@@ -13,10 +13,10 @@ const executeSchema = z.object({
 });
 
 /**
- * Swarm execute – triggers Phase 2 feature routing via Natural Language Command.
- * Supports SSE streaming for Real-Time Progress Updates (Feature #6).
+ * Natural Language Command (#1)
+ * Dynamically instantiates the Swarm, routes via Architect, streams progress via SSE.
  */
-router.post('/execute', async (req: AuthRequest, res) => {
+router.post('/', async (req: AuthRequest, res) => {
   const parsed = executeSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.flatten() });
@@ -25,7 +25,6 @@ router.post('/execute', async (req: AuthRequest, res) => {
 
   const wantsStream =
     parsed.data.stream === true ||
-    req.query.stream === 'true' ||
     req.headers.accept?.includes('text/event-stream');
 
   if (wantsStream) {
@@ -40,8 +39,11 @@ router.post('/execute', async (req: AuthRequest, res) => {
       endSSE(res);
     } catch (err) {
       const message = (err as Error).message;
-      const code = message.includes('Insufficient actions') ? 'OUT_OF_ACTIONS' : 'SWARM_ERROR';
-      res.write(`event: error\ndata: ${JSON.stringify({ error: message, code })}\n\n`);
+      if (message.includes('Insufficient actions')) {
+        res.write(`event: error\ndata: ${JSON.stringify({ error: message, code: 'OUT_OF_ACTIONS' })}\n\n`);
+      } else {
+        res.write(`event: error\ndata: ${JSON.stringify({ error: message })}\n\n`);
+      }
       res.end();
     }
     return;
@@ -57,26 +59,6 @@ router.post('/execute', async (req: AuthRequest, res) => {
       return;
     }
     res.status(500).json({ error: message });
-  }
-});
-
-router.get('/runs/:runId', async (req: AuthRequest, res) => {
-  try {
-    const runId = String(req.params.runId);
-    const run = await SwarmService.getRun(req.userId!, runId);
-    res.json(run);
-  } catch (err) {
-    res.status(404).json({ error: (err as Error).message });
-  }
-});
-
-router.get('/runs/:runId/status', async (req: AuthRequest, res) => {
-  try {
-    const runId = String(req.params.runId);
-    const status = await SwarmService.getStatus(req.userId!, runId);
-    res.json(status);
-  } catch (err) {
-    res.status(404).json({ error: (err as Error).message });
   }
 });
 

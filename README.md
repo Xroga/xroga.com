@@ -22,7 +22,7 @@ xroga/
 
 The negotiation loop repeats until all agents confirm **Zero Defects**.
 
-## Phase 1 (Current)
+## Phase 1 (Complete)
 
 - [x] Next.js 14 frontend with cosmic dark theme
 - [x] Express backend API
@@ -32,6 +32,16 @@ The negotiation loop repeats until all agents confirm **Zero Defects**.
 - [x] Action Meter (fuel system)
 - [x] Dashboard shell with sidebar
 - [x] Profile settings page
+
+## Phase 2 (Current)
+
+- [x] Natural Language Command with feature routing (DeepSeek Architect)
+- [x] SSE streaming progress (`POST /api/swarm/execute?stream=true`)
+- [x] Landing Page Builder – Claude 3.5 + Flux Pro + Vercel deploy (25 Actions)
+- [x] Image Generation – Replicate Flux Pro + Cloudflare fallback (4 Actions)
+- [x] Browser Automation – Playwright + Browserbase fallback (5 Actions)
+- [x] Cross-Post – Buffer / Twitter / LinkedIn APIs (1 Action/platform)
+- [x] Auto-Key Creation – Browserbase + encrypted Supabase storage (5 Actions)
 
 ## Quick Start
 

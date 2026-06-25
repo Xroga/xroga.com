@@ -1,15 +1,54 @@
+import type { Response } from 'express';
 import { getSupabaseAdmin } from '../config/supabase.js';
-import { swarm } from '../swarm/XrogaSwarm.js';
+import { featureSwarm } from '../swarm/FeatureSwarm.js';
 import { ActionService } from './ActionService.js';
+import { classifyFeature, getCrossPostPlatformCount } from './architect/featureRouter.js';
+import { sendSSE } from '../lib/sse.js';
 import type { SwarmStatus } from '../types/index.js';
+import type { FeatureCategory, SwarmProgressEvent } from '../types/features.js';
+import { FEATURE_TASK_TYPES } from '../types/features.js';
+
+export interface SwarmRunResult {
+  runId: string;
+  result: Awaited<ReturnType<typeof featureSwarm.execute>>;
+  actions: Awaited<ReturnType<typeof ActionService.deduct>>;
+  featureCategory: FeatureCategory;
+}
+
+function computeActionCost(category: FeatureCategory, prompt: string): number {
+  if (category === 'cross_post') {
+    return getCrossPostPlatformCount(prompt);
+  }
+  const taskType = FEATURE_TASK_TYPES[category];
+  return ActionService.getCost(taskType);
+}
 
 export class SwarmService {
-  static async run(userId: string, prompt: string, projectId?: string) {
+  static async run(
+    userId: string,
+    prompt: string,
+    projectId?: string,
+    onProgress?: (event: SwarmProgressEvent) => void
+  ): Promise<SwarmRunResult> {
     const supabase = getSupabaseAdmin();
 
-    const canAfford = await ActionService.canAfford(userId, 5);
+    const route = await classifyFeature(prompt);
+    const actionCost = computeActionCost(route.category, prompt);
+    const taskType = FEATURE_TASK_TYPES[route.category];
+
+    const canAfford = await ActionService.canAfford(userId, actionCost);
     if (!canAfford) {
       throw new Error('Insufficient actions to run Swarm task');
+    }
+
+    const deductResult = await ActionService.deduct(userId, taskType, {
+      projectId,
+      customCost: actionCost,
+      description: `${route.category}: ${prompt.slice(0, 80)}`,
+    });
+
+    if (!deductResult.success) {
+      throw new Error(deductResult.error ?? 'Action deduction failed');
     }
 
     const { data: run, error } = await supabase
@@ -24,23 +63,29 @@ export class SwarmService {
       .single();
 
     if (error || !run) {
+      await ActionService.refund(userId, actionCost, 'Swarm run creation failed');
       throw new Error(`Failed to create swarm run: ${error?.message}`);
     }
 
-    swarm.setStatusCallback(async (runId, status, agent) => {
-      await supabase
-        .from('swarm_runs')
-        .update({ status, current_agent: agent })
-        .eq('id', runId);
+    featureSwarm.setStatusCallback(async (runId, status, agent) => {
+      await supabase.from('swarm_runs').update({ status, current_agent: agent }).eq('id', runId);
     });
 
-    const result = await swarm.execute(userId, prompt, projectId, run.id);
+    if (onProgress) {
+      featureSwarm.setProgressCallback(onProgress);
+    }
 
-    const deductResult = await ActionService.deduct(userId, 'chat', {
-      projectId,
-      customCost: result.plan?.estimatedTotalActions ?? 5,
-      description: `Swarm execution: ${prompt.slice(0, 80)}`,
-    });
+    let result: Awaited<ReturnType<typeof featureSwarm.execute>>;
+    try {
+      result = await featureSwarm.execute(userId, prompt, projectId, run.id, route.category);
+    } catch (err) {
+      await ActionService.refund(userId, actionCost, 'Swarm execution failed');
+      throw err;
+    }
+
+    if (!result.success) {
+      await ActionService.refund(userId, Math.floor(actionCost / 2), 'Partial refund – zero defects not reached');
+    }
 
     await supabase
       .from('swarm_runs')
@@ -48,21 +93,22 @@ export class SwarmService {
         status: result.success ? 'completed' : 'failed',
         iteration_count: result.iterations,
         defects_found: result.defectsFound,
-        output: result,
+        output: { ...result, featureCategory: route.category },
         completed_at: new Date().toISOString(),
       })
       .eq('id', run.id);
 
     if (projectId) {
+      const outputSummary = this.summarizeOutput(result.output);
       await supabase.from('project_messages').insert([
         { project_id: projectId, role: 'user', content: prompt },
         {
           project_id: projectId,
           role: 'assistant',
           content: result.success
-            ? `Task completed after ${result.iterations} iteration(s). Zero defects confirmed.`
-            : `Task could not reach zero-defect state after ${result.iterations} iteration(s).`,
-          metadata: { swarmRunId: run.id, agents: result.agents },
+            ? `✅ ${route.category} completed. ${outputSummary}`
+            : `⚠️ Task incomplete after ${result.iterations} iteration(s).`,
+          metadata: { swarmRunId: run.id, featureCategory: route.category, output: result.output },
         },
       ]);
     }
@@ -71,10 +117,60 @@ export class SwarmService {
       user_id: userId,
       project_id: projectId ?? null,
       action: result.success ? 'swarm_completed' : 'swarm_failed',
-      details: { runId: run.id, iterations: result.iterations, defects: result.defectsFound },
+      details: { runId: run.id, featureCategory: route.category, iterations: result.iterations },
     });
 
-    return { runId: run.id, result, actions: deductResult };
+    return { runId: run.id, result, actions: deductResult, featureCategory: route.category };
+  }
+
+  static async runWithSSE(
+    userId: string,
+    prompt: string,
+    res: Response,
+    projectId?: string
+  ): Promise<void> {
+    sendSSE(res, {
+      event: 'start',
+      data: { message: 'Swarm initialized', prompt: prompt.slice(0, 100) },
+    });
+
+    const result = await this.run(userId, prompt, projectId, (event) => {
+      sendSSE(res, { event: 'progress', data: event as unknown as Record<string, unknown> });
+    });
+
+    sendSSE(res, {
+      event: 'complete',
+      data: {
+        runId: result.runId,
+        success: result.result.success,
+        featureCategory: result.featureCategory,
+        output: result.result.output,
+        agents: result.result.agents,
+        actionsRemaining: result.actions.remaining,
+      },
+    });
+  }
+
+  static summarizeOutput(output: unknown): string {
+    if (!output || typeof output !== 'object') return 'Task complete.';
+    const o = output as Record<string, unknown>;
+
+    if (o.type === 'landing_page' && typeof o.deployUrl === 'string') {
+      return `Live at ${o.deployUrl}`;
+    }
+    if (o.type === 'image' && typeof o.imageUrl === 'string') {
+      return `Image ready: ${o.imageUrl.slice(0, 80)}...`;
+    }
+    if (o.type === 'browser_automation') {
+      return 'Browser automation complete.';
+    }
+    if (o.type === 'cross_post') {
+      return 'Posted to social platforms.';
+    }
+    if (o.type === 'key_creation' && typeof o.message === 'string') {
+      return o.message;
+    }
+    return 'Task complete.';
   }
 
   static async getRun(userId: string, runId: string) {

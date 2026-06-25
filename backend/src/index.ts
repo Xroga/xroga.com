@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import { authMiddleware } from './middleware/auth.js';
 import actionsRouter from './routes/actions.js';
 import swarmRouter from './routes/swarm.js';
+import chatRouter from './routes/chat.js';
 import projectsRouter from './routes/projects.js';
 import profileRouter from './routes/profile.js';
 
@@ -31,6 +32,7 @@ app.get('/health', (_req, res) => {
 
 app.use('/api/actions', authMiddleware, actionsRouter);
 app.use('/api/swarm', authMiddleware, swarmRouter);
+app.use('/api/chat', authMiddleware, chatRouter);
 app.use('/api/projects', authMiddleware, projectsRouter);
 app.use('/api/profile', authMiddleware, profileRouter);
 

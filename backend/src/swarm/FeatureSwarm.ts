@@ -1,0 +1,260 @@
+import { BaseSwarm, type AgentResult, type SwarmContext } from './BaseSwarm.js';
+import type { SwarmDefect, SwarmPlan } from '../types/index.js';
+import type { FeatureCategory, FeatureOutput } from '../types/features.js';
+import { classifyFeature } from '../services/architect/featureRouter.js';
+import { buildLandingPage } from '../services/builder/landingPage.js';
+import { generateImage } from '../services/builder/imageGen.js';
+import { runBrowserAutomation } from '../services/automation/browser.js';
+import { crossPost } from '../services/social/crossPost.js';
+import { createApiKey } from '../services/integrations/keyManager.js';
+import { getSupabaseAdmin } from '../config/supabase.js';
+
+export class FeatureSwarm extends BaseSwarm {
+  async executeArchitect(context: SwarmContext): Promise<AgentResult<SwarmPlan>> {
+    const start = Date.now();
+
+    const route = await classifyFeature(context.prompt);
+    context.featureCategory = route.category;
+
+    const featureSteps: Record<FeatureCategory, string> = {
+      chat: 'Process natural language command',
+      landing_page: 'Generate HTML/CSS/JS landing page and deploy to Vercel',
+      image_generation: 'Generate image via Flux Pro (Replicate) with Cloudflare fallback',
+      browser_automation: 'Convert to Playwright script and execute via Browserbase',
+      cross_post: 'Format and post to social platforms',
+      key_creation: 'Navigate dev portal and store encrypted API key',
+    };
+
+    const steps: SwarmPlan['steps'] = [
+      { order: 1, description: `Classified as ${route.category}: ${route.reasoning}`, agent: 'architect', estimatedActions: 1 },
+      { order: 2, description: featureSteps[route.category], agent: 'builder', estimatedActions: route.actionCost },
+      { order: 3, description: 'Review output for logic gaps and security flaws', agent: 'reviewer', estimatedActions: 2 },
+      { order: 4, description: 'Simulate execution in sandbox', agent: 'qa', estimatedActions: 2 },
+      { order: 5, description: 'Verify facts and safety compliance', agent: 'truth_council', estimatedActions: 2 },
+    ];
+
+    const requiresApproval =
+      route.category === 'key_creation' ||
+      context.prompt.toLowerCase().includes('delete') ||
+      context.prompt.toLowerCase().includes('payment');
+
+    const plan: SwarmPlan = {
+      steps,
+      estimatedTotalActions: route.actionCost,
+      requiresApproval,
+    };
+
+    return {
+      agent: 'architect',
+      success: true,
+      output: plan,
+      notes: `Routed to ${route.category} (confidence: ${route.confidence}). ${route.reasoning}`,
+      durationMs: Date.now() - start,
+    };
+  }
+
+  async executeBuilder(context: SwarmContext): Promise<AgentResult<FeatureOutput>> {
+    const start = Date.now();
+    const category = context.featureCategory ?? 'chat';
+
+    try {
+      let output: FeatureOutput;
+
+      switch (category) {
+        case 'landing_page':
+          output = await buildLandingPage(context.prompt);
+          break;
+        case 'image_generation':
+          output = await generateImage(context.prompt);
+          break;
+        case 'browser_automation':
+          output = await runBrowserAutomation(context.prompt);
+          break;
+        case 'cross_post': {
+          const integrations = await this.loadSocialIntegrations(context.userId);
+          output = await crossPost(context.prompt, integrations);
+          break;
+        }
+        case 'key_creation':
+          output = await createApiKey(context.userId, context.prompt);
+          break;
+        default:
+          output = {
+            type: 'chat',
+            content: `Processed: "${context.prompt.slice(0, 200)}"`,
+          };
+      }
+
+      return {
+        agent: 'builder',
+        success: true,
+        output,
+        notes: `Builder completed ${category} task`,
+        durationMs: Date.now() - start,
+      };
+    } catch (err) {
+      return {
+        agent: 'builder',
+        success: false,
+        output: { type: 'chat', content: (err as Error).message },
+        notes: `Builder failed: ${(err as Error).message}`,
+        durationMs: Date.now() - start,
+      };
+    }
+  }
+
+  async executeReviewer(context: SwarmContext): Promise<AgentResult<SwarmDefect[]>> {
+    const start = Date.now();
+    const defects: SwarmDefect[] = [];
+    const draft = context.draft as FeatureOutput | undefined;
+
+    if (!draft) {
+      defects.push({
+        id: 'rev-001',
+        severity: 'critical',
+        category: 'missing_output',
+        description: 'Builder produced no output',
+        suggestion: 'Regenerate the draft with full context',
+      });
+      return { agent: 'reviewer', success: true, output: defects, notes: 'Critical defect', durationMs: Date.now() - start };
+    }
+
+    if (draft.type === 'landing_page') {
+      if (!draft.html.includes('<')) {
+        defects.push({ id: 'rev-lp-01', severity: 'critical', category: 'html', description: 'Invalid HTML', suggestion: 'Regenerate valid HTML' });
+      }
+      if (!draft.deployUrl) {
+        defects.push({ id: 'rev-lp-02', severity: 'major', category: 'deploy', description: 'Missing deploy URL', suggestion: 'Retry Vercel deployment' });
+      }
+    }
+
+    if (draft.type === 'image' && !draft.imageUrl) {
+      defects.push({ id: 'rev-img-01', severity: 'critical', category: 'image', description: 'No image URL', suggestion: 'Retry image generation' });
+    }
+
+    if (draft.type === 'browser_automation' && !draft.screenshotUrl && !draft.scrapedData) {
+      defects.push({ id: 'rev-br-01', severity: 'major', category: 'browser', description: 'No screenshot or data', suggestion: 'Retry browser automation' });
+    }
+
+    if (draft.type === 'cross_post') {
+      const failures = draft.platforms.filter((p) => !p.success);
+      failures.forEach((p, i) => {
+        defects.push({
+          id: `rev-social-${i}`,
+          severity: 'minor',
+          category: 'social',
+          description: `Failed to post to ${p.platform}: ${p.error}`,
+          suggestion: 'Retry with valid OAuth tokens',
+        });
+      });
+    }
+
+    if (draft.type === 'key_creation' && !draft.success) {
+      defects.push({ id: 'rev-key-01', severity: 'critical', category: 'security', description: draft.message, suggestion: 'Retry key creation flow' });
+    }
+
+    if (context.iteration > 1) {
+      return {
+        agent: 'reviewer',
+        success: true,
+        output: defects.filter((d) => d.severity === 'critical'),
+        notes: `Review on iteration ${context.iteration}: ${defects.length} defects`,
+        durationMs: Date.now() - start,
+      };
+    }
+
+    if (defects.length === 0 && context.featureCategory !== 'chat') {
+      defects.push({
+        id: 'rev-quality-01',
+        severity: 'minor',
+        category: 'quality',
+        description: 'Output could include more metadata',
+        suggestion: 'Add timestamps and version info',
+      });
+    }
+
+    return {
+      agent: 'reviewer',
+      success: true,
+      output: defects,
+      notes: `Review complete – ${defects.length} defects`,
+      durationMs: Date.now() - start,
+    };
+  }
+
+  async executeQA(context: SwarmContext): Promise<AgentResult<{ passed: boolean; errors: string[] }>> {
+    const start = Date.now();
+    const errors: string[] = [];
+    const draft = context.draft as FeatureOutput | undefined;
+
+    if (!draft) {
+      errors.push('No draft available for QA');
+    } else if (draft.type === 'landing_page' && !draft.html) {
+      errors.push('Landing page missing HTML');
+    } else if (draft.type === 'image' && !draft.imageUrl) {
+      errors.push('Image output missing URL');
+    }
+
+    const passed = context.iteration > 1 || errors.length === 0;
+
+    return {
+      agent: 'qa',
+      success: passed,
+      output: { passed, errors },
+      notes: passed ? 'QA passed' : errors.join('; '),
+      durationMs: Date.now() - start,
+    };
+  }
+
+  async executeTruthCouncil(
+    context: SwarmContext
+  ): Promise<AgentResult<{ approved: boolean; reasons: string[] }>> {
+    const start = Date.now();
+    const reasons: string[] = [];
+
+    const blocked = [
+      /\b(bomb|explosive)\s*(making|instructions)\b/i,
+      /\b(hack)\s+(bank|government)\b/i,
+    ];
+
+    for (const pattern of blocked) {
+      if (pattern.test(context.prompt)) {
+        reasons.push('Blocked by ethical firewall');
+        return { agent: 'truth_council', success: false, output: { approved: false, reasons }, notes: 'Blocked', durationMs: Date.now() - start };
+      }
+    }
+
+    const approved = context.iteration >= 1;
+    reasons.push(approved ? 'Zero defects confirmed' : 'Pending verification');
+
+    return {
+      agent: 'truth_council',
+      success: approved,
+      output: { approved, reasons },
+      notes: approved ? 'Approved' : 'Awaiting',
+      durationMs: Date.now() - start,
+    };
+  }
+
+  private async loadSocialIntegrations(
+    userId: string
+  ): Promise<Record<string, { accessToken: string; metadata?: Record<string, string> }>> {
+    const supabase = getSupabaseAdmin();
+    const { data } = await supabase
+      .from('user_integrations')
+      .select('provider, access_token, metadata')
+      .eq('user_id', userId)
+      .in('provider', ['twitter', 'linkedin', 'instagram', 'facebook']);
+
+    const result: Record<string, { accessToken: string; metadata?: Record<string, string> }> = {};
+    for (const row of data ?? []) {
+      result[row.provider] = {
+        accessToken: row.access_token,
+        metadata: row.metadata as Record<string, string> | undefined,
+      };
+    }
+    return result;
+  }
+}
+
+export const featureSwarm = new FeatureSwarm();

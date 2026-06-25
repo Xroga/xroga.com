@@ -5,6 +5,7 @@ import type {
   SwarmResult,
   SwarmStatus,
 } from '../types/index.js';
+import type { FeatureCategory, SwarmProgressEvent } from '../types/features.js';
 
 export interface SwarmContext {
   userId: string;
@@ -12,6 +13,7 @@ export interface SwarmContext {
   prompt: string;
   runId: string;
   iteration: number;
+  featureCategory?: FeatureCategory;
   plan?: SwarmPlan;
   draft?: unknown;
   defects?: SwarmDefect[];
@@ -39,13 +41,26 @@ export abstract class BaseSwarm {
   ): Promise<AgentResult<{ approved: boolean; reasons: string[] }>>;
 
   protected onStatusChange?: (runId: string, status: SwarmStatus, agent: SwarmAgent) => void;
+  protected onProgress?: (event: SwarmProgressEvent) => void;
 
   setStatusCallback(cb: (runId: string, status: SwarmStatus, agent: SwarmAgent) => void) {
     this.onStatusChange = cb;
   }
 
-  private notify(runId: string, status: SwarmStatus, agent: SwarmAgent) {
+  setProgressCallback(cb: (event: SwarmProgressEvent) => void) {
+    this.onProgress = cb;
+  }
+
+  private notify(runId: string, status: SwarmStatus, agent: SwarmAgent, iteration?: number) {
     this.onStatusChange?.(runId, status, agent);
+    this.onProgress?.({
+      runId,
+      agent,
+      status,
+      message: `${agent} is ${status}`,
+      iteration,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   /**
@@ -60,13 +75,14 @@ export abstract class BaseSwarm {
    * 8. Loop repeats if any agent finds flaws
    * 9. Release only when ALL agents say "Zero Defects"
    */
-  async execute(userId: string, prompt: string, projectId?: string, runId?: string): Promise<SwarmResult> {
+  async execute(userId: string, prompt: string, projectId?: string, runId?: string, featureCategory?: FeatureCategory): Promise<SwarmResult> {
     const context: SwarmContext = {
       userId,
       projectId,
       prompt,
       runId: runId ?? crypto.randomUUID(),
       iteration: 0,
+      featureCategory,
     };
 
     const agentResults: SwarmResult['agents'] = {
@@ -97,7 +113,7 @@ export abstract class BaseSwarm {
       context.iteration = i + 1;
 
       // Step 2: Builder creates draft
-      this.notify(context.runId, 'building', 'builder');
+      this.notify(context.runId, 'building', 'builder', context.iteration);
       const buildResult = await this.executeBuilder(context);
       context.draft = buildResult.output;
       output = buildResult.output;
