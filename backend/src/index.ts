@@ -16,23 +16,42 @@ import notificationsRouter from './routes/notifications.js';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 8080;
+const HOST = '0.0.0.0';
 
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors({
-  origin: process.env.FRONTEND_URL ?? 'http://localhost:3000',
+  origin: [
+    process.env.FRONTEND_URL ?? 'http://localhost:3000',
+    'https://xroga.com',
+    'https://www.xroga.com',
+    'https://xroga-api.fly.dev',
+  ],
   credentials: true,
 }));
 app.use(express.json({ limit: '10mb' }));
 
-app.get('/health', (_req, res) => {
+const healthPayload = () => ({
+  status: 'ok',
+  service: 'xroga-api',
+  version: '1.0.0',
+  timestamp: new Date().toISOString(),
+});
+
+app.get('/', (_req, res) => {
   res.json({
-    status: 'ok',
-    service: 'xroga-api',
-    version: '0.3.0',
-    swarm: '5-agent-system',
-    phase: 3,
+    ...healthPayload(),
+    message: 'Xroga API is running',
+    docs: { health: '/health', api: '/api' },
   });
+});
+
+app.get('/health', (_req, res) => {
+  res.json(healthPayload());
+});
+
+app.get('/api/health', (_req, res) => {
+  res.json(healthPayload());
 });
 
 app.use('/api/actions', authMiddleware, actionsRouter);
@@ -54,8 +73,16 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
   res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Server running on http://${HOST}:${PORT}`);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception:', err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason);
 });
 
 export default app;

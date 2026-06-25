@@ -8,6 +8,7 @@ LABEL fly_launch_runtime="Node.js"
 WORKDIR /app
 
 ENV NODE_ENV="production"
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 FROM base AS build
 
@@ -30,4 +31,4 @@ COPY --from=build /app /app
 
 EXPOSE 8080
 
-CMD [ "npm", "run", "start" ]
+CMD [ "node", "dist/index.js" ]
