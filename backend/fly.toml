@@ -29,14 +29,11 @@ primary_region = 'iad'
     hard_limit = 100
 
   [[http_service.checks]]
-    grace_period = '20s'
+    grace_period = '30s'
     interval = '15s'
     method = 'GET'
-    timeout = '5s'
+    timeout = '10s'
     path = '/health'
-
-    [http_service.checks.headers]
-      X-Forwarded-Proto = 'https'
 
 [[vm]]
   memory = '1gb'
