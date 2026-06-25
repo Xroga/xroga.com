@@ -1,13 +1,6 @@
 {
-    "experimentalServices": {
-        "frontend": {
-            "root": "frontend",
-            "routePrefix": "/",
-            "framework": "nextjs"
-        },
-        "backend": {
-            "root": "backend",
-            "routePrefix": "/_/backend"
-        }
-    }
+  "framework": "nextjs",
+  "root": "frontend",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next"
 }
