@@ -6,7 +6,12 @@ export type FeatureCategory =
   | 'image_generation'
   | 'browser_automation'
   | 'cross_post'
-  | 'key_creation';
+  | 'key_creation'
+  | 'video_studio'
+  | 'deep_research'
+  | 'content_blocker'
+  | 'job_hunter'
+  | 'code_debug';
 
 export interface FeatureRoute {
   category: FeatureCategory;
@@ -60,12 +65,92 @@ export interface KeyCreationOutput {
   message: string;
 }
 
+export interface VideoStudioOutput {
+  type: 'video_studio';
+  title: string;
+  streamingUrl: string;
+  durationSeconds: number;
+  actionCost: number;
+  screenplay: {
+    title: string;
+    mood: string;
+    scenes: Array<{ number: number; description: string; dialogue: string; durationSeconds: number }>;
+  };
+  selectedProvider: string;
+  reviewScores: { physics: number; lighting: number; consistency: number };
+  providersUsed: string[];
+  audioTracks: Array<{ type: string; provider: string }>;
+}
+
+export interface DeepResearchOutput {
+  type: 'deep_research';
+  title: string;
+  pdfUrl: string;
+  sourceCount: number;
+  subtopics: string[];
+  factCheckIssues: number;
+  bibliography: string[];
+}
+
+export interface ContentBlockerOutput {
+  type: 'content_blocker';
+  status: string;
+  deviceId: string;
+  deviceName: string;
+  userId: string;
+  dns: {
+    provider: string;
+    servers: string[];
+    setupScript: string;
+  };
+  onnx: {
+    enabled: boolean;
+    modelPath: string;
+    clientConfig: Record<string, unknown>;
+  };
+  activatedAt: string;
+}
+
+export interface JobHunterOutput {
+  type: 'job_hunter';
+  projectId: string;
+  query: string;
+  jobsFound: number;
+  applicationsSubmitted: number;
+  applications: Array<{
+    jobTitle: string;
+    company: string;
+    url: string;
+    submitted: boolean;
+    resumeTailored: boolean;
+    error?: string;
+  }>;
+  status: string;
+}
+
+export interface CodeDebugOutput {
+  type: 'code_debug';
+  filename: string;
+  fixedCode: string;
+  language: string;
+  lineCount: number;
+  defectsFound: number;
+  iterations: number;
+  success: boolean;
+  zeroDefects: boolean;
+}
+
 export type FeatureOutput =
   | LandingPageOutput
   | ImageGenOutput
   | BrowserAutomationOutput
   | CrossPostOutput
   | KeyCreationOutput
+  | VideoStudioOutput
+  | DeepResearchOutput
+  | ContentBlockerOutput
+  | JobHunterOutput
+  | CodeDebugOutput
   | { type: 'chat'; content: string };
 
 export interface SwarmProgressEvent {
@@ -84,6 +169,11 @@ export const FEATURE_ACTION_COSTS: Record<FeatureCategory, number> = {
   browser_automation: 5,
   cross_post: 1,
   key_creation: 5,
+  video_studio: 50,
+  deep_research: 100,
+  content_blocker: 1,
+  job_hunter: 90,
+  code_debug: 15,
 };
 
 export const FEATURE_TASK_TYPES: Record<FeatureCategory, TaskType> = {
@@ -93,4 +183,9 @@ export const FEATURE_TASK_TYPES: Record<FeatureCategory, TaskType> = {
   browser_automation: 'scrape',
   cross_post: 'chat',
   key_creation: 'chat',
+  video_studio: 'video',
+  deep_research: 'research',
+  content_blocker: 'chat',
+  job_hunter: 'scrape',
+  code_debug: 'code_fix',
 };

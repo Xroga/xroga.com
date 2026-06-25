@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { SwarmService } from '../services/SwarmService.js';
+import { SwarmService, handleInsufficientActions } from '../services/SwarmService.js';
+import { InsufficientActionsError } from '../errors/InsufficientActionsError.js';
 import { initSSE, endSSE } from '../lib/sse.js';
 import type { AuthRequest } from '../middleware/auth.js';
 
@@ -38,10 +39,10 @@ router.post('/', async (req: AuthRequest, res) => {
       );
       endSSE(res);
     } catch (err) {
-      const message = (err as Error).message;
-      if (message.includes('Insufficient actions')) {
-        res.write(`event: error\ndata: ${JSON.stringify({ error: message, code: 'OUT_OF_ACTIONS' })}\n\n`);
+      if (err instanceof InsufficientActionsError) {
+        res.write(`event: error\ndata: ${JSON.stringify(err.toJSON())}\n\n`);
       } else {
+        const message = (err as Error).message;
         res.write(`event: error\ndata: ${JSON.stringify({ error: message })}\n\n`);
       }
       res.end();
@@ -53,12 +54,11 @@ router.post('/', async (req: AuthRequest, res) => {
     const result = await SwarmService.run(req.userId!, parsed.data.prompt, parsed.data.projectId);
     res.json(result);
   } catch (err) {
-    const message = (err as Error).message;
-    if (message.includes('Insufficient actions')) {
-      res.status(402).json({ error: message, code: 'OUT_OF_ACTIONS' });
+    if (err instanceof InsufficientActionsError) {
+      handleInsufficientActions(res, err);
       return;
     }
-    res.status(500).json({ error: message });
+    res.status(500).json({ error: (err as Error).message });
   }
 });
 

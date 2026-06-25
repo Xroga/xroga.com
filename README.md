@@ -33,7 +33,7 @@ The negotiation loop repeats until all agents confirm **Zero Defects**.
 - [x] Dashboard shell with sidebar
 - [x] Profile settings page
 
-## Phase 2 (Current)
+## Phase 2 (Complete)
 
 - [x] Natural Language Command with feature routing (DeepSeek Architect)
 - [x] SSE streaming progress (`POST /api/swarm/execute?stream=true`)
@@ -42,6 +42,14 @@ The negotiation loop repeats until all agents confirm **Zero Defects**.
 - [x] Browser Automation – Playwright + Browserbase fallback (5 Actions)
 - [x] Cross-Post – Buffer / Twitter / LinkedIn APIs (1 Action/platform)
 - [x] Auto-Key Creation – Browserbase + encrypted Supabase storage (5 Actions)
+
+## Phase 3 (Current)
+
+- [x] Omni-Video Studio – Claude screenplay + parallel Agnes/Kling/Morph + FFmpeg + R2 (50 Actions/5s)
+- [x] Deep Research – Exa + Tavily + Gemini PDF report (100 Actions)
+- [x] Adult Content Blocker – Cloudflare DNS + ONNX config (`POST /api/wellbeing/protect`)
+- [x] Auto Job Hunter – Apify + Claude resume + Browserbase apply (90 Actions)
+- [x] Multi-Agent Debugging – DeepSeek-R1 + Claude + sandbox (`POST /api/debug/execute`)
 
 ## Quick Start
 
@@ -79,15 +87,16 @@ npm run dev
 | GET | `/health` | Health check |
 | GET | `/api/actions/balance` | Get action fuel balance |
 | POST | `/api/actions/deduct` | Deduct actions for a task |
-| POST | `/api/swarm/execute` | Run 5-agent Swarm on a prompt |
+| POST | `/api/swarm/execute` | Run Swarm with feature routing (add `?stream=true` for SSE) |
+| POST | `/api/chat` | Natural Language Command with SSE streaming |
 | GET | `/api/projects` | List user projects |
 | POST | `/api/projects` | Create a project |
-| GET/PATCH | `/api/profile` | User profile |
+| POST | `/api/debug/execute` | Multi-agent code debugging |
+| POST | `/api/wellbeing/protect` | Enable content blocker |
+| GET | `/api/projects/:id/files` | List project files from R2 |
 
 ## Roadmap
 
-- **Phase 2**: Core features (NL command, landing page builder, image gen, browser automation)
-- **Phase 3**: Premium features (Omni-Video, Deep Research, Job Hunter)
 - **Phase 4**: Full dashboard, project detail view, GitHub integration
 - **Phase 5**: Paddle payments, pricing page, go-live
 

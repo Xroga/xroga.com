@@ -7,6 +7,11 @@ import { generateImage } from '../services/builder/imageGen.js';
 import { runBrowserAutomation } from '../services/automation/browser.js';
 import { crossPost } from '../services/social/crossPost.js';
 import { createApiKey } from '../services/integrations/keyManager.js';
+import { produceVideo } from '../services/media/videoStudio.js';
+import { conductDeepResearch } from '../services/research/deepResearch.js';
+import { activateProtection } from '../services/wellbeing/blocker.js';
+import { huntJobs } from '../services/career/jobHunter.js';
+import { debugCode } from '../services/debugging/codeDebugger.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 
 export class FeatureSwarm extends BaseSwarm {
@@ -23,6 +28,11 @@ export class FeatureSwarm extends BaseSwarm {
       browser_automation: 'Convert to Playwright script and execute via Browserbase',
       cross_post: 'Format and post to social platforms',
       key_creation: 'Navigate dev portal and store encrypted API key',
+      video_studio: 'Write screenplay, parallel video gen (Agnes+Kling+Morph), audio, FFmpeg assembly',
+      deep_research: 'Exa+Tavily search, Gemini synthesis, PDF report with bibliography',
+      content_blocker: 'Configure Cloudflare Family DNS + ONNX Runtime protection',
+      job_hunter: 'Apify scrape, Claude resume tailoring, Browserbase auto-apply',
+      code_debug: 'Multi-agent code negotiation until zero defects',
     };
 
     const steps: SwarmPlan['steps'] = [
@@ -78,6 +88,28 @@ export class FeatureSwarm extends BaseSwarm {
         case 'key_creation':
           output = await createApiKey(context.userId, context.prompt);
           break;
+        case 'video_studio':
+          output = await produceVideo(context.userId, context.prompt, context.projectId);
+          break;
+        case 'deep_research':
+          output = await conductDeepResearch(context.userId, context.prompt, context.projectId);
+          break;
+        case 'content_blocker':
+          output = await activateProtection(
+            context.userId,
+            context.extras?.deviceName as string | undefined
+          );
+          break;
+        case 'job_hunter':
+          output = await huntJobs(context.userId, context.prompt);
+          break;
+        case 'code_debug': {
+          const code = (context.extras?.code as string) ?? context.prompt;
+          const filename = (context.extras?.filename as string) ?? 'snippet.js';
+          const language = context.extras?.language as string | undefined;
+          output = await debugCode({ code, filename, language });
+          break;
+        }
         default:
           output = {
             type: 'chat',
@@ -153,6 +185,22 @@ export class FeatureSwarm extends BaseSwarm {
       defects.push({ id: 'rev-key-01', severity: 'critical', category: 'security', description: draft.message, suggestion: 'Retry key creation flow' });
     }
 
+    if (draft.type === 'video_studio' && !draft.streamingUrl) {
+      defects.push({ id: 'rev-vid-01', severity: 'critical', category: 'video', description: 'No streaming URL', suggestion: 'Retry video assembly' });
+    }
+
+    if (draft.type === 'deep_research' && !draft.pdfUrl) {
+      defects.push({ id: 'rev-res-01', severity: 'critical', category: 'research', description: 'PDF not generated', suggestion: 'Retry research pipeline' });
+    }
+
+    if (draft.type === 'job_hunter' && draft.applicationsSubmitted === 0) {
+      defects.push({ id: 'rev-job-01', severity: 'major', category: 'career', description: 'No applications submitted', suggestion: 'Retry with valid credentials' });
+    }
+
+    if (draft.type === 'code_debug' && !draft.zeroDefects) {
+      defects.push({ id: 'rev-dbg-01', severity: 'critical', category: 'code', description: 'Zero defects not reached', suggestion: 'Continue negotiation loop' });
+    }
+
     if (context.iteration > 1) {
       return {
         agent: 'reviewer',
@@ -193,6 +241,12 @@ export class FeatureSwarm extends BaseSwarm {
       errors.push('Landing page missing HTML');
     } else if (draft.type === 'image' && !draft.imageUrl) {
       errors.push('Image output missing URL');
+    } else if (draft.type === 'video_studio' && !draft.streamingUrl) {
+      errors.push('Video missing streaming URL');
+    } else if (draft.type === 'deep_research' && !draft.pdfUrl) {
+      errors.push('Research PDF missing');
+    } else if (draft.type === 'code_debug' && !draft.success) {
+      errors.push('Code debug did not reach zero defects');
     }
 
     const passed = context.iteration > 1 || errors.length === 0;

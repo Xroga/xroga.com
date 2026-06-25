@@ -14,6 +14,7 @@ export interface SwarmContext {
   runId: string;
   iteration: number;
   featureCategory?: FeatureCategory;
+  extras?: Record<string, unknown>;
   plan?: SwarmPlan;
   draft?: unknown;
   defects?: SwarmDefect[];
@@ -75,7 +76,7 @@ export abstract class BaseSwarm {
    * 8. Loop repeats if any agent finds flaws
    * 9. Release only when ALL agents say "Zero Defects"
    */
-  async execute(userId: string, prompt: string, projectId?: string, runId?: string, featureCategory?: FeatureCategory): Promise<SwarmResult> {
+  async execute(userId: string, prompt: string, projectId?: string, runId?: string, featureCategory?: FeatureCategory, extras?: Record<string, unknown>): Promise<SwarmResult> {
     const context: SwarmContext = {
       userId,
       projectId,
@@ -83,6 +84,7 @@ export abstract class BaseSwarm {
       runId: runId ?? crypto.randomUUID(),
       iteration: 0,
       featureCategory,
+      extras,
     };
 
     const agentResults: SwarmResult['agents'] = {

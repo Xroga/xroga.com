@@ -54,6 +54,35 @@ router.post('/', async (req: AuthRequest, res) => {
   res.status(201).json(data);
 });
 
+router.get('/:id/files', async (req: AuthRequest, res) => {
+  const supabase = getSupabaseAdmin();
+  const projectId = String(req.params.id);
+
+  const { data: project } = await supabase
+    .from('projects')
+    .select('id')
+    .eq('id', projectId)
+    .eq('user_id', req.userId!)
+    .single();
+
+  if (!project) {
+    res.status(404).json({ error: 'Project not found' });
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from('project_files')
+    .select('*')
+    .eq('project_id', projectId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    res.status(500).json({ error: error.message });
+    return;
+  }
+  res.json(data);
+});
+
 router.get('/:id', async (req: AuthRequest, res) => {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase

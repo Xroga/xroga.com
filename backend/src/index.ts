@@ -9,6 +9,8 @@ import swarmRouter from './routes/swarm.js';
 import chatRouter from './routes/chat.js';
 import projectsRouter from './routes/projects.js';
 import profileRouter from './routes/profile.js';
+import debugRouter from './routes/debug.js';
+import wellbeingRouter from './routes/wellbeing.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 4000;
@@ -25,8 +27,9 @@ app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     service: 'xroga-api',
-    version: '0.1.0',
+    version: '0.3.0',
     swarm: '5-agent-system',
+    phase: 3,
   });
 });
 
@@ -35,6 +38,8 @@ app.use('/api/swarm', authMiddleware, swarmRouter);
 app.use('/api/chat', authMiddleware, chatRouter);
 app.use('/api/projects', authMiddleware, projectsRouter);
 app.use('/api/profile', authMiddleware, profileRouter);
+app.use('/api/debug', authMiddleware, debugRouter);
+app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found' });

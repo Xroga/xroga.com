@@ -2,8 +2,9 @@ import type { Response } from 'express';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { featureSwarm } from '../swarm/FeatureSwarm.js';
 import { ActionService } from './ActionService.js';
-import { classifyFeature, getCrossPostPlatformCount } from './architect/featureRouter.js';
+import { classifyFeature, computeFeatureActionCost } from './architect/featureRouter.js';
 import { sendSSE } from '../lib/sse.js';
+import { InsufficientActionsError } from '../errors/InsufficientActionsError.js';
 import type { SwarmStatus } from '../types/index.js';
 import type { FeatureCategory, SwarmProgressEvent } from '../types/features.js';
 import { FEATURE_TASK_TYPES } from '../types/features.js';
@@ -15,30 +16,23 @@ export interface SwarmRunResult {
   featureCategory: FeatureCategory;
 }
 
-function computeActionCost(category: FeatureCategory, prompt: string): number {
-  if (category === 'cross_post') {
-    return getCrossPostPlatformCount(prompt);
-  }
-  const taskType = FEATURE_TASK_TYPES[category];
-  return ActionService.getCost(taskType);
-}
-
 export class SwarmService {
   static async run(
     userId: string,
     prompt: string,
     projectId?: string,
-    onProgress?: (event: SwarmProgressEvent) => void
+    onProgress?: (event: SwarmProgressEvent) => void,
+    options?: { lineCount?: number; extras?: Record<string, unknown> }
   ): Promise<SwarmRunResult> {
     const supabase = getSupabaseAdmin();
 
     const route = await classifyFeature(prompt);
-    const actionCost = computeActionCost(route.category, prompt);
+    const actionCost = computeFeatureActionCost(route.category, prompt, { lineCount: options?.lineCount });
     const taskType = FEATURE_TASK_TYPES[route.category];
 
-    const canAfford = await ActionService.canAfford(userId, actionCost);
-    if (!canAfford) {
-      throw new Error('Insufficient actions to run Swarm task');
+    const balance = await ActionService.getBalance(userId);
+    if (!balance || balance.remaining < actionCost) {
+      throw new InsufficientActionsError(actionCost, balance?.remaining ?? 0);
     }
 
     const deductResult = await ActionService.deduct(userId, taskType, {
@@ -48,7 +42,7 @@ export class SwarmService {
     });
 
     if (!deductResult.success) {
-      throw new Error(deductResult.error ?? 'Action deduction failed');
+      throw new InsufficientActionsError(actionCost, deductResult.remaining);
     }
 
     const { data: run, error } = await supabase
@@ -77,7 +71,7 @@ export class SwarmService {
 
     let result: Awaited<ReturnType<typeof featureSwarm.execute>>;
     try {
-      result = await featureSwarm.execute(userId, prompt, projectId, run.id, route.category);
+      result = await featureSwarm.execute(userId, prompt, projectId, run.id, route.category, options?.extras);
     } catch (err) {
       await ActionService.refund(userId, actionCost, 'Swarm execution failed');
       throw err;
@@ -155,21 +149,16 @@ export class SwarmService {
     if (!output || typeof output !== 'object') return 'Task complete.';
     const o = output as Record<string, unknown>;
 
-    if (o.type === 'landing_page' && typeof o.deployUrl === 'string') {
-      return `Live at ${o.deployUrl}`;
-    }
-    if (o.type === 'image' && typeof o.imageUrl === 'string') {
-      return `Image ready: ${o.imageUrl.slice(0, 80)}...`;
-    }
-    if (o.type === 'browser_automation') {
-      return 'Browser automation complete.';
-    }
-    if (o.type === 'cross_post') {
-      return 'Posted to social platforms.';
-    }
-    if (o.type === 'key_creation' && typeof o.message === 'string') {
-      return o.message;
-    }
+    if (o.type === 'landing_page' && typeof o.deployUrl === 'string') return `Live at ${o.deployUrl}`;
+    if (o.type === 'image' && typeof o.imageUrl === 'string') return `Image ready: ${o.imageUrl.slice(0, 80)}...`;
+    if (o.type === 'browser_automation') return 'Browser automation complete.';
+    if (o.type === 'cross_post') return 'Posted to social platforms.';
+    if (o.type === 'key_creation' && typeof o.message === 'string') return o.message;
+    if (o.type === 'video_studio' && typeof o.streamingUrl === 'string') return `Video: ${o.streamingUrl}`;
+    if (o.type === 'deep_research' && typeof o.pdfUrl === 'string') return `Report: ${o.pdfUrl}`;
+    if (o.type === 'content_blocker' && typeof o.status === 'string') return o.status;
+    if (o.type === 'job_hunter') return `Submitted ${o.applicationsSubmitted} applications`;
+    if (o.type === 'code_debug' && o.zeroDefects) return 'Code debugged – zero defects';
     return 'Task complete.';
   }
 
@@ -198,4 +187,8 @@ export class SwarmService {
       iteration: run.iteration_count,
     };
   }
+}
+
+export function handleInsufficientActions(res: Response, err: InsufficientActionsError): void {
+  res.status(402).json(err.toJSON());
 }
