@@ -15,7 +15,7 @@ import githubRouter from './routes/github.js';
 import notificationsRouter from './routes/notifications.js';
 
 const app = express();
-const PORT = process.env.PORT ?? 4000;
+const PORT = Number(process.env.PORT) || 8080;
 
 app.use(helmet());
 app.use(morgan('dev'));
@@ -54,8 +54,8 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
   res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Xroga API running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 export default app;
