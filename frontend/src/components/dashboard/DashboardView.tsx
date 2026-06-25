@@ -8,6 +8,7 @@ import { ProjectCard } from './ProjectCard';
 import { ActivityFeed } from './ActivityFeed';
 import { QuickActions } from './QuickActions';
 import { SwarmChat } from '@/components/SwarmChat';
+import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
 import { api, type Project } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -40,6 +41,8 @@ export function DashboardView({ displayName }: DashboardViewProps) {
           Your AI Swarm is ready. Describe any task below.
         </p>
       </div>
+
+      <ApiConnectionBanner />
 
       <ActionMeterLarge />
 
