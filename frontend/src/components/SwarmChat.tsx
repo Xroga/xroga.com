@@ -66,8 +66,19 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
 
     try {
       const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error('Please sign in to use the Swarm.');
+      const { data: { session: initial } } = await supabase.auth.getSession();
+      let session = initial;
+      if (session?.expires_at && session.expires_at * 1000 < Date.now() + 60_000) {
+        const { data: { session: refreshed } } = await supabase.auth.refreshSession();
+        session = refreshed ?? session;
+      }
+      if (!session) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('Please sign in to use the Swarm.');
+        const { data: { session: s2 } } = await supabase.auth.getSession();
+        session = s2;
+      }
+      if (!session?.access_token) throw new Error('Please sign in to use the Swarm.');
 
       const res = await fetch(`${API_URL}/api/swarm/execute?stream=true`, {
         method: 'POST',

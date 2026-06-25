@@ -10,6 +10,7 @@ primary_region = 'iad'
 [env]
   PORT = '8080'
   NODE_ENV = 'production'
+  FRONTEND_URL = 'https://xrogaaicom.vercel.app'
 
 [processes]
   app = 'node dist/index.js'
