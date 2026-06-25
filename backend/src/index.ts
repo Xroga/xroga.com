@@ -61,7 +61,7 @@ const healthPayload = () => ({
   service: 'xroga-api',
   version: '1.0.0',
   timestamp: new Date().toISOString(),
-  authConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+  authConfigured: Boolean(process.env.SUPABASE_URL),
 });
 
 app.get('/', (_req, res) => {
@@ -78,6 +78,13 @@ app.get('/health', (_req, res) => {
 
 app.get('/api/health', (_req, res) => {
   res.json(healthPayload());
+});
+
+app.get('/api/config', (_req, res) => {
+  res.json({
+    authConfigured: Boolean(process.env.SUPABASE_URL),
+    apiUrl: process.env.FRONTEND_URL ?? null,
+  });
 });
 
 app.use('/api/actions', authMiddleware, actionsRouter);

@@ -96,6 +96,12 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
         if (res.status === 402) {
           throw new Error('Out of Actions — subscribe at /pricing to continue.');
         }
+        if (res.status === 503 && err.code === 'AUTH_NOT_CONFIGURED') {
+          throw new Error('API missing SUPABASE_URL on Fly.io — contact support or check deployment settings.');
+        }
+        if (res.status === 401 && err.code === 'TOKEN_INVALID') {
+          throw new Error('Session expired — please sign out and sign in again.');
+        }
         throw new Error(typeof err.error === 'string' ? err.error : 'Request failed');
       }
 
