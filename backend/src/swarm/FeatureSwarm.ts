@@ -1,7 +1,9 @@
 import { BaseSwarm, type AgentResult, type SwarmContext } from './BaseSwarm.js';
 import type { SwarmDefect, SwarmPlan } from '../types/index.js';
 import type { FeatureCategory, FeatureOutput } from '../types/features.js';
+import { FEATURE_ACTION_COSTS, FEATURE_TASK_TYPES } from '../types/features.js';
 import { classifyFeature } from '../services/architect/featureRouter.js';
+import { quickChat } from '../services/chat/quickChat.js';
 import { buildLandingPage } from '../services/builder/landingPage.js';
 import { generateImage } from '../services/builder/imageGen.js';
 import { runBrowserAutomation } from '../services/automation/browser.js';
@@ -18,7 +20,15 @@ export class FeatureSwarm extends BaseSwarm {
   async executeArchitect(context: SwarmContext): Promise<AgentResult<SwarmPlan>> {
     const start = Date.now();
 
-    const route = await classifyFeature(context.prompt);
+    const route = context.featureCategory
+      ? {
+          category: context.featureCategory,
+          taskType: FEATURE_TASK_TYPES[context.featureCategory],
+          actionCost: FEATURE_ACTION_COSTS[context.featureCategory],
+          confidence: 1,
+          reasoning: 'Pre-classified route',
+        }
+      : await classifyFeature(context.prompt);
     context.featureCategory = route.category;
 
     const featureSteps: Record<FeatureCategory, string> = {
@@ -110,11 +120,10 @@ export class FeatureSwarm extends BaseSwarm {
           output = await debugCode({ code, filename, language });
           break;
         }
-        default:
-          output = {
-            type: 'chat',
-            content: `Processed: "${context.prompt.slice(0, 200)}"`,
-          };
+        default: {
+          const content = await quickChat(context.prompt);
+          output = { type: 'chat', content };
+        }
       }
 
       return {

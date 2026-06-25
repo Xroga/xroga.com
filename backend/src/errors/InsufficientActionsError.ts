@@ -7,7 +7,7 @@ export class InsufficientActionsError extends Error {
 
   constructor(required: number, remaining: number) {
     const paymentLink =
-      process.env.STRIPE_PAYMENT_LINK ?? `${process.env.FRONTEND_URL ?? 'http://localhost:3000'}/dashboard/upgrade`;
+      process.env.STRIPE_PAYMENT_LINK ?? `${process.env.FRONTEND_URL ?? 'http://localhost:3000'}/pricing`;
     super(`Insufficient actions. Required: ${required}, remaining: ${remaining}. Top up at ${paymentLink}`);
     this.name = 'InsufficientActionsError';
     this.required = required;

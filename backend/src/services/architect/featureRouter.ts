@@ -147,6 +147,12 @@ function parseDeepSeekClassification(raw: string, prompt: string): FeatureRoute 
  * Falls back to rule-based classification when API is unavailable.
  */
 export async function classifyFeature(prompt: string): Promise<FeatureRoute> {
+  const rules = classifyByRules(prompt);
+
+  // Fast path: rule match or simple chat — skip slow LLM classification
+  if (rules.confidence >= 0.85) return rules;
+  if (rules.category === 'chat' && prompt.length < 300) return rules;
+
   try {
     const response = await deepSeekChat(
       [

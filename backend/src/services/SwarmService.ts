@@ -128,8 +128,21 @@ export class SwarmService {
       data: { message: 'Swarm initialized', prompt: prompt.slice(0, 100) },
     });
 
+    sendSSE(res, {
+      event: 'progress',
+      data: { agent: 'architect', status: 'planning', message: 'Analyzing your request...' },
+    });
+
     const result = await this.run(userId, prompt, projectId, (event) => {
-      sendSSE(res, { event: 'progress', data: event as unknown as Record<string, unknown> });
+      sendSSE(res, {
+      event: 'progress',
+      data: {
+        agent: event.agent,
+        status: event.status,
+        message: event.message,
+        iteration: event.iteration,
+      },
+    });
     });
 
     sendSSE(res, {

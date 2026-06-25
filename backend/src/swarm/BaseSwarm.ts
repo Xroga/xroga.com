@@ -126,6 +126,15 @@ export abstract class BaseSwarm {
 
       if (!buildResult.success) continue;
 
+      // Fast path: simple chat skips heavy review loop
+      if (context.featureCategory === 'chat') {
+        agentResults.reviewer = { status: 'passed', notes: 'Fast chat path' };
+        agentResults.qa = { status: 'passed', notes: 'Fast chat path' };
+        agentResults.truth_council = { status: 'passed', notes: 'Fast chat path' };
+        this.notify(context.runId, 'completed', 'builder', context.iteration);
+        return this.buildResult(true, output, context, 0, agentResults);
+      }
+
       // Step 3: Reviewer finds defects
       this.notify(context.runId, 'reviewing', 'reviewer');
       const reviewResult = await this.executeReviewer(context);
