@@ -1,4 +1,5 @@
-# syntax = docker/dockerfile:1
+# Fly.io API image — build context MUST be the monorepo root.
+# Deploy: fly deploy . --config fly.api.toml -a xroga-api
 
 ARG NODE_VERSION=22.21.1
 FROM node:${NODE_VERSION}-slim AS base
@@ -15,15 +16,15 @@ FROM base AS build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
-COPY package.json package-lock.json ./
+COPY backend/package.json backend/package-lock.json ./
 
 RUN npm ci --include=dev
 
-COPY . .
+COPY backend/ .
 
 RUN npm run build
 
-RUN test -f dist/index.js || (echo "ERROR: dist/index.js missing — deploy from backend/ with: cd backend && fly deploy -a xroga-api" && exit 1)
+RUN test -f dist/index.js
 
 RUN npm prune --omit=dev
 

@@ -1,16 +1,11 @@
-# fly.toml app configuration file for xroga-api
-#
-# Deploy from THIS directory (backend/):
-#   cd backend && fly deploy -a xroga-api
-#
-# Or from monorepo root:
+# Deploy from monorepo root:
 #   fly deploy . --config fly.api.toml -a xroga-api
 
 app = 'xroga-api'
 primary_region = 'iad'
 
 [build]
-  dockerfile = 'Dockerfile'
+  dockerfile = 'Dockerfile.api'
 
 [env]
   PORT = '8080'
