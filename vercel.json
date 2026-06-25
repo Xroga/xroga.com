@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "root": "frontend",
+  "rootDirectory": "frontend",
   "buildCommand": "npm run build",
   "outputDirectory": ".next"
 }
