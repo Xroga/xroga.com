@@ -28,6 +28,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://xroga.com',
   'https://www.xroga.com',
+  'https://xrogaaicom.vercel.app',
 ].filter(Boolean) as string[];
 
 function isAllowedOrigin(origin: string | undefined): boolean {
@@ -60,6 +61,7 @@ const healthPayload = () => ({
   service: 'xroga-api',
   version: '1.0.0',
   timestamp: new Date().toISOString(),
+  authConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
 });
 
 app.get('/', (_req, res) => {
