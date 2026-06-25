@@ -64,7 +64,7 @@ export function Sidebar({ displayName }: SidebarProps) {
       ))}
 
       <Link
-        href="/dashboard/upgrade"
+        href="/pricing"
         onClick={() => setMobileOpen(false)}
         className="flex items-center justify-center gap-2 mt-4 mx-1 px-4 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-sm font-semibold transition-all shadow-lg shadow-violet-500/25"
       >

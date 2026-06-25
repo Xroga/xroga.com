@@ -3,6 +3,7 @@
 import { Sidebar } from './Sidebar';
 import { MobileNav } from './MobileNav';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { FeedbackWidget } from '@/components/feedback/FeedbackWidget';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ export function AppShell({ children, displayName }: AppShellProps) {
         <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8 overflow-auto">{children}</main>
       </div>
       <MobileNav />
+      <FeedbackWidget />
     </div>
   );
 }

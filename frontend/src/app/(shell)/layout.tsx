@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { AppShell } from '@/components/layout/AppShell';
 import { AppProviders } from '@/components/providers/AppProviders';
+import { OnboardingGuard } from '@/components/onboarding/OnboardingGuard';
 
 export default async function ShellLayout({
   children,
@@ -23,7 +24,9 @@ export default async function ShellLayout({
 
   return (
     <AppProviders>
-      <AppShell displayName={displayName}>{children}</AppShell>
+      <OnboardingGuard>
+        <AppShell displayName={displayName}>{children}</AppShell>
+      </OnboardingGuard>
     </AppProviders>
   );
 }

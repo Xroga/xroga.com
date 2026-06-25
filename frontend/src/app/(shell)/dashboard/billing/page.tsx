@@ -1,2 +1,10 @@
-import { PlaceholderPage } from '@/components/PlaceholderPage';
-export default function Page() { return <PlaceholderPage title="Billing" />; }
+import { BillingDashboard } from '@/components/billing/BillingDashboard';
+
+export default function BillingPage() {
+  return (
+    <div className="max-w-3xl mx-auto">
+      <h1 className="text-2xl font-bold mb-6">Billing</h1>
+      <BillingDashboard />
+    </div>
+  );
+}

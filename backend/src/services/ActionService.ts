@@ -22,6 +22,10 @@ export class ActionService {
     remaining: number;
     planTier: string;
     resetDate: string;
+    isTrial: boolean;
+    trialExpiresAt: string | null;
+    subscriptionStatus: string;
+    trialExpired: boolean;
   } | null> {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
@@ -32,12 +36,22 @@ export class ActionService {
 
     if (error || !data) return null;
 
+    const isTrial = false;
+    const trialExpiresAt = null;
+    const trialExpired = false;
+
+    const unpaid = data.subscription_status === 'unpaid' || data.subscription_status === 'expired';
+
     return {
       total: data.total_actions,
       used: data.used_actions,
       remaining: data.remaining_actions ?? data.total_actions - data.used_actions,
       planTier: data.plan_tier,
       resetDate: data.reset_date,
+      isTrial,
+      trialExpiresAt,
+      subscriptionStatus: unpaid ? 'unpaid' : (data.subscription_status ?? 'unpaid'),
+      trialExpired: false,
     };
   }
 

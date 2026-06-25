@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { trackEvent } from '@/lib/analytics';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -36,10 +37,11 @@ export function SignupForm() {
     }
 
     setSuccess(true);
+    trackEvent('Sign Up', { method: 'email' });
     setLoading(false);
 
     // If email confirmation is disabled, redirect immediately
-    setTimeout(() => router.push('/dashboard'), 1500);
+    setTimeout(() => router.push('/onboarding'), 1500);
   }
 
   if (success) {

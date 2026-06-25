@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { api, type Profile } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 import { GitHubConnect } from '@/components/integrations/GitHubConnect';
+import { BillingDashboard } from '@/components/billing/BillingDashboard';
 import toast from 'react-hot-toast';
 import { Save, Trash2, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -27,7 +28,6 @@ export function SettingsView({ email }: { email: string }) {
     soundEffects: true,
   });
   const setStoreProfile = useAppStore((s) => s.setProfile);
-  const actions = useAppStore((s) => s.actions);
 
   useEffect(() => {
     api.profile.get()
@@ -164,21 +164,7 @@ export function SettingsView({ email }: { email: string }) {
             </form>
           )}
 
-          {tab === 'Plan & Billing' && (
-            <div className="space-y-4">
-              <h2 className="font-semibold">Plan & Billing</h2>
-              <div className="p-4 rounded-lg border border-violet-500/30 bg-violet-500/10">
-                <p className="font-medium capitalize">{actions?.planTier ?? 'spark'} Plan</p>
-                <p className="text-sm text-[var(--muted)] mt-1">
-                  {actions?.remaining.toLocaleString()} / {actions?.total.toLocaleString()} Actions remaining
-                </p>
-                <a href="/dashboard/upgrade" className="inline-block mt-3 px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-sm">
-                  Upgrade Plan
-                </a>
-              </div>
-              <p className="text-sm text-[var(--muted)]">Invoice history available after Paddle integration (Phase 5).</p>
-            </div>
-          )}
+          {tab === 'Plan & Billing' && <BillingDashboard />}
 
           {tab === 'Integrations' && (
             <div className="space-y-4">

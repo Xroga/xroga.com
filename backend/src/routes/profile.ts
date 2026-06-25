@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from '../middleware/auth.js';
+import { sendWelcomeEmail } from '../services/email/resend.js';
 
 const router = Router();
 
@@ -47,6 +48,47 @@ router.patch('/', async (req: AuthRequest, res) => {
     return;
   }
   res.json(data);
+});
+
+router.post('/onboarding/complete', async (req: AuthRequest, res) => {
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase
+    .from('profiles')
+    .update({ onboarding_completed: true, updated_at: new Date().toISOString() })
+    .eq('id', req.userId!);
+
+  if (error) {
+    res.status(500).json({ error: error.message });
+    return;
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('display_name')
+    .eq('id', req.userId!)
+    .single();
+
+  const { data: { user } } = await supabase.auth.admin.getUserById(req.userId!);
+  if (user?.email) {
+    sendWelcomeEmail(req.userId!, user.email, profile?.display_name ?? 'there').catch(() => {});
+  }
+
+  res.json({ completed: true });
+});
+
+router.get('/onboarding/status', async (req: AuthRequest, res) => {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('onboarding_completed')
+    .eq('id', req.userId!)
+    .single();
+
+  if (error) {
+    res.json({ completed: false });
+    return;
+  }
+  res.json({ completed: data?.onboarding_completed ?? false });
 });
 
 router.get('/activity', async (req: AuthRequest, res) => {
