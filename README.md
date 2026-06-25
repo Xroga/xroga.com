@@ -43,13 +43,23 @@ The negotiation loop repeats until all agents confirm **Zero Defects**.
 - [x] Cross-Post – Buffer / Twitter / LinkedIn APIs (1 Action/platform)
 - [x] Auto-Key Creation – Browserbase + encrypted Supabase storage (5 Actions)
 
-## Phase 3 (Current)
+## Phase 3 (Complete)
 
 - [x] Omni-Video Studio – Claude screenplay + parallel Agnes/Kling/Morph + FFmpeg + R2 (50 Actions/5s)
 - [x] Deep Research – Exa + Tavily + Gemini PDF report (100 Actions)
 - [x] Adult Content Blocker – Cloudflare DNS + ONNX config (`POST /api/wellbeing/protect`)
 - [x] Auto Job Hunter – Apify + Claude resume + Browserbase apply (90 Actions)
 - [x] Multi-Agent Debugging – DeepSeek-R1 + Claude + sandbox (`POST /api/debug/execute`)
+
+## Phase 4 (Current)
+
+- [x] Persistent sidebar with gradient active states + mini Action Meter
+- [x] Mobile bottom navigation + collapsible drawer
+- [x] Full dashboard with welcome, fuel meter, projects, activity feed, quick actions
+- [x] Project detail view (chat + files + version history + previews)
+- [x] GitHub OAuth integration UI with repo strategy
+- [x] Settings page with tabs (General, Billing, Integrations, Security, Notifications)
+- [x] Notification bell with unread count + SSE real-time Swarm progress
 
 ## Quick Start
 
@@ -97,7 +107,6 @@ npm run dev
 
 ## Roadmap
 
-- **Phase 4**: Full dashboard, project detail view, GitHub integration
 - **Phase 5**: Paddle payments, pricing page, go-live
 
 ## License

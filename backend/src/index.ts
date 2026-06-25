@@ -11,6 +11,8 @@ import projectsRouter from './routes/projects.js';
 import profileRouter from './routes/profile.js';
 import debugRouter from './routes/debug.js';
 import wellbeingRouter from './routes/wellbeing.js';
+import githubRouter from './routes/github.js';
+import notificationsRouter from './routes/notifications.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 4000;
@@ -40,6 +42,8 @@ app.use('/api/projects', authMiddleware, projectsRouter);
 app.use('/api/profile', authMiddleware, profileRouter);
 app.use('/api/debug', authMiddleware, debugRouter);
 app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
+app.use('/api/github', authMiddleware, githubRouter);
+app.use('/api/notifications', authMiddleware, notificationsRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found' });

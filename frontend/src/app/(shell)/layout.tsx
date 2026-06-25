@@ -1,8 +1,9 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { Sidebar } from '@/components/Sidebar';
+import { AppShell } from '@/components/layout/AppShell';
+import { AppProviders } from '@/components/providers/AppProviders';
 
-export default async function DashboardLayout({
+export default async function ShellLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -18,10 +19,11 @@ export default async function DashboardLayout({
     .eq('id', user.id)
     .single();
 
+  const displayName = profile?.display_name ?? user.email?.split('@')[0] ?? 'there';
+
   return (
-    <div className="flex min-h-screen">
-      <Sidebar displayName={profile?.display_name ?? user.email?.split('@')[0]} />
-      <main className="flex-1 p-6 lg:p-8 overflow-auto">{children}</main>
-    </div>
+    <AppProviders>
+      <AppShell displayName={displayName}>{children}</AppShell>
+    </AppProviders>
   );
 }
