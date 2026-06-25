@@ -69,9 +69,9 @@ router.get('/subscription', async (req: AuthRequest, res) => {
 
   res.json({
     planTier: actions?.plan_tier ?? 'spark',
-    subscriptionStatus: actions?.subscription_status ?? 'trial',
-    isTrial: actions?.is_trial ?? true,
-    trialExpiresAt: actions?.trial_expires_at,
+    subscriptionStatus: actions?.subscription_status ?? 'unpaid',
+    isTrial: false,
+    trialExpiresAt: null,
     renewalDate: actions?.renewal_date ?? actions?.reset_date,
     subscription,
     paymentMethod: customer ? { last4: '••••', brand: 'card' } : null,

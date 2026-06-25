@@ -14,15 +14,13 @@ import {
 } from '@/lib/plans';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
-import Link from 'next/link';
 
 interface PricingCardsProps {
-  showTrial?: boolean;
   compact?: boolean;
   onSelectPlan?: (tier: string) => void;
 }
 
-export function PricingCards({ showTrial, compact, onSelectPlan }: PricingCardsProps) {
+export function PricingCards({ compact, onSelectPlan }: PricingCardsProps) {
   const [region, setRegion] = useState<BillingRegion>('global');
   const [emergingCurrency, setEmergingCurrency] = useState<'PKR' | 'INR'>('PKR');
   const [showCosts, setShowCosts] = useState(false);
@@ -52,7 +50,6 @@ export function PricingCards({ showTrial, compact, onSelectPlan }: PricingCardsP
 
   return (
     <div className="space-y-12">
-      {/* Regional toggle */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
         <div className="flex items-center rounded-full border border-[var(--card-border)] p-1 bg-white/5">
           <button
@@ -95,7 +92,6 @@ export function PricingCards({ showTrial, compact, onSelectPlan }: PricingCardsP
         )}
       </div>
 
-      {/* Plan cards */}
       <div className={cn(
         'grid gap-4',
         compact ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'
@@ -137,29 +133,20 @@ export function PricingCards({ showTrial, compact, onSelectPlan }: PricingCardsP
                   {plan.quality} quality
                 </li>
               </ul>
-              {showTrial ? (
-                <Link
-                  href="/auth/signup"
-                  className="mt-5 w-full py-2.5 rounded-xl text-center text-sm font-medium bg-gradient-to-r from-violet-600 to-cyan-500 hover:opacity-90 transition-opacity"
-                >
-                  Start Free Trial
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  disabled={loading === plan.tier}
-                  onClick={() => handleSubscribe(plan.tier)}
-                  className={cn(
-                    'mt-5 w-full py-2.5 rounded-xl text-sm font-medium transition-all',
-                    plan.highlighted
-                      ? 'bg-gradient-to-r from-violet-600 to-cyan-500 hover:shadow-lg hover:shadow-violet-500/30'
-                      : 'bg-violet-600/80 hover:bg-violet-600',
-                    loading === plan.tier && 'opacity-50'
-                  )}
-                >
-                  {loading === plan.tier ? 'Redirecting...' : 'Subscribe'}
-                </button>
-              )}
+              <button
+                type="button"
+                disabled={loading === plan.tier}
+                onClick={() => handleSubscribe(plan.tier)}
+                className={cn(
+                  'mt-5 w-full py-2.5 rounded-xl text-sm font-medium transition-all',
+                  plan.highlighted
+                    ? 'bg-gradient-to-r from-violet-600 to-cyan-500 hover:shadow-lg hover:shadow-violet-500/30'
+                    : 'bg-violet-600/80 hover:bg-violet-600',
+                  loading === plan.tier && 'opacity-50'
+                )}
+              >
+                {loading === plan.tier ? 'Redirecting...' : 'Subscribe'}
+              </button>
             </div>
           );
         })}
@@ -167,7 +154,6 @@ export function PricingCards({ showTrial, compact, onSelectPlan }: PricingCardsP
 
       {!compact && (
         <>
-          {/* Feature highlights */}
           <div>
             <h2 className="text-xl font-bold text-center mb-6">Everything Included</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -181,7 +167,6 @@ export function PricingCards({ showTrial, compact, onSelectPlan }: PricingCardsP
             </div>
           </div>
 
-          {/* Action cost table */}
           <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
             <button
               type="button"

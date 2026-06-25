@@ -81,12 +81,12 @@ export function BillingDashboard() {
           <div>
             <p className="text-xs text-[var(--muted)] uppercase tracking-wide">Current Plan</p>
             <p className="text-2xl font-bold capitalize mt-1">{subscription?.planTier ?? 'spark'}</p>
-            {subscription?.isTrial && (
+            {subscription?.subscriptionStatus === 'unpaid' && (
               <span className="inline-block mt-2 px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-xs">
-                🔥 Free Trial
+                No active subscription
               </span>
             )}
-            {subscription?.subscriptionStatus === 'active' && !subscription.isTrial && (
+            {subscription?.subscriptionStatus === 'active' && (
               <p className="text-sm text-[var(--muted)] mt-2">Renews on {renewalDate}</p>
             )}
           </div>
@@ -105,7 +105,7 @@ export function BillingDashboard() {
           >
             Upgrade Plan
           </Link>
-          {subscription?.subscriptionStatus === 'active' && !subscription.isTrial && (
+          {subscription?.subscriptionStatus === 'active' && (
             <>
               <button
                 type="button"
@@ -124,12 +124,12 @@ export function BillingDashboard() {
               </button>
             </>
           )}
-          {subscription?.isTrial && (
+          {subscription?.subscriptionStatus === 'unpaid' && (
             <Link
               href="/pricing"
               className="px-4 py-2 rounded-lg border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 text-sm transition-colors"
             >
-              Subscribe Now
+              Subscribe from $19/mo
             </Link>
           )}
         </div>
@@ -185,7 +185,7 @@ export function BillingDashboard() {
       </div>
 
       {/* Cancel */}
-      {subscription?.subscriptionStatus === 'active' && !subscription.isTrial && (
+      {subscription?.subscriptionStatus === 'active' && (
         <button
           type="button"
           onClick={handleCancel}

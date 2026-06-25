@@ -12,7 +12,7 @@ const ENTRIES = [
       'Galactic Tier pricing with regional support (USD, PKR, INR)',
       'Paddle subscription billing + Coinbase crypto top-ups',
       'GitHub integration with auto-repo creation',
-      'Free trial: 50 Actions for 7 days',
+      'Free trial removed — paid plans from $19/mo',
       'Onboarding flow for new users',
       'Real-time notifications via SSE',
       'Hollywood Video Studio, Deep Research, Job Hunter, Code Debugger',

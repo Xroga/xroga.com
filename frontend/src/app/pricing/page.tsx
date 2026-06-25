@@ -21,10 +21,10 @@ export default function PricingPage() {
               Log in
             </Link>
             <Link
-              href="/auth/signup"
+              href="/pricing"
               className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-sm font-medium transition-colors"
             >
-              Start Free Trial
+              View Plans
             </Link>
           </div>
         </div>
@@ -44,7 +44,7 @@ export default function PricingPage() {
       </main>
 
       <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-[var(--muted)]">
-        <p>All plans include a 7-day free trial with 50 Actions. Cancel anytime.</p>
+        <p>Plans start at $19/mo. All 92 features included in every tier. Cancel anytime.</p>
         <div className="flex justify-center gap-4 mt-2">
           <Link href="/changelog" className="hover:text-white">Changelog</Link>
           <Link href="/" className="hover:text-white">Home</Link>

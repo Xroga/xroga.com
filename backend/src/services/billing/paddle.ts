@@ -269,9 +269,9 @@ export async function handlePaddleWebhook(eventType: string, data: Record<string
       if (userId) {
         const supabase = getSupabaseAdmin();
         await supabase.from('user_actions').update({
-          subscription_status: 'canceled',
+          subscription_status: 'unpaid',
           plan_tier: 'spark',
-          total_actions: 50,
+          total_actions: 0,
           updated_at: new Date().toISOString(),
         }).eq('user_id', userId);
       }

@@ -36,18 +36,11 @@ export class ActionService {
 
     if (error || !data) return null;
 
-    const isTrial = data.is_trial ?? false;
-    const trialExpiresAt = data.trial_expires_at ?? null;
-    const trialExpired = isTrial && trialExpiresAt
-      ? new Date(trialExpiresAt) < new Date()
-      : false;
+    const isTrial = false;
+    const trialExpiresAt = null;
+    const trialExpired = false;
 
-    if (trialExpired && data.subscription_status === 'trial') {
-      await supabase.from('user_actions').update({
-        subscription_status: 'expired',
-        updated_at: new Date().toISOString(),
-      }).eq('user_id', userId);
-    }
+    const unpaid = data.subscription_status === 'unpaid' || data.subscription_status === 'expired';
 
     return {
       total: data.total_actions,
@@ -57,8 +50,8 @@ export class ActionService {
       resetDate: data.reset_date,
       isTrial,
       trialExpiresAt,
-      subscriptionStatus: trialExpired ? 'expired' : (data.subscription_status ?? 'trial'),
-      trialExpired,
+      subscriptionStatus: unpaid ? 'unpaid' : (data.subscription_status ?? 'unpaid'),
+      trialExpired: false,
     };
   }
 

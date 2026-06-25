@@ -193,10 +193,7 @@ export interface ActionBalance {
   remaining: number;
   planTier: string;
   resetDate: string;
-  isTrial?: boolean;
-  trialExpiresAt?: string | null;
   subscriptionStatus?: string;
-  trialExpired?: boolean;
 }
 
 export interface SubscriptionInfo {

@@ -5,7 +5,7 @@ type EmailTemplate = 'welcome' | 'video_ready' | 'low_actions' | 'we_miss_you';
 const TEMPLATES: Record<EmailTemplate, (data: Record<string, string>) => { subject: string; html: string }> = {
   welcome: (d) => ({
     subject: 'Welcome to Xroga — Your AI Swarm Awaits',
-    html: `<h1>Welcome, ${d.name}!</h1><p>You have <strong>50 free Actions</strong> to explore all 92 features. Start building at <a href="${d.appUrl}">xroga.com</a>.</p>`,
+    html: `<h1>Welcome, ${d.name}!</h1><p>Your Xroga account is ready. <a href="${d.billingUrl}">Choose a plan from $19/mo</a> to unlock your AI Swarm and start building.</p>`,
   }),
   video_ready: (d) => ({
     subject: 'Your video is ready!',

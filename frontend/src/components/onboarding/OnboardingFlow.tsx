@@ -161,9 +161,13 @@ export function OnboardingFlow() {
             <div className="space-y-4">
               <h1 className="text-2xl font-bold">Choose Your Plan</h1>
               <p className="text-[var(--muted)] text-sm">
-                Start with 50 free Actions — no credit card required.
+                Plans start at $19/mo. Pick a tier and subscribe to activate your Swarm.
               </p>
-              <PricingCards showTrial compact onSelectPlan={() => setStep(3)} />
+              <PricingCards compact onSelectPlan={(tier) => {
+                api.billing.createCheckout(tier).then(({ checkoutUrl }) => {
+                  window.location.href = checkoutUrl;
+                }).catch((err) => toast.error((err as Error).message));
+              }} />
               <div className="flex justify-between pt-2">
                 <button type="button" onClick={() => setStep(1)} className="flex items-center gap-1 text-sm text-[var(--muted)]">
                   <ArrowLeft className="w-4 h-4" /> Back
@@ -171,9 +175,9 @@ export function OnboardingFlow() {
                 <button
                   type="button"
                   onClick={() => setStep(3)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-sm"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--card-border)] text-sm text-[var(--muted)]"
                 >
-                  Continue with Free Trial <ArrowRight className="w-4 h-4" />
+                  I&apos;ll subscribe later <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -184,7 +188,7 @@ export function OnboardingFlow() {
               <Rocket className="w-16 h-16 text-violet-400 mx-auto" />
               <h1 className="text-2xl font-bold">Welcome to Xroga!</h1>
               <p className="text-[var(--muted)] text-sm max-w-md mx-auto">
-                Your AI Swarm is ready. You have <strong className="text-white">50 free Actions</strong> to explore all 92 features.
+                Your account is ready. Subscribe to a plan from <strong className="text-white">$19/mo</strong> to unlock all 92 features.
               </p>
               <div className="grid sm:grid-cols-3 gap-3 text-left text-sm">
                 {[

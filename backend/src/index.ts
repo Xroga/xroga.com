@@ -16,7 +16,7 @@ import notificationsRouter from './routes/notifications.js';
 import billingRouter, { paddleWebhookHandler, cryptoWebhookHandler } from './routes/billing.js';
 
 const app = express();
-const PORT = process.env.PORT ?? 4000;
+const PORT = process.env.PORT ?? 8080;
 const VERSION = '1.0.0';
 
 const allowedOrigins = [

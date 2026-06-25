@@ -29,7 +29,7 @@ export const GALACTIC_PLANS: PlanDefinition[] = [
     quality: 'Standard',
     actions: 2000,
     concurrency: 2,
-    prices: { global: { amount: 19, currency: 'USD' }, emerging: { amount: 1499, currency: 'PKR' } },
+    prices: { global: { amount: 19, currency: 'USD' }, emerging: { amount: 5299, currency: 'PKR' } },
     paddlePriceIds: { global: 'pri_spark_global', emerging: 'pri_spark_emerging' },
   },
   {

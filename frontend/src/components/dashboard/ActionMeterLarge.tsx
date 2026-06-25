@@ -5,6 +5,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import Skeleton from 'react-loading-skeleton';
+import Link from 'next/link';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 export function ActionMeterLarge() {
@@ -19,12 +20,9 @@ export function ActionMeterLarge() {
   }
 
   const pct = actions.total > 0 ? (actions.remaining / actions.total) * 100 : 0;
-  const isLow = pct <= 20;
+  const isLow = pct <= 20 && actions.total > 0;
   const isOut = actions.remaining <= 0;
-  const isTrial = actions.isTrial && !actions.trialExpired;
-  const trialDaysLeft = actions.trialExpiresAt
-    ? formatDistanceToNow(new Date(actions.trialExpiresAt), { addSuffix: false })
-    : null;
+  const isUnpaid = actions.subscriptionStatus === 'unpaid' || actions.total === 0;
   const resetIn = formatDistanceToNow(new Date(actions.resetDate), { addSuffix: false });
 
   return (
@@ -40,7 +38,7 @@ export function ActionMeterLarge() {
           <h2 className="font-semibold">Action Meter</h2>
         </div>
         <span className="text-xs px-2 py-1 rounded-full bg-violet-500/20 text-violet-300 capitalize">
-          {isTrial ? '🔥 Free Trial' : `${actions.planTier} plan`}
+          {isUnpaid ? 'No active plan' : `${actions.planTier} plan`}
         </span>
       </div>
 
@@ -55,23 +53,25 @@ export function ActionMeterLarge() {
             'h-full rounded-full transition-all duration-700',
             isOut ? 'bg-red-500' : isLow ? 'bg-amber-500' : 'bg-gradient-to-r from-violet-600 to-cyan-500'
           )}
-          style={{ width: `${Math.max(pct, 2)}%` }}
+          style={{ width: `${Math.max(pct, isOut ? 0 : 2)}%` }}
         />
       </div>
 
       <div className="flex items-center justify-between text-xs text-[var(--muted)]">
-        <span>{pct.toFixed(0)}% remaining</span>
-        <span>{isTrial && trialDaysLeft ? `Trial ends in ${trialDaysLeft}` : `Resets in ${resetIn}`}</span>
+        <span>{actions.total > 0 ? `${pct.toFixed(0)}% remaining` : 'Subscribe to get Actions'}</span>
+        {actions.total > 0 && <span>Resets in {resetIn}</span>}
       </div>
 
-      {isTrial && (
-        <p className="mt-3 text-sm text-amber-300">
-          🔥 Free Trial: {actions.remaining} Actions left
-          {actions.trialExpired && ' — trial expired, subscribe to continue'}
-        </p>
+      {isUnpaid && (
+        <div className="mt-4 flex items-center justify-between gap-3 p-3 rounded-lg border border-violet-500/30 bg-violet-500/10">
+          <p className="text-sm text-violet-200">Subscribe from $19/mo to unlock your Swarm</p>
+          <Link href="/pricing" className="shrink-0 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 text-xs font-medium">
+            View Plans
+          </Link>
+        </div>
       )}
 
-      {(isLow || isOut) && !actions.trialExpired && (
+      {(isLow || isOut) && !isUnpaid && (
         <div className={cn('flex items-center gap-2 mt-4 text-sm', isOut ? 'text-red-400' : 'text-amber-400')}>
           <AlertTriangle className="w-4 h-4" />
           {isOut ? 'Out of Actions — top up to continue' : 'Running low — consider upgrading'}

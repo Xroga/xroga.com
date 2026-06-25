@@ -14,7 +14,7 @@ export default function SignupPage() {
             <span className="text-2xl font-bold gradient-text">Xroga</span>
           </Link>
           <h1 className="text-xl font-semibold">Create your account</h1>
-          <p className="text-sm text-[var(--muted)] mt-1">50 free Actions — 7-day trial, no credit card</p>
+          <p className="text-sm text-[var(--muted)] mt-1">Plans from $19/mo — subscribe to get started</p>
         </div>
 
         <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">

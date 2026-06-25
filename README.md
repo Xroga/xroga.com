@@ -67,7 +67,7 @@ The negotiation loop repeats until all agents confirm **Zero Defects**.
 - [x] Paddle billing (checkout, portal, webhooks, subscription management)
 - [x] Coinbase Commerce crypto top-ups for Action packs
 - [x] Full billing dashboard (plan, invoices, cancel, payment methods)
-- [x] Free trial: 50 Actions, 7-day expiry
+- [x] Paid-only onboarding — plans from $19/mo (no free trial)
 - [x] Onboarding flow for new users (GitHub → goal → plan → welcome)
 - [x] Google Analytics 4 + Mixpanel event tracking
 - [x] Resend email drip (welcome, low actions, video ready, we miss you)
@@ -96,7 +96,7 @@ cp frontend/.env.local.example frontend/.env.local
 # Run Supabase migrations (in order)
 # Apply supabase/migrations/001_initial_schema.sql
 # Apply supabase/migrations/002_notifications.sql
-# Apply supabase/migrations/003_billing.sql
+# Apply supabase/migrations/004_remove_free_trial.sql
 
 # Start dev servers
 npm run dev
