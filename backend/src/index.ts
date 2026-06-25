@@ -13,26 +13,44 @@ import debugRouter from './routes/debug.js';
 import wellbeingRouter from './routes/wellbeing.js';
 import githubRouter from './routes/github.js';
 import notificationsRouter from './routes/notifications.js';
+import billingRouter, { paddleWebhookHandler, cryptoWebhookHandler } from './routes/billing.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 4000;
+const VERSION = '1.0.0';
+
+const allowedOrigins = [
+  process.env.FRONTEND_URL ?? 'http://localhost:3000',
+  'https://xroga.com',
+  'https://www.xroga.com',
+  'http://localhost:3000',
+].filter(Boolean);
 
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors({
-  origin: process.env.FRONTEND_URL ?? 'http://localhost:3000',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
+
+// Webhook routes need raw body — register before JSON parser
+app.post('/api/billing/webhook/paddle', express.raw({ type: 'application/json' }), paddleWebhookHandler);
+app.post('/api/billing/webhook/crypto', express.raw({ type: 'application/json' }), cryptoWebhookHandler);
+
 app.use(express.json({ limit: '10mb' }));
 
 app.get('/health', (_req, res) => {
-  res.json({
-    status: 'ok',
-    service: 'xroga-api',
-    version: '0.3.0',
-    swarm: '5-agent-system',
-    phase: 3,
-  });
+  res.json({ status: 'ok', service: 'xroga-api', version: VERSION, timestamp: new Date().toISOString() });
+});
+
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', version: VERSION, timestamp: new Date().toISOString() });
 });
 
 app.use('/api/actions', authMiddleware, actionsRouter);
@@ -44,6 +62,7 @@ app.use('/api/debug', authMiddleware, debugRouter);
 app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
 app.use('/api/github', authMiddleware, githubRouter);
 app.use('/api/notifications', authMiddleware, notificationsRouter);
+app.use('/api/billing', authMiddleware, billingRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found' });
@@ -51,11 +70,14 @@ app.use((_req, res) => {
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err);
+  if (process.env.SENTRY_DSN) {
+    console.error('[sentry] Would report:', err.message);
+  }
   res.status(500).json({ error: 'Internal server error' });
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Xroga API running on http://localhost:${PORT}`);
+  console.log(`🚀 Xroga API v${VERSION} running on http://localhost:${PORT}`);
 });
 
 export default app;

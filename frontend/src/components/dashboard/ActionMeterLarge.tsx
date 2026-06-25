@@ -21,6 +21,10 @@ export function ActionMeterLarge() {
   const pct = actions.total > 0 ? (actions.remaining / actions.total) * 100 : 0;
   const isLow = pct <= 20;
   const isOut = actions.remaining <= 0;
+  const isTrial = actions.isTrial && !actions.trialExpired;
+  const trialDaysLeft = actions.trialExpiresAt
+    ? formatDistanceToNow(new Date(actions.trialExpiresAt), { addSuffix: false })
+    : null;
   const resetIn = formatDistanceToNow(new Date(actions.resetDate), { addSuffix: false });
 
   return (
@@ -36,7 +40,7 @@ export function ActionMeterLarge() {
           <h2 className="font-semibold">Action Meter</h2>
         </div>
         <span className="text-xs px-2 py-1 rounded-full bg-violet-500/20 text-violet-300 capitalize">
-          {actions.planTier} plan
+          {isTrial ? '🔥 Free Trial' : `${actions.planTier} plan`}
         </span>
       </div>
 
@@ -57,10 +61,17 @@ export function ActionMeterLarge() {
 
       <div className="flex items-center justify-between text-xs text-[var(--muted)]">
         <span>{pct.toFixed(0)}% remaining</span>
-        <span>Resets in {resetIn}</span>
+        <span>{isTrial && trialDaysLeft ? `Trial ends in ${trialDaysLeft}` : `Resets in ${resetIn}`}</span>
       </div>
 
-      {(isLow || isOut) && (
+      {isTrial && (
+        <p className="mt-3 text-sm text-amber-300">
+          🔥 Free Trial: {actions.remaining} Actions left
+          {actions.trialExpired && ' — trial expired, subscribe to continue'}
+        </p>
+      )}
+
+      {(isLow || isOut) && !actions.trialExpired && (
         <div className={cn('flex items-center gap-2 mt-4 text-sm', isOut ? 'text-red-400' : 'text-amber-400')}>
           <AlertTriangle className="w-4 h-4" />
           {isOut ? 'Out of Actions — top up to continue' : 'Running low — consider upgrading'}

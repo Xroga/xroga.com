@@ -53,7 +53,25 @@ export async function apiFetch<T = unknown>(
 
 export const api = {
   actions: {
-    balance: () => apiFetch<{ total: number; used: number; remaining: number; planTier: string; resetDate: string }>('/api/actions/balance'),
+    balance: () => apiFetch<ActionBalance>('/api/actions/balance'),
+    costs: () => apiFetch<Record<string, number>>('/api/actions/costs'),
+  },
+  billing: {
+    createCheckout: (planId: string, region: string = 'global') =>
+      apiFetch<{ checkoutUrl: string }>('/api/billing/create-checkout', {
+        method: 'POST',
+        body: JSON.stringify({ planId, region }),
+      }),
+    portal: () => apiFetch<{ portalUrl: string }>('/api/billing/portal', { method: 'POST' }),
+    subscription: () => apiFetch<SubscriptionInfo>('/api/billing/subscription'),
+    invoices: () => apiFetch<Invoice[]>('/api/billing/invoices'),
+    cancel: () => apiFetch<{ canceled: boolean }>('/api/billing/cancel', { method: 'POST' }),
+    createCryptoCharge: (packId: string) =>
+      apiFetch<{ chargeUrl: string; chargeId: string; actions: number }>('/api/billing/crypto/create-charge', {
+        method: 'POST',
+        body: JSON.stringify({ packId }),
+      }),
+    cryptoPacks: () => apiFetch<{ id: string; actions: number; usd: number }[]>('/api/billing/crypto-packs'),
   },
   projects: {
     list: () => apiFetch<Project[]>('/api/projects'),
@@ -67,6 +85,8 @@ export const api = {
     update: (body: Partial<Profile>) =>
       apiFetch<Profile>('/api/profile', { method: 'PATCH', body: JSON.stringify(body) }),
     activity: () => apiFetch<ActivityLog[]>('/api/profile/activity'),
+    completeOnboarding: () => apiFetch<{ completed: boolean }>('/api/profile/onboarding/complete', { method: 'POST' }),
+    onboardingStatus: () => apiFetch<{ completed: boolean }>('/api/profile/onboarding/status'),
   },
   github: {
     oauthUrl: () => apiFetch<{ url: string }>('/api/github/oauth'),
@@ -173,4 +193,31 @@ export interface ActionBalance {
   remaining: number;
   planTier: string;
   resetDate: string;
+  isTrial?: boolean;
+  trialExpiresAt?: string | null;
+  subscriptionStatus?: string;
+  trialExpired?: boolean;
+}
+
+export interface SubscriptionInfo {
+  planTier: string;
+  subscriptionStatus: string;
+  isTrial: boolean;
+  trialExpiresAt: string | null;
+  renewalDate: string | null;
+  subscription: Record<string, unknown> | null;
+  paymentMethod: { last4: string; brand: string } | null;
+}
+
+export interface Invoice {
+  id: string;
+  amount_cents: number;
+  currency: string;
+  status: string;
+  description: string | null;
+  receipt_url: string | null;
+  invoice_url: string | null;
+  plan_tier: string | null;
+  actions_purchased: number | null;
+  created_at: string;
 }

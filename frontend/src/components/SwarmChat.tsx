@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { API_URL } from '@/lib/api';
+import { trackEvent } from '@/lib/analytics';
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -92,6 +93,7 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
       }
 
       toast.success(finalMessage || 'Task submitted');
+      trackEvent('Feature Used', { prompt: prompt.slice(0, 100), projectId });
       setPrompt('');
       try {
         const balance = await import('@/lib/api').then((m) => m.api.actions.balance());
