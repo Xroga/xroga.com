@@ -1,0 +1,20 @@
+{
+  "name": "xroga",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Xroga – AI Swarm Operating System",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=frontend\" \"npm run dev --workspace=backend\"",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "build": "npm run build --workspace=frontend && npm run build --workspace=backend",
+    "lint": "npm run lint --workspace=frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
