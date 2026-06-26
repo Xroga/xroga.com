@@ -1,6 +1,7 @@
 import { groqChat } from '../../lib/groq.js';
 import { deepSeekChat } from '../../lib/deepseek.js';
 import { geminiGenerate } from '../../lib/gemini.js';
+import { claudeGenerate } from '../../lib/anthropic.js';
 
 const SYSTEM = `You are Xroga, an AI Swarm assistant. Be helpful, concise, and friendly. 
 If the user greets you, greet them back and offer to help build apps, videos, websites, or automate tasks.`;
@@ -18,6 +19,16 @@ export async function quickChat(prompt: string): Promise<string> {
     { role: 'system' as const, content: SYSTEM },
     { role: 'user' as const, content: prompt },
   ];
+
+  // Builder agent: Claude 3.5 Sonnet (primary)
+  if (process.env.ANTHROPIC_API_KEY) {
+    try {
+      const reply = await claudeGenerate(SYSTEM, prompt, { maxTokens: 512 });
+      if (reply.trim()) return reply.trim();
+    } catch (err) {
+      console.error('[quickChat] Anthropic failed:', (err as Error).message);
+    }
+  }
 
   if (process.env.GROQ_API_KEY) {
     try {

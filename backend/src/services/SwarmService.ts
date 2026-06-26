@@ -10,6 +10,12 @@ import type { SwarmStatus } from '../types/index.js';
 import type { FeatureCategory, SwarmProgressEvent, FeatureOutput } from '../types/features.js';
 import { FEATURE_TASK_TYPES } from '../types/features.js';
 
+function isMissingTableError(message: string): boolean {
+  return /schema cache|could not find the table|does not exist|relation.*does not exist/i.test(
+    message
+  );
+}
+
 function isGreeting(prompt: string): boolean {
   return /^(hi|hello|hey|yo|sup|good\s+(morning|afternoon|evening))\b/i.test(prompt.trim());
 }
@@ -69,7 +75,7 @@ export class SwarmService {
       }
     }
 
-    const { data: run, error } = await supabase
+    const { data: insertedRun, error: insertError } = await supabase
       .from('swarm_runs')
       .insert({
         user_id: userId,
@@ -80,12 +86,26 @@ export class SwarmService {
       .select()
       .single();
 
-    if (error || !run) {
-      await ActionService.refund(userId, actionCost, 'Swarm run creation failed');
-      throw new Error(`Failed to create swarm run: ${error?.message}`);
+    let persistRun = true;
+    let run: { id: string };
+
+    if (insertError || !insertedRun) {
+      if (insertError && isMissingTableError(insertError.message)) {
+        console.warn(
+          '[SwarmService] swarm_runs table missing — running in ephemeral mode. Apply migration 006_production_swarm_schema.sql'
+        );
+        persistRun = false;
+        run = { id: crypto.randomUUID() };
+      } else {
+        await ActionService.refund(userId, actionCost, 'Swarm run creation failed');
+        throw new Error(`Failed to create swarm run: ${insertError?.message ?? 'unknown error'}`);
+      }
+    } else {
+      run = insertedRun;
     }
 
     featureSwarm.setStatusCallback(async (runId, status, agent) => {
+      if (!persistRun) return;
       await supabase.from('swarm_runs').update({ status, current_agent: agent }).eq('id', runId);
     });
 
@@ -105,20 +125,22 @@ export class SwarmService {
       await ActionService.refund(userId, Math.floor(actionCost / 2), 'Partial refund – zero defects not reached');
     }
 
-    await supabase
-      .from('swarm_runs')
-      .update({
-        status: result.success ? 'completed' : 'failed',
-        iteration_count: result.iterations,
-        defects_found: result.defectsFound,
-        output: { ...result, featureCategory: route.category },
-        completed_at: new Date().toISOString(),
-      })
-      .eq('id', run.id);
+    if (persistRun) {
+      await supabase
+        .from('swarm_runs')
+        .update({
+          status: result.success ? 'completed' : 'failed',
+          iteration_count: result.iterations,
+          defects_found: result.defectsFound,
+          output: { ...result, featureCategory: route.category },
+          completed_at: new Date().toISOString(),
+        })
+        .eq('id', run.id);
+    }
 
     if (projectId) {
       const outputSummary = this.summarizeOutput(result.output);
-      await supabase.from('project_messages').insert([
+      const { error: pmError } = await supabase.from('project_messages').insert([
         { project_id: projectId, role: 'user', content: prompt },
         {
           project_id: projectId,
@@ -129,14 +151,20 @@ export class SwarmService {
           metadata: { swarmRunId: run.id, featureCategory: route.category, output: result.output },
         },
       ]);
+      if (pmError && !isMissingTableError(pmError.message)) {
+        console.warn('[SwarmService] project_messages insert:', pmError.message);
+      }
     }
 
-    await supabase.from('activity_logs').insert({
+    const { error: activityError } = await supabase.from('activity_logs').insert({
       user_id: userId,
       project_id: projectId ?? null,
       action: result.success ? 'swarm_completed' : 'swarm_failed',
       details: { runId: run.id, featureCategory: route.category, iterations: result.iterations },
     });
+    if (activityError && !isMissingTableError(activityError.message)) {
+      console.warn('[SwarmService] activity_logs insert:', activityError.message);
+    }
 
     if (route.category === 'chat' && result.success) {
       const chatOutput = result.output as FeatureOutput | undefined;
@@ -145,10 +173,13 @@ export class SwarmService {
           ? chatOutput.content
           : this.summarizeOutput(result.output);
 
-      await supabase.from('messages').insert([
+      const { error: msgError } = await supabase.from('messages').insert([
         { user_id: userId, content: prompt, role: 'user' },
         { user_id: userId, content: reply, role: 'assistant' },
       ]);
+      if (msgError && !isMissingTableError(msgError.message)) {
+        console.warn('[SwarmService] messages insert:', msgError.message);
+      }
     }
 
     return { runId: run.id, result, actions: deductResult, featureCategory: route.category };
