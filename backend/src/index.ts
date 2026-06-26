@@ -73,7 +73,7 @@ app.get('/', (_req, res) => {
   res.json({
     ...healthPayload(),
     message: 'Xroga API is running',
-    docs: { health: '/health', api: '/api' },
+    docs: { health: '/health', chat: 'POST /chat', api: '/api' },
   });
 });
 
