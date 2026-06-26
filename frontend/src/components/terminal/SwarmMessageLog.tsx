@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Loader2, Terminal } from 'lucide-react';
+import { Terminal } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
+import { AiResponseLoader, detectLoaderKind } from '@/components/ui/Uiverse';
 import { cn } from '@/lib/utils';
 
 function useTypewriter(text: string, active: boolean, speed = 12) {
@@ -53,6 +54,9 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
   const { messages, loading, animatingId, outOfActionsOpen, setOutOfActionsOpen } = useTerminalChat();
   const theme = useThemeStore((s) => s.theme);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')?.content ?? '';
+  const loaderKind = detectLoaderKind(lastUserMessage);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -105,10 +109,9 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
             </div>
           ))}
           {loading && messages[messages.length - 1]?.role !== 'assistant' && (
-            <p className="flex items-center gap-2 opacity-80">
-              <Loader2 className="w-3 h-3 animate-spin" />
-              Swarm is thinking...
-            </p>
+            <div className="flex justify-center py-4">
+              <AiResponseLoader kind={loaderKind} />
+            </div>
           )}
           <div ref={bottomRef} />
         </div>

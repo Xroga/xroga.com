@@ -5,6 +5,7 @@ import { GALACTIC_PLANS } from '@/lib/plans';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
 import { useAppStore } from '@/store/useAppStore';
 import { Zap, Shield, Layers, Sparkles } from 'lucide-react';
+import { GalacticPlanCard, PopularPlanCard } from '@/components/ui/Uiverse';
 
 export function BillingPageClient() {
   const actions = useAppStore((s) => s.actions);
@@ -41,39 +42,45 @@ export function BillingPageClient() {
           ALL 92 FEATURES ON EVERY PLAN
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {GALACTIC_PLANS.map((plan) => (
-            <div
-              key={plan.tier}
-              className={`glass-panel rounded-2xl p-6 flex flex-col universe-float ${
-                plan.highlight ? 'border-[var(--accent)]/50 glow-frozen' : ''
-              } ${actions?.planTier === plan.tier ? 'ring-2 ring-[var(--accent)]/50' : ''}`}
-            >
-              {plan.highlight && (
-                <span className="text-[10px] uppercase tracking-wider text-[var(--accent)] font-semibold mb-2">
-                  Popular
-                </span>
-              )}
-              <h2 className="text-xl font-bold">{plan.name}</h2>
-              <p className="text-3xl font-bold mt-2">
-                {plan.priceLabel}
-                <span className="text-sm text-[var(--muted)]">/mo</span>
-              </p>
-              <ul className="mt-4 space-y-2 text-sm text-[var(--muted)] flex-1">
-                <li className="flex gap-2">
-                  <Zap className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                  {plan.actionsLabel}
-                </li>
-                <li>{plan.concurrency} concurrent tasks</li>
-              </ul>
-              {actions?.planTier === plan.tier ? (
-                <div className="mt-6 text-center py-2.5 rounded-xl border border-[var(--accent)]/40 text-sm font-semibold text-[var(--accent)]">
-                  Current Plan
-                </div>
-              ) : (
-                <CheckoutButton planTier={plan.tier} className="mt-6 w-full" label={`Subscribe`} />
-              )}
-            </div>
-          ))}
+          {GALACTIC_PLANS.map((plan) => {
+            const isCurrent = actions?.planTier === plan.tier;
+            const cta = isCurrent ? (
+              <div className="text-center py-2 text-sm font-semibold text-cyan-300">Current Plan</div>
+            ) : (
+              <CheckoutButton planTier={plan.tier} label="Subscribe" />
+            );
+
+            if (plan.highlight) {
+              return (
+                <PopularPlanCard
+                  key={plan.tier}
+                  name={plan.name}
+                  price={plan.priceLabel}
+                  actions={plan.actionsLabel}
+                  description={`${plan.concurrency} concurrent tasks · All 92 features`}
+                  cta={cta}
+                />
+              );
+            }
+
+            return (
+              <GalacticPlanCard
+                key={plan.tier}
+                name={plan.name}
+                price={plan.priceLabel}
+                actions={plan.actionsLabel}
+                current={isCurrent}
+                features={[`${plan.concurrency} concurrent tasks`, 'All 92 features unlocked']}
+                cta={
+                  isCurrent ? (
+                    <div className="xv-plan-btn opacity-80 cursor-default">Current Plan</div>
+                  ) : (
+                    <CheckoutButton planTier={plan.tier} label="Subscribe" />
+                  )
+                }
+              />
+            );
+          })}
         </div>
       </div>
 

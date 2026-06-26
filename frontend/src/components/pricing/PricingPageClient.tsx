@@ -2,16 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Logo } from '@/components/layout/Logo';
 import { GALACTIC_PLANS, FREE_TRIAL_ACTIONS } from '@/lib/plans';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
 import { useAppStore } from '@/store/useAppStore';
 import { Zap, Shield, Layers, Sparkles } from 'lucide-react';
+import { GalacticPlanCard, PopularPlanCard, GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
 
 export function PricingPageClient() {
   const [loggedIn, setLoggedIn] = useState(false);
   const actions = useAppStore((s) => s.actions);
+  const router = useRouter();
 
   useEffect(() => {
     createClient()
@@ -42,15 +45,8 @@ export function PricingPageClient() {
               </Link>
             ) : (
               <>
-                <Link href="/auth/login" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)]">
-                  Sign In
-                </Link>
-                <Link
-                  href="/auth/signup"
-                  className="text-sm px-4 py-2 rounded-xl bg-[var(--accent)] text-black font-semibold"
-                >
-                  Start Free
-                </Link>
+                <PlayNowButton onClick={() => router.push('/auth/login')}>Sign In</PlayNowButton>
+                <GradientStartButton onClick={() => router.push('/auth/signup')}>Start Free</GradientStartButton>
               </>
             )}
           </div>
@@ -69,62 +65,57 @@ export function PricingPageClient() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-16">
-          <div className="glass-panel rounded-2xl p-6 flex flex-col border-[var(--primary)]/40">
-            <h2 className="text-xl font-bold">Free Trial</h2>
-            <p className="text-3xl font-bold mt-2">$0</p>
-            <ul className="mt-4 space-y-2 text-sm text-[var(--muted)] flex-1">
-              <li className="flex gap-2">
-                <Zap className="w-4 h-4 text-[var(--accent)]" />
-                {FREE_TRIAL_ACTIONS} Actions (one-time)
-              </li>
-              <li>1 concurrent task</li>
-              <li>Full Swarm access</li>
-            </ul>
-            {loggedIn ? (
-              <div className="mt-6 text-center py-2.5 rounded-xl glass-panel text-sm font-semibold text-[var(--accent)]">
-                Your current plan: {actions?.planTier ?? 'unpaid'}
-              </div>
-            ) : (
-              <Link
-                href="/auth/signup"
-                className="mt-6 block text-center py-2.5 rounded-xl glass-panel hover:border-[var(--accent)]/40 text-sm font-semibold"
-              >
-                Start Free
-              </Link>
-            )}
-          </div>
-
-          {GALACTIC_PLANS.map((plan) => (
-            <div
-              key={plan.tier}
-              className={`glass-panel rounded-2xl p-6 flex flex-col ${
-                plan.highlight ? 'border-[var(--accent)]/50 glow-frozen' : ''
-              }`}
-            >
-              {plan.highlight && (
-                <span className="text-[10px] uppercase tracking-wider text-[var(--accent)] font-semibold mb-2">
-                  Popular
-                </span>
-              )}
-              <h2 className="text-xl font-bold">{plan.name}</h2>
-              <p className="text-3xl font-bold mt-2">
-                {plan.priceLabel}
-                <span className="text-sm text-[var(--muted)]">/mo</span>
-              </p>
-              <ul className="mt-4 space-y-2 text-sm text-[var(--muted)] flex-1">
-                <li>{plan.actionsLabel}</li>
-                <li>{plan.concurrency} concurrent tasks</li>
-                <li>All 92 features</li>
-              </ul>
-              {loggedIn && actions?.planTier === plan.tier ? (
-                <div className="mt-6 text-center py-2.5 rounded-xl border border-[var(--accent)]/40 text-sm font-semibold text-[var(--accent)]">
-                  Current Plan
+          <GalacticPlanCard
+            name="Free Trial"
+            price="$0"
+            actions={`${FREE_TRIAL_ACTIONS} Actions (one-time)`}
+            features={['1 concurrent task', 'Full Swarm access']}
+            cta={
+              loggedIn ? (
+                <div className="xv-plan-btn opacity-80 cursor-default text-center">
+                  Plan: {actions?.planTier ?? 'unpaid'}
                 </div>
               ) : (
-                <CheckoutButton planTier={plan.tier} className="mt-6 w-full" label={`Get ${plan.name}`} />
-              )}
-            </div>
-          ))}
+                <GradientStartButton className="w-full text-sm" onClick={() => router.push('/auth/signup')}>
+                  Start Free
+                </GradientStartButton>
+              )
+            }
+          />
+
+          {GALACTIC_PLANS.map((plan) => {
+            const isCurrent = loggedIn && actions?.planTier === plan.tier;
+            const cta = isCurrent ? (
+              <div className="text-center py-2 text-sm font-semibold text-cyan-300">Current Plan</div>
+            ) : (
+              <CheckoutButton planTier={plan.tier} label={`Get ${plan.name}`} variant="checkout-card" />
+            );
+
+            if (plan.highlight) {
+              return (
+                <PopularPlanCard
+                  key={plan.tier}
+                  name={plan.name}
+                  price={plan.priceLabel}
+                  actions={plan.actionsLabel}
+                  description="Best for growing startups"
+                  cta={cta}
+                />
+              );
+            }
+
+            return (
+              <GalacticPlanCard
+                key={plan.tier}
+                name={plan.name}
+                price={plan.priceLabel}
+                actions={plan.actionsLabel}
+                current={!!isCurrent}
+                features={[`${plan.concurrency} concurrent tasks`, 'All 92 features']}
+                cta={cta}
+              />
+            );
+          })}
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">

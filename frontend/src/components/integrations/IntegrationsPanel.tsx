@@ -9,6 +9,7 @@ import { GitHubConnect } from '@/components/integrations/GitHubConnect';
 import { api } from '@/lib/api';
 import { CUSTOM_CREDENTIALS_KEY } from '@/lib/constants';
 import toast from 'react-hot-toast';
+import { ConnectButton } from '@/components/ui/Uiverse';
 import { cn } from '@/lib/utils';
 
 interface CustomCredential {
@@ -183,25 +184,17 @@ export function IntegrationsPanel() {
                     >
                       {connected ? 'Connected' : 'Not connected'}
                     </span>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
+                    <ConnectButton
+                      connected={connected}
+                      label={connected ? 'Manage' : 'Connect'}
+                      onClick={() => {
                         if (connected && item.id === 'github') {
                           window.location.href = '/dashboard/integrations';
                         } else if (!connected) {
                           void handleConnect(item.id, item.oauth);
                         }
                       }}
-                      className={cn(
-                        'text-xs px-4 py-2 rounded-xl font-semibold transition-all hover:scale-105',
-                        connected
-                          ? 'bg-white/10 hover:bg-white/15'
-                          : 'bg-[var(--foreground)] text-[var(--background)] hover:opacity-90'
-                      )}
-                    >
-                      {connected ? 'Manage' : 'Connect'}
-                    </button>
+                    />
                   </div>
                 </div>
               );

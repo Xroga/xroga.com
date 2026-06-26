@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
   LayoutDashboard,
@@ -10,7 +10,6 @@ import {
   Link2,
   CreditCard,
   Settings,
-  Rocket,
   Menu,
   X,
   PanelLeftClose,
@@ -26,6 +25,8 @@ import { SidebarSearchModal } from './SidebarSearchModal';
 import { MediaGalleryModal } from './MediaGalleryModal';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
+import { createClient } from '@/lib/supabase/client';
+import { LogoutButton, GradientStartButton } from '@/components/ui/Uiverse';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -44,6 +45,7 @@ interface SidebarProps {
 
 export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mediaOpen, setMediaOpen] = useState(false);
@@ -54,6 +56,13 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
 
   const isActive = (href: string) =>
     pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/');
+    router.refresh();
+  }
 
   const bottomSection = (
     <div className="p-2 border-t border-[var(--card-border)] mt-auto space-y-2">
@@ -74,33 +83,39 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           )}
         </div>
       )}
-      {isFreeTrial && (
+      {isFreeTrial && sidebarOpen && (
+        <div className="mx-1">
+          <GradientStartButton className="w-full text-sm" onClick={() => router.push('/pricing')}>
+            Upgrade Plan
+          </GradientStartButton>
+        </div>
+      )}
+      {isFreeTrial && !sidebarOpen && (
         <Link
           href="/pricing"
           onClick={() => setMobileOpen(false)}
-          className={cn(
-            'flex items-center justify-center gap-1.5 rounded-lg bg-[var(--foreground)] text-[var(--background)] text-xs font-semibold transition-transform hover:scale-[1.02]',
-            sidebarOpen ? 'mx-1 px-3 py-2' : 'p-2 mx-auto w-10 h-10'
-          )}
+          className="flex items-center justify-center p-2 mx-auto w-10 h-10 rounded-lg bg-[var(--foreground)] text-[var(--background)]"
           title="Upgrade Plan"
         >
-          <Rocket className="w-3.5 h-3.5 shrink-0" />
-          {sidebarOpen && <span>Upgrade Plan</span>}
+          <Zap className="w-4 h-4" />
         </Link>
       )}
-      {displayName && (
-        <div className={cn('flex items-center gap-2 px-1 py-1.5', !sidebarOpen && 'justify-center')}>
-          <div className="w-8 h-8 rounded-full border border-[var(--card-border)] flex items-center justify-center text-xs font-bold shrink-0">
-            {displayName.charAt(0).toUpperCase()}
-          </div>
-          {sidebarOpen && (
-            <div className="min-w-0">
-              <p className="text-xs font-medium truncate">{displayName}</p>
-              {email && <p className="text-[10px] text-[var(--muted)] truncate">{email}</p>}
+      <div className={cn('flex items-center justify-between gap-2 px-1 py-1.5', !sidebarOpen && 'flex-col')}>
+        {displayName && (
+          <div className={cn('flex items-center gap-2 min-w-0', !sidebarOpen && 'justify-center')}>
+            <div className="w-8 h-8 rounded-full border border-[var(--card-border)] flex items-center justify-center text-xs font-bold shrink-0">
+              {displayName.charAt(0).toUpperCase()}
             </div>
-          )}
-        </div>
-      )}
+            {sidebarOpen && (
+              <div className="min-w-0">
+                <p className="text-xs font-medium truncate">{displayName}</p>
+                {email && <p className="text-[10px] text-[var(--muted)] truncate">{email}</p>}
+              </div>
+            )}
+          </div>
+        )}
+        <LogoutButton onClick={handleLogout} />
+      </div>
     </div>
   );
 
@@ -172,25 +187,41 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           </button>
         </div>
 
-        <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
-          {navItems.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setMobileOpen(false)}
-              title={!sidebarOpen ? label : undefined}
-              className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all',
-                isActive(href)
-                  ? 'bg-white/10 text-[var(--foreground)] border border-[var(--card-border)]'
-                  : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5',
-                !sidebarOpen && 'justify-center px-2'
-              )}
-            >
-              <Icon className="w-4 h-4 shrink-0" />
-              {sidebarOpen && <span>{label}</span>}
-            </Link>
-          ))}
+        <nav className="flex-1 p-2 overflow-y-auto">
+          {sidebarOpen ? (
+            <div className="xv-sidebar-menu">
+              {navItems.map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(isActive(href) && 'xv-active')}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <span>{label}</span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-0.5">
+              {navItems.map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMobileOpen(false)}
+                  title={label}
+                  className={cn(
+                    'flex items-center justify-center p-2.5 rounded-lg text-sm transition-all',
+                    isActive(href)
+                      ? 'bg-white/10 text-[var(--foreground)]'
+                      : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5'
+                  )}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                </Link>
+              ))}
+            </div>
+          )}
         </nav>
 
         {bottomSection}

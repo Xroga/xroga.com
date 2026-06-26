@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { AuthFormCard, GradientStartButton } from '@/components/ui/Uiverse';
 
 export function SignupForm() {
   const [email, setEmail] = useState('');
@@ -37,49 +38,39 @@ export function SignupForm() {
 
     setSuccess(true);
     setLoading(false);
-
-    // If email confirmation is disabled, redirect immediately
     setTimeout(() => router.push('/dashboard'), 1500);
   }
 
   if (success) {
     return (
-      <div className="text-center space-y-4">
-        <h2 className="text-xl font-semibold text-emerald-400">Account created!</h2>
-        <p className="text-[var(--muted)] text-sm">
-          Check your email to verify, or you&apos;ll be redirected shortly.
+      <AuthFormCard title="Welcome!">
+        <p className="text-center text-emerald-600 text-sm mt-4">
+          Account created! Check your email or redirecting…
         </p>
-      </div>
+      </AuthFormCard>
     );
   }
 
   return (
-    <form onSubmit={handleSignup} className="space-y-4">
-      <div>
-        <label htmlFor="name" className="block text-sm text-[var(--muted)] mb-1.5">Display Name</label>
+    <AuthFormCard title="Sign Up">
+      <form onSubmit={handleSignup} className="mt-4">
         <input
           id="name"
           type="text"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
-          className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-[var(--card-border)] focus:border-violet-500 focus:outline-none text-sm"
-          placeholder="Your name"
+          className="xv-auth-input"
+          placeholder="Display Name"
         />
-      </div>
-      <div>
-        <label htmlFor="email" className="block text-sm text-[var(--muted)] mb-1.5">Email</label>
         <input
           id="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-[var(--card-border)] focus:border-violet-500 focus:outline-none text-sm"
-          placeholder="you@example.com"
+          className="xv-auth-input"
+          placeholder="E-mail"
         />
-      </div>
-      <div>
-        <label htmlFor="password" className="block text-sm text-[var(--muted)] mb-1.5">Password</label>
         <input
           id="password"
           type="password"
@@ -87,27 +78,25 @@ export function SignupForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
           minLength={8}
-          className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-[var(--card-border)] focus:border-violet-500 focus:outline-none text-sm"
-          placeholder="Min 8 characters"
+          className="xv-auth-input"
+          placeholder="Password (min 8 chars)"
         />
-      </div>
 
-      {error && <p className="text-red-400 text-sm">{error}</p>}
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full py-2.5 rounded-lg bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 font-medium text-sm transition-all disabled:opacity-50"
-      >
-        {loading ? 'Creating account...' : 'Create Account'}
-      </button>
+        <div className="flex justify-center mt-4">
+          <GradientStartButton type="submit" className="w-full max-w-[240px] text-sm" disabled={loading}>
+            {loading ? 'Creating…' : 'Create Account'}
+          </GradientStartButton>
+        </div>
+      </form>
 
-      <p className="text-center text-sm text-[var(--muted)]">
+      <p className="text-center text-sm text-gray-500 mt-4">
         Already have an account?{' '}
-        <Link href="/auth/login" className="text-violet-400 hover:underline">
+        <Link href="/auth/login" className="text-cyan-600 hover:underline">
           Sign in
         </Link>
       </p>
-    </form>
+    </AuthFormCard>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Paperclip, Send, Loader2, Search, GitBranch } from 'lucide-react';
+import { Paperclip, Loader2, Search, GitBranch } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useAppStore } from '@/store/useAppStore';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -9,6 +9,7 @@ import { estimateActionCost } from '@/lib/actionCosts';
 import { IntegrationsModal } from './IntegrationsModal';
 import { GithubRepoModal } from './GithubRepoModal';
 import { ActionCostModal } from './ActionCostModal';
+import { PodaChatbarShell, SendDiscoverButton } from '@/components/ui/Uiverse';
 import { cn } from '@/lib/utils';
 
 const QUICK_CHIPS = ['GitHub', 'GitLab', 'Vercel', 'Twitter/X'];
@@ -50,19 +51,16 @@ export function TerminalChatBar() {
         <p className="text-[10px] text-center text-[var(--muted)] mb-2 opacity-70 font-terminal">
           We try our best not to make mistakes — verify critical outputs before publishing.
         </p>
-        <div
+        <PodaChatbarShell
           className={cn(
-            'terminal-chatbar-float rounded-2xl overflow-hidden',
-            'shadow-[0_8px_40px_rgba(0,0,0,0.25),0_2px_20px_rgba(0,0,0,0.15)]',
-            'universe-float',
+            'terminal-chatbar-float rounded-2xl universe-float',
             theme === 'image' && 'chatbar-theme-image',
             theme === 'white' && 'chatbar-theme-white',
             theme === 'black' && 'chatbar-theme-black',
             theme === 'gray' && 'chatbar-theme-gray'
           )}
         >
-          {/* Single row: integrations + actions */}
-          <div className="flex items-center gap-2 px-3 py-2 flex-wrap">
+          <div className="flex items-center gap-2 px-3 py-2 flex-wrap border-none">
             <button
               type="button"
               onClick={() => setIntegrationsOpen(true)}
@@ -115,8 +113,8 @@ export function TerminalChatBar() {
             }}
             className="px-3 pb-3"
           >
-            <div className="relative flex items-end">
-              <span className="absolute left-3 bottom-3 text-sm font-terminal opacity-60">&gt;</span>
+            <div className="relative flex items-end gap-2">
+              <span className="absolute left-3 bottom-3 text-sm font-terminal opacity-60 z-10">&gt;</span>
               <textarea
                 ref={textareaRef}
                 value={prompt}
@@ -131,8 +129,8 @@ export function TerminalChatBar() {
                 disabled={loading}
                 rows={1}
                 className={cn(
-                  'w-full pl-8 pr-20 py-3 rounded-xl resize-none',
-                  'bg-transparent focus:outline-none',
+                  'flex-1 pl-8 pr-4 py-3 rounded-xl resize-none',
+                  'bg-transparent focus:outline-none border-none',
                   'text-sm font-terminal leading-[22px]',
                   'placeholder:opacity-50',
                   !loading && !prompt && 'cursor-blink'
@@ -149,22 +147,21 @@ export function TerminalChatBar() {
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="absolute right-12 bottom-2.5 p-1.5 opacity-60 hover:opacity-100 transition-opacity"
+                className="p-2 opacity-60 hover:opacity-100 transition-opacity shrink-0"
                 aria-label="Upload"
               >
                 <Paperclip className="w-4 h-4" />
               </button>
-              <button
-                type="submit"
-                disabled={loading || !prompt.trim()}
-                className="absolute right-2 bottom-2 p-2 rounded-xl bg-[var(--foreground)] text-[var(--background)] hover:scale-105 active:scale-95 disabled:opacity-30 transition-transform send-pulse"
-                aria-label="Send"
-              >
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-              </button>
+              {loading ? (
+                <div className="shrink-0 p-2">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                </div>
+              ) : (
+                <SendDiscoverButton disabled={!prompt.trim()} loading={loading} />
+              )}
             </div>
           </form>
-        </div>
+        </PodaChatbarShell>
       </div>
     </>
   );

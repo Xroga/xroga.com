@@ -5,7 +5,9 @@ import { createClient } from '@/lib/supabase/client';
 import { api, type Profile } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 import toast from 'react-hot-toast';
-import { Save, Trash2, LogOut } from 'lucide-react';
+import { Save, Trash2 } from 'lucide-react';
+import { LogoutButton } from '@/components/ui/Uiverse';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -17,6 +19,7 @@ const TABS = ['General', 'Plan & Billing', 'Integrations', 'Security', 'Notifica
 type Tab = (typeof TABS)[number];
 
 export function SettingsView({ email }: { email: string }) {
+  const router = useRouter();
   const [tab, setTab] = useState<Tab>('General');
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -206,10 +209,14 @@ export function SettingsView({ email }: { email: string }) {
                 <input type="checkbox" className="rounded" />
                 Enable Two-Factor Authentication (TOTP)
               </label>
-              <button type="button" className="flex items-center gap-2 text-sm text-amber-400 hover:underline">
-                <LogOut className="w-4 h-4" />
-                Log Out All Devices
-              </button>
+              <LogoutButton
+                onClick={async () => {
+                  const supabase = createClient();
+                  await supabase.auth.signOut();
+                  router.push('/');
+                  router.refresh();
+                }}
+              />
               <button
                 type="button"
                 onClick={() => setShowDeleteModal(true)}
