@@ -17,7 +17,7 @@ export function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-[var(--card-border)] glass-panel-strong safe-area-pb">
+    <nav className="xv-mobile-nav lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-[var(--card-border)] glass-panel-strong safe-area-pb">
       <div className="flex items-center justify-around py-2 px-1">
         {items.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href));

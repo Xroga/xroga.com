@@ -124,6 +124,11 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
       .catch(() => {});
   }, [setProfile]);
 
+  useEffect(() => {
+    document.body.classList.toggle('mobile-sidebar-open', mobileOpen);
+    return () => document.body.classList.remove('mobile-sidebar-open');
+  }, [mobileOpen]);
+
   const isActive = (href: string) =>
     pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
 
@@ -269,7 +274,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
 
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+          className="lg:hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
           onClick={() => setMobileOpen(false)}
           aria-hidden
         />
@@ -285,7 +290,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
         className={cn(
           'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-all duration-300 xv-sidebar-hover',
           sidebarOpen ? 'w-64' : 'w-[72px]',
-          mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'
+          mobileOpen ? 'translate-x-0 w-64 z-[70]' : '-translate-x-full lg:translate-x-0'
         )}
       >
         <div className="p-3 border-b border-[var(--card-border)] flex items-center gap-1.5">

@@ -512,4 +512,18 @@ body.theme-gray .glass-panel-strong {
     transform: translateY(-2px) scale(1.01);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   }
+
+  /* Mobile: hide chatbar & bottom nav when sidebar drawer is open */
+  @media (max-width: 1023px) {
+    body.mobile-sidebar-open .xv-terminal-dock,
+    body.mobile-sidebar-open .xv-mobile-nav {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(100%);
+    }
+  }
+
+  .xv-home-header {
+    overflow-x: hidden;
+  }
 }

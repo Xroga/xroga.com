@@ -13,7 +13,7 @@ export function TerminalDock() {
 
   return (
     <div
-      className="fixed z-40 bottom-0 left-0 right-0 lg:left-[var(--sidebar-width)] transition-[left] duration-300"
+      className="xv-terminal-dock fixed z-40 bottom-0 left-0 right-0 lg:left-[var(--sidebar-width)] transition-[left,opacity,transform] duration-300"
       style={{ '--sidebar-width': sidebarOpen ? '16rem' : '4.5rem' } as React.CSSProperties}
     >
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pb-2 lg:pb-3">
