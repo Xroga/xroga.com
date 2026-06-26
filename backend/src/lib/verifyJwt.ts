@@ -3,19 +3,23 @@ import { createRemoteJWKSet, jwtVerify, type JWTVerifyOptions } from 'jose';
 let jwks: ReturnType<typeof createRemoteJWKSet> | null = null;
 let cachedIssuer: string | null = null;
 
-function getSupabaseAuthBase(): string {
+function getSupabaseUrl(): string {
   const url = process.env.SUPABASE_URL?.replace(/\/$/, '');
   if (!url) {
     throw new Error('SUPABASE_URL must be set on the API server');
   }
-  return `${url}/auth/v1`;
+  return url;
+}
+
+function getIssuer(): string {
+  return `${getSupabaseUrl()}/auth/v1`;
 }
 
 function getJwks(): ReturnType<typeof createRemoteJWKSet> {
-  const authBase = getSupabaseAuthBase();
-  if (!jwks || cachedIssuer !== authBase) {
-    jwks = createRemoteJWKSet(new URL(`${authBase}/.well-known/jwks.json`));
-    cachedIssuer = authBase;
+  const issuer = getIssuer();
+  if (!jwks || cachedIssuer !== issuer) {
+    jwks = createRemoteJWKSet(new URL(`${issuer}/.well-known/jwks.json`));
+    cachedIssuer = issuer;
   }
   return jwks;
 }
@@ -25,35 +29,72 @@ export interface VerifiedUser {
   email?: string;
 }
 
-/**
- * Verify a Supabase access token via public JWKS.
- * Only requires SUPABASE_URL on the server (no anon/service keys needed for verification).
- */
-export async function verifySupabaseAccessToken(token: string): Promise<VerifiedUser> {
-  const issuer = getSupabaseAuthBase();
-  const verifyOptions: JWTVerifyOptions = {
-    issuer,
-    audience: 'authenticated',
-  };
+async function verifyWithJwtSecret(token: string): Promise<VerifiedUser | null> {
+  const secret = process.env.SUPABASE_JWT_SECRET;
+  if (!secret) return null;
+
+  const issuer = getIssuer();
+  const key = new TextEncoder().encode(secret);
+  const options: JWTVerifyOptions = { issuer, audience: 'authenticated' };
 
   try {
-    const { payload } = await jwtVerify(token, getJwks(), verifyOptions);
-    if (!payload.sub) {
-      throw new Error('Token missing subject');
-    }
+    const { payload } = await jwtVerify(token, key, options);
+    if (!payload.sub) return null;
     return {
       userId: payload.sub,
       email: typeof payload.email === 'string' ? payload.email : undefined,
     };
-  } catch (err) {
-    // Some legacy tokens use aud as array or omit strict audience
-    const { payload } = await jwtVerify(token, getJwks(), { issuer });
-    if (!payload.sub) {
-      throw err instanceof Error ? err : new Error('Invalid token');
+  } catch {
+    try {
+      const { payload } = await jwtVerify(token, key, { issuer });
+      if (!payload.sub) return null;
+      return {
+        userId: payload.sub,
+        email: typeof payload.email === 'string' ? payload.email : undefined,
+      };
+    } catch {
+      return null;
     }
-    return {
-      userId: payload.sub,
-      email: typeof payload.email === 'string' ? payload.email : undefined,
-    };
   }
+}
+
+async function verifyWithJwks(token: string): Promise<VerifiedUser | null> {
+  const issuer = getIssuer();
+  const options: JWTVerifyOptions = { issuer, audience: 'authenticated' };
+
+  try {
+    const { payload } = await jwtVerify(token, getJwks(), options);
+    if (!payload.sub) return null;
+    return {
+      userId: payload.sub,
+      email: typeof payload.email === 'string' ? payload.email : undefined,
+    };
+  } catch {
+    try {
+      const { payload } = await jwtVerify(token, getJwks(), { issuer });
+      if (!payload.sub) return null;
+      return {
+        userId: payload.sub,
+        email: typeof payload.email === 'string' ? payload.email : undefined,
+      };
+    } catch {
+      return null;
+    }
+  }
+}
+
+/**
+ * Verify Supabase access token.
+ * Tries: JWT secret (HS256) → JWKS → caller should fall back to admin getUser().
+ */
+export async function verifySupabaseAccessToken(token: string): Promise<VerifiedUser> {
+  getSupabaseUrl(); // throws if missing
+
+  const fromSecret = await verifyWithJwtSecret(token);
+  if (fromSecret) return fromSecret;
+
+  const fromJwks = await verifyWithJwks(token);
+  if (fromJwks) return fromJwks;
+
+  throw new Error('Invalid or expired token');
 }

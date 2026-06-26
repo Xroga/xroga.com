@@ -96,6 +96,11 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
         if (res.status === 402) {
           throw new Error('Out of Actions — subscribe at /pricing to continue.');
         }
+        if (res.status === 401 && typeof err.error === 'string' && err.error === 'Authentication failed') {
+          throw new Error(
+            'API is running old code or missing Supabase secrets on Fly.io. Redeploy with: fly deploy . --config fly.api.toml -a xroga-api'
+          );
+        }
         if (res.status === 503 && err.code === 'AUTH_NOT_CONFIGURED') {
           throw new Error('API missing SUPABASE_URL on Fly.io — contact support or check deployment settings.');
         }

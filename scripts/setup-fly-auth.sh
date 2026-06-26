@@ -1,29 +1,29 @@
 #!/usr/bin/env bash
-# Set all required secrets on Fly.io for xroga-api (production: xroga.com)
+# One-command Fly.io setup for xroga-api auth
 #
 # Usage:
 #   ./scripts/setup-fly-auth.sh \
 #     "https://YOUR_PROJECT.supabase.co" \
+#     "your-jwt-secret" \
 #     "your-service-role-key"
+#
+# Get all three from Supabase → Project Settings → API:
+#   - Project URL        → arg 1
+#   - JWT Secret         → arg 2  (Settings → API → JWT Settings)
+#   - service_role key   → arg 3
 
 set -euo pipefail
 
 APP="${FLY_APP:-xroga-api}"
 SUPABASE_URL="${1:-}"
-SERVICE_ROLE_KEY="${2:-}"
+JWT_SECRET="${2:-}"
+SERVICE_ROLE_KEY="${3:-}"
 
 export FLYCTL_INSTALL="${FLYCTL_INSTALL:-$HOME/.fly}"
 export PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 if [[ -z "$SUPABASE_URL" ]]; then
-  echo "Usage: ./scripts/setup-fly-auth.sh \"https://xxx.supabase.co\" \"service_role_key\""
-  echo ""
-  echo "Get these from Supabase → Project Settings → API"
-  exit 1
-fi
-
-if [[ ! "$SUPABASE_URL" =~ \.supabase\.co ]]; then
-  echo "ERROR: SUPABASE_URL must be https://xxx.supabase.co (not your Site URL xroga.com)"
+  echo "Usage: $0 SUPABASE_URL JWT_SECRET SERVICE_ROLE_KEY"
   exit 1
 fi
 
@@ -32,20 +32,17 @@ SECRETS=(
   FRONTEND_URL="https://xroga.com"
 )
 
-if [[ -n "$SERVICE_ROLE_KEY" ]]; then
-  SECRETS+=(SUPABASE_SERVICE_ROLE_KEY="$SERVICE_ROLE_KEY")
-fi
+[[ -n "$JWT_SECRET" ]] && SECRETS+=(SUPABASE_JWT_SECRET="$JWT_SECRET")
+[[ -n "$SERVICE_ROLE_KEY" ]] && SECRETS+=(SUPABASE_SERVICE_ROLE_KEY="$SERVICE_ROLE_KEY")
 
-echo "Setting Fly secrets on $APP..."
+echo "Setting secrets on $APP..."
 flyctl secrets set -a "$APP" "${SECRETS[@]}"
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
-echo "Deploying API..."
-flyctl deploy . --config fly.api.toml -a "$APP"
+echo "Deploying..."
+flyctl deploy . --config fly.api.toml -a "$APP" --remote-only
 
 echo ""
-echo "Verify: curl https://xroga-api.fly.dev/health"
-echo "Vercel env: NEXT_PUBLIC_SUPABASE_URL=$SUPABASE_URL"
-echo "            NEXT_PUBLIC_API_URL=https://xroga-api.fly.dev"
-echo "            NEXT_PUBLIC_SITE_URL=https://xroga.com"
+echo "Test: curl https://xroga-api.fly.dev/health"
+echo "Expected: version 1.0.1, authConfigured true, jwtConfigured true"

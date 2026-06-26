@@ -59,10 +59,11 @@ app.use(express.json({ limit: '10mb' }));
 const healthPayload = () => ({
   status: 'ok',
   service: 'xroga-api',
-  version: '1.0.0',
+  version: '1.0.1',
   timestamp: new Date().toISOString(),
   authConfigured: Boolean(process.env.SUPABASE_URL),
   dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+  jwtConfigured: Boolean(process.env.SUPABASE_URL && (process.env.SUPABASE_JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY)),
   frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
 });
 

@@ -21,8 +21,20 @@ NEXT_PUBLIC_SITE_URL=https://xroga.com
 
 ## Fly.io secrets
 ```bash
-./scripts/setup-fly-auth.sh "https://YOUR_PROJECT.supabase.co" "your-service-role-key"
+./scripts/setup-fly-auth.sh \
+  "https://YOUR_PROJECT.supabase.co" \
+  "your-jwt-secret" \
+  "your-service-role-key"
 ```
+
+JWT Secret is in Supabase → Project Settings → API → JWT Settings.
+
+## GitHub auto-deploy (Fly)
+Add repo secret `FLY_API_TOKEN`:
+```bash
+fly tokens create deploy -a xroga-api
+```
+Without this, GitHub deploys fail and Fly runs **old code** → "Authentication failed".
 
 ## Apply database migrations
 Option A (CLI):
