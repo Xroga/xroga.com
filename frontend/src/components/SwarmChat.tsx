@@ -18,7 +18,7 @@ interface SwarmChatProps {
   projectId?: string;
 }
 
-export function SwarmChat({ projectId: _projectId }: SwarmChatProps) {
+export function SwarmChat({ projectId }: SwarmChatProps) {
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -57,7 +57,11 @@ export function SwarmChat({ projectId: _projectId }: SwarmChatProps) {
       const res = await fetch(`${API_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, userId: user.id }),
+        body: JSON.stringify({
+          message: text,
+          userId: user.id,
+          ...(projectId ? { projectId } : {}),
+        }),
       });
 
       const data = await res.json().catch(() => ({})) as {
@@ -66,8 +70,18 @@ export function SwarmChat({ projectId: _projectId }: SwarmChatProps) {
         error?: string;
       };
 
+      if (res.status === 404) {
+        throw new Error(
+          'Chat API not deployed on Fly.io yet. Run: fly deploy . --config fly.api.toml -a xroga-api'
+        );
+      }
+
       if (!res.ok || !data.success || !data.reply) {
-        throw new Error(data.error ?? `Chat failed (${res.status})`);
+        const hint =
+          data.error?.includes('messages') || data.error?.includes('schema cache')
+            ? ' Run migration 004_messages.sql in Supabase SQL Editor.'
+            : '';
+        throw new Error((data.error ?? `Chat failed (${res.status})`) + hint);
       }
 
       setMessages((m) => [
