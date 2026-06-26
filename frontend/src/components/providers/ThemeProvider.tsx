@@ -14,7 +14,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
     const body = document.body;
 
-    body.classList.remove('theme-image', 'theme-white', 'theme-black', 'theme-gray', 'theme-blue-gradient');
+    body.classList.remove('theme-image', 'theme-white', 'theme-black', 'theme-gray');
     body.classList.add(`theme-${theme}`);
 
     body.style.transition = 'background 500ms ease, color 500ms ease';

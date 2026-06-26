@@ -22,7 +22,7 @@ export async function ensureUserRecords(userId: string, email?: string): Promise
 
   const { data: actions } = await supabase
     .from('user_actions')
-    .select('user_id')
+    .select('*')
     .eq('user_id', userId)
     .maybeSingle();
 
@@ -32,6 +32,28 @@ export async function ensureUserRecords(userId: string, email?: string): Promise
       plan_tier: 'unpaid',
       total_actions: FREE_TRIAL_ACTIONS,
       used_actions: 0,
+      concurrency_limit: 1,
     });
+    return;
+  }
+
+  // Fix unpaid users stuck at 0 or wrong trial totals
+  if (actions.plan_tier === 'unpaid' || !actions.plan_tier) {
+    const used = actions.used_actions ?? 0;
+    const needsFix =
+      actions.total_actions < FREE_TRIAL_ACTIONS ||
+      actions.total_actions > FREE_TRIAL_ACTIONS * 2;
+
+    if (needsFix) {
+      await supabase
+        .from('user_actions')
+        .update({
+          plan_tier: 'unpaid',
+          total_actions: FREE_TRIAL_ACTIONS,
+          used_actions: Math.min(used, FREE_TRIAL_ACTIONS),
+          concurrency_limit: 1,
+        })
+        .eq('user_id', userId);
+    }
   }
 }

@@ -21,6 +21,15 @@ export const useThemeStore = create<ThemeState>()(
       setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
       toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
     }),
-    { name: 'xroga-theme' }
+    {
+      name: 'xroga-theme',
+      migrate: (persisted) => {
+        const s = persisted as { theme?: string; sidebarOpen?: boolean };
+        return {
+          theme: s.theme === 'blue-gradient' ? 'image' : (s.theme ?? 'image'),
+          sidebarOpen: s.sidebarOpen ?? true,
+        } as Pick<ThemeState, 'theme' | 'sidebarOpen'>;
+      },
+    }
   )
 );

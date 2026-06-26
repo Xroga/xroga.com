@@ -1,4 +1,5 @@
 import { getConcurrencyForTier } from '../config/plans.js';
+import { FREE_TRIAL_ACTIONS } from '../config/plans.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ACTION_COSTS, type TaskType } from '../types/index.js';
 
@@ -17,6 +18,32 @@ export class ActionService {
     return ACTION_COSTS[taskType] ?? 1;
   }
 
+  static async ensureTrialBalance(userId: string): Promise<void> {
+    const supabase = getSupabaseAdmin();
+    const { data } = await supabase
+      .from('user_actions')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (!data) return;
+
+    const tier = data.plan_tier ?? 'unpaid';
+    if (tier !== 'unpaid') return;
+
+    const used = data.used_actions ?? 0;
+    if (data.total_actions < FREE_TRIAL_ACTIONS || data.total_actions > FREE_TRIAL_ACTIONS * 4) {
+      await supabase
+        .from('user_actions')
+        .update({
+          total_actions: FREE_TRIAL_ACTIONS,
+          used_actions: Math.min(used, FREE_TRIAL_ACTIONS),
+          concurrency_limit: 1,
+        })
+        .eq('user_id', userId);
+    }
+  }
+
   static async getBalance(userId: string): Promise<{
     total: number;
     used: number;
@@ -25,6 +52,7 @@ export class ActionService {
     resetDate: string;
     concurrencyLimit: number;
   } | null> {
+    await this.ensureTrialBalance(userId);
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from('user_actions')

@@ -29,7 +29,18 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         withTimeout(api.notifications.list()),
       ]);
 
-      if (results[0].status === 'fulfilled') setActions(results[0].value);
+      if (results[0].status === 'fulfilled') {
+        setActions(results[0].value);
+      } else {
+        setActions({
+          total: 50,
+          used: 0,
+          remaining: 50,
+          planTier: 'unpaid',
+          resetDate: new Date().toISOString(),
+          concurrencyLimit: 1,
+        });
+      }
       if (results[1].status === 'fulfilled') setUnreadCount(results[1].value.count);
       if (results[2].status === 'fulfilled') setNotifications(results[2].value.slice(0, 5));
     }
