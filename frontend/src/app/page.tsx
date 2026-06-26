@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { Logo } from '@/components/layout/Logo';
-import { GALACTIC_PLANS, FREE_TRIAL_ACTIONS } from '@/lib/plans';
-import { Sparkles, Globe, Paperclip, Mic, ArrowRight } from 'lucide-react';
+import { GALACTIC_PLANS } from '@/lib/plans';
+import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
+import { Sparkles, ArrowRight } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -10,12 +11,12 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Logo href="/" height={50} />
           <div className="flex items-center gap-3">
-            <button type="button" className="hidden sm:flex items-center gap-2 text-sm text-[var(--muted)] glass-panel px-3 py-1.5 rounded-lg">
-              <Globe className="w-4 h-4" /> Theme
-            </button>
+            <Link href="/auth/login" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)]">
+              Sign In
+            </Link>
             <Link
               href="/auth/signup"
-              className="text-sm px-4 py-2 rounded-xl bg-white text-black font-semibold hover:opacity-90 flex items-center gap-2"
+              className="text-sm px-4 py-2 rounded-xl bg-[var(--accent)] text-black font-semibold hover:opacity-90 flex items-center gap-2"
             >
               Get Started <ArrowRight className="w-4 h-4" />
             </Link>
@@ -33,7 +34,7 @@ export default function HomePage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold mb-4 text-balance leading-tight">
-            <span className="text-white">Do Everything</span>
+            <span className="text-[var(--foreground)]">Do Everything</span>
             <br />
             <span className="gradient-text-blue">You Imagine</span>
           </h1>
@@ -42,39 +43,9 @@ export default function HomePage() {
             XROGA AI — the world&apos;s most advanced intelligence. Create, build, explore, and bring your boldest ideas to life.
           </p>
 
-          <div className="glass-panel-strong rounded-2xl p-2 mb-4 glow-blue">
-            <div className="flex items-center gap-2 px-3 py-2 text-xs text-[var(--muted)] font-terminal border-b border-[var(--card-border)] mb-2">
-              <span className="text-[var(--accent)]">⚡ {FREE_TRIAL_ACTIONS} free actions</span>
-              <span className="mx-2">•</span>
-              <span>Swarm online</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                readOnly
-                placeholder="Ask XROGA to do anything..."
-                className="flex-1 bg-transparent px-4 py-3 text-sm font-terminal focus:outline-none placeholder:text-[var(--muted)]"
-              />
-              <div className="flex items-center gap-1 pr-2 text-[var(--muted)]">
-                <Paperclip className="w-4 h-4" />
-                <Mic className="w-4 h-4" />
-              </div>
-              <Link
-                href="/auth/signup"
-                className="px-5 py-3 rounded-xl bg-white text-black font-semibold text-sm flex items-center gap-2 hover:opacity-90 shrink-0"
-              >
-                Send <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
+          <HomepageChatBar />
 
-          <Link
-            href="/auth/signup"
-            className="inline-flex items-center gap-2 glass-panel px-4 py-2 rounded-full text-sm text-[var(--accent)] hover:border-[var(--accent)]/40 mb-12"
-          >
-            Let&apos;s Build a Movie <ArrowRight className="w-4 h-4" />
-          </Link>
-
-          <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto mt-8">
             {[
               'Games 3D/2D',
               'Website • Apps',
@@ -82,11 +53,11 @@ export default function HomePage() {
               'Movies • Dramas',
               'Debug • Code Fix',
               'Web Search • Research',
-              '3D Models',
-              'Voice TTS • Cloning',
-              'Android/iOS Games',
             ].map((tag) => (
-              <span key={tag} className="glass-panel px-3 py-1.5 rounded-full text-xs text-[var(--muted)] hover:text-white hover:border-[var(--accent)]/30 transition-colors">
+              <span
+                key={tag}
+                className="glass-panel px-3 py-1.5 rounded-full text-xs text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 transition-colors"
+              >
                 {tag}
               </span>
             ))}

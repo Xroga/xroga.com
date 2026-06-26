@@ -3,11 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
-import { ActionMeterLarge } from './ActionMeterLarge';
 import { ProjectCard } from './ProjectCard';
 import { ActivityFeed } from './ActivityFeed';
-import { QuickActions } from './QuickActions';
-import { SwarmChat } from '@/components/SwarmChat';
+import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
 import { api, type Project } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
@@ -25,71 +23,60 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   useEffect(() => {
     setProfile({ display_name: displayName, avatar_url: null, timezone: 'UTC', language: 'en' });
 
-    api.projects.list()
+    api.projects
+      .list()
       .then((data) => setProjects(data.slice(0, 6)))
       .catch(() => setProjects([]))
       .finally(() => setLoading(false));
   }, [displayName, setProfile]);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold">
+    <div className="max-w-5xl mx-auto space-y-6 h-full flex flex-col">
+      <div className="shrink-0">
+        <h1 className="text-xl sm:text-2xl font-bold">
           Welcome back, <span className="gradient-text">{displayName}</span>! Your AI Swarm is ready.
         </h1>
         <p className="text-[var(--muted)] text-sm mt-1">
-          Your AI Swarm is ready. Describe any task below.
+          Type in the terminal below — the swarm plans, builds, reviews, and verifies until zero defects.
         </p>
       </div>
 
       <ApiConnectionBanner />
 
-      <ActionMeterLarge />
-
-      <div id="command" className="scroll-mt-8">
-        <SwarmChat />
+      <div className="flex-1 min-h-0 flex flex-col">
+        <SwarmMessageLog />
       </div>
 
-      <div>
-        <h2 className="font-semibold mb-3">Quick Actions</h2>
-        <QuickActions />
-      </div>
-
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold">Recent Projects</h2>
-          <Link href="/dashboard/projects" className="text-sm text-violet-400 hover:underline">
-            View all
-          </Link>
-        </div>
-
-        {loading ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} height={120} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
-            ))}
+      <div className="shrink-0 space-y-6 pb-4">
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold text-sm">Recent Projects</h2>
+            <Link href="/dashboard/projects" className="text-xs text-[var(--accent)] hover:underline">
+              View all
+            </Link>
           </div>
-        ) : projects.length > 0 ? (
-          <>
-            <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+          {loading ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} height={100} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
+              ))}
+            </div>
+          ) : projects.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {projects.map((p) => (
                 <ProjectCard key={p.id} project={p} />
               ))}
             </div>
-            <div className="sm:hidden space-y-3">
-              {projects.map((p) => (
-                <ProjectCard key={p.id} project={p} listView />
-              ))}
+          ) : (
+            <div className="text-center py-8 rounded-xl border border-dashed border-[var(--card-border)]">
+              <p className="text-[var(--muted)] text-sm">No projects yet. Use the command bar below to create your first one.</p>
             </div>
-          </>
-        ) : (
-          <div className="text-center py-12 rounded-xl border border-dashed border-[var(--card-border)]">
-            <p className="text-[var(--muted)] text-sm">No projects yet. Use the command bar to create your first one.</p>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      <ActivityFeed />
+        <ActivityFeed />
+      </div>
     </div>
   );
 }

@@ -1,22 +1,30 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { LOGO_URL } from '@/lib/theme';
+import { LOGO_URL, SIDEBAR_COLLAPSED_LOGO_URL } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
   href?: string;
   height?: number;
   className?: string;
+  variant?: 'header' | 'sidebar' | 'collapsed';
 }
 
-export function Logo({ href = '/dashboard', height = 50, className }: LogoProps) {
+export function Logo({ href = '/dashboard', height = 50, className, variant = 'header' }: LogoProps) {
+  const src = variant === 'collapsed' ? SIDEBAR_COLLAPSED_LOGO_URL : LOGO_URL;
+  const width = variant === 'collapsed' ? height : height * 2.2;
+
   const inner = (
-    <div className={cn('relative glow-frozen', className)} style={{ height, width: height * 2.2 }}>
+    <div
+      className={cn('relative', variant !== 'collapsed' && 'glow-frozen', className)}
+      style={{ height, width, background: 'transparent' }}
+    >
       <Image
-        src={LOGO_URL}
+        src={src}
         alt="Xroga"
         fill
-        className="object-contain object-left drop-shadow-[0_0_16px_rgba(0,212,255,0.4)]"
+        className="object-contain object-left"
+        style={{ background: 'transparent' }}
         unoptimized
         priority
       />
@@ -24,7 +32,11 @@ export function Logo({ href = '/dashboard', height = 50, className }: LogoProps)
   );
 
   if (href) {
-    return <Link href={href} className="inline-block">{inner}</Link>;
+    return (
+      <Link href={href} className="inline-block" style={{ background: 'transparent' }}>
+        {inner}
+      </Link>
+    );
   }
   return inner;
 }
