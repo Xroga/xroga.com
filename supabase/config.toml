@@ -1,0 +1,35 @@
+# Xroga Supabase — link with: supabase link --project-ref YOUR_REF
+project_id = "xroga"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "https://xroga.com"
+additional_redirect_urls = [
+  "https://xroga.com/auth/callback",
+  "https://xroga.com/**",
+  "https://www.xroga.com/auth/callback",
+  "https://www.xroga.com/**",
+  "https://xrogaaicom.vercel.app/auth/callback",
+  "https://xrogaaicom.vercel.app/**",
+  "http://localhost:3000/auth/callback"
+]
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false

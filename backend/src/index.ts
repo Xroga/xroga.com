@@ -62,6 +62,8 @@ const healthPayload = () => ({
   version: '1.0.0',
   timestamp: new Date().toISOString(),
   authConfigured: Boolean(process.env.SUPABASE_URL),
+  dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+  frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
 });
 
 app.get('/', (_req, res) => {

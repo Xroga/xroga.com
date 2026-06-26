@@ -17,9 +17,9 @@ export function ApiConnectionBanner() {
       .then((r) => r.json() as Promise<HealthResponse>)
       .then((data) => {
         if (data.authConfigured === false) {
-          setIssue(
-            'API is missing SUPABASE_URL on Fly.io. Chat will show "Authentication failed" until you set the Supabase Project URL (https://xxx.supabase.co) — not the Site URL.'
-          );
+        setIssue(
+          'API is missing SUPABASE_URL on Fly.io. Set your Supabase Project URL (https://xxx.supabase.co) — chat will fail until then.'
+        );
         }
       })
       .catch(() => {

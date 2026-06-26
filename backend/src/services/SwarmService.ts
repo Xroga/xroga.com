@@ -9,6 +9,10 @@ import type { SwarmStatus } from '../types/index.js';
 import type { FeatureCategory, SwarmProgressEvent } from '../types/features.js';
 import { FEATURE_TASK_TYPES } from '../types/features.js';
 
+function isGreeting(prompt: string): boolean {
+  return /^(hi|hello|hey|yo|sup|good\s+(morning|afternoon|evening))\b/i.test(prompt.trim());
+}
+
 export interface SwarmRunResult {
   runId: string;
   result: Awaited<ReturnType<typeof featureSwarm.execute>>;
@@ -27,22 +31,35 @@ export class SwarmService {
     const supabase = getSupabaseAdmin();
 
     const route = await classifyFeature(prompt);
-    const actionCost = computeFeatureActionCost(route.category, prompt, { lineCount: options?.lineCount });
+    let actionCost = computeFeatureActionCost(route.category, prompt, { lineCount: options?.lineCount });
     const taskType = FEATURE_TASK_TYPES[route.category];
 
-    const balance = await ActionService.getBalance(userId);
-    if (!balance || balance.remaining < actionCost) {
-      throw new InsufficientActionsError(actionCost, balance?.remaining ?? 0);
+    // Free greeting replies so new users can test chat immediately
+    if (route.category === 'chat' && isGreeting(prompt)) {
+      actionCost = 0;
     }
 
-    const deductResult = await ActionService.deduct(userId, taskType, {
-      projectId,
-      customCost: actionCost,
-      description: `${route.category}: ${prompt.slice(0, 80)}`,
-    });
+    let deductResult: Awaited<ReturnType<typeof ActionService.deduct>> = {
+      success: true,
+      remaining: (await ActionService.getBalance(userId))?.remaining ?? 0,
+      cost: 0,
+    };
 
-    if (!deductResult.success) {
-      throw new InsufficientActionsError(actionCost, deductResult.remaining);
+    if (actionCost > 0) {
+      const balance = await ActionService.getBalance(userId);
+      if (!balance || balance.remaining < actionCost) {
+        throw new InsufficientActionsError(actionCost, balance?.remaining ?? 0);
+      }
+
+      deductResult = await ActionService.deduct(userId, taskType, {
+        projectId,
+        customCost: actionCost,
+        description: `${route.category}: ${prompt.slice(0, 80)}`,
+      });
+
+      if (!deductResult.success) {
+        throw new InsufficientActionsError(actionCost, deductResult.remaining);
+      }
     }
 
     const { data: run, error } = await supabase
