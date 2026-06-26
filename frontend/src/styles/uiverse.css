@@ -125,6 +125,53 @@
 }
 .xv-play-btn:hover::before { width: 100%; }
 
+/* Compact auth buttons — homepage mobile header */
+.xv-play-btn.xv-play-btn-sm {
+  width: 88px;
+  height: 40px;
+  transform: translateY(2px);
+  flex-shrink: 0;
+}
+.xv-play-btn.xv-play-btn-sm span {
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  top: 44%;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 0, 0, 0.5);
+}
+@media (min-width: 640px) {
+  .xv-play-btn.xv-play-btn-sm {
+    width: 120px;
+    height: 48px;
+  }
+  .xv-play-btn.xv-play-btn-sm span {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+  }
+}
+
+.xv-gradient-btn-wrapper.xv-gradient-btn-sm {
+  font-size: 0.7rem;
+  --xv-rad: 22px;
+  flex-shrink: 0;
+  max-width: 100%;
+}
+.xv-gradient-btn-wrapper.xv-gradient-btn-sm .xv-gradient-btn,
+.xv-gradient-btn-wrapper.xv-gradient-btn-sm .xv-text-overlay {
+  padding: 7px 12px;
+  letter-spacing: 0.04rem;
+}
+@media (min-width: 640px) {
+  .xv-gradient-btn-wrapper.xv-gradient-btn-sm {
+    font-size: 0.85rem;
+    --xv-rad: 28px;
+  }
+  .xv-gradient-btn-wrapper.xv-gradient-btn-sm .xv-gradient-btn,
+  .xv-gradient-btn-wrapper.xv-gradient-btn-sm .xv-text-overlay {
+    padding: 8px 18px;
+  }
+}
+
 /* ── Send Discover button (vinodjangid07) ── */
 .xv-send-btn {
   display: flex;

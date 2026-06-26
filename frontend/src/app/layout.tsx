@@ -1,35 +1,50 @@
-import type { Metadata } from 'next';
-import localFont from 'next/font/local';
+import type { Metadata, Viewport } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
-import '../styles/uiverse.css';
-import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { buildMetadata, FAVICON_URL } from '@/lib/seo';
 
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-  weight: '100 900',
-});
-const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
-  weight: '100 900',
-});
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'Xroga – AI Swarm Operating System',
-  description: '92 features, 100+ specialized AIs, and a Truth Council that ensures flawless execution.',
+  ...buildMetadata({
+    title: 'Xroga AI — #1 AI Swarm Operating System | Build Apps, Games & Automate',
+    description:
+      'Xroga AI is the AI Swarm Operating System built by Muhammad Ibrahim from Pakistan. Build websites, mobile apps, games, software, browser automation, and research — with honest action pricing and 710+ integrations.',
+    path: '/',
+  }),
+  metadataBase: new URL('https://xroga.com'),
+  applicationName: 'Xroga AI',
+  authors: [{ name: 'Muhammad Ibrahim', url: 'https://xroga.com/about' }],
+  creator: 'Muhammad Ibrahim',
+  publisher: 'Xroga AI',
+  formatDetection: { email: false, address: false, telephone: false },
+  icons: {
+    icon: [{ url: FAVICON_URL, type: 'image/png' }],
+    apple: [{ url: FAVICON_URL, type: 'image/png' }],
+    shortcut: FAVICON_URL,
+  },
+  verification: {
+    google: 'xroga-google-verification-placeholder',
+  },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen theme-image`}>
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
+      </head>
+      <body className={`${inter.variable} font-sans antialiased`}>{children}</body>
     </html>
   );
 }

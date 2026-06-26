@@ -10,9 +10,10 @@ interface LogoProps {
   height?: number;
   className?: string;
   variant?: 'header' | 'sidebar' | 'homepage';
+  onClick?: () => void;
 }
 
-export function Logo({ href = '/dashboard', height = 50, className, variant = 'header' }: LogoProps) {
+export function Logo({ href = '/dashboard', height = 50, className, variant = 'header', onClick }: LogoProps) {
   const src =
     variant === 'homepage' ? HOMEPAGE_LOGO_URL : variant === 'sidebar' ? SIDEBAR_LOGO_URL : HEADER_LOGO_URL;
   const width = variant === 'homepage' ? height * 2.8 : variant === 'header' ? height * 2.2 : height * 1.1;
@@ -36,7 +37,7 @@ export function Logo({ href = '/dashboard', height = 50, className, variant = 'h
 
   if (href) {
     return (
-      <Link href={href} className="inline-block bg-transparent" style={{ background: 'transparent' }}>
+      <Link href={href} onClick={onClick} className="inline-block bg-transparent" style={{ background: 'transparent' }}>
         {inner}
       </Link>
     );

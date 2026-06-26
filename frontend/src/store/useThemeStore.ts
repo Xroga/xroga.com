@@ -3,12 +3,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ThemeId, TerminalSkin } from '@/lib/theme';
-import { CUSTOM_DESKTOP_BG_KEY, CUSTOM_MOBILE_BG_KEY } from '@/lib/theme';
+import { CUSTOM_DESKTOP_BG_KEY, CUSTOM_MOBILE_BG_KEY, DEFAULT_TERMINAL_SKIN } from '@/lib/theme';
 
 const SKIN_CYCLES: Record<ThemeId, TerminalSkin[]> = {
-  white: ['dark', 'light', 'light-grid'],
-  black: ['amoled', 'light', 'gray', 'dark'],
-  gray: ['gray', 'dark', 'light', 'amoled'],
+  white: ['light', 'amoled', 'light-grid'],
+  black: ['amoled', 'light', 'gray'],
+  gray: ['gray', 'amoled', 'light'],
   image: ['dark', 'light', 'light-grid', 'gray'],
 };
 
@@ -21,6 +21,7 @@ interface ThemeState {
   terminalFullscreen: boolean;
   terminalSkin: TerminalSkin;
   browserPanelOpen: boolean;
+  browserFullscreen: boolean;
   setTheme: (theme: ThemeId) => void;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
@@ -29,6 +30,8 @@ interface ThemeState {
   setTerminalFullscreen: (v: boolean) => void;
   cycleTerminalSkin: () => void;
   setBrowserPanelOpen: (v: boolean) => void;
+  setBrowserFullscreen: (v: boolean) => void;
+  closeBrowser: () => void;
 }
 
 export const useThemeStore = create<ThemeState>()(
@@ -40,9 +43,11 @@ export const useThemeStore = create<ThemeState>()(
       customDesktopBg: null,
       customMobileBg: null,
       terminalFullscreen: false,
-      terminalSkin: 'dark',
+      terminalSkin: DEFAULT_TERMINAL_SKIN.image,
       browserPanelOpen: false,
-      setTheme: (theme) => set({ theme }),
+      browserFullscreen: false,
+      setTheme: (theme) =>
+        set({ theme, terminalSkin: DEFAULT_TERMINAL_SKIN[theme] }),
       setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
       toggleSidebar: () =>
         set((s) => {
@@ -67,7 +72,19 @@ export const useThemeStore = create<ThemeState>()(
           const next = cycle[(idx + 1) % cycle.length];
           return { terminalSkin: next };
         }),
-      setBrowserPanelOpen: (browserPanelOpen) => set({ browserPanelOpen }),
+      setBrowserPanelOpen: (browserPanelOpen) =>
+        set(
+          browserPanelOpen
+            ? { browserPanelOpen: true, browserFullscreen: false }
+            : { browserPanelOpen: false, browserFullscreen: false }
+        ),
+      setBrowserFullscreen: (browserFullscreen) =>
+        set(
+          browserFullscreen
+            ? { browserFullscreen: true, browserPanelOpen: true }
+            : { browserFullscreen: false }
+        ),
+      closeBrowser: () => set({ browserPanelOpen: false, browserFullscreen: false }),
     }),
     {
       name: 'xroga-theme',
@@ -86,6 +103,9 @@ export const useThemeStore = create<ThemeState>()(
           if (d) state.customDesktopBg = d;
           if (m) state.customMobileBg = m;
           if (state.sidebarPinned) state.sidebarOpen = true;
+          if (!state.terminalSkin) {
+            state.terminalSkin = DEFAULT_TERMINAL_SKIN[state.theme];
+          }
         }
       },
     }
