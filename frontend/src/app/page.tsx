@@ -104,8 +104,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="relative z-10 border-t border-white/10 py-8 text-center text-sm text-white/70 glass-panel-strong">
-        © {new Date().getFullYear()} Xroga — AI Swarm Operating System
+      <footer className="relative z-10 border-t border-white/10 py-8 text-center text-sm text-white/70 glass-panel-strong space-y-2">
+        <p>
+          <Link href="/about" className="text-[var(--accent)] hover:underline">
+            About Xroga & CEO Muhammad Ibrahim
+          </Link>
+          {' · '}
+          <Link href="/pricing" className="text-[var(--accent)] hover:underline">
+            Pricing
+          </Link>
+        </p>
+        <p>© {new Date().getFullYear()} Xroga — AI Swarm Operating System · Built by Muhammad Ibrahim, Pakistan</p>
       </footer>
     </div>
   );

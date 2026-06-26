@@ -21,6 +21,13 @@ export const AI_RESPONSE_LOGO_URL = SIDEBAR_LOGO_URL;
 
 export type TerminalSkin = 'dark' | 'light' | 'light-grid' | 'gray' | 'amoled';
 
+export const DEFAULT_TERMINAL_SKIN: Record<ThemeId, TerminalSkin> = {
+  white: 'light',
+  black: 'amoled',
+  gray: 'gray',
+  image: 'dark',
+};
+
 /** @deprecated use HEADER_LOGO_URL */
 export const LOGO_URL = HEADER_LOGO_URL;
 

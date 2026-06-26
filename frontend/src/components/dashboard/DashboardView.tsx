@@ -4,12 +4,12 @@ import { Maximize2, Minimize2 } from 'lucide-react';
 import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { QuickActionTabs } from '@/components/terminal/QuickActionTabs';
 import { BrowserPanel } from '@/components/terminal/BrowserPanel';
-import { CompactAnalytics } from '@/components/dashboard/CompactAnalytics';
 import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
 import { useAppStore } from '@/store/useAppStore';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useEffect } from 'react';
 import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
 
 interface DashboardViewProps {
   displayName: string;
@@ -19,6 +19,8 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   const fullscreen = useThemeStore((s) => s.terminalFullscreen);
   const setFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
+  const browserOpen = useThemeStore((s) => s.browserPanelOpen);
+  const browserFullscreen = useThemeStore((s) => s.browserFullscreen);
   const setProfile = useAppStore((s) => s.setProfile);
 
   useEffect(() => {
@@ -33,9 +35,21 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   const terminalBlock = (
     <div className="space-y-3">
       <QuickActionTabs />
-      <BrowserPanel />
-      <SwarmMessageLog />
-      <CompactAnalytics compact className="pt-2" />
+      {browserFullscreen && browserOpen ? (
+        <BrowserPanel mode="full" />
+      ) : (
+        <div
+          className={cn(
+            'gap-3 transition-all duration-300',
+            browserOpen ? 'grid grid-cols-1 lg:grid-cols-2 items-stretch' : 'block'
+          )}
+        >
+          <div className="space-y-3 min-w-0">
+            <SwarmMessageLog />
+          </div>
+          {browserOpen && <BrowserPanel mode="split" />}
+        </div>
+      )}
     </div>
   );
 

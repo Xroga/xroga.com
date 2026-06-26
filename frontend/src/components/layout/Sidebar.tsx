@@ -20,12 +20,14 @@ import {
   BarChart3,
   PieChart,
   Camera,
+  Workflow,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
 import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
 import { MediaGalleryModal } from './MediaGalleryModal';
+import { HoverTip } from '@/components/ui/HoverTip';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/lib/supabase/client';
@@ -34,14 +36,60 @@ import { LogoutButton, UpgradeProButton } from '@/components/ui/Uiverse';
 import toast from 'react-hot-toast';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/dashboard/projects', label: 'My Projects', icon: FolderOpen },
-  { href: '/dashboard/chats', label: 'Chats', icon: MessageSquare },
-  { href: '/dashboard/spending', label: 'Action Spend', icon: PieChart },
-  { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
-  { href: '/dashboard/integrations', label: 'Integrations', icon: Link2 },
-  { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
-  { href: '/settings', label: 'Settings', icon: Settings },
+  {
+    href: '/dashboard',
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+    tip: 'Main workspace — terminal, browser split view, and AI swarm.',
+  },
+  {
+    href: '/dashboard/projects',
+    label: 'My Projects',
+    icon: FolderOpen,
+    tip: 'All your websites, apps, games, and software projects.',
+  },
+  {
+    href: '/dashboard/chats',
+    label: 'Chats',
+    icon: MessageSquare,
+    tip: 'Conversation history with the Xroga swarm.',
+  },
+  {
+    href: '/dashboard/automation',
+    label: 'Automation',
+    icon: Workflow,
+    tip: 'Running, failed, and browser automations — continue or review past runs.',
+  },
+  {
+    href: '/dashboard/spending',
+    label: 'Action Spend',
+    icon: PieChart,
+    tip: 'See action costs per task and what fits your balance.',
+  },
+  {
+    href: '/dashboard/analytics',
+    label: 'Analytics',
+    icon: BarChart3,
+    tip: 'Usage stats and build analytics for your account.',
+  },
+  {
+    href: '/dashboard/integrations',
+    label: 'Integrations',
+    icon: Link2,
+    tip: 'Connect GitHub, Slack, databases, and 710+ tools.',
+  },
+  {
+    href: '/dashboard/billing',
+    label: 'Billing',
+    icon: CreditCard,
+    tip: 'Plans, invoices, and action top-ups.',
+  },
+  {
+    href: '/settings',
+    label: 'Settings',
+    icon: Settings,
+    tip: 'Theme, terminal skin, account, and preferences.',
+  },
 ];
 
 interface SidebarProps {
@@ -60,6 +108,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const setSidebarOpen = useThemeStore((s) => s.setSidebarOpen);
   const sidebarPinned = useThemeStore((s) => s.sidebarPinned);
   const toggleSidebar = useThemeStore((s) => s.toggleSidebar);
+  const closeBrowser = useThemeStore((s) => s.closeBrowser);
   const actions = useAppStore((s) => s.actions);
   const profile = useAppStore((s) => s.profile);
   const setProfile = useAppStore((s) => s.setProfile);
@@ -78,6 +127,11 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const isActive = (href: string) =>
     pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
 
+  function handleNavClick() {
+    setMobileOpen(false);
+    closeBrowser();
+  }
+
   async function handleLogout() {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -95,7 +149,10 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
       const reader = new FileReader();
       reader.onload = () => {
         const url = reader.result as string;
-        setProfile({ ...(profile ?? { display_name: displayName ?? '', timezone: 'UTC', language: 'en', avatar_url: '' }), avatar_url: url });
+        setProfile({
+          ...(profile ?? { display_name: displayName ?? '', timezone: 'UTC', language: 'en', avatar_url: '' }),
+          avatar_url: url,
+        });
         toast.success('Avatar updated locally');
       };
       reader.readAsDataURL(file);
@@ -109,7 +166,10 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
       setProfile(updated);
       toast.success('Avatar updated');
     } catch {
-      setProfile({ ...(profile ?? { display_name: displayName ?? '', timezone: 'UTC', language: 'en', avatar_url: '' }), avatar_url: publicUrl });
+      setProfile({
+        ...(profile ?? { display_name: displayName ?? '', timezone: 'UTC', language: 'en', avatar_url: '' }),
+        avatar_url: publicUrl,
+      });
       toast.success('Avatar uploaded');
     }
   }
@@ -121,15 +181,16 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           {sidebarOpen ? (
             <MiniActionMeter onTopUp={onTopUp} />
           ) : (
-            <button
-              type="button"
-              onClick={onTopUp}
-              className="p-2 rounded-lg glass-panel flex items-center gap-0.5 text-[10px] font-terminal text-[var(--accent)]"
-              title={`${actions?.remaining ?? 50} actions left`}
-            >
-              <Zap className="w-3 h-3" />
-              {actions?.remaining ?? 50}
-            </button>
+            <HoverTip label="Actions left" description="Your remaining swarm actions. Click to top up.">
+              <button
+                type="button"
+                onClick={onTopUp}
+                className="p-2 rounded-lg glass-panel flex items-center gap-0.5 text-[10px] font-terminal text-[var(--accent)]"
+              >
+                <Zap className="w-3 h-3" />
+                {actions?.remaining ?? 50}
+              </button>
+            </HoverTip>
           )}
         </div>
       )}
@@ -137,34 +198,36 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
         <UpgradeProButton onClick={() => router.push('/pricing')} />
       )}
       {isFreeTrial && !sidebarOpen && (
-        <Link
-          href="/pricing"
-          onClick={() => setMobileOpen(false)}
-          className="flex items-center justify-center p-2 mx-auto w-10 h-10 rounded-lg bg-[var(--foreground)] text-[var(--background)]"
-          title="Upgrade Plan"
-        >
-          <Zap className="w-4 h-4" />
-        </Link>
+        <HoverTip label="Upgrade Plan" description="Unlock more actions and PRO features.">
+          <Link
+            href="/pricing"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center justify-center p-2 mx-auto w-10 h-10 rounded-lg bg-[var(--foreground)] text-[var(--background)]"
+          >
+            <Zap className="w-4 h-4" />
+          </Link>
+        </HoverTip>
       )}
       <div className={cn('flex items-center justify-between gap-2 px-1 py-1.5', !sidebarOpen && 'flex-col')}>
         {displayName && (
           <div className={cn('flex items-center gap-2 min-w-0', !sidebarOpen && 'justify-center flex-col')}>
-            <button
-              type="button"
-              onClick={() => avatarRef.current?.click()}
-              className="relative w-9 h-9 rounded-full border-2 border-[var(--accent)]/40 overflow-hidden flex items-center justify-center text-xs font-bold shrink-0 group hover:border-[var(--accent)] transition-colors"
-              title="Change profile photo"
-            >
-              {avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
-              ) : (
-                nameInitial
-              )}
-              <span className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                <Camera className="w-3.5 h-3.5 text-white" />
-              </span>
-            </button>
+            <HoverTip label="Profile photo" description="Upload or change your avatar.">
+              <button
+                type="button"
+                onClick={() => avatarRef.current?.click()}
+                className="relative w-9 h-9 rounded-full border-2 border-[var(--accent)]/40 overflow-hidden flex items-center justify-center text-xs font-bold shrink-0 group hover:border-[var(--accent)] transition-colors"
+              >
+                {avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  nameInitial
+                )}
+                <span className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                  <Camera className="w-3.5 h-3.5 text-white" />
+                </span>
+              </button>
+            </HoverTip>
             <input ref={avatarRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
             {sidebarOpen && (
               <div className="min-w-0">
@@ -176,6 +239,17 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
         )}
         <LogoutButton onClick={handleLogout} />
       </div>
+      {sidebarOpen && (
+        <HoverTip label="About Xroga" description="Mission, CEO Muhammad Ibrahim, and what Xroga AI can do.">
+          <Link
+            href="/about"
+            onClick={() => setMobileOpen(false)}
+            className="block text-center text-[10px] text-[var(--muted)] hover:text-[var(--accent)] py-1"
+          >
+            About Xroga & CEO
+          </Link>
+        </HoverTip>
+      )}
     </div>
   );
 
@@ -214,80 +288,81 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'
         )}
       >
-        <div className="p-3 border-b border-[var(--card-border)] flex items-center justify-between gap-1">
-          <Logo href="/dashboard" height={sidebarOpen ? 44 : 36} variant="sidebar" />
+        <div className="p-3 border-b border-[var(--card-border)] flex items-center gap-1.5">
+          <HoverTip label="Xroga AI" description="Your AI Swarm Operating System — dashboard home.">
+            <div className="shrink-0">
+              <Logo
+                href="/dashboard"
+                height={sidebarOpen ? 44 : 36}
+                variant="sidebar"
+                onClick={handleNavClick}
+              />
+            </div>
+          </HoverTip>
+          <div className={cn('flex items-center gap-0.5', sidebarOpen ? 'ml-auto' : 'flex-col ml-0')}>
+            <HoverTip label="Search" description="Search projects, chats, and commands.">
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
+                aria-label="Search"
+              >
+                <Search className="w-4 h-4" />
+              </button>
+            </HoverTip>
+            <HoverTip label="Images & Videos" description="Browse AI-generated images and media.">
+              <button
+                type="button"
+                onClick={() => setMediaOpen(true)}
+                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
+                aria-label="Images and videos"
+              >
+                <ImageIcon className="w-4 h-4" />
+              </button>
+            </HoverTip>
+          </div>
           <button
             type="button"
             onClick={() => {
               toggleSidebar();
               setMobileOpen(false);
             }}
-            className="hidden lg:flex p-2 rounded-lg hover:bg-white/5 text-[var(--muted)] shrink-0"
+            className="hidden lg:flex p-1.5 rounded-lg hover:bg-white/5 text-[var(--muted)] shrink-0"
             aria-label="Toggle sidebar"
           >
             {sidebarOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeft className="w-4 h-4" />}
           </button>
         </div>
 
-        <div className={cn('px-2 pt-2 flex gap-1', !sidebarOpen && 'flex-col items-center')}>
-          <button
-            type="button"
-            onClick={() => setSearchOpen(true)}
-            title="Search projects & chats"
-            className={cn(
-              'flex items-center gap-2 rounded-lg text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors',
-              sidebarOpen ? 'flex-1 px-3 py-2' : 'p-2.5'
-            )}
-          >
-            <Search className="w-4 h-4 shrink-0" />
-            {sidebarOpen && <span className="text-xs">Search...</span>}
-          </button>
-          <button
-            type="button"
-            onClick={() => setMediaOpen(true)}
-            title="Images & Videos"
-            className={cn(
-              'flex items-center gap-2 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors',
-              sidebarOpen ? 'px-3 py-2' : 'p-2.5'
-            )}
-          >
-            <ImageIcon className="w-4 h-4 shrink-0" aria-hidden />
-            {sidebarOpen && <span className="text-xs">Media</span>}
-          </button>
-        </div>
-
         <nav className="flex-1 p-2 overflow-y-auto">
           {sidebarOpen ? (
             <div className="xv-sidebar-menu">
-              {navItems.map(({ href, label, icon: Icon }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(isActive(href) && 'xv-active')}
-                >
-                  <Icon className="w-4 h-4 shrink-0" />
-                  <span>{label}</span>
-                </Link>
+              {navItems.map(({ href, label, icon: Icon, tip }) => (
+                <HoverTip key={href} label={label} description={tip}>
+                  <Link href={href} onClick={handleNavClick} className={cn(isActive(href) && 'xv-active')}>
+                    <Icon className="w-4 h-4 shrink-0" />
+                    <span>{label}</span>
+                  </Link>
+                </HoverTip>
               ))}
             </div>
           ) : (
             <div className="space-y-0.5">
-              {navItems.map(({ href, label, icon: Icon }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setMobileOpen(false)}
-                  title={label}
-                  className={cn(
-                    'flex items-center justify-center p-2.5 rounded-lg text-sm transition-all',
-                    isActive(href)
-                      ? 'bg-white/10 text-[var(--foreground)]'
-                      : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5'
-                  )}
-                >
-                  <Icon className="w-4 h-4 shrink-0" />
-                </Link>
+              {navItems.map(({ href, label, icon: Icon, tip }) => (
+                <HoverTip key={href} label={label} description={tip}>
+                  <Link
+                    href={href}
+                    onClick={handleNavClick}
+                    className={cn(
+                      'flex items-center justify-center p-2.5 rounded-lg text-sm transition-all',
+                      isActive(href)
+                        ? 'bg-white/10 text-[var(--foreground)]'
+                        : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5'
+                    )}
+                  >
+                    <Icon className="w-4 h-4 shrink-0" />
+                  </Link>
+                </HoverTip>
               ))}
             </div>
           )}
