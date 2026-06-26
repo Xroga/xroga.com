@@ -2,15 +2,15 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, FolderOpen, MessageSquare, Settings, User } from 'lucide-react';
+import { Home, FolderOpen, MessageSquare, Link2, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const items = [
   { href: '/dashboard', label: 'Home', icon: Home },
   { href: '/dashboard/projects', label: 'Projects', icon: FolderOpen },
   { href: '/dashboard/chats', label: 'Chat', icon: MessageSquare },
-  { href: '/settings', label: 'Settings', icon: Settings },
-  { href: '/pricing', label: 'Profile', icon: User },
+  { href: '/dashboard/integrations', label: 'Integrations', icon: Link2 },
+  { href: '/settings', label: 'Profile', icon: User },
 ];
 
 export function MobileNav() {

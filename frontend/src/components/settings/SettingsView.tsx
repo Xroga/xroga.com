@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { api, type Profile } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
-import { GitHubConnect } from '@/components/integrations/GitHubConnect';
 import toast from 'react-hot-toast';
 import { Save, Trash2, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -12,6 +11,7 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useThemeStore } from '@/store/useThemeStore';
 import { THEME_OPTIONS } from '@/lib/theme';
+import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
 
 const TABS = ['General', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
 type Tab = (typeof TABS)[number];
@@ -189,16 +189,7 @@ export function SettingsView({ email }: { email: string }) {
             </div>
           )}
 
-          {tab === 'Integrations' && (
-            <div className="space-y-4">
-              <h2 className="font-semibold">Integrations</h2>
-              <GitHubConnect />
-              <div className="p-4 rounded-lg border border-[var(--card-border)] opacity-60">
-                <p className="font-medium">Gmail, Twitter, Stripe</p>
-                <p className="text-xs text-[var(--muted)] mt-1">Coming in Phase 5</p>
-              </div>
-            </div>
-          )}
+          {tab === 'Integrations' && <IntegrationsPanel />}
 
           {tab === 'Security' && (
             <div className="space-y-4">

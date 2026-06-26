@@ -17,6 +17,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     body.classList.remove('theme-image', 'theme-white', 'theme-black', 'theme-gray', 'theme-blue-gradient');
     body.classList.add(`theme-${theme}`);
 
+    body.style.transition = 'background 500ms ease, color 500ms ease';
+
     if (theme === 'image') {
       const url = isMobile ? MOBILE_BG : DESKTOP_BG;
       body.style.backgroundImage = `url("${url}")`;

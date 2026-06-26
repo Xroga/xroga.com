@@ -6,7 +6,7 @@ import { ArrowLeft, Download, ExternalLink, History } from 'lucide-react';
 import Skeleton from 'react-loading-skeleton';
 import toast from 'react-hot-toast';
 import { api, type ProjectDetail, type ProjectFile, type ProjectMessage } from '@/lib/api';
-import { SwarmChat } from '@/components/SwarmChat';
+import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { FilePreview } from './FilePreview';
 import { cn } from '@/lib/utils';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -120,7 +120,7 @@ export function ProjectDetailView({ projectId }: ProjectDetailViewProps) {
             )}
           </div>
           <div className="p-3 border-t border-[var(--card-border)]">
-            <SwarmChat projectId={projectId} />
+            <SwarmMessageLog compact />
           </div>
         </div>
 
