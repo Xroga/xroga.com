@@ -1,77 +1,84 @@
 import type { PlanTier } from '../types/index.js';
 
-export const FREE_TRIAL_ACTIONS = 10;
+export const FREE_TRIAL_ACTIONS = 50;
 
 export interface PlanDefinition {
   tier: PlanTier;
   name: string;
   priceLabel: string;
-  priceRange: string;
   actionsLabel: string;
   actions: number;
   concurrency: number;
   envPriceKey: string;
+  paid: boolean;
 }
 
 export const GALACTIC_PLANS: PlanDefinition[] = [
   {
     tier: 'spark',
     name: 'Spark',
-    priceLabel: '$10',
-    priceRange: '$6–$15',
-    actionsLabel: '500–1,000',
-    actions: 1000,
+    priceLabel: '$19',
+    actionsLabel: '500 Actions/mo',
+    actions: 500,
     concurrency: 2,
     envPriceKey: 'PADDLE_PRICE_SPARK',
-  },
-  {
-    tier: 'pulse',
-    name: 'Pulse',
-    priceLabel: '$29',
-    priceRange: '$19–$39',
-    actionsLabel: '2,000–4,000',
-    actions: 3000,
-    concurrency: 3,
-    envPriceKey: 'PADDLE_PRICE_PULSE',
+    paid: true,
   },
   {
     tier: 'nova',
     name: 'Nova',
-    priceLabel: '$74',
-    priceRange: '$49–$99',
-    actionsLabel: '6,000–12,000',
-    actions: 9000,
+    priceLabel: '$49',
+    actionsLabel: '2,000 Actions/mo',
+    actions: 2000,
     concurrency: 5,
     envPriceKey: 'PADDLE_PRICE_NOVA',
+    paid: true,
   },
   {
     tier: 'zenith',
     name: 'Zenith',
-    priceLabel: '$199',
-    priceRange: '$150–$249',
-    actionsLabel: '20,000–40,000',
-    actions: 30000,
-    concurrency: 15,
+    priceLabel: '$99',
+    actionsLabel: '6,000 Actions/mo',
+    actions: 6000,
+    concurrency: 30,
     envPriceKey: 'PADDLE_PRICE_ZENITH',
+    paid: true,
   },
   {
     tier: 'singularity',
     name: 'Singularity',
-    priceLabel: '$749',
-    priceRange: '$499–$999',
-    actionsLabel: '50,000–100,000',
-    actions: 75000,
-    concurrency: 999,
+    priceLabel: '$999',
+    actionsLabel: '50,000 Actions/mo',
+    actions: 50000,
+    concurrency: 100,
     envPriceKey: 'PADDLE_PRICE_SINGULARITY',
+    paid: true,
   },
 ];
 
 export function getPlanByTier(tier: string): PlanDefinition | undefined {
+  if (tier === 'unpaid') {
+    return {
+      tier: 'unpaid',
+      name: 'Free Trial',
+      priceLabel: '$0',
+      actionsLabel: `${FREE_TRIAL_ACTIONS} Actions (one-time)`,
+      actions: FREE_TRIAL_ACTIONS,
+      concurrency: 1,
+      envPriceKey: '',
+      paid: false,
+    };
+  }
   return GALACTIC_PLANS.find((p) => p.tier === tier);
 }
 
 export function getPaddlePriceId(tier: PlanTier): string | undefined {
+  if (tier === 'unpaid') return undefined;
   const plan = getPlanByTier(tier);
-  if (!plan) return undefined;
+  if (!plan?.envPriceKey) return undefined;
   return process.env[plan.envPriceKey];
+}
+
+export function getConcurrencyForTier(tier: string): number {
+  return getPlanByTier(tier)?.concurrency ?? 1;
 }

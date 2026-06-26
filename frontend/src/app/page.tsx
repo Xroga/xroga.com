@@ -8,7 +8,7 @@ export default function HomePage() {
     <div className="min-h-screen cosmic-bg terminal-grid flex flex-col">
       <header className="sticky top-0 z-50 glass-panel-strong border-b border-[var(--card-border)]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Logo href="/" size="md" />
+          <Logo href="/" height={50} />
           <div className="flex items-center gap-3">
             <button type="button" className="hidden sm:flex items-center gap-2 text-sm text-[var(--muted)] glass-panel px-3 py-1.5 rounded-lg">
               <Globe className="w-4 h-4" /> Theme

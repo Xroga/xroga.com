@@ -23,7 +23,7 @@ export default async function ShellLayout({
 
   return (
     <AppProviders>
-      <AppShell displayName={displayName}>{children}</AppShell>
+      <AppShell displayName={displayName} email={user.email ?? undefined}>{children}</AppShell>
     </AppProviders>
   );
 }

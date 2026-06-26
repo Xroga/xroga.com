@@ -16,12 +16,14 @@ export class InsufficientActionsError extends Error {
   }
 
   toJSON(): Record<string, unknown> {
+    const frontend = process.env.FRONTEND_URL ?? 'https://xroga.com';
     return {
       error: this.message,
       code: this.code,
       required: this.required,
       remaining: this.remaining,
       paymentLink: this.paymentLink,
+      redirect_url: `${frontend}/pricing`,
     };
   }
 }

@@ -7,7 +7,7 @@ import type { PlanTier } from '../types/index.js';
 const router = Router();
 
 const checkoutSchema = z.object({
-  planTier: z.enum(['spark', 'pulse', 'nova', 'zenith', 'singularity']),
+  planTier: z.enum(['spark', 'nova', 'zenith', 'singularity']),
 });
 
 router.get('/plans', (_req, res) => {

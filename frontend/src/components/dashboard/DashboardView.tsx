@@ -35,7 +35,7 @@ export function DashboardView({ displayName }: DashboardViewProps) {
     <div className="max-w-6xl mx-auto space-y-8">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold">
-          Welcome back, <span className="gradient-text">{displayName}</span>!
+          Welcome back, <span className="gradient-text">{displayName}</span>! Your AI Swarm is ready.
         </h1>
         <p className="text-[var(--muted)] text-sm mt-1">
           Your AI Swarm is ready. Describe any task below.

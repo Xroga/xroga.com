@@ -1,3 +1,4 @@
+import { getConcurrencyForTier } from '../config/plans.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ACTION_COSTS, type TaskType } from '../types/index.js';
 
@@ -22,6 +23,7 @@ export class ActionService {
     remaining: number;
     planTier: string;
     resetDate: string;
+    concurrencyLimit: number;
   } | null> {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
@@ -32,12 +34,16 @@ export class ActionService {
 
     if (error || !data) return null;
 
+    const concurrencyLimit =
+      data.concurrency_limit ?? getConcurrencyForTier(data.plan_tier ?? 'unpaid');
+
     return {
       total: data.total_actions,
       used: data.used_actions,
       remaining: data.remaining_actions ?? data.total_actions - data.used_actions,
       planTier: data.plan_tier,
       resetDate: data.reset_date,
+      concurrencyLimit,
     };
   }
 
@@ -140,6 +146,7 @@ export class ActionService {
   static async applyPlan(userId: string, planTier: string, totalActions: number): Promise<void> {
     const supabase = getSupabaseAdmin();
     const resetDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    const concurrencyLimit = getConcurrencyForTier(planTier);
 
     const { data: existing } = await supabase
       .from('user_actions')
@@ -154,6 +161,7 @@ export class ActionService {
           plan_tier: planTier,
           total_actions: totalActions,
           used_actions: 0,
+          concurrency_limit: concurrencyLimit,
           reset_date: resetDate,
           updated_at: new Date().toISOString(),
         })
@@ -164,6 +172,7 @@ export class ActionService {
         plan_tier: planTier,
         total_actions: totalActions,
         used_actions: 0,
+        concurrency_limit: concurrencyLimit,
         reset_date: resetDate,
       });
     }

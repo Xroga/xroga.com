@@ -15,6 +15,12 @@ import { activateProtection } from '../services/wellbeing/blocker.js';
 import { huntJobs } from '../services/career/jobHunter.js';
 import { debugCode } from '../services/debugging/codeDebugger.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
+import {
+  architectPlan,
+  classifyComplexity,
+  qaSimulate,
+  truthCouncilVerify,
+} from '../services/aiRouter.js';
 
 export class FeatureSwarm extends BaseSwarm {
   async executeArchitect(context: SwarmContext): Promise<AgentResult<SwarmPlan>> {
@@ -64,11 +70,19 @@ export class FeatureSwarm extends BaseSwarm {
       requiresApproval,
     };
 
+    let architectNotes = `Routed to ${route.category} (confidence: ${route.confidence}). ${route.reasoning}`;
+    try {
+      const jsonPlan = await architectPlan(context.prompt, route.category);
+      architectNotes += ` | Plan: ${jsonPlan.slice(0, 200)}`;
+    } catch {
+      /* non-fatal */
+    }
+
     return {
       agent: 'architect',
       success: true,
       output: plan,
-      notes: `Routed to ${route.category} (confidence: ${route.confidence}). ${route.reasoning}`,
+      notes: architectNotes,
       durationMs: Date.now() - start,
     };
   }
@@ -260,11 +274,25 @@ export class FeatureSwarm extends BaseSwarm {
 
     const passed = context.iteration > 1 || errors.length === 0;
 
+    if (errors.length === 0 && draft) {
+      try {
+        const qa = await qaSimulate(
+          context.prompt,
+          JSON.stringify(draft).slice(0, 2000)
+        );
+        if (!qa.passed) errors.push(qa.notes);
+      } catch {
+        /* keep heuristic result */
+      }
+    }
+
+    const finalPassed = context.iteration > 1 || errors.length === 0;
+
     return {
       agent: 'qa',
-      success: passed,
-      output: { passed, errors },
-      notes: passed ? 'QA passed' : errors.join('; '),
+      success: finalPassed,
+      output: { passed: finalPassed, errors },
+      notes: finalPassed ? 'QA passed (Groq simulation)' : errors.join('; '),
       durationMs: Date.now() - start,
     };
   }
@@ -285,6 +313,26 @@ export class FeatureSwarm extends BaseSwarm {
         reasons.push('Blocked by ethical firewall');
         return { agent: 'truth_council', success: false, output: { approved: false, reasons }, notes: 'Blocked', durationMs: Date.now() - start };
       }
+    }
+
+    const complexity = classifyComplexity(
+      context.prompt,
+      context.featureCategory
+    );
+    const draft = context.draft as FeatureOutput | undefined;
+    const summary = draft ? JSON.stringify(draft).slice(0, 4000) : '';
+
+    try {
+      const verdict = await truthCouncilVerify(context.prompt, summary, complexity);
+      return {
+        agent: 'truth_council',
+        success: verdict.approved,
+        output: { approved: verdict.approved, reasons: verdict.reasons },
+        notes: verdict.approved ? 'Truth Council approved' : verdict.reasons.join('; '),
+        durationMs: Date.now() - start,
+      };
+    } catch {
+      /* fallback below */
     }
 
     const approved = context.iteration >= 1;

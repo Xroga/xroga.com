@@ -43,6 +43,21 @@ export class SwarmService {
     const actionCost = computeFeatureActionCost(route.category, prompt, { lineCount: options?.lineCount });
     const taskType = FEATURE_TASK_TYPES[route.category];
 
+    const balance = await ActionService.getBalance(userId);
+    if (balance) {
+      const { count } = await supabase
+        .from('swarm_runs')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .in('status', ['pending', 'planning', 'building', 'reviewing', 'testing', 'verifying']);
+
+      if (count !== null && count >= balance.concurrencyLimit) {
+        throw new Error(
+          `Concurrency limit reached (${balance.concurrencyLimit} parallel tasks). Upgrade your plan or wait for a task to finish.`
+        );
+      }
+    }
+
     let deductResult: Awaited<ReturnType<typeof ActionService.deduct>> = {
       success: true,
       remaining: (await ActionService.getBalance(userId))?.remaining ?? 0,

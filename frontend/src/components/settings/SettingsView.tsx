@@ -10,8 +10,10 @@ import { Save, Trash2, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { useThemeStore } from '@/store/useThemeStore';
+import { THEME_OPTIONS } from '@/lib/theme';
 
-const TABS = ['General', 'Plan & Billing', 'Integrations', 'Security', 'Notifications'] as const;
+const TABS = ['General', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
 type Tab = (typeof TABS)[number];
 
 export function SettingsView({ email }: { email: string }) {
@@ -28,6 +30,8 @@ export function SettingsView({ email }: { email: string }) {
   });
   const setStoreProfile = useAppStore((s) => s.setProfile);
   const actions = useAppStore((s) => s.actions);
+  const theme = useThemeStore((s) => s.theme);
+  const setTheme = useThemeStore((s) => s.setTheme);
 
   useEffect(() => {
     api.profile.get()
@@ -89,7 +93,7 @@ export function SettingsView({ email }: { email: string }) {
                 onClick={() => setTab(t)}
                 className={cn(
                   'px-4 py-2 rounded-lg text-sm text-left whitespace-nowrap transition-colors',
-                  tab === t ? 'bg-violet-600/20 text-violet-300' : 'text-[var(--muted)] hover:bg-white/5'
+                  tab === t ? 'bg-[var(--primary)]/20 text-[var(--accent)]' : 'text-[var(--muted)] hover:bg-white/5'
                 )}
               >
                 {t}
@@ -103,7 +107,7 @@ export function SettingsView({ email }: { email: string }) {
             <form onSubmit={handleSaveProfile} className="space-y-4">
               <h2 className="font-semibold mb-4">General</h2>
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-violet-600/20 overflow-hidden flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-[var(--primary)]/20 overflow-hidden flex items-center justify-center">
                   {profile.avatar_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
@@ -111,7 +115,7 @@ export function SettingsView({ email }: { email: string }) {
                     <span className="text-2xl">👤</span>
                   )}
                 </div>
-                <label className="text-sm text-violet-400 hover:underline cursor-pointer">
+                <label className="text-sm text-[var(--accent)] hover:underline cursor-pointer">
                   Upload avatar
                   <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
                 </label>
@@ -157,7 +161,7 @@ export function SettingsView({ email }: { email: string }) {
                   </select>
                 </div>
               </div>
-              <button type="submit" disabled={saving} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-sm disabled:opacity-50">
+              <button type="submit" disabled={saving} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] hover:opacity-90 text-sm disabled:opacity-50">
                 <Save className="w-4 h-4" />
                 {saving ? 'Saving...' : 'Save Changes'}
               </button>
@@ -167,12 +171,17 @@ export function SettingsView({ email }: { email: string }) {
           {tab === 'Plan & Billing' && (
             <div className="space-y-4">
               <h2 className="font-semibold">Plan & Billing</h2>
-              <div className="p-4 rounded-lg border border-violet-500/30 bg-violet-500/10">
-                <p className="font-medium capitalize">{actions?.planTier ?? 'spark'} Plan</p>
+              <div className="p-4 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent)]/10">
+                <p className="font-medium capitalize">{actions?.planTier ?? 'unpaid'} Plan</p>
                 <p className="text-sm text-[var(--muted)] mt-1">
                   {actions?.remaining.toLocaleString()} / {actions?.total.toLocaleString()} Actions remaining
                 </p>
-                <a href="/dashboard/upgrade" className="inline-block mt-3 px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-sm">
+                {actions?.concurrencyLimit != null && (
+                  <p className="text-sm text-[var(--muted)] mt-1">
+                    {actions.concurrencyLimit} concurrent task{actions.concurrencyLimit === 1 ? '' : 's'}
+                  </p>
+                )}
+                <a href="/pricing" className="inline-block mt-3 px-4 py-2 rounded-lg bg-[var(--accent)] text-black text-sm font-semibold">
                   Upgrade Plan
                 </a>
               </div>
@@ -252,6 +261,33 @@ export function SettingsView({ email }: { email: string }) {
                   />
                 </label>
               ))}
+            </div>
+          )}
+
+          {tab === 'Theme' && (
+            <div className="space-y-4">
+              <h2 className="font-semibold">Theme</h2>
+              <p className="text-sm text-[var(--muted)]">
+                Choose your workspace background. Image mode uses galactic wallpapers on desktop and mobile.
+              </p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {THEME_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setTheme(opt.id)}
+                    className={cn(
+                      'text-left p-4 rounded-xl border transition-colors',
+                      theme === opt.id
+                        ? 'border-[var(--accent)] bg-[var(--accent)]/10'
+                        : 'border-[var(--card-border)] hover:border-[var(--primary)]/40'
+                    )}
+                  >
+                    <p className="font-medium">{opt.label}</p>
+                    <p className="text-xs text-[var(--muted)] mt-1">{opt.description}</p>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>
