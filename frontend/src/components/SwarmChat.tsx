@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { API_URL } from '@/lib/api';
+import { streamChatMessage } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 import toast from 'react-hot-toast';
 import { Send, Loader2, Bot, User } from 'lucide-react';
@@ -44,6 +44,7 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
     if (!text || loading) return;
 
     const userMsg: ChatMessage = { id: crypto.randomUUID(), role: 'user', content: text };
+    const assistantId = crypto.randomUUID();
     setMessages((m) => [...m, userMsg]);
     setPrompt('');
     setLoading(true);
@@ -54,47 +55,28 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Please sign in to chat.');
 
-      const res = await fetch(`${API_URL}/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: text,
-          userId: user.id,
-          ...(projectId ? { projectId } : {}),
-        }),
+      setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '' }]);
+
+      await streamChatMessage(text, user.id, {
+        projectId,
+        onDelta: (delta) => {
+          setMessages((m) =>
+            m.map((msg) =>
+              msg.id === assistantId ? { ...msg, content: msg.content + delta } : msg
+            )
+          );
+        },
       });
-
-      const data = await res.json().catch(() => ({})) as {
-        success?: boolean;
-        reply?: string;
-        error?: string;
-      };
-
-      if (res.status === 404) {
-        throw new Error(
-          'Chat API not deployed on Fly.io yet. Run: fly deploy . --config fly.api.toml -a xroga-api'
-        );
-      }
-
-      if (!res.ok || !data.success || !data.reply) {
-        const hint =
-          data.error?.includes('messages') || data.error?.includes('schema cache')
-            ? ' Run migration 004_messages.sql in Supabase SQL Editor.'
-            : '';
-        throw new Error((data.error ?? `Chat failed (${res.status})`) + hint);
-      }
-
-      setMessages((m) => [
-        ...m,
-        { id: crypto.randomUUID(), role: 'assistant', content: data.reply! },
-      ]);
     } catch (err) {
       const message = (err as Error).message;
       toast.error(message);
-      setMessages((m) => [
-        ...m,
-        { id: crypto.randomUUID(), role: 'assistant', content: `⚠️ ${message}` },
-      ]);
+      setMessages((m) => {
+        const withoutEmpty = m.filter((msg) => msg.id !== assistantId || msg.content.length > 0);
+        return [
+          ...withoutEmpty,
+          { id: crypto.randomUUID(), role: 'assistant', content: `⚠️ ${message}` },
+        ];
+      });
     } finally {
       setLoading(false);
       setSwarmRunning(false);
@@ -135,7 +117,12 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
                   : 'bg-white/5 border border-[var(--card-border)]'
               )}
             >
-              {msg.content}
+              {msg.content || (loading && msg.role === 'assistant' ? (
+                <span className="inline-flex items-center gap-1 text-violet-300">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Thinking...
+                </span>
+              ) : null)}
             </div>
             {msg.role === 'user' && (
               <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0">
@@ -144,12 +131,6 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
             )}
           </div>
         ))}
-        {loading && (
-          <div className="flex items-center gap-2 text-xs text-violet-300">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            Thinking...
-          </div>
-        )}
         <div ref={bottomRef} />
       </div>
 

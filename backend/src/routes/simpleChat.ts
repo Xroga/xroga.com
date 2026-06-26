@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import cors from 'cors';
+import { runSwarm, type ChatHistoryMessage } from '../services/aiSwarm.js';
+import { initSSE, sendSSE, endSSE } from '../lib/sse.js';
 
 const router = Router();
 
@@ -10,10 +12,11 @@ const chatCors = cors({
     'https://www.xroga.com',
     'http://localhost:3000',
     'https://xroga-api.fly.dev',
+    /\.vercel\.app$/,
   ],
   credentials: true,
   methods: ['POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
 });
 
 router.use(chatCors);
@@ -33,6 +36,7 @@ function getSupabase() {
 /**
  * POST /chat
  * Body: { message: string, userId: string }
+ * Streams SSE chunks with the AI swarm response.
  */
 router.post('/', async (req, res) => {
   try {
@@ -48,11 +52,37 @@ router.post('/', async (req, res) => {
       return;
     }
 
+    if (!process.env.OPENAI_API_KEY) {
+      res.status(503).json({
+        success: false,
+        error: 'OPENAI_API_KEY is not configured on the server',
+      });
+      return;
+    }
+
     const supabase = getSupabase();
+    const trimmedMessage = message.trim();
+
+    const { data: historyRows, error: historyError } = await supabase
+      .from('messages')
+      .select('role, content')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (historyError) {
+      console.error('[chat] fetch history:', historyError.message);
+      res.status(500).json({ success: false, error: historyError.message });
+      return;
+    }
+
+    const chatHistory: ChatHistoryMessage[] = (historyRows ?? [])
+      .reverse()
+      .filter((row): row is ChatHistoryMessage => row.role === 'user' || row.role === 'assistant');
 
     const { error: userMsgError } = await supabase.from('messages').insert({
       user_id: userId,
-      content: message.trim(),
+      content: trimmedMessage,
       role: 'user',
     });
 
@@ -62,27 +92,50 @@ router.post('/', async (req, res) => {
       return;
     }
 
-    const aiReply = `Echo: ${message.trim()}`;
+    initSSE(res);
 
-    const { error: aiMsgError } = await supabase.from('messages').insert({
-      user_id: userId,
-      content: aiReply,
-      role: 'assistant',
-    });
+    const stream = await runSwarm(userId, trimmedMessage, chatHistory);
+    let fullReply = '';
 
-    if (aiMsgError) {
-      console.error('[chat] insert assistant message:', aiMsgError.message);
-      res.status(500).json({ success: false, error: aiMsgError.message });
+    for await (const chunk of stream) {
+      const delta = chunk.choices[0]?.delta?.content;
+      if (delta) {
+        fullReply += delta;
+        sendSSE(res, { data: { delta } });
+      }
+    }
+
+    if (fullReply.trim()) {
+      const { error: aiMsgError } = await supabase.from('messages').insert({
+        user_id: userId,
+        content: fullReply.trim(),
+        role: 'assistant',
+      });
+
+      if (aiMsgError) {
+        console.error('[chat] insert assistant message:', aiMsgError.message);
+        sendSSE(res, { event: 'error', data: { error: aiMsgError.message } });
+        res.end();
+        return;
+      }
+    }
+
+    endSSE(res);
+  } catch (err) {
+    console.error('[chat]', err);
+    if (!res.headersSent) {
+      res.status(500).json({
+        success: false,
+        error: err instanceof Error ? err.message : 'Internal server error',
+      });
       return;
     }
 
-    res.json({ success: true, reply: aiReply });
-  } catch (err) {
-    console.error('[chat]', err);
-    res.status(500).json({
-      success: false,
-      error: err instanceof Error ? err.message : 'Internal server error',
+    sendSSE(res, {
+      event: 'error',
+      data: { error: err instanceof Error ? err.message : 'Internal server error' },
     });
+    res.end();
   }
 });
 

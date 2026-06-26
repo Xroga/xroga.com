@@ -28,6 +28,91 @@ export function siteUrl(): string {
 
 export const API_URL = resolveApiUrl();
 
+export interface StreamChatOptions {
+  projectId?: string;
+  onDelta: (delta: string) => void;
+}
+
+/** Parse SSE lines from a streaming /chat response and invoke onDelta for each chunk. */
+export async function streamChatMessage(
+  message: string,
+  userId: string,
+  options: StreamChatOptions
+): Promise<void> {
+  const res = await fetch(`${API_URL}/chat`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'text/event-stream',
+    },
+    body: JSON.stringify({
+      message,
+      userId,
+      ...(options.projectId ? { projectId: options.projectId } : {}),
+    }),
+  });
+
+  if (res.status === 404) {
+    throw new Error(
+      'Chat API not deployed on Fly.io yet. Run: fly deploy . --config fly.api.toml -a xroga-api'
+    );
+  }
+
+  const contentType = res.headers.get('content-type') ?? '';
+
+  if (!res.ok && !contentType.includes('text/event-stream')) {
+    const data = await res.json().catch(() => ({})) as { error?: string };
+    const hint =
+      data.error?.includes('messages') || data.error?.includes('schema cache')
+        ? ' Run migration 004_messages.sql in Supabase SQL Editor.'
+        : '';
+    throw new Error((data.error ?? `Chat failed (${res.status})`) + hint);
+  }
+
+  if (!res.body) {
+    throw new Error('No response body from chat stream');
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const parts = buffer.split('\n\n');
+    buffer = parts.pop() ?? '';
+
+    for (const part of parts) {
+      const lines = part.split('\n');
+      let eventName = 'message';
+      let dataLine = '';
+
+      for (const line of lines) {
+        if (line.startsWith('event:')) {
+          eventName = line.slice(6).trim();
+        } else if (line.startsWith('data:')) {
+          dataLine += line.slice(5).trim();
+        }
+      }
+
+      if (!dataLine) continue;
+
+      const payload = JSON.parse(dataLine) as { delta?: string; error?: string; complete?: boolean };
+
+      if (eventName === 'error' || payload.error) {
+        throw new Error(payload.error ?? 'Stream error');
+      }
+
+      if (payload.delta) {
+        options.onDelta(payload.delta);
+      }
+    }
+  }
+}
+
 export class ApiError extends Error {
   status: number;
   data: Record<string, unknown>;
@@ -117,22 +202,12 @@ export const api = {
       }),
   },
   chat: {
-    send: (message: string, userId: string) =>
-      fetch(`${API_URL}/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, userId }),
-      }).then(async (res) => {
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) {
-          throw new ApiError(
-            typeof data.error === 'string' ? data.error : 'Chat request failed',
-            res.status,
-            data
-          );
-        }
-        return data as { success: boolean; reply: string };
-      }),
+    send: (message: string, userId: string, onDelta?: (delta: string) => void) => {
+      if (onDelta) {
+        return streamChatMessage(message, userId, { onDelta });
+      }
+      return streamChatMessage(message, userId, { onDelta: () => {} });
+    },
   },
 };
 
