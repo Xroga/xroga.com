@@ -116,6 +116,24 @@ export const api = {
         body: JSON.stringify({ prompt, projectId }),
       }),
   },
+  chat: {
+    send: (message: string, userId: string) =>
+      fetch(`${API_URL}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, userId }),
+      }).then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new ApiError(
+            typeof data.error === 'string' ? data.error : 'Chat request failed',
+            res.status,
+            data
+          );
+        }
+        return data as { success: boolean; reply: string };
+      }),
+  },
 };
 
 export interface Profile {

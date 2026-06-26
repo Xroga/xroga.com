@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'backend/**'
+      - 'frontend/**'
+      - 'supabase/**'
       - 'Dockerfile.api'
       - 'fly.api.toml'
       - '.github/workflows/fly-deploy.yml'

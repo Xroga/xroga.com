@@ -13,6 +13,7 @@ import debugRouter from './routes/debug.js';
 import wellbeingRouter from './routes/wellbeing.js';
 import githubRouter from './routes/github.js';
 import notificationsRouter from './routes/notifications.js';
+import simpleChatRouter from './routes/simpleChat.js';
 
 const app = express();
 
@@ -29,6 +30,7 @@ const allowedOrigins = [
   'https://xroga.com',
   'https://www.xroga.com',
   'https://xrogaaicom.vercel.app',
+  'https://xroga-api.fly.dev',
 ].filter(Boolean) as string[];
 
 function isAllowedOrigin(origin: string | undefined): boolean {
@@ -59,7 +61,7 @@ app.use(express.json({ limit: '10mb' }));
 const healthPayload = () => ({
   status: 'ok',
   service: 'xroga-api',
-  version: '1.0.1',
+  version: '1.0.2',
   timestamp: new Date().toISOString(),
   authConfigured: Boolean(process.env.SUPABASE_URL),
   dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
@@ -89,6 +91,8 @@ app.get('/api/config', (_req, res) => {
     apiUrl: process.env.FRONTEND_URL ?? null,
   });
 });
+
+app.use('/chat', simpleChatRouter);
 
 app.use('/api/actions', authMiddleware, actionsRouter);
 app.use('/api/swarm', authMiddleware, swarmRouter);

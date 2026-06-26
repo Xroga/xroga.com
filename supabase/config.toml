@@ -1,5 +1,5 @@
 # Xroga Supabase — link with: supabase link --project-ref YOUR_REF
-project_id = "xroga"
+project_id = "mweinwhoekwjrecsodip"
 
 [api]
 enabled = true

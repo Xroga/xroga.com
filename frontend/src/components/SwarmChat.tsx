@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: 'user' | 'assistant';
   content: string;
 }
 
@@ -18,24 +18,13 @@ interface SwarmChatProps {
   projectId?: string;
 }
 
-function extractChatContent(output: unknown): string | null {
-  if (!output || typeof output !== 'object') return null;
-  const o = output as Record<string, unknown>;
-  if (o.type === 'chat' && typeof o.content === 'string') return o.content;
-  if (typeof o.content === 'string') return o.content;
-  if (typeof o.message === 'string') return o.message;
-  return null;
-}
-
-export function SwarmChat({ projectId }: SwarmChatProps) {
+export function SwarmChat({ projectId: _projectId }: SwarmChatProps) {
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const chatPrefill = useAppStore((s) => s.chatPrefill);
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
   const setSwarmRunning = useAppStore((s) => s.setSwarmRunning);
-  const setActions = useAppStore((s) => s.setActions);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,7 +36,7 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, status]);
+  }, [messages, loading]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -58,164 +47,43 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
     setMessages((m) => [...m, userMsg]);
     setPrompt('');
     setLoading(true);
-    setStatus('Connecting to Swarm...');
     setSwarmRunning(true);
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 120000);
 
     try {
       const supabase = createClient();
-      const { data: { session: initial } } = await supabase.auth.getSession();
-      let session = initial;
-      if (session?.expires_at && session.expires_at * 1000 < Date.now() + 60_000) {
-        const { data: { session: refreshed } } = await supabase.auth.refreshSession();
-        session = refreshed ?? session;
-      }
-      if (!session) {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('Please sign in to use the Swarm.');
-        const { data: { session: s2 } } = await supabase.auth.getSession();
-        session = s2;
-      }
-      if (!session?.access_token) throw new Error('Please sign in to use the Swarm.');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Please sign in to chat.');
 
-      const res = await fetch(`${API_URL}/api/swarm/execute?stream=true`, {
+      const res = await fetch(`${API_URL}/chat`, {
         method: 'POST',
-        signal: controller.signal,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-          Accept: 'text/event-stream',
-        },
-        body: JSON.stringify({ prompt: text, projectId }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, userId: user.id }),
       });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: res.statusText }));
-        if (res.status === 402) {
-          throw new Error('Out of Actions — subscribe at /pricing to continue.');
-        }
-        if (res.status === 401 && typeof err.error === 'string' && err.error === 'Authentication failed') {
-          throw new Error(
-            'API is running old code or missing Supabase secrets on Fly.io. Redeploy with: fly deploy . --config fly.api.toml -a xroga-api'
-          );
-        }
-        if (res.status === 503 && err.code === 'AUTH_NOT_CONFIGURED') {
-          throw new Error('API missing SUPABASE_URL on Fly.io — contact support or check deployment settings.');
-        }
-        if (res.status === 401 && err.code === 'TOKEN_INVALID') {
-          throw new Error('Session expired — please sign out and sign in again.');
-        }
-        throw new Error(typeof err.error === 'string' ? err.error : 'Request failed');
+      const data = await res.json().catch(() => ({})) as {
+        success?: boolean;
+        reply?: string;
+        error?: string;
+      };
+
+      if (!res.ok || !data.success || !data.reply) {
+        throw new Error(data.error ?? `Chat failed (${res.status})`);
       }
 
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error('No response stream');
-
-      const decoder = new TextDecoder();
-      let buffer = '';
-      let assistantContent = '';
-      let currentEvent = 'message';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() ?? '';
-
-        for (const line of lines) {
-          if (line.startsWith('event: ')) {
-            currentEvent = line.slice(7).trim();
-            continue;
-          }
-          if (!line.startsWith('data: ')) continue;
-
-          try {
-            const data = JSON.parse(line.slice(6)) as Record<string, unknown>;
-
-            if (currentEvent === 'error' || data.code === 'OUT_OF_ACTIONS') {
-              throw new Error(String(data.error ?? 'Swarm error'));
-            }
-
-            if (currentEvent === 'start') {
-              setStatus('Swarm initialized...');
-            }
-
-            if (currentEvent === 'progress' && data.agent && data.status) {
-              setStatus(`${String(data.agent)}: ${String(data.message ?? data.status)}`);
-            }
-
-            if (currentEvent === 'complete') {
-              const fromOutput = extractChatContent(data.output);
-              if (fromOutput) {
-                assistantContent = fromOutput;
-              } else if (data.success) {
-                assistantContent = `Task completed (${String(data.featureCategory ?? 'task')}).`;
-              } else {
-                assistantContent = 'Task could not be completed. Please try again.';
-              }
-            }
-
-            // Legacy flat SSE format
-            if (!currentEvent || currentEvent === 'message') {
-              if (data.agent && data.status) {
-                setStatus(`${String(data.agent)}: ${String(data.message ?? data.status)}`);
-              }
-              const legacy = extractChatContent(data.output);
-              if (legacy) assistantContent = legacy;
-              if (data.success !== undefined && !assistantContent) {
-                assistantContent = data.success
-                  ? `Done (${String(data.featureCategory ?? 'task')}).`
-                  : 'Task incomplete.';
-              }
-            }
-          } catch (parseErr) {
-            if (parseErr instanceof Error && parseErr.message !== 'Unexpected end of JSON input') {
-              throw parseErr;
-            }
-          }
-        }
-      }
-
-      if (assistantContent) {
-        setMessages((m) => [
-          ...m,
-          { id: crypto.randomUUID(), role: 'assistant', content: assistantContent },
-        ]);
-      } else {
-        setMessages((m) => [
-          ...m,
-          {
-            id: crypto.randomUUID(),
-            role: 'assistant',
-            content: 'I processed your request but no text response was returned. Please try again.',
-          },
-        ]);
-      }
-
-      try {
-        const balance = await import('@/lib/api').then((mod) => mod.api.actions.balance());
-        setActions(balance);
-      } catch {
-        // non-fatal
-      }
+      setMessages((m) => [
+        ...m,
+        { id: crypto.randomUUID(), role: 'assistant', content: data.reply! },
+      ]);
     } catch (err) {
-      const message = (err as Error).name === 'AbortError'
-        ? 'Request timed out — the API may be waking up. Try again in a few seconds.'
-        : (err as Error).message;
+      const message = (err as Error).message;
       toast.error(message);
       setMessages((m) => [
         ...m,
         { id: crypto.randomUUID(), role: 'assistant', content: `⚠️ ${message}` },
       ]);
     } finally {
-      clearTimeout(timeout);
       setLoading(false);
       setSwarmRunning(false);
-      setStatus('');
     }
   }
 
@@ -265,7 +133,7 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
         {loading && (
           <div className="flex items-center gap-2 text-xs text-violet-300">
             <Loader2 className="w-4 h-4 animate-spin" />
-            {status || 'Thinking...'}
+            Thinking...
           </div>
         )}
         <div ref={bottomRef} />
