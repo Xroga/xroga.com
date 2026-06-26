@@ -15,21 +15,25 @@ import {
   X,
   PanelLeftClose,
   PanelLeft,
-  Palette,
+  Search,
+  Image as ImageIcon,
+  Zap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
 import { Logo } from './Logo';
+import { SidebarSearchModal } from './SidebarSearchModal';
+import { MediaGalleryModal } from './MediaGalleryModal';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, emoji: '📊' },
-  { href: '/dashboard/projects', label: 'My Projects', icon: FolderOpen, emoji: '📁' },
-  { href: '/dashboard/chats', label: 'Chats', icon: MessageSquare, emoji: '💬' },
-  { href: '/dashboard/integrations', label: 'Integrations', icon: Link2, emoji: '🔗' },
-  { href: '/dashboard/billing', label: 'Billing', icon: CreditCard, emoji: '💰' },
-  { href: '/settings', label: 'Settings', icon: Settings, emoji: '⚙️' },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard/projects', label: 'My Projects', icon: FolderOpen },
+  { href: '/dashboard/chats', label: 'Chats', icon: MessageSquare },
+  { href: '/dashboard/integrations', label: 'Integrations', icon: Link2 },
+  { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 interface SidebarProps {
@@ -41,11 +45,10 @@ interface SidebarProps {
 export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [themeOpen, setThemeOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [mediaOpen, setMediaOpen] = useState(false);
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const toggleSidebar = useThemeStore((s) => s.toggleSidebar);
-  const setTheme = useThemeStore((s) => s.setTheme);
-  const theme = useThemeStore((s) => s.theme);
   const actions = useAppStore((s) => s.actions);
   const isFreeTrial = !actions?.planTier || actions.planTier === 'unpaid';
 
@@ -62,10 +65,11 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
             <button
               type="button"
               onClick={onTopUp}
-              className="p-2 rounded-lg glass-panel text-[10px] font-terminal text-[var(--accent)]"
-              title={`${actions?.remaining ?? 0} actions left`}
+              className="p-2 rounded-lg glass-panel flex items-center gap-0.5 text-[10px] font-terminal text-[var(--accent)]"
+              title={`${actions?.remaining ?? 50} actions left`}
             >
-              ⚡{actions?.remaining ?? 0}
+              <Zap className="w-3 h-3" />
+              {actions?.remaining ?? 50}
             </button>
           )}
         </div>
@@ -75,7 +79,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           href="/pricing"
           onClick={() => setMobileOpen(false)}
           className={cn(
-            'flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-[var(--accent)] to-[var(--primary)] text-black text-xs font-semibold transition-transform hover:scale-[1.02]',
+            'flex items-center justify-center gap-1.5 rounded-lg bg-[var(--foreground)] text-[var(--background)] text-xs font-semibold transition-transform hover:scale-[1.02]',
             sidebarOpen ? 'mx-1 px-3 py-2' : 'p-2 mx-auto w-10 h-10'
           )}
           title="Upgrade Plan"
@@ -86,7 +90,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
       )}
       {displayName && (
         <div className={cn('flex items-center gap-2 px-1 py-1.5', !sidebarOpen && 'justify-center')}>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-xs font-bold text-black shrink-0">
+          <div className="w-8 h-8 rounded-full border border-[var(--card-border)] flex items-center justify-center text-xs font-bold shrink-0">
             {displayName.charAt(0).toUpperCase()}
           </div>
           {sidebarOpen && (
@@ -102,6 +106,9 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
 
   return (
     <>
+      <SidebarSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <MediaGalleryModal open={mediaOpen} onClose={() => setMediaOpen(false)} />
+
       <button
         type="button"
         className="lg:hidden fixed top-3.5 left-4 z-50 p-2.5 rounded-lg glass-panel"
@@ -127,11 +134,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
         )}
       >
         <div className="p-3 border-b border-[var(--card-border)] flex items-center justify-between gap-1">
-          {sidebarOpen ? (
-            <Logo href="/dashboard" height={44} variant="sidebar" />
-          ) : (
-            <Logo href="/dashboard" height={36} variant="collapsed" />
-          )}
+          <Logo href="/dashboard" height={sidebarOpen ? 44 : 36} />
           <button
             type="button"
             onClick={toggleSidebar}
@@ -139,6 +142,33 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
             aria-label="Toggle sidebar"
           >
             {sidebarOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeft className="w-4 h-4" />}
+          </button>
+        </div>
+
+        <div className={cn('px-2 pt-2 flex gap-1', !sidebarOpen && 'flex-col items-center')}>
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            title="Search projects & chats"
+            className={cn(
+              'flex items-center gap-2 rounded-lg text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors',
+              sidebarOpen ? 'flex-1 px-3 py-2' : 'p-2.5'
+            )}
+          >
+            <Search className="w-4 h-4 shrink-0" />
+            {sidebarOpen && <span className="text-xs">Search...</span>}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMediaOpen(true)}
+            title="Images & Videos"
+            className={cn(
+              'flex items-center gap-2 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors',
+              sidebarOpen ? 'px-3 py-2' : 'p-2.5'
+            )}
+          >
+            <ImageIcon className="w-4 h-4 shrink-0" aria-hidden />
+            {sidebarOpen && <span className="text-xs">Media</span>}
           </button>
         </div>
 
@@ -152,7 +182,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
               className={cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all',
                 isActive(href)
-                  ? 'glass-panel border-[var(--accent)]/40 text-[var(--accent)]'
+                  ? 'bg-white/10 text-[var(--foreground)] border border-[var(--card-border)]'
                   : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5',
                 !sidebarOpen && 'justify-center px-2'
               )}
@@ -161,47 +191,6 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
               {sidebarOpen && <span>{label}</span>}
             </Link>
           ))}
-
-          <div className="relative">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setThemeOpen(!themeOpen);
-              }}
-              title="Theme"
-              className={cn(
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5',
-                !sidebarOpen && 'justify-center px-2'
-              )}
-            >
-              <Palette className="w-4 h-4 shrink-0" />
-              {sidebarOpen && <span>Theme</span>}
-            </button>
-            {themeOpen && sidebarOpen && (
-              <div
-                className="absolute left-full top-0 ml-2 w-48 glass-panel-strong rounded-xl p-2 z-50 shadow-xl"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {(['image', 'white', 'black', 'gray', 'blue-gradient'] as const).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => {
-                      setTheme(t);
-                      setThemeOpen(false);
-                    }}
-                    className={cn(
-                      'w-full text-left px-3 py-2 rounded-lg text-xs capitalize',
-                      theme === t ? 'bg-[var(--primary)]/30 text-[var(--accent)]' : 'hover:bg-white/5'
-                    )}
-                  >
-                    {t.replace('-', ' ')}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
         </nav>
 
         {bottomSection}

@@ -86,7 +86,7 @@ export const ACTION_COSTS: Record<TaskType, number> = {
   chat: 1,
   translate: 1,
   image: 4,
-  code_fix: 5,
+  code_fix: 3,
   scrape: 5,
   '3d_model': 15,
   voice: 15,

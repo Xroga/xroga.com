@@ -10,8 +10,8 @@ const AGENT_STYLES: Record<string, string> = {
   architect: 'text-[var(--primary)]',
   builder: 'text-[var(--accent)]',
   reviewer: 'text-[var(--warning)]',
-  qa: 'text-amber-300',
-  truth_council: 'text-emerald-400',
+  qa: 'text-[var(--muted)]',
+  truth_council: 'text-[var(--foreground)]',
   complete: 'text-[var(--foreground)]',
 };
 
@@ -103,7 +103,7 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
           {loading && messages[messages.length - 1]?.role !== 'assistant' && (
             <p className="text-[var(--accent)] flex items-center gap-2">
               <Loader2 className="w-3 h-3 animate-spin" />
-              🧠 Swarm is thinking...
+              Swarm is thinking...
             </p>
           )}
           <div ref={bottomRef} />

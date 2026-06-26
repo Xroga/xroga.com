@@ -39,15 +39,6 @@ interface TerminalChatContextValue {
 
 const TerminalChatContext = createContext<TerminalChatContextValue | null>(null);
 
-const AGENT_ICONS: Record<string, string> = {
-  architect: '🧠',
-  builder: '⚙️',
-  reviewer: '🔍',
-  qa: '🧪',
-  truth_council: '✅',
-  complete: '🎉',
-};
-
 export function TerminalChatProvider({
   children,
   projectId: projectIdProp,
@@ -72,15 +63,22 @@ export function TerminalChatProvider({
 
   const addProgress = useCallback((agent: string, message: string) => {
     const key = agent.toLowerCase().replace(/\s/g, '_');
-    const icon = AGENT_ICONS[key] ?? '•';
-    const label = agent.replace(/_/g, ' ');
+    const labels: Record<string, string> = {
+      architect: 'Architect',
+      builder: 'Builder',
+      reviewer: 'Reviewer',
+      qa: 'QA Tester',
+      truth_council: 'Truth Council',
+      complete: 'Complete',
+    };
+    const label = labels[key] ?? agent.replace(/_/g, ' ');
     setMessages((m) => [
       ...m,
       {
         id: crypto.randomUUID(),
         role: 'system',
         agent: key,
-        content: `${icon} ${label.charAt(0).toUpperCase() + label.slice(1)}: ${message}`,
+        content: `[${label}] ${message}`,
       },
     ]);
   }, []);
