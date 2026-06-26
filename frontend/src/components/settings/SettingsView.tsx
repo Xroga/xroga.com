@@ -32,6 +32,10 @@ export function SettingsView({ email }: { email: string }) {
   const actions = useAppStore((s) => s.actions);
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
+  const setCustomDesktopBg = useThemeStore((s) => s.setCustomDesktopBg);
+  const setCustomMobileBg = useThemeStore((s) => s.setCustomMobileBg);
+  const customDesktopBg = useThemeStore((s) => s.customDesktopBg);
+  const customMobileBg = useThemeStore((s) => s.customMobileBg);
 
   useEffect(() => {
     api.profile.get()
@@ -259,7 +263,7 @@ export function SettingsView({ email }: { email: string }) {
             <div className="space-y-4">
               <h2 className="font-semibold">Theme</h2>
               <p className="text-sm text-[var(--muted)]">
-                Choose your workspace background. Image mode uses galactic wallpapers on desktop and mobile.
+                Choose your workspace background. Image mode uses galactic wallpapers — or upload your own.
               </p>
               <div className="grid sm:grid-cols-2 gap-3">
                 {THEME_OPTIONS.map((opt) => (
@@ -268,7 +272,7 @@ export function SettingsView({ email }: { email: string }) {
                     type="button"
                     onClick={() => setTheme(opt.id)}
                     className={cn(
-                      'text-left p-4 rounded-xl border transition-colors',
+                      'text-left p-4 rounded-xl border transition-colors universe-float',
                       theme === opt.id
                         ? 'border-[var(--accent)] bg-[var(--accent)]/10'
                         : 'border-[var(--card-border)] hover:border-[var(--primary)]/40'
@@ -278,6 +282,64 @@ export function SettingsView({ email }: { email: string }) {
                     <p className="text-xs text-[var(--muted)] mt-1">{opt.description}</p>
                   </button>
                 ))}
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t border-[var(--card-border)]">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Custom desktop wallpaper</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="text-xs w-full"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const reader = new FileReader();
+                      reader.onload = () => {
+                        setCustomDesktopBg(reader.result as string);
+                        setTheme('image');
+                        toast.success('Desktop wallpaper updated');
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                  {customDesktopBg && (
+                    <button
+                      type="button"
+                      className="text-xs text-red-400 mt-2 hover:underline"
+                      onClick={() => setCustomDesktopBg(null)}
+                    >
+                      Remove custom desktop
+                    </button>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Custom mobile wallpaper</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="text-xs w-full"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const reader = new FileReader();
+                      reader.onload = () => {
+                        setCustomMobileBg(reader.result as string);
+                        setTheme('image');
+                        toast.success('Mobile wallpaper updated');
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                  {customMobileBg && (
+                    <button
+                      type="button"
+                      className="text-xs text-red-400 mt-2 hover:underline"
+                      onClick={() => setCustomMobileBg(null)}
+                    >
+                      Remove custom mobile
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )}

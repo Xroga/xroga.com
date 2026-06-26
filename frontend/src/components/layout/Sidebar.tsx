@@ -134,7 +134,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
         )}
       >
         <div className="p-3 border-b border-[var(--card-border)] flex items-center justify-between gap-1">
-          <Logo href="/dashboard" height={sidebarOpen ? 44 : 36} />
+          <Logo href="/dashboard" height={sidebarOpen ? 44 : 36} variant="sidebar" />
           <button
             type="button"
             onClick={toggleSidebar}

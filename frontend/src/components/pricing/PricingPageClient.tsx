@@ -34,7 +34,7 @@ export function PricingPageClient() {
     <div className="min-h-screen">
       <header className="sticky top-0 z-50 glass-panel-strong border-b border-[var(--card-border)]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Logo href={loggedIn ? '/dashboard' : '/'} height={50} />
+          <Logo href={loggedIn ? '/dashboard' : '/'} variant="header" height={50} />
           <div className="flex items-center gap-4">
             {loggedIn ? (
               <Link href="/dashboard" className="text-sm text-[var(--accent)] hover:underline">

@@ -22,8 +22,8 @@ interface AppShellProps {
 
 export function AppShell({ children, displayName, email }: AppShellProps) {
   const [topUpOpen, setTopUpOpen] = useState(false);
-  const [terminalFullscreen, setTerminalFullscreen] = useState(false);
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
+  const theme = useThemeStore((s) => s.theme);
   const pathname = usePathname();
   const isDashboard = pathname === '/dashboard';
 
@@ -33,37 +33,36 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
         className="flex min-h-screen terminal-layout"
         style={{ '--sidebar-width': sidebarOpen ? '16rem' : '4.5rem' } as React.CSSProperties}
       >
-        {!terminalFullscreen && (
-          <Sidebar displayName={displayName} email={email} onTopUp={() => setTopUpOpen(true)} />
-        )}
+        <Sidebar displayName={displayName} email={email} onTopUp={() => setTopUpOpen(true)} />
         <div className="flex-1 flex flex-col min-w-0 min-h-screen">
-          {!terminalFullscreen && (
-            <header className="sticky top-0 z-30 flex items-center justify-between gap-4 px-4 sm:px-6 py-3 border-b border-[var(--card-border)] glass-panel-strong shrink-0">
-              <div className="flex items-center gap-4 pl-10 lg:pl-0">
-                <Logo href="/dashboard" height={50} />
-              </div>
-              <div className="flex items-center gap-2 sm:gap-3 ml-auto">
-                <HeaderActionMeter onClick={() => setTopUpOpen(true)} />
-                <ThemeToggle />
-                <NotificationBell />
-              </div>
-            </header>
-          )}
+          <header
+            className={cn(
+              'sticky top-0 z-30 flex items-center justify-between gap-4 px-4 sm:px-6 py-3 shrink-0 transition-all',
+              theme === 'image'
+                ? 'bg-transparent border-b border-transparent'
+                : 'border-b border-[var(--card-border)] glass-panel-strong'
+            )}
+          >
+            <div className="flex items-center gap-4 pl-10 lg:pl-0">
+              <Logo href="/dashboard" height={50} variant="header" />
+            </div>
+            <div className="flex items-center gap-2 sm:gap-3 ml-auto">
+              <HeaderActionMeter onClick={() => setTopUpOpen(true)} />
+              <ThemeToggle />
+              <NotificationBell />
+            </div>
+          </header>
           <main
             className={cn(
               'flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8',
-              isDashboard && !terminalFullscreen && 'pb-[240px] lg:pb-[220px]',
-              terminalFullscreen && 'p-0 overflow-hidden'
+              isDashboard && 'pb-[200px] lg:pb-[180px]'
             )}
           >
             {children}
           </main>
-          <TerminalDock
-            fullscreen={terminalFullscreen}
-            onFullscreen={() => setTerminalFullscreen((f) => !f)}
-          />
+          <TerminalDock />
         </div>
-        {!terminalFullscreen && <MobileNav />}
+        <MobileNav />
         <TopUpModal open={topUpOpen} onClose={() => setTopUpOpen(false)} />
       </div>
     </TerminalChatProvider>

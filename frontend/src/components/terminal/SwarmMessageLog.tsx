@@ -3,17 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Loader2, Terminal } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
+import { useThemeStore } from '@/store/useThemeStore';
 import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
 import { cn } from '@/lib/utils';
-
-const AGENT_STYLES: Record<string, string> = {
-  architect: 'text-[var(--primary)]',
-  builder: 'text-[var(--accent)]',
-  reviewer: 'text-[var(--warning)]',
-  qa: 'text-[var(--muted)]',
-  truth_council: 'text-[var(--foreground)]',
-  complete: 'text-[var(--foreground)]',
-};
 
 function useTypewriter(text: string, active: boolean, speed = 12) {
   const [displayed, setDisplayed] = useState('');
@@ -44,12 +36,22 @@ function TypewriterMessage({ content, animate }: { content: string; animate: boo
   );
 }
 
+const AGENT_STYLES: Record<string, string> = {
+  architect: 'text-[var(--primary)]',
+  builder: 'text-[var(--accent)]',
+  reviewer: 'text-[var(--warning)]',
+  qa: 'text-[var(--muted)]',
+  truth_council: 'text-[var(--foreground)]',
+  complete: 'text-[var(--foreground)]',
+};
+
 interface SwarmMessageLogProps {
   compact?: boolean;
 }
 
 export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
   const { messages, loading, animatingId, outOfActionsOpen, setOutOfActionsOpen } = useTerminalChat();
+  const theme = useThemeStore((s) => s.theme);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -60,19 +62,21 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
     <>
       <div
         className={cn(
-          'glass-panel-strong rounded-xl flex flex-col relative overflow-hidden scanlines',
-          compact ? 'min-h-[200px]' : 'min-h-[320px] flex-1'
+          'terminal-log rounded-xl relative overflow-hidden scanlines',
+          theme === 'white' && 'terminal-log-white',
+          theme === 'image' && 'terminal-log-image',
+          compact ? '' : 'w-full'
         )}
       >
-        <div className="flex items-center gap-2 px-4 pt-3 pb-2 border-b border-[var(--card-border)] shrink-0">
-          <Terminal className="w-4 h-4 text-[var(--accent)]" />
-          <h3 className="font-terminal text-sm text-[var(--accent)]">xroga@swarm ~ terminal</h3>
+        <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--card-border)]/30">
+          <Terminal className="w-4 h-4 opacity-70" />
+          <h3 className="font-terminal text-sm opacity-80">xroga@swarm ~ terminal</h3>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2 font-terminal text-[13px] min-h-[180px]">
+        <div className="px-4 py-3 space-y-2 font-terminal text-[13px]">
           {messages.length === 0 && !loading && (
-            <p className="text-[var(--muted)] text-center py-10">
-              <span className="text-[var(--accent)]">&gt;</span> Ask Xroga to build anything…
+            <p className="text-[var(--muted)] text-center py-6">
+              <span className="opacity-70">&gt;</span> Ask Xroga to build anything…
             </p>
           )}
           {messages.map((msg) => (
@@ -84,14 +88,14 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
               )}
             >
               {msg.role === 'user' ? (
-                <span className="inline-block px-3 py-1.5 rounded-lg bg-[var(--primary)]/25 border border-[var(--primary)]/30">
-                  <span className="text-[var(--accent)] mr-2">&gt;</span>
+                <span className="inline-block px-3 py-1.5 rounded-lg bg-white/10">
+                  <span className="opacity-60 mr-2">&gt;</span>
                   {msg.content}
                 </span>
               ) : msg.role === 'system' ? (
                 <p className="py-0.5">{msg.content}</p>
               ) : (
-                <p className="py-1 whitespace-pre-wrap text-[var(--foreground)]">
+                <p className="py-1 whitespace-pre-wrap">
                   <TypewriterMessage
                     content={msg.content}
                     animate={msg.id === animatingId && loading}
@@ -101,7 +105,7 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
             </div>
           ))}
           {loading && messages[messages.length - 1]?.role !== 'assistant' && (
-            <p className="text-[var(--accent)] flex items-center gap-2">
+            <p className="flex items-center gap-2 opacity-80">
               <Loader2 className="w-3 h-3 animate-spin" />
               Swarm is thinking...
             </p>

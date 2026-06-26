@@ -7,9 +7,11 @@ import Skeleton from 'react-loading-skeleton';
 import { ProjectCard } from './ProjectCard';
 import { ActivityFeed } from './ActivityFeed';
 import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
+import { QuickActionTabs } from '@/components/terminal/QuickActionTabs';
 import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
 import { api, type Project } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
+import { useThemeStore } from '@/store/useThemeStore';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 interface DashboardViewProps {
@@ -19,7 +21,9 @@ interface DashboardViewProps {
 export function DashboardView({ displayName }: DashboardViewProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [fullscreen, setFullscreen] = useState(false);
+  const fullscreen = useThemeStore((s) => s.terminalFullscreen);
+  const setFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
+  const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const setProfile = useAppStore((s) => s.setProfile);
 
   useEffect(() => {
@@ -32,29 +36,37 @@ export function DashboardView({ displayName }: DashboardViewProps) {
       .finally(() => setLoading(false));
   }, [displayName, setProfile]);
 
+  const terminalBlock = (
+    <div className="space-y-3">
+      <QuickActionTabs />
+      <SwarmMessageLog />
+    </div>
+  );
+
   if (fullscreen) {
     return (
-      <div className="fixed inset-0 z-30 flex flex-col bg-[var(--background)] pt-4 px-4 pb-[220px]">
+      <div
+        className="fixed inset-y-0 right-0 z-20 flex flex-col bg-[var(--background)]/95 backdrop-blur-md px-4 sm:px-6 pt-4 pb-[200px] overflow-y-auto"
+        style={{ left: sidebarOpen ? '16rem' : '4.5rem' }}
+      >
         <div className="flex items-center justify-between mb-3 shrink-0">
           <h2 className="font-terminal text-sm text-[var(--muted)]">xroga@swarm — fullscreen</h2>
           <button
             type="button"
             onClick={() => setFullscreen(false)}
-            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-[var(--card-border)] hover:bg-white/5"
+            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors"
           >
             <Minimize2 className="w-3.5 h-3.5" /> Exit fullscreen
           </button>
         </div>
-        <div className="flex-1 min-h-0">
-          <SwarmMessageLog />
-        </div>
+        {terminalBlock}
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 h-full flex flex-col">
-      <div className="shrink-0 flex items-start justify-between gap-4">
+    <div className="max-w-5xl mx-auto space-y-6">
+      <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold">
             Welcome back, <span className="gradient-text">{displayName}</span>! Your AI Swarm is ready.
@@ -66,8 +78,8 @@ export function DashboardView({ displayName }: DashboardViewProps) {
         <button
           type="button"
           onClick={() => setFullscreen(true)}
-          className="shrink-0 flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border border-[var(--card-border)] hover:bg-white/5 transition-colors"
-          title="Fullscreen terminal"
+          className="shrink-0 flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg hover:bg-white/10 transition-colors"
+          title="Fullscreen terminal (outside sidebar)"
         >
           <Maximize2 className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Fullscreen</span>
@@ -76,11 +88,9 @@ export function DashboardView({ displayName }: DashboardViewProps) {
 
       <ApiConnectionBanner />
 
-      <div className="flex-1 min-h-0 flex flex-col">
-        <SwarmMessageLog />
-      </div>
+      {terminalBlock}
 
-      <div className="shrink-0 space-y-6 pb-4">
+      <div className="space-y-6 pb-4">
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold text-sm">Recent Projects</h2>
