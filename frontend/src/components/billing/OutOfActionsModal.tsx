@@ -26,7 +26,7 @@ export function OutOfActionsModal({ open, onClose }: OutOfActionsModalProps) {
         <p className="text-[var(--muted)] text-sm mb-6">
           You&apos;ve used your free actions. Subscribe to continue building with the Swarm.
         </p>
-        <CheckoutButton planTier="pulse" label="Subscribe — Pulse Plan" className="w-full mb-3" onSuccess={onClose} />
+        <CheckoutButton planTier="nova" label="Subscribe — Nova Plan" className="w-full mb-3" onSuccess={onClose} />
         <Link
           href="/pricing"
           className="block text-sm text-[var(--accent)] hover:underline"

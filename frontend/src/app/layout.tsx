@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -25,8 +26,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased cosmic-bg min-h-screen`}>
-        {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen theme-image`}>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

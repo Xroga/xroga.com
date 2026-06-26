@@ -99,10 +99,10 @@ export const ACTION_COSTS: Record<TaskType, number> = {
 };
 
 export const PLAN_ALLOCATIONS: Record<PlanTier, { actions: number; concurrency: number }> = {
-  unpaid: { actions: 10, concurrency: 1 },
-  spark: { actions: 1000, concurrency: 2 },
-  pulse: { actions: 3000, concurrency: 3 },
-  nova: { actions: 9000, concurrency: 5 },
-  zenith: { actions: 30000, concurrency: 15 },
-  singularity: { actions: 75000, concurrency: 999 },
+  unpaid: { actions: 50, concurrency: 1 },
+  spark: { actions: 500, concurrency: 2 },
+  pulse: { actions: 500, concurrency: 2 },
+  nova: { actions: 2000, concurrency: 5 },
+  zenith: { actions: 6000, concurrency: 30 },
+  singularity: { actions: 50000, concurrency: 100 },
 };

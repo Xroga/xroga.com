@@ -12,7 +12,6 @@ export class BillingService {
       tier: plan.tier,
       name: plan.name,
       priceLabel: plan.priceLabel,
-      priceRange: plan.priceRange,
       actionsLabel: plan.actionsLabel,
       actions: plan.actions,
       concurrency: plan.concurrency,

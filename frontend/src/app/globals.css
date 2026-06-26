@@ -2,31 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 :root {
-  --background: #0a0e14;
+  --background: #0a0e17;
   --foreground: #ffffff;
-  --card: rgba(20, 30, 50, 0.6);
-  --card-border: rgba(74, 122, 255, 0.2);
+  --card: rgba(20, 30, 60, 0.6);
+  --card-border: rgba(74, 122, 255, 0.25);
   --primary: #4a7aff;
   --primary-glow: #6b9fff;
-  --accent: #00ff88;
-  --accent-dim: rgba(0, 255, 136, 0.15);
-  --muted: #b0bec5;
-  --success: #00ff88;
-  --warning: #f59e0b;
+  --accent: #00d4ff;
+  --accent-dim: rgba(0, 212, 255, 0.12);
+  --muted: #b8c6e0;
+  --success: #00d4ff;
+  --warning: #fbbf24;
   --danger: #ef4444;
   --glass-blur: 20px;
+  --font-sans: 'Inter', var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', var(--font-geist-mono), ui-monospace, monospace;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-sans);
+}
+
+body.theme-white {
+  --background: #f5f7fb;
+  --foreground: #0a0e17;
+  --card: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(74, 122, 255, 0.2);
+  --muted: #5a6478;
+}
+
+body.theme-black {
+  --background: #000000;
+  --card: rgba(10, 10, 20, 0.85);
+}
+
+body.theme-gray {
+  --background: #1a1f2e;
+  --card: rgba(40, 48, 65, 0.75);
+}
+
+body.theme-blue-gradient {
+  background: linear-gradient(135deg, #0a0e17 0%, #1a2a5e 40%, #0a1628 100%) !important;
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .font-terminal {
+    font-family: var(--font-mono);
   }
 
   .glass-panel {
@@ -37,40 +63,18 @@ body {
   }
 
   .glass-panel-strong {
-    background: rgba(10, 20, 40, 0.75);
+    background: rgba(10, 20, 45, 0.75);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(0, 255, 136, 0.15);
+    border: 1px solid rgba(0, 212, 255, 0.15);
   }
 
   .terminal-grid {
-    background-color: var(--background);
-    background-image:
-      linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
-    background-size: 32px 32px;
-  }
-
-  .cosmic-bg {
-    background:
-      radial-gradient(ellipse at 50% 100%, rgba(74, 122, 255, 0.25) 0%, transparent 55%),
-      radial-gradient(ellipse at 20% 20%, rgba(0, 255, 136, 0.08) 0%, transparent 45%),
-      radial-gradient(ellipse at 80% 30%, rgba(124, 58, 237, 0.12) 0%, transparent 40%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Ccircle cx='20' cy='30' r='1'/%3E%3Ccircle cx='80' cy='60' r='0.8'/%3E%3Ccircle cx='140' cy='20' r='1.2'/%3E%3Ccircle cx='170' cy='90' r='0.7'/%3E%3Ccircle cx='50' cy='120' r='1'/%3E%3Ccircle cx='120' cy='150' r='0.9'/%3E%3C/g%3E%3C/svg%3E"),
-      var(--background);
-    background-size: auto, auto, auto, 200px 200px, auto;
-  }
-
-  .glow-green {
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.25);
-  }
-
-  .glow-blue {
-    box-shadow: 0 0 40px rgba(74, 122, 255, 0.3);
+    background-color: transparent;
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #00ff88, #4a7aff);
+    background: linear-gradient(135deg, #00d4ff, #4a7aff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -83,6 +87,10 @@ body {
     background-clip: text;
   }
 
+  .glow-frozen {
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+  }
+
   .scanlines::after {
     content: '';
     pointer-events: none;
@@ -92,8 +100,8 @@ body {
       0deg,
       transparent,
       transparent 2px,
-      rgba(0, 0, 0, 0.08) 2px,
-      rgba(0, 0, 0, 0.08) 4px
+      rgba(0, 0, 0, 0.06) 2px,
+      rgba(0, 0, 0, 0.06) 4px
     );
     border-radius: inherit;
   }
@@ -109,7 +117,12 @@ body {
     50% { opacity: 0; }
   }
 
-  .font-terminal {
-    font-family: var(--font-geist-mono), ui-monospace, monospace;
+  @keyframes typewriter {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
+  }
+
+  .typewriter-char {
+    animation: typewriter 0.02s ease-in;
   }
 }

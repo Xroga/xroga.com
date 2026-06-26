@@ -1,40 +1,30 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { LOGO_URL } from '@/lib/plans';
+import { LOGO_URL } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
   href?: string;
-  size?: 'sm' | 'md' | 'lg';
-  showText?: boolean;
+  height?: number;
   className?: string;
 }
 
-const sizes = { sm: 28, md: 36, lg: 48 };
-
-export function Logo({ href = '/dashboard', size = 'md', showText = true, className }: LogoProps) {
-  const px = sizes[size];
-
+export function Logo({ href = '/dashboard', height = 50, className }: LogoProps) {
   const inner = (
-    <div className={cn('flex items-center gap-2.5 group', className)}>
-      <div className="relative glow-green rounded-lg">
-        <Image
-          src={LOGO_URL}
-          alt="Xroga"
-          width={px}
-          height={px}
-          className="object-contain drop-shadow-[0_0_12px_rgba(0,255,136,0.5)]"
-          unoptimized
-        />
-      </div>
-      {showText && (
-        <span className="text-xl font-bold gradient-text tracking-tight">XROGA</span>
-      )}
+    <div className={cn('relative glow-frozen', className)} style={{ height, width: height * 2.2 }}>
+      <Image
+        src={LOGO_URL}
+        alt="Xroga"
+        fill
+        className="object-contain object-left drop-shadow-[0_0_16px_rgba(0,212,255,0.4)]"
+        unoptimized
+        priority
+      />
     </div>
   );
 
   if (href) {
-    return <Link href={href}>{inner}</Link>;
+    return <Link href={href} className="inline-block">{inner}</Link>;
   }
   return inner;
 }

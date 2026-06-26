@@ -300,7 +300,8 @@ export async function apiFetch<T = unknown>(
 
 export const api = {
   actions: {
-    balance: () => apiFetch<{ total: number; used: number; remaining: number; planTier: string; resetDate: string }>('/api/actions/balance'),
+    balance: () =>
+      apiFetch<ActionBalance>('/api/actions/balance'),
   },
   projects: {
     list: () => apiFetch<Project[]>('/api/projects'),
@@ -438,6 +439,7 @@ export interface ActionBalance {
   remaining: number;
   planTier: string;
   resetDate: string;
+  concurrencyLimit?: number;
 }
 
 export interface SwarmRunSummary {
