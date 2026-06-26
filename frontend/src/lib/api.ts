@@ -1,6 +1,11 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { createClient } from '@/lib/supabase/client';
+import {
+  swarmOutputToText,
+  type SwarmCompleteEvent,
+  type SwarmProgressEvent,
+} from '@/lib/swarm';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -27,6 +32,109 @@ export function siteUrl(): string {
 }
 
 export const API_URL = resolveApiUrl();
+
+export interface StreamSwarmOptions {
+  projectId?: string;
+  onProgress?: (event: SwarmProgressEvent) => void;
+  onDelta?: (delta: string) => void;
+}
+
+/** Stream SSE from POST /api/swarm/execute with JWT auth. */
+export async function streamSwarmExecute(
+  prompt: string,
+  options: StreamSwarmOptions = {}
+): Promise<string> {
+  const token = await getAccessToken();
+  if (!token) {
+    throw new Error('Please sign in to chat.');
+  }
+
+  const res = await fetch(`${API_URL}/api/swarm/execute`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'text/event-stream',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      prompt,
+      stream: true,
+      ...(options.projectId ? { projectId: options.projectId } : {}),
+    }),
+  });
+
+  const contentType = res.headers.get('content-type') ?? '';
+
+  if (!res.ok && !contentType.includes('text/event-stream')) {
+    const data = await res.json().catch(() => ({})) as { error?: string; code?: string };
+    if (res.status === 401) {
+      throw new Error(
+        data.error ?? 'Authentication failed — sign out and sign in again to refresh your session.'
+      );
+    }
+    throw new ApiError(data.error ?? `Swarm failed (${res.status})`, res.status, data);
+  }
+
+  if (!res.body) {
+    throw new Error('No response body from swarm stream');
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let finalText = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const parts = buffer.split('\n\n');
+    buffer = parts.pop() ?? '';
+
+    for (const part of parts) {
+      const lines = part.split('\n');
+      let eventName = 'message';
+      let dataLine = '';
+
+      for (const line of lines) {
+        if (line.startsWith('event:')) {
+          eventName = line.slice(6).trim();
+        } else if (line.startsWith('data:')) {
+          dataLine += line.slice(5).trim();
+        }
+      }
+
+      if (!dataLine) continue;
+
+      const payload = JSON.parse(dataLine) as Record<string, unknown>;
+
+      if (eventName === 'error' || payload.error) {
+        throw new Error(String(payload.error ?? 'Swarm stream error'));
+      }
+
+      if (eventName === 'progress') {
+        options.onProgress?.(payload as SwarmProgressEvent);
+      }
+
+      if (eventName === 'delta' && typeof payload.delta === 'string') {
+        finalText += payload.delta;
+        options.onDelta?.(payload.delta);
+      }
+
+      if (eventName === 'complete') {
+        const complete = payload as SwarmCompleteEvent;
+        const text = swarmOutputToText(complete.output);
+        if (text && !finalText) {
+          finalText = text;
+          options.onDelta?.(text);
+        }
+      }
+    }
+  }
+
+  return finalText || 'Swarm task complete.';
+}
 
 export interface StreamChatOptions {
   projectId?: string;
@@ -150,6 +258,15 @@ export async function apiFetch<T = unknown>(
 
   if (!res.ok) {
     const message = typeof data.error === 'string' ? data.error : 'API request failed';
+    if (res.status === 401) {
+      throw new ApiError(
+        message.includes('token') || message.includes('authorization')
+          ? message
+          : 'Authentication failed — sign out and sign in again.',
+        res.status,
+        data
+      );
+    }
     throw new ApiError(message, res.status, data);
   }
 
@@ -200,14 +317,11 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ prompt, projectId }),
       }),
+    stream: streamSwarmExecute,
   },
   chat: {
-    send: (message: string, userId: string, onDelta?: (delta: string) => void) => {
-      if (onDelta) {
-        return streamChatMessage(message, userId, { onDelta });
-      }
-      return streamChatMessage(message, userId, { onDelta: () => {} });
-    },
+    send: (message: string, _userId?: string, onDelta?: (delta: string) => void) =>
+      streamSwarmExecute(message, { onDelta }),
   },
 };
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { streamChatMessage } from '@/lib/api';
+import { streamSwarmExecute } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 import toast from 'react-hot-toast';
 import { Send, Loader2, Bot, User } from 'lucide-react';
@@ -21,6 +21,7 @@ interface SwarmChatProps {
 export function SwarmChat({ projectId }: SwarmChatProps) {
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
+  const [swarmStatus, setSwarmStatus] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const chatPrefill = useAppStore((s) => s.chatPrefill);
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
@@ -36,7 +37,7 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, loading]);
+  }, [messages, loading, swarmStatus]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -49,16 +50,22 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
     setPrompt('');
     setLoading(true);
     setSwarmRunning(true);
+    setSwarmStatus('Swarm engaged...');
 
     try {
       const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Please sign in to chat.');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Please sign in to chat.');
 
       setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '' }]);
 
-      await streamChatMessage(text, user.id, {
+      await streamSwarmExecute(text, {
         projectId,
+        onProgress: (event) => {
+          const agent = event.agent ? event.agent.replace(/_/g, ' ') : 'Swarm';
+          const label = event.message ?? event.status ?? 'working';
+          setSwarmStatus(`${agent}: ${label}`);
+        },
         onDelta: (delta) => {
           setMessages((m) =>
             m.map((msg) =>
@@ -80,6 +87,7 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
     } finally {
       setLoading(false);
       setSwarmRunning(false);
+      setSwarmStatus(null);
     }
   }
 
@@ -131,6 +139,9 @@ export function SwarmChat({ projectId }: SwarmChatProps) {
             )}
           </div>
         ))}
+        {loading && swarmStatus && (
+          <p className="text-xs text-violet-300/80 text-center">{swarmStatus}</p>
+        )}
         <div ref={bottomRef} />
       </div>
 

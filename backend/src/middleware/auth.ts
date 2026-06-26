@@ -14,10 +14,23 @@ async function resolveUser(token: string): Promise<{ userId: string; email?: str
     throw new Error('SUPABASE_URL must be set on Fly.io');
   }
 
-  if (token === 'test' || token.length < 20) {
+  if (!token || token.length < 20) {
     throw new Error('Invalid or expired token');
   }
 
+  // Primary: verify via Supabase Admin (most reliable when service role key is set)
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    const supabase = getSupabaseAdmin();
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (!error && user) {
+      return { userId: user.id, email: user.email };
+    }
+    if (error) {
+      console.warn('[auth] supabase.auth.getUser failed:', error.message);
+    }
+  }
+
+  // Fallback: local JWT verification (HS256 secret or JWKS)
   try {
     const verified = await verifySupabaseAccessToken(token);
     return { userId: verified.userId, email: verified.email };
@@ -25,17 +38,8 @@ async function resolveUser(token: string): Promise<{ userId: string; email?: str
     console.warn('[auth] JWT verify failed:', (jwksErr as Error).message);
   }
 
-  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    const supabase = getSupabaseAdmin();
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (!error && user) {
-      return { userId: user.id, email: user.email };
-    }
-    throw new Error(error?.message ?? 'Invalid or expired token');
-  }
-
   throw new Error(
-    'Token verification failed. Set SUPABASE_URL and SUPABASE_JWT_SECRET (or SUPABASE_SERVICE_ROLE_KEY) on Fly.io.'
+    'Invalid or expired token. Sign out and sign in again to refresh your session.'
   );
 }
 
@@ -43,7 +47,10 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith('Bearer ')) {
-    res.status(401).json({ error: 'Missing or invalid authorization header', code: 'NO_TOKEN' });
+    res.status(401).json({
+      error: 'Missing authorization header. Sign in and retry.',
+      code: 'NO_TOKEN',
+    });
     return;
   }
 
@@ -68,19 +75,21 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
     const message = err instanceof Error ? err.message : 'Authentication failed';
     console.error('[auth]', message);
 
-    if (message.includes('SUPABASE_URL') || message.includes('SUPABASE_SERVICE_ROLE_KEY') || message.includes('SUPABASE_JWT_SECRET')) {
+    if (
+      message.includes('SUPABASE_URL') ||
+      message.includes('SUPABASE_SERVICE_ROLE_KEY') ||
+      message.includes('SUPABASE_JWT_SECRET')
+    ) {
       res.status(503).json({
-        error: 'API auth not configured on Fly.io. Set SUPABASE_URL + SUPABASE_JWT_SECRET (or SERVICE_ROLE_KEY).',
+        error: 'API auth not configured on Fly.io. Set SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY.',
         code: 'AUTH_NOT_CONFIGURED',
       });
       return;
     }
 
-    if (message.toLowerCase().includes('expired') || message.toLowerCase().includes('invalid')) {
-      res.status(401).json({ error: 'Session expired — sign out and sign in again.', code: 'TOKEN_INVALID' });
-      return;
-    }
-
-    res.status(401).json({ error: message, code: 'AUTH_FAILED' });
+    res.status(401).json({
+      error: message,
+      code: 'AUTH_FAILED',
+    });
   }
 }

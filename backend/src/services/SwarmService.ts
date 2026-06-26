@@ -5,8 +5,9 @@ import { ActionService } from './ActionService.js';
 import { classifyFeature, computeFeatureActionCost } from './architect/featureRouter.js';
 import { sendSSE } from '../lib/sse.js';
 import { InsufficientActionsError } from '../errors/InsufficientActionsError.js';
+import { ensureUserRecords } from './ensureUserRecords.js';
 import type { SwarmStatus } from '../types/index.js';
-import type { FeatureCategory, SwarmProgressEvent } from '../types/features.js';
+import type { FeatureCategory, SwarmProgressEvent, FeatureOutput } from '../types/features.js';
 import { FEATURE_TASK_TYPES } from '../types/features.js';
 
 function isGreeting(prompt: string): boolean {
@@ -29,6 +30,12 @@ export class SwarmService {
     options?: { lineCount?: number; extras?: Record<string, unknown> }
   ): Promise<SwarmRunResult> {
     const supabase = getSupabaseAdmin();
+
+    try {
+      await ensureUserRecords(userId);
+    } catch (provisionErr) {
+      console.warn('[SwarmService] ensureUserRecords:', (provisionErr as Error).message);
+    }
 
     const route = await classifyFeature(prompt);
     let actionCost = computeFeatureActionCost(route.category, prompt, { lineCount: options?.lineCount });
@@ -131,6 +138,19 @@ export class SwarmService {
       details: { runId: run.id, featureCategory: route.category, iterations: result.iterations },
     });
 
+    if (route.category === 'chat' && result.success) {
+      const chatOutput = result.output as FeatureOutput | undefined;
+      const reply =
+        chatOutput?.type === 'chat' && typeof chatOutput.content === 'string'
+          ? chatOutput.content
+          : this.summarizeOutput(result.output);
+
+      await supabase.from('messages').insert([
+        { user_id: userId, content: prompt, role: 'user' },
+        { user_id: userId, content: reply, role: 'assistant' },
+      ]);
+    }
+
     return { runId: run.id, result, actions: deductResult, featureCategory: route.category };
   }
 
@@ -152,14 +172,25 @@ export class SwarmService {
 
     const result = await this.run(userId, prompt, projectId, (event) => {
       sendSSE(res, {
-      event: 'progress',
-      data: {
-        agent: event.agent,
-        status: event.status,
-        message: event.message,
-        iteration: event.iteration,
-      },
+        event: 'progress',
+        data: {
+          agent: event.agent,
+          status: event.status,
+          message: event.message,
+          iteration: event.iteration,
+        },
+      });
     });
+
+    const chatOutput = result.result.output as FeatureOutput | undefined;
+    const replyText =
+      chatOutput?.type === 'chat' && typeof chatOutput.content === 'string'
+        ? chatOutput.content
+        : this.summarizeOutput(result.result.output);
+
+    sendSSE(res, {
+      event: 'delta',
+      data: { delta: replyText },
     });
 
     sendSSE(res, {
