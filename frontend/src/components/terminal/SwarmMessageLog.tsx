@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Terminal } from 'lucide-react';
+import { Terminal, Sun, Moon } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
@@ -53,25 +53,39 @@ interface SwarmMessageLogProps {
 export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
   const { messages, loading, animatingId, outOfActionsOpen, setOutOfActionsOpen } = useTerminalChat();
   const theme = useThemeStore((s) => s.theme);
+  const terminalColorMode = useThemeStore((s) => s.terminalColorMode);
+  const toggleTerminalColorMode = useThemeStore((s) => s.toggleTerminalColorMode);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
+  const isDay = terminalColorMode === 'day';
+
   return (
     <>
       <div
         className={cn(
           'terminal-log rounded-xl relative overflow-hidden scanlines',
-          theme === 'white' && 'terminal-log-white',
+          isDay ? 'terminal-log-day' : 'terminal-log-night',
+          theme === 'white' && isDay && 'terminal-log-white',
           theme === 'image' && 'terminal-log-image',
           compact ? '' : 'w-full'
         )}
       >
         <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--card-border)]/30">
           <Terminal className="w-4 h-4 opacity-70" />
-          <h3 className="font-terminal text-sm opacity-80">xroga@swarm ~ terminal</h3>
+          <h3 className="font-terminal text-sm opacity-80 flex-1">xroga@swarm ~ terminal</h3>
+          <button
+            type="button"
+            onClick={toggleTerminalColorMode}
+            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+            title={isDay ? 'Switch to night terminal' : 'Switch to day terminal'}
+            aria-label={isDay ? 'Night mode' : 'Day mode'}
+          >
+            {isDay ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5" />}
+          </button>
         </div>
 
         <div className="px-4 py-3 space-y-2 font-terminal text-[13px]">

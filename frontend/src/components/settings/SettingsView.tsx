@@ -13,7 +13,7 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useThemeStore } from '@/store/useThemeStore';
 import { THEME_OPTIONS } from '@/lib/theme';
-import { ALL_ACTION_COSTS, estimateActionCost } from '@/lib/actionCosts';
+import { ALL_ACTION_COSTS, estimateActionCost, tasksForActionBudget } from '@/lib/actionCosts';
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
 
 const TABS = ['General', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
@@ -41,7 +41,9 @@ export function SettingsView({ email }: { email: string }) {
   const customDesktopBg = useThemeStore((s) => s.customDesktopBg);
   const customMobileBg = useThemeStore((s) => s.customMobileBg);
   const [calcPrompt, setCalcPrompt] = useState('');
+  const [calcBudget, setCalcBudget] = useState('50');
   const calcEstimate = estimateActionCost(calcPrompt || 'chat');
+  const calcAffordable = tasksForActionBudget(Math.max(0, parseInt(calcBudget, 10) || 0), 8);
   const usedActions = actions ? actions.total - actions.remaining : 0;
   const usedPct = actions?.total ? Math.round((usedActions / actions.total) * 100) : 0;
 
@@ -198,21 +200,45 @@ export function SettingsView({ email }: { email: string }) {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl border border-[var(--card-border)] bg-white/[0.02]">
-                <h3 className="font-medium text-sm mb-2">Estimate before you build</h3>
-                <input
-                  value={calcPrompt}
-                  onChange={(e) => setCalcPrompt(e.target.value)}
-                  placeholder="Describe your task..."
-                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-[var(--card-border)] text-sm mb-2"
-                />
-                <p className="text-sm">
-                  Est. <strong>{calcEstimate.cost}</strong> actions — {calcEstimate.label}
-                </p>
+              <div className="p-4 rounded-xl border border-[var(--card-border)] bg-white/[0.02] space-y-4">
+                <h3 className="font-medium text-sm">Action cost calculator</h3>
+                <div>
+                  <label className="block text-xs text-[var(--muted)] mb-1">Describe your task → see cost</label>
+                  <input
+                    value={calcPrompt}
+                    onChange={(e) => setCalcPrompt(e.target.value)}
+                    placeholder="Describe your task..."
+                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-[var(--card-border)] text-sm mb-2"
+                  />
+                  <p className="text-sm">
+                    Est. <strong>{calcEstimate.cost}</strong> actions — {calcEstimate.label}
+                  </p>
+                  {calcEstimate.breakdown && (
+                    <p className="text-xs text-[var(--muted)] mt-1">{calcEstimate.breakdown.join(' · ')}</p>
+                  )}
+                </div>
+                <div className="border-t border-[var(--card-border)]/40 pt-3">
+                  <label className="block text-xs text-[var(--muted)] mb-1">Enter actions → see what you can do</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={calcBudget}
+                    onChange={(e) => setCalcBudget(e.target.value)}
+                    className="w-28 px-3 py-2 rounded-lg bg-white/5 border border-[var(--card-border)] text-sm font-mono mb-2"
+                  />
+                  <ul className="text-xs space-y-1">
+                    {calcAffordable.map((c) => (
+                      <li key={c.id} className="flex justify-between py-0.5">
+                        <span className="text-[var(--muted)]">{c.task}</span>
+                        <span className="font-mono">{Math.floor((parseInt(calcBudget, 10) || 0) / c.cost)}×</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
 
-              <div className="text-xs text-[var(--muted)] space-y-1 max-h-40 overflow-y-auto">
-                {ALL_ACTION_COSTS.slice(0, 8).map((c) => (
+              <div className="text-xs text-[var(--muted)] space-y-1 max-h-48 overflow-y-auto">
+                {ALL_ACTION_COSTS.map((c) => (
                   <div key={c.id} className="flex justify-between py-1 border-b border-[var(--card-border)]/40">
                     <span>{c.task}</span>
                     <span className="font-mono">{c.cost}</span>

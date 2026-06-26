@@ -16,7 +16,7 @@ export const CORE_ACTION_COSTS: ActionCostItem[] = [
   { id: 'voice', category: 'Core AI', task: 'Voice / Audio', example: 'Clone voice & narrate script', cost: 15 },
   { id: '3d_model', category: 'Core AI', task: '3D Model Generation', example: '3D game character', cost: 15 },
   { id: 'social', category: 'Core AI', task: 'Social Media Posting', example: 'Post to X, LinkedIn, Instagram', cost: 20 },
-  { id: 'video_short', category: 'Core AI', task: 'AI Video (5s clip)', example: '5-second promo clip', cost: 50 },
+  { id: 'video_short', category: 'Core AI', task: 'AI Video Generation', example: '5-second promo clip', cost: 50 },
   { id: 'research', category: 'Core AI', task: 'Deep Research', example: '200-source cited report', cost: 100 },
 ];
 
@@ -28,69 +28,97 @@ export const AGENT_WORKFLOW_COSTS: ActionCostItem[] = [
   { id: 'qa', category: 'Agent', task: 'QA Tester', example: 'Headless browser simulation', cost: 15 },
   { id: 'builder_final', category: 'Agent', task: 'Builder (Final)', example: 'Fixes UI bugs', cost: 10 },
   { id: 'debugger', category: 'Agent', task: 'Debugger', example: 'Compile & run check', cost: 10 },
+  { id: 'automation_runtime', category: 'Agent', task: 'Automation Runtime', example: '10 actions per 10 min per browser tab', cost: 10 },
 ];
 
 export const MEDIA_ACTION_COSTS: ActionCostItem[] = [
-  { id: 'logline', category: 'Media', task: 'Script Outline', example: '5-beat sci-fi outline', cost: 2 },
+  { id: 'logline', category: 'Media', task: 'Script Outline / Logline', example: '5-beat sci-fi outline', cost: 2 },
   { id: 'character', category: 'Media', task: 'Character Profile', example: 'Lead protagonist backstory', cost: 4 },
   { id: 'scene_short', category: 'Media', task: 'Scene Script (2-3 pp)', example: 'Noir confrontation scene', cost: 5 },
   { id: 'episode', category: 'Media', task: 'Full Episode (45 min)', example: 'Complete TV teleplay', cost: 30 },
   { id: 'movie_script', category: 'Media', task: 'Full Movie Script', example: '90-120 min screenplay', cost: 50 },
-  { id: 'coverage', category: 'Media', task: 'Script Analysis', example: '110-page coverage report', cost: 15 },
+  { id: 'coverage', category: 'Media', task: 'Script Analysis & Coverage', example: '110-page coverage report', cost: 15 },
+  { id: 'dialogue_polish', category: 'Media', task: 'Dialogue Polish / Localization', example: 'British teen drama rewrite', cost: 6 },
+  { id: 'transcription', category: 'Media', task: 'Transcription (1-hour)', example: '45-min episode dialogue', cost: 20 },
+  { id: 'season_summary', category: 'Media', task: 'Episode Summarization', example: '10-episode season recap', cost: 30 },
+  { id: 'continuity', category: 'Media', task: 'Continuity & Canon Check', example: '8-episode timeline audit', cost: 50 },
+  { id: 'storyboard', category: 'Media', task: 'Storyboard (5 key frames)', example: 'Climactic action sequence', cost: 25 },
   { id: 'video_1min', category: 'Media', task: 'AI Video 1-min Scene', example: 'Cinematic rendered scene', cost: 110 },
   { id: 'video_30min', category: 'Media', task: 'AI Video 30-min Episode', example: 'Full drama episode', cost: 400 },
   { id: 'video_movie', category: 'Media', task: 'Full Movie (90 min)', example: 'Feature film generation', cost: 1200 },
+  { id: 'dubbing', category: 'Media', task: 'Voice Dubbing (Full Episode)', example: 'Clone 3 voices, dub to Spanish', cost: 100 },
+  { id: 'soundtrack', category: 'Media', task: 'Soundtrack / Score Generation', example: '30-min orchestral score', cost: 60 },
 ];
 
 export const ALL_ACTION_COSTS = [...CORE_ACTION_COSTS, ...AGENT_WORKFLOW_COSTS, ...MEDIA_ACTION_COSTS];
+
+const ESTIMATE_RULES: { pattern: RegExp; id: string }[] = [
+  { pattern: /\b(full movie|90.?min|feature film|120.?min)\b/, id: 'video_movie' },
+  { pattern: /\b(30.?min episode|animated episode|drama episode)\b/, id: 'video_30min' },
+  { pattern: /\b(1.?min scene|one minute|cinematic scene)\b/, id: 'video_1min' },
+  { pattern: /\b(storyboard|key frames)\b/, id: 'storyboard' },
+  { pattern: /\b(continuity|canon check|timeline)\b/, id: 'continuity' },
+  { pattern: /\b(season summary|binge.?mode|episode recap)\b/, id: 'season_summary' },
+  { pattern: /\b(transcri|subtitle)\b/, id: 'transcription' },
+  { pattern: /\b(dialogue polish|localization)\b/, id: 'dialogue_polish' },
+  { pattern: /\b(coverage|script analysis)\b/, id: 'coverage' },
+  { pattern: /\b(screenplay|movie script|full script|teleplay)\b/, id: 'movie_script' },
+  { pattern: /\b(full episode|45.?min)\b/, id: 'episode' },
+  { pattern: /\b(scene script|confrontation scene)\b/, id: 'scene_short' },
+  { pattern: /\b(character profile|backstory|protagonist)\b/, id: 'character' },
+  { pattern: /\b(logline|outline|5.?beat)\b/, id: 'logline' },
+  { pattern: /\b(soundtrack|orchestral score)\b/, id: 'soundtrack' },
+  { pattern: /\b(dubbing|voice dub)\b/, id: 'dubbing' },
+  { pattern: /\b(research|200 source|deep research|cited report)\b/, id: 'research' },
+  { pattern: /\b(5.?second|promo clip|trailer|ai video)\b/, id: 'video_short' },
+  { pattern: /\b(social|twitter|linkedin|instagram|post to)\b/, id: 'social' },
+  { pattern: /\b(voice|tts|clone|narrat|audio)\b/, id: 'voice' },
+  { pattern: /\b(3d model|3d character|avatar)\b/, id: '3d_model' },
+  { pattern: /\b(scrape|crawl|automat|browser)\b/, id: 'scrape' },
+  { pattern: /\b(image|logo|generate.*picture|flux)\b/, id: 'image' },
+  { pattern: /\b(full.?stack|react app|build.*app|website|mobile app)\b/, id: 'builder' },
+  { pattern: /\b(debug|fix.*code|refactor)\b/, id: 'code' },
+];
+
+function findCostItem(id: string): ActionCostItem | undefined {
+  return ALL_ACTION_COSTS.find((c) => c.id === id);
+}
 
 /** Estimate cost from user prompt (mirrors backend classifyTaskType) */
 export function estimateActionCost(prompt: string): { cost: number; label: string; breakdown?: string[] } {
   const p = prompt.toLowerCase();
 
-  if (/\b(full movie|90.?min|feature film|120.?min)\b/.test(p)) {
-    return { cost: 1200, label: 'Full Movie AI Generation', breakdown: ['Script + render pipeline'] };
-  }
-  if (/\b(30.?min|episode|drama series)\b/.test(p)) {
-    return { cost: 400, label: 'AI Video 30-min Episode' };
-  }
-  if (/\b(1.?min|one minute|cinematic scene)\b/.test(p)) {
-    return { cost: 110, label: 'AI Video 1-min Scene' };
-  }
-  if (/\b(screenplay|movie script|full script)\b/.test(p)) {
-    return { cost: 50, label: 'Full Movie Script' };
-  }
-  if (/\b(research|200 source|deep research|cited report)\b/.test(p)) {
-    return { cost: 100, label: 'Deep Research' };
-  }
-  if (/\b(video|promo clip|trailer)\b/.test(p)) {
-    return { cost: 50, label: 'AI Video Generation' };
-  }
-  if (/\b(social|twitter|linkedin|instagram|post to)\b/.test(p)) {
-    return { cost: 20, label: 'Social Media Posting' };
-  }
-  if (/\b(voice|tts|clone|narrat|audio)\b/.test(p)) {
-    return { cost: 15, label: 'Voice / Audio' };
-  }
-  if (/\b(3d model|3d character|avatar)\b/.test(p)) {
-    return { cost: 15, label: '3D Model Generation' };
-  }
-  if (/\b(scrape|crawl|automat|browser)\b/.test(p)) {
-    return { cost: 5, label: 'Browser Automation' };
-  }
-  if (/\b(image|logo|generate.*picture|flux)\b/.test(p)) {
-    return { cost: 4, label: 'Image Generation' };
-  }
-  if (/\b(full.?stack|react app|build.*app|website|mobile app|code)\b/.test(p)) {
-    return {
-      cost: 120,
-      label: 'Full App Build (Swarm)',
-      breakdown: ['Architect 5', 'Builder 50', 'Reviewer 10', 'QA 15', 'Builder fix 20', 'Debug 10', 'Chat 10'],
-    };
-  }
-  if (/\b(debug|fix.*code|refactor)\b/.test(p)) {
-    return { cost: 5, label: 'Code Fix / Debug' };
+  for (const { pattern, id } of ESTIMATE_RULES) {
+    if (pattern.test(p)) {
+      const item = findCostItem(id);
+      if (item) {
+        if (id === 'builder') {
+          return {
+            cost: 120,
+            label: 'Full App Build (Swarm)',
+            breakdown: ['Architect 5', 'Builder 50', 'Reviewer 10', 'QA 15', 'Builder fix 20', 'Debug 10', 'Chat 10'],
+          };
+        }
+        return { cost: item.cost, label: item.task };
+      }
+    }
   }
 
-  return { cost: 1, label: 'Chat / Text AI' };
+  const chat = findCostItem('chat')!;
+  return { cost: chat.cost, label: chat.task };
+}
+
+/** Given an action budget, return tasks the user can afford (sorted by cost desc) */
+export function tasksForActionBudget(actions: number, limit = 12): ActionCostItem[] {
+  if (actions <= 0) return [];
+  return ALL_ACTION_COSTS.filter((item) => item.cost <= actions)
+    .sort((a, b) => b.cost - a.cost)
+    .slice(0, limit);
+}
+
+/** How many times a task fits in a budget */
+export function taskCountForBudget(taskId: string, actions: number): number {
+  const item = findCostItem(taskId);
+  if (!item || item.cost <= 0) return 0;
+  return Math.floor(actions / item.cost);
 }

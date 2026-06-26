@@ -45,11 +45,11 @@ export function TerminalChatBar() {
       <ActionCostModal open={costOpen} onClose={() => setCostOpen(false)} />
 
       <ChatbarShell>
-        <div className="flex items-center gap-2 px-3 py-2 flex-wrap border-b border-white/10">
+        <div className="flex items-center gap-2 px-3 py-2 flex-wrap border-b border-black/10">
           <button
             type="button"
             onClick={() => setIntegrationsOpen(true)}
-            className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            className="p-2 rounded-lg hover:bg-black/5 transition-colors text-black"
             title="Search integrations"
           >
             <Search className="w-4 h-4" />
@@ -58,7 +58,7 @@ export function TerminalChatBar() {
           <button
             type="button"
             onClick={() => setGithubOpen(true)}
-            className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs hover:bg-white/10"
+            className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs hover:bg-black/5 text-black"
           >
             <GitBranch className="w-3.5 h-3.5" />
             GitHub
@@ -69,7 +69,7 @@ export function TerminalChatBar() {
               key={name}
               type="button"
               onClick={() => setIntegrationsOpen(true)}
-              className="hidden sm:inline px-2 py-1 rounded-lg text-[10px] hover:bg-white/10"
+              className="hidden sm:inline px-2 py-1 rounded-lg text-[10px] hover:bg-black/5 text-black"
             >
               {name}
             </button>
@@ -80,20 +80,16 @@ export function TerminalChatBar() {
           <button
             type="button"
             onClick={() => setCostOpen(true)}
-            className="flex items-center gap-1.5 text-[10px] sm:text-xs font-terminal hover:opacity-80 whitespace-nowrap"
+            className="flex items-center gap-1.5 text-[10px] sm:text-xs font-terminal hover:opacity-80 whitespace-nowrap text-black"
           >
             <span className="font-semibold">{remaining.toLocaleString()}</span>
-            <span className="text-[var(--muted)]">actions left</span>
-            <span className="text-[var(--muted)]">|</span>
-            <span className="text-[var(--muted)]">
-              Est. <strong className="text-[var(--foreground)]">{estimate.cost}</strong> for {estimate.label}
+            <span className="opacity-60">actions left</span>
+            <span className="opacity-40">|</span>
+            <span className="opacity-70">
+              Est. <strong className="text-black">{estimate.cost}</strong> for {estimate.label}
             </span>
           </button>
         </div>
-
-        <p className="text-[9px] text-center text-[var(--muted)] py-1.5 px-3 opacity-80 font-terminal border-b border-white/5">
-          We give our best, but perfection is Allah&apos;s alone. XROGA AI verifies every critical output before publish.
-        </p>
 
         <form
           onSubmit={(e) => {
@@ -103,7 +99,7 @@ export function TerminalChatBar() {
           className="px-3 py-3"
         >
           <div className="relative flex items-end gap-2">
-            <span className="absolute left-3 bottom-3 text-sm font-terminal opacity-60 z-10">&gt;</span>
+            <span className="absolute left-3 bottom-3 text-sm font-terminal text-black opacity-60 z-10">&gt;</span>
             <textarea
               ref={textareaRef}
               value={prompt}
@@ -120,8 +116,8 @@ export function TerminalChatBar() {
               className={cn(
                 'flex-1 pl-8 pr-4 py-3 rounded-xl resize-none',
                 'bg-transparent focus:outline-none border-none',
-                'text-sm font-terminal leading-[22px]',
-                'placeholder:opacity-50',
+                'text-sm font-terminal leading-[22px] text-black',
+                'placeholder:text-black/40',
                 !loading && !prompt && 'cursor-blink'
               )}
             />
@@ -136,13 +132,13 @@ export function TerminalChatBar() {
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="p-2 opacity-60 hover:opacity-100 shrink-0"
+              className="p-2 text-black/60 hover:text-black shrink-0"
               aria-label="Upload"
             >
               <Paperclip className="w-4 h-4" />
             </button>
             {loading ? (
-              <div className="shrink-0 p-2">
+              <div className="shrink-0 p-2 text-black">
                 <Loader2 className="w-5 h-5 animate-spin" />
               </div>
             ) : (

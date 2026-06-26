@@ -85,7 +85,7 @@ export function GitHubConnect() {
           <div>
             <h3 className="font-semibold">GitHub</h3>
             {status?.connected ? (
-              <p className="text-sm text-emerald-400 flex items-center gap-1">
+              <p className="text-sm text-blue-400 flex items-center gap-1">
                 <Check className="w-4 h-4" /> Connected as @{status.username}
               </p>
             ) : (

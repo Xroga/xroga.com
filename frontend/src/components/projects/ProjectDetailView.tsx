@@ -64,7 +64,7 @@ export function ProjectDetailView({ projectId }: ProjectDetailViewProps) {
               </span>
               <span className={cn(
                 'capitalize px-2 py-0.5 rounded-full',
-                project.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
+                project.status === 'completed' ? 'bg-blue-500/20 text-blue-400' : 'bg-amber-500/20 text-amber-400'
               )}>
                 {project.status.replace('_', ' ')}
               </span>

@@ -33,7 +33,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
           {GALACTIC_PLANS.map((plan) => (
             <div
               key={plan.tier}
-              className={`glass-panel rounded-xl p-4 ${plan.highlight ? 'border-[var(--accent)]/50 glow-green' : ''}`}
+              className={`glass-panel rounded-xl p-4 ${plan.highlight ? 'border-[var(--accent)]/50 glow-frozen' : ''}`}
             >
               <h3 className="font-semibold">{plan.name}</h3>
               <p className="text-2xl font-bold mt-1">{plan.priceLabel}<span className="text-xs text-[var(--muted)]">/mo</span></p>

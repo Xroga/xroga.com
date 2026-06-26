@@ -19,7 +19,7 @@ interface ProjectCardProps {
 export function ProjectCard({ project, listView }: ProjectCardProps) {
   const icon = TYPE_ICONS[project.type] ?? '📁';
   const statusColor =
-    project.status === 'completed' ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10';
+    project.status === 'completed' ? 'text-blue-400 bg-blue-500/10' : 'text-amber-400 bg-amber-500/10';
 
   return (
     <Link

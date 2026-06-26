@@ -11,12 +11,14 @@ interface ThemeState {
   customDesktopBg: string | null;
   customMobileBg: string | null;
   terminalFullscreen: boolean;
+  terminalColorMode: 'day' | 'night';
   setTheme: (theme: ThemeId) => void;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
   setCustomDesktopBg: (url: string | null) => void;
   setCustomMobileBg: (url: string | null) => void;
   setTerminalFullscreen: (v: boolean) => void;
+  toggleTerminalColorMode: () => void;
 }
 
 export const useThemeStore = create<ThemeState>()(
@@ -27,6 +29,7 @@ export const useThemeStore = create<ThemeState>()(
       customDesktopBg: null,
       customMobileBg: null,
       terminalFullscreen: false,
+      terminalColorMode: 'night',
       setTheme: (theme) => set({ theme }),
       setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
       toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
@@ -41,6 +44,8 @@ export const useThemeStore = create<ThemeState>()(
         set({ customMobileBg: url });
       },
       setTerminalFullscreen: (terminalFullscreen) => set({ terminalFullscreen }),
+      toggleTerminalColorMode: () =>
+        set((s) => ({ terminalColorMode: s.terminalColorMode === 'day' ? 'night' : 'day' })),
     }),
     {
       name: 'xroga-theme',
@@ -49,6 +54,7 @@ export const useThemeStore = create<ThemeState>()(
         sidebarOpen: s.sidebarOpen,
         customDesktopBg: s.customDesktopBg,
         customMobileBg: s.customMobileBg,
+        terminalColorMode: s.terminalColorMode,
       }),
       onRehydrateStorage: () => (state) => {
         if (state && typeof window !== 'undefined') {

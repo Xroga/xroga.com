@@ -76,7 +76,7 @@ export function ChatIntegrationsBar({ onSelect }: ChatIntegrationsBarProps) {
           className={cn(
             'flex items-center gap-1 px-2 py-1 rounded-md text-[10px] border transition-all hover:scale-105',
             githubConnected
-              ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10'
+              ? 'border-blue-500/40 text-blue-400 bg-blue-500/10'
               : 'border-[var(--card-border)] text-[var(--muted)] hover:border-[var(--accent)]/40'
           )}
         >

@@ -58,7 +58,13 @@ export function IntegrationsPanel() {
 
   const grouped = useMemo(() => {
     const map = new Map<string, typeof INTEGRATIONS>();
-    for (const cat of INTEGRATION_CATEGORIES) {
+    const catsInData = new Set(filtered.map((i) => i.category));
+    const catList = Array.from(catsInData);
+    const ordered = [
+      ...INTEGRATION_CATEGORIES.filter((c) => catsInData.has(c)),
+      ...catList.filter((c) => !INTEGRATION_CATEGORIES.includes(c as (typeof INTEGRATION_CATEGORIES)[number])).sort(),
+    ];
+    for (const cat of ordered) {
       const items = filtered.filter((i) => i.category === cat);
       if (items.length) map.set(cat, items);
     }
@@ -178,7 +184,7 @@ export function IntegrationsPanel() {
                       className={cn(
                         'text-xs px-2.5 py-1 rounded-full font-medium transition-colors',
                         connected
-                          ? 'bg-emerald-500/20 text-emerald-400 connect-pulse'
+                          ? 'bg-blue-500/20 text-blue-400 connect-pulse'
                           : 'bg-white/5 text-[var(--muted)]'
                       )}
                     >

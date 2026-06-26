@@ -44,7 +44,7 @@ export function SignupForm() {
   if (success) {
     return (
       <AuthFormCard title="Welcome!">
-        <p className="text-center text-emerald-600 text-sm mt-4">
+        <p className="text-center text-blue-500 text-sm mt-4">
           Account created! Check your email or redirecting…
         </p>
       </AuthFormCard>

@@ -281,56 +281,70 @@
 body.theme-image .xv-poda-main { background: rgba(255,255,255,0.15); }
 body.theme-white .xv-poda-main { background: rgba(255,255,255,0.95); }
 
-/* ── Upgrade to PRO (vinodjangid07) ── */
+/* ── Upgrade to PRO (compact + hover animation) ── */
 .xv-upgrade-pro {
   width: 100%;
+  max-width: 200px;
   border: none;
   background-color: #ebebeb;
-  padding: 8px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px #e1e1e1;
+  padding: 4px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px #e1e1e1;
   cursor: pointer;
-  transition: 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.xv-upgrade-pro:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 16px rgba(74, 122, 255, 0.35);
+}
+.xv-upgrade-pro:active {
+  transform: translateY(0) scale(0.98);
 }
 .xv-upgrade-pro .xv-upgrade-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f7f7f7;
+  background: linear-gradient(135deg, #f7f7f7, #eef2ff);
   border-radius: 5px;
-  padding: 8px 14px;
-  box-shadow: 0 4px 10px #d3d3d3;
-  gap: 12px;
+  padding: 5px 10px;
+  box-shadow: 0 2px 6px #d3d3d3;
+  gap: 8px;
+  transition: background 0.2s ease;
+}
+.xv-upgrade-pro:hover .xv-upgrade-inner {
+  background: linear-gradient(135deg, #eef2ff, #dbeafe);
 }
 .xv-upgrade-pro .xv-upgrade-text {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.85em;
+  gap: 4px;
+  font-size: 0.72em;
   font-weight: 600;
-  color: rgb(140,140,140);
+  color: rgb(100, 100, 120);
 }
 .xv-upgrade-pro .xv-upgrade-text .pro {
-  background: #000;
+  background: linear-gradient(135deg, #4a7aff, #6b9fff);
   color: #fff;
-  padding: 3px 8px;
-  border-radius: 5px;
-  font-size: 0.9em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
 }
 .xv-upgrade-pro .xv-upgrade-icon {
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   background: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   transform: rotate(45deg);
-  transition: 0.2s;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   flex-shrink: 0;
 }
-.xv-upgrade-pro:hover .xv-upgrade-icon { transform: rotate(0deg); }
-.xv-upgrade-pro .xv-upgrade-icon svg { width: 14px; fill: #333; }
+.xv-upgrade-pro:hover .xv-upgrade-icon {
+  transform: rotate(0deg) scale(1.1);
+}
+.xv-upgrade-pro .xv-upgrade-icon svg { width: 12px; fill: #4a7aff; }
 
 /* ── Static quick tab (no animation) ── */
 .xv-quick-tab {
@@ -468,21 +482,37 @@ body.theme-white .xv-poda-main { background: rgba(255,255,255,0.95); }
   text-shadow: none;
 }
 
-/* ── Modern solid chatbar ── */
+/* ── Modern transparent chatbar ── */
 .xv-chatbar-solid {
-  background: #121820;
-  border: 1px solid rgba(255,255,255,0.1);
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 16px;
-  box-shadow: 0 -4px 24px rgba(0,0,0,0.35);
+  box-shadow: none;
+  color: #000;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 body.theme-white .xv-chatbar-solid {
-  background: #ffffff;
-  border: 2px solid #000;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.15);
   color: #000;
 }
 body.theme-image .xv-chatbar-solid {
-  background: #0d1117;
-  border: 1px solid rgba(255,255,255,0.12);
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: #000;
+}
+body.theme-black .xv-chatbar-solid,
+body.theme-gray .xv-chatbar-solid {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+body.theme-black .xv-chatbar-solid textarea,
+body.theme-gray .xv-chatbar-solid textarea,
+body.theme-black .xv-chatbar-solid button,
+body.theme-gray .xv-chatbar-solid button {
+  color: #fff;
 }
 
 /* ── Settings tabs modern ── */

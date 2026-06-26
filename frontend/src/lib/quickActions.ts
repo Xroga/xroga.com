@@ -25,7 +25,7 @@ export interface QuickAction {
 export const QUICK_ACTIONS: QuickAction[] = [
   { id: 'build-app', icon: Code2, label: 'Build App', prompt: 'Build a full-stack web app for: ', color: '#4a7aff' },
   { id: 'make-movie', icon: Clapperboard, label: 'Make Movie', prompt: 'Create a cinematic video script and storyboard for: ', color: '#a855f7' },
-  { id: 'automate', icon: Bot, label: 'Automate', prompt: 'Automate this workflow for me: ', color: '#00d4ff' },
+  { id: 'automate', icon: Bot, label: 'Automate', prompt: 'Automate this workflow for me: ', color: '#4a7aff' },
   { id: 'games', icon: Gamepad2, label: 'Games 3D/2D', prompt: 'Build a 3D/2D game: ', color: '#22c55e' },
   { id: 'website', icon: Globe, label: 'Website · Apps', prompt: 'Build a website or mobile app for: ', color: '#3b82f6' },
   { id: 'media', icon: Image, label: 'Images & Videos', prompt: 'Generate images and videos for: ', color: '#ec4899' },

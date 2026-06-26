@@ -5,9 +5,9 @@ export const DESKTOP_BG =
 export const MOBILE_BG =
   'https://i.pinimg.com/736x/49/17/78/491778bbd33b7d4b832c8f06415d4e33.jpg';
 
-/** Header / homepage / main area logo */
+/** Header / homepage / main area logo — blue brand */
 export const HEADER_LOGO_URL =
-  'https://i.postimg.cc/pLxrn9yP/Green-Minimalist-Summer-Big-Sale-Medium-Banner-10-removebg-preview-(1).png';
+  'https://i.postimg.cc/bJnL5jV7/Red-and-Blue-Modern-X-letter-Digital-Marketing-Logo-1-removebg-preview-1.png';
 
 /** Sidebar logo */
 export const SIDEBAR_LOGO_URL =
