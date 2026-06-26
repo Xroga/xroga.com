@@ -13,6 +13,8 @@ import debugRouter from './routes/debug.js';
 import wellbeingRouter from './routes/wellbeing.js';
 import githubRouter from './routes/github.js';
 import notificationsRouter from './routes/notifications.js';
+import billingRouter from './routes/billing.js';
+import billingWebhookRouter from './routes/billingWebhook.js';
 import simpleChatRouter from './routes/simpleChat.js';
 
 const app = express();
@@ -56,12 +58,16 @@ const corsOptions: cors.CorsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+// Paddle webhook needs raw body — mount before express.json()
+app.use('/api/billing/webhook', billingWebhookRouter);
+
 app.use(express.json({ limit: '10mb' }));
 
 const healthPayload = () => ({
   status: 'ok',
   service: 'xroga-api',
-  version: '1.0.6',
+  version: '1.1.0',
   timestamp: new Date().toISOString(),
   authConfigured: Boolean(process.env.SUPABASE_URL),
   dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
@@ -107,6 +113,7 @@ app.use('/api/debug', authMiddleware, debugRouter);
 app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
 app.use('/api/github', authMiddleware, githubRouter);
 app.use('/api/notifications', authMiddleware, notificationsRouter);
+app.use('/api/billing', authMiddleware, billingRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found' });

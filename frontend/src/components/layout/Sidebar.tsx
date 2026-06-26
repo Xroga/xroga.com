@@ -6,13 +6,10 @@ import {
   LayoutDashboard,
   FolderOpen,
   MessageSquare,
-  BarChart3,
   Link2,
   CreditCard,
   Settings,
-  Shield,
   Rocket,
-  Zap,
   Menu,
   X,
 } from 'lucide-react';
@@ -20,23 +17,23 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { Logo } from './Logo';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, emoji: '🔥' },
-  { href: '/dashboard/projects', label: 'My Projects', icon: FolderOpen, emoji: '📁' },
-  { href: '/dashboard/chats', label: 'Active Chats', icon: MessageSquare, emoji: '💬' },
-  { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3, emoji: '📊' },
-  { href: '/dashboard/integrations', label: 'Integrations', icon: Link2, emoji: '🔗' },
-  { href: '/dashboard/billing', label: 'Billing', icon: CreditCard, emoji: '💰' },
-  { href: '/settings', label: 'Settings', icon: Settings, emoji: '⚙️' },
-  { href: '/dashboard/security', label: 'Security', icon: Shield, emoji: '🛡️' },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard/projects', label: 'Projects', icon: FolderOpen },
+  { href: '/dashboard/chats', label: 'Chats', icon: MessageSquare },
+  { href: '/dashboard/integrations', label: 'Integrations', icon: Link2 },
+  { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 interface SidebarProps {
   displayName?: string;
+  onTopUp?: () => void;
 }
 
-export function Sidebar({ displayName }: SidebarProps) {
+export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -45,7 +42,7 @@ export function Sidebar({ displayName }: SidebarProps) {
 
   const navContent = (
     <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-      {navItems.map(({ href, label, icon: Icon, emoji }) => (
+      {navItems.map(({ href, label, icon: Icon }) => (
         <Link
           key={href}
           href={href}
@@ -53,23 +50,22 @@ export function Sidebar({ displayName }: SidebarProps) {
           className={cn(
             'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all',
             isActive(href)
-              ? 'bg-gradient-to-r from-violet-600/30 to-cyan-600/20 text-white border border-violet-500/40 shadow-lg shadow-violet-500/10'
+              ? 'glass-panel border-[var(--accent)]/40 text-white text-[var(--accent)]'
               : 'text-[var(--muted)] hover:text-white hover:bg-white/5'
           )}
         >
-          <span className="text-base w-5 text-center" aria-hidden>{emoji}</span>
-          <Icon className="w-4 h-4 opacity-70" />
+          <Icon className="w-4 h-4" />
           {label}
         </Link>
       ))}
 
       <Link
-        href="/dashboard/upgrade"
+        href="/pricing"
         onClick={() => setMobileOpen(false)}
-        className="flex items-center justify-center gap-2 mt-4 mx-1 px-4 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-sm font-semibold transition-all shadow-lg shadow-violet-500/25"
+        className="flex items-center justify-center gap-2 mt-4 mx-1 px-4 py-3 rounded-xl bg-gradient-to-r from-[var(--accent)] to-[var(--primary)] text-black text-sm font-semibold transition-all glow-green"
       >
         <Rocket className="w-4 h-4" />
-        🚀 Upgrade
+        Upgrade
       </Link>
     </nav>
   );
@@ -78,25 +74,22 @@ export function Sidebar({ displayName }: SidebarProps) {
     <>
       <div className="p-5 border-b border-[var(--card-border)]">
         <div className="flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold gradient-text">Xroga</span>
-          </Link>
+          <Logo href="/dashboard" size="md" />
           <div className="lg:hidden">
             <NotificationBell />
           </div>
         </div>
         {displayName && (
-          <p className="text-sm text-[var(--muted)] mt-2 truncate">Welcome, {displayName}</p>
+          <p className="text-sm text-[var(--muted)] mt-3 truncate font-terminal">
+            &gt; {displayName}
+          </p>
         )}
       </div>
 
       {navContent}
 
       <div className="p-3 border-t border-[var(--card-border)] mt-auto">
-        <MiniActionMeter />
+        <MiniActionMeter onTopUp={onTopUp} />
       </div>
     </>
   );
@@ -105,7 +98,7 @@ export function Sidebar({ displayName }: SidebarProps) {
     <>
       <button
         type="button"
-        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 rounded-lg bg-[var(--card)] border border-[var(--card-border)] shadow-lg"
+        className="lg:hidden fixed top-3.5 left-4 z-50 p-2.5 rounded-lg glass-panel"
         onClick={() => setMobileOpen(!mobileOpen)}
         aria-label="Toggle menu"
       >
@@ -114,7 +107,7 @@ export function Sidebar({ displayName }: SidebarProps) {
 
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-40 bg-black/60"
+          className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
           onClick={() => setMobileOpen(false)}
           aria-hidden
         />
@@ -122,7 +115,7 @@ export function Sidebar({ displayName }: SidebarProps) {
 
       <aside
         className={cn(
-          'fixed lg:sticky top-0 z-40 flex flex-col w-64 border-r border-[var(--card-border)] bg-[var(--card)] min-h-screen transition-transform lg:translate-x-0',
+          'fixed lg:sticky top-0 z-40 flex flex-col w-64 border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-transform lg:translate-x-0',
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >

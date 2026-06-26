@@ -1,103 +1,119 @@
 import Link from 'next/link';
-import { Zap, Shield, Layers, Sparkles } from 'lucide-react';
-
-const plans = [
-  { name: 'Spark', price: '$19', actions: '2,000', concurrency: '2 Tasks' },
-  { name: 'Nova', price: '$59', actions: '6,000', concurrency: '5 Tasks' },
-  { name: 'Zenith', price: '$150', actions: '20,000', concurrency: '15 Tasks' },
-  { name: 'Singularity', price: '$499', actions: '50,000+', concurrency: 'Unlimited' },
-];
+import { Logo } from '@/components/layout/Logo';
+import { GALACTIC_PLANS, FREE_TRIAL_ACTIONS } from '@/lib/plans';
+import { Sparkles, Globe, Paperclip, Mic, ArrowRight } from 'lucide-react';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-[var(--card-border)] backdrop-blur-sm sticky top-0 z-50">
+    <div className="min-h-screen cosmic-bg terminal-grid flex flex-col">
+      <header className="sticky top-0 z-50 glass-panel-strong border-b border-[var(--card-border)]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold gradient-text">Xroga</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link href="/auth/login" className="text-sm text-[var(--muted)] hover:text-white transition-colors">
-              Sign In
-            </Link>
+          <Logo href="/" size="md" />
+          <div className="flex items-center gap-3">
+            <button type="button" className="hidden sm:flex items-center gap-2 text-sm text-[var(--muted)] glass-panel px-3 py-1.5 rounded-lg">
+              <Globe className="w-4 h-4" /> Theme
+            </button>
             <Link
               href="/auth/signup"
-              className="text-sm px-4 py-2 rounded-lg bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 transition-all"
+              className="text-sm px-4 py-2 rounded-xl bg-white text-black font-semibold hover:opacity-90 flex items-center gap-2"
             >
-              Get Started
+              Get Started <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </header>
 
-      <main>
-        <section className="max-w-6xl mx-auto px-6 py-24 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-xs text-violet-300 mb-6">
+      <main className="flex-1 flex flex-col items-center justify-center px-6 py-12 relative">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[120%] max-w-4xl h-64 bg-gradient-to-t from-[var(--primary)]/30 via-[var(--primary)]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 w-full max-w-3xl text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-[var(--accent)] mb-6 font-terminal tracking-wider">
             <Sparkles className="w-3 h-3" />
-            AI Swarm Operating System
+            NEXT-GEN AGI • LIVE NOW
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-balance">
-            If you can describe it,{' '}
-            <span className="gradient-text">Xroga builds it</span>
+
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold mb-4 text-balance leading-tight">
+            <span className="text-white">Do Everything</span>
+            <br />
+            <span className="gradient-text-blue">You Imagine</span>
           </h1>
-          <p className="text-lg text-[var(--muted)] max-w-2xl mx-auto mb-10">
-            92 features, 100+ specialized AIs, and a Truth Council that negotiates, critiques,
-            and iterates until perfection — before you see the result.
+
+          <p className="text-[var(--muted)] max-w-xl mx-auto mb-10 text-sm sm:text-base">
+            XROGA AI — the world&apos;s most advanced intelligence. Create, build, explore, and bring your boldest ideas to life.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/auth/signup"
-              className="px-8 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 font-medium transition-all glow-purple"
-            >
-              Start Building Free
-            </Link>
-            <Link
-              href="#pricing"
-              className="px-8 py-3 rounded-xl border border-[var(--card-border)] hover:bg-white/5 font-medium transition-colors"
-            >
-              View Plans
-            </Link>
-          </div>
-        </section>
 
-        <section className="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-3 gap-6">
-          {[
-            { icon: Layers, title: '5-Agent Swarm', desc: 'Architect, Builder, Reviewer, QA, and Truth Council work in parallel until zero defects.' },
-            { icon: Shield, title: 'Zero-BS Guarantee', desc: 'Never see broken code, flawed videos, or hallucinated facts. The Swarm fixes everything silently.' },
-            { icon: Zap, title: 'Pay for Fuel Only', desc: 'All 92 features unlocked in every plan. You only pay for Actions — units of AI compute.' },
-          ].map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="p-6 rounded-xl border border-[var(--card-border)] bg-[var(--card)]">
-              <Icon className="w-8 h-8 text-violet-400 mb-4" />
-              <h3 className="font-semibold mb-2">{title}</h3>
-              <p className="text-sm text-[var(--muted)]">{desc}</p>
+          <div className="glass-panel-strong rounded-2xl p-2 mb-4 glow-blue">
+            <div className="flex items-center gap-2 px-3 py-2 text-xs text-[var(--muted)] font-terminal border-b border-[var(--card-border)] mb-2">
+              <span className="text-[var(--accent)]">⚡ {FREE_TRIAL_ACTIONS} free actions</span>
+              <span className="mx-2">•</span>
+              <span>Swarm online</span>
             </div>
-          ))}
-        </section>
-
-        <section id="pricing" className="max-w-6xl mx-auto px-6 py-16">
-          <h2 className="text-3xl font-bold text-center mb-4">Galactic Tiers</h2>
-          <p className="text-center text-[var(--muted)] mb-10">All features unlocked. Pay only for Actions.</p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {plans.map((plan) => (
-              <div key={plan.name} className="p-6 rounded-xl border border-[var(--card-border)] bg-[var(--card)] hover:border-violet-500/50 transition-colors">
-                <h3 className="font-semibold text-lg mb-1">{plan.name}</h3>
-                <p className="text-3xl font-bold mb-4">{plan.price}<span className="text-sm text-[var(--muted)]">/mo</span></p>
-                <ul className="space-y-2 text-sm text-[var(--muted)]">
-                  <li>{plan.actions} Actions</li>
-                  <li>{plan.concurrency}</li>
-                  <li>All 92 features</li>
-                </ul>
+            <div className="flex items-center gap-2">
+              <input
+                readOnly
+                placeholder="Ask XROGA to do anything..."
+                className="flex-1 bg-transparent px-4 py-3 text-sm font-terminal focus:outline-none placeholder:text-[var(--muted)]"
+              />
+              <div className="flex items-center gap-1 pr-2 text-[var(--muted)]">
+                <Paperclip className="w-4 h-4" />
+                <Mic className="w-4 h-4" />
               </div>
+              <Link
+                href="/auth/signup"
+                className="px-5 py-3 rounded-xl bg-white text-black font-semibold text-sm flex items-center gap-2 hover:opacity-90 shrink-0"
+              >
+                Send <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+
+          <Link
+            href="/auth/signup"
+            className="inline-flex items-center gap-2 glass-panel px-4 py-2 rounded-full text-sm text-[var(--accent)] hover:border-[var(--accent)]/40 mb-12"
+          >
+            Let&apos;s Build a Movie <ArrowRight className="w-4 h-4" />
+          </Link>
+
+          <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
+            {[
+              'Games 3D/2D',
+              'Website • Apps',
+              'Images & Videos',
+              'Movies • Dramas',
+              'Debug • Code Fix',
+              'Web Search • Research',
+              '3D Models',
+              'Voice TTS • Cloning',
+              'Android/iOS Games',
+            ].map((tag) => (
+              <span key={tag} className="glass-panel px-3 py-1.5 rounded-full text-xs text-[var(--muted)] hover:text-white hover:border-[var(--accent)]/30 transition-colors">
+                {tag}
+              </span>
             ))}
           </div>
-        </section>
+        </div>
       </main>
 
-      <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-[var(--muted)]">
-        © {new Date().getFullYear()} Xroga. The world&apos;s #1 AI Swarm Operating System.
+      <section id="pricing" className="relative z-10 max-w-6xl mx-auto px-6 py-16 w-full">
+        <h2 className="text-2xl font-bold text-center mb-8">Galactic Tiers</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          {GALACTIC_PLANS.map((plan) => (
+            <div key={plan.tier} className="glass-panel rounded-xl p-4 text-center">
+              <h3 className="font-semibold">{plan.name}</h3>
+              <p className="text-xl font-bold mt-1">{plan.priceLabel}</p>
+              <p className="text-xs text-[var(--muted)]">{plan.actionsLabel}</p>
+            </div>
+          ))}
+        </div>
+        <div className="text-center mt-8">
+          <Link href="/pricing" className="text-[var(--accent)] hover:underline text-sm">
+            View full pricing & subscribe →
+          </Link>
+        </div>
+      </section>
+
+      <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-[var(--muted)] glass-panel-strong">
+        © {new Date().getFullYear()} Xroga — AI Swarm Operating System
       </footer>
     </div>
   );

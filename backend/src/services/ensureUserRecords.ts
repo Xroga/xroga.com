@@ -1,3 +1,4 @@
+import { FREE_TRIAL_ACTIONS } from '../config/plans.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 
 /**
@@ -28,8 +29,8 @@ export async function ensureUserRecords(userId: string, email?: string): Promise
   if (!actions) {
     await supabase.from('user_actions').insert({
       user_id: userId,
-      plan_tier: 'spark',
-      total_actions: 10,
+      plan_tier: 'unpaid',
+      total_actions: FREE_TRIAL_ACTIONS,
       used_actions: 0,
     });
   }

@@ -136,4 +136,43 @@ export class ActionService {
 
     return !error;
   }
+
+  static async applyPlan(userId: string, planTier: string, totalActions: number): Promise<void> {
+    const supabase = getSupabaseAdmin();
+    const resetDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data: existing } = await supabase
+      .from('user_actions')
+      .select('user_id')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (existing) {
+      await supabase
+        .from('user_actions')
+        .update({
+          plan_tier: planTier,
+          total_actions: totalActions,
+          used_actions: 0,
+          reset_date: resetDate,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', userId);
+    } else {
+      await supabase.from('user_actions').insert({
+        user_id: userId,
+        plan_tier: planTier,
+        total_actions: totalActions,
+        used_actions: 0,
+        reset_date: resetDate,
+      });
+    }
+
+    await supabase.from('action_transactions').insert({
+      user_id: userId,
+      task_type: 'chat',
+      actions_cost: 0,
+      description: `Plan upgraded to ${planTier} (${totalActions} actions)`,
+    });
+  }
 }

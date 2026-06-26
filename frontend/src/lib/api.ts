@@ -66,10 +66,21 @@ export async function streamSwarmExecute(
   const contentType = res.headers.get('content-type') ?? '';
 
   if (!res.ok && !contentType.includes('text/event-stream')) {
-    const data = await res.json().catch(() => ({})) as { error?: string; code?: string };
+    const data = await res.json().catch(() => ({})) as {
+      error?: string;
+      code?: string;
+      paymentLink?: string;
+    };
     if (res.status === 401) {
       throw new Error(
         data.error ?? 'Authentication failed — sign out and sign in again to refresh your session.'
+      );
+    }
+    if (res.status === 402 || data.code === 'OUT_OF_ACTIONS') {
+      throw new ApiError(
+        data.error ?? 'Out of actions — subscribe to continue.',
+        402,
+        { code: 'OUT_OF_ACTIONS', paymentLink: data.paymentLink ?? '/pricing' }
       );
     }
     throw new ApiError(data.error ?? `Swarm failed (${res.status})`, res.status, data);
@@ -110,6 +121,13 @@ export async function streamSwarmExecute(
       const payload = JSON.parse(dataLine) as Record<string, unknown>;
 
       if (eventName === 'error' || payload.error) {
+        if (payload.code === 'OUT_OF_ACTIONS') {
+          throw new ApiError(
+            String(payload.error ?? 'Out of actions'),
+            402,
+            payload as Record<string, unknown>
+          );
+        }
         throw new Error(String(payload.error ?? 'Swarm stream error'));
       }
 
@@ -267,6 +285,13 @@ export async function apiFetch<T = unknown>(
         data
       );
     }
+    if (res.status === 402 || data.code === 'OUT_OF_ACTIONS') {
+      throw new ApiError(
+        message || 'Out of actions — subscribe to continue.',
+        402,
+        { ...data, code: 'OUT_OF_ACTIONS', paymentLink: data.paymentLink ?? '/pricing' }
+      );
+    }
     throw new ApiError(message, res.status, data);
   }
 
@@ -318,6 +343,19 @@ export const api = {
         body: JSON.stringify({ prompt, projectId }),
       }),
     stream: streamSwarmExecute,
+    history: () => apiFetch<SwarmRunSummary[]>('/api/swarm/history'),
+  },
+  billing: {
+    plans: () => apiFetch<{ plans: unknown[] }>('/api/billing/plans'),
+    createCheckout: (planTier: string) =>
+      apiFetch<{
+        checkoutUrl?: string;
+        priceId: string;
+        customData: Record<string, string>;
+      }>('/api/billing/create-checkout', {
+        method: 'POST',
+        body: JSON.stringify({ planTier }),
+      }),
   },
   chat: {
     send: (message: string, _userId?: string, onDelta?: (delta: string) => void) =>
@@ -400,4 +438,14 @@ export interface ActionBalance {
   remaining: number;
   planTier: string;
   resetDate: string;
+}
+
+export interface SwarmRunSummary {
+  id: string;
+  prompt: string;
+  status: string;
+  output: unknown;
+  created_at: string;
+  completed_at: string | null;
+  iteration_count: number;
 }

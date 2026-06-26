@@ -4,7 +4,12 @@ import { Zap } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { cn } from '@/lib/utils';
 
-export function MiniActionMeter({ compact = false }: { compact?: boolean }) {
+interface MiniActionMeterProps {
+  compact?: boolean;
+  onTopUp?: () => void;
+}
+
+export function MiniActionMeter({ compact = false, onTopUp }: MiniActionMeterProps) {
   const actions = useAppStore((s) => s.actions);
 
   if (!actions) {
@@ -15,13 +20,14 @@ export function MiniActionMeter({ compact = false }: { compact?: boolean }) {
 
   const pct = actions.total > 0 ? (actions.remaining / actions.total) * 100 : 0;
   const isLow = pct <= 20;
+  const isOut = actions.remaining <= 0;
 
-  return (
-    <div className={cn('rounded-lg border border-[var(--card-border)] bg-black/20', compact ? 'p-2' : 'p-3')}>
+  const content = (
+    <>
       <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-1.5">
-          <Zap className={cn('w-3.5 h-3.5', isLow ? 'text-amber-400' : 'text-violet-400')} />
-          <span className="text-xs font-medium">Fuel</span>
+          <Zap className={cn('w-3.5 h-3.5', isOut ? 'text-red-400' : isLow ? 'text-amber-400' : 'text-[var(--accent)]')} />
+          <span className="text-xs font-medium font-terminal">Fuel</span>
         </div>
         <span className="text-xs text-[var(--muted)] capitalize">{actions.planTier}</span>
       </div>
@@ -33,11 +39,27 @@ export function MiniActionMeter({ compact = false }: { compact?: boolean }) {
         <div
           className={cn(
             'h-full rounded-full transition-all',
-            isLow ? 'bg-amber-500' : 'bg-gradient-to-r from-violet-600 to-cyan-500'
+            isOut ? 'bg-red-500' : isLow ? 'bg-amber-500' : 'bg-gradient-to-r from-[var(--accent)] to-[var(--primary)]'
           )}
           style={{ width: `${Math.max(pct, 3)}%` }}
         />
       </div>
-    </div>
+    </>
   );
+
+  const className = cn(
+    'rounded-lg glass-panel w-full text-left',
+    compact ? 'p-2' : 'p-3',
+    onTopUp && 'hover:border-[var(--accent)]/40 transition-colors cursor-pointer'
+  );
+
+  if (onTopUp) {
+    return (
+      <button type="button" onClick={onTopUp} className={className}>
+        {content}
+      </button>
+    );
+  }
+
+  return <div className={className}>{content}</div>;
 }

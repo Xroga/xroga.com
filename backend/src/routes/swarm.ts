@@ -68,6 +68,16 @@ router.post('/execute', async (req: AuthRequest, res) => {
   }
 });
 
+router.get('/history', async (req: AuthRequest, res) => {
+  try {
+    const limit = Math.min(Number(req.query.limit) || 20, 50);
+    const runs = await SwarmService.listRuns(req.userId!, limit);
+    res.json(runs);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
 router.get('/runs/:runId', async (req: AuthRequest, res) => {
   try {
     const runId = String(req.params.runId);

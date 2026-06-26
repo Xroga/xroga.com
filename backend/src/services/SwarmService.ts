@@ -16,10 +16,6 @@ function isMissingTableError(message: string): boolean {
   );
 }
 
-function isGreeting(prompt: string): boolean {
-  return /^(hi|hello|hey|yo|sup|good\s+(morning|afternoon|evening))\b/i.test(prompt.trim());
-}
-
 export interface SwarmRunResult {
   runId: string;
   result: Awaited<ReturnType<typeof featureSwarm.execute>>;
@@ -44,13 +40,8 @@ export class SwarmService {
     }
 
     const route = await classifyFeature(prompt);
-    let actionCost = computeFeatureActionCost(route.category, prompt, { lineCount: options?.lineCount });
+    const actionCost = computeFeatureActionCost(route.category, prompt, { lineCount: options?.lineCount });
     const taskType = FEATURE_TASK_TYPES[route.category];
-
-    // Free greeting replies so new users can test chat immediately
-    if (route.category === 'chat' && isGreeting(prompt)) {
-      actionCost = 0;
-    }
 
     let deductResult: Awaited<ReturnType<typeof ActionService.deduct>> = {
       success: true,
@@ -252,6 +243,22 @@ export class SwarmService {
     if (o.type === 'job_hunter') return `Submitted ${o.applicationsSubmitted} applications`;
     if (o.type === 'code_debug' && o.zeroDefects) return 'Code debugged – zero defects';
     return 'Task complete.';
+  }
+
+  static async listRuns(userId: string, limit = 20) {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('swarm_runs')
+      .select('id, prompt, status, output, created_at, completed_at, iteration_count')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      if (isMissingTableError(error.message)) return [];
+      throw new Error(error.message);
+    }
+    return data ?? [];
   }
 
   static async getRun(userId: string, runId: string) {
