@@ -1,25 +1,36 @@
+'use client';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { GALACTIC_PLANS } from '@/lib/plans';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import { GradientStartButton, PlayNowButton, FrutigerButton } from '@/components/ui/Uiverse';
+
+const HOMEPAGE_TAGS = [
+  'Games 3D/2D',
+  'Website · Apps',
+  'Images & Videos',
+  'Movies · Dramas',
+  'Debug · Code Fix',
+  'Web Search · Research',
+  '3D Models',
+  'Voice TTS · Cloning',
+  'Android/iOS Games',
+];
 
 export default function HomePage() {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen cosmic-bg terminal-grid flex flex-col">
-      <header className="sticky top-0 z-50 glass-panel-strong border-b border-[var(--card-border)]">
+      <header className="sticky top-0 z-50 bg-transparent border-b border-transparent">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Logo href="/" height={50} />
+          <Logo href="/" variant="header" height={56} />
           <div className="flex items-center gap-3">
-            <Link href="/auth/login" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)]">
-              Sign In
-            </Link>
-            <Link
-              href="/auth/signup"
-              className="text-sm px-4 py-2 rounded-xl bg-[var(--accent)] text-black font-semibold hover:opacity-90 flex items-center gap-2"
-            >
-              Get Started <ArrowRight className="w-4 h-4" />
-            </Link>
+            <PlayNowButton onClick={() => router.push('/auth/login')}>Sign In</PlayNowButton>
+            <GradientStartButton onClick={() => router.push('/auth/signup')}>Get Started</GradientStartButton>
           </div>
         </div>
       </header>
@@ -45,21 +56,11 @@ export default function HomePage() {
 
           <HomepageChatBar />
 
-          <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto mt-8">
-            {[
-              'Games 3D/2D',
-              'Website • Apps',
-              'Images & Videos',
-              'Movies • Dramas',
-              'Debug • Code Fix',
-              'Web Search • Research',
-            ].map((tag) => (
-              <span
-                key={tag}
-                className="glass-panel px-3 py-1.5 rounded-full text-xs text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 transition-colors"
-              >
+          <div className="flex flex-wrap justify-center gap-2 max-w-3xl mx-auto mt-8">
+            {HOMEPAGE_TAGS.map((tag) => (
+              <FrutigerButton key={tag} onClick={() => router.push('/auth/signup')}>
                 {tag}
-              </span>
+              </FrutigerButton>
             ))}
           </div>
         </div>
@@ -69,7 +70,7 @@ export default function HomePage() {
         <h2 className="text-2xl font-bold text-center mb-8">Galactic Tiers</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {GALACTIC_PLANS.map((plan) => (
-            <div key={plan.tier} className="glass-panel rounded-xl p-4 text-center">
+            <div key={plan.tier} className="glass-panel rounded-xl p-4 text-center universe-float">
               <h3 className="font-semibold">{plan.name}</h3>
               <p className="text-xl font-bold mt-1">{plan.priceLabel}</p>
               <p className="text-xs text-[var(--muted)]">{plan.actionsLabel}</p>

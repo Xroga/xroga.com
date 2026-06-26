@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Zap } from 'lucide-react';
+import { AuthFormCard, PlayNowButton } from '@/components/ui/Uiverse';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
@@ -64,98 +65,80 @@ export function LoginForm() {
 
   if (magicLinkSent) {
     return (
-      <div className="text-center space-y-4">
-        <div className="w-12 h-12 mx-auto rounded-full bg-violet-600/20 flex items-center justify-center">
-          <Zap className="w-6 h-6 text-violet-400" />
+      <AuthFormCard title="Check Email">
+        <div className="text-center space-y-4 mt-4">
+          <Zap className="w-8 h-8 mx-auto text-cyan-500" />
+          <p className="text-sm text-gray-600">
+            We sent a magic link to <strong>{email}</strong>
+          </p>
         </div>
-        <h2 className="text-xl font-semibold">Check your email</h2>
-        <p className="text-[var(--muted)] text-sm">
-          We sent a magic link to <strong>{email}</strong>
-        </p>
-      </div>
+      </AuthFormCard>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex gap-3">
-        <button
-          type="button"
-          onClick={() => handleOAuth('google')}
-          className="flex-1 py-2.5 px-4 rounded-lg border border-[var(--card-border)] bg-white/5 hover:bg-white/10 text-sm transition-colors"
-        >
-          Google
-        </button>
-        <button
-          type="button"
-          onClick={() => handleOAuth('github')}
-          className="flex-1 py-2.5 px-4 rounded-lg border border-[var(--card-border)] bg-white/5 hover:bg-white/10 text-sm transition-colors"
-        >
-          GitHub
-        </button>
-      </div>
-
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-[var(--card-border)]" />
-        </div>
-        <div className="relative flex justify-center text-xs">
-          <span className="bg-[var(--card)] px-2 text-[var(--muted)]">or continue with email</span>
+    <AuthFormCard title="Sign In">
+      <div className="social-account-container mt-4">
+        <span className="title block text-center text-[10px] text-gray-400 mb-2">Or Sign in with</span>
+        <div className="flex justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => handleOAuth('google')}
+            className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-gray-500 border-4 border-white shadow-lg flex items-center justify-center"
+            aria-label="Google"
+          >
+            <span className="text-white text-xs font-bold">G</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleOAuth('github')}
+            className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-gray-500 border-4 border-white shadow-lg flex items-center justify-center"
+            aria-label="GitHub"
+          >
+            <span className="text-white text-xs font-bold">GH</span>
+          </button>
         </div>
       </div>
 
-      <form onSubmit={handleLogin} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm text-[var(--muted)] mb-1.5">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-[var(--card-border)] focus:border-violet-500 focus:outline-none text-sm"
-            placeholder="you@example.com"
-          />
-        </div>
-        <div>
-          <label htmlFor="password" className="block text-sm text-[var(--muted)] mb-1.5">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-[var(--card-border)] focus:border-violet-500 focus:outline-none text-sm"
-            placeholder="••••••••"
-          />
-        </div>
+      <form onSubmit={handleLogin} className="mt-4">
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="xv-auth-input"
+          placeholder="E-mail"
+        />
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="xv-auth-input"
+          placeholder="Password"
+        />
 
-        {error && <p className="text-red-400 text-sm">{error}</p>}
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2.5 rounded-lg bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 font-medium text-sm transition-all disabled:opacity-50"
-        >
+        <button type="submit" disabled={loading} className="xv-auth-submit">
           {loading ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
 
-      <button
-        type="button"
-        onClick={handleMagicLink}
-        disabled={loading}
-        className="w-full py-2.5 rounded-lg border border-[var(--card-border)] hover:bg-white/5 text-sm transition-colors disabled:opacity-50"
-      >
-        Send Magic Link
-      </button>
+      <div className="flex justify-center mt-4">
+        <PlayNowButton onClick={handleMagicLink} disabled={loading}>
+          Magic Link
+        </PlayNowButton>
+      </div>
 
-      <p className="text-center text-sm text-[var(--muted)]">
+      <p className="text-center text-sm text-gray-500 mt-4">
         No account?{' '}
-        <Link href="/auth/signup" className="text-violet-400 hover:underline">
+        <Link href="/auth/signup" className="text-cyan-600 hover:underline">
           Sign up
         </Link>
       </p>
-    </div>
+    </AuthFormCard>
   );
 }

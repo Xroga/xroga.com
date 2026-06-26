@@ -195,4 +195,116 @@ body.theme-gray .glass-panel-strong {
   .cosmic-bg {
     background: var(--background);
   }
+
+  /* Floating chatbar — theme variants */
+  .terminal-chatbar-float {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  .chatbar-theme-image {
+    background: rgba(255, 255, 255, 0.12);
+    color: #0a0e17;
+    --foreground: #0a0e17;
+    --muted: #374151;
+    --accent: #0a0e17;
+    --background: #ffffff;
+  }
+
+  .chatbar-theme-white {
+    background: rgba(255, 255, 255, 0.95);
+    color: #000;
+    --foreground: #000;
+    --muted: #6b7280;
+    --accent: #000;
+    --background: #fff;
+  }
+
+  .chatbar-theme-black {
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+  }
+
+  .chatbar-theme-gray {
+    background: rgba(40, 40, 40, 0.8);
+    color: #fff;
+  }
+
+  /* Terminal log area */
+  .terminal-log {
+    background: rgba(10, 20, 45, 0.35);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .terminal-log-white {
+    background: #ffffff;
+    border: 2px solid #000000;
+    color: #000;
+    --foreground: #000;
+    --muted: #4b5563;
+    --accent: #000;
+    --primary: #000;
+  }
+
+  .terminal-log-image {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  /* Universe.io-inspired animations */
+  .universe-float {
+    animation: universe-float 6s ease-in-out infinite;
+  }
+
+  @keyframes universe-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  .universe-fade-in {
+    animation: universe-fade-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes universe-fade-in {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-backdrop {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(8px);
+    animation: universe-fade-in 0.25s ease forwards;
+  }
+
+  .modal-glass {
+    background: rgba(15, 20, 35, 0.92);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  }
+
+  body.theme-white .modal-glass {
+    background: rgba(255, 255, 255, 0.96);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #000;
+  }
+
+  .connect-pulse {
+    animation: connect-pulse 2s ease infinite;
+  }
+
+  @keyframes connect-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
+  }
+
+  .integration-card {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  }
+
+  .integration-card:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
 }

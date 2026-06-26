@@ -2,11 +2,14 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Search, Plus, Trash2, Key } from 'lucide-react';
+import Image from 'next/image';
 import { INTEGRATIONS, INTEGRATION_CATEGORIES } from '@/lib/integrations';
+import { getIntegrationLogo } from '@/lib/integrationLogos';
 import { GitHubConnect } from '@/components/integrations/GitHubConnect';
 import { api } from '@/lib/api';
 import { CUSTOM_CREDENTIALS_KEY } from '@/lib/constants';
 import toast from 'react-hot-toast';
+import { ConnectButton } from '@/components/ui/Uiverse';
 import { cn } from '@/lib/utils';
 
 interface CustomCredential {
@@ -146,39 +149,52 @@ export function IntegrationsPanel() {
               return (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-white/[0.02]"
+                  className="integration-card flex items-center justify-between gap-4 px-4 py-3 hover:bg-white/[0.03]"
                 >
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium">{item.name}</p>
-                    {item.description && (
-                      <p className="text-xs text-[var(--muted)]">{item.description}</p>
-                    )}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 overflow-hidden">
+                      {getIntegrationLogo(item.id) ? (
+                        <Image
+                          src={getIntegrationLogo(item.id)!}
+                          alt=""
+                          width={24}
+                          height={24}
+                          unoptimized
+                          className="object-contain"
+                        />
+                      ) : (
+                        <span className="text-sm font-bold">{item.name.charAt(0)}</span>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium">{item.name}</p>
+                      {item.description && (
+                        <p className="text-xs text-[var(--muted)]">{item.description}</p>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     <span
                       className={cn(
-                        'text-xs px-2 py-0.5 rounded-full',
+                        'text-xs px-2.5 py-1 rounded-full font-medium transition-colors',
                         connected
-                          ? 'bg-emerald-500/20 text-emerald-400'
+                          ? 'bg-emerald-500/20 text-emerald-400 connect-pulse'
                           : 'bg-white/5 text-[var(--muted)]'
                       )}
                     >
                       {connected ? 'Connected' : 'Not connected'}
                     </span>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
+                    <ConnectButton
+                      connected={connected}
+                      label={connected ? 'Manage' : 'Connect'}
+                      onClick={() => {
                         if (connected && item.id === 'github') {
                           window.location.href = '/dashboard/integrations';
                         } else if (!connected) {
                           void handleConnect(item.id, item.oauth);
                         }
                       }}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-[var(--primary)]/20 text-[var(--accent)] hover:bg-[var(--primary)]/30 transition-colors"
-                    >
-                      {connected ? 'Manage' : 'Connect'}
-                    </button>
+                    />
                   </div>
                 </div>
               );
