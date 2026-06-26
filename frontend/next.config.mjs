@@ -5,6 +5,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'i.postimg.cc' },
       { protocol: 'https', hostname: 'i.pinimg.com' },
       { protocol: 'https', hostname: 'cdn.simpleicons.org' },
+      { protocol: 'https', hostname: 'www.google.com' },
     ],
   },
 };

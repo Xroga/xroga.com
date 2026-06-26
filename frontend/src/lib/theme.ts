@@ -5,13 +5,21 @@ export const DESKTOP_BG =
 export const MOBILE_BG =
   'https://i.pinimg.com/736x/49/17/78/491778bbd33b7d4b832c8f06415d4e33.jpg';
 
-/** Header / homepage / main area logo — blue brand */
+/** App header logo (outside sidebar) — blue X brand */
 export const HEADER_LOGO_URL =
   'https://i.postimg.cc/bJnL5jV7/Red-and-Blue-Modern-X-letter-Digital-Marketing-Logo-1-removebg-preview-1.png';
 
-/** Sidebar logo */
+/** Homepage hero logo */
+export const HOMEPAGE_LOGO_URL =
+  'https://i.postimg.cc/pLxrn9yP/Green-Minimalist-Summer-Big-Sale-Medium-Banner-10-removebg-preview-(1).png';
+
+/** Sidebar + AI response avatar logo */
 export const SIDEBAR_LOGO_URL =
   'https://i.postimg.cc/bJnL5jV7/Red-and-Blue-Modern-X-letter-Digital-Marketing-Logo-1-removebg-preview-1.png';
+
+export const AI_RESPONSE_LOGO_URL = SIDEBAR_LOGO_URL;
+
+export type TerminalSkin = 'dark' | 'light' | 'light-grid' | 'gray' | 'amoled';
 
 /** @deprecated use HEADER_LOGO_URL */
 export const LOGO_URL = HEADER_LOGO_URL;

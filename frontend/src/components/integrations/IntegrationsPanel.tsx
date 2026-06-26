@@ -119,7 +119,12 @@ export function IntegrationsPanel() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-semibold text-lg">Integrations</h2>
+        <div className="flex flex-wrap items-center gap-3">
+          <h2 className="font-semibold text-lg">Integrations</h2>
+          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/30">
+            {INTEGRATIONS.length} total
+          </span>
+        </div>
         <p className="text-sm text-[var(--muted)] mt-1">
           Connect external services to power your Swarm.
         </p>
@@ -158,10 +163,10 @@ export function IntegrationsPanel() {
                   className="integration-card flex items-center justify-between gap-4 px-4 py-3 hover:bg-white/[0.03]"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 overflow-hidden">
-                      {getIntegrationLogo(item.id) ? (
+                    <div className="w-10 h-10 rounded-xl integration-logo-wrap flex items-center justify-center shrink-0 overflow-hidden">
+                      {getIntegrationLogo(item.id, item.name) ? (
                         <Image
-                          src={getIntegrationLogo(item.id)!}
+                          src={getIntegrationLogo(item.id, item.name)!}
                           alt=""
                           width={24}
                           height={24}

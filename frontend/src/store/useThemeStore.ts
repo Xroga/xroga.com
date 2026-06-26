@@ -2,23 +2,33 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { ThemeId } from '@/lib/theme';
+import type { ThemeId, TerminalSkin } from '@/lib/theme';
 import { CUSTOM_DESKTOP_BG_KEY, CUSTOM_MOBILE_BG_KEY } from '@/lib/theme';
+
+const SKIN_CYCLES: Record<ThemeId, TerminalSkin[]> = {
+  white: ['dark', 'light', 'light-grid'],
+  black: ['amoled', 'light', 'gray', 'dark'],
+  gray: ['gray', 'dark', 'light', 'amoled'],
+  image: ['dark', 'light', 'light-grid', 'gray'],
+};
 
 interface ThemeState {
   theme: ThemeId;
   sidebarOpen: boolean;
+  sidebarPinned: boolean;
   customDesktopBg: string | null;
   customMobileBg: string | null;
   terminalFullscreen: boolean;
-  terminalColorMode: 'day' | 'night';
+  terminalSkin: TerminalSkin;
+  browserPanelOpen: boolean;
   setTheme: (theme: ThemeId) => void;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
   setCustomDesktopBg: (url: string | null) => void;
   setCustomMobileBg: (url: string | null) => void;
   setTerminalFullscreen: (v: boolean) => void;
-  toggleTerminalColorMode: () => void;
+  cycleTerminalSkin: () => void;
+  setBrowserPanelOpen: (v: boolean) => void;
 }
 
 export const useThemeStore = create<ThemeState>()(
@@ -26,13 +36,19 @@ export const useThemeStore = create<ThemeState>()(
     (set) => ({
       theme: 'image',
       sidebarOpen: true,
+      sidebarPinned: true,
       customDesktopBg: null,
       customMobileBg: null,
       terminalFullscreen: false,
-      terminalColorMode: 'night',
+      terminalSkin: 'dark',
+      browserPanelOpen: false,
       setTheme: (theme) => set({ theme }),
       setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
-      toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
+      toggleSidebar: () =>
+        set((s) => {
+          const next = !s.sidebarOpen;
+          return { sidebarOpen: next, sidebarPinned: next };
+        }),
       setCustomDesktopBg: (url) => {
         if (url) localStorage.setItem(CUSTOM_DESKTOP_BG_KEY, url);
         else localStorage.removeItem(CUSTOM_DESKTOP_BG_KEY);
@@ -44,17 +60,24 @@ export const useThemeStore = create<ThemeState>()(
         set({ customMobileBg: url });
       },
       setTerminalFullscreen: (terminalFullscreen) => set({ terminalFullscreen }),
-      toggleTerminalColorMode: () =>
-        set((s) => ({ terminalColorMode: s.terminalColorMode === 'day' ? 'night' : 'day' })),
+      cycleTerminalSkin: () =>
+        set((s) => {
+          const cycle = SKIN_CYCLES[s.theme] ?? SKIN_CYCLES.image;
+          const idx = cycle.indexOf(s.terminalSkin);
+          const next = cycle[(idx + 1) % cycle.length];
+          return { terminalSkin: next };
+        }),
+      setBrowserPanelOpen: (browserPanelOpen) => set({ browserPanelOpen }),
     }),
     {
       name: 'xroga-theme',
       partialize: (s) => ({
         theme: s.theme,
         sidebarOpen: s.sidebarOpen,
+        sidebarPinned: s.sidebarPinned,
         customDesktopBg: s.customDesktopBg,
         customMobileBg: s.customMobileBg,
-        terminalColorMode: s.terminalColorMode,
+        terminalSkin: s.terminalSkin,
       }),
       onRehydrateStorage: () => (state) => {
         if (state && typeof window !== 'undefined') {
@@ -62,6 +85,7 @@ export const useThemeStore = create<ThemeState>()(
           const m = localStorage.getItem(CUSTOM_MOBILE_BG_KEY);
           if (d) state.customDesktopBg = d;
           if (m) state.customMobileBg = m;
+          if (state.sidebarPinned) state.sidebarOpen = true;
         }
       },
     }

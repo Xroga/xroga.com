@@ -108,12 +108,22 @@ export function estimateActionCost(prompt: string): { cost: number; label: strin
   return { cost: chat.cost, label: chat.task };
 }
 
-/** Given an action budget, return tasks the user can afford (sorted by cost desc) */
-export function tasksForActionBudget(actions: number, limit = 12): ActionCostItem[] {
-  if (actions <= 0) return [];
-  return ALL_ACTION_COSTS.filter((item) => item.cost <= actions)
-    .sort((a, b) => b.cost - a.cost)
-    .slice(0, limit);
+/** All tasks for a budget — affordable first (cheapest→expensive), then unaffordable with honest labels */
+export function tasksForActionBudget(actions: number): ActionCostItem[] {
+  const affordable = ALL_ACTION_COSTS.filter((item) => item.cost <= actions).sort(
+    (a, b) => a.cost - b.cost
+  );
+  const unaffordable = ALL_ACTION_COSTS.filter((item) => item.cost > actions).sort(
+    (a, b) => a.cost - b.cost
+  );
+  return [...affordable, ...unaffordable];
+}
+
+export function budgetTaskLine(item: ActionCostItem, actions: number): string {
+  if (actions <= 0) return `needs ${item.cost} actions`;
+  const count = Math.floor(actions / item.cost);
+  if (count > 0) return `${count}× (${item.cost} each)`;
+  return `needs ${item.cost} — you have ${actions}`;
 }
 
 /** How many times a task fits in a budget */

@@ -1,8 +1,8 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
 import {
   LayoutDashboard,
   FolderOpen,
@@ -19,6 +19,7 @@ import {
   Zap,
   BarChart3,
   PieChart,
+  Camera,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
@@ -28,7 +29,9 @@ import { MediaGalleryModal } from './MediaGalleryModal';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/lib/supabase/client';
+import { api } from '@/lib/api';
 import { LogoutButton, UpgradeProButton } from '@/components/ui/Uiverse';
+import toast from 'react-hot-toast';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -54,9 +57,23 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mediaOpen, setMediaOpen] = useState(false);
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
+  const setSidebarOpen = useThemeStore((s) => s.setSidebarOpen);
+  const sidebarPinned = useThemeStore((s) => s.sidebarPinned);
   const toggleSidebar = useThemeStore((s) => s.toggleSidebar);
   const actions = useAppStore((s) => s.actions);
+  const profile = useAppStore((s) => s.profile);
+  const setProfile = useAppStore((s) => s.setProfile);
+  const avatarRef = useRef<HTMLInputElement>(null);
   const isFreeTrial = !actions?.planTier || actions.planTier === 'unpaid';
+  const avatarUrl = profile?.avatar_url;
+  const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
+
+  useEffect(() => {
+    api.profile
+      .get()
+      .then((p) => setProfile(p))
+      .catch(() => {});
+  }, [setProfile]);
 
   const isActive = (href: string) =>
     pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
@@ -66,6 +83,35 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
     await supabase.auth.signOut();
     router.push('/');
     router.refresh();
+  }
+
+  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const supabase = createClient();
+    const path = `avatars/${Date.now()}-${file.name}`;
+    const { error } = await supabase.storage.from('avatars').upload(path, file);
+    if (error) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const url = reader.result as string;
+        setProfile({ ...(profile ?? { display_name: displayName ?? '', timezone: 'UTC', language: 'en', avatar_url: '' }), avatar_url: url });
+        toast.success('Avatar updated locally');
+      };
+      reader.readAsDataURL(file);
+      return;
+    }
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('avatars').getPublicUrl(path);
+    try {
+      const updated = await api.profile.update({ avatar_url: publicUrl });
+      setProfile(updated);
+      toast.success('Avatar updated');
+    } catch {
+      setProfile({ ...(profile ?? { display_name: displayName ?? '', timezone: 'UTC', language: 'en', avatar_url: '' }), avatar_url: publicUrl });
+      toast.success('Avatar uploaded');
+    }
   }
 
   const bottomSection = (
@@ -102,13 +148,27 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
       )}
       <div className={cn('flex items-center justify-between gap-2 px-1 py-1.5', !sidebarOpen && 'flex-col')}>
         {displayName && (
-          <div className={cn('flex items-center gap-2 min-w-0', !sidebarOpen && 'justify-center')}>
-            <div className="w-8 h-8 rounded-full border border-[var(--card-border)] flex items-center justify-center text-xs font-bold shrink-0">
-              {displayName.charAt(0).toUpperCase()}
-            </div>
+          <div className={cn('flex items-center gap-2 min-w-0', !sidebarOpen && 'justify-center flex-col')}>
+            <button
+              type="button"
+              onClick={() => avatarRef.current?.click()}
+              className="relative w-9 h-9 rounded-full border-2 border-[var(--accent)]/40 overflow-hidden flex items-center justify-center text-xs font-bold shrink-0 group hover:border-[var(--accent)] transition-colors"
+              title="Change profile photo"
+            >
+              {avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+              ) : (
+                nameInitial
+              )}
+              <span className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <Camera className="w-3.5 h-3.5 text-white" />
+              </span>
+            </button>
+            <input ref={avatarRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
             {sidebarOpen && (
               <div className="min-w-0">
-                <p className="text-xs font-medium truncate">{displayName}</p>
+                <p className="text-xs font-medium truncate">{profile?.display_name ?? displayName}</p>
                 {email && <p className="text-[10px] text-[var(--muted)] truncate">{email}</p>}
               </div>
             )}
@@ -142,8 +202,14 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
       )}
 
       <aside
+        onMouseEnter={() => {
+          if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(true);
+        }}
+        onMouseLeave={() => {
+          if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(false);
+        }}
         className={cn(
-          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-all duration-300',
+          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-all duration-300 xv-sidebar-hover',
           sidebarOpen ? 'w-64' : 'w-[72px]',
           mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'
         )}
@@ -152,7 +218,10 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           <Logo href="/dashboard" height={sidebarOpen ? 44 : 36} variant="sidebar" />
           <button
             type="button"
-            onClick={toggleSidebar}
+            onClick={() => {
+              toggleSidebar();
+              setMobileOpen(false);
+            }}
             className="hidden lg:flex p-2 rounded-lg hover:bg-white/5 text-[var(--muted)] shrink-0"
             aria-label="Toggle sidebar"
           >

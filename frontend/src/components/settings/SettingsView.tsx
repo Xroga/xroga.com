@@ -13,7 +13,7 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useThemeStore } from '@/store/useThemeStore';
 import { THEME_OPTIONS } from '@/lib/theme';
-import { ALL_ACTION_COSTS, estimateActionCost, tasksForActionBudget } from '@/lib/actionCosts';
+import { ALL_ACTION_COSTS, tasksForActionBudget, budgetTaskLine } from '@/lib/actionCosts';
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
 
 const TABS = ['General', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
@@ -40,10 +40,8 @@ export function SettingsView({ email }: { email: string }) {
   const setCustomMobileBg = useThemeStore((s) => s.setCustomMobileBg);
   const customDesktopBg = useThemeStore((s) => s.customDesktopBg);
   const customMobileBg = useThemeStore((s) => s.customMobileBg);
-  const [calcPrompt, setCalcPrompt] = useState('');
   const [calcBudget, setCalcBudget] = useState('50');
-  const calcEstimate = estimateActionCost(calcPrompt || 'chat');
-  const calcAffordable = tasksForActionBudget(Math.max(0, parseInt(calcBudget, 10) || 0), 8);
+  const calcAffordable = tasksForActionBudget(Math.max(0, parseInt(calcBudget, 10) || 0));
   const usedActions = actions ? actions.total - actions.remaining : 0;
   const usedPct = actions?.total ? Math.round((usedActions / actions.total) * 100) : 0;
 
@@ -112,7 +110,7 @@ export function SettingsView({ email }: { email: string }) {
           {tab === 'General' && profile && (
             <form onSubmit={handleSaveProfile} className="space-y-5">
               <h2 className="font-semibold text-lg">General</h2>
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-[var(--card-border)]">
+              <div className="flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-br from-[var(--accent)]/10 to-transparent border border-[var(--card-border)] xv-fuel-card">
                 <div className="w-16 h-16 rounded-full bg-[var(--primary)]/20 overflow-hidden flex items-center justify-center ring-2 ring-[var(--accent)]/30">
                   {profile.avatar_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -200,41 +198,35 @@ export function SettingsView({ email }: { email: string }) {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl border border-[var(--card-border)] bg-white/[0.02] space-y-4">
-                <h3 className="font-medium text-sm">Action cost calculator</h3>
-                <div>
-                  <label className="block text-xs text-[var(--muted)] mb-1">Describe your task → see cost</label>
-                  <input
-                    value={calcPrompt}
-                    onChange={(e) => setCalcPrompt(e.target.value)}
-                    placeholder="Describe your task..."
-                    className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-[var(--card-border)] text-sm mb-2"
-                  />
-                  <p className="text-sm">
-                    Est. <strong>{calcEstimate.cost}</strong> actions — {calcEstimate.label}
-                  </p>
-                  {calcEstimate.breakdown && (
-                    <p className="text-xs text-[var(--muted)] mt-1">{calcEstimate.breakdown.join(' · ')}</p>
-                  )}
-                </div>
-                <div className="border-t border-[var(--card-border)]/40 pt-3">
-                  <label className="block text-xs text-[var(--muted)] mb-1">Enter actions → see what you can do</label>
-                  <input
-                    type="number"
-                    min={0}
-                    value={calcBudget}
-                    onChange={(e) => setCalcBudget(e.target.value)}
-                    className="w-28 px-3 py-2 rounded-lg bg-white/5 border border-[var(--card-border)] text-sm font-mono mb-2"
-                  />
-                  <ul className="text-xs space-y-1">
-                    {calcAffordable.map((c) => (
-                      <li key={c.id} className="flex justify-between py-0.5">
-                        <span className="text-[var(--muted)]">{c.task}</span>
-                        <span className="font-mono">{Math.floor((parseInt(calcBudget, 10) || 0) / c.cost)}×</span>
+              <div className="p-4 rounded-xl border border-[var(--card-border)] bg-white/[0.02] space-y-3">
+                <h3 className="font-medium text-sm">Action calculator</h3>
+                <p className="text-xs text-[var(--muted)]">
+                  Enter actions to see what you can do — including 1-action chat and tasks you cannot afford yet.
+                </p>
+                <input
+                  type="number"
+                  min={0}
+                  value={calcBudget}
+                  onChange={(e) => setCalcBudget(e.target.value)}
+                  className="w-28 px-3 py-2 rounded-lg bg-white/5 border border-[var(--card-border)] text-sm font-mono"
+                />
+                <ul className="text-xs space-y-1 max-h-48 overflow-y-auto">
+                  {calcAffordable.map((c) => {
+                    const budget = parseInt(calcBudget, 10) || 0;
+                    const canDo = budget >= c.cost;
+                    return (
+                      <li
+                        key={c.id}
+                        className={`flex justify-between py-0.5 gap-2 ${!canDo ? 'opacity-50' : ''}`}
+                      >
+                        <span className="text-[var(--muted)] truncate">{c.task}</span>
+                        <span className={`font-mono shrink-0 ${canDo ? '' : 'text-red-400/80'}`}>
+                          {budgetTaskLine(c, budget)}
+                        </span>
                       </li>
-                    ))}
-                  </ul>
-                </div>
+                    );
+                  })}
+                </ul>
               </div>
 
               <div className="text-xs text-[var(--muted)] space-y-1 max-h-48 overflow-y-auto">

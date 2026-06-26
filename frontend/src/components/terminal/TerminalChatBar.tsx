@@ -110,7 +110,7 @@ export function TerminalChatBar() {
                   void submit();
                 }
               }}
-              placeholder="Ask Xroga to do anything..."
+              placeholder="Ask Xroga AI to do everything..."
               disabled={loading}
               rows={1}
               className={cn(

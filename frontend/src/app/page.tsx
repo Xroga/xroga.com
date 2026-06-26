@@ -7,6 +7,8 @@ import { GALACTIC_PLANS } from '@/lib/plans';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { Sparkles } from 'lucide-react';
 import { StaticQuickTab, GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
+import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
+import { useThemeStore } from '@/store/useThemeStore';
 
 const HOMEPAGE_TAGS = [
   'Games 3D/2D',
@@ -22,12 +24,30 @@ const HOMEPAGE_TAGS = [
 
 export default function HomePage() {
   const router = useRouter();
+  const customDesktopBg = useThemeStore((s) => s.customDesktopBg);
+  const customMobileBg = useThemeStore((s) => s.customMobileBg);
 
   return (
-    <div className="min-h-screen cosmic-bg terminal-grid flex flex-col">
-      <header className="sticky top-0 z-50 bg-transparent border-b border-transparent">
+    <div className="min-h-screen flex flex-col relative">
+      <div
+        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat md:bg-fixed"
+        style={{
+          backgroundImage: `url("${customDesktopBg ?? DESKTOP_BG}")`,
+        }}
+        aria-hidden
+      />
+      <div
+        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat md:hidden"
+        style={{
+          backgroundImage: `url("${customMobileBg ?? MOBILE_BG}")`,
+        }}
+        aria-hidden
+      />
+      <div className="fixed inset-0 -z-10 bg-black/20" aria-hidden />
+
+      <header className="sticky top-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Logo href="/" variant="header" height={56} />
+          <Logo href="/" variant="homepage" height={56} />
           <div className="flex items-center gap-3">
             <PlayNowButton onClick={() => router.push('/auth/login')}>Sign In</PlayNowButton>
             <GradientStartButton onClick={() => router.push('/auth/signup')}>Get Started</GradientStartButton>
@@ -45,12 +65,12 @@ export default function HomePage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold mb-4 text-balance leading-tight">
-            <span className="text-[var(--foreground)]">Do Everything</span>
+            <span className="text-white drop-shadow-lg">Do Everything</span>
             <br />
             <span className="gradient-text-blue">You Imagine</span>
           </h1>
 
-          <p className="text-[var(--muted)] max-w-xl mx-auto mb-10 text-sm sm:text-base">
+          <p className="text-white/80 max-w-xl mx-auto mb-10 text-sm sm:text-base drop-shadow">
             XROGA AI — the world&apos;s most advanced intelligence. Create, build, explore, and bring your boldest ideas to life.
           </p>
 
@@ -67,7 +87,7 @@ export default function HomePage() {
       </main>
 
       <section id="pricing" className="relative z-10 max-w-6xl mx-auto px-6 py-16 w-full">
-        <h2 className="text-2xl font-bold text-center mb-8">Galactic Tiers</h2>
+        <h2 className="text-2xl font-bold text-center mb-8 text-white">Galactic Tiers</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {GALACTIC_PLANS.map((plan) => (
             <div key={plan.tier} className="glass-panel rounded-xl p-4 text-center universe-float">
@@ -84,7 +104,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-[var(--muted)] glass-panel-strong">
+      <footer className="relative z-10 border-t border-white/10 py-8 text-center text-sm text-white/70 glass-panel-strong">
         © {new Date().getFullYear()} Xroga — AI Swarm Operating System
       </footer>
     </div>

@@ -10,6 +10,7 @@ import {
   AGENT_WORKFLOW_COSTS,
   MEDIA_ACTION_COSTS,
   tasksForActionBudget,
+  budgetTaskLine,
 } from '@/lib/actionCosts';
 
 interface ActionCostModalProps {
@@ -32,7 +33,7 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
   if (!open) return null;
 
   const budget = Math.max(0, parseInt(budgetInput, 10) || 0);
-  const affordable = tasksForActionBudget(budget, 10);
+  const affordable = tasksForActionBudget(budget);
 
   const sections = [
     { title: 'Core AI Tasks', items: CORE_ACTION_COSTS },
@@ -81,18 +82,18 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
             <span className="text-sm text-[var(--muted)]">actions, I can do:</span>
           </div>
           {budget > 0 ? (
-            <ul className="mt-2 space-y-1 text-xs">
-              {affordable.map((item) => (
-                <li key={item.id} className="flex justify-between gap-2 py-0.5">
-                  <span className="text-[var(--muted)]">{item.task}</span>
-                  <span className="font-mono shrink-0">
-                    {Math.floor(budget / item.cost)}× ({item.cost} each)
-                  </span>
-                </li>
-              ))}
-              {affordable.length === 0 && (
-                <li className="text-[var(--muted)]">Not enough for any listed task — try chat (1 action).</li>
-              )}
+            <ul className="mt-2 space-y-1 text-xs max-h-40 overflow-y-auto">
+              {affordable.map((item) => {
+                const canDo = budget >= item.cost;
+                return (
+                  <li key={item.id} className={`flex justify-between gap-2 py-0.5 ${!canDo ? 'opacity-50' : ''}`}>
+                    <span className="text-[var(--muted)] truncate">{item.task}</span>
+                    <span className={`font-mono shrink-0 ${canDo ? '' : 'text-red-400/80'}`}>
+                      {budgetTaskLine(item, budget)}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <p className="text-xs text-[var(--muted)] mt-2">Enter an action count above.</p>

@@ -509,10 +509,14 @@ body.theme-gray .xv-chatbar-solid {
   color: #fff;
 }
 body.theme-black .xv-chatbar-solid textarea,
-body.theme-gray .xv-chatbar-solid textarea,
 body.theme-black .xv-chatbar-solid button,
+body.theme-gray .xv-chatbar-solid textarea,
 body.theme-gray .xv-chatbar-solid button {
-  color: #fff;
+  color: #fff !important;
+}
+body.theme-black .xv-chatbar-solid textarea::placeholder,
+body.theme-gray .xv-chatbar-solid textarea::placeholder {
+  color: rgba(255, 255, 255, 0.65) !important;
 }
 
 /* ── Settings tabs modern ── */

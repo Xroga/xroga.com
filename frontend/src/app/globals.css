@@ -255,6 +255,112 @@ body.theme-gray .glass-panel-strong {
     color: #fff;
   }
 
+  .terminal-skin-dark {
+    background: #000000;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    --foreground: #fff;
+    --muted: #a3a3a3;
+    --accent: #4a7aff;
+  }
+
+  .terminal-skin-amoled {
+    background: #000000;
+    border: none;
+    color: #ffffff;
+    --foreground: #fff;
+    --muted: #737373;
+    --accent: #fff;
+  }
+
+  .terminal-skin-light {
+    background: #ffffff;
+    border: none;
+    color: #000000;
+    --foreground: #000;
+    --muted: #6b7280;
+    --accent: #4a7aff;
+  }
+
+  .terminal-skin-light-grid {
+    background-color: #ffffff;
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    background-size: 16px 16px;
+    border: none;
+    color: #000000;
+    --foreground: #000;
+    --muted: #4b5563;
+    --accent: #4a7aff;
+  }
+
+  .terminal-skin-gray {
+    background: #2a2a2a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    --foreground: #fff;
+    --muted: #a3a3a3;
+    --accent: #4a7aff;
+  }
+
+  body.theme-white .integration-logo-wrap {
+    background: #1e293b;
+  }
+
+  body.theme-white .integration-logo-wrap img {
+    filter: none;
+  }
+
+  .xv-analytics-card {
+    animation: universe-float 5s ease-in-out infinite;
+  }
+
+  .xv-analytics-bar {
+    animation: xv-bar-grow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes xv-bar-grow {
+    from { width: 0%; }
+    to { width: 8%; }
+  }
+
+  .xv-browser-scan {
+    animation: xv-browser-scan 2.5s linear infinite;
+  }
+
+  @keyframes xv-browser-scan {
+    0% { transform: translateX(-100%); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+  }
+
+  .xv-fuel-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .xv-fuel-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(74, 122, 255, 0.12);
+  }
+
+  body.theme-black .xv-chatbar-solid textarea,
+  body.theme-black .xv-chatbar-solid .xv-chatbar-input,
+  body.theme-gray .xv-chatbar-solid textarea {
+    color: #fff !important;
+  }
+
+  body.theme-black .xv-chatbar-solid textarea::placeholder,
+  body.theme-gray .xv-chatbar-solid textarea::placeholder {
+    color: rgba(255, 255, 255, 0.55) !important;
+  }
+
+  body.theme-black .xv-chatbar-solid,
+  body.theme-gray .xv-chatbar-solid {
+    color: #fff;
+  }
+
+  /* Legacy terminal skins */
   .terminal-log-night {
     background: rgba(10, 20, 45, 0.35);
     backdrop-filter: blur(12px);

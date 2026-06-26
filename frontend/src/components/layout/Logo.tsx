@@ -1,18 +1,21 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { HEADER_LOGO_URL, SIDEBAR_LOGO_URL } from '@/lib/theme';
+import { HEADER_LOGO_URL, SIDEBAR_LOGO_URL, HOMEPAGE_LOGO_URL } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
   href?: string;
   height?: number;
   className?: string;
-  variant?: 'header' | 'sidebar';
+  variant?: 'header' | 'sidebar' | 'homepage';
 }
 
 export function Logo({ href = '/dashboard', height = 50, className, variant = 'header' }: LogoProps) {
-  const src = variant === 'sidebar' ? SIDEBAR_LOGO_URL : HEADER_LOGO_URL;
-  const width = variant === 'header' ? height * 2.2 : height * 1.1;
+  const src =
+    variant === 'homepage' ? HOMEPAGE_LOGO_URL : variant === 'sidebar' ? SIDEBAR_LOGO_URL : HEADER_LOGO_URL;
+  const width = variant === 'homepage' ? height * 2.8 : variant === 'header' ? height * 2.2 : height * 1.1;
 
   const inner = (
     <div
