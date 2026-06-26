@@ -11,6 +11,7 @@ export interface Integration {
 
 export const INTEGRATION_CATEGORIES = [
   'Developer & Code',
+  'Gaming & Consoles',
   'Social Media & Communication',
   'E-commerce & Payments',
   'AI & Media APIs',
@@ -33,6 +34,15 @@ export const INTEGRATIONS: Integration[] = [
   { id: 'render', name: 'Render', category: 'Developer & Code', status: 'not_connected', oauth: true },
   { id: 'supabase', name: 'Supabase', category: 'Developer & Code', status: 'connected', description: 'Database, Auth, RLS' },
   { id: 'upstash', name: 'Upstash Redis', category: 'Developer & Code', status: 'connected', description: 'Task queue & caching' },
+  // Gaming & Consoles
+  { id: 'xbox', name: 'Xbox / Microsoft', category: 'Gaming & Consoles', status: 'not_connected', oauth: true },
+  { id: 'ps5', name: 'PlayStation (PS5)', category: 'Gaming & Consoles', status: 'not_connected', oauth: true },
+  { id: 'steam', name: 'Steam / PC', category: 'Gaming & Consoles', status: 'not_connected', oauth: true },
+  { id: 'nintendo', name: 'Nintendo Switch', category: 'Gaming & Consoles', status: 'not_connected' },
+  { id: 'epic', name: 'Epic Games', category: 'Gaming & Consoles', status: 'not_connected', oauth: true },
+  { id: 'unity', name: 'Unity Gaming Services', category: 'Gaming & Consoles', status: 'not_connected' },
+  { id: 'roblox', name: 'Roblox', category: 'Gaming & Consoles', status: 'not_connected' },
+  { id: 'itch', name: 'itch.io', category: 'Gaming & Consoles', status: 'not_connected' },
   // Social
   { id: 'twitter', name: 'Twitter/X', category: 'Social Media & Communication', status: 'not_connected', oauth: true },
   { id: 'linkedin', name: 'LinkedIn', category: 'Social Media & Communication', status: 'not_connected', oauth: true },
@@ -69,6 +79,9 @@ export const INTEGRATIONS: Integration[] = [
   { id: 'fal', name: 'Fal.ai', category: 'AI & Media APIs', status: 'not_connected' },
   { id: 'luma', name: 'Luma', category: 'AI & Media APIs', status: 'not_connected' },
   { id: 'tripo', name: 'Tripo', category: 'AI & Media APIs', status: 'not_connected' },
+  { id: 'midjourney', name: 'Midjourney', category: 'AI & Media APIs', status: 'not_connected' },
+  { id: 'stability', name: 'Stability AI', category: 'AI & Media APIs', status: 'not_connected' },
+  { id: 'perplexity', name: 'Perplexity', category: 'AI & Media APIs', status: 'not_connected' },
   // Automation
   { id: 'apify', name: 'Apify', category: 'Automation & Scraping', status: 'not_connected' },
   { id: 'browserless', name: 'Browserless', category: 'Automation & Scraping', status: 'not_connected' },

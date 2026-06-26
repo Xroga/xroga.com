@@ -6,7 +6,7 @@ import { Logo } from '@/components/layout/Logo';
 import { GALACTIC_PLANS } from '@/lib/plans';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { Sparkles } from 'lucide-react';
-import { GradientStartButton, PlayNowButton, FrutigerButton } from '@/components/ui/Uiverse';
+import { StaticQuickTab, GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
 
 const HOMEPAGE_TAGS = [
   'Games 3D/2D',
@@ -58,9 +58,9 @@ export default function HomePage() {
 
           <div className="flex flex-wrap justify-center gap-2 max-w-3xl mx-auto mt-8">
             {HOMEPAGE_TAGS.map((tag) => (
-              <FrutigerButton key={tag} onClick={() => router.push('/auth/signup')}>
+              <StaticQuickTab key={tag} onClick={() => router.push('/auth/signup')}>
                 {tag}
-              </FrutigerButton>
+              </StaticQuickTab>
             ))}
           </div>
         </div>

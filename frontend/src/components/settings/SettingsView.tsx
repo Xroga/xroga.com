@@ -5,14 +5,15 @@ import { createClient } from '@/lib/supabase/client';
 import { api, type Profile } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 import toast from 'react-hot-toast';
-import { Save, Trash2 } from 'lucide-react';
-import { LogoutButton } from '@/components/ui/Uiverse';
+import { Save } from 'lucide-react';
+import { LogoutButton, UpgradeProButton, DeleteExpandButton, SettingsTab } from '@/components/ui/Uiverse';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useThemeStore } from '@/store/useThemeStore';
 import { THEME_OPTIONS } from '@/lib/theme';
+import { ALL_ACTION_COSTS, estimateActionCost } from '@/lib/actionCosts';
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
 
 const TABS = ['General', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
@@ -39,6 +40,10 @@ export function SettingsView({ email }: { email: string }) {
   const setCustomMobileBg = useThemeStore((s) => s.setCustomMobileBg);
   const customDesktopBg = useThemeStore((s) => s.customDesktopBg);
   const customMobileBg = useThemeStore((s) => s.customMobileBg);
+  const [calcPrompt, setCalcPrompt] = useState('');
+  const calcEstimate = estimateActionCost(calcPrompt || 'chat');
+  const usedActions = actions ? actions.total - actions.remaining : 0;
+  const usedPct = actions?.total ? Math.round((usedActions / actions.total) * 100) : 0;
 
   useEffect(() => {
     api.profile.get()
@@ -94,27 +99,19 @@ export function SettingsView({ email }: { email: string }) {
         <div className="md:w-48 shrink-0">
           <nav className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
             {TABS.map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTab(t)}
-                className={cn(
-                  'px-4 py-2 rounded-lg text-sm text-left whitespace-nowrap transition-colors',
-                  tab === t ? 'bg-[var(--primary)]/20 text-[var(--accent)]' : 'text-[var(--muted)] hover:bg-white/5'
-                )}
-              >
+              <SettingsTab key={t} active={tab === t} onClick={() => setTab(t)}>
                 {t}
-              </button>
+              </SettingsTab>
             ))}
           </nav>
         </div>
 
-        <div className="flex-1 rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
+        <div className="flex-1 rounded-2xl border border-[var(--card-border)] bg-[var(--card)]/80 backdrop-blur-sm p-6 shadow-lg">
           {tab === 'General' && profile && (
-            <form onSubmit={handleSaveProfile} className="space-y-4">
-              <h2 className="font-semibold mb-4">General</h2>
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-[var(--primary)]/20 overflow-hidden flex items-center justify-center">
+            <form onSubmit={handleSaveProfile} className="space-y-5">
+              <h2 className="font-semibold text-lg">General</h2>
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-[var(--card-border)]">
+                <div className="w-16 h-16 rounded-full bg-[var(--primary)]/20 overflow-hidden flex items-center justify-center ring-2 ring-[var(--accent)]/30">
                   {profile.avatar_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
@@ -176,23 +173,52 @@ export function SettingsView({ email }: { email: string }) {
           )}
 
           {tab === 'Plan & Billing' && (
-            <div className="space-y-4">
-              <h2 className="font-semibold">Plan & Billing</h2>
-              <div className="p-4 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent)]/10">
-                <p className="font-medium capitalize">{actions?.planTier ?? 'unpaid'} Plan</p>
-                <p className="text-sm text-[var(--muted)] mt-1">
-                  {actions?.remaining.toLocaleString()} / {actions?.total.toLocaleString()} Actions remaining
+            <div className="space-y-5">
+              <h2 className="font-semibold text-lg">Plan & Billing</h2>
+              <div className="p-5 rounded-xl border border-[var(--accent)]/30 bg-gradient-to-br from-[var(--accent)]/10 to-transparent">
+                <p className="font-medium capitalize text-lg">{actions?.planTier ?? 'unpaid'} Plan</p>
+                <div className="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full bg-[var(--accent)] rounded-full transition-all"
+                    style={{ width: `${usedPct}%` }}
+                  />
+                </div>
+                <p className="text-sm text-[var(--muted)] mt-2">
+                  <span className="text-[var(--accent)] font-semibold">{actions?.remaining.toLocaleString() ?? 50}</span>
+                  {' / '}
+                  {actions?.total.toLocaleString() ?? 50} Actions remaining ({usedPct}% used)
                 </p>
                 {actions?.concurrencyLimit != null && (
                   <p className="text-sm text-[var(--muted)] mt-1">
                     {actions.concurrencyLimit} concurrent task{actions.concurrencyLimit === 1 ? '' : 's'}
                   </p>
                 )}
-                <a href="/pricing" className="inline-block mt-3 px-4 py-2 rounded-lg bg-[var(--accent)] text-black text-sm font-semibold">
-                  Upgrade Plan
-                </a>
+                <div className="mt-4 max-w-xs">
+                  <UpgradeProButton onClick={() => router.push('/pricing')} />
+                </div>
               </div>
-              <p className="text-sm text-[var(--muted)]">Invoice history available after Paddle integration (Phase 5).</p>
+
+              <div className="p-4 rounded-xl border border-[var(--card-border)] bg-white/[0.02]">
+                <h3 className="font-medium text-sm mb-2">Estimate before you build</h3>
+                <input
+                  value={calcPrompt}
+                  onChange={(e) => setCalcPrompt(e.target.value)}
+                  placeholder="Describe your task..."
+                  className="w-full px-3 py-2.5 rounded-lg bg-white/5 border border-[var(--card-border)] text-sm mb-2"
+                />
+                <p className="text-sm">
+                  Est. <strong>{calcEstimate.cost}</strong> actions — {calcEstimate.label}
+                </p>
+              </div>
+
+              <div className="text-xs text-[var(--muted)] space-y-1 max-h-40 overflow-y-auto">
+                {ALL_ACTION_COSTS.slice(0, 8).map((c) => (
+                  <div key={c.id} className="flex justify-between py-1 border-b border-[var(--card-border)]/40">
+                    <span>{c.task}</span>
+                    <span className="font-mono">{c.cost}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -217,14 +243,7 @@ export function SettingsView({ email }: { email: string }) {
                   router.refresh();
                 }}
               />
-              <button
-                type="button"
-                onClick={() => setShowDeleteModal(true)}
-                className="flex items-center gap-2 text-sm text-red-400 hover:underline"
-              >
-                <Trash2 className="w-4 h-4" />
-                Delete Account
-              </button>
+              <DeleteExpandButton onClick={() => setShowDeleteModal(true)} />
               {showDeleteModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
                   <div className="bg-[var(--card)] rounded-xl border border-[var(--card-border)] p-6 max-w-sm w-full">
@@ -293,9 +312,10 @@ export function SettingsView({ email }: { email: string }) {
               <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t border-[var(--card-border)]">
                 <div>
                   <label className="block text-sm font-medium mb-2">Custom desktop wallpaper</label>
+                  <p className="text-xs text-[var(--muted)] mb-2">PNG, JPG, WebP · recommended 1920×1080 or higher · keep file under 5MB</p>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/png,image/jpeg,image/webp,image/gif"
                     className="text-xs w-full"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
@@ -321,9 +341,10 @@ export function SettingsView({ email }: { email: string }) {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Custom mobile wallpaper</label>
+                  <p className="text-xs text-[var(--muted)] mb-2">PNG, JPG, WebP · recommended 1080×1920 portrait · light images work best</p>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/png,image/jpeg,image/webp,image/gif"
                     className="text-xs w-full"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
