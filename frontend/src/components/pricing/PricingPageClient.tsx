@@ -88,7 +88,7 @@ export function PricingPageClient() {
             const cta = isCurrent ? (
               <div className="text-center py-2 text-sm font-semibold text-cyan-300">Current Plan</div>
             ) : (
-              <CheckoutButton planTier={plan.tier} label={`Get ${plan.name}`} variant="checkout-card" />
+              <CheckoutButton planTier={plan.tier} label={`Get ${plan.name}`} />
             );
 
             if (plan.highlight) {

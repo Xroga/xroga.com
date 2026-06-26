@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { api, ApiError } from '@/lib/api';
-import { SpinSubscribeButton, CheckoutAnimationCard } from '@/components/ui/Uiverse';
+import { BuyNowButton } from '@/components/ui/Uiverse';
 import type { PlanTier } from '@/lib/plans';
 
 interface CheckoutButtonProps {
@@ -11,14 +11,12 @@ interface CheckoutButtonProps {
   label?: string;
   className?: string;
   onSuccess?: () => void;
-  variant?: 'spin' | 'checkout-card';
 }
 
 export function CheckoutButton({
   planTier,
   label = 'Subscribe',
   onSuccess,
-  variant = 'spin',
 }: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
 
@@ -59,14 +57,5 @@ export function CheckoutButton({
     }
   }
 
-  if (variant === 'checkout-card') {
-    return (
-      <CheckoutAnimationCard
-        label={loading ? 'Opening checkout…' : `New Transaction — ${label}`}
-        onClick={handleCheckout}
-      />
-    );
-  }
-
-  return <SpinSubscribeButton label={label} onClick={handleCheckout} disabled={loading} />;
+  return <BuyNowButton label={label === 'Subscribe' ? 'BUY NOW' : label} onClick={handleCheckout} disabled={loading} />;
 }

@@ -1,2 +1,5 @@
-import { PlaceholderPage } from '@/components/PlaceholderPage';
-export default function Page() { return <PlaceholderPage title="Analytics" />; }
+import { AnalyticsView } from '@/components/dashboard/AnalyticsView';
+
+export default function AnalyticsPage() {
+  return <AnalyticsView />;
+}

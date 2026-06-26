@@ -69,6 +69,26 @@ export function SendDiscoverButton({ disabled, loading }: { disabled?: boolean; 
 }
 
 /* ── Frutiger quick-action tab ── */
+export function StaticQuickTab({
+  children,
+  icon,
+  onClick,
+  disabled,
+}: {
+  children: ReactNode;
+  icon?: ReactNode;
+  onClick?: (e: React.MouseEvent) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <button type="button" onClick={onClick} disabled={disabled} className="xv-quick-tab">
+      {icon}
+      {children}
+    </button>
+  );
+}
+
+/** @deprecated use StaticQuickTab */
 export function FrutigerButton({
   children,
   icon,
@@ -114,7 +134,82 @@ export function ConnectButton({
   );
 }
 
-/* ── Logout ── */
+export function UpgradeProButton({ onClick }: { onClick?: () => void }) {
+  return (
+    <button type="button" onClick={onClick} className="xv-upgrade-pro">
+      <span className="xv-upgrade-inner">
+        <span className="xv-upgrade-text">
+          <span>Upgrade to</span>
+          <span className="pro">PRO</span>
+        </span>
+        <span className="xv-upgrade-icon">
+          <svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg">
+            <path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z" />
+          </svg>
+        </span>
+      </span>
+    </button>
+  );
+}
+
+export function BuyNowButton({
+  label = 'BUY NOW',
+  onClick,
+  disabled,
+}: {
+  label?: string;
+  onClick?: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <button type="button" onClick={onClick} disabled={disabled} className="xv-buy-now">
+      {disabled ? 'Opening…' : label}
+      <svg fill="none" viewBox="0 0 24 24" height="20" width="20" xmlns="http://www.w3.org/2000/svg">
+        <path
+          fill="white"
+          d="M0.479167 11.5C0.203024 11.5 -0.0208333 11.7239 -0.0208333 12C-0.0208333 12.2761 0.203024 12.5 0.479167 12.5V11.5ZM22.9231 12.3536C23.1184 12.1583 23.1184 11.8417 22.9231 11.6464L19.7411 8.46447C19.5459 8.2692 19.2293 8.2692 19.034 8.46447C18.8388 8.65973 18.8388 8.97631 19.034 9.17157L21.8625 12L19.034 14.8284C18.8388 15.0237 18.8388 15.3403 19.034 15.5355C19.2293 15.7308 19.5459 15.7308 19.7411 15.5355L22.9231 12.3536ZM0.479167 12.5H22.5696V11.5H0.479167V12.5Z"
+        />
+      </svg>
+    </button>
+  );
+}
+
+export function DeleteExpandButton({ onClick, label = 'Delete' }: { onClick?: () => void; label?: string }) {
+  return (
+    <button type="button" onClick={onClick} className="xv-delete-btn" aria-label={label}>
+      <svg viewBox="0 0 448 512" className="xv-del-icon">
+        <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z" />
+      </svg>
+    </button>
+  );
+}
+
+export function QuotePageLoader() {
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--background)]/90 backdrop-blur-sm">
+      <button type="button" className="xv-quote-loader" tabIndex={-1}>
+        <span>XROGA AI: Defined by what we do.</span>
+      </button>
+    </div>
+  );
+}
+
+export function SettingsTab({
+  active,
+  onClick,
+  children,
+}: {
+  active?: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button type="button" onClick={onClick} className={cn('xv-settings-tab', active && 'xv-active')}>
+      {children}
+    </button>
+  );
+}
+
 export function LogoutButton({ onClick }: { onClick: () => void }) {
   return (
     <button type="button" onClick={onClick} className="xv-logout-btn" aria-label="Logout">
@@ -232,61 +327,17 @@ export function SpinSubscribeButton({
   onClick: () => void;
   disabled?: boolean;
 }) {
-  return (
-    <div className="xv-spin-subscribe">
-      <button type="button" className="xv-real-btn" onClick={onClick} disabled={disabled} aria-label={label} />
-      <div className="xv-spin" />
-      <div className="xv-spin-border">
-        <div className="xv-spin-inner">{disabled ? 'Opening…' : label}</div>
-      </div>
-    </div>
-  );
+  return <BuyNowButton label={label} onClick={onClick} disabled={disabled} />;
 }
 
-export function CheckoutAnimationCard({ label, onClick }: { label: string; onClick?: () => void }) {
-  return (
-    <button type="button" onClick={onClick} className="xv-checkout-card w-full text-left">
-      <div className="xv-checkout-left">
-        <div className="text-green-700 font-bold text-lg">$</div>
-      </div>
-      <div className="xv-checkout-right">{label}</div>
-    </button>
-  );
+export function ChatbarShell({ children, className }: { children: ReactNode; className?: string }) {
+  return <div className={cn('xv-chatbar-solid', className)}>{children}</div>;
 }
 
-/* ── Poda chatbar shell ── */
-export function PodaChatbarShell({ children, className }: { children: ReactNode; className?: string }) {
-  return (
-    <div className={cn('xv-poda', className)}>
-      <div className="xv-glow" />
-      <div className="xv-dark-border" />
-      <div className="xv-dark-border" />
-      <div className="xv-white-ring" />
-      <div className="xv-border-ring" />
-      <div className="xv-poda-main">{children}</div>
-    </div>
-  );
-}
+/** @deprecated use ChatbarShell */
+export const PodaChatbarShell = ChatbarShell;
 
-/* ── Loader type detection ── */
-export type LoaderKind = 'generating' | 'build' | 'search' | 'image';
-
-export function detectLoaderKind(text: string): LoaderKind {
-  const t = text.toLowerCase();
-  if (/image|video|picture|photo|art|draw|illustrat/.test(t)) return 'image';
-  if (/search|research|document|source|praise|web search|papers/.test(t)) return 'search';
-  if (/build|website|app|software|game|movie|automate|code|debug/.test(t)) return 'build';
-  return 'generating';
-}
-
-export function AiResponseLoader({ kind, word = 'Generating' }: { kind: LoaderKind; word?: string }) {
-  if (kind === 'search') return <DocumentSearchLoader />;
-  if (kind === 'build') return <BuildSiteLoader />;
-  if (kind === 'image') return <PencilImageLoader />;
-  return <GeneratingLoader word={word} />;
-}
-
-function GeneratingLoader({ word }: { word: string }) {
+export function AiResponseLoader({ word = 'Generating' }: { word?: string }) {
   const letters = word.split('');
   return (
     <div className="xv-gen-loader py-4">
@@ -297,51 +348,5 @@ function GeneratingLoader({ word }: { word: string }) {
       ))}
       <div className="xv-gen-ring" />
     </div>
-  );
-}
-
-function DocumentSearchLoader() {
-  const page = (
-    <svg fill="currentColor" viewBox="0 0 90 120">
-      <path d="M90,0 L90,120 L11,120 C4.92486775,120 0,115.075132 0,109 L0,11 C0,4.92486775 4.92486775,0 11,0 L90,0 Z M71.5,81 L18.5,81 C17.1192881,81 16,82.1192881 16,83.5 C16,84.8254834 17.0315359,85.9100387 18.3356243,85.9946823 L18.5,86 L71.5,86 C72.8807119,86 74,84.8807119 74,83.5 C74,82.1745166 72.9684641,81.0899613 71.6643757,81.0053177 L71.5,81 Z M71.5,57 L18.5,57 C17.1192881,57 16,58.1192881 16,59.5 C16,60.8254834 17.0315359,61.9100387 18.3356243,61.9946823 L18.5,62 L71.5,62 C72.8807119,62 74,60.8807119 74,59.5 C74,58.1192881 72.8807119,57 71.5,57 Z M71.5,33 L18.5,33 C17.1192881,33 16,34.1192881 16,35.5 C16,36.8254834 17.0315359,37.9100387 18.3356243,37.9946823 L18.5,38 L71.5,38 C72.8807119,38 74,36.8807119 74,35.5 C74,34.1192881 72.8807119,33 71.5,33 Z" />
-    </svg>
-  );
-  return (
-    <div className="xv-doc-loader mx-auto py-2">
-      <div>
-        <ul>
-          {[1, 2, 3].map((n) => (
-            <li key={n}>{page}</li>
-          ))}
-        </ul>
-      </div>
-      <span>Sourcing documents…</span>
-    </div>
-  );
-}
-
-function BuildSiteLoader() {
-  return (
-    <div className="xv-build-loader mx-auto py-2">
-      <svg viewBox="0 0 400 120" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
-        <rect x="120" y="20" width="160" height="90" rx="6" className="xv-browser-frame" />
-        <rect x="130" y="35" width="140" height="10" rx="2" className="xv-skeleton" />
-        <rect x="130" y="52" width="90" height="8" rx="2" className="xv-skeleton" />
-        <rect x="130" y="65" width="140" height="30" rx="2" className="xv-skeleton" />
-        <path d="M60 70 H120 V30" className="xv-trace" />
-        <path d="M340 50 H280 V80" className="xv-trace" />
-      </svg>
-    </div>
-  );
-}
-
-function PencilImageLoader() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" className="xv-pencil-loader mx-auto py-2">
-      <circle transform="rotate(-113,100,100)" strokeWidth="2" stroke="currentColor" fill="none" r="70" className="xv-pb1" />
-      <g transform="translate(100,100)" className="xv-pr">
-        <circle transform="rotate(-90)" strokeWidth="30" stroke="hsl(223,90%,50%)" fill="none" r="64" className="xv-pb1" />
-      </g>
-    </svg>
   );
 }

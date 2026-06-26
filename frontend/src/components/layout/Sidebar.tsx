@@ -17,6 +17,8 @@ import {
   Search,
   Image as ImageIcon,
   Zap,
+  BarChart3,
+  PieChart,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
@@ -26,12 +28,14 @@ import { MediaGalleryModal } from './MediaGalleryModal';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/lib/supabase/client';
-import { LogoutButton, GradientStartButton } from '@/components/ui/Uiverse';
+import { LogoutButton, UpgradeProButton } from '@/components/ui/Uiverse';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/dashboard/projects', label: 'My Projects', icon: FolderOpen },
   { href: '/dashboard/chats', label: 'Chats', icon: MessageSquare },
+  { href: '/dashboard/spending', label: 'Action Spend', icon: PieChart },
+  { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/dashboard/integrations', label: 'Integrations', icon: Link2 },
   { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
   { href: '/settings', label: 'Settings', icon: Settings },
@@ -84,11 +88,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
         </div>
       )}
       {isFreeTrial && sidebarOpen && (
-        <div className="mx-1">
-          <GradientStartButton className="w-full text-sm" onClick={() => router.push('/pricing')}>
-            Upgrade Plan
-          </GradientStartButton>
-        </div>
+        <UpgradeProButton onClick={() => router.push('/pricing')} />
       )}
       {isFreeTrial && !sidebarOpen && (
         <Link

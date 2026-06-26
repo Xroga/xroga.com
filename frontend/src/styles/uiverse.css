@@ -193,30 +193,18 @@
   font-size: 11px;
 }
 
-/* ── Sidebar glass menu (mymiamo) ── */
+/* ── Sidebar nav (no blue pill background) ── */
 .xv-sidebar-menu {
-  width: calc(100% - 8px);
-  margin: 0 auto;
-  backdrop-filter: blur(12px) saturate(180%) contrast(200%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%) contrast(200%);
-  background: rgba(0, 122, 255, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-  padding: 6px;
-  border-radius: 99rem;
+  width: 100%;
+  margin: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   position: relative;
-}
-.xv-sidebar-menu::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  box-shadow: inset 2px 2px 5px -2px rgba(255,255,255,0.4), inset -2px -2px 5px 2px rgba(255,255,255,0.4);
-  pointer-events: none;
-  z-index: -1;
 }
 .xv-sidebar-menu a,
 .xv-sidebar-menu button.xv-menu-item {
@@ -238,14 +226,15 @@
 }
 .xv-sidebar-menu a:hover,
 .xv-sidebar-menu button.xv-menu-item:hover {
-  background: rgba(255,255,255,0.3);
-  transform: rotate(0.5deg);
-  color: rgba(0,122,255,0.9);
+  background: rgba(255,255,255,0.08);
+  transform: none;
+  color: var(--foreground);
 }
 .xv-sidebar-menu a.xv-active,
 .xv-sidebar-menu button.xv-menu-item.xv-active {
-  background: rgba(237,237,237,0.6);
-  color: rgba(0,122,255,0.95);
+  background: rgba(255,255,255,0.12);
+  color: var(--accent);
+  border: 1px solid var(--card-border);
 }
 .xv-sidebar-menu a:active { transform: scale(0.98); }
 
@@ -292,10 +281,149 @@
 body.theme-image .xv-poda-main { background: rgba(255,255,255,0.15); }
 body.theme-white .xv-poda-main { background: rgba(255,255,255,0.95); }
 
-/* ── Connect button simplified (marcelodolza inspired) ── */
+/* ── Upgrade to PRO (vinodjangid07) ── */
+.xv-upgrade-pro {
+  width: 100%;
+  border: none;
+  background-color: #ebebeb;
+  padding: 8px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px #e1e1e1;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.xv-upgrade-pro .xv-upgrade-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f7f7f7;
+  border-radius: 5px;
+  padding: 8px 14px;
+  box-shadow: 0 4px 10px #d3d3d3;
+  gap: 12px;
+}
+.xv-upgrade-pro .xv-upgrade-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: rgb(140,140,140);
+}
+.xv-upgrade-pro .xv-upgrade-text .pro {
+  background: #000;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+.xv-upgrade-pro .xv-upgrade-icon {
+  width: 36px;
+  height: 36px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(45deg);
+  transition: 0.2s;
+  flex-shrink: 0;
+}
+.xv-upgrade-pro:hover .xv-upgrade-icon { transform: rotate(0deg); }
+.xv-upgrade-pro .xv-upgrade-icon svg { width: 14px; fill: #333; }
+
+/* ── Static quick tab (no animation) ── */
+.xv-quick-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background: rgba(255,255,255,0.06);
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.xv-quick-tab:hover { background: rgba(255,255,255,0.12); border-color: var(--accent); }
+.xv-quick-tab:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── BUY NOW (aCHEN-design) ── */
+.xv-buy-now {
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.35);
+  background: rgba(0,0,0,0.25);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.5);
+  backdrop-filter: blur(15px);
+  position: relative;
+  transition: all 0.3s;
+  padding: 0.5rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #fff;
+  gap: 10px;
+  outline: none;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  width: 100%;
+}
+.xv-buy-now:hover { transform: scale(1.03); box-shadow: 0 4px 0 rgba(0,0,0,0.5); }
+.xv-buy-now::before {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100%;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.8), transparent 70%);
+  top: 0;
+  left: -100px;
+  opacity: 0.6;
+}
+.xv-buy-now:hover::before { animation: xv-shine 1s ease-out infinite; }
+
+/* ── Delete expand (vinodjangid07) ── */
+.xv-delete-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgb(20,20,20);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.16);
+  cursor: pointer;
+  transition-duration: 0.3s;
+  overflow: hidden;
+  position: relative;
+}
+.xv-delete-btn .xv-del-icon { width: 12px; transition-duration: 0.3s; }
+.xv-delete-btn .xv-del-icon path { fill: white; }
+.xv-delete-btn:hover {
+  width: 120px;
+  border-radius: 50px;
+  background: rgb(255,69,69);
+}
+.xv-delete-btn:hover .xv-del-icon { width: 20px; transform: translateY(60%); }
+.xv-delete-btn::before {
+  position: absolute;
+  top: -20px;
+  content: "Delete";
+  color: white;
+  font-size: 2px;
+  transition-duration: 0.3s;
+}
+.xv-delete-btn:hover::before { font-size: 13px; transform: translateY(28px); }
+
+/* ── Connect button blue/silver ── */
 .xv-connect-btn {
-  --xv-purple-300: #c389f2;
-  --xv-purple-400: #8e26e2;
+  --xv-purple-300: #94c5f8;
+  --xv-purple-400: #2563eb;
   border-radius: 14px;
   outline: none;
   cursor: pointer;
@@ -332,11 +460,77 @@ body.theme-white .xv-poda-main { background: rgba(255,255,255,0.95); }
   padding: 0 14px;
 }
 .xv-connect-btn.xv-manage .xv-connect-wrap {
-  background: linear-gradient(to bottom, #a8e6cf, #2d8659);
+  background: linear-gradient(to bottom, #c0c0c0, #6b7280);
 }
 .xv-connect-btn.xv-manage .xv-connect-content {
-  background: linear-gradient(to bottom, #7dcea0, #27ae60);
-  color: #fff;
+  background: linear-gradient(to bottom, #e5e7eb, #9ca3af);
+  color: #111;
+  text-shadow: none;
+}
+
+/* ── Modern solid chatbar ── */
+.xv-chatbar-solid {
+  background: #121820;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.35);
+}
+body.theme-white .xv-chatbar-solid {
+  background: #ffffff;
+  border: 2px solid #000;
+  color: #000;
+}
+body.theme-image .xv-chatbar-solid {
+  background: #0d1117;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* ── Settings tabs modern ── */
+.xv-settings-tab {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  color: var(--muted);
+}
+.xv-settings-tab:hover { background: rgba(255,255,255,0.05); color: var(--foreground); }
+.xv-settings-tab.xv-active {
+  background: rgba(74,122,255,0.15);
+  border-color: rgba(74,122,255,0.35);
+  color: var(--accent);
+}
+
+/* ── Page quote loader (barisdogansutcu) ── */
+.xv-quote-loader {
+  border: none;
+  position: relative;
+  width: min(320px, 90vw);
+  height: 64px;
+  padding: 0;
+  z-index: 2;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='868' width='2500' viewBox='0 0 726 252.17'%3E%3Cpath d='M483.92 0S481.38 24.71 466 40.11c-11.74 11.74-24.09 12.66-40.26 15.07-9.42 1.41-29.7 3.77-34.81-.79-2.37-2.11-3-21-3.22-27.62-.21-6.92-1.36-16.52-2.82-18-.75 3.06-2.49 11.53-3.09 13.61S378.49 34.3 378 36a85.13 85.13 0 0 0-30.09 0c-.46-1.67-3.17-11.48-3.77-13.56s-2.34-10.55-3.09-13.61c-1.45 1.45-2.61 11.05-2.82 18-.21 6.67-.84 25.51-3.22 27.62-5.11 4.56-25.38 2.2-34.8.79-16.16-2.47-28.51-3.39-40.21-15.13C244.57 24.71 242 0 242 0H0s69.52 22.74 97.52 68.59c16.56 27.11 14.14 58.49 9.92 74.73C170 140 221.46 140 273 158.57c69.23 24.93 83.2 76.19 90 93.6 6.77-17.41 20.75-68.67 90-93.6 51.54-18.56 103-18.59 165.56-15.25-4.21-16.24-6.63-47.62 9.93-74.73C656.43 22.74 726 0 726 0z'/%3E%3C/svg%3E") no-repeat 50% 50%;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='868' width='2500' viewBox='0 0 726 252.17'%3E%3Cpath d='M483.92 0S481.38 24.71 466 40.11c-11.74 11.74-24.09 12.66-40.26 15.07-9.42 1.41-29.7 3.77-34.81-.79-2.37-2.11-3-21-3.22-27.62-.21-6.92-1.36-16.52-2.82-18-.75 3.06-2.49 11.53-3.09 13.61S378.49 34.3 378 36a85.13 85.13 0 0 0-30.09 0c-.46-1.67-3.17-11.48-3.77-13.56s-2.34-10.55-3.09-13.61c-1.45 1.45-2.61 11.05-2.82 18-.21 6.67-.84 25.51-3.22 27.62-5.11 4.56-25.38 2.2-34.8.79-16.16-2.47-28.51-3.39-40.21-15.13C244.57 24.71 242 0 242 0H0s69.52 22.74 97.52 68.59c16.56 27.11 14.14 58.49 9.92 74.73C170 140 221.46 140 273 158.57c69.23 24.93 83.2 76.19 90 93.6 6.77-17.41 20.75-68.67 90-93.6 51.54-18.56 103-18.59 165.56-15.25-4.21-16.24-6.63-47.62 9.93-74.73C656.43 22.74 726 0 726 0z'/%3E%3C/svg%3E") no-repeat 50% 50%;
+  -webkit-mask-size: 100%;
+  mask-size: 100%;
+  background: transparent;
+  cursor: default;
+}
+.xv-quote-loader span {
+  position: absolute;
+  width: 92%;
+  font-size: 9px;
+  font-weight: 500;
+  left: 50%;
+  top: 42%;
+  letter-spacing: 0.5px;
+  text-align: center;
+  transform: translate(-50%,-50%);
+  color: #111;
+  line-height: 1.3;
 }
 
 /* ── Logout button (vinodjangid07) ── */

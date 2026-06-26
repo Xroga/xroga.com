@@ -2,7 +2,7 @@
 
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { QUICK_ACTIONS } from '@/lib/quickActions';
-import { FrutigerButton } from '@/components/ui/Uiverse';
+import { StaticQuickTab } from '@/components/ui/Uiverse';
 
 export function QuickActionTabs() {
   const { setPrompt, loading } = useTerminalChat();
@@ -13,17 +13,17 @@ export function QuickActionTabs() {
         {QUICK_ACTIONS.map((action) => {
           const Icon = action.icon;
           return (
-            <FrutigerButton
+            <StaticQuickTab
               key={action.id}
               disabled={loading}
-              icon={<Icon className="w-3.5 h-3.5 text-white relative z-10" />}
+              icon={<Icon className="w-3.5 h-3.5 shrink-0" style={{ color: action.color }} />}
               onClick={(e) => {
                 e.stopPropagation();
                 setPrompt(action.prompt);
               }}
             >
               {action.label}
-            </FrutigerButton>
+            </StaticQuickTab>
           );
         })}
       </div>
