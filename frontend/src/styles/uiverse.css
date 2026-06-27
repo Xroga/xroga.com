@@ -7,7 +7,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  overflow: clip;
+  overflow: hidden;
   overflow-clip-margin: 4px;
   border: 2px solid #fff;
   border-radius: var(--xv-rad);
@@ -16,6 +16,7 @@
   font-weight: 600;
   filter: saturate(0.65) brightness(1.8);
   cursor: pointer;
+  isolation: isolate;
 }
 .xv-gradient-btn-wrapper .xv-light {
   position: absolute;
@@ -254,7 +255,8 @@
   position: relative;
 }
 .xv-sidebar-menu a,
-.xv-sidebar-menu button.xv-menu-item {
+.xv-sidebar-menu button.xv-menu-item,
+.xv-sidebar-menu .xv-hover-tip-wrap > a {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -272,13 +274,15 @@
   text-align: left;
 }
 .xv-sidebar-menu a:hover,
-.xv-sidebar-menu button.xv-menu-item:hover {
+.xv-sidebar-menu button.xv-menu-item:hover,
+.xv-sidebar-menu .xv-hover-tip-wrap > a:hover {
   background: rgba(255,255,255,0.08);
   transform: none;
   color: var(--foreground);
 }
 .xv-sidebar-menu a.xv-active,
-.xv-sidebar-menu button.xv-menu-item.xv-active {
+.xv-sidebar-menu button.xv-menu-item.xv-active,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active {
   background: rgba(255,255,255,0.12);
   color: var(--accent);
   border: 1px solid var(--card-border);
@@ -646,6 +650,21 @@ body.theme-gray .xv-chatbar-solid textarea::placeholder {
 .xv-logout-btn:hover .xv-sign { width: 28%; padding-left: 12px; }
 .xv-logout-btn:hover .xv-logout-text { opacity: 1; width: 70%; padding-right: 8px; }
 .xv-logout-btn:active { transform: translate(2px, 2px); }
+
+/* Sidebar footer — keep logout compact */
+.xv-sidebar-logout .xv-logout-btn {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  flex-shrink: 0;
+}
+.xv-sidebar-logout .xv-logout-btn:hover {
+  width: 96px;
+}
+.xv-sidebar-logout .xv-logout-btn .xv-sign svg {
+  width: 14px;
+  height: 14px;
+}
 
 /* ── Auth form card (Smit-Prajapati) ── */
 .xv-auth-card {

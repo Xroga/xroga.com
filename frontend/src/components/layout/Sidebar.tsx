@@ -242,7 +242,9 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
             )}
           </div>
         )}
-        <LogoutButton onClick={handleLogout} />
+        <div className="xv-sidebar-logout shrink-0">
+          <LogoutButton onClick={handleLogout} />
+        </div>
       </div>
       {sidebarOpen && (
         <HoverTip label="About Xroga" description="Mission, CEO Muhammad Ibrahim, and what Xroga AI can do.">
@@ -293,46 +295,72 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           mobileOpen ? 'translate-x-0 w-64 z-[70]' : '-translate-x-full lg:translate-x-0'
         )}
       >
-        <div className="p-3 border-b border-[var(--card-border)] flex items-center gap-1.5">
-          <HoverTip label="Xroga AI" description="Your AI Swarm Operating System — dashboard home.">
-            <div className="shrink-0">
+        <div className="p-3 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[56px]">
+          <HoverTip label="Xroga AI" description="Your AI Swarm Operating System — dashboard home." block className="min-w-0 flex-1">
+            <div className="shrink min-w-0">
               <Logo
                 href="/dashboard"
-                height={sidebarOpen ? 44 : 36}
+                height={sidebarOpen ? 40 : 32}
                 variant="sidebar"
                 onClick={handleNavClick}
               />
             </div>
           </HoverTip>
-          <div className={cn('flex items-center gap-0.5', sidebarOpen ? 'ml-auto' : 'flex-col ml-0')}>
-            <HoverTip label="Search" description="Search projects, chats, and commands.">
-              <button
-                type="button"
-                onClick={() => setSearchOpen(true)}
-                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
-                aria-label="Search"
-              >
-                <Search className="w-4 h-4" />
-              </button>
-            </HoverTip>
-            <HoverTip label="Images & Videos" description="Browse AI-generated images and media.">
-              <button
-                type="button"
-                onClick={() => setMediaOpen(true)}
-                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
-                aria-label="Images and videos"
-              >
-                <ImageIcon className="w-4 h-4" />
-              </button>
-            </HoverTip>
-          </div>
+          {sidebarOpen && (
+            <div className="flex items-center gap-0.5 shrink-0">
+              <HoverTip label="Search" description="Search projects, chats, and commands.">
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen(true)}
+                  className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
+                  aria-label="Search"
+                >
+                  <Search className="w-4 h-4" />
+                </button>
+              </HoverTip>
+              <HoverTip label="Images & Videos" description="Browse AI-generated images and media.">
+                <button
+                  type="button"
+                  onClick={() => setMediaOpen(true)}
+                  className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
+                  aria-label="Images and videos"
+                >
+                  <ImageIcon className="w-4 h-4" />
+                </button>
+              </HoverTip>
+            </div>
+          )}
+          {!sidebarOpen && (
+            <div className="flex flex-col items-center gap-0.5 shrink-0">
+              <HoverTip label="Search" description="Search projects, chats, and commands.">
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen(true)}
+                  className="p-1 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5"
+                  aria-label="Search"
+                >
+                  <Search className="w-3.5 h-3.5" />
+                </button>
+              </HoverTip>
+              <HoverTip label="Images" description="Browse AI-generated images and media.">
+                <button
+                  type="button"
+                  onClick={() => setMediaOpen(true)}
+                  className="p-1 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5"
+                  aria-label="Images"
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                </button>
+              </HoverTip>
+            </div>
+          )}
           <button
             type="button"
             onClick={() => {
               toggleSidebar();
               setMobileOpen(false);
             }}
-            className="hidden lg:flex p-1.5 rounded-lg hover:bg-white/5 text-[var(--muted)] shrink-0"
+            className="hidden lg:flex p-1.5 rounded-lg hover:bg-white/5 text-[var(--muted)] shrink-0 ml-auto"
             aria-label="Toggle sidebar"
           >
             {sidebarOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeft className="w-4 h-4" />}
@@ -343,7 +371,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           {sidebarOpen ? (
             <div className="xv-sidebar-menu">
               {navItems.map(({ href, label, icon: Icon, tip }) => (
-                <HoverTip key={href} label={label} description={tip}>
+                <HoverTip key={href} label={label} description={tip} block>
                   <Link href={href} onClick={handleNavClick} className={cn(isActive(href) && 'xv-active')}>
                     <Icon className="w-4 h-4 shrink-0" />
                     <span>{label}</span>

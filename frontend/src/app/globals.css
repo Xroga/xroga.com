@@ -44,16 +44,19 @@ body.theme-white {
 }
 
 body.theme-white .xv-sidebar-menu a,
-body.theme-white .xv-sidebar-menu button.xv-menu-item {
+body.theme-white .xv-sidebar-menu button.xv-menu-item,
+body.theme-white .xv-sidebar-menu .xv-hover-tip-wrap > a {
   color: #000;
 }
 body.theme-white .xv-sidebar-menu a:hover,
-body.theme-white .xv-sidebar-menu button.xv-menu-item:hover {
+body.theme-white .xv-sidebar-menu button.xv-menu-item:hover,
+body.theme-white .xv-sidebar-menu .xv-hover-tip-wrap > a:hover {
   color: #000;
   background: rgba(0, 0, 0, 0.06);
 }
 body.theme-white .xv-sidebar-menu a.xv-active,
-body.theme-white .xv-sidebar-menu button.xv-menu-item.xv-active {
+body.theme-white .xv-sidebar-menu button.xv-menu-item.xv-active,
+body.theme-white .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active {
   color: #000;
   background: rgba(74, 122, 255, 0.12);
   border-color: rgba(74, 122, 255, 0.35);

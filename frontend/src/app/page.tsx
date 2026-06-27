@@ -48,8 +48,7 @@ export default function HomePage() {
               Sign In
             </PlayNowButton>
             <GradientStartButton className="xv-gradient-btn-sm" onClick={() => router.push('/auth/signup')}>
-              <span className="hidden min-[380px]:inline">Get Started</span>
-              <span className="min-[380px]:hidden">Start</span>
+              Get Started
             </GradientStartButton>
           </div>
         </div>
@@ -70,13 +69,15 @@ export default function HomePage() {
             <span className="gradient-text-blue">You Imagine</span>
           </h1>
 
-          <p className="text-white/85 max-w-lg mx-auto mb-6 sm:mb-10 text-sm sm:text-base drop-shadow px-1">
+          <p className="text-white/85 max-w-lg mx-auto mb-6 sm:mb-10 text-sm sm:text-base drop-shadow px-1 leading-relaxed">
             XROGA AI — build, automate, and create with a multi-agent swarm. Websites, apps, games, and browser research in one place.
           </p>
 
-          <HomepageChatBar />
+          <div className="w-full mb-6 sm:mb-8">
+            <HomepageChatBar />
+          </div>
 
-          <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 max-w-3xl mx-auto mt-6 sm:mt-8 px-1">
+          <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 max-w-3xl mx-auto mt-0 px-1">
             {HOMEPAGE_TAGS.map((tag) => (
               <StaticQuickTab key={tag} onClick={() => router.push('/auth/signup')}>
                 {tag}

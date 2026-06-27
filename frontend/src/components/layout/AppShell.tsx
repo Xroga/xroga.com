@@ -43,8 +43,8 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                 : 'border-b border-[var(--card-border)] glass-panel-strong'
             )}
           >
-            <div className="flex items-center gap-4 pl-10 lg:pl-0">
-              <Logo href="/dashboard" height={50} variant="header" />
+            <div className="flex items-center gap-4 pl-10 lg:pl-0 lg:hidden">
+              <Logo href="/dashboard" height={44} variant="header" />
             </div>
             <div className="flex items-center gap-2 sm:gap-3 ml-auto">
               <HeaderActionMeter onClick={() => setTopUpOpen(true)} />

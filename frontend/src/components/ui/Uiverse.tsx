@@ -27,7 +27,9 @@ export function GradientStartButton({
           style={{ animationDelay: `${delay}s`, animationDuration: `${15 + i * 2}s` }}
         />
       ))}
-      <span className="xv-gradient-btn">{children}</span>
+      <span className="xv-gradient-btn" aria-hidden="true">
+        {typeof children === 'string' ? children : ''}
+      </span>
       <div className="xv-text-overlay">{children}</div>
     </button>
   );
@@ -139,7 +141,7 @@ export function UpgradeProButton({ onClick }: { onClick?: () => void }) {
     <button type="button" onClick={onClick} className="xv-upgrade-pro">
       <span className="xv-upgrade-inner">
         <span className="xv-upgrade-text">
-          <span>Upgrade to</span>
+          <span>Upgrade to&nbsp;</span>
           <span className="pro">PRO</span>
         </span>
         <span className="xv-upgrade-icon">

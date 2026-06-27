@@ -18,7 +18,7 @@ export function TerminalDock() {
     >
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pb-2 lg:pb-3">
         <TerminalChatBar />
-        <p className="text-[9px] text-center text-black/70 py-1.5 px-3 font-terminal xv-chatbar-disclaimer">
+        <p className="text-[9px] text-center text-[var(--muted)] py-1.5 px-3 font-terminal xv-chatbar-disclaimer">
           We give our best, but perfection is Allah&apos;s alone. XROGA AI verifies every critical output before publish.
         </p>
       </div>

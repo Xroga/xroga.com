@@ -9,9 +9,18 @@ interface HoverTipProps {
   children: ReactNode;
   className?: string;
   side?: 'top' | 'right' | 'bottom' | 'left';
+  /** Use block + full width — required when wrapping sidebar nav links */
+  block?: boolean;
 }
 
-export function HoverTip({ label, description, children, className, side = 'right' }: HoverTipProps) {
+export function HoverTip({
+  label,
+  description,
+  children,
+  className,
+  side = 'right',
+  block = false,
+}: HoverTipProps) {
   const [visible, setVisible] = useState(false);
   const [detail, setDetail] = useState(false);
   const labelTimer = useRef<ReturnType<typeof setTimeout>>();
@@ -46,7 +55,11 @@ export function HoverTip({ label, description, children, className, side = 'righ
 
   return (
     <span
-      className={cn('relative inline-flex', className)}
+      className={cn(
+        'relative xv-hover-tip-wrap',
+        block ? 'block w-full' : 'inline-flex',
+        className
+      )}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onFocus={onEnter}
