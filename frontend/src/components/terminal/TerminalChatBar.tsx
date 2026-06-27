@@ -14,7 +14,6 @@ import {
   ChatBarDragOverlay,
   ChatBarFileStrip,
   ChatBarInputRow,
-  ChatBarSuggestions,
   ChatBarToolChip,
   ChatBarFuelMeter,
   useSpeechToText,
@@ -35,7 +34,7 @@ const MAX_ROWS = 13;
 const LINE_HEIGHT = 22;
 
 export function TerminalChatBar() {
-  const { prompt, setPrompt, loading, submit } = useTerminalChat();
+  const { prompt, setPrompt, loading, submit, stop } = useTerminalChat();
   const actions = useAppStore((s) => s.actions);
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -49,7 +48,6 @@ export function TerminalChatBar() {
   const [showDomain, setShowDomain] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [listening, setListening] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const [sendState, setSendState] = useState<SendButtonState>('idle');
 
   const remaining = actions?.remaining ?? 50;
@@ -68,12 +66,17 @@ export function TerminalChatBar() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (loading) {
+      stop();
+      setSendState('idle');
+      return;
+    }
     const text = autocorrectText(prompt.trim());
     if (!text && files.length === 0) return;
     if (text !== prompt) setPrompt(text);
     setSendState('sending');
-    await submit();
-    setSendState('launched');
+    await submit(text || undefined);
+    if (!loading) setSendState('launched');
   }
 
   const appendSpeech = useCallback(
@@ -120,15 +123,6 @@ export function TerminalChatBar() {
       <DeployModal open={deployOpen} onClose={() => setDeployOpen(false)} />
 
       <div className="relative">
-        <ChatBarSuggestions
-          prompt={prompt}
-          visible={showSuggestions && !loading}
-          onSelect={(s) => {
-            setPrompt(s.text);
-            setShowSuggestions(false);
-          }}
-        />
-
         <ChatbarShell
           className={cn('relative', (dragOver || uploading) && 'ring-2 ring-[var(--accent)]/40')}
           onDragOver={(e: React.DragEvent) => {
@@ -217,7 +211,11 @@ export function TerminalChatBar() {
               }}
               micDisabled={!speech.supported}
               sendState={sendState}
-              canSend={!!prompt.trim() || files.length > 0}
+              stopping={loading}
+              onStop={() => {
+                stop();
+                setSendState('idle');
+              }}
             >
               <span className="absolute left-2 bottom-3 text-sm font-terminal text-[var(--foreground)] opacity-50 z-10">
                 &gt;
@@ -225,13 +223,8 @@ export function TerminalChatBar() {
               <textarea
                 ref={textareaRef}
                 value={prompt}
-                onChange={(e) => {
-                  setPrompt(e.target.value);
-                  setShowSuggestions(true);
-                }}
-                onFocus={() => setShowSuggestions(true)}
+                onChange={(e) => setPrompt(e.target.value)}
                 onBlur={() => {
-                  setTimeout(() => setShowSuggestions(false), 150);
                   const fixed = autocorrectText(prompt);
                   if (fixed !== prompt) setPrompt(fixed);
                 }}
@@ -242,7 +235,6 @@ export function TerminalChatBar() {
                   }
                 }}
                 placeholder="Ask Xroga AI to do everything..."
-                disabled={loading}
                 rows={1}
                 className={cn(
                   'w-full pl-7 pr-2 py-2.5 rounded-xl resize-none max-h-[286px]',

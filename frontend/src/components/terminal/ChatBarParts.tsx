@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import { X, FileText, Image as ImageIcon, Film, Mic } from 'lucide-react';
 import { ChatBarSendButton, ChatBarUploadButton, VoiceWaveform, type SendButtonState } from './ChatBarButtons';
-import { getChatSuggestions, type ChatSuggestion } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
 
 const FILE_ROWS = 2;
@@ -77,44 +76,6 @@ export function ChatBarDragOverlay({ active }: { active: boolean }) {
   );
 }
 
-export function ChatBarSuggestions({
-  prompt,
-  visible,
-  onSelect,
-}: {
-  prompt: string;
-  visible: boolean;
-  onSelect: (s: ChatSuggestion) => void;
-}) {
-  if (!visible || prompt.trim().length < 1) return null;
-  const suggestions = getChatSuggestions(prompt, 5);
-  if (suggestions.length === 0) return null;
-
-  return (
-    <div className="absolute left-0 right-0 bottom-full mb-2 z-30 px-1">
-      <div className="xv-chat-suggestions rounded-xl border border-[var(--card-border)] bg-[var(--card)]/95 backdrop-blur-xl shadow-2xl overflow-hidden">
-        {suggestions.map((s) => (
-          <button
-            key={s.id}
-            type="button"
-            onClick={() => onSelect(s)}
-            className="w-full text-left px-3 py-2.5 text-xs hover:bg-white/5 flex items-center gap-2 border-b border-[var(--card-border)]/30 last:border-0 transition-colors"
-          >
-            <span
-              className="text-[8px] uppercase font-bold px-1.5 py-0.5 rounded shrink-0"
-              style={{ background: `${s.color}22`, color: s.color }}
-            >
-              {s.kind}
-            </span>
-            <span className="font-medium text-[var(--foreground)] shrink-0 max-w-[72px] truncate">{s.label}</span>
-            <span className="text-[var(--muted)] truncate">{s.text}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function ChatBarMicButton({
   listening,
   onToggle,
@@ -130,10 +91,10 @@ export function ChatBarMicButton({
       onClick={onToggle}
       disabled={disabled}
       className={cn(
-        'relative p-1.5 rounded-xl border transition-all shrink-0',
+        'xv-mic-btn relative p-1.5 rounded-xl transition-all shrink-0',
         listening
-          ? 'border-red-400/50 bg-red-500/10'
-          : 'border-[var(--card-border)]/50 hover:bg-white/10 text-[var(--foreground)]'
+          ? 'bg-red-500/15 text-red-400'
+          : 'xv-chatbar-secondary-btn border border-[var(--card-border)]/50 hover:bg-white/10 text-[var(--foreground)]'
       )}
       title={listening ? 'Stop listening' : 'Speak to text'}
       aria-label={listening ? 'Stop voice input' : 'Start voice input'}
@@ -150,7 +111,8 @@ export function ChatBarInputRow({
   onMicToggle,
   micDisabled,
   sendState,
-  canSend,
+  stopping,
+  onStop,
   children,
 }: {
   uploading: boolean;
@@ -159,15 +121,16 @@ export function ChatBarInputRow({
   onMicToggle: () => void;
   micDisabled?: boolean;
   sendState: SendButtonState;
-  canSend: boolean;
+  stopping?: boolean;
+  onStop?: () => void;
   children: React.ReactNode;
 }) {
   return (
     <div className="relative flex items-end gap-1.5">
       <ChatBarUploadButton onClick={onUploadClick} active={uploading} />
       <div className="flex-1 min-w-0 relative">{children}</div>
-      <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || sendState === 'thinking'} />
-      <ChatBarSendButton disabled={!canSend} state={sendState} />
+      <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || stopping} />
+      <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} />
     </div>
   );
 }

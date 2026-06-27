@@ -1,52 +1,43 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Rocket, Loader2, Check } from 'lucide-react';
+import { Rocket, Square } from 'lucide-react';
 
 export type SendButtonState = 'idle' | 'sending' | 'thinking' | 'launched';
 
 export function ChatBarSendButton({
-  disabled,
+  stopping = false,
+  onStop,
   state = 'idle',
 }: {
-  disabled?: boolean;
+  stopping?: boolean;
+  onStop?: () => void;
   state?: SendButtonState;
 }) {
-  const busy = state === 'sending' || state === 'thinking';
+  const busy = stopping || state === 'sending' || state === 'thinking';
+
+  if (busy) {
+    return (
+      <button
+        type="button"
+        onClick={onStop}
+        className="xv-go-btn xv-go-btn--stop shrink-0"
+        aria-label="Stop response"
+      >
+        <span className="xv-go-btn__icon xv-go-btn__icon--stop">
+          <Square className="w-3 h-3 fill-current" />
+        </span>
+        <span className="xv-go-btn__text">Stop</span>
+      </button>
+    );
+  }
 
   return (
-    <button
-      type="submit"
-      disabled={disabled || busy}
-      className={cn(
-        'xv-send-btn-box relative flex items-center justify-center gap-1 shrink-0',
-        'rounded-lg border-2 font-semibold transition-all duration-300',
-        state === 'idle' && 'bg-[#006aff] border-[#c0dfff] text-white hover:bg-[#1b7aff]',
-        state === 'sending' && 'xv-send-btn--sending bg-[#006aff] border-white/40 text-white',
-        state === 'thinking' && 'xv-send-btn--thinking bg-[#006aff]/90 border-[#c0dfff]/60 text-white',
-        state === 'launched' && 'bg-emerald-600 border-emerald-400/50 text-white',
-        disabled && state === 'idle' && 'opacity-40 pointer-events-none'
-      )}
-      aria-label={
-        state === 'sending' ? 'Launching' : state === 'launched' ? 'Launched' : state === 'thinking' ? 'AI responding' : 'Launch'
-      }
-    >
-      {state === 'sending' && (
-        <>
-          <Rocket className="w-4 h-4 xv-rocket-launch" />
-          <span className="text-[10px] sm:text-xs hidden xs:inline">Start</span>
-        </>
-      )}
-      {state === 'thinking' && <Loader2 className="w-4 h-4 animate-spin" />}
-      {state === 'launched' && (
-        <>
-          <Check className="w-4 h-4" />
-          <span className="text-[10px] sm:text-xs">Launched</span>
-        </>
-      )}
-      {state === 'idle' && <Rocket className="w-4 h-4 sm:w-5 sm:h-5" />}
-      {state === 'sending' && <span className="xv-send-ring" aria-hidden />}
-      {state === 'thinking' && <span className="xv-send-pulse" aria-hidden />}
+    <button type="submit" className="xv-go-btn shrink-0" aria-label="Launch">
+      <span className="xv-go-btn__icon">
+        <Rocket className="w-3.5 h-3.5" />
+      </span>
+      <span className="xv-go-btn__text">GO!</span>
     </button>
   );
 }
@@ -63,10 +54,10 @@ export function ChatBarUploadButton({
       type="button"
       onClick={onClick}
       className={cn(
-        'xv-upload-icon-btn p-2 rounded-lg border shrink-0 transition-all',
+        'xv-upload-icon-btn p-2 rounded-lg shrink-0 transition-all',
         active
-          ? 'border-[var(--accent)]/50 bg-[var(--accent)]/15 text-[var(--accent)]'
-          : 'border-[var(--card-border)]/50 hover:bg-white/10 text-[var(--foreground)]'
+          ? 'bg-[var(--accent)]/15 text-[var(--accent)]'
+          : 'xv-chatbar-secondary-btn border border-[var(--card-border)]/50 hover:bg-white/10 text-[var(--foreground)]'
       )}
       title="Attach files"
       aria-label="Upload files"

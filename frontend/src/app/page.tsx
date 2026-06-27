@@ -6,15 +6,12 @@ import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageTagMarquee } from '@/components/homepage/HomepageTagMarquee';
-import { RotatingWords } from '@/components/ui/RotatingWords';
-import { Sparkles, ArrowRight, Zap } from 'lucide-react';
+import { Sparkles, Zap } from 'lucide-react';
 import { GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
 import { XROGA_MODEL_FULL, XROGA_MODEL_TAGLINE } from '@/lib/brand';
 import { useThemeStore } from '@/store/useThemeStore';
 import { createClient } from '@/lib/supabase/client';
-
-const HOMEPAGE_ROTATE_WORDS = ['apps', 'games', 'websites', 'automations', 'movies', 'AI agents'];
 
 export default function HomePage() {
   const router = useRouter();
@@ -29,7 +26,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="xv-homepage min-h-screen flex flex-col relative overflow-x-hidden xv-mag-cursor">
+    <div className="xv-homepage min-h-screen flex flex-col relative overflow-x-hidden">
       <div
         className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat md:bg-fixed"
         style={{ backgroundImage: `url("${customDesktopBg ?? DESKTOP_BG}")` }}
@@ -47,9 +44,29 @@ export default function HomePage() {
           <Logo href="/" variant="homepage" height={76} className="shrink-0" />
           <div className="flex items-center gap-2 shrink-0">
             {loggedIn ? (
-              <Link href="/dashboard" className="xv-dashboard-cta flex items-center gap-2 text-xs sm:text-sm font-semibold">
-                <span>Dashboard</span>
-                <ArrowRight className="w-4 h-4" />
+              <Link
+                href="/dashboard"
+                className="group relative px-5 sm:px-8 py-2.5 sm:py-3.5 font-bold text-white uppercase tracking-wider rounded-2xl bg-[#006aff] border-b-[6px] sm:border-b-[8px] border-[#0047b3] active:border-b-0 active:translate-y-[6px] sm:active:translate-y-[8px] transition-all duration-100 shadow-[0_15px_25px_-10px_rgba(0,106,255,0.75)] focus:outline-none focus:ring-4 focus:ring-blue-400/50 text-xs sm:text-sm"
+              >
+                <span className="absolute inset-0 w-full h-full rounded-2xl bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                <span className="absolute top-1.5 sm:top-2 left-2 sm:left-3 w-5 sm:w-6 h-2.5 sm:h-3 rounded-full bg-white/40 blur-[2px] pointer-events-none" />
+                <span className="relative flex items-center justify-center gap-2 drop-shadow-md">
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    aria-hidden
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
+                  </svg>
+                  Dashboard
+                </span>
               </Link>
             ) : (
               <>
@@ -68,7 +85,7 @@ export default function HomePage() {
       <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-14 relative">
         <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[80%] max-w-lg h-40 bg-[var(--accent)]/25 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="relative z-10 w-full max-w-4xl text-center xv-mag-zone">
+        <div className="relative z-10 w-full max-w-4xl text-center">
           <div className="xv-hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6">
             <Sparkles className="w-3.5 h-3.5 text-[var(--accent)]" />
             <span className="text-[10px] sm:text-xs tracking-[0.2em] uppercase font-semibold text-white/90">
@@ -79,25 +96,17 @@ export default function HomePage() {
 
           <h1 className="xv-hero-title text-4xl sm:text-5xl md:text-7xl font-bold mb-4 leading-[1.05] tracking-tight">
             <span className="block text-white xv-hero-shine">Do Everything</span>
-            <span className="block mt-2 xv-hero-gradient-text">You Imagine</span>
+            <span className="block mt-1 sm:mt-2 xv-hero-gradient-text">You Imagine</span>
           </h1>
 
-          <div className="xv-hero-underline mx-auto mb-5" aria-hidden />
+          <div className="xv-hero-underline mx-auto mb-6" aria-hidden />
 
-          <p className="text-sm sm:text-lg text-white/80 max-w-2xl mx-auto mb-3 leading-relaxed xv-hero-sub font-medium">
+          <p className="text-base sm:text-xl text-white/90 max-w-2xl mx-auto mb-2 leading-relaxed xv-hero-sub font-semibold tracking-tight">
             One AI model that does it all — apps, games, movies, code, and automations.
-            <span className="block text-white/60 text-xs sm:text-sm mt-1 font-normal">{XROGA_MODEL_TAGLINE}</span>
           </p>
-
-          <div className="flex justify-center mb-6 min-h-[2.5rem]">
-            <RotatingWords
-              prefix="Build"
-              words={HOMEPAGE_ROTATE_WORDS}
-              variant="hero"
-              className="text-lg sm:text-2xl xv-hero-rotate"
-              stopAfterMs={24000}
-            />
-          </div>
+          <p className="text-xs sm:text-sm text-white/55 max-w-xl mx-auto mb-8 font-medium">
+            {XROGA_MODEL_TAGLINE}
+          </p>
 
           <div className="w-full mb-10">
             <HomepageChatBar />
