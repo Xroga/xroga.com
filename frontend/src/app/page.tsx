@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
-import { TypewriterText } from '@/components/ui/TypewriterText';
+import { RotatingWords } from '@/components/ui/RotatingWords';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
@@ -24,6 +24,8 @@ const HOMEPAGE_TAGS = [
   'Voice TTS · Cloning',
   'Android/iOS Games',
 ];
+
+const HOMEPAGE_ROTATE_WORDS = ['apps', 'games', 'websites', 'automations', 'movies', 'integrations'];
 
 export default function HomePage() {
   const router = useRouter();
@@ -92,13 +94,14 @@ export default function HomePage() {
             </span>
           </h1>
 
-          <p className="text-white/80 max-w-md mx-auto mb-8 text-sm sm:text-base leading-relaxed min-h-[3.5rem] xv-mag-zone">
-            <TypewriterText
-              text="XROGA AI — build, automate, and create with a multi-agent swarm. Websites, apps, games, and browser research in one place."
-              speed={22}
-              delay={400}
+          <div className="flex justify-center mb-8 min-h-[3rem] xv-mag-zone">
+            <RotatingWords
+              prefix="Build"
+              words={HOMEPAGE_ROTATE_WORDS}
+              variant="hero"
+              className="text-base sm:text-xl"
             />
-          </p>
+          </div>
 
           <div className="w-full mb-8 xv-mag-zone">
             <HomepageChatBar />

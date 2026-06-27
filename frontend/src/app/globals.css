@@ -868,4 +868,70 @@ body.theme-gray .glass-panel-strong {
   @keyframes xv-upload-ok {
     to { transform: scale(1); }
   }
+
+  /* Rotating words — Uiverse-inspired (kennyotsu) */
+  .xv-rotating-words {
+    font-weight: 500;
+    gap: 0.35rem;
+    line-height: 1.5;
+  }
+  .xv-rotating-words--hero {
+    --rw-bg: transparent;
+    --rw-muted: rgba(255, 255, 255, 0.65);
+    --rw-accent: #a78bfa;
+  }
+  .xv-rotating-words--dashboard {
+    --rw-bg: transparent;
+    --rw-muted: var(--muted);
+    --rw-accent: var(--accent);
+  }
+  .xv-rotating-prefix {
+    color: var(--rw-muted);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .xv-rotating-words-slot {
+    height: 1.5em;
+    overflow: hidden;
+    position: relative;
+    display: inline-block;
+    vertical-align: bottom;
+  }
+  .xv-rotating-words-slot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      var(--rw-bg) 8%,
+      transparent 28%,
+      transparent 72%,
+      var(--rw-bg) 92%
+    );
+    z-index: 2;
+    pointer-events: none;
+  }
+  .xv-rotating-words-track {
+    display: flex;
+    flex-direction: column;
+    animation: xv-words-spin 5s ease-in-out infinite;
+  }
+  .xv-rotating-word {
+    display: block;
+    height: 1.5em;
+    line-height: 1.5em;
+    color: var(--rw-accent);
+    font-weight: 600;
+    white-space: nowrap;
+    padding-left: 2px;
+  }
+  @keyframes xv-words-spin {
+    0%, 10% { transform: translateY(0); }
+    14%, 24% { transform: translateY(-14.28%); }
+    28%, 38% { transform: translateY(-28.56%); }
+    42%, 52% { transform: translateY(-42.84%); }
+    56%, 66% { transform: translateY(-57.12%); }
+    70%, 80% { transform: translateY(-71.4%); }
+    84%, 94% { transform: translateY(-85.68%); }
+    98%, 100% { transform: translateY(-100%); }
+  }
 }
