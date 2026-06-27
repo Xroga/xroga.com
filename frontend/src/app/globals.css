@@ -275,11 +275,11 @@ body.theme-gray .glass-panel-strong {
 
   .terminal-skin-amoled {
     background: #000000;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: #ffffff;
     --foreground: #fff;
-    --muted: #737373;
-    --accent: #fff;
+    --muted: #9ca3af;
+    --accent: #4a7aff;
   }
 
   .terminal-skin-light {
@@ -949,9 +949,9 @@ body.theme-gray .glass-panel-strong {
     height: 24px;
   }
 
-  /* Chatbar file strip — horizontal scroll */
+  /* Chatbar file strip — 2 rows, horizontal scroll */
   .xv-chatbar-files-scroll {
-    max-height: calc(4 * 2.75rem + 0.5rem);
+    max-height: calc(2 * 5.5rem + 0.5rem);
   }
 
   /* Top-up explain cards — readable on white theme */
@@ -990,10 +990,30 @@ body.theme-gray .glass-panel-strong {
     50% { transform: scale(1.03); opacity: 0.92; }
   }
 
-  /* Compact send button */
+  /* Compact send button → box launch button */
   .xv-send-btn-compact {
     width: 32px;
     height: 32px;
+  }
+  .xv-send-btn-box {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+  @media (min-width: 640px) {
+    .xv-send-btn-box {
+      width: 48px;
+      height: 40px;
+      min-width: 48px;
+      padding: 0 10px;
+    }
+  }
+  .xv-rocket-launch {
+    animation: xv-rocket-blast 0.5s ease-out infinite alternate;
+  }
+  @keyframes xv-rocket-blast {
+    from { transform: translateY(2px) scale(0.95); }
+    to { transform: translateY(-3px) scale(1.05); }
   }
   .xv-send-btn--sending .xv-send-ring {
     position: absolute;
@@ -1041,12 +1061,12 @@ body.theme-gray .glass-panel-strong {
     background: rgba(255, 255, 255, 0.03);
   }
 
-  /* Fullscreen mode */
+  /* Fullscreen mode — transparent, below header */
   .xv-fullscreen-frame {
-    background: var(--background);
+    background: transparent !important;
   }
   body.theme-white .xv-fullscreen-frame {
-    background: #f8fafc;
+    background: transparent !important;
   }
   .xv-fullscreen-terminal {
     max-width: 72rem;
@@ -1123,36 +1143,139 @@ body.theme-gray .glass-panel-strong {
     background: var(--background);
   }
 
-  /* Homepage SaaS header */
+  /* Homepage SaaS header — fully transparent */
   .xv-home-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.2) 100%);
-    backdrop-filter: blur(20px);
+    border: none;
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
   }
   .xv-home-header-inner {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    margin-top: 0.5rem;
-    margin-bottom: 0.25rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
-  .xv-hero-sub {
-    font-weight: 400;
-    letter-spacing: 0.01em;
+
+  /* Hero typography */
+  .xv-hero-title {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    letter-spacing: -0.03em;
   }
-  .xv-hero-rotate .xv-rotating-word {
-    background: linear-gradient(90deg, #60a5fa, #a78bfa);
+  .xv-hero-shine {
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.15);
+  }
+  .xv-hero-gradient-text {
+    background: linear-gradient(135deg, #fff 0%, #93c5fd 40%, #4a7aff 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    font-weight: 700;
   }
+  .xv-hero-underline {
+    width: 120px;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, #4a7aff, #a78bfa, transparent);
+    animation: xv-shine-line 3s ease-in-out infinite;
+  }
+  @keyframes xv-shine-line {
+    0%, 100% { opacity: 0.6; transform: scaleX(0.9); }
+    50% { opacity: 1; transform: scaleX(1.1); }
+  }
+  .xv-hero-badge {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(12px);
+  }
+
+  /* Dashboard CTA on homepage */
+  .xv-dashboard-cta {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #006aff, #4a7aff);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(74, 122, 255, 0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .xv-dashboard-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(74, 122, 255, 0.45);
+  }
+
+  /* Pricing details button */
+  .xv-pricing-details-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.9rem;
+    border-radius: 9999px;
+    background: #006aff !important;
+    color: #000 !important;
+    font-weight: 600;
+  }
+  .xv-pricing-details-btn:hover {
+    background: #1b7aff !important;
+  }
+
+  /* Mobile homepage tag marquee */
+  .xv-home-tags-row {
+    animation: xv-tags-scroll 28s linear infinite;
+  }
+  .xv-home-tags-row--reverse {
+    animation: xv-tags-scroll-reverse 32s linear infinite;
+  }
+  @keyframes xv-tags-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes xv-tags-scroll-reverse {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0); }
+  }
+
+  .xv-hero-rotate .xv-rotating-word,
   .xv-rotating-word--static {
     background: linear-gradient(90deg, #60a5fa, #a78bfa);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     font-weight: 700;
+  }
+
+  /* Black theme — terminal & chatbar polish */
+  body.theme-black .xv-chatbar-solid {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(12px);
+  }
+  body.theme-black .xv-terminal-dock {
+    background: transparent;
+  }
+  body.theme-black .terminal-skin-amoled,
+  body.theme-black .terminal-skin-dark,
+  body.theme-black .terminal-skin-gray {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Mobile chatbar / terminal responsiveness */
+  @media (max-width: 639px) {
+    .xv-terminal-dock {
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+    .xv-terminal-dock .max-w-3xl {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+    .xv-chatbar-chip span {
+      display: none;
+    }
+    .xv-chatbar-chip {
+      padding: 0.35rem 0.5rem;
+    }
+    .xv-fuel-meter span:nth-child(4) {
+      display: none;
+    }
+    .xv-quick-tab {
+      font-size: 10px;
+      padding: 0.35rem 0.5rem;
+    }
   }
 }

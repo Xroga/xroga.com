@@ -6,7 +6,7 @@ import { ChatBarSendButton, ChatBarUploadButton, VoiceWaveform, type SendButtonS
 import { getChatSuggestions, type ChatSuggestion } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
 
-const FILE_ROWS = 4;
+const FILE_ROWS = 2;
 
 function filePreviewIcon(type: string) {
   if (type.startsWith('image/')) return ImageIcon;
@@ -37,15 +37,17 @@ export function ChatBarFileStrip({
             return (
               <div
                 key={`${f.name}-${i}`}
-                className="relative flex items-center gap-1.5 text-[10px] px-2 py-1 rounded-lg bg-white/5 border border-[var(--card-border)] w-[120px]"
+                className="relative flex flex-col items-center gap-1 text-[10px] px-2 py-2 rounded-xl bg-white/5 border border-[var(--card-border)] w-[100px] sm:w-[120px] shrink-0"
               >
                 {url ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={url} alt="" className="w-8 h-8 rounded object-cover shrink-0" />
+                  <img src={url} alt="" className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover shrink-0" />
                 ) : (
-                  <Icon className="w-4 h-4 text-[var(--muted)] shrink-0" />
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-white/5 flex items-center justify-center">
+                    <Icon className="w-6 h-6 text-[var(--muted)]" />
+                  </div>
                 )}
-                <span className="flex-1 truncate text-[var(--foreground)]">{f.name}</span>
+                <span className="w-full truncate text-center text-[var(--foreground)]">{f.name}</span>
                 <button
                   type="button"
                   onClick={() => onRemove(i)}
@@ -98,8 +100,13 @@ export function ChatBarSuggestions({
             onClick={() => onSelect(s)}
             className="w-full text-left px-3 py-2.5 text-xs hover:bg-white/5 flex items-center gap-2 border-b border-[var(--card-border)]/30 last:border-0 transition-colors"
           >
-            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: s.color }} />
-            <span className="font-medium text-[var(--foreground)] shrink-0">{s.label}</span>
+            <span
+              className="text-[8px] uppercase font-bold px-1.5 py-0.5 rounded shrink-0"
+              style={{ background: `${s.color}22`, color: s.color }}
+            >
+              {s.kind}
+            </span>
+            <span className="font-medium text-[var(--foreground)] shrink-0 max-w-[72px] truncate">{s.label}</span>
             <span className="text-[var(--muted)] truncate">{s.text}</span>
           </button>
         ))}

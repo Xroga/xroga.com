@@ -125,7 +125,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
           >
             Back to Dashboard <ArrowRight className="w-3.5 h-3.5" />
           </button>
-          <Link href="/pricing" onClick={onClose} className="xv-footer-pill !text-xs">
+          <Link href="/pricing" onClick={onClose} className="xv-pricing-details-btn !text-xs">
             Pricing plan details
           </Link>
         </div>

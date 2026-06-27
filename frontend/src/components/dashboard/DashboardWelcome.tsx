@@ -6,7 +6,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { getTimeGreetingKey, t } from '@/lib/i18n/translations';
 import { useLocale } from '@/components/providers/LanguageProvider';
 import { RotatingWords } from '@/components/ui/RotatingWords';
-import { XROGA_MODEL_NAME } from '@/lib/brand';
+import { XROGA_MODEL_FULL, XROGA_MODEL_TAGLINE } from '@/lib/brand';
 import { cn } from '@/lib/utils';
 
 const DASHBOARD_ROTATE_WORDS = [
@@ -43,7 +43,7 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
             {greeting}, <span className="gradient-text">{firstName}</span>
           </h1>
           <p className="text-[10px] sm:text-xs text-[var(--accent)] font-medium mt-0.5">
-            Powered by {XROGA_MODEL_NAME}
+            {XROGA_MODEL_FULL} · {XROGA_MODEL_TAGLINE}
           </p>
         </div>
       </div>

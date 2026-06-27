@@ -2,21 +2,20 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sparkles } from 'lucide-react';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
-import { ChatbarShell } from '@/components/ui/Uiverse';
+import { autocorrectText } from '@/lib/chatSuggestions';
 import {
   ChatBarDragOverlay,
   ChatBarFileStrip,
   ChatBarInputRow,
   ChatBarSuggestions,
   useSpeechToText,
-} from './ChatBarParts';
-import type { SendButtonState } from './ChatBarButtons';
+} from '@/components/terminal/ChatBarParts';
+import type { SendButtonState } from '@/components/terminal/ChatBarButtons';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
-const MAX_ROWS = 8;
+const MAX_ROWS = 6;
 const LINE_HEIGHT = 22;
 
 export function HomepageChatBar() {
@@ -52,17 +51,31 @@ export function HomepageChatBar() {
     el.style.height = `${Math.min(el.scrollHeight, maxH)}px`;
   }, [prompt]);
 
+  function handlePromptChange(value: string) {
+    setPrompt(value);
+    setShowSuggestions(true);
+  }
+
+  function handleBlur() {
+    setTimeout(() => setShowSuggestions(false), 150);
+    if (prompt.trim()) {
+      const fixed = autocorrectText(prompt);
+      if (fixed !== prompt) setPrompt(fixed);
+    }
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const text = prompt.trim();
+    const text = autocorrectText(prompt.trim());
     if (!text && files.length === 0) return;
     setSendState('sending');
     localStorage.setItem(PENDING_PROMPT_KEY, text || 'Build with attached files');
-    setTimeout(() => router.push('/auth/signup'), 350);
+    setTimeout(() => setSendState('launched'), 400);
+    setTimeout(() => router.push('/auth/signup'), 900);
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto relative">
+    <div className="w-full max-w-2xl mx-auto relative">
       <ChatBarSuggestions
         prompt={prompt}
         visible={showSuggestions}
@@ -73,8 +86,12 @@ export function HomepageChatBar() {
       />
 
       <form onSubmit={handleSubmit} className="w-full">
-        <ChatbarShell
-          className={cn('relative xv-home-chatbar-shell', dragOver && 'ring-2 ring-[var(--accent)]/50')}
+        <div
+          className={cn(
+            'xv-home-chatbox relative rounded-2xl border-2 overflow-hidden transition-all duration-300',
+            'bg-black/40 backdrop-blur-2xl border-white/20 shadow-[0_8px_40px_rgba(0,0,0,0.35)]',
+            dragOver && 'border-[var(--accent)]/60 ring-2 ring-[var(--accent)]/30 scale-[1.01]'
+          )}
           onDragOver={(e) => {
             e.preventDefault();
             setDragOver(true);
@@ -88,16 +105,9 @@ export function HomepageChatBar() {
         >
           <ChatBarDragOverlay active={dragOver} />
 
-          <div className="flex items-center gap-2 px-3 py-2 border-b border-white/10">
-            <Sparkles className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" />
-            <span className="text-[10px] sm:text-xs font-terminal text-white/80">
-              50 free actions · Swarm online
-            </span>
-          </div>
-
           <ChatBarFileStrip files={files} onRemove={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))} />
 
-          <div className="px-3 py-3">
+          <div className="px-3 sm:px-4 py-3 sm:py-4">
             <ChatBarInputRow
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
@@ -113,36 +123,30 @@ export function HomepageChatBar() {
               sendState={sendState}
               canSend={!!prompt.trim() || files.length > 0}
             >
-              <span className="absolute left-2 bottom-3 text-sm font-terminal text-white opacity-60 z-10">
-                &gt;
-              </span>
               <textarea
                 ref={textareaRef}
                 value={prompt}
-                onChange={(e) => {
-                  setPrompt(e.target.value);
-                  setShowSuggestions(true);
-                }}
+                onChange={(e) => handlePromptChange(e.target.value)}
                 onFocus={() => setShowSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                onBlur={handleBlur}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     handleSubmit(e);
                   }
                 }}
-                placeholder="Ask Xroga AI to do everything..."
-                rows={1}
+                placeholder="Describe what you want to build…"
+                rows={2}
                 className={cn(
-                  'w-full pl-7 pr-2 py-2.5 rounded-xl resize-none max-h-[176px]',
-                  'bg-transparent focus:outline-none text-sm font-terminal leading-[22px]',
-                  'text-white placeholder:text-white/45'
+                  'w-full px-1 py-2 resize-none min-h-[52px] max-h-[140px]',
+                  'bg-transparent focus:outline-none text-sm sm:text-base leading-relaxed',
+                  'text-white placeholder:text-white/40 font-medium'
                 )}
               />
             </ChatBarInputRow>
             <input ref={fileRef} type="file" multiple className="hidden" onChange={(e) => addFiles(e.target.files)} />
           </div>
-        </ChatbarShell>
+        </div>
       </form>
     </div>
   );
