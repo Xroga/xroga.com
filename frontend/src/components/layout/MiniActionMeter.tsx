@@ -1,6 +1,6 @@
 'use client';
 
-import { Zap, Sparkles } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { cn } from '@/lib/utils';
 
@@ -14,7 +14,7 @@ export function MiniActionMeter({ compact = false, onTopUp }: MiniActionMeterPro
 
   if (!actions) {
     return (
-      <div className={cn('animate-pulse rounded-xl bg-white/5', compact ? 'h-10' : 'h-16')} />
+      <div className={cn('xv-fuel-skeleton animate-pulse rounded-lg bg-white/5', compact ? 'h-8' : 'h-10')} />
     );
   }
 
@@ -23,52 +23,45 @@ export function MiniActionMeter({ compact = false, onTopUp }: MiniActionMeterPro
   const isOut = actions.remaining <= 0;
 
   const content = (
-    <div className="xv-fuel-meter relative overflow-hidden rounded-xl">
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/10 via-transparent to-[var(--primary)]/5 pointer-events-none" />
-      <div className="relative">
-        <div className="flex items-center justify-between mb-1.5">
-          <div className="flex items-center gap-1.5">
-            <div className="relative">
-              <Zap
-                className={cn(
-                  'w-4 h-4',
-                  isOut ? 'text-red-400' : isLow ? 'text-amber-400' : 'text-[var(--accent)]'
-                )}
-              />
-              {!isOut && <Sparkles className="w-2 h-2 text-[var(--accent)] absolute -top-1 -right-1 animate-pulse" />}
-            </div>
-            <span className="text-xs font-semibold font-terminal tracking-wide">Fuel</span>
-          </div>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 capitalize font-medium">
-            {actions.planTier}
+    <div className="xv-fuel-compact">
+      <div className="flex items-center justify-between gap-2 mb-1">
+        <div className="flex items-center gap-1 min-w-0">
+          <Zap
+            className={cn(
+              'w-3 h-3 shrink-0',
+              isOut ? 'text-red-400' : isLow ? 'text-amber-400' : 'text-[var(--accent)]'
+            )}
+          />
+          <span className="text-[10px] font-semibold tabular-nums truncate">
+            {actions.remaining.toLocaleString()}
+            <span className="text-[var(--muted)] font-normal"> / {actions.total.toLocaleString()}</span>
           </span>
         </div>
-        <div className="flex items-baseline gap-1 mb-2">
-          <span className="text-xl font-bold tabular-nums">{actions.remaining.toLocaleString()}</span>
-          <span className="text-xs text-[var(--muted)]">/ {actions.total.toLocaleString()}</span>
-        </div>
-        <div className="h-2 bg-black/20 rounded-full overflow-hidden">
-          <div
-            className={cn(
-              'h-full rounded-full transition-all duration-500 xv-fuel-bar',
-              isOut ? 'bg-red-500' : isLow ? 'bg-amber-500' : 'bg-gradient-to-r from-[var(--accent)] to-[var(--primary)]'
-            )}
-            style={{ width: `${Math.max(pct, 4)}%` }}
-          />
-        </div>
+        <span className="text-[8px] uppercase tracking-wider text-[var(--muted)] capitalize shrink-0">
+          {actions.planTier}
+        </span>
+      </div>
+      <div className="h-1 rounded-full bg-white/10 overflow-hidden">
+        <div
+          className={cn(
+            'h-full rounded-full transition-all duration-500',
+            isOut ? 'bg-red-500' : isLow ? 'bg-amber-500' : 'bg-gradient-to-r from-[var(--accent)] to-[var(--primary)]'
+          )}
+          style={{ width: `${Math.max(pct, 3)}%` }}
+        />
       </div>
     </div>
   );
 
   const className = cn(
-    'w-full text-left border border-[var(--card-border)]/50',
-    compact ? 'p-2' : 'p-3',
-    onTopUp && 'hover:border-[var(--accent)]/50 transition-all cursor-pointer'
+    'w-full text-left rounded-lg border border-[var(--card-border)]/40 bg-white/[0.02]',
+    compact ? 'px-2 py-1.5' : 'px-2.5 py-2',
+    onTopUp && 'hover:border-[var(--accent)]/40 transition-colors cursor-pointer'
   );
 
   if (onTopUp) {
     return (
-      <button type="button" onClick={onTopUp} className={className}>
+      <button type="button" onClick={onTopUp} className={className} title="Top up actions">
         {content}
       </button>
     );

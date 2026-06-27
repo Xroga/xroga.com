@@ -665,6 +665,26 @@ body.theme-gray .glass-panel-strong {
     background: rgba(74, 122, 255, 0.18);
   }
 
+  .xv-about-pill {
+    margin: 0 4px 4px;
+  }
+
+  .xv-fuel-compact {
+    min-width: 0;
+  }
+
+  .xv-browser-toggle {
+    backdrop-filter: blur(8px);
+  }
+
+  .xv-dashboard-welcome {
+    animation: universe-fade-in 0.4s ease-out;
+  }
+
+  body.xv-page-fullscreen-active .xv-dashboard-welcome {
+    display: none;
+  }
+
   .xv-sidebar-icon-link {
     display: flex;
     align-items: center;

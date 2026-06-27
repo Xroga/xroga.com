@@ -8,7 +8,6 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
 import { AiResponseLoader } from '@/components/ui/Uiverse';
-import { BrowserPanelToggle } from './BrowserPanel';
 import { AI_RESPONSE_LOGO_URL } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
@@ -89,7 +88,6 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
         <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--card-border)]/30">
           <Terminal className="w-4 h-4 opacity-70" />
           <h3 className="font-terminal text-sm opacity-80 flex-1">xroga@swarm ~ terminal</h3>
-          <BrowserPanelToggle />
           <button
             type="button"
             onClick={cycleTerminalSkin}

@@ -17,13 +17,15 @@ export function BrowserPanelToggle() {
         type="button"
         onClick={() => setOpen(!open)}
         className={cn(
-          'p-1.5 rounded-lg transition-colors flex items-center gap-1',
-          open ? 'bg-[var(--accent)]/20 text-[var(--accent)]' : 'hover:bg-white/10'
+          'xv-browser-toggle inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all',
+          open
+            ? 'bg-[var(--accent)]/15 border-[var(--accent)]/40 text-[var(--accent)]'
+            : 'border-[var(--card-border)] bg-white/[0.03] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30'
         )}
         aria-label="Toggle Xroga Browser"
       >
         <Globe className="w-3.5 h-3.5" />
-        <span className="text-[9px] font-terminal hidden sm:inline">Browser</span>
+        <span className="hidden xs:inline sm:inline">Browser</span>
       </button>
     </SidebarTip>
   );

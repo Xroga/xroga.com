@@ -45,10 +45,12 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                 : 'border-b border-[var(--card-border)] glass-panel-strong'
             )}
           >
-            <div className="xv-mobile-header-logo flex items-center gap-4 pl-12 lg:pl-0 lg:hidden">
-              <Logo href="/dashboard" height={42} variant="header" />
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="xv-mobile-header-logo pl-12 lg:pl-0">
+                <Logo href="/dashboard" height={44} variant="header" />
+              </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3 ml-auto">
+            <div className="flex items-center gap-2 sm:gap-3 ml-auto shrink-0">
               <HeaderActionMeter onClick={() => setTopUpOpen(true)} />
               <ThemeToggle />
               <NotificationBell />
