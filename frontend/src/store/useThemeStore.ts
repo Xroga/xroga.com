@@ -3,19 +3,20 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ThemeId, TerminalSkin } from '@/lib/theme';
-import { CUSTOM_DESKTOP_BG_KEY, CUSTOM_MOBILE_BG_KEY, DEFAULT_TERMINAL_SKIN } from '@/lib/theme';
+import { CUSTOM_DESKTOP_BG_KEY, CUSTOM_MOBILE_BG_KEY, DEFAULT_TERMINAL_SKIN, TERMINAL_SKIN_CYCLE } from '@/lib/theme';
 
 const SKIN_CYCLES: Record<ThemeId, TerminalSkin[]> = {
-  white: ['light', 'amoled', 'light-grid'],
-  black: ['amoled', 'light', 'gray'],
-  gray: ['gray', 'amoled', 'light'],
-  image: ['dark', 'light', 'light-grid', 'gray'],
+  white: TERMINAL_SKIN_CYCLE,
+  black: TERMINAL_SKIN_CYCLE,
+  gray: TERMINAL_SKIN_CYCLE,
+  image: TERMINAL_SKIN_CYCLE,
 };
 
 interface ThemeState {
   theme: ThemeId;
   sidebarOpen: boolean;
   sidebarPinned: boolean;
+  sidebarWidth: number;
   customDesktopBg: string | null;
   customMobileBg: string | null;
   terminalFullscreen: boolean;
@@ -24,6 +25,7 @@ interface ThemeState {
   browserFullscreen: boolean;
   setTheme: (theme: ThemeId) => void;
   setSidebarOpen: (open: boolean) => void;
+  setSidebarWidth: (width: number) => void;
   toggleSidebar: () => void;
   setCustomDesktopBg: (url: string | null) => void;
   setCustomMobileBg: (url: string | null) => void;
@@ -40,6 +42,7 @@ export const useThemeStore = create<ThemeState>()(
       theme: 'image',
       sidebarOpen: true,
       sidebarPinned: true,
+      sidebarWidth: 256,
       customDesktopBg: null,
       customMobileBg: null,
       terminalFullscreen: false,
@@ -49,6 +52,8 @@ export const useThemeStore = create<ThemeState>()(
       setTheme: (theme) =>
         set({ theme, terminalSkin: DEFAULT_TERMINAL_SKIN[theme] }),
       setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
+      setSidebarWidth: (sidebarWidth) =>
+        set({ sidebarWidth: Math.min(420, Math.max(200, sidebarWidth)) }),
       toggleSidebar: () =>
         set((s) => {
           const next = !s.sidebarOpen;
@@ -92,6 +97,7 @@ export const useThemeStore = create<ThemeState>()(
         theme: s.theme,
         sidebarOpen: s.sidebarOpen,
         sidebarPinned: s.sidebarPinned,
+        sidebarWidth: s.sidebarWidth,
         customDesktopBg: s.customDesktopBg,
         customMobileBg: s.customMobileBg,
         terminalSkin: s.terminalSkin,

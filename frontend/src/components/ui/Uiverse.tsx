@@ -332,8 +332,16 @@ export function SpinSubscribeButton({
   return <BuyNowButton label={label} onClick={onClick} disabled={disabled} />;
 }
 
-export function ChatbarShell({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn('xv-chatbar-solid', className)}>{children}</div>;
+export function ChatbarShell({
+  children,
+  className,
+  ...props
+}: { children: ReactNode; className?: string } & React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn('xv-chatbar-solid', className)} {...props}>
+      {children}
+    </div>
+  );
 }
 
 /** @deprecated use ChatbarShell */

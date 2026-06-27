@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Zap } from 'lucide-react';
 import { AuthFormCard, PlayNowButton } from '@/components/ui/Uiverse';
+import { LOGIN_QUOTES, randomQuote } from '@/lib/authQuotes';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
@@ -14,6 +15,7 @@ export function LoginForm() {
   const [error, setError] = useState('');
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const router = useRouter();
+  const quote = useMemo(() => randomQuote(LOGIN_QUOTES), []);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -67,8 +69,8 @@ export function LoginForm() {
     return (
       <AuthFormCard title="Check Email">
         <div className="text-center space-y-4 mt-4">
-          <Zap className="w-8 h-8 mx-auto text-cyan-500" />
-          <p className="text-sm text-gray-600">
+          <Zap className="w-8 h-8 mx-auto text-[var(--accent)]" />
+          <p className="text-sm text-[var(--muted)]">
             We sent a magic link to <strong>{email}</strong>
           </p>
         </div>
@@ -78,8 +80,12 @@ export function LoginForm() {
 
   return (
     <AuthFormCard title="Sign In">
-      <div className="social-account-container mt-4">
-        <span className="title block text-center text-[10px] text-gray-400 mb-2">Or Sign in with</span>
+      <blockquote className="text-center text-xs text-[var(--muted)] italic border-l-2 border-[var(--accent)]/40 pl-3 my-3">
+        &ldquo;{quote.text}&rdquo;
+        <footer className="text-[10px] mt-1 not-italic opacity-70">— {quote.author}</footer>
+      </blockquote>
+      <div className="social-account-container mt-2">
+        <span className="title block text-center text-[10px] text-[var(--muted)] mb-2">Or sign in with</span>
         <div className="flex justify-center gap-3">
           <button
             type="button"
@@ -133,9 +139,9 @@ export function LoginForm() {
         </PlayNowButton>
       </div>
 
-      <p className="text-center text-sm text-gray-500 mt-4">
+      <p className="text-center text-sm text-[var(--muted)] mt-4">
         No account?{' '}
-        <Link href="/auth/signup" className="text-cyan-600 hover:underline">
+        <Link href="/auth/signup" className="text-[var(--accent)] hover:underline">
           Sign up
         </Link>
       </p>

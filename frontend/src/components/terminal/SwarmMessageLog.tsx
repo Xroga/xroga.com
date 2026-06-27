@@ -42,11 +42,11 @@ function TypewriterMessage({ content, animate }: { content: string; animate: boo
 }
 
 const SKIN_LABELS: Record<string, string> = {
-  dark: 'Night',
-  light: 'Day',
-  'light-grid': 'Day + Grid',
+  light: 'White',
+  amoled: 'Black',
   gray: 'Gray',
-  amoled: 'AMOLED',
+  dark: 'Black',
+  'light-grid': 'White',
 };
 
 const AGENT_STYLES: Record<string, string> = {

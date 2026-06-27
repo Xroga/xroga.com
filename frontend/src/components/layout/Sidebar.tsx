@@ -28,6 +28,7 @@ import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
 import { MediaGalleryModal } from './MediaGalleryModal';
 import { HoverTip } from '@/components/ui/HoverTip';
+import { SidebarTip } from '@/components/ui/SidebarTip';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/lib/supabase/client';
@@ -109,6 +110,8 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const sidebarPinned = useThemeStore((s) => s.sidebarPinned);
   const toggleSidebar = useThemeStore((s) => s.toggleSidebar);
   const closeBrowser = useThemeStore((s) => s.closeBrowser);
+  const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
+  const setSidebarWidth = useThemeStore((s) => s.setSidebarWidth);
   const actions = useAppStore((s) => s.actions);
   const profile = useAppStore((s) => s.profile);
   const setProfile = useAppStore((s) => s.setProfile);
@@ -128,6 +131,23 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
     document.body.classList.toggle('mobile-sidebar-open', mobileOpen);
     return () => document.body.classList.remove('mobile-sidebar-open');
   }, [mobileOpen]);
+
+  function startResize(e: React.MouseEvent) {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = sidebarWidth;
+    function onMove(ev: MouseEvent) {
+      setSidebarWidth(startW + (ev.clientX - startX));
+    }
+    function onUp() {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  }
+
+  const asideWidth = sidebarOpen ? sidebarWidth : 72;
 
   const isActive = (href: string) =>
     pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
@@ -247,15 +267,15 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
         </div>
       </div>
       {sidebarOpen && (
-        <HoverTip label="About Xroga" description="Mission, CEO Muhammad Ibrahim, and what Xroga AI can do.">
+        <SidebarTip label="About Xroga & CEO" description="Mission, Muhammad Ibrahim (Pakistan), and what Xroga AI can do.">
           <Link
             href="/about"
             onClick={() => setMobileOpen(false)}
-            className="block text-center text-[10px] text-[var(--muted)] hover:text-[var(--accent)] py-1"
+            className="xv-sidebar-about-btn block w-full text-center"
           >
             About Xroga & CEO
           </Link>
-        </HoverTip>
+        </SidebarTip>
       )}
     </div>
   );
@@ -289,10 +309,10 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
         onMouseLeave={() => {
           if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(false);
         }}
+        style={{ width: mobileOpen ? sidebarWidth : asideWidth }}
         className={cn(
-          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-all duration-300 xv-sidebar-hover',
-          sidebarOpen ? 'w-64' : 'w-[72px]',
-          mobileOpen ? 'translate-x-0 w-64 z-[70]' : '-translate-x-full lg:translate-x-0'
+          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,transform] duration-200 xv-sidebar-hover shrink-0 relative',
+          mobileOpen ? 'translate-x-0 z-[70]' : '-translate-x-full lg:translate-x-0'
         )}
       >
         <div className="p-2 sm:p-3 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[52px]">
@@ -330,54 +350,62 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
               </HoverTip>
             </div>
           )}
-          <button
-            type="button"
-            onClick={() => {
-              toggleSidebar();
-              setMobileOpen(false);
-            }}
-            className="hidden lg:flex p-1.5 rounded-lg hover:bg-white/5 text-[var(--muted)] shrink-0 ml-auto"
-            aria-label="Toggle sidebar"
-          >
-            {sidebarOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeft className="w-4 h-4" />}
-          </button>
         </div>
 
-        <nav className="flex-1 p-2 overflow-y-auto">
+        <button
+          type="button"
+          onClick={() => {
+            toggleSidebar();
+            setMobileOpen(false);
+          }}
+          className="xv-sidebar-edge-toggle hidden lg:flex"
+          aria-label="Toggle sidebar"
+          style={{ left: asideWidth }}
+        >
+          {sidebarOpen ? <PanelLeftClose className="w-3.5 h-3.5" /> : <PanelLeft className="w-3.5 h-3.5" />}
+        </button>
+
+        <nav className="flex-1 p-2 overflow-y-auto overflow-x-hidden">
           {sidebarOpen ? (
             <div className="xv-sidebar-menu">
               {navItems.map(({ href, label, icon: Icon, tip }) => (
-                <HoverTip key={href} label={label} description={tip} block>
+                <SidebarTip key={href} label={label} description={tip}>
                   <Link href={href} onClick={handleNavClick} className={cn(isActive(href) && 'xv-active')}>
                     <Icon className="w-4 h-4 shrink-0" />
                     <span>{label}</span>
                   </Link>
-                </HoverTip>
+                </SidebarTip>
               ))}
             </div>
           ) : (
-            <div className="space-y-0.5">
+            <div className="xv-sidebar-collapsed-nav space-y-1">
               {navItems.map(({ href, label, icon: Icon, tip }) => (
-                <HoverTip key={href} label={label} description={tip}>
+                <SidebarTip key={href} label={label} description={tip}>
                   <Link
                     href={href}
                     onClick={handleNavClick}
                     className={cn(
-                      'flex items-center justify-center p-2.5 rounded-lg text-sm transition-all',
-                      isActive(href)
-                        ? 'bg-white/10 text-[var(--foreground)]'
-                        : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5'
+                      'xv-sidebar-icon-link',
+                      isActive(href) && 'xv-active'
                     )}
                   >
                     <Icon className="w-4 h-4 shrink-0" />
                   </Link>
-                </HoverTip>
+                </SidebarTip>
               ))}
             </div>
           )}
         </nav>
 
         {bottomSection}
+        {sidebarOpen && (
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            onMouseDown={startResize}
+            className="hidden lg:block absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-[var(--accent)]/30 z-50"
+          />
+        )}
       </aside>
     </>
   );

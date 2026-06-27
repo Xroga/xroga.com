@@ -28,8 +28,16 @@ export function SwarmRunHistory() {
 
   if (runs.length === 0) {
     return (
-      <div className="glass-panel rounded-xl p-8 text-center text-[var(--muted)] text-sm">
-        No Swarm runs yet. Send a command from the dashboard to see history here.
+      <div className="p-10 text-center">
+        <Bot className="w-12 h-12 mx-auto text-[var(--accent)]/40 mb-4" />
+        <p className="font-medium mb-1">No Swarm runs yet</p>
+        <p className="text-sm text-[var(--muted)] mb-6">Send a command from the dashboard terminal to see history here.</p>
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent)] text-[var(--background)] text-sm font-semibold"
+        >
+          Open Dashboard
+        </Link>
       </div>
     );
   }

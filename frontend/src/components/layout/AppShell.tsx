@@ -23,18 +23,20 @@ interface AppShellProps {
 export function AppShell({ children, displayName, email }: AppShellProps) {
   const [topUpOpen, setTopUpOpen] = useState(false);
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
+  const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const theme = useThemeStore((s) => s.theme);
   const pathname = usePathname();
   const isDashboard = pathname === '/dashboard';
+  const widthPx = sidebarOpen ? sidebarWidth : 72;
 
   return (
     <TerminalChatProvider>
       <div
         className="flex min-h-screen terminal-layout"
-        style={{ '--sidebar-width': sidebarOpen ? '16rem' : '4.5rem' } as React.CSSProperties}
+        style={{ '--sidebar-width': `${widthPx}px` } as React.CSSProperties}
       >
         <Sidebar displayName={displayName} email={email} onTopUp={() => setTopUpOpen(true)} />
-        <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+        <div className="flex-1 flex flex-col min-w-0 min-h-screen" style={{ marginLeft: 0 }}>
           <header
             className={cn(
               'sticky top-0 z-30 flex items-center justify-between gap-4 px-4 sm:px-6 py-3 shrink-0 transition-all',
@@ -44,7 +46,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
             )}
           >
             <div className="xv-mobile-header-logo flex items-center gap-4 pl-12 lg:pl-0 lg:hidden">
-              <Logo href="/dashboard" height={40} variant="header" />
+              <Logo href="/dashboard" height={42} variant="header" />
             </div>
             <div className="flex items-center gap-2 sm:gap-3 ml-auto">
               <HeaderActionMeter onClick={() => setTopUpOpen(true)} />

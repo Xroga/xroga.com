@@ -6,10 +6,46 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Logo } from '@/components/layout/Logo';
 import { GALACTIC_PLANS, FREE_TRIAL_ACTIONS } from '@/lib/plans';
+import { XROGA_FEATURES, FEATURE_COUNT } from '@/lib/features';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
 import { useAppStore } from '@/store/useAppStore';
-import { Zap, Shield, Layers, Sparkles } from 'lucide-react';
+import { Zap, Shield, Layers, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import { GalacticPlanCard, PopularPlanCard, GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
+
+function FeaturesExpand() {
+  const [open, setOpen] = useState(false);
+  const shown = open ? XROGA_FEATURES : XROGA_FEATURES.slice(0, 12);
+  return (
+    <div className="glass-panel rounded-2xl p-6 mb-12">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <h2 className="text-lg font-bold">All {FEATURE_COUNT} features on every plan</h2>
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          className="xv-footer-pill !text-xs flex items-center gap-1"
+        >
+          {open ? (
+            <>
+              Show less <ChevronUp className="w-3.5 h-3.5" />
+            </>
+          ) : (
+            <>
+              View all {FEATURE_COUNT} features <ChevronDown className="w-3.5 h-3.5" />
+            </>
+          )}
+        </button>
+      </div>
+      <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs text-[var(--muted)]">
+        {shown.map((f) => (
+          <li key={f} className="flex items-start gap-2">
+            <span className="text-[var(--accent)] shrink-0">✓</span>
+            {f}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export function PricingPageClient() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -57,7 +93,7 @@ export function PricingPageClient() {
         <div className="text-center mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-[var(--accent)] mb-6 font-terminal">
             <Sparkles className="w-3 h-3" />
-            ALL 92 FEATURES UNLOCKED ON EVERY PLAN
+            ALL {FEATURE_COUNT} FEATURES UNLOCKED ON EVERY PLAN
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Pay for <span className="gradient-text">fuel</span>, not features
@@ -111,12 +147,14 @@ export function PricingPageClient() {
                 price={plan.priceLabel}
                 actions={plan.actionsLabel}
                 current={!!isCurrent}
-                features={[`${plan.concurrency} concurrent tasks`, 'All 92 features']}
+                features={[`${plan.concurrency} concurrent tasks`, `All ${FEATURE_COUNT} features unlocked`]}
                 cta={cta}
               />
             );
           })}
         </div>
+
+        <FeaturesExpand />
 
         <div className="grid md:grid-cols-3 gap-6">
           {[

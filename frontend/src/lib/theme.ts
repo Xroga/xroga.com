@@ -5,9 +5,9 @@ export const DESKTOP_BG =
 export const MOBILE_BG =
   'https://i.pinimg.com/736x/49/17/78/491778bbd33b7d4b832c8f06415d4e33.jpg';
 
-/** App header logo (outside sidebar) — blue X brand */
+/** Dashboard header logo (outside sidebar) */
 export const HEADER_LOGO_URL =
-  'https://i.postimg.cc/bJnL5jV7/Red-and-Blue-Modern-X-letter-Digital-Marketing-Logo-1-removebg-preview-1.png';
+  'https://i.postimg.cc/pLxrn9yP/Green-Minimalist-Summer-Big-Sale-Medium-Banner-10-removebg-preview-(1).png';
 
 /** Homepage hero logo */
 export const HOMEPAGE_LOGO_URL =
@@ -25,8 +25,10 @@ export const DEFAULT_TERMINAL_SKIN: Record<ThemeId, TerminalSkin> = {
   white: 'light',
   black: 'amoled',
   gray: 'gray',
-  image: 'dark',
+  image: 'light',
 };
+
+export const TERMINAL_SKIN_CYCLE: TerminalSkin[] = ['light', 'amoled', 'gray'];
 
 /** @deprecated use HEADER_LOGO_URL */
 export const LOGO_URL = HEADER_LOGO_URL;
