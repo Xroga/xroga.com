@@ -56,8 +56,10 @@ export const useThemeStore = create<ThemeState>()(
         set({ sidebarWidth: Math.min(420, Math.max(200, sidebarWidth)) }),
       toggleSidebar: () =>
         set((s) => {
-          const next = !s.sidebarOpen;
-          return { sidebarOpen: next, sidebarPinned: next };
+          if (s.sidebarOpen) {
+            return { sidebarOpen: false, sidebarPinned: true };
+          }
+          return { sidebarOpen: true, sidebarPinned: true };
         }),
       setCustomDesktopBg: (url) => {
         if (url) localStorage.setItem(CUSTOM_DESKTOP_BG_KEY, url);

@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Logo } from '@/components/layout/Logo';
-import { GALACTIC_PLANS, FREE_TRIAL_ACTIONS } from '@/lib/plans';
+import { GALACTIC_PLANS, FREE_TRIAL_ACTIONS, COMING_SOON_PLANS } from '@/lib/plans';
 import { XROGA_FEATURES, FEATURE_COUNT } from '@/lib/features';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
 import { useAppStore } from '@/store/useAppStore';
-import { Zap, Shield, Layers, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { Zap, Shield, Layers, Sparkles, ChevronDown, ChevronUp, Fuel, Lock, ArrowRight } from 'lucide-react';
 import { GalacticPlanCard, PopularPlanCard, GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
 
 function FeaturesExpand() {
@@ -98,6 +98,24 @@ export function PricingPageClient() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Pay for <span className="gradient-text">fuel</span>, not features
           </h1>
+          <p className="text-[var(--muted)] max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+            <strong className="text-[var(--foreground)]">Top Up Actions</strong> = buy monthly Swarm fuel. Every plan unlocks
+            all {FEATURE_COUNT} features — browser, automation, 710+ integrations. You only pay for compute.
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-3 gap-3 mb-12">
+          {[
+            { icon: Fuel, title: 'Actions = fuel', desc: 'Each chat, build, scrape, or image task burns actions from your balance.' },
+            { icon: Sparkles, title: 'All features included', desc: `Every tier gets the full Xroga stack — all ${FEATURE_COUNT} features, no upsells.` },
+            { icon: Zap, title: 'Top up anytime', desc: 'Upgrade monthly fuel. Pulse is our most popular plan for daily builders.' },
+          ].map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="glass-panel rounded-xl p-4 border border-[var(--card-border)]">
+              <Icon className="w-5 h-5 text-[var(--accent)] mb-2" />
+              <p className="text-sm font-semibold mb-1">{title}</p>
+              <p className="text-xs text-[var(--muted)] leading-relaxed">{desc}</p>
+            </div>
+          ))}
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-16">
@@ -134,7 +152,7 @@ export function PricingPageClient() {
                   name={plan.name}
                   price={plan.priceLabel}
                   actions={plan.actionsLabel}
-                  description="Best for growing startups"
+                  description={plan.tagline ?? 'Best for growing startups'}
                   cta={cta}
                 />
               );
@@ -154,6 +172,23 @@ export function PricingPageClient() {
           })}
         </div>
 
+        <div className="rounded-2xl border border-dashed border-[var(--card-border)] p-6 mb-12 text-center">
+          <p className="text-xs font-semibold text-[var(--muted)] mb-4 flex items-center justify-center gap-1.5">
+            <Lock className="w-3.5 h-3.5" /> Budget tiers — coming soon
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {COMING_SOON_PLANS.map((p) => (
+              <div
+                key={p.price}
+                className="px-4 py-3 rounded-xl bg-white/5 border border-[var(--card-border)] min-w-[88px] opacity-80"
+              >
+                <p className="text-lg font-bold">{p.price}</p>
+                <p className="text-[10px] text-[var(--muted)]">/mo · {p.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <FeaturesExpand />
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -168,6 +203,22 @@ export function PricingPageClient() {
               <p className="text-sm text-[var(--muted)]">{desc}</p>
             </div>
           ))}
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-3 mt-12">
+          {loggedIn ? (
+            <button
+              type="button"
+              onClick={() => router.push('/dashboard')}
+              className="xv-footer-pill !text-sm flex items-center gap-2 !text-[var(--foreground)] px-6 py-3"
+            >
+              Back to Dashboard <ArrowRight className="w-4 h-4" />
+            </button>
+          ) : (
+            <GradientStartButton className="xv-gradient-btn-sm" onClick={() => router.push('/auth/signup')}>
+              Start Free — {FREE_TRIAL_ACTIONS} actions
+            </GradientStartButton>
+          )}
         </div>
       </main>
     </div>

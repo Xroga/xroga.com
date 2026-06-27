@@ -1,26 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, Image as ImageIcon, Film } from 'lucide-react';
+import Link from 'next/link';
+import { X, Image as ImageIcon, Film, Music } from 'lucide-react';
+import { loadMediaItems, type MediaItem } from '@/lib/mediaStorage';
 
 interface MediaGalleryModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-const MEDIA_KEY = 'xroga_media_gallery';
-
 export function MediaGalleryModal({ open, onClose }: MediaGalleryModalProps) {
-  const [items, setItems] = useState<{ id: string; name: string; type: 'image' | 'video'; url: string }[]>([]);
+  const [items, setItems] = useState<MediaItem[]>([]);
 
   useEffect(() => {
     if (!open) return;
-    try {
-      const stored = localStorage.getItem(MEDIA_KEY);
-      setItems(stored ? JSON.parse(stored) : []);
-    } catch {
-      setItems([]);
-    }
+    setItems(loadMediaItems());
   }, [open]);
 
   if (!open) return null;
@@ -32,7 +27,7 @@ export function MediaGalleryModal({ open, onClose }: MediaGalleryModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--card-border)]">
-          <h2 className="font-semibold text-sm">Images & Videos</h2>
+          <h2 className="font-semibold text-sm">AI Media — quick view</h2>
           <button type="button" onClick={onClose} className="p-1 rounded hover:bg-white/5">
             <X className="w-4 h-4" />
           </button>
@@ -43,7 +38,7 @@ export function MediaGalleryModal({ open, onClose }: MediaGalleryModalProps) {
               <ImageIcon className="w-12 h-12 mx-auto text-[var(--muted)] mb-3 opacity-50" />
               <p className="text-sm text-[var(--muted)]">No media yet</p>
               <p className="text-xs text-[var(--muted)] mt-1">
-                Generated images and videos will appear here
+                Generated images, videos, and audio will appear here
               </p>
             </div>
           ) : (
@@ -53,9 +48,13 @@ export function MediaGalleryModal({ open, onClose }: MediaGalleryModalProps) {
                   {item.type === 'image' ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={item.url} alt={item.name} className="w-full aspect-square object-cover" />
-                  ) : (
+                  ) : item.type === 'video' ? (
                     <div className="aspect-square bg-white/5 flex items-center justify-center">
                       <Film className="w-8 h-8 text-[var(--muted)]" />
+                    </div>
+                  ) : (
+                    <div className="aspect-square bg-white/5 flex items-center justify-center">
+                      <Music className="w-8 h-8 text-[var(--muted)]" />
                     </div>
                   )}
                   <p className="text-xs p-2 truncate">{item.name}</p>
@@ -63,6 +62,11 @@ export function MediaGalleryModal({ open, onClose }: MediaGalleryModalProps) {
               ))}
             </div>
           )}
+        </div>
+        <div className="px-4 py-3 border-t border-[var(--card-border)] text-center">
+          <Link href="/dashboard/media" onClick={onClose} className="text-xs text-[var(--accent)] hover:underline">
+            Open full AI Media library →
+          </Link>
         </div>
       </div>
     </div>

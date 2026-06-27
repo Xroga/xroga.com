@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { api, type ProjectDetail, type ProjectFile, type ProjectMessage } from '@/lib/api';
 import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { FilePreview } from './FilePreview';
+import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { cn } from '@/lib/utils';
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -50,6 +51,7 @@ export function ProjectDetailView({ projectId }: ProjectDetailViewProps) {
   }
 
   return (
+    <PageFullscreenFrame>
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -174,5 +176,6 @@ export function ProjectDetailView({ projectId }: ProjectDetailViewProps) {
         </div>
       </div>
     </div>
+    </PageFullscreenFrame>
   );
 }

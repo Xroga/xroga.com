@@ -11,6 +11,7 @@ export interface PlanDefinition {
   concurrency: number;
   envPriceKey: string;
   paid: boolean;
+  highlight?: boolean;
 }
 
 export const GALACTIC_PLANS: PlanDefinition[] = [
@@ -18,19 +19,30 @@ export const GALACTIC_PLANS: PlanDefinition[] = [
     tier: 'spark',
     name: 'Spark',
     priceLabel: '$19',
-    actionsLabel: '500 Actions/mo',
-    actions: 500,
+    actionsLabel: '1,500 Actions/mo',
+    actions: 1500,
     concurrency: 2,
     envPriceKey: 'PADDLE_PRICE_SPARK',
     paid: true,
   },
   {
+    tier: 'pulse',
+    name: 'Pulse',
+    priceLabel: '$29',
+    actionsLabel: '5,000 Actions/mo',
+    actions: 5000,
+    concurrency: 8,
+    envPriceKey: 'PADDLE_PRICE_PULSE',
+    paid: true,
+    highlight: true,
+  },
+  {
     tier: 'nova',
     name: 'Nova',
     priceLabel: '$49',
-    actionsLabel: '2,000 Actions/mo',
-    actions: 2000,
-    concurrency: 5,
+    actionsLabel: '10,000 Actions/mo',
+    actions: 10000,
+    concurrency: 12,
     envPriceKey: 'PADDLE_PRICE_NOVA',
     paid: true,
   },

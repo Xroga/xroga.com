@@ -1,5 +1,10 @@
 import { AnalyticsView } from '@/components/dashboard/AnalyticsView';
+import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 
 export default function AnalyticsPage() {
-  return <AnalyticsView />;
+  return (
+    <PageFullscreenFrame>
+      <AnalyticsView />
+    </PageFullscreenFrame>
+  );
 }

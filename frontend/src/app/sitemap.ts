@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/dashboard/projects',
     '/dashboard/chats',
     '/dashboard/analytics',
+    '/dashboard/media',
     '/dashboard/billing',
     '/settings',
   ];

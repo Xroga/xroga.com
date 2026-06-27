@@ -1,8 +1,10 @@
 import { SwarmRunHistory } from '@/components/dashboard/SwarmRunHistory';
+import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { MessageSquare } from 'lucide-react';
 
 export default function ChatsPage() {
   return (
+    <PageFullscreenFrame>
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
@@ -17,5 +19,6 @@ export default function ChatsPage() {
         <SwarmRunHistory />
       </div>
     </div>
+    </PageFullscreenFrame>
   );
 }
