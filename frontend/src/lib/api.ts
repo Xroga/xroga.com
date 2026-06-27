@@ -35,6 +35,7 @@ export const API_URL = resolveApiUrl();
 
 export interface StreamSwarmOptions {
   projectId?: string;
+  signal?: AbortSignal;
   onProgress?: (event: SwarmProgressEvent) => void;
   onDelta?: (delta: string) => void;
 }
@@ -61,6 +62,7 @@ export async function streamSwarmExecute(
       stream: true,
       ...(options.projectId ? { projectId: options.projectId } : {}),
     }),
+    signal: options.signal,
   });
 
   const contentType = res.headers.get('content-type') ?? '';
@@ -96,6 +98,11 @@ export async function streamSwarmExecute(
   let finalText = '';
 
   while (true) {
+    if (options.signal?.aborted) {
+      await reader.cancel().catch(() => {});
+      throw new DOMException('Aborted', 'AbortError');
+    }
+
     const { done, value } = await reader.read();
     if (done) break;
 

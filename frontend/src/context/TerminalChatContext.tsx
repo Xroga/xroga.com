@@ -34,6 +34,7 @@ interface TerminalChatContextValue {
   setOutOfActionsOpen: (v: boolean) => void;
   animatingId: string | null;
   submit: (text?: string) => Promise<void>;
+  stop: () => void;
   projectId?: string;
 }
 
@@ -58,6 +59,7 @@ export function TerminalChatProvider({
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
   const setSwarmRunning = useAppStore((s) => s.setSwarmRunning);
   const thinkingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
   const autoRanRef = useRef(false);
   const submitRef = useRef<(text?: string) => Promise<void>>(async () => {});
 
@@ -83,10 +85,15 @@ export function TerminalChatProvider({
     ]);
   }, []);
 
+  const stop = useCallback(() => {
+    abortRef.current?.abort();
+  }, []);
+
   const submit = useCallback(
     async (overrideText?: string) => {
       const text = (overrideText ?? prompt).trim();
-      if (!text || loading) return;
+      if (loading) return;
+      if (!text) return;
 
       setMessages((m) => [...m, { id: crypto.randomUUID(), role: 'user', content: text }]);
       setPrompt('');
@@ -95,6 +102,8 @@ export function TerminalChatProvider({
 
       const assistantId = crypto.randomUUID();
       let gotEvent = false;
+      const controller = new AbortController();
+      abortRef.current = controller;
 
       thinkingTimerRef.current = setTimeout(() => {
         if (!gotEvent) {
@@ -118,6 +127,7 @@ export function TerminalChatProvider({
 
         await streamSwarmExecute(text, {
           projectId,
+          signal: controller.signal,
           onProgress: (event) => {
             gotEvent = true;
             if (thinkingTimerRef.current) {
@@ -144,6 +154,13 @@ export function TerminalChatProvider({
           addProgress('complete', fullReply.slice(0, 80) + (fullReply.length > 80 ? '…' : ''));
         }
       } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') {
+          setMessages((m) => [
+            ...m,
+            { id: crypto.randomUUID(), role: 'system', content: '[Stopped] Response cancelled.' },
+          ]);
+          return;
+        }
         if (err instanceof ApiError && err.status === 402) {
           setOutOfActionsOpen(true);
           setMessages((m) => m.filter((msg) => msg.id !== assistantId || msg.content.length > 0));
@@ -160,6 +177,7 @@ export function TerminalChatProvider({
           clearTimeout(thinkingTimerRef.current);
           thinkingTimerRef.current = null;
         }
+        abortRef.current = null;
         setLoading(false);
         setSwarmRunning(false);
         setAnimatingId(null);
@@ -199,6 +217,7 @@ export function TerminalChatProvider({
         setOutOfActionsOpen,
         animatingId,
         submit,
+        stop,
         projectId,
       }}
     >

@@ -80,7 +80,7 @@ body.theme-black {
   --background: #000000;
   --foreground: #ffffff;
   --card: rgba(0, 0, 0, 0.85);
-  --card-border: rgba(255, 255, 255, 0.15);
+  --card-border: rgba(255, 255, 255, 0.22);
   --muted: #a3a3a3;
   --primary: #ffffff;
   --accent: #ffffff;
@@ -568,39 +568,26 @@ body.theme-gray .glass-panel-strong {
     background: transparent !important;
   }
 
-  /* Homepage chatbar — image theme: black on desktop, white on mobile */
+  /* Homepage chatbar — full white with shadow */
   .xv-home-chatbox {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.18);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    background: #ffffff;
+    border: none;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
   }
-  .xv-home-chatbar-meta,
-  .xv-home-chatbar-input,
-  .xv-home-chatbar-prompt {
-    color: #fff;
+  .xv-home-chatbar-inner .xv-chatbar-secondary-btn {
+    background: rgba(15, 23, 42, 0.06);
+    border: none;
+    color: #334155;
   }
-  .xv-home-chatbar-input::placeholder {
-    color: rgba(255, 255, 255, 0.45);
+  .xv-home-chatbar-inner .xv-chatbar-secondary-btn:hover {
+    background: rgba(15, 23, 42, 0.1);
   }
-  .xv-home-chatbar-icon {
-    color: rgba(255, 255, 255, 0.75);
+  .xv-home-chatbar-inner .xv-go-btn {
+    border-color: rgba(15, 23, 42, 0.12);
+    background-color: #0f172a;
   }
-  @media (min-width: 768px) {
-    .xv-homepage .xv-home-chatbox {
-      background: rgba(255, 255, 255, 0.72);
-      border-color: rgba(0, 0, 0, 0.12);
-    }
-    .xv-homepage .xv-home-chatbar-meta,
-    .xv-homepage .xv-home-chatbar-input,
-    .xv-homepage .xv-home-chatbar-prompt {
-      color: #0f172a;
-    }
-    .xv-homepage .xv-home-chatbar-input::placeholder {
-      color: rgba(15, 23, 42, 0.45);
-    }
-    .xv-homepage .xv-home-chatbar-icon {
-      color: #334155;
-    }
+  .xv-home-chatbar-inner .xv-go-btn__text {
+    color: white;
   }
 
   .xv-footer-pill {
@@ -990,7 +977,79 @@ body.theme-gray .glass-panel-strong {
     50% { transform: scale(1.03); opacity: 0.92; }
   }
 
-  /* Compact send button → box launch button */
+  /* GO! send button — Uiverse bookmarkBtn style with rocket */
+  .xv-go-btn {
+    width: 88px;
+    height: 38px;
+    border-radius: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.349);
+    background-color: rgb(12, 12, 12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition-duration: 0.3s;
+    overflow: hidden;
+  }
+  .xv-go-btn:active {
+    transform: scale(0.95);
+  }
+  .xv-go-btn__icon {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(to bottom, rgb(255, 136, 255), rgb(172, 70, 255));
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 2;
+    transition-duration: 0.3s;
+    color: white;
+    flex-shrink: 0;
+  }
+  .xv-go-btn__icon--stop {
+    background: linear-gradient(to bottom, #f87171, #dc2626);
+  }
+  .xv-go-btn__text {
+    height: 100%;
+    width: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    z-index: 1;
+    transition-duration: 0.3s;
+    font-size: 0.95em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .xv-go-btn:hover .xv-go-btn__icon {
+    width: 82px;
+  }
+  .xv-go-btn:hover .xv-go-btn__text {
+    transform: translate(10px);
+    width: 0;
+    font-size: 0;
+  }
+  .xv-go-btn--stop:hover .xv-go-btn__icon {
+    width: 72px;
+  }
+
+  /* Black theme — mic/upload: gray bg, no white borders */
+  body.theme-black .xv-chatbar-secondary-btn,
+  body.theme-black .xv-upload-icon-btn,
+  body.theme-black .xv-mic-btn {
+    border: none !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+  }
+  body.theme-black .xv-chatbar-secondary-btn:hover,
+  body.theme-black .xv-upload-icon-btn:hover,
+  body.theme-black .xv-mic-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  /* Compact send button → box launch button (legacy) */
   .xv-send-btn-compact {
     width: 32px;
     height: 32px;
@@ -1242,7 +1301,7 @@ body.theme-gray .glass-panel-strong {
 
   /* Black theme — terminal & chatbar polish */
   body.theme-black .xv-chatbar-solid {
-    border-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.22);
     background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(12px);
   }
@@ -1277,91 +1336,13 @@ body.theme-gray .glass-panel-strong {
       font-size: 10px;
       padding: 0.35rem 0.5rem;
     }
-  }
-
-  /* 3D pixel custom cursor — desktop & laptop only */
-  body.xv-custom-cursor-active,
-  body.xv-custom-cursor-active * {
-    cursor: none !important;
-  }
-
-  .xv-cursor-pixel {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 99999;
-    pointer-events: none;
-    margin-left: -4px;
-    margin-top: -4px;
-    will-change: transform;
-    transition: filter 0.15s ease;
-    filter: drop-shadow(0 2px 6px rgba(236, 72, 153, 0.35));
-  }
-  .xv-cursor-pixel--hover {
-    filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.7)) drop-shadow(0 0 20px rgba(96, 165, 250, 0.5));
-    transform-origin: top left;
-  }
-  .xv-cursor-pixel--click {
-    animation: xv-cursor-pop 0.25s ease-out;
-  }
-  @keyframes xv-cursor-pop {
-    0% { scale: 1; }
-    50% { scale: 0.85; }
-    100% { scale: 1; }
-  }
-
-  .xv-cursor-ring {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 99998;
-    pointer-events: none;
-    width: 36px;
-    height: 36px;
-    margin-left: -18px;
-    margin-top: -18px;
-    border-radius: 50%;
-    border: 1px solid transparent;
-    will-change: transform;
-    transition: border-color 0.2s, box-shadow 0.2s, scale 0.2s;
-  }
-  .xv-cursor-ring--hover {
-    border-color: rgba(168, 85, 247, 0.45);
-    box-shadow: 0 0 16px rgba(96, 165, 250, 0.35), inset 0 0 12px rgba(236, 72, 153, 0.15);
-    scale: 1.15;
-  }
-  .xv-cursor-ring--click {
-    border-color: rgba(236, 72, 153, 0.7);
-    box-shadow: 0 0 24px rgba(236, 72, 153, 0.5);
-    scale: 0.9;
-  }
-
-  .xv-cursor-sparkle {
-    position: absolute;
-    inset: -8px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, transparent 70%);
-    animation: xv-cursor-sparkle 1.2s ease-in-out infinite;
-  }
-  @keyframes xv-cursor-sparkle {
-    0%, 100% { opacity: 0.4; transform: scale(0.9); }
-    50% { opacity: 1; transform: scale(1.1); }
-  }
-
-  .xv-cursor-burst {
-    position: fixed;
-    z-index: 99997;
-    pointer-events: none;
-    width: 24px;
-    height: 24px;
-    margin-left: -12px;
-    margin-top: -12px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(96, 165, 250, 0.8) 0%, rgba(168, 85, 247, 0.4) 40%, transparent 70%);
-    animation: xv-cursor-burst 0.55s ease-out forwards;
-  }
-  @keyframes xv-cursor-burst {
-    from { opacity: 1; transform: scale(0.3); }
-    to { opacity: 0; transform: scale(2.2); }
+    .xv-go-btn {
+      width: 76px;
+      height: 36px;
+    }
+    .xv-go-btn__text {
+      width: 44px;
+      font-size: 0.85em;
+    }
   }
 }

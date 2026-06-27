@@ -8,7 +8,6 @@ import {
   ChatBarDragOverlay,
   ChatBarFileStrip,
   ChatBarInputRow,
-  ChatBarSuggestions,
   useSpeechToText,
 } from '@/components/terminal/ChatBarParts';
 import type { SendButtonState } from '@/components/terminal/ChatBarButtons';
@@ -24,7 +23,6 @@ export function HomepageChatBar() {
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [listening, setListening] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const [sendState, setSendState] = useState<SendButtonState>('idle');
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -51,13 +49,7 @@ export function HomepageChatBar() {
     el.style.height = `${Math.min(el.scrollHeight, maxH)}px`;
   }, [prompt]);
 
-  function handlePromptChange(value: string) {
-    setPrompt(value);
-    setShowSuggestions(true);
-  }
-
   function handleBlur() {
-    setTimeout(() => setShowSuggestions(false), 150);
     if (prompt.trim()) {
       const fixed = autocorrectText(prompt);
       if (fixed !== prompt) setPrompt(fixed);
@@ -67,7 +59,6 @@ export function HomepageChatBar() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const text = autocorrectText(prompt.trim());
-    if (!text && files.length === 0) return;
     setSendState('sending');
     localStorage.setItem(PENDING_PROMPT_KEY, text || 'Build with attached files');
     setTimeout(() => setSendState('launched'), 400);
@@ -76,21 +67,12 @@ export function HomepageChatBar() {
 
   return (
     <div className="w-full max-w-2xl mx-auto relative">
-      <ChatBarSuggestions
-        prompt={prompt}
-        visible={showSuggestions}
-        onSelect={(s) => {
-          setPrompt(s.text);
-          setShowSuggestions(false);
-        }}
-      />
-
       <form onSubmit={handleSubmit} className="w-full">
         <div
           className={cn(
-            'xv-home-chatbox relative rounded-2xl border-2 overflow-hidden transition-all duration-300',
-            'bg-black/40 backdrop-blur-2xl border-white/20 shadow-[0_8px_40px_rgba(0,0,0,0.35)]',
-            dragOver && 'border-[var(--accent)]/60 ring-2 ring-[var(--accent)]/30 scale-[1.01]'
+            'xv-home-chatbox relative rounded-2xl overflow-hidden transition-all duration-300',
+            'bg-white text-[#0f172a] shadow-[0_12px_48px_rgba(0,0,0,0.18)]',
+            dragOver && 'ring-2 ring-[#4a7aff]/40 scale-[1.01]'
           )}
           onDragOver={(e) => {
             e.preventDefault();
@@ -107,7 +89,7 @@ export function HomepageChatBar() {
 
           <ChatBarFileStrip files={files} onRemove={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))} />
 
-          <div className="px-3 sm:px-4 py-3 sm:py-4">
+          <div className="px-3 sm:px-4 py-3 sm:py-4 xv-home-chatbar-inner">
             <ChatBarInputRow
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
@@ -121,13 +103,11 @@ export function HomepageChatBar() {
               }}
               micDisabled={!speech.supported}
               sendState={sendState}
-              canSend={!!prompt.trim() || files.length > 0}
             >
               <textarea
                 ref={textareaRef}
                 value={prompt}
-                onChange={(e) => handlePromptChange(e.target.value)}
-                onFocus={() => setShowSuggestions(true)}
+                onChange={(e) => setPrompt(e.target.value)}
                 onBlur={handleBlur}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
@@ -140,7 +120,7 @@ export function HomepageChatBar() {
                 className={cn(
                   'w-full px-1 py-2 resize-none min-h-[52px] max-h-[140px]',
                   'bg-transparent focus:outline-none text-sm sm:text-base leading-relaxed',
-                  'text-white placeholder:text-white/40 font-medium'
+                  'text-[#0f172a] placeholder:text-[#64748b] font-medium'
                 )}
               />
             </ChatBarInputRow>
