@@ -43,8 +43,7 @@ export const useThemeStore = create<ThemeState>()(
       terminalSkin: DEFAULT_TERMINAL_SKIN.image,
       browserPanelOpen: false,
       browserFullscreen: false,
-      setTheme: (theme) =>
-        set({ theme, terminalSkin: DEFAULT_TERMINAL_SKIN[theme] }),
+      setTheme: (theme) => set({ theme }),
       setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
       setSidebarWidth: (sidebarWidth) =>
         set({ sidebarWidth: Math.min(420, Math.max(200, sidebarWidth)) }),

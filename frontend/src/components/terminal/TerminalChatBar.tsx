@@ -20,6 +20,7 @@ import {
   useSpeechToText,
 } from './ChatBarParts';
 import type { SendButtonState } from './ChatBarButtons';
+import { autocorrectText } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -56,8 +57,24 @@ export function TerminalChatBar() {
 
   useEffect(() => {
     if (loading) setSendState('thinking');
-    else setSendState((s) => (s === 'thinking' || s === 'sending' ? 'idle' : s));
-  }, [loading]);
+    else if (sendState === 'thinking') setSendState('launched');
+  }, [loading, sendState]);
+
+  useEffect(() => {
+    if (sendState !== 'launched') return;
+    const t = setTimeout(() => setSendState('idle'), 1400);
+    return () => clearTimeout(t);
+  }, [sendState]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const text = autocorrectText(prompt.trim());
+    if (!text && files.length === 0) return;
+    if (text !== prompt) setPrompt(text);
+    setSendState('sending');
+    await submit();
+    setSendState('launched');
+  }
 
   const appendSpeech = useCallback(
     (text: string) => setPrompt(prompt ? `${prompt} ${text}` : text),
@@ -89,14 +106,6 @@ export function TerminalChatBar() {
       (prompt ? prompt + '\n' : '') + `[Deploy] Publish to ${d} via Vercel/GitHub integration`
     );
     setShowDomain(false);
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!prompt.trim() && files.length === 0) return;
-    setSendState('sending');
-    await submit();
-    setTimeout(() => setSendState('idle'), 400);
   }
 
   return (
@@ -221,7 +230,11 @@ export function TerminalChatBar() {
                   setShowSuggestions(true);
                 }}
                 onFocus={() => setShowSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                onBlur={() => {
+                  setTimeout(() => setShowSuggestions(false), 150);
+                  const fixed = autocorrectText(prompt);
+                  if (fixed !== prompt) setPrompt(fixed);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();

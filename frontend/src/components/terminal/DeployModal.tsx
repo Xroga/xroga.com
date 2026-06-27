@@ -121,17 +121,32 @@ export function DeployModal({ open, onClose }: DeployModalProps) {
               >
                 <ShoppingCart className="w-4 h-4" /> Search & buy domain
               </button>
-              <button
-                type="button"
-                onClick={() => inject(`[Domain] Connect my existing domain ${domain || 'my-domain.com'} to Xroga — auto-configure A record, CNAME, and nameservers`)}
-                className="w-full text-left p-3 rounded-xl border border-[var(--accent)]/40 bg-[var(--accent)]/5 flex gap-3"
-              >
-                <Link2 className="w-4 h-4 text-[var(--accent)] shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-sm">Connect existing domain</p>
-                  <p className="text-[11px] text-[var(--muted)]">Auto IP, DNS & nameserver setup on Xroga AI</p>
+              <div className="p-4 rounded-xl border border-[var(--accent)]/40 bg-[var(--accent)]/5 space-y-3">
+                <div className="flex gap-2 items-start">
+                  <Link2 className="w-4 h-4 text-[var(--accent)] shrink-0 mt-1" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm">Connect existing domain</p>
+                    <p className="text-[11px] text-[var(--muted)] mb-2">Auto IP, DNS & nameserver setup on Xroga AI</p>
+                    <input
+                      value={domain}
+                      onChange={(e) => setDomain(e.target.value)}
+                      placeholder="yourbrand.com"
+                      className="w-full text-sm px-3 py-2 rounded-lg bg-white/5 border border-[var(--card-border)] focus:outline-none focus:border-[var(--accent)]/50"
+                    />
+                  </div>
                 </div>
-              </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    inject(
+                      `[Domain] Connect my existing domain ${domain || 'my-domain.com'} to Xroga — auto-configure A record, CNAME, and nameservers`
+                    )
+                  }
+                  className="w-full py-2.5 rounded-lg bg-[var(--accent)] text-[var(--background)] text-sm font-semibold"
+                >
+                  Connect domain
+                </button>
+              </div>
               <button
                 type="button"
                 onClick={() => inject('[Domain] Transfer domain from GoDaddy/Namecheap/Google — auto-point to Xroga deploy')}

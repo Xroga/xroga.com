@@ -1,9 +1,9 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { ArrowUp, Loader2 } from 'lucide-react';
+import { Rocket, Loader2, Check } from 'lucide-react';
 
-export type SendButtonState = 'idle' | 'sending' | 'thinking';
+export type SendButtonState = 'idle' | 'sending' | 'thinking' | 'launched';
 
 export function ChatBarSendButton({
   disabled,
@@ -12,25 +12,39 @@ export function ChatBarSendButton({
   disabled?: boolean;
   state?: SendButtonState;
 }) {
+  const busy = state === 'sending' || state === 'thinking';
+
   return (
     <button
       type="submit"
-      disabled={disabled || state === 'thinking'}
+      disabled={disabled || busy}
       className={cn(
-        'xv-send-btn-compact relative flex items-center justify-center rounded-full shrink-0',
-        'border-2 transition-all duration-300',
-        state === 'idle' && 'bg-[var(--accent)] border-[var(--accent)]/40 text-white hover:scale-105',
-        state === 'sending' && 'xv-send-btn--sending bg-[var(--accent)] border-white/30 text-white scale-95',
-        state === 'thinking' && 'xv-send-btn--thinking bg-[var(--accent)]/80 border-[var(--accent)]/50 text-white',
+        'xv-send-btn-box relative flex items-center justify-center gap-1 shrink-0',
+        'rounded-lg border-2 font-semibold transition-all duration-300',
+        state === 'idle' && 'bg-[#006aff] border-[#c0dfff] text-white hover:bg-[#1b7aff]',
+        state === 'sending' && 'xv-send-btn--sending bg-[#006aff] border-white/40 text-white',
+        state === 'thinking' && 'xv-send-btn--thinking bg-[#006aff]/90 border-[#c0dfff]/60 text-white',
+        state === 'launched' && 'bg-emerald-600 border-emerald-400/50 text-white',
         disabled && state === 'idle' && 'opacity-40 pointer-events-none'
       )}
-      aria-label={state === 'thinking' ? 'AI responding' : 'Send'}
+      aria-label={
+        state === 'sending' ? 'Launching' : state === 'launched' ? 'Launched' : state === 'thinking' ? 'AI responding' : 'Launch'
+      }
     >
-      {state === 'thinking' ? (
-        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-      ) : (
-        <ArrowUp className={cn('w-3.5 h-3.5', state === 'sending' && 'xv-send-arrow-burst')} />
+      {state === 'sending' && (
+        <>
+          <Rocket className="w-4 h-4 xv-rocket-launch" />
+          <span className="text-[10px] sm:text-xs hidden xs:inline">Start</span>
+        </>
       )}
+      {state === 'thinking' && <Loader2 className="w-4 h-4 animate-spin" />}
+      {state === 'launched' && (
+        <>
+          <Check className="w-4 h-4" />
+          <span className="text-[10px] sm:text-xs">Launched</span>
+        </>
+      )}
+      {state === 'idle' && <Rocket className="w-4 h-4 sm:w-5 sm:h-5" />}
       {state === 'sending' && <span className="xv-send-ring" aria-hidden />}
       {state === 'thinking' && <span className="xv-send-pulse" aria-hidden />}
     </button>
@@ -49,7 +63,7 @@ export function ChatBarUploadButton({
       type="button"
       onClick={onClick}
       className={cn(
-        'xv-upload-icon-btn p-2 rounded-xl border shrink-0 transition-all',
+        'xv-upload-icon-btn p-2 rounded-lg border shrink-0 transition-all',
         active
           ? 'border-[var(--accent)]/50 bg-[var(--accent)]/15 text-[var(--accent)]'
           : 'border-[var(--card-border)]/50 hover:bg-white/10 text-[var(--foreground)]'

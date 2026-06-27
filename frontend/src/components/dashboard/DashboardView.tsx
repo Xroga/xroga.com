@@ -78,10 +78,10 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   if (fullscreen) {
     return (
       <div
-        className="fixed z-[40] flex flex-col overflow-y-auto xv-fullscreen-frame px-4 sm:px-6 pt-2"
+        className="fixed z-[20] flex flex-col overflow-y-auto bg-transparent px-4 sm:px-6 pt-14"
         style={{
-          top: '56px',
-          bottom: '180px',
+          top: 0,
+          bottom: '160px',
           left: `${widthPx}px`,
           right: 0,
         }}
