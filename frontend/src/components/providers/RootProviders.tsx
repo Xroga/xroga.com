@@ -2,11 +2,15 @@
 
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from './ThemeProvider';
+import { CurrencyDetector } from './CurrencyDetector';
+import { LanguageProvider } from './LanguageProvider';
 
 export function RootProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
-      {children}
+      <LanguageProvider>
+        <CurrencyDetector />
+        {children}
       <Toaster
         position="top-right"
         toastOptions={{
@@ -17,6 +21,7 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
           },
         }}
       />
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

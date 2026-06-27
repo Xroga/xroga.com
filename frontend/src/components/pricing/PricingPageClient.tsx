@@ -11,6 +11,7 @@ import { CheckoutButton } from '@/components/billing/CheckoutButton';
 import { useAppStore } from '@/store/useAppStore';
 import { Zap, Shield, Layers, Sparkles, ChevronDown, ChevronUp, Fuel, Lock, ArrowRight } from 'lucide-react';
 import { GalacticPlanCard, PopularPlanCard, GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
+import { CurrencyToggle } from '@/hooks/usePlanPrice';
 
 function FeaturesExpand() {
   const [open, setOpen] = useState(false);

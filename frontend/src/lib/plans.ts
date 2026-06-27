@@ -4,6 +4,8 @@ export interface GalacticPlan {
   tier: PlanTier;
   name: string;
   priceLabel: string;
+  usdPrice: number;
+  productId: string;
   actionsLabel: string;
   actions: number;
   concurrency: number;
@@ -16,6 +18,8 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     tier: 'spark',
     name: 'Spark',
     priceLabel: '$19',
+    usdPrice: 19,
+    productId: 'pro_01kw4k9efhq3tyrnzxa7kq1nra',
     actionsLabel: '1,500 Actions/mo',
     actions: 1500,
     concurrency: 2,
@@ -25,6 +29,8 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     tier: 'pulse',
     name: 'Pulse',
     priceLabel: '$29',
+    usdPrice: 29,
+    productId: 'pro_01kw4kae0qby4dt86b8n551sqt',
     actionsLabel: '5,000 Actions/mo',
     actions: 5000,
     concurrency: 8,
@@ -35,6 +41,8 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     tier: 'nova',
     name: 'Nova',
     priceLabel: '$49',
+    usdPrice: 49,
+    productId: 'pro_01kw4kawhx64rdmm5ncax0at6e',
     actionsLabel: '10,000 Actions/mo',
     actions: 10000,
     concurrency: 12,
@@ -44,6 +52,8 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     tier: 'zenith',
     name: 'Zenith',
     priceLabel: '$99',
+    usdPrice: 99,
+    productId: 'pro_01kw4kb8t79rfdj68h5c5ep5x0',
     actionsLabel: '6,000 Actions/mo',
     actions: 6000,
     concurrency: 30,
@@ -53,6 +63,8 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     tier: 'singularity',
     name: 'Singularity',
     priceLabel: '$999',
+    usdPrice: 999,
+    productId: 'pro_01kw4jptfsdbs2yfv6s5ctyptg',
     actionsLabel: '50,000 Actions/mo',
     actions: 50000,
     concurrency: 100,

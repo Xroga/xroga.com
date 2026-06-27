@@ -7,6 +7,9 @@ import { X, Zap, Fuel, Sparkles, Lock, ArrowRight, Check } from 'lucide-react';
 import { GALACTIC_PLANS, COMING_SOON_PLANS } from '@/lib/plans';
 import { CheckoutButton } from './CheckoutButton';
 import { FEATURE_COUNT } from '@/lib/features';
+import { CurrencyToggle } from '@/hooks/usePlanPrice';
+import { usePlanPrice } from '@/hooks/usePlanPrice';
+import { useT } from '@/components/providers/LanguageProvider';
 
 interface TopUpModalProps {
   open: boolean;
@@ -16,6 +19,7 @@ interface TopUpModalProps {
 export function TopUpModal({ open, onClose }: TopUpModalProps) {
   const router = useRouter();
   const [tab, setTab] = useState<'plans' | 'explain'>('explain');
+  const t = useT();
 
   if (!open) return null;
 
@@ -40,6 +44,10 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
                 </span>{' '}
                 Pay only for compute.
               </p>
+              <p className="text-[10px] text-[var(--muted)] mt-1">{t('checkout.methods')}</p>
+              <div className="mt-2">
+                <CurrencyToggle />
+              </div>
             </div>
             <button type="button" onClick={onClose} className="p-2 rounded-full hover:bg-white/5 shrink-0">
               <X className="w-4 h-4" />
@@ -85,34 +93,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
 
           <div className="space-y-2">
             {GALACTIC_PLANS.map((plan) => (
-              <div
-                key={plan.tier}
-                className={`flex flex-wrap items-center gap-3 rounded-xl px-4 py-3 border transition-all ${
-                  plan.highlight
-                    ? 'border-[var(--accent)]/50 bg-[var(--accent)]/6'
-                    : 'border-[var(--card-border)]/60 bg-white/[0.02]'
-                }`}
-              >
-                <div className="flex-1 min-w-[140px]">
-                  {plan.highlight && (
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--accent)] block mb-0.5">
-                      ★ Most Popular
-                    </span>
-                  )}
-                  <p className="font-bold">{plan.name}</p>
-                  <p className="text-[10px] text-[var(--muted)]">{plan.tagline}</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="text-lg font-bold">
-                    {plan.priceLabel}
-                    <span className="text-[10px] font-normal text-[var(--muted)]">/mo</span>
-                  </p>
-                  <p className="text-xs text-[var(--accent)] font-semibold">{plan.actionsLabel}</p>
-                </div>
-                <div className="w-full sm:w-auto shrink-0">
-                  <CheckoutButton planTier={plan.tier} className="!w-full sm:!w-auto min-w-[100px]" onSuccess={onClose} />
-                </div>
-              </div>
+              <PlanRow key={plan.tier} plan={plan} onSuccess={onClose} />
             ))}
           </div>
 
@@ -146,6 +127,40 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
             Full pricing
           </Link>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PlanRow({ plan, onSuccess }: { plan: (typeof GALACTIC_PLANS)[0]; onSuccess: () => void }) {
+  const { primary, secondary } = usePlanPrice(plan.usdPrice);
+  return (
+    <div
+      className={`flex flex-wrap items-center gap-3 rounded-xl px-4 py-3 border transition-all ${
+        plan.highlight
+          ? 'border-[var(--accent)]/50 bg-[var(--accent)]/6'
+          : 'border-[var(--card-border)]/60 bg-white/[0.02]'
+      }`}
+    >
+      <div className="flex-1 min-w-[140px]">
+        {plan.highlight && (
+          <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--accent)] block mb-0.5">
+            ★ Most Popular
+          </span>
+        )}
+        <p className="font-bold">{plan.name}</p>
+        <p className="text-[10px] text-[var(--muted)]">{plan.tagline}</p>
+      </div>
+      <div className="text-right shrink-0">
+        <p className="text-lg font-bold">
+          {primary}
+          <span className="text-[10px] font-normal text-[var(--muted)]">/mo</span>
+        </p>
+        {secondary && <p className="text-[9px] text-[var(--muted)]">≈ {secondary}/mo</p>}
+        <p className="text-xs text-[var(--accent)] font-semibold">{plan.actionsLabel}</p>
+      </div>
+      <div className="w-full sm:w-auto shrink-0">
+        <CheckoutButton planTier={plan.tier} className="!w-full sm:!w-auto min-w-[100px]" onSuccess={onSuccess} />
       </div>
     </div>
   );

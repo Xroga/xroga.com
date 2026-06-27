@@ -16,12 +16,14 @@ import { THEME_OPTIONS } from '@/lib/theme';
 import { ALL_ACTION_COSTS, tasksForActionBudget, budgetTaskLine } from '@/lib/actionCosts';
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
+import { useT } from '@/components/providers/LanguageProvider';
 
 const TABS = ['General', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
 type Tab = (typeof TABS)[number];
 
 export function SettingsView({ email }: { email: string }) {
   const router = useRouter();
+  const t = useT();
   const [tab, setTab] = useState<Tab>('General');
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -154,7 +156,7 @@ export function SettingsView({ email }: { email: string }) {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-[var(--muted)] mb-1">Language</label>
+                  <label className="block text-sm text-[var(--muted)] mb-1">{t('settings.language')}</label>
                   <select
                     value={profile.language}
                     onChange={(e) => setProfile({ ...profile, language: e.target.value })}
@@ -169,7 +171,7 @@ export function SettingsView({ email }: { email: string }) {
               </div>
               <button type="submit" disabled={saving} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] hover:opacity-90 text-sm disabled:opacity-50">
                 <Save className="w-4 h-4" />
-                {saving ? 'Saving...' : 'Save Changes'}
+                {saving ? 'Saving...' : t('settings.save')}
               </button>
             </form>
           )}

@@ -5,7 +5,6 @@ import {
   Loader2,
   Search,
   GitBranch,
-  Upload,
   Rocket,
   Globe,
   X,
@@ -19,7 +18,9 @@ import { estimateActionCost } from '@/lib/actionCosts';
 import { IntegrationsModal } from './IntegrationsModal';
 import { GithubRepoModal } from './GithubRepoModal';
 import { ActionCostModal } from './ActionCostModal';
+import { DeployModal } from './DeployModal';
 import { ChatbarShell, SendDiscoverButton } from '@/components/ui/Uiverse';
+import { UploadAnimButton } from '@/components/ui/UploadAnimButton';
 import { cn } from '@/lib/utils';
 
 const QUICK_CHIPS = ['GitHub', 'GitLab', 'Vercel', 'Twitter/X'];
@@ -40,7 +41,9 @@ export function TerminalChatBar() {
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const [githubOpen, setGithubOpen] = useState(false);
   const [costOpen, setCostOpen] = useState(false);
+  const [deployOpen, setDeployOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
   const [domain, setDomain] = useState('');
   const [showDomain, setShowDomain] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -49,8 +52,13 @@ export function TerminalChatBar() {
   const estimate = estimateActionCost(prompt || 'chat');
 
   const addFiles = useCallback((list: FileList | null) => {
-    if (!list) return;
-    setFiles((prev) => [...prev, ...Array.from(list)]);
+    if (!list?.length) return;
+    setUploading(true);
+    const incoming = Array.from(list);
+    setTimeout(() => {
+      setFiles((prev) => [...prev, ...incoming]);
+      setUploading(false);
+    }, Math.min(1800, 400 + incoming.length * 200));
   }, []);
 
   useEffect(() => {
@@ -78,9 +86,10 @@ export function TerminalChatBar() {
         onSelect={(t) => setPrompt(prompt + (prompt ? '\n' : '') + t)}
       />
       <ActionCostModal open={costOpen} onClose={() => setCostOpen(false)} />
+      <DeployModal open={deployOpen} onClose={() => setDeployOpen(false)} />
 
       <ChatbarShell
-        className={cn(dragOver && 'ring-2 ring-[var(--accent)]/40')}
+        className={cn((dragOver || uploading) && 'ring-2 ring-[var(--accent)]/40')}
         onDragOver={(e: React.DragEvent) => {
           e.preventDefault();
           setDragOver(true);
@@ -121,7 +130,7 @@ export function TerminalChatBar() {
           ))}
           <button
             type="button"
-            onClick={() => setShowDomain((s) => !s)}
+            onClick={() => setDeployOpen(true)}
             className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] hover:bg-white/10 text-[var(--foreground)]"
             title="Deploy & domain"
           >
@@ -220,14 +229,10 @@ export function TerminalChatBar() {
               )}
             />
             <input ref={fileRef} type="file" multiple className="hidden" onChange={(e) => addFiles(e.target.files)} />
-            <button
-              type="button"
+            <UploadAnimButton
+              active={uploading}
               onClick={() => fileRef.current?.click()}
-              className="p-2 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/10 shrink-0 group"
-              title="Upload any file — images, video, audio, documents. Drag & drop supported. No size limit."
-            >
-              <Upload className="w-4 h-4" />
-            </button>
+            />
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin text-[var(--foreground)] shrink-0 m-2" />
             ) : (

@@ -440,11 +440,38 @@ body.theme-gray .glass-panel-strong {
     border-color: rgba(0, 0, 0, 0.1) !important;
   }
 
-  /* Legacy alias */
+  /* Legacy alias — skin classes own the background */
   .terminal-log {
-    background: rgba(10, 20, 45, 0.35);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .terminal-skin-light,
+  .terminal-skin-light-grid {
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    color: #000000 !important;
+    --foreground: #000;
+    --muted: #6b7280;
+    --accent: #4a7aff;
+  }
+
+  .terminal-skin-amoled,
+  .terminal-skin-dark {
+    background: #000000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    --foreground: #fff;
+    --muted: #a3a3a3;
+    --accent: #4a7aff;
+  }
+
+  .terminal-skin-gray {
+    background: #2a2a2a !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    --foreground: #fff;
+    --muted: #a3a3a3;
+    --accent: #4a7aff;
   }
 
   .terminal-log-white {
@@ -720,5 +747,125 @@ body.theme-gray .glass-panel-strong {
   .xv-sidebar-menu .xv-sidebar-tip-wrap > a.xv-active {
     background: rgba(74, 122, 255, 0.15);
     color: var(--accent);
+  }
+
+  /* Xroga chip loader — transparent bg */
+  .xv-chip-loader {
+    width: min(320px, 80vw);
+    background: transparent;
+  }
+  .xv-trace-bg {
+    stroke: #252525;
+    stroke-width: 1.8;
+    fill: none;
+  }
+  .xv-trace-flow {
+    stroke-width: 1.8;
+    fill: none;
+    stroke-dasharray: 40 400;
+    stroke-dashoffset: 438;
+    filter: drop-shadow(0 0 6px currentColor);
+    animation: xv-flow 3s cubic-bezier(0.5, 0, 0.9, 1) infinite;
+  }
+  .xv-trace-flow.xv-blue { stroke: #399fff; color: #399fff; }
+  .xv-trace-flow.xv-blue2 { stroke: #399fff; color: #399fff; }
+  @keyframes xv-flow {
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* Upload animation (Uiverse-inspired) */
+  .xv-upload-anim {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    transition: width 0.3s ease;
+  }
+  .xv-upload-app {
+    position: absolute;
+    inset: 0;
+    background: var(--card);
+    border: 2px solid var(--foreground);
+    overflow: hidden;
+    border-radius: 8px;
+  }
+  .xv-upload-app::before {
+    content: 'upload';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 10px 8px;
+    font-size: 9px;
+    font-weight: bold;
+    color: var(--foreground);
+    z-index: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .xv-upload-arrow::before,
+  .xv-upload-arrow::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    width: 8px;
+    height: 2px;
+    background: var(--foreground);
+    z-index: 2;
+  }
+  .xv-upload-arrow::before { right: 14px; transform: rotateZ(-45deg); }
+  .xv-upload-arrow::after { right: 9px; transform: rotateZ(45deg); }
+  .xv-upload-arrow {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 32px;
+    height: 32px;
+    z-index: 2;
+  }
+  .xv-upload-success {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 44px;
+    height: 44px;
+    background: var(--accent);
+    transform: scale(0);
+    border-radius: 50%;
+    z-index: 3;
+  }
+  .xv-upload-success svg {
+    width: 18px;
+    height: 18px;
+    margin: 13px auto;
+    display: block;
+    fill: #fff;
+  }
+  .xv-upload-anim--active {
+    width: 42px;
+  }
+  .xv-upload-anim--active .xv-upload-arrow::before {
+    animation: xv-upload-a 0.4s ease 0.4s forwards, xv-upload-bar 2s ease 1s forwards;
+  }
+  .xv-upload-anim--active .xv-upload-arrow::after {
+    animation: xv-upload-b 0.4s ease 0.4s forwards, xv-upload-bar 2s ease 1s forwards;
+  }
+  .xv-upload-anim--active .xv-upload-success {
+    animation: xv-upload-ok 0.35s cubic-bezier(0, 0.74, 0.32, 1.21) 2.8s forwards;
+  }
+  @keyframes xv-upload-a {
+    to { top: 30px; right: 16px; width: 14px; transform: rotateZ(0deg); background: #ffc107; }
+  }
+  @keyframes xv-upload-b {
+    to { top: 30px; right: 2px; width: 14px; transform: rotateZ(0deg); background: #ffc107; }
+  }
+  @keyframes xv-upload-bar {
+    to { top: 0; height: 36px; }
+  }
+  @keyframes xv-upload-ok {
+    to { transform: scale(1); }
   }
 }
