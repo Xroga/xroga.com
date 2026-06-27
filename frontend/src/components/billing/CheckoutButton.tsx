@@ -48,7 +48,7 @@ export function CheckoutButton({
         }
       }
 
-      toast.error('Checkout not configured. Set Paddle price IDs on the API.');
+      toast.error('Checkout not configured. Add Paddle keys in Vercel & Fly — see docs/PADDLE_SETUP.md');
     } catch (err) {
       const message = err instanceof ApiError ? err.message : (err as Error).message;
       toast.error(message);

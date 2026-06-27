@@ -1,12 +1,33 @@
 import crypto from 'crypto';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ActionService } from './ActionService.js';
-import { getPaddlePriceId, getPlanByTier, GALACTIC_PLANS } from '../config/plans.js';
+import { GALACTIC_PLANS, getPaddlePriceId, getPlanByTier } from '../config/plans.js';
 import type { PlanTier } from '../types/index.js';
 
-const PADDLE_API = 'https://api.paddle.com';
+function paddleApiBase(): string {
+  const env = process.env.PADDLE_ENV ?? process.env.NEXT_PUBLIC_PADDLE_ENV ?? 'production';
+  return env === 'sandbox' ? 'https://sandbox-api.paddle.com' : 'https://api.paddle.com';
+}
 
 export class BillingService {
+  static billingStatus() {
+    const apiKey = !!process.env.PADDLE_API_KEY;
+    const webhook = !!process.env.PADDLE_WEBHOOK_SECRET;
+    const clientConfigured = !!process.env.PADDLE_VENDOR_ID;
+    return {
+      paddleApi: apiKey,
+      paddleWebhook: webhook,
+      paddleClient: clientConfigured,
+      environment: process.env.PADDLE_ENV ?? 'production',
+      plans: GALACTIC_PLANS.map((plan) => ({
+        tier: plan.tier,
+        name: plan.name,
+        priceId: process.env[plan.envPriceKey] ?? null,
+        ready: !!(process.env[plan.envPriceKey] && apiKey),
+      })),
+    };
+  }
+
   static listPlans() {
     return GALACTIC_PLANS.map((plan) => ({
       tier: plan.tier,
@@ -45,7 +66,7 @@ export class BillingService {
       body.customer = { email: userEmail };
     }
 
-    const response = await fetch(`${PADDLE_API}/transactions`, {
+    const response = await fetch(`${paddleApiBase()}/transactions`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,

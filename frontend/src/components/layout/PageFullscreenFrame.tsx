@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Maximize2, Minimize2 } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,11 @@ export function PageFullscreenFrame({ children, className }: PageFullscreenFrame
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const widthPx = sidebarOpen ? sidebarWidth : 72;
+
+  useEffect(() => {
+    document.body.classList.toggle('xv-page-fullscreen-active', fullscreen);
+    return () => document.body.classList.remove('xv-page-fullscreen-active');
+  }, [fullscreen]);
 
   const toggle = (
     <button
@@ -38,7 +43,7 @@ export function PageFullscreenFrame({ children, className }: PageFullscreenFrame
   if (fullscreen) {
     return (
       <div
-        className="fixed z-[25] overflow-y-auto cosmic-bg p-4 sm:p-6 lg:p-8"
+        className="fixed z-[25] overflow-y-auto bg-transparent px-4 sm:px-6 lg:px-8"
         style={{
           top: '56px',
           bottom: '180px',
@@ -46,7 +51,7 @@ export function PageFullscreenFrame({ children, className }: PageFullscreenFrame
           right: 0,
         }}
       >
-        <div className="flex justify-end mb-4">{toggle}</div>
+        <div className="flex justify-end mb-4 pt-1">{toggle}</div>
         <div className={cn(className)}>{children}</div>
       </div>
     );

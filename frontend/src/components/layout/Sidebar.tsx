@@ -23,6 +23,7 @@ import {
   Workflow,
   Music,
   Lock,
+  Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
@@ -61,12 +62,6 @@ const navItems = [
     label: 'Automation',
     icon: Workflow,
     tip: 'Running, failed, and browser automations — continue or review past runs.',
-  },
-  {
-    href: '/dashboard/media',
-    label: 'AI Media',
-    icon: Music,
-    tip: 'Images, videos, and audio generated or uploaded by your Swarm.',
   },
   {
     href: '/dashboard/spending',
@@ -273,15 +268,14 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
         </div>
       </div>
       {sidebarOpen && (
-        <SidebarTip label="About Xroga & CEO" description="Mission, Muhammad Ibrahim (Pakistan), and what Xroga AI can do.">
-          <Link
-            href="/about"
-            onClick={() => setMobileOpen(false)}
-            className="xv-sidebar-about-btn block w-full text-center"
-          >
-            About Xroga & CEO
-          </Link>
-        </SidebarTip>
+        <Link
+          href="/about"
+          onClick={() => setMobileOpen(false)}
+          className="xv-about-pill flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-full border border-[var(--card-border)]/60 bg-white/[0.03] hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/35 text-[10px] font-semibold text-[var(--muted)] hover:text-[var(--accent)] transition-all"
+        >
+          <Sparkles className="w-3 h-3 shrink-0" />
+          About Xroga & CEO
+        </Link>
       )}
     </div>
   );
@@ -320,41 +314,45 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           mobileOpen ? 'translate-x-0 z-[70]' : '-translate-x-full lg:translate-x-0'
         )}
       >
-        <div className="p-2 sm:p-3 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[52px]">
+        <div className="px-2 py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[48px]">
           <HoverTip label="Xroga AI" description="Your AI Swarm Operating System — dashboard home." block className="min-w-0 flex-1">
             <div className="shrink min-w-0 flex justify-center lg:justify-start">
               <Logo
                 href="/dashboard"
-                height={sidebarOpen ? 40 : 28}
+                height={sidebarOpen ? 36 : 26}
                 variant="sidebar"
                 onClick={handleNavClick}
               />
             </div>
           </HoverTip>
-          {sidebarOpen && (
-            <div className="flex items-center gap-0.5 shrink-0">
-              <HoverTip label="Search" description="Search projects, chats, and commands.">
-                <button
-                  type="button"
-                  onClick={() => setSearchOpen(true)}
-                  className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
-                  aria-label="Search"
-                >
-                  <Search className="w-4 h-4" />
-                </button>
-              </HoverTip>
-              <HoverTip label="AI Media" description="Images, videos, and audio library.">
-                <Link
-                  href="/dashboard/media"
-                  onClick={handleNavClick}
-                  className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
-                  aria-label="AI Media library"
-                >
-                  <ImageIcon className="w-4 h-4" />
-                </Link>
-              </HoverTip>
-            </div>
-          )}
+          <div className={cn('flex items-center gap-0.5 shrink-0', !sidebarOpen && 'flex-col')}>
+            <HoverTip label="Search" description="Search projects, chats, and commands.">
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
+                aria-label="Search"
+              >
+                <Search className="w-3.5 h-3.5" />
+              </button>
+            </HoverTip>
+            <HoverTip label="AI Media" description="Images, videos, and audio library.">
+              <Link
+                href="/dashboard/media"
+                onClick={handleNavClick}
+                className={cn(
+                  'p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors flex items-center',
+                  pathname.startsWith('/dashboard/media') && 'bg-[var(--accent)]/15 text-[var(--accent)]'
+                )}
+                aria-label="AI Media library"
+              >
+                <span className="relative flex items-center w-3.5 h-3.5">
+                  <ImageIcon className="w-3 h-3 absolute left-0 top-0" />
+                  <Music className="w-2.5 h-2.5 absolute right-0 bottom-0 opacity-90" />
+                </span>
+              </Link>
+            </HoverTip>
+          </div>
         </div>
 
         <button

@@ -14,6 +14,10 @@ router.get('/plans', (_req, res) => {
   res.json({ plans: BillingService.listPlans() });
 });
 
+router.get('/status', (_req, res) => {
+  res.json(BillingService.billingStatus());
+});
+
 router.post('/create-checkout', async (req: AuthRequest, res) => {
   const parsed = checkoutSchema.safeParse(req.body);
   if (!parsed.success) {
