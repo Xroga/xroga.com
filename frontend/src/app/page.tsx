@@ -42,9 +42,9 @@ export default function HomePage() {
       />
       <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/50 via-black/20 to-black/60" aria-hidden />
 
-      <header className="xv-home-header sticky top-0 z-50 border-b border-white/[0.08] bg-transparent backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
-          <Logo href="/" variant="homepage" height={52} className="shrink-0" />
+      <header className="xv-home-header sticky top-0 z-50">
+        <div className="xv-home-header-inner max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+          <Logo href="/" variant="homepage" height={64} className="shrink-0" />
           <div className="flex items-center gap-2 shrink-0">
             {loggedIn ? (
               <Link
@@ -76,19 +76,24 @@ export default function HomePage() {
             Next-Gen AGI · Live Now
           </div>
 
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-2 leading-[1.08] tracking-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-3 leading-[1.08] tracking-tight">
             <span className="block text-white drop-shadow-2xl xv-hero-line">Do Everything</span>
             <span className="block mt-1 bg-gradient-to-r from-white via-blue-200 to-[var(--accent)] bg-clip-text text-transparent xv-hero-gradient">
               You Imagine
             </span>
           </h1>
 
+          <p className="text-sm sm:text-base text-white/75 max-w-xl mx-auto mb-4 leading-relaxed xv-hero-sub">
+            The AI Swarm OS for builders — apps, games, movies, and automations in one terminal.
+          </p>
+
           <div className="flex justify-center mb-8 min-h-[3rem] xv-mag-zone">
             <RotatingWords
               prefix="Build"
               words={HOMEPAGE_ROTATE_WORDS}
               variant="hero"
-              className="text-base sm:text-xl"
+              className="text-base sm:text-xl xv-hero-rotate"
+              stopAfterMs={22000}
             />
           </div>
 

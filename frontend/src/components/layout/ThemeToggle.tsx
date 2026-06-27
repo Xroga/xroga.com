@@ -28,7 +28,7 @@ export function ThemeToggle() {
         <Palette className="w-4 h-4 text-[var(--accent)]" />
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-56 glass-panel-strong rounded-xl p-2 z-50 shadow-xl">
+        <div className="absolute right-0 top-full mt-2 w-56 glass-panel-strong rounded-xl p-2 z-[250] shadow-xl border border-[var(--card-border)]">
           {THEME_OPTIONS.map((opt) => (
             <button
               key={opt.id}

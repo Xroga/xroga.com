@@ -2,14 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { Terminal, Palette, Share2, MessageSquare } from 'lucide-react';
+import { Terminal, Palette, MessageCircleHeart } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
 import { AiResponseLoader } from '@/components/ui/Uiverse';
 import { BrowserPanelToggle } from './BrowserPanel';
-import { AI_RESPONSE_LOGO_URL } from '@/lib/theme';
+import { AI_RESPONSE_LOGO_URL, TERMINAL_SKIN_LABELS } from '@/lib/theme';
+import { XROGA_MODEL_NAME } from '@/lib/brand';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -42,14 +43,6 @@ function TypewriterMessage({ content, animate }: { content: string; animate: boo
   );
 }
 
-const SKIN_LABELS: Record<string, string> = {
-  light: 'White',
-  amoled: 'Black',
-  gray: 'Gray',
-  dark: 'Black',
-  'light-grid': 'Grid',
-};
-
 const AGENT_STYLES: Record<string, string> = {
   architect: 'text-[var(--primary)]',
   builder: 'text-[var(--accent)]',
@@ -66,7 +59,6 @@ interface SwarmMessageLogProps {
 export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
   const { messages, loading, animatingId, outOfActionsOpen, setOutOfActionsOpen } = useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
-  const theme = useThemeStore((s) => s.theme);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
   const profile = useAppStore((s) => s.profile);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -90,40 +82,28 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
       >
         <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--card-border)]/30">
           <Terminal className="w-4 h-4 opacity-70 shrink-0" />
-          <h3 className="font-terminal text-sm opacity-80 flex-1 min-w-0 truncate">xroga@swarm ~ terminal</h3>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-terminal text-sm opacity-90 truncate">xroga@swarm ~ terminal</h3>
+            <p className="text-[9px] text-[var(--accent)] font-medium truncate">{XROGA_MODEL_NAME}</p>
+          </div>
           <button
             type="button"
             onClick={cycleTerminalSkin}
             className="flex items-center gap-1 p-1.5 rounded-lg hover:bg-white/10 transition-colors text-[10px] font-terminal shrink-0"
-            title="Cycle workspace theme (white / black / gray / image)"
+            title="Cycle terminal color (white / black / gray) — independent of site theme"
           >
             <Palette className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline opacity-70">{SKIN_LABELS[terminalSkin] ?? theme}</span>
+            <span className="hidden sm:inline opacity-70">{TERMINAL_SKIN_LABELS[terminalSkin]}</span>
           </button>
           <BrowserPanelToggle />
           <button
             type="button"
-            onClick={() => {
-              const url = typeof window !== 'undefined' ? window.location.href : 'https://xroga.com';
-              if (navigator.share) {
-                void navigator.share({ title: 'Xroga AI Swarm', url });
-              } else {
-                void navigator.clipboard.writeText(url);
-                toast.success('Link copied');
-              }
-            }}
-            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors shrink-0"
-            title="Share"
+            onClick={() => toast('Feedback — tell us what to improve', { icon: '💬' })}
+            className="xv-feedback-btn p-1.5 rounded-lg shrink-0"
+            title="Send feedback"
+            aria-label="Feedback"
           >
-            <Share2 className="w-3.5 h-3.5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => toast('Send feedback via Settings → Help', { icon: '💬' })}
-            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors shrink-0"
-            title="Feedback"
-          >
-            <MessageSquare className="w-3.5 h-3.5" />
+            <MessageCircleHeart className="w-4 h-4" />
           </button>
         </div>
 

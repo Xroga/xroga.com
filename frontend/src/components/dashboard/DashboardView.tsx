@@ -10,6 +10,7 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { useEffect } from 'react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { Maximize2, Minimize2 } from 'lucide-react';
 
 interface DashboardViewProps {
   displayName: string;
@@ -35,9 +36,23 @@ export function DashboardView({ displayName }: DashboardViewProps) {
       );
   }, [displayName, setProfile]);
 
+  const exitFullscreenBtn = fullscreen ? (
+    <div className="flex justify-end">
+      <button
+        type="button"
+        onClick={() => setFullscreen(false)}
+        className="xv-fullscreen-exit-pill flex items-center gap-1.5 text-xs font-medium"
+      >
+        <Minimize2 className="w-3.5 h-3.5" />
+        Exit fullscreen
+      </button>
+    </div>
+  ) : null;
+
   const terminalBlock = (
-    <div className="space-y-3">
+    <div className={cn('space-y-3', fullscreen && 'xv-fullscreen-terminal')}>
       <QuickActionTabs />
+      {exitFullscreenBtn}
       {browserFullscreen && browserOpen ? (
         <BrowserPanel mode="full" />
       ) : (
@@ -63,9 +78,9 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   if (fullscreen) {
     return (
       <div
-        className="fixed z-[40] flex flex-col overflow-y-auto bg-transparent px-4 sm:px-6 pt-2"
+        className="fixed z-[40] flex flex-col overflow-y-auto xv-fullscreen-frame px-4 sm:px-6 pt-2"
         style={{
-          top: '88px',
+          top: '56px',
           bottom: '180px',
           left: `${widthPx}px`,
           right: 0,
@@ -83,9 +98,10 @@ export function DashboardView({ displayName }: DashboardViewProps) {
         <button
           type="button"
           onClick={() => setFullscreen(true)}
-          className="xv-footer-pill !text-xs flex items-center gap-1.5 shrink-0 !text-[var(--foreground)]"
+          className="xv-fullscreen-enter-pill flex items-center gap-1.5 text-xs font-medium shrink-0"
           title="Fullscreen terminal"
         >
+          <Maximize2 className="w-3.5 h-3.5" />
           Fullscreen
         </button>
       </div>

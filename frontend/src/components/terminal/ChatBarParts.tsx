@@ -1,9 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { X, FileText, Image as ImageIcon, Film, Mic, MicOff } from 'lucide-react';
-import { UploadAnimButton } from '@/components/ui/UploadAnimButton';
-import { SendDiscoverButton } from '@/components/ui/Uiverse';
+import { X, FileText, Image as ImageIcon, Film, Mic } from 'lucide-react';
+import { ChatBarSendButton, ChatBarUploadButton, VoiceWaveform, type SendButtonState } from './ChatBarButtons';
 import { getChatSuggestions, type ChatSuggestion } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
 
@@ -68,7 +67,7 @@ export function ChatBarDragOverlay({ active }: { active: boolean }) {
   if (!active) return null;
   return (
     <div className="absolute inset-0 z-20 flex items-center justify-center rounded-[inherit] bg-[var(--accent)]/8 backdrop-blur-[2px] border-2 border-dashed border-[var(--accent)]/50 pointer-events-none">
-      <div className="xv-drag-drop-card px-6 py-4 rounded-2xl border border-[var(--accent)]/40 bg-[var(--card)]/90 shadow-xl text-center animate-pulse">
+      <div className="xv-drag-drop-card px-6 py-4 rounded-2xl border border-[var(--accent)]/40 bg-[var(--card)]/90 shadow-xl text-center">
         <p className="text-sm font-semibold text-[var(--foreground)]">Drag & drop</p>
         <p className="text-[10px] text-[var(--muted)] mt-1">Images, video, audio, documents</p>
       </div>
@@ -124,49 +123,44 @@ export function ChatBarMicButton({
       onClick={onToggle}
       disabled={disabled}
       className={cn(
-        'xv-mic-btn p-2 rounded-xl border transition-all shrink-0',
+        'relative p-1.5 rounded-xl border transition-all shrink-0',
         listening
-          ? 'border-red-400/60 bg-red-500/15 text-red-400 animate-pulse'
-          : 'border-[var(--card-border)]/60 hover:bg-white/10 text-[var(--foreground)]'
+          ? 'border-red-400/50 bg-red-500/10'
+          : 'border-[var(--card-border)]/50 hover:bg-white/10 text-[var(--foreground)]'
       )}
       title={listening ? 'Stop listening' : 'Speak to text'}
       aria-label={listening ? 'Stop voice input' : 'Start voice input'}
     >
-      {listening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+      {listening ? <VoiceWaveform active /> : <Mic className="w-4 h-4" />}
     </button>
   );
 }
 
-export function ChatBarInputControls({
+export function ChatBarInputRow({
   uploading,
   onUploadClick,
   listening,
   onMicToggle,
   micDisabled,
-  loading,
+  sendState,
   canSend,
+  children,
 }: {
   uploading: boolean;
   onUploadClick: () => void;
   listening: boolean;
   onMicToggle: () => void;
   micDisabled?: boolean;
-  loading: boolean;
+  sendState: SendButtonState;
   canSend: boolean;
+  children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-1 shrink-0">
-      <UploadAnimButton active={uploading} onClick={onUploadClick} className="xv-upload-anim--compact" />
-      <div className="flex items-center gap-1">
-        <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || loading} />
-        {loading ? (
-          <div className="w-10 h-10 flex items-center justify-center">
-            <span className="w-5 h-5 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : (
-          <SendDiscoverButton disabled={!canSend} loading={loading} />
-        )}
-      </div>
+    <div className="relative flex items-end gap-1.5">
+      <ChatBarUploadButton onClick={onUploadClick} active={uploading} />
+      <div className="flex-1 min-w-0 relative">{children}</div>
+      <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || sendState === 'thinking'} />
+      <ChatBarSendButton disabled={!canSend} state={sendState} />
     </div>
   );
 }
@@ -217,4 +211,56 @@ export function useSpeechToText(onResult: (text: string) => void) {
       (window as unknown as { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition);
 
   return { toggle, supported };
+}
+
+/** Modern pill chips for GitHub / Deploy toolbar */
+export function ChatBarToolChip({
+  icon,
+  label,
+  onClick,
+  accent,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  accent?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="xv-chatbar-chip flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-medium border transition-all hover:-translate-y-px"
+      style={
+        accent
+          ? { borderColor: `${accent}44`, background: `${accent}12`, color: 'var(--foreground)' }
+          : undefined
+      }
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  );
+}
+
+export function ChatBarFuelMeter({
+  remaining,
+  estimate,
+  onClick,
+}: {
+  remaining: number;
+  estimate: number;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="xv-fuel-meter flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[var(--card-border)]/50 bg-white/[0.03] text-[10px] sm:text-xs font-terminal hover:border-[var(--accent)]/40 transition-colors"
+    >
+      <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+      <span className="font-semibold text-[var(--foreground)]">{remaining}</span>
+      <span className="text-[var(--muted)]">actions</span>
+      <span className="text-[var(--muted)] hidden sm:inline">· Est. {estimate}</span>
+    </button>
+  );
 }

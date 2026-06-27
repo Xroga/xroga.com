@@ -8,10 +8,11 @@ import { ChatbarShell } from '@/components/ui/Uiverse';
 import {
   ChatBarDragOverlay,
   ChatBarFileStrip,
-  ChatBarInputControls,
+  ChatBarInputRow,
   ChatBarSuggestions,
   useSpeechToText,
 } from './ChatBarParts';
+import type { SendButtonState } from './ChatBarButtons';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -25,6 +26,7 @@ export function HomepageChatBar() {
   const [uploading, setUploading] = useState(false);
   const [listening, setListening] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [sendState, setSendState] = useState<SendButtonState>('idle');
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
@@ -54,8 +56,9 @@ export function HomepageChatBar() {
     e.preventDefault();
     const text = prompt.trim();
     if (!text && files.length === 0) return;
+    setSendState('sending');
     localStorage.setItem(PENDING_PROMPT_KEY, text || 'Build with attached files');
-    router.push('/auth/signup');
+    setTimeout(() => router.push('/auth/signup'), 350);
   }
 
   return (
@@ -85,9 +88,9 @@ export function HomepageChatBar() {
         >
           <ChatBarDragOverlay active={dragOver} />
 
-          <div className="flex items-center gap-2 px-3 py-2 border-b border-[var(--card-border)]/40">
+          <div className="flex items-center gap-2 px-3 py-2 border-b border-white/10">
             <Sparkles className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" />
-            <span className="text-[10px] sm:text-xs font-terminal text-[var(--muted)]">
+            <span className="text-[10px] sm:text-xs font-terminal text-white/80">
               50 free actions · Swarm online
             </span>
           </div>
@@ -95,8 +98,22 @@ export function HomepageChatBar() {
           <ChatBarFileStrip files={files} onRemove={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))} />
 
           <div className="px-3 py-3">
-            <div className="relative flex items-end gap-1">
-              <span className="absolute left-2 bottom-3 text-sm font-terminal text-[var(--foreground)] opacity-50 z-10">
+            <ChatBarInputRow
+              uploading={uploading}
+              onUploadClick={() => fileRef.current?.click()}
+              listening={listening}
+              onMicToggle={() => {
+                if (!speech.supported) {
+                  toast.error('Voice input not supported in this browser');
+                  return;
+                }
+                speech.toggle(listening, setListening);
+              }}
+              micDisabled={!speech.supported}
+              sendState={sendState}
+              canSend={!!prompt.trim() || files.length > 0}
+            >
+              <span className="absolute left-2 bottom-3 text-sm font-terminal text-white opacity-60 z-10">
                 &gt;
               </span>
               <textarea
@@ -117,34 +134,13 @@ export function HomepageChatBar() {
                 placeholder="Ask Xroga AI to do everything..."
                 rows={1}
                 className={cn(
-                  'flex-1 pl-7 pr-2 py-2.5 rounded-xl resize-none max-h-[176px]',
+                  'w-full pl-7 pr-2 py-2.5 rounded-xl resize-none max-h-[176px]',
                   'bg-transparent focus:outline-none text-sm font-terminal leading-[22px]',
-                  'text-[var(--foreground)] placeholder:text-[var(--muted)]'
+                  'text-white placeholder:text-white/45'
                 )}
               />
-              <input
-                ref={fileRef}
-                type="file"
-                multiple
-                className="hidden"
-                onChange={(e) => addFiles(e.target.files)}
-              />
-              <ChatBarInputControls
-                uploading={uploading}
-                onUploadClick={() => fileRef.current?.click()}
-                listening={listening}
-                onMicToggle={() => {
-                  if (!speech.supported) {
-                    toast.error('Voice input not supported in this browser');
-                    return;
-                  }
-                  speech.toggle(listening, setListening);
-                }}
-                micDisabled={!speech.supported}
-                loading={false}
-                canSend={!!prompt.trim() || files.length > 0}
-              />
-            </div>
+            </ChatBarInputRow>
+            <input ref={fileRef} type="file" multiple className="hidden" onChange={(e) => addFiles(e.target.files)} />
           </div>
         </ChatbarShell>
       </form>
