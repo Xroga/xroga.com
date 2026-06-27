@@ -134,6 +134,12 @@ export default function HomePage() {
         <Link href="/privacy" className="xv-footer-pill">
           Privacy Policy
         </Link>
+        <Link href="/terms" className="xv-footer-pill">
+          Terms of Service
+        </Link>
+        <Link href="/refund" className="xv-footer-pill">
+          Refund Policy
+        </Link>
       </footer>
     </div>
   );

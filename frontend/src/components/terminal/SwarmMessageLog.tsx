@@ -8,6 +8,7 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
 import { AiResponseLoader } from '@/components/ui/Uiverse';
+import { BrowserPanelToggle } from './BrowserPanel';
 import { AI_RESPONSE_LOGO_URL } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
@@ -45,7 +46,7 @@ const SKIN_LABELS: Record<string, string> = {
   amoled: 'Black',
   gray: 'Gray',
   dark: 'Black',
-  'light-grid': 'White',
+  'light-grid': 'Grid',
 };
 
 const AGENT_STYLES: Record<string, string> = {
@@ -64,6 +65,7 @@ interface SwarmMessageLogProps {
 export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
   const { messages, loading, animatingId, outOfActionsOpen, setOutOfActionsOpen } = useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
+  const theme = useThemeStore((s) => s.theme);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
   const profile = useAppStore((s) => s.profile);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -79,24 +81,25 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
     <>
       <div
         className={cn(
-          'terminal-log rounded-xl relative overflow-hidden',
+          'rounded-xl relative overflow-hidden border',
           `terminal-skin-${terminalSkin}`,
           terminalSkin === 'dark' || terminalSkin === 'amoled' ? 'scanlines' : '',
           compact ? '' : 'w-full'
         )}
       >
         <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--card-border)]/30">
-          <Terminal className="w-4 h-4 opacity-70" />
-          <h3 className="font-terminal text-sm opacity-80 flex-1">xroga@swarm ~ terminal</h3>
+          <Terminal className="w-4 h-4 opacity-70 shrink-0" />
+          <h3 className="font-terminal text-sm opacity-80 flex-1 min-w-0 truncate">xroga@swarm ~ terminal</h3>
           <button
             type="button"
             onClick={cycleTerminalSkin}
-            className="flex items-center gap-1 p-1.5 rounded-lg hover:bg-white/10 transition-colors text-[10px] font-terminal"
-            title="Cycle terminal colors"
+            className="flex items-center gap-1 p-1.5 rounded-lg hover:bg-white/10 transition-colors text-[10px] font-terminal shrink-0"
+            title="Cycle workspace theme (white / black / gray / image)"
           >
             <Palette className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline opacity-70">{SKIN_LABELS[terminalSkin] ?? terminalSkin}</span>
+            <span className="hidden sm:inline opacity-70">{SKIN_LABELS[terminalSkin] ?? theme}</span>
           </button>
+          <BrowserPanelToggle />
         </div>
 
         <div className="px-4 py-3 space-y-3 font-terminal text-[13px]">

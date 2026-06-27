@@ -19,6 +19,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   const setActions = useAppStore((s) => s.setActions);
   const setUnreadCount = useAppStore((s) => s.setUnreadCount);
   const setNotifications = useAppStore((s) => s.setNotifications);
+  const setProfile = useAppStore((s) => s.setProfile);
 
   useEffect(() => {
     async function load() {
@@ -26,6 +27,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         withTimeout(api.actions.balance()),
         withTimeout(api.notifications.unreadCount()),
         withTimeout(api.notifications.list()),
+        withTimeout(api.profile.get()),
       ]);
 
       if (results[0].status === 'fulfilled') {
@@ -42,11 +44,12 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       }
       if (results[1].status === 'fulfilled') setUnreadCount(results[1].value.count);
       if (results[2].status === 'fulfilled') setNotifications(results[2].value.slice(0, 5));
+      if (results[3].status === 'fulfilled') setProfile(results[3].value);
     }
     load();
     const interval = setInterval(load, 120000);
     return () => clearInterval(interval);
-  }, [setActions, setUnreadCount, setNotifications]);
+  }, [setActions, setUnreadCount, setNotifications, setProfile]);
 
   return (
     <>

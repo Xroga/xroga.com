@@ -21,7 +21,6 @@ import {
   PieChart,
   Camera,
   Workflow,
-  Music,
   Lock,
   Sparkles,
 } from 'lucide-react';
@@ -31,6 +30,7 @@ import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
 import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
+import { useT } from '@/components/providers/LanguageProvider';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/lib/supabase/client';
@@ -102,6 +102,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
+  const t = useT();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -336,20 +337,19 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
                 <Search className="w-3.5 h-3.5" />
               </button>
             </HoverTip>
-            <HoverTip label="AI Media" description="Images, videos, and audio library.">
+            <HoverTip label={t('media.label')} description="Images, videos, and audio library.">
               <Link
                 href="/dashboard/media"
                 onClick={handleNavClick}
                 className={cn(
-                  'p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors flex items-center',
-                  pathname.startsWith('/dashboard/media') && 'bg-[var(--accent)]/15 text-[var(--accent)]'
+                  'flex items-center gap-1 px-1.5 py-1 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors',
+                  pathname.startsWith('/dashboard/media') && 'bg-[var(--accent)]/15 text-[var(--accent)]',
+                  !sidebarOpen && 'p-1.5'
                 )}
-                aria-label="AI Media library"
+                aria-label={t('media.label')}
               >
-                <span className="relative flex items-center w-3.5 h-3.5">
-                  <ImageIcon className="w-3 h-3 absolute left-0 top-0" />
-                  <Music className="w-2.5 h-2.5 absolute right-0 bottom-0 opacity-90" />
-                </span>
+                <ImageIcon className="w-3.5 h-3.5 shrink-0" />
+                {sidebarOpen && <span className="text-[9px] font-semibold whitespace-nowrap">{t('media.label')}</span>}
               </Link>
             </HoverTip>
           </div>
