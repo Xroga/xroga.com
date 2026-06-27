@@ -3,9 +3,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ThemeId, TerminalSkin } from '@/lib/theme';
-import { CUSTOM_DESKTOP_BG_KEY, CUSTOM_MOBILE_BG_KEY, DEFAULT_TERMINAL_SKIN } from '@/lib/theme';
-
-const THEME_CYCLE: ThemeId[] = ['image', 'white', 'black', 'gray'];
+import { CUSTOM_DESKTOP_BG_KEY, CUSTOM_MOBILE_BG_KEY, DEFAULT_TERMINAL_SKIN, TERMINAL_SKIN_CYCLE } from '@/lib/theme';
 
 interface ThemeState {
   theme: ThemeId;
@@ -26,6 +24,7 @@ interface ThemeState {
   setCustomMobileBg: (url: string | null) => void;
   setTerminalFullscreen: (v: boolean) => void;
   cycleTerminalSkin: () => void;
+  setTerminalSkin: (skin: TerminalSkin) => void;
   setBrowserPanelOpen: (v: boolean) => void;
   setBrowserFullscreen: (v: boolean) => void;
   closeBrowser: () => void;
@@ -69,10 +68,11 @@ export const useThemeStore = create<ThemeState>()(
       setTerminalFullscreen: (terminalFullscreen) => set({ terminalFullscreen }),
       cycleTerminalSkin: () =>
         set((s) => {
-          const tIdx = THEME_CYCLE.indexOf(s.theme);
-          const nextTheme = THEME_CYCLE[(tIdx + 1) % THEME_CYCLE.length];
-          return { theme: nextTheme, terminalSkin: DEFAULT_TERMINAL_SKIN[nextTheme] };
+          const idx = TERMINAL_SKIN_CYCLE.indexOf(s.terminalSkin);
+          const next = TERMINAL_SKIN_CYCLE[(idx + 1) % TERMINAL_SKIN_CYCLE.length];
+          return { terminalSkin: next };
         }),
+      setTerminalSkin: (terminalSkin) => set({ terminalSkin }),
       setBrowserPanelOpen: (browserPanelOpen) =>
         set(
           browserPanelOpen

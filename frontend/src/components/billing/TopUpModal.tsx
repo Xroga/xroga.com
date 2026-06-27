@@ -10,6 +10,7 @@ import { FEATURE_COUNT } from '@/lib/features';
 import { CurrencyToggle } from '@/hooks/usePlanPrice';
 import { usePlanPrice } from '@/hooks/usePlanPrice';
 import { useT } from '@/components/providers/LanguageProvider';
+import { cn } from '@/lib/utils';
 
 interface TopUpModalProps {
   open: boolean;
@@ -26,9 +27,8 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
   return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" onClick={onClose} aria-hidden />
-      <div className="relative w-full sm:max-w-3xl glass-panel-strong rounded-t-2xl sm:rounded-2xl border border-[var(--card-border)] max-h-[94vh] overflow-hidden flex flex-col shadow-2xl">
-        {/* Header */}
-        <div className="shrink-0 px-5 pt-5 pb-4 border-b border-[var(--card-border)]/60">
+      <div className="relative w-full sm:max-w-3xl xv-topup-modal rounded-t-2xl sm:rounded-2xl border border-[var(--card-border)] max-h-[94vh] overflow-hidden flex flex-col shadow-2xl">
+        <div className="shrink-0 px-5 pt-5 pb-4 border-b border-[var(--card-border)]/60 bg-[var(--card)]/95 backdrop-blur-xl">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-1">
@@ -41,8 +41,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
                 Swarm fuel for every task.{' '}
                 <span className="text-[var(--foreground)] font-medium">
                   All {FEATURE_COUNT} features free on every plan.
-                </span>{' '}
-                Pay only for compute.
+                </span>
               </p>
               <p className="text-[10px] text-[var(--muted)] mt-1">{t('checkout.methods')}</p>
               <div className="mt-2">
@@ -72,21 +71,16 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 py-4">
+        <div className="flex-1 overflow-y-auto px-5 py-4 bg-[var(--background)]/80">
           {tab === 'explain' && (
             <div className="space-y-2.5 mb-5">
-              <p className="text-xs font-medium text-[var(--muted)] px-1">
-                How fuel works on every plan
-              </p>
+              <p className="text-xs font-medium text-[var(--muted)] px-1">How fuel works on every plan</p>
               {[
                 { icon: Fuel, title: 'Actions = fuel', desc: 'Chat uses 1 action. Bigger builds use more.' },
                 { icon: Sparkles, title: 'All features included', desc: `${FEATURE_COUNT} features + 710 integrations on every tier.` },
                 { icon: Check, title: 'Top up anytime', desc: 'Upgrade monthly fuel. Resets each billing cycle.' },
               ].map(({ icon: Icon, title, desc }) => (
-                <div
-                  key={title}
-                  className="xv-topup-explain-card flex items-start gap-3 py-3 px-3.5 rounded-xl border border-[var(--card-border)]/70 bg-[var(--card)]/80 shadow-sm"
-                >
+                <div key={title} className="xv-billing-card flex items-start gap-3 py-3 px-3.5 rounded-xl">
                   <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/12 flex items-center justify-center shrink-0">
                     <Icon className="w-4 h-4 text-[var(--accent)]" />
                   </div>
@@ -99,19 +93,19 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
             </div>
           )}
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             {GALACTIC_PLANS.map((plan) => (
               <PlanRow key={plan.tier} plan={plan} onSuccess={onClose} />
             ))}
           </div>
 
-          <div className="mt-4 rounded-xl border border-dashed border-[var(--card-border)]/70 px-4 py-3">
+          <div className="mt-4 xv-billing-card rounded-xl border-dashed px-4 py-3">
             <p className="text-[10px] font-semibold text-[var(--muted)] mb-2 flex items-center gap-1">
               <Lock className="w-3 h-3" /> $6 · $9 · $10/mo — coming soon
             </p>
             <div className="flex gap-2">
               {COMING_SOON_PLANS.map((p) => (
-                <div key={p.price} className="flex-1 text-center py-2 rounded-lg bg-white/[0.03] border border-[var(--card-border)]/50 opacity-75">
+                <div key={p.price} className="flex-1 text-center py-2.5 rounded-lg bg-white/[0.04] border border-[var(--card-border)]/50">
                   <p className="text-sm font-bold">{p.price}</p>
                   <p className="text-[8px] text-[var(--muted)]">/mo</p>
                 </div>
@@ -120,7 +114,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
           </div>
         </div>
 
-        <div className="shrink-0 flex flex-wrap gap-2 justify-center px-5 py-4 border-t border-[var(--card-border)]/60 bg-white/[0.02]">
+        <div className="shrink-0 flex flex-wrap gap-2 justify-center px-5 py-4 border-t border-[var(--card-border)]/60 bg-[var(--card)]/90">
           <button
             type="button"
             onClick={() => {
@@ -144,11 +138,10 @@ function PlanRow({ plan, onSuccess }: { plan: (typeof GALACTIC_PLANS)[0]; onSucc
   const { primary, secondary } = usePlanPrice(plan.usdPrice);
   return (
     <div
-      className={`flex flex-wrap items-center gap-3 rounded-xl px-4 py-3 border transition-all ${
-        plan.highlight
-          ? 'border-[var(--accent)]/50 bg-[var(--accent)]/6'
-          : 'border-[var(--card-border)]/60 bg-white/[0.02]'
-      }`}
+      className={cn(
+        'xv-billing-card flex flex-wrap items-center gap-3 rounded-xl px-4 py-3.5 transition-all',
+        plan.highlight && 'xv-billing-card--highlight'
+      )}
     >
       <div className="flex-1 min-w-[140px]">
         {plan.highlight && (
@@ -156,11 +149,11 @@ function PlanRow({ plan, onSuccess }: { plan: (typeof GALACTIC_PLANS)[0]; onSucc
             ★ Most Popular
           </span>
         )}
-        <p className="font-bold">{plan.name}</p>
+        <p className="font-bold text-[var(--foreground)]">{plan.name}</p>
         <p className="text-[10px] text-[var(--muted)]">{plan.tagline}</p>
       </div>
       <div className="text-right shrink-0">
-        <p className="text-lg font-bold">
+        <p className="text-lg font-bold text-[var(--foreground)]">
           {primary}
           <span className="text-[10px] font-normal text-[var(--muted)]">/mo</span>
         </p>

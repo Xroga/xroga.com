@@ -968,8 +968,12 @@ body.theme-gray .glass-panel-strong {
     background: rgba(0, 0, 0, 0.35);
   }
   .xv-homepage .xv-home-chatbar-shell textarea,
-  .xv-homepage .xv-home-chatbar-shell button {
+  .xv-homepage .xv-home-chatbar-shell button,
+  .xv-homepage .xv-upload-icon-btn {
     color: #fff !important;
+  }
+  .xv-homepage .xv-home-chatbar-shell .xv-upload-icon-btn {
+    border-color: rgba(255, 255, 255, 0.25);
   }
   .xv-homepage .xv-home-chatbar-shell textarea::placeholder {
     color: rgba(255, 255, 255, 0.5) !important;
@@ -984,5 +988,171 @@ body.theme-gray .glass-panel-strong {
   @keyframes xv-drag-pulse {
     0%, 100% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.03); opacity: 0.92; }
+  }
+
+  /* Compact send button */
+  .xv-send-btn-compact {
+    width: 32px;
+    height: 32px;
+  }
+  .xv-send-btn--sending .xv-send-ring {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    animation: xv-send-ring 0.6s ease-out forwards;
+  }
+  .xv-send-btn--thinking .xv-send-pulse {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    animation: xv-send-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes xv-send-ring {
+    from { transform: scale(0.8); opacity: 1; }
+    to { transform: scale(1.4); opacity: 0; }
+  }
+  @keyframes xv-send-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.15); opacity: 0.2; }
+  }
+  .xv-send-arrow-burst {
+    animation: xv-arrow-up 0.35s ease-out;
+  }
+  @keyframes xv-arrow-up {
+    0% { transform: translateY(4px); opacity: 0.5; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Voice waveform while speaking */
+  .xv-wave-bar--active {
+    animation: xv-wave 0.5s ease-in-out infinite alternate;
+    height: 4px;
+  }
+  @keyframes xv-wave {
+    from { height: 4px; }
+    to { height: 14px; }
+  }
+
+  /* Chatbar chips */
+  .xv-chatbar-chip {
+    border-color: var(--card-border);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  /* Fullscreen mode */
+  .xv-fullscreen-frame {
+    background: var(--background);
+  }
+  body.theme-white .xv-fullscreen-frame {
+    background: #f8fafc;
+  }
+  .xv-fullscreen-terminal {
+    max-width: 72rem;
+    margin: 0 auto;
+  }
+  .xv-fullscreen-enter-pill,
+  .xv-fullscreen-exit-pill {
+    padding: 0.4rem 0.85rem;
+    border-radius: 9999px;
+    border: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--foreground);
+    transition: all 0.2s;
+  }
+  .xv-fullscreen-enter-pill:hover,
+  .xv-fullscreen-exit-pill:hover {
+    border-color: var(--accent);
+    background: rgba(74, 122, 255, 0.08);
+  }
+
+  /* Browser theme sync */
+  .xv-browser--light .xv-browser-chrome { background: #f1f5f9; color: #0f172a; border-color: #e2e8f0; }
+  .xv-browser--dark .xv-browser-chrome { background: #0a0a0a; color: #fff; border-color: #222; }
+  .xv-browser--gray .xv-browser-chrome { background: #374151; color: #f9fafb; border-color: #4b5563; }
+  .xv-browser--image .xv-browser-chrome { background: rgba(0,0,0,0.75); color: #fff; border-color: rgba(255,255,255,0.1); }
+  .xv-browser-mini-tip {
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--muted);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  /* Sidebar AI Media label */
+  .xv-ai-media-label {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 2px;
+  }
+
+  /* Feedback button in terminal */
+  .xv-feedback-btn {
+    color: var(--accent);
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .xv-feedback-btn:hover {
+    background: rgba(74, 122, 255, 0.12);
+    border-color: rgba(74, 122, 255, 0.3);
+  }
+
+  /* Billing-style cards in Top Up modal */
+  .xv-billing-card {
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+  body.theme-white .xv-billing-card {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.1);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  }
+  .xv-billing-card--highlight {
+    border-color: rgba(74, 122, 255, 0.45);
+    background: linear-gradient(135deg, rgba(74, 122, 255, 0.06), transparent);
+  }
+  body.theme-white .xv-billing-card--highlight {
+    background: linear-gradient(135deg, rgba(74, 122, 255, 0.08), #ffffff);
+  }
+  .xv-topup-modal {
+    background: var(--background);
+  }
+
+  /* Homepage SaaS header */
+  .xv-home-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.2) 100%);
+    backdrop-filter: blur(20px);
+  }
+  .xv-home-header-inner {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+  .xv-hero-sub {
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+  .xv-hero-rotate .xv-rotating-word {
+    background: linear-gradient(90deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+  }
+  .xv-rotating-word--static {
+    background: linear-gradient(90deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
   }
 }

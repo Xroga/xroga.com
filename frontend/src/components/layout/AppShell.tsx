@@ -13,7 +13,6 @@ import { TerminalChatProvider } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Minimize2 } from 'lucide-react';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -25,8 +24,6 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   const [topUpOpen, setTopUpOpen] = useState(false);
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
-  const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
-  const setTerminalFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const pathname = usePathname();
   const isDashboard = pathname === '/dashboard';
   const widthPx = sidebarOpen ? sidebarWidth : 72;
@@ -47,30 +44,15 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
           >
             <div className="flex items-center gap-3 min-w-0">
               <div className="xv-mobile-header-logo pl-12 lg:pl-0">
-                <Logo href="/dashboard" height={52} variant="header" />
+                <Logo href="/dashboard" height={56} variant="header" />
               </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3 ml-auto shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3 ml-auto shrink-0 relative z-[250]">
               <HeaderActionMeter onClick={() => setTopUpOpen(true)} />
               <ThemeToggle />
               <NotificationBell />
             </div>
           </header>
-
-          {terminalFullscreen && isDashboard && (
-            <div
-              className="sticky z-[35] flex justify-end px-4 sm:px-6 py-1.5 bg-transparent"
-              style={{ top: '56px' }}
-            >
-              <button
-                type="button"
-                onClick={() => setTerminalFullscreen(false)}
-                className="xv-footer-pill !text-xs flex items-center gap-1.5 !text-[var(--foreground)]"
-              >
-                <Minimize2 className="w-3.5 h-3.5" /> Exit fullscreen
-              </button>
-            </div>
-          )}
 
           <main
             className={cn(

@@ -349,7 +349,11 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
                 aria-label={t('media.label')}
               >
                 <ImageIcon className="w-3.5 h-3.5 shrink-0" />
-                {sidebarOpen && <span className="text-[9px] font-semibold whitespace-nowrap">{t('media.label')}</span>}
+                {sidebarOpen && (
+                  <span className="xv-ai-media-label text-[11px] font-bold tracking-wide whitespace-nowrap">
+                    {t('media.label')}
+                  </span>
+                )}
               </Link>
             </HoverTip>
           </div>

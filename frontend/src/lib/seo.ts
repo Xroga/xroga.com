@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const SITE_URL = 'https://xroga.com';
 export const SITE_NAME = 'Xroga AI';
-export const FAVICON_URL = 'https://i.postimg.cc/k52s32y9/XROGA01-removebg-preview.png';
+export const FAVICON_URL = 'https://i.postimg.cc/9Mfm1jdK/xrogaai.png';
 export const FAVICON_LOCAL = '/favicon.png';
 
 export const DEFAULT_DESCRIPTION =

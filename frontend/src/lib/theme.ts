@@ -28,7 +28,15 @@ export const DEFAULT_TERMINAL_SKIN: Record<ThemeId, TerminalSkin> = {
   image: 'light',
 };
 
-export const TERMINAL_SKIN_CYCLE: TerminalSkin[] = ['light', 'amoled', 'gray'];
+export const TERMINAL_SKIN_CYCLE: TerminalSkin[] = ['light', 'amoled', 'gray', 'dark', 'light-grid'];
+
+export const TERMINAL_SKIN_LABELS: Record<TerminalSkin, string> = {
+  light: 'White',
+  amoled: 'Black',
+  gray: 'Gray',
+  dark: 'Dark',
+  'light-grid': 'Grid',
+};
 
 /** @deprecated use HEADER_LOGO_URL */
 export const LOGO_URL = HEADER_LOGO_URL;
