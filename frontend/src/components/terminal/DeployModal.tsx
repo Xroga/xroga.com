@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, Rocket, Globe, Gamepad2, Code2, ShoppingCart, ExternalLink } from 'lucide-react';
+import { X, Rocket, Globe, Gamepad2, Code2, ShoppingCart, ExternalLink, Link2, Server } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 
 interface DeployModalProps {
@@ -9,11 +9,45 @@ interface DeployModalProps {
   onClose: () => void;
 }
 
+const XROGA_DEPLOY = [
+  {
+    id: 'xroga-vercel',
+    name: 'Xroga → Vercel',
+    desc: 'One-click deploy for websites & Next.js apps from your swarm build.',
+    prompt: '[Deploy] Publish my Xroga build to Vercel with GitHub CI/CD',
+  },
+  {
+    id: 'xroga-fly',
+    name: 'Xroga → Fly.io',
+    desc: 'Ship backends, APIs, and full-stack apps to the edge.',
+    prompt: '[Deploy] Deploy my Xroga project to Fly.io globally',
+  },
+  {
+    id: 'xroga-game',
+    name: 'Xroga → Game hosting',
+    desc: 'Publish 2D/3D web games and export mobile builds.',
+    prompt: '[Deploy] Build and publish my game to web + app stores via Xroga',
+  },
+  {
+    id: 'xroga-software',
+    name: 'Xroga → Desktop software',
+    desc: 'Package and distribute desktop apps built in swarm.',
+    prompt: '[Deploy] Package and release my desktop software build',
+  },
+];
+
 const PLATFORMS = [
   { id: 'vercel', name: 'Vercel', desc: 'Instant deploy for Next.js, React, and static sites.', prompt: '[Deploy] Publish to Vercel with GitHub integration' },
   { id: 'github', name: 'GitHub Pages', desc: 'Push and host from your repository.', prompt: '[Deploy] Deploy to GitHub Pages' },
   { id: 'fly', name: 'Fly.io', desc: 'Global edge apps and APIs.', prompt: '[Deploy] Deploy backend to Fly.io' },
   { id: 'netlify', name: 'Netlify', desc: 'Jamstack sites with CI/CD.', prompt: '[Deploy] Deploy to Netlify' },
+];
+
+const DOMAIN_PROVIDERS = [
+  { name: 'Spaceship (Xroga partner)', prompt: '[Domain] Search, buy, and connect via Spaceship API' },
+  { name: 'Buy from Xroga', prompt: '[Domain] Purchase domain through Xroga billing and auto-connect DNS' },
+  { name: 'Transfer existing domain', prompt: '[Domain] Transfer domain from GoDaddy/Namecheap/Google and auto-point to my Xroga deploy' },
+  { name: 'Connect external domain', prompt: '[Domain] Connect my existing domain from another registrar to Xroga hosting' },
 ];
 
 export function DeployModal({ open, onClose }: DeployModalProps) {
@@ -57,7 +91,7 @@ export function DeployModal({ open, onClose }: DeployModalProps) {
               onClick={() => setTab(k)}
               className={`flex-1 text-xs py-2 rounded-lg font-medium ${tab === k ? 'bg-[var(--accent)]/15 text-[var(--accent)]' : 'text-[var(--muted)]'}`}
             >
-              {k === 'deploy' ? 'Launch' : 'Buy domain'}
+              {k === 'deploy' ? 'Launch from Xroga' : 'Domains'}
             </button>
           ))}
         </div>
@@ -65,7 +99,25 @@ export function DeployModal({ open, onClose }: DeployModalProps) {
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {tab === 'deploy' && (
             <>
-              <p className="text-xs text-[var(--muted)]">Deploy websites, apps, and games directly from Xroga Swarm.</p>
+              <p className="text-xs text-[var(--muted)]">
+                Deploy websites, apps, games, and software directly from Xroga Swarm.
+              </p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--accent)]">Xroga deploy</p>
+              {XROGA_DEPLOY.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => inject(p.prompt)}
+                  className="w-full text-left p-3 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/5 hover:border-[var(--accent)]/50 hover:bg-[var(--accent)]/10 transition-all flex gap-3"
+                >
+                  <Server className="w-5 h-5 text-[var(--accent)] shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-sm">{p.name}</p>
+                    <p className="text-[11px] text-[var(--muted)]">{p.desc}</p>
+                  </div>
+                </button>
+              ))}
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] pt-1">Also supported</p>
               {PLATFORMS.map((p) => (
                 <button
                   key={p.id}
@@ -97,7 +149,7 @@ export function DeployModal({ open, onClose }: DeployModalProps) {
           {tab === 'domain' && (
             <>
               <p className="text-xs text-[var(--muted)]">
-                Search, buy, and transfer domains via Spaceship API — connected to your Xroga account.
+                Search, buy, transfer, and connect domains — powered by Spaceship & Xroga.
               </p>
               <div className="flex gap-2">
                 <Globe className="w-4 h-4 text-[var(--muted)] shrink-0 mt-2.5" />
@@ -112,19 +164,32 @@ export function DeployModal({ open, onClose }: DeployModalProps) {
                 type="button"
                 onClick={() =>
                   inject(
-                    `[Domain] Search availability and register ${domain || 'my-domain.com'} via Spaceship — connect DNS to my deployed app`
+                    `[Domain] Search availability and register ${domain || 'my-domain.com'} via Xroga Spaceship — connect DNS to my deployed app`
                   )
                 }
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--background)] text-sm font-semibold"
               >
                 <ShoppingCart className="w-4 h-4" /> Search & buy domain
               </button>
+              {DOMAIN_PROVIDERS.map((d) => (
+                <button
+                  key={d.name}
+                  type="button"
+                  onClick={() => inject(d.prompt + (domain ? ` for ${domain}` : ''))}
+                  className="w-full text-left p-3 rounded-xl border border-[var(--card-border)]/60 hover:border-[var(--accent)]/40 flex gap-3"
+                >
+                  <Link2 className="w-4 h-4 text-[var(--accent)] shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-sm">{d.name}</p>
+                  </div>
+                </button>
+              ))}
               <button
                 type="button"
                 onClick={() => inject('[Domain] Transfer existing domain to Xroga Spaceship and point to my project')}
                 className="w-full text-xs text-[var(--accent)] hover:underline flex items-center justify-center gap-1"
               >
-                Transfer domain <ExternalLink className="w-3 h-3" />
+                Auto-transfer & connect DNS <ExternalLink className="w-3 h-3" />
               </button>
             </>
           )}

@@ -877,8 +877,8 @@ body.theme-gray .glass-panel-strong {
   }
   .xv-rotating-words--hero {
     --rw-bg: transparent;
-    --rw-muted: rgba(255, 255, 255, 0.65);
-    --rw-accent: #a78bfa;
+    --rw-muted: rgba(255, 255, 255, 0.75);
+    --rw-accent: #60a5fa;
   }
   .xv-rotating-words--dashboard {
     --rw-bg: transparent;
@@ -933,5 +933,56 @@ body.theme-gray .glass-panel-strong {
     70%, 80% { transform: translateY(-71.4%); }
     84%, 94% { transform: translateY(-85.68%); }
     98%, 100% { transform: translateY(-100%); }
+  }
+
+  /* Compact upload above send */
+  .xv-upload-anim--compact {
+    width: 30px;
+    height: 30px;
+  }
+  .xv-upload-anim--compact .xv-upload-app::before {
+    font-size: 7px;
+    padding: 6px 4px;
+  }
+  .xv-upload-anim--compact .xv-upload-arrow {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Chatbar file strip — horizontal scroll */
+  .xv-chatbar-files-scroll {
+    max-height: calc(4 * 2.75rem + 0.5rem);
+  }
+
+  /* Top-up explain cards — readable on white theme */
+  body.theme-white .xv-topup-explain-card {
+    background: #f8fafc;
+    border-color: rgba(15, 23, 42, 0.1);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  }
+
+  /* Homepage chatbar matches dashboard shell on hero */
+  .xv-homepage .xv-home-chatbar-shell {
+    border-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(16px);
+    background: rgba(0, 0, 0, 0.35);
+  }
+  .xv-homepage .xv-home-chatbar-shell textarea,
+  .xv-homepage .xv-home-chatbar-shell button {
+    color: #fff !important;
+  }
+  .xv-homepage .xv-home-chatbar-shell textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+  .xv-homepage .xv-home-chatbar-shell .border-\[var\(--card-border\)\] {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  .xv-drag-drop-card {
+    animation: xv-drag-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes xv-drag-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.03); opacity: 0.92; }
   }
 }

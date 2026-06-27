@@ -74,17 +74,25 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
 
         <div className="flex-1 overflow-y-auto px-5 py-4">
           {tab === 'explain' && (
-            <div className="space-y-2 mb-5">
+            <div className="space-y-2.5 mb-5">
+              <p className="text-xs font-medium text-[var(--muted)] px-1">
+                How fuel works on every plan
+              </p>
               {[
                 { icon: Fuel, title: 'Actions = fuel', desc: 'Chat uses 1 action. Bigger builds use more.' },
                 { icon: Sparkles, title: 'All features included', desc: `${FEATURE_COUNT} features + 710 integrations on every tier.` },
                 { icon: Check, title: 'Top up anytime', desc: 'Upgrade monthly fuel. Resets each billing cycle.' },
               ].map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="flex items-start gap-3 py-2.5 px-3 rounded-xl bg-white/[0.02]">
-                  <Icon className="w-4 h-4 text-[var(--accent)] mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold">{title}</p>
-                    <p className="text-xs text-[var(--muted)]">{desc}</p>
+                <div
+                  key={title}
+                  className="xv-topup-explain-card flex items-start gap-3 py-3 px-3.5 rounded-xl border border-[var(--card-border)]/70 bg-[var(--card)]/80 shadow-sm"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/12 flex items-center justify-center shrink-0">
+                    <Icon className="w-4 h-4 text-[var(--accent)]" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-[var(--foreground)]">{title}</p>
+                    <p className="text-xs text-[var(--muted)] leading-relaxed mt-0.5">{desc}</p>
                   </div>
                 </div>
               ))}
@@ -124,7 +132,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
             Back to Dashboard <ArrowRight className="w-3.5 h-3.5" />
           </button>
           <Link href="/pricing" onClick={onClose} className="xv-footer-pill !text-xs">
-            Full pricing
+            Pricing plan details
           </Link>
         </div>
       </div>

@@ -63,7 +63,7 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   if (fullscreen) {
     return (
       <div
-        className="fixed z-[20] flex flex-col overflow-y-auto bg-transparent px-4 sm:px-6 pt-2"
+        className="fixed z-[40] flex flex-col overflow-y-auto bg-transparent px-4 sm:px-6 pt-2"
         style={{
           top: '88px',
           bottom: '180px',
