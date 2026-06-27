@@ -23,11 +23,12 @@ export const metadata: Metadata = {
   formatDetection: { email: false, address: false, telephone: false },
   icons: {
     icon: [
+      { url: '/favicon-32.png', type: 'image/png', sizes: '32x32' },
       { url: FAVICON_LOCAL, type: 'image/png', sizes: '512x512' },
       { url: FAVICON_URL, type: 'image/png', sizes: '512x512' },
     ],
     apple: [{ url: '/apple-touch-icon.png', type: 'image/png', sizes: '180x180' }],
-    shortcut: FAVICON_LOCAL,
+    shortcut: '/favicon-32.png',
   },
   verification: {
     google: 'xroga-google-verification-placeholder',
@@ -47,9 +48,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
         <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
-        <link rel="shortcut icon" href="/favicon.png" />
+        <link rel="shortcut icon" href="/favicon-32.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>

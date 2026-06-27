@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { Terminal, Palette } from 'lucide-react';
+import { Terminal, Palette, Share2, MessageSquare } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
@@ -11,6 +11,7 @@ import { AiResponseLoader } from '@/components/ui/Uiverse';
 import { BrowserPanelToggle } from './BrowserPanel';
 import { AI_RESPONSE_LOGO_URL } from '@/lib/theme';
 import { cn } from '@/lib/utils';
+import toast from 'react-hot-toast';
 
 function useTypewriter(text: string, active: boolean, speed = 12) {
   const [displayed, setDisplayed] = useState('');
@@ -100,6 +101,30 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
             <span className="hidden sm:inline opacity-70">{SKIN_LABELS[terminalSkin] ?? theme}</span>
           </button>
           <BrowserPanelToggle />
+          <button
+            type="button"
+            onClick={() => {
+              const url = typeof window !== 'undefined' ? window.location.href : 'https://xroga.com';
+              if (navigator.share) {
+                void navigator.share({ title: 'Xroga AI Swarm', url });
+              } else {
+                void navigator.clipboard.writeText(url);
+                toast.success('Link copied');
+              }
+            }}
+            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors shrink-0"
+            title="Share"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => toast('Send feedback via Settings → Help', { icon: '💬' })}
+            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors shrink-0"
+            title="Feedback"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+          </button>
         </div>
 
         <div className="px-4 py-3 space-y-3 font-terminal text-[13px]">

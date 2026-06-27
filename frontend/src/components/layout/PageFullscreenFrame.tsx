@@ -43,7 +43,7 @@ export function PageFullscreenFrame({ children, className }: PageFullscreenFrame
   if (fullscreen) {
     return (
       <div
-        className="fixed z-[25] overflow-y-auto bg-transparent px-4 sm:px-6 lg:px-8"
+        className="fixed z-[40] overflow-y-auto bg-transparent px-4 sm:px-6 lg:px-8"
         style={{
           top: '56px',
           bottom: '180px',

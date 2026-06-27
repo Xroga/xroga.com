@@ -11,19 +11,8 @@ import { GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
 import { useThemeStore } from '@/store/useThemeStore';
 import { createClient } from '@/lib/supabase/client';
+import { QUICK_ACTIONS } from '@/lib/quickActions';
 import { cn } from '@/lib/utils';
-
-const HOMEPAGE_TAGS = [
-  'Games 3D/2D',
-  'Website · Apps',
-  'Images & Videos',
-  'Movies · Dramas',
-  'Debug · Code Fix',
-  'Web Search · Research',
-  '3D Models',
-  'Voice TTS · Cloning',
-  'Android/iOS Games',
-];
 
 const HOMEPAGE_ROTATE_WORDS = ['apps', 'games', 'websites', 'automations', 'movies', 'integrations'];
 
@@ -55,7 +44,7 @@ export default function HomePage() {
 
       <header className="xv-home-header sticky top-0 z-50 border-b border-white/[0.08] bg-transparent backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
-          <Logo href="/" variant="homepage" height={40} className="shrink-0" />
+          <Logo href="/" variant="homepage" height={52} className="shrink-0" />
           <div className="flex items-center gap-2 shrink-0">
             {loggedIn ? (
               <Link
@@ -107,22 +96,30 @@ export default function HomePage() {
             <HomepageChatBar />
           </div>
 
-          <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto xv-mag-zone">
-            {HOMEPAGE_TAGS.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                onClick={() => router.push(loggedIn ? '/dashboard' : '/auth/signup')}
-                className={cn(
-                  'xv-capsule-tag px-3.5 py-2 rounded-full text-[11px] font-medium',
-                  'border border-white/20 bg-white/5 backdrop-blur-md text-white/90',
-                  'hover:bg-white/15 hover:border-[var(--accent)]/50 hover:shadow-[0_0_20px_rgba(74,122,255,0.25)]',
-                  'transition-all duration-300 hover:-translate-y-0.5'
-                )}
-              >
-                {tag}
-              </button>
-            ))}
+          <div className="flex flex-wrap justify-center gap-2 max-w-3xl mx-auto xv-mag-zone">
+            {QUICK_ACTIONS.map((action) => {
+              const Icon = action.icon;
+              return (
+                <button
+                  key={action.id}
+                  type="button"
+                  onClick={() => router.push(loggedIn ? '/dashboard' : '/auth/signup')}
+                  className={cn(
+                    'xv-capsule-tag flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[11px] font-medium',
+                    'border backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5',
+                    'hover:shadow-[0_0_20px_rgba(74,122,255,0.25)]'
+                  )}
+                  style={{
+                    borderColor: `${action.color}55`,
+                    background: `${action.color}18`,
+                    color: 'rgba(255,255,255,0.95)',
+                  }}
+                >
+                  <Icon className="w-3.5 h-3.5 shrink-0" style={{ color: action.color }} />
+                  {action.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </main>
