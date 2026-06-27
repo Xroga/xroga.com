@@ -15,6 +15,7 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { THEME_OPTIONS } from '@/lib/theme';
 import { ALL_ACTION_COSTS, tasksForActionBudget, budgetTaskLine } from '@/lib/actionCosts';
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
+import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 
 const TABS = ['General', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
 type Tab = (typeof TABS)[number];
@@ -92,6 +93,7 @@ export function SettingsView({ email }: { email: string }) {
   }
 
   return (
+    <PageFullscreenFrame>
     <div className="max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Settings</h1>
 
@@ -392,5 +394,6 @@ export function SettingsView({ email }: { email: string }) {
         </div>
       </div>
     </div>
+    </PageFullscreenFrame>
   );
 }

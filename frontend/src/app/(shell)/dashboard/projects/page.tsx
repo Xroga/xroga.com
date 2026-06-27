@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FolderOpen, Plus, Rocket, Sparkles } from 'lucide-react';
 import Skeleton from 'react-loading-skeleton';
 import { ProjectCard } from '@/components/dashboard/ProjectCard';
+import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { api, type Project } from '@/lib/api';
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -21,6 +22,7 @@ export default function ProjectsPage() {
   }, []);
 
   return (
+    <PageFullscreenFrame>
     <div className="max-w-6xl mx-auto space-y-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
@@ -64,5 +66,6 @@ export default function ProjectsPage() {
         </div>
       )}
     </div>
+    </PageFullscreenFrame>
   );
 }

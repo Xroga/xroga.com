@@ -4,6 +4,7 @@ import './globals.css';
 import '@/styles/uiverse.css';
 import { buildMetadata, FAVICON_URL } from '@/lib/seo';
 import { RootProviders } from '@/components/providers/RootProviders';
+import { SiteJsonLd } from '@/components/seo/SiteJsonLd';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
+        <SiteJsonLd />
         <RootProviders>{children}</RootProviders>
       </body>
     </html>

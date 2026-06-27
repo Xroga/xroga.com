@@ -21,12 +21,13 @@ import {
   PieChart,
   Camera,
   Workflow,
+  Music,
+  Lock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
 import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
-import { MediaGalleryModal } from './MediaGalleryModal';
 import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -60,6 +61,12 @@ const navItems = [
     label: 'Automation',
     icon: Workflow,
     tip: 'Running, failed, and browser automations — continue or review past runs.',
+  },
+  {
+    href: '/dashboard/media',
+    label: 'AI Media',
+    icon: Music,
+    tip: 'Images, videos, and audio generated or uploaded by your Swarm.',
   },
   {
     href: '/dashboard/spending',
@@ -104,7 +111,6 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [mediaOpen, setMediaOpen] = useState(false);
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const setSidebarOpen = useThemeStore((s) => s.setSidebarOpen);
   const sidebarPinned = useThemeStore((s) => s.sidebarPinned);
@@ -283,7 +289,6 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   return (
     <>
       <SidebarSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
-      <MediaGalleryModal open={mediaOpen} onClose={() => setMediaOpen(false)} />
 
       <button
         type="button"
@@ -338,15 +343,15 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
                   <Search className="w-4 h-4" />
                 </button>
               </HoverTip>
-              <HoverTip label="Images & Videos" description="Browse AI-generated images and media.">
-                <button
-                  type="button"
-                  onClick={() => setMediaOpen(true)}
+              <HoverTip label="AI Media" description="Images, videos, and audio library.">
+                <Link
+                  href="/dashboard/media"
+                  onClick={handleNavClick}
                   className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
-                  aria-label="Images and videos"
+                  aria-label="AI Media library"
                 >
                   <ImageIcon className="w-4 h-4" />
-                </button>
+                </Link>
               </HoverTip>
             </div>
           )}
@@ -359,10 +364,17 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
             setMobileOpen(false);
           }}
           className="xv-sidebar-edge-toggle hidden lg:flex"
-          aria-label="Toggle sidebar"
+          aria-label={sidebarOpen ? 'Lock sidebar closed' : 'Open sidebar'}
+          title={sidebarPinned && !sidebarOpen ? 'Click to open sidebar' : sidebarOpen ? 'Lock sidebar closed' : 'Open sidebar'}
           style={{ left: asideWidth }}
         >
-          {sidebarOpen ? <PanelLeftClose className="w-3.5 h-3.5" /> : <PanelLeft className="w-3.5 h-3.5" />}
+          {sidebarOpen ? (
+            <PanelLeftClose className="w-3.5 h-3.5" />
+          ) : sidebarPinned ? (
+            <Lock className="w-3.5 h-3.5" />
+          ) : (
+            <PanelLeft className="w-3.5 h-3.5" />
+          )}
         </button>
 
         <nav className="flex-1 p-2 overflow-y-auto overflow-x-hidden">
