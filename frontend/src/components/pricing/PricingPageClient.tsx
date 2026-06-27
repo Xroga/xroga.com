@@ -103,6 +103,9 @@ export function PricingPageClient() {
             <strong className="text-[var(--foreground)]">Top Up Actions</strong> = buy monthly Swarm fuel. Every plan unlocks
             all {FEATURE_COUNT} features — browser, automation, 710+ integrations. You only pay for compute.
           </p>
+          <div className="mt-4 flex justify-center">
+            <CurrencyToggle />
+          </div>
         </div>
 
         <div className="grid sm:grid-cols-3 gap-3 mb-12">
