@@ -10,7 +10,7 @@ import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
 import { AiResponseLoader } from '@/components/ui/Uiverse';
 import { BrowserPanelToggle } from './BrowserPanel';
 import { AI_RESPONSE_LOGO_URL, TERMINAL_SKIN_LABELS } from '@/lib/theme';
-import { XROGA_MODEL_FULL } from '@/lib/brand';
+import { ModelBadge } from '@/components/ui/ModelBadge';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -84,7 +84,7 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
           <Terminal className="w-4 h-4 opacity-70 shrink-0" />
           <div className="flex-1 min-w-0">
             <h3 className="font-terminal text-sm opacity-90 truncate">xroga@swarm ~ terminal</h3>
-            <p className="text-[9px] text-[var(--accent)] font-medium truncate">{XROGA_MODEL_FULL}</p>
+            <ModelBadge variant="inline" className="text-[9px] opacity-90" />
           </div>
           <button
             type="button"

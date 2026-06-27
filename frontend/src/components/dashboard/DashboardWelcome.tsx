@@ -6,7 +6,8 @@ import { useAppStore } from '@/store/useAppStore';
 import { getTimeGreetingKey, t } from '@/lib/i18n/translations';
 import { useLocale } from '@/components/providers/LanguageProvider';
 import { RotatingWords } from '@/components/ui/RotatingWords';
-import { XROGA_MODEL_FULL, XROGA_MODEL_TAGLINE } from '@/lib/brand';
+import { ModelBadge } from '@/components/ui/ModelBadge';
+import { XROGA_MODEL_TAGLINE, XROGA_AI_GENIUS } from '@/lib/brand';
 import { cn } from '@/lib/utils';
 
 const DASHBOARD_ROTATE_WORDS = [
@@ -42,8 +43,12 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
             {greeting}, <span className="gradient-text">{firstName}</span>
           </h1>
-          <p className="text-[10px] sm:text-xs text-[var(--accent)] font-medium mt-0.5">
-            {XROGA_MODEL_FULL} · {XROGA_MODEL_TAGLINE}
+          <p className="text-[10px] sm:text-xs text-[var(--accent)] font-medium mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+            <span className="opacity-80">{XROGA_AI_GENIUS}</span>
+            <span className="opacity-40">·</span>
+            <ModelBadge variant="inline" className="text-[10px] sm:text-xs" />
+            <span className="opacity-40">·</span>
+            <span>{XROGA_MODEL_TAGLINE}</span>
           </p>
         </div>
       </div>

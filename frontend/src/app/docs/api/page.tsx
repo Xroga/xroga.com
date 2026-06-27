@@ -1,12 +1,17 @@
 import Link from 'next/link';
 import { buildMetadata } from '@/lib/seo';
-import { XROGA_MODEL_FULL, XROGA_MODEL_ID, XROGA_API_BASE } from '@/lib/brand';
+import {
+  XROGA_MODEL_FULL,
+  XROGA_MODEL_ID,
+  XROGA_API_BASE,
+  XROGA_MODEL_TAGLINE,
+} from '@/lib/brand';
 import { FEATURE_COUNT } from '@/lib/features';
 import { ArrowLeft, Key, Zap, BookOpen, Code2 } from 'lucide-react';
 
 export const metadata = buildMetadata({
   title: 'API Documentation',
-  description: `Xroga ${XROGA_MODEL_FULL} API — one model, high limits, every feature on all plans.`,
+  description: `${XROGA_MODEL_FULL} API — one model, high limits, every feature on all plans. ${XROGA_MODEL_TAGLINE}`,
   path: '/docs/api',
 });
 
@@ -20,11 +25,14 @@ export default function ApiDocsPage() {
 
         <header className="space-y-3">
           <p className="text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">{XROGA_MODEL_FULL}</p>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Xroga API</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">XROGA API</h1>
           <p className="text-[var(--muted)] leading-relaxed">
             One evolving model — <strong className="text-[var(--foreground)]">{XROGA_MODEL_ID}</strong>.
             New capabilities ship inside {XROGA_MODEL_FULL}, not as separate models.
             All {FEATURE_COUNT} features and swarm agents available on every plan with generous rate limits.
+          </p>
+          <p className="text-xs text-[var(--muted)] italic border-l-2 border-[var(--accent)]/30 pl-3">
+            {XROGA_MODEL_TAGLINE} Hover the ∞ symbol in-app for our philosophy on version infinity.
           </p>
         </header>
 

@@ -6,10 +6,11 @@ import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageTagMarquee } from '@/components/homepage/HomepageTagMarquee';
+import { ModelBadge } from '@/components/ui/ModelBadge';
 import { Sparkles, Zap } from 'lucide-react';
 import { GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
-import { XROGA_MODEL_FULL, XROGA_MODEL_TAGLINE } from '@/lib/brand';
+import { XROGA_MODEL_TAGLINE, XROGA_MODEL_TAGLINE_HUMBLE, XROGA_AI_GENIUS } from '@/lib/brand';
 import { useThemeStore } from '@/store/useThemeStore';
 import { createClient } from '@/lib/supabase/client';
 
@@ -86,12 +87,18 @@ export default function HomePage() {
         <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[80%] max-w-lg h-40 bg-[var(--accent)]/25 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="relative z-10 w-full max-w-4xl text-center">
-          <div className="xv-hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6">
-            <Sparkles className="w-3.5 h-3.5 text-[var(--accent)]" />
-            <span className="text-[10px] sm:text-xs tracking-[0.2em] uppercase font-semibold text-white/90">
-              {XROGA_MODEL_FULL} · Live
+          <div className="xv-hero-badge inline-flex flex-col items-center gap-1 px-5 py-3 rounded-2xl mb-6">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-3.5 h-3.5 text-[var(--accent)]" />
+              <span className="text-[10px] sm:text-xs tracking-[0.15em] uppercase font-semibold text-white/80">
+                {XROGA_AI_GENIUS}
+              </span>
+              <Zap className="w-3 h-3 text-[var(--accent)]" />
+            </div>
+            <ModelBadge variant="hero" showSubtext />
+            <span className="text-[9px] text-emerald-400/90 font-semibold tracking-widest uppercase mt-0.5">
+              · Live ·
             </span>
-            <Zap className="w-3 h-3 text-[var(--accent)]" />
           </div>
 
           <h1 className="xv-hero-title text-4xl sm:text-5xl md:text-7xl font-bold mb-4 leading-[1.05] tracking-tight">
@@ -104,8 +111,11 @@ export default function HomePage() {
           <p className="text-base sm:text-xl text-white/90 max-w-2xl mx-auto mb-2 leading-relaxed xv-hero-sub font-semibold tracking-tight">
             One AI model that does it all — apps, games, movies, code, and automations.
           </p>
-          <p className="text-xs sm:text-sm text-white/55 max-w-xl mx-auto mb-8 font-medium">
+          <p className="text-xs sm:text-sm text-white/55 max-w-xl mx-auto mb-1 font-medium">
             {XROGA_MODEL_TAGLINE}
+          </p>
+          <p className="text-[10px] sm:text-xs text-white/40 max-w-lg mx-auto mb-8 leading-relaxed italic px-2">
+            {XROGA_MODEL_TAGLINE_HUMBLE}
           </p>
 
           <div className="w-full mb-10">
