@@ -71,8 +71,9 @@ export function HomepageChatBar() {
         <div
           className={cn(
             'xv-home-chatbox relative rounded-2xl overflow-hidden transition-all duration-300',
-            'bg-white text-[#0f172a] shadow-[0_12px_48px_rgba(0,0,0,0.18)]',
-            dragOver && 'ring-2 ring-[#4a7aff]/40 scale-[1.01]'
+            'bg-white text-black border-2 border-[#006aff]/35',
+            'shadow-[0_16px_56px_rgba(0,106,255,0.15),0_8px_24px_rgba(0,0,0,0.12)]',
+            dragOver && 'ring-2 ring-[#006aff]/50 scale-[1.01] border-[#006aff]/60'
           )}
           onDragOver={(e) => {
             e.preventDefault();
@@ -91,6 +92,7 @@ export function HomepageChatBar() {
 
           <div className="px-3 sm:px-4 py-3 sm:py-4 xv-home-chatbar-inner">
             <ChatBarInputRow
+              surface="homepage"
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
               listening={listening}
@@ -120,7 +122,7 @@ export function HomepageChatBar() {
                 className={cn(
                   'w-full px-1 py-2 resize-none min-h-[52px] max-h-[140px]',
                   'bg-transparent focus:outline-none text-sm sm:text-base leading-relaxed',
-                  'text-[#0f172a] placeholder:text-[#64748b] font-medium'
+                  'text-black placeholder:text-neutral-500 font-medium'
                 )}
               />
             </ChatBarInputRow>

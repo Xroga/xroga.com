@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { X, FileText, Image as ImageIcon, Film, Mic } from 'lucide-react';
-import { ChatBarSendButton, ChatBarUploadButton, VoiceWaveform, type SendButtonState } from './ChatBarButtons';
+import { ChatBarSendButton, ChatBarUploadButton, VoiceWaveform, type SendButtonState, type ChatbarSurface } from './ChatBarButtons';
 import { cn } from '@/lib/utils';
 
 const FILE_ROWS = 2;
@@ -80,10 +80,12 @@ export function ChatBarMicButton({
   listening,
   onToggle,
   disabled,
+  surface = 'dashboard',
 }: {
   listening: boolean;
   onToggle: () => void;
   disabled?: boolean;
+  surface?: ChatbarSurface;
 }) {
   return (
     <button
@@ -92,9 +94,10 @@ export function ChatBarMicButton({
       disabled={disabled}
       className={cn(
         'xv-mic-btn relative p-1.5 rounded-xl transition-all shrink-0',
+        surface === 'homepage' && 'xv-mic-btn--home',
         listening
           ? 'bg-red-500/15 text-red-400'
-          : 'xv-chatbar-secondary-btn border border-[var(--card-border)]/50 hover:bg-white/10 text-[var(--foreground)]'
+          : 'xv-chatbar-secondary-btn hover:bg-white/10 text-[var(--foreground)]'
       )}
       title={listening ? 'Stop listening' : 'Speak to text'}
       aria-label={listening ? 'Stop voice input' : 'Start voice input'}
@@ -113,6 +116,7 @@ export function ChatBarInputRow({
   sendState,
   stopping,
   onStop,
+  surface = 'dashboard',
   children,
 }: {
   uploading: boolean;
@@ -123,14 +127,15 @@ export function ChatBarInputRow({
   sendState: SendButtonState;
   stopping?: boolean;
   onStop?: () => void;
+  surface?: ChatbarSurface;
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative flex items-end gap-1.5">
-      <ChatBarUploadButton onClick={onUploadClick} active={uploading} />
+    <div className={cn('relative flex items-end gap-1.5', surface === 'homepage' && 'xv-chatbar-row--home')}>
+      <ChatBarUploadButton onClick={onUploadClick} active={uploading} surface={surface} />
       <div className="flex-1 min-w-0 relative">{children}</div>
-      <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || stopping} />
-      <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} />
+      <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || stopping} surface={surface} />
+      <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} />
     </div>
   );
 }
