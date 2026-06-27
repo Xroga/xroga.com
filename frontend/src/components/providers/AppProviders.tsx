@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Toaster } from 'react-hot-toast';
 import { api } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -52,16 +51,6 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <>
       {children}
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: 'var(--card)',
-            color: 'var(--foreground)',
-            border: '1px solid var(--card-border)',
-          },
-        }}
-      />
     </>
   );
 }

@@ -295,12 +295,12 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           mobileOpen ? 'translate-x-0 w-64 z-[70]' : '-translate-x-full lg:translate-x-0'
         )}
       >
-        <div className="p-3 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[56px]">
+        <div className="p-2 sm:p-3 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[52px]">
           <HoverTip label="Xroga AI" description="Your AI Swarm Operating System — dashboard home." block className="min-w-0 flex-1">
-            <div className="shrink min-w-0">
+            <div className="shrink min-w-0 flex justify-center lg:justify-start">
               <Logo
                 href="/dashboard"
-                height={sidebarOpen ? 40 : 32}
+                height={sidebarOpen ? 40 : 28}
                 variant="sidebar"
                 onClick={handleNavClick}
               />
@@ -326,30 +326,6 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
                   aria-label="Images and videos"
                 >
                   <ImageIcon className="w-4 h-4" />
-                </button>
-              </HoverTip>
-            </div>
-          )}
-          {!sidebarOpen && (
-            <div className="flex flex-col items-center gap-0.5 shrink-0">
-              <HoverTip label="Search" description="Search projects, chats, and commands.">
-                <button
-                  type="button"
-                  onClick={() => setSearchOpen(true)}
-                  className="p-1 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5"
-                  aria-label="Search"
-                >
-                  <Search className="w-3.5 h-3.5" />
-                </button>
-              </HoverTip>
-              <HoverTip label="Images" description="Browse AI-generated images and media.">
-                <button
-                  type="button"
-                  onClick={() => setMediaOpen(true)}
-                  className="p-1 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5"
-                  aria-label="Images"
-                >
-                  <ImageIcon className="w-3.5 h-3.5" />
                 </button>
               </HoverTip>
             </div>

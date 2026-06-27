@@ -71,7 +71,16 @@
   transition: transform 0.3s ease;
   animation: xv-opacity-pulse 5s ease infinite;
 }
-.xv-gradient-btn-wrapper:hover .xv-text-overlay { transform: scale(1.08); }
+.xv-gradient-btn-wrapper.w-full {
+  display: flex;
+  width: 100%;
+}
+.xv-gradient-btn-wrapper.w-full .xv-gradient-btn,
+.xv-gradient-btn-wrapper.w-full .xv-text-overlay {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+}
 .xv-gradient-btn-wrapper:hover .xv-gradient-btn { color: transparent; text-shadow: none; }
 
 /* ── Play Now auth button (barisdogansutcu) ── */

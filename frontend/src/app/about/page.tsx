@@ -112,7 +112,7 @@ export default function AboutPage() {
           <section className="text-center pt-4">
             <Link
               href="/auth/signup"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-[var(--accent)] text-white font-semibold text-sm hover:opacity-90 transition-opacity"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-[var(--accent)] text-[var(--background)] font-semibold text-sm hover:opacity-90 transition-opacity"
             >
               Start Building with Xroga
             </Link>

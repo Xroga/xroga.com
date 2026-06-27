@@ -34,7 +34,7 @@ export function PricingPageClient() {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <header className="sticky top-0 z-50 glass-panel-strong border-b border-[var(--card-border)]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Logo href={loggedIn ? '/dashboard' : '/'} variant="header" height={50} />
@@ -45,8 +45,8 @@ export function PricingPageClient() {
               </Link>
             ) : (
               <>
-                <PlayNowButton onClick={() => router.push('/auth/login')}>Sign In</PlayNowButton>
-                <GradientStartButton onClick={() => router.push('/auth/signup')}>Start Free</GradientStartButton>
+                <PlayNowButton className="xv-play-btn-sm" onClick={() => router.push('/auth/login')}>Sign In</PlayNowButton>
+                <GradientStartButton className="xv-gradient-btn-sm" onClick={() => router.push('/auth/signup')}>Start Free</GradientStartButton>
               </>
             )}
           </div>

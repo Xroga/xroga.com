@@ -48,7 +48,7 @@ export function HomepageChatBar() {
           <button
             type="submit"
             disabled={!prompt.trim()}
-            className="absolute right-1.5 sm:right-2 p-2 sm:p-2.5 rounded-xl bg-[var(--accent)] text-black hover:scale-105 active:scale-95 transition-transform disabled:opacity-40 send-pulse"
+            className="absolute right-1.5 sm:right-2 p-2 sm:p-2.5 rounded-xl bg-[var(--accent)] text-[var(--background)] hover:scale-105 active:scale-95 transition-transform disabled:opacity-40 send-pulse"
             aria-label="Send"
           >
             <Send className="w-4 h-4" />

@@ -131,9 +131,15 @@ body.theme-gray .glass-panel-strong {
   }
 
   .terminal-layout {
-    height: 100vh;
-    height: 100dvh;
-    overflow: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  @media (min-width: 1024px) {
+    .terminal-layout {
+      height: 100dvh;
+      overflow: hidden;
+    }
   }
 
   .gradient-text {
@@ -516,13 +522,17 @@ body.theme-gray .glass-panel-strong {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   }
 
-  /* Mobile: hide chatbar & bottom nav when sidebar drawer is open */
+  /* Mobile: hide chatbar, bottom nav, and header logo when sidebar drawer is open */
   @media (max-width: 1023px) {
     body.mobile-sidebar-open .xv-terminal-dock,
     body.mobile-sidebar-open .xv-mobile-nav {
       opacity: 0;
       pointer-events: none;
       transform: translateY(100%);
+    }
+    body.mobile-sidebar-open .xv-mobile-header-logo {
+      visibility: hidden;
+      pointer-events: none;
     }
   }
 

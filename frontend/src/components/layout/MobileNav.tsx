@@ -15,6 +15,9 @@ const items = [
 
 export function MobileNav() {
   const pathname = usePathname();
+  const isDashboard = pathname === '/dashboard' || pathname === '/dashboard/';
+
+  if (isDashboard) return null;
 
   return (
     <nav className="xv-mobile-nav lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-[var(--card-border)] glass-panel-strong safe-area-pb">

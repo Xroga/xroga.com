@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import '@/styles/uiverse.css';
 import { buildMetadata, FAVICON_URL } from '@/lib/seo';
+import { RootProviders } from '@/components/providers/RootProviders';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -44,7 +46,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>
-      <body className={`${inter.variable} font-sans antialiased`}>{children}</body>
+      <body className={`${inter.variable} font-sans antialiased`}>
+        <RootProviders>{children}</RootProviders>
+      </body>
     </html>
   );
 }
