@@ -1278,4 +1278,90 @@ body.theme-gray .glass-panel-strong {
       padding: 0.35rem 0.5rem;
     }
   }
+
+  /* 3D pixel custom cursor — desktop & laptop only */
+  body.xv-custom-cursor-active,
+  body.xv-custom-cursor-active * {
+    cursor: none !important;
+  }
+
+  .xv-cursor-pixel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99999;
+    pointer-events: none;
+    margin-left: -4px;
+    margin-top: -4px;
+    will-change: transform;
+    transition: filter 0.15s ease;
+    filter: drop-shadow(0 2px 6px rgba(236, 72, 153, 0.35));
+  }
+  .xv-cursor-pixel--hover {
+    filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.7)) drop-shadow(0 0 20px rgba(96, 165, 250, 0.5));
+    transform-origin: top left;
+  }
+  .xv-cursor-pixel--click {
+    animation: xv-cursor-pop 0.25s ease-out;
+  }
+  @keyframes xv-cursor-pop {
+    0% { scale: 1; }
+    50% { scale: 0.85; }
+    100% { scale: 1; }
+  }
+
+  .xv-cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99998;
+    pointer-events: none;
+    width: 36px;
+    height: 36px;
+    margin-left: -18px;
+    margin-top: -18px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    will-change: transform;
+    transition: border-color 0.2s, box-shadow 0.2s, scale 0.2s;
+  }
+  .xv-cursor-ring--hover {
+    border-color: rgba(168, 85, 247, 0.45);
+    box-shadow: 0 0 16px rgba(96, 165, 250, 0.35), inset 0 0 12px rgba(236, 72, 153, 0.15);
+    scale: 1.15;
+  }
+  .xv-cursor-ring--click {
+    border-color: rgba(236, 72, 153, 0.7);
+    box-shadow: 0 0 24px rgba(236, 72, 153, 0.5);
+    scale: 0.9;
+  }
+
+  .xv-cursor-sparkle {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, transparent 70%);
+    animation: xv-cursor-sparkle 1.2s ease-in-out infinite;
+  }
+  @keyframes xv-cursor-sparkle {
+    0%, 100% { opacity: 0.4; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+
+  .xv-cursor-burst {
+    position: fixed;
+    z-index: 99997;
+    pointer-events: none;
+    width: 24px;
+    height: 24px;
+    margin-left: -12px;
+    margin-top: -12px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(96, 165, 250, 0.8) 0%, rgba(168, 85, 247, 0.4) 40%, transparent 70%);
+    animation: xv-cursor-burst 0.55s ease-out forwards;
+  }
+  @keyframes xv-cursor-burst {
+    from { opacity: 1; transform: scale(0.3); }
+    to { opacity: 0; transform: scale(2.2); }
+  }
 }

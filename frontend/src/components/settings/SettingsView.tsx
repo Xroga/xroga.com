@@ -17,6 +17,8 @@ import { ALL_ACTION_COSTS, tasksForActionBudget, budgetTaskLine } from '@/lib/ac
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { useT } from '@/components/providers/LanguageProvider';
+import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
+import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 
 const TABS = ['General', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
 type Tab = (typeof TABS)[number];
@@ -29,6 +31,8 @@ export function SettingsView({ email }: { email: string }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
+  const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
   const [prefs, setPrefs] = useState({
     emailNotif: true,
     inAppNotif: true,
@@ -77,17 +81,15 @@ export function SettingsView({ email }: { email: string }) {
   async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file || !profile) return;
+    await uploadAvatarFile(file);
+    const p = useAppStore.getState().profile;
+    if (p) setProfile({ ...profile, avatar_url: p.avatar_url });
+  }
 
-    const supabase = createClient();
-    const path = `avatars/${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from('avatars').upload(path, file);
-    if (error) {
-      toast.error('Avatar upload failed — configure Supabase Storage bucket');
-      return;
-    }
-    const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path);
-    setProfile({ ...profile, avatar_url: publicUrl });
-    toast.success('Avatar uploaded — save to apply');
+  async function handleAvatarPick(url: string) {
+    if (!profile) return;
+    await setAvatarUrl(url);
+    setProfile({ ...profile, avatar_url: url });
   }
 
   if (loading) {
@@ -95,6 +97,7 @@ export function SettingsView({ email }: { email: string }) {
   }
 
   return (
+    <>
     <PageFullscreenFrame>
     <div className="max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Settings</h1>
@@ -114,19 +117,34 @@ export function SettingsView({ email }: { email: string }) {
           {tab === 'General' && profile && (
             <form onSubmit={handleSaveProfile} className="space-y-5">
               <h2 className="font-semibold text-lg">General</h2>
-              <div className="flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-br from-[var(--accent)]/10 to-transparent border border-[var(--card-border)] xv-fuel-card">
-                <div className="w-16 h-16 rounded-full bg-[var(--primary)]/20 overflow-hidden flex items-center justify-center ring-2 ring-[var(--accent)]/30">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-5 rounded-2xl bg-gradient-to-br from-[var(--accent)]/10 to-transparent border border-[var(--card-border)] xv-fuel-card">
+                <button
+                  type="button"
+                  onClick={() => setAvatarPickerOpen(true)}
+                  className="w-16 h-16 rounded-full bg-[var(--primary)]/20 overflow-hidden flex items-center justify-center ring-2 ring-[var(--accent)]/30 hover:ring-[var(--accent)] transition-all shrink-0"
+                  data-cursor="pointer"
+                >
                   {profile.avatar_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
                   ) : (
                     <span className="text-2xl">👤</span>
                   )}
+                </button>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => setAvatarPickerOpen(true)}
+                    className="text-sm text-[var(--accent)] hover:underline font-medium"
+                    data-cursor="pointer"
+                  >
+                    Choose avatar
+                  </button>
+                  <label className="block text-sm text-[var(--muted)] hover:text-[var(--foreground)] cursor-pointer">
+                    or upload custom
+                    <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                  </label>
                 </div>
-                <label className="text-sm text-[var(--accent)] hover:underline cursor-pointer">
-                  Upload avatar
-                  <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-                </label>
               </div>
               <div>
                 <label className="block text-sm text-[var(--muted)] mb-1">Display Name</label>
@@ -397,5 +415,19 @@ export function SettingsView({ email }: { email: string }) {
       </div>
     </div>
     </PageFullscreenFrame>
+
+    <AvatarPickerModal
+      open={avatarPickerOpen}
+      onClose={() => setAvatarPickerOpen(false)}
+      currentUrl={profile?.avatar_url}
+      onSelect={handleAvatarPick}
+      onUpload={async (file) => {
+        await uploadAvatarFile(file);
+        const p = useAppStore.getState().profile;
+        if (p && profile) setProfile({ ...profile, avatar_url: p.avatar_url });
+        setAvatarPickerOpen(false);
+      }}
+    />
+    </>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -36,7 +36,8 @@ import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/lib/supabase/client';
 import { api } from '@/lib/api';
 import { LogoutButton, UpgradeProButton } from '@/components/ui/Uiverse';
-import toast from 'react-hot-toast';
+import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
+import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 
 const navItems = [
   {
@@ -107,6 +108,8 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
+  const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const setSidebarOpen = useThemeStore((s) => s.setSidebarOpen);
   const sidebarPinned = useThemeStore((s) => s.sidebarPinned);
@@ -117,7 +120,6 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const actions = useAppStore((s) => s.actions);
   const profile = useAppStore((s) => s.profile);
   const setProfile = useAppStore((s) => s.setProfile);
-  const avatarRef = useRef<HTMLInputElement>(null);
   const isFreeTrial = !actions?.planTier || actions.planTier === 'unpaid';
   const avatarUrl = profile?.avatar_url;
   const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
@@ -166,41 +168,6 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
     router.refresh();
   }
 
-  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const supabase = createClient();
-    const path = `avatars/${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from('avatars').upload(path, file);
-    if (error) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const url = reader.result as string;
-        setProfile({
-          ...(profile ?? { display_name: displayName ?? '', timezone: 'UTC', language: 'en', avatar_url: '' }),
-          avatar_url: url,
-        });
-        toast.success('Avatar updated locally');
-      };
-      reader.readAsDataURL(file);
-      return;
-    }
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from('avatars').getPublicUrl(path);
-    try {
-      const updated = await api.profile.update({ avatar_url: publicUrl });
-      setProfile(updated);
-      toast.success('Avatar updated');
-    } catch {
-      setProfile({
-        ...(profile ?? { display_name: displayName ?? '', timezone: 'UTC', language: 'en', avatar_url: '' }),
-        avatar_url: publicUrl,
-      });
-      toast.success('Avatar uploaded');
-    }
-  }
-
   const bottomSection = (
     <div className="p-2 border-t border-[var(--card-border)] mt-auto space-y-2">
       {onTopUp && (
@@ -238,11 +205,12 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
       <div className={cn('flex items-center justify-between gap-2 px-1 py-1.5', !sidebarOpen && 'flex-col')}>
         {displayName && (
           <div className={cn('flex items-center gap-2 min-w-0', !sidebarOpen && 'justify-center flex-col')}>
-            <HoverTip label="Profile photo" description="Upload or change your avatar.">
+            <HoverTip label="Profile photo" description="Choose avatar or upload your own.">
               <button
                 type="button"
-                onClick={() => avatarRef.current?.click()}
+                onClick={() => setAvatarPickerOpen(true)}
                 className="relative w-9 h-9 rounded-full border-2 border-[var(--accent)]/40 overflow-hidden flex items-center justify-center text-xs font-bold shrink-0 group hover:border-[var(--accent)] transition-colors"
+                data-cursor="pointer"
               >
                 {avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -255,7 +223,6 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
                 </span>
               </button>
             </HoverTip>
-            <input ref={avatarRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
             {sidebarOpen && (
               <div className="min-w-0">
                 <p className="text-xs font-medium truncate">{profile?.display_name ?? displayName}</p>
@@ -421,6 +388,17 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           />
         )}
       </aside>
+
+      <AvatarPickerModal
+        open={avatarPickerOpen}
+        onClose={() => setAvatarPickerOpen(false)}
+        currentUrl={avatarUrl}
+        onSelect={setAvatarUrl}
+        onUpload={async (file) => {
+          await uploadAvatarFile(file);
+          setAvatarPickerOpen(false);
+        }}
+      />
     </>
   );
 }
