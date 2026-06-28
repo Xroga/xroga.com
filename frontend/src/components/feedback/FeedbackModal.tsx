@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Send, Sparkles, Smile, Meh, Frown } from 'lucide-react';
 import { addFeedback } from '@/lib/feedbackStorage';
+import { markFeedbackSubmitted } from '@/lib/scheduledFeedback';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -46,6 +47,7 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
       featuresWanted: wantFeatures.trim(),
       author: 'You',
     });
+    markFeedbackSubmitted();
     toast.success('Thanks! You rock');
     setMessage('');
     setWantFeatures('');
