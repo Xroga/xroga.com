@@ -1,0 +1,19 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+
+const MOBILE_QUERY = '(max-width: 1023px)';
+
+export function useIsMobile() {
+  const [mobile, setMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_QUERY);
+    const sync = () => setMobile(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  return mobile;
+}

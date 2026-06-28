@@ -32,35 +32,37 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   return (
     <TerminalChatProvider>
       <div
-        className="flex min-h-screen terminal-layout"
+        className="flex min-h-screen terminal-layout overflow-x-hidden"
         style={{ '--sidebar-width': `${widthPx}px` } as React.CSSProperties}
       >
         <Sidebar displayName={displayName} email={email} onTopUp={() => setTopUpOpen(true)} />
-        <div className="flex-1 flex flex-col min-w-0 min-h-screen" style={{ marginLeft: 0 }}>
+        <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden" style={{ marginLeft: 0 }}>
           <header
             className={cn(
-              'sticky top-0 z-30 flex items-center justify-between gap-4 px-4 sm:px-6 py-3 shrink-0',
+              'sticky top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3 shrink-0',
               'bg-transparent border-b border-transparent'
             )}
           >
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="xv-mobile-header-logo pl-12 lg:pl-0">
-                <Logo href="/dashboard" height={56} variant="header" />
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <div className="xv-mobile-header-logo pl-11 sm:pl-12 lg:pl-0 min-w-0">
+                <Logo href="/dashboard" height={44} variant="header" className="sm:!h-[56px]" />
               </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3 ml-auto shrink-0 relative z-[250]">
+            <div className="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0 relative z-[250]">
               <AppStoreInline compact className="hidden md:inline-flex opacity-80" />
-              <HeaderActionMeter onClick={() => setTopUpOpen(true)} />
-              <ThemeToggle />
+              <HeaderActionMeter onClick={() => setTopUpOpen(true)} className="!px-2 sm:!px-3 !py-1 sm:!py-1.5 text-xs sm:text-sm" />
+              <div className="hidden sm:block">
+                <ThemeToggle />
+              </div>
               <NotificationBell />
             </div>
           </header>
 
           <main
             className={cn(
-              'flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8',
+              'flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 lg:p-8',
               'pb-24 lg:pb-8',
-              isDashboard && 'pb-[210px] lg:pb-[180px]'
+              isDashboard && 'pb-[min(280px,calc(42vh+env(safe-area-inset-bottom)))] lg:pb-[180px]'
             )}
           >
             {children}

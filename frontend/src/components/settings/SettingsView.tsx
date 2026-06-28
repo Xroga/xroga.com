@@ -113,7 +113,7 @@ export function SettingsView({ email }: { email: string }) {
           </nav>
         </div>
 
-        <div className="flex-1 rounded-2xl border border-[var(--card-border)] bg-[var(--card)]/80 backdrop-blur-sm p-6 shadow-lg">
+        <div className="flex-1 rounded-2xl border border-[var(--card-border)] bg-[var(--card)]/80 backdrop-blur-sm p-4 sm:p-6 shadow-lg min-w-0">
           {tab === 'General' && profile && (
             <form onSubmit={handleSaveProfile} className="space-y-5">
               <h2 className="font-semibold text-lg">General</h2>

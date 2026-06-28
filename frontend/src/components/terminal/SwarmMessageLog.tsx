@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useMemo } from 'react';
 import Image from 'next/image';
-import { Terminal, Palette, MessageCircleHeart, Search, X } from 'lucide-react';
+import { Terminal, Palette, MessageCircleHeart, Search, X, MoreHorizontal, Globe } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
@@ -65,12 +65,15 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
+  const browserOpen = useThemeStore((s) => s.browserPanelOpen);
+  const setBrowserOpen = useThemeStore((s) => s.setBrowserPanelOpen);
   const profile = useAppStore((s) => s.profile);
   const bottomRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [terminalSearch, setTerminalSearch] = useState('');
   const [searchHit, setSearchHit] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -135,46 +138,74 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
           compact ? '' : 'w-full'
         )}
       >
-        <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--card-border)]/30">
-          <Terminal className="w-4 h-4 opacity-70 shrink-0" />
+        <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 border-b border-[var(--card-border)]/30 overflow-x-auto scrollbar-hide">
+          <Terminal className="w-4 h-4 opacity-70 shrink-0 hidden sm:block" />
           <div className="flex-1 min-w-0">
-            <h3 className="font-terminal text-sm opacity-90 truncate">xroga@swarm ~ terminal</h3>
-            <ModelBadge variant="inline" className="text-[9px] opacity-90" />
+            <h3 className="font-terminal text-xs sm:text-sm opacity-90 truncate">xroga@swarm ~ terminal</h3>
+            <ModelBadge variant="inline" className="text-[8px] sm:text-[9px] opacity-90" />
           </div>
-          <button
-            type="button"
-            onClick={cycleTerminalSkin}
-            className="flex items-center gap-1 p-1.5 rounded-lg hover:bg-white/10 transition-colors text-[10px] font-terminal shrink-0"
-            title="Cycle terminal color (white / black / gray) — independent of site theme"
-          >
-            <Palette className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline opacity-70">{TERMINAL_SKIN_LABELS[terminalSkin]}</span>
-          </button>
-          <BrowserPanelToggle />
-          <div className="hidden sm:flex items-center gap-1 max-w-[140px] lg:max-w-[180px]">
-            <Search className="w-3 h-3 text-[var(--muted)] shrink-0" />
-            <input
-              value={terminalSearch}
-              onChange={(e) => setTerminalSearch(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && runTerminalSearch()}
-              placeholder="Search terminal…"
-              className="w-full min-w-0 text-[10px] bg-transparent border-none outline-none text-[var(--foreground)] placeholder:text-[var(--muted)]"
-            />
-            {terminalSearch && (
-              <button type="button" onClick={() => { setTerminalSearch(''); setSearchHit(null); }} className="p-0.5 text-[var(--muted)]">
-                <X className="w-3 h-3" />
-              </button>
+          <div className="hidden sm:flex items-center gap-1 shrink-0">
+            <button
+              type="button"
+              onClick={cycleTerminalSkin}
+              className="flex items-center gap-1 p-1.5 rounded-lg hover:bg-white/10 transition-colors text-[10px] font-terminal shrink-0"
+              title="Cycle terminal color (white / black / gray) — independent of site theme"
+            >
+              <Palette className="w-3.5 h-3.5" />
+              <span className="hidden md:inline opacity-70">{TERMINAL_SKIN_LABELS[terminalSkin]}</span>
+            </button>
+            <BrowserPanelToggle />
+            <div className="flex items-center gap-1 max-w-[140px] lg:max-w-[180px]">
+              <Search className="w-3 h-3 text-[var(--muted)] shrink-0" />
+              <input
+                value={terminalSearch}
+                onChange={(e) => setTerminalSearch(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && runTerminalSearch()}
+                placeholder="Search terminal…"
+                className="w-full min-w-0 text-[10px] bg-transparent border-none outline-none text-[var(--foreground)] placeholder:text-[var(--muted)]"
+              />
+              {terminalSearch && (
+                <button type="button" onClick={() => { setTerminalSearch(''); setSearchHit(null); }} className="p-0.5 text-[var(--muted)]">
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setFeedbackOpen(true)}
+              className="xv-feedback-btn p-1.5 rounded-lg shrink-0"
+              title="Send feedback"
+              aria-label="Feedback"
+            >
+              <MessageCircleHeart className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="relative sm:hidden shrink-0">
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="p-1.5 rounded-lg hover:bg-white/10 shrink-0"
+              aria-label="Terminal options"
+            >
+              <MoreHorizontal className="w-4 h-4" />
+            </button>
+            {mobileMenuOpen && (
+              <>
+                <div className="fixed inset-0 z-[40]" onClick={() => setMobileMenuOpen(false)} aria-hidden />
+                <div className="absolute right-0 top-full mt-1 z-[50] w-44 rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-xl p-1.5">
+                  <button type="button" onClick={() => { cycleTerminalSkin(); setMobileMenuOpen(false); }} className="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs text-left hover:bg-white/10">
+                    <Palette className="w-3.5 h-3.5" /> Skin
+                  </button>
+                  <button type="button" onClick={() => { setBrowserOpen(!browserOpen); setMobileMenuOpen(false); }} className="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs text-left hover:bg-white/10">
+                    <Globe className="w-3.5 h-3.5" /> Browser
+                  </button>
+                  <button type="button" onClick={() => { setFeedbackOpen(true); setMobileMenuOpen(false); }} className="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs text-left hover:bg-white/10">
+                    <MessageCircleHeart className="w-3.5 h-3.5" /> Feedback
+                  </button>
+                </div>
+              </>
             )}
           </div>
-          <button
-            type="button"
-            onClick={() => setFeedbackOpen(true)}
-            className="xv-feedback-btn p-1.5 rounded-lg shrink-0"
-            title="Send feedback"
-            aria-label="Feedback"
-          >
-            <MessageCircleHeart className="w-4 h-4" />
-          </button>
         </div>
 
         <div className="px-4 py-3 space-y-3 font-terminal text-[13px]">

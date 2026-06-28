@@ -134,7 +134,7 @@ export function AutomationView() {
 
       <SectionSearchBar value={query} onChange={setQuery} placeholder="Search automations…" />
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
           { key: 'running' as const, label: 'Running', count: counts.running, color: 'text-amber-400' },
           { key: 'failed' as const, label: 'Failed', count: counts.failed, color: 'text-red-400' },

@@ -22,7 +22,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
 
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const isMobile = window.matchMedia('(max-width: 1023px)').matches;
     const body = document.body;
 
     body.classList.remove('theme-image', 'theme-white', 'theme-black', 'theme-gray');
@@ -44,7 +44,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       body.style.backgroundImage = `url("${url}")`;
       body.style.backgroundSize = 'cover';
       body.style.backgroundPosition = 'center';
-      body.style.backgroundAttachment = 'fixed';
+      body.style.backgroundAttachment = isMobile ? 'scroll' : 'fixed';
       body.style.backgroundColor = '#0a0e17';
     } else {
       body.style.backgroundImage = '';

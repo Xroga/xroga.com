@@ -85,8 +85,8 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <div className="max-w-5xl mx-auto space-y-4 sm:space-y-5 min-w-0">
+      <div className="flex flex-wrap items-start justify-between gap-2 sm:gap-3">
         <DashboardWelcome displayName={displayName} hidden={fullscreen} className="flex-1 min-w-0" />
         <button
           type="button"
