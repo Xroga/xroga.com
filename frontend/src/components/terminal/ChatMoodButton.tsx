@@ -35,7 +35,7 @@ export function ChatMoodButton({ className, variant = 'toolbar' }: { className?:
       {open && (
         <div
           id="xv-mood-popup"
-          className="absolute bottom-full left-0 mb-2 z-[90] w-[min(300px,calc(100vw-24px))] rounded-2xl border border-[#006aff]/20 bg-gradient-to-br from-white via-sky-50/95 to-blue-50/90 dark:from-[#0f172a] dark:via-[#1e293b] dark:to-[#0f172a] shadow-[0_16px_48px_rgba(0,106,255,0.18)] p-3 animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-[90] w-[min(300px,calc(100vw-32px))] max-w-[calc(100vw-32px)] rounded-2xl border border-[#006aff]/20 bg-gradient-to-br from-white via-sky-50/95 to-blue-50/90 dark:from-[#0f172a] dark:via-[#1e293b] dark:to-[#0f172a] shadow-[0_16px_48px_rgba(0,106,255,0.18)] p-3 animate-in fade-in slide-in-from-bottom-2 duration-200"
         >
           <div className="flex items-center justify-between gap-2 mb-2">
             <p className="text-[10px] font-bold uppercase tracking-wider text-[#006aff]">AI Mood</p>

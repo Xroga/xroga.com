@@ -64,7 +64,7 @@ export function BrowserPanel({ mode = 'split' }: BrowserPanelProps) {
       className={cn(
         'xv-browser-panel rounded-xl border overflow-hidden universe-fade-in flex flex-col',
         BROWSER_THEME_CLASS[theme] ?? 'xv-browser--image',
-        isFull ? 'min-h-[60vh]' : 'min-h-[280px] h-full'
+        isFull ? 'min-h-[40vh] sm:min-h-[60vh]' : 'min-h-[200px] sm:min-h-[280px] h-full'
       )}
     >
       <div className="xv-browser-chrome flex items-center gap-2 px-2 py-1.5 border-b shrink-0">

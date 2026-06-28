@@ -43,21 +43,21 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
             {greeting}, <span className="gradient-text">{firstName}</span>
           </h1>
-          <p className="text-[10px] sm:text-xs text-[var(--accent)] font-medium mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-            <ModelBadge variant="inline" className="text-[10px] sm:text-xs" />
-            <span className="opacity-40">·</span>
-            <span>{XROGA_MODEL_TAGLINE}</span>
+          <p className="text-[10px] sm:text-xs text-[var(--accent)] font-medium mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 max-w-full">
+            <ModelBadge variant="inline" className="text-[10px] sm:text-xs shrink-0" />
             <span className="opacity-40 hidden sm:inline">·</span>
-            <span className="hidden sm:inline opacity-80">{XROGA_MODEL_FIRST_LAST}</span>
+            <span className="hidden sm:inline truncate">{XROGA_MODEL_TAGLINE}</span>
+            <span className="opacity-40 hidden md:inline">·</span>
+            <span className="hidden md:inline opacity-80">{XROGA_MODEL_FIRST_LAST}</span>
           </p>
         </div>
       </div>
-      <div className="xv-dashboard-subhead pl-6 border-l-2 border-[var(--accent)]/30">
+      <div className="xv-dashboard-subhead pl-4 sm:pl-6 border-l-2 border-[var(--accent)]/30 max-w-full overflow-hidden">
         <RotatingWords
           prefix="Ship"
           words={DASHBOARD_ROTATE_WORDS}
           variant="dashboard"
-          className="text-sm sm:text-base"
+          className="text-xs sm:text-base max-w-full"
           stopAfterMs={18000}
         />
       </div>

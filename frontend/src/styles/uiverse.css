@@ -1073,6 +1073,21 @@ body.theme-white .xv-uiverse-table-card {
   width: 40%;
   text-align: end;
 }
+@media (max-width: 639px) {
+  .xv-uiverse-table-card__data {
+    flex-direction: column;
+  }
+  .xv-uiverse-table-card__right,
+  .xv-uiverse-table-card__left {
+    width: 100%;
+    border-right: none;
+    text-align: left;
+  }
+  .xv-uiverse-table-card__left .xv-uiverse-table-card__item {
+    padding-right: 0.8em;
+    text-align: left;
+  }
+}
 .xv-uiverse-table-card__item {
   padding: 3px 0;
   background-color: white;

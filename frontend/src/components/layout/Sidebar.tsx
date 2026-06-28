@@ -158,6 +158,9 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   }
 
   const asideWidth = sidebarOpen ? sidebarWidth : 72;
+  const navExpanded = sidebarOpen || mobileOpen;
+  const mobileDrawerWidth =
+    typeof window !== 'undefined' ? Math.min(sidebarWidth, Math.floor(window.innerWidth * 0.88)) : sidebarWidth;
 
   const isActive = (href: string) =>
     pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
@@ -183,8 +186,8 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const bottomSection = (
     <div className="p-2 mt-auto space-y-2 xv-sidebar-bottom">
       {onTopUp && (
-        <div className={cn(!sidebarOpen && 'flex justify-center')}>
-          {sidebarOpen ? (
+        <div className={cn(!navExpanded && 'flex justify-center')}>
+          {navExpanded ? (
             <MiniActionMeter onTopUp={onTopUp} />
           ) : (
             <HoverTip label="Actions left" description="Your remaining swarm actions. Click to top up.">
@@ -200,7 +203,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           )}
         </div>
       )}
-      {isFreeTrial && sidebarOpen && (
+      {isFreeTrial && navExpanded && (
         <UpgradeProButton onClick={() => router.push('/pricing')} />
       )}
       {isFreeTrial && !sidebarOpen && (
@@ -214,15 +217,14 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           </Link>
         </HoverTip>
       )}
-      {sidebarOpen && (
+      {navExpanded ? (
         <PalestineSupportBanner className="w-full justify-center" />
-      )}
-      {!sidebarOpen && (
+      ) : (
         <div className="flex justify-center">
           <PalestineSupportBanner compact />
         </div>
       )}
-      {displayName && sidebarOpen && (
+      {displayName && navExpanded && (
         <div ref={profileRowRef} className="xv-sidebar-profile-row flex items-center gap-2.5 px-2.5 py-2 rounded-xl">
           <button
             type="button"
@@ -273,7 +275,10 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
 
       <button
         type="button"
-        className="lg:hidden fixed top-3.5 left-4 z-50 p-2.5 rounded-lg glass-panel"
+        className={cn(
+          'lg:hidden fixed top-3 left-3 sm:top-3.5 sm:left-4 p-2 sm:p-2.5 rounded-lg glass-panel',
+          mobileOpen ? 'z-[80]' : 'z-50'
+        )}
         onClick={() => setMobileOpen(!mobileOpen)}
         aria-label="Toggle menu"
       >
@@ -295,7 +300,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         onMouseLeave={() => {
           if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(false);
         }}
-        style={{ width: mobileOpen ? sidebarWidth : asideWidth }}
+        style={{ width: mobileOpen ? mobileDrawerWidth : asideWidth }}
         className={cn(
           'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,transform] duration-200 xv-sidebar-hover shrink-0 relative',
           mobileOpen ? 'translate-x-0 z-[70]' : '-translate-x-full lg:translate-x-0'
@@ -303,9 +308,9 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
       >
         <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px]">
           <HoverTip label="Xroga AI" description="Dashboard home" block className="shrink min-w-0">
-            <Logo href="/dashboard" height={sidebarOpen ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
+            <Logo href="/dashboard" height={navExpanded ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
           </HoverTip>
-          {sidebarOpen ? (
+          {navExpanded ? (
             <button
               type="button"
               onClick={handleNewChat}
@@ -322,7 +327,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
               </button>
             </SidebarTip>
           )}
-          <div className={cn('flex items-center gap-0.5 shrink-0 ml-auto', !sidebarOpen && 'flex-col ml-0')}>
+          <div className={cn('flex items-center gap-0.5 shrink-0 ml-auto', !navExpanded && 'flex-col ml-0')}>
             <HoverTip label="Search" description="Search projects, chats, and commands.">
               <button
                 type="button"
@@ -340,12 +345,12 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
                 className={cn(
                   'flex items-center gap-1 px-1.5 py-1 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors',
                   pathname.startsWith('/dashboard/media') && 'bg-[var(--accent)]/15 text-[var(--accent)]',
-                  !sidebarOpen && 'p-1.5'
+                  !navExpanded && 'p-1.5'
                 )}
                 aria-label={t('media.label')}
               >
                 <ImageIcon className="w-3.5 h-3.5 shrink-0" />
-                {sidebarOpen && (
+                {navExpanded && (
                   <span className="xv-ai-media-label text-[10px] font-bold tracking-wide whitespace-nowrap">
                     {t('media.label')}
                   </span>
@@ -375,7 +380,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         </button>
 
         <nav className="flex-1 p-2 overflow-y-auto overflow-x-hidden">
-          {sidebarOpen ? (
+          {navExpanded ? (
             <div className="xv-sidebar-menu">
               {navItems.map(({ href, label, icon: Icon, tip }) => (
                 <SidebarTip key={href} label={label} description={tip}>

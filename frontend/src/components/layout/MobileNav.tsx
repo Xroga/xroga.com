@@ -2,15 +2,15 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, FolderOpen, MessageSquare, Link2, User } from 'lucide-react';
+import { Home, FolderOpen, MessageSquare, CreditCard, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const items = [
   { href: '/dashboard', label: 'Home', icon: Home },
   { href: '/dashboard/projects', label: 'Projects', icon: FolderOpen },
-  { href: '/dashboard/chats', label: 'Research', icon: MessageSquare },
-  { href: '/dashboard/integrations', label: 'Integrations', icon: Link2 },
-  { href: '/settings', label: 'Profile', icon: User },
+  { href: '/dashboard/chats', label: 'Chats', icon: MessageSquare },
+  { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function MobileNav() {
@@ -21,7 +21,7 @@ export function MobileNav() {
 
   return (
     <nav className="xv-mobile-nav lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-[var(--card-border)] glass-panel-strong safe-area-pb">
-      <div className="flex items-center justify-around py-2 px-1">
+      <div className="flex items-center justify-between py-1.5 px-1 max-w-lg mx-auto">
         {items.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
           return (
@@ -29,12 +29,12 @@ export function MobileNav() {
               key={href}
               href={href}
               className={cn(
-                'flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg text-[10px] transition-colors min-w-[52px]',
+                'flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-lg text-[9px] sm:text-[10px] transition-colors min-w-0 flex-1 max-w-[72px]',
                 active ? 'text-[var(--accent)]' : 'text-[var(--muted)]'
               )}
             >
-              <Icon className="w-5 h-5" />
-              {label}
+              <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="truncate w-full text-center">{label}</span>
             </Link>
           );
         })}

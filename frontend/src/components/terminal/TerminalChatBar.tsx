@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Search, Play, Globe } from 'lucide-react';
+import { Search, Play, Globe, Layers } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useAppStore } from '@/store/useAppStore';
 import { estimateActionCost } from '@/lib/actionCosts';
@@ -140,50 +140,62 @@ export function TerminalChatBar() {
         >
           <ChatBarDragOverlay active={dragOver} />
 
-          <div className="xv-chatbar-toolbar flex items-center gap-1.5 px-3 py-2 flex-wrap">
+          <div className="xv-chatbar-toolbar flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 overflow-x-auto scrollbar-hide flex-nowrap">
             <ChatMoodButton variant="toolbar" />
-            <ChatBarTip label="Search integrations">
+            <ChatBarTip label="Tools & integrations" className="shrink-0 sm:hidden">
               <button
                 type="button"
                 onClick={() => setIntegrationsOpen(true)}
-                className="p-1.5 h-7 rounded-lg hover:bg-white/10 text-[var(--foreground)]"
+                className="flex items-center gap-1 px-2.5 h-7 rounded-lg border border-[var(--card-border)]/40 bg-white/[0.04] text-[10px] font-semibold shrink-0"
               >
-                <Search className="w-3.5 h-3.5" />
+                <Layers className="w-3.5 h-3.5" />
+                <span>Tools</span>
               </button>
             </ChatBarTip>
-            <ChatBarTip label="GitHub repos">
-              <span className="inline-flex">
-                <ChatBarToolChip
-                  icon={<GitHubChipIcon />}
-                  label="GitHub"
-                  onClick={() => setGithubOpen(true)}
-                  accent="#6e40c9"
-                />
-              </span>
-            </ChatBarTip>
-            {TOOL_CHIPS.map(({ name, icon: Icon, accent }) => (
-              <ChatBarTip key={name} label={name}>
-                <span className="inline-flex">
+            <div className="hidden sm:contents">
+              <ChatBarTip label="Search integrations">
+                <button
+                  type="button"
+                  onClick={() => setIntegrationsOpen(true)}
+                  className="p-1.5 h-7 rounded-lg hover:bg-white/10 text-[var(--foreground)] shrink-0"
+                >
+                  <Search className="w-3.5 h-3.5" />
+                </button>
+              </ChatBarTip>
+              <ChatBarTip label="GitHub repos">
+                <span className="inline-flex shrink-0">
                   <ChatBarToolChip
-                    icon={<Icon />}
-                    label={name}
-                    onClick={() => setIntegrationsOpen(true)}
-                    accent={accent}
+                    icon={<GitHubChipIcon />}
+                    label="GitHub"
+                    onClick={() => setGithubOpen(true)}
+                    accent="#6e40c9"
                   />
                 </span>
               </ChatBarTip>
-            ))}
-            <ChatBarTip label="Deploy project">
-              <span className="inline-flex">
-                <ChatBarToolChip
-                  icon={<Play className="w-3 h-3 fill-current text-[var(--accent)]" />}
-                  label="Deploy"
-                  onClick={() => setDeployOpen(true)}
-                  accent="#4a7aff"
-                />
-              </span>
-            </ChatBarTip>
-            <div className="flex-1" />
+              {TOOL_CHIPS.map(({ name, icon: Icon, accent }) => (
+                <ChatBarTip key={name} label={name}>
+                  <span className="inline-flex shrink-0">
+                    <ChatBarToolChip
+                      icon={<Icon />}
+                      label={name}
+                      onClick={() => setIntegrationsOpen(true)}
+                      accent={accent}
+                    />
+                  </span>
+                </ChatBarTip>
+              ))}
+              <ChatBarTip label="Deploy project">
+                <span className="inline-flex shrink-0">
+                  <ChatBarToolChip
+                    icon={<Play className="w-3 h-3 fill-current text-[var(--accent)]" />}
+                    label="Deploy"
+                    onClick={() => setDeployOpen(true)}
+                    accent="#4a7aff"
+                  />
+                </span>
+              </ChatBarTip>
+            </div>
+            <div className="flex-1 min-w-[4px]" />
             <ChatBarFuelMeter
               remaining={remaining}
               estimate={estimate.cost}
@@ -212,7 +224,7 @@ export function TerminalChatBar() {
 
           <ChatBarFileStrip files={files} onRemove={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))} />
 
-          <form onSubmit={handleSubmit} className="px-3 py-3">
+          <form onSubmit={handleSubmit} className="px-2 sm:px-3 py-2 sm:py-3">
             <ChatBarInputRow
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}

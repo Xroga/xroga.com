@@ -2005,6 +2005,31 @@ body.theme-gray * {
   }
 
   /* Mobile chatbar / terminal responsiveness */
+  @media (max-width: 1023px) {
+    .terminal-layout main {
+      -webkit-overflow-scrolling: touch;
+    }
+    .xv-dashboard-subhead {
+      max-width: 100%;
+      overflow: hidden;
+    }
+    .xv-rotating-prefix,
+    .xv-rotating-word {
+      white-space: normal;
+    }
+    .xv-rotating-words-slot {
+      max-width: 100%;
+    }
+    .xv-power-smash-upload__shell {
+      width: 38px !important;
+      height: 34px !important;
+    }
+    .xv-go-btn {
+      width: 68px;
+      height: 34px;
+    }
+  }
+
   @media (max-width: 639px) {
     .xv-terminal-dock {
       padding-bottom: env(safe-area-inset-bottom, 0);
