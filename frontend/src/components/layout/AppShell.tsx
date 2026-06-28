@@ -48,7 +48,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
           >
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <div className="xv-mobile-header-logo pl-11 sm:pl-12 lg:pl-0 min-w-0">
-                <Logo href="/dashboard" height={44} variant="header" className="sm:!h-[56px]" />
+                <Logo href="/dashboard" height={52} variant="header" className="!h-[52px] sm:!h-[68px] lg:!h-[72px]" />
               </div>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0 relative z-[250]">
@@ -66,7 +66,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
             className={cn(
               'flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 lg:p-8',
               'pb-24 lg:pb-8',
-              isDashboard && 'pb-[min(280px,calc(42vh+env(safe-area-inset-bottom)))] lg:pb-[180px]',
+              isDashboard && 'pb-[min(300px,calc(44vh+env(safe-area-inset-bottom)))] lg:pb-[200px]',
               incognito && isDashboard && 'ring-2 ring-inset ring-violet-500/20'
             )}
           >

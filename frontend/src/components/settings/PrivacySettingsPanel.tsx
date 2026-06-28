@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
-import { CHAT_MOODS, useMoodStore } from '@/store/useMoodStore';
 import { cn } from '@/lib/utils';
 
 function ToggleRow({ label, desc, on, onChange }: { label: string; desc: string; on: boolean; onChange: (v: boolean) => void }) {
@@ -35,8 +34,6 @@ export function PrivacySettingsPanel() {
   const setCrossProjectAccess = usePrivacyStore((s) => s.setCrossProjectAccess);
   const xrogaAutoMode = usePrivacyStore((s) => s.xrogaAutoMode);
   const setXrogaAutoMode = usePrivacyStore((s) => s.setXrogaAutoMode);
-  const mood = useMoodStore((s) => s.mood);
-  const setMood = useMoodStore((s) => s.setMood);
 
   return (
     <div className="space-y-5">
@@ -75,28 +72,6 @@ export function PrivacySettingsPanel() {
           on={xrogaAutoMode}
           onChange={setXrogaAutoMode}
         />
-      </div>
-      <div>
-        <p className="text-sm font-medium mb-2">Default AI mood</p>
-        <div className="flex flex-wrap gap-1.5">
-          {CHAT_MOODS.slice(0, 10).map((m) => {
-            const Icon = m.icon;
-            return (
-              <button
-                key={m.id}
-                type="button"
-                onClick={() => setMood(m.id)}
-                className={cn(
-                  'flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold border',
-                  mood === m.id ? 'border-[#006aff] bg-[#006aff]/10 text-[#006aff]' : 'border-[var(--card-border)] text-[var(--muted)]'
-                )}
-              >
-                <Icon className="w-3 h-3" />
-                {m.label}
-              </button>
-            );
-          })}
-        </div>
       </div>
     </div>
   );

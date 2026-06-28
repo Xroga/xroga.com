@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import type { ReactNode } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 
 /* ── Gradient Get Started ── */
 export function GradientStartButton({
@@ -332,17 +332,16 @@ export function SpinSubscribeButton({
   return <BuyNowButton label={label} onClick={onClick} disabled={disabled} />;
 }
 
-export function ChatbarShell({
-  children,
-  className,
-  ...props
-}: { children: ReactNode; className?: string } & React.HTMLAttributes<HTMLDivElement>) {
+export const ChatbarShell = forwardRef<
+  HTMLDivElement,
+  { children: ReactNode; className?: string } & React.HTMLAttributes<HTMLDivElement>
+>(function ChatbarShell({ children, className, ...props }, ref) {
   return (
-    <div className={cn('xv-chatbar-solid', className)} {...props}>
+    <div ref={ref} className={cn('xv-chatbar-solid', className)} {...props}>
       {children}
     </div>
   );
-}
+});
 
 /** @deprecated use ChatbarShell */
 export const PodaChatbarShell = ChatbarShell;

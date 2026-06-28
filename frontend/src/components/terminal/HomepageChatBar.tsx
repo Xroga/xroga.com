@@ -6,16 +6,20 @@ import { PENDING_PROMPT_KEY } from '@/lib/constants';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import {
   ChatBarDragOverlay,
-  ChatBarFileStrip,
   ChatBarInputRow,
   useSpeechToText,
 } from '@/components/terminal/ChatBarParts';
+import { ChatBarFileGrid } from '@/components/terminal/ChatBarFileGrid';
 import type { SendButtonState } from '@/components/terminal/ChatBarButtons';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 const MAX_ROWS = 6;
 const LINE_HEIGHT = 22;
+
+function renameFile(file: File, newName: string) {
+  return new File([file], newName, { type: file.type, lastModified: file.lastModified });
+}
 
 export function HomepageChatBar() {
   const [prompt, setPrompt] = useState('');
@@ -88,7 +92,13 @@ export function HomepageChatBar() {
         >
           <ChatBarDragOverlay active={dragOver} />
 
-          <ChatBarFileStrip files={files} onRemove={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))} />
+          <ChatBarFileGrid
+            files={files}
+            onRemove={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))}
+            onRename={(i, name) =>
+              setFiles((prev) => prev.map((f, j) => (j === i ? renameFile(f, name) : f)))
+            }
+          />
 
           <div className="px-3 sm:px-4 py-3 sm:py-4 xv-home-chatbar-inner">
             <ChatBarInputRow
