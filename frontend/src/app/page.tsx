@@ -100,6 +100,9 @@ export default function HomePage() {
       </main>
 
       <footer className="relative z-10 py-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-4">
+        <Link href="/features" className="xv-footer-pill">Features</Link>
+        <Link href="/auth/signup" className="xv-footer-pill">Sign Up</Link>
+        <Link href="/auth/login" className="xv-footer-pill">Sign In</Link>
         <Link href="/about" className="xv-footer-pill">About Xroga</Link>
         <Link href="/docs/api" className="xv-footer-pill">API</Link>
         <Link href="/pricing" className="xv-footer-pill">Pricing</Link>

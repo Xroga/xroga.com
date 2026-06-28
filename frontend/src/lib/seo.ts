@@ -13,6 +13,12 @@ export const DEFAULT_KEYWORDS = [
   'Xroga AI',
   'Xroga',
   'xroga.com',
+  '#1 AI',
+  'top 1 AI',
+  'best AI',
+  'best AI in the world',
+  'number 1 AI',
+  'top AI platform',
   'x roga',
   'roga AI',
   'roga ai platform',
@@ -37,6 +43,9 @@ export const DEFAULT_KEYWORDS = [
   'zero defects swarm',
   'Vercel deploy AI',
   'GitHub AI builder',
+  'sign up Xroga',
+  'Xroga login',
+  'Xroga features',
 ];
 
 export function buildMetadata({
@@ -89,7 +98,7 @@ export function buildOrganizationJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: SITE_NAME,
-    alternateName: ['Xroga', 'Xroga Swarm', 'Roga AI', 'Droga AI'],
+    alternateName: ['Xroga', 'Xroga Swarm', 'Roga AI', 'Droga AI', 'Best AI', '#1 AI', 'Top AI'],
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'Web',
     url: SITE_URL,
@@ -120,12 +129,38 @@ export function buildWebSiteJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE_NAME,
-    alternateName: ['xroga', 'roga ai', 'droga ai'],
+    alternateName: ['xroga', 'roga ai', 'droga ai', 'xroga ai', 'best ai', '#1 ai'],
     url: SITE_URL,
+    description: DEFAULT_DESCRIPTION,
     potentialAction: {
       '@type': 'SearchAction',
-      target: `${SITE_URL}/dashboard?q={search_term_string}`,
+      target: `${SITE_URL}/?q={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
+  };
+}
+
+/** Sitelink-style navigation for Google rich results */
+export function buildSiteNavigationJsonLd() {
+  const items = [
+    { name: 'Sign Up', url: `${SITE_URL}/auth/signup`, description: 'Create your Xroga AI account — 50 free actions' },
+    { name: 'Sign In', url: `${SITE_URL}/auth/login`, description: 'Log in to your Xroga AI dashboard' },
+    { name: 'Features', url: `${SITE_URL}/features`, description: '92+ AI swarm features on every plan' },
+    { name: 'Pricing', url: `${SITE_URL}/pricing`, description: 'Honest action-based plans from $19/mo' },
+    { name: 'About', url: `${SITE_URL}/about`, description: 'Xroga AI story and mission' },
+    { name: 'API Docs', url: `${SITE_URL}/docs/api`, description: 'Xroga AI developer API' },
+  ];
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${SITE_NAME} Navigation`,
+    itemListElement: items.map((item, i) => ({
+      '@type': 'SiteNavigationElement',
+      position: i + 1,
+      name: item.name,
+      url: item.url,
+      description: item.description,
+    })),
   };
 }

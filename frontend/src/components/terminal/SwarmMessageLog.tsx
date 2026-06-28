@@ -1,18 +1,22 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Terminal, Palette, MessageCircleHeart } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
-import { AiResponseLoader } from '@/components/ui/Uiverse';
 import { BrowserPanelToggle } from './BrowserPanel';
 import { AI_RESPONSE_LOGO_URL, TERMINAL_SKIN_LABELS } from '@/lib/theme';
 import { ModelBadge } from '@/components/ui/ModelBadge';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
+import { MessageBubbleActions } from './MessageBubbleActions';
+import { MessageSuggestionChips } from './MessageSuggestionChips';
+import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
+import { generateMessageSuggestions, isBuildRelated } from '@/lib/messageHelpers';
 import { cn } from '@/lib/utils';
+import toast from 'react-hot-toast';
 
 function useTypewriter(text: string, active: boolean, speed = 12) {
   const [displayed, setDisplayed] = useState('');
@@ -57,7 +61,8 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, outOfActionsOpen, setOutOfActionsOpen } = useTerminalChat();
+  const { messages, loading, animatingId, swarmActiveAgent, outOfActionsOpen, setOutOfActionsOpen, setPrompt } =
+    useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
   const profile = useAppStore((s) => s.profile);
@@ -70,6 +75,35 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
 
   const avatarUrl = profile?.avatar_url;
   const displayInitial = profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U';
+
+  const lastAssistantIdx = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'assistant' && messages[i].content) return i;
+    }
+    return -1;
+  }, [messages]);
+
+  const lastUserText = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') return messages[i].content;
+    }
+    return '';
+  }, [messages]);
+
+  function handleEditUser(content: string) {
+    setPrompt(content);
+    toast('Edit your message below and press GO', { icon: '✏️' });
+  }
+
+  function handleDeploy() {
+    setPrompt('[Deploy] Publish my project to Vercel with production settings');
+    toast('Deploy prompt added — press GO', { icon: '🚀' });
+  }
+
+  function handleSuggestion(text: string) {
+    setPrompt(text);
+    toast('Suggestion added — press GO', { icon: '💡' });
+  }
 
   return (
     <>
@@ -114,60 +148,97 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
               <span className="opacity-70">&gt;</span> Ask Xroga to build anything…
             </p>
           )}
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={cn(
-                'flex gap-2',
-                msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
-                msg.role === 'system' && 'justify-center'
-              )}
-            >
-              {msg.role === 'user' && (
-                <div className="w-7 h-7 rounded-full border border-[var(--card-border)] overflow-hidden shrink-0 flex items-center justify-center bg-[var(--accent)]/10 text-[10px] font-bold">
-                  {avatarUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    displayInitial
-                  )}
-                </div>
-              )}
-              {msg.role === 'assistant' && (
-                <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
-                  <Image src={AI_RESPONSE_LOGO_URL} alt="Xroga" width={22} height={22} unoptimized className="object-contain" />
-                </div>
-              )}
+
+          {loading && (
+            <SwarmProcessingIndicator activeAgent={swarmActiveAgent ?? undefined} loading={loading} />
+          )}
+
+          {messages.map((msg, idx) => {
+            const isLastAssistant = idx === lastAssistantIdx && !loading;
+            const showSuggestions = isLastAssistant && msg.role === 'assistant';
+            const showDeploy =
+              msg.role === 'assistant' &&
+              !loading &&
+              (isBuildRelated(msg.content) || isBuildRelated(lastUserText));
+            const suggestions =
+              showSuggestions ? generateMessageSuggestions(lastUserText, msg.content) : null;
+
+            return (
               <div
+                key={msg.id}
                 className={cn(
-                  'min-w-0 max-w-[85%]',
-                  msg.role === 'user' && 'text-right',
-                  msg.role === 'system' && (AGENT_STYLES[msg.agent ?? ''] ?? 'text-[var(--muted)] text-center max-w-full')
+                  'group flex gap-2',
+                  msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
+                  msg.role === 'system' && 'justify-center'
                 )}
               >
-                {msg.role === 'user' ? (
-                  <span className="inline-block px-3 py-1.5 rounded-lg bg-white/10 text-left">
-                    <span className="opacity-60 mr-2">&gt;</span>
-                    {msg.content}
-                  </span>
-                ) : msg.role === 'system' ? (
-                  <p className="py-0.5 text-xs">{msg.content}</p>
-                ) : (
-                  <p className="py-1 whitespace-pre-wrap text-left">
-                    <TypewriterMessage
-                      content={msg.content}
-                      animate={msg.id === animatingId && loading}
-                    />
-                  </p>
+                {msg.role === 'user' && (
+                  <div className="w-7 h-7 rounded-full border border-[var(--card-border)] overflow-hidden shrink-0 flex items-center justify-center bg-[var(--accent)]/10 text-[10px] font-bold">
+                    {avatarUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      displayInitial
+                    )}
+                  </div>
                 )}
+                {msg.role === 'assistant' && (
+                  <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
+                    <Image src={AI_RESPONSE_LOGO_URL} alt="Xroga" width={22} height={22} unoptimized className="object-contain" />
+                  </div>
+                )}
+                <div
+                  className={cn(
+                    'min-w-0 max-w-[85%]',
+                    msg.role === 'user' && 'text-right',
+                    msg.role === 'system' && (AGENT_STYLES[msg.agent ?? ''] ?? 'text-[var(--muted)] text-center max-w-full')
+                  )}
+                >
+                  {msg.role === 'user' ? (
+                    <>
+                      <span className="inline-block px-3 py-1.5 rounded-lg bg-white/10 text-left">
+                        <span className="opacity-60 mr-2">&gt;</span>
+                        {msg.content}
+                      </span>
+                      <MessageBubbleActions
+                        role="user"
+                        content={msg.content}
+                        messageId={msg.id}
+                        onEdit={() => handleEditUser(msg.content)}
+                      />
+                    </>
+                  ) : msg.role === 'system' ? (
+                    <p className="py-0.5 text-xs xv-swarm-agent-line animate-in fade-in duration-300">{msg.content}</p>
+                  ) : (
+                    <>
+                      <p className="py-1 whitespace-pre-wrap text-left">
+                        <TypewriterMessage
+                          content={msg.content}
+                          animate={msg.id === animatingId && loading}
+                        />
+                      </p>
+                      {msg.content && (
+                        <MessageBubbleActions
+                          role="assistant"
+                          content={msg.content}
+                          messageId={msg.id}
+                          showDeploy={showDeploy}
+                          onDeploy={handleDeploy}
+                          onFeedback={() => setFeedbackOpen(true)}
+                        />
+                      )}
+                      {suggestions && (
+                        <MessageSuggestionChips
+                          suggestions={suggestions}
+                          onSelect={handleSuggestion}
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-          {loading && messages[messages.length - 1]?.role !== 'assistant' && (
-            <div className="flex justify-center py-4">
-              <AiResponseLoader word="Generating" />
-            </div>
-          )}
+            );
+          })}
           <div ref={bottomRef} />
         </div>
       </div>
