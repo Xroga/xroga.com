@@ -16,7 +16,8 @@ import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions, isBuildRelated } from '@/lib/messageHelpers';
-import { INCOGNITO_AVATAR_URL } from '@/lib/incognito';
+import { getIncognitoAvatarUrl } from '@/lib/incognito';
+import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -85,7 +86,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  const avatarUrl = isIncognito ? INCOGNITO_AVATAR_URL : profile?.avatar_url;
+  const avatarUrl = isIncognito ? getIncognitoAvatarUrl() : profile?.avatar_url;
   const displayInitial = isIncognito ? '?' : (profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U');
 
   const lastAssistantIdx = useMemo(() => {
@@ -260,6 +261,9 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                 )}
               >
                 {msg.role === 'user' && (
+                  isIncognito ? (
+                    <IncognitoProfileBox size="terminal" />
+                  ) : (
                   <div className="w-7 h-7 rounded-full border border-[var(--card-border)] overflow-hidden shrink-0 flex items-center justify-center bg-[var(--accent)]/10 text-[10px] font-bold">
                     {avatarUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -268,6 +272,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                       displayInitial
                     )}
                   </div>
+                  )
                 )}
                 {msg.role === 'assistant' && (
                   <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">

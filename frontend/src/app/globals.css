@@ -2193,4 +2193,15 @@ body.theme-gray * {
     background: rgba(139, 92, 246, 0.08);
     border: 1px solid rgba(139, 92, 246, 0.2);
   }
+  .xv-incognito-profile-box {
+    border-radius: 10px;
+  }
+  body.xv-incognito-active .xv-incognito-fullscreen-bg {
+    left: 0;
+  }
+  @media (min-width: 1024px) {
+    body.xv-incognito-active .xv-incognito-fullscreen-bg {
+      left: var(--sidebar-width, 72px);
+    }
+  }
 }

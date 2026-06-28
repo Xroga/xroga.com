@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { EyeOff, X, MessageCircle } from 'lucide-react';
-import Image from 'next/image';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
-import { INCOGNITO_AVATAR_URL, INCOGNITO_GUIDANCE } from '@/lib/incognito';
+import { INCOGNITO_GUIDANCE } from '@/lib/incognito';
+import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -35,13 +35,11 @@ export function IncognitoModeButton() {
             <div className="fixed inset-0 z-[400] bg-black/60 backdrop-blur-sm" onClick={() => setInfoOpen(false)} aria-hidden />
             <div className="fixed z-[410] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(400px,calc(100vw-28px))] rounded-2xl border border-white/15 overflow-hidden shadow-2xl">
               <div className="relative p-5 bg-gradient-to-br from-[#0a0a0f] via-[#12101a] to-[#1a1025]">
-                <div className="absolute inset-0 opacity-20 bg-[url('/incognito/bridge-bg.png')] bg-cover bg-center" aria-hidden />
+                <div className="absolute inset-0 opacity-25 bg-[url('/incognito/bg.png')] bg-cover bg-center" aria-hidden />
                 <div className="relative">
                   <div className="flex items-start justify-between gap-2 mb-3">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-violet-500/40 shrink-0">
-                        <Image src={INCOGNITO_AVATAR_URL} alt="" width={40} height={40} unoptimized className="object-cover w-full h-full" />
-                      </div>
+                      <IncognitoProfileBox size="modal" className="!w-11 !h-11" />
                       <div>
                         <h3 className="font-bold text-white tracking-wide">Incognito</h3>
                         <p className="text-[10px] text-violet-300/80">Temporary private chat</p>

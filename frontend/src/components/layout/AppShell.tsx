@@ -15,6 +15,8 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { usePathname } from 'next/navigation';
 import { IncognitoModeButton } from '@/components/layout/IncognitoModeButton';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { INCOGNITO_BG_URL } from '@/lib/incognito';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 interface AppShellProps {
@@ -44,7 +46,14 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
         style={{ '--sidebar-width': `${widthPx}px` } as React.CSSProperties}
       >
         <Sidebar displayName={displayName} email={email} onTopUp={() => setTopUpOpen(true)} />
-        <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden" style={{ marginLeft: 0 }}>
+        <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden relative" style={{ marginLeft: 0 }}>
+          {incognito && isDashboard && (
+            <div className="xv-incognito-fullscreen-bg fixed inset-0 z-0 pointer-events-none" aria-hidden>
+              <Image src={INCOGNITO_BG_URL} alt="" fill unoptimized priority className="object-cover object-center" />
+              <div className="absolute inset-0 bg-black/55" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/75" />
+            </div>
+          )}
           <header
             className={cn(
               'sticky top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3 shrink-0',
@@ -69,10 +78,10 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
 
           <main
             className={cn(
-              'flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 lg:p-8',
+              'flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 lg:p-8 relative z-[1]',
               'pb-24 lg:pb-8',
               isDashboard && 'pb-[min(300px,calc(44vh+env(safe-area-inset-bottom)))] lg:pb-[200px]',
-              incognito && isDashboard && 'ring-2 ring-inset ring-violet-500/30 bg-violet-950/5'
+              incognito && isDashboard && 'ring-2 ring-inset ring-violet-500/20'
             )}
           >
             {children}
