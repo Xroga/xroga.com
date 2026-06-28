@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Sparkles } from 'lucide-react';
+import { WandSparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CHAT_MOODS, useMoodStore } from '@/store/useMoodStore';
+import { ChatBarTip } from '@/components/ui/ChatBarTip';
 
-export function ChatMoodButton({ className }: { className?: string }) {
+export function ChatMoodButton({ className, variant = 'toolbar' }: { className?: string; variant?: 'toolbar' | 'inline' }) {
   const [open, setOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
   const autoEnabled = useMoodStore((s) => s.autoEnabled);
@@ -14,6 +15,7 @@ export function ChatMoodButton({ className }: { className?: string }) {
   const setMood = useMoodStore((s) => s.setMood);
 
   const activeMood = CHAT_MOODS.find((m) => m.id === mood) ?? CHAT_MOODS[6];
+  const ActiveIcon = activeMood.icon;
 
   useEffect(() => {
     if (!open) return;
@@ -33,66 +35,71 @@ export function ChatMoodButton({ className }: { className?: string }) {
       {open && (
         <div
           id="xv-mood-popup"
-          className="absolute bottom-full left-0 mb-2 z-[80] w-[min(280px,calc(100vw-32px))] rounded-2xl border border-[var(--card-border)] bg-[var(--card)]/98 backdrop-blur-xl shadow-2xl p-3 animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="absolute bottom-full left-0 mb-2 z-[90] w-[min(300px,calc(100vw-24px))] rounded-2xl border border-[#006aff]/20 bg-gradient-to-br from-white via-sky-50/95 to-blue-50/90 dark:from-[#0f172a] dark:via-[#1e293b] dark:to-[#0f172a] shadow-[0_16px_48px_rgba(0,106,255,0.18)] p-3 animate-in fade-in slide-in-from-bottom-2 duration-200"
         >
-          <div className="flex items-center justify-between gap-2 mb-2.5">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">AI Mood</p>
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#006aff]">AI Mood</p>
             <button
               type="button"
               onClick={() => setAutoEnabled(!autoEnabled)}
               className={cn(
-                'text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors',
+                'text-[9px] font-bold px-2 py-0.5 rounded-full border transition-colors',
                 autoEnabled
-                  ? 'bg-[#006aff]/20 text-[#60a5fa]'
-                  : 'bg-white/5 text-[var(--muted)]'
+                  ? 'bg-[#006aff] text-white border-[#006aff]'
+                  : 'bg-transparent text-[var(--muted)] border-[var(--card-border)]'
               )}
             >
               Auto {autoEnabled ? 'ON' : 'OFF'}
             </button>
           </div>
-          <p className="text-[10px] text-[var(--muted)] mb-2 leading-snug">
-            Pick a mood — Xroga adapts tone to match you.
-          </p>
-          <div className="grid grid-cols-3 gap-1.5 max-h-[200px] overflow-y-auto">
-            {CHAT_MOODS.map((m) => (
-              <button
-                key={m.id}
-                type="button"
-                onClick={() => {
-                  setMood(m.id);
-                  setAutoEnabled(true);
-                }}
-                className={cn(
-                  'flex flex-col items-center gap-0.5 p-2 rounded-xl border text-center transition-all',
-                  mood === m.id
-                    ? 'border-[#006aff]/50 bg-[#006aff]/10'
-                    : 'border-transparent hover:bg-white/5'
-                )}
-              >
-                <span className="text-lg leading-none">{m.emoji}</span>
-                <span className="text-[9px] font-semibold">{m.label}</span>
-              </button>
-            ))}
+          <div className="grid grid-cols-4 gap-1 max-h-[220px] overflow-y-auto pr-0.5">
+            {CHAT_MOODS.map((m) => {
+              const Icon = m.icon;
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => {
+                    setMood(m.id);
+                    setAutoEnabled(true);
+                  }}
+                  className={cn(
+                    'flex flex-col items-center gap-0.5 p-1.5 rounded-xl border text-center transition-all',
+                    mood === m.id
+                      ? 'border-[#006aff]/50 bg-[#006aff]/10 text-[#006aff]'
+                      : 'border-transparent hover:bg-[#006aff]/5 text-[var(--foreground)]'
+                  )}
+                  title={m.desc}
+                >
+                  <Icon className="w-4 h-4 shrink-0" strokeWidth={2} />
+                  <span className="text-[8px] font-semibold leading-tight">{m.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
 
-      <button
-        ref={btnRef}
-        type="button"
-        onClick={() => setOpen(!open)}
-        className={cn(
-          'xv-chat-mood-btn flex items-center gap-1 px-2 py-1.5 rounded-lg text-[10px] font-bold transition-all',
-          autoEnabled
-            ? 'bg-gradient-to-r from-[#006aff]/25 to-[#60a5fa]/20 text-[#93c5fd] ring-1 ring-[#006aff]/30'
-            : 'bg-white/5 text-[var(--muted)] hover:bg-white/10'
-        )}
-        title="AI mood — auto adapts to your vibe"
-      >
-        <Sparkles className="w-3 h-3 shrink-0" />
-        <span>Auto</span>
-        {autoEnabled && <span className="text-xs leading-none">{activeMood.emoji}</span>}
-      </button>
+      <ChatBarTip label={autoEnabled ? `Auto · ${activeMood.label}` : 'AI mood'}>
+        <button
+          ref={btnRef}
+          type="button"
+          onClick={() => setOpen(!open)}
+          className={cn(
+            'xv-chat-mood-btn flex items-center gap-1 rounded-lg font-bold transition-all',
+            variant === 'toolbar'
+              ? 'px-2 py-1 text-[10px] h-7'
+              : 'px-2 py-1.5 text-[10px]',
+            autoEnabled
+              ? 'bg-gradient-to-r from-[#006aff] to-[#1e40af] text-white shadow-sm ring-1 ring-[#006aff]/40'
+              : 'bg-white/5 text-[var(--muted)] hover:bg-white/10 border border-[var(--card-border)]'
+          )}
+        >
+          <WandSparkles className="w-3 h-3 shrink-0" />
+          <span>Auto</span>
+          {autoEnabled && <ActiveIcon className="w-3 h-3 shrink-0 opacity-90" />}
+        </button>
+      </ChatBarTip>
     </div>
   );
 }

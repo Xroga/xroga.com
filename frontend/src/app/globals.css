@@ -1221,14 +1221,41 @@ body.theme-gray * {
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
   body.theme-white .xv-sidebar-profile-row {
-    background: rgba(15, 23, 42, 0.06);
-    border-color: rgba(0, 0, 0, 0.08);
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid rgba(0, 0, 0, 0.1);
   }
-  body.theme-white .xv-sidebar-profile-row p {
-    color: var(--foreground) !important;
+  .xv-sidebar-profile-name {
+    color: rgba(255, 255, 255, 0.92);
   }
-  body.theme-white .xv-sidebar-profile-row .text-white\/45 {
-    color: var(--muted) !important;
+  .xv-sidebar-profile-plan {
+    color: rgba(255, 255, 255, 0.45);
+  }
+  body.theme-white .xv-sidebar-profile-name {
+    color: #0f172a !important;
+  }
+  body.theme-white .xv-sidebar-profile-plan {
+    color: #64748b !important;
+  }
+  body.theme-white .xv-profile-quick-trigger {
+    color: #334155 !important;
+  }
+  body.theme-white .xv-profile-quick-trigger:hover {
+    color: #006aff !important;
+    background: rgba(0, 106, 255, 0.08);
+  }
+
+  /* Upload button — blue/black gradient all themes */
+  .xv-power-smash-upload__shell {
+    background: linear-gradient(145deg, #006aff 0%, #0f172a 100%) !important;
+    border-bottom-color: #0047b3 !important;
+    box-shadow: 0 6px 16px rgba(0, 106, 255, 0.45) !important;
+  }
+  body.theme-white .xv-power-smash-upload__shell {
+    background: linear-gradient(145deg, #006aff 0%, #1e293b 100%) !important;
+  }
+
+  body.xv-page-fullscreen-active .xv-terminal-dock {
+    display: none !important;
   }
 
   .xv-chat-mood-btn {

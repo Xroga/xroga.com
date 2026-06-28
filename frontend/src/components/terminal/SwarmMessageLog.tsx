@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useMemo } from 'react';
 import Image from 'next/image';
-import { Terminal, Palette, MessageCircleHeart } from 'lucide-react';
+import { Terminal, Palette, MessageCircleHeart, Search, X } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
@@ -67,7 +67,10 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
   const profile = useAppStore((s) => s.profile);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [terminalSearch, setTerminalSearch] = useState('');
+  const [searchHit, setSearchHit] = useState<string | null>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -90,9 +93,26 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
     return '';
   }, [messages]);
 
-  function handleEditUser(content: string) {
+  function handleEditAI(content: string) {
     setPrompt(content);
-    toast('Edit your message below and press GO', { icon: '✏️' });
+    toast('AI text loaded — edit and press GO');
+  }
+
+  function runTerminalSearch() {
+    const q = terminalSearch.trim().toLowerCase();
+    if (!q) {
+      setSearchHit(null);
+      return;
+    }
+    const hit = messages.find((m) => m.content.toLowerCase().includes(q));
+    if (hit) {
+      setSearchHit(hit.id);
+      messageRefs.current[hit.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      toast.success('Found in this terminal');
+    } else {
+      setSearchHit(null);
+      toast.error('Not found in this terminal — search is only for current chat');
+    }
   }
 
   function handleDeploy() {
@@ -131,6 +151,21 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
             <span className="hidden sm:inline opacity-70">{TERMINAL_SKIN_LABELS[terminalSkin]}</span>
           </button>
           <BrowserPanelToggle />
+          <div className="hidden sm:flex items-center gap-1 max-w-[140px] lg:max-w-[180px]">
+            <Search className="w-3 h-3 text-[var(--muted)] shrink-0" />
+            <input
+              value={terminalSearch}
+              onChange={(e) => setTerminalSearch(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && runTerminalSearch()}
+              placeholder="Search terminal…"
+              className="w-full min-w-0 text-[10px] bg-transparent border-none outline-none text-[var(--foreground)] placeholder:text-[var(--muted)]"
+            />
+            {terminalSearch && (
+              <button type="button" onClick={() => { setTerminalSearch(''); setSearchHit(null); }} className="p-0.5 text-[var(--muted)]">
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
           <button
             type="button"
             onClick={() => setFeedbackOpen(true)}
@@ -166,10 +201,12 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
             return (
               <div
                 key={msg.id}
+                ref={(el) => { messageRefs.current[msg.id] = el; }}
                 className={cn(
                   'group flex gap-2',
                   msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
-                  msg.role === 'system' && 'justify-center'
+                  msg.role === 'system' && 'justify-center',
+                  searchHit === msg.id && 'ring-1 ring-[#006aff]/40 rounded-lg'
                 )}
               >
                 {msg.role === 'user' && (
@@ -196,16 +233,11 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
                 >
                   {msg.role === 'user' ? (
                     <>
-                      <span className="inline-block px-3 py-1.5 rounded-lg bg-white/10 text-left">
+                      <span className="inline-block px-3 py-2 rounded-xl bg-gradient-to-br from-[#006aff]/15 to-slate-500/10 border border-[var(--card-border)]/50 text-left shadow-sm">
                         <span className="opacity-60 mr-2">&gt;</span>
                         {msg.content}
                       </span>
-                      <MessageBubbleActions
-                        role="user"
-                        content={msg.content}
-                        messageId={msg.id}
-                        onEdit={() => handleEditUser(msg.content)}
-                      />
+                      <MessageBubbleActions role="user" content={msg.content} messageId={msg.id} />
                     </>
                   ) : msg.role === 'system' ? (
                     <p className="py-0.5 text-xs xv-swarm-agent-line animate-in fade-in duration-300">{msg.content}</p>
@@ -224,6 +256,7 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
                           messageId={msg.id}
                           showDeploy={showDeploy}
                           onDeploy={handleDeploy}
+                          onEdit={() => handleEditAI(msg.content)}
                           onFeedback={() => setFeedbackOpen(true)}
                         />
                       )}

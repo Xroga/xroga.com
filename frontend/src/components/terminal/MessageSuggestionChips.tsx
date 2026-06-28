@@ -1,5 +1,6 @@
 'use client';
 
+import { Lightbulb } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { MessageSuggestions } from '@/lib/messageHelpers';
 
@@ -33,9 +34,10 @@ export function MessageSuggestionChips({ suggestions, onSelect, className }: Mes
             key={idea}
             type="button"
             onClick={() => onSelect(idea)}
-            className="px-2.5 py-1 rounded-full text-[10px] font-medium border border-[var(--card-border)] bg-white/5 text-[var(--foreground)]/80 hover:bg-white/10 transition-colors"
+            className="px-2.5 py-1 rounded-full text-[10px] font-medium border border-[var(--card-border)] bg-white/5 text-[var(--foreground)]/80 hover:bg-white/10 transition-colors inline-flex items-center gap-1"
           >
-            💡 {idea}
+            <Lightbulb className="w-3 h-3 text-[#006aff]" />
+            {idea}
           </button>
         ))}
       </div>

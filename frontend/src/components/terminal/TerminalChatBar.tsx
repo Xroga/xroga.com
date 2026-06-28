@@ -20,6 +20,8 @@ import {
 } from './ChatBarParts';
 import type { SendButtonState } from './ChatBarButtons';
 import { GitHubChipIcon, GitLabChipIcon, VercelChipIcon, TwitterChipIcon } from './ChatBarButtons';
+import { ChatMoodButton } from './ChatMoodButton';
+import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -139,35 +141,48 @@ export function TerminalChatBar() {
           <ChatBarDragOverlay active={dragOver} />
 
           <div className="xv-chatbar-toolbar flex items-center gap-1.5 px-3 py-2 flex-wrap">
-            <button
-              type="button"
-              onClick={() => setIntegrationsOpen(true)}
-              className="p-2 rounded-lg hover:bg-white/10 text-[var(--foreground)]"
-              title="Search integrations"
-            >
-              <Search className="w-4 h-4" />
-            </button>
-            <ChatBarToolChip
-              icon={<GitHubChipIcon />}
-              label="GitHub"
-              onClick={() => setGithubOpen(true)}
-              accent="#6e40c9"
-            />
-            {TOOL_CHIPS.map(({ name, icon: Icon, accent }) => (
-              <ChatBarToolChip
-                key={name}
-                icon={<Icon />}
-                label={name}
+            <ChatMoodButton variant="toolbar" />
+            <ChatBarTip label="Search integrations">
+              <button
+                type="button"
                 onClick={() => setIntegrationsOpen(true)}
-                accent={accent}
-              />
+                className="p-1.5 h-7 rounded-lg hover:bg-white/10 text-[var(--foreground)]"
+              >
+                <Search className="w-3.5 h-3.5" />
+              </button>
+            </ChatBarTip>
+            <ChatBarTip label="GitHub repos">
+              <span className="inline-flex">
+                <ChatBarToolChip
+                  icon={<GitHubChipIcon />}
+                  label="GitHub"
+                  onClick={() => setGithubOpen(true)}
+                  accent="#6e40c9"
+                />
+              </span>
+            </ChatBarTip>
+            {TOOL_CHIPS.map(({ name, icon: Icon, accent }) => (
+              <ChatBarTip key={name} label={name}>
+                <span className="inline-flex">
+                  <ChatBarToolChip
+                    icon={<Icon />}
+                    label={name}
+                    onClick={() => setIntegrationsOpen(true)}
+                    accent={accent}
+                  />
+                </span>
+              </ChatBarTip>
             ))}
-            <ChatBarToolChip
-              icon={<Play className="w-3 h-3 fill-current text-[var(--accent)]" />}
-              label="Deploy"
-              onClick={() => setDeployOpen(true)}
-              accent="#4a7aff"
-            />
+            <ChatBarTip label="Deploy project">
+              <span className="inline-flex">
+                <ChatBarToolChip
+                  icon={<Play className="w-3 h-3 fill-current text-[var(--accent)]" />}
+                  label="Deploy"
+                  onClick={() => setDeployOpen(true)}
+                  accent="#4a7aff"
+                />
+              </span>
+            </ChatBarTip>
             <div className="flex-1" />
             <ChatBarFuelMeter
               remaining={remaining}

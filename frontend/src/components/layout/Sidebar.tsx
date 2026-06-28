@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
+import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
 import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
@@ -110,6 +111,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
+  const profileRowRef = useRef<HTMLDivElement>(null);
   const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
   const { startNewChat } = useTerminalChat();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
@@ -215,8 +217,13 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
       {sidebarOpen && (
         <PalestineSupportBanner className="w-full justify-center" />
       )}
+      {!sidebarOpen && (
+        <div className="flex justify-center">
+          <PalestineSupportBanner compact />
+        </div>
+      )}
       {displayName && sidebarOpen && (
-        <div className="xv-sidebar-profile-row flex items-center gap-2.5 px-2.5 py-2 rounded-xl">
+        <div ref={profileRowRef} className="xv-sidebar-profile-row flex items-center gap-2.5 px-2.5 py-2 rounded-xl">
           <button
             type="button"
             onClick={() => setAvatarPickerOpen(true)}
@@ -232,24 +239,24 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
             )}
           </button>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-white/90 truncate leading-tight">{userName}</p>
-            <p className="text-xs text-white/45 truncate">{userPlan}</p>
+            <p className="text-sm font-medium xv-sidebar-profile-name truncate leading-tight">{userName}</p>
+            <p className="text-xs xv-sidebar-profile-plan truncate">{userPlan}</p>
           </div>
-          <ProfileQuickMenu onLogout={handleLogout} />
+          <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} />
         </div>
       )}
       {displayName && !sidebarOpen && (
-        <div className="flex flex-col items-center gap-1">
+        <div className="flex flex-col items-center gap-1 py-1">
           <button
             type="button"
             onClick={() => setAvatarPickerOpen(true)}
-            className="w-9 h-9 rounded-full overflow-hidden shrink-0"
+            className="w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-[var(--card-border)]"
           >
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
             ) : (
-              <span className="w-full h-full flex items-center justify-center text-xs font-bold bg-[var(--accent)]/20">
+              <span className="w-full h-full flex items-center justify-center text-[10px] font-bold bg-[var(--accent)]/20 text-[var(--foreground)]">
                 {nameInitial}
               </span>
             )}
@@ -294,16 +301,19 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           mobileOpen ? 'translate-x-0 z-[70]' : '-translate-x-full lg:translate-x-0'
         )}
       >
-        <div className="px-2 py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[48px]">
+        <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px]">
+          <HoverTip label="Xroga AI" description="Dashboard home" block className="shrink min-w-0">
+            <Logo href="/dashboard" height={sidebarOpen ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
+          </HoverTip>
           {sidebarOpen ? (
             <button
               type="button"
               onClick={handleNewChat}
-              className="xv-new-chat-btn flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-bold shrink-0"
+              className="xv-new-chat-btn flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold shrink-0"
               title="New Chat"
             >
-              <MessageCirclePlus className="w-4 h-4" />
-              New Chat
+              <MessageCirclePlus className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">New Chat</span>
             </button>
           ) : (
             <SidebarTip label="New Chat" description="Start a fresh workspace session.">

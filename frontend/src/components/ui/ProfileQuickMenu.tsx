@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronsUpDown, Users, MessageCircleHeart, Sparkles, LogOut } from 'lucide-react';
+import { WandSparkles, Users, MessageCircleHeart, Sparkles } from 'lucide-react';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
-import { cn } from '@/lib/utils';
+import { LogoutButton } from '@/components/ui/Uiverse';
 
 const ITEMS = [
   {
@@ -32,20 +32,27 @@ const ITEMS = [
 
 interface ProfileQuickMenuProps {
   onLogout?: () => void;
+  anchorRef?: React.RefObject<HTMLElement | null>;
 }
 
-export function ProfileQuickMenu({ onLogout }: ProfileQuickMenuProps) {
+export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps) {
   const [open, setOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [highlight, setHighlight] = useState(0);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
   const btnRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
 
   useEffect(() => {
     if (!open) return;
-    const id = setInterval(() => setHighlight((h) => (h + 1) % ITEMS.length), 2800);
-    return () => clearInterval(id);
-  }, [open]);
+    const el = anchorRef?.current ?? btnRef.current;
+    if (el) {
+      const r = el.getBoundingClientRect();
+      setPos({
+        top: Math.max(12, r.top - 8),
+        left: r.right + 10,
+      });
+    }
+  }, [open, anchorRef]);
 
   useEffect(() => {
     if (!open) return;
@@ -69,81 +76,59 @@ export function ProfileQuickMenu({ onLogout }: ProfileQuickMenuProps) {
     if (item.href) router.push(item.href);
   }
 
-  function handleLogout() {
-    setOpen(false);
-    onLogout?.();
-  }
-
   return (
     <>
       <button
         ref={btnRef}
         type="button"
         onClick={() => setOpen(!open)}
-        className="xv-profile-quick-trigger p-1 rounded-md text-white/40 hover:text-white/70 hover:bg-white/5 transition-colors shrink-0"
+        className="xv-profile-quick-trigger p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors shrink-0"
         aria-label="Quick links"
-        title="Community, Feedback, About"
+        title="Quick links"
       >
-        <ChevronsUpDown className="w-4 h-4" />
+        <WandSparkles className="w-4 h-4" />
       </button>
 
       {open && (
-        <div
-          id="xv-profile-quick-menu"
-          className="fixed z-[300] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(300px,calc(100vw-32px))] animate-in fade-in zoom-in-95 duration-200"
-        >
-          <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)]/98 backdrop-blur-xl shadow-2xl overflow-hidden">
-            <p className="text-[9px] uppercase tracking-widest text-[var(--muted)] px-4 pt-3 pb-1 font-semibold">
-              Quick links
-            </p>
-            <ul className="p-2 space-y-0.5">
-              {ITEMS.map((item, i) => {
-                const Icon = item.icon;
-                const active = i === highlight;
-                return (
-                  <li key={item.key}>
-                    <button
-                      type="button"
-                      onClick={() => handleItem(item)}
-                      className={cn(
-                        'w-full flex items-start gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all',
-                        active
-                          ? 'bg-[var(--accent)]/15 ring-1 ring-[var(--accent)]/30'
-                          : 'hover:bg-white/5'
-                      )}
-                    >
-                      <Icon className={cn('w-4 h-4 shrink-0 mt-0.5', active ? 'text-[var(--accent)]' : 'text-[var(--muted)]')} />
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold">{item.label}</p>
-                        <p className="text-[11px] text-[var(--muted)]">{item.desc}</p>
-                      </div>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-            {onLogout && (
-              <div className="p-2 pt-0 border-t border-[var(--card-border)]/50">
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="xv-sidebar-logout-menu w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-red-400 hover:bg-red-500/10 transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </button>
-              </div>
-            )}
+        <>
+          <div className="fixed inset-0 z-[298]" onClick={() => setOpen(false)} aria-hidden />
+          <div
+            id="xv-profile-quick-menu"
+            className="fixed z-[300] w-[min(260px,calc(100vw-100px))] animate-in fade-in slide-in-from-left-2 duration-200"
+            style={{ top: pos.top, left: Math.min(pos.left, window.innerWidth - 280) }}
+          >
+            <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)]/98 backdrop-blur-xl shadow-2xl overflow-hidden">
+              <p className="text-[9px] uppercase tracking-widest text-[var(--muted)] px-3 pt-2.5 pb-1 font-semibold">
+                Quick links
+              </p>
+              <ul className="p-1.5 space-y-0.5">
+                {ITEMS.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <li key={item.key}>
+                      <button
+                        type="button"
+                        onClick={() => handleItem(item)}
+                        className="w-full flex items-start gap-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-[var(--accent)]/10 transition-all"
+                      >
+                        <Icon className="w-4 h-4 shrink-0 mt-0.5 text-[var(--accent)]" />
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold">{item.label}</p>
+                          <p className="text-[10px] text-[var(--muted)]">{item.desc}</p>
+                        </div>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+              {onLogout && (
+                <div className="p-2 border-t border-[var(--card-border)]/50 flex justify-center">
+                  <LogoutButton onClick={() => { setOpen(false); onLogout(); }} />
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
-
-      {open && (
-        <div
-          className="fixed inset-0 z-[299] bg-black/40 backdrop-blur-[2px]"
-          onClick={() => setOpen(false)}
-          aria-hidden
-        />
+        </>
       )}
 
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
