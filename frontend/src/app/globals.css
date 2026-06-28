@@ -2169,4 +2169,28 @@ body.theme-gray * {
       font-size: 0.85em;
     }
   }
+
+  /* Incognito temporary dashboard */
+  .xv-incognito-title {
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.08);
+    font-family: var(--font-sans, system-ui), sans-serif;
+  }
+  .xv-incognito-intro {
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+  .xv-incognito-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+  }
+  body.xv-incognito-active .xv-terminal-dock .xv-chatbar-incognito {
+    background: rgba(10, 8, 18, 0.88) !important;
+    border-color: rgba(139, 92, 246, 0.35) !important;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(139, 92, 246, 0.1);
+  }
+  body.xv-incognito-active .xv-sidebar-profile-row {
+    background: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+  }
 }

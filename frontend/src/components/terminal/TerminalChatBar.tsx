@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Search, Play, Globe, Layers } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useAppStore } from '@/store/useAppStore';
+import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { estimateActionCost } from '@/lib/actionCosts';
 import { IntegrationsModal } from './IntegrationsModal';
 import { GithubRepoModal } from './GithubRepoModal';
@@ -55,6 +56,7 @@ export function TerminalChatBar() {
     clearQueue,
   } = useTerminalChat();
   const actions = useAppStore((s) => s.actions);
+  const incognito = usePrivacyStore((s) => s.incognito);
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
@@ -157,21 +159,28 @@ export function TerminalChatBar() {
       <div className="relative">
         <ChatbarShell
           ref={shellRef}
-          className={cn('relative', (dragOver || uploading) && 'ring-2 ring-[var(--accent)]/40')}
+          className={cn(
+            'relative',
+            incognito && 'xv-chatbar-incognito border-violet-500/25',
+            (dragOver || uploading) && !incognito && 'ring-2 ring-[var(--accent)]/40'
+          )}
           onDragOver={(e: React.DragEvent) => {
+            if (incognito) return;
             e.preventDefault();
             setDragOver(true);
           }}
-          onDragLeave={() => setDragOver(false)}
+          onDragLeave={() => !incognito && setDragOver(false)}
           onDrop={(e: React.DragEvent) => {
+            if (incognito) return;
             e.preventDefault();
             setDragOver(false);
             addFiles(e.dataTransfer.files);
           }}
         >
-          <ChatBarDragOverlay active={dragOver} />
+          <ChatBarDragOverlay active={!incognito && dragOver} />
 
-          <RepoContextBar />
+          {!incognito && <RepoContextBar />}
+          {!incognito && (
           <ChatPromptQueue
             queue={promptQueue}
             onSendNow={sendQueuedNow}
@@ -179,7 +188,9 @@ export function TerminalChatBar() {
             onRemove={removeFromQueue}
             onClear={clearQueue}
           />
+          )}
 
+          {!incognito && (
           <div className="xv-chatbar-toolbar flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 overflow-x-auto scrollbar-hide flex-nowrap">
             <BlackHoleVButton />
             <ChatBarTip label="Tools & integrations" className="shrink-0 sm:hidden">
@@ -242,8 +253,17 @@ export function TerminalChatBar() {
               onClick={() => setCostOpen(true)}
             />
           </div>
+          )}
 
-          {showDomain && (
+          {incognito && (
+            <div className="px-3 py-1.5 border-b border-violet-500/15">
+              <p className="text-[10px] text-violet-300/70 text-center">
+                Temporary chat · text only · auto-deletes on exit
+              </p>
+            </div>
+          )}
+
+          {!incognito && showDomain && (
             <div className="flex items-center gap-2 px-3 py-2 border-b border-[var(--card-border)]/30">
               <Globe className="w-3.5 h-3.5 text-[var(--muted)] shrink-0" />
               <input
@@ -262,6 +282,7 @@ export function TerminalChatBar() {
             </div>
           )}
 
+          {!incognito && (
           <ChatBarFileGrid
             files={files}
             onRemove={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))}
@@ -269,12 +290,14 @@ export function TerminalChatBar() {
               setFiles((prev) => prev.map((f, j) => (j === i ? renameFile(f, name) : f)))
             }
           />
+          )}
 
           <form onSubmit={handleSubmit} className="px-2 sm:px-3 py-2 sm:py-3">
             <ChatBarInputRow
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
               listening={listening}
+              hideUpload={incognito}
               onMicToggle={() => {
                 if (!speech.supported) {
                   toast.error('Voice input not supported in this browser');
@@ -307,7 +330,7 @@ export function TerminalChatBar() {
                     void handleSubmit(e);
                   }
                 }}
-                placeholder="Ask Xroga AI to do everything..."
+                placeholder={incognito ? 'Temporary message — chat only, no builds…' : 'Ask Xroga AI to do everything...'}
                 rows={1}
                 className={cn(
                   'w-full pl-7 pr-2 py-2.5 rounded-xl resize-none max-h-[286px]',
@@ -317,7 +340,7 @@ export function TerminalChatBar() {
                 )}
               />
             </ChatBarInputRow>
-            <input ref={fileRef} type="file" multiple className="hidden" onChange={(e) => addFiles(e.target.files)} />
+            <input ref={fileRef} type="file" multiple className="hidden" onChange={(e) => addFiles(e.target.files)} disabled={incognito} />
           </form>
         </ChatbarShell>
       </div>

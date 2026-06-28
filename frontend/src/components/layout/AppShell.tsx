@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { MobileNav } from './MobileNav';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
@@ -31,6 +31,11 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   const isDashboard = pathname === '/dashboard';
   const incognito = usePrivacyStore((s) => s.incognito);
   const widthPx = sidebarOpen ? sidebarWidth : 72;
+
+  useEffect(() => {
+    document.body.classList.toggle('xv-incognito-active', incognito && isDashboard);
+    return () => document.body.classList.remove('xv-incognito-active');
+  }, [incognito, isDashboard]);
 
   return (
     <TerminalChatProvider>
@@ -67,7 +72,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
               'flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 lg:p-8',
               'pb-24 lg:pb-8',
               isDashboard && 'pb-[min(300px,calc(44vh+env(safe-area-inset-bottom)))] lg:pb-[200px]',
-              incognito && isDashboard && 'ring-2 ring-inset ring-violet-500/20'
+              incognito && isDashboard && 'ring-2 ring-inset ring-violet-500/30 bg-violet-950/5'
             )}
           >
             {children}
