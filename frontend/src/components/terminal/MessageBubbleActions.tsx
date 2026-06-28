@@ -48,7 +48,7 @@ export function MessageBubbleActions({
 
   function handleLike(v: 'up' | 'down') {
     setReaction(v);
-    toast.success(v === 'up' ? 'Thanks for the love!' : 'Noted — we will improve');
+    toast.success(v === 'up' ? 'Thanks!' : 'Noted — we will improve');
   }
 
   const btnClass =
@@ -63,45 +63,27 @@ export function MessageBubbleActions({
     >
       {role === 'assistant' && (
         <>
-          <button
-            type="button"
-            onClick={() => handleLike('up')}
-            className={cn(btnClass, reaction === 'up' && 'text-emerald-400 bg-emerald-500/10')}
-            aria-label="Like"
-            title="Like"
-          >
+          <button type="button" onClick={() => handleLike('up')} className={cn(btnClass, reaction === 'up' && 'text-emerald-400 bg-emerald-500/10')} aria-label="Like">
             <ThumbsUp className="w-3.5 h-3.5" />
           </button>
-          <button
-            type="button"
-            onClick={() => handleLike('down')}
-            className={cn(btnClass, reaction === 'down' && 'text-red-400 bg-red-500/10')}
-            aria-label="Dislike"
-            title="Dislike"
-          >
+          <button type="button" onClick={() => handleLike('down')} className={cn(btnClass, reaction === 'down' && 'text-red-400 bg-red-500/10')} aria-label="Dislike">
             <ThumbsDown className="w-3.5 h-3.5" />
           </button>
-          <button type="button" onClick={handleCopy} className={btnClass} aria-label="Copy" title="Copy">
+          <button type="button" onClick={handleCopy} className={btnClass} aria-label="Copy">
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
+          {onEdit && (
+            <button type="button" onClick={onEdit} className={btnClass} aria-label="Edit in chatbar">
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+          )}
           {onFeedback && (
-            <button
-              type="button"
-              onClick={onFeedback}
-              className={btnClass}
-              aria-label="Feedback"
-              title="Send feedback"
-            >
+            <button type="button" onClick={onFeedback} className={btnClass} aria-label="Feedback">
               <MessageCircleHeart className="w-3.5 h-3.5" />
             </button>
           )}
           {showDeploy && onDeploy && (
-            <button
-              type="button"
-              onClick={onDeploy}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-gradient-to-r from-[#006aff] to-[#60a5fa] text-white hover:opacity-90 transition-opacity"
-              title="Deploy"
-            >
+            <button type="button" onClick={onDeploy} className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-gradient-to-r from-[#006aff] to-[#60a5fa] text-white">
               <Rocket className="w-3 h-3" />
               Deploy
             </button>
@@ -109,16 +91,9 @@ export function MessageBubbleActions({
         </>
       )}
       {role === 'user' && (
-        <>
-          {onEdit && (
-            <button type="button" onClick={onEdit} className={btnClass} aria-label="Edit" title="Edit & resend">
-              <Pencil className="w-3.5 h-3.5" />
-            </button>
-          )}
-          <button type="button" onClick={handleCopy} className={btnClass} aria-label="Copy" title="Copy">
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-          </button>
-        </>
+        <button type="button" onClick={handleCopy} className={btnClass} aria-label="Copy">
+          {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+        </button>
       )}
       <span className="sr-only" data-message-id={messageId} />
     </div>

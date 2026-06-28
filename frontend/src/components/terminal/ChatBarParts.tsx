@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import { X, FileText, Image as ImageIcon, Film, Mic } from 'lucide-react';
 import { ChatBarSendButton, ChatBarUploadButton, VoiceWaveform, type SendButtonState, type ChatbarSurface } from './ChatBarButtons';
-import { ChatMoodButton } from './ChatMoodButton';
 import { cn } from '@/lib/utils';
 
 const FILE_ROWS = 2;
@@ -133,7 +132,6 @@ export function ChatBarInputRow({
 }) {
   return (
     <div className={cn('relative flex items-end gap-1.5', surface === 'homepage' && 'xv-chatbar-row--home')}>
-      <ChatMoodButton />
       <ChatBarUploadButton onClick={onUploadClick} active={uploading} surface={surface} />
       <div className="flex-1 min-w-0 relative">{children}</div>
       <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || stopping} surface={surface} />
