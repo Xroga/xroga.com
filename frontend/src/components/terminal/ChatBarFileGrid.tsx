@@ -40,6 +40,34 @@ function formatSize(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function NaturalImageThumb({ url, alt }: { url: string; alt: string }) {
+  const [dims, setDims] = useState<{ w: number; h: number } | null>(null);
+  const maxSide = 72;
+
+  useEffect(() => {
+    const img = new window.Image();
+    img.onload = () => {
+      const { naturalWidth: nw, naturalHeight: nh } = img;
+      if (!nw || !nh) return;
+      const scale = Math.min(maxSide / nw, maxSide / nh, 1);
+      setDims({ w: Math.round(nw * scale), h: Math.round(nh * scale) });
+    };
+    img.src = url;
+  }, [url]);
+
+  const style = dims ? { width: dims.w, height: dims.h } : { width: maxSide, height: maxSide };
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={url}
+      alt={alt}
+      style={style}
+      className="object-contain rounded max-w-full"
+    />
+  );
+}
+
 function FilePreviewModal({
   file,
   url,
@@ -188,7 +216,7 @@ export function ChatBarFileGrid({
 
   return (
     <div className="px-2 sm:px-3 py-2">
-      <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+      <div className="grid grid-cols-4 gap-1.5 sm:gap-2 items-end">
         {visibleFiles.map((f) => {
           const i = files.indexOf(f);
           const kind = fileKind(f.type, f.name);
@@ -204,11 +232,13 @@ export function ChatBarFileGrid({
               tabIndex={0}
               onClick={() => setPreviewIdx(i)}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setPreviewIdx(i); }}
-              className="group relative aspect-square rounded-lg overflow-hidden bg-black/15 xv-file-tile cursor-pointer"
+              className={cn(
+                'group relative rounded-lg overflow-hidden bg-black/15 xv-file-tile cursor-pointer',
+                isImage ? 'flex items-center justify-center p-1 min-h-[48px]' : 'aspect-square'
+              )}
             >
               {url && isImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={url} alt="" className="w-full h-full object-cover" />
+                <NaturalImageThumb url={url} alt={f.name} />
               ) : isVideo ? (
                 <div className="w-full h-full flex items-center justify-center bg-black/25">
                   <Film className="w-6 h-6 text-[var(--muted)]" />

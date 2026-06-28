@@ -117,6 +117,7 @@ export function ChatBarInputRow({
   stopping,
   onStop,
   surface = 'dashboard',
+  hideUpload = false,
   children,
 }: {
   uploading: boolean;
@@ -128,11 +129,12 @@ export function ChatBarInputRow({
   stopping?: boolean;
   onStop?: () => void;
   surface?: ChatbarSurface;
+  hideUpload?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <div className={cn('relative flex items-end gap-1.5', surface === 'homepage' && 'xv-chatbar-row--home')}>
-      <ChatBarUploadButton onClick={onUploadClick} active={uploading} surface={surface} />
+      {!hideUpload && <ChatBarUploadButton onClick={onUploadClick} active={uploading} surface={surface} />}
       <div className="flex-1 min-w-0 relative">{children}</div>
       <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || stopping} surface={surface} />
       <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} />

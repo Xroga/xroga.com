@@ -16,6 +16,8 @@ import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions, isBuildRelated } from '@/lib/messageHelpers';
+import { INCOGNITO_AVATAR_URL } from '@/lib/incognito';
+import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -59,9 +61,10 @@ const AGENT_STYLES: Record<string, string> = {
 
 interface SwarmMessageLogProps {
   compact?: boolean;
+  incognito?: boolean;
 }
 
-export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
+export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
   const { messages, loading, animatingId, swarmActiveAgent, outOfActionsOpen, setOutOfActionsOpen, setPrompt } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
@@ -69,6 +72,8 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
   const browserOpen = useThemeStore((s) => s.browserPanelOpen);
   const setBrowserOpen = useThemeStore((s) => s.setBrowserPanelOpen);
   const profile = useAppStore((s) => s.profile);
+  const storeIncognito = usePrivacyStore((s) => s.incognito);
+  const isIncognito = incognito || storeIncognito;
   const bottomRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -80,8 +85,8 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  const avatarUrl = profile?.avatar_url;
-  const displayInitial = profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U';
+  const avatarUrl = isIncognito ? INCOGNITO_AVATAR_URL : profile?.avatar_url;
+  const displayInitial = isIncognito ? '?' : (profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U');
 
   const lastAssistantIdx = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
@@ -134,17 +139,23 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
       <div
         className={cn(
           'rounded-xl relative overflow-hidden border',
-          `terminal-skin-${terminalSkin}`,
-          terminalSkin === 'dark' || terminalSkin === 'amoled' ? 'scanlines' : '',
+          isIncognito ? 'terminal-skin-dark border-white/10 bg-black/40 backdrop-blur-md' : `terminal-skin-${terminalSkin}`,
+          !isIncognito && (terminalSkin === 'dark' || terminalSkin === 'amoled') ? 'scanlines' : '',
           compact ? '' : 'w-full'
         )}
       >
         <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 border-b border-[var(--card-border)]/30 overflow-x-auto scrollbar-hide">
           <Terminal className="w-4 h-4 opacity-70 shrink-0 hidden sm:block" />
           <div className="flex-1 min-w-0">
-            <h3 className="font-terminal text-xs sm:text-sm opacity-90 truncate">xroga@swarm ~ terminal</h3>
-            <ModelBadge variant="inline" className="text-[8px] sm:text-[9px] opacity-90" />
+            <h3 className="font-terminal text-xs sm:text-sm opacity-90 truncate">
+              {isIncognito ? 'guest@incognito ~ temporary' : 'xroga@swarm ~ terminal'}
+            </h3>
+            {!isIncognito && <ModelBadge variant="inline" className="text-[8px] sm:text-[9px] opacity-90" />}
+            {isIncognito && (
+              <p className="text-[8px] sm:text-[9px] text-violet-300/80 font-medium">Private · not saved</p>
+            )}
           </div>
+          {!isIncognito && (
           <div className="hidden sm:flex items-center gap-1 shrink-0">
             <button
               type="button"
@@ -181,6 +192,8 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
               <MessageCircleHeart className="w-4 h-4" />
             </button>
           </div>
+          )}
+          {!isIncognito && (
           <div className="relative sm:hidden shrink-0">
             <button
               type="button"
@@ -207,12 +220,16 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
               </>
             )}
           </div>
+          )}
         </div>
 
         <div className="px-4 py-3 space-y-3 font-terminal text-[13px]">
           {messages.length === 0 && !loading && (
             <p className="text-[var(--muted)] text-center py-6">
-              <span className="opacity-70">&gt;</span> Ask Xroga to build anything…
+              <span className="opacity-70">&gt;</span>{' '}
+              {isIncognito
+                ? 'Start a temporary chat — questions & conversation only…'
+                : 'Ask Xroga to build anything…'}
             </p>
           )}
 
@@ -224,11 +241,12 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
             const isLastAssistant = idx === lastAssistantIdx && !loading;
             const showSuggestions = isLastAssistant && msg.role === 'assistant';
             const showDeploy =
+              !isIncognito &&
               msg.role === 'assistant' &&
               !loading &&
               (isBuildRelated(msg.content) || isBuildRelated(lastUserText));
             const suggestions =
-              showSuggestions ? generateMessageSuggestions(lastUserText, msg.content) : null;
+              !isIncognito && showSuggestions ? generateMessageSuggestions(lastUserText, msg.content) : null;
 
             return (
               <div

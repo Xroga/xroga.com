@@ -39,6 +39,8 @@ import { UpgradeProButton } from '@/components/ui/Uiverse';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 import { useTerminalChat } from '@/context/TerminalChatContext';
+import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { INCOGNITO_AVATAR_URL } from '@/lib/incognito';
 import { GALACTIC_PLANS } from '@/lib/plans';
 
 const navItems = [
@@ -124,11 +126,12 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const actions = useAppStore((s) => s.actions);
   const profile = useAppStore((s) => s.profile);
   const setProfile = useAppStore((s) => s.setProfile);
+  const incognito = usePrivacyStore((s) => s.incognito);
   const isFreeTrial = !actions?.planTier || actions.planTier === 'unpaid';
-  const avatarUrl = profile?.avatar_url;
+  const avatarUrl = incognito ? INCOGNITO_AVATAR_URL : profile?.avatar_url;
   const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
-  const userName = profile?.display_name ?? displayName ?? 'User';
-  const userPlan = planLabel(actions?.planTier);
+  const userName = incognito ? 'Incognito' : (profile?.display_name ?? displayName ?? 'User');
+  const userPlan = incognito ? 'Temporary session' : planLabel(actions?.planTier);
 
   useEffect(() => {
     api.profile
@@ -228,8 +231,12 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         <div ref={profileRowRef} className="xv-sidebar-profile-row flex items-center gap-2.5 px-2.5 py-2 rounded-xl">
           <button
             type="button"
-            onClick={() => setAvatarPickerOpen(true)}
-            className="w-9 h-9 rounded-full overflow-hidden shrink-0 ring-1 ring-white/10"
+            onClick={() => !incognito && setAvatarPickerOpen(true)}
+            className={cn(
+              'w-9 h-9 rounded-full overflow-hidden shrink-0 ring-1 ring-white/10',
+              incognito && 'ring-violet-500/40 cursor-default'
+            )}
+            title={incognito ? 'Incognito session avatar' : 'Change avatar'}
           >
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -251,8 +258,12 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         <div className="flex flex-col items-center gap-1 py-1">
           <button
             type="button"
-            onClick={() => setAvatarPickerOpen(true)}
-            className="w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-[var(--card-border)]"
+            onClick={() => !incognito && setAvatarPickerOpen(true)}
+            className={cn(
+              'w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-[var(--card-border)]',
+              incognito && 'ring-violet-500/40 cursor-default'
+            )}
+            title={incognito ? 'Incognito session avatar' : 'Change avatar'}
           >
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element

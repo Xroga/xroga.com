@@ -5,8 +5,10 @@ import { QuickActionTabs } from '@/components/terminal/QuickActionTabs';
 import { BrowserPanel } from '@/components/terminal/BrowserPanel';
 import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
 import { DashboardWelcome } from '@/components/dashboard/DashboardWelcome';
+import { IncognitoDashboard } from '@/components/dashboard/IncognitoDashboard';
 import { useAppStore } from '@/store/useAppStore';
 import { useThemeStore } from '@/store/useThemeStore';
+import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useEffect } from 'react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -21,6 +23,7 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   const setFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const browserOpen = useThemeStore((s) => s.browserPanelOpen);
   const browserFullscreen = useThemeStore((s) => s.browserFullscreen);
+  const incognito = usePrivacyStore((s) => s.incognito);
   const setProfile = useAppStore((s) => s.setProfile);
 
   useEffect(() => {
@@ -79,6 +82,14 @@ export function DashboardView({ displayName }: DashboardViewProps) {
       )}
     </div>
   );
+
+  if (incognito) {
+    return (
+      <div className="max-w-4xl mx-auto min-w-0">
+        <IncognitoDashboard />
+      </div>
+    );
+  }
 
   if (fullscreen) {
     return (
