@@ -80,7 +80,7 @@ body.theme-black {
   --background: #000000;
   --foreground: #ffffff;
   --card: rgba(0, 0, 0, 0.85);
-  --card-border: rgba(255, 255, 255, 0.14);
+  --card-border: rgba(163, 163, 163, 0.28);
   --muted: #a3a3a3;
   --primary: #ffffff;
   --accent: #ffffff;
@@ -88,7 +88,7 @@ body.theme-black {
 
 body.theme-black .glass-panel-strong {
   background: rgba(0, 0, 0, 0.92);
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(163, 163, 163, 0.22);
 }
 
 body.theme-gray {
@@ -468,7 +468,7 @@ body.theme-gray * {
   .terminal-skin-amoled,
   .terminal-skin-dark {
     background: #000000 !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(163, 163, 163, 0.28) !important;
     color: #ffffff !important;
     --foreground: #fff;
     --muted: #a3a3a3;
@@ -477,7 +477,7 @@ body.theme-gray * {
 
   .terminal-skin-gray {
     background: #2a2a2a !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(0, 0, 0, 0.35) !important;
     color: #ffffff !important;
     --foreground: #fff;
     --muted: #a3a3a3;
@@ -578,23 +578,79 @@ body.theme-gray * {
     background: transparent !important;
   }
 
-  /* Homepage chatbar — full white, black text, blue border */
-  .xv-home-chatbox {
-    background: #ffffff;
-    border: 2px solid rgba(0, 106, 255, 0.35);
-    box-shadow: 0 16px 56px rgba(0, 106, 255, 0.15), 0 8px 24px rgba(0, 0, 0, 0.12);
+  /* Homepage chatbar — transparent shell, responsive text */
+  .xv-home-chatbox,
+  .xv-homepage .xv-home-chatbar-shell {
+    background: rgba(0, 0, 0, 0.12) !important;
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 106, 255, 0.35) !important;
+    box-shadow: 0 12px 40px rgba(0, 106, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.08);
   }
-  .xv-home-chatbar-inner .xv-mic-btn--home {
-    background: rgba(0, 0, 0, 0.06);
-    border: none;
-    color: #0f172a;
+  @media (min-width: 640px) {
+    .xv-homepage .xv-home-chatbar-input,
+    .xv-homepage .xv-home-chatbar-inner textarea {
+      color: #0f172a !important;
+    }
+    .xv-homepage .xv-home-chatbar-input::placeholder,
+    .xv-homepage .xv-home-chatbar-inner textarea::placeholder {
+      color: rgba(15, 23, 42, 0.5) !important;
+    }
+    .xv-homepage .xv-home-chatbar-inner .xv-mic-btn--home {
+      background: rgba(0, 0, 0, 0.06);
+      color: #0f172a !important;
+    }
+    .xv-homepage .xv-home-chatbar-inner .xv-power-smash-upload__shell {
+      background: linear-gradient(145deg, #e2e8f0 0%, #93c5fd 45%, #ffffff 100%);
+      border-bottom-color: #64748b;
+    }
+    .xv-homepage .xv-home-chatbar-inner .xv-power-smash-upload__shell svg {
+      color: #006aff;
+    }
+    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home {
+      background: linear-gradient(135deg, #e2e8f0, #60a5fa, #ffffff);
+      border-color: rgba(0, 106, 255, 0.3);
+    }
+    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home .xv-go-btn__text {
+      color: #006aff;
+    }
+    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home .xv-go-btn__icon {
+      background: linear-gradient(to bottom, #60a5fa, #006aff);
+      color: white;
+    }
   }
-  .xv-home-chatbar-inner .xv-go-btn--home {
-    border-color: rgba(0, 106, 255, 0.25);
-    background: linear-gradient(135deg, #006aff, #0047b3);
-  }
-  .xv-home-chatbar-inner .xv-go-btn--home .xv-go-btn__icon {
-    background: linear-gradient(to bottom, #60a5fa, #006aff);
+  @media (max-width: 639px) {
+    .xv-homepage .xv-home-chatbar-input,
+    .xv-homepage .xv-home-chatbar-inner textarea,
+    .xv-homepage .xv-home-chatbar-inner button {
+      color: #ffffff !important;
+    }
+    .xv-homepage .xv-home-chatbar-input::placeholder,
+    .xv-homepage .xv-home-chatbar-inner textarea::placeholder {
+      color: rgba(255, 255, 255, 0.55) !important;
+    }
+    .xv-homepage .xv-home-chatbar-inner .xv-mic-btn--home {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff !important;
+    }
+    .xv-homepage .xv-home-chatbar-inner .xv-power-smash-upload__shell {
+      background: linear-gradient(145deg, #ffffff 0%, #e2e8f0 50%, #0f172a 100%);
+      border-bottom-color: #334155;
+    }
+    .xv-homepage .xv-home-chatbar-inner .xv-power-smash-upload__shell svg {
+      color: #fff;
+    }
+    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home {
+      background: linear-gradient(135deg, #ffffff, #94a3b8, #0f172a);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home .xv-go-btn__text {
+      color: #fff;
+    }
+    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home .xv-go-btn__icon {
+      background: linear-gradient(to bottom, #f8fafc, #64748b);
+      color: #0f172a;
+    }
   }
 
   /* Hero — silver & blue modern typography */
@@ -638,15 +694,16 @@ body.theme-gray * {
     font-family: Georgia, 'Times New Roman', serif;
   }
   .xv-hero-sub-card {
-    background: linear-gradient(135deg, rgba(224, 242, 254, 0.92) 0%, rgba(248, 250, 252, 0.88) 50%, rgba(191, 219, 254, 0.85) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 12px 40px rgba(0, 106, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(12px);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.45) 0%, rgba(0, 106, 255, 0.12) 45%, rgba(148, 163, 184, 0.18) 100%);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 106, 255, 0.08);
+    backdrop-filter: blur(10px);
   }
   .xv-hero-model-pill {
-    background: rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(16px);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(0, 106, 255, 0.15) 50%, rgba(148, 163, 184, 0.2) 100%);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    backdrop-filter: blur(12px);
+    padding: 0.5rem 1.25rem;
   }
 
   /* Dotted Sign In button */
@@ -864,6 +921,64 @@ body.theme-gray * {
 
   .xv-about-pill {
     margin: 0 4px 4px;
+  }
+
+  .xv-about-pill-modern {
+    margin: 0.25rem 0.5rem 0.5rem;
+    background: linear-gradient(135deg, rgba(74, 122, 255, 0.12), rgba(148, 163, 184, 0.08));
+    border: 1px solid var(--card-border);
+    color: var(--accent);
+  }
+  .xv-about-pill-modern:hover {
+    background: linear-gradient(135deg, rgba(74, 122, 255, 0.22), rgba(148, 163, 184, 0.14));
+    transform: translateY(-1px);
+  }
+  body.theme-black .xv-about-pill-modern,
+  body.theme-gray .xv-about-pill-modern {
+    border-color: var(--card-border);
+    outline: none;
+    box-shadow: none;
+  }
+
+  .xv-new-chat-btn {
+    background: linear-gradient(135deg, rgba(74, 122, 255, 0.18), rgba(0, 106, 255, 0.08));
+    border: 1px solid var(--card-border);
+    color: var(--accent);
+  }
+  .xv-new-chat-btn:hover {
+    background: linear-gradient(135deg, rgba(74, 122, 255, 0.28), rgba(0, 106, 255, 0.15));
+  }
+
+  .xv-palestine-btn {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(0, 0, 0, 0.2));
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: var(--foreground);
+  }
+  .xv-palestine-btn:hover {
+    border-color: rgba(16, 185, 129, 0.45);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(0, 0, 0, 0.25));
+  }
+
+  .xv-action-meter {
+    border: 1px solid var(--card-border);
+  }
+  body.theme-black .xv-action-meter {
+    border-color: rgba(163, 163, 163, 0.22);
+  }
+  body.theme-gray .xv-action-meter {
+    border-color: rgba(0, 0, 0, 0.3);
+  }
+
+  .xv-chatbar-toolbar {
+    border-bottom: none !important;
+  }
+
+  @keyframes xv-cloud-upload-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  .xv-cloud-upload-bounce {
+    animation: xv-cloud-upload-bounce 0.6s ease-in-out infinite;
   }
 
   .xv-fuel-compact {
@@ -1131,25 +1246,14 @@ body.theme-gray * {
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
   }
 
-  /* Homepage chatbar matches dashboard shell on hero */
-  .xv-homepage .xv-home-chatbar-shell {
-    border-color: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(16px);
-    background: rgba(0, 0, 0, 0.35);
-  }
+  /* Homepage chatbar legacy overrides — keep toolbar borderless */
   .xv-homepage .xv-home-chatbar-shell textarea,
   .xv-homepage .xv-home-chatbar-shell button,
   .xv-homepage .xv-upload-icon-btn {
-    color: #fff !important;
-  }
-  .xv-homepage .xv-home-chatbar-shell .xv-upload-icon-btn {
-    border-color: rgba(255, 255, 255, 0.25);
-  }
-  .xv-homepage .xv-home-chatbar-shell textarea::placeholder {
-    color: rgba(255, 255, 255, 0.5) !important;
+    border-color: transparent;
   }
   .xv-homepage .xv-home-chatbar-shell .border-\[var\(--card-border\)\] {
-    border-color: rgba(255, 255, 255, 0.12) !important;
+    border-color: transparent !important;
   }
 
   .xv-drag-drop-card {
@@ -1210,10 +1314,13 @@ body.theme-gray * {
     font-size: 0;
   }
 
-  /* White theme dashboard chatbar */
+  /* White theme dashboard chatbar — blue/silver upload gradient */
   body.theme-white .xv-terminal-dock .xv-power-smash-upload__shell {
-    background: #006aff;
-    border-bottom-color: #0047b3;
+    background: linear-gradient(145deg, #e2e8f0 0%, #93c5fd 45%, #ffffff 100%);
+    border-bottom-color: #64748b;
+  }
+  body.theme-white .xv-terminal-dock .xv-power-smash-upload__shell svg {
+    color: #006aff;
   }
   body.theme-white .xv-terminal-dock .xv-go-btn {
     background: linear-gradient(135deg, #0f172a, #006aff);
@@ -1223,17 +1330,16 @@ body.theme-gray * {
     background: linear-gradient(to bottom, #60a5fa, #006aff);
   }
 
-  /* Black & gray theme chatbar — white buttons, soft borders */
+  /* Black & gray theme chatbar — gradient upload & GO */
   body.theme-black .xv-terminal-dock .xv-power-smash-upload__shell,
   body.theme-gray .xv-terminal-dock .xv-power-smash-upload__shell {
-    background: #ffffff;
-    border-bottom-color: #cbd5e1;
-    box-shadow: 0 6px 14px -4px rgba(255, 255, 255, 0.15);
+    background: linear-gradient(145deg, #ffffff 0%, #e2e8f0 45%, #0f172a 100%);
+    border-bottom-color: #334155;
+    box-shadow: 0 6px 14px -4px rgba(0, 0, 0, 0.35);
   }
-  body.theme-black .xv-terminal-dock .xv-upload-anim--in-smash .xv-upload-app,
-  body.theme-gray .xv-terminal-dock .xv-upload-anim--in-smash .xv-upload-app {
-    background: #f8fafc;
-    border-color: rgba(0, 0, 0, 0.12);
+  body.theme-black .xv-terminal-dock .xv-power-smash-upload__shell svg,
+  body.theme-gray .xv-terminal-dock .xv-power-smash-upload__shell svg {
+    color: #0f172a;
   }
   body.theme-black .xv-terminal-dock .xv-mic-btn,
   body.theme-gray .xv-terminal-dock .xv-mic-btn {
@@ -1243,17 +1349,17 @@ body.theme-gray * {
   }
   body.theme-black .xv-terminal-dock .xv-go-btn,
   body.theme-gray .xv-terminal-dock .xv-go-btn {
-    background: #ffffff;
-    border: 1px solid rgba(0, 106, 255, 0.35);
+    background: linear-gradient(135deg, #ffffff, #94a3b8, #0f172a);
+    border: 1px solid rgba(0, 0, 0, 0.25);
   }
   body.theme-black .xv-terminal-dock .xv-go-btn__text,
   body.theme-gray .xv-terminal-dock .xv-go-btn__text {
-    color: #006aff;
+    color: #f8fafc;
   }
   body.theme-black .xv-terminal-dock .xv-go-btn__icon,
   body.theme-gray .xv-terminal-dock .xv-go-btn__icon {
-    background: linear-gradient(to bottom, #006aff, #0047b3);
-    color: white;
+    background: linear-gradient(to bottom, #f8fafc, #64748b);
+    color: #0f172a;
   }
 
   body.theme-black .xv-chatbar-secondary-btn,
@@ -1562,7 +1668,7 @@ body.theme-gray * {
 
   /* Black theme — terminal & chatbar polish */
   body.theme-black .xv-chatbar-solid {
-    border-color: rgba(255, 255, 255, 0.14);
+    border-color: rgba(163, 163, 163, 0.28);
     background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(12px);
   }

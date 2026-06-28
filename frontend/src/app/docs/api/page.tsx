@@ -88,7 +88,7 @@ Content-Type: application/json`}
             <li><Link href="/pricing" className="text-[var(--accent)] hover:underline">Plans & action fuel</Link></li>
             <li><Link href="/terms" className="text-[var(--accent)] hover:underline">Terms of Service</Link></li>
             <li><Link href="/about" className="text-[var(--accent)] hover:underline">About Xroga & the team</Link></li>
-            <li><a href="mailto:api@xroga.com" className="text-[var(--accent)] hover:underline">api@xroga.com</a> — API support</li>
+            <li><a href="mailto:hello@xroga.com" className="text-[var(--accent)] hover:underline">hello@xroga.com</a> — API & support</li>
           </ul>
         </section>
       </div>

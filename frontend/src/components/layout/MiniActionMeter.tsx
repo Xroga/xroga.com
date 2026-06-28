@@ -54,7 +54,7 @@ export function MiniActionMeter({ compact = false, onTopUp }: MiniActionMeterPro
   );
 
   const className = cn(
-    'w-full text-left rounded-lg border border-[var(--card-border)]/40 bg-white/[0.02]',
+    'w-full text-left rounded-lg bg-white/[0.02] xv-action-meter',
     compact ? 'px-2 py-1.5' : 'px-2.5 py-2',
     onTopUp && 'hover:border-[var(--accent)]/40 transition-colors cursor-pointer'
   );

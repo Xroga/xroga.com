@@ -1,8 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Rocket, Square } from 'lucide-react';
-import { UploadAnimButton } from '@/components/ui/UploadAnimButton';
+import { Rocket, Square, CloudUpload } from 'lucide-react';
 
 export type SendButtonState = 'idle' | 'sending' | 'thinking' | 'launched';
 export type ChatbarSurface = 'homepage' | 'dashboard';
@@ -64,14 +63,21 @@ export function ChatBarUploadButton({
       <button
         type="button"
         onClick={onClick}
-        className="xv-power-smash-upload__shell"
+        className={cn('xv-power-smash-upload__shell', active && 'xv-power-smash-upload__shell--active')}
         title="Attach files"
         aria-label="Upload files"
         aria-busy={active}
       >
         <span className="xv-power-smash-upload__shine" aria-hidden />
         <span className="xv-power-smash-upload__gloss" aria-hidden />
-        <UploadAnimButton active={!!active} decorative className="xv-upload-anim--compact xv-upload-anim--in-smash" />
+        <CloudUpload
+          className={cn(
+            'w-4 h-4 relative z-[1] transition-transform',
+            active && 'xv-cloud-upload-bounce text-white'
+          )}
+          strokeWidth={2.25}
+        />
+        {active && <span className="xv-upload-pulse-ring" aria-hidden />}
       </button>
     </div>
   );
@@ -89,4 +95,27 @@ export function VoiceWaveform({ active }: { active: boolean }) {
       ))}
     </span>
   );
+}
+
+function IntegrationLogo({ src, alt }: { src: string; alt: string }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={alt} className="w-3.5 h-3.5 object-contain shrink-0" />
+  );
+}
+
+export function GitHubChipIcon() {
+  return <IntegrationLogo src="https://cdn.simpleicons.org/github/6e40c9" alt="GitHub" />;
+}
+
+export function GitLabChipIcon() {
+  return <IntegrationLogo src="https://cdn.simpleicons.org/gitlab/FC6D26" alt="GitLab" />;
+}
+
+export function VercelChipIcon() {
+  return <IntegrationLogo src="https://cdn.simpleicons.org/vercel/000000" alt="Vercel" />;
+}
+
+export function TwitterChipIcon() {
+  return <IntegrationLogo src="https://cdn.simpleicons.org/x/1d9bf0" alt="X" />;
 }

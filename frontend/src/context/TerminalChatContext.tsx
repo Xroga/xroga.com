@@ -35,6 +35,7 @@ interface TerminalChatContextValue {
   animatingId: string | null;
   submit: (text?: string) => Promise<void>;
   stop: () => void;
+  startNewChat: () => void;
   projectId?: string;
 }
 
@@ -88,6 +89,19 @@ export function TerminalChatProvider({
   const stop = useCallback(() => {
     abortRef.current?.abort();
   }, []);
+
+  const startNewChat = useCallback(() => {
+    abortRef.current?.abort();
+    if (thinkingTimerRef.current) {
+      clearTimeout(thinkingTimerRef.current);
+      thinkingTimerRef.current = null;
+    }
+    setMessages([]);
+    setPrompt('');
+    setLoading(false);
+    setSwarmRunning(false);
+    setAnimatingId(null);
+  }, [setSwarmRunning]);
 
   const submit = useCallback(
     async (overrideText?: string) => {
@@ -218,6 +232,7 @@ export function TerminalChatProvider({
         animatingId,
         submit,
         stop,
+        startNewChat,
         projectId,
       }}
     >

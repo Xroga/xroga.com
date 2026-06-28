@@ -70,12 +70,12 @@ export default function HomePage() {
             </span>
           </h1>
 
-          <div className="xv-hero-sub-card mx-auto max-w-3xl mb-8 px-5 sm:px-8 py-4 sm:py-5 rounded-2xl">
-            <p className="text-sm sm:text-lg text-slate-800/95 font-semibold leading-relaxed tracking-tight">
+          <div className="xv-hero-sub-card mx-auto max-w-2xl mb-8 px-4 sm:px-6 py-3 sm:py-4 rounded-xl">
+            <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed tracking-tight">
               One AI model that does it all — apps, games, movies, code, and automations.
             </p>
-            <p className="text-xs sm:text-sm text-[#006aff] font-bold mt-2 tracking-wide">{XROGA_MODEL_TAGLINE}</p>
-            <p className="text-[10px] sm:text-xs text-slate-600/90 mt-1.5 font-medium">{XROGA_MODEL_FIRST_LAST}</p>
+            <p className="text-[10px] sm:text-xs text-[#93c5fd] font-bold mt-1.5 tracking-wide">{XROGA_MODEL_TAGLINE}</p>
+            <p className="text-[9px] sm:text-[10px] text-slate-300/80 mt-1 font-medium">{XROGA_MODEL_FIRST_LAST}</p>
           </div>
 
           {!loggedIn && (

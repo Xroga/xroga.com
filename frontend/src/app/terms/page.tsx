@@ -56,7 +56,7 @@ export default function TermsPage() {
         <section className="space-y-3">
           <h2 className="text-lg font-semibold">5. Contact</h2>
           <p>
-            Questions: <a href="mailto:support@xroga.com" className="text-[var(--accent)]">support@xroga.com</a>
+            Questions: <a href="mailto:hello@xroga.com" className="text-[var(--accent)]">hello@xroga.com</a>
           </p>
         </section>
       </main>

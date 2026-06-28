@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { api, type SwarmRunSummary } from '@/lib/api';
 import { swarmOutputToText } from '@/lib/swarm';
 import { formatDistanceToNow } from 'date-fns';
 import { Bot, Loader2 } from 'lucide-react';
 
-export function SwarmRunHistory() {
+export function SwarmRunHistory({ search = '' }: { search?: string }) {
   const [runs, setRuns] = useState<SwarmRunSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -17,6 +17,20 @@ export function SwarmRunHistory() {
       .catch(() => setRuns([]))
       .finally(() => setLoading(false));
   }, []);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return runs;
+    return runs.filter((run) => {
+      const output = run.output as { output?: unknown } | null;
+      const text = swarmOutputToText(output?.output ?? output);
+      return (
+        run.prompt.toLowerCase().includes(q) ||
+        text.toLowerCase().includes(q) ||
+        run.status.toLowerCase().includes(q)
+      );
+    });
+  }, [runs, search]);
 
   if (loading) {
     return (
@@ -42,9 +56,17 @@ export function SwarmRunHistory() {
     );
   }
 
+  if (filtered.length === 0) {
+    return (
+      <div className="p-10 text-center">
+        <p className="text-sm text-[var(--muted)]">No results for &ldquo;{search}&rdquo;</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-3">
-      {runs.map((run) => {
+    <div className="space-y-3 p-4">
+      {filtered.map((run) => {
         const output = run.output as { output?: unknown } | null;
         const text = swarmOutputToText(output?.output ?? output);
         return (

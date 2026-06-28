@@ -10,6 +10,7 @@ interface CurrencyState {
   currency: CurrencyCode;
   showUsd: boolean;
   loaded: boolean;
+  blocked: boolean;
   setShowUsd: (v: boolean) => void;
   detect: () => Promise<void>;
 }
@@ -21,18 +22,20 @@ export const useCurrencyStore = create<CurrencyState>()(
       currency: 'USD',
       showUsd: false,
       loaded: false,
+      blocked: false,
       setShowUsd: (showUsd) => set({ showUsd }),
       detect: async () => {
         if (get().loaded) return;
         try {
           const res = await fetch('/api/geo');
-          const data = (await res.json()) as { country?: string };
-          const country = data.country ?? 'US';
+          const data = (await res.json()) as { country?: string; blocked?: boolean };
+          const country = (data.country ?? 'US').toUpperCase();
           const currency = currencyForCountry(country);
           set({
             country,
             currency,
             showUsd: isUsdRegion(country),
+            blocked: data.blocked ?? false,
             loaded: true,
           });
         } catch {

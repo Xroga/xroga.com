@@ -13,6 +13,7 @@ import {
 import { api, type SwarmRunSummary } from '@/lib/api';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useRouter } from 'next/navigation';
+import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { cn } from '@/lib/utils';
 
 const RUNNING = new Set(['pending', 'planning', 'building', 'reviewing', 'testing', 'verifying']);
@@ -49,6 +50,7 @@ export function AutomationView() {
   const [runs, setRuns] = useState<SwarmRunSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'running' | 'failed' | 'browser'>('all');
+  const [query, setQuery] = useState('');
   const { setPrompt } = useTerminalChat();
   const router = useRouter();
 
@@ -71,13 +73,15 @@ export function AutomationView() {
   }, []);
 
   const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
     return runs.filter((r) => {
-      if (filter === 'running') return RUNNING.has(r.status);
-      if (filter === 'failed') return FAILED.has(r.status);
-      if (filter === 'browser') return isBrowserRun(r.prompt);
+      if (filter === 'running' && !RUNNING.has(r.status)) return false;
+      if (filter === 'failed' && !FAILED.has(r.status)) return false;
+      if (filter === 'browser' && !isBrowserRun(r.prompt)) return false;
+      if (q && !r.prompt.toLowerCase().includes(q) && !r.status.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [runs, filter]);
+  }, [runs, filter, query]);
 
   const counts = useMemo(
     () => ({
@@ -113,6 +117,8 @@ export function AutomationView() {
           <RefreshCw className={cn('w-3.5 h-3.5', loading && 'animate-spin')} /> Refresh
         </button>
       </div>
+
+      <SectionSearchBar value={query} onChange={setQuery} placeholder="Search automations…" />
 
       <div className="grid grid-cols-3 gap-3">
         {[

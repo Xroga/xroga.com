@@ -52,7 +52,7 @@ export default function RefundPage() {
           <h2 className="text-lg font-semibold">Payment methods</h2>
           <p>
             Checkout is powered by Paddle — cards, PayPal, Google Pay, and UPI (region-dependent). Disputes should be
-            raised through Paddle or support@xroga.com within 14 days of charge.
+            raised through Paddle or hello@xroga.com within 14 days of charge.
           </p>
         </section>
 

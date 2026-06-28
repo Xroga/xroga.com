@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Logo } from '@/components/layout/Logo';
@@ -11,6 +10,7 @@ import { CheckoutButton } from '@/components/billing/CheckoutButton';
 import { useAppStore } from '@/store/useAppStore';
 import { Zap, Shield, Layers, Sparkles, ChevronDown, ChevronUp, Fuel, Lock, ArrowRight } from 'lucide-react';
 import { GalacticPlanCard, PopularPlanCard, GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
+import { PowerSmashButton } from '@/components/ui/XrogaButtons';
 import { CurrencyToggle } from '@/hooks/usePlanPrice';
 
 function FeaturesExpand() {
@@ -77,9 +77,9 @@ export function PricingPageClient() {
           <Logo href={loggedIn ? '/dashboard' : '/'} variant="header" height={50} />
           <div className="flex items-center gap-4">
             {loggedIn ? (
-              <Link href="/dashboard" className="text-sm text-[var(--accent)] hover:underline">
-                Back to Dashboard
-              </Link>
+              <PowerSmashButton size="sm" onClick={() => router.push('/dashboard')}>
+                Dashboard
+              </PowerSmashButton>
             ) : (
               <>
                 <PlayNowButton className="xv-play-btn-sm" onClick={() => router.push('/auth/login')}>Sign In</PlayNowButton>

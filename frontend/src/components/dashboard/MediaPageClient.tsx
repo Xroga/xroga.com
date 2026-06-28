@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { Film, Image as ImageIcon, Music, Upload, Trash2 } from 'lucide-react';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
+import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { loadMediaItems, saveMediaItems, type MediaItem } from '@/lib/mediaStorage';
 import toast from 'react-hot-toast';
 
@@ -21,6 +22,7 @@ function detectType(file: File): MediaItem['type'] {
 export function MediaPageClient() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [filter, setFilter] = useState<'all' | MediaItem['type']>('all');
+  const [query, setQuery] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -62,7 +64,12 @@ export function MediaPageClient() {
     toast.success('Removed from library');
   }
 
-  const shown = filter === 'all' ? items : items.filter((i) => i.type === filter);
+  const shown = useMemo(() => {
+    const typeFiltered = filter === 'all' ? items : items.filter((i) => i.type === filter);
+    const q = query.trim().toLowerCase();
+    if (!q) return typeFiltered;
+    return typeFiltered.filter((i) => i.name.toLowerCase().includes(q));
+  }, [items, filter, query]);
 
   return (
     <PageFullscreenFrame>
@@ -96,6 +103,8 @@ export function MediaPageClient() {
             }}
           />
         </div>
+
+        <SectionSearchBar value={query} onChange={setQuery} placeholder="Search AI media…" />
 
         <div className="flex flex-wrap gap-2">
           {(['all', 'image', 'video', 'audio'] as const).map((key) => (

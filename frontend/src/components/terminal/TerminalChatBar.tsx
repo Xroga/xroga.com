@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Search, GitBranch, Rocket, Globe } from 'lucide-react';
+import { Search, Play, Globe } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useAppStore } from '@/store/useAppStore';
 import { estimateActionCost } from '@/lib/actionCosts';
@@ -19,16 +19,16 @@ import {
   useSpeechToText,
 } from './ChatBarParts';
 import type { SendButtonState } from './ChatBarButtons';
+import { GitHubChipIcon, GitLabChipIcon, VercelChipIcon, TwitterChipIcon } from './ChatBarButtons';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 const TOOL_CHIPS = [
-  { name: 'GitHub', icon: GitBranch, accent: '#6e40c9' },
-  { name: 'GitLab', icon: GitBranch, accent: '#fc6d26' },
-  { name: 'Vercel', icon: Rocket, accent: '#000' },
-  { name: 'Twitter/X', icon: Globe, accent: '#1d9bf0' },
-];
+  { name: 'GitLab', icon: GitLabChipIcon, accent: '#fc6d26' },
+  { name: 'Vercel', icon: VercelChipIcon, accent: '#000' },
+  { name: 'Twitter/X', icon: TwitterChipIcon, accent: '#1d9bf0' },
+] as const;
 
 const MAX_ROWS = 13;
 const LINE_HEIGHT = 22;
@@ -138,7 +138,7 @@ export function TerminalChatBar() {
         >
           <ChatBarDragOverlay active={dragOver} />
 
-          <div className="flex items-center gap-1.5 px-3 py-2 flex-wrap border-b border-[var(--card-border)]/40">
+          <div className="xv-chatbar-toolbar flex items-center gap-1.5 px-3 py-2 flex-wrap">
             <button
               type="button"
               onClick={() => setIntegrationsOpen(true)}
@@ -148,22 +148,22 @@ export function TerminalChatBar() {
               <Search className="w-4 h-4" />
             </button>
             <ChatBarToolChip
-              icon={<GitBranch className="w-3 h-3" style={{ color: '#6e40c9' }} />}
+              icon={<GitHubChipIcon />}
               label="GitHub"
               onClick={() => setGithubOpen(true)}
               accent="#6e40c9"
             />
-            {TOOL_CHIPS.slice(1).map(({ name, icon: Icon, accent }) => (
+            {TOOL_CHIPS.map(({ name, icon: Icon, accent }) => (
               <ChatBarToolChip
                 key={name}
-                icon={<Icon className="w-3 h-3" style={{ color: accent }} />}
+                icon={<Icon />}
                 label={name}
                 onClick={() => setIntegrationsOpen(true)}
                 accent={accent}
               />
             ))}
             <ChatBarToolChip
-              icon={<Rocket className="w-3 h-3 text-[var(--accent)]" />}
+              icon={<Play className="w-3 h-3 fill-current text-[var(--accent)]" />}
               label="Deploy"
               onClick={() => setDeployOpen(true)}
               accent="#4a7aff"

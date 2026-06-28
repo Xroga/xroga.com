@@ -588,7 +588,7 @@ body.theme-image .xv-chatbar-solid {
 body.theme-black .xv-chatbar-solid,
 body.theme-gray .xv-chatbar-solid {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--card-border);
   color: #fff;
 }
 body.theme-black .xv-chatbar-solid textarea,

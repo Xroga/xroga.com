@@ -23,6 +23,7 @@ import {
   Workflow,
   Lock,
   Sparkles,
+  PlusCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
@@ -38,6 +39,8 @@ import { api } from '@/lib/api';
 import { LogoutButton, UpgradeProButton } from '@/components/ui/Uiverse';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
+import { useTerminalChat } from '@/context/TerminalChatContext';
+import { PalestineSupportBanner } from '@/components/ui/PalestineSupport';
 
 const navItems = [
   {
@@ -54,9 +57,9 @@ const navItems = [
   },
   {
     href: '/dashboard/chats',
-    label: 'Chats',
+    label: 'Chats & Research',
     icon: MessageSquare,
-    tip: 'Conversation history with the Xroga swarm.',
+    tip: 'Conversations, research, documents, and swarm history.',
   },
   {
     href: '/dashboard/automation',
@@ -110,6 +113,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
+  const { startNewChat } = useTerminalChat();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const setSidebarOpen = useThemeStore((s) => s.setSidebarOpen);
   const sidebarPinned = useThemeStore((s) => s.sidebarPinned);
@@ -169,7 +173,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   }
 
   const bottomSection = (
-    <div className="p-2 border-t border-[var(--card-border)] mt-auto space-y-2">
+    <div className="p-2 border-t border-[var(--card-border)]/30 mt-auto space-y-2 xv-sidebar-bottom">
       {onTopUp && (
         <div className={cn(!sidebarOpen && 'flex justify-center')}>
           {sidebarOpen ? (
@@ -209,7 +213,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
               <button
                 type="button"
                 onClick={() => setAvatarPickerOpen(true)}
-                className="relative w-9 h-9 rounded-full border-2 border-[var(--accent)]/40 overflow-hidden flex items-center justify-center text-xs font-bold shrink-0 group hover:border-[var(--accent)] transition-colors"
+                className="relative w-9 h-9 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold shrink-0 group bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 transition-colors"
                 data-cursor="pointer"
               >
                 {avatarUrl ? (
@@ -236,14 +240,17 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
         </div>
       </div>
       {sidebarOpen && (
-        <Link
-          href="/about"
-          onClick={() => setMobileOpen(false)}
-          className="xv-about-pill flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-full border border-[var(--card-border)]/60 bg-white/[0.03] hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/35 text-[10px] font-semibold text-[var(--muted)] hover:text-[var(--accent)] transition-all"
-        >
-          <Sparkles className="w-3 h-3 shrink-0" />
-          About Xroga & CEO
-        </Link>
+        <>
+          <PalestineSupportBanner className="w-full justify-center" />
+          <Link
+            href="/about"
+            onClick={() => setMobileOpen(false)}
+            className="xv-about-pill-modern flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl text-[10px] font-semibold transition-all"
+          >
+            <Sparkles className="w-3 h-3 shrink-0" />
+            About Xroga & CEO
+          </Link>
+        </>
       )}
     </div>
   );
@@ -346,7 +353,35 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           )}
         </button>
 
-        <nav className="flex-1 p-2 overflow-y-auto overflow-x-hidden">
+        <nav className="flex-1 p-2 overflow-y-auto overflow-x-hidden space-y-2">
+          {sidebarOpen ? (
+            <button
+              type="button"
+              onClick={() => {
+                startNewChat();
+                handleNavClick();
+                router.push('/dashboard');
+              }}
+              className="xv-new-chat-btn w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all mb-1"
+            >
+              <PlusCircle className="w-4 h-4" />
+              New Chat
+            </button>
+          ) : (
+            <SidebarTip label="New Chat" description="Start a fresh workspace session.">
+              <button
+                type="button"
+                onClick={() => {
+                  startNewChat();
+                  handleNavClick();
+                  router.push('/dashboard');
+                }}
+                className="xv-sidebar-icon-link mx-auto"
+              >
+                <PlusCircle className="w-4 h-4" />
+              </button>
+            </SidebarTip>
+          )}
           {sidebarOpen ? (
             <div className="xv-sidebar-menu">
               {navItems.map(({ href, label, icon: Icon, tip }) => (

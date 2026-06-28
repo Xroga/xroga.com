@@ -1,17 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { FolderOpen, Plus, Rocket, Sparkles } from 'lucide-react';
 import Skeleton from 'react-loading-skeleton';
 import { ProjectCard } from '@/components/dashboard/ProjectCard';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
+import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { api, type Project } from '@/lib/api';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     api.projects
@@ -21,24 +23,39 @@ export default function ProjectsPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return projects;
+    return projects.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.type.toLowerCase().includes(q) ||
+        (p.github_repo_name?.toLowerCase().includes(q) ?? false)
+    );
+  }, [projects, query]);
+
   return (
     <PageFullscreenFrame>
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
             <FolderOpen className="w-7 h-7 text-[var(--accent)]" />
             My Projects
           </h1>
-          <p className="text-sm text-[var(--muted)] mt-1">Websites, apps, games, and software built by your Swarm.</p>
+          <p className="text-sm text-[var(--muted)] mt-1">
+            Websites, apps, games, software, browser extensions & tools built by your Swarm.
+          </p>
         </div>
         <Link
           href="/dashboard"
-          className="xv-footer-pill !text-[var(--foreground)] !border-[var(--card-border)] flex items-center gap-1.5"
+          className="xv-footer-pill !text-[var(--foreground)] flex items-center gap-1.5"
         >
           <Plus className="w-3.5 h-3.5" /> New via Command
         </Link>
       </div>
+
+      <SectionSearchBar value={query} onChange={setQuery} placeholder="Search projects…" />
 
       {loading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -46,9 +63,9 @@ export default function ProjectsPage() {
             <Skeleton key={i} height={140} baseColor="var(--card)" highlightColor="var(--card-border)" />
           ))}
         </div>
-      ) : projects.length > 0 ? (
+      ) : filtered.length > 0 ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((p) => (
+          {filtered.map((p) => (
             <ProjectCard key={p.id} project={p} />
           ))}
         </div>
