@@ -29,6 +29,10 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   }, [fullscreen]);
 
   useEffect(() => {
+    return () => setFullscreen(false);
+  }, [setFullscreen]);
+
+  useEffect(() => {
     api.profile
       .get()
       .then((p) => setProfile(p))
@@ -78,8 +82,10 @@ export function DashboardView({ displayName }: DashboardViewProps) {
 
   if (fullscreen) {
     return (
-      <div className="xv-fullscreen-overlay fixed inset-0 z-[200] flex flex-col overflow-y-auto bg-[var(--background)] px-4 sm:px-6 pt-4 pb-[180px]">
-        {terminalBlock}
+      <div className="xv-fullscreen-overlay xv-dashboard-fullscreen fixed inset-0 z-[200] flex flex-col bg-[var(--background)]">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 sm:px-6 pt-3 sm:pt-4 pb-[min(280px,calc(42vh+env(safe-area-inset-bottom)))]">
+          {terminalBlock}
+        </div>
       </div>
     );
   }
