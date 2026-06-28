@@ -1202,6 +1202,38 @@ body.theme-gray * {
   body.xv-page-fullscreen-active .xv-dashboard-welcome {
     display: none;
   }
+  body.xv-page-fullscreen-active aside.xv-sidebar-hover,
+  body.xv-terminal-fullscreen-active aside.xv-sidebar-hover {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  body.xv-page-fullscreen-active header.sticky,
+  body.xv-terminal-fullscreen-active header.sticky {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .xv-fullscreen-overlay {
+    background: var(--background) !important;
+  }
+
+  .xv-sidebar-profile-row {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  body.theme-white .xv-sidebar-profile-row {
+    background: rgba(15, 23, 42, 0.06);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+  body.theme-white .xv-sidebar-profile-row p {
+    color: var(--foreground) !important;
+  }
+  body.theme-white .xv-sidebar-profile-row .text-white\/45 {
+    color: var(--muted) !important;
+  }
+
+  .xv-chat-mood-btn {
+    border: 1px solid rgba(0, 106, 255, 0.15);
+  }
 
   .xv-sidebar-icon-link {
     display: flex;

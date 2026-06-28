@@ -7,7 +7,6 @@ import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageTagMarquee } from '@/components/homepage/HomepageTagMarquee';
 import { AppStoreInline } from '@/components/ui/AppStoreInline';
-import { ModelBadge } from '@/components/ui/ModelBadge';
 import { PowerSmashButton, DottedSignInButton } from '@/components/ui/XrogaButtons';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
 import { XROGA_MODEL_TAGLINE, XROGA_MODEL_FIRST_LAST } from '@/lib/brand';
@@ -58,16 +57,6 @@ export default function HomePage() {
         <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[80%] max-w-lg h-40 bg-[#006aff]/15 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="relative z-10 w-full max-w-5xl text-center">
-          <div className="xv-hero-axrina-badge inline-flex items-stretch mb-6 overflow-hidden rounded-full">
-            <span className="xv-hero-axrina-badge__new">New</span>
-            <span className="xv-hero-axrina-badge__text">Black Hole V∞ is out now</span>
-          </div>
-
-          <div className="xv-hero-model-pill inline-flex items-center justify-center mb-6 px-5 py-2 rounded-full">
-            <ModelBadge variant="hero" showSubtext />
-            <span className="ml-2 text-[9px] text-emerald-400/90 font-semibold tracking-widest uppercase">· Live ·</span>
-          </div>
-
           <h1 className="xv-hero-modern-title mb-6">
             <span className="xv-hero-modern-line block">
               <span className="xv-hero-silver">Do </span>
@@ -78,14 +67,6 @@ export default function HomePage() {
               <span className="xv-hero-blue-italic">Imagine</span>
             </span>
           </h1>
-
-          <div className="xv-hero-sub-card mx-auto max-w-2xl mb-8 px-4 sm:px-6 py-3 sm:py-4 rounded-xl">
-            <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed tracking-tight">
-              One AI model that does it all — apps, games, movies, code, and automations.
-            </p>
-            <p className="text-[10px] sm:text-xs text-[#93c5fd] font-bold mt-1.5 tracking-wide">{XROGA_MODEL_TAGLINE}</p>
-            <p className="text-[9px] sm:text-[10px] text-slate-300/80 mt-1 font-medium">{XROGA_MODEL_FIRST_LAST}</p>
-          </div>
 
           {!loggedIn && (
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-8">
@@ -105,6 +86,15 @@ export default function HomePage() {
           </div>
 
           <AppStoreInline className="mb-5" />
+
+          <div className="mx-auto max-w-2xl mb-6 space-y-1.5 px-2">
+            <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed tracking-tight">
+              One AI model that does it all — apps, games, movies, code, and automations.
+            </p>
+            <p className="text-[10px] sm:text-xs text-[#93c5fd] font-bold tracking-wide">{XROGA_MODEL_TAGLINE}</p>
+            <p className="text-[9px] sm:text-[10px] text-slate-300/80 font-medium">{XROGA_MODEL_FIRST_LAST}</p>
+          </div>
+
           <HomepageTagMarquee />
         </div>
       </main>

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { Maximize2, Minimize2 } from 'lucide-react';
-import { useThemeStore } from '@/store/useThemeStore';
 import { cn } from '@/lib/utils';
 
 interface PageFullscreenFrameProps {
@@ -12,9 +11,6 @@ interface PageFullscreenFrameProps {
 
 export function PageFullscreenFrame({ children, className }: PageFullscreenFrameProps) {
   const [fullscreen, setFullscreen] = useState(false);
-  const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
-  const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
-  const widthPx = sidebarOpen ? sidebarWidth : 72;
 
   useEffect(() => {
     document.body.classList.toggle('xv-page-fullscreen-active', fullscreen);
@@ -42,17 +38,9 @@ export function PageFullscreenFrame({ children, className }: PageFullscreenFrame
 
   if (fullscreen) {
     return (
-      <div
-        className="fixed z-[40] overflow-y-auto bg-transparent px-4 sm:px-6 lg:px-8"
-        style={{
-          top: '56px',
-          bottom: '180px',
-          left: `${widthPx}px`,
-          right: 0,
-        }}
-      >
-        <div className="flex justify-end mb-4 pt-1">{toggle}</div>
-        <div className={cn(className)}>{children}</div>
+      <div className="xv-fullscreen-overlay fixed inset-0 z-[200] overflow-y-auto bg-[var(--background)] p-4 sm:p-6 lg:p-8">
+        <div className="flex justify-end mb-4 sticky top-0 z-10">{toggle}</div>
+        <div className={cn('max-w-6xl mx-auto', className)}>{children}</div>
       </div>
     );
   }

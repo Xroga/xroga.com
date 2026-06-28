@@ -27,11 +27,11 @@ export function AuthModernCard({
   );
 }
 
-export function AuthModernQuote({ text, author }: { text: string; author: string }) {
+export function AuthModernQuote({ text, author, compact }: { text: string; author: string; compact?: boolean }) {
   return (
-    <blockquote className="xv-auth-modern-quote my-5 px-4 py-3 rounded-2xl text-center">
-      <p className="text-sm italic text-slate-600 leading-relaxed">&ldquo;{text}&rdquo;</p>
-      <footer className="text-[11px] mt-2 font-semibold xv-auth-gradient-text not-italic">— {author}</footer>
+    <blockquote className={cn('xv-auth-modern-quote px-3 py-2 rounded-xl text-center', compact ? 'my-3' : 'my-5')}>
+      <p className={cn('italic text-slate-600 leading-relaxed', compact ? 'text-xs' : 'text-sm')}>&ldquo;{text}&rdquo;</p>
+      <footer className="text-[10px] mt-1 font-semibold xv-auth-gradient-text not-italic">— {author}</footer>
     </blockquote>
   );
 }

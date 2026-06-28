@@ -19,13 +19,14 @@ interface DashboardViewProps {
 export function DashboardView({ displayName }: DashboardViewProps) {
   const fullscreen = useThemeStore((s) => s.terminalFullscreen);
   const setFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
-  const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
-  const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const browserOpen = useThemeStore((s) => s.browserPanelOpen);
   const browserFullscreen = useThemeStore((s) => s.browserFullscreen);
   const setProfile = useAppStore((s) => s.setProfile);
 
-  const widthPx = sidebarOpen ? sidebarWidth : 72;
+  useEffect(() => {
+    document.body.classList.toggle('xv-terminal-fullscreen-active', fullscreen);
+    return () => document.body.classList.remove('xv-terminal-fullscreen-active');
+  }, [fullscreen]);
 
   useEffect(() => {
     api.profile
@@ -77,15 +78,7 @@ export function DashboardView({ displayName }: DashboardViewProps) {
 
   if (fullscreen) {
     return (
-      <div
-        className="fixed z-[20] flex flex-col overflow-y-auto bg-transparent px-4 sm:px-6 pt-14"
-        style={{
-          top: 0,
-          bottom: '160px',
-          left: `${widthPx}px`,
-          right: 0,
-        }}
-      >
+      <div className="xv-fullscreen-overlay fixed inset-0 z-[200] flex flex-col overflow-y-auto bg-[var(--background)] px-4 sm:px-6 pt-4 pb-[180px]">
         {terminalBlock}
       </div>
     );

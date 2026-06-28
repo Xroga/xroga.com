@@ -18,14 +18,12 @@ import {
   Image as ImageIcon,
   Zap,
   BarChart3,
-  Camera,
   Workflow,
   Lock,
-  PlusCircle,
+  MessageCirclePlus,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
-import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
 import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
@@ -36,10 +34,11 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/lib/supabase/client';
 import { api } from '@/lib/api';
-import { LogoutButton, UpgradeProButton } from '@/components/ui/Uiverse';
+import { UpgradeProButton } from '@/components/ui/Uiverse';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 import { useTerminalChat } from '@/context/TerminalChatContext';
+import { GALACTIC_PLANS } from '@/lib/plans';
 
 const navItems = [
   {
@@ -98,7 +97,13 @@ interface SidebarProps {
   onTopUp?: () => void;
 }
 
-export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
+function planLabel(tier?: string | null) {
+  if (!tier || tier === 'unpaid') return 'Free Trial';
+  const plan = GALACTIC_PLANS.find((p) => p.tier === tier);
+  return plan ? `${plan.name} Plan` : `${tier.charAt(0).toUpperCase()}${tier.slice(1)} Plan`;
+}
+
+export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const t = useT();
   const pathname = usePathname();
   const router = useRouter();
@@ -120,6 +125,8 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const isFreeTrial = !actions?.planTier || actions.planTier === 'unpaid';
   const avatarUrl = profile?.avatar_url;
   const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
+  const userName = profile?.display_name ?? displayName ?? 'User';
+  const userPlan = planLabel(actions?.planTier);
 
   useEffect(() => {
     api.profile
@@ -208,39 +215,48 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
       {sidebarOpen && (
         <PalestineSupportBanner className="w-full justify-center" />
       )}
-      <div className={cn('flex items-center gap-1 px-1 py-1.5', !sidebarOpen && 'flex-col')}>
-        {displayName && (
-          <div className={cn('flex items-center gap-1 min-w-0 flex-1', !sidebarOpen && 'flex-col')}>
-            <HoverTip label="Profile photo" description="Choose avatar or upload your own.">
-              <button
-                type="button"
-                onClick={() => setAvatarPickerOpen(true)}
-                className="relative w-9 h-9 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold shrink-0 group bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 transition-colors"
-              >
-                {avatarUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  nameInitial
-                )}
-                <span className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                  <Camera className="w-3.5 h-3.5 text-white" />
-                </span>
-              </button>
-            </HoverTip>
-            {sidebarOpen && (
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium truncate">{profile?.display_name ?? displayName}</p>
-                {email && <p className="text-[10px] text-[var(--muted)] truncate">{email}</p>}
-              </div>
+      {displayName && sidebarOpen && (
+        <div className="xv-sidebar-profile-row flex items-center gap-2.5 px-2.5 py-2 rounded-xl">
+          <button
+            type="button"
+            onClick={() => setAvatarPickerOpen(true)}
+            className="w-9 h-9 rounded-full overflow-hidden shrink-0 ring-1 ring-white/10"
+          >
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <span className="w-full h-full flex items-center justify-center text-xs font-bold bg-[var(--accent)]/20">
+                {nameInitial}
+              </span>
             )}
-            <ProfileQuickMenu />
+          </button>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium text-white/90 truncate leading-tight">{userName}</p>
+            <p className="text-xs text-white/45 truncate">{userPlan}</p>
           </div>
-        )}
-        <div className="xv-sidebar-logout shrink-0">
-          <LogoutButton onClick={handleLogout} />
+          <ProfileQuickMenu onLogout={handleLogout} />
         </div>
-      </div>
+      )}
+      {displayName && !sidebarOpen && (
+        <div className="flex flex-col items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setAvatarPickerOpen(true)}
+            className="w-9 h-9 rounded-full overflow-hidden shrink-0"
+          >
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <span className="w-full h-full flex items-center justify-center text-xs font-bold bg-[var(--accent)]/20">
+                {nameInitial}
+              </span>
+            )}
+          </button>
+          <ProfileQuickMenu onLogout={handleLogout} />
+        </div>
+      )}
     </div>
   );
 
@@ -279,16 +295,6 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
         )}
       >
         <div className="px-2 py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[48px]">
-          <HoverTip label="Xroga AI" description="Your AI Swarm Operating System — dashboard home." block className="min-w-0 shrink">
-            <div className="shrink min-w-0 flex justify-center lg:justify-start">
-              <Logo
-                href="/dashboard"
-                height={sidebarOpen ? 32 : 24}
-                variant="sidebar"
-                onClick={handleNavClick}
-              />
-            </div>
-          </HoverTip>
           {sidebarOpen ? (
             <button
               type="button"
@@ -296,13 +302,13 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
               className="xv-new-chat-btn flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-bold shrink-0"
               title="New Chat"
             >
-              <PlusCircle className="w-3.5 h-3.5" />
+              <MessageCirclePlus className="w-4 h-4" />
               New Chat
             </button>
           ) : (
             <SidebarTip label="New Chat" description="Start a fresh workspace session.">
               <button type="button" onClick={handleNewChat} className="xv-sidebar-icon-link !w-8 !h-8 !mx-0">
-                <PlusCircle className="w-4 h-4" />
+                <MessageCirclePlus className="w-4 h-4" />
               </button>
             </SidebarTip>
           )}
