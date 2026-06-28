@@ -4,13 +4,21 @@ import { useState, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { AuthFormCard, GradientStartButton } from '@/components/ui/Uiverse';
 import { SIGNUP_QUOTES, randomQuote } from '@/lib/authQuotes';
 import { XROGA_PROFILE_AVATARS } from '@/lib/profileAvatars';
 import { generateAvatarUrl } from '@/lib/avatarGenerate';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import { ChevronRight, Sparkles } from 'lucide-react';
+import { ChevronRight, Sparkles, Wand2 } from 'lucide-react';
+import {
+  AuthModernCard,
+  AuthModernQuote,
+  AuthModernInput,
+  AuthModernLabel,
+  AuthStepDots,
+  AuthGradientButton,
+  AuthSwitchText,
+} from './AuthModern';
 
 export function SignupForm() {
   const [step, setStep] = useState<1 | 2>(1);
@@ -77,127 +85,145 @@ export function SignupForm() {
 
   if (success) {
     return (
-      <AuthFormCard title={`Welcome, ${displayName}!`}>
-        <p className="text-center text-[var(--accent)] text-sm mt-4">
+      <AuthModernCard title={`Welcome, ${displayName}!`}>
+        <p className="text-center xv-auth-gradient-text text-sm font-semibold mt-4 py-6">
           Account created! Redirecting to your dashboard…
         </p>
-      </AuthFormCard>
+      </AuthModernCard>
     );
   }
 
   return (
-    <AuthFormCard title={step === 1 ? 'Create Your Profile' : 'Secure Your Account'}>
-      <blockquote className="text-center text-xs text-[var(--muted)] italic border-l-2 border-[var(--accent)]/30 pl-3 my-3">
-        &ldquo;{quote.text}&rdquo;
-        <footer className="text-[10px] mt-1 not-italic opacity-70">— {quote.author}</footer>
-      </blockquote>
+    <AuthModernCard
+      title={step === 1 ? 'Create Your Profile' : 'Secure Your Account'}
+      subtitle={step === 1 ? '50 free Actions on signup — choose your identity first' : undefined}
+    >
+      <AuthModernQuote text={quote.text} author={quote.author} />
+      <AuthStepDots step={step} />
 
-      <div className="flex justify-center gap-2 mb-4">
-        {[1, 2].map((s) => (
-          <span
-            key={s}
-            className={cn(
-              'h-1.5 rounded-full transition-all',
-              step === s ? 'w-8 bg-[var(--accent)]' : 'w-4 bg-[var(--card-border)]'
-            )}
-          />
-        ))}
-      </div>
-
-      <form onSubmit={handleSignup} className="mt-2 space-y-3">
+      <form onSubmit={handleSignup} className="space-y-4">
         {step === 1 && (
-          <>
-            <p className="text-[10px] text-center text-[var(--muted)]">Choose your photo & display name first</p>
-            <div className="flex justify-center">
-              <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-[var(--accent)]/40">
+          <div className="space-y-4">
+            <p className="text-center text-xs text-slate-500 font-medium">
+              Choose your photo & display name first
+            </p>
+
+            <div className="flex justify-center py-2">
+              <div className="relative w-24 h-24 rounded-2xl overflow-hidden ring-4 ring-[#006aff]/25 shadow-lg shadow-blue-500/20">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
               </div>
             </div>
-            <div className="grid grid-cols-5 gap-1.5 max-h-24 overflow-y-auto">
-              {XROGA_PROFILE_AVATARS.map((a) => (
+
+            <div>
+              <AuthModernLabel>Pick a photo</AuthModernLabel>
+              <div className="grid grid-cols-5 gap-2 p-3 rounded-2xl bg-slate-50/80 border border-sky-100 max-h-28 overflow-y-auto">
+                {XROGA_PROFILE_AVATARS.map((a) => (
+                  <button
+                    key={a.url}
+                    type="button"
+                    onClick={() => setAvatarUrl(a.url)}
+                    className={cn(
+                      'aspect-square rounded-xl overflow-hidden border-2 transition-all',
+                      avatarUrl === a.url
+                        ? 'border-[#006aff] ring-2 ring-[#006aff]/30 scale-105'
+                        : 'border-transparent opacity-75 hover:opacity-100 hover:border-sky-200'
+                    )}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={a.url} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <AuthModernLabel>
+                <span className="inline-flex items-center gap-1">
+                  <Wand2 className="w-3 h-3" /> Generate hero avatar
+                </span>
+              </AuthModernLabel>
+              <div className="flex gap-2">
+                <AuthModernInput
+                  value={heroPrompt}
+                  onChange={(e) => setHeroPrompt(e.target.value)}
+                  placeholder="Describe your hero look…"
+                  className="flex-1"
+                />
                 <button
-                  key={a.url}
                   type="button"
-                  onClick={() => setAvatarUrl(a.url)}
-                  className={cn(
-                    'aspect-square rounded-lg overflow-hidden border-2 transition-all',
-                    avatarUrl === a.url ? 'border-[var(--accent)] scale-105' : 'border-transparent opacity-70 hover:opacity-100'
-                  )}
+                  onClick={() => heroPrompt.trim() && setAvatarUrl(generateAvatarUrl(heroPrompt, 'superhero'))}
+                  className="h-12 w-12 shrink-0 rounded-xl bg-gradient-to-br from-[#006aff] to-[#60a5fa] text-white flex items-center justify-center shadow-lg shadow-blue-500/25 hover:scale-105 transition-transform"
+                  title="Generate"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={a.url} alt="" className="w-full h-full object-cover" />
+                  <Sparkles className="w-5 h-5" />
                 </button>
-              ))}
+              </div>
             </div>
-            <div className="flex gap-1.5">
-              <input
-                value={heroPrompt}
-                onChange={(e) => setHeroPrompt(e.target.value)}
-                className="xv-auth-input flex-1 !py-2 text-xs"
-                placeholder="Or generate hero avatar…"
+
+            <div>
+              <AuthModernLabel>Display name</AuthModernLabel>
+              <AuthModernInput
+                id="name"
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                required
+                placeholder="How should we call you?"
               />
-              <button
-                type="button"
-                onClick={() => heroPrompt.trim() && setAvatarUrl(generateAvatarUrl(heroPrompt, 'superhero'))}
-                className="px-3 rounded-lg bg-[var(--accent)]/15 text-[var(--accent)] text-xs font-bold shrink-0"
-              >
-                <Sparkles className="w-4 h-4" />
-              </button>
             </div>
-            <input
-              id="name"
-              type="text"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              required
-              className="xv-auth-input"
-              placeholder="Display Name"
-            />
-          </>
+          </div>
         )}
 
         {step === 2 && (
-          <>
-            <div className="flex items-center gap-3 p-2 rounded-xl bg-[var(--accent)]/8 border border-[var(--accent)]/20">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-sky-50 to-blue-50 border border-sky-100">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={avatarUrl} alt="" className="w-10 h-10 rounded-xl object-cover" />
-              <div className="min-w-0">
-                <p className="text-sm font-semibold truncate">{displayName}</p>
-                <button type="button" onClick={() => setStep(1)} className="text-[10px] text-[var(--accent)]">
+              <img src={avatarUrl} alt="" className="w-12 h-12 rounded-xl object-cover ring-2 ring-white shadow" />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold text-slate-800 truncate">{displayName}</p>
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="text-xs xv-auth-gradient-text font-semibold"
+                >
                   Edit profile
                 </button>
               </div>
             </div>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="xv-auth-input"
-              placeholder="E-mail"
-            />
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              className="xv-auth-input"
-              placeholder="Password (min 8 chars)"
-            />
-          </>
+            <div>
+              <AuthModernLabel>Email</AuthModernLabel>
+              <AuthModernInput
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="you@email.com"
+              />
+            </div>
+            <div>
+              <AuthModernLabel>Password</AuthModernLabel>
+              <AuthModernInput
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={8}
+                placeholder="Min. 8 characters"
+              />
+            </div>
+          </div>
         )}
 
         {error && (
-          <p className="text-red-500 text-sm">
+          <p className="text-red-500 text-sm text-center px-2">
             {error}
             {error.includes('sign in') && (
               <>
                 {' '}
-                <Link href="/auth/login" className="text-[var(--accent)] underline">
+                <Link href="/auth/login" className="xv-auth-gradient-text font-semibold underline">
                   Sign in →
                 </Link>
               </>
@@ -205,23 +231,22 @@ export function SignupForm() {
           </p>
         )}
 
-        <div className="flex justify-center mt-4">
-          <GradientStartButton type="submit" className="w-full max-w-[240px] text-sm flex items-center justify-center gap-2" disabled={loading}>
-            {loading ? 'Creating…' : step === 1 ? (
-              <>Continue <ChevronRight className="w-4 h-4" /></>
-            ) : (
-              'Create Account'
-            )}
-          </GradientStartButton>
+        <div className="pt-2">
+          <AuthGradientButton type="submit" disabled={loading}>
+            <span className="inline-flex items-center justify-center gap-2 w-full">
+              {loading ? 'Creating…' : step === 1 ? (
+                <>
+                  Continue <ChevronRight className="w-4 h-4" />
+                </>
+              ) : (
+                'Create Account'
+              )}
+            </span>
+          </AuthGradientButton>
         </div>
       </form>
 
-      <p className="text-center text-sm text-[var(--muted)] mt-4">
-        Already have an account?{' '}
-        <Link href="/auth/login" className="text-[var(--accent)] hover:underline">
-          Sign in
-        </Link>
-      </p>
-    </AuthFormCard>
+      <AuthSwitchText prompt="Already have an account?" linkText="Sign in" href="/auth/login" />
+    </AuthModernCard>
   );
 }

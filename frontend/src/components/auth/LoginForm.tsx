@@ -3,10 +3,16 @@
 import { useState, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Zap } from 'lucide-react';
-import { AuthFormCard, PlayNowButton } from '@/components/ui/Uiverse';
 import { LOGIN_QUOTES, randomQuote } from '@/lib/authQuotes';
+import {
+  AuthModernCard,
+  AuthModernQuote,
+  AuthModernInput,
+  AuthModernLabel,
+  AuthGradientButton,
+  AuthSwitchText,
+} from './AuthModern';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
@@ -23,10 +29,10 @@ export function LoginForm() {
     setError('');
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error: err } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) {
-      setError(error.message);
+    if (err) {
+      setError(err.message);
       setLoading(false);
       return;
     }
@@ -44,13 +50,13 @@ export function LoginForm() {
     setError('');
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error: err } = await supabase.auth.signInWithOtp({
       email,
       options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     });
 
-    if (error) {
-      setError(error.message);
+    if (err) {
+      setError(err.message);
     } else {
       setMagicLinkSent(true);
     }
@@ -67,84 +73,83 @@ export function LoginForm() {
 
   if (magicLinkSent) {
     return (
-      <AuthFormCard title="Check Email">
-        <div className="text-center space-y-4 mt-4">
-          <Zap className="w-8 h-8 mx-auto text-[var(--accent)]" />
-          <p className="text-sm text-[var(--muted)]">
-            We sent a magic link to <strong>{email}</strong>
+      <AuthModernCard title="Check Email">
+        <div className="text-center space-y-4 py-6">
+          <Zap className="w-10 h-10 mx-auto text-[#006aff]" />
+          <p className="text-sm text-slate-600">
+            We sent a magic link to <strong className="text-slate-800">{email}</strong>
           </p>
         </div>
-      </AuthFormCard>
+      </AuthModernCard>
     );
   }
 
   return (
-    <AuthFormCard title="Sign In">
-      <blockquote className="text-center text-xs text-[var(--muted)] italic border-l-2 border-[var(--accent)]/40 pl-3 my-3">
-        &ldquo;{quote.text}&rdquo;
-        <footer className="text-[10px] mt-1 not-italic opacity-70">— {quote.author}</footer>
-      </blockquote>
-      <div className="social-account-container mt-2">
-        <span className="title block text-center text-[10px] text-[var(--muted)] mb-2">Or sign in with</span>
+    <AuthModernCard title="Sign In">
+      <AuthModernQuote text={quote.text} author={quote.author} />
+
+      <div className="my-5">
+        <p className="text-center text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-3">
+          Or sign in with
+        </p>
         <div className="flex justify-center gap-3">
           <button
             type="button"
             onClick={() => handleOAuth('google')}
-            className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-gray-500 border-4 border-white shadow-lg flex items-center justify-center"
+            className="xv-auth-oauth-btn"
             aria-label="Google"
           >
-            <span className="text-white text-xs font-bold">G</span>
+            <span className="text-sm font-bold">G</span>
           </button>
           <button
             type="button"
             onClick={() => handleOAuth('github')}
-            className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-gray-500 border-4 border-white shadow-lg flex items-center justify-center"
+            className="xv-auth-oauth-btn"
             aria-label="GitHub"
           >
-            <span className="text-white text-xs font-bold">GH</span>
+            <span className="text-xs font-bold">GH</span>
           </button>
         </div>
       </div>
 
-      <form onSubmit={handleLogin} className="mt-4">
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="xv-auth-input"
-          placeholder="E-mail"
-        />
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="xv-auth-input"
-          placeholder="Password"
-        />
+      <form onSubmit={handleLogin} className="space-y-4">
+        <div>
+          <AuthModernLabel>Email</AuthModernLabel>
+          <AuthModernInput
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="you@email.com"
+          />
+        </div>
+        <div>
+          <AuthModernLabel>Password</AuthModernLabel>
+          <AuthModernInput
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="Your password"
+          />
+        </div>
 
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
-        <button type="submit" disabled={loading} className="xv-auth-submit">
-          {loading ? 'Signing in...' : 'Sign In'}
-        </button>
+        <AuthGradientButton type="submit" disabled={loading}>
+          {loading ? 'Signing in…' : 'Sign In'}
+        </AuthGradientButton>
       </form>
 
-      <div className="flex justify-center mt-4">
-        <PlayNowButton onClick={handleMagicLink} disabled={loading}>
+      <div className="mt-4">
+        <AuthGradientButton type="button" disabled={loading} onClick={handleMagicLink}>
           Magic Link
-        </PlayNowButton>
+        </AuthGradientButton>
       </div>
 
-      <p className="text-center text-sm text-[var(--muted)] mt-4">
-        No account?{' '}
-        <Link href="/auth/signup" className="text-[var(--accent)] hover:underline">
-          Sign up
-        </Link>
-      </p>
-    </AuthFormCard>
+      <AuthSwitchText prompt="No account?" linkText="Sign up" href="/auth/signup" />
+    </AuthModernCard>
   );
 }
