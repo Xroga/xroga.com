@@ -29,6 +29,7 @@ export interface ChatMessage {
   role: MessageRole;
   content: string;
   agent?: string;
+  createdAt?: number;
 }
 
 export interface QueuedPrompt {
@@ -126,6 +127,7 @@ export function TerminalChatProvider({
         role: 'system',
         agent: key,
         content: `[${label}] ${message}`,
+        createdAt: Date.now(),
       },
     ]);
   }, []);
@@ -197,7 +199,7 @@ export function TerminalChatProvider({
       }
       if (loading) return;
 
-      setMessages((m) => [...m, { id: crypto.randomUUID(), role: 'user', content: text }]);
+      setMessages((m) => [...m, { id: crypto.randomUUID(), role: 'user', content: text, createdAt: Date.now() }]);
       if (!fromQueue) setPrompt('');
       setLoading(true);
       setSwarmRunning(true);
@@ -218,7 +220,7 @@ export function TerminalChatProvider({
         if (!session?.access_token) throw new Error('Please sign in to chat.');
 
         addProgress('architect', 'Planning...');
-        setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '' }]);
+        setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
         setAnimatingId(assistantId);
 
         let fullReply = '';
@@ -250,7 +252,7 @@ export function TerminalChatProvider({
         if (err instanceof DOMException && err.name === 'AbortError') {
           setMessages((m) => [
             ...m,
-            { id: crypto.randomUUID(), role: 'system', content: '[Stopped] Response cancelled.' },
+            { id: crypto.randomUUID(), role: 'system', content: '[Stopped] Response cancelled.', createdAt: Date.now() },
           ]);
           return;
         }
@@ -263,7 +265,7 @@ export function TerminalChatProvider({
         toast.error(message);
         setMessages((m) => [
           ...m.filter((msg) => msg.id !== assistantId || msg.content.length > 0),
-          { id: crypto.randomUUID(), role: 'assistant', content: `⚠️ ${message}` },
+          { id: crypto.randomUUID(), role: 'assistant', content: `⚠️ ${message}`, createdAt: Date.now() },
         ]);
       } finally {
         if (thinkingTimerRef.current) {
