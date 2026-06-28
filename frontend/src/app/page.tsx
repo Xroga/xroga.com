@@ -9,7 +9,6 @@ import { HomepageTagMarquee } from '@/components/homepage/HomepageTagMarquee';
 import { AppStoreInline } from '@/components/ui/AppStoreInline';
 import { PowerSmashButton, DottedSignInButton } from '@/components/ui/XrogaButtons';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
-import { XROGA_MODEL_TAGLINE, XROGA_MODEL_FIRST_LAST } from '@/lib/brand';
 import { useThemeStore } from '@/store/useThemeStore';
 import { createClient } from '@/lib/supabase/client';
 
@@ -85,30 +84,23 @@ export default function HomePage() {
             <HomepageChatBar />
           </div>
 
-          <AppStoreInline className="mb-5" />
-
-          <div className="mx-auto max-w-2xl mb-6 space-y-1.5 px-2">
-            <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed tracking-tight">
-              One AI model that does it all — apps, games, movies, code, and automations.
-            </p>
-            <p className="text-[10px] sm:text-xs text-[#93c5fd] font-bold tracking-wide">{XROGA_MODEL_TAGLINE}</p>
-            <p className="text-[9px] sm:text-[10px] text-slate-300/80 font-medium">{XROGA_MODEL_FIRST_LAST}</p>
-          </div>
-
+          <AppStoreInline className="mb-5 justify-center" />
           <HomepageTagMarquee />
         </div>
       </main>
 
-      <footer className="relative z-10 py-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-4">
-        <Link href="/features" className="xv-footer-pill">Features</Link>
-        <Link href="/auth/signup" className="xv-footer-pill">Sign Up</Link>
-        <Link href="/auth/login" className="xv-footer-pill">Sign In</Link>
-        <Link href="/about" className="xv-footer-pill">About Xroga</Link>
-        <Link href="/docs/api" className="xv-footer-pill">API</Link>
-        <Link href="/pricing" className="xv-footer-pill">Pricing</Link>
-        <Link href="/privacy" className="xv-footer-pill">Privacy Policy</Link>
-        <Link href="/terms" className="xv-footer-pill">Terms of Service</Link>
-        <Link href="/refund" className="xv-footer-pill">Refund Policy</Link>
+      <footer className="relative z-10 py-4 px-4 xv-home-footer-scroll">
+        <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide max-w-full mx-auto pb-1">
+          <Link href="/features" className="xv-footer-pill shrink-0">Features</Link>
+          <Link href="/auth/signup" className="xv-footer-pill shrink-0">Sign Up</Link>
+          <Link href="/auth/login" className="xv-footer-pill shrink-0">Sign In</Link>
+          <Link href="/about" className="xv-footer-pill shrink-0">About Xroga</Link>
+          <Link href="/docs/api" className="xv-footer-pill shrink-0">API</Link>
+          <Link href="/pricing" className="xv-footer-pill shrink-0">Pricing</Link>
+          <Link href="/privacy" className="xv-footer-pill shrink-0">Privacy Policy</Link>
+          <Link href="/terms" className="xv-footer-pill shrink-0">Terms of Service</Link>
+          <Link href="/refund" className="xv-footer-pill shrink-0">Refund Policy</Link>
+        </div>
       </footer>
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { WandSparkles, Users, MessageCircleHeart, Sparkles } from 'lucide-react';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
@@ -30,6 +30,9 @@ const ITEMS = [
   },
 ];
 
+const MENU_WIDTH = 260;
+const VIEWPORT_PAD = 12;
+
 interface ProfileQuickMenuProps {
   onLogout?: () => void;
   anchorRef?: React.RefObject<HTMLElement | null>;
@@ -40,18 +43,37 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0 });
   const btnRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!open) return;
-    const el = anchorRef?.current ?? btnRef.current;
-    if (el) {
-      const r = el.getBoundingClientRect();
-      setPos({
-        top: Math.max(12, r.top - 8),
-        left: r.right + 10,
-      });
+
+    function placeMenu() {
+      const trigger = btnRef.current?.getBoundingClientRect();
+      const menu = menuRef.current;
+      if (!trigger || !menu) return;
+
+      const menuW = menu.offsetWidth || MENU_WIDTH;
+      const menuH = menu.offsetHeight || 280;
+      const gap = 10;
+
+      let left = trigger.left + trigger.width / 2 - menuW / 2;
+      let top = trigger.top - menuH - gap;
+
+      if (top < VIEWPORT_PAD) {
+        top = trigger.bottom + gap;
+      }
+
+      left = Math.max(VIEWPORT_PAD, Math.min(left, window.innerWidth - menuW - VIEWPORT_PAD));
+      top = Math.max(VIEWPORT_PAD, Math.min(top, window.innerHeight - menuH - VIEWPORT_PAD));
+
+      setPos({ top, left });
     }
+
+    placeMenu();
+    window.addEventListener('resize', placeMenu);
+    return () => window.removeEventListener('resize', placeMenu);
   }, [open, anchorRef]);
 
   useEffect(() => {
@@ -59,8 +81,7 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
     function onDoc(e: MouseEvent) {
       const t = e.target as Node;
       if (btnRef.current?.contains(t)) return;
-      const pop = document.getElementById('xv-profile-quick-menu');
-      if (pop?.contains(t)) return;
+      if (menuRef.current?.contains(t)) return;
       setOpen(false);
     }
     document.addEventListener('mousedown', onDoc);
@@ -85,6 +106,7 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
         className="xv-profile-quick-trigger p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors shrink-0"
         aria-label="Quick links"
         title="Quick links"
+        aria-expanded={open}
       >
         <WandSparkles className="w-4 h-4" />
       </button>
@@ -93,9 +115,10 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
         <>
           <div className="fixed inset-0 z-[298]" onClick={() => setOpen(false)} aria-hidden />
           <div
+            ref={menuRef}
             id="xv-profile-quick-menu"
-            className="fixed z-[300] w-[min(260px,calc(100vw-100px))] animate-in fade-in slide-in-from-left-2 duration-200"
-            style={{ top: pos.top, left: Math.min(pos.left, window.innerWidth - 280) }}
+            className="fixed z-[300] w-[min(260px,calc(100vw-24px))] animate-in fade-in slide-in-from-bottom-2 duration-200"
+            style={{ top: pos.top, left: pos.left }}
           >
             <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)]/98 backdrop-blur-xl shadow-2xl overflow-hidden">
               <p className="text-[9px] uppercase tracking-widest text-[var(--muted)] px-3 pt-2.5 pb-1 font-semibold">

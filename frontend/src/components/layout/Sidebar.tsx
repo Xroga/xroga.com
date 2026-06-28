@@ -181,7 +181,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   }
 
   const bottomSection = (
-    <div className="p-2 border-t border-[var(--card-border)]/30 mt-auto space-y-2 xv-sidebar-bottom">
+    <div className="p-2 mt-auto space-y-2 xv-sidebar-bottom">
       {onTopUp && (
         <div className={cn(!sidebarOpen && 'flex justify-center')}>
           {sidebarOpen ? (
