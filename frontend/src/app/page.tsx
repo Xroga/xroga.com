@@ -7,12 +7,12 @@ import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageTagMarquee } from '@/components/homepage/HomepageTagMarquee';
 import { AppStoreInline } from '@/components/ui/AppStoreInline';
+import { ModelBadge } from '@/components/ui/ModelBadge';
 import { PowerSmashButton, DottedSignInButton } from '@/components/ui/XrogaButtons';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
 import { XROGA_MODEL_TAGLINE, XROGA_MODEL_FIRST_LAST } from '@/lib/brand';
 import { useThemeStore } from '@/store/useThemeStore';
 import { createClient } from '@/lib/supabase/client';
-import { Sparkles } from 'lucide-react';
 
 export default function HomePage() {
   const router = useRouter();
@@ -38,7 +38,7 @@ export default function HomePage() {
         style={{ backgroundImage: `url("${customMobileBg ?? MOBILE_BG}")` }}
         aria-hidden
       />
-      <div className="fixed inset-0 -z-10 xv-hero-axrina-bg" aria-hidden />
+      <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/50 via-black/20 to-black/55" aria-hidden />
 
       <header className="xv-home-header sticky top-0 z-50 bg-transparent border-none shadow-none">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
@@ -55,33 +55,37 @@ export default function HomePage() {
       </header>
 
       <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-14 relative">
-        <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[80%] max-w-lg h-40 bg-[#6b21a8]/25 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[80%] max-w-lg h-40 bg-[#006aff]/15 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="relative z-10 w-full max-w-5xl text-center">
-          {/* Axrina-style badge */}
-          <div className="xv-hero-axrina-badge inline-flex items-stretch mb-8 overflow-hidden rounded-full">
+          <div className="xv-hero-axrina-badge inline-flex items-stretch mb-6 overflow-hidden rounded-full">
             <span className="xv-hero-axrina-badge__new">New</span>
             <span className="xv-hero-axrina-badge__text">Black Hole V∞ is out now</span>
           </div>
 
-          <h1 className="xv-hero-axrina-title mb-5">
-            Meet{' '}
-            <span className="xv-hero-axrina-brand">
-              Xroga
-              <span className="xv-hero-axrina-underline" aria-hidden />
+          <div className="xv-hero-model-pill inline-flex items-center justify-center mb-6 px-5 py-2 rounded-full">
+            <ModelBadge variant="hero" showSubtext />
+            <span className="ml-2 text-[9px] text-emerald-400/90 font-semibold tracking-widest uppercase">· Live ·</span>
+          </div>
+
+          <h1 className="xv-hero-modern-title mb-6">
+            <span className="xv-hero-modern-line block">
+              <span className="xv-hero-silver">Do </span>
+              <span className="xv-hero-silver-italic">Everything</span>
             </span>
-            <br className="sm:hidden" />
-            {' '}Personal AI Assistant
-            <span className="xv-hero-axrina-sparkles inline-flex ml-2 align-middle" aria-hidden>
-              <Sparkles className="w-5 h-5 sm:w-7 sm:h-7 text-[#e8c4a8]/80" />
+            <span className="xv-hero-modern-line block mt-1 sm:mt-2">
+              <span className="xv-hero-blue">You </span>
+              <span className="xv-hero-blue-italic">Imagine</span>
             </span>
           </h1>
 
-          <p className="xv-hero-axrina-sub max-w-xl mx-auto mb-6 text-sm sm:text-base leading-relaxed">
-            One AI model that does it all — apps, games, movies, code, and automations.{' '}
-            <span className="block mt-1 text-[#93c5fd] font-semibold text-xs sm:text-sm">{XROGA_MODEL_TAGLINE}</span>
-            <span className="block mt-0.5 text-white/50 text-[10px] sm:text-xs">{XROGA_MODEL_FIRST_LAST}</span>
-          </p>
+          <div className="xv-hero-sub-card mx-auto max-w-2xl mb-8 px-4 sm:px-6 py-3 sm:py-4 rounded-xl">
+            <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed tracking-tight">
+              One AI model that does it all — apps, games, movies, code, and automations.
+            </p>
+            <p className="text-[10px] sm:text-xs text-[#93c5fd] font-bold mt-1.5 tracking-wide">{XROGA_MODEL_TAGLINE}</p>
+            <p className="text-[9px] sm:text-[10px] text-slate-300/80 mt-1 font-medium">{XROGA_MODEL_FIRST_LAST}</p>
+          </div>
 
           {!loggedIn && (
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-8">
@@ -100,10 +104,8 @@ export default function HomePage() {
             <HomepageChatBar />
           </div>
 
-          <div className="w-full mb-4">
-            <AppStoreInline className="mb-5" />
-            <HomepageTagMarquee />
-          </div>
+          <AppStoreInline className="mb-5" />
+          <HomepageTagMarquee />
         </div>
       </main>
 

@@ -661,15 +661,15 @@ body.theme-gray * {
     letter-spacing: -0.04em;
   }
   .xv-hero-silver {
-    background: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 45%, #e2e8f0 100%);
+    background: linear-gradient(135deg, #f5e6d3 0%, #e8c4a8 45%, #d4a574 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     font-weight: 800;
-    text-shadow: 0 0 40px rgba(148, 163, 184, 0.25);
+    text-shadow: 0 0 40px rgba(232, 196, 168, 0.35);
   }
   .xv-hero-silver-italic {
-    background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+    background: linear-gradient(135deg, #f0dcc8 0%, #e8c4a8 55%, #c9a06a 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -784,6 +784,132 @@ body.theme-gray * {
     text-align: center;
     margin-bottom: 1rem;
     color: var(--foreground);
+  }
+
+  /* Modern auth — light glass card + gradient UI */
+  .xv-auth-glass-card {
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.94) 0%,
+      rgba(248, 250, 252, 0.88) 50%,
+      rgba(240, 249, 255, 0.9) 100%
+    );
+    border: 1px solid rgba(0, 106, 255, 0.12);
+    box-shadow:
+      0 24px 48px rgba(0, 0, 0, 0.28),
+      0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+      0 8px 32px rgba(0, 106, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .xv-auth-gradient-title {
+    background: linear-gradient(135deg, #006aff 0%, #3b82f6 40%, #60a5fa 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-family: 'Nunito', var(--font-inter), sans-serif;
+    letter-spacing: -0.02em;
+  }
+  .xv-auth-gradient-text {
+    background: linear-gradient(135deg, #006aff 0%, #60a5fa 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .xv-auth-modern-subtitle {
+    background: linear-gradient(135deg, #475569 0%, #006aff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: 0.02em;
+  }
+  .xv-auth-modern-quote {
+    background: linear-gradient(135deg, rgba(240, 249, 255, 0.9) 0%, rgba(248, 250, 252, 0.95) 100%);
+    border: 1px solid rgba(0, 106, 255, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 106, 255, 0.06);
+  }
+  .xv-auth-footer-link {
+    color: #64748b;
+    transition: color 0.2s ease;
+  }
+  .xv-auth-footer-link:hover {
+    color: #006aff;
+  }
+  .xv-auth-back-link {
+    color: rgba(255, 255, 255, 0.65);
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+  .xv-auth-back-link:hover {
+    color: #fff;
+    background: rgba(0, 106, 255, 0.25);
+    border-color: rgba(0, 106, 255, 0.35);
+  }
+  .xv-auth-oauth-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.875rem;
+    background: #fff;
+    border: 1px solid rgba(0, 106, 255, 0.15);
+    box-shadow: 0 4px 14px rgba(0, 106, 255, 0.1);
+    color: #334155;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .xv-auth-oauth-btn:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 106, 255, 0.35);
+    box-shadow: 0 8px 20px rgba(0, 106, 255, 0.18);
+  }
+  .xv-auth-gradient-btn.xv-gradient-btn-wrapper {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    --xv-rad: 14px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    min-height: 3rem;
+    height: 3rem;
+    filter: saturate(1) brightness(1.1);
+    border-color: rgba(255, 255, 255, 0.85);
+  }
+  .xv-auth-gradient-btn.xv-gradient-btn-wrapper .xv-gradient-btn,
+  .xv-auth-gradient-btn.xv-gradient-btn-wrapper .xv-text-overlay {
+    width: 100%;
+    min-height: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.25rem;
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  .xv-auth-gradient-btn.xv-gradient-btn-wrapper .xv-text-overlay {
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    mix-blend-mode: normal;
+    box-shadow: none;
+    animation: xv-auth-btn-glow 4s ease-in-out infinite;
+  }
+  @keyframes xv-auth-btn-glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.92; }
+  }
+  .xv-store-badge-official {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .xv-store-badge-official:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   }
 
   /* Dotted Sign In button */
