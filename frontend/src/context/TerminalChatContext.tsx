@@ -38,6 +38,7 @@ interface TerminalChatContextValue {
   outOfActionsOpen: boolean;
   setOutOfActionsOpen: (v: boolean) => void;
   animatingId: string | null;
+  swarmActiveAgent: string | null;
   submit: (text?: string) => Promise<void>;
   stop: () => void;
   startNewChat: () => void;
@@ -61,6 +62,7 @@ export function TerminalChatProvider({
   const [outOfActionsOpen, setOutOfActionsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [animatingId, setAnimatingId] = useState<string | null>(null);
+  const [swarmActiveAgent, setSwarmActiveAgent] = useState<string | null>(null);
   const chatPrefill = useAppStore((s) => s.chatPrefill);
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
   const setSwarmRunning = useAppStore((s) => s.setSwarmRunning);
@@ -93,6 +95,7 @@ export function TerminalChatProvider({
       complete: 'Complete',
     };
     const label = labels[key] ?? agent.replace(/_/g, ' ');
+    setSwarmActiveAgent(key);
     setMessages((m) => [
       ...m,
       {
@@ -119,6 +122,7 @@ export function TerminalChatProvider({
     setLoading(false);
     setSwarmRunning(false);
     setAnimatingId(null);
+    setSwarmActiveAgent(null);
     clearWorkspaceSession();
   }, [setSwarmRunning]);
 
@@ -132,6 +136,7 @@ export function TerminalChatProvider({
       setPrompt('');
       setLoading(true);
       setSwarmRunning(true);
+      setSwarmActiveAgent('routing');
 
       const assistantId = crypto.randomUUID();
       let gotEvent = false;
@@ -214,6 +219,7 @@ export function TerminalChatProvider({
         setLoading(false);
         setSwarmRunning(false);
         setAnimatingId(null);
+        setSwarmActiveAgent(null);
       }
     },
     [prompt, loading, projectId, addProgress, setSwarmRunning]
@@ -249,6 +255,7 @@ export function TerminalChatProvider({
         outOfActionsOpen,
         setOutOfActionsOpen,
         animatingId,
+        swarmActiveAgent,
         submit,
         stop,
         startNewChat,

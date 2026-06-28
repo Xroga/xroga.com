@@ -11,9 +11,9 @@ const nunito = Nunito({ subsets: ['latin'], variable: '--font-nunito', weight: [
 
 export const metadata: Metadata = {
   ...buildMetadata({
-    title: 'Xroga AI — #1 AI Swarm Operating System | Build Apps, Games & Automate',
+    title: 'Xroga AI — #1 Top AI Swarm Operating System | Best AI to Build Apps & Games',
     description:
-      'Xroga AI is the AI Swarm Operating System built by Muhammad Ibrahim from Pakistan. Build websites, mobile apps, games, software, browser automation, and research — with honest action pricing and 710+ integrations.',
+      'Xroga AI is the #1 AI Swarm Operating System — best top AI platform to build websites, mobile apps, games, software, and browser automation. Sign up free. Also found as Roga AI, Droga AI, xroga.com.',
     path: '/',
   }),
   metadataBase: new URL('https://xroga.com'),
