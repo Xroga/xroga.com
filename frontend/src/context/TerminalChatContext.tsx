@@ -13,6 +13,7 @@ import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, ApiError } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
+import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
 import {
   clearWorkspaceSession,
@@ -30,10 +31,17 @@ export interface ChatMessage {
   agent?: string;
 }
 
+export interface QueuedPrompt {
+  id: string;
+  text: string;
+  createdAt: number;
+}
+
 interface TerminalChatContextValue {
   messages: ChatMessage[];
   prompt: string;
   setPrompt: (v: string) => void;
+  promptQueue: QueuedPrompt[];
   loading: boolean;
   outOfActionsOpen: boolean;
   setOutOfActionsOpen: (v: boolean) => void;
@@ -42,6 +50,10 @@ interface TerminalChatContextValue {
   submit: (text?: string) => Promise<void>;
   stop: () => void;
   startNewChat: () => void;
+  removeFromQueue: (id: string) => void;
+  editQueuedPrompt: (id: string, text: string) => void;
+  sendQueuedNow: (id: string) => void;
+  clearQueue: () => void;
   projectId?: string;
 }
 
@@ -57,7 +69,9 @@ export function TerminalChatProvider({
   const pathname = usePathname();
   const routeProjectId = pathname.match(/\/dashboard\/projects\/([^/]+)/)?.[1];
   const projectId = projectIdProp ?? routeProjectId;
+  const incognito = usePrivacyStore((s) => s.incognito);
   const [prompt, setPrompt] = useState('');
+  const [promptQueue, setPromptQueue] = useState<QueuedPrompt[]>([]);
   const [loading, setLoading] = useState(false);
   const [outOfActionsOpen, setOutOfActionsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -69,20 +83,29 @@ export function TerminalChatProvider({
   const thinkingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const autoRanRef = useRef(false);
-  const submitRef = useRef<(text?: string) => Promise<void>>(async () => {});
+  const submitRef = useRef<(text?: string, fromQueue?: boolean) => Promise<void>>(async () => {});
+  const queueRef = useRef<QueuedPrompt[]>([]);
   const [sessionReady, setSessionReady] = useState(false);
 
+  queueRef.current = promptQueue;
+
   useEffect(() => {
+    if (incognito) {
+      setMessages([]);
+      setPrompt('');
+      setPromptQueue([]);
+      return;
+    }
     const session = loadWorkspaceSession();
     if (session?.messages?.length) setMessages(session.messages);
     if (session?.prompt) setPrompt(session.prompt);
     setSessionReady(true);
-  }, []);
+  }, [incognito]);
 
   useEffect(() => {
-    if (!sessionReady) return;
+    if (!sessionReady || incognito) return;
     saveWorkspaceSession({ prompt, messages });
-  }, [sessionReady, prompt, messages]);
+  }, [sessionReady, prompt, messages, incognito]);
 
   const addProgress = useCallback((agent: string, message: string) => {
     const key = agent.toLowerCase().replace(/\s/g, '_');
@@ -107,6 +130,18 @@ export function TerminalChatProvider({
     ]);
   }, []);
 
+  const enqueuePrompt = useCallback((text: string) => {
+    setPromptQueue((q) => [...q, { id: crypto.randomUUID(), text, createdAt: Date.now() }]);
+    toast('Queued — sends when current response finishes', { icon: '⏳' });
+  }, []);
+
+  const processNextInQueue = useCallback(() => {
+    const next = queueRef.current[0];
+    if (!next) return;
+    setPromptQueue((q) => q.slice(1));
+    void submitRef.current(next.text, true);
+  }, []);
+
   const stop = useCallback(() => {
     abortRef.current?.abort();
   }, []);
@@ -119,21 +154,51 @@ export function TerminalChatProvider({
     }
     setMessages([]);
     setPrompt('');
+    setPromptQueue([]);
     setLoading(false);
     setSwarmRunning(false);
     setAnimatingId(null);
     setSwarmActiveAgent(null);
-    clearWorkspaceSession();
+    if (!usePrivacyStore.getState().incognito) clearWorkspaceSession();
   }, [setSwarmRunning]);
 
+  const removeFromQueue = useCallback((id: string) => {
+    setPromptQueue((q) => q.filter((p) => p.id !== id));
+  }, []);
+
+  const editQueuedPrompt = useCallback((id: string, text: string) => {
+    setPromptQueue((q) => q.map((p) => (p.id === id ? { ...p, text } : p)));
+    setPrompt(text);
+  }, []);
+
+  const sendQueuedNow = useCallback((id: string) => {
+    const item = queueRef.current.find((p) => p.id === id);
+    if (!item) return;
+    setPromptQueue((q) => q.filter((p) => p.id !== id));
+    if (loading) {
+      setPromptQueue((q) => [item, ...q]);
+      toast('Moved to front of queue', { icon: '⏳' });
+      return;
+    }
+    void submitRef.current(item.text, true);
+  }, [loading]);
+
+  const clearQueue = useCallback(() => setPromptQueue([]), []);
+
   const submit = useCallback(
-    async (overrideText?: string) => {
+    async (overrideText?: string, fromQueue = false) => {
       const text = (overrideText ?? prompt).trim();
-      if (loading) return;
       if (!text) return;
 
+      if (loading && !fromQueue) {
+        enqueuePrompt(text);
+        setPrompt('');
+        return;
+      }
+      if (loading) return;
+
       setMessages((m) => [...m, { id: crypto.randomUUID(), role: 'user', content: text }]);
-      setPrompt('');
+      if (!fromQueue) setPrompt('');
       setLoading(true);
       setSwarmRunning(true);
       setSwarmActiveAgent('routing');
@@ -144,25 +209,19 @@ export function TerminalChatProvider({
       abortRef.current = controller;
 
       thinkingTimerRef.current = setTimeout(() => {
-        if (!gotEvent) {
-          addProgress('architect', 'Swarm is thinking...');
-        }
+        if (!gotEvent) addProgress('architect', 'Swarm is thinking...');
       }, 3000);
 
       try {
         const supabase = createClient();
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
         if (!session?.access_token) throw new Error('Please sign in to chat.');
 
         addProgress('architect', 'Planning...');
-
         setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '' }]);
         setAnimatingId(assistantId);
 
         let fullReply = '';
-
         await streamSwarmExecute(text, {
           projectId,
           signal: controller.signal,
@@ -173,17 +232,13 @@ export function TerminalChatProvider({
               thinkingTimerRef.current = null;
             }
             const label = event.message ?? event.status ?? 'working';
-            if (event.agent) {
-              addProgress(event.agent, label);
-            }
+            if (event.agent) addProgress(event.agent, label);
           },
           onDelta: (delta) => {
             gotEvent = true;
             fullReply += delta;
             setMessages((m) =>
-              m.map((msg) =>
-                msg.id === assistantId ? { ...msg, content: msg.content + delta } : msg
-              )
+              m.map((msg) => (msg.id === assistantId ? { ...msg, content: msg.content + delta } : msg))
             );
           },
         });
@@ -220,9 +275,10 @@ export function TerminalChatProvider({
         setSwarmRunning(false);
         setAnimatingId(null);
         setSwarmActiveAgent(null);
+        setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, addProgress, setSwarmRunning]
+    [prompt, loading, projectId, addProgress, setSwarmRunning, enqueuePrompt, processNextInQueue]
   );
 
   submitRef.current = submit;
@@ -235,15 +291,14 @@ export function TerminalChatProvider({
   }, [chatPrefill, setChatPrefill]);
 
   useEffect(() => {
-    if (autoRanRef.current) return;
-    const pending =
-      typeof window !== 'undefined' ? localStorage.getItem(PENDING_PROMPT_KEY) : null;
+    if (autoRanRef.current || incognito) return;
+    const pending = typeof window !== 'undefined' ? localStorage.getItem(PENDING_PROMPT_KEY) : null;
     if (pending) {
       autoRanRef.current = true;
       localStorage.removeItem(PENDING_PROMPT_KEY);
       void submitRef.current(pending);
     }
-  }, []);
+  }, [incognito]);
 
   return (
     <TerminalChatContext.Provider
@@ -251,6 +306,7 @@ export function TerminalChatProvider({
         messages,
         prompt,
         setPrompt,
+        promptQueue,
         loading,
         outOfActionsOpen,
         setOutOfActionsOpen,
@@ -259,6 +315,10 @@ export function TerminalChatProvider({
         submit,
         stop,
         startNewChat,
+        removeFromQueue,
+        editQueuedPrompt,
+        sendQueuedNow,
+        clearQueue,
         projectId,
       }}
     >

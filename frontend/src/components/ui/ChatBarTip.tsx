@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
 
-/** Compact tooltip shown ABOVE the trigger */
+/** Tooltip rendered above the chatbar (outside overflow clipping). */
 export function ChatBarTip({
   label,
   children,
@@ -15,6 +16,30 @@ export function ChatBarTip({
 }) {
   const [show, setShow] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    if (!show || !ref.current) return;
+    const r = ref.current.getBoundingClientRect();
+    setPos({
+      top: r.top - 8,
+      left: r.left + r.width / 2,
+    });
+  }, [show]);
+
+  const tip =
+    show && typeof document !== 'undefined'
+      ? createPortal(
+          <span
+            role="tooltip"
+            className="fixed z-[300] -translate-x-1/2 -translate-y-full px-2.5 py-1 rounded-lg text-[9px] font-semibold whitespace-nowrap bg-[var(--foreground)] text-[var(--background)] shadow-lg pointer-events-none"
+            style={{ top: pos.top, left: pos.left }}
+          >
+            {label}
+          </span>,
+          document.body
+        )
+      : null;
 
   return (
     <div
@@ -25,14 +50,7 @@ export function ChatBarTip({
       onFocus={() => setShow(true)}
       onBlur={() => setShow(false)}
     >
-      {show && (
-        <span
-          role="tooltip"
-          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 rounded-md text-[9px] font-semibold whitespace-nowrap z-[90] bg-[var(--foreground)] text-[var(--background)] shadow-lg pointer-events-none"
-        >
-          {label}
-        </span>
-      )}
+      {tip}
       {children}
     </div>
   );

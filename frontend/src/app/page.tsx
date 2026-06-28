@@ -39,10 +39,10 @@ export default function HomePage() {
       <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/50 via-black/20 to-black/55" aria-hidden />
 
       <header className="xv-home-header sticky top-0 z-50 bg-transparent border-none shadow-none">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
-          <Logo href="/" variant="homepage" height={76} className="shrink-0" />
-          <div className="flex items-center gap-3">
-            <AppStoreInline compact className="hidden sm:inline-flex" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+          <Logo href="/" variant="homepage" height={76} className="shrink-0 justify-self-start" />
+          <AppStoreInline compact className="hidden lg:inline-flex justify-self-center" />
+          <div className="flex items-center justify-end gap-3 justify-self-end">
             {loggedIn && (
               <PowerSmashButton size="md" onClick={() => router.push('/dashboard')}>
                 Dashboard
@@ -68,15 +68,20 @@ export default function HomePage() {
           </h1>
 
           {!loggedIn && (
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-8">
+            <div className="xv-home-auth-row flex items-stretch justify-center gap-3 sm:gap-4 mb-8">
               <PowerSmashButton
                 size="sm"
                 onClick={() => router.push('/auth/signup')}
-                className="xv-get-started-outline"
+                className="xv-get-started-outline xv-home-auth-btn !min-w-[148px] !min-h-[48px]"
               >
                 Get Started
               </PowerSmashButton>
-              <DottedSignInButton onClick={() => router.push('/auth/login')}>Sign In</DottedSignInButton>
+              <DottedSignInButton
+                onClick={() => router.push('/auth/login')}
+                className="xv-dotted-signin--light xv-home-auth-btn !min-w-[148px]"
+              >
+                Sign In
+              </DottedSignInButton>
             </div>
           )}
 
@@ -84,13 +89,12 @@ export default function HomePage() {
             <HomepageChatBar />
           </div>
 
-          <AppStoreInline className="mb-5 justify-center" />
           <HomepageTagMarquee />
         </div>
       </main>
 
       <footer className="relative z-10 py-4 px-4 xv-home-footer-scroll">
-        <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide max-w-full mx-auto pb-1">
+        <div className="flex items-center justify-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide max-w-4xl mx-auto pb-1">
           <Link href="/features" className="xv-footer-pill shrink-0">Features</Link>
           <Link href="/auth/signup" className="xv-footer-pill shrink-0">Sign Up</Link>
           <Link href="/auth/login" className="xv-footer-pill shrink-0">Sign In</Link>

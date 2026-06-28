@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 const MOOD_OPTIONS = [
+  { icon: Smile, label: 'Perfect', pct: 100, hover: 'hover:bg-[#006aff]/20 hover:border-[#006aff]/50 hover:text-[#006aff]' },
   { icon: Smile, label: 'Love it', pct: 72, hover: 'hover:bg-emerald-500/20 hover:border-emerald-400/50 hover:text-emerald-400' },
   { icon: Smile, label: 'Good', pct: 58, hover: 'hover:bg-green-500/15 hover:border-green-400/40 hover:text-green-400' },
   { icon: Meh, label: 'Okay', pct: 45, hover: 'hover:bg-orange-500/15 hover:border-orange-400/40 hover:text-orange-400' },
@@ -75,7 +76,7 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
             </button>
           </div>
 
-          <div className="grid grid-cols-6 gap-1.5 mb-4">
+          <div className="grid grid-cols-7 gap-1 mb-4">
             {MOOD_OPTIONS.map((m, i) => {
               const Icon = m.icon;
               return (
