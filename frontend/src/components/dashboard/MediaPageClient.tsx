@@ -1,17 +1,18 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { Film, Image as ImageIcon, Music, Upload, Trash2 } from 'lucide-react';
+import { Film, Image as ImageIcon, Music, Upload } from 'lucide-react';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
+import { UiverseTableCard } from '@/components/ui/UiverseTableCard';
+import { SectionRowActions, downloadUrl } from '@/components/ui/SectionRowActions';
 import { loadMediaItems, saveMediaItems, type MediaItem } from '@/lib/mediaStorage';
+import { mediaTableRows } from '@/lib/tableRows';
+import { getItemMeta, markItemSeen } from '@/lib/itemMeta';
+import { resumeToDashboard } from '@/lib/workspacePersistence';
+import { useRouter } from 'next/navigation';
+import { useTerminalChat } from '@/context/TerminalChatContext';
 import toast from 'react-hot-toast';
-
-function MediaIcon({ type }: { type: MediaItem['type'] }) {
-  if (type === 'video') return <Film className="w-8 h-8 text-[var(--muted)]" />;
-  if (type === 'audio') return <Music className="w-8 h-8 text-[var(--muted)]" />;
-  return <ImageIcon className="w-8 h-8 text-[var(--muted)]" />;
-}
 
 function detectType(file: File): MediaItem['type'] {
   if (file.type.startsWith('video/')) return 'video';
@@ -23,7 +24,10 @@ export function MediaPageClient() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [filter, setFilter] = useState<'all' | MediaItem['type']>('all');
   const [query, setQuery] = useState('');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const { setPrompt } = useTerminalChat();
 
   useEffect(() => {
     setItems(loadMediaItems());
@@ -62,6 +66,20 @@ export function MediaPageClient() {
   function removeItem(id: string) {
     persist(items.filter((i) => i.id !== id));
     toast.success('Removed from library');
+  }
+
+  function openInDashboard(item: MediaItem) {
+    markItemSeen(item.id);
+    setSelectedId(item.id);
+    const prompt = `Use my ${item.type} asset "${item.name}" in the next build`;
+    setPrompt(prompt);
+    resumeToDashboard({
+      prompt,
+      selectedId: item.id,
+      selectedLabel: item.name,
+      source: 'media',
+    });
+    router.push('/dashboard');
   }
 
   const shown = useMemo(() => {
@@ -132,40 +150,29 @@ export function MediaPageClient() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {shown.map((item) => (
-              <div
-                key={item.id}
-                className="group rounded-xl border border-[var(--card-border)] overflow-hidden glass-panel"
-              >
-                <div className="aspect-square bg-white/5 relative flex items-center justify-center overflow-hidden">
-                  {item.type === 'image' ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={item.url} alt={item.name} className="w-full h-full object-cover" />
-                  ) : item.type === 'video' ? (
-                    <video src={item.url} className="w-full h-full object-cover" controls />
-                  ) : (
-                    <div className="p-4 w-full">
-                      <audio src={item.url} controls className="w-full" />
-                    </div>
-                  )}
-                  {item.type !== 'audio' && (
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <MediaIcon type={item.type} />
-                    </div>
-                  )}
-                </div>
-                <div className="p-2 flex items-center gap-2">
-                  <p className="text-xs truncate flex-1">{item.name}</p>
-                  <button
-                    type="button"
-                    onClick={() => removeItem(item.id)}
-                    className="p-1 rounded hover:bg-red-500/20 text-[var(--muted)] hover:text-red-400"
-                    aria-label="Remove"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+              <div key={item.id} className="space-y-2">
+                {item.type === 'image' && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={item.url}
+                    alt=""
+                    className="w-full h-24 object-cover rounded-lg border border-[var(--card-border)]"
+                  />
+                )}
+                {item.type === 'video' && <Film className="w-8 h-8 text-[var(--muted)]" />}
+                {item.type === 'audio' && <Music className="w-8 h-8 text-[var(--muted)]" />}
+                <UiverseTableCard
+                  title={item.name.slice(0, 28) || item.type}
+                  rows={mediaTableRows(item, getItemMeta(item.id))}
+                  selected={selectedId === item.id}
+                  onClick={() => openInDashboard(item)}
+                />
+                <SectionRowActions
+                  onDownload={() => downloadUrl(item.name, item.url)}
+                  onDelete={() => removeItem(item.id)}
+                />
               </div>
             ))}
           </div>

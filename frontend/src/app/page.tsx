@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageTagMarquee } from '@/components/homepage/HomepageTagMarquee';
+import { AppStoreBanner } from '@/components/dashboard/AppStoreBanner';
 import { ModelBadge } from '@/components/ui/ModelBadge';
 import { PowerSmashButton, DottedSignInButton } from '@/components/ui/XrogaButtons';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
@@ -92,6 +93,10 @@ export default function HomePage() {
           </div>
 
           <HomepageTagMarquee />
+
+          <div className="mt-8 w-full max-w-xl mx-auto">
+            <AppStoreBanner variant="homepage" />
+          </div>
         </div>
       </main>
 

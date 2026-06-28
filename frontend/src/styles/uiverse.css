@@ -1034,3 +1034,113 @@ body.theme-gray .xv-chatbar-solid textarea::placeholder {
   from { transform: translate(100px,100px) rotate(0); }
   to { transform: translate(100px,100px) rotate(720deg); }
 }
+
+/* ── Uiverse table card (Rodrypaladin) — theme-aware ── */
+.xv-uiverse-table-card {
+  background: rgb(44, 44, 44);
+  font-family: "Courier New", Courier, monospace;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  overflow: hidden;
+  border: none;
+}
+body.theme-white .xv-uiverse-table-card {
+  background: rgb(55, 55, 58);
+}
+.xv-uiverse-table-card__title {
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-bottom: 1px solid rgb(167, 159, 159);
+  font-size: 0.95rem;
+  text-transform: lowercase;
+}
+.xv-uiverse-table-card__data {
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  border-right: 1px solid rgb(203, 203, 203);
+  border-left: 1px solid rgb(203, 203, 203);
+  border-bottom: 1px solid rgb(203, 203, 203);
+}
+.xv-uiverse-table-card__right {
+  width: 60%;
+  border-right: 1px solid rgb(203, 203, 203);
+}
+.xv-uiverse-table-card__left {
+  width: 40%;
+  text-align: end;
+}
+.xv-uiverse-table-card__item {
+  padding: 3px 0;
+  background-color: white;
+  color: #1a1a1a;
+}
+.xv-uiverse-table-card__right .xv-uiverse-table-card__item {
+  padding-left: 0.8em;
+}
+.xv-uiverse-table-card__left .xv-uiverse-table-card__item {
+  padding-right: 0.8em;
+}
+.xv-uiverse-table-card__item:nth-child(even) {
+  background: rgb(234, 235, 234);
+}
+
+/* App store badges */
+.xv-store-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+  background: rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Sidebar compact buttons */
+.xv-sidebar-feedback-btn {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: rgba(236, 72, 153, 0.1);
+  color: var(--foreground);
+  transition: all 0.15s;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+.xv-sidebar-feedback-btn:hover {
+  background: rgba(236, 72, 153, 0.2);
+  border-color: rgba(236, 72, 153, 0.35);
+}
+.xv-sidebar-community-btn {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: linear-gradient(135deg, rgba(74, 122, 255, 0.15), rgba(168, 85, 247, 0.1));
+  color: var(--accent);
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+.xv-sidebar-community-btn:hover {
+  background: linear-gradient(135deg, rgba(74, 122, 255, 0.25), rgba(168, 85, 247, 0.18));
+  transform: translateY(-1px);
+}
+.xv-sidebar-community-btn.xv-active {
+  ring: 2px;
+  border-color: var(--accent);
+}
+

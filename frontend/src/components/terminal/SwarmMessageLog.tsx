@@ -11,8 +11,8 @@ import { AiResponseLoader } from '@/components/ui/Uiverse';
 import { BrowserPanelToggle } from './BrowserPanel';
 import { AI_RESPONSE_LOGO_URL, TERMINAL_SKIN_LABELS } from '@/lib/theme';
 import { ModelBadge } from '@/components/ui/ModelBadge';
+import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { cn } from '@/lib/utils';
-import toast from 'react-hot-toast';
 
 function useTypewriter(text: string, active: boolean, speed = 12) {
   const [displayed, setDisplayed] = useState('');
@@ -62,6 +62,7 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
   const profile = useAppStore((s) => s.profile);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -98,7 +99,7 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
           <BrowserPanelToggle />
           <button
             type="button"
-            onClick={() => toast('Feedback — tell us what to improve', { icon: '💬' })}
+            onClick={() => setFeedbackOpen(true)}
             className="xv-feedback-btn p-1.5 rounded-lg shrink-0"
             title="Send feedback"
             aria-label="Feedback"
@@ -171,6 +172,7 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
         </div>
       </div>
       <OutOfActionsModal open={outOfActionsOpen} onClose={() => setOutOfActionsOpen(false)} />
+      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </>
   );
 }

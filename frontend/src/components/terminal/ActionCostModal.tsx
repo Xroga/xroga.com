@@ -12,6 +12,7 @@ import {
   tasksForActionBudget,
   budgetTaskLine,
 } from '@/lib/actionCosts';
+import { UiverseTableCard } from '@/components/ui/UiverseTableCard';
 
 interface ActionCostModalProps {
   open: boolean;
@@ -36,9 +37,9 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
   const affordable = tasksForActionBudget(budget);
 
   const sections = [
-    { title: 'Core AI Tasks', items: CORE_ACTION_COSTS },
-    { title: 'AI Agent Workflow', items: AGENT_WORKFLOW_COSTS },
-    { title: 'Media & Entertainment', items: MEDIA_ACTION_COSTS },
+    { title: 'core ai tasks', items: CORE_ACTION_COSTS },
+    { title: 'ai agent workflow', items: AGENT_WORKFLOW_COSTS },
+    { title: 'media & entertainment', items: MEDIA_ACTION_COSTS },
   ];
 
   return (
@@ -70,7 +71,7 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
           <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wider mb-2 flex items-center gap-1">
             <Calculator className="w-3.5 h-3.5" /> Reverse calculator
           </p>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
             <label className="text-sm text-[var(--muted)]">If I have</label>
             <input
               type="number"
@@ -82,21 +83,15 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
             <span className="text-sm text-[var(--muted)]">actions, I can do:</span>
           </div>
           {budget > 0 ? (
-            <ul className="mt-2 space-y-1 text-xs max-h-40 overflow-y-auto">
-              {affordable.map((item) => {
-                const canDo = budget >= item.cost;
-                return (
-                  <li key={item.id} className={`flex justify-between gap-2 py-0.5 ${!canDo ? 'opacity-50' : ''}`}>
-                    <span className="text-[var(--muted)] truncate">{item.task}</span>
-                    <span className={`font-mono shrink-0 ${canDo ? '' : 'text-red-400/80'}`}>
-                      {budgetTaskLine(item, budget)}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
+            <UiverseTableCard
+              title="budget calculator"
+              rows={affordable.map((item) => ({
+                left: item.task,
+                right: budgetTaskLine(item, budget),
+              }))}
+            />
           ) : (
-            <p className="text-xs text-[var(--muted)] mt-2">Enter an action count above.</p>
+            <p className="text-xs text-[var(--muted)]">Enter an action count above.</p>
           )}
         </div>
 
@@ -106,17 +101,13 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
               <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wider mb-2 flex items-center gap-1">
                 <Info className="w-3 h-3" /> {title}
               </p>
-              <ul className="space-y-1">
-                {items.map((item) => (
-                  <li key={item.id} className="flex justify-between gap-3 text-sm py-1 border-b border-white/5 last:border-0">
-                    <div className="min-w-0">
-                      <span className="block truncate">{item.task}</span>
-                      <span className="text-[10px] text-[var(--muted)] truncate block">{item.example}</span>
-                    </div>
-                    <span className="font-semibold shrink-0">{item.cost}</span>
-                  </li>
-                ))}
-              </ul>
+              <UiverseTableCard
+                title={title}
+                rows={items.map((item) => ({
+                  left: item.task,
+                  right: String(item.cost),
+                }))}
+              />
             </div>
           ))}
         </div>

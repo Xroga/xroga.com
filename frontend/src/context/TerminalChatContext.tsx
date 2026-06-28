@@ -14,6 +14,11 @@ import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, ApiError } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
+import {
+  clearWorkspaceSession,
+  loadWorkspaceSession,
+  saveWorkspaceSession,
+} from '@/lib/workspacePersistence';
 import toast from 'react-hot-toast';
 
 type MessageRole = 'user' | 'assistant' | 'system';
@@ -63,6 +68,19 @@ export function TerminalChatProvider({
   const abortRef = useRef<AbortController | null>(null);
   const autoRanRef = useRef(false);
   const submitRef = useRef<(text?: string) => Promise<void>>(async () => {});
+  const [sessionReady, setSessionReady] = useState(false);
+
+  useEffect(() => {
+    const session = loadWorkspaceSession();
+    if (session?.messages?.length) setMessages(session.messages);
+    if (session?.prompt) setPrompt(session.prompt);
+    setSessionReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!sessionReady) return;
+    saveWorkspaceSession({ prompt, messages });
+  }, [sessionReady, prompt, messages]);
 
   const addProgress = useCallback((agent: string, message: string) => {
     const key = agent.toLowerCase().replace(/\s/g, '_');
@@ -101,6 +119,7 @@ export function TerminalChatProvider({
     setLoading(false);
     setSwarmRunning(false);
     setAnimatingId(null);
+    clearWorkspaceSession();
   }, [setSwarmRunning]);
 
   const submit = useCallback(

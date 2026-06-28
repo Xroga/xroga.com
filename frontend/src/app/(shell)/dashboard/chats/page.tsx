@@ -15,10 +15,10 @@ export default function ChatsPage() {
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
           <MessageSquare className="w-7 h-7 text-[var(--accent)]" />
-          Chats & Research
+          Chats & Reports
         </h1>
         <p className="text-sm text-[var(--muted)] mt-1">
-          Conversations, research, documents, and swarm history — continue any task from here.
+          Conversations, reports, research, documents, and swarm history — continue any task from here.
         </p>
       </div>
       <SectionSearchBar value={query} onChange={setQuery} placeholder="Search chats & research…" />

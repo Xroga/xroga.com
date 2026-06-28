@@ -14,6 +14,10 @@ import { api, type SwarmRunSummary } from '@/lib/api';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useRouter } from 'next/navigation';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
+import { UiverseTableCard } from '@/components/ui/UiverseTableCard';
+import { automationTableRows } from '@/lib/tableRows';
+import { getItemMeta, incrementRunCount, markItemSeen } from '@/lib/itemMeta';
+import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { cn } from '@/lib/utils';
 
 const RUNNING = new Set(['pending', 'planning', 'building', 'reviewing', 'testing', 'verifying']);
@@ -51,6 +55,7 @@ export function AutomationView() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'running' | 'failed' | 'browser'>('all');
   const [query, setQuery] = useState('');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const { setPrompt } = useTerminalChat();
   const router = useRouter();
 
@@ -92,8 +97,17 @@ export function AutomationView() {
     [runs]
   );
 
-  function continueRun(prompt: string) {
-    setPrompt(prompt);
+  function continueRun(run: SwarmRunSummary) {
+    markItemSeen(run.id);
+    incrementRunCount(run.id, run.iteration_count + 1);
+    setSelectedId(run.id);
+    setPrompt(run.prompt);
+    resumeToDashboard({
+      prompt: run.prompt,
+      selectedId: run.id,
+      selectedLabel: run.prompt.slice(0, 40),
+      source: 'automation',
+    });
     router.push('/dashboard');
   }
 
@@ -141,50 +155,45 @@ export function AutomationView() {
         ))}
       </div>
 
-      <div className="glass-panel rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-[var(--card-border)] text-sm font-semibold">
-          {filter === 'all' ? 'All automations' : `Filtered: ${filter}`}
+      {loading && runs.length === 0 ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="w-6 h-6 animate-spin text-[var(--accent)]" />
         </div>
-        {loading && runs.length === 0 ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="w-6 h-6 animate-spin text-[var(--accent)]" />
-          </div>
-        ) : filtered.length === 0 ? (
-          <p className="text-sm text-[var(--muted)] text-center py-12 px-4">
-            No automations yet. Run a scrape, automate, or research task from the dashboard terminal.
-          </p>
-        ) : (
-          <ul className="divide-y divide-[var(--card-border)]">
-            {filtered.map((run) => (
-              <li key={run.id} className="px-4 py-3 flex flex-wrap items-start gap-3 hover:bg-white/[0.02]">
-                <div className="shrink-0 mt-0.5">
+      ) : filtered.length === 0 ? (
+        <p className="text-sm text-[var(--muted)] text-center py-12 px-4 glass-panel rounded-xl">
+          No automations yet. Run a scrape, automate, or research task from the dashboard terminal.
+        </p>
+      ) : (
+        <div className="grid sm:grid-cols-2 gap-4">
+          {filtered.map((run) => (
+            <div key={run.id} className="space-y-2">
+              <UiverseTableCard
+                title={isBrowserRun(run.prompt) ? 'browser auto' : 'automation'}
+                rows={automationTableRows(run, getItemMeta(run.id))}
+                selected={selectedId === run.id}
+                onClick={() => continueRun(run)}
+              />
+              <div className="flex items-center justify-between gap-2 px-1">
+                <div className="flex items-center gap-1.5 min-w-0">
                   {isBrowserRun(run.prompt) ? (
-                    <Monitor className="w-4 h-4 text-[var(--accent)]" />
+                    <Monitor className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" />
                   ) : (
-                    <Bot className="w-4 h-4 text-[var(--muted)]" />
+                    <Bot className="w-3.5 h-3.5 text-[var(--muted)] shrink-0" />
                   )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium line-clamp-2">{run.prompt}</p>
-                  <p className="text-[10px] text-[var(--muted)] mt-1">
-                    {new Date(run.created_at).toLocaleString()} · {run.status} · {run.iteration_count} iterations
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
                   <StatusBadge status={run.status} />
-                  <button
-                    type="button"
-                    onClick={() => continueRun(run.prompt)}
-                    className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg bg-[var(--accent)]/15 text-[var(--accent)] hover:bg-[var(--accent)]/25"
-                  >
-                    <Play className="w-3 h-3" /> Continue
-                  </button>
                 </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+                <button
+                  type="button"
+                  onClick={() => continueRun(run)}
+                  className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg bg-[var(--accent)]/15 text-[var(--accent)] hover:bg-[var(--accent)]/25 shrink-0"
+                >
+                  <Play className="w-3 h-3" /> Continue
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

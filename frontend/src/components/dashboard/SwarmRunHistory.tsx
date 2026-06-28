@@ -2,14 +2,25 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { api, type SwarmRunSummary } from '@/lib/api';
 import { swarmOutputToText } from '@/lib/swarm';
-import { formatDistanceToNow } from 'date-fns';
 import { Bot, Loader2 } from 'lucide-react';
+import { UiverseTableCard } from '@/components/ui/UiverseTableCard';
+import { SectionRowActions, copyText, downloadText } from '@/components/ui/SectionRowActions';
+import { chatTableRows } from '@/lib/tableRows';
+import { getItemMeta, markItemDeleted, markItemSeen } from '@/lib/itemMeta';
+import { resumeToDashboard } from '@/lib/workspacePersistence';
+import { useTerminalChat } from '@/context/TerminalChatContext';
+import toast from 'react-hot-toast';
 
 export function SwarmRunHistory({ search = '' }: { search?: string }) {
   const [runs, setRuns] = useState<SwarmRunSummary[]>([]);
+  const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const router = useRouter();
+  const { setPrompt } = useTerminalChat();
 
   useEffect(() => {
     api.swarm.history()
@@ -20,8 +31,9 @@ export function SwarmRunHistory({ search = '' }: { search?: string }) {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return runs;
     return runs.filter((run) => {
+      if (hidden.has(run.id)) return false;
+      if (!q) return true;
       const output = run.output as { output?: unknown } | null;
       const text = swarmOutputToText(output?.output ?? output);
       return (
@@ -30,7 +42,20 @@ export function SwarmRunHistory({ search = '' }: { search?: string }) {
         run.status.toLowerCase().includes(q)
       );
     });
-  }, [runs, search]);
+  }, [runs, search, hidden]);
+
+  function openInDashboard(run: SwarmRunSummary) {
+    markItemSeen(run.id);
+    setSelectedId(run.id);
+    setPrompt(run.prompt);
+    resumeToDashboard({
+      prompt: run.prompt,
+      selectedId: run.id,
+      selectedLabel: run.prompt.slice(0, 40),
+      source: 'chats',
+    });
+    router.push('/dashboard');
+  }
 
   if (loading) {
     return (
@@ -65,31 +90,35 @@ export function SwarmRunHistory({ search = '' }: { search?: string }) {
   }
 
   return (
-    <div className="space-y-3 p-4">
+    <div className="grid sm:grid-cols-2 gap-4 p-4">
       {filtered.map((run) => {
         const output = run.output as { output?: unknown } | null;
         const text = swarmOutputToText(output?.output ?? output);
+        const meta = getItemMeta(run.id);
         return (
-          <div key={run.id} className="glass-panel rounded-xl p-4">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-[var(--accent)]/20 flex items-center justify-center shrink-0">
-                <Bot className="w-4 h-4 text-[var(--accent)]" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium truncate">{run.prompt}</p>
-                <p className="text-xs text-[var(--muted)] mt-1 line-clamp-2">{text}</p>
-                <div className="flex items-center gap-3 mt-2 text-xs text-[var(--muted)]">
-                  <span className={run.status === 'completed' ? 'text-[var(--accent)]' : ''}>
-                    {run.status}
-                  </span>
-                  <span>{formatDistanceToNow(new Date(run.created_at), { addSuffix: true })}</span>
-                </div>
-              </div>
-            </div>
+          <div key={run.id} className="space-y-2">
+            <UiverseTableCard
+              title={run.prompt.slice(0, 36) || 'chat'}
+              rows={chatTableRows(run, meta)}
+              selected={selectedId === run.id}
+              onClick={() => openInDashboard(run)}
+            />
+            <SectionRowActions
+              onEdit={() => openInDashboard(run)}
+              onCopy={() => void copyText(run.prompt, 'Prompt copied')}
+              onDownload={() =>
+                downloadText(`xroga-chat-${run.id}.txt`, `${run.prompt}\n\n---\n\n${text}`)
+              }
+              onDelete={() => {
+                markItemDeleted(run.id);
+                setHidden((h) => new Set(h).add(run.id));
+                toast.success('Removed from list');
+              }}
+            />
           </div>
         );
       })}
-      <Link href="/dashboard" className="block text-center text-sm text-[var(--accent)] hover:underline">
+      <Link href="/dashboard" className="sm:col-span-2 block text-center text-sm text-[var(--accent)] hover:underline">
         Run a new command →
       </Link>
     </div>

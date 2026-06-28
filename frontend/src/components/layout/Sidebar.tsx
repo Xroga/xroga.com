@@ -24,6 +24,8 @@ import {
   Lock,
   Sparkles,
   PlusCircle,
+  Users,
+  MessageCircleHeart,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
@@ -41,6 +43,7 @@ import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { PalestineSupportBanner } from '@/components/ui/PalestineSupport';
+import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 
 const navItems = [
   {
@@ -57,15 +60,21 @@ const navItems = [
   },
   {
     href: '/dashboard/chats',
-    label: 'Chats & Research',
+    label: 'Chats & Reports',
     icon: MessageSquare,
-    tip: 'Conversations, research, documents, and swarm history.',
+    tip: 'Conversations, reports, research, documents, and swarm history.',
   },
   {
     href: '/dashboard/automation',
     label: 'Automation',
     icon: Workflow,
     tip: 'Running, failed, and browser automations — continue or review past runs.',
+  },
+  {
+    href: '/dashboard/community',
+    label: 'Community',
+    icon: Users,
+    tip: 'Discover creations from other builders — vote, comment, and collaborate. Coming soon.',
   },
   {
     href: '/dashboard/spending',
@@ -112,6 +121,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
   const { startNewChat } = useTerminalChat();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
@@ -242,6 +252,22 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
       {sidebarOpen && (
         <>
           <PalestineSupportBanner className="w-full justify-center" />
+          <button
+            type="button"
+            onClick={() => setFeedbackOpen(true)}
+            className="xv-sidebar-feedback-btn"
+          >
+            <MessageCircleHeart className="w-3.5 h-3.5" />
+            Feedback
+          </button>
+          <Link
+            href="/dashboard/community"
+            onClick={() => setMobileOpen(false)}
+            className={cn('xv-sidebar-community-btn', isActive('/dashboard/community') && 'xv-active')}
+          >
+            <Users className="w-3.5 h-3.5" />
+            Community
+          </Link>
           <Link
             href="/about"
             onClick={() => setMobileOpen(false)}
@@ -434,6 +460,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           setAvatarPickerOpen(false);
         }}
       />
+      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </>
   );
 }
