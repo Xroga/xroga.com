@@ -18,14 +18,10 @@ import {
   Image as ImageIcon,
   Zap,
   BarChart3,
-  PieChart,
   Camera,
   Workflow,
   Lock,
-  Sparkles,
   PlusCircle,
-  Users,
-  MessageCircleHeart,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
@@ -33,6 +29,8 @@ import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
 import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
+import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
+import { PalestineSupportBanner } from '@/components/ui/PalestineSupport';
 import { useT } from '@/components/providers/LanguageProvider';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
@@ -42,8 +40,6 @@ import { LogoutButton, UpgradeProButton } from '@/components/ui/Uiverse';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 import { useTerminalChat } from '@/context/TerminalChatContext';
-import { PalestineSupportBanner } from '@/components/ui/PalestineSupport';
-import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 
 const navItems = [
   {
@@ -71,18 +67,6 @@ const navItems = [
     tip: 'Running, failed, and browser automations — continue or review past runs.',
   },
   {
-    href: '/dashboard/community',
-    label: 'Community',
-    icon: Users,
-    tip: 'Discover creations from other builders — vote, comment, and collaborate. Coming soon.',
-  },
-  {
-    href: '/dashboard/spending',
-    label: 'Action Spend',
-    icon: PieChart,
-    tip: 'See action costs per task and what fits your balance.',
-  },
-  {
     href: '/dashboard/analytics',
     label: 'Analytics',
     icon: BarChart3,
@@ -98,7 +82,7 @@ const navItems = [
     href: '/dashboard/billing',
     label: 'Billing',
     icon: CreditCard,
-    tip: 'Plans, invoices, and action top-ups.',
+    tip: 'Plans, invoices, action spend, and top-ups.',
   },
   {
     href: '/settings',
@@ -121,7 +105,6 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
   const { startNewChat } = useTerminalChat();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
@@ -175,6 +158,12 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
     closeBrowser();
   }
 
+  function handleNewChat() {
+    startNewChat();
+    handleNavClick();
+    router.push('/dashboard');
+  }
+
   async function handleLogout() {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -216,15 +205,17 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           </Link>
         </HoverTip>
       )}
-      <div className={cn('flex items-center justify-between gap-2 px-1 py-1.5', !sidebarOpen && 'flex-col')}>
+      {sidebarOpen && (
+        <PalestineSupportBanner className="w-full justify-center" />
+      )}
+      <div className={cn('flex items-center gap-1 px-1 py-1.5', !sidebarOpen && 'flex-col')}>
         {displayName && (
-          <div className={cn('flex items-center gap-2 min-w-0', !sidebarOpen && 'justify-center flex-col')}>
+          <div className={cn('flex items-center gap-1 min-w-0 flex-1', !sidebarOpen && 'flex-col')}>
             <HoverTip label="Profile photo" description="Choose avatar or upload your own.">
               <button
                 type="button"
                 onClick={() => setAvatarPickerOpen(true)}
                 className="relative w-9 h-9 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold shrink-0 group bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 transition-colors"
-                data-cursor="pointer"
               >
                 {avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -238,46 +229,18 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
               </button>
             </HoverTip>
             {sidebarOpen && (
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="text-xs font-medium truncate">{profile?.display_name ?? displayName}</p>
                 {email && <p className="text-[10px] text-[var(--muted)] truncate">{email}</p>}
               </div>
             )}
+            <ProfileQuickMenu />
           </div>
         )}
         <div className="xv-sidebar-logout shrink-0">
           <LogoutButton onClick={handleLogout} />
         </div>
       </div>
-      {sidebarOpen && (
-        <>
-          <PalestineSupportBanner className="w-full justify-center" />
-          <button
-            type="button"
-            onClick={() => setFeedbackOpen(true)}
-            className="xv-sidebar-feedback-btn"
-          >
-            <MessageCircleHeart className="w-3.5 h-3.5" />
-            Feedback
-          </button>
-          <Link
-            href="/dashboard/community"
-            onClick={() => setMobileOpen(false)}
-            className={cn('xv-sidebar-community-btn', isActive('/dashboard/community') && 'xv-active')}
-          >
-            <Users className="w-3.5 h-3.5" />
-            Community
-          </Link>
-          <Link
-            href="/about"
-            onClick={() => setMobileOpen(false)}
-            className="xv-about-pill-modern flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl text-[10px] font-semibold transition-all"
-          >
-            <Sparkles className="w-3 h-3 shrink-0" />
-            About Xroga & CEO
-          </Link>
-        </>
-      )}
     </div>
   );
 
@@ -316,17 +279,34 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
         )}
       >
         <div className="px-2 py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[48px]">
-          <HoverTip label="Xroga AI" description="Your AI Swarm Operating System — dashboard home." block className="min-w-0 flex-1">
+          <HoverTip label="Xroga AI" description="Your AI Swarm Operating System — dashboard home." block className="min-w-0 shrink">
             <div className="shrink min-w-0 flex justify-center lg:justify-start">
               <Logo
                 href="/dashboard"
-                height={sidebarOpen ? 36 : 26}
+                height={sidebarOpen ? 32 : 24}
                 variant="sidebar"
                 onClick={handleNavClick}
               />
             </div>
           </HoverTip>
-          <div className={cn('flex items-center gap-0.5 shrink-0', !sidebarOpen && 'flex-col')}>
+          {sidebarOpen ? (
+            <button
+              type="button"
+              onClick={handleNewChat}
+              className="xv-new-chat-btn flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-bold shrink-0"
+              title="New Chat"
+            >
+              <PlusCircle className="w-3.5 h-3.5" />
+              New Chat
+            </button>
+          ) : (
+            <SidebarTip label="New Chat" description="Start a fresh workspace session.">
+              <button type="button" onClick={handleNewChat} className="xv-sidebar-icon-link !w-8 !h-8 !mx-0">
+                <PlusCircle className="w-4 h-4" />
+              </button>
+            </SidebarTip>
+          )}
+          <div className={cn('flex items-center gap-0.5 shrink-0 ml-auto', !sidebarOpen && 'flex-col ml-0')}>
             <HoverTip label="Search" description="Search projects, chats, and commands.">
               <button
                 type="button"
@@ -350,7 +330,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
               >
                 <ImageIcon className="w-3.5 h-3.5 shrink-0" />
                 {sidebarOpen && (
-                  <span className="xv-ai-media-label text-[11px] font-bold tracking-wide whitespace-nowrap">
+                  <span className="xv-ai-media-label text-[10px] font-bold tracking-wide whitespace-nowrap">
                     {t('media.label')}
                   </span>
                 )}
@@ -367,7 +347,6 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           }}
           className="xv-sidebar-edge-toggle hidden lg:flex"
           aria-label={sidebarOpen ? 'Lock sidebar closed' : 'Open sidebar'}
-          title={sidebarPinned && !sidebarOpen ? 'Click to open sidebar' : sidebarOpen ? 'Lock sidebar closed' : 'Open sidebar'}
           style={{ left: asideWidth }}
         >
           {sidebarOpen ? (
@@ -379,35 +358,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           )}
         </button>
 
-        <nav className="flex-1 p-2 overflow-y-auto overflow-x-hidden space-y-2">
-          {sidebarOpen ? (
-            <button
-              type="button"
-              onClick={() => {
-                startNewChat();
-                handleNavClick();
-                router.push('/dashboard');
-              }}
-              className="xv-new-chat-btn w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all mb-1"
-            >
-              <PlusCircle className="w-4 h-4" />
-              New Chat
-            </button>
-          ) : (
-            <SidebarTip label="New Chat" description="Start a fresh workspace session.">
-              <button
-                type="button"
-                onClick={() => {
-                  startNewChat();
-                  handleNavClick();
-                  router.push('/dashboard');
-                }}
-                className="xv-sidebar-icon-link mx-auto"
-              >
-                <PlusCircle className="w-4 h-4" />
-              </button>
-            </SidebarTip>
-          )}
+        <nav className="flex-1 p-2 overflow-y-auto overflow-x-hidden">
           {sidebarOpen ? (
             <div className="xv-sidebar-menu">
               {navItems.map(({ href, label, icon: Icon, tip }) => (
@@ -426,10 +377,7 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
                   <Link
                     href={href}
                     onClick={handleNavClick}
-                    className={cn(
-                      'xv-sidebar-icon-link',
-                      isActive(href) && 'xv-active'
-                    )}
+                    className={cn('xv-sidebar-icon-link', isActive(href) && 'xv-active')}
                   >
                     <Icon className="w-4 h-4 shrink-0" />
                   </Link>
@@ -460,7 +408,6 @@ export function Sidebar({ displayName, email, onTopUp }: SidebarProps) {
           setAvatarPickerOpen(false);
         }}
       />
-      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </>
   );
 }

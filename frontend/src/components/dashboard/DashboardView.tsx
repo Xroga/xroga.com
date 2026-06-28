@@ -4,7 +4,6 @@ import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { QuickActionTabs } from '@/components/terminal/QuickActionTabs';
 import { BrowserPanel } from '@/components/terminal/BrowserPanel';
 import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
-import { AppStoreBanner } from '@/components/dashboard/AppStoreBanner';
 import { DashboardWelcome } from '@/components/dashboard/DashboardWelcome';
 import { useAppStore } from '@/store/useAppStore';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -108,7 +107,6 @@ export function DashboardView({ displayName }: DashboardViewProps) {
       </div>
 
       <ApiConnectionBanner />
-      <AppStoreBanner variant="dashboard" />
       {terminalBlock}
     </div>
   );

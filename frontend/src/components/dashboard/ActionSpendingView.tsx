@@ -7,7 +7,7 @@ import { api } from '@/lib/api';
 import Link from 'next/link';
 import { UiverseTableCard } from '@/components/ui/UiverseTableCard';
 
-export function ActionSpendingView() {
+export function ActionSpendingView({ embedded }: { embedded?: boolean }) {
   const actions = useAppStore((s) => s.actions);
   const [calcBudget, setCalcBudget] = useState(String(actions?.remaining ?? 50));
   const [recentSpend, setRecentSpend] = useState<
@@ -48,11 +48,13 @@ export function ActionSpendingView() {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold">Action Spending</h1>
-        <p className="text-sm text-[var(--muted)] mt-1">Track what you spend, what you built, and what&apos;s left.</p>
-      </div>
+    <div className={embedded ? 'space-y-6' : 'max-w-4xl mx-auto space-y-8'}>
+      {!embedded && (
+        <div>
+          <h1 className="text-2xl font-bold">Action Spending</h1>
+          <p className="text-sm text-[var(--muted)] mt-1">Track what you spend, what you built, and what&apos;s left.</p>
+        </div>
+      )}
 
       <div className="grid sm:grid-cols-3 gap-4">
         <div className="glass-panel rounded-xl p-5 xv-fuel-card">

@@ -1,10 +1,5 @@
-import { ActionSpendingView } from '@/components/dashboard/ActionSpendingView';
-import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
+import { redirect } from 'next/navigation';
 
 export default function ActionSpendingPage() {
-  return (
-    <PageFullscreenFrame>
-      <ActionSpendingView />
-    </PageFullscreenFrame>
-  );
+  redirect('/dashboard/billing#action-spend');
 }

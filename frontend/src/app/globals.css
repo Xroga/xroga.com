@@ -589,15 +589,16 @@ body.theme-gray * {
   @media (min-width: 640px) {
     .xv-homepage .xv-home-chatbar-input,
     .xv-homepage .xv-home-chatbar-inner textarea {
-      color: #0f172a !important;
+      color: #006aff !important;
     }
     .xv-homepage .xv-home-chatbar-input::placeholder,
     .xv-homepage .xv-home-chatbar-inner textarea::placeholder {
-      color: rgba(15, 23, 42, 0.5) !important;
+      color: rgba(0, 106, 255, 0.45) !important;
     }
     .xv-homepage .xv-home-chatbar-inner .xv-mic-btn--home {
-      background: rgba(0, 0, 0, 0.06);
-      color: #0f172a !important;
+      background: rgba(0, 106, 255, 0.1);
+      color: #006aff !important;
+      border: 1px solid rgba(0, 106, 255, 0.25);
     }
     .xv-homepage .xv-home-chatbar-inner .xv-power-smash-upload__shell {
       background: linear-gradient(145deg, #e2e8f0 0%, #93c5fd 45%, #ffffff 100%);
@@ -620,18 +621,17 @@ body.theme-gray * {
   }
   @media (max-width: 639px) {
     .xv-homepage .xv-home-chatbar-input,
-    .xv-homepage .xv-home-chatbar-inner textarea,
-    .xv-homepage .xv-home-chatbar-inner button {
-      color: #ffffff !important;
+    .xv-homepage .xv-home-chatbar-inner textarea {
+      color: #60a5fa !important;
     }
     .xv-homepage .xv-home-chatbar-input::placeholder,
     .xv-homepage .xv-home-chatbar-inner textarea::placeholder {
-      color: rgba(255, 255, 255, 0.55) !important;
+      color: rgba(96, 165, 250, 0.5) !important;
     }
     .xv-homepage .xv-home-chatbar-inner .xv-mic-btn--home {
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      color: #fff !important;
+      background: rgba(0, 106, 255, 0.15);
+      border: 1px solid rgba(0, 106, 255, 0.35);
+      color: #60a5fa !important;
     }
     .xv-homepage .xv-home-chatbar-inner .xv-power-smash-upload__shell {
       background: linear-gradient(145deg, #ffffff 0%, #e2e8f0 50%, #0f172a 100%);
@@ -704,6 +704,86 @@ body.theme-gray * {
     border: 1px solid rgba(148, 163, 184, 0.22);
     backdrop-filter: blur(12px);
     padding: 0.5rem 1.25rem;
+  }
+
+  /* Axrina-inspired hero */
+  .xv-hero-axrina-bg {
+    background: linear-gradient(180deg, #0a0612 0%, #1a0a2e 40%, #0f0f1a 100%);
+  }
+  .xv-hero-axrina-badge {
+    border: 1px solid rgba(232, 196, 168, 0.25);
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+  }
+  .xv-hero-axrina-badge__new {
+    background: #e8c4a8;
+    color: #1a0a2e;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0.35rem 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+  }
+  .xv-hero-axrina-badge__text {
+    color: #e8c4a8;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35rem 1rem;
+    letter-spacing: 0.02em;
+  }
+  .xv-hero-axrina-title {
+    font-family: var(--font-nunito), 'Nunito', var(--font-inter), system-ui, sans-serif;
+    font-size: clamp(2rem, 6.5vw, 4.25rem);
+    font-weight: 800;
+    line-height: 1.12;
+    color: #e8c4a8;
+    letter-spacing: -0.02em;
+  }
+  .xv-hero-axrina-brand {
+    position: relative;
+    display: inline-block;
+  }
+  .xv-hero-axrina-underline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #e8c4a8, transparent);
+    border-radius: 2px;
+  }
+  .xv-hero-axrina-sub {
+    color: rgba(232, 196, 168, 0.75);
+    font-family: 'Nunito', var(--font-inter), sans-serif;
+  }
+  .xv-get-started-outline {
+    background: rgba(0, 106, 255, 0.85) !important;
+    border: 2px solid rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 8px 24px rgba(0, 106, 255, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
+    font-size: 0.7rem !important;
+    padding-top: 0.65rem !important;
+    padding-bottom: 0.65rem !important;
+  }
+
+  /* Auth shell */
+  .xv-auth-ceo-quote {
+    font-family: 'Nunito', var(--font-inter), sans-serif;
+  }
+  .xv-auth-form-panel .xv-auth-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+  .xv-auth-form-panel .xv-auth-heading {
+    font-family: 'Nunito', var(--font-inter), sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--foreground);
   }
 
   /* Dotted Sign In button */

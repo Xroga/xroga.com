@@ -6,6 +6,7 @@ import { MobileNav } from './MobileNav';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { Logo } from './Logo';
 import { HeaderActionMeter } from './HeaderActionMeter';
+import { AppStoreInline } from '@/components/ui/AppStoreInline';
 import { ThemeToggle } from './ThemeToggle';
 import { TopUpModal } from '@/components/billing/TopUpModal';
 import { TerminalDock } from '@/components/terminal/TerminalDock';
@@ -48,6 +49,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
               </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-3 ml-auto shrink-0 relative z-[250]">
+              <AppStoreInline compact className="hidden md:inline-flex opacity-80" />
               <HeaderActionMeter onClick={() => setTopUpOpen(true)} />
               <ThemeToggle />
               <NotificationBell />

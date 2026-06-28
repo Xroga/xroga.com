@@ -7,10 +7,21 @@ import { CheckoutButton } from '@/components/billing/CheckoutButton';
 import { useAppStore } from '@/store/useAppStore';
 import { Zap, Shield, Layers, Sparkles, Lock, ArrowRight } from 'lucide-react';
 import { GalacticPlanCard, PopularPlanCard } from '@/components/ui/Uiverse';
+import { ActionSpendingView } from '@/components/dashboard/ActionSpendingView';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
+import { ChevronDown, PieChart } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
 export function BillingPageClient() {
   const actions = useAppStore((s) => s.actions);
+  const [spendOpen, setSpendOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash === '#action-spend') {
+      setSpendOpen(true);
+    }
+  }, []);
 
   return (
     <PageFullscreenFrame>
@@ -42,6 +53,28 @@ export function BillingPageClient() {
           >
             Back to Dashboard <ArrowRight className="w-4 h-4" />
           </Link>
+        </div>
+
+        <div id="action-spend" className="glass-panel rounded-2xl overflow-hidden border-[var(--card-border)]">
+          <button
+            type="button"
+            onClick={() => setSpendOpen(!spendOpen)}
+            className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-white/[0.02] transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <PieChart className="w-5 h-5 text-[var(--accent)]" />
+              <div>
+                <h2 className="font-semibold text-sm">Action Spend</h2>
+                <p className="text-[10px] text-[var(--muted)]">Calculator, recent spend & cost reference</p>
+              </div>
+            </div>
+            <ChevronDown className={cn('w-4 h-4 text-[var(--muted)] transition-transform', spendOpen && 'rotate-180')} />
+          </button>
+          {spendOpen && (
+            <div className="border-t border-[var(--card-border)] px-4 sm:px-6 pb-6 pt-2">
+              <ActionSpendingView embedded />
+            </div>
+          )}
         </div>
 
         <div>
