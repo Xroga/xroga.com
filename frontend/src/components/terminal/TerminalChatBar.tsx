@@ -20,7 +20,9 @@ import {
 } from './ChatBarParts';
 import type { SendButtonState } from './ChatBarButtons';
 import { GitHubChipIcon, GitLabChipIcon, VercelChipIcon, TwitterChipIcon } from './ChatBarButtons';
-import { ChatMoodButton } from './ChatMoodButton';
+import { BlackHoleVButton } from './BlackHoleVButton';
+import { ChatPromptQueue } from './ChatPromptQueue';
+import { RepoContextBar } from './RepoContextBar';
 import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
@@ -36,7 +38,18 @@ const MAX_ROWS = 13;
 const LINE_HEIGHT = 22;
 
 export function TerminalChatBar() {
-  const { prompt, setPrompt, loading, submit, stop } = useTerminalChat();
+  const {
+    prompt,
+    setPrompt,
+    loading,
+    submit,
+    stop,
+    promptQueue,
+    removeFromQueue,
+    editQueuedPrompt,
+    sendQueuedNow,
+    clearQueue,
+  } = useTerminalChat();
   const actions = useAppStore((s) => s.actions);
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -140,8 +153,17 @@ export function TerminalChatBar() {
         >
           <ChatBarDragOverlay active={dragOver} />
 
+          <RepoContextBar />
+          <ChatPromptQueue
+            queue={promptQueue}
+            onSendNow={sendQueuedNow}
+            onEdit={editQueuedPrompt}
+            onRemove={removeFromQueue}
+            onClear={clearQueue}
+          />
+
           <div className="xv-chatbar-toolbar flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 overflow-x-auto scrollbar-hide flex-nowrap">
-            <ChatMoodButton variant="toolbar" />
+            <BlackHoleVButton />
             <ChatBarTip label="Tools & integrations" className="shrink-0 sm:hidden">
               <button
                 type="button"

@@ -20,7 +20,9 @@ import { useT } from '@/components/providers/LanguageProvider';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 
-const TABS = ['General', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
+import { PrivacySettingsPanel } from '@/components/settings/PrivacySettingsPanel';
+
+const TABS = ['General', 'Privacy', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
 type Tab = (typeof TABS)[number];
 
 export function SettingsView({ email }: { email: string }) {
@@ -193,6 +195,8 @@ export function SettingsView({ email }: { email: string }) {
               </button>
             </form>
           )}
+
+          {tab === 'Privacy' && <PrivacySettingsPanel />}
 
           {tab === 'Plan & Billing' && (
             <div className="space-y-5">

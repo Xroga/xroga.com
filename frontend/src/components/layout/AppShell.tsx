@@ -13,6 +13,8 @@ import { TerminalDock } from '@/components/terminal/TerminalDock';
 import { TerminalChatProvider } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePathname } from 'next/navigation';
+import { IncognitoModeButton } from '@/components/layout/IncognitoModeButton';
+import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { cn } from '@/lib/utils';
 
 interface AppShellProps {
@@ -27,6 +29,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const pathname = usePathname();
   const isDashboard = pathname === '/dashboard';
+  const incognito = usePrivacyStore((s) => s.incognito);
   const widthPx = sidebarOpen ? sidebarWidth : 72;
 
   return (
@@ -49,6 +52,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
               </div>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0 relative z-[250]">
+              {isDashboard && <IncognitoModeButton />}
               <AppStoreInline compact className="hidden md:inline-flex opacity-80" />
               <HeaderActionMeter onClick={() => setTopUpOpen(true)} className="!px-2 sm:!px-3 !py-1 sm:!py-1.5 text-xs sm:text-sm" />
               <div className="hidden sm:block">
@@ -62,7 +66,8 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
             className={cn(
               'flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 lg:p-8',
               'pb-24 lg:pb-8',
-              isDashboard && 'pb-[min(280px,calc(42vh+env(safe-area-inset-bottom)))] lg:pb-[180px]'
+              isDashboard && 'pb-[min(280px,calc(42vh+env(safe-area-inset-bottom)))] lg:pb-[180px]',
+              incognito && isDashboard && 'ring-2 ring-inset ring-violet-500/20'
             )}
           >
             {children}

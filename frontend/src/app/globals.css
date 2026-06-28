@@ -972,6 +972,46 @@ body.theme-gray * {
     letter-spacing: 0.06em;
     font-size: 0.8rem;
   }
+
+  /* White Sign In — blue dots, white bg, blue border */
+  .xv-dotted-signin--light {
+    background-color: #ffffff;
+    color: #006aff;
+    box-shadow:
+      0.5px 0.5px 0 0 rgba(0, 106, 255, 0.35), 1px 1px 0 0 rgba(0, 106, 255, 0.3),
+      2px 2px 0 0 rgba(0, 106, 255, 0.25), 0 0 0 2px #006aff, 0 0 20px rgba(0, 106, 255, 0.2);
+    transform: none;
+  }
+  .xv-dotted-signin--light:hover {
+    box-shadow: 0 0 0 2px #006aff, 0 0 28px rgba(0, 106, 255, 0.35);
+  }
+  .xv-dotted-signin--light > div {
+    background-color: #ffffff;
+    border: 2px solid #006aff;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+  .xv-dotted-signin--light > div::before {
+    background-image: radial-gradient(rgb(0 106 255 / 55%) 20%, transparent 20%),
+      radial-gradient(rgb(0 106 255 / 85%) 20%, transparent 20%);
+    mix-blend-mode: normal;
+    opacity: 0.7;
+  }
+  .xv-dotted-signin--light > div > span {
+    color: #006aff;
+    filter: none;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.7rem;
+    min-height: 44px;
+  }
+
+  .xv-home-auth-row .xv-home-auth-btn {
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
   @keyframes xv-dotted-dots {
     0% { background-position: 0 0, 4px 4px; }
     100% { background-position: 8px 0, 12px 4px; }
@@ -1674,17 +1714,17 @@ body.theme-gray * {
   }
   body.theme-black .xv-terminal-dock .xv-go-btn,
   body.theme-gray .xv-terminal-dock .xv-go-btn {
-    background: linear-gradient(135deg, #ffffff, #94a3b8, #0f172a);
-    border: 1px solid rgba(0, 0, 0, 0.25);
+    background: #ffffff !important;
+    border: 2px solid rgba(15, 23, 42, 0.2) !important;
   }
   body.theme-black .xv-terminal-dock .xv-go-btn__text,
   body.theme-gray .xv-terminal-dock .xv-go-btn__text {
-    color: #f8fafc;
+    color: #0f172a !important;
   }
   body.theme-black .xv-terminal-dock .xv-go-btn__icon,
   body.theme-gray .xv-terminal-dock .xv-go-btn__icon {
-    background: linear-gradient(to bottom, #f8fafc, #64748b);
-    color: #0f172a;
+    background: #0f172a !important;
+    color: #ffffff !important;
   }
 
   body.theme-black .xv-chatbar-secondary-btn,
@@ -1784,8 +1824,9 @@ body.theme-gray * {
     background: transparent !important;
   }
   .xv-fullscreen-terminal {
-    max-width: 72rem;
-    margin: 0 auto;
+    max-width: none;
+    width: 100%;
+    margin: 0;
   }
   .xv-fullscreen-enter-pill,
   .xv-fullscreen-exit-pill {
@@ -1998,7 +2039,7 @@ body.theme-gray * {
     backdrop-filter: blur(12px);
   }
   body.theme-gray .xv-chatbar-solid {
-    border-color: rgba(255, 255, 255, 0.24);
+    border-color: rgba(255, 255, 255, 0.28) !important;
     background: rgba(30, 30, 30, 0.65);
   }
   body.theme-black .terminal-skin-amoled,

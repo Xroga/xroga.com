@@ -14,6 +14,7 @@ import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
+import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions, isBuildRelated } from '@/lib/messageHelpers';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -264,10 +265,7 @@ export function SwarmMessageLog({ compact }: SwarmMessageLogProps) {
                 >
                   {msg.role === 'user' ? (
                     <>
-                      <span className="inline-block px-3 py-2 rounded-xl bg-gradient-to-br from-[#006aff]/15 to-slate-500/10 border border-[var(--card-border)]/50 text-left shadow-sm">
-                        <span className="opacity-60 mr-2">&gt;</span>
-                        {msg.content}
-                      </span>
+                      <UserPromptBubble content={msg.content} />
                       <MessageBubbleActions role="user" content={msg.content} messageId={msg.id} />
                     </>
                   ) : msg.role === 'system' ? (
