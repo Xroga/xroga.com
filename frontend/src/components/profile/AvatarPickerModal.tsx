@@ -194,24 +194,28 @@ export function AvatarPickerModal({
                     type="button"
                     disabled={!!picking}
                     onClick={() => void pick(avatar.url)}
-                    className={cn(
-                      'relative shrink-0 snap-start w-[72px] h-[72px] rounded-2xl overflow-hidden border-2 transition-all hover:scale-105',
-                      selected ? 'border-[#fffc00] ring-2 ring-[#fffc00]/40' : 'border-white/15 hover:border-[#5865f2]/60'
-                    )}
-                    title={avatar.label}
+                    className="shrink-0 snap-start flex flex-col items-center gap-1"
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={avatar.url} alt={avatar.label} className="w-full h-full object-cover" loading={i < 5 ? 'eager' : 'lazy'} />
-                    {selected && (
-                      <span className="absolute inset-0 bg-[#5865f2]/30 flex items-center justify-center">
-                        <Check className="w-5 h-5 text-white" />
-                      </span>
-                    )}
-                    {loading && (
-                      <span className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <Loader2 className="w-5 h-5 text-white animate-spin" />
-                      </span>
-                    )}
+                    <span
+                      className={cn(
+                        'relative w-[72px] h-[72px] rounded-xl overflow-hidden border-2 transition-all hover:scale-105 block',
+                        selected ? 'border-[#fffc00] ring-2 ring-[#fffc00]/40' : 'border-white/15 hover:border-[#5865f2]/60'
+                      )}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={avatar.url} alt={avatar.label} className="w-full h-full object-cover" loading={i < 5 ? 'eager' : 'lazy'} />
+                      {selected && (
+                        <span className="absolute inset-0 bg-[#5865f2]/30 flex items-center justify-center">
+                          <Check className="w-5 h-5 text-white" />
+                        </span>
+                      )}
+                      {loading && (
+                        <span className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <Loader2 className="w-5 h-5 text-white animate-spin" />
+                        </span>
+                      )}
+                    </span>
+                    <span className="text-[9px] font-semibold text-white/50">{avatar.label}</span>
                   </button>
                 );
               })}

@@ -14,6 +14,7 @@ import { TerminalChatProvider } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePathname } from 'next/navigation';
 import { IncognitoModeButton } from '@/components/layout/IncognitoModeButton';
+import { IncognitoFullscreenBackground } from '@/components/incognito/IncognitoFullscreenBackground';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { cn } from '@/lib/utils';
 
@@ -39,18 +40,14 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
 
   return (
     <TerminalChatProvider>
+      <IncognitoFullscreenBackground />
       <div
         className="flex min-h-screen terminal-layout overflow-x-hidden"
         style={{ '--sidebar-width': `${widthPx}px` } as React.CSSProperties}
       >
         <Sidebar displayName={displayName} email={email} onTopUp={() => setTopUpOpen(true)} />
-        <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden" style={{ marginLeft: 0 }}>
-          <header
-            className={cn(
-              'sticky top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3 shrink-0',
-              'bg-transparent border-b border-transparent'
-            )}
-          >
+        <div className="xv-main-column flex-1 flex flex-col w-full min-w-0 max-w-full min-h-screen overflow-x-hidden relative z-[2]">
+          <header className="sticky top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3 shrink-0 bg-transparent border-b border-transparent">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <div className="xv-mobile-header-logo pl-11 sm:pl-12 lg:pl-0 min-w-0">
                 <Logo href="/dashboard" height={52} variant="header" className="!h-[52px] sm:!h-[68px] lg:!h-[72px]" />
@@ -69,10 +66,10 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
 
           <main
             className={cn(
-              'flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 lg:p-8',
+              'flex-1 overflow-y-auto overflow-x-hidden relative z-[1]',
+              incognito && isDashboard ? 'p-2 sm:p-4 lg:p-6 bg-transparent' : 'p-3 sm:p-6 lg:p-8',
               'pb-24 lg:pb-8',
-              isDashboard && 'pb-[min(300px,calc(44vh+env(safe-area-inset-bottom)))] lg:pb-[200px]',
-              incognito && isDashboard && 'ring-2 ring-inset ring-violet-500/30 bg-violet-950/5'
+              isDashboard && 'pb-[min(300px,calc(44vh+env(safe-area-inset-bottom)))] lg:pb-[200px]'
             )}
           >
             {children}

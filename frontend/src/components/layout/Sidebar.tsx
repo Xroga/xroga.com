@@ -40,7 +40,7 @@ import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
-import { INCOGNITO_AVATAR_URL } from '@/lib/incognito';
+import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { GALACTIC_PLANS } from '@/lib/plans';
 
 const navItems = [
@@ -128,7 +128,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const setProfile = useAppStore((s) => s.setProfile);
   const incognito = usePrivacyStore((s) => s.incognito);
   const isFreeTrial = !actions?.planTier || actions.planTier === 'unpaid';
-  const avatarUrl = incognito ? INCOGNITO_AVATAR_URL : profile?.avatar_url;
+  const avatarUrl = profile?.avatar_url;
   const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
   const userName = incognito ? 'Incognito' : (profile?.display_name ?? displayName ?? 'User');
   const userPlan = incognito ? 'Temporary session' : planLabel(actions?.planTier);
@@ -229,14 +229,14 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
       )}
       {displayName && navExpanded && (
         <div ref={profileRowRef} className="xv-sidebar-profile-row flex items-center gap-2.5 px-2.5 py-2 rounded-xl">
+          {incognito ? (
+            <IncognitoProfileBox size="sidebar" />
+          ) : (
           <button
             type="button"
-            onClick={() => !incognito && setAvatarPickerOpen(true)}
-            className={cn(
-              'w-9 h-9 rounded-full overflow-hidden shrink-0 ring-1 ring-white/10',
-              incognito && 'ring-violet-500/40 cursor-default'
-            )}
-            title={incognito ? 'Incognito session avatar' : 'Change avatar'}
+            onClick={() => setAvatarPickerOpen(true)}
+            className="w-9 h-9 rounded-full overflow-hidden shrink-0 ring-1 ring-white/10"
+            title="Change avatar"
           >
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -247,6 +247,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
               </span>
             )}
           </button>
+          )}
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium xv-sidebar-profile-name truncate leading-tight">{userName}</p>
             <p className="text-xs xv-sidebar-profile-plan truncate">{userPlan}</p>
@@ -256,14 +257,14 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
       )}
       {displayName && !sidebarOpen && (
         <div className="flex flex-col items-center gap-1 py-1">
+          {incognito ? (
+            <IncognitoProfileBox size="sidebarCompact" />
+          ) : (
           <button
             type="button"
-            onClick={() => !incognito && setAvatarPickerOpen(true)}
-            className={cn(
-              'w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-[var(--card-border)]',
-              incognito && 'ring-violet-500/40 cursor-default'
-            )}
-            title={incognito ? 'Incognito session avatar' : 'Change avatar'}
+            onClick={() => setAvatarPickerOpen(true)}
+            className="w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-[var(--card-border)]"
+            title="Change avatar"
           >
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -274,6 +275,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
               </span>
             )}
           </button>
+          )}
           <ProfileQuickMenu onLogout={handleLogout} />
         </div>
       )}
@@ -281,7 +283,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   );
 
   return (
-    <>
+    <div className="xv-sidebar-root w-0 overflow-visible shrink-0 lg:w-auto">
       <SidebarSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
 
       <button
@@ -311,10 +313,14 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         onMouseLeave={() => {
           if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(false);
         }}
-        style={{ width: mobileOpen ? mobileDrawerWidth : asideWidth }}
+        style={{
+          width: mobileOpen ? mobileDrawerWidth : asideWidth,
+          ['--sidebar-drawer-width' as string]: `${mobileDrawerWidth}px`,
+        }}
         className={cn(
-          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,transform] duration-200 xv-sidebar-hover shrink-0 relative',
-          mobileOpen ? 'translate-x-0 z-[70]' : '-translate-x-full lg:translate-x-0'
+          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,transform] duration-200 xv-sidebar-hover shrink-0 relative max-lg:!w-0 max-lg:border-r-0',
+          mobileOpen && 'max-lg:!w-[var(--sidebar-drawer-width)] max-lg:border-r',
+          mobileOpen ? 'translate-x-0 z-[70] xv-sidebar-mobile-open' : '-translate-x-full lg:translate-x-0'
         )}
       >
         <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px]">
@@ -440,6 +446,6 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           setAvatarPickerOpen(false);
         }}
       />
-    </>
+    </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useMemo } from 'react';
 import Image from 'next/image';
-import { Terminal, Palette, MessageCircleHeart, Search, X, MoreHorizontal, Globe } from 'lucide-react';
+import { Terminal, Palette, MessageCircleHeart, MoreHorizontal, Globe } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
@@ -16,7 +16,9 @@ import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions, isBuildRelated } from '@/lib/messageHelpers';
-import { INCOGNITO_AVATAR_URL } from '@/lib/incognito';
+import { getIncognitoAvatarUrl } from '@/lib/incognito';
+import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
+import { TerminalSearchBar } from '@/components/terminal/TerminalSearchBar';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -77,7 +79,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   const bottomRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [terminalSearch, setTerminalSearch] = useState('');
   const [searchHit, setSearchHit] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -85,7 +86,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  const avatarUrl = isIncognito ? INCOGNITO_AVATAR_URL : profile?.avatar_url;
+  const avatarUrl = isIncognito ? getIncognitoAvatarUrl() : profile?.avatar_url;
   const displayInitial = isIncognito ? '?' : (profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U');
 
   const lastAssistantIdx = useMemo(() => {
@@ -107,21 +108,9 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     toast('AI text loaded — edit and press GO');
   }
 
-  function runTerminalSearch() {
-    const q = terminalSearch.trim().toLowerCase();
-    if (!q) {
-      setSearchHit(null);
-      return;
-    }
-    const hit = messages.find((m) => m.content.toLowerCase().includes(q));
-    if (hit) {
-      setSearchHit(hit.id);
-      messageRefs.current[hit.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      toast.success('Found in this terminal');
-    } else {
-      setSearchHit(null);
-      toast.error('Not found in this terminal — search is only for current chat');
-    }
+  function jumpToMessage(messageId: string) {
+    setSearchHit(messageId);
+    messageRefs.current[messageId]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   function handleDeploy() {
@@ -155,8 +144,9 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
               <p className="text-[8px] sm:text-[9px] text-violet-300/80 font-medium">Private · not saved</p>
             )}
           </div>
-          {!isIncognito && (
           <div className="hidden sm:flex items-center gap-1 shrink-0">
+            {!isIncognito && (
+            <>
             <button
               type="button"
               onClick={cycleTerminalSkin}
@@ -167,21 +157,10 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
               <span className="hidden md:inline opacity-70">{TERMINAL_SKIN_LABELS[terminalSkin]}</span>
             </button>
             <BrowserPanelToggle />
-            <div className="flex items-center gap-1 max-w-[140px] lg:max-w-[180px]">
-              <Search className="w-3 h-3 text-[var(--muted)] shrink-0" />
-              <input
-                value={terminalSearch}
-                onChange={(e) => setTerminalSearch(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && runTerminalSearch()}
-                placeholder="Search terminal…"
-                className="w-full min-w-0 text-[10px] bg-transparent border-none outline-none text-[var(--foreground)] placeholder:text-[var(--muted)]"
-              />
-              {terminalSearch && (
-                <button type="button" onClick={() => { setTerminalSearch(''); setSearchHit(null); }} className="p-0.5 text-[var(--muted)]">
-                  <X className="w-3 h-3" />
-                </button>
-              )}
-            </div>
+            </>
+            )}
+            <TerminalSearchBar messages={messages} searchHit={searchHit} onJump={jumpToMessage} />
+            {!isIncognito && (
             <button
               type="button"
               onClick={() => setFeedbackOpen(true)}
@@ -191,8 +170,8 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
             >
               <MessageCircleHeart className="w-4 h-4" />
             </button>
+            )}
           </div>
-          )}
           {!isIncognito && (
           <div className="relative sm:hidden shrink-0">
             <button
@@ -260,6 +239,9 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                 )}
               >
                 {msg.role === 'user' && (
+                  isIncognito ? (
+                    <IncognitoProfileBox size="terminal" />
+                  ) : (
                   <div className="w-7 h-7 rounded-full border border-[var(--card-border)] overflow-hidden shrink-0 flex items-center justify-center bg-[var(--accent)]/10 text-[10px] font-bold">
                     {avatarUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -268,6 +250,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                       displayInitial
                     )}
                   </div>
+                  )
                 )}
                 {msg.role === 'assistant' && (
                   <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">

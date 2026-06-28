@@ -85,7 +85,7 @@ export function DashboardView({ displayName }: DashboardViewProps) {
 
   if (incognito) {
     return (
-      <div className="max-w-4xl mx-auto min-w-0">
+      <div className="w-full min-w-0 min-h-[calc(100dvh-12rem)] relative">
         <IncognitoDashboard />
       </div>
     );
