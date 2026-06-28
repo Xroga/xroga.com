@@ -54,9 +54,12 @@ function AppStoreBadge({ className }: { className?: string }) {
 export function AppStoreInline({ className, compact }: AppStoreInlineProps) {
   if (compact) {
     return (
-      <div className={cn('inline-flex items-center gap-2 opacity-90', className)}>
-        <GooglePlayBadge className="!px-2 !py-1 scale-90 origin-left" />
-        <AppStoreBadge className="!px-2 !py-1 scale-90 origin-left" />
+      <div className={cn('inline-flex items-center gap-1.5 opacity-90', className)}>
+        <GooglePlayBadge className="!px-2 !py-1 scale-[0.85] origin-left" />
+        <AppStoreBadge className="!px-2 !py-1 scale-[0.85] origin-left" />
+        <span className="text-[9px] font-bold xv-auth-gradient-text whitespace-nowrap hidden sm:inline">
+          Coming Soon
+        </span>
       </div>
     );
   }

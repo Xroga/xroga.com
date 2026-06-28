@@ -142,7 +142,7 @@ export function UpgradeProButton({ onClick }: { onClick?: () => void }) {
       <span className="xv-upgrade-inner">
         <span className="xv-upgrade-text">
           <span>Upgrade to&nbsp;</span>
-          <span className="pro">Spark & Pulse</span>
+          <span className="pro">Spark</span>
         </span>
         <span className="xv-upgrade-icon">
           <svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg">
