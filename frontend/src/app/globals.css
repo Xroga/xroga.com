@@ -2115,7 +2115,25 @@ body.theme-gray * {
 
   /* Mobile chatbar / terminal responsiveness */
   @media (max-width: 1023px) {
+    .terminal-layout {
+      width: 100%;
+      max-width: 100vw;
+    }
+    .terminal-layout > .xv-sidebar-root {
+      width: 0 !important;
+      min-width: 0 !important;
+      flex: 0 0 0 !important;
+      overflow: visible;
+    }
+    .terminal-layout > .xv-main-column {
+      flex: 1 1 100%;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
     .terminal-layout main {
+      width: 100%;
+      max-width: 100%;
       -webkit-overflow-scrolling: touch;
     }
     .xv-dashboard-subhead {

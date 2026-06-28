@@ -46,7 +46,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
         style={{ '--sidebar-width': `${widthPx}px` } as React.CSSProperties}
       >
         <Sidebar displayName={displayName} email={email} onTopUp={() => setTopUpOpen(true)} />
-        <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden relative z-[2]" style={{ marginLeft: 0 }}>
+        <div className="xv-main-column flex-1 flex flex-col w-full min-w-0 max-w-full min-h-screen overflow-x-hidden relative z-[2]">
           <header className="sticky top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3 shrink-0 bg-transparent border-b border-transparent">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <div className="xv-mobile-header-logo pl-11 sm:pl-12 lg:pl-0 min-w-0">

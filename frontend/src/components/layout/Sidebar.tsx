@@ -283,7 +283,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   );
 
   return (
-    <>
+    <div className="xv-sidebar-root w-0 overflow-visible shrink-0 lg:w-auto">
       <SidebarSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
 
       <button
@@ -313,10 +313,14 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         onMouseLeave={() => {
           if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(false);
         }}
-        style={{ width: mobileOpen ? mobileDrawerWidth : asideWidth }}
+        style={{
+          width: mobileOpen ? mobileDrawerWidth : asideWidth,
+          ['--sidebar-drawer-width' as string]: `${mobileDrawerWidth}px`,
+        }}
         className={cn(
-          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,transform] duration-200 xv-sidebar-hover shrink-0 relative',
-          mobileOpen ? 'translate-x-0 z-[70]' : '-translate-x-full lg:translate-x-0'
+          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,transform] duration-200 xv-sidebar-hover shrink-0 relative max-lg:!w-0 max-lg:border-r-0',
+          mobileOpen && 'max-lg:!w-[var(--sidebar-drawer-width)] max-lg:border-r',
+          mobileOpen ? 'translate-x-0 z-[70] xv-sidebar-mobile-open' : '-translate-x-full lg:translate-x-0'
         )}
       >
         <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px]">
@@ -442,6 +446,6 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           setAvatarPickerOpen(false);
         }}
       />
-    </>
+    </div>
   );
 }
