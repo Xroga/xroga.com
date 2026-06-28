@@ -324,10 +324,24 @@ body.theme-gray * {
   }
 
   body.theme-white .integration-logo-wrap {
-    background: #f1f5f9;
+    background: transparent;
+    border: 1px solid rgba(15, 23, 42, 0.08);
   }
 
-  body.theme-white .integration-logo-wrap img {
+  body.theme-white .integration-logo-wrap img,
+  .integration-logo-img {
+    filter: none;
+    mix-blend-mode: normal;
+  }
+
+  body.theme-black .integration-logo-wrap,
+  body.theme-gray .integration-logo-wrap {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  body.theme-black .integration-logo-wrap img,
+  body.theme-gray .integration-logo-wrap img {
     filter: none;
   }
 
@@ -349,11 +363,6 @@ body.theme-gray * {
   body.theme-black .integration-card .text-\[var\(--muted\)\],
   body.theme-gray .integration-card .text-\[var\(--muted\)\] {
     color: #64748b !important;
-  }
-
-  body.theme-black .integration-logo-wrap,
-  body.theme-gray .integration-logo-wrap {
-    background: #f8fafc;
   }
 
   .xv-hover-tip {
@@ -1028,12 +1037,15 @@ body.theme-gray * {
     padding: 0;
     border: none;
     border-radius: 14px;
-    background: #006aff;
-    border-bottom: 5px solid #0047b3;
-    box-shadow: 0 8px 18px -6px rgba(0, 106, 255, 0.7);
+    background: linear-gradient(165deg, #3d8bff 0%, #006aff 55%, #0052cc 100%);
+    border-bottom: 4px solid #0047b3;
+    box-shadow: 0 8px 20px -6px rgba(0, 106, 255, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.35);
     cursor: pointer;
     transition: transform 0.1s, border-bottom-width 0.1s;
     overflow: hidden;
+  }
+  .xv-power-smash-upload__shell svg {
+    color: #ffffff !important;
   }
   .xv-power-smash-upload__shell:active {
     transform: translateY(4px);
@@ -1597,7 +1609,48 @@ body.theme-gray * {
     height: 24px;
   }
 
-  /* Chatbar file strip — 2 rows, horizontal scroll */
+  /* Chatbar file grid */
+  .xv-file-tile {
+    border: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .xv-file-tile:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  .xv-file-tool-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.12));
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--foreground);
+    transition: background 0.15s;
+  }
+  .xv-file-tool-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .xv-terminal-dock-inner {
+    margin-top: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid transparent;
+    background: linear-gradient(to top, var(--background, #0a0a0a) 60%, transparent);
+  }
+
+  body.theme-white .xv-terminal-dock-inner {
+    background: linear-gradient(to top, #ffffff 65%, transparent);
+  }
+
+  .xv-chatbar-solid {
+    margin-top: 0.25rem;
+  }
+
+  /* Chatbar file strip — legacy scroll */
   .xv-chatbar-files-scroll {
     max-height: calc(2 * 5.5rem + 0.5rem);
   }
@@ -1679,12 +1732,13 @@ body.theme-gray * {
 
   /* White theme dashboard chatbar — blue/silver upload gradient */
   body.theme-white .xv-terminal-dock .xv-power-smash-upload__shell {
-    background: linear-gradient(145deg, #ffffff 0%, #e8f2ff 55%, #006aff 100%) !important;
-    border: 2px solid #006aff !important;
-    border-bottom: 2px solid #0047b3 !important;
+    background: linear-gradient(165deg, #4d94ff 0%, #006aff 50%, #0052cc 100%) !important;
+    border: none !important;
+    border-bottom: 4px solid #0047b3 !important;
+    box-shadow: 0 8px 20px -6px rgba(0, 106, 255, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
   }
   body.theme-white .xv-terminal-dock .xv-power-smash-upload__shell svg {
-    color: #006aff !important;
+    color: #ffffff !important;
   }
   body.theme-white .xv-terminal-dock .xv-go-btn {
     background: linear-gradient(135deg, #0f172a, #006aff);
@@ -1697,14 +1751,14 @@ body.theme-gray * {
   /* Black & gray theme chatbar — gradient upload & GO */
   body.theme-black .xv-terminal-dock .xv-power-smash-upload__shell,
   body.theme-gray .xv-terminal-dock .xv-power-smash-upload__shell {
-    background: #ffffff !important;
-    border: 2px solid rgba(15, 23, 42, 0.88) !important;
-    border-bottom: 2px solid rgba(15, 23, 42, 0.88) !important;
-    box-shadow: 0 6px 14px -4px rgba(0, 0, 0, 0.35);
+    background: linear-gradient(165deg, #4d94ff 0%, #006aff 50%, #0052cc 100%) !important;
+    border: none !important;
+    border-bottom: 4px solid #003d99 !important;
+    box-shadow: 0 8px 18px -4px rgba(0, 106, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   }
   body.theme-black .xv-terminal-dock .xv-power-smash-upload__shell svg,
   body.theme-gray .xv-terminal-dock .xv-power-smash-upload__shell svg {
-    color: #0f172a !important;
+    color: #ffffff !important;
   }
   body.theme-black .xv-terminal-dock .xv-mic-btn,
   body.theme-gray .xv-terminal-dock .xv-mic-btn {

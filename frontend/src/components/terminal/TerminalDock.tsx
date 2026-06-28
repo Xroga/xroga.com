@@ -30,7 +30,7 @@ export function TerminalDock() {
     >
       <div
         className={cn(
-          'mx-auto px-2 sm:px-4 lg:px-6 pb-1.5 sm:pb-2 lg:pb-3',
+          'mx-auto px-2 sm:px-4 lg:px-6 pt-3 sm:pt-4 pb-1.5 sm:pb-2 lg:pb-3 xv-terminal-dock-inner',
           dashboardFullscreen ? 'max-w-6xl' : 'max-w-3xl'
         )}
       >

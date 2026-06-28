@@ -12,12 +12,12 @@ import { DeployModal } from './DeployModal';
 import { ChatbarShell } from '@/components/ui/Uiverse';
 import {
   ChatBarDragOverlay,
-  ChatBarFileStrip,
   ChatBarInputRow,
   ChatBarToolChip,
   ChatBarFuelMeter,
   useSpeechToText,
 } from './ChatBarParts';
+import { ChatBarFileGrid } from './ChatBarFileGrid';
 import type { SendButtonState } from './ChatBarButtons';
 import { GitHubChipIcon, GitLabChipIcon, VercelChipIcon, TwitterChipIcon } from './ChatBarButtons';
 import { BlackHoleVButton } from './BlackHoleVButton';
@@ -37,6 +37,10 @@ const TOOL_CHIPS = [
 const MAX_ROWS = 13;
 const LINE_HEIGHT = 22;
 
+function renameFile(file: File, newName: string) {
+  return new File([file], newName, { type: file.type, lastModified: file.lastModified });
+}
+
 export function TerminalChatBar() {
   const {
     prompt,
@@ -53,6 +57,7 @@ export function TerminalChatBar() {
   const actions = useAppStore((s) => s.actions);
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const [githubOpen, setGithubOpen] = useState(false);
   const [costOpen, setCostOpen] = useState(false);
@@ -118,6 +123,18 @@ export function TerminalChatBar() {
     el.style.height = `${Math.min(el.scrollHeight, maxH)}px`;
   }, [prompt]);
 
+  useEffect(() => {
+    const el = shellRef.current;
+    if (!el) return;
+    const sync = () => {
+      document.documentElement.style.setProperty('--xv-chatbar-height', `${el.offsetHeight}px`);
+    };
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [files.length, prompt, showDomain, promptQueue.length]);
+
   function handleDeploy() {
     const d = domain.trim() || 'your-app.vercel.app';
     setPrompt(
@@ -139,6 +156,7 @@ export function TerminalChatBar() {
 
       <div className="relative">
         <ChatbarShell
+          ref={shellRef}
           className={cn('relative', (dragOver || uploading) && 'ring-2 ring-[var(--accent)]/40')}
           onDragOver={(e: React.DragEvent) => {
             e.preventDefault();
@@ -244,7 +262,13 @@ export function TerminalChatBar() {
             </div>
           )}
 
-          <ChatBarFileStrip files={files} onRemove={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))} />
+          <ChatBarFileGrid
+            files={files}
+            onRemove={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))}
+            onRename={(i, name) =>
+              setFiles((prev) => prev.map((f, j) => (j === i ? renameFile(f, name) : f)))
+            }
+          />
 
           <form onSubmit={handleSubmit} className="px-2 sm:px-3 py-2 sm:py-3">
             <ChatBarInputRow
