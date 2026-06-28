@@ -10,7 +10,7 @@ export function IncognitoDashboard() {
   const setIncognito = usePrivacyStore((s) => s.setIncognito);
 
   return (
-    <div className="relative z-[1] space-y-5 sm:space-y-6 py-2 sm:py-4">
+    <div className="relative z-[1] w-full min-h-[min(100dvh,900px)] space-y-5 sm:space-y-6 py-2 sm:py-4 px-1 sm:px-2">
       <header className="text-center space-y-2 sm:space-y-3">
         <div className="flex justify-center mb-2">
           <IncognitoProfileBox size="sidebar" className="!w-16 !h-16 sm:!w-20 sm:!h-20 ring-2 ring-violet-400/50" />
@@ -58,7 +58,7 @@ export function IncognitoDashboard() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto space-y-2">
+      <div className="w-full max-w-4xl lg:max-w-5xl mx-auto space-y-2">
         <p className="text-[10px] uppercase tracking-widest text-white/40 font-semibold px-1">
           Temporary chat
         </p>
