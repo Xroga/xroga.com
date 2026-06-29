@@ -48,6 +48,8 @@ function shouldAddProsCons(prompt: string, content: string): boolean {
   if (content.length < 200) return false;
   if (prompt.length < 40) return false;
   if (/^(hi|hello|hey|thanks|thank you)\b/i.test(prompt.trim())) return false;
+  if (/\b(generate|create|make|draw)\b.*\b(image|picture|logo|video)\b/i.test(prompt)) return false;
+  if (content.includes('![') && content.includes('](')) return false;
   return /\b(build|code|deploy|research|video|app|website|script|debug|automate)\b/i.test(prompt);
 }
 

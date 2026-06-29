@@ -3,6 +3,7 @@ import { getSupabaseAdmin } from '../config/supabase.js';
 import { featureSwarm } from '../swarm/FeatureSwarm.js';
 import { ActionService } from './ActionService.js';
 import { classifyFeature, computeFeatureActionCost } from './architect/featureRouter.js';
+import { resolveFeatureCategory } from './featureExecutor.js';
 import { sendSSE } from '../lib/sse.js';
 import { InsufficientActionsError } from '../errors/InsufficientActionsError.js';
 import { ensureUserRecords } from './ensureUserRecords.js';
@@ -86,8 +87,9 @@ export class SwarmService {
     }
 
     const route = await classifyFeature(prompt);
-    const actionCost = computeFeatureActionCost(route.category, prompt, { lineCount: options?.lineCount });
-    const taskType = FEATURE_TASK_TYPES[route.category];
+    const featureCategory = resolveFeatureCategory(prompt, route.category);
+    const actionCost = computeFeatureActionCost(featureCategory, prompt, { lineCount: options?.lineCount });
+    const taskType = FEATURE_TASK_TYPES[featureCategory];
 
     const balance = await ActionService.getBalance(userId);
     if (balance) {
@@ -119,7 +121,7 @@ export class SwarmService {
       deductResult = await ActionService.deduct(userId, taskType, {
         projectId,
         customCost: actionCost,
-        description: `${route.category}: ${prompt.slice(0, 80)}`,
+        description: `${featureCategory}: ${prompt.slice(0, 80)}`,
       });
 
       if (!deductResult.success) {
@@ -167,7 +169,7 @@ export class SwarmService {
 
     let result: Awaited<ReturnType<typeof featureSwarm.execute>>;
     try {
-      result = await featureSwarm.execute(userId, prompt, projectId, run.id, route.category, options?.extras);
+      result = await featureSwarm.execute(userId, prompt, projectId, run.id, featureCategory, options?.extras);
     } catch (err) {
       await ActionService.refund(userId, actionCost, 'Swarm execution failed');
       throw err;
@@ -184,7 +186,7 @@ export class SwarmService {
           status: result.success ? 'completed' : 'failed',
           iteration_count: result.iterations,
           defects_found: result.defectsFound,
-          output: { ...result, featureCategory: route.category },
+          output: { ...result, featureCategory },
           completed_at: new Date().toISOString(),
         })
         .eq('id', run.id);
@@ -198,9 +200,9 @@ export class SwarmService {
           project_id: projectId,
           role: 'assistant',
           content: result.success
-            ? `✅ ${route.category} completed. ${outputSummary}`
+            ? `✅ ${featureCategory} completed. ${outputSummary}`
             : `Task in progress — ${result.iterations} iteration(s) completed. Refine with a follow-up prompt for more detail.`,
-          metadata: { swarmRunId: run.id, featureCategory: route.category, output: result.output },
+          metadata: { swarmRunId: run.id, featureCategory, output: result.output },
         },
       ]);
       if (pmError && !isMissingTableError(pmError.message)) {
@@ -212,13 +214,13 @@ export class SwarmService {
       user_id: userId,
       project_id: projectId ?? null,
       action: result.success ? 'swarm_completed' : 'swarm_failed',
-      details: { runId: run.id, featureCategory: route.category, iterations: result.iterations },
+      details: { runId: run.id, featureCategory, iterations: result.iterations },
     });
     if (activityError && !isMissingTableError(activityError.message)) {
       console.warn('[SwarmService] activity_logs insert:', activityError.message);
     }
 
-    if (route.category === 'chat' && result.success) {
+    if (featureCategory === 'chat' && result.success) {
       const chatOutput = result.output as FeatureOutput | undefined;
       const reply =
         chatOutput?.type === 'chat' && typeof chatOutput.content === 'string'
@@ -234,7 +236,7 @@ export class SwarmService {
       }
     }
 
-    return { runId: run.id, result, actions: deductResult, featureCategory: route.category };
+    return { runId: run.id, result, actions: deductResult, featureCategory };
   }
 
   static async runWithSSE(

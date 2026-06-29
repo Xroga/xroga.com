@@ -4,6 +4,7 @@ import type { FeatureCategory, FeatureOutput } from '../types/features.js';
 import { FEATURE_ACTION_COSTS, FEATURE_TASK_TYPES } from '../types/features.js';
 import { classifyFeature } from '../services/architect/featureRouter.js';
 import { quickChat } from '../services/chat/quickChat.js';
+import { executeFeature, resolveFeatureCategory } from '../services/featureExecutor.js';
 import { buildLandingPage } from '../services/builder/landingPage.js';
 import { generateImage } from '../services/builder/imageGen.js';
 import { runBrowserAutomation } from '../services/automation/browser.js';
@@ -135,8 +136,18 @@ export class FeatureSwarm extends BaseSwarm {
           break;
         }
         default: {
-          const content = await quickChat(context.prompt);
-          output = { type: 'chat', content };
+          const route = await classifyFeature(context.prompt);
+          const category = resolveFeatureCategory(context.prompt, route.category);
+          if (category !== 'chat') {
+            output = await executeFeature(category, context.prompt, {
+              userId: context.userId,
+              projectId: context.projectId,
+              extras: context.extras,
+            });
+          } else {
+            const content = await quickChat(context.prompt);
+            output = { type: 'chat', content };
+          }
         }
       }
 
