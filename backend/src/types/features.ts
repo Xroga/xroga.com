@@ -87,6 +87,12 @@ export interface VideoStudioOutput {
   reviewScores: { physics: number; lighting: number; consistency: number };
   providersUsed: string[];
   audioTracks: Array<{ type: string; provider: string }>;
+  sceneCount?: number;
+  scriptProvider?: string;
+  characters?: Array<{ name: string; faceImageUrl?: string }>;
+  pros?: string[];
+  cons?: string[];
+  followUps?: string[];
 }
 
 export interface DeepResearchOutput {
@@ -168,6 +174,7 @@ export interface SwarmProgressEvent {
   iteration?: number;
   timestamp: string;
   imageStep?: string;
+  videoStep?: string;
 }
 
 export const FEATURE_ACTION_COSTS: Record<FeatureCategory, number> = {

@@ -1,29 +1,44 @@
+import { getApiPriority, VIDEO_API_TIMEOUT_MS } from '../config/apiPriorities.js';
+import { logSystemError } from '../services/systemErrorLog.js';
+import { generateRunwayVideo } from './video/runwayVideo.js';
+import { generateLumaVideo } from './video/lumaVideo.js';
+import { generateHailuoVideo } from './video/hailuoVideo.js';
+import { generateFalVideo } from './video/falVideo.js';
+import { generateReplicateVideo } from './video/replicateVideo.js';
+import { generateComfyUIVideo } from './video/comfyuiVideo.js';
+import { generateSlideshowVideo } from './video/slideshow.js';
+
 export interface VideoGenerationResult {
-  provider: 'agnes' | 'kling' | 'morph';
+  provider: string;
   videoUrl: string;
   durationSeconds: number;
-  scores?: { physics: number; lighting: number; consistency: number };
 }
 
-export async function generateAgnesVideo(prompt: string, durationSeconds: number): Promise<VideoGenerationResult> {
-  const apiKey = process.env.AGNES_API_KEY;
-  if (!apiKey) throw new Error('AGNES_API_KEY not configured');
+export type VideoProviderName =
+  | 'runway'
+  | 'luma'
+  | 'hailuo'
+  | 'kling'
+  | 'fal'
+  | 'replicate-svd'
+  | 'agnes'
+  | 'morph'
+  | 'comfyui'
+  | 'slideshow';
 
-  const response = await fetch('https://api.agnes-ai.com/v2/video/generate', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({ prompt, duration: durationSeconds, quality: 'hd' }),
-  });
+type ProviderEntry = {
+  name: VideoProviderName;
+  configured: boolean;
+  call: (prompt: string, durationSeconds: number) => Promise<string>;
+};
 
-  if (!response.ok) throw new Error(`Agnes AI error: ${response.status}`);
-
-  const data = (await response.json()) as { video_url: string; id: string };
-  const videoUrl = await pollAgnesJob(data.id, apiKey);
-
-  return { provider: 'agnes', videoUrl, durationSeconds };
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+    ),
+  ]);
 }
 
 async function pollAgnesJob(jobId: string, apiKey: string): Promise<string> {
@@ -39,7 +54,44 @@ async function pollAgnesJob(jobId: string, apiKey: string): Promise<string> {
   throw new Error('Agnes video timed out');
 }
 
-export async function generateKlingVideo(prompt: string, durationSeconds: number): Promise<VideoGenerationResult> {
+async function generateAgnesVideo(prompt: string, durationSeconds: number): Promise<string> {
+  const apiKey = process.env.AGNES_API_KEY;
+  if (!apiKey) throw new Error('AGNES_API_KEY not configured');
+
+  const response = await fetch('https://api.agnes-ai.com/v2/video/generate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({ prompt, duration: durationSeconds, quality: 'hd' }),
+  });
+
+  if (!response.ok) throw new Error(`Agnes AI error: ${response.status}`);
+
+  const data = (await response.json()) as { video_url?: string; id: string };
+  if (data.video_url) return data.video_url;
+  return pollAgnesJob(data.id, apiKey);
+}
+
+async function pollKlingTask(taskId: string, apiKey: string): Promise<string> {
+  for (let i = 0; i < 60; i++) {
+    const res = await fetch(`https://api.klingai.com/v1/videos/text2video/${taskId}`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    const data = (await res.json()) as {
+      data: { task_status: string; task_result?: { videos?: Array<{ url: string }> } };
+    };
+    if (data.data.task_status === 'succeed' && data.data.task_result?.videos?.[0]?.url) {
+      return data.data.task_result.videos[0].url;
+    }
+    if (data.data.task_status === 'failed') throw new Error('Kling video failed');
+    await new Promise((r) => setTimeout(r, 3000));
+  }
+  throw new Error('Kling video timed out');
+}
+
+async function generateKlingVideo(prompt: string, durationSeconds: number): Promise<string> {
   const apiKey = process.env.KLING_API_KEY;
   if (!apiKey) throw new Error('KLING_API_KEY not configured');
 
@@ -55,27 +107,10 @@ export async function generateKlingVideo(prompt: string, durationSeconds: number
   if (!response.ok) throw new Error(`Kling AI error: ${response.status}`);
 
   const data = (await response.json()) as { data: { task_id: string } };
-  const videoUrl = await pollKlingTask(data.data.task_id, apiKey);
-
-  return { provider: 'kling', videoUrl, durationSeconds };
+  return pollKlingTask(data.data.task_id, apiKey);
 }
 
-async function pollKlingTask(taskId: string, apiKey: string): Promise<string> {
-  for (let i = 0; i < 60; i++) {
-    const res = await fetch(`https://api.klingai.com/v1/videos/text2video/${taskId}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
-    const data = (await res.json()) as { data: { task_status: string; task_result?: { videos?: Array<{ url: string }> } } };
-    if (data.data.task_status === 'succeed' && data.data.task_result?.videos?.[0]?.url) {
-      return data.data.task_result.videos[0].url;
-    }
-    if (data.data.task_status === 'failed') throw new Error('Kling video failed');
-    await new Promise((r) => setTimeout(r, 3000));
-  }
-  throw new Error('Kling video timed out');
-}
-
-export async function generateMorphVideo(prompt: string, durationSeconds: number): Promise<VideoGenerationResult> {
+async function generateMorphVideo(prompt: string, durationSeconds: number): Promise<string> {
   const apiKey = process.env.MORPH_API_KEY;
   if (!apiKey) throw new Error('MORPH_API_KEY not configured');
 
@@ -95,51 +130,176 @@ export async function generateMorphVideo(prompt: string, durationSeconds: number
   if (!response.ok) throw new Error(`Morph Studio error: ${response.status}`);
 
   const data = (await response.json()) as { video_url: string };
-  return { provider: 'morph', videoUrl: data.video_url, durationSeconds };
+  return data.video_url;
 }
 
-export function simulateVideoResult(provider: VideoGenerationResult['provider'], prompt: string): VideoGenerationResult {
-  return {
-    provider,
-    videoUrl: `https://storage.xroga.local/simulated/${provider}-${Date.now()}.mp4`,
-    durationSeconds: 5,
-    scores: {
-      physics: provider === 'morph' ? 0.85 : 0.75,
-      lighting: provider === 'kling' ? 0.9 : 0.8,
-      consistency: provider === 'agnes' ? 0.88 : 0.78,
+function buildVideoProviders(): ProviderEntry[] {
+  return [
+    {
+      name: 'runway',
+      configured: Boolean(process.env.RUNWAY_API_KEY),
+      call: generateRunwayVideo,
     },
-  };
+    {
+      name: 'luma',
+      configured: Boolean(process.env.LUMA_API_KEY),
+      call: generateLumaVideo,
+    },
+    {
+      name: 'hailuo',
+      configured: Boolean(process.env.HAILUO_API_KEY ?? process.env.MINIMAX_API_KEY),
+      call: generateHailuoVideo,
+    },
+    {
+      name: 'kling',
+      configured: Boolean(process.env.KLING_API_KEY),
+      call: generateKlingVideo,
+    },
+    {
+      name: 'fal',
+      configured: Boolean(process.env.FAL_KEY ?? process.env.FAL_API_KEY),
+      call: generateFalVideo,
+    },
+    {
+      name: 'replicate-svd',
+      configured: Boolean(process.env.REPLICATE_API_TOKEN),
+      call: (prompt) => generateReplicateVideo(prompt),
+    },
+    {
+      name: 'agnes',
+      configured: Boolean(process.env.AGNES_API_KEY),
+      call: generateAgnesVideo,
+    },
+    {
+      name: 'morph',
+      configured: Boolean(process.env.MORPH_API_KEY),
+      call: generateMorphVideo,
+    },
+    {
+      name: 'comfyui',
+      configured: Boolean(process.env.COMFYUI_URL),
+      call: generateComfyUIVideo,
+    },
+    {
+      name: 'slideshow',
+      configured: true,
+      call: (prompt, duration) => generateSlideshowVideo(prompt, duration),
+    },
+  ];
 }
 
-export async function generateVideosParallel(
-  scenePrompt: string,
-  durationSeconds: number
-): Promise<VideoGenerationResult[]> {
-  const generators = [
-    () => generateAgnesVideo(scenePrompt, durationSeconds),
-    () => generateKlingVideo(scenePrompt, durationSeconds),
-    () => generateMorphVideo(scenePrompt, durationSeconds),
-  ];
-
-  const providers: VideoGenerationResult['provider'][] = ['agnes', 'kling', 'morph'];
-
-  const results = await Promise.all(
-    generators.map(async (gen, i) => {
-      try {
-        return await gen();
-      } catch (err) {
-        console.error(`[VideoStudio] ${providers[i]} failed:`, (err as Error).message);
-        return simulateVideoResult(providers[i], scenePrompt);
-      }
-    })
+function isValidVideoUrl(url: string): boolean {
+  if (!url?.trim()) return false;
+  if (url.includes('simulated') || url.includes('xroga.local')) return false;
+  return (
+    url.startsWith('http://') ||
+    url.startsWith('https://') ||
+    url.startsWith('data:video/')
   );
+}
 
-  const successful = results.filter((r) => !r.videoUrl.includes('simulated'));
-  if (successful.length === 0) {
-    throw new Error(
-      'All video providers failed (Agnes, Kling, Morph). Check API keys and quotas.'
-    );
+export function getVideoProviderStatus(): { configured: string[]; ready: boolean; keys: Record<string, boolean> } {
+  const providers = buildVideoProviders();
+  const configured = providers.filter((p) => p.configured && p.name !== 'slideshow').map((p) => p.name);
+  const keys: Record<string, boolean> = {};
+  for (const p of providers) {
+    keys[p.name] = p.configured;
+  }
+  return { configured, ready: configured.length > 0, keys };
+}
+
+/** Direct provider loop — no circuit breaker (same lesson as imageGen). */
+export async function generateVideoWithFallback(
+  prompt: string,
+  durationSeconds: number,
+  options?: {
+    priority?: 'premium' | 'cheap' | 'auto';
+    userId?: string;
+    runId?: string;
+    keyframeUrl?: string;
+  }
+): Promise<VideoGenerationResult> {
+  const priorityList = await getApiPriority('video');
+  const allProviders = buildVideoProviders();
+  const providerMap = new Map(allProviders.map((p) => [p.name, p]));
+
+  const premiumSet = new Set(['runway', 'luma']);
+  const cheapSet = new Set(['hailuo', 'kling', 'fal', 'replicate-svd', 'agnes', 'morph']);
+
+  let orderedNames = priorityList.filter((name) => providerMap.has(name as VideoProviderName));
+
+  if (options?.priority === 'premium') {
+    orderedNames = orderedNames.filter((n) => premiumSet.has(n) || n === 'slideshow');
+  } else if (options?.priority === 'cheap') {
+    orderedNames = orderedNames.filter((n) => cheapSet.has(n) || n === 'comfyui' || n === 'slideshow');
   }
 
-  return results;
+  orderedNames.push('slideshow');
+
+  for (const name of orderedNames) {
+    const entry = providerMap.get(name as VideoProviderName);
+    if (!entry?.configured) continue;
+
+    try {
+      const videoUrl = await withTimeout(
+        entry.call(prompt, durationSeconds),
+        VIDEO_API_TIMEOUT_MS,
+        name
+      );
+      if (!isValidVideoUrl(videoUrl)) continue;
+
+      return { provider: name, videoUrl, durationSeconds };
+    } catch (err) {
+      await logSystemError({
+        api: name,
+        errorMessage: (err as Error).message,
+        fallbackUsed: 'trying next video provider',
+        severity: 'warning',
+        userId: options?.userId,
+        runId: options?.runId,
+        metadata: { apiType: 'video' },
+      });
+    }
+  }
+
+  const slideshowUrl = await generateSlideshowVideo(prompt, durationSeconds, options?.keyframeUrl);
+  return { provider: 'slideshow', videoUrl: slideshowUrl, durationSeconds };
+}
+
+/** Legacy parallel generation — now uses single best-result fallback chain per scene */
+export async function generateVideosParallel(
+  scenePrompt: string,
+  durationSeconds: number,
+  options?: { userId?: string; runId?: string; priority?: 'premium' | 'cheap' | 'auto' }
+): Promise<VideoGenerationResult[]> {
+  const result = await generateVideoWithFallback(scenePrompt, durationSeconds, options);
+  return [result];
+}
+
+export async function smokeTestVideoGeneration(): Promise<{
+  ok: boolean;
+  provider?: string;
+  error?: string;
+  tried: string[];
+}> {
+  const tried: string[] = [];
+  const providers = buildVideoProviders().filter((p) => p.configured && p.name !== 'slideshow');
+
+  for (const p of providers) {
+    tried.push(p.name);
+    try {
+      const url = await withTimeout(
+        p.call('A cinematic sunset over the ocean, 2 seconds', 2),
+        90_000,
+        p.name
+      );
+      if (isValidVideoUrl(url)) {
+        return { ok: true, provider: p.name, tried };
+      }
+    } catch (err) {
+      console.warn(`[VideoSmoke] ${p.name} failed:`, (err as Error).message);
+    }
+  }
+
+  return { ok: false, error: 'All configured video providers failed smoke test', tried };
 }

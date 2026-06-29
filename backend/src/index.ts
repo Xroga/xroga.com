@@ -69,13 +69,15 @@ app.use('/api/billing/webhook', billingWebhookRouter);
 app.use(express.json({ limit: '10mb' }));
 
 import { getImageProviderStatus } from './services/builder/imageGen.js';
+import { getVideoProviderStatus } from './lib/videoProviders.js';
 
 const healthPayload = () => {
   const image = getImageProviderStatus();
+  const video = getVideoProviderStatus();
   return {
     status: 'ok',
     service: 'xroga-api',
-    version: '1.2.4',
+    version: '1.3.0',
     timestamp: new Date().toISOString(),
     authConfigured: Boolean(process.env.SUPABASE_URL),
     dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
@@ -88,6 +90,9 @@ const healthPayload = () => {
     imageProviders: image.configured,
     imageReady: image.ready,
     imageKeys: image.keys,
+    videoProviders: video.configured,
+    videoReady: video.ready,
+    videoKeys: video.keys,
   };
 };
 
@@ -113,6 +118,19 @@ app.get('/api/health/smoke-image', async (req, res) => {
     const quick = await smokeTestImageGeneration();
     const full = req.query.full === '1' ? await smokeTestFullPipeline() : undefined;
     res.json({ ...healthPayload(), smoke: quick, fullPipeline: full });
+  } catch (err) {
+    res.status(500).json({
+      ...healthPayload(),
+      smoke: { ok: false, error: (err as Error).message, tried: [] },
+    });
+  }
+});
+
+app.get('/api/health/smoke-video', async (_req, res) => {
+  try {
+    const { smokeTestVideoGeneration } = await import('./lib/videoProviders.js');
+    const smoke = await smokeTestVideoGeneration();
+    res.json({ ...healthPayload(), smoke });
   } catch (err) {
     res.status(500).json({
       ...healthPayload(),

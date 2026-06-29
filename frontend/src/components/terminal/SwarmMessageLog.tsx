@@ -16,8 +16,9 @@ import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ProcessingPipeline } from './ProcessingPipeline';
 import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { FollowUpChips, ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
-import { isImageGenerationPrompt, extractImagesFromContent } from '@/lib/parseImageContent';
+import { isImageGenerationPrompt, isVideoGenerationPrompt, extractImagesFromContent } from '@/lib/parseImageContent';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
+import { FilmGeneratingAnimation } from './FilmGeneratingAnimation';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions, isBuildRelated, primaryDeploySuggestion } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -42,7 +43,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, followUps, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt } =
+  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, videoProgressStep, followUps, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -257,6 +258,14 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                     <>
                       <div className="py-1 text-left">
                         {loading &&
+                        msg.id === animatingId &&
+                        isVideoGenerationPrompt(lastUserText) &&
+                        !msg.content.includes('Watch & download') ? (
+                          <FilmGeneratingAnimation
+                            message={pipelineMessage ?? undefined}
+                            step={videoProgressStep ?? undefined}
+                          />
+                        ) : loading &&
                         msg.id === animatingId &&
                         isImageGenerationPrompt(lastUserText) &&
                         extractImagesFromContent(msg.content).length === 0 ? (

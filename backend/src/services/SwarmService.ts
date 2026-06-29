@@ -259,6 +259,7 @@ export class SwarmService {
           message: event.message,
           iteration: event.iteration,
           imageStep: event.imageStep,
+          videoStep: event.videoStep,
         },
       });
     };

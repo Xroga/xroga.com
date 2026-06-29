@@ -19,13 +19,24 @@ export const IMAGE_PROVIDERS = [
   'cloudflare',
   'comfyui',
 ] as const;
-export const VIDEO_PROVIDERS = ['runway', 'luma', 'kling', 'hailuo'] as const;
+export const VIDEO_PROVIDERS = [
+  'runway',
+  'luma',
+  'hailuo',
+  'kling',
+  'fal',
+  'replicate-svd',
+  'agnes',
+  'morph',
+  'comfyui',
+  'slideshow',
+] as const;
 export const VOICE_PROVIDERS = ['elevenlabs', 'cartesia', 'fish-audio', 'google-tts'] as const;
 export const SEARCH_PROVIDERS = ['tavily', 'exa', 'newsapi'] as const;
 
 export const CHEAP_API_TIMEOUT_MS = 5000;
 export const PREMIUM_API_TIMEOUT_MS = 15000;
-export const VIDEO_API_TIMEOUT_MS = 30000;
+export const VIDEO_API_TIMEOUT_MS = 120_000;
 export const IMAGE_API_TIMEOUT_MS = 120_000;
 
 const DEFAULTS: Record<string, readonly string[]> = {

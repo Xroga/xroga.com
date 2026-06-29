@@ -12,6 +12,7 @@ import { shouldUseFastChat, isTrivialPrompt, requiresFeaturePipeline } from '../
 import { formatFeatureOutput, stripFakeImageMarkdown } from '../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../services/featureExecutor.js';
 import { getImageProviderStatus } from '../services/builder/imageGen.js';
+import { getVideoProviderStatus } from '../lib/videoProviders.js';
 
 const FRIENDLY_FALLBACKS = [
   "I'm putting the finishing touches on this — here's what I can share right now based on your request.",
@@ -152,6 +153,53 @@ export class Orchestrator {
     };
   }
 
+  /** Direct video/movie production — bypasses 5-agent swarm */
+  private static async executeVideoFast(
+    ctx: {
+      userId: string;
+      prompt: string;
+      projectId?: string;
+      onProgress?: (event: SwarmProgressEvent) => void;
+    }
+  ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[] }> {
+    const runId = crypto.randomUUID();
+    const { produceVideo } = await import('../services/media/videoStudio.js');
+
+    const output = await produceVideo(ctx.userId, ctx.prompt, {
+      projectId: ctx.projectId,
+      runId,
+      onProgress: (step, message, detail) => {
+        ctx.onProgress?.({
+          runId,
+          agent: 'builder',
+          status: 'building',
+          message: detail ?? message,
+          videoStep: step,
+          timestamp: new Date().toISOString(),
+        });
+      },
+    });
+
+    const reply = formatFeatureOutput(output);
+
+    return {
+      runId,
+      fast: true,
+      result: {
+        success: true,
+        iterations: 0,
+        defectsFound: 0,
+        plan: defaultPlan(),
+        agents: defaultAgents(['builder']),
+        output,
+      },
+      actions: { success: true, remaining: 0, cost: output.actionCost },
+      featureCategory: 'video_studio',
+      polishedReply: reply,
+      followUps: output.followUps ?? ['Add subtitles?', 'Generate episode 2?'],
+    };
+  }
+
   static async executeSafe(
     runFn: () => Promise<SwarmRunResult>,
     ctx: {
@@ -216,6 +264,50 @@ export class Orchestrator {
           },
           actions: { success: true, remaining: 0, cost: 0 },
           featureCategory: 'image_generation',
+          polishedReply: shield.content,
+          followUps: shield.followUps,
+        };
+      }
+    }
+
+    // Video fast path — full movie pipeline with fallback chains
+    if (featureCategory === 'video_studio') {
+      try {
+        return await this.executeVideoFast(ctx);
+      } catch (vidErr) {
+        await logSystemError({
+          api: 'video_gen',
+          errorMessage: (vidErr as Error).message,
+          fallbackUsed: 'video-fast-path',
+          severity: 'error',
+          userId: ctx.userId,
+        });
+        const status = getVideoProviderStatus();
+        const errMsg = (vidErr as Error).message;
+        const fallbackText = status.ready
+          ? `Video production encountered an issue. Server sees keys for: ${status.configured.join(', ')}. The pipeline will retry with fallback providers.`
+          : `Video production is starting with available fallbacks. Configure RUNWAY_API_KEY, LUMA_API_KEY, AGNES_API_KEY, or KLING_API_KEY on Fly.io for best quality.`;
+
+        const shield = await runThreeLayerShield({
+          content: `${fallbackText}\n\n${errMsg.slice(0, 120)}`,
+          prompt: ctx.prompt,
+          userId: ctx.userId,
+          includeProsCons: false,
+        });
+
+        return {
+          runId: crypto.randomUUID(),
+          fast: true,
+          result: {
+            success: false,
+            iterations: 0,
+            defectsFound: 0,
+            plan: defaultPlan(),
+            agents: defaultAgents(['builder']),
+            output: { type: 'chat', content: shield.content } as FeatureOutput,
+          },
+          actions: { success: true, remaining: 0, cost: 0 },
+          featureCategory: 'video_studio',
           polishedReply: shield.content,
           followUps: shield.followUps,
         };

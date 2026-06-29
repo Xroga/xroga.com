@@ -34,8 +34,13 @@ Deploy: Vercel or Netlify. Offer custom domain setup.`,
 Support: text-to-image, edit, remove background, upscale, variations, style change.
 License: personal + commercial use included.`,
 
-  video_studio: `Xroga Video Studio. Produce screenplay, shot list, storyboard notes, then video via Agnes/Kling/Morph pipeline.
-Export: MP4, YouTube upload prep, Cloudflare Stream embed. Never suggest Vercel for video hosting.`,
+  video_studio: `Xroga Film Studio — full movie production pipeline:
+1. LLM screenplay: OpenAI → Anthropic → DeepSeek → Groq → Gemini → Ollama fallback chain.
+2. Character design: consistent face images via image pipeline, voice IDs for ElevenLabs/Cartesia.
+3. Scene rendering: Runway → Luma → Hailuo → Kling → Fal → Replicate SVD → Agnes → ComfyUI → FFmpeg slideshow.
+4. Audio: ElevenLabs → Cartesia → Fish Audio for dialogue; Suno/Fish for score.
+5. Assembly: FFmpeg multi-scene stitch, post-production, export MP4 to R2.
+Series support: ongoing characters and series_bible continuity. Never suggest Vercel for video hosting.`,
 
   browser_automation: `Xroga Automation Runtime. Write Playwright scripts (free local execution). Include selectors, waits, error handling.
 Offer: cron schedule, webhook triggers, Slack/Discord notifications on completion.
