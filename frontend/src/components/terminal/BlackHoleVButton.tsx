@@ -7,6 +7,7 @@ import { useMoodStore } from '@/store/useMoodStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
 
+/** Text-only control outside chatbar: Black Hole V + ∞ */
 export function BlackHoleVButton({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -24,8 +25,8 @@ export function BlackHoleVButton({ className }: { className?: string }) {
       <ChatBarPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} width={300}>
         <div className="rounded-2xl border border-[#006aff]/25 bg-[var(--card)] shadow-2xl p-3 animate-in fade-in slide-in-from-bottom-2">
           <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs font-bold text-[var(--foreground)]">Black Hole V</span>
             <Infinity className="w-4 h-4 text-[#006aff]" strokeWidth={2.5} />
-            <p className="text-xs font-bold text-[var(--foreground)]">Black Hole V∞</p>
             <span className={cn('ml-auto text-[9px] font-bold px-2 py-0.5 rounded-full', autoOn ? 'bg-[#006aff] text-white' : 'bg-white/10 text-[var(--muted)]')}>
               {autoOn ? 'ON' : 'OFF'}
             </span>
@@ -61,11 +62,11 @@ export function BlackHoleVButton({ className }: { className?: string }) {
         ref={btnRef}
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-0.5 h-7 px-2 rounded-full bg-[#006aff]/10 border border-[#006aff]/30 text-[10px] sm:text-[11px] font-bold text-[var(--foreground)] hover:bg-[#006aff]/18 transition-colors"
+        className="flex items-center gap-0.5 px-0 py-0.5 bg-transparent border-0 text-[10px] sm:text-[11px] font-bold text-[var(--foreground)] hover:text-[#006aff] transition-colors"
       >
+        <span>Black Hole V</span>
         <Infinity className="w-3.5 h-3.5 shrink-0 text-[#006aff]" strokeWidth={2.5} />
-        <span className="hidden xs:inline">Black Hole V∞</span>
-        <ChevronDown className={cn('w-3 h-3 opacity-50 transition-transform', open && 'rotate-180')} />
+        <ChevronDown className={cn('w-3 h-3 opacity-45 transition-transform', open && 'rotate-180')} />
       </button>
     </div>
   );

@@ -76,7 +76,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
               'flex-1 overflow-y-auto overflow-x-hidden relative z-[1]',
               incognito && isDashboard ? 'p-2 sm:p-4 lg:p-6 bg-transparent' : 'p-3 sm:p-6 lg:p-8',
               'pb-24 lg:pb-8',
-              isDashboard && 'pb-[min(300px,calc(44vh+env(safe-area-inset-bottom)))] lg:pb-[200px]'
+              isDashboard && 'pb-[min(340px,calc(48vh+env(safe-area-inset-bottom)))] lg:pb-[240px]'
             )}
           >
             {children}

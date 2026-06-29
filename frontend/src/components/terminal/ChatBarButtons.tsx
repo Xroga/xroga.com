@@ -97,25 +97,44 @@ export function VoiceWaveform({ active }: { active: boolean }) {
   );
 }
 
-function IntegrationLogo({ src, alt }: { src: string; alt: string }) {
+function IntegrationLogo({ src, alt, className }: { src: string; alt: string; className?: string }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} className="w-3.5 h-3.5 object-contain shrink-0" />
+    <img src={src} alt={alt} className={cn('w-4 h-4 object-contain shrink-0', className)} />
   );
 }
 
 export function GitHubChipIcon() {
-  return <IntegrationLogo src="https://cdn.simpleicons.org/github/6e40c9" alt="GitHub" />;
+  return (
+    <IntegrationLogo
+      src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+      alt="GitHub"
+      className="dark:invert"
+    />
+  );
 }
 
 export function GitLabChipIcon() {
-  return <IntegrationLogo src="https://cdn.simpleicons.org/gitlab/FC6D26" alt="GitLab" />;
+  return (
+    <IntegrationLogo
+      src="https://about.gitlab.com/images/press/logo/png/gitlab-icon-rgb.png"
+      alt="GitLab"
+    />
+  );
 }
 
 export function VercelChipIcon() {
-  return <IntegrationLogo src="https://cdn.simpleicons.org/vercel/000000" alt="Vercel" />;
+  return (
+    <svg viewBox="0 0 76 65" className="w-3.5 h-3.5 shrink-0" aria-hidden>
+      <path fill="currentColor" d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
+    </svg>
+  );
 }
 
 export function TwitterChipIcon() {
-  return <IntegrationLogo src="https://cdn.simpleicons.org/x/1d9bf0" alt="X" />;
+  return (
+    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" aria-hidden>
+      <path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
 }

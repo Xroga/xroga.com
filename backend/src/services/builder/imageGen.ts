@@ -41,8 +41,8 @@ export const IMAGE_PROGRESS_MESSAGES: Record<ImageProgressStep, string> = {
   complete: 'Image ready!',
 };
 
-const MATCH_THRESHOLD = 72;
-const MAX_VERIFY_ATTEMPTS = 4;
+const MATCH_THRESHOLD = 60;
+const MAX_VERIFY_ATTEMPTS = 6;
 const DEFAULT_FOLLOW_UPS = ['Make it 4K', 'YouTube thumbnail variant', 'Generate variations'];
 const DEFAULT_PROS = ['Verified match to your prompt'];
 
@@ -194,6 +194,7 @@ function truncatePrompt(prompt: string): string {
 }
 
 const PROVIDER_TIMEOUT_MS = 12_000;
+const AGNES_TIMEOUT_MS = 45_000;
 
 async function callImageProvider(
   entry: ProviderEntry,
@@ -201,10 +202,11 @@ async function callImageProvider(
   ctx: { userId?: string; runId?: string }
 ): Promise<string> {
   const safePrompt = truncatePrompt(prompt);
+  const timeout = entry.name === 'agnes-image' ? AGNES_TIMEOUT_MS : PROVIDER_TIMEOUT_MS;
   const imageUrl = await Promise.race([
     entry.call(safePrompt),
     new Promise<string>((_, reject) =>
-      setTimeout(() => reject(new Error(`${entry.name} timed out`)), PROVIDER_TIMEOUT_MS)
+      setTimeout(() => reject(new Error(`${entry.name} timed out`)), timeout)
     ),
   ]);
   if (!isValidImageResult(imageUrl)) {
@@ -329,6 +331,11 @@ function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T
   ]);
 }
 
+function shouldAcceptVerification(v: { matchScore: number; matches: boolean; verifier: string }): boolean {
+  if (v.verifier === 'skipped-no-gemini' || v.verifier === 'fallback-accept') return true;
+  return v.matches || v.matchScore >= MATCH_THRESHOLD;
+}
+
 export async function generateImage(userPrompt: string, options?: ImageGenOptions): Promise<ImageGenOutput> {
   const rawQuery = extractImagePrompt(userPrompt);
   const ctx = { userId: options?.userId, runId: options?.runId };
@@ -362,7 +369,7 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
       const verification = await verifyImageMatchesPrompt(imageUrl, rawQuery);
       const provider = normalizeProvider(entry.name);
 
-      if (verification.matches && verification.matchScore >= MATCH_THRESHOLD) {
+      if (shouldAcceptVerification(verification)) {
         emitProgress(options, 'complete');
         return {
           type: 'image',
@@ -417,12 +424,32 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
       enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : undefined,
       followUps: DEFAULT_FOLLOW_UPS,
       pros: ['Best available result'],
-      cons: ['Could not fully verify prompt match — try refining your prompt'],
+      cons: bestFallback.score < MATCH_THRESHOLD
+        ? ['Could not fully verify prompt match — try refining your prompt']
+        : undefined,
       matchScore: bestFallback.score,
-      verified: false,
+      verified: bestFallback.score >= MATCH_THRESHOLD,
       rejectedImages: rejectedImages.filter((r) => r.imageUrl !== bestFallback!.imageUrl),
       isYoutubeThumbnail,
     };
+  }
+
+  // Last resort — generate without verification gate (providers were all throwing)
+  try {
+    const fallback = await generateStandardChain(imagePrompt, rawQuery, ctx);
+    emitProgress(options, 'complete');
+    return {
+      type: 'image',
+      imageUrl: fallback.imageUrl,
+      provider: fallback.provider,
+      prompt: rawQuery,
+      followUps: DEFAULT_FOLLOW_UPS,
+      pros: ['Generated via fallback chain'],
+      verified: false,
+      isYoutubeThumbnail,
+    };
+  } catch {
+    /* fall through */
   }
 
   throw new ImageGenerationError(

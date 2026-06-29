@@ -2181,16 +2181,17 @@ body.theme-gray * {
       padding-left: 0.5rem;
       padding-right: 0.5rem;
     }
-    .xv-chatbar-toolbar {
-      display: none;
-    }
     .xv-chatbar-input-form {
-      padding-top: 0.35rem !important;
-      padding-bottom: 0.5rem !important;
+      padding-top: 0.25rem !important;
+      padding-bottom: 0.35rem !important;
     }
     .xv-chatbar-input-form textarea {
-      min-height: 44px;
-      font-size: 15px;
+      min-height: 36px;
+      font-size: 14px;
+    }
+    .xv-chatbar-toolbar {
+      padding-top: 0.25rem !important;
+      padding-bottom: 0.25rem !important;
     }
     .xv-chatbar-chip span {
       display: none;
