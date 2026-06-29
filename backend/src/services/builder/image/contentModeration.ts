@@ -1,10 +1,15 @@
 /** Pre-generation safety filter — blocks prohibited content before any API call */
 
+import { IMAGE_SAFETY_GUIDANCE } from './imageSafetyMessages.js';
+
 const NUDE_PATTERNS =
-  /\b(nude|naked|nsfw|porn|pornographic|xxx|sexual|erotic|hentai|vulgar|explicit sex|genitals|topless|bottomless|undressed|strip tease|onlyfans|adult content|x-?rated|lewd|obscene|fetish|bondage)\b/i;
+  /\b(nude|naked|nsfw|porn|pornographic|xxx|sexual|erotic|hentai|vulgar|explicit sex|genitals|topless|bottomless|undressed|strip tease|onlyfans|adult content|x-?rated|lewd|obscene|fetish|bondage|intercourse|orgasm|masturbat)\b/i;
+
+const ADULTERY_PATTERNS =
+  /\b(adult(ery|erous)?|zina|fornicat|cheating (wife|husband|spouse)|affair with|mistress|lover in bed|illicit (relation|relationship)|haram (relation|relationship)|shameful (act|deed)|immoral (act|scene)|sinful (couple|scene))\b/i;
 
 const SUGGESTIVE_PATTERNS =
-  /\b(swimsuit|bikini|lingerie|underwear|bra\b|panties|thong|cleavage|see-?through|sheer outfit|micro bikini|wet t-?shirt|no clothes|without clothes|in bed|seductive|provocative|sensual pose|hot girl|sexy girl|sexy woman|tight dress|tight clothes|tight outfit|revealing outfit|skimpy|barely dressed|boobs|breasts exposed|ass exposed|butt naked)\b/i;
+  /\b(swimsuit|bikini|lingerie|underwear|bra\b|panties|thong|cleavage|see-?through|sheer outfit|micro bikini|wet t-?shirt|no clothes|without clothes|in bed|seductive|provocative|sensual pose|hot girl|sexy girl|sexy woman|tight dress|tight clothes|tight outfit|revealing outfit|skimpy|barely dressed|boobs|breasts exposed|ass exposed|butt naked|kissing passionately|making out|intimate couple|bedroom scene)\b/i;
 
 const PROPHET_GOD_PATTERNS =
   /\b(prophet\s+muhammad|muhammad\s+s\.?a\.?w|mohammed\s+s\.?a\.?w|depict(ion|ing)?\s+of\s+(the\s+)?prophet|image\s+of\s+(the\s+)?prophet|picture\s+of\s+(the\s+)?prophet|draw\s+(the\s+)?prophet|prophet\s+isa\b|prophet\s+musa\b|god\s+face|face\s+of\s+god|depict(ion|ing)?\s+of\s+god|allah\s+face|jesus\s+portrait|christ\s+portrait|religious\s+figure\s+depiction)\b/i;
@@ -23,12 +28,11 @@ export function moderateImagePrompt(prompt: string): ModerationResult {
   const text = prompt.trim();
   if (!text) return { allowed: false, reason: 'Please describe what you want to generate.' };
 
-  if (NUDE_PATTERNS.test(text)) {
+  if (NUDE_PATTERNS.test(text) || ADULTERY_PATTERNS.test(text)) {
     return {
       allowed: false,
       blockedCategory: 'nude',
-      reason:
-        'Xroga cannot generate nude, sexual, or adult content. Please request a safe-for-work image instead.',
+      reason: `${IMAGE_SAFETY_GUIDANCE.title}. ${IMAGE_SAFETY_GUIDANCE.quranReference}: "${IMAGE_SAFETY_GUIDANCE.quranTranslation}" Xroga does not generate nude, sexual, adulterous, or adult content. Shaitan beautifies such acts — please request a modest, family-safe image instead.`,
     };
   }
 
@@ -36,8 +40,7 @@ export function moderateImagePrompt(prompt: string): ModerationResult {
     return {
       allowed: false,
       blockedCategory: 'suggestive',
-      reason:
-        'Xroga cannot generate suggestive, revealing, or swimwear-focused images. Please request modest, professional, or family-safe imagery.',
+      reason: `${IMAGE_SAFETY_GUIDANCE.title}. ${IMAGE_SAFETY_GUIDANCE.quranReference}: "${IMAGE_SAFETY_GUIDANCE.quranTranslation}" Xroga cannot generate suggestive, revealing, or swimwear-focused images. Please request modest, professional, or family-safe imagery.`,
     };
   }
 

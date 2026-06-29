@@ -34,6 +34,23 @@ export interface LandingPageOutput {
   vercelDeploymentId?: string;
 }
 
+export interface ImageBlockedOutput {
+  type: 'image_blocked';
+  prompt: string;
+  reason: 'prompt_blocked' | 'image_blocked' | 'verification_failed';
+  detail?: string;
+  safety: {
+    title: string;
+    quranArabic: string;
+    quranTranslation: string;
+    quranReference: string;
+    guidance: string[];
+    leakFallback: string;
+    creativeAlternatives: string[];
+  };
+  followUps?: string[];
+}
+
 export interface ImageGenOutput {
   type: 'image';
   imageUrl: string;
@@ -176,6 +193,7 @@ export interface CodeDebugOutput {
 export type FeatureOutput =
   | LandingPageOutput
   | ImageGenOutput
+  | ImageBlockedOutput
   | BrowserAutomationOutput
   | CrossPostOutput
   | KeyCreationOutput

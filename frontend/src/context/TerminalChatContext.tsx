@@ -343,6 +343,24 @@ export function TerminalChatProvider({
               setFollowUps(complete.followUps);
             }
             const output = complete.output as Record<string, unknown> | undefined;
+            if (output?.type === 'image_blocked') {
+              setMessages((m) =>
+                m.map((msg) =>
+                  msg.id === assistantId
+                    ? {
+                        ...msg,
+                        content: '',
+                        featureOutput: output,
+                      }
+                    : msg
+                )
+              );
+              const blockedFollowUps = Array.isArray(output.followUps)
+                ? (output.followUps as string[])
+                : undefined;
+              if (blockedFollowUps?.length) setFollowUps(blockedFollowUps);
+              return;
+            }
             if (output?.type === 'image' && typeof output.imageUrl === 'string') {
               addMediaItem({
                 name: String(output.prompt ?? 'Xroga image').slice(0, 40),

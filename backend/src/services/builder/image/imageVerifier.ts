@@ -14,7 +14,14 @@ const VERIFIER_SYSTEM = `You are an image quality and safety verifier. Compare t
 Score 0-100 for prompt match (subject, style, accuracy, realism).
 Set matches=true only if matchScore>=72 and no critical errors.
 
-SAFETY — set blockedForSafety=true if the image contains nudity, swimwear, lingerie, or sexually suggestive content.
+SAFETY — set blockedForSafety=true if the image contains ANY of:
+- Nudity, partial nudity, exposed breasts, buttocks, or genitals
+- Swimwear, bikini, lingerie, underwear, or revealing clothing
+- Sexually suggestive poses, adultery, intimate couples in bed, kissing passionately
+- Pornographic, erotic, or adult content of any kind
+- Immodest or haram imagery that would violate Islamic modesty standards
+
+When in doubt about modesty or explicit content, set blockedForSafety=true.
 
 Also flag: wrong flags, wrong person identity, cartoon when photorealism requested, religious figure depictions.
 
@@ -242,12 +249,13 @@ export async function verifyImageMatchesPrompt(
     .filter((r): r is ImageVerificationResult => r !== null);
 
   if (!results.length) {
-    console.warn('[ImageVerifier] All vision APIs failed');
+    console.warn('[ImageVerifier] All vision APIs failed — blocking image (fail-closed)');
     return {
-      matchScore: 50,
+      matchScore: 0,
       matches: false,
-      issues: ['Vision check unavailable — image still shown for your review'],
-      verifier: 'failed',
+      issues: ['Safety verification unavailable — image withheld for your protection'],
+      verifier: 'failed-closed',
+      blockedForSafety: true,
       scoresByVerifier: {},
     };
   }

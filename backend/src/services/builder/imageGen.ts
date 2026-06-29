@@ -8,13 +8,14 @@ import { generateHailuoImage } from '../../lib/hailuo.js';
 import { generateComfyUIImage } from '../../lib/comfyui.js';
 import { generateOpenAIImage } from '../../lib/openaiImage.js';
 import { logSystemError } from '../../services/systemErrorLog.js';
-import type { ImageGenOutput } from '../../types/features.js';
+import type { ImageBlockedOutput, ImageGenOutput } from '../../types/features.js';
 import { classifyImageQuery } from './image/understanding.js';
 import { enhanceImagePrompt } from './image/promptEnhancer.js';
 import { pickBestImage } from './image/imageReviewer.js';
 import { generateImageFollowUps } from './image/followUps.js';
 import { moderateImagePrompt, parseImageAspectFormat, aspectFormatLabel, aspectFormatPromptSuffix, type ImageAspectFormat } from './image/contentModeration.js';
 import { verifyImageMatchesPrompt } from './image/imageVerifier.js';
+import { buildImageBlockedOutput } from './image/imageSafetyMessages.js';
 
 export class ImageGenerationError extends Error {
   constructor(message: string) {
@@ -365,13 +366,16 @@ function buildAllProviders(): ProviderEntry[] {
   });
 }
 
-export async function generateImage(userPrompt: string, options?: ImageGenOptions): Promise<ImageGenOutput> {
+export async function generateImage(
+  userPrompt: string,
+  options?: ImageGenOptions
+): Promise<ImageGenOutput | ImageBlockedOutput> {
   const rawQuery = extractImagePrompt(userPrompt);
   const ctx = { userId: options?.userId, runId: options?.runId };
 
   const moderation = moderateImagePrompt(rawQuery);
   if (!moderation.allowed) {
-    throw new ImageGenerationError(moderation.reason ?? 'This image request is not allowed.');
+    return buildImageBlockedOutput(rawQuery, 'prompt_blocked', moderation.reason);
   }
 
   const aspectFormat = options?.aspectFormat ?? parseImageAspectFormat(rawQuery);
@@ -413,22 +417,35 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
         } catch (verifyErr) {
           console.warn(`[ImageGen] verify failed for ${entry.name}:`, (verifyErr as Error).message);
           verification = {
-            matchScore: 50,
+            matchScore: 0,
             matches: false,
-            issues: ['Verification failed — image still shown'],
+            issues: ['Safety verification failed — image withheld'],
             verifier: 'verify-error',
+            blockedForSafety: true,
             scoresByVerifier: {},
           };
         }
 
         const provider = normalizeProvider(entry.name);
 
+        if (verification.blockedForSafety) {
+          console.log(`[ImageGen] ${entry.name} blocked by safety verifier`);
+          return {
+            imageUrl,
+            provider,
+            matchScore: 0,
+            issues: verification.issues,
+            blocked: true,
+            scoresByVerifier: verification.scoresByVerifier,
+          };
+        }
+
         const attempt: Attempt = {
           imageUrl,
           provider,
           matchScore: verification.matchScore,
           issues: verification.issues,
-          blocked: verification.blockedForSafety,
+          blocked: false,
           scoresByVerifier: verification.scoresByVerifier,
         };
 
@@ -466,6 +483,16 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
   if (!allAttempts.length) {
     try {
       const fallback = await generateStandardChain(imagePrompt, rawQuery, ctx);
+      emitProgress(options, 'verifying', 'Final safety check…');
+      const finalCheck = await verifyImageMatchesPrompt(fallback.imageUrl, rawQuery);
+      if (finalCheck.blockedForSafety) {
+        emitProgress(options, 'complete');
+        return buildImageBlockedOutput(
+          rawQuery,
+          'image_blocked',
+          'Fallback image was blocked by AI safety review.'
+        );
+      }
       emitProgress(options, 'complete');
       return {
         type: 'image',
@@ -485,8 +512,42 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
     }
   }
 
-  const pool = safeAttempts.length ? safeAttempts : allAttempts;
+  if (!safeAttempts.length) {
+    emitProgress(options, 'complete');
+    return buildImageBlockedOutput(
+      rawQuery,
+      'image_blocked',
+      'All AI-generated images were blocked by safety review before display.'
+    );
+  }
+
+  const pool = safeAttempts;
   let winner = [...pool].sort((a, b) => b.matchScore - a.matchScore)[0]!;
+
+  emitProgress(options, 'verifying', 'Final safety check on best image…');
+  const winnerRecheck = await verifyImageMatchesPrompt(winner.imageUrl, rawQuery);
+  if (winnerRecheck.blockedForSafety) {
+    const remaining = pool.filter((a) => a.imageUrl !== winner.imageUrl);
+    const alternate = remaining.sort((a, b) => b.matchScore - a.matchScore)[0];
+    if (!alternate) {
+      emitProgress(options, 'complete');
+      return buildImageBlockedOutput(
+        rawQuery,
+        'image_blocked',
+        'Best image failed final safety review — nothing safe to display.'
+      );
+    }
+    winner = alternate;
+    const altRecheck = await verifyImageMatchesPrompt(winner.imageUrl, rawQuery);
+    if (altRecheck.blockedForSafety) {
+      emitProgress(options, 'complete');
+      return buildImageBlockedOutput(
+        rawQuery,
+        'image_blocked',
+        'All candidate images failed final safety review.'
+      );
+    }
+  }
 
   if (pool.length > 1) {
     const top = pool.filter((a) => a.matchScore >= Math.max(ACCEPT_THRESHOLD, winner.matchScore - 12));
@@ -503,7 +564,7 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
     }
   }
 
-  const serializedAttempts = allAttempts.map((a) => ({
+  const serializedAttempts = safeAttempts.map((a) => ({
     imageUrl: a.imageUrl,
     provider: a.provider,
     matchScore: a.matchScore,
@@ -524,7 +585,7 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
     enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : undefined,
     followUps: DEFAULT_FOLLOW_UPS,
     pros: [
-      `Best of ${allAttempts.length} AI attempts (${winner.provider})`,
+      `Best of ${safeAttempts.length} safe AI attempts (${winner.provider})`,
       `Format: ${formatLabel}`,
     ],
     cons:
@@ -581,6 +642,9 @@ export async function smokeTestFullPipeline(
 ): Promise<{ ok: boolean; provider?: string; imageUrl?: string; error?: string }> {
   try {
     const result = await generateImage(userPrompt);
+    if (result.type === 'image_blocked') {
+      return { ok: false, error: result.detail ?? 'Image blocked by safety review' };
+    }
     return {
       ok: true,
       provider: result.provider,
