@@ -16,6 +16,8 @@ import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ProcessingPipeline } from './ProcessingPipeline';
 import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { FollowUpChips, ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
+import { isImageGenerationPrompt, extractImagesFromContent } from '@/lib/parseImageContent';
+import { ImageGeneratingAnimation } from './ImageStudioCard';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions, isBuildRelated, primaryDeploySuggestion } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -254,10 +256,17 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   ) : (
                     <>
                       <div className="py-1 text-left">
-                        <ModernResponseText
-                          content={msg.content}
-                          streaming={msg.id === animatingId && loading}
-                        />
+                        {loading &&
+                        msg.id === animatingId &&
+                        isImageGenerationPrompt(lastUserText) &&
+                        extractImagesFromContent(msg.content).length === 0 ? (
+                          <ImageGeneratingAnimation />
+                        ) : (
+                          <ModernResponseText
+                            content={msg.content}
+                            streaming={msg.id === animatingId && loading}
+                          />
+                        )}
                       </div>
                       {isLastAssistant && reasoning && (
                         <ReasoningPanel reasoning={reasoning} dag={dag ?? undefined} />

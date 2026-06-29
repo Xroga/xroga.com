@@ -2,6 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import {
+  extractImagesFromContent,
+  stripImageMarkdown,
+  parseProviderFromContent,
+} from '@/lib/parseImageContent';
+import { ImageStudioCard } from './ImageStudioCard';
 
 interface ReasoningPanelProps {
   reasoning?: string;
@@ -64,7 +70,7 @@ export function FollowUpChips({ items, onSelect }: FollowUpChipsProps) {
   );
 }
 
-/** Modern AI response — natural stream growth + fade-in, renders markdown images */
+/** Modern AI response — text + Image Studio cards with reveal animation */
 export function ModernResponseText({
   content,
   streaming,
@@ -73,7 +79,7 @@ export function ModernResponseText({
   streaming?: boolean;
 }) {
   const prevLen = useRef(0);
-  const blockRef = useRef<HTMLSpanElement>(null);
+  const blockRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (content.length > prevLen.current && blockRef.current && !streaming) {
@@ -94,34 +100,44 @@ export function ModernResponseText({
     );
   }
 
-  const parts = content.split(/(!\[[^\]]*\]\([^)]+\))/g);
+  const images = extractImagesFromContent(content);
+  const textOnly = stripImageMarkdown(content);
+  const provider = parseProviderFromContent(content);
+
+  if (images.length > 0) {
+    return (
+      <div
+        ref={blockRef}
+        className={cn('xv-response-text space-y-2', streaming && 'xv-streaming')}
+      >
+        {textOnly && (
+          <p className="whitespace-pre-wrap text-[13px] leading-relaxed">{textOnly}</p>
+        )}
+        {images.map((img, i) => (
+          <ImageStudioCard
+            key={`${img.url}-${i}`}
+            src={img.url}
+            alt={img.alt}
+            provider={provider}
+            caption={img.alt !== 'Generated image' ? img.alt : undefined}
+          />
+        ))}
+        {streaming && (
+          <span className="inline-block w-0.5 h-[1em] ml-0.5 bg-[#006aff]/80 align-middle animate-pulse rounded-full" />
+        )}
+      </div>
+    );
+  }
 
   return (
-    <span
+    <div
       ref={blockRef}
       className={cn('xv-response-text whitespace-pre-wrap', streaming && 'xv-streaming')}
     >
-      {parts.map((part, i) => {
-        const imgMatch = part.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
-        if (imgMatch) {
-          const [, alt, src] = imgMatch;
-          return (
-            <span key={i} className="block my-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={src}
-                alt={alt || 'Generated image'}
-                className="max-w-full rounded-lg border border-white/10 shadow-lg max-h-[420px] object-contain bg-black/20"
-                loading="lazy"
-              />
-            </span>
-          );
-        }
-        return <span key={i}>{part}</span>;
-      })}
+      {content}
       {streaming && content.length > 0 && (
         <span className="inline-block w-0.5 h-[1em] ml-0.5 bg-[#006aff]/80 align-middle animate-pulse rounded-full" />
       )}
-    </span>
+    </div>
   );
 }

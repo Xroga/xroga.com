@@ -2,6 +2,8 @@ import type { FeatureCategory } from '../types/features.js';
 
 /** Strong intent detection — never route these through text-only chat */
 
+const IMAGE_EDIT_INTENT = /\[Image(?:\s+Edit)?\]/i;
+
 const IMAGE_INTENT =
   /\b(generate|create|make|draw|design)\b[\s\S]{0,40}\b(image|picture|logo|illustration|artwork|poster|thumbnail|graphic|photo|avatar|icon)\b|\bimage\s+of\b/i;
 
@@ -19,6 +21,7 @@ const DEBUG_INTENT = /\b(debug|fix)\b[\s\S]{0,30}\b(code|bug|error)\b/i;
 const SOCIAL_INTENT = /\b(post|share|cross.?post)\b[\s\S]{0,30}\b(twitter|linkedin|instagram|facebook|x\.com)\b/i;
 
 const INTENT_RULES: Array<{ category: FeatureCategory; test: RegExp }> = [
+  { category: 'image_generation', test: IMAGE_EDIT_INTENT },
   { category: 'video_studio', test: VIDEO_INTENT },
   { category: 'image_generation', test: IMAGE_INTENT },
   { category: 'browser_automation', test: BROWSER_INTENT },
