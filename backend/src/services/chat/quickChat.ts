@@ -2,20 +2,12 @@ import { groqChat } from '../../lib/groq.js';
 import { builderGenerate, classifyComplexity } from '../aiRouter.js';
 import { classifyFeature } from '../architect/featureRouter.js';
 import { loadMasterPrompt } from '../../orchestrator/masterPrompt.js';
-import { getCreationSystemPrompt } from '../../orchestrator/creationPrompts.js';
+import { buildFullSystemPrompt } from '../../orchestrator/aiTraining.js';
 import { isTrivialPrompt } from '../../lib/promptClassifier.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
 
-const CHAT_SYSTEM = `You are Xroga — a sharp, friendly AI assistant (like a top-tier coding partner).
-
-Rules:
-- Match the user's tone. Greetings get 1–2 natural sentences, not a sales pitch.
-- Be direct and useful. No "Swarm command center" marketing language.
-- For questions, answer clearly with substance — examples when helpful.
-- Never mention internal agents, DAGs, or architecture unless asked.
-- Do not append pros/cons or bullet lists unless the task is complex.
-- NEVER invent or fake image/video URLs. If the user wants media generated, say you'll run the creation pipeline — do not output ![image](url) markdown unless you have a real API-generated URL.`;
+const CHAT_SYSTEM = `You are Xroga AI. Follow all training rules. Be natural and direct.`;
 
 export async function quickChat(prompt: string): Promise<string> {
   const lower = prompt.toLowerCase().trim();
@@ -63,7 +55,7 @@ export async function quickChat(prompt: string): Promise<string> {
     }
   }
 
-  const creationPrompt = getCreationSystemPrompt(route.category, prompt);
+  const creationPrompt = buildFullSystemPrompt(category, prompt);
   const complexity = classifyComplexity(prompt, route.category);
   const { text } = await builderGenerate(prompt, complexity, `${master}\n\n${creationPrompt}\n\n${CHAT_SYSTEM}`);
   return text?.trim() || "I'm here — tell me what you'd like to work on.";

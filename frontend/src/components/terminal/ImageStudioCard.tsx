@@ -14,6 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 import { copyImageToClipboard, downloadImage } from '@/lib/imageStudioUtils';
 import { ImageEditModal } from './ImageEditModal';
+import { PencilGeneratingAnimation } from './PencilGeneratingAnimation';
 import toast from 'react-hot-toast';
 
 interface ImageStudioCardProps {
@@ -27,35 +28,11 @@ interface ImageStudioCardProps {
 
 export function ImageGeneratingAnimation({ className }: { className?: string }) {
   return (
-    <div
-      className={cn(
-        'xv-image-gen-card relative overflow-hidden rounded-2xl border border-[#006aff]/25 bg-gradient-to-br from-[#006aff]/10 via-purple-500/5 to-transparent p-6',
-        className
-      )}
-    >
-      <div className="absolute inset-0 xv-image-shimmer pointer-events-none" />
-      <div className="relative flex flex-col items-center justify-center gap-4 min-h-[220px]">
-        <div className="relative">
-          <span className="absolute inset-0 rounded-full bg-[#006aff]/30 animate-ping" />
-          <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[#006aff]/20 border border-[#006aff]/40">
-            <Sparkles className="h-7 w-7 text-[#60a5fa] xv-image-sparkle" />
-          </span>
-        </div>
-        <div className="text-center space-y-1">
-          <p className="text-sm font-semibold text-[var(--foreground)]">Generating your image</p>
-          <p className="text-[11px] text-[var(--muted)]">Agnes AI · rendering pixels…</p>
-        </div>
-        <div className="flex gap-1.5">
-          {[0, 1, 2, 3, 4].map((i) => (
-            <span
-              key={i}
-              className="h-1.5 w-1.5 rounded-full bg-[#006aff]/60 xv-image-dot"
-              style={{ animationDelay: `${i * 0.15}s` }}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
+    <PencilGeneratingAnimation
+      className={className}
+      label="Generating your image"
+      sublabel="Xroga AI · Agnes Image Studio"
+    />
   );
 }
 

@@ -1,6 +1,6 @@
 import { builderGenerate, classifyComplexity } from '../../services/aiRouter.js';
 import { classifyFeature } from '../../services/architect/featureRouter.js';
-import { getCreationSystemPrompt } from '../creationPrompts.js';
+import { buildFullSystemPrompt } from '../aiTraining.js';
 import type { AgentContext, AgentModule } from './types.js';
 
 const CODE_STUB =
@@ -13,7 +13,7 @@ export const builderAgent: AgentModule = {
     const route = await classifyFeature(ctx.prompt).catch(() => ({ category: 'chat' as const }));
     const complexity = classifyComplexity(ctx.prompt, route.category);
     const tier = ctx.tier === 'premium' ? 'heavy' : complexity;
-    const system = getCreationSystemPrompt(route.category, ctx.prompt);
+    const system = buildFullSystemPrompt(route.category, ctx.prompt);
 
     const { text } = await builderGenerate(ctx.prompt, tier, system).catch(() => ({
       text: CODE_STUB,
