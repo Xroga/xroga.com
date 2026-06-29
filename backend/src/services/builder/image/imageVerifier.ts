@@ -47,6 +47,8 @@ SAFETY — set blockedForSafety=true if the image contains ANY of:
 
 Also flag: wrong flags, wrong person identity, cartoon when photorealism requested, religious figure depictions.
 
+For NATIONAL FLAGS: score below 72 if wrong country, wrong colors, wrong symbols (e.g. Pakistan must be green with white stripe, crescent and star). Only matches=true when the correct country flag is shown.
+
 Return ONLY JSON:
 {"matchScore":85,"matches":true,"blockedForSafety":false,"issues":["..."]}`;
 

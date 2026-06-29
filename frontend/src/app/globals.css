@@ -2212,7 +2212,10 @@ body.theme-gray * {
       pointer-events: auto !important;
       clip-path: none !important;
       transform: none !important;
-      z-index: 90 !important;
+      z-index: 100 !important;
+    }
+    .xv-sidebar-mobile-open .xv-sidebar-menu a {
+      min-height: 44px;
     }
     .terminal-layout > .xv-main-column {
       flex: 1 1 100%;

@@ -12,7 +12,6 @@ import {
   CreditCard,
   Settings,
   Menu,
-  X,
   PanelLeftClose,
   PanelLeft,
   Search,
@@ -45,6 +44,7 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { GALACTIC_PLANS } from '@/lib/plans';
+import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
 
 const navItems = [
   {
@@ -116,6 +116,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
+  const navScrollRef = useRef<HTMLDivElement>(null);
   const profileRowRef = useRef<HTMLDivElement>(null);
   const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
   const { startNewChat } = useTerminalChat();
@@ -146,6 +147,15 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
 
   useEffect(() => {
     document.body.classList.toggle('mobile-sidebar-open', mobileOpen);
+    if (mobileOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      navScrollRef.current?.scrollTo({ top: 0 });
+      return () => {
+        document.body.style.overflow = prev;
+        document.body.classList.remove('mobile-sidebar-open');
+      };
+    }
     return () => document.body.classList.remove('mobile-sidebar-open');
   }, [mobileOpen]);
 
@@ -166,8 +176,10 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
 
   const asideWidth = sidebarOpen ? sidebarWidth : 72;
   const navExpanded = isMobile ? mobileOpen : sidebarOpen;
-  const mobileDrawerWidth =
-    typeof window !== 'undefined' ? Math.min(sidebarWidth, Math.floor(window.innerWidth * 0.88)) : sidebarWidth;
+
+  function closeMobile() {
+    setMobileOpen(false);
+  }
 
   if (incognito) {
     return (
@@ -191,7 +203,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
 
   function handleNavClick() {
-    setMobileOpen(false);
+    closeMobile();
     closeBrowser();
   }
 
@@ -209,7 +221,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   }
 
   function goToPlanUsage() {
-    setMobileOpen(false);
+    closeMobile();
     router.push('/dashboard/billing#action-spend');
   }
 
@@ -293,7 +305,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
 
   const sidebarInner = (
     <>
-      <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px]">
+      <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px] shrink-0">
         <HoverTip label="Xroga AI" description="Dashboard home" block className="shrink min-w-0">
           <Logo href="/dashboard" height={navExpanded ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
         </HoverTip>
@@ -344,6 +356,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
               )}
             </Link>
           </HoverTip>
+          {isMobile && mobileOpen && <ModalCloseButton onClick={closeMobile} />}
         </div>
       </div>
 
@@ -366,7 +379,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         )}
       </button>
 
-      <nav className="flex-1 p-2 overflow-y-auto overflow-x-hidden min-h-0">
+      <nav ref={navScrollRef} className="flex-1 p-2 overflow-y-auto overflow-x-hidden min-h-0">
         {navExpanded ? (
           <div className="xv-sidebar-menu">
             {navItems.map(({ href, label, icon: Icon, tip }) => (
@@ -414,14 +427,14 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
       <button
         type="button"
         className={cn(
-          'lg:hidden fixed top-3 left-3 sm:top-3.5 sm:left-4 p-2 sm:p-2.5 rounded-lg glass-panel',
-          mobileOpen ? 'z-[95]' : 'z-50'
+          'lg:hidden fixed top-[max(0.75rem,env(safe-area-inset-top))] left-3 p-2.5 rounded-xl glass-panel shadow-lg z-[80]',
+          mobileOpen && 'opacity-0 pointer-events-none',
         )}
-        onClick={() => setMobileOpen(!mobileOpen)}
-        aria-label="Toggle menu"
+        onClick={() => setMobileOpen(true)}
+        aria-label="Open menu"
         aria-expanded={mobileOpen}
       >
-        {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        <Menu className="w-5 h-5" />
       </button>
 
       {isMobile &&
@@ -430,18 +443,15 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         createPortal(
           <>
             <div
-              className="fixed inset-0 z-[88] bg-black/65 backdrop-blur-sm"
-              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 z-[98] bg-black/70 backdrop-blur-sm"
+              onClick={closeMobile}
               aria-hidden
             />
-            <aside
-              style={{ width: mobileDrawerWidth }}
-              className="fixed top-0 left-0 z-[90] flex flex-col h-[100dvh] max-h-[100dvh] border-r border-[var(--card-border)] glass-panel-strong overflow-y-auto overscroll-contain xv-sidebar-mobile-open shadow-2xl"
-            >
-              {sidebarInner}
+            <aside className="fixed top-0 left-0 z-[100] flex flex-col w-[min(88vw,320px)] max-w-[320px] h-[100dvh] pt-[env(safe-area-inset-top)] border-r border-[var(--card-border)] glass-panel-strong overflow-hidden shadow-2xl xv-sidebar-mobile-open">
+              <div className="flex flex-col flex-1 min-h-0 overflow-hidden">{sidebarInner}</div>
             </aside>
           </>,
-          document.body
+          document.body,
         )}
 
       <div className="xv-sidebar-root hidden lg:block shrink-0">

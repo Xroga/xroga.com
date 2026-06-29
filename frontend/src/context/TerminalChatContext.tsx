@@ -21,7 +21,7 @@ import {
   loadWorkspaceSession,
   saveWorkspaceSession,
 } from '@/lib/workspacePersistence';
-import { addMediaItem, removeMediaByUrl, removeMediaByMessageId } from '@/lib/mediaStorage';
+import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
 import { archiveChatTurn, removeChatArchiveEntry, isChatSectionArchive } from '@/lib/chatArchive';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import { api } from '@/lib/api';
@@ -180,6 +180,14 @@ export function TerminalChatProvider({
       const output = assistant.featureOutput as Record<string, unknown> | undefined;
       if (typeof output?.imageUrl === 'string') removeMediaByUrl(output.imageUrl);
       if (typeof output?.streamingUrl === 'string') removeMediaByUrl(output.streamingUrl);
+      const rejected = output?.rejectedImages;
+      if (Array.isArray(rejected)) {
+        purgeMediaUrls(
+          ...rejected
+            .map((r) => (r && typeof r === 'object' && 'imageUrl' in r ? String((r as { imageUrl: string }).imageUrl) : ''))
+            .filter(Boolean),
+        );
+      }
       removeMediaByMessageId(assistantMessageId);
 
       if (userIdx >= 0) {

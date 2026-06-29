@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, type ComponentType, type CSSProperties } from 'react';
+import { useState, useCallback, useEffect, type ComponentType, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import {
   X,
@@ -44,14 +44,20 @@ interface ImageEditModalProps {
   onClose: () => void;
   src: string;
   alt?: string;
+  variants?: Array<{ imageUrl: string; provider?: string; matchScore?: number }>;
 }
 
-export function ImageEditModal({ open, onClose, src, alt = 'Image' }: ImageEditModalProps) {
+export function ImageEditModal({ open, onClose, src, alt = 'Image', variants = [] }: ImageEditModalProps) {
   const { setPrompt, submit } = useTerminalChat();
   const siteTheme = useThemeStore((s) => s.theme);
   const [transform, setTransform] = useState<ImageTransform>(DEFAULT_TRANSFORM);
   const [editPrompt, setEditPrompt] = useState('');
   const [cropMode, setCropMode] = useState(false);
+  const [previewSrc, setPreviewSrc] = useState(src);
+
+  useEffect(() => {
+    if (open) setPreviewSrc(src);
+  }, [open, src]);
 
   const resetTransform = useCallback(() => setTransform(DEFAULT_TRANSFORM), []);
 
@@ -98,7 +104,7 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image' }: ImageEditM
   }
 
   function runAiAction(action: string) {
-    const prompt = buildImageEditPrompt(action, src, editPrompt.trim() || undefined);
+    const prompt = buildImageEditPrompt(action, previewSrc, editPrompt.trim() || undefined);
     setPrompt(prompt);
     onClose();
     toast('Edit queued — press GO', { icon: '✨' });
@@ -107,7 +113,7 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image' }: ImageEditM
   function handleChatSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!editPrompt.trim()) return;
-    const prompt = buildImageEditPrompt('Apply this edit', src, editPrompt.trim());
+    const prompt = buildImageEditPrompt('Apply this edit', previewSrc, editPrompt.trim());
     setPrompt(prompt);
     onClose();
     void submit(prompt);
@@ -165,7 +171,7 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image' }: ImageEditM
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={src}
+                src={previewSrc}
                 alt={alt}
                 className={cn(
                   'max-w-full max-h-[50vh] object-contain',
@@ -242,12 +248,12 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image' }: ImageEditM
                 <MiniBtn
                   icon={Download}
                   label="Download"
-                  onClick={() => downloadImage(src, 'xroga-edited.png', transform)}
+                  onClick={() => downloadImage(previewSrc, 'xroga-edited.png', transform)}
                 />
                 <MiniBtn
                   icon={Copy}
                   label="Copy"
-                  onClick={() => copyImageToClipboard(src, transform)}
+                  onClick={() => copyImageToClipboard(previewSrc, transform)}
                 />
                 <MiniBtn icon={Share2} label="Post" onClick={handlePost} />
               </section>
@@ -288,6 +294,35 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image' }: ImageEditM
             </form>
           </aside>
         </div>
+
+        {variants.length > 1 && (
+          <div className="border-t px-3 py-2 shrink-0 xv-image-modal-variants">
+            <p className="text-[9px] font-bold uppercase tracking-wider text-[var(--muted)] mb-1.5">
+              All tries from this prompt
+            </p>
+            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+              {variants.map((v) => (
+                <button
+                  key={v.imageUrl}
+                  type="button"
+                  onClick={() => {
+                    setPreviewSrc(v.imageUrl);
+                    resetTransform();
+                  }}
+                  className={cn(
+                    'relative shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-colors',
+                    previewSrc === v.imageUrl
+                      ? 'border-[#006aff]'
+                      : 'border-white/10 hover:border-white/25',
+                  )}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={v.imageUrl} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>,
     document.body

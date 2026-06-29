@@ -61,3 +61,10 @@ export function removeMediaByMessageId(messageId: string) {
   if (!messageId) return;
   saveMediaItems(loadMediaItems().filter((i) => i.sourceMessageId !== messageId));
 }
+
+/** Remove one media item and every stored copy of its URL. */
+export function purgeMediaUrls(...urls: string[]) {
+  const drop = new Set(urls.filter(Boolean));
+  if (!drop.size) return;
+  saveMediaItems(loadMediaItems().filter((i) => !drop.has(i.url)));
+}

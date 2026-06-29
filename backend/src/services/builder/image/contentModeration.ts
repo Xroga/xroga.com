@@ -81,8 +81,53 @@ function enhanceSafePrompt(prompt: string): string {
     return `${prompt}. Official cinematic movie still, photorealistic, accurate costume and character design, dramatic lighting, Marvel/DC film quality, not cartoon. ${safeSuffix}`;
   }
 
+  const flagMatch =
+    prompt.match(/\b(?:flag of|national flag of|country flag of)\s+([a-z][a-z\s-]{1,40})/i) ??
+    prompt.match(/\b([a-z][a-z\s-]{1,30})\s+(?:national\s+)?flag\b/i);
+  if (flagMatch) {
+    const country = flagMatch[1].trim().toLowerCase();
+    const spec = NATIONAL_FLAG_SPECS[country] ?? NATIONAL_FLAG_SPECS[country.replace(/\s+/g, ' ')];
+    if (spec) {
+      return `Official national flag of ${spec.name}. ${spec.description} Accurate official colors and proportions, entire flag visible, centered, flat vector clarity, no wrong country, no extra symbols. ${safeSuffix}`;
+    }
+    return `${prompt}. Official accurate national flag of ${flagMatch[1].trim()}, correct colors symbols and proportions, entire flag visible, centered, photorealistic fabric texture optional. ${safeSuffix}`;
+  }
+
   return `${prompt}. ${safeSuffix}`;
 }
+
+const NATIONAL_FLAG_SPECS: Record<string, { name: string; description: string }> = {
+  pakistan: {
+    name: 'Pakistan',
+    description:
+      'Green field (#01411C) with white vertical stripe at the hoist (one-quarter width), white crescent moon and five-pointed star in the green field, official Pakistan flag layout.',
+  },
+  palestine: {
+    name: 'Palestine',
+    description:
+      'Black, white, and green horizontal stripes with red triangle at the hoist, official Palestine flag.',
+  },
+  turkey: {
+    name: 'Turkey',
+    description: 'Red field with white crescent moon and star, official Turkey flag.',
+  },
+  'united states': {
+    name: 'United States',
+    description: 'Stars and stripes, 50 white stars on blue canton, 13 red and white stripes, official US flag.',
+  },
+  usa: {
+    name: 'United States',
+    description: 'Stars and stripes, 50 white stars on blue canton, 13 red and white stripes, official US flag.',
+  },
+  india: {
+    name: 'India',
+    description: 'Saffron, white, green horizontal stripes with navy blue Ashoka Chakra in center, official India flag.',
+  },
+  'saudi arabia': {
+    name: 'Saudi Arabia',
+    description: 'Green field with white Arabic shahada and sword, official Saudi Arabia flag.',
+  },
+};
 
 export type ImageAspectFormat = '1:1' | '4:5' | '16:9' | '9:16' | '3:4' | '4:3';
 
