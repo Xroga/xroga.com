@@ -68,20 +68,28 @@ app.use('/api/billing/webhook', billingWebhookRouter);
 
 app.use(express.json({ limit: '10mb' }));
 
-const healthPayload = () => ({
-  status: 'ok',
-  service: 'xroga-api',
-  version: '1.2.0',
-  timestamp: new Date().toISOString(),
-  authConfigured: Boolean(process.env.SUPABASE_URL),
-  dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
-  jwtConfigured: Boolean(
-    process.env.SUPABASE_URL &&
-      (process.env.SUPABASE_JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY)
-  ),
-  authMethod: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'supabase_admin' : 'jwt_local',
-  frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
-});
+import { getImageProviderStatus } from './services/builder/imageGen.js';
+
+const healthPayload = () => {
+  const image = getImageProviderStatus();
+  return {
+    status: 'ok',
+    service: 'xroga-api',
+    version: '1.2.1',
+    timestamp: new Date().toISOString(),
+    authConfigured: Boolean(process.env.SUPABASE_URL),
+    dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+    jwtConfigured: Boolean(
+      process.env.SUPABASE_URL &&
+        (process.env.SUPABASE_JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY)
+    ),
+    authMethod: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'supabase_admin' : 'jwt_local',
+    frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
+    imageProviders: image.configured,
+    imageReady: image.ready,
+    imageKeys: image.keys,
+  };
+};
 
 app.get('/', (_req, res) => {
   res.json({

@@ -172,6 +172,7 @@ export class FeatureSwarm extends BaseSwarm {
         durationMs: Date.now() - start,
       };
     } catch (err) {
+      if (category === 'image_generation') throw err;
       return {
         agent: 'builder',
         success: false,

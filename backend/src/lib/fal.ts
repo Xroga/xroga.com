@@ -18,7 +18,8 @@ export async function generateFalImage(prompt: string): Promise<string> {
   });
 
   if (!response.ok) {
-    throw new Error(`Fal.ai image error: ${response.status}`);
+    const errText = await response.text();
+    throw new Error(`Fal.ai image error ${response.status}: ${errText.slice(0, 300)}`);
   }
 
   const data = (await response.json()) as { images?: Array<{ url?: string }> };

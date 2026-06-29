@@ -29,6 +29,27 @@ NEXT_PUBLIC_SITE_URL=https://xroga.com
 
 JWT Secret is in Supabase → Project Settings → API → JWT Settings.
 
+## Fly.io secrets (image generation)
+`FLY_API_TOKEN` in GitHub **only deploys code** — it does **not** pass image API keys to Fly.
+
+Set image keys directly on the Fly app:
+```bash
+fly secrets set -a xroga-api \
+  FAL_API_KEY="..." \
+  REPLICATE_API_TOKEN="..." \
+  AGNES_API_KEY="..." \
+  GROQ_API_KEY="..." \
+  DEEPSEEK_API_KEY="..."
+```
+
+Verify the server sees your keys:
+```bash
+curl https://xroga-api.fly.dev/health
+# imageReady: true, imageProviders: ["fal-sdxl","replicate-sd",...]
+```
+
+**ComfyUI** requires a separate running ComfyUI server and `COMFYUI_URL` — it is not automatic on Fly.
+
 ## GitHub auto-deploy (Fly)
 Add repo secret `FLY_API_TOKEN`:
 ```bash

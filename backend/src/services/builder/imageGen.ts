@@ -132,6 +132,28 @@ export function getConfiguredImageProviders(): string[] {
     .map((p) => p.name);
 }
 
+/** Public-safe diagnostic — which image keys the server sees (not the values). */
+export function getImageProviderStatus(): {
+  configured: string[];
+  keys: Record<string, boolean>;
+  ready: boolean;
+} {
+  const keys = {
+    fal: Boolean(process.env.FAL_KEY ?? process.env.FAL_API_KEY),
+    replicate: Boolean(process.env.REPLICATE_API_TOKEN),
+    agnes: Boolean(process.env.AGNES_API_KEY),
+    luma: Boolean(process.env.LUMA_API_KEY),
+    runway: Boolean(process.env.RUNWAY_API_KEY),
+    hailuo: Boolean(process.env.HAILUO_API_KEY ?? process.env.MINIMAX_API_KEY),
+    cloudflare: Boolean(process.env.CLOUDFLARE_ACCOUNT_ID && process.env.CLOUDFLARE_API_TOKEN),
+    comfyui: Boolean(process.env.COMFYUI_URL),
+    groq: Boolean(process.env.GROQ_API_KEY),
+    deepseek: Boolean(process.env.DEEPSEEK_API_KEY),
+  };
+  const configured = getConfiguredImageProviders();
+  return { configured, keys, ready: configured.length > 0 };
+}
+
 function normalizeProvider(name: string): ImageGenOutput['provider'] {
   const map: Record<string, ImageGenOutput['provider']> = {
     'fal-sdxl': 'fal',
@@ -258,9 +280,7 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
 
   emitProgress(options, 'enhancing');
   const enhanced = await enhanceImagePrompt(intent);
-  const fullPrompt = enhanced.negativePrompt
-    ? `${enhanced.prompt} --neg ${enhanced.negativePrompt}`
-    : enhanced.prompt;
+  const imagePrompt = enhanced.prompt;
 
   emitProgress(options, 'painting');
 
@@ -270,17 +290,17 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
   if (quality === 'premium' && buildPremiumProviders().some((p) => p.configured)) {
     try {
       emitProgress(options, 'reviewing');
-      const premium = await generatePremiumWithVoting(fullPrompt, ctx);
+      const premium = await generatePremiumWithVoting(imagePrompt, ctx);
       imageUrl = premium.imageUrl;
       provider = premium.provider;
     } catch (err) {
       console.warn('[ImageGen] Premium voting failed, falling back to standard chain:', (err as Error).message);
-      const standard = await generateStandardChain(fullPrompt, ctx);
+      const standard = await generateStandardChain(imagePrompt, ctx);
       imageUrl = standard.imageUrl;
       provider = standard.provider;
     }
   } else {
-    const standard = await generateStandardChain(fullPrompt, ctx);
+    const standard = await generateStandardChain(imagePrompt, ctx);
     imageUrl = standard.imageUrl;
     provider = standard.provider;
   }

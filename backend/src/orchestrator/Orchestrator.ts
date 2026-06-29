@@ -11,6 +11,7 @@ import type { SwarmCoreAgent, SwarmPlan, SwarmResult } from '../types/index.js';
 import { shouldUseFastChat, isTrivialPrompt, requiresFeaturePipeline } from '../lib/promptClassifier.js';
 import { formatFeatureOutput, stripFakeImageMarkdown } from '../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../services/featureExecutor.js';
+import { getImageProviderStatus } from '../services/builder/imageGen.js';
 
 const FRIENDLY_FALLBACKS = [
   "I'm putting the finishing touches on this — here's what I can share right now based on your request.",
@@ -97,6 +98,67 @@ export class Orchestrator {
     };
   }
 
+  /** Direct image generation — bypasses swarm loop that can mask API failures */
+  private static async executeImageFast(
+    ctx: {
+      userId: string;
+      prompt: string;
+      projectId?: string;
+      onProgress?: (event: SwarmProgressEvent) => void;
+    }
+  ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[] }> {
+    const runId = crypto.randomUUID();
+    const { generateImage } = await import('../services/builder/imageGen.js');
+
+    const status = getImageProviderStatus();
+    if (!status.ready) {
+      throw new Error(
+        'No image API keys visible to the server. Set FAL_KEY, REPLICATE_API_TOKEN, or AGNES_API_KEY on Fly.io with: fly secrets set -a xroga-api FAL_API_KEY=...'
+      );
+    }
+
+    const output = await generateImage(ctx.prompt, {
+      userId: ctx.userId,
+      runId,
+      onProgress: (step, message) => {
+        ctx.onProgress?.({
+          runId,
+          agent: 'builder',
+          status: 'building',
+          message,
+          imageStep: step,
+          timestamp: new Date().toISOString(),
+        });
+      },
+    });
+
+    const reply = formatFeatureOutput(output);
+    const shield = await runThreeLayerShield({
+      content: reply,
+      prompt: ctx.prompt,
+      userId: ctx.userId,
+      runId,
+      includeProsCons: false,
+    });
+
+    return {
+      runId,
+      fast: true,
+      result: {
+        success: true,
+        iterations: 0,
+        defectsFound: 0,
+        plan: defaultPlan(),
+        agents: defaultAgents(['builder']),
+        output,
+      },
+      actions: { success: true, remaining: 0, cost: 4 },
+      featureCategory: 'image_generation',
+      polishedReply: shield.content || reply,
+      followUps: output.followUps?.length ? output.followUps : shield.followUps,
+    };
+  }
+
   static async executeSafe(
     runFn: () => Promise<SwarmRunResult>,
     ctx: {
@@ -121,6 +183,50 @@ export class Orchestrator {
     // Fast chat: greetings & simple conversation — no swarm, no architect spam
     if (shouldUseFastChat(ctx.prompt, featureCategory)) {
       return this.executeFastChat(ctx, featureCategory);
+    }
+
+    // Image fast path — skip 5-agent swarm; call image APIs directly
+    if (featureCategory === 'image_generation') {
+      try {
+        return await this.executeImageFast(ctx);
+      } catch (imgErr) {
+        await logSystemError({
+          api: 'image_gen',
+          errorMessage: (imgErr as Error).message,
+          fallbackUsed: 'image-fast-path',
+          severity: 'error',
+          userId: ctx.userId,
+        });
+        const status = getImageProviderStatus();
+        const errMsg = (imgErr as Error).message;
+        const fallbackText = status.ready
+          ? `Image generation failed. Server sees keys for: ${status.configured.join(', ')} — but all providers returned errors. Check \`fly logs -a xroga-api\`. Error: ${errMsg.slice(0, 180)}`
+          : `No image API keys are visible on the server. GitHub FLY_API_TOKEN only deploys code — set secrets on Fly: fly secrets set -a xroga-api FAL_API_KEY=... REPLICATE_API_TOKEN=... AGNES_API_KEY=...`;
+
+        const shield = await runThreeLayerShield({
+          content: fallbackText,
+          prompt: ctx.prompt,
+          userId: ctx.userId,
+          includeProsCons: false,
+        });
+
+        return {
+          runId: crypto.randomUUID(),
+          fast: true,
+          result: {
+            success: false,
+            iterations: 0,
+            defectsFound: 0,
+            plan: defaultPlan(),
+            agents: defaultAgents(['builder']),
+            output: { type: 'chat', content: shield.content } as FeatureOutput,
+          },
+          actions: { success: true, remaining: 0, cost: 0 },
+          featureCategory: 'image_generation',
+          polishedReply: shield.content,
+          followUps: shield.followUps,
+        };
+      }
     }
 
     const plan = await buildArchitectDAG(ctx.prompt, {
@@ -275,9 +381,17 @@ export class Orchestrator {
           const output = await executeFeature(category, ctx.prompt, { userId: ctx.userId, projectId: ctx.projectId });
           fallbackText = formatFeatureOutput(output);
         } catch (featureErr) {
-          console.error('[Orchestrator] Feature fallback failed:', (featureErr as Error).message);
+          const errMsg = (featureErr as Error).message;
+          console.error('[Orchestrator] Feature fallback failed:', errMsg);
+          const status = getImageProviderStatus();
+          const configured = status.configured.length
+            ? status.configured.join(', ')
+            : 'none detected';
           fallbackText =
-            `I couldn't complete that ${route.category.replace(/_/g, ' ')} request. Please verify API keys (Agnes, Replicate, Cloudflare) are set on the server.`;
+            `I couldn't complete that ${route.category.replace(/_/g, ' ')} request. ` +
+            (status.ready
+              ? `Your image API keys are loaded (${configured}) but all providers returned errors. Check Fly logs: fly logs -a xroga-api. Last error: ${errMsg.slice(0, 200)}`
+              : `No image API keys are visible to the server (detected: ${configured}). GitHub FLY_API_TOKEN only deploys code — set keys on Fly with: fly secrets set -a xroga-api FAL_API_KEY=... REPLICATE_API_TOKEN=...`);
         }
       } else {
         try {
