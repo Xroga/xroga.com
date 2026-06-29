@@ -25,6 +25,8 @@ export function FeatureOutputView({
       matchScore: typeof o.matchScore === 'number' ? o.matchScore : undefined,
       rejectedImages: Array.isArray(o.rejectedImages) ? (o.rejectedImages as ImageOutputData['rejectedImages']) : undefined,
       isYoutubeThumbnail: Boolean(o.isYoutubeThumbnail),
+      aspectFormat: typeof o.aspectFormat === 'string' ? o.aspectFormat : undefined,
+      followUps: Array.isArray(o.followUps) ? (o.followUps as string[]) : undefined,
     };
     return <ImageStudioCard data={data} onDelete={onDelete} />;
   }

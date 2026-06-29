@@ -86,6 +86,28 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     return null;
   }, [visibleMessages]);
 
+  const lastUserMessageId = useMemo(() => {
+    for (let i = visibleMessages.length - 1; i >= 0; i--) {
+      if (visibleMessages[i].role === 'user') return visibleMessages[i].id;
+    }
+    return null;
+  }, [visibleMessages]);
+
+  const swarmProcessing = loading ? (
+    pipelineCompact ? (
+      <ProcessingPipeline
+        activeAgent={swarmActiveAgent ?? undefined}
+        loading={loading}
+        compact
+      />
+    ) : (
+      <SwarmProcessingIndicator
+        activeAgent={swarmActiveAgent ?? undefined}
+        loading={loading}
+      />
+    )
+  ) : null;
+
   const lastUserText = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i].role === 'user') return messages[i].content;
@@ -199,20 +221,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
             </p>
           )}
 
-          {loading && (
-            pipelineCompact ? (
-              <ProcessingPipeline
-                activeAgent={swarmActiveAgent ?? undefined}
-                loading={loading}
-                compact
-              />
-            ) : (
-              <SwarmProcessingIndicator
-                activeAgent={swarmActiveAgent ?? undefined}
-                loading={loading}
-              />
-            )
-          )}
+          {loading && !lastUserMessageId && swarmProcessing}
 
           {visibleMessages.map((msg) => {
             const isLastAssistant = msg.id === lastAssistantId && !loading;
@@ -264,6 +273,9 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                     <>
                       <UserPromptBubble content={msg.content} />
                       <MessageBubbleActions role="user" content={msg.content} messageId={msg.id} />
+                      {loading && msg.id === lastUserMessageId && (
+                        <div className="mt-2 text-left">{swarmProcessing}</div>
+                      )}
                     </>
                   ) : msg.role === 'system' ? (
                     <p className="py-0.5 text-xs xv-swarm-agent-line animate-in fade-in duration-300">{msg.content}</p>

@@ -36,13 +36,13 @@ export function TerminalDock() {
     >
       <div
         className={cn(
-          'mx-auto px-2 sm:px-4 lg:px-6 pt-3 sm:pt-4 pb-2 sm:pb-3 lg:pb-4 xv-terminal-dock-inner',
+          'mx-auto px-2 sm:px-4 lg:px-6 pt-2 sm:pt-3 pb-1.5 sm:pb-3 lg:pb-4 xv-terminal-dock-inner',
           dashboardFullscreen ? 'max-w-6xl' : 'max-w-3xl'
         )}
       >
         {!incognito && (
-          <div className="flex flex-col gap-1 mb-2 px-0.5">
-            <BlackHoleVButton />
+          <div className="flex flex-col px-0.5">
+            <BlackHoleVButton className="xv-blackhole-outside self-start" />
             <RepoContextBar outside />
           </div>
         )}

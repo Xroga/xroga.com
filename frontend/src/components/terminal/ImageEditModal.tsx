@@ -27,6 +27,7 @@ import {
   buildImageEditPrompt,
 } from '@/lib/imageStudioUtils';
 import { useTerminalChat } from '@/context/TerminalChatContext';
+import { useThemeStore } from '@/store/useThemeStore';
 import toast from 'react-hot-toast';
 
 const RATIOS: { id: AspectRatio; label: string }[] = [
@@ -47,6 +48,7 @@ interface ImageEditModalProps {
 
 export function ImageEditModal({ open, onClose, src, alt = 'Image' }: ImageEditModalProps) {
   const { setPrompt, submit } = useTerminalChat();
+  const siteTheme = useThemeStore((s) => s.theme);
   const [transform, setTransform] = useState<ImageTransform>(DEFAULT_TRANSFORM);
   const [editPrompt, setEditPrompt] = useState('');
   const [cropMode, setCropMode] = useState(false);
@@ -116,6 +118,13 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image' }: ImageEditM
     toast('Post to social — connect in Integrations', { icon: '📤' });
   }
 
+  const themeClass =
+    siteTheme === 'white'
+      ? 'xv-image-modal--white'
+      : siteTheme === 'black'
+        ? 'xv-image-modal--black'
+        : 'xv-image-modal--gray';
+
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-2 sm:p-4">
       <button
@@ -124,8 +133,13 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image' }: ImageEditM
         onClick={onClose}
         aria-label="Close"
       />
-      <div className="relative z-10 flex flex-col w-full max-w-4xl max-h-[95vh] rounded-2xl border border-white/15 bg-[#12121a]/95 shadow-2xl overflow-hidden xv-image-modal-enter">
-        <header className="flex items-center justify-between gap-2 px-4 py-3 border-b border-white/10 shrink-0">
+      <div
+        className={cn(
+          'relative z-10 flex flex-col w-full max-w-4xl max-h-[95vh] rounded-2xl border shadow-2xl overflow-hidden xv-image-modal-enter',
+          themeClass
+        )}
+      >
+        <header className="flex items-center justify-between gap-2 px-4 py-3 border-b shrink-0 xv-image-modal-header">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-[#60a5fa]" />
             <h2 className="text-sm font-bold text-[var(--foreground)]">AI Image Editor</h2>
@@ -142,10 +156,10 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image' }: ImageEditM
         </header>
 
         <div className="flex flex-col lg:flex-row flex-1 min-h-0 overflow-hidden">
-          <div className="flex-1 flex items-center justify-center p-4 bg-black/40 min-h-[200px] lg:min-h-0 overflow-auto">
+          <div className="flex-1 flex items-center justify-center p-4 min-h-[200px] lg:min-h-0 overflow-auto xv-image-modal-preview">
             <div
               className={cn(
-                'relative flex items-center justify-center w-full max-w-lg overflow-hidden rounded-xl border border-white/10 bg-black/50',
+                'relative flex items-center justify-center w-full max-w-lg overflow-hidden rounded-xl border xv-image-modal-frame',
                 cropMode && frameClass ? frameClass : 'max-h-[50vh]'
               )}
             >
@@ -162,7 +176,7 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image' }: ImageEditM
             </div>
           </div>
 
-          <aside className="w-full lg:w-72 shrink-0 border-t lg:border-t-0 lg:border-l border-white/10 flex flex-col bg-black/25">
+          <aside className="w-full lg:w-72 shrink-0 border-t lg:border-t-0 lg:border-l flex flex-col xv-image-modal-aside">
             <div className="p-3 space-y-3 overflow-y-auto flex-1">
               <section>
                 <p className="text-[9px] font-bold uppercase tracking-wider text-[var(--muted)] mb-1.5">Ratio</p>
@@ -249,7 +263,7 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image' }: ImageEditM
 
             <form
               onSubmit={handleChatSubmit}
-              className="p-3 border-t border-white/10 bg-black/30 shrink-0"
+              className="p-3 border-t shrink-0 xv-image-modal-chat"
             >
               <p className="text-[9px] font-bold uppercase tracking-wider text-[var(--muted)] mb-1.5">
                 AI edit chat

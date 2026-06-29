@@ -7,9 +7,10 @@ import { cn } from '@/lib/utils';
 interface MiniActionMeterProps {
   compact?: boolean;
   onTopUp?: () => void;
+  onPlanUsage?: () => void;
 }
 
-export function MiniActionMeter({ compact = false, onTopUp }: MiniActionMeterProps) {
+export function MiniActionMeter({ compact = false, onTopUp, onPlanUsage }: MiniActionMeterProps) {
   const actions = useAppStore((s) => s.actions);
 
   if (!actions) {
@@ -54,14 +55,27 @@ export function MiniActionMeter({ compact = false, onTopUp }: MiniActionMeterPro
   );
 
   const className = cn(
-    'w-full text-left rounded-lg bg-white/[0.02] xv-action-meter',
+    'w-full text-left rounded-lg bg-white/[0.02] xv-action-meter border border-[var(--card-border)]/40',
     compact ? 'px-2 py-1.5' : 'px-2.5 py-2',
-    onTopUp && 'hover:border-[var(--accent)]/40 transition-colors cursor-pointer'
+    (onPlanUsage || onTopUp) && 'hover:border-[var(--accent)]/40 transition-colors cursor-pointer'
   );
 
-  if (onTopUp) {
+  const handleClick = () => {
+    if (onPlanUsage) {
+      onPlanUsage();
+      return;
+    }
+    onTopUp?.();
+  };
+
+  if (onPlanUsage || onTopUp) {
     return (
-      <button type="button" onClick={onTopUp} className={className} title="Top up actions">
+      <button
+        type="button"
+        onClick={handleClick}
+        className={className}
+        title="View plan & action usage"
+      >
         {content}
       </button>
     );

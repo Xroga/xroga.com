@@ -11,6 +11,10 @@ import {
   CheckCircle2,
   AlertTriangle,
   Tv,
+  ThumbsUp,
+  ThumbsDown,
+  Palette,
+  Layers,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { copyImageToClipboard, downloadImage } from '@/lib/imageStudioUtils';
@@ -18,6 +22,7 @@ import { ImageEditModal } from './ImageEditModal';
 import { TextGeneratingAnimation } from './TextGeneratingAnimation';
 import { isPlaceholderImage } from '@/lib/parseImageContent';
 import { addMediaItem } from '@/lib/mediaStorage';
+import { useTerminalChat } from '@/context/TerminalChatContext';
 import toast from 'react-hot-toast';
 
 export interface RejectedImage {
@@ -26,6 +31,15 @@ export interface RejectedImage {
   matchScore: number;
   issues?: string[];
 }
+
+const FORMAT_LABELS: Record<string, string> = {
+  '1:1': 'Post (1:1)',
+  '4:5': 'Portrait (4:5)',
+  '16:9': 'Landscape (16:9)',
+  '9:16': 'Story (9:16)',
+  '3:4': 'Portrait (3:4)',
+  '4:3': 'Standard (4:3)',
+};
 
 export interface ImageOutputData {
   type: 'image';
@@ -36,6 +50,8 @@ export interface ImageOutputData {
   matchScore?: number;
   rejectedImages?: RejectedImage[];
   isYoutubeThumbnail?: boolean;
+  aspectFormat?: string;
+  followUps?: string[];
 }
 
 interface ImageStudioCardProps {
@@ -57,13 +73,23 @@ export function ImageGeneratingAnimation({
   step?: string;
 }) {
   return (
-    <TextGeneratingAnimation
-      className={className}
-      message={message}
-      step={step}
-      mode="image"
-      sublabel="Xroga AI · Image Studio"
-    />
+    <div className={cn('my-3 space-y-2', className)}>
+      <div className="flex items-center gap-2 px-1">
+        <span className="text-[10px] font-semibold text-[var(--muted)]">Format:</span>
+        <span className="text-[10px] px-2 py-0.5 rounded-full border border-[var(--card-border)] bg-[var(--background)] text-[var(--foreground)]">
+          Post (1:1) — default
+        </span>
+        <span className="text-[9px] text-[var(--muted)] hidden sm:inline">
+          Add &quot;story&quot;, &quot;16:9&quot;, or &quot;portrait&quot; to your prompt for other ratios
+        </span>
+      </div>
+      <TextGeneratingAnimation
+        message={message}
+        step={step}
+        mode="image"
+        sublabel="Xroga AI · Image Studio"
+      />
+    </div>
   );
 }
 
@@ -75,9 +101,12 @@ export function ImageStudioCard({
   message,
   step,
 }: ImageStudioCardProps) {
+  const { setPrompt, submit } = useTerminalChat();
   const [editOpen, setEditOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  const [liked, setLiked] = useState<boolean | null>(null);
+  const [editSrc, setEditSrc] = useState('');
 
   if (generating) {
     return <ImageGeneratingAnimation className={className} message={message} step={step} />;
@@ -85,7 +114,19 @@ export function ImageStudioCard({
 
   if (hidden) return null;
 
-  const { imageUrl: src, provider, prompt, verified, matchScore, rejectedImages, isYoutubeThumbnail } = data;
+  const {
+    imageUrl: src,
+    provider,
+    prompt,
+    verified,
+    matchScore,
+    rejectedImages,
+    isYoutubeThumbnail,
+    aspectFormat,
+    followUps,
+  } = data;
+
+  const activeEditSrc = editSrc || src;
 
   if (isPlaceholderImage(src)) {
     return (
@@ -111,9 +152,22 @@ export function ImageStudioCard({
     toast.success('Saved to AI Media library');
   }
 
-  function handleYoutubeThumb() {
-    toast('Ask: "YouTube thumbnail for [your topic]" for a pro thumbnail', { icon: '🎬' });
+  function handleVariant(style?: string) {
+    const base = prompt ?? 'this image';
+    const text = style
+      ? `Generate more variants of: ${base}. Style: ${style}`
+      : `Generate more variants of: ${base}`;
+    setPrompt(text);
+    void submit(text);
+    toast('Generating variants…', { icon: '🎨' });
   }
+
+  function openEditor(url = src) {
+    setEditSrc(url);
+    setEditOpen(true);
+  }
+
+  const formatLabel = aspectFormat ? FORMAT_LABELS[aspectFormat] ?? aspectFormat : 'Post (1:1)';
 
   return (
     <>
@@ -131,6 +185,9 @@ export function ImageStudioCard({
                 {provider}
               </span>
             )}
+            <span className="text-[10px] px-2 py-0.5 rounded-full border border-[var(--card-border)] text-[var(--muted)]">
+              {formatLabel}
+            </span>
             {verified !== false ? (
               <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                 <CheckCircle2 className="h-3 w-3" />
@@ -146,7 +203,12 @@ export function ImageStudioCard({
         </div>
 
         <div className="p-2 sm:p-3 bg-[var(--background)]">
-          <div className="overflow-hidden rounded-lg border border-[var(--card-border)] bg-black/5 dark:bg-black/30">
+          <button
+            type="button"
+            onClick={() => openEditor()}
+            className="w-full overflow-hidden rounded-lg border border-[var(--card-border)] bg-black/5 dark:bg-black/30 cursor-zoom-in hover:ring-2 hover:ring-[var(--accent)]/30 transition-shadow"
+            aria-label="Open image editor"
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={src}
@@ -158,7 +220,8 @@ export function ImageStudioCard({
               loading="lazy"
               onLoad={() => setRevealed(true)}
             />
-          </div>
+          </button>
+          <p className="text-[9px] text-center text-[var(--muted)] mt-1.5">Tap image to edit</p>
         </div>
 
         {prompt && (
@@ -167,41 +230,111 @@ export function ImageStudioCard({
           </p>
         )}
 
-        <div className="flex flex-wrap items-center gap-1.5 px-3 pb-3 pt-2">
+        <div className="px-3 py-2 border-t border-[var(--card-border)] flex items-center gap-2 flex-wrap">
+          <span className="text-[10px] text-[var(--muted)]">Like this?</span>
+          <button
+            type="button"
+            onClick={() => setLiked(true)}
+            className={cn(
+              'p-1.5 rounded-lg border transition-colors',
+              liked === true
+                ? 'border-emerald-500/50 bg-emerald-500/15 text-emerald-600'
+                : 'border-[var(--card-border)] hover:bg-[var(--muted)]/10'
+            )}
+            aria-label="Like"
+          >
+            <ThumbsUp className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setLiked(false);
+              handleVariant('improve based on feedback');
+            }}
+            className={cn(
+              'p-1.5 rounded-lg border transition-colors',
+              liked === false
+                ? 'border-amber-500/50 bg-amber-500/15 text-amber-600'
+                : 'border-[var(--card-border)] hover:bg-[var(--muted)]/10'
+            )}
+            aria-label="Not quite"
+          >
+            <ThumbsDown className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => handleVariant()}
+            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold border border-[var(--accent)]/30 bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20"
+          >
+            <Layers className="h-3 w-3" />
+            More variants
+          </button>
+          <button
+            type="button"
+            onClick={() => handleVariant('different artistic style')}
+            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold border border-[var(--card-border)] hover:bg-[var(--muted)]/10"
+          >
+            <Palette className="h-3 w-3" />
+            Different style
+          </button>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-1.5 px-3 pb-3 pt-1">
           <ActionBtn icon={Download} label="Download" onClick={() => downloadImage(src, 'xroga-image.png')} />
           <ActionBtn icon={Copy} label="Copy" onClick={() => copyImageToClipboard(src)} />
           <ActionBtn icon={Share2} label="Save to Media" onClick={handleSaveMedia} />
           {isYoutubeThumbnail && (
-            <ActionBtn icon={Tv} label="Thumbnail" onClick={handleYoutubeThumb} accent="primary" />
+            <ActionBtn icon={Tv} label="Thumbnail" onClick={() => toast('Ask for a YouTube thumbnail variant', { icon: '🎬' })} accent="primary" />
           )}
-          <ActionBtn icon={Wand2} label="Edit" onClick={() => setEditOpen(true)} accent="primary" />
+          <ActionBtn icon={Wand2} label="Edit" onClick={openEditor} accent="primary" />
           <ActionBtn icon={Trash2} label="Delete" onClick={handleDelete} accent="danger" className="ml-auto" />
         </div>
 
         {rejectedImages && rejectedImages.length > 0 && (
           <div className="px-3 pb-3 border-t border-[var(--card-border)] pt-3">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--muted)] mb-2">
-              Other attempts (not exact match)
+              All AI attempts — tap to view full size
             </p>
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {rejectedImages.map((img) => (
-                <div
+                <button
                   key={img.imageUrl}
-                  className="relative rounded-lg overflow-hidden border border-[var(--card-border)] opacity-75 hover:opacity-100 transition-opacity"
+                  type="button"
+                  onClick={() => openEditor(img.imageUrl)}
+                  className="relative rounded-lg overflow-hidden border border-[var(--card-border)] hover:ring-2 hover:ring-[var(--accent)]/40 text-left transition-all"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img.imageUrl} alt="" className="w-full h-16 object-cover" />
-                  <span className="absolute bottom-0 inset-x-0 bg-black/70 text-[8px] text-white px-1 py-0.5 truncate">
+                  <img src={img.imageUrl} alt="" className="w-full h-20 sm:h-24 object-cover" />
+                  <span className="absolute bottom-0 inset-x-0 bg-black/75 text-[8px] text-white px-1 py-0.5 truncate">
                     {img.provider} · {img.matchScore}%
+                    {img.issues?.[0] ? ` · ${img.issues[0].slice(0, 24)}` : ''}
                   </span>
-                </div>
+                </button>
               ))}
             </div>
           </div>
         )}
+
+        {followUps && followUps.length > 0 && (
+          <div className="px-3 pb-3 flex flex-wrap gap-1.5">
+            {followUps.map((f) => (
+              <button
+                key={f}
+                type="button"
+                onClick={() => {
+                  setPrompt(f);
+                  void submit(f);
+                }}
+                className="text-[10px] px-2 py-1 rounded-full border border-[var(--card-border)] hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/5"
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      <ImageEditModal open={editOpen} onClose={() => setEditOpen(false)} src={src} alt={prompt ?? 'Image'} />
+      <ImageEditModal open={editOpen} onClose={() => setEditOpen(false)} src={activeEditSrc} alt={prompt ?? 'Image'} />
     </>
   );
 }

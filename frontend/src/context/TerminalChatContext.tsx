@@ -24,6 +24,7 @@ import {
 import { addMediaItem } from '@/lib/mediaStorage';
 import { archiveChatTurn } from '@/lib/chatArchive';
 import { isBuildPrompt, saveLocalProject } from '@/lib/projectArchive';
+import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
@@ -375,7 +376,7 @@ export function TerminalChatProvider({
               userMessageId: turn.userMessageId,
               assistantMessageId: turn.assistantId,
             });
-            if (isBuildPrompt(turn.text)) {
+            if (isBuildPrompt(turn.text) && !isImageGenerationPrompt(turn.text) && !isVideoGenerationPrompt(turn.text)) {
               saveLocalProject({
                 name: turn.text.slice(0, 48),
                 prompt: turn.text,

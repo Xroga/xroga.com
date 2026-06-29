@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Rocket, Globe, Layers } from 'lucide-react';
+import { Rocket, Globe, Search } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
@@ -20,7 +20,7 @@ import {
 } from './ChatBarParts';
 import { ChatBarFileGrid } from './ChatBarFileGrid';
 import type { SendButtonState } from './ChatBarButtons';
-import { GitHubChipIcon, GitLabChipIcon, VercelChipIcon, TwitterChipIcon } from './ChatBarButtons';
+import { GitHubChipIcon, GitLabChipIcon, VercelChipIcon, TwitterChipIcon, ChatBarBrandChip } from './ChatBarButtons';
 import { ChatPromptQueue } from './ChatPromptQueue';
 import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
@@ -65,6 +65,7 @@ export function TerminalChatBar() {
   const [listening, setListening] = useState(false);
   const [sendState, setSendState] = useState<SendButtonState>('idle');
   const [liveEstimate, setLiveEstimate] = useState({ actions: 1, time: '5s' });
+  const [inputMultiLine, setInputMultiLine] = useState(false);
 
   const remaining = actions?.remaining ?? 50;
 
@@ -130,7 +131,9 @@ export function TerminalChatBar() {
     if (!el) return;
     el.style.height = 'auto';
     const maxH = LINE_HEIGHT * MAX_ROWS;
-    el.style.height = `${Math.max(MIN_INPUT_H, Math.min(el.scrollHeight, maxH))}px`;
+    const nextH = Math.max(MIN_INPUT_H, Math.min(el.scrollHeight, maxH));
+    el.style.height = `${nextH}px`;
+    setInputMultiLine(nextH > MIN_INPUT_H + 4);
   }, [prompt]);
 
   useEffect(() => {
@@ -200,7 +203,10 @@ export function TerminalChatBar() {
           {!incognito && (
           <div className="xv-chatbar-toolbar flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 overflow-x-auto scrollbar-hide flex-nowrap">
             <ChatBarTip label="GitHub repos" className="shrink-0">
-              <span className="inline-flex shrink-0">
+              <span className="inline-flex shrink-0 lg:hidden">
+                <ChatBarBrandChip variant="github" label="GitHub" onClick={() => setGithubOpen(true)} />
+              </span>
+              <span className="hidden lg:inline-flex shrink-0">
                 <ChatBarToolChip
                   icon={<GitHubChipIcon />}
                   label="GitHub"
@@ -210,7 +216,10 @@ export function TerminalChatBar() {
               </span>
             </ChatBarTip>
             <ChatBarTip label="GitLab" className="shrink-0">
-              <span className="inline-flex shrink-0">
+              <span className="inline-flex shrink-0 lg:hidden">
+                <ChatBarBrandChip variant="gitlab" label="GitLab" onClick={() => setIntegrationsOpen(true)} />
+              </span>
+              <span className="hidden lg:inline-flex shrink-0">
                 <ChatBarToolChip
                   icon={<GitLabChipIcon />}
                   label="GitLab"
@@ -220,7 +229,10 @@ export function TerminalChatBar() {
               </span>
             </ChatBarTip>
             <ChatBarTip label="Vercel" className="shrink-0">
-              <span className="inline-flex shrink-0">
+              <span className="inline-flex shrink-0 lg:hidden">
+                <ChatBarBrandChip variant="vercel" label="Vercel" onClick={() => setIntegrationsOpen(true)} />
+              </span>
+              <span className="hidden lg:inline-flex shrink-0">
                 <ChatBarToolChip
                   icon={<VercelChipIcon />}
                   label="Vercel"
@@ -239,14 +251,14 @@ export function TerminalChatBar() {
                 />
               </span>
             </ChatBarTip>
-            <ChatBarTip label="Connect & deploy tools" className="shrink-0">
+            <ChatBarTip label="Search integrations" className="shrink-0">
               <button
                 type="button"
                 onClick={() => setIntegrationsOpen(true)}
                 className="flex items-center gap-1 px-2.5 h-6 rounded-full bg-gradient-to-r from-[#006aff]/18 to-[#006aff]/6 border border-[#006aff]/30 text-[9px] font-bold text-[var(--foreground)] shrink-0 hover:from-[#006aff]/28"
               >
-                <Layers className="w-3 h-3 text-[#006aff]" />
-                <span>Stack</span>
+                <Search className="w-3 h-3 text-[#006aff]" />
+                <span className="hidden sm:inline">Search</span>
               </button>
             </ChatBarTip>
             <ChatBarTip label="Deploy project" className="shrink-0">
@@ -304,6 +316,7 @@ export function TerminalChatBar() {
               listening={listening}
               hideUpload={incognito}
               surface={incognito ? 'incognito' : 'dashboard'}
+              multiLine={inputMultiLine}
               onMicToggle={() => {
                 if (!speech.supported) {
                   toast.error('Voice input not supported in this browser');

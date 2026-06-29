@@ -1,10 +1,11 @@
-/** Gemini vision — verify generated image matches user prompt */
+/** Gemini vision — verify generated image matches user prompt + safety check */
 
 export interface ImageVerificationResult {
   matchScore: number;
   matches: boolean;
   issues: string[];
   verifier: string;
+  blockedForSafety?: boolean;
 }
 
 async function fetchImageAsBase64(imageUrl: string): Promise<{ data: string; mimeType: string }> {
@@ -33,11 +34,21 @@ export async function verifyImageMatchesPrompt(
   try {
     const { data, mimeType } = await fetchImageAsBase64(imageUrl);
 
-    const system = `You are an image quality verifier. Compare the image to the user's request.
+    const system = `You are an image quality and safety verifier. Compare the image to the user's request.
+
 Score 0-100 for prompt match (subject, style, accuracy, realism).
-Flag wrong flags, wrong person identity, cartoon when photorealism requested, religious figure depictions.
-Return ONLY JSON: {"matchScore":85,"matches":true,"issues":["..."]}
-Set matches=true only if matchScore>=72 and no critical identity errors.`;
+Set matches=true only if matchScore>=72 and no critical identity errors.
+
+SAFETY — set blockedForSafety=true if the image contains ANY of:
+- Nudity, topless, exposed breasts, exposed buttocks, genitals
+- Swimwear, bikini, lingerie, underwear, bra visible
+- Suggestive, seductive, or sexually provocative poses or clothing
+- Very tight/revealing clothing focused on body parts
+
+Also flag: wrong flags, wrong person identity, cartoon when photorealism requested, religious figure depictions.
+
+Return ONLY JSON:
+{"matchScore":85,"matches":true,"blockedForSafety":false,"issues":["..."]}`;
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
@@ -74,7 +85,18 @@ Set matches=true only if matchScore>=72 and no critical identity errors.`;
       matchScore?: number;
       matches?: boolean;
       issues?: string[];
+      blockedForSafety?: boolean;
     };
+
+    if (parsed.blockedForSafety) {
+      return {
+        matchScore: 0,
+        matches: false,
+        issues: ['Image blocked: suggestive or unsafe content detected', ...(parsed.issues ?? [])],
+        verifier: 'gemini-2.0-flash-safety',
+        blockedForSafety: true,
+      };
+    }
 
     const matchScore = Math.min(100, Math.max(0, Number(parsed.matchScore) || 0));
     const matches = parsed.matches === true || matchScore >= 72;
