@@ -1,6 +1,7 @@
 import { groqChat } from '../lib/groq.js';
 import { deepSeekChat } from '../lib/deepseek.js';
 import { loadMasterPrompt } from './masterPrompt.js';
+import { buildFullSystemPrompt } from './aiTraining.js';
 import { isTrivialPrompt, isSimpleChat } from '../lib/promptClassifier.js';
 import type { SwarmProgressEvent } from '../types/features.js';
 
@@ -77,7 +78,8 @@ export async function buildArchitectDAG(
   }
 
   const master = await loadMasterPrompt();
-  const system = `${master}
+  const training = buildFullSystemPrompt(opts?.featureId ?? 'chat', prompt);
+  const system = `${master}\n\n${training}
 
 You are the XROGA Architect (internal only — analysis never shown to user). Output JSON:
 {"analysis":"internal notes","thinking":"brief internal reasoning","dag":[{"id":"1","description":"...","agent":"builder","dependsOn":[],"estimatedSeconds":10}],"estimatedDurationSeconds":60}

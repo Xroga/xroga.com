@@ -3,6 +3,7 @@ import { groqChat } from '../lib/groq.js';
 import { geminiGenerate } from '../lib/gemini.js';
 import { claudeGenerate } from '../lib/anthropic.js';
 import OpenAI from 'openai';
+import { XROGA_CORE_TRAINING } from '../orchestrator/aiTraining.js';
 import type { FeatureCategory } from '../types/features.js';
 
 export type TaskComplexity = 'light' | 'medium' | 'heavy';
@@ -32,7 +33,9 @@ function getOpenAI(): OpenAI | null {
 
 /** Architect — DeepSeek-V4 Flash (cheap) → Gemini Flash fallback */
 export async function architectPlan(prompt: string, category: string): Promise<string> {
-  const system = `You are the Xroga Architect. Break this request into a structured JSON plan.
+  const system = `${XROGA_CORE_TRAINING}
+
+You are the Xroga Architect. Break this request into a structured JSON plan.
 Category: ${category}
 Return concise JSON with keys: goal, steps (array), tools_needed, estimated_complexity.`;
 
