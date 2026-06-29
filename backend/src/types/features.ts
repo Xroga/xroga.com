@@ -37,7 +37,7 @@ export interface LandingPageOutput {
 export interface ImageGenOutput {
   type: 'image';
   imageUrl: string;
-  provider: 'agnes' | 'fal' | 'replicate' | 'cloudflare' | 'luma' | 'runway' | 'hailuo' | 'comfyui';
+  provider: 'agnes' | 'fal' | 'replicate' | 'cloudflare' | 'luma' | 'runway' | 'hailuo' | 'comfyui' | 'openai';
   prompt: string;
   enhancedPrompt?: string;
   followUps?: string[];
@@ -50,6 +50,14 @@ export interface ImageGenOutput {
     provider: string;
     matchScore: number;
     issues?: string[];
+  }>;
+  /** Every provider image from this prompt (winner + alternates) */
+  allAttempts?: Array<{
+    imageUrl: string;
+    provider: string;
+    matchScore: number;
+    issues?: string[];
+    selected?: boolean;
   }>;
   aspectFormat?: '1:1' | '4:5' | '16:9' | '9:16' | '3:4' | '4:3';
   thumbnailUrl?: string;
@@ -186,6 +194,12 @@ export interface SwarmProgressEvent {
   timestamp: string;
   imageStep?: string;
   videoStep?: string;
+  imageAttempt?: {
+    imageUrl: string;
+    provider: string;
+    matchScore: number;
+    issues?: string[];
+  };
 }
 
 export const FEATURE_ACTION_COSTS: Record<FeatureCategory, number> = {

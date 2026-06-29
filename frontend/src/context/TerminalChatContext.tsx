@@ -57,6 +57,7 @@ interface TerminalChatContextValue {
   swarmActiveAgent: string | null;
   pipelineMessage: string | null;
   imageProgressStep: string | null;
+  imageAttempts: Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>;
   videoProgressStep: string | null;
   followUps: string[];
   reasoning: string | null;
@@ -96,6 +97,9 @@ export function TerminalChatProvider({
   const [swarmActiveAgent, setSwarmActiveAgent] = useState<string | null>(null);
   const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
   const [imageProgressStep, setImageProgressStep] = useState<string | null>(null);
+  const [imageAttempts, setImageAttempts] = useState<
+    Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>
+  >([]);
   const [videoProgressStep, setVideoProgressStep] = useState<string | null>(null);
   const [followUps, setFollowUps] = useState<string[]>([]);
   const [reasoning, setReasoning] = useState<string | null>(null);
@@ -181,13 +185,16 @@ export function TerminalChatProvider({
       if (typeof output?.imageUrl === 'string') removeMediaByUrl(output.imageUrl);
       if (typeof output?.streamingUrl === 'string') removeMediaByUrl(output.streamingUrl);
       const rejected = output?.rejectedImages;
-      if (Array.isArray(rejected)) {
-        purgeMediaUrls(
-          ...rejected
-            .map((r) => (r && typeof r === 'object' && 'imageUrl' in r ? String((r as { imageUrl: string }).imageUrl) : ''))
-            .filter(Boolean),
-        );
-      }
+      const allAttempts = output?.allAttempts;
+      const urls = [
+        ...(Array.isArray(rejected)
+          ? rejected.map((r) => (r && typeof r === 'object' && 'imageUrl' in r ? String((r as { imageUrl: string }).imageUrl) : ''))
+          : []),
+        ...(Array.isArray(allAttempts)
+          ? allAttempts.map((r) => (r && typeof r === 'object' && 'imageUrl' in r ? String((r as { imageUrl: string }).imageUrl) : ''))
+          : []),
+      ].filter(Boolean);
+      if (urls.length) purgeMediaUrls(...urls);
       removeMediaByMessageId(assistantMessageId);
 
       if (userIdx >= 0) {
@@ -244,6 +251,7 @@ export function TerminalChatProvider({
       setSwarmActiveAgent(null);
       setPipelineMessage(null);
       setImageProgressStep(null);
+      setImageAttempts([]);
       setVideoProgressStep(null);
       setFollowUps([]);
       setReasoning(null);
@@ -282,6 +290,12 @@ export function TerminalChatProvider({
             const label = event.message ?? event.status ?? 'Thinking…';
             setPipelineMessage(label);
             if (event.imageStep) setImageProgressStep(event.imageStep);
+            if (event.imageAttempt?.imageUrl) {
+              setImageAttempts((prev) => {
+                if (prev.some((a) => a.imageUrl === event.imageAttempt!.imageUrl)) return prev;
+                return [...prev, event.imageAttempt!];
+              });
+            }
             if (event.videoStep) setVideoProgressStep(event.videoStep);
             if (event.agent) setSwarmActiveAgent(event.agent);
             const ev = event as SwarmProgressEvent & { dag?: typeof dag; thinking?: string };
@@ -431,6 +445,7 @@ export function TerminalChatProvider({
         setSwarmActiveAgent(null);
         setPipelineMessage(null);
         setImageProgressStep(null);
+        setImageAttempts([]);
         setVideoProgressStep(null);
         setPipelineCompact(false);
         setTimeout(processNextInQueue, 50);
@@ -472,6 +487,7 @@ export function TerminalChatProvider({
         swarmActiveAgent,
         pipelineMessage,
         imageProgressStep,
+        imageAttempts,
         videoProgressStep,
         pipelineCompact,
         followUps,

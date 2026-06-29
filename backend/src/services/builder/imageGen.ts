@@ -6,6 +6,7 @@ import { generateLumaImage } from '../../lib/luma.js';
 import { generateRunwayImage } from '../../lib/runway.js';
 import { generateHailuoImage } from '../../lib/hailuo.js';
 import { generateComfyUIImage } from '../../lib/comfyui.js';
+import { generateOpenAIImage } from '../../lib/openaiImage.js';
 import { logSystemError } from '../../services/systemErrorLog.js';
 import type { ImageGenOutput } from '../../types/features.js';
 import { classifyImageQuery } from './image/understanding.js';
@@ -52,6 +53,12 @@ const DEFAULT_FOLLOW_UPS = [
 
 export interface ImageGenOptions {
   onProgress?: (step: ImageProgressStep, message: string) => void;
+  onImageAttempt?: (attempt: {
+    imageUrl: string;
+    provider: ImageGenOutput['provider'];
+    matchScore: number;
+    issues?: string[];
+  }) => void;
   quality?: 'standard' | 'premium';
   userId?: string;
   runId?: string;
@@ -65,6 +72,8 @@ function extractImagePrompt(userPrompt: string): string {
   const patterns = [
     /generate\s+(?:an?\s+)?image\s+of\s+(.+)/i,
     /create\s+(?:an?\s+)?(?:image|picture)\s+of\s+(.+)/i,
+    /generate\s+(?:an?\s+)?(.+)/i,
+    /create\s+(?:an?\s+)?(.+)/i,
     /draw\s+(.+)/i,
     /image:\s*(.+)/i,
   ];
@@ -91,7 +100,8 @@ type ProviderName =
   | 'runway-image'
   | 'hailuo-image'
   | 'cloudflare'
-  | 'comfyui';
+  | 'comfyui'
+  | 'openai-image';
 
 type ProviderEntry = {
   name: ProviderName;
@@ -131,6 +141,11 @@ function buildStandardProviders(): ProviderEntry[] {
       name: 'agnes-image',
       configured: Boolean(process.env.AGNES_API_KEY),
       call: generateAgnesImage,
+    },
+    {
+      name: 'openai-image',
+      configured: Boolean(process.env.OPENAI_API_KEY),
+      call: generateOpenAIImage,
     },
   ];
 }
@@ -188,6 +203,7 @@ function normalizeProvider(name: string): ImageGenOutput['provider'] {
     'hailuo-image': 'hailuo',
     cloudflare: 'cloudflare',
     comfyui: 'comfyui',
+    'openai-image': 'openai',
   };
   return map[name] ?? 'fal';
 }
@@ -338,17 +354,6 @@ function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T
   ]);
 }
 
-function shouldAcceptVerification(v: { matchScore: number; matches: boolean; verifier: string; blockedForSafety?: boolean }): boolean {
-  if (v.blockedForSafety) return false;
-  if (v.verifier === 'skipped-no-gemini' || v.verifier === 'fallback-accept') return true;
-  return v.matches || v.matchScore >= ACCEPT_THRESHOLD;
-}
-
-function isExactMatch(v: { matchScore: number; matches: boolean; blockedForSafety?: boolean }): boolean {
-  if (v.blockedForSafety) return false;
-  return v.matches || v.matchScore >= EXACT_MATCH_THRESHOLD;
-}
-
 function buildAllProviders(): ProviderEntry[] {
   const seen = new Set<string>();
   const all = [...buildStandardProviders(), ...buildPremiumProviders()];
@@ -373,148 +378,148 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
   const basePrompt = moderation.sanitizedPrompt ?? rawQuery;
   const imagePrompt = `${basePrompt}. ${aspectFormatPromptSuffix(aspectFormat)}`;
   const isYoutubeThumbnail = /\b(thumbnail|youtube)\b/i.test(rawQuery);
-  const rejectedImages: ImageGenOutput['rejectedImages'] = [];
 
-  emitProgress(options, 'painting', `Format: ${formatLabel} — trying free providers first…`);
+  emitProgress(options, 'painting', `Format: ${formatLabel} — running all image AIs in parallel…`);
 
   const providers = buildAllProviders();
   if (!providers.length) {
     throw new ImageGenerationError('No image API keys configured on the server.');
   }
 
-  console.log(`[ImageGen] Chain (${formatLabel}): ${providers.map((p) => p.name).join(' → ')}`);
+  console.log(`[ImageGen] Parallel (${formatLabel}): ${providers.map((p) => p.name).join(', ')}`);
 
-  let bestFallback: { imageUrl: string; provider: ImageGenOutput['provider']; score: number } | null = null;
+  type Attempt = {
+    imageUrl: string;
+    provider: ImageGenOutput['provider'];
+    matchScore: number;
+    issues?: string[];
+    blocked?: boolean;
+  };
 
-  for (const entry of providers) {
-    const providerLabel = normalizeProvider(entry.name);
-    emitProgress(options, 'painting', `${providerLabel} generating (${formatLabel})…`);
+  const attemptResults = await Promise.all(
+    providers.map(async (entry): Promise<Attempt | null> => {
+      const providerLabel = normalizeProvider(entry.name);
+      emitProgress(options, 'painting', `${providerLabel} generating…`);
 
-    try {
-      const imageUrl = await callImageProvider(entry, imagePrompt, ctx);
-      emitProgress(options, 'verifying', `Gemini analyzing ${providerLabel} result…`);
+      try {
+        const imageUrl = await callImageProvider(entry, imagePrompt, ctx);
+        emitProgress(options, 'verifying', `Analyzing ${providerLabel} result…`);
 
-      const verification = await verifyImageMatchesPrompt(imageUrl, rawQuery);
-      const provider = normalizeProvider(entry.name);
+        const verification = await verifyImageMatchesPrompt(imageUrl, rawQuery);
+        const provider = normalizeProvider(entry.name);
 
-      if (verification.blockedForSafety) {
-        rejectedImages.push({
+        const attempt: Attempt = {
           imageUrl,
           provider,
-          matchScore: 0,
-          issues: verification.issues,
-        });
-        console.log(`[ImageGen] ${entry.name} blocked for safety`);
-        continue;
-      }
-
-      if (isExactMatch(verification)) {
-        emitProgress(options, 'complete');
-        return {
-          type: 'image',
-          imageUrl,
-          provider,
-          prompt: rawQuery,
-          enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : undefined,
-          followUps: DEFAULT_FOLLOW_UPS,
-          pros: [`Exact match verified (${verification.matchScore}%)`, `Format: ${formatLabel}`],
           matchScore: verification.matchScore,
-          verified: true,
-          aspectFormat,
-          rejectedImages: rejectedImages.length ? rejectedImages : undefined,
-          isYoutubeThumbnail,
+          issues: verification.issues,
+          blocked: verification.blockedForSafety,
         };
+
+        options?.onImageAttempt?.({
+          imageUrl: attempt.imageUrl,
+          provider: attempt.provider,
+          matchScore: attempt.matchScore,
+          issues: attempt.issues,
+        });
+
+        console.log(
+          `[ImageGen] ${entry.name} score=${verification.matchScore} verifier=${verification.verifier}`
+        );
+        return attempt;
+      } catch (err) {
+        console.warn(`[ImageGen] ${entry.name} failed:`, (err as Error).message);
+        await logSystemError({
+          api: entry.name,
+          errorMessage: (err as Error).message,
+          fallbackUsed: 'parallel provider batch',
+          severity: 'warning',
+          userId: ctx.userId,
+          runId: ctx.runId,
+          metadata: { apiType: 'image_gen' },
+        }).catch(() => {});
+        return null;
       }
+    })
+  );
 
-      rejectedImages.push({
-        imageUrl,
-        provider,
-        matchScore: verification.matchScore,
-        issues: verification.issues,
-      });
+  const allAttempts = attemptResults.filter((a): a is Attempt => a !== null);
+  const safeAttempts = allAttempts.filter((a) => !a.blocked);
 
-      if (!bestFallback || verification.matchScore > bestFallback.score) {
-        bestFallback = { imageUrl, provider, score: verification.matchScore };
-      }
-
-      console.log(
-        `[ImageGen] ${entry.name} score=${verification.matchScore} — continuing chain for exact match`
+  if (!allAttempts.length) {
+    try {
+      const fallback = await generateStandardChain(imagePrompt, rawQuery, ctx);
+      emitProgress(options, 'complete');
+      return {
+        type: 'image',
+        imageUrl: fallback.imageUrl,
+        provider: fallback.provider,
+        prompt: rawQuery,
+        followUps: DEFAULT_FOLLOW_UPS,
+        pros: ['Generated via fallback chain', `Format: ${formatLabel}`],
+        verified: false,
+        aspectFormat,
+        isYoutubeThumbnail,
+      };
+    } catch {
+      throw new ImageGenerationError(
+        'All image providers failed. Try a more specific description.'
       );
-    } catch (err) {
-      console.warn(`[ImageGen] ${entry.name} failed:`, (err as Error).message);
-      await logSystemError({
-        api: entry.name,
-        errorMessage: (err as Error).message,
-        fallbackUsed: 'next provider in verify loop',
-        severity: 'warning',
-        userId: ctx.userId,
-        runId: ctx.runId,
-        metadata: { apiType: 'image_gen' },
-      }).catch(() => {});
     }
   }
 
-  if (bestFallback && bestFallback.score >= ACCEPT_THRESHOLD) {
-    emitProgress(options, 'complete');
-    return {
-      type: 'image',
-      imageUrl: bestFallback.imageUrl,
-      provider: bestFallback.provider,
-      prompt: rawQuery,
-      enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : undefined,
-      followUps: DEFAULT_FOLLOW_UPS,
-      pros: [`Best result from ${bestFallback.provider}`, `Format: ${formatLabel}`],
-      cons: bestFallback.score < EXACT_MATCH_THRESHOLD
-        ? ['No exact match — see other AI attempts below']
+  const pool = safeAttempts.length ? safeAttempts : allAttempts;
+  let winner = [...pool].sort((a, b) => b.matchScore - a.matchScore)[0]!;
+
+  if (pool.length > 1) {
+    const top = pool.filter((a) => a.matchScore >= Math.max(ACCEPT_THRESHOLD, winner.matchScore - 12));
+    if (top.length > 1) {
+      try {
+        const picked = await pickBestImage(
+          rawQuery,
+          top.map((c) => ({ provider: c.provider, imageUrl: c.imageUrl }))
+        );
+        winner = pool.find((a) => a.imageUrl === picked.imageUrl) ?? winner;
+      } catch {
+        /* keep score winner */
+      }
+    }
+  }
+
+  const serializedAttempts = allAttempts.map((a) => ({
+    imageUrl: a.imageUrl,
+    provider: a.provider,
+    matchScore: a.matchScore,
+    issues: a.issues,
+    selected: a.imageUrl === winner.imageUrl,
+  }));
+
+  const others = serializedAttempts.filter((a) => a.imageUrl !== winner.imageUrl);
+
+  emitProgress(options, 'complete');
+
+  return {
+    type: 'image',
+    imageUrl: winner.imageUrl,
+    provider: winner.provider,
+    prompt: rawQuery,
+    enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : undefined,
+    followUps: DEFAULT_FOLLOW_UPS,
+    pros: [
+      `Best of ${allAttempts.length} AI attempts (${winner.provider})`,
+      `Format: ${formatLabel}`,
+    ],
+    cons:
+      winner.matchScore < EXACT_MATCH_THRESHOLD
+        ? ['No exact match — see all AI attempts below']
         : undefined,
-      matchScore: bestFallback.score,
-      verified: bestFallback.score >= EXACT_MATCH_THRESHOLD,
-      aspectFormat,
-      rejectedImages: rejectedImages.filter((r) => r.imageUrl !== bestFallback!.imageUrl),
-      isYoutubeThumbnail,
-    };
-  }
-
-  if (rejectedImages.length > 0) {
-    const top = [...rejectedImages].sort((a, b) => b.matchScore - a.matchScore)[0]!;
-    emitProgress(options, 'complete');
-    return {
-      type: 'image',
-      imageUrl: top.imageUrl,
-      provider: top.provider as ImageGenOutput['provider'],
-      prompt: rawQuery,
-      followUps: DEFAULT_FOLLOW_UPS,
-      pros: ['Showing best available attempt'],
-      cons: ['Could not verify exact prompt match'],
-      matchScore: top.matchScore,
-      verified: false,
-      aspectFormat,
-      rejectedImages: rejectedImages.filter((r) => r.imageUrl !== top.imageUrl),
-      isYoutubeThumbnail,
-    };
-  }
-
-  try {
-    const fallback = await generateStandardChain(imagePrompt, rawQuery, ctx);
-    emitProgress(options, 'complete');
-    return {
-      type: 'image',
-      imageUrl: fallback.imageUrl,
-      provider: fallback.provider,
-      prompt: rawQuery,
-      followUps: DEFAULT_FOLLOW_UPS,
-      pros: ['Generated via fallback chain', `Format: ${formatLabel}`],
-      verified: false,
-      aspectFormat,
-      isYoutubeThumbnail,
-    };
-  } catch {
-    /* fall through */
-  }
-
-  throw new ImageGenerationError(
-    'All image providers failed or none matched your prompt. Try a more specific description.'
-  );
+    matchScore: winner.matchScore,
+    verified: winner.matchScore >= EXACT_MATCH_THRESHOLD,
+    aspectFormat,
+    allAttempts: serializedAttempts,
+    rejectedImages: others,
+    isYoutubeThumbnail,
+  };
 }
 
 /** Live smoke test — tries Fal then Replicate with a tiny prompt (for /health/smoke-image). */

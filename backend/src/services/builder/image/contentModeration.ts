@@ -83,7 +83,9 @@ function enhanceSafePrompt(prompt: string): string {
 
   const flagMatch =
     prompt.match(/\b(?:flag of|national flag of|country flag of)\s+([a-z][a-z\s-]{1,40})/i) ??
-    prompt.match(/\b([a-z][a-z\s-]{1,30})\s+(?:national\s+)?flag\b/i);
+    prompt.match(/\b([a-z][a-z\s-]{1,30})\s+(?:national\s+)?flag\b/i) ??
+    (/\bflag\b/i.test(prompt) && /\bpakistan\b/i.test(prompt) ? ['', 'pakistan'] : null) ??
+    (/\bflag\b/i.test(prompt) && /\bpalestine\b/i.test(prompt) ? ['', 'palestine'] : null);
   if (flagMatch) {
     const country = flagMatch[1].trim().toLowerCase();
     const spec = NATIONAL_FLAG_SPECS[country] ?? NATIONAL_FLAG_SPECS[country.replace(/\s+/g, ' ')];

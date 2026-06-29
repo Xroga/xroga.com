@@ -45,6 +45,7 @@ export interface ImageOutputData {
   verified?: boolean;
   matchScore?: number;
   rejectedImages?: RejectedImage[];
+  allAttempts?: RejectedImage[];
   isYoutubeThumbnail?: boolean;
   aspectFormat?: string;
   followUps?: string[];
@@ -64,14 +65,37 @@ export function ImageGeneratingAnimation({
   className,
   message,
   step,
+  liveAttempts = [],
 }: {
   className?: string;
   message?: string;
   step?: string;
+  liveAttempts?: RejectedImage[];
 }) {
   return (
     <div className={cn('my-3 space-y-2', className)}>
       <TextGeneratingAnimation message={message} step={step} mode="image" sublabel="Xroga AI · Image Studio" />
+      {liveAttempts.length > 0 && (
+        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)]/50 p-2">
+          <p className="text-[10px] font-medium text-[var(--muted)] mb-1.5 px-1">
+            AI results arriving ({liveAttempts.length})…
+          </p>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
+            {liveAttempts.map((img) => (
+              <div
+                key={img.imageUrl}
+                className="relative rounded-md overflow-hidden border border-[var(--card-border)] aspect-square"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
+                <span className="absolute bottom-0 inset-x-0 bg-black/75 text-[7px] text-white px-1 py-0.5 truncate">
+                  {img.provider} · {img.matchScore}%
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -100,10 +124,14 @@ export function ImageStudioCard({
     verified,
     matchScore,
     rejectedImages,
+    allAttempts: allAttemptsProp,
     aspectFormat,
   } = data;
 
   const allAttempts = useMemo(() => {
+    if (allAttemptsProp?.length) {
+      return [...allAttemptsProp].sort((a, b) => b.matchScore - a.matchScore);
+    }
     const list: RejectedImage[] = [];
     const seen = new Set<string>();
     const add = (img: RejectedImage) => {
@@ -120,7 +148,7 @@ export function ImageStudioCard({
     }
     for (const r of rejectedImages ?? []) add(r);
     return list.sort((a, b) => b.matchScore - a.matchScore);
-  }, [src, provider, matchScore, rejectedImages]);
+  }, [src, provider, matchScore, rejectedImages, allAttemptsProp]);
 
   if (generating) {
     return <ImageGeneratingAnimation className={className} message={message} step={step} />;
@@ -241,10 +269,10 @@ export function ImageStudioCard({
           />
         </div>
 
-        {allAttempts.length > 1 && (
+        {allAttempts.length > 0 && (
           <div className="px-2 pb-2 border-t border-[var(--card-border)] pt-2">
             <p className="text-[10px] font-medium text-[var(--muted)] mb-1.5">
-              All AI tries ({allAttempts.length}) — tap to edit
+              All AI outputs ({allAttempts.length}) — tap to edit
             </p>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
               {allAttempts.map((img) => {

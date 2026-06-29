@@ -260,6 +260,7 @@ export class SwarmService {
           iteration: event.iteration,
           imageStep: event.imageStep,
           videoStep: event.videoStep,
+          imageAttempt: event.imageAttempt,
         },
       });
     };

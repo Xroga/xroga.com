@@ -24,6 +24,7 @@ export function FeatureOutputView({
       verified: o.verified as boolean | undefined,
       matchScore: typeof o.matchScore === 'number' ? o.matchScore : undefined,
       rejectedImages: Array.isArray(o.rejectedImages) ? (o.rejectedImages as ImageOutputData['rejectedImages']) : undefined,
+      allAttempts: Array.isArray(o.allAttempts) ? (o.allAttempts as ImageOutputData['allAttempts']) : undefined,
       isYoutubeThumbnail: Boolean(o.isYoutubeThumbnail),
       aspectFormat: typeof o.aspectFormat === 'string' ? o.aspectFormat : undefined,
       followUps: Array.isArray(o.followUps) ? (o.followUps as string[]) : undefined,
