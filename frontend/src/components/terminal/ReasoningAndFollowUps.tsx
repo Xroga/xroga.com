@@ -64,45 +64,45 @@ export function FollowUpChips({ items, onSelect }: FollowUpChipsProps) {
   );
 }
 
-/** Smooth typewriter — avoids stray single-char flash by syncing with growing content */
-export function SmoothTypewriter({
+/** Modern AI response — natural stream growth + fade-in, no typewriter */
+export function ModernResponseText({
   content,
-  animate,
-  speed = 8,
+  streaming,
 }: {
   content: string;
-  animate: boolean;
-  speed?: number;
+  streaming?: boolean;
 }) {
-  const [displayed, setDisplayed] = useState(animate ? '' : content);
-  const targetRef = useRef(content);
+  const prevLen = useRef(0);
+  const blockRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    targetRef.current = content;
-    if (!animate) {
-      setDisplayed(content);
-      return;
+    if (content.length > prevLen.current && blockRef.current && !streaming) {
+      blockRef.current.style.animation = 'none';
+      void blockRef.current.offsetHeight;
+      if (content.length > 0) {
+        blockRef.current.style.animation = 'xv-response-in 0.35s ease-out';
+      }
     }
-    if (!content) {
-      setDisplayed('');
-      return;
-    }
-    let i = displayed.length;
-    if (i > content.length) i = 0;
-    const timer = setInterval(() => {
-      i += 1;
-      const next = targetRef.current.slice(0, i);
-      setDisplayed(next);
-      if (i >= targetRef.current.length) clearInterval(timer);
-    }, speed);
-    return () => clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, animate]);
+    prevLen.current = content.length;
+  }, [content, streaming]);
+
+  if (!content && streaming) {
+    return (
+      <span className="xv-stream-cursor inline-flex items-center">
+        <span className="w-0.5 h-4 bg-[#006aff]/70 rounded-full animate-pulse" />
+      </span>
+    );
+  }
 
   return (
-    <span>
-      {displayed}
-      {animate && displayed.length < content.length && <span className="cursor-blink">▌</span>}
+    <span
+      ref={blockRef}
+      className={cn('xv-response-text whitespace-pre-wrap', streaming && 'xv-streaming')}
+    >
+      {content}
+      {streaming && content.length > 0 && (
+        <span className="inline-block w-0.5 h-[1em] ml-0.5 bg-[#006aff]/80 align-middle animate-pulse rounded-full" />
+      )}
     </span>
   );
 }

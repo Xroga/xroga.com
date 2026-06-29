@@ -18,6 +18,7 @@ interface MessageBubbleActionsProps {
   content: string;
   messageId: string;
   showDeploy?: boolean;
+  deployLabel?: string;
   onEdit?: () => void;
   onDeploy?: () => void;
   onFeedback?: () => void;
@@ -28,6 +29,7 @@ export function MessageBubbleActions({
   content,
   messageId,
   showDeploy,
+  deployLabel = 'Deploy',
   onEdit,
   onDeploy,
   onFeedback,
@@ -83,9 +85,9 @@ export function MessageBubbleActions({
             </button>
           )}
           {showDeploy && onDeploy && (
-            <button type="button" onClick={onDeploy} className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-gradient-to-r from-[#006aff] to-[#60a5fa] text-white">
+            <button type="button" onClick={onDeploy} className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-gradient-to-r from-emerald-600 to-emerald-400 text-white hover:opacity-90 transition-opacity">
               <Rocket className="w-3 h-3" />
-              Deploy
+              {deployLabel}
             </button>
           )}
         </>

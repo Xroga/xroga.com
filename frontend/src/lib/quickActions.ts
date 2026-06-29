@@ -28,7 +28,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
   { id: 'video', icon: Film, label: 'Video', prompt: 'Create a video about ', color: '#a855f7' },
   { id: 'script', icon: FileText, label: 'Script', prompt: 'Write a script for ', color: '#f59e0b' },
   { id: '3d', icon: Box, label: '3D', prompt: 'Generate a 3D model of ', color: '#8b5cf6' },
-  { id: 'deploy', icon: Rocket, label: 'Deploy', prompt: 'Deploy my project to Vercel with production settings for ', color: '#ef4444' },
+  { id: 'deploy', icon: Rocket, label: 'Deploy', prompt: 'Deploy my project to the best platform for: ', color: '#ef4444' },
   { id: 'scrape', icon: Globe, label: 'Scrape', prompt: 'Scrape and extract data from ', color: '#06b6d4' },
   { id: 'voice', icon: Mic, label: 'Voice', prompt: 'Create voice/TTS for ', color: '#14b8a6' },
   { id: 'review', icon: Bug, label: 'Review', prompt: 'Review and improve this: ', color: '#6366f1' },

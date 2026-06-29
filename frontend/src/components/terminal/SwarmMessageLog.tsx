@@ -14,19 +14,15 @@ import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ProcessingPipeline } from './ProcessingPipeline';
-import { FollowUpChips, ReasoningPanel, SmoothTypewriter } from './ReasoningAndFollowUps';
+import { FollowUpChips, ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
-import { generateMessageSuggestions, isBuildRelated } from '@/lib/messageHelpers';
+import { generateMessageSuggestions, isBuildRelated, primaryDeploySuggestion } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { UserProfileBox } from '@/components/profile/UserProfileBox';
 import { TerminalSearchBar } from '@/components/terminal/TerminalSearchBar';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
-
-function TypewriterMessage({ content, animate }: { content: string; animate: boolean }) {
-  return <SmoothTypewriter content={content} animate={animate} speed={6} />;
-}
 
 const AGENT_STYLES: Record<string, string> = {
   architect: 'text-[var(--primary)]',
@@ -90,9 +86,10 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     messageRefs.current[messageId]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  function handleDeploy() {
-    setPrompt('[Deploy] Publish my project to Vercel with production settings');
-    toast('Deploy prompt added — press GO', { icon: '🚀' });
+  function handleDeploy(userText: string, aiText: string) {
+    const primary = primaryDeploySuggestion(userText, aiText);
+    setPrompt(primary?.prompt ?? '[Deploy] Publish my project to the best platform for this build');
+    toast(primary ? `${primary.label} ready — press GO` : 'Deploy prompt added — press GO', { icon: '🚀' });
   }
 
   function handleSuggestion(text: string) {
@@ -201,6 +198,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
               msg.role === 'assistant' &&
               !loading &&
               isBuildRelated(msg.content, lastUserText);
+            const deploySuggestion = showDeploy ? primaryDeploySuggestion(lastUserText, msg.content) : null;
             const suggestions =
               !isIncognito && showSuggestions ? generateMessageSuggestions(lastUserText, msg.content) : null;
 
@@ -247,12 +245,12 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                     <p className="py-0.5 text-xs xv-swarm-agent-line animate-in fade-in duration-300">{msg.content}</p>
                   ) : (
                     <>
-                      <p className="py-1 whitespace-pre-wrap text-left">
-                        <TypewriterMessage
+                      <div className="py-1 text-left">
+                        <ModernResponseText
                           content={msg.content}
-                          animate={msg.id === animatingId}
+                          streaming={msg.id === animatingId && loading}
                         />
-                      </p>
+                      </div>
                       {isLastAssistant && reasoning && (
                         <ReasoningPanel reasoning={reasoning} dag={dag ?? undefined} />
                       )}
@@ -265,7 +263,8 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           content={msg.content}
                           messageId={msg.id}
                           showDeploy={showDeploy}
-                          onDeploy={handleDeploy}
+                          deployLabel={deploySuggestion?.label ?? 'Deploy'}
+                          onDeploy={() => handleDeploy(lastUserText, msg.content)}
                           onEdit={() => handleEditAI(msg.content)}
                           onFeedback={() => setFeedbackOpen(true)}
                         />

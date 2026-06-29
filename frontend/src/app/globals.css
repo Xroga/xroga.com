@@ -2289,3 +2289,26 @@ body.theme-gray * {
   60% { content: '..'; }
   80%, 100% { content: '...'; }
 }
+
+@keyframes xv-response-in {
+  from {
+    opacity: 0.4;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.xv-response-text.xv-streaming {
+  transition: opacity 0.15s ease;
+}
+
+.xv-suggestions-enter {
+  animation: xv-response-in 0.4s ease-out;
+}
+
+.assistant-bubble-glow {
+  position: relative;
+}
