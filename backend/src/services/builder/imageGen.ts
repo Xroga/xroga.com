@@ -369,8 +369,10 @@ export async function smokeTestImageGeneration(): Promise<{
   imageUrl?: string;
   error?: string;
   tried: string[];
+  errors?: Record<string, string>;
 }> {
   const tried: string[] = [];
+  const errors: Record<string, string> = {};
   const prompt = 'a red circle on white background, minimal test';
 
   const chain = buildStandardProviders().filter((p) => p.configured);
@@ -378,17 +380,19 @@ export async function smokeTestImageGeneration(): Promise<{
     return { ok: false, error: 'No image providers configured', tried };
   }
 
-  for (const entry of chain.slice(0, 3)) {
+  for (const entry of chain) {
     tried.push(entry.name);
     try {
       const imageUrl = await entry.call(prompt);
       if (isValidImageResult(imageUrl)) {
         return { ok: true, provider: entry.name, imageUrl: imageUrl.slice(0, 120), tried };
       }
+      errors[entry.name] = 'Invalid URL returned';
     } catch (err) {
-      console.warn(`[ImageSmoke] ${entry.name}:`, (err as Error).message);
+      errors[entry.name] = (err as Error).message;
+      console.warn(`[ImageSmoke] ${entry.name}:`, errors[entry.name]);
     }
   }
 
-  return { ok: false, error: 'All smoke-test providers failed', tried };
+  return { ok: false, error: 'All smoke-test providers failed', tried, errors };
 }

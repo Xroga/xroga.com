@@ -119,7 +119,7 @@ export async function upscaleImageReplicate(imageUrl: string): Promise<string> {
 }
 
 export async function generateImageFlux(prompt: string): Promise<string> {
-  const apiKey = process.env.REPLICATE_API_TOKEN;
+  const apiKey = process.env.REPLICATE_API_TOKEN?.trim();
   if (!apiKey) throw new Error('REPLICATE_API_TOKEN not configured');
 
   let lastErr: Error | null = null;

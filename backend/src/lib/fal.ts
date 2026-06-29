@@ -6,7 +6,7 @@ const FAL_ENDPOINTS = [
 ] as const;
 
 export async function generateFalImage(prompt: string): Promise<string> {
-  const apiKey = process.env.FAL_KEY ?? process.env.FAL_API_KEY;
+  const apiKey = (process.env.FAL_KEY ?? process.env.FAL_API_KEY)?.trim();
   if (!apiKey) throw new Error('FAL_KEY not configured');
 
   let lastErr: Error | null = null;

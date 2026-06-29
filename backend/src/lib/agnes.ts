@@ -3,7 +3,7 @@
 const AGNES_HUB = 'https://apihub.agnes-ai.com/v1';
 
 function getAgnesKey(): string {
-  const apiKey = process.env.AGNES_API_KEY;
+  const apiKey = process.env.AGNES_API_KEY?.trim();
   if (!apiKey) throw new Error('AGNES_API_KEY not configured');
   return apiKey;
 }
@@ -36,21 +36,23 @@ async function requestAgnes(model: string, prompt: string, size: string): Promis
       model,
       prompt,
       size,
-      response_format: 'url',
-      extra_body: { response_format: 'url' },
+      extra_body: {
+        response_format: 'url',
+      },
     }),
+    signal: AbortSignal.timeout(90_000),
   });
 
   const body = await response.text();
   if (!response.ok) {
-    throw new Error(`Agnes image error ${response.status}: ${body.slice(0, 200)}`);
+    throw new Error(`Agnes image error ${response.status}: ${body.slice(0, 300)}`);
   }
 
   let data: unknown;
   try {
     data = JSON.parse(body);
   } catch {
-    throw new Error('Agnes returned invalid JSON');
+    throw new Error(`Agnes returned invalid JSON: ${body.slice(0, 200)}`);
   }
 
   const url = parseAgnesImageResponse(data);
@@ -58,7 +60,7 @@ async function requestAgnes(model: string, prompt: string, size: string): Promis
   return url;
 }
 
-export async function generateAgnesImage(prompt: string, size = '1024x1024'): Promise<string> {
+export async function generateAgnesImage(prompt: string, size = '1024x768'): Promise<string> {
   const models = ['agnes-image-2.1-flash', 'agnes-image-2.0-flash'];
   let lastErr: Error | null = null;
 
