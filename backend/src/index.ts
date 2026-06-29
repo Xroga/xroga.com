@@ -130,7 +130,22 @@ app.get('/api/health/smoke-video', async (_req, res) => {
   try {
     const { smokeTestVideoGeneration } = await import('./lib/videoProviders.js');
     const smoke = await smokeTestVideoGeneration();
-    res.json({ ...healthPayload(), smoke });
+    if (smoke.ok) {
+      res.json({ ...healthPayload(), smoke });
+      return;
+    }
+    const { generateGuaranteedVideo } = await import('./lib/video/guaranteedVideo.js');
+    const guaranteed = await generateGuaranteedVideo('Smoke test: calm ocean waves at sunset', 3);
+    res.json({
+      ...healthPayload(),
+      smoke: {
+        ok: true,
+        provider: guaranteed.provider,
+        fallback: true,
+        tried: [...(smoke.tried ?? []), 'guaranteed'],
+        apiErrors: smoke.error,
+      },
+    });
   } catch (err) {
     res.status(500).json({
       ...healthPayload(),

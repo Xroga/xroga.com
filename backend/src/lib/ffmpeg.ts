@@ -6,8 +6,15 @@ import { tmpdir } from 'node:os';
 import { randomUUID } from 'node:crypto';
 
 import { isValidMp4Buffer, isStubJsonBuffer } from './mediaValidation.js';
+import { resolveFfmpegPath } from './video/ffmpegPath.js';
 
 const execFileAsync = promisify(execFile);
+
+async function ffmpegBin(): Promise<string> {
+  const bin = await resolveFfmpegPath();
+  if (!bin) throw new Error('FFmpeg not available');
+  return bin;
+}
 
 export interface AssemblyInput {
   videoUrl: string;
@@ -68,7 +75,7 @@ export async function assembleVideo(input: AssemblyInput): Promise<AssemblyOutpu
   const outputPath = join(workDir, input.outputFilename);
 
   try {
-    await execFileAsync('ffmpeg', ['-version']);
+    await execFileAsync(await ffmpegBin(), ['-version']);
     try {
       return await runFfmpegAssembly(workDir, outputPath, input);
     } catch (asmErr) {
@@ -107,7 +114,7 @@ export async function assembleMultiSceneVideo(input: MultiSceneInput): Promise<A
   const tempFiles: string[] = [];
 
   try {
-    await execFileAsync('ffmpeg', ['-version']);
+    await execFileAsync(await ffmpegBin(), ['-version']);
 
     for (let i = 0; i < input.scenes.length; i++) {
       const scene = input.scenes[i];
@@ -127,7 +134,7 @@ export async function assembleMultiSceneVideo(input: MultiSceneInput): Promise<A
     await writeFile(concatListPath, sceneFiles.map((f) => `file '${f}'`).join('\n'));
     tempFiles.push(concatListPath);
 
-    await execFileAsync('ffmpeg', [
+    await execFileAsync(await ffmpegBin(), [
       '-f', 'concat',
       '-safe', '0',
       '-i', concatListPath,
@@ -173,7 +180,7 @@ async function runFfmpegAssembly(
   if (primaryAudio?.url) args.push('-i', audioPath);
   args.push('-c:v', 'copy', '-c:a', 'aac', '-shortest', '-y', outputPath);
 
-  await execFileAsync('ffmpeg', args);
+  await execFileAsync(await ffmpegBin(), args);
 
   const buffer = await readFile(outputPath);
   await cleanup(workDir, tempFiles);

@@ -1,5 +1,6 @@
 import { produceSingleSceneVideo } from './videoStudioLegacy.js';
 import { runMoviePipeline, type MovieProgressStep } from './moviePipeline.js';
+import { planVideoProduction } from './videoRouter.js';
 import { parseVideoDuration } from './videoUtils.js';
 import type { VideoStudioOutput } from '../../types/features.js';
 
@@ -12,17 +13,21 @@ export interface ProduceVideoOptions {
   onProgress?: (step: MovieProgressStep, message: string, detail?: string) => void;
 }
 
-/** Routes to full movie pipeline only for explicit long-form requests */
+/** Routes through AI video planner — multi-scene → movie pipeline, else guaranteed single clip */
 export async function produceVideo(
   userId: string,
   prompt: string,
   options?: ProduceVideoOptions
 ): Promise<VideoStudioOutput> {
-  const isFullMovie =
-    /\b(full movie|feature film|multi.?scene|episode\s+\d|series)\b/i.test(prompt) &&
-    parseVideoDuration(prompt) > 15;
+  options?.onProgress?.('scripting', 'Analyzing video request…');
 
-  if (isFullMovie) {
+  const plan = await planVideoProduction(prompt, {
+    userId,
+    runId: options?.runId,
+    onProgress: (step, message) => options?.onProgress?.(step as MovieProgressStep, message),
+  });
+
+  if (plan.mode === 'multi_scene' && plan.scenes.length > 1) {
     return runMoviePipeline({
       userId,
       prompt,

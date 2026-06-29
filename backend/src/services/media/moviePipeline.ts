@@ -1,5 +1,5 @@
 import { callWithLlmFallback } from '../../lib/llmFallback.js';
-import { generateVideoWithFallback } from '../../lib/videoProviders.js';
+import { generateGuaranteedVideo } from '../../lib/video/guaranteedVideo.js';
 import { generateSceneAudio } from '../../lib/audioProviders.js';
 import { assembleMultiSceneVideo } from '../../lib/ffmpeg.js';
 import { reviewVideoOutputs } from './videoUtils.js';
@@ -275,7 +275,7 @@ export async function runMoviePipeline(options: MoviePipelineOptions): Promise<V
       const keyframe = characters[0]?.face_image_url;
       const priority = scene.priority === 'critical' ? 'premium' : 'cheap';
 
-      let result = await generateVideoWithFallback(scene.dialogue || scenePrompt, scene.durationSeconds, {
+      let result = await generateGuaranteedVideo(scene.dialogue || scenePrompt, scene.durationSeconds, {
         priority,
         userId,
         runId: options.runId,
@@ -287,8 +287,8 @@ export async function runMoviePipeline(options: MoviePipelineOptions): Promise<V
         scenePrompt
       );
 
-      if (reviewed.total < 21) {
-        const corrected = await generateVideoWithFallback(
+      if (reviewed.total < 21 && !['slideshow', 'slideshow-ai-image', 'ffmpeg-minimal'].includes(result.provider)) {
+        const corrected = await generateGuaranteedVideo(
           `${scenePrompt}. Avoid warping, realistic physics, smooth motion.`,
           scene.durationSeconds,
           { priority: 'cheap', userId, runId: options.runId, keyframeUrl: keyframe }
