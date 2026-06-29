@@ -42,7 +42,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, followUps, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt } =
+  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, followUps, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -260,7 +260,10 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                         msg.id === animatingId &&
                         isImageGenerationPrompt(lastUserText) &&
                         extractImagesFromContent(msg.content).length === 0 ? (
-                          <ImageGeneratingAnimation />
+                          <ImageGeneratingAnimation
+                            message={pipelineMessage ?? undefined}
+                            step={imageProgressStep ?? undefined}
+                          />
                         ) : (
                           <ModernResponseText
                             content={msg.content}

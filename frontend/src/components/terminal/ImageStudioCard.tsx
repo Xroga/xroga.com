@@ -28,12 +28,21 @@ interface ImageStudioCardProps {
   className?: string;
 }
 
-export function ImageGeneratingAnimation({ className }: { className?: string }) {
+export function ImageGeneratingAnimation({
+  className,
+  message,
+  step,
+}: {
+  className?: string;
+  message?: string;
+  step?: string;
+}) {
   return (
     <PencilGeneratingAnimation
       className={className}
-      label="Generating your image"
-      sublabel="Xroga AI · Agnes Image Studio"
+      message={message}
+      step={step}
+      sublabel="Xroga AI · Image Studio"
     />
   );
 }
@@ -65,9 +74,9 @@ export function ImageStudioCard({
         <p className="text-sm font-semibold text-red-200">Image generation failed</p>
         <p className="text-[11px] text-red-300/80 max-w-sm mx-auto">
           No image API returned a real result. Ask your admin to set{' '}
-          <code className="text-[10px] bg-black/20 px-1 rounded">OPENAI_API_KEY</code>,{' '}
-          <code className="text-[10px] bg-black/20 px-1 rounded">AGNES_API_KEY</code>, or{' '}
-          <code className="text-[10px] bg-black/20 px-1 rounded">REPLICATE_API_TOKEN</code> on Fly.io, then try again.
+          <code className="text-[10px] bg-black/20 px-1 rounded">FAL_KEY</code>,{' '}
+          <code className="text-[10px] bg-black/20 px-1 rounded">REPLICATE_API_TOKEN</code>, or{' '}
+          <code className="text-[10px] bg-black/20 px-1 rounded">AGNES_API_KEY</code> on Fly.io, then try again.
         </p>
       </div>
     );

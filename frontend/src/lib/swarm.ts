@@ -45,6 +45,7 @@ export interface SwarmProgressEvent {
   status?: string;
   message?: string;
   iteration?: number;
+  imageStep?: string;
 }
 
 export interface SwarmCompleteEvent {

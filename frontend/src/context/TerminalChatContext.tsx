@@ -51,6 +51,7 @@ interface TerminalChatContextValue {
   animatingId: string | null;
   swarmActiveAgent: string | null;
   pipelineMessage: string | null;
+  imageProgressStep: string | null;
   followUps: string[];
   reasoning: string | null;
   dag: Array<{ id: string; description: string; agent: string }> | null;
@@ -86,6 +87,7 @@ export function TerminalChatProvider({
   const [animatingId, setAnimatingId] = useState<string | null>(null);
   const [swarmActiveAgent, setSwarmActiveAgent] = useState<string | null>(null);
   const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
+  const [imageProgressStep, setImageProgressStep] = useState<string | null>(null);
   const [followUps, setFollowUps] = useState<string[]>([]);
   const [reasoning, setReasoning] = useState<string | null>(null);
   const [dag, setDag] = useState<Array<{ id: string; description: string; agent: string }> | null>(null);
@@ -230,6 +232,7 @@ export function TerminalChatProvider({
             }
             const label = event.message ?? event.status ?? 'Thinking…';
             setPipelineMessage(label);
+            if (event.imageStep) setImageProgressStep(event.imageStep);
             if (event.agent) setSwarmActiveAgent(event.agent);
             const ev = event as SwarmProgressEvent & { dag?: typeof dag; thinking?: string };
             if (ev.thinking && !useCompactPipeline) setReasoning(ev.thinking);
@@ -279,6 +282,7 @@ export function TerminalChatProvider({
         setAnimatingId(null);
         setSwarmActiveAgent(null);
         setPipelineMessage(null);
+        setImageProgressStep(null);
         setPipelineCompact(false);
         setTimeout(processNextInQueue, 50);
       }
@@ -318,6 +322,7 @@ export function TerminalChatProvider({
         animatingId,
         swarmActiveAgent,
         pipelineMessage,
+        imageProgressStep,
         pipelineCompact,
         followUps,
         reasoning,

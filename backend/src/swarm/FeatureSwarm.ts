@@ -41,7 +41,7 @@ export class FeatureSwarm extends BaseSwarm {
     const featureSteps: Record<FeatureCategory, string> = {
       chat: 'Process natural language command',
       landing_page: 'Generate HTML/CSS/JS landing page and deploy to Vercel',
-      image_generation: 'Generate image via Agnes AI (primary), Fal/Replicate/Cloudflare fallback',
+      image_generation: 'Groq classifies → DeepSeek enhances prompt → Fal/Replicate/Agnes/Luma/Runway image APIs',
       browser_automation: 'Convert to Playwright script (free local) with Browserbase fallback',
       cross_post: 'Format and post to social platforms',
       key_creation: 'Navigate dev portal and store encrypted API key',
@@ -100,7 +100,20 @@ export class FeatureSwarm extends BaseSwarm {
           output = await buildLandingPage(context.prompt);
           break;
         case 'image_generation':
-          output = await generateImage(context.prompt);
+          output = await generateImage(context.prompt, {
+            userId: context.userId,
+            runId: context.runId,
+            onProgress: (step, message) => {
+              this.onProgress?.({
+                runId: context.runId,
+                agent: 'builder',
+                status: 'building',
+                message,
+                imageStep: step,
+                timestamp: new Date().toISOString(),
+              });
+            },
+          });
           break;
         case 'browser_automation':
           output = await runBrowserAutomation(context.prompt);

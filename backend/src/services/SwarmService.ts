@@ -258,6 +258,7 @@ export class SwarmService {
           status: event.status,
           message: event.message,
           iteration: event.iteration,
+          imageStep: event.imageStep,
         },
       });
     };

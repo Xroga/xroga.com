@@ -37,7 +37,7 @@ export async function quickChat(prompt: string): Promise<string> {
       return formatFeatureOutput(output);
     } catch (err) {
       console.error(`[quickChat] Feature ${intentCategory} failed:`, (err as Error).message);
-      return `I couldn't complete ${intentCategory.replace(/_/g, ' ')} right now. Please check API keys (Agnes, Replicate, Cloudflare) and try again.`;
+      return `I couldn't complete ${intentCategory.replace(/_/g, ' ')} right now. Please check API keys (Fal, Replicate, Agnes, Luma) and try again.`;
     }
   }
 
