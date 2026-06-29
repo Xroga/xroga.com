@@ -38,6 +38,7 @@ import { api } from '@/lib/api';
 import { UpgradeProButton } from '@/components/ui/Uiverse';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -127,6 +128,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const profile = useAppStore((s) => s.profile);
   const setProfile = useAppStore((s) => s.setProfile);
   const incognito = usePrivacyStore((s) => s.incognito);
+  const isMobile = useIsMobile();
   const isFreeTrial = !actions?.planTier || actions.planTier === 'unpaid';
   const avatarUrl = profile?.avatar_url;
   const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
@@ -161,7 +163,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   }
 
   const asideWidth = sidebarOpen ? sidebarWidth : 72;
-  const navExpanded = sidebarOpen || mobileOpen;
+  const navExpanded = isMobile ? mobileOpen : sidebarOpen;
   const mobileDrawerWidth =
     typeof window !== 'undefined' ? Math.min(sidebarWidth, Math.floor(window.innerWidth * 0.88)) : sidebarWidth;
 
@@ -209,7 +211,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
       {isFreeTrial && navExpanded && (
         <UpgradeProButton onClick={() => router.push('/pricing')} />
       )}
-      {isFreeTrial && !sidebarOpen && (
+      {isFreeTrial && !sidebarOpen && !isMobile && (
         <HoverTip label="Upgrade Plan" description="Unlock more actions and PRO features.">
           <Link
             href="/pricing"
@@ -255,7 +257,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} />
         </div>
       )}
-      {displayName && !sidebarOpen && (
+      {displayName && !sidebarOpen && !isMobile && (
         <div className="flex flex-col items-center gap-1 py-1">
           {incognito ? (
             <IncognitoProfileBox size="sidebarCompact" />
@@ -283,7 +285,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   );
 
   return (
-    <div className="xv-sidebar-root w-0 overflow-visible shrink-0 lg:w-auto">
+    <>
       <SidebarSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
 
       <button
@@ -306,6 +308,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         />
       )}
 
+      <div className="xv-sidebar-root w-0 overflow-hidden shrink-0 lg:w-auto lg:overflow-visible">
       <aside
         onMouseEnter={() => {
           if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(true);
@@ -318,9 +321,9 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           ['--sidebar-drawer-width' as string]: `${mobileDrawerWidth}px`,
         }}
         className={cn(
-          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,transform] duration-200 xv-sidebar-hover shrink-0 relative max-lg:!w-0 max-lg:border-r-0',
-          mobileOpen && 'max-lg:!w-[var(--sidebar-drawer-width)] max-lg:border-r',
-          mobileOpen ? 'translate-x-0 z-[70] xv-sidebar-mobile-open' : '-translate-x-full lg:translate-x-0'
+          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,transform] duration-200 xv-sidebar-hover shrink-0 relative max-lg:overflow-hidden max-lg:!w-0 max-lg:border-r-0',
+          mobileOpen && 'max-lg:!w-[var(--sidebar-drawer-width)] max-lg:border-r max-lg:overflow-y-auto',
+          mobileOpen ? 'translate-x-0 z-[70] xv-sidebar-mobile-open' : '-translate-x-full lg:translate-x-0 max-lg:invisible max-lg:pointer-events-none'
         )}
       >
         <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px]">
@@ -446,6 +449,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           setAvatarPickerOpen(false);
         }}
       />
-    </div>
+      </div>
+    </>
   );
 }
