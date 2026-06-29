@@ -1,9 +1,9 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Infinity } from 'lucide-react';
 import { TerminalChatBar } from './TerminalChatBar';
 import { RepoContextBar } from './RepoContextBar';
+import { BlackHoleVButton } from './BlackHoleVButton';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useVisualViewportBottom } from '@/hooks/useVisualViewportBottom';
@@ -36,20 +36,13 @@ export function TerminalDock() {
     >
       <div
         className={cn(
-          'mx-auto px-2 sm:px-4 lg:px-6 pt-2 sm:pt-3 pb-1.5 sm:pb-2 lg:pb-3 xv-terminal-dock-inner',
+          'mx-auto px-2 sm:px-4 lg:px-6 pt-3 sm:pt-4 pb-2 sm:pb-3 lg:pb-4 xv-terminal-dock-inner',
           dashboardFullscreen ? 'max-w-6xl' : 'max-w-3xl'
         )}
       >
         {!incognito && (
-          <div className="flex flex-col gap-1 mb-1.5 px-0.5">
-            <button
-              type="button"
-              className="self-start flex items-center gap-1 text-[10px] sm:text-[11px] font-bold text-[var(--foreground)] hover:text-[#006aff] transition-colors"
-              title="Black Hole V∞ — our first and last model"
-            >
-              <Infinity className="w-3.5 h-3.5 text-[#006aff]" strokeWidth={2.5} />
-              Black Hole V∞
-            </button>
+          <div className="flex flex-col gap-1 mb-2 px-0.5">
+            <BlackHoleVButton />
             <RepoContextBar outside />
           </div>
         )}

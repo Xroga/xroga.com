@@ -209,7 +209,7 @@ export function ChatBarToolChip({
     <button
       type="button"
       onClick={onClick}
-      className="xv-chatbar-chip flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-medium border transition-all hover:-translate-y-px"
+      className="xv-chatbar-chip flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium border transition-all hover:-translate-y-px"
       style={
         accent
           ? { borderColor: `${accent}44`, background: `${accent}12`, color: 'var(--foreground)' }
@@ -235,12 +235,12 @@ export function ChatBarFuelMeter({
     <button
       type="button"
       onClick={onClick}
-      className="xv-fuel-meter flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[var(--card-border)]/50 bg-white/[0.03] text-[10px] sm:text-xs font-terminal hover:border-[var(--accent)]/40 transition-colors"
+      className="xv-fuel-meter flex items-center gap-1 px-2 py-0.5 rounded-full border border-[var(--card-border)]/50 bg-white/[0.03] text-[9px] sm:text-[10px] font-terminal hover:border-[var(--accent)]/40 transition-colors shrink-0"
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-      <span className="font-semibold text-[var(--foreground)]">{remaining}</span>
-      <span className="text-[var(--muted)]">actions</span>
-      <span className="text-[var(--muted)] hidden sm:inline">· Est. {estimate}</span>
+      <span className="w-1 h-1 rounded-full bg-[var(--accent)]" />
+      <span className="font-semibold text-[var(--foreground)] whitespace-nowrap">
+        {remaining} actions · Est. {estimate}
+      </span>
     </button>
   );
 }

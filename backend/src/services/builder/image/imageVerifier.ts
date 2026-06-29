@@ -27,7 +27,7 @@ export async function verifyImageMatchesPrompt(
 ): Promise<ImageVerificationResult> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return { matchScore: 70, matches: true, issues: [], verifier: 'skipped-no-gemini' };
+    return { matchScore: 80, matches: true, issues: [], verifier: 'skipped-no-gemini' };
   }
 
   try {
@@ -87,6 +87,6 @@ Set matches=true only if matchScore>=72 and no critical identity errors.`;
     };
   } catch (err) {
     console.warn('[ImageVerifier] failed:', (err as Error).message);
-    return { matchScore: 65, matches: true, issues: [], verifier: 'fallback-accept' };
+    return { matchScore: 75, matches: true, issues: [], verifier: 'fallback-accept' };
   }
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Search, Play, Globe, Layers } from 'lucide-react';
+import { Rocket, Globe, Layers } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
@@ -21,21 +21,15 @@ import {
 import { ChatBarFileGrid } from './ChatBarFileGrid';
 import type { SendButtonState } from './ChatBarButtons';
 import { GitHubChipIcon, GitLabChipIcon, VercelChipIcon, TwitterChipIcon } from './ChatBarButtons';
-import { BlackHoleVButton } from './BlackHoleVButton';
 import { ChatPromptQueue } from './ChatPromptQueue';
 import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
-const TOOL_CHIPS = [
-  { name: 'GitLab', icon: GitLabChipIcon, accent: '#fc6d26' },
-  { name: 'Vercel', icon: VercelChipIcon, accent: '#000' },
-  { name: 'Twitter/X', icon: TwitterChipIcon, accent: '#1d9bf0' },
-] as const;
-
 const MAX_ROWS = 13;
-const LINE_HEIGHT = 22;
+const LINE_HEIGHT = 20;
+const MIN_INPUT_H = 36;
 
 function renameFile(file: File, newName: string) {
   return new File([file], newName, { type: file.type, lastModified: file.lastModified });
@@ -136,7 +130,7 @@ export function TerminalChatBar() {
     if (!el) return;
     el.style.height = 'auto';
     const maxH = LINE_HEIGHT * MAX_ROWS;
-    el.style.height = `${Math.min(el.scrollHeight, maxH)}px`;
+    el.style.height = `${Math.max(MIN_INPUT_H, Math.min(el.scrollHeight, maxH))}px`;
   }, [prompt]);
 
   useEffect(() => {
@@ -204,15 +198,14 @@ export function TerminalChatBar() {
           )}
 
           {!incognito && (
-          <div className="xv-chatbar-toolbar flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
-            <BlackHoleVButton className="hidden sm:flex" />
-            <ChatBarTip label="GitHub repos" className="shrink-0 hidden sm:inline-flex">
+          <div className="xv-chatbar-toolbar flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 overflow-x-auto scrollbar-hide flex-nowrap">
+            <ChatBarTip label="GitHub repos" className="shrink-0">
               <span className="inline-flex shrink-0">
                 <ChatBarToolChip
                   icon={<GitHubChipIcon />}
                   label="GitHub"
                   onClick={() => setGithubOpen(true)}
-                  accent="#6e40c9"
+                  accent="#24292f"
                 />
               </span>
             </ChatBarTip>
@@ -226,58 +219,52 @@ export function TerminalChatBar() {
                 />
               </span>
             </ChatBarTip>
+            <ChatBarTip label="Vercel" className="shrink-0">
+              <span className="inline-flex shrink-0">
+                <ChatBarToolChip
+                  icon={<VercelChipIcon />}
+                  label="Vercel"
+                  onClick={() => setIntegrationsOpen(true)}
+                  accent="#000"
+                />
+              </span>
+            </ChatBarTip>
+            <ChatBarTip label="X / Twitter" className="shrink-0 hidden xs:inline-flex">
+              <span className="inline-flex shrink-0">
+                <ChatBarToolChip
+                  icon={<TwitterChipIcon />}
+                  label="X"
+                  onClick={() => setIntegrationsOpen(true)}
+                  accent="#000"
+                />
+              </span>
+            </ChatBarTip>
             <ChatBarTip label="Connect & deploy tools" className="shrink-0">
               <button
                 type="button"
                 onClick={() => setIntegrationsOpen(true)}
-                className="flex items-center gap-1.5 px-3 h-7 rounded-full bg-gradient-to-r from-[#006aff]/20 to-[#006aff]/8 border border-[#006aff]/35 text-[10px] font-bold text-[var(--foreground)] shrink-0 shadow-sm hover:from-[#006aff]/30"
+                className="flex items-center gap-1 px-2.5 h-6 rounded-full bg-gradient-to-r from-[#006aff]/18 to-[#006aff]/6 border border-[#006aff]/30 text-[9px] font-bold text-[var(--foreground)] shrink-0 hover:from-[#006aff]/28"
               >
-                <Layers className="w-3.5 h-3.5 text-[#006aff]" />
+                <Layers className="w-3 h-3 text-[#006aff]" />
                 <span>Stack</span>
               </button>
             </ChatBarTip>
-            <div className="hidden sm:contents">
-              <ChatBarTip label="Search integrations">
-                <button
-                  type="button"
-                  onClick={() => setIntegrationsOpen(true)}
-                  className="p-1.5 h-7 rounded-lg hover:bg-white/10 text-[var(--foreground)] shrink-0"
-                >
-                  <Search className="w-3.5 h-3.5" />
-                </button>
-              </ChatBarTip>
-              {TOOL_CHIPS.filter((t) => t.name !== 'GitLab').map(({ name, icon: Icon, accent }) => (
-                <ChatBarTip key={name} label={name}>
-                  <span className="inline-flex shrink-0">
-                    <ChatBarToolChip
-                      icon={<Icon />}
-                      label={name}
-                      onClick={() => setIntegrationsOpen(true)}
-                      accent={accent}
-                    />
-                  </span>
-                </ChatBarTip>
-              ))}
-              <ChatBarTip label="Deploy project">
-                <span className="inline-flex shrink-0">
-                  <ChatBarToolChip
-                    icon={<Play className="w-3 h-3 fill-current text-[var(--accent)]" />}
-                    label="Deploy"
-                    onClick={() => setDeployOpen(true)}
-                    accent="#4a7aff"
-                  />
-                </span>
-              </ChatBarTip>
-            </div>
-            <div className="flex-1 min-w-[4px]" />
+            <ChatBarTip label="Deploy project" className="shrink-0">
+              <button
+                type="button"
+                onClick={() => setDeployOpen(true)}
+                className="flex items-center gap-1 px-2.5 h-6 rounded-full bg-gradient-to-r from-emerald-500/20 to-[#006aff]/15 border border-emerald-500/35 text-[9px] font-bold text-[var(--foreground)] shrink-0 hover:from-emerald-500/30"
+              >
+                <Rocket className="w-3 h-3 text-emerald-500" />
+                <span>Deploy</span>
+              </button>
+            </ChatBarTip>
+            <div className="flex-1 min-w-[2px]" />
             <ChatBarFuelMeter
               remaining={remaining}
               estimate={estimate}
               onClick={() => setCostOpen(true)}
             />
-            <span className="text-[9px] text-[var(--muted)] font-terminal hidden sm:inline">
-              ~{liveEstimate.time}
-            </span>
           </div>
           )}
 
@@ -310,7 +297,7 @@ export function TerminalChatBar() {
           />
           )}
 
-          <form onSubmit={handleSubmit} className="px-2 sm:px-3 py-1.5 sm:py-2.5 xv-chatbar-input-form">
+          <form onSubmit={handleSubmit} className="px-2 sm:px-2.5 py-1 sm:py-1.5 xv-chatbar-input-form">
             <ChatBarInputRow
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
@@ -333,7 +320,7 @@ export function TerminalChatBar() {
               }}
             >
               {!incognito && (
-                <span className="absolute left-2 bottom-3 text-sm font-terminal text-[var(--foreground)] opacity-50 z-10">
+                <span className="absolute left-2 bottom-2 text-sm font-terminal text-[var(--foreground)] opacity-50 z-10">
                   &gt;
                 </span>
               )}
@@ -354,9 +341,9 @@ export function TerminalChatBar() {
                 placeholder={incognito ? 'Type a private message…' : 'Xroga AI do everything..'}
                 rows={1}
                 className={cn(
-                  'w-full pr-2 py-2 sm:py-2.5 rounded-xl resize-none max-h-[286px]',
-                  incognito ? 'pl-3 text-white placeholder:text-white/45' : 'pl-6 sm:pl-7 text-[var(--foreground)] placeholder:text-[var(--muted)]',
-                  'bg-transparent focus:outline-none text-sm font-terminal leading-[22px]',
+                  'w-full pr-2 py-1.5 rounded-xl resize-none max-h-[260px] min-h-[36px]',
+                  incognito ? 'pl-3 text-white placeholder:text-white/45' : 'pl-6 text-[var(--foreground)] placeholder:text-[var(--muted)]',
+                  'bg-transparent focus:outline-none text-sm font-terminal leading-[20px]',
                   !loading && !prompt && 'cursor-blink'
                 )}
               />

@@ -1,31 +1,29 @@
 'use client';
 
 const PAYMENT_METHODS = [
-  { name: 'Visa', slug: 'visa' },
-  { name: 'Mastercard', slug: 'mastercard' },
-  { name: 'American Express', slug: 'americanexpress' },
-  { name: 'PayPal', slug: 'paypal' },
-  { name: 'Google Pay', slug: 'googlepay' },
-  { name: 'Apple Pay', slug: 'applepay' },
-  { name: 'UPI', slug: 'upi' },
-  { name: 'Paddle', slug: 'paddle' },
+  { name: 'Visa', src: 'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/visa.svg' },
+  { name: 'Mastercard', src: 'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/mastercard.svg' },
+  { name: 'Maestro', src: 'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/maestro.svg' },
+  { name: 'American Express', src: 'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/amex.svg' },
+  { name: 'JCB', src: 'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/jcb.svg' },
+  { name: 'Discover', src: 'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/discover.svg' },
+  { name: 'Diners Club', src: 'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/diners.svg' },
+  { name: 'UnionPay', src: 'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/main/flat-rounded/unionpay.svg' },
+  { name: 'PayPal', src: 'https://cdn.simpleicons.org/paypal/003087' },
+  { name: 'Google Pay', src: 'https://cdn.simpleicons.org/googlepay/4285F4' },
 ] as const;
 
 export function PaymentMethodIcons() {
   return (
-    <div className="flex flex-wrap items-center gap-2.5">
+    <div className="grid grid-cols-5 gap-2 sm:gap-2.5">
       {PAYMENT_METHODS.map((m) => (
         <div
-          key={m.slug}
+          key={m.name}
           title={m.name}
-          className="h-9 min-w-[52px] px-2.5 rounded-lg bg-white border border-[var(--card-border)] flex items-center justify-center shrink-0"
+          className="h-10 sm:h-11 rounded-lg bg-white border border-[var(--card-border)] flex items-center justify-center p-1.5 shrink-0 shadow-sm"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={`https://cdn.simpleicons.org/${m.slug}/111827`}
-            alt={m.name}
-            className="h-4 w-auto max-w-[44px] object-contain"
-          />
+          <img src={m.src} alt={m.name} className="h-full w-full object-contain" />
         </div>
       ))}
     </div>
@@ -54,20 +52,13 @@ export function SubscriptionManagePanel() {
           <button
             type="button"
             onClick={() => window.open('mailto:hello@xroga.com?subject=Cancel%20my%20Xroga%20subscription', '_blank')}
-            className="px-4 py-2 rounded-lg border border-[var(--card-border)] text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            className="px-4 py-2 rounded-lg bg-red-500/12 border border-red-500/40 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-500/20 transition-colors"
           >
             Cancel subscription
           </button>
         </div>
-      </div>
-
-      <div className="p-4 sm:p-5 rounded-xl border border-[var(--card-border)] bg-white/[0.02] space-y-3">
-        <h3 className="font-semibold text-sm">Cancel anytime — immediate stop</h3>
-        <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
-          Cancel anytime directly from your dashboard. Cancellation takes effect immediately and you will not be billed again.
-        </p>
-        <p className="text-xs text-[var(--muted)] leading-relaxed">
-          We do not offer retroactive refunds for the current billing period. You retain full access until your paid period ends.
+        <p className="text-[10px] text-[var(--muted)] leading-relaxed pt-1 border-t border-[var(--card-border)]/40">
+          Cancellation takes effect at the end of your billing period. You retain access until then. No retroactive refunds for the current period.
         </p>
       </div>
 
