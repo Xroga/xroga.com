@@ -82,19 +82,26 @@ export function UserPromptBubble({ content }: { content: string }) {
   const long = content.length > 120;
 
   return (
-    <span className="inline-block max-w-full px-3 py-2 rounded-xl bg-gradient-to-br from-[#006aff]/15 to-slate-500/10 border border-[var(--card-border)]/50 text-left shadow-sm">
-      <span className="opacity-60 mr-2">&gt;</span>
-      <span className={cn(!expanded && long && 'line-clamp-3')}>{content}</span>
+    <div className="inline-block max-w-full text-left">
+      <span className="inline-block max-w-full px-3 py-2 rounded-xl bg-gradient-to-br from-[#006aff]/15 to-slate-500/10 border border-[var(--card-border)]/50 shadow-sm">
+        <span className="opacity-60 mr-2">&gt;</span>
+        <span className={cn(!expanded && long && 'line-clamp-3')}>{content}</span>
+      </span>
       {long && (
         <button
           type="button"
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-0.5 text-[9px] text-[#006aff] mt-1.5 font-semibold"
+          className="flex items-center gap-0.5 text-[9px] text-[#006aff] mt-1 font-semibold px-3"
         >
           <ChevronDown className={cn('w-3 h-3', expanded && 'rotate-180')} />
           {expanded ? 'Show less' : 'Full prompt'}
         </button>
       )}
-    </span>
+      {expanded && long && (
+        <div className="mt-1.5 mx-1 px-3 py-2 rounded-lg border border-[var(--card-border)]/40 bg-[var(--background)]/60 text-[11px] text-[var(--foreground)] whitespace-pre-wrap break-words">
+          {content}
+        </div>
+      )}
+    </div>
   );
 }

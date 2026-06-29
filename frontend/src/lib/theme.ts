@@ -45,8 +45,8 @@ export const CUSTOM_DESKTOP_BG_KEY = 'xroga_custom_desktop_bg';
 export const CUSTOM_MOBILE_BG_KEY = 'xroga_custom_mobile_bg';
 
 export const THEME_OPTIONS: { id: ThemeId; label: string; description: string }[] = [
-  { id: 'image', label: 'Image Background', description: 'Galactic desktop/mobile wallpapers' },
-  { id: 'white', label: 'White', description: 'Clean black-on-white minimal' },
-  { id: 'black', label: 'Black', description: 'Pure black & white terminal' },
-  { id: 'gray', label: 'Gray', description: 'Gray & white focused workspace' },
+  { id: 'image', label: 'Image', description: 'Fun & creative work' },
+  { id: 'white', label: 'White', description: 'Pure deep work' },
+  { id: 'black', label: 'Black', description: 'Aesthetic attitude' },
+  { id: 'gray', label: 'Gray', description: 'Focused mode' },
 ];

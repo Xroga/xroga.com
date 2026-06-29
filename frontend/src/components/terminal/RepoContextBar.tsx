@@ -4,13 +4,18 @@ import { useEffect, useRef, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { api } from '@/lib/api';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
+import { cn } from '@/lib/utils';
 
 interface RepoEntry {
   repo: string;
   branches: string[];
 }
 
-export function RepoContextBar() {
+interface RepoContextBarProps {
+  outside?: boolean;
+}
+
+export function RepoContextBar({ outside }: RepoContextBarProps) {
   const [repos, setRepos] = useState<RepoEntry[]>([]);
   const [repoIdx, setRepoIdx] = useState(0);
   const [branch, setBranch] = useState('main');
@@ -55,7 +60,10 @@ export function RepoContextBar() {
   if (!current) return null;
 
   return (
-    <div className="flex items-center gap-2 px-2 sm:px-3 py-1 text-[10px] font-mono text-[var(--foreground)] overflow-x-auto scrollbar-hide border-0">
+    <div className={cn(
+      'flex items-center gap-2 text-[10px] font-mono text-[var(--foreground)] overflow-x-auto scrollbar-hide',
+      outside ? 'px-0 py-0' : 'px-2 sm:px-3 py-1 border-0'
+    )}>
       <div className="relative shrink-0">
         <button
           ref={repoBtnRef}

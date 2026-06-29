@@ -31,9 +31,9 @@ export function BlackHoleVButton({ className }: { className?: string }) {
             </span>
           </div>
           <p className="text-[10px] text-[var(--muted)] leading-relaxed mb-2.5">
-            All Xroga AI capabilities — balanced for complex tasks. Background work with manual or auto confirmations.
+            Our first and last model — every update ships in this one model. All Xroga AI capabilities, balanced for complex tasks.
           </p>
-          <div className="flex items-center justify-between gap-2 py-1.5 border-t border-[var(--card-border)]/40">
+          <div className="flex items-center justify-between gap-2 py-1.5">
             <span className="text-[10px] font-semibold">Auto mode</span>
             <button
               type="button"
@@ -47,7 +47,7 @@ export function BlackHoleVButton({ className }: { className?: string }) {
               <span className={cn('absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all', xrogaAutoMode ? 'left-4' : 'left-0.5')} />
             </button>
           </div>
-          <div className="flex items-center justify-between gap-2 py-1.5 border-t border-[var(--card-border)]/40">
+          <div className="flex items-center justify-between gap-2 py-1.5">
             <span className="text-[10px] font-semibold">Confirmations</span>
             <div className="flex text-[9px] font-bold overflow-hidden rounded-lg border border-[var(--card-border)]">
               <button type="button" onClick={() => setConfirmationMode('manual')} className={cn('px-2 py-1', confirmationMode === 'manual' ? 'bg-[#006aff] text-white' : 'text-[var(--muted)]')}>Manual</button>
@@ -61,10 +61,10 @@ export function BlackHoleVButton({ className }: { className?: string }) {
         ref={btnRef}
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-0.5 h-7 px-0 text-[11px] font-bold text-[var(--foreground)] bg-transparent border-0 hover:opacity-80 transition-opacity"
+        className="flex items-center gap-0.5 h-7 px-2 rounded-full bg-[#006aff]/10 border border-[#006aff]/30 text-[10px] sm:text-[11px] font-bold text-[var(--foreground)] hover:bg-[#006aff]/18 transition-colors"
       >
         <Infinity className="w-3.5 h-3.5 shrink-0 text-[#006aff]" strokeWidth={2.5} />
-        <span>Black Hole V∞</span>
+        <span className="hidden xs:inline">Black Hole V∞</span>
         <ChevronDown className={cn('w-3 h-3 opacity-50 transition-transform', open && 'rotate-180')} />
       </button>
     </div>

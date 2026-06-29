@@ -8,6 +8,9 @@ export interface MediaItem {
   type: MediaType;
   url: string;
   createdAt: string;
+  /** Jump back to the chat message that produced this asset */
+  sourceMessageId?: string;
+  sourcePrompt?: string;
 }
 
 export function loadMediaItems(): MediaItem[] {
@@ -27,15 +30,24 @@ export function saveMediaItems(items: MediaItem[]) {
   localStorage.setItem(MEDIA_KEY, JSON.stringify(items));
 }
 
-export function addMediaItem(item: Omit<MediaItem, 'id' | 'createdAt'> & { id?: string }) {
+export function addMediaItem(
+  item: Omit<MediaItem, 'id' | 'createdAt'> & { id?: string; createdAt?: string }
+) {
   const items = loadMediaItems();
   const next: MediaItem = {
     id: item.id ?? `media-${Date.now()}`,
     name: item.name,
     type: item.type,
     url: item.url,
-    createdAt: new Date().toISOString(),
+    createdAt: item.createdAt ?? new Date().toISOString(),
+    sourceMessageId: item.sourceMessageId,
+    sourcePrompt: item.sourcePrompt,
   };
-  saveMediaItems([next, ...items]);
+  const deduped = items.filter((i) => i.url !== next.url || i.sourceMessageId !== next.sourceMessageId);
+  saveMediaItems([next, ...deduped]);
   return next;
+}
+
+export function removeMediaItem(id: string) {
+  saveMediaItems(loadMediaItems().filter((i) => i.id !== id));
 }

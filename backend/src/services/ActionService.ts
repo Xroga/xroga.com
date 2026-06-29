@@ -2,6 +2,7 @@ import { getConcurrencyForTier } from '../config/plans.js';
 import { FREE_TRIAL_ACTIONS } from '../config/plans.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ACTION_COSTS, type TaskType } from '../types/index.js';
+import { ensureUserRecords } from './ensureUserRecords.js';
 
 export interface DeductResult {
   success: boolean;
@@ -52,13 +53,25 @@ export class ActionService {
     resetDate: string;
     concurrencyLimit: number;
   } | null> {
+    await ensureUserRecords(userId);
     await this.ensureTrialBalance(userId);
     const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('user_actions')
       .select('*')
       .eq('user_id', userId)
       .single();
+
+    if (error || !data) {
+      await ensureUserRecords(userId);
+      const retry = await supabase
+        .from('user_actions')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+      data = retry.data;
+      error = retry.error;
+    }
 
     if (error || !data) return null;
 
@@ -87,13 +100,25 @@ export class ActionService {
     options?: { projectId?: string; description?: string; customCost?: number }
   ): Promise<DeductResult> {
     const cost = options?.customCost ?? this.getCost(taskType);
+    await ensureUserRecords(userId);
     const supabase = getSupabaseAdmin();
 
-    const { data: current, error: fetchError } = await supabase
+    let { data: current, error: fetchError } = await supabase
       .from('user_actions')
       .select('*')
       .eq('user_id', userId)
       .single();
+
+    if (fetchError || !current) {
+      await ensureUserRecords(userId);
+      const retry = await supabase
+        .from('user_actions')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+      current = retry.data;
+      fetchError = retry.error;
+    }
 
     if (fetchError || !current) {
       return { success: false, remaining: 0, cost, error: 'User actions record not found' };

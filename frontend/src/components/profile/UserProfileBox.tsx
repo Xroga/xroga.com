@@ -3,9 +3,10 @@
 import { cn } from '@/lib/utils';
 
 const SIZE_CLASS = {
-  sidebar: 'w-14 h-14 sm:w-16 sm:h-16',
-  sidebarCompact: 'w-12 h-12',
-  terminal: 'w-14 h-14 sm:w-16 sm:h-16',
+  sidebar: 'w-11 h-11 sm:w-12 sm:h-12',
+  sidebarCompact: 'w-9 h-9',
+  terminal: 'w-8 h-8 sm:w-9 sm:h-9',
+  terminalCompact: 'w-7 h-7',
 } as const;
 
 interface UserProfileBoxProps {

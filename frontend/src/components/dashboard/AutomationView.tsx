@@ -14,6 +14,7 @@ import { api, type SwarmRunSummary } from '@/lib/api';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useRouter } from 'next/navigation';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
+import { copyText } from '@/components/ui/SectionRowActions';
 import { UiverseTableCard } from '@/components/ui/UiverseTableCard';
 import { automationTableRows } from '@/lib/tableRows';
 import { getItemMeta, incrementRunCount, markItemSeen } from '@/lib/itemMeta';
@@ -182,13 +183,22 @@ export function AutomationView() {
                   )}
                   <StatusBadge status={run.status} />
                 </div>
-                <button
-                  type="button"
-                  onClick={() => continueRun(run)}
-                  className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg bg-[var(--accent)]/15 text-[var(--accent)] hover:bg-[var(--accent)]/25 shrink-0"
-                >
-                  <Play className="w-3 h-3" /> Continue
-                </button>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => void copyText(run.prompt, 'Prompt copied')}
+                    className="text-[10px] px-2 py-1 rounded-lg border border-[var(--card-border)] hover:bg-white/5"
+                  >
+                    Copy
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => continueRun(run)}
+                    className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg bg-[var(--accent)]/15 text-[var(--accent)] hover:bg-[var(--accent)]/25"
+                  >
+                    <Play className="w-3 h-3" /> Continue
+                  </button>
+                </div>
               </div>
             </div>
           ))}

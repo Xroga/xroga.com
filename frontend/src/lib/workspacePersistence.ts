@@ -10,6 +10,7 @@ export interface WorkspaceSession {
   selectedId?: string;
   selectedLabel?: string;
   source?: WorkspaceSource;
+  jumpMessageId?: string;
   updatedAt: string;
 }
 
@@ -41,6 +42,7 @@ export function resumeToDashboard(opts: {
   selectedId: string;
   selectedLabel: string;
   source: WorkspaceSource;
+  jumpMessageId?: string;
 }) {
   const existing = loadWorkspaceSession();
   saveWorkspaceSession({
@@ -49,5 +51,6 @@ export function resumeToDashboard(opts: {
     selectedId: opts.selectedId,
     selectedLabel: opts.selectedLabel,
     source: opts.source,
+    jumpMessageId: opts.jumpMessageId,
   });
 }
