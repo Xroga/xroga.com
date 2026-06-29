@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { TerminalChatBar } from './TerminalChatBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
+import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { RepoContextBar } from './RepoContextBar';
 import { BlackHoleVButton } from './BlackHoleVButton';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -64,6 +65,7 @@ export function TerminalDock() {
           </div>
         )}
         <ChatbarQueueOutside />
+        <TerminalFollowUpStrip />
         <TerminalChatBar />
         {incognito ? (
           <p className="text-[10px] sm:text-xs text-center text-white py-2 sm:py-2.5 px-3 font-medium leading-relaxed xv-incognito-room-notice">

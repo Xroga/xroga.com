@@ -10,8 +10,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   ThumbsUp,
-  Layers,
   Star,
+  Share2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { copyImageToClipboard, downloadImage } from '@/lib/imageStudioUtils';
@@ -230,8 +230,8 @@ export function ImageStudioCard({
     setDeleteOpen(false);
   }
 
-  function handleVariant() {
-    const text = `Generate 4 more variants of: ${prompt ?? 'this image'}`;
+  function handlePostSocial() {
+    const text = `[Post] Share this image to Twitter, LinkedIn, and Instagram: ${previewSrc}${prompt ? `\nCaption: ${prompt}` : ''}`;
     setPrompt(text);
     void submit(text);
   }
@@ -299,7 +299,7 @@ export function ImageStudioCard({
 
         <div className="px-2 py-2">
           <p className="text-[10px] font-medium text-[var(--muted)] mb-1.5 px-0.5">
-            Vote for the best · tap to preview · download / edit / remove each
+            Vote for the best · Agnes · Cloudflare · Fal AI · +1 AI
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
             {displaySlots.map((img, i) => {
@@ -371,7 +371,15 @@ export function ImageStudioCard({
         </div>
 
         <div className="flex items-center gap-1 px-2 py-2 border-t border-[var(--card-border)]">
-          <IconBtn icon={Layers} title="4 more variants" onClick={handleVariant} />
+          <button
+            type="button"
+            title="Post to social media"
+            onClick={handlePostSocial}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-emerald-500/35 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold hover:bg-emerald-500/20 transition-colors"
+          >
+            <Share2 className="h-3.5 w-3.5" />
+            Post to social
+          </button>
           <div className="w-px h-5 bg-[var(--card-border)] mx-0.5" />
           <IconBtn icon={Download} title="Download selected" onClick={() => downloadImage(previewSrc, 'xroga-image.png')} />
           <IconBtn icon={Copy} title="Copy selected" onClick={() => copyImageToClipboard(previewSrc)} />

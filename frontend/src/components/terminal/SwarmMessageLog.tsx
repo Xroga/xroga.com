@@ -15,7 +15,7 @@ import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ProcessingPipeline } from './ProcessingPipeline';
 import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
-import { FollowUpChips, ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
+import { ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
 import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
@@ -45,7 +45,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, imageAttempts, videoProgressStep, followUps, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn } =
+  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, imageAttempts, videoProgressStep, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -315,9 +315,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                       </div>
                       {isLastAssistant && reasoning && (
                         <ReasoningPanel reasoning={reasoning} dag={dag ?? undefined} />
-                      )}
-                      {isLastAssistant && followUps.length > 0 && (
-                        <FollowUpChips items={followUps} onSelect={handleSuggestion} />
                       )}
                       {msg.content && (
                         <MessageBubbleActions
