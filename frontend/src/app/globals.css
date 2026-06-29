@@ -2312,3 +2312,90 @@ body.theme-gray * {
 .assistant-bubble-glow {
   position: relative;
 }
+
+/* Image Studio */
+@keyframes xv-image-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes xv-image-reveal-scan {
+  0% { transform: translateY(-100%); opacity: 0.6; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+@keyframes xv-image-sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.08); }
+}
+
+@keyframes xv-image-dot-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes xv-image-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes xv-image-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.xv-image-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 106, 255, 0.12) 50%,
+    transparent 100%
+  );
+  animation: xv-image-shimmer 2s ease-in-out infinite;
+}
+
+.xv-image-sparkle {
+  animation: xv-image-sparkle 1.5s ease-in-out infinite;
+}
+
+.xv-image-dot {
+  animation: xv-image-dot-pulse 1.2s ease-in-out infinite;
+}
+
+.xv-image-reveal-scan {
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(0, 106, 255, 0.25),
+    transparent
+  );
+  animation: xv-image-reveal-scan 1.2s ease-out forwards;
+}
+
+.xv-image-revealed {
+  animation: xv-image-card-in 0.6s ease-out;
+}
+
+.xv-image-studio-card {
+  animation: xv-image-card-in 0.5s ease-out;
+}
+
+.xv-image-modal-enter {
+  animation: xv-image-modal-in 0.3s ease-out;
+}
+
+.xv-image-gen-card {
+  animation: xv-image-card-in 0.4s ease-out;
+}
