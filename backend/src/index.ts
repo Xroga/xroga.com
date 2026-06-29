@@ -18,6 +18,7 @@ import billingWebhookRouter from './routes/billingWebhook.js';
 import simpleChatRouter from './routes/simpleChat.js';
 import v1Router from './routes/v1.js';
 import adminRouter from './routes/admin.js';
+import mediaRouter from './routes/media.js';
 import { adminMiddleware } from './middleware/admin.js';
 import { startSwarmWorker } from './workers/swarmWorker.js';
 
@@ -170,6 +171,7 @@ app.use('/api/admin', authMiddleware, adminMiddleware, adminRouter);
 app.use('/api/chat', authMiddleware, chatRouter);
 app.use('/api/projects', authMiddleware, projectsRouter);
 app.use('/api/profile', authMiddleware, profileRouter);
+app.use('/api/media', authMiddleware, mediaRouter);
 app.use('/api/debug', authMiddleware, debugRouter);
 app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
 app.use('/api/github', authMiddleware, githubRouter);

@@ -54,6 +54,9 @@ export function FeatureOutputView({
       isYoutubeThumbnail: Boolean(o.isYoutubeThumbnail),
       aspectFormat: typeof o.aspectFormat === 'string' ? o.aspectFormat : undefined,
       followUps: Array.isArray(o.followUps) ? (o.followUps as string[]) : undefined,
+      variantCount: typeof o.variantCount === 'number' ? o.variantCount : undefined,
+      isStyleTransfer: Boolean(o.isStyleTransfer),
+      sourceImageUrl: typeof o.sourceImageUrl === 'string' ? o.sourceImageUrl : undefined,
     };
     return <ImageStudioCard data={data} messageId={messageId} onDelete={onDelete} />;
   }
