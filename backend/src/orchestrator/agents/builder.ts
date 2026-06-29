@@ -1,4 +1,6 @@
 import { builderGenerate, classifyComplexity } from '../../services/aiRouter.js';
+import { classifyFeature } from '../../services/architect/featureRouter.js';
+import { getCreationSystemPrompt } from '../creationPrompts.js';
 import type { AgentContext, AgentModule } from './types.js';
 
 const CODE_STUB =
@@ -8,10 +10,10 @@ export const builderAgent: AgentModule = {
   name: 'Builder',
   role: 'Content and artifact generation',
   async execute(ctx: AgentContext) {
-    const complexity = classifyComplexity(ctx.prompt);
+    const route = await classifyFeature(ctx.prompt).catch(() => ({ category: 'chat' as const }));
+    const complexity = classifyComplexity(ctx.prompt, route.category);
     const tier = ctx.tier === 'premium' ? 'heavy' : complexity;
-    const system =
-      'You are the XROGA Builder. Produce the main deliverable (code, copy, script, or structured output). No preamble.';
+    const system = getCreationSystemPrompt(route.category, ctx.prompt);
 
     const { text } = await builderGenerate(ctx.prompt, tier, system).catch(() => ({
       text: CODE_STUB,

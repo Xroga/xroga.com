@@ -1,6 +1,8 @@
 import { groqChat } from '../../lib/groq.js';
 import { builderGenerate, classifyComplexity } from '../aiRouter.js';
+import { classifyFeature } from '../architect/featureRouter.js';
 import { loadMasterPrompt } from '../../orchestrator/masterPrompt.js';
+import { getCreationSystemPrompt } from '../../orchestrator/creationPrompts.js';
 import { isTrivialPrompt } from '../../lib/promptClassifier.js';
 
 const CHAT_SYSTEM = `You are Xroga — a sharp, friendly AI assistant (like a top-tier coding partner).
@@ -34,8 +36,10 @@ export async function quickChat(prompt: string): Promise<string> {
   }
 
   const master = await loadMasterPrompt().catch(() => CHAT_SYSTEM);
-  const complexity = classifyComplexity(prompt, 'chat');
-  const { text } = await builderGenerate(prompt, complexity, `${master}\n\n${CHAT_SYSTEM}`);
+  const route = await classifyFeature(prompt).catch(() => ({ category: 'chat' as const }));
+  const creationPrompt = getCreationSystemPrompt(route.category, prompt);
+  const complexity = classifyComplexity(prompt, route.category);
+  const { text } = await builderGenerate(prompt, complexity, `${master}\n\n${creationPrompt}\n\n${CHAT_SYSTEM}`);
   return text?.trim() || "I'm here — tell me what you'd like to work on.";
 }
 
