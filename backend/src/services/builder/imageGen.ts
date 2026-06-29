@@ -23,19 +23,24 @@ export class ImageGenerationError extends Error {
 export type ImageProgressStep = 'classifying' | 'enhancing' | 'painting' | 'reviewing' | 'upscaling' | 'complete';
 
 export const IMAGE_PROGRESS_MESSAGES: Record<ImageProgressStep, string> = {
-  classifying: '✨ Generating your image…',
-  enhancing: '🎨 Enhancing prompt…',
-  painting: '🖌️ Xroga is painting…',
-  reviewing: '🔍 Final touches…',
-  upscaling: '🔍 Final touches…',
-  complete: '🎉 Image ready!',
+  classifying: 'Understanding your request…',
+  enhancing: 'Enhancing your prompt…',
+  painting: 'Generating your image…',
+  reviewing: 'Final touches…',
+  upscaling: 'Final touches…',
+  complete: 'Image ready!',
 };
+
+const DEFAULT_FOLLOW_UPS = ['Make it 4K', 'Change style to anime', 'Generate variations'];
+const DEFAULT_PROS = ['Creative result'];
 
 export interface ImageGenOptions {
   onProgress?: (step: ImageProgressStep, message: string) => void;
   quality?: 'standard' | 'premium';
   userId?: string;
   runId?: string;
+  /** Skip slow LLM classify/enhance for sub-15s delivery (default true) */
+  fast?: boolean;
 }
 
 function extractImagePrompt(userPrompt: string): string {
@@ -79,16 +84,6 @@ type ProviderEntry = {
 function buildStandardProviders(): ProviderEntry[] {
   return [
     {
-      name: 'fal-sdxl',
-      configured: Boolean(process.env.FAL_KEY ?? process.env.FAL_API_KEY),
-      call: generateFalImage,
-    },
-    {
-      name: 'replicate-sd',
-      configured: Boolean(process.env.REPLICATE_API_TOKEN),
-      call: generateImageFlux,
-    },
-    {
       name: 'agnes-image',
       configured: Boolean(process.env.AGNES_API_KEY),
       call: generateAgnesImage,
@@ -97,6 +92,16 @@ function buildStandardProviders(): ProviderEntry[] {
       name: 'hailuo-image',
       configured: Boolean(process.env.HAILUO_API_KEY ?? process.env.MINIMAX_API_KEY),
       call: generateHailuoImage,
+    },
+    {
+      name: 'fal-sdxl',
+      configured: Boolean(process.env.FAL_KEY ?? process.env.FAL_API_KEY),
+      call: generateFalImage,
+    },
+    {
+      name: 'replicate-sd',
+      configured: Boolean(process.env.REPLICATE_API_TOKEN),
+      call: generateImageFlux,
     },
     {
       name: 'cloudflare',
@@ -176,14 +181,20 @@ function truncatePrompt(prompt: string): string {
   return t.slice(0, MAX_PROMPT_CHARS).trim();
 }
 
-/** Direct provider call — same path as smoke test (no circuit breaker). */
+const PROVIDER_TIMEOUT_MS = 12_000;
+
 async function callImageProvider(
   entry: ProviderEntry,
   prompt: string,
   ctx: { userId?: string; runId?: string }
 ): Promise<string> {
   const safePrompt = truncatePrompt(prompt);
-  const imageUrl = await entry.call(safePrompt);
+  const imageUrl = await Promise.race([
+    entry.call(safePrompt),
+    new Promise<string>((_, reject) =>
+      setTimeout(() => reject(new Error(`${entry.name} timed out`)), PROVIDER_TIMEOUT_MS)
+    ),
+  ]);
   if (!isValidImageResult(imageUrl)) {
     throw new ImageGenerationError(`${entry.name} returned invalid image URL`);
   }
@@ -308,29 +319,34 @@ function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T
 export async function generateImage(userPrompt: string, options?: ImageGenOptions): Promise<ImageGenOutput> {
   const rawQuery = extractImagePrompt(userPrompt);
   const ctx = { userId: options?.userId, runId: options?.runId };
+  const useFast = options?.fast !== false;
+  let imagePrompt = rawQuery;
+  let enhancedPrompt: string | undefined;
+  const effectiveQuality = options?.quality ?? 'standard';
 
-  emitProgress(options, 'classifying');
-  const intent = await withTimeout(
-    classifyImageQuery(rawQuery),
-    8000,
-    { subject: rawQuery, style: 'detailed, high quality', quality: 'standard' as const, rawQuery }
-  );
-  const quality = options?.quality ?? intent.quality;
-
-  emitProgress(options, 'enhancing');
-  const enhanced = await withTimeout(
-    enhanceImagePrompt(intent),
-    12000,
-    { prompt: rawQuery, negativePrompt: '', styleTags: [] }
-  );
-  const imagePrompt = enhanced.prompt || rawQuery;
+  if (!useFast) {
+    emitProgress(options, 'classifying');
+    const intent = await withTimeout(
+      classifyImageQuery(rawQuery),
+      2500,
+      { subject: rawQuery, style: 'detailed, high quality', quality: 'standard' as const, rawQuery }
+    );
+    emitProgress(options, 'enhancing');
+    const enhanced = await withTimeout(
+      enhanceImagePrompt(intent),
+      3500,
+      { prompt: rawQuery, negativePrompt: '', styleTags: [] }
+    );
+    imagePrompt = enhanced.prompt || rawQuery;
+    if (enhanced.prompt !== rawQuery) enhancedPrompt = enhanced.prompt;
+  }
 
   emitProgress(options, 'painting');
 
   let imageUrl: string;
   let provider: ImageGenOutput['provider'];
 
-  if (quality === 'premium' && buildPremiumProviders().some((p) => p.configured)) {
+  if (effectiveQuality === 'premium' && buildPremiumProviders().some((p) => p.configured)) {
     try {
       emitProgress(options, 'reviewing');
       const premium = await generatePremiumWithVoting(imagePrompt, ctx);
@@ -352,32 +368,31 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
     throw new ImageGenerationError('Image generation failed — no valid image returned.');
   }
 
-  emitProgress(options, 'upscaling');
-  imageUrl = await maybeUpscale(imageUrl, quality === 'premium');
-
-  emitProgress(options, 'reviewing');
-  const { followUps, pros, cons } = await withTimeout(
-    generateImageFollowUps(enhanced.prompt, provider),
-    8000,
-    {
-      followUps: ['Make it 4K', 'Change style to anime', 'Generate variations'],
-      pros: ['Creative result'],
-      cons: [],
-    }
-  );
+  if (!useFast && effectiveQuality === 'premium') {
+    emitProgress(options, 'upscaling');
+    imageUrl = await maybeUpscale(imageUrl, true);
+  }
 
   emitProgress(options, 'complete');
-  console.log(`[ImageGen] Success via ${provider} (quality=${quality})`);
+  console.log(`[ImageGen] Success via ${provider} (fast=${useFast})`);
+
+  const meta = useFast
+    ? { followUps: DEFAULT_FOLLOW_UPS, pros: DEFAULT_PROS, cons: [] as string[] }
+    : await withTimeout(generateImageFollowUps(imagePrompt, provider), 3000, {
+        followUps: DEFAULT_FOLLOW_UPS,
+        pros: DEFAULT_PROS,
+        cons: [],
+      });
 
   return {
     type: 'image',
     imageUrl,
     provider,
     prompt: rawQuery,
-    enhancedPrompt: enhanced.prompt,
-    followUps,
-    pros,
-    cons,
+    enhancedPrompt,
+    followUps: meta.followUps,
+    pros: meta.pros,
+    cons: meta.cons.length ? meta.cons : undefined,
   };
 }
 

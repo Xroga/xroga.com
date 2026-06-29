@@ -20,13 +20,13 @@ export const IMAGE_PROVIDERS = [
   'comfyui',
 ] as const;
 export const VIDEO_PROVIDERS = [
-  'runway',
-  'luma',
-  'hailuo',
+  'agnes',
   'kling',
   'fal',
+  'hailuo',
+  'runway',
+  'luma',
   'replicate-svd',
-  'agnes',
   'morph',
   'comfyui',
   'slideshow',

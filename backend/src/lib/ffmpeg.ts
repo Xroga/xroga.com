@@ -39,6 +39,17 @@ async function downloadToFile(url: string, destPath: string): Promise<void> {
   await writeFile(destPath, Buffer.from(await res.arrayBuffer()));
 }
 
+/** Download video bytes directly — used when FFmpeg mux fails */
+export async function downloadVideoBuffer(videoUrl: string): Promise<Buffer> {
+  if (videoUrl.startsWith('data:video/')) {
+    const base64 = videoUrl.split(',')[1] ?? '';
+    return Buffer.from(base64, 'base64');
+  }
+  const res = await fetch(videoUrl);
+  if (!res.ok) throw new Error(`Failed to download video: ${res.status}`);
+  return Buffer.from(await res.arrayBuffer());
+}
+
 async function cleanup(workDir: string, files: string[]): Promise<void> {
   for (const f of files) {
     try { await unlink(f); } catch { /* ignore */ }
@@ -58,8 +69,9 @@ export async function assembleVideo(input: AssemblyInput): Promise<AssemblyOutpu
     await execFileAsync('ffmpeg', ['-version']);
     return await runFfmpegAssembly(workDir, outputPath, input);
   } catch {
-    console.error('[FFmpeg] Not available, using stub assembly');
-    return await stubAssembly(input);
+    console.error('[FFmpeg] Not available, returning raw video download');
+    const buffer = await downloadVideoBuffer(input.videoUrl);
+    return { filePath: input.outputFilename, buffer, durationSeconds: 5 };
   }
 }
 

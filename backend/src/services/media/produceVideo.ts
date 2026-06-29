@@ -12,15 +12,15 @@ export interface ProduceVideoOptions {
   onProgress?: (step: MovieProgressStep, message: string, detail?: string) => void;
 }
 
-/** Routes to full movie pipeline or single-scene fast path */
+/** Routes to full movie pipeline only for explicit long-form requests */
 export async function produceVideo(
   userId: string,
   prompt: string,
   options?: ProduceVideoOptions
 ): Promise<VideoStudioOutput> {
   const isFullMovie =
-    /\b(movie|film|series|episode|trailer|short film|documentary)\b/i.test(prompt) ||
-    parseVideoDuration(prompt) > 5;
+    /\b(full movie|feature film|multi.?scene|episode\s+\d|series)\b/i.test(prompt) &&
+    parseVideoDuration(prompt) > 15;
 
   if (isFullMovie) {
     return runMoviePipeline({
