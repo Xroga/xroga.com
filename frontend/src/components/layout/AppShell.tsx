@@ -49,18 +49,25 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
         <div className="xv-main-column flex-1 flex flex-col w-full min-w-0 max-w-full min-h-screen overflow-x-hidden relative z-[2]">
           <header className="sticky top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3 shrink-0 bg-transparent border-b border-transparent">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <div className="xv-mobile-header-logo pl-11 sm:pl-12 lg:pl-0 min-w-0">
+              <div
+                className={cn(
+                  'xv-mobile-header-logo min-w-0',
+                  incognito && isDashboard ? 'pl-0 lg:pl-0' : 'pl-11 sm:pl-12 lg:pl-0'
+                )}
+              >
                 <Logo href="/dashboard" height={52} variant="header" className="!h-[52px] sm:!h-[68px] lg:!h-[72px]" />
               </div>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0 relative z-[250]">
               {isDashboard && <IncognitoModeButton />}
-              <AppStoreInline compact className="hidden md:inline-flex opacity-80" />
-              <HeaderActionMeter onClick={() => setTopUpOpen(true)} className="!px-2 sm:!px-3 !py-1 sm:!py-1.5 text-xs sm:text-sm" />
-              <div className="hidden sm:block">
-                <ThemeToggle />
-              </div>
-              <NotificationBell />
+              {!incognito && (
+                <>
+                  <AppStoreInline compact className="hidden md:inline-flex opacity-80" />
+                  <HeaderActionMeter onClick={() => setTopUpOpen(true)} className="!px-2 sm:!px-3 !py-1 sm:!py-1.5 text-xs sm:text-sm" />
+                </>
+              )}
+              <ThemeToggle />
+              {!incognito && <NotificationBell />}
             </div>
           </header>
 

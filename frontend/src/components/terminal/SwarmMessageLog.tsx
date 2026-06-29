@@ -16,8 +16,8 @@ import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions, isBuildRelated } from '@/lib/messageHelpers';
-import { getIncognitoAvatarUrl } from '@/lib/incognito';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
+import { UserProfileBox } from '@/components/profile/UserProfileBox';
 import { TerminalSearchBar } from '@/components/terminal/TerminalSearchBar';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { cn } from '@/lib/utils';
@@ -86,8 +86,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  const avatarUrl = isIncognito ? getIncognitoAvatarUrl() : profile?.avatar_url;
-  const displayInitial = isIncognito ? '?' : (profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U');
+  const displayInitial = profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U';
 
   const lastAssistantIdx = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
@@ -128,7 +127,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
       <div
         className={cn(
           'rounded-xl relative overflow-hidden border',
-          isIncognito ? 'terminal-skin-dark border-white/10 bg-black/40 backdrop-blur-md' : `terminal-skin-${terminalSkin}`,
+          isIncognito ? 'terminal-skin-dark border-white/15 bg-[#3a3a40]/80 backdrop-blur-md' : `terminal-skin-${terminalSkin}`,
           !isIncognito && (terminalSkin === 'dark' || terminalSkin === 'amoled') ? 'scanlines' : '',
           compact ? '' : 'w-full'
         )}
@@ -141,7 +140,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
             </h3>
             {!isIncognito && <ModelBadge variant="inline" className="text-[8px] sm:text-[9px] opacity-90" />}
             {isIncognito && (
-              <p className="text-[8px] sm:text-[9px] text-violet-300/80 font-medium">Private · not saved</p>
+              <p className="text-[8px] sm:text-[9px] text-white/55 font-medium">Private room · not saved</p>
             )}
           </div>
           <div className="hidden sm:flex items-center gap-1 shrink-0">
@@ -242,14 +241,11 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   isIncognito ? (
                     <IncognitoProfileBox size="terminal" />
                   ) : (
-                  <div className="w-7 h-7 rounded-full border border-[var(--card-border)] overflow-hidden shrink-0 flex items-center justify-center bg-[var(--accent)]/10 text-[10px] font-bold">
-                    {avatarUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      displayInitial
-                    )}
-                  </div>
+                    <UserProfileBox
+                      url={profile?.avatar_url}
+                      initial={displayInitial}
+                      size="terminal"
+                    />
                   )
                 )}
                 {msg.role === 'assistant' && (

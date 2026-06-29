@@ -161,7 +161,7 @@ export function TerminalChatBar() {
           ref={shellRef}
           className={cn(
             'relative',
-            incognito && 'xv-chatbar-incognito border-violet-500/25',
+            incognito && 'xv-chatbar-incognito',
             (dragOver || uploading) && !incognito && 'ring-2 ring-[var(--accent)]/40'
           )}
           onDragOver={(e: React.DragEvent) => {
@@ -255,14 +255,6 @@ export function TerminalChatBar() {
           </div>
           )}
 
-          {incognito && (
-            <div className="px-3 py-1.5 border-b border-violet-500/15">
-              <p className="text-[10px] text-violet-300/70 text-center">
-                Temporary chat · text only · auto-deletes on exit
-              </p>
-            </div>
-          )}
-
           {!incognito && showDomain && (
             <div className="flex items-center gap-2 px-3 py-2 border-b border-[var(--card-border)]/30">
               <Globe className="w-3.5 h-3.5 text-[var(--muted)] shrink-0" />
@@ -298,6 +290,7 @@ export function TerminalChatBar() {
               onUploadClick={() => fileRef.current?.click()}
               listening={listening}
               hideUpload={incognito}
+              surface={incognito ? 'incognito' : 'dashboard'}
               onMicToggle={() => {
                 if (!speech.supported) {
                   toast.error('Voice input not supported in this browser');
@@ -313,9 +306,11 @@ export function TerminalChatBar() {
                 setSendState('idle');
               }}
             >
-              <span className="absolute left-2 bottom-3 text-sm font-terminal text-[var(--foreground)] opacity-50 z-10">
-                &gt;
-              </span>
+              {!incognito && (
+                <span className="absolute left-2 bottom-3 text-sm font-terminal text-[var(--foreground)] opacity-50 z-10">
+                  &gt;
+                </span>
+              )}
               <textarea
                 ref={textareaRef}
                 value={prompt}
@@ -330,12 +325,12 @@ export function TerminalChatBar() {
                     void handleSubmit(e);
                   }
                 }}
-                placeholder={incognito ? 'Temporary message — chat only, no builds…' : 'Ask Xroga AI to do everything...'}
+                placeholder={incognito ? 'Type a private message…' : 'Ask Xroga AI to do everything...'}
                 rows={1}
                 className={cn(
-                  'w-full pl-7 pr-2 py-2.5 rounded-xl resize-none max-h-[286px]',
+                  'w-full pr-2 py-2.5 rounded-xl resize-none max-h-[286px]',
+                  incognito ? 'pl-3 text-white placeholder:text-white/45' : 'pl-7 text-[var(--foreground)] placeholder:text-[var(--muted)]',
                   'bg-transparent focus:outline-none text-sm font-terminal leading-[22px]',
-                  'text-[var(--foreground)] placeholder:text-[var(--muted)]',
                   !loading && !prompt && 'cursor-blink'
                 )}
               />

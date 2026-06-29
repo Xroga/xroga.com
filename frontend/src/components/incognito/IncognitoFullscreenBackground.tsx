@@ -4,9 +4,10 @@ import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
-import { INCOGNITO_BG_URL } from '@/lib/incognito';
 
-/** Fixed full-viewport incognito backdrop — portaled to document.body */
+const INCOGNITO_GRAY = '#2b2b30';
+
+/** Fixed full-viewport incognito backdrop — solid gray, no image */
 export function IncognitoFullscreenBackground() {
   const incognito = usePrivacyStore((s) => s.incognito);
   const pathname = usePathname();
@@ -16,7 +17,7 @@ export function IncognitoFullscreenBackground() {
   useEffect(() => {
     if (!active) return;
     const prev = document.body.style.backgroundColor;
-    document.body.style.backgroundColor = '#000';
+    document.body.style.backgroundColor = INCOGNITO_GRAY;
     return () => {
       document.body.style.backgroundColor = prev;
     };
@@ -25,17 +26,7 @@ export function IncognitoFullscreenBackground() {
   if (!active || typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className="xv-incognito-fullscreen-bg" aria-hidden>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={INCOGNITO_BG_URL}
-        alt=""
-        className="xv-incognito-fullscreen-bg__image"
-        fetchPriority="high"
-      />
-      <div className="xv-incognito-fullscreen-bg__shade" />
-      <div className="xv-incognito-fullscreen-bg__vignette" />
-    </div>,
+    <div className="xv-incognito-fullscreen-bg xv-incognito-fullscreen-bg--gray" aria-hidden />,
     document.body
   );
 }

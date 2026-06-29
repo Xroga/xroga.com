@@ -95,9 +95,12 @@ export function ChatBarMicButton({
       className={cn(
         'xv-mic-btn relative p-1.5 rounded-xl transition-all shrink-0',
         surface === 'homepage' && 'xv-mic-btn--home',
+        surface === 'incognito' && 'xv-mic-btn--incognito',
         listening
           ? 'bg-red-500/15 text-red-400'
-          : 'xv-chatbar-secondary-btn hover:bg-white/10 text-[var(--foreground)]'
+          : surface === 'incognito'
+            ? 'border border-white/25 text-white hover:bg-white/10'
+            : 'xv-chatbar-secondary-btn hover:bg-white/10 text-[var(--foreground)]'
       )}
       title={listening ? 'Stop listening' : 'Speak to text'}
       aria-label={listening ? 'Stop voice input' : 'Start voice input'}

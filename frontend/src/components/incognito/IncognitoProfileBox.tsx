@@ -22,7 +22,7 @@ export function IncognitoProfileBox({
     <div
       className={cn(
         'xv-incognito-profile-box rounded-lg overflow-hidden shrink-0',
-        'ring-1 ring-violet-400/35 shadow-[0_0_12px_rgba(139,92,246,0.2)]',
+        'ring-1 ring-white/20 shadow-[0_0_12px_rgba(255,255,255,0.06)]',
         'bg-black',
         SIZE_CLASS[size],
         className

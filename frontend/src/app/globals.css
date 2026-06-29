@@ -2198,7 +2198,7 @@ body.theme-gray * {
     }
   }
 
-  /* Incognito — full viewport background */
+  /* Incognito — full viewport gray private room */
   .xv-incognito-fullscreen-bg {
     position: fixed;
     inset: 0;
@@ -2209,41 +2209,45 @@ body.theme-gray * {
     pointer-events: none;
     overflow: hidden;
   }
-  .xv-incognito-fullscreen-bg__image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center center;
-    transform: scale(1.08);
-  }
-  .xv-incognito-fullscreen-bg__shade {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.48);
-  }
-  .xv-incognito-fullscreen-bg__vignette {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 120% 80% at 50% 40%, transparent 0%, rgba(0, 0, 0, 0.55) 100%),
-      linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, transparent 35%, rgba(0, 0, 0, 0.65) 100%);
+  .xv-incognito-fullscreen-bg--gray {
+    background: linear-gradient(165deg, #323238 0%, #2b2b30 45%, #242428 100%);
   }
   body.xv-incognito-active {
-    background-color: #000 !important;
+    background-color: #2b2b30 !important;
   }
   body.xv-incognito-active .terminal-layout {
     background: transparent !important;
   }
-  body.xv-incognito-active aside.xv-sidebar-hover {
-    background: rgba(6, 6, 10, 0.78) !important;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-color: rgba(255, 255, 255, 0.08) !important;
+  body.xv-incognito-active .xv-sidebar-root {
+    display: none !important;
+  }
+  body.xv-incognito-active .xv-mobile-header-logo {
+    padding-left: 0 !important;
   }
   body.xv-incognito-active .xv-terminal-dock-inner {
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 55%, transparent) !important;
+    background: linear-gradient(to top, rgba(36, 36, 40, 0.96) 60%, transparent) !important;
+  }
+  body.xv-incognito-active .xv-terminal-dock .xv-chatbar-incognito {
+    background: #3d3d44 !important;
+    border: 1px solid rgba(255, 255, 255, 0.38) !important;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.28);
+    color: #fff;
+  }
+  body.xv-incognito-active .xv-chatbar-incognito textarea,
+  body.xv-incognito-active .xv-chatbar-incognito .xv-mic-btn--incognito {
+    color: #fff !important;
+  }
+  body.xv-incognito-active .xv-go-btn--incognito {
+    background: rgba(255, 255, 255, 0.14) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    color: #fff !important;
+  }
+  body.xv-incognito-active .xv-go-btn--incognito .xv-go-btn__text,
+  body.xv-incognito-active .xv-go-btn--incognito .xv-go-btn__icon {
+    color: #fff !important;
+  }
+  body.xv-incognito-active .xv-incognito-room-notice {
+    color: rgba(255, 255, 255, 0.88) !important;
   }
 
   /* Incognito temporary dashboard */
@@ -2259,17 +2263,10 @@ body.theme-gray * {
     border: 1px solid rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(8px);
   }
-  body.xv-incognito-active .xv-terminal-dock .xv-chatbar-incognito {
-    background: rgba(10, 8, 18, 0.88) !important;
-    border-color: rgba(139, 92, 246, 0.35) !important;
-    backdrop-filter: blur(16px);
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(139, 92, 246, 0.1);
-  }
-  body.xv-incognito-active .xv-sidebar-profile-row {
-    background: rgba(139, 92, 246, 0.08);
-    border: 1px solid rgba(139, 92, 246, 0.2);
-  }
   .xv-incognito-profile-box {
+    border-radius: 10px;
+  }
+  .xv-user-profile-box {
     border-radius: 10px;
   }
 }

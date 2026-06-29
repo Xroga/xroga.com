@@ -37,6 +37,7 @@ import { createClient } from '@/lib/supabase/client';
 import { api } from '@/lib/api';
 import { UpgradeProButton } from '@/components/ui/Uiverse';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
+import { UserProfileBox } from '@/components/profile/UserProfileBox';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -167,6 +168,24 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const mobileDrawerWidth =
     typeof window !== 'undefined' ? Math.min(sidebarWidth, Math.floor(window.innerWidth * 0.88)) : sidebarWidth;
 
+  if (incognito) {
+    return (
+      <>
+        <SidebarSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+        <AvatarPickerModal
+          open={avatarPickerOpen}
+          onClose={() => setAvatarPickerOpen(false)}
+          currentUrl={avatarUrl}
+          onSelect={setAvatarUrl}
+          onUpload={async (file) => {
+            await uploadAvatarFile(file);
+            setAvatarPickerOpen(false);
+          }}
+        />
+      </>
+    );
+  }
+
   const isActive = (href: string) =>
     pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
 
@@ -234,21 +253,12 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           {incognito ? (
             <IncognitoProfileBox size="sidebar" />
           ) : (
-          <button
-            type="button"
+          <UserProfileBox
+            url={avatarUrl}
+            initial={nameInitial}
+            size="sidebar"
             onClick={() => setAvatarPickerOpen(true)}
-            className="w-9 h-9 rounded-full overflow-hidden shrink-0 ring-1 ring-white/10"
-            title="Change avatar"
-          >
-            {avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
-            ) : (
-              <span className="w-full h-full flex items-center justify-center text-xs font-bold bg-[var(--accent)]/20">
-                {nameInitial}
-              </span>
-            )}
-          </button>
+          />
           )}
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium xv-sidebar-profile-name truncate leading-tight">{userName}</p>
@@ -262,21 +272,12 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           {incognito ? (
             <IncognitoProfileBox size="sidebarCompact" />
           ) : (
-          <button
-            type="button"
+          <UserProfileBox
+            url={avatarUrl}
+            initial={nameInitial}
+            size="sidebarCompact"
             onClick={() => setAvatarPickerOpen(true)}
-            className="w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-[var(--card-border)]"
-            title="Change avatar"
-          >
-            {avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
-            ) : (
-              <span className="w-full h-full flex items-center justify-center text-[10px] font-bold bg-[var(--accent)]/20 text-[var(--foreground)]">
-                {nameInitial}
-              </span>
-            )}
-          </button>
+          />
           )}
           <ProfileQuickMenu onLogout={handleLogout} />
         </div>
