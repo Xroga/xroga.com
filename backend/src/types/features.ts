@@ -37,8 +37,12 @@ export interface LandingPageOutput {
 export interface ImageGenOutput {
   type: 'image';
   imageUrl: string;
-  provider: 'agnes' | 'fal' | 'replicate' | 'cloudflare' | 'openai';
+  provider: 'agnes' | 'fal' | 'replicate' | 'cloudflare' | 'luma' | 'runway' | 'hailuo' | 'comfyui';
   prompt: string;
+  enhancedPrompt?: string;
+  followUps?: string[];
+  pros?: string[];
+  cons?: string[];
 }
 
 export interface BrowserAutomationOutput {
@@ -163,6 +167,7 @@ export interface SwarmProgressEvent {
   message: string;
   iteration?: number;
   timestamp: string;
+  imageStep?: string;
 }
 
 export const FEATURE_ACTION_COSTS: Record<FeatureCategory, number> = {

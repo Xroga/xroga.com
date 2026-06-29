@@ -238,7 +238,16 @@ export class Orchestrator {
       return {
         ...result,
         polishedReply: reply,
-        followUps: shield.followUps,
+        followUps:
+          result.result.output &&
+          typeof result.result.output === 'object' &&
+          (result.result.output as { type?: string; followUps?: string[] }).type === 'image' &&
+          Array.isArray((result.result.output as { followUps?: string[] }).followUps)
+            ? [
+                ...((result.result.output as { followUps: string[] }).followUps ?? []),
+                ...shield.followUps,
+              ].slice(0, 6)
+            : shield.followUps,
         reasoning: plan.thinking || undefined,
       };
     } catch (err) {

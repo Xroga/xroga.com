@@ -86,6 +86,38 @@ async function runLegacyVersion(apiKey: string, prompt: string): Promise<string>
   return extractOutputUrl(prediction);
 }
 
+/** Upscale an image via Replicate Real-ESRGAN (cheap enhancement). */
+export async function upscaleImageReplicate(imageUrl: string): Promise<string> {
+  const apiKey = process.env.REPLICATE_API_TOKEN;
+  if (!apiKey) throw new Error('REPLICATE_API_TOKEN not configured');
+
+  const createRes = await fetch('https://api.replicate.com/v1/models/nightmareai/real-esrgan/predictions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+      Prefer: 'wait=60',
+    },
+    body: JSON.stringify({
+      input: {
+        image: imageUrl,
+        scale: 2,
+        face_enhance: false,
+      },
+    }),
+  });
+
+  if (!createRes.ok) {
+    throw new Error(`Replicate upscale failed: ${createRes.status}`);
+  }
+
+  let prediction = (await createRes.json()) as ReplicatePrediction;
+  if (prediction.status !== 'succeeded') {
+    prediction = await pollPrediction(apiKey, prediction);
+  }
+  return extractOutputUrl(prediction);
+}
+
 export async function generateImageFlux(prompt: string): Promise<string> {
   const apiKey = process.env.REPLICATE_API_TOKEN;
   if (!apiKey) throw new Error('REPLICATE_API_TOKEN not configured');

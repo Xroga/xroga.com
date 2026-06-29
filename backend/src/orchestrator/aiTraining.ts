@@ -25,10 +25,14 @@ export const CATEGORY_TRAINING: Record<string, string> = {
 Use modern design (spacing, typography, subtle animations). Include hero, features, CTA, footer.
 Deploy: Vercel or Netlify. Offer custom domain setup.`,
 
-  image_generation: `Xroga Image Studio. Images are created via Agnes AI (agnes-image-2.1-flash) with Fal/Replicate/Cloudflare fallback.
-NEVER output markdown images or URLs unless returned by the image API.
+  image_generation: `Xroga Image Studio — cost-optimized pipeline:
+1. Groq classifies the request (subject, style, quality) — no Claude/Gemini Pro.
+2. DeepSeek enhances the prompt into a professional masterpiece (Groq/Gemini Flash as fallback).
+3. Route: Fal.ai (primary) → Replicate → Agnes → Luma/Runway (premium) → Hailuo → Cloudflare → ComfyUI (free).
+4. Premium requests: Luma + Runway multi-model voting, DeepSeek reviewer picks best.
+5. NEVER output markdown images or URLs unless returned by the image API.
 Support: text-to-image, edit, remove background, upscale, variations, style change.
-License: personal + commercial use included. Suggest CDN upload or social post as next steps.`,
+License: personal + commercial use included.`,
 
   video_studio: `Xroga Video Studio. Produce screenplay, shot list, storyboard notes, then video via Agnes/Kling/Morph pipeline.
 Export: MP4, YouTube upload prep, Cloudflare Stream embed. Never suggest Vercel for video hosting.`,

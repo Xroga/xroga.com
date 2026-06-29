@@ -1,19 +1,50 @@
 'use client';
 
-import { useId } from 'react';
+import { useId, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+
+const STEP_ORDER = ['classifying', 'enhancing', 'painting', 'reviewing', 'complete'] as const;
+
+const STEP_LABELS: Record<string, string> = {
+  classifying: '✨ Generating your image…',
+  enhancing: '🎨 Enhancing prompt…',
+  painting: '🖌️ Xroga is painting…',
+  reviewing: '🔍 Final touches…',
+  upscaling: '🔍 Final touches…',
+  complete: '🎉 Image ready!',
+};
 
 /** Pencil drawing animation — Uiverse gustavofusco, branded Xroga AI */
 export function PencilGeneratingAnimation({
   className,
-  label = 'Generating your image',
-  sublabel = 'Xroga AI · Agnes Image Studio',
+  label,
+  sublabel = 'Xroga AI · Image Studio',
+  step,
+  message,
 }: {
   className?: string;
   label?: string;
   sublabel?: string;
+  step?: string;
+  message?: string;
 }) {
   const clipId = useId().replace(/:/g, '');
+  const [activeStep, setActiveStep] = useState(0);
+
+  useEffect(() => {
+    if (step) {
+      const idx = STEP_ORDER.indexOf(step as (typeof STEP_ORDER)[number]);
+      if (idx >= 0) setActiveStep(idx);
+      return;
+    }
+    const timer = setInterval(() => {
+      setActiveStep((s) => (s + 1) % STEP_ORDER.length);
+    }, 2800);
+    return () => clearInterval(timer);
+  }, [step]);
+
+  const displayLabel =
+    message ?? label ?? STEP_LABELS[step ?? STEP_ORDER[activeStep]] ?? 'Generating your image';
 
   return (
     <div
@@ -76,7 +107,6 @@ export function PencilGeneratingAnimation({
                   className="pencil__body3"
                 />
               </g>
-              {/* Xroga AI brand on pencil barrel */}
               <g className="pencil__brand" transform="rotate(90)">
                 <rect x="-38" y="-8" width="76" height="16" rx="3" fill="hsl(220,90%,45%)" opacity="0.95" />
                 <text
@@ -116,8 +146,21 @@ export function PencilGeneratingAnimation({
             </g>
           </svg>
         </div>
-        <div className="text-center space-y-1">
-          <p className="text-sm font-semibold text-[var(--foreground)]">{label}</p>
+        <div className="text-center space-y-2">
+          <p className="text-sm font-semibold text-[var(--foreground)] animate-in fade-in duration-300">
+            {displayLabel}
+          </p>
+          <div className="flex items-center justify-center gap-1.5">
+            {STEP_ORDER.map((s, i) => (
+              <span
+                key={s}
+                className={cn(
+                  'h-1 rounded-full transition-all duration-500',
+                  i <= activeStep ? 'w-4 bg-[#006aff]' : 'w-1.5 bg-[#006aff]/25'
+                )}
+              />
+            ))}
+          </div>
           <p className="text-[11px] text-[var(--muted)]">{sublabel}</p>
         </div>
       </div>
