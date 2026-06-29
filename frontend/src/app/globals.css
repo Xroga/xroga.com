@@ -1636,6 +1636,10 @@ body.theme-gray * {
     background: rgba(255, 255, 255, 0.1);
   }
 
+  .xv-chatbar-queue-outside {
+    width: 100%;
+  }
+
   .xv-terminal-dock-inner {
     margin-top: 0.75rem;
     padding-top: 1rem;

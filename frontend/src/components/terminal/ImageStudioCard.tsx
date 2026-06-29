@@ -26,6 +26,14 @@ export interface RejectedImage {
   provider: string;
   matchScore: number;
   issues?: string[];
+  scoresByVerifier?: Record<string, number>;
+}
+
+function formatVerifierScores(scores?: Record<string, number>): string {
+  if (!scores || !Object.keys(scores).length) return '';
+  return Object.entries(scores)
+    .map(([k, v]) => `${k} ${v}%`)
+    .join(' · ');
 }
 
 const FORMAT_LABELS: Record<string, string> = {
@@ -291,9 +299,11 @@ export function ImageStudioCard({
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
-                    <span className="absolute bottom-0 inset-x-0 bg-black/75 text-[7px] text-white px-1 py-0.5 truncate">
-                      {img.provider}
-                      {img.matchScore ? ` · ${img.matchScore}%` : ''}
+                    <span className="absolute bottom-0 inset-x-0 bg-black/75 text-[7px] text-white px-1 py-0.5 line-clamp-2 leading-tight">
+                      <span className="block truncate">{img.provider} · {img.matchScore}%</span>
+                      {formatVerifierScores(img.scoresByVerifier) ? (
+                        <span className="block truncate opacity-80">{formatVerifierScores(img.scoresByVerifier)}</span>
+                      ) : null}
                     </span>
                   </button>
                 );

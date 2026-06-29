@@ -58,6 +58,7 @@ export interface ImageGenOptions {
     provider: ImageGenOutput['provider'];
     matchScore: number;
     issues?: string[];
+    scoresByVerifier?: Record<string, number>;
   }) => void;
   quality?: 'standard' | 'premium';
   userId?: string;
@@ -394,6 +395,7 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
     matchScore: number;
     issues?: string[];
     blocked?: boolean;
+    scoresByVerifier?: Record<string, number>;
   };
 
   const attemptResults = await Promise.all(
@@ -403,9 +405,22 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
 
       try {
         const imageUrl = await callImageProvider(entry, imagePrompt, ctx);
-        emitProgress(options, 'verifying', `Analyzing ${providerLabel} result…`);
+        emitProgress(options, 'verifying', `Scoring ${providerLabel} (Gemini + OpenAI + Groq)…`);
 
-        const verification = await verifyImageMatchesPrompt(imageUrl, rawQuery);
+        let verification;
+        try {
+          verification = await verifyImageMatchesPrompt(imageUrl, rawQuery);
+        } catch (verifyErr) {
+          console.warn(`[ImageGen] verify failed for ${entry.name}:`, (verifyErr as Error).message);
+          verification = {
+            matchScore: 50,
+            matches: false,
+            issues: ['Verification failed — image still shown'],
+            verifier: 'verify-error',
+            scoresByVerifier: {},
+          };
+        }
+
         const provider = normalizeProvider(entry.name);
 
         const attempt: Attempt = {
@@ -414,6 +429,7 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
           matchScore: verification.matchScore,
           issues: verification.issues,
           blocked: verification.blockedForSafety,
+          scoresByVerifier: verification.scoresByVerifier,
         };
 
         options?.onImageAttempt?.({
@@ -421,6 +437,7 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
           provider: attempt.provider,
           matchScore: attempt.matchScore,
           issues: attempt.issues,
+          scoresByVerifier: attempt.scoresByVerifier,
         });
 
         console.log(
@@ -491,6 +508,7 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
     provider: a.provider,
     matchScore: a.matchScore,
     issues: a.issues,
+    scoresByVerifier: a.scoresByVerifier,
     selected: a.imageUrl === winner.imageUrl,
   }));
 

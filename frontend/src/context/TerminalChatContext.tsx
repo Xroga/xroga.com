@@ -63,7 +63,7 @@ interface TerminalChatContextValue {
   reasoning: string | null;
   dag: Array<{ id: string; description: string; agent: string }> | null;
   pipelineCompact: boolean;
-  submit: (text?: string) => Promise<void>;
+  submit: (text?: string, fromQueue?: boolean, interrupt?: boolean) => Promise<void>;
   stop: () => void;
   startNewChat: () => void;
   /** Permanently removes assistant response + its user prompt from chat, archive, and media */
@@ -112,9 +112,11 @@ export function TerminalChatProvider({
   const thinkingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const autoRanRef = useRef(false);
-  const submitRef = useRef<(text?: string, fromQueue?: boolean) => Promise<void>>(async () => {});
+  const submitRef = useRef<(text?: string, fromQueue?: boolean, interrupt?: boolean) => Promise<void>>(async () => {});
   const queueRef = useRef<QueuedPrompt[]>([]);
   const lastTurnRef = useRef<{ userMessageId: string; assistantId: string; text: string } | null>(null);
+  const skipNextQueueRef = useRef(false);
+  const interruptRef = useRef(false);
   const [sessionReady, setSessionReady] = useState(false);
 
   queueRef.current = promptQueue;
@@ -139,7 +141,19 @@ export function TerminalChatProvider({
 
   const enqueuePrompt = useCallback((text: string) => {
     setPromptQueue((q) => [...q, { id: crypto.randomUUID(), text, createdAt: Date.now() }]);
-    toast('Queued — sends when current response finishes', { icon: '⏳' });
+    toast.success('Queued — sends when current response finishes');
+  }, []);
+
+  const cleanupInProgressAssistant = useCallback(() => {
+    setMessages((m) => {
+      const last = m[m.length - 1];
+      if (last?.role === 'assistant' && !last.content && !last.featureOutput) {
+        return m.slice(0, -1);
+      }
+      return m;
+    });
+    setAnimatingId(null);
+    lastTurnRef.current = null;
   }, []);
 
   const processNextInQueue = useCallback(() => {
@@ -220,26 +234,41 @@ export function TerminalChatProvider({
     if (!item) return;
     setPromptQueue((q) => q.filter((p) => p.id !== id));
     if (loading) {
-      setPromptQueue((q) => [item, ...q]);
-      toast('Moved to front of queue', { icon: '⏳' });
-      return;
+      skipNextQueueRef.current = true;
+      interruptRef.current = true;
+      abortRef.current?.abort();
+      cleanupInProgressAssistant();
+      setLoading(false);
+      setSwarmRunning(false);
     }
-    void submitRef.current(item.text, true);
-  }, [loading]);
+    void submitRef.current(item.text, false, true);
+  }, [loading, cleanupInProgressAssistant, setSwarmRunning]);
 
   const clearQueue = useCallback(() => setPromptQueue([]), []);
 
   const submit = useCallback(
-    async (overrideText?: string, fromQueue = false) => {
+    async (overrideText?: string, fromQueue = false, interrupt = false) => {
       const userPrompt = (overrideText ?? prompt).trim();
       if (!userPrompt) return;
 
-      if (loading && !fromQueue) {
+      if (loading && interrupt) {
+        skipNextQueueRef.current = true;
+        interruptRef.current = true;
+        abortRef.current?.abort();
+        cleanupInProgressAssistant();
+        setLoading(false);
+        setSwarmRunning(false);
+        setPipelineMessage(null);
+        setImageProgressStep(null);
+        setImageAttempts([]);
+        setVideoProgressStep(null);
+      } else if (loading && !fromQueue) {
         enqueuePrompt(userPrompt);
         setPrompt('');
         return;
+      } else if (loading) {
+        return;
       }
-      if (loading) return;
 
       const userMessageId = crypto.randomUUID();
       const assistantId = crypto.randomUUID();
@@ -389,6 +418,11 @@ export function TerminalChatProvider({
 
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
+          if (interruptRef.current) {
+            interruptRef.current = false;
+            cleanupInProgressAssistant();
+            return;
+          }
           setMessages((m) => [
             ...m,
             { id: crypto.randomUUID(), role: 'system', content: '[Stopped] Response cancelled.', createdAt: Date.now() },
@@ -417,7 +451,7 @@ export function TerminalChatProvider({
           thinkingTimerRef.current = null;
         }
         const turn = lastTurnRef.current;
-        if (!incognito && turn) {
+        if (!incognito && turn && !interruptRef.current) {
           setMessages((current) => {
             if (isChatSectionArchive(turn.text)) {
               archiveChatTurn({
@@ -448,10 +482,15 @@ export function TerminalChatProvider({
         setImageAttempts([]);
         setVideoProgressStep(null);
         setPipelineCompact(false);
+        interruptRef.current = false;
+        if (skipNextQueueRef.current) {
+          skipNextQueueRef.current = false;
+          return;
+        }
         setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, incognito, setSwarmRunning, setActions, enqueuePrompt, processNextInQueue]
+    [prompt, loading, projectId, incognito, setSwarmRunning, setActions, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant]
   );
 
   submitRef.current = submit;

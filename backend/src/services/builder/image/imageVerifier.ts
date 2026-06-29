@@ -6,6 +6,7 @@ export interface ImageVerificationResult {
   issues: string[];
   verifier: string;
   blockedForSafety?: boolean;
+  scoresByVerifier?: Record<string, number>;
 }
 
 const VERIFIER_SYSTEM = `You are an image quality and safety verifier. Compare the image to the user's request.
@@ -49,6 +50,8 @@ function parseVerifierJson(raw: string, verifier: string): ImageVerificationResu
     blockedForSafety?: boolean;
   };
 
+  const key = verifier.replace(/-safety$/, '');
+
   if (parsed.blockedForSafety) {
     return {
       matchScore: 0,
@@ -56,6 +59,7 @@ function parseVerifierJson(raw: string, verifier: string): ImageVerificationResu
       issues: ['Image blocked: unsafe content', ...(parsed.issues ?? [])],
       verifier: `${verifier}-safety`,
       blockedForSafety: true,
+      scoresByVerifier: { [key]: 0 },
     };
   }
 
@@ -65,6 +69,7 @@ function parseVerifierJson(raw: string, verifier: string): ImageVerificationResu
     matches: parsed.matches === true || matchScore >= 72,
     issues: Array.isArray(parsed.issues) ? parsed.issues : [],
     verifier,
+    scoresByVerifier: { [key]: matchScore },
   };
 }
 
@@ -207,12 +212,17 @@ function mergeVerificationResults(results: ImageVerificationResult[]): ImageVeri
   const avgScore = Math.round(results.reduce((s, r) => s + r.matchScore, 0) / results.length);
   const issues = [...new Set(results.flatMap((r) => r.issues).filter(Boolean))];
   const matchVotes = results.filter((r) => r.matches).length;
+  const scoresByVerifier: Record<string, number> = {};
+  for (const r of results) {
+    if (r.scoresByVerifier) Object.assign(scoresByVerifier, r.scoresByVerifier);
+  }
 
   return {
     matchScore: avgScore,
     matches: avgScore >= 72 && matchVotes >= Math.ceil(results.length / 2),
     issues,
     verifier: results.map((r) => r.verifier).join('+'),
+    scoresByVerifier,
   };
 }
 
@@ -234,10 +244,11 @@ export async function verifyImageMatchesPrompt(
   if (!results.length) {
     console.warn('[ImageVerifier] All vision APIs failed');
     return {
-      matchScore: 55,
+      matchScore: 50,
       matches: false,
-      issues: ['Vision check unavailable — image shown for manual review'],
+      issues: ['Vision check unavailable — image still shown for your review'],
       verifier: 'failed',
+      scoresByVerifier: {},
     };
   }
 

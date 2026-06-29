@@ -58,6 +58,7 @@ export interface ImageGenOutput {
     matchScore: number;
     issues?: string[];
     selected?: boolean;
+    scoresByVerifier?: Record<string, number>;
   }>;
   aspectFormat?: '1:1' | '4:5' | '16:9' | '9:16' | '3:4' | '4:3';
   thumbnailUrl?: string;
