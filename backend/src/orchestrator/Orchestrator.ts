@@ -133,13 +133,6 @@ export class Orchestrator {
     });
 
     const reply = formatFeatureOutput(output);
-    const shield = await runThreeLayerShield({
-      content: reply,
-      prompt: ctx.prompt,
-      userId: ctx.userId,
-      runId,
-      includeProsCons: false,
-    });
 
     return {
       runId,
@@ -154,8 +147,8 @@ export class Orchestrator {
       },
       actions: { success: true, remaining: 0, cost: 4 },
       featureCategory: 'image_generation',
-      polishedReply: shield.content || reply,
-      followUps: output.followUps?.length ? output.followUps : shield.followUps,
+      polishedReply: reply,
+      followUps: output.followUps ?? [],
     };
   }
 

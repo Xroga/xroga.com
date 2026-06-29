@@ -26,6 +26,7 @@ export const SEARCH_PROVIDERS = ['tavily', 'exa', 'newsapi'] as const;
 export const CHEAP_API_TIMEOUT_MS = 5000;
 export const PREMIUM_API_TIMEOUT_MS = 15000;
 export const VIDEO_API_TIMEOUT_MS = 30000;
+export const IMAGE_API_TIMEOUT_MS = 120_000;
 
 const DEFAULTS: Record<string, readonly string[]> = {
   llm: LLM_PROVIDERS,

@@ -7,6 +7,8 @@ import { generateRunwayImage } from '../../lib/runway.js';
 import { generateHailuoImage } from '../../lib/hailuo.js';
 import { generateComfyUIImage } from '../../lib/comfyui.js';
 import { callWithFallback } from '../../lib/resilience/callWithFallback.js';
+import type { RetryOptions } from '../../lib/resilience/retry.js';
+import { IMAGE_API_TIMEOUT_MS } from '../../config/apiPriorities.js';
 import type { ImageGenOutput } from '../../types/features.js';
 import { classifyImageQuery } from './image/understanding.js';
 import { enhanceImagePrompt } from './image/promptEnhancer.js';
@@ -168,6 +170,11 @@ function normalizeProvider(name: string): ImageGenOutput['provider'] {
   return map[name] ?? 'fal';
 }
 
+const IMAGE_RETRY: RetryOptions = {
+  maxRetries: 0,
+  timeoutMs: IMAGE_API_TIMEOUT_MS,
+};
+
 async function tryProvider(
   entry: ProviderEntry,
   prompt: string,
@@ -178,7 +185,8 @@ async function tryProvider(
     () => {
       throw new ImageGenerationError(`${entry.name} failed`);
     },
-    { apiType: 'image_gen', userId: ctx.userId, runId: ctx.runId }
+    { apiType: 'image_gen', userId: ctx.userId, runId: ctx.runId },
+    IMAGE_RETRY
   );
   return result;
 }
@@ -246,7 +254,8 @@ async function generateStandardChain(
         `All image providers failed (${configured.map((p) => p.name).join(' → ')}). Check API quotas and keys.`
       );
     },
-    { apiType: 'image_gen', userId: ctx.userId, runId: ctx.runId }
+    { apiType: 'image_gen', userId: ctx.userId, runId: ctx.runId },
+    IMAGE_RETRY
   );
 
   return { imageUrl, provider: normalizeProvider(provider) };
@@ -270,17 +279,32 @@ function emitProgress(
   options?.onProgress?.(step, IMAGE_PROGRESS_MESSAGES[step]);
 }
 
+function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms)),
+  ]);
+}
+
 export async function generateImage(userPrompt: string, options?: ImageGenOptions): Promise<ImageGenOutput> {
   const rawQuery = extractImagePrompt(userPrompt);
   const ctx = { userId: options?.userId, runId: options?.runId };
 
   emitProgress(options, 'classifying');
-  const intent = await classifyImageQuery(rawQuery);
+  const intent = await withTimeout(
+    classifyImageQuery(rawQuery),
+    8000,
+    { subject: rawQuery, style: 'detailed, high quality', quality: 'standard' as const, rawQuery }
+  );
   const quality = options?.quality ?? intent.quality;
 
   emitProgress(options, 'enhancing');
-  const enhanced = await enhanceImagePrompt(intent);
-  const imagePrompt = enhanced.prompt;
+  const enhanced = await withTimeout(
+    enhanceImagePrompt(intent),
+    12000,
+    { prompt: rawQuery, negativePrompt: '', styleTags: [] }
+  );
+  const imagePrompt = enhanced.prompt || rawQuery;
 
   emitProgress(options, 'painting');
 
@@ -313,7 +337,15 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
   imageUrl = await maybeUpscale(imageUrl, quality === 'premium');
 
   emitProgress(options, 'reviewing');
-  const { followUps, pros, cons } = await generateImageFollowUps(enhanced.prompt, provider);
+  const { followUps, pros, cons } = await withTimeout(
+    generateImageFollowUps(enhanced.prompt, provider),
+    8000,
+    {
+      followUps: ['Make it 4K', 'Change style to anime', 'Generate variations'],
+      pros: ['Creative result'],
+      cons: [],
+    }
+  );
 
   emitProgress(options, 'complete');
   console.log(`[ImageGen] Success via ${provider} (quality=${quality})`);
@@ -328,4 +360,35 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
     pros,
     cons,
   };
+}
+
+/** Live smoke test — tries Fal then Replicate with a tiny prompt (for /health/smoke-image). */
+export async function smokeTestImageGeneration(): Promise<{
+  ok: boolean;
+  provider?: string;
+  imageUrl?: string;
+  error?: string;
+  tried: string[];
+}> {
+  const tried: string[] = [];
+  const prompt = 'a red circle on white background, minimal test';
+
+  const chain = buildStandardProviders().filter((p) => p.configured);
+  if (!chain.length) {
+    return { ok: false, error: 'No image providers configured', tried };
+  }
+
+  for (const entry of chain.slice(0, 3)) {
+    tried.push(entry.name);
+    try {
+      const imageUrl = await entry.call(prompt);
+      if (isValidImageResult(imageUrl)) {
+        return { ok: true, provider: entry.name, imageUrl: imageUrl.slice(0, 120), tried };
+      }
+    } catch (err) {
+      console.warn(`[ImageSmoke] ${entry.name}:`, (err as Error).message);
+    }
+  }
+
+  return { ok: false, error: 'All smoke-test providers failed', tried };
 }

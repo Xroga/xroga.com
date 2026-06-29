@@ -245,6 +245,28 @@ export function TerminalChatProvider({
               m.map((msg) => (msg.id === assistantId ? { ...msg, content: msg.content + delta } : msg))
             );
           },
+          onComplete: (complete) => {
+            if (complete.followUps?.length) {
+              setFollowUps(complete.followUps);
+            }
+            const text = complete.output
+              ? (() => {
+                  const o = complete.output as { type?: string; imageUrl?: string; prompt?: string; provider?: string };
+                  if (o.type === 'image' && o.imageUrl) {
+                    const alt = (o.prompt ?? 'Generated image').slice(0, 80);
+                    const provider = o.provider ? `\n\n*Generated via ${o.provider}*` : '';
+                    return `![${alt}](${o.imageUrl})${provider}`;
+                  }
+                  return null;
+                })()
+              : null;
+            if (text) {
+              fullReply = text;
+              setMessages((m) =>
+                m.map((msg) => (msg.id === assistantId ? { ...msg, content: text } : msg))
+              );
+            }
+          },
         });
 
       } catch (err) {

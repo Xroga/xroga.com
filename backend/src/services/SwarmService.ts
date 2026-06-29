@@ -277,7 +277,7 @@ export class SwarmService {
       event: 'complete',
       data: {
         runId: result.runId,
-        success: true,
+        success: result.result.success,
         featureCategory: result.featureCategory,
         output: result.result.output,
         agents: result.result.agents,

@@ -75,7 +75,7 @@ const healthPayload = () => {
   return {
     status: 'ok',
     service: 'xroga-api',
-    version: '1.2.1',
+    version: '1.2.2',
     timestamp: new Date().toISOString(),
     authConfigured: Boolean(process.env.SUPABASE_URL),
     dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
@@ -105,6 +105,19 @@ app.get('/health', (_req, res) => {
 
 app.get('/api/health', (_req, res) => {
   res.json(healthPayload());
+});
+
+app.get('/api/health/smoke-image', async (_req, res) => {
+  try {
+    const { smokeTestImageGeneration } = await import('./services/builder/imageGen.js');
+    const result = await smokeTestImageGeneration();
+    res.json({ ...healthPayload(), smoke: result });
+  } catch (err) {
+    res.status(500).json({
+      ...healthPayload(),
+      smoke: { ok: false, error: (err as Error).message, tried: [] },
+    });
+  }
 });
 
 app.get('/api/config', (_req, res) => {

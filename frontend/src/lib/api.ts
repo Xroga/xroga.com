@@ -39,6 +39,7 @@ export interface StreamSwarmOptions {
   compact?: boolean;
   onProgress?: (event: SwarmProgressEvent) => void;
   onDelta?: (delta: string) => void;
+  onComplete?: (event: SwarmCompleteEvent & { followUps?: string[] }) => void;
 }
 
 /** Stream SSE from POST /api/swarm/execute with JWT auth. */
@@ -157,12 +158,22 @@ export async function streamSwarmExecute(
       }
 
       if (eventName === 'complete') {
-        const complete = payload as SwarmCompleteEvent;
+        const complete = payload as SwarmCompleteEvent & { followUps?: string[] };
         const text = swarmOutputToText(complete.output);
-        if (text && !finalText) {
+        if (complete.output && typeof complete.output === 'object') {
+          const out = complete.output as { type?: string; imageUrl?: string };
+          if (out.type === 'image' && typeof out.imageUrl === 'string' && text) {
+            finalText = text;
+            options.onDelta?.(text);
+          } else if (text && !finalText) {
+            finalText = text;
+            options.onDelta?.(text);
+          }
+        } else if (text && !finalText) {
           finalText = text;
           options.onDelta?.(text);
         }
+        options.onComplete?.(complete);
       }
     }
   }
