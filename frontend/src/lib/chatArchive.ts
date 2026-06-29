@@ -62,3 +62,24 @@ export function archiveChatTurn(opts: {
 export function removeChatArchiveEntry(id: string) {
   save(loadChatArchive().filter((e) => e.id !== id));
 }
+
+export function findChatArchiveByMessageId(messageId: string): ChatArchiveEntry | undefined {
+  return loadChatArchive().find(
+    (e) => e.userMessageId === messageId || e.assistantMessageId === messageId,
+  );
+}
+
+/** Chats section: conversations, reports, documents — not image/video/build projects. */
+export function isChatSectionArchive(prompt: string): boolean {
+  const p = prompt.toLowerCase();
+  if (/\b(generate|create|make|draw|design)\b.{0,40}\b(image|picture|photo|logo|icon|thumbnail|poster|banner)\b/i.test(prompt)) {
+    return false;
+  }
+  if (/\b(video|clip|animation|movie|film|reel)\b/i.test(p) && /\b(generate|create|make|produce|render)\b/i.test(p)) {
+    return false;
+  }
+  if (/\b(website|web app|landing page|saas|store|shop|game|software|mobile app)\b/i.test(p) && /\b(build|create|make|generate|deploy)\b/i.test(p)) {
+    return false;
+  }
+  return true;
+}

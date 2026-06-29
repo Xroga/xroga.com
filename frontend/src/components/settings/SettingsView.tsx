@@ -22,8 +22,9 @@ import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 
 import { PrivacySettingsPanel } from '@/components/settings/PrivacySettingsPanel';
+import { DataAiSettingsPanel } from '@/components/settings/DataAiSettingsPanel';
 
-const TABS = ['General', 'Privacy', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
+const TABS = ['General', 'Privacy', 'Data & AI', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
 type Tab = (typeof TABS)[number];
 
 export function SettingsView({ email }: { email: string }) {
@@ -199,6 +200,8 @@ export function SettingsView({ email }: { email: string }) {
 
           {tab === 'Privacy' && <PrivacySettingsPanel />}
 
+          {tab === 'Data & AI' && <DataAiSettingsPanel email={email} />}
+
           {tab === 'Plan & Billing' && (
             <div className="space-y-5">
               <h2 className="font-semibold text-lg">Plan & Billing</h2>
@@ -295,13 +298,24 @@ export function SettingsView({ email }: { email: string }) {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
                   <div className="bg-[var(--card)] rounded-xl border border-[var(--card-border)] p-6 max-w-sm w-full">
                     <h3 className="font-semibold text-red-400">Delete Account?</h3>
-                    <p className="text-sm text-[var(--muted)] mt-2">This permanently deletes all projects and data. This cannot be undone.</p>
+                    <p className="text-sm text-[var(--muted)] mt-2">
+                      For full account deletion, use the Data &amp; AI tab. This only signs you out.
+                    </p>
                     <div className="flex gap-2 mt-4">
                       <button type="button" onClick={() => setShowDeleteModal(false)} className="flex-1 py-2 rounded-lg border border-[var(--card-border)] text-sm">
                         Cancel
                       </button>
-                      <button type="button" onClick={() => toast.error('Contact support to delete account')} className="flex-1 py-2 rounded-lg bg-red-600 text-sm">
-                        Delete
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const supabase = createClient();
+                          await supabase.auth.signOut();
+                          router.push('/');
+                          router.refresh();
+                        }}
+                        className="flex-1 py-2 rounded-lg bg-red-600 text-sm"
+                      >
+                        Sign out
                       </button>
                     </div>
                   </div>

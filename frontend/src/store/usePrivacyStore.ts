@@ -13,6 +13,10 @@ interface PrivacyState {
   crossProjectAccess: boolean;
   xrogaAutoMode: boolean;
   confirmationMode: ConfirmationMode;
+  /** Train Xroga on this user's chats for personalized responses */
+  trainForPersonalUse: boolean;
+  /** Allow anonymized content to improve models for everyone */
+  improveModelForEveryone: boolean;
   setIncognito: (v: boolean) => void;
   setAllowPersonalInfo: (v: boolean) => void;
   setUseRandomDisplayName: (v: boolean) => void;
@@ -20,6 +24,8 @@ interface PrivacyState {
   setCrossProjectAccess: (v: boolean) => void;
   setXrogaAutoMode: (v: boolean) => void;
   setConfirmationMode: (v: ConfirmationMode) => void;
+  setTrainForPersonalUse: (v: boolean) => void;
+  setImproveModelForEveryone: (v: boolean) => void;
 }
 
 export const usePrivacyStore = create<PrivacyState>()(
@@ -32,6 +38,8 @@ export const usePrivacyStore = create<PrivacyState>()(
       crossProjectAccess: false,
       xrogaAutoMode: true,
       confirmationMode: 'manual',
+      trainForPersonalUse: true,
+      improveModelForEveryone: false,
       setIncognito: (incognito) => set({ incognito }),
       setAllowPersonalInfo: (allowPersonalInfo) => set({ allowPersonalInfo }),
       setUseRandomDisplayName: (useRandomDisplayName) => set({ useRandomDisplayName }),
@@ -39,6 +47,8 @@ export const usePrivacyStore = create<PrivacyState>()(
       setCrossProjectAccess: (crossProjectAccess) => set({ crossProjectAccess }),
       setXrogaAutoMode: (xrogaAutoMode) => set({ xrogaAutoMode }),
       setConfirmationMode: (confirmationMode) => set({ confirmationMode }),
+      setTrainForPersonalUse: (trainForPersonalUse) => set({ trainForPersonalUse }),
+      setImproveModelForEveryone: (improveModelForEveryone) => set({ improveModelForEveryone }),
     }),
     { name: 'xroga-privacy-v1' }
   )

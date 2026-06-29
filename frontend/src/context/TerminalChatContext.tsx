@@ -21,10 +21,9 @@ import {
   loadWorkspaceSession,
   saveWorkspaceSession,
 } from '@/lib/workspacePersistence';
-import { addMediaItem } from '@/lib/mediaStorage';
-import { archiveChatTurn } from '@/lib/chatArchive';
-import { isBuildPrompt, saveLocalProject } from '@/lib/projectArchive';
-import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
+import { addMediaItem, removeMediaByUrl, removeMediaByMessageId } from '@/lib/mediaStorage';
+import { archiveChatTurn, removeChatArchiveEntry, isChatSectionArchive } from '@/lib/chatArchive';
+import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
@@ -66,6 +65,8 @@ interface TerminalChatContextValue {
   submit: (text?: string) => Promise<void>;
   stop: () => void;
   startNewChat: () => void;
+  /** Permanently removes assistant response + its user prompt from chat, archive, and media */
+  deleteTurn: (assistantMessageId: string) => void;
   removeFromQueue: (id: string) => void;
   editQueuedPrompt: (id: string, text: string) => void;
   sendQueuedNow: (id: string) => void;
@@ -163,6 +164,32 @@ export function TerminalChatProvider({
     setSwarmActiveAgent(null);
     if (!usePrivacyStore.getState().incognito) clearWorkspaceSession();
   }, [setSwarmRunning]);
+
+  const deleteTurn = useCallback((assistantMessageId: string) => {
+    setMessages((current) => {
+      const assistantIdx = current.findIndex((m) => m.id === assistantMessageId);
+      if (assistantIdx < 0) return current;
+
+      let userIdx = assistantIdx - 1;
+      while (userIdx >= 0 && current[userIdx].role !== 'user') userIdx--;
+
+      const assistant = current[assistantIdx];
+      const removeIds = new Set<string>([assistantMessageId]);
+      if (userIdx >= 0) removeIds.add(current[userIdx]!.id);
+
+      const output = assistant.featureOutput as Record<string, unknown> | undefined;
+      if (typeof output?.imageUrl === 'string') removeMediaByUrl(output.imageUrl);
+      if (typeof output?.streamingUrl === 'string') removeMediaByUrl(output.streamingUrl);
+      removeMediaByMessageId(assistantMessageId);
+
+      if (userIdx >= 0) {
+        removeChatArchiveEntry(`chat-${current[userIdx]!.id}`);
+      }
+
+      return current.filter((m) => !removeIds.has(m.id));
+    });
+    toast.success('Deleted permanently');
+  }, []);
 
   const removeFromQueue = useCallback((id: string) => {
     setPromptQueue((q) => q.filter((p) => p.id !== id));
@@ -370,13 +397,15 @@ export function TerminalChatProvider({
         const turn = lastTurnRef.current;
         if (!incognito && turn) {
           setMessages((current) => {
-            archiveChatTurn({
-              prompt: turn.text,
-              messages: current,
-              userMessageId: turn.userMessageId,
-              assistantMessageId: turn.assistantId,
-            });
-            if (isBuildPrompt(turn.text) && !isImageGenerationPrompt(turn.text) && !isVideoGenerationPrompt(turn.text)) {
+            if (isChatSectionArchive(turn.text)) {
+              archiveChatTurn({
+                prompt: turn.text,
+                messages: current,
+                userMessageId: turn.userMessageId,
+                assistantMessageId: turn.assistantId,
+              });
+            }
+            if (shouldSaveToProjects(turn.text)) {
               saveLocalProject({
                 name: turn.text.slice(0, 48),
                 prompt: turn.text,
@@ -443,6 +472,7 @@ export function TerminalChatProvider({
         submit,
         stop,
         startNewChat,
+        deleteTurn,
         removeFromQueue,
         editQueuedPrompt,
         sendQueuedNow,

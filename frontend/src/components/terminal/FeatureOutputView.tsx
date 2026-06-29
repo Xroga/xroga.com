@@ -28,7 +28,7 @@ export function FeatureOutputView({
       aspectFormat: typeof o.aspectFormat === 'string' ? o.aspectFormat : undefined,
       followUps: Array.isArray(o.followUps) ? (o.followUps as string[]) : undefined,
     };
-    return <ImageStudioCard data={data} onDelete={onDelete} />;
+    return <ImageStudioCard data={data} messageId={messageId} onDelete={onDelete} />;
   }
 
   if (o.type === 'video_studio' && typeof o.streamingUrl === 'string') {
