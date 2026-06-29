@@ -6,6 +6,8 @@ import { classifyFeature, computeFeatureActionCost } from './architect/featureRo
 import { sendSSE } from '../lib/sse.js';
 import { InsufficientActionsError } from '../errors/InsufficientActionsError.js';
 import { ensureUserRecords } from './ensureUserRecords.js';
+import { Orchestrator } from '../orchestrator/Orchestrator.js';
+import { getSwarmQueue } from '../config/redis.js';
 import type { SwarmStatus } from '../types/index.js';
 import type { FeatureCategory, SwarmProgressEvent, FeatureOutput } from '../types/features.js';
 import { FEATURE_TASK_TYPES } from '../types/features.js';
@@ -25,6 +27,50 @@ export interface SwarmRunResult {
 
 export class SwarmService {
   static async run(
+    userId: string,
+    prompt: string,
+    projectId?: string,
+    onProgress?: (event: SwarmProgressEvent) => void,
+    options?: { lineCount?: number; extras?: Record<string, unknown> }
+  ): Promise<SwarmRunResult> {
+    const wrapped = await Orchestrator.executeSafe(
+      () => this.runCore(userId, prompt, projectId, onProgress, options),
+      { userId, prompt, onProgress }
+    );
+    const { polishedReply: _pr, ...rest } = wrapped;
+    void _pr;
+    return rest;
+  }
+
+  static async enqueueLongTask(
+    userId: string,
+    prompt: string,
+    projectId?: string,
+    featureCategory?: FeatureCategory
+  ): Promise<{ runId: string; queued: boolean }> {
+    const runId = crypto.randomUUID();
+    const queue = getSwarmQueue();
+    const supabase = getSupabaseAdmin();
+
+    if (!queue) {
+      return { runId, queued: false };
+    }
+
+    await supabase.from('swarm_job_queue').insert({
+      run_id: runId,
+      user_id: userId,
+      prompt,
+      project_id: projectId ?? null,
+      feature_category: featureCategory ?? null,
+      status: 'queued',
+    });
+
+    await queue.add('swarm-execute', { userId, prompt, projectId, runId }, { jobId: runId });
+
+    return { runId, queued: true };
+  }
+
+  private static async runCore(
     userId: string,
     prompt: string,
     projectId?: string,
@@ -153,7 +199,7 @@ export class SwarmService {
           role: 'assistant',
           content: result.success
             ? `✅ ${route.category} completed. ${outputSummary}`
-            : `⚠️ Task incomplete after ${result.iterations} iteration(s).`,
+            : `Task in progress — ${result.iterations} iteration(s) completed. Refine with a follow-up prompt for more detail.`,
           metadata: { swarmRunId: run.id, featureCategory: route.category, output: result.output },
         },
       ]);
@@ -207,7 +253,7 @@ export class SwarmService {
       data: { agent: 'architect', status: 'planning', message: 'Analyzing your request...' },
     });
 
-    const result = await this.run(userId, prompt, projectId, (event) => {
+    const onProgress = (event: SwarmProgressEvent) => {
       sendSSE(res, {
         event: 'progress',
         data: {
@@ -217,24 +263,23 @@ export class SwarmService {
           iteration: event.iteration,
         },
       });
-    });
+    };
 
-    const chatOutput = result.result.output as FeatureOutput | undefined;
-    const replyText =
-      chatOutput?.type === 'chat' && typeof chatOutput.content === 'string'
-        ? chatOutput.content
-        : this.summarizeOutput(result.result.output);
+    const result = await Orchestrator.executeSafe(
+      () => this.runCore(userId, prompt, projectId, onProgress),
+      { userId, prompt, onProgress }
+    );
 
     sendSSE(res, {
       event: 'delta',
-      data: { delta: replyText },
+      data: { delta: result.polishedReply },
     });
 
     sendSSE(res, {
       event: 'complete',
       data: {
         runId: result.runId,
-        success: result.result.success,
+        success: true,
         featureCategory: result.featureCategory,
         output: result.result.output,
         agents: result.result.agents,

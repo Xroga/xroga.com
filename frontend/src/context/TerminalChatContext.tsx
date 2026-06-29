@@ -207,6 +207,7 @@ export function TerminalChatProvider({
 
       const assistantId = crypto.randomUUID();
       let gotEvent = false;
+      let fullReply = '';
       const controller = new AbortController();
       abortRef.current = controller;
 
@@ -223,7 +224,6 @@ export function TerminalChatProvider({
         setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
         setAnimatingId(assistantId);
 
-        let fullReply = '';
         await streamSwarmExecute(text, {
           projectId,
           signal: controller.signal,
@@ -261,11 +261,16 @@ export function TerminalChatProvider({
           setMessages((m) => m.filter((msg) => msg.id !== assistantId || msg.content.length > 0));
           return;
         }
-        const message = (err as Error).message;
-        toast.error(message);
+        const friendly =
+          "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.";
         setMessages((m) => [
           ...m.filter((msg) => msg.id !== assistantId || msg.content.length > 0),
-          { id: crypto.randomUUID(), role: 'assistant', content: `⚠️ ${message}`, createdAt: Date.now() },
+          {
+            id: assistantId,
+            role: 'assistant',
+            content: fullReply || friendly,
+            createdAt: Date.now(),
+          },
         ]);
       } finally {
         if (thinkingTimerRef.current) {

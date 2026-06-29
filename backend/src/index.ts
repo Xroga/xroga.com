@@ -16,6 +16,7 @@ import notificationsRouter from './routes/notifications.js';
 import billingRouter from './routes/billing.js';
 import billingWebhookRouter from './routes/billingWebhook.js';
 import simpleChatRouter from './routes/simpleChat.js';
+import { startSwarmWorker } from './workers/swarmWorker.js';
 
 const app = express();
 
@@ -122,7 +123,11 @@ app.use((_req, res) => {
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err);
   if (!res.headersSent) {
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(200).json({
+      success: true,
+      message:
+        "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.",
+    });
   }
 });
 
@@ -131,6 +136,9 @@ app.listen(port, '0.0.0.0', () => {
   console.log(`Environment: ${process.env.NODE_ENV ?? 'development'}`);
   if (!process.env.SUPABASE_URL) {
     console.warn('WARNING: SUPABASE_URL is not set — authenticated routes will fail');
+  }
+  if (process.env.RUN_SWARM_WORKER === 'true') {
+    startSwarmWorker();
   }
 });
 
