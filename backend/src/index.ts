@@ -139,6 +139,14 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
   console.log(`Environment: ${process.env.NODE_ENV ?? 'development'}`);
+  void import('./services/builder/imageGen.js').then(({ getConfiguredImageProviders }) => {
+    const providers = getConfiguredImageProviders();
+    if (providers.length) {
+      console.log(`[ImageGen] Configured providers: ${providers.join(', ')}`);
+    } else {
+      console.warn('[ImageGen] WARNING: No image API keys set — image generation will fail');
+    }
+  });
   if (!process.env.SUPABASE_URL) {
     console.warn('WARNING: SUPABASE_URL is not set — authenticated routes will fail');
   }
