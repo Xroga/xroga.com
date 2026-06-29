@@ -2,9 +2,6 @@
 #
 # Deploy from THIS directory (backend/):
 #   cd backend && fly deploy -a xroga-api
-#
-# Or from monorepo root:
-#   fly deploy . --config fly.api.toml -a xroga-api
 
 app = 'xroga-api'
 primary_region = 'iad'
@@ -16,9 +13,13 @@ primary_region = 'iad'
   PORT = '8080'
   NODE_ENV = 'production'
   FRONTEND_URL = 'https://xroga.com'
+  RUN_SWARM_WORKER = 'true'
+  SWARM_WORKER_CONCURRENCY = '2'
+  GPU_ENABLED = 'false'
 
 [processes]
   app = 'node dist/index.js'
+  worker = 'RUN_SWARM_WORKER=true node dist/index.js'
 
 [http_service]
   internal_port = 8080
@@ -30,7 +31,7 @@ primary_region = 'iad'
 
   [http_service.concurrency]
     type = 'requests'
-    soft_limit = 50
+    soft_limit = 80
     hard_limit = 100
 
   [[http_service.checks]]
@@ -41,6 +42,14 @@ primary_region = 'iad'
     path = '/health'
 
 [[vm]]
-  memory = '1gb'
+  memory = '2gb'
   cpu_kind = 'shared'
-  cpus = 1
+  cpus = 2
+
+# GPU worker for ComfyUI — scale separately when COMFYUI_URL is configured
+# [[vm]]
+#   processes = ['gpu-worker']
+#   memory = '32gb'
+#   cpu_kind = 'performance'
+#   cpus = 8
+#   gpu_kind = 'a100'

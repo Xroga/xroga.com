@@ -29,6 +29,10 @@ RUN npm prune --omit=dev
 
 FROM base
 
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y ffmpeg tesseract-ocr pandoc libimage-exiftool-perl && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /app /app
 
 EXPOSE 8080

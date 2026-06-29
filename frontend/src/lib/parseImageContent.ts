@@ -30,6 +30,12 @@ export function isImageGenerationPrompt(text: string): boolean {
   );
 }
 
+export function isVideoGenerationPrompt(text: string): boolean {
+  return /\b(generate|create|make|produce|film|shoot)\b[\s\S]{0,40}\b(video|movie|film|trailer|clip|scene|episode|series)\b|\bvideo\s+of\b/i.test(
+    text
+  );
+}
+
 export function parseProviderFromContent(content: string): string | undefined {
   const m = content.match(/\*Generated via ([^*]+)\*/);
   return m?.[1]?.trim();

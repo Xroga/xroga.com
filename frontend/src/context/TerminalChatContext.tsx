@@ -52,6 +52,7 @@ interface TerminalChatContextValue {
   swarmActiveAgent: string | null;
   pipelineMessage: string | null;
   imageProgressStep: string | null;
+  videoProgressStep: string | null;
   followUps: string[];
   reasoning: string | null;
   dag: Array<{ id: string; description: string; agent: string }> | null;
@@ -88,6 +89,7 @@ export function TerminalChatProvider({
   const [swarmActiveAgent, setSwarmActiveAgent] = useState<string | null>(null);
   const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
   const [imageProgressStep, setImageProgressStep] = useState<string | null>(null);
+  const [videoProgressStep, setVideoProgressStep] = useState<string | null>(null);
   const [followUps, setFollowUps] = useState<string[]>([]);
   const [reasoning, setReasoning] = useState<string | null>(null);
   const [dag, setDag] = useState<Array<{ id: string; description: string; agent: string }> | null>(null);
@@ -195,6 +197,8 @@ export function TerminalChatProvider({
       setSwarmRunning(true);
       setSwarmActiveAgent(null);
       setPipelineMessage(null);
+      setImageProgressStep(null);
+      setVideoProgressStep(null);
       setFollowUps([]);
       setReasoning(null);
       setDag(null);
@@ -233,6 +237,7 @@ export function TerminalChatProvider({
             const label = event.message ?? event.status ?? 'Thinking…';
             setPipelineMessage(label);
             if (event.imageStep) setImageProgressStep(event.imageStep);
+            if (event.videoStep) setVideoProgressStep(event.videoStep);
             if (event.agent) setSwarmActiveAgent(event.agent);
             const ev = event as SwarmProgressEvent & { dag?: typeof dag; thinking?: string };
             if (ev.thinking && !useCompactPipeline) setReasoning(ev.thinking);
@@ -251,11 +256,23 @@ export function TerminalChatProvider({
             }
             const text = complete.output
               ? (() => {
-                  const o = complete.output as { type?: string; imageUrl?: string; prompt?: string; provider?: string };
+                  const o = complete.output as {
+                    type?: string;
+                    imageUrl?: string;
+                    prompt?: string;
+                    provider?: string;
+                    streamingUrl?: string;
+                    title?: string;
+                    followUps?: string[];
+                  };
                   if (o.type === 'image' && o.imageUrl) {
                     const alt = (o.prompt ?? 'Generated image').slice(0, 80);
                     const provider = o.provider ? `\n\n*Generated via ${o.provider}*` : '';
                     return `![${alt}](${o.imageUrl})${provider}`;
+                  }
+                  if (o.type === 'video_studio' && o.streamingUrl) {
+                    const title = o.title ?? 'Your film';
+                    return `**${title}** is ready!\n\n[Watch & download](${o.streamingUrl})`;
                   }
                   return null;
                 })()
@@ -265,6 +282,10 @@ export function TerminalChatProvider({
               setMessages((m) =>
                 m.map((msg) => (msg.id === assistantId ? { ...msg, content: text } : msg))
               );
+            }
+            const outputFollowUps = (complete.output as { followUps?: string[] } | undefined)?.followUps;
+            if (outputFollowUps?.length) {
+              setFollowUps(outputFollowUps);
             }
           },
         });
@@ -305,6 +326,7 @@ export function TerminalChatProvider({
         setSwarmActiveAgent(null);
         setPipelineMessage(null);
         setImageProgressStep(null);
+        setVideoProgressStep(null);
         setPipelineCompact(false);
         setTimeout(processNextInQueue, 50);
       }
@@ -345,6 +367,7 @@ export function TerminalChatProvider({
         swarmActiveAgent,
         pipelineMessage,
         imageProgressStep,
+        videoProgressStep,
         pipelineCompact,
         followUps,
         reasoning,

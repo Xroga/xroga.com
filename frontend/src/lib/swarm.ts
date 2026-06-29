@@ -31,7 +31,8 @@ export function swarmOutputToText(output: unknown): string {
     return `![${alt}](${o.imageUrl})${provider}`;
   }
   if (o.type === 'video_studio' && o.streamingUrl) {
-    return `Video ready: ${o.streamingUrl}`;
+    const title = (o as { title?: string }).title ?? 'Your film';
+    return `**${title}** is ready!\n\n[Watch & download](${o.streamingUrl})`;
   }
   if (o.type === 'deep_research' && o.pdfUrl) {
     return `Research report: ${o.pdfUrl}`;
@@ -46,6 +47,7 @@ export interface SwarmProgressEvent {
   message?: string;
   iteration?: number;
   imageStep?: string;
+  videoStep?: string;
 }
 
 export interface SwarmCompleteEvent {

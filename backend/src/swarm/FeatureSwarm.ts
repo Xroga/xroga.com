@@ -45,7 +45,7 @@ export class FeatureSwarm extends BaseSwarm {
       browser_automation: 'Convert to Playwright script (free local) with Browserbase fallback',
       cross_post: 'Format and post to social platforms',
       key_creation: 'Navigate dev portal and store encrypted API key',
-      video_studio: 'Write screenplay, parallel video gen (Agnes+Kling+Morph), audio, FFmpeg assembly',
+      video_studio: 'Script → Characters → Storyboard → Scene rendering (Runway/Luma/Hailuo/Kling/Fal) → Audio → FFmpeg assembly',
       deep_research: 'Exa+Tavily search, Gemini synthesis, PDF report with bibliography',
       content_blocker: 'Configure Cloudflare Family DNS + ONNX Runtime protection',
       job_hunter: 'Apify scrape, Claude resume tailoring, Browserbase auto-apply',
@@ -127,7 +127,20 @@ export class FeatureSwarm extends BaseSwarm {
           output = await createApiKey(context.userId, context.prompt);
           break;
         case 'video_studio':
-          output = await produceVideo(context.userId, context.prompt, context.projectId);
+          output = await produceVideo(context.userId, context.prompt, {
+            projectId: context.projectId,
+            runId: context.runId,
+            onProgress: (step, message, detail) => {
+              this.onProgress?.({
+                runId: context.runId,
+                agent: 'builder',
+                status: 'building',
+                message: detail ?? message,
+                videoStep: step,
+                timestamp: new Date().toISOString(),
+              });
+            },
+          });
           break;
         case 'deep_research':
           output = await conductDeepResearch(context.userId, context.prompt, context.projectId);
