@@ -26,6 +26,7 @@ import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox'
 import { UserProfileBox } from '@/components/profile/UserProfileBox';
 import { TerminalSearchBar } from '@/components/terminal/TerminalSearchBar';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { loadWorkspaceSession } from '@/lib/workspacePersistence';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -59,6 +60,17 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
+
+  useEffect(() => {
+    const session = loadWorkspaceSession();
+    if (session?.jumpMessageId) {
+      const id = session.jumpMessageId;
+      setTimeout(() => {
+        messageRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setSearchHit(id);
+      }, 400);
+    }
+  }, []);
 
   const displayInitial = profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U';
 
@@ -232,13 +244,13 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                     <UserProfileBox
                       url={profile?.avatar_url}
                       initial={displayInitial}
-                      size="terminal"
+                      size="terminalCompact"
                     />
                   )
                 )}
                 {msg.role === 'assistant' && (
-                  <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
-                    <Image src={AI_RESPONSE_LOGO_URL} alt="Xroga" width={22} height={22} unoptimized className="object-contain" />
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
+                    <Image src={AI_RESPONSE_LOGO_URL} alt="Xroga" width={32} height={32} unoptimized className="object-contain w-7 h-7 sm:w-8 sm:h-8" />
                   </div>
                 )}
                 <div
@@ -269,7 +281,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             sublabel="Xroga AI · Video Studio"
                           />
                         ) : msg.featureOutput ? (
-                          <FeatureOutputView output={msg.featureOutput} />
+                          <FeatureOutputView output={msg.featureOutput} messageId={msg.id} />
                         ) : loading &&
                         msg.id === animatingId &&
                         isImageGenerationPrompt(lastUserText) ? (

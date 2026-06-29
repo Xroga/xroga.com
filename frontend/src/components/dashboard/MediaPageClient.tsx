@@ -1,14 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { Film, Image as ImageIcon, Music, Upload } from 'lucide-react';
+import { Image as ImageIcon, Upload } from 'lucide-react';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
-import { UiverseTableCard } from '@/components/ui/UiverseTableCard';
-import { SectionRowActions, downloadUrl } from '@/components/ui/SectionRowActions';
-import { loadMediaItems, saveMediaItems, type MediaItem } from '@/lib/mediaStorage';
-import { mediaTableRows } from '@/lib/tableRows';
-import { getItemMeta, markItemSeen } from '@/lib/itemMeta';
+import { MediaCard } from '@/components/dashboard/MediaCard';
+import { loadMediaItems, saveMediaItems, removeMediaItem, type MediaItem } from '@/lib/mediaStorage';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { useRouter } from 'next/navigation';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -27,7 +24,7 @@ export function MediaPageClient() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const { setPrompt } = useTerminalChat();
+  const { setPrompt, messages } = useTerminalChat();
 
   useEffect(() => {
     setItems(loadMediaItems());
@@ -63,21 +60,22 @@ export function MediaPageClient() {
     });
   }
 
-  function removeItem(id: string) {
-    persist(items.filter((i) => i.id !== id));
-    toast.success('Removed from library');
-  }
-
   function openInDashboard(item: MediaItem) {
-    markItemSeen(item.id);
     setSelectedId(item.id);
-    const prompt = `Use my ${item.type} asset "${item.name}" in the next build`;
+    const prompt = item.sourcePrompt ?? `Use my ${item.type} asset "${item.name}" in the next build`;
     setPrompt(prompt);
+
+    const archived = item.sourceMessageId
+      ? messages
+      : undefined;
+
     resumeToDashboard({
       prompt,
+      messages: archived,
       selectedId: item.id,
       selectedLabel: item.name,
       source: 'media',
+      jumpMessageId: item.sourceMessageId,
     });
     router.push('/dashboard');
   }
@@ -96,10 +94,10 @@ export function MediaPageClient() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
               <ImageIcon className="w-7 h-7 text-[var(--accent)]" />
-              AI Media Library
+              AI Media
             </h1>
             <p className="text-sm text-[var(--muted)] mt-1">
-              Images, videos, and audio from generation are saved here automatically. Upload your own files too.
+              Images, videos, and audio save here automatically. Tap any card to jump to where it was created.
             </p>
           </div>
           <button
@@ -146,34 +144,23 @@ export function MediaPageClient() {
             <ImageIcon className="w-12 h-12 mx-auto text-[var(--muted)] mb-4 opacity-50" />
             <p className="text-sm text-[var(--muted)]">No media yet in this view.</p>
             <p className="text-xs text-[var(--muted)] mt-2">
-              Ask Xroga to generate images, video, or audio — or upload files here.
+              Ask Xroga to generate images, video, or audio — they appear here automatically.
             </p>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {shown.map((item) => (
-              <div key={item.id} className="space-y-2">
-                {item.type === 'image' && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={item.url}
-                    alt=""
-                    className="w-full h-24 object-cover rounded-lg border border-[var(--card-border)]"
-                  />
-                )}
-                {item.type === 'video' && <Film className="w-8 h-8 text-[var(--muted)]" />}
-                {item.type === 'audio' && <Music className="w-8 h-8 text-[var(--muted)]" />}
-                <UiverseTableCard
-                  title={item.name.slice(0, 28) || item.type}
-                  rows={mediaTableRows(item, getItemMeta(item.id))}
-                  selected={selectedId === item.id}
-                  onClick={() => openInDashboard(item)}
-                />
-                <SectionRowActions
-                  onDownload={() => downloadUrl(item.name, item.url)}
-                  onDelete={() => removeItem(item.id)}
-                />
-              </div>
+              <MediaCard
+                key={item.id}
+                item={item}
+                selected={selectedId === item.id}
+                onOpen={openInDashboard}
+                onDelete={(id) => {
+                  removeMediaItem(id);
+                  persist(items.filter((i) => i.id !== id));
+                  toast.success('Removed from library');
+                }}
+              />
             ))}
           </div>
         )}

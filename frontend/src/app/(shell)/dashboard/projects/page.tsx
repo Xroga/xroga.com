@@ -10,13 +10,15 @@ import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { UiverseTableCard } from '@/components/ui/UiverseTableCard';
 import { api, type Project } from '@/lib/api';
 import { projectTableRows } from '@/lib/tableRows';
-import { getItemMeta, markItemSeen } from '@/lib/itemMeta';
+import { loadLocalProjects, type LocalProjectEntry } from '@/lib/projectArchive';
+import { getItemMeta, markItemSeen, splitDateParts, recentlyLabel } from '@/lib/itemMeta';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [localProjects, setLocalProjects] = useState<LocalProjectEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -24,6 +26,7 @@ export default function ProjectsPage() {
   const { setPrompt } = useTerminalChat();
 
   useEffect(() => {
+    setLocalProjects(loadLocalProjects());
     api.projects
       .list()
       .then(setProjects)
@@ -85,8 +88,38 @@ export default function ProjectsPage() {
               <Skeleton key={i} height={200} baseColor="var(--card)" highlightColor="var(--card-border)" />
             ))}
           </div>
-        ) : filtered.length > 0 ? (
+        ) : filtered.length > 0 || localProjects.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {localProjects.map((p) => {
+              const created = splitDateParts(p.updatedAt);
+              return (
+                <UiverseTableCard
+                  key={p.id}
+                  title={p.name.slice(0, 32) || 'project'}
+                  rows={[
+                    { left: 'name', right: p.name.slice(0, 28) },
+                    { left: 'type', right: p.type },
+                    { left: 'date', right: created.date },
+                    { left: 'time', right: created.time },
+                    { left: 'year', right: created.year },
+                    { left: 'recently seen', right: recentlyLabel(p.updatedAt) },
+                  ]}
+                  selected={selectedId === p.id}
+                  onClick={() => {
+                    setSelectedId(p.id);
+                    setPrompt(p.prompt);
+                    resumeToDashboard({
+                      prompt: p.prompt,
+                      selectedId: p.id,
+                      selectedLabel: p.name,
+                      source: 'projects',
+                      jumpMessageId: p.sourceMessageId,
+                    });
+                    router.push('/dashboard');
+                  }}
+                />
+              );
+            })}
             {filtered.map((p) => (
               <UiverseTableCard
                 key={p.id}

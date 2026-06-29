@@ -73,5 +73,7 @@ export function parseVideoDuration(prompt: string): number {
 }
 
 export function computeVideoActionCost(durationSeconds: number): number {
-  return Math.ceil(durationSeconds / 5) * 50;
+  if (durationSeconds <= 5) return 10;
+  if (durationSeconds <= 15) return 25;
+  return Math.min(50, Math.ceil(durationSeconds / 10) * 25);
 }

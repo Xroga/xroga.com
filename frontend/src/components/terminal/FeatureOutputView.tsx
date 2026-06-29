@@ -6,9 +6,11 @@ import { VideoStudioCard, type VideoOutputData } from './VideoStudioCard';
 export function FeatureOutputView({
   output,
   onDelete,
+  messageId,
 }: {
   output: unknown;
   onDelete?: () => void;
+  messageId?: string;
 }) {
   if (!output || typeof output !== 'object') return null;
   const o = output as Record<string, unknown>;
@@ -35,7 +37,7 @@ export function FeatureOutputView({
       durationSeconds: typeof o.durationSeconds === 'number' ? o.durationSeconds : undefined,
       selectedProvider: typeof o.selectedProvider === 'string' ? o.selectedProvider : undefined,
     };
-    return <VideoStudioCard data={data} onDelete={onDelete} />;
+    return <VideoStudioCard data={data} onDelete={onDelete} messageId={messageId} />;
   }
 
   return null;

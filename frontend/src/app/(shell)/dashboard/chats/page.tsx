@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { SwarmRunHistory } from '@/components/dashboard/SwarmRunHistory';
+import { ChatArchiveList } from '@/components/dashboard/ChatArchiveList';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { MessageSquare } from 'lucide-react';
@@ -22,6 +23,7 @@ export default function ChatsPage() {
         </p>
       </div>
       <SectionSearchBar value={query} onChange={setQuery} placeholder="Search chats & research…" />
+      <ChatArchiveList search={query} />
       <div className="glass-panel rounded-2xl overflow-hidden">
         <SwarmRunHistory search={query} />
       </div>

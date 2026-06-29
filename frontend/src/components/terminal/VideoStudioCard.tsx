@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ComponentType } from 'react';
+import { useRef, useState, type ComponentType } from 'react';
 import {
   Download,
   Trash2,
@@ -11,10 +11,13 @@ import {
   Tv,
   Share2,
   Film,
+  SkipForward,
+  Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { addMediaItem } from '@/lib/mediaStorage';
 import { TextGeneratingAnimation } from './TextGeneratingAnimation';
+import { useTerminalChat } from '@/context/TerminalChatContext';
 import toast from 'react-hot-toast';
 
 export interface VideoOutputData {
@@ -32,6 +35,7 @@ interface VideoStudioCardProps {
   generating?: boolean;
   message?: string;
   step?: string;
+  messageId?: string;
 }
 
 function isPlayableVideoUrl(url: string): boolean {
@@ -48,10 +52,15 @@ export function VideoStudioCard({
   generating,
   message,
   step,
+  messageId: _messageId,
 }: VideoStudioCardProps) {
+  void _messageId;
   const [hidden, setHidden] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [volume, setVolume] = useState(0.85);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const { setPrompt } = useTerminalChat();
 
   if (generating) {
     return (
@@ -129,11 +138,11 @@ export function VideoStudioCard({
       </div>
 
       <div className="p-2 sm:p-3 bg-[var(--background)]">
-        <div className="relative rounded-lg overflow-hidden border border-[var(--card-border)] bg-black">
+        <div className="relative rounded-lg overflow-hidden border border-[var(--card-border)] bg-black aspect-video max-w-md">
           <video
+            ref={videoRef}
             src={streamingUrl}
-            className="w-full max-h-[400px] object-contain"
-            controls
+            className="w-full h-full object-contain"
             playsInline
             muted={muted}
             onPlay={() => setPlaying(true)}
@@ -147,19 +156,58 @@ export function VideoStudioCard({
           icon={playing ? Pause : Play}
           label={playing ? 'Pause' : 'Play'}
           onClick={() => {
-            const v = document.querySelector(`video[src="${streamingUrl}"]`) as HTMLVideoElement | null;
-            if (v) {
-              if (playing) v.pause();
-              else void v.play();
-            }
+            const v = videoRef.current;
+            if (!v) return;
+            if (playing) v.pause();
+            else void v.play();
           }}
         />
         <ActionBtn
           icon={muted ? VolumeX : Volume2}
           label={muted ? 'Unmute' : 'Mute'}
-          onClick={() => setMuted((m) => !m)}
+          onClick={() => {
+            setMuted((m) => {
+              const next = !m;
+              if (videoRef.current) videoRef.current.muted = next;
+              return next;
+            });
+          }}
+        />
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.05}
+          value={volume}
+          onChange={(e) => {
+            const v = parseFloat(e.target.value);
+            setVolume(v);
+            if (videoRef.current) {
+              videoRef.current.volume = v;
+              videoRef.current.muted = v === 0;
+              setMuted(v === 0);
+            }
+          }}
+          className="w-16 h-1 accent-[var(--accent)]"
+          aria-label="Volume"
+        />
+        <ActionBtn
+          icon={SkipForward}
+          label="+5s"
+          onClick={() => {
+            if (videoRef.current) videoRef.current.currentTime += 5;
+          }}
         />
         <ActionBtn icon={Download} label="Download" onClick={handleDownload} />
+        <ActionBtn
+          icon={Sparkles}
+          label="AI Edit"
+          accent="primary"
+          onClick={() => {
+            setPrompt(`Edit this video: ${title}`);
+            toast('Edit prompt loaded — press GO', { icon: '✨' });
+          }}
+        />
         <ActionBtn icon={Share2} label="Save to Media" onClick={handleSaveMedia} />
         <ActionBtn icon={Tv} label="YouTube" onClick={() => handleUpload('YouTube')} accent="primary" />
         <ActionBtn icon={Share2} label="Reels" onClick={() => handleUpload('Instagram Reels')} />

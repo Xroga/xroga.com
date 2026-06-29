@@ -22,6 +22,9 @@ import {
   saveWorkspaceSession,
 } from '@/lib/workspacePersistence';
 import { addMediaItem } from '@/lib/mediaStorage';
+import { archiveChatTurn } from '@/lib/chatArchive';
+import { isBuildPrompt, saveLocalProject } from '@/lib/projectArchive';
+import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
 
@@ -99,11 +102,13 @@ export function TerminalChatProvider({
   const chatPrefill = useAppStore((s) => s.chatPrefill);
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
   const setSwarmRunning = useAppStore((s) => s.setSwarmRunning);
+  const setActions = useAppStore((s) => s.setActions);
   const thinkingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const autoRanRef = useRef(false);
   const submitRef = useRef<(text?: string, fromQueue?: boolean) => Promise<void>>(async () => {});
   const queueRef = useRef<QueuedPrompt[]>([]);
+  const lastTurnRef = useRef<{ userMessageId: string; assistantId: string; text: string } | null>(null);
   const [sessionReady, setSessionReady] = useState(false);
 
   queueRef.current = promptQueue;
@@ -183,17 +188,20 @@ export function TerminalChatProvider({
 
   const submit = useCallback(
     async (overrideText?: string, fromQueue = false) => {
-      const text = (overrideText ?? prompt).trim();
-      if (!text) return;
+      const userPrompt = (overrideText ?? prompt).trim();
+      if (!userPrompt) return;
 
       if (loading && !fromQueue) {
-        enqueuePrompt(text);
+        enqueuePrompt(userPrompt);
         setPrompt('');
         return;
       }
       if (loading) return;
 
-      setMessages((m) => [...m, { id: crypto.randomUUID(), role: 'user', content: text, createdAt: Date.now() }]);
+      const userMessageId = crypto.randomUUID();
+      const assistantId = crypto.randomUUID();
+      lastTurnRef.current = { userMessageId, assistantId, text: userPrompt };
+      setMessages((m) => [...m, { id: userMessageId, role: 'user', content: userPrompt, createdAt: Date.now() }]);
       if (!fromQueue) setPrompt('');
       setLoading(true);
       setSwarmRunning(true);
@@ -205,10 +213,9 @@ export function TerminalChatProvider({
       setReasoning(null);
       setDag(null);
 
-      const useCompactPipeline = isTrivialPrompt(text) || isSimpleChat(text);
+      const useCompactPipeline = isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt);
       setPipelineCompact(useCompactPipeline);
 
-      const assistantId = crypto.randomUUID();
       let gotEvent = false;
       let fullReply = '';
       const controller = new AbortController();
@@ -226,7 +233,7 @@ export function TerminalChatProvider({
         setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
         setAnimatingId(assistantId);
 
-        await streamSwarmExecute(text, {
+        await streamSwarmExecute(userPrompt, {
           projectId,
           signal: controller.signal,
           compact: useCompactPipeline,
@@ -262,6 +269,8 @@ export function TerminalChatProvider({
                 name: String(output.prompt ?? 'Xroga image').slice(0, 40),
                 type: 'image',
                 url: output.imageUrl,
+                sourceMessageId: assistantId,
+                sourcePrompt: userPrompt,
               });
               setMessages((m) =>
                 m.map((msg) =>
@@ -281,6 +290,8 @@ export function TerminalChatProvider({
                 name: String(output.title ?? 'Xroga video').slice(0, 40),
                 type: 'video',
                 url: output.streamingUrl,
+                sourceMessageId: assistantId,
+                sourcePrompt: userPrompt,
               });
               setMessages((m) =>
                 m.map((msg) =>
@@ -321,6 +332,8 @@ export function TerminalChatProvider({
             if (outputFollowUps?.length) {
               setFollowUps(outputFollowUps);
             }
+
+            void api.actions.balance().then(setActions).catch(() => {});
           },
         });
 
@@ -353,6 +366,26 @@ export function TerminalChatProvider({
           clearTimeout(thinkingTimerRef.current);
           thinkingTimerRef.current = null;
         }
+        const turn = lastTurnRef.current;
+        if (!incognito && turn) {
+          setMessages((current) => {
+            archiveChatTurn({
+              prompt: turn.text,
+              messages: current,
+              userMessageId: turn.userMessageId,
+              assistantMessageId: turn.assistantId,
+            });
+            if (isBuildPrompt(turn.text)) {
+              saveLocalProject({
+                name: turn.text.slice(0, 48),
+                prompt: turn.text,
+                sourceMessageId: turn.assistantId,
+              });
+            }
+            return current;
+          });
+        }
+        lastTurnRef.current = null;
         abortRef.current = null;
         setLoading(false);
         setSwarmRunning(false);
@@ -365,7 +398,7 @@ export function TerminalChatProvider({
         setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, setSwarmRunning, enqueuePrompt, processNextInQueue]
+    [prompt, loading, projectId, incognito, setSwarmRunning, setActions, enqueuePrompt, processNextInQueue]
   );
 
   submitRef.current = submit;

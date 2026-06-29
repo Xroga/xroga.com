@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { ActionService } from '../services/ActionService.js';
+import { ensureUserRecords } from '../services/ensureUserRecords.js';
 import { ACTION_COSTS } from '../types/index.js';
 import type { AuthRequest } from '../middleware/auth.js';
 
@@ -8,6 +9,7 @@ const router = Router();
 
 router.get('/balance', async (req: AuthRequest, res) => {
   try {
+    await ensureUserRecords(req.userId!);
     const balance = await ActionService.getBalance(req.userId!);
     if (!balance) {
       res.status(404).json({ error: 'Actions record not found' });

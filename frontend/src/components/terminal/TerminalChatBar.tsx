@@ -23,7 +23,6 @@ import type { SendButtonState } from './ChatBarButtons';
 import { GitHubChipIcon, GitLabChipIcon, VercelChipIcon, TwitterChipIcon } from './ChatBarButtons';
 import { BlackHoleVButton } from './BlackHoleVButton';
 import { ChatPromptQueue } from './ChatPromptQueue';
-import { RepoContextBar } from './RepoContextBar';
 import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
@@ -194,7 +193,6 @@ export function TerminalChatBar() {
         >
           <ChatBarDragOverlay active={!incognito && dragOver} />
 
-          {!incognito && <RepoContextBar />}
           {!incognito && (
           <ChatPromptQueue
             queue={promptQueue}
@@ -206,9 +204,9 @@ export function TerminalChatBar() {
           )}
 
           {!incognito && (
-          <div className="xv-chatbar-toolbar flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 overflow-x-auto scrollbar-hide flex-nowrap">
-            <BlackHoleVButton />
-            <ChatBarTip label="GitHub repos" className="shrink-0">
+          <div className="xv-chatbar-toolbar flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
+            <BlackHoleVButton className="hidden sm:flex" />
+            <ChatBarTip label="GitHub repos" className="shrink-0 hidden sm:inline-flex">
               <span className="inline-flex shrink-0">
                 <ChatBarToolChip
                   icon={<GitHubChipIcon />}
@@ -228,14 +226,14 @@ export function TerminalChatBar() {
                 />
               </span>
             </ChatBarTip>
-            <ChatBarTip label="Integrations" className="shrink-0">
+            <ChatBarTip label="Connect & deploy tools" className="shrink-0">
               <button
                 type="button"
                 onClick={() => setIntegrationsOpen(true)}
-                className="flex items-center gap-1 px-2.5 h-7 rounded-lg border border-[var(--card-border)]/40 bg-white/[0.04] text-[10px] font-semibold shrink-0"
+                className="flex items-center gap-1.5 px-3 h-7 rounded-full bg-gradient-to-r from-[#006aff]/20 to-[#006aff]/8 border border-[#006aff]/35 text-[10px] font-bold text-[var(--foreground)] shrink-0 shadow-sm hover:from-[#006aff]/30"
               >
-                <Layers className="w-3.5 h-3.5" />
-                <span>Integrations</span>
+                <Layers className="w-3.5 h-3.5 text-[#006aff]" />
+                <span>Stack</span>
               </button>
             </ChatBarTip>
             <div className="hidden sm:contents">
@@ -312,7 +310,7 @@ export function TerminalChatBar() {
           />
           )}
 
-          <form onSubmit={handleSubmit} className="px-2 sm:px-3 py-2 sm:py-3">
+          <form onSubmit={handleSubmit} className="px-2 sm:px-3 py-1.5 sm:py-2.5 xv-chatbar-input-form">
             <ChatBarInputRow
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
@@ -356,8 +354,8 @@ export function TerminalChatBar() {
                 placeholder={incognito ? 'Type a private message…' : 'Xroga AI do everything..'}
                 rows={1}
                 className={cn(
-                  'w-full pr-2 py-2.5 rounded-xl resize-none max-h-[286px]',
-                  incognito ? 'pl-3 text-white placeholder:text-white/45' : 'pl-7 text-[var(--foreground)] placeholder:text-[var(--muted)]',
+                  'w-full pr-2 py-2 sm:py-2.5 rounded-xl resize-none max-h-[286px]',
+                  incognito ? 'pl-3 text-white placeholder:text-white/45' : 'pl-6 sm:pl-7 text-[var(--foreground)] placeholder:text-[var(--muted)]',
                   'bg-transparent focus:outline-none text-sm font-terminal leading-[22px]',
                   !loading && !prompt && 'cursor-blink'
                 )}

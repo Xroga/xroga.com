@@ -9,6 +9,7 @@ import { generateFalVideo } from './video/falVideo.js';
 import { generateReplicateVideo } from './video/replicateVideo.js';
 import { generateComfyUIVideo } from './video/comfyuiVideo.js';
 import { generateSlideshowVideo } from './video/slideshow.js';
+import { isFfmpegAvailable } from './video/ffmpegPath.js';
 
 export interface VideoGenerationResult {
   provider: string;
@@ -41,6 +42,12 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
       setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
     ),
   ]);
+}
+
+function providerTimeout(name: VideoProviderName): number {
+  if (name === 'agnes') return 180_000;
+  if (name === 'slideshow') return 120_000;
+  return VIDEO_API_TIMEOUT_MS;
 }
 
 
@@ -160,12 +167,20 @@ function buildVideoProviders(): ProviderEntry[] {
       configured: Boolean(process.env.COMFYUI_URL),
       call: generateComfyUIVideo,
     },
-    {
+  ];
+}
+
+async function buildVideoProvidersAsync(): Promise<ProviderEntry[]> {
+  const providers = buildVideoProviders();
+  const ffmpegOk = await isFfmpegAvailable();
+  if (ffmpegOk) {
+    providers.push({
       name: 'slideshow',
       configured: true,
       call: (prompt, duration) => generateImageToSlideshowVideo(prompt, duration),
-    },
-  ];
+    });
+  }
+  return providers;
 }
 
 function isValidVideoUrl(url: string): boolean {
@@ -200,7 +215,7 @@ export async function generateVideoWithFallback(
   }
 ): Promise<VideoGenerationResult> {
   const priorityList = await getApiPriority('video');
-  const allProviders = buildVideoProviders();
+  const allProviders = await buildVideoProvidersAsync();
   const providerMap = new Map(allProviders.map((p) => [p.name, p]));
 
   const premiumSet = new Set(['runway', 'luma']);
@@ -216,6 +231,8 @@ export async function generateVideoWithFallback(
 
   orderedNames.push('slideshow');
 
+  const errors: string[] = [];
+
   for (const name of orderedNames) {
     const entry = providerMap.get(name as VideoProviderName);
     if (!entry?.configured) continue;
@@ -223,16 +240,21 @@ export async function generateVideoWithFallback(
     try {
       const videoUrl = await withTimeout(
         entry.call(prompt, durationSeconds),
-        VIDEO_API_TIMEOUT_MS,
+        providerTimeout(name as VideoProviderName),
         name
       );
-      if (!isValidVideoUrl(videoUrl)) continue;
+      if (!isValidVideoUrl(videoUrl)) {
+        errors.push(`${name}: invalid URL`);
+        continue;
+      }
 
       return { provider: name, videoUrl, durationSeconds };
     } catch (err) {
+      const msg = (err as Error).message;
+      errors.push(`${name}: ${msg.slice(0, 100)}`);
       await logSystemError({
         api: name,
-        errorMessage: (err as Error).message,
+        errorMessage: msg,
         fallbackUsed: 'trying next video provider',
         severity: 'warning',
         userId: options?.userId,
@@ -242,8 +264,20 @@ export async function generateVideoWithFallback(
     }
   }
 
-  const slideshowUrl = await generateSlideshowVideo(prompt, durationSeconds, options?.keyframeUrl);
-  return { provider: 'slideshow', videoUrl: slideshowUrl, durationSeconds };
+  if (providerMap.has('slideshow')) {
+    try {
+      const slideshowUrl = await generateSlideshowVideo(prompt, durationSeconds, options?.keyframeUrl);
+      if (isValidVideoUrl(slideshowUrl)) {
+        return { provider: 'slideshow', videoUrl: slideshowUrl, durationSeconds };
+      }
+    } catch (err) {
+      errors.push(`slideshow: ${(err as Error).message.slice(0, 100)}`);
+    }
+  }
+
+  throw new Error(
+    `All video providers failed. ${errors.slice(0, 4).join(' | ')}`
+  );
 }
 
 /** Legacy parallel generation — now uses single best-result fallback chain per scene */
@@ -266,12 +300,13 @@ export async function smokeTestVideoGeneration(): Promise<{
   const errors: Record<string, string> = {};
   const prompt = 'A cat walking on a beach at sunset, cinematic, 2 seconds';
 
-  const chain = buildVideoProviders().filter((p) => p.configured);
+  const chain = await buildVideoProvidersAsync();
+  const configured = chain.filter((p) => p.configured);
 
-  for (const p of chain) {
+  for (const p of configured) {
     tried.push(p.name);
     try {
-      const url = await withTimeout(p.call(prompt, 3), p.name === 'agnes' ? 180_000 : 45_000, p.name);
+      const url = await withTimeout(p.call(prompt, 3), providerTimeout(p.name), p.name);
       if (isValidVideoUrl(url)) {
         return { ok: true, provider: p.name, tried };
       }
