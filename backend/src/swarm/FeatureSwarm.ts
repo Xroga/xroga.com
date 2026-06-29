@@ -40,8 +40,8 @@ export class FeatureSwarm extends BaseSwarm {
     const featureSteps: Record<FeatureCategory, string> = {
       chat: 'Process natural language command',
       landing_page: 'Generate HTML/CSS/JS landing page and deploy to Vercel',
-      image_generation: 'Generate image via Flux Pro (Replicate) with Cloudflare fallback',
-      browser_automation: 'Convert to Playwright script and execute via Browserbase',
+      image_generation: 'Generate image via Agnes AI (primary), Fal/Replicate/Cloudflare fallback',
+      browser_automation: 'Convert to Playwright script (free local) with Browserbase fallback',
       cross_post: 'Format and post to social platforms',
       key_creation: 'Navigate dev portal and store encrypted API key',
       video_studio: 'Write screenplay, parallel video gen (Agnes+Kling+Morph), audio, FFmpeg assembly',

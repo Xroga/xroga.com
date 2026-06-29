@@ -7,7 +7,7 @@ import { loadMasterPrompt } from './masterPrompt.js';
 import { buildArchitectDAG, isLongRunningTask, formatDuration } from './architectDAG.js';
 import type { SwarmRunResult } from '../services/SwarmService.js';
 import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../types/features.js';
-import type { SwarmAgent, SwarmPlan, SwarmResult } from '../types/index.js';
+import type { SwarmCoreAgent, SwarmPlan, SwarmResult } from '../types/index.js';
 import { shouldUseFastChat, isTrivialPrompt } from '../lib/promptClassifier.js';
 
 const FRIENDLY_FALLBACKS = [
@@ -35,8 +35,8 @@ function extractReplyText(output: unknown): string {
   return JSON.stringify(o).slice(0, 500);
 }
 
-function defaultAgents(passed: SwarmAgent[] = ['architect', 'builder']): SwarmResult['agents'] {
-  const all: SwarmAgent[] = ['architect', 'builder', 'reviewer', 'qa', 'truth_council'];
+function defaultAgents(passed: SwarmCoreAgent[] = ['architect', 'builder']): SwarmResult['agents'] {
+  const all: SwarmCoreAgent[] = ['architect', 'builder', 'reviewer', 'qa', 'truth_council'];
   return all.reduce(
     (acc, agent) => {
       acc[agent] = {

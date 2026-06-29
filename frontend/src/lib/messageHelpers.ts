@@ -46,17 +46,24 @@ export function isBuildRelated(text: string, userText?: string): boolean {
 }
 
 export const SWARM_AGENTS = [
-  { key: 'routing', label: 'Router', desc: 'Understanding…' },
-  { key: 'architect', label: 'Architect', desc: 'Planning…' },
-  { key: 'builder', label: 'Builder', desc: 'Generating…' },
-  { key: 'reviewer', label: 'Reviewer', desc: 'Verifying…' },
-  { key: 'qa', label: 'QA', desc: 'Testing…' },
-  { key: 'truth_council', label: 'Review', desc: 'Final check…' },
+  { key: 'architect', label: 'Architect', desc: 'Planning your request…' },
+  { key: 'builder', label: 'Builder', desc: 'Creating content…' },
+  { key: 'reviewer', label: 'Reviewer', desc: 'Fact-checking output…' },
+  { key: 'qa', label: 'QA', desc: 'Testing quality…' },
+  { key: 'debugger', label: 'Debugger', desc: 'Fixing issues…' },
+  { key: 'automation', label: 'Automation', desc: 'Deploy & integrate…' },
 ] as const;
+
+const AGENT_ALIASES: Record<string, string> = {
+  routing: 'architect',
+  truth_council: 'automation',
+  complete: 'automation',
+};
 
 export function agentIndex(agent?: string): number {
   if (!agent) return 0;
   const key = agent.toLowerCase().replace(/\s/g, '_');
-  const idx = SWARM_AGENTS.findIndex((a) => a.key === key);
+  const mapped = AGENT_ALIASES[key] ?? key;
+  const idx = SWARM_AGENTS.findIndex((a) => a.key === mapped);
   return idx >= 0 ? idx : 0;
 }

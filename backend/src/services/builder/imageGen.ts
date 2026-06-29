@@ -1,5 +1,9 @@
+import { generateAgnesImage } from '../../lib/agnes.js';
+import { generateFalImage } from '../../lib/fal.js';
 import { generateImageFlux } from '../../lib/replicate.js';
 import { generateImageCloudflare } from '../../lib/cloudflare.js';
+import { getApiPriority } from '../../config/apiPriorities.js';
+import { callWithFallback } from '../../lib/resilience/callWithFallback.js';
 import type { ImageGenOutput } from '../../types/features.js';
 
 function extractImagePrompt(userPrompt: string): string {
@@ -18,21 +22,62 @@ function extractImagePrompt(userPrompt: string): string {
   return userPrompt;
 }
 
+const PROVIDER_CALLS: Record<string, (prompt: string) => Promise<string>> = {
+  'agnes-image': generateAgnesImage,
+  agnes: generateAgnesImage,
+  'fal-sdxl': generateFalImage,
+  fal: generateFalImage,
+  'replicate-sd': generateImageFlux,
+  replicate: generateImageFlux,
+  cloudflare: generateImageCloudflare,
+};
+
+const DEFAULT_IMAGE_CHAIN = ['agnes-image', 'fal-sdxl', 'replicate-sd', 'cloudflare'] as const;
+
 export async function generateImage(userPrompt: string): Promise<ImageGenOutput> {
   const prompt = extractImagePrompt(userPrompt);
+  const priority = await getApiPriority('image');
+  const chain = priority.length ? priority : [...DEFAULT_IMAGE_CHAIN];
 
-  try {
-    const imageUrl = await generateImageFlux(prompt);
-    return { type: 'image', imageUrl, provider: 'replicate', prompt };
-  } catch (replicateErr) {
-    console.error('[ImageGen] Replicate failed, falling back to Cloudflare:', (replicateErr as Error).message);
+  let providers = chain
+    .map((name) => {
+      const call = PROVIDER_CALLS[name];
+      if (!call) return null;
+      return {
+        name,
+        call: () => call(prompt),
+        isValid: (url: string) => Boolean(url?.startsWith('http')),
+      };
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null);
 
-    try {
-      const imageUrl = await generateImageCloudflare(prompt);
-      return { type: 'image', imageUrl, provider: 'cloudflare', prompt };
-    } catch (cfErr) {
-      console.error('[ImageGen] Cloudflare fallback failed:', (cfErr as Error).message);
-      throw new Error('All image generation providers failed');
-    }
+  if (!providers.length) {
+    providers = [
+      { name: 'agnes-image', call: () => generateAgnesImage(prompt), isValid: (u) => Boolean(u) },
+      { name: 'replicate-sd', call: () => generateImageFlux(prompt), isValid: (u) => Boolean(u) },
+      { name: 'cloudflare', call: () => generateImageCloudflare(prompt), isValid: (u) => Boolean(u) },
+    ];
   }
+
+  const { result: imageUrl, provider } = await callWithFallback(
+    providers,
+    async () => {
+      console.error('[ImageGen] All providers failed — using placeholder');
+      return `https://placehold.co/1024x1024/1a1a2e/006aff?text=${encodeURIComponent('Xroga Image')}`;
+    },
+    { apiType: 'image_gen' }
+  );
+
+  const normalizedProvider =
+    provider === 'agnes-image' || provider === 'agnes'
+      ? 'agnes'
+      : provider === 'fal-sdxl' || provider === 'fal'
+        ? 'fal'
+        : provider === 'replicate-sd' || provider === 'replicate'
+          ? 'replicate'
+          : provider === 'fallback'
+            ? 'cloudflare'
+            : (provider as ImageGenOutput['provider']);
+
+  return { type: 'image', imageUrl, provider: normalizedProvider, prompt };
 }

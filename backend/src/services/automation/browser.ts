@@ -106,7 +106,7 @@ export async function runBrowserAutomation(prompt: string): Promise<BrowserAutom
       console.error('[Browser] Browserbase failed:', (bbErr as Error).message);
       scrapedData = {
         simulated: true,
-        message: 'Browser automation simulated – configure Playwright or Browserbase for live execution',
+        message: 'Browser automation simulated – install Playwright locally (free) or configure Browserbase for cloud runs',
         parsedScript: script,
         startUrl,
       };

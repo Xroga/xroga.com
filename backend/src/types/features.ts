@@ -37,7 +37,7 @@ export interface LandingPageOutput {
 export interface ImageGenOutput {
   type: 'image';
   imageUrl: string;
-  provider: 'replicate' | 'cloudflare';
+  provider: 'agnes' | 'fal' | 'replicate' | 'cloudflare';
   prompt: string;
 }
 

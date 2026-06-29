@@ -14,6 +14,7 @@ import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ProcessingPipeline } from './ProcessingPipeline';
+import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { FollowUpChips, ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions, isBuildRelated, primaryDeploySuggestion } from '@/lib/messageHelpers';
@@ -183,11 +184,18 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           )}
 
           {loading && (
-            <ProcessingPipeline
-              activeAgent={swarmActiveAgent ?? undefined}
-              loading={loading}
-              compact={pipelineCompact}
-            />
+            pipelineCompact ? (
+              <ProcessingPipeline
+                activeAgent={swarmActiveAgent ?? undefined}
+                loading={loading}
+                compact
+              />
+            ) : (
+              <SwarmProcessingIndicator
+                activeAgent={swarmActiveAgent ?? undefined}
+                loading={loading}
+              />
+            )
           )}
 
           {visibleMessages.map((msg) => {
