@@ -1,9 +1,16 @@
-/** Detect build/deploy-related content for deploy CTA */
-const BUILD_PATTERN =
-  /\b(website|web\s*app|mobile\s*app|app|game|software|saas|landing\s*page|build|deploy|vercel|react|next\.?js|flutter|unity)\b/i;
+import { isTrivialConversation, isTrivialPrompt } from './promptClassifier';
 
-export function isBuildRelated(text: string): boolean {
-  return BUILD_PATTERN.test(text);
+/** Detect build/deploy-related content for deploy CTA — user must have build intent */
+const BUILD_PATTERN =
+  /\b(website|web\s*app|mobile\s*app|saas|landing\s*page|deploy|vercel|react|next\.?js|flutter|unity)\b/i;
+
+const USER_BUILD_PATTERN =
+  /\b(build|create|make|generate|deploy|code|debug|fix|scrape|automate)\b/i;
+
+export function isBuildRelated(text: string, userText?: string): boolean {
+  if (userText && isTrivialPrompt(userText)) return false;
+  if (userText && !USER_BUILD_PATTERN.test(userText)) return false;
+  return BUILD_PATTERN.test(text) || (userText ? USER_BUILD_PATTERN.test(userText) : false);
 }
 
 export interface MessageSuggestions {
@@ -12,41 +19,51 @@ export interface MessageSuggestions {
 }
 
 export function generateMessageSuggestions(userText: string, aiText: string): MessageSuggestions {
+  if (isTrivialConversation(userText, aiText)) {
+    return {
+      yesNo: ['Build a landing page', 'Help me write code', 'Research a topic'],
+      ideas: [],
+    };
+  }
+
   const combined = `${userText} ${aiText}`.toLowerCase();
-  const build = isBuildRelated(combined);
+  const build = isBuildRelated(aiText, userText);
 
   const yesNo: string[] = [];
   const ideas: string[] = [];
 
   if (build) {
-    yesNo.push('Deploy to Vercel now?');
-    yesNo.push('Add authentication?');
-    yesNo.push('Optimize for mobile?');
-    ideas.push('Connect GitHub repo', 'Add custom domain', 'Generate app store assets');
+    yesNo.push('Deploy to Vercel');
+    yesNo.push('Add authentication');
+    yesNo.push('Optimize for mobile');
+    ideas.push('Connect GitHub', 'Add custom domain');
+  } else if (USER_BUILD_PATTERN.test(userText)) {
+    yesNo.push('Go deeper on this');
+    yesNo.push('Show me an example');
+    yesNo.push('Break it into steps');
   } else {
-    yesNo.push('Want more detail on this?');
-    yesNo.push('Should I create a step-by-step plan?');
-    yesNo.push('Ready to start building?');
-    ideas.push('Research competitors', 'Draft a project brief', 'Estimate action cost');
+    yesNo.push('Tell me more');
+    yesNo.push('Give me an example');
+    ideas.push('Estimate action cost');
   }
 
   if (combined.includes('game')) {
-    ideas.push('Add sound effects', 'Design game UI', 'Publish to itch.io');
+    ideas.push('Add sound effects', 'Design game UI');
   }
   if (combined.includes('automat')) {
-    ideas.push('Schedule daily runs', 'Add email alerts', 'Connect Slack');
+    ideas.push('Schedule daily runs', 'Connect Slack');
   }
 
-  return { yesNo: yesNo.slice(0, 3), ideas: ideas.slice(0, 3) };
+  return { yesNo: yesNo.slice(0, 3), ideas: ideas.slice(0, 2) };
 }
 
 export const SWARM_AGENTS = [
   { key: 'routing', label: 'Router', desc: 'Understanding your intent…' },
-  { key: 'architect', label: 'Architect', desc: 'Planning architecture & swarm route…' },
-  { key: 'builder', label: 'Builder', desc: 'Writing code & building assets…' },
-  { key: 'reviewer', label: 'Reviewer', desc: 'Reviewing quality & security…' },
-  { key: 'qa', label: 'QA Tester', desc: 'Testing edge cases…' },
-  { key: 'truth_council', label: 'Truth Council', desc: 'Verifying accuracy…' },
+  { key: 'architect', label: 'Architect', desc: 'Planning…' },
+  { key: 'builder', label: 'Builder', desc: 'Generating…' },
+  { key: 'reviewer', label: 'Reviewer', desc: 'Verifying…' },
+  { key: 'qa', label: 'QA', desc: 'Testing…' },
+  { key: 'truth_council', label: 'Review', desc: 'Final check…' },
 ] as const;
 
 export function agentIndex(agent?: string): number {

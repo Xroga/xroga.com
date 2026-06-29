@@ -245,12 +245,7 @@ export class SwarmService {
   ): Promise<void> {
     sendSSE(res, {
       event: 'start',
-      data: { message: 'Swarm initialized', prompt: prompt.slice(0, 100) },
-    });
-
-    sendSSE(res, {
-      event: 'progress',
-      data: { agent: 'architect', status: 'planning', message: 'Analyzing your request...' },
+      data: { message: 'Ready', prompt: prompt.slice(0, 100) },
     });
 
     const onProgress = (event: SwarmProgressEvent) => {
@@ -287,6 +282,7 @@ export class SwarmService {
         followUps: (result as { followUps?: string[] }).followUps,
         reasoning: (result as { reasoning?: string }).reasoning,
         queued: (result as { queued?: boolean }).queued,
+        fast: (result as { fast?: boolean }).fast,
       },
     });
   }

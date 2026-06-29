@@ -22,6 +22,7 @@ import {
   saveWorkspaceSession,
 } from '@/lib/workspacePersistence';
 import toast from 'react-hot-toast';
+import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
 
 type MessageRole = 'user' | 'assistant' | 'system';
 
@@ -53,6 +54,7 @@ interface TerminalChatContextValue {
   followUps: string[];
   reasoning: string | null;
   dag: Array<{ id: string; description: string; agent: string }> | null;
+  pipelineCompact: boolean;
   submit: (text?: string) => Promise<void>;
   stop: () => void;
   startNewChat: () => void;
@@ -87,6 +89,7 @@ export function TerminalChatProvider({
   const [followUps, setFollowUps] = useState<string[]>([]);
   const [reasoning, setReasoning] = useState<string | null>(null);
   const [dag, setDag] = useState<Array<{ id: string; description: string; agent: string }> | null>(null);
+  const [pipelineCompact, setPipelineCompact] = useState(false);
   const chatPrefill = useAppStore((s) => s.chatPrefill);
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
   const setSwarmRunning = useAppStore((s) => s.setSwarmRunning);
@@ -116,30 +119,6 @@ export function TerminalChatProvider({
     if (!sessionReady || incognito) return;
     saveWorkspaceSession({ prompt, messages });
   }, [sessionReady, prompt, messages, incognito]);
-
-  const addProgress = useCallback((agent: string, message: string) => {
-    const key = agent.toLowerCase().replace(/\s/g, '_');
-    const labels: Record<string, string> = {
-      architect: 'Architect',
-      builder: 'Builder',
-      reviewer: 'Reviewer',
-      qa: 'QA Tester',
-      truth_council: 'Truth Council',
-      complete: 'Complete',
-    };
-    const label = labels[key] ?? agent.replace(/_/g, ' ');
-    setSwarmActiveAgent(key);
-    setMessages((m) => [
-      ...m,
-      {
-        id: crypto.randomUUID(),
-        role: 'system',
-        agent: key,
-        content: `[${label}] ${message}`,
-        createdAt: Date.now(),
-      },
-    ]);
-  }, []);
 
   const enqueuePrompt = useCallback((text: string) => {
     setPromptQueue((q) => [...q, { id: crypto.randomUUID(), text, createdAt: Date.now() }]);
@@ -212,11 +191,14 @@ export function TerminalChatProvider({
       if (!fromQueue) setPrompt('');
       setLoading(true);
       setSwarmRunning(true);
-      setSwarmActiveAgent('routing');
-      setPipelineMessage('📡 Connecting to Swarm…');
+      setSwarmActiveAgent(null);
+      setPipelineMessage(null);
       setFollowUps([]);
       setReasoning(null);
       setDag(null);
+
+      const useCompactPipeline = isTrivialPrompt(text) || isSimpleChat(text);
+      setPipelineCompact(useCompactPipeline);
 
       const assistantId = crypto.randomUUID();
       let gotEvent = false;
@@ -225,36 +207,33 @@ export function TerminalChatProvider({
       abortRef.current = controller;
 
       thinkingTimerRef.current = setTimeout(() => {
-        if (!gotEvent) addProgress('architect', 'Swarm is thinking...');
-      }, 3000);
+        if (!gotEvent) setPipelineMessage('Thinking…');
+      }, 1500);
 
       try {
         const supabase = createClient();
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.access_token) throw new Error('Please sign in to chat.');
 
-        addProgress('architect', 'Planning...');
         setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
         setAnimatingId(assistantId);
 
         await streamSwarmExecute(text, {
           projectId,
           signal: controller.signal,
+          compact: useCompactPipeline,
           onProgress: (event) => {
             gotEvent = true;
             if (thinkingTimerRef.current) {
               clearTimeout(thinkingTimerRef.current);
               thinkingTimerRef.current = null;
             }
-            const label = event.message ?? event.status ?? 'working';
+            const label = event.message ?? event.status ?? 'Thinking…';
             setPipelineMessage(label);
-            if (event.agent) {
-              setSwarmActiveAgent(event.agent);
-              addProgress(event.agent, label);
-            }
+            if (event.agent) setSwarmActiveAgent(event.agent);
             const ev = event as SwarmProgressEvent & { dag?: typeof dag; thinking?: string };
-            if (ev.thinking) setReasoning(ev.thinking);
-            if (ev.dag) setDag(ev.dag);
+            if (ev.thinking && !useCompactPipeline) setReasoning(ev.thinking);
+            if (ev.dag && !useCompactPipeline) setDag(ev.dag);
           },
           onDelta: (delta) => {
             gotEvent = true;
@@ -265,9 +244,6 @@ export function TerminalChatProvider({
           },
         });
 
-        if (fullReply) {
-          addProgress('complete', fullReply.slice(0, 80) + (fullReply.length > 80 ? '…' : ''));
-        }
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
           setMessages((m) => [
@@ -303,10 +279,11 @@ export function TerminalChatProvider({
         setAnimatingId(null);
         setSwarmActiveAgent(null);
         setPipelineMessage(null);
+        setPipelineCompact(false);
         setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, addProgress, setSwarmRunning, enqueuePrompt, processNextInQueue]
+    [prompt, loading, projectId, setSwarmRunning, enqueuePrompt, processNextInQueue]
   );
 
   submitRef.current = submit;
@@ -341,6 +318,7 @@ export function TerminalChatProvider({
         animatingId,
         swarmActiveAgent,
         pipelineMessage,
+        pipelineCompact,
         followUps,
         reasoning,
         dag,

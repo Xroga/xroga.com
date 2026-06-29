@@ -1,25 +1,42 @@
 import { groqChat } from '../../lib/groq.js';
-import {
-  builderGenerate,
-  classifyComplexity,
-} from '../aiRouter.js';
+import { builderGenerate, classifyComplexity } from '../aiRouter.js';
+import { loadMasterPrompt } from '../../orchestrator/masterPrompt.js';
+import { isTrivialPrompt } from '../../lib/promptClassifier.js';
 
-const SYSTEM = `You are Xroga, an AI Swarm assistant. Be helpful, concise, and friendly.
-If the user greets you, greet them back and offer to help build apps, videos, websites, or automate tasks.`;
+const CHAT_SYSTEM = `You are Xroga — a sharp, friendly AI assistant (like a top-tier coding partner).
 
-const GREETING_REPLY =
-  "Hello! I'm Xroga — your AI Swarm command center is online. I can build apps, generate videos, automate workflows, and research anything. What should we create?";
+Rules:
+- Match the user's tone. Greetings get 1–2 natural sentences, not a sales pitch.
+- Be direct and useful. No "Swarm command center" marketing language.
+- For questions, answer clearly with substance — examples when helpful.
+- Never mention internal agents, DAGs, or architecture unless asked.
+- Do not append pros/cons or bullet lists unless the task is complex.`;
 
 export async function quickChat(prompt: string): Promise<string> {
   const lower = prompt.toLowerCase().trim();
-  if (/^(hi|hello|hey|yo|sup|good\s+(morning|afternoon|evening))\b/.test(lower)) {
-    return GREETING_REPLY;
+
+  if (isTrivialPrompt(prompt)) {
+    if (/^(thanks|thank\s*you|thx)\b/.test(lower)) {
+      return "You're welcome! Let me know if you need anything else.";
+    }
+    if (/^(bye|goodbye|see\s*ya)\b/.test(lower)) {
+      return 'See you later — happy building!';
+    }
+    if (/^(yes|no|ok|okay|yep|nope|cool|nice|got\s*it)\b/.test(lower)) {
+      return 'Got it. What should we work on next?';
+    }
+    // Natural greeting — short, human
+    if (/good\s+(morning|afternoon|evening)/.test(lower)) {
+      const period = lower.match(/good\s+(\w+)/)?.[1] ?? 'day';
+      return `Good ${period}! What can I help you with?`;
+    }
+    return "Hey! What can I help you with today?";
   }
 
+  const master = await loadMasterPrompt().catch(() => CHAT_SYSTEM);
   const complexity = classifyComplexity(prompt, 'chat');
-  const { text, model } = await builderGenerate(prompt, complexity, SYSTEM);
-  console.log(`[quickChat] routed to ${model} (complexity: ${complexity})`);
-  return text;
+  const { text } = await builderGenerate(prompt, complexity, `${master}\n\n${CHAT_SYSTEM}`);
+  return text?.trim() || "I'm here — tell me what you'd like to work on.";
 }
 
 export async function quickChatWithGroqFallback(prompt: string): Promise<string> {
@@ -29,10 +46,10 @@ export async function quickChatWithGroqFallback(prompt: string): Promise<string>
     if (process.env.GROQ_API_KEY) {
       return groqChat(
         [
-          { role: 'system', content: SYSTEM },
+          { role: 'system', content: CHAT_SYSTEM },
           { role: 'user', content: prompt },
         ],
-        { maxTokens: 400 }
+        { maxTokens: 1024 }
       );
     }
     throw new Error('All chat models failed');

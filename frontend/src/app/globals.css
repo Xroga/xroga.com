@@ -2276,3 +2276,16 @@ body.theme-gray * {
     border-radius: 10px;
   }
 }
+
+/* Modern thinking indicator */
+.xv-thinking-dots::after {
+  content: '…';
+  animation: xv-dots 1.2s steps(4, end) infinite;
+}
+
+@keyframes xv-dots {
+  0%, 20% { content: ''; }
+  40% { content: '.'; }
+  60% { content: '..'; }
+  80%, 100% { content: '...'; }
+}

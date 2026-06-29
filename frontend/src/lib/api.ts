@@ -36,6 +36,7 @@ export const API_URL = resolveApiUrl();
 export interface StreamSwarmOptions {
   projectId?: string;
   signal?: AbortSignal;
+  compact?: boolean;
   onProgress?: (event: SwarmProgressEvent) => void;
   onDelta?: (delta: string) => void;
 }

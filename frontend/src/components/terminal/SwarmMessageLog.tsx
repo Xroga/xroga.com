@@ -43,7 +43,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, swarmActiveAgent, pipelineMessage, followUps, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt } =
+  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, followUps, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -61,12 +61,17 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
 
   const displayInitial = profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U';
 
-  const lastAssistantIdx = useMemo(() => {
-    for (let i = messages.length - 1; i >= 0; i--) {
-      if (messages[i].role === 'assistant' && messages[i].content) return i;
+  const visibleMessages = useMemo(
+    () => messages.filter((m) => !(m.role === 'system' && m.agent)),
+    [messages]
+  );
+
+  const lastAssistantId = useMemo(() => {
+    for (let i = visibleMessages.length - 1; i >= 0; i--) {
+      if (visibleMessages[i].role === 'assistant' && visibleMessages[i].content) return visibleMessages[i].id;
     }
-    return -1;
-  }, [messages]);
+    return null;
+  }, [visibleMessages]);
 
   const lastUserText = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
@@ -184,18 +189,18 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
             <ProcessingPipeline
               activeAgent={swarmActiveAgent ?? undefined}
               loading={loading}
-              message={pipelineMessage ?? undefined}
+              compact={pipelineCompact}
             />
           )}
 
-          {messages.map((msg, idx) => {
-            const isLastAssistant = idx === lastAssistantIdx && !loading;
+          {visibleMessages.map((msg) => {
+            const isLastAssistant = msg.id === lastAssistantId && !loading;
             const showSuggestions = isLastAssistant && msg.role === 'assistant';
             const showDeploy =
               !isIncognito &&
               msg.role === 'assistant' &&
               !loading &&
-              (isBuildRelated(msg.content) || isBuildRelated(lastUserText));
+              isBuildRelated(msg.content, lastUserText);
             const suggestions =
               !isIncognito && showSuggestions ? generateMessageSuggestions(lastUserText, msg.content) : null;
 

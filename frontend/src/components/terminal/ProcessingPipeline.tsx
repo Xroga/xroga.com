@@ -1,71 +1,75 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
-const PIPELINE_STEPS = [
-  { id: 'connect', icon: '📡', label: 'Connecting to Swarm…' },
-  { id: 'architect', icon: '🧠', label: 'Architect is planning…' },
-  { id: 'builder', icon: '⚙️', label: 'Builder is generating…' },
-  { id: 'reviewer', icon: '🔍', label: 'Reviewer is verifying…' },
-  { id: 'assemble', icon: '✨', label: 'Assembling final response…' },
+const FULL_STEPS = [
+  { id: 'plan', label: 'Planning' },
+  { id: 'build', label: 'Building' },
+  { id: 'verify', label: 'Verifying' },
 ] as const;
 
-const AGENT_TO_STEP: Record<string, number> = {
+const AGENT_STEP: Record<string, number> = {
   routing: 0,
-  architect: 1,
-  builder: 2,
+  architect: 0,
+  builder: 1,
   reviewer: 2,
-  qa: 3,
-  truth_council: 3,
-  complete: 4,
+  qa: 2,
+  truth_council: 2,
+  complete: 3,
 };
 
 interface ProcessingPipelineProps {
   activeAgent?: string | null;
   loading: boolean;
-  message?: string;
+  compact?: boolean;
 }
 
-export function ProcessingPipeline({ activeAgent, loading, message }: ProcessingPipelineProps) {
-  const [step, setStep] = useState(0);
-
-  useEffect(() => {
-    if (!loading) {
-      setStep(0);
-      return;
-    }
-    const idx = activeAgent ? (AGENT_TO_STEP[activeAgent] ?? 1) : 0;
-    setStep(Math.max(step, idx));
-  }, [activeAgent, loading, step]);
-
+export function ProcessingPipeline({ activeAgent, loading, compact }: ProcessingPipelineProps) {
   if (!loading) return null;
 
+  if (compact) {
+    return (
+      <div className="xv-thinking-bar flex items-center gap-2.5 py-2.5 px-3 my-2 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#006aff]/40" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#006aff]" />
+        </span>
+        <span className="text-[13px] text-[var(--foreground)]/80 font-medium">Thinking</span>
+        <span className="xv-thinking-dots text-[var(--muted)] text-sm" aria-hidden />
+      </div>
+    );
+  }
+
+  const step = activeAgent ? (AGENT_STEP[activeAgent] ?? 0) : 0;
+
   return (
-    <div className="xv-processing-pipeline my-3 p-3 rounded-xl border border-[#006aff]/25 bg-gradient-to-br from-[#006aff]/10 via-transparent to-violet-500/10">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-[#60a5fa] mb-3 flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-[#006aff] animate-pulse" />
-        XROGA Swarm · Black Hole V∞
-      </p>
-      <div className="space-y-2">
-        {PIPELINE_STEPS.map((s, i) => {
-          const active = i === step;
+    <div className="xv-processing-pipeline my-2 px-3 py-2.5 rounded-lg border border-white/[0.08] bg-white/[0.02]">
+      <div className="flex items-center gap-3">
+        {FULL_STEPS.map((s, i) => {
           const done = i < step;
-          const label = active && message ? message : s.label;
+          const active = i === step;
           return (
-            <div
-              key={s.id}
-              className={cn(
-                'flex items-center gap-2.5 text-[12px] transition-all duration-500',
-                active && 'text-[#93c5fd] font-medium',
-                done && 'text-emerald-400/80',
-                !active && !done && 'text-[var(--muted)] opacity-35'
-              )}
-            >
-              <span className="text-base w-5 text-center">{done ? '✓' : s.icon}</span>
-              <span className="flex-1">{label}</span>
-              {active && (
-                <span className="xv-pipeline-spinner w-3.5 h-3.5 border-2 border-[#006aff]/40 border-t-[#006aff] rounded-full animate-spin" />
+            <div key={s.id} className="flex items-center gap-1.5 flex-1 min-w-0">
+              <span
+                className={cn(
+                  'w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-300',
+                  done && 'bg-emerald-400',
+                  active && 'bg-[#006aff] animate-pulse scale-125',
+                  !done && !active && 'bg-white/20'
+                )}
+              />
+              <span
+                className={cn(
+                  'text-[11px] truncate transition-colors',
+                  active && 'text-[var(--foreground)] font-medium',
+                  done && 'text-[var(--muted)]',
+                  !done && !active && 'text-[var(--muted)]/40'
+                )}
+              >
+                {s.label}
+              </span>
+              {i < FULL_STEPS.length - 1 && (
+                <span className="flex-1 h-px bg-white/[0.06] mx-1 hidden sm:block" />
               )}
             </div>
           );
