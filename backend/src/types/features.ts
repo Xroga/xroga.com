@@ -54,7 +54,7 @@ export interface ImageBlockedOutput {
 export interface ImageGenOutput {
   type: 'image';
   imageUrl: string;
-  provider: 'agnes' | 'fal' | 'replicate' | 'cloudflare' | 'luma' | 'runway' | 'hailuo' | 'comfyui' | 'openai';
+  provider: 'agnes' | 'fal' | 'replicate' | 'cloudflare' | 'luma' | 'runway' | 'hailuo' | 'comfyui' | 'openai' | 'gemini';
   prompt: string;
   enhancedPrompt?: string;
   followUps?: string[];

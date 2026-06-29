@@ -7,6 +7,7 @@ import { generateRunwayImage } from '../../lib/runway.js';
 import { generateHailuoImage } from '../../lib/hailuo.js';
 import { generateComfyUIImage } from '../../lib/comfyui.js';
 import { generateOpenAIImage } from '../../lib/openaiImage.js';
+import { generateGeminiImage } from '../../lib/geminiImage.js';
 import { logSystemError } from '../../services/systemErrorLog.js';
 import type { ImageBlockedOutput, ImageGenOutput } from '../../types/features.js';
 import { classifyImageQuery } from './image/understanding.js';
@@ -114,7 +115,8 @@ type ProviderName =
   | 'hailuo-image'
   | 'cloudflare'
   | 'comfyui'
-  | 'openai-image';
+  | 'openai-image'
+  | 'gemini-image';
 
 type ProviderEntry = {
   name: ProviderName;
@@ -122,8 +124,13 @@ type ProviderEntry = {
   configured: boolean;
 };
 
-/** Fixed 4-variant slots: Agnes · Cloudflare · Fal AI · +1 other configured API */
-const VARIANT_SLOT_PROVIDERS: ProviderName[] = ['agnes-image', 'cloudflare', 'fal-sdxl'];
+/** Fixed 4-variant slots: Agnes · Cloudflare · Fal AI · Gemini */
+const VARIANT_SLOT_PROVIDERS: ProviderName[] = [
+  'agnes-image',
+  'cloudflare',
+  'fal-sdxl',
+  'gemini-image',
+];
 
 const OTHER_VARIANT_POOL: ProviderName[] = [
   'replicate-sd',
@@ -138,6 +145,7 @@ const PROVIDER_DISPLAY: Record<ProviderName, string> = {
   'agnes-image': 'Agnes',
   cloudflare: 'Cloudflare',
   'fal-sdxl': 'Fal AI',
+  'gemini-image': 'Google Gemini',
   'replicate-sd': 'Replicate',
   'openai-image': 'OpenAI',
   comfyui: 'ComfyUI',
@@ -188,6 +196,11 @@ function buildStandardProviders(): ProviderEntry[] {
       configured: Boolean(process.env.OPENAI_API_KEY),
       call: generateOpenAIImage,
     },
+    {
+      name: 'gemini-image',
+      configured: Boolean(process.env.GEMINI_API_KEY),
+      call: generateGeminiImage,
+    },
   ];
 }
 
@@ -229,6 +242,8 @@ export function getImageProviderStatus(): {
     comfyui: Boolean(process.env.COMFYUI_URL),
     groq: Boolean(process.env.GROQ_API_KEY),
     deepseek: Boolean(process.env.DEEPSEEK_API_KEY),
+    gemini: Boolean(process.env.GEMINI_API_KEY),
+    openai: Boolean(process.env.OPENAI_API_KEY),
   };
   const configured = getConfiguredImageProviders();
   return { configured, keys, ready: configured.length > 0 };
@@ -245,6 +260,7 @@ function normalizeProvider(name: string): ImageGenOutput['provider'] {
     cloudflare: 'cloudflare',
     comfyui: 'comfyui',
     'openai-image': 'openai',
+    'gemini-image': 'gemini',
   };
   return map[name] ?? 'fal';
 }
@@ -259,6 +275,7 @@ function truncatePrompt(prompt: string): string {
 
 const PROVIDER_TIMEOUT_MS = 12_000;
 const AGNES_TIMEOUT_MS = 45_000;
+const GEMINI_TIMEOUT_MS = 90_000;
 
 async function callImageProvider(
   entry: ProviderEntry,
@@ -266,7 +283,12 @@ async function callImageProvider(
   ctx: { userId?: string; runId?: string }
 ): Promise<string> {
   const safePrompt = truncatePrompt(prompt);
-  const timeout = entry.name === 'agnes-image' ? AGNES_TIMEOUT_MS : PROVIDER_TIMEOUT_MS;
+  const timeout =
+    entry.name === 'agnes-image'
+      ? AGNES_TIMEOUT_MS
+      : entry.name === 'gemini-image'
+        ? GEMINI_TIMEOUT_MS
+        : PROVIDER_TIMEOUT_MS;
   const imageUrl = await Promise.race([
     entry.call(safePrompt),
     new Promise<string>((_, reject) =>

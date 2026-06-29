@@ -299,7 +299,7 @@ export function ImageStudioCard({
 
         <div className="px-2 py-2">
           <p className="text-[10px] font-medium text-[var(--muted)] mb-1.5 px-0.5">
-            Vote for the best · Agnes · Cloudflare · Fal AI · +1 AI
+            Vote for the best · Agnes · Cloudflare · Fal AI · Google Gemini
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
             {displaySlots.map((img, i) => {
