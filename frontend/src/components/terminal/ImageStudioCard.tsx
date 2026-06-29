@@ -14,7 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 import { copyImageToClipboard, downloadImage } from '@/lib/imageStudioUtils';
 import { ImageEditModal } from './ImageEditModal';
-import { PencilGeneratingAnimation } from './PencilGeneratingAnimation';
+import { TextGeneratingAnimation } from './TextGeneratingAnimation';
 import { isPlaceholderImage } from '@/lib/parseImageContent';
 import { AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -38,10 +38,11 @@ export function ImageGeneratingAnimation({
   step?: string;
 }) {
   return (
-    <PencilGeneratingAnimation
+    <TextGeneratingAnimation
       className={className}
       message={message}
       step={step}
+      mode="image"
       sublabel="Xroga AI · Image Studio"
     />
   );

@@ -77,7 +77,7 @@ const healthPayload = () => {
   return {
     status: 'ok',
     service: 'xroga-api',
-    version: '1.3.0',
+    version: '1.3.1',
     timestamp: new Date().toISOString(),
     authConfigured: Boolean(process.env.SUPABASE_URL),
     dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),

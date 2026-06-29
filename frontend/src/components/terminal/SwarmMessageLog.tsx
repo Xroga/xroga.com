@@ -18,7 +18,7 @@ import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { FollowUpChips, ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
 import { isImageGenerationPrompt, isVideoGenerationPrompt, extractImagesFromContent } from '@/lib/parseImageContent';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
-import { FilmGeneratingAnimation } from './FilmGeneratingAnimation';
+import { TextGeneratingAnimation } from './TextGeneratingAnimation';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions, isBuildRelated, primaryDeploySuggestion } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -261,9 +261,11 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                         msg.id === animatingId &&
                         isVideoGenerationPrompt(lastUserText) &&
                         !msg.content.includes('Watch & download') ? (
-                          <FilmGeneratingAnimation
+                          <TextGeneratingAnimation
                             message={pipelineMessage ?? undefined}
                             step={videoProgressStep ?? undefined}
+                            mode="video"
+                            sublabel="Xroga AI · Video Studio"
                           />
                         ) : loading &&
                         msg.id === animatingId &&

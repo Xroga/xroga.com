@@ -1,5 +1,7 @@
 import { getApiPriority, VIDEO_API_TIMEOUT_MS } from '../config/apiPriorities.js';
 import { logSystemError } from '../services/systemErrorLog.js';
+import { generateAgnesVideo } from './agnesVideo.js';
+import { generateAgnesImage } from './agnes.js';
 import { generateRunwayVideo } from './video/runwayVideo.js';
 import { generateLumaVideo } from './video/lumaVideo.js';
 import { generateHailuoVideo } from './video/hailuoVideo.js';
@@ -41,38 +43,6 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
   ]);
 }
 
-async function pollAgnesJob(jobId: string, apiKey: string): Promise<string> {
-  for (let i = 0; i < 60; i++) {
-    const res = await fetch(`https://api.agnes-ai.com/v2/video/${jobId}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
-    const data = (await res.json()) as { status: string; video_url?: string };
-    if (data.status === 'completed' && data.video_url) return data.video_url;
-    if (data.status === 'failed') throw new Error('Agnes video generation failed');
-    await new Promise((r) => setTimeout(r, 3000));
-  }
-  throw new Error('Agnes video timed out');
-}
-
-async function generateAgnesVideo(prompt: string, durationSeconds: number): Promise<string> {
-  const apiKey = process.env.AGNES_API_KEY;
-  if (!apiKey) throw new Error('AGNES_API_KEY not configured');
-
-  const response = await fetch('https://api.agnes-ai.com/v2/video/generate', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({ prompt, duration: durationSeconds, quality: 'hd' }),
-  });
-
-  if (!response.ok) throw new Error(`Agnes AI error: ${response.status}`);
-
-  const data = (await response.json()) as { video_url?: string; id: string };
-  if (data.video_url) return data.video_url;
-  return pollAgnesJob(data.id, apiKey);
-}
 
 async function pollKlingTask(taskId: string, apiKey: string): Promise<string> {
   for (let i = 0; i < 60; i++) {
@@ -133,22 +103,22 @@ async function generateMorphVideo(prompt: string, durationSeconds: number): Prom
   return data.video_url;
 }
 
+async function generateImageToSlideshowVideo(prompt: string, durationSeconds: number): Promise<string> {
+  let imageUrl: string | undefined;
+  try {
+    imageUrl = await generateAgnesImage(prompt.slice(0, 500));
+  } catch {
+    /* use placeholder in slideshow */
+  }
+  return generateSlideshowVideo(prompt, durationSeconds, imageUrl);
+}
+
 function buildVideoProviders(): ProviderEntry[] {
   return [
     {
-      name: 'runway',
-      configured: Boolean(process.env.RUNWAY_API_KEY),
-      call: generateRunwayVideo,
-    },
-    {
-      name: 'luma',
-      configured: Boolean(process.env.LUMA_API_KEY),
-      call: generateLumaVideo,
-    },
-    {
-      name: 'hailuo',
-      configured: Boolean(process.env.HAILUO_API_KEY ?? process.env.MINIMAX_API_KEY),
-      call: generateHailuoVideo,
+      name: 'agnes',
+      configured: Boolean(process.env.AGNES_API_KEY),
+      call: generateAgnesVideo,
     },
     {
       name: 'kling',
@@ -161,14 +131,24 @@ function buildVideoProviders(): ProviderEntry[] {
       call: generateFalVideo,
     },
     {
+      name: 'hailuo',
+      configured: Boolean(process.env.HAILUO_API_KEY ?? process.env.MINIMAX_API_KEY),
+      call: generateHailuoVideo,
+    },
+    {
+      name: 'runway',
+      configured: Boolean(process.env.RUNWAY_API_KEY),
+      call: generateRunwayVideo,
+    },
+    {
+      name: 'luma',
+      configured: Boolean(process.env.LUMA_API_KEY),
+      call: generateLumaVideo,
+    },
+    {
       name: 'replicate-svd',
       configured: Boolean(process.env.REPLICATE_API_TOKEN),
       call: (prompt) => generateReplicateVideo(prompt),
-    },
-    {
-      name: 'agnes',
-      configured: Boolean(process.env.AGNES_API_KEY),
-      call: generateAgnesVideo,
     },
     {
       name: 'morph',
@@ -183,7 +163,7 @@ function buildVideoProviders(): ProviderEntry[] {
     {
       name: 'slideshow',
       configured: true,
-      call: (prompt, duration) => generateSlideshowVideo(prompt, duration),
+      call: (prompt, duration) => generateImageToSlideshowVideo(prompt, duration),
     },
   ];
 }
@@ -283,23 +263,28 @@ export async function smokeTestVideoGeneration(): Promise<{
   tried: string[];
 }> {
   const tried: string[] = [];
-  const providers = buildVideoProviders().filter((p) => p.configured && p.name !== 'slideshow');
+  const errors: Record<string, string> = {};
+  const prompt = 'A cat walking on a beach at sunset, cinematic, 2 seconds';
 
-  for (const p of providers) {
+  const chain = buildVideoProviders().filter((p) => p.configured);
+
+  for (const p of chain) {
     tried.push(p.name);
     try {
-      const url = await withTimeout(
-        p.call('A cinematic sunset over the ocean, 2 seconds', 2),
-        90_000,
-        p.name
-      );
+      const url = await withTimeout(p.call(prompt, 3), p.name === 'agnes' ? 180_000 : 45_000, p.name);
       if (isValidVideoUrl(url)) {
         return { ok: true, provider: p.name, tried };
       }
+      errors[p.name] = 'Invalid URL returned';
     } catch (err) {
-      console.warn(`[VideoSmoke] ${p.name} failed:`, (err as Error).message);
+      errors[p.name] = (err as Error).message;
+      console.warn(`[VideoSmoke] ${p.name}:`, errors[p.name]);
     }
   }
 
-  return { ok: false, error: 'All configured video providers failed smoke test', tried };
+  return {
+    ok: false,
+    error: `All video providers failed. ${Object.entries(errors).slice(0, 3).map(([k, v]) => `${k}: ${v.slice(0, 80)}`).join(' | ')}`,
+    tried,
+  };
 }

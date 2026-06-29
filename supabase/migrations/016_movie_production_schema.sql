@@ -106,6 +106,6 @@ INSERT INTO api_priority_config (id, api_type, providers)
 VALUES (
   'video_gen',
   'video',
-  '["runway","luma","hailuo","kling","fal","replicate-svd","agnes","comfyui","slideshow"]'::jsonb
+  '["agnes","kling","fal","hailuo","runway","luma","replicate-svd","slideshow"]'::jsonb
 )
 ON CONFLICT (id) DO UPDATE SET providers = EXCLUDED.providers, updated_at = NOW();
