@@ -4,15 +4,19 @@ import { getCachedResponse, setCachedResponse } from '../services/responseCache.
 import { logSystemError } from '../services/systemErrorLog.js';
 import { runThreeLayerShield } from './threeLayerShield.js';
 import { loadMasterPrompt } from './masterPrompt.js';
+import { buildArchitectDAG, isLongRunningTask, formatDuration } from './architectDAG.js';
+import type { SwarmRunResult } from '../services/SwarmService.js';
 import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../types/features.js';
 import type { SwarmAgent, SwarmPlan, SwarmResult } from '../types/index.js';
-import type { SwarmRunResult } from '../services/SwarmService.js';
 
 const FRIENDLY_FALLBACKS = [
   "I'm putting the finishing touches on this — here's what I can share right now based on your request.",
   "Great question. Here's a solid starting point while the full Swarm run completes in the background.",
   "XROGA is on it. Here's a helpful answer to keep you moving forward.",
 ];
+
+const BACKGROUND_MSG =
+  "Your request is being processed in the background. We'll notify you here when it's ready. Here's a quick preview while the Swarm works:";
 
 function pickFallback(): string {
   return FRIENDLY_FALLBACKS[Math.floor(Math.random() * FRIENDLY_FALLBACKS.length)];
@@ -45,25 +49,18 @@ function defaultAgents(passed: SwarmAgent[] = ['architect', 'builder']): SwarmRe
 }
 
 function defaultPlan(): SwarmPlan {
-  return {
-    steps: [],
-    estimatedTotalActions: 1,
-    requiresApproval: false,
-  };
+  return { steps: [], estimatedTotalActions: 1, requiresApproval: false };
 }
 
-function progressEvent(
-  agent: string,
-  status: string,
-  message: string
-): SwarmProgressEvent {
+function progressEvent(agent: string, status: string, message: string, extra?: Record<string, unknown>): SwarmProgressEvent {
   return {
     runId: crypto.randomUUID(),
     agent,
     status,
     message,
     timestamp: new Date().toISOString(),
-  };
+    ...extra,
+  } as SwarmProgressEvent & Record<string, unknown>;
 }
 
 export class Orchestrator {
@@ -72,10 +69,65 @@ export class Orchestrator {
     ctx: {
       userId: string;
       prompt: string;
+      projectId?: string;
       onProgress?: (event: SwarmProgressEvent) => void;
     }
-  ): Promise<SwarmRunResult & { polishedReply: string }> {
-    await loadMasterPrompt(); // warm cache / DB prompt
+  ): Promise<SwarmRunResult & { polishedReply: string; followUps?: string[]; reasoning?: string; queued?: boolean }> {
+    await loadMasterPrompt();
+
+    const plan = await buildArchitectDAG(ctx.prompt, {
+      onProgress: ctx.onProgress,
+    });
+
+    ctx.onProgress?.(
+      progressEvent('architect', 'planning', plan.analysis, {
+        type: 'dag',
+        dag: plan.dag,
+        thinking: plan.thinking,
+      }) as SwarmProgressEvent
+    );
+
+    // Long-running: enqueue and return immediately
+    if (isLongRunningTask(plan, ctx.prompt)) {
+      const route = await classifyFeature(ctx.prompt).catch(() => ({ category: 'chat' as FeatureCategory }));
+      const { SwarmService } = await import('../services/SwarmService.js');
+      const { runId, queued } = await SwarmService.enqueueLongTask(
+        ctx.userId,
+        ctx.prompt,
+        ctx.projectId,
+        route.category
+      );
+
+      let preview = `${BACKGROUND_MSG}\n\n**Plan overview:** ${plan.analysis}\n\nEstimated time: ${formatDuration(plan.estimatedDurationSeconds)}`;
+      if (queued) {
+        ctx.onProgress?.(progressEvent('builder', 'queued', 'Queued for background processing…'));
+      }
+
+      const shield = await runThreeLayerShield({
+        content: preview,
+        prompt: ctx.prompt,
+        userId: ctx.userId,
+        includeProsCons: false,
+      });
+
+      return {
+        runId,
+        queued: true,
+        result: {
+          success: true,
+          iterations: 0,
+          defectsFound: 0,
+          plan: defaultPlan(),
+          agents: defaultAgents(['architect']),
+          output: { type: 'chat', content: shield.content } as FeatureOutput,
+        },
+        actions: { success: true, remaining: 0, cost: 0 },
+        featureCategory: route.category,
+        polishedReply: shield.content,
+        reasoning: plan.thinking,
+        followUps: shield.followUps,
+      };
+    }
 
     const cached = await getCachedResponse(ctx.prompt);
     if (cached) {
@@ -84,6 +136,7 @@ export class Orchestrator {
         content: cached,
         prompt: ctx.prompt,
         userId: ctx.userId,
+        includeProsCons: false,
       });
       return {
         runId: crypto.randomUUID(),
@@ -98,6 +151,8 @@ export class Orchestrator {
         actions: { success: true, remaining: 0, cost: 0 },
         featureCategory: 'chat' as FeatureCategory,
         polishedReply: shield.content,
+        followUps: shield.followUps,
+        reasoning: plan.thinking,
       };
     }
 
@@ -116,7 +171,6 @@ export class Orchestrator {
         await setCachedResponse(ctx.prompt, reply, result.featureCategory);
       }
 
-      // Patch chat output with shielded content
       if (result.result.output && typeof result.result.output === 'object') {
         const out = result.result.output as FeatureOutput;
         if (out.type === 'chat') {
@@ -124,7 +178,12 @@ export class Orchestrator {
         }
       }
 
-      return { ...result, polishedReply: reply };
+      return {
+        ...result,
+        polishedReply: reply,
+        followUps: shield.followUps,
+        reasoning: plan.thinking,
+      };
     } catch (err) {
       await logSystemError({
         api: 'orchestrator',
@@ -136,7 +195,7 @@ export class Orchestrator {
 
       const route = await classifyFeature(ctx.prompt).catch(() => ({
         category: 'chat' as FeatureCategory,
-        taskType: 'chat',
+        taskType: 'chat' as const,
         actionCost: 1,
         confidence: 0.5,
         reasoning: 'fallback',
@@ -155,6 +214,7 @@ export class Orchestrator {
         content: fallbackText,
         prompt: ctx.prompt,
         userId: ctx.userId,
+        includeProsCons: false,
       });
 
       return {
@@ -170,6 +230,8 @@ export class Orchestrator {
         actions: { success: true, remaining: 0, cost: 0 },
         featureCategory: route.category,
         polishedReply: shield.content,
+        followUps: shield.followUps,
+        reasoning: plan.thinking,
       };
     }
   }

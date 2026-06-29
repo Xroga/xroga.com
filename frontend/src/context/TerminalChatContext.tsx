@@ -12,6 +12,7 @@ import {
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, ApiError } from '@/lib/api';
+import type { SwarmProgressEvent } from '@/lib/swarm';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
@@ -48,6 +49,10 @@ interface TerminalChatContextValue {
   setOutOfActionsOpen: (v: boolean) => void;
   animatingId: string | null;
   swarmActiveAgent: string | null;
+  pipelineMessage: string | null;
+  followUps: string[];
+  reasoning: string | null;
+  dag: Array<{ id: string; description: string; agent: string }> | null;
   submit: (text?: string) => Promise<void>;
   stop: () => void;
   startNewChat: () => void;
@@ -78,6 +83,10 @@ export function TerminalChatProvider({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [animatingId, setAnimatingId] = useState<string | null>(null);
   const [swarmActiveAgent, setSwarmActiveAgent] = useState<string | null>(null);
+  const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
+  const [followUps, setFollowUps] = useState<string[]>([]);
+  const [reasoning, setReasoning] = useState<string | null>(null);
+  const [dag, setDag] = useState<Array<{ id: string; description: string; agent: string }> | null>(null);
   const chatPrefill = useAppStore((s) => s.chatPrefill);
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
   const setSwarmRunning = useAppStore((s) => s.setSwarmRunning);
@@ -204,6 +213,10 @@ export function TerminalChatProvider({
       setLoading(true);
       setSwarmRunning(true);
       setSwarmActiveAgent('routing');
+      setPipelineMessage('📡 Connecting to Swarm…');
+      setFollowUps([]);
+      setReasoning(null);
+      setDag(null);
 
       const assistantId = crypto.randomUUID();
       let gotEvent = false;
@@ -234,7 +247,14 @@ export function TerminalChatProvider({
               thinkingTimerRef.current = null;
             }
             const label = event.message ?? event.status ?? 'working';
-            if (event.agent) addProgress(event.agent, label);
+            setPipelineMessage(label);
+            if (event.agent) {
+              setSwarmActiveAgent(event.agent);
+              addProgress(event.agent, label);
+            }
+            const ev = event as SwarmProgressEvent & { dag?: typeof dag; thinking?: string };
+            if (ev.thinking) setReasoning(ev.thinking);
+            if (ev.dag) setDag(ev.dag);
           },
           onDelta: (delta) => {
             gotEvent = true;
@@ -282,6 +302,7 @@ export function TerminalChatProvider({
         setSwarmRunning(false);
         setAnimatingId(null);
         setSwarmActiveAgent(null);
+        setPipelineMessage(null);
         setTimeout(processNextInQueue, 50);
       }
     },
@@ -319,6 +340,10 @@ export function TerminalChatProvider({
         setOutOfActionsOpen,
         animatingId,
         swarmActiveAgent,
+        pipelineMessage,
+        followUps,
+        reasoning,
+        dag,
         submit,
         stop,
         startNewChat,

@@ -19,6 +19,9 @@ export interface FeatureRoute {
   actionCost: number;
   confidence: number;
   reasoning: string;
+  featureId?: string;
+  agent?: string;
+  systemPrompt?: string;
 }
 
 export interface LandingPageOutput {

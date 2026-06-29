@@ -1,10 +1,12 @@
 import { logSystemError } from '../services/systemErrorLog.js';
+import { generateProsCons, formatProsConsBlock } from '../services/reviewer/prosCons.js';
 
 export interface ShieldInput {
   content: string;
   prompt: string;
   userId?: string;
   runId?: string;
+  includeProsCons?: boolean;
 }
 
 export interface ShieldResult {
@@ -13,6 +15,8 @@ export interface ShieldResult {
   tier2Passed: boolean;
   tier3Passed: boolean;
   repairs: string[];
+  followUps: string[];
+  reasoning?: string;
 }
 
 const BLOCKED_PATTERNS = [
@@ -39,29 +43,26 @@ function stripInternalErrors(text: string): string {
   return out.replace(/\s{2,}/g, ' ').trim();
 }
 
-function appendProsConsNextSteps(content: string, prompt: string): string {
-  if (content.includes('**Pros**') || content.length < 80) return content;
-  const lower = prompt.toLowerCase();
-  const pros =
-    lower.includes('code') || lower.includes('build')
-      ? '- Fast iteration with Swarm agents\n- Production-ready structure'
-      : '- Clear, actionable guidance\n- Context-aware response';
-  const cons = '- Complex edge cases may need a follow-up prompt\n- Verify critical facts independently';
-  const next = '- Refine with more detail\n- Ask Xroga to implement the next step';
-  return `${content}\n\n**Pros**\n${pros}\n\n**Cons**\n${cons}\n\n**Next steps**\n${next}`;
+function shouldAddProsCons(prompt: string, content: string): boolean {
+  if (content.includes('**Pros**')) return false;
+  if (content.length < 200) return false;
+  if (prompt.length < 40) return false;
+  if (/^(hi|hello|hey|thanks|thank you)\b/i.test(prompt.trim())) return false;
+  return /\b(build|code|deploy|research|video|app|website|script|debug|automate)\b/i.test(prompt);
 }
 
 /** Tier 1 Syntax → Tier 2 Semantic (light) → Tier 3 Safety */
 export async function runThreeLayerShield(input: ShieldInput): Promise<ShieldResult> {
   const repairs: string[] = [];
   let content = input.content;
+  let followUps: string[] = [];
 
   // Tier 1 — syntax / structure
   const tier1Before = content;
   content = repairJsonLike(content);
   if (content !== tier1Before) repairs.push('json-repair');
 
-  // Tier 3 — safety (run before semantic to strip harmful content)
+  // Tier 3 — safety
   let tier3Passed = true;
   if (NSFW_PATTERNS.test(content)) {
     content = content.replace(NSFW_PATTERNS, '[filtered]');
@@ -75,14 +76,21 @@ export async function runThreeLayerShield(input: ShieldInput): Promise<ShieldRes
     repairs.push('empty-output-fallback');
   }
 
-  // Tier 2 — semantic (light heuristic: non-empty, min length for substantive prompts)
+  // Tier 2 — semantic
   const tier2Passed = input.prompt.length < 20 || content.length >= 40;
   if (!tier2Passed) {
     content += '\n\nI focused on the core of your request — let me know if you want me to expand any section.';
     repairs.push('semantic-padding');
   }
 
-  content = appendProsConsNextSteps(content, input.prompt);
+  // Pros/cons only for substantive complex answers
+  const addProsCons = input.includeProsCons ?? shouldAddProsCons(input.prompt, content);
+  if (addProsCons) {
+    const pc = await generateProsCons(input.prompt, content);
+    const block = formatProsConsBlock(pc);
+    if (block) content += block;
+    followUps = pc.followUps ?? [];
+  }
 
   if (repairs.length) {
     await logSystemError({
@@ -101,5 +109,6 @@ export async function runThreeLayerShield(input: ShieldInput): Promise<ShieldRes
     tier2Passed: tier2Passed || repairs.includes('semantic-padding'),
     tier3Passed,
     repairs,
+    followUps,
   };
 }

@@ -13,7 +13,8 @@ import { ModelBadge } from '@/components/ui/ModelBadge';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
-import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
+import { ProcessingPipeline } from './ProcessingPipeline';
+import { FollowUpChips, ReasoningPanel, SmoothTypewriter } from './ReasoningAndFollowUps';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions, isBuildRelated } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -23,33 +24,8 @@ import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
-function useTypewriter(text: string, active: boolean, speed = 12) {
-  const [displayed, setDisplayed] = useState('');
-  useEffect(() => {
-    if (!active) {
-      setDisplayed(text);
-      return;
-    }
-    setDisplayed('');
-    let i = 0;
-    const timer = setInterval(() => {
-      i += 1;
-      setDisplayed(text.slice(0, i));
-      if (i >= text.length) clearInterval(timer);
-    }, speed);
-    return () => clearInterval(timer);
-  }, [text, active, speed]);
-  return displayed;
-}
-
 function TypewriterMessage({ content, animate }: { content: string; animate: boolean }) {
-  const displayed = useTypewriter(content, animate);
-  return (
-    <span>
-      {displayed}
-      {animate && displayed.length < content.length && <span className="cursor-blink" />}
-    </span>
-  );
+  return <SmoothTypewriter content={content} animate={animate} speed={6} />;
 }
 
 const AGENT_STYLES: Record<string, string> = {
@@ -67,7 +43,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, swarmActiveAgent, outOfActionsOpen, setOutOfActionsOpen, setPrompt } =
+  const { messages, loading, animatingId, swarmActiveAgent, pipelineMessage, followUps, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -205,7 +181,11 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           )}
 
           {loading && (
-            <SwarmProcessingIndicator activeAgent={swarmActiveAgent ?? undefined} loading={loading} />
+            <ProcessingPipeline
+              activeAgent={swarmActiveAgent ?? undefined}
+              loading={loading}
+              message={pipelineMessage ?? undefined}
+            />
           )}
 
           {messages.map((msg, idx) => {
@@ -265,9 +245,15 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                       <p className="py-1 whitespace-pre-wrap text-left">
                         <TypewriterMessage
                           content={msg.content}
-                          animate={msg.id === animatingId && loading}
+                          animate={msg.id === animatingId}
                         />
                       </p>
+                      {isLastAssistant && reasoning && (
+                        <ReasoningPanel reasoning={reasoning} dag={dag ?? undefined} />
+                      )}
+                      {isLastAssistant && followUps.length > 0 && (
+                        <FollowUpChips items={followUps} onSelect={handleSuggestion} />
+                      )}
                       {msg.content && (
                         <MessageBubbleActions
                           role="assistant"

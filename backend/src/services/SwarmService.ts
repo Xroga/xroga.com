@@ -284,6 +284,9 @@ export class SwarmService {
         output: result.result.output,
         agents: result.result.agents,
         actionsRemaining: result.actions.remaining,
+        followUps: (result as { followUps?: string[] }).followUps,
+        reasoning: (result as { reasoning?: string }).reasoning,
+        queued: (result as { queued?: boolean }).queued,
       },
     });
   }

@@ -138,6 +138,14 @@ export async function streamSwarmExecute(
         throw new Error(String(payload.error ?? 'Swarm stream error'));
       }
 
+      if (eventName === 'pipeline') {
+        options.onProgress?.({
+          agent: 'routing',
+          status: 'connecting',
+          message: String(payload.message ?? 'Connecting…'),
+        } as SwarmProgressEvent);
+      }
+
       if (eventName === 'progress') {
         options.onProgress?.(payload as SwarmProgressEvent);
       }
@@ -303,6 +311,22 @@ export async function apiFetch<T = unknown>(
   }
 
   return data as T;
+}
+
+export async function estimatePrompt(prompt: string): Promise<{
+  estimatedActions: number;
+  estimatedTime: string;
+  featureName?: string;
+}> {
+  if (!prompt.trim()) return { estimatedActions: 1, estimatedTime: '5s' };
+  try {
+    return await apiFetch('/api/v1/estimate', {
+      method: 'POST',
+      body: JSON.stringify({ prompt }),
+    });
+  } catch {
+    return { estimatedActions: 1, estimatedTime: '5s' };
+  }
 }
 
 export const api = {

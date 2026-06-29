@@ -1,12 +1,14 @@
 import { deepSeekChat } from '../../lib/deepseek.js';
+import { groqChat } from '../../lib/groq.js';
 import type { FeatureCategory, FeatureRoute } from '../../types/features.js';
 import { FEATURE_ACTION_COSTS, FEATURE_TASK_TYPES } from '../../types/features.js';
 import { computeVideoActionCost, parseVideoDuration } from '../media/videoUtils.js';
 import { computeDebugActionCost } from '../debugging/codeDebugger.js';
+import { FEATURE_CATALOG, matchFeatureByKeywords, type FeatureCatalogEntry } from '../../config/featureCatalog.js';
 
-const CLASSIFICATION_SYSTEM = `You are the Xroga Architect. Classify user requests into exactly one category.
-Categories: chat, landing_page, image_generation, browser_automation, cross_post, key_creation, video_studio, deep_research, content_blocker, job_hunter, code_debug
-Respond ONLY with JSON: {"category":"...","confidence":0.0-1.0,"reasoning":"..."}`;
+const CLASSIFICATION_SYSTEM = `You are the Xroga Architect. Classify user requests into a feature ID from the catalog.
+Respond ONLY with JSON: {"featureId":"...","category":"chat|landing_page|image_generation|browser_automation|cross_post|key_creation|video_studio|deep_research|content_blocker|job_hunter|code_debug","confidence":0.0-1.0,"reasoning":"..."}
+Pick the closest featureId from: ${FEATURE_CATALOG.slice(0, 30).map((f) => f.id).join(', ')}...`;
 
 const RULE_PATTERNS: Array<{ category: FeatureCategory; patterns: RegExp[] }> = [
   {
@@ -87,7 +89,50 @@ const RULE_PATTERNS: Array<{ category: FeatureCategory; patterns: RegExp[] }> = 
   },
 ];
 
+function catalogToRoute(entry: FeatureCatalogEntry): FeatureRoute {
+  const category = mapCatalogToCategory(entry);
+  return {
+    category,
+    taskType: FEATURE_TASK_TYPES[category],
+    actionCost: entry.actionCost || FEATURE_ACTION_COSTS[category],
+    confidence: 0.9,
+    reasoning: `Catalog match: ${entry.name} → ${entry.agent}`,
+    featureId: entry.id,
+    agent: entry.agent,
+    systemPrompt: entry.systemPrompt,
+  };
+}
+
+function mapCatalogToCategory(entry: FeatureCatalogEntry): FeatureCategory {
+  const id = entry.id;
+  const map: Record<string, FeatureCategory> = {
+    landing_page: 'landing_page',
+    website_gen: 'landing_page',
+    image_generation: 'image_generation',
+    browser_automation: 'browser_automation',
+    browser_scrape: 'browser_automation',
+    cross_post: 'cross_post',
+    social_posting: 'cross_post',
+    key_creation: 'key_creation',
+    api_vault: 'key_creation',
+    video_studio: 'video_studio',
+    ai_video: 'video_studio',
+    full_episode: 'video_studio',
+    deep_research: 'deep_research',
+    web_research: 'deep_research',
+    content_blocker: 'content_blocker',
+    safe_browser: 'content_blocker',
+    job_hunter: 'job_hunter',
+    code_debug: 'code_debug',
+    code_generation: 'code_debug',
+  };
+  return map[id] ?? 'chat';
+}
+
 function classifyByRules(prompt: string): FeatureRoute {
+  const catalog = matchFeatureByKeywords(prompt);
+  if (catalog) return catalogToRoute(catalog);
+
   for (const { category, patterns } of RULE_PATTERNS) {
     if (patterns.some((p) => p.test(prompt))) {
       return {
@@ -116,9 +161,15 @@ function parseDeepSeekClassification(raw: string, prompt: string): FeatureRoute 
 
     const parsed = JSON.parse(jsonMatch[0]) as {
       category?: string;
+      featureId?: string;
       confidence?: number;
       reasoning?: string;
     };
+
+    if (parsed.featureId) {
+      const entry = FEATURE_CATALOG.find((f) => f.id === parsed.featureId);
+      if (entry) return catalogToRoute(entry);
+    }
 
     const validCategories: FeatureCategory[] = [
       'chat', 'landing_page', 'image_generation', 'browser_automation', 'cross_post', 'key_creation',
@@ -151,7 +202,27 @@ export async function classifyFeature(prompt: string): Promise<FeatureRoute> {
 
   // Fast path: rule match or simple chat — skip slow LLM classification
   if (rules.confidence >= 0.85) return rules;
-  if (rules.category === 'chat' && prompt.length < 300) return rules;
+  if (rules.category === 'chat' && prompt.length < 300) {
+    const catalog = matchFeatureByKeywords(prompt);
+    if (catalog) return catalogToRoute(catalog);
+    return rules;
+  }
+
+  if (process.env.GROQ_API_KEY) {
+    try {
+      const response = await groqChat(
+        [
+          { role: 'system', content: CLASSIFICATION_SYSTEM },
+          { role: 'user', content: prompt },
+        ],
+        { maxTokens: 256 }
+      );
+      const classified = parseDeepSeekClassification(response, prompt);
+      if (classified) return classified;
+    } catch {
+      /* try deepseek */
+    }
+  }
 
   try {
     const response = await deepSeekChat(

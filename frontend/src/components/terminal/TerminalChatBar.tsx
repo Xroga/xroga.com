@@ -5,7 +5,7 @@ import { Search, Play, Globe, Layers } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
-import { estimateActionCost } from '@/lib/actionCosts';
+import { estimatePrompt } from '@/lib/api';
 import { IntegrationsModal } from './IntegrationsModal';
 import { GithubRepoModal } from './GithubRepoModal';
 import { ActionCostModal } from './ActionCostModal';
@@ -71,9 +71,24 @@ export function TerminalChatBar() {
   const [dragOver, setDragOver] = useState(false);
   const [listening, setListening] = useState(false);
   const [sendState, setSendState] = useState<SendButtonState>('idle');
+  const [liveEstimate, setLiveEstimate] = useState({ actions: 1, time: '5s' });
 
   const remaining = actions?.remaining ?? 50;
-  const estimate = estimateActionCost(prompt || 'chat');
+
+  useEffect(() => {
+    if (!prompt.trim()) {
+      setLiveEstimate({ actions: 1, time: '5s' });
+      return;
+    }
+    const t = setTimeout(() => {
+      void estimatePrompt(prompt).then((e) =>
+        setLiveEstimate({ actions: e.estimatedActions, time: e.estimatedTime })
+      );
+    }, 400);
+    return () => clearTimeout(t);
+  }, [prompt]);
+
+  const estimate = liveEstimate.actions;
 
   useEffect(() => {
     if (loading) setSendState('thinking');
@@ -259,9 +274,12 @@ export function TerminalChatBar() {
             <div className="flex-1 min-w-[4px]" />
             <ChatBarFuelMeter
               remaining={remaining}
-              estimate={estimate.cost}
+              estimate={estimate}
               onClick={() => setCostOpen(true)}
             />
+            <span className="text-[9px] text-[var(--muted)] font-terminal hidden sm:inline">
+              ~{liveEstimate.time}
+            </span>
           </div>
           )}
 
