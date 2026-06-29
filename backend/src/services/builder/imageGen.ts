@@ -51,10 +51,10 @@ export const IMAGE_PROGRESS_MESSAGES: Record<ImageProgressStep, string> = {
 const EXACT_MATCH_THRESHOLD = 72;
 const ACCEPT_THRESHOLD = 60;
 const DEFAULT_FOLLOW_UPS = [
-  'Generate more variants',
-  'Try a different art style',
   'Make it more photorealistic',
-  'Anime / illustration style',
+  'Try anime / illustration style',
+  'Warmer cinematic lighting',
+  'Sharper details and higher contrast',
 ];
 
 export const VARIANT_COUNT = 4;
@@ -121,6 +121,34 @@ type ProviderEntry = {
   call: (prompt: string) => Promise<string>;
   configured: boolean;
 };
+
+/** Fixed 4-variant slots: Agnes · Cloudflare · Fal AI · +1 other configured API */
+const VARIANT_SLOT_PROVIDERS: ProviderName[] = ['agnes-image', 'cloudflare', 'fal-sdxl'];
+
+const OTHER_VARIANT_POOL: ProviderName[] = [
+  'replicate-sd',
+  'openai-image',
+  'comfyui',
+  'luma-image',
+  'hailuo-image',
+  'runway-image',
+];
+
+const PROVIDER_DISPLAY: Record<ProviderName, string> = {
+  'agnes-image': 'Agnes',
+  cloudflare: 'Cloudflare',
+  'fal-sdxl': 'Fal AI',
+  'replicate-sd': 'Replicate',
+  'openai-image': 'OpenAI',
+  comfyui: 'ComfyUI',
+  'luma-image': 'Luma',
+  'hailuo-image': 'Hailuo',
+  'runway-image': 'Runway',
+};
+
+function providerDisplayLabel(name: ProviderName): string {
+  return PROVIDER_DISPLAY[name] ?? name;
+}
 
 function buildStandardProviders(): ProviderEntry[] {
   /** Free/cheap providers first, paid APIs last */
@@ -378,23 +406,31 @@ function buildAllProviders(): ProviderEntry[] {
 }
 
 function pickVariantProviders(all: ProviderEntry[]): ProviderEntry[] {
-  const preferredOrder: ProviderName[] = [
-    'fal-sdxl',
-    'replicate-sd',
-    'agnes-image',
-    'openai-image',
-    'cloudflare',
-    'comfyui',
-    'luma-image',
-    'hailuo-image',
-    'runway-image',
-  ];
+  const byName = new Map(all.map((p) => [p.name, p]));
   const picked: ProviderEntry[] = [];
-  for (const name of preferredOrder) {
-    const entry = all.find((p) => p.name === name);
+
+  for (const name of VARIANT_SLOT_PROVIDERS) {
+    const entry = byName.get(name);
     if (entry) picked.push(entry);
-    if (picked.length >= VARIANT_COUNT) break;
   }
+
+  for (const name of OTHER_VARIANT_POOL) {
+    if (picked.length >= VARIANT_COUNT) break;
+    if (picked.some((p) => p.name === name)) continue;
+    const entry = byName.get(name);
+    if (entry) {
+      picked.push(entry);
+      break;
+    }
+  }
+
+  if (picked.length < VARIANT_COUNT) {
+    for (const entry of all) {
+      if (picked.length >= VARIANT_COUNT) break;
+      if (!picked.some((p) => p.name === entry.name)) picked.push(entry);
+    }
+  }
+
   return picked.slice(0, VARIANT_COUNT);
 }
 
@@ -503,7 +539,7 @@ async function generateStyleTransferImage(
     imageUrl: winner.imageUrl,
     provider: winner.provider,
     prompt: rawQuery,
-    followUps: ['Try another style', 'Make it more photorealistic', 'Anime / illustration style', 'Cinematic movie look'],
+    followUps: ['Make it more photorealistic', 'Try anime / illustration style', 'Warmer cinematic lighting', 'Sharper details and higher contrast'],
     pros: [`${safeAttempts.length} style variants from your upload`, `Best: ${winner.variantLabel ?? winner.provider}`],
     matchScore: winner.matchScore,
     verified: winner.matchScore >= EXACT_MATCH_THRESHOLD,
@@ -566,9 +602,10 @@ export async function generateImage(
   };
 
   const attemptResults = await Promise.all(
-    providers.map(async (entry): Promise<Attempt | null> => {
+    providers.map(async (entry, variantIndex): Promise<Attempt | null> => {
+      const displayLabel = providerDisplayLabel(entry.name);
       const providerLabel = normalizeProvider(entry.name);
-      emitProgress(options, 'painting', `${providerLabel} generating…`);
+      emitProgress(options, 'painting', `${displayLabel} generating…`);
 
       try {
         const imageUrl = await callImageProvider(entry, imagePrompt, ctx);
@@ -600,6 +637,8 @@ export async function generateImage(
             issues: verification.issues,
             blocked: true,
             scoresByVerifier: verification.scoresByVerifier,
+            variantLabel: displayLabel,
+            variantIndex,
           };
         }
 
@@ -610,6 +649,8 @@ export async function generateImage(
           issues: verification.issues,
           blocked: false,
           scoresByVerifier: verification.scoresByVerifier,
+          variantLabel: displayLabel,
+          variantIndex,
         };
 
         options?.onImageAttempt?.({
@@ -618,6 +659,8 @@ export async function generateImage(
           matchScore: attempt.matchScore,
           issues: attempt.issues,
           scoresByVerifier: attempt.scoresByVerifier,
+          variantLabel: displayLabel,
+          variantIndex,
         });
 
         console.log(
@@ -734,6 +777,8 @@ export async function generateImage(
     issues: a.issues,
     scoresByVerifier: a.scoresByVerifier,
     selected: a.imageUrl === winner.imageUrl,
+    variantLabel: a.variantLabel,
+    variantIndex: a.variantIndex,
   }));
 
   const others = serializedAttempts.filter((a) => a.imageUrl !== winner.imageUrl);
