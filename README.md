@@ -38,8 +38,8 @@ The negotiation loop repeats until all agents confirm **Zero Defects**.
 - [x] Natural Language Command with feature routing (DeepSeek Architect)
 - [x] SSE streaming progress (`POST /api/swarm/execute?stream=true`)
 - [x] Landing Page Builder – Claude 3.5 + Flux Pro + Vercel deploy (25 Actions)
-- [x] Image Generation – Replicate Flux Pro + Cloudflare fallback (4 Actions)
-- [x] Browser Automation – Playwright + Browserbase fallback (5 Actions)
+- [x] Image Generation – Agnes AI (primary), Fal/Replicate/Cloudflare fallback (4 Actions)
+- [x] Browser Automation – Playwright (free local) + Browserbase fallback (5 Actions)
 - [x] Cross-Post – Buffer / Twitter / LinkedIn APIs (1 Action/platform)
 - [x] Auto-Key Creation – Browserbase + encrypted Supabase storage (5 Actions)
 

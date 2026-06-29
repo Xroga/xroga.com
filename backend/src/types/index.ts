@@ -3,7 +3,9 @@ export type PlanTier = 'unpaid' | 'spark' | 'pulse' | 'nova' | 'zenith' | 'singu
 export type ProjectType = 'app' | 'website' | 'video' | 'game' | 'research' | 'automation';
 export type ProjectStatus = 'in_progress' | 'completed' | 'archived';
 
-export type SwarmAgent = 'architect' | 'builder' | 'reviewer' | 'qa' | 'truth_council';
+export type SwarmCoreAgent = 'architect' | 'builder' | 'reviewer' | 'qa' | 'truth_council';
+/** Includes progress-only agents shown in the UI (Debugger, Automation Runtime) */
+export type SwarmAgent = SwarmCoreAgent | 'debugger' | 'automation';
 export type SwarmStatus = 'pending' | 'planning' | 'building' | 'reviewing' | 'testing' | 'verifying' | 'completed' | 'failed';
 
 export interface Profile {
@@ -64,7 +66,7 @@ export interface SwarmResult {
   plan: SwarmPlan;
   defectsFound: number;
   iterations: number;
-  agents: Record<SwarmAgent, { status: 'passed' | 'failed'; notes: string }>;
+  agents: Record<SwarmCoreAgent, { status: 'passed' | 'failed'; notes: string }>;
 }
 
 export type TaskType =

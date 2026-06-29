@@ -145,9 +145,9 @@ export abstract class BaseSwarm {
         notes: `${reviewResult.output.length} defects found`,
       };
 
-      // Step 4: Builder fixes defects (if any)
+      // Step 4: Debugger fixes defects (if any)
       if (reviewResult.output.length > 0) {
-        this.notify(context.runId, 'building', 'builder');
+        this.notify(context.runId, 'building', 'debugger');
         const fixResult = await this.executeBuilder({ ...context, prompt: this.buildFixPrompt(context) });
         context.draft = fixResult.output;
         output = fixResult.output;
@@ -162,9 +162,9 @@ export abstract class BaseSwarm {
         notes: qaResult.output.errors.join('; ') || 'All tests passed',
       };
 
-      // Step 6: Builder fixes runtime errors (if any)
+      // Step 6: Debugger fixes runtime errors (if any)
       if (!qaResult.output.passed) {
-        this.notify(context.runId, 'building', 'builder');
+        this.notify(context.runId, 'building', 'debugger');
         const runtimeFix = await this.executeBuilder({
           ...context,
           prompt: `Fix these runtime errors:\n${qaResult.output.errors.join('\n')}`,
@@ -173,8 +173,13 @@ export abstract class BaseSwarm {
         output = runtimeFix.output;
       }
 
-      // Step 7: Truth Council verifies
-      this.notify(context.runId, 'verifying', 'truth_council');
+      // Step 7: Automation Runtime + Truth Council verifies
+      const deployCategories = new Set(['landing_page', 'browser_automation', 'key_creation']);
+      this.notify(
+        context.runId,
+        'verifying',
+        deployCategories.has(context.featureCategory ?? '') ? 'automation' : 'truth_council'
+      );
       const truthResult = await this.executeTruthCouncil(context);
       context.truthCouncilVerdict = truthResult.output;
       agentResults.truth_council = {

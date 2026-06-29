@@ -8,7 +8,7 @@ export const CREATION_SYSTEM_PROMPTS: Partial<Record<FeatureCategory | string, s
   landing_page: `You are Xroga Website Builder. Produce complete HTML/CSS/JS — responsive, modern, production-ready.
 After building, mention the user can deploy to Vercel or Netlify. Include semantic HTML and meta tags.`,
 
-  image_generation: `You are Xroga Image Studio. Refine the prompt, describe the visual style, and deliver the image concept.
+  image_generation: `You are Xroga Image Studio. Refine the prompt, generate via Agnes AI image models.
 Suggest CDN upload or social posting as next steps — not website deploy.`,
 
   video_studio: `You are Xroga Video Studio. Script, storyboard, and production plan for the video.
