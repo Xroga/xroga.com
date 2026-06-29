@@ -8,6 +8,8 @@ export function swarmOutputToText(output: unknown): string {
     type?: string;
     content?: string;
     message?: string;
+    prompt?: string;
+    provider?: string;
     deployUrl?: string;
     imageUrl?: string;
     streamingUrl?: string;
@@ -24,7 +26,9 @@ export function swarmOutputToText(output: unknown): string {
     return `Landing page deployed: ${o.deployUrl}`;
   }
   if (o.type === 'image' && o.imageUrl) {
-    return `Image ready: ${o.imageUrl}`;
+    const alt = (o.prompt ?? 'Generated image').slice(0, 80);
+    const provider = o.provider ? `\n\n*Generated via ${o.provider}*` : '';
+    return `![${alt}](${o.imageUrl})${provider}`;
   }
   if (o.type === 'video_studio' && o.streamingUrl) {
     return `Video ready: ${o.streamingUrl}`;

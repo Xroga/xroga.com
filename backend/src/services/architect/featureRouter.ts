@@ -130,20 +130,21 @@ function mapCatalogToCategory(entry: FeatureCatalogEntry): FeatureCategory {
 }
 
 function classifyByRules(prompt: string): FeatureRoute {
-  const catalog = matchFeatureByKeywords(prompt);
-  if (catalog) return catalogToRoute(catalog);
-
+  // Strong intent rules first — beats weak catalog keyword scoring
   for (const { category, patterns } of RULE_PATTERNS) {
     if (patterns.some((p) => p.test(prompt))) {
       return {
         category,
         taskType: FEATURE_TASK_TYPES[category],
         actionCost: FEATURE_ACTION_COSTS[category],
-        confidence: 0.85,
+        confidence: 0.9,
         reasoning: `Rule-based match for ${category}`,
       };
     }
   }
+
+  const catalog = matchFeatureByKeywords(prompt);
+  if (catalog) return catalogToRoute(catalog);
 
   return {
     category: 'chat',

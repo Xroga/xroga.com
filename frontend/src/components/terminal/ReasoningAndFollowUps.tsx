@@ -64,7 +64,7 @@ export function FollowUpChips({ items, onSelect }: FollowUpChipsProps) {
   );
 }
 
-/** Modern AI response — natural stream growth + fade-in, no typewriter */
+/** Modern AI response — natural stream growth + fade-in, renders markdown images */
 export function ModernResponseText({
   content,
   streaming,
@@ -94,12 +94,31 @@ export function ModernResponseText({
     );
   }
 
+  const parts = content.split(/(!\[[^\]]*\]\([^)]+\))/g);
+
   return (
     <span
       ref={blockRef}
       className={cn('xv-response-text whitespace-pre-wrap', streaming && 'xv-streaming')}
     >
-      {content}
+      {parts.map((part, i) => {
+        const imgMatch = part.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+        if (imgMatch) {
+          const [, alt, src] = imgMatch;
+          return (
+            <span key={i} className="block my-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={src}
+                alt={alt || 'Generated image'}
+                className="max-w-full rounded-lg border border-white/10 shadow-lg max-h-[420px] object-contain bg-black/20"
+                loading="lazy"
+              />
+            </span>
+          );
+        }
+        return <span key={i}>{part}</span>;
+      })}
       {streaming && content.length > 0 && (
         <span className="inline-block w-0.5 h-[1em] ml-0.5 bg-[#006aff]/80 align-middle animate-pulse rounded-full" />
       )}

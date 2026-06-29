@@ -1,5 +1,9 @@
 /** Classify prompt complexity for routing — fast chat vs full swarm */
 
+import { detectFeatureIntent, requiresFeaturePipeline } from './featureIntent.js';
+
+export { requiresFeaturePipeline, detectFeatureIntent };
+
 const GREETING =
   /^(hi|hello|hey|yo|sup|hola|howdy|what'?s\s*up|good\s+(morning|afternoon|evening)|gm|gn)\b[!.,?\s]*$/i;
 
@@ -26,6 +30,7 @@ export function isSimpleChat(prompt: string): boolean {
 }
 
 export function shouldUseFastChat(prompt: string, category?: string): boolean {
+  if (requiresFeaturePipeline(prompt)) return false;
   if (category && category !== 'chat') return false;
   return isSimpleChat(prompt);
 }

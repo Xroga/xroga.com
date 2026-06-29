@@ -8,7 +8,9 @@ import { buildArchitectDAG, isLongRunningTask, formatDuration } from './architec
 import type { SwarmRunResult } from '../services/SwarmService.js';
 import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../types/features.js';
 import type { SwarmCoreAgent, SwarmPlan, SwarmResult } from '../types/index.js';
-import { shouldUseFastChat, isTrivialPrompt } from '../lib/promptClassifier.js';
+import { shouldUseFastChat, isTrivialPrompt, requiresFeaturePipeline } from '../lib/promptClassifier.js';
+import { formatFeatureOutput, stripFakeImageMarkdown } from '../lib/featureIntent.js';
+import { executeFeature, resolveFeatureCategory } from '../services/featureExecutor.js';
 
 const FRIENDLY_FALLBACKS = [
   "I'm putting the finishing touches on this — here's what I can share right now based on your request.",
@@ -24,15 +26,7 @@ function pickFallback(): string {
 }
 
 function extractReplyText(output: unknown): string {
-  if (!output || typeof output !== 'object') return 'Task complete.';
-  const o = output as Record<string, unknown>;
-  if (o.type === 'chat' && typeof o.content === 'string') return o.content;
-  if (typeof o.message === 'string') return o.message;
-  if (typeof o.deployUrl === 'string') return `Your project is live at ${o.deployUrl}`;
-  if (typeof o.imageUrl === 'string') return `Image ready: ${o.imageUrl}`;
-  if (typeof o.streamingUrl === 'string') return `Video ready: ${o.streamingUrl}`;
-  if (typeof o.pdfUrl === 'string') return `Research report: ${o.pdfUrl}`;
-  return JSON.stringify(o).slice(0, 500);
+  return formatFeatureOutput(output);
 }
 
 function defaultAgents(passed: SwarmCoreAgent[] = ['architect', 'builder']): SwarmResult['agents'] {
@@ -122,9 +116,11 @@ export class Orchestrator {
       reasoning: 'fallback',
     }));
 
+    const featureCategory = resolveFeatureCategory(ctx.prompt, route.category);
+
     // Fast chat: greetings & simple conversation — no swarm, no architect spam
-    if (shouldUseFastChat(ctx.prompt, route.category)) {
-      return this.executeFastChat(ctx, route.category);
+    if (shouldUseFastChat(ctx.prompt, featureCategory)) {
+      return this.executeFastChat(ctx, featureCategory);
     }
 
     const plan = await buildArchitectDAG(ctx.prompt, {
@@ -185,7 +181,7 @@ export class Orchestrator {
       };
     }
 
-    const cached = await getCachedResponse(ctx.prompt);
+    const cached = !requiresFeaturePipeline(ctx.prompt) ? await getCachedResponse(ctx.prompt) : null;
     if (cached) {
       const shield = await runThreeLayerShield({
         content: cached,
@@ -214,13 +210,19 @@ export class Orchestrator {
     try {
       const result = await runFn();
       let reply = extractReplyText(result.result.output);
+      const isStructuredOutput =
+        result.result.output &&
+        typeof result.result.output === 'object' &&
+        (result.result.output as { type?: string }).type !== 'chat';
+
       const shield = await runThreeLayerShield({
         content: reply,
         prompt: ctx.prompt,
         userId: ctx.userId,
         runId: result.runId,
+        includeProsCons: !isStructuredOutput,
       });
-      reply = shield.content;
+      reply = isStructuredOutput ? reply : stripFakeImageMarkdown(shield.content);
 
       if (result.result.success) {
         await setCachedResponse(ctx.prompt, reply, result.featureCategory);
@@ -257,12 +259,25 @@ export class Orchestrator {
       }));
 
       let fallbackText = pickFallback();
-      try {
-        const { quickChat } = await import('../services/chat/quickChat.js');
-        const quick = await quickChat(ctx.prompt);
-        if (quick?.trim()) fallbackText = quick;
-      } catch {
-        /* use friendly fallback */
+
+      if (requiresFeaturePipeline(ctx.prompt)) {
+        try {
+          const category = resolveFeatureCategory(ctx.prompt, route.category);
+          const output = await executeFeature(category, ctx.prompt, { userId: ctx.userId, projectId: ctx.projectId });
+          fallbackText = formatFeatureOutput(output);
+        } catch (featureErr) {
+          console.error('[Orchestrator] Feature fallback failed:', (featureErr as Error).message);
+          fallbackText =
+            `I couldn't complete that ${route.category.replace(/_/g, ' ')} request. Please verify API keys (Agnes, Replicate, Cloudflare) are set on the server.`;
+        }
+      } else {
+        try {
+          const { quickChat } = await import('../services/chat/quickChat.js');
+          const quick = await quickChat(ctx.prompt);
+          if (quick?.trim()) fallbackText = stripFakeImageMarkdown(quick);
+        } catch {
+          /* use friendly fallback */
+        }
       }
 
       const shield = await runThreeLayerShield({
