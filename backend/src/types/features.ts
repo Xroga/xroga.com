@@ -43,6 +43,16 @@ export interface ImageGenOutput {
   followUps?: string[];
   pros?: string[];
   cons?: string[];
+  matchScore?: number;
+  verified?: boolean;
+  rejectedImages?: Array<{
+    imageUrl: string;
+    provider: string;
+    matchScore: number;
+    issues?: string[];
+  }>;
+  thumbnailUrl?: string;
+  isYoutubeThumbnail?: boolean;
 }
 
 export interface BrowserAutomationOutput {

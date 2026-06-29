@@ -5,6 +5,8 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { randomUUID } from 'node:crypto';
 
+import { isValidMp4Buffer, isStubJsonBuffer } from './mediaValidation.js';
+
 const execFileAsync = promisify(execFile);
 
 export interface AssemblyInput {
@@ -67,10 +69,22 @@ export async function assembleVideo(input: AssemblyInput): Promise<AssemblyOutpu
 
   try {
     await execFileAsync('ffmpeg', ['-version']);
-    return await runFfmpegAssembly(workDir, outputPath, input);
+    try {
+      return await runFfmpegAssembly(workDir, outputPath, input);
+    } catch (asmErr) {
+      console.error('[FFmpeg] Assembly failed, using raw video:', (asmErr as Error).message);
+      const buffer = await downloadVideoBuffer(input.videoUrl);
+      if (isStubJsonBuffer(buffer) || !isValidMp4Buffer(buffer)) {
+        throw new Error('Invalid video data from provider');
+      }
+      return { filePath: input.outputFilename, buffer, durationSeconds: 5 };
+    }
   } catch {
     console.error('[FFmpeg] Not available, returning raw video download');
     const buffer = await downloadVideoBuffer(input.videoUrl);
+    if (isStubJsonBuffer(buffer) || !isValidMp4Buffer(buffer)) {
+      throw new Error('Video file is invalid — provider returned no playable MP4');
+    }
     return { filePath: input.outputFilename, buffer, durationSeconds: 5 };
   }
 }

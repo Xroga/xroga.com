@@ -12,6 +12,8 @@ import { classifyImageQuery } from './image/understanding.js';
 import { enhanceImagePrompt } from './image/promptEnhancer.js';
 import { pickBestImage } from './image/imageReviewer.js';
 import { generateImageFollowUps } from './image/followUps.js';
+import { moderateImagePrompt } from './image/contentModeration.js';
+import { verifyImageMatchesPrompt } from './image/imageVerifier.js';
 
 export class ImageGenerationError extends Error {
   constructor(message: string) {
@@ -20,19 +22,29 @@ export class ImageGenerationError extends Error {
   }
 }
 
-export type ImageProgressStep = 'classifying' | 'enhancing' | 'painting' | 'reviewing' | 'upscaling' | 'complete';
+export type ImageProgressStep =
+  | 'classifying'
+  | 'enhancing'
+  | 'painting'
+  | 'reviewing'
+  | 'verifying'
+  | 'upscaling'
+  | 'complete';
 
 export const IMAGE_PROGRESS_MESSAGES: Record<ImageProgressStep, string> = {
   classifying: 'Understanding your request…',
   enhancing: 'Enhancing your prompt…',
   painting: 'Generating your image…',
-  reviewing: 'Final touches…',
+  reviewing: 'Comparing results…',
+  verifying: 'Verifying match to your prompt…',
   upscaling: 'Final touches…',
   complete: 'Image ready!',
 };
 
-const DEFAULT_FOLLOW_UPS = ['Make it 4K', 'Change style to anime', 'Generate variations'];
-const DEFAULT_PROS = ['Creative result'];
+const MATCH_THRESHOLD = 72;
+const MAX_VERIFY_ATTEMPTS = 4;
+const DEFAULT_FOLLOW_UPS = ['Make it 4K', 'YouTube thumbnail variant', 'Generate variations'];
+const DEFAULT_PROS = ['Verified match to your prompt'];
 
 export interface ImageGenOptions {
   onProgress?: (step: ImageProgressStep, message: string) => void;
@@ -304,9 +316,10 @@ async function maybeUpscale(imageUrl: string, premium: boolean): Promise<string>
 
 function emitProgress(
   options: ImageGenOptions | undefined,
-  step: ImageProgressStep
+  step: ImageProgressStep,
+  message?: string
 ): void {
-  options?.onProgress?.(step, IMAGE_PROGRESS_MESSAGES[step]);
+  options?.onProgress?.(step, message ?? IMAGE_PROGRESS_MESSAGES[step]);
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
@@ -319,81 +332,102 @@ function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T
 export async function generateImage(userPrompt: string, options?: ImageGenOptions): Promise<ImageGenOutput> {
   const rawQuery = extractImagePrompt(userPrompt);
   const ctx = { userId: options?.userId, runId: options?.runId };
-  const useFast = options?.fast !== false;
-  let imagePrompt = rawQuery;
-  let enhancedPrompt: string | undefined;
-  const effectiveQuality = options?.quality ?? 'standard';
 
-  if (!useFast) {
-    emitProgress(options, 'classifying');
-    const intent = await withTimeout(
-      classifyImageQuery(rawQuery),
-      2500,
-      { subject: rawQuery, style: 'detailed, high quality', quality: 'standard' as const, rawQuery }
-    );
-    emitProgress(options, 'enhancing');
-    const enhanced = await withTimeout(
-      enhanceImagePrompt(intent),
-      3500,
-      { prompt: rawQuery, negativePrompt: '', styleTags: [] }
-    );
-    imagePrompt = enhanced.prompt || rawQuery;
-    if (enhanced.prompt !== rawQuery) enhancedPrompt = enhanced.prompt;
+  const moderation = moderateImagePrompt(rawQuery);
+  if (!moderation.allowed) {
+    throw new ImageGenerationError(moderation.reason ?? 'This image request is not allowed.');
   }
+
+  const imagePrompt = moderation.sanitizedPrompt ?? rawQuery;
+  const isYoutubeThumbnail = /\b(thumbnail|youtube)\b/i.test(rawQuery);
+  const rejectedImages: ImageGenOutput['rejectedImages'] = [];
 
   emitProgress(options, 'painting');
 
-  let imageUrl: string;
-  let provider: ImageGenOutput['provider'];
+  const providers = buildStandardProviders().filter((p) => p.configured);
+  if (!providers.length) {
+    throw new ImageGenerationError('No image API keys configured on the server.');
+  }
 
-  if (effectiveQuality === 'premium' && buildPremiumProviders().some((p) => p.configured)) {
+  let bestFallback: { imageUrl: string; provider: ImageGenOutput['provider']; score: number } | null = null;
+
+  for (let attempt = 0; attempt < Math.min(MAX_VERIFY_ATTEMPTS, providers.length); attempt++) {
+    const entry = providers[attempt % providers.length]!;
+    emitProgress(options, 'painting', `Trying ${normalizeProvider(entry.name)}…`);
+
     try {
-      emitProgress(options, 'reviewing');
-      const premium = await generatePremiumWithVoting(imagePrompt, ctx);
-      imageUrl = premium.imageUrl;
-      provider = premium.provider;
-    } catch (err) {
-      console.warn('[ImageGen] Premium voting failed, falling back to standard chain:', (err as Error).message);
-      const standard = await generateStandardChain(imagePrompt, rawQuery, ctx);
-      imageUrl = standard.imageUrl;
-      provider = standard.provider;
-    }
-  } else {
-    const standard = await generateStandardChain(imagePrompt, rawQuery, ctx);
-    imageUrl = standard.imageUrl;
-    provider = standard.provider;
-  }
+      const imageUrl = await callImageProvider(entry, imagePrompt, ctx);
+      emitProgress(options, 'verifying');
 
-  if (!isValidImageResult(imageUrl)) {
-    throw new ImageGenerationError('Image generation failed — no valid image returned.');
-  }
+      const verification = await verifyImageMatchesPrompt(imageUrl, rawQuery);
+      const provider = normalizeProvider(entry.name);
 
-  if (!useFast && effectiveQuality === 'premium') {
-    emitProgress(options, 'upscaling');
-    imageUrl = await maybeUpscale(imageUrl, true);
-  }
+      if (verification.matches && verification.matchScore >= MATCH_THRESHOLD) {
+        emitProgress(options, 'complete');
+        return {
+          type: 'image',
+          imageUrl,
+          provider,
+          prompt: rawQuery,
+          enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : undefined,
+          followUps: DEFAULT_FOLLOW_UPS,
+          pros: DEFAULT_PROS,
+          matchScore: verification.matchScore,
+          verified: true,
+          rejectedImages: rejectedImages.length ? rejectedImages : undefined,
+          isYoutubeThumbnail,
+        };
+      }
 
-  emitProgress(options, 'complete');
-  console.log(`[ImageGen] Success via ${provider} (fast=${useFast})`);
-
-  const meta = useFast
-    ? { followUps: DEFAULT_FOLLOW_UPS, pros: DEFAULT_PROS, cons: [] as string[] }
-    : await withTimeout(generateImageFollowUps(imagePrompt, provider), 3000, {
-        followUps: DEFAULT_FOLLOW_UPS,
-        pros: DEFAULT_PROS,
-        cons: [],
+      rejectedImages.push({
+        imageUrl,
+        provider,
+        matchScore: verification.matchScore,
+        issues: verification.issues,
       });
 
-  return {
-    type: 'image',
-    imageUrl,
-    provider,
-    prompt: rawQuery,
-    enhancedPrompt,
-    followUps: meta.followUps,
-    pros: meta.pros,
-    cons: meta.cons.length ? meta.cons : undefined,
-  };
+      if (!bestFallback || verification.matchScore > bestFallback.score) {
+        bestFallback = { imageUrl, provider, score: verification.matchScore };
+      }
+
+      console.log(
+        `[ImageGen] ${entry.name} rejected (score=${verification.matchScore}), trying next provider`
+      );
+    } catch (err) {
+      console.warn(`[ImageGen] ${entry.name} failed:`, (err as Error).message);
+      await logSystemError({
+        api: entry.name,
+        errorMessage: (err as Error).message,
+        fallbackUsed: 'next provider in verify loop',
+        severity: 'warning',
+        userId: ctx.userId,
+        runId: ctx.runId,
+        metadata: { apiType: 'image_gen' },
+      }).catch(() => {});
+    }
+  }
+
+  if (bestFallback) {
+    emitProgress(options, 'complete');
+    return {
+      type: 'image',
+      imageUrl: bestFallback.imageUrl,
+      provider: bestFallback.provider,
+      prompt: rawQuery,
+      enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : undefined,
+      followUps: DEFAULT_FOLLOW_UPS,
+      pros: ['Best available result'],
+      cons: ['Could not fully verify prompt match — try refining your prompt'],
+      matchScore: bestFallback.score,
+      verified: false,
+      rejectedImages: rejectedImages.filter((r) => r.imageUrl !== bestFallback!.imageUrl),
+      isYoutubeThumbnail,
+    };
+  }
+
+  throw new ImageGenerationError(
+    'All image providers failed or none matched your prompt. Try a more specific description.'
+  );
 }
 
 /** Live smoke test — tries Fal then Replicate with a tiny prompt (for /health/smoke-image). */

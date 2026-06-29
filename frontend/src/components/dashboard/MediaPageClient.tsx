@@ -99,7 +99,7 @@ export function MediaPageClient() {
               AI Media Library
             </h1>
             <p className="text-sm text-[var(--muted)] mt-1">
-              Images, videos, and audio from your Swarm — upload or browse generated assets.
+              Images, videos, and audio from generation are saved here automatically. Upload your own files too.
             </p>
           </div>
           <button

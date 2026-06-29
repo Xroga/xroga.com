@@ -231,18 +231,28 @@ export class Orchestrator {
       try {
         return await this.executeImageFast(ctx);
       } catch (imgErr) {
+        const errMsg = (imgErr as Error).message;
+        const isModeration =
+          errMsg.includes('cannot generate') ||
+          errMsg.includes('does not generate') ||
+          errMsg.includes('not allowed');
+
         await logSystemError({
           api: 'image_gen',
-          errorMessage: (imgErr as Error).message,
+          errorMessage: errMsg,
           fallbackUsed: 'image-fast-path',
-          severity: 'error',
+          severity: isModeration ? 'warning' : 'error',
           userId: ctx.userId,
         });
-        const status = getImageProviderStatus();
-        const errMsg = (imgErr as Error).message;
-        const fallbackText = status.ready
-          ? `Image generation failed. Server sees keys for: ${status.configured.join(', ')} — but all providers returned errors. Check \`fly logs -a xroga-api\`. Error: ${errMsg.slice(0, 180)}`
-          : `No image API keys are visible on the server. GitHub FLY_API_TOKEN only deploys code — set secrets on Fly: fly secrets set -a xroga-api FAL_API_KEY=... REPLICATE_API_TOKEN=... AGNES_API_KEY=...`;
+
+        const fallbackText = isModeration
+          ? errMsg
+          : (() => {
+              const status = getImageProviderStatus();
+              return status.ready
+                ? `Image generation failed. ${errMsg.slice(0, 180)}`
+                : `No image API keys visible on the server. Set FAL_API_KEY, REPLICATE_API_TOKEN, or AGNES_API_KEY on Fly.io.`;
+            })();
 
         const shield = await runThreeLayerShield({
           content: fallbackText,

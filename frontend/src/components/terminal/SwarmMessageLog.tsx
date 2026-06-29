@@ -16,7 +16,8 @@ import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ProcessingPipeline } from './ProcessingPipeline';
 import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { FollowUpChips, ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
-import { isImageGenerationPrompt, isVideoGenerationPrompt, extractImagesFromContent } from '@/lib/parseImageContent';
+import { FeatureOutputView } from './FeatureOutputView';
+import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
 import { TextGeneratingAnimation } from './TextGeneratingAnimation';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
@@ -260,17 +261,18 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                         {loading &&
                         msg.id === animatingId &&
                         isVideoGenerationPrompt(lastUserText) &&
-                        !msg.content.includes('Watch & download') ? (
+                        !msg.featureOutput ? (
                           <TextGeneratingAnimation
                             message={pipelineMessage ?? undefined}
                             step={videoProgressStep ?? undefined}
                             mode="video"
                             sublabel="Xroga AI · Video Studio"
                           />
+                        ) : msg.featureOutput ? (
+                          <FeatureOutputView output={msg.featureOutput} />
                         ) : loading &&
                         msg.id === animatingId &&
-                        isImageGenerationPrompt(lastUserText) &&
-                        extractImagesFromContent(msg.content).length === 0 ? (
+                        isImageGenerationPrompt(lastUserText) ? (
                           <ImageGeneratingAnimation
                             message={pipelineMessage ?? undefined}
                             step={imageProgressStep ?? undefined}
