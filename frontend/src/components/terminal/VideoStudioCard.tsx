@@ -52,15 +52,14 @@ export function VideoStudioCard({
   generating,
   message,
   step,
-  messageId: _messageId,
+  messageId,
 }: VideoStudioCardProps) {
-  void _messageId;
   const [hidden, setHidden] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [volume, setVolume] = useState(0.85);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { setPrompt } = useTerminalChat();
+  const { setPrompt, deleteTurn } = useTerminalChat();
 
   if (generating) {
     return (
@@ -90,9 +89,12 @@ export function VideoStudioCard({
   }
 
   function handleDelete() {
+    if (messageId) {
+      deleteTurn(messageId);
+    } else {
+      onDelete?.();
+    }
     setHidden(true);
-    onDelete?.();
-    toast.success('Video removed');
   }
 
   function handleDownload() {

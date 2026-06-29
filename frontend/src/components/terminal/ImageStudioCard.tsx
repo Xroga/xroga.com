@@ -56,6 +56,7 @@ export interface ImageOutputData {
 
 interface ImageStudioCardProps {
   data: ImageOutputData;
+  messageId?: string;
   onDelete?: () => void;
   className?: string;
   generating?: boolean;
@@ -95,13 +96,14 @@ export function ImageGeneratingAnimation({
 
 export function ImageStudioCard({
   data,
+  messageId,
   onDelete,
   className,
   generating,
   message,
   step,
 }: ImageStudioCardProps) {
-  const { setPrompt, submit } = useTerminalChat();
+  const { setPrompt, submit, deleteTurn } = useTerminalChat();
   const [editOpen, setEditOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [revealed, setRevealed] = useState(false);
@@ -138,9 +140,12 @@ export function ImageStudioCard({
   }
 
   function handleDelete() {
+    if (messageId) {
+      deleteTurn(messageId);
+    } else {
+      onDelete?.();
+    }
     setHidden(true);
-    onDelete?.();
-    toast.success('Image removed');
   }
 
   function handleSaveMedia() {

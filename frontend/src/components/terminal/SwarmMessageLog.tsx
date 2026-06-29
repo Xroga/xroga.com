@@ -45,7 +45,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, videoProgressStep, followUps, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt } =
+  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, videoProgressStep, followUps, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -293,7 +293,11 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             sublabel="Xroga AI · Video Studio"
                           />
                         ) : msg.featureOutput ? (
-                          <FeatureOutputView output={msg.featureOutput} messageId={msg.id} />
+                          <FeatureOutputView
+                            output={msg.featureOutput}
+                            messageId={msg.id}
+                            onDelete={() => deleteTurn(msg.id)}
+                          />
                         ) : loading &&
                         msg.id === animatingId &&
                         isImageGenerationPrompt(lastUserText) ? (
@@ -324,6 +328,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           onDeploy={() => handleDeploy(lastUserText, msg.content)}
                           onEdit={() => handleEditAI(msg.content)}
                           onFeedback={() => setFeedbackOpen(true)}
+                          onDelete={() => deleteTurn(msg.id)}
                         />
                       )}
                       {suggestions && (

@@ -1258,8 +1258,8 @@ body.theme-gray * {
   body.xv-page-fullscreen-active .xv-dashboard-welcome {
     display: none;
   }
-  body.xv-page-fullscreen-active aside.xv-sidebar-hover,
-  body.xv-terminal-fullscreen-active aside.xv-sidebar-hover {
+  body.xv-page-fullscreen-active aside.xv-sidebar-hover:not(.xv-sidebar-mobile-open),
+  body.xv-terminal-fullscreen-active aside.xv-sidebar-hover:not(.xv-sidebar-mobile-open) {
     visibility: hidden;
     pointer-events: none;
   }
@@ -2192,11 +2192,12 @@ body.theme-gray * {
       clip-path: inset(0 100% 0 0);
       pointer-events: none !important;
     }
-    aside.xv-sidebar-hover.xv-sidebar-mobile-open {
+    aside.xv-sidebar-mobile-open {
       visibility: visible !important;
       pointer-events: auto !important;
-      clip-path: none;
-      z-index: 75;
+      clip-path: none !important;
+      transform: none !important;
+      z-index: 90 !important;
     }
     .terminal-layout > .xv-main-column {
       flex: 1 1 100%;

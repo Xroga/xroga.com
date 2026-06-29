@@ -51,3 +51,13 @@ export function addMediaItem(
 export function removeMediaItem(id: string) {
   saveMediaItems(loadMediaItems().filter((i) => i.id !== id));
 }
+
+export function removeMediaByUrl(url: string) {
+  if (!url) return;
+  saveMediaItems(loadMediaItems().filter((i) => i.url !== url));
+}
+
+export function removeMediaByMessageId(messageId: string) {
+  if (!messageId) return;
+  saveMediaItems(loadMediaItems().filter((i) => i.sourceMessageId !== messageId));
+}

@@ -9,6 +9,7 @@ import {
   MessageCircleHeart,
   Rocket,
   Check,
+  Trash2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -22,6 +23,7 @@ interface MessageBubbleActionsProps {
   onEdit?: () => void;
   onDeploy?: () => void;
   onFeedback?: () => void;
+  onDelete?: () => void;
 }
 
 export function MessageBubbleActions({
@@ -33,6 +35,7 @@ export function MessageBubbleActions({
   onEdit,
   onDeploy,
   onFeedback,
+  onDelete,
 }: MessageBubbleActionsProps) {
   const [reaction, setReaction] = useState<'up' | 'down' | null>(null);
   const [copied, setCopied] = useState(false);
@@ -88,6 +91,11 @@ export function MessageBubbleActions({
             <button type="button" onClick={onDeploy} className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-gradient-to-r from-emerald-600 to-emerald-400 text-white hover:opacity-90 transition-opacity">
               <Rocket className="w-3 h-3" />
               {deployLabel}
+            </button>
+          )}
+          {onDelete && (
+            <button type="button" onClick={onDelete} className={cn(btnClass, 'hover:text-red-400 hover:bg-red-500/10')} aria-label="Delete message">
+              <Trash2 className="w-3.5 h-3.5" />
             </button>
           )}
         </>

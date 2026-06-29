@@ -157,7 +157,11 @@ export function MediaPageClient() {
                 onOpen={openInDashboard}
                 onDelete={(id) => {
                   removeMediaItem(id);
-                  persist(items.filter((i) => i.id !== id));
+                  setItems((prev) => {
+                    const next = prev.filter((i) => i.id !== id);
+                    saveMediaItems(next);
+                    return next;
+                  });
                   toast.success('Removed from library');
                 }}
               />

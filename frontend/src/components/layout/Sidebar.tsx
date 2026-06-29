@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -290,6 +291,122 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     </div>
   );
 
+  const sidebarInner = (
+    <>
+      <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px]">
+        <HoverTip label="Xroga AI" description="Dashboard home" block className="shrink min-w-0">
+          <Logo href="/dashboard" height={navExpanded ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
+        </HoverTip>
+        {navExpanded ? (
+          <button
+            type="button"
+            onClick={handleNewChat}
+            className="xv-new-chat-btn flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold shrink-0"
+            title="New Chat"
+          >
+            <MessageCirclePlus className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">New Chat</span>
+          </button>
+        ) : (
+          <SidebarTip label="New Chat" description="Start a fresh workspace session.">
+            <button type="button" onClick={handleNewChat} className="xv-sidebar-icon-link !w-8 !h-8 !mx-0">
+              <MessageCirclePlus className="w-4 h-4" />
+            </button>
+          </SidebarTip>
+        )}
+        <div className={cn('flex items-center gap-0.5 shrink-0 ml-auto', !navExpanded && 'flex-col ml-0')}>
+          <HoverTip label="Search" description="Search projects, chats, and commands.">
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
+              aria-label="Search"
+            >
+              <Search className="w-3.5 h-3.5" />
+            </button>
+          </HoverTip>
+          <HoverTip label={t('media.label')} description="Images, videos, and audio library.">
+            <Link
+              href="/dashboard/media"
+              onClick={handleNavClick}
+              className={cn(
+                'flex items-center gap-1 px-1.5 py-1 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors',
+                pathname.startsWith('/dashboard/media') && 'bg-[var(--accent)]/15 text-[var(--accent)]',
+                !navExpanded && 'p-1.5'
+              )}
+              aria-label={t('media.label')}
+            >
+              <ImageIcon className="w-3.5 h-3.5 shrink-0" />
+              {navExpanded && (
+                <span className="xv-ai-media-label text-[10px] font-bold tracking-wide whitespace-nowrap">
+                  {t('media.label')}
+                </span>
+              )}
+            </Link>
+          </HoverTip>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          toggleSidebar();
+          setMobileOpen(false);
+        }}
+        className="xv-sidebar-edge-toggle hidden lg:flex"
+        aria-label={sidebarOpen ? 'Lock sidebar closed' : 'Open sidebar'}
+        style={{ left: asideWidth }}
+      >
+        {sidebarOpen ? (
+          <PanelLeftClose className="w-3.5 h-3.5" />
+        ) : sidebarPinned ? (
+          <Lock className="w-3.5 h-3.5" />
+        ) : (
+          <PanelLeft className="w-3.5 h-3.5" />
+        )}
+      </button>
+
+      <nav className="flex-1 p-2 overflow-y-auto overflow-x-hidden min-h-0">
+        {navExpanded ? (
+          <div className="xv-sidebar-menu">
+            {navItems.map(({ href, label, icon: Icon, tip }) => (
+              <SidebarTip key={href} label={label} description={tip}>
+                <Link href={href} onClick={handleNavClick} className={cn(isActive(href) && 'xv-active')}>
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <span>{label}</span>
+                </Link>
+              </SidebarTip>
+            ))}
+          </div>
+        ) : (
+          <div className="xv-sidebar-collapsed-nav space-y-1">
+            {navItems.map(({ href, label, icon: Icon, tip }) => (
+              <SidebarTip key={href} label={label} description={tip}>
+                <Link
+                  href={href}
+                  onClick={handleNavClick}
+                  className={cn('xv-sidebar-icon-link', isActive(href) && 'xv-active')}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                </Link>
+              </SidebarTip>
+            ))}
+          </div>
+        )}
+      </nav>
+
+      {bottomSection}
+      {sidebarOpen && (
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          onMouseDown={startResize}
+          className="hidden lg:block absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-[var(--accent)]/30 z-50"
+        />
+      )}
+    </>
+  );
+
   return (
     <>
       <SidebarSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
@@ -298,153 +415,49 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         type="button"
         className={cn(
           'lg:hidden fixed top-3 left-3 sm:top-3.5 sm:left-4 p-2 sm:p-2.5 rounded-lg glass-panel',
-          mobileOpen ? 'z-[80]' : 'z-50'
+          mobileOpen ? 'z-[95]' : 'z-50'
         )}
         onClick={() => setMobileOpen(!mobileOpen)}
         aria-label="Toggle menu"
+        aria-expanded={mobileOpen}
       >
         {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
-      {mobileOpen && (
-        <div
-          className="lg:hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
-          onClick={() => setMobileOpen(false)}
-          aria-hidden
-        />
-      )}
-
-      <div className="xv-sidebar-root w-0 shrink-0 max-lg:overflow-visible lg:w-auto lg:overflow-visible">
-      <aside
-        onMouseEnter={() => {
-          if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(true);
-        }}
-        onMouseLeave={() => {
-          if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(false);
-        }}
-        style={{
-          width: mobileOpen ? mobileDrawerWidth : asideWidth,
-          ['--sidebar-drawer-width' as string]: `${mobileDrawerWidth}px`,
-        }}
-        className={cn(
-          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen min-h-[100dvh] transition-[width,transform,visibility] duration-200 xv-sidebar-hover shrink-0 relative',
-          !mobileOpen && 'max-lg:!w-0 max-lg:border-r-0 max-lg:invisible max-lg:pointer-events-none',
-          mobileOpen && 'max-lg:!w-[var(--sidebar-drawer-width)] max-lg:border-r max-lg:visible max-lg:pointer-events-auto max-lg:overflow-y-auto max-lg:max-h-[100dvh]',
-          mobileOpen ? 'translate-x-0 z-[80] xv-sidebar-mobile-open' : '-translate-x-full lg:translate-x-0'
-        )}
-      >
-        <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px]">
-          <HoverTip label="Xroga AI" description="Dashboard home" block className="shrink min-w-0">
-            <Logo href="/dashboard" height={navExpanded ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
-          </HoverTip>
-          {navExpanded ? (
-            <button
-              type="button"
-              onClick={handleNewChat}
-              className="xv-new-chat-btn flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold shrink-0"
-              title="New Chat"
+      {isMobile &&
+        mobileOpen &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <>
+            <div
+              className="fixed inset-0 z-[88] bg-black/65 backdrop-blur-sm"
+              onClick={() => setMobileOpen(false)}
+              aria-hidden
+            />
+            <aside
+              style={{ width: mobileDrawerWidth }}
+              className="fixed top-0 left-0 z-[90] flex flex-col h-[100dvh] max-h-[100dvh] border-r border-[var(--card-border)] glass-panel-strong overflow-y-auto overscroll-contain xv-sidebar-mobile-open shadow-2xl"
             >
-              <MessageCirclePlus className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">New Chat</span>
-            </button>
-          ) : (
-            <SidebarTip label="New Chat" description="Start a fresh workspace session.">
-              <button type="button" onClick={handleNewChat} className="xv-sidebar-icon-link !w-8 !h-8 !mx-0">
-                <MessageCirclePlus className="w-4 h-4" />
-              </button>
-            </SidebarTip>
-          )}
-          <div className={cn('flex items-center gap-0.5 shrink-0 ml-auto', !navExpanded && 'flex-col ml-0')}>
-            <HoverTip label="Search" description="Search projects, chats, and commands.">
-              <button
-                type="button"
-                onClick={() => setSearchOpen(true)}
-                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
-                aria-label="Search"
-              >
-                <Search className="w-3.5 h-3.5" />
-              </button>
-            </HoverTip>
-            <HoverTip label={t('media.label')} description="Images, videos, and audio library.">
-              <Link
-                href="/dashboard/media"
-                onClick={handleNavClick}
-                className={cn(
-                  'flex items-center gap-1 px-1.5 py-1 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors',
-                  pathname.startsWith('/dashboard/media') && 'bg-[var(--accent)]/15 text-[var(--accent)]',
-                  !navExpanded && 'p-1.5'
-                )}
-                aria-label={t('media.label')}
-              >
-                <ImageIcon className="w-3.5 h-3.5 shrink-0" />
-                {navExpanded && (
-                  <span className="xv-ai-media-label text-[10px] font-bold tracking-wide whitespace-nowrap">
-                    {t('media.label')}
-                  </span>
-                )}
-              </Link>
-            </HoverTip>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            toggleSidebar();
-            setMobileOpen(false);
-          }}
-          className="xv-sidebar-edge-toggle hidden lg:flex"
-          aria-label={sidebarOpen ? 'Lock sidebar closed' : 'Open sidebar'}
-          style={{ left: asideWidth }}
-        >
-          {sidebarOpen ? (
-            <PanelLeftClose className="w-3.5 h-3.5" />
-          ) : sidebarPinned ? (
-            <Lock className="w-3.5 h-3.5" />
-          ) : (
-            <PanelLeft className="w-3.5 h-3.5" />
-          )}
-        </button>
-
-        <nav className="flex-1 p-2 overflow-y-auto overflow-x-hidden">
-          {navExpanded ? (
-            <div className="xv-sidebar-menu">
-              {navItems.map(({ href, label, icon: Icon, tip }) => (
-                <SidebarTip key={href} label={label} description={tip}>
-                  <Link href={href} onClick={handleNavClick} className={cn(isActive(href) && 'xv-active')}>
-                    <Icon className="w-4 h-4 shrink-0" />
-                    <span>{label}</span>
-                  </Link>
-                </SidebarTip>
-              ))}
-            </div>
-          ) : (
-            <div className="xv-sidebar-collapsed-nav space-y-1">
-              {navItems.map(({ href, label, icon: Icon, tip }) => (
-                <SidebarTip key={href} label={label} description={tip}>
-                  <Link
-                    href={href}
-                    onClick={handleNavClick}
-                    className={cn('xv-sidebar-icon-link', isActive(href) && 'xv-active')}
-                  >
-                    <Icon className="w-4 h-4 shrink-0" />
-                  </Link>
-                </SidebarTip>
-              ))}
-            </div>
-          )}
-        </nav>
-
-        {bottomSection}
-        {sidebarOpen && (
-          <div
-            role="separator"
-            aria-orientation="vertical"
-            onMouseDown={startResize}
-            className="hidden lg:block absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-[var(--accent)]/30 z-50"
-          />
+              {sidebarInner}
+            </aside>
+          </>,
+          document.body
         )}
-      </aside>
+
+      <div className="xv-sidebar-root hidden lg:block shrink-0">
+        <aside
+          onMouseEnter={() => {
+            if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(true);
+          }}
+          onMouseLeave={() => {
+            if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(false);
+          }}
+          style={{ width: asideWidth }}
+          className="sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width] duration-200 xv-sidebar-hover shrink-0 relative"
+        >
+          {sidebarInner}
+        </aside>
+      </div>
 
       <AvatarPickerModal
         open={avatarPickerOpen}
@@ -456,7 +469,6 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           setAvatarPickerOpen(false);
         }}
       />
-      </div>
     </>
   );
 }
