@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Rocket, Square, CloudUpload } from 'lucide-react';
 
 export type SendButtonState = 'idle' | 'sending' | 'thinking' | 'launched';
-export type ChatbarSurface = 'homepage' | 'dashboard';
+export type ChatbarSurface = 'homepage' | 'dashboard' | 'incognito';
 
 export function ChatBarSendButton({
   stopping = false,
@@ -24,7 +24,7 @@ export function ChatBarSendButton({
       <button
         type="button"
         onClick={onStop}
-        className={cn('xv-go-btn xv-go-btn--stop shrink-0', surface === 'homepage' && 'xv-go-btn--home')}
+        className={cn('xv-go-btn xv-go-btn--stop shrink-0', surface === 'homepage' && 'xv-go-btn--home', surface === 'incognito' && 'xv-go-btn--incognito')}
         aria-label="Stop response"
       >
         <span className="xv-go-btn__icon xv-go-btn__icon--stop">
@@ -38,7 +38,7 @@ export function ChatBarSendButton({
   return (
     <button
       type="submit"
-      className={cn('xv-go-btn shrink-0', surface === 'homepage' && 'xv-go-btn--home')}
+      className={cn('xv-go-btn shrink-0', surface === 'homepage' && 'xv-go-btn--home', surface === 'incognito' && 'xv-go-btn--incognito')}
       aria-label="Launch"
     >
       <span className="xv-go-btn__icon">
