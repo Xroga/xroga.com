@@ -5,7 +5,7 @@ import { Rocket, Globe, Search } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
-import { estimatePrompt } from '@/lib/api';
+import { estimatePrompt, uploadChatImage, type ChatAttachment } from '@/lib/api';
 import { IntegrationsModal } from './IntegrationsModal';
 import { GithubRepoModal } from './GithubRepoModal';
 import { ActionCostModal } from './ActionCostModal';
@@ -107,8 +107,54 @@ export function TerminalChatBar() {
     }
 
     setSendState('sending');
-    await submit(text || undefined);
+
+    let attachments: ChatAttachment[] | undefined;
+    const imageFiles = files.filter((f) => f.type.startsWith('image/'));
+    if (imageFiles.length > 0) {
+      setUploading(true);
+      try {
+        attachments = await Promise.all(
+          imageFiles.slice(0, 4).map(async (f) => ({
+            url: await uploadChatImage(f),
+            mimeType: f.type,
+            name: f.name,
+          }))
+        );
+        setFiles([]);
+      } catch {
+        toast.error('Image upload failed — try a smaller file');
+        setUploading(false);
+        setSendState('idle');
+        return;
+      }
+      setUploading(false);
+    }
+
+    const promptText =
+      text ||
+      (attachments?.length
+        ? 'Transform this image with a modern professional look'
+        : undefined);
+
+    await submit(promptText, false, false, attachments);
     if (!loading) setSendState('launched');
+  }
+
+  async function applyStyleFromFile(file: File, stylePrompt: string) {
+    setUploading(true);
+    try {
+      const url = await uploadChatImage(file);
+      const text =
+        stylePrompt.trim() ||
+        'Transform this image with a modern cinematic look while keeping the same subject';
+      setFiles([]);
+      setPrompt('');
+      await submit(text, false, false, [{ url, mimeType: file.type, name: file.name }]);
+    } catch {
+      toast.error('Could not upload image for style transfer');
+    } finally {
+      setUploading(false);
+    }
   }
 
   const appendSpeech = useCallback(
@@ -296,6 +342,7 @@ export function TerminalChatBar() {
             onRename={(i, name) =>
               setFiles((prev) => prev.map((f, j) => (j === i ? renameFile(f, name) : f)))
             }
+            onApplyStyle={(file, stylePrompt) => void applyStyleFromFile(file, stylePrompt)}
           />
           )}
 
@@ -356,7 +403,7 @@ export function TerminalChatBar() {
                 )}
               />
             </ChatBarInputRow>
-            <input ref={fileRef} type="file" multiple className="hidden" onChange={(e) => addFiles(e.target.files)} disabled={incognito} />
+            <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => addFiles(e.target.files)} disabled={incognito} />
           </form>
         </ChatbarShell>
       </div>

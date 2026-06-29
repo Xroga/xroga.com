@@ -33,10 +33,17 @@ export function siteUrl(): string {
 
 export const API_URL = resolveApiUrl();
 
+export interface ChatAttachment {
+  url: string;
+  mimeType?: string;
+  name?: string;
+}
+
 export interface StreamSwarmOptions {
   projectId?: string;
   signal?: AbortSignal;
   compact?: boolean;
+  attachments?: ChatAttachment[];
   onProgress?: (event: SwarmProgressEvent) => void;
   onDelta?: (delta: string) => void;
   onComplete?: (event: SwarmCompleteEvent & { followUps?: string[] }) => void;
@@ -63,6 +70,7 @@ export async function streamSwarmExecute(
       prompt,
       stream: true,
       ...(options.projectId ? { projectId: options.projectId } : {}),
+      ...(options.attachments?.length ? { attachments: options.attachments } : {}),
     }),
     signal: options.signal,
   });
@@ -281,6 +289,33 @@ export async function getAccessToken(): Promise<string | null> {
   const supabase = createClient();
   const { data: { session } } = await supabase.auth.getSession();
   return session?.access_token ?? null;
+}
+
+export async function uploadChatImage(file: File): Promise<string> {
+  const dataBase64 = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const comma = result.indexOf(',');
+      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+    };
+    reader.onerror = () => reject(new Error('Failed to read file'));
+    reader.readAsDataURL(file);
+  });
+
+  try {
+    const data = await apiFetch<{ url: string }>('/api/media/upload', {
+      method: 'POST',
+      body: JSON.stringify({
+        filename: file.name,
+        contentType: file.type || 'image/png',
+        dataBase64,
+      }),
+    });
+    return data.url;
+  } catch {
+    return `data:${file.type || 'image/png'};base64,${dataBase64}`;
+  }
 }
 
 export async function apiFetch<T = unknown>(

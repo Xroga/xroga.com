@@ -10,8 +10,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   ThumbsUp,
-  ThumbsDown,
   Layers,
+  Star,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { copyImageToClipboard, downloadImage } from '@/lib/imageStudioUtils';
@@ -27,14 +27,13 @@ export interface RejectedImage {
   matchScore: number;
   issues?: string[];
   scoresByVerifier?: Record<string, number>;
+  variantLabel?: string;
+  variantIndex?: number;
+  userVoted?: boolean;
+  selected?: boolean;
 }
 
-function formatVerifierScores(scores?: Record<string, number>): string {
-  if (!scores || !Object.keys(scores).length) return '';
-  return Object.entries(scores)
-    .map(([k, v]) => `${k} ${v}%`)
-    .join(' · ');
-}
+const VARIANT_SLOTS = 4;
 
 const FORMAT_LABELS: Record<string, string> = {
   '1:1': 'Post (1:1)',
@@ -57,6 +56,9 @@ export interface ImageOutputData {
   isYoutubeThumbnail?: boolean;
   aspectFormat?: string;
   followUps?: string[];
+  variantCount?: number;
+  isStyleTransfer?: boolean;
+  sourceImageUrl?: string;
 }
 
 interface ImageStudioCardProps {
@@ -80,30 +82,36 @@ export function ImageGeneratingAnimation({
   step?: string;
   liveAttempts?: RejectedImage[];
 }) {
+  const slots = Array.from({ length: VARIANT_SLOTS }, (_, i) => liveAttempts[i] ?? null);
+
   return (
     <div className={cn('my-3 space-y-2', className)}>
-      <TextGeneratingAnimation message={message} step={step} mode="image" sublabel="Xroga AI · Image Studio" />
-      {liveAttempts.length > 0 && (
-        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)]/50 p-2">
-          <p className="text-[10px] font-medium text-[var(--muted)] mb-1.5 px-1">
-            AI results arriving ({liveAttempts.length})…
-          </p>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
-            {liveAttempts.map((img) => (
-              <div
-                key={img.imageUrl}
-                className="relative rounded-md overflow-hidden border border-[var(--card-border)] aspect-square"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
-                <span className="absolute bottom-0 inset-x-0 bg-black/75 text-[7px] text-white px-1 py-0.5 truncate">
-                  {img.provider} · {img.matchScore}%
-                </span>
-              </div>
-            ))}
-          </div>
+      <TextGeneratingAnimation message={message} step={step} mode="image" sublabel="Xroga AI · 4 variants" />
+      <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)]/50 p-2">
+        <p className="text-[10px] font-medium text-[var(--muted)] mb-1.5 px-1">
+          Generating {VARIANT_SLOTS} variants… ({liveAttempts.length}/{VARIANT_SLOTS})
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+          {slots.map((img, i) => (
+            <div
+              key={img?.imageUrl ?? `slot-${i}`}
+              className="relative rounded-md overflow-hidden border border-[var(--card-border)] aspect-square bg-[var(--muted)]/10"
+            >
+              {img ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
+                  <span className="absolute bottom-0 inset-x-0 bg-black/75 text-[7px] text-white px-1 py-0.5 truncate">
+                    {img.variantLabel ?? img.provider} · {img.matchScore}%
+                  </span>
+                </>
+              ) : (
+                <div className="w-full h-full animate-pulse bg-[var(--muted)]/20" />
+              )}
+            </div>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -117,16 +125,17 @@ export function ImageStudioCard({
   message,
   step,
 }: ImageStudioCardProps) {
-  const { setPrompt, submit, deleteTurn } = useTerminalChat();
+  const { setPrompt, submit, deleteTurn, updateFeatureOutput } = useTerminalChat();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [revealed, setRevealed] = useState(false);
-  const [liked, setLiked] = useState<boolean | null>(null);
   const [editSrc, setEditSrc] = useState('');
+  const [hiddenUrls, setHiddenUrls] = useState<Set<string>>(new Set());
+  const [activeUrl, setActiveUrl] = useState(data.imageUrl);
 
   const {
-    imageUrl: src,
+    imageUrl: defaultSrc,
     provider,
     prompt,
     verified,
@@ -134,11 +143,12 @@ export function ImageStudioCard({
     rejectedImages,
     allAttempts: allAttemptsProp,
     aspectFormat,
+    isStyleTransfer,
   } = data;
 
   const allAttempts = useMemo(() => {
     if (allAttemptsProp?.length) {
-      return [...allAttemptsProp].sort((a, b) => b.matchScore - a.matchScore);
+      return [...allAttemptsProp].sort((a, b) => (a.variantIndex ?? 99) - (b.variantIndex ?? 99));
     }
     const list: RejectedImage[] = [];
     const seen = new Set<string>();
@@ -147,16 +157,22 @@ export function ImageStudioCard({
       seen.add(img.imageUrl);
       list.push(img);
     };
-    if (src && !isPlaceholderImage(src)) {
+    if (defaultSrc && !isPlaceholderImage(defaultSrc)) {
       add({
-        imageUrl: src,
+        imageUrl: defaultSrc,
         provider: provider ?? 'Selected',
         matchScore: matchScore ?? 0,
+        selected: true,
       });
     }
     for (const r of rejectedImages ?? []) add(r);
-    return list.sort((a, b) => b.matchScore - a.matchScore);
-  }, [src, provider, matchScore, rejectedImages, allAttemptsProp]);
+    return list.slice(0, VARIANT_SLOTS);
+  }, [defaultSrc, provider, matchScore, rejectedImages, allAttemptsProp]);
+
+  const visibleVariants = allAttempts.filter((v) => !hiddenUrls.has(v.imageUrl));
+  const displaySlots = Array.from({ length: VARIANT_SLOTS }, (_, i) => visibleVariants[i] ?? null);
+  const activeVariant = visibleVariants.find((v) => v.imageUrl === activeUrl) ?? visibleVariants[0];
+  const previewSrc = activeVariant?.imageUrl ?? defaultSrc;
 
   if (generating) {
     return <ImageGeneratingAnimation className={className} message={message} step={step} />;
@@ -164,15 +180,47 @@ export function ImageStudioCard({
 
   if (hidden) return null;
 
-  const activeEditSrc = editSrc || src;
-
-  if (isPlaceholderImage(src)) {
+  if (isPlaceholderImage(defaultSrc)) {
     return (
       <div className={cn('my-3 rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-center', className)}>
         <p className="text-sm font-medium text-red-600 dark:text-red-300">Image generation failed</p>
         <p className="text-xs text-red-700/80 dark:text-red-200/70 mt-1">Please try again with a clearer prompt.</p>
       </div>
     );
+  }
+
+  function persistSelection(url: string, voted: boolean) {
+    if (!messageId) return;
+    const nextAttempts = allAttempts.map((a) => ({
+      ...a,
+      selected: a.imageUrl === url,
+      userVoted: a.imageUrl === url ? voted : a.userVoted,
+    }));
+    updateFeatureOutput(messageId, {
+      ...data,
+      imageUrl: url,
+      provider: nextAttempts.find((a) => a.imageUrl === url)?.provider ?? provider,
+      matchScore: nextAttempts.find((a) => a.imageUrl === url)?.matchScore ?? matchScore,
+      allAttempts: nextAttempts,
+    });
+  }
+
+  function handleVote(url: string) {
+    setActiveUrl(url);
+    persistSelection(url, true);
+  }
+
+  function handleSelect(url: string) {
+    setActiveUrl(url);
+    persistSelection(url, false);
+  }
+
+  function handleRemoveVariant(url: string) {
+    setHiddenUrls((prev) => new Set(prev).add(url));
+    if (activeUrl === url) {
+      const next = visibleVariants.find((v) => v.imageUrl !== url);
+      if (next) setActiveUrl(next.imageUrl);
+    }
   }
 
   function handleDelete() {
@@ -183,12 +231,12 @@ export function ImageStudioCard({
   }
 
   function handleVariant() {
-    const text = `Generate more variants of: ${prompt ?? 'this image'}`;
+    const text = `Generate 4 more variants of: ${prompt ?? 'this image'}`;
     setPrompt(text);
     void submit(text);
   }
 
-  function openEditor(url = src) {
+  function openEditor(url = previewSrc) {
     setEditSrc(url);
     setEditOpen(true);
   }
@@ -205,17 +253,14 @@ export function ImageStudioCard({
       >
         <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-[var(--card-border)] bg-[var(--background)]/50">
           <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-            <span className="text-xs font-semibold">Image</span>
-            {provider && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--muted)]/10 border border-[var(--card-border)] truncate max-w-[100px]">
-                {provider}
-              </span>
-            )}
+            <span className="text-xs font-semibold">
+              {isStyleTransfer ? 'Style transfer' : 'Image'} · {visibleVariants.length} variants
+            </span>
             <span className="text-[10px] text-[var(--muted)]">{formatLabel}</span>
             {verified !== false ? (
               <span className="inline-flex items-center gap-0.5 text-[10px] text-emerald-600">
                 <CheckCircle2 className="h-3 w-3" />
-                {matchScore != null ? `${matchScore}%` : 'OK'}
+                {activeVariant?.matchScore != null ? `${activeVariant.matchScore}%` : 'OK'}
               </span>
             ) : (
               <span className="inline-flex items-center gap-0.5 text-[10px] text-amber-600">
@@ -226,109 +271,166 @@ export function ImageStudioCard({
           </div>
         </div>
 
-        <div className="p-2 bg-[var(--background)]">
-          <button
-            type="button"
-            onClick={() => openEditor()}
-            className="w-full overflow-hidden rounded-lg border border-[var(--card-border)] cursor-zoom-in hover:ring-2 hover:ring-[var(--accent)]/25 transition-shadow"
-            aria-label="Open image editor"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={src}
-              alt={prompt ?? 'Generated image'}
-              className={cn(
-                'w-full max-h-[360px] object-contain mx-auto transition-opacity duration-500',
-                revealed ? 'opacity-100' : 'opacity-0',
-              )}
-              loading="lazy"
-              onLoad={() => setRevealed(true)}
-            />
-          </button>
+        {previewSrc && (
+          <div className="p-2 bg-[var(--background)] border-b border-[var(--card-border)]">
+            <button
+              type="button"
+              onClick={() => openEditor(previewSrc)}
+              className="w-full overflow-hidden rounded-lg border border-[var(--card-border)] cursor-zoom-in hover:ring-2 hover:ring-[var(--accent)]/25 transition-shadow"
+              aria-label="Open selected variant"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={previewSrc}
+                alt={prompt ?? 'Selected variant'}
+                className={cn(
+                  'w-full max-h-[280px] object-contain mx-auto transition-opacity duration-500',
+                  revealed ? 'opacity-100' : 'opacity-0',
+                )}
+                loading="lazy"
+                onLoad={() => setRevealed(true)}
+              />
+            </button>
+            <p className="text-[10px] text-center text-[var(--muted)] mt-1">
+              {activeVariant?.userVoted ? '★ Your pick' : 'Preview'} — {activeVariant?.variantLabel ?? activeVariant?.provider ?? 'Selected'}
+            </p>
+          </div>
+        )}
+
+        <div className="px-2 py-2">
+          <p className="text-[10px] font-medium text-[var(--muted)] mb-1.5 px-0.5">
+            Vote for the best · tap to preview · download / edit / remove each
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+            {displaySlots.map((img, i) => {
+              if (!img) {
+                return (
+                  <div
+                    key={`empty-${i}`}
+                    className="aspect-square rounded-md border border-dashed border-[var(--card-border)] bg-[var(--muted)]/5"
+                  />
+                );
+              }
+
+              const isActive = img.imageUrl === activeUrl;
+              const isVoted = img.userVoted || (img.selected && isActive);
+
+              return (
+                <div
+                  key={img.imageUrl}
+                  className={cn(
+                    'relative rounded-md overflow-hidden border aspect-square group',
+                    isActive
+                      ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/30'
+                      : 'border-[var(--card-border)]',
+                  )}
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleSelect(img.imageUrl)}
+                    className="absolute inset-0 z-0"
+                    aria-label={`Preview ${img.variantLabel ?? img.provider}`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
+                  </button>
+
+                  <div className="absolute top-0 inset-x-0 flex items-center justify-between p-0.5 z-10">
+                    <span className="text-[7px] font-bold px-1 py-0.5 rounded bg-black/60 text-white truncate max-w-[60%]">
+                      {img.variantLabel ?? img.provider}
+                    </span>
+                    <button
+                      type="button"
+                      title="Vote best"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleVote(img.imageUrl);
+                      }}
+                      className={cn(
+                        'p-0.5 rounded bg-black/60',
+                        isVoted ? 'text-amber-400' : 'text-white/80 hover:text-amber-300',
+                      )}
+                    >
+                      {isVoted ? <Star className="h-3 w-3 fill-current" /> : <ThumbsUp className="h-3 w-3" />}
+                    </button>
+                  </div>
+
+                  <div className="absolute bottom-0 inset-x-0 flex gap-0.5 p-0.5 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    <MiniBtn icon={Download} title="Download" onClick={() => downloadImage(img.imageUrl, `xroga-${i + 1}.png`)} />
+                    <MiniBtn icon={Wand2} title="Edit" onClick={() => openEditor(img.imageUrl)} />
+                    <MiniBtn icon={Trash2} title="Remove" danger onClick={() => handleRemoveVariant(img.imageUrl)} />
+                  </div>
+
+                  <span className="absolute bottom-0 right-0 text-[7px] text-white/90 bg-black/50 px-1 py-0.5 z-[5] pointer-events-none">
+                    {img.matchScore}%
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <div className="flex items-center gap-1 px-2 py-2 border-t border-[var(--card-border)]">
-          <IconBtn
-            icon={ThumbsUp}
-            title="Like"
-            active={liked === true}
-            onClick={() => setLiked(true)}
-          />
-          <IconBtn
-            icon={ThumbsDown}
-            title="Retry"
-            active={liked === false}
-            onClick={() => {
-              setLiked(false);
-              handleVariant();
-            }}
-          />
-          <IconBtn icon={Layers} title="Variants" onClick={handleVariant} />
+          <IconBtn icon={Layers} title="4 more variants" onClick={handleVariant} />
           <div className="w-px h-5 bg-[var(--card-border)] mx-0.5" />
-          <IconBtn icon={Download} title="Download" onClick={() => downloadImage(src, 'xroga-image.png')} />
-          <IconBtn icon={Copy} title="Copy" onClick={() => copyImageToClipboard(src)} />
-          <IconBtn icon={Wand2} title="Edit" accent onClick={() => openEditor()} />
+          <IconBtn icon={Download} title="Download selected" onClick={() => downloadImage(previewSrc, 'xroga-image.png')} />
+          <IconBtn icon={Copy} title="Copy selected" onClick={() => copyImageToClipboard(previewSrc)} />
+          <IconBtn icon={Wand2} title="Edit selected" accent onClick={() => openEditor()} />
           <IconBtn
             icon={Trash2}
-            title="Delete"
+            title="Delete all"
             danger
             className="ml-auto"
             onClick={() => setDeleteOpen(true)}
           />
         </div>
-
-        {allAttempts.length > 0 && (
-          <div className="px-2 pb-2 border-t border-[var(--card-border)] pt-2">
-            <p className="text-[10px] font-medium text-[var(--muted)] mb-1.5">
-              All AI outputs ({allAttempts.length}) — tap to edit
-            </p>
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
-              {allAttempts.map((img) => {
-                const selected = img.imageUrl === src;
-                return (
-                  <button
-                    key={img.imageUrl}
-                    type="button"
-                    onClick={() => openEditor(img.imageUrl)}
-                    className={cn(
-                      'relative rounded-md overflow-hidden border text-left aspect-square',
-                      selected
-                        ? 'border-[var(--accent)] ring-1 ring-[var(--accent)]/40'
-                        : 'border-[var(--card-border)] hover:border-[var(--accent)]/35',
-                    )}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
-                    <span className="absolute bottom-0 inset-x-0 bg-black/75 text-[7px] text-white px-1 py-0.5 line-clamp-2 leading-tight">
-                      <span className="block truncate">{img.provider} · {img.matchScore}%</span>
-                      {formatVerifierScores(img.scoresByVerifier) ? (
-                        <span className="block truncate opacity-80">{formatVerifierScores(img.scoresByVerifier)}</span>
-                      ) : null}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </div>
 
       <ImageEditModal
         open={editOpen}
         onClose={() => setEditOpen(false)}
-        src={activeEditSrc}
+        src={editSrc || previewSrc}
         alt={prompt ?? 'Image'}
-        variants={allAttempts}
+        variants={visibleVariants}
       />
 
       <ConfirmDeleteModal
         open={deleteOpen}
         title="Delete this image?"
-        message="This permanently removes the image, your prompt, and all AI attempts from chat and AI Media."
+        message="This permanently removes the image, your prompt, and all variants from chat and AI Media."
         onConfirm={handleDelete}
         onCancel={() => setDeleteOpen(false)}
       />
     </>
+  );
+}
+
+function MiniBtn({
+  icon: Icon,
+  title,
+  onClick,
+  danger,
+}: {
+  icon: ComponentType<{ className?: string }>;
+  title: string;
+  onClick: () => void;
+  danger?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      title={title}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+      className={cn(
+        'flex-1 flex items-center justify-center py-1 rounded bg-white/10 hover:bg-white/20',
+        danger && 'text-red-300',
+      )}
+    >
+      <Icon className="h-3 w-3 text-white" />
+    </button>
   );
 }
 

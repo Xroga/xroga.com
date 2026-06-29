@@ -53,6 +53,8 @@ export interface SwarmProgressEvent {
     provider: string;
     matchScore: number;
     issues?: string[];
+    variantLabel?: string;
+    variantIndex?: number;
   };
 }
 

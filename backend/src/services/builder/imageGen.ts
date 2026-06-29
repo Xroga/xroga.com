@@ -16,6 +16,11 @@ import { generateImageFollowUps } from './image/followUps.js';
 import { moderateImagePrompt, parseImageAspectFormat, aspectFormatLabel, aspectFormatPromptSuffix, type ImageAspectFormat } from './image/contentModeration.js';
 import { verifyImageMatchesPrompt } from './image/imageVerifier.js';
 import { buildImageBlockedOutput } from './image/imageSafetyMessages.js';
+import {
+  extractSourceImageUrl,
+  generateStyleVariants,
+  VARIANT_COUNT as STYLE_VARIANT_COUNT,
+} from './image/imageStyleTransfer.js';
 
 export class ImageGenerationError extends Error {
   constructor(message: string) {
@@ -52,6 +57,8 @@ const DEFAULT_FOLLOW_UPS = [
   'Anime / illustration style',
 ];
 
+export const VARIANT_COUNT = 4;
+
 export interface ImageGenOptions {
   onProgress?: (step: ImageProgressStep, message: string) => void;
   onImageAttempt?: (attempt: {
@@ -60,6 +67,8 @@ export interface ImageGenOptions {
     matchScore: number;
     issues?: string[];
     scoresByVerifier?: Record<string, number>;
+    variantLabel?: string;
+    variantIndex?: number;
   }) => void;
   quality?: 'standard' | 'premium';
   userId?: string;
@@ -68,6 +77,8 @@ export interface ImageGenOptions {
   fast?: boolean;
   /** Output aspect ratio — defaults to 1:1 post if not in prompt */
   aspectFormat?: ImageAspectFormat;
+  /** Source photo for style transfer / image edit */
+  sourceImageUrl?: string;
 }
 
 function extractImagePrompt(userPrompt: string): string {
@@ -366,6 +377,146 @@ function buildAllProviders(): ProviderEntry[] {
   });
 }
 
+function pickVariantProviders(all: ProviderEntry[]): ProviderEntry[] {
+  const preferredOrder: ProviderName[] = [
+    'fal-sdxl',
+    'replicate-sd',
+    'agnes-image',
+    'openai-image',
+    'cloudflare',
+    'comfyui',
+    'luma-image',
+    'hailuo-image',
+    'runway-image',
+  ];
+  const picked: ProviderEntry[] = [];
+  for (const name of preferredOrder) {
+    const entry = all.find((p) => p.name === name);
+    if (entry) picked.push(entry);
+    if (picked.length >= VARIANT_COUNT) break;
+  }
+  return picked.slice(0, VARIANT_COUNT);
+}
+
+async function generateStyleTransferImage(
+  userPrompt: string,
+  rawQuery: string,
+  sourceUrl: string,
+  options: ImageGenOptions | undefined,
+  meta: {
+    aspectFormat: ImageAspectFormat;
+    formatLabel: string;
+    isYoutubeThumbnail: boolean;
+    ctx: { userId?: string; runId?: string };
+  }
+): Promise<ImageGenOutput | ImageBlockedOutput> {
+  emitProgress(options, 'painting', `Style transfer — ${STYLE_VARIANT_COUNT} modern looks from your photo…`);
+
+  type Attempt = {
+    imageUrl: string;
+    provider: ImageGenOutput['provider'];
+    matchScore: number;
+    issues?: string[];
+    blocked?: boolean;
+    scoresByVerifier?: Record<string, number>;
+    variantLabel?: string;
+    variantIndex?: number;
+  };
+
+  const variants = await generateStyleVariants(sourceUrl, userPrompt, (index, label) => {
+    emitProgress(options, 'painting', `Variant ${index + 1}/${STYLE_VARIANT_COUNT}: ${label}…`);
+  });
+
+  if (!variants.length) {
+    throw new ImageGenerationError('Style transfer failed — try a clearer style description.');
+  }
+
+  const attemptResults = await Promise.all(
+    variants.map(async (variant, index): Promise<Attempt | null> => {
+      emitProgress(options, 'verifying', `Scoring ${variant.variantLabel}…`);
+      try {
+        const verification = await verifyImageMatchesPrompt(variant.imageUrl, rawQuery);
+        if (verification.blockedForSafety) {
+          return {
+            imageUrl: variant.imageUrl,
+            provider: 'fal',
+            matchScore: 0,
+            issues: verification.issues,
+            blocked: true,
+            variantLabel: variant.variantLabel,
+            variantIndex: index,
+          };
+        }
+
+        const attempt: Attempt = {
+          imageUrl: variant.imageUrl,
+          provider: 'fal',
+          matchScore: verification.matchScore,
+          issues: verification.issues,
+          blocked: false,
+          scoresByVerifier: verification.scoresByVerifier,
+          variantLabel: variant.variantLabel,
+          variantIndex: index,
+        };
+
+        options?.onImageAttempt?.({
+          imageUrl: attempt.imageUrl,
+          provider: attempt.provider,
+          matchScore: attempt.matchScore,
+          issues: attempt.issues,
+          scoresByVerifier: attempt.scoresByVerifier,
+          variantLabel: attempt.variantLabel,
+          variantIndex: attempt.variantIndex,
+        });
+
+        return attempt;
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  const allAttempts = attemptResults.filter((a): a is Attempt => a !== null);
+  const safeAttempts = allAttempts.filter((a) => !a.blocked);
+
+  if (!safeAttempts.length) {
+    emitProgress(options, 'complete');
+    return buildImageBlockedOutput(rawQuery, 'image_blocked', 'Style transfer outputs were blocked by safety review.');
+  }
+
+  const winner = [...safeAttempts].sort((a, b) => b.matchScore - a.matchScore)[0]!;
+  const serializedAttempts = safeAttempts.map((a) => ({
+    imageUrl: a.imageUrl,
+    provider: a.provider,
+    matchScore: a.matchScore,
+    issues: a.issues,
+    scoresByVerifier: a.scoresByVerifier,
+    selected: a.imageUrl === winner.imageUrl,
+    variantLabel: a.variantLabel,
+    variantIndex: a.variantIndex,
+  }));
+
+  emitProgress(options, 'complete');
+
+  return {
+    type: 'image',
+    imageUrl: winner.imageUrl,
+    provider: winner.provider,
+    prompt: rawQuery,
+    followUps: ['Try another style', 'Make it more photorealistic', 'Anime / illustration style', 'Cinematic movie look'],
+    pros: [`${safeAttempts.length} style variants from your upload`, `Best: ${winner.variantLabel ?? winner.provider}`],
+    matchScore: winner.matchScore,
+    verified: winner.matchScore >= EXACT_MATCH_THRESHOLD,
+    aspectFormat: meta.aspectFormat,
+    allAttempts: serializedAttempts,
+    rejectedImages: serializedAttempts.filter((a) => a.imageUrl !== winner.imageUrl),
+    isYoutubeThumbnail: meta.isYoutubeThumbnail,
+    variantCount: safeAttempts.length,
+    isStyleTransfer: true,
+    sourceImageUrl: sourceUrl,
+  };
+}
+
 export async function generateImage(
   userPrompt: string,
   options?: ImageGenOptions
@@ -384,14 +535,24 @@ export async function generateImage(
   const imagePrompt = `${basePrompt}. ${aspectFormatPromptSuffix(aspectFormat)}`;
   const isYoutubeThumbnail = /\b(thumbnail|youtube)\b/i.test(rawQuery);
 
-  emitProgress(options, 'painting', `Format: ${formatLabel} — running all image AIs in parallel…`);
+  const sourceUrl = extractSourceImageUrl(userPrompt, options?.sourceImageUrl);
+  if (sourceUrl) {
+    return generateStyleTransferImage(userPrompt, rawQuery, sourceUrl, options, {
+      aspectFormat,
+      formatLabel,
+      isYoutubeThumbnail,
+      ctx,
+    });
+  }
 
-  const providers = buildAllProviders();
+  emitProgress(options, 'painting', `Format: ${formatLabel} — generating ${VARIANT_COUNT} variants…`);
+
+  const providers = pickVariantProviders(buildAllProviders());
   if (!providers.length) {
     throw new ImageGenerationError('No image API keys configured on the server.');
   }
 
-  console.log(`[ImageGen] Parallel (${formatLabel}): ${providers.map((p) => p.name).join(', ')}`);
+  console.log(`[ImageGen] ${VARIANT_COUNT} variants (${formatLabel}): ${providers.map((p) => p.name).join(', ')}`);
 
   type Attempt = {
     imageUrl: string;
@@ -400,6 +561,8 @@ export async function generateImage(
     issues?: string[];
     blocked?: boolean;
     scoresByVerifier?: Record<string, number>;
+    variantLabel?: string;
+    variantIndex?: number;
   };
 
   const attemptResults = await Promise.all(
@@ -585,7 +748,7 @@ export async function generateImage(
     enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : undefined,
     followUps: DEFAULT_FOLLOW_UPS,
     pros: [
-      `Best of ${safeAttempts.length} safe AI attempts (${winner.provider})`,
+      `${safeAttempts.length} variants — best: ${winner.provider}`,
       `Format: ${formatLabel}`,
     ],
     cons:
@@ -598,6 +761,7 @@ export async function generateImage(
     allAttempts: serializedAttempts,
     rejectedImages: others,
     isYoutubeThumbnail,
+    variantCount: safeAttempts.length,
   };
 }
 

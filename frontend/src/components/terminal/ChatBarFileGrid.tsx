@@ -74,12 +74,14 @@ function FilePreviewModal({
   onClose,
   onRename,
   onRemove,
+  onApplyStyle,
 }: {
   file: File;
   url: string | null;
   onClose: () => void;
   onRename: (name: string) => void;
   onRemove: () => void;
+  onApplyStyle?: (file: File, prompt: string) => void;
 }) {
   const [name, setName] = useState(file.name);
   const [aiPrompt, setAiPrompt] = useState('');
@@ -140,16 +142,23 @@ function FilePreviewModal({
             <textarea
               value={aiPrompt}
               onChange={(e) => setAiPrompt(e.target.value)}
-              placeholder="AI edit: remove background, upscale, change format… describe what you want"
+              placeholder="Describe the modern look: cinematic, anime, watercolor, professional portrait…"
               rows={2}
               className="w-full text-xs px-2.5 py-2 rounded-lg border border-[var(--card-border)] bg-white/5 resize-none"
             />
             <button
               type="button"
-              onClick={() => toast('AI image edit queued — coming with Swarm media API', { icon: '✨' })}
+              onClick={() => {
+                if (onApplyStyle) {
+                  onApplyStyle(file, aiPrompt);
+                  onClose();
+                } else {
+                  toast('AI style transfer — attach image and send from chatbar', { icon: '✨' });
+                }
+              }}
               className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#006aff]/15 text-[#006aff] text-xs font-bold"
             >
-              <Sparkles className="w-3.5 h-3.5" /> Apply AI edit
+              <Sparkles className="w-3.5 h-3.5" /> Apply modern style
             </button>
           </div>
         )}
@@ -185,10 +194,12 @@ export function ChatBarFileGrid({
   files,
   onRemove,
   onRename,
+  onApplyStyle,
 }: {
   files: File[];
   onRemove: (index: number) => void;
   onRename: (index: number, name: string) => void;
+  onApplyStyle?: (file: File, prompt: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [previewIdx, setPreviewIdx] = useState<number | null>(null);
@@ -287,6 +298,7 @@ export function ChatBarFileGrid({
           onClose={() => setPreviewIdx(null)}
           onRename={(name) => onRename(previewIdx, name)}
           onRemove={() => onRemove(previewIdx)}
+          onApplyStyle={onApplyStyle}
         />
       )}
     </div>

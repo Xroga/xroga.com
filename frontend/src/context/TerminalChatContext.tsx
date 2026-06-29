@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { streamSwarmExecute, ApiError } from '@/lib/api';
+import { streamSwarmExecute, ApiError, type ChatAttachment } from '@/lib/api';
 import type { SwarmProgressEvent } from '@/lib/swarm';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
@@ -63,11 +63,18 @@ interface TerminalChatContextValue {
   reasoning: string | null;
   dag: Array<{ id: string; description: string; agent: string }> | null;
   pipelineCompact: boolean;
-  submit: (text?: string, fromQueue?: boolean, interrupt?: boolean) => Promise<void>;
+  submit: (
+    text?: string,
+    fromQueue?: boolean,
+    interrupt?: boolean,
+    attachments?: ChatAttachment[]
+  ) => Promise<void>;
   stop: () => void;
   startNewChat: () => void;
   /** Permanently removes assistant response + its user prompt from chat, archive, and media */
   deleteTurn: (assistantMessageId: string) => void;
+  /** Update structured feature output (e.g. user voted on image variant) */
+  updateFeatureOutput: (messageId: string, output: unknown) => void;
   removeFromQueue: (id: string) => void;
   editQueuedPrompt: (id: string, text: string) => void;
   sendQueuedNow: (id: string) => void;
@@ -246,10 +253,21 @@ export function TerminalChatProvider({
 
   const clearQueue = useCallback(() => setPromptQueue([]), []);
 
+  const updateFeatureOutput = useCallback((messageId: string, output: unknown) => {
+    setMessages((m) =>
+      m.map((msg) => (msg.id === messageId ? { ...msg, featureOutput: output } : msg))
+    );
+  }, []);
+
   const submit = useCallback(
-    async (overrideText?: string, fromQueue = false, interrupt = false) => {
+    async (
+      overrideText?: string,
+      fromQueue = false,
+      interrupt = false,
+      attachments?: ChatAttachment[]
+    ) => {
       const userPrompt = (overrideText ?? prompt).trim();
-      if (!userPrompt) return;
+      if (!userPrompt && !attachments?.length) return;
 
       if (loading && interrupt) {
         skipNextQueueRef.current = true;
@@ -272,8 +290,21 @@ export function TerminalChatProvider({
 
       const userMessageId = crypto.randomUUID();
       const assistantId = crypto.randomUUID();
-      lastTurnRef.current = { userMessageId, assistantId, text: userPrompt };
-      setMessages((m) => [...m, { id: userMessageId, role: 'user', content: userPrompt, createdAt: Date.now() }]);
+      const displayPrompt =
+        userPrompt ||
+        (attachments?.length ? 'Transform this image with a modern style' : '');
+      lastTurnRef.current = { userMessageId, assistantId, text: displayPrompt };
+      setMessages((m) => [
+        ...m,
+        {
+          id: userMessageId,
+          role: 'user',
+          content: attachments?.length
+            ? `${displayPrompt}${displayPrompt ? '\n' : ''}📎 ${attachments.length} image(s) attached`
+            : displayPrompt,
+          createdAt: Date.now(),
+        },
+      ]);
       if (!fromQueue) setPrompt('');
       setLoading(true);
       setSwarmRunning(true);
@@ -306,10 +337,11 @@ export function TerminalChatProvider({
         setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
         setAnimatingId(assistantId);
 
-        await streamSwarmExecute(userPrompt, {
+        await streamSwarmExecute(displayPrompt, {
           projectId,
           signal: controller.signal,
           compact: useCompactPipeline,
+          attachments,
           onProgress: (event) => {
             gotEvent = true;
             if (thinkingTimerRef.current) {
@@ -322,7 +354,7 @@ export function TerminalChatProvider({
             if (event.imageAttempt?.imageUrl) {
               setImageAttempts((prev) => {
                 if (prev.some((a) => a.imageUrl === event.imageAttempt!.imageUrl)) return prev;
-                return [...prev, event.imageAttempt!];
+                return [...prev, event.imageAttempt!].slice(0, 4);
               });
             }
             if (event.videoStep) setVideoProgressStep(event.videoStep);
@@ -554,6 +586,7 @@ export function TerminalChatProvider({
         stop,
         startNewChat,
         deleteTurn,
+        updateFeatureOutput,
         removeFromQueue,
         editQueuedPrompt,
         sendQueuedNow,

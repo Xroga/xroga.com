@@ -106,6 +106,7 @@ export class Orchestrator {
       prompt: string;
       projectId?: string;
       onProgress?: (event: SwarmProgressEvent) => void;
+      attachments?: Array<{ url: string; mimeType?: string; name?: string }>;
     }
   ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[] }> {
     const runId = crypto.randomUUID();
@@ -118,9 +119,18 @@ export class Orchestrator {
       );
     }
 
-    const output = await generateImage(ctx.prompt, {
+    const imageAttachment = ctx.attachments?.find(
+      (a) => a.mimeType?.startsWith('image/') || a.url.startsWith('data:image/') || /\.(png|jpe?g|webp|gif)(\?|$)/i.test(a.url)
+    );
+
+    const stylePrompt = imageAttachment
+      ? `[Image Edit] Style transfer: ${ctx.prompt}\nsource image: ${imageAttachment.url}`
+      : ctx.prompt;
+
+    const output = await generateImage(stylePrompt, {
       userId: ctx.userId,
       runId,
+      sourceImageUrl: imageAttachment?.url,
       onProgress: (step, message) => {
         ctx.onProgress?.({
           runId,
@@ -218,9 +228,14 @@ export class Orchestrator {
       prompt: string;
       projectId?: string;
       onProgress?: (event: SwarmProgressEvent) => void;
+      attachments?: Array<{ url: string; mimeType?: string; name?: string }>;
     }
   ): Promise<SwarmRunResult & { polishedReply: string; followUps?: string[]; reasoning?: string; queued?: boolean; fast?: boolean }> {
     await loadMasterPrompt();
+
+    const hasImageAttachment = ctx.attachments?.some(
+      (a) => a.mimeType?.startsWith('image/') || /\.(png|jpe?g|webp|gif)(\?|$)/i.test(a.url) || a.url.startsWith('data:image/')
+    );
 
     const route = await classifyFeature(ctx.prompt).catch(() => ({
       category: 'chat' as FeatureCategory,
@@ -230,7 +245,9 @@ export class Orchestrator {
       reasoning: 'fallback',
     }));
 
-    const featureCategory = resolveFeatureCategory(ctx.prompt, route.category);
+    const featureCategory = hasImageAttachment
+      ? 'image_generation'
+      : resolveFeatureCategory(ctx.prompt, route.category);
 
     // Fast chat: greetings & simple conversation — no swarm, no architect spam
     if (shouldUseFastChat(ctx.prompt, featureCategory)) {

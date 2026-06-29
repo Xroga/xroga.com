@@ -76,7 +76,13 @@ export interface ImageGenOutput {
     issues?: string[];
     selected?: boolean;
     scoresByVerifier?: Record<string, number>;
+    variantLabel?: string;
+    variantIndex?: number;
+    userVoted?: boolean;
   }>;
+  variantCount?: number;
+  isStyleTransfer?: boolean;
+  sourceImageUrl?: string;
   aspectFormat?: '1:1' | '4:5' | '16:9' | '9:16' | '3:4' | '4:3';
   thumbnailUrl?: string;
   isYoutubeThumbnail?: boolean;
