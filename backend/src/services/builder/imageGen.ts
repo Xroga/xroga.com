@@ -6,9 +6,7 @@ import { generateLumaImage } from '../../lib/luma.js';
 import { generateRunwayImage } from '../../lib/runway.js';
 import { generateHailuoImage } from '../../lib/hailuo.js';
 import { generateComfyUIImage } from '../../lib/comfyui.js';
-import { callWithFallback } from '../../lib/resilience/callWithFallback.js';
-import type { RetryOptions } from '../../lib/resilience/retry.js';
-import { IMAGE_API_TIMEOUT_MS } from '../../config/apiPriorities.js';
+import { logSystemError } from '../../services/systemErrorLog.js';
 import type { ImageGenOutput } from '../../types/features.js';
 import { classifyImageQuery } from './image/understanding.js';
 import { enhanceImagePrompt } from './image/promptEnhancer.js';
@@ -170,25 +168,61 @@ function normalizeProvider(name: string): ImageGenOutput['provider'] {
   return map[name] ?? 'fal';
 }
 
-const IMAGE_RETRY: RetryOptions = {
-  maxRetries: 0,
-  timeoutMs: IMAGE_API_TIMEOUT_MS,
-};
+const MAX_PROMPT_CHARS = 900;
 
-async function tryProvider(
+function truncatePrompt(prompt: string): string {
+  const t = prompt.trim();
+  if (t.length <= MAX_PROMPT_CHARS) return t;
+  return t.slice(0, MAX_PROMPT_CHARS).trim();
+}
+
+/** Direct provider call — same path as smoke test (no circuit breaker). */
+async function callImageProvider(
   entry: ProviderEntry,
   prompt: string,
   ctx: { userId?: string; runId?: string }
 ): Promise<string> {
-  const { result } = await callWithFallback(
-    [{ name: entry.name, call: () => entry.call(prompt), isValid: isValidImageResult }],
-    () => {
-      throw new ImageGenerationError(`${entry.name} failed`);
-    },
-    { apiType: 'image_gen', userId: ctx.userId, runId: ctx.runId },
-    IMAGE_RETRY
+  const safePrompt = truncatePrompt(prompt);
+  const imageUrl = await entry.call(safePrompt);
+  if (!isValidImageResult(imageUrl)) {
+    throw new ImageGenerationError(`${entry.name} returned invalid image URL`);
+  }
+  return imageUrl;
+}
+
+async function tryProviderChain(
+  entries: ProviderEntry[],
+  prompts: string[],
+  ctx: { userId?: string; runId?: string }
+): Promise<{ imageUrl: string; provider: ImageGenOutput['provider'] }> {
+  const errors: string[] = [];
+
+  for (const prompt of prompts) {
+    for (const entry of entries) {
+      try {
+        const imageUrl = await callImageProvider(entry, prompt, ctx);
+        console.log(`[ImageGen] Success via ${entry.name}`);
+        return { imageUrl, provider: normalizeProvider(entry.name) };
+      } catch (err) {
+        const msg = (err as Error).message;
+        errors.push(`${entry.name}: ${msg}`);
+        console.warn(`[ImageGen] ${entry.name} failed:`, msg);
+        await logSystemError({
+          api: entry.name,
+          errorMessage: msg,
+          fallbackUsed: 'trying next provider',
+          severity: 'warning',
+          userId: ctx.userId,
+          runId: ctx.runId,
+          metadata: { apiType: 'image_gen', promptLen: prompt.length },
+        }).catch(() => {});
+      }
+    }
+  }
+
+  throw new ImageGenerationError(
+    `All image providers failed (${entries.map((e) => e.name).join(' → ')}). ${errors.slice(-3).join(' | ')}`
   );
-  return result;
 }
 
 async function generatePremiumWithVoting(
@@ -203,7 +237,7 @@ async function generatePremiumWithVoting(
   const results = await Promise.allSettled(
     premium.map(async (entry) => ({
       provider: normalizeProvider(entry.name),
-      imageUrl: await tryProvider(entry, prompt, ctx),
+      imageUrl: await callImageProvider(entry, prompt, ctx),
     }))
   );
 
@@ -229,6 +263,7 @@ async function generatePremiumWithVoting(
 
 async function generateStandardChain(
   prompt: string,
+  rawFallback: string,
   ctx: { userId?: string; runId?: string }
 ): Promise<{ imageUrl: string; provider: ImageGenOutput['provider'] }> {
   const configured = buildStandardProviders().filter((p) => p.configured);
@@ -241,24 +276,8 @@ async function generateStandardChain(
 
   console.log(`[ImageGen] Standard chain: ${configured.map((p) => p.name).join(' → ')}`);
 
-  const providers = configured.map((p) => ({
-    name: p.name,
-    call: () => p.call(prompt),
-    isValid: isValidImageResult,
-  }));
-
-  const { result: imageUrl, provider } = await callWithFallback(
-    providers,
-    () => {
-      throw new ImageGenerationError(
-        `All image providers failed (${configured.map((p) => p.name).join(' → ')}). Check API quotas and keys.`
-      );
-    },
-    { apiType: 'image_gen', userId: ctx.userId, runId: ctx.runId },
-    IMAGE_RETRY
-  );
-
-  return { imageUrl, provider: normalizeProvider(provider) };
+  const prompts = prompt.trim() === rawFallback.trim() ? [prompt] : [prompt, rawFallback];
+  return tryProviderChain(configured, prompts, ctx);
 }
 
 async function maybeUpscale(imageUrl: string, premium: boolean): Promise<string> {
@@ -319,12 +338,12 @@ export async function generateImage(userPrompt: string, options?: ImageGenOption
       provider = premium.provider;
     } catch (err) {
       console.warn('[ImageGen] Premium voting failed, falling back to standard chain:', (err as Error).message);
-      const standard = await generateStandardChain(imagePrompt, ctx);
+      const standard = await generateStandardChain(imagePrompt, rawQuery, ctx);
       imageUrl = standard.imageUrl;
       provider = standard.provider;
     }
   } else {
-    const standard = await generateStandardChain(imagePrompt, ctx);
+    const standard = await generateStandardChain(imagePrompt, rawQuery, ctx);
     imageUrl = standard.imageUrl;
     provider = standard.provider;
   }
@@ -395,4 +414,20 @@ export async function smokeTestImageGeneration(): Promise<{
   }
 
   return { ok: false, error: 'All smoke-test providers failed', tried, errors };
+}
+
+/** Full pipeline smoke — classify, enhance, generate (matches user flow). */
+export async function smokeTestFullPipeline(
+  userPrompt = 'generate a cyberpunk cat image'
+): Promise<{ ok: boolean; provider?: string; imageUrl?: string; error?: string }> {
+  try {
+    const result = await generateImage(userPrompt);
+    return {
+      ok: true,
+      provider: result.provider,
+      imageUrl: result.imageUrl.slice(0, 120),
+    };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
 }
