@@ -104,17 +104,24 @@ function IntegrationLogo({ src, alt, className }: { src: string; alt: string; cl
   );
 }
 
-export function GitHubChipIcon() {
+export function GitHubChipIcon({ lightBg = false }: { lightBg?: boolean }) {
   return (
     <IntegrationLogo
       src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
       alt="GitHub"
-      className="dark:invert"
+      className={cn('w-3.5 h-3.5', !lightBg && 'dark:invert')}
     />
   );
 }
 
-export function GitLabChipIcon() {
+export function GitLabChipIcon({ white = false }: { white?: boolean }) {
+  if (white) {
+    return (
+      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" aria-hidden>
+        <path fill="currentColor" d="m23.6 9.6-.8-2.4a1.2 1.2 0 0 0-1.1-.8h-3.4L16.2 2a1.2 1.2 0 0 0-2.2 0l-2.1 4.4H8.5a1.2 1.2 0 0 0-1.1.8L6.6 9.6a1.2 1.2 0 0 0 .4 1.4l2.7 2-1 3.1a1.2 1.2 0 0 0 1.8 1.3l2.8-2 2.8 2a1.2 1.2 0 0 0 1.8-1.3l-1-3.1 2.7-2a1.2 1.2 0 0 0 .4-1.4Z" />
+      </svg>
+    );
+  }
   return (
     <IntegrationLogo
       src="https://about.gitlab.com/images/press/logo/png/gitlab-icon-rgb.png"
@@ -123,11 +130,38 @@ export function GitLabChipIcon() {
   );
 }
 
-export function VercelChipIcon() {
+export function VercelChipIcon({ white = false }: { white?: boolean }) {
   return (
     <svg viewBox="0 0 76 65" className="w-3.5 h-3.5 shrink-0" aria-hidden>
-      <path fill="currentColor" d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
+      <path fill={white ? '#ffffff' : 'currentColor'} d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
     </svg>
+  );
+}
+
+export function ChatBarBrandChip({
+  variant,
+  label,
+  onClick,
+}: {
+  variant: 'github' | 'gitlab' | 'vercel';
+  label: string;
+  onClick: () => void;
+}) {
+  const icons = {
+    github: <GitHubChipIcon lightBg />,
+    gitlab: <GitLabChipIcon white />,
+    vercel: <VercelChipIcon white />,
+  };
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn('xv-brand-chip', `xv-brand-chip--${variant}`)}
+      aria-label={label}
+      title={label}
+    >
+      {icons[variant]}
+    </button>
   );
 }
 

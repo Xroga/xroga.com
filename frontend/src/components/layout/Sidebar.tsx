@@ -207,17 +207,22 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     router.refresh();
   }
 
+  function goToPlanUsage() {
+    setMobileOpen(false);
+    router.push('/dashboard/billing#action-spend');
+  }
+
   const bottomSection = (
     <div className="p-2 mt-auto space-y-2 xv-sidebar-bottom">
       {onTopUp && (
         <div className={cn(!navExpanded && 'flex justify-center')}>
           {navExpanded ? (
-            <MiniActionMeter onTopUp={onTopUp} />
+            <MiniActionMeter onPlanUsage={goToPlanUsage} onTopUp={onTopUp} />
           ) : (
-            <HoverTip label="Actions left" description="Your remaining swarm actions. Click to top up.">
+            <HoverTip label="Plan & usage" description="View your action calculator and spend.">
               <button
                 type="button"
-                onClick={onTopUp}
+                onClick={goToPlanUsage}
                 className="p-2 rounded-lg glass-panel flex items-center gap-0.5 text-[10px] font-terminal text-[var(--accent)]"
               >
                 <Zap className="w-3 h-3" />
@@ -309,7 +314,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         />
       )}
 
-      <div className="xv-sidebar-root w-0 overflow-hidden shrink-0 lg:w-auto lg:overflow-visible">
+      <div className="xv-sidebar-root w-0 shrink-0 max-lg:overflow-visible lg:w-auto lg:overflow-visible">
       <aside
         onMouseEnter={() => {
           if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(true);
@@ -322,10 +327,10 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           ['--sidebar-drawer-width' as string]: `${mobileDrawerWidth}px`,
         }}
         className={cn(
-          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,transform,visibility] duration-200 xv-sidebar-hover shrink-0 relative',
+          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen min-h-[100dvh] transition-[width,transform,visibility] duration-200 xv-sidebar-hover shrink-0 relative',
           !mobileOpen && 'max-lg:!w-0 max-lg:border-r-0 max-lg:invisible max-lg:pointer-events-none',
-          mobileOpen && 'max-lg:!w-[var(--sidebar-drawer-width)] max-lg:border-r max-lg:visible max-lg:pointer-events-auto max-lg:overflow-y-auto',
-          mobileOpen ? 'translate-x-0 z-[75] xv-sidebar-mobile-open' : '-translate-x-full lg:translate-x-0'
+          mobileOpen && 'max-lg:!w-[var(--sidebar-drawer-width)] max-lg:border-r max-lg:visible max-lg:pointer-events-auto max-lg:overflow-y-auto max-lg:max-h-[100dvh]',
+          mobileOpen ? 'translate-x-0 z-[80] xv-sidebar-mobile-open' : '-translate-x-full lg:translate-x-0'
         )}
       >
         <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px]">

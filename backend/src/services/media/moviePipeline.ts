@@ -287,7 +287,7 @@ export async function runMoviePipeline(options: MoviePipelineOptions): Promise<V
         scenePrompt
       );
 
-      if (reviewed.total < 21 && !['slideshow', 'slideshow-ai-image', 'ffmpeg-minimal'].includes(result.provider)) {
+      if (reviewed.total < 21 && !['slideshow', 'slideshow-ai-image', 'ffmpeg-minimal', 'static-mp4'].includes(result.provider)) {
         const corrected = await generateGuaranteedVideo(
           `${scenePrompt}. Avoid warping, realistic physics, smooth motion.`,
           scene.durationSeconds,

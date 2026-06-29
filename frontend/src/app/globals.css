@@ -2118,6 +2118,60 @@ body.theme-gray * {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   }
 
+  /* Desktop chatbar — compact upload button */
+  @media (min-width: 1024px) {
+    .xv-terminal-dock .xv-power-smash-upload__shell {
+      width: 36px !important;
+      height: 32px !important;
+      border-radius: 12px;
+    }
+    .xv-terminal-dock .xv-power-smash-upload__shell svg {
+      width: 15px !important;
+      height: 15px !important;
+    }
+  }
+
+  /* Brand chips — circular icon buttons on mobile */
+  .xv-brand-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 9999px;
+    border: none;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+  }
+  .xv-brand-chip:active {
+    transform: scale(0.94);
+  }
+  .xv-brand-chip--github {
+    background: #ffffff;
+    color: #24292f;
+  }
+  .xv-brand-chip--gitlab {
+    background: #fc6d26;
+    color: #ffffff;
+  }
+  .xv-brand-chip--vercel {
+    background: #000000;
+    color: #ffffff;
+  }
+
+  /* Mic above GO when input wraps to second row */
+  .xv-chatbar-row--multiline .xv-chatbar-actions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  /* Black Hole V label flush above chatbar */
+  .xv-blackhole-outside {
+    margin-bottom: 2px;
+    line-height: 1;
+  }
+
   /* Mobile chatbar / terminal responsiveness */
   @media (max-width: 1023px) {
     .terminal-layout {
@@ -2128,7 +2182,10 @@ body.theme-gray * {
       width: 0 !important;
       min-width: 0 !important;
       flex: 0 0 0 !important;
-      overflow: hidden !important;
+      overflow: visible !important;
+    }
+    body.mobile-sidebar-open .terminal-layout > .xv-sidebar-root {
+      overflow: visible !important;
     }
     aside.xv-sidebar-hover:not(.xv-sidebar-mobile-open) {
       overflow: hidden !important;

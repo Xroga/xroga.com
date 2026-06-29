@@ -33,6 +33,7 @@ export async function generateSlideshowVideo(
     } else {
       const placeholder = `https://placehold.co/1280x720/1a1a2e/006aff/png?text=${encodeURIComponent(prompt.slice(0, 30))}`;
       const imgRes = await fetch(placeholder, { signal: AbortSignal.timeout(15_000) });
+      if (!imgRes.ok) throw new Error(`Placeholder image fetch failed: ${imgRes.status}`);
       await writeFile(imagePath, Buffer.from(await imgRes.arrayBuffer()));
     }
 

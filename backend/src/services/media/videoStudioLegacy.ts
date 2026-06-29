@@ -79,7 +79,7 @@ export async function produceSingleSceneVideo(
 
   options?.onProgress?.('complete', 'Your video is ready!');
 
-  const usedFallback = ['slideshow', 'slideshow-ai-image', 'ffmpeg-minimal'].includes(video.provider);
+    const usedFallback = ['slideshow', 'slideshow-ai-image', 'ffmpeg-minimal', 'static-mp4'].includes(video.provider);
 
   return {
     type: 'video_studio',
