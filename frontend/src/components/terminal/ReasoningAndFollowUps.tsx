@@ -125,10 +125,12 @@ export function ModernResponseText({
         {images.map((img, i) => (
           <ImageStudioCard
             key={`${img.url}-${i}`}
-            src={img.url}
-            alt={img.alt}
-            provider={provider}
-            caption={img.alt !== 'Generated image' ? img.alt : undefined}
+            data={{
+              type: 'image',
+              imageUrl: img.url,
+              provider,
+              prompt: img.alt !== 'Generated image' ? img.alt : undefined,
+            }}
           />
         ))}
         {streaming && (

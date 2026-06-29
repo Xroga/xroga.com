@@ -45,7 +45,7 @@ export async function generateSlideshowVideo(
     const base64 = buffer.toString('base64');
     return `data:video/mp4;base64,${base64}`;
   } catch {
-    return `data:video/mp4;base64,`;
+    throw new Error('Slideshow video generation failed — FFmpeg unavailable');
   } finally {
     for (const f of [imagePath, outputPath]) {
       try { await unlink(f); } catch { /* ignore */ }

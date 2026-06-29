@@ -21,6 +21,7 @@ import {
   loadWorkspaceSession,
   saveWorkspaceSession,
 } from '@/lib/workspacePersistence';
+import { addMediaItem } from '@/lib/mediaStorage';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
 
@@ -32,6 +33,7 @@ export interface ChatMessage {
   content: string;
   agent?: string;
   createdAt?: number;
+  featureOutput?: unknown;
 }
 
 export interface QueuedPrompt {
@@ -254,6 +256,45 @@ export function TerminalChatProvider({
             if (complete.followUps?.length) {
               setFollowUps(complete.followUps);
             }
+            const output = complete.output as Record<string, unknown> | undefined;
+            if (output?.type === 'image' && typeof output.imageUrl === 'string') {
+              addMediaItem({
+                name: String(output.prompt ?? 'Xroga image').slice(0, 40),
+                type: 'image',
+                url: output.imageUrl,
+              });
+              setMessages((m) =>
+                m.map((msg) =>
+                  msg.id === assistantId
+                    ? {
+                        ...msg,
+                        content: '',
+                        featureOutput: output,
+                      }
+                    : msg
+                )
+              );
+              return;
+            }
+            if (output?.type === 'video_studio' && typeof output.streamingUrl === 'string') {
+              addMediaItem({
+                name: String(output.title ?? 'Xroga video').slice(0, 40),
+                type: 'video',
+                url: output.streamingUrl,
+              });
+              setMessages((m) =>
+                m.map((msg) =>
+                  msg.id === assistantId
+                    ? {
+                        ...msg,
+                        content: '',
+                        featureOutput: output,
+                      }
+                    : msg
+                )
+              );
+              return;
+            }
             const text = complete.output
               ? (() => {
                   const o = complete.output as {
@@ -261,18 +302,11 @@ export function TerminalChatProvider({
                     imageUrl?: string;
                     prompt?: string;
                     provider?: string;
-                    streamingUrl?: string;
-                    title?: string;
-                    followUps?: string[];
                   };
                   if (o.type === 'image' && o.imageUrl) {
                     const alt = (o.prompt ?? 'Generated image').slice(0, 80);
                     const provider = o.provider ? `\n\n*Generated via ${o.provider}*` : '';
                     return `![${alt}](${o.imageUrl})${provider}`;
-                  }
-                  if (o.type === 'video_studio' && o.streamingUrl) {
-                    const title = o.title ?? 'Your film';
-                    return `**${title}** is ready!\n\n[Watch & download](${o.streamingUrl})`;
                   }
                   return null;
                 })()

@@ -1,16 +1,17 @@
 import { generateVideoWithFallback } from '../../lib/videoProviders.js';
-import { generateSceneAudio } from '../../lib/audioProviders.js';
-import { assembleVideo, downloadVideoBuffer } from '../../lib/ffmpeg.js';
+import { downloadVideoBuffer } from '../../lib/ffmpeg.js';
+import { isValidMp4Buffer, isHttpMediaUrl, isStubJsonBuffer } from '../../lib/mediaValidation.js';
 import { parseVideoDuration, computeVideoActionCost } from './videoUtils.js';
 import { storeUserFile } from '../storage/projectFiles.js';
 import type { VideoStudioOutput } from '../../types/features.js';
 import type { ProduceVideoOptions } from './produceVideo.js';
+import { moderateImagePrompt } from '../builder/image/contentModeration.js';
 
 export { parseVideoDuration, computeVideoActionCost };
 
 function extractVideoPrompt(userPrompt: string): string {
   const patterns = [
-    /generate\s+(?:an?\s+)?video\s+of\s+(.+)/i,
+    /generate\s+(?:an?\s+)?(?:\d+\s*(?:second|sec|s)\s+)?(?:video|clip)\s+(?:of\s+)?(.+)/i,
     /create\s+(?:an?\s+)?video\s+of\s+(.+)/i,
     /make\s+(?:an?\s+)?video\s+(?:of\s+)?(.+)/i,
     /film\s+(.+)/i,
@@ -20,58 +21,66 @@ function extractVideoPrompt(userPrompt: string): string {
     const match = userPrompt.match(pattern);
     if (match?.[1]) return match[1].trim();
   }
-  return userPrompt;
+  return userPrompt.replace(/\b(generate|create|make|produce)\b/gi, '').trim();
 }
 
-/** Fast single-scene video — Agnes hub first, minimal LLM overhead */
+/** Fast single-scene video — Agnes hub first, store real MP4 only */
 export async function produceSingleSceneVideo(
   userId: string,
   prompt: string,
   projectId?: string,
   options?: ProduceVideoOptions
 ): Promise<VideoStudioOutput> {
-  const durationSeconds = Math.min(parseVideoDuration(prompt), 8);
+  const durationSeconds = Math.min(Math.max(parseVideoDuration(prompt), 3), 8);
   const actionCost = computeVideoActionCost(durationSeconds);
   const scenePrompt = extractVideoPrompt(prompt);
-  const title = scenePrompt.slice(0, 80);
+  const title = scenePrompt.slice(0, 80) || 'Xroga Video';
+
+  const moderation = moderateImagePrompt(scenePrompt);
+  if (!moderation.allowed) {
+    throw new Error(moderation.reason ?? 'This video request is not allowed.');
+  }
+
+  const enhancedPrompt = moderation.sanitizedPrompt ?? scenePrompt;
 
   options?.onProgress?.('rendering', 'Rendering video…');
 
-  const video = await generateVideoWithFallback(scenePrompt, durationSeconds, {
+  const video = await generateVideoWithFallback(enhancedPrompt, durationSeconds, {
     userId,
     runId: options?.runId,
     priority: 'cheap',
   });
 
-  options?.onProgress?.('audio', 'Adding audio…');
-
-  let assemblyBuffer: Buffer;
-  try {
-    const audioTracks = await generateSceneAudio('', 'cinematic', durationSeconds, {
-      userId,
-      runId: options?.runId,
-    });
-    options?.onProgress?.('assembling', 'Assembling…');
-    const assembly = await assembleVideo({
-      videoUrl: video.videoUrl,
-      audioTracks: audioTracks.map((t) => ({ url: t.url, type: t.type })),
-      outputFilename: `xroga-video-${Date.now()}.mp4`,
-    });
-    assemblyBuffer = assembly.buffer;
-  } catch {
-    assemblyBuffer = await downloadVideoBuffer(video.videoUrl);
+  if (!video.videoUrl || video.videoUrl === 'data:video/mp4;base64,') {
+    throw new Error('Video generation failed — no playable video was produced.');
   }
 
-  const { fileUrl } = await storeUserFile(
-    userId,
-    `video-${Date.now()}.mp4`,
-    assemblyBuffer,
-    'video/mp4'
-  );
+  options?.onProgress?.('assembling', 'Preparing your video…');
+
+  let fileUrl: string;
+
+  if (isHttpMediaUrl(video.videoUrl)) {
+    const buffer = await downloadVideoBuffer(video.videoUrl);
+    if (isStubJsonBuffer(buffer) || !isValidMp4Buffer(buffer)) {
+      throw new Error('Video provider returned invalid file. Please try again.');
+    }
+    const stored = await storeUserFile(userId, `video-${Date.now()}.mp4`, buffer, 'video/mp4');
+    fileUrl = stored.fileUrl;
+  } else if (video.videoUrl.startsWith('data:video/')) {
+    const buffer = await downloadVideoBuffer(video.videoUrl);
+    if (!isValidMp4Buffer(buffer)) {
+      throw new Error('Video generation failed — invalid video data.');
+    }
+    const stored = await storeUserFile(userId, `video-${Date.now()}.mp4`, buffer, 'video/mp4');
+    fileUrl = stored.fileUrl;
+  } else {
+    throw new Error('Video generation failed — unsupported video format.');
+  }
 
   if (projectId) {
+    const buffer = await downloadVideoBuffer(fileUrl);
     const { storeProjectFile } = await import('../storage/projectFiles.js');
-    await storeProjectFile(userId, projectId, `video-${Date.now()}.mp4`, assemblyBuffer, 'video/mp4', 'video');
+    await storeProjectFile(userId, projectId, `video-${Date.now()}.mp4`, buffer, 'video/mp4', 'video');
   }
 
   options?.onProgress?.('complete', 'Your video is ready!');
@@ -85,7 +94,7 @@ export async function produceSingleSceneVideo(
     screenplay: {
       title,
       mood: 'cinematic',
-      scenes: [{ number: 1, description: scenePrompt, dialogue: '', durationSeconds }],
+      scenes: [{ number: 1, description: enhancedPrompt, dialogue: '', durationSeconds }],
     },
     selectedProvider: video.provider,
     reviewScores: { physics: 8, lighting: 8, consistency: 8 },

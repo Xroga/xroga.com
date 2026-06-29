@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
-const IMAGE_STEPS = ['classifying', 'enhancing', 'painting', 'reviewing', 'complete'] as const;
+const IMAGE_STEPS = ['classifying', 'enhancing', 'painting', 'verifying', 'reviewing', 'complete'] as const;
 
 const IMAGE_LABELS: Record<string, string> = {
   classifying: 'Understanding your request',
   enhancing: 'Enhancing your prompt',
   painting: 'Generating your image',
-  reviewing: 'Final touches',
+  verifying: 'Verifying match to your prompt',
+  reviewing: 'Comparing results',
   upscaling: 'Final touches',
   complete: 'Image ready',
 };
