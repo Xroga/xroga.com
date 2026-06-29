@@ -66,6 +66,14 @@ export function formatFeatureOutput(output: unknown): string {
   if (!output || typeof output !== 'object') return 'Task complete.';
   const o = output as Record<string, unknown>;
 
+  if (o.type === 'image_blocked') {
+    const safety = o.safety as { title?: string; quranReference?: string; quranTranslation?: string } | undefined;
+    const title = safety?.title ?? 'Image blocked for your protection';
+    const ref = safety?.quranReference ?? "Qur'an 17:32";
+    const verse = safety?.quranTranslation ?? 'And do not approach unlawful sexual intercourse.';
+    const detail = typeof o.detail === 'string' ? `\n\n${o.detail}` : '';
+    return `${title}\n\n${ref}: "${verse}"${detail}\n\nPlease try a modest, family-safe creative image instead.`;
+  }
   if (o.type === 'image' && typeof o.imageUrl === 'string') {
     return formatImageReply(o.imageUrl, String(o.prompt ?? ''), String(o.provider ?? ''));
   }

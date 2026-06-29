@@ -131,6 +131,17 @@ export class Orchestrator {
           timestamp: new Date().toISOString(),
         });
       },
+      onImageAttempt: (attempt) => {
+        ctx.onProgress?.({
+          runId,
+          agent: 'builder',
+          status: 'building',
+          message: `${attempt.provider} · ${attempt.matchScore}%`,
+          imageStep: 'painting',
+          imageAttempt: attempt,
+          timestamp: new Date().toISOString(),
+        });
+      },
     });
 
     const reply = formatFeatureOutput(output);

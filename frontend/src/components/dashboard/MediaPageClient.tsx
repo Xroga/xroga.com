@@ -5,11 +5,20 @@ import { Image as ImageIcon, Upload } from 'lucide-react';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { MediaCard } from '@/components/dashboard/MediaCard';
-import { loadMediaItems, saveMediaItems, removeMediaItem, type MediaItem } from '@/lib/mediaStorage';
-import { findChatArchiveByMessageId } from '@/lib/chatArchive';
+import {
+  loadMediaItems,
+  saveMediaItems,
+  removeMediaItem,
+  removeMediaByUrl,
+  removeMediaByMessageId,
+  purgeMediaUrls,
+  type MediaItem,
+} from '@/lib/mediaStorage';
+import { findChatArchiveByMessageId, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { useRouter } from 'next/navigation';
 import { useTerminalChat } from '@/context/TerminalChatContext';
+import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
 import toast from 'react-hot-toast';
 
 function detectType(file: File): MediaItem['type'] {
@@ -23,9 +32,11 @@ export function MediaPageClient() {
   const [filter, setFilter] = useState<'all' | MediaItem['type']>('all');
   const [query, setQuery] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<MediaItem | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const { setPrompt } = useTerminalChat();
+  const { setPrompt, deleteTurn } = useTerminalChat();
 
   useEffect(() => {
     setItems(loadMediaItems());
@@ -79,6 +90,31 @@ export function MediaPageClient() {
       jumpMessageId: item.sourceMessageId,
     });
     router.push('/dashboard');
+  }
+
+  function permanentlyDelete(item: MediaItem) {
+    setDeleting(true);
+    try {
+      removeMediaItem(item.id);
+      removeMediaByUrl(item.url);
+      if (item.sourceMessageId) {
+        removeMediaByMessageId(item.sourceMessageId);
+        const archive = findChatArchiveByMessageId(item.sourceMessageId);
+        if (archive) removeChatArchiveEntry(archive.id);
+        deleteTurn(item.sourceMessageId);
+      } else {
+        purgeMediaUrls(item.url);
+      }
+      setItems((prev) => {
+        const next = prev.filter((i) => i.id !== item.id);
+        saveMediaItems(next);
+        return next;
+      });
+      toast.success('Deleted permanently from all sections');
+      setDeleteTarget(null);
+    } finally {
+      setDeleting(false);
+    }
   }
 
   const shown = useMemo(() => {
@@ -156,20 +192,21 @@ export function MediaPageClient() {
                 item={item}
                 selected={selectedId === item.id}
                 onOpen={openInDashboard}
-                onDelete={(id) => {
-                  removeMediaItem(id);
-                  setItems((prev) => {
-                    const next = prev.filter((i) => i.id !== id);
-                    saveMediaItems(next);
-                    return next;
-                  });
-                  toast.success('Removed from library');
-                }}
+                onDelete={() => setDeleteTarget(item)}
               />
             ))}
           </div>
         )}
       </div>
+
+      <ConfirmDeleteModal
+        open={!!deleteTarget}
+        title={`Delete this ${deleteTarget?.type ?? 'file'}?`}
+        message="This permanently removes it from AI Media, your chat history, and every saved copy on this device. This cannot be undone."
+        onConfirm={() => deleteTarget && permanentlyDelete(deleteTarget)}
+        onCancel={() => setDeleteTarget(null)}
+        busy={deleting}
+      />
     </PageFullscreenFrame>
   );
 }

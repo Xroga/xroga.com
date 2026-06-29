@@ -34,10 +34,27 @@ export interface LandingPageOutput {
   vercelDeploymentId?: string;
 }
 
+export interface ImageBlockedOutput {
+  type: 'image_blocked';
+  prompt: string;
+  reason: 'prompt_blocked' | 'image_blocked' | 'verification_failed';
+  detail?: string;
+  safety: {
+    title: string;
+    quranArabic: string;
+    quranTranslation: string;
+    quranReference: string;
+    guidance: string[];
+    leakFallback: string;
+    creativeAlternatives: string[];
+  };
+  followUps?: string[];
+}
+
 export interface ImageGenOutput {
   type: 'image';
   imageUrl: string;
-  provider: 'agnes' | 'fal' | 'replicate' | 'cloudflare' | 'luma' | 'runway' | 'hailuo' | 'comfyui';
+  provider: 'agnes' | 'fal' | 'replicate' | 'cloudflare' | 'luma' | 'runway' | 'hailuo' | 'comfyui' | 'openai';
   prompt: string;
   enhancedPrompt?: string;
   followUps?: string[];
@@ -50,6 +67,15 @@ export interface ImageGenOutput {
     provider: string;
     matchScore: number;
     issues?: string[];
+  }>;
+  /** Every provider image from this prompt (winner + alternates) */
+  allAttempts?: Array<{
+    imageUrl: string;
+    provider: string;
+    matchScore: number;
+    issues?: string[];
+    selected?: boolean;
+    scoresByVerifier?: Record<string, number>;
   }>;
   aspectFormat?: '1:1' | '4:5' | '16:9' | '9:16' | '3:4' | '4:3';
   thumbnailUrl?: string;
@@ -167,6 +193,7 @@ export interface CodeDebugOutput {
 export type FeatureOutput =
   | LandingPageOutput
   | ImageGenOutput
+  | ImageBlockedOutput
   | BrowserAutomationOutput
   | CrossPostOutput
   | KeyCreationOutput
@@ -186,6 +213,12 @@ export interface SwarmProgressEvent {
   timestamp: string;
   imageStep?: string;
   videoStep?: string;
+  imageAttempt?: {
+    imageUrl: string;
+    provider: string;
+    matchScore: number;
+    issues?: string[];
+  };
 }
 
 export const FEATURE_ACTION_COSTS: Record<FeatureCategory, number> = {

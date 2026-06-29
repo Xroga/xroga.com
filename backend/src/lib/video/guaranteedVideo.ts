@@ -78,6 +78,7 @@ export async function generateGuaranteedVideo(
             runId: options?.runId,
             fast: true,
           });
+          if (out.type === 'image_blocked') return '';
           return out.imageUrl;
         }, errors, 'image-gen'),
     },

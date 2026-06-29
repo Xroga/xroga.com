@@ -48,6 +48,12 @@ export interface SwarmProgressEvent {
   iteration?: number;
   imageStep?: string;
   videoStep?: string;
+  imageAttempt?: {
+    imageUrl: string;
+    provider: string;
+    matchScore: number;
+    issues?: string[];
+  };
 }
 
 export interface SwarmCompleteEvent {

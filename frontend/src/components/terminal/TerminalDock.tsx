@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { TerminalChatBar } from './TerminalChatBar';
+import { ChatbarQueueOutside } from './ChatbarQueueOutside';
 import { RepoContextBar } from './RepoContextBar';
 import { BlackHoleVButton } from './BlackHoleVButton';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -17,8 +19,22 @@ export function TerminalDock() {
   const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
   const incognito = usePrivacyStore((s) => s.incognito);
   const keyboardOffset = useVisualViewportBottom();
+  const dockInnerRef = useRef<HTMLDivElement>(null);
   const isDashboard = pathname === '/dashboard' || pathname === '/dashboard/';
   const dashboardFullscreen = isDashboard && terminalFullscreen;
+
+  useEffect(() => {
+    if (!isDashboard) return;
+    const el = dockInnerRef.current;
+    if (!el) return;
+    const sync = () => {
+      document.documentElement.style.setProperty('--xv-chatbar-height', `${el.offsetHeight}px`);
+    };
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [incognito, isDashboard]);
 
   if (!isDashboard) return null;
 
@@ -35,6 +51,7 @@ export function TerminalDock() {
       } as React.CSSProperties}
     >
       <div
+        ref={dockInnerRef}
         className={cn(
           'mx-auto px-2 sm:px-4 lg:px-6 pt-2 sm:pt-3 pb-1.5 sm:pb-3 lg:pb-4 xv-terminal-dock-inner',
           dashboardFullscreen ? 'max-w-6xl' : 'max-w-3xl'
@@ -46,6 +63,7 @@ export function TerminalDock() {
             <RepoContextBar outside />
           </div>
         )}
+        <ChatbarQueueOutside />
         <TerminalChatBar />
         {incognito ? (
           <p className="text-[10px] sm:text-xs text-center text-white py-2 sm:py-2.5 px-3 font-medium leading-relaxed xv-incognito-room-notice">

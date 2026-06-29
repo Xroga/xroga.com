@@ -1636,6 +1636,10 @@ body.theme-gray * {
     background: rgba(255, 255, 255, 0.1);
   }
 
+  .xv-chatbar-queue-outside {
+    width: 100%;
+  }
+
   .xv-terminal-dock-inner {
     margin-top: 0.75rem;
     padding-top: 1rem;
@@ -2212,7 +2216,10 @@ body.theme-gray * {
       pointer-events: auto !important;
       clip-path: none !important;
       transform: none !important;
-      z-index: 90 !important;
+      z-index: 100 !important;
+    }
+    .xv-sidebar-mobile-open .xv-sidebar-menu a {
+      min-height: 44px;
     }
     .terminal-layout > .xv-main-column {
       flex: 1 1 100%;

@@ -113,6 +113,17 @@ export class FeatureSwarm extends BaseSwarm {
                 timestamp: new Date().toISOString(),
               });
             },
+            onImageAttempt: (attempt) => {
+              this.onProgress?.({
+                runId: context.runId,
+                agent: 'builder',
+                status: 'building',
+                message: `${attempt.provider} · ${attempt.matchScore}%`,
+                imageStep: 'painting',
+                imageAttempt: attempt,
+                timestamp: new Date().toISOString(),
+              });
+            },
           });
           break;
         case 'browser_automation':

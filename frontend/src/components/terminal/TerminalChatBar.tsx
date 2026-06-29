@@ -21,7 +21,6 @@ import {
 import { ChatBarFileGrid } from './ChatBarFileGrid';
 import type { SendButtonState } from './ChatBarButtons';
 import { GitHubChipIcon, GitLabChipIcon, VercelChipIcon, TwitterChipIcon, ChatBarBrandChip } from './ChatBarButtons';
-import { ChatPromptQueue } from './ChatPromptQueue';
 import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
@@ -42,11 +41,6 @@ export function TerminalChatBar() {
     loading,
     submit,
     stop,
-    promptQueue,
-    removeFromQueue,
-    editQueuedPrompt,
-    sendQueuedNow,
-    clearQueue,
   } = useTerminalChat();
   const actions = useAppStore((s) => s.actions);
   const incognito = usePrivacyStore((s) => s.incognito);
@@ -94,16 +88,24 @@ export function TerminalChatBar() {
     return () => clearTimeout(t);
   }, [sendState]);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent, interrupt = false) {
     e.preventDefault();
-    if (loading) {
-      stop();
-      setSendState('idle');
-      return;
-    }
     const text = autocorrectText(prompt.trim());
     if (!text && files.length === 0) return;
     if (text !== prompt) setPrompt(text);
+
+    if (loading && !interrupt) {
+      await submit(text, false, false);
+      return;
+    }
+
+    if (loading && interrupt) {
+      setSendState('sending');
+      await submit(text, false, true);
+      if (!loading) setSendState('launched');
+      return;
+    }
+
     setSendState('sending');
     await submit(text || undefined);
     if (!loading) setSendState('launched');
@@ -144,7 +146,7 @@ export function TerminalChatBar() {
     const ro = new ResizeObserver(sync);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [files.length, prompt, showDomain, promptQueue.length]);
+  }, [files.length, prompt, showDomain]);
 
   function handleDeploy() {
     const d = domain.trim() || 'your-app.vercel.app';
@@ -187,16 +189,6 @@ export function TerminalChatBar() {
           }}
         >
           <ChatBarDragOverlay active={!incognito && dragOver} />
-
-          {!incognito && (
-          <ChatPromptQueue
-            queue={promptQueue}
-            onSendNow={sendQueuedNow}
-            onEdit={editQueuedPrompt}
-            onRemove={removeFromQueue}
-            onClear={clearQueue}
-          />
-          )}
 
           {!incognito && (
           <div className="xv-chatbar-toolbar flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 overflow-x-auto scrollbar-hide flex-nowrap">
@@ -344,9 +336,14 @@ export function TerminalChatBar() {
                   if (fixed !== prompt) setPrompt(fixed);
                 }}
                 onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.shiftKey) {
+                    e.preventDefault();
+                    if (prompt.trim()) void handleSubmit(e, true);
+                    return;
+                  }
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    void handleSubmit(e);
+                    void handleSubmit(e, false);
                   }
                 }}
                 placeholder={incognito ? 'Type a private message…' : 'Xroga AI do everything..'}

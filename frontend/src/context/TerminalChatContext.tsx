@@ -21,7 +21,7 @@ import {
   loadWorkspaceSession,
   saveWorkspaceSession,
 } from '@/lib/workspacePersistence';
-import { addMediaItem, removeMediaByUrl, removeMediaByMessageId } from '@/lib/mediaStorage';
+import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
 import { archiveChatTurn, removeChatArchiveEntry, isChatSectionArchive } from '@/lib/chatArchive';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import { api } from '@/lib/api';
@@ -57,12 +57,13 @@ interface TerminalChatContextValue {
   swarmActiveAgent: string | null;
   pipelineMessage: string | null;
   imageProgressStep: string | null;
+  imageAttempts: Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>;
   videoProgressStep: string | null;
   followUps: string[];
   reasoning: string | null;
   dag: Array<{ id: string; description: string; agent: string }> | null;
   pipelineCompact: boolean;
-  submit: (text?: string) => Promise<void>;
+  submit: (text?: string, fromQueue?: boolean, interrupt?: boolean) => Promise<void>;
   stop: () => void;
   startNewChat: () => void;
   /** Permanently removes assistant response + its user prompt from chat, archive, and media */
@@ -96,6 +97,9 @@ export function TerminalChatProvider({
   const [swarmActiveAgent, setSwarmActiveAgent] = useState<string | null>(null);
   const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
   const [imageProgressStep, setImageProgressStep] = useState<string | null>(null);
+  const [imageAttempts, setImageAttempts] = useState<
+    Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>
+  >([]);
   const [videoProgressStep, setVideoProgressStep] = useState<string | null>(null);
   const [followUps, setFollowUps] = useState<string[]>([]);
   const [reasoning, setReasoning] = useState<string | null>(null);
@@ -108,9 +112,11 @@ export function TerminalChatProvider({
   const thinkingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const autoRanRef = useRef(false);
-  const submitRef = useRef<(text?: string, fromQueue?: boolean) => Promise<void>>(async () => {});
+  const submitRef = useRef<(text?: string, fromQueue?: boolean, interrupt?: boolean) => Promise<void>>(async () => {});
   const queueRef = useRef<QueuedPrompt[]>([]);
   const lastTurnRef = useRef<{ userMessageId: string; assistantId: string; text: string } | null>(null);
+  const skipNextQueueRef = useRef(false);
+  const interruptRef = useRef(false);
   const [sessionReady, setSessionReady] = useState(false);
 
   queueRef.current = promptQueue;
@@ -135,7 +141,19 @@ export function TerminalChatProvider({
 
   const enqueuePrompt = useCallback((text: string) => {
     setPromptQueue((q) => [...q, { id: crypto.randomUUID(), text, createdAt: Date.now() }]);
-    toast('Queued — sends when current response finishes', { icon: '⏳' });
+    toast.success('Queued — sends when current response finishes');
+  }, []);
+
+  const cleanupInProgressAssistant = useCallback(() => {
+    setMessages((m) => {
+      const last = m[m.length - 1];
+      if (last?.role === 'assistant' && !last.content && !last.featureOutput) {
+        return m.slice(0, -1);
+      }
+      return m;
+    });
+    setAnimatingId(null);
+    lastTurnRef.current = null;
   }, []);
 
   const processNextInQueue = useCallback(() => {
@@ -180,6 +198,17 @@ export function TerminalChatProvider({
       const output = assistant.featureOutput as Record<string, unknown> | undefined;
       if (typeof output?.imageUrl === 'string') removeMediaByUrl(output.imageUrl);
       if (typeof output?.streamingUrl === 'string') removeMediaByUrl(output.streamingUrl);
+      const rejected = output?.rejectedImages;
+      const allAttempts = output?.allAttempts;
+      const urls = [
+        ...(Array.isArray(rejected)
+          ? rejected.map((r) => (r && typeof r === 'object' && 'imageUrl' in r ? String((r as { imageUrl: string }).imageUrl) : ''))
+          : []),
+        ...(Array.isArray(allAttempts)
+          ? allAttempts.map((r) => (r && typeof r === 'object' && 'imageUrl' in r ? String((r as { imageUrl: string }).imageUrl) : ''))
+          : []),
+      ].filter(Boolean);
+      if (urls.length) purgeMediaUrls(...urls);
       removeMediaByMessageId(assistantMessageId);
 
       if (userIdx >= 0) {
@@ -205,26 +234,41 @@ export function TerminalChatProvider({
     if (!item) return;
     setPromptQueue((q) => q.filter((p) => p.id !== id));
     if (loading) {
-      setPromptQueue((q) => [item, ...q]);
-      toast('Moved to front of queue', { icon: '⏳' });
-      return;
+      skipNextQueueRef.current = true;
+      interruptRef.current = true;
+      abortRef.current?.abort();
+      cleanupInProgressAssistant();
+      setLoading(false);
+      setSwarmRunning(false);
     }
-    void submitRef.current(item.text, true);
-  }, [loading]);
+    void submitRef.current(item.text, false, true);
+  }, [loading, cleanupInProgressAssistant, setSwarmRunning]);
 
   const clearQueue = useCallback(() => setPromptQueue([]), []);
 
   const submit = useCallback(
-    async (overrideText?: string, fromQueue = false) => {
+    async (overrideText?: string, fromQueue = false, interrupt = false) => {
       const userPrompt = (overrideText ?? prompt).trim();
       if (!userPrompt) return;
 
-      if (loading && !fromQueue) {
+      if (loading && interrupt) {
+        skipNextQueueRef.current = true;
+        interruptRef.current = true;
+        abortRef.current?.abort();
+        cleanupInProgressAssistant();
+        setLoading(false);
+        setSwarmRunning(false);
+        setPipelineMessage(null);
+        setImageProgressStep(null);
+        setImageAttempts([]);
+        setVideoProgressStep(null);
+      } else if (loading && !fromQueue) {
         enqueuePrompt(userPrompt);
         setPrompt('');
         return;
+      } else if (loading) {
+        return;
       }
-      if (loading) return;
 
       const userMessageId = crypto.randomUUID();
       const assistantId = crypto.randomUUID();
@@ -236,6 +280,7 @@ export function TerminalChatProvider({
       setSwarmActiveAgent(null);
       setPipelineMessage(null);
       setImageProgressStep(null);
+      setImageAttempts([]);
       setVideoProgressStep(null);
       setFollowUps([]);
       setReasoning(null);
@@ -274,6 +319,12 @@ export function TerminalChatProvider({
             const label = event.message ?? event.status ?? 'Thinking…';
             setPipelineMessage(label);
             if (event.imageStep) setImageProgressStep(event.imageStep);
+            if (event.imageAttempt?.imageUrl) {
+              setImageAttempts((prev) => {
+                if (prev.some((a) => a.imageUrl === event.imageAttempt!.imageUrl)) return prev;
+                return [...prev, event.imageAttempt!];
+              });
+            }
             if (event.videoStep) setVideoProgressStep(event.videoStep);
             if (event.agent) setSwarmActiveAgent(event.agent);
             const ev = event as SwarmProgressEvent & { dag?: typeof dag; thinking?: string };
@@ -292,6 +343,24 @@ export function TerminalChatProvider({
               setFollowUps(complete.followUps);
             }
             const output = complete.output as Record<string, unknown> | undefined;
+            if (output?.type === 'image_blocked') {
+              setMessages((m) =>
+                m.map((msg) =>
+                  msg.id === assistantId
+                    ? {
+                        ...msg,
+                        content: '',
+                        featureOutput: output,
+                      }
+                    : msg
+                )
+              );
+              const blockedFollowUps = Array.isArray(output.followUps)
+                ? (output.followUps as string[])
+                : undefined;
+              if (blockedFollowUps?.length) setFollowUps(blockedFollowUps);
+              return;
+            }
             if (output?.type === 'image' && typeof output.imageUrl === 'string') {
               addMediaItem({
                 name: String(output.prompt ?? 'Xroga image').slice(0, 40),
@@ -367,6 +436,11 @@ export function TerminalChatProvider({
 
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
+          if (interruptRef.current) {
+            interruptRef.current = false;
+            cleanupInProgressAssistant();
+            return;
+          }
           setMessages((m) => [
             ...m,
             { id: crypto.randomUUID(), role: 'system', content: '[Stopped] Response cancelled.', createdAt: Date.now() },
@@ -395,7 +469,7 @@ export function TerminalChatProvider({
           thinkingTimerRef.current = null;
         }
         const turn = lastTurnRef.current;
-        if (!incognito && turn) {
+        if (!incognito && turn && !interruptRef.current) {
           setMessages((current) => {
             if (isChatSectionArchive(turn.text)) {
               archiveChatTurn({
@@ -423,12 +497,18 @@ export function TerminalChatProvider({
         setSwarmActiveAgent(null);
         setPipelineMessage(null);
         setImageProgressStep(null);
+        setImageAttempts([]);
         setVideoProgressStep(null);
         setPipelineCompact(false);
+        interruptRef.current = false;
+        if (skipNextQueueRef.current) {
+          skipNextQueueRef.current = false;
+          return;
+        }
         setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, incognito, setSwarmRunning, setActions, enqueuePrompt, processNextInQueue]
+    [prompt, loading, projectId, incognito, setSwarmRunning, setActions, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant]
   );
 
   submitRef.current = submit;
@@ -464,6 +544,7 @@ export function TerminalChatProvider({
         swarmActiveAgent,
         pipelineMessage,
         imageProgressStep,
+        imageAttempts,
         videoProgressStep,
         pipelineCompact,
         followUps,

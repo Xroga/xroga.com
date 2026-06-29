@@ -182,6 +182,13 @@ async function designCharacters(
         `Portrait photo, consistent character face, ${char.description}, cinematic lighting, 16:9`,
         { userId: options.userId, runId: options.runId }
       );
+      if (imageResult.type === 'image_blocked') {
+        designed.push({
+          ...char,
+          voice_id: process.env.ELEVENLABS_VOICE_ID ?? '21m00Tcm4TlvDq8ikWAM',
+        });
+        continue;
+      }
       designed.push({
         ...char,
         face_image_url: imageResult.imageUrl,
