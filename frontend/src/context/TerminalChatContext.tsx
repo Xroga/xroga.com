@@ -22,9 +22,8 @@ import {
   saveWorkspaceSession,
 } from '@/lib/workspacePersistence';
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId } from '@/lib/mediaStorage';
-import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
-import { isBuildPrompt, saveLocalProject } from '@/lib/projectArchive';
-import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
+import { archiveChatTurn, removeChatArchiveEntry, isChatSectionArchive } from '@/lib/chatArchive';
+import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
@@ -398,13 +397,15 @@ export function TerminalChatProvider({
         const turn = lastTurnRef.current;
         if (!incognito && turn) {
           setMessages((current) => {
-            archiveChatTurn({
-              prompt: turn.text,
-              messages: current,
-              userMessageId: turn.userMessageId,
-              assistantMessageId: turn.assistantId,
-            });
-            if (isBuildPrompt(turn.text) && !isImageGenerationPrompt(turn.text) && !isVideoGenerationPrompt(turn.text)) {
+            if (isChatSectionArchive(turn.text)) {
+              archiveChatTurn({
+                prompt: turn.text,
+                messages: current,
+                userMessageId: turn.userMessageId,
+                assistantMessageId: turn.assistantId,
+              });
+            }
+            if (shouldSaveToProjects(turn.text)) {
               saveLocalProject({
                 name: turn.text.slice(0, 48),
                 prompt: turn.text,

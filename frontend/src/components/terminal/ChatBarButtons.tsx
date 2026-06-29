@@ -11,11 +11,13 @@ export function ChatBarSendButton({
   onStop,
   state = 'idle',
   surface = 'dashboard',
+  compact = false,
 }: {
   stopping?: boolean;
   onStop?: () => void;
   state?: SendButtonState;
   surface?: ChatbarSurface;
+  compact?: boolean;
 }) {
   const busy = stopping || state === 'sending' || state === 'thinking';
 
@@ -24,7 +26,7 @@ export function ChatBarSendButton({
       <button
         type="button"
         onClick={onStop}
-        className={cn('xv-go-btn xv-go-btn--stop shrink-0', surface === 'homepage' && 'xv-go-btn--home', surface === 'incognito' && 'xv-go-btn--incognito')}
+        className={cn('xv-go-btn xv-go-btn--stop shrink-0', compact && 'xv-go-btn--compact', surface === 'homepage' && 'xv-go-btn--home', surface === 'incognito' && 'xv-go-btn--incognito')}
         aria-label="Stop response"
       >
         <span className="xv-go-btn__icon xv-go-btn__icon--stop">
@@ -38,13 +40,13 @@ export function ChatBarSendButton({
   return (
     <button
       type="submit"
-      className={cn('xv-go-btn shrink-0', surface === 'homepage' && 'xv-go-btn--home', surface === 'incognito' && 'xv-go-btn--incognito')}
+      className={cn('xv-go-btn shrink-0', compact && 'xv-go-btn--compact', surface === 'homepage' && 'xv-go-btn--home', surface === 'incognito' && 'xv-go-btn--incognito')}
       aria-label="Launch"
     >
       <span className="xv-go-btn__icon">
         <Rocket className="w-3 h-3" />
       </span>
-      <span className="xv-go-btn__text">GO!</span>
+      <span className="xv-go-btn__text">{compact ? 'Go' : 'GO!'}</span>
     </button>
   );
 }
@@ -149,7 +151,7 @@ export function ChatBarBrandChip({
 }) {
   const icons = {
     github: <GitHubChipIcon lightBg />,
-    gitlab: <GitLabChipIcon white />,
+    gitlab: <GitLabChipIcon />,
     vercel: <VercelChipIcon white />,
   };
   return (

@@ -1,6 +1,9 @@
 const KEY = 'xroga_local_projects';
 
-export type LocalProjectType = 'website' | 'app' | 'game' | 'software' | 'video' | 'automation';
+export type LocalProjectType = 'website' | 'app' | 'game' | 'software';
+
+/** Types shown in Projects — websites, apps, games, software only. */
+export const PROJECT_SECTION_TYPES: LocalProjectType[] = ['website', 'app', 'game', 'software'];
 
 export interface LocalProjectEntry {
   id: string;
@@ -36,11 +39,32 @@ export function loadLocalProjects(): LocalProjectEntry[] {
 export function inferProjectType(prompt: string): LocalProjectType {
   const p = prompt.toLowerCase();
   if (/\b(game|unity|godot|phaser)\b/.test(p)) return 'game';
-  if (/\b(video|film|movie|clip)\b/.test(p)) return 'video';
-  if (/\b(automate|scrape|workflow|cron)\b/.test(p)) return 'automation';
   if (/\b(app|mobile|ios|android|react native)\b/.test(p)) return 'app';
   if (/\b(software|desktop|electron|tool)\b/.test(p)) return 'software';
   return 'website';
+}
+
+/** Only save build-related prompts — not chats, images, or videos. */
+export function shouldSaveToProjects(prompt: string): boolean {
+  const p = prompt.toLowerCase();
+  if (/\b(generate|create|make|draw|design)\b.{0,40}\b(image|picture|photo|logo|icon|thumbnail|poster|banner)\b/i.test(prompt)) {
+    return false;
+  }
+  if (/\b(video|clip|animation|movie|film|reel)\b/i.test(p) && /\b(generate|create|make|produce|render)\b/i.test(p)) {
+    return false;
+  }
+  if (/\b(report|document|doc|pdf|summary|analysis|research)\b/i.test(p) && !/\b(build|website|app|game|software)\b/i.test(p)) {
+    return false;
+  }
+  return /\b(website|web app|landing page|saas|store|shop|game|software|mobile app|build|deploy|extension)\b/i.test(p);
+}
+
+export function removeLocalProject(id: string): void {
+  save(load().filter((p) => p.id !== id));
+}
+
+export function filterProjectsForSection(entries: LocalProjectEntry[]): LocalProjectEntry[] {
+  return entries.filter((e) => PROJECT_SECTION_TYPES.includes(e.type));
 }
 
 export function saveLocalProject(opts: {

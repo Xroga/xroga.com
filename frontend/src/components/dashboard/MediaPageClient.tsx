@@ -6,6 +6,7 @@ import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { MediaCard } from '@/components/dashboard/MediaCard';
 import { loadMediaItems, saveMediaItems, removeMediaItem, type MediaItem } from '@/lib/mediaStorage';
+import { findChatArchiveByMessageId } from '@/lib/chatArchive';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { useRouter } from 'next/navigation';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -24,7 +25,7 @@ export function MediaPageClient() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const { setPrompt, messages } = useTerminalChat();
+  const { setPrompt } = useTerminalChat();
 
   useEffect(() => {
     setItems(loadMediaItems());
@@ -62,11 +63,11 @@ export function MediaPageClient() {
 
   function openInDashboard(item: MediaItem) {
     setSelectedId(item.id);
-    const prompt = item.sourcePrompt ?? `Use my ${item.type} asset "${item.name}" in the next build`;
+    const prompt = item.sourcePrompt ?? item.name;
     setPrompt(prompt);
 
     const archived = item.sourceMessageId
-      ? messages
+      ? findChatArchiveByMessageId(item.sourceMessageId)?.messages
       : undefined;
 
     resumeToDashboard({

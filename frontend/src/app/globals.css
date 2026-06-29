@@ -1734,6 +1734,21 @@ body.theme-gray * {
     width: 0;
     font-size: 0;
   }
+  .xv-go-btn--compact {
+    width: 56px;
+    height: 32px;
+  }
+  .xv-go-btn--compact .xv-go-btn__icon {
+    width: 22px;
+    height: 22px;
+  }
+  .xv-go-btn--compact .xv-go-btn__text {
+    width: 28px;
+    font-size: 0.72em;
+  }
+  .xv-go-btn--compact:hover .xv-go-btn__icon {
+    width: 52px;
+  }
 
   /* White theme dashboard chatbar — blue/silver upload gradient */
   body.theme-white .xv-terminal-dock .xv-power-smash-upload__shell {

@@ -65,7 +65,6 @@ export function TerminalChatBar() {
   const [listening, setListening] = useState(false);
   const [sendState, setSendState] = useState<SendButtonState>('idle');
   const [liveEstimate, setLiveEstimate] = useState({ actions: 1, time: '5s' });
-  const [inputMultiLine, setInputMultiLine] = useState(false);
 
   const remaining = actions?.remaining ?? 50;
 
@@ -133,7 +132,6 @@ export function TerminalChatBar() {
     const maxH = LINE_HEIGHT * MAX_ROWS;
     const nextH = Math.max(MIN_INPUT_H, Math.min(el.scrollHeight, maxH));
     el.style.height = `${nextH}px`;
-    setInputMultiLine(nextH > MIN_INPUT_H + 4);
   }, [prompt]);
 
   useEffect(() => {
@@ -316,7 +314,7 @@ export function TerminalChatBar() {
               listening={listening}
               hideUpload={incognito}
               surface={incognito ? 'incognito' : 'dashboard'}
-              multiLine={inputMultiLine}
+              compactGo={!!prompt.trim()}
               onMicToggle={() => {
                 if (!speech.supported) {
                   toast.error('Voice input not supported in this browser');

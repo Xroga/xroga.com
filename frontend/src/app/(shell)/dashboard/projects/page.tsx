@@ -7,47 +7,70 @@ import { FolderOpen, Plus, Rocket, Sparkles } from 'lucide-react';
 import Skeleton from 'react-loading-skeleton';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
-import { UiverseTableCard } from '@/components/ui/UiverseTableCard';
+import { SectionCompactCard } from '@/components/dashboard/SectionCompactCard';
 import { api, type Project } from '@/lib/api';
-import { projectTableRows } from '@/lib/tableRows';
-import { loadLocalProjects, type LocalProjectEntry } from '@/lib/projectArchive';
-import { getItemMeta, markItemSeen, splitDateParts, recentlyLabel } from '@/lib/itemMeta';
+import {
+  filterProjectsForSection,
+  loadLocalProjects,
+  removeLocalProject,
+  type LocalProjectEntry,
+} from '@/lib/projectArchive';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { useTerminalChat } from '@/context/TerminalChatContext';
+import toast from 'react-hot-toast';
 import 'react-loading-skeleton/dist/skeleton.css';
+
+const BUILD_TYPES = new Set(['website', 'app', 'game', 'software', 'extension', 'tool']);
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [localProjects, setLocalProjects] = useState<LocalProjectEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
   const { setPrompt } = useTerminalChat();
 
   useEffect(() => {
-    setLocalProjects(loadLocalProjects());
+    setLocalProjects(filterProjectsForSection(loadLocalProjects()));
     api.projects
       .list()
-      .then(setProjects)
+      .then((list) => setProjects(list.filter((p) => BUILD_TYPES.has(p.type.toLowerCase()))))
       .catch(() => setProjects([]))
       .finally(() => setLoading(false));
   }, []);
 
-  const filtered = useMemo(() => {
+  const filteredLocal = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return localProjects;
+    return localProjects.filter(
+      (p) => p.name.toLowerCase().includes(q) || p.prompt.toLowerCase().includes(q) || p.type.includes(q),
+    );
+  }, [localProjects, query]);
+
+  const filteredRemote = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return projects;
     return projects.filter(
       (p) =>
         p.name.toLowerCase().includes(q) ||
         p.type.toLowerCase().includes(q) ||
-        (p.github_repo_name?.toLowerCase().includes(q) ?? false)
+        (p.github_repo_name?.toLowerCase().includes(q) ?? false),
     );
   }, [projects, query]);
 
-  function openProject(project: Project) {
-    markItemSeen(project.id);
-    setSelectedId(project.id);
+  function openLocalProject(p: LocalProjectEntry) {
+    setPrompt(p.prompt);
+    resumeToDashboard({
+      prompt: p.prompt,
+      selectedId: p.id,
+      selectedLabel: p.name,
+      source: 'projects',
+      jumpMessageId: p.sourceMessageId,
+    });
+    router.push('/dashboard');
+  }
+
+  function openRemoteProject(project: Project) {
     const prompt = `Continue working on project: ${project.name}`;
     setPrompt(prompt);
     resumeToDashboard({
@@ -59,6 +82,14 @@ export default function ProjectsPage() {
     router.push(`/dashboard/projects/${project.id}`);
   }
 
+  function deleteLocal(id: string) {
+    removeLocalProject(id);
+    setLocalProjects(filterProjectsForSection(loadLocalProjects()));
+    toast.success('Project removed');
+  }
+
+  const hasItems = filteredLocal.length > 0 || filteredRemote.length > 0;
+
   return (
     <PageFullscreenFrame>
       <div className="max-w-6xl mx-auto space-y-6">
@@ -69,13 +100,10 @@ export default function ProjectsPage() {
               My Projects
             </h1>
             <p className="text-sm text-[var(--muted)] mt-1">
-              Websites, apps, games, software, browser extensions & tools built by your Swarm.
+              Websites, apps, games, and software built by your Swarm — open any project to continue in the terminal.
             </p>
           </div>
-          <Link
-            href="/dashboard"
-            className="xv-footer-pill !text-[var(--foreground)] flex items-center gap-1.5"
-          >
+          <Link href="/dashboard" className="xv-footer-pill !text-[var(--foreground)] flex items-center gap-1.5">
             <Plus className="w-3.5 h-3.5" /> New via Command
           </Link>
         </div>
@@ -85,48 +113,31 @@ export default function ProjectsPage() {
         {loading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} height={200} baseColor="var(--card)" highlightColor="var(--card-border)" />
+              <Skeleton key={i} height={160} baseColor="var(--card)" highlightColor="var(--card-border)" />
             ))}
           </div>
-        ) : filtered.length > 0 || localProjects.length > 0 ? (
+        ) : hasItems ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {localProjects.map((p) => {
-              const created = splitDateParts(p.updatedAt);
-              return (
-                <UiverseTableCard
-                  key={p.id}
-                  title={p.name.slice(0, 32) || 'project'}
-                  rows={[
-                    { left: 'name', right: p.name.slice(0, 28) },
-                    { left: 'type', right: p.type },
-                    { left: 'date', right: created.date },
-                    { left: 'time', right: created.time },
-                    { left: 'year', right: created.year },
-                    { left: 'recently seen', right: recentlyLabel(p.updatedAt) },
-                  ]}
-                  selected={selectedId === p.id}
-                  onClick={() => {
-                    setSelectedId(p.id);
-                    setPrompt(p.prompt);
-                    resumeToDashboard({
-                      prompt: p.prompt,
-                      selectedId: p.id,
-                      selectedLabel: p.name,
-                      source: 'projects',
-                      jumpMessageId: p.sourceMessageId,
-                    });
-                    router.push('/dashboard');
-                  }}
-                />
-              );
-            })}
-            {filtered.map((p) => (
-              <UiverseTableCard
+            {filteredLocal.map((p) => (
+              <SectionCompactCard
                 key={p.id}
-                title={p.name.slice(0, 32) || 'project'}
-                rows={projectTableRows(p, getItemMeta(p.id))}
-                selected={selectedId === p.id}
-                onClick={() => openProject(p)}
+                title={p.name}
+                subtitle={p.type}
+                dateIso={p.updatedAt}
+                onOpen={() => openLocalProject(p)}
+                onDelete={() => deleteLocal(p.id)}
+                openLabel="Open in terminal"
+              />
+            ))}
+            {filteredRemote.map((p) => (
+              <SectionCompactCard
+                key={p.id}
+                title={p.name}
+                subtitle={p.type}
+                dateIso={p.updated_at ?? new Date().toISOString()}
+                onOpen={() => openRemoteProject(p)}
+                onDelete={() => toast('Cloud projects are managed from the project page', { icon: 'ℹ️' })}
+                openLabel="Open project"
               />
             ))}
           </div>
@@ -134,7 +145,7 @@ export default function ProjectsPage() {
           <div className="glass-panel rounded-2xl p-10 text-center border border-dashed border-[var(--card-border)]">
             <Sparkles className="w-10 h-10 mx-auto text-[var(--accent)]/50 mb-4" />
             <p className="text-[var(--muted)] mb-2">No projects yet.</p>
-            <p className="text-sm text-[var(--muted)] mb-6">Head to the dashboard and ask Xroga to build something.</p>
+            <p className="text-sm text-[var(--muted)] mb-6">Ask Xroga to build a website, app, game, or software tool.</p>
             <Link
               href="/dashboard"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--background)] text-sm font-semibold hover:opacity-90"
