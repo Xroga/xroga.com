@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useMemo } from 'react';
 import Image from 'next/image';
-import { Terminal, Palette, MessageCircleHeart, MoreHorizontal, Globe } from 'lucide-react';
+import { Terminal, Palette, MessageCircleHeart } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
@@ -71,8 +71,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
-  const browserOpen = useThemeStore((s) => s.browserPanelOpen);
-  const setBrowserOpen = useThemeStore((s) => s.setBrowserPanelOpen);
   const profile = useAppStore((s) => s.profile);
   const storeIncognito = usePrivacyStore((s) => s.incognito);
   const isIncognito = incognito || storeIncognito;
@@ -80,7 +78,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [searchHit, setSearchHit] = useState<string | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -172,31 +169,27 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
             )}
           </div>
           {!isIncognito && (
-          <div className="relative sm:hidden shrink-0">
+          <div className="flex sm:hidden items-center gap-0.5 shrink-0">
+            <BrowserPanelToggle />
+            <TerminalSearchBar messages={messages} searchHit={searchHit} onJump={jumpToMessage} compact />
             <button
               type="button"
-              onClick={() => setMobileMenuOpen((v) => !v)}
+              onClick={cycleTerminalSkin}
               className="p-1.5 rounded-lg hover:bg-white/10 shrink-0"
-              aria-label="Terminal options"
+              title="Terminal theme"
+              aria-label="Terminal theme"
             >
-              <MoreHorizontal className="w-4 h-4" />
+              <Palette className="w-4 h-4" />
             </button>
-            {mobileMenuOpen && (
-              <>
-                <div className="fixed inset-0 z-[40]" onClick={() => setMobileMenuOpen(false)} aria-hidden />
-                <div className="absolute right-0 top-full mt-1 z-[50] w-44 rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-xl p-1.5">
-                  <button type="button" onClick={() => { cycleTerminalSkin(); setMobileMenuOpen(false); }} className="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs text-left hover:bg-white/10">
-                    <Palette className="w-3.5 h-3.5" /> Skin
-                  </button>
-                  <button type="button" onClick={() => { setBrowserOpen(!browserOpen); setMobileMenuOpen(false); }} className="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs text-left hover:bg-white/10">
-                    <Globe className="w-3.5 h-3.5" /> Browser
-                  </button>
-                  <button type="button" onClick={() => { setFeedbackOpen(true); setMobileMenuOpen(false); }} className="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs text-left hover:bg-white/10">
-                    <MessageCircleHeart className="w-3.5 h-3.5" /> Feedback
-                  </button>
-                </div>
-              </>
-            )}
+            <button
+              type="button"
+              onClick={() => setFeedbackOpen(true)}
+              className="xv-feedback-btn p-1.5 rounded-lg shrink-0"
+              title="Feedback"
+              aria-label="Feedback"
+            >
+              <MessageCircleHeart className="w-4 h-4" />
+            </button>
           </div>
           )}
         </div>

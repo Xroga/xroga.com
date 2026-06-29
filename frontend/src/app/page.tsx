@@ -21,8 +21,14 @@ export default function HomePage() {
   useEffect(() => {
     createClient()
       .auth.getSession()
-      .then(({ data: { session } }) => setLoggedIn(!!session));
-  }, []);
+      .then(({ data: { session } }) => {
+        if (session) {
+          router.replace('/dashboard');
+          return;
+        }
+        setLoggedIn(false);
+      });
+  }, [router]);
 
   return (
     <div className="xv-homepage min-h-screen flex flex-col relative overflow-x-hidden">

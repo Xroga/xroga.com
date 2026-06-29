@@ -3,9 +3,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, X, ExternalLink } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, X, Plug } from 'lucide-react';
 import { INTEGRATIONS, INTEGRATION_CATEGORIES } from '@/lib/integrations';
 import { getIntegrationLogo } from '@/lib/integrationLogos';
+import toast from 'react-hot-toast';
 
 interface IntegrationsModalProps {
   open: boolean;
@@ -13,6 +15,7 @@ interface IntegrationsModalProps {
 }
 
 export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
+  const router = useRouter();
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -28,6 +31,12 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
       (i) => i.name.toLowerCase().includes(q) || i.category.toLowerCase().includes(q)
     );
   }, [search]);
+
+  function handleConnect(name: string) {
+    toast(`Open Integrations to connect ${name}`, { icon: '🔌' });
+    onClose();
+    router.push('/dashboard/integrations');
+  }
 
   if (!open) return null;
 
@@ -63,12 +72,11 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {items.map((item) => {
                     const logo = getIntegrationLogo(item.id);
+                    const connected = item.status === 'connected';
                     return (
-                      <Link
+                      <div
                         key={item.id}
-                        href="/dashboard/integrations"
-                        onClick={onClose}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all hover:scale-[1.01] group"
+                        className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.07] transition-colors"
                       >
                         <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center shrink-0 overflow-hidden">
                           {logo ? (
@@ -80,11 +88,18 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium truncate">{item.name}</p>
                           <p className="text-[10px] text-[var(--muted)]">
-                            {item.status === 'connected' ? 'Connected' : 'Not connected'}
+                            {connected ? 'Connected' : 'Not connected'}
                           </p>
                         </div>
-                        <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-60 shrink-0" />
-                      </Link>
+                        <button
+                          type="button"
+                          onClick={() => handleConnect(item.name)}
+                          className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-[var(--accent)]/15 border border-[var(--accent)]/35 text-[var(--foreground)] hover:bg-[var(--accent)]/25 transition-colors"
+                        >
+                          <Plug className="w-3 h-3" />
+                          {connected ? 'Manage' : 'Install'}
+                        </button>
+                      </div>
                     );
                   })}
                 </div>
@@ -92,9 +107,13 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
             );
           })}
         </div>
-        <div className="px-5 py-3 border-t border-white/10 text-center">
-          <Link href="/dashboard/integrations" onClick={onClose} className="text-sm text-[var(--accent)] hover:underline">
-            Open full integrations page →
+        <div className="px-5 py-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-2">
+          <Link
+            href="/dashboard/integrations"
+            onClick={onClose}
+            className="w-full sm:w-auto text-center px-4 py-2 rounded-xl bg-[var(--accent)]/20 border border-[var(--accent)]/35 text-sm font-semibold text-[var(--foreground)] hover:bg-[var(--accent)]/30 transition-colors"
+          >
+            Open Integrations tab →
           </Link>
         </div>
       </div>

@@ -193,14 +193,34 @@ export function TerminalChatBar() {
           {!incognito && (
           <div className="xv-chatbar-toolbar flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 overflow-x-auto scrollbar-hide flex-nowrap">
             <BlackHoleVButton />
-            <ChatBarTip label="Tools & integrations" className="shrink-0 sm:hidden">
+            <ChatBarTip label="GitHub repos" className="shrink-0">
+              <span className="inline-flex shrink-0">
+                <ChatBarToolChip
+                  icon={<GitHubChipIcon />}
+                  label="GitHub"
+                  onClick={() => setGithubOpen(true)}
+                  accent="#6e40c9"
+                />
+              </span>
+            </ChatBarTip>
+            <ChatBarTip label="GitLab" className="shrink-0">
+              <span className="inline-flex shrink-0">
+                <ChatBarToolChip
+                  icon={<GitLabChipIcon />}
+                  label="GitLab"
+                  onClick={() => setIntegrationsOpen(true)}
+                  accent="#fc6d26"
+                />
+              </span>
+            </ChatBarTip>
+            <ChatBarTip label="Integrations" className="shrink-0">
               <button
                 type="button"
                 onClick={() => setIntegrationsOpen(true)}
                 className="flex items-center gap-1 px-2.5 h-7 rounded-lg border border-[var(--card-border)]/40 bg-white/[0.04] text-[10px] font-semibold shrink-0"
               >
                 <Layers className="w-3.5 h-3.5" />
-                <span>Tools</span>
+                <span>Integrations</span>
               </button>
             </ChatBarTip>
             <div className="hidden sm:contents">
@@ -213,17 +233,7 @@ export function TerminalChatBar() {
                   <Search className="w-3.5 h-3.5" />
                 </button>
               </ChatBarTip>
-              <ChatBarTip label="GitHub repos">
-                <span className="inline-flex shrink-0">
-                  <ChatBarToolChip
-                    icon={<GitHubChipIcon />}
-                    label="GitHub"
-                    onClick={() => setGithubOpen(true)}
-                    accent="#6e40c9"
-                  />
-                </span>
-              </ChatBarTip>
-              {TOOL_CHIPS.map(({ name, icon: Icon, accent }) => (
+              {TOOL_CHIPS.filter((t) => t.name !== 'GitLab').map(({ name, icon: Icon, accent }) => (
                 <ChatBarTip key={name} label={name}>
                   <span className="inline-flex shrink-0">
                     <ChatBarToolChip
@@ -325,7 +335,7 @@ export function TerminalChatBar() {
                     void handleSubmit(e);
                   }
                 }}
-                placeholder={incognito ? 'Type a private message…' : 'Ask Xroga AI to do everything...'}
+                placeholder={incognito ? 'Type a private message…' : 'Xroga AI do everything..'}
                 rows={1}
                 className={cn(
                   'w-full pr-2 py-2.5 rounded-xl resize-none max-h-[286px]',

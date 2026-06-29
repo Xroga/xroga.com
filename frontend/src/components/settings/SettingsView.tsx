@@ -15,6 +15,7 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { THEME_OPTIONS } from '@/lib/theme';
 import { ALL_ACTION_COSTS, tasksForActionBudget, budgetTaskLine } from '@/lib/actionCosts';
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
+import { SubscriptionManagePanel } from '@/components/billing/SubscriptionManagePanel';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { useT } from '@/components/providers/LanguageProvider';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
@@ -263,6 +264,8 @@ export function SettingsView({ email }: { email: string }) {
                   </div>
                 ))}
               </div>
+
+              <SubscriptionManagePanel />
             </div>
           )}
 

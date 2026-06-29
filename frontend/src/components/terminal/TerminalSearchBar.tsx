@@ -16,10 +16,12 @@ export function TerminalSearchBar({
   messages,
   searchHit,
   onJump,
+  compact = false,
 }: {
   messages: ChatMessage[];
   searchHit: string | null;
   onJump: (messageId: string) => void;
+  compact?: boolean;
 }) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -50,21 +52,24 @@ export function TerminalSearchBar({
   };
 
   return (
-    <div ref={wrapRef} className="relative min-w-[120px] max-w-[200px] lg:max-w-[240px]">
+    <div ref={wrapRef} className={cn('relative', compact ? 'min-w-0 max-w-[108px]' : 'min-w-[120px] max-w-[200px] lg:max-w-[240px]')}>
       <div
         className={cn(
           'flex items-center gap-1 px-2 py-1 rounded-lg border transition-colors',
           open ? 'border-[#006aff]/50 bg-white/10' : 'border-transparent hover:bg-white/5'
         )}
       >
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          className="p-0.5 text-[var(--muted)] hover:text-[var(--foreground)]"
-          aria-label="Search terminal history"
-        >
-          <Search className="w-3.5 h-3.5" />
-        </button>
+        {compact ? (
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] sm:hidden"
+            aria-label="Search terminal history"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+        ) : null}
+        {!compact && <Search className="w-3.5 h-3.5 text-[var(--muted)] shrink-0" />}
         <input
           value={query}
           onChange={(e) => {
@@ -76,8 +81,11 @@ export function TerminalSearchBar({
             if (e.key === 'Enter' && shown[0]) jump(shown[0].messageId);
             if (e.key === 'Escape') setOpen(false);
           }}
-          placeholder="Search terminal…"
-          className="w-full min-w-0 text-[10px] bg-transparent border-none outline-none text-[var(--foreground)] placeholder:text-[var(--muted)]"
+          placeholder={compact ? 'Search' : 'Search terminal…'}
+          className={cn(
+            'xv-terminal-search-input min-w-0 text-[10px] bg-transparent border-none outline-none text-[var(--foreground)] placeholder:text-[var(--muted)]',
+            compact ? 'hidden sm:block w-full' : 'w-full'
+          )}
         />
         {query && (
           <button

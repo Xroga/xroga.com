@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X, MessageCircle } from 'lucide-react';
+import { HatGlasses, X, MessageCircle } from 'lucide-react';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { INCOGNITO_GUIDANCE } from '@/lib/incognito';
@@ -78,13 +78,15 @@ export function IncognitoModeButton() {
         className={cn(
           'flex items-center gap-1.5 px-2 py-1.5 sm:px-2.5 rounded-full text-xs font-semibold border transition-all',
           incognito
-            ? 'bg-white/12 border-white/35 text-white shadow-[0_0_16px_rgba(255,255,255,0.08)]'
+            ? 'bg-black border-white/30 text-white shadow-[0_0_12px_rgba(255,255,255,0.1)]'
             : 'glass-panel border-[var(--card-border)] text-[var(--muted)] hover:text-[var(--foreground)]'
         )}
         title={incognito ? 'Exit private room' : 'Enter incognito private room'}
         aria-label={incognito ? 'Exit incognito' : 'Incognito mode'}
       >
-        <IncognitoProfileBox size="modal" className="!w-7 !h-7 !ring-white/25" />
+        <span className="flex items-center justify-center w-7 h-7 rounded-full bg-black border border-white/20 shrink-0">
+          <HatGlasses className="w-4 h-4 text-white" strokeWidth={2} />
+        </span>
         <span className="hidden md:inline">{incognito ? 'Exit' : 'Incognito'}</span>
       </button>
       {modal}

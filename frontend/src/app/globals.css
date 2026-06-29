@@ -64,7 +64,7 @@ body.theme-white .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active {
 
 body.theme-image .xv-chatbar-disclaimer {
   color: rgba(0, 0, 0, 0.75);
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  text-shadow: none;
 }
 
 body.theme-white .xv-chatbar-disclaimer {
@@ -1639,11 +1639,15 @@ body.theme-gray * {
     margin-top: 0.75rem;
     padding-top: 1rem;
     border-top: 1px solid transparent;
-    background: linear-gradient(to top, var(--background, #0a0a0a) 60%, transparent);
+    background: transparent;
   }
 
   body.theme-white .xv-terminal-dock-inner {
-    background: linear-gradient(to top, #ffffff 65%, transparent);
+    background: transparent;
+  }
+
+  .xv-chatbar-disclaimer {
+    text-shadow: none !important;
   }
 
   .xv-chatbar-solid {
@@ -2134,6 +2138,7 @@ body.theme-gray * {
       visibility: visible !important;
       pointer-events: auto !important;
       clip-path: none;
+      z-index: 75;
     }
     .terminal-layout > .xv-main-column {
       flex: 1 1 100%;

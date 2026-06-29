@@ -1,6 +1,9 @@
 import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { SettingsView } from '@/components/settings/SettingsView';
+import { PAGE_SEO } from '@/lib/dashboard-metadata';
+
+export const metadata = PAGE_SEO.settings;
 
 export default async function SettingsPage() {
   const supabase = await createClient();

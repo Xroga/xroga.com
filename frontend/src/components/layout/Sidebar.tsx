@@ -322,9 +322,10 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           ['--sidebar-drawer-width' as string]: `${mobileDrawerWidth}px`,
         }}
         className={cn(
-          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,transform] duration-200 xv-sidebar-hover shrink-0 relative max-lg:overflow-hidden max-lg:!w-0 max-lg:border-r-0',
-          mobileOpen && 'max-lg:!w-[var(--sidebar-drawer-width)] max-lg:border-r max-lg:overflow-y-auto',
-          mobileOpen ? 'translate-x-0 z-[70] xv-sidebar-mobile-open' : '-translate-x-full lg:translate-x-0 max-lg:invisible max-lg:pointer-events-none'
+          'fixed lg:sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,transform,visibility] duration-200 xv-sidebar-hover shrink-0 relative',
+          !mobileOpen && 'max-lg:!w-0 max-lg:border-r-0 max-lg:invisible max-lg:pointer-events-none',
+          mobileOpen && 'max-lg:!w-[var(--sidebar-drawer-width)] max-lg:border-r max-lg:visible max-lg:pointer-events-auto max-lg:overflow-y-auto',
+          mobileOpen ? 'translate-x-0 z-[75] xv-sidebar-mobile-open' : '-translate-x-full lg:translate-x-0'
         )}
       >
         <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px]">
