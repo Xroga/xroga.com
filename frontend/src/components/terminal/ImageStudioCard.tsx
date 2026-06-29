@@ -15,6 +15,8 @@ import { cn } from '@/lib/utils';
 import { copyImageToClipboard, downloadImage } from '@/lib/imageStudioUtils';
 import { ImageEditModal } from './ImageEditModal';
 import { PencilGeneratingAnimation } from './PencilGeneratingAnimation';
+import { isPlaceholderImage } from '@/lib/parseImageContent';
+import { AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface ImageStudioCardProps {
@@ -49,6 +51,26 @@ export function ImageStudioCard({
 
   if (generating) {
     return <ImageGeneratingAnimation className={className} />;
+  }
+
+  if (isPlaceholderImage(src)) {
+    return (
+      <div
+        className={cn(
+          'my-3 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-center space-y-2',
+          className
+        )}
+      >
+        <AlertCircle className="h-8 w-8 text-red-400 mx-auto" />
+        <p className="text-sm font-semibold text-red-200">Image generation failed</p>
+        <p className="text-[11px] text-red-300/80 max-w-sm mx-auto">
+          No image API returned a real result. Ask your admin to set{' '}
+          <code className="text-[10px] bg-black/20 px-1 rounded">OPENAI_API_KEY</code>,{' '}
+          <code className="text-[10px] bg-black/20 px-1 rounded">AGNES_API_KEY</code>, or{' '}
+          <code className="text-[10px] bg-black/20 px-1 rounded">REPLICATE_API_TOKEN</code> on Fly.io, then try again.
+        </p>
+      </div>
+    );
   }
 
   function handlePost() {

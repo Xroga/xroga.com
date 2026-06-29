@@ -9,7 +9,7 @@ export const LLM_PROVIDERS = [
   'gemini-flash',
 ] as const;
 
-export const IMAGE_PROVIDERS = ['agnes-image', 'fal-sdxl', 'replicate-sd', 'cloudflare'] as const;
+export const IMAGE_PROVIDERS = ['openai-dalle', 'agnes-image', 'fal-sdxl', 'replicate-sd', 'cloudflare'] as const;
 export const VIDEO_PROVIDERS = ['runway', 'luma', 'kling', 'hailuo'] as const;
 export const VOICE_PROVIDERS = ['elevenlabs', 'cartesia', 'fish-audio', 'google-tts'] as const;
 export const SEARCH_PROVIDERS = ['tavily', 'exa', 'newsapi'] as const;

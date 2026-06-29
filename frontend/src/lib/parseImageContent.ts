@@ -34,3 +34,14 @@ export function parseProviderFromContent(content: string): string | undefined {
   const m = content.match(/\*Generated via ([^*]+)\*/);
   return m?.[1]?.trim();
 }
+
+export function isPlaceholderImage(url: string): boolean {
+  return /placehold\.co|placeholder|via\.placeholder/i.test(url);
+}
+
+export function isFailedImageContent(content: string): boolean {
+  if (isPlaceholderImage(content)) return true;
+  return /IMAGE_GEN_FAILED|No image API keys configured|All image providers failed|Image generation failed/i.test(
+    content
+  );
+}

@@ -6,6 +6,7 @@ import {
   extractImagesFromContent,
   stripImageMarkdown,
   parseProviderFromContent,
+  isFailedImageContent,
 } from '@/lib/parseImageContent';
 import { ImageStudioCard } from './ImageStudioCard';
 
@@ -103,6 +104,14 @@ export function ModernResponseText({
   const images = extractImagesFromContent(content);
   const textOnly = stripImageMarkdown(content);
   const provider = parseProviderFromContent(content);
+
+  if (isFailedImageContent(content) && images.length === 0) {
+    return (
+      <div ref={blockRef} className="xv-response-text">
+        <p className="whitespace-pre-wrap text-[13px] text-red-300/90">{textOnly || content}</p>
+      </div>
+    );
+  }
 
   if (images.length > 0) {
     return (
