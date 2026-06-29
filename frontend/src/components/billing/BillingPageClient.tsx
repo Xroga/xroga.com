@@ -12,6 +12,7 @@ import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { ChevronDown, PieChart } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { SubscriptionManagePanel } from '@/components/billing/SubscriptionManagePanel';
 
 export function BillingPageClient() {
   const actions = useAppStore((s) => s.actions);
@@ -76,6 +77,8 @@ export function BillingPageClient() {
             </div>
           )}
         </div>
+
+        <SubscriptionManagePanel />
 
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-[var(--accent)] mb-6 font-terminal">

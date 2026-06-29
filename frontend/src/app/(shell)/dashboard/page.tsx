@@ -1,5 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { DashboardView } from '@/components/dashboard/DashboardView';
+import { PAGE_SEO } from '@/lib/dashboard-metadata';
+
+export const metadata = PAGE_SEO.dashboard;
 
 export default async function DashboardPage() {
   const supabase = await createClient();

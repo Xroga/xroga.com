@@ -64,7 +64,7 @@ export function BlackHoleVButton({ className }: { className?: string }) {
         className="flex items-center gap-0.5 h-7 px-0 text-[11px] font-bold text-[var(--foreground)] bg-transparent border-0 hover:opacity-80 transition-opacity"
       >
         <Infinity className="w-3.5 h-3.5 shrink-0 text-[#006aff]" strokeWidth={2.5} />
-        <span>Black Hole V</span>
+        <span>Black Hole V∞</span>
         <ChevronDown className={cn('w-3 h-3 opacity-50 transition-transform', open && 'rotate-180')} />
       </button>
     </div>
