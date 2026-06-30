@@ -28,6 +28,8 @@ export const VIDEO_PROVIDERS = [
   'agnes',
   'cogvideox',
   'animatediff',
+  'replicate-minimax',
+  'replicate-wan',
   'replicate-svd',
   'morph',
   'comfyui',

@@ -4,6 +4,7 @@ import { generateMinimalMp4 } from './minimalMp4.js';
 import { getStaticMp4DataUrl } from './staticMp4.js';
 import { generateVideoWithFallback } from '../videoProviders.js';
 import { raceVideoProviders, isFastClip } from './fastVideoRace.js';
+import { tryImageToVideo } from './imageToVideo.js';
 import { generateImage } from '../../services/builder/imageGen.js';
 import { parseVideoFormat } from '../../services/media/videoUtils.js';
 import type { VideoGenerationResult } from '../videoProviders.js';
@@ -67,13 +68,29 @@ export async function generateGuaranteedVideo(
 
   if (isFastClip(dur)) {
     try {
-      const raced = await raceVideoProviders(cleanPrompt, dur, { aspectRatio });
+      const raced = await raceVideoProviders(cleanPrompt, dur, {
+        aspectRatio,
+        userId: options?.userId,
+      });
       if (raced?.videoUrl) {
         console.log(`[GuaranteedVideo] Fast race winner: ${raced.provider}`);
         return raced;
       }
     } catch (err) {
       errors.push(`fast-race: ${(err as Error).message.slice(0, 80)}`);
+    }
+
+    try {
+      const i2v = await tryImageToVideo(cleanPrompt, dur, {
+        userId: options?.userId,
+        aspectRatio,
+      });
+      if (i2v?.videoUrl) {
+        console.log(`[GuaranteedVideo] Image-to-video winner: ${i2v.provider}`);
+        return i2v;
+      }
+    } catch (err) {
+      errors.push(`image-to-video: ${(err as Error).message.slice(0, 80)}`);
     }
   }
 

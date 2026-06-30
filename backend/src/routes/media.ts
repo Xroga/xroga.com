@@ -35,7 +35,7 @@ router.post('/upload', async (req: AuthRequest, res) => {
     const key = buildR2Key(req.userId!, filename);
     const uploaded = await uploadToR2(key, buffer, contentType);
     res.json({ url: uploaded.publicUrl, key: uploaded.key });
-  } catch (err) {
+  } catch {
     const dataUrl = `data:${contentType};base64,${dataBase64}`;
     res.json({
       url: dataUrl,

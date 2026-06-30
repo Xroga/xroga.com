@@ -338,12 +338,13 @@ export async function runMoviePipeline(options: MoviePipelineOptions): Promise<V
 
   emit(options, 'postproduction');
 
-  const { fileUrl } = await storeUserFile(
+  const { fileUrl, playbackUrl } = await storeUserFile(
     userId,
     `movie-${Date.now()}.mp4`,
     assembly.buffer,
     'video/mp4'
   );
+  const hostedUrl = playbackUrl || fileUrl;
 
   if (options.projectId) {
     const { storeProjectFile } = await import('../storage/projectFiles.js');
@@ -375,7 +376,7 @@ export async function runMoviePipeline(options: MoviePipelineOptions): Promise<V
   return {
     type: 'video_studio',
     title: screenplay.title,
-    streamingUrl: fileUrl,
+    streamingUrl: hostedUrl,
     durationSeconds: assembly.durationSeconds || durationSeconds,
     actionCost,
     screenplay: {
