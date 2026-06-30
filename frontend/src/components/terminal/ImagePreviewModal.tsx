@@ -39,7 +39,7 @@ export function ImagePreviewModal({
     };
   }, [open, onClose]);
 
-  if (!open || typeof document === 'undefined') return null;
+  if (!open || typeof document === 'undefined' || !src) return null;
 
   const themeClass =
     siteTheme === 'white'

@@ -10,6 +10,7 @@ import { generateOpenAIImage } from '../../lib/openaiImage.js';
 import { generateGeminiImage } from '../../lib/geminiImage.js';
 import { logSystemError } from '../../services/systemErrorLog.js';
 import type { ImageBlockedOutput, ImageGenOutput } from '../../types/features.js';
+import { persistImageUrl } from '../../lib/persistImageUrl.js';
 import { classifyImageQuery } from './image/understanding.js';
 import { enhanceImagePrompt } from './image/promptEnhancer.js';
 import { pickBestImage } from './image/imageReviewer.js';
@@ -562,7 +563,11 @@ async function runVariantSlot(
     emitProgress(options, 'painting', `${slot.label} · ${providerDisplayLabel(name)}…`);
 
     try {
-      const imageUrl = await callImageProvider(entry, prompt, ctx);
+      const rawUrl = await callImageProvider(entry, prompt, ctx);
+      const imageUrl = await persistImageUrl(rawUrl, {
+        userId: ctx.userId,
+        label: `${slot.label}-${name}`.replace(/\s+/g, '-').toLowerCase(),
+      });
       const provider = normalizeProvider(name);
       const attempt = {
         imageUrl,

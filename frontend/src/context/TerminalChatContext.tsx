@@ -143,7 +143,11 @@ export function TerminalChatProvider({
 
   useEffect(() => {
     if (!sessionReady || incognito) return;
-    saveWorkspaceSession({ prompt, messages });
+    try {
+      saveWorkspaceSession({ prompt, messages });
+    } catch (err) {
+      console.warn('[workspace] persist skipped:', (err as Error).message);
+    }
   }, [sessionReady, prompt, messages, incognito]);
 
   const enqueuePrompt = useCallback((text: string) => {
@@ -503,20 +507,24 @@ export function TerminalChatProvider({
         const turn = lastTurnRef.current;
         if (!incognito && turn && !interruptRef.current) {
           setMessages((current) => {
-            if (isChatSectionArchive(turn.text)) {
-              archiveChatTurn({
-                prompt: turn.text,
-                messages: current,
-                userMessageId: turn.userMessageId,
-                assistantMessageId: turn.assistantId,
-              });
-            }
-            if (shouldSaveToProjects(turn.text)) {
-              saveLocalProject({
-                name: turn.text.slice(0, 48),
-                prompt: turn.text,
-                sourceMessageId: turn.assistantId,
-              });
+            try {
+              if (isChatSectionArchive(turn.text)) {
+                archiveChatTurn({
+                  prompt: turn.text,
+                  messages: current,
+                  userMessageId: turn.userMessageId,
+                  assistantMessageId: turn.assistantId,
+                });
+              }
+              if (shouldSaveToProjects(turn.text)) {
+                saveLocalProject({
+                  name: turn.text.slice(0, 48),
+                  prompt: turn.text,
+                  sourceMessageId: turn.assistantId,
+                });
+              }
+            } catch (err) {
+              console.warn('[chat] archive save skipped:', (err as Error).message);
             }
             return current;
           });

@@ -1,4 +1,5 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
+import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 
 const KEY = 'xroga_chat_archive';
 
@@ -27,7 +28,11 @@ export function loadChatArchive(): ChatArchiveEntry[] {
 
 function save(entries: ChatArchiveEntry[]) {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(KEY, JSON.stringify(entries.slice(0, 200)));
+  const slim = entries.slice(0, 200).map((e) => ({
+    ...e,
+    messages: messagesForStorage(e.messages),
+  }));
+  safeStorageSet(localStorage, KEY, JSON.stringify(slim));
 }
 
 export function archiveChatTurn(opts: {

@@ -97,7 +97,7 @@ export function ImageGeneratingAnimation({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
           {slots.map((img, i) => (
             <div
-              key={img?.imageUrl ?? `slot-${i}`}
+              key={img?.variantIndex ?? `slot-${i}`}
               className="relative rounded-md overflow-hidden border border-[var(--card-border)] aspect-square bg-[var(--muted)]/10"
             >
               {img ? (
@@ -133,7 +133,7 @@ export function ImageStudioCard({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [revealed, setRevealed] = useState(false);
+  const [revealed, setRevealed] = useState(true);
   const [editSrc, setEditSrc] = useState('');
   const [hiddenUrls, setHiddenUrls] = useState<Set<string>>(new Set());
   const [activeUrl, setActiveUrl] = useState(data.imageUrl);
@@ -333,7 +333,7 @@ export function ImageStudioCard({
 
               return (
                 <div
-                  key={`${img.variantLabel ?? img.provider}-${img.imageUrl}-${i}`}
+                  key={`variant-${img.variantIndex ?? i}-${img.provider ?? 'slot'}`}
                   className={cn(
                     'relative rounded-md overflow-hidden border aspect-square group',
                     isActive
