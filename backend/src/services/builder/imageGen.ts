@@ -273,10 +273,34 @@ function truncatePrompt(prompt: string): string {
   return t.slice(0, MAX_PROMPT_CHARS).trim();
 }
 
-const PROVIDER_TIMEOUT_MS = 28_000;
-const AGNES_TIMEOUT_MS = 28_000;
+const PROVIDER_TIMEOUT_MS = 35_000;
+const AGNES_TIMEOUT_MS = 35_000;
 /** Gemini tries Interactions + generateContent fallbacks inside one call */
-const GEMINI_TIMEOUT_MS = 30_000;
+const GEMINI_TIMEOUT_MS = 38_000;
+
+type VariantSlotConfig = {
+  variantIndex: number;
+  label: string;
+  providers: ProviderName[];
+};
+
+/** Each grid slot has a primary provider plus fallbacks so all 4 columns can fill */
+const VARIANT_SLOTS: VariantSlotConfig[] = [
+  { variantIndex: 0, label: 'Agnes', providers: ['agnes-image', 'fal-sdxl', 'replicate-sd'] },
+  { variantIndex: 1, label: 'Cloudflare', providers: ['cloudflare', 'fal-sdxl', 'replicate-sd'] },
+  { variantIndex: 2, label: 'Fal AI', providers: ['fal-sdxl', 'replicate-sd', 'agnes-image'] },
+  { variantIndex: 3, label: 'Google Gemini', providers: ['gemini-image', 'fal-sdxl', 'replicate-sd'] },
+];
+
+function buildProviderRegistry(): Map<ProviderName, ProviderEntry> {
+  return new Map(buildAllProviders().map((p) => [p.name, p]));
+}
+
+function shortImagePrompt(rawQuery: string, basePrompt: string): string {
+  const t = (basePrompt || rawQuery).trim();
+  if (t.length <= 420) return t;
+  return t.slice(0, 420).trim();
+}
 
 async function callImageProvider(
   entry: ProviderEntry,
@@ -462,14 +486,14 @@ function pickVariantProviders(all: ProviderEntry[]): ProviderEntry[] {
 
   for (const name of VARIANT_SLOT_PROVIDERS) {
     const entry = byName.get(name);
-    if (entry) picked.push(entry);
+    if (entry?.configured) picked.push(entry);
   }
 
   for (const name of OTHER_VARIANT_POOL) {
     if (picked.length >= VARIANT_COUNT) break;
     if (picked.some((p) => p.name === name)) continue;
     const entry = byName.get(name);
-    if (entry) picked.push(entry);
+    if (entry?.configured) picked.push(entry);
   }
 
   if (picked.length < VARIANT_COUNT) {
@@ -480,6 +504,91 @@ function pickVariantProviders(all: ProviderEntry[]): ProviderEntry[] {
   }
 
   return picked.slice(0, VARIANT_COUNT);
+}
+
+async function runVariantSlot(
+  slot: VariantSlotConfig,
+  prompts: { full: string; short: string },
+  registry: Map<ProviderName, ProviderEntry>,
+  ctx: { userId?: string; runId?: string },
+  options?: ImageGenOptions
+): Promise<{
+  imageUrl: string;
+  provider: ImageGenOutput['provider'];
+  matchScore: number;
+  issues?: string[];
+  blocked?: boolean;
+  failed?: boolean;
+  scoresByVerifier?: Record<string, number>;
+  variantLabel: string;
+  variantIndex: number;
+  usedProvider?: string;
+}> {
+  const errors: string[] = [];
+
+  for (const name of slot.providers) {
+    const entry = registry.get(name);
+    if (!entry?.configured) {
+      errors.push(`${providerDisplayLabel(name)}: API key not set`);
+      continue;
+    }
+
+    const useShort = name === 'cloudflare' || name === 'fal-sdxl' || name === 'replicate-sd';
+    const prompt = useShort ? prompts.short : prompts.full;
+
+    emitProgress(options, 'painting', `${slot.label} · ${providerDisplayLabel(name)}…`);
+
+    try {
+      const imageUrl = await callImageProvider(entry, prompt, ctx);
+      const provider = normalizeProvider(name);
+      const attempt = {
+        imageUrl,
+        provider,
+        matchScore: 72,
+        issues: [] as string[],
+        blocked: false,
+        scoresByVerifier: {} as Record<string, number>,
+        variantLabel: slot.label,
+        variantIndex: slot.variantIndex,
+        usedProvider: name,
+      };
+
+      options?.onImageAttempt?.({
+        imageUrl: attempt.imageUrl,
+        provider: attempt.provider,
+        matchScore: attempt.matchScore,
+        variantLabel: slot.label,
+        variantIndex: slot.variantIndex,
+      });
+
+      console.log(`[ImageGen] slot ${slot.variantIndex} (${slot.label}) ok via ${name}`);
+      return attempt;
+    } catch (err) {
+      const msg = (err as Error).message.slice(0, 120);
+      errors.push(`${providerDisplayLabel(name)}: ${msg}`);
+      console.warn(`[ImageGen] slot ${slot.variantIndex} ${name} failed:`, msg);
+    }
+  }
+
+  await logSystemError({
+    api: slot.label,
+    errorMessage: errors.join(' | ') || 'All providers failed',
+    fallbackUsed: 'variant slot fallbacks exhausted',
+    severity: 'warning',
+    userId: ctx.userId,
+    runId: ctx.runId,
+    metadata: { apiType: 'image_gen', slot: slot.variantIndex },
+  }).catch(() => {});
+
+  return {
+    imageUrl: '',
+    provider: normalizeProvider(slot.providers[0] ?? 'fal-sdxl'),
+    matchScore: 0,
+    issues: errors.length ? errors : [`${slot.label}: no providers configured`],
+    failed: true,
+    variantLabel: slot.label,
+    variantIndex: slot.variantIndex,
+  };
 }
 
 async function generateStyleTransferImage(
@@ -631,12 +740,19 @@ export async function generateImage(
 
   emitProgress(options, 'painting', `Format: ${formatLabel} — generating ${VARIANT_COUNT} variants…`);
 
-  const providers = pickVariantProviders(buildAllProviders());
-  if (!providers.length) {
+  const registry = buildProviderRegistry();
+  if (!registry.size) {
     throw new ImageGenerationError('No image API keys configured on the server.');
   }
 
-  console.log(`[ImageGen] ${VARIANT_COUNT} variants (${formatLabel}): ${providers.map((p) => p.name).join(', ')}`);
+  const promptBundle = {
+    full: imagePrompt,
+    short: shortImagePrompt(rawQuery, basePrompt),
+  };
+
+  console.log(
+    `[ImageGen] ${VARIANT_COUNT} slots (${formatLabel}): ${VARIANT_SLOTS.map((s) => s.label).join(', ')}`
+  );
 
   type Attempt = {
     imageUrl: string;
@@ -648,97 +764,11 @@ export async function generateImage(
     scoresByVerifier?: Record<string, number>;
     variantLabel?: string;
     variantIndex?: number;
+    usedProvider?: string;
   };
 
-  const useQuickVerify = options?.fast !== false;
-  const verifyFn = useQuickVerify ? verifyImageQuick : verifyImageMatchesPrompt;
-
   const attemptResults = await Promise.all(
-    providers.map(async (entry, variantIndex): Promise<Attempt> => {
-      const displayLabel = providerDisplayLabel(entry.name);
-      const providerLabel = normalizeProvider(entry.name);
-      emitProgress(options, 'painting', `${displayLabel} generating…`);
-
-      try {
-        const imageUrl = await callImageProvider(entry, imagePrompt, ctx);
-        emitProgress(options, 'verifying', `Scoring ${providerLabel} (Gemini + OpenAI + Groq)…`);
-
-        let verification;
-        try {
-          verification = await verifyFn(imageUrl, rawQuery);
-        } catch (verifyErr) {
-          console.warn(`[ImageGen] verify failed for ${entry.name}:`, (verifyErr as Error).message);
-          verification = {
-            matchScore: 65,
-            matches: true,
-            issues: [],
-            verifier: 'verify-skipped',
-            scoresByVerifier: {},
-          };
-        }
-
-        const provider = normalizeProvider(entry.name);
-
-        if (verification.blockedForSafety) {
-          console.log(`[ImageGen] ${entry.name} blocked by safety verifier`);
-          return {
-            imageUrl: '',
-            provider,
-            matchScore: 0,
-            issues: verification.issues,
-            blocked: true,
-            variantLabel: displayLabel,
-            variantIndex,
-          };
-        }
-
-        const attempt: Attempt = {
-          imageUrl,
-          provider,
-          matchScore: verification.matchScore,
-          issues: verification.issues,
-          blocked: false,
-          scoresByVerifier: verification.scoresByVerifier,
-          variantLabel: displayLabel,
-          variantIndex,
-        };
-
-        options?.onImageAttempt?.({
-          imageUrl: attempt.imageUrl,
-          provider: attempt.provider,
-          matchScore: attempt.matchScore,
-          issues: attempt.issues,
-          scoresByVerifier: attempt.scoresByVerifier,
-          variantLabel: displayLabel,
-          variantIndex,
-        });
-
-        console.log(
-          `[ImageGen] ${entry.name} score=${verification.matchScore} verifier=${verification.verifier}`
-        );
-        return attempt;
-      } catch (err) {
-        console.warn(`[ImageGen] ${entry.name} failed:`, (err as Error).message);
-        await logSystemError({
-          api: entry.name,
-          errorMessage: (err as Error).message,
-          fallbackUsed: 'parallel provider batch',
-          severity: 'warning',
-          userId: ctx.userId,
-          runId: ctx.runId,
-          metadata: { apiType: 'image_gen' },
-        }).catch(() => {});
-        return {
-          imageUrl: '',
-          provider: normalizeProvider(entry.name),
-          matchScore: 0,
-          issues: [(err as Error).message.slice(0, 100)],
-          failed: true,
-          variantLabel: displayLabel,
-          variantIndex,
-        };
-      }
-    })
+    VARIANT_SLOTS.map((slot) => runVariantSlot(slot, promptBundle, registry, ctx, options))
   );
 
   const allAttempts = attemptResults;
@@ -788,7 +818,7 @@ export async function generateImage(
   const pool = safeAttempts;
   let winner = [...pool].sort((a, b) => b.matchScore - a.matchScore)[0]!;
 
-  if (!useQuickVerify) {
+  if (options?.fast === false) {
     emitProgress(options, 'verifying', 'Final safety check on best image…');
     const winnerRecheck = await verifyImageMatchesPrompt(winner.imageUrl, rawQuery);
     if (winnerRecheck.blockedForSafety) {
@@ -803,12 +833,13 @@ export async function generateImage(
         );
       }
       winner = alternate;
+    } else {
+      winner = { ...winner, matchScore: winnerRecheck.matchScore, issues: winnerRecheck.issues };
     }
   }
 
-  const serializedAttempts = providers.map((entry, i) => {
+  const serializedAttempts = VARIANT_SLOTS.map((slot, i) => {
     const a = attemptResults[i]!;
-    const displayLabel = providerDisplayLabel(entry.name);
     return {
       imageUrl: a.imageUrl,
       provider: a.provider,
@@ -816,8 +847,8 @@ export async function generateImage(
       issues: a.issues,
       scoresByVerifier: a.scoresByVerifier,
       selected: a.imageUrl === winner.imageUrl && !a.failed && !a.blocked,
-      variantLabel: a.variantLabel ?? displayLabel,
-      variantIndex: a.variantIndex ?? i,
+      variantLabel: a.variantLabel ?? slot.label,
+      variantIndex: a.variantIndex ?? slot.variantIndex,
       failed: a.failed,
       blocked: a.blocked,
     };

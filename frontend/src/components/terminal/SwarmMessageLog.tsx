@@ -82,10 +82,25 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
 
   const lastAssistantId = useMemo(() => {
     for (let i = visibleMessages.length - 1; i >= 0; i--) {
-      if (visibleMessages[i].role === 'assistant' && visibleMessages[i].content) return visibleMessages[i].id;
+      const m = visibleMessages[i];
+      if (m.role === 'assistant' && (m.content || m.featureOutput)) return m.id;
     }
     return null;
   }, [visibleMessages]);
+
+  const lastImageFollowUps = useMemo(() => {
+    for (let i = visibleMessages.length - 1; i >= 0; i--) {
+      const m = visibleMessages[i];
+      if (m.role !== 'assistant' || !m.featureOutput) continue;
+      const out = m.featureOutput as { type?: string; followUps?: string[] };
+      if (out.type === 'image' && Array.isArray(out.followUps) && out.followUps.length > 0) {
+        return out.followUps;
+      }
+    }
+    return undefined;
+  }, [visibleMessages]);
+
+  const showImageFollowUps = Boolean(lastImageFollowUps?.length) && !loading;
 
   const lastUserMessageId = useMemo(() => {
     for (let i = visibleMessages.length - 1; i >= 0; i--) {
@@ -294,24 +309,11 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             sublabel="Xroga AI · Video Studio"
                           />
                         ) : msg.featureOutput ? (
-                          <>
-                            <FeatureOutputView
-                              output={msg.featureOutput}
-                              messageId={msg.id}
-                              onDelete={() => deleteTurn(msg.id)}
-                            />
-                            {isLastAssistant &&
-                              (msg.featureOutput as { type?: string }).type === 'image' && (
-                                <TerminalFollowUpStrip
-                                  className="mt-3"
-                                  items={
-                                    Array.isArray((msg.featureOutput as { followUps?: string[] }).followUps)
-                                      ? (msg.featureOutput as { followUps: string[] }).followUps
-                                      : undefined
-                                  }
-                                />
-                              )}
-                          </>
+                          <FeatureOutputView
+                            output={msg.featureOutput}
+                            messageId={msg.id}
+                            onDelete={() => deleteTurn(msg.id)}
+                          />
                         ) : loading &&
                         msg.id === animatingId &&
                         isImageGenerationPrompt(lastUserText) ? (
@@ -357,6 +359,12 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           })}
           <div ref={bottomRef} />
         </div>
+
+        {showImageFollowUps && (
+          <div className="border-t border-[var(--card-border)]/40 px-3 sm:px-4 py-2.5 bg-[var(--background)]/40">
+            <TerminalFollowUpStrip items={lastImageFollowUps} />
+          </div>
+        )}
       </div>
       <OutOfActionsModal open={outOfActionsOpen} onClose={() => setOutOfActionsOpen(false)} />
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />

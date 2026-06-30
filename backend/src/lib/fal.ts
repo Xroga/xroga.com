@@ -25,7 +25,7 @@ export async function generateFalImage(prompt: string): Promise<string> {
           num_inference_steps: 4,
           enable_safety_checker: true,
         }),
-        signal: AbortSignal.timeout(90_000),
+        signal: AbortSignal.timeout(60_000),
       });
 
       if (!response.ok) {

@@ -347,12 +347,12 @@ export function ImageStudioCard({
                       <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
                     </button>
                   ) : (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-1 text-center z-0">
-                      <span className="text-[8px] font-bold text-amber-600 dark:text-amber-400">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-1.5 text-center z-0 bg-[var(--muted)]/10">
+                      <span className="text-[9px] font-bold text-amber-600 dark:text-amber-400">
                         {img.blocked ? 'Blocked' : 'Failed'}
                       </span>
-                      <span className="text-[7px] text-[var(--muted)] line-clamp-3 mt-0.5">
-                        {img.issues?.[0] ?? 'No output'}
+                      <span className="text-[8px] text-[var(--muted)] line-clamp-4 mt-1 leading-tight">
+                        {img.issues?.[0] ?? 'Provider did not return an image'}
                       </span>
                     </div>
                   )}

@@ -20,7 +20,8 @@ export async function generateImageCloudflare(prompt: string): Promise<string> {
         Authorization: `Bearer ${apiToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ prompt }),
+      body: JSON.stringify({ prompt: prompt.slice(0, 900) }),
+      signal: AbortSignal.timeout(60_000),
     }
   );
 
