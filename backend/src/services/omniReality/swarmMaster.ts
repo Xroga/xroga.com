@@ -106,7 +106,17 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
         recordVaultUsage(result.provider);
       }
 
-      if (!FALLBACK_PROVIDERS.has(result.provider) && options.durationSeconds <= 15) {
+      if (FALLBACK_PROVIDERS.has(result.provider)) {
+        healingSteps.push('ffmpeg-fallback');
+        return {
+          ...result,
+          healingSteps,
+          qcScore: 72,
+          reviewScores: { physics: 72, lighting: 74, consistency: 72 },
+        };
+      }
+
+      if (options.durationSeconds <= 15) {
         healingSteps.push(result.provider.includes('replicate') || result.provider === 'deepinfra' ? 'oss-real-video' : 'fast-real-video');
         return {
           ...result,

@@ -18,7 +18,7 @@ import {
   MessageCircleHeart,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useVideoSrc, PLAYBACK_SPEEDS } from '@/lib/videoPlayback';
+import { useVideoSrc, PLAYBACK_SPEEDS, videoCrossOrigin } from '@/lib/videoPlayback';
 import type { VideoFormatId } from '@/lib/videoFormat';
 import { videoAspectClass } from '@/lib/videoFormat';
 import toast from 'react-hot-toast';
@@ -124,7 +124,7 @@ export function VideoPlayerModal({
             className="h-full w-full object-contain"
             playsInline
             preload="auto"
-            crossOrigin="anonymous"
+            crossOrigin={videoCrossOrigin(playSrc)}
             onClick={() => void togglePlay()}
             onPlay={() => setPlaying(true)}
             onPause={() => setPlaying(false)}

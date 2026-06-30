@@ -19,7 +19,9 @@ function stripFeatureOutput(output: unknown): unknown {
 
   if (o.type === 'video_studio') {
     const next = { ...o };
-    if (isDataVideoUrl(o.streamingUrl)) {
+    const url = o.streamingUrl;
+    // Keep HTTP playback URLs; only strip huge inline data URLs (session quota)
+    if (isDataVideoUrl(url) && typeof url === 'string' && url.length > 500_000) {
       next.streamingUrl = '';
     }
     return next;

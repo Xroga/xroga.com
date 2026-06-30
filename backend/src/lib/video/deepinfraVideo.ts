@@ -16,9 +16,10 @@ interface DeepInfraResponse {
   status?: string;
 }
 
-async function pollDeepInfra(apiKey: string, requestId: string): Promise<string> {
+async function pollDeepInfra(apiKey: string, model: string, requestId: string): Promise<string> {
+  const pollUrl = `https://api.deepinfra.com/v1/inference/${model}/${requestId}`;
   for (let i = 0; i < 90; i++) {
-    const res = await fetch(`https://api.deepinfra.com/v1/inference/${requestId}`, {
+    const res = await fetch(pollUrl, {
       headers: { Authorization: `Bearer ${apiKey}` },
       signal: AbortSignal.timeout(20_000),
     });
@@ -60,7 +61,7 @@ async function tryModel(apiKey: string, model: string, prompt: string): Promise<
   const data = JSON.parse(body) as DeepInfraResponse & { request_id?: string };
   const immediate = extractVideoUrl(data);
   if (immediate) return immediate;
-  if (data.request_id) return pollDeepInfra(apiKey, data.request_id);
+  if (data.request_id) return pollDeepInfra(apiKey, model, data.request_id);
   throw new Error(`DeepInfra ${model} returned no video URL`);
 }
 

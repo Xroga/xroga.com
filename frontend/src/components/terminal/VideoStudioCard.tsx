@@ -8,7 +8,7 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { VideoPlayerModal } from './VideoPlayerModal';
 import { VideoShareModal } from './VideoShareModal';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
-import { useVideoSrc } from '@/lib/videoPlayback';
+import { useVideoSrc, videoCrossOrigin } from '@/lib/videoPlayback';
 import { parseVideoFormatFromPrompt, videoAspectClass, formatLabel, type VideoFormatId } from '@/lib/videoFormat';
 import toast from 'react-hot-toast';
 
@@ -146,7 +146,7 @@ export function VideoStudioCard({
           {(isSlideshowFallback || providersUsed?.includes('slideshow')) && (
             <div className="mx-3 mb-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1.5">
               <p className="text-[10px] text-amber-700 dark:text-amber-300">
-                Premium video APIs unavailable (credits/locked keys). Using OSS engines (Replicate/DeepInfra) or motion preview from generated still.
+                Motion preview — OSS engines were busy or rate-limited. This clip still plays in your browser.
               </p>
             </div>
           )}
@@ -212,7 +212,7 @@ export function VideoStudioCard({
               playsInline
               muted
               preload="metadata"
-              crossOrigin="anonymous"
+              crossOrigin={videoCrossOrigin(previewSrc)}
             />
             <span className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/40 transition-colors">
               <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-black shadow-lg">

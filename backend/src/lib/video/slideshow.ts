@@ -63,6 +63,7 @@ export async function generateSlideshowVideo(
       '-c:v', 'libx264',
       '-t', String(durationSeconds),
       '-pix_fmt', 'yuv420p',
+      '-movflags', '+faststart',
       '-vf', kenBurns,
       '-y', outputPath,
     ], { timeout: 120_000 });
