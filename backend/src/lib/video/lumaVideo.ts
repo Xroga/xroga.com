@@ -1,3 +1,5 @@
+import { getSecret } from '../../config/envSecrets.js';
+
 /** Luma Dream Machine — premium cinematic video */
 
 interface LumaGeneration {
@@ -27,7 +29,7 @@ export async function generateLumaVideo(
   _durationSeconds = 5,
   options?: { aspectRatio?: '9:16' | '16:9' }
 ): Promise<string> {
-  const apiKey = process.env.LUMA_API_KEY;
+  const apiKey = getSecret('LUMA_API_KEY');
   if (!apiKey) throw new Error('LUMA_API_KEY not configured');
 
   const createRes = await fetch(`${BASE}/generations`, {

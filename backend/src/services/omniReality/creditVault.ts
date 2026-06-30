@@ -52,7 +52,7 @@ export function getVaultBalance(providerId: string): { used: number; limit: numb
 
 export function isVaultDepleted(providerId: string): boolean {
   const tool = TOOL_REGISTRY.find((t) => t.id === providerId);
-  if (!tool) return true;
+  if (!tool) return false;
   if (!isToolConfigured(tool)) return true;
   const { remaining } = getVaultBalance(providerId);
   return remaining <= 0;

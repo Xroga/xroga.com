@@ -81,8 +81,12 @@ export function videoAspectSuffix(format: VideoFormatId): string {
 }
 
 export function parseVideoDuration(prompt: string): number {
-  const secMatch = prompt.match(/(\d+)\s*(?:second|sec|s)\b/i);
+  const cleaned = prompt.replace(/\[xroga-video-format:[^\]]+\]/gi, '');
+  const secMatch = cleaned.match(/(\d+)\s*(?:second|seconds|sec|s)\b/i);
   if (secMatch) return Math.min(parseInt(secMatch[1], 10), 300);
+
+  const clipMatch = cleaned.match(/(\d+)\s*(?:second|sec|s)?\s*clip\b/i);
+  if (clipMatch) return Math.min(parseInt(clipMatch[1], 10), 300);
 
   const minMatch = prompt.match(/(\d+)\s*(?:minute|min|m)\b/i);
   if (minMatch) return Math.min(parseInt(minMatch[1], 10) * 60, 300);

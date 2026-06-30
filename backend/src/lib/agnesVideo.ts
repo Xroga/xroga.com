@@ -1,10 +1,12 @@
 /** Agnes Video V2.0 — apihub.agnes-ai.com (same hub as working image API) */
 
+import { getSecret } from '../config/envSecrets.js';
+
 const AGNES_HUB = 'https://apihub.agnes-ai.com/v1';
 const AGNES_POLL = 'https://apihub.agnes-ai.com/agnesapi';
 
 function getAgnesKey(): string {
-  const apiKey = process.env.AGNES_API_KEY?.trim();
+  const apiKey = getSecret('AGNES_API_KEY');
   if (!apiKey) throw new Error('AGNES_API_KEY not configured');
   return apiKey;
 }

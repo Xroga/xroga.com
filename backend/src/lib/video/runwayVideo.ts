@@ -1,3 +1,5 @@
+import { getSecret } from '../../config/envSecrets.js';
+
 /** Runway Gen-3 Alpha — premium cinematic video */
 
 interface RunwayTask {
@@ -32,7 +34,7 @@ export async function generateRunwayVideo(
   durationSeconds = 5,
   options?: { aspectRatio?: '9:16' | '16:9' }
 ): Promise<string> {
-  const apiKey = process.env.RUNWAY_API_KEY;
+  const apiKey = getSecret('RUNWAY_API_KEY');
   if (!apiKey) throw new Error('RUNWAY_API_KEY not configured');
 
   const createRes = await fetch(`${BASE}/text_to_video`, {

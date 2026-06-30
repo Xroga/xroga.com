@@ -40,9 +40,13 @@ export async function generateSlideshowVideo(
       await writeFile(imagePath, Buffer.from(await imgRes.arrayBuffer()));
     }
 
-    const scale = vertical
+    const scalePad = vertical
       ? 'scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2'
       : 'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2';
+    // Ken Burns: slow zoom + pan so fallback is clearly video, not a static photo
+    const kenBurns = vertical
+      ? `${scalePad},zoompan=z='min(zoom+0.0012,1.18)':d=${durationSeconds * 24}:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=720x1280:fps=24`
+      : `${scalePad},zoompan=z='min(zoom+0.0008,1.12)':d=${durationSeconds * 24}:x='iw/2-(iw/zoom/2)+20*sin(on/48)':y='ih/2-(ih/zoom/2)':s=1280x720:fps=24`;
 
     await execFileAsync(ffmpeg, [
       '-loop', '1',
@@ -50,7 +54,7 @@ export async function generateSlideshowVideo(
       '-c:v', 'libx264',
       '-t', String(durationSeconds),
       '-pix_fmt', 'yuv420p',
-      '-vf', scale,
+      '-vf', kenBurns,
       '-y', outputPath,
     ], { timeout: 120_000 });
 
