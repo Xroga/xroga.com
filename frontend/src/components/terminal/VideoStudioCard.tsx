@@ -48,6 +48,35 @@ interface VideoStudioCardProps {
   messageId?: string;
 }
 
+function providerLabel(id?: string): string {
+  const labels: Record<string, string> = {
+    deepinfra: 'DeepInfra OSS',
+    agnes: 'Agnes Video',
+    comfyui: 'ComfyUI',
+    'replicate-wan': 'Wan 2.2',
+    hunyuan: 'HunyuanVideo',
+    mochi: 'Mochi 1',
+    cogvideox: 'CogVideoX',
+    'ltx-video': 'LTX Video',
+    videocrafter: 'VideoCrafter',
+    animatediff: 'AnimateDiff',
+    zeroscope: 'Zeroscope',
+    'replicate-svd': 'Stable Video Diffusion',
+    'replicate-minimax': 'MiniMax',
+    'slideshow-ai-image': 'Motion preview',
+    slideshow: 'Motion preview',
+  };
+  return labels[id ?? ''] ?? id ?? 'AI Video';
+}
+
+function isOssProvider(id?: string): boolean {
+  if (!id) return false;
+  return [
+    'deepinfra', 'agnes', 'comfyui', 'replicate-wan', 'hunyuan', 'mochi', 'cogvideox',
+    'ltx-video', 'videocrafter', 'animatediff', 'zeroscope', 'replicate-svd', 'replicate-minimax',
+  ].includes(id);
+}
+
 function isPlayableVideoUrl(url: string): boolean {
   if (!url) return false;
   if (url.startsWith('data:video/') && url.length < 200) return false;
@@ -143,10 +172,18 @@ export function VideoStudioCard({
           )}
           </div>
 
-          {(isSlideshowFallback || providersUsed?.includes('slideshow')) && (
+          {isOssProvider(selectedProvider) && (
+            <div className="mx-3 mb-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1.5">
+              <p className="text-[10px] text-emerald-700 dark:text-emerald-300">
+                Open-source AI video · {providerLabel(selectedProvider)}
+              </p>
+            </div>
+          )}
+
+          {isSlideshowFallback && (
             <div className="mx-3 mb-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1.5">
               <p className="text-[10px] text-amber-700 dark:text-amber-300">
-                Motion preview — OSS engines were busy or rate-limited. This clip still plays in your browser.
+                Motion preview from generated still — plays in your browser while OSS engines retry.
               </p>
             </div>
           )}
@@ -178,7 +215,7 @@ export function VideoStudioCard({
               )}
               {selectedProvider && (
                 <span className="text-[9px] px-1.5 py-0.5 rounded-md border border-[var(--card-border)] text-[var(--muted)]">
-                  {selectedProvider}
+                  {providerLabel(selectedProvider)}
                 </span>
               )}
               {providersUsed?.slice(0, 3).map((p) => (

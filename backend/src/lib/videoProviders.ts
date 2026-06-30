@@ -16,6 +16,11 @@ import {
   generateZeroscopeVideo,
   generateMinimaxReplicateVideo,
   generateWanReplicateVideo,
+  generateHunyuanVideo,
+  generateMochiVideo,
+  generateLtxVideo,
+  generateVideoCrafter,
+  generateAnimateDiffVideo,
 } from './video/replicateOssVideo.js';
 import { generateComfyUIVideo } from './video/comfyuiVideo.js';
 import { generateDeepInfraVideo } from './video/deepinfraVideo.js';
@@ -43,7 +48,12 @@ export type VideoProviderName =
   | 'deepinfra'
   | 'luma-replicate'
   | 'cogvideox'
+  | 'hunyuan'
+  | 'mochi'
+  | 'ltx-video'
+  | 'videocrafter'
   | 'animatediff'
+  | 'zeroscope'
   | 'agnes'
   | 'morph'
   | 'comfyui'
@@ -126,37 +136,13 @@ async function generateImageToSlideshowVideo(
 }
 
 function buildVideoProviders(): ProviderEntry[] {
+  const rep = hasSecret('REPLICATE_API_TOKEN');
   return [
-    // OSS workhorse (80%) — tried first
-    {
-      name: 'replicate-minimax',
-      configured: hasSecret('REPLICATE_API_TOKEN'),
-      call: (prompt, duration) => generateMinimaxReplicateVideo(prompt, duration),
-    },
-    {
-      name: 'replicate-wan',
-      configured: hasSecret('REPLICATE_API_TOKEN'),
-      call: (prompt, duration) => generateWanReplicateVideo(prompt, duration),
-    },
+    // ── Open-source FIRST ──
     {
       name: 'deepinfra',
       configured: hasSecret('DEEPINFRA_API_KEY'),
       call: (prompt, duration) => generateDeepInfraVideo(prompt, duration),
-    },
-    {
-      name: 'cogvideox',
-      configured: hasSecret('REPLICATE_API_TOKEN'),
-      call: (prompt, duration) => generateCogVideoX(prompt, duration),
-    },
-    {
-      name: 'animatediff',
-      configured: hasSecret('REPLICATE_API_TOKEN'),
-      call: (prompt, duration) => generateZeroscopeVideo(prompt, duration),
-    },
-    {
-      name: 'replicate-svd',
-      configured: hasSecret('REPLICATE_API_TOKEN'),
-      call: (prompt, _duration, opts) => generateReplicateVideo(prompt, { userId: opts?.userId }),
     },
     {
       name: 'agnes',
@@ -168,7 +154,57 @@ function buildVideoProviders(): ProviderEntry[] {
       configured: Boolean(getSecret('COMFYUI_URL')),
       call: generateComfyUIVideo,
     },
-    // Premium (20%)
+    {
+      name: 'replicate-wan',
+      configured: rep,
+      call: (prompt, duration) => generateWanReplicateVideo(prompt, duration),
+    },
+    {
+      name: 'hunyuan',
+      configured: rep,
+      call: (prompt, duration) => generateHunyuanVideo(prompt, duration),
+    },
+    {
+      name: 'mochi',
+      configured: rep,
+      call: (prompt, duration) => generateMochiVideo(prompt, duration),
+    },
+    {
+      name: 'cogvideox',
+      configured: rep,
+      call: (prompt, duration) => generateCogVideoX(prompt, duration),
+    },
+    {
+      name: 'ltx-video',
+      configured: rep,
+      call: (prompt, duration) => generateLtxVideo(prompt, duration),
+    },
+    {
+      name: 'videocrafter',
+      configured: rep,
+      call: (prompt, duration) => generateVideoCrafter(prompt, duration),
+    },
+    {
+      name: 'animatediff',
+      configured: rep,
+      call: (prompt, duration) => generateAnimateDiffVideo(prompt, duration),
+    },
+    {
+      name: 'zeroscope',
+      configured: rep,
+      call: (prompt, duration) => generateZeroscopeVideo(prompt, duration),
+    },
+    {
+      name: 'replicate-svd',
+      configured: rep,
+      call: (prompt, _duration, opts) => generateReplicateVideo(prompt, { userId: opts?.userId }),
+    },
+    {
+      name: 'replicate-minimax',
+      configured: rep,
+      call: (prompt, duration) => generateMinimaxReplicateVideo(prompt, duration),
+    },
+    // ── Premium LAST ──
     {
       name: 'fal',
       configured: hasSecret('FAL_KEY'),
@@ -191,7 +227,7 @@ function buildVideoProviders(): ProviderEntry[] {
     },
     {
       name: 'luma-replicate',
-      configured: hasSecret('REPLICATE_API_TOKEN'),
+      configured: rep,
       call: (prompt, duration, opts) => generateLumaReplicateVideo(prompt, duration, { aspectRatio: opts?.aspectRatio }),
     },
     {
@@ -257,10 +293,11 @@ export async function generateVideoWithFallback(
   const allProviders = await buildVideoProvidersAsync();
   const providerMap = new Map(allProviders.map((p) => [p.name, p]));
 
-  const premiumSet = new Set(['runway', 'luma']);
+  const premiumSet = new Set(['runway', 'luma', 'fal', 'hailuo', 'kling', 'luma-replicate', 'morph']);
   const cheapSet = new Set([
-    'replicate-minimax', 'replicate-wan', 'deepinfra', 'cogvideox', 'animatediff',
-    'replicate-svd', 'agnes', 'comfyui', 'luma-replicate', 'hailuo', 'kling', 'fal', 'morph',
+    'deepinfra', 'agnes', 'comfyui',
+    'replicate-wan', 'hunyuan', 'mochi', 'cogvideox', 'ltx-video', 'videocrafter',
+    'animatediff', 'zeroscope', 'replicate-svd', 'replicate-minimax',
   ]);
 
   let orderedNames = priorityList.filter((name) => providerMap.has(name as VideoProviderName));
@@ -271,7 +308,9 @@ export async function generateVideoWithFallback(
     orderedNames = orderedNames.filter((n) => cheapSet.has(n) || n === 'comfyui' || n === 'slideshow');
   }
 
-  orderedNames.push('slideshow');
+  if (!orderedNames.includes('slideshow')) {
+    orderedNames.push('slideshow');
+  }
 
   orderedNames = filterByVault(orderedNames);
 
@@ -356,7 +395,11 @@ export async function smokeTestVideoGeneration(): Promise<{
   const prompt = 'A cat walking on a beach at sunset, cinematic, 2 seconds';
 
   const chain = await buildVideoProvidersAsync();
-  const ossOrder = ['deepinfra', 'agnes', 'replicate-wan', 'replicate-minimax', 'cogvideox', 'zeroscope', 'replicate-svd'] as const;
+  const ossOrder = [
+    'deepinfra', 'agnes', 'comfyui',
+    'replicate-wan', 'hunyuan', 'mochi', 'cogvideox', 'ltx-video', 'videocrafter',
+    'animatediff', 'zeroscope', 'replicate-svd', 'replicate-minimax',
+  ] as const;
   const configured = chain.filter((p) => p.configured && p.name !== 'slideshow');
   const ordered = [
     ...ossOrder.map((n) => configured.find((p) => p.name === n)).filter(Boolean),

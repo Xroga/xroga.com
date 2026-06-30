@@ -1,15 +1,18 @@
-/** DeepInfra OSS text-to-video — uses DEEPINFRA_API_KEY (free-tier models) */
+/** DeepInfra OSS text-to-video — Wan 2.2/2.6, Pruna (open-source hosted) */
 
 import { getSecret } from '../../config/envSecrets.js';
 import { sanitizeVideoPrompt } from './videoPrompt.js';
 
 const MODELS = [
+  'Wan-AI/Wan2.2-T2V-A14B',
+  'Wan-AI/Wan2.6-T2V',
   'Wan-AI/Wan2.1-T2V-14B',
   'PrunaAI/p-video',
 ] as const;
 
 interface DeepInfraResponse {
   video?: string;
+  video_url?: string;
   output?: { video?: string; url?: string };
   results?: Array<{ video?: string; url?: string }>;
   request_id?: string;
@@ -36,6 +39,7 @@ async function pollDeepInfra(apiKey: string, model: string, requestId: string): 
 
 function extractVideoUrl(data: DeepInfraResponse): string | null {
   if (typeof data.video === 'string' && data.video.startsWith('http')) return data.video;
+  if (typeof data.video_url === 'string' && data.video_url.startsWith('http')) return data.video_url;
   if (data.output?.video?.startsWith('http')) return data.output.video;
   if (data.output?.url?.startsWith('http')) return data.output.url;
   const r0 = data.results?.[0];
