@@ -76,7 +76,11 @@ async function pollKlingTask(taskId: string, apiKey: string): Promise<string> {
   throw new Error('Kling video timed out');
 }
 
-async function generateKlingVideo(prompt: string, durationSeconds: number): Promise<string> {
+async function generateKlingVideo(
+  prompt: string,
+  durationSeconds: number,
+  options?: { aspectRatio?: '9:16' | '16:9' }
+): Promise<string> {
   const apiKey = process.env.KLING_API_KEY;
   if (!apiKey) throw new Error('KLING_API_KEY not configured');
 
@@ -86,7 +90,12 @@ async function generateKlingVideo(prompt: string, durationSeconds: number): Prom
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
     },
-    body: JSON.stringify({ prompt, duration: String(durationSeconds), mode: 'std' }),
+    body: JSON.stringify({
+      prompt,
+      duration: String(durationSeconds),
+      mode: 'std',
+      aspect_ratio: options?.aspectRatio === '9:16' ? '9:16' : '16:9',
+    }),
   });
 
   if (!response.ok) throw new Error(`Kling AI error: ${response.status}`);
@@ -147,12 +156,12 @@ function buildVideoProviders(): ProviderEntry[] {
     {
       name: 'fal',
       configured: Boolean(process.env.FAL_KEY ?? process.env.FAL_API_KEY),
-      call: generateFalVideo,
+      call: (prompt, duration, opts) => generateFalVideo(prompt, duration, { aspectRatio: opts?.aspectRatio }),
     },
     {
       name: 'hailuo',
       configured: Boolean(process.env.HAILUO_API_KEY ?? process.env.MINIMAX_API_KEY),
-      call: generateHailuoVideo,
+      call: (prompt, duration, opts) => generateHailuoVideo(prompt, duration, { aspectRatio: opts?.aspectRatio }),
     },
     {
       name: 'runway',

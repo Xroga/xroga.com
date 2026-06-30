@@ -75,6 +75,9 @@ export function VideoStudioCard({
     data.videoFormat ?? parseVideoFormatFromPrompt(prompt ?? title);
   const { src: previewSrc, loading: videoLoading, error: videoError } = useVideoSrc(streamingUrl);
   const aspectClass = videoAspectClass(videoFormat);
+  const isSlideshowFallback = ['slideshow', 'slideshow-ai-image', 'parallax', 'ffmpeg-minimal', 'static-mp4'].includes(
+    selectedProvider ?? ''
+  );
 
   if (generating) {
     return (
@@ -139,6 +142,14 @@ export function VideoStudioCard({
             <span className="text-[10px] text-[var(--muted)] shrink-0">{durationSeconds}s</span>
           )}
           </div>
+
+          {(isSlideshowFallback || providersUsed?.includes('slideshow')) && (
+            <div className="mx-3 mb-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1.5">
+              <p className="text-[10px] text-amber-700 dark:text-amber-300">
+                Video APIs were unavailable — cinematic motion fallback used. Deploy latest backend for real AI video via Fal/Hailuo/Luma.
+              </p>
+            </div>
+          )}
 
           {(screenplay?.scenes?.length ?? 0) > 0 && (
             <div className="px-3 pb-2">

@@ -41,14 +41,34 @@ export async function produceSingleSceneVideo(
 ): Promise<VideoStudioOutput> {
   const durationSeconds = Math.min(Math.max(parseVideoDuration(prompt), 3), 30);
   const actionCost = computeVideoActionCost(durationSeconds);
+  const isFastClip = durationSeconds <= 15;
 
-  options?.onProgress?.('scripting', 'Planning your video with AI…');
+  options?.onProgress?.('scripting', isFastClip ? 'Fast render — skipping heavy planning…' : 'Planning your video with AI…');
 
-  const plan = await planVideoProduction(prompt, {
-    userId,
-    runId: options?.runId,
-    onProgress: (step, message) => options?.onProgress?.(step as 'scripting', message),
-  });
+  const plan = isFastClip
+    ? {
+        mode: 'single_scene' as const,
+        title: prompt.replace(/\[xroga-video-format:[^\]]+\]/gi, '').slice(0, 80) || 'Xroga Video',
+        mood: 'cinematic',
+        durationSeconds,
+        renderPrompt: prompt,
+        scenes: [{
+          sceneId: '1',
+          location: 'CINEMATIC',
+          action: prompt,
+          dialogue: '',
+          renderPrompt: prompt,
+          durationSeconds,
+          priority: 'critical' as const,
+        }],
+        characters: [{ name: 'Protagonist', description: 'Main subject' }],
+        scriptProvider: 'fast-heuristic',
+      }
+    : await planVideoProduction(prompt, {
+        userId,
+        runId: options?.runId,
+        onProgress: (step, message) => options?.onProgress?.(step as 'scripting', message),
+      });
 
   const scene = plan.scenes[0];
   const scenePrompt = scene?.renderPrompt ?? plan.renderPrompt ?? prompt;

@@ -1,4 +1,7 @@
-/** Replicate Stable Video Diffusion — open-source fallback */
+/** Replicate Stable Video Diffusion — image-to-video with real keyframe */
+
+import { getSecret } from '../../config/envSecrets.js';
+import { generateAgnesImage } from '../agnes.js';
 
 interface ReplicatePrediction {
   id: string;
@@ -22,23 +25,33 @@ async function pollPrediction(apiKey: string, prediction: ReplicatePrediction): 
   throw new Error('Replicate SVD timed out');
 }
 
+async function resolveKeyframe(prompt: string): Promise<string> {
+  try {
+    return await generateAgnesImage(`Cinematic film still: ${prompt.slice(0, 400)}`);
+  } catch {
+    return `https://placehold.co/1280x720/1a1a2e/006aff/png?text=${encodeURIComponent(prompt.slice(0, 30))}`;
+  }
+}
+
 export async function generateReplicateVideo(prompt: string): Promise<string> {
-  const apiKey = process.env.REPLICATE_API_TOKEN;
+  const apiKey = getSecret('REPLICATE_API_TOKEN');
   if (!apiKey) throw new Error('REPLICATE_API_TOKEN not configured');
+
+  const inputImage = await resolveKeyframe(prompt);
 
   const createRes = await fetch('https://api.replicate.com/v1/models/stability-ai/stable-video-diffusion/predictions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
-      Prefer: 'wait=60',
+      Prefer: 'wait=90',
     },
     body: JSON.stringify({
       input: {
         cond_aug: 0.02,
         decoding_t: 14,
-        input_image: `https://placehold.co/1280x720/png?text=${encodeURIComponent(prompt.slice(0, 40))}`,
-        video_length: '14_frames_with_svd',
+        input_image: inputImage,
+        video_length: '25_frames_with_svd',
         sizing_strategy: 'maintain_aspect_ratio',
         motion_bucket_id: 127,
         frames_per_second: 6,

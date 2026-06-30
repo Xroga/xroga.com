@@ -37,23 +37,30 @@ function emit(opts: OmniProductionOptions, phase: OmniVideoEvent['phase'], detai
 export async function produceOmniVideo(options: OmniProductionOptions): Promise<VideoStudioOutput> {
   const { userId, prompt, projectId, seriesId, runId } = options;
   const durationSeconds = parseVideoDuration(prompt);
+  const isFast = durationSeconds <= 15;
 
-  emit(options, 'trinity_scripting', 'DeepSeek Showrunner analyzing your vision…');
+  if (!isFast) {
+    emit(options, 'trinity_scripting', 'DeepSeek Showrunner analyzing your vision…');
+    const storyboard = await deepSeekStoryboard(prompt, durationSeconds, { userId, runId });
+    emit(options, 'storyboard_ready', `${storyboard.scenes.length} scene(s) · ${storyboard.mood_tone}`);
+  } else {
+    emit(options, 'trinity_scripting', 'Fast clip mode — rendering immediately…');
+    emit(options, 'storyboard_ready', `${durationSeconds}s clip · direct render`);
+  }
 
-  const storyboard = await deepSeekStoryboard(prompt, durationSeconds, { userId, runId });
-  emit(options, 'storyboard_ready', `${storyboard.scenes.length} scene(s) · ${storyboard.mood_tone}`);
+  const plan = isFast
+    ? null
+    : await planVideoProduction(prompt, {
+        userId,
+        runId,
+        onProgress: (step, message) => {
+          options.onProgress?.(step as MovieProgressStep, message);
+          if (step === 'scripting') emit(options, 'trinity_scripting', message);
+          if (step === 'storyboard') emit(options, 'storyboard_ready', message);
+        },
+      });
 
-  const plan = await planVideoProduction(prompt, {
-    userId,
-    runId,
-    onProgress: (step, message) => {
-      options.onProgress?.(step as MovieProgressStep, message);
-      if (step === 'scripting') emit(options, 'trinity_scripting', message);
-      if (step === 'storyboard') emit(options, 'storyboard_ready', message);
-    },
-  });
-
-  const isMulti = plan.mode === 'multi_scene' && plan.scenes.length > 1;
+  const isMulti = !isFast && plan?.mode === 'multi_scene' && (plan?.scenes.length ?? 0) > 1;
 
   const bridgeProgress = (step: MovieProgressStep, message: string, detail?: string) => {
     options.onProgress?.(step, message, detail);
@@ -97,10 +104,10 @@ export async function produceOmniVideo(options: OmniProductionOptions): Promise<
   return {
     ...output,
     omniReality: {
-      storyboardProvider: storyboard.scriptProvider ?? plan.scriptProvider,
-      moodTone: storyboard.mood_tone,
-      continuityLocks: storyboard.continuity_locks.map((l) => l.description),
-      sceneCount: storyboard.scenes.length,
+      storyboardProvider: plan?.scriptProvider ?? 'fast-heuristic',
+      moodTone: plan?.mood ?? output.screenplay?.mood,
+      continuityLocks: [],
+      sceneCount: plan?.scenes.length ?? 1,
       trinity: {
         deepseek: Boolean(process.env.DEEPSEEK_API_KEY),
         gemini: Boolean(process.env.GEMINI_API_KEY),

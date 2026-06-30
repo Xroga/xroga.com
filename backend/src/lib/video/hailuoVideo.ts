@@ -1,58 +1,99 @@
-/** Hailuo / MiniMax — cheap draft video clips */
+/** Hailuo / MiniMax — https://platform.minimax.io/docs/api-reference/video-generation-t2v */
 
-interface MiniMaxVideoResponse {
+import { getSecret } from '../../config/envSecrets.js';
+
+interface MiniMaxTaskResponse {
   task_id?: string;
-  data?: { video_url?: string };
+  base_resp?: { status_code: number; status_msg?: string };
+}
+
+interface MiniMaxQueryResponse {
+  status?: string;
+  file_id?: string;
+  base_resp?: { status_code: number; status_msg?: string };
+}
+
+interface MiniMaxFileResponse {
+  file?: { download_url?: string; file_id?: string };
   base_resp?: { status_code: number; status_msg?: string };
 }
 
 function getHailuoKey(): string {
-  const key = process.env.HAILUO_API_KEY ?? process.env.MINIMAX_API_KEY;
+  const key = getSecret('HAILUO_API_KEY');
   if (!key) throw new Error('HAILUO_API_KEY not configured');
   return key;
 }
 
-async function pollTask(taskId: string, apiKey: string, base: string): Promise<string> {
-  for (let i = 0; i < 60; i++) {
-    const res = await fetch(`${base}/v1/video_generation/query?task_id=${taskId}`, {
+const API_BASE = 'https://api.minimax.io';
+
+async function pollVideoTask(taskId: string, apiKey: string): Promise<string> {
+  for (let i = 0; i < 45; i++) {
+    const res = await fetch(`${API_BASE}/v1/query/video_generation?task_id=${encodeURIComponent(taskId)}`, {
       headers: { Authorization: `Bearer ${apiKey}` },
+      signal: AbortSignal.timeout(20_000),
     });
     if (!res.ok) throw new Error(`Hailuo poll error: ${res.status}`);
-    const data = (await res.json()) as MiniMaxVideoResponse;
-    if (data.data?.video_url) return data.data.video_url;
-    if (data.base_resp?.status_code && data.base_resp.status_code !== 0 && data.base_resp.status_code !== 1) {
-      throw new Error(data.base_resp.status_msg ?? 'Hailuo video failed');
+    const data = (await res.json()) as MiniMaxQueryResponse;
+    const status = (data.status ?? '').toLowerCase();
+
+    if (status === 'success' && data.file_id) {
+      return fetchDownloadUrl(data.file_id, apiKey);
     }
-    await new Promise((r) => setTimeout(r, 4000));
+    if (status === 'fail' || status === 'failed') {
+      throw new Error(data.base_resp?.status_msg ?? 'Hailuo video failed');
+    }
+    await new Promise((r) => setTimeout(r, 5000));
   }
   throw new Error('Hailuo video timed out');
 }
 
-export async function generateHailuoVideo(prompt: string, durationSeconds = 5): Promise<string> {
-  const apiKey = getHailuoKey();
-  const base = process.env.MINIMAX_API_BASE ?? 'https://api.minimax.io';
+async function fetchDownloadUrl(fileId: string, apiKey: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/v1/files/retrieve?file_id=${encodeURIComponent(fileId)}`, {
+    headers: { Authorization: `Bearer ${apiKey}` },
+    signal: AbortSignal.timeout(20_000),
+  });
+  if (!res.ok) throw new Error(`Hailuo file retrieve error: ${res.status}`);
+  const data = (await res.json()) as MiniMaxFileResponse;
+  const url = data.file?.download_url;
+  if (!url) throw new Error('Hailuo returned no download URL');
+  return url;
+}
 
-  const response = await fetch(`${base}/v1/video_generation`, {
+export async function generateHailuoVideo(
+  prompt: string,
+  durationSeconds = 5,
+  options?: { aspectRatio?: '9:16' | '16:9' }
+): Promise<string> {
+  const apiKey = getHailuoKey();
+  const dur = durationSeconds <= 6 ? 6 : 10;
+  const vertical = options?.aspectRatio === '9:16';
+
+  const response = await fetch(`${API_BASE}/v1/video_generation`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'video-01',
-      prompt,
-      duration: Math.min(durationSeconds, 6),
+      model: 'MiniMax-Hailuo-2.3-Fast',
+      prompt: prompt.slice(0, 2000),
+      duration: dur,
+      resolution: vertical ? '768P' : '768P',
+      prompt_optimizer: true,
     }),
+    signal: AbortSignal.timeout(30_000),
   });
 
+  const body = await response.text();
   if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`Hailuo video error ${response.status}: ${errText.slice(0, 200)}`);
+    throw new Error(`Hailuo video error ${response.status}: ${body.slice(0, 300)}`);
   }
 
-  const data = (await response.json()) as MiniMaxVideoResponse;
-  if (data.data?.video_url) return data.data.video_url;
+  const data = JSON.parse(body) as MiniMaxTaskResponse;
+  if (data.base_resp?.status_code && data.base_resp.status_code !== 0) {
+    throw new Error(data.base_resp.status_msg ?? 'Hailuo task creation failed');
+  }
   if (!data.task_id) throw new Error('Hailuo returned no task_id');
 
-  return pollTask(data.task_id, apiKey, base);
+  return pollVideoTask(data.task_id, apiKey);
 }

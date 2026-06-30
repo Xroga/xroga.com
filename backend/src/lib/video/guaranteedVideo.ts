@@ -3,6 +3,7 @@ import { generateSlideshowVideo } from './slideshow.js';
 import { generateMinimalMp4 } from './minimalMp4.js';
 import { getStaticMp4DataUrl } from './staticMp4.js';
 import { generateVideoWithFallback } from '../videoProviders.js';
+import { raceVideoProviders, isFastClip } from './fastVideoRace.js';
 import { generateImage } from '../../services/builder/imageGen.js';
 import { parseVideoFormat } from '../../services/media/videoUtils.js';
 import type { VideoGenerationResult } from '../videoProviders.js';
@@ -60,11 +61,24 @@ export async function generateGuaranteedVideo(
   const errors: string[] = [];
   const dur = Math.min(Math.max(durationSeconds, 3), 30);
   const isVertical = parseVideoFormat(prompt) === 'shorts_reels';
+  const aspectRatio = isVertical ? '9:16' as const : '16:9' as const;
+
+  if (isFastClip(dur)) {
+    try {
+      const raced = await raceVideoProviders(prompt, dur, { aspectRatio });
+      if (raced?.videoUrl) {
+        console.log(`[GuaranteedVideo] Fast race winner: ${raced.provider}`);
+        return raced;
+      }
+    } catch (err) {
+      errors.push(`fast-race: ${(err as Error).message.slice(0, 80)}`);
+    }
+  }
 
   try {
     const api = await tryApiProviders(prompt, dur, {
       ...options,
-      aspectRatio: isVertical ? '9:16' : '16:9',
+      aspectRatio,
     });
     if (api.videoUrl) return api;
   } catch (err) {

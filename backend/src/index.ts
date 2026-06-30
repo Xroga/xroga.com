@@ -133,10 +133,14 @@ app.get('/api/health/smoke-image', async (req, res) => {
 app.get('/api/health/omni-reality', async (_req, res) => {
   try {
     const { getOmniRealityStatus, getCreditVaultStatus } = await import('./services/omniReality/index.js');
+    const { getVideoKeyStatus } = await import('./config/envSecrets.js');
+    const { getVideoProviderStatus } = await import('./lib/videoProviders.js');
     res.json({
       ...healthPayload(),
       omniReality: getOmniRealityStatus(),
       creditVault: getCreditVaultStatus(),
+      flySecrets: getVideoKeyStatus(),
+      videoProviders: getVideoProviderStatus(),
     });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
