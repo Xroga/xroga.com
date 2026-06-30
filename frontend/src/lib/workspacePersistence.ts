@@ -1,4 +1,5 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
+import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 
 const KEY = 'xroga_workspace_session';
 
@@ -27,8 +28,38 @@ export function loadWorkspaceSession(): WorkspaceSession | null {
 
 export function saveWorkspaceSession(session: Omit<WorkspaceSession, 'updatedAt'>) {
   if (typeof window === 'undefined') return;
-  const payload: WorkspaceSession = { ...session, updatedAt: new Date().toISOString() };
-  sessionStorage.setItem(KEY, JSON.stringify(payload));
+  const payload: WorkspaceSession = {
+    ...session,
+    messages: messagesForStorage(session.messages),
+    updatedAt: new Date().toISOString(),
+  };
+  try {
+    let json: string;
+    try {
+      json = JSON.stringify(payload);
+    } catch {
+      const slim: WorkspaceSession = {
+        ...payload,
+        messages: payload.messages.map((m) => ({
+          ...m,
+          featureOutput: undefined,
+        })),
+      };
+      json = JSON.stringify(slim);
+    }
+    if (!safeStorageSet(sessionStorage, KEY, json)) {
+      const slim: WorkspaceSession = {
+        ...payload,
+        messages: payload.messages.map((m) => ({
+          ...m,
+          featureOutput: undefined,
+        })),
+      };
+      safeStorageSet(sessionStorage, KEY, JSON.stringify(slim));
+    }
+  } catch (err) {
+    console.warn('[workspace] save failed:', (err as Error).message);
+  }
 }
 
 export function clearWorkspaceSession() {

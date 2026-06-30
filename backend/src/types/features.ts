@@ -57,6 +57,10 @@ export interface ImageGenOutput {
   provider: 'agnes' | 'fal' | 'replicate' | 'cloudflare' | 'luma' | 'runway' | 'hailuo' | 'comfyui' | 'openai' | 'gemini';
   prompt: string;
   enhancedPrompt?: string;
+  /** Short Groq-refined prompt shown in the UI */
+  concisePrompt?: string;
+  /** Text to render on thumbnails/posters */
+  overlayText?: string;
   followUps?: string[];
   pros?: string[];
   cons?: string[];

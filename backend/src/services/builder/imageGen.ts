@@ -10,8 +10,10 @@ import { generateOpenAIImage } from '../../lib/openaiImage.js';
 import { generateGeminiImage } from '../../lib/geminiImage.js';
 import { logSystemError } from '../../services/systemErrorLog.js';
 import type { ImageBlockedOutput, ImageGenOutput } from '../../types/features.js';
+import { persistImageUrl } from '../../lib/persistImageUrl.js';
 import { classifyImageQuery } from './image/understanding.js';
 import { enhanceImagePrompt } from './image/promptEnhancer.js';
+import { buildConciseImagePrompt, extractOverlayText, isThumbnailRequest } from './image/concisePrompt.js';
 import { pickBestImage } from './image/imageReviewer.js';
 import { generateImageFollowUps } from './image/followUps.js';
 import { moderateImagePrompt, parseImageAspectFormat, aspectFormatLabel, aspectFormatPromptSuffix, type ImageAspectFormat } from './image/contentModeration.js';
@@ -273,10 +275,20 @@ function truncatePrompt(prompt: string): string {
   return t.slice(0, MAX_PROMPT_CHARS).trim();
 }
 
-const PROVIDER_TIMEOUT_MS = 35_000;
-const AGNES_TIMEOUT_MS = 35_000;
-/** Gemini tries Interactions + generateContent fallbacks inside one call */
-const GEMINI_TIMEOUT_MS = 38_000;
+const PROVIDER_TIMEOUT_MS: Partial<Record<ProviderName, number>> = {
+  cloudflare: 90_000,
+  'fal-sdxl': 75_000,
+  'replicate-sd': 130_000,
+  'agnes-image': 90_000,
+  'gemini-image': 38_000,
+  'openai-image': 60_000,
+  'luma-image': 60_000,
+  'hailuo-image': 60_000,
+  'runway-image': 60_000,
+  comfyui: 60_000,
+};
+
+const DEFAULT_PROVIDER_TIMEOUT_MS = 45_000;
 
 type VariantSlotConfig = {
   variantIndex: number;
@@ -286,11 +298,23 @@ type VariantSlotConfig = {
 
 /** Each grid slot has a primary provider plus fallbacks so all 4 columns can fill */
 const VARIANT_SLOTS: VariantSlotConfig[] = [
-  { variantIndex: 0, label: 'Agnes', providers: ['agnes-image', 'fal-sdxl', 'replicate-sd'] },
-  { variantIndex: 1, label: 'Cloudflare', providers: ['cloudflare', 'fal-sdxl', 'replicate-sd'] },
-  { variantIndex: 2, label: 'Fal AI', providers: ['fal-sdxl', 'replicate-sd', 'agnes-image'] },
-  { variantIndex: 3, label: 'Google Gemini', providers: ['gemini-image', 'fal-sdxl', 'replicate-sd'] },
+  { variantIndex: 0, label: 'Agnes', providers: ['agnes-image', 'openai-image', 'fal-sdxl'] },
+  { variantIndex: 1, label: 'Cloudflare', providers: ['cloudflare', 'fal-sdxl', 'openai-image'] },
+  { variantIndex: 2, label: 'Fal AI', providers: ['fal-sdxl', 'replicate-sd', 'openai-image'] },
+  { variantIndex: 3, label: 'Google Gemini', providers: ['gemini-image', 'openai-image', 'fal-sdxl', 'luma-image'] },
 ];
+
+function resolveVariantSlots(registry: Map<ProviderName, ProviderEntry>): VariantSlotConfig[] {
+  const geminiReady = registry.get('gemini-image')?.configured;
+  return VARIANT_SLOTS.map((slot) => {
+    if (slot.variantIndex !== 3 || geminiReady) return slot;
+    return {
+      ...slot,
+      label: 'OpenAI',
+      providers: ['openai-image', 'fal-sdxl', 'replicate-sd', 'luma-image'],
+    };
+  });
+}
 
 function buildProviderRegistry(): Map<ProviderName, ProviderEntry> {
   return new Map(buildAllProviders().map((p) => [p.name, p]));
@@ -308,16 +332,11 @@ async function callImageProvider(
   ctx: { userId?: string; runId?: string }
 ): Promise<string> {
   const safePrompt = truncatePrompt(prompt);
-  const timeout =
-    entry.name === 'agnes-image'
-      ? AGNES_TIMEOUT_MS
-      : entry.name === 'gemini-image'
-        ? GEMINI_TIMEOUT_MS
-        : PROVIDER_TIMEOUT_MS;
+  const timeout = PROVIDER_TIMEOUT_MS[entry.name] ?? DEFAULT_PROVIDER_TIMEOUT_MS;
   const imageUrl = await Promise.race([
     entry.call(safePrompt),
     new Promise<string>((_, reject) =>
-      setTimeout(() => reject(new Error(`${entry.name} timed out`)), timeout)
+      setTimeout(() => reject(new Error(`${entry.name} timed out after ${timeout}ms`)), timeout)
     ),
   ]);
   if (!isValidImageResult(imageUrl)) {
@@ -440,11 +459,16 @@ async function buildPipelinePrompt(
   basePrompt: string,
   aspectFormat: ImageAspectFormat,
   options?: ImageGenOptions
-): Promise<string> {
+): Promise<{ full: string; concise: string; overlayText?: string }> {
   const suffix = aspectFormatPromptSuffix(aspectFormat);
-  if (options?.fast === false) return `${basePrompt}. ${suffix}`;
+  const overlayText = extractOverlayText(rawQuery);
 
-  emitProgress(options, 'classifying', 'Groq analyzing your prompt…');
+  if (options?.fast === false) {
+    const full = `${basePrompt}. ${suffix}`;
+    return { full, concise: basePrompt.slice(0, 200), overlayText };
+  }
+
+  emitProgress(options, 'classifying', 'Groq analyzing your command…');
   const intent = await withTimeout(classifyImageQuery(rawQuery), 3_500, {
     subject: rawQuery.slice(0, 120),
     style: 'detailed, high quality',
@@ -452,15 +476,37 @@ async function buildPipelinePrompt(
     rawQuery,
   });
 
-  emitProgress(options, 'enhancing', 'Building detailed prompt for image AIs…');
+  emitProgress(options, 'enhancing', 'Groq writing a concise image prompt…');
+  const concise = await withTimeout(buildConciseImagePrompt(intent, overlayText), 4_000, fallbackConcise(intent, overlayText));
+
+  emitProgress(options, 'enhancing', `Prompt: ${concise.slice(0, 140)}${concise.length > 140 ? '…' : ''}`);
+
   const enhanced = await withTimeout(enhanceImagePrompt(intent), 4_500, {
-    prompt: basePrompt,
+    prompt: concise,
     negativePrompt: '',
     styleTags: [],
   });
 
-  const text = enhanced.prompt?.trim() || basePrompt;
-  return `${text}. ${suffix}`;
+  let text = enhanced.prompt?.trim() || concise;
+  if (overlayText && !text.toLowerCase().includes(overlayText.toLowerCase().slice(0, 12))) {
+    text += ` Bold readable text overlay: "${overlayText}".`;
+  }
+  if (isThumbnailRequest(rawQuery) && !/\b16:9|thumbnail\b/i.test(text)) {
+    text += ' YouTube thumbnail style, 16:9, bold composition, text-safe areas.';
+  }
+
+  const full = `${text}. ${suffix}`;
+  return { full, concise, overlayText };
+}
+
+function fallbackConcise(
+  intent: { subject: string; action?: string; environment?: string; style: string; rawQuery: string },
+  overlayText?: string
+): string {
+  const parts = [intent.subject, intent.action, intent.environment, intent.style].filter(Boolean);
+  let base = parts.join(', ').slice(0, 160) || intent.rawQuery.slice(0, 120);
+  if (overlayText) base += `, text "${overlayText}"`;
+  return base;
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
@@ -562,7 +608,11 @@ async function runVariantSlot(
     emitProgress(options, 'painting', `${slot.label} · ${providerDisplayLabel(name)}…`);
 
     try {
-      const imageUrl = await callImageProvider(entry, prompt, ctx);
+      const rawUrl = await callImageProvider(entry, prompt, ctx);
+      const imageUrl = await persistImageUrl(rawUrl, {
+        userId: ctx.userId,
+        label: `${slot.label}-${name}`.replace(/\s+/g, '-').toLowerCase(),
+      });
       const provider = normalizeProvider(name);
       const attempt = {
         imageUrl,
@@ -748,8 +798,11 @@ export async function generateImage(
   const aspectFormat = options?.aspectFormat ?? parseImageAspectFormat(rawQuery);
   const formatLabel = aspectFormatLabel(aspectFormat);
   const basePrompt = moderation.sanitizedPrompt ?? rawQuery;
-  const imagePrompt = await buildPipelinePrompt(rawQuery, basePrompt, aspectFormat, options);
-  const isYoutubeThumbnail = /\b(thumbnail|youtube)\b/i.test(rawQuery);
+  const pipeline = await buildPipelinePrompt(rawQuery, basePrompt, aspectFormat, options);
+  const imagePrompt = pipeline.full;
+  const concisePrompt = pipeline.concise;
+  const overlayText = pipeline.overlayText;
+  const isYoutubeThumbnail = isThumbnailRequest(rawQuery) || /\b(thumbnail|youtube)\b/i.test(rawQuery);
 
   const sourceUrl = extractSourceImageUrl(userPrompt, options?.sourceImageUrl);
   if (sourceUrl) {
@@ -768,13 +821,15 @@ export async function generateImage(
     throw new ImageGenerationError('No image API keys configured on the server.');
   }
 
+  const activeSlots = resolveVariantSlots(registry);
+
   const promptBundle = {
     full: imagePrompt,
     short: shortImagePrompt(rawQuery, basePrompt),
   };
 
   console.log(
-    `[ImageGen] ${VARIANT_COUNT} slots (${formatLabel}): ${VARIANT_SLOTS.map((s) => s.label).join(', ')}`
+    `[ImageGen] ${VARIANT_COUNT} slots (${formatLabel}): ${activeSlots.map((s) => s.label).join(', ')}`
   );
 
   type Attempt = {
@@ -791,7 +846,7 @@ export async function generateImage(
   };
 
   const attemptResults = await Promise.all(
-    VARIANT_SLOTS.map((slot) => runVariantSlot(slot, promptBundle, registry, ctx, options))
+    activeSlots.map((slot) => runVariantSlot(slot, promptBundle, registry, ctx, options))
   );
 
   const allAttempts = attemptResults;
@@ -861,7 +916,7 @@ export async function generateImage(
     }
   }
 
-  const serializedAttempts = VARIANT_SLOTS.map((slot, i) => {
+  const serializedAttempts = activeSlots.map((slot, i) => {
     const a = attemptResults[i]!;
     return {
       imageUrl: a.imageUrl,
@@ -886,7 +941,9 @@ export async function generateImage(
     imageUrl: winner.imageUrl,
     provider: winner.provider,
     prompt: rawQuery,
-    enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : undefined,
+    concisePrompt,
+    overlayText,
+    enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : concisePrompt,
     followUps: DEFAULT_FOLLOW_UPS,
     pros: [
       `${safeAttempts.length}/${VARIANT_COUNT} AI variants — best: ${winner.variantLabel ?? winner.provider}`,
@@ -906,7 +963,7 @@ export async function generateImage(
   };
 }
 
-/** Live smoke test — tries Fal then Replicate with a tiny prompt (for /health/smoke-image). */
+/** Live smoke test — tries each configured provider with a tiny prompt. */
 export async function smokeTestImageGeneration(): Promise<{
   ok: boolean;
   provider?: string;
@@ -929,7 +986,7 @@ export async function smokeTestImageGeneration(): Promise<{
     try {
       const imageUrl = await entry.call(prompt);
       if (isValidImageResult(imageUrl)) {
-        return { ok: true, provider: entry.name, imageUrl: imageUrl.slice(0, 120), tried };
+        return { ok: true, provider: entry.name, imageUrl: imageUrl.slice(0, 120), tried, errors };
       }
       errors[entry.name] = 'Invalid URL returned';
     } catch (err) {
@@ -939,6 +996,50 @@ export async function smokeTestImageGeneration(): Promise<{
   }
 
   return { ok: false, error: 'All smoke-test providers failed', tried, errors };
+}
+
+/** Diagnostic — test every configured provider independently (always returns per-provider errors). */
+export async function smokeTestAllImageProviders(): Promise<{
+  prompt: string;
+  results: Array<{
+    provider: string;
+    ok: boolean;
+    imageUrl?: string;
+    error?: string;
+    ms: number;
+  }>;
+}> {
+  const prompt = 'a red circle on white background, minimal test';
+  const chain = [...buildStandardProviders(), ...buildPremiumProviders()].filter((p) => p.configured);
+  const seen = new Set<string>();
+  const unique = chain.filter((p) => {
+    if (seen.has(p.name)) return false;
+    seen.add(p.name);
+    return true;
+  });
+
+  const results = await Promise.all(
+    unique.map(async (entry) => {
+      const started = Date.now();
+      try {
+        const imageUrl = await entry.call(prompt);
+        const ms = Date.now() - started;
+        if (!isValidImageResult(imageUrl)) {
+          return { provider: entry.name, ok: false, error: 'Invalid URL returned', ms };
+        }
+        return { provider: entry.name, ok: true, imageUrl: imageUrl.slice(0, 120), ms };
+      } catch (err) {
+        return {
+          provider: entry.name,
+          ok: false,
+          error: (err as Error).message,
+          ms: Date.now() - started,
+        };
+      }
+    })
+  );
+
+  return { prompt, results };
 }
 
 /** Full pipeline smoke — classify, enhance, generate (matches user flow). */

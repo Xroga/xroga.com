@@ -12,11 +12,12 @@ import {
   ThumbsUp,
   Star,
   Share2,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { copyImageToClipboard, downloadImage } from '@/lib/imageStudioUtils';
 import { ImageEditModal } from './ImageEditModal';
-import { ImagePreviewModal } from './ImagePreviewModal';
 import { TextGeneratingAnimation } from './TextGeneratingAnimation';
 import { isPlaceholderImage } from '@/lib/parseImageContent';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -41,7 +42,7 @@ const VARIANT_SLOTS = 4;
 const FORMAT_LABELS: Record<string, string> = {
   '1:1': 'Post (1:1)',
   '4:5': 'Portrait (4:5)',
-  '16:9': 'Landscape (16:9)',
+  '16:9': 'YouTube Thumbnail (16:9)',
   '9:16': 'Story (9:16)',
   '3:4': 'Portrait (3:4)',
   '4:3': 'Standard (4:3)',
@@ -52,6 +53,9 @@ export interface ImageOutputData {
   imageUrl: string;
   provider?: string;
   prompt?: string;
+  concisePrompt?: string;
+  enhancedPrompt?: string;
+  overlayText?: string;
   verified?: boolean;
   matchScore?: number;
   rejectedImages?: RejectedImage[];
@@ -79,17 +83,25 @@ export function ImageGeneratingAnimation({
   message,
   step,
   liveAttempts = [],
+  promptHint,
 }: {
   className?: string;
   message?: string;
   step?: string;
   liveAttempts?: RejectedImage[];
+  promptHint?: string;
 }) {
   const slots = Array.from({ length: VARIANT_SLOTS }, (_, i) => liveAttempts[i] ?? null);
 
   return (
     <div className={cn('my-3 space-y-2', className)}>
       <TextGeneratingAnimation message={message} step={step} mode="image" sublabel="Xroga AI · 4 variants" />
+      {promptHint && (
+        <div className="rounded-lg border border-[var(--card-border)] bg-[var(--card)]/60 px-3 py-2">
+          <p className="text-[9px] font-bold uppercase tracking-wide text-[var(--muted)] mb-0.5">Your command</p>
+          <p className="text-[11px] text-[var(--foreground)] leading-snug">{promptHint}</p>
+        </div>
+      )}
       <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)]/50 p-2">
         <p className="text-[10px] font-medium text-[var(--muted)] mb-1.5 px-1">
           Generating {VARIANT_SLOTS} variants… ({liveAttempts.length}/{VARIANT_SLOTS})
@@ -97,7 +109,7 @@ export function ImageGeneratingAnimation({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
           {slots.map((img, i) => (
             <div
-              key={img?.imageUrl ?? `slot-${i}`}
+              key={img?.variantIndex ?? `slot-${i}`}
               className="relative rounded-md overflow-hidden border border-[var(--card-border)] aspect-square bg-[var(--muted)]/10"
             >
               {img ? (
@@ -130,25 +142,28 @@ export function ImageStudioCard({
 }: ImageStudioCardProps) {
   const { setPrompt, submit, deleteTurn, updateFeatureOutput } = useTerminalChat();
   const [editOpen, setEditOpen] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [revealed, setRevealed] = useState(false);
   const [editSrc, setEditSrc] = useState('');
-  const [hiddenUrls, setHiddenUrls] = useState<Set<string>>(new Set());
   const [activeUrl, setActiveUrl] = useState(data.imageUrl);
 
   const {
     imageUrl: defaultSrc,
     provider,
     prompt,
+    concisePrompt,
+    enhancedPrompt,
+    overlayText,
     verified,
     matchScore,
     rejectedImages,
     allAttempts: allAttemptsProp,
     aspectFormat,
     isStyleTransfer,
+    isYoutubeThumbnail,
   } = data;
+
+  const displayPrompt = concisePrompt || enhancedPrompt || prompt;
 
   const allAttempts = useMemo(() => {
     if (allAttemptsProp?.length) {
@@ -174,8 +189,8 @@ export function ImageStudioCard({
   }, [defaultSrc, provider, matchScore, rejectedImages, allAttemptsProp]);
 
   const successfulVariants = useMemo(
-    () => allAttempts.filter((v) => Boolean(v.imageUrl) && !v.failed && !v.blocked && !hiddenUrls.has(v.imageUrl)),
-    [allAttempts, hiddenUrls]
+    () => allAttempts.filter((v) => Boolean(v.imageUrl) && !v.failed && !v.blocked),
+    [allAttempts]
   );
 
   const visibleVariants = successfulVariants.length > 0 ? successfulVariants : allAttempts.filter((v) => !v.failed && !v.blocked);
@@ -189,9 +204,20 @@ export function ImageStudioCard({
           : 'grid-cols-2 sm:grid-cols-4';
   const activeVariant = visibleVariants.find((v) => v.imageUrl === activeUrl) ?? visibleVariants[0];
   const previewSrc = activeVariant?.imageUrl ?? defaultSrc;
+  const activeIndex = Math.max(
+    0,
+    successfulVariants.findIndex((v) => v.imageUrl === activeUrl)
+  );
 
   if (generating) {
-    return <ImageGeneratingAnimation className={className} message={message} step={step} />;
+    return (
+      <ImageGeneratingAnimation
+        className={className}
+        message={message}
+        step={step}
+        promptHint={displayPrompt}
+      />
+    );
   }
 
   if (hidden) return null;
@@ -231,14 +257,6 @@ export function ImageStudioCard({
     persistSelection(url, false);
   }
 
-  function handleRemoveVariant(url: string) {
-    setHiddenUrls((prev) => new Set(prev).add(url));
-    if (activeUrl === url) {
-      const next = visibleVariants.find((v) => v.imageUrl !== url);
-      if (next) setActiveUrl(next.imageUrl);
-    }
-  }
-
   function handleDelete() {
     if (messageId) deleteTurn(messageId);
     else onDelete?.();
@@ -252,18 +270,25 @@ export function ImageStudioCard({
     void submit(text);
   }
 
-  function openPreview(url = previewSrc) {
-    setEditSrc(url);
-    setPreviewOpen(true);
-  }
-
   function openEditor(url = previewSrc) {
-    setPreviewOpen(false);
     setEditSrc(url);
+    setActiveUrl(url);
+    persistSelection(url, false);
     setEditOpen(true);
   }
 
-  const formatLabel = aspectFormat ? (FORMAT_LABELS[aspectFormat] ?? aspectFormat) : 'Post (1:1)';
+  function slideVariant(delta: number) {
+    if (successfulVariants.length < 2) return;
+    const next = (activeIndex + delta + successfulVariants.length) % successfulVariants.length;
+    const v = successfulVariants[next];
+    if (v) handleSelect(v.imageUrl);
+  }
+
+  const formatLabel = isYoutubeThumbnail
+    ? 'YouTube Thumbnail (16:9)'
+    : aspectFormat
+      ? (FORMAT_LABELS[aspectFormat] ?? aspectFormat)
+      : 'Post (1:1)';
 
   return (
     <>
@@ -276,7 +301,8 @@ export function ImageStudioCard({
         <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-[var(--card-border)] bg-[var(--background)]/50">
           <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
             <span className="text-xs font-semibold">
-              {isStyleTransfer ? 'Style transfer' : 'Image'} · {successfulVariants.length || 1} variant{successfulVariants.length === 1 ? '' : 's'}
+              {isStyleTransfer ? 'Style transfer' : isYoutubeThumbnail ? 'Thumbnail' : 'Image'} ·{' '}
+              {successfulVariants.length || 1} variant{successfulVariants.length === 1 ? '' : 's'}
             </span>
             <span className="text-[10px] text-[var(--muted)]">{formatLabel}</span>
             {verified !== false ? (
@@ -293,98 +319,148 @@ export function ImageStudioCard({
           </div>
         </div>
 
+        {displayPrompt && (
+          <div className="px-3 py-2 border-b border-[var(--card-border)] bg-[var(--background)]/30">
+            <p className="text-[9px] font-bold uppercase tracking-wide text-[var(--muted)] mb-0.5">
+              Groq prompt
+            </p>
+            <p className="text-[11px] text-[var(--foreground)] leading-snug">{displayPrompt}</p>
+            {overlayText && (
+              <p className="text-[10px] text-[var(--accent)] mt-1">
+                On-image text: <span className="font-semibold">&ldquo;{overlayText}&rdquo;</span>
+              </p>
+            )}
+          </div>
+        )}
+
         {previewSrc && (
           <div className="p-2 bg-[var(--background)] border-b border-[var(--card-border)]">
             <button
               type="button"
-              onClick={() => openPreview(previewSrc)}
-              className="w-full overflow-hidden rounded-lg border border-[var(--card-border)] cursor-zoom-in hover:ring-2 hover:ring-[var(--accent)]/25 transition-shadow"
-              aria-label="Open selected variant"
+              onClick={() => openEditor(previewSrc)}
+              className="w-full overflow-hidden rounded-lg border border-[var(--card-border)] cursor-pointer hover:ring-2 hover:ring-[var(--accent)]/25 transition-shadow"
+              aria-label="Open AI image editor"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={previewSrc}
                 alt={prompt ?? 'Selected variant'}
-                className={cn(
-                  'w-full max-h-[280px] object-contain mx-auto transition-opacity duration-500',
-                  revealed ? 'opacity-100' : 'opacity-0',
-                )}
+                className="w-full max-h-[280px] object-contain mx-auto"
                 loading="lazy"
-                onLoad={() => setRevealed(true)}
               />
             </button>
-            <p className="text-[10px] text-center text-[var(--muted)] mt-1">
-              {activeVariant?.userVoted ? '★ Your pick' : 'Preview'} — {activeVariant?.variantLabel ?? activeVariant?.provider ?? 'Selected'}
-            </p>
+
+            {successfulVariants.length > 1 && (
+              <div className="mt-2 px-1 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => slideVariant(-1)}
+                    className="p-1 rounded-md border border-[var(--card-border)] hover:bg-[var(--muted)]/10"
+                    aria-label="Previous variant"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                  </button>
+                  <input
+                    type="range"
+                    min={0}
+                    max={successfulVariants.length - 1}
+                    value={activeIndex}
+                    onChange={(e) => {
+                      const v = successfulVariants[Number(e.target.value)];
+                      if (v) handleSelect(v.imageUrl);
+                    }}
+                    className="flex-1 h-1.5 accent-[var(--accent)] cursor-pointer"
+                    aria-label="Browse variants"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => slideVariant(1)}
+                    className="p-1 rounded-md border border-[var(--card-border)] hover:bg-[var(--muted)]/10"
+                    aria-label="Next variant"
+                  >
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                <p className="text-[10px] text-center text-[var(--muted)]">
+                  Variant {activeIndex + 1} / {successfulVariants.length} —{' '}
+                  {activeVariant?.variantLabel ?? activeVariant?.provider ?? 'Selected'}
+                  {activeVariant?.userVoted ? ' · ★ Your pick' : ''}
+                </p>
+              </div>
+            )}
+
+            <div className="flex items-center justify-center gap-1.5 mt-2 flex-wrap">
+              <ActionPill icon={Wand2} label="AI Edit" accent onClick={() => openEditor(previewSrc)} />
+              <ActionPill icon={Download} label="Download" onClick={() => downloadImage(previewSrc, 'xroga-image.png')} />
+              <ActionPill icon={Copy} label="Copy" onClick={() => copyImageToClipboard(previewSrc)} />
+              <ActionPill icon={Trash2} label="Delete" danger onClick={() => setDeleteOpen(true)} />
+            </div>
           </div>
         )}
 
         {successfulVariants.length > 0 && (
-        <div className="px-2 py-2">
-          <p className="text-[10px] font-medium text-[var(--muted)] mb-1.5 px-0.5">
-            {successfulVariants.length > 1 ? 'Vote for the best' : 'Generated by'} ·{' '}
-            {successfulVariants.map((v) => v.variantLabel ?? v.provider).join(' · ')}
-          </p>
-          <div className={cn('grid gap-1.5', gridCols)}>
-            {successfulVariants.map((img, i) => {
-              const hasImage = Boolean(img.imageUrl);
-              const isActive = hasImage && img.imageUrl === activeUrl;
-              const isVoted = img.userVoted || (img.selected && isActive);
+          <div className="px-2 py-2">
+            <p className="text-[10px] font-medium text-[var(--muted)] mb-1.5 px-0.5">
+              {successfulVariants.length > 1 ? 'All variants — tap to AI edit' : 'Generated by'} ·{' '}
+              {successfulVariants.map((v) => v.variantLabel ?? v.provider).join(' · ')}
+            </p>
+            <div className={cn('grid gap-1.5', gridCols)}>
+              {successfulVariants.map((img, i) => {
+                const isActive = img.imageUrl === activeUrl;
+                const isVoted = img.userVoted || (img.selected && isActive);
 
-              return (
-                <div
-                  key={`${img.variantLabel ?? img.provider}-${img.imageUrl}-${i}`}
-                  className={cn(
-                    'relative rounded-md overflow-hidden border aspect-square group',
-                    isActive
-                      ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/30'
-                      : 'border-[var(--card-border)]',
-                  )}
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleSelect(img.imageUrl)}
-                    className="absolute inset-0 z-0"
-                    aria-label={`Preview ${img.variantLabel ?? img.provider}`}
+                return (
+                  <div
+                    key={`variant-${img.variantIndex ?? i}-${img.provider ?? 'slot'}`}
+                    className={cn(
+                      'relative rounded-md overflow-hidden border aspect-square group',
+                      isActive
+                        ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/30'
+                        : 'border-[var(--card-border)]',
+                    )}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
-                  </button>
-
-                  <div className="absolute top-0 inset-x-0 flex items-center justify-between p-0.5 z-10">
-                    <span className="text-[7px] font-bold px-1 py-0.5 rounded bg-black/60 text-white truncate max-w-[60%]">
-                      {img.variantLabel ?? img.provider}
-                    </span>
                     <button
                       type="button"
-                      title="Vote best"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleVote(img.imageUrl);
-                      }}
-                      className={cn(
-                        'p-0.5 rounded bg-black/60',
-                        isVoted ? 'text-amber-400' : 'text-white/80 hover:text-amber-300',
-                      )}
+                      onClick={() => openEditor(img.imageUrl)}
+                      className="absolute inset-0 z-0"
+                      aria-label={`AI edit ${img.variantLabel ?? img.provider}`}
                     >
-                      {isVoted ? <Star className="h-3 w-3 fill-current" /> : <ThumbsUp className="h-3 w-3" />}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
                     </button>
-                  </div>
 
-                  <div className="absolute bottom-0 inset-x-0 flex gap-0.5 p-0.5 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                    <MiniBtn icon={Download} title="Download" onClick={() => downloadImage(img.imageUrl, `xroga-${i + 1}.png`)} />
-                    <MiniBtn icon={Wand2} title="Edit" onClick={() => openEditor(img.imageUrl)} />
-                    <MiniBtn icon={Trash2} title="Remove" danger onClick={() => handleRemoveVariant(img.imageUrl)} />
-                  </div>
+                    <div className="absolute top-0 inset-x-0 flex items-center justify-between p-0.5 z-10 pointer-events-none">
+                      <span className="text-[7px] font-bold px-1 py-0.5 rounded bg-black/60 text-white truncate max-w-[60%]">
+                        {img.variantLabel ?? img.provider}
+                      </span>
+                    </div>
 
-                  <span className="absolute bottom-0 right-0 text-[7px] text-white/90 bg-black/50 px-1 py-0.5 z-[5] pointer-events-none">
-                    {img.matchScore}%
-                  </span>
-                </div>
-              );
-            })}
+                    <div className="absolute top-0 right-0 p-0.5 z-10">
+                      <button
+                        type="button"
+                        title="Vote best"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVote(img.imageUrl);
+                        }}
+                        className={cn(
+                          'p-0.5 rounded bg-black/60 pointer-events-auto',
+                          isVoted ? 'text-amber-400' : 'text-white/80 hover:text-amber-300',
+                        )}
+                      >
+                        {isVoted ? <Star className="h-3 w-3 fill-current" /> : <ThumbsUp className="h-3 w-3" />}
+                      </button>
+                    </div>
+
+                    <span className="absolute bottom-0 right-0 text-[7px] text-white/90 bg-black/50 px-1 py-0.5 z-[5] pointer-events-none">
+                      {img.matchScore}%
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
         )}
 
         <div className="flex items-center gap-1 px-2 py-2 border-t border-[var(--card-border)]">
@@ -397,28 +473,8 @@ export function ImageStudioCard({
             <Share2 className="h-3.5 w-3.5" />
             Post to social
           </button>
-          <div className="w-px h-5 bg-[var(--card-border)] mx-0.5" />
-          <IconBtn icon={Download} title="Download selected" onClick={() => downloadImage(previewSrc, 'xroga-image.png')} />
-          <IconBtn icon={Copy} title="Copy selected" onClick={() => copyImageToClipboard(previewSrc)} />
-          <IconBtn icon={Wand2} title="Edit selected" accent onClick={() => openEditor()} />
-          <IconBtn
-            icon={Trash2}
-            title="Delete all"
-            danger
-            className="ml-auto"
-            onClick={() => setDeleteOpen(true)}
-          />
         </div>
       </div>
-
-      <ImagePreviewModal
-        open={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        src={editSrc || previewSrc}
-        alt={prompt ?? 'Image'}
-        label={activeVariant?.variantLabel ?? activeVariant?.provider}
-        onEdit={() => openEditor(editSrc || previewSrc)}
-      />
 
       <ImageEditModal
         open={editOpen}
@@ -439,67 +495,32 @@ export function ImageStudioCard({
   );
 }
 
-function MiniBtn({
+function ActionPill({
   icon: Icon,
-  title,
+  label,
   onClick,
-  danger,
-}: {
-  icon: ComponentType<{ className?: string }>;
-  title: string;
-  onClick: () => void;
-  danger?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      title={title}
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick();
-      }}
-      className={cn(
-        'flex-1 flex items-center justify-center py-1 rounded bg-white/10 hover:bg-white/20',
-        danger && 'text-red-300',
-      )}
-    >
-      <Icon className="h-3 w-3 text-white" />
-    </button>
-  );
-}
-
-function IconBtn({
-  icon: Icon,
-  title,
-  onClick,
-  active,
   accent,
   danger,
-  className,
 }: {
   icon: ComponentType<{ className?: string }>;
-  title: string;
+  label: string;
   onClick: () => void;
-  active?: boolean;
   accent?: boolean;
   danger?: boolean;
-  className?: string;
 }) {
   return (
     <button
       type="button"
-      title={title}
       onClick={onClick}
       className={cn(
-        'p-2 rounded-lg border transition-colors',
-        active && 'border-emerald-500/40 bg-emerald-500/10',
-        accent && 'border-[var(--accent)]/35 bg-[var(--accent)]/10',
-        danger && 'border-red-500/30 text-red-500 hover:bg-red-500/10',
-        !active && !accent && !danger && 'border-transparent hover:bg-[var(--muted)]/10',
-        className,
+        'inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold border transition-colors',
+        accent && 'border-[var(--accent)]/40 bg-[var(--accent)]/10 text-[var(--accent)] hover:bg-[var(--accent)]/20',
+        danger && 'border-red-500/35 bg-red-500/10 text-red-500 hover:bg-red-500/15',
+        !accent && !danger && 'border-[var(--card-border)] bg-[var(--card)]/80 hover:bg-[var(--card)]',
       )}
     >
       <Icon className="h-3.5 w-3.5" />
+      {label}
     </button>
   );
 }
