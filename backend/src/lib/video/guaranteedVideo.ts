@@ -7,6 +7,7 @@ import { raceVideoProviders, isFastClip } from './fastVideoRace.js';
 import { generateImage } from '../../services/builder/imageGen.js';
 import { parseVideoFormat } from '../../services/media/videoUtils.js';
 import type { VideoGenerationResult } from '../videoProviders.js';
+import { sanitizeVideoPrompt } from './videoPrompt.js';
 
 export interface GuaranteedVideoOptions {
   userId?: string;
@@ -60,12 +61,13 @@ export async function generateGuaranteedVideo(
 ): Promise<VideoGenerationResult> {
   const errors: string[] = [];
   const dur = Math.min(Math.max(durationSeconds, 3), 30);
+  const cleanPrompt = sanitizeVideoPrompt(prompt);
   const isVertical = parseVideoFormat(prompt) === 'shorts_reels';
   const aspectRatio = isVertical ? '9:16' as const : '16:9' as const;
 
   if (isFastClip(dur)) {
     try {
-      const raced = await raceVideoProviders(prompt, dur, { aspectRatio });
+      const raced = await raceVideoProviders(cleanPrompt, dur, { aspectRatio });
       if (raced?.videoUrl) {
         console.log(`[GuaranteedVideo] Fast race winner: ${raced.provider}`);
         return raced;
@@ -76,7 +78,7 @@ export async function generateGuaranteedVideo(
   }
 
   try {
-    const api = await tryApiProviders(prompt, dur, {
+    const api = await tryApiProviders(cleanPrompt, dur, {
       ...options,
       aspectRatio,
     });
@@ -89,13 +91,13 @@ export async function generateGuaranteedVideo(
     {
       label: 'agnes-image',
       fn: () =>
-        tryImageSlideshow(prompt, dur, () => generateAgnesImage(prompt.slice(0, 500)), errors, 'agnes-image', isVertical),
+        tryImageSlideshow(cleanPrompt, dur, () => generateAgnesImage(cleanPrompt.slice(0, 500)), errors, 'agnes-image', isVertical),
     },
     {
       label: 'image-gen',
       fn: () =>
         tryImageSlideshow(prompt, dur, async () => {
-          const out = await generateImage(`Cinematic still frame: ${prompt}`, {
+          const out = await generateImage(`Cinematic still frame: ${cleanPrompt}`, {
             userId: options?.userId,
             runId: options?.runId,
             fast: true,
@@ -109,14 +111,14 @@ export async function generateGuaranteedVideo(
       label: 'keyframe',
       fn: () =>
         options?.keyframeUrl
-          ? tryImageSlideshow(prompt, dur, async () => options.keyframeUrl!, errors, 'keyframe', isVertical)
+          ? tryImageSlideshow(cleanPrompt, dur, async () => options.keyframeUrl!, errors, 'keyframe', isVertical)
           : Promise.resolve(null),
     },
     {
       label: 'placeholder-slideshow',
       fn: async () => {
         try {
-          const videoUrl = await generateSlideshowVideo(prompt, dur, undefined, isVertical);
+          const videoUrl = await generateSlideshowVideo(cleanPrompt, dur, undefined, isVertical);
           return { provider: 'slideshow', videoUrl, durationSeconds: dur };
         } catch (err) {
           errors.push(`placeholder-slideshow: ${(err as Error).message.slice(0, 80)}`);
@@ -139,7 +141,7 @@ export async function generateGuaranteedVideo(
   }
 
   try {
-    const videoUrl = await generateMinimalMp4(prompt, dur);
+    const videoUrl = await generateMinimalMp4(cleanPrompt, dur);
     console.log('[GuaranteedVideo] Success via ffmpeg-minimal');
     return { provider: 'ffmpeg-minimal', videoUrl, durationSeconds: dur };
   } catch (err) {

@@ -1,6 +1,7 @@
 /** Hailuo / MiniMax — https://platform.minimax.io/docs/api-reference/video-generation-t2v */
 
 import { getSecret } from '../../config/envSecrets.js';
+import { sanitizeVideoPrompt } from './videoPrompt.js';
 
 interface MiniMaxTaskResponse {
   task_id?: string;
@@ -66,7 +67,7 @@ export async function generateHailuoVideo(
 ): Promise<string> {
   const apiKey = getHailuoKey();
   const dur = durationSeconds <= 6 ? 6 : 10;
-  const vertical = options?.aspectRatio === '9:16';
+  const cleanPrompt = sanitizeVideoPrompt(prompt).slice(0, 2000);
 
   const response = await fetch(`${API_BASE}/v1/video_generation`, {
     method: 'POST',
@@ -75,11 +76,12 @@ export async function generateHailuoVideo(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'MiniMax-Hailuo-2.3-Fast',
-      prompt: prompt.slice(0, 2000),
+      model: 'MiniMax-Hailuo-2.3',
+      prompt: cleanPrompt,
       duration: dur,
-      resolution: vertical ? '768P' : '768P',
+      resolution: '768P',
       prompt_optimizer: true,
+      fast_pretreatment: true,
     }),
     signal: AbortSignal.timeout(30_000),
   });

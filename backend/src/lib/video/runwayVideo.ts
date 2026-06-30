@@ -1,4 +1,5 @@
 import { getSecret } from '../../config/envSecrets.js';
+import { sanitizeVideoPrompt } from './videoPrompt.js';
 
 /** Runway Gen-3 Alpha — premium cinematic video */
 
@@ -37,6 +38,8 @@ export async function generateRunwayVideo(
   const apiKey = getSecret('RUNWAY_API_KEY');
   if (!apiKey) throw new Error('RUNWAY_API_KEY not configured');
 
+  const cleanPrompt = sanitizeVideoPrompt(prompt);
+
   const createRes = await fetch(`${BASE}/text_to_video`, {
     method: 'POST',
     headers: {
@@ -46,7 +49,7 @@ export async function generateRunwayVideo(
     },
     body: JSON.stringify({
       model: 'gen3a_turbo',
-      promptText: prompt.slice(0, 1000),
+      promptText: cleanPrompt.slice(0, 1000),
       duration: Math.min(durationSeconds, 10),
       ratio: options?.aspectRatio === '9:16' ? '768:1280' : '1280:768',
     }),

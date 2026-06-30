@@ -51,6 +51,7 @@ export function getVideoKeyStatus(): Record<string, boolean> {
     FAL_API_KEY: hasSecret('FAL_KEY'),
     AGNES_API_KEY: hasSecret('AGNES_API_KEY'),
     KLING_API_KEY: hasSecret('KLING_API_KEY'),
+    KLING_API_SECRET: hasSecret('KLING_API_SECRET'),
     LUMA_API_KEY: hasSecret('LUMA_API_KEY'),
     RUNWAY_API_KEY: hasSecret('RUNWAY_API_KEY'),
     HAILUO_API_KEY: hasSecret('HAILUO_API_KEY'),

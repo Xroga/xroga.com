@@ -1,16 +1,23 @@
 import { filterByVault, recordVaultUsage } from '../services/omniReality/creditVault.js';
 import { getApiPriority, VIDEO_API_TIMEOUT_MS } from '../config/apiPriorities.js';
 import { logSystemError } from '../services/systemErrorLog.js';
+import { getSecret, hasSecret } from '../config/envSecrets.js';
 import { generateAgnesVideo } from './agnesVideo.js';
 import { generateAgnesImage } from './agnes.js';
 import { generateRunwayVideo } from './video/runwayVideo.js';
 import { generateLumaVideo } from './video/lumaVideo.js';
 import { generateHailuoVideo } from './video/hailuoVideo.js';
 import { generateFalVideo } from './video/falVideo.js';
+import { generateKlingVideo } from './video/klingVideo.js';
+import { isKlingConfigured } from './video/klingAuth.js';
 import { generateReplicateVideo } from './video/replicateVideo.js';
-import { generateCogVideoX, generateAnimateDiff } from './video/replicateOssVideo.js';
+import {
+  generateCogVideoX,
+  generateAnimateDiff,
+} from './video/replicateOssVideo.js';
 import { generateComfyUIVideo } from './video/comfyuiVideo.js';
 import { generateSlideshowVideo } from './video/slideshow.js';
+import { sanitizeVideoPrompt } from './video/videoPrompt.js';
 import { isFfmpegAvailable } from './video/ffmpegPath.js';
 
 export interface VideoGenerationResult {
@@ -55,53 +62,8 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
 function providerTimeout(name: VideoProviderName): number {
   if (name === 'agnes') return 180_000;
   if (name === 'slideshow') return 120_000;
+  if (name === 'fal' || name === 'hailuo') return 150_000;
   return VIDEO_API_TIMEOUT_MS;
-}
-
-
-async function pollKlingTask(taskId: string, apiKey: string): Promise<string> {
-  for (let i = 0; i < 60; i++) {
-    const res = await fetch(`https://api.klingai.com/v1/videos/text2video/${taskId}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
-    const data = (await res.json()) as {
-      data: { task_status: string; task_result?: { videos?: Array<{ url: string }> } };
-    };
-    if (data.data.task_status === 'succeed' && data.data.task_result?.videos?.[0]?.url) {
-      return data.data.task_result.videos[0].url;
-    }
-    if (data.data.task_status === 'failed') throw new Error('Kling video failed');
-    await new Promise((r) => setTimeout(r, 3000));
-  }
-  throw new Error('Kling video timed out');
-}
-
-async function generateKlingVideo(
-  prompt: string,
-  durationSeconds: number,
-  options?: { aspectRatio?: '9:16' | '16:9' }
-): Promise<string> {
-  const apiKey = process.env.KLING_API_KEY;
-  if (!apiKey) throw new Error('KLING_API_KEY not configured');
-
-  const response = await fetch('https://api.klingai.com/v1/videos/text2video', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      prompt,
-      duration: String(durationSeconds),
-      mode: 'std',
-      aspect_ratio: options?.aspectRatio === '9:16' ? '9:16' : '16:9',
-    }),
-  });
-
-  if (!response.ok) throw new Error(`Kling AI error: ${response.status}`);
-
-  const data = (await response.json()) as { data: { task_id: string } };
-  return pollKlingTask(data.data.task_id, apiKey);
 }
 
 async function generateMorphVideo(prompt: string, durationSeconds: number): Promise<string> {
@@ -144,58 +106,58 @@ async function generateImageToSlideshowVideo(
 function buildVideoProviders(): ProviderEntry[] {
   return [
     {
-      name: 'agnes',
-      configured: Boolean(process.env.AGNES_API_KEY),
-      call: generateAgnesVideo,
-    },
-    {
-      name: 'kling',
-      configured: Boolean(process.env.KLING_API_KEY),
-      call: generateKlingVideo,
-    },
-    {
       name: 'fal',
-      configured: Boolean(process.env.FAL_KEY ?? process.env.FAL_API_KEY),
+      configured: hasSecret('FAL_KEY'),
       call: (prompt, duration, opts) => generateFalVideo(prompt, duration, { aspectRatio: opts?.aspectRatio }),
     },
     {
       name: 'hailuo',
-      configured: Boolean(process.env.HAILUO_API_KEY ?? process.env.MINIMAX_API_KEY),
+      configured: hasSecret('HAILUO_API_KEY'),
       call: (prompt, duration, opts) => generateHailuoVideo(prompt, duration, { aspectRatio: opts?.aspectRatio }),
     },
     {
-      name: 'runway',
-      configured: Boolean(process.env.RUNWAY_API_KEY),
-      call: generateRunwayVideo,
+      name: 'kling',
+      configured: isKlingConfigured(),
+      call: (prompt, duration, opts) => generateKlingVideo(prompt, duration, { aspectRatio: opts?.aspectRatio }),
     },
     {
       name: 'luma',
-      configured: Boolean(process.env.LUMA_API_KEY),
+      configured: hasSecret('LUMA_API_KEY'),
       call: generateLumaVideo,
     },
     {
+      name: 'runway',
+      configured: hasSecret('RUNWAY_API_KEY'),
+      call: generateRunwayVideo,
+    },
+    {
+      name: 'replicate-svd',
+      configured: hasSecret('REPLICATE_API_TOKEN'),
+      call: (prompt) => generateReplicateVideo(prompt),
+    },
+    {
       name: 'cogvideox',
-      configured: Boolean(process.env.REPLICATE_API_TOKEN),
+      configured: hasSecret('REPLICATE_API_TOKEN'),
       call: (prompt, duration) => generateCogVideoX(prompt, duration),
     },
     {
       name: 'animatediff',
-      configured: Boolean(process.env.REPLICATE_API_TOKEN),
+      configured: hasSecret('REPLICATE_API_TOKEN'),
       call: (prompt, duration) => generateAnimateDiff(prompt, duration),
     },
     {
-      name: 'replicate-svd',
-      configured: Boolean(process.env.REPLICATE_API_TOKEN),
-      call: (prompt) => generateReplicateVideo(prompt),
+      name: 'agnes',
+      configured: hasSecret('AGNES_API_KEY'),
+      call: generateAgnesVideo,
     },
     {
       name: 'morph',
-      configured: Boolean(process.env.MORPH_API_KEY),
+      configured: Boolean(getSecret('MORPH_API_KEY')),
       call: generateMorphVideo,
     },
     {
       name: 'comfyui',
-      configured: Boolean(process.env.COMFYUI_URL),
+      configured: Boolean(getSecret('COMFYUI_URL')),
       call: generateComfyUIVideo,
     },
   ];
@@ -246,6 +208,7 @@ export async function generateVideoWithFallback(
     aspectRatio?: '9:16' | '16:9';
   }
 ): Promise<VideoGenerationResult> {
+  const cleanPrompt = sanitizeVideoPrompt(prompt);
   const priorityList = await getApiPriority('video');
   const allProviders = await buildVideoProvidersAsync();
   const providerMap = new Map(allProviders.map((p) => [p.name, p]));
@@ -273,7 +236,7 @@ export async function generateVideoWithFallback(
 
     try {
       const videoUrl = await withTimeout(
-        entry.call(prompt, durationSeconds, { aspectRatio: options?.aspectRatio }),
+        entry.call(cleanPrompt, durationSeconds, { aspectRatio: options?.aspectRatio }),
         providerTimeout(name as VideoProviderName),
         name
       );
@@ -303,7 +266,7 @@ export async function generateVideoWithFallback(
   if (providerMap.has('slideshow')) {
     try {
       const slideshowUrl = await generateSlideshowVideo(
-        prompt,
+        cleanPrompt,
         durationSeconds,
         options?.keyframeUrl,
         options?.aspectRatio === '9:16'
@@ -336,20 +299,21 @@ export async function smokeTestVideoGeneration(): Promise<{
   provider?: string;
   error?: string;
   tried: string[];
+  errors?: Record<string, string>;
 }> {
   const tried: string[] = [];
   const errors: Record<string, string> = {};
   const prompt = 'A cat walking on a beach at sunset, cinematic, 2 seconds';
 
   const chain = await buildVideoProvidersAsync();
-  const configured = chain.filter((p) => p.configured);
+  const configured = chain.filter((p) => p.configured && p.name !== 'slideshow');
 
   for (const p of configured) {
     tried.push(p.name);
     try {
       const url = await withTimeout(p.call(prompt, 3), providerTimeout(p.name), p.name);
       if (isValidVideoUrl(url)) {
-        return { ok: true, provider: p.name, tried };
+        return { ok: true, provider: p.name, tried, errors };
       }
       errors[p.name] = 'Invalid URL returned';
     } catch (err) {
@@ -360,7 +324,8 @@ export async function smokeTestVideoGeneration(): Promise<{
 
   return {
     ok: false,
-    error: `All video providers failed. ${Object.entries(errors).slice(0, 3).map(([k, v]) => `${k}: ${v.slice(0, 80)}`).join(' | ')}`,
+    error: `All video providers failed. ${Object.entries(errors).slice(0, 4).map(([k, v]) => `${k}: ${v.slice(0, 80)}`).join(' | ')}`,
     tried,
+    errors,
   };
 }
