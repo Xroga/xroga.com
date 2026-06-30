@@ -38,7 +38,7 @@ export function FeatureOutputView({
       },
       followUps: Array.isArray(o.followUps) ? (o.followUps as string[]) : undefined,
     };
-    return <ImageBlockedCard data={data} />;
+    return <ImageBlockedCard data={data} messageId={messageId} onDelete={onDelete} />;
   }
 
   if (o.type === 'image' && typeof o.imageUrl === 'string') {

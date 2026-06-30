@@ -18,6 +18,7 @@ import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
 import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { FeatureOutputView } from './FeatureOutputView';
+import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
 import { TextGeneratingAnimation } from './TextGeneratingAnimation';
@@ -46,7 +47,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, imageAttempts, videoProgressStep, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn } =
+  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, imageAttempts, videoProgressStep, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -293,7 +294,12 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   {msg.role === 'user' ? (
                     <>
                       <UserPromptBubble content={msg.content} />
-                      <MessageBubbleActions role="user" content={msg.content} messageId={msg.id} />
+                      <MessageBubbleActions
+                        role="user"
+                        content={msg.content}
+                        messageId={msg.id}
+                        onDelete={() => deleteUserTurn(msg.id)}
+                      />
                       {loading && msg.id === lastUserMessageId && (
                         <div className="mt-2 text-left">{swarmProcessing}</div>
                       )}
@@ -314,11 +320,13 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             sublabel="Xroga AI · Video Studio"
                           />
                         ) : msg.featureOutput ? (
-                          <FeatureOutputView
-                            output={msg.featureOutput}
-                            messageId={msg.id}
-                            onDelete={() => deleteTurn(msg.id)}
-                          />
+                          <ChatErrorBoundary>
+                            <FeatureOutputView
+                              output={msg.featureOutput}
+                              messageId={msg.id}
+                              onDelete={() => deleteTurn(msg.id)}
+                            />
+                          </ChatErrorBoundary>
                         ) : loading &&
                         msg.id === animatingId &&
                         isImageGenerationPrompt(lastUserText) ? (
@@ -348,6 +356,14 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           onDeploy={() => handleDeploy(lastUserText, msg.content)}
                           onEdit={() => handleEditAI(msg.content)}
                           onFeedback={() => setFeedbackOpen(true)}
+                          onDelete={() => deleteTurn(msg.id)}
+                        />
+                      )}
+                      {!msg.content && msg.featureOutput && (
+                        <MessageBubbleActions
+                          role="assistant"
+                          content=""
+                          messageId={msg.id}
                           onDelete={() => deleteTurn(msg.id)}
                         />
                       )}

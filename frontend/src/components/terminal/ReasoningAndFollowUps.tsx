@@ -124,7 +124,7 @@ export function ModernResponseText({
         )}
         {images.map((img, i) => (
           <ImageStudioCard
-            key={`${img.url}-${i}`}
+            key={`studio-img-${i}`}
             data={{
               type: 'image',
               imageUrl: img.url,
