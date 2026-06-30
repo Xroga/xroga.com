@@ -1,13 +1,11 @@
 /**
- * Fast video path — OSS providers race first for short clips (≤15s).
- * Target: real MP4 in under 2 minutes without premium API credits.
+ * Fast video path — OSS providers tried sequentially for short clips (≤15s).
+ * Avoids Replicate 429 bursts from parallel predictions on one token.
  */
 
 import { hasSecret } from '../../config/envSecrets.js';
 import { generateMinimaxReplicateVideo, generateWanReplicateVideo, generateCogVideoX, generateAnimateDiff } from './replicateOssVideo.js';
 import { generateDeepInfraVideo } from './deepinfraVideo.js';
-import { tryImageToVideo } from './imageToVideo.js';
-import { generateReplicateVideo } from './replicateVideo.js';
 import { generateFalVideo } from './falVideo.js';
 import { generateHailuoVideo } from './hailuoVideo.js';
 import { generateLumaVideo } from './lumaVideo.js';
@@ -30,7 +28,31 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
 
 type Racer = { name: string; run: () => Promise<string> };
 
-function buildRacers(
+function buildOssRacers(
+  prompt: string,
+  durationSeconds: number,
+  userId?: string
+): Racer[] {
+  const racers: Racer[] = [];
+
+  // DeepInfra first — separate quota from Replicate
+  if (hasSecret('DEEPINFRA_API_KEY')) {
+    racers.push({ name: 'deepinfra', run: () => generateDeepInfraVideo(prompt, durationSeconds) });
+  }
+
+  // Replicate OSS models one-at-a-time (shared rate limit)
+  if (hasSecret('REPLICATE_API_TOKEN')) {
+    racers.push({ name: 'replicate-minimax', run: () => generateMinimaxReplicateVideo(prompt, durationSeconds) });
+    racers.push({ name: 'replicate-wan', run: () => generateWanReplicateVideo(prompt, durationSeconds) });
+    racers.push({ name: 'cogvideox', run: () => generateCogVideoX(prompt, durationSeconds) });
+    racers.push({ name: 'animatediff', run: () => generateAnimateDiff(prompt, durationSeconds) });
+    // SVD is image-to-video — skip in fast text-to-video race (handled in guaranteedVideo i2v)
+  }
+
+  return racers;
+}
+
+function buildPremiumRacers(
   prompt: string,
   durationSeconds: number,
   aspectRatio?: '9:16' | '16:9',
@@ -38,19 +60,6 @@ function buildRacers(
 ): Racer[] {
   const racers: Racer[] = [];
 
-  // ── OSS / free (80%) — tried first in parallel ──
-  if (hasSecret('REPLICATE_API_TOKEN')) {
-    racers.push({ name: 'replicate-minimax', run: () => generateMinimaxReplicateVideo(prompt, durationSeconds) });
-    racers.push({ name: 'replicate-wan', run: () => generateWanReplicateVideo(prompt, durationSeconds) });
-    racers.push({ name: 'cogvideox', run: () => generateCogVideoX(prompt, durationSeconds) });
-    racers.push({ name: 'animatediff', run: () => generateAnimateDiff(prompt, durationSeconds) });
-    racers.push({ name: 'replicate-svd', run: () => generateReplicateVideo(prompt, { userId }) });
-  }
-  if (hasSecret('DEEPINFRA_API_KEY')) {
-    racers.push({ name: 'deepinfra', run: () => generateDeepInfraVideo(prompt, durationSeconds) });
-  }
-
-  // ── Premium (20%) — only if OSS racers all fail ──
   if (hasSecret('FAL_KEY')) {
     racers.push({ name: 'fal', run: () => generateFalVideo(prompt, durationSeconds, { aspectRatio }) });
   }
@@ -73,54 +82,43 @@ function buildRacers(
   return racers;
 }
 
+async function trySequential(
+  group: Racer[],
+  durationSeconds: number
+): Promise<VideoGenerationResult | null> {
+  for (const r of group) {
+    try {
+      const videoUrl = await withTimeout(r.run(), FAST_TIMEOUT_MS, r.name);
+      return { provider: r.name, videoUrl, durationSeconds };
+    } catch (err) {
+      console.warn(`[FastVideoRace] ${r.name}:`, (err as Error).message.slice(0, 120));
+    }
+  }
+  return null;
+}
+
 /** First successful provider wins; returns null if all fail */
 export async function raceVideoProviders(
   prompt: string,
   durationSeconds: number,
   options?: { aspectRatio?: '9:16' | '16:9'; userId?: string }
 ): Promise<VideoGenerationResult | null> {
-  const racers = buildRacers(prompt, durationSeconds, options?.aspectRatio, options?.userId);
-  if (racers.length === 0) return null;
+  const ossRacers = buildOssRacers(prompt, durationSeconds, options?.userId);
+  const premiumRacers = buildPremiumRacers(prompt, durationSeconds, options?.aspectRatio, options?.userId);
 
-  const ossNames = new Set(['replicate-minimax', 'replicate-wan', 'cogvideox', 'animatediff', 'replicate-svd', 'deepinfra']);
-  const ossRacers = racers.filter((r) => ossNames.has(r.name));
-  const premiumRacers = racers.filter((r) => !ossNames.has(r.name));
+  if (ossRacers.length === 0 && premiumRacers.length === 0) return null;
 
-  const race = async (group: Racer[]): Promise<VideoGenerationResult | null> => {
-    if (group.length === 0) return null;
-    const attempts = group.map((r) =>
-      withTimeout(r.run(), FAST_TIMEOUT_MS, r.name)
-        .then((videoUrl) => ({ provider: r.name, videoUrl, durationSeconds }))
-        .catch((err) => {
-          console.warn(`[FastVideoRace] ${r.name}:`, (err as Error).message.slice(0, 100));
-          return Promise.reject(err);
-        })
-    );
-    try {
-      return await Promise.any(attempts);
-    } catch {
-      return null;
-    }
-  };
-
-  const ossWinner = await race(ossRacers);
+  const ossWinner = await trySequential(ossRacers, durationSeconds);
   if (ossWinner) {
     console.log(`[FastVideoRace] OSS winner: ${ossWinner.provider}`);
     return ossWinner;
   }
 
-  console.warn('[FastVideoRace] OSS failed, trying premium + image-to-video…');
-  const premiumWinner = await race(premiumRacers);
+  console.warn('[FastVideoRace] OSS exhausted, trying premium providers…');
+  const premiumWinner = await trySequential(premiumRacers, durationSeconds);
   if (premiumWinner) {
     console.log(`[FastVideoRace] Premium winner: ${premiumWinner.provider}`);
     return premiumWinner;
-  }
-
-  try {
-    const i2v = await tryImageToVideo(prompt, durationSeconds, options);
-    if (i2v) return i2v;
-  } catch (err) {
-    console.warn('[FastVideoRace] Image-to-video failed:', (err as Error).message);
   }
 
   return null;

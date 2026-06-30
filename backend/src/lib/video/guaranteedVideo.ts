@@ -92,16 +92,18 @@ export async function generateGuaranteedVideo(
     } catch (err) {
       errors.push(`image-to-video: ${(err as Error).message.slice(0, 80)}`);
     }
-  }
 
-  try {
-    const api = await tryApiProviders(cleanPrompt, dur, {
-      ...options,
-      aspectRatio,
-    });
-    if (api.videoUrl) return api;
-  } catch (err) {
-    errors.push(`api: ${(err as Error).message.slice(0, 80)}`);
+    // Skip redundant sequential API pass for fast clips — go straight to FFmpeg fallbacks
+  } else {
+    try {
+      const api = await tryApiProviders(cleanPrompt, dur, {
+        ...options,
+        aspectRatio,
+      });
+      if (api.videoUrl) return api;
+    } catch (err) {
+      errors.push(`api: ${(err as Error).message.slice(0, 80)}`);
+    }
   }
 
   const slideshowAttempts: Array<{ label: string; fn: () => Promise<VideoGenerationResult | null> }> = [

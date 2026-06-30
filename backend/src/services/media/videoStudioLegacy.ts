@@ -19,19 +19,27 @@ async function persistVideoFile(
   videoUrl: string,
   projectId?: string
 ): Promise<string> {
-  const buffer = await downloadVideoBuffer(videoUrl);
-  if (isStubJsonBuffer(buffer) || !isValidMp4Buffer(buffer)) {
-    throw new Error('Video provider returned invalid file.');
+  try {
+    const buffer = await downloadVideoBuffer(videoUrl);
+    if (isStubJsonBuffer(buffer) || !isValidMp4Buffer(buffer)) {
+      throw new Error('Video provider returned invalid file.');
+    }
+
+    const stored = await storeUserFile(userId, `video-${Date.now()}.mp4`, buffer, 'video/mp4');
+
+    if (projectId) {
+      const { storeProjectFile } = await import('../storage/projectFiles.js');
+      await storeProjectFile(userId, projectId, `video-${Date.now()}.mp4`, buffer, 'video/mp4', 'video');
+    }
+
+    return stored.playbackUrl || stored.fileUrl;
+  } catch (err) {
+    console.error('[VideoStudio] Persist failed, using source URL:', (err as Error).message);
+    if (videoUrl.startsWith('http') || videoUrl.startsWith('data:video/')) {
+      return videoUrl;
+    }
+    throw err;
   }
-
-  const stored = await storeUserFile(userId, `video-${Date.now()}.mp4`, buffer, 'video/mp4');
-
-  if (projectId) {
-    const { storeProjectFile } = await import('../storage/projectFiles.js');
-    await storeProjectFile(userId, projectId, `video-${Date.now()}.mp4`, buffer, 'video/mp4', 'video');
-  }
-
-  return stored.fileUrl.startsWith('data:') ? stored.fileUrl : (stored.playbackUrl || stored.fileUrl);
 }
 
 /** Single-scene video — AI router plans script, guaranteed output always delivers MP4 */
@@ -115,7 +123,7 @@ export async function produceSingleSceneVideo(
         outputFilename: `xroga-video-${Date.now()}.mp4`,
       });
       const stored = await storeUserFile(userId, `video-${Date.now()}.mp4`, assembly.buffer, 'video/mp4');
-      fileUrl = stored.fileUrl.startsWith('data:') ? stored.fileUrl : (stored.playbackUrl || stored.fileUrl);
+      fileUrl = stored.playbackUrl || stored.fileUrl;
       if (projectId) {
         const { storeProjectFile } = await import('../storage/projectFiles.js');
         await storeProjectFile(userId, projectId, `video-${Date.now()}.mp4`, assembly.buffer, 'video/mp4', 'video');

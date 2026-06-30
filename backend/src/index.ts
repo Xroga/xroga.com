@@ -196,6 +196,7 @@ app.get('/api/media/stream', async (req, res) => {
     res.setHeader('Content-Type', contentType.startsWith('video/') ? contentType : 'video/mp4');
     res.setHeader('Cache-Control', 'public, max-age=86400');
     res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.send(buffer);
   } catch (err) {
     console.error('[MediaStream]', (err as Error).message);
