@@ -29,7 +29,9 @@ export const TOOL_REGISTRY: ToolEntry[] = [
   { id: 'runway', name: 'Runway Gen-3', category: 'video', isFree: false, isPremium: true, envKey: 'RUNWAY_API_KEY', costWeight: 9, capabilities: ['text2video', 'motion', 'production'], climaxOnly: true },
   { id: 'hailuo', name: 'Hailuo / MiniMax', category: 'video', isFree: false, isPremium: false, envKey: 'HAILUO_API_KEY', altEnvKeys: ['MINIMAX_API_KEY'], costWeight: 5, capabilities: ['text2video', 'micro_expressions', 'stylization'] },
   { id: 'fal', name: 'fal.ai', category: 'video', isFree: false, isPremium: false, envKey: 'FAL_KEY', altEnvKeys: ['FAL_API_KEY'], costWeight: 4, capabilities: ['text2video', 'fast_inference', 'workflow'] },
-  { id: 'replicate-svd', name: 'Replicate SVD', category: 'video', isFree: false, isPremium: false, envKey: 'REPLICATE_API_TOKEN', costWeight: 3, capabilities: ['img2video', 'svd', 'oss_models'] },
+  { id: 'cogvideox', name: 'CogVideoX', category: 'video', isFree: true, isPremium: false, envKey: 'REPLICATE_API_TOKEN', costWeight: 2, capabilities: ['text2video', 'oss', 'replicate'] },
+  { id: 'animatediff', name: 'AnimateDiff', category: 'video', isFree: true, isPremium: false, envKey: 'REPLICATE_API_TOKEN', costWeight: 2, capabilities: ['text2video', 'motion', 'oss'] },
+  { id: 'replicate-svd', name: 'Stable Video Diffusion', category: 'video', isFree: false, isPremium: false, envKey: 'REPLICATE_API_TOKEN', costWeight: 3, capabilities: ['img2video', 'svd'] },
   { id: 'morph', name: 'Morph Studio', category: 'video', isFree: false, isPremium: false, envKey: 'MORPH_API_KEY', costWeight: 6, capabilities: ['text2video', 'camera_pan'] },
 
   // ── Video: Workhorse (80%) ──

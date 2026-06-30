@@ -13,6 +13,7 @@ import { formatFeatureOutput, stripFakeImageMarkdown } from '../lib/featureInten
 import { executeFeature, resolveFeatureCategory } from '../services/featureExecutor.js';
 import { getImageProviderStatus } from '../services/builder/imageGen.js';
 import { getVideoProviderStatus } from '../lib/videoProviders.js';
+import { omniPhaseToVideoStep } from '../services/omniReality/omniEvents.js';
 
 const FRIENDLY_FALLBACKS = [
   "I'm putting the finishing touches on this — here's what I can share right now based on your request.",
@@ -196,6 +197,18 @@ export class Orchestrator {
           status: 'building',
           message: detail ?? message,
           videoStep: step,
+          timestamp: new Date().toISOString(),
+        });
+      },
+      onOmniEvent: (event) => {
+        ctx.onProgress?.({
+          runId,
+          agent: 'omni_reality',
+          status: 'building',
+          message: event.detail ?? event.message,
+          videoStep: omniPhaseToVideoStep(event.phase),
+          omniPhase: event.phase,
+          omniDetail: event.detail,
           timestamp: new Date().toISOString(),
         });
       },

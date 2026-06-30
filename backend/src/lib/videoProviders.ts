@@ -8,6 +8,7 @@ import { generateLumaVideo } from './video/lumaVideo.js';
 import { generateHailuoVideo } from './video/hailuoVideo.js';
 import { generateFalVideo } from './video/falVideo.js';
 import { generateReplicateVideo } from './video/replicateVideo.js';
+import { generateCogVideoX, generateAnimateDiff } from './video/replicateOssVideo.js';
 import { generateComfyUIVideo } from './video/comfyuiVideo.js';
 import { generateSlideshowVideo } from './video/slideshow.js';
 import { isFfmpegAvailable } from './video/ffmpegPath.js';
@@ -25,6 +26,8 @@ export type VideoProviderName =
   | 'kling'
   | 'fal'
   | 'replicate-svd'
+  | 'cogvideox'
+  | 'animatediff'
   | 'agnes'
   | 'morph'
   | 'comfyui'
@@ -162,6 +165,16 @@ function buildVideoProviders(): ProviderEntry[] {
       call: generateLumaVideo,
     },
     {
+      name: 'cogvideox',
+      configured: Boolean(process.env.REPLICATE_API_TOKEN),
+      call: (prompt, duration) => generateCogVideoX(prompt, duration),
+    },
+    {
+      name: 'animatediff',
+      configured: Boolean(process.env.REPLICATE_API_TOKEN),
+      call: (prompt, duration) => generateAnimateDiff(prompt, duration),
+    },
+    {
       name: 'replicate-svd',
       configured: Boolean(process.env.REPLICATE_API_TOKEN),
       call: (prompt) => generateReplicateVideo(prompt),
@@ -229,7 +242,7 @@ export async function generateVideoWithFallback(
   const providerMap = new Map(allProviders.map((p) => [p.name, p]));
 
   const premiumSet = new Set(['runway', 'luma']);
-  const cheapSet = new Set(['hailuo', 'kling', 'fal', 'replicate-svd', 'agnes', 'morph']);
+  const cheapSet = new Set(['hailuo', 'kling', 'fal', 'replicate-svd', 'cogvideox', 'animatediff', 'agnes', 'morph']);
 
   let orderedNames = priorityList.filter((name) => providerMap.has(name as VideoProviderName));
 

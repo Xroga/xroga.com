@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, Trash2, Play, Share2, Film, Sparkles } from 'lucide-react';
+import { Download, Trash2, Play, Share2, Film, Sparkles, Clapperboard, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TextGeneratingAnimation } from './TextGeneratingAnimation';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -20,6 +20,22 @@ export interface VideoOutputData {
   selectedProvider?: string;
   videoFormat?: VideoFormatId;
   prompt?: string;
+  screenplay?: {
+    title: string;
+    mood: string;
+    scenes: Array<{ number: number; description: string; dialogue: string; durationSeconds: number }>;
+  };
+  providersUsed?: string[];
+  reviewScores?: { physics: number; lighting: number; consistency: number };
+  healingSteps?: string[];
+  qcScore?: number;
+  omniReality?: {
+    storyboardProvider?: string;
+    moodTone?: string;
+    continuityLocks?: string[];
+    sceneCount?: number;
+  };
+  audioTracks?: Array<{ type: string; provider: string }>;
 }
 
 interface VideoStudioCardProps {
@@ -54,7 +70,7 @@ export function VideoStudioCard({
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const { setPrompt, deleteTurn } = useTerminalChat();
 
-  const { title, streamingUrl, selectedProvider, durationSeconds, prompt } = data;
+  const { title, streamingUrl, selectedProvider, durationSeconds, prompt, screenplay, providersUsed, reviewScores, healingSteps, qcScore, omniReality, audioTracks } = data;
   const videoFormat: VideoFormatId =
     data.videoFormat ?? parseVideoFormatFromPrompt(prompt ?? title);
   const { src: previewSrc, loading: videoLoading, error: videoError } = useVideoSrc(streamingUrl);
@@ -113,18 +129,57 @@ export function VideoStudioCard({
             <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-[var(--muted)]/12 text-[var(--muted)] shrink-0">
               {formatLabel(videoFormat).split(' ')[0]}
             </span>
-            {selectedProvider && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded-md border border-[var(--card-border)] text-[var(--muted)] shrink-0">
-                {selectedProvider}
+            {omniReality?.moodTone && (
+              <span className="text-[9px] px-1.5 py-0.5 rounded-md border border-purple-500/30 text-purple-400 shrink-0">
+                {omniReality.moodTone}
               </span>
             )}
           </div>
           {durationSeconds != null && (
             <span className="text-[10px] text-[var(--muted)] shrink-0">{durationSeconds}s</span>
           )}
-        </div>
+          </div>
 
-        <div className="px-3 pb-3">
+          {(screenplay?.scenes?.length ?? 0) > 0 && (
+            <div className="px-3 pb-2">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <Clapperboard className="h-3 w-3 text-[var(--accent)]" />
+                <span className="text-[10px] font-semibold text-[var(--muted)]">Storyboard</span>
+              </div>
+              <div className="space-y-1 max-h-24 overflow-y-auto">
+                {screenplay!.scenes.slice(0, 4).map((s) => (
+                  <p key={s.number} className="text-[9px] text-[var(--muted)] leading-snug">
+                    <span className="text-[var(--foreground)] font-medium">Scene {s.number}:</span> {s.description.slice(0, 80)}
+                    {s.dialogue ? ` — "${s.dialogue.slice(0, 40)}…"` : ''}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {(reviewScores || qcScore != null || healingSteps?.length) && (
+            <div className="px-3 pb-2 flex flex-wrap gap-1.5">
+              {reviewScores && (
+                <span className="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                  <Shield className="h-2.5 w-2.5" />
+                  QC {qcScore ?? reviewScores.physics + reviewScores.lighting + reviewScores.consistency}
+                </span>
+              )}
+              {selectedProvider && (
+                <span className="text-[9px] px-1.5 py-0.5 rounded-md border border-[var(--card-border)] text-[var(--muted)]">
+                  {selectedProvider}
+                </span>
+              )}
+              {providersUsed?.slice(0, 3).map((p) => (
+                <span key={p} className="text-[9px] px-1.5 py-0.5 rounded-md bg-[var(--muted)]/8 text-[var(--muted)]">{p}</span>
+              ))}
+              {audioTracks?.map((t) => (
+                <span key={t.provider} className="text-[9px] px-1.5 py-0.5 rounded-md bg-[#006aff]/10 text-[#60a5fa]">{t.provider}</span>
+              ))}
+            </div>
+          )}
+
+          <div className="px-3 pb-3">
           <button
             type="button"
             onClick={() => setPlayerOpen(true)}

@@ -5,6 +5,7 @@ import { storeUserFile } from '../storage/projectFiles.js';
 import { planVideoProduction } from './videoRouter.js';
 import type { VideoStudioOutput } from '../../types/features.js';
 import type { ProduceVideoOptions } from './produceVideo.js';
+import type { OmniVideoEvent } from '../omniReality/omniEvents.js';
 import { moderateImagePrompt } from '../builder/image/contentModeration.js';
 import { renderSceneWithHealing, buildAspectSuffix } from '../omniReality/swarmMaster.js';
 import { generateSceneAudio } from '../../lib/audioProviders.js';
@@ -72,6 +73,7 @@ export async function produceSingleSceneVideo(
     runId: options?.runId,
     aspectRatio: parseVideoFormat(prompt) === 'shorts_reels' ? '9:16' : '16:9',
     onProgress: (msg) => options?.onProgress?.('rendering', msg),
+    onOmniEvent: options?.onOmniEvent,
   });
 
   options?.onProgress?.('audio', 'Composing voiceover & score…');
@@ -134,6 +136,8 @@ export async function produceSingleSceneVideo(
     videoFormat: parseVideoFormat(prompt),
     characters: plan.characters.map((c) => ({ name: c.name })),
     cons: usedFallback ? ['Used visual fallback — premium APIs were unavailable'] : undefined,
+    healingSteps: video.healingSteps,
+    qcScore: video.qcScore,
     followUps: plan.mode === 'multi_scene' ? ['Generate full multi-scene movie?'] : undefined,
   };
 }

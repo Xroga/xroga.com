@@ -261,6 +261,8 @@ export class SwarmService {
           iteration: event.iteration,
           imageStep: event.imageStep,
           videoStep: event.videoStep,
+          omniPhase: event.omniPhase,
+          omniDetail: event.omniDetail,
           imageAttempt: event.imageAttempt,
         },
       });

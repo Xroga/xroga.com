@@ -21,7 +21,7 @@ import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
-import { TextGeneratingAnimation } from './TextGeneratingAnimation';
+import { VideoProductionAnimation } from './VideoProductionAnimation';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions, isBuildRelated, primaryDeploySuggestion } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -47,7 +47,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, imageAttempts, videoProgressStep, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn } =
+  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, imageAttempts, videoProgressStep, videoOmniPhase, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -352,11 +352,11 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                         msg.id === animatingId &&
                         isVideoGenerationPrompt(lastUserText) &&
                         !msg.featureOutput ? (
-                          <TextGeneratingAnimation
+                          <VideoProductionAnimation
                             message={pipelineMessage ?? undefined}
                             step={videoProgressStep ?? undefined}
-                            mode="video"
-                            sublabel="Xroga AI · Video Studio"
+                            omniPhase={videoOmniPhase}
+                            sublabel="Omni-Reality · Trinity Brain · Titanium Ladder"
                           />
                         ) : msg.featureOutput ? (
                           <ChatErrorBoundary>

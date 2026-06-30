@@ -59,6 +59,7 @@ interface TerminalChatContextValue {
   imageProgressStep: string | null;
   imageAttempts: Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>;
   videoProgressStep: string | null;
+  videoOmniPhase: string | null;
   followUps: string[];
   reasoning: string | null;
   dag: Array<{ id: string; description: string; agent: string }> | null;
@@ -110,6 +111,7 @@ export function TerminalChatProvider({
     Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>
   >([]);
   const [videoProgressStep, setVideoProgressStep] = useState<string | null>(null);
+  const [videoOmniPhase, setVideoOmniPhase] = useState<string | null>(null);
   const [followUps, setFollowUps] = useState<string[]>([]);
   const [reasoning, setReasoning] = useState<string | null>(null);
   const [dag, setDag] = useState<Array<{ id: string; description: string; agent: string }> | null>(null);
@@ -327,6 +329,7 @@ export function TerminalChatProvider({
         setImageProgressStep(null);
         setImageAttempts([]);
         setVideoProgressStep(null);
+        setVideoOmniPhase(null);
       } else if (loading && !fromQueue) {
         enqueuePrompt(userPrompt);
         setPrompt('');
@@ -405,6 +408,8 @@ export function TerminalChatProvider({
               });
             }
             if (event.videoStep) setVideoProgressStep(event.videoStep);
+            if ((event as { omniPhase?: string }).omniPhase) setVideoOmniPhase((event as { omniPhase?: string }).omniPhase ?? null);
+            if (event.message) setPipelineMessage(event.message);
             if (event.agent) setSwarmActiveAgent(event.agent);
             const ev = event as SwarmProgressEvent & { dag?: typeof dag; thinking?: string };
             if (ev.thinking && !useCompactPipeline) setReasoning(ev.thinking);
@@ -583,6 +588,7 @@ export function TerminalChatProvider({
         setImageProgressStep(null);
         setImageAttempts([]);
         setVideoProgressStep(null);
+        setVideoOmniPhase(null);
         setPipelineCompact(false);
         interruptRef.current = false;
         if (skipNextQueueRef.current) {
@@ -630,6 +636,7 @@ export function TerminalChatProvider({
         imageProgressStep,
         imageAttempts,
         videoProgressStep,
+        videoOmniPhase,
         pipelineCompact,
         followUps,
         reasoning,
