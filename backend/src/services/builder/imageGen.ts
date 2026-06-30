@@ -274,10 +274,20 @@ function truncatePrompt(prompt: string): string {
   return t.slice(0, MAX_PROMPT_CHARS).trim();
 }
 
-const PROVIDER_TIMEOUT_MS = 35_000;
-const AGNES_TIMEOUT_MS = 35_000;
-/** Gemini tries Interactions + generateContent fallbacks inside one call */
-const GEMINI_TIMEOUT_MS = 38_000;
+const PROVIDER_TIMEOUT_MS: Partial<Record<ProviderName, number>> = {
+  cloudflare: 90_000,
+  'fal-sdxl': 75_000,
+  'replicate-sd': 130_000,
+  'agnes-image': 90_000,
+  'gemini-image': 38_000,
+  'openai-image': 60_000,
+  'luma-image': 60_000,
+  'hailuo-image': 60_000,
+  'runway-image': 60_000,
+  comfyui: 60_000,
+};
+
+const DEFAULT_PROVIDER_TIMEOUT_MS = 45_000;
 
 type VariantSlotConfig = {
   variantIndex: number;
@@ -287,11 +297,23 @@ type VariantSlotConfig = {
 
 /** Each grid slot has a primary provider plus fallbacks so all 4 columns can fill */
 const VARIANT_SLOTS: VariantSlotConfig[] = [
-  { variantIndex: 0, label: 'Agnes', providers: ['agnes-image', 'fal-sdxl', 'replicate-sd'] },
-  { variantIndex: 1, label: 'Cloudflare', providers: ['cloudflare', 'fal-sdxl', 'replicate-sd'] },
-  { variantIndex: 2, label: 'Fal AI', providers: ['fal-sdxl', 'replicate-sd', 'agnes-image'] },
-  { variantIndex: 3, label: 'Google Gemini', providers: ['gemini-image', 'fal-sdxl', 'replicate-sd'] },
+  { variantIndex: 0, label: 'Agnes', providers: ['agnes-image', 'openai-image', 'fal-sdxl'] },
+  { variantIndex: 1, label: 'Cloudflare', providers: ['cloudflare', 'fal-sdxl', 'openai-image'] },
+  { variantIndex: 2, label: 'Fal AI', providers: ['fal-sdxl', 'replicate-sd', 'openai-image'] },
+  { variantIndex: 3, label: 'Google Gemini', providers: ['gemini-image', 'openai-image', 'fal-sdxl', 'luma-image'] },
 ];
+
+function resolveVariantSlots(registry: Map<ProviderName, ProviderEntry>): VariantSlotConfig[] {
+  const geminiReady = registry.get('gemini-image')?.configured;
+  return VARIANT_SLOTS.map((slot) => {
+    if (slot.variantIndex !== 3 || geminiReady) return slot;
+    return {
+      ...slot,
+      label: 'OpenAI',
+      providers: ['openai-image', 'fal-sdxl', 'replicate-sd', 'luma-image'],
+    };
+  });
+}
 
 function buildProviderRegistry(): Map<ProviderName, ProviderEntry> {
   return new Map(buildAllProviders().map((p) => [p.name, p]));
@@ -309,16 +331,11 @@ async function callImageProvider(
   ctx: { userId?: string; runId?: string }
 ): Promise<string> {
   const safePrompt = truncatePrompt(prompt);
-  const timeout =
-    entry.name === 'agnes-image'
-      ? AGNES_TIMEOUT_MS
-      : entry.name === 'gemini-image'
-        ? GEMINI_TIMEOUT_MS
-        : PROVIDER_TIMEOUT_MS;
+  const timeout = PROVIDER_TIMEOUT_MS[entry.name] ?? DEFAULT_PROVIDER_TIMEOUT_MS;
   const imageUrl = await Promise.race([
     entry.call(safePrompt),
     new Promise<string>((_, reject) =>
-      setTimeout(() => reject(new Error(`${entry.name} timed out`)), timeout)
+      setTimeout(() => reject(new Error(`${entry.name} timed out after ${timeout}ms`)), timeout)
     ),
   ]);
   if (!isValidImageResult(imageUrl)) {
@@ -773,13 +790,15 @@ export async function generateImage(
     throw new ImageGenerationError('No image API keys configured on the server.');
   }
 
+  const activeSlots = resolveVariantSlots(registry);
+
   const promptBundle = {
     full: imagePrompt,
     short: shortImagePrompt(rawQuery, basePrompt),
   };
 
   console.log(
-    `[ImageGen] ${VARIANT_COUNT} slots (${formatLabel}): ${VARIANT_SLOTS.map((s) => s.label).join(', ')}`
+    `[ImageGen] ${VARIANT_COUNT} slots (${formatLabel}): ${activeSlots.map((s) => s.label).join(', ')}`
   );
 
   type Attempt = {
@@ -796,7 +815,7 @@ export async function generateImage(
   };
 
   const attemptResults = await Promise.all(
-    VARIANT_SLOTS.map((slot) => runVariantSlot(slot, promptBundle, registry, ctx, options))
+    activeSlots.map((slot) => runVariantSlot(slot, promptBundle, registry, ctx, options))
   );
 
   const allAttempts = attemptResults;
@@ -866,7 +885,7 @@ export async function generateImage(
     }
   }
 
-  const serializedAttempts = VARIANT_SLOTS.map((slot, i) => {
+  const serializedAttempts = activeSlots.map((slot, i) => {
     const a = attemptResults[i]!;
     return {
       imageUrl: a.imageUrl,
@@ -911,7 +930,7 @@ export async function generateImage(
   };
 }
 
-/** Live smoke test — tries Fal then Replicate with a tiny prompt (for /health/smoke-image). */
+/** Live smoke test — tries each configured provider with a tiny prompt. */
 export async function smokeTestImageGeneration(): Promise<{
   ok: boolean;
   provider?: string;
@@ -934,7 +953,7 @@ export async function smokeTestImageGeneration(): Promise<{
     try {
       const imageUrl = await entry.call(prompt);
       if (isValidImageResult(imageUrl)) {
-        return { ok: true, provider: entry.name, imageUrl: imageUrl.slice(0, 120), tried };
+        return { ok: true, provider: entry.name, imageUrl: imageUrl.slice(0, 120), tried, errors };
       }
       errors[entry.name] = 'Invalid URL returned';
     } catch (err) {
@@ -944,6 +963,50 @@ export async function smokeTestImageGeneration(): Promise<{
   }
 
   return { ok: false, error: 'All smoke-test providers failed', tried, errors };
+}
+
+/** Diagnostic — test every configured provider independently (always returns per-provider errors). */
+export async function smokeTestAllImageProviders(): Promise<{
+  prompt: string;
+  results: Array<{
+    provider: string;
+    ok: boolean;
+    imageUrl?: string;
+    error?: string;
+    ms: number;
+  }>;
+}> {
+  const prompt = 'a red circle on white background, minimal test';
+  const chain = [...buildStandardProviders(), ...buildPremiumProviders()].filter((p) => p.configured);
+  const seen = new Set<string>();
+  const unique = chain.filter((p) => {
+    if (seen.has(p.name)) return false;
+    seen.add(p.name);
+    return true;
+  });
+
+  const results = await Promise.all(
+    unique.map(async (entry) => {
+      const started = Date.now();
+      try {
+        const imageUrl = await entry.call(prompt);
+        const ms = Date.now() - started;
+        if (!isValidImageResult(imageUrl)) {
+          return { provider: entry.name, ok: false, error: 'Invalid URL returned', ms };
+        }
+        return { provider: entry.name, ok: true, imageUrl: imageUrl.slice(0, 120), ms };
+      } catch (err) {
+        return {
+          provider: entry.name,
+          ok: false,
+          error: (err as Error).message,
+          ms: Date.now() - started,
+        };
+      }
+    })
+  );
+
+  return { prompt, results };
 }
 
 /** Full pipeline smoke — classify, enhance, generate (matches user flow). */

@@ -115,10 +115,12 @@ app.get('/api/health', (_req, res) => {
 
 app.get('/api/health/smoke-image', async (req, res) => {
   try {
-    const { smokeTestImageGeneration, smokeTestFullPipeline } = await import('./services/builder/imageGen.js');
+    const { smokeTestImageGeneration, smokeTestFullPipeline, smokeTestAllImageProviders } =
+      await import('./services/builder/imageGen.js');
     const quick = await smokeTestImageGeneration();
+    const all = req.query.all === '1' ? await smokeTestAllImageProviders() : undefined;
     const full = req.query.full === '1' ? await smokeTestFullPipeline() : undefined;
-    res.json({ ...healthPayload(), smoke: quick, fullPipeline: full });
+    res.json({ ...healthPayload(), smoke: quick, allProviders: all, fullPipeline: full });
   } catch (err) {
     res.status(500).json({
       ...healthPayload(),

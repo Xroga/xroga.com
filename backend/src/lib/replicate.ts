@@ -11,7 +11,7 @@ const OFFICIAL_MODELS = [
 ] as const;
 
 async function pollPrediction(apiKey: string, prediction: ReplicatePrediction): Promise<ReplicatePrediction> {
-  for (let i = 0; i < 90; i++) {
+  for (let i = 0; i < 120; i++) {
     if (prediction.status === 'succeeded' || prediction.status === 'failed' || prediction.status === 'canceled') {
       return prediction;
     }
@@ -41,16 +41,17 @@ async function runOfficialModel(apiKey: string, model: string, prompt: string): 
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
-      Prefer: 'wait=60',
+      Prefer: 'wait=120',
     },
     body: JSON.stringify({
       input: {
         prompt,
-        aspect_ratio: '16:9',
+        aspect_ratio: '1:1',
         output_format: 'webp',
         num_outputs: 1,
       },
     }),
+    signal: AbortSignal.timeout(130_000),
   });
 
   if (!createRes.ok) {
