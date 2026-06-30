@@ -13,7 +13,7 @@ import { isKlingConfigured } from './video/klingAuth.js';
 import { generateReplicateVideo } from './video/replicateVideo.js';
 import {
   generateCogVideoX,
-  generateAnimateDiff,
+  generateZeroscopeVideo,
   generateMinimaxReplicateVideo,
   generateWanReplicateVideo,
 } from './video/replicateOssVideo.js';
@@ -151,7 +151,7 @@ function buildVideoProviders(): ProviderEntry[] {
     {
       name: 'animatediff',
       configured: hasSecret('REPLICATE_API_TOKEN'),
-      call: (prompt, duration) => generateAnimateDiff(prompt, duration),
+      call: (prompt, duration) => generateZeroscopeVideo(prompt, duration),
     },
     {
       name: 'replicate-svd',
@@ -356,7 +356,7 @@ export async function smokeTestVideoGeneration(): Promise<{
   const prompt = 'A cat walking on a beach at sunset, cinematic, 2 seconds';
 
   const chain = await buildVideoProvidersAsync();
-  const ossOrder = ['replicate-minimax', 'replicate-wan', 'deepinfra', 'cogvideox', 'animatediff', 'replicate-svd'] as const;
+  const ossOrder = ['deepinfra', 'agnes', 'replicate-wan', 'replicate-minimax', 'cogvideox', 'zeroscope', 'replicate-svd'] as const;
   const configured = chain.filter((p) => p.configured && p.name !== 'slideshow');
   const ordered = [
     ...ossOrder.map((n) => configured.find((p) => p.name === n)).filter(Boolean),
