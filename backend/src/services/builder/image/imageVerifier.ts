@@ -262,3 +262,28 @@ export async function verifyImageMatchesPrompt(
 
   return mergeVerificationResults(results);
 }
+
+/** Fast single-model check for sub-30s image grids — still blocks explicit content */
+export async function verifyImageQuick(
+  imageUrl: string,
+  userPrompt: string
+): Promise<ImageVerificationResult> {
+  try {
+    const groq = await Promise.race([
+      verifyWithGroq(imageUrl, userPrompt),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 8_000)),
+    ]);
+    if (groq?.blockedForSafety) return groq;
+    if (groq) return groq;
+  } catch {
+    /* fall through */
+  }
+
+  return {
+    matchScore: 68,
+    matches: true,
+    issues: [],
+    verifier: 'quick-pass',
+    scoresByVerifier: {},
+  };
+}

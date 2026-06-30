@@ -106,12 +106,12 @@ function IntegrationLogo({ src, alt, className }: { src: string; alt: string; cl
   );
 }
 
-export function GitHubChipIcon({ lightBg = false }: { lightBg?: boolean }) {
+export function GitHubChipIcon({ lightBg = false, white = false }: { lightBg?: boolean; white?: boolean }) {
   return (
     <IntegrationLogo
       src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
       alt="GitHub"
-      className={cn('w-3.5 h-3.5', !lightBg && 'dark:invert')}
+      className={cn('w-3.5 h-3.5', white && 'brightness-0 invert', !lightBg && !white && 'dark:invert')}
     />
   );
 }
@@ -144,21 +144,30 @@ export function ChatBarBrandChip({
   variant,
   label,
   onClick,
+  plain = false,
+  darkUi = false,
 }: {
   variant: 'github' | 'gitlab' | 'vercel';
   label: string;
   onClick: () => void;
+  plain?: boolean;
+  darkUi?: boolean;
 }) {
   const icons = {
-    github: <GitHubChipIcon lightBg />,
-    gitlab: <GitLabChipIcon />,
-    vercel: <VercelChipIcon white />,
+    github: <GitHubChipIcon lightBg={!plain} white={plain && darkUi} />,
+    gitlab: <GitLabChipIcon white={plain} />,
+    vercel: <VercelChipIcon white={plain ? darkUi : true} />,
   };
   return (
     <button
       type="button"
       onClick={onClick}
-      className={cn('xv-brand-chip', `xv-brand-chip--${variant}`)}
+      className={cn(
+        'xv-brand-chip',
+        plain && 'xv-brand-chip--plain',
+        darkUi && 'xv-brand-chip--dark-ui',
+        `xv-brand-chip--${variant}`
+      )}
       aria-label={label}
       title={label}
     >

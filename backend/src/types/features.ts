@@ -79,6 +79,8 @@ export interface ImageGenOutput {
     variantLabel?: string;
     variantIndex?: number;
     userVoted?: boolean;
+    failed?: boolean;
+    blocked?: boolean;
   }>;
   variantCount?: number;
   isStyleTransfer?: boolean;

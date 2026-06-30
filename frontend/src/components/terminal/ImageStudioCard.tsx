@@ -31,6 +31,8 @@ export interface RejectedImage {
   variantIndex?: number;
   userVoted?: boolean;
   selected?: boolean;
+  failed?: boolean;
+  blocked?: boolean;
 }
 
 const VARIANT_SLOTS = 4;
@@ -169,8 +171,12 @@ export function ImageStudioCard({
     return list.slice(0, VARIANT_SLOTS);
   }, [defaultSrc, provider, matchScore, rejectedImages, allAttemptsProp]);
 
-  const visibleVariants = allAttempts.filter((v) => !hiddenUrls.has(v.imageUrl));
-  const displaySlots = Array.from({ length: VARIANT_SLOTS }, (_, i) => visibleVariants[i] ?? null);
+  const visibleVariants = allAttempts.filter((v) => !hiddenUrls.has(v.imageUrl) || v.failed || v.blocked);
+  const displaySlots = Array.from({ length: VARIANT_SLOTS }, (_, i) =>
+    allAttemptsProp?.length
+      ? allAttemptsProp.find((a) => a.variantIndex === i) ?? allAttempts[i] ?? null
+      : allAttempts[i] ?? null
+  );
   const activeVariant = visibleVariants.find((v) => v.imageUrl === activeUrl) ?? visibleVariants[0];
   const previewSrc = activeVariant?.imageUrl ?? defaultSrc;
 
@@ -307,33 +313,49 @@ export function ImageStudioCard({
                 return (
                   <div
                     key={`empty-${i}`}
-                    className="aspect-square rounded-md border border-dashed border-[var(--card-border)] bg-[var(--muted)]/5"
-                  />
+                    className="aspect-square rounded-md border border-dashed border-[var(--card-border)] bg-[var(--muted)]/5 flex items-center justify-center p-1"
+                  >
+                    <span className="text-[8px] text-[var(--muted)] text-center">Waiting…</span>
+                  </div>
                 );
               }
 
-              const isActive = img.imageUrl === activeUrl;
+              const hasImage = Boolean(img.imageUrl) && !img.failed && !img.blocked;
+              const isActive = hasImage && img.imageUrl === activeUrl;
               const isVoted = img.userVoted || (img.selected && isActive);
 
               return (
                 <div
-                  key={img.imageUrl}
+                  key={`${img.variantLabel ?? img.provider}-${i}`}
                   className={cn(
                     'relative rounded-md overflow-hidden border aspect-square group',
-                    isActive
-                      ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/30'
-                      : 'border-[var(--card-border)]',
+                    img.failed || img.blocked
+                      ? 'border-amber-500/40 bg-amber-500/5'
+                      : isActive
+                        ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/30'
+                        : 'border-[var(--card-border)]',
                   )}
                 >
-                  <button
-                    type="button"
-                    onClick={() => handleSelect(img.imageUrl)}
-                    className="absolute inset-0 z-0"
-                    aria-label={`Preview ${img.variantLabel ?? img.provider}`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
-                  </button>
+                  {hasImage ? (
+                    <button
+                      type="button"
+                      onClick={() => handleSelect(img.imageUrl)}
+                      className="absolute inset-0 z-0"
+                      aria-label={`Preview ${img.variantLabel ?? img.provider}`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-1 text-center z-0">
+                      <span className="text-[8px] font-bold text-amber-600 dark:text-amber-400">
+                        {img.blocked ? 'Blocked' : 'Failed'}
+                      </span>
+                      <span className="text-[7px] text-[var(--muted)] line-clamp-3 mt-0.5">
+                        {img.issues?.[0] ?? 'No output'}
+                      </span>
+                    </div>
+                  )}
 
                   <div className="absolute top-0 inset-x-0 flex items-center justify-between p-0.5 z-10">
                     <span className="text-[7px] font-bold px-1 py-0.5 rounded bg-black/60 text-white truncate max-w-[60%]">
@@ -342,9 +364,10 @@ export function ImageStudioCard({
                     <button
                       type="button"
                       title="Vote best"
+                      disabled={!hasImage}
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleVote(img.imageUrl);
+                        if (hasImage) handleVote(img.imageUrl);
                       }}
                       className={cn(
                         'p-0.5 rounded bg-black/60',
@@ -355,15 +378,19 @@ export function ImageStudioCard({
                     </button>
                   </div>
 
-                  <div className="absolute bottom-0 inset-x-0 flex gap-0.5 p-0.5 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                    <MiniBtn icon={Download} title="Download" onClick={() => downloadImage(img.imageUrl, `xroga-${i + 1}.png`)} />
-                    <MiniBtn icon={Wand2} title="Edit" onClick={() => openEditor(img.imageUrl)} />
-                    <MiniBtn icon={Trash2} title="Remove" danger onClick={() => handleRemoveVariant(img.imageUrl)} />
-                  </div>
+                  {hasImage && (
+                    <div className="absolute bottom-0 inset-x-0 flex gap-0.5 p-0.5 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      <MiniBtn icon={Download} title="Download" onClick={() => downloadImage(img.imageUrl, `xroga-${i + 1}.png`)} />
+                      <MiniBtn icon={Wand2} title="Edit" onClick={() => openEditor(img.imageUrl)} />
+                      <MiniBtn icon={Trash2} title="Remove" danger onClick={() => handleRemoveVariant(img.imageUrl)} />
+                    </div>
+                  )}
 
-                  <span className="absolute bottom-0 right-0 text-[7px] text-white/90 bg-black/50 px-1 py-0.5 z-[5] pointer-events-none">
-                    {img.matchScore}%
-                  </span>
+                  {hasImage && (
+                    <span className="absolute bottom-0 right-0 text-[7px] text-white/90 bg-black/50 px-1 py-0.5 z-[5] pointer-events-none">
+                      {img.matchScore}%
+                    </span>
+                  )}
                 </div>
               );
             })}
