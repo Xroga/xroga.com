@@ -2673,6 +2673,45 @@ body.theme-gray * {
   background: #25252d;
 }
 
+/* Modern image lightbox — theme-aware */
+.xv-img-lightbox-backdrop {
+  background: color-mix(in srgb, var(--background) 20%, rgba(0, 0, 0, 0.72));
+  backdrop-filter: blur(12px) saturate(1.2);
+}
+.xv-img-lightbox--white .xv-img-lightbox-backdrop {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(16px) saturate(1.1);
+}
+.xv-img-lightbox--black .xv-img-lightbox-backdrop,
+.xv-img-lightbox--gray .xv-img-lightbox-backdrop {
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(14px);
+}
+.xv-img-lightbox-frame {
+  background: var(--card);
+  animation: xv-image-modal-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Compact refine strip in terminal footer */
+.xv-refine-strip {
+  padding: 0;
+}
+.xv-refine-chip {
+  font-size: 10px;
+  line-height: 1.2;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--foreground);
+  opacity: 0.92;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.xv-refine-chip:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  transform: translateY(-1px);
+}
+
 .xv-image-gen-card {
   animation: xv-image-card-in 0.4s ease-out;
 }

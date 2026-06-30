@@ -1,6 +1,6 @@
 'use client';
 
-import { Lightbulb, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 
@@ -22,58 +22,31 @@ export function TerminalFollowUpStrip({
   }
 
   const refinements = chips.filter(
-    (f) => !/post|social|twitter|linkedin|instagram|share/i.test(f)
+    (f) => !/post|social|twitter|linkedin|instagram|share|deploy|cdn|r2|upload to/i.test(f)
   );
-  const social = chips.filter((f) => /post|social|twitter|linkedin|instagram|share/i.test(f));
+
+  if (refinements.length === 0) return null;
 
   return (
-    <div className={cn('rounded-xl border border-[var(--card-border)] bg-[var(--card)]/90 backdrop-blur-sm px-2.5 py-2 shadow-sm', className)}>
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5 flex items-center gap-1.5">
-        <Sparkles className="w-3 h-3 text-[#006aff]" />
-        Suggestions · refinements · next steps
-      </p>
-
-      {refinements.length > 0 && (
-        <div className="mb-1.5">
-          <p className="text-[9px] font-medium text-[var(--muted)] mb-1 flex items-center gap-1">
-            <Lightbulb className="w-3 h-3" />
-            Refine your image
-          </p>
-          <div className="flex flex-wrap gap-1">
-            {refinements.map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => handleSelect(item)}
-                className={cn(
-                  'text-[10px] px-2 py-1 rounded-full border border-[#006aff]/30',
-                  'bg-[#006aff]/10 hover:bg-[#006aff]/20 text-[#93c5fd] transition-colors'
-                )}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {social.length > 0 && (
-        <div>
-          <p className="text-[9px] font-medium text-[var(--muted)] mb-1">Next steps</p>
-          <div className="flex flex-wrap gap-1">
-            {social.map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => handleSelect(item)}
-                className="text-[10px] px-2 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 transition-colors"
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+    <div className={cn('xv-refine-strip', className)}>
+      <div className="flex items-center gap-1.5 mb-1.5 min-w-0">
+        <Sparkles className="w-3 h-3 text-[var(--accent)] shrink-0" />
+        <span className="text-[9px] font-semibold uppercase tracking-wider text-[var(--muted)] truncate">
+          Refine your image
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-1">
+        {refinements.map((item) => (
+          <button
+            key={item}
+            type="button"
+            onClick={() => handleSelect(item)}
+            className="xv-refine-chip"
+          >
+            {item}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

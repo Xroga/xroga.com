@@ -135,17 +135,18 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image', variants = [
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-2 sm:p-4">
       <button
         type="button"
-        className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+        className="absolute inset-0 xv-img-lightbox-backdrop"
         onClick={onClose}
         aria-label="Close"
       />
       <div
         className={cn(
-          'relative z-10 flex flex-col w-full max-w-4xl max-h-[95vh] rounded-2xl border shadow-2xl overflow-hidden xv-image-modal-enter',
+          'relative z-10 flex flex-col w-full max-w-4xl max-h-[95vh] rounded-2xl border border-[var(--card-border)] shadow-2xl overflow-hidden xv-image-modal-enter',
+          'bg-[var(--card)] text-[var(--foreground)]',
           themeClass
         )}
       >
-        <header className="flex items-center justify-between gap-2 px-4 py-3 border-b shrink-0 xv-image-modal-header">
+        <header className="flex items-center justify-between gap-2 px-4 py-3 border-b border-[var(--card-border)] shrink-0">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-[#60a5fa]" />
             <h2 className="text-sm font-bold text-[var(--foreground)]">AI Image Editor</h2>
@@ -162,10 +163,10 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image', variants = [
         </header>
 
         <div className="flex flex-col lg:flex-row flex-1 min-h-0 overflow-hidden">
-          <div className="flex-1 flex items-center justify-center p-4 min-h-[200px] lg:min-h-0 overflow-auto xv-image-modal-preview">
+          <div className="flex-1 flex items-center justify-center p-4 min-h-[200px] lg:min-h-0 overflow-auto bg-[var(--background)]/50">
             <div
               className={cn(
-                'relative flex items-center justify-center w-full max-w-lg overflow-hidden rounded-xl border xv-image-modal-frame',
+                'relative flex items-center justify-center w-full max-w-lg overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)]',
                 cropMode && frameClass ? frameClass : 'max-h-[50vh]'
               )}
             >
@@ -182,7 +183,7 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image', variants = [
             </div>
           </div>
 
-          <aside className="w-full lg:w-72 shrink-0 border-t lg:border-t-0 lg:border-l flex flex-col xv-image-modal-aside">
+          <aside className="w-full lg:w-72 shrink-0 border-t lg:border-t-0 lg:border-l border-[var(--card-border)] flex flex-col bg-[var(--card)]">
             <div className="p-3 space-y-3 overflow-y-auto flex-1">
               <section>
                 <p className="text-[9px] font-bold uppercase tracking-wider text-[var(--muted)] mb-1.5">Ratio</p>
@@ -195,8 +196,8 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image', variants = [
                       className={cn(
                         'px-2 py-1 rounded-md text-[10px] font-medium border transition-colors',
                         transform.aspectRatio === r.id
-                          ? 'border-[#006aff]/50 bg-[#006aff]/20 text-[#93c5fd]'
-                          : 'border-white/10 bg-white/5 text-[var(--muted)] hover:bg-white/10'
+                          ? 'border-[var(--accent)]/50 bg-[var(--accent)]/15 text-[var(--accent)]'
+                          : 'border-[var(--card-border)] bg-[var(--background)]/40 text-[var(--muted)] hover:bg-[var(--background)]/70'
                       )}
                     >
                       {r.label}
@@ -345,7 +346,7 @@ function ToolBtn({
       type="button"
       title={title}
       onClick={onClick}
-      className="flex flex-col items-center gap-0.5 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[var(--foreground)] transition-colors"
+      className="flex flex-col items-center gap-0.5 py-2 rounded-lg border border-[var(--card-border)] bg-[var(--background)]/40 hover:bg-[var(--background)]/70 text-[var(--foreground)] transition-colors"
     >
       <Icon className="h-4 w-4 text-[#60a5fa]" />
       <span className="text-[9px] text-[var(--muted)]">{label}</span>

@@ -480,6 +480,29 @@ function buildAllProviders(): ProviderEntry[] {
   });
 }
 
+/** Ultimate fallback order when a slot's primary providers fail */
+const GLOBAL_FALLBACK_CHAIN: ProviderName[] = [
+  'fal-sdxl',
+  'replicate-sd',
+  'agnes-image',
+  'openai-image',
+  'cloudflare',
+  'gemini-image',
+  'comfyui',
+];
+
+function buildSlotProviderChain(slot: VariantSlotConfig): ProviderName[] {
+  const seen = new Set<ProviderName>();
+  const chain: ProviderName[] = [];
+  for (const name of [...slot.providers, ...GLOBAL_FALLBACK_CHAIN]) {
+    if (!seen.has(name)) {
+      seen.add(name);
+      chain.push(name);
+    }
+  }
+  return chain;
+}
+
 function pickVariantProviders(all: ProviderEntry[]): ProviderEntry[] {
   const byName = new Map(all.map((p) => [p.name, p]));
   const picked: ProviderEntry[] = [];
@@ -526,7 +549,7 @@ async function runVariantSlot(
 }> {
   const errors: string[] = [];
 
-  for (const name of slot.providers) {
+  for (const name of buildSlotProviderChain(slot)) {
     const entry = registry.get(name);
     if (!entry?.configured) {
       errors.push(`${providerDisplayLabel(name)}: API key not set`);
@@ -852,7 +875,7 @@ export async function generateImage(
       failed: a.failed,
       blocked: a.blocked,
     };
-  });
+  }).filter((a) => Boolean(a.imageUrl) && !a.failed && !a.blocked);
 
   const others = serializedAttempts.filter((a) => a.imageUrl !== winner.imageUrl);
 
@@ -879,7 +902,7 @@ export async function generateImage(
     allAttempts: serializedAttempts,
     rejectedImages: others,
     isYoutubeThumbnail,
-    variantCount: VARIANT_COUNT,
+    variantCount: serializedAttempts.length,
   };
 }
 

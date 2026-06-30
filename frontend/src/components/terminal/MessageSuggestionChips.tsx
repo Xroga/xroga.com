@@ -1,6 +1,6 @@
 'use client';
 
-import { Lightbulb, Rocket } from 'lucide-react';
+import { Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { MessageSuggestions } from '@/lib/messageHelpers';
 
@@ -11,71 +11,38 @@ interface MessageSuggestionChipsProps {
 }
 
 export function MessageSuggestionChips({ suggestions, onSelect, className }: MessageSuggestionChipsProps) {
-  const { deploy, followUps, refine, creationLabel } = suggestions;
+  const { deploy, followUps, refine } = suggestions;
+  const all = [
+    ...deploy.map((d) => ({ key: d.id, text: d.prompt, label: `${d.platform} · ${d.label}`, tone: 'deploy' as const })),
+    ...followUps.map((q) => ({ key: q, text: q, label: q, tone: 'next' as const })),
+    ...refine.map((idea) => ({ key: idea, text: idea, label: idea, tone: 'refine' as const })),
+  ];
+
+  if (all.length === 0) return null;
 
   return (
-    <div className={cn('mt-3 space-y-3 xv-suggestions-enter', className)}>
-      {deploy.length > 0 && (
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5 flex items-center gap-1.5">
-            <Rocket className="w-3 h-3 text-[#006aff]" />
-            Deploy {creationLabel}
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {deploy.map((d) => (
-              <button
-                key={d.id}
-                type="button"
-                onClick={() => onSelect(d.prompt)}
-                className="px-2.5 py-1.5 rounded-lg text-[10px] font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span className="opacity-60 font-normal">{d.platform} ·</span> {d.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {followUps.length > 0 && (
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5">
-            Next steps
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {followUps.map((q) => (
-              <button
-                key={q}
-                type="button"
-                onClick={() => onSelect(q)}
-                className="px-2.5 py-1 rounded-full text-[10px] font-medium border border-[#006aff]/30 bg-[#006aff]/10 text-[#93c5fd] hover:bg-[#006aff]/20 transition-colors"
-              >
-                {q}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {refine.length > 0 && (
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5">
-            Refine
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {refine.map((idea) => (
-              <button
-                key={idea}
-                type="button"
-                onClick={() => onSelect(idea)}
-                className="px-2.5 py-1 rounded-full text-[10px] font-medium border border-[var(--card-border)] bg-white/5 text-[var(--foreground)]/80 hover:bg-white/10 transition-colors inline-flex items-center gap-1"
-              >
-                <Lightbulb className="w-3 h-3 text-[#006aff]" />
-                {idea}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+    <div className={cn('mt-2 xv-suggestions-enter', className)}>
+      <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1 flex items-center gap-1">
+        <Rocket className="w-3 h-3 text-[var(--accent)]" />
+        Next steps
+      </p>
+      <div className="flex flex-wrap gap-1">
+        {all.map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            onClick={() => onSelect(item.text)}
+            className={cn(
+              'text-[9px] px-2 py-0.5 rounded-full border font-medium transition-colors',
+              item.tone === 'deploy' && 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300',
+              item.tone === 'next' && 'border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--foreground)]',
+              item.tone === 'refine' && 'border-[var(--card-border)] bg-[var(--background)]/50 text-[var(--foreground)]/85'
+            )}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

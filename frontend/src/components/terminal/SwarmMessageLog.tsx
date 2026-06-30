@@ -248,8 +248,13 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
               !loading &&
               isBuildRelated(msg.content, lastUserText);
             const deploySuggestion = showDeploy ? primaryDeploySuggestion(lastUserText, msg.content) : null;
+            const isImageOutput =
+              msg.featureOutput != null &&
+              (msg.featureOutput as { type?: string }).type === 'image';
             const suggestions =
-              !isIncognito && showSuggestions ? generateMessageSuggestions(lastUserText, msg.content) : null;
+              !isIncognito && showSuggestions && !isImageOutput
+                ? generateMessageSuggestions(lastUserText, msg.content)
+                : null;
 
             return (
               <div

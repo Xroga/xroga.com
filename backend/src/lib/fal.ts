@@ -1,8 +1,8 @@
-/** Fal.ai image generation — Flux schnell (primary) */
+/** Fal.ai image generation — Flux schnell (sync) with dev fallback */
 
-const FAL_ENDPOINTS = [
-  'https://fal.run/fal-ai/flux/schnell',
-  'https://queue.fal.run/fal-ai/flux/schnell',
+const FAL_MODELS = [
+  { endpoint: 'https://fal.run/fal-ai/flux/schnell', body: { num_inference_steps: 4 } },
+  { endpoint: 'https://fal.run/fal-ai/flux/dev', body: { num_inference_steps: 28, guidance_scale: 3.5 } },
 ] as const;
 
 export async function generateFalImage(prompt: string): Promise<string> {
@@ -11,7 +11,7 @@ export async function generateFalImage(prompt: string): Promise<string> {
 
   let lastErr: Error | null = null;
 
-  for (const endpoint of FAL_ENDPOINTS) {
+  for (const { endpoint, body } of FAL_MODELS) {
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -20,24 +20,30 @@ export async function generateFalImage(prompt: string): Promise<string> {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt,
-          image_size: 'landscape_4_3',
-          num_inference_steps: 4,
-          enable_safety_checker: true,
+          prompt: prompt.slice(0, 900),
+          image_size: 'square_hd',
+          num_images: 1,
+          enable_safety_checker: false,
+          ...body,
         }),
-        signal: AbortSignal.timeout(60_000),
+        signal: AbortSignal.timeout(55_000),
       });
 
+      const raw = await response.text();
       if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Fal.ai ${response.status}: ${errText.slice(0, 300)}`);
+        throw new Error(`Fal.ai ${response.status}: ${raw.slice(0, 300)}`);
       }
 
-      const data = (await response.json()) as {
+      let data: {
         images?: Array<{ url?: string }>;
         image?: { url?: string };
         output?: { images?: Array<{ url?: string }> };
       };
+      try {
+        data = JSON.parse(raw) as typeof data;
+      } catch {
+        throw new Error(`Fal.ai invalid JSON: ${raw.slice(0, 120)}`);
+      }
 
       const url =
         data.images?.[0]?.url ??

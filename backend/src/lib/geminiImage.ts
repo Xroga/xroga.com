@@ -38,8 +38,8 @@ type ImageAttempt = {
   run: (prompt: string, timeoutMs: number) => Promise<string>;
 };
 
-const INTERACTION_MODELS = ['gemini-3.1-flash-image', 'gemini-2.5-flash-image'] as const;
-const GENERATE_CONTENT_MODELS = ['gemini-2.5-flash-image', 'gemini-2.0-flash-exp-image-generation'] as const;
+const INTERACTION_MODELS = ['gemini-2.5-flash-image', 'gemini-3.1-flash-image'] as const;
+const GENERATE_CONTENT_MODELS = ['gemini-2.5-flash-image'] as const;
 
 function getApiKey(): string {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
@@ -114,7 +114,7 @@ async function callInteractionsApi(
     headers: geminiHeaders(apiKey),
     body: JSON.stringify({
       model,
-      input: prompt,
+      input: prompt.slice(0, 900),
       response_format: { type: 'image', aspect_ratio: '1:1' },
     }),
     signal: AbortSignal.timeout(timeoutMs),
@@ -132,7 +132,7 @@ async function callInteractionsApi(
     throw new Error(`Interactions ${model} returned invalid JSON`);
   }
 
-  if (data.status && data.status !== 'completed') {
+  if (data.status && data.status !== 'completed' && data.status !== 'in_progress') {
     throw new Error(`Interactions ${model} status: ${data.status}`);
   }
 
@@ -154,7 +154,7 @@ async function callGenerateContentApi(
     method: 'POST',
     headers: geminiHeaders(apiKey),
     body: JSON.stringify({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      contents: [{ role: 'user', parts: [{ text: prompt.slice(0, 900) }] }],
       generationConfig: {
         responseModalities: ['TEXT', 'IMAGE'],
       },
@@ -178,7 +178,7 @@ async function callGenerateContentApi(
   if (blocked) {
     const detail = data.promptFeedback?.blockReasonMessage?.trim();
     throw new Error(
-      detail ? `generateContent ${model} blocked: ${blocked} (${detail})` : `generateContent ${model} blocked: ${blocked}`
+      detail ? `blocked: ${blocked}` : `blocked: ${blocked}`
     );
   }
 
@@ -207,15 +207,15 @@ export async function generateGeminiImage(prompt: string): Promise<string> {
   ];
 
   const started = Date.now();
-  const totalBudgetMs = 26_000;
+  const totalBudgetMs = 34_000;
   let lastErr: Error | null = null;
 
   for (const attempt of attempts) {
     const elapsed = Date.now() - started;
     const remaining = totalBudgetMs - elapsed;
-    if (remaining < 4_000) break;
+    if (remaining < 5_000) break;
 
-    const timeoutMs = Math.min(remaining, attempt.label.startsWith('interactions:') ? 22_000 : 18_000);
+    const timeoutMs = Math.min(remaining, 28_000);
 
     try {
       return await attempt.run(prompt, timeoutMs);
