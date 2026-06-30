@@ -4,20 +4,27 @@ import { Lightbulb, Sparkles } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 
-export function TerminalFollowUpStrip({ className }: { className?: string }) {
+export function TerminalFollowUpStrip({
+  className,
+  items,
+}: {
+  className?: string;
+  items?: string[];
+}) {
   const { followUps, loading, setPrompt, submit } = useTerminalChat();
+  const chips = (items?.length ? items : followUps).filter(Boolean);
 
-  if (loading || followUps.length === 0) return null;
+  if (loading || chips.length === 0) return null;
 
   function handleSelect(text: string) {
     setPrompt(text);
     void submit(text);
   }
 
-  const refinements = followUps.filter(
+  const refinements = chips.filter(
     (f) => !/post|social|twitter|linkedin|instagram|share/i.test(f)
   );
-  const social = followUps.filter((f) => /post|social|twitter|linkedin|instagram|share/i.test(f));
+  const social = chips.filter((f) => /post|social|twitter|linkedin|instagram|share/i.test(f));
 
   return (
     <div className={cn('rounded-xl border border-[var(--card-border)] bg-[var(--card)]/90 backdrop-blur-sm px-2.5 py-2 shadow-sm', className)}>

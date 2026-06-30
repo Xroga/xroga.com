@@ -302,7 +302,14 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             />
                             {isLastAssistant &&
                               (msg.featureOutput as { type?: string }).type === 'image' && (
-                                <TerminalFollowUpStrip className="mt-3" />
+                                <TerminalFollowUpStrip
+                                  className="mt-3"
+                                  items={
+                                    Array.isArray((msg.featureOutput as { followUps?: string[] }).followUps)
+                                      ? (msg.featureOutput as { followUps: string[] }).followUps
+                                      : undefined
+                                  }
+                                />
                               )}
                           </>
                         ) : loading &&
