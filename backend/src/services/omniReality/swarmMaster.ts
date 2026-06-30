@@ -107,7 +107,7 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
       }
 
       if (!FALLBACK_PROVIDERS.has(result.provider) && options.durationSeconds <= 15) {
-        healingSteps.push('fast-real-video');
+        healingSteps.push(result.provider.includes('replicate') || result.provider === 'deepinfra' ? 'oss-real-video' : 'fast-real-video');
         return {
           ...result,
           healingSteps,

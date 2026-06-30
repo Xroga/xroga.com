@@ -20,19 +20,23 @@ export const IMAGE_PROVIDERS = [
   'comfyui',
 ] as const;
 export const VIDEO_PROVIDERS = [
+  // OSS / free workhorse first (80%) — fast, no premium credits needed
+  'replicate-minimax',
+  'replicate-wan',
+  'deepinfra',
+  'cogvideox',
+  'animatediff',
+  'replicate-svd',
+  'agnes',
+  'comfyui',
+  // Premium / paid (20%) — climax scenes only
   'fal',
   'hailuo',
   'kling',
   'luma',
+  'luma-replicate',
   'runway',
-  'agnes',
-  'cogvideox',
-  'animatediff',
-  'replicate-minimax',
-  'replicate-wan',
-  'replicate-svd',
   'morph',
-  'comfyui',
   'slideshow',
 ] as const;
 export const VOICE_PROVIDERS = ['elevenlabs', 'cartesia', 'fish-audio', 'google-tts'] as const;

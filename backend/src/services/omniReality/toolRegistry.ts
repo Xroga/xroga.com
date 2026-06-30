@@ -3,6 +3,8 @@
  * 80% workhorse (free/OSS) · 20% premium specialist APIs.
  */
 
+import { getSecret } from '../../config/envSecrets.js';
+
 export type ToolCategory = 'video' | 'audio' | 'llm' | 'transcription' | 'avatar';
 
 export interface ToolEntry {
@@ -29,9 +31,13 @@ export const TOOL_REGISTRY: ToolEntry[] = [
   { id: 'runway', name: 'Runway Gen-3', category: 'video', isFree: false, isPremium: true, envKey: 'RUNWAY_API_KEY', costWeight: 9, capabilities: ['text2video', 'motion', 'production'], climaxOnly: true },
   { id: 'hailuo', name: 'Hailuo / MiniMax', category: 'video', isFree: false, isPremium: false, envKey: 'HAILUO_API_KEY', altEnvKeys: ['MINIMAX_API_KEY'], costWeight: 5, capabilities: ['text2video', 'micro_expressions', 'stylization'] },
   { id: 'fal', name: 'fal.ai', category: 'video', isFree: false, isPremium: false, envKey: 'FAL_KEY', altEnvKeys: ['FAL_API_KEY'], costWeight: 4, capabilities: ['text2video', 'fast_inference', 'workflow'] },
+  { id: 'replicate-minimax', name: 'MiniMax via Replicate', category: 'video', isFree: true, isPremium: false, envKey: 'REPLICATE_API_TOKEN', costWeight: 2, capabilities: ['text2video', 'oss', 'replicate'] },
+  { id: 'replicate-wan', name: 'Wan 2.1 via Replicate', category: 'video', isFree: true, isPremium: false, envKey: 'REPLICATE_API_TOKEN', costWeight: 2, capabilities: ['text2video', 'oss', 'replicate'] },
+  { id: 'deepinfra', name: 'DeepInfra OSS Video', category: 'video', isFree: true, isPremium: false, envKey: 'DEEPINFRA_API_KEY', costWeight: 2, capabilities: ['text2video', 'wan', 'oss'] },
   { id: 'cogvideox', name: 'CogVideoX', category: 'video', isFree: true, isPremium: false, envKey: 'REPLICATE_API_TOKEN', costWeight: 2, capabilities: ['text2video', 'oss', 'replicate'] },
   { id: 'animatediff', name: 'AnimateDiff', category: 'video', isFree: true, isPremium: false, envKey: 'REPLICATE_API_TOKEN', costWeight: 2, capabilities: ['text2video', 'motion', 'oss'] },
   { id: 'replicate-svd', name: 'Stable Video Diffusion', category: 'video', isFree: false, isPremium: false, envKey: 'REPLICATE_API_TOKEN', costWeight: 3, capabilities: ['img2video', 'svd'] },
+  { id: 'luma-replicate', name: 'Luma via Replicate', category: 'video', isFree: false, isPremium: false, envKey: 'REPLICATE_API_TOKEN', costWeight: 5, capabilities: ['text2video', 'replicate_gateway'] },
   { id: 'morph', name: 'Morph Studio', category: 'video', isFree: false, isPremium: false, envKey: 'MORPH_API_KEY', costWeight: 6, capabilities: ['text2video', 'camera_pan'] },
 
   // ── Video: Workhorse (80%) ──
@@ -61,7 +67,7 @@ export const TOOL_REGISTRY: ToolEntry[] = [
 export function isToolConfigured(tool: ToolEntry): boolean {
   if (!tool.envKey && !tool.altEnvKeys?.length) return tool.isFree;
   const keys = [tool.envKey, ...(tool.altEnvKeys ?? [])].filter(Boolean) as string[];
-  return keys.some((k) => Boolean(process.env[k]?.trim()));
+  return keys.some((k) => Boolean(getSecret(k)));
 }
 
 export function getConfiguredTools(category?: ToolCategory): ToolEntry[] {
