@@ -15,7 +15,7 @@ echo "==> Pulling latest main..."
 git pull origin main
 
 echo "==> Deploying $APP (Dockerfile.api from repo root)..."
-flyctl deploy . --config fly.api.toml -a "$APP" --remote-only
+flyctl deploy . --config fly.api.toml -a "$APP" --local-only --ha=false --strategy immediate
 
 echo "==> Waiting for health..."
 sleep 8
