@@ -38,15 +38,27 @@ function extractVideoId(data: AgnesVideoCreateResponse): string | null {
 }
 
 function extractVideoUrl(data: AgnesVideoPollResponse): string | null {
-  return (
-    data.video_url ??
-    data.url ??
-    data.output?.video_url ??
-    data.output?.url ??
-    data.data?.video_url ??
-    data.data?.url ??
-    null
-  );
+  const raw = data as Record<string, unknown>;
+  const dataObj = raw.data as Record<string, unknown> | undefined;
+  const outputObj = raw.output as Record<string, unknown> | undefined;
+  const resultObj = raw.result as Record<string, unknown> | undefined;
+  const candidates = [
+    data.video_url,
+    data.url,
+    data.output?.video_url,
+    data.output?.url,
+    data.data?.video_url,
+    data.data?.url,
+    resultObj?.video_url,
+    resultObj?.url,
+    dataObj?.output && typeof dataObj.output === 'object' ? (dataObj.output as { video_url?: string }).video_url : undefined,
+    raw.video && typeof raw.video === 'object' ? (raw.video as { url?: string }).url : undefined,
+    outputObj?.video && typeof outputObj.video === 'object' ? (outputObj.video as { url?: string }).url : undefined,
+  ];
+  for (const c of candidates) {
+    if (typeof c === 'string' && c.startsWith('http')) return c;
+  }
+  return null;
 }
 
 function isDone(data: AgnesVideoPollResponse): boolean {

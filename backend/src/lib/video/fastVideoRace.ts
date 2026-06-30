@@ -9,6 +9,7 @@ import { generateHailuoVideo } from './hailuoVideo.js';
 import { generateLumaVideo } from './lumaVideo.js';
 import { generateRunwayVideo } from './runwayVideo.js';
 import { generateMinimaxReplicateVideo, generateWanReplicateVideo } from './replicateOssVideo.js';
+import { tryImageToVideo } from './imageToVideo.js';
 import { generateReplicateVideo } from './replicateVideo.js';
 import { isKlingConfigured } from './klingAuth.js';
 import { generateKlingVideo } from './klingVideo.js';
@@ -86,7 +87,7 @@ function buildRacers(
 export async function raceVideoProviders(
   prompt: string,
   durationSeconds: number,
-  options?: { aspectRatio?: '9:16' | '16:9' }
+  options?: { aspectRatio?: '9:16' | '16:9'; userId?: string }
 ): Promise<VideoGenerationResult | null> {
   const racers = buildRacers(prompt, durationSeconds, options?.aspectRatio);
   if (racers.length === 0) return null;
@@ -108,7 +109,13 @@ export async function raceVideoProviders(
     console.log(`[FastVideoRace] Winner: ${winner.provider}`);
     return winner;
   } catch {
-    console.warn(`[FastVideoRace] All racers failed: ${errors.slice(0, 3).join(' | ')}`);
+    console.warn(`[FastVideoRace] All racers failed, trying image-to-video…`);
+    try {
+      const i2v = await tryImageToVideo(prompt, durationSeconds, options);
+      if (i2v) return i2v;
+    } catch (err) {
+      console.warn(`[FastVideoRace] Image-to-video failed:`, (err as Error).message);
+    }
     return null;
   }
 }

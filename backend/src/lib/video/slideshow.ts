@@ -16,7 +16,7 @@ async function createSolidFrame(
   const size = vertical ? '720x1280' : '1280x720';
   await execFileAsync(ffmpeg, [
     '-f', 'lavfi',
-    '-i', `color=c=0x1a1a2e:s=${size}:d=1`,
+    '-i', `gradients=s=${size}:c0=0x2563eb:c1=0x7c3aed`,
     '-frames:v', '1',
     '-y', imagePath,
   ], { timeout: 15_000 });

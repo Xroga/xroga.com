@@ -183,6 +183,26 @@ app.get('/api/config', (_req, res) => {
   });
 });
 
+/** Public video stream — keys are unguessable (userId + timestamp + filename) */
+app.get('/api/media/stream', async (req, res) => {
+  const key = typeof req.query.key === 'string' ? req.query.key : '';
+  if (!key || !key.startsWith('users/') || key.includes('..')) {
+    res.status(400).json({ error: 'Invalid media key' });
+    return;
+  }
+  try {
+    const { readStoredFile } = await import('./services/storage/projectFiles.js');
+    const { buffer, contentType } = await readStoredFile(key);
+    res.setHeader('Content-Type', contentType.startsWith('video/') ? contentType : 'video/mp4');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.send(buffer);
+  } catch (err) {
+    console.error('[MediaStream]', (err as Error).message);
+    res.status(404).json({ error: 'Video not found' });
+  }
+});
+
 app.use('/chat', simpleChatRouter);
 
 app.use('/api/actions', authMiddleware, actionsRouter);

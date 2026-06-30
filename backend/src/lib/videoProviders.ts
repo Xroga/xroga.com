@@ -14,6 +14,8 @@ import { generateReplicateVideo } from './video/replicateVideo.js';
 import {
   generateCogVideoX,
   generateAnimateDiff,
+  generateMinimaxReplicateVideo,
+  generateWanReplicateVideo,
 } from './video/replicateOssVideo.js';
 import { generateComfyUIVideo } from './video/comfyuiVideo.js';
 import { generateSlideshowVideo } from './video/slideshow.js';
@@ -33,6 +35,8 @@ export type VideoProviderName =
   | 'kling'
   | 'fal'
   | 'replicate-svd'
+  | 'replicate-minimax'
+  | 'replicate-wan'
   | 'cogvideox'
   | 'animatediff'
   | 'agnes'
@@ -46,7 +50,7 @@ type ProviderEntry = {
   call: (
     prompt: string,
     durationSeconds: number,
-    options?: { aspectRatio?: '9:16' | '16:9' }
+    options?: { aspectRatio?: '9:16' | '16:9'; userId?: string }
   ) => Promise<string>;
 };
 
@@ -131,9 +135,19 @@ function buildVideoProviders(): ProviderEntry[] {
       call: generateRunwayVideo,
     },
     {
+      name: 'replicate-minimax',
+      configured: hasSecret('REPLICATE_API_TOKEN'),
+      call: (prompt, duration) => generateMinimaxReplicateVideo(prompt, duration),
+    },
+    {
+      name: 'replicate-wan',
+      configured: hasSecret('REPLICATE_API_TOKEN'),
+      call: (prompt, duration) => generateWanReplicateVideo(prompt, duration),
+    },
+    {
       name: 'replicate-svd',
       configured: hasSecret('REPLICATE_API_TOKEN'),
-      call: (prompt) => generateReplicateVideo(prompt),
+      call: (prompt, _duration, opts) => generateReplicateVideo(prompt, { userId: opts?.userId }),
     },
     {
       name: 'cogvideox',
@@ -214,7 +228,7 @@ export async function generateVideoWithFallback(
   const providerMap = new Map(allProviders.map((p) => [p.name, p]));
 
   const premiumSet = new Set(['runway', 'luma']);
-  const cheapSet = new Set(['hailuo', 'kling', 'fal', 'replicate-svd', 'cogvideox', 'animatediff', 'agnes', 'morph']);
+  const cheapSet = new Set(['hailuo', 'kling', 'fal', 'replicate-svd', 'replicate-minimax', 'replicate-wan', 'cogvideox', 'animatediff', 'agnes', 'morph']);
 
   let orderedNames = priorityList.filter((name) => providerMap.has(name as VideoProviderName));
 
@@ -236,7 +250,10 @@ export async function generateVideoWithFallback(
 
     try {
       const videoUrl = await withTimeout(
-        entry.call(cleanPrompt, durationSeconds, { aspectRatio: options?.aspectRatio }),
+        entry.call(cleanPrompt, durationSeconds, {
+          aspectRatio: options?.aspectRatio,
+          userId: options?.userId,
+        }),
         providerTimeout(name as VideoProviderName),
         name
       );

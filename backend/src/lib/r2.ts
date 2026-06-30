@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 
 let s3Client: S3Client | null = null;
 
@@ -58,4 +58,22 @@ export function buildR2Key(userId: string, filename: string): string {
   const ts = Date.now();
   const safe = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
   return `users/${userId}/${ts}-${safe}`;
+}
+
+export function buildPlaybackUrl(key: string): string {
+  const apiBase = (process.env.API_PUBLIC_URL ?? 'https://xroga-api.fly.dev').replace(/\/$/, '');
+  return `${apiBase}/api/media/stream?key=${encodeURIComponent(key)}`;
+}
+
+export async function downloadFromR2(key: string): Promise<{ buffer: Buffer; contentType: string }> {
+  const bucket = process.env.CLOUDFLARE_R2_BUCKET ?? 'xroga-assets';
+  const client = getR2Client();
+  const res = await client.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+  const body = res.Body;
+  if (!body) throw new Error('R2 object empty');
+  const bytes = await body.transformToByteArray();
+  return {
+    buffer: Buffer.from(bytes),
+    contentType: res.ContentType ?? 'application/octet-stream',
+  };
 }

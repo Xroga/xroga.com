@@ -27,7 +27,7 @@ export async function generateMinimalMp4(prompt: string, durationSeconds = 5): P
         '-f',
         'lavfi',
         '-i',
-        `color=c=0x1a1a2e:s=1280x720:d=${dur}`,
+        `color=c=0x2563eb:s=1280x720:d=${dur}`,
         '-vf',
         'scale=1280:720,format=yuv420p',
         '-c:v',

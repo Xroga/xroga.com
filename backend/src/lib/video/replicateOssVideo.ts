@@ -2,75 +2,16 @@
  * OSS video models via Replicate — MiniMax, Wan, CogVideoX workhorse tier.
  */
 
-import { getSecret } from '../../config/envSecrets.js';
 import { sanitizeVideoPrompt } from './videoPrompt.js';
+import { runReplicateModel } from './replicateClient.js';
 
-interface ReplicatePrediction {
-  id: string;
-  status: 'starting' | 'processing' | 'succeeded' | 'failed' | 'canceled';
-  output?: string | string[];
-  error?: string;
-}
-
-async function pollPrediction(apiKey: string, prediction: ReplicatePrediction): Promise<ReplicatePrediction> {
-  for (let i = 0; i < 90; i++) {
-    if (prediction.status === 'succeeded' || prediction.status === 'failed' || prediction.status === 'canceled') {
-      return prediction;
-    }
-    await new Promise((r) => setTimeout(r, 4000));
-    const pollRes = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
-    if (!pollRes.ok) throw new Error(`Replicate poll failed: ${pollRes.status}`);
-    prediction = (await pollRes.json()) as ReplicatePrediction;
-  }
-  throw new Error('Replicate OSS video timed out');
-}
-
-async function runReplicateModel(
-  modelPath: string,
-  input: Record<string, unknown>,
-  label: string
-): Promise<string> {
-  const apiKey = getSecret('REPLICATE_API_TOKEN');
-  if (!apiKey) throw new Error('REPLICATE_API_TOKEN not configured');
-
-  const createRes = await fetch(`https://api.replicate.com/v1/models/${modelPath}/predictions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-      Prefer: 'wait=90',
-    },
-    body: JSON.stringify({ input }),
-  });
-
-  if (!createRes.ok) {
-    const errText = await createRes.text();
-    throw new Error(`${label} failed ${createRes.status}: ${errText.slice(0, 200)}`);
-  }
-
-  let prediction = (await createRes.json()) as ReplicatePrediction;
-  if (prediction.status !== 'succeeded') {
-    prediction = await pollPrediction(apiKey, prediction);
-  }
-
-  if (prediction.status === 'failed' || prediction.status === 'canceled') {
-    throw new Error(prediction.error ?? `${label} failed`);
-  }
-
-  const url = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
-  if (!url || typeof url !== 'string') throw new Error(`${label} returned no video URL`);
-  return url;
-}
-
-/** MiniMax video-01 via Replicate — reliable text-to-video */
+/** MiniMax video-01 via Replicate */
 export async function generateMinimaxReplicateVideo(prompt: string, _durationSeconds = 5): Promise<string> {
   const cleanPrompt = sanitizeVideoPrompt(prompt);
   return runReplicateModel('minimax/video-01', { prompt: cleanPrompt.slice(0, 2000) }, 'MiniMax-Replicate');
 }
 
-/** Wan 2.1 text-to-video — fast OSS workhorse */
+/** Wan 2.1 text-to-video */
 export async function generateWanReplicateVideo(prompt: string, _durationSeconds = 5): Promise<string> {
   const cleanPrompt = sanitizeVideoPrompt(prompt);
   return runReplicateModel(
@@ -94,7 +35,7 @@ export async function generateCogVideoX(prompt: string, _durationSeconds = 5): P
   );
 }
 
-/** AnimateDiff — OSS motion from prompt */
+/** AnimateDiff motion from prompt */
 export async function generateAnimateDiff(prompt: string, _durationSeconds = 5): Promise<string> {
   const cleanPrompt = sanitizeVideoPrompt(prompt);
   return runReplicateModel(
@@ -105,5 +46,22 @@ export async function generateAnimateDiff(prompt: string, _durationSeconds = 5):
       num_inference_steps: 25,
     },
     'AnimateDiff'
+  );
+}
+
+/** Stable Video Diffusion — image-to-video */
+export async function generateSvdFromImage(imageUrl: string): Promise<string> {
+  return runReplicateModel(
+    'stability-ai/stable-video-diffusion',
+    {
+      cond_aug: 0.02,
+      decoding_t: 14,
+      input_image: imageUrl,
+      video_length: '25_frames_with_svd',
+      sizing_strategy: 'maintain_aspect_ratio',
+      motion_bucket_id: 127,
+      frames_per_second: 6,
+    },
+    'Replicate-SVD'
   );
 }
