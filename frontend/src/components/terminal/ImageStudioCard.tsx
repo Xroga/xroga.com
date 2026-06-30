@@ -9,19 +9,22 @@ import {
   Wand2,
   CheckCircle2,
   AlertTriangle,
-  ThumbsUp,
   Star,
   Share2,
   ChevronLeft,
   ChevronRight,
+  UserCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { copyImageToClipboard, downloadImage } from '@/lib/imageStudioUtils';
+import { setProfileFromImageUrl } from '@/lib/setProfileFromImage';
+import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 import { ImageEditModal } from './ImageEditModal';
 import { SocialShareModal } from './SocialShareModal';
 import { TextGeneratingAnimation } from './TextGeneratingAnimation';
 import { isPlaceholderImage } from '@/lib/parseImageContent';
 import { useTerminalChat } from '@/context/TerminalChatContext';
+import toast from 'react-hot-toast';
 import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
 
 export interface RejectedImage {
@@ -142,6 +145,8 @@ export function ImageStudioCard({
   step,
 }: ImageStudioCardProps) {
   const { deleteTurn, updateFeatureOutput } = useTerminalChat();
+  const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
+  const [settingProfile, setSettingProfile] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [socialOpen, setSocialOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -201,16 +206,15 @@ export function ImageStudioCard({
   );
 
   const visibleVariants = successfulVariants.length > 0 ? successfulVariants : allAttempts.filter((v) => !v.failed && !v.blocked);
-  const gridCols =
-    successfulVariants.length <= 1
-      ? 'grid-cols-1'
-      : successfulVariants.length === 2
-        ? 'grid-cols-2'
-        : successfulVariants.length === 3
-          ? 'grid-cols-3'
-          : 'grid-cols-2 sm:grid-cols-4';
   const activeVariant = visibleVariants.find((v) => v.imageUrl === activeUrl) ?? visibleVariants[0];
   const previewSrc = activeVariant?.imageUrl ?? defaultSrc;
+
+  /** Small grid — only other variants (never repeat the main preview) */
+  const gridVariants = useMemo(() => {
+    if (successfulVariants.length <= 1) return [];
+    return successfulVariants.filter((v) => v.imageUrl !== previewSrc);
+  }, [successfulVariants, previewSrc]);
+
   const activeIndex = Math.max(
     0,
     successfulVariants.findIndex((v) => v.imageUrl === activeUrl)
@@ -278,6 +282,17 @@ export function ImageStudioCard({
     setEditOpen(true);
   }
 
+  async function handleSetProfilePic(url = previewSrc) {
+    setSettingProfile(true);
+    try {
+      await setProfileFromImageUrl(url, { setAvatarUrl, uploadAvatarFile });
+    } catch {
+      toast.error('Could not set profile photo — try Download first');
+    } finally {
+      setSettingProfile(false);
+    }
+  }
+
   function slideVariant(delta: number) {
     if (successfulVariants.length < 2) return;
     const next = (activeIndex + delta + successfulVariants.length) % successfulVariants.length;
@@ -339,125 +354,96 @@ export function ImageStudioCard({
             <button
               type="button"
               onClick={() => openEditor(previewSrc)}
-              className="w-full overflow-hidden rounded-lg border border-[var(--card-border)] cursor-pointer hover:ring-2 hover:ring-[var(--accent)]/25 transition-shadow"
+              className="w-full overflow-hidden rounded-lg border border-[var(--card-border)] cursor-pointer hover:ring-2 hover:ring-[var(--accent)]/25 transition-shadow bg-[var(--card)]/30"
               aria-label="Open AI image editor"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={previewSrc}
                 alt={prompt ?? 'Selected variant'}
-                className="w-full max-h-[280px] object-contain mx-auto"
+                className="w-full max-h-[min(42vw,200px)] object-contain mx-auto"
                 loading="lazy"
               />
             </button>
 
             {successfulVariants.length > 1 && (
-              <div className="mt-2 px-1 space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => slideVariant(-1)}
-                    className="p-1 rounded-md border border-[var(--card-border)] hover:bg-[var(--muted)]/10"
-                    aria-label="Previous variant"
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                  </button>
-                  <input
-                    type="range"
-                    min={0}
-                    max={successfulVariants.length - 1}
-                    value={activeIndex}
-                    onChange={(e) => {
-                      const v = successfulVariants[Number(e.target.value)];
-                      if (v) handleSelect(v.imageUrl);
-                    }}
-                    className="flex-1 h-1.5 accent-[var(--accent)] cursor-pointer"
-                    aria-label="Browse variants"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => slideVariant(1)}
-                    className="p-1 rounded-md border border-[var(--card-border)] hover:bg-[var(--muted)]/10"
-                    aria-label="Next variant"
-                  >
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-                <p className="text-[10px] text-center text-[var(--muted)]">
-                  Variant {activeIndex + 1} / {successfulVariants.length} —{' '}
-                  {activeVariant?.variantLabel ?? activeVariant?.provider ?? 'Selected'}
-                  {activeVariant?.userVoted ? ' · ★ Your pick' : ''}
-                </p>
+              <div className="mt-1.5 px-1 flex items-center gap-1.5">
+                <button type="button" onClick={() => slideVariant(-1)} className="p-0.5 rounded border border-[var(--card-border)]" aria-label="Previous">
+                  <ChevronLeft className="h-3 w-3" />
+                </button>
+                <input
+                  type="range"
+                  min={0}
+                  max={successfulVariants.length - 1}
+                  value={activeIndex}
+                  onChange={(e) => {
+                    const v = successfulVariants[Number(e.target.value)];
+                    if (v) handleSelect(v.imageUrl);
+                  }}
+                  className="flex-1 h-1 accent-[var(--accent)]"
+                  aria-label="Browse variants"
+                />
+                <button type="button" onClick={() => slideVariant(1)} className="p-0.5 rounded border border-[var(--card-border)]" aria-label="Next">
+                  <ChevronRight className="h-3 w-3" />
+                </button>
+                <span className="text-[9px] text-[var(--muted)] shrink-0">
+                  {activeIndex + 1}/{successfulVariants.length}
+                </span>
               </div>
             )}
 
-            <div className="flex items-center justify-center gap-1.5 mt-2 flex-wrap">
+            <div className="flex items-center justify-center gap-1 mt-2 flex-wrap">
               <ActionPill icon={Wand2} label="AI Edit" accent onClick={() => openEditor(previewSrc)} />
-              <ActionPill icon={Share2} label="Post to social" onClick={() => setSocialOpen(true)} />
-              <ActionPill icon={Download} label="Download" onClick={() => downloadImage(previewSrc, 'xroga-image.png')} />
+              <ActionPill
+                icon={UserCircle}
+                label={settingProfile ? '…' : 'Profile pic'}
+                onClick={() => void handleSetProfilePic(previewSrc)}
+              />
+              <ActionPill icon={Share2} label="Social" onClick={() => setSocialOpen(true)} />
+              <ActionPill icon={Download} label="Save" onClick={() => downloadImage(previewSrc, 'xroga-image.png')} />
               <ActionPill icon={Copy} label="Copy" onClick={() => copyImageToClipboard(previewSrc)} />
               <ActionPill icon={Trash2} label="Delete" danger onClick={() => setDeleteOpen(true)} />
             </div>
           </div>
         )}
 
-        {successfulVariants.length > 0 && (
-          <div className="px-2 py-2">
-            <p className="text-[10px] font-medium text-[var(--muted)] mb-1.5 px-0.5">
-              {successfulVariants.length > 1 ? 'All variants — tap to AI edit' : 'Generated by'} ·{' '}
-              {successfulVariants.map((v) => v.variantLabel ?? v.provider).join(' · ')}
-            </p>
-            <div className={cn('grid gap-1.5', gridCols)}>
-              {successfulVariants.map((img, i) => {
-                const isActive = img.imageUrl === activeUrl;
-                const isVoted = img.userVoted || (img.selected && isActive);
-
+        {gridVariants.length > 0 && (
+          <div className="px-2 py-2 border-b border-[var(--card-border)]">
+            <p className="text-[9px] font-medium text-[var(--muted)] mb-1 px-0.5">Other variants</p>
+            <div className="grid grid-cols-4 sm:grid-cols-4 gap-1 max-w-md">
+              {gridVariants.map((img, i) => {
+                const isVoted = img.userVoted || img.selected;
                 return (
                   <div
-                    key={`variant-${img.variantIndex ?? i}-${img.provider ?? 'slot'}`}
-                    className={cn(
-                      'relative rounded-md overflow-hidden border aspect-square group',
-                      isActive
-                        ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/30'
-                        : 'border-[var(--card-border)]',
-                    )}
+                    key={`grid-${img.variantIndex ?? i}-${img.provider ?? 'v'}`}
+                    className="relative rounded-md overflow-hidden border border-[var(--card-border)] aspect-square max-h-16"
                   >
                     <button
                       type="button"
                       onClick={() => openEditor(img.imageUrl)}
-                      className="absolute inset-0 z-0"
-                      aria-label={`AI edit ${img.variantLabel ?? img.provider}`}
+                      className="absolute inset-0"
+                      aria-label={`Edit ${img.variantLabel ?? img.provider}`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
                     </button>
-
-                    <div className="absolute top-0 inset-x-0 flex items-center justify-between p-0.5 z-10 pointer-events-none">
-                      <span className="text-[7px] font-bold px-1 py-0.5 rounded bg-black/60 text-white truncate max-w-[60%]">
-                        {img.variantLabel ?? img.provider}
-                      </span>
-                    </div>
-
-                    <div className="absolute top-0 right-0 p-0.5 z-10">
-                      <button
-                        type="button"
-                        title="Vote best"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleVote(img.imageUrl);
-                        }}
-                        className={cn(
-                          'p-0.5 rounded bg-black/60 pointer-events-auto',
-                          isVoted ? 'text-amber-400' : 'text-white/80 hover:text-amber-300',
-                        )}
-                      >
-                        {isVoted ? <Star className="h-3 w-3 fill-current" /> : <ThumbsUp className="h-3 w-3" />}
-                      </button>
-                    </div>
-
-                    <span className="absolute bottom-0 right-0 text-[7px] text-white/90 bg-black/50 px-1 py-0.5 z-[5] pointer-events-none">
-                      {img.matchScore}%
+                    <span className="absolute bottom-0 inset-x-0 text-[6px] bg-black/70 text-white px-0.5 truncate pointer-events-none">
+                      {img.variantLabel ?? img.provider}
                     </span>
+                    <button
+                      type="button"
+                      title="Vote"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleVote(img.imageUrl);
+                      }}
+                      className={cn(
+                        'absolute top-0 right-0 p-0.5 bg-black/60 rounded-bl',
+                        isVoted ? 'text-amber-400' : 'text-white/70',
+                      )}
+                    >
+                      <Star className="h-2.5 w-2.5" />
+                    </button>
                   </div>
                 );
               })}
@@ -465,14 +451,14 @@ export function ImageStudioCard({
           </div>
         )}
 
-        <div className="flex items-center gap-1 px-2 py-2 border-t border-[var(--card-border)]">
+        <div className="flex items-center gap-1 px-2 py-1.5">
           <button
             type="button"
-            title="Share to YouTube, X, Instagram, Facebook, Pinterest & more"
+            title="Share to YouTube, X, Instagram & more"
             onClick={() => setSocialOpen(true)}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-emerald-500/35 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold hover:bg-emerald-500/20 transition-colors"
+            className="flex items-center gap-1 px-2 py-1 rounded-lg border border-emerald-500/35 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold hover:bg-emerald-500/20"
           >
-            <Share2 className="h-3.5 w-3.5" />
+            <Share2 className="h-3 w-3" />
             Post to social media
           </button>
         </div>

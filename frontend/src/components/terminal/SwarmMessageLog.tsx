@@ -18,6 +18,7 @@ import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
 import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { FeatureOutputView } from './FeatureOutputView';
+import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
 import { TextGeneratingAnimation } from './TextGeneratingAnimation';
@@ -319,11 +320,13 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             sublabel="Xroga AI · Video Studio"
                           />
                         ) : msg.featureOutput ? (
-                          <FeatureOutputView
-                            output={msg.featureOutput}
-                            messageId={msg.id}
-                            onDelete={() => deleteTurn(msg.id)}
-                          />
+                          <ChatErrorBoundary>
+                            <FeatureOutputView
+                              output={msg.featureOutput}
+                              messageId={msg.id}
+                              onDelete={() => deleteTurn(msg.id)}
+                            />
+                          </ChatErrorBoundary>
                         ) : loading &&
                         msg.id === animatingId &&
                         isImageGenerationPrompt(lastUserText) ? (

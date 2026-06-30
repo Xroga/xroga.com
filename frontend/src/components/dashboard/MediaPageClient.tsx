@@ -18,6 +18,8 @@ import { findChatArchiveByMessageId, removeChatArchiveEntry } from '@/lib/chatAr
 import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { useRouter } from 'next/navigation';
 import { useTerminalChat } from '@/context/TerminalChatContext';
+import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
+import { setProfileFromImageUrl } from '@/lib/setProfileFromImage';
 import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
 import toast from 'react-hot-toast';
 
@@ -37,6 +39,16 @@ export function MediaPageClient() {
   const fileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { setPrompt, deleteTurn } = useTerminalChat();
+  const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
+
+  async function handleSetProfile(item: MediaItem) {
+    if (item.type !== 'image') return;
+    try {
+      await setProfileFromImageUrl(item.url, { setAvatarUrl, uploadAvatarFile });
+    } catch {
+      toast.error('Could not set profile photo');
+    }
+  }
 
   useEffect(() => {
     setItems(loadMediaItems());
@@ -193,6 +205,7 @@ export function MediaPageClient() {
                 selected={selectedId === item.id}
                 onOpen={openInDashboard}
                 onDelete={() => setDeleteTarget(item)}
+                onSetProfile={item.type === 'image' ? handleSetProfile : undefined}
               />
             ))}
           </div>

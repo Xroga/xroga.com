@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Film, Music, Play, Pause } from 'lucide-react';
+import { Film, Music, Play, Pause, UserCircle } from 'lucide-react';
 import { SectionCompactCard } from '@/components/dashboard/SectionCompactCard';
 import type { MediaItem } from '@/lib/mediaStorage';
 import { cn } from '@/lib/utils';
@@ -11,17 +11,34 @@ interface MediaCardProps {
   selected?: boolean;
   onOpen: (item: MediaItem) => void;
   onDelete: (id: string) => void;
+  onSetProfile?: (item: MediaItem) => void;
 }
 
-export function MediaCard({ item, selected, onOpen, onDelete }: MediaCardProps) {
+export function MediaCard({ item, selected, onOpen, onDelete, onSetProfile }: MediaCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
 
   const preview = (
     <div className="relative aspect-square bg-black/30 overflow-hidden">
       {item.type === 'image' && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={item.url} alt={item.name} className="h-full w-full object-cover" />
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={item.url} alt={item.name} className="h-full w-full object-cover" />
+          {onSetProfile && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSetProfile(item);
+              }}
+              className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-[var(--accent)] transition-colors"
+              title="Set as profile photo"
+              aria-label="Set as profile photo"
+            >
+              <UserCircle className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </>
       )}
       {item.type === 'video' && (
         <>
