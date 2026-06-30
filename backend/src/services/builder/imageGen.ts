@@ -275,7 +275,8 @@ function truncatePrompt(prompt: string): string {
 
 const PROVIDER_TIMEOUT_MS = 28_000;
 const AGNES_TIMEOUT_MS = 28_000;
-const GEMINI_TIMEOUT_MS = 28_000;
+/** Gemini tries Interactions + generateContent fallbacks inside one call */
+const GEMINI_TIMEOUT_MS = 30_000;
 
 async function callImageProvider(
   entry: ProviderEntry,
