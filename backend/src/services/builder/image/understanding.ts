@@ -8,15 +8,20 @@ export interface ImageQueryIntent {
   quality: 'standard' | 'premium';
   resolution?: string;
   rawQuery: string;
+  aspectFormat?: string;
+  contentType?: string;
+  styleVibe?: string;
 }
 
 const CLASSIFY_SYSTEM = `You classify image generation requests. Respond ONLY with valid JSON:
-{"subject":"main subject","action":"optional action","environment":"setting/scene","style":"art style keywords","quality":"standard|premium","resolution":"optional e.g. 4K"}
+{"subject":"main subject (short)","action":"optional action","environment":"setting/scene","style":"art style keywords","quality":"standard|premium","resolution":"optional","aspectFormat":"1:1|4:5|16:9|9:16|3:4|4:3","contentType":"thumbnail|logo|avatar|og|post|story|banner|wallpaper|general","styleVibe":"photorealistic|3d|pixel|minecraft|cartoon|anime|logo|illustration|general"}
 
 Rules:
-- quality=premium when user asks for photorealistic, cinematic, hero, masterpiece, 4K/8K, ultra, professional, or similar.
-- Otherwise quality=standard.
-- Extract concise fields from the user query.`;
+- quality=premium for photorealistic, cinematic, 4K/8K, masterpiece, professional.
+- aspectFormat: thumbnail/og/banner/youtube=16:9, story/tiktok/mobile=9:16, logo/avatar=1:1, instagram post=1:1 or 4:5.
+- contentType: detect logo, avatar, thumbnail, og, story, banner, wallpaper, post from user words.
+- styleVibe: detect 3d, pixel, minecraft, cartoon, anime, logo, photorealistic from user words.
+- Keep subject under 12 words.`;
 
 function parseIntentJson(raw: string, query: string): ImageQueryIntent {
   const cleaned = raw.replace(/```json?\s*|\s*```/g, '').trim();
@@ -30,6 +35,9 @@ function parseIntentJson(raw: string, query: string): ImageQueryIntent {
       quality: parsed.quality === 'premium' ? 'premium' : 'standard',
       resolution: parsed.resolution?.trim(),
       rawQuery: query,
+      aspectFormat: parsed.aspectFormat?.trim(),
+      contentType: parsed.contentType?.trim(),
+      styleVibe: parsed.styleVibe?.trim(),
     };
   } catch {
     return fallbackIntent(query);

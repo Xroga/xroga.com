@@ -2,6 +2,7 @@ import { deepSeekChat } from '../../../lib/deepseek.js';
 import { groqChat } from '../../../lib/groq.js';
 import { geminiGenerate } from '../../../lib/gemini.js';
 import type { ImageQueryIntent } from './understanding.js';
+import { styleVibePromptSuffix, contentTypePromptSuffix, type ImageStyleVibe, type ImageContentType } from './imageIntent.js';
 
 export interface EnhancedImagePrompt {
   prompt: string;
@@ -12,8 +13,9 @@ export interface EnhancedImagePrompt {
 const NEGATIVE_DEFAULT =
   'blurry, low quality, distorted, deformed, watermark, text overlay, ugly, duplicate, mutilated, disfigured, bad anatomy, extra limbs';
 
-const ENHANCE_SYSTEM = `You are an expert image prompt engineer. Given structured intent JSON, output ONE detailed image generation prompt (80-200 words).
+const ENHANCE_SYSTEM = `You are an expert image prompt engineer. Given structured intent JSON, output ONE detailed image generation prompt (60-150 words).
 Include: subject, action, environment, lighting, composition, camera angle, art style, quality tags.
+Match the styleVibe (3d, pixel, minecraft, cartoon, anime, logo, photorealistic) and contentType (thumbnail, logo, avatar, og, story).
 Do NOT wrap in quotes. Do NOT use markdown. Output only the prompt text.`;
 
 function buildIntentPayload(intent: ImageQueryIntent): string {
@@ -24,6 +26,9 @@ function buildIntentPayload(intent: ImageQueryIntent): string {
     style: intent.style,
     resolution: intent.resolution ?? 'high quality',
     quality: intent.quality,
+    aspectFormat: intent.aspectFormat,
+    contentType: intent.contentType,
+    styleVibe: intent.styleVibe,
   });
 }
 
@@ -68,15 +73,15 @@ function deriveStyleTags(intent: ImageQueryIntent): string[] {
   return tags;
 }
 
-/** Step B: DeepSeek enhances prompt (Groq/Gemini Flash as fallbacks — no premium LLMs). */
+/** Step B: Gemini/Groq enhance prompt — Gemini preferred for detail, Groq as fast fallback. */
 export async function enhanceImagePrompt(intent: ImageQueryIntent): Promise<EnhancedImagePrompt> {
   const styleTags = deriveStyleTags(intent);
   let prompt = '';
 
   const enhancers: Array<() => Promise<string>> = [];
-  if (process.env.DEEPSEEK_API_KEY) enhancers.push(() => enhanceWithDeepSeek(intent));
-  if (process.env.GROQ_API_KEY) enhancers.push(() => enhanceWithGroq(intent));
   if (process.env.GEMINI_API_KEY) enhancers.push(() => enhanceWithGeminiFlash(intent));
+  if (process.env.GROQ_API_KEY) enhancers.push(() => enhanceWithGroq(intent));
+  if (process.env.DEEPSEEK_API_KEY) enhancers.push(() => enhanceWithDeepSeek(intent));
 
   for (const run of enhancers) {
     try {
@@ -96,6 +101,11 @@ export async function enhanceImagePrompt(intent: ImageQueryIntent): Promise<Enha
   }
 
   prompt = injectStyle(prompt, styleTags);
+
+  const vibe = (intent.styleVibe as ImageStyleVibe) || 'general';
+  const content = (intent.contentType as ImageContentType) || 'general';
+  if (vibe !== 'general') prompt += `. ${styleVibePromptSuffix(vibe)}`;
+  if (content !== 'general') prompt += `. ${contentTypePromptSuffix(content)}`;
 
   return {
     prompt,

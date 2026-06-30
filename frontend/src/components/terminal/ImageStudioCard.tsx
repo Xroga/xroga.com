@@ -10,8 +10,6 @@ import {
   CheckCircle2,
   AlertTriangle,
   Share2,
-  ChevronLeft,
-  ChevronRight,
   UserCircle,
   ChevronDown,
   ChevronUp,
@@ -22,6 +20,7 @@ import { setProfileFromImageUrl } from '@/lib/setProfileFromImage';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 import { ImageEditModal } from './ImageEditModal';
 import { SocialShareModal } from './SocialShareModal';
+import { ImageVariantCarousel } from './ImageVariantCarousel';
 import { TextGeneratingAnimation } from './TextGeneratingAnimation';
 import { isPlaceholderImage } from '@/lib/parseImageContent';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -44,20 +43,38 @@ export interface RejectedImage {
 
 const VARIANT_SLOTS = 4;
 
-const FORMAT_LABELS: Record<string, string> = {
-  '1:1': '1:1',
-  '4:5': '4:5',
-  '16:9': '16:9',
-  '9:16': '9:16',
-  '3:4': '3:4',
-  '4:3': '4:3',
+const CONTENT_LABELS: Record<string, string> = {
+  thumbnail: 'Thumbnail',
+  logo: 'Logo',
+  avatar: 'Avatar',
+  og: 'OG Post',
+  post: 'Post',
+  story: 'Story',
+  banner: 'Banner',
+  wallpaper: 'Wallpaper',
+  general: 'Image',
 };
 
-function previewAspectClass(aspectFormat?: string, isYoutubeThumbnail?: boolean): string {
-  if (aspectFormat === '16:9' || isYoutubeThumbnail) return 'aspect-video';
-  if (aspectFormat === '9:16') return 'aspect-[9/16] max-h-72';
-  if (aspectFormat === '4:5' || aspectFormat === '3:4') return 'aspect-[4/5] max-h-64';
-  return 'aspect-square max-h-56';
+const STYLE_LABELS: Record<string, string> = {
+  photorealistic: 'Photo',
+  '3d': '3D',
+  pixel: 'Pixel',
+  minecraft: 'Minecraft',
+  cartoon: 'Cartoon',
+  anime: 'Anime',
+  logo: 'Logo',
+  illustration: 'Illustration',
+  general: '',
+};
+
+function previewAspectClass(aspectFormat?: string, isYoutubeThumbnail?: boolean, contentType?: string): string {
+  if (aspectFormat === '16:9' || isYoutubeThumbnail || contentType === 'thumbnail' || contentType === 'og' || contentType === 'banner') {
+    return 'aspect-video';
+  }
+  if (aspectFormat === '9:16' || contentType === 'story' || contentType === 'wallpaper') return 'aspect-[9/16] max-h-80';
+  if (aspectFormat === '4:5' || aspectFormat === '3:4') return 'aspect-[4/5] max-h-72';
+  if (contentType === 'logo' || contentType === 'avatar') return 'aspect-square max-h-52';
+  return 'aspect-square max-h-64';
 }
 
 export interface ImageOutputData {
@@ -74,6 +91,8 @@ export interface ImageOutputData {
   allAttempts?: RejectedImage[];
   isYoutubeThumbnail?: boolean;
   aspectFormat?: string;
+  contentType?: string;
+  styleVibe?: string;
   followUps?: string[];
   variantCount?: number;
   isStyleTransfer?: boolean;
@@ -98,6 +117,7 @@ export function ImageGeneratingAnimation({
   promptHint,
   aspectFormat,
   isYoutubeThumbnail,
+  contentType,
 }: {
   className?: string;
   message?: string;
@@ -106,30 +126,24 @@ export function ImageGeneratingAnimation({
   promptHint?: string;
   aspectFormat?: string;
   isYoutubeThumbnail?: boolean;
+  contentType?: string;
 }) {
   const slots = Array.from({ length: VARIANT_SLOTS }, (_, i) => liveAttempts[i] ?? null);
-  const aspectClass = previewAspectClass(aspectFormat, isYoutubeThumbnail);
+  const aspectClass = previewAspectClass(aspectFormat, isYoutubeThumbnail, contentType);
 
   return (
     <div className={cn('my-2', className)}>
       <TextGeneratingAnimation message={message} step={step} mode="image" sublabel="4 variants" />
-      {promptHint && (
-        <p className="mt-1.5 text-[10px] text-[var(--muted)] truncate px-0.5">{promptHint}</p>
-      )}
-      <div className="mt-2 grid grid-cols-4 gap-1">
+      {promptHint && <p className="mt-1.5 text-[10px] text-[var(--muted)] truncate px-0.5">{promptHint}</p>}
+      <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-1.5">
         {slots.map((img, i) => (
           <div
             key={img?.variantIndex ?? `slot-${i}`}
-            className={cn(
-              'relative overflow-hidden rounded-md border border-[var(--card-border)] bg-[var(--muted)]/10',
-              aspectClass,
-            )}
+            className={cn('relative overflow-hidden rounded-lg border border-[var(--card-border)] bg-[var(--muted)]/10', aspectClass)}
           >
             {img ? (
-              <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.imageUrl} alt="" className="h-full w-full object-cover" />
-              </>
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={img.imageUrl} alt="" className="h-full w-full object-cover" />
             ) : (
               <div className="h-full w-full animate-pulse bg-[var(--muted)]/20" />
             )}
@@ -152,6 +166,7 @@ export function ImageStudioCard({
   const { deleteTurn, updateFeatureOutput } = useTerminalChat();
   const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
   const [settingProfile, setSettingProfile] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [socialOpen, setSocialOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -172,18 +187,17 @@ export function ImageStudioCard({
     rejectedImages,
     allAttempts: allAttemptsProp,
     aspectFormat,
+    contentType,
+    styleVibe,
     isStyleTransfer,
     isYoutubeThumbnail,
   } = data;
 
   const displayPrompt = concisePrompt || enhancedPrompt || prompt;
-  const aspectClass = previewAspectClass(aspectFormat, isYoutubeThumbnail);
-  const formatBadge =
-    isYoutubeThumbnail || aspectFormat === '16:9'
-      ? '16:9'
-      : aspectFormat
-        ? (FORMAT_LABELS[aspectFormat] ?? aspectFormat)
-        : '1:1';
+  const aspectClass = previewAspectClass(aspectFormat, isYoutubeThumbnail, contentType);
+  const title = isStyleTransfer ? 'Style' : CONTENT_LABELS[contentType ?? ''] ?? (isYoutubeThumbnail ? 'Thumbnail' : 'Image');
+  const styleBadge = styleVibe ? STYLE_LABELS[styleVibe] : '';
+  const formatBadge = aspectFormat ?? (isYoutubeThumbnail ? '16:9' : '1:1');
 
   const allAttempts = useMemo(() => {
     if (allAttemptsProp?.length) {
@@ -197,12 +211,7 @@ export function ImageStudioCard({
       list.push(img);
     };
     if (defaultSrc && !isPlaceholderImage(defaultSrc)) {
-      add({
-        imageUrl: defaultSrc,
-        provider: provider ?? 'Selected',
-        matchScore: matchScore ?? 0,
-        selected: true,
-      });
+      add({ imageUrl: defaultSrc, provider: provider ?? 'Selected', matchScore: matchScore ?? 0, selected: true });
     }
     for (const r of rejectedImages ?? []) add(r);
     return list.slice(0, VARIANT_SLOTS);
@@ -213,22 +222,18 @@ export function ImageStudioCard({
     [allAttempts],
   );
 
-  const allImageUrls = useMemo(
-    () => successfulVariants.map((v) => v.imageUrl).filter(Boolean),
-    [successfulVariants],
-  );
+  const allImageUrls = useMemo(() => successfulVariants.map((v) => v.imageUrl).filter(Boolean), [successfulVariants]);
 
   const visibleVariants =
-    successfulVariants.length > 0
-      ? successfulVariants
-      : allAttempts.filter((v) => !v.failed && !v.blocked);
+    successfulVariants.length > 0 ? successfulVariants : allAttempts.filter((v) => !v.failed && !v.blocked);
   const activeVariant = visibleVariants.find((v) => v.imageUrl === activeUrl) ?? visibleVariants[0];
   const previewSrc = activeVariant?.imageUrl ?? defaultSrc;
 
-  const activeIndex = Math.max(
-    0,
-    successfulVariants.findIndex((v) => v.imageUrl === activeUrl),
-  );
+  const activeIndex = Math.max(0, visibleVariants.findIndex((v) => v.imageUrl === activeUrl));
+  const carouselSlides = visibleVariants.map((v) => ({
+    imageUrl: v.imageUrl,
+    label: v.variantLabel ?? v.provider,
+  }));
 
   if (generating) {
     return (
@@ -239,6 +244,7 @@ export function ImageStudioCard({
         promptHint={displayPrompt}
         aspectFormat={aspectFormat}
         isYoutubeThumbnail={isYoutubeThumbnail}
+        contentType={contentType}
       />
     );
   }
@@ -254,12 +260,11 @@ export function ImageStudioCard({
     );
   }
 
-  function persistSelection(url: string, voted: boolean) {
+  function persistSelection(url: string) {
     if (!messageId) return;
     const nextAttempts = allAttempts.map((a) => ({
       ...a,
       selected: a.imageUrl === url,
-      userVoted: a.imageUrl === url ? voted : a.userVoted,
     }));
     updateFeatureOutput(messageId, {
       ...data,
@@ -270,9 +275,11 @@ export function ImageStudioCard({
     });
   }
 
-  function handleSelect(url: string) {
-    setActiveUrl(url);
-    persistSelection(url, false);
+  function handleSelectIndex(index: number) {
+    const v = visibleVariants[index];
+    if (!v) return;
+    setActiveUrl(v.imageUrl);
+    persistSelection(v.imageUrl);
   }
 
   function handleDelete() {
@@ -285,7 +292,7 @@ export function ImageStudioCard({
   function openEditor(url = previewSrc) {
     setEditSrc(url);
     setActiveUrl(url);
-    persistSelection(url, false);
+    persistSelection(url);
     setEditOpen(true);
   }
 
@@ -300,33 +307,33 @@ export function ImageStudioCard({
     }
   }
 
-  function slideVariant(delta: number) {
-    if (successfulVariants.length < 2) return;
-    const next = (activeIndex + delta + successfulVariants.length) % successfulVariants.length;
-    const v = successfulVariants[next];
-    if (v) handleSelect(v.imageUrl);
+  async function handleDownload(url = previewSrc) {
+    setDownloading(true);
+    try {
+      await downloadImage(url, 'xroga-image.png');
+    } finally {
+      setTimeout(() => setDownloading(false), 800);
+    }
   }
-
-  const title = isStyleTransfer ? 'Style' : isYoutubeThumbnail ? 'Thumbnail' : 'Image';
 
   return (
     <>
       <div
         className={cn(
-          'my-2 overflow-hidden rounded-xl border border-[var(--card-border)]/80 bg-[var(--card)]/40 backdrop-blur-sm',
+          'my-2 overflow-hidden rounded-2xl border border-[var(--card-border)]/80 bg-[var(--card)]/50 backdrop-blur-sm shadow-sm',
           className,
         )}
       >
-        {/* Compact header */}
-        <div className="flex items-center justify-between gap-2 px-2.5 py-1.5">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-[11px] font-semibold text-[var(--foreground)]">{title}</span>
-            <span className="rounded px-1 py-0.5 text-[9px] font-medium bg-[var(--muted)]/15 text-[var(--muted)]">
+        {/* Header */}
+        <div className="flex items-center justify-between gap-2 px-3 py-2">
+          <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
+            <span className="text-xs font-semibold">{title}</span>
+            <span className="rounded-md px-1.5 py-0.5 text-[9px] font-medium bg-[var(--muted)]/12 text-[var(--muted)]">
               {formatBadge}
             </span>
-            {successfulVariants.length > 1 && (
-              <span className="text-[9px] text-[var(--muted)]">
-                {activeIndex + 1}/{successfulVariants.length}
+            {styleBadge && (
+              <span className="rounded-md px-1.5 py-0.5 text-[9px] font-medium bg-[var(--accent)]/10 text-[var(--accent)]">
+                {styleBadge}
               </span>
             )}
           </div>
@@ -344,7 +351,7 @@ export function ImageStudioCard({
             <button
               type="button"
               onClick={() => setDeleteOpen(true)}
-              className="p-1 rounded-md text-[var(--muted)] hover:text-red-500 hover:bg-red-500/10 transition-colors"
+              className="p-1 rounded-md text-[var(--muted)] hover:text-red-500 hover:bg-red-500/10"
               aria-label="Delete"
             >
               <Trash2 className="h-3 w-3" />
@@ -352,116 +359,93 @@ export function ImageStudioCard({
           </div>
         </div>
 
-        {/* Hero preview — respects aspect ratio */}
         {previewSrc && (
-          <div className="px-2 pb-2">
-            <button
-              type="button"
-              onClick={() => openEditor(previewSrc)}
-              className={cn(
-                'group relative w-full overflow-hidden rounded-lg bg-black/5 dark:bg-black/20',
-                aspectClass,
-              )}
-              aria-label="Open AI image editor"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={previewSrc}
-                alt={prompt ?? 'Generated image'}
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-              <span className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
-                <Wand2 className="h-5 w-5 text-white opacity-0 group-hover:opacity-90 drop-shadow transition-opacity" />
-              </span>
-            </button>
+          <div className="px-3 pb-3 space-y-3">
+            {/* Carousel with arrows, swipe, auto-slide */}
+            <ImageVariantCarousel
+              slides={carouselSlides.length > 0 ? carouselSlides : [{ imageUrl: previewSrc }]}
+              activeIndex={activeIndex}
+              onChange={handleSelectIndex}
+              aspectClass={aspectClass}
+              alt={prompt ?? 'Generated image'}
+              onImageClick={openEditor}
+            />
 
+            {/* Variant grid — larger modern tiles */}
             {successfulVariants.length > 1 && (
-              <div className="mt-1.5 flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => slideVariant(-1)}
-                  className="p-0.5 rounded text-[var(--muted)] hover:text-[var(--foreground)]"
-                  aria-label="Previous variant"
-                >
-                  <ChevronLeft className="h-3.5 w-3.5" />
-                </button>
-                <div className="flex flex-1 gap-1 overflow-x-auto scrollbar-none">
+              <div>
+                <p className="text-[9px] font-medium uppercase tracking-wide text-[var(--muted)] mb-1.5 px-0.5">
+                  All variants
+                </p>
+                <div className="grid grid-cols-2 gap-2">
                   {successfulVariants.map((v, i) => (
                     <button
-                      key={`thumb-${v.variantIndex ?? i}`}
+                      key={`grid-${v.variantIndex ?? i}`}
                       type="button"
-                      onClick={() => handleSelect(v.imageUrl)}
+                      onClick={() => handleSelectIndex(i)}
                       className={cn(
-                        'shrink-0 w-10 rounded overflow-hidden border-2 transition-colors',
+                        'relative overflow-hidden rounded-xl border-2 transition-all hover:scale-[1.02]',
                         v.imageUrl === previewSrc
-                          ? 'border-[var(--accent)]'
-                          : 'border-transparent opacity-70 hover:opacity-100',
+                          ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/20'
+                          : 'border-[var(--card-border)] opacity-85 hover:opacity-100',
+                        aspectClass,
                       )}
-                      aria-label={`Variant ${i + 1}`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={v.imageUrl} alt="" className="w-full aspect-video object-cover" />
+                      <img src={v.imageUrl} alt="" className="h-full w-full object-cover" />
+                      <span className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1.5 text-[9px] font-medium text-white truncate">
+                        {v.variantLabel ?? v.provider}
+                      </span>
                     </button>
                   ))}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => slideVariant(1)}
-                  className="p-0.5 rounded text-[var(--muted)] hover:text-[var(--foreground)]"
-                  aria-label="Next variant"
-                >
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </button>
               </div>
             )}
 
-            {/* Icon toolbar */}
-            <div className="mt-2 flex items-center justify-between gap-1 px-0.5">
-              <div className="flex items-center gap-0.5">
+            {/* Action row */}
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => void handleDownload(previewSrc)}
+                disabled={downloading}
+                className={cn(
+                  'inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-[11px] font-semibold transition-all',
+                  'bg-[var(--accent)] text-white hover:opacity-90 active:scale-95',
+                  downloading && 'animate-pulse opacity-80',
+                )}
+              >
+                <Download className={cn('h-3.5 w-3.5', downloading && 'animate-bounce')} />
+                {downloading ? 'Saving…' : 'Download'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSocialOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-[11px] font-semibold border border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-all active:scale-95"
+              >
+                <Share2 className="h-3.5 w-3.5" />
+                Post to social media
+              </button>
+
+              <div className="flex items-center gap-0.5 ml-auto">
                 <IconBtn icon={Wand2} label="AI Edit" onClick={() => openEditor(previewSrc)} accent />
-                <IconBtn
-                  icon={UserCircle}
-                  label="Profile"
-                  onClick={() => void handleSetProfilePic(previewSrc)}
-                  disabled={settingProfile}
-                />
-                <IconBtn icon={Share2} label="Share" onClick={() => setSocialOpen(true)} />
-                <IconBtn icon={Download} label="Save" onClick={() => downloadImage(previewSrc, 'xroga-image.png')} />
-                <IconBtn icon={Copy} label="Copy" onClick={() => copyImageToClipboard(previewSrc)} />
+                <IconBtn icon={UserCircle} label="Profile" onClick={() => void handleSetProfilePic(previewSrc)} disabled={settingProfile} />
+                <IconBtn icon={Copy} label="Copy image" onClick={() => void copyImageToClipboard(previewSrc)} />
               </div>
             </div>
           </div>
         )}
 
-        {/* Collapsible prompt — one line by default */}
         {displayPrompt && (
-          <div className="border-t border-[var(--card-border)]/60 px-2.5 py-1.5">
-            <button
-              type="button"
-              onClick={() => setPromptOpen((o) => !o)}
-              className="flex w-full items-center gap-1 text-left"
-            >
-              <span className="text-[9px] font-medium uppercase tracking-wide text-[var(--muted)] shrink-0">
-                Prompt
-              </span>
+          <div className="border-t border-[var(--card-border)]/60 px-3 py-2">
+            <button type="button" onClick={() => setPromptOpen((o) => !o)} className="flex w-full items-center gap-1 text-left">
+              <span className="text-[9px] font-medium uppercase tracking-wide text-[var(--muted)] shrink-0">Prompt</span>
               <span className={cn('flex-1 text-[10px] text-[var(--muted)]', !promptOpen && 'truncate')}>
                 {displayPrompt}
-                {overlayText && !promptOpen && (
-                  <span className="text-[var(--accent)]"> · &ldquo;{overlayText}&rdquo;</span>
-                )}
+                {overlayText && !promptOpen && <span className="text-[var(--accent)]"> · &ldquo;{overlayText}&rdquo;</span>}
               </span>
-              {promptOpen ? (
-                <ChevronUp className="h-3 w-3 shrink-0 text-[var(--muted)]" />
-              ) : (
-                <ChevronDown className="h-3 w-3 shrink-0 text-[var(--muted)]" />
-              )}
+              {promptOpen ? <ChevronUp className="h-3 w-3 shrink-0 text-[var(--muted)]" /> : <ChevronDown className="h-3 w-3 shrink-0 text-[var(--muted)]" />}
             </button>
-            {promptOpen && overlayText && (
-              <p className="mt-1 text-[10px] text-[var(--accent)]">
-                On-image text: <span className="font-semibold">&ldquo;{overlayText}&rdquo;</span>
-              </p>
-            )}
           </div>
         )}
       </div>
@@ -474,6 +458,8 @@ export function ImageStudioCard({
         overlayText={overlayText}
         imageUrls={allImageUrls}
         primaryImageUrl={previewSrc}
+        contentType={contentType}
+        aspectFormat={aspectFormat}
       />
 
       <ImageEditModal
@@ -519,9 +505,7 @@ function IconBtn({
       onClick={onClick}
       className={cn(
         'p-2 rounded-lg transition-colors disabled:opacity-50',
-        accent
-          ? 'text-[var(--accent)] hover:bg-[var(--accent)]/10'
-          : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/10',
+        accent ? 'text-[var(--accent)] hover:bg-[var(--accent)]/10' : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/10',
       )}
       aria-label={label}
     >

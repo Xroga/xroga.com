@@ -144,12 +144,12 @@ export type ImageAspectFormat = '1:1' | '4:5' | '16:9' | '9:16' | '3:4' | '4:3';
 /** Parse desired output format from prompt — default Instagram post (1:1) */
 export function parseImageAspectFormat(prompt: string): ImageAspectFormat {
   const p = prompt.toLowerCase();
-  if (/\b(story|reel|tiktok|vertical video|9:16|9\s*:\s*16)\b/.test(p)) return '9:16';
-  if (/\b(youtube|thumbnail|banner|landscape|16:9|16\s*:\s*9|widescreen)\b/.test(p)) return '16:9';
+  if (/\b(story|reel|tiktok|vertical video|9:16|9\s*:\s*16|mobile wallpaper|phone wallpaper)\b/.test(p)) return '9:16';
+  if (/\b(youtube|thumbnail|banner|landscape|16:9|16\s*:\s*9|widescreen|og image|open graph|cover photo|header image|facebook cover|twitter header)\b/.test(p)) return '16:9';
   if (/\b(portrait|3:4|3\s*:\s*4|pinterest)\b/.test(p)) return '3:4';
   if (/\b(4:3|4\s*:\s*3)\b/.test(p)) return '4:3';
   if (/\b(4:5|4\s*:\s*5|instagram portrait)\b/.test(p)) return '4:5';
-  if (/\b(square|1:1|1\s*:\s*1|post|instagram post|ig post)\b/.test(p)) return '1:1';
+  if (/\b(square|1:1|1\s*:\s*1|post|instagram post|ig post|logo|avatar|profile pic|pfp)\b/.test(p)) return '1:1';
   return '1:1';
 }
 

@@ -43,6 +43,42 @@ async function loadImage(url: string): Promise<HTMLImageElement> {
   });
 }
 
+/** Convert any image URL (http or data:) to a PNG blob — works for clipboard paste. */
+export async function imageUrlToPngBlob(url: string): Promise<Blob> {
+  if (url.startsWith('data:')) {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    if (blob.type === 'image/png') return blob;
+    const img = await loadImage(url);
+    return drawImageToPngBlob(img);
+  }
+
+  try {
+    const res = await fetch(url, { mode: 'cors' });
+    if (res.ok) {
+      const blob = await res.blob();
+      if (blob.type.startsWith('image/')) return blob.type === 'image/png' ? blob : drawImageToPngBlob(await loadImage(url));
+    }
+  } catch {
+    /* fall through to canvas */
+  }
+
+  const img = await loadImage(url);
+  return drawImageToPngBlob(img);
+}
+
+function drawImageToPngBlob(img: HTMLImageElement): Promise<Blob> {
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth || img.width;
+  canvas.height = img.naturalHeight || img.height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas not supported');
+  ctx.drawImage(img, 0, 0);
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Failed to encode PNG'))), 'image/png');
+  });
+}
+
 export async function renderTransformedImage(
   url: string,
   transform: ImageTransform
@@ -86,10 +122,7 @@ export async function downloadImage(url: string, filename = 'xroga-image.png', t
   try {
     let blob: Blob | null = null;
     if (transform) blob = await renderTransformedImage(url, transform);
-    if (!blob) {
-      const res = await fetch(url);
-      blob = await res.blob();
-    }
+    if (!blob) blob = await imageUrlToPngBlob(url);
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = filename;
@@ -101,22 +134,30 @@ export async function downloadImage(url: string, filename = 'xroga-image.png', t
   }
 }
 
-export async function copyImageToClipboard(url: string, transform?: ImageTransform) {
+export async function copyImageToClipboard(url: string, transform?: ImageTransform, silent = false): Promise<boolean> {
   try {
     let blob: Blob | null = null;
     if (transform) blob = await renderTransformedImage(url, transform);
-    if (!blob) {
-      const res = await fetch(url);
-      blob = await res.blob();
+    if (!blob) blob = await imageUrlToPngBlob(url);
+
+    const pngBlob = blob.type === 'image/png' ? blob : await imageUrlToPngBlob(url);
+
+    if (typeof ClipboardItem !== 'undefined' && navigator.clipboard?.write) {
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
+      if (!silent) toast.success('Image copied — paste anywhere');
+      return true;
     }
-    await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
-    toast.success('Image copied');
+
+    if (!silent) toast.error('Clipboard image not supported in this browser');
+    return false;
   } catch {
     try {
       await navigator.clipboard.writeText(url);
-      toast.success('Image URL copied');
+      if (!silent) toast.success('Image URL copied (image paste unavailable)');
+      return false;
     } catch {
-      toast.error('Copy failed');
+      if (!silent) toast.error('Copy failed — try Download instead');
+      return false;
     }
   }
 }

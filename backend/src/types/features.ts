@@ -90,6 +90,8 @@ export interface ImageGenOutput {
   isStyleTransfer?: boolean;
   sourceImageUrl?: string;
   aspectFormat?: '1:1' | '4:5' | '16:9' | '9:16' | '3:4' | '4:3';
+  contentType?: string;
+  styleVibe?: string;
   thumbnailUrl?: string;
   isYoutubeThumbnail?: boolean;
 }

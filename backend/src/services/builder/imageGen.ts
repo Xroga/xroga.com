@@ -18,6 +18,7 @@ import { buildConciseImagePrompt, extractOverlayText, isThumbnailRequest } from 
 import { pickBestImage } from './image/imageReviewer.js';
 import { generateImageFollowUps } from './image/followUps.js';
 import { moderateImagePrompt, parseImageAspectFormat, aspectFormatLabel, aspectFormatPromptSuffix, type ImageAspectFormat } from './image/contentModeration.js';
+import { parseFullImageIntent, contentTypeLabel, styleVibePromptSuffix, contentTypePromptSuffix, type ImageContentType, type ImageStyleVibe } from './image/imageIntent.js';
 import { verifyImageMatchesPrompt, verifyImageQuick } from './image/imageVerifier.js';
 import { buildImageBlockedOutput } from './image/imageSafetyMessages.js';
 import {
@@ -465,13 +466,16 @@ async function buildPipelinePrompt(
   rawQuery: string,
   basePrompt: string,
   aspectFormat: ImageAspectFormat,
+  imageIntent: ReturnType<typeof parseFullImageIntent>,
   options?: ImageGenOptions
 ): Promise<{ full: string; concise: string; overlayText?: string }> {
   const suffix = aspectFormatPromptSuffix(aspectFormat);
   const overlayText = extractOverlayText(rawQuery);
+  const styleSuffix = styleVibePromptSuffix(imageIntent.styleVibe);
+  const contentSuffix = contentTypePromptSuffix(imageIntent.contentType, overlayText);
 
   if (options?.fast === false) {
-    const full = `${basePrompt}. ${suffix}`;
+    const full = `${basePrompt}. ${suffix}. ${styleSuffix}. ${contentSuffix}`;
     return { full, concise: basePrompt.slice(0, 200), overlayText };
   }
 
@@ -483,7 +487,13 @@ async function buildPipelinePrompt(
     rawQuery,
   });
 
-  emitProgress(options, 'enhancing', 'Groq writing a concise image prompt…');
+  if (intent.contentType) imageIntent.contentType = intent.contentType as ImageContentType;
+  if (intent.styleVibe) imageIntent.styleVibe = intent.styleVibe as ImageStyleVibe;
+  if (intent.aspectFormat && /^\d+:\d+$/.test(intent.aspectFormat)) {
+    imageIntent.aspectFormat = intent.aspectFormat as ImageAspectFormat;
+  }
+
+  emitProgress(options, 'enhancing', 'Gemini & Groq refining your prompt…');
   const concise = await withTimeout(buildConciseImagePrompt(intent, overlayText), 4_000, fallbackConcise(intent, overlayText));
 
   emitProgress(options, 'enhancing', `Prompt: ${concise.slice(0, 140)}${concise.length > 140 ? '…' : ''}`);
@@ -502,7 +512,9 @@ async function buildPipelinePrompt(
     text += ' YouTube thumbnail style, 16:9, bold composition, text-safe areas.';
   }
 
-  const full = `${text}. ${suffix}`;
+  const refreshedStyle = styleVibePromptSuffix(imageIntent.styleVibe);
+  const refreshedContent = contentTypePromptSuffix(imageIntent.contentType, overlayText);
+  const full = `${text}. ${suffix}. ${refreshedStyle}. ${refreshedContent}`;
   return { full, concise, overlayText };
 }
 
@@ -795,7 +807,9 @@ export async function generateImage(
   options?: ImageGenOptions
 ): Promise<ImageGenOutput | ImageBlockedOutput> {
   const rawQuery = extractImagePrompt(userPrompt);
-  const aspectFormat = options?.aspectFormat ?? parseImageAspectFormat(rawQuery);
+  const baseAspect = options?.aspectFormat ?? parseImageAspectFormat(rawQuery);
+  const imageIntent = parseFullImageIntent(rawQuery, baseAspect);
+  const aspectFormat = imageIntent.aspectFormat;
   const ctx: ImageGenCtx = { userId: options?.userId, runId: options?.runId, aspectFormat };
 
   const moderation = moderateImagePrompt(rawQuery);
@@ -804,12 +818,16 @@ export async function generateImage(
   }
 
   const formatLabel = aspectFormatLabel(aspectFormat);
+  const contentLabel = contentTypeLabel(imageIntent.contentType);
   const basePrompt = moderation.sanitizedPrompt ?? rawQuery;
-  const pipeline = await buildPipelinePrompt(rawQuery, basePrompt, aspectFormat, options);
+  const pipeline = await buildPipelinePrompt(rawQuery, basePrompt, aspectFormat, imageIntent, options);
   const imagePrompt = pipeline.full;
   const concisePrompt = pipeline.concise;
   const overlayText = pipeline.overlayText;
-  const isYoutubeThumbnail = isThumbnailRequest(rawQuery) || /\b(thumbnail|youtube)\b/i.test(rawQuery);
+  const isYoutubeThumbnail =
+    imageIntent.contentType === 'thumbnail' ||
+    isThumbnailRequest(rawQuery) ||
+    /\b(thumbnail|youtube)\b/i.test(rawQuery);
 
   const sourceUrl = extractSourceImageUrl(userPrompt, options?.sourceImageUrl);
   if (sourceUrl) {
@@ -954,7 +972,7 @@ export async function generateImage(
     followUps: DEFAULT_FOLLOW_UPS,
     pros: [
       `${safeAttempts.length}/${VARIANT_COUNT} AI variants — best: ${winner.variantLabel ?? winner.provider}`,
-      `Format: ${formatLabel}`,
+      `${contentLabel} · ${formatLabel}`,
     ],
     cons:
       winner.matchScore < EXACT_MATCH_THRESHOLD
@@ -963,6 +981,8 @@ export async function generateImage(
     matchScore: winner.matchScore,
     verified: winner.matchScore >= EXACT_MATCH_THRESHOLD,
     aspectFormat,
+    contentType: imageIntent.contentType,
+    styleVibe: imageIntent.styleVibe,
     allAttempts: serializedAttempts,
     rejectedImages: others,
     isYoutubeThumbnail,

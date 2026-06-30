@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Share2 } from 'lucide-react';
+import { X, Share2, Copy, Check, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { buildSocialPlatformPacks, shareToPlatform, type SocialPlatformPack } from '@/lib/socialSharePack';
 import toast from 'react-hot-toast';
@@ -15,18 +15,20 @@ interface SocialShareModalProps {
   overlayText?: string;
   imageUrls: string[];
   primaryImageUrl?: string;
+  contentType?: string;
+  aspectFormat?: string;
 }
 
-const PLATFORMS: Array<{ id: SocialPlatformPack['id']; label: string; color: string }> = [
-  { id: 'youtube', label: 'YouTube', color: 'text-red-500 border-red-500/30 bg-red-500/10' },
-  { id: 'x', label: 'X', color: 'text-[var(--foreground)] border-[var(--card-border)] bg-[var(--card)]' },
-  { id: 'facebook', label: 'Facebook', color: 'text-blue-500 border-blue-500/30 bg-blue-500/10' },
-  { id: 'instagram', label: 'Instagram', color: 'text-pink-500 border-pink-500/30 bg-pink-500/10' },
-  { id: 'pinterest', label: 'Pinterest', color: 'text-red-600 border-red-600/30 bg-red-600/10' },
-  { id: 'linkedin', label: 'LinkedIn', color: 'text-sky-500 border-sky-500/30 bg-sky-500/10' },
-  { id: 'tiktok', label: 'TikTok', color: 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10' },
-  { id: 'threads', label: 'Threads', color: 'text-[var(--foreground)] border-[var(--card-border)] bg-[var(--card)]' },
-];
+const PLATFORM_STYLES: Record<SocialPlatformPack['id'], string> = {
+  youtube: 'from-red-500/15 to-red-600/5 border-red-500/25 hover:border-red-500/50',
+  x: 'from-[var(--foreground)]/5 to-transparent border-[var(--card-border)] hover:border-[var(--foreground)]/20',
+  facebook: 'from-blue-500/15 to-blue-600/5 border-blue-500/25 hover:border-blue-500/50',
+  instagram: 'from-pink-500/15 via-purple-500/10 to-orange-500/5 border-pink-500/25 hover:border-pink-500/50',
+  pinterest: 'from-red-600/15 to-red-700/5 border-red-600/25 hover:border-red-600/50',
+  linkedin: 'from-sky-500/15 to-sky-600/5 border-sky-500/25 hover:border-sky-500/50',
+  tiktok: 'from-cyan-500/15 to-pink-500/10 border-cyan-500/25 hover:border-cyan-500/50',
+  threads: 'from-[var(--foreground)]/5 to-transparent border-[var(--card-border)] hover:border-[var(--foreground)]/20',
+};
 
 export function SocialShareModal({
   open,
@@ -36,8 +38,15 @@ export function SocialShareModal({
   overlayText,
   imageUrls,
   primaryImageUrl,
+  contentType,
+  aspectFormat,
 }: SocialShareModalProps) {
   const [picked, setPicked] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  const previewUrl = primaryImageUrl || imageUrls[0] || '';
+  const previewAspect =
+    aspectFormat === '16:9' || contentType === 'thumbnail' ? 'aspect-video' : aspectFormat === '9:16' ? 'aspect-[9/16] max-h-36' : 'aspect-square max-h-36';
 
   const packs = useMemo(
     () =>
@@ -47,67 +56,107 @@ export function SocialShareModal({
         overlayText,
         imageUrls,
         primaryImageUrl,
+        contentType,
       }),
-    [prompt, concisePrompt, overlayText, imageUrls, primaryImageUrl]
+    [prompt, concisePrompt, overlayText, imageUrls, primaryImageUrl, contentType],
   );
 
   if (!open || typeof document === 'undefined') return null;
 
   async function handlePick(pack: SocialPlatformPack) {
     setPicked(pack.id);
-    await shareToPlatform(pack);
-    toast.success(`${pack.name}: title, tags & description copied`);
+    await shareToPlatform(pack, previewUrl || undefined);
+    toast.success(`${pack.name}: caption copied${previewUrl ? ' + image copied' : ''}`);
     setTimeout(() => {
       setPicked(null);
       onClose();
-    }, 600);
+    }, 700);
   }
 
   return createPortal(
     <div className="fixed inset-0 z-[230] flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <button type="button" className="absolute inset-0 bg-black/50" onClick={onClose} aria-label="Close" />
+      <button type="button" className="absolute inset-0 bg-black/55 backdrop-blur-[2px]" onClick={onClose} aria-label="Close" />
       <div
         role="dialog"
         aria-label="Share to social media"
-        className="relative z-10 w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl border border-[var(--card-border)] bg-[var(--card)] shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 duration-200"
+        className="relative z-10 w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl border border-[var(--card-border)] bg-[var(--card)] shadow-2xl overflow-hidden"
       >
-        <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-[var(--card-border)]">
-          <div className="flex items-center gap-2">
-            <Share2 className="h-4 w-4 text-[var(--accent)]" />
-            <p className="text-sm font-bold">Post to social</p>
+        <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-[var(--card-border)] bg-gradient-to-r from-[var(--accent)]/8 to-transparent">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--accent)]/15">
+              <Share2 className="h-4 w-4 text-[var(--accent)]" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold leading-tight">Post to social</p>
+              <p className="text-[10px] text-[var(--muted)] truncate">
+                Tap a platform — viral copy + image copied automatically
+              </p>
+            </div>
           </div>
-          <button type="button" onClick={onClose} className="p-1 rounded-lg hover:bg-[var(--muted)]/10" aria-label="Close">
+          <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--muted)]/10 shrink-0" aria-label="Close">
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="p-3 space-y-2 max-h-[min(70vh,420px)] overflow-y-auto">
-          <p className="text-[10px] text-[var(--muted)]">
-            Tap a platform — viral title, tags &amp; description copy automatically, then the site opens.
-          </p>
-          <div className="grid grid-cols-2 gap-1.5">
+        {previewUrl && (
+          <div className="px-4 pt-3">
+            <div className={cn('overflow-hidden rounded-xl border border-[var(--card-border)] bg-black/5', previewAspect)}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={previewUrl} alt="" className="h-full w-full object-cover" />
+            </div>
+          </div>
+        )}
+
+        <div className="p-3 sm:p-4 space-y-2 max-h-[min(55vh,400px)] overflow-y-auto">
+          <div className="grid grid-cols-2 gap-2">
             {packs.map((pack) => {
-              const meta = PLATFORMS.find((p) => p.id === pack.id);
+              const isPicked = picked === pack.id;
+              const isExpanded = expanded === pack.id;
               return (
-                <button
-                  key={pack.id}
-                  type="button"
-                  disabled={picked === pack.id}
-                  onClick={() => handlePick(pack)}
-                  className={cn(
-                    'text-left rounded-xl border px-3 py-2.5 transition-all hover:scale-[1.01] disabled:opacity-60',
-                    meta?.color ?? 'border-[var(--card-border)]'
+                <div key={pack.id} className="flex flex-col">
+                  <button
+                    type="button"
+                    disabled={isPicked}
+                    onClick={() => handlePick(pack)}
+                    className={cn(
+                      'text-left rounded-xl border bg-gradient-to-br px-3 py-2.5 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60',
+                      PLATFORM_STYLES[pack.id],
+                    )}
+                  >
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-[11px] font-bold flex items-center gap-1">
+                        <span className="text-xs opacity-80">{pack.emoji}</span>
+                        {pack.name}
+                      </span>
+                      {isPicked ? (
+                        <Check className="h-3.5 w-3.5 text-emerald-500" />
+                      ) : (
+                        <ExternalLink className="h-3 w-3 opacity-40" />
+                      )}
+                    </div>
+                    <p className="text-[10px] font-medium mt-1 line-clamp-2 leading-snug opacity-90">{pack.title}</p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setExpanded(isExpanded ? null : pack.id)}
+                    className="mt-0.5 flex items-center gap-0.5 text-[9px] text-[var(--muted)] hover:text-[var(--foreground)] px-1"
+                  >
+                    <Copy className="h-2.5 w-2.5" />
+                    {isExpanded ? 'Hide preview' : 'Preview caption'}
+                  </button>
+                  {isExpanded && (
+                    <p className="mt-1 text-[9px] text-[var(--muted)] leading-relaxed px-1 line-clamp-4 whitespace-pre-wrap">
+                      {pack.clipboardText.slice(0, 280)}
+                      {pack.clipboardText.length > 280 ? '…' : ''}
+                    </p>
                   )}
-                >
-                  <p className="text-[11px] font-bold">{pack.name}</p>
-                  <p className="text-[9px] opacity-80 line-clamp-2 mt-0.5">{pack.title}</p>
-                </button>
+                </div>
               );
             })}
           </div>
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
