@@ -74,7 +74,9 @@ export async function storeUserFile(
   } catch (err) {
     console.error('[Storage] R2 upload failed:', (err as Error).message);
     const base64 = (typeof content === 'string' ? Buffer.from(content) : content).toString('base64');
-    return { fileUrl: `data:${contentType};base64,${base64}`, playbackUrl, key };
+    const dataUrl = `data:${contentType};base64,${base64}`;
+    // Must not return stream URL when file was never uploaded to R2 (would 404)
+    return { fileUrl: dataUrl, playbackUrl: dataUrl, key };
   }
 }
 
