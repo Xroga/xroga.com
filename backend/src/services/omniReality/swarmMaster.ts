@@ -23,6 +23,11 @@ export interface HealedVideoResult extends VideoGenerationResult {
   healingSteps: string[];
 }
 
+const OSS_VIDEO_PROVIDERS = new Set([
+  'deepinfra', 'agnes', 'comfyui', 'replicate-wan', 'hunyuan', 'mochi', 'cogvideox',
+  'ltx-video', 'videocrafter', 'animatediff', 'zeroscope', 'replicate-svd', 'replicate-minimax',
+]);
+
 const FALLBACK_PROVIDERS = new Set(['slideshow', 'slideshow-ai-image', 'ffmpeg-minimal', 'static-mp4', 'parallax']);
 
 function omniEmit(
@@ -116,8 +121,8 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
         };
       }
 
-      if (options.durationSeconds <= 15) {
-        healingSteps.push(result.provider.includes('replicate') || result.provider === 'deepinfra' ? 'oss-real-video' : 'fast-real-video');
+      if (OSS_VIDEO_PROVIDERS.has(result.provider) && options.durationSeconds <= 15) {
+        healingSteps.push('oss-open-source-video');
         return {
           ...result,
           healingSteps,

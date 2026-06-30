@@ -19,17 +19,25 @@ export const IMAGE_PROVIDERS = [
   'cloudflare',
   'comfyui',
 ] as const;
+
+/** Open-source video models FIRST — premium APIs only at the end */
 export const VIDEO_PROVIDERS = [
-  // OSS / free workhorse first (80%) — fast, no premium credits needed
+  // OSS hosts (separate quota)
   'deepinfra',
   'agnes',
-  'replicate-wan',
-  'replicate-minimax',
-  'cogvideox',
-  'animatediff',
-  'replicate-svd',
   'comfyui',
-  // Premium / paid (20%) — climax scenes only
+  // Replicate OSS (Hunyuan, Mochi, Wan, CogVideoX, LTX, VideoCrafter, AnimateDiff, SVD)
+  'replicate-wan',
+  'hunyuan',
+  'mochi',
+  'cogvideox',
+  'ltx-video',
+  'videocrafter',
+  'animatediff',
+  'zeroscope',
+  'replicate-svd',
+  'replicate-minimax',
+  // Premium / paid — last resort only
   'fal',
   'hailuo',
   'kling',
@@ -37,8 +45,10 @@ export const VIDEO_PROVIDERS = [
   'luma-replicate',
   'runway',
   'morph',
+  // Guaranteed motion fallback (always produces playable MP4)
   'slideshow',
 ] as const;
+
 export const VOICE_PROVIDERS = ['elevenlabs', 'cartesia', 'fish-audio', 'google-tts'] as const;
 export const SEARCH_PROVIDERS = ['tavily', 'exa', 'newsapi'] as const;
 

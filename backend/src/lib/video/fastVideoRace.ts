@@ -1,12 +1,13 @@
 /**
- * Fast video path — OSS providers tried sequentially for short clips (≤15s).
- * Avoids Replicate 429 bursts from parallel predictions on one token.
+ * Fast video path — ALL open-source models first, premium APIs last.
  */
 
-import { hasSecret } from '../../config/envSecrets.js';
-import { generateMinimaxReplicateVideo, generateWanReplicateVideo, generateCogVideoX, generateZeroscopeVideo } from './replicateOssVideo.js';
+import { hasSecret, getSecret } from '../../config/envSecrets.js';
+import { REPLICATE_OSS_VIDEO_MODELS, runOssReplicateModel } from './ossVideoRegistry.js';
+import { generateMinimaxReplicateVideo } from './replicateOssVideo.js';
 import { generateDeepInfraVideo } from './deepinfraVideo.js';
 import { generateAgnesVideo } from '../agnesVideo.js';
+import { generateComfyUIVideo } from './comfyuiVideo.js';
 import { generateFalVideo } from './falVideo.js';
 import { generateHailuoVideo } from './hailuoVideo.js';
 import { generateLumaVideo } from './lumaVideo.js';
@@ -29,27 +30,30 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
 
 type Racer = { name: string; run: () => Promise<string> };
 
-function buildOssRacers(
-  prompt: string,
-  durationSeconds: number,
-  userId?: string
-): Racer[] {
+function buildOssRacers(prompt: string, durationSeconds: number): Racer[] {
   const racers: Racer[] = [];
 
-  // DeepInfra + Agnes first — separate quotas from Replicate
+  // ── Tier 1: separate OSS hosts (not Replicate quota) ──
   if (hasSecret('DEEPINFRA_API_KEY')) {
     racers.push({ name: 'deepinfra', run: () => generateDeepInfraVideo(prompt, durationSeconds) });
   }
   if (hasSecret('AGNES_API_KEY')) {
     racers.push({ name: 'agnes', run: () => generateAgnesVideo(prompt, durationSeconds) });
   }
+  if (getSecret('COMFYUI_URL')) {
+    racers.push({ name: 'comfyui', run: () => generateComfyUIVideo(prompt, durationSeconds) });
+  }
 
-  // Replicate OSS models one-at-a-time (shared rate limit / credits)
+  // ── Tier 2: Replicate OSS models (Hunyuan, Mochi, Wan, CogVideoX, LTX, VideoCrafter, AnimateDiff…) ──
   if (hasSecret('REPLICATE_API_TOKEN')) {
-    racers.push({ name: 'replicate-wan', run: () => generateWanReplicateVideo(prompt, durationSeconds) });
+    for (const model of REPLICATE_OSS_VIDEO_MODELS) {
+      racers.push({
+        name: model.id,
+        run: () => runOssReplicateModel(model, prompt, durationSeconds),
+      });
+    }
+    // Replicate MiniMax last among replicate (often needs credits)
     racers.push({ name: 'replicate-minimax', run: () => generateMinimaxReplicateVideo(prompt, durationSeconds) });
-    racers.push({ name: 'cogvideox', run: () => generateCogVideoX(prompt, durationSeconds) });
-    racers.push({ name: 'zeroscope', run: () => generateZeroscopeVideo(prompt, durationSeconds) });
   }
 
   return racers;
@@ -100,13 +104,13 @@ async function trySequential(
   return null;
 }
 
-/** First successful provider wins; returns null if all fail */
+/** OSS models first; premium only if every open-source path fails */
 export async function raceVideoProviders(
   prompt: string,
   durationSeconds: number,
   options?: { aspectRatio?: '9:16' | '16:9'; userId?: string }
 ): Promise<VideoGenerationResult | null> {
-  const ossRacers = buildOssRacers(prompt, durationSeconds, options?.userId);
+  const ossRacers = buildOssRacers(prompt, durationSeconds);
   const premiumRacers = buildPremiumRacers(prompt, durationSeconds, options?.aspectRatio, options?.userId);
 
   if (ossRacers.length === 0 && premiumRacers.length === 0) return null;
@@ -117,7 +121,7 @@ export async function raceVideoProviders(
     return ossWinner;
   }
 
-  console.warn('[FastVideoRace] OSS exhausted, trying premium providers…');
+  console.warn('[FastVideoRace] All OSS models exhausted — trying premium APIs as last resort…');
   const premiumWinner = await trySequential(premiumRacers, durationSeconds);
   if (premiumWinner) {
     console.log(`[FastVideoRace] Premium winner: ${premiumWinner.provider}`);

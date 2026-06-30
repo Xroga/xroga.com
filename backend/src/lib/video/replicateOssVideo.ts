@@ -1,52 +1,61 @@
 /**
- * OSS video models via Replicate — Wan 2.2, CogVideoX, Zeroscope workhorse tier.
+ * OSS video models via Replicate — delegates to ossVideoRegistry.
  */
 
-import { sanitizeVideoPrompt } from './videoPrompt.js';
+import { REPLICATE_OSS_VIDEO_MODELS, runOssReplicateModel } from './ossVideoRegistry.js';
 import { runReplicateModel } from './replicateClient.js';
+import { sanitizeVideoPrompt } from './videoPrompt.js';
 
-/** Wan 2.2 fast text-to-video (replaces deprecated wan-2.1 path) */
-export async function generateWanReplicateVideo(prompt: string, _durationSeconds = 5): Promise<string> {
-  const cleanPrompt = sanitizeVideoPrompt(prompt);
-  return runReplicateModel(
-    'wan-video/wan-2.2-t2v-fast',
-    { prompt: cleanPrompt.slice(0, 1000) },
-    'Wan-2.2'
-  );
+function modelById(id: string) {
+  const m = REPLICATE_OSS_VIDEO_MODELS.find((x) => x.id === id);
+  if (!m) throw new Error(`Unknown OSS model: ${id}`);
+  return m;
 }
 
-/** MiniMax video-01 via Replicate */
+export async function generateWanReplicateVideo(prompt: string, durationSeconds = 5): Promise<string> {
+  return runOssReplicateModel(modelById('replicate-wan'), prompt, durationSeconds);
+}
+
+export async function generateHunyuanVideo(prompt: string, durationSeconds = 5): Promise<string> {
+  return runOssReplicateModel(modelById('hunyuan'), prompt, durationSeconds);
+}
+
+export async function generateMochiVideo(prompt: string, durationSeconds = 5): Promise<string> {
+  return runOssReplicateModel(modelById('mochi'), prompt, durationSeconds);
+}
+
+export async function generateCogVideoX(prompt: string, durationSeconds = 5): Promise<string> {
+  return runOssReplicateModel(modelById('cogvideox'), prompt, durationSeconds);
+}
+
+export async function generateLtxVideo(prompt: string, durationSeconds = 5): Promise<string> {
+  return runOssReplicateModel(modelById('ltx-video'), prompt, durationSeconds);
+}
+
+export async function generateVideoCrafter(prompt: string, durationSeconds = 5): Promise<string> {
+  return runOssReplicateModel(modelById('videocrafter'), prompt, durationSeconds);
+}
+
+export async function generateAnimateDiffVideo(prompt: string, durationSeconds = 5): Promise<string> {
+  return runOssReplicateModel(modelById('animatediff'), prompt, durationSeconds);
+}
+
+export async function generateZeroscopeVideo(prompt: string, durationSeconds = 5): Promise<string> {
+  return runOssReplicateModel(modelById('zeroscope'), prompt, durationSeconds);
+}
+
+/** @deprecated alias */
+export async function generateAnimateDiff(prompt: string, durationSeconds = 5): Promise<string> {
+  return generateAnimateDiffVideo(prompt, durationSeconds);
+}
+
+/** MiniMax on Replicate — tried after pure OSS models */
 export async function generateMinimaxReplicateVideo(prompt: string, _durationSeconds = 5): Promise<string> {
   const cleanPrompt = sanitizeVideoPrompt(prompt);
   return runReplicateModel('minimax/video-01', { prompt: cleanPrompt.slice(0, 2000) }, 'MiniMax-Replicate');
 }
 
-/** CogVideoX text-to-video */
-export async function generateCogVideoX(prompt: string, _durationSeconds = 5): Promise<string> {
-  const cleanPrompt = sanitizeVideoPrompt(prompt);
-  return runReplicateModel(
-    'thudm/cogvideox-t2v',
-    { prompt: cleanPrompt.slice(0, 1000) },
-    'CogVideoX'
-  );
-}
-
-/** Zeroscope v2 XL — lightweight OSS text-to-video */
-export async function generateZeroscopeVideo(prompt: string, _durationSeconds = 5): Promise<string> {
-  const cleanPrompt = sanitizeVideoPrompt(prompt);
-  return runReplicateModel(
-    'anotherjesse/zeroscope-v2-xl',
-    { prompt: cleanPrompt.slice(0, 800) },
-    'Zeroscope'
-  );
-}
-
-/** @deprecated use generateZeroscopeVideo — kept for provider registry alias */
-export async function generateAnimateDiff(prompt: string, durationSeconds = 5): Promise<string> {
-  return generateZeroscopeVideo(prompt, durationSeconds);
-}
-
-/** Stable Video Diffusion — image-to-video */
+/** Stable Video Diffusion — image-to-video (OSS) */
 export async function generateSvdFromImage(imageUrl: string): Promise<string> {
   return runReplicateModel(
     'stability-ai/stable-video-diffusion',
@@ -59,6 +68,19 @@ export async function generateSvdFromImage(imageUrl: string): Promise<string> {
       motion_bucket_id: 127,
       frames_per_second: 6,
     },
-    'Replicate-SVD'
+    'Stable-Video-Diffusion'
   );
+}
+
+/** Run every Replicate OSS model sequentially until one succeeds */
+export async function tryAllReplicateOssModels(prompt: string, durationSeconds: number): Promise<{ id: string; videoUrl: string } | null> {
+  for (const model of REPLICATE_OSS_VIDEO_MODELS) {
+    try {
+      const videoUrl = await runOssReplicateModel(model, prompt, durationSeconds);
+      return { id: model.id, videoUrl };
+    } catch (err) {
+      console.warn(`[OSS] ${model.id}:`, (err as Error).message.slice(0, 100));
+    }
+  }
+  return null;
 }
