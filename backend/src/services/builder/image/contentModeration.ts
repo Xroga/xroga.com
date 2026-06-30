@@ -157,7 +157,7 @@ export function aspectFormatLabel(format: ImageAspectFormat): string {
   const labels: Record<ImageAspectFormat, string> = {
     '1:1': 'Post (1:1)',
     '4:5': 'Portrait post (4:5)',
-    '16:9': 'Landscape (16:9)',
+    '16:9': 'YouTube Thumbnail (16:9)',
     '9:16': 'Story (9:16)',
     '3:4': 'Portrait (3:4)',
     '4:3': 'Standard (4:3)',
@@ -169,7 +169,7 @@ export function aspectFormatPromptSuffix(format: ImageAspectFormat): string {
   const map: Record<ImageAspectFormat, string> = {
     '1:1': 'Square composition, Instagram post format 1:1 aspect ratio',
     '4:5': 'Vertical Instagram portrait post, 4:5 aspect ratio',
-    '16:9': 'Wide landscape banner, 16:9 aspect ratio',
+    '16:9': 'YouTube thumbnail, wide horizontal 16:9 landscape banner, NOT square, cinematic widescreen composition',
     '9:16': 'Vertical story format, 9:16 aspect ratio, mobile-first',
     '3:4': 'Portrait orientation, 3:4 aspect ratio',
     '4:3': 'Classic photo orientation, 4:3 aspect ratio',

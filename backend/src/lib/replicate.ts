@@ -1,3 +1,5 @@
+import { replicateAspectRatio, type ImageProviderOptions } from './imageAspect.js';
+
 interface ReplicatePrediction {
   id: string;
   status: 'starting' | 'processing' | 'succeeded' | 'failed' | 'canceled';
@@ -35,7 +37,12 @@ function extractOutputUrl(prediction: ReplicatePrediction): string {
   return url;
 }
 
-async function runOfficialModel(apiKey: string, model: string, prompt: string): Promise<string> {
+async function runOfficialModel(
+  apiKey: string,
+  model: string,
+  prompt: string,
+  aspectRatio: string
+): Promise<string> {
   const createRes = await fetch(`https://api.replicate.com/v1/models/${model}/predictions`, {
     method: 'POST',
     headers: {
@@ -46,7 +53,7 @@ async function runOfficialModel(apiKey: string, model: string, prompt: string): 
     body: JSON.stringify({
       input: {
         prompt,
-        aspect_ratio: '1:1',
+        aspect_ratio: aspectRatio,
         output_format: 'webp',
         num_outputs: 1,
       },
@@ -66,7 +73,7 @@ async function runOfficialModel(apiKey: string, model: string, prompt: string): 
   return extractOutputUrl(prediction);
 }
 
-async function runLegacyVersion(apiKey: string, prompt: string): Promise<string> {
+async function runLegacyVersion(apiKey: string, prompt: string, aspectRatio: string): Promise<string> {
   const createRes = await fetch('https://api.replicate.com/v1/predictions', {
     method: 'POST',
     headers: {
@@ -75,7 +82,7 @@ async function runLegacyVersion(apiKey: string, prompt: string): Promise<string>
     },
     body: JSON.stringify({
       version: 'black-forest-labs/flux-schnell',
-      input: { prompt, aspect_ratio: '16:9', output_format: 'webp' },
+      input: { prompt, aspect_ratio: aspectRatio, output_format: 'webp' },
     }),
   });
 
@@ -119,14 +126,15 @@ export async function upscaleImageReplicate(imageUrl: string): Promise<string> {
   return extractOutputUrl(prediction);
 }
 
-export async function generateImageFlux(prompt: string): Promise<string> {
+export async function generateImageFlux(prompt: string, options?: ImageProviderOptions): Promise<string> {
   const apiKey = process.env.REPLICATE_API_TOKEN?.trim();
   if (!apiKey) throw new Error('REPLICATE_API_TOKEN not configured');
 
+  const aspectRatio = replicateAspectRatio(options?.aspectFormat);
   let lastErr: Error | null = null;
   for (const model of OFFICIAL_MODELS) {
     try {
-      return await runOfficialModel(apiKey, model, prompt);
+      return await runOfficialModel(apiKey, model, prompt, aspectRatio);
     } catch (err) {
       lastErr = err as Error;
       console.warn(`[Replicate] ${model} failed:`, lastErr.message);
@@ -134,7 +142,7 @@ export async function generateImageFlux(prompt: string): Promise<string> {
   }
 
   try {
-    return await runLegacyVersion(apiKey, prompt);
+    return await runLegacyVersion(apiKey, prompt, aspectRatio);
   } catch (err) {
     throw lastErr ?? (err as Error);
   }

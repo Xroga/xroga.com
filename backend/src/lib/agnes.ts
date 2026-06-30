@@ -1,5 +1,7 @@
 /** Agnes AI — image generation (OpenAI-compatible hub) */
 
+import { agnesSize, type ImageProviderOptions } from './imageAspect.js';
+
 const AGNES_HUB = 'https://apihub.agnes-ai.com/v1';
 
 function getAgnesKey(): string {
@@ -60,7 +62,8 @@ async function requestAgnes(model: string, prompt: string, size: string): Promis
   return url;
 }
 
-export async function generateAgnesImage(prompt: string, size = '1024x768'): Promise<string> {
+export async function generateAgnesImage(prompt: string, options?: ImageProviderOptions): Promise<string> {
+  const size = agnesSize(options?.aspectFormat);
   const models = ['agnes-image-2.1-flash', 'agnes-image-2.0-flash'];
   let lastErr: Error | null = null;
 
