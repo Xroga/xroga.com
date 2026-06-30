@@ -1,5 +1,7 @@
 /** Fal.ai image generation — sync fal.run with queue.fal.run fallback */
 
+import { falImageSize, type ImageProviderOptions } from './imageAspect.js';
+
 const FAL_KEY = () => (process.env.FAL_KEY ?? process.env.FAL_API_KEY)?.trim();
 
 type FalModel = {
@@ -9,26 +11,28 @@ type FalModel = {
   body: Record<string, unknown>;
 };
 
-const FAL_MODELS: FalModel[] = [
-  {
-    id: 'flux/schnell',
-    syncUrl: 'https://fal.run/fal-ai/flux/schnell',
-    queueUrl: 'https://queue.fal.run/fal-ai/flux/schnell',
-    body: { num_inference_steps: 4, image_size: 'square_hd' },
-  },
-  {
-    id: 'flux/dev',
-    syncUrl: 'https://fal.run/fal-ai/flux/dev',
-    queueUrl: 'https://queue.fal.run/fal-ai/flux/dev',
-    body: { num_inference_steps: 28, guidance_scale: 3.5, image_size: 'square_hd' },
-  },
-  {
-    id: 'flux-2/flash',
-    syncUrl: 'https://fal.run/fal-ai/flux-2/flash',
-    queueUrl: 'https://queue.fal.run/fal-ai/flux-2/flash',
-    body: { image_size: 'square_hd', num_images: 1 },
-  },
-];
+function buildFalModels(imageSize: string): FalModel[] {
+  return [
+    {
+      id: 'flux/schnell',
+      syncUrl: 'https://fal.run/fal-ai/flux/schnell',
+      queueUrl: 'https://queue.fal.run/fal-ai/flux/schnell',
+      body: { num_inference_steps: 4, image_size: imageSize },
+    },
+    {
+      id: 'flux/dev',
+      syncUrl: 'https://fal.run/fal-ai/flux/dev',
+      queueUrl: 'https://queue.fal.run/fal-ai/flux/dev',
+      body: { num_inference_steps: 28, guidance_scale: 3.5, image_size: imageSize },
+    },
+    {
+      id: 'flux-2/flash',
+      syncUrl: 'https://fal.run/fal-ai/flux-2/flash',
+      queueUrl: 'https://queue.fal.run/fal-ai/flux-2/flash',
+      body: { image_size: imageSize, num_images: 1 },
+    },
+  ];
+}
 
 type FalImagePayload = {
   images?: Array<{ url?: string }>;
@@ -188,10 +192,12 @@ async function callFalQueue(apiKey: string, model: FalModel, prompt: string): Pr
   return pollFalQueue(apiKey, model, data.request_id, data.response_url, data.status_url);
 }
 
-export async function generateFalImage(prompt: string): Promise<string> {
+export async function generateFalImage(prompt: string, options?: ImageProviderOptions): Promise<string> {
   const apiKey = FAL_KEY();
   if (!apiKey) throw new Error('FAL_KEY not configured');
 
+  const imageSize = falImageSize(options?.aspectFormat);
+  const FAL_MODELS = buildFalModels(imageSize);
   let lastErr: Error | null = null;
 
   for (const model of FAL_MODELS) {

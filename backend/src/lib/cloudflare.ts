@@ -1,3 +1,7 @@
+/** Cloudflare Workers AI — SDXL image generation */
+
+import { cloudflareDimensions, type ImageProviderOptions } from './imageAspect.js';
+
 interface CloudflareImageResult {
   result?: { image?: string };
   success?: boolean;
@@ -46,7 +50,14 @@ const CF_MODELS = [
   '@cf/bytedance/stable-diffusion-xl-lightning',
 ] as const;
 
-async function runCloudflareModel(accountId: string, apiToken: string, model: string, prompt: string): Promise<string> {
+async function runCloudflareModel(
+  accountId: string,
+  apiToken: string,
+  model: string,
+  prompt: string,
+  width: number,
+  height: number
+): Promise<string> {
   const response = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${model}`,
     {
@@ -55,7 +66,7 @@ async function runCloudflareModel(accountId: string, apiToken: string, model: st
         Authorization: `Bearer ${apiToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ prompt: prompt.slice(0, 900) }),
+      body: JSON.stringify({ prompt: prompt.slice(0, 900), width, height }),
       signal: AbortSignal.timeout(90_000),
     }
   );
@@ -90,7 +101,7 @@ async function runCloudflareModel(accountId: string, apiToken: string, model: st
   throw new Error(`Cloudflare ${model} returned unrecognized payload (${buffer.length} bytes)`);
 }
 
-export async function generateImageCloudflare(prompt: string): Promise<string> {
+export async function generateImageCloudflare(prompt: string, options?: ImageProviderOptions): Promise<string> {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
 
@@ -98,10 +109,11 @@ export async function generateImageCloudflare(prompt: string): Promise<string> {
     throw new Error('Cloudflare Workers AI credentials not configured');
   }
 
+  const { width, height } = cloudflareDimensions(options?.aspectFormat);
   let lastErr: Error | null = null;
   for (const model of CF_MODELS) {
     try {
-      return await runCloudflareModel(accountId, apiToken, model, prompt);
+      return await runCloudflareModel(accountId, apiToken, model, prompt, width, height);
     } catch (err) {
       lastErr = err as Error;
       console.warn(`[Cloudflare] ${model} failed:`, lastErr.message);

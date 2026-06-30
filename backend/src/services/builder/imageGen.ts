@@ -11,6 +11,7 @@ import { generateGeminiImage } from '../../lib/geminiImage.js';
 import { logSystemError } from '../../services/systemErrorLog.js';
 import type { ImageBlockedOutput, ImageGenOutput } from '../../types/features.js';
 import { persistImageUrl } from '../../lib/persistImageUrl.js';
+import type { ImageProviderOptions } from '../../lib/imageAspect.js';
 import { classifyImageQuery } from './image/understanding.js';
 import { enhanceImagePrompt } from './image/promptEnhancer.js';
 import { buildConciseImagePrompt, extractOverlayText, isThumbnailRequest } from './image/concisePrompt.js';
@@ -122,8 +123,14 @@ type ProviderName =
 
 type ProviderEntry = {
   name: ProviderName;
-  call: (prompt: string) => Promise<string>;
+  call: (prompt: string, options?: ImageProviderOptions) => Promise<string>;
   configured: boolean;
+};
+
+type ImageGenCtx = {
+  userId?: string;
+  runId?: string;
+  aspectFormat?: ImageAspectFormat;
 };
 
 /** Fixed 4-variant slots: Agnes · Cloudflare · Fal AI · Gemini */
@@ -329,12 +336,12 @@ function shortImagePrompt(rawQuery: string, basePrompt: string): string {
 async function callImageProvider(
   entry: ProviderEntry,
   prompt: string,
-  ctx: { userId?: string; runId?: string }
+  ctx: ImageGenCtx
 ): Promise<string> {
   const safePrompt = truncatePrompt(prompt);
   const timeout = PROVIDER_TIMEOUT_MS[entry.name] ?? DEFAULT_PROVIDER_TIMEOUT_MS;
   const imageUrl = await Promise.race([
-    entry.call(safePrompt),
+    entry.call(safePrompt, { aspectFormat: ctx.aspectFormat }),
     new Promise<string>((_, reject) =>
       setTimeout(() => reject(new Error(`${entry.name} timed out after ${timeout}ms`)), timeout)
     ),
@@ -348,7 +355,7 @@ async function callImageProvider(
 async function tryProviderChain(
   entries: ProviderEntry[],
   prompts: string[],
-  ctx: { userId?: string; runId?: string }
+  ctx: ImageGenCtx
 ): Promise<{ imageUrl: string; provider: ImageGenOutput['provider'] }> {
   const errors: string[] = [];
 
@@ -382,7 +389,7 @@ async function tryProviderChain(
 
 async function generatePremiumWithVoting(
   prompt: string,
-  ctx: { userId?: string; runId?: string }
+  ctx: ImageGenCtx
 ): Promise<{ imageUrl: string; provider: ImageGenOutput['provider'] }> {
   const premium = buildPremiumProviders().filter((p) => p.configured);
   if (!premium.length) {
@@ -419,7 +426,7 @@ async function generatePremiumWithVoting(
 async function generateStandardChain(
   prompt: string,
   rawFallback: string,
-  ctx: { userId?: string; runId?: string }
+  ctx: ImageGenCtx
 ): Promise<{ imageUrl: string; provider: ImageGenOutput['provider'] }> {
   const configured = buildStandardProviders().filter((p) => p.configured);
 
@@ -579,7 +586,7 @@ async function runVariantSlot(
   slot: VariantSlotConfig,
   prompts: { full: string; short: string },
   registry: Map<ProviderName, ProviderEntry>,
-  ctx: { userId?: string; runId?: string },
+  ctx: ImageGenCtx,
   options?: ImageGenOptions
 ): Promise<{
   imageUrl: string;
@@ -673,7 +680,7 @@ async function generateStyleTransferImage(
     aspectFormat: ImageAspectFormat;
     formatLabel: string;
     isYoutubeThumbnail: boolean;
-    ctx: { userId?: string; runId?: string };
+    ctx: ImageGenCtx;
   }
 ): Promise<ImageGenOutput | ImageBlockedOutput> {
   emitProgress(options, 'painting', `Style transfer — ${STYLE_VARIANT_COUNT} modern looks from your photo…`);
@@ -788,14 +795,14 @@ export async function generateImage(
   options?: ImageGenOptions
 ): Promise<ImageGenOutput | ImageBlockedOutput> {
   const rawQuery = extractImagePrompt(userPrompt);
-  const ctx = { userId: options?.userId, runId: options?.runId };
+  const aspectFormat = options?.aspectFormat ?? parseImageAspectFormat(rawQuery);
+  const ctx: ImageGenCtx = { userId: options?.userId, runId: options?.runId, aspectFormat };
 
   const moderation = moderateImagePrompt(rawQuery);
   if (!moderation.allowed) {
     return buildImageBlockedOutput(rawQuery, 'prompt_blocked', moderation.reason);
   }
 
-  const aspectFormat = options?.aspectFormat ?? parseImageAspectFormat(rawQuery);
   const formatLabel = aspectFormatLabel(aspectFormat);
   const basePrompt = moderation.sanitizedPrompt ?? rawQuery;
   const pipeline = await buildPipelinePrompt(rawQuery, basePrompt, aspectFormat, options);

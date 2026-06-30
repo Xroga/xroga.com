@@ -1,5 +1,7 @@
 /** Google Gemini native image generation (Nano Banana / flash-image models) */
 
+import { geminiAspectRatio, type ImageProviderOptions } from './imageAspect.js';
+
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 
 interface GeminiImagePart {
@@ -35,7 +37,7 @@ interface InteractionResponse {
 
 type ImageAttempt = {
   label: string;
-  run: (prompt: string, timeoutMs: number) => Promise<string>;
+  run: (prompt: string, timeoutMs: number, aspectRatio: string) => Promise<string>;
 };
 
 const INTERACTION_MODELS = ['gemini-2.5-flash-image', 'gemini-3.1-flash-image'] as const;
@@ -106,7 +108,8 @@ function formatApiError(status: number, body: string): string {
 async function callInteractionsApi(
   model: string,
   prompt: string,
-  timeoutMs: number
+  timeoutMs: number,
+  aspectRatio: string
 ): Promise<string> {
   const apiKey = getApiKey();
   const response = await fetch(`${GEMINI_BASE}/interactions`, {
@@ -115,7 +118,7 @@ async function callInteractionsApi(
     body: JSON.stringify({
       model,
       input: prompt.slice(0, 900),
-      response_format: { type: 'image', aspect_ratio: '1:1' },
+      response_format: { type: 'image', aspect_ratio: aspectRatio },
     }),
     signal: AbortSignal.timeout(timeoutMs),
   });
@@ -190,12 +193,13 @@ async function callGenerateContentApi(
   return imageUrl;
 }
 
-export async function generateGeminiImage(prompt: string): Promise<string> {
+export async function generateGeminiImage(prompt: string, options?: ImageProviderOptions): Promise<string> {
+  const aspectRatio = geminiAspectRatio(options?.aspectFormat);
   const attempts: ImageAttempt[] = [
     ...INTERACTION_MODELS.map(
       (model): ImageAttempt => ({
         label: `interactions:${model}`,
-        run: (p, timeoutMs) => callInteractionsApi(model, p, timeoutMs),
+        run: (p, timeoutMs, ratio) => callInteractionsApi(model, p, timeoutMs, ratio),
       })
     ),
     ...GENERATE_CONTENT_MODELS.map(
@@ -218,7 +222,7 @@ export async function generateGeminiImage(prompt: string): Promise<string> {
     const timeoutMs = Math.min(remaining, 28_000);
 
     try {
-      return await attempt.run(prompt, timeoutMs);
+      return await attempt.run(prompt, timeoutMs, aspectRatio);
     } catch (err) {
       lastErr = err as Error;
       console.warn(`[GeminiImage] ${attempt.label} failed:`, lastErr.message);
