@@ -74,6 +74,13 @@ export function FeatureOutputView({
       videoFormat:
         o.videoFormat === 'shorts_reels' || o.videoFormat === 'youtube_video' ? o.videoFormat : undefined,
       prompt: typeof o.prompt === 'string' ? o.prompt : undefined,
+      screenplay: o.screenplay as VideoOutputData['screenplay'],
+      providersUsed: Array.isArray(o.providersUsed) ? (o.providersUsed as string[]) : undefined,
+      reviewScores: o.reviewScores as VideoOutputData['reviewScores'],
+      healingSteps: Array.isArray(o.healingSteps) ? (o.healingSteps as string[]) : undefined,
+      qcScore: typeof o.qcScore === 'number' ? o.qcScore : undefined,
+      omniReality: o.omniReality as VideoOutputData['omniReality'],
+      audioTracks: Array.isArray(o.audioTracks) ? (o.audioTracks as VideoOutputData['audioTracks']) : undefined,
     };
     return <VideoStudioCard data={data} onDelete={onDelete} messageId={messageId} />;
   }

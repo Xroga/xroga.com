@@ -142,6 +142,15 @@ export interface VideoStudioOutput {
   scriptProvider?: string;
   videoFormat?: 'shorts_reels' | 'youtube_video';
   characters?: Array<{ name: string; faceImageUrl?: string }>;
+  healingSteps?: string[];
+  qcScore?: number;
+  omniReality?: {
+    storyboardProvider?: string;
+    moodTone?: string;
+    continuityLocks?: string[];
+    sceneCount?: number;
+    trinity?: { deepseek: boolean; gemini: boolean; groq: boolean };
+  };
   pros?: string[];
   cons?: string[];
   followUps?: string[];
@@ -228,6 +237,8 @@ export interface SwarmProgressEvent {
   timestamp: string;
   imageStep?: string;
   videoStep?: string;
+  omniPhase?: string;
+  omniDetail?: string;
   imageAttempt?: {
     imageUrl: string;
     provider: string;

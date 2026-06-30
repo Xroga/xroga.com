@@ -15,6 +15,7 @@ import { recordVaultUsage } from './creditVault.js';
 import { groqReflexPatch, deepSeekSimplifyShot } from './brainTrinity.js';
 import { runQCInspection } from './qcInspector.js';
 import { generateParallaxClip } from './fallbackParallax.js';
+import type { OmniVideoEvent, OmniVideoPhase } from './omniEvents.js';
 
 export interface HealedVideoResult extends VideoGenerationResult {
   qcScore?: number;
@@ -23,6 +24,15 @@ export interface HealedVideoResult extends VideoGenerationResult {
 }
 
 const FALLBACK_PROVIDERS = new Set(['slideshow', 'slideshow-ai-image', 'ffmpeg-minimal', 'static-mp4', 'parallax']);
+
+function omniEmit(
+  opts: RenderSceneOptions,
+  phase: OmniVideoPhase,
+  detail?: string,
+  extra?: Partial<OmniVideoEvent>
+) {
+  opts.onOmniEvent?.({ phase, message: detail ?? phase, detail, ...extra });
+}
 
 export interface RenderSceneOptions {
   prompt: string;
@@ -34,6 +44,7 @@ export interface RenderSceneOptions {
   runId?: string;
   aspectRatio?: '9:16' | '16:9';
   onProgress?: (message: string) => void;
+  onOmniEvent?: (event: OmniVideoEvent) => void;
 }
 
 export async function renderSceneWithHealing(options: RenderSceneOptions): Promise<HealedVideoResult> {
@@ -51,14 +62,21 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
   };
 
   for (let ladder = 0; ladder < 4; ladder++) {
-    options.onProgress?.(
+    const ladderMsg =
       ladder === 0
         ? 'Rendering scene…'
         : ladder === 1
           ? 'Groq reflex patch — retrying…'
           : ladder === 2
             ? 'DeepSeek simplifying shot…'
-            : 'Parallax cinematic transition…'
+            : 'Parallax cinematic transition…';
+
+    options.onProgress?.(ladderMsg);
+    omniEmit(
+      options,
+      ladder === 1 ? 'groq_patch' : ladder === 2 ? 'deepseek_simplify' : ladder === 3 ? 'parallax_fallback' : 'scene_render',
+      ladderMsg,
+      { healingStep: `ladder-${ladder}` }
     );
 
     if (ladder === 2) {
@@ -88,6 +106,8 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
         recordVaultUsage(result.provider);
       }
 
+      omniEmit(options, 'qc_inspect', 'QC shield inspecting frames…');
+
       const qc = await runQCInspection({
         videoUrl: result.videoUrl,
         prompt: currentPrompt,
@@ -98,6 +118,7 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
 
       if (qc.passed || FALLBACK_PROVIDERS.has(result.provider)) {
         healingSteps.push(ladder === 0 ? 'first-pass' : `ladder-${ladder}`);
+        omniEmit(options, 'qc_inspect', `QC passed · score ${qc.score}`, { provider: result.provider });
         return {
           ...result,
           healingSteps,
@@ -115,6 +136,7 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
 
       if (ladder === 1) {
         healingSteps.push('tool-swap-retry');
+        omniEmit(options, 'tool_swap', 'Swapping render engine…');
         currentPrompt = `${currentPrompt}. Avoid warping, realistic physics, 5 fingers per hand, smooth motion`;
         continue;
       }

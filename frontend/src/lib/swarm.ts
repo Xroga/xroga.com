@@ -48,6 +48,8 @@ export interface SwarmProgressEvent {
   iteration?: number;
   imageStep?: string;
   videoStep?: string;
+  omniPhase?: string;
+  omniDetail?: string;
   imageAttempt?: {
     imageUrl: string;
     provider: string;
