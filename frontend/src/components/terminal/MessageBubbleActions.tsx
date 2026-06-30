@@ -101,9 +101,21 @@ export function MessageBubbleActions({
         </>
       )}
       {role === 'user' && (
-        <button type="button" onClick={handleCopy} className={btnClass} aria-label="Copy">
-          {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-        </button>
+        <>
+          <button type="button" onClick={handleCopy} className={btnClass} aria-label="Copy">
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+          </button>
+          {onDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              className={cn(btnClass, 'hover:text-red-400 hover:bg-red-500/10')}
+              aria-label="Delete message"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </>
       )}
       <span className="sr-only" data-message-id={messageId} />
     </div>

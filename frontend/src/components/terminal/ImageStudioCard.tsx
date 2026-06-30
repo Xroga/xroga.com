@@ -18,6 +18,7 @@ import {
 import { cn } from '@/lib/utils';
 import { copyImageToClipboard, downloadImage } from '@/lib/imageStudioUtils';
 import { ImageEditModal } from './ImageEditModal';
+import { SocialShareModal } from './SocialShareModal';
 import { TextGeneratingAnimation } from './TextGeneratingAnimation';
 import { isPlaceholderImage } from '@/lib/parseImageContent';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -140,8 +141,9 @@ export function ImageStudioCard({
   message,
   step,
 }: ImageStudioCardProps) {
-  const { setPrompt, submit, deleteTurn, updateFeatureOutput } = useTerminalChat();
+  const { deleteTurn, updateFeatureOutput } = useTerminalChat();
   const [editOpen, setEditOpen] = useState(false);
+  const [socialOpen, setSocialOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [editSrc, setEditSrc] = useState('');
@@ -191,6 +193,11 @@ export function ImageStudioCard({
   const successfulVariants = useMemo(
     () => allAttempts.filter((v) => Boolean(v.imageUrl) && !v.failed && !v.blocked),
     [allAttempts]
+  );
+
+  const allImageUrls = useMemo(
+    () => successfulVariants.map((v) => v.imageUrl).filter(Boolean),
+    [successfulVariants]
   );
 
   const visibleVariants = successfulVariants.length > 0 ? successfulVariants : allAttempts.filter((v) => !v.failed && !v.blocked);
@@ -262,12 +269,6 @@ export function ImageStudioCard({
     else onDelete?.();
     setHidden(true);
     setDeleteOpen(false);
-  }
-
-  function handlePostSocial() {
-    const text = `[Post] Share this image to Twitter, LinkedIn, and Instagram: ${previewSrc}${prompt ? `\nCaption: ${prompt}` : ''}`;
-    setPrompt(text);
-    void submit(text);
   }
 
   function openEditor(url = previewSrc) {
@@ -392,6 +393,7 @@ export function ImageStudioCard({
 
             <div className="flex items-center justify-center gap-1.5 mt-2 flex-wrap">
               <ActionPill icon={Wand2} label="AI Edit" accent onClick={() => openEditor(previewSrc)} />
+              <ActionPill icon={Share2} label="Post to social" onClick={() => setSocialOpen(true)} />
               <ActionPill icon={Download} label="Download" onClick={() => downloadImage(previewSrc, 'xroga-image.png')} />
               <ActionPill icon={Copy} label="Copy" onClick={() => copyImageToClipboard(previewSrc)} />
               <ActionPill icon={Trash2} label="Delete" danger onClick={() => setDeleteOpen(true)} />
@@ -466,15 +468,25 @@ export function ImageStudioCard({
         <div className="flex items-center gap-1 px-2 py-2 border-t border-[var(--card-border)]">
           <button
             type="button"
-            title="Post to social media"
-            onClick={handlePostSocial}
+            title="Share to YouTube, X, Instagram, Facebook, Pinterest & more"
+            onClick={() => setSocialOpen(true)}
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-emerald-500/35 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold hover:bg-emerald-500/20 transition-colors"
           >
             <Share2 className="h-3.5 w-3.5" />
-            Post to social
+            Post to social media
           </button>
         </div>
       </div>
+
+      <SocialShareModal
+        open={socialOpen}
+        onClose={() => setSocialOpen(false)}
+        prompt={prompt}
+        concisePrompt={concisePrompt}
+        overlayText={overlayText}
+        imageUrls={allImageUrls}
+        primaryImageUrl={previewSrc}
+      />
 
       <ImageEditModal
         open={editOpen}
@@ -482,6 +494,9 @@ export function ImageStudioCard({
         src={editSrc || previewSrc}
         alt={prompt ?? 'Image'}
         variants={successfulVariants}
+        sharePrompt={prompt}
+        concisePrompt={concisePrompt}
+        overlayText={overlayText}
       />
 
       <ConfirmDeleteModal

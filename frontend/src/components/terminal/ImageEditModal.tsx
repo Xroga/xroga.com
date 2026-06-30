@@ -28,6 +28,7 @@ import {
 } from '@/lib/imageStudioUtils';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
+import { SocialShareModal } from './SocialShareModal';
 import toast from 'react-hot-toast';
 
 const RATIOS: { id: AspectRatio; label: string }[] = [
@@ -45,15 +46,28 @@ interface ImageEditModalProps {
   src: string;
   alt?: string;
   variants?: Array<{ imageUrl: string; provider?: string; matchScore?: number }>;
+  sharePrompt?: string;
+  concisePrompt?: string;
+  overlayText?: string;
 }
 
-export function ImageEditModal({ open, onClose, src, alt = 'Image', variants = [] }: ImageEditModalProps) {
+export function ImageEditModal({
+  open,
+  onClose,
+  src,
+  alt = 'Image',
+  variants = [],
+  sharePrompt,
+  concisePrompt,
+  overlayText,
+}: ImageEditModalProps) {
   const { setPrompt, submit } = useTerminalChat();
   const siteTheme = useThemeStore((s) => s.theme);
   const [transform, setTransform] = useState<ImageTransform>(DEFAULT_TRANSFORM);
   const [editPrompt, setEditPrompt] = useState('');
   const [cropMode, setCropMode] = useState(false);
   const [previewSrc, setPreviewSrc] = useState(src);
+  const [socialOpen, setSocialOpen] = useState(false);
 
   useEffect(() => {
     if (open) setPreviewSrc(src);
@@ -121,8 +135,12 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image', variants = [
   }
 
   function handlePost() {
-    toast('Post to social — connect in Integrations', { icon: '📤' });
+    setSocialOpen(true);
   }
+
+  const shareImageUrls = variants.length
+    ? variants.map((v) => v.imageUrl).filter(Boolean)
+    : [previewSrc];
 
   const themeClass =
     siteTheme === 'white'
@@ -131,7 +149,9 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image', variants = [
         ? 'xv-image-modal--black'
         : 'xv-image-modal--gray';
 
-  return createPortal(
+  return (
+    <>
+    {createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-2 sm:p-4">
       <button
         type="button"
@@ -327,6 +347,17 @@ export function ImageEditModal({ open, onClose, src, alt = 'Image', variants = [
       </div>
     </div>,
     document.body
+  )}
+    <SocialShareModal
+      open={socialOpen}
+      onClose={() => setSocialOpen(false)}
+      prompt={sharePrompt}
+      concisePrompt={concisePrompt}
+      overlayText={overlayText}
+      imageUrls={shareImageUrls}
+      primaryImageUrl={previewSrc}
+    />
+    </>
   );
 }
 

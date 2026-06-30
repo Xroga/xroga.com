@@ -73,6 +73,8 @@ interface TerminalChatContextValue {
   startNewChat: () => void;
   /** Permanently removes assistant response + its user prompt from chat, archive, and media */
   deleteTurn: (assistantMessageId: string) => void;
+  /** Permanently removes a user prompt + its assistant reply */
+  deleteUserTurn: (userMessageId: string) => void;
   /** Update structured feature output (e.g. user voted on image variant) */
   updateFeatureOutput: (messageId: string, output: unknown) => void;
   removeFromQueue: (id: string) => void;
@@ -226,6 +228,47 @@ export function TerminalChatProvider({
         removeChatArchiveEntry(`chat-${current[userIdx]!.id}`);
       }
 
+      return current.filter((m) => !removeIds.has(m.id));
+    });
+    toast.success('Deleted permanently');
+  }, []);
+
+  const deleteUserTurn = useCallback((userMessageId: string) => {
+    setMessages((current) => {
+      const userIdx = current.findIndex((m) => m.id === userMessageId);
+      if (userIdx < 0) return current;
+
+      const removeIds = new Set<string>([userMessageId]);
+      let assistantIdx: number | null = null;
+      for (let i = userIdx + 1; i < current.length; i++) {
+        if (current[i]!.role === 'user') break;
+        if (current[i]!.role === 'assistant') {
+          assistantIdx = i;
+          removeIds.add(current[i]!.id);
+          break;
+        }
+      }
+
+      if (assistantIdx != null) {
+        const assistant = current[assistantIdx]!;
+        const output = assistant.featureOutput as Record<string, unknown> | undefined;
+        if (typeof output?.imageUrl === 'string') removeMediaByUrl(output.imageUrl);
+        if (typeof output?.streamingUrl === 'string') removeMediaByUrl(output.streamingUrl);
+        const rejected = output?.rejectedImages;
+        const allAttempts = output?.allAttempts;
+        const urls = [
+          ...(Array.isArray(rejected)
+            ? rejected.map((r) => (r && typeof r === 'object' && 'imageUrl' in r ? String((r as { imageUrl: string }).imageUrl) : ''))
+            : []),
+          ...(Array.isArray(allAttempts)
+            ? allAttempts.map((r) => (r && typeof r === 'object' && 'imageUrl' in r ? String((r as { imageUrl: string }).imageUrl) : ''))
+            : []),
+        ].filter(Boolean);
+        if (urls.length) purgeMediaUrls(...urls);
+        removeMediaByMessageId(assistant.id);
+      }
+
+      removeChatArchiveEntry(`chat-${userMessageId}`);
       return current.filter((m) => !removeIds.has(m.id));
     });
     toast.success('Deleted permanently');
@@ -594,6 +637,7 @@ export function TerminalChatProvider({
         stop,
         startNewChat,
         deleteTurn,
+        deleteUserTurn,
         updateFeatureOutput,
         removeFromQueue,
         editQueuedPrompt,
