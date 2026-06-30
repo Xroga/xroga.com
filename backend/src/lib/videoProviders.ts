@@ -1,3 +1,4 @@
+import { filterByVault, recordVaultUsage } from '../services/omniReality/creditVault.js';
 import { getApiPriority, VIDEO_API_TIMEOUT_MS } from '../config/apiPriorities.js';
 import { logSystemError } from '../services/systemErrorLog.js';
 import { generateAgnesVideo } from './agnesVideo.js';
@@ -240,6 +241,8 @@ export async function generateVideoWithFallback(
 
   orderedNames.push('slideshow');
 
+  orderedNames = filterByVault(orderedNames);
+
   const errors: string[] = [];
 
   for (const name of orderedNames) {
@@ -256,6 +259,8 @@ export async function generateVideoWithFallback(
         errors.push(`${name}: invalid URL`);
         continue;
       }
+
+      recordVaultUsage(name);
 
       return { provider: name, videoUrl, durationSeconds };
     } catch (err) {

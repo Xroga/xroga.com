@@ -1,5 +1,4 @@
-import { generateGuaranteedVideo } from '../../lib/video/guaranteedVideo.js';
-import { downloadVideoBuffer } from '../../lib/ffmpeg.js';
+import { downloadVideoBuffer, assembleVideo } from '../../lib/ffmpeg.js';
 import { isValidMp4Buffer, isHttpMediaUrl, isStubJsonBuffer } from '../../lib/mediaValidation.js';
 import { parseVideoDuration, parseVideoFormat, computeVideoActionCost } from './videoUtils.js';
 import { storeUserFile } from '../storage/projectFiles.js';
@@ -7,6 +6,8 @@ import { planVideoProduction } from './videoRouter.js';
 import type { VideoStudioOutput } from '../../types/features.js';
 import type { ProduceVideoOptions } from './produceVideo.js';
 import { moderateImagePrompt } from '../builder/image/contentModeration.js';
+import { renderSceneWithHealing, buildAspectSuffix } from '../omniReality/swarmMaster.js';
+import { generateSceneAudio } from '../../lib/audioProviders.js';
 
 export { parseVideoDuration, computeVideoActionCost };
 
@@ -58,20 +59,47 @@ export async function produceSingleSceneVideo(
   }
 
   const enhancedPrompt = moderation.sanitizedPrompt ?? scenePrompt;
+  const aspectSuffix = buildAspectSuffix(prompt);
+  const dialogue = scene?.dialogue ?? plan.scenes[0]?.dialogue ?? '';
 
-  options?.onProgress?.('rendering', 'Generating video (always delivers output)…');
+  options?.onProgress?.('rendering', 'Omni-Reality swarm rendering…');
 
-  const video = await generateGuaranteedVideo(enhancedPrompt, scene?.durationSeconds ?? durationSeconds, {
+  const video = await renderSceneWithHealing({
+    prompt: `${enhancedPrompt}. ${aspectSuffix}`,
+    durationSeconds: scene?.durationSeconds ?? durationSeconds,
+    scenePriority: scene?.priority ?? 'critical',
     userId,
     runId: options?.runId,
-    priority: scene?.priority === 'critical' ? 'premium' : 'cheap',
-    keyframeUrl: undefined,
+    aspectRatio: parseVideoFormat(prompt) === 'shorts_reels' ? '9:16' : '16:9',
+    onProgress: (msg) => options?.onProgress?.('rendering', msg),
   });
+
+  options?.onProgress?.('audio', 'Composing voiceover & score…');
+  const audioTracks = dialogue.trim()
+    ? await generateSceneAudio(dialogue, plan.mood, video.durationSeconds, { userId, runId: options?.runId })
+    : [];
 
   options?.onProgress?.('assembling', 'Preparing your video…');
 
   let fileUrl: string;
-  if (isHttpMediaUrl(video.videoUrl) || video.videoUrl.startsWith('data:video/')) {
+  if (audioTracks.length > 0 && (isHttpMediaUrl(video.videoUrl) || video.videoUrl.startsWith('data:video/'))) {
+    try {
+      const assembly = await assembleVideo({
+        videoUrl: video.videoUrl,
+        audioTracks: audioTracks.map((t) => ({ url: t.url, type: t.type })),
+        subtitles: dialogue.slice(0, 200) || undefined,
+        outputFilename: `xroga-video-${Date.now()}.mp4`,
+      });
+      const stored = await storeUserFile(userId, `video-${Date.now()}.mp4`, assembly.buffer, 'video/mp4');
+      fileUrl = stored.fileUrl;
+      if (projectId) {
+        const { storeProjectFile } = await import('../storage/projectFiles.js');
+        await storeProjectFile(userId, projectId, `video-${Date.now()}.mp4`, assembly.buffer, 'video/mp4', 'video');
+      }
+    } catch {
+      fileUrl = await persistVideoFile(userId, video.videoUrl, projectId);
+    }
+  } else if (isHttpMediaUrl(video.videoUrl) || video.videoUrl.startsWith('data:video/')) {
     fileUrl = await persistVideoFile(userId, video.videoUrl, projectId);
   } else {
     throw new Error('Video generation failed — unsupported video format.');
@@ -79,7 +107,7 @@ export async function produceSingleSceneVideo(
 
   options?.onProgress?.('complete', 'Your video is ready!');
 
-    const usedFallback = ['slideshow', 'slideshow-ai-image', 'ffmpeg-minimal', 'static-mp4'].includes(video.provider);
+    const usedFallback = ['slideshow', 'slideshow-ai-image', 'ffmpeg-minimal', 'static-mp4', 'parallax'].includes(video.provider);
 
   return {
     type: 'video_studio',
@@ -98,9 +126,9 @@ export async function produceSingleSceneVideo(
       })),
     },
     selectedProvider: video.provider,
-    reviewScores: { physics: 8, lighting: 8, consistency: 8 },
+    reviewScores: video.reviewScores ?? { physics: 8, lighting: 8, consistency: 8 },
     providersUsed: [video.provider],
-    audioTracks: [],
+    audioTracks: audioTracks.map((t) => ({ type: t.type, provider: t.provider })),
     sceneCount: plan.scenes.length,
     scriptProvider: plan.scriptProvider,
     videoFormat: parseVideoFormat(prompt),
