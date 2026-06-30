@@ -462,6 +462,7 @@ export function TerminalChatProvider({
               return;
             }
             if (output?.type === 'video_studio' && typeof output.streamingUrl === 'string') {
+              const videoOutput = { ...output, prompt: userPrompt };
               addMediaItem({
                 name: String(output.title ?? 'Xroga video').slice(0, 40),
                 type: 'video',
@@ -475,7 +476,7 @@ export function TerminalChatProvider({
                     ? {
                         ...msg,
                         content: '',
-                        featureOutput: output,
+                        featureOutput: videoOutput,
                       }
                     : msg
                 )

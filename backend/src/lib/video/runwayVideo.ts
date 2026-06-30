@@ -27,7 +27,11 @@ async function pollTask(id: string, apiKey: string): Promise<RunwayTask> {
   throw new Error('Runway video generation timed out');
 }
 
-export async function generateRunwayVideo(prompt: string, durationSeconds = 5): Promise<string> {
+export async function generateRunwayVideo(
+  prompt: string,
+  durationSeconds = 5,
+  options?: { aspectRatio?: '9:16' | '16:9' }
+): Promise<string> {
   const apiKey = process.env.RUNWAY_API_KEY;
   if (!apiKey) throw new Error('RUNWAY_API_KEY not configured');
 
@@ -42,7 +46,7 @@ export async function generateRunwayVideo(prompt: string, durationSeconds = 5): 
       model: 'gen3a_turbo',
       promptText: prompt.slice(0, 1000),
       duration: Math.min(durationSeconds, 10),
-      ratio: '1280:768',
+      ratio: options?.aspectRatio === '9:16' ? '768:1280' : '1280:768',
     }),
   });
 

@@ -22,7 +22,11 @@ async function pollGeneration(id: string, apiKey: string): Promise<LumaGeneratio
   throw new Error('Luma video generation timed out');
 }
 
-export async function generateLumaVideo(prompt: string, _durationSeconds = 5): Promise<string> {
+export async function generateLumaVideo(
+  prompt: string,
+  _durationSeconds = 5,
+  options?: { aspectRatio?: '9:16' | '16:9' }
+): Promise<string> {
   const apiKey = process.env.LUMA_API_KEY;
   if (!apiKey) throw new Error('LUMA_API_KEY not configured');
 
@@ -35,7 +39,7 @@ export async function generateLumaVideo(prompt: string, _durationSeconds = 5): P
     },
     body: JSON.stringify({
       prompt,
-      aspect_ratio: '16:9',
+      aspect_ratio: options?.aspectRatio === '9:16' ? '9:16' : '16:9',
       loop: false,
     }),
   });

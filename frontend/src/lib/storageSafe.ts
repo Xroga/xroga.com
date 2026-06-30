@@ -4,14 +4,27 @@ export function isDataImageUrl(url: unknown): url is string {
   return typeof url === 'string' && url.startsWith('data:image/');
 }
 
+function isDataVideoUrl(url: unknown): url is string {
+  return typeof url === 'string' && url.startsWith('data:video/');
+}
+
 function stripUrl(url: unknown): unknown {
-  if (isDataImageUrl(url)) return '';
+  if (isDataImageUrl(url) || isDataVideoUrl(url)) return '';
   return url;
 }
 
 function stripFeatureOutput(output: unknown): unknown {
   if (!output || typeof output !== 'object') return output;
   const o = output as Record<string, unknown>;
+
+  if (o.type === 'video_studio') {
+    const next = { ...o };
+    if (isDataVideoUrl(o.streamingUrl)) {
+      next.streamingUrl = '';
+    }
+    return next;
+  }
+
   if (o.type !== 'image') return output;
 
   const next: Record<string, unknown> = { ...o };

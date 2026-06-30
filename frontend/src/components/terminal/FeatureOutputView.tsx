@@ -71,6 +71,9 @@ export function FeatureOutputView({
       streamingUrl: o.streamingUrl,
       durationSeconds: typeof o.durationSeconds === 'number' ? o.durationSeconds : undefined,
       selectedProvider: typeof o.selectedProvider === 'string' ? o.selectedProvider : undefined,
+      videoFormat:
+        o.videoFormat === 'shorts_reels' || o.videoFormat === 'youtube_video' ? o.videoFormat : undefined,
+      prompt: typeof o.prompt === 'string' ? o.prompt : undefined,
     };
     return <VideoStudioCard data={data} onDelete={onDelete} messageId={messageId} />;
   }

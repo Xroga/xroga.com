@@ -24,6 +24,9 @@ import type { SendButtonState } from './ChatBarButtons';
 import { GitHubChipIcon, GitLabChipIcon, VercelChipIcon, TwitterChipIcon, ChatBarBrandChip } from './ChatBarButtons';
 import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
+import { isVideoGenerationPrompt } from '@/lib/parseImageContent';
+import { injectVideoFormatTag, VIDEO_FORMAT_TAG, type VideoFormatId } from '@/lib/videoFormat';
+import { VideoFormatPicker } from './VideoFormatPicker';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -56,6 +59,8 @@ export function TerminalChatBar() {
   const [deployOpen, setDeployOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [videoFormatOpen, setVideoFormatOpen] = useState(false);
+  const pendingVideoSubmitRef = useRef<{ text: string; attachments?: ChatAttachment[] } | null>(null);
   const [domain, setDomain] = useState('');
   const [showDomain, setShowDomain] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -139,8 +144,27 @@ export function TerminalChatBar() {
         ? 'Transform this image with a modern professional look'
         : undefined);
 
+    if (promptText && isVideoGenerationPrompt(promptText) && !VIDEO_FORMAT_TAG.test(promptText)) {
+      pendingVideoSubmitRef.current = { text: promptText, attachments };
+      setVideoFormatOpen(true);
+      setSendState('idle');
+      return;
+    }
+
     await submit(promptText, false, false, attachments);
     if (!loading) setSendState('launched');
+  }
+
+  function handleVideoFormatSelect(format: VideoFormatId) {
+    const pending = pendingVideoSubmitRef.current;
+    setVideoFormatOpen(false);
+    pendingVideoSubmitRef.current = null;
+    if (!pending) return;
+    const tagged = injectVideoFormatTag(pending.text, format);
+    setSendState('sending');
+    void submit(tagged, false, false, pending.attachments).then(() => {
+      if (!loading) setSendState('launched');
+    });
   }
 
   async function applyStyleFromFile(file: File, stylePrompt: string) {
@@ -418,6 +442,14 @@ export function TerminalChatBar() {
           </form>
         </ChatbarShell>
       </div>
+      <VideoFormatPicker
+        open={videoFormatOpen}
+        onClose={() => {
+          setVideoFormatOpen(false);
+          pendingVideoSubmitRef.current = null;
+        }}
+        onSelect={handleVideoFormatSelect}
+      />
     </>
   );
 }
