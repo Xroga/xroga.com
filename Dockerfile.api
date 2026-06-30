@@ -16,15 +16,12 @@ FROM base AS build
 
 COPY backend/package.json backend/package-lock.json ./
 
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci --include=dev --ignore-scripts
+RUN npm ci --include=dev --ignore-scripts
 
 COPY backend/tsconfig.json backend/tsconfig.json
 COPY backend/src ./src
 
-RUN npm run build
-
-RUN test -f dist/index.js
+RUN npm run build && test -f dist/index.js
 
 RUN npm prune --omit=dev
 

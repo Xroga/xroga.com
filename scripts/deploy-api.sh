@@ -15,7 +15,11 @@ echo "==> Pulling latest main..."
 git pull origin main
 
 echo "==> Deploying $APP (Dockerfile.api from repo root)..."
-flyctl deploy . --config fly.api.toml -a "$APP" --local-only --ha=false --strategy immediate
+flyctl auth docker
+IMAGE="registry.fly.io/${APP}:${GITHUB_SHA:-latest}"
+docker build -f Dockerfile.api -t "$IMAGE" .
+docker push "$IMAGE"
+flyctl deploy --config fly.api.toml -a "$APP" --image "$IMAGE" --ha=false
 
 echo "==> Waiting for health..."
 sleep 8
