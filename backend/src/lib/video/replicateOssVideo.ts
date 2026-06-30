@@ -1,9 +1,19 @@
 /**
- * OSS video models via Replicate — MiniMax, Wan, CogVideoX workhorse tier.
+ * OSS video models via Replicate — Wan 2.2, CogVideoX, Zeroscope workhorse tier.
  */
 
 import { sanitizeVideoPrompt } from './videoPrompt.js';
 import { runReplicateModel } from './replicateClient.js';
+
+/** Wan 2.2 fast text-to-video (replaces deprecated wan-2.1 path) */
+export async function generateWanReplicateVideo(prompt: string, _durationSeconds = 5): Promise<string> {
+  const cleanPrompt = sanitizeVideoPrompt(prompt);
+  return runReplicateModel(
+    'wan-video/wan-2.2-t2v-fast',
+    { prompt: cleanPrompt.slice(0, 1000) },
+    'Wan-2.2'
+  );
+}
 
 /** MiniMax video-01 via Replicate */
 export async function generateMinimaxReplicateVideo(prompt: string, _durationSeconds = 5): Promise<string> {
@@ -11,42 +21,29 @@ export async function generateMinimaxReplicateVideo(prompt: string, _durationSec
   return runReplicateModel('minimax/video-01', { prompt: cleanPrompt.slice(0, 2000) }, 'MiniMax-Replicate');
 }
 
-/** Wan 2.1 text-to-video */
-export async function generateWanReplicateVideo(prompt: string, _durationSeconds = 5): Promise<string> {
-  const cleanPrompt = sanitizeVideoPrompt(prompt);
-  return runReplicateModel(
-    'wavespeedai/wan-2.1-t2v-480p',
-    { prompt: cleanPrompt.slice(0, 1000) },
-    'Wan-2.1'
-  );
-}
-
 /** CogVideoX text-to-video */
 export async function generateCogVideoX(prompt: string, _durationSeconds = 5): Promise<string> {
   const cleanPrompt = sanitizeVideoPrompt(prompt);
   return runReplicateModel(
-    'thudm/cogvideox-2b',
-    {
-      prompt: cleanPrompt.slice(0, 1000),
-      num_inference_steps: 30,
-      guidance_scale: 7,
-    },
+    'thudm/cogvideox-t2v',
+    { prompt: cleanPrompt.slice(0, 1000) },
     'CogVideoX'
   );
 }
 
-/** AnimateDiff motion from prompt */
-export async function generateAnimateDiff(prompt: string, _durationSeconds = 5): Promise<string> {
+/** Zeroscope v2 XL — lightweight OSS text-to-video */
+export async function generateZeroscopeVideo(prompt: string, _durationSeconds = 5): Promise<string> {
   const cleanPrompt = sanitizeVideoPrompt(prompt);
   return runReplicateModel(
-    'lucataco/animate-diff',
-    {
-      prompt: cleanPrompt.slice(0, 800),
-      n_prompt: 'blurry, low quality, extra limbs, warping',
-      num_inference_steps: 25,
-    },
-    'AnimateDiff'
+    'anotherjesse/zeroscope-v2-xl',
+    { prompt: cleanPrompt.slice(0, 800) },
+    'Zeroscope'
   );
+}
+
+/** @deprecated use generateZeroscopeVideo — kept for provider registry alias */
+export async function generateAnimateDiff(prompt: string, durationSeconds = 5): Promise<string> {
+  return generateZeroscopeVideo(prompt, durationSeconds);
 }
 
 /** Stable Video Diffusion — image-to-video */

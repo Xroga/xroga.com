@@ -4,8 +4,9 @@
  */
 
 import { hasSecret } from '../../config/envSecrets.js';
-import { generateMinimaxReplicateVideo, generateWanReplicateVideo, generateCogVideoX, generateAnimateDiff } from './replicateOssVideo.js';
+import { generateMinimaxReplicateVideo, generateWanReplicateVideo, generateCogVideoX, generateZeroscopeVideo } from './replicateOssVideo.js';
 import { generateDeepInfraVideo } from './deepinfraVideo.js';
+import { generateAgnesVideo } from '../agnesVideo.js';
 import { generateFalVideo } from './falVideo.js';
 import { generateHailuoVideo } from './hailuoVideo.js';
 import { generateLumaVideo } from './lumaVideo.js';
@@ -35,18 +36,20 @@ function buildOssRacers(
 ): Racer[] {
   const racers: Racer[] = [];
 
-  // DeepInfra first — separate quota from Replicate
+  // DeepInfra + Agnes first — separate quotas from Replicate
   if (hasSecret('DEEPINFRA_API_KEY')) {
     racers.push({ name: 'deepinfra', run: () => generateDeepInfraVideo(prompt, durationSeconds) });
   }
+  if (hasSecret('AGNES_API_KEY')) {
+    racers.push({ name: 'agnes', run: () => generateAgnesVideo(prompt, durationSeconds) });
+  }
 
-  // Replicate OSS models one-at-a-time (shared rate limit)
+  // Replicate OSS models one-at-a-time (shared rate limit / credits)
   if (hasSecret('REPLICATE_API_TOKEN')) {
-    racers.push({ name: 'replicate-minimax', run: () => generateMinimaxReplicateVideo(prompt, durationSeconds) });
     racers.push({ name: 'replicate-wan', run: () => generateWanReplicateVideo(prompt, durationSeconds) });
+    racers.push({ name: 'replicate-minimax', run: () => generateMinimaxReplicateVideo(prompt, durationSeconds) });
     racers.push({ name: 'cogvideox', run: () => generateCogVideoX(prompt, durationSeconds) });
-    racers.push({ name: 'animatediff', run: () => generateAnimateDiff(prompt, durationSeconds) });
-    // SVD is image-to-video — skip in fast text-to-video race (handled in guaranteedVideo i2v)
+    racers.push({ name: 'zeroscope', run: () => generateZeroscopeVideo(prompt, durationSeconds) });
   }
 
   return racers;

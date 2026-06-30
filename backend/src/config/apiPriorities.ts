@@ -21,13 +21,13 @@ export const IMAGE_PROVIDERS = [
 ] as const;
 export const VIDEO_PROVIDERS = [
   // OSS / free workhorse first (80%) — fast, no premium credits needed
-  'replicate-minimax',
-  'replicate-wan',
   'deepinfra',
+  'agnes',
+  'replicate-wan',
+  'replicate-minimax',
   'cogvideox',
   'animatediff',
   'replicate-svd',
-  'agnes',
   'comfyui',
   // Premium / paid (20%) — climax scenes only
   'fal',
