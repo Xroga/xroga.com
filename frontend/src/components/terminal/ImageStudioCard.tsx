@@ -21,6 +21,7 @@ import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 import { ImageEditModal } from './ImageEditModal';
 import { SocialShareModal } from './SocialShareModal';
 import { ImageVariantCarousel } from './ImageVariantCarousel';
+import { VariantThumbGrid, previewAspectClass } from './VariantThumbGrid';
 import { TextGeneratingAnimation } from './TextGeneratingAnimation';
 import { isPlaceholderImage } from '@/lib/parseImageContent';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -66,16 +67,6 @@ const STYLE_LABELS: Record<string, string> = {
   illustration: 'Illustration',
   general: '',
 };
-
-function previewAspectClass(aspectFormat?: string, isYoutubeThumbnail?: boolean, contentType?: string): string {
-  if (aspectFormat === '16:9' || isYoutubeThumbnail || contentType === 'thumbnail' || contentType === 'og' || contentType === 'banner') {
-    return 'aspect-video';
-  }
-  if (aspectFormat === '9:16' || contentType === 'story' || contentType === 'wallpaper') return 'aspect-[9/16] max-h-80';
-  if (aspectFormat === '4:5' || aspectFormat === '3:4') return 'aspect-[4/5] max-h-72';
-  if (contentType === 'logo' || contentType === 'avatar') return 'aspect-square max-h-52';
-  return 'aspect-square max-h-64';
-}
 
 export interface ImageOutputData {
   type: 'image';
@@ -129,21 +120,26 @@ export function ImageGeneratingAnimation({
   contentType?: string;
 }) {
   const slots = Array.from({ length: VARIANT_SLOTS }, (_, i) => liveAttempts[i] ?? null);
-  const aspectClass = previewAspectClass(aspectFormat, isYoutubeThumbnail, contentType);
+  const thumbH =
+    aspectFormat === '16:9' || isYoutubeThumbnail || contentType === 'thumbnail'
+      ? 'h-[42px]'
+      : aspectFormat === '9:16' || contentType === 'story'
+        ? 'h-[52px]'
+        : 'h-14';
 
   return (
     <div className={cn('my-2', className)}>
       <TextGeneratingAnimation message={message} step={step} mode="image" sublabel="4 variants" />
       {promptHint && <p className="mt-1.5 text-[10px] text-[var(--muted)] truncate px-0.5">{promptHint}</p>}
-      <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+      <div className="mt-2 grid grid-cols-4 gap-1">
         {slots.map((img, i) => (
           <div
             key={img?.variantIndex ?? `slot-${i}`}
-            className={cn('relative overflow-hidden rounded-lg border border-[var(--card-border)] bg-[var(--muted)]/10', aspectClass)}
+            className={cn('relative overflow-hidden rounded-md border border-[var(--card-border)] bg-[var(--muted)]/10', thumbH)}
           >
             {img ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={img.imageUrl} alt="" className="h-full w-full object-cover" />
+              <img src={img.imageUrl} alt="" className="h-full w-full object-contain p-0.5" />
             ) : (
               <div className="h-full w-full animate-pulse bg-[var(--muted)]/20" />
             )}
@@ -260,9 +256,9 @@ export function ImageStudioCard({
     );
   }
 
-  function persistSelection(url: string) {
+  function persistSelection(url: string, attempts = allAttempts) {
     if (!messageId) return;
-    const nextAttempts = allAttempts.map((a) => ({
+    const nextAttempts = attempts.map((a) => ({
       ...a,
       selected: a.imageUrl === url,
     }));
@@ -275,7 +271,7 @@ export function ImageStudioCard({
     });
   }
 
-  function handleSelectIndex(index: number) {
+  function handleCarouselChange(index: number) {
     const v = visibleVariants[index];
     if (!v) return;
     setActiveUrl(v.imageUrl);
@@ -291,9 +287,19 @@ export function ImageStudioCard({
 
   function openEditor(url = previewSrc) {
     setEditSrc(url);
-    setActiveUrl(url);
-    persistSelection(url);
     setEditOpen(true);
+  }
+
+  function handleRemoveVariant(url: string) {
+    const next = successfulVariants.filter((v) => v.imageUrl !== url);
+    if (next.length === 0) {
+      handleDelete();
+      return;
+    }
+    const nextUrl = next[0]!.imageUrl;
+    setActiveUrl(nextUrl);
+    persistSelection(nextUrl, next);
+    toast.success('Variant removed');
   }
 
   async function handleSetProfilePic(url = previewSrc) {
@@ -324,7 +330,6 @@ export function ImageStudioCard({
           className,
         )}
       >
-        {/* Header */}
         <div className="flex items-center justify-between gap-2 px-3 py-2">
           <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
             <span className="text-xs font-semibold">{title}</span>
@@ -360,49 +365,28 @@ export function ImageStudioCard({
         </div>
 
         {previewSrc && (
-          <div className="px-3 pb-3 space-y-3">
-            {/* Carousel with arrows, swipe, auto-slide */}
+          <div className="px-3 pb-3 space-y-2.5">
             <ImageVariantCarousel
               slides={carouselSlides.length > 0 ? carouselSlides : [{ imageUrl: previewSrc }]}
               activeIndex={activeIndex}
-              onChange={handleSelectIndex}
+              onChange={handleCarouselChange}
               aspectClass={aspectClass}
               alt={prompt ?? 'Generated image'}
               onImageClick={openEditor}
             />
 
-            {/* Variant grid — larger modern tiles */}
-            {successfulVariants.length > 1 && (
-              <div>
-                <p className="text-[9px] font-medium uppercase tracking-wide text-[var(--muted)] mb-1.5 px-0.5">
-                  All variants
-                </p>
-                <div className="grid grid-cols-2 gap-2">
-                  {successfulVariants.map((v, i) => (
-                    <button
-                      key={`grid-${v.variantIndex ?? i}`}
-                      type="button"
-                      onClick={() => handleSelectIndex(i)}
-                      className={cn(
-                        'relative overflow-hidden rounded-xl border-2 transition-all hover:scale-[1.02]',
-                        v.imageUrl === previewSrc
-                          ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/20'
-                          : 'border-[var(--card-border)] opacity-85 hover:opacity-100',
-                        aspectClass,
-                      )}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={v.imageUrl} alt="" className="h-full w-full object-cover" />
-                      <span className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1.5 text-[9px] font-medium text-white truncate">
-                        {v.variantLabel ?? v.provider}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            <VariantThumbGrid
+              variants={successfulVariants}
+              activeUrl={previewSrc}
+              aspectFormat={aspectFormat}
+              isYoutubeThumbnail={isYoutubeThumbnail}
+              contentType={contentType}
+              onEdit={openEditor}
+              onCopy={(url) => void copyImageToClipboard(url)}
+              onDownload={(url) => void handleDownload(url)}
+              onRemove={handleRemoveVariant}
+            />
 
-            {/* Action row */}
             <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
@@ -429,7 +413,12 @@ export function ImageStudioCard({
 
               <div className="flex items-center gap-0.5 ml-auto">
                 <IconBtn icon={Wand2} label="AI Edit" onClick={() => openEditor(previewSrc)} accent />
-                <IconBtn icon={UserCircle} label="Profile" onClick={() => void handleSetProfilePic(previewSrc)} disabled={settingProfile} />
+                <IconBtn
+                  icon={UserCircle}
+                  label="Profile"
+                  onClick={() => void handleSetProfilePic(previewSrc)}
+                  disabled={settingProfile}
+                />
                 <IconBtn icon={Copy} label="Copy image" onClick={() => void copyImageToClipboard(previewSrc)} />
               </div>
             </div>

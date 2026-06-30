@@ -1,5 +1,3 @@
-import { copyImageToClipboard } from './imageStudioUtils';
-
 export type SocialPlatformId =
   | 'youtube'
   | 'x'
@@ -238,20 +236,3 @@ export function buildSocialPlatformPacks(input: SocialShareInput): SocialPlatfor
   ];
 }
 
-export async function shareToPlatform(pack: SocialPlatformPack, imageUrl?: string): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(pack.clipboardText);
-  } catch {
-    /* text clipboard optional */
-  }
-
-  if (imageUrl) {
-    try {
-      await copyImageToClipboard(imageUrl, undefined, true);
-    } catch {
-      /* image copy optional */
-    }
-  }
-
-  window.open(pack.openUrl, '_blank', 'noopener,noreferrer');
-}

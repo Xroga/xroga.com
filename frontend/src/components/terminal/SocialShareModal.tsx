@@ -4,8 +4,8 @@ import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Share2, Copy, Check, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { buildSocialPlatformPacks, shareToPlatform, type SocialPlatformPack } from '@/lib/socialSharePack';
-import toast from 'react-hot-toast';
+import { buildSocialPlatformPacks, type SocialPlatformPack } from '@/lib/socialSharePack';
+import { shareToPlatform } from '@/lib/shareImage';
 
 interface SocialShareModalProps {
   open: boolean;
@@ -66,7 +66,6 @@ export function SocialShareModal({
   async function handlePick(pack: SocialPlatformPack) {
     setPicked(pack.id);
     await shareToPlatform(pack, previewUrl || undefined);
-    toast.success(`${pack.name}: caption copied${previewUrl ? ' + image copied' : ''}`);
     setTimeout(() => {
       setPicked(null);
       onClose();

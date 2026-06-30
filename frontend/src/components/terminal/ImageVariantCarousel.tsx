@@ -101,7 +101,7 @@ export function ImageVariantCarousel({
           <img
             src={current.imageUrl}
             alt={alt}
-            className="h-full w-full object-cover select-none"
+            className="h-full w-full object-contain select-none bg-black/5 dark:bg-black/20"
             draggable={false}
             loading="lazy"
           />

@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
-import { Terminal, Palette, MessageCircleHeart } from 'lucide-react';
+import { Terminal, Palette, MessageCircleHeart, ChevronDown } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
@@ -56,12 +56,51 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   const isIncognito = incognito || storeIncognito;
   const bottomRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const stickToBottomRef = useRef(true);
+  const prevLoadingRef = useRef(false);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [searchHit, setSearchHit] = useState<string | null>(null);
 
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
+    stickToBottomRef.current = true;
+    setShowScrollToBottom(false);
+    bottomRef.current?.scrollIntoView({ behavior, block: 'end' });
+  }, []);
+
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, loading]);
+    const el = bottomRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const atBottom = entry.isIntersecting;
+        setShowScrollToBottom(!atBottom);
+        if (atBottom) stickToBottomRef.current = true;
+        else if (!loading) stickToBottomRef.current = false;
+      },
+      { threshold: 0, rootMargin: '0px 0px 140px 0px' },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loading, messages.length]);
+
+  useEffect(() => {
+    const started = loading && !prevLoadingRef.current;
+    const finished = !loading && prevLoadingRef.current;
+    prevLoadingRef.current = loading;
+
+    if (started) {
+      stickToBottomRef.current = true;
+      scrollToBottom('auto');
+      return;
+    }
+
+    if (stickToBottomRef.current || finished) {
+      scrollToBottom(loading ? 'auto' : 'smooth');
+    }
+  }, [messages, loading, imageAttempts, imageProgressStep, pipelineMessage, scrollToBottom]);
 
   useEffect(() => {
     const session = loadWorkspaceSession();
@@ -390,6 +429,18 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
       </div>
       <OutOfActionsModal open={outOfActionsOpen} onClose={() => setOutOfActionsOpen(false)} />
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
+
+      {showScrollToBottom && (
+        <button
+          type="button"
+          onClick={() => scrollToBottom('smooth')}
+          className="fixed z-[180] bottom-[calc(min(340px,48vh)+1rem)] right-4 sm:right-8 flex items-center gap-1 rounded-full border border-[var(--card-border)] bg-[var(--card)]/95 backdrop-blur-md px-3 py-2 text-[11px] font-semibold shadow-lg hover:bg-[var(--card)] transition-all animate-in fade-in slide-in-from-bottom-2"
+          aria-label="Scroll to latest message"
+        >
+          <ChevronDown className="h-4 w-4" />
+          Latest
+        </button>
+      )}
     </>
   );
 }
