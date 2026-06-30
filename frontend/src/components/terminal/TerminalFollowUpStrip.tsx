@@ -4,23 +4,30 @@ import { Lightbulb, Sparkles } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 
-export function TerminalFollowUpStrip() {
+export function TerminalFollowUpStrip({
+  className,
+  items,
+}: {
+  className?: string;
+  items?: string[];
+}) {
   const { followUps, loading, setPrompt, submit } = useTerminalChat();
+  const chips = (items?.length ? items : followUps).filter(Boolean);
 
-  if (loading || followUps.length === 0) return null;
+  if (loading || chips.length === 0) return null;
 
   function handleSelect(text: string) {
     setPrompt(text);
     void submit(text);
   }
 
-  const refinements = followUps.filter(
+  const refinements = chips.filter(
     (f) => !/post|social|twitter|linkedin|instagram|share/i.test(f)
   );
-  const social = followUps.filter((f) => /post|social|twitter|linkedin|instagram|share/i.test(f));
+  const social = chips.filter((f) => /post|social|twitter|linkedin|instagram|share/i.test(f));
 
   return (
-    <div className="mb-2 rounded-xl border border-[var(--card-border)] bg-[var(--card)]/90 backdrop-blur-sm px-2.5 py-2 shadow-sm">
+    <div className={cn('rounded-xl border border-[var(--card-border)] bg-[var(--card)]/90 backdrop-blur-sm px-2.5 py-2 shadow-sm', className)}>
       <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5 flex items-center gap-1.5">
         <Sparkles className="w-3 h-3 text-[#006aff]" />
         Suggestions · refinements · next steps

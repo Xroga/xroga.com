@@ -5,6 +5,7 @@ import { Rocket, Globe, Search } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { useThemeStore } from '@/store/useThemeStore';
 import { estimatePrompt, uploadChatImage, type ChatAttachment } from '@/lib/api';
 import { IntegrationsModal } from './IntegrationsModal';
 import { GithubRepoModal } from './GithubRepoModal';
@@ -44,6 +45,8 @@ export function TerminalChatBar() {
   } = useTerminalChat();
   const actions = useAppStore((s) => s.actions);
   const incognito = usePrivacyStore((s) => s.incognito);
+  const theme = useThemeStore((s) => s.theme);
+  const darkUi = theme === 'black' || theme === 'gray';
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
@@ -240,7 +243,7 @@ export function TerminalChatBar() {
           <div className="xv-chatbar-toolbar flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 overflow-x-auto scrollbar-hide flex-nowrap">
             <ChatBarTip label="GitHub repos" className="shrink-0">
               <span className="inline-flex shrink-0 lg:hidden">
-                <ChatBarBrandChip variant="github" label="GitHub" onClick={() => setGithubOpen(true)} />
+                <ChatBarBrandChip variant="github" label="GitHub" onClick={() => setGithubOpen(true)} plain darkUi={darkUi} />
               </span>
               <span className="hidden lg:inline-flex shrink-0">
                 <ChatBarToolChip
@@ -253,7 +256,7 @@ export function TerminalChatBar() {
             </ChatBarTip>
             <ChatBarTip label="GitLab" className="shrink-0">
               <span className="inline-flex shrink-0 lg:hidden">
-                <ChatBarBrandChip variant="gitlab" label="GitLab" onClick={() => setIntegrationsOpen(true)} />
+                <ChatBarBrandChip variant="gitlab" label="GitLab" onClick={() => setIntegrationsOpen(true)} plain darkUi={darkUi} />
               </span>
               <span className="hidden lg:inline-flex shrink-0">
                 <ChatBarToolChip
@@ -266,7 +269,7 @@ export function TerminalChatBar() {
             </ChatBarTip>
             <ChatBarTip label="Vercel" className="shrink-0">
               <span className="inline-flex shrink-0 lg:hidden">
-                <ChatBarBrandChip variant="vercel" label="Vercel" onClick={() => setIntegrationsOpen(true)} />
+                <ChatBarBrandChip variant="vercel" label="Vercel" onClick={() => setIntegrationsOpen(true)} plain darkUi={darkUi} />
               </span>
               <span className="hidden lg:inline-flex shrink-0">
                 <ChatBarToolChip
@@ -287,24 +290,32 @@ export function TerminalChatBar() {
                 />
               </span>
             </ChatBarTip>
-            <ChatBarTip label="Search integrations" className="shrink-0">
+            <ChatBarTip label="Integrations" className="shrink-0">
               <button
                 type="button"
                 onClick={() => setIntegrationsOpen(true)}
-                className="flex items-center gap-1 px-2.5 h-6 rounded-full bg-gradient-to-r from-[#006aff]/18 to-[#006aff]/6 border border-[#006aff]/30 text-[9px] font-bold text-[var(--foreground)] shrink-0 hover:from-[#006aff]/28"
+                className={cn(
+                  'shrink-0 flex items-center gap-1 text-[9px] font-bold',
+                  'lg:px-2.5 lg:h-6 lg:rounded-full lg:border lg:border-[#006aff]/30 lg:bg-gradient-to-r lg:from-[#006aff]/18 lg:to-[#006aff]/6 lg:hover:from-[#006aff]/28',
+                  'xv-chatbar-icon-btn lg:w-auto lg:h-6 lg:bg-transparent'
+                )}
               >
-                <Search className="w-3 h-3 text-[#006aff]" />
-                <span className="hidden sm:inline">Search</span>
+                <Search className={cn('w-3.5 h-3.5', darkUi ? 'text-white' : 'text-[#006aff]')} />
+                <span className="hidden lg:inline text-[var(--foreground)]">Integration</span>
               </button>
             </ChatBarTip>
             <ChatBarTip label="Deploy project" className="shrink-0">
               <button
                 type="button"
                 onClick={() => setDeployOpen(true)}
-                className="flex items-center gap-1 px-2.5 h-6 rounded-full bg-gradient-to-r from-emerald-500/20 to-[#006aff]/15 border border-emerald-500/35 text-[9px] font-bold text-[var(--foreground)] shrink-0 hover:from-emerald-500/30"
+                className={cn(
+                  'shrink-0 flex items-center gap-1 text-[9px] font-bold',
+                  'lg:px-2.5 lg:h-6 lg:rounded-full lg:border lg:border-emerald-500/35 lg:bg-gradient-to-r lg:from-emerald-500/20 lg:to-[#006aff]/15 lg:hover:from-emerald-500/30',
+                  'xv-chatbar-icon-btn lg:w-auto lg:h-6 lg:bg-transparent'
+                )}
               >
-                <Rocket className="w-3 h-3 text-emerald-500" />
-                <span>Deploy</span>
+                <Rocket className={cn('w-3.5 h-3.5', darkUi ? 'text-emerald-400' : 'text-emerald-500')} />
+                <span className="hidden lg:inline text-[var(--foreground)]">Deploy</span>
               </button>
             </ChatBarTip>
             <div className="flex-1 min-w-[2px]" />

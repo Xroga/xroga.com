@@ -7,7 +7,7 @@ import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageTagMarquee } from '@/components/homepage/HomepageTagMarquee';
 import { AppStoreInline } from '@/components/ui/AppStoreInline';
-import { PowerSmashButton, DottedSignInButton } from '@/components/ui/XrogaButtons';
+import { PowerSmashButton, HomeSignInButton } from '@/components/ui/XrogaButtons';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
 import { useThemeStore } from '@/store/useThemeStore';
 import { createClient } from '@/lib/supabase/client';
@@ -82,12 +82,12 @@ export default function HomePage() {
               >
                 Get Started
               </PowerSmashButton>
-              <DottedSignInButton
+              <HomeSignInButton
                 onClick={() => router.push('/auth/login')}
-                className="xv-dotted-signin--light xv-home-auth-btn !min-w-[148px]"
+                className="xv-home-auth-btn !min-w-[148px] !min-h-[48px]"
               >
                 Sign In
-              </DottedSignInButton>
+              </HomeSignInButton>
             </div>
           )}
 

@@ -16,6 +16,7 @@ import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { ProcessingPipeline } from './ProcessingPipeline';
 import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
+import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { FeatureOutputView } from './FeatureOutputView';
 import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
@@ -293,11 +294,24 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             sublabel="Xroga AI · Video Studio"
                           />
                         ) : msg.featureOutput ? (
-                          <FeatureOutputView
-                            output={msg.featureOutput}
-                            messageId={msg.id}
-                            onDelete={() => deleteTurn(msg.id)}
-                          />
+                          <>
+                            <FeatureOutputView
+                              output={msg.featureOutput}
+                              messageId={msg.id}
+                              onDelete={() => deleteTurn(msg.id)}
+                            />
+                            {isLastAssistant &&
+                              (msg.featureOutput as { type?: string }).type === 'image' && (
+                                <TerminalFollowUpStrip
+                                  className="mt-3"
+                                  items={
+                                    Array.isArray((msg.featureOutput as { followUps?: string[] }).followUps)
+                                      ? (msg.featureOutput as { followUps: string[] }).followUps
+                                      : undefined
+                                  }
+                                />
+                              )}
+                          </>
                         ) : loading &&
                         msg.id === animatingId &&
                         isImageGenerationPrompt(lastUserText) ? (

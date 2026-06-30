@@ -1027,6 +1027,98 @@ body.theme-gray * {
     100% { background-position: 8px 0, 12px 4px; }
   }
 
+  /* Homepage Sign In — Uiverse ryota1231 + vinodjangid07 combined */
+  .xv-home-signin-combo {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 148px;
+    min-height: 48px;
+    padding: 4px 5px 4px 18px;
+    background: #ffffff;
+    border-radius: 9999px;
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 0 2px rgba(0, 106, 255, 0.2), 0 8px 22px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    font-weight: 600;
+    color: #1f387e;
+  }
+  .xv-home-signin-combo svg.xv-home-signin-arr-1,
+  .xv-home-signin-combo svg.xv-home-signin-arr-2 {
+    position: absolute;
+    width: 18px;
+    fill: #1f387e;
+    z-index: 3;
+    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .xv-home-signin-arr-1 { right: 52px; opacity: 0.85; }
+  .xv-home-signin-arr-2 { left: -22%; opacity: 0; }
+  .xv-home-signin-text {
+    position: relative;
+    z-index: 2;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transform: translateX(-8px);
+    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .xv-home-signin-circle {
+    position: absolute;
+    top: 50%;
+    left: 38%;
+    transform: translate(-50%, -50%);
+    width: 18px;
+    height: 18px;
+    background: #c5e5e4;
+    border-radius: 50%;
+    opacity: 0;
+    z-index: 0;
+    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .xv-home-signin-icon-wrap {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #006aff;
+    color: #ffffff;
+    border: 3px solid #ffffff;
+    flex-shrink: 0;
+    transition: transform 0.5s ease;
+  }
+  .xv-home-signin-icon-wrap svg {
+    transition: transform 1.2s ease;
+  }
+  .xv-home-signin-combo:hover {
+    border-radius: 14px;
+    box-shadow: 0 0 0 10px transparent, 0 10px 28px rgba(0, 106, 255, 0.2);
+    color: #212121;
+  }
+  .xv-home-signin-combo:hover .xv-home-signin-arr-1 { right: -20%; opacity: 0; }
+  .xv-home-signin-combo:hover .xv-home-signin-arr-2 { left: 14px; opacity: 1; }
+  .xv-home-signin-combo:hover .xv-home-signin-text { transform: translateX(10px); }
+  .xv-home-signin-combo:hover .xv-home-signin-circle {
+    width: 200px;
+    height: 200px;
+    opacity: 1;
+  }
+  .xv-home-signin-combo:hover .xv-home-signin-icon-wrap svg {
+    animation: xv-signin-icon-nudge 1s linear infinite;
+  }
+  .xv-home-signin-combo:active { transform: scale(0.97); }
+  @keyframes xv-signin-icon-nudge {
+    0% { opacity: 0.7; transform: translateX(0); }
+    100% { opacity: 1; transform: translateX(4px); }
+  }
+
   /* Power Smash upload shell */
   .xv-power-smash-upload__shell {
     position: relative;
@@ -2176,6 +2268,41 @@ body.theme-gray * {
   .xv-brand-chip--vercel {
     background: #000000;
     color: #ffffff;
+  }
+  .xv-brand-chip--plain {
+    background: transparent !important;
+    width: 26px;
+    height: 26px;
+    border: none;
+    box-shadow: none;
+  }
+  .xv-brand-chip--plain.xv-brand-chip--github {
+    color: #24292f;
+  }
+  .xv-brand-chip--plain.xv-brand-chip--gitlab {
+    color: #fc6d26;
+  }
+  .xv-brand-chip--plain.xv-brand-chip--vercel {
+    color: #000000;
+  }
+  .xv-brand-chip--plain.xv-brand-chip--dark-ui.xv-brand-chip--github,
+  .xv-brand-chip--plain.xv-brand-chip--dark-ui.xv-brand-chip--vercel {
+    color: #ffffff;
+  }
+  .xv-chatbar-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: none;
+    background: transparent;
+    flex-shrink: 0;
+    border-radius: 8px;
+    transition: opacity 0.15s ease;
+  }
+  .xv-chatbar-icon-btn:active {
+    opacity: 0.7;
   }
 
   /* Mic above GO when input wraps to second row */

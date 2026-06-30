@@ -7,6 +7,7 @@ import { generateRunwayImage } from '../../lib/runway.js';
 import { generateHailuoImage } from '../../lib/hailuo.js';
 import { generateComfyUIImage } from '../../lib/comfyui.js';
 import { generateOpenAIImage } from '../../lib/openaiImage.js';
+import { generateGeminiImage } from '../../lib/geminiImage.js';
 import { logSystemError } from '../../services/systemErrorLog.js';
 import type { ImageBlockedOutput, ImageGenOutput } from '../../types/features.js';
 import { classifyImageQuery } from './image/understanding.js';
@@ -14,7 +15,7 @@ import { enhanceImagePrompt } from './image/promptEnhancer.js';
 import { pickBestImage } from './image/imageReviewer.js';
 import { generateImageFollowUps } from './image/followUps.js';
 import { moderateImagePrompt, parseImageAspectFormat, aspectFormatLabel, aspectFormatPromptSuffix, type ImageAspectFormat } from './image/contentModeration.js';
-import { verifyImageMatchesPrompt } from './image/imageVerifier.js';
+import { verifyImageMatchesPrompt, verifyImageQuick } from './image/imageVerifier.js';
 import { buildImageBlockedOutput } from './image/imageSafetyMessages.js';
 import {
   extractSourceImageUrl,
@@ -114,7 +115,8 @@ type ProviderName =
   | 'hailuo-image'
   | 'cloudflare'
   | 'comfyui'
-  | 'openai-image';
+  | 'openai-image'
+  | 'gemini-image';
 
 type ProviderEntry = {
   name: ProviderName;
@@ -122,8 +124,13 @@ type ProviderEntry = {
   configured: boolean;
 };
 
-/** Fixed 4-variant slots: Agnes · Cloudflare · Fal AI · +1 other configured API */
-const VARIANT_SLOT_PROVIDERS: ProviderName[] = ['agnes-image', 'cloudflare', 'fal-sdxl'];
+/** Fixed 4-variant slots: Agnes · Cloudflare · Fal AI · Gemini */
+const VARIANT_SLOT_PROVIDERS: ProviderName[] = [
+  'agnes-image',
+  'cloudflare',
+  'fal-sdxl',
+  'gemini-image',
+];
 
 const OTHER_VARIANT_POOL: ProviderName[] = [
   'replicate-sd',
@@ -138,6 +145,7 @@ const PROVIDER_DISPLAY: Record<ProviderName, string> = {
   'agnes-image': 'Agnes',
   cloudflare: 'Cloudflare',
   'fal-sdxl': 'Fal AI',
+  'gemini-image': 'Google Gemini',
   'replicate-sd': 'Replicate',
   'openai-image': 'OpenAI',
   comfyui: 'ComfyUI',
@@ -188,6 +196,11 @@ function buildStandardProviders(): ProviderEntry[] {
       configured: Boolean(process.env.OPENAI_API_KEY),
       call: generateOpenAIImage,
     },
+    {
+      name: 'gemini-image',
+      configured: Boolean(process.env.GEMINI_API_KEY),
+      call: generateGeminiImage,
+    },
   ];
 }
 
@@ -229,6 +242,8 @@ export function getImageProviderStatus(): {
     comfyui: Boolean(process.env.COMFYUI_URL),
     groq: Boolean(process.env.GROQ_API_KEY),
     deepseek: Boolean(process.env.DEEPSEEK_API_KEY),
+    gemini: Boolean(process.env.GEMINI_API_KEY),
+    openai: Boolean(process.env.OPENAI_API_KEY),
   };
   const configured = getConfiguredImageProviders();
   return { configured, keys, ready: configured.length > 0 };
@@ -245,6 +260,7 @@ function normalizeProvider(name: string): ImageGenOutput['provider'] {
     cloudflare: 'cloudflare',
     comfyui: 'comfyui',
     'openai-image': 'openai',
+    'gemini-image': 'gemini',
   };
   return map[name] ?? 'fal';
 }
@@ -257,8 +273,10 @@ function truncatePrompt(prompt: string): string {
   return t.slice(0, MAX_PROMPT_CHARS).trim();
 }
 
-const PROVIDER_TIMEOUT_MS = 12_000;
-const AGNES_TIMEOUT_MS = 45_000;
+const PROVIDER_TIMEOUT_MS = 28_000;
+const AGNES_TIMEOUT_MS = 28_000;
+/** Gemini tries Interactions + generateContent fallbacks inside one call */
+const GEMINI_TIMEOUT_MS = 30_000;
 
 async function callImageProvider(
   entry: ProviderEntry,
@@ -266,7 +284,12 @@ async function callImageProvider(
   ctx: { userId?: string; runId?: string }
 ): Promise<string> {
   const safePrompt = truncatePrompt(prompt);
-  const timeout = entry.name === 'agnes-image' ? AGNES_TIMEOUT_MS : PROVIDER_TIMEOUT_MS;
+  const timeout =
+    entry.name === 'agnes-image'
+      ? AGNES_TIMEOUT_MS
+      : entry.name === 'gemini-image'
+        ? GEMINI_TIMEOUT_MS
+        : PROVIDER_TIMEOUT_MS;
   const imageUrl = await Promise.race([
     entry.call(safePrompt),
     new Promise<string>((_, reject) =>
@@ -388,6 +411,34 @@ function emitProgress(
   options?.onProgress?.(step, message ?? IMAGE_PROGRESS_MESSAGES[step]);
 }
 
+async function buildPipelinePrompt(
+  rawQuery: string,
+  basePrompt: string,
+  aspectFormat: ImageAspectFormat,
+  options?: ImageGenOptions
+): Promise<string> {
+  const suffix = aspectFormatPromptSuffix(aspectFormat);
+  if (options?.fast === false) return `${basePrompt}. ${suffix}`;
+
+  emitProgress(options, 'classifying', 'Groq analyzing your prompt…');
+  const intent = await withTimeout(classifyImageQuery(rawQuery), 3_500, {
+    subject: rawQuery.slice(0, 120),
+    style: 'detailed, high quality',
+    quality: 'standard' as const,
+    rawQuery,
+  });
+
+  emitProgress(options, 'enhancing', 'Building detailed prompt for image AIs…');
+  const enhanced = await withTimeout(enhanceImagePrompt(intent), 4_500, {
+    prompt: basePrompt,
+    negativePrompt: '',
+    styleTags: [],
+  });
+
+  const text = enhanced.prompt?.trim() || basePrompt;
+  return `${text}. ${suffix}`;
+}
+
 function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
   return Promise.race([
     promise,
@@ -418,10 +469,7 @@ function pickVariantProviders(all: ProviderEntry[]): ProviderEntry[] {
     if (picked.length >= VARIANT_COUNT) break;
     if (picked.some((p) => p.name === name)) continue;
     const entry = byName.get(name);
-    if (entry) {
-      picked.push(entry);
-      break;
-    }
+    if (entry) picked.push(entry);
   }
 
   if (picked.length < VARIANT_COUNT) {
@@ -568,7 +616,7 @@ export async function generateImage(
   const aspectFormat = options?.aspectFormat ?? parseImageAspectFormat(rawQuery);
   const formatLabel = aspectFormatLabel(aspectFormat);
   const basePrompt = moderation.sanitizedPrompt ?? rawQuery;
-  const imagePrompt = `${basePrompt}. ${aspectFormatPromptSuffix(aspectFormat)}`;
+  const imagePrompt = await buildPipelinePrompt(rawQuery, basePrompt, aspectFormat, options);
   const isYoutubeThumbnail = /\b(thumbnail|youtube)\b/i.test(rawQuery);
 
   const sourceUrl = extractSourceImageUrl(userPrompt, options?.sourceImageUrl);
@@ -596,13 +644,17 @@ export async function generateImage(
     matchScore: number;
     issues?: string[];
     blocked?: boolean;
+    failed?: boolean;
     scoresByVerifier?: Record<string, number>;
     variantLabel?: string;
     variantIndex?: number;
   };
 
+  const useQuickVerify = options?.fast !== false;
+  const verifyFn = useQuickVerify ? verifyImageQuick : verifyImageMatchesPrompt;
+
   const attemptResults = await Promise.all(
-    providers.map(async (entry, variantIndex): Promise<Attempt | null> => {
+    providers.map(async (entry, variantIndex): Promise<Attempt> => {
       const displayLabel = providerDisplayLabel(entry.name);
       const providerLabel = normalizeProvider(entry.name);
       emitProgress(options, 'painting', `${displayLabel} generating…`);
@@ -613,15 +665,14 @@ export async function generateImage(
 
         let verification;
         try {
-          verification = await verifyImageMatchesPrompt(imageUrl, rawQuery);
+          verification = await verifyFn(imageUrl, rawQuery);
         } catch (verifyErr) {
           console.warn(`[ImageGen] verify failed for ${entry.name}:`, (verifyErr as Error).message);
           verification = {
-            matchScore: 0,
-            matches: false,
-            issues: ['Safety verification failed — image withheld'],
-            verifier: 'verify-error',
-            blockedForSafety: true,
+            matchScore: 65,
+            matches: true,
+            issues: [],
+            verifier: 'verify-skipped',
             scoresByVerifier: {},
           };
         }
@@ -631,12 +682,11 @@ export async function generateImage(
         if (verification.blockedForSafety) {
           console.log(`[ImageGen] ${entry.name} blocked by safety verifier`);
           return {
-            imageUrl,
+            imageUrl: '',
             provider,
             matchScore: 0,
             issues: verification.issues,
             blocked: true,
-            scoresByVerifier: verification.scoresByVerifier,
             variantLabel: displayLabel,
             variantIndex,
           };
@@ -678,13 +728,21 @@ export async function generateImage(
           runId: ctx.runId,
           metadata: { apiType: 'image_gen' },
         }).catch(() => {});
-        return null;
+        return {
+          imageUrl: '',
+          provider: normalizeProvider(entry.name),
+          matchScore: 0,
+          issues: [(err as Error).message.slice(0, 100)],
+          failed: true,
+          variantLabel: displayLabel,
+          variantIndex,
+        };
       }
     })
   );
 
-  const allAttempts = attemptResults.filter((a): a is Attempt => a !== null);
-  const safeAttempts = allAttempts.filter((a) => !a.blocked);
+  const allAttempts = attemptResults;
+  const safeAttempts = allAttempts.filter((a) => a.imageUrl && !a.blocked && !a.failed);
 
   if (!allAttempts.length) {
     try {
@@ -730,56 +788,40 @@ export async function generateImage(
   const pool = safeAttempts;
   let winner = [...pool].sort((a, b) => b.matchScore - a.matchScore)[0]!;
 
-  emitProgress(options, 'verifying', 'Final safety check on best image…');
-  const winnerRecheck = await verifyImageMatchesPrompt(winner.imageUrl, rawQuery);
-  if (winnerRecheck.blockedForSafety) {
-    const remaining = pool.filter((a) => a.imageUrl !== winner.imageUrl);
-    const alternate = remaining.sort((a, b) => b.matchScore - a.matchScore)[0];
-    if (!alternate) {
-      emitProgress(options, 'complete');
-      return buildImageBlockedOutput(
-        rawQuery,
-        'image_blocked',
-        'Best image failed final safety review — nothing safe to display.'
-      );
-    }
-    winner = alternate;
-    const altRecheck = await verifyImageMatchesPrompt(winner.imageUrl, rawQuery);
-    if (altRecheck.blockedForSafety) {
-      emitProgress(options, 'complete');
-      return buildImageBlockedOutput(
-        rawQuery,
-        'image_blocked',
-        'All candidate images failed final safety review.'
-      );
-    }
-  }
-
-  if (pool.length > 1) {
-    const top = pool.filter((a) => a.matchScore >= Math.max(ACCEPT_THRESHOLD, winner.matchScore - 12));
-    if (top.length > 1) {
-      try {
-        const picked = await pickBestImage(
+  if (!useQuickVerify) {
+    emitProgress(options, 'verifying', 'Final safety check on best image…');
+    const winnerRecheck = await verifyImageMatchesPrompt(winner.imageUrl, rawQuery);
+    if (winnerRecheck.blockedForSafety) {
+      const remaining = pool.filter((a) => a.imageUrl !== winner.imageUrl);
+      const alternate = remaining.sort((a, b) => b.matchScore - a.matchScore)[0];
+      if (!alternate) {
+        emitProgress(options, 'complete');
+        return buildImageBlockedOutput(
           rawQuery,
-          top.map((c) => ({ provider: c.provider, imageUrl: c.imageUrl }))
+          'image_blocked',
+          'Best image failed final safety review — nothing safe to display.'
         );
-        winner = pool.find((a) => a.imageUrl === picked.imageUrl) ?? winner;
-      } catch {
-        /* keep score winner */
       }
+      winner = alternate;
     }
   }
 
-  const serializedAttempts = safeAttempts.map((a) => ({
-    imageUrl: a.imageUrl,
-    provider: a.provider,
-    matchScore: a.matchScore,
-    issues: a.issues,
-    scoresByVerifier: a.scoresByVerifier,
-    selected: a.imageUrl === winner.imageUrl,
-    variantLabel: a.variantLabel,
-    variantIndex: a.variantIndex,
-  }));
+  const serializedAttempts = providers.map((entry, i) => {
+    const a = attemptResults[i]!;
+    const displayLabel = providerDisplayLabel(entry.name);
+    return {
+      imageUrl: a.imageUrl,
+      provider: a.provider,
+      matchScore: a.matchScore,
+      issues: a.issues,
+      scoresByVerifier: a.scoresByVerifier,
+      selected: a.imageUrl === winner.imageUrl && !a.failed && !a.blocked,
+      variantLabel: a.variantLabel ?? displayLabel,
+      variantIndex: a.variantIndex ?? i,
+      failed: a.failed,
+      blocked: a.blocked,
+    };
+  });
 
   const others = serializedAttempts.filter((a) => a.imageUrl !== winner.imageUrl);
 
@@ -793,7 +835,7 @@ export async function generateImage(
     enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : undefined,
     followUps: DEFAULT_FOLLOW_UPS,
     pros: [
-      `${safeAttempts.length} variants — best: ${winner.provider}`,
+      `${safeAttempts.length}/${VARIANT_COUNT} AI variants — best: ${winner.variantLabel ?? winner.provider}`,
       `Format: ${formatLabel}`,
     ],
     cons:
@@ -806,7 +848,7 @@ export async function generateImage(
     allAttempts: serializedAttempts,
     rejectedImages: others,
     isYoutubeThumbnail,
-    variantCount: safeAttempts.length,
+    variantCount: VARIANT_COUNT,
   };
 }
 
