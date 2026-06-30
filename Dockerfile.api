@@ -18,7 +18,7 @@ COPY backend/package.json backend/package-lock.json ./
 
 RUN npm ci --include=dev --ignore-scripts
 
-COPY backend/tsconfig.json backend/tsconfig.json
+COPY backend/tsconfig.json tsconfig.json
 COPY backend/src ./src
 
 RUN npm run build && test -f dist/index.js
