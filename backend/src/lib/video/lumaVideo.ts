@@ -1,4 +1,5 @@
 import { getSecret } from '../../config/envSecrets.js';
+import { sanitizeVideoPrompt } from './videoPrompt.js';
 
 /** Luma Dream Machine — premium cinematic video */
 
@@ -32,6 +33,8 @@ export async function generateLumaVideo(
   const apiKey = getSecret('LUMA_API_KEY');
   if (!apiKey) throw new Error('LUMA_API_KEY not configured');
 
+  const cleanPrompt = sanitizeVideoPrompt(prompt);
+
   const createRes = await fetch(`${BASE}/generations`, {
     method: 'POST',
     headers: {
@@ -40,7 +43,7 @@ export async function generateLumaVideo(
       accept: 'application/json',
     },
     body: JSON.stringify({
-      prompt,
+      prompt: cleanPrompt,
       aspect_ratio: options?.aspectRatio === '9:16' ? '9:16' : '16:9',
       loop: false,
     }),

@@ -3,15 +3,18 @@
  * Target: real MP4 in under 2 minutes.
  */
 
-import { getSecret, hasSecret } from '../../config/envSecrets.js';
+import { hasSecret } from '../../config/envSecrets.js';
 import { generateFalVideo } from './falVideo.js';
 import { generateHailuoVideo } from './hailuoVideo.js';
 import { generateLumaVideo } from './lumaVideo.js';
 import { generateRunwayVideo } from './runwayVideo.js';
-import { generateAgnesVideo } from '../agnesVideo.js';
+import { generateMinimaxReplicateVideo, generateWanReplicateVideo } from './replicateOssVideo.js';
+import { generateReplicateVideo } from './replicateVideo.js';
+import { isKlingConfigured } from './klingAuth.js';
+import { generateKlingVideo } from './klingVideo.js';
 import type { VideoGenerationResult } from '../videoProviders.js';
 
-const FAST_TIMEOUT_MS = 90_000;
+const FAST_TIMEOUT_MS = 120_000;
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
   return Promise.race([
@@ -43,6 +46,12 @@ function buildRacers(
       run: () => generateHailuoVideo(prompt, durationSeconds, { aspectRatio }),
     });
   }
+  if (isKlingConfigured()) {
+    racers.push({
+      name: 'kling',
+      run: () => generateKlingVideo(prompt, durationSeconds, { aspectRatio }),
+    });
+  }
   if (hasSecret('LUMA_API_KEY')) {
     racers.push({
       name: 'luma',
@@ -55,10 +64,18 @@ function buildRacers(
       run: () => generateRunwayVideo(prompt, durationSeconds, { aspectRatio }),
     });
   }
-  if (hasSecret('AGNES_API_KEY')) {
+  if (hasSecret('REPLICATE_API_TOKEN')) {
     racers.push({
-      name: 'agnes',
-      run: () => generateAgnesVideo(prompt, durationSeconds),
+      name: 'replicate-minimax',
+      run: () => generateMinimaxReplicateVideo(prompt, durationSeconds),
+    });
+    racers.push({
+      name: 'replicate-wan',
+      run: () => generateWanReplicateVideo(prompt, durationSeconds),
+    });
+    racers.push({
+      name: 'replicate-svd',
+      run: () => generateReplicateVideo(prompt),
     });
   }
 
@@ -74,11 +91,14 @@ export async function raceVideoProviders(
   const racers = buildRacers(prompt, durationSeconds, options?.aspectRatio);
   if (racers.length === 0) return null;
 
+  const errors: string[] = [];
   const attempts = racers.map((r) =>
     withTimeout(r.run(), FAST_TIMEOUT_MS, r.name)
       .then((videoUrl) => ({ provider: r.name, videoUrl, durationSeconds }))
       .catch((err) => {
-        console.warn(`[FastVideoRace] ${r.name} failed:`, (err as Error).message);
+        const msg = `${r.name}: ${(err as Error).message.slice(0, 100)}`;
+        errors.push(msg);
+        console.warn(`[FastVideoRace] ${msg}`);
         return Promise.reject(err);
       })
   );
@@ -88,6 +108,7 @@ export async function raceVideoProviders(
     console.log(`[FastVideoRace] Winner: ${winner.provider}`);
     return winner;
   } catch {
+    console.warn(`[FastVideoRace] All racers failed: ${errors.slice(0, 3).join(' | ')}`);
     return null;
   }
 }

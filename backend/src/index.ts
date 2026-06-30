@@ -165,6 +165,7 @@ app.get('/api/health/smoke-video', async (_req, res) => {
         fallback: true,
         tried: [...(smoke.tried ?? []), 'guaranteed'],
         apiErrors: smoke.error,
+        providerErrors: smoke.errors,
       },
     });
   } catch (err) {

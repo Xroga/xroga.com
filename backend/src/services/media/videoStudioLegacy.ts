@@ -1,6 +1,6 @@
 import { downloadVideoBuffer, assembleVideo } from '../../lib/ffmpeg.js';
 import { isValidMp4Buffer, isHttpMediaUrl, isStubJsonBuffer } from '../../lib/mediaValidation.js';
-import { parseVideoDuration, parseVideoFormat, computeVideoActionCost } from './videoUtils.js';
+import { parseVideoDuration, parseVideoFormat, stripVideoFormatTag, computeVideoActionCost } from './videoUtils.js';
 import { storeUserFile } from '../storage/projectFiles.js';
 import { planVideoProduction } from './videoRouter.js';
 import type { VideoStudioOutput } from '../../types/features.js';
@@ -9,6 +9,8 @@ import type { OmniVideoEvent } from '../omniReality/omniEvents.js';
 import { moderateImagePrompt } from '../builder/image/contentModeration.js';
 import { renderSceneWithHealing, buildAspectSuffix } from '../omniReality/swarmMaster.js';
 import { generateSceneAudio } from '../../lib/audioProviders.js';
+
+import { sanitizeVideoPrompt } from '../../lib/video/videoPrompt.js';
 
 export { parseVideoDuration, computeVideoActionCost };
 
@@ -48,16 +50,16 @@ export async function produceSingleSceneVideo(
   const plan = isFastClip
     ? {
         mode: 'single_scene' as const,
-        title: prompt.replace(/\[xroga-video-format:[^\]]+\]/gi, '').slice(0, 80) || 'Xroga Video',
+        title: stripVideoFormatTag(prompt).slice(0, 80) || 'Xroga Video',
         mood: 'cinematic',
         durationSeconds,
-        renderPrompt: prompt,
+        renderPrompt: sanitizeVideoPrompt(prompt),
         scenes: [{
           sceneId: '1',
           location: 'CINEMATIC',
-          action: prompt,
+          action: sanitizeVideoPrompt(prompt),
           dialogue: '',
-          renderPrompt: prompt,
+          renderPrompt: sanitizeVideoPrompt(prompt),
           durationSeconds,
           priority: 'critical' as const,
         }],

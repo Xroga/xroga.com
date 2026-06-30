@@ -8,6 +8,20 @@ import { resolveFfmpegPath } from './ffmpegPath.js';
 
 const execFileAsync = promisify(execFile);
 
+async function createSolidFrame(
+  ffmpeg: string,
+  imagePath: string,
+  vertical: boolean
+): Promise<void> {
+  const size = vertical ? '720x1280' : '1280x720';
+  await execFileAsync(ffmpeg, [
+    '-f', 'lavfi',
+    '-i', `color=c=0x1a1a2e:s=${size}:d=1`,
+    '-frames:v', '1',
+    '-y', imagePath,
+  ], { timeout: 15_000 });
+}
+
 /** FFmpeg slideshow — visual fallback when all video APIs fail */
 export async function generateSlideshowVideo(
   prompt: string,
@@ -32,12 +46,7 @@ export async function generateSlideshowVideo(
       if (!imgRes.ok) throw new Error(`Failed to fetch keyframe: ${imgRes.status}`);
       await writeFile(imagePath, Buffer.from(await imgRes.arrayBuffer()));
     } else {
-      const placeholder = vertical
-        ? `https://placehold.co/720x1280/1a1a2e/006aff/png?text=${encodeURIComponent(prompt.slice(0, 20))}`
-        : `https://placehold.co/1280x720/1a1a2e/006aff/png?text=${encodeURIComponent(prompt.slice(0, 30))}`;
-      const imgRes = await fetch(placeholder, { signal: AbortSignal.timeout(15_000) });
-      if (!imgRes.ok) throw new Error(`Placeholder image fetch failed: ${imgRes.status}`);
-      await writeFile(imagePath, Buffer.from(await imgRes.arrayBuffer()));
+      await createSolidFrame(ffmpeg, imagePath, vertical);
     }
 
     const scalePad = vertical

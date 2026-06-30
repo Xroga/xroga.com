@@ -2,6 +2,7 @@
 
 import { getSecret } from '../../config/envSecrets.js';
 import { generateAgnesImage } from '../agnes.js';
+import { sanitizeVideoPrompt } from './videoPrompt.js';
 
 interface ReplicatePrediction {
   id: string;
@@ -26,10 +27,11 @@ async function pollPrediction(apiKey: string, prediction: ReplicatePrediction): 
 }
 
 async function resolveKeyframe(prompt: string): Promise<string> {
+  const cleanPrompt = sanitizeVideoPrompt(prompt);
   try {
-    return await generateAgnesImage(`Cinematic film still: ${prompt.slice(0, 400)}`);
+    return await generateAgnesImage(`Cinematic film still: ${cleanPrompt.slice(0, 400)}`);
   } catch {
-    return `https://placehold.co/1280x720/1a1a2e/006aff/png?text=${encodeURIComponent(prompt.slice(0, 30))}`;
+    throw new Error('Could not generate keyframe image for SVD');
   }
 }
 

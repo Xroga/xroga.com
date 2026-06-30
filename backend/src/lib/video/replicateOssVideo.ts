@@ -1,6 +1,9 @@
 /**
- * OSS video models via Replicate — CogVideoX, AnimateDiff (80% workhorse tier).
+ * OSS video models via Replicate — MiniMax, Wan, CogVideoX workhorse tier.
  */
+
+import { getSecret } from '../../config/envSecrets.js';
+import { sanitizeVideoPrompt } from './videoPrompt.js';
 
 interface ReplicatePrediction {
   id: string;
@@ -29,7 +32,7 @@ async function runReplicateModel(
   input: Record<string, unknown>,
   label: string
 ): Promise<string> {
-  const apiKey = process.env.REPLICATE_API_TOKEN;
+  const apiKey = getSecret('REPLICATE_API_TOKEN');
   if (!apiKey) throw new Error('REPLICATE_API_TOKEN not configured');
 
   const createRes = await fetch(`https://api.replicate.com/v1/models/${modelPath}/predictions`, {
@@ -61,12 +64,29 @@ async function runReplicateModel(
   return url;
 }
 
-/** CogVideoX text-to-video — free-tier OSS workhorse */
-export async function generateCogVideoX(prompt: string, _durationSeconds = 5): Promise<string> {
+/** MiniMax video-01 via Replicate — reliable text-to-video */
+export async function generateMinimaxReplicateVideo(prompt: string, _durationSeconds = 5): Promise<string> {
+  const cleanPrompt = sanitizeVideoPrompt(prompt);
+  return runReplicateModel('minimax/video-01', { prompt: cleanPrompt.slice(0, 2000) }, 'MiniMax-Replicate');
+}
+
+/** Wan 2.1 text-to-video — fast OSS workhorse */
+export async function generateWanReplicateVideo(prompt: string, _durationSeconds = 5): Promise<string> {
+  const cleanPrompt = sanitizeVideoPrompt(prompt);
   return runReplicateModel(
-    'lucataco/cogvideox-5b',
+    'wavespeedai/wan-2.1-t2v-480p',
+    { prompt: cleanPrompt.slice(0, 1000) },
+    'Wan-2.1'
+  );
+}
+
+/** CogVideoX text-to-video */
+export async function generateCogVideoX(prompt: string, _durationSeconds = 5): Promise<string> {
+  const cleanPrompt = sanitizeVideoPrompt(prompt);
+  return runReplicateModel(
+    'thudm/cogvideox-2b',
     {
-      prompt: prompt.slice(0, 1000),
+      prompt: cleanPrompt.slice(0, 1000),
       num_inference_steps: 30,
       guidance_scale: 7,
     },
@@ -76,10 +96,11 @@ export async function generateCogVideoX(prompt: string, _durationSeconds = 5): P
 
 /** AnimateDiff — OSS motion from prompt */
 export async function generateAnimateDiff(prompt: string, _durationSeconds = 5): Promise<string> {
+  const cleanPrompt = sanitizeVideoPrompt(prompt);
   return runReplicateModel(
     'lucataco/animate-diff',
     {
-      prompt: prompt.slice(0, 800),
+      prompt: cleanPrompt.slice(0, 800),
       n_prompt: 'blurry, low quality, extra limbs, warping',
       num_inference_steps: 25,
     },
