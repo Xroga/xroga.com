@@ -1,8 +1,10 @@
 import { groqChat } from '../../../lib/groq.js';
 import type { ImageQueryIntent } from './understanding.js';
 
-const CONCISE_SYSTEM = `You write short image-generation prompts. Output ONE concise prompt only (max 40 words).
-Include: subject, mood, lighting, style. For YouTube thumbnails add "bold text overlay" if the user wants text on the image.
+const CONCISE_SYSTEM = `You write short image-generation prompts. Output ONE concise prompt only (max 35 words).
+Include: subject, mood, lighting, style. Detect format: thumbnail=16:9, logo/avatar=1:1, story=9:16, og/banner=16:9.
+Detect style: 3d, pixel art, minecraft, cartoon, anime, logo, photorealistic from user words.
+For YouTube thumbnails add bold text overlay if user wants text on the image.
 No markdown, no quotes, no explanation.`;
 
 /** Pull explicit on-image text from user commands (thumbnails, posters, etc.). */

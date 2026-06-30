@@ -1,3 +1,5 @@
+import { copyImageToClipboard } from './imageStudioUtils';
+
 export type SocialPlatformId =
   | 'youtube'
   | 'x'
@@ -15,10 +17,9 @@ export interface SocialPlatformPack {
   description: string;
   tags: string[];
   hashtags: string;
-  /** Full text copied when user picks this platform */
   clipboardText: string;
-  /** Opens the platform composer / upload page */
   openUrl: string;
+  emoji: string;
 }
 
 export interface SocialShareInput {
@@ -27,50 +28,56 @@ export interface SocialShareInput {
   overlayText?: string;
   imageUrls: string[];
   primaryImageUrl?: string;
+  contentType?: string;
 }
 
-function deriveSubject(input: SocialShareInput): string {
-  const raw = (input.concisePrompt || input.prompt || 'AI image').trim();
-  return raw
-    .replace(/^(generate|create|make|draw|design)\s+(an?\s+)?(image|picture|thumbnail|poster)\s+(of\s+)?/i, '')
+function shortHook(input: SocialShareInput): string {
+  const overlay = input.overlayText?.trim();
+  if (overlay) return overlay;
+
+  const raw = (input.concisePrompt || input.prompt || 'AI art').trim();
+  const cleaned = raw
+    .replace(/^(generate|create|make|draw|design)\s+(an?\s+)?(image|picture|thumbnail|logo|avatar|poster)\s+(of\s+)?/i, '')
     .replace(/\[.*?\]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 90) || 'AI creation';
+    .trim();
+
+  const first = cleaned.split(/[,.!?]/)[0]?.trim() || cleaned;
+  const words = first.split(/\s+/).slice(0, 6).join(' ');
+  return words.slice(0, 55) || 'AI creation';
 }
 
-function titleCase(s: string): string {
-  return s.replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function hashTagsFromSubject(subject: string, extra: string[] = []): string {
-  const words = subject
-    .toLowerCase()
-    .split(/[^a-z0-9]+/)
-    .filter((w) => w.length > 3)
-    .slice(0, 5);
-  const tags = Array.from(new Set([...words, ...extra, 'xroga', 'aiart', 'aigenerated']));
-  return tags.map((t) => `#${t.replace(/\s/g, '')}`).join(' ');
-}
-
-function tagList(subject: string): string[] {
-  const base = subject
-    .toLowerCase()
-    .split(/[^a-z0-9]+/)
+function subjectWords(input: SocialShareInput): string[] {
+  const hook = shortHook(input);
+  return hook
+    .replace(/[^\w\s'-]/g, '')
+    .split(/\s+/)
     .filter((w) => w.length > 2)
-    .slice(0, 12);
-  return Array.from(new Set([...base, 'ai art', 'xroga', 'digital art', 'creative']));
+    .slice(0, 8);
+}
+
+function hashTagsFromSubject(input: SocialShareInput, extra: string[] = []): string {
+  const words = subjectWords(input);
+  const tags = Array.from(
+    new Set([...words, ...extra, 'xroga', 'aiart', 'aigenerated'].map((t) => t.toLowerCase())),
+  );
+  return tags
+    .slice(0, 8)
+    .map((t) => `#${t.replace(/\s/g, '')}`)
+    .join(' ');
+}
+
+function tagList(input: SocialShareInput): string[] {
+  const words = subjectWords(input);
+  return Array.from(new Set([...words, 'ai art', 'xroga', 'digital art', 'creative']));
 }
 
 function imageBlock(urls: string[]): string {
   const publicUrls = urls.filter((u) => u.startsWith('http'));
   if (!publicUrls.length) {
-    return urls.length
-      ? 'Images: download from Xroga chat (use Download button) and upload to this platform.'
-      : '';
+    return 'Image: use Download in Xroga, then upload to this platform.';
   }
   if (publicUrls.length === 1) return `Image: ${publicUrls[0]}`;
-  return `Images (${publicUrls.length}):\n${publicUrls.map((u, i) => `${i + 1}. ${u}`).join('\n')}`;
+  return `Images:\n${publicUrls.map((u, i) => `${i + 1}. ${u}`).join('\n')}`;
 }
 
 function encode(text: string): string {
@@ -78,115 +85,95 @@ function encode(text: string): string {
 }
 
 export function buildSocialPlatformPacks(input: SocialShareInput): SocialPlatformPack[] {
-  const subject = deriveSubject(input);
-  const titled = titleCase(subject);
+  const hook = shortHook(input);
   const overlay = input.overlayText?.trim();
-  const tags = tagList(subject);
-  const hashtags = hashTagsFromSubject(subject, overlay ? [overlay.replace(/\s+/g, '').toLowerCase()] : []);
+  const tags = tagList(input);
+  const hashtags = hashTagsFromSubject(input, overlay ? [overlay.replace(/\s+/g, '')] : []);
   const images = input.imageUrls.filter(Boolean);
   const primary = input.primaryImageUrl || images[0] || '';
   const imgBlock = imageBlock(images);
+  const isThumb = input.contentType === 'thumbnail' || /\bthumbnail|youtube\b/i.test(input.prompt ?? '');
 
-  const viralTitle = overlay
-    ? `${overlay.toUpperCase()} — ${titled} 🔥`
-    : `${titled} — You Need To See This ✨`;
+  const ytTitle = overlay
+    ? `${overlay.toUpperCase()} — ${hook} 🔥`
+    : isThumb
+      ? `${hook} | YouTube Thumbnail 🔥`
+      : `${hook} — Must Watch ✨`;
 
-  const shortHook = overlay ? `${overlay} | ${subject}` : `🔥 ${subject}`;
+  const xPost = [`🔥 ${hook}`, hashtags, primary.startsWith('http') ? primary : ''].filter(Boolean).join('\n\n').slice(0, 260);
 
-  const youtubeDesc = [
-    viralTitle,
-    '',
-    overlay ? `On-image text: "${overlay}"` : '',
-    `Created with Xroga AI from: "${input.prompt || subject}"`,
-    '',
-    '👍 Like · 💬 Comment · 🔔 Subscribe for more!',
-    '',
-    `Tags: ${tags.join(', ')}`,
-    '',
-    imgBlock,
-  ]
+  const instaCaption = [`✨ ${hook}`, '', overlay ? `"${overlay}"` : input.prompt?.slice(0, 120) ?? '', '', hashtags, '', imgBlock]
     .filter(Boolean)
     .join('\n');
 
-  const xText = [
-    shortHook.slice(0, 200),
-    hashtags,
-    primary.startsWith('http') ? primary : '',
-  ]
-    .filter(Boolean)
-    .join('\n\n')
-    .slice(0, 275);
+  const fbPost = [`🎬 ${hook}`, '', overlay ? `Text on image: "${overlay}"` : '', hashtags, '', imgBlock].filter(Boolean).join('\n');
 
-  const instaCaption = [
-    viralTitle,
-    '',
-    input.prompt ? `"${input.prompt.slice(0, 180)}"` : subject,
-    '',
-    hashtags,
-    '',
-    imgBlock,
-  ]
-    .filter(Boolean)
-    .join('\n');
-
-  const fbPost = [viralTitle, '', input.prompt || subject, '', hashtags, '', imgBlock].filter(Boolean).join('\n');
-
-  const pinterestDesc = [
-    `${titled}${overlay ? ` — "${overlay}"` : ''}`,
-    input.prompt || subject,
-    hashtags,
-    imgBlock,
-  ]
-    .filter(Boolean)
-    .join('\n');
+  const pinTitle = overlay ? `${overlay} — ${hook}` : hook;
+  const pinterestDesc = [pinTitle, input.prompt?.slice(0, 160) ?? hook, hashtags, imgBlock].filter(Boolean).join('\n');
 
   const linkedInPost = [
-    `🎨 ${viralTitle}`,
+    `🎨 ${hook}`,
     '',
-    `I created this with Xroga AI.`,
-    input.prompt ? `Prompt: ${input.prompt.slice(0, 240)}` : '',
+    `Created with Xroga AI — ${isThumb ? 'YouTube thumbnail design' : 'AI image generation'}.`,
+    overlay ? `Featured text: "${overlay}"` : '',
     '',
-    'What would you create with AI?',
+    'What would you create?',
     '',
     hashtags,
-    '',
     imgBlock,
   ]
     .filter(Boolean)
     .join('\n');
 
-  const tiktokCaption = [shortHook, '', hashtags, '#fyp #viral #ai', '', imgBlock].filter(Boolean).join('\n');
+  const tiktokCaption = [`🔥 ${hook}`, '#fyp #viral #ai #xroga', hashtags, imgBlock].filter(Boolean).join('\n');
 
-  const threadsText = [shortHook, hashtags, primary.startsWith('http') ? primary : ''].filter(Boolean).join('\n\n').slice(0, 480);
+  const threadsText = [`🔥 ${hook}`, hashtags].filter(Boolean).join('\n\n').slice(0, 450);
+
+  const youtubeDesc = [
+    ytTitle,
+    '',
+    overlay ? `On-image text: "${overlay}"` : '',
+    `Made with Xroga AI`,
+    '',
+    '👍 Like · 💬 Comment · 🔔 Subscribe!',
+    '',
+    `Tags: ${tags.join(', ')}`,
+    imgBlock,
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   const pageUrl = typeof window !== 'undefined' ? window.location.origin : 'https://xroga.com';
   const pinMedia = primary.startsWith('http') ? primary : pageUrl;
 
-  const packs: SocialPlatformPack[] = [
+  return [
     {
       id: 'youtube',
       name: 'YouTube',
-      title: viralTitle.slice(0, 100),
+      emoji: '▶️',
+      title: ytTitle.slice(0, 100),
       description: youtubeDesc,
       tags,
       hashtags,
-      clipboardText: `TITLE:\n${viralTitle.slice(0, 100)}\n\nDESCRIPTION:\n${youtubeDesc}\n\nTAGS:\n${tags.join(', ')}`,
+      clipboardText: `TITLE:\n${ytTitle.slice(0, 100)}\n\nDESCRIPTION:\n${youtubeDesc}\n\nTAGS:\n${tags.join(', ')}`,
       openUrl: 'https://studio.youtube.com/channel/videos/upload',
     },
     {
       id: 'x',
-      name: 'X (Twitter)',
-      title: shortHook.slice(0, 70),
-      description: xText,
+      name: 'X',
+      emoji: '𝕏',
+      title: hook.slice(0, 70),
+      description: xPost,
       tags,
       hashtags,
-      clipboardText: xText,
-      openUrl: `https://twitter.com/intent/tweet?text=${encode(xText)}`,
+      clipboardText: xPost,
+      openUrl: `https://twitter.com/intent/tweet?text=${encode(xPost)}`,
     },
     {
       id: 'facebook',
       name: 'Facebook',
-      title: viralTitle.slice(0, 80),
+      emoji: 'f',
+      title: hook.slice(0, 80),
       description: fbPost,
       tags,
       hashtags,
@@ -196,7 +183,8 @@ export function buildSocialPlatformPacks(input: SocialShareInput): SocialPlatfor
     {
       id: 'instagram',
       name: 'Instagram',
-      title: viralTitle.slice(0, 80),
+      emoji: '📸',
+      title: hook.slice(0, 80),
       description: instaCaption,
       tags,
       hashtags,
@@ -206,7 +194,8 @@ export function buildSocialPlatformPacks(input: SocialShareInput): SocialPlatfor
     {
       id: 'pinterest',
       name: 'Pinterest',
-      title: titled,
+      emoji: '📌',
+      title: pinTitle.slice(0, 100),
       description: pinterestDesc,
       tags,
       hashtags,
@@ -216,7 +205,8 @@ export function buildSocialPlatformPacks(input: SocialShareInput): SocialPlatfor
     {
       id: 'linkedin',
       name: 'LinkedIn',
-      title: viralTitle.slice(0, 120),
+      emoji: 'in',
+      title: hook.slice(0, 100),
       description: linkedInPost,
       tags,
       hashtags,
@@ -226,7 +216,8 @@ export function buildSocialPlatformPacks(input: SocialShareInput): SocialPlatfor
     {
       id: 'tiktok',
       name: 'TikTok',
-      title: shortHook.slice(0, 80),
+      emoji: '♪',
+      title: hook.slice(0, 80),
       description: tiktokCaption,
       tags,
       hashtags,
@@ -236,7 +227,8 @@ export function buildSocialPlatformPacks(input: SocialShareInput): SocialPlatfor
     {
       id: 'threads',
       name: 'Threads',
-      title: shortHook.slice(0, 80),
+      emoji: '@',
+      title: hook.slice(0, 80),
       description: threadsText,
       tags,
       hashtags,
@@ -244,15 +236,22 @@ export function buildSocialPlatformPacks(input: SocialShareInput): SocialPlatfor
       openUrl: `https://www.threads.net/intent/post?text=${encode(threadsText)}`,
     },
   ];
-
-  return packs;
 }
 
-export async function shareToPlatform(pack: SocialPlatformPack): Promise<void> {
+export async function shareToPlatform(pack: SocialPlatformPack, imageUrl?: string): Promise<void> {
   try {
     await navigator.clipboard.writeText(pack.clipboardText);
   } catch {
-    /* clipboard optional */
+    /* text clipboard optional */
   }
+
+  if (imageUrl) {
+    try {
+      await copyImageToClipboard(imageUrl, undefined, true);
+    } catch {
+      /* image copy optional */
+    }
+  }
+
   window.open(pack.openUrl, '_blank', 'noopener,noreferrer');
 }
