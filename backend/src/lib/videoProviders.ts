@@ -18,8 +18,11 @@ import {
   generateWanReplicateVideo,
 } from './video/replicateOssVideo.js';
 import { generateComfyUIVideo } from './video/comfyuiVideo.js';
+import { generateDeepInfraVideo } from './video/deepinfraVideo.js';
+import { generateLumaReplicateVideo } from './video/lumaReplicateVideo.js';
 import { generateSlideshowVideo } from './video/slideshow.js';
 import { sanitizeVideoPrompt } from './video/videoPrompt.js';
+import { generateImage } from '../services/builder/imageGen.js';
 import { isFfmpegAvailable } from './video/ffmpegPath.js';
 
 export interface VideoGenerationResult {
@@ -37,6 +40,8 @@ export type VideoProviderName =
   | 'replicate-svd'
   | 'replicate-minimax'
   | 'replicate-wan'
+  | 'deepinfra'
+  | 'luma-replicate'
   | 'cogvideox'
   | 'animatediff'
   | 'agnes'
@@ -96,19 +101,74 @@ async function generateMorphVideo(prompt: string, durationSeconds: number): Prom
 async function generateImageToSlideshowVideo(
   prompt: string,
   durationSeconds: number,
-  options?: { aspectRatio?: '9:16' | '16:9' }
+  options?: { aspectRatio?: '9:16' | '16:9'; userId?: string }
 ): Promise<string> {
+  const clean = sanitizeVideoPrompt(prompt);
+  const vertical = options?.aspectRatio === '9:16';
   let imageUrl: string | undefined;
   try {
-    imageUrl = await generateAgnesImage(prompt.slice(0, 500));
+    const out = await generateImage(`Cinematic film still: ${clean}`, {
+      userId: options?.userId,
+      fast: true,
+      aspectFormat: vertical ? '9:16' : '16:9',
+    });
+    if (out.type !== 'image_blocked' && out.imageUrl) imageUrl = out.imageUrl;
   } catch {
-    /* use placeholder in slideshow */
   }
-  return generateSlideshowVideo(prompt, durationSeconds, imageUrl, options?.aspectRatio === '9:16');
+  if (!imageUrl) {
+    try {
+      imageUrl = await generateAgnesImage(clean.slice(0, 500));
+    } catch {
+      /* gradient frame in slideshow */
+    }
+  }
+  return generateSlideshowVideo(clean, durationSeconds, imageUrl, vertical);
 }
 
 function buildVideoProviders(): ProviderEntry[] {
   return [
+    // OSS workhorse (80%) — tried first
+    {
+      name: 'replicate-minimax',
+      configured: hasSecret('REPLICATE_API_TOKEN'),
+      call: (prompt, duration) => generateMinimaxReplicateVideo(prompt, duration),
+    },
+    {
+      name: 'replicate-wan',
+      configured: hasSecret('REPLICATE_API_TOKEN'),
+      call: (prompt, duration) => generateWanReplicateVideo(prompt, duration),
+    },
+    {
+      name: 'deepinfra',
+      configured: hasSecret('DEEPINFRA_API_KEY'),
+      call: (prompt, duration) => generateDeepInfraVideo(prompt, duration),
+    },
+    {
+      name: 'cogvideox',
+      configured: hasSecret('REPLICATE_API_TOKEN'),
+      call: (prompt, duration) => generateCogVideoX(prompt, duration),
+    },
+    {
+      name: 'animatediff',
+      configured: hasSecret('REPLICATE_API_TOKEN'),
+      call: (prompt, duration) => generateAnimateDiff(prompt, duration),
+    },
+    {
+      name: 'replicate-svd',
+      configured: hasSecret('REPLICATE_API_TOKEN'),
+      call: (prompt, _duration, opts) => generateReplicateVideo(prompt, { userId: opts?.userId }),
+    },
+    {
+      name: 'agnes',
+      configured: hasSecret('AGNES_API_KEY'),
+      call: generateAgnesVideo,
+    },
+    {
+      name: 'comfyui',
+      configured: Boolean(getSecret('COMFYUI_URL')),
+      call: generateComfyUIVideo,
+    },
+    // Premium (20%)
     {
       name: 'fal',
       configured: hasSecret('FAL_KEY'),
@@ -130,49 +190,19 @@ function buildVideoProviders(): ProviderEntry[] {
       call: generateLumaVideo,
     },
     {
+      name: 'luma-replicate',
+      configured: hasSecret('REPLICATE_API_TOKEN'),
+      call: (prompt, duration, opts) => generateLumaReplicateVideo(prompt, duration, { aspectRatio: opts?.aspectRatio }),
+    },
+    {
       name: 'runway',
       configured: hasSecret('RUNWAY_API_KEY'),
-      call: generateRunwayVideo,
-    },
-    {
-      name: 'replicate-minimax',
-      configured: hasSecret('REPLICATE_API_TOKEN'),
-      call: (prompt, duration) => generateMinimaxReplicateVideo(prompt, duration),
-    },
-    {
-      name: 'replicate-wan',
-      configured: hasSecret('REPLICATE_API_TOKEN'),
-      call: (prompt, duration) => generateWanReplicateVideo(prompt, duration),
-    },
-    {
-      name: 'replicate-svd',
-      configured: hasSecret('REPLICATE_API_TOKEN'),
-      call: (prompt, _duration, opts) => generateReplicateVideo(prompt, { userId: opts?.userId }),
-    },
-    {
-      name: 'cogvideox',
-      configured: hasSecret('REPLICATE_API_TOKEN'),
-      call: (prompt, duration) => generateCogVideoX(prompt, duration),
-    },
-    {
-      name: 'animatediff',
-      configured: hasSecret('REPLICATE_API_TOKEN'),
-      call: (prompt, duration) => generateAnimateDiff(prompt, duration),
-    },
-    {
-      name: 'agnes',
-      configured: hasSecret('AGNES_API_KEY'),
-      call: generateAgnesVideo,
+      call: (prompt, duration, opts) => generateRunwayVideo(prompt, duration, { aspectRatio: opts?.aspectRatio, userId: opts?.userId }),
     },
     {
       name: 'morph',
       configured: Boolean(getSecret('MORPH_API_KEY')),
       call: generateMorphVideo,
-    },
-    {
-      name: 'comfyui',
-      configured: Boolean(getSecret('COMFYUI_URL')),
-      call: generateComfyUIVideo,
     },
   ];
 }
@@ -228,7 +258,10 @@ export async function generateVideoWithFallback(
   const providerMap = new Map(allProviders.map((p) => [p.name, p]));
 
   const premiumSet = new Set(['runway', 'luma']);
-  const cheapSet = new Set(['hailuo', 'kling', 'fal', 'replicate-svd', 'replicate-minimax', 'replicate-wan', 'cogvideox', 'animatediff', 'agnes', 'morph']);
+  const cheapSet = new Set([
+    'replicate-minimax', 'replicate-wan', 'deepinfra', 'cogvideox', 'animatediff',
+    'replicate-svd', 'agnes', 'comfyui', 'luma-replicate', 'hailuo', 'kling', 'fal', 'morph',
+  ]);
 
   let orderedNames = priorityList.filter((name) => providerMap.has(name as VideoProviderName));
 
@@ -323,9 +356,14 @@ export async function smokeTestVideoGeneration(): Promise<{
   const prompt = 'A cat walking on a beach at sunset, cinematic, 2 seconds';
 
   const chain = await buildVideoProvidersAsync();
+  const ossOrder = ['replicate-minimax', 'replicate-wan', 'deepinfra', 'cogvideox', 'animatediff', 'replicate-svd'] as const;
   const configured = chain.filter((p) => p.configured && p.name !== 'slideshow');
+  const ordered = [
+    ...ossOrder.map((n) => configured.find((p) => p.name === n)).filter(Boolean),
+    ...configured.filter((p) => !ossOrder.includes(p.name as typeof ossOrder[number])),
+  ] as typeof configured;
 
-  for (const p of configured) {
+  for (const p of ordered) {
     tried.push(p.name);
     try {
       const url = await withTimeout(p.call(prompt, 3), providerTimeout(p.name), p.name);

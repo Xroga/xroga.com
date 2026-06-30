@@ -1,5 +1,6 @@
 /**
- * Shared Replicate prediction runner — Prefer: wait max is 60 seconds.
+ * Shared Replicate prediction runner — no Prefer header (avoids 422 on wait>60).
+ * Creates async prediction and polls until complete.
  */
 
 import { getSecret } from '../../config/envSecrets.js';
@@ -10,8 +11,6 @@ export interface ReplicatePrediction {
   output?: string | string[];
   error?: string;
 }
-
-const REPLICATE_WAIT_SEC = 60;
 
 async function pollPrediction(apiKey: string, prediction: ReplicatePrediction): Promise<ReplicatePrediction> {
   for (let i = 0; i < 120; i++) {
@@ -50,10 +49,9 @@ export async function runReplicateModel(
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
-      Prefer: `wait=${REPLICATE_WAIT_SEC}`,
     },
     body: JSON.stringify({ input }),
-    signal: AbortSignal.timeout(130_000),
+    signal: AbortSignal.timeout(30_000),
   });
 
   if (!createRes.ok) {
