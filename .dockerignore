@@ -1,0 +1,24 @@
+# Shrink Fly.io build context — only backend is needed (Dockerfile.api)
+frontend/
+node_modules/
+**/node_modules/
+.git/
+.github/
+.cursor/
+terminals/
+*.md
+!backend/README.md
+.env
+.env.*
+**/.env
+**/.env.*
+**/*.log
+**/dist/
+frontend/.next/
+**/.turbo/
+**/coverage/
+**/__tests__/
+**/*.test.ts
+**/*.spec.ts
+agent-tools/
+opt/

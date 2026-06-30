@@ -1,4 +1,4 @@
-# Fly.io API image — build context MUST be the monorepo root.
+# Fly.io API image — build context is monorepo root.
 # Deploy: fly deploy . --config fly.api.toml -a xroga-api
 
 ARG NODE_VERSION=22.21.1
@@ -10,17 +10,17 @@ WORKDIR /app
 
 ENV NODE_ENV="production"
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV npm_config_loglevel=warn
 
 FROM base AS build
 
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
-
 COPY backend/package.json backend/package-lock.json ./
 
-RUN npm ci --include=dev
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --include=dev --ignore-scripts
 
-COPY backend/ .
+COPY backend/tsconfig.json backend/tsconfig.json
+COPY backend/src ./src
 
 RUN npm run build
 
@@ -31,7 +31,7 @@ RUN npm prune --omit=dev
 FROM base
 
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y ffmpeg && \
+    apt-get install --no-install-recommends -y ffmpeg ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app /app

@@ -31,7 +31,7 @@ async function persistVideoFile(
     await storeProjectFile(userId, projectId, `video-${Date.now()}.mp4`, buffer, 'video/mp4', 'video');
   }
 
-  return stored.playbackUrl || stored.fileUrl;
+  return stored.fileUrl.startsWith('data:') ? stored.fileUrl : (stored.playbackUrl || stored.fileUrl);
 }
 
 /** Single-scene video — AI router plans script, guaranteed output always delivers MP4 */
@@ -115,7 +115,7 @@ export async function produceSingleSceneVideo(
         outputFilename: `xroga-video-${Date.now()}.mp4`,
       });
       const stored = await storeUserFile(userId, `video-${Date.now()}.mp4`, assembly.buffer, 'video/mp4');
-      fileUrl = stored.playbackUrl || stored.fileUrl;
+      fileUrl = stored.fileUrl.startsWith('data:') ? stored.fileUrl : (stored.playbackUrl || stored.fileUrl);
       if (projectId) {
         const { storeProjectFile } = await import('../storage/projectFiles.js');
         await storeProjectFile(userId, projectId, `video-${Date.now()}.mp4`, assembly.buffer, 'video/mp4', 'video');
