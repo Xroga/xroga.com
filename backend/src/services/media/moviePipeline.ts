@@ -1,13 +1,12 @@
-import { callWithLlmFallback } from '../../lib/llmFallback.js';
-import { generateGuaranteedVideo } from '../../lib/video/guaranteedVideo.js';
+import { renderSceneWithHealing, buildAspectSuffix } from '../omniReality/swarmMaster.js';
+import { deepSeekStoryboard, buildRenderPromptFromScene } from '../omniReality/brainTrinity.js';
 import { generateSceneAudio } from '../../lib/audioProviders.js';
 import { assembleMultiSceneVideo } from '../../lib/ffmpeg.js';
-import { reviewVideoOutputs } from './videoUtils.js';
+import { parseVideoFormat } from './videoUtils.js';
 import { storeUserFile } from '../storage/projectFiles.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { generateImage } from '../builder/imageGen.js';
 import {
-  MOVIE_SCRIPTWRITER_PROMPT,
   MOVIE_PROGRESS_MESSAGES,
 } from '../../orchestrator/moviePrompts.js';
 import type { VideoStudioOutput } from '../../types/features.js';
@@ -257,13 +256,25 @@ export async function runMoviePipeline(options: MoviePipelineOptions): Promise<V
   const actionCost = computeVideoActionCost(durationSeconds);
 
   emit(options, 'scripting');
-  const { text: scriptRaw, provider: scriptProvider } = await callWithLlmFallback(
-    MOVIE_SCRIPTWRITER_PROMPT,
-    `Write a screenplay for: ${prompt}. Total duration ~${durationSeconds}s. Scene count: ${computeSceneCount(durationSeconds)}.`,
-    { maxTokens: 4096, userId, runId: options.runId, apiType: 'movie_script' }
-  );
+  const omniBoard = await deepSeekStoryboard(prompt, durationSeconds, { userId, runId: options.runId });
+  const aspectSuffix = buildAspectSuffix(prompt);
+  const isVertical = parseVideoFormat(prompt) === 'shorts_reels';
 
-  let screenplay = parseScreenplay(scriptRaw, prompt, durationSeconds);
+  let screenplay: MovieScreenplay = {
+    title: omniBoard.title,
+    mood: omniBoard.mood,
+    characters: omniBoard.characters,
+    scenes: omniBoard.scenes.map((s) => ({
+      scene_id: s.scene_id,
+      location: s.location,
+      characters: omniBoard.characters.map((c) => c.name).slice(0, 2),
+      dialogue: s.dialogue,
+      action: s.action,
+      durationSeconds: s.durationSeconds,
+      priority: s.priority,
+    })),
+  };
+  const scriptProvider = omniBoard.scriptProvider ?? 'deepseek';
   const jobId = await persistMovieJob(userId, prompt, screenplay, options);
 
   emit(options, 'characters');
@@ -278,30 +289,30 @@ export async function runMoviePipeline(options: MoviePipelineOptions): Promise<V
     async (scene, index) => {
       emit(options, 'rendering', `Rendering scene ${index + 1}/${screenplay.scenes.length}…`);
 
-      const scenePrompt = buildScenePrompt(screenplay, scene, characters);
+      const omniScene = omniBoard.scenes[index];
+      const scenePrompt = omniScene
+        ? buildRenderPromptFromScene(omniBoard, omniScene, aspectSuffix)
+        : buildScenePrompt(screenplay, scene, characters);
       const keyframe = characters[0]?.face_image_url;
-      const priority = scene.priority === 'critical' ? 'premium' : 'cheap';
 
-      let result = await generateGuaranteedVideo(scene.dialogue || scenePrompt, scene.durationSeconds, {
-        priority,
+      const healed = await renderSceneWithHealing({
+        prompt: scene.dialogue ? `${scenePrompt}. Dialogue: ${scene.dialogue.slice(0, 120)}` : scenePrompt,
+        durationSeconds: scene.durationSeconds,
+        scenePriority: scene.priority,
+        keyframeUrl: keyframe,
+        referenceFaceUrl: keyframe,
         userId,
         runId: options.runId,
-        keyframeUrl: keyframe,
+        aspectRatio: isVertical ? '9:16' : '16:9',
+        onProgress: (msg) => emit(options, 'rendering', `Scene ${index + 1}: ${msg}`),
       });
 
-      const reviewed = await reviewVideoOutputs(
-        [{ provider: result.provider, videoUrl: result.videoUrl }],
-        scenePrompt
-      );
-
-      if (reviewed.total < 21 && !['slideshow', 'slideshow-ai-image', 'ffmpeg-minimal', 'static-mp4'].includes(result.provider)) {
-        const corrected = await generateGuaranteedVideo(
-          `${scenePrompt}. Avoid warping, realistic physics, smooth motion.`,
-          scene.durationSeconds,
-          { priority: 'cheap', userId, runId: options.runId, keyframeUrl: keyframe }
-        );
-        result = corrected;
-      }
+      const result = {
+        provider: healed.provider,
+        videoUrl: healed.videoUrl,
+        durationSeconds: healed.durationSeconds,
+        reviewScores: healed.reviewScores,
+      };
 
       return { scene, result };
     }
@@ -378,7 +389,7 @@ export async function runMoviePipeline(options: MoviePipelineOptions): Promise<V
       })),
     },
     selectedProvider: primaryScene?.result.provider ?? 'slideshow',
-    reviewScores: {
+    reviewScores: renderedScenes[0]?.result.reviewScores ?? {
       physics: 8,
       lighting: 8,
       consistency: 8,
