@@ -32,7 +32,11 @@ export type VideoProviderName =
 type ProviderEntry = {
   name: VideoProviderName;
   configured: boolean;
-  call: (prompt: string, durationSeconds: number) => Promise<string>;
+  call: (
+    prompt: string,
+    durationSeconds: number,
+    options?: { aspectRatio?: '9:16' | '16:9' }
+  ) => Promise<string>;
 };
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
@@ -110,14 +114,18 @@ async function generateMorphVideo(prompt: string, durationSeconds: number): Prom
   return data.video_url;
 }
 
-async function generateImageToSlideshowVideo(prompt: string, durationSeconds: number): Promise<string> {
+async function generateImageToSlideshowVideo(
+  prompt: string,
+  durationSeconds: number,
+  options?: { aspectRatio?: '9:16' | '16:9' }
+): Promise<string> {
   let imageUrl: string | undefined;
   try {
     imageUrl = await generateAgnesImage(prompt.slice(0, 500));
   } catch {
     /* use placeholder in slideshow */
   }
-  return generateSlideshowVideo(prompt, durationSeconds, imageUrl);
+  return generateSlideshowVideo(prompt, durationSeconds, imageUrl, options?.aspectRatio === '9:16');
 }
 
 function buildVideoProviders(): ProviderEntry[] {
@@ -177,7 +185,7 @@ async function buildVideoProvidersAsync(): Promise<ProviderEntry[]> {
     providers.push({
       name: 'slideshow',
       configured: true,
-      call: (prompt, duration) => generateImageToSlideshowVideo(prompt, duration),
+      call: (prompt, duration, opts) => generateImageToSlideshowVideo(prompt, duration, opts),
     });
   }
   return providers;
@@ -212,6 +220,7 @@ export async function generateVideoWithFallback(
     userId?: string;
     runId?: string;
     keyframeUrl?: string;
+    aspectRatio?: '9:16' | '16:9';
   }
 ): Promise<VideoGenerationResult> {
   const priorityList = await getApiPriority('video');
@@ -239,7 +248,7 @@ export async function generateVideoWithFallback(
 
     try {
       const videoUrl = await withTimeout(
-        entry.call(prompt, durationSeconds),
+        entry.call(prompt, durationSeconds, { aspectRatio: options?.aspectRatio }),
         providerTimeout(name as VideoProviderName),
         name
       );
@@ -266,7 +275,12 @@ export async function generateVideoWithFallback(
 
   if (providerMap.has('slideshow')) {
     try {
-      const slideshowUrl = await generateSlideshowVideo(prompt, durationSeconds, options?.keyframeUrl);
+      const slideshowUrl = await generateSlideshowVideo(
+        prompt,
+        durationSeconds,
+        options?.keyframeUrl,
+        options?.aspectRatio === '9:16'
+      );
       if (isValidVideoUrl(slideshowUrl)) {
         return { provider: 'slideshow', videoUrl: slideshowUrl, durationSeconds };
       }

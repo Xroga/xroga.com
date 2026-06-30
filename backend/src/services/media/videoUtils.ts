@@ -60,6 +60,26 @@ Return JSON: {"winner":"provider_name","scores":[{"provider":"","physics":0,"lig
   };
 }
 
+export type VideoFormatId = 'shorts_reels' | 'youtube_video';
+
+export function parseVideoFormat(prompt: string): VideoFormatId {
+  const tag = prompt.match(/\[xroga-video-format:(shorts_reels|youtube_video)\]/i);
+  if (tag?.[1] === 'shorts_reels') return 'shorts_reels';
+  if (tag?.[1] === 'youtube_video') return 'youtube_video';
+  if (/\b(shorts?|reels?|tiktok|vertical|9:16|mobile|instagram reel)\b/i.test(prompt)) return 'shorts_reels';
+  return 'youtube_video';
+}
+
+export function stripVideoFormatTag(prompt: string): string {
+  return prompt.replace(/\[xroga-video-format:(shorts_reels|youtube_video)\]/gi, '').trim();
+}
+
+export function videoAspectSuffix(format: VideoFormatId): string {
+  return format === 'shorts_reels'
+    ? 'Vertical 9:16 mobile video, portrait orientation, TikTok Reels Shorts style'
+    : 'Landscape 16:9 widescreen YouTube video, cinematic horizontal format';
+}
+
 export function parseVideoDuration(prompt: string): number {
   const secMatch = prompt.match(/(\d+)\s*(?:second|sec|s)\b/i);
   if (secMatch) return Math.min(parseInt(secMatch[1], 10), 300);

@@ -4,6 +4,7 @@ import { generateMinimalMp4 } from './minimalMp4.js';
 import { getStaticMp4DataUrl } from './staticMp4.js';
 import { generateVideoWithFallback } from '../videoProviders.js';
 import { generateImage } from '../../services/builder/imageGen.js';
+import { parseVideoFormat } from '../../services/media/videoUtils.js';
 import type { VideoGenerationResult } from '../videoProviders.js';
 
 export interface GuaranteedVideoOptions {
@@ -11,6 +12,7 @@ export interface GuaranteedVideoOptions {
   runId?: string;
   keyframeUrl?: string;
   priority?: 'premium' | 'cheap' | 'auto';
+  aspectRatio?: '9:16' | '16:9';
 }
 
 /** Try paid/free API providers — may throw */
@@ -24,6 +26,7 @@ async function tryApiProviders(
     runId: options?.runId,
     keyframeUrl: options?.keyframeUrl,
     priority: options?.priority ?? 'cheap',
+    aspectRatio: options?.aspectRatio,
   });
 }
 
@@ -32,11 +35,12 @@ async function tryImageSlideshow(
   durationSeconds: number,
   getImage: () => Promise<string>,
   errors: string[],
-  label: string
+  label: string,
+  vertical: boolean
 ): Promise<VideoGenerationResult | null> {
   try {
     const imageUrl = await getImage();
-    const videoUrl = await generateSlideshowVideo(prompt, durationSeconds, imageUrl);
+    const videoUrl = await generateSlideshowVideo(prompt, durationSeconds, imageUrl, vertical);
     return { provider: 'slideshow-ai-image', videoUrl, durationSeconds };
   } catch (err) {
     errors.push(`${label}: ${(err as Error).message.slice(0, 80)}`);
@@ -55,9 +59,13 @@ export async function generateGuaranteedVideo(
 ): Promise<VideoGenerationResult> {
   const errors: string[] = [];
   const dur = Math.min(Math.max(durationSeconds, 3), 30);
+  const isVertical = parseVideoFormat(prompt) === 'shorts_reels';
 
   try {
-    const api = await tryApiProviders(prompt, dur, options);
+    const api = await tryApiProviders(prompt, dur, {
+      ...options,
+      aspectRatio: isVertical ? '9:16' : '16:9',
+    });
     if (api.videoUrl) return api;
   } catch (err) {
     errors.push(`api: ${(err as Error).message.slice(0, 80)}`);
@@ -67,7 +75,7 @@ export async function generateGuaranteedVideo(
     {
       label: 'agnes-image',
       fn: () =>
-        tryImageSlideshow(prompt, dur, () => generateAgnesImage(prompt.slice(0, 500)), errors, 'agnes-image'),
+        tryImageSlideshow(prompt, dur, () => generateAgnesImage(prompt.slice(0, 500)), errors, 'agnes-image', isVertical),
     },
     {
       label: 'image-gen',
@@ -77,23 +85,24 @@ export async function generateGuaranteedVideo(
             userId: options?.userId,
             runId: options?.runId,
             fast: true,
+            aspectFormat: isVertical ? '9:16' : '16:9',
           });
           if (out.type === 'image_blocked') return '';
           return out.imageUrl;
-        }, errors, 'image-gen'),
+        }, errors, 'image-gen', isVertical),
     },
     {
       label: 'keyframe',
       fn: () =>
         options?.keyframeUrl
-          ? tryImageSlideshow(prompt, dur, async () => options.keyframeUrl!, errors, 'keyframe')
+          ? tryImageSlideshow(prompt, dur, async () => options.keyframeUrl!, errors, 'keyframe', isVertical)
           : Promise.resolve(null),
     },
     {
       label: 'placeholder-slideshow',
       fn: async () => {
         try {
-          const videoUrl = await generateSlideshowVideo(prompt, dur);
+          const videoUrl = await generateSlideshowVideo(prompt, dur, undefined, isVertical);
           return { provider: 'slideshow', videoUrl, durationSeconds: dur };
         } catch (err) {
           errors.push(`placeholder-slideshow: ${(err as Error).message.slice(0, 80)}`);

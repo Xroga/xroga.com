@@ -12,7 +12,8 @@ const execFileAsync = promisify(execFile);
 export async function generateSlideshowVideo(
   prompt: string,
   durationSeconds = 5,
-  imageUrl?: string
+  imageUrl?: string,
+  vertical = false
 ): Promise<string> {
   const ffmpeg = await resolveFfmpegPath();
   if (!ffmpeg) {
@@ -31,11 +32,17 @@ export async function generateSlideshowVideo(
       if (!imgRes.ok) throw new Error(`Failed to fetch keyframe: ${imgRes.status}`);
       await writeFile(imagePath, Buffer.from(await imgRes.arrayBuffer()));
     } else {
-      const placeholder = `https://placehold.co/1280x720/1a1a2e/006aff/png?text=${encodeURIComponent(prompt.slice(0, 30))}`;
+      const placeholder = vertical
+        ? `https://placehold.co/720x1280/1a1a2e/006aff/png?text=${encodeURIComponent(prompt.slice(0, 20))}`
+        : `https://placehold.co/1280x720/1a1a2e/006aff/png?text=${encodeURIComponent(prompt.slice(0, 30))}`;
       const imgRes = await fetch(placeholder, { signal: AbortSignal.timeout(15_000) });
       if (!imgRes.ok) throw new Error(`Placeholder image fetch failed: ${imgRes.status}`);
       await writeFile(imagePath, Buffer.from(await imgRes.arrayBuffer()));
     }
+
+    const scale = vertical
+      ? 'scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2'
+      : 'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2';
 
     await execFileAsync(ffmpeg, [
       '-loop', '1',
@@ -43,7 +50,7 @@ export async function generateSlideshowVideo(
       '-c:v', 'libx264',
       '-t', String(durationSeconds),
       '-pix_fmt', 'yuv420p',
-      '-vf', 'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2',
+      '-vf', scale,
       '-y', outputPath,
     ], { timeout: 120_000 });
 

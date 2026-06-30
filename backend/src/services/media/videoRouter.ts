@@ -1,6 +1,6 @@
 import { callWithLlmFallback } from '../../lib/llmFallback.js';
 import { MOVIE_SCRIPTWRITER_PROMPT } from '../../orchestrator/moviePrompts.js';
-import { parseVideoDuration } from './videoUtils.js';
+import { parseVideoDuration, parseVideoFormat, stripVideoFormatTag, videoAspectSuffix } from './videoUtils.js';
 
 /** Prefer free/cheap LLMs for planning & scripting */
 const FREE_LLM_CHAIN = ['groq', 'deepseek', 'gemini', 'ollama', 'openai', 'anthropic'] as const;
@@ -64,20 +64,23 @@ function buildRenderPrompt(parts: {
   action: string;
   dialogue: string;
   mood: string;
+  aspectSuffix: string;
 }): string {
   return [
     parts.title,
     parts.location,
     parts.action,
     parts.dialogue ? `Mood dialogue: ${parts.dialogue.slice(0, 100)}` : '',
-    `Cinematic ${parts.mood}, realistic physics, smooth motion, 16:9`,
+    `Cinematic ${parts.mood}, realistic physics, smooth motion, ${parts.aspectSuffix}`,
   ]
     .filter(Boolean)
     .join('. ');
 }
 
 function heuristicPlan(userPrompt: string, durationSeconds: number): VideoProductionPlan {
-  const subject = extractVideoPrompt(userPrompt);
+  const subject = extractVideoPrompt(stripVideoFormatTag(userPrompt));
+  const format = parseVideoFormat(userPrompt);
+  const aspectSuffix = videoAspectSuffix(format);
   const sceneCount = computeSceneCount(durationSeconds);
   const sceneDur = Math.max(3, Math.floor(durationSeconds / sceneCount));
   const mode: VideoRouteMode = sceneCount > 1 ? 'multi_scene' : 'single_scene';
@@ -101,6 +104,7 @@ function heuristicPlan(userPrompt: string, durationSeconds: number): VideoProduc
         action,
         dialogue: '',
         mood: 'cinematic',
+        aspectSuffix,
       }),
       durationSeconds: sceneDur,
       priority: i === 0 || i === sceneCount - 1 ? 'critical' : 'low',
@@ -166,6 +170,7 @@ function parseLlmScreenplay(
           action,
           dialogue,
           mood,
+          aspectSuffix: videoAspectSuffix(parseVideoFormat(userPrompt)),
         }),
         durationSeconds: s.durationSeconds ?? Math.max(3, Math.floor(durationSeconds / parsed.scenes!.length)),
         priority: s.priority ?? (i === 0 ? 'critical' : 'low'),

@@ -140,6 +140,7 @@ export interface VideoStudioOutput {
   audioTracks: Array<{ type: string; provider: string }>;
   sceneCount?: number;
   scriptProvider?: string;
+  videoFormat?: 'shorts_reels' | 'youtube_video';
   characters?: Array<{ name: string; faceImageUrl?: string }>;
   pros?: string[];
   cons?: string[];

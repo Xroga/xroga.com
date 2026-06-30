@@ -1,7 +1,7 @@
 import { generateGuaranteedVideo } from '../../lib/video/guaranteedVideo.js';
 import { downloadVideoBuffer } from '../../lib/ffmpeg.js';
 import { isValidMp4Buffer, isHttpMediaUrl, isStubJsonBuffer } from '../../lib/mediaValidation.js';
-import { parseVideoDuration, computeVideoActionCost } from './videoUtils.js';
+import { parseVideoDuration, parseVideoFormat, computeVideoActionCost } from './videoUtils.js';
 import { storeUserFile } from '../storage/projectFiles.js';
 import { planVideoProduction } from './videoRouter.js';
 import type { VideoStudioOutput } from '../../types/features.js';
@@ -103,6 +103,7 @@ export async function produceSingleSceneVideo(
     audioTracks: [],
     sceneCount: plan.scenes.length,
     scriptProvider: plan.scriptProvider,
+    videoFormat: parseVideoFormat(prompt),
     characters: plan.characters.map((c) => ({ name: c.name })),
     cons: usedFallback ? ['Used visual fallback — premium APIs were unavailable'] : undefined,
     followUps: plan.mode === 'multi_scene' ? ['Generate full multi-scene movie?'] : undefined,
