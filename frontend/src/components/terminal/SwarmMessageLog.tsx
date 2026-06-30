@@ -326,6 +326,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             message={pipelineMessage ?? undefined}
                             step={imageProgressStep ?? undefined}
                             liveAttempts={imageAttempts}
+                            promptHint={pipelineMessage?.startsWith('Prompt:') ? pipelineMessage.replace(/^Prompt:\s*/, '') : lastUserText}
                           />
                         ) : (
                           <ModernResponseText

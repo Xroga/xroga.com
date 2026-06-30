@@ -13,6 +13,7 @@ import type { ImageBlockedOutput, ImageGenOutput } from '../../types/features.js
 import { persistImageUrl } from '../../lib/persistImageUrl.js';
 import { classifyImageQuery } from './image/understanding.js';
 import { enhanceImagePrompt } from './image/promptEnhancer.js';
+import { buildConciseImagePrompt, extractOverlayText, isThumbnailRequest } from './image/concisePrompt.js';
 import { pickBestImage } from './image/imageReviewer.js';
 import { generateImageFollowUps } from './image/followUps.js';
 import { moderateImagePrompt, parseImageAspectFormat, aspectFormatLabel, aspectFormatPromptSuffix, type ImageAspectFormat } from './image/contentModeration.js';
@@ -458,11 +459,16 @@ async function buildPipelinePrompt(
   basePrompt: string,
   aspectFormat: ImageAspectFormat,
   options?: ImageGenOptions
-): Promise<string> {
+): Promise<{ full: string; concise: string; overlayText?: string }> {
   const suffix = aspectFormatPromptSuffix(aspectFormat);
-  if (options?.fast === false) return `${basePrompt}. ${suffix}`;
+  const overlayText = extractOverlayText(rawQuery);
 
-  emitProgress(options, 'classifying', 'Groq analyzing your prompt…');
+  if (options?.fast === false) {
+    const full = `${basePrompt}. ${suffix}`;
+    return { full, concise: basePrompt.slice(0, 200), overlayText };
+  }
+
+  emitProgress(options, 'classifying', 'Groq analyzing your command…');
   const intent = await withTimeout(classifyImageQuery(rawQuery), 3_500, {
     subject: rawQuery.slice(0, 120),
     style: 'detailed, high quality',
@@ -470,15 +476,37 @@ async function buildPipelinePrompt(
     rawQuery,
   });
 
-  emitProgress(options, 'enhancing', 'Building detailed prompt for image AIs…');
+  emitProgress(options, 'enhancing', 'Groq writing a concise image prompt…');
+  const concise = await withTimeout(buildConciseImagePrompt(intent, overlayText), 4_000, fallbackConcise(intent, overlayText));
+
+  emitProgress(options, 'enhancing', `Prompt: ${concise.slice(0, 140)}${concise.length > 140 ? '…' : ''}`);
+
   const enhanced = await withTimeout(enhanceImagePrompt(intent), 4_500, {
-    prompt: basePrompt,
+    prompt: concise,
     negativePrompt: '',
     styleTags: [],
   });
 
-  const text = enhanced.prompt?.trim() || basePrompt;
-  return `${text}. ${suffix}`;
+  let text = enhanced.prompt?.trim() || concise;
+  if (overlayText && !text.toLowerCase().includes(overlayText.toLowerCase().slice(0, 12))) {
+    text += ` Bold readable text overlay: "${overlayText}".`;
+  }
+  if (isThumbnailRequest(rawQuery) && !/\b16:9|thumbnail\b/i.test(text)) {
+    text += ' YouTube thumbnail style, 16:9, bold composition, text-safe areas.';
+  }
+
+  const full = `${text}. ${suffix}`;
+  return { full, concise, overlayText };
+}
+
+function fallbackConcise(
+  intent: { subject: string; action?: string; environment?: string; style: string; rawQuery: string },
+  overlayText?: string
+): string {
+  const parts = [intent.subject, intent.action, intent.environment, intent.style].filter(Boolean);
+  let base = parts.join(', ').slice(0, 160) || intent.rawQuery.slice(0, 120);
+  if (overlayText) base += `, text "${overlayText}"`;
+  return base;
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
@@ -770,8 +798,11 @@ export async function generateImage(
   const aspectFormat = options?.aspectFormat ?? parseImageAspectFormat(rawQuery);
   const formatLabel = aspectFormatLabel(aspectFormat);
   const basePrompt = moderation.sanitizedPrompt ?? rawQuery;
-  const imagePrompt = await buildPipelinePrompt(rawQuery, basePrompt, aspectFormat, options);
-  const isYoutubeThumbnail = /\b(thumbnail|youtube)\b/i.test(rawQuery);
+  const pipeline = await buildPipelinePrompt(rawQuery, basePrompt, aspectFormat, options);
+  const imagePrompt = pipeline.full;
+  const concisePrompt = pipeline.concise;
+  const overlayText = pipeline.overlayText;
+  const isYoutubeThumbnail = isThumbnailRequest(rawQuery) || /\b(thumbnail|youtube)\b/i.test(rawQuery);
 
   const sourceUrl = extractSourceImageUrl(userPrompt, options?.sourceImageUrl);
   if (sourceUrl) {
@@ -910,7 +941,9 @@ export async function generateImage(
     imageUrl: winner.imageUrl,
     provider: winner.provider,
     prompt: rawQuery,
-    enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : undefined,
+    concisePrompt,
+    overlayText,
+    enhancedPrompt: imagePrompt !== rawQuery ? imagePrompt : concisePrompt,
     followUps: DEFAULT_FOLLOW_UPS,
     pros: [
       `${safeAttempts.length}/${VARIANT_COUNT} AI variants — best: ${winner.variantLabel ?? winner.provider}`,

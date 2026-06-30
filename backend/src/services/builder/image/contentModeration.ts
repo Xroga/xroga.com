@@ -1,6 +1,7 @@
 /** Pre-generation safety filter — blocks prohibited content before any API call */
 
 import { IMAGE_SAFETY_GUIDANCE } from './imageSafetyMessages.js';
+import { extractOverlayText } from './concisePrompt.js';
 
 const NUDE_PATTERNS =
   /\b(nude|naked|nsfw|porn|pornographic|xxx|sexual|erotic|hentai|vulgar|explicit sex|genitals|topless|bottomless|undressed|strip tease|onlyfans|adult content|x-?rated|lewd|obscene|fetish|bondage|intercourse|orgasm|masturbat)\b/i;
@@ -77,7 +78,11 @@ function enhanceSafePrompt(prompt: string): string {
   }
 
   if (/\bthumbnail\b/i.test(prompt) || /\byoutube\b/i.test(prompt)) {
-    return `${prompt}. Professional YouTube thumbnail, bold composition, high contrast, click-worthy, 16:9, sharp text-safe areas, photorealistic, cinematic lighting. ${safeSuffix}`;
+    const overlay = extractOverlayText(prompt);
+    const textPart = overlay
+      ? ` Large bold readable text overlay "${overlay}" prominently displayed, high contrast lettering, text-safe layout.`
+      : ' Clear text-safe areas for bold title text.';
+    return `${prompt}. Professional YouTube thumbnail, bold composition, high contrast, click-worthy, 16:9, sharp details, photorealistic, cinematic lighting.${textPart} ${safeSuffix}`;
   }
 
   if (/\b(superhero|iron man|batman|spider-?man|superman|wonder woman|captain america|thor|hulk)\b/i.test(prompt)) {
@@ -140,7 +145,7 @@ export type ImageAspectFormat = '1:1' | '4:5' | '16:9' | '9:16' | '3:4' | '4:3';
 export function parseImageAspectFormat(prompt: string): ImageAspectFormat {
   const p = prompt.toLowerCase();
   if (/\b(story|reel|tiktok|vertical video|9:16|9\s*:\s*16)\b/.test(p)) return '9:16';
-  if (/\b(youtube|banner|landscape|16:9|16\s*:\s*9|widescreen)\b/.test(p)) return '16:9';
+  if (/\b(youtube|thumbnail|banner|landscape|16:9|16\s*:\s*9|widescreen)\b/.test(p)) return '16:9';
   if (/\b(portrait|3:4|3\s*:\s*4|pinterest)\b/.test(p)) return '3:4';
   if (/\b(4:3|4\s*:\s*3)\b/.test(p)) return '4:3';
   if (/\b(4:5|4\s*:\s*5|instagram portrait)\b/.test(p)) return '4:5';
