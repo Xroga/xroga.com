@@ -13,7 +13,7 @@ import type { ImageBlockedOutput, ImageGenOutput } from '../../types/features.js
 import { persistImageUrl } from '../../lib/persistImageUrl.js';
 import type { ImageProviderOptions } from '../../lib/imageAspect.js';
 import { classifyImageQuery } from './image/understanding.js';
-import { enhanceImagePrompt } from './image/promptEnhancer.js';
+import { enhanceImagePrompt, buildPerSlotPrompts } from './image/promptEnhancer.js';
 import { buildConciseImagePrompt, extractOverlayText, isThumbnailRequest } from './image/concisePrompt.js';
 import { pickBestImage } from './image/imageReviewer.js';
 import { generateImageFollowUps } from './image/followUps.js';
@@ -848,10 +848,24 @@ export async function generateImage(
 
   const activeSlots = resolveVariantSlots(registry);
 
-  const promptBundle = {
-    full: imagePrompt,
-    short: shortImagePrompt(rawQuery, basePrompt),
-  };
+  emitProgress(options, 'enhancing', 'Crafting unique prompts per AI model…');
+  const slotPrompts = await withTimeout(
+    buildPerSlotPrompts(
+      {
+        subject: rawQuery.slice(0, 200),
+        style: 'photorealistic, cinematic, ultra detailed',
+        quality: 'standard',
+        rawQuery,
+        styleVibe: imageIntent.styleVibe,
+        contentType: imageIntent.contentType,
+        aspectFormat,
+      },
+      imagePrompt,
+      activeSlots.length
+    ),
+    6_000,
+    activeSlots.map((_, i) => `${imagePrompt}. Unique variant ${i + 1}, distinct angle and lighting`)
+  );
 
   console.log(
     `[ImageGen] ${VARIANT_COUNT} slots (${formatLabel}): ${activeSlots.map((s) => s.label).join(', ')}`
@@ -871,7 +885,14 @@ export async function generateImage(
   };
 
   const attemptResults = await Promise.all(
-    activeSlots.map((slot) => runVariantSlot(slot, promptBundle, registry, ctx, options))
+    activeSlots.map((slot, i) => {
+      const slotFull = slotPrompts[i] ?? imagePrompt;
+      const promptBundle = {
+        full: slotFull,
+        short: shortImagePrompt(rawQuery, slotFull),
+      };
+      return runVariantSlot(slot, promptBundle, registry, ctx, options);
+    })
   );
 
   const allAttempts = attemptResults;
@@ -921,9 +942,13 @@ export async function generateImage(
   const pool = safeAttempts;
   let winner = [...pool].sort((a, b) => b.matchScore - a.matchScore)[0]!;
 
-  if (options?.fast === false) {
-    emitProgress(options, 'verifying', 'Final safety check on best image…');
-    const winnerRecheck = await verifyImageMatchesPrompt(winner.imageUrl, rawQuery);
+  emitProgress(options, 'verifying', 'Final safety & quality check on best image…');
+  try {
+    const winnerRecheck = await withTimeout(
+      verifyImageMatchesPrompt(winner.imageUrl, rawQuery),
+      12_000,
+      { matchScore: winner.matchScore, matches: true, issues: [], verifier: 'timeout-skip' }
+    );
     if (winnerRecheck.blockedForSafety) {
       const remaining = pool.filter((a) => a.imageUrl !== winner.imageUrl);
       const alternate = remaining.sort((a, b) => b.matchScore - a.matchScore)[0];
@@ -939,6 +964,12 @@ export async function generateImage(
     } else {
       winner = { ...winner, matchScore: winnerRecheck.matchScore, issues: winnerRecheck.issues };
     }
+  } catch {
+    /* keep winner if verification unavailable */
+  }
+
+  if (options?.fast === false) {
+    /* legacy flag — verification already ran above */
   }
 
   const serializedAttempts = activeSlots.map((slot, i) => {

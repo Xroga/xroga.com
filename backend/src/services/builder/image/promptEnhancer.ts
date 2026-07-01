@@ -11,12 +11,20 @@ export interface EnhancedImagePrompt {
 }
 
 const NEGATIVE_DEFAULT =
-  'blurry, low quality, distorted, deformed, watermark, text overlay, ugly, duplicate, mutilated, disfigured, bad anatomy, extra limbs';
+  'blurry, low quality, distorted, deformed, watermark, ugly, duplicate, mutilated, disfigured, bad anatomy, extra limbs, extra fingers, extra hands, extra feet, missing fingers, fused limbs, malformed hands, malformed feet, cropped, out of frame, text overlay, nsfw, nude, bikini, lingerie, suggestive pose';
 
 const ENHANCE_SYSTEM = `You are an expert image prompt engineer. Given structured intent JSON, output ONE detailed image generation prompt (60-150 words).
 Include: subject, action, environment, lighting, composition, camera angle, art style, quality tags.
 Match the styleVibe (3d, pixel, minecraft, cartoon, anime, logo, photorealistic) and contentType (thumbnail, logo, avatar, og, story).
+REQUIREMENTS: family-safe, modest clothing, correct anatomy (two hands, two feet, five fingers each), photorealistic when requested, no suggestive content.
 Do NOT wrap in quotes. Do NOT use markdown. Output only the prompt text.`;
+
+const SLOT_ANGLE_HINTS = [
+  'Cinematic wide-angle establishing shot, dramatic golden-hour lighting, film still quality, depth of field',
+  'Close-up hero portrait, shallow depth of field, studio rim lighting, ultra-sharp facial detail',
+  'Dynamic three-quarter action angle, vibrant modern color grading, editorial magazine style',
+  'Unique artistic perspective, minimalist composition, trending aesthetic, creative camera tilt',
+] as const;
 
 function buildIntentPayload(intent: ImageQueryIntent): string {
   return JSON.stringify({
@@ -112,4 +120,69 @@ export async function enhanceImagePrompt(intent: ImageQueryIntent): Promise<Enha
     negativePrompt: NEGATIVE_DEFAULT,
     styleTags,
   };
+}
+
+const MULTI_SLOT_SYSTEM = `You are an expert image prompt engineer. Given a base image intent, output exactly 4 DIFFERENT prompts as JSON array.
+Each prompt must vary: camera angle, lighting, composition, and artistic vibe. All must be family-safe and modest.
+Format: ["prompt1","prompt2","prompt3","prompt4"] — no markdown, no extra text.`;
+
+/** Build unique per-provider prompts so each variant looks different. */
+export async function buildPerSlotPrompts(
+  intent: ImageQueryIntent,
+  basePrompt: string,
+  slotCount = 4
+): Promise<string[]> {
+  const payload = JSON.stringify({
+    subject: intent.subject,
+    style: intent.style,
+    styleVibe: intent.styleVibe,
+    contentType: intent.contentType,
+    basePrompt: basePrompt.slice(0, 400),
+  });
+
+  const llmBuilders: Array<() => Promise<string[]>> = [];
+  if (process.env.GEMINI_API_KEY) {
+    llmBuilders.push(async () => {
+      const raw = await geminiGenerate(MULTI_SLOT_SYSTEM, payload, { model: 'gemini-2.0-flash', maxTokens: 900 });
+      const match = raw.match(/\[[\s\S]*\]/);
+      if (!match) throw new Error('no json array');
+      const parsed = JSON.parse(match[0]) as string[];
+      if (!Array.isArray(parsed) || parsed.length < 2) throw new Error('invalid array');
+      return parsed.map((p) => String(p).trim()).filter((p) => p.length > 20);
+    });
+  }
+  if (process.env.GROQ_API_KEY) {
+    llmBuilders.push(async () => {
+      const raw = await groqChat(
+        [
+          { role: 'system', content: MULTI_SLOT_SYSTEM },
+          { role: 'user', content: payload },
+        ],
+        { maxTokens: 900 }
+      );
+      const match = raw.match(/\[[\s\S]*\]/);
+      if (!match) throw new Error('no json array');
+      const parsed = JSON.parse(match[0]) as string[];
+      if (!Array.isArray(parsed) || parsed.length < 2) throw new Error('invalid array');
+      return parsed.map((p) => String(p).trim()).filter((p) => p.length > 20);
+    });
+  }
+
+  for (const run of llmBuilders) {
+    try {
+      const prompts = await run();
+      if (prompts.length >= 2) {
+        while (prompts.length < slotCount) {
+          prompts.push(`${prompts[prompts.length % prompts.length]}. ${SLOT_ANGLE_HINTS[prompts.length % SLOT_ANGLE_HINTS.length]}`);
+        }
+        return prompts.slice(0, slotCount);
+      }
+    } catch (err) {
+      console.warn('[PromptEnhancer] multi-slot failed:', (err as Error).message);
+    }
+  }
+
+  return SLOT_ANGLE_HINTS.map(
+    (hint, i) => `${basePrompt}. ${hint}. Variant ${i + 1}, unique composition and lighting`
+  );
 }

@@ -5,6 +5,8 @@ import { FEATURE_ACTION_COSTS, FEATURE_TASK_TYPES } from '../../types/features.j
 import { computeVideoActionCost, parseVideoDuration } from '../media/videoUtils.js';
 import { computeDebugActionCost } from '../debugging/codeDebugger.js';
 import { FEATURE_CATALOG, matchFeatureByKeywords, type FeatureCatalogEntry } from '../../config/featureCatalog.js';
+import { isTrivialPrompt } from '../../lib/promptClassifier.js';
+import { routingPrompt } from '../../lib/promptRouting.js';
 
 const CLASSIFICATION_SYSTEM = `You are the Xroga Architect. Classify user requests into a feature ID from the catalog.
 Respond ONLY with JSON: {"featureId":"...","category":"chat|landing_page|image_generation|browser_automation|cross_post|key_creation|video_studio|deep_research|content_blocker|job_hunter|code_debug","confidence":0.0-1.0,"reasoning":"..."}
@@ -199,12 +201,23 @@ function parseDeepSeekClassification(raw: string, prompt: string): FeatureRoute 
  * Falls back to rule-based classification when API is unavailable.
  */
 export async function classifyFeature(prompt: string): Promise<FeatureRoute> {
-  const rules = classifyByRules(prompt);
+  const userText = routingPrompt(prompt);
+  if (isTrivialPrompt(userText)) {
+    return {
+      category: 'chat',
+      taskType: FEATURE_TASK_TYPES.chat,
+      actionCost: FEATURE_ACTION_COSTS.chat,
+      confidence: 0.99,
+      reasoning: 'Trivial greeting or acknowledgment',
+    };
+  }
+
+  const rules = classifyByRules(userText);
 
   // Fast path: rule match or simple chat — skip slow LLM classification
   if (rules.confidence >= 0.85) return rules;
-  if (rules.category === 'chat' && prompt.length < 300) {
-    const catalog = matchFeatureByKeywords(prompt);
+  if (rules.category === 'chat' && userText.length < 300) {
+    const catalog = matchFeatureByKeywords(userText);
     if (catalog) return catalogToRoute(catalog);
     return rules;
   }
@@ -214,11 +227,11 @@ export async function classifyFeature(prompt: string): Promise<FeatureRoute> {
       const response = await groqChat(
         [
           { role: 'system', content: CLASSIFICATION_SYSTEM },
-          { role: 'user', content: prompt },
+          { role: 'user', content: userText },
         ],
         { maxTokens: 256 }
       );
-      const classified = parseDeepSeekClassification(response, prompt);
+      const classified = parseDeepSeekClassification(response, userText);
       if (classified) return classified;
     } catch {
       /* try deepseek */
@@ -229,18 +242,18 @@ export async function classifyFeature(prompt: string): Promise<FeatureRoute> {
     const response = await deepSeekChat(
       [
         { role: 'system', content: CLASSIFICATION_SYSTEM },
-        { role: 'user', content: prompt },
+        { role: 'user', content: userText },
       ],
       { model: 'deepseek-chat', maxTokens: 256 }
     );
 
-    const classified = parseDeepSeekClassification(response, prompt);
+    const classified = parseDeepSeekClassification(response, userText);
     if (classified) return classified;
   } catch (err) {
     console.error('[Architect] DeepSeek classification failed, using rules:', (err as Error).message);
   }
 
-  return classifyByRules(prompt);
+  return classifyByRules(userText);
 }
 
 export function getCrossPostPlatformCount(prompt: string): number {

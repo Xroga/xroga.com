@@ -1,6 +1,6 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
 import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
-import { isSimpleChat } from '@/lib/promptClassifier';
+import { isSimpleChat, isTrivialPrompt } from '@/lib/promptClassifier';
 
 const MAX_CONTEXT_TURNS = 10;
 const MAX_SNIPPET = 320;
@@ -10,8 +10,15 @@ const UPDATE_HINT =
 
 /** Inject recent thread context for conversational memory across chat and media follow-ups. */
 export function buildPromptWithMemory(prompt: string, messages: ChatMessage[]): string {
-  const wantsMemory = isSimpleChat(prompt) || UPDATE_HINT.test(prompt) || isImageGenerationPrompt(prompt) || isVideoGenerationPrompt(prompt);
-  if (!wantsMemory || messages.length < 2) return prompt;
+  const trimmed = prompt.trim();
+  if (isTrivialPrompt(trimmed)) return trimmed;
+
+  const wantsMemory =
+    UPDATE_HINT.test(trimmed) ||
+    isImageGenerationPrompt(trimmed) ||
+    isVideoGenerationPrompt(trimmed) ||
+    (isSimpleChat(trimmed) && messages.length >= 4);
+  if (!wantsMemory || messages.length < 2) return trimmed;
 
   const recent = messages
     .filter((m) => (m.role === 'user' || m.role === 'assistant') && (m.content || m.featureOutput))
@@ -30,5 +37,5 @@ export function buildPromptWithMemory(prompt: string, messages: ChatMessage[]): 
     return `${label}: ${body.slice(0, MAX_SNIPPET)}`;
   });
 
-  return `[Previous conversation for context — refer when user asks about earlier messages]\n${lines.join('\n')}\n\n[Current message]\n${prompt}`;
+  return `[Previous conversation for context — refer when user asks about earlier messages]\n${lines.join('\n')}\n\n[Current message]\n${trimmed}`;
 }
