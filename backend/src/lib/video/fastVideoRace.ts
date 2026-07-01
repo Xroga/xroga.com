@@ -15,6 +15,8 @@ import { generateLumaReplicateVideo } from './lumaReplicateVideo.js';
 import { generateRunwayVideo } from './runwayVideo.js';
 import { isKlingConfigured } from './klingAuth.js';
 import { generateKlingVideo } from './klingVideo.js';
+import { generateOviVideo } from './oviVideo.js';
+import { generateSkyReelsVideo } from './piapiVideo.js';
 import type { VideoGenerationResult } from '../videoProviders.js';
 
 const FAST_TIMEOUT_MS = 110_000;
@@ -30,7 +32,11 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
 
 type Racer = { name: string; run: () => Promise<string> };
 
-function buildOssRacers(prompt: string, durationSeconds: number): Racer[] {
+function buildOssRacers(
+  prompt: string,
+  durationSeconds: number,
+  options?: { aspectRatio?: '9:16' | '16:9'; userId?: string }
+): Racer[] {
   const racers: Racer[] = [];
 
   // ── Tier 1: separate OSS hosts (not Replicate quota) ──
@@ -44,7 +50,7 @@ function buildOssRacers(prompt: string, durationSeconds: number): Racer[] {
     racers.push({ name: 'comfyui', run: () => generateComfyUIVideo(prompt, durationSeconds) });
   }
 
-  // ── Tier 2: Replicate OSS models (Hunyuan, Mochi, Wan, CogVideoX, LTX, VideoCrafter, AnimateDiff…) ──
+  // ── Tier 2: Replicate OSS models (all 15 families) ──
   if (hasSecret('REPLICATE_API_TOKEN')) {
     for (const model of REPLICATE_OSS_VIDEO_MODELS) {
       racers.push({
@@ -52,8 +58,25 @@ function buildOssRacers(prompt: string, durationSeconds: number): Racer[] {
         run: () => runOssReplicateModel(model, prompt, durationSeconds),
       });
     }
-    // Replicate MiniMax last among replicate (often needs credits)
     racers.push({ name: 'replicate-minimax', run: () => generateMinimaxReplicateVideo(prompt, durationSeconds) });
+  }
+
+  // ── Tier 3: optional OSS gateways ──
+  if (hasSecret('PIAPI_API_KEY')) {
+    racers.push({
+      name: 'skyreels',
+      run: () =>
+        generateSkyReelsVideo(prompt, {
+          userId: options?.userId,
+          aspectRatio: options?.aspectRatio,
+        }),
+    });
+  }
+  if (hasSecret('FAL_KEY') || hasSecret('REPLICATE_API_TOKEN')) {
+    racers.push({
+      name: 'ovi',
+      run: () => generateOviVideo(prompt, durationSeconds, { userId: options?.userId }),
+    });
   }
 
   return racers;
@@ -110,7 +133,7 @@ export async function raceVideoProviders(
   durationSeconds: number,
   options?: { aspectRatio?: '9:16' | '16:9'; userId?: string }
 ): Promise<VideoGenerationResult | null> {
-  const ossRacers = buildOssRacers(prompt, durationSeconds);
+  const ossRacers = buildOssRacers(prompt, durationSeconds, options);
   const premiumRacers = buildPremiumRacers(prompt, durationSeconds, options?.aspectRatio, options?.userId);
 
   if (ossRacers.length === 0 && premiumRacers.length === 0) return null;
