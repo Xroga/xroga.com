@@ -132,7 +132,7 @@ export function VideoStudioCard({
         message={message}
         step={step}
         mode="video"
-        sublabel="Pick format · Xroga Video Studio"
+        sublabel="Xroga Video Studio"
       />
     );
   }
@@ -200,7 +200,7 @@ export function VideoStudioCard({
           {isSlideshowFallback && (
             <div className="mx-3 mb-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1.5">
               <p className="text-[10px] text-amber-700 dark:text-amber-300">
-                Motion preview from generated still — plays in your browser while OSS engines retry.
+                Motion preview from an AI still — video APIs were unavailable. Add REPLICATE_API_TOKEN or FAL_KEY on Fly.io for full AI video.
               </p>
             </div>
           )}
