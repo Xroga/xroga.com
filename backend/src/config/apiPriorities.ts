@@ -26,15 +26,21 @@ export const VIDEO_PROVIDERS = [
   'deepinfra',
   'agnes',
   'comfyui',
-  // Replicate OSS (Hunyuan, Mochi, Wan, CogVideoX, LTX, VideoCrafter, AnimateDiff, SVD)
+  // Replicate OSS — 15 open-source families
   'replicate-wan',
-  'hunyuan',
-  'mochi',
-  'cogvideox',
+  'zeroscope',
   'ltx-video',
   'videocrafter',
   'animatediff',
-  'zeroscope',
+  'allegro',
+  'kandinsky',
+  'mochi',
+  'cogvideox',
+  'open-sora',
+  'pyramid-flow',
+  'hunyuan',
+  'skyreels',
+  'ovi',
   'replicate-svd',
   'replicate-minimax',
   // Premium / paid — last resort only
@@ -48,6 +54,35 @@ export const VIDEO_PROVIDERS = [
   // Guaranteed motion fallback (always produces playable MP4)
   'slideshow',
 ] as const;
+
+const PREMIUM_VIDEO_PROVIDERS = new Set([
+  'fal',
+  'hailuo',
+  'kling',
+  'luma',
+  'luma-replicate',
+  'runway',
+  'morph',
+]);
+
+/** Merge DB priority with code defaults — OSS models always tried first */
+function mergeVideoPriority(dbList: string[], defaults: readonly string[]): string[] {
+  const oss = defaults.filter((n) => !PREMIUM_VIDEO_PROVIDERS.has(n) && n !== 'slideshow');
+  const premium = defaults.filter((n) => PREMIUM_VIDEO_PROVIDERS.has(n));
+  const merged: string[] = [];
+
+  for (const n of oss) {
+    if (!merged.includes(n)) merged.push(n);
+  }
+  for (const n of dbList) {
+    if (!merged.includes(n) && n !== 'slideshow') merged.push(n);
+  }
+  for (const n of premium) {
+    if (!merged.includes(n)) merged.push(n);
+  }
+  if (!merged.includes('slideshow')) merged.push('slideshow');
+  return merged;
+}
 
 export const VOICE_PROVIDERS = ['elevenlabs', 'cartesia', 'fish-audio', 'google-tts'] as const;
 export const SEARCH_PROVIDERS = ['tavily', 'exa', 'newsapi'] as const;
@@ -85,7 +120,11 @@ export async function getApiPriority(apiType: keyof typeof DEFAULTS | string): P
       .eq('id', configId)
       .maybeSingle();
     if (data?.providers && Array.isArray(data.providers)) {
-      return data.providers as string[];
+      const db = data.providers as string[];
+      if (key === 'video') {
+        return mergeVideoPriority(db, DEFAULTS.video);
+      }
+      return db;
     }
   } catch {
     /* use defaults */

@@ -44,6 +44,22 @@ export async function generateZeroscopeVideo(prompt: string, durationSeconds = 5
   return runOssReplicateModel(modelById('zeroscope'), prompt, durationSeconds);
 }
 
+export async function generateOpenSoraVideo(prompt: string, durationSeconds = 5): Promise<string> {
+  return runOssReplicateModel(modelById('open-sora'), prompt, durationSeconds);
+}
+
+export async function generatePyramidFlowVideo(prompt: string, durationSeconds = 5): Promise<string> {
+  return runOssReplicateModel(modelById('pyramid-flow'), prompt, durationSeconds);
+}
+
+export async function generateAllegroVideo(prompt: string, durationSeconds = 5): Promise<string> {
+  return runOssReplicateModel(modelById('allegro'), prompt, durationSeconds);
+}
+
+export async function generateKandinskyVideo(prompt: string, durationSeconds = 5): Promise<string> {
+  return runOssReplicateModel(modelById('kandinsky'), prompt, durationSeconds);
+}
+
 /** @deprecated alias */
 export async function generateAnimateDiff(prompt: string, durationSeconds = 5): Promise<string> {
   return generateAnimateDiffVideo(prompt, durationSeconds);

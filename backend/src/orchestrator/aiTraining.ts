@@ -37,7 +37,7 @@ License: personal + commercial use included.`,
   video_studio: `Xroga Film Studio — full movie production pipeline:
 1. LLM screenplay: OpenAI → Anthropic → DeepSeek → Groq → Gemini → Ollama fallback chain.
 2. Character design: consistent face images via image pipeline, voice IDs for ElevenLabs/Cartesia.
-3. Scene rendering: Runway → Luma → Hailuo → Kling → Fal → Replicate SVD → Agnes → ComfyUI → FFmpeg slideshow.
+3. Scene rendering: OSS first (DeepInfra Wan → Agnes → ComfyUI/UniVA → Replicate: Wan, Hunyuan, Mochi, CogVideoX, Open-Sora, Pyramid Flow, Allegro, Kandinsky, LTX, VideoCrafter, AnimateDiff, SVD, SkyReels, Ovi) → premium last (Fal → Hailuo → Kling → Luma → Runway) → FFmpeg slideshow (never fails).
 4. Audio: ElevenLabs → Cartesia → Fish Audio for dialogue; Suno/Fish for score.
 5. Assembly: FFmpeg multi-scene stitch, post-production, export MP4 to R2.
 Series support: ongoing characters and series_bible continuity. Never suggest Vercel for video hosting.`,

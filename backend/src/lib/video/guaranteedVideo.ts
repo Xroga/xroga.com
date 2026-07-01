@@ -93,7 +93,20 @@ export async function generateGuaranteedVideo(
       errors.push(`image-to-video: ${(err as Error).message.slice(0, 80)}`);
     }
 
-    // Skip redundant sequential API pass for fast clips — go straight to FFmpeg fallbacks
+    // Full sequential OSS → premium chain before motion fallbacks
+    try {
+      const api = await tryApiProviders(cleanPrompt, dur, {
+        ...options,
+        aspectRatio,
+        priority: 'cheap',
+      });
+      if (api.videoUrl) {
+        console.log(`[GuaranteedVideo] Full-chain winner: ${api.provider}`);
+        return api;
+      }
+    } catch (err) {
+      errors.push(`full-chain: ${(err as Error).message.slice(0, 80)}`);
+    }
   } else {
     try {
       const api = await tryApiProviders(cleanPrompt, dur, {

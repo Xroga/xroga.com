@@ -147,6 +147,22 @@ app.get('/api/health/omni-reality', async (_req, res) => {
   }
 });
 
+app.get('/api/health/oss-video-catalog', async (_req, res) => {
+  try {
+    const { OPEN_SOURCE_VIDEO_CATALOG } = await import('./lib/video/openSourceVideoCatalog.js');
+    const { getVideoProviderStatus } = await import('./lib/videoProviders.js');
+    const status = getVideoProviderStatus();
+    res.json({
+      catalog: OPEN_SOURCE_VIDEO_CATALOG,
+      configured: status.configured,
+      ready: status.ready,
+      keys: status.keys,
+    });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
 app.get('/api/health/smoke-video', async (_req, res) => {
   try {
     const { smokeTestVideoGeneration } = await import('./lib/videoProviders.js');

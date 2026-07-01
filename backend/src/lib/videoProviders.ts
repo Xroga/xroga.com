@@ -21,7 +21,13 @@ import {
   generateLtxVideo,
   generateVideoCrafter,
   generateAnimateDiffVideo,
+  generateOpenSoraVideo,
+  generatePyramidFlowVideo,
+  generateAllegroVideo,
+  generateKandinskyVideo,
 } from './video/replicateOssVideo.js';
+import { generateOviVideo } from './video/oviVideo.js';
+import { generateSkyReelsVideo } from './video/piapiVideo.js';
 import { generateComfyUIVideo } from './video/comfyuiVideo.js';
 import { generateDeepInfraVideo } from './video/deepinfraVideo.js';
 import { generateLumaReplicateVideo } from './video/lumaReplicateVideo.js';
@@ -48,6 +54,12 @@ export type VideoProviderName =
   | 'deepinfra'
   | 'luma-replicate'
   | 'cogvideox'
+  | 'open-sora'
+  | 'pyramid-flow'
+  | 'allegro'
+  | 'kandinsky'
+  | 'skyreels'
+  | 'ovi'
   | 'hunyuan'
   | 'mochi'
   | 'ltx-video'
@@ -160,19 +172,9 @@ function buildVideoProviders(): ProviderEntry[] {
       call: (prompt, duration) => generateWanReplicateVideo(prompt, duration),
     },
     {
-      name: 'hunyuan',
+      name: 'zeroscope',
       configured: rep,
-      call: (prompt, duration) => generateHunyuanVideo(prompt, duration),
-    },
-    {
-      name: 'mochi',
-      configured: rep,
-      call: (prompt, duration) => generateMochiVideo(prompt, duration),
-    },
-    {
-      name: 'cogvideox',
-      configured: rep,
-      call: (prompt, duration) => generateCogVideoX(prompt, duration),
+      call: (prompt, duration) => generateZeroscopeVideo(prompt, duration),
     },
     {
       name: 'ltx-video',
@@ -190,9 +192,54 @@ function buildVideoProviders(): ProviderEntry[] {
       call: (prompt, duration) => generateAnimateDiffVideo(prompt, duration),
     },
     {
-      name: 'zeroscope',
+      name: 'allegro',
       configured: rep,
-      call: (prompt, duration) => generateZeroscopeVideo(prompt, duration),
+      call: (prompt, duration) => generateAllegroVideo(prompt, duration),
+    },
+    {
+      name: 'kandinsky',
+      configured: rep,
+      call: (prompt, duration) => generateKandinskyVideo(prompt, duration),
+    },
+    {
+      name: 'mochi',
+      configured: rep,
+      call: (prompt, duration) => generateMochiVideo(prompt, duration),
+    },
+    {
+      name: 'cogvideox',
+      configured: rep,
+      call: (prompt, duration) => generateCogVideoX(prompt, duration),
+    },
+    {
+      name: 'open-sora',
+      configured: rep,
+      call: (prompt, duration) => generateOpenSoraVideo(prompt, duration),
+    },
+    {
+      name: 'pyramid-flow',
+      configured: rep,
+      call: (prompt, duration) => generatePyramidFlowVideo(prompt, duration),
+    },
+    {
+      name: 'hunyuan',
+      configured: rep,
+      call: (prompt, duration) => generateHunyuanVideo(prompt, duration),
+    },
+    {
+      name: 'skyreels',
+      configured: hasSecret('PIAPI_API_KEY'),
+      call: (prompt, duration, opts) =>
+        generateSkyReelsVideo(prompt, {
+          userId: opts?.userId,
+          aspectRatio: opts?.aspectRatio,
+        }),
+    },
+    {
+      name: 'ovi',
+      configured: hasSecret('FAL_KEY') || rep,
+      call: (prompt, duration, opts) =>
+        generateOviVideo(prompt, duration, { userId: opts?.userId }),
     },
     {
       name: 'replicate-svd',
@@ -296,8 +343,9 @@ export async function generateVideoWithFallback(
   const premiumSet = new Set(['runway', 'luma', 'fal', 'hailuo', 'kling', 'luma-replicate', 'morph']);
   const cheapSet = new Set([
     'deepinfra', 'agnes', 'comfyui',
-    'replicate-wan', 'hunyuan', 'mochi', 'cogvideox', 'ltx-video', 'videocrafter',
-    'animatediff', 'zeroscope', 'replicate-svd', 'replicate-minimax',
+    'replicate-wan', 'zeroscope', 'ltx-video', 'videocrafter', 'animatediff',
+    'allegro', 'kandinsky', 'mochi', 'cogvideox', 'open-sora', 'pyramid-flow',
+    'hunyuan', 'skyreels', 'ovi', 'replicate-svd', 'replicate-minimax',
   ]);
 
   let orderedNames = priorityList.filter((name) => providerMap.has(name as VideoProviderName));
@@ -397,8 +445,9 @@ export async function smokeTestVideoGeneration(): Promise<{
   const chain = await buildVideoProvidersAsync();
   const ossOrder = [
     'deepinfra', 'agnes', 'comfyui',
-    'replicate-wan', 'hunyuan', 'mochi', 'cogvideox', 'ltx-video', 'videocrafter',
-    'animatediff', 'zeroscope', 'replicate-svd', 'replicate-minimax',
+    'replicate-wan', 'zeroscope', 'ltx-video', 'videocrafter', 'animatediff',
+    'allegro', 'kandinsky', 'mochi', 'cogvideox', 'open-sora', 'pyramid-flow',
+    'hunyuan', 'skyreels', 'ovi', 'replicate-svd', 'replicate-minimax',
   ] as const;
   const configured = chain.filter((p) => p.configured && p.name !== 'slideshow');
   const ordered = [

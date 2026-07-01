@@ -50,21 +50,37 @@ interface VideoStudioCardProps {
 
 function providerLabel(id?: string): string {
   const labels: Record<string, string> = {
-    deepinfra: 'DeepInfra OSS',
+    deepinfra: 'DeepInfra OSS (Wan/Pruna)',
     agnes: 'Agnes Video',
-    comfyui: 'ComfyUI',
-    'replicate-wan': 'Wan 2.2',
-    hunyuan: 'HunyuanVideo',
-    mochi: 'Mochi 1',
-    cogvideox: 'CogVideoX',
-    'ltx-video': 'LTX Video',
-    videocrafter: 'VideoCrafter',
+    comfyui: 'ComfyUI / UniVA',
+    'replicate-wan': 'Wan 2.2 (Alibaba)',
+    hunyuan: 'HunyuanVideo (Tencent)',
+    mochi: 'Mochi 1 (Genmo)',
+    cogvideox: 'CogVideoX (THUDM)',
+    'open-sora': 'Open-Sora',
+    'pyramid-flow': 'Pyramid Flow',
+    allegro: 'Allegro (RhymesAI)',
+    kandinsky: 'Kandinsky Video',
+    skyreels: 'SkyReels V1',
+    ovi: 'Ovi (video+audio)',
+    'ltx-video': 'LTX Video (Lightricks)',
+    videocrafter: 'VideoCrafter (ModelScope)',
     animatediff: 'AnimateDiff',
     zeroscope: 'Zeroscope',
     'replicate-svd': 'Stable Video Diffusion',
     'replicate-minimax': 'MiniMax',
+    fal: 'Fal.ai',
+    hailuo: 'Hailuo / MiniMax',
+    kling: 'Kling AI',
+    luma: 'Luma Dream Machine',
+    'luma-replicate': 'Luma (Replicate)',
+    runway: 'Runway Gen-4',
+    morph: 'Morph Studio',
     'slideshow-ai-image': 'Motion preview',
     slideshow: 'Motion preview',
+    parallax: 'Motion preview',
+    'ffmpeg-minimal': 'Motion preview',
+    'static-mp4': 'Motion preview',
   };
   return labels[id ?? ''] ?? id ?? 'AI Video';
 }
@@ -73,6 +89,7 @@ function isOssProvider(id?: string): boolean {
   if (!id) return false;
   return [
     'deepinfra', 'agnes', 'comfyui', 'replicate-wan', 'hunyuan', 'mochi', 'cogvideox',
+    'open-sora', 'pyramid-flow', 'allegro', 'kandinsky', 'skyreels', 'ovi',
     'ltx-video', 'videocrafter', 'animatediff', 'zeroscope', 'replicate-svd', 'replicate-minimax',
   ].includes(id);
 }
