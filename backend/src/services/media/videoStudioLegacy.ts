@@ -11,6 +11,7 @@ import { renderSceneWithHealing, buildAspectSuffix } from '../omniReality/swarmM
 import { generateSceneAudio } from '../../lib/audioProviders.js';
 
 import { sanitizeVideoPrompt } from '../../lib/video/videoPrompt.js';
+import { enhanceVideoPrompt, buildGenerationPrompt } from '../../lib/video/videoPromptEnhancer.js';
 
 export { parseVideoDuration, computeVideoActionCost };
 
@@ -93,10 +94,18 @@ export async function produceSingleSceneVideo(
   const aspectSuffix = buildAspectSuffix(prompt);
   const dialogue = scene?.dialogue ?? plan.scenes[0]?.dialogue ?? '';
 
+  options?.onProgress?.('rendering', 'Locking subjects & enhancing prompt…');
+  const promptLock = await enhanceVideoPrompt(prompt);
+  const generationPrompt = `${buildGenerationPrompt(promptLock)}. ${aspectSuffix}`;
+
   options?.onProgress?.('rendering', 'Omni-Reality swarm rendering…');
 
   const video = await renderSceneWithHealing({
-    prompt: `${enhancedPrompt}. ${aspectSuffix}`,
+    prompt: generationPrompt,
+    userIntent: promptLock.userIntent,
+    negativePrompt: promptLock.negativePrompt,
+    lockedSubjects: promptLock.lockedSubjects,
+    mustNotInclude: promptLock.mustNotInclude,
     durationSeconds: scene?.durationSeconds ?? durationSeconds,
     scenePriority: scene?.priority ?? 'critical',
     userId,

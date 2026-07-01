@@ -42,6 +42,11 @@ function omniEmit(
 
 export interface RenderSceneOptions {
   prompt: string;
+  /** Original user intent before enhancement — used for alignment QC */
+  userIntent?: string;
+  negativePrompt?: string;
+  lockedSubjects?: string[];
+  mustNotInclude?: string[];
   durationSeconds: number;
   scenePriority?: 'critical' | 'low' | string;
   keyframeUrl?: string;
@@ -57,7 +62,9 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
   const healingSteps: string[] = [];
   const priority = allocateRenderTier(options.scenePriority ?? 'low');
   const isVertical = options.aspectRatio === '9:16' || parseVideoFormat(options.prompt) === 'shorts_reels';
+  const userIntent = options.userIntent ?? options.prompt;
   let currentPrompt = options.prompt;
+  let negativePrompt = options.negativePrompt ?? '';
 
   const baseOpts: GuaranteedVideoOptions = {
     userId: options.userId,
@@ -108,7 +115,12 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
     }
 
     try {
-      const result = await generateGuaranteedVideo(currentPrompt, options.durationSeconds, baseOpts);
+      const genPrompt =
+        negativePrompt && !currentPrompt.includes('Avoid:')
+          ? `${currentPrompt}. Avoid: ${negativePrompt}`
+          : currentPrompt;
+
+      const result = await generateGuaranteedVideo(genPrompt, options.durationSeconds, baseOpts);
       if (!FALLBACK_PROVIDERS.has(result.provider)) {
         recordVaultUsage(result.provider);
       }
@@ -132,28 +144,23 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
         };
       }
 
-      if (OSS_VIDEO_PROVIDERS.has(result.provider) && options.durationSeconds <= 15) {
-        healingSteps.push('oss-open-source-video');
-        return {
-          ...result,
-          healingSteps,
-          qcScore: 75,
-          reviewScores: { physics: 75, lighting: 75, consistency: 75 },
-        };
-      }
-
-      omniEmit(options, 'qc_inspect', 'QC shield inspecting frames…');
+      omniEmit(options, 'qc_inspect', 'QC shield — verifying subject matches your prompt…');
 
       const qc = await runQCInspection({
         videoUrl: result.videoUrl,
         prompt: currentPrompt,
+        userIntent,
+        lockedSubjects: options.lockedSubjects,
+        mustNotInclude: options.mustNotInclude,
         provider: result.provider,
         keyframeUrl: options.keyframeUrl,
         referenceFaceUrl: options.referenceFaceUrl,
       });
 
-      if (qc.passed || FALLBACK_PROVIDERS.has(result.provider)) {
-        healingSteps.push(ladder === 0 ? 'first-pass' : `ladder-${ladder}`);
+      if (qc.passed) {
+        healingSteps.push(
+          OSS_VIDEO_PROVIDERS.has(result.provider) ? 'oss-open-source-video' : ladder === 0 ? 'first-pass' : `ladder-${ladder}`
+        );
         omniEmit(options, 'qc_inspect', `QC passed · score ${qc.score}`, { provider: result.provider });
         return {
           ...result,
@@ -165,8 +172,12 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
 
       if (ladder === 0 && qc.issues.length > 0) {
         healingSteps.push('groq-patch');
-        const patch = await groqReflexPatch(currentPrompt, qc.issues);
-        currentPrompt = `${patch.correctedPrompt}. Avoid: ${patch.negativePrompt}`;
+        const patch = await groqReflexPatch(
+          `${currentPrompt}\nUser intent lock: ${userIntent}`,
+          qc.issues
+        );
+        currentPrompt = `${patch.correctedPrompt}. SUBJECT LOCK: ${(options.lockedSubjects ?? []).join(', ')}. Avoid: ${patch.negativePrompt}`;
+        negativePrompt = `${negativePrompt}, ${patch.negativePrompt}`.replace(/^,\s*/, '');
         continue;
       }
 
