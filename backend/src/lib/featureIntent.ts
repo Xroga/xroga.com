@@ -1,4 +1,5 @@
 import type { FeatureCategory } from '../types/features.js';
+import { routingPrompt } from './promptRouting.js';
 
 /** Strong intent detection — never route these through text-only chat */
 
@@ -32,7 +33,7 @@ const INTENT_RULES: Array<{ category: FeatureCategory; test: RegExp }> = [
 ];
 
 export function detectFeatureIntent(prompt: string): FeatureCategory | 'chat' {
-  const t = prompt.trim();
+  const t = routingPrompt(prompt).trim();
   if (!t) return 'chat';
   for (const { category, test } of INTENT_RULES) {
     if (test.test(t)) return category;

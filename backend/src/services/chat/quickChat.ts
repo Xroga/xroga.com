@@ -4,15 +4,17 @@ import { classifyFeature } from '../architect/featureRouter.js';
 import { loadMasterPrompt } from '../../orchestrator/masterPrompt.js';
 import { buildFullSystemPrompt } from '../../orchestrator/aiTraining.js';
 import { isTrivialPrompt } from '../../lib/promptClassifier.js';
+import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
 
 const CHAT_SYSTEM = `You are Xroga AI. Follow all training rules. Be natural and direct.`;
 
 export async function quickChat(prompt: string): Promise<string> {
-  const lower = prompt.toLowerCase().trim();
+  const userText = routingPrompt(prompt);
+  const lower = userText.toLowerCase().trim();
 
-  if (isTrivialPrompt(prompt)) {
+  if (isTrivialPrompt(userText)) {
     if (/^(thanks|thank\s*you|thx)\b/.test(lower)) {
       return "You're welcome! Let me know if you need anything else.";
     }
@@ -30,10 +32,10 @@ export async function quickChat(prompt: string): Promise<string> {
   }
 
   // Safety net: feature intents must use real APIs, never text-only LLM
-  const intentCategory = detectFeatureIntent(prompt);
+  const intentCategory = detectFeatureIntent(userText);
   if (intentCategory !== 'chat') {
     try {
-      const output = await executeFeature(intentCategory, prompt);
+      const output = await executeFeature(intentCategory, userText);
       return formatFeatureOutput(output);
     } catch (err) {
       console.error(`[quickChat] Feature ${intentCategory} failed:`, (err as Error).message);
@@ -42,12 +44,12 @@ export async function quickChat(prompt: string): Promise<string> {
   }
 
   const master = await loadMasterPrompt().catch(() => CHAT_SYSTEM);
-  const route = await classifyFeature(prompt).catch(() => ({ category: 'chat' as const }));
-  const category = resolveFeatureCategory(prompt, route.category);
+  const route = await classifyFeature(userText).catch(() => ({ category: 'chat' as const }));
+  const category = resolveFeatureCategory(userText, route.category);
 
   if (category !== 'chat') {
     try {
-      const output = await executeFeature(category, prompt);
+      const output = await executeFeature(category, userText);
       return formatFeatureOutput(output);
     } catch (err) {
       console.error(`[quickChat] Classified ${category} failed:`, (err as Error).message);
@@ -55,9 +57,9 @@ export async function quickChat(prompt: string): Promise<string> {
     }
   }
 
-  const creationPrompt = buildFullSystemPrompt(category, prompt);
-  const complexity = classifyComplexity(prompt, route.category);
-  const { text } = await builderGenerate(prompt, complexity, `${master}\n\n${creationPrompt}\n\n${CHAT_SYSTEM}`);
+  const creationPrompt = buildFullSystemPrompt(category, userText);
+  const complexity = classifyComplexity(userText, route.category);
+  const { text } = await builderGenerate(userText, complexity, `${master}\n\n${creationPrompt}\n\n${CHAT_SYSTEM}`);
   return text?.trim() || "I'm here — tell me what you'd like to work on.";
 }
 

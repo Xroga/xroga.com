@@ -24,6 +24,7 @@ SAFETY — set blockedForSafety=true if the image contains ANY of:
 When in doubt about modesty or explicit content, set blockedForSafety=true.
 
 Also flag: wrong flags, wrong person identity, cartoon when photorealism requested, religious figure depictions.
+ANATOMY — score below 60 if: extra fingers, extra hands, extra feet, missing limbs, fused limbs, malformed anatomy, duplicated body parts.
 
 For NATIONAL FLAGS: score below 72 if wrong country, wrong colors, or wrong symbols.
 Pakistan flag must be green field with white vertical stripe at hoist, white crescent and star.

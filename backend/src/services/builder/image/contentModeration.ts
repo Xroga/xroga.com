@@ -10,7 +10,11 @@ const ADULTERY_PATTERNS =
   /\b(adult(ery|erous)?|zina|fornicat|cheating (wife|husband|spouse)|affair with|mistress|lover in bed|illicit (relation|relationship)|haram (relation|relationship)|shameful (act|deed)|immoral (act|scene)|sinful (couple|scene))\b/i;
 
 const SUGGESTIVE_PATTERNS =
-  /\b(swimsuit|bikini|lingerie|underwear|bra\b|panties|thong|cleavage|see-?through|sheer outfit|micro bikini|wet t-?shirt|no clothes|without clothes|in bed|seductive|provocative|sensual pose|hot girl|sexy girl|sexy woman|tight dress|tight clothes|tight outfit|revealing outfit|skimpy|barely dressed|boobs|breasts exposed|ass exposed|butt naked|kissing passionately|making out|intimate couple|bedroom scene)\b/i;
+  /\b(swimsuit|bikini|lingerie|underwear|bra\b|panties|thong|cleavage|see-?through|sheer outfit|micro bikini|wet t-?shirt|no clothes|without clothes|in bed|seductive|provocative|sensual pose|hot girl|sexy girl|sexy woman|tight dress|tight clothes|tight outfit|revealing outfit|skimpy|barely dressed|boobs|breasts exposed|ass exposed|butt naked|kissing passionately|making out|intimate couple|bedroom scene|miniskirt|mini skirt|short skirt|schoolgirl|waifu|anime girl|anime woman|magical girl|catgirl|bunny girl|maid outfit|crop top|midriff|bare legs|bare thighs|thigh gap|low cut|deep neckline|exposed chest|large breasts|big boobs|voluptuous|curvy body|pin-?up|ecchi|hentai girl|fanservice)\b/i;
+
+/** Female anime/character requests that often produce immodest output — require family-safe redirect */
+const ANIME_FEMALE_CHARACTER =
+  /\b(anime\s+(girl|woman|female|lady)|waifu|schoolgirl|magical\s+girl|cat\s*girl|bunny\s+girl|girl\s+in\s+(skirt|dress|uniform)|woman\s+in\s+(skirt|dress|uniform)|female\s+anime\s+character)\b/i;
 
 const PROPHET_GOD_PATTERNS =
   /\b(prophet\s+muhammad|muhammad\s+s\.?a\.?w|mohammed\s+s\.?a\.?w|depict(ion|ing)?\s+of\s+(the\s+)?prophet|image\s+of\s+(the\s+)?prophet|picture\s+of\s+(the\s+)?prophet|draw\s+(the\s+)?prophet|prophet\s+isa\b|prophet\s+musa\b|god\s+face|face\s+of\s+god|depict(ion|ing)?\s+of\s+god|allah\s+face|jesus\s+portrait|christ\s+portrait|religious\s+figure\s+depiction)\b/i;
@@ -45,6 +49,15 @@ export function moderateImagePrompt(prompt: string): ModerationResult {
     };
   }
 
+  if (ANIME_FEMALE_CHARACTER.test(text)) {
+    return {
+      allowed: false,
+      blockedCategory: 'suggestive',
+      reason:
+        'Xroga does not generate anime girls, waifu, schoolgirl, or other female character images that may be immodest. Try: anime landscape, mecha, Ben 10 aliens, cartoon action scene, or a modest professional portrait instead.',
+    };
+  }
+
   if (PROPHET_GOD_PATTERNS.test(text) || RELIGIOUS_NAME_ONLY.test(text)) {
     return {
       allowed: false,
@@ -67,8 +80,18 @@ export function moderateImagePrompt(prompt: string): ModerationResult {
 
 function enhanceSafePrompt(prompt: string): string {
   const lower = prompt.toLowerCase();
+  const anatomySuffix =
+    'Correct human anatomy, exactly two hands with five fingers each, exactly two feet, no extra limbs, no duplicated body parts, no deformities';
   const safeSuffix =
-    'Family-safe, modest professional attire, fully clothed, no nudity, no swimwear, no lingerie, no suggestive poses, photorealistic, natural lighting';
+    `Family-safe, modest professional attire, fully clothed, no nudity, no swimwear, no lingerie, no suggestive poses, photorealistic, natural lighting. ${anatomySuffix}`;
+
+  if (/\bben\s*10\b|\bomnitrix\b|\bheatblast\b|\bfour\s*arms\b|\bdiamondhead\b|\bwildmutt\b|\bxlr8\b|\bgrey\s*matter\b|\bupgrade\b|\bghostfreak\b|\bripjaws\b|\bstinkfly\b/i.test(prompt)) {
+    return `${prompt}. Cartoon Network Ben 10 animation style, accurate Ben 10 character or Omnitrix alien design, vibrant cel-shaded colors, dynamic action pose, family-friendly adventure scene, clean linework. ${safeSuffix}`;
+  }
+
+  if (/\banime\b/i.test(prompt) && !/\b(girl|woman|female|waifu|schoolgirl|skirt|bikini)\b/i.test(prompt)) {
+    return `${prompt}. High-quality anime art style, Studio Ghibli / modern anime aesthetic, detailed backgrounds, family-safe, no suggestive content, landscape or character in modest full clothing. ${anatomySuffix}`;
+  }
 
   const pakistaniLeaders = ['shahbaz sharif', 'shabaz sharif', 'shehbaz sharif', 'imran khan', 'asif ali zardari'];
   for (const name of pakistaniLeaders) {

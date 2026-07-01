@@ -9,6 +9,7 @@ import type { SwarmRunResult } from '../services/SwarmService.js';
 import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../types/features.js';
 import type { SwarmCoreAgent, SwarmPlan, SwarmResult } from '../types/index.js';
 import { shouldUseFastChat, isTrivialPrompt, requiresFeaturePipeline } from '../lib/promptClassifier.js';
+import { routingPrompt } from '../lib/promptRouting.js';
 import { formatFeatureOutput, stripFakeImageMarkdown } from '../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../services/featureExecutor.js';
 import { getImageProviderStatus } from '../services/builder/imageGen.js';
@@ -71,10 +72,13 @@ export class Orchestrator {
     },
     category: FeatureCategory = 'chat'
   ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[] }> {
-    ctx.onProgress?.(progressEvent('builder', 'thinking', 'Thinking…'));
+    const userText = routingPrompt(ctx.prompt);
+    if (!isTrivialPrompt(userText)) {
+      ctx.onProgress?.(progressEvent('builder', 'thinking', 'Thinking…'));
+    }
 
     const { quickChat } = await import('../services/chat/quickChat.js');
-    const reply = await quickChat(ctx.prompt);
+    const reply = await quickChat(userText);
     const shield = await runThreeLayerShield({
       content: reply,
       prompt: ctx.prompt,
@@ -246,11 +250,12 @@ export class Orchestrator {
   ): Promise<SwarmRunResult & { polishedReply: string; followUps?: string[]; reasoning?: string; queued?: boolean; fast?: boolean }> {
     await loadMasterPrompt();
 
+    const userText = routingPrompt(ctx.prompt);
     const hasImageAttachment = ctx.attachments?.some(
       (a) => a.mimeType?.startsWith('image/') || /\.(png|jpe?g|webp|gif)(\?|$)/i.test(a.url) || a.url.startsWith('data:image/')
     );
 
-    const route = await classifyFeature(ctx.prompt).catch(() => ({
+    const route = await classifyFeature(userText).catch(() => ({
       category: 'chat' as FeatureCategory,
       taskType: 'chat' as const,
       actionCost: 1,
@@ -258,12 +263,13 @@ export class Orchestrator {
       reasoning: 'fallback',
     }));
 
-    const featureCategory = hasImageAttachment
-      ? 'image_generation'
-      : resolveFeatureCategory(ctx.prompt, route.category);
+    const featureCategory =
+      hasImageAttachment && !isTrivialPrompt(userText)
+        ? 'image_generation'
+        : resolveFeatureCategory(userText, route.category);
 
     // Fast chat: greetings & simple conversation — no swarm, no architect spam
-    if (shouldUseFastChat(ctx.prompt, featureCategory)) {
+    if (shouldUseFastChat(userText, featureCategory)) {
       return this.executeFastChat(ctx, featureCategory);
     }
 
