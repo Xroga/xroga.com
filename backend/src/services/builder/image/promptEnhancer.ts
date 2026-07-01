@@ -2,6 +2,7 @@ import { deepSeekChat } from '../../../lib/deepseek.js';
 import { groqChat } from '../../../lib/groq.js';
 import { geminiGenerate } from '../../../lib/gemini.js';
 import type { ImageQueryIntent } from './understanding.js';
+import { literalDirective } from './promptLiteralConstraints.js';
 import { styleVibePromptSuffix, contentTypePromptSuffix, type ImageStyleVibe, type ImageContentType } from './imageIntent.js';
 
 export interface EnhancedImagePrompt {
@@ -15,6 +16,8 @@ const NEGATIVE_DEFAULT =
 
 const ENHANCE_SYSTEM = `You are an expert image prompt engineer. Given structured intent JSON, output ONE detailed image generation prompt (60-150 words).
 Include: subject, action, environment, lighting, composition, camera angle, art style, quality tags.
+CRITICAL: Preserve EVERY color, character name, and style adjective from the user's ORIGINAL request verbatim.
+If user says gray super saiyan, hair MUST be gray/silver NOT golden. If user says Tom and Jerry, subject MUST be Tom and Jerry NOT any other character.
 Match the styleVibe (3d, pixel, minecraft, cartoon, anime, logo, photorealistic) and contentType (thumbnail, logo, avatar, og, story).
 REQUIREMENTS: family-safe, modest clothing, correct anatomy (two hands, two feet, five fingers each), photorealistic when requested, no suggestive content.
 Do NOT wrap in quotes. Do NOT use markdown. Output only the prompt text.`;
@@ -50,7 +53,7 @@ async function enhanceWithDeepSeek(intent: ImageQueryIntent): Promise<string> {
   return deepSeekChat(
     [
       { role: 'system', content: ENHANCE_SYSTEM },
-      { role: 'user', content: buildIntentPayload(intent) },
+      { role: 'user', content: `${literalDirective(intent.rawQuery)}\n\n${buildIntentPayload(intent)}` },
     ],
     { model: 'deepseek-chat', maxTokens: 512 }
   );
@@ -60,14 +63,14 @@ async function enhanceWithGroq(intent: ImageQueryIntent): Promise<string> {
   return groqChat(
     [
       { role: 'system', content: ENHANCE_SYSTEM },
-      { role: 'user', content: buildIntentPayload(intent) },
+      { role: 'user', content: `${literalDirective(intent.rawQuery)}\n\n${buildIntentPayload(intent)}` },
     ],
     { maxTokens: 512 }
   );
 }
 
 async function enhanceWithGeminiFlash(intent: ImageQueryIntent): Promise<string> {
-  return geminiGenerate(ENHANCE_SYSTEM, buildIntentPayload(intent), {
+  return geminiGenerate(ENHANCE_SYSTEM, `${literalDirective(intent.rawQuery)}\n\n${buildIntentPayload(intent)}`, {
     model: 'gemini-2.0-flash',
     maxTokens: 512,
   });
@@ -123,7 +126,8 @@ export async function enhanceImagePrompt(intent: ImageQueryIntent): Promise<Enha
 }
 
 const MULTI_SLOT_SYSTEM = `You are an expert image prompt engineer. Given a base image intent, output exactly 4 DIFFERENT prompts as JSON array.
-Each prompt must vary: camera angle, lighting, composition, and artistic vibe. All must be family-safe and modest.
+Each prompt must vary: camera angle, lighting, composition, and artistic vibe.
+CRITICAL: Every prompt MUST keep the EXACT same subject, character names, and colors from the user's original request. Do NOT substitute characters.
 Format: ["prompt1","prompt2","prompt3","prompt4"] — no markdown, no extra text.`;
 
 /** Build unique per-provider prompts so each variant looks different. */

@@ -36,6 +36,7 @@ export function MediaGenerationCard({
   const safeIndex = Math.min(activeIndex, variants.length - 1);
   const activeUrl = variants[safeIndex] ?? group.item.url;
   const count = variants.length;
+  const gridVariants = variants.filter((url) => url !== activeUrl);
 
   function goPrev() {
     setActiveIndex((i) => (i <= 0 ? count - 1 : i - 1));
@@ -150,7 +151,7 @@ export function MediaGenerationCard({
           </div>
         </div>
 
-        {count > 1 && (
+        {gridVariants.length > 0 && (
           <div>
             <p className="text-[9px] font-medium uppercase tracking-wide text-[var(--muted)] mb-1.5 px-0.5">
               Other variants
@@ -158,22 +159,22 @@ export function MediaGenerationCard({
             <div
               className={cn(
                 'grid gap-2',
-                count === 2 && 'grid-cols-2',
-                count === 3 && 'grid-cols-3',
-                count >= 4 && 'grid-cols-4',
+                gridVariants.length === 1 && 'grid-cols-1',
+                gridVariants.length === 2 && 'grid-cols-2',
+                gridVariants.length === 3 && 'grid-cols-3',
+                gridVariants.length >= 4 && 'grid-cols-4',
               )}
             >
-              {variants.map((url, i) => (
+              {gridVariants.map((url, i) => {
+                const origIndex = variants.indexOf(url);
+                return (
                 <div
                   key={`${url.slice(-24)}-${i}`}
-                  className={cn(
-                    'group relative aspect-square rounded-lg overflow-hidden border bg-[var(--muted)]/8',
-                    i === safeIndex ? 'border-[var(--accent)] ring-1 ring-[var(--accent)]/40' : 'border-[var(--card-border)]',
-                  )}
+                  className="group relative aspect-square rounded-lg overflow-hidden border border-[var(--card-border)] bg-[var(--muted)]/8"
                 >
                   <button
                     type="button"
-                    onClick={() => setActiveIndex(i)}
+                    onClick={() => setActiveIndex(origIndex >= 0 ? origIndex : i)}
                     className="absolute inset-0 flex items-center justify-center p-0.5"
                     aria-label={`Select variant ${i + 1}`}
                   >
@@ -185,7 +186,7 @@ export function MediaGenerationCard({
                     <GridIcon icon={Copy} label="Copy" onClick={() => void handleCopy(url)} />
                   </div>
                 </div>
-              ))}
+              );})}
             </div>
           </div>
         )}

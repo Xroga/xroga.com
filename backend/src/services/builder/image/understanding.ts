@@ -21,7 +21,9 @@ Rules:
 - aspectFormat: thumbnail/og/banner/youtube=16:9, story/tiktok/mobile=9:16, logo/avatar=1:1, instagram post=1:1 or 4:5.
 - contentType: detect logo, avatar, thumbnail, og, story, banner, wallpaper, post from user words.
 - styleVibe: detect 3d, pixel, minecraft, cartoon, anime, logo, photorealistic from user words.
-- Keep subject under 12 words.`;
+- Keep subject under 12 words. Preserve exact character names and color words (gray, golden, etc.) from user text.
+- colorModifiers: list every color the user specified.
+- Do NOT substitute a different character than the user named.`;
 
 function parseIntentJson(raw: string, query: string): ImageQueryIntent {
   const cleaned = raw.replace(/```json?\s*|\s*```/g, '').trim();
