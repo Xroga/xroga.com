@@ -18,7 +18,7 @@ import toast from 'react-hot-toast';
 interface MediaGenerationCardProps {
   group: MediaGenerationGroup;
   selected?: boolean;
-  onOpenExisting: () => void;
+  onOpenOldTerminal: () => void;
   onOpenNewTerminal: () => void;
   onDelete: () => void;
   onDeleteVariant?: (url: string) => void;
@@ -27,7 +27,7 @@ interface MediaGenerationCardProps {
 export function MediaGenerationCard({
   group,
   selected,
-  onOpenExisting,
+  onOpenOldTerminal,
   onOpenNewTerminal,
   onDelete,
 }: MediaGenerationCardProps) {
@@ -76,15 +76,15 @@ export function MediaGenerationCard({
           </p>
         </div>
         <div className="flex flex-wrap gap-1.5 shrink-0">
-          <button
-            type="button"
-            onClick={onOpenExisting}
-            className="text-[10px] px-2.5 py-1.5 rounded-lg border border-[var(--card-border)] bg-[var(--card)]/60 hover:border-[var(--accent)]/40 flex items-center gap-1"
-            title="Open in existing terminal — full thread where this was created"
-          >
-            <Terminal className="h-3 w-3 text-[var(--accent)]" />
-            Existing terminal
-          </button>
+            <button
+              type="button"
+              onClick={onOpenOldTerminal}
+              className="text-[10px] px-2.5 py-1.5 rounded-lg border border-[var(--card-border)] bg-[var(--card)]/60 hover:border-[var(--accent)]/40 flex items-center gap-1"
+              title="Old terminal — jump to exact spot where this image was first created"
+            >
+              <Terminal className="h-3 w-3 text-[var(--accent)]" />
+              Old terminal
+            </button>
           <button
             type="button"
             onClick={onOpenNewTerminal}

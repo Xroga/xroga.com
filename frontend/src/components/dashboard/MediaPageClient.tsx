@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { Image as ImageIcon, Upload, Terminal, Sparkles, History } from 'lucide-react';
+import { Image as ImageIcon, Upload, Terminal, Sparkles } from 'lucide-react';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { MediaGenerationCard } from '@/components/dashboard/MediaGenerationCard';
@@ -12,11 +12,12 @@ import {
   removeMediaByUrl,
   removeMediaByMessageId,
   purgeMediaUrls,
+  MEDIA_UPDATED_EVENT,
   type MediaItem,
 } from '@/lib/mediaStorage';
 import { groupImageGenerations, extractGenerationThread } from '@/lib/mediaHelpers';
 import { findChatArchiveByMessageId, removeChatArchiveEntry } from '@/lib/chatArchive';
-import { loadWorkspaceSession, resumeToDashboard } from '@/lib/workspacePersistence';
+import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { useRouter } from 'next/navigation';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
@@ -56,7 +57,17 @@ export function MediaPageClient() {
   const { setPrompt, deleteTurn, startNewChat, hydrateFromSession, loadIsolatedThread } = useTerminalChat();
 
   useEffect(() => {
-    setItems(loadMediaItems());
+    const refresh = () => setItems(loadMediaItems());
+    refresh();
+    window.addEventListener('focus', refresh);
+    window.addEventListener(MEDIA_UPDATED_EVENT, refresh);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') refresh();
+    });
+    return () => {
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener(MEDIA_UPDATED_EVENT, refresh);
+    };
   }, []);
 
   function persist(next: MediaItem[]) {
@@ -89,27 +100,27 @@ export function MediaPageClient() {
     });
   }
 
-  function resolveMessages(item: MediaItem) {
-    return (
-      item.messagesSnapshot ??
-      (item.sourceMessageId ? findChatArchiveByMessageId(item.sourceMessageId)?.messages : undefined)
-    );
+  /** Snapshot from when this image was first generated — never the live current terminal. */
+  function resolveCreationSnapshot(item: MediaItem) {
+    if (item.messagesSnapshot?.length) return item.messagesSnapshot;
+    if (item.sourceMessageId) {
+      const archive = findChatArchiveByMessageId(item.sourceMessageId);
+      if (archive?.messages?.length) return archive.messages;
+    }
+    return undefined;
   }
 
-  function openExistingTerminal(item: MediaItem) {
+  function openOldTerminal(item: MediaItem) {
     setSelectedId(item.id);
     const prompt = item.sourcePrompt ?? item.name;
-    setPrompt(prompt);
+    const messages = resolveCreationSnapshot(item);
 
-    const archived = resolveMessages(item);
-    const session = loadWorkspaceSession();
-    const messages = archived?.length ? archived : (session?.messages ?? []);
-
-    if (!messages.length) {
-      toast.error('No saved terminal thread for this generation');
+    if (!messages?.length) {
+      toast.error('No saved terminal from when this image was created');
       return;
     }
 
+    setPrompt(prompt);
     resumeToDashboard({
       prompt,
       messages,
@@ -120,13 +131,13 @@ export function MediaPageClient() {
     });
     router.push('/dashboard');
     setTimeout(() => hydrateFromSession(), 100);
-    toast('Opening existing terminal — full thread with all variants', { icon: '📍' });
+    toast('Old terminal — exact spot where this image was created', { icon: '📍' });
   }
 
   function openNewTerminalWithCreation(item: MediaItem) {
     setSelectedId(item.id);
     const prompt = item.sourcePrompt ?? item.name;
-    const archived = resolveMessages(item);
+    const archived = resolveCreationSnapshot(item);
     const thread = extractGenerationThread(archived, item.sourceMessageId);
 
     if (!thread.length) {
@@ -144,24 +155,6 @@ export function MediaPageClient() {
     startNewChat();
     router.push('/dashboard');
     toast('Fresh empty terminal', { icon: '🆕' });
-  }
-
-  function handleOpenCurrentTerminal() {
-    const session = loadWorkspaceSession();
-    if (!session?.messages?.length) {
-      toast.error('No active terminal session — generate something on the dashboard first');
-      return;
-    }
-    resumeToDashboard({
-      prompt: session.prompt,
-      messages: session.messages,
-      selectedId: 'current-terminal',
-      selectedLabel: 'Current terminal',
-      source: 'dashboard',
-    });
-    router.push('/dashboard');
-    setTimeout(() => hydrateFromSession(), 100);
-    toast('Back to your current terminal', { icon: '📍' });
   }
 
   function permanentlyDelete(item: MediaItem) {
@@ -215,17 +208,10 @@ export function MediaPageClient() {
               AI Media
             </h1>
             <p className="text-sm text-[var(--muted)] mt-1">
-              Each card shows 1–4 image variants. Open in your full terminal or a fresh isolated terminal.
+              Each card shows 1–4 variants. Old terminal jumps to the exact spot where that image was first created.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={handleOpenCurrentTerminal}
-              className="xv-footer-pill !text-[var(--foreground)] flex items-center gap-1.5 border border-[var(--card-border)] hover:border-[var(--accent)]/40"
-            >
-              <History className="w-3.5 h-3.5 text-[var(--accent)]" /> Open existing terminal
-            </button>
             <button
               type="button"
               onClick={handleBlankNewTerminal}
@@ -301,7 +287,7 @@ export function MediaPageClient() {
                       key={group.id}
                       group={group}
                       selected={selectedId === group.item.id}
-                      onOpenExisting={() => openExistingTerminal(group.item)}
+                      onOpenOldTerminal={() => openOldTerminal(group.item)}
                       onOpenNewTerminal={() => openNewTerminalWithCreation(group.item)}
                       onDelete={() => setDeleteTarget(group.item)}
                     />
@@ -326,7 +312,7 @@ export function MediaPageClient() {
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => openExistingTerminal(item)}
+                      onClick={() => openOldTerminal(item)}
                       className={cn(
                         'relative rounded-xl overflow-hidden border text-left transition-all hover:border-[var(--accent)]/40',
                         item.type === 'video' ? 'aspect-video' : 'aspect-[3/1]',
