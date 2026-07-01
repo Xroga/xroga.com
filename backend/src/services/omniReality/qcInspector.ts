@@ -1,10 +1,12 @@
 /**
- * QC Inspector — 4-phase pre-visualization checks (Silent Heal).
- * Uses Gemini vision + DeepSeek text review + heuristics.
+ * QC Inspector — physics + subject alignment (Silent Heal).
+ * Uses Gemini vision on extracted video frames + DeepSeek text review.
  */
 
 import { reviewVideoOutputs } from '../media/videoUtils.js';
 import { geminiVisionQC } from './brainTrinity.js';
+import { verifyVideoAlignment } from '../../lib/video/videoAlignment.js';
+import { extractVideoFrame } from '../../lib/ffmpeg.js';
 
 export interface QCInspectionResult {
   passed: boolean;
@@ -13,11 +15,14 @@ export interface QCInspectionResult {
   lighting: number;
   consistency: number;
   issues: string[];
+  alignmentScore?: number;
+  detectedSubject?: string;
   phases: {
     faceAnchoring: boolean;
     silhouetteEdge: boolean;
     audioDrift: boolean;
     colorFlicker: boolean;
+    subjectAlignment: boolean;
   };
 }
 
@@ -26,11 +31,15 @@ const FALLBACK_PROVIDERS = new Set(['slideshow', 'slideshow-ai-image', 'ffmpeg-m
 export async function runQCInspection(options: {
   videoUrl: string;
   prompt: string;
+  userIntent?: string;
+  lockedSubjects?: string[];
+  mustNotInclude?: string[];
   provider: string;
   keyframeUrl?: string;
   referenceFaceUrl?: string;
 }): Promise<QCInspectionResult> {
   const { videoUrl, prompt, provider, keyframeUrl, referenceFaceUrl } = options;
+  const userIntent = options.userIntent ?? prompt;
 
   if (FALLBACK_PROVIDERS.has(provider)) {
     return {
@@ -40,7 +49,13 @@ export async function runQCInspection(options: {
       lighting: 72,
       consistency: 72,
       issues: ['Visual fallback used — QC relaxed'],
-      phases: { faceAnchoring: true, silhouetteEdge: true, audioDrift: true, colorFlicker: true },
+      phases: {
+        faceAnchoring: true,
+        silhouetteEdge: true,
+        audioDrift: true,
+        colorFlicker: true,
+        subjectAlignment: true,
+      },
     };
   }
 
@@ -48,14 +63,45 @@ export async function runQCInspection(options: {
   let physics = 75;
   let lighting = 75;
   let consistency = 75;
+  let alignmentScore = 75;
+  let detectedSubject: string | undefined;
+  let subjectAligned = true;
 
-  const textReview = await reviewVideoOutputs([{ provider, videoUrl }], prompt);
+  const alignment = await verifyVideoAlignment({
+    videoUrl,
+    userIntent,
+    lockedSubjects: options.lockedSubjects,
+    mustNotInclude: options.mustNotInclude,
+  });
+  alignmentScore = alignment.score;
+  detectedSubject = alignment.detectedSubject;
+  subjectAligned = alignment.aligned;
+
+  if (!alignment.aligned) {
+    issues.push(...alignment.issues);
+    if (issues.length === 0) {
+      issues.push(
+        `Subject mismatch: expected ${alignment.expectedSubjects.join(', ')}, got ${alignment.detectedSubject}`
+      );
+    }
+    consistency = Math.min(consistency, Math.round(alignment.score * 0.7));
+  }
+
+  const textReview = await reviewVideoOutputs([{ provider, videoUrl }], userIntent);
   physics = textReview.physics;
   lighting = textReview.lighting;
-  consistency = textReview.consistency;
+  consistency = Math.round((consistency + textReview.consistency) / 2);
 
-  const frameUrl = keyframeUrl ?? (videoUrl.startsWith('http') ? undefined : undefined);
-  const vision = frameUrl ? await geminiVisionQC(frameUrl, prompt, referenceFaceUrl) : null;
+  let frameUrl = keyframeUrl;
+  if (!frameUrl) {
+    try {
+      frameUrl = await extractVideoFrame(videoUrl, { atSeconds: 1 });
+    } catch {
+      /* vision QC skipped */
+    }
+  }
+
+  const vision = frameUrl ? await geminiVisionQC(frameUrl, userIntent, referenceFaceUrl) : null;
 
   if (vision) {
     physics = Math.round((physics + vision.physics_score) / 2);
@@ -71,10 +117,22 @@ export async function runQCInspection(options: {
     silhouetteEdge: !issues.some((i) => i.toLowerCase().includes('polygon') || i.toLowerCase().includes('jagged')),
     audioDrift: true,
     colorFlicker: !issues.some((i) => i.toLowerCase().includes('flicker')),
+    subjectAlignment: subjectAligned,
   };
 
-  const score = physics + lighting + consistency;
-  const passed = score >= 63 && issues.length < 3;
+  const score = physics + lighting + consistency + Math.round(alignmentScore / 4);
+  const criticalMismatch = !subjectAligned && alignmentScore < 55;
+  const passed = !criticalMismatch && score >= 63 && issues.length < 4;
 
-  return { passed, score, physics, lighting, consistency, issues, phases };
+  return {
+    passed,
+    score,
+    physics,
+    lighting,
+    consistency,
+    issues,
+    alignmentScore,
+    detectedSubject,
+    phases,
+  };
 }

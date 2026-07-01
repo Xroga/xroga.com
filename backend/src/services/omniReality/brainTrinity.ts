@@ -61,9 +61,10 @@ Return ONLY valid JSON:
   }]
 }`;
 
-const GROQ_REFLEX_SYSTEM = `You are Groq Reflex Surgeon. A video QC inspector found defects.
-Rewrite the render prompt to fix ONLY the listed issues. Add strict negative constraints.
-Return ONLY JSON: {"correctedPrompt":"","negativePrompt":"No extra fingers, no warping..."}`;
+const GROQ_REFLEX_SYSTEM = `You are Groq Reflex Surgeon. A video QC inspector found defects (physics glitches OR wrong subject vs user intent).
+Rewrite the render prompt to fix ONLY the listed issues. If subject mismatch (e.g. woman instead of cat), make the correct subject dominant and explicit.
+Add strict negative constraints for forbidden subjects.
+Return ONLY JSON: {"correctedPrompt":"","negativePrompt":"No extra fingers, no warping, no wrong subject..."}`;
 
 const SIMPLIFY_SYSTEM = `You are DeepSeek. Simplify this video shot description so OSS video models can render it.
 Reduce physical complexity: spinning kicks → slow turn; crowd → single figure; rain storm → light drizzle.

@@ -48,6 +48,78 @@ async function downloadToFile(url: string, destPath: string): Promise<void> {
   await writeFile(destPath, Buffer.from(await res.arrayBuffer()));
 }
 
+export interface ExtractFrameOptions {
+  /** Seek position in seconds (default 1) */
+  atSeconds?: number;
+}
+
+/**
+ * Extract a single JPEG frame from a video URL for vision QC / alignment checks.
+ */
+export async function extractVideoFrame(
+  videoUrl: string,
+  options?: ExtractFrameOptions
+): Promise<string> {
+  const atSeconds = options?.atSeconds ?? 1;
+  const workDir = join(tmpdir(), `xroga-frame-${randomUUID()}`);
+  await mkdir(workDir, { recursive: true });
+  const videoPath = join(workDir, 'input.mp4');
+  const framePath = join(workDir, 'frame.jpg');
+
+  try {
+    await downloadToFile(videoUrl, videoPath);
+    const bin = await ffmpegBin();
+    await execFileAsync(bin, [
+      '-ss',
+      String(atSeconds),
+      '-i',
+      videoPath,
+      '-vframes',
+      '1',
+      '-q:v',
+      '2',
+      '-y',
+      framePath,
+    ]);
+    const buffer = await readFile(framePath);
+    return `data:image/jpeg;base64,${buffer.toString('base64')}`;
+  } catch (err) {
+    if (videoUrl.startsWith('http')) {
+      try {
+        const res = await fetch(videoUrl, { signal: AbortSignal.timeout(20_000) });
+        if (res.ok) {
+          const ct = res.headers.get('content-type') ?? '';
+          if (ct.startsWith('image/')) {
+            const buffer = Buffer.from(await res.arrayBuffer());
+            const mime = ct.split(';')[0];
+            return `data:${mime};base64,${buffer.toString('base64')}`;
+          }
+        }
+      } catch {
+        /* continue */
+      }
+    }
+    throw err;
+  } finally {
+    try {
+      await unlink(videoPath);
+    } catch {
+      /* ignore */
+    }
+    try {
+      await unlink(framePath);
+    } catch {
+      /* ignore */
+    }
+    try {
+      const { rmdir } = await import('node:fs/promises');
+      await rmdir(workDir);
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
 /** Download video bytes directly — used when FFmpeg mux fails */
 export async function downloadVideoBuffer(videoUrl: string): Promise<Buffer> {
   if (videoUrl.startsWith('data:video/')) {
