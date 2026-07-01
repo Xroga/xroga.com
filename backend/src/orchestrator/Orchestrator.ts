@@ -12,6 +12,7 @@ import { routingPrompt } from '../lib/promptRouting.js';
 import { shouldUseFastChat, isTrivialPrompt, requiresFeaturePipeline } from '../lib/promptClassifier.js';
 import { formatFeatureOutput, stripFakeImageMarkdown } from '../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../services/featureExecutor.js';
+import { resolveAttachmentFeatureCategory } from '../lib/featureIntent.js';
 import { getImageProviderStatus } from '../services/builder/imageGen.js';
 import { getVideoProviderStatus } from '../lib/videoProviders.js';
 import { omniPhaseToVideoStep } from '../services/omniReality/omniEvents.js';
@@ -188,14 +189,32 @@ export class Orchestrator {
       prompt: string;
       projectId?: string;
       onProgress?: (event: SwarmProgressEvent) => void;
+      attachments?: Array<{ url: string; mimeType?: string; name?: string }>;
     }
   ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[] }> {
     const runId = crypto.randomUUID();
     const { produceVideo } = await import('../services/media/videoStudio.js');
+    const { moderateUploadedImage } = await import('../lib/video/moderateUploadedImage.js');
+
+    const imageAttachment = ctx.attachments?.find(
+      (a) =>
+        a.mimeType?.startsWith('image/') ||
+        a.url.startsWith('data:image/') ||
+        /\.(png|jpe?g|webp|gif)(\?|$)/i.test(a.url)
+    );
+
+    if (imageAttachment) {
+      const moderation = await moderateUploadedImage(imageAttachment.url, ctx.prompt);
+      if (!moderation.allowed) {
+        throw new Error(moderation.reason ?? 'This image cannot be used for video generation.');
+      }
+    }
 
     const output = await produceVideo(ctx.userId, ctx.prompt, {
       projectId: ctx.projectId,
       runId,
+      keyframeUrl: imageAttachment?.url,
+      sourceImageUrl: imageAttachment?.url,
       onProgress: (step, message, detail) => {
         ctx.onProgress?.({
           runId,
@@ -265,10 +284,9 @@ export class Orchestrator {
       reasoning: 'fallback',
     }));
 
-    const featureCategory =
-      hasImageAttachment && !isTrivialPrompt(userText)
-        ? 'image_generation'
-        : resolveFeatureCategory(userText, route.category);
+    const featureCategory = hasImageAttachment
+      ? resolveAttachmentFeatureCategory(userText, route.category)
+      : resolveFeatureCategory(userText, route.category);
 
     // Fast chat: greetings & simple conversation — no swarm, no architect spam
     if (shouldUseFastChat(userText, featureCategory)) {

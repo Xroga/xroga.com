@@ -274,6 +274,63 @@ async function stubAssembly(input: AssemblyInput): Promise<AssemblyOutput> {
   return { filePath: input.outputFilename, buffer: stubContent, durationSeconds: 5 };
 }
 
+export interface GifConvertOptions {
+  fps?: number;
+  width?: number;
+}
+
+/** Convert MP4 buffer to animated GIF (for image-to-gif requests). */
+export async function convertVideoBufferToGif(
+  mp4Buffer: Buffer,
+  options?: GifConvertOptions
+): Promise<Buffer> {
+  const fps = options?.fps ?? 12;
+  const width = options?.width ?? 480;
+  const workDir = join(tmpdir(), `xroga-gif-${randomUUID()}`);
+  await mkdir(workDir, { recursive: true });
+  const videoPath = join(workDir, 'input.mp4');
+  const palettePath = join(workDir, 'palette.png');
+  const gifPath = join(workDir, 'out.gif');
+
+  try {
+    await writeFile(videoPath, mp4Buffer);
+    const bin = await ffmpegBin();
+    await execFileAsync(bin, [
+      '-i',
+      videoPath,
+      '-vf',
+      `fps=${fps},scale=${width}:-1:flags=lanczos,palettegen`,
+      '-y',
+      palettePath,
+    ]);
+    await execFileAsync(bin, [
+      '-i',
+      videoPath,
+      '-i',
+      palettePath,
+      '-lavfi',
+      `fps=${fps},scale=${width}:-1:flags=lanczos[x];[x][1:v]paletteuse`,
+      '-y',
+      gifPath,
+    ]);
+    return await readFile(gifPath);
+  } finally {
+    for (const f of [videoPath, palettePath, gifPath]) {
+      try {
+        await unlink(f);
+      } catch {
+        /* ignore */
+      }
+    }
+    try {
+      const { rmdir } = await import('node:fs/promises');
+      await rmdir(workDir);
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
 export async function assembleViaCloudflareStream(
   videoUrl: string,
   accountId: string,

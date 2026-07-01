@@ -25,6 +25,7 @@ import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls 
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { buildPromptWithMemory } from '@/lib/chatMemory';
+import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -385,7 +386,7 @@ export function TerminalChatProvider({
       const assistantId = crypto.randomUUID();
       const displayPrompt =
         userPrompt ||
-        (attachments?.length ? 'Transform this image with a modern style' : '');
+        (attachments?.length ? defaultImageAttachmentPrompt('', true) : '');
       lastTurnRef.current = { userMessageId, assistantId, text: displayPrompt };
       setMessages((m) => [
         ...m,

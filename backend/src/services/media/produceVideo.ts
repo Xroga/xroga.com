@@ -8,6 +8,9 @@ export interface ProduceVideoOptions {
   projectId?: string;
   seriesId?: string;
   runId?: string;
+  /** User-uploaded reference frame for image-to-video */
+  keyframeUrl?: string;
+  sourceImageUrl?: string;
   onProgress?: (step: MovieProgressStep, message: string, detail?: string) => void;
   onOmniEvent?: (event: OmniVideoEvent) => void;
 }
@@ -25,6 +28,7 @@ export async function produceVideo(
     projectId: options?.projectId,
     seriesId: options?.seriesId,
     runId: options?.runId,
+    keyframeUrl: options?.keyframeUrl ?? options?.sourceImageUrl,
     onProgress: options?.onProgress,
     onOmniEvent: options?.onOmniEvent,
   });

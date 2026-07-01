@@ -75,6 +75,31 @@ async function resolveKeyframe(prompt: string, userId?: string): Promise<string>
   }
 }
 
+export async function generateRunwayImageToVideo(
+  prompt: string,
+  durationSeconds = 5,
+  options?: { aspectRatio?: '9:16' | '16:9'; userId?: string; keyframeUrl?: string }
+): Promise<string> {
+  const apiKey = getSecret('RUNWAY_API_KEY');
+  if (!apiKey) throw new Error('RUNWAY_API_KEY not configured');
+
+  const cleanPrompt = sanitizeVideoPrompt(prompt);
+  const dur = Math.min(Math.max(durationSeconds, 2), 10);
+  const ratio = options?.aspectRatio === '9:16' ? '720:1280' : '1280:720';
+  const keyframe = options?.keyframeUrl ?? (await resolveKeyframe(cleanPrompt, options?.userId));
+
+  const task = await submitRunwayTask(apiKey, 'image_to_video', {
+    model: 'gen4_turbo',
+    promptImage: keyframe,
+    promptText: cleanPrompt.slice(0, 1000),
+    duration: dur,
+    ratio,
+  });
+  const url = task.output?.[0];
+  if (!url) throw new Error('Runway i2v returned no video URL');
+  return url;
+}
+
 export async function generateRunwayVideo(
   prompt: string,
   durationSeconds = 5,
@@ -106,15 +131,11 @@ export async function generateRunwayVideo(
 
   try {
     const keyframe = await resolveKeyframe(cleanPrompt, options?.userId);
-    const task = await submitRunwayTask(apiKey, 'image_to_video', {
-      model: 'gen4_turbo',
-      promptImage: keyframe,
-      promptText: cleanPrompt.slice(0, 1000),
-      duration: dur,
-      ratio,
+    return await generateRunwayImageToVideo(cleanPrompt, dur, {
+      aspectRatio: options?.aspectRatio,
+      userId: options?.userId,
+      keyframeUrl: keyframe,
     });
-    const url = task.output?.[0];
-    if (url) return url;
   } catch (err) {
     errors.push(`gen4_turbo-i2v: ${(err as Error).message.slice(0, 80)}`);
   }

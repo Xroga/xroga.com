@@ -37,6 +37,7 @@ export interface FastVideoRaceOptions {
   aspectRatio?: '9:16' | '16:9';
   userId?: string;
   scenePriority?: string;
+  keyframeUrl?: string;
 }
 
 function buildHfSpaceRacers(
@@ -52,6 +53,7 @@ function buildHfSpaceRacers(
           userId: options?.userId,
           aspectRatio: options?.aspectRatio,
           scenePriority: options?.scenePriority,
+          keyframeUrl: options?.keyframeUrl,
         });
         return result.videoUrl;
       },
