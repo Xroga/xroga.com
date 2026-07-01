@@ -32,7 +32,7 @@ type Block =
   | { type: 'heading'; level: number; text: string }
   | { type: 'bullet'; items: string[] }
   | { type: 'numbered'; items: string[] }
-  | { type: 'para'; text: string }
+  | { type: 'para'; text: string; lead?: boolean }
   | { type: 'hr' }
   | { type: 'summary'; text: string };
 
@@ -67,7 +67,7 @@ function parseBlocks(content: string): Block[] {
       continue;
     }
 
-    const heading = trimmed.match(/^(#{1,3})\s+(.+)$/);
+    const heading = trimmed.match(/^(#{1,4})\s+(.+)$/);
     if (heading) {
       blocks.push({ type: 'heading', level: heading[1]!.length, text: heading[2]! });
       i += 1;
@@ -96,11 +96,12 @@ function parseBlocks(content: string): Block[] {
 
     const paraLines: string[] = [trimmed];
     i += 1;
-    while (i < lines.length && (lines[i] ?? '').trim() && !/^(#{1,3}\s|[-*•]\s|\d+[.)]\s|---)/.test((lines[i] ?? '').trim())) {
+    while (i < lines.length && (lines[i] ?? '').trim() && !/^(#{1,4}\s|[-*•]\s|\d+[.)]\s|---)/.test((lines[i] ?? '').trim())) {
       paraLines.push((lines[i] ?? '').trim());
       i += 1;
     }
-    blocks.push({ type: 'para', text: paraLines.join(' ') });
+    const isFirstPara = !blocks.some((b) => b.type === 'heading' || b.type === 'bullet' || b.type === 'numbered' || b.type === 'summary');
+    blocks.push({ type: 'para', text: paraLines.join(' '), lead: isFirstPara });
   }
 
   return blocks;
@@ -121,15 +122,15 @@ export function FormattedAiMarkdown({
     <div className={cn('xv-formatted-response space-y-2.5 text-[13px] leading-relaxed', className)}>
       {blocks.map((block, idx) => {
         if (block.type === 'heading') {
-          const Tag = block.level === 1 ? 'h3' : block.level === 2 ? 'h4' : 'h5';
+          const Tag = block.level <= 2 ? 'h3' : block.level === 3 ? 'h4' : 'h5';
           return (
             <Tag
               key={idx}
               className={cn(
-                'font-bold text-[var(--foreground)] tracking-tight',
+                'font-bold text-[var(--foreground)] tracking-tight border-b border-[var(--card-border)]/30 pb-1',
                 block.level === 1 && 'text-base mt-1',
                 block.level === 2 && 'text-sm mt-0.5',
-                block.level === 3 && 'text-[13px] text-[var(--accent)]',
+                block.level >= 3 && 'text-[13px] text-[var(--accent)] border-none pb-0',
               )}
             >
               {renderInline(block.text)}
@@ -167,15 +168,21 @@ export function FormattedAiMarkdown({
           return (
             <div
               key={idx}
-              className="rounded-xl border border-[var(--accent)]/20 bg-[var(--accent)]/5 px-3 py-2.5 text-[12px] text-[var(--foreground)]/90"
+              className="rounded-xl border border-[var(--accent)]/25 bg-gradient-to-br from-[var(--accent)]/8 to-transparent px-3.5 py-2.5 text-[12px] text-[var(--foreground)]/90 shadow-sm"
             >
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--accent)] mb-1">Summary</p>
-              <p>{renderInline(block.text)}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--accent)] mb-1.5">Key takeaway</p>
+              <p className="leading-relaxed">{renderInline(block.text)}</p>
             </div>
           );
         }
         return (
-          <p key={idx} className="text-[var(--foreground)]/95">
+          <p
+            key={idx}
+            className={cn(
+              'text-[var(--foreground)]/95',
+              block.lead && 'text-[14px] font-medium leading-snug text-[var(--foreground)]',
+            )}
+          >
             {renderInline(block.text)}
           </p>
         );

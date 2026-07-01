@@ -38,12 +38,41 @@ export function HomepageChatBar() {
   const addFiles = useCallback((list: FileList | null) => {
     if (!list?.length) return;
     setUploading(true);
-    const incoming = Array.from(list);
+    const incoming = Array.from(list).filter((f) => f.type.startsWith('image/'));
+    if (!incoming.length) {
+      setUploading(false);
+      return;
+    }
     setTimeout(() => {
       setFiles((prev) => [...prev, ...incoming]);
       setUploading(false);
     }, Math.min(1200, 300 + incoming.length * 150));
   }, []);
+
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      const items = e.clipboardData?.items;
+      if (!items?.length) return;
+
+      const imageFiles: File[] = [];
+      for (let i = 0; i < items.length; i += 1) {
+        const item = items[i];
+        if (item?.kind === 'file' && item.type.startsWith('image/')) {
+          const file = item.getAsFile();
+          if (file) imageFiles.push(file);
+        }
+      }
+
+      if (imageFiles.length > 0) {
+        e.preventDefault();
+        const dt = new DataTransfer();
+        imageFiles.forEach((f) => dt.items.add(f));
+        addFiles(dt.files);
+        toast.success(imageFiles.length === 1 ? 'Image pasted' : `${imageFiles.length} images pasted`);
+      }
+    },
+    [addFiles]
+  );
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -120,6 +149,7 @@ export function HomepageChatBar() {
                 ref={textareaRef}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
+                onPaste={handlePaste}
                 onBlur={handleBlur}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {

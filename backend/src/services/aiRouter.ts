@@ -19,11 +19,24 @@ const HEAVY_CATEGORIES: FeatureCategory[] = [
 const HEAVY_PATTERNS =
   /\b(full.?stack|production|enterprise|complex|algorithm|architect|refactor|movie|feature film|phd|research report|deploy)\b/i;
 
+const REASONING_PATTERNS =
+  /\b(explain|why|how does|how do|compare|analyze|analyse|reason|step.?by.?step|debug|design|plan|evaluate|trade.?offs?|pros and cons|walk me through|break down|think through|deep dive|detailed)\b/i;
+
 export function classifyComplexity(prompt: string, category?: FeatureCategory): TaskComplexity {
   if (category && HEAVY_CATEGORIES.includes(category)) return 'heavy';
   if (HEAVY_PATTERNS.test(prompt) || prompt.length > 400) return 'heavy';
   if (prompt.length > 120 || /\b(code|app|website|api|database)\b/i.test(prompt)) return 'medium';
   return 'light';
+}
+
+/** Terminal chat — bump to medium/heavy when the user asks for reasoning or depth */
+export function classifyChatComplexity(prompt: string, category?: FeatureCategory): TaskComplexity {
+  const base = classifyComplexity(prompt, category);
+  if (base === 'heavy') return 'heavy';
+  if (REASONING_PATTERNS.test(prompt) || prompt.length > 220) {
+    return base === 'light' ? 'medium' : 'heavy';
+  }
+  return base;
 }
 
 function getOpenAI(): OpenAI | null {
@@ -141,6 +154,89 @@ export async function builderGenerate(
       if (text) return { text, model: 'groq-llama' };
     } catch (err) {
       console.warn('[aiRouter] builder Groq failed:', (err as Error).message);
+    }
+  }
+
+  return { text: `I received: "${prompt.slice(0, 200)}". Configure AI keys on Fly.io.`, model: 'fallback' };
+}
+
+/**
+ * Terminal chat — Groq (general) with occasional Gemini; DeepSeek for reasoning/complex.
+ */
+export async function chatGenerate(
+  prompt: string,
+  complexity: TaskComplexity,
+  systemPrompt: string
+): Promise<{ text: string; model: string }> {
+  const useDeepSeek = complexity === 'heavy' || complexity === 'medium';
+  const preferGemini = !useDeepSeek && Math.random() < 0.28;
+
+  if (useDeepSeek && process.env.DEEPSEEK_API_KEY) {
+    try {
+      const text = await deepSeekChat(
+        [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: prompt },
+        ],
+        { model: 'deepseek-chat', maxTokens: 1536 }
+      );
+      if (text.trim()) return { text: text.trim(), model: 'deepseek-chat' };
+    } catch (err) {
+      console.warn('[aiRouter] chat DeepSeek failed:', (err as Error).message);
+    }
+  }
+
+  if (preferGemini && process.env.GEMINI_API_KEY) {
+    try {
+      const text = await geminiGenerate(systemPrompt, prompt, {
+        model: 'gemini-2.0-flash',
+        maxTokens: 1024,
+      });
+      if (text.trim()) return { text: text.trim(), model: 'gemini-2.0-flash' };
+    } catch (err) {
+      console.warn('[aiRouter] chat Gemini failed:', (err as Error).message);
+    }
+  }
+
+  if (process.env.GROQ_API_KEY) {
+    try {
+      const text = await groqChat(
+        [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: prompt },
+        ],
+        { maxTokens: 1024 }
+      );
+      if (text) return { text, model: 'groq-llama' };
+    } catch (err) {
+      console.warn('[aiRouter] chat Groq failed:', (err as Error).message);
+    }
+  }
+
+  if (process.env.GEMINI_API_KEY) {
+    try {
+      const text = await geminiGenerate(systemPrompt, prompt, {
+        model: 'gemini-2.0-flash',
+        maxTokens: 1024,
+      });
+      if (text.trim()) return { text: text.trim(), model: 'gemini-2.0-flash' };
+    } catch (err) {
+      console.warn('[aiRouter] chat Gemini fallback failed:', (err as Error).message);
+    }
+  }
+
+  if (!useDeepSeek && process.env.DEEPSEEK_API_KEY) {
+    try {
+      const text = await deepSeekChat(
+        [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: prompt },
+        ],
+        { model: 'deepseek-chat', maxTokens: 1024 }
+      );
+      if (text.trim()) return { text: text.trim(), model: 'deepseek-chat' };
+    } catch (err) {
+      console.warn('[aiRouter] chat DeepSeek fallback failed:', (err as Error).message);
     }
   }
 
