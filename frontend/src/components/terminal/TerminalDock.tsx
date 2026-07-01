@@ -53,6 +53,23 @@ export function TerminalDock() {
         bottom: keyboardOffset,
       } as React.CSSProperties}
     >
+      {showJumpToLatest && (
+        <button
+          type="button"
+          onClick={() => scrollToLatest('smooth')}
+          className={cn(
+            'absolute z-[220] flex h-7 w-7 items-center justify-center rounded-full',
+            'border border-[var(--card-border)] bg-[var(--card)]/95 backdrop-blur-md shadow-md',
+            'text-[var(--foreground)] hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/40',
+            'transition-all animate-in fade-in zoom-in-95',
+            dashboardFullscreen ? 'right-6 top-3' : 'right-3 sm:right-4 lg:right-6 top-2',
+          )}
+          aria-label="Jump to latest output"
+          title="Jump to latest"
+        >
+          <ChevronDown className="h-3.5 w-3.5" />
+        </button>
+      )}
       <div
         ref={dockInnerRef}
         className={cn(
@@ -64,19 +81,6 @@ export function TerminalDock() {
           <div className="flex flex-col px-0.5">
             <BlackHoleVButton className="xv-blackhole-outside self-start" />
             <RepoContextBar outside />
-          </div>
-        )}
-        {showJumpToLatest && (
-          <div className="flex justify-center mb-1.5">
-            <button
-              type="button"
-              onClick={() => scrollToLatest('smooth')}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--card-border)] bg-[var(--card)]/95 backdrop-blur-md shadow-md text-[var(--foreground)] hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/40 transition-all animate-in fade-in zoom-in-95"
-              aria-label="Jump to latest output"
-              title="Jump to latest"
-            >
-              <ChevronDown className="h-4 w-4" />
-            </button>
           </div>
         )}
         <ChatbarQueueOutside />

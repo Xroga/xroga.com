@@ -14,6 +14,8 @@ import { persistImageUrl } from '../../lib/persistImageUrl.js';
 import type { ImageProviderOptions } from '../../lib/imageAspect.js';
 import { classifyImageQuery } from './image/understanding.js';
 import { enhanceImagePrompt, buildPerSlotPrompts } from './image/promptEnhancer.js';
+import { applyLiteralConstraints } from './image/promptLiteralConstraints.js';
+import { routingPrompt } from '../../lib/promptRouting.js';
 import { buildConciseImagePrompt, extractOverlayText, isThumbnailRequest } from './image/concisePrompt.js';
 import { pickBestImage } from './image/imageReviewer.js';
 import { generateImageFollowUps } from './image/followUps.js';
@@ -505,6 +507,7 @@ async function buildPipelinePrompt(
   });
 
   let text = enhanced.prompt?.trim() || concise;
+  text = applyLiteralConstraints(text, rawQuery);
   if (overlayText && !text.toLowerCase().includes(overlayText.toLowerCase().slice(0, 12))) {
     text += ` Bold readable text overlay: "${overlayText}".`;
   }
@@ -806,7 +809,7 @@ export async function generateImage(
   userPrompt: string,
   options?: ImageGenOptions
 ): Promise<ImageGenOutput | ImageBlockedOutput> {
-  const rawQuery = extractImagePrompt(userPrompt);
+  const rawQuery = extractImagePrompt(routingPrompt(userPrompt));
   const baseAspect = options?.aspectFormat ?? parseImageAspectFormat(rawQuery);
   const imageIntent = parseFullImageIntent(rawQuery, baseAspect);
   const aspectFormat = imageIntent.aspectFormat;
@@ -886,7 +889,7 @@ export async function generateImage(
 
   const attemptResults = await Promise.all(
     activeSlots.map((slot, i) => {
-      const slotFull = slotPrompts[i] ?? imagePrompt;
+      const slotFull = applyLiteralConstraints(slotPrompts[i] ?? imagePrompt, rawQuery);
       const promptBundle = {
         full: slotFull,
         short: shortImagePrompt(rawQuery, slotFull),

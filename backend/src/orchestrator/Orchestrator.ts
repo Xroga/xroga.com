@@ -8,8 +8,8 @@ import { buildArchitectDAG, isLongRunningTask, formatDuration } from './architec
 import type { SwarmRunResult } from '../services/SwarmService.js';
 import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../types/features.js';
 import type { SwarmCoreAgent, SwarmPlan, SwarmResult } from '../types/index.js';
-import { shouldUseFastChat, isTrivialPrompt, requiresFeaturePipeline } from '../lib/promptClassifier.js';
 import { routingPrompt } from '../lib/promptRouting.js';
+import { shouldUseFastChat, isTrivialPrompt, requiresFeaturePipeline } from '../lib/promptClassifier.js';
 import { formatFeatureOutput, stripFakeImageMarkdown } from '../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../services/featureExecutor.js';
 import { getImageProviderStatus } from '../services/builder/imageGen.js';
@@ -128,9 +128,11 @@ export class Orchestrator {
       (a) => a.mimeType?.startsWith('image/') || a.url.startsWith('data:image/') || /\.(png|jpe?g|webp|gif)(\?|$)/i.test(a.url)
     );
 
+    const userText = routingPrompt(ctx.prompt);
+
     const stylePrompt = imageAttachment
-      ? `[Image Edit] Style transfer: ${ctx.prompt}\nsource image: ${imageAttachment.url}`
-      : ctx.prompt;
+      ? `[Image Edit] Style transfer: ${userText}\nsource image: ${imageAttachment.url}`
+      : userText;
 
     const output = await generateImage(stylePrompt, {
       userId: ctx.userId,

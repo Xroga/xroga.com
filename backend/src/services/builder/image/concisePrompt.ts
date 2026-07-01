@@ -1,8 +1,11 @@
 import { groqChat } from '../../../lib/groq.js';
 import type { ImageQueryIntent } from './understanding.js';
+import { literalDirective } from './promptLiteralConstraints.js';
 
 const CONCISE_SYSTEM = `You write short image-generation prompts. Output ONE concise prompt only (max 35 words).
-Include: subject, mood, lighting, style. Detect format: thumbnail=16:9, logo/avatar=1:1, story=9:16, og/banner=16:9.
+Include: subject, mood, lighting, style. Preserve EVERY color and character name from the user's original words.
+If user says gray super saiyan, include gray/silver hair NOT golden. If Tom and Jerry, say Tom and Jerry only.
+Detect format: thumbnail=16:9, logo/avatar=1:1, story=9:16, og/banner=16:9.
 Detect style: 3d, pixel art, minecraft, cartoon, anime, logo, photorealistic from user words.
 For YouTube thumbnails add bold text overlay if user wants text on the image.
 No markdown, no quotes, no explanation.`;
@@ -56,7 +59,7 @@ export async function buildConciseImagePrompt(
         { role: 'system', content: CONCISE_SYSTEM },
         {
           role: 'user',
-          content: `User request: ${intent.rawQuery}\nSubject: ${intent.subject}\nStyle: ${intent.style}.${overlayHint}${thumbHint}`,
+          content: `${literalDirective(intent.rawQuery)}\nUser request: ${intent.rawQuery}\nSubject: ${intent.subject}\nStyle: ${intent.style}.${overlayHint}${thumbHint}`,
         },
       ],
       { model: 'llama-3.3-70b-versatile', maxTokens: 120 }

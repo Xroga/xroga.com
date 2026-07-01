@@ -53,6 +53,25 @@ export async function imageUrlToPngBlob(url: string): Promise<Blob> {
     return drawImageToPngBlob(img);
   }
 
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    try {
+      const proxyRes = await fetch(`/api/image-fetch?url=${encodeURIComponent(url)}`);
+      if (proxyRes.ok) {
+        const blob = await proxyRes.blob();
+        if (blob.type === 'image/png') return blob;
+        const objUrl = URL.createObjectURL(blob);
+        try {
+          const img = await loadImage(objUrl);
+          return drawImageToPngBlob(img);
+        } finally {
+          URL.revokeObjectURL(objUrl);
+        }
+      }
+    } catch {
+      /* try direct fetch below */
+    }
+  }
+
   try {
     const res = await fetch(url, { mode: 'cors' });
     if (res.ok) {
@@ -144,21 +163,15 @@ export async function copyImageToClipboard(url: string, transform?: ImageTransfo
 
     if (typeof ClipboardItem !== 'undefined' && navigator.clipboard?.write) {
       await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
-      if (!silent) toast.success('Image copied — paste anywhere');
+      if (!silent) toast.success('Image copied — paste anywhere (Ctrl+V)');
       return true;
     }
 
-    if (!silent) toast.error('Clipboard image not supported in this browser');
+    if (!silent) toast.error('Clipboard image not supported in this browser — try Download');
     return false;
   } catch {
-    try {
-      await navigator.clipboard.writeText(url);
-      if (!silent) toast.success('Image URL copied (image paste unavailable)');
-      return false;
-    } catch {
-      if (!silent) toast.error('Copy failed — try Download instead');
-      return false;
-    }
+    if (!silent) toast.error('Copy failed — try Download instead');
+    return false;
   }
 }
 

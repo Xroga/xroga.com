@@ -24,6 +24,8 @@ SAFETY — set blockedForSafety=true if the image contains ANY of:
 When in doubt about modesty or explicit content, set blockedForSafety=true.
 
 Also flag: wrong flags, wrong person identity, cartoon when photorealism requested, religious figure depictions.
+WRONG SUBJECT — set matchScore below 40 and blockedForSafety=false but add issue if image shows a completely different character than requested (e.g. user asked Tom and Jerry but image shows Goku or Iron Man).
+COLOR MISMATCH — score below 55 if user requested gray/silver but image shows golden yellow (e.g. gray super saiyan requested but golden hair shown).
 ANATOMY — score below 60 if: extra fingers, extra hands, extra feet, missing limbs, fused limbs, malformed anatomy, duplicated body parts.
 
 For NATIONAL FLAGS: score below 72 if wrong country, wrong colors, or wrong symbols.
