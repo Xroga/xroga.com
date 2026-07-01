@@ -65,4 +65,19 @@ router.patch('/read-all', async (req: AuthRequest, res) => {
   res.json({ success: true });
 });
 
+router.delete('/:id', async (req: AuthRequest, res) => {
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase
+    .from('notifications')
+    .delete()
+    .eq('id', String(req.params.id))
+    .eq('user_id', req.userId!);
+
+  if (error) {
+    res.status(500).json({ error: error.message });
+    return;
+  }
+  res.json({ success: true });
+});
+
 export default router;

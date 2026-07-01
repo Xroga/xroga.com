@@ -43,6 +43,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { GALACTIC_PLANS } from '@/lib/plans';
 import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
 
@@ -390,6 +391,11 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
                 </Link>
               </SidebarTip>
             ))}
+            {!incognito && (
+              <div className={cn(navExpanded ? 'px-1 pt-1' : 'flex justify-center pt-1')}>
+                <NotificationBell variant={navExpanded ? 'sidebar' : 'header'} />
+              </div>
+            )}
           </div>
         ) : (
           <div className="xv-sidebar-collapsed-nav space-y-1">
@@ -404,6 +410,11 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
                 </Link>
               </SidebarTip>
             ))}
+            {!incognito && (
+              <div className="flex justify-center pt-1">
+                <NotificationBell variant="header" />
+              </div>
+            )}
           </div>
         )}
       </nav>

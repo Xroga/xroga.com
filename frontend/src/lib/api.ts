@@ -44,6 +44,11 @@ export interface StreamSwarmOptions {
   signal?: AbortSignal;
   compact?: boolean;
   attachments?: ChatAttachment[];
+  clientMeta?: {
+    assistantMessageId?: string;
+    userMessageId?: string;
+    userPrompt?: string;
+  };
   onProgress?: (event: SwarmProgressEvent) => void;
   onDelta?: (delta: string) => void;
   onComplete?: (event: SwarmCompleteEvent & { followUps?: string[] }) => void;
@@ -71,6 +76,7 @@ export async function streamSwarmExecute(
       stream: true,
       ...(options.projectId ? { projectId: options.projectId } : {}),
       ...(options.attachments?.length ? { attachments: options.attachments } : {}),
+      ...(options.clientMeta ? { clientMeta: options.clientMeta } : {}),
     }),
     signal: options.signal,
   });
@@ -414,6 +420,12 @@ export const api = {
     unreadCount: () => apiFetch<{ count: number }>('/api/notifications/unread-count'),
     markRead: (id: string) => apiFetch(`/api/notifications/${id}/read`, { method: 'PATCH' }),
     markAllRead: () => apiFetch('/api/notifications/read-all', { method: 'PATCH' }),
+    delete: (id: string) => apiFetch(`/api/notifications/${id}`, { method: 'DELETE' }),
+  },
+  videoJobs: {
+    get: (jobId: string) =>
+      apiFetch<VideoJobRecord>(`/api/video/jobs/${jobId}`),
+    listActive: () => apiFetch<VideoJobRecord[]>('/api/video/jobs/active'),
   },
   swarm: {
     execute: (prompt: string, projectId?: string) =>
@@ -508,7 +520,21 @@ export interface Notification {
   type: string;
   read: boolean;
   link: string | null;
+  metadata?: Record<string, unknown> | null;
   created_at: string;
+}
+
+export interface VideoJobRecord {
+  id: string;
+  status: 'processing' | 'completed' | 'failed';
+  prompt: string;
+  estimated_seconds: number;
+  progress?: { step?: string; message?: string; percent?: number };
+  output?: Record<string, unknown>;
+  error_message?: string;
+  metadata?: Record<string, unknown>;
+  created_at: string;
+  completed_at?: string;
 }
 
 export interface ActionBalance {

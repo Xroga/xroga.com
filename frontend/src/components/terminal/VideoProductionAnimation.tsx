@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Film, Brain, Shield, Wand2, Music, Scissors, Sparkles } from 'lucide-react';
+import { Film, Brain, Shield, Wand2, Music, Scissors, Sparkles, Clock } from 'lucide-react';
 
 const OMNI_STEPS = [
   { id: 'scripting', label: 'Trinity Brain', icon: Brain, phases: ['trinity_scripting', 'storyboard_ready', 'characters'] },
@@ -32,12 +32,23 @@ const PHASE_LABELS: Record<string, string> = {
   assembling: 'Assembling final cut',
 };
 
+function formatRemaining(seconds: number): string {
+  if (seconds <= 0) return 'almost done';
+  if (seconds < 60) return `~${seconds}s left`;
+  const m = Math.ceil(seconds / 60);
+  return m === 1 ? '~1 min left' : `~${m} min left`;
+}
+
 interface VideoProductionAnimationProps {
   className?: string;
   message?: string;
   step?: string;
   omniPhase?: string | null;
   sublabel?: string;
+  estimatedSeconds?: number;
+  startedAt?: number;
+  percent?: number;
+  backgroundMode?: boolean;
 }
 
 export function VideoProductionAnimation({
@@ -46,13 +57,30 @@ export function VideoProductionAnimation({
   step,
   omniPhase,
   sublabel,
+  estimatedSeconds,
+  startedAt,
+  percent,
+  backgroundMode,
 }: VideoProductionAnimationProps) {
   const [dots, setDots] = useState('');
+  const [remaining, setRemaining] = useState(estimatedSeconds ?? 120);
 
   useEffect(() => {
     const t = setInterval(() => setDots((d) => (d.length >= 3 ? '' : `${d}.`)), 450);
     return () => clearInterval(t);
   }, []);
+
+  useEffect(() => {
+    if (!estimatedSeconds) return;
+    const start = startedAt ?? Date.now();
+    const tick = () => {
+      const elapsed = Math.floor((Date.now() - start) / 1000);
+      setRemaining(Math.max(0, estimatedSeconds - elapsed));
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [estimatedSeconds, startedAt]);
 
   const activePhase = omniPhase ?? step ?? 'scripting';
   const activeStepIdx = OMNI_STEPS.findIndex((s) =>
@@ -63,6 +91,8 @@ export function VideoProductionAnimation({
   const displayLabel =
     message ?? PHASE_LABELS[activePhase] ?? PHASE_LABELS[step ?? ''] ?? 'Omni-Reality production in progress';
 
+  const barPercent = percent ?? Math.min(95, ((stepIdx + 1) / OMNI_STEPS.length) * 100);
+
   return (
     <div
       className={cn(
@@ -72,15 +102,29 @@ export function VideoProductionAnimation({
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(0,106,255,0.12),transparent_60%)] pointer-events-none" />
       <div className="relative flex flex-col gap-4">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#006aff]/15 border border-[#006aff]/30">
-            <Wand2 className="h-4 w-4 text-[#60a5fa]" />
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#006aff]/15 border border-[#006aff]/30">
+              <Wand2 className="h-4 w-4 text-[#60a5fa]" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#60a5fa]/80">Omni-Reality Studio</p>
+              <p className="text-xs text-[var(--muted)]">Marvel-grade production pipeline</p>
+            </div>
           </div>
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#60a5fa]/80">Omni-Reality Studio</p>
-            <p className="text-xs text-[var(--muted)]">Marvel-grade production pipeline</p>
-          </div>
+          {estimatedSeconds != null && (
+            <div className="flex items-center gap-1 text-[10px] font-semibold text-[#60a5fa] shrink-0">
+              <Clock className="h-3 w-3" />
+              {formatRemaining(remaining)}
+            </div>
+          )}
         </div>
+
+        {backgroundMode && (
+          <p className="text-[11px] text-center text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
+            Keep using Xroga for other tasks — you can close this tab. We&apos;ll notify you when your video is ready.
+          </p>
+        )}
 
         <p className="text-sm font-medium text-[var(--foreground)] text-center xv-swarm-typing">
           {displayLabel}
@@ -115,7 +159,7 @@ export function VideoProductionAnimation({
         <div className="h-1 rounded-full bg-[#006aff]/10 overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-[#006aff] to-[#60a5fa] transition-all duration-700 rounded-full"
-            style={{ width: `${Math.min(100, ((stepIdx + 1) / OMNI_STEPS.length) * 100)}%` }}
+            style={{ width: `${barPercent}%` }}
           />
         </div>
 

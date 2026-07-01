@@ -3,6 +3,7 @@
 import { ImageStudioCard, type ImageOutputData } from './ImageStudioCard';
 import { ImageBlockedCard } from './ImageBlockedCard';
 import { VideoStudioCard, type VideoOutputData } from './VideoStudioCard';
+import { VideoProductionAnimation } from './VideoProductionAnimation';
 import type { ImageBlockedOutput } from '@/lib/imageSafetyMessages';
 
 export function FeatureOutputView({
@@ -83,6 +84,21 @@ export function FeatureOutputView({
       audioTracks: Array.isArray(o.audioTracks) ? (o.audioTracks as VideoOutputData['audioTracks']) : undefined,
     };
     return <VideoStudioCard data={data} onDelete={onDelete} messageId={messageId} />;
+  }
+
+  if (o.type === 'video_job_pending' && typeof o.jobId === 'string') {
+    return (
+      <VideoProductionAnimation
+        message={typeof o.message === 'string' ? o.message : 'Generating your video…'}
+        step={typeof o.progress === 'object' && o.progress && 'step' in (o.progress as object) ? String((o.progress as { step?: string }).step) : 'rendering'}
+        omniPhase={typeof o.progress === 'object' && o.progress && 'omniPhase' in (o.progress as object) ? String((o.progress as { omniPhase?: string }).omniPhase) : null}
+        estimatedSeconds={typeof o.estimatedSeconds === 'number' ? o.estimatedSeconds : 120}
+        startedAt={typeof o.startedAt === 'number' ? o.startedAt : Date.now()}
+        percent={typeof o.progress === 'object' && o.progress && 'percent' in (o.progress as object) ? Number((o.progress as { percent?: number }).percent) : undefined}
+        backgroundMode
+        sublabel="Runs in background · check the bell icon when ready"
+      />
+    );
   }
 
   return null;

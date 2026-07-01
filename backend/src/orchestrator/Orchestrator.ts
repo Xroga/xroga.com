@@ -182,7 +182,7 @@ export class Orchestrator {
     };
   }
 
-  /** Direct video/movie production — bypasses 5-agent swarm */
+  /** Background video job — returns immediately; processing survives tab close */
   private static async executeVideoFast(
     ctx: {
       userId: string;
@@ -190,10 +190,10 @@ export class Orchestrator {
       projectId?: string;
       onProgress?: (event: SwarmProgressEvent) => void;
       attachments?: Array<{ url: string; mimeType?: string; name?: string }>;
+      clientMeta?: { assistantMessageId?: string; userMessageId?: string; userPrompt?: string };
     }
-  ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[] }> {
-    const runId = crypto.randomUUID();
-    const { produceVideo } = await import('../services/media/videoStudio.js');
+  ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[]; queued?: boolean }> {
+    const { startVideoJob } = await import('../services/media/videoJobService.js');
     const { moderateUploadedImage } = await import('../lib/video/moderateUploadedImage.js');
 
     const imageAttachment = ctx.attachments?.find(
@@ -210,52 +210,44 @@ export class Orchestrator {
       }
     }
 
-    const output = await produceVideo(ctx.userId, ctx.prompt, {
+    const { jobId, estimatedSeconds, etaLabel } = await startVideoJob({
+      userId: ctx.userId,
+      prompt: ctx.prompt,
       projectId: ctx.projectId,
-      runId,
       keyframeUrl: imageAttachment?.url,
-      sourceImageUrl: imageAttachment?.url,
-      onProgress: (step, message, detail) => {
-        ctx.onProgress?.({
-          runId,
-          agent: 'builder',
-          status: 'building',
-          message: detail ?? message,
-          videoStep: step,
-          timestamp: new Date().toISOString(),
-        });
+      metadata: {
+        assistantMessageId: ctx.clientMeta?.assistantMessageId,
+        userMessageId: ctx.clientMeta?.userMessageId,
+        userPrompt: ctx.clientMeta?.userPrompt ?? ctx.prompt,
       },
-      onOmniEvent: (event) => {
-        ctx.onProgress?.({
-          runId,
-          agent: 'omni_reality',
-          status: 'building',
-          message: event.detail ?? event.message,
-          videoStep: omniPhaseToVideoStep(event.phase),
-          omniPhase: event.phase,
-          omniDetail: event.detail,
-          timestamp: new Date().toISOString(),
-        });
-      },
+      onProgress: ctx.onProgress,
     });
 
-    const reply = formatFeatureOutput(output);
+    const bgMessage = `Your video is generating (${etaLabel}). Keep using Xroga for other tasks — you can close this tab. We'll notify you when it's ready.`;
 
     return {
-      runId,
+      runId: jobId,
       fast: true,
+      queued: true,
       result: {
         success: true,
         iterations: 0,
         defectsFound: 0,
         plan: defaultPlan(),
         agents: defaultAgents(['builder']),
-        output,
+        output: {
+          type: 'video_job_pending',
+          jobId,
+          estimatedSeconds,
+          etaLabel,
+          message: bgMessage,
+          assistantMessageId: ctx.clientMeta?.assistantMessageId,
+        },
       },
-      actions: { success: true, remaining: 0, cost: output.actionCost },
+      actions: { success: true, remaining: 0, cost: 0 },
       featureCategory: 'video_studio',
-      polishedReply: reply,
-      followUps: output.followUps ?? ['Add subtitles?', 'Generate episode 2?'],
+      polishedReply: bgMessage,
+      followUps: ['Add subtitles?', 'Make episode 2?'],
     };
   }
 
@@ -267,6 +259,7 @@ export class Orchestrator {
       projectId?: string;
       onProgress?: (event: SwarmProgressEvent) => void;
       attachments?: Array<{ url: string; mimeType?: string; name?: string }>;
+      clientMeta?: { assistantMessageId?: string; userMessageId?: string; userPrompt?: string };
     }
   ): Promise<SwarmRunResult & { polishedReply: string; followUps?: string[]; reasoning?: string; queued?: boolean; fast?: boolean }> {
     await loadMasterPrompt();

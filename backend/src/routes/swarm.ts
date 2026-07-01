@@ -22,6 +22,13 @@ const executeSchema = z.object({
     )
     .max(4)
     .optional(),
+  clientMeta: z
+    .object({
+      assistantMessageId: z.string().optional(),
+      userMessageId: z.string().optional(),
+      userPrompt: z.string().optional(),
+    })
+    .optional(),
 });
 
 const FRIENDLY_FALLBACK =
@@ -51,7 +58,8 @@ router.post('/execute', async (req: AuthRequest, res) => {
         parsed.data.prompt,
         res,
         parsed.data.projectId,
-        parsed.data.attachments
+        parsed.data.attachments,
+        parsed.data.clientMeta
       );
       endSSE(res);
     } catch (err) {
