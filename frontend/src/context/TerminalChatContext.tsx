@@ -22,7 +22,8 @@ import {
   saveWorkspaceSession,
 } from '@/lib/workspacePersistence';
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
-import { archiveChatTurn, removeChatArchiveEntry, isChatSectionArchive } from '@/lib/chatArchive';
+import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
+import { buildPromptWithMemory } from '@/lib/chatMemory';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -72,6 +73,8 @@ interface TerminalChatContextValue {
   ) => Promise<void>;
   stop: () => void;
   startNewChat: () => void;
+  /** Restore session from workspace (e.g. jump from AI Media) */
+  hydrateFromSession: () => void;
   /** Permanently removes assistant response + its user prompt from chat, archive, and media */
   deleteTurn: (assistantMessageId: string) => void;
   /** Permanently removes a user prompt + its assistant reply */
@@ -144,6 +147,23 @@ export function TerminalChatProvider({
     if (session?.prompt) setPrompt(session.prompt);
     setSessionReady(true);
   }, [incognito]);
+
+  const hydrateFromSession = useCallback(() => {
+    if (incognito) return;
+    const session = loadWorkspaceSession();
+    if (!session) return;
+    if (session.messages?.length) setMessages(session.messages);
+    if (session.prompt) setPrompt(session.prompt);
+  }, [incognito]);
+
+  useEffect(() => {
+    if (incognito || pathname !== '/dashboard') return;
+    const session = loadWorkspaceSession();
+    if (session?.source === 'media' && session.messages?.length) {
+      setMessages(session.messages);
+      if (session.prompt) setPrompt(session.prompt);
+    }
+  }, [pathname, incognito]);
 
   useEffect(() => {
     if (!sessionReady || incognito) return;
@@ -387,7 +407,9 @@ export function TerminalChatProvider({
         setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
         setAnimatingId(assistantId);
 
-        await streamSwarmExecute(displayPrompt, {
+        const apiPrompt = buildPromptWithMemory(displayPrompt, messages);
+
+        await streamSwarmExecute(apiPrompt, {
           projectId,
           signal: controller.signal,
           compact: useCompactPipeline,
@@ -446,46 +468,42 @@ export function TerminalChatProvider({
               return;
             }
             if (output?.type === 'image' && typeof output.imageUrl === 'string') {
-              addMediaItem({
-                name: String(output.prompt ?? 'Xroga image').slice(0, 40),
-                type: 'image',
-                url: output.imageUrl,
-                sourceMessageId: assistantId,
-                sourcePrompt: userPrompt,
-              });
-              setMessages((m) =>
-                m.map((msg) =>
+              setMessages((m) => {
+                const updated = m.map((msg) =>
                   msg.id === assistantId
-                    ? {
-                        ...msg,
-                        content: '',
-                        featureOutput: output,
-                      }
+                    ? { ...msg, content: '', featureOutput: output }
                     : msg
-                )
-              );
+                );
+                addMediaItem({
+                  name: String(output.prompt ?? 'Xroga image').slice(0, 40),
+                  type: 'image',
+                  url: output.imageUrl as string,
+                  sourceMessageId: assistantId,
+                  sourcePrompt: userPrompt,
+                  messagesSnapshot: updated,
+                });
+                return updated;
+              });
               return;
             }
             if (output?.type === 'video_studio' && typeof output.streamingUrl === 'string') {
               const videoOutput = { ...output, prompt: userPrompt };
-              addMediaItem({
-                name: String(output.title ?? 'Xroga video').slice(0, 40),
-                type: 'video',
-                url: output.streamingUrl,
-                sourceMessageId: assistantId,
-                sourcePrompt: userPrompt,
-              });
-              setMessages((m) =>
-                m.map((msg) =>
+              setMessages((m) => {
+                const updated = m.map((msg) =>
                   msg.id === assistantId
-                    ? {
-                        ...msg,
-                        content: '',
-                        featureOutput: videoOutput,
-                      }
+                    ? { ...msg, content: '', featureOutput: videoOutput }
                     : msg
-                )
-              );
+                );
+                addMediaItem({
+                  name: String(output.title ?? 'Xroga video').slice(0, 40),
+                  type: 'video',
+                  url: output.streamingUrl as string,
+                  sourceMessageId: assistantId,
+                  sourcePrompt: userPrompt,
+                  messagesSnapshot: updated,
+                });
+                return updated;
+              });
               return;
             }
             const text = complete.output
@@ -557,14 +575,12 @@ export function TerminalChatProvider({
         if (!incognito && turn && !interruptRef.current) {
           setMessages((current) => {
             try {
-              if (isChatSectionArchive(turn.text)) {
-                archiveChatTurn({
-                  prompt: turn.text,
-                  messages: current,
-                  userMessageId: turn.userMessageId,
-                  assistantMessageId: turn.assistantId,
-                });
-              }
+              archiveChatTurn({
+                prompt: turn.text,
+                messages: current,
+                userMessageId: turn.userMessageId,
+                assistantMessageId: turn.assistantId,
+              });
               if (shouldSaveToProjects(turn.text)) {
                 saveLocalProject({
                   name: turn.text.slice(0, 48),
@@ -598,7 +614,7 @@ export function TerminalChatProvider({
         setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, incognito, setSwarmRunning, setActions, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant]
+    [prompt, loading, projectId, incognito, messages, setSwarmRunning, setActions, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant]
   );
 
   submitRef.current = submit;
@@ -644,6 +660,7 @@ export function TerminalChatProvider({
         submit,
         stop,
         startNewChat,
+        hydrateFromSession,
         deleteTurn,
         deleteUserTurn,
         updateFeatureOutput,

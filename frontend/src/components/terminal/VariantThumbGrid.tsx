@@ -18,11 +18,11 @@ export function previewAspectClass(
     return 'aspect-video';
   }
   if (aspectFormat === '9:16' || contentType === 'story' || contentType === 'wallpaper') {
-    return 'aspect-[9/16] max-h-80';
+    return 'aspect-[9/16] max-h-96 w-full';
   }
-  if (aspectFormat === '4:5' || aspectFormat === '3:4') return 'aspect-[4/5] max-h-72';
-  if (contentType === 'logo' || contentType === 'avatar') return 'aspect-square max-h-52';
-  return 'aspect-square max-h-64';
+  if (aspectFormat === '4:5' || aspectFormat === '3:4') return 'aspect-[4/5] max-h-80 w-full';
+  if (contentType === 'logo' || contentType === 'avatar') return 'aspect-square max-h-64 w-full';
+  return 'aspect-square max-h-72 w-full';
 }
 
 /** Compact grid thumb — fixed height, real image proportions via object-contain */
@@ -31,10 +31,10 @@ export function gridThumbFrameClass(
   isYoutubeThumbnail?: boolean,
   contentType?: string,
 ): string {
-  if (aspectFormat === '16:9' || isYoutubeThumbnail || contentType === 'thumbnail') return 'h-[52px]';
-  if (aspectFormat === '9:16' || contentType === 'story') return 'h-[68px]';
-  if (aspectFormat === '4:5' || aspectFormat === '3:4') return 'h-[60px]';
-  return 'h-[56px]';
+  if (aspectFormat === '16:9' || isYoutubeThumbnail || contentType === 'thumbnail') return 'h-[72px]';
+  if (aspectFormat === '9:16' || contentType === 'story') return 'h-[88px]';
+  if (aspectFormat === '4:5' || aspectFormat === '3:4') return 'h-[80px]';
+  return 'h-[76px]';
 }
 
 interface VariantThumb {

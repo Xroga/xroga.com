@@ -1,4 +1,5 @@
-import { safeStorageSet, isDataImageUrl } from '@/lib/storageSafe';
+import type { ChatMessage } from '@/context/TerminalChatContext';
+import { isDataImageUrl, messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 
 export const MEDIA_KEY = 'xroga_media_gallery';
 
@@ -13,6 +14,8 @@ export interface MediaItem {
   /** Jump back to the chat message that produced this asset */
   sourceMessageId?: string;
   sourcePrompt?: string;
+  /** Full thread snapshot for restoring terminal when jumping from AI Media */
+  messagesSnapshot?: import('@/context/TerminalChatContext').ChatMessage[];
 }
 
 export function loadMediaItems(): MediaItem[] {
@@ -34,7 +37,7 @@ export function saveMediaItems(items: MediaItem[]) {
 }
 
 export function addMediaItem(
-  item: Omit<MediaItem, 'id' | 'createdAt'> & { id?: string; createdAt?: string }
+  item: Omit<MediaItem, 'id' | 'createdAt'> & { id?: string; createdAt?: string; messagesSnapshot?: ChatMessage[] }
 ) {
   if (isDataImageUrl(item.url)) {
     return {
@@ -45,9 +48,13 @@ export function addMediaItem(
       createdAt: item.createdAt ?? new Date().toISOString(),
       sourceMessageId: item.sourceMessageId,
       sourcePrompt: item.sourcePrompt,
+      messagesSnapshot: item.messagesSnapshot,
     };
   }
   const items = loadMediaItems();
+  const slimSnapshot = item.messagesSnapshot?.length
+    ? messagesForStorage(item.messagesSnapshot)
+    : undefined;
   const next: MediaItem = {
     id: item.id ?? `media-${Date.now()}`,
     name: item.name,
@@ -56,6 +63,7 @@ export function addMediaItem(
     createdAt: item.createdAt ?? new Date().toISOString(),
     sourceMessageId: item.sourceMessageId,
     sourcePrompt: item.sourcePrompt,
+    messagesSnapshot: slimSnapshot,
   };
   const deduped = items.filter((i) => i.url !== next.url || i.sourceMessageId !== next.sourceMessageId);
   saveMediaItems([next, ...deduped]);

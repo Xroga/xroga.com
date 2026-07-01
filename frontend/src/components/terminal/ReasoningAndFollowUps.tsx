@@ -8,6 +8,7 @@ import {
   parseProviderFromContent,
   isFailedImageContent,
 } from '@/lib/parseImageContent';
+import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
 import { ImageStudioCard } from './ImageStudioCard';
 
 interface ReasoningPanelProps {
@@ -120,7 +121,7 @@ export function ModernResponseText({
         className={cn('xv-response-text space-y-2', streaming && 'xv-streaming')}
       >
         {textOnly && (
-          <p className="whitespace-pre-wrap text-[13px] leading-relaxed">{textOnly}</p>
+          <FormattedAiMarkdown content={textOnly} streaming={streaming} />
         )}
         {images.map((img, i) => (
           <ImageStudioCard
@@ -143,12 +144,9 @@ export function ModernResponseText({
   return (
     <div
       ref={blockRef}
-      className={cn('xv-response-text whitespace-pre-wrap', streaming && 'xv-streaming')}
+      className={cn('xv-response-text', streaming && 'xv-streaming')}
     >
-      {content}
-      {streaming && content.length > 0 && (
-        <span className="inline-block w-0.5 h-[1em] ml-0.5 bg-[#006aff]/80 align-middle animate-pulse rounded-full" />
-      )}
+      <FormattedAiMarkdown content={content} streaming={streaming} />
     </div>
   );
 }
