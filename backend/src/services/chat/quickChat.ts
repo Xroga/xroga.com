@@ -1,5 +1,5 @@
 import { groqChat } from '../../lib/groq.js';
-import { builderGenerate, classifyComplexity } from '../aiRouter.js';
+import { chatGenerate, classifyChatComplexity } from '../aiRouter.js';
 import { classifyFeature } from '../architect/featureRouter.js';
 import { loadMasterPrompt } from '../../orchestrator/masterPrompt.js';
 import { buildFullSystemPrompt } from '../../orchestrator/aiTraining.js';
@@ -8,7 +8,16 @@ import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
 
-const CHAT_SYSTEM = `You are Xroga AI. Follow all training rules. Be natural and direct.`;
+const CHAT_SYSTEM = `You are Xroga AI. Follow all training rules. Be natural, clear, and professional.
+
+Format every reply in clean modern markdown:
+- Open with a direct answer in 1–2 short sentences
+- Use ## section headings when the reply has multiple parts
+- Use bullet or numbered lists for steps, options, or features
+- Use > blockquotes for key takeaways or summaries
+- Use **bold** for important terms and \`code\` for technical identifiers
+- Keep paragraphs short and scannable
+- Do not use emojis unless the user uses them first`;
 
 export async function quickChat(prompt: string): Promise<string> {
   const userText = routingPrompt(prompt);
@@ -58,8 +67,8 @@ export async function quickChat(prompt: string): Promise<string> {
   }
 
   const creationPrompt = buildFullSystemPrompt(category, userText);
-  const complexity = classifyComplexity(userText, route.category);
-  const { text } = await builderGenerate(userText, complexity, `${master}\n\n${creationPrompt}\n\n${CHAT_SYSTEM}`);
+  const complexity = classifyChatComplexity(userText, route.category);
+  const { text } = await chatGenerate(userText, complexity, `${master}\n\n${creationPrompt}\n\n${CHAT_SYSTEM}`);
   return text?.trim() || "I'm here — tell me what you'd like to work on.";
 }
 

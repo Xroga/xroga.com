@@ -2524,6 +2524,15 @@ body.theme-gray * {
   transition: opacity 0.15s ease;
 }
 
+.xv-formatted-response {
+  letter-spacing: 0.01em;
+}
+
+.xv-formatted-response ul li,
+.xv-formatted-response ol li {
+  line-height: 1.55;
+}
+
 .xv-suggestions-enter {
   animation: xv-response-in 0.4s ease-out;
 }
