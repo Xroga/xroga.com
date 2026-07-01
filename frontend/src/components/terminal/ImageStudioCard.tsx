@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentType } from 'react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   Download,
   Copy,
@@ -125,13 +125,13 @@ export function ImageGeneratingAnimation({
     <div className={cn('my-2', className)}>
       <TextGeneratingAnimation message={message} step={step} mode="image" sublabel="4 variants" />
       {promptHint && <p className="mt-1.5 text-[10px] text-[var(--muted)] truncate px-0.5">{promptHint}</p>}
-      <div className="mt-2 grid grid-cols-4 gap-1.5 max-w-full">
+      <div className="mt-2 grid grid-cols-4 gap-2 max-w-full">
         {slots.map((img, i) => (
           <div
             key={img?.variantIndex ?? `slot-${i}`}
             className={cn(
               'relative overflow-hidden rounded-lg border border-[var(--card-border)] bg-[var(--muted)]/10 min-w-0',
-              aspectFormat === '16:9' || isYoutubeThumbnail || contentType === 'thumbnail' ? 'h-[56px]' : 'h-16',
+              aspectFormat === '16:9' || isYoutubeThumbnail || contentType === 'thumbnail' ? 'h-[72px] sm:h-20' : 'h-20 sm:h-24',
             )}
           >
             {img ? (
@@ -167,6 +167,10 @@ export function ImageStudioCard({
   const [promptOpen, setPromptOpen] = useState(false);
   const [editSrc, setEditSrc] = useState('');
   const [activeUrl, setActiveUrl] = useState(data.imageUrl);
+
+  useEffect(() => {
+    if (data.imageUrl) setActiveUrl(data.imageUrl);
+  }, [data.imageUrl, messageId]);
 
   const {
     imageUrl: defaultSrc,
@@ -323,7 +327,7 @@ export function ImageStudioCard({
     <>
       <div
         className={cn(
-          'my-2 w-full max-w-full min-w-0 overflow-hidden rounded-2xl border border-[var(--card-border)]/80 bg-[var(--card)]/50 backdrop-blur-sm shadow-sm xv-image-studio-card',
+          'my-2 w-fit max-w-full min-w-0 overflow-hidden rounded-2xl border border-[var(--card-border)]/80 bg-[var(--card)]/50 backdrop-blur-sm shadow-sm xv-image-studio-card',
           className,
         )}
       >

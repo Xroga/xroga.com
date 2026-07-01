@@ -31,10 +31,10 @@ export function gridThumbFrameClass(
   isYoutubeThumbnail?: boolean,
   contentType?: string,
 ): string {
-  if (aspectFormat === '16:9' || isYoutubeThumbnail || contentType === 'thumbnail') return 'h-[72px]';
-  if (aspectFormat === '9:16' || contentType === 'story') return 'h-[88px]';
-  if (aspectFormat === '4:5' || aspectFormat === '3:4') return 'h-[80px]';
-  return 'h-[76px]';
+  if (aspectFormat === '16:9' || isYoutubeThumbnail || contentType === 'thumbnail') return 'h-[84px] sm:h-[96px]';
+  if (aspectFormat === '9:16' || contentType === 'story') return 'h-[96px] sm:h-[108px]';
+  if (aspectFormat === '4:5' || aspectFormat === '3:4') return 'h-[88px] sm:h-[100px]';
+  return 'h-[84px] sm:h-[96px]';
 }
 
 interface VariantThumb {
@@ -76,7 +76,7 @@ export function VariantThumbGrid({
       <p className="text-[9px] font-medium uppercase tracking-wide text-[var(--muted)] mb-1 px-0.5">
         Other variants
       </p>
-      <div className="grid grid-cols-4 gap-1.5">
+      <div className="grid grid-cols-4 gap-2">
         {variants.map((v, i) => {
           const isActive = v.imageUrl === activeUrl;
           return (

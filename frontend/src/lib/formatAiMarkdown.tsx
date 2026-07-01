@@ -33,7 +33,8 @@ type Block =
   | { type: 'bullet'; items: string[] }
   | { type: 'numbered'; items: string[] }
   | { type: 'para'; text: string }
-  | { type: 'hr' };
+  | { type: 'hr' }
+  | { type: 'summary'; text: string };
 
 function parseBlocks(content: string): Block[] {
   const lines = content.split('\n');
@@ -52,6 +53,17 @@ function parseBlocks(content: string): Block[] {
     if (/^---+$/.test(trimmed) || /^\*\*\*+$/.test(trimmed)) {
       blocks.push({ type: 'hr' });
       i += 1;
+      continue;
+    }
+
+    if (trimmed.startsWith('> ')) {
+      const summaryLines: string[] = [trimmed.slice(2)];
+      i += 1;
+      while (i < lines.length && (lines[i] ?? '').trim().startsWith('> ')) {
+        summaryLines.push((lines[i] ?? '').trim().slice(2));
+        i += 1;
+      }
+      blocks.push({ type: 'summary', text: summaryLines.join(' ') });
       continue;
     }
 
@@ -150,6 +162,17 @@ export function FormattedAiMarkdown({
         }
         if (block.type === 'hr') {
           return <hr key={idx} className="border-[var(--card-border)]/50 my-2" />;
+        }
+        if (block.type === 'summary') {
+          return (
+            <div
+              key={idx}
+              className="rounded-xl border border-[var(--accent)]/20 bg-[var(--accent)]/5 px-3 py-2.5 text-[12px] text-[var(--foreground)]/90"
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--accent)] mb-1">Summary</p>
+              <p>{renderInline(block.text)}</p>
+            </div>
+          );
         }
         return (
           <p key={idx} className="text-[var(--foreground)]/95">

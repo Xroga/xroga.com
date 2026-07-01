@@ -1,12 +1,17 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
+import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
 import { isSimpleChat } from '@/lib/promptClassifier';
 
-const MAX_CONTEXT_TURNS = 8;
-const MAX_SNIPPET = 280;
+const MAX_CONTEXT_TURNS = 10;
+const MAX_SNIPPET = 320;
 
-/** Inject recent thread context for conversational memory (chat-only prompts). */
+const UPDATE_HINT =
+  /\b(update|change|edit|modify|redo|regenerate|same|previous|earlier|last|that image|those images|again)\b/i;
+
+/** Inject recent thread context for conversational memory across chat and media follow-ups. */
 export function buildPromptWithMemory(prompt: string, messages: ChatMessage[]): string {
-  if (!isSimpleChat(prompt) || messages.length < 2) return prompt;
+  const wantsMemory = isSimpleChat(prompt) || UPDATE_HINT.test(prompt) || isImageGenerationPrompt(prompt) || isVideoGenerationPrompt(prompt);
+  if (!wantsMemory || messages.length < 2) return prompt;
 
   const recent = messages
     .filter((m) => (m.role === 'user' || m.role === 'assistant') && (m.content || m.featureOutput))
