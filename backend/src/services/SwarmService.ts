@@ -244,7 +244,8 @@ export class SwarmService {
     prompt: string,
     res: Response,
     projectId?: string,
-    attachments?: Array<{ url: string; mimeType?: string; name?: string }>
+    attachments?: Array<{ url: string; mimeType?: string; name?: string }>,
+    clientMeta?: { assistantMessageId?: string; userMessageId?: string; userPrompt?: string }
   ): Promise<void> {
     sendSSE(res, {
       event: 'start',
@@ -270,7 +271,7 @@ export class SwarmService {
 
     const result = await Orchestrator.executeSafe(
       () => this.runCore(userId, prompt, projectId, onProgress, { extras: { attachments } }),
-      { userId, prompt, onProgress, attachments }
+      { userId, prompt, onProgress, attachments, clientMeta }
     );
 
     sendSSE(res, {

@@ -30,6 +30,9 @@ import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
+import { isVideoGenerationPrompt } from '@/lib/parseImageContent';
+import { addPendingVideoJob } from '@/lib/pendingVideoJobs';
+import { useBackgroundVideoJobs } from '@/hooks/useBackgroundVideoJobs';
 
 type MessageRole = 'user' | 'assistant' | 'system';
 
@@ -139,6 +142,25 @@ export function TerminalChatProvider({
 
   queueRef.current = promptQueue;
 
+  useBackgroundVideoJobs(
+    ({ assistantMessageId, output }) => {
+      setMessages((m) =>
+        m.map((msg) =>
+          msg.id === assistantMessageId ? { ...msg, content: '', featureOutput: output } : msg
+        )
+      );
+      toast.success('Your video is ready!');
+    },
+    (_jobId, assistantMessageId, error) => {
+      setMessages((m) =>
+        m.map((msg) =>
+          msg.id === assistantMessageId ? { ...msg, content: error, featureOutput: undefined } : msg
+        )
+      );
+      toast.error('Video generation failed');
+    }
+  );
+
   useEffect(() => {
     if (incognito) {
       setMessages([]);
@@ -161,6 +183,12 @@ export function TerminalChatProvider({
     if (session.messages?.length) setMessages(session.messages);
     if (session.prompt) setPrompt(session.prompt);
   }, [incognito]);
+
+  useEffect(() => {
+    const onResume = () => hydrateFromSession();
+    window.addEventListener('xroga-resume-workspace', onResume);
+    return () => window.removeEventListener('xroga-resume-workspace', onResume);
+  }, [hydrateFromSession]);
 
   const loadIsolatedThread = useCallback(
     (thread: ChatMessage[], threadPrompt: string, jumpMessageId?: string) => {
@@ -438,6 +466,11 @@ export function TerminalChatProvider({
           signal: controller.signal,
           compact: useCompactPipeline,
           attachments,
+          clientMeta: {
+            assistantMessageId: assistantId,
+            userMessageId: userMessageId,
+            userPrompt: displayPrompt,
+          },
           onProgress: (event) => {
             gotEvent = true;
             if (thinkingTimerRef.current) {
@@ -457,6 +490,28 @@ export function TerminalChatProvider({
             if ((event as { omniPhase?: string }).omniPhase) setVideoOmniPhase((event as { omniPhase?: string }).omniPhase ?? null);
             if (event.message) setPipelineMessage(event.message);
             if (event.agent) setSwarmActiveAgent(event.agent);
+            const pendingVideo = isVideoGenerationPrompt(displayPrompt);
+            if (pendingVideo && event.message) {
+              setMessages((m) =>
+                m.map((msg) => {
+                  if (msg.id !== assistantId) return msg;
+                  const fo = msg.featureOutput as Record<string, unknown> | undefined;
+                  if (fo?.type !== 'video_job_pending') return msg;
+                  return {
+                    ...msg,
+                    featureOutput: {
+                      ...fo,
+                      message: event.message,
+                      progress: {
+                        step: event.videoStep ?? fo.progress,
+                        message: event.message,
+                        omniPhase: (event as { omniPhase?: string }).omniPhase,
+                      },
+                    },
+                  };
+                })
+              );
+            }
             const ev = event as SwarmProgressEvent & { dag?: typeof dag; thinking?: string };
             if (ev.thinking && !useCompactPipeline) setReasoning(ev.thinking);
             if (ev.dag && !useCompactPipeline) setDag(ev.dag);
@@ -509,6 +564,33 @@ export function TerminalChatProvider({
                 });
                 return updated;
               });
+              return;
+            }
+            if (output?.type === 'video_job_pending' && typeof output.jobId === 'string') {
+              const startedAt = Date.now();
+              const estimatedSeconds =
+                typeof output.estimatedSeconds === 'number' ? output.estimatedSeconds : 120;
+              const pendingOutput = { ...output, startedAt };
+              addPendingVideoJob({
+                jobId: output.jobId as string,
+                assistantMessageId: assistantId,
+                userMessageId,
+                userPrompt: displayPrompt,
+                estimatedSeconds,
+                startedAt,
+              });
+              setMessages((m) =>
+                m.map((msg) =>
+                  msg.id === assistantId
+                    ? { ...msg, content: '', featureOutput: pendingOutput }
+                    : msg
+                )
+              );
+              setLoading(false);
+              setSwarmRunning(false);
+              setAnimatingId(null);
+              setPipelineMessage(null);
+              toast.success('Video generating in background — keep using Xroga!');
               return;
             }
             if (output?.type === 'video_studio' && typeof output.streamingUrl === 'string') {
