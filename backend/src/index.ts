@@ -147,6 +147,21 @@ app.get('/api/health/omni-reality', async (_req, res) => {
   }
 });
 
+app.get('/api/health/hf-video-spaces', async (_req, res) => {
+  try {
+    const { getHfSpacesCatalog } = await import('./lib/video/videoOrchestrator.js');
+    res.json({
+      tier: 'Tier 0 — community HF Spaces ($0)',
+      spaces: getHfSpacesCatalog(),
+      hfTokenConfigured: Boolean(
+        (await import('./config/envSecrets.js')).hasSecret('HF_TOKEN')
+      ),
+    });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
 app.get('/api/health/oss-video-catalog', async (_req, res) => {
   try {
     const { OPEN_SOURCE_VIDEO_CATALOG } = await import('./lib/video/openSourceVideoCatalog.js');

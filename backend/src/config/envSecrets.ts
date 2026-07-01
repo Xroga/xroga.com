@@ -28,6 +28,7 @@ const ALIASES: Record<string, string[]> = {
   DESCRIPT_API_TOKEN: ['DESCRIPT_API_TOKEN'],
   DEEPINFRA_API_KEY: ['DEEPINFRA_API_KEY'],
   PIAPI_API_KEY: ['PIAPI_API_KEY'],
+  HF_TOKEN: ['HF_TOKEN', 'HUGGINGFACE_API_KEY'],
   MORPH_API_KEY: ['MORPH_API_KEY'],
   DEEPDUB_API_KEY: ['DEEPDUB_API_KEY'],
   IMMERSITY_CLIENT_ID: ['IMMERSITY_CLIENT_ID', 'Immersity_Client_ID'],
@@ -65,6 +66,7 @@ export function getVideoKeyStatus(): Record<string, boolean> {
     GEMINI_API_KEY: hasSecret('GEMINI_API_KEY'),
     DEEPINFRA_API_KEY: hasSecret('DEEPINFRA_API_KEY'),
     PIAPI_API_KEY: hasSecret('PIAPI_API_KEY'),
+    HF_TOKEN: hasSecret('HF_TOKEN'),
     MORPH_API_KEY: hasSecret('MORPH_API_KEY'),
     GROQ_API_KEY: hasSecret('GROQ_API_KEY'),
   };

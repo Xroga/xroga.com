@@ -28,6 +28,7 @@ import {
 } from './video/replicateOssVideo.js';
 import { generateOviVideo } from './video/oviVideo.js';
 import { generateSkyReelsVideo } from './video/piapiVideo.js';
+import { generateViaHfSpaces } from './video/videoOrchestrator.js';
 import { generateComfyUIVideo } from './video/comfyuiVideo.js';
 import { generateDeepInfraVideo } from './video/deepinfraVideo.js';
 import { generateLumaReplicateVideo } from './video/lumaReplicateVideo.js';
@@ -43,6 +44,7 @@ export interface VideoGenerationResult {
 }
 
 export type VideoProviderName =
+  | 'hf-spaces'
   | 'runway'
   | 'luma'
   | 'hailuo'
@@ -91,6 +93,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
 }
 
 function providerTimeout(name: VideoProviderName): number {
+  if (name === 'hf-spaces') return 180_000;
   if (name === 'agnes') return 180_000;
   if (name === 'slideshow') return 120_000;
   if (name === 'fal' || name === 'hailuo') return 150_000;
@@ -150,7 +153,17 @@ async function generateImageToSlideshowVideo(
 function buildVideoProviders(): ProviderEntry[] {
   const rep = hasSecret('REPLICATE_API_TOKEN');
   return [
-    // ── Open-source FIRST ──
+    // ── Tier 0: HF Spaces (always available — no API key required) ──
+    {
+      name: 'hf-spaces',
+      configured: true,
+      call: (prompt, duration, opts) =>
+        generateViaHfSpaces(prompt, duration, {
+          userId: opts?.userId,
+          aspectRatio: opts?.aspectRatio,
+        }).then((r) => r.videoUrl),
+    },
+    // ── Open-source hosts ──
     {
       name: 'deepinfra',
       configured: hasSecret('DEEPINFRA_API_KEY'),
@@ -342,7 +355,7 @@ export async function generateVideoWithFallback(
 
   const premiumSet = new Set(['runway', 'luma', 'fal', 'hailuo', 'kling', 'luma-replicate', 'morph']);
   const cheapSet = new Set([
-    'deepinfra', 'agnes', 'comfyui',
+    'hf-spaces', 'deepinfra', 'agnes', 'comfyui',
     'replicate-wan', 'zeroscope', 'ltx-video', 'videocrafter', 'animatediff',
     'allegro', 'kandinsky', 'mochi', 'cogvideox', 'open-sora', 'pyramid-flow',
     'hunyuan', 'skyreels', 'ovi', 'replicate-svd', 'replicate-minimax',
@@ -444,7 +457,7 @@ export async function smokeTestVideoGeneration(): Promise<{
 
   const chain = await buildVideoProvidersAsync();
   const ossOrder = [
-    'deepinfra', 'agnes', 'comfyui',
+    'hf-spaces', 'deepinfra', 'agnes', 'comfyui',
     'replicate-wan', 'zeroscope', 'ltx-video', 'videocrafter', 'animatediff',
     'allegro', 'kandinsky', 'mochi', 'cogvideox', 'open-sora', 'pyramid-flow',
     'hunyuan', 'skyreels', 'ovi', 'replicate-svd', 'replicate-minimax',

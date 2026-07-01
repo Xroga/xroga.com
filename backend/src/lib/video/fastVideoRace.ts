@@ -17,6 +17,7 @@ import { isKlingConfigured } from './klingAuth.js';
 import { generateKlingVideo } from './klingVideo.js';
 import { generateOviVideo } from './oviVideo.js';
 import { generateSkyReelsVideo } from './piapiVideo.js';
+import { generateViaHfSpaces } from './videoOrchestrator.js';
 import type { VideoGenerationResult } from '../videoProviders.js';
 
 const FAST_TIMEOUT_MS = 110_000;
@@ -32,14 +33,43 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
 
 type Racer = { name: string; run: () => Promise<string> };
 
+export interface FastVideoRaceOptions {
+  aspectRatio?: '9:16' | '16:9';
+  userId?: string;
+  scenePriority?: string;
+}
+
+function buildHfSpaceRacers(
+  prompt: string,
+  durationSeconds: number,
+  options?: FastVideoRaceOptions
+): Racer[] {
+  return [
+    {
+      name: 'hf-spaces',
+      run: async () => {
+        const result = await generateViaHfSpaces(prompt, durationSeconds, {
+          userId: options?.userId,
+          aspectRatio: options?.aspectRatio,
+          scenePriority: options?.scenePriority,
+        });
+        return result.videoUrl;
+      },
+    },
+  ];
+}
+
 function buildOssRacers(
   prompt: string,
   durationSeconds: number,
-  options?: { aspectRatio?: '9:16' | '16:9'; userId?: string }
+  options?: FastVideoRaceOptions
 ): Racer[] {
   const racers: Racer[] = [];
 
-  // ── Tier 1: separate OSS hosts (not Replicate quota) ──
+  // ── Tier 0: HuggingFace community GPUs ($0, round-robin) ──
+  racers.push(...buildHfSpaceRacers(prompt, durationSeconds, options));
+
+  // ── Tier 1: separate OSS hosts (API keys) ──
   if (hasSecret('DEEPINFRA_API_KEY')) {
     racers.push({ name: 'deepinfra', run: () => generateDeepInfraVideo(prompt, durationSeconds) });
   }
@@ -131,7 +161,7 @@ async function trySequential(
 export async function raceVideoProviders(
   prompt: string,
   durationSeconds: number,
-  options?: { aspectRatio?: '9:16' | '16:9'; userId?: string }
+  options?: FastVideoRaceOptions
 ): Promise<VideoGenerationResult | null> {
   const ossRacers = buildOssRacers(prompt, durationSeconds, options);
   const premiumRacers = buildPremiumRacers(prompt, durationSeconds, options?.aspectRatio, options?.userId);

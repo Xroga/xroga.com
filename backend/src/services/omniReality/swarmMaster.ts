@@ -24,7 +24,7 @@ export interface HealedVideoResult extends VideoGenerationResult {
 }
 
 const OSS_VIDEO_PROVIDERS = new Set([
-  'deepinfra', 'agnes', 'comfyui', 'replicate-wan', 'hunyuan', 'mochi', 'cogvideox',
+  'hf-spaces', 'deepinfra', 'agnes', 'comfyui', 'replicate-wan', 'hunyuan', 'mochi', 'cogvideox',
   'open-sora', 'pyramid-flow', 'allegro', 'kandinsky', 'skyreels', 'ovi',
   'ltx-video', 'videocrafter', 'animatediff', 'zeroscope', 'replicate-svd', 'replicate-minimax',
 ]);
@@ -65,6 +65,7 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
     keyframeUrl: options.keyframeUrl,
     priority: priority as 'premium' | 'cheap',
     aspectRatio: (isVertical ? '9:16' : '16:9') as '9:16' | '16:9',
+    scenePriority: options.scenePriority,
   };
 
   for (let ladder = 0; ladder < 4; ladder++) {

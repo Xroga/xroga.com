@@ -22,6 +22,8 @@ export const IMAGE_PROVIDERS = [
 
 /** Open-source video models FIRST — premium APIs only at the end */
 export const VIDEO_PROVIDERS = [
+  // Tier 0: community HF Spaces ($0, round-robin)
+  'hf-spaces',
   // OSS hosts (separate quota)
   'deepinfra',
   'agnes',
