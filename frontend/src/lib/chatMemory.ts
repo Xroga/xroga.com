@@ -1,5 +1,4 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
-import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
 import { isSimpleChat, isTrivialPrompt } from '@/lib/promptClassifier';
 
 const MAX_CONTEXT_TURNS = 10;
@@ -15,8 +14,6 @@ export function buildPromptWithMemory(prompt: string, messages: ChatMessage[]): 
 
   const wantsMemory =
     UPDATE_HINT.test(trimmed) ||
-    isImageGenerationPrompt(trimmed) ||
-    isVideoGenerationPrompt(trimmed) ||
     (isSimpleChat(trimmed) && messages.length >= 4);
   if (!wantsMemory || messages.length < 2) return trimmed;
 

@@ -232,6 +232,11 @@ export function ImageStudioCard({
     label: v.variantLabel ?? v.provider,
   }));
 
+  const gridVariants = useMemo(
+    () => visibleVariants.filter((v) => v.imageUrl && v.imageUrl !== previewSrc),
+    [visibleVariants, previewSrc],
+  );
+
   if (generating) {
     return (
       <ImageGeneratingAnimation
@@ -377,7 +382,7 @@ export function ImageStudioCard({
             />
 
             <VariantThumbGrid
-              variants={successfulVariants}
+              variants={gridVariants}
               activeUrl={previewSrc}
               aspectFormat={aspectFormat}
               isYoutubeThumbnail={isYoutubeThumbnail}
