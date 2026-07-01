@@ -143,7 +143,9 @@ export function TerminalChatProvider({
       return;
     }
     const session = loadWorkspaceSession();
-    if (session?.messages?.length) setMessages(session.messages);
+    if (session?.messages?.length) {
+      setMessages(session.messages);
+    }
     if (session?.prompt) setPrompt(session.prompt);
     setSessionReady(true);
   }, [incognito]);
@@ -158,12 +160,8 @@ export function TerminalChatProvider({
 
   useEffect(() => {
     if (incognito || pathname !== '/dashboard') return;
-    const session = loadWorkspaceSession();
-    if (session?.source === 'media' && session.messages?.length) {
-      setMessages(session.messages);
-      if (session.prompt) setPrompt(session.prompt);
-    }
-  }, [pathname, incognito]);
+    hydrateFromSession();
+  }, [pathname, incognito, hydrateFromSession]);
 
   useEffect(() => {
     if (!sessionReady || incognito) return;

@@ -99,12 +99,26 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   }, [messages.length, setShowJumpToLatest]);
 
   useEffect(() => {
-    const onWheel = () => {
-      if (loading) userScrolledUpRef.current = true;
+    const scrollEl =
+      document.querySelector<HTMLElement>('main.flex-1.overflow-y-auto') ??
+      document.querySelector<HTMLElement>('.xv-fullscreen-overlay .overflow-y-auto') ??
+      document.documentElement;
+
+    const onScroll = () => {
+      const atBottom = scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight < 140;
+      if (atBottom) {
+        stickToBottomRef.current = true;
+        if (!loading) userScrolledUpRef.current = false;
+      } else if (loading) {
+        userScrolledUpRef.current = true;
+        stickToBottomRef.current = false;
+        setShowJumpToLatest(true);
+      }
     };
-    window.addEventListener('wheel', onWheel, { passive: true });
-    return () => window.removeEventListener('wheel', onWheel);
-  }, [loading]);
+
+    scrollEl.addEventListener('scroll', onScroll, { passive: true });
+    return () => scrollEl.removeEventListener('scroll', onScroll);
+  }, [loading, setShowJumpToLatest]);
 
   useEffect(() => {
     const started = loading && !prevLoadingRef.current;

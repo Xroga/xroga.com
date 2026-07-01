@@ -2610,6 +2610,7 @@ body.theme-gray * {
 .xv-image-studio-card {
   animation: xv-image-card-in 0.5s ease-out;
   max-width: min(100%, 42rem);
+  width: fit-content;
 }
 
 .xv-image-modal-enter {
