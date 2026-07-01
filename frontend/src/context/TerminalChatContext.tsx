@@ -22,6 +22,7 @@ import {
   saveWorkspaceSession,
 } from '@/lib/workspacePersistence';
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
+import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { buildPromptWithMemory } from '@/lib/chatMemory';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
@@ -75,6 +76,8 @@ interface TerminalChatContextValue {
   startNewChat: () => void;
   /** Restore session from workspace (e.g. jump from AI Media) */
   hydrateFromSession: () => void;
+  /** Load an isolated prompt+response thread into terminal (new terminal from AI Media) */
+  loadIsolatedThread: (messages: ChatMessage[], prompt: string, jumpMessageId?: string) => void;
   /** Permanently removes assistant response + its user prompt from chat, archive, and media */
   deleteTurn: (assistantMessageId: string) => void;
   /** Permanently removes a user prompt + its assistant reply */
@@ -157,6 +160,28 @@ export function TerminalChatProvider({
     if (session.messages?.length) setMessages(session.messages);
     if (session.prompt) setPrompt(session.prompt);
   }, [incognito]);
+
+  const loadIsolatedThread = useCallback(
+    (thread: ChatMessage[], threadPrompt: string, jumpMessageId?: string) => {
+      if (incognito) return;
+      abortRef.current?.abort();
+      setLoading(false);
+      setSwarmRunning(false);
+      setAnimatingId(null);
+      setPromptQueue([]);
+      setMessages(thread);
+      setPrompt(threadPrompt);
+      saveWorkspaceSession({
+        prompt: threadPrompt,
+        messages: thread,
+        source: 'media',
+        jumpMessageId,
+        selectedId: jumpMessageId ?? thread[thread.length - 1]?.id ?? 'isolated',
+        selectedLabel: threadPrompt.slice(0, 40),
+      });
+    },
+    [incognito, setSwarmRunning],
+  );
 
   useEffect(() => {
     if (incognito || pathname !== '/dashboard') return;
@@ -478,6 +503,7 @@ export function TerminalChatProvider({
                   url: output.imageUrl as string,
                   sourceMessageId: assistantId,
                   sourcePrompt: userPrompt,
+                  variantUrls: collectVariantUrlsFromOutput(output),
                   messagesSnapshot: updated,
                 });
                 return updated;
@@ -659,6 +685,7 @@ export function TerminalChatProvider({
         stop,
         startNewChat,
         hydrateFromSession,
+        loadIsolatedThread,
         deleteTurn,
         deleteUserTurn,
         updateFeatureOutput,

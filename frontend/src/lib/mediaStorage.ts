@@ -14,6 +14,8 @@ export interface MediaItem {
   /** Jump back to the chat message that produced this asset */
   sourceMessageId?: string;
   sourcePrompt?: string;
+  /** All variant URLs from one generation (1–4 images) */
+  variantUrls?: string[];
   /** Full thread snapshot for restoring terminal when jumping from AI Media */
   messagesSnapshot?: import('@/context/TerminalChatContext').ChatMessage[];
 }
@@ -37,7 +39,12 @@ export function saveMediaItems(items: MediaItem[]) {
 }
 
 export function addMediaItem(
-  item: Omit<MediaItem, 'id' | 'createdAt'> & { id?: string; createdAt?: string; messagesSnapshot?: ChatMessage[] }
+  item: Omit<MediaItem, 'id' | 'createdAt'> & {
+    id?: string;
+    createdAt?: string;
+    messagesSnapshot?: ChatMessage[];
+    variantUrls?: string[];
+  }
 ) {
   if (isDataImageUrl(item.url)) {
     return {
@@ -48,6 +55,7 @@ export function addMediaItem(
       createdAt: item.createdAt ?? new Date().toISOString(),
       sourceMessageId: item.sourceMessageId,
       sourcePrompt: item.sourcePrompt,
+      variantUrls: item.variantUrls,
       messagesSnapshot: item.messagesSnapshot,
     };
   }
@@ -63,6 +71,7 @@ export function addMediaItem(
     createdAt: item.createdAt ?? new Date().toISOString(),
     sourceMessageId: item.sourceMessageId,
     sourcePrompt: item.sourcePrompt,
+    variantUrls: item.variantUrls?.filter(Boolean),
     messagesSnapshot: slimSnapshot,
   };
   const deduped = items.filter((i) => i.url !== next.url || i.sourceMessageId !== next.sourceMessageId);

@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { Image as ImageIcon, Upload, Terminal, Plus } from 'lucide-react';
+import { Image as ImageIcon, Upload, Terminal, Sparkles, History } from 'lucide-react';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
+import { MediaGenerationCard } from '@/components/dashboard/MediaGenerationCard';
 import {
   loadMediaItems,
   saveMediaItems,
@@ -13,8 +14,9 @@ import {
   purgeMediaUrls,
   type MediaItem,
 } from '@/lib/mediaStorage';
+import { groupImageGenerations, extractGenerationThread } from '@/lib/mediaHelpers';
 import { findChatArchiveByMessageId, removeChatArchiveEntry } from '@/lib/chatArchive';
-import { resumeToDashboard } from '@/lib/workspacePersistence';
+import { loadWorkspaceSession, resumeToDashboard } from '@/lib/workspacePersistence';
 import { useRouter } from 'next/navigation';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
@@ -51,7 +53,7 @@ export function MediaPageClient() {
   const [deleting, setDeleting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const { setPrompt, deleteTurn, startNewChat, hydrateFromSession } = useTerminalChat();
+  const { setPrompt, deleteTurn, startNewChat, hydrateFromSession, loadIsolatedThread } = useTerminalChat();
 
   useEffect(() => {
     setItems(loadMediaItems());
@@ -87,18 +89,30 @@ export function MediaPageClient() {
     });
   }
 
-  function openInDashboard(item: MediaItem) {
+  function resolveMessages(item: MediaItem) {
+    return (
+      item.messagesSnapshot ??
+      (item.sourceMessageId ? findChatArchiveByMessageId(item.sourceMessageId)?.messages : undefined)
+    );
+  }
+
+  function openExistingTerminal(item: MediaItem) {
     setSelectedId(item.id);
     const prompt = item.sourcePrompt ?? item.name;
     setPrompt(prompt);
 
-    const archived =
-      item.messagesSnapshot ??
-      (item.sourceMessageId ? findChatArchiveByMessageId(item.sourceMessageId)?.messages : undefined);
+    const archived = resolveMessages(item);
+    const session = loadWorkspaceSession();
+    const messages = archived?.length ? archived : (session?.messages ?? []);
+
+    if (!messages.length) {
+      toast.error('No saved terminal thread for this generation');
+      return;
+    }
 
     resumeToDashboard({
       prompt,
-      messages: archived,
+      messages,
       selectedId: item.id,
       selectedLabel: item.name,
       source: 'media',
@@ -106,13 +120,48 @@ export function MediaPageClient() {
     });
     router.push('/dashboard');
     setTimeout(() => hydrateFromSession(), 100);
-    toast('Jumping to where this was created…', { icon: '📍' });
+    toast('Opening existing terminal — full thread with all variants', { icon: '📍' });
   }
 
-  function handleNewTerminal() {
+  function openNewTerminalWithCreation(item: MediaItem) {
+    setSelectedId(item.id);
+    const prompt = item.sourcePrompt ?? item.name;
+    const archived = resolveMessages(item);
+    const thread = extractGenerationThread(archived, item.sourceMessageId);
+
+    if (!thread.length) {
+      toast.error('No saved prompt/response for this image');
+      return;
+    }
+
+    loadIsolatedThread(thread, prompt, item.sourceMessageId);
+    router.push('/dashboard');
+    setTimeout(() => hydrateFromSession(), 100);
+    toast('New terminal — your prompt and image output', { icon: '✨' });
+  }
+
+  function handleBlankNewTerminal() {
     startNewChat();
     router.push('/dashboard');
-    toast('Fresh terminal — your history is saved in AI Media', { icon: '✨' });
+    toast('Fresh empty terminal', { icon: '🆕' });
+  }
+
+  function handleOpenCurrentTerminal() {
+    const session = loadWorkspaceSession();
+    if (!session?.messages?.length) {
+      toast.error('No active terminal session — generate something on the dashboard first');
+      return;
+    }
+    resumeToDashboard({
+      prompt: session.prompt,
+      messages: session.messages,
+      selectedId: 'current-terminal',
+      selectedLabel: 'Current terminal',
+      source: 'dashboard',
+    });
+    router.push('/dashboard');
+    setTimeout(() => hydrateFromSession(), 100);
+    toast('Back to your current terminal', { icon: '📍' });
   }
 
   function permanentlyDelete(item: MediaItem) {
@@ -120,6 +169,7 @@ export function MediaPageClient() {
     try {
       removeMediaItem(item.id);
       removeMediaByUrl(item.url);
+      if (item.variantUrls?.length) purgeMediaUrls(...item.variantUrls);
       if (item.sourceMessageId) {
         removeMediaByMessageId(item.sourceMessageId);
         const archive = findChatArchiveByMessageId(item.sourceMessageId);
@@ -144,11 +194,16 @@ export function MediaPageClient() {
     const typeFiltered = filter === 'all' ? items : items.filter((i) => i.type === filter);
     const q = query.trim().toLowerCase();
     if (!q) return typeFiltered;
-    return typeFiltered.filter((i) => i.name.toLowerCase().includes(q) || (i.sourcePrompt ?? '').toLowerCase().includes(q));
+    return typeFiltered.filter(
+      (i) => i.name.toLowerCase().includes(q) || (i.sourcePrompt ?? '').toLowerCase().includes(q),
+    );
   }, [items, filter, query]);
 
-  const groups = useMemo(() => groupByPrompt(shown), [shown]);
-  const imageItems = shown.filter((i) => i.type === 'image');
+  const imageGenerations = useMemo(() => groupImageGenerations(shown), [shown]);
+  const nonImageGroups = useMemo(
+    () => groupByPrompt(shown.filter((i) => i.type !== 'image')),
+    [shown],
+  );
 
   return (
     <PageFullscreenFrame>
@@ -160,13 +215,20 @@ export function MediaPageClient() {
               AI Media
             </h1>
             <p className="text-sm text-[var(--muted)] mt-1">
-              Tap any thumbnail to jump back to the exact terminal turn — input, output, and variants.
+              Each card shows 1–4 image variants. Open in your full terminal or a fresh isolated terminal.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
-              onClick={handleNewTerminal}
+              onClick={handleOpenCurrentTerminal}
+              className="xv-footer-pill !text-[var(--foreground)] flex items-center gap-1.5 border border-[var(--card-border)] hover:border-[var(--accent)]/40"
+            >
+              <History className="w-3.5 h-3.5 text-[var(--accent)]" /> Open existing terminal
+            </button>
+            <button
+              type="button"
+              onClick={handleBlankNewTerminal}
               className="xv-footer-pill !text-[var(--foreground)] flex items-center gap-1.5 border border-[var(--accent)]/30 text-[var(--accent)]"
             >
               <Terminal className="w-3.5 h-3.5" /> New terminal
@@ -200,11 +262,12 @@ export function MediaPageClient() {
               key={key}
               type="button"
               onClick={() => setFilter(key)}
-              className={`text-xs px-3 py-1.5 rounded-full border capitalize ${
+              className={cn(
+                'text-xs px-3 py-1.5 rounded-full border capitalize',
                 filter === key
                   ? 'bg-[var(--accent)]/15 border-[var(--accent)]/40 text-[var(--accent)]'
-                  : 'border-[var(--card-border)] text-[var(--muted)]'
-              }`}
+                  : 'border-[var(--card-border)] text-[var(--muted)]',
+              )}
             >
               {key === 'all' ? 'All media' : key}
             </button>
@@ -220,63 +283,57 @@ export function MediaPageClient() {
             </p>
           </div>
         ) : (
-          <div className="space-y-5">
-            {imageItems.length > 0 && (
-              <div className="glass-panel rounded-2xl border border-[var(--card-border)] p-4 sm:p-5">
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <h2 className="text-sm font-semibold">Image gallery</h2>
-                  <span className="text-[10px] text-[var(--muted)]">{imageItems.length} items</span>
+          <div className="space-y-6">
+            {imageGenerations.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <h2 className="text-sm font-semibold flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-[var(--accent)]" />
+                    Image generations
+                  </h2>
+                  <span className="text-[10px] text-[var(--muted)]">
+                    {imageGenerations.length} session{imageGenerations.length === 1 ? '' : 's'}
+                  </span>
                 </div>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
-                  {imageItems.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => openInDashboard(item)}
-                      className={cn(
-                        'group relative aspect-square rounded-xl overflow-hidden border bg-black/5 dark:bg-black/20 transition-all hover:ring-2 hover:ring-[var(--accent)]/50',
-                        selectedId === item.id ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/40' : 'border-[var(--card-border)]',
-                      )}
-                      title={item.sourcePrompt ?? item.name}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={item.url} alt="" className="h-full w-full object-cover" />
-                      <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-1.5 pt-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-[8px] text-white line-clamp-2 leading-tight">
-                          {(item.sourcePrompt ?? item.name).slice(0, 40)}
-                        </span>
-                      </span>
-                    </button>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {imageGenerations.map((group) => (
+                    <MediaGenerationCard
+                      key={group.id}
+                      group={group}
+                      selected={selectedId === group.item.id}
+                      onOpenExisting={() => openExistingTerminal(group.item)}
+                      onOpenNewTerminal={() => openNewTerminalWithCreation(group.item)}
+                      onDelete={() => setDeleteTarget(group.item)}
+                    />
                   ))}
                 </div>
               </div>
             )}
 
-            {groups.map((group) => (
+            {nonImageGroups.map((group) => (
               <div
                 key={group.key}
                 className="glass-panel rounded-2xl border border-[var(--card-border)] overflow-hidden"
               >
                 <div className="px-4 py-3 border-b border-[var(--card-border)]/60 flex items-center justify-between gap-2">
                   <p className="text-xs font-medium truncate">{group.label}</p>
-                  <span className="text-[9px] text-[var(--muted)] shrink-0">{group.items.length} file{group.items.length === 1 ? '' : 's'}</span>
+                  <span className="text-[9px] text-[var(--muted)] shrink-0">
+                    {group.items.length} file{group.items.length === 1 ? '' : 's'}
+                  </span>
                 </div>
                 <div className="p-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {group.items.map((item) => (
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => openInDashboard(item)}
+                      onClick={() => openExistingTerminal(item)}
                       className={cn(
                         'relative rounded-xl overflow-hidden border text-left transition-all hover:border-[var(--accent)]/40',
-                        item.type === 'video' ? 'aspect-video' : item.type === 'audio' ? 'aspect-[3/1]' : 'aspect-square',
+                        item.type === 'video' ? 'aspect-video' : 'aspect-[3/1]',
                         selectedId === item.id ? 'border-[var(--accent)]' : 'border-[var(--card-border)]',
                       )}
                     >
-                      {item.type === 'image' ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={item.url} alt="" className="h-full w-full object-cover" />
-                      ) : item.type === 'video' ? (
+                      {item.type === 'video' ? (
                         <video src={item.url} className="h-full w-full object-cover" muted playsInline preload="metadata" />
                       ) : (
                         <div className="h-full w-full flex items-center justify-center bg-[var(--muted)]/10 text-[10px] text-[var(--muted)] px-2">
@@ -288,15 +345,6 @@ export function MediaPageClient() {
                       </span>
                     </button>
                   ))}
-                </div>
-                <div className="px-3 pb-3 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => group.items[0] && openInDashboard(group.items[0])}
-                    className="text-[10px] text-[var(--accent)] hover:underline flex items-center gap-1"
-                  >
-                    <Plus className="h-3 w-3" /> Open in terminal
-                  </button>
                 </div>
               </div>
             ))}
