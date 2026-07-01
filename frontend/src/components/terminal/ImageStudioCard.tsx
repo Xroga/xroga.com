@@ -120,22 +120,19 @@ export function ImageGeneratingAnimation({
   contentType?: string;
 }) {
   const slots = Array.from({ length: VARIANT_SLOTS }, (_, i) => liveAttempts[i] ?? null);
-  const thumbH =
-    aspectFormat === '16:9' || isYoutubeThumbnail || contentType === 'thumbnail'
-      ? 'h-[42px]'
-      : aspectFormat === '9:16' || contentType === 'story'
-        ? 'h-[52px]'
-        : 'h-14';
 
   return (
     <div className={cn('my-2', className)}>
       <TextGeneratingAnimation message={message} step={step} mode="image" sublabel="4 variants" />
       {promptHint && <p className="mt-1.5 text-[10px] text-[var(--muted)] truncate px-0.5">{promptHint}</p>}
-      <div className="mt-2 grid grid-cols-4 gap-1">
+      <div className="mt-2 grid grid-cols-4 gap-1.5 max-w-full">
         {slots.map((img, i) => (
           <div
             key={img?.variantIndex ?? `slot-${i}`}
-            className={cn('relative overflow-hidden rounded-md border border-[var(--card-border)] bg-[var(--muted)]/10', thumbH)}
+            className={cn(
+              'relative overflow-hidden rounded-lg border border-[var(--card-border)] bg-[var(--muted)]/10 min-w-0',
+              aspectFormat === '16:9' || isYoutubeThumbnail || contentType === 'thumbnail' ? 'h-[56px]' : 'h-16',
+            )}
           >
             {img ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -326,7 +323,7 @@ export function ImageStudioCard({
     <>
       <div
         className={cn(
-          'my-2 overflow-hidden rounded-2xl border border-[var(--card-border)]/80 bg-[var(--card)]/50 backdrop-blur-sm shadow-sm',
+          'my-2 w-full max-w-full min-w-0 overflow-hidden rounded-2xl border border-[var(--card-border)]/80 bg-[var(--card)]/50 backdrop-blur-sm shadow-sm xv-image-studio-card',
           className,
         )}
       >
@@ -365,7 +362,7 @@ export function ImageStudioCard({
         </div>
 
         {previewSrc && (
-          <div className="px-3 pb-3 space-y-2.5">
+          <div className="px-3 pb-3 space-y-2.5 min-w-0 max-w-full">
             <ImageVariantCarousel
               slides={carouselSlides.length > 0 ? carouselSlides : [{ imageUrl: previewSrc }]}
               activeIndex={activeIndex}

@@ -6,6 +6,8 @@ import { TerminalChatBar } from './TerminalChatBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
 import { RepoContextBar } from './RepoContextBar';
 import { BlackHoleVButton } from './BlackHoleVButton';
+import { useTerminalScroll } from '@/context/TerminalScrollContext';
+import { ChevronDown } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useVisualViewportBottom } from '@/hooks/useVisualViewportBottom';
@@ -20,6 +22,7 @@ export function TerminalDock() {
   const incognito = usePrivacyStore((s) => s.incognito);
   const keyboardOffset = useVisualViewportBottom();
   const dockInnerRef = useRef<HTMLDivElement>(null);
+  const { showJumpToLatest, scrollToLatest } = useTerminalScroll();
   const isDashboard = pathname === '/dashboard' || pathname === '/dashboard/';
   const dashboardFullscreen = isDashboard && terminalFullscreen;
 
@@ -61,6 +64,19 @@ export function TerminalDock() {
           <div className="flex flex-col px-0.5">
             <BlackHoleVButton className="xv-blackhole-outside self-start" />
             <RepoContextBar outside />
+          </div>
+        )}
+        {showJumpToLatest && (
+          <div className="flex justify-center mb-1.5">
+            <button
+              type="button"
+              onClick={() => scrollToLatest('smooth')}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--card-border)] bg-[var(--card)]/95 backdrop-blur-md shadow-md text-[var(--foreground)] hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/40 transition-all animate-in fade-in zoom-in-95"
+              aria-label="Jump to latest output"
+              title="Jump to latest"
+            >
+              <ChevronDown className="h-4 w-4" />
+            </button>
           </div>
         )}
         <ChatbarQueueOutside />

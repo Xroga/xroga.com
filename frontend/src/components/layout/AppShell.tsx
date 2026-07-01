@@ -11,6 +11,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { TopUpModal } from '@/components/billing/TopUpModal';
 import { TerminalDock } from '@/components/terminal/TerminalDock';
 import { TerminalChatProvider } from '@/context/TerminalChatContext';
+import { TerminalScrollProvider } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePathname } from 'next/navigation';
 import { IncognitoModeButton } from '@/components/layout/IncognitoModeButton';
@@ -40,6 +41,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
 
   return (
     <TerminalChatProvider>
+      <TerminalScrollProvider>
       <IncognitoFullscreenBackground />
       <div
         className="flex min-h-screen terminal-layout overflow-x-hidden"
@@ -86,6 +88,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
         <MobileNav />
         <TopUpModal open={topUpOpen} onClose={() => setTopUpOpen(false)} />
       </div>
+      </TerminalScrollProvider>
     </TerminalChatProvider>
   );
 }

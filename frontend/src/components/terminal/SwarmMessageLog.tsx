@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
-import { Terminal, Palette, MessageCircleHeart, ChevronDown } from 'lucide-react';
+import { Terminal, Palette, MessageCircleHeart } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
+import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
@@ -54,19 +55,26 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   const profile = useAppStore((s) => s.profile);
   const storeIncognito = usePrivacyStore((s) => s.incognito);
   const isIncognito = incognito || storeIncognito;
+  const { setShowJumpToLatest, registerScrollToLatest } = useTerminalScroll();
   const bottomRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const stickToBottomRef = useRef(true);
+  const userScrolledUpRef = useRef(false);
   const prevLoadingRef = useRef(false);
-  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+  const jumpHandledRef = useRef<string | null>(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [searchHit, setSearchHit] = useState<string | null>(null);
 
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
     stickToBottomRef.current = true;
-    setShowScrollToBottom(false);
+    userScrolledUpRef.current = false;
+    setShowJumpToLatest(false);
     bottomRef.current?.scrollIntoView({ behavior, block: 'end' });
-  }, []);
+  }, [setShowJumpToLatest]);
+
+  useEffect(() => {
+    registerScrollToLatest(scrollToBottom);
+  }, [registerScrollToLatest, scrollToBottom]);
 
   useEffect(() => {
     const el = bottomRef.current;
@@ -75,16 +83,28 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     const observer = new IntersectionObserver(
       ([entry]) => {
         const atBottom = entry.isIntersecting;
-        setShowScrollToBottom(!atBottom);
-        if (atBottom) stickToBottomRef.current = true;
-        else if (!loading) stickToBottomRef.current = false;
+        if (atBottom) {
+          stickToBottomRef.current = true;
+          userScrolledUpRef.current = false;
+          setShowJumpToLatest(false);
+        } else if (userScrolledUpRef.current) {
+          setShowJumpToLatest(true);
+        }
       },
       { threshold: 0, rootMargin: '0px 0px 140px 0px' },
     );
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [loading, messages.length]);
+  }, [messages.length, setShowJumpToLatest]);
+
+  useEffect(() => {
+    const onWheel = () => {
+      if (loading) userScrolledUpRef.current = true;
+    };
+    window.addEventListener('wheel', onWheel, { passive: true });
+    return () => window.removeEventListener('wheel', onWheel);
+  }, [loading]);
 
   useEffect(() => {
     const started = loading && !prevLoadingRef.current;
@@ -92,26 +112,35 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     prevLoadingRef.current = loading;
 
     if (started) {
+      userScrolledUpRef.current = false;
       stickToBottomRef.current = true;
       scrollToBottom('auto');
       return;
     }
 
-    if (stickToBottomRef.current || finished) {
-      scrollToBottom(loading ? 'auto' : 'smooth');
+    if (loading && stickToBottomRef.current && !userScrolledUpRef.current) {
+      scrollToBottom('auto');
+      return;
+    }
+
+    if (finished && stickToBottomRef.current && !userScrolledUpRef.current) {
+      scrollToBottom('smooth');
     }
   }, [messages, loading, imageAttempts, imageProgressStep, pipelineMessage, scrollToBottom]);
 
   useEffect(() => {
     const session = loadWorkspaceSession();
-    if (session?.jumpMessageId) {
-      const id = session.jumpMessageId;
-      setTimeout(() => {
-        messageRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setSearchHit(id);
-      }, 400);
-    }
-  }, []);
+    const jumpId = session?.jumpMessageId;
+    if (!jumpId || jumpHandledRef.current === jumpId) return;
+    jumpHandledRef.current = jumpId;
+    const t = setTimeout(() => {
+      messageRefs.current[jumpId]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setSearchHit(jumpId);
+      userScrolledUpRef.current = true;
+      setShowJumpToLatest(true);
+    }, 450);
+    return () => clearTimeout(t);
+  }, [messages.length, setShowJumpToLatest]);
 
   const displayInitial = profile?.display_name?.charAt(0)?.toUpperCase() ?? 'U';
 
@@ -325,7 +354,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                 )}
                 <div
                   className={cn(
-                    'min-w-0 max-w-[85%]',
+                    'min-w-0 max-w-[85%] w-full',
                     msg.role === 'user' && 'text-right',
                     msg.role === 'system' && (AGENT_STYLES[msg.agent ?? ''] ?? 'text-[var(--muted)] text-center max-w-full')
                   )}
@@ -429,18 +458,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
       </div>
       <OutOfActionsModal open={outOfActionsOpen} onClose={() => setOutOfActionsOpen(false)} />
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
-
-      {showScrollToBottom && (
-        <button
-          type="button"
-          onClick={() => scrollToBottom('smooth')}
-          className="fixed z-[180] bottom-[calc(min(340px,48vh)+1rem)] right-4 sm:right-8 flex items-center gap-1 rounded-full border border-[var(--card-border)] bg-[var(--card)]/95 backdrop-blur-md px-3 py-2 text-[11px] font-semibold shadow-lg hover:bg-[var(--card)] transition-all animate-in fade-in slide-in-from-bottom-2"
-          aria-label="Scroll to latest message"
-        >
-          <ChevronDown className="h-4 w-4" />
-          Latest
-        </button>
-      )}
     </>
   );
 }
