@@ -25,7 +25,8 @@ export interface ToolEntry {
 }
 
 export const TOOL_REGISTRY: ToolEntry[] = [
-  // ── Video: Premium (20%) ──
+  // ── Video: Tier 0 HF Spaces (free community GPUs) ──
+  { id: 'hf-spaces', name: 'HuggingFace Spaces OSS', category: 'video', isFree: true, isPremium: false, costWeight: 0, capabilities: ['text2video', 'img2video', 'hf_gradio', 'round_robin'] },
   { id: 'kling', name: 'Kling AI', category: 'video', isFree: false, isPremium: true, envKey: 'KLING_API_KEY', costWeight: 8, capabilities: ['text2video', 'img2video', 'physics', 'multimodal'], climaxOnly: true },
   { id: 'luma', name: 'Luma Dream Machine', category: 'video', isFree: false, isPremium: true, envKey: 'LUMA_API_KEY', costWeight: 9, capabilities: ['text2video', 'img2video', 'cinematic', 'camera_moves'], climaxOnly: true },
   { id: 'runway', name: 'Runway Gen-3', category: 'video', isFree: false, isPremium: true, envKey: 'RUNWAY_API_KEY', costWeight: 9, capabilities: ['text2video', 'motion', 'production'], climaxOnly: true },

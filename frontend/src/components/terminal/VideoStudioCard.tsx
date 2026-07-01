@@ -50,6 +50,7 @@ interface VideoStudioCardProps {
 
 function providerLabel(id?: string): string {
   const labels: Record<string, string> = {
+    'hf-spaces': 'HuggingFace Spaces (free GPU)',
     deepinfra: 'DeepInfra OSS (Wan/Pruna)',
     agnes: 'Agnes Video',
     comfyui: 'ComfyUI / UniVA',
@@ -88,7 +89,7 @@ function providerLabel(id?: string): string {
 function isOssProvider(id?: string): boolean {
   if (!id) return false;
   return [
-    'deepinfra', 'agnes', 'comfyui', 'replicate-wan', 'hunyuan', 'mochi', 'cogvideox',
+    'hf-spaces', 'deepinfra', 'agnes', 'comfyui', 'replicate-wan', 'hunyuan', 'mochi', 'cogvideox',
     'open-sora', 'pyramid-flow', 'allegro', 'kandinsky', 'skyreels', 'ovi',
     'ltx-video', 'videocrafter', 'animatediff', 'zeroscope', 'replicate-svd', 'replicate-minimax',
   ].includes(id);

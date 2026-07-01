@@ -16,6 +16,7 @@ export interface GuaranteedVideoOptions {
   keyframeUrl?: string;
   priority?: 'premium' | 'cheap' | 'auto';
   aspectRatio?: '9:16' | '16:9';
+  scenePriority?: string;
 }
 
 /** Try paid/free API providers — may throw */
@@ -75,6 +76,7 @@ export async function generateGuaranteedVideo(
       const raced = await raceVideoProviders(cleanPrompt, dur, {
         aspectRatio,
         userId: options?.userId,
+        scenePriority: options?.scenePriority,
       });
       if (raced?.videoUrl) {
         console.log(`[GuaranteedVideo] Fast race winner: ${raced.provider}`);
