@@ -36,6 +36,8 @@ export interface VideoOutputData {
     sceneCount?: number;
   };
   audioTracks?: Array<{ type: string; provider: string }>;
+  sourceImageUrl?: string;
+  outputFormat?: 'mp4' | 'gif';
 }
 
 interface VideoStudioCardProps {
@@ -69,6 +71,9 @@ function providerLabel(id?: string): string {
     animatediff: 'AnimateDiff',
     zeroscope: 'Zeroscope',
     'replicate-svd': 'Stable Video Diffusion',
+    'replicate-svd-i2v': 'Stable Video Diffusion (your image)',
+    'runway-i2v': 'Runway Gen-4 (your image)',
+    'hf-spaces-i2v': 'HuggingFace Spaces (your image)',
     'replicate-minimax': 'MiniMax',
     fal: 'Fal.ai',
     hailuo: 'Hailuo / MiniMax',
@@ -117,7 +122,8 @@ export function VideoStudioCard({
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const { setPrompt, deleteTurn } = useTerminalChat();
 
-  const { title, streamingUrl, selectedProvider, durationSeconds, prompt, screenplay, providersUsed, reviewScores, healingSteps, qcScore, omniReality, audioTracks } = data;
+  const { title, streamingUrl, selectedProvider, durationSeconds, prompt, screenplay, providersUsed, reviewScores, healingSteps, qcScore, omniReality, audioTracks, sourceImageUrl, outputFormat } = data;
+  const isGif = outputFormat === 'gif' || /\.gif(\?|$)/i.test(streamingUrl);
   const videoFormat: VideoFormatId =
     data.videoFormat ?? parseVideoFormatFromPrompt(prompt ?? title);
   const { src: previewSrc, loading: videoLoading, error: videoError } = useVideoSrc(streamingUrl);
@@ -159,7 +165,7 @@ export function VideoStudioCard({
   function handleDownload() {
     const a = document.createElement('a');
     a.href = previewSrc || streamingUrl;
-    a.download = `${title.slice(0, 30) || 'xroga-video'}.mp4`;
+    a.download = `${title.slice(0, 30) || 'xroga-video'}.${isGif ? 'gif' : 'mp4'}`;
     a.click();
     toast.success('Download started');
   }
@@ -190,7 +196,15 @@ export function VideoStudioCard({
           )}
           </div>
 
-          {isOssProvider(selectedProvider) && (
+          {sourceImageUrl && (
+            <div className="mx-3 mb-2 rounded-lg border border-sky-500/30 bg-sky-500/10 px-2.5 py-1.5">
+              <p className="text-[10px] text-sky-700 dark:text-sky-300">
+                Animated from your uploaded image · {providerLabel(selectedProvider)}
+              </p>
+            </div>
+          )}
+
+          {isOssProvider(selectedProvider) && !sourceImageUrl && (
             <div className="mx-3 mb-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1.5">
               <p className="text-[10px] text-emerald-700 dark:text-emerald-300">
                 Open-source AI video · {providerLabel(selectedProvider)}
@@ -261,14 +275,22 @@ export function VideoStudioCard({
             {videoError && (
               <div className="absolute inset-0 flex items-center justify-center text-red-400 text-[10px] px-2 text-center">{videoError}</div>
             )}
-            <video
-              src={previewSrc}
-              className="h-full w-full object-contain pointer-events-none"
-              playsInline
-              muted
-              preload="metadata"
-              crossOrigin={videoCrossOrigin(previewSrc)}
-            />
+            {isGif ? (
+              <img
+                src={previewSrc || streamingUrl}
+                alt={title}
+                className="h-full w-full object-contain pointer-events-none"
+              />
+            ) : (
+              <video
+                src={previewSrc}
+                className="h-full w-full object-contain pointer-events-none"
+                playsInline
+                muted
+                preload="metadata"
+                crossOrigin={videoCrossOrigin(previewSrc)}
+              />
+            )}
             <span className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/40 transition-colors">
               <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-black shadow-lg">
                 <Play className="h-6 w-6 ml-0.5" />

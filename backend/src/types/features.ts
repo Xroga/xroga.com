@@ -154,6 +154,9 @@ export interface VideoStudioOutput {
   pros?: string[];
   cons?: string[];
   followUps?: string[];
+  /** Chat image-to-video reference frame */
+  sourceImageUrl?: string;
+  outputFormat?: 'mp4' | 'gif';
 }
 
 export interface DeepResearchOutput {

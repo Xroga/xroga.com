@@ -31,9 +31,27 @@ export function isImageGenerationPrompt(text: string): boolean {
 }
 
 export function isVideoGenerationPrompt(text: string): boolean {
-  return /\b(generate|create|make|produce|film|shoot)\b[\s\S]{0,40}\b(video|movie|film|trailer|clip|scene|episode|series)\b|\bvideo\s+of\b/i.test(
+  return /\b(generate|create|make|produce|film|shoot|animate|turn)\b[\s\S]{0,50}\b(video|movie|film|trailer|clip|scene|episode|series|gif|animation)\b|\bvideo\s+of\b|\bimage\s+to\s+video\b|\bphoto\s+to\s+video\b/i.test(
     text
   );
+}
+
+export function isImageToVideoPrompt(text: string): boolean {
+  return /\b(animate|animation|turn\s+(?:this\s+)?(?:image|photo|picture)\s+(?:into|to)|image\s+to\s+video|photo\s+to\s+video|make\s+(?:this|the)\s+(?:image|photo)\s+(?:move|alive)|bring\s+(?:this|the)\s+(?:image|photo)\s+to\s+life)\b/i.test(
+    text
+  );
+}
+
+export function isGifPrompt(text: string): boolean {
+  return /\b(gif|animated\s+gif|image\s+to\s+gif|make\s+a\s+gif)\b/i.test(text);
+}
+
+/** Default chat prompt when user attaches image only */
+export function defaultImageAttachmentPrompt(text: string, hasVideoIntent: boolean): string {
+  if (text.trim()) return text;
+  return hasVideoIntent
+    ? 'Turn this image into a cinematic animated video'
+    : 'Turn this image into a cinematic animated video';
 }
 
 export function parseProviderFromContent(content: string): string | undefined {

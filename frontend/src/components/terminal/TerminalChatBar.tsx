@@ -24,7 +24,7 @@ import type { SendButtonState } from './ChatBarButtons';
 import { GitHubChipIcon, GitLabChipIcon, VercelChipIcon, TwitterChipIcon, ChatBarBrandChip } from './ChatBarButtons';
 import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
-import { isVideoGenerationPrompt } from '@/lib/parseImageContent';
+import { isVideoGenerationPrompt, isImageToVideoPrompt, isGifPrompt, defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { ensureVideoFormatTag } from '@/lib/videoFormat';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -135,16 +135,19 @@ export function TerminalChatBar() {
       setUploading(false);
     }
 
+    const hasImages = Boolean(attachments?.length);
     const rawPrompt =
       text ||
-      (attachments?.length
-        ? 'Transform this image with a modern professional look'
-        : undefined);
+      (hasImages ? defaultImageAttachmentPrompt('', true) : undefined);
+
+    const videoIntent =
+      hasImages ||
+      isVideoGenerationPrompt(rawPrompt ?? '') ||
+      isImageToVideoPrompt(rawPrompt ?? '') ||
+      isGifPrompt(rawPrompt ?? '');
 
     const promptText =
-      rawPrompt && isVideoGenerationPrompt(rawPrompt)
-        ? ensureVideoFormatTag(rawPrompt)
-        : rawPrompt;
+      rawPrompt && videoIntent ? ensureVideoFormatTag(rawPrompt) : rawPrompt;
 
     await submit(promptText, false, false, attachments);
     if (!loading) setSendState('launched');

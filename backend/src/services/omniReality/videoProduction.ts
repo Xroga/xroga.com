@@ -94,6 +94,7 @@ export async function produceOmniVideo(options: OmniProductionOptions): Promise<
       projectId,
       seriesId,
       runId,
+      keyframeUrl: options.keyframeUrl,
       onProgress: bridgeProgress,
       onOmniEvent: options.onOmniEvent,
     });

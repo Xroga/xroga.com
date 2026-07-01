@@ -1,13 +1,13 @@
 /**
- * Image-to-video pipeline — uses working image APIs + Replicate SVD / Runway gen4_turbo.
- * Reliable when text-to-video APIs are locked or out of credits.
+ * Image-to-video pipeline — user reference frame + OSS SVD / Runway gen4_turbo.
  */
 
 import { generateImage } from '../../services/builder/imageGen.js';
 import { generateAgnesImage } from '../agnes.js';
 import { sanitizeVideoPrompt } from './videoPrompt.js';
 import { generateSvdFromImage } from './replicateOssVideo.js';
-import { generateRunwayVideo } from './runwayVideo.js';
+import { generateRunwayImageToVideo } from './runwayVideo.js';
+import { generateViaHfSpaces } from './videoOrchestrator.js';
 import { hasSecret } from '../../config/envSecrets.js';
 import type { VideoGenerationResult } from '../videoProviders.js';
 
@@ -17,7 +17,7 @@ async function generateKeyframe(
   userId?: string
 ): Promise<string> {
   const clean = sanitizeVideoPrompt(prompt);
-  const aspect = vertical ? '9:16' as const : '16:9' as const;
+  const aspect = vertical ? ('9:16' as const) : ('16:9' as const);
   try {
     return await generateAgnesImage(`Cinematic film still, ${clean.slice(0, 400)}`);
   } catch {
@@ -32,41 +32,88 @@ async function generateKeyframe(
   }
 }
 
-/** Keyframe + Replicate SVD — works with REPLICATE_API_TOKEN only */
+/** User or AI keyframe + Replicate SVD */
 export async function generateImageToVideoSvd(
   prompt: string,
   durationSeconds: number,
-  options?: { userId?: string; aspectRatio?: '9:16' | '16:9' }
+  options?: { userId?: string; aspectRatio?: '9:16' | '16:9'; keyframeUrl?: string }
 ): Promise<VideoGenerationResult> {
   if (!hasSecret('REPLICATE_API_TOKEN')) throw new Error('REPLICATE_API_TOKEN not configured');
   const vertical = options?.aspectRatio === '9:16';
-  const keyframe = await generateKeyframe(prompt, vertical, options?.userId);
+  const keyframe =
+    options?.keyframeUrl ?? (await generateKeyframe(prompt, vertical, options?.userId));
   const videoUrl = await generateSvdFromImage(keyframe);
-  return { provider: 'replicate-svd', videoUrl, durationSeconds };
+  return { provider: options?.keyframeUrl ? 'replicate-svd-i2v' : 'replicate-svd', videoUrl, durationSeconds };
 }
 
-/** Keyframe + Runway gen4_turbo image-to-video */
+/** User or AI keyframe + Runway gen4_turbo image-to-video */
 export async function generateImageToVideoRunway(
   prompt: string,
   durationSeconds: number,
-  options?: { userId?: string; aspectRatio?: '9:16' | '16:9' }
+  options?: { userId?: string; aspectRatio?: '9:16' | '16:9'; keyframeUrl?: string }
 ): Promise<VideoGenerationResult> {
-  if (!hasSecret('RUNWAY_API_KEY')) throw new Error('RUNWAY_API_KEY not configured');
-  const videoUrl = await generateRunwayVideo(prompt, durationSeconds, {
+  const videoUrl = await generateRunwayImageToVideo(prompt, durationSeconds, {
     aspectRatio: options?.aspectRatio,
     userId: options?.userId,
+    keyframeUrl: options?.keyframeUrl,
   });
-  return { provider: 'runway-i2v', videoUrl, durationSeconds };
+  return { provider: options?.keyframeUrl ? 'runway-i2v' : 'runway-i2v', videoUrl, durationSeconds };
 }
 
-/** Try image-to-video paths — high success when image APIs work */
+/** HF Spaces image-conditioned models when user supplies a frame */
+async function tryHfSpacesImageToVideo(
+  prompt: string,
+  durationSeconds: number,
+  options: { userId?: string; aspectRatio?: '9:16' | '16:9'; keyframeUrl: string }
+): Promise<VideoGenerationResult | null> {
+  try {
+    const result = await generateViaHfSpaces(prompt, durationSeconds, {
+      userId: options.userId,
+      aspectRatio: options.aspectRatio,
+      keyframeUrl: options.keyframeUrl,
+    });
+    return { provider: 'hf-spaces-i2v', videoUrl: result.videoUrl, durationSeconds };
+  } catch (err) {
+    console.warn('[ImageToVideo] HF Spaces i2v:', (err as Error).message);
+    return null;
+  }
+}
+
+/**
+ * Image-to-video — prefers user-uploaded reference frame when provided.
+ */
 export async function tryImageToVideo(
   prompt: string,
   durationSeconds: number,
-  options?: { userId?: string; aspectRatio?: '9:16' | '16:9' }
+  options?: { userId?: string; aspectRatio?: '9:16' | '16:9'; keyframeUrl?: string }
 ): Promise<VideoGenerationResult | null> {
-  const attempts: Array<() => Promise<VideoGenerationResult>> = [];
+  const userFrame = options?.keyframeUrl?.trim();
 
+  if (userFrame) {
+    const hf = await tryHfSpacesImageToVideo(prompt, durationSeconds, {
+      userId: options?.userId,
+      aspectRatio: options?.aspectRatio,
+      keyframeUrl: userFrame,
+    });
+    if (hf) return hf;
+
+    if (hasSecret('REPLICATE_API_TOKEN')) {
+      try {
+        return await generateImageToVideoSvd(prompt, durationSeconds, { ...options, keyframeUrl: userFrame });
+      } catch (err) {
+        console.warn('[ImageToVideo] SVD user frame:', (err as Error).message);
+      }
+    }
+    if (hasSecret('RUNWAY_API_KEY')) {
+      try {
+        return await generateImageToVideoRunway(prompt, durationSeconds, { ...options, keyframeUrl: userFrame });
+      } catch (err) {
+        console.warn('[ImageToVideo] Runway user frame:', (err as Error).message);
+      }
+    }
+  }
+
+  const attempts: Array<() => Promise<VideoGenerationResult>> = [];
   if (hasSecret('REPLICATE_API_TOKEN')) {
     attempts.push(() => generateImageToVideoSvd(prompt, durationSeconds, options));
   }

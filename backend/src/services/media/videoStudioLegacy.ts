@@ -1,4 +1,4 @@
-import { downloadVideoBuffer, assembleVideo } from '../../lib/ffmpeg.js';
+import { downloadVideoBuffer, assembleVideo, convertVideoBufferToGif } from '../../lib/ffmpeg.js';
 import { isValidMp4Buffer, isHttpMediaUrl, isStubJsonBuffer } from '../../lib/mediaValidation.js';
 import { parseVideoDuration, parseVideoFormat, stripVideoFormatTag, computeVideoActionCost } from './videoUtils.js';
 import { storeUserFile } from '../storage/projectFiles.js';
@@ -12,6 +12,11 @@ import { generateSceneAudio } from '../../lib/audioProviders.js';
 
 import { sanitizeVideoPrompt } from '../../lib/video/videoPrompt.js';
 import { enhanceVideoPrompt, buildGenerationPrompt } from '../../lib/video/videoPromptEnhancer.js';
+import {
+  buildImageToVideoPrompt,
+  buildImageToVideoGenerationPrompt,
+} from '../../lib/video/imageToVideoPrompt.js';
+import { isGifOutputIntent } from '../../lib/featureIntent.js';
 
 export { parseVideoDuration, computeVideoActionCost };
 
@@ -94,9 +99,18 @@ export async function produceSingleSceneVideo(
   const aspectSuffix = buildAspectSuffix(prompt);
   const dialogue = scene?.dialogue ?? plan.scenes[0]?.dialogue ?? '';
 
-  options?.onProgress?.('rendering', 'Locking subjects & enhancing prompt…');
-  const promptLock = await enhanceVideoPrompt(prompt);
-  const generationPrompt = `${buildGenerationPrompt(promptLock)}. ${aspectSuffix}`;
+  const referenceImageUrl = options?.keyframeUrl;
+  const wantsGif = isGifOutputIntent(prompt);
+
+  options?.onProgress?.('rendering', referenceImageUrl ? 'Analyzing your image…' : 'Locking subjects & enhancing prompt…');
+
+  const promptLock = referenceImageUrl
+    ? await buildImageToVideoPrompt(referenceImageUrl, prompt)
+    : await enhanceVideoPrompt(prompt);
+
+  const generationPrompt = referenceImageUrl
+    ? `${buildImageToVideoGenerationPrompt(promptLock as Awaited<ReturnType<typeof buildImageToVideoPrompt>>)}. ${aspectSuffix}`
+    : `${buildGenerationPrompt(promptLock)}. ${aspectSuffix}`;
 
   options?.onProgress?.('rendering', 'Omni-Reality swarm rendering…');
 
@@ -106,6 +120,7 @@ export async function produceSingleSceneVideo(
     negativePrompt: promptLock.negativePrompt,
     lockedSubjects: promptLock.lockedSubjects,
     mustNotInclude: promptLock.mustNotInclude,
+    keyframeUrl: referenceImageUrl,
     durationSeconds: scene?.durationSeconds ?? durationSeconds,
     scenePriority: scene?.priority ?? 'critical',
     userId,
@@ -146,6 +161,17 @@ export async function produceSingleSceneVideo(
     throw new Error('Video generation failed — unsupported video format.');
   }
 
+  if (wantsGif) {
+    try {
+      const mp4Buffer = await downloadVideoBuffer(fileUrl);
+      const gifBuffer = await convertVideoBufferToGif(mp4Buffer, { fps: 12, width: 480 });
+      const stored = await storeUserFile(userId, `animation-${Date.now()}.gif`, gifBuffer, 'image/gif');
+      fileUrl = stored.playbackUrl || stored.fileUrl;
+    } catch (err) {
+      console.warn('[VideoStudio] GIF conversion failed, keeping MP4:', (err as Error).message);
+    }
+  }
+
   options?.onProgress?.('complete', 'Your video is ready!');
 
     const usedFallback = ['slideshow', 'slideshow-ai-image', 'ffmpeg-minimal', 'static-mp4', 'parallax'].includes(video.provider);
@@ -177,6 +203,8 @@ export async function produceSingleSceneVideo(
     cons: usedFallback ? ['Used visual fallback — premium APIs were unavailable'] : undefined,
     healingSteps: video.healingSteps,
     qcScore: video.qcScore,
+    sourceImageUrl: referenceImageUrl,
+    outputFormat: wantsGif ? 'gif' : 'mp4',
     followUps: plan.mode === 'multi_scene' ? ['Generate full multi-scene movie?'] : undefined,
   };
 }

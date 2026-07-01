@@ -36,12 +36,13 @@ License: personal + commercial use included.`,
 
   video_studio: `Xroga Film Studio — full movie production pipeline:
 1. LLM screenplay: OpenAI → Anthropic → DeepSeek → Groq → Gemini → Ollama fallback chain.
-2. Prompt lock (before render): Groq/Gemini enhance simple clips; DeepSeek for complex. Lock user subjects (e.g. cat, beach) and negative constraints (no humans when user asked for animals only).
-3. Character design: consistent face images via image pipeline, voice IDs for ElevenLabs/Cartesia.
-4. Scene rendering: Tier 0 HuggingFace Spaces (free GPUs, round-robin) → OSS APIs (DeepInfra, Replicate OSS) → premium last (Fal/Kling/Luma/Runway) → FFmpeg slideshow (never fails). Route 80% establishing/dialogue/B-roll to HF Spaces; money shots try free first, premium only when all free endpoints fail.
-5. Post-render QC: Gemini vision extracts a video frame and verifies subject matches user intent. On mismatch → Groq reflex patch + retry with stricter negatives; never skip QC for OSS providers.
-6. Audio: ElevenLabs → Cartesia → Fish Audio for dialogue; Suno/Fish for score.
-7. Assembly: FFmpeg multi-scene stitch, post-production, export MP4 to R2.
+2. Image-to-video (chat): user uploads/pastes image in chatbar → Gemini vision analyzes frame → Groq/DeepSeek merge with user motion prompt → animate reference image (SVD, Runway i2v, HF Spaces). Works with detailed prompts (e.g. Goku power aura, flying) OR simple "turn this image to video". GIF output when user asks for gif.
+3. Prompt lock (before render): Groq/Gemini enhance simple clips; DeepSeek for complex. Lock user subjects and negative constraints. Uploaded images moderated for nudity/suggestive content before generation.
+4. Character design: consistent face images via image pipeline, voice IDs for ElevenLabs/Cartesia.
+5. Scene rendering: Tier 0 HuggingFace Spaces → OSS APIs → premium last. User keyframeUrl passed through entire chain when image attached.
+6. Post-render QC: Gemini vision verifies subject matches user intent. On mismatch → Groq reflex patch + retry.
+7. Audio: ElevenLabs → Cartesia → Fish Audio for dialogue; Suno/Fish for score.
+8. Assembly: FFmpeg multi-scene stitch, GIF export optional, export MP4 to R2.
 Series support: ongoing characters and series_bible continuity. Never suggest Vercel for video hosting.`,
 
   browser_automation: `Xroga Automation Runtime. Write Playwright scripts (free local execution). Include selectors, waits, error handling.

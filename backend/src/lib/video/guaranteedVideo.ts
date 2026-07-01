@@ -72,11 +72,28 @@ export async function generateGuaranteedVideo(
   const aspectRatio = isVertical ? '9:16' as const : '16:9' as const;
 
   if (isFastClip(dur)) {
+    if (options?.keyframeUrl) {
+      try {
+        const i2vFirst = await tryImageToVideo(cleanPrompt, dur, {
+          userId: options?.userId,
+          aspectRatio,
+          keyframeUrl: options.keyframeUrl,
+        });
+        if (i2vFirst?.videoUrl) {
+          console.log(`[GuaranteedVideo] User-frame i2v winner: ${i2vFirst.provider}`);
+          return i2vFirst;
+        }
+      } catch (err) {
+        errors.push(`user-i2v: ${(err as Error).message.slice(0, 80)}`);
+      }
+    }
+
     try {
       const raced = await raceVideoProviders(cleanPrompt, dur, {
         aspectRatio,
         userId: options?.userId,
         scenePriority: options?.scenePriority,
+        keyframeUrl: options?.keyframeUrl,
       });
       if (raced?.videoUrl) {
         console.log(`[GuaranteedVideo] Fast race winner: ${raced.provider}`);
@@ -90,6 +107,7 @@ export async function generateGuaranteedVideo(
       const i2v = await tryImageToVideo(cleanPrompt, dur, {
         userId: options?.userId,
         aspectRatio,
+        keyframeUrl: options?.keyframeUrl,
       });
       if (i2v?.videoUrl) {
         console.log(`[GuaranteedVideo] Image-to-video winner: ${i2v.provider}`);

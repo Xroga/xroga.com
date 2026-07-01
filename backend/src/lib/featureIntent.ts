@@ -11,6 +11,16 @@ const IMAGE_INTENT =
 const VIDEO_INTENT =
   /\b(generate|create|make|produce)\b[\s\S]{0,40}\b(video|movie|film|trailer|clip|animation)\b|\bvideo\s+(about|of)\b/i;
 
+/** User uploaded image → animate / image-to-video / gif */
+const IMAGE_TO_VIDEO_INTENT =
+  /\b(animate|animation|turn\s+(?:this\s+)?(?:image|photo|picture)\s+(?:into|to)|image\s+to\s+video|photo\s+to\s+video|picture\s+to\s+video|make\s+(?:this|the)\s+(?:image|photo)\s+(?:move|alive)|bring\s+(?:this|the)\s+(?:image|photo)\s+to\s+life|convert\s+(?:this\s+)?(?:image|photo)\s+to\s+(?:a\s+)?(?:video|gif)|image\s+to\s+gif|gif\s+from\s+(?:this\s+)?image)\b/i;
+
+const GIF_INTENT = /\b(gif|animated\s+gif|make\s+a\s+gif|as\s+a\s+gif)\b/i;
+
+/** Explicit still-image edit — not video */
+const IMAGE_STYLE_EDIT_INTENT =
+  /\b(style\s+transfer|change\s+style|apply\s+filter|remove\s+background|change\s+background|upscale|enhance\s+photo|make\s+it\s+look\s+like|edit\s+this\s+image|transform\s+this\s+image\s+with)\b/i;
+
 const BROWSER_INTENT =
   /\b(automate|scrape|scraping|screenshot|playwright|puppeteer)\b|\b(go\s+to|navigate\s+to|visit|open)\b[\s\S]{0,30}(https?:\/\/|www\.|\.com\b)/i;
 
@@ -23,6 +33,7 @@ const SOCIAL_INTENT = /\b(post|share|cross.?post)\b[\s\S]{0,30}\b(twitter|linked
 
 const INTENT_RULES: Array<{ category: FeatureCategory; test: RegExp }> = [
   { category: 'image_generation', test: IMAGE_EDIT_INTENT },
+  { category: 'video_studio', test: IMAGE_TO_VIDEO_INTENT },
   { category: 'video_studio', test: VIDEO_INTENT },
   { category: 'image_generation', test: IMAGE_INTENT },
   { category: 'browser_automation', test: BROWSER_INTENT },
@@ -43,6 +54,34 @@ export function detectFeatureIntent(prompt: string): FeatureCategory | 'chat' {
 
 export function requiresFeaturePipeline(prompt: string): boolean {
   return detectFeatureIntent(prompt) !== 'chat';
+}
+
+export function isImageToVideoIntent(prompt: string): boolean {
+  const t = routingPrompt(prompt).trim();
+  return IMAGE_TO_VIDEO_INTENT.test(t) || VIDEO_INTENT.test(t) || GIF_INTENT.test(t);
+}
+
+export function isGifOutputIntent(prompt: string): boolean {
+  return GIF_INTENT.test(routingPrompt(prompt));
+}
+
+export function isImageStyleEditIntent(prompt: string): boolean {
+  const t = routingPrompt(prompt).trim();
+  return IMAGE_STYLE_EDIT_INTENT.test(t) && !isImageToVideoIntent(t);
+}
+
+/** Route chat attachment: image-to-video unless user clearly wants style edit only */
+export function resolveAttachmentFeatureCategory(
+  prompt: string,
+  classified?: FeatureCategory
+): FeatureCategory {
+  const t = routingPrompt(prompt).trim();
+  if (isImageStyleEditIntent(t)) return 'image_generation';
+  if (isImageToVideoIntent(t)) return 'video_studio';
+  if (!t || t.length < 4) return 'video_studio';
+  const intent = detectFeatureIntent(prompt);
+  if (intent === 'image_generation' && !isImageToVideoIntent(t)) return 'image_generation';
+  return 'video_studio';
 }
 
 /** Block LLM-hallucinated image links (ibb.co, fake placeholders, etc.) */
