@@ -8,21 +8,7 @@ import { resolveFfmpegPath } from './ffmpegPath.js';
 
 const execFileAsync = promisify(execFile);
 
-async function createSolidFrame(
-  ffmpeg: string,
-  imagePath: string,
-  vertical: boolean
-): Promise<void> {
-  const size = vertical ? '720x1280' : '1280x720';
-  await execFileAsync(ffmpeg, [
-    '-f', 'lavfi',
-    '-i', `gradients=s=${size}:c0=0x2563eb:c1=0x7c3aed`,
-    '-frames:v', '1',
-    '-y', imagePath,
-  ], { timeout: 15_000 });
-}
-
-/** FFmpeg slideshow — visual fallback when all video APIs fail */
+/** FFmpeg slideshow — Ken Burns motion from a real keyframe image */
 export async function generateSlideshowVideo(
   prompt: string,
   durationSeconds = 5,
@@ -46,7 +32,7 @@ export async function generateSlideshowVideo(
       if (!imgRes.ok) throw new Error(`Failed to fetch keyframe: ${imgRes.status}`);
       await writeFile(imagePath, Buffer.from(await imgRes.arrayBuffer()));
     } else {
-      await createSolidFrame(ffmpeg, imagePath, vertical);
+      throw new Error('Slideshow requires a keyframe image — refusing gradient placeholder');
     }
 
     const scalePad = vertical

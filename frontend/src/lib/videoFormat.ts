@@ -11,9 +11,19 @@ export function parseVideoFormatFromPrompt(prompt: string): VideoFormatId {
   const m = prompt.match(VIDEO_FORMAT_TAG);
   if (m?.[1]?.toLowerCase() === 'youtube_video') return 'youtube_video';
   if (m?.[1]?.toLowerCase() === 'shorts_reels') return 'shorts_reels';
-  if (/\b(shorts?|reels?|tiktok|vertical|9:16|mobile|instagram)\b/i.test(prompt)) return 'shorts_reels';
-  if (/\b(youtube video|landscape|16:9|widescreen|facebook video)\b/i.test(prompt)) return 'youtube_video';
-  return 'youtube_video';
+  if (/\b(youtube video|landscape|16:9|widescreen|facebook video|horizontal)\b/i.test(prompt)) {
+    return 'youtube_video';
+  }
+  if (/\b(shorts?|reels?|tiktok|vertical|9:16|mobile|instagram)\b/i.test(prompt)) {
+    return 'shorts_reels';
+  }
+  return 'shorts_reels';
+}
+
+/** Auto-attach format tag from prompt keywords — no confirmation modal */
+export function ensureVideoFormatTag(prompt: string): string {
+  if (VIDEO_FORMAT_TAG.test(prompt)) return prompt;
+  return injectVideoFormatTag(prompt, parseVideoFormatFromPrompt(prompt));
 }
 
 export function videoAspectClass(format: VideoFormatId): string {

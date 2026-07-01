@@ -66,8 +66,11 @@ export function parseVideoFormat(prompt: string): VideoFormatId {
   const tag = prompt.match(/\[xroga-video-format:(shorts_reels|youtube_video)\]/i);
   if (tag?.[1] === 'shorts_reels') return 'shorts_reels';
   if (tag?.[1] === 'youtube_video') return 'youtube_video';
+  if (/\b(youtube video|landscape|16:9|widescreen|facebook video|horizontal)\b/i.test(prompt)) {
+    return 'youtube_video';
+  }
   if (/\b(shorts?|reels?|tiktok|vertical|9:16|mobile|instagram reel)\b/i.test(prompt)) return 'shorts_reels';
-  return 'youtube_video';
+  return 'shorts_reels';
 }
 
 export function stripVideoFormatTag(prompt: string): string {

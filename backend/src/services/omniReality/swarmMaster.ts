@@ -6,7 +6,7 @@
  * Step 4: Parallax nuclear fallback
  */
 
-import { generateGuaranteedVideo } from '../../lib/video/guaranteedVideo.js';
+import { generateGuaranteedVideo, type GuaranteedVideoOptions } from '../../lib/video/guaranteedVideo.js';
 import type { VideoGenerationResult } from '../../lib/videoProviders.js';
 import { parseVideoFormat } from '../media/videoUtils.js';
 import { videoAspectSuffix } from '../media/videoUtils.js';
@@ -25,6 +25,7 @@ export interface HealedVideoResult extends VideoGenerationResult {
 
 const OSS_VIDEO_PROVIDERS = new Set([
   'deepinfra', 'agnes', 'comfyui', 'replicate-wan', 'hunyuan', 'mochi', 'cogvideox',
+  'open-sora', 'pyramid-flow', 'allegro', 'kandinsky', 'skyreels', 'ovi',
   'ltx-video', 'videocrafter', 'animatediff', 'zeroscope', 'replicate-svd', 'replicate-minimax',
 ]);
 
@@ -58,7 +59,7 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
   const isVertical = options.aspectRatio === '9:16' || parseVideoFormat(options.prompt) === 'shorts_reels';
   let currentPrompt = options.prompt;
 
-  const baseOpts = {
+  const baseOpts: GuaranteedVideoOptions = {
     userId: options.userId,
     runId: options.runId,
     keyframeUrl: options.keyframeUrl,
@@ -112,7 +113,16 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
       }
 
       if (FALLBACK_PROVIDERS.has(result.provider)) {
-        healingSteps.push('ffmpeg-fallback');
+        healingSteps.push(`fallback-${result.provider}`);
+        // Never accept bare gradient slideshow — keep trying premium + parallax
+        if (result.provider === 'slideshow') {
+          if (ladder < 2) continue;
+          continue;
+        }
+        if (ladder < 1) {
+          baseOpts.priority = 'premium';
+          continue;
+        }
         return {
           ...result,
           healingSteps,

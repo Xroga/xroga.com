@@ -42,7 +42,11 @@ async function tryImageSlideshow(
   vertical: boolean
 ): Promise<VideoGenerationResult | null> {
   try {
-    const imageUrl = await getImage();
+    const imageUrl = (await getImage())?.trim();
+    if (!imageUrl) {
+      errors.push(`${label}: no keyframe image`);
+      return null;
+    }
     const videoUrl = await generateSlideshowVideo(prompt, durationSeconds, imageUrl, vertical);
     return { provider: 'slideshow-ai-image', videoUrl, durationSeconds };
   } catch (err) {
@@ -94,18 +98,20 @@ export async function generateGuaranteedVideo(
     }
 
     // Full sequential OSS → premium chain before motion fallbacks
-    try {
-      const api = await tryApiProviders(cleanPrompt, dur, {
-        ...options,
-        aspectRatio,
-        priority: 'cheap',
-      });
-      if (api.videoUrl) {
-        console.log(`[GuaranteedVideo] Full-chain winner: ${api.provider}`);
-        return api;
+    for (const priority of ['cheap', 'premium'] as const) {
+      try {
+        const api = await tryApiProviders(cleanPrompt, dur, {
+          ...options,
+          aspectRatio,
+          priority,
+        });
+        if (api.videoUrl) {
+          console.log(`[GuaranteedVideo] Full-chain winner (${priority}): ${api.provider}`);
+          return api;
+        }
+      } catch (err) {
+        errors.push(`full-chain-${priority}: ${(err as Error).message.slice(0, 80)}`);
       }
-    } catch (err) {
-      errors.push(`full-chain: ${(err as Error).message.slice(0, 80)}`);
     }
   } else {
     try {
@@ -145,18 +151,6 @@ export async function generateGuaranteedVideo(
         options?.keyframeUrl
           ? tryImageSlideshow(cleanPrompt, dur, async () => options.keyframeUrl!, errors, 'keyframe', isVertical)
           : Promise.resolve(null),
-    },
-    {
-      label: 'placeholder-slideshow',
-      fn: async () => {
-        try {
-          const videoUrl = await generateSlideshowVideo(cleanPrompt, dur, undefined, isVertical);
-          return { provider: 'slideshow', videoUrl, durationSeconds: dur };
-        } catch (err) {
-          errors.push(`placeholder-slideshow: ${(err as Error).message.slice(0, 80)}`);
-          return null;
-        }
-      },
     },
   ];
 
