@@ -152,35 +152,59 @@ export function buildGenerationPrompt(enhanced: EnhancedVideoPrompt): string {
 
 /**
  * Verify user prompt → advanced locked prompt before sending to video AI.
+ * Never blocks longer than timeoutMs — heuristic fallback is always ready.
  */
-export async function enhanceVideoPrompt(rawPrompt: string): Promise<EnhancedVideoPrompt> {
+export async function enhanceVideoPrompt(
+  rawPrompt: string,
+  options?: { timeoutMs?: number; fastClip?: boolean }
+): Promise<EnhancedVideoPrompt> {
+  const timeoutMs = options?.timeoutMs ?? (options?.fastClip ? 6_000 : 12_000);
   const userIntent = sanitizeVideoPrompt(rawPrompt);
-  const complex = isComplexPrompt(userIntent);
+  const heuristic = heuristicEnhance(rawPrompt);
 
-  try {
-    if (complex) {
-      const deep = await enhanceWithDeepSeek(userIntent);
-      if (deep) return deep;
-    } else {
-      const groq = await enhanceWithGroq(userIntent);
-      if (groq) return groq;
+  const llmEnhance = async (): Promise<EnhancedVideoPrompt> => {
+    const complex = isComplexPrompt(userIntent);
+    try {
+      if (complex) {
+        const deep = await enhanceWithDeepSeek(userIntent);
+        if (deep) return deep;
+      } else {
+        const groq = await enhanceWithGroq(userIntent);
+        if (groq) return groq;
+        const gemini = await enhanceWithGemini(userIntent);
+        if (gemini) return gemini;
+      }
+    } catch (err) {
+      console.warn('[VideoPromptEnhancer] LLM enhance failed:', (err as Error).message);
+    }
+
+    try {
+      if (!complex) {
+        const deep = await enhanceWithDeepSeek(userIntent);
+        if (deep) return deep;
+      }
       const gemini = await enhanceWithGemini(userIntent);
       if (gemini) return gemini;
+    } catch {
+      /* fall through */
     }
-  } catch (err) {
-    console.warn('[VideoPromptEnhancer] LLM enhance failed:', (err as Error).message);
+
+    return heuristic;
+  };
+
+  if (options?.fastClip) {
+    return Promise.race([
+      llmEnhance(),
+      new Promise<EnhancedVideoPrompt>((resolve) => setTimeout(() => resolve(heuristic), timeoutMs)),
+    ]);
   }
 
   try {
-    if (!complex) {
-      const deep = await enhanceWithDeepSeek(userIntent);
-      if (deep) return deep;
-    }
-    const gemini = await enhanceWithGemini(userIntent);
-    if (gemini) return gemini;
+    return await Promise.race([
+      llmEnhance(),
+      new Promise<EnhancedVideoPrompt>((resolve) => setTimeout(() => resolve(heuristic), timeoutMs)),
+    ]);
   } catch {
-    /* fall through */
+    return heuristic;
   }
-
-  return heuristicEnhance(rawPrompt);
 }

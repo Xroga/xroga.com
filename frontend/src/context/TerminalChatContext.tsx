@@ -696,6 +696,23 @@ export function TerminalChatProvider({
           thinkingTimerRef.current = null;
         }
         const turn = lastTurnRef.current;
+        if (turn && isVideoGenerationPrompt(turn.text) && !interruptRef.current) {
+          setMessages((m) => {
+            const assistant = m.find((msg) => msg.id === turn.assistantId);
+            if (assistant && !assistant.featureOutput && !assistant.content?.trim()) {
+              return m.map((msg) =>
+                msg.id === turn.assistantId
+                  ? {
+                      ...msg,
+                      content:
+                        'Video took longer than expected. Please try again — if this persists, ensure the latest backend is deployed.',
+                    }
+                  : msg
+              );
+            }
+            return m;
+          });
+        }
         if (!incognito && turn && !interruptRef.current) {
           setMessages((current) => {
             try {

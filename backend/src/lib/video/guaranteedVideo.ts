@@ -117,34 +117,26 @@ export async function generateGuaranteedVideo(
       errors.push(`image-to-video: ${(err as Error).message.slice(0, 80)}`);
     }
 
-    // Skip slow full sequential chain for fast clips — fall through to motion fallbacks
-    if (!isFastClip(dur)) {
-      for (const priority of ['cheap', 'premium'] as const) {
-        try {
-          const api = await tryApiProviders(cleanPrompt, dur, {
-            ...options,
-            aspectRatio,
-            priority,
-          });
-          if (api.videoUrl) {
-            console.log(`[GuaranteedVideo] Full-chain winner (${priority}): ${api.provider}`);
-            return api;
-          }
-        } catch (err) {
-          errors.push(`full-chain-${priority}: ${(err as Error).message.slice(0, 80)}`);
-        }
-      }
-    }
-  } else {
     try {
-      const api = await tryApiProviders(cleanPrompt, dur, {
-        ...options,
-        aspectRatio,
-      });
-      if (api.videoUrl) return api;
+      const videoUrl = await generateMinimalMp4(cleanPrompt, dur);
+      console.log('[GuaranteedVideo] Fast clip — ffmpeg-minimal');
+      return { provider: 'ffmpeg-minimal', videoUrl, durationSeconds: dur };
     } catch (err) {
-      errors.push(`api: ${(err as Error).message.slice(0, 80)}`);
+      errors.push(`minimal-fast: ${(err as Error).message.slice(0, 80)}`);
     }
+
+    console.log('[GuaranteedVideo] Fast clip — static MP4');
+    return { provider: 'static-mp4', videoUrl: getStaticMp4DataUrl(), durationSeconds: dur };
+  }
+
+  try {
+    const api = await tryApiProviders(cleanPrompt, dur, {
+      ...options,
+      aspectRatio,
+    });
+    if (api.videoUrl) return api;
+  } catch (err) {
+    errors.push(`api: ${(err as Error).message.slice(0, 80)}`);
   }
 
   const slideshowAttempts: Array<{ label: string; fn: () => Promise<VideoGenerationResult | null> }> = [

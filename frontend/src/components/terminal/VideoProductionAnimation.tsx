@@ -33,7 +33,7 @@ const PHASE_LABELS: Record<string, string> = {
 };
 
 function formatRemaining(seconds: number): string {
-  if (seconds <= 0) return 'almost done';
+  if (seconds <= 0) return 'finishing render…';
   if (seconds < 60) return `~${seconds}s left`;
   const m = Math.ceil(seconds / 60);
   return m === 1 ? '~1 min left' : `~${m} min left`;

@@ -196,6 +196,8 @@ export class Orchestrator {
     const runId = crypto.randomUUID();
     const userPrompt = ctx.clientMeta?.userPrompt ?? routingPrompt(ctx.prompt);
     const { produceVideo } = await import('../services/media/videoStudio.js');
+    const { parseVideoDuration } = await import('../services/media/videoUtils.js');
+    const { withVideoDeadline, videoDeadlineMs } = await import('../lib/video/videoDeadline.js');
     const { moderateUploadedImage } = await import('../lib/video/moderateUploadedImage.js');
     const { notifyVideoReady } = await import('../services/notificationService.js');
     const { estimateVideoJobSeconds } = await import('../services/media/videoJobService.js');
@@ -233,7 +235,10 @@ export class Orchestrator {
       timestamp: new Date().toISOString(),
     });
 
-    const output = await produceVideo(ctx.userId, userPrompt, {
+    const deadlineMs = videoDeadlineMs(parseVideoDuration(userPrompt));
+
+    const output = await withVideoDeadline(
+      produceVideo(ctx.userId, userPrompt, {
       projectId: ctx.projectId,
       runId,
       keyframeUrl: imageAttachment?.url,
@@ -259,7 +264,10 @@ export class Orchestrator {
           timestamp: new Date().toISOString(),
         });
       },
-    });
+    }),
+      deadlineMs,
+      'produce-video'
+    );
 
     void notifyVideoReady(ctx.userId, {
       jobId: runId,

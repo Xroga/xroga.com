@@ -172,6 +172,42 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
       6,
     ],
   },
+  {
+    id: 'hf-zeroscope',
+    family: 'Zeroscope (OSS)',
+    modelId: 'zeroscope',
+    spaceId: 'fffiloni/zeroscope-v2-xl',
+    apiName: '/predict',
+    bestFor: ['broll', 'general', 'establishing'],
+    buildData: (ctx) => [ctx.prompt.slice(0, 800)],
+  },
+  {
+    id: 'hf-zeroscope-mirror',
+    family: 'Zeroscope (OSS)',
+    modelId: 'zeroscope',
+    spaceId: 'linoyts/zeroscope-v2-xl',
+    apiName: '/predict',
+    bestFor: ['broll', 'general', 'dialogue'],
+    buildData: (ctx) => [ctx.prompt.slice(0, 800)],
+  },
+  {
+    id: 'hf-kandinsky',
+    family: 'Kandinsky Video',
+    modelId: 'kandinsky',
+    spaceId: 'ai-forever/Kandinsky-5-0-Video',
+    apiName: '/predict',
+    bestFor: ['cartoon', 'general', 'broll'],
+    buildData: (ctx) => [ctx.prompt.slice(0, 800)],
+  },
+  {
+    id: 'hf-allegro',
+    family: 'Allegro Video',
+    modelId: 'allegro',
+    spaceId: 'rhymes-ai/Allegro',
+    apiName: '/predict',
+    bestFor: ['action', 'climax', 'broll'],
+    buildData: (ctx) => [ctx.prompt.slice(0, 800)],
+  },
 ];
 
 export function classifyVideoScene(prompt: string, scenePriority?: string): VideoSceneKind {
@@ -180,7 +216,7 @@ export function classifyVideoScene(prompt: string, scenePriority?: string): Vide
   if (/\b(explosion|fight|climax|battle|chase|combat|stunt)\b/.test(lower)) return 'action';
   if (/\b(cartoon|anime|animation|animated|loop)\b/.test(lower)) return 'cartoon';
   if (/\b(dialogue|talking|conversation|speaking|interview|monologue)\b/.test(lower)) return 'dialogue';
-  if (/\b(establishing|aerial|landscape|cityscape|b-?roll|wide shot)\b/.test(lower)) return 'establishing';
+  if (/\b(establishing|aerial|landscape|cityscape|b-?roll|wide shot|cybercity|cyber.?city|city|skyline|neon)\b/.test(lower)) return 'establishing';
   return 'general';
 }
 
