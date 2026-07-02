@@ -62,6 +62,7 @@ interface TerminalChatContextValue {
   animatingId: string | null;
   swarmActiveAgent: string | null;
   pipelineMessage: string | null;
+  councilLayer: 'elite' | 'reserve' | 'blackhole' | null;
   imageProgressStep: string | null;
   imageAttempts: Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>;
   videoProgressStep: string | null;
@@ -118,6 +119,7 @@ export function TerminalChatProvider({
   const [animatingId, setAnimatingId] = useState<string | null>(null);
   const [swarmActiveAgent, setSwarmActiveAgent] = useState<string | null>(null);
   const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
+  const [councilLayer, setCouncilLayer] = useState<'elite' | 'reserve' | 'blackhole' | null>(null);
   const [imageProgressStep, setImageProgressStep] = useState<string | null>(null);
   const [imageAttempts, setImageAttempts] = useState<
     Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>
@@ -436,6 +438,7 @@ export function TerminalChatProvider({
       setSwarmRunning(true);
       setSwarmActiveAgent(null);
       setPipelineMessage(null);
+      setCouncilLayer(null);
       setImageProgressStep(null);
       setImageAttempts([]);
       setVideoProgressStep(null);
@@ -503,6 +506,8 @@ export function TerminalChatProvider({
             if (event.videoStep) setVideoProgressStep(event.videoStep);
             if ((event as { omniPhase?: string }).omniPhase) setVideoOmniPhase((event as { omniPhase?: string }).omniPhase ?? null);
             if (event.message) setPipelineMessage(event.message);
+            const layer = (event as { councilLayer?: 'elite' | 'reserve' | 'blackhole' }).councilLayer;
+            if (layer) setCouncilLayer(layer);
             if (event.agent) setSwarmActiveAgent(event.agent);
             const pendingVideo = isVideoGenerationPrompt(displayPrompt);
             if (pendingVideo && event.message) {
@@ -742,6 +747,7 @@ export function TerminalChatProvider({
         setAnimatingId(null);
         setSwarmActiveAgent(null);
         setPipelineMessage(null);
+        setCouncilLayer(null);
         setImageProgressStep(null);
         setImageAttempts([]);
         setVideoProgressStep(null);
@@ -790,6 +796,7 @@ export function TerminalChatProvider({
         animatingId,
         swarmActiveAgent,
         pipelineMessage,
+        councilLayer,
         imageProgressStep,
         imageAttempts,
         videoProgressStep,

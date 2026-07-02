@@ -14,7 +14,7 @@ import { ModelBadge } from '@/components/ui/ModelBadge';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
-import { ProcessingPipeline } from './ProcessingPipeline';
+import { CouncilBlackHoleAnimation } from './CouncilBlackHoleAnimation';
 import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
 import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
@@ -48,7 +48,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, imageAttempts, videoProgressStep, videoOmniPhase, videoEstimateSeconds, videoStartedAt, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput } =
+  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, councilLayer, imageProgressStep, imageAttempts, videoProgressStep, videoOmniPhase, videoEstimateSeconds, videoStartedAt, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -203,10 +203,9 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
 
   const swarmProcessing = loading && !isVideoLoading ? (
     pipelineCompact ? (
-      <ProcessingPipeline
-        activeAgent={swarmActiveAgent ?? undefined}
-        loading={loading}
-        compact
+      <CouncilBlackHoleAnimation
+        layer={councilLayer ?? 'elite'}
+        message={pipelineMessage ?? undefined}
       />
     ) : (
       <SwarmProcessingIndicator

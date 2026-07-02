@@ -58,6 +58,7 @@ export interface SwarmProgressEvent {
     variantLabel?: string;
     variantIndex?: number;
   };
+  councilLayer?: 'elite' | 'reserve' | 'blackhole';
 }
 
 export interface SwarmCompleteEvent {

@@ -7,6 +7,7 @@ import { isTrivialPrompt } from '../../lib/promptClassifier.js';
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
+import type { RouteProgressFn } from '../../orchestrator/xrogaRouter.js';
 
 const CHAT_SYSTEM = `You are Xroga AI. Follow all training rules. Be natural, clear, and professional.
 
@@ -19,7 +20,7 @@ Format every reply in clean modern markdown:
 - Keep paragraphs short and scannable
 - Do not use emojis unless the user uses them first`;
 
-export async function quickChat(prompt: string): Promise<string> {
+export async function quickChat(prompt: string, onCouncilProgress?: RouteProgressFn): Promise<string> {
   const userText = routingPrompt(prompt);
   const lower = userText.toLowerCase().trim();
 
@@ -68,6 +69,14 @@ export async function quickChat(prompt: string): Promise<string> {
 
   const creationPrompt = buildFullSystemPrompt(category, userText);
   const complexity = classifyChatComplexity(userText, route.category);
+
+  // Hybrid Council → Reserve → Black Hole V∞ for pure chat
+  const { xrogaRouter } = await import('../../orchestrator/xrogaRouter.js');
+  const routed = await xrogaRouter.route(userText, onCouncilProgress);
+  if (routed.text?.trim()) {
+    return routed.text.trim();
+  }
+
   const { text } = await chatGenerate(userText, complexity, `${master}\n\n${creationPrompt}\n\n${CHAT_SYSTEM}`);
   return text?.trim() || "I'm here — tell me what you'd like to work on.";
 }

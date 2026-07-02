@@ -79,7 +79,13 @@ export class Orchestrator {
     }
 
     const { quickChat } = await import('../services/chat/quickChat.js');
-    const reply = await quickChat(userText);
+    const reply = await quickChat(userText, (layer, detail) => {
+      ctx.onProgress?.(
+        progressEvent('builder', 'building', detail ?? `Black Hole V∞ — ${layer}`, {
+          councilLayer: layer,
+        })
+      );
+    });
     const shield = await runThreeLayerShield({
       content: reply,
       prompt: ctx.prompt,
