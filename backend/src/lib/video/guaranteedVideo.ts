@@ -10,6 +10,15 @@ import { parseVideoFormat } from '../../services/media/videoUtils.js';
 import type { VideoGenerationResult } from '../videoProviders.js';
 import { sanitizeVideoPrompt } from './videoPrompt.js';
 
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out`)), ms)
+    ),
+  ]);
+}
+
 export interface GuaranteedVideoOptions {
   userId?: string;
   runId?: string;
@@ -72,6 +81,21 @@ export async function generateGuaranteedVideo(
   const aspectRatio = isVertical ? '9:16' as const : '16:9' as const;
 
   if (isFastClip(dur)) {
+    try {
+      const { generateLtxHfVideo } = await import('./ltxHfVideo.js');
+      const ltx = await withTimeout(
+        generateLtxHfVideo(cleanPrompt, dur, aspectRatio),
+        155_000,
+        'ltx-hf-guaranteed'
+      );
+      if (ltx.videoUrl) {
+        console.log('[GuaranteedVideo] LTX HF winner');
+        return ltx;
+      }
+    } catch (err) {
+      errors.push(`ltx-hf: ${(err as Error).message.slice(0, 80)}`);
+    }
+
     if (options?.keyframeUrl) {
       try {
         const i2vFirst = await tryImageToVideo(cleanPrompt, dur, {

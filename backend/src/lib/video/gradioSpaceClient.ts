@@ -11,13 +11,16 @@ export function spaceIdToHost(spaceId: string): string {
 
 /** Wake sleeping HF Space before API call */
 async function wakeSpace(host: string): Promise<void> {
-  try {
-    await fetch(`https://${host}/`, {
-      method: 'GET',
-      signal: AbortSignal.timeout(8_000),
-    });
-  } catch {
-    /* best-effort */
+  for (let i = 0; i < 3; i++) {
+    try {
+      await fetch(`https://${host}/`, {
+        method: 'GET',
+        signal: AbortSignal.timeout(12_000),
+      });
+    } catch {
+      /* best-effort */
+    }
+    if (i < 2) await new Promise((r) => setTimeout(r, 2500));
   }
 }
 
@@ -83,12 +86,15 @@ function parseSsePayload(text: string): unknown {
         message?: string;
         data?: unknown;
         output?: { data?: unknown };
-      };
+      } | null;
+      if (!parsed || typeof parsed !== 'object') continue;
       if (parsed.type === 'status' && parsed.stage === 'error') {
         throw new Error(parsed.message ?? 'Gradio space error');
       }
       if (parsed.type === 'error' || parsed.event === 'error') {
-        throw new Error('Gradio space returned error');
+        const msg = parsed.message ?? 'Gradio space returned error';
+        if (msg && msg !== 'Gradio space returned error') throw new Error(msg);
+        continue;
       }
       if (parsed.output?.data !== undefined) {
         lastComplete = parsed.output.data;

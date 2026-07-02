@@ -112,6 +112,7 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     spaceId: 'fffiloni/Open-Sora-Plan-v1-0-0',
     apiName: '/generate',
     bestFor: ['establishing', 'general'],
+    disabled: true,
     buildData: (ctx) => [ctx.prompt.slice(0, 800)],
   },
   {
@@ -141,6 +142,7 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     spaceId: 'jonluca/HunyuanVideo',
     apiName: '/predict',
     bestFor: ['climax', 'establishing', 'general'],
+    disabled: true,
     buildData: (ctx) => [ctx.prompt.slice(0, 800)],
   },
   {
@@ -150,6 +152,7 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     spaceId: 'Dummypava2/tencent-HunyuanVideo',
     apiName: '/predict',
     bestFor: ['climax', 'establishing', 'general'],
+    disabled: true,
     buildData: (ctx) => [ctx.prompt.slice(0, 800)],
   },
   {
@@ -159,6 +162,7 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     spaceId: 'salomonsky/Mochi_1_Video',
     apiName: '/predict',
     bestFor: ['dialogue', 'general', 'climax'],
+    disabled: true,
     buildData: (ctx) => [ctx.prompt.slice(0, 800)],
   },
   {
@@ -168,6 +172,7 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     spaceId: 'damo-vilab/modelscope-text-to-video-synthesis',
     apiName: '/predict',
     bestFor: ['general', 'broll', 'establishing', 'dialogue'],
+    disabled: true,
     buildData: (ctx) => [ctx.prompt.slice(0, 500)],
   },
   {
@@ -178,6 +183,7 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     apiName: '/video',
     bestFor: ['broll', 'dialogue', 'cartoon'],
     requiresImage: true,
+    disabled: true,
     buildData: (ctx) => [
       ctx.keyframeUrl
         ? { url: ctx.keyframeUrl }
@@ -205,6 +211,7 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     spaceId: 'linoyts/zeroscope-v2-xl',
     apiName: '/predict',
     bestFor: ['broll', 'general', 'dialogue'],
+    disabled: true,
     buildData: (ctx) => [ctx.prompt.slice(0, 800)],
   },
   {
@@ -214,6 +221,7 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     spaceId: 'ai-forever/Kandinsky-5-0-Video',
     apiName: '/predict',
     bestFor: ['cartoon', 'general', 'broll'],
+    disabled: true,
     buildData: (ctx) => [ctx.prompt.slice(0, 800)],
   },
   {
@@ -223,6 +231,7 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     spaceId: 'rhymes-ai/Allegro',
     apiName: '/predict',
     bestFor: ['action', 'climax', 'broll'],
+    disabled: true,
     buildData: (ctx) => [ctx.prompt.slice(0, 800)],
   },
 ];
@@ -250,7 +259,7 @@ export function orderSpacesForScene(
     return { space, score };
   });
   scored.sort((a, b) => a.score - b.score);
-  const ordered = scored.map((s) => s.space);
+  const ordered = scored.map((s) => s.space).filter((s) => !s.disabled);
   const offset = roundRobinOffset % Math.max(ordered.length, 1);
   return [...ordered.slice(offset), ...ordered.slice(0, offset)];
 }

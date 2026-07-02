@@ -7,6 +7,7 @@
 import { hasSecret, getSecret } from '../../config/envSecrets.js';
 import { REPLICATE_OSS_VIDEO_MODELS, runOssReplicateModel } from './ossVideoRegistry.js';
 import { generateMinimaxReplicateVideo } from './replicateOssVideo.js';
+import { generateLtxHfVideo } from './ltxHfVideo.js';
 import { generateDeepInfraVideo } from './deepinfraVideo.js';
 import { generateAgnesVideo } from '../agnesVideo.js';
 import { generateComfyUIVideo } from './comfyuiVideo.js';
@@ -77,6 +78,18 @@ function buildOssRacers(
   options?: FastVideoRaceOptions
 ): Racer[] {
   const racers: Racer[] = [];
+
+  racers.push({
+    name: 'hf-ltx-video',
+    run: async () => {
+      const result = await withTimeout(
+        generateLtxHfVideo(prompt, durationSeconds, options?.aspectRatio ?? '16:9'),
+        150_000,
+        'hf-ltx-video'
+      );
+      return result.videoUrl;
+    },
+  });
 
   racers.push(...buildHfSpaceRacers(prompt, durationSeconds, options));
 

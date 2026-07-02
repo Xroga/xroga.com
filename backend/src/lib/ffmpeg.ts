@@ -126,7 +126,12 @@ export async function downloadVideoBuffer(videoUrl: string): Promise<Buffer> {
     const base64 = videoUrl.split(',')[1] ?? '';
     return Buffer.from(base64, 'base64');
   }
-  const res = await fetch(videoUrl);
+  const headers: Record<string, string> = {};
+  if (videoUrl.includes('.hf.space')) {
+    const host = videoUrl.match(/https?:\/\/([^/]+\.hf\.space)/)?.[1];
+    if (host) headers.Referer = `https://${host}/`;
+  }
+  const res = await fetch(videoUrl, { headers, redirect: 'follow' });
   if (!res.ok) throw new Error(`Failed to download video: ${res.status}`);
   return Buffer.from(await res.arrayBuffer());
 }

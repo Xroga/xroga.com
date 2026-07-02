@@ -403,10 +403,11 @@ export class Orchestrator {
 
         const userPrompt = ctx.clientMeta?.userPrompt ?? routingPrompt(ctx.prompt);
         try {
-          const { generateGuaranteedVideo } = await import('../lib/video/guaranteedVideo.js');
+          const { generateLtxHfVideo } = await import('../lib/video/ltxHfVideo.js');
           const { parseVideoDuration, computeVideoActionCost } = await import('../services/media/videoUtils.js');
           const { storeUserFile } = await import('../services/storage/projectFiles.js');
           const durationSeconds = parseVideoDuration(userPrompt);
+          const aspect = /shorts_reels/i.test(userPrompt) ? '9:16' as const : '16:9' as const;
 
           ctx.onProgress?.(
             progressEvent('builder', 'building', 'Emergency fallback — delivering playable video…', {
@@ -415,10 +416,16 @@ export class Orchestrator {
             })
           );
 
-          const emergency = await generateGuaranteedVideo(userPrompt, durationSeconds, {
-            userId: ctx.userId,
-            aspectRatio: /shorts_reels/i.test(userPrompt) ? '9:16' : '16:9',
-          });
+          let emergency;
+          try {
+            emergency = await generateLtxHfVideo(userPrompt, durationSeconds, aspect);
+          } catch {
+            const { generateGuaranteedVideo } = await import('../lib/video/guaranteedVideo.js');
+            emergency = await generateGuaranteedVideo(userPrompt, durationSeconds, {
+              userId: ctx.userId,
+              aspectRatio: aspect,
+            });
+          }
 
           let streamingUrl = emergency.videoUrl;
           if (streamingUrl.startsWith('http') || streamingUrl.startsWith('data:video/')) {

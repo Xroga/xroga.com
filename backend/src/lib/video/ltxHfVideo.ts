@@ -9,7 +9,20 @@ import type { VideoGenerationResult } from '../videoProviders.js';
 
 const LTX_SPACE = 'Lightricks/ltx-video-distilled';
 const LTX_API = '/text_to_video';
-const LTX_TIMEOUT_MS = 120_000;
+const LTX_TIMEOUT_MS = 150_000;
+const LTX_MAX_ATTEMPTS = 2;
+
+async function wakeLtxSpace(): Promise<void> {
+  const host = 'lightricks-ltx-video-distilled.hf.space';
+  for (let i = 0; i < 3; i++) {
+    try {
+      await fetch(`https://${host}/`, { method: 'GET', signal: AbortSignal.timeout(12_000) });
+    } catch {
+      /* best-effort */
+    }
+    if (i < 2) await new Promise((r) => setTimeout(r, 3000));
+  }
+}
 
 export async function generateLtxHfVideo(
   prompt: string,
@@ -36,14 +49,29 @@ export async function generateLtxHfVideo(
     true,
   ];
 
-  const result = await callGradioSpace({
-    spaceId: LTX_SPACE,
-    apiName: LTX_API,
-    data,
-    label: 'hf-ltx-video',
-    timeoutMs: LTX_TIMEOUT_MS,
-  });
+  let lastErr = 'unknown';
+  for (let attempt = 0; attempt < LTX_MAX_ATTEMPTS; attempt++) {
+    if (attempt > 0) {
+      console.warn(`[LTX-HF] Retry ${attempt + 1}/${LTX_MAX_ATTEMPTS}`);
+      await wakeLtxSpace();
+    }
 
-  const videoUrl = videoUrlFromGradioResult(result, LTX_SPACE);
-  return { provider: 'hf-ltx-video', videoUrl, durationSeconds: dur };
+    try {
+      const result = await callGradioSpace({
+        spaceId: LTX_SPACE,
+        apiName: LTX_API,
+        data,
+        label: 'hf-ltx-video',
+        timeoutMs: LTX_TIMEOUT_MS,
+      });
+
+      const videoUrl = videoUrlFromGradioResult(result, LTX_SPACE);
+      return { provider: 'hf-ltx-video', videoUrl, durationSeconds: dur };
+    } catch (err) {
+      lastErr = (err as Error).message;
+      console.warn(`[LTX-HF] attempt ${attempt + 1}:`, lastErr.slice(0, 120));
+    }
+  }
+
+  throw new Error(`LTX HF failed after ${LTX_MAX_ATTEMPTS} attempts: ${lastErr}`);
 }

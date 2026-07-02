@@ -101,6 +101,15 @@ export async function produceSingleSceneVideo(
 
   const referenceImageUrl = options?.keyframeUrl;
   const wantsGif = isGifOutputIntent(prompt);
+  const aspectRatio = parseVideoFormat(prompt) === 'shorts_reels' ? '9:16' as const : '16:9' as const;
+
+  // Kick off LTX immediately — HF Spaces need 30–90s cold wake; don't wait for Trinity Brain first
+  let earlyLtx: Promise<import('../../lib/videoProviders.js').VideoGenerationResult | null> | undefined;
+  if (isFastClip && !referenceImageUrl) {
+    const { generateLtxHfVideo } = await import('../../lib/video/ltxHfVideo.js');
+    const rawPrompt = sanitizeVideoPrompt(prompt);
+    earlyLtx = generateLtxHfVideo(rawPrompt, durationSeconds, aspectRatio).catch(() => null);
+  }
 
   options?.onProgress?.('rendering', referenceImageUrl ? 'Analyzing your image…' : 'Trinity Brain — locking your prompt…');
   options?.onOmniEvent?.({
@@ -125,7 +134,6 @@ export async function produceSingleSceneVideo(
 
   options?.onProgress?.('rendering', 'Omni-Reality swarm rendering…');
 
-  const aspectRatio = parseVideoFormat(prompt) === 'shorts_reels' ? '9:16' as const : '16:9' as const;
   let video: Awaited<ReturnType<typeof renderSceneWithHealing>>;
   let variantSources: Array<{ provider: string; videoUrl: string; durationSeconds: number }> = [];
 
@@ -134,7 +142,7 @@ export async function produceSingleSceneVideo(
     options?.onOmniEvent?.({
       phase: 'scene_render',
       message: 'Swarm Render',
-      detail: 'Racing multiple free OSS models in parallel (up to 3 videos)…',
+      detail: 'LTX Video on HuggingFace (free OSS) — generating your clip…',
     });
 
     const multi = await raceMultipleOssVideos(generationPrompt, scene?.durationSeconds ?? durationSeconds, {
@@ -143,6 +151,7 @@ export async function produceSingleSceneVideo(
       keyframeUrl: referenceImageUrl,
       scenePriority: scene?.priority ?? 'low',
       maxVariants: 3,
+      earlyLtx,
     });
 
     variantSources = multi.videos;
