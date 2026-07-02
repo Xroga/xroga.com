@@ -157,6 +157,12 @@ export interface VideoStudioOutput {
   /** Chat image-to-video reference frame */
   sourceImageUrl?: string;
   outputFormat?: 'mp4' | 'gif';
+  /** Up to 3 parallel AI renders from one prompt */
+  variants?: Array<{
+    streamingUrl: string;
+    provider: string;
+    label?: string;
+  }>;
 }
 
 export interface DeepResearchOutput {

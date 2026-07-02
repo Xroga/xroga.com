@@ -84,6 +84,9 @@ export function FeatureOutputView({
       qcScore: typeof o.qcScore === 'number' ? o.qcScore : undefined,
       omniReality: o.omniReality as VideoOutputData['omniReality'],
       audioTracks: Array.isArray(o.audioTracks) ? (o.audioTracks as VideoOutputData['audioTracks']) : undefined,
+      variants: Array.isArray(o.variants)
+        ? (o.variants as Array<{ streamingUrl: string; provider: string; label?: string }>)
+        : undefined,
     };
     return <VideoStudioCard data={data} onDelete={onDelete} messageId={messageId} />;
   }

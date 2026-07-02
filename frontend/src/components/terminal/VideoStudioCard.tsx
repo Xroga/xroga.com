@@ -38,6 +38,7 @@ export interface VideoOutputData {
   audioTracks?: Array<{ type: string; provider: string }>;
   sourceImageUrl?: string;
   outputFormat?: 'mp4' | 'gif';
+  variants?: Array<{ streamingUrl: string; provider: string; label?: string }>;
 }
 
 interface VideoStudioCardProps {
@@ -52,6 +53,19 @@ interface VideoStudioCardProps {
 
 function providerLabel(id?: string): string {
   const labels: Record<string, string> = {
+    'hf-cogvideox': 'CogVideoX (HF Space)',
+    'hf-ltx-video': 'LTX Video (HF Space)',
+    'hf-pyramid-flow': 'Pyramid Flow (HF Space)',
+    'hf-videocrafter': 'VideoCrafter (HF Space)',
+    'hf-animatediff': 'AnimateDiff (HF Space)',
+    'hf-modelscope': 'ModelScope T2V (HF Space)',
+    'hf-zeroscope': 'Zeroscope (HF Space)',
+    'hf-allegro': 'Allegro (HF Space)',
+    'hf-kandinsky': 'Kandinsky (HF Space)',
+    'hf-hunyuan-mirror': 'HunyuanVideo (HF Space)',
+    'hf-mochi-mirror': 'Mochi 1 (HF Space)',
+    'hf-open-sora': 'Open-Sora (HF Space)',
+    'hf-svd': 'Stable Video Diffusion (HF Space)',
     'hf-spaces': 'HuggingFace Spaces (free GPU)',
     deepinfra: 'DeepInfra OSS (Wan/Pruna)',
     agnes: 'Agnes Video',
@@ -93,11 +107,16 @@ function providerLabel(id?: string): string {
 
 function isOssProvider(id?: string): boolean {
   if (!id) return false;
+  if (id.startsWith('hf-') || id === 'hf-spaces') return true;
   return [
-    'hf-spaces', 'deepinfra', 'agnes', 'comfyui', 'replicate-wan', 'hunyuan', 'mochi', 'cogvideox',
+    'deepinfra', 'agnes', 'comfyui', 'replicate-wan', 'hunyuan', 'mochi', 'cogvideox',
     'open-sora', 'pyramid-flow', 'allegro', 'kandinsky', 'skyreels', 'ovi',
     'ltx-video', 'videocrafter', 'animatediff', 'zeroscope', 'replicate-svd', 'replicate-minimax',
   ].includes(id);
+}
+
+function isMotionFallback(id?: string): boolean {
+  return ['slideshow', 'slideshow-ai-image', 'parallax', 'ffmpeg-minimal', 'static-mp4'].includes(id ?? '');
 }
 
 function isPlayableVideoUrl(url: string): boolean {
@@ -105,6 +124,70 @@ function isPlayableVideoUrl(url: string): boolean {
   if (url.startsWith('data:video/') && url.length < 200) return false;
   if (url.startsWith('{') || (url.includes('assembled') && !url.startsWith('http'))) return false;
   return url.startsWith('http') || url.startsWith('data:video/');
+}
+
+function VariantPreview({
+  streamingUrl,
+  provider,
+  title,
+  aspectClass,
+  isGif,
+  isPrimary,
+  onPlay,
+}: {
+  streamingUrl: string;
+  provider: string;
+  title: string;
+  aspectClass: string;
+  isGif: boolean;
+  isPrimary?: boolean;
+  onPlay: () => void;
+}) {
+  const { src: previewSrc, loading: videoLoading, error: videoError } = useVideoSrc(streamingUrl);
+
+  if (!isPlayableVideoUrl(streamingUrl)) return null;
+
+  return (
+    <div className="flex flex-col gap-1">
+      {isPrimary && (
+        <span className="text-[9px] font-semibold text-[#60a5fa] uppercase tracking-wide">Best match</span>
+      )}
+      <button
+        type="button"
+        onClick={onPlay}
+        className={cn(
+          'group relative w-full overflow-hidden rounded-xl border border-[var(--card-border)] bg-black',
+          aspectClass,
+        )}
+        aria-label={`Play ${title}`}
+      >
+        {videoLoading && (
+          <div className="absolute inset-0 flex items-center justify-center text-white/60 text-xs">Loading…</div>
+        )}
+        {videoError && (
+          <div className="absolute inset-0 flex items-center justify-center text-red-400 text-[10px] px-2 text-center">{videoError}</div>
+        )}
+        {isGif ? (
+          <img src={previewSrc || streamingUrl} alt={title} className="h-full w-full object-contain pointer-events-none" />
+        ) : (
+          <video
+            src={previewSrc}
+            className="h-full w-full object-contain pointer-events-none"
+            playsInline
+            muted
+            preload="metadata"
+            crossOrigin={videoCrossOrigin(previewSrc)}
+          />
+        )}
+        <span className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/40 transition-colors">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-black shadow-lg">
+            <Play className="h-5 w-5 ml-0.5" />
+          </span>
+        </span>
+      </button>
+      <p className="text-[9px] text-center text-[var(--muted)] truncate">{providerLabel(provider)}</p>
+    </div>
+  );
 }
 
 export function VideoStudioCard({
@@ -122,15 +205,18 @@ export function VideoStudioCard({
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const { setPrompt, deleteTurn } = useTerminalChat();
 
-  const { title, streamingUrl, selectedProvider, durationSeconds, prompt, screenplay, providersUsed, reviewScores, healingSteps, qcScore, omniReality, audioTracks, sourceImageUrl, outputFormat } = data;
+  const { title, streamingUrl, selectedProvider, durationSeconds, prompt, screenplay, providersUsed, reviewScores, healingSteps, qcScore, omniReality, audioTracks, sourceImageUrl, outputFormat, variants } = data;
   const isGif = outputFormat === 'gif' || /\.gif(\?|$)/i.test(streamingUrl);
   const videoFormat: VideoFormatId =
     data.videoFormat ?? parseVideoFormatFromPrompt(prompt ?? title);
-  const { src: previewSrc, loading: videoLoading, error: videoError } = useVideoSrc(streamingUrl);
+  const { src: previewSrc } = useVideoSrc(streamingUrl);
   const aspectClass = videoAspectClass(videoFormat);
-  const isSlideshowFallback = ['slideshow', 'slideshow-ai-image', 'parallax', 'ffmpeg-minimal', 'static-mp4'].includes(
-    selectedProvider ?? ''
-  );
+  const isSlideshowFallback = isMotionFallback(selectedProvider);
+  const displayVariants =
+    variants && variants.length > 0
+      ? variants
+      : [{ streamingUrl, provider: selectedProvider ?? 'ai-video' }];
+  const hasOssVideo = displayVariants.some((v) => isOssProvider(v.provider));
 
   if (generating) {
     return (
@@ -204,18 +290,20 @@ export function VideoStudioCard({
             </div>
           )}
 
-          {isOssProvider(selectedProvider) && !sourceImageUrl && (
+          {hasOssVideo && !sourceImageUrl && (
             <div className="mx-3 mb-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1.5">
               <p className="text-[10px] text-emerald-700 dark:text-emerald-300">
-                Open-source AI video · {providerLabel(selectedProvider)}
+                {displayVariants.length > 1
+                  ? `${displayVariants.length} open-source AI renders — pick your favorite`
+                  : `Open-source AI video · ${providerLabel(selectedProvider)}`}
               </p>
             </div>
           )}
 
-          {isSlideshowFallback && (
+          {isSlideshowFallback && !hasOssVideo && (
             <div className="mx-3 mb-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1.5">
               <p className="text-[10px] text-amber-700 dark:text-amber-300">
-                Motion preview from an AI still — video APIs were unavailable. Add REPLICATE_API_TOKEN or FAL_KEY on Fly.io for full AI video.
+                Free GPU queues were busy — motion preview from AI still. Retrying more OSS models in the background on your next prompt usually yields full text-to-video.
               </p>
             </div>
           )}
@@ -259,46 +347,23 @@ export function VideoStudioCard({
             </div>
           )}
 
-          <div className="px-3 pb-3">
-          <button
-            type="button"
-            onClick={() => setPlayerOpen(true)}
-            className={cn(
-              'group relative w-full max-w-md mx-auto overflow-hidden rounded-xl border border-[var(--card-border)] bg-black',
-              aspectClass,
-            )}
-            aria-label="Open video player"
-          >
-            {videoLoading && (
-              <div className="absolute inset-0 flex items-center justify-center text-white/60 text-xs">Loading…</div>
-            )}
-            {videoError && (
-              <div className="absolute inset-0 flex items-center justify-center text-red-400 text-[10px] px-2 text-center">{videoError}</div>
-            )}
-            {isGif ? (
-              <img
-                src={previewSrc || streamingUrl}
-                alt={title}
-                className="h-full w-full object-contain pointer-events-none"
-              />
-            ) : (
-              <video
-                src={previewSrc}
-                className="h-full w-full object-contain pointer-events-none"
-                playsInline
-                muted
-                preload="metadata"
-                crossOrigin={videoCrossOrigin(previewSrc)}
-              />
-            )}
-            <span className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/40 transition-colors">
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-black shadow-lg">
-                <Play className="h-6 w-6 ml-0.5" />
-              </span>
-            </span>
-          </button>
+          <div className={cn('px-3 pb-3', displayVariants.length > 1 && 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3')}>
+          {displayVariants.map((variant, idx) => (
+            <VariantPreview
+              key={`${variant.provider}-${idx}`}
+              streamingUrl={variant.streamingUrl}
+              provider={variant.provider}
+              title={displayVariants.length > 1 ? `${title} · ${providerLabel(variant.provider)}` : title}
+              aspectClass={aspectClass}
+              isGif={isGif}
+              isPrimary={idx === 0}
+              onPlay={() => {
+                setPlayerOpen(true);
+              }}
+            />
+          ))}
 
-          <div className="mt-2.5 flex flex-wrap items-center gap-2">
+          <div className="mt-2.5 flex flex-wrap items-center gap-2 col-span-full">
             <button
               type="button"
               onClick={() => setPlayerOpen(true)}

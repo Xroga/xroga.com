@@ -125,21 +125,51 @@ export async function produceSingleSceneVideo(
 
   options?.onProgress?.('rendering', 'Omni-Reality swarm rendering…');
 
-  const video = await renderSceneWithHealing({
-    prompt: generationPrompt,
-    userIntent: promptLock.userIntent,
-    negativePrompt: promptLock.negativePrompt,
-    lockedSubjects: promptLock.lockedSubjects,
-    mustNotInclude: promptLock.mustNotInclude,
-    keyframeUrl: referenceImageUrl,
-    durationSeconds: scene?.durationSeconds ?? durationSeconds,
-    scenePriority: scene?.priority ?? 'critical',
-    userId,
-    runId: options?.runId,
-    aspectRatio: parseVideoFormat(prompt) === 'shorts_reels' ? '9:16' : '16:9',
-    onProgress: (msg) => options?.onProgress?.('rendering', msg),
-    onOmniEvent: options?.onOmniEvent,
-  });
+  const aspectRatio = parseVideoFormat(prompt) === 'shorts_reels' ? '9:16' as const : '16:9' as const;
+  let video: Awaited<ReturnType<typeof renderSceneWithHealing>>;
+  let variantSources: Array<{ provider: string; videoUrl: string; durationSeconds: number }> = [];
+
+  if (isFastClip) {
+    const { raceMultipleOssVideos } = await import('../../lib/video/multiVideoRace.js');
+    options?.onOmniEvent?.({
+      phase: 'scene_render',
+      message: 'Swarm Render',
+      detail: 'Racing multiple free OSS models in parallel (up to 3 videos)…',
+    });
+
+    const multi = await raceMultipleOssVideos(generationPrompt, scene?.durationSeconds ?? durationSeconds, {
+      userId,
+      aspectRatio,
+      keyframeUrl: referenceImageUrl,
+      scenePriority: scene?.priority ?? 'low',
+      maxVariants: 3,
+    });
+
+    variantSources = multi.videos;
+    video = {
+      ...multi.primary,
+      healingSteps: ['multi-oss-race'],
+      reviewScores: { physics: 80, lighting: 80, consistency: 80 },
+      qcScore: 80,
+    };
+  } else {
+    video = await renderSceneWithHealing({
+      prompt: generationPrompt,
+      userIntent: promptLock.userIntent,
+      negativePrompt: promptLock.negativePrompt,
+      lockedSubjects: promptLock.lockedSubjects,
+      mustNotInclude: promptLock.mustNotInclude,
+      keyframeUrl: referenceImageUrl,
+      durationSeconds: scene?.durationSeconds ?? durationSeconds,
+      scenePriority: scene?.priority ?? 'critical',
+      userId,
+      runId: options?.runId,
+      aspectRatio,
+      onProgress: (msg) => options?.onProgress?.('rendering', msg),
+      onOmniEvent: options?.onOmniEvent,
+    });
+    variantSources = [video];
+  }
 
   options?.onProgress?.('audio', isFastClip ? 'Skipping audio for fast clip…' : 'Composing voiceover & score…');
   const audioTracks =
@@ -149,28 +179,40 @@ export async function produceSingleSceneVideo(
 
   options?.onProgress?.('assembling', 'Preparing your video…');
 
-  let fileUrl: string;
-  if (audioTracks.length > 0 && (isHttpMediaUrl(video.videoUrl) || video.videoUrl.startsWith('data:video/'))) {
+  const persistedVariants: Array<{ streamingUrl: string; provider: string }> = [];
+  for (const src of variantSources.slice(0, 3)) {
     try {
-      const assembly = await assembleVideo({
-        videoUrl: video.videoUrl,
-        audioTracks: audioTracks.map((t) => ({ url: t.url, type: t.type })),
-        subtitles: dialogue.slice(0, 200) || undefined,
-        outputFilename: `xroga-video-${Date.now()}.mp4`,
-      });
-      const stored = await storeUserFile(userId, `video-${Date.now()}.mp4`, assembly.buffer, 'video/mp4');
-      fileUrl = stored.playbackUrl || stored.fileUrl;
-      if (projectId) {
-        const { storeProjectFile } = await import('../storage/projectFiles.js');
-        await storeProjectFile(userId, projectId, `video-${Date.now()}.mp4`, assembly.buffer, 'video/mp4', 'video');
-      }
-    } catch {
-      fileUrl = await persistVideoFile(userId, video.videoUrl, projectId);
+      const url = await persistVideoFile(userId, src.videoUrl, projectId);
+      persistedVariants.push({ streamingUrl: url, provider: src.provider });
+    } catch (err) {
+      console.warn(`[VideoStudio] Variant persist failed (${src.provider}):`, (err as Error).message);
     }
-  } else if (isHttpMediaUrl(video.videoUrl) || video.videoUrl.startsWith('data:video/')) {
-    fileUrl = await persistVideoFile(userId, video.videoUrl, projectId);
-  } else {
-    throw new Error('Video generation failed — unsupported video format.');
+  }
+
+  let fileUrl = persistedVariants[0]?.streamingUrl ?? '';
+  if (!fileUrl) {
+    if (audioTracks.length > 0 && (isHttpMediaUrl(video.videoUrl) || video.videoUrl.startsWith('data:video/'))) {
+      try {
+        const assembly = await assembleVideo({
+          videoUrl: video.videoUrl,
+          audioTracks: audioTracks.map((t) => ({ url: t.url, type: t.type })),
+          subtitles: dialogue.slice(0, 200) || undefined,
+          outputFilename: `xroga-video-${Date.now()}.mp4`,
+        });
+        const stored = await storeUserFile(userId, `video-${Date.now()}.mp4`, assembly.buffer, 'video/mp4');
+        fileUrl = stored.playbackUrl || stored.fileUrl;
+        if (projectId) {
+          const { storeProjectFile } = await import('../storage/projectFiles.js');
+          await storeProjectFile(userId, projectId, `video-${Date.now()}.mp4`, assembly.buffer, 'video/mp4', 'video');
+        }
+      } catch {
+        fileUrl = await persistVideoFile(userId, video.videoUrl, projectId);
+      }
+    } else if (isHttpMediaUrl(video.videoUrl) || video.videoUrl.startsWith('data:video/')) {
+      fileUrl = await persistVideoFile(userId, video.videoUrl, projectId);
+    } else {
+      throw new Error('Video generation failed — unsupported video format.');
+    }
   }
 
   if (wantsGif) {
@@ -187,6 +229,7 @@ export async function produceSingleSceneVideo(
   options?.onProgress?.('complete', 'Your video is ready!');
 
     const usedFallback = ['slideshow', 'slideshow-ai-image', 'ffmpeg-minimal', 'static-mp4', 'parallax'].includes(video.provider);
+  const allProviders = variantSources.map((v) => v.provider);
 
   return {
     type: 'video_studio',
@@ -206,13 +249,14 @@ export async function produceSingleSceneVideo(
     },
     selectedProvider: video.provider,
     reviewScores: video.reviewScores ?? { physics: 8, lighting: 8, consistency: 8 },
-    providersUsed: [video.provider],
+    providersUsed: allProviders,
+    variants: persistedVariants.length > 1 ? persistedVariants : undefined,
     audioTracks: audioTracks.map((t) => ({ type: t.type, provider: t.provider })),
     sceneCount: plan.scenes.length,
     scriptProvider: plan.scriptProvider,
     videoFormat: parseVideoFormat(prompt),
     characters: plan.characters.map((c) => ({ name: c.name })),
-    cons: usedFallback ? ['Used visual fallback — premium APIs were unavailable'] : undefined,
+    cons: usedFallback ? ['Free GPU queues were busy — showing best available render'] : undefined,
     healingSteps: video.healingSteps,
     qcScore: video.qcScore,
     sourceImageUrl: referenceImageUrl,

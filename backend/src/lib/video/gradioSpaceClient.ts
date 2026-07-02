@@ -9,6 +9,18 @@ export function spaceIdToHost(spaceId: string): string {
   return `${spaceId.replace(/\//g, '-').toLowerCase()}.hf.space`;
 }
 
+/** Wake sleeping HF Space before API call */
+async function wakeSpace(host: string): Promise<void> {
+  try {
+    await fetch(`https://${host}/`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(8_000),
+    });
+  } catch {
+    /* best-effort */
+  }
+}
+
 function authHeaders(): Record<string, string> {
   const token = getSecret('HF_TOKEN') ?? getSecret('HUGGINGFACE_API_KEY');
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -98,8 +110,10 @@ export async function callGradioSpace(options: GradioCallOptions): Promise<unkno
   const host = spaceIdToHost(options.spaceId);
   const base = `https://${host}`;
   const apiPath = options.apiName.startsWith('/') ? options.apiName : `/${options.apiName}`;
-  const timeoutMs = options.timeoutMs ?? 150_000;
+  const timeoutMs = options.timeoutMs ?? 90_000;
   const headers = authHeaders();
+
+  await wakeSpace(host);
 
   let eventId: string | null = null;
   let lastErr = '';
