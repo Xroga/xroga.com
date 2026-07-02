@@ -52,6 +52,10 @@ function extractVideoUrl(value: unknown, host?: string): string | null {
   }
   if (typeof value === 'object') {
     const o = value as Record<string, unknown>;
+    if (o.video && typeof o.video === 'object') {
+      const nested = extractVideoUrl(o.video, host);
+      if (nested) return nested;
+    }
     if (typeof o.url === 'string' && o.url.startsWith('http')) return o.url;
     if (typeof o.path === 'string') {
       if (o.path.startsWith('http')) return o.path;
@@ -74,6 +78,7 @@ function parseSsePayload(text: string): unknown {
     try {
       const parsed = JSON.parse(payload) as {
         type?: string;
+        event?: string;
         stage?: string;
         message?: string;
         data?: unknown;
@@ -81,6 +86,9 @@ function parseSsePayload(text: string): unknown {
       };
       if (parsed.type === 'status' && parsed.stage === 'error') {
         throw new Error(parsed.message ?? 'Gradio space error');
+      }
+      if (parsed.type === 'error' || parsed.event === 'error') {
+        throw new Error('Gradio space returned error');
       }
       if (parsed.output?.data !== undefined) {
         lastComplete = parsed.output.data;

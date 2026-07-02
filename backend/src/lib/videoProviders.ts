@@ -455,6 +455,19 @@ export async function smokeTestVideoGeneration(): Promise<{
   const errors: Record<string, string> = {};
   const prompt = 'A cat walking on a beach at sunset, cinematic, 2 seconds';
 
+  try {
+    const { generateLtxHfVideo } = await import('./video/ltxHfVideo.js');
+    tried.push('hf-ltx-video');
+    const ltx = await withTimeout(generateLtxHfVideo(prompt, 3, '16:9'), 125_000, 'hf-ltx-video');
+    if (isValidVideoUrl(ltx.videoUrl)) {
+      return { ok: true, provider: ltx.provider, tried, errors };
+    }
+    errors['hf-ltx-video'] = 'Invalid URL returned';
+  } catch (err) {
+    errors['hf-ltx-video'] = (err as Error).message;
+    console.warn('[VideoSmoke] hf-ltx-video:', errors['hf-ltx-video']);
+  }
+
   const chain = await buildVideoProvidersAsync();
   const ossOrder = [
     'hf-spaces', 'deepinfra', 'agnes', 'comfyui',

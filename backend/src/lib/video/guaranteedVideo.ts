@@ -118,7 +118,7 @@ export async function generateGuaranteedVideo(
     }
 
     try {
-      const videoUrl = await generateMinimalMp4(cleanPrompt, dur);
+      const videoUrl = await generateMinimalMp4(cleanPrompt, dur, { vertical: isVertical });
       console.log('[GuaranteedVideo] Fast clip — ffmpeg-minimal');
       return { provider: 'ffmpeg-minimal', videoUrl, durationSeconds: dur };
     } catch (err) {
@@ -181,7 +181,7 @@ export async function generateGuaranteedVideo(
   }
 
   try {
-    const videoUrl = await generateMinimalMp4(cleanPrompt, dur);
+    const videoUrl = await generateMinimalMp4(cleanPrompt, dur, { vertical: isVertical });
     console.log('[GuaranteedVideo] Success via ffmpeg-minimal');
     return { provider: 'ffmpeg-minimal', videoUrl, durationSeconds: dur };
   } catch (err) {

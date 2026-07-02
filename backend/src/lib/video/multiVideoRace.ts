@@ -8,14 +8,15 @@ import { orderSpacesForScene, classifyVideoScene, HF_VIDEO_SPACES } from './hfSp
 import { callGradioSpace, videoUrlFromGradioResult } from './gradioSpaceClient.js';
 import { sanitizeVideoPrompt } from './videoPrompt.js';
 import { raceVideoProviders } from './fastVideoRace.js';
+import { generateLtxHfVideo } from './ltxHfVideo.js';
 import { generateParallaxClip } from '../../services/omniReality/fallbackParallax.js';
 import { generateMinimalMp4 } from './minimalMp4.js';
 import { getStaticMp4DataUrl } from './staticMp4.js';
 import type { VideoGenerationResult } from '../videoProviders.js';
 
 const MAX_VARIANTS = 3;
-const HF_PARALLEL = 5;
-const PER_SPACE_MS = 55_000;
+const HF_PARALLEL = 4;
+const PER_SPACE_MS = 90_000;
 
 export interface MultiVideoRaceOptions {
   userId?: string;
@@ -75,7 +76,9 @@ async function collectHfSpaceVideos(
 ): Promise<VideoGenerationResult[]> {
   const clean = sanitizeVideoPrompt(prompt);
   const scene = classifyVideoScene(clean, options.scenePriority);
-  const spaces = orderSpacesForScene(scene, Math.floor(Math.random() * 1000));
+  const spaces = orderSpacesForScene(scene, Math.floor(Math.random() * 1000)).filter(
+    (s) => s.id !== 'hf-ltx-video' && !s.disabled
+  );
   const maxVariants = options.maxVariants ?? MAX_VARIANTS;
   const winners: VideoGenerationResult[] = [];
   const seen = new Set<string>();
@@ -132,10 +135,30 @@ export async function raceMultipleOssVideos(
   const attemptedProviders: string[] = [];
   const videos: VideoGenerationResult[] = [];
 
-  const hfWinners = await collectHfSpaceVideos(prompt, dur, { ...options, maxVariants });
-  for (const v of hfWinners) {
-    attemptedProviders.push(v.provider);
-    videos.push(v);
+  // Tier 0: LTX on HuggingFace — verified free text-to-video (no API keys)
+  try {
+    const ltx = await withTimeout(
+      generateLtxHfVideo(prompt, dur, options?.aspectRatio ?? '16:9'),
+      125_000,
+      'ltx-hf-first'
+    );
+    if (ltx.videoUrl) {
+      attemptedProviders.push(ltx.provider);
+      videos.push(ltx);
+      console.log('[MultiVideoRace] LTX HF primary winner');
+    }
+  } catch (err) {
+    console.warn('[MultiVideoRace] LTX HF first:', (err as Error).message.slice(0, 100));
+  }
+
+  if (videos.length < maxVariants) {
+    const hfWinners = await collectHfSpaceVideos(prompt, dur, { ...options, maxVariants: maxVariants - videos.length });
+    for (const v of hfWinners) {
+      if (!videos.some((x) => x.videoUrl === v.videoUrl)) {
+        attemptedProviders.push(v.provider);
+        videos.push(v);
+      }
+    }
   }
 
   if (videos.length < maxVariants) {
@@ -198,7 +221,9 @@ export async function raceMultipleOssVideos(
 
   if (videos.length === 0) {
     try {
-      const videoUrl = await generateMinimalMp4(prompt, dur);
+      const videoUrl = await generateMinimalMp4(prompt, dur, {
+        vertical: options?.aspectRatio === '9:16',
+      });
       attemptedProviders.push('ffmpeg-minimal');
       videos.push({ provider: 'ffmpeg-minimal', videoUrl, durationSeconds: dur });
     } catch {

@@ -9,7 +9,11 @@ import { resolveFfmpegPath } from './ffmpegPath.js';
 const execFileAsync = promisify(execFile);
 
 /** FFmpeg-only MP4 — works when all video APIs fail (no external keys needed) */
-export async function generateMinimalMp4(prompt: string, durationSeconds = 5): Promise<string> {
+export async function generateMinimalMp4(
+  prompt: string,
+  durationSeconds = 5,
+  options?: { vertical?: boolean }
+): Promise<string> {
   const ffmpeg = await resolveFfmpegPath();
   if (!ffmpeg) {
     throw new Error('FFmpeg unavailable for minimal video');
@@ -19,6 +23,8 @@ export async function generateMinimalMp4(prompt: string, durationSeconds = 5): P
   await mkdir(workDir, { recursive: true });
   const outputPath = join(workDir, 'minimal.mp4');
   const dur = Math.min(Math.max(durationSeconds, 3), 30);
+  const vertical = options?.vertical ?? false;
+  const size = vertical ? '720x1280' : '1280x720';
 
   try {
     await execFileAsync(
@@ -27,7 +33,7 @@ export async function generateMinimalMp4(prompt: string, durationSeconds = 5): P
         '-f',
         'lavfi',
         '-i',
-        `color=c=0x0a1628:s=1280x720:d=${dur}`,
+        `color=c=0x0a1628:s=${size}:d=${dur}`,
         '-vf',
         `drawtext=text='${prompt.slice(0, 40).replace(/'/g, '')}':fontsize=28:fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2,format=yuv420p`,
         '-c:v',
