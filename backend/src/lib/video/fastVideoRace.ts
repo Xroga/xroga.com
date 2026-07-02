@@ -54,12 +54,17 @@ function buildHfSpaceRacers(
     {
       name: 'hf-spaces',
       run: async () => {
-        const result = await generateViaHfSpaces(prompt, durationSeconds, {
-          userId: options?.userId,
-          aspectRatio: options?.aspectRatio,
-          scenePriority: options?.scenePriority,
-          keyframeUrl: options?.keyframeUrl,
-        });
+        const result = await withTimeout(
+          generateViaHfSpaces(prompt, durationSeconds, {
+            userId: options?.userId,
+            aspectRatio: options?.aspectRatio,
+            scenePriority: options?.scenePriority,
+            keyframeUrl: options?.keyframeUrl,
+            maxAttempts: isFastClip(durationSeconds) ? 8 : 15,
+          }),
+          isFastClip(durationSeconds) ? 70_000 : 120_000,
+          'hf-spaces'
+        );
         return result.videoUrl;
       },
     },

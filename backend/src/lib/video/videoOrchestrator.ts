@@ -1,6 +1,6 @@
 /**
  * Video Orchestrator — Tier 0 HuggingFace Spaces workhorse.
- * Round-robins across 15 OSS community GPUs; instant failover on 429/503.
+ * Parallel round-robin across 15 OSS community GPUs; instant failover on 429/503.
  * Premium Replicate APIs are Tier 2 (handled by fastVideoRace after this).
  */
 
@@ -17,6 +17,10 @@ import { generateImage } from '../../services/builder/imageGen.js';
 
 let roundRobinCounter = 0;
 
+const HF_PARALLEL_BATCH = 4;
+const HF_MAX_BATCHES = 2;
+const HF_SPACE_TIMEOUT_MS = 65_000;
+
 export interface HfOrchestratorResult {
   provider: string;
   videoUrl: string;
@@ -29,8 +33,16 @@ export interface HfOrchestratorOptions {
   aspectRatio?: '9:16' | '16:9';
   scenePriority?: string;
   keyframeUrl?: string;
-  /** Money shots — still try free first, but fewer retries per space */
   maxAttempts?: number;
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+    ),
+  ]);
 }
 
 async function resolveKeyframe(
@@ -39,14 +51,22 @@ async function resolveKeyframe(
 ): Promise<string | undefined> {
   if (options.keyframeUrl) return options.keyframeUrl;
   try {
-    return await generateAgnesImage(`Cinematic still: ${prompt.slice(0, 400)}`);
+    return await withTimeout(
+      generateAgnesImage(`Cinematic still: ${prompt.slice(0, 400)}`),
+      20_000,
+      'keyframe-agnes'
+    );
   } catch {
     try {
-      const out = await generateImage(`Cinematic film still: ${prompt}`, {
-        userId: options.userId,
-        fast: true,
-        aspectFormat: options.aspectRatio === '9:16' ? '9:16' : '16:9',
-      });
+      const out = await withTimeout(
+        generateImage(`Cinematic film still: ${prompt}`, {
+          userId: options.userId,
+          fast: true,
+          aspectFormat: options.aspectRatio === '9:16' ? '9:16' : '16:9',
+        }),
+        25_000,
+        'keyframe-image'
+      );
       if (out.type !== 'image_blocked' && out.imageUrl) return out.imageUrl;
     } catch {
       /* skip */
@@ -74,13 +94,20 @@ async function trySpace(
     keyframeUrl,
   });
 
-  const result = await callGradioSpace({
-    spaceId: space.spaceId,
-    apiName: space.apiName,
-    data,
-    label: space.id,
-    timeoutMs: space.modelId === 'cogvideox' || space.modelId === 'hunyuan' ? 180_000 : 120_000,
-  });
+  const perSpaceTimeout =
+    space.modelId === 'cogvideox' || space.modelId === 'hunyuan' ? 90_000 : HF_SPACE_TIMEOUT_MS;
+
+  const result = await withTimeout(
+    callGradioSpace({
+      spaceId: space.spaceId,
+      apiName: space.apiName,
+      data,
+      label: space.id,
+      timeoutMs: perSpaceTimeout,
+    }),
+    perSpaceTimeout + 5_000,
+    space.id
+  );
 
   const videoUrl = videoUrlFromGradioResult(result, space.spaceId);
   return {
@@ -93,11 +120,40 @@ async function trySpace(
 
 function shouldSkipForRateLimit(err: Error): boolean {
   const msg = err.message;
-  return msg.startsWith('RATE_LIMIT:') || /429|rate.?limit|queue is full|503|sleeping/i.test(msg);
+  return msg.startsWith('RATE_LIMIT:') || /429|rate.?limit|queue is full|503|sleeping|timed out/i.test(msg);
+}
+
+async function raceSpaceBatch(
+  spaces: HfSpaceEndpoint[],
+  prompt: string,
+  durationSeconds: number,
+  options: HfOrchestratorOptions
+): Promise<HfOrchestratorResult | null> {
+  if (spaces.length === 0) return null;
+
+  const attempts = spaces.map((space) =>
+    trySpace(space, prompt, durationSeconds, options).catch((err) => {
+      console.warn(`[VideoOrchestrator] ${space.id}:`, (err as Error).message.slice(0, 100));
+      throw err;
+    })
+  );
+
+  try {
+    return await Promise.any(attempts);
+  } catch {
+    for (const space of spaces) {
+      try {
+        return await trySpace(space, prompt, durationSeconds, options);
+      } catch (err) {
+        if (!shouldSkipForRateLimit(err as Error)) continue;
+      }
+    }
+    return null;
+  }
 }
 
 /**
- * Try HF Spaces in round-robin order. Returns first successful MP4 URL.
+ * Try HF Spaces in parallel batches (5 at a time). Returns first successful MP4 URL.
  * 80% of scenes should succeed here at $0 cost.
  */
 export async function generateViaHfSpaces(
@@ -110,26 +166,35 @@ export async function generateViaHfSpaces(
   const offset = roundRobinCounter++ % 1000;
   const spaces = orderSpacesForScene(scene, offset);
   const maxAttempts = options?.maxAttempts ?? spaces.length;
+  const capped = spaces.slice(0, maxAttempts);
   const errors: string[] = [];
 
-  for (let i = 0; i < Math.min(maxAttempts, spaces.length); i++) {
-    const space = spaces[i]!;
-    try {
-      const result = await trySpace(space, clean, durationSeconds, options ?? {});
-      console.log(`[VideoOrchestrator] HF winner: ${result.provider} (${result.family}) scene=${scene}`);
-      return result;
-    } catch (err) {
-      const msg = (err as Error).message.slice(0, 120);
-      errors.push(`${space.id}: ${msg}`);
-      console.warn(`[VideoOrchestrator] ${space.id} failed:`, msg);
-      if (shouldSkipForRateLimit(err as Error)) {
-        continue;
-      }
+  const batchCount = Math.min(
+    HF_MAX_BATCHES,
+    Math.ceil(capped.length / HF_PARALLEL_BATCH)
+  );
+
+  for (let batch = 0; batch < batchCount; batch++) {
+    const slice = capped.slice(batch * HF_PARALLEL_BATCH, (batch + 1) * HF_PARALLEL_BATCH);
+    if (slice.length === 0) break;
+
+    console.log(
+      `[VideoOrchestrator] HF batch ${batch + 1}/${batchCount} — racing ${slice.map((s) => s.id).join(', ')}`
+    );
+
+    const winner = await raceSpaceBatch(slice, clean, durationSeconds, options ?? {});
+    if (winner) {
+      console.log(`[VideoOrchestrator] HF winner: ${winner.provider} (${winner.family}) scene=${scene}`);
+      return winner;
+    }
+
+    for (const space of slice) {
+      errors.push(`${space.id}: batch-${batch + 1}-failed`);
     }
   }
 
   throw new Error(
-    `All HF Spaces exhausted (${spaces.length} tried). ${errors.slice(0, 4).join(' | ')}`
+    `All HF Spaces exhausted (${capped.length} tried). ${errors.slice(0, 4).join(' | ')}`
   );
 }
 

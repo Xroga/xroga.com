@@ -75,7 +75,7 @@ export async function produceSingleSceneVideo(
           dialogue: '',
           renderPrompt: sanitizeVideoPrompt(prompt),
           durationSeconds,
-          priority: 'critical' as const,
+          priority: 'low' as const,
         }],
         characters: [{ name: 'Protagonist', description: 'Main subject' }],
         scriptProvider: 'fast-heuristic',
@@ -102,11 +102,22 @@ export async function produceSingleSceneVideo(
   const referenceImageUrl = options?.keyframeUrl;
   const wantsGif = isGifOutputIntent(prompt);
 
-  options?.onProgress?.('rendering', referenceImageUrl ? 'Analyzing your image…' : 'Locking subjects & enhancing prompt…');
+  options?.onProgress?.('rendering', referenceImageUrl ? 'Analyzing your image…' : 'Trinity Brain — locking your prompt…');
+  options?.onOmniEvent?.({
+    phase: 'trinity_scripting',
+    message: 'Trinity Brain',
+    detail: 'Groq · Gemini · DeepSeek verifying your prompt…',
+  });
 
   const promptLock = referenceImageUrl
     ? await buildImageToVideoPrompt(referenceImageUrl, prompt)
-    : await enhanceVideoPrompt(prompt);
+    : await enhanceVideoPrompt(prompt, { fastClip: isFastClip, timeoutMs: isFastClip ? 6_000 : 12_000 });
+
+  options?.onOmniEvent?.({
+    phase: 'scene_render',
+    message: 'Swarm Render',
+    detail: `Prompt locked via ${promptLock.enhancerProvider} — starting OSS + API render…`,
+  });
 
   const generationPrompt = referenceImageUrl
     ? `${buildImageToVideoGenerationPrompt(promptLock as Awaited<ReturnType<typeof buildImageToVideoPrompt>>)}. ${aspectSuffix}`
@@ -130,10 +141,11 @@ export async function produceSingleSceneVideo(
     onOmniEvent: options?.onOmniEvent,
   });
 
-  options?.onProgress?.('audio', 'Composing voiceover & score…');
-  const audioTracks = dialogue.trim()
-    ? await generateSceneAudio(dialogue, plan.mood, video.durationSeconds, { userId, runId: options?.runId })
-    : [];
+  options?.onProgress?.('audio', isFastClip ? 'Skipping audio for fast clip…' : 'Composing voiceover & score…');
+  const audioTracks =
+    !isFastClip && dialogue.trim()
+      ? await generateSceneAudio(dialogue, plan.mood, video.durationSeconds, { userId, runId: options?.runId })
+      : [];
 
   options?.onProgress?.('assembling', 'Preparing your video…');
 
