@@ -566,7 +566,10 @@ export class Orchestrator {
       };
     }
 
-    const cached = !requiresFeaturePipeline(ctx.prompt) ? await getCachedResponse(ctx.prompt) : null;
+    const cached =
+      !requiresFeaturePipeline(ctx.prompt) && route.category !== 'chat'
+        ? await getCachedResponse(ctx.prompt)
+        : null;
     if (cached) {
       const shield = await runThreeLayerShield({
         content: cached,
@@ -609,7 +612,7 @@ export class Orchestrator {
       });
       reply = isStructuredOutput ? reply : stripFakeImageMarkdown(shield.content);
 
-      if (result.result.success) {
+      if (result.result.success && result.featureCategory !== 'chat') {
         await setCachedResponse(ctx.prompt, reply, result.featureCategory);
       }
 

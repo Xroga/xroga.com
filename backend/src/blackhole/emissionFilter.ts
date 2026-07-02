@@ -2,6 +2,15 @@
  * Black Hole V∞ emission filter — regex + templates (no heavy LLM).
  */
 
+/** Strip emoji / pictographs from user-facing text */
+export function stripEmojis(text: string): string {
+  return text
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}\u{E0020}-\u{E007F}]/gu, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/ +\n/g, '\n')
+    .trim();
+}
+
 const BANNED_REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bdelve\b/gi, 'examine'],
   [/\btapestry\b/gi, 'landscape'],
@@ -20,7 +29,7 @@ const BANNED_REPLACEMENTS: Array<[RegExp, string]> = [
 ];
 
 export function deAiFilter(text: string): string {
-  let out = text;
+  let out = stripEmojis(text);
   for (const [pattern, replacement] of BANNED_REPLACEMENTS) {
     out = out.replace(pattern, replacement);
   }

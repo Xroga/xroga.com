@@ -1,11 +1,23 @@
 /**
- * Intent classification — Mistral/Ollama on every query, heuristic fallback.
+ * Intent classification — Mistral 7B classifier bee, heuristic fallback.
  */
 
 import type { XrogaIntent } from '../config/apiRoles.js';
 import { getSecret } from '../config/envSecrets.js';
 import { groqChat } from './groq.js';
 import { SWARM_CLASSIFIER_PROMPT } from '../prompts/swarmReservePrompts.js';
+
+const SINGLE_WORD_MAP: Record<string, XrogaIntent> = {
+  greeting: 'greeting',
+  quick_fact: 'quick_fact',
+  coding: 'coding',
+  stem: 'stem',
+  history: 'history',
+  decision: 'decision',
+  build: 'build_website',
+  multimodal: 'multimodal_upload',
+  cultural: 'cultural',
+};
 
 const CLASSIFIER_JSON_INTENTS: XrogaIntent[] = [
   'greeting', 'quick_fact', 'coding', 'stem', 'history', 'cultural', 'decision',
@@ -27,7 +39,7 @@ async function callClassifierBee(userInput: string): Promise<string> {
             { role: 'user', content: userInput.slice(0, 600) },
           ],
           stream: false,
-          options: { num_predict: 128, temperature: 0.1 },
+          options: { num_predict: 32, temperature: 0.1 },
         }),
         signal: AbortSignal.timeout(8_000),
       });
@@ -46,10 +58,20 @@ async function callClassifierBee(userInput: string): Promise<string> {
         { role: 'system', content: SWARM_CLASSIFIER_PROMPT },
         { role: 'user', content: userInput.slice(0, 600) },
       ],
-      { maxTokens: 128 }
+      { maxTokens: 16 }
     );
   }
   return '';
+}
+
+function parseClassifierWord(raw: string): XrogaIntent | null {
+  const token = raw
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z_]/g, '')
+    .split(/\s+/)[0];
+  if (token && SINGLE_WORD_MAP[token]) return SINGLE_WORD_MAP[token];
+  return null;
 }
 
 function heuristicIntent(userInput: string): XrogaIntent {
@@ -80,6 +102,9 @@ function heuristicIntent(userInput: string): XrogaIntent {
 export async function classifyXrogaIntent(userInput: string): Promise<XrogaIntent> {
   try {
     const raw = await callClassifierBee(userInput);
+    const single = parseClassifierWord(raw);
+    if (single) return single;
+
     const match = raw.match(/\{[\s\S]*\}/);
     if (match) {
       const parsed = JSON.parse(match[0]) as { intent?: string };

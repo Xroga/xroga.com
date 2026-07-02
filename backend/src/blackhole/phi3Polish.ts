@@ -1,7 +1,9 @@
-/** Optional Phi-3 mini polish via Ollama — 1-sentence instruction only */
+/** Optional Phi-3 mini polish via Ollama */
+
+import { SWARM_POLISHER_PROMPT } from '../prompts/swarmReservePrompts.js';
 
 export async function phi3Polish(text: string): Promise<string> {
-  const instruction = `Make this sound human and engaging. Remove AI-isms. Keep all facts:\n\n${text.slice(0, 3000)}`;
+  const instruction = `${SWARM_POLISHER_PROMPT}\n\n${text.slice(0, 3000)}`;
   const base = process.env.OLLAMA_URL ?? 'http://127.0.0.1:11434';
 
   if (!process.env.OLLAMA_URL && !process.env.OLLAMA_ENABLED) {

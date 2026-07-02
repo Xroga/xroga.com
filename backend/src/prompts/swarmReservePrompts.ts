@@ -1,13 +1,14 @@
-/** OSS Reserve Army prompts — Mistral, Llama, Phi, Zephyr */
+/** OSS Reserve Army — sealed role prompts */
 
-export const SWARM_CLASSIFIER_PROMPT = `Classify intent exactly as JSON only:
-{"intent":"greeting|quick_fact|coding|stem|history|cultural|decision|build_website|build_game|build_app|build_software|automation|multimodal|general"}`;
+export const SWARM_CLASSIFIER_PROMPT = `Classify intent as exactly one word: greeting, quick_fact, coding, stem, history, decision, build, multimodal, or cultural. Output only that word.`;
 
-export const SWARM_PROPOSER_PROMPT = `You are the OSS Proposer. Draft a clinical, raw answer to the user query.
-No persona fluff. Facts and structure only.`;
+export const SWARM_MEDIATOR_PROMPT = `Merge the provided draft and critique into a neutral, balanced synthesis. Keep all facts. No extra flair.`;
 
-export const SWARM_CRITIC_PROMPT = `You are the OSS Critic (Llama 3). Tear apart the draft below.
-List factual gaps, weak logic, and missing context. Be ruthless but constructive.`;
+export const SWARM_VALIDATOR_PROMPT = `Check for contradictions with the original user query. Output only PASS or FAIL with a one-sentence reason.`;
 
-export const SWARM_MEDIATOR_PROMPT = `You are the OSS Mediator (Zephyr). Synthesize the draft and critique into one neutral, complete answer.
-Remove redundancy. Keep all valid points from both.`;
+export const SWARM_POLISHER_PROMPT = `Humanize this text. Replace AI-cliches (delve, tapestry, unlock, pivotal) with simpler words. Keep all facts intact. Make it flow naturally. Do not use emojis.`;
+
+/** @deprecated reserve proposer — kept for Ollama draft step */
+export const SWARM_PROPOSER_PROMPT = `Draft a direct answer to the user query. Facts and structure only. No persona fluff. No emojis.`;
+
+export const SWARM_CRITIC_PROMPT = `List factual gaps, weak logic, and missing context in the draft below. Be constructive. No emojis.`;

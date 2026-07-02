@@ -1,5 +1,5 @@
 /**
- * OSS Reserve — Ollama bees with Groq fallback when local models unavailable.
+ * OSS Reserve — Mistral classifier, Zephyr mediator, TinyLlama validator, Phi-3 polisher.
  */
 
 import { groqChat } from '../../lib/groq.js';
@@ -9,7 +9,10 @@ import {
   SWARM_PROPOSER_PROMPT,
   SWARM_CRITIC_PROMPT,
   SWARM_MEDIATOR_PROMPT,
+  SWARM_VALIDATOR_PROMPT,
+  SWARM_POLISHER_PROMPT,
 } from '../../prompts/swarmReservePrompts.js';
+import { phi3Polish } from '../../blackhole/phi3Polish.js';
 
 export type SwarmIntent = 'greeting' | 'stem' | 'cultural' | 'general' | 'creation';
 
@@ -64,21 +67,35 @@ async function callBee(
   throw new Error('No OSS reserve provider available');
 }
 
+async function validateAnswer(userInput: string, answer: string): Promise<boolean> {
+  try {
+    const verdict = await callBee(
+      process.env.OLLAMA_VALIDATOR_MODEL ?? 'tinyllama',
+      SWARM_VALIDATOR_PROMPT,
+      `User query: ${userInput}\n\nAnswer:\n${answer.slice(0, 2000)}`,
+      64
+    );
+    return /^pass\b/i.test(verdict.trim());
+  } catch {
+    return true;
+  }
+}
+
 export async function classifyIntent(userInput: string): Promise<SwarmIntent> {
   try {
     const raw = await callBee(
       process.env.OLLAMA_CLASSIFIER_MODEL ?? 'mistral',
       SWARM_CLASSIFIER_PROMPT,
       userInput.slice(0, 500),
-      128
+      16
     );
-    const match = raw.match(/\{[\s\S]*\}/);
-    if (match) {
-      const parsed = JSON.parse(match[0]) as { intent?: string };
-      const intent = parsed.intent ?? 'general';
-      if (['greeting', 'stem', 'cultural', 'general', 'creation'].includes(intent)) {
-        return intent as SwarmIntent;
-      }
+    const token = raw.trim().toLowerCase().split(/\s+/)[0];
+    if (['greeting', 'stem', 'cultural', 'general', 'creation', 'coding', 'history', 'decision'].includes(token)) {
+      if (token === 'coding' || token === 'stem') return 'stem';
+      if (token === 'history' || token === 'cultural') return 'cultural';
+      if (token === 'greeting') return 'greeting';
+      if (token === 'decision') return 'general';
+      return token as SwarmIntent;
     }
   } catch {
     /* heuristic below */
@@ -92,7 +109,7 @@ export async function classifyIntent(userInput: string): Promise<SwarmIntent> {
   return 'general';
 }
 
-/** Full reserve pipeline: Proposer → Critic → Mediator */
+/** Full reserve pipeline: Proposer → Critic → Zephyr Mediator → TinyLlama Validator → Phi-3 Polish */
 export async function swarmReserveProcess(userInput: string): Promise<string> {
   const draft = await callBee(
     process.env.OLLAMA_PROPOSER_MODEL ?? 'mistral',
@@ -113,14 +130,43 @@ export async function swarmReserveProcess(userInput: string): Promise<string> {
     return draft;
   }
 
+  let merged: string;
   try {
-    return await callBee(
-      process.env.OLLAMA_MEDIATOR_MODEL ?? 'phi3',
+    merged = await callBee(
+      process.env.OLLAMA_MEDIATOR_MODEL ?? 'zephyr',
       SWARM_MEDIATOR_PROMPT,
       `User: ${userInput}\n\nDraft:\n${draft}\n\nCritique:\n${critique}`,
       1536
     );
   } catch {
-    return draft;
+    merged = draft;
+  }
+
+  const valid = await validateAnswer(userInput, merged);
+  if (!valid) {
+    try {
+      merged = await callBee(
+        process.env.OLLAMA_PROPOSER_MODEL ?? 'mistral',
+        SWARM_PROPOSER_PROMPT,
+        `${userInput}\n\n(Previous answer failed validation — answer directly, no fluff.)`,
+        1536
+      );
+    } catch {
+      /* keep merged */
+    }
+  }
+
+  try {
+    if (process.env.OLLAMA_URL || process.env.OLLAMA_ENABLED) {
+      return await callBee(
+        process.env.OLLAMA_POLISH_MODEL ?? 'phi3',
+        SWARM_POLISHER_PROMPT,
+        merged,
+        1024
+      );
+    }
+    return await phi3Polish(merged);
+  } catch {
+    return merged;
   }
 }

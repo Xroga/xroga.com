@@ -8,8 +8,10 @@ import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
 import type { RouteProgressFn } from '../../orchestrator/xrogaRouter.js';
+import type { ChatTurn } from '../../lib/conversationContext.js';
 
-const CHAT_SYSTEM = `You are Xroga AI. Follow all training rules. Be natural, clear, and professional.
+const CHAT_SYSTEM = `You are Xroga AI — a premium creation terminal users should feel is the best AI available.
+Be natural, confident, and precise. No emojis. No filler openers you have used before.
 
 Format every reply in clean modern markdown:
 - Open with a direct answer in 1–2 short sentences
@@ -17,10 +19,13 @@ Format every reply in clean modern markdown:
 - Use bullet or numbered lists for steps, options, or features
 - Use > blockquotes for key takeaways or summaries
 - Use **bold** for important terms and \`code\` for technical identifiers
-- Keep paragraphs short and scannable
-- Do not use emojis unless the user uses them first`;
+- Keep paragraphs short and scannable`;
 
-export async function quickChat(prompt: string, onCouncilProgress?: RouteProgressFn): Promise<string> {
+export async function quickChat(
+  prompt: string,
+  onCouncilProgress?: RouteProgressFn,
+  context?: ChatTurn[]
+): Promise<string> {
   const userText = routingPrompt(prompt);
   const lower = userText.toLowerCase().trim();
 
@@ -38,7 +43,7 @@ export async function quickChat(prompt: string, onCouncilProgress?: RouteProgres
     try {
       const { groqSprinter } = await import('../../council/groqClient.js');
       const { blackHoleEmit } = await import('../../blackhole/synthesizer.js');
-      const raw = await groqSprinter(userText);
+      const raw = await groqSprinter(userText, context);
       const emitted = await blackHoleEmit(raw, userText, 'greeting', 'elite');
       return emitted.text;
     } catch {
@@ -81,7 +86,7 @@ export async function quickChat(prompt: string, onCouncilProgress?: RouteProgres
 
   // Hybrid Council → Reserve → Black Hole V∞ for pure chat
   const { xrogaRouter } = await import('../../orchestrator/xrogaRouter.js');
-  const routed = await xrogaRouter.route(userText, onCouncilProgress);
+  const routed = await xrogaRouter.route(userText, onCouncilProgress, { context });
   if (routed.text?.trim()) {
     return routed.text.trim();
   }

@@ -17,6 +17,11 @@ import { blackHoleEmit } from '../blackhole/synthesizer.js';
 import { BLACKHOLE_MAINTENANCE } from '../prompts/blackholePrompts.js';
 import { groqChat } from '../lib/groq.js';
 import { getSecret } from '../config/envSecrets.js';
+import type { ChatTurn } from '../lib/conversationContext.js';
+
+export interface XrogaRouteOptions {
+  context?: ChatTurn[];
+}
 
 export interface XrogaRouteResult {
   text: string;
@@ -77,8 +82,13 @@ async function councilOrReserve(
 }
 
 export class XrogaRouter {
-  async route(userInput: string, onProgress?: RouteProgressFn): Promise<XrogaRouteResult> {
+  async route(
+    userInput: string,
+    onProgress?: RouteProgressFn,
+    options?: XrogaRouteOptions
+  ): Promise<XrogaRouteResult> {
     const input = userInput.trim();
+    const ctx = options?.context;
     if (!input) {
       return { text: 'What can I help you build?', provider: 'groq', councilLayer: 'elite', intent: 'greeting' };
     }
@@ -101,7 +111,7 @@ export class XrogaRouter {
         const { raw, layer, provider } = await councilOrReserve(
           input,
           'groq',
-          () => groqSprinter(input),
+          () => groqSprinter(input, ctx),
           onProgress
         );
         onProgress?.('blackhole', 'Black Hole V∞');
@@ -121,7 +131,7 @@ export class XrogaRouter {
         const { raw, layer, provider } = await councilOrReserve(
           input,
           'gemini',
-          () => geminiGenerateCultural(input),
+          () => geminiGenerateCultural(input, { context: ctx }),
           onProgress
         );
         onProgress?.('blackhole', 'Black Hole V∞');
@@ -138,7 +148,7 @@ export class XrogaRouter {
         const { raw, layer, provider } = await councilOrReserve(
           input,
           'deepseek',
-          () => deepseekGenerate(input),
+          () => deepseekGenerate(input, { context: ctx }),
           onProgress
         );
         onProgress?.('blackhole', 'Black Hole V∞');
@@ -151,7 +161,7 @@ export class XrogaRouter {
           input,
           'deepseek',
           async () => {
-            const draft = await deepseekGenerate(input);
+            const draft = await deepseekGenerate(input, { context: ctx });
             const parts = [draft];
             if (getSecret('GEMINI_API_KEY')) {
               try {
@@ -181,7 +191,7 @@ export class XrogaRouter {
         const { raw, layer, provider } = await councilOrReserve(
           input,
           'groq',
-          () => groqGeneral(input),
+          () => groqGeneral(input, ctx),
           onProgress
         );
         onProgress?.('blackhole', 'Black Hole V∞');
@@ -192,7 +202,7 @@ export class XrogaRouter {
       const { raw, layer, provider } = await councilOrReserve(
         input,
         'deepseek',
-        () => deepseekGenerate(input),
+        () => deepseekGenerate(input, { context: ctx }),
         onProgress
       );
       onProgress?.('blackhole', 'Black Hole V∞');

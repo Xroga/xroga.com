@@ -1,25 +1,40 @@
 import { groqChat } from '../lib/groq.js';
 import { getSecret } from '../config/envSecrets.js';
 import { API_ROLES, formatMinimalPrompt } from '../config/apiRoles.js';
-import { XROGA_COUNCIL_BRIEF } from '../prompts/xrogaSystemManifest.js';
+import {
+  GROQ_SPRINTER_PROMPT,
+  GROQ_EDGE_PROMPT,
+} from '../prompts/councilPrompts.js';
+import {
+  type ChatTurn,
+  formatConversationContext,
+  FRESHNESS_DIRECTIVE,
+} from '../lib/conversationContext.js';
 
-/** Sprinter — raw user input only, max 50 tokens (manifesto) */
-export async function groqSprinter(userInput: string): Promise<string> {
+function groqSystem(rolePrompt: string, context?: ChatTurn[]): string {
+  return `${rolePrompt}\n\nYou are Groq Sprinter inside XROGA AI. ${FRESHNESS_DIRECTIVE}${formatConversationContext(context)}`;
+}
+
+/** Sprinter — sealed role prompt, max 50 tokens */
+export async function groqSprinter(userInput: string, context?: ChatTurn[]): Promise<string> {
   if (!getSecret('GROQ_API_KEY')) throw new Error('GROQ_API_KEY not configured');
-  const text = await groqChat([{ role: 'user', content: userInput }], {
-    maxTokens: API_ROLES.groq.maxOutputTokens,
-  });
+  const text = await groqChat(
+    [
+      { role: 'system', content: groqSystem(GROQ_SPRINTER_PROMPT, context) },
+      { role: 'user', content: userInput },
+    ],
+    { maxTokens: API_ROLES.groq.maxOutputTokens }
+  );
   if (!text.trim()) throw new Error('Groq returned empty');
   return text.trim();
 }
 
-/** General chat — Groq + XROGA platform brief (short prompts) */
-export async function groqGeneral(userInput: string): Promise<string> {
+/** General chat — Groq Sprinter with conversation memory */
+export async function groqGeneral(userInput: string, context?: ChatTurn[]): Promise<string> {
   if (!getSecret('GROQ_API_KEY')) throw new Error('GROQ_API_KEY not configured');
-  const system = `${XROGA_COUNCIL_BRIEF}\n\nYou are Groq Sprinter inside XROGA. Answer clearly; mention relevant XROGA features when helpful.`;
   const text = await groqChat(
     [
-      { role: 'system', content: system },
+      { role: 'system', content: groqSystem(GROQ_SPRINTER_PROMPT, context) },
       { role: 'user', content: userInput },
     ],
     { maxTokens: 1024 }
@@ -28,16 +43,12 @@ export async function groqGeneral(userInput: string): Promise<string> {
   return text.trim();
 }
 
-/** Devil's advocate — Groq replaces Grok for decision triad */
+/** Contrarian edge for decision triad */
 export async function groqContrarian(userInput: string, draft: string): Promise<string> {
   if (!getSecret('GROQ_API_KEY')) throw new Error('GROQ_API_KEY not configured');
   const text = await groqChat(
     [
-      {
-        role: 'system',
-        content:
-          'You are Groq inside XROGA. Give a punchy contrarian take — challenge assumptions in under 80 words.',
-      },
+      { role: 'system', content: GROQ_EDGE_PROMPT },
       { role: 'user', content: `Question: ${userInput}\n\nDraft answer:\n${draft.slice(0, 2000)}` },
     ],
     { maxTokens: 150 }

@@ -72,8 +72,7 @@ export const API_ROLES: Record<ApiRoleId, ApiRoleDefinition> = {
     ],
     maxOutputTokens: 2048,
     temperature: 0.7,
-    minimalPromptTemplate:
-      '{user_input}\n\nProvide a comprehensive, globally-aware historical and cultural perspective. Cross-reference timelines and flag Western-centric assumptions.',
+    minimalPromptTemplate: '{user_input}',
     fallbackModel: 'llama3_70b_via_groq',
   },
   deepseek: {
@@ -86,8 +85,7 @@ export const API_ROLES: Record<ApiRoleId, ApiRoleDefinition> = {
     ],
     maxOutputTokens: 4096,
     temperature: 0.2,
-    minimalPromptTemplate:
-      '{user_input}\n\nProvide step-by-step reasoning, production-ready code with comments, and flag assumptions with [ASSUMPTION].',
+    minimalPromptTemplate: '{user_input}',
     fallbackModel: 'mixtral_8x7b_via_ollama',
   },
   swarm: {
