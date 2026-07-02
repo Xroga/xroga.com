@@ -46,6 +46,17 @@ export function isGifPrompt(text: string): boolean {
   return /\b(gif|animated\s+gif|image\s+to\s+gif|make\s+a\s+gif)\b/i.test(text);
 }
 
+/** Rough ETA for video generation UI (seconds) */
+export function estimateVideoSeconds(prompt: string): number {
+  const cleaned = prompt.replace(/\[xroga-video-format:[^\]]+\]/gi, '');
+  const secMatch = cleaned.match(/(\d+)\s*(?:second|seconds|sec|s)\b/i);
+  const dur = secMatch ? Math.min(parseInt(secMatch[1], 10), 300) : 5;
+  if (dur <= 5) return 90;
+  if (dur <= 10) return 120;
+  if (dur <= 15) return 180;
+  return 240;
+}
+
 /** Default chat prompt when user attaches image only */
 export function defaultImageAttachmentPrompt(text: string, hasVideoIntent: boolean): string {
   if (text.trim()) return text;
