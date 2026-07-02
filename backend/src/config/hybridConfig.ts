@@ -11,7 +11,3 @@ export function isPaidApiAllowed(): boolean {
   if (v === 'false' || v === '0' || v === 'no') return false;
   return true;
 }
-
-export function isGrokEnabled(): boolean {
-  return Boolean(process.env.XAI_API_KEY?.trim() || process.env.GROK_API_KEY?.trim());
-}

@@ -34,7 +34,7 @@ export type XrogaIntent =
   | 'general'
   | 'creation';
 
-export type ApiRoleId = 'groq' | 'gemini' | 'deepseek' | 'grok' | 'swarm' | 'blackhole';
+export type ApiRoleId = 'groq' | 'gemini' | 'deepseek' | 'swarm' | 'blackhole';
 
 export interface ApiRoleDefinition {
   id: ApiRoleId;
@@ -55,6 +55,7 @@ export const API_ROLES: Record<ApiRoleId, ApiRoleDefinition> = {
     primaryRole: 'Ultra-low latency. Greetings, quick facts, small talk, yes/no.',
     intentsHandled: [
       'greeting', 'quick_fact', 'small_talk', 'yes_no', 'simple_math', 'name_reminder', 'time_query',
+      'decision', 'philosophical_debate', 'what_if_scenario',
     ],
     maxOutputTokens: 50,
     temperature: 0.3,
@@ -88,18 +89,6 @@ export const API_ROLES: Record<ApiRoleId, ApiRoleDefinition> = {
     minimalPromptTemplate:
       '{user_input}\n\nProvide step-by-step reasoning, production-ready code with comments, and flag assumptions with [ASSUMPTION].',
     fallbackModel: 'mixtral_8x7b_via_ollama',
-  },
-  grok: {
-    id: 'grok',
-    codename: 'The Edge',
-    primaryRole: 'Contrarian devil\'s advocate for decisions and debates.',
-    intentsHandled: ['decision', 'philosophical_debate', 'what_if_scenario'],
-    maxOutputTokens: 1024,
-    temperature: 0.8,
-    minimalPromptTemplate:
-      '{user_input}\n\nChallenge conventional wisdom. Provide a provocative, well-reasoned alternative narrative.',
-    fallbackModel: 'zephyr_contrarian',
-    isOptional: true,
   },
   swarm: {
     id: 'swarm',
@@ -138,7 +127,8 @@ export function primaryApiForIntent(intent: XrogaIntent): ApiRoleId {
   if (API_ROLES.groq.intentsHandled.includes(intent)) return 'groq';
   if (API_ROLES.gemini.intentsHandled.includes(intent)) return 'gemini';
   if (API_ROLES.deepseek.intentsHandled.includes(intent)) return 'deepseek';
-  if (API_ROLES.grok.intentsHandled.includes(intent)) return 'grok';
-  if (intent === 'decision' || intent === 'philosophical_debate') return 'deepseek';
+  if (intent === 'decision' || intent === 'philosophical_debate' || intent === 'what_if_scenario') {
+    return 'deepseek';
+  }
   return 'deepseek';
 }

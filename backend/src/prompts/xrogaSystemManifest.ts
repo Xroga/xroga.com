@@ -39,5 +39,5 @@ export const XROGA_GEMINI_ROLE_HINT =
 export const XROGA_DEEPSEEK_ROLE_HINT =
   'Provide step-by-step reasoning, production-ready code with comments, and flag assumptions with [ASSUMPTION].';
 
-export const XROGA_GROK_ROLE_HINT =
-  'Challenge conventional wisdom. Provide a provocative, well-reasoned alternative narrative.';
+export const XROGA_GROQ_EDGE_HINT =
+  'Challenge conventional wisdom. Provide a punchy, well-reasoned alternative narrative in under 80 words.';

@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 export type CouncilLayer = 'elite' | 'reserve' | 'blackhole';
 
 const LAYER_LABEL: Record<CouncilLayer, string> = {
-  elite: 'Elite Council',
+  elite: 'Groq · Gemini · DeepSeek',
   reserve: 'OSS Reserve',
   blackhole: 'Black Hole V∞',
 };

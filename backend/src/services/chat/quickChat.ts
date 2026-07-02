@@ -34,11 +34,20 @@ export async function quickChat(prompt: string, onCouncilProgress?: RouteProgres
     if (/^(yes|no|ok|okay|yep|nope|cool|nice|got\s*it)\b/.test(lower)) {
       return 'Got it. What should we work on next?';
     }
-    if (/good\s+(morning|afternoon|evening)/.test(lower)) {
-      const period = lower.match(/good\s+(\w+)/)?.[1] ?? 'day';
-      return `Good ${period}! What can I help you with?`;
+    // Greetings → real Groq Sprinter (not hardcoded)
+    try {
+      const { groqSprinter } = await import('../../council/groqClient.js');
+      const { blackHoleEmit } = await import('../../blackhole/synthesizer.js');
+      const raw = await groqSprinter(userText);
+      const emitted = await blackHoleEmit(raw, userText, 'greeting', 'elite');
+      return emitted.text;
+    } catch {
+      if (/good\s+(morning|afternoon|evening)/.test(lower)) {
+        const period = lower.match(/good\s+(\w+)/)?.[1] ?? 'day';
+        return `Good ${period}! What can I help you with?`;
+      }
+      return "Hey! What can I help you with today?";
     }
-    return "Hey! What can I help you with today?";
   }
 
   // Safety net: feature intents must use real APIs, never text-only LLM
