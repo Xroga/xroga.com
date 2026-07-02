@@ -4,6 +4,7 @@
  */
 
 import { generateSlideshowVideo } from '../../lib/video/slideshow.js';
+import { generatePollinationsImage } from '../../lib/video/freeImageGen.js';
 import { generateAgnesImage } from '../../lib/agnes.js';
 import { generateImage } from '../builder/imageGen.js';
 import type { VideoGenerationResult } from '../../lib/videoProviders.js';
@@ -23,18 +24,24 @@ export async function generateParallaxClip(
 
   if (!imageUrl) {
     try {
-      imageUrl = await generateAgnesImage(`Cinematic still, ${prompt.slice(0, 400)}`);
+      imageUrl = await generatePollinationsImage(`Cinematic still, ${prompt.slice(0, 400)}`, {
+        vertical: options?.vertical,
+      });
     } catch {
       try {
-        const out = await generateImage(`Cinematic movie still frame: ${prompt}`, {
-          userId: options?.userId,
-          runId: options?.runId,
-          fast: true,
-          aspectFormat: options?.vertical ? '9:16' : '16:9',
-        });
-        if (out.type !== 'image_blocked') imageUrl = out.imageUrl;
+        imageUrl = await generateAgnesImage(`Cinematic still, ${prompt.slice(0, 400)}`);
       } catch {
-        /* placeholder in slideshow */
+        try {
+          const out = await generateImage(`Cinematic movie still frame: ${prompt}`, {
+            userId: options?.userId,
+            runId: options?.runId,
+            fast: true,
+            aspectFormat: options?.vertical ? '9:16' : '16:9',
+          });
+          if (out.type !== 'image_blocked') imageUrl = out.imageUrl;
+        } catch {
+          /* placeholder in slideshow */
+        }
       }
     }
   }

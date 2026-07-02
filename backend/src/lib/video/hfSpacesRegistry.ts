@@ -27,51 +27,20 @@ export interface HfSpaceEndpoint {
   apiName: string;
   bestFor: VideoSceneKind[];
   requiresImage?: boolean;
+  /** Skip broken / offline HF Spaces */
+  disabled?: boolean;
   buildData: (ctx: HfSpaceContext) => unknown[];
 }
 
-/** Verified public Gradio Spaces — OSS Tier 0 */
+/** Verified public Gradio Spaces — OSS Tier 0 (LTX first — live tested) */
 export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
-  {
-    id: 'hf-cogvideox',
-    family: 'CogVideoX (THUDM)',
-    modelId: 'cogvideox',
-    spaceId: 'zai-org/CogVideoX-5B-Space',
-    apiName: '/generate',
-    bestFor: ['climax', 'action', 'general', 'establishing'],
-    buildData: (ctx) => [
-      ctx.prompt.slice(0, 800),
-      null,
-      null,
-      0.8,
-      -1,
-      false,
-      false,
-    ],
-  },
-  {
-    id: 'hf-pyramid-flow',
-    family: 'Pyramid Flow',
-    modelId: 'pyramid-flow',
-    spaceId: 'pyramid-flow/Pyramid-Flow',
-    apiName: '/generate_video',
-    bestFor: ['action', 'climax', 'broll'],
-    buildData: (ctx) => [
-      ctx.prompt.slice(0, 800),
-      null,
-      Math.min(Math.max(ctx.durationSeconds, 3), 10),
-      9,
-      5,
-      24,
-    ],
-  },
   {
     id: 'hf-ltx-video',
     family: 'LTX Video (Lightricks)',
     modelId: 'ltx-video',
     spaceId: 'Lightricks/ltx-video-distilled',
     apiName: '/text_to_video',
-    bestFor: ['broll', 'general', 'dialogue', 'establishing'],
+    bestFor: ['broll', 'general', 'dialogue', 'establishing', 'action', 'climax', 'cartoon'],
     buildData: (ctx) => {
       const vertical = ctx.aspectRatio === '9:16';
       return [
@@ -92,12 +61,48 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     },
   },
   {
+    id: 'hf-cogvideox',
+    family: 'CogVideoX (THUDM)',
+    modelId: 'cogvideox',
+    spaceId: 'zai-org/CogVideoX-5B-Space',
+    apiName: '/generate',
+    bestFor: ['climax', 'action', 'general', 'establishing'],
+    disabled: true,
+    buildData: (ctx) => [
+      ctx.prompt.slice(0, 800),
+      null,
+      null,
+      0.8,
+      -1,
+      false,
+      false,
+    ],
+  },
+  {
+    id: 'hf-pyramid-flow',
+    family: 'Pyramid Flow',
+    modelId: 'pyramid-flow',
+    spaceId: 'pyramid-flow/Pyramid-Flow',
+    apiName: '/generate_video',
+    bestFor: ['action', 'climax', 'broll'],
+    disabled: true,
+    buildData: (ctx) => [
+      ctx.prompt.slice(0, 800),
+      null,
+      Math.min(Math.max(ctx.durationSeconds, 3), 10),
+      9,
+      5,
+      24,
+    ],
+  },
+  {
     id: 'hf-open-sora',
     family: 'Open-Sora',
     modelId: 'open-sora',
     spaceId: 'hpcai-tech/open-sora',
     apiName: '/generate',
     bestFor: ['establishing', 'general', 'climax'],
+    disabled: true,
     buildData: (ctx) => [ctx.prompt.slice(0, 800)],
   },
   {
@@ -116,6 +121,7 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     spaceId: 'ali-vilab/modelscope-text-to-video-synthesis',
     apiName: '/predict',
     bestFor: ['dialogue', 'broll', 'general'],
+    disabled: true,
     buildData: (ctx) => [ctx.prompt.slice(0, 500)],
   },
   {
@@ -125,6 +131,7 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     spaceId: 'text-to-video/zsxkib-animatediff-prompt-travel',
     apiName: '/predict',
     bestFor: ['cartoon', 'broll', 'dialogue'],
+    disabled: true,
     buildData: (ctx) => [ctx.prompt.slice(0, 500), 25, 7.5, 16],
   },
   {
@@ -188,6 +195,7 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     spaceId: 'fffiloni/zeroscope-v2-xl',
     apiName: '/predict',
     bestFor: ['broll', 'general', 'establishing'],
+    disabled: true,
     buildData: (ctx) => [ctx.prompt.slice(0, 800)],
   },
   {
