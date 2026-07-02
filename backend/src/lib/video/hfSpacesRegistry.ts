@@ -155,6 +155,15 @@ export const HF_VIDEO_SPACES: HfSpaceEndpoint[] = [
     buildData: (ctx) => [ctx.prompt.slice(0, 800)],
   },
   {
+    id: 'hf-modelscope',
+    family: 'ModelScope T2V',
+    modelId: 'zeroscope',
+    spaceId: 'damo-vilab/modelscope-text-to-video-synthesis',
+    apiName: '/predict',
+    bestFor: ['general', 'broll', 'establishing', 'dialogue'],
+    buildData: (ctx) => [ctx.prompt.slice(0, 500)],
+  },
+  {
     id: 'hf-svd',
     family: 'Stable Video Diffusion',
     modelId: 'replicate-svd',
