@@ -1,11 +1,12 @@
 import { getSecret } from '../config/envSecrets.js';
-import { GROK_EDGE_PROMPT } from '../prompts/councilPrompts.js';
+import { API_ROLES, formatMinimalPrompt } from '../config/apiRoles.js';
+import { XROGA_COUNCIL_BRIEF } from '../prompts/xrogaSystemManifest.js';
 import { isGrokEnabled } from '../config/hybridConfig.js';
 
-/** Optional xAI Grok — uses OpenAI-compatible API when XAI_API_KEY is set */
 export async function grokGenerate(userInput: string): Promise<string> {
   const key = getSecret('XAI_API_KEY') ?? getSecret('GROK_API_KEY');
   if (!key) throw new Error('XAI_API_KEY not configured');
+  const user = formatMinimalPrompt(API_ROLES.grok.minimalPromptTemplate, userInput);
   const base = process.env.XAI_API_BASE ?? 'https://api.x.ai/v1';
   const res = await fetch(`${base}/chat/completions`, {
     method: 'POST',
@@ -16,10 +17,11 @@ export async function grokGenerate(userInput: string): Promise<string> {
     body: JSON.stringify({
       model: process.env.XAI_MODEL ?? 'grok-2-latest',
       messages: [
-        { role: 'system', content: GROK_EDGE_PROMPT },
-        { role: 'user', content: userInput },
+        { role: 'system', content: `${XROGA_COUNCIL_BRIEF}\n\nYou are Grok Edge — devil's advocate.` },
+        { role: 'user', content: user },
       ],
-      max_tokens: 1024,
+      max_tokens: API_ROLES.grok.maxOutputTokens,
+      temperature: API_ROLES.grok.temperature,
     }),
     signal: AbortSignal.timeout(60_000),
   });

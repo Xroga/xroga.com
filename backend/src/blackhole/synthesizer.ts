@@ -1,80 +1,67 @@
-import { BLACKHOLE_PERSONA } from '../prompts/blackholePrompts.js';
-import { groqGenerate } from '../council/groqClient.js';
-import { geminiGenerate } from '../lib/gemini.js';
-import { deepSeekChat } from '../lib/deepseek.js';
-import { getSecret } from '../config/envSecrets.js';
 import type { CouncilLayer } from '../config/hybridConfig.js';
+import type { XrogaIntent } from '../config/apiRoles.js';
+import {
+  deAiFilter,
+  markdownBeautifier,
+  buildDecisionMatrix,
+  needsPolish,
+} from './emissionFilter.js';
+import { phi3Polish } from './phi3Polish.js';
 
-export type EmitIntent = 'greeting' | 'stem' | 'cultural' | 'general' | 'reserve';
+export type EmitIntent =
+  | 'quick'
+  | 'greeting'
+  | 'cultural'
+  | 'technical'
+  | 'stem'
+  | 'general'
+  | 'decision'
+  | 'reserve';
 
 export interface BlackHoleEmitResult {
   text: string;
   layer: CouncilLayer;
 }
 
-/** Strip common AI-isms before final polish */
-export function deAiify(text: string): string {
-  return text
-    .replace(/\b(In conclusion|Furthermore|Moreover|It's worth noting that|Delve into|tapestry of)\b/gi, '')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
+function intentToEmit(intent: XrogaIntent | EmitIntent): EmitIntent {
+  if (intent === 'greeting' || intent === 'quick_fact' || intent === 'yes_no' || intent === 'small_talk') return 'quick';
+  if (intent === 'decision' || intent === 'philosophical_debate' || intent === 'what_if_scenario') return 'decision';
+  if (['history', 'cultural', 'geopolitical', 'current_events'].includes(intent as string)) return 'cultural';
+  if (['coding', 'stem', 'complex_math', 'debug', 'automation', 'build_website', '3d_model', 'video_script'].includes(intent as string)) return 'technical';
+  return 'general';
 }
 
 /**
- * Black Hole V∞ — absorb Council or Reserve output and emit final XROGA persona.
- * Uses Groq for speed; Gemini/DeepSeek as fallback synthesizers.
+ * Black Hole V∞ — Python-style emit: regex de-AI, markdown, decision matrix, optional Phi-3 polish.
+ * Does NOT call Gemini/DeepSeek/Groq for fluff.
  */
 export async function blackHoleEmit(
   rawResponse: string,
   userInput: string,
-  intent: EmitIntent,
-  sourceLayer: 'elite' | 'reserve'
+  intent: XrogaIntent | EmitIntent,
+  _sourceLayer: 'elite' | 'reserve'
 ): Promise<BlackHoleEmitResult> {
-  const cleaned = deAiify(rawResponse);
-  if (!cleaned || cleaned.length < 20) {
-    return { text: cleaned || rawResponse, layer: 'blackhole' };
+  const emitKind = typeof intent === 'string' ? intentToEmit(intent as XrogaIntent) : intent;
+  let cleaned = deAiFilter(rawResponse);
+
+  if (!cleaned) {
+    return { text: rawResponse.trim() || 'I am here — what should we build?', layer: 'blackhole' };
   }
 
-  const system = `${BLACKHOLE_PERSONA}
-
-Intent: ${intent}
-Source: ${sourceLayer === 'elite' ? 'Elite Council' : 'OSS Reserve Swarm'}
-Rewrite the raw council/swarm output into the final XROGA voice. Keep all facts. Improve structure.`;
-
-  const user = `User asked:\n${userInput.slice(0, 1500)}\n\nRaw output to absorb:\n${cleaned.slice(0, 8000)}`;
-
-  if (getSecret('GROQ_API_KEY')) {
-    try {
-      const text = await groqGenerate(system, user, 2048);
-      return { text, layer: 'blackhole' };
-    } catch (err) {
-      console.warn('[BlackHole] Groq synthesize failed:', (err as Error).message.slice(0, 80));
-    }
+  if (emitKind === 'decision') {
+    return { text: buildDecisionMatrix(cleaned, userInput), layer: 'blackhole' };
   }
 
-  if (getSecret('GEMINI_API_KEY')) {
-    try {
-      const text = await geminiGenerate(system, user, { model: 'gemini-2.0-flash', maxTokens: 2048 });
-      if (text.trim()) return { text: text.trim(), layer: 'blackhole' };
-    } catch (err) {
-      console.warn('[BlackHole] Gemini synthesize failed:', (err as Error).message.slice(0, 80));
-    }
+  if (emitKind === 'quick' || cleaned.length < 80) {
+    return { text: cleaned, layer: 'blackhole' };
   }
 
-  if (getSecret('DEEPSEEK_API_KEY')) {
-    try {
-      const text = await deepSeekChat(
-        [
-          { role: 'system', content: system },
-          { role: 'user', content: user },
-        ],
-        { model: 'deepseek-chat', maxTokens: 2048 }
-      );
-      if (text.trim()) return { text: text.trim(), layer: 'blackhole' };
-    } catch {
-      /* pass through */
-    }
+  cleaned = markdownBeautifier(cleaned);
+
+  if (needsPolish(cleaned)) {
+    cleaned = await phi3Polish(cleaned);
+    cleaned = deAiFilter(cleaned);
   }
 
-  return { text: cleaned, layer: sourceLayer };
+  return { text: cleaned, layer: 'blackhole' };
 }

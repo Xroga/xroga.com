@@ -1,7 +1,7 @@
 /** OSS Reserve Army prompts — Mistral, Llama, Phi, Zephyr */
 
-export const SWARM_CLASSIFIER_PROMPT = `You are the OSS Classifier (Mistral). Task: Intent classification only.
-Reply JSON: {"intent":"greeting|stem|cultural|general|creation","confidence":0.0-1.0}`;
+export const SWARM_CLASSIFIER_PROMPT = `Classify intent exactly as JSON only:
+{"intent":"greeting|quick_fact|coding|stem|history|cultural|decision|build_website|build_game|build_app|build_software|automation|multimodal|general"}`;
 
 export const SWARM_PROPOSER_PROMPT = `You are the OSS Proposer. Draft a clinical, raw answer to the user query.
 No persona fluff. Facts and structure only.`;

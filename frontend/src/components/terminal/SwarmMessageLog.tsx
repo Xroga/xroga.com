@@ -14,7 +14,7 @@ import { ModelBadge } from '@/components/ui/ModelBadge';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
-import { CouncilBlackHoleAnimation } from './CouncilBlackHoleAnimation';
+import { GradientLoader } from './GradientLoader';
 import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
 import { ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
 import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
@@ -203,10 +203,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
 
   const swarmProcessing = loading && !isVideoLoading ? (
     pipelineCompact ? (
-      <CouncilBlackHoleAnimation
-        layer={councilLayer ?? 'elite'}
-        message={pipelineMessage ?? undefined}
-      />
+      <GradientLoader layer={councilLayer ?? 'elite'} message={pipelineMessage ?? undefined} />
     ) : (
       <SwarmProcessingIndicator
         activeAgent={swarmActiveAgent ?? undefined}
