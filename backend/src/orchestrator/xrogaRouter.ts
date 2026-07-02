@@ -175,14 +175,14 @@ export class XrogaRouter {
             const parts = [draft];
             if (getSecret('GEMINI_API_KEY')) {
               try {
-                parts.push(`## Second perspective\n${await geminiReview(draft, input)}`);
+                parts.push(`Second perspective\n${await geminiReview(draft, input)}`);
               } catch {
                 /* skip */
               }
             }
             if (getSecret('GROQ_API_KEY')) {
               try {
-                parts.push(`## Contrarian view\n${await groqContrarian(input, draft)}`);
+                parts.push(`Contrarian view\n${await groqContrarian(input, draft)}`);
               } catch {
                 /* skip */
               }

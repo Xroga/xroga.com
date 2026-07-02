@@ -9,6 +9,7 @@ import {
   isFailedImageContent,
 } from '@/lib/parseImageContent';
 import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
+import { PlainAiResponse } from '@/lib/plainAiText';
 import { ImageStudioCard } from './ImageStudioCard';
 
 interface ReasoningPanelProps {
@@ -146,7 +147,7 @@ export function ModernResponseText({
       ref={blockRef}
       className={cn('xv-response-text', streaming && 'xv-streaming')}
     >
-      <FormattedAiMarkdown content={content} streaming={streaming} />
+      <PlainAiResponse content={content} streaming={streaming} />
     </div>
   );
 }

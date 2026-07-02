@@ -2,10 +2,9 @@ import type { CouncilLayer } from '../config/hybridConfig.js';
 import type { XrogaIntent } from '../config/apiRoles.js';
 import {
   deAiFilter,
-  markdownBeautifier,
-  buildDecisionMatrix,
   needsPolish,
 } from './emissionFilter.js';
+import { formatPlainProfessional, buildDecisionPlain } from './plainTextFormat.js';
 import { phi3Polish } from './phi3Polish.js';
 
 export type EmitIntent =
@@ -32,8 +31,7 @@ function intentToEmit(intent: XrogaIntent | EmitIntent): EmitIntent {
 }
 
 /**
- * Black Hole V∞ — Python-style emit: regex de-AI, markdown, decision matrix, optional Phi-3 polish.
- * Does NOT call Gemini/DeepSeek/Groq for fluff.
+ * Black Hole V∞ — de-AI, plain professional text, optional Phi-3 polish.
  */
 export async function blackHoleEmit(
   rawResponse: string,
@@ -42,26 +40,21 @@ export async function blackHoleEmit(
   _sourceLayer: 'elite' | 'reserve'
 ): Promise<BlackHoleEmitResult> {
   const emitKind = typeof intent === 'string' ? intentToEmit(intent as XrogaIntent) : intent;
-  const keepEmojis = emitKind === 'technical' || emitKind === 'decision' || emitKind === 'general';
-  let cleaned = deAiFilter(rawResponse, { keepEmojis });
+  let cleaned = deAiFilter(rawResponse, { keepEmojis: false });
 
   if (!cleaned) {
     return { text: rawResponse.trim() || 'I am here — what should we build?', layer: 'blackhole' };
   }
 
   if (emitKind === 'decision') {
-    return { text: buildDecisionMatrix(cleaned, userInput), layer: 'blackhole' };
+    return { text: buildDecisionPlain(cleaned, userInput), layer: 'blackhole' };
   }
 
-  if (emitKind === 'quick' || cleaned.length < 80) {
-    return { text: cleaned, layer: 'blackhole' };
-  }
+  cleaned = formatPlainProfessional(cleaned);
 
-  cleaned = markdownBeautifier(cleaned);
-
-  if (needsPolish(cleaned)) {
+  if (emitKind !== 'quick' && cleaned.length > 80 && needsPolish(cleaned)) {
     cleaned = await phi3Polish(cleaned);
-    cleaned = deAiFilter(cleaned, { keepEmojis });
+    cleaned = formatPlainProfessional(deAiFilter(cleaned, { keepEmojis: false }));
   }
 
   return { text: cleaned, layer: 'blackhole' };

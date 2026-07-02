@@ -44,9 +44,9 @@ export async function geminiReview(draft: string, userInput: string): Promise<st
 }
 
 export function geminiKnowledgeGapCard(reason: string): string {
-  return `## Multimodal analysis unavailable
+  return `Multimodal analysis unavailable
 
 ${reason}
 
-Upload vision/PDF analysis requires additional server configuration. Try rephrasing as text, or contact support to enable multimodal mode.`;
+Upload vision or PDF analysis needs additional server configuration. Try rephrasing as text, or contact support to enable multimodal mode.`;
 }

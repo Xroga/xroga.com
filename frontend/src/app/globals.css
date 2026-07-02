@@ -1465,6 +1465,24 @@ body.theme-gray * {
     50% { transform: scale(1.08); }
   }
 
+  .xv-orbit-spin {
+    animation: xv-orbit-spin 2.4s linear infinite;
+  }
+  .xv-orbit-spin-reverse {
+    animation: xv-orbit-spin 1.8s linear infinite reverse;
+  }
+  .xv-orbit-glow {
+    animation: xv-orbit-glow 2.8s ease-in-out infinite;
+  }
+  @keyframes xv-orbit-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes xv-orbit-glow {
+    0%, 100% { opacity: 0.35; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.08); }
+  }
+
   .xv-sidebar-icon-link {
     display: flex;
     align-items: center;
