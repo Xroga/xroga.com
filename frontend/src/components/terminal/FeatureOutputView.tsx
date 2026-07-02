@@ -3,17 +3,19 @@
 import { ImageStudioCard, type ImageOutputData } from './ImageStudioCard';
 import { ImageBlockedCard } from './ImageBlockedCard';
 import { VideoStudioCard, type VideoOutputData } from './VideoStudioCard';
-import { VideoProductionAnimation } from './VideoProductionAnimation';
+import { VideoJobPendingCard } from './VideoJobPendingCard';
 import type { ImageBlockedOutput } from '@/lib/imageSafetyMessages';
 
 export function FeatureOutputView({
   output,
   onDelete,
   messageId,
+  onVideoJobResolved,
 }: {
   output: unknown;
   onDelete?: () => void;
   messageId?: string;
+  onVideoJobResolved?: (output: VideoOutputData) => void;
 }) {
   if (!output || typeof output !== 'object') return null;
   const o = output as Record<string, unknown>;
@@ -88,15 +90,14 @@ export function FeatureOutputView({
 
   if (o.type === 'video_job_pending' && typeof o.jobId === 'string') {
     return (
-      <VideoProductionAnimation
-        message={typeof o.message === 'string' ? o.message : 'Generating your video…'}
-        step={typeof o.progress === 'object' && o.progress && 'step' in (o.progress as object) ? String((o.progress as { step?: string }).step) : 'rendering'}
-        omniPhase={typeof o.progress === 'object' && o.progress && 'omniPhase' in (o.progress as object) ? String((o.progress as { omniPhase?: string }).omniPhase) : null}
+      <VideoJobPendingCard
+        jobId={o.jobId}
+        message={typeof o.message === 'string' ? o.message : undefined}
         estimatedSeconds={typeof o.estimatedSeconds === 'number' ? o.estimatedSeconds : 120}
-        startedAt={typeof o.startedAt === 'number' ? o.startedAt : Date.now()}
-        percent={typeof o.progress === 'object' && o.progress && 'percent' in (o.progress as object) ? Number((o.progress as { percent?: number }).percent) : undefined}
-        backgroundMode
-        sublabel="Runs in background · check the bell icon when ready"
+        startedAt={typeof o.startedAt === 'number' ? o.startedAt : undefined}
+        userPrompt={typeof o.userPrompt === 'string' ? o.userPrompt : undefined}
+        messageId={messageId}
+        onResolved={(video) => onVideoJobResolved?.(video)}
       />
     );
   }

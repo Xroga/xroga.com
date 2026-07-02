@@ -48,7 +48,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, imageAttempts, videoProgressStep, videoOmniPhase, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn } =
+  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, imageProgressStep, imageAttempts, videoProgressStep, videoOmniPhase, videoEstimateSeconds, videoStartedAt, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -399,7 +399,9 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             message={pipelineMessage ?? undefined}
                             step={videoProgressStep ?? undefined}
                             omniPhase={videoOmniPhase}
-                            sublabel="Omni-Reality · Trinity Brain · Titanium Ladder"
+                            estimatedSeconds={videoEstimateSeconds ?? 120}
+                            startedAt={videoStartedAt ?? Date.now()}
+                            sublabel="Your video will appear here when rendering finishes"
                           />
                         ) : msg.featureOutput ? (
                           <ChatErrorBoundary>
@@ -407,6 +409,9 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                               output={msg.featureOutput}
                               messageId={msg.id}
                               onDelete={() => deleteTurn(msg.id)}
+                              onVideoJobResolved={(video) => {
+                                updateFeatureOutput(msg.id, video);
+                              }}
                             />
                           </ChatErrorBoundary>
                         ) : loading &&

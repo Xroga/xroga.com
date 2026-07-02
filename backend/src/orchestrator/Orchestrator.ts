@@ -182,7 +182,7 @@ export class Orchestrator {
     };
   }
 
-  /** Background video job — returns immediately; processing survives tab close */
+  /** Direct video production — waits for MP4, then returns video_studio to the chat */
   private static async executeVideoFast(
     ctx: {
       userId: string;
@@ -192,9 +192,12 @@ export class Orchestrator {
       attachments?: Array<{ url: string; mimeType?: string; name?: string }>;
       clientMeta?: { assistantMessageId?: string; userMessageId?: string; userPrompt?: string };
     }
-  ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[]; queued?: boolean }> {
-    const { startVideoJob } = await import('../services/media/videoJobService.js');
+  ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[] }> {
+    const runId = crypto.randomUUID();
+    const { produceVideo } = await import('../services/media/videoStudio.js');
     const { moderateUploadedImage } = await import('../lib/video/moderateUploadedImage.js');
+    const { notifyVideoReady } = await import('../services/notificationService.js');
+    const { estimateVideoJobSeconds } = await import('../services/media/videoJobService.js');
 
     const imageAttachment = ctx.attachments?.find(
       (a) =>
@@ -210,44 +213,71 @@ export class Orchestrator {
       }
     }
 
-    const { jobId, estimatedSeconds, etaLabel } = await startVideoJob({
-      userId: ctx.userId,
-      prompt: ctx.prompt,
-      projectId: ctx.projectId,
-      keyframeUrl: imageAttachment?.url,
-      metadata: {
-        assistantMessageId: ctx.clientMeta?.assistantMessageId,
-        userMessageId: ctx.clientMeta?.userMessageId,
-        userPrompt: ctx.clientMeta?.userPrompt ?? ctx.prompt,
-      },
-      onProgress: ctx.onProgress,
+    const estimatedSeconds = estimateVideoJobSeconds(ctx.prompt);
+    ctx.onProgress?.({
+      runId,
+      agent: 'builder',
+      status: 'building',
+      message: `Rendering your video (est. ${Math.ceil(estimatedSeconds / 60)} min)…`,
+      videoStep: 'rendering',
+      timestamp: new Date().toISOString(),
     });
 
-    const bgMessage = `Your video is generating (${etaLabel}). Keep using Xroga for other tasks — you can close this tab. We'll notify you when it's ready.`;
+    const output = await produceVideo(ctx.userId, ctx.prompt, {
+      projectId: ctx.projectId,
+      runId,
+      keyframeUrl: imageAttachment?.url,
+      onProgress: (step, message, detail) => {
+        ctx.onProgress?.({
+          runId,
+          agent: 'builder',
+          status: 'building',
+          message: detail ?? message,
+          videoStep: step,
+          timestamp: new Date().toISOString(),
+        });
+      },
+      onOmniEvent: (event) => {
+        ctx.onProgress?.({
+          runId,
+          agent: 'omni_reality',
+          status: 'building',
+          message: event.detail ?? event.message,
+          videoStep: omniPhaseToVideoStep(event.phase),
+          omniPhase: event.phase,
+          omniDetail: event.detail,
+          timestamp: new Date().toISOString(),
+        });
+      },
+    });
+
+    void notifyVideoReady(ctx.userId, {
+      jobId: runId,
+      title: output.title,
+      prompt: ctx.clientMeta?.userPrompt ?? ctx.prompt,
+      streamingUrl: output.streamingUrl,
+      assistantMessageId: ctx.clientMeta?.assistantMessageId,
+      durationSeconds: output.durationSeconds,
+      outputFormat: output.outputFormat,
+    }).catch((err) => console.warn('[VideoFast] notify failed:', (err as Error).message));
+
+    const reply = formatFeatureOutput(output);
 
     return {
-      runId: jobId,
+      runId,
       fast: true,
-      queued: true,
       result: {
         success: true,
         iterations: 0,
         defectsFound: 0,
         plan: defaultPlan(),
         agents: defaultAgents(['builder']),
-        output: {
-          type: 'video_job_pending',
-          jobId,
-          estimatedSeconds,
-          etaLabel,
-          message: bgMessage,
-          assistantMessageId: ctx.clientMeta?.assistantMessageId,
-        },
+        output,
       },
-      actions: { success: true, remaining: 0, cost: 0 },
+      actions: { success: true, remaining: 0, cost: output.actionCost },
       featureCategory: 'video_studio',
-      polishedReply: bgMessage,
-      followUps: ['Add subtitles?', 'Make episode 2?'],
+      polishedReply: reply,
+      followUps: output.followUps ?? ['Add subtitles?', 'Generate episode 2?'],
     };
   }
 

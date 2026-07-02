@@ -30,7 +30,7 @@ import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
-import { isVideoGenerationPrompt } from '@/lib/parseImageContent';
+import { isVideoGenerationPrompt, estimateVideoSeconds } from '@/lib/parseImageContent';
 import { addPendingVideoJob } from '@/lib/pendingVideoJobs';
 import { useBackgroundVideoJobs } from '@/hooks/useBackgroundVideoJobs';
 
@@ -66,6 +66,8 @@ interface TerminalChatContextValue {
   imageAttempts: Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>;
   videoProgressStep: string | null;
   videoOmniPhase: string | null;
+  videoEstimateSeconds: number | null;
+  videoStartedAt: number | null;
   followUps: string[];
   reasoning: string | null;
   dag: Array<{ id: string; description: string; agent: string }> | null;
@@ -122,6 +124,8 @@ export function TerminalChatProvider({
   >([]);
   const [videoProgressStep, setVideoProgressStep] = useState<string | null>(null);
   const [videoOmniPhase, setVideoOmniPhase] = useState<string | null>(null);
+  const [videoEstimateSeconds, setVideoEstimateSeconds] = useState<number | null>(null);
+  const [videoStartedAt, setVideoStartedAt] = useState<number | null>(null);
   const [followUps, setFollowUps] = useState<string[]>([]);
   const [reasoning, setReasoning] = useState<string | null>(null);
   const [dag, setDag] = useState<Array<{ id: string; description: string; agent: string }> | null>(null);
@@ -435,6 +439,9 @@ export function TerminalChatProvider({
       setImageProgressStep(null);
       setImageAttempts([]);
       setVideoProgressStep(null);
+      setVideoOmniPhase(null);
+      setVideoEstimateSeconds(isVideoGenerationPrompt(displayPrompt) ? estimateVideoSeconds(displayPrompt) : null);
+      setVideoStartedAt(isVideoGenerationPrompt(displayPrompt) ? Date.now() : null);
       setFollowUps([]);
       setReasoning(null);
       setDag(null);
@@ -570,7 +577,7 @@ export function TerminalChatProvider({
               const startedAt = Date.now();
               const estimatedSeconds =
                 typeof output.estimatedSeconds === 'number' ? output.estimatedSeconds : 120;
-              const pendingOutput = { ...output, startedAt };
+              const pendingOutput = { ...output, startedAt, userPrompt: displayPrompt };
               addPendingVideoJob({
                 jobId: output.jobId as string,
                 assistantMessageId: assistantId,
@@ -586,11 +593,6 @@ export function TerminalChatProvider({
                     : msg
                 )
               );
-              setLoading(false);
-              setSwarmRunning(false);
-              setAnimatingId(null);
-              setPipelineMessage(null);
-              toast.success('Video generating in background — keep using Xroga!');
               return;
             }
             if (output?.type === 'video_studio' && typeof output.streamingUrl === 'string') {
@@ -760,6 +762,8 @@ export function TerminalChatProvider({
         imageAttempts,
         videoProgressStep,
         videoOmniPhase,
+        videoEstimateSeconds,
+        videoStartedAt,
         pipelineCompact,
         followUps,
         reasoning,
