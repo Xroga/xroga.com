@@ -31,7 +31,7 @@ export function isImageGenerationPrompt(text: string): boolean {
 }
 
 export function isVideoGenerationPrompt(text: string): boolean {
-  return /\b(generate|create|make|produce|film|shoot|animate|turn)\b[\s\S]{0,50}\b(video|movie|film|trailer|clip|scene|episode|series|gif|animation)\b|\bvideo\s+of\b|\bimage\s+to\s+video\b|\bphoto\s+to\s+video\b/i.test(
+  return /\b(generate|create|make|produce|film|shoot|animate|turn)\b[\s\S]{0,60}\b(video|movie|film|trailer|clip|scene|episode|series|gif|animation)\b|\b(video|movie|clip)\b[\s\S]{0,30}\b(of|about)\b|\b\d+\s*(?:second|seconds|sec|s)\b[\s\S]{0,40}\bvideo\b|\bimage\s+to\s+video\b|\bphoto\s+to\s+video\b/i.test(
     text
   );
 }

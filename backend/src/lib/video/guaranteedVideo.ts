@@ -117,20 +117,22 @@ export async function generateGuaranteedVideo(
       errors.push(`image-to-video: ${(err as Error).message.slice(0, 80)}`);
     }
 
-    // Full sequential OSS → premium chain before motion fallbacks
-    for (const priority of ['cheap', 'premium'] as const) {
-      try {
-        const api = await tryApiProviders(cleanPrompt, dur, {
-          ...options,
-          aspectRatio,
-          priority,
-        });
-        if (api.videoUrl) {
-          console.log(`[GuaranteedVideo] Full-chain winner (${priority}): ${api.provider}`);
-          return api;
+    // Skip slow full sequential chain for fast clips — fall through to motion fallbacks
+    if (!isFastClip(dur)) {
+      for (const priority of ['cheap', 'premium'] as const) {
+        try {
+          const api = await tryApiProviders(cleanPrompt, dur, {
+            ...options,
+            aspectRatio,
+            priority,
+          });
+          if (api.videoUrl) {
+            console.log(`[GuaranteedVideo] Full-chain winner (${priority}): ${api.provider}`);
+            return api;
+          }
+        } catch (err) {
+          errors.push(`full-chain-${priority}: ${(err as Error).message.slice(0, 80)}`);
         }
-      } catch (err) {
-        errors.push(`full-chain-${priority}: ${(err as Error).message.slice(0, 80)}`);
       }
     }
   } else {

@@ -1,5 +1,7 @@
 /**
  * Fast video path — ALL open-source models first, premium APIs last.
+ * Fast clips (≤15s) use parallel racing + capped sequential attempts so users
+ * always get a video within ~2 minutes instead of timing out on 20+ providers.
  */
 
 import { hasSecret, getSecret } from '../../config/envSecrets.js';
@@ -20,7 +22,10 @@ import { generateSkyReelsVideo } from './piapiVideo.js';
 import { generateViaHfSpaces } from './videoOrchestrator.js';
 import type { VideoGenerationResult } from '../videoProviders.js';
 
-const FAST_TIMEOUT_MS = 110_000;
+const DEFAULT_TIMEOUT_MS = 90_000;
+const FAST_CLIP_TIMEOUT_MS = 45_000;
+const FAST_CLIP_PARALLEL = 4;
+const FAST_CLIP_MAX_SEQUENTIAL = 4;
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
   return Promise.race([
@@ -68,10 +73,8 @@ function buildOssRacers(
 ): Racer[] {
   const racers: Racer[] = [];
 
-  // ── Tier 0: HuggingFace community GPUs ($0, round-robin) ──
   racers.push(...buildHfSpaceRacers(prompt, durationSeconds, options));
 
-  // ── Tier 1: separate OSS hosts (API keys) ──
   if (hasSecret('DEEPINFRA_API_KEY')) {
     racers.push({ name: 'deepinfra', run: () => generateDeepInfraVideo(prompt, durationSeconds) });
   }
@@ -82,7 +85,6 @@ function buildOssRacers(
     racers.push({ name: 'comfyui', run: () => generateComfyUIVideo(prompt, durationSeconds) });
   }
 
-  // ── Tier 2: Replicate OSS models (all 15 families) ──
   if (hasSecret('REPLICATE_API_TOKEN')) {
     for (const model of REPLICATE_OSS_VIDEO_MODELS) {
       racers.push({
@@ -93,7 +95,6 @@ function buildOssRacers(
     racers.push({ name: 'replicate-minimax', run: () => generateMinimaxReplicateVideo(prompt, durationSeconds) });
   }
 
-  // ── Tier 3: optional OSS gateways ──
   if (hasSecret('PIAPI_API_KEY')) {
     racers.push({
       name: 'skyreels',
@@ -144,13 +145,50 @@ function buildPremiumRacers(
   return racers;
 }
 
+async function tryParallelRace(
+  group: Racer[],
+  durationSeconds: number,
+  count: number,
+  timeoutMs: number
+): Promise<VideoGenerationResult | null> {
+  const batch = group.slice(0, count);
+  if (batch.length === 0) return null;
+
+  try {
+    const winner = await Promise.any(
+      batch.map((r) =>
+        withTimeout(r.run(), timeoutMs, r.name).then((videoUrl) => ({
+          provider: r.name,
+          videoUrl,
+          durationSeconds,
+        }))
+      )
+    );
+    return winner;
+  } catch {
+    for (const r of batch) {
+      try {
+        const videoUrl = await withTimeout(r.run(), timeoutMs, r.name);
+        return { provider: r.name, videoUrl, durationSeconds };
+      } catch (err) {
+        console.warn(`[FastVideoRace] parallel-fallback ${r.name}:`, (err as Error).message.slice(0, 120));
+      }
+    }
+    return null;
+  }
+}
+
 async function trySequential(
   group: Racer[],
-  durationSeconds: number
+  durationSeconds: number,
+  maxAttempts: number,
+  timeoutMs: number,
+  startIndex = 0
 ): Promise<VideoGenerationResult | null> {
-  for (const r of group) {
+  const slice = group.slice(startIndex, startIndex + maxAttempts);
+  for (const r of slice) {
     try {
-      const videoUrl = await withTimeout(r.run(), FAST_TIMEOUT_MS, r.name);
+      const videoUrl = await withTimeout(r.run(), timeoutMs, r.name);
       return { provider: r.name, videoUrl, durationSeconds };
     } catch (err) {
       console.warn(`[FastVideoRace] ${r.name}:`, (err as Error).message.slice(0, 120));
@@ -165,19 +203,46 @@ export async function raceVideoProviders(
   durationSeconds: number,
   options?: FastVideoRaceOptions
 ): Promise<VideoGenerationResult | null> {
+  const fastClip = isFastClip(durationSeconds);
+  const timeoutMs = fastClip ? FAST_CLIP_TIMEOUT_MS : DEFAULT_TIMEOUT_MS;
+  const maxSequential = fastClip ? FAST_CLIP_MAX_SEQUENTIAL : 8;
+
   const ossRacers = buildOssRacers(prompt, durationSeconds, options);
   const premiumRacers = buildPremiumRacers(prompt, durationSeconds, options?.aspectRatio, options?.userId);
 
   if (ossRacers.length === 0 && premiumRacers.length === 0) return null;
 
-  const ossWinner = await trySequential(ossRacers, durationSeconds);
+  if (fastClip && ossRacers.length > 0) {
+    const parallelWinner = await tryParallelRace(ossRacers, durationSeconds, FAST_CLIP_PARALLEL, timeoutMs);
+    if (parallelWinner) {
+      console.log(`[FastVideoRace] OSS parallel winner: ${parallelWinner.provider}`);
+      return parallelWinner;
+    }
+  }
+
+  const ossWinner = await trySequential(ossRacers, durationSeconds, maxSequential, timeoutMs, fastClip ? FAST_CLIP_PARALLEL : 0);
   if (ossWinner) {
     console.log(`[FastVideoRace] OSS winner: ${ossWinner.provider}`);
     return ossWinner;
   }
 
-  console.warn('[FastVideoRace] All OSS models exhausted — trying premium APIs as last resort…');
-  const premiumWinner = await trySequential(premiumRacers, durationSeconds);
+  console.warn('[FastVideoRace] OSS exhausted — trying premium APIs…');
+
+  if (fastClip && premiumRacers.length > 0) {
+    const premiumParallel = await tryParallelRace(premiumRacers, durationSeconds, 2, timeoutMs);
+    if (premiumParallel) {
+      console.log(`[FastVideoRace] Premium parallel winner: ${premiumParallel.provider}`);
+      return premiumParallel;
+    }
+  }
+
+  const premiumWinner = await trySequential(
+    premiumRacers,
+    durationSeconds,
+    fastClip ? 3 : maxSequential,
+    timeoutMs,
+    fastClip ? 2 : 0
+  );
   if (premiumWinner) {
     console.log(`[FastVideoRace] Premium winner: ${premiumWinner.provider}`);
     return premiumWinner;

@@ -194,6 +194,7 @@ export class Orchestrator {
     }
   ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[] }> {
     const runId = crypto.randomUUID();
+    const userPrompt = ctx.clientMeta?.userPrompt ?? routingPrompt(ctx.prompt);
     const { produceVideo } = await import('../services/media/videoStudio.js');
     const { moderateUploadedImage } = await import('../lib/video/moderateUploadedImage.js');
     const { notifyVideoReady } = await import('../services/notificationService.js');
@@ -207,13 +208,22 @@ export class Orchestrator {
     );
 
     if (imageAttachment) {
-      const moderation = await moderateUploadedImage(imageAttachment.url, ctx.prompt);
+      const moderation = await moderateUploadedImage(imageAttachment.url, userPrompt);
       if (!moderation.allowed) {
         throw new Error(moderation.reason ?? 'This image cannot be used for video generation.');
       }
     }
 
-    const estimatedSeconds = estimateVideoJobSeconds(ctx.prompt);
+    const estimatedSeconds = estimateVideoJobSeconds(userPrompt);
+    ctx.onProgress?.({
+      runId,
+      agent: 'builder',
+      status: 'building',
+      message: 'Omni-Reality Studio — starting video production…',
+      videoStep: 'scripting',
+      omniPhase: 'trinity_scripting',
+      timestamp: new Date().toISOString(),
+    });
     ctx.onProgress?.({
       runId,
       agent: 'builder',
@@ -223,7 +233,7 @@ export class Orchestrator {
       timestamp: new Date().toISOString(),
     });
 
-    const output = await produceVideo(ctx.userId, ctx.prompt, {
+    const output = await produceVideo(ctx.userId, userPrompt, {
       projectId: ctx.projectId,
       runId,
       keyframeUrl: imageAttachment?.url,
@@ -254,7 +264,7 @@ export class Orchestrator {
     void notifyVideoReady(ctx.userId, {
       jobId: runId,
       title: output.title,
-      prompt: ctx.clientMeta?.userPrompt ?? ctx.prompt,
+      prompt: userPrompt,
       streamingUrl: output.streamingUrl,
       assistantMessageId: ctx.clientMeta?.assistantMessageId,
       durationSeconds: output.durationSeconds,
@@ -378,10 +388,73 @@ export class Orchestrator {
         await logSystemError({
           api: 'video_gen',
           errorMessage: (vidErr as Error).message,
-          fallbackUsed: 'video-fast-path',
+          fallbackUsed: 'video-emergency-fallback',
           severity: 'error',
           userId: ctx.userId,
         });
+
+        const userPrompt = ctx.clientMeta?.userPrompt ?? routingPrompt(ctx.prompt);
+        try {
+          const { generateGuaranteedVideo } = await import('../lib/video/guaranteedVideo.js');
+          const { parseVideoDuration, computeVideoActionCost } = await import('../services/media/videoUtils.js');
+          const { storeUserFile } = await import('../services/storage/projectFiles.js');
+          const durationSeconds = parseVideoDuration(userPrompt);
+
+          ctx.onProgress?.(
+            progressEvent('builder', 'building', 'Emergency fallback — delivering playable video…', {
+              videoStep: 'rendering',
+              omniPhase: 'parallax_fallback',
+            })
+          );
+
+          const emergency = await generateGuaranteedVideo(userPrompt, durationSeconds, {
+            userId: ctx.userId,
+            aspectRatio: /shorts_reels/i.test(userPrompt) ? '9:16' : '16:9',
+          });
+
+          let streamingUrl = emergency.videoUrl;
+          if (streamingUrl.startsWith('http') || streamingUrl.startsWith('data:video/')) {
+            try {
+              const { downloadVideoBuffer } = await import('../lib/ffmpeg.js');
+              const buffer = await downloadVideoBuffer(streamingUrl);
+              const stored = await storeUserFile(ctx.userId, `video-emergency-${Date.now()}.mp4`, buffer, 'video/mp4');
+              streamingUrl = stored.playbackUrl || stored.fileUrl;
+            } catch {
+              /* use source url */
+            }
+          }
+
+          const output = {
+            type: 'video_studio' as const,
+            title: userPrompt.slice(0, 80) || 'Xroga Video',
+            streamingUrl,
+            durationSeconds: emergency.durationSeconds || durationSeconds,
+            actionCost: computeVideoActionCost(durationSeconds),
+            selectedProvider: emergency.provider,
+            providersUsed: [emergency.provider],
+            followUps: ['Try again with more detail?', 'Add subtitles?'],
+          };
+
+          return {
+            runId: crypto.randomUUID(),
+            fast: true,
+            result: {
+              success: true,
+              iterations: 0,
+              defectsFound: 0,
+              plan: defaultPlan(),
+              agents: defaultAgents(['builder']),
+              output,
+            },
+            actions: { success: true, remaining: 0, cost: output.actionCost },
+            featureCategory: 'video_studio',
+            polishedReply: formatFeatureOutput(output),
+            followUps: output.followUps,
+          };
+        } catch (fallbackErr) {
+          console.error('[VideoFast] Emergency fallback failed:', (fallbackErr as Error).message);
+        }
+
         const status = getVideoProviderStatus();
         const errMsg = (vidErr as Error).message;
         const fallbackText = status.ready

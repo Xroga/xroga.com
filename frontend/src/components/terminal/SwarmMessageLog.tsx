@@ -192,7 +192,16 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     return null;
   }, [visibleMessages]);
 
-  const swarmProcessing = loading ? (
+  const lastUserText = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') return messages[i].content;
+    }
+    return '';
+  }, [messages]);
+
+  const isVideoLoading = loading && isVideoGenerationPrompt(lastUserText);
+
+  const swarmProcessing = loading && !isVideoLoading ? (
     pipelineCompact ? (
       <ProcessingPipeline
         activeAgent={swarmActiveAgent ?? undefined}
@@ -206,13 +215,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
       />
     )
   ) : null;
-
-  const lastUserText = useMemo(() => {
-    for (let i = messages.length - 1; i >= 0; i--) {
-      if (messages[i].role === 'user') return messages[i].content;
-    }
-    return '';
-  }, [messages]);
 
   function handleEditAI(content: string) {
     setPrompt(content);
