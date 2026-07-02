@@ -9,7 +9,7 @@ const IMAGE_INTENT =
   /\b(generate|create|make|draw|design)\b[\s\S]{0,40}\b(image|picture|logo|illustration|artwork|poster|thumbnail|graphic|photo|avatar|icon)\b|\bimage\s+of\b/i;
 
 const VIDEO_INTENT =
-  /\b(generate|create|make|produce)\b[\s\S]{0,40}\b(video|movie|film|trailer|clip|animation)\b|\bvideo\s+(about|of)\b/i;
+  /\b(generate|create|make|produce|film|shoot)\b[\s\S]{0,60}\b(video|movie|film|trailer|clip|animation)\b|\b(video|movie|clip)\b[\s\S]{0,30}\b(of|about)\b|\b\d+\s*(?:second|seconds|sec|s)\b[\s\S]{0,40}\bvideo\b/i;
 
 /** User uploaded image → animate / image-to-video / gif */
 const IMAGE_TO_VIDEO_INTENT =

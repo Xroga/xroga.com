@@ -16,7 +16,8 @@ const RULE_PATTERNS: Array<{ category: FeatureCategory; patterns: RegExp[] }> = 
   {
     category: 'video_studio',
     patterns: [
-      /\b(make|create|generate|produce)\b.*\b(video|movie|film|trailer|anime|clip)\b/i,
+      /\b(make|create|generate|produce|film|shoot)\b.*\b(video|movie|film|trailer|anime|clip)\b/i,
+      /\b\d+\s*(?:second|seconds|sec|s)\b.*\bvideo\b/i,
       /\bvideo\s+about\b/i,
       /\bomni.?video\b/i,
     ],

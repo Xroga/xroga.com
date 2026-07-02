@@ -269,10 +269,23 @@ export class SwarmService {
       });
     };
 
-    const result = await Orchestrator.executeSafe(
-      () => this.runCore(userId, prompt, projectId, onProgress, { extras: { attachments } }),
-      { userId, prompt, onProgress, attachments, clientMeta }
-    );
+    const heartbeat = setInterval(() => {
+      try {
+        res.write(': keepalive\n\n');
+      } catch {
+        clearInterval(heartbeat);
+      }
+    }, 15_000);
+
+    let result: Awaited<ReturnType<typeof Orchestrator.executeSafe>>;
+    try {
+      result = await Orchestrator.executeSafe(
+        () => this.runCore(userId, prompt, projectId, onProgress, { extras: { attachments } }),
+        { userId, prompt, onProgress, attachments, clientMeta }
+      );
+    } finally {
+      clearInterval(heartbeat);
+    }
 
     sendSSE(res, {
       event: 'delta',

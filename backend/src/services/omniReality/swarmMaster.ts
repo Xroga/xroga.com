@@ -62,6 +62,8 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
   const healingSteps: string[] = [];
   const priority = allocateRenderTier(options.scenePriority ?? 'low');
   const isVertical = options.aspectRatio === '9:16' || parseVideoFormat(options.prompt) === 'shorts_reels';
+  const isFastClip = options.durationSeconds <= 15;
+  const maxLadder = isFastClip ? 2 : 4;
   const userIntent = options.userIntent ?? options.prompt;
   let currentPrompt = options.prompt;
   let negativePrompt = options.negativePrompt ?? '';
@@ -75,7 +77,7 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
     scenePriority: options.scenePriority,
   };
 
-  for (let ladder = 0; ladder < 4; ladder++) {
+  for (let ladder = 0; ladder < maxLadder; ladder++) {
     const ladderMsg =
       ladder === 0
         ? 'Rendering scene…'
@@ -93,12 +95,12 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
       { healingStep: `ladder-${ladder}` }
     );
 
-    if (ladder === 2) {
+    if (!isFastClip && ladder === 2) {
       healingSteps.push('deepseek-simplify');
       currentPrompt = await deepSeekSimplifyShot(currentPrompt);
     }
 
-    if (ladder === 3) {
+    if (!isFastClip && ladder === 3) {
       healingSteps.push('parallax-fallback');
       const parallax = await generateParallaxClip(currentPrompt, options.durationSeconds, {
         keyframeUrl: options.keyframeUrl,
@@ -127,21 +129,19 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
 
       if (FALLBACK_PROVIDERS.has(result.provider)) {
         healingSteps.push(`fallback-${result.provider}`);
-        // Never accept bare gradient slideshow — keep trying premium + parallax
-        if (result.provider === 'slideshow') {
-          if (ladder < 2) continue;
+        if (result.provider === 'slideshow' && !isFastClip && ladder < 2) {
           continue;
         }
-        if (ladder < 1) {
-          baseOpts.priority = 'premium';
-          continue;
+        if (isFastClip || ladder >= 1 || result.provider !== 'slideshow') {
+          return {
+            ...result,
+            healingSteps,
+            qcScore: 72,
+            reviewScores: { physics: 72, lighting: 74, consistency: 72 },
+          };
         }
-        return {
-          ...result,
-          healingSteps,
-          qcScore: 72,
-          reviewScores: { physics: 72, lighting: 74, consistency: 72 },
-        };
+        baseOpts.priority = 'premium';
+        continue;
       }
 
       omniEmit(options, 'qc_inspect', 'QC shield — verifying subject matches your prompt…');
@@ -162,6 +162,17 @@ export async function renderSceneWithHealing(options: RenderSceneOptions): Promi
           OSS_VIDEO_PROVIDERS.has(result.provider) ? 'oss-open-source-video' : ladder === 0 ? 'first-pass' : `ladder-${ladder}`
         );
         omniEmit(options, 'qc_inspect', `QC passed · score ${qc.score}`, { provider: result.provider });
+        return {
+          ...result,
+          healingSteps,
+          qcScore: qc.score,
+          reviewScores: { physics: qc.physics, lighting: qc.lighting, consistency: qc.consistency },
+        };
+      }
+
+      if (isFastClip) {
+        healingSteps.push(ladder === 0 ? 'fast-clip-accept' : 'fast-clip-retry-accept');
+        omniEmit(options, 'qc_inspect', `Delivering video · QC score ${qc.score}`, { provider: result.provider });
         return {
           ...result,
           healingSteps,

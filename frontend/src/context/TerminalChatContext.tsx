@@ -446,8 +446,15 @@ export function TerminalChatProvider({
       setReasoning(null);
       setDag(null);
 
-      const useCompactPipeline = isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt);
+      const useCompactPipeline =
+        isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt);
       setPipelineCompact(useCompactPipeline);
+
+      if (isVideoGenerationPrompt(displayPrompt)) {
+        setPipelineMessage('Omni-Reality Studio — starting video production…');
+        setVideoOmniPhase('trinity_scripting');
+        setVideoProgressStep('scripting');
+      }
 
       let gotEvent = false;
       let fullReply = '';
@@ -595,25 +602,33 @@ export function TerminalChatProvider({
               );
               return;
             }
-            if (output?.type === 'video_studio' && typeof output.streamingUrl === 'string') {
-              const videoOutput = { ...output, prompt: userPrompt };
-              setMessages((m) => {
-                const updated = m.map((msg) =>
-                  msg.id === assistantId
-                    ? { ...msg, content: '', featureOutput: videoOutput }
-                    : msg
-                );
-                addMediaItem({
-                  name: String(output.title ?? 'Xroga video').slice(0, 40),
-                  type: 'video',
-                  url: output.streamingUrl as string,
-                  sourceMessageId: assistantId,
-                  sourcePrompt: userPrompt,
-                  messagesSnapshot: updated,
+            if (output?.type === 'video_studio') {
+              const streamUrl =
+                typeof output.streamingUrl === 'string'
+                  ? output.streamingUrl
+                  : typeof output.videoUrl === 'string'
+                    ? output.videoUrl
+                    : null;
+              if (streamUrl) {
+                const videoOutput = { ...output, streamingUrl: streamUrl, prompt: userPrompt };
+                setMessages((m) => {
+                  const updated = m.map((msg) =>
+                    msg.id === assistantId
+                      ? { ...msg, content: '', featureOutput: videoOutput }
+                      : msg
+                  );
+                  addMediaItem({
+                    name: String(output.title ?? 'Xroga video').slice(0, 40),
+                    type: 'video',
+                    url: streamUrl,
+                    sourceMessageId: assistantId,
+                    sourcePrompt: userPrompt,
+                    messagesSnapshot: updated,
+                  });
+                  return updated;
                 });
-                return updated;
-              });
-              return;
+                return;
+              }
             }
             const text = complete.output
               ? (() => {
