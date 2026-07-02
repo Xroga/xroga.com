@@ -9,6 +9,7 @@ import {
 } from '../config/apiRoles.js';
 import { classifyXrogaIntent } from '../lib/intentClassifier.js';
 import { getComingSoonResponse, wantsFullNativeBuild } from '../lib/comingSoon.js';
+import { isCapabilitiesQuery, getXrogaCapabilitiesResponse } from '../lib/xrogaCapabilities.js';
 import { groqSprinter, groqGeneral, groqContrarian } from '../council/groqClient.js';
 import { geminiGenerateCultural, geminiKnowledgeGapCard, geminiReview } from '../council/geminiClient.js';
 import { deepseekGenerate } from '../council/deepseekClient.js';
@@ -64,15 +65,14 @@ async function councilOrReserve(
   }
 
   const role = API_ROLES[apiId];
-  const progressLabel =
-    apiId === 'groq' ? 'Groq Sprinter' : apiId === 'gemini' ? 'Gemini Polymath' : 'DeepSeek Architect';
-  onProgress?.('elite', progressLabel);
+  void role;
+  onProgress?.('elite', 'Thinking…');
   try {
     const raw = await councilFn();
     return { raw, layer: 'elite', provider: apiId };
   } catch (err) {
     console.warn(`[XrogaRouter] ${apiId} failed:`, (err as Error).message.slice(0, 100));
-    onProgress?.('reserve', `Groq fallback`);
+    onProgress?.('reserve', 'Reserve Swarm');
     const raw =
       apiId === 'groq'
         ? await phi3Fallback(userInput)
@@ -94,6 +94,16 @@ export class XrogaRouter {
     }
 
     try {
+      if (isCapabilitiesQuery(input)) {
+        onProgress?.('blackhole', 'Black Hole V∞');
+        return {
+          text: getXrogaCapabilitiesResponse(),
+          provider: 'xroga',
+          councilLayer: 'blackhole',
+          intent: 'general',
+        };
+      }
+
       onProgress?.('reserve', 'Classifying intent…');
       const intent = await classifyXrogaIntent(input);
 
@@ -122,7 +132,7 @@ export class XrogaRouter {
       if (intent === 'multimodal_upload' || API_ROLES.gemini.intentsHandled.includes(intent)) {
         if (!getSecret('GEMINI_API_KEY') && isPaidApiAllowed()) {
           return {
-            text: geminiKnowledgeGapCard('Vision/PDF analysis requires Gemini.'),
+            text: geminiKnowledgeGapCard('Vision/PDF analysis is not configured on this server.'),
             provider: 'knowledge-gap',
             councilLayer: 'blackhole',
             intent,
@@ -165,14 +175,14 @@ export class XrogaRouter {
             const parts = [draft];
             if (getSecret('GEMINI_API_KEY')) {
               try {
-                parts.push(`--- Gemini Critique ---\n${await geminiReview(draft, input)}`);
+                parts.push(`## Second perspective\n${await geminiReview(draft, input)}`);
               } catch {
                 /* skip */
               }
             }
             if (getSecret('GROQ_API_KEY')) {
               try {
-                parts.push(`--- Groq Edge ---\n${await groqContrarian(input, draft)}`);
+                parts.push(`## Contrarian view\n${await groqContrarian(input, draft)}`);
               } catch {
                 /* skip */
               }

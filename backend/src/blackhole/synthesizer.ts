@@ -42,7 +42,8 @@ export async function blackHoleEmit(
   _sourceLayer: 'elite' | 'reserve'
 ): Promise<BlackHoleEmitResult> {
   const emitKind = typeof intent === 'string' ? intentToEmit(intent as XrogaIntent) : intent;
-  let cleaned = deAiFilter(rawResponse);
+  const keepEmojis = emitKind === 'technical' || emitKind === 'decision' || emitKind === 'general';
+  let cleaned = deAiFilter(rawResponse, { keepEmojis });
 
   if (!cleaned) {
     return { text: rawResponse.trim() || 'I am here — what should we build?', layer: 'blackhole' };
@@ -60,7 +61,7 @@ export async function blackHoleEmit(
 
   if (needsPolish(cleaned)) {
     cleaned = await phi3Polish(cleaned);
-    cleaned = deAiFilter(cleaned);
+    cleaned = deAiFilter(cleaned, { keepEmojis });
   }
 
   return { text: cleaned, layer: 'blackhole' };

@@ -11,9 +11,9 @@ interface CouncilBlackHoleAnimationProps {
 }
 
 const COUNCIL_ORBS = [
-  { id: 'groq', label: 'Groq', color: 'bg-amber-400 shadow-amber-400/50' },
-  { id: 'gemini', label: 'Gemini', color: 'bg-sky-400 shadow-sky-400/50' },
-  { id: 'deepseek', label: 'DeepSeek', color: 'bg-orange-500 shadow-orange-500/50' },
+  { id: 'speed', label: 'Speed', color: 'bg-amber-400 shadow-amber-400/50' },
+  { id: 'depth', label: 'Depth', color: 'bg-sky-400 shadow-sky-400/50' },
+  { id: 'build', label: 'Build', color: 'bg-orange-500 shadow-orange-500/50' },
 ] as const;
 
 /** Visualize Elite Council or OSS Reserve converging into Black Hole V∞ */
@@ -75,7 +75,7 @@ export function CouncilBlackHoleAnimation({ layer = 'elite', message, className 
               ? 'Black Hole V∞ — compressing into final truth'
               : isReserve
                 ? 'OSS Reserve Army — emergency fallback'
-                : 'Elite Council — Groq · Gemini · DeepSeek')}
+                : 'XROGA AI — Black Hole V∞')}
         </p>
       </div>
     </div>

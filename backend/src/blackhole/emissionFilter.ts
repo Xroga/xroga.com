@@ -11,6 +11,21 @@ export function stripEmojis(text: string): string {
     .trim();
 }
 
+const PROVIDER_LEAK_PATTERNS: Array<[RegExp, string]> = [
+  [/\bBased on my capabilities as\b[^.\n]*/gi, ''],
+  [/\b(as (the )?)?(Groq|Gemini|DeepSeek|OpenAI|Anthropic|xAI)(\s+(Sprinter|Polymath|Architect|Showrunner|Flash))?\b/gi, 'XROGA AI'],
+  [/\bI am (the )?(Groq|Gemini|DeepSeek)\b[^.\n]*/gi, 'I am XROGA AI'],
+  [/---\s*(Gemini|Groq|DeepSeek)[^-\n]*---\s*/gi, ''],
+];
+
+export function stripProviderLeaks(text: string): string {
+  let out = text;
+  for (const [pattern, replacement] of PROVIDER_LEAK_PATTERNS) {
+    out = out.replace(pattern, replacement);
+  }
+  return out.replace(/\n{3,}/g, '\n\n').trim();
+}
+
 const BANNED_REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bdelve\b/gi, 'examine'],
   [/\btapestry\b/gi, 'landscape'],
@@ -28,11 +43,12 @@ const BANNED_REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bI hope this helps!?\s*/gi, ''],
 ];
 
-export function deAiFilter(text: string): string {
-  let out = stripEmojis(text);
+export function deAiFilter(text: string, opts?: { keepEmojis?: boolean }): string {
+  let out = opts?.keepEmojis ? text : stripEmojis(text);
   for (const [pattern, replacement] of BANNED_REPLACEMENTS) {
     out = out.replace(pattern, replacement);
   }
+  out = stripProviderLeaks(out);
   return out.replace(/\n{3,}/g, '\n\n').trim();
 }
 
@@ -46,6 +62,12 @@ export function markdownBeautifier(text: string): string {
     if (!trimmed) {
       inList = false;
       out.push('');
+      continue;
+    }
+    // Preserve markdown tables
+    if (trimmed.includes('|')) {
+      inList = false;
+      out.push(trimmed);
       continue;
     }
     if (/^#{1,6}\s/.test(trimmed)) {
@@ -89,18 +111,6 @@ Consider the opposite path: what if the conventional choice is wrong for *your* 
 ## Option C
 
 A third path: reduce scope, test small, then commit — often beats binary yes/no.
-
-## Decision Chart
-
-\`\`\`
-    [ Stay ]───────┐
-        │          │
-        v          v
-   [ Change ]──> [ Hybrid ]
-        │
-        v
-   [ Wait 30d ]
-\`\`\`
 
 > **Your question:** ${userQuery.slice(0, 200)}
 `;

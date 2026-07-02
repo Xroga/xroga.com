@@ -55,7 +55,6 @@ export const API_ROLES: Record<ApiRoleId, ApiRoleDefinition> = {
     primaryRole: 'Ultra-low latency. Greetings, quick facts, small talk, yes/no.',
     intentsHandled: [
       'greeting', 'quick_fact', 'small_talk', 'yes_no', 'simple_math', 'name_reminder', 'time_query',
-      'decision', 'philosophical_debate', 'what_if_scenario',
     ],
     maxOutputTokens: 50,
     temperature: 0.3,
@@ -82,6 +81,7 @@ export const API_ROLES: Record<ApiRoleId, ApiRoleDefinition> = {
     intentsHandled: [
       'coding', 'stem', 'complex_math', 'build_website', 'automation', 'debug',
       '3d_model', 'video_script', 'build_website',
+      'decision', 'philosophical_debate', 'what_if_scenario',
     ],
     maxOutputTokens: 4096,
     temperature: 0.2,

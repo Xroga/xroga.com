@@ -12,7 +12,6 @@ import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
 export function BlackHoleVButton({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const [apiVersion, setApiVersion] = useState<string | null>(null);
-  const [councilStack, setCouncilStack] = useState<string | null>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
   const autoEnabled = useMoodStore((s) => s.autoEnabled);
   const setAutoEnabled = useMoodStore((s) => s.setAutoEnabled);
@@ -25,10 +24,9 @@ export function BlackHoleVButton({ className }: { className?: string }) {
 
   useEffect(() => {
     fetch(`${API_URL}/health`, { cache: 'no-store' })
-      .then((r) => r.json() as Promise<{ version?: string; councilStack?: string }>)
+      .then((r) => r.json() as Promise<{ version?: string }>)
       .then((data) => {
         if (data.version) setApiVersion(data.version);
-        if (data.councilStack) setCouncilStack(data.councilStack);
       })
       .catch(() => {
         /* silent — popover still works */
@@ -49,10 +47,9 @@ export function BlackHoleVButton({ className }: { className?: string }) {
           <p className="text-[10px] text-[var(--muted)] leading-relaxed mb-2.5">
             Our first and last model — every update ships in this one model. All Xroga AI capabilities, balanced for complex tasks.
           </p>
-          {(apiVersion || councilStack) && (
+          {apiVersion && (
             <p className="text-[9px] font-mono text-[#006aff]/90 mb-2.5">
-              API v{apiVersion ?? '…'}
-              {councilStack ? ` · ${councilStack.replace(/-/g, ' · ')}` : ''}
+              XROGA AI · v{apiVersion}
             </p>
           )}
           <div className="flex items-center justify-between gap-2 py-1.5">

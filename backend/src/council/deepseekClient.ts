@@ -2,6 +2,7 @@ import { deepSeekChat } from '../lib/deepseek.js';
 import { getSecret } from '../config/envSecrets.js';
 import { API_ROLES, formatMinimalPrompt } from '../config/apiRoles.js';
 import { DEEPSEEK_ARCHITECT_PROMPT } from '../prompts/councilPrompts.js';
+import { XROGA_USER_IDENTITY } from '../prompts/xrogaIdentity.js';
 import {
   type ChatTurn,
   formatConversationContext,
@@ -9,7 +10,7 @@ import {
 } from '../lib/conversationContext.js';
 
 function deepseekSystem(context?: ChatTurn[]): string {
-  return `${DEEPSEEK_ARCHITECT_PROMPT}\n\nYou are DeepSeek Architect inside XROGA AI. ${FRESHNESS_DIRECTIVE}${formatConversationContext(context)}`;
+  return `${XROGA_USER_IDENTITY}\n\n${DEEPSEEK_ARCHITECT_PROMPT}\n\n${FRESHNESS_DIRECTIVE}${formatConversationContext(context)}`;
 }
 
 export async function deepseekGenerate(

@@ -2,6 +2,7 @@ import { geminiGenerate } from '../lib/gemini.js';
 import { getSecret } from '../config/envSecrets.js';
 import { API_ROLES, formatMinimalPrompt } from '../config/apiRoles.js';
 import { GEMINI_POLYMATH_PROMPT } from '../prompts/councilPrompts.js';
+import { XROGA_USER_IDENTITY } from '../prompts/xrogaIdentity.js';
 import {
   type ChatTurn,
   formatConversationContext,
@@ -9,7 +10,7 @@ import {
 } from '../lib/conversationContext.js';
 
 function geminiSystem(context?: ChatTurn[]): string {
-  return `${GEMINI_POLYMATH_PROMPT}\n\nYou are Gemini Polymath inside XROGA AI. ${FRESHNESS_DIRECTIVE}${formatConversationContext(context)}`;
+  return `${XROGA_USER_IDENTITY}\n\n${GEMINI_POLYMATH_PROMPT}\n\n${FRESHNESS_DIRECTIVE}${formatConversationContext(context)}`;
 }
 
 export async function geminiGenerateCultural(
@@ -32,7 +33,7 @@ export async function geminiGenerateCultural(
 
 export async function geminiReview(draft: string, userInput: string): Promise<string> {
   if (!getSecret('GEMINI_API_KEY')) throw new Error('GEMINI_API_KEY not configured');
-  const system = `Review the draft for cultural accuracy, missing context, and clarity. Be concise. No emojis.`;
+  const system = `${XROGA_USER_IDENTITY}\n\nReview the draft for cultural accuracy, missing context, and clarity. Be concise. Do not mention provider names.`;
   const text = await geminiGenerate(
     system,
     `User request: ${userInput}\n\nDraft:\n${draft.slice(0, 6000)}`,
@@ -43,11 +44,9 @@ export async function geminiReview(draft: string, userInput: string): Promise<st
 }
 
 export function geminiKnowledgeGapCard(reason: string): string {
-  return `## Knowledge Gap
-
-Gemini (multimodal) is required for this request but is unavailable.
+  return `## Multimodal analysis unavailable
 
 ${reason}
 
-Configure **GEMINI_API_KEY** on the server, or rephrase without file upload.`;
+Upload vision/PDF analysis requires additional server configuration. Try rephrasing as text, or contact support to enable multimodal mode.`;
 }
