@@ -92,7 +92,8 @@ function heuristicIntent(userInput: string): XrogaIntent {
   if (/\b(history|historical|who was|when did|ancient|dynasty|empire|war of|century)\b/.test(lower)) return 'history';
   if (/\b(culture|cultural|tradition|religion|geopolitic|current events|news about)\b/.test(lower)) return 'cultural';
   if (/\b(code|debug|fix bug|typescript|python|javascript|api|function|class|sql|regex)\b/.test(lower) || userInput.includes('```')) return 'coding';
-  if (/\b(math|equation|integral|derivative|proof|calculate|algorithm)\b/.test(lower)) return 'stem';
+  if (/\b(solve\s+for|equation|integral|derivative|proof|calculate)\b/.test(lower)) return 'stem';
+  if (/\b(math|algorithm)\b/.test(lower)) return 'stem';
   if (/\b(3d model|blender|mesh|openscad)\b/.test(lower)) return '3d_model';
   if (lower.length < 60 && /\b(what is|who is|when is|how many)\b/.test(lower)) return 'quick_fact';
   if (/\b(generate|create|make|design)\b/.test(lower)) return 'creation';

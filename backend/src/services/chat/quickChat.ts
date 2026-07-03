@@ -6,6 +6,8 @@ import { buildFullSystemPrompt } from '../../orchestrator/aiTraining.js';
 import { isTrivialPrompt } from '../../lib/promptClassifier.js';
 import { isCapabilitiesQuery, getXrogaCapabilitiesResponse } from '../../lib/xrogaCapabilities.js';
 import { analyzeUserQuery } from '../../lib/queryAnalyzer.js';
+import { isMathQuery } from '../../lib/mathQuery.js';
+import { trySolveMathLocally } from '../../lib/mathSolver.js';
 import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
@@ -37,6 +39,11 @@ export async function quickChat(
 
   if (isCapabilitiesQuery(userText)) {
     return formatPlainProfessional(getXrogaCapabilitiesResponse());
+  }
+
+  if (isMathQuery(userText)) {
+    const local = trySolveMathLocally(userText);
+    if (local) return formatPlainProfessional(local);
   }
 
   if (isTrivialPrompt(userText)) {

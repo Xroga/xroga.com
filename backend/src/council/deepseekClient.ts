@@ -15,10 +15,12 @@ function deepseekSystem(context?: ChatTurn[]): string {
 
 export async function deepseekGenerate(
   userInput: string,
-  options?: { maxTokens?: number; context?: ChatTurn[] }
+  options?: { maxTokens?: number; context?: ChatTurn[]; mathMode?: boolean }
 ): Promise<string> {
   if (!getSecret('DEEPSEEK_API_KEY')) throw new Error('DEEPSEEK_API_KEY not configured');
-  const user = formatMinimalPrompt(API_ROLES.deepseek.minimalPromptTemplate, userInput);
+  const user = options?.mathMode
+    ? `${formatMinimalPrompt(API_ROLES.deepseek.minimalPromptTemplate, userInput)}\n\nFollow the MATH layout exactly. Never merge Step labels with equations.`
+    : formatMinimalPrompt(API_ROLES.deepseek.minimalPromptTemplate, userInput);
   const text = await deepSeekChat(
     [
       { role: 'system', content: deepseekSystem(options?.context) },
