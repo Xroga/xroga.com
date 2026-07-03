@@ -635,6 +635,105 @@ body.theme-gray * {
     background: transparent !important;
   }
 
+  /* Sticky header + Talk button — desktop & mobile */
+  .xv-site-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: color-mix(in srgb, var(--background) 72%, transparent);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  body:not(.xv-terminal-fullscreen-active) .xv-site-header {
+    border-bottom-color: color-mix(in srgb, var(--card-border) 55%, transparent) !important;
+  }
+
+  .xv-talk-btn-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    line-height: 1;
+    color: var(--foreground);
+    border: 1px solid color-mix(in srgb, #006aff 45%, var(--card-border));
+    background: color-mix(in srgb, #006aff 12%, var(--card));
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .xv-talk-btn-header:hover {
+    background: color-mix(in srgb, #006aff 22%, var(--card));
+    box-shadow: 0 0 0 3px color-mix(in srgb, #006aff 18%, transparent);
+  }
+
+  .xv-talk-btn-header--active {
+    background: color-mix(in srgb, #ef4444 18%, var(--card));
+    border-color: color-mix(in srgb, #ef4444 55%, var(--card-border));
+    color: #fca5a5;
+    animation: talk-pulse 1.4s ease infinite;
+  }
+
+  .xv-talk-btn-header--busy {
+    opacity: 0.9;
+    pointer-events: none;
+  }
+
+  .xv-talk-btn-header--searching {
+    border-color: color-mix(in srgb, #22d3ee 55%, var(--card-border));
+    background: color-mix(in srgb, #22d3ee 14%, var(--card));
+    animation: talk-pulse 1.6s ease infinite;
+  }
+
+  .xv-talk-btn-large {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 9rem;
+    height: 9rem;
+    border-radius: 9999px;
+    color: #fff;
+    background: radial-gradient(circle at 30% 20%, #3b82f6, #006aff 55%, #1e3a8a);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 20px 50px rgba(0, 106, 255, 0.35);
+    transition: transform 0.2s ease;
+  }
+
+  .xv-talk-btn-large--active {
+    transform: scale(1.04);
+    background: radial-gradient(circle at 30% 20%, #f87171, #ef4444 55%, #991b1b);
+    box-shadow: 0 20px 50px rgba(239, 68, 68, 0.35);
+    animation: talk-pulse 1.2s ease infinite;
+  }
+
+  .xv-talk-btn-large-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    pointer-events: none;
+  }
+
+  .xv-talk-btn-large-ring--on {
+    border-color: rgba(255, 255, 255, 0.45);
+    animation: talk-ring 1.2s ease infinite;
+  }
+
+  @keyframes talk-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, #006aff 35%, transparent); }
+    50% { box-shadow: 0 0 0 8px transparent; }
+  }
+
+  @keyframes talk-ring {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.12); opacity: 0; }
+  }
+
   /* Homepage chatbar — transparent shell, responsive text */
   .xv-home-chatbox,
   .xv-homepage .xv-home-chatbar-shell {

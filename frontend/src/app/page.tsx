@@ -10,6 +10,7 @@ import { AppStoreInline } from '@/components/ui/AppStoreInline';
 import { PowerSmashButton, HomeSignInButton } from '@/components/ui/XrogaButtons';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
 import { useThemeStore } from '@/store/useThemeStore';
+import { TalkButton } from '@/components/voice/TalkButton';
 import { createClient } from '@/lib/supabase/client';
 
 export default function HomePage() {
@@ -44,10 +45,13 @@ export default function HomePage() {
       />
       <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/50 via-black/20 to-black/55" aria-hidden />
 
-      <header className="xv-home-header sticky top-0 z-50 bg-transparent border-none shadow-none">
+      <header className="xv-home-header xv-site-header sticky top-0 z-50 bg-transparent border-none shadow-none">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
           <Logo href="/" variant="homepage" height={76} className="shrink-0 justify-self-start" />
-          <AppStoreInline compact className="hidden lg:inline-flex justify-self-center" />
+          <div className="justify-self-center flex items-center gap-2">
+            <TalkButton variant="header" />
+            <AppStoreInline compact className="hidden lg:inline-flex" />
+          </div>
           <div className="flex items-center justify-end gap-3 justify-self-end">
             {loggedIn && (
               <PowerSmashButton size="md" onClick={() => router.push('/dashboard')}>

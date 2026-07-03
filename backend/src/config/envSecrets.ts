@@ -41,6 +41,7 @@ const ALIASES: Record<string, string[]> = {
   VERCEL_API_KEY: ['VERCEL_API_KEY', 'VERCEL_TOKEN'],
   VERCEL_TOKEN: ['VERCEL_API_KEY', 'VERCEL_TOKEN'],
   NETLIFY_ACCESS_TOKEN: ['NETLIFY_ACCESS_TOKEN'],
+  TAVILY_API_KEY: ['TAVILY_API_KEY'],
 };
 
 export function getSecret(primary: keyof typeof ALIASES | string): string | undefined {
@@ -73,6 +74,7 @@ export function getCouncilKeyStatus(): Record<string, boolean> {
     MISTRAL_API_KEY: hasSecret('MISTRAL_API_KEY'),
     ANTHROPIC_API_KEY: hasSecret('ANTHROPIC_API_KEY'),
     OPENAI_API_KEY: hasSecret('OPENAI_API_KEY'),
+    TAVILY_API_KEY: hasSecret('TAVILY_API_KEY'),
   };
 }
 

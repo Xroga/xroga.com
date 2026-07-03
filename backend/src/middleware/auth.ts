@@ -43,6 +43,10 @@ async function resolveUser(token: string): Promise<{ userId: string; email?: str
   );
 }
 
+export async function verifyAccessToken(token: string): Promise<{ userId: string; email?: string }> {
+  return resolveUser(token);
+}
+
 export async function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
