@@ -2565,9 +2565,16 @@ body.theme-gray * {
 
 .xv-xroga-response {
   letter-spacing: 0.01em;
-  font-size: 17px;
-  line-height: 1.75;
+  font-size: 14px;
+  line-height: 1.65;
   animation: xv-response-in 0.4s ease-out;
+}
+
+@media (min-width: 640px) {
+  .xv-xroga-response {
+    font-size: 15px;
+    line-height: 1.7;
+  }
 }
 
 .xv-math-equation {
@@ -2578,12 +2585,13 @@ body.theme-gray * {
 
 .xv-xroga-response h2,
 .xv-xroga-response .xv-headline {
-  font-size: clamp(1.75rem, 4.5vw, 2.5rem);
-  line-height: 1.15;
+  font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+  line-height: 1.35;
+  font-weight: 600;
 }
 
 .xv-math-equation .katex {
-  font-size: 1.15em;
+  font-size: 1.05em;
 }
 
 .xv-formatted-response ul li,
