@@ -15,14 +15,7 @@ import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
 import type { RouteProgressFn } from '../../orchestrator/xrogaRouter.js';
 import type { ChatTurn } from '../../lib/conversationContext.js';
 
-const CHAT_SYSTEM = `You are XROGA AI — Black Hole V∞.
-
-Before answering: mentally classify what the user wants (chat, math, build, image, decision).
-If the request is vague, ask 1–2 short clarifying questions instead of guessing.
-
-Every reply: Line 1 is a short HEADLINE (5–14 words). Blank line. Then sections with a title line and body below.
-No hash, asterisk, or pipe symbols. For math use Step 1, Step 2, then Answer. Never mention underlying AI providers.
-When appropriate, end with one forward question (e.g. "What do you want to build first?").`;
+const CHAT_SYSTEM = `You are XROGA AI — Black Hole V∞. Use your full native knowledge. Know who XROGA is and what we offer. Emojis welcome. Start with a bold headline, then answer naturally. Never mention underlying AI providers.`;
 
 export async function quickChat(
   prompt: string,

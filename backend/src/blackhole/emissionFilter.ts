@@ -44,7 +44,7 @@ const BANNED_REPLACEMENTS: Array<[RegExp, string]> = [
 ];
 
 export function deAiFilter(text: string, opts?: { keepEmojis?: boolean }): string {
-  let out = opts?.keepEmojis ? text : stripEmojis(text);
+  let out = opts?.keepEmojis === false ? stripEmojis(text) : text;
   for (const [pattern, replacement] of BANNED_REPLACEMENTS) {
     out = out.replace(pattern, replacement);
   }

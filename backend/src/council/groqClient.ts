@@ -1,11 +1,7 @@
 import { groqChat } from '../lib/groq.js';
 import { getSecret } from '../config/envSecrets.js';
 import { API_ROLES, formatMinimalPrompt } from '../config/apiRoles.js';
-import {
-  GROQ_SPRINTER_PROMPT,
-  GROQ_GREETING_PROMPT,
-  GROQ_EDGE_PROMPT,
-} from '../prompts/councilPrompts.js';
+import { GROQ_EDGE_PROMPT } from '../prompts/councilPrompts.js';
 import { XROGA_USER_IDENTITY } from '../prompts/xrogaIdentity.js';
 import {
   type ChatTurn,
@@ -13,23 +9,22 @@ import {
   FRESHNESS_DIRECTIVE,
 } from '../lib/conversationContext.js';
 
-function groqSystem(rolePrompt: string, context?: ChatTurn[]): string {
-  return `${XROGA_USER_IDENTITY}\n\n${rolePrompt}\n\n${FRESHNESS_DIRECTIVE}${formatConversationContext(context)}`;
+function groqSystem(context?: ChatTurn[]): string {
+  return `${XROGA_USER_IDENTITY}\n\n${FRESHNESS_DIRECTIVE}${formatConversationContext(context)}`;
 }
 
 function isGreetingText(input: string): boolean {
   return /^(hi|hello|hey|yo|sup|salam|good\s+(morning|afternoon|evening))\b/i.test(input.trim());
 }
 
-/** Sprinter — sealed role prompt */
+/** Fast path — greetings stay short; everything else uses full knowledge */
 export async function groqSprinter(userInput: string, context?: ChatTurn[]): Promise<string> {
   if (!getSecret('GROQ_API_KEY')) throw new Error('GROQ_API_KEY not configured');
   const greeting = isGreetingText(userInput);
-  const rolePrompt = greeting ? GROQ_GREETING_PROMPT : GROQ_SPRINTER_PROMPT;
-  const maxTokens = greeting ? 120 : API_ROLES.groq.maxOutputTokens;
+  const maxTokens = greeting ? 200 : API_ROLES.groq.maxOutputTokens;
   const text = await groqChat(
     [
-      { role: 'system', content: groqSystem(rolePrompt, context) },
+      { role: 'system', content: groqSystem(context) },
       { role: 'user', content: userInput },
     ],
     { maxTokens }
@@ -38,15 +33,15 @@ export async function groqSprinter(userInput: string, context?: ChatTurn[]): Pro
   return text.trim();
 }
 
-/** General chat */
+/** General chat — full native knowledge */
 export async function groqGeneral(userInput: string, context?: ChatTurn[]): Promise<string> {
   if (!getSecret('GROQ_API_KEY')) throw new Error('GROQ_API_KEY not configured');
   const text = await groqChat(
     [
-      { role: 'system', content: groqSystem(GROQ_SPRINTER_PROMPT, context) },
+      { role: 'system', content: groqSystem(context) },
       { role: 'user', content: userInput },
     ],
-    { maxTokens: 1024 }
+    { maxTokens: 2048 }
   );
   if (!text.trim()) throw new Error('Groq returned empty');
   return text.trim();
@@ -60,7 +55,7 @@ export async function groqContrarian(userInput: string, draft: string): Promise<
       { role: 'system', content: `${XROGA_USER_IDENTITY}\n\n${GROQ_EDGE_PROMPT}` },
       { role: 'user', content: `Question: ${userInput}\n\nDraft answer:\n${draft.slice(0, 2000)}` },
     ],
-    { maxTokens: 150 }
+    { maxTokens: 300 }
   );
   if (!text.trim()) throw new Error('Groq contrarian empty');
   return text.trim();

@@ -164,7 +164,7 @@ export class XrogaRouter {
         const { raw, layer, provider } = await councilOrReserve(
           input,
           'groq',
-          () => groqSprinter(input, ctx),
+          () => groqGeneral(input, ctx),
           onProgress
         );
         onProgress?.('blackhole', 'Composing your answer');

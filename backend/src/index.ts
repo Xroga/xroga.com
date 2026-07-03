@@ -80,7 +80,7 @@ const healthPayload = () => {
   return {
     status: 'ok',
     service: 'xroga-api',
-    version: '1.4.8',
+    version: '1.4.9',
     councilStack: 'groq-gemini-deepseek',
     promptsSealed: true,
     timestamp: new Date().toISOString(),

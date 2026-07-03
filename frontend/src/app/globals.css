@@ -2576,6 +2576,12 @@ body.theme-gray * {
   padding: 0.35rem 0;
 }
 
+.xv-xroga-response h2,
+.xv-xroga-response .xv-headline {
+  font-size: clamp(1.75rem, 4.5vw, 2.5rem);
+  line-height: 1.15;
+}
+
 .xv-math-equation .katex {
   font-size: 1.15em;
 }
