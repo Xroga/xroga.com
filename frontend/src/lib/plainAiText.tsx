@@ -196,7 +196,7 @@ function renderInline(text: string): ReactNode[] {
     parts.push(
       <code
         key={k++}
-        className="rounded-md bg-slate-200/60 px-1.5 py-0.5 text-[14px] font-mono text-slate-800 dark:bg-white/10 dark:text-slate-200"
+        className="rounded-md bg-slate-200/60 px-1.5 py-0.5 text-[12px] font-mono text-slate-800 dark:bg-white/10 dark:text-slate-200"
       >
         {m[1]}
       </code>
@@ -219,7 +219,7 @@ function MathStepBody({ body }: { body: string }) {
   return (
     <div className="space-y-3">
       {prose.map((line, i) => (
-        <p key={`p-${i}`} className="text-[16px] sm:text-[17px] leading-relaxed text-[var(--foreground)]/85">
+        <p key={`p-${i}`} className="text-[14px] sm:text-[15px] leading-relaxed text-[var(--foreground)]/85">
           {renderInline(line)}
         </p>
       ))}
@@ -227,7 +227,7 @@ function MathStepBody({ body }: { body: string }) {
         <div key={`eq-${i}`} className="xv-math-equation py-1">
           <MathEquation
             text={eq}
-            className="text-[20px] sm:text-[22px] text-[var(--foreground)]"
+            className="text-[16px] sm:text-[17px] text-[var(--foreground)]"
           />
         </div>
       ))}
@@ -239,31 +239,31 @@ function BlockView({ block }: { block: XrogaBlock }) {
   switch (block.type) {
     case 'headline':
       return (
-        <h2 className="xv-headline text-[1.9rem] sm:text-[2.25rem] lg:text-[2.5rem] font-bold leading-[1.15] tracking-tight text-[var(--foreground)] border-b border-slate-200/70 dark:border-white/10 pb-3 mb-2">
+        <h2 className="xv-headline text-[1.125rem] sm:text-[1.25rem] font-semibold leading-snug tracking-tight text-[var(--foreground)] border-b border-slate-200/70 dark:border-white/10 pb-2 mb-1.5">
           {block.text}
         </h2>
       );
     case 'section':
       return (
         <div className="space-y-1.5 pt-1">
-          <h3 className="text-[17px] sm:text-[18px] font-semibold tracking-tight text-[var(--foreground)]">
+          <h3 className="text-[14px] sm:text-[15px] font-semibold tracking-tight text-[var(--foreground)]">
             {block.title}
           </h3>
-          <p className="text-[17px] sm:text-[18px] leading-[1.75] text-[var(--foreground)]/85 whitespace-pre-wrap">
+          <p className="text-[14px] sm:text-[15px] leading-[1.65] text-[var(--foreground)]/85 whitespace-pre-wrap">
             {renderInline(block.body)}
           </p>
         </div>
       );
     case 'paragraph':
       return (
-        <p className="text-[17px] sm:text-[18px] leading-[1.75] text-[var(--foreground)]/88 whitespace-pre-wrap">
+        <p className="text-[14px] sm:text-[15px] leading-[1.65] text-[var(--foreground)]/88 whitespace-pre-wrap">
           {renderInline(block.text)}
         </p>
       );
     case 'math-step':
       return (
         <div className="space-y-2 py-2 border-t border-slate-200/50 dark:border-white/10 first:border-t-0">
-          <p className="text-[16px] sm:text-[17px] font-bold text-[var(--foreground)]">{block.step}</p>
+          <p className="text-[14px] sm:text-[15px] font-semibold text-[var(--foreground)]">{block.step}</p>
           <MathStepBody body={block.body} />
         </div>
       );
@@ -272,18 +272,18 @@ function BlockView({ block }: { block: XrogaBlock }) {
         <div className="xv-math-equation py-2">
           <MathEquation
             text={block.text}
-            className="text-[20px] sm:text-[22px] text-[var(--foreground)]"
+            className="text-[16px] sm:text-[17px] text-[var(--foreground)]"
           />
         </div>
       );
     case 'math-answer':
       return (
         <div className="pt-3 mt-2 border-t border-slate-200/70 dark:border-white/15 space-y-2">
-          <p className="text-[16px] sm:text-[17px] font-bold text-[var(--foreground)]">Answer</p>
+          <p className="text-[14px] sm:text-[15px] font-semibold text-[var(--foreground)]">Answer</p>
           <div className="xv-math-equation">
             <MathEquation
               text={block.text}
-              className="text-[22px] sm:text-[24px] font-medium text-[var(--foreground)]"
+              className="text-[17px] sm:text-[18px] font-medium text-[var(--foreground)]"
             />
           </div>
         </div>
@@ -291,8 +291,8 @@ function BlockView({ block }: { block: XrogaBlock }) {
     case 'callout':
       return (
         <div className="rounded-r-xl border-l-4 border-[#006aff]/50 bg-gradient-to-r from-slate-50/95 to-white/60 px-4 py-3 dark:from-white/5 dark:to-transparent">
-          <p className="text-[15px] sm:text-[16px] font-bold text-[var(--foreground)] mb-1">{block.label}</p>
-          <p className="text-[16px] sm:text-[17px] leading-[1.7] text-[var(--foreground)]/88 whitespace-pre-wrap">
+          <p className="text-[13px] sm:text-[14px] font-semibold text-[var(--foreground)] mb-1">{block.label}</p>
+          <p className="text-[14px] sm:text-[15px] leading-[1.65] text-[var(--foreground)]/88 whitespace-pre-wrap">
             {renderInline(block.body)}
           </p>
         </div>
@@ -303,7 +303,7 @@ function BlockView({ block }: { block: XrogaBlock }) {
           {block.items.map((item, i) => (
             <p
               key={i}
-              className="text-[16px] sm:text-[17px] leading-snug text-[var(--foreground)]/80 pl-3 border-l-2 border-slate-200/80 dark:border-white/15"
+              className="text-[14px] sm:text-[15px] leading-snug text-[var(--foreground)]/80 pl-3 border-l-2 border-slate-200/80 dark:border-white/15"
             >
               {renderInline(item)}
             </p>
@@ -312,7 +312,7 @@ function BlockView({ block }: { block: XrogaBlock }) {
       );
     case 'code':
       return (
-        <pre className="overflow-x-auto rounded-xl border border-slate-200/80 bg-slate-900/[0.04] px-4 py-3 text-[14px] font-mono leading-relaxed dark:border-white/10 dark:bg-black/30">
+        <pre className="overflow-x-auto rounded-xl border border-slate-200/80 bg-slate-900/[0.04] px-3 py-2.5 text-[12px] sm:text-[13px] font-mono leading-relaxed dark:border-white/10 dark:bg-black/30">
           <code>{block.body}</code>
         </pre>
       );
@@ -339,7 +339,7 @@ export function PlainAiResponse({
   }
 
   return (
-    <div className={cn('xv-xroga-response space-y-4', className)}>
+    <div className={cn('xv-xroga-response space-y-3', className)}>
       {blocks.map((block, i) => (
         <BlockView key={`${block.type}-${i}`} block={block} />
       ))}
