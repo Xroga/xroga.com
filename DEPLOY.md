@@ -29,6 +29,27 @@ NEXT_PUBLIC_SITE_URL=https://xroga.com
 
 JWT Secret is in Supabase → Project Settings → API → JWT Settings.
 
+## GitHub OAuth (user connect — not Fly URL)
+GitHub OAuth App → Authorization callback URL (exact):
+`https://xroga.com/dashboard/integrations/github/callback`
+
+Fly secrets (required):
+```bash
+fly secrets set -a xroga-api \
+  GITHUB_CLIENT_ID="from_github_oauth_app" \
+  GITHUB_CLIENT_SECRET="from_github_oauth_app" \
+  FRONTEND_URL="https://xroga.com" \
+  GITHUB_OAUTH_CALLBACK_URL="https://xroga.com/dashboard/integrations/github/callback"
+```
+
+Remove unused: `GITHUB_FINE_GRAINED_PERSONAL_ACCESS_TOKEN` (XROGA does not use it).
+
+Verify after deploy:
+```bash
+curl https://xroga-api.fly.dev/health
+# githubOAuthRedirectUri must be https://xroga.com/dashboard/integrations/github/callback
+```
+
 ## Fly.io secrets (image generation)
 `FLY_API_TOKEN` in GitHub **only deploys code** — it does **not** pass image API keys to Fly.
 

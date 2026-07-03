@@ -12,6 +12,7 @@ primary_region = 'iad'
   PORT = '8080'
   NODE_ENV = 'production'
   FRONTEND_URL = 'https://xroga.com'
+  GITHUB_OAUTH_CALLBACK_URL = 'https://xroga.com/dashboard/integrations/github/callback'
 
 [processes]
   app = 'node dist/index.js'
