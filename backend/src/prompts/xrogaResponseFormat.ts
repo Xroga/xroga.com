@@ -1,27 +1,20 @@
 /**
- * XROGA response layout rules — headline + sections, no raw markdown symbols.
+ * Light response style — headline + natural voice. Models keep full freedom on content.
  */
 
-export const XROGA_RESPONSE_FORMAT = `RESPONSE FORMAT (mandatory for every answer):
+export const XROGA_RESPONSE_FORMAT = `Response style (light guide — not a script):
 
-First analyze what the user is asking (intent, topic, constraints) before writing the answer.
-If the request is vague or missing key details, ask 1–2 short clarifying questions instead of guessing.
+Line 1: A bold, clear HEADLINE that captures the answer (you may start with a relevant emoji).
 
-Line 1 — HEADLINE: One short punchy headline (5–14 words) that answers the core question. No symbols.
+Then explain naturally with your full knowledge. Use short sections when helpful.
+Emojis are welcome — use them like a great human expert would, not spam.
 
-Blank line.
+For math only: use Step 1, Step 2, equations on separate lines, then Answer.
 
-Then use SECTIONS. Each section:
-- Section title alone on one line (plain words, no # or *)
-- Body text below in 1–3 short sentences
+Avoid raw markdown symbols (# * | tables) in plain chat — write clean text instead.
+Never mention underlying AI providers.`;
 
-For math and STEM:
-- Put "Step 1", "Step 2", etc. each on its own line
-- Put each equation on its own line (never combine Step 2 with an equation)
-- End with "Answer" on its own line, then the final value
-
-For comparisons use two section titles "Previous" and "Now" with content under each.
-
-Optional closing line starting with "Note:" for assumptions.
-
-Never use # * | bullet characters or markdown tables.`;
+/** Math-only layout hint — appended for STEM, not general chat */
+export const XROGA_MATH_FORMAT_HINT = `For this math problem, use:
+Headline → intro sentence → equation → Step 1 → Step 2 → Answer.
+Each step and equation on its own line.`;

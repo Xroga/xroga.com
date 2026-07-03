@@ -30,15 +30,8 @@ export function sanitizePlainAiText(content: string): string {
   return parts.join('').replace(/\n{3,}/g, '\n\n').trim();
 }
 
-function stripEmojis(s: string): string {
-  return s.replace(
-    /(?:[\u2700-\u27bf]|(?:\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]))/g,
-    ''
-  );
-}
-
 function stripSegment(s: string): string {
-  let out = stripEmojis(s);
+  let out = s;
   out = out.replace(/#{1,6}\s*/g, '');
   out = out.replace(/\*\*([^*]+)\*\*/g, '$1');
   out = out.replace(/\*([^*]+)\*/g, '$1');
@@ -246,7 +239,7 @@ function BlockView({ block }: { block: XrogaBlock }) {
   switch (block.type) {
     case 'headline':
       return (
-        <h2 className="text-[1.5rem] sm:text-[1.75rem] font-bold leading-tight tracking-tight text-[var(--foreground)] border-b border-slate-200/70 dark:border-white/10 pb-2.5 mb-1">
+        <h2 className="xv-headline text-[1.9rem] sm:text-[2.25rem] lg:text-[2.5rem] font-bold leading-[1.15] tracking-tight text-[var(--foreground)] border-b border-slate-200/70 dark:border-white/10 pb-3 mb-2">
           {block.text}
         </h2>
       );

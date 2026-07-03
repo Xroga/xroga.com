@@ -1,7 +1,6 @@
 import { geminiGenerate } from '../lib/gemini.js';
 import { getSecret } from '../config/envSecrets.js';
 import { API_ROLES, formatMinimalPrompt } from '../config/apiRoles.js';
-import { GEMINI_POLYMATH_PROMPT } from '../prompts/councilPrompts.js';
 import { XROGA_USER_IDENTITY } from '../prompts/xrogaIdentity.js';
 import {
   type ChatTurn,
@@ -10,7 +9,7 @@ import {
 } from '../lib/conversationContext.js';
 
 function geminiSystem(context?: ChatTurn[]): string {
-  return `${XROGA_USER_IDENTITY}\n\n${GEMINI_POLYMATH_PROMPT}\n\n${FRESHNESS_DIRECTIVE}${formatConversationContext(context)}`;
+  return `${XROGA_USER_IDENTITY}\n\n${FRESHNESS_DIRECTIVE}${formatConversationContext(context)}`;
 }
 
 export async function geminiGenerateCultural(

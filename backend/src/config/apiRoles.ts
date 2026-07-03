@@ -56,8 +56,8 @@ export const API_ROLES: Record<ApiRoleId, ApiRoleDefinition> = {
     intentsHandled: [
       'greeting', 'quick_fact', 'small_talk', 'yes_no', 'simple_math', 'name_reminder', 'time_query',
     ],
-    maxOutputTokens: 50,
-    temperature: 0.3,
+    maxOutputTokens: 2048,
+    temperature: 0.7,
     minimalPromptTemplate: '{user_input}',
     fallbackModel: 'phi3',
   },
