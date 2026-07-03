@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import { API_URL, getAccessToken } from '@/lib/api';
+import { useAppStore } from '@/store/useAppStore';
 
 export type TalkState = 'idle' | 'connecting' | 'recording' | 'processing' | 'speaking';
 
@@ -26,8 +27,10 @@ interface VoiceTalkContextValue {
   state: TalkState;
   statusLabel: string | null;
   turns: VoiceTurn[];
+  welcomeText: string | null;
   liveReply: string | null;
   liveUser: string | null;
+  interimUser: string | null;
   captionsOn: boolean;
   speakerOn: boolean;
   muted: boolean;
@@ -42,33 +45,76 @@ interface VoiceTalkContextValue {
 
 const VoiceTalkContext = createContext<VoiceTalkContextValue | null>(null);
 
+const XROGA_LOGO = 'https://i.postimg.cc/9Mfm1jdK/xrogaai.png';
+export { XROGA_LOGO };
+
 function voiceWsUrl(token: string): string {
   const wsBase = API_URL.replace(/^http/, 'ws');
   return `${wsBase}/api/voice/ws?token=${encodeURIComponent(token)}`;
 }
 
+type SpeechRecognitionInstance = {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+  onresult: ((ev: { results: SpeechRecognitionResultList }) => void) | null;
+  onerror: ((ev: Event) => void) | null;
+  onend: (() => void) | null;
+};
+
+function getSpeechRecognition(): (new () => SpeechRecognitionInstance) | null {
+  if (typeof window === 'undefined') return null;
+  const w = window as Window & {
+    SpeechRecognition?: new () => SpeechRecognitionInstance;
+    webkitSpeechRecognition?: new () => SpeechRecognitionInstance;
+  };
+  return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
+}
+
+async function toArrayBuffer(data: ArrayBuffer | Blob): Promise<ArrayBuffer> {
+  if (data instanceof ArrayBuffer) return data;
+  return data.arrayBuffer();
+}
+
 export function VoiceTalkProvider({ children }: { children: ReactNode }) {
+  const profile = useAppStore((s) => s.profile);
+  const displayName = profile?.display_name?.split(' ')[0] ?? 'there';
+
   const [overlayOpen, setOverlayOpen] = useState(false);
   const [state, setState] = useState<TalkState>('idle');
   const [statusLabel, setStatusLabel] = useState<string | null>(null);
   const [turns, setTurns] = useState<VoiceTurn[]>([]);
+  const [welcomeText, setWelcomeText] = useState<string | null>(null);
   const [captionsOn, setCaptionsOn] = useState(true);
   const [speakerOn, setSpeakerOn] = useState(true);
   const [muted, setMuted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [liveReply, setLiveReply] = useState<string | null>(null);
   const [liveUser, setLiveUser] = useState<string | null>(null);
+  const [interimUser, setInterimUser] = useState<string | null>(null);
 
   const wsRef = useRef<WebSocket | null>(null);
+  const welcomeWsRef = useRef<WebSocket | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const welcomeAudioRef = useRef<HTMLAudioElement | null>(null);
   const sessionRef = useRef(false);
+  const welcomePlayedRef = useRef(false);
   const pendingTurnRef = useRef<{ user: string; reply: string } | null>(null);
+  const speechRef = useRef<SpeechRecognitionInstance | null>(null);
   const stateRef = useRef(state);
   stateRef.current = state;
+  const speakerOnRef = useRef(speakerOn);
+  speakerOnRef.current = speakerOn;
 
   const cleanupMedia = useCallback(() => {
+    speechRef.current?.abort();
+    speechRef.current = null;
+
     if (recorderRef.current && recorderRef.current.state !== 'inactive') {
       try {
         recorderRef.current.stop();
@@ -90,15 +136,26 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
     cleanupMedia();
     closeSocket();
     sessionRef.current = false;
-    setState('idle');
-    setStatusLabel(null);
+    setInterimUser(null);
+    if (stateRef.current !== 'speaking') {
+      setState('idle');
+      setStatusLabel(null);
+    }
   }, [cleanupMedia, closeSocket]);
 
   const closeOverlay = useCallback(() => {
     audioRef.current?.pause();
+    welcomeAudioRef.current?.pause();
+    welcomeWsRef.current?.close();
+    welcomeWsRef.current = null;
     endVoiceSession();
     setOverlayOpen(false);
     setError(null);
+    setWelcomeText(null);
+    welcomePlayedRef.current = false;
+    setTurns([]);
+    setLiveReply(null);
+    setLiveUser(null);
   }, [endVoiceSession]);
 
   const openOverlay = useCallback(() => {
@@ -116,7 +173,9 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
     return () => {
       cleanupMedia();
       closeSocket();
+      welcomeWsRef.current?.close();
       audioRef.current?.pause();
+      welcomeAudioRef.current?.pause();
     };
   }, [cleanupMedia, closeSocket]);
 
@@ -130,35 +189,230 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
     pendingTurnRef.current = null;
   }, []);
 
-  const playAudio = useCallback(
-    (buffer: ArrayBuffer) => {
+  const playAudioBuffer = useCallback(
+    (buffer: ArrayBuffer, opts: { welcome?: boolean; onFinish?: () => void }) => {
       const blob = new Blob([buffer], { type: 'audio/mpeg' });
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
-      audio.volume = speakerOn ? 1 : 0;
-      audioRef.current = audio;
-      setState('speaking');
-      setStatusLabel('Speaking…');
+      audio.volume = speakerOnRef.current ? 1 : 0;
+
+      if (opts.welcome) {
+        welcomeAudioRef.current?.pause();
+        welcomeAudioRef.current = audio;
+      } else {
+        audioRef.current?.pause();
+        audioRef.current = audio;
+        setState('speaking');
+        setStatusLabel('Speaking…');
+      }
 
       const finish = () => {
         URL.revokeObjectURL(url);
-        audioRef.current = null;
-        const pending = pendingTurnRef.current;
-        if (pending) commitTurn(pending.user, pending.reply);
-        setLiveReply(null);
-        setLiveUser(null);
-        endVoiceSession();
+        if (opts.welcome) {
+          welcomeAudioRef.current = null;
+          if (!sessionRef.current) {
+            setState('idle');
+            setStatusLabel(null);
+          }
+        } else {
+          audioRef.current = null;
+          const pending = pendingTurnRef.current;
+          if (pending) commitTurn(pending.user, pending.reply);
+          setLiveReply(null);
+          setLiveUser(null);
+          setInterimUser(null);
+          sessionRef.current = false;
+          setState('idle');
+          setStatusLabel(null);
+          closeSocket();
+        }
+        opts.onFinish?.();
       };
 
       audio.onended = finish;
       audio.onerror = finish;
       void audio.play().catch(() => {
-        setError('Allow audio playback to hear XROGA');
+        if (!opts.welcome) {
+          setError('Allow audio playback to hear XROGA');
+        }
         finish();
       });
     },
-    [commitTurn, endVoiceSession, speakerOn]
+    [closeSocket, commitTurn]
   );
+
+  const handleWsMessage = useCallback(
+    (event: MessageEvent, mode: 'talk' | 'welcome') => {
+      if (typeof event.data !== 'string') {
+        void toArrayBuffer(event.data as ArrayBuffer | Blob).then((buf) => {
+          playAudioBuffer(buf, {
+            welcome: mode === 'welcome',
+            onFinish: mode === 'welcome' ? () => welcomeWsRef.current?.close() : undefined,
+          });
+        });
+        return;
+      }
+
+      try {
+        const msg = JSON.parse(event.data) as {
+          type: string;
+          stage?: string;
+          message?: string;
+          text?: string;
+          reply?: string;
+        };
+
+        if (msg.type === 'ready' && mode === 'talk') {
+          return;
+        }
+
+        if (msg.type === 'status') {
+          if (msg.stage === 'transcribing') {
+            setState('processing');
+            setStatusLabel('Transcribing…');
+          }
+          if (msg.stage === 'routing' || msg.stage === 'thinking') {
+            setState('processing');
+            setStatusLabel('Thinking…');
+          }
+          if (msg.stage === 'searching') {
+            setState('processing');
+            setStatusLabel('Searching the web…');
+          }
+          if (msg.stage === 'speaking') {
+            if (mode === 'welcome') {
+              setState('speaking');
+              setStatusLabel('XROGA is greeting you…');
+            } else {
+              setStatusLabel('Speaking…');
+            }
+          }
+          return;
+        }
+
+        if (msg.type === 'user_text' && msg.text) {
+          setLiveUser(msg.text);
+          setInterimUser(null);
+          return;
+        }
+
+        if (msg.type === 'greeting' && msg.text) {
+          setWelcomeText(msg.text);
+          if (mode === 'welcome') {
+            setState('speaking');
+          }
+          return;
+        }
+
+        if (msg.type === 'transcript') {
+          if (msg.text) {
+            setLiveUser(msg.text);
+            setInterimUser(null);
+          }
+          if (msg.reply) {
+            pendingTurnRef.current = {
+              user: msg.text ?? liveUser ?? interimUser ?? '',
+              reply: msg.reply,
+            };
+            setLiveReply(msg.reply);
+          }
+          return;
+        }
+
+        if (msg.type === 'done' && mode === 'talk') {
+          return;
+        }
+
+        if (msg.type === 'error') {
+          setError(msg.message ?? 'Voice error');
+          if (mode === 'talk') endVoiceSession();
+        }
+      } catch { /* ignore */ }
+    },
+    [endVoiceSession, interimUser, liveUser, playAudioBuffer]
+  );
+
+  const playWelcome = useCallback(async () => {
+    if (welcomePlayedRef.current || sessionRef.current) return;
+    welcomePlayedRef.current = true;
+
+    try {
+      const token = await getAccessToken();
+      if (!token) return;
+
+      const ws = new WebSocket(voiceWsUrl(token));
+      ws.binaryType = 'arraybuffer';
+      welcomeWsRef.current = ws;
+
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error('Welcome timeout')), 15000);
+
+        ws.onopen = () => {
+          ws.send(JSON.stringify({ type: 'greeting', displayName }));
+        };
+
+        ws.onmessage = (event) => {
+          handleWsMessage(event, 'welcome');
+          if (typeof event.data === 'string') {
+            try {
+              const msg = JSON.parse(event.data) as { type: string };
+              if (msg.type === 'greeting') clearTimeout(timeout);
+              if (msg.type === 'done' || msg.type === 'error') {
+                clearTimeout(timeout);
+                resolve();
+              }
+            } catch { /* ignore */ }
+          }
+        };
+
+        ws.onerror = () => {
+          clearTimeout(timeout);
+          reject(new Error('Welcome connection failed'));
+        };
+      });
+    } catch {
+      welcomePlayedRef.current = false;
+    }
+  }, [displayName, handleWsMessage]);
+
+  useEffect(() => {
+    if (!overlayOpen) return;
+    const t = window.setTimeout(() => {
+      void playWelcome();
+    }, 400);
+    return () => window.clearTimeout(t);
+  }, [overlayOpen, playWelcome]);
+
+  const startSpeechRecognition = useCallback(() => {
+    const Ctor = getSpeechRecognition();
+    if (!Ctor) return;
+
+    try {
+      const recognition = new Ctor();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (ev) => {
+        let interim = '';
+        let final = '';
+        for (let i = 0; i < ev.results.length; i++) {
+          const r = ev.results[i];
+          if (r.isFinal) final += r[0].transcript;
+          else interim += r[0].transcript;
+        }
+        if (final.trim()) {
+          setInterimUser(final.trim());
+        } else if (interim.trim()) {
+          setInterimUser(interim.trim());
+        }
+      };
+
+      recognition.onerror = () => { /* browser may deny — Groq STT is fallback */ };
+      recognition.start();
+      speechRef.current = recognition;
+    } catch { /* unsupported */ }
+  }, []);
 
   const openVoiceSocket = useCallback(async (): Promise<WebSocket> => {
     closeSocket();
@@ -179,58 +433,19 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
       }, 12000);
 
       ws.onmessage = (event) => {
-        if (typeof event.data !== 'string') {
-          if (event.data instanceof ArrayBuffer) playAudio(event.data);
-          return;
+        handleWsMessage(event, 'talk');
+
+        if (typeof event.data === 'string') {
+          try {
+            const msg = JSON.parse(event.data) as { type: string };
+            if (msg.type === 'ready') {
+              clearTimeout(timeout);
+              setState('recording');
+              setStatusLabel('Listening… speak now');
+              resolve(ws);
+            }
+          } catch { /* ignore */ }
         }
-
-        try {
-          const msg = JSON.parse(event.data) as {
-            type: string;
-            stage?: string;
-            message?: string;
-            text?: string;
-            reply?: string;
-          };
-
-          if (msg.type === 'ready') {
-            clearTimeout(timeout);
-            setState('recording');
-            setStatusLabel('Listening…');
-            resolve(ws);
-            return;
-          }
-
-          if (msg.type === 'status') {
-            if (msg.stage === 'transcribing') setStatusLabel('Listening…');
-            if (msg.stage === 'routing' || msg.stage === 'thinking') {
-              setState('processing');
-              setStatusLabel('Thinking…');
-            }
-            if (msg.stage === 'searching') {
-              setState('processing');
-              setStatusLabel('Searching the web…');
-            }
-            if (msg.stage === 'speaking') setStatusLabel('Speaking…');
-            return;
-          }
-
-          if (msg.type === 'transcript' && msg.reply) {
-            pendingTurnRef.current = {
-              user: msg.text ?? '',
-              reply: msg.reply,
-            };
-            setLiveReply(msg.reply);
-            setLiveUser(msg.text ?? null);
-            return;
-          }
-
-          if (msg.type === 'error') {
-            setError(msg.message ?? 'Voice error');
-            endVoiceSession();
-            return;
-          }
-        } catch { /* ignore */ }
       };
 
       ws.onerror = () => {
@@ -240,28 +455,49 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
 
       ws.onclose = () => {
         clearTimeout(timeout);
-        if (sessionRef.current && stateRef.current !== 'speaking') {
+        if (
+          sessionRef.current &&
+          stateRef.current !== 'speaking' &&
+          stateRef.current !== 'processing'
+        ) {
           endVoiceSession();
         }
       };
     });
-  }, [closeSocket, endVoiceSession, playAudio]);
+  }, [closeSocket, endVoiceSession, handleWsMessage]);
 
   const startTalk = useCallback(async () => {
     if (sessionRef.current) return;
+
+    welcomeAudioRef.current?.pause();
+    welcomeAudioRef.current = null;
+
     sessionRef.current = true;
     setError(null);
+    setLiveReply(null);
+    setLiveUser(null);
+    setInterimUser(null);
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
       streamRef.current = stream;
       stream.getAudioTracks().forEach((t) => {
         t.enabled = !muted;
       });
 
-      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-        ? 'audio/webm;codecs=opus'
-        : 'audio/webm';
+      const mimeCandidates = [
+        'audio/webm;codecs=opus',
+        'audio/webm',
+        'audio/mp4',
+        'audio/ogg;codecs=opus',
+      ];
+      const mimeType = mimeCandidates.find((m) => MediaRecorder.isTypeSupported(m)) ?? 'audio/webm';
 
       const ws = await openVoiceSocket();
       ws.send(JSON.stringify({ type: 'start', mimeType }));
@@ -275,16 +511,20 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
         }
       };
 
-      recorder.start(1000);
+      recorder.start(250);
+      startSpeechRecognition();
     } catch (e) {
       sessionRef.current = false;
       setError((e as Error).message);
       endVoiceSession();
     }
-  }, [endVoiceSession, muted, openVoiceSocket]);
+  }, [endVoiceSession, muted, openVoiceSocket, startSpeechRecognition]);
 
   const stopTalk = useCallback(() => {
     if (!sessionRef.current || stateRef.current !== 'recording') return;
+
+    speechRef.current?.stop();
+    speechRef.current = null;
 
     const ws = wsRef.current;
     const recorder = recorderRef.current;
@@ -321,6 +561,7 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
     pendingTurnRef.current = null;
     setLiveReply(null);
     setLiveUser(null);
+    setInterimUser(null);
     endVoiceSession();
   }, [endVoiceSession]);
 
@@ -337,8 +578,11 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
   const toggleCaptions = useCallback(() => setCaptionsOn((c) => !c), []);
   const toggleSpeaker = useCallback(() => {
     setSpeakerOn((s) => {
-      if (audioRef.current) audioRef.current.volume = s ? 0 : 1;
-      return !s;
+      const next = !s;
+      const vol = next ? 1 : 0;
+      if (audioRef.current) audioRef.current.volume = vol;
+      if (welcomeAudioRef.current) welcomeAudioRef.current.volume = vol;
+      return next;
     });
   }, []);
 
@@ -351,8 +595,10 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
         state,
         statusLabel,
         turns,
+        welcomeText,
         liveReply,
         liveUser,
+        interimUser,
         captionsOn,
         speakerOn,
         muted,

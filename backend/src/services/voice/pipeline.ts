@@ -118,7 +118,8 @@ export interface VoicePipelineResult {
 export async function runVoicePipeline(
   audio: Buffer,
   mimeType: string,
-  onStage?: (stage: VoiceStage) => void
+  onStage?: (stage: VoiceStage) => void,
+  onTranscript?: (text: string) => void
 ): Promise<VoicePipelineResult> {
   const { transcribeWithGroqWhisper } = await import('./groqWhisper.js');
 
@@ -137,6 +138,8 @@ export async function runVoicePipeline(
   if (!transcript) {
     throw new Error('Could not hear you — try speaking a bit louder.');
   }
+
+  onTranscript?.(transcript);
 
   const cached = getCached(transcript);
   if (cached) {

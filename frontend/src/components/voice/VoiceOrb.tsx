@@ -1,8 +1,9 @@
 'use client';
 
-import { Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import type { TalkState } from '@/context/VoiceTalkContext';
+import { XROGA_LOGO } from '@/context/VoiceTalkContext';
 
 interface VoiceOrbProps {
   state: TalkState;
@@ -37,15 +38,22 @@ export function VoiceOrb({ state, onClick, size = 'hero', className }: VoiceOrbP
       <span className="xv-voice-orb-glow" aria-hidden />
       <span className="xv-voice-orb-ring xv-voice-orb-ring--1" aria-hidden />
       <span className="xv-voice-orb-ring xv-voice-orb-ring--2" aria-hidden />
+      <span className="xv-voice-orb-shimmer" aria-hidden />
       <span className="xv-voice-orb-core">
-        <Sparkles
-          className={cn(
-            'xv-voice-orb-icon',
-            size === 'hero' ? 'w-10 h-10 sm:w-12 sm:h-12' : 'w-7 h-7',
-            isProcessing && 'animate-spin'
-          )}
-          strokeWidth={1.5}
-        />
+        <span className="xv-voice-orb-logo-wrap">
+          <Image
+            src={XROGA_LOGO}
+            alt="XROGA AI"
+            width={size === 'hero' ? 96 : 52}
+            height={size === 'hero' ? 96 : 52}
+            className={cn(
+              'xv-voice-orb-logo',
+              size === 'hero' ? 'w-16 h-16 sm:w-20 sm:h-20' : 'w-10 h-10',
+              isProcessing && 'xv-voice-orb-logo--busy'
+            )}
+            priority
+          />
+        </span>
       </span>
     </button>
   );

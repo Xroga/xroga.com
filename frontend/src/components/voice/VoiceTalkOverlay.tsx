@@ -9,9 +9,11 @@ import {
   VolumeX,
   Captions,
 } from 'lucide-react';
-import { useVoiceTalk } from '@/context/VoiceTalkContext';
+import Image from 'next/image';
+import { useVoiceTalk, XROGA_LOGO } from '@/context/VoiceTalkContext';
 import { VoiceOrb } from '@/components/voice/VoiceOrb';
 import { useAppStore } from '@/store/useAppStore';
+import { useThemeStore } from '@/store/useThemeStore';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -27,14 +29,17 @@ function greetingForHour(): string {
 export function VoiceTalkOverlay() {
   const router = useRouter();
   const profile = useAppStore((s) => s.profile);
+  const theme = useThemeStore((s) => s.theme);
   const {
     overlayOpen,
     closeOverlay,
     state,
     statusLabel,
     turns,
+    welcomeText,
     liveReply,
     liveUser,
+    interimUser,
     captionsOn,
     speakerOn,
     muted,
@@ -50,7 +55,18 @@ export function VoiceTalkOverlay() {
   const displayName = profile?.display_name?.split(' ')[0] ?? 'there';
   const greeting = useMemo(() => greetingForHour(), []);
 
-  const isWelcome = state === 'idle' && turns.length === 0 && !liveUser && !liveReply;
+  const userCaption =
+    state === 'recording'
+      ? interimUser || liveUser
+      : liveUser;
+
+  const isWelcome =
+    state === 'idle' &&
+    turns.length === 0 &&
+    !liveUser &&
+    !liveReply &&
+    !interimUser &&
+    !welcomeText;
   const isActive = state !== 'idle';
   const canCancel = isActive;
 
@@ -69,10 +85,14 @@ export function VoiceTalkOverlay() {
   if (!overlayOpen || typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className="xv-voice-overlay fixed inset-0 z-[400] flex flex-col" role="dialog" aria-modal="true" aria-label="XROGA Voice">
+    <div
+      className={cn('xv-voice-overlay fixed inset-0 z-[400] flex flex-col', `xv-voice-theme-${theme}`)}
+      role="dialog"
+      aria-modal="true"
+      aria-label="XROGA Voice"
+    >
       <div className="xv-voice-overlay-bg" aria-hidden />
 
-      {/* Top bar — Close + tools */}
       <header className="relative z-10 flex items-center justify-between px-4 sm:px-6 pt-4 sm:pt-5">
         <button
           type="button"
@@ -106,19 +126,32 @@ export function VoiceTalkOverlay() {
         </div>
       </header>
 
-      {/* Conversation panel — user text + AI speech */}
       <main className="relative z-10 flex-1 flex flex-col min-h-0 overflow-hidden">
         <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-4 space-y-4">
           {isWelcome && (
             <div className="text-center space-y-3 pt-8 sm:pt-12 animate-in fade-in duration-500">
-              <p className="text-sm sm:text-base text-white/50 font-medium">
+              <p className="text-sm sm:text-base xv-voice-muted font-medium">
                 {greeting}{' '}
-                <span className="text-pink-300/90 font-semibold">{displayName}!</span>
+                <span className="xv-voice-accent font-semibold">{displayName}!</span>
               </p>
-              <h2 className="text-2xl sm:text-3xl font-semibold text-white/95 tracking-tight leading-tight">
+              <h2 className="text-2xl sm:text-3xl font-semibold xv-voice-title tracking-tight leading-tight">
                 How can I help you today?
               </h2>
-              <p className="text-xs text-white/35 pt-2">Tap the orb below to start talking</p>
+              <p className="text-xs xv-voice-muted-dim pt-2">
+                XROGA will greet you, then tap the orb to speak
+              </p>
+            </div>
+          )}
+
+          {welcomeText && turns.length === 0 && (
+            <div className="flex gap-3 items-start max-w-[92%] animate-in fade-in">
+              <div className="xv-voice-orb-mini shrink-0 mt-1 overflow-hidden">
+                <Image src={XROGA_LOGO} alt="" width={28} height={28} className="w-full h-full object-cover" />
+              </div>
+              <div className="xv-voice-bubble xv-voice-bubble--ai xv-voice-bubble--live">
+                <span className="xv-voice-bubble-label">XROGA</span>
+                {captionsOn && <p>{welcomeText}</p>}
+              </div>
             </div>
           )}
 
@@ -132,7 +165,9 @@ export function VoiceTalkOverlay() {
               </div>
             ) : (
               <div key={turn.id} className="flex gap-3 items-start max-w-[90%]">
-                <div className="xv-voice-orb-mini shrink-0 mt-1" aria-hidden />
+                <div className="xv-voice-orb-mini shrink-0 mt-1 overflow-hidden">
+                  <Image src={XROGA_LOGO} alt="" width={28} height={28} className="w-full h-full object-cover" />
+                </div>
                 <div className="xv-voice-bubble xv-voice-bubble--ai">
                   <span className="xv-voice-bubble-label">XROGA</span>
                   {captionsOn && <p>{turn.text}</p>}
@@ -145,7 +180,9 @@ export function VoiceTalkOverlay() {
             <div className="flex justify-end animate-in fade-in">
               <div className="xv-voice-bubble xv-voice-bubble--user xv-voice-bubble--live max-w-[85%]">
                 <span className="xv-voice-bubble-label">You</span>
-                <p className="text-white/60 italic">Listening to you…</p>
+                <p className={userCaption ? '' : 'xv-voice-muted italic'}>
+                  {userCaption || 'Listening… speak now'}
+                </p>
               </div>
             </div>
           )}
@@ -161,7 +198,9 @@ export function VoiceTalkOverlay() {
 
           {(state === 'processing' || state === 'speaking') && liveReply && captionsOn && (
             <div className="flex gap-3 items-start max-w-[90%] animate-in fade-in">
-              <div className="xv-voice-orb-mini shrink-0 mt-1" aria-hidden />
+              <div className="xv-voice-orb-mini shrink-0 mt-1 overflow-hidden">
+                <Image src={XROGA_LOGO} alt="" width={28} height={28} className="w-full h-full object-cover" />
+              </div>
               <div className="xv-voice-bubble xv-voice-bubble--ai xv-voice-bubble--live">
                 <span className="xv-voice-bubble-label">XROGA</span>
                 <p>{liveReply}</p>
@@ -170,7 +209,6 @@ export function VoiceTalkOverlay() {
           )}
         </div>
 
-        {/* Orb + status */}
         <div className="shrink-0 flex flex-col items-center gap-3 py-4 px-4">
           <VoiceOrb state={state} size="hero" onClick={orbPress} />
           {statusLabel && (
@@ -180,8 +218,8 @@ export function VoiceTalkOverlay() {
                 statusLabel.includes('Searching')
                   ? 'text-cyan-300/90'
                   : state === 'recording'
-                    ? 'text-white/75'
-                    : 'text-white/50'
+                    ? 'xv-voice-title'
+                    : 'xv-voice-muted'
               )}
             >
               {statusLabel.includes('Searching') ? `🔍 ${statusLabel}` : statusLabel}
@@ -191,7 +229,6 @@ export function VoiceTalkOverlay() {
         </div>
       </main>
 
-      {/* Bottom control bar */}
       <footer className="relative z-10 px-4 sm:px-8 pb-6 sm:pb-8 pt-2 border-t border-white/5">
         <div className="flex items-center justify-between gap-4 max-w-md mx-auto">
           <button
@@ -226,8 +263,8 @@ export function VoiceTalkOverlay() {
             </button>
           )}
         </div>
-        <p className="text-center text-[10px] text-white/25 mt-3 font-mono">
-          Tap orb to talk · Cancel stops current round · Close exits
+        <p className="text-center text-[10px] xv-voice-muted-dim mt-3 font-mono">
+          Tap orb to start · Tap again when done speaking · Cancel stops current round
         </p>
       </footer>
     </div>,

@@ -2,6 +2,7 @@ import type { IncomingMessage, Server } from 'http';
 import { WebSocketServer, type WebSocket } from 'ws';
 import { verifyAccessToken } from '../../middleware/auth.js';
 import { runVoicePipeline } from './pipeline.js';
+import { synthesizeWelcome } from './welcomeVoice.js';
 
 interface VoiceClientState {
   userId: string;
@@ -26,6 +27,20 @@ function parseTokenFromUrl(url: string | undefined): string | null {
   }
 }
 
+async function handleGreeting(ws: WebSocket, displayName?: string) {
+  try {
+    sendJson(ws, { type: 'status', stage: 'speaking' });
+    const { text, audio } = await synthesizeWelcome(displayName);
+    sendJson(ws, { type: 'greeting', text });
+    if (ws.readyState === ws.OPEN) {
+      ws.send(audio, { binary: true });
+    }
+    sendJson(ws, { type: 'done' });
+  } catch (e) {
+    sendJson(ws, { type: 'error', message: (e as Error).message });
+  }
+}
+
 async function handleEndOfSpeech(ws: WebSocket, state: VoiceClientState) {
   if (state.processing) return;
   state.processing = true;
@@ -40,9 +55,16 @@ async function handleEndOfSpeech(ws: WebSocket, state: VoiceClientState) {
   }
 
   try {
-    const result = await runVoicePipeline(audio, state.mimeType, (stage) => {
-      sendJson(ws, { type: 'status', stage });
-    });
+    const result = await runVoicePipeline(
+      audio,
+      state.mimeType,
+      (stage) => {
+        sendJson(ws, { type: 'status', stage });
+      },
+      (text) => {
+        sendJson(ws, { type: 'user_text', text });
+      }
+    );
 
     sendJson(ws, {
       type: 'transcript',
@@ -104,10 +126,10 @@ export function attachVoiceWebSocket(server: Server) {
     sendJson(ws, { type: 'ready' });
 
     ws.on('message', (data, isBinary) => {
-      if (state.processing) return;
-
       if (isBinary) {
-        state.chunks.push(Buffer.from(data as ArrayBuffer));
+        if (!state.processing) {
+          state.chunks.push(Buffer.from(data as ArrayBuffer));
+        }
         return;
       }
 
@@ -115,7 +137,15 @@ export function attachVoiceWebSocket(server: Server) {
         const msg = JSON.parse(String(data)) as {
           type?: string;
           mimeType?: string;
+          displayName?: string;
         };
+
+        if (msg.type === 'greeting') {
+          void handleGreeting(ws, msg.displayName);
+          return;
+        }
+
+        if (state.processing) return;
 
         if (msg.type === 'start') {
           state.chunks = [];
