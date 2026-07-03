@@ -681,6 +681,12 @@ body.theme-gray * {
     pointer-events: none;
   }
 
+  .xv-talk-btn-header--searching {
+    border-color: color-mix(in srgb, #22d3ee 55%, var(--card-border));
+    background: color-mix(in srgb, #22d3ee 14%, var(--card));
+    animation: talk-pulse 1.6s ease infinite;
+  }
+
   .xv-talk-btn-large {
     position: relative;
     display: flex;

@@ -123,9 +123,13 @@ export function usePushToTalk() {
 
           if (msg.type === 'status') {
             if (msg.stage === 'transcribing') setStatusLabel('Listening…');
-            if (msg.stage === 'thinking') {
+            if (msg.stage === 'routing' || msg.stage === 'thinking') {
               setState('processing');
               setStatusLabel('Thinking…');
+            }
+            if (msg.stage === 'searching') {
+              setState('processing');
+              setStatusLabel('🔍 Searching the web…');
             }
             if (msg.stage === 'speaking') setStatusLabel('Speaking…');
             return;

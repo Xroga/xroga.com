@@ -49,6 +49,7 @@ async function handleEndOfSpeech(ws: WebSocket, state: VoiceClientState) {
       text: result.transcript,
       reply: result.reply,
       cached: result.cached,
+      searchedWeb: result.searchedWeb,
     });
 
     if (ws.readyState === ws.OPEN) {

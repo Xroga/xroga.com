@@ -84,7 +84,7 @@ const healthPayload = () => {
   return {
     status: 'ok',
     service: 'xroga-api',
-    version: '1.7.0',
+    version: '1.7.1',
     councilStack: 'groq-gemini-deepseek-mistral',
     councilKeys: getCouncilKeyStatus(),
     deployKeys: getDeployKeyStatus(),

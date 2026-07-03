@@ -38,6 +38,7 @@ export function TalkButton({ variant = 'header', className }: TalkButtonProps) {
   }, [error, clearError, router]);
 
   const isActive = state === 'recording';
+  const isSearching = statusLabel?.toLowerCase().includes('searching');
   const isBusy = state === 'connecting' || state === 'processing' || state === 'speaking';
   const label = statusLabel ?? STATE_LABEL[state];
 
@@ -89,6 +90,7 @@ export function TalkButton({ variant = 'header', className }: TalkButtonProps) {
         'xv-talk-btn-header shrink-0',
         isActive && 'xv-talk-btn-header--active',
         isBusy && 'xv-talk-btn-header--busy',
+        isSearching && 'xv-talk-btn-header--searching',
         className
       )}
       aria-pressed={isActive || isBusy}
