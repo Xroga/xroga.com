@@ -34,7 +34,9 @@ const ALIASES: Record<string, string[]> = {
   MORPH_API_KEY: ['MORPH_API_KEY'],
   DEEPDUB_API_KEY: ['DEEPDUB_API_KEY'],
   IMMERSITY_CLIENT_ID: ['IMMERSITY_CLIENT_ID', 'Immersity_Client_ID'],
-  IMMERSITY_CLIENT_SECRET: ['IMMERSITY_CLIENT_SECRET', 'Immersity_Client_Secret'],
+  ANTHROPIC_API_KEY: ['ANTHROPIC_API_KEY'],
+  OPENAI_API_KEY: ['OPENAI_API_KEY'],
+  MISTRAL_API_KEY: ['MISTRAL_API_KEY'],
 };
 
 export function getSecret(primary: keyof typeof ALIASES | string): string | undefined {

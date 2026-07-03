@@ -18,6 +18,12 @@ import { resolveAttachmentFeatureCategory } from '../lib/featureIntent.js';
 import { getImageProviderStatus } from '../services/builder/imageGen.js';
 import { getVideoProviderStatus } from '../lib/videoProviders.js';
 import { omniPhaseToVideoStep } from '../services/omniReality/omniEvents.js';
+import {
+  runNegotiationEngine,
+  runEscapePod,
+  shouldUseNegotiationEngine,
+} from '../swarm/negotiation/engine.js';
+import { isPaidApiAllowed } from '../config/hybridConfig.js';
 
 const FRIENDLY_FALLBACKS = [
   "I'm putting the finishing touches on this — here's what I can share right now based on your request.",
@@ -114,6 +120,95 @@ export class Orchestrator {
       featureCategory: category,
       polishedReply: shield.content,
       followUps: shield.followUps,
+    };
+  }
+
+  /** 7-Phase AI Swarm Logic — negotiated build with Core Quartet + Reserve */
+  private static async executeNegotiationBuild(
+    ctx: {
+      userId: string;
+      prompt: string;
+      onProgress?: (event: SwarmProgressEvent) => void;
+    },
+    featureCategory: FeatureCategory
+  ): Promise<SwarmRunResult & { polishedReply: string; followUps: string[]; fast?: boolean }> {
+    const userText = routingPrompt(ctx.prompt);
+    const runNegotiation = async () =>
+      runNegotiationEngine({
+        userPrompt: userText,
+        userId: ctx.userId,
+        featureCategory,
+        onProgress: ctx.onProgress,
+      });
+
+    let result;
+    try {
+      result = isPaidApiAllowed() ? await runNegotiation() : await runEscapePod({
+        userPrompt: userText,
+        userId: ctx.userId,
+        featureCategory,
+        onProgress: ctx.onProgress,
+      });
+    } catch (err) {
+      console.warn('[Orchestrator] Negotiation engine failed, Escape Pod:', (err as Error).message);
+      result = await runEscapePod({
+        userPrompt: userText,
+        userId: ctx.userId,
+        featureCategory,
+        onProgress: ctx.onProgress,
+      });
+    }
+
+    if (result.needsUserClarification) {
+      const shield = await runThreeLayerShield({
+        content: result.polishedOutput,
+        prompt: ctx.prompt,
+        userId: ctx.userId,
+        includeProsCons: false,
+      });
+      return {
+        runId: crypto.randomUUID(),
+        fast: true,
+        result: {
+          success: true,
+          iterations: 0,
+          defectsFound: 0,
+          plan: defaultPlan(),
+          agents: defaultAgents(['architect']),
+          output: { type: 'chat', content: shield.content } as FeatureOutput,
+        },
+        actions: { success: true, remaining: 0, cost: 1 },
+        featureCategory,
+        polishedReply: shield.content,
+        followUps: shield.followUps,
+      };
+    }
+
+    const shield = await runThreeLayerShield({
+      content: result.polishedOutput,
+      prompt: ctx.prompt,
+      userId: ctx.userId,
+      includeProsCons: false,
+    });
+
+    return {
+      runId: crypto.randomUUID(),
+      result: {
+        success: result.success,
+        iterations: 1,
+        defectsFound: 0,
+        plan: defaultPlan(),
+        agents: defaultAgents(['architect', 'builder', 'reviewer', 'qa', 'truth_council']),
+        output: { type: 'chat', content: shield.content } as FeatureOutput,
+      },
+      actions: { success: true, remaining: 0, cost: featureCategory === 'chat' ? 1 : 15 },
+      featureCategory,
+      polishedReply: shield.content,
+      followUps: [
+        ...shield.followUps,
+        'Deploy this build?',
+        'Add another feature?',
+      ].slice(0, 4),
     };
   }
 
@@ -518,6 +613,11 @@ export class Orchestrator {
           followUps: shield.followUps,
         };
       }
+    }
+
+    // 7-Phase AI Swarm Logic — replaces background queue for build tasks
+    if (shouldUseNegotiationEngine(userText, featureCategory)) {
+      return this.executeNegotiationBuild(ctx, featureCategory);
     }
 
     const plan = await buildArchitectDAG(ctx.prompt, {

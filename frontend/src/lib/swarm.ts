@@ -59,6 +59,8 @@ export interface SwarmProgressEvent {
     variantIndex?: number;
   };
   councilLayer?: 'elite' | 'reserve' | 'blackhole';
+  negotiationPhase?: number;
+  swarmLogic?: boolean;
 }
 
 export interface SwarmCompleteEvent {
