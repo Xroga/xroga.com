@@ -18,7 +18,7 @@ import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
 import { buildLandingPage } from '../../services/builder/landingPage.js';
 import { debugCode } from '../../services/debugging/codeDebugger.js';
 import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../../types/features.js';
-import type { NegotiationContext, NegotiationPhase, NegotiationResult, VerificationReport } from './types.js';
+import type { NegotiationContext, NegotiationPhase, NegotiationResult, VerificationReport, SwarmTodoItem } from './types.js';
 import {
   BRAND_HEADER,
   PHASE_0_DISCOVERY,
@@ -38,6 +38,167 @@ import { swarmReserveProcess } from '../reserve/orchestrator.js';
 const MAX_PLAN_ITERATIONS = 3;
 const MAX_STEP_CORRECTIONS = 3;
 
+const META_TODO_DEFS: Array<{ id: string; label: string }> = [
+  { id: 'analyze', label: 'XROGA is analyzing your request' },
+  { id: 'plan', label: 'XROGA is planning' },
+  { id: 'structure', label: 'XROGA is making it structured' },
+  { id: 'steps', label: 'XROGA turned it into a step-by-step plan' },
+  { id: 'verify-plan', label: 'XROGA verified the master plan' },
+];
+
+function createTodoState() {
+  const meta: SwarmTodoItem[] = META_TODO_DEFS.map((d) => ({
+    ...d,
+    status: 'pending' as const,
+  }));
+  let build: SwarmTodoItem[] = [];
+  let analysis = '';
+
+  const snapshot = (): SwarmTodoItem[] => [...meta, ...build];
+
+  const setAnalysis = (text: string) => {
+    analysis = text.slice(0, 400);
+  };
+
+  const activateMeta = (id: string) => {
+    let passed = false;
+    for (const item of meta) {
+      if (item.id === id) {
+        item.status = 'active';
+        passed = true;
+      } else if (!passed) {
+        item.status = 'done';
+      } else {
+        item.status = 'pending';
+      }
+    }
+    for (const item of build) {
+      if (item.status === 'active') item.status = 'pending';
+    }
+  };
+
+  const completeMetaThrough = (id: string) => {
+    let found = false;
+    for (const item of meta) {
+      if (item.id === id) {
+        item.status = 'done';
+        found = true;
+      } else if (!found) {
+        item.status = 'done';
+      }
+    }
+  };
+
+  const setBuildSteps = (steps: string[]) => {
+    build = steps.map((s, i) => ({
+      id: `build-${i}`,
+      label: `Step ${i + 1}: ${s}`,
+      status: 'pending' as const,
+    }));
+  };
+
+  const activateBuild = (index: number) => {
+    build.forEach((item, i) => {
+      if (i < index) item.status = 'done';
+      else if (i === index) item.status = 'active';
+      else item.status = 'pending';
+    });
+    for (const item of meta) {
+      if (item.status !== 'done') item.status = 'done';
+    }
+  };
+
+  const completeAllBuild = () => {
+    build.forEach((item) => {
+      item.status = 'done';
+    });
+  };
+
+  const addFinalTodos = () => {
+    if (!build.some((b) => b.id === 'final-check')) {
+      build.push(
+        { id: 'final-check', label: 'XROGA final verification', status: 'pending' },
+        { id: 'emit', label: 'XROGA delivering your build', status: 'pending' }
+      );
+    }
+  };
+
+  const activateFinal = (id: 'final-check' | 'emit') => {
+    for (const item of build) {
+      if (item.id === id) item.status = 'active';
+      else if (item.status === 'active') item.status = 'done';
+      else if (build.indexOf(item) < build.findIndex((b) => b.id === id)) item.status = 'done';
+    }
+  };
+
+  const completeAll = () => {
+    meta.forEach((m) => {
+      m.status = 'done';
+    });
+    build.forEach((b) => {
+      b.status = 'done';
+    });
+  };
+
+  const completeMeta = (id: string) => {
+    for (const item of meta) {
+      if (item.id === id) item.status = 'done';
+    }
+  };
+
+  const completeBuild = (index: number) => {
+    build.forEach((item, i) => {
+      if (i <= index) item.status = 'done';
+      else if (item.status === 'active') item.status = 'pending';
+    });
+  };
+
+  const completeFinal = (id: 'final-check' | 'emit') => {
+    for (const item of build) {
+      if (item.id === id) item.status = 'done';
+    }
+  };
+
+  return {
+    snapshot,
+    setAnalysis,
+    activateMeta,
+    completeMeta,
+    completeMetaThrough,
+    setBuildSteps,
+    activateBuild,
+    completeBuild,
+    completeAllBuild,
+    addFinalTodos,
+    activateFinal,
+    completeFinal,
+    completeAll,
+    getAnalysis: () => analysis,
+  };
+}
+
+function emit(
+  ctx: NegotiationContext,
+  phase: NegotiationPhase,
+  detail: string,
+  agent: string,
+  todos: ReturnType<typeof createTodoState>,
+  statusLabel: string
+): void {
+  ctx.onProgress?.({
+    runId: crypto.randomUUID(),
+    agent,
+    status: `phase_${phase}`,
+    message: statusLabel,
+    negotiationPhase: phase,
+    swarmLogic: true,
+    swarmTodos: todos.snapshot(),
+    swarmStatusLabel: statusLabel,
+    swarmAnalysis: todos.getAnalysis() || undefined,
+    timestamp: new Date().toISOString(),
+  } as SwarmProgressEvent);
+}
+
 export function shouldUseNegotiationEngine(prompt: string, category: FeatureCategory): boolean {
   if (['landing_page', 'code_debug', 'browser_automation'].includes(category)) return true;
   const t = prompt.toLowerCase();
@@ -46,23 +207,6 @@ export function shouldUseNegotiationEngine(prompt: string, category: FeatureCate
   }
   if (/\b(debug|fix)\b[\s\S]{0,40}\b(code|bug|error|typescript|python)\b/.test(t)) return true;
   return false;
-}
-
-function emit(
-  ctx: NegotiationContext,
-  phase: NegotiationPhase,
-  detail: string,
-  agent = 'architect'
-): void {
-  ctx.onProgress?.({
-    runId: crypto.randomUUID(),
-    agent,
-    status: `phase_${phase}`,
-    message: `${BRAND_HEADER}\n\n[Phase ${phase}] ${detail}`,
-    negotiationPhase: phase,
-    swarmLogic: true,
-    timestamp: new Date().toISOString(),
-  } as SwarmProgressEvent);
 }
 
 function isPass(text: string): boolean {
@@ -152,12 +296,15 @@ async function verifyStepParallel(
 
 export async function runNegotiationEngine(ctx: NegotiationContext): Promise<NegotiationResult> {
   const { userPrompt, featureCategory } = ctx;
+  const todos = createTodoState();
 
-  // Phase 0 — Discovery
-  emit(ctx, 0, 'Gemini analyzing your request…', 'architect');
+  todos.activateMeta('analyze');
+  emit(ctx, 0, 'XROGA is analyzing your request…', 'architect', todos, 'XROGA Analyze');
+
   const analysis = analyzeUserQuery(userPrompt);
   if (analysis.needsClarification && analysis.clarificationText) {
-    emit(ctx, 0, 'Need a few details before building…', 'architect');
+    todos.setAnalysis(analysis.intentLabel);
+    emit(ctx, 0, 'Need a few details before building…', 'architect', todos, 'XROGA Analyze');
     return {
       success: false,
       clarifiedBrief: '',
@@ -180,7 +327,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   }
 
   if (/clarifying question|\?\s*$/im.test(clarifiedBrief) && clarifiedBrief.split('?').length > 2) {
-    emit(ctx, 0, 'Gemini is asking clarifying questions…', 'architect');
+    todos.setAnalysis(clarifiedBrief.slice(0, 280));
+    emit(ctx, 0, 'XROGA needs a few clarifying details…', 'architect', todos, 'XROGA Analyze');
     const emitted = await blackHoleEmit(clarifiedBrief, userPrompt, 'general', 'elite');
     return {
       success: false,
@@ -193,7 +341,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     };
   }
 
-  emit(ctx, 0, 'Brief clarified — Groq summarizing intent…', 'architect');
+  todos.setAnalysis(clarifiedBrief.slice(0, 280));
+  todos.completeMeta('analyze');
+  emit(ctx, 0, 'Analysis complete — moving to planning', 'architect', todos, 'XROGA Analyze');
+
   try {
     clarifiedBrief = await groqCall(
       'Summarize this brief in under 50 words.',
@@ -204,20 +355,22 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     /* keep gemini brief */
   }
 
-  // Phase 1 — Planning
-  emit(ctx, 1, 'Gemini generating Master Plan…', 'architect');
+  todos.activateMeta('plan');
+  emit(ctx, 1, 'XROGA is planning…', 'architect', todos, 'XROGA Planning');
   let masterPlan = await geminiCall(PHASE_1_PLANNING_GEMINI, `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`);
   try {
     masterPlan = await groqCall(PHASE_1_PLANNING_GROQ, masterPlan, 400);
   } catch {
     /* keep gemini plan */
   }
-  emit(ctx, 1, `Master Plan ready (${parsePlanSteps(masterPlan).length} steps)`, 'architect');
+  todos.completeMeta('plan');
+  emit(ctx, 1, `Master Plan ready (${parsePlanSteps(masterPlan).length} steps)`, 'architect', todos, 'XROGA Planning');
 
-  // Phase 2 — Plan cross-verification
+  todos.activateMeta('structure');
+  emit(ctx, 2, 'XROGA is making it structured…', 'architect', todos, 'XROGA Structure');
   let approvedPlan = masterPlan;
   for (let i = 0; i < MAX_PLAN_ITERATIONS; i++) {
-    emit(ctx, 2, `DeepSeek reviewing plan (round ${i + 1})…`, 'reviewer');
+    emit(ctx, 2, `DeepSeek reviewing plan (round ${i + 1})…`, 'reviewer', todos, 'XROGA Structure');
     const review = await deepseekCall(
       PHASE_2_DEEPSEEK_REVIEW,
       `User query:\n${userPrompt}\n\nMaster Plan:\n${approvedPlan}`
@@ -225,12 +378,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
     if (isPass(review)) {
       approvedPlan = review.replace(/^APPROVED PLAN\s*/i, '').trim() || approvedPlan;
-      emit(ctx, 2, 'Plan approved unanimously ✅', 'reviewer');
       break;
     }
 
     const corrected = review.replace(/^CORRECTED PLAN\s*/i, '').trim() || review;
-    emit(ctx, 2, 'Gemini reviewing DeepSeek corrections…', 'architect');
+    emit(ctx, 2, 'Gemini reviewing DeepSeek corrections…', 'architect', todos, 'XROGA Structure');
     const geminiReply = await geminiCall(
       PHASE_2_GEMINI_AGREE,
       `Original user:\n${userPrompt}\n\nCorrected plan:\n${corrected}`
@@ -238,22 +390,28 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
     if (isPass(geminiReply)) {
       approvedPlan = geminiReply.replace(/^UNANIMOUS APPROVAL\s*/i, '').trim() || corrected;
-      emit(ctx, 2, 'Unanimous plan approval ✅', 'architect');
       break;
     }
     approvedPlan = corrected;
   }
+  todos.completeMeta('structure');
+  todos.activateMeta('verify-plan');
+  todos.completeMeta('verify-plan');
 
   const steps = parsePlanSteps(approvedPlan);
   if (!steps.length) steps.push('Implement the full project per the approved brief');
+  todos.setBuildSteps(steps);
+  todos.activateMeta('steps');
+  todos.completeMeta('steps');
+  emit(ctx, 2, 'Plan verified — step-by-step build list ready', 'reviewer', todos, 'XROGA Steps');
 
   const codeParts: string[] = [];
   let totalCorrections = 0;
 
-  // Phase 3–5 — Step execution loop
   for (let si = 0; si < steps.length; si++) {
     const stepLabel = `Step ${si + 1}/${steps.length}`;
-    emit(ctx, 3, `Executing ${stepLabel} with DeepSeek…`, 'builder');
+    todos.activateBuild(si);
+    emit(ctx, 3, `Building ${stepLabel}…`, 'builder', todos, 'XROGA Build');
 
     let stepCode = await deepseekCall(
       PHASE_3_EXECUTE,
@@ -262,12 +420,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
     let approved = false;
     for (let attempt = 0; attempt < MAX_STEP_CORRECTIONS; attempt++) {
-      emit(ctx, 4, `Verifying ${stepLabel} (Groq + Gemini + Mistral)…`, 'qa');
+      emit(ctx, 4, `Verifying ${stepLabel}…`, 'qa', todos, 'XROGA Verify');
       const reports = await verifyStepParallel(stepCode, approvedPlan, userPrompt);
       const failures = reports.filter((r) => !r.pass);
 
       if (!failures.length) {
-        emit(ctx, 4, `${stepLabel} verified — all agents PASS ✅`, 'qa');
         approved = true;
         break;
       }
@@ -275,8 +432,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       emit(
         ctx,
         5,
-        `${failures.map((f) => f.agent).join(', ')} found issues — DeepSeek correcting…`,
-        'debugger'
+        `${failures.map((f) => f.agent).join(', ')} found issues — correcting…`,
+        'debugger',
+        todos,
+        'XROGA Fix'
       );
       const errorPlan = failures.map((f) => `[${f.agent}] ${f.report}`).join('\n');
       stepCode = await deepseekCall(
@@ -286,16 +445,18 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       totalCorrections++;
     }
 
-    if (!approved) {
-      emit(ctx, 5, `${stepLabel} — max corrections reached, proceeding with best effort`, 'debugger');
-    }
+    todos.completeBuild(si);
     codeParts.push(`// --- ${stepLabel}: ${steps[si]} ---\n${stepCode}`);
+    if (!approved) {
+      emit(ctx, 5, `${stepLabel} — best effort after max corrections`, 'debugger', todos, 'XROGA Fix');
+    }
   }
 
   let assembledCode = codeParts.join('\n\n');
 
-  // Phase 6 — Final verification
-  emit(ctx, 6, 'Final holistic verification (all 4 agents)…', 'truth_council');
+  todos.addFinalTodos();
+  todos.activateFinal('final-check');
+  emit(ctx, 6, 'Final verification (all agents)…', 'truth_council', todos, 'XROGA Final Check');
   const finalChecks = await Promise.allSettled([
     deepseekCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 10000)}`),
     geminiCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 10000)}`, 256),
@@ -307,23 +468,18 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   const finalFail = finalChecks.some((r) => r.status === 'fulfilled' && !isPass(r.value as string));
   if (finalFail) {
-    emit(ctx, 5, 'Final issues found — DeepSeek applying global fix…', 'debugger');
     assembledCode = await deepseekCall(PHASE_5_CORRECT, `Final review issues\n\n${assembledCode}`);
     totalCorrections++;
-  } else {
-    emit(ctx, 6, 'Final verification — ALL PASS ✅', 'truth_council');
   }
+  todos.completeFinal('final-check');
 
-  // Reserve 20% (optional)
   if (shouldUseReserve(userPrompt, totalCorrections)) {
-    emit(ctx, 6, 'Reserve polish (Claude/GPT)…', 'architect');
     const polished = await reservePolish(assembledCode, userPrompt, 'repeated_failure');
     if (polished) assembledCode = polished;
-    else emit(ctx, 6, 'Reserve unavailable — Core Quartet completing 100%', 'architect');
   }
 
-  // Phase 7 — Emission
-  emit(ctx, 7, 'Emitting through Black Hole V∞…', 'builder');
+  todos.activateFinal('emit');
+  emit(ctx, 7, 'Emitting through Black Hole V∞…', 'builder', todos, 'XROGA Deliver');
   let featureOutput: FeatureOutput | null = null;
 
   try {
@@ -353,7 +509,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     polishedOutput = formatPlainProfessional(rawEmit);
   }
 
-  emit(ctx, 7, 'Build delivered — errors resolved before you saw them ✅', 'complete');
+  todos.completeFinal('emit');
+  todos.completeAll();
+  emit(ctx, 7, 'Build delivered ✅', 'complete', todos, 'XROGA Deliver');
 
   return {
     success: true,
@@ -366,10 +524,13 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
 /** OSS Escape Pod — all paid APIs down */
 export async function runEscapePod(ctx: NegotiationContext): Promise<NegotiationResult> {
-  emit(ctx, 0, 'Escape Pod Mode — OSS Reserve Army engaged', 'architect');
+  const todos = createTodoState();
+  todos.activateMeta('analyze');
+  emit(ctx, 0, 'Escape Pod Mode — OSS Reserve Army engaged', 'architect', todos, 'XROGA Analyze');
   const raw = await swarmReserveProcess(ctx.userPrompt);
+  todos.completeAll();
   const emitted = await blackHoleEmit(raw, ctx.userPrompt, 'general', 'reserve');
-  emit(ctx, 7, 'Escape Pod delivery complete', 'complete');
+  emit(ctx, 7, 'Escape Pod delivery complete', 'complete', todos, 'XROGA Deliver');
   return {
     success: true,
     clarifiedBrief: ctx.userPrompt,

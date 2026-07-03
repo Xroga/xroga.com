@@ -48,7 +48,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, swarmNegotiationPhase, imageProgressStep, imageAttempts, videoProgressStep, videoOmniPhase, videoEstimateSeconds, videoStartedAt, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput } =
+  const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, imageProgressStep, imageAttempts, videoProgressStep, videoOmniPhase, videoEstimateSeconds, videoStartedAt, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -388,11 +388,14 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
-                        {loading && msg.id === animatingId && swarmNegotiationPhase != null && (
+                        {loading && msg.id === animatingId && (swarmTodos.length > 0 || swarmNegotiationPhase != null) && (
                           <SwarmPhasePanel
                             activePhase={swarmNegotiationPhase}
                             loading={loading}
                             message={pipelineMessage}
+                            statusLabel={swarmStatusLabel}
+                            analysis={swarmAnalysis}
+                            todos={swarmTodos}
                           />
                         )}
                         {(msg.thinkingSteps?.length || (loading && msg.id === animatingId && showChatThinking)) && (

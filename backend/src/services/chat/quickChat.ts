@@ -1,3 +1,4 @@
+import { getSecret } from '../../config/envSecrets.js';
 import { groqChat } from '../../lib/groq.js';
 import { chatGenerate, classifyChatComplexity } from '../aiRouter.js';
 import { classifyFeature } from '../architect/featureRouter.js';
@@ -109,7 +110,7 @@ export async function quickChatWithGroqFallback(prompt: string): Promise<string>
   try {
     return await quickChat(prompt);
   } catch {
-    if (process.env.GROQ_API_KEY) {
+    if (getSecret('GROQ_API_KEY')) {
       return groqChat(
         [
           { role: 'system', content: CHAT_SYSTEM },

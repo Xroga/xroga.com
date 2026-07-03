@@ -267,6 +267,9 @@ export class SwarmService {
           imageAttempt: event.imageAttempt,
           negotiationPhase: event.negotiationPhase,
           swarmLogic: event.swarmLogic,
+          swarmTodos: event.swarmTodos,
+          swarmStatusLabel: event.swarmStatusLabel,
+          swarmAnalysis: event.swarmAnalysis,
           councilLayer: event.councilLayer,
         },
       });

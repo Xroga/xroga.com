@@ -1,3 +1,5 @@
+import { getSecret } from '../config/envSecrets.js';
+
 interface DeepSeekMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
@@ -11,7 +13,7 @@ export async function deepSeekChat(
   messages: DeepSeekMessage[],
   options?: { model?: string; maxTokens?: number }
 ): Promise<string> {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
+  const apiKey = getSecret('DEEPSEEK_API_KEY');
   if (!apiKey) {
     throw new Error('DEEPSEEK_API_KEY not configured');
   }

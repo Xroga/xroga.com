@@ -4,6 +4,7 @@ import { geminiGenerate } from '../lib/gemini.js';
 import { claudeGenerate } from '../lib/anthropic.js';
 import OpenAI from 'openai';
 import { XROGA_CORE_TRAINING } from '../orchestrator/aiTraining.js';
+import { getSecret } from '../config/envSecrets.js';
 import type { FeatureCategory } from '../types/features.js';
 
 export type TaskComplexity = 'light' | 'medium' | 'heavy';
@@ -40,7 +41,7 @@ export function classifyChatComplexity(prompt: string, category?: FeatureCategor
 }
 
 function getOpenAI(): OpenAI | null {
-  const key = process.env.OPENAI_API_KEY;
+  const key = getSecret('OPENAI_API_KEY');
   return key ? new OpenAI({ apiKey: key }) : null;
 }
 
@@ -52,7 +53,7 @@ You are the Xroga Architect. Break this request into a structured JSON plan.
 Category: ${category}
 Return concise JSON with keys: goal, steps (array), tools_needed, estimated_complexity.`;
 
-  if (process.env.DEEPSEEK_API_KEY) {
+  if (getSecret('DEEPSEEK_API_KEY')) {
     try {
       const reply = await deepSeekChat(
         [
@@ -67,7 +68,7 @@ Return concise JSON with keys: goal, steps (array), tools_needed, estimated_comp
     }
   }
 
-  if (process.env.GEMINI_API_KEY) {
+  if (getSecret('GEMINI_API_KEY')) {
     try {
       return await geminiGenerate(system, prompt, { model: 'gemini-2.0-flash', maxTokens: 512 });
     } catch (err) {
@@ -86,7 +87,7 @@ export async function builderGenerate(
 ): Promise<{ text: string; model: string }> {
   const usePremium = complexity === 'heavy' || (complexity === 'medium' && Math.random() < 0.3);
 
-  if (usePremium && process.env.ANTHROPIC_API_KEY) {
+  if (usePremium && getSecret('ANTHROPIC_API_KEY')) {
     try {
       const text = await claudeGenerate(systemPrompt, prompt, { maxTokens: 2048 });
       if (text.trim()) return { text: text.trim(), model: 'claude-3.5-sonnet' };
@@ -115,7 +116,7 @@ export async function builderGenerate(
     }
   }
 
-  if (process.env.GEMINI_API_KEY) {
+  if (getSecret('GEMINI_API_KEY')) {
     try {
       const text = await geminiGenerate(systemPrompt, prompt, {
         model: 'gemini-2.0-flash',
@@ -127,7 +128,7 @@ export async function builderGenerate(
     }
   }
 
-  if (process.env.DEEPSEEK_API_KEY) {
+  if (getSecret('DEEPSEEK_API_KEY')) {
     try {
       const text = await deepSeekChat(
         [
@@ -142,7 +143,7 @@ export async function builderGenerate(
     }
   }
 
-  if (process.env.GROQ_API_KEY) {
+  if (getSecret('GROQ_API_KEY')) {
     try {
       const text = await groqChat(
         [
@@ -171,7 +172,7 @@ export async function chatGenerate(
   const useDeepSeek = complexity === 'heavy' || complexity === 'medium';
   const preferGemini = !useDeepSeek && Math.random() < 0.28;
 
-  if (useDeepSeek && process.env.DEEPSEEK_API_KEY) {
+  if (useDeepSeek && getSecret('DEEPSEEK_API_KEY')) {
     try {
       const text = await deepSeekChat(
         [
@@ -186,7 +187,7 @@ export async function chatGenerate(
     }
   }
 
-  if (preferGemini && process.env.GEMINI_API_KEY) {
+  if (preferGemini && getSecret('GEMINI_API_KEY')) {
     try {
       const text = await geminiGenerate(systemPrompt, prompt, {
         model: 'gemini-2.0-flash',
@@ -198,7 +199,7 @@ export async function chatGenerate(
     }
   }
 
-  if (process.env.GROQ_API_KEY) {
+  if (getSecret('GROQ_API_KEY')) {
     try {
       const text = await groqChat(
         [
@@ -213,7 +214,7 @@ export async function chatGenerate(
     }
   }
 
-  if (process.env.GEMINI_API_KEY) {
+  if (getSecret('GEMINI_API_KEY')) {
     try {
       const text = await geminiGenerate(systemPrompt, prompt, {
         model: 'gemini-2.0-flash',
@@ -225,7 +226,7 @@ export async function chatGenerate(
     }
   }
 
-  if (!useDeepSeek && process.env.DEEPSEEK_API_KEY) {
+  if (!useDeepSeek && getSecret('DEEPSEEK_API_KEY')) {
     try {
       const text = await deepSeekChat(
         [
@@ -248,7 +249,7 @@ export async function reviewerFindDefects(prompt: string, draftSummary: string):
   const system = `You are the Xroga Reviewer. List 5-15 defects (JSON array) with severity, description, suggestion.
 Output ONLY valid JSON array.`;
 
-  if (process.env.DEEPSEEK_API_KEY) {
+  if (getSecret('DEEPSEEK_API_KEY')) {
     try {
       return await deepSeekChat(
         [
@@ -270,7 +271,7 @@ Output ONLY valid JSON array.`;
 
 /** QA — Groq ultra-fast */
 export async function qaSimulate(prompt: string, draftSummary: string): Promise<{ passed: boolean; notes: string }> {
-  if (!process.env.GROQ_API_KEY) {
+  if (!getSecret('GROQ_API_KEY')) {
     return { passed: true, notes: 'QA skipped (no Groq key)' };
   }
 
@@ -305,7 +306,7 @@ export async function truthCouncilVerify(
   const system = `You are the Truth Council. Verify safety, factual plausibility, and goal alignment.
 Reply JSON: {"approved":true/false,"reasons":["..."]}`;
 
-  if (process.env.GEMINI_API_KEY) {
+  if (getSecret('GEMINI_API_KEY')) {
     try {
       const raw = await geminiGenerate(
         system,
