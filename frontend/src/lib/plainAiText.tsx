@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
-/** Remove markdown symbols so raw # * | never show in chat */
+/** Remove markdown symbols, emojis, and clutter from AI text */
 export function sanitizePlainAiText(content: string): string {
   const parts: string[] = [];
   const fence = /```[\s\S]*?```/g;
@@ -18,17 +18,26 @@ export function sanitizePlainAiText(content: string): string {
   return parts.join('').replace(/\n{3,}/g, '\n\n').trim();
 }
 
+function stripEmojis(s: string): string {
+  return s.replace(
+    /(?:[\u2700-\u27bf]|(?:\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]))/g,
+    ''
+  );
+}
+
 function stripSegment(s: string): string {
-  return s
-    .replace(/^#{1,6}\s*/gm, '')
-    .replace(/\*\*([^*]+)\*\*/g, '$1')
-    .replace(/\*([^*]+)\*/g, '$1')
-    .replace(/_([^_]+)_/g, '$1')
-    .replace(/^>\s?/gm, '')
-    .replace(/^[-*•]\s+/gm, '')
-    .replace(/\|/g, ' ')
-    .replace(/^:?-{2,}:?$/gm, '')
-    .replace(/`([^`]+)`/g, '$1');
+  let out = stripEmojis(s);
+  out = out.replace(/#{1,6}\s*/g, '');
+  out = out.replace(/\*\*([^*]+)\*\*/g, '$1');
+  out = out.replace(/\*([^*]+)\*/g, '$1');
+  out = out.replace(/_([^_]+)_/g, '$1');
+  out = out.replace(/^>\s?/gm, '');
+  out = out.replace(/^[-*•]\s+/gm, '');
+  out = out.replace(/\|+/g, ' ');
+  out = out.replace(/^:?-{2,}:?$/gm, '');
+  out = out.replace(/`([^`]+)`/g, '$1');
+  out = out.replace(/\s{2,}/g, ' ');
+  return out;
 }
 
 function renderCodeBlocks(content: string): React.ReactNode[] {
@@ -40,14 +49,12 @@ function renderCodeBlocks(content: string): React.ReactNode[] {
 
   while ((match = re.exec(content)) !== null) {
     if (match.index > last) {
-      nodes.push(
-        <PlainSections key={key++} text={content.slice(last, match.index)} />
-      );
+      nodes.push(<PlainSections key={key++} text={content.slice(last, match.index)} />);
     }
     nodes.push(
       <pre
         key={key++}
-        className="my-2 overflow-x-auto rounded-xl border border-[var(--card-border)]/60 bg-black/30 px-3 py-2.5 text-[11px] font-mono leading-relaxed text-[var(--foreground)]/95"
+        className="my-2 overflow-x-auto rounded-xl border border-slate-200/80 bg-slate-900/5 px-3 py-2.5 text-[11px] font-mono leading-relaxed text-[var(--foreground)]/95 dark:border-white/10 dark:bg-black/30"
       >
         <code>{match[2]?.trim()}</code>
       </pre>
@@ -69,9 +76,12 @@ function PlainSections({ text }: { text: string }) {
   if (!sections.length) return null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3.5">
       {sections.map((section, i) => {
-        const lines = section.split('\n').map((l) => l.trim()).filter(Boolean);
+        const lines = section
+          .split('\n')
+          .map((l) => l.trim())
+          .filter(Boolean);
         if (!lines.length) return null;
         const first = lines[0]!;
         const looksLikeLabel =
@@ -79,15 +89,14 @@ function PlainSections({ text }: { text: string }) {
           first.length < 56 &&
           !first.endsWith('.') &&
           !first.endsWith('?') &&
-          !first.endsWith(':');
+          !first.endsWith(':') &&
+          !first.includes('  ');
 
         if (looksLikeLabel) {
           return (
-            <div key={i} className="space-y-1">
-              <p className="text-[13px] font-semibold tracking-tight text-[var(--foreground)]">
-                {first}
-              </p>
-              <p className="text-[13px] leading-[1.65] text-[var(--foreground)]/90 whitespace-pre-wrap">
+            <div key={i} className="space-y-1.5">
+              <p className="text-[13px] font-semibold tracking-tight text-[var(--foreground)]">{first}</p>
+              <p className="text-[13px] leading-[1.7] text-[var(--foreground)]/88 whitespace-pre-wrap">
                 {lines.slice(1).join('\n')}
               </p>
             </div>
@@ -98,7 +107,7 @@ function PlainSections({ text }: { text: string }) {
           <p
             key={i}
             className={cn(
-              'text-[13px] leading-[1.65] text-[var(--foreground)]/90 whitespace-pre-wrap',
+              'text-[13px] leading-[1.7] text-[var(--foreground)]/88 whitespace-pre-wrap',
               i === 0 && 'text-[14px] font-medium text-[var(--foreground)]'
             )}
           >
@@ -119,17 +128,18 @@ export function PlainAiResponse({
   streaming?: boolean;
   className?: string;
 }) {
-  const hasCode = useMemo(() => /```/.test(content), [content]);
+  const safe = useMemo(() => sanitizePlainAiText(content), [content]);
+  const hasCode = useMemo(() => /```/.test(safe), [safe]);
   const nodes = useMemo(
-    () => (hasCode ? renderCodeBlocks(content) : [<PlainSections key={0} text={content} />]),
-    [content, hasCode]
+    () => (hasCode ? renderCodeBlocks(safe) : [<PlainSections key={0} text={safe} />]),
+    [safe, hasCode]
   );
 
   return (
     <div className={cn('xv-plain-response', className)}>
       {nodes}
-      {streaming && content.length > 0 && (
-        <span className="inline-block w-0.5 h-[1em] ml-0.5 bg-[#006aff]/80 align-middle animate-pulse rounded-full" />
+      {streaming && safe.length > 0 && (
+        <span className="inline-block w-0.5 h-[1em] ml-0.5 bg-[#006aff]/70 align-middle animate-pulse rounded-full" />
       )}
     </div>
   );

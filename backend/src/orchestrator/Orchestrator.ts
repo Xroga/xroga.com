@@ -75,7 +75,7 @@ export class Orchestrator {
   ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[] }> {
     const userText = routingPrompt(ctx.prompt);
     if (!isTrivialPrompt(userText)) {
-      ctx.onProgress?.(progressEvent('builder', 'thinking', 'Thinking…'));
+      ctx.onProgress?.(progressEvent('builder', 'thinking', 'Reading your question'));
     }
 
     const { quickChat } = await import('../services/chat/quickChat.js');

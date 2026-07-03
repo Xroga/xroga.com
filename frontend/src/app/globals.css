@@ -1483,6 +1483,22 @@ body.theme-gray * {
     50% { opacity: 0.7; transform: scale(1.08); }
   }
 
+  .xv-thinking-shimmer {
+    animation: xv-thinking-shimmer 2.5s ease-in-out infinite;
+  }
+  .xv-thinking-sweep {
+    animation: xv-thinking-sweep 2.8s ease-in-out infinite;
+  }
+  @keyframes xv-thinking-shimmer {
+    0%, 100% { box-shadow: 0 4px 24px rgba(148, 163, 184, 0.15); }
+    50% { box-shadow: 0 4px 28px rgba(0, 106, 255, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.5); }
+  }
+  @keyframes xv-thinking-sweep {
+    0% { opacity: 0; transform: translateX(-120%); }
+    40% { opacity: 0.35; }
+    100% { opacity: 0; transform: translateX(120%); }
+  }
+
   .xv-sidebar-icon-link {
     display: flex;
     align-items: center;

@@ -15,6 +15,7 @@ import { geminiGenerateCultural, geminiKnowledgeGapCard, geminiReview } from '..
 import { deepseekGenerate } from '../council/deepseekClient.js';
 import { swarmReserveProcess } from '../swarm/reserve/orchestrator.js';
 import { blackHoleEmit } from '../blackhole/synthesizer.js';
+import { formatPlainProfessional } from '../blackhole/plainTextFormat.js';
 import { BLACKHOLE_MAINTENANCE } from '../prompts/blackholePrompts.js';
 import { groqChat } from '../lib/groq.js';
 import { getSecret } from '../config/envSecrets.js';
@@ -59,14 +60,14 @@ async function councilOrReserve(
   onProgress?: RouteProgressFn
 ): Promise<{ raw: string; layer: 'elite' | 'reserve'; provider: string }> {
   if (!isPaidApiAllowed()) {
-    onProgress?.('reserve', 'OSS Reserve');
+    onProgress?.('reserve', 'Reserve Swarm');
     const raw = await swarmReserveProcess(userInput);
     return { raw, layer: 'reserve', provider: 'oss-swarm' };
   }
 
   const role = API_ROLES[apiId];
   void role;
-  onProgress?.('elite', 'Thinking…');
+  onProgress?.('elite', 'Gathering the right knowledge');
   try {
     const raw = await councilFn();
     return { raw, layer: 'elite', provider: apiId };
@@ -95,20 +96,20 @@ export class XrogaRouter {
 
     try {
       if (isCapabilitiesQuery(input)) {
-        onProgress?.('blackhole', 'Black Hole V∞');
+        onProgress?.('blackhole', 'Preparing XROGA capabilities overview');
         return {
-          text: getXrogaCapabilitiesResponse(),
+          text: formatPlainProfessional(getXrogaCapabilitiesResponse()),
           provider: 'xroga',
           councilLayer: 'blackhole',
           intent: 'general',
         };
       }
 
-      onProgress?.('reserve', 'Classifying intent…');
+      onProgress?.('reserve', 'Reading your question');
       const intent = await classifyXrogaIntent(input);
 
       if (COMING_SOON_INTENTS.includes(intent) && wantsFullNativeBuild(input)) {
-        onProgress?.('blackhole', 'Black Hole V∞');
+        onProgress?.('blackhole', 'Composing your answer');
         return {
           text: getComingSoonResponse(intent),
           provider: 'coming-soon',
@@ -124,7 +125,7 @@ export class XrogaRouter {
           () => groqSprinter(input, ctx),
           onProgress
         );
-        onProgress?.('blackhole', 'Black Hole V∞');
+        onProgress?.('blackhole', 'Composing your answer');
         const emitted = await blackHoleEmit(raw, input, intent, layer);
         return { text: emitted.text, provider, councilLayer: emitted.layer, intent };
       }
@@ -144,7 +145,7 @@ export class XrogaRouter {
           () => geminiGenerateCultural(input, { context: ctx }),
           onProgress
         );
-        onProgress?.('blackhole', 'Black Hole V∞');
+        onProgress?.('blackhole', 'Composing your answer');
         const emitted = await blackHoleEmit(raw, input, intent, layer);
         return { text: emitted.text, provider, councilLayer: emitted.layer, intent };
       }
@@ -161,7 +162,7 @@ export class XrogaRouter {
           () => deepseekGenerate(input, { context: ctx }),
           onProgress
         );
-        onProgress?.('blackhole', 'Black Hole V∞');
+        onProgress?.('blackhole', 'Composing your answer');
         const emitted = await blackHoleEmit(raw, input, intent, layer);
         return { text: emitted.text, provider, councilLayer: emitted.layer, intent };
       }
@@ -191,7 +192,7 @@ export class XrogaRouter {
           },
           onProgress
         );
-        onProgress?.('blackhole', 'Decision Matrix');
+        onProgress?.('blackhole', 'Building decision summary');
         const emitted = await blackHoleEmit(raw, input, 'decision', layer);
         return { text: emitted.text, provider: provider === 'deepseek' ? 'deepseek+gemini+groq' : provider, councilLayer: emitted.layer, intent: 'decision' };
       }
@@ -204,7 +205,7 @@ export class XrogaRouter {
           () => groqGeneral(input, ctx),
           onProgress
         );
-        onProgress?.('blackhole', 'Black Hole V∞');
+        onProgress?.('blackhole', 'Composing your answer');
         const emitted = await blackHoleEmit(raw, input, intent, layer);
         return { text: emitted.text, provider, councilLayer: emitted.layer, intent };
       }
@@ -215,7 +216,7 @@ export class XrogaRouter {
         () => deepseekGenerate(input, { context: ctx }),
         onProgress
       );
-      onProgress?.('blackhole', 'Black Hole V∞');
+      onProgress?.('blackhole', 'Composing your answer');
       const emitted = await blackHoleEmit(raw, input, intent, layer);
       return { text: emitted.text, provider, councilLayer: emitted.layer, intent };
     } catch (err) {

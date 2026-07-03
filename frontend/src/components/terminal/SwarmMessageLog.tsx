@@ -14,8 +14,7 @@ import { ModelBadge } from '@/components/ui/ModelBadge';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
-import { GradientLoader } from './GradientLoader';
-import { SwarmProcessingIndicator } from './SwarmProcessingIndicator';
+import { BlackHoleThinkingPanel } from './BlackHoleThinkingPanel';
 import { ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
 import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { FeatureOutputView } from './FeatureOutputView';
@@ -48,7 +47,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, swarmActiveAgent, pipelineCompact, pipelineMessage, councilLayer, imageProgressStep, imageAttempts, videoProgressStep, videoOmniPhase, videoEstimateSeconds, videoStartedAt, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput } =
+  const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, imageProgressStep, imageAttempts, videoProgressStep, videoOmniPhase, videoEstimateSeconds, videoStartedAt, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -201,16 +200,11 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
 
   const isVideoLoading = loading && isVideoGenerationPrompt(lastUserText);
 
-  const swarmProcessing = loading && !isVideoLoading ? (
-    pipelineCompact ? (
-      <GradientLoader layer={councilLayer ?? 'elite'} message={pipelineMessage ?? undefined} />
-    ) : (
-      <SwarmProcessingIndicator
-        activeAgent={swarmActiveAgent ?? undefined}
-        loading={loading}
-      />
-    )
-  ) : null;
+  const showChatThinking =
+    loading &&
+    !isVideoLoading &&
+    !isImageGenerationPrompt(lastUserText) &&
+    pipelineCompact;
 
   function handleEditAI(content: string) {
     setPrompt(content);
@@ -318,7 +312,14 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
             </p>
           )}
 
-          {loading && !lastUserMessageId && swarmProcessing}
+          {loading && !lastUserMessageId && showChatThinking && (
+            <BlackHoleThinkingPanel
+              steps={thinkingSteps}
+              startedAt={thinkingStartedAt ?? undefined}
+              active
+              defaultExpanded
+            />
+          )}
 
           {visibleMessages.map((msg) => {
             const isLastAssistant = msg.id === lastAssistantId && !loading;
@@ -380,15 +381,29 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                         messageId={msg.id}
                         onDelete={() => deleteUserTurn(msg.id)}
                       />
-                      {loading && msg.id === lastUserMessageId && (
-                        <div className="mt-2 text-left">{swarmProcessing}</div>
-                      )}
                     </>
                   ) : msg.role === 'system' ? (
                     <p className="py-0.5 text-xs xv-swarm-agent-line animate-in fade-in duration-300">{msg.content}</p>
                   ) : (
                     <>
-                      <div className="py-1 text-left">
+                      <div className="py-1 text-left space-y-2">
+                        {(msg.thinkingSteps?.length || (loading && msg.id === animatingId && showChatThinking)) && (
+                          <BlackHoleThinkingPanel
+                            steps={
+                              loading && msg.id === animatingId
+                                ? thinkingSteps
+                                : (msg.thinkingSteps ?? [])
+                            }
+                            startedAt={
+                              loading && msg.id === animatingId
+                                ? (thinkingStartedAt ?? undefined)
+                                : undefined
+                            }
+                            thoughtMs={msg.thoughtMs}
+                            active={loading && msg.id === animatingId && showChatThinking}
+                            defaultExpanded={loading && msg.id === animatingId}
+                          />
+                        )}
                         {loading &&
                         msg.id === animatingId &&
                         isVideoGenerationPrompt(lastUserText) &&

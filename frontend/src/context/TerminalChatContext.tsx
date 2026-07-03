@@ -29,6 +29,7 @@ import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
+import { sanitizePlainAiText } from '@/lib/plainAiText';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
 import { isVideoGenerationPrompt, estimateVideoSeconds } from '@/lib/parseImageContent';
 import { addPendingVideoJob } from '@/lib/pendingVideoJobs';
@@ -43,6 +44,9 @@ export interface ChatMessage {
   agent?: string;
   createdAt?: number;
   featureOutput?: unknown;
+  /** Behind-the-scenes reasoning steps shown after response */
+  thinkingSteps?: string[];
+  thoughtMs?: number;
 }
 
 export interface QueuedPrompt {
@@ -63,6 +67,8 @@ interface TerminalChatContextValue {
   swarmActiveAgent: string | null;
   pipelineMessage: string | null;
   councilLayer: 'elite' | 'reserve' | 'blackhole' | null;
+  thinkingSteps: string[];
+  thinkingStartedAt: number | null;
   imageProgressStep: string | null;
   imageAttempts: Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>;
   videoProgressStep: string | null;
@@ -120,6 +126,10 @@ export function TerminalChatProvider({
   const [swarmActiveAgent, setSwarmActiveAgent] = useState<string | null>(null);
   const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
   const [councilLayer, setCouncilLayer] = useState<'elite' | 'reserve' | 'blackhole' | null>(null);
+  const [thinkingSteps, setThinkingSteps] = useState<string[]>([]);
+  const [thinkingStartedAt, setThinkingStartedAt] = useState<number | null>(null);
+  const thinkingStepsRef = useRef<string[]>([]);
+  const thinkingStartedAtRef = useRef<number>(0);
   const [imageProgressStep, setImageProgressStep] = useState<string | null>(null);
   const [imageAttempts, setImageAttempts] = useState<
     Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>
@@ -439,6 +449,10 @@ export function TerminalChatProvider({
       setSwarmActiveAgent(null);
       setPipelineMessage(null);
       setCouncilLayer(null);
+      thinkingStepsRef.current = [];
+      thinkingStartedAtRef.current = Date.now();
+      setThinkingSteps([]);
+      setThinkingStartedAt(Date.now());
       setImageProgressStep(null);
       setImageAttempts([]);
       setVideoProgressStep(null);
@@ -496,6 +510,10 @@ export function TerminalChatProvider({
             }
             const label = event.message ?? event.status ?? 'Thinking…';
             setPipelineMessage(label);
+            if (label && !thinkingStepsRef.current.includes(label)) {
+              thinkingStepsRef.current = [...thinkingStepsRef.current, label];
+              setThinkingSteps([...thinkingStepsRef.current]);
+            }
             if (event.imageStep) setImageProgressStep(event.imageStep);
             if (event.imageAttempt?.imageUrl) {
               setImageAttempts((prev) => {
@@ -701,6 +719,22 @@ export function TerminalChatProvider({
           thinkingTimerRef.current = null;
         }
         const turn = lastTurnRef.current;
+        if (turn && !interruptRef.current) {
+          const thoughtMs = Date.now() - thinkingStartedAtRef.current;
+          const steps = [...thinkingStepsRef.current];
+          setMessages((m) =>
+            m.map((msg) => {
+              if (msg.id !== turn.assistantId) return msg;
+              const plain = msg.content ? sanitizePlainAiText(msg.content) : msg.content;
+              return {
+                ...msg,
+                content: plain,
+                thinkingSteps: steps.length ? steps : msg.thinkingSteps,
+                thoughtMs: thoughtMs > 0 ? thoughtMs : msg.thoughtMs,
+              };
+            })
+          );
+        }
         if (turn && isVideoGenerationPrompt(turn.text) && !interruptRef.current) {
           setMessages((m) => {
             const assistant = m.find((msg) => msg.id === turn.assistantId);
@@ -748,6 +782,8 @@ export function TerminalChatProvider({
         setSwarmActiveAgent(null);
         setPipelineMessage(null);
         setCouncilLayer(null);
+        setThinkingSteps([]);
+        setThinkingStartedAt(null);
         setImageProgressStep(null);
         setImageAttempts([]);
         setVideoProgressStep(null);
@@ -797,6 +833,8 @@ export function TerminalChatProvider({
         swarmActiveAgent,
         pipelineMessage,
         councilLayer,
+        thinkingSteps,
+        thinkingStartedAt,
         imageProgressStep,
         imageAttempts,
         videoProgressStep,
