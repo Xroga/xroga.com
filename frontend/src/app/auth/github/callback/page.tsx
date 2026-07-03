@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
+import { dispatchGitHubConnected } from '@/lib/githubEvents';
 
 function GitHubAuthCallback() {
   const router = useRouter();
@@ -26,9 +27,12 @@ function GitHubAuthCallback() {
         setMessage(`Connected as @${res.username}`);
         if (window.opener) {
           window.opener.postMessage({ type: 'xroga-github-connected', username: res.username }, '*');
+          dispatchGitHubConnected(res.username);
           setTimeout(() => window.close(), 400);
         } else {
-          router.replace('/dashboard/integrations?github=connected');
+          router.replace(
+            `/dashboard?github=connected&username=${encodeURIComponent(res.username)}`
+          );
         }
       })
       .catch((e) => {

@@ -33,6 +33,8 @@ import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
 import { isVideoGenerationPrompt, estimateVideoSeconds } from '@/lib/parseImageContent';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
+import { GitHubActivationOverlay } from '@/components/terminal/GitHubActivationOverlay';
+import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
 import { addPendingVideoJob } from '@/lib/pendingVideoJobs';
 import { useBackgroundVideoJobs } from '@/hooks/useBackgroundVideoJobs';
 
@@ -156,6 +158,10 @@ export function TerminalChatProvider({
   const [swarmAnalysis, setSwarmAnalysis] = useState<string | null>(null);
   const [swarmActivityLog, setSwarmActivityLog] = useState<string[]>([]);
   const [githubGateOpen, setGithubGateOpen] = useState(false);
+  const [githubActivation, setGithubActivation] = useState<{ open: boolean; username?: string }>({
+    open: false,
+  });
+  const afterGitHubActivationRef = useRef<(() => void) | null>(null);
   const pendingBuildRef = useRef<{
     userPrompt: string;
     fromQueue: boolean;
@@ -213,6 +219,49 @@ export function TerminalChatProvider({
     if (session?.prompt) setPrompt(session.prompt);
     setSessionReady(true);
   }, [incognito]);
+
+  useEffect(() => {
+    const isDashboard = pathname === '/dashboard' || pathname === '/dashboard/';
+    if (!isDashboard || typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('github') !== 'connected') return;
+    const rawUser = params.get('username');
+    setGithubActivation({
+      open: true,
+      username: rawUser ? decodeURIComponent(rawUser) : undefined,
+    });
+    window.history.replaceState({}, '', '/dashboard');
+  }, [pathname]);
+
+  useEffect(() => {
+    const onGitHubConnected = (e: Event) => {
+      const detail = (e as CustomEvent<{ username?: string }>).detail;
+      setGithubActivation({ open: true, username: detail?.username });
+    };
+    window.addEventListener(GITHUB_CONNECTED_EVENT, onGitHubConnected);
+    return () => window.removeEventListener(GITHUB_CONNECTED_EVENT, onGitHubConnected);
+  }, []);
+
+  const finishGitHubActivation = useCallback(() => {
+    setGithubActivation({ open: false });
+    const next = afterGitHubActivationRef.current;
+    afterGitHubActivationRef.current = null;
+    next?.();
+  }, []);
+
+  const queueBuildAfterGitHubActivation = useCallback(() => {
+    const pending = pendingBuildRef.current;
+    pendingBuildRef.current = null;
+    if (!pending) return;
+    afterGitHubActivationRef.current = () => {
+      void submitRef.current(
+        pending.userPrompt,
+        pending.fromQueue,
+        pending.interrupt,
+        pending.attachments
+      );
+    };
+  }, []);
 
   const hydrateFromSession = useCallback(() => {
     if (incognito) return;
@@ -932,19 +981,18 @@ export function TerminalChatProvider({
         onClose={() => {
           setGithubGateOpen(false);
           pendingBuildRef.current = null;
+          afterGitHubActivationRef.current = null;
         }}
-        onConnected={() => {
-          const pending = pendingBuildRef.current;
-          pendingBuildRef.current = null;
-          if (pending) {
-            void submitRef.current(
-              pending.userPrompt,
-              pending.fromQueue,
-              pending.interrupt,
-              pending.attachments
-            );
-          }
+        onConnected={(username) => {
+          setGithubGateOpen(false);
+          queueBuildAfterGitHubActivation();
+          setGithubActivation({ open: true, username });
         }}
+      />
+      <GitHubActivationOverlay
+        open={githubActivation.open}
+        username={githubActivation.username}
+        onDone={finishGitHubActivation}
       />
       {children}
     </TerminalChatContext.Provider>

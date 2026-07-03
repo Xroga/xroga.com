@@ -1,113 +1,227 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
-import { api } from '@/lib/api';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ChevronDown, Loader2 } from 'lucide-react';
+import { api, type GitHubRepo } from '@/lib/api';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
+import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
 import { cn } from '@/lib/utils';
 
-interface RepoEntry {
-  repo: string;
-  branches: string[];
-}
+const STORAGE_KEY = 'xroga-repo-context';
 
 interface RepoContextBarProps {
   outside?: boolean;
 }
 
 export function RepoContextBar({ outside }: RepoContextBarProps) {
-  const [repos, setRepos] = useState<RepoEntry[]>([]);
-  const [repoIdx, setRepoIdx] = useState(0);
-  const [branch, setBranch] = useState('main');
+  const [connected, setConnected] = useState(false);
+  const [repos, setRepos] = useState<GitHubRepo[]>([]);
+  const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
+  const [branches, setBranches] = useState<string[]>([]);
+  const [selectedBranch, setSelectedBranch] = useState('main');
+  const [loadingRepos, setLoadingRepos] = useState(false);
+  const [loadingBranches, setLoadingBranches] = useState(false);
   const [open, setOpen] = useState<'repo' | 'branch' | null>(null);
-  const repoBtnRef = useRef<HTMLButtonElement>(null);
-  const branchBtnRef = useRef<HTMLButtonElement>(null);
+  const repoAnchorRef = useRef<HTMLSpanElement>(null);
+  const branchAnchorRef = useRef<HTMLSpanElement>(null);
 
-  const current = repos[repoIdx];
-
-  useEffect(() => {
-    api.github
-      .status()
-      .then((s) => {
-        if (!s.connected) {
-          setRepos([]);
-          return;
-        }
-        const defaultRepo = s.defaultRepo ?? (s.username ? `${s.username}/xroga-app` : null);
-        if (defaultRepo) {
-          setRepos([{ repo: defaultRepo, branches: ['main', 'develop'] }]);
-        }
-      })
-      .catch(() => setRepos([]));
-
-    const saved = localStorage.getItem('xroga-repo-context');
-    if (!saved) return;
+  const loadBranches = useCallback(async (fullName: string, preferred?: string) => {
+    const [owner, repo] = fullName.split('/');
+    if (!owner || !repo) return;
+    setLoadingBranches(true);
     try {
-      const p = JSON.parse(saved) as { repoIdx: number; branch: string };
-      setRepoIdx(p.repoIdx);
-      setBranch(p.branch);
-    } catch { /* ignore */ }
+      const { branches: list } = await api.github.listBranches(owner, repo);
+      const names = list.map((b) => b.name);
+      setBranches(names);
+      const next =
+        preferred && names.includes(preferred)
+          ? preferred
+          : names.includes('main')
+            ? 'main'
+            : names[0] ?? 'main';
+      setSelectedBranch(next);
+    } catch {
+      setBranches(['main']);
+      setSelectedBranch('main');
+    } finally {
+      setLoadingBranches(false);
+    }
   }, []);
 
-  useEffect(() => {
-    if (!current) return;
-    localStorage.setItem('xroga-repo-context', JSON.stringify({ repoIdx, branch, repo: current.repo }));
-    if (!current.branches.includes(branch)) {
-      setBranch(current.branches[0]);
-    }
-  }, [repoIdx, branch, current]);
+  const refresh = useCallback(async () => {
+    setLoadingRepos(true);
+    try {
+      const status = await api.github.status();
+      if (!status.connected) {
+        setConnected(false);
+        setRepos([]);
+        setSelectedRepo(null);
+        return;
+      }
+      setConnected(true);
 
-  if (!current) return null;
+      const { repos: list } = await api.github.listRepos();
+      setRepos(list);
+
+      const saved = localStorage.getItem(STORAGE_KEY);
+      let savedRepo: string | null = null;
+      let savedBranch: string | null = null;
+      if (saved) {
+        try {
+          const p = JSON.parse(saved) as { repo?: string; branch?: string };
+          savedRepo = p.repo ?? null;
+          savedBranch = p.branch ?? null;
+        } catch { /* ignore */ }
+      }
+
+      const defaultRepo =
+        (savedRepo && list.some((r) => r.fullName === savedRepo) ? savedRepo : null) ??
+        (status.defaultRepo && list.some((r) => r.fullName === status.defaultRepo) ? status.defaultRepo : null) ??
+        list[0]?.fullName ??
+        null;
+
+      setSelectedRepo(defaultRepo);
+      if (defaultRepo) {
+        const meta = list.find((r) => r.fullName === defaultRepo);
+        await loadBranches(defaultRepo, savedBranch ?? meta?.defaultBranch);
+      }
+    } catch {
+      setConnected(false);
+      setRepos([]);
+    } finally {
+      setLoadingRepos(false);
+    }
+  }, [loadBranches]);
+
+  useEffect(() => {
+    void refresh();
+    const onConnected = () => void refresh();
+    window.addEventListener(GITHUB_CONNECTED_EVENT, onConnected);
+    return () => window.removeEventListener(GITHUB_CONNECTED_EVENT, onConnected);
+  }, [refresh]);
+
+  useEffect(() => {
+    if (!selectedRepo) return;
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ repo: selectedRepo, branch: selectedBranch })
+    );
+  }, [selectedRepo, selectedBranch]);
+
+  async function selectRepo(fullName: string) {
+    setSelectedRepo(fullName);
+    setOpen(null);
+    const meta = repos.find((r) => r.fullName === fullName);
+    await loadBranches(fullName, meta?.defaultBranch);
+    try {
+      await api.github.updateSettings('auto', fullName);
+    } catch { /* non-blocking */ }
+  }
+
+  async function selectBranch(name: string) {
+    setSelectedBranch(name);
+    setOpen(null);
+  }
+
+  if (!connected && !loadingRepos) return null;
+
+  if (loadingRepos && !selectedRepo) {
+    return (
+      <div className={cn('flex items-center gap-1.5 text-[10px] font-mono text-[var(--muted)]', outside ? 'py-0' : 'py-1')}>
+        <Loader2 className="w-3 h-3 animate-spin opacity-60" />
+        <span>Loading repositories…</span>
+      </div>
+    );
+  }
+
+  if (!selectedRepo) return null;
+
+  const textTriggerClass =
+    'inline-flex items-center gap-0.5 cursor-pointer select-none font-semibold text-[var(--foreground)] hover:text-[#006aff] transition-colors outline-none';
 
   return (
-    <div className={cn(
-      'flex items-center gap-2 text-[10px] font-mono text-[var(--foreground)] overflow-x-auto scrollbar-hide',
-      outside ? 'px-0 py-0' : 'px-2 sm:px-3 py-1 border-0'
-    )}>
+    <div
+      className={cn(
+        'flex items-center gap-2 text-[10px] font-mono text-[var(--foreground)] overflow-x-auto scrollbar-hide',
+        outside ? 'px-0 py-0' : 'px-2 sm:px-3 py-1 border-0'
+      )}
+    >
       <div className="relative shrink-0">
-        <button
-          ref={repoBtnRef}
-          type="button"
+        <span
+          ref={repoAnchorRef}
+          role="button"
+          tabIndex={0}
           onClick={() => setOpen(open === 'repo' ? null : 'repo')}
-          className="flex items-center gap-0.5 bg-transparent border-0 p-0 font-semibold hover:text-[#006aff] transition-colors"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setOpen(open === 'repo' ? null : 'repo');
+            }
+          }}
+          className={textTriggerClass}
         >
-          <span className="truncate max-w-[140px] sm:max-w-[220px]">{current.repo}</span>
-          <ChevronDown className="w-3 h-3 opacity-50" />
-        </button>
-        <ChatBarPortalPopover open={open === 'repo'} onClose={() => setOpen(null)} anchorRef={repoBtnRef} width={220}>
-          <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-2xl p-1 max-h-[160px] overflow-y-auto">
-            {repos.map((r, i) => (
-              <li key={r.repo}>
-                <button
-                  type="button"
-                  onClick={() => { setRepoIdx(i); setBranch(r.branches[0]); setOpen(null); }}
-                  className="w-full text-left px-2.5 py-1.5 rounded-lg text-[10px] hover:bg-white/10 truncate"
+          <span className="truncate max-w-[140px] sm:max-w-[220px]">{selectedRepo}</span>
+          <ChevronDown className={cn('w-3 h-3 opacity-50 transition-transform', open === 'repo' && 'rotate-180')} />
+        </span>
+        <ChatBarPortalPopover open={open === 'repo'} onClose={() => setOpen(null)} anchorRef={repoAnchorRef} width={240}>
+          <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-2xl p-1 max-h-[200px] overflow-y-auto">
+            {repos.map((r) => (
+              <li key={r.fullName}>
+                <span
+                  role="option"
+                  aria-selected={r.fullName === selectedRepo}
+                  onClick={() => void selectRepo(r.fullName)}
+                  className={cn(
+                    'block px-2.5 py-1.5 rounded-lg text-[10px] cursor-pointer truncate hover:bg-white/10',
+                    r.fullName === selectedRepo && 'text-[#006aff] font-semibold'
+                  )}
                 >
-                  {r.repo}
-                </button>
+                  {r.fullName}
+                </span>
               </li>
             ))}
           </ul>
         </ChatBarPortalPopover>
       </div>
+
       <span className="text-[var(--muted)] opacity-40">/</span>
+
       <div className="relative shrink-0">
-        <button
-          ref={branchBtnRef}
-          type="button"
-          onClick={() => setOpen(open === 'branch' ? null : 'branch')}
-          className="flex items-center gap-0.5 bg-transparent border-0 p-0 font-semibold hover:text-[#006aff] transition-colors"
+        <span
+          ref={branchAnchorRef}
+          role="button"
+          tabIndex={0}
+          onClick={() => !loadingBranches && setOpen(open === 'branch' ? null : 'branch')}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              if (!loadingBranches) setOpen(open === 'branch' ? null : 'branch');
+            }
+          }}
+          className={cn(textTriggerClass, loadingBranches && 'opacity-60 pointer-events-none')}
         >
-          {branch}
-          <ChevronDown className="w-3 h-3 opacity-50" />
-        </button>
-        <ChatBarPortalPopover open={open === 'branch'} onClose={() => setOpen(null)} anchorRef={branchBtnRef} width={160}>
-          <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-2xl p-1">
-            {current.branches.map((b) => (
+          {loadingBranches ? (
+            <Loader2 className="w-3 h-3 animate-spin" />
+          ) : (
+            selectedBranch
+          )}
+          <ChevronDown className={cn('w-3 h-3 opacity-50 transition-transform', open === 'branch' && 'rotate-180')} />
+        </span>
+        <ChatBarPortalPopover open={open === 'branch'} onClose={() => setOpen(null)} anchorRef={branchAnchorRef} width={180}>
+          <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-2xl p-1 max-h-[200px] overflow-y-auto">
+            {branches.map((b) => (
               <li key={b}>
-                <button type="button" onClick={() => { setBranch(b); setOpen(null); }} className="w-full text-left px-2.5 py-1.5 rounded-lg text-[10px] hover:bg-white/10">
+                <span
+                  role="option"
+                  aria-selected={b === selectedBranch}
+                  onClick={() => void selectBranch(b)}
+                  className={cn(
+                    'block px-2.5 py-1.5 rounded-lg text-[10px] cursor-pointer hover:bg-white/10',
+                    b === selectedBranch && 'text-[#006aff] font-semibold'
+                  )}
+                >
                   {b}
-                </button>
+                </span>
               </li>
             ))}
           </ul>
