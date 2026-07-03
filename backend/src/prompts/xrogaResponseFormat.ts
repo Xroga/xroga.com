@@ -14,8 +14,8 @@ Then use SECTIONS. Each section:
 
 For math and STEM:
 - Put "Step 1", "Step 2", etc. each on its own line
-- Show the equation or work on the next line
-- End with "Answer" on its own line, then the final result
+- Put each equation on its own line (never combine Step 2 with an equation)
+- End with "Answer" on its own line, then the final value
 
 For comparisons use two section titles "Previous" and "Now" with content under each.
 

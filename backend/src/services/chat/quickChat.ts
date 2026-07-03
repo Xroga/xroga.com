@@ -4,6 +4,8 @@ import { classifyFeature } from '../architect/featureRouter.js';
 import { loadMasterPrompt } from '../../orchestrator/masterPrompt.js';
 import { buildFullSystemPrompt } from '../../orchestrator/aiTraining.js';
 import { isTrivialPrompt } from '../../lib/promptClassifier.js';
+import { isCapabilitiesQuery, getXrogaCapabilitiesResponse } from '../../lib/xrogaCapabilities.js';
+import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
@@ -22,6 +24,10 @@ export async function quickChat(
 ): Promise<string> {
   const userText = routingPrompt(prompt);
   const lower = userText.toLowerCase().trim();
+
+  if (isCapabilitiesQuery(userText)) {
+    return formatPlainProfessional(getXrogaCapabilitiesResponse());
+  }
 
   if (isTrivialPrompt(userText)) {
     if (/^(thanks|thank\s*you|thx)\b/.test(lower)) {

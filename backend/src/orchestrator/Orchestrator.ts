@@ -10,6 +10,7 @@ import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../type
 import type { SwarmCoreAgent, SwarmPlan, SwarmResult } from '../types/index.js';
 import { routingPrompt } from '../lib/promptRouting.js';
 import { shouldUseFastChat, isTrivialPrompt, requiresFeaturePipeline } from '../lib/promptClassifier.js';
+import { isCapabilitiesQuery } from '../lib/xrogaCapabilities.js';
 import { formatFeatureOutput, stripFakeImageMarkdown } from '../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../services/featureExecutor.js';
 import { resolveAttachmentFeatureCategory } from '../lib/featureIntent.js';
@@ -319,6 +320,12 @@ export class Orchestrator {
     await loadMasterPrompt();
 
     const userText = routingPrompt(ctx.prompt);
+
+    // Capabilities FAQ — never DAG, never background queue
+    if (isCapabilitiesQuery(userText)) {
+      return this.executeFastChat(ctx, 'chat');
+    }
+
     const hasImageAttachment = ctx.attachments?.some(
       (a) => a.mimeType?.startsWith('image/') || /\.(png|jpe?g|webp|gif)(\?|$)/i.test(a.url) || a.url.startsWith('data:image/')
     );

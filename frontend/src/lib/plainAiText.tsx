@@ -8,7 +8,7 @@ export type XrogaBlock =
   | { type: 'section'; title: string; body: string }
   | { type: 'paragraph'; text: string }
   | { type: 'math-step'; step: string; body: string }
-  | { type: 'math-equation'; text: string }
+  | { type: 'math-answer'; text: string }
   | { type: 'callout'; label: string; body: string }
   | { type: 'list'; items: string[] }
   | { type: 'code'; language?: string; body: string };
@@ -48,10 +48,24 @@ function stripSegment(s: string): string {
   return out;
 }
 
-function isMathLine(line: string): boolean {
-  if (/^step\s+\d+/i.test(line) || /^answer$/i.test(line.trim())) return true;
-  if (/[∫∑√±×÷^]/.test(line)) return true;
-  if (/=/.test(line) && /[0-9a-z]/i.test(line) && line.length < 120) return true;
+function normalizeMathContent(content: string): string {
+  let out = content;
+  out = out.replace(/(\S)\s+Step\s+(\d+)\b/gi, '$1\n\nStep $2');
+  out = out.replace(/\s+Answer\b/gi, '\n\nAnswer\n');
+  out = out.replace(/steps\s+Step\s+(\d+)/gi, 'steps\n\nStep $1');
+  out = out.replace(/Step\s+(\d+)\s*[:.]?\s*/gi, 'Step $1\n');
+  out = out.replace(/(\d)\s+(Step\s+\d)/gi, '$1\n\n$2');
+  return out;
+}
+
+function isEquationLine(line: string): boolean {
+  const t = line.trim();
+  if (!t) return false;
+  if (/^step\s+\d+/i.test(t) || /^answer$/i.test(t)) return false;
+  if (/^(subtract|divide|add|multiply|simplify|therefore|so)\b/i.test(t)) return false;
+  if (/[∫∑√±×÷^]/.test(t)) return true;
+  if (/=/.test(t) && /[0-9a-z]/i.test(t) && t.length < 100) return true;
+  if (/^[0-9x().+\-*/\s]+$/.test(t) && t.length < 60) return true;
   return false;
 }
 
@@ -74,6 +88,7 @@ function splitCallout(line: string): { label: string; rest: string } {
 }
 
 export function parseXrogaBlocks(content: string): XrogaBlock[] {
+  const normalized = normalizeMathContent(content);
   const blocks: XrogaBlock[] = [];
   const codeRe = /```(\w*)\n?([\s\S]*?)```/g;
   let cursor = 0;
@@ -114,11 +129,11 @@ export function parseXrogaBlocks(content: string): XrogaBlock[] {
       }
 
       if (/^answer$/i.test(first) && lines.length > 1) {
-        blocks.push({ type: 'section', title: 'Answer', body: lines.slice(1).join('\n') });
+        blocks.push({ type: 'math-answer', text: lines.slice(1).join('\n').trim() });
         return;
       }
 
-      if (lines.length === 1 && isMathLine(first)) {
+      if (lines.length === 1 && isEquationLine(first)) {
         blocks.push({ type: 'math-equation', text: first });
         return;
       }
@@ -139,16 +154,16 @@ export function parseXrogaBlocks(content: string): XrogaBlock[] {
   };
 
   let isFirstText = true;
-  while ((match = codeRe.exec(content)) !== null) {
+  while ((match = codeRe.exec(normalized)) !== null) {
     if (match.index > cursor) {
-      pushText(content.slice(cursor, match.index), isFirstText);
+      pushText(normalized.slice(cursor, match.index), isFirstText);
       isFirstText = false;
     }
     blocks.push({ type: 'code', language: match[1] || undefined, body: match[2]?.trim() ?? '' });
     cursor = match.index + match[0].length;
   }
-  if (cursor < content.length) {
-    pushText(content.slice(cursor), isFirstText);
+  if (cursor < normalized.length) {
+    pushText(normalized.slice(cursor), isFirstText);
   }
 
   return blocks;
@@ -174,6 +189,33 @@ function renderInline(text: string): ReactNode[] {
   }
   if (last < text.length) parts.push(text.slice(last));
   return parts.length ? parts : [text];
+}
+
+function MathStepBody({ body }: { body: string }) {
+  const lines = body.split('\n').map((l) => l.trim()).filter(Boolean);
+  const prose: string[] = [];
+  const equations: string[] = [];
+  for (const line of lines) {
+    if (isEquationLine(line)) equations.push(line);
+    else prose.push(line);
+  }
+  return (
+    <div className="space-y-2">
+      {prose.map((line, i) => (
+        <p key={`p-${i}`} className="text-[14px] leading-relaxed text-[var(--foreground)]/85">
+          {renderInline(line)}
+        </p>
+      ))}
+      {equations.map((eq, i) => (
+        <p
+          key={`eq-${i}`}
+          className="text-center font-serif text-[17px] sm:text-[18px] leading-relaxed text-[var(--foreground)] py-0.5 tracking-wide"
+        >
+          {eq.replace(/\*/g, '·')}
+        </p>
+      ))}
+    </div>
+  );
 }
 
 function BlockView({ block }: { block: XrogaBlock }) {
@@ -203,19 +245,22 @@ function BlockView({ block }: { block: XrogaBlock }) {
       );
     case 'math-step':
       return (
-        <div className="rounded-xl border border-slate-200/70 bg-gradient-to-br from-white/90 to-slate-50/80 px-4 py-3 dark:border-white/10 dark:from-white/5 dark:to-slate-500/5">
-          <p className="text-[12px] font-bold uppercase tracking-wider text-[#006aff]/80 mb-1.5">
-            {block.step}
-          </p>
-          <p className="text-[15px] font-mono leading-relaxed text-[var(--foreground)]/90 whitespace-pre-wrap text-center sm:text-left">
-            {block.body}
-          </p>
+        <div className="space-y-2 py-1">
+          <p className="text-[14px] font-bold text-[var(--foreground)]">{block.step}</p>
+          <MathStepBody body={block.body} />
         </div>
       );
     case 'math-equation':
       return (
-        <div className="rounded-xl border border-slate-200/60 bg-slate-50/90 px-4 py-3 dark:bg-white/5 dark:border-white/10">
-          <p className="text-[16px] font-mono font-medium text-center text-[var(--foreground)] tracking-wide">
+        <p className="text-center font-serif text-[17px] sm:text-[18px] leading-relaxed text-[var(--foreground)] py-1 tracking-wide">
+          {block.text}
+        </p>
+      );
+    case 'math-answer':
+      return (
+        <div className="pt-2 space-y-1">
+          <p className="text-[14px] font-bold text-[var(--foreground)]">Answer</p>
+          <p className="text-center font-serif text-[18px] sm:text-[20px] font-medium text-[var(--foreground)]">
             {block.text}
           </p>
         </div>

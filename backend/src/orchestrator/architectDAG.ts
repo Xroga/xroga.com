@@ -3,6 +3,8 @@ import { deepSeekChat } from '../lib/deepseek.js';
 import { loadMasterPrompt } from './masterPrompt.js';
 import { buildFullSystemPrompt } from './aiTraining.js';
 import { isTrivialPrompt, isSimpleChat } from '../lib/promptClassifier.js';
+import { isCapabilitiesQuery } from '../lib/xrogaCapabilities.js';
+import { isMathQuery } from '../lib/mathQuery.js';
 import type { SwarmProgressEvent } from '../types/features.js';
 
 export interface DagSubtask {
@@ -72,8 +74,8 @@ export async function buildArchitectDAG(
     onProgress?: (event: SwarmProgressEvent) => void;
   }
 ): Promise<ArchitectPlan> {
-  // Skip heavy planning for greetings and simple chat
-  if (isTrivialPrompt(prompt) || isSimpleChat(prompt)) {
+  // Skip heavy planning for greetings, capabilities, math, and simple chat
+  if (isTrivialPrompt(prompt) || isSimpleChat(prompt) || isCapabilitiesQuery(prompt) || isMathQuery(prompt)) {
     return INSTANT_PLAN;
   }
 
