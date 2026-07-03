@@ -2,6 +2,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { deployStaticSite } from '../../lib/vercel.js';
+import { getSecret } from '../../config/envSecrets.js';
 import { logSystemError } from '../systemErrorLog.js';
 
 const execAsync = promisify(exec);

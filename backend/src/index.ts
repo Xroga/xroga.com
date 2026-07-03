@@ -73,7 +73,7 @@ app.use(express.json({ limit: '10mb' }));
 
 import { getImageProviderStatus } from './services/builder/imageGen.js';
 import { getVideoProviderStatus } from './lib/videoProviders.js';
-import { getCouncilKeyStatus } from './config/envSecrets.js';
+import { getCouncilKeyStatus, getDeployKeyStatus } from './config/envSecrets.js';
 
 const healthPayload = () => {
   const image = getImageProviderStatus();
@@ -81,9 +81,10 @@ const healthPayload = () => {
   return {
     status: 'ok',
     service: 'xroga-api',
-    version: '1.6.0',
+    version: '1.6.1',
     councilStack: 'groq-gemini-deepseek-mistral',
     councilKeys: getCouncilKeyStatus(),
+    deployKeys: getDeployKeyStatus(),
     promptsSealed: true,
     timestamp: new Date().toISOString(),
     authConfigured: Boolean(process.env.SUPABASE_URL),

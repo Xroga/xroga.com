@@ -3,6 +3,7 @@
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SwarmTodoItem } from '@/lib/swarm';
+import { SwarmProcessingTicker } from './SwarmProcessingTicker';
 
 const PHASES = [
   { id: 0, label: 'Discovery' },
@@ -22,9 +23,10 @@ interface SwarmPhasePanelProps {
   statusLabel?: string | null;
   analysis?: string | null;
   todos?: SwarmTodoItem[];
+  activityLog?: string[];
 }
 
-/** Live 7-phase AI Swarm Logic + XROGA step-by-step checklist */
+/** Live 7-phase AI Swarm Logic + XROGA branded processing animation */
 export function SwarmPhasePanel({
   activePhase,
   loading,
@@ -32,18 +34,22 @@ export function SwarmPhasePanel({
   statusLabel,
   analysis,
   todos = [],
+  activityLog = [],
 }: SwarmPhasePanelProps) {
-  const showPanel = loading && (todos.length > 0 || activePhase != null);
+  const showPanel = loading && (todos.length > 0 || activePhase != null || Boolean(message));
   if (!showPanel) return null;
 
   const phase = activePhase != null ? Math.min(7, Math.max(0, activePhase)) : null;
-  const headline = statusLabel ?? 'XROGA · BLACK HOLE V∞ · AI SWARM LOGIC';
+  const liveText = message ?? statusLabel ?? activityLog[activityLog.length - 1];
+  const headline = statusLabel ?? 'AI SWARM LOGIC';
 
   return (
-    <div className="my-2 rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] px-3 py-2.5">
+    <div className="my-2 rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] px-3 py-2.5 animate-in fade-in duration-200">
       <p className="text-[10px] font-bold tracking-wide text-[#60a5fa]/90 mb-2">
         🕳️ {headline}
       </p>
+
+      <SwarmProcessingTicker text={liveText} activityLog={activityLog} className="mb-2.5" />
 
       {phase != null && (
         <div className="flex flex-wrap gap-1 mb-2.5">
@@ -54,7 +60,7 @@ export function SwarmPhasePanel({
               <span
                 key={p.id}
                 className={cn(
-                  'text-[9px] px-1.5 py-0.5 rounded-md border transition-colors',
+                  'text-[9px] px-1.5 py-0.5 rounded-md border transition-all duration-150',
                   done && 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400',
                   active && 'border-[#006aff]/50 bg-[#006aff]/15 text-[#93c5fd] animate-pulse',
                   !done && !active && 'border-white/10 text-[var(--muted)]/50'
@@ -70,7 +76,7 @@ export function SwarmPhasePanel({
       {analysis && (
         <div className="mb-2.5 rounded-lg border border-white/8 bg-black/20 px-2.5 py-2">
           <p className="text-[9px] font-medium uppercase tracking-wider text-[var(--muted)]/70 mb-1">
-            Analysis
+            Event Horizon Analysis
           </p>
           <p className="text-[11px] text-[var(--foreground)]/80 leading-snug line-clamp-4 whitespace-pre-wrap">
             {analysis}
@@ -84,7 +90,7 @@ export function SwarmPhasePanel({
             <li
               key={item.id}
               className={cn(
-                'flex items-start gap-2 rounded-md px-2 py-1.5 text-[11px] leading-snug transition-colors',
+                'flex items-start gap-2 rounded-md px-2 py-1.5 text-[11px] leading-snug transition-colors duration-150',
                 item.status === 'done' && 'text-emerald-400',
                 item.status === 'active' && 'bg-[#006aff]/12 text-[#93c5fd] border border-[#006aff]/25',
                 item.status === 'pending' && 'text-[var(--muted)]/45'
@@ -106,12 +112,6 @@ export function SwarmPhasePanel({
           ))}
         </ul>
       ) : null}
-
-      {message && !todos.length && (
-        <p className="text-[11px] text-[var(--foreground)]/75 leading-snug line-clamp-3 whitespace-pre-wrap">
-          {message.replace(/^🕳️[^\n]*\n\n/, '')}
-        </p>
-      )}
     </div>
   );
 }

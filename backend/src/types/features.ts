@@ -265,6 +265,8 @@ export interface SwarmProgressEvent {
   swarmTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
   swarmStatusLabel?: string;
   swarmAnalysis?: string;
+  /** Live branded activity line for processing animation */
+  swarmActivity?: string;
   /** Build blocked until GitHub OAuth completes */
   needsGitHub?: boolean;
 }

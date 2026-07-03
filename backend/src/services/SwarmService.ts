@@ -270,6 +270,7 @@ export class SwarmService {
           swarmTodos: event.swarmTodos,
           swarmStatusLabel: event.swarmStatusLabel,
           swarmAnalysis: event.swarmAnalysis,
+          swarmActivity: event.swarmActivity,
           needsGitHub: event.needsGitHub,
           councilLayer: event.councilLayer,
         },

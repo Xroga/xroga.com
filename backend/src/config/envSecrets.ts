@@ -38,7 +38,9 @@ const ALIASES: Record<string, string[]> = {
   ANTHROPIC_API_KEY: ['ANTHROPIC_API_KEY'],
   OPENAI_API_KEY: ['OPENAI_API_KEY'],
   MISTRAL_API_KEY: ['MISTRAL_API_KEY'],
-  VERCEL_TOKEN: ['VERCEL_TOKEN'],
+  VERCEL_API_KEY: ['VERCEL_API_KEY', 'VERCEL_TOKEN'],
+  VERCEL_TOKEN: ['VERCEL_API_KEY', 'VERCEL_TOKEN'],
+  NETLIFY_ACCESS_TOKEN: ['NETLIFY_ACCESS_TOKEN'],
 };
 
 export function getSecret(primary: keyof typeof ALIASES | string): string | undefined {
@@ -52,6 +54,14 @@ export function getSecret(primary: keyof typeof ALIASES | string): string | unde
 
 export function hasSecret(primary: string): boolean {
   return Boolean(getSecret(primary));
+}
+
+/** Deploy platform keys — Fly.io secret names */
+export function getDeployKeyStatus(): Record<string, boolean> {
+  return {
+    VERCEL_API_KEY: hasSecret('VERCEL_API_KEY'),
+    NETLIFY_ACCESS_TOKEN: hasSecret('NETLIFY_ACCESS_TOKEN'),
+  };
 }
 
 /** Elite Council + Reserve — Fly.io secret names */
