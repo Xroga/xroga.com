@@ -10,6 +10,7 @@ import {
 import { classifyXrogaIntent } from '../lib/intentClassifier.js';
 import { getComingSoonResponse, wantsFullNativeBuild } from '../lib/comingSoon.js';
 import { isCapabilitiesQuery, getXrogaCapabilitiesResponse } from '../lib/xrogaCapabilities.js';
+import { analyzeUserQuery } from '../lib/queryAnalyzer.js';
 import { groqSprinter, groqGeneral, groqContrarian } from '../council/groqClient.js';
 import { geminiGenerateCultural, geminiKnowledgeGapCard, geminiReview } from '../council/geminiClient.js';
 import { deepseekGenerate } from '../council/deepseekClient.js';
@@ -95,6 +96,21 @@ export class XrogaRouter {
     }
 
     try {
+      const analysis = analyzeUserQuery(input);
+      for (const step of analysis.thinkingSteps.slice(0, -1)) {
+        onProgress?.('reserve', step);
+      }
+
+      if (analysis.needsClarification && analysis.clarificationText) {
+        onProgress?.('blackhole', analysis.thinkingSteps.at(-1) ?? 'Preparing follow-up questions');
+        return {
+          text: formatPlainProfessional(analysis.clarificationText),
+          provider: 'xroga',
+          councilLayer: 'blackhole',
+          intent: 'general',
+        };
+      }
+
       if (isCapabilitiesQuery(input)) {
         onProgress?.('blackhole', 'Preparing XROGA capabilities overview');
         return {
@@ -105,7 +121,7 @@ export class XrogaRouter {
         };
       }
 
-      onProgress?.('reserve', 'Reading your question');
+      onProgress?.('reserve', analysis.thinkingSteps.at(-1) ?? 'Reading your question');
       const intent = await classifyXrogaIntent(input);
 
       if (COMING_SOON_INTENTS.includes(intent) && wantsFullNativeBuild(input)) {

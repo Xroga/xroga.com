@@ -8,6 +8,7 @@ export type XrogaBlock =
   | { type: 'section'; title: string; body: string }
   | { type: 'paragraph'; text: string }
   | { type: 'math-step'; step: string; body: string }
+  | { type: 'math-equation'; text: string }
   | { type: 'math-answer'; text: string }
   | { type: 'callout'; label: string; body: string }
   | { type: 'list'; items: string[] }
@@ -72,7 +73,7 @@ function isEquationLine(line: string): boolean {
 function isSectionTitle(line: string): boolean {
   if (line.length > 64) return false;
   if (/[.!?]$/.test(line) && line.split(' ').length > 6) return false;
-  if (/^(note|implementation note|key takeaway|answer|try asking|arriving)/i.test(line)) return true;
+  if (/^(note|implementation note|key takeaway|answer|try asking|arriving|quick questions)/i.test(line)) return true;
   if (line.split(' ').length <= 6 && !line.endsWith('.')) return true;
   return false;
 }
@@ -140,8 +141,8 @@ export function parseXrogaBlocks(content: string): XrogaBlock[] {
 
       if (lines.length > 1 && isSectionTitle(first)) {
         const bodyLines = lines.slice(1);
-        const allShort = bodyLines.every((l) => l.length < 90 && !l.includes('.'));
-        if (allShort && bodyLines.length > 1 && first.toLowerCase() === 'try asking') {
+        const allShort = bodyLines.every((l) => l.length < 120);
+        if (allShort && bodyLines.length > 1 && /^(try asking|quick questions)/i.test(first)) {
           blocks.push({ type: 'list', items: bodyLines });
           return;
         }
@@ -180,7 +181,7 @@ function renderInline(text: string): ReactNode[] {
     parts.push(
       <code
         key={k++}
-        className="rounded-md bg-slate-200/60 px-1.5 py-0.5 text-[13px] font-mono text-slate-800 dark:bg-white/10 dark:text-slate-200"
+        className="rounded-md bg-slate-200/60 px-1.5 py-0.5 text-[14px] font-mono text-slate-800 dark:bg-white/10 dark:text-slate-200"
       >
         {m[1]}
       </code>
@@ -202,14 +203,14 @@ function MathStepBody({ body }: { body: string }) {
   return (
     <div className="space-y-2">
       {prose.map((line, i) => (
-        <p key={`p-${i}`} className="text-[14px] leading-relaxed text-[var(--foreground)]/85">
+        <p key={`p-${i}`} className="text-[16px] sm:text-[17px] leading-relaxed text-[var(--foreground)]/85">
           {renderInline(line)}
         </p>
       ))}
       {equations.map((eq, i) => (
         <p
           key={`eq-${i}`}
-          className="text-center font-serif text-[17px] sm:text-[18px] leading-relaxed text-[var(--foreground)] py-0.5 tracking-wide"
+          className="text-center font-serif text-[19px] sm:text-[21px] leading-relaxed text-[var(--foreground)] py-0.5 tracking-wide"
         >
           {eq.replace(/\*/g, '·')}
         </p>
@@ -222,45 +223,45 @@ function BlockView({ block }: { block: XrogaBlock }) {
   switch (block.type) {
     case 'headline':
       return (
-        <h2 className="text-[1.35rem] sm:text-[1.5rem] font-bold leading-tight tracking-tight text-[var(--foreground)] border-b border-slate-200/70 dark:border-white/10 pb-2.5 mb-1">
+        <h2 className="text-[1.5rem] sm:text-[1.75rem] font-bold leading-tight tracking-tight text-[var(--foreground)] border-b border-slate-200/70 dark:border-white/10 pb-2.5 mb-1">
           {block.text}
         </h2>
       );
     case 'section':
       return (
         <div className="space-y-1.5 pt-1">
-          <h3 className="text-[15px] font-semibold tracking-tight text-[var(--foreground)]">
+          <h3 className="text-[17px] sm:text-[18px] font-semibold tracking-tight text-[var(--foreground)]">
             {block.title}
           </h3>
-          <p className="text-[15px] leading-[1.75] text-[var(--foreground)]/85 whitespace-pre-wrap">
+          <p className="text-[17px] sm:text-[18px] leading-[1.75] text-[var(--foreground)]/85 whitespace-pre-wrap">
             {renderInline(block.body)}
           </p>
         </div>
       );
     case 'paragraph':
       return (
-        <p className="text-[15px] leading-[1.75] text-[var(--foreground)]/88 whitespace-pre-wrap">
+        <p className="text-[17px] sm:text-[18px] leading-[1.75] text-[var(--foreground)]/88 whitespace-pre-wrap">
           {renderInline(block.text)}
         </p>
       );
     case 'math-step':
       return (
         <div className="space-y-2 py-1">
-          <p className="text-[14px] font-bold text-[var(--foreground)]">{block.step}</p>
+          <p className="text-[16px] sm:text-[17px] font-bold text-[var(--foreground)]">{block.step}</p>
           <MathStepBody body={block.body} />
         </div>
       );
     case 'math-equation':
       return (
-        <p className="text-center font-serif text-[17px] sm:text-[18px] leading-relaxed text-[var(--foreground)] py-1 tracking-wide">
+        <p className="text-center font-serif text-[19px] sm:text-[21px] leading-relaxed text-[var(--foreground)] py-1 tracking-wide">
           {block.text}
         </p>
       );
     case 'math-answer':
       return (
         <div className="pt-2 space-y-1">
-          <p className="text-[14px] font-bold text-[var(--foreground)]">Answer</p>
-          <p className="text-center font-serif text-[18px] sm:text-[20px] font-medium text-[var(--foreground)]">
+          <p className="text-[16px] sm:text-[17px] font-bold text-[var(--foreground)]">Answer</p>
+          <p className="text-center font-serif text-[20px] sm:text-[22px] font-medium text-[var(--foreground)]">
             {block.text}
           </p>
         </div>
@@ -268,8 +269,8 @@ function BlockView({ block }: { block: XrogaBlock }) {
     case 'callout':
       return (
         <div className="rounded-r-xl border-l-4 border-[#006aff]/50 bg-gradient-to-r from-slate-50/95 to-white/60 px-4 py-3 dark:from-white/5 dark:to-transparent">
-          <p className="text-[13px] font-bold text-[var(--foreground)] mb-1">{block.label}</p>
-          <p className="text-[14px] leading-[1.7] text-[var(--foreground)]/88 whitespace-pre-wrap">
+          <p className="text-[15px] sm:text-[16px] font-bold text-[var(--foreground)] mb-1">{block.label}</p>
+          <p className="text-[16px] sm:text-[17px] leading-[1.7] text-[var(--foreground)]/88 whitespace-pre-wrap">
             {renderInline(block.body)}
           </p>
         </div>
@@ -280,7 +281,7 @@ function BlockView({ block }: { block: XrogaBlock }) {
           {block.items.map((item, i) => (
             <p
               key={i}
-              className="text-[14px] leading-snug text-[var(--foreground)]/80 pl-3 border-l-2 border-slate-200/80 dark:border-white/15"
+              className="text-[16px] sm:text-[17px] leading-snug text-[var(--foreground)]/80 pl-3 border-l-2 border-slate-200/80 dark:border-white/15"
             >
               {renderInline(item)}
             </p>
@@ -289,7 +290,7 @@ function BlockView({ block }: { block: XrogaBlock }) {
       );
     case 'code':
       return (
-        <pre className="overflow-x-auto rounded-xl border border-slate-200/80 bg-slate-900/[0.04] px-4 py-3 text-[13px] font-mono leading-relaxed dark:border-white/10 dark:bg-black/30">
+        <pre className="overflow-x-auto rounded-xl border border-slate-200/80 bg-slate-900/[0.04] px-4 py-3 text-[14px] font-mono leading-relaxed dark:border-white/10 dark:bg-black/30">
           <code>{block.body}</code>
         </pre>
       );
