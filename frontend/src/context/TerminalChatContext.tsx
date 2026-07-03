@@ -79,6 +79,7 @@ interface TerminalChatContextValue {
   reasoning: string | null;
   dag: Array<{ id: string; description: string; agent: string }> | null;
   pipelineCompact: boolean;
+  swarmNegotiationPhase: number | null;
   submit: (
     text?: string,
     fromQueue?: boolean,
@@ -142,6 +143,7 @@ export function TerminalChatProvider({
   const [reasoning, setReasoning] = useState<string | null>(null);
   const [dag, setDag] = useState<Array<{ id: string; description: string; agent: string }> | null>(null);
   const [pipelineCompact, setPipelineCompact] = useState(false);
+  const [swarmNegotiationPhase, setSwarmNegotiationPhase] = useState<number | null>(null);
   const chatPrefill = useAppStore((s) => s.chatPrefill);
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
   const setSwarmRunning = useAppStore((s) => s.setSwarmRunning);
@@ -462,6 +464,7 @@ export function TerminalChatProvider({
       setFollowUps([]);
       setReasoning(null);
       setDag(null);
+      setSwarmNegotiationPhase(null);
 
       const useCompactPipeline =
         isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt);
@@ -527,6 +530,8 @@ export function TerminalChatProvider({
             const layer = (event as { councilLayer?: 'elite' | 'reserve' | 'blackhole' }).councilLayer;
             if (layer) setCouncilLayer(layer);
             if (event.agent) setSwarmActiveAgent(event.agent);
+            const negPhase = (event as SwarmProgressEvent).negotiationPhase;
+            if (negPhase != null) setSwarmNegotiationPhase(negPhase);
             const pendingVideo = isVideoGenerationPrompt(displayPrompt);
             if (pendingVideo && event.message) {
               setMessages((m) =>
@@ -842,6 +847,7 @@ export function TerminalChatProvider({
         videoEstimateSeconds,
         videoStartedAt,
         pipelineCompact,
+        swarmNegotiationPhase,
         followUps,
         reasoning,
         dag,

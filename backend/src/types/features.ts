@@ -256,6 +256,9 @@ export interface SwarmProgressEvent {
   };
   /** Hybrid swarm: elite council vs OSS reserve vs black hole synthesis */
   councilLayer?: 'elite' | 'reserve' | 'blackhole';
+  /** 7-phase AI Swarm Logic (0–7) */
+  negotiationPhase?: number;
+  swarmLogic?: boolean;
 }
 
 export const FEATURE_ACTION_COSTS: Record<FeatureCategory, number> = {

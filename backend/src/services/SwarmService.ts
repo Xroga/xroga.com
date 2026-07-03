@@ -265,6 +265,9 @@ export class SwarmService {
           omniPhase: event.omniPhase,
           omniDetail: event.omniDetail,
           imageAttempt: event.imageAttempt,
+          negotiationPhase: event.negotiationPhase,
+          swarmLogic: event.swarmLogic,
+          councilLayer: event.councilLayer,
         },
       });
     };
