@@ -2,6 +2,7 @@
 
 import { useMemo, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { MathEquation } from '@/lib/mathRender';
 
 export type XrogaBlock =
   | { type: 'headline'; text: string }
@@ -56,6 +57,8 @@ function normalizeMathContent(content: string): string {
   out = out.replace(/steps\s+Step\s+(\d+)/gi, 'steps\n\nStep $1');
   out = out.replace(/Step\s+(\d+)\s*[:.]?\s*/gi, 'Step $1\n');
   out = out.replace(/(\d)\s+(Step\s+\d)/gi, '$1\n\n$2');
+  out = out.replace(/(To solve for [^\n]+)\s*(\d)/gi, '$1\n\n$2');
+  out = out.replace(/(equation:)\s*/gi, '$1\n\n');
   return out;
 }
 
@@ -80,6 +83,10 @@ function isSectionTitle(line: string): boolean {
 
 function isCalloutLine(line: string): boolean {
   return /^(note|implementation note|key takeaway|assumption):/i.test(line);
+}
+
+function isMathIntro(line: string): boolean {
+  return /^to solve for\b/i.test(line.trim());
 }
 
 function splitCallout(line: string): { label: string; rest: string } {
@@ -131,6 +138,21 @@ export function parseXrogaBlocks(content: string): XrogaBlock[] {
 
       if (/^answer$/i.test(first) && lines.length > 1) {
         blocks.push({ type: 'math-answer', text: lines.slice(1).join('\n').trim() });
+        return;
+      }
+
+      if (isMathIntro(first)) {
+        blocks.push({ type: 'paragraph', text: first });
+        const rest = lines.slice(1);
+        for (const line of rest) {
+          if (isEquationLine(line)) blocks.push({ type: 'math-equation', text: line });
+          else if (/^step\s+\d+/i.test(line)) {
+            const stepIdx = rest.indexOf(line);
+            const stepBody = rest.slice(stepIdx + 1).join('\n');
+            blocks.push({ type: 'math-step', step: line, body: stepBody });
+            break;
+          } else blocks.push({ type: 'paragraph', text: line });
+        }
         return;
       }
 
@@ -197,23 +219,24 @@ function MathStepBody({ body }: { body: string }) {
   const prose: string[] = [];
   const equations: string[] = [];
   for (const line of lines) {
+    if (/^step\s+\d+/i.test(line) || /^answer$/i.test(line)) break;
     if (isEquationLine(line)) equations.push(line);
     else prose.push(line);
   }
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {prose.map((line, i) => (
         <p key={`p-${i}`} className="text-[16px] sm:text-[17px] leading-relaxed text-[var(--foreground)]/85">
           {renderInline(line)}
         </p>
       ))}
       {equations.map((eq, i) => (
-        <p
-          key={`eq-${i}`}
-          className="text-center font-serif text-[19px] sm:text-[21px] leading-relaxed text-[var(--foreground)] py-0.5 tracking-wide"
-        >
-          {eq.replace(/\*/g, '·')}
-        </p>
+        <div key={`eq-${i}`} className="xv-math-equation py-1">
+          <MathEquation
+            text={eq}
+            className="text-[20px] sm:text-[22px] text-[var(--foreground)]"
+          />
+        </div>
       ))}
     </div>
   );
@@ -246,24 +269,30 @@ function BlockView({ block }: { block: XrogaBlock }) {
       );
     case 'math-step':
       return (
-        <div className="space-y-2 py-1">
+        <div className="space-y-2 py-2 border-t border-slate-200/50 dark:border-white/10 first:border-t-0">
           <p className="text-[16px] sm:text-[17px] font-bold text-[var(--foreground)]">{block.step}</p>
           <MathStepBody body={block.body} />
         </div>
       );
     case 'math-equation':
       return (
-        <p className="text-center font-serif text-[19px] sm:text-[21px] leading-relaxed text-[var(--foreground)] py-1 tracking-wide">
-          {block.text}
-        </p>
+        <div className="xv-math-equation py-2">
+          <MathEquation
+            text={block.text}
+            className="text-[20px] sm:text-[22px] text-[var(--foreground)]"
+          />
+        </div>
       );
     case 'math-answer':
       return (
-        <div className="pt-2 space-y-1">
+        <div className="pt-3 mt-2 border-t border-slate-200/70 dark:border-white/15 space-y-2">
           <p className="text-[16px] sm:text-[17px] font-bold text-[var(--foreground)]">Answer</p>
-          <p className="text-center font-serif text-[20px] sm:text-[22px] font-medium text-[var(--foreground)]">
-            {block.text}
-          </p>
+          <div className="xv-math-equation">
+            <MathEquation
+              text={block.text}
+              className="text-[22px] sm:text-[24px] font-medium text-[var(--foreground)]"
+            />
+          </div>
         </div>
       );
     case 'callout':

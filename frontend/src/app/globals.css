@@ -4,6 +4,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import 'xterm/css/xterm.css';
+@import 'katex/dist/katex.min.css';
 
 :root {
   --background: #0a0e17;
@@ -2567,6 +2568,16 @@ body.theme-gray * {
   font-size: 17px;
   line-height: 1.75;
   animation: xv-response-in 0.4s ease-out;
+}
+
+.xv-math-equation {
+  display: flex;
+  justify-content: center;
+  padding: 0.35rem 0;
+}
+
+.xv-math-equation .katex {
+  font-size: 1.15em;
 }
 
 .xv-formatted-response ul li,

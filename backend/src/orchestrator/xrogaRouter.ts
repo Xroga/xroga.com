@@ -11,6 +11,8 @@ import { classifyXrogaIntent } from '../lib/intentClassifier.js';
 import { getComingSoonResponse, wantsFullNativeBuild } from '../lib/comingSoon.js';
 import { isCapabilitiesQuery, getXrogaCapabilitiesResponse } from '../lib/xrogaCapabilities.js';
 import { analyzeUserQuery } from '../lib/queryAnalyzer.js';
+import { isMathQuery } from '../lib/mathQuery.js';
+import { trySolveMathLocally } from '../lib/mathSolver.js';
 import { groqSprinter, groqGeneral, groqContrarian } from '../council/groqClient.js';
 import { geminiGenerateCultural, geminiKnowledgeGapCard, geminiReview } from '../council/geminiClient.js';
 import { deepseekGenerate } from '../council/deepseekClient.js';
@@ -119,6 +121,30 @@ export class XrogaRouter {
           councilLayer: 'blackhole',
           intent: 'general',
         };
+      }
+
+      if (isMathQuery(input)) {
+        onProgress?.('reserve', 'Working through the math step by step');
+        const local = trySolveMathLocally(input);
+        if (local) {
+          onProgress?.('blackhole', 'Formatting your solution');
+          return {
+            text: formatPlainProfessional(local),
+            provider: 'xroga-math',
+            councilLayer: 'blackhole',
+            intent: 'stem',
+          };
+        }
+        onProgress?.('elite', 'Solving with step-by-step reasoning');
+        const { raw, layer, provider } = await councilOrReserve(
+          input,
+          'deepseek',
+          () => deepseekGenerate(input, { context: ctx, mathMode: true }),
+          onProgress
+        );
+        onProgress?.('blackhole', 'Formatting your solution');
+        const emitted = await blackHoleEmit(raw, input, 'stem', layer);
+        return { text: emitted.text, provider, councilLayer: emitted.layer, intent: 'stem' };
       }
 
       onProgress?.('reserve', analysis.thinkingSteps.at(-1) ?? 'Reading your question');
