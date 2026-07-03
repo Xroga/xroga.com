@@ -1,6 +1,27 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+/** Paths crawlers and visitors can access without signing in */
+const PUBLIC_PREFIXES = [
+  '/features',
+  '/integrations',
+  '/droga',
+  '/pricing',
+  '/about',
+  '/contact',
+  '/docs',
+  '/terms',
+  '/privacy',
+  '/refund',
+];
+
+function isPublicPath(pathname: string): boolean {
+  if (pathname === '/') return true;
+  if (pathname === '/robots.txt' || pathname === '/sitemap.xml') return true;
+  if (pathname.startsWith('/auth')) return true;
+  return PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -24,11 +45,12 @@ export async function updateSession(request: NextRequest) {
   );
 
   const { data: { user } } = await supabase.auth.getUser();
+  const pathname = request.nextUrl.pathname;
 
-  const isAuthPage = request.nextUrl.pathname.startsWith('/auth');
-  const isPublicPage = request.nextUrl.pathname === '/';
+  const isAuthPage = pathname.startsWith('/auth');
+  const isPublicPage = isPublicPath(pathname);
 
-  if (!user && !isAuthPage && !isPublicPage) {
+  if (!user && !isPublicPage) {
     const url = request.nextUrl.clone();
     url.pathname = '/auth/login';
     return NextResponse.redirect(url);
@@ -40,7 +62,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && isPublicPage) {
+  if (user && pathname === '/') {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard';
     return NextResponse.redirect(url);

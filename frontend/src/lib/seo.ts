@@ -9,10 +9,30 @@ export const DEFAULT_DESCRIPTION =
   'Xroga AI is the AI Swarm Operating System — 710+ integrations, multi-agent Architect·Builder·Reviewer·QA workflows, browser automation, and action-based billing. Built by Muhammad Ibrahim, 19, from Pakistan.';
 
 /** Brand + typo + related search terms for discoverability */
+export const BRAND_TYPO_KEYWORDS = [
+  'Droga AI',
+  'droga ai',
+  'droga',
+  'Droga',
+  'Roga AI',
+  'roga ai',
+  'roga ai platform',
+  'x roga',
+  'zroga',
+  'Zroga AI',
+  'xroga ai',
+  'xroga.com',
+  'XROGA AI',
+  'XROGA',
+  'did you mean xroga',
+  'droga ai xroga',
+];
+
 export const DEFAULT_KEYWORDS = [
   'Xroga AI',
   'Xroga',
   'xroga.com',
+  ...BRAND_TYPO_KEYWORDS,
   '#1 AI',
   'top 1 AI',
   'best AI',
@@ -95,7 +115,7 @@ export function buildOrganizationJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: SITE_NAME,
-    alternateName: ['Xroga', 'Xroga Swarm', 'Roga AI', 'XROGA AI'],
+    alternateName: ['Xroga', 'Xroga Swarm', 'Roga AI', 'Droga AI', 'Zroga AI', 'XROGA AI', 'xroga.com'],
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'Web',
     url: SITE_URL,
@@ -126,7 +146,7 @@ export function buildWebSiteJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE_NAME,
-    alternateName: ['xroga', 'roga ai', 'xroga ai', 'best ai'],
+    alternateName: ['xroga', 'xroga ai', 'roga ai', 'droga ai', 'Droga AI', 'zroga', 'best ai'],
     url: SITE_URL,
     description: DEFAULT_DESCRIPTION,
     potentialAction: {
@@ -142,7 +162,12 @@ export function buildSiteNavigationJsonLd() {
   const items = [
     { name: 'Sign Up', url: `${SITE_URL}/auth/signup`, description: 'Create your Xroga AI account — 50 free actions' },
     { name: 'Sign In', url: `${SITE_URL}/auth/login`, description: 'Log in to your Xroga AI dashboard' },
-    { name: 'Features', url: `${SITE_URL}/features`, description: '92+ AI swarm features on every plan' },
+    { name: 'Features', url: `${SITE_URL}/features`, description: '98+ AI swarm features on every plan' },
+    { name: 'AI Image Generation', url: `${SITE_URL}/features/ai-image-generation`, description: 'Generate images with Xroga AI' },
+    { name: 'Talk with AI', url: `${SITE_URL}/features/ai-voice-talk`, description: 'Push-to-talk voice assistant' },
+    { name: 'GitHub Deploy', url: `${SITE_URL}/features/github-auto-deploy`, description: 'Connect GitHub and auto-deploy' },
+    { name: 'Integrations', url: `${SITE_URL}/integrations`, description: '710+ integrations' },
+    { name: 'Droga AI', url: `${SITE_URL}/droga`, description: 'Looking for Droga AI? This is Xroga AI' },
     { name: 'Pricing', url: `${SITE_URL}/pricing`, description: 'Honest action-based plans from $19/mo' },
     { name: 'About', url: `${SITE_URL}/about`, description: 'Xroga AI story and mission' },
     { name: 'API Docs', url: `${SITE_URL}/docs/api`, description: 'Xroga AI developer API' },
