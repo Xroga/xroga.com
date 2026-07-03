@@ -7,12 +7,19 @@ const router = Router();
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID ?? '';
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET ?? '';
-const FRONTEND_URL = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+
+/** Must match GitHub OAuth App → Authorization callback URL exactly */
+export function getGitHubOAuthCallbackUrl(): string {
+  const explicit = process.env.GITHUB_OAUTH_CALLBACK_URL?.trim();
+  if (explicit) return explicit.replace(/\/$/, '');
+  const base = (process.env.FRONTEND_URL ?? 'http://localhost:3000').replace(/\/$/, '');
+  return `${base}/dashboard/integrations/github/callback`;
+}
 
 function buildGitHubAuthorizeUrl(userId: string): string | null {
   if (!GITHUB_CLIENT_ID) return null;
   const state = Buffer.from(JSON.stringify({ userId })).toString('base64url');
-  const redirectUri = `${FRONTEND_URL}/dashboard/integrations/github/callback`;
+  const redirectUri = getGitHubOAuthCallbackUrl();
   return `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=repo,user:email&state=${state}`;
 }
 
@@ -22,7 +29,18 @@ router.get('/oauth', (req: AuthRequest, res) => {
     res.status(503).json({ error: 'GitHub OAuth not configured' });
     return;
   }
-  res.json({ url });
+  res.json({ url, redirectUri: getGitHubOAuthCallbackUrl() });
+});
+
+/** Shows exact callback URL — use this to configure GitHub OAuth App */
+router.get('/oauth-config', (_req: AuthRequest, res) => {
+  res.json({
+    redirectUri: getGitHubOAuthCallbackUrl(),
+    frontendUrl: process.env.FRONTEND_URL ?? null,
+    githubOAuthCallbackUrl: process.env.GITHUB_OAUTH_CALLBACK_URL ?? null,
+    clientIdConfigured: Boolean(GITHUB_CLIENT_ID),
+    hint: 'GitHub OAuth App → Authorization callback URL must match redirectUri exactly.',
+  });
 });
 
 /** GET /auth/github — redirect straight to GitHub OAuth (alias mount) */
@@ -53,7 +71,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
     return;
   }
 
-  const redirectUri = `${FRONTEND_URL}/dashboard/integrations/github/callback`;
+  const redirectUri = getGitHubOAuthCallbackUrl();
 
   const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
     method: 'POST',
