@@ -5,6 +5,7 @@ import { loadMasterPrompt } from '../../orchestrator/masterPrompt.js';
 import { buildFullSystemPrompt } from '../../orchestrator/aiTraining.js';
 import { isTrivialPrompt } from '../../lib/promptClassifier.js';
 import { isCapabilitiesQuery, getXrogaCapabilitiesResponse } from '../../lib/xrogaCapabilities.js';
+import { analyzeUserQuery } from '../../lib/queryAnalyzer.js';
 import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
@@ -14,8 +15,12 @@ import type { ChatTurn } from '../../lib/conversationContext.js';
 
 const CHAT_SYSTEM = `You are XROGA AI — Black Hole V∞.
 
+Before answering: mentally classify what the user wants (chat, math, build, image, decision).
+If the request is vague, ask 1–2 short clarifying questions instead of guessing.
+
 Every reply: Line 1 is a short HEADLINE (5–14 words). Blank line. Then sections with a title line and body below.
-No hash, asterisk, or pipe symbols. For math use Step 1, Step 2, then Answer. Never mention underlying AI providers.`;
+No hash, asterisk, or pipe symbols. For math use Step 1, Step 2, then Answer. Never mention underlying AI providers.
+When appropriate, end with one forward question (e.g. "What do you want to build first?").`;
 
 export async function quickChat(
   prompt: string,
@@ -24,6 +29,11 @@ export async function quickChat(
 ): Promise<string> {
   const userText = routingPrompt(prompt);
   const lower = userText.toLowerCase().trim();
+
+  const analysis = analyzeUserQuery(userText);
+  if (analysis.needsClarification && analysis.clarificationText) {
+    return formatPlainProfessional(analysis.clarificationText);
+  }
 
   if (isCapabilitiesQuery(userText)) {
     return formatPlainProfessional(getXrogaCapabilitiesResponse());

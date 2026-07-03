@@ -4,6 +4,9 @@
 
 export const XROGA_RESPONSE_FORMAT = `RESPONSE FORMAT (mandatory for every answer):
 
+First analyze what the user is asking (intent, topic, constraints) before writing the answer.
+If the request is vague or missing key details, ask 1–2 short clarifying questions instead of guessing.
+
 Line 1 — HEADLINE: One short punchy headline (5–14 words) that answers the core question. No symbols.
 
 Blank line.

@@ -11,6 +11,7 @@ import type { SwarmCoreAgent, SwarmPlan, SwarmResult } from '../types/index.js';
 import { routingPrompt } from '../lib/promptRouting.js';
 import { shouldUseFastChat, isTrivialPrompt, requiresFeaturePipeline } from '../lib/promptClassifier.js';
 import { isCapabilitiesQuery } from '../lib/xrogaCapabilities.js';
+import { analyzeUserQuery } from '../lib/queryAnalyzer.js';
 import { formatFeatureOutput, stripFakeImageMarkdown } from '../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../services/featureExecutor.js';
 import { resolveAttachmentFeatureCategory } from '../lib/featureIntent.js';
@@ -75,14 +76,18 @@ export class Orchestrator {
     category: FeatureCategory = 'chat'
   ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[] }> {
     const userText = routingPrompt(ctx.prompt);
+    const analysis = analyzeUserQuery(userText);
     if (!isTrivialPrompt(userText)) {
-      ctx.onProgress?.(progressEvent('builder', 'thinking', 'Reading your question'));
+      for (const step of analysis.thinkingSteps.slice(0, 2)) {
+        ctx.onProgress?.(progressEvent('builder', 'thinking', step));
+      }
     }
 
     const { quickChat } = await import('../services/chat/quickChat.js');
     const reply = await quickChat(userText, (layer, detail) => {
+      const msg = detail ?? analysis.thinkingSteps.at(-1) ?? `Black Hole V∞ — ${layer}`;
       ctx.onProgress?.(
-        progressEvent('builder', 'building', detail ?? `Black Hole V∞ — ${layer}`, {
+        progressEvent('builder', 'building', msg, {
           councilLayer: layer,
         })
       );
