@@ -2,6 +2,8 @@
 
 import { detectFeatureIntent, requiresFeaturePipeline } from './featureIntent.js';
 import { routingPrompt } from './promptRouting.js';
+import { isCapabilitiesQuery } from './xrogaCapabilities.js';
+import { isMathQuery } from './mathQuery.js';
 
 export { requiresFeaturePipeline, detectFeatureIntent };
 
@@ -24,6 +26,8 @@ export function isTrivialPrompt(prompt: string): boolean {
 /** Short conversational messages — use fast chat, not full 5-agent swarm */
 export function isSimpleChat(prompt: string): boolean {
   const t = routingPrompt(prompt).trim();
+  if (isCapabilitiesQuery(t)) return true;
+  if (isMathQuery(t)) return true;
   if (isTrivialPrompt(t)) return true;
   if (t.length > 200) return false;
   if (BUILD_INTENT.test(t)) return false;
@@ -32,6 +36,8 @@ export function isSimpleChat(prompt: string): boolean {
 
 export function shouldUseFastChat(prompt: string, category?: string): boolean {
   const routeText = routingPrompt(prompt);
+  if (isCapabilitiesQuery(routeText)) return true;
+  if (isMathQuery(routeText)) return true;
   if (requiresFeaturePipeline(routeText)) return false;
   if (category && category !== 'chat') return false;
   return isSimpleChat(routeText);
