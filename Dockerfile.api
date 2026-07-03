@@ -16,6 +16,7 @@ FROM base AS build
 
 COPY backend/package.json backend/package-lock.json ./
 
+# package-lock.json must include every dependency in package.json (npm ci fails otherwise)
 RUN npm ci --include=dev --ignore-scripts
 
 COPY backend/tsconfig.json tsconfig.json
