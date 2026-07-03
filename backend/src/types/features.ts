@@ -32,6 +32,8 @@ export interface LandingPageOutput {
   heroImageUrl: string;
   deployUrl: string;
   vercelDeploymentId?: string;
+  githubRepoUrl?: string;
+  githubRepoName?: string;
 }
 
 export interface ImageBlockedOutput {
@@ -263,6 +265,8 @@ export interface SwarmProgressEvent {
   swarmTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
   swarmStatusLabel?: string;
   swarmAnalysis?: string;
+  /** Build blocked until GitHub OAuth completes */
+  needsGitHub?: boolean;
 }
 
 export const FEATURE_ACTION_COSTS: Record<FeatureCategory, number> = {

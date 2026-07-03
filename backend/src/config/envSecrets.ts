@@ -38,6 +38,7 @@ const ALIASES: Record<string, string[]> = {
   ANTHROPIC_API_KEY: ['ANTHROPIC_API_KEY'],
   OPENAI_API_KEY: ['OPENAI_API_KEY'],
   MISTRAL_API_KEY: ['MISTRAL_API_KEY'],
+  VERCEL_TOKEN: ['VERCEL_TOKEN'],
 };
 
 export function getSecret(primary: keyof typeof ALIASES | string): string | undefined {

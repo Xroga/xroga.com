@@ -159,6 +159,40 @@ export class Orchestrator {
       });
     }
 
+    if (result.needsGitHubConnection) {
+      ctx.onProgress?.({
+        runId: crypto.randomUUID(),
+        agent: 'architect',
+        status: 'needs_github',
+        message: 'Connect GitHub to start building',
+        negotiationPhase: 0,
+        swarmLogic: true,
+        needsGitHub: true,
+        timestamp: new Date().toISOString(),
+      } as SwarmProgressEvent);
+      return {
+        runId: crypto.randomUUID(),
+        fast: true,
+        result: {
+          success: false,
+          iterations: 0,
+          defectsFound: 0,
+          plan: defaultPlan(),
+          agents: defaultAgents(['architect']),
+          output: {
+            type: 'chat',
+            content:
+              '🔗 Connect your GitHub account to start building. XROGA will auto-push code and deploy a live preview.',
+          } as FeatureOutput,
+        },
+        actions: { success: true, remaining: 0, cost: 0 },
+        featureCategory,
+        polishedReply:
+          '🔗 Connect your GitHub account to start building. XROGA will auto-push code and deploy a live preview.',
+        followUps: ['Connect GitHub', 'What can you build for me?'],
+      };
+    }
+
     if (result.needsUserClarification) {
       const shield = await runThreeLayerShield({
         content: result.polishedOutput,
@@ -191,6 +225,17 @@ export class Orchestrator {
       includeProsCons: false,
     });
 
+    const structuredOutput = result.featureOutput ?? ({ type: 'chat', content: shield.content } as FeatureOutput);
+    const followUps =
+      result.featureOutput?.type === 'landing_page'
+        ? [
+            'Open live preview',
+            'Push another update',
+            'Add a contact form',
+            'Change the color scheme',
+          ]
+        : [...shield.followUps, 'Deploy this build?', 'Add another feature?'].slice(0, 4);
+
     return {
       runId: crypto.randomUUID(),
       result: {
@@ -199,16 +244,12 @@ export class Orchestrator {
         defectsFound: 0,
         plan: defaultPlan(),
         agents: defaultAgents(['architect', 'builder', 'reviewer', 'qa', 'truth_council']),
-        output: { type: 'chat', content: shield.content } as FeatureOutput,
+        output: structuredOutput,
       },
       actions: { success: true, remaining: 0, cost: featureCategory === 'chat' ? 1 : 15 },
       featureCategory,
       polishedReply: shield.content,
-      followUps: [
-        ...shield.followUps,
-        'Deploy this build?',
-        'Add another feature?',
-      ].slice(0, 4),
+      followUps,
     };
   }
 

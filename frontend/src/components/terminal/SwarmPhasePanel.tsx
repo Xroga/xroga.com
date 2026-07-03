@@ -4,6 +4,17 @@ import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SwarmTodoItem } from '@/lib/swarm';
 
+const PHASES = [
+  { id: 0, label: 'Discovery' },
+  { id: 1, label: 'Planning' },
+  { id: 2, label: 'Verify Plan' },
+  { id: 3, label: 'Execute' },
+  { id: 4, label: 'Verify Code' },
+  { id: 5, label: 'Fix Errors' },
+  { id: 6, label: 'Final Check' },
+  { id: 7, label: 'Emit' },
+] as const;
+
 interface SwarmPhasePanelProps {
   activePhase?: number | null;
   loading: boolean;
@@ -13,7 +24,7 @@ interface SwarmPhasePanelProps {
   todos?: SwarmTodoItem[];
 }
 
-/** Live XROGA step-by-step planning & build progress */
+/** Live 7-phase AI Swarm Logic + XROGA step-by-step checklist */
 export function SwarmPhasePanel({
   activePhase,
   loading,
@@ -25,13 +36,36 @@ export function SwarmPhasePanel({
   const showPanel = loading && (todos.length > 0 || activePhase != null);
   if (!showPanel) return null;
 
-  const headline = statusLabel ?? 'XROGA Planning';
+  const phase = activePhase != null ? Math.min(7, Math.max(0, activePhase)) : null;
+  const headline = statusLabel ?? 'XROGA · BLACK HOLE V∞ · AI SWARM LOGIC';
 
   return (
     <div className="my-2 rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] px-3 py-2.5">
-      <p className="text-[11px] font-semibold tracking-wide text-[#60a5fa] mb-2">
+      <p className="text-[10px] font-bold tracking-wide text-[#60a5fa]/90 mb-2">
         🕳️ {headline}
       </p>
+
+      {phase != null && (
+        <div className="flex flex-wrap gap-1 mb-2.5">
+          {PHASES.map((p) => {
+            const done = p.id < phase;
+            const active = p.id === phase;
+            return (
+              <span
+                key={p.id}
+                className={cn(
+                  'text-[9px] px-1.5 py-0.5 rounded-md border transition-colors',
+                  done && 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400',
+                  active && 'border-[#006aff]/50 bg-[#006aff]/15 text-[#93c5fd] animate-pulse',
+                  !done && !active && 'border-white/10 text-[var(--muted)]/50'
+                )}
+              >
+                {p.label}
+              </span>
+            );
+          })}
+        </div>
+      )}
 
       {analysis && (
         <div className="mb-2.5 rounded-lg border border-white/8 bg-black/20 px-2.5 py-2">

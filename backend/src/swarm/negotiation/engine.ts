@@ -34,11 +34,17 @@ import {
 } from './prompts.js';
 import { reservePolish, shouldUseReserve } from './reserve.js';
 import { swarmReserveProcess } from '../reserve/orchestrator.js';
+import {
+  isGitHubConnected,
+  pushAndDeployLivePreview,
+  landingFilesFromOutput,
+} from '../../services/integrations/githubDeploy.js';
 
 const MAX_PLAN_ITERATIONS = 3;
 const MAX_STEP_CORRECTIONS = 3;
 
 const META_TODO_DEFS: Array<{ id: string; label: string }> = [
+  { id: 'github', label: 'XROGA verified your GitHub connection' },
   { id: 'analyze', label: 'XROGA is analyzing your request' },
   { id: 'plan', label: 'XROGA is planning' },
   { id: 'structure', label: 'XROGA is making it structured' },
@@ -115,15 +121,18 @@ function createTodoState() {
   };
 
   const addFinalTodos = () => {
-    if (!build.some((b) => b.id === 'final-check')) {
-      build.push(
-        { id: 'final-check', label: 'XROGA final verification', status: 'pending' },
-        { id: 'emit', label: 'XROGA delivering your build', status: 'pending' }
-      );
+    const extras: SwarmTodoItem[] = [
+      { id: 'github-push', label: 'XROGA pushed code to GitHub', status: 'pending' },
+      { id: 'live-deploy', label: 'XROGA deployed your live preview', status: 'pending' },
+      { id: 'final-check', label: 'XROGA final verification', status: 'pending' },
+      { id: 'emit', label: 'XROGA delivering your build', status: 'pending' },
+    ];
+    for (const item of extras) {
+      if (!build.some((b) => b.id === item.id)) build.push(item);
     }
   };
 
-  const activateFinal = (id: 'final-check' | 'emit') => {
+  const activateFinal = (id: 'github-push' | 'live-deploy' | 'final-check' | 'emit') => {
     for (const item of build) {
       if (item.id === id) item.status = 'active';
       else if (item.status === 'active') item.status = 'done';
@@ -153,7 +162,7 @@ function createTodoState() {
     });
   };
 
-  const completeFinal = (id: 'final-check' | 'emit') => {
+  const completeFinal = (id: 'github-push' | 'live-deploy' | 'final-check' | 'emit') => {
     for (const item of build) {
       if (item.id === id) item.status = 'done';
     }
@@ -195,6 +204,7 @@ function emit(
     swarmTodos: todos.snapshot(),
     swarmStatusLabel: statusLabel,
     swarmAnalysis: todos.getAnalysis() || undefined,
+    needsGitHub: statusLabel === 'XROGA GitHub',
     timestamp: new Date().toISOString(),
   } as SwarmProgressEvent);
 }
@@ -295,8 +305,25 @@ async function verifyStepParallel(
 }
 
 export async function runNegotiationEngine(ctx: NegotiationContext): Promise<NegotiationResult> {
-  const { userPrompt, featureCategory } = ctx;
+  const { userPrompt, featureCategory, userId } = ctx;
   const todos = createTodoState();
+
+  todos.activateMeta('github');
+  const githubOk = await isGitHubConnected(userId);
+  if (!githubOk) {
+    emit(ctx, 0, 'Connect GitHub to start building', 'architect', todos, 'XROGA GitHub');
+    return {
+      success: false,
+      clarifiedBrief: '',
+      approvedPlan: '',
+      assembledCode: '',
+      polishedOutput:
+        '🔗 Connect your GitHub account to start building. XROGA will push your code and deploy a live preview automatically.',
+      needsGitHubConnection: true,
+    };
+  }
+  todos.completeMeta('github');
+  emit(ctx, 0, 'GitHub connected — starting discovery', 'architect', todos, 'XROGA GitHub');
 
   todos.activateMeta('analyze');
   emit(ctx, 0, 'XROGA is analyzing your request…', 'architect', todos, 'XROGA Analyze');
@@ -497,9 +524,41 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     console.warn('[NegotiationEngine] Feature builder:', (err as Error).message);
   }
 
-  const rawEmit = featureOutput
-    ? `Your project is ready 🎉\n\n${assembledCode.slice(0, 6000)}`
-    : `Your build is ready 🎉\n\n${assembledCode}`;
+  const projectSlug = `xroga-build-${Date.now()}`;
+  if (featureOutput?.type === 'landing_page') {
+    todos.activateFinal('github-push');
+    emit(ctx, 7, 'Pushing code to GitHub…', 'builder', todos, 'XROGA GitHub Push');
+    try {
+      const files = landingFilesFromOutput(featureOutput.html, featureOutput.css, featureOutput.js);
+      const pipeline = await pushAndDeployLivePreview(userId, files, projectSlug);
+      featureOutput = {
+        ...featureOutput,
+        deployUrl: pipeline.deployUrl,
+        vercelDeploymentId: pipeline.vercelDeploymentId ?? featureOutput.vercelDeploymentId,
+        githubRepoUrl: pipeline.github.htmlUrl,
+        githubRepoName: pipeline.github.repoName,
+      };
+      todos.completeFinal('github-push');
+      todos.activateFinal('live-deploy');
+      emit(ctx, 7, 'Live preview ready', 'builder', todos, 'XROGA Live Preview');
+      todos.completeFinal('live-deploy');
+    } catch (err) {
+      console.warn('[NegotiationEngine] GitHub/deploy pipeline:', (err as Error).message);
+      todos.completeFinal('github-push');
+      todos.completeFinal('live-deploy');
+    }
+  }
+
+  const liveUrl =
+    featureOutput?.type === 'landing_page' ? featureOutput.deployUrl : undefined;
+  const repoUrl =
+    featureOutput?.type === 'landing_page' ? featureOutput.githubRepoUrl : undefined;
+
+  const rawEmit = liveUrl
+    ? `Your project is live! 🎉\n\n🔗 Live preview: ${liveUrl}${repoUrl ? `\n📦 GitHub: ${repoUrl}` : ''}`
+    : featureOutput
+      ? `Your project is ready 🎉\n\n${assembledCode.slice(0, 6000)}`
+      : `Your build is ready 🎉\n\n${assembledCode}`;
 
   let polishedOutput: string;
   try {
@@ -519,6 +578,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     approvedPlan,
     assembledCode,
     polishedOutput,
+    featureOutput: featureOutput ?? undefined,
   };
 }
 

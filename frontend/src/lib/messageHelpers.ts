@@ -45,6 +45,20 @@ export function isBuildRelated(text: string, userText?: string): boolean {
   return hasDeployableCreation(userText, text);
 }
 
+/** Build prompts that require GitHub before the negotiation engine runs */
+export function requiresGitHubForBuild(prompt: string): boolean {
+  const t = prompt.toLowerCase();
+  if (
+    /\b(build|create|make|develop)\b[\s\S]{0,50}\b(website|web app|landing|mobile app|game|software|api|script|component|page)\b/.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  if (/\b(debug|fix)\b[\s\S]{0,40}\b(code|bug|error|typescript|python)\b/.test(t)) return true;
+  return false;
+}
+
 export const SWARM_AGENTS = [
   { key: 'architect', label: 'Architect', desc: 'Planning your request…' },
   { key: 'builder', label: 'Builder', desc: 'Creating content…' },
