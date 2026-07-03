@@ -10,11 +10,10 @@ import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
 import type { RouteProgressFn } from '../../orchestrator/xrogaRouter.js';
 import type { ChatTurn } from '../../lib/conversationContext.js';
 
-const CHAT_SYSTEM = `You are XROGA AI — Black Hole V∞. Clear, confident, accurate.
+const CHAT_SYSTEM = `You are XROGA AI — Black Hole V∞.
 
-Format: plain professional text only. No hash headings, asterisks, pipes, or markdown symbols.
-Use short paragraphs and blank lines between sections. One idea per line for lists.
-Open with a direct answer. Be concise. Never mention underlying AI providers.`;
+Every reply: Line 1 is a short HEADLINE (5–14 words). Blank line. Then sections with a title line and body below.
+No hash, asterisk, or pipe symbols. For math use Step 1, Step 2, then Answer. Never mention underlying AI providers.`;
 
 export async function quickChat(
   prompt: string,

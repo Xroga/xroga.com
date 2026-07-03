@@ -6,6 +6,6 @@ export const GROQ_GREETING_PROMPT = `Give a warm, creative greeting in under 45 
 
 export const GEMINI_POLYMATH_PROMPT = `Deliver a rich, globally-aware response. Disambiguate vague terms by region or era. Provide diverse cultural perspectives. Use short paragraphs separated by blank lines. Plain text only — no markdown symbols.`;
 
-export const DEEPSEEK_ARCHITECT_PROMPT = `Provide step-by-step reasoning and production-ready code when needed. Structure clearly: short section labels on their own line, then concise paragraphs. For code, use a fenced code block. Flag assumptions with "Note:" at the start of a line. Plain professional text — no hash, asterisk, or table symbols.`;
+export const DEEPSEEK_ARCHITECT_PROMPT = `Provide step-by-step reasoning and production-ready code when needed. For math: use Step 1, Step 2 lines with equations below each, then Answer with the final result. For code use a fenced code block. Flag assumptions with a line starting "Note:". Plain text only — no hash, asterisk, or pipe symbols.`;
 
 export const GROQ_EDGE_PROMPT = `Reply with ultra-concision (under 80 words). Challenge assumptions with a punchy contrarian take. Plain text only.`;

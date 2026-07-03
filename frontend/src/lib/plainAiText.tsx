@@ -1,9 +1,19 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-/** Remove markdown symbols, emojis, and clutter from AI text */
+export type XrogaBlock =
+  | { type: 'headline'; text: string }
+  | { type: 'section'; title: string; body: string }
+  | { type: 'paragraph'; text: string }
+  | { type: 'math-step'; step: string; body: string }
+  | { type: 'math-equation'; text: string }
+  | { type: 'callout'; label: string; body: string }
+  | { type: 'list'; items: string[] }
+  | { type: 'code'; language?: string; body: string };
+
+/** Sanitize — strip markdown symbols but keep backticks for inline code */
 export function sanitizePlainAiText(content: string): string {
   const parts: string[] = [];
   const fence = /```[\s\S]*?```/g;
@@ -35,88 +45,212 @@ function stripSegment(s: string): string {
   out = out.replace(/^[-*•]\s+/gm, '');
   out = out.replace(/\|+/g, ' ');
   out = out.replace(/^:?-{2,}:?$/gm, '');
-  out = out.replace(/`([^`]+)`/g, '$1');
-  out = out.replace(/\s{2,}/g, ' ');
   return out;
 }
 
-function renderCodeBlocks(content: string): React.ReactNode[] {
-  const nodes: React.ReactNode[] = [];
-  const re = /```(\w*)\n?([\s\S]*?)```/g;
-  let last = 0;
-  let match: RegExpExecArray | null;
-  let key = 0;
-
-  while ((match = re.exec(content)) !== null) {
-    if (match.index > last) {
-      nodes.push(<PlainSections key={key++} text={content.slice(last, match.index)} />);
-    }
-    nodes.push(
-      <pre
-        key={key++}
-        className="my-2 overflow-x-auto rounded-xl border border-slate-200/80 bg-slate-900/5 px-3 py-2.5 text-[11px] font-mono leading-relaxed text-[var(--foreground)]/95 dark:border-white/10 dark:bg-black/30"
-      >
-        <code>{match[2]?.trim()}</code>
-      </pre>
-    );
-    last = match.index + match[0].length;
-  }
-
-  if (last < content.length) {
-    nodes.push(<PlainSections key={key++} text={content.slice(last)} />);
-  }
-
-  return nodes.length ? nodes : [<PlainSections key={0} text={content} />];
+function isMathLine(line: string): boolean {
+  if (/^step\s+\d+/i.test(line) || /^answer$/i.test(line.trim())) return true;
+  if (/[∫∑√±×÷^]/.test(line)) return true;
+  if (/=/.test(line) && /[0-9a-z]/i.test(line) && line.length < 120) return true;
+  return false;
 }
 
-function PlainSections({ text }: { text: string }) {
-  const clean = sanitizePlainAiText(text);
-  const sections = clean.split(/\n\n+/).filter((s) => s.trim());
+function isSectionTitle(line: string): boolean {
+  if (line.length > 64) return false;
+  if (/[.!?]$/.test(line) && line.split(' ').length > 6) return false;
+  if (/^(note|implementation note|key takeaway|answer|try asking|arriving)/i.test(line)) return true;
+  if (line.split(' ').length <= 6 && !line.endsWith('.')) return true;
+  return false;
+}
 
-  if (!sections.length) return null;
+function isCalloutLine(line: string): boolean {
+  return /^(note|implementation note|key takeaway|assumption):/i.test(line);
+}
 
-  return (
-    <div className="space-y-3.5">
-      {sections.map((section, i) => {
-        const lines = section
-          .split('\n')
-          .map((l) => l.trim())
-          .filter(Boolean);
-        if (!lines.length) return null;
-        const first = lines[0]!;
-        const looksLikeLabel =
-          lines.length > 1 &&
-          first.length < 56 &&
-          !first.endsWith('.') &&
-          !first.endsWith('?') &&
-          !first.endsWith(':') &&
-          !first.includes('  ');
+function splitCallout(line: string): { label: string; rest: string } {
+  const idx = line.indexOf(':');
+  if (idx < 0) return { label: 'Note', rest: line };
+  return { label: line.slice(0, idx).trim(), rest: line.slice(idx + 1).trim() };
+}
 
-        if (looksLikeLabel) {
-          return (
-            <div key={i} className="space-y-1.5">
-              <p className="text-[13px] font-semibold tracking-tight text-[var(--foreground)]">{first}</p>
-              <p className="text-[13px] leading-[1.7] text-[var(--foreground)]/88 whitespace-pre-wrap">
-                {lines.slice(1).join('\n')}
-              </p>
-            </div>
-          );
+export function parseXrogaBlocks(content: string): XrogaBlock[] {
+  const blocks: XrogaBlock[] = [];
+  const codeRe = /```(\w*)\n?([\s\S]*?)```/g;
+  let cursor = 0;
+  let match: RegExpExecArray | null;
+
+  const pushText = (raw: string, isFirst: boolean) => {
+    const text = sanitizePlainAiText(raw).trim();
+    if (!text) return;
+
+    const paragraphs = text.split(/\n\n+/).filter((p) => p.trim());
+    paragraphs.forEach((para, pIdx) => {
+      const lines = para.split('\n').map((l) => l.trim()).filter(Boolean);
+      if (!lines.length) return;
+
+      const first = lines[0]!;
+
+      if (isFirst && pIdx === 0 && blocks.length === 0) {
+        blocks.push({ type: 'headline', text: first });
+        if (lines.length > 1) {
+          blocks.push({ type: 'paragraph', text: lines.slice(1).join('\n') });
         }
+        return;
+      }
 
-        return (
-          <p
-            key={i}
-            className={cn(
-              'text-[13px] leading-[1.7] text-[var(--foreground)]/88 whitespace-pre-wrap',
-              i === 0 && 'text-[14px] font-medium text-[var(--foreground)]'
-            )}
-          >
-            {section}
+      if (isCalloutLine(first)) {
+        const { label, rest } = splitCallout(first);
+        blocks.push({
+          type: 'callout',
+          label,
+          body: [rest, ...lines.slice(1)].filter(Boolean).join('\n'),
+        });
+        return;
+      }
+
+      if (/^step\s+\d+/i.test(first)) {
+        blocks.push({ type: 'math-step', step: first, body: lines.slice(1).join('\n') });
+        return;
+      }
+
+      if (/^answer$/i.test(first) && lines.length > 1) {
+        blocks.push({ type: 'section', title: 'Answer', body: lines.slice(1).join('\n') });
+        return;
+      }
+
+      if (lines.length === 1 && isMathLine(first)) {
+        blocks.push({ type: 'math-equation', text: first });
+        return;
+      }
+
+      if (lines.length > 1 && isSectionTitle(first)) {
+        const bodyLines = lines.slice(1);
+        const allShort = bodyLines.every((l) => l.length < 90 && !l.includes('.'));
+        if (allShort && bodyLines.length > 1 && first.toLowerCase() === 'try asking') {
+          blocks.push({ type: 'list', items: bodyLines });
+          return;
+        }
+        blocks.push({ type: 'section', title: first, body: bodyLines.join('\n') });
+        return;
+      }
+
+      blocks.push({ type: 'paragraph', text: lines.join('\n') });
+    });
+  };
+
+  let isFirstText = true;
+  while ((match = codeRe.exec(content)) !== null) {
+    if (match.index > cursor) {
+      pushText(content.slice(cursor, match.index), isFirstText);
+      isFirstText = false;
+    }
+    blocks.push({ type: 'code', language: match[1] || undefined, body: match[2]?.trim() ?? '' });
+    cursor = match.index + match[0].length;
+  }
+  if (cursor < content.length) {
+    pushText(content.slice(cursor), isFirstText);
+  }
+
+  return blocks;
+}
+
+function renderInline(text: string): ReactNode[] {
+  const parts: ReactNode[] = [];
+  const re = /`([^`]+)`/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  let k = 0;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
+    parts.push(
+      <code
+        key={k++}
+        className="rounded-md bg-slate-200/60 px-1.5 py-0.5 text-[13px] font-mono text-slate-800 dark:bg-white/10 dark:text-slate-200"
+      >
+        {m[1]}
+      </code>
+    );
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts.length ? parts : [text];
+}
+
+function BlockView({ block }: { block: XrogaBlock }) {
+  switch (block.type) {
+    case 'headline':
+      return (
+        <h2 className="text-[1.35rem] sm:text-[1.5rem] font-bold leading-tight tracking-tight text-[var(--foreground)] border-b border-slate-200/70 dark:border-white/10 pb-2.5 mb-1">
+          {block.text}
+        </h2>
+      );
+    case 'section':
+      return (
+        <div className="space-y-1.5 pt-1">
+          <h3 className="text-[15px] font-semibold tracking-tight text-[var(--foreground)]">
+            {block.title}
+          </h3>
+          <p className="text-[15px] leading-[1.75] text-[var(--foreground)]/85 whitespace-pre-wrap">
+            {renderInline(block.body)}
           </p>
-        );
-      })}
-    </div>
-  );
+        </div>
+      );
+    case 'paragraph':
+      return (
+        <p className="text-[15px] leading-[1.75] text-[var(--foreground)]/88 whitespace-pre-wrap">
+          {renderInline(block.text)}
+        </p>
+      );
+    case 'math-step':
+      return (
+        <div className="rounded-xl border border-slate-200/70 bg-gradient-to-br from-white/90 to-slate-50/80 px-4 py-3 dark:border-white/10 dark:from-white/5 dark:to-slate-500/5">
+          <p className="text-[12px] font-bold uppercase tracking-wider text-[#006aff]/80 mb-1.5">
+            {block.step}
+          </p>
+          <p className="text-[15px] font-mono leading-relaxed text-[var(--foreground)]/90 whitespace-pre-wrap text-center sm:text-left">
+            {block.body}
+          </p>
+        </div>
+      );
+    case 'math-equation':
+      return (
+        <div className="rounded-xl border border-slate-200/60 bg-slate-50/90 px-4 py-3 dark:bg-white/5 dark:border-white/10">
+          <p className="text-[16px] font-mono font-medium text-center text-[var(--foreground)] tracking-wide">
+            {block.text}
+          </p>
+        </div>
+      );
+    case 'callout':
+      return (
+        <div className="rounded-r-xl border-l-4 border-[#006aff]/50 bg-gradient-to-r from-slate-50/95 to-white/60 px-4 py-3 dark:from-white/5 dark:to-transparent">
+          <p className="text-[13px] font-bold text-[var(--foreground)] mb-1">{block.label}</p>
+          <p className="text-[14px] leading-[1.7] text-[var(--foreground)]/88 whitespace-pre-wrap">
+            {renderInline(block.body)}
+          </p>
+        </div>
+      );
+    case 'list':
+      return (
+        <div className="space-y-2">
+          {block.items.map((item, i) => (
+            <p
+              key={i}
+              className="text-[14px] leading-snug text-[var(--foreground)]/80 pl-3 border-l-2 border-slate-200/80 dark:border-white/15"
+            >
+              {renderInline(item)}
+            </p>
+          ))}
+        </div>
+      );
+    case 'code':
+      return (
+        <pre className="overflow-x-auto rounded-xl border border-slate-200/80 bg-slate-900/[0.04] px-4 py-3 text-[13px] font-mono leading-relaxed dark:border-white/10 dark:bg-black/30">
+          <code>{block.body}</code>
+        </pre>
+      );
+    default:
+      return null;
+  }
 }
 
 export function PlainAiResponse({
@@ -128,18 +262,21 @@ export function PlainAiResponse({
   streaming?: boolean;
   className?: string;
 }) {
-  const safe = useMemo(() => sanitizePlainAiText(content), [content]);
-  const hasCode = useMemo(() => /```/.test(safe), [safe]);
-  const nodes = useMemo(
-    () => (hasCode ? renderCodeBlocks(safe) : [<PlainSections key={0} text={safe} />]),
-    [safe, hasCode]
-  );
+  const blocks = useMemo(() => parseXrogaBlocks(content), [content]);
+
+  if (!blocks.length && streaming) {
+    return (
+      <span className="inline-block w-0.5 h-5 bg-[#006aff]/70 animate-pulse rounded-full" />
+    );
+  }
 
   return (
-    <div className={cn('xv-plain-response', className)}>
-      {nodes}
-      {streaming && safe.length > 0 && (
-        <span className="inline-block w-0.5 h-[1em] ml-0.5 bg-[#006aff]/70 align-middle animate-pulse rounded-full" />
+    <div className={cn('xv-xroga-response space-y-4', className)}>
+      {blocks.map((block, i) => (
+        <BlockView key={`${block.type}-${i}`} block={block} />
+      ))}
+      {streaming && content.length > 0 && (
+        <span className="inline-block w-0.5 h-5 ml-0.5 bg-[#006aff]/70 align-middle animate-pulse rounded-full" />
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-/** "What can you build?" — plain professional capabilities (no markdown symbols) */
+/** "What can you build?" — headline + section plain format */
 
 export function isCapabilitiesQuery(input: string): boolean {
   const lower = input.toLowerCase().trim();
@@ -13,20 +13,20 @@ export function isCapabilitiesQuery(input: string): boolean {
 }
 
 export function getXrogaCapabilitiesResponse(): string {
-  return `XROGA AI — Black Hole V∞
+  return `What XROGA can build for you
 
-Here is what I can do for you today, and what arrives in the next few days.
+Here is what works today and what arrives in the next few days.
 
 Ask me anything
-History, science, LLMs, AI, APIs, logic, math, culture, geopolitics, and decisions — from a quick answer to a full deep dive.
+History, science, LLMs, AI, APIs, logic, math, culture, and decisions. Short answers or deep dives.
 
 Images
-Four modern image variants from one prompt. Generate, edit, upscale, or remove backgrounds.
+Four modern variants from one prompt. Generate, edit, upscale, or remove backgrounds.
 
 Code and systems
-Production-ready APIs, scripts, automation, debugging, and STEM walkthroughs with clear steps and working code.
+Production APIs, scripts, automation, debugging, and STEM with clear steps.
 
-Arriving in the next few days
+Arriving soon
 Video generation, websites, mobile apps, games, desktop software, and browser automation.
 
 Try asking
@@ -34,5 +34,5 @@ Explain how transformers work
 Generate 4 cyberpunk city images at night
 Write a FastAPI health-check endpoint
 
-What should we build or explore first?`;
+What should we build first?`;
 }
