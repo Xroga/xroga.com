@@ -1,26 +1,71 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { API_URL, getAccessToken } from '@/lib/api';
 
 export type TalkState = 'idle' | 'connecting' | 'recording' | 'processing' | 'speaking';
+
+export interface VoiceTurn {
+  id: string;
+  role: 'user' | 'assistant';
+  text: string;
+}
+
+interface VoiceTalkContextValue {
+  overlayOpen: boolean;
+  openOverlay: () => void;
+  closeOverlay: () => void;
+  state: TalkState;
+  statusLabel: string | null;
+  turns: VoiceTurn[];
+  liveReply: string | null;
+  liveUser: string | null;
+  captionsOn: boolean;
+  speakerOn: boolean;
+  muted: boolean;
+  toggleCaptions: () => void;
+  toggleSpeaker: () => void;
+  toggleMute: () => void;
+  orbPress: () => void;
+  error: string | null;
+  clearError: () => void;
+}
+
+const VoiceTalkContext = createContext<VoiceTalkContextValue | null>(null);
 
 function voiceWsUrl(token: string): string {
   const wsBase = API_URL.replace(/^http/, 'ws');
   return `${wsBase}/api/voice/ws?token=${encodeURIComponent(token)}`;
 }
 
-export function usePushToTalk() {
+export function VoiceTalkProvider({ children }: { children: ReactNode }) {
+  const [overlayOpen, setOverlayOpen] = useState(false);
   const [state, setState] = useState<TalkState>('idle');
   const [statusLabel, setStatusLabel] = useState<string | null>(null);
-  const [lastReply, setLastReply] = useState<string | null>(null);
+  const [turns, setTurns] = useState<VoiceTurn[]>([]);
+  const [captionsOn, setCaptionsOn] = useState(true);
+  const [speakerOn, setSpeakerOn] = useState(true);
+  const [muted, setMuted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [liveReply, setLiveReply] = useState<string | null>(null);
+  const [liveUser, setLiveUser] = useState<string | null>(null);
 
   const wsRef = useRef<WebSocket | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const sessionRef = useRef(false);
+  const pendingTurnRef = useRef<{ user: string; reply: string } | null>(null);
+  const stateRef = useRef(state);
+  stateRef.current = state;
 
   const cleanupMedia = useCallback(() => {
     if (recorderRef.current && recorderRef.current.state !== 'inactive') {
@@ -40,13 +85,31 @@ export function usePushToTalk() {
     }
   }, []);
 
-  const resetToIdle = useCallback(() => {
+  const endVoiceSession = useCallback(() => {
     cleanupMedia();
     closeSocket();
     sessionRef.current = false;
     setState('idle');
     setStatusLabel(null);
   }, [cleanupMedia, closeSocket]);
+
+  const closeOverlay = useCallback(() => {
+    audioRef.current?.pause();
+    endVoiceSession();
+    setOverlayOpen(false);
+    setError(null);
+  }, [endVoiceSession]);
+
+  const openOverlay = useCallback(() => {
+    setOverlayOpen(true);
+    setError(null);
+  }, []);
+
+  useEffect(() => {
+    if (!overlayOpen) return;
+    document.body.classList.add('xv-voice-overlay-open');
+    return () => document.body.classList.remove('xv-voice-overlay-open');
+  }, [overlayOpen]);
 
   useEffect(() => {
     return () => {
@@ -56,11 +119,22 @@ export function usePushToTalk() {
     };
   }, [cleanupMedia, closeSocket]);
 
+  const commitTurn = useCallback((user: string, reply: string) => {
+    const id = `${Date.now()}`;
+    setTurns((prev) => [
+      ...prev,
+      { id: `${id}-u`, role: 'user', text: user },
+      { id: `${id}-a`, role: 'assistant', text: reply },
+    ]);
+    pendingTurnRef.current = null;
+  }, []);
+
   const playAudio = useCallback(
     (buffer: ArrayBuffer) => {
       const blob = new Blob([buffer], { type: 'audio/mpeg' });
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
+      audio.volume = speakerOn ? 1 : 0;
       audioRef.current = audio;
       setState('speaking');
       setStatusLabel('Speaking…');
@@ -68,7 +142,11 @@ export function usePushToTalk() {
       const finish = () => {
         URL.revokeObjectURL(url);
         audioRef.current = null;
-        resetToIdle();
+        const pending = pendingTurnRef.current;
+        if (pending) commitTurn(pending.user, pending.reply);
+        setLiveReply(null);
+        setLiveUser(null);
+        endVoiceSession();
       };
 
       audio.onended = finish;
@@ -78,7 +156,7 @@ export function usePushToTalk() {
         finish();
       });
     },
-    [resetToIdle]
+    [commitTurn, endVoiceSession, speakerOn]
   );
 
   const openVoiceSocket = useCallback(async (): Promise<WebSocket> => {
@@ -110,6 +188,7 @@ export function usePushToTalk() {
             type: string;
             stage?: string;
             message?: string;
+            text?: string;
             reply?: string;
           };
 
@@ -129,20 +208,25 @@ export function usePushToTalk() {
             }
             if (msg.stage === 'searching') {
               setState('processing');
-              setStatusLabel('🔍 Searching the web…');
+              setStatusLabel('Searching the web…');
             }
             if (msg.stage === 'speaking') setStatusLabel('Speaking…');
             return;
           }
 
           if (msg.type === 'transcript' && msg.reply) {
-            setLastReply(msg.reply);
+            pendingTurnRef.current = {
+              user: msg.text ?? '',
+              reply: msg.reply,
+            };
+            setLiveReply(msg.reply);
+            setLiveUser(msg.text ?? null);
             return;
           }
 
           if (msg.type === 'error') {
             setError(msg.message ?? 'Voice error');
-            resetToIdle();
+            endVoiceSession();
             return;
           }
         } catch { /* ignore */ }
@@ -155,12 +239,12 @@ export function usePushToTalk() {
 
       ws.onclose = () => {
         clearTimeout(timeout);
-        if (sessionRef.current && state !== 'speaking') {
-          resetToIdle();
+        if (sessionRef.current && stateRef.current !== 'speaking') {
+          endVoiceSession();
         }
       };
     });
-  }, [closeSocket, playAudio, resetToIdle, state]);
+  }, [closeSocket, endVoiceSession, playAudio]);
 
   const startTalk = useCallback(async () => {
     if (sessionRef.current) return;
@@ -170,6 +254,9 @@ export function usePushToTalk() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
+      stream.getAudioTracks().forEach((t) => {
+        t.enabled = !muted;
+      });
 
       const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
         ? 'audio/webm;codecs=opus'
@@ -191,12 +278,12 @@ export function usePushToTalk() {
     } catch (e) {
       sessionRef.current = false;
       setError((e as Error).message);
-      resetToIdle();
+      endVoiceSession();
     }
-  }, [openVoiceSocket, resetToIdle]);
+  }, [endVoiceSession, muted, openVoiceSocket]);
 
   const stopTalk = useCallback(() => {
-    if (!sessionRef.current || state !== 'recording') return;
+    if (!sessionRef.current || stateRef.current !== 'recording') return;
 
     const ws = wsRef.current;
     const recorder = recorderRef.current;
@@ -207,7 +294,7 @@ export function usePushToTalk() {
         setStatusLabel('Thinking…');
         ws.send(JSON.stringify({ type: 'end' }));
       } else {
-        resetToIdle();
+        endVoiceSession();
       }
       streamRef.current?.getTracks().forEach((t) => t.stop());
       streamRef.current = null;
@@ -220,21 +307,75 @@ export function usePushToTalk() {
     } else {
       sendEnd();
     }
-  }, [resetToIdle, state]);
+  }, [endVoiceSession]);
 
-  const toggleTalk = useCallback(() => {
-    if (state === 'idle') void startTalk();
-    else if (state === 'recording') stopTalk();
-  }, [state, startTalk, stopTalk]);
+  const orbPress = useCallback(() => {
+    if (stateRef.current === 'idle') void startTalk();
+    else if (stateRef.current === 'recording') stopTalk();
+  }, [startTalk, stopTalk]);
 
+  const toggleMute = useCallback(() => {
+    setMuted((m) => {
+      const next = !m;
+      streamRef.current?.getAudioTracks().forEach((t) => {
+        t.enabled = !next;
+      });
+      return next;
+    });
+  }, []);
+
+  const toggleCaptions = useCallback(() => setCaptionsOn((c) => !c), []);
+  const toggleSpeaker = useCallback(() => {
+    setSpeakerOn((s) => {
+      if (audioRef.current) audioRef.current.volume = s ? 0 : 1;
+      return !s;
+    });
+  }, []);
+
+  return (
+    <VoiceTalkContext.Provider
+      value={{
+        overlayOpen,
+        openOverlay,
+        closeOverlay,
+        state,
+        statusLabel,
+        turns,
+        liveReply,
+        liveUser,
+        captionsOn,
+        speakerOn,
+        muted,
+        toggleCaptions,
+        toggleSpeaker,
+        toggleMute,
+        orbPress,
+        error,
+        clearError: () => setError(null),
+      }}
+    >
+      {children}
+    </VoiceTalkContext.Provider>
+  );
+}
+
+export function useVoiceTalk() {
+  const ctx = useContext(VoiceTalkContext);
+  if (!ctx) throw new Error('useVoiceTalk must be used within VoiceTalkProvider');
+  return ctx;
+}
+
+/** @deprecated Use useVoiceTalk */
+export function usePushToTalk() {
+  const v = useVoiceTalk();
   return {
-    state,
-    statusLabel,
-    lastReply,
-    error,
-    toggleTalk,
-    startTalk,
-    stopTalk,
-    clearError: () => setError(null),
+    state: v.state,
+    statusLabel: v.statusLabel,
+    lastReply: v.turns.at(-1)?.role === 'assistant' ? v.turns.at(-1)?.text ?? null : null,
+    error: v.error,
+    toggleTalk: v.orbPress,
+    startTalk: v.orbPress,
+    stopTalk: v.orbPress,
+    clearError: v.clearError,
   };
 }

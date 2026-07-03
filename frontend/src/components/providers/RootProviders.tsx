@@ -6,6 +6,8 @@ import { ThemeProvider } from './ThemeProvider';
 import { CurrencyDetector } from './CurrencyDetector';
 import { LanguageProvider } from './LanguageProvider';
 import { ScheduledFeedbackPrompt } from '@/components/feedback/ScheduledFeedbackPrompt';
+import { VoiceTalkProvider } from '@/context/VoiceTalkContext';
+import { VoiceTalkOverlay } from '@/components/voice/VoiceTalkOverlay';
 import { getFirstVisitTime } from '@/lib/scheduledFeedback';
 
 export function RootProviders({ children }: { children: React.ReactNode }) {
@@ -17,7 +19,10 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
     <ThemeProvider>
       <LanguageProvider>
         <CurrencyDetector />
-        {children}
+        <VoiceTalkProvider>
+          {children}
+          <VoiceTalkOverlay />
+        </VoiceTalkProvider>
         <ScheduledFeedbackPrompt />
         <Toaster
           position="top-right"
