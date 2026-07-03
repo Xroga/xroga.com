@@ -437,6 +437,12 @@ export const api = {
         body: JSON.stringify({ repoStrategy, defaultRepo }),
       }),
     disconnect: () => apiFetch('/api/github/disconnect', { method: 'DELETE' }),
+    listRepos: () =>
+      apiFetch<{ repos: GitHubRepo[] }>('/api/github/repos'),
+    listBranches: (owner: string, repo: string) =>
+      apiFetch<{ branches: GitHubBranch[] }>(
+        `/api/github/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/branches`
+      ),
   },
   notifications: {
     list: () => apiFetch<Notification[]>('/api/notifications'),
@@ -534,6 +540,18 @@ export interface GitHubStatus {
   username?: string;
   repoStrategy?: string;
   defaultRepo?: string | null;
+}
+
+export interface GitHubRepo {
+  fullName: string;
+  defaultBranch: string;
+  private: boolean;
+  updatedAt: string;
+}
+
+export interface GitHubBranch {
+  name: string;
+  protected: boolean;
 }
 
 export interface Notification {

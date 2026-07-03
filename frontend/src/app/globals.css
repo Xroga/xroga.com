@@ -561,6 +561,52 @@ body.theme-gray * {
     50% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
   }
 
+  .github-activation-enter {
+    animation: github-activation-backdrop-in 0.35s ease forwards;
+  }
+
+  .github-activation-exit {
+    animation: github-activation-backdrop-out 0.5s ease forwards;
+  }
+
+  .github-activation-card {
+    animation: github-activation-card-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .github-activation-exit .github-activation-card {
+    animation: github-activation-card-out 0.5s ease forwards;
+  }
+
+  .github-activation-check-icon {
+    animation: github-activation-check 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+  }
+
+  @keyframes github-activation-backdrop-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes github-activation-backdrop-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  @keyframes github-activation-card-in {
+    from { opacity: 0; transform: scale(0.88) translateY(12px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  @keyframes github-activation-card-out {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.95) translateY(-8px); }
+  }
+
+  @keyframes github-activation-check {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+
   .integration-card {
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
   }

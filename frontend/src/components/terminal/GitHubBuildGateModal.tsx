@@ -7,7 +7,7 @@ import { api } from '@/lib/api';
 interface GitHubBuildGateModalProps {
   open: boolean;
   onClose: () => void;
-  onConnected: () => void;
+  onConnected: (username?: string) => void;
 }
 
 /** Blocks build until GitHub OAuth completes — opens popup then resumes engine */
@@ -34,8 +34,7 @@ export function GitHubBuildGateModal({ open, onClose, onConnected }: GitHubBuild
       if (e.data?.type === 'xroga-github-connected') {
         stopPoll();
         setConnecting(false);
-        onConnected();
-        onClose();
+        onConnected(e.data.username as string | undefined);
       }
     };
     window.addEventListener('message', onMessage);
@@ -64,8 +63,7 @@ export function GitHubBuildGateModal({ open, onClose, onConnected }: GitHubBuild
             const status = await api.github.status();
             setConnecting(false);
             if (status.connected) {
-              onConnected();
-              onClose();
+              onConnected(status.username);
             } else {
               setError('GitHub connection was not completed. Try again.');
             }
@@ -76,8 +74,7 @@ export function GitHubBuildGateModal({ open, onClose, onConnected }: GitHubBuild
             stopPoll();
             popup.close();
             setConnecting(false);
-            onConnected();
-            onClose();
+            onConnected(status.username);
           }
         } catch {
           /* keep polling */

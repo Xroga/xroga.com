@@ -1,16 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Check, Loader2, Code2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Skeleton from 'react-loading-skeleton';
 import { api, type GitHubStatus } from '@/lib/api';
+import { dispatchGitHubConnected } from '@/lib/githubEvents';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 type RepoStrategy = 'auto' | 'monorepo' | 'manual';
 
 export function GitHubConnect() {
+  const router = useRouter();
   const [status, setStatus] = useState<GitHubStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
@@ -35,13 +37,15 @@ export function GitHubConnect() {
       setConnecting(true);
       api.github.connect(code, repoStrategy, defaultRepo || undefined)
         .then((res) => {
-          setStatus({ connected: true, username: res.username, repoStrategy, defaultRepo });
-          toast.success(`Connected as @${res.username}`);
+          dispatchGitHubConnected(res.username);
+          router.replace(
+            `/dashboard?github=connected&username=${encodeURIComponent(res.username)}`
+          );
         })
         .catch((e) => toast.error((e as Error).message))
         .finally(() => setConnecting(false));
     }
-  }, [searchParams, status?.connected, repoStrategy, defaultRepo]);
+  }, [searchParams, status?.connected, repoStrategy, defaultRepo, router]);
 
   async function handleConnect() {
     setConnecting(true);

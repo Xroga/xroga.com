@@ -53,6 +53,31 @@ function isAllowedCallbackUrl(url: string): boolean {
   }
 }
 
+async function getUserGitHubToken(userId: string): Promise<string | null> {
+  const supabase = getSupabaseAdmin();
+  const { data } = await supabase
+    .from('github_integrations')
+    .select('access_token')
+    .eq('user_id', userId)
+    .maybeSingle();
+  return data?.access_token ?? null;
+}
+
+async function ghApi<T>(token: string, path: string): Promise<T> {
+  const res = await fetch(`https://api.github.com${path}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`GitHub API ${res.status}: ${err.slice(0, 200)}`);
+  }
+  return res.json() as Promise<T>;
+}
+
 function buildGitHubAuthorizeUrl(userId: string, redirectUri: string): string | null {
   if (!GITHUB_CLIENT_ID) return null;
   const state = Buffer.from(JSON.stringify({ userId })).toString('base64url');
@@ -198,6 +223,61 @@ router.get('/status', async (req: AuthRequest, res) => {
     repoStrategy: ghInt?.repo_strategy ?? 'auto',
     defaultRepo: ghInt?.default_repo ?? null,
   });
+});
+
+/** List repositories the user can push to */
+router.get('/repos', async (req: AuthRequest, res) => {
+  const token = await getUserGitHubToken(req.userId!);
+  if (!token) {
+    res.status(401).json({ error: 'GitHub not connected' });
+    return;
+  }
+
+  try {
+    const repos = await ghApi<
+      Array<{ full_name: string; default_branch: string; private: boolean; updated_at: string }>
+    >(token, '/user/repos?per_page=100&sort=updated&affiliation=owner,collaborator');
+
+    res.json({
+      repos: repos.map((r) => ({
+        fullName: r.full_name,
+        defaultBranch: r.default_branch,
+        private: r.private,
+        updatedAt: r.updated_at,
+      })),
+    });
+  } catch (e) {
+    res.status(502).json({ error: (e as Error).message });
+  }
+});
+
+/** List branches for a repository */
+router.get('/repos/:owner/:repo/branches', async (req: AuthRequest, res) => {
+  const token = await getUserGitHubToken(req.userId!);
+  if (!token) {
+    res.status(401).json({ error: 'GitHub not connected' });
+    return;
+  }
+
+  const owner = String(req.params.owner ?? '');
+  const repo = String(req.params.repo ?? '');
+  if (!owner || !repo) {
+    res.status(400).json({ error: 'owner and repo required' });
+    return;
+  }
+
+  try {
+    const branches = await ghApi<Array<{ name: string; protected: boolean }>>(
+      token,
+      `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/branches?per_page=100`
+    );
+
+    res.json({
+      branches: branches.map((b) => ({ name: b.name, protected: b.protected })),
+    });
+  } catch (e) {
+    res.status(502).json({ error: (e as Error).message });
+  }
 });
 
 router.patch('/settings', async (req: AuthRequest, res) => {
