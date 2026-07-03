@@ -10,7 +10,7 @@ import {
   buildTavilyUserPrompt,
 } from './voicePrompt.js';
 import { RateLimitError } from './groqWhisper.js';
-import { synthesizeWithEdgeTts } from './edgeTts.js';
+import { synthesizeWithEdgeTts, type VoiceGender } from './edgeTts.js';
 import { routeVoiceQuery } from './voiceRouter.js';
 import {
   searchWithTavily,
@@ -129,7 +129,8 @@ export async function runVoicePipeline(
   mimeType: string,
   onStage?: (stage: VoiceStage) => void,
   onTranscript?: (text: string) => void,
-  clientTranscript?: string
+  clientTranscript?: string,
+  voiceGender: VoiceGender = 'female'
 ): Promise<VoicePipelineResult> {
   const { transcribeWithGroqWhisper } = await import('./groqWhisper.js');
 
@@ -215,7 +216,7 @@ export async function runVoicePipeline(
 
   // Step 4 — Speak (TTS)
   onStage?.('speaking');
-  const audioOut = await synthesizeWithEdgeTts(reply);
+  const audioOut = await synthesizeWithEdgeTts(reply, voiceGender);
   setCache(transcript, reply, audioOut);
 
   return { transcript, reply, audio: audioOut, cached: false, searchedWeb };

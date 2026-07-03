@@ -1,4 +1,4 @@
-import { synthesizeWithEdgeTts } from './edgeTts.js';
+import { synthesizeWithEdgeTts, type VoiceGender } from './edgeTts.js';
 
 function timeGreeting(): string {
   const h = new Date().getHours();
@@ -24,8 +24,11 @@ export function buildWelcomeSpeech(displayName?: string): string {
   );
 }
 
-export async function synthesizeWelcome(displayName?: string): Promise<{ text: string; audio: Buffer }> {
+export async function synthesizeWelcome(
+  displayName?: string,
+  voiceGender: VoiceGender = 'female'
+): Promise<{ text: string; audio: Buffer }> {
   const text = buildWelcomeSpeech(displayName);
-  const audio = await synthesizeWithEdgeTts(text);
+  const audio = await synthesizeWithEdgeTts(text, voiceGender);
   return { text, audio };
 }

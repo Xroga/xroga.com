@@ -4,6 +4,7 @@ import { verifyAccessToken } from '../../middleware/auth.js';
 import { runVoicePipeline } from './pipeline.js';
 import { synthesizeWelcome } from './welcomeVoice.js';
 import { toVoiceUserError } from './voiceErrors.js';
+import type { VoiceGender } from './edgeTts.js';
 
 interface VoiceClientState {
   userId: string;
@@ -28,10 +29,10 @@ function parseTokenFromUrl(url: string | undefined): string | null {
   }
 }
 
-async function handleGreeting(ws: WebSocket, displayName?: string) {
+async function handleGreeting(ws: WebSocket, displayName?: string, voiceGender?: VoiceGender) {
   try {
     sendJson(ws, { type: 'status', stage: 'speaking' });
-    const { text, audio } = await synthesizeWelcome(displayName);
+    const { text, audio } = await synthesizeWelcome(displayName, voiceGender ?? 'female');
     sendJson(ws, { type: 'greeting', text });
     if (ws.readyState === ws.OPEN) {
       ws.send(audio, { binary: true });
@@ -45,7 +46,8 @@ async function handleGreeting(ws: WebSocket, displayName?: string) {
 async function handleEndOfSpeech(
   ws: WebSocket,
   state: VoiceClientState,
-  clientTranscript?: string
+  clientTranscript?: string,
+  voiceGender?: VoiceGender
 ) {
   if (state.processing) return;
   state.processing = true;
@@ -69,7 +71,8 @@ async function handleEndOfSpeech(
       (text) => {
         sendJson(ws, { type: 'user_text', text });
       },
-      clientTranscript
+      clientTranscript,
+      voiceGender ?? 'female'
     );
 
     sendJson(ws, {
@@ -145,10 +148,11 @@ export function attachVoiceWebSocket(server: Server) {
           mimeType?: string;
           displayName?: string;
           clientTranscript?: string;
+          voiceGender?: VoiceGender;
         };
 
         if (msg.type === 'greeting') {
-          void handleGreeting(ws, msg.displayName);
+          void handleGreeting(ws, msg.displayName, msg.voiceGender);
           return;
         }
 
@@ -162,7 +166,7 @@ export function attachVoiceWebSocket(server: Server) {
         }
 
         if (msg.type === 'end') {
-          void handleEndOfSpeech(ws, state, msg.clientTranscript);
+          void handleEndOfSpeech(ws, state, msg.clientTranscript, msg.voiceGender);
         }
       } catch {
         sendJson(ws, { type: 'error', message: 'Invalid message format' });

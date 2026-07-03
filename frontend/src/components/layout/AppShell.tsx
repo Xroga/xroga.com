@@ -15,7 +15,6 @@ import { TerminalScrollProvider } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePathname } from 'next/navigation';
 import { IncognitoModeButton } from '@/components/layout/IncognitoModeButton';
-import { TalkButton } from '@/components/voice/TalkButton';
 import { IncognitoFullscreenBackground } from '@/components/incognito/IncognitoFullscreenBackground';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { cn } from '@/lib/utils';
@@ -62,7 +61,6 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
               </div>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0 relative z-[250]">
-              <TalkButton variant="header" />
               {isDashboard && <IncognitoModeButton />}
               {!incognito && (
                 <>

@@ -11,6 +11,7 @@ import { VoiceLiveCaption } from '@/components/voice/VoiceLiveCaption';
 import { useAppStore } from '@/store/useAppStore';
 import { useThemeStore } from '@/store/useThemeStore';
 import { voiceThemeStyle } from '@/lib/voiceTheme';
+import { useVoicePrefsStore } from '@/store/useVoicePrefsStore';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -56,6 +57,8 @@ export function VoiceTalkOverlay() {
     error,
     clearError,
   } = useVoiceTalk();
+  const voiceGender = useVoicePrefsStore((s) => s.voiceGender);
+  const setVoiceGender = useVoicePrefsStore((s) => s.setVoiceGender);
 
   const displayName = profile?.display_name?.split(' ')[0] ?? 'there';
   const greeting = useMemo(() => greetingForHour(), []);
@@ -132,7 +135,23 @@ export function VoiceTalkOverlay() {
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <span className="xv-voice-call-timer font-mono text-xs xv-voice-muted">
+            <div className="xv-voice-gender-toggle" role="group" aria-label="AI voice">
+              <button
+                type="button"
+                className={cn('xv-voice-gender-btn', voiceGender === 'female' && 'xv-voice-gender-btn--active')}
+                onClick={() => setVoiceGender('female')}
+              >
+                Female
+              </button>
+              <button
+                type="button"
+                className={cn('xv-voice-gender-btn', voiceGender === 'male' && 'xv-voice-gender-btn--active')}
+                onClick={() => setVoiceGender('male')}
+              >
+                Male
+              </button>
+            </div>
+            <span className="xv-voice-call-timer font-mono text-xs xv-voice-muted hidden sm:inline">
               {formatCallTime(callSeconds)}
             </span>
             <button type="button" onClick={closeOverlay} className="xv-voice-close-btn" aria-label="End call">

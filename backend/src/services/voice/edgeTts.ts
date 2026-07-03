@@ -2,14 +2,28 @@ import { MsEdgeTTS, OUTPUT_FORMAT } from 'msedge-tts';
 import { Readable } from 'stream';
 import { prepareSpeechText } from './voicePrompt.js';
 
-const VOICE = 'en-US-JennyNeural';
+export type VoiceGender = 'female' | 'male';
 
-export async function synthesizeWithEdgeTts(text: string): Promise<Buffer> {
+const VOICES: Record<VoiceGender, string> = {
+  female: 'en-US-JennyNeural',
+  male: 'en-US-GuyNeural',
+};
+
+export function resolveEdgeVoice(gender?: VoiceGender): string {
+  return VOICES[gender === 'male' ? 'male' : 'female'];
+}
+
+export async function synthesizeWithEdgeTts(
+  text: string,
+  gender: VoiceGender = 'female'
+): Promise<Buffer> {
   const speech = prepareSpeechText(text);
+  const voice = resolveEdgeVoice(gender);
   const tts = new MsEdgeTTS();
-  await tts.setMetadata(VOICE, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+  await tts.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
 
-  const { audioStream } = tts.toStream(speech, { rate: 0.95, pitch: '+2Hz', volume: 100 });
+  const pitch = gender === 'male' ? '+0Hz' : '+2Hz';
+  const { audioStream } = tts.toStream(speech, { rate: 0.95, pitch, volume: 100 });
   const chunks: Buffer[] = [];
 
   await new Promise<void>((resolve, reject) => {
