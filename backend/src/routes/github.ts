@@ -9,17 +9,30 @@ const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID ?? '';
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET ?? '';
 const FRONTEND_URL = process.env.FRONTEND_URL ?? 'http://localhost:3000';
 
+function buildGitHubAuthorizeUrl(userId: string): string | null {
+  if (!GITHUB_CLIENT_ID) return null;
+  const state = Buffer.from(JSON.stringify({ userId })).toString('base64url');
+  const redirectUri = `${FRONTEND_URL}/dashboard/integrations/github/callback`;
+  return `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=repo,user:email&state=${state}`;
+}
+
 router.get('/oauth', (req: AuthRequest, res) => {
-  if (!GITHUB_CLIENT_ID) {
+  const url = buildGitHubAuthorizeUrl(req.userId!);
+  if (!url) {
     res.status(503).json({ error: 'GitHub OAuth not configured' });
     return;
   }
-
-  const state = Buffer.from(JSON.stringify({ userId: req.userId })).toString('base64url');
-  const redirectUri = `${FRONTEND_URL}/dashboard/integrations/github/callback`;
-  const url = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=repo,user:email&state=${state}`;
-
   res.json({ url });
+});
+
+/** GET /auth/github — redirect straight to GitHub OAuth (alias mount) */
+router.get('/redirect', (req: AuthRequest, res) => {
+  const url = buildGitHubAuthorizeUrl(req.userId!);
+  if (!url) {
+    res.status(503).json({ error: 'GitHub OAuth not configured' });
+    return;
+  }
+  res.redirect(url);
 });
 
 router.post('/connect', async (req: AuthRequest, res) => {

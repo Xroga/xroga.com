@@ -4,6 +4,7 @@ import { ImageStudioCard, type ImageOutputData } from './ImageStudioCard';
 import { ImageBlockedCard } from './ImageBlockedCard';
 import { VideoStudioCard, type VideoOutputData } from './VideoStudioCard';
 import { VideoJobPendingCard } from './VideoJobPendingCard';
+import { LandingPageCard } from './LandingPageCard';
 import type { ImageBlockedOutput } from '@/lib/imageSafetyMessages';
 
 export function FeatureOutputView({
@@ -65,6 +66,23 @@ export function FeatureOutputView({
       sourceImageUrl: typeof o.sourceImageUrl === 'string' ? o.sourceImageUrl : undefined,
     };
     return <ImageStudioCard data={data} messageId={messageId} onDelete={onDelete} />;
+  }
+
+  if (o.type === 'landing_page' && typeof o.deployUrl === 'string') {
+    return (
+      <LandingPageCard
+        data={{
+          type: 'landing_page',
+          html: typeof o.html === 'string' ? o.html : '',
+          css: typeof o.css === 'string' ? o.css : '',
+          js: typeof o.js === 'string' ? o.js : '',
+          heroImageUrl: typeof o.heroImageUrl === 'string' ? o.heroImageUrl : undefined,
+          deployUrl: o.deployUrl,
+          githubRepoUrl: typeof o.githubRepoUrl === 'string' ? o.githubRepoUrl : undefined,
+          githubRepoName: typeof o.githubRepoName === 'string' ? o.githubRepoName : undefined,
+        }}
+      />
+    );
   }
 
   if (o.type === 'video_studio' && typeof o.streamingUrl === 'string') {

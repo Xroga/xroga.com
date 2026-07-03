@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { streamSwarmExecute, ApiError, type ChatAttachment } from '@/lib/api';
+import { streamSwarmExecute, ApiError, type ChatAttachment, api } from '@/lib/api';
 import type { SwarmProgressEvent } from '@/lib/swarm';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
@@ -27,11 +27,12 @@ import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { buildPromptWithMemory } from '@/lib/chatMemory';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
-import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { sanitizePlainAiText } from '@/lib/plainAiText';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
 import { isVideoGenerationPrompt, estimateVideoSeconds } from '@/lib/parseImageContent';
+import { requiresGitHubForBuild } from '@/lib/messageHelpers';
+import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
 import { addPendingVideoJob } from '@/lib/pendingVideoJobs';
 import { useBackgroundVideoJobs } from '@/hooks/useBackgroundVideoJobs';
 
@@ -152,6 +153,13 @@ export function TerminalChatProvider({
   >([]);
   const [swarmStatusLabel, setSwarmStatusLabel] = useState<string | null>(null);
   const [swarmAnalysis, setSwarmAnalysis] = useState<string | null>(null);
+  const [githubGateOpen, setGithubGateOpen] = useState(false);
+  const pendingBuildRef = useRef<{
+    userPrompt: string;
+    fromQueue: boolean;
+    interrupt: boolean;
+    attachments?: ChatAttachment[];
+  } | null>(null);
   const chatPrefill = useAppStore((s) => s.chatPrefill);
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
   const setSwarmRunning = useAppStore((s) => s.setSwarmRunning);
@@ -159,7 +167,9 @@ export function TerminalChatProvider({
   const thinkingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const autoRanRef = useRef(false);
-  const submitRef = useRef<(text?: string, fromQueue?: boolean, interrupt?: boolean) => Promise<void>>(async () => {});
+  const submitRef = useRef<
+    (text?: string, fromQueue?: boolean, interrupt?: boolean, attachments?: ChatAttachment[]) => Promise<void>
+  >(async () => {});
   const queueRef = useRef<QueuedPrompt[]>([]);
   const lastTurnRef = useRef<{ userMessageId: string; assistantId: string; text: string } | null>(null);
   const skipNextQueueRef = useRef(false);
@@ -436,6 +446,19 @@ export function TerminalChatProvider({
         return;
       }
 
+      if (requiresGitHubForBuild(userPrompt)) {
+        try {
+          const gh = await api.github.status();
+          if (!gh.connected) {
+            pendingBuildRef.current = { userPrompt, fromQueue, interrupt, attachments };
+            setGithubGateOpen(true);
+            return;
+          }
+        } catch {
+          /* backend will enforce if status check fails */
+        }
+      }
+
       const userMessageId = crypto.randomUUID();
       const assistantId = crypto.randomUUID();
       const displayPrompt =
@@ -547,6 +570,7 @@ export function TerminalChatProvider({
             if (swarmEv.swarmTodos?.length) setSwarmTodos(swarmEv.swarmTodos);
             if (swarmEv.swarmStatusLabel) setSwarmStatusLabel(swarmEv.swarmStatusLabel);
             if (swarmEv.swarmAnalysis) setSwarmAnalysis(swarmEv.swarmAnalysis);
+            if (swarmEv.needsGitHub) setGithubGateOpen(true);
             if (swarmEv.message) setPipelineMessage(swarmEv.message);
             const pendingVideo = isVideoGenerationPrompt(displayPrompt);
             if (pendingVideo && event.message) {
@@ -622,6 +646,14 @@ export function TerminalChatProvider({
                 });
                 return updated;
               });
+              return;
+            }
+            if (output?.type === 'landing_page' && typeof output.deployUrl === 'string') {
+              setMessages((m) =>
+                m.map((msg) =>
+                  msg.id === assistantId ? { ...msg, content: '', featureOutput: output } : msg
+                )
+              );
               return;
             }
             if (output?.type === 'video_job_pending' && typeof output.jobId === 'string') {
@@ -885,6 +917,25 @@ export function TerminalChatProvider({
         projectId,
       }}
     >
+      <GitHubBuildGateModal
+        open={githubGateOpen}
+        onClose={() => {
+          setGithubGateOpen(false);
+          pendingBuildRef.current = null;
+        }}
+        onConnected={() => {
+          const pending = pendingBuildRef.current;
+          pendingBuildRef.current = null;
+          if (pending) {
+            void submitRef.current(
+              pending.userPrompt,
+              pending.fromQueue,
+              pending.interrupt,
+              pending.attachments
+            );
+          }
+        }}
+      />
       {children}
     </TerminalChatContext.Provider>
   );

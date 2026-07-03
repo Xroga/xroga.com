@@ -81,7 +81,7 @@ const healthPayload = () => {
   return {
     status: 'ok',
     service: 'xroga-api',
-    version: '1.5.1',
+    version: '1.6.0',
     councilStack: 'groq-gemini-deepseek-mistral',
     councilKeys: getCouncilKeyStatus(),
     promptsSealed: true,
@@ -255,6 +255,10 @@ app.use('/api/video', authMiddleware, videoRouter);
 app.use('/api/debug', authMiddleware, debugRouter);
 app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
 app.use('/api/github', authMiddleware, githubRouter);
+app.get('/auth/github', authMiddleware, (req, res, next) => {
+  req.url = '/redirect';
+  githubRouter(req, res, next);
+});
 app.use('/api/notifications', authMiddleware, notificationsRouter);
 app.use('/api/billing', authMiddleware, billingRouter);
 

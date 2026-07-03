@@ -64,6 +64,7 @@ export interface SwarmProgressEvent {
   swarmTodos?: SwarmTodoItem[];
   swarmStatusLabel?: string;
   swarmAnalysis?: string;
+  needsGitHub?: boolean;
 }
 
 export type SwarmTodoStatus = 'done' | 'active' | 'pending';

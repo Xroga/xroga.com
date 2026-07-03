@@ -1,7 +1,10 @@
+import { getSecret } from '../config/envSecrets.js';
+
 interface VercelDeployment {
   id: string;
   url: string;
   readyState: string;
+  alias?: string[];
 }
 
 interface VercelFile {
@@ -13,7 +16,7 @@ export async function deployStaticSite(
   projectName: string,
   files: VercelFile[]
 ): Promise<{ deployUrl: string; deploymentId: string }> {
-  const token = process.env.VERCEL_TOKEN;
+  const token = getSecret('VERCEL_TOKEN') ?? process.env.VERCEL_TOKEN;
   const teamId = process.env.VERCEL_TEAM_ID;
 
   if (!token) {
@@ -46,4 +49,36 @@ export async function deployStaticSite(
     : `https://${deployment.url}`;
 
   return { deployUrl, deploymentId: deployment.id };
+}
+
+/** Poll until deployment is READY; returns stable preview URL */
+export async function pollDeploymentReady(
+  deploymentId: string,
+  fallbackUrl: string,
+  maxWaitMs = 120_000
+): Promise<string> {
+  const token = getSecret('VERCEL_TOKEN') ?? process.env.VERCEL_TOKEN;
+  const teamId = process.env.VERCEL_TEAM_ID;
+  if (!token) return fallbackUrl;
+
+  const query = teamId ? `?teamId=${teamId}` : '';
+  const started = Date.now();
+
+  while (Date.now() - started < maxWaitMs) {
+    const res = await fetch(`https://api.vercel.com/v13/deployments/${deploymentId}${query}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) {
+      const dep = (await res.json()) as VercelDeployment;
+      if (dep.readyState === 'READY') {
+        const alias = dep.alias?.[0];
+        if (alias) return alias.startsWith('http') ? alias : `https://${alias}`;
+        return dep.url.startsWith('http') ? dep.url : `https://${dep.url}`;
+      }
+      if (dep.readyState === 'ERROR' || dep.readyState === 'CANCELED') break;
+    }
+    await new Promise((r) => setTimeout(r, 3000));
+  }
+
+  return fallbackUrl;
 }

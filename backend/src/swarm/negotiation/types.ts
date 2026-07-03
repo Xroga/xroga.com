@@ -29,6 +29,8 @@ export interface NegotiationResult {
   polishedOutput: string;
   needsUserClarification?: boolean;
   clarificationText?: string;
+  needsGitHubConnection?: boolean;
+  featureOutput?: import('../../types/features.js').FeatureOutput;
 }
 
 export interface VerificationReport {
