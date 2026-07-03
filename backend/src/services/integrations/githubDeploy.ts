@@ -35,7 +35,22 @@ async function getIntegration(userId: string): Promise<GitHubIntegrationRow | nu
     .select('access_token, repo_strategy, default_repo')
     .eq('user_id', userId)
     .maybeSingle();
-  return data as GitHubIntegrationRow | null;
+  if (data?.access_token) return data as GitHubIntegrationRow;
+
+  const { data: legacy } = await supabase
+    .from('user_integrations')
+    .select('access_token')
+    .eq('user_id', userId)
+    .eq('provider', 'github')
+    .maybeSingle();
+
+  if (!legacy?.access_token) return null;
+
+  return {
+    access_token: legacy.access_token,
+    repo_strategy: 'auto',
+    default_repo: null,
+  };
 }
 
 export async function isGitHubConnected(userId: string): Promise<boolean> {

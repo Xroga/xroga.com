@@ -13,9 +13,12 @@ export function stripEmojis(text: string): string {
 
 const PROVIDER_LEAK_PATTERNS: Array<[RegExp, string]> = [
   [/\bBased on my capabilities as\b[^.\n]*/gi, ''],
-  [/\b(as (the )?)?(Groq|Gemini|DeepSeek|OpenAI|Anthropic|xAI)(\s+(Sprinter|Polymath|Architect|Showrunner|Flash))?\b/gi, 'XROGA AI'],
-  [/\bI am (the )?(Groq|Gemini|DeepSeek)\b[^.\n]*/gi, 'I am XROGA AI'],
-  [/---\s*(Gemini|Groq|DeepSeek)[^-\n]*---\s*/gi, ''],
+  [/\b(as (the )?)?(Groq|Gemini|DeepSeek|OpenAI|Anthropic|Claude|GPT-?4|GPT-?3|Mistral|ChatGPT|xAI)(\s+(Sprinter|Polymath|Architect|Showrunner|Flash|Neural))?\b/gi, 'XROGA AI'],
+  [/\bI am (the )?(Groq|Gemini|DeepSeek|Claude|GPT|Mistral)\b[^.\n]*/gi, 'I am XROGA AI'],
+  [/---\s*(Gemini|Groq|DeepSeek|Mistral|Claude|GPT)[^-\n]*---\s*/gi, ''],
+  [/\bGemini Master Plan\b/gi, 'XROGA Master Plan'],
+  [/\bDeepSeek\b/gi, 'XROGA Architect'],
+  [/\bMistral\b/gi, 'XROGA Co-Architect'],
 ];
 
 export function stripProviderLeaks(text: string): string {

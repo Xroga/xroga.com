@@ -9,7 +9,7 @@ export const BRAND = {
   },
   phase1: {
     planning: '📝 AI SWARM LOGIC is plotting the gravitational path...',
-    planReady: (steps: number) => `Gemini Master Plan ready — ${steps} gravitational steps mapped.`,
+    planReady: (steps: number) => `XROGA Master Plan ready — ${steps} gravitational steps mapped.`,
   },
   phase2: {
     reviewing: '🔄 XROGA Architect is verifying the Event Horizon alignment...',

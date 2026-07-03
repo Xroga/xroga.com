@@ -35,6 +35,11 @@ import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
 import { GitHubActivationOverlay } from '@/components/terminal/GitHubActivationOverlay';
 import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
+import {
+  isGitHubConnectedSession,
+  markGitHubConnectedSession,
+  sanitizeXrogaTerminalText,
+} from '@/lib/xrogaBrand';
 import { addPendingVideoJob } from '@/lib/pendingVideoJobs';
 import { useBackgroundVideoJobs } from '@/hooks/useBackgroundVideoJobs';
 
@@ -162,6 +167,7 @@ export function TerminalChatProvider({
     open: false,
   });
   const afterGitHubActivationRef = useRef<(() => void) | null>(null);
+  const skipGithubGateRef = useRef(false);
   const pendingBuildRef = useRef<{
     userPrompt: string;
     fromQueue: boolean;
@@ -226,6 +232,8 @@ export function TerminalChatProvider({
     const params = new URLSearchParams(window.location.search);
     if (params.get('github') !== 'connected') return;
     const rawUser = params.get('username');
+    markGitHubConnectedSession();
+    skipGithubGateRef.current = true;
     setGithubActivation({
       open: true,
       username: rawUser ? decodeURIComponent(rawUser) : undefined,
@@ -236,6 +244,8 @@ export function TerminalChatProvider({
   useEffect(() => {
     const onGitHubConnected = (e: Event) => {
       const detail = (e as CustomEvent<{ username?: string }>).detail;
+      markGitHubConnectedSession();
+      skipGithubGateRef.current = true;
       setGithubActivation({ open: true, username: detail?.username });
     };
     window.addEventListener(GITHUB_CONNECTED_EVENT, onGitHubConnected);
@@ -254,13 +264,24 @@ export function TerminalChatProvider({
     pendingBuildRef.current = null;
     if (!pending) return;
     afterGitHubActivationRef.current = () => {
-      void submitRef.current(
-        pending.userPrompt,
-        pending.fromQueue,
-        pending.interrupt,
-        pending.attachments
-      );
+      window.setTimeout(() => {
+        void submitRef.current(
+          pending.userPrompt,
+          pending.fromQueue,
+          pending.interrupt,
+          pending.attachments
+        );
+      }, 400);
     };
+  }, []);
+
+  const pushSwarmTerminalLine = useCallback((raw: string) => {
+    const line = sanitizeXrogaTerminalText(raw);
+    if (!line) return;
+    setPipelineMessage(line);
+    setSwarmActivityLog((prev) =>
+      prev[prev.length - 1] === line ? prev : [...prev, line].slice(-24)
+    );
   }, []);
 
   const hydrateFromSession = useCallback(() => {
@@ -497,7 +518,7 @@ export function TerminalChatProvider({
         return;
       }
 
-      if (requiresGitHubForBuild(userPrompt)) {
+      if (requiresGitHubForBuild(userPrompt) && !isGitHubConnectedSession() && !skipGithubGateRef.current) {
         try {
           const gh = await api.github.status();
           if (!gh.connected) {
@@ -597,7 +618,7 @@ export function TerminalChatProvider({
               clearTimeout(thinkingTimerRef.current);
               thinkingTimerRef.current = null;
             }
-            const label = event.message ?? event.status ?? 'Thinking…';
+            const label = sanitizeXrogaTerminalText(event.message ?? event.status ?? 'Thinking…');
             setPipelineMessage(label);
             if (label && !thinkingStepsRef.current.includes(label)) {
               thinkingStepsRef.current = [...thinkingStepsRef.current, label];
@@ -612,7 +633,7 @@ export function TerminalChatProvider({
             }
             if (event.videoStep) setVideoProgressStep(event.videoStep);
             if ((event as { omniPhase?: string }).omniPhase) setVideoOmniPhase((event as { omniPhase?: string }).omniPhase ?? null);
-            if (event.message) setPipelineMessage(event.message);
+            if (event.message) setPipelineMessage(sanitizeXrogaTerminalText(event.message));
             const layer = (event as { councilLayer?: 'elite' | 'reserve' | 'blackhole' }).councilLayer;
             if (layer) setCouncilLayer(layer);
             if (event.agent) setSwarmActiveAgent(event.agent);
@@ -620,16 +641,26 @@ export function TerminalChatProvider({
             if (negPhase != null) setSwarmNegotiationPhase(negPhase);
             const swarmEv = event as SwarmProgressEvent;
             if (swarmEv.swarmTodos?.length) setSwarmTodos(swarmEv.swarmTodos);
-            if (swarmEv.swarmStatusLabel) setSwarmStatusLabel(swarmEv.swarmStatusLabel);
-            if (swarmEv.swarmAnalysis) setSwarmAnalysis(swarmEv.swarmAnalysis);
-            const activity = swarmEv.swarmActivity ?? swarmEv.message;
-            if (activity) {
-              setPipelineMessage(activity);
-              setSwarmActivityLog((prev) =>
-                prev[prev.length - 1] === activity ? prev : [...prev, activity].slice(-24)
-              );
+            if (swarmEv.swarmStatusLabel) {
+              setSwarmStatusLabel(sanitizeXrogaTerminalText(swarmEv.swarmStatusLabel));
             }
-            if (swarmEv.needsGitHub) setGithubGateOpen(true);
+            if (swarmEv.swarmAnalysis) {
+              setSwarmAnalysis(sanitizeXrogaTerminalText(swarmEv.swarmAnalysis));
+            }
+            const activity = swarmEv.swarmActivity ?? swarmEv.message;
+            if (activity) pushSwarmTerminalLine(activity);
+            if (swarmEv.needsGitHub && !isGitHubConnectedSession() && !skipGithubGateRef.current) {
+              void api.github.status().then((gh) => {
+                if (!gh.connected) setGithubGateOpen(true);
+              }).catch(() => {
+                setGithubGateOpen(true);
+              });
+            } else if (swarmEv.needsGitHub && (isGitHubConnectedSession() || skipGithubGateRef.current)) {
+              skipGithubGateRef.current = false;
+            }
+            if (swarmEv.swarmTodos?.some((t) => t.id === 'github' && t.status === 'done')) {
+              skipGithubGateRef.current = false;
+            }
             const pendingVideo = isVideoGenerationPrompt(displayPrompt);
             if (pendingVideo && event.message) {
               setMessages((m) =>
@@ -908,7 +939,7 @@ export function TerminalChatProvider({
         setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, incognito, messages, setSwarmRunning, setActions, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant]
+    [prompt, loading, projectId, incognito, messages, setSwarmRunning, setActions, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine]
   );
 
   submitRef.current = submit;
@@ -984,6 +1015,8 @@ export function TerminalChatProvider({
           afterGitHubActivationRef.current = null;
         }}
         onConnected={(username) => {
+          markGitHubConnectedSession();
+          skipGithubGateRef.current = true;
           setGithubGateOpen(false);
           queueBuildAfterGitHubActivation();
           setGithubActivation({ open: true, username });
