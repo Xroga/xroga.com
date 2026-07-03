@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { createServer } from 'http';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -23,6 +24,7 @@ import mediaRouter from './routes/media.js';
 import videoRouter from './routes/video.js';
 import { adminMiddleware } from './middleware/admin.js';
 import { startSwarmWorker } from './workers/swarmWorker.js';
+import { attachVoiceWebSocket } from './services/voice/voiceWebSocket.js';
 
 const app = express();
 
@@ -82,7 +84,7 @@ const healthPayload = () => {
   return {
     status: 'ok',
     service: 'xroga-api',
-    version: '1.6.3',
+    version: '1.7.0',
     councilStack: 'groq-gemini-deepseek-mistral',
     councilKeys: getCouncilKeyStatus(),
     deployKeys: getDeployKeyStatus(),
@@ -280,7 +282,10 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
   }
 });
 
-app.listen(port, '0.0.0.0', () => {
+const server = createServer(app);
+attachVoiceWebSocket(server);
+
+server.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
   console.log(`Environment: ${process.env.NODE_ENV ?? 'development'}`);
   void import('./services/builder/imageGen.js').then(({ getConfiguredImageProviders }) => {

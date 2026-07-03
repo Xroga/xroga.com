@@ -6,7 +6,7 @@ interface GroqResponse {
 
 export async function groqChat(
   messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
-  options?: { model?: string; maxTokens?: number }
+  options?: { model?: string; maxTokens?: number; temperature?: number }
 ): Promise<string> {
   const apiKey = getSecret('GROQ_API_KEY');
   if (!apiKey) {
@@ -23,7 +23,7 @@ export async function groqChat(
       model: options?.model ?? 'llama-3.3-70b-versatile',
       messages,
       max_tokens: options?.maxTokens ?? 512,
-      temperature: 0.6,
+      temperature: options?.temperature ?? 0.6,
     }),
   });
 
