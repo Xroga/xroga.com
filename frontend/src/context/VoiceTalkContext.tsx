@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { API_URL, getAccessToken } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
+import { useVoicePrefsStore } from '@/store/useVoicePrefsStore';
 
 export type TalkState = 'idle' | 'connecting' | 'recording' | 'processing' | 'speaking';
 
@@ -96,6 +97,7 @@ async function toArrayBuffer(data: ArrayBuffer | Blob): Promise<ArrayBuffer> {
 
 export function VoiceTalkProvider({ children }: { children: ReactNode }) {
   const profile = useAppStore((s) => s.profile);
+  const voiceGender = useVoicePrefsStore((s) => s.voiceGender);
   const displayName = profile?.display_name?.split(' ')[0] ?? 'there';
 
   const [overlayOpen, setOverlayOpen] = useState(false);
@@ -128,6 +130,8 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
   stateRef.current = state;
   const speakerOnRef = useRef(speakerOn);
   speakerOnRef.current = speakerOn;
+  const voiceGenderRef = useRef(voiceGender);
+  voiceGenderRef.current = voiceGender;
 
   const cleanupMedia = useCallback(() => {
     speechRef.current?.abort();
@@ -363,7 +367,7 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
         const timeout = setTimeout(() => resolve(), 15000);
 
         ws.onopen = () => {
-          ws.send(JSON.stringify({ type: 'greeting', displayName }));
+          ws.send(JSON.stringify({ type: 'greeting', displayName, voiceGender: voiceGenderRef.current }));
         };
 
         ws.onmessage = (event) => {
@@ -524,7 +528,7 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
       const mimeType = mimeCandidates.find((m) => MediaRecorder.isTypeSupported(m)) ?? 'audio/webm';
 
       const ws = await openVoiceSocket();
-      ws.send(JSON.stringify({ type: 'start', mimeType }));
+      ws.send(JSON.stringify({ type: 'start', mimeType, voiceGender: voiceGenderRef.current }));
 
       const recorder = new MediaRecorder(stream, { mimeType });
       recorderRef.current = recorder;
@@ -563,7 +567,7 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
       if (ws && ws.readyState === WebSocket.OPEN) {
         setState('processing');
         setStatusLabel('XROGA is thinking…');
-        ws.send(JSON.stringify({ type: 'end', clientTranscript: clientTranscript || undefined }));
+        ws.send(JSON.stringify({ type: 'end', clientTranscript: clientTranscript || undefined, voiceGender: voiceGenderRef.current }));
       } else {
         endVoiceSession();
       }

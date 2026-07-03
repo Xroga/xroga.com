@@ -687,6 +687,268 @@ body.theme-gray * {
     animation: talk-pulse 1.6s ease infinite;
   }
 
+  /* Talk button — attached above chatbar (outside inner shell) */
+  .xv-chatbar-stack {
+    position: relative;
+  }
+
+  .xv-talk-chatbar-mount {
+    display: flex;
+    justify-content: center;
+    margin-bottom: -0.65rem;
+    position: relative;
+    z-index: 25;
+    pointer-events: none;
+  }
+
+  .xv-talk-chatbar-mount > * {
+    pointer-events: auto;
+  }
+
+  .xv-talk-chatbar-btn {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.25s ease, filter 0.25s ease;
+  }
+
+  .xv-talk-chatbar-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .xv-talk-chatbar-btn--live {
+    animation: talk-pulse 1.8s ease infinite;
+  }
+
+  /* Uiverse blue/sky — image + white themes */
+  .xv-talk-btn-uiverse {
+    --talk-duration: 7s;
+    --talk-easing: linear;
+    --talk-c1: rgba(96, 165, 250, 0.75);
+    --talk-c2: #2563eb;
+    --talk-c3: #38bdf8;
+    --talk-c4: rgba(224, 242, 254, 0.85);
+    --talk-shadow: rgba(56, 189, 248, 0.45);
+    --talk-shadow-top: rgba(186, 230, 253, 0.9);
+    --talk-shadow-bottom: rgba(239, 246, 255, 0.85);
+    --talk-radial-inner: #60a5fa;
+    --talk-radial-outer: #e0f2fe;
+    border-radius: 24px;
+    padding: 0;
+    background: radial-gradient(circle, var(--talk-radial-inner), var(--talk-radial-outer) 80%);
+    box-shadow: 0 0 18px var(--talk-shadow);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+
+  .xv-talk-btn-uiverse--white {
+    --talk-radial-inner: #3b82f6;
+    --talk-radial-outer: #ffffff;
+    color: #1e3a8a;
+    box-shadow: 0 0 16px rgba(37, 99, 235, 0.25);
+  }
+
+  .xv-talk-btn-uiverse::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border-radius: 24px;
+    box-shadow:
+      inset 0 3px 12px var(--talk-shadow-top),
+      inset 0 -3px 4px var(--talk-shadow-bottom);
+  }
+
+  .xv-talk-uiverse-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    min-width: 118px;
+    padding: 10px 22px;
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+  }
+
+  .xv-talk-uiverse-wrapper > span:first-child {
+    position: relative;
+    z-index: 4;
+    display: inline-block;
+  }
+
+  .xv-talk-uiverse-circle {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    filter: blur(8px);
+    animation: var(--talk-anim, none) var(--talk-duration) var(--talk-easing) infinite;
+  }
+
+  .xv-talk-uiverse-circle-1, .xv-talk-uiverse-circle-9, .xv-talk-uiverse-circle-10, .xv-talk-uiverse-circle-11, .xv-talk-uiverse-circle-12 { --talk-bg: var(--talk-c4); }
+  .xv-talk-uiverse-circle-3, .xv-talk-uiverse-circle-4 { --talk-bg: var(--talk-c2); filter: blur(12px); }
+  .xv-talk-uiverse-circle-5, .xv-talk-uiverse-circle-6 { --talk-bg: var(--talk-c3); filter: blur(14px); }
+  .xv-talk-uiverse-circle-2, .xv-talk-uiverse-circle-7, .xv-talk-uiverse-circle-8 { --talk-bg: var(--talk-c1); filter: blur(10px); }
+  .xv-talk-uiverse-circle { background: var(--talk-bg, transparent); }
+
+  .xv-talk-uiverse-circle-1 { left: 0; top: -36px; --talk-anim: xv-talk-c1; }
+  .xv-talk-uiverse-circle-2 { left: 82px; top: 6px; --talk-anim: xv-talk-c2; }
+  .xv-talk-uiverse-circle-3 { left: -10px; top: -10px; --talk-anim: xv-talk-c3; }
+  .xv-talk-uiverse-circle-4 { left: 72px; top: -10px; --talk-anim: xv-talk-c4; }
+  .xv-talk-uiverse-circle-5 { left: 10px; top: -2px; --talk-anim: xv-talk-c5; }
+  .xv-talk-uiverse-circle-6 { left: 50px; top: 14px; --talk-anim: xv-talk-c6; }
+
+  @keyframes xv-talk-c1 { 33% { transform: translate(0, 14px); } 66% { transform: translate(10px, 52px); } }
+  @keyframes xv-talk-c2 { 33% { transform: translate(72px, -8px); } 66% { transform: translate(64px, -40px); } }
+  @keyframes xv-talk-c3 { 33% { transform: translate(16px, 10px); } 66% { transform: translate(8px, 2px); } }
+  @keyframes xv-talk-c4 { 33% { transform: translate(68px, -10px); } 66% { transform: translate(96px, -6px); } }
+  @keyframes xv-talk-c5 { 33% { transform: translate(76px, 22px); } 66% { transform: translate(36px, -26px); } }
+  @keyframes xv-talk-c6 { 33% { transform: translate(22px, -12px); } 66% { transform: translate(66px, -48px); } }
+
+  .xv-talk-chatbar-btn:hover .xv-talk-btn-uiverse {
+    --talk-duration: 1.4s;
+  }
+
+  /* Black theme — glow frame */
+  .xv-talk-btn-black {
+    width: auto;
+    min-width: 96px;
+    height: 40px;
+    padding: 0 16px;
+    background: #111;
+    color: #fff;
+    border-radius: 4px;
+  }
+
+  .xv-talk-black-filter {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .xv-talk-black-text {
+    position: relative;
+    z-index: 1;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .xv-talk-black-a {
+    pointer-events: none;
+    position: absolute;
+    --w: 2px;
+    --t: -36px;
+    --s: calc(var(--t) * -1);
+    --e: calc(100% + var(--t));
+    --g: #fff0, #fff3 var(--s), #fffa var(--s), #fff, #fffa var(--e), #fff3 var(--e), #fff0;
+  }
+
+  .xv-talk-black-a::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    z-index: -2;
+  }
+
+  .xv-talk-black-l { left: -2px; top: var(--t); bottom: var(--t); width: var(--w); background: linear-gradient(var(--g)); }
+  .xv-talk-black-r { right: -2px; top: var(--t); bottom: var(--t); width: var(--w); background: linear-gradient(var(--g)); }
+  .xv-talk-black-t { top: -2px; left: var(--t); right: var(--t); height: var(--w); background: linear-gradient(90deg, var(--g)); }
+  .xv-talk-black-b { bottom: -2px; left: var(--t); right: var(--t); height: var(--w); background: linear-gradient(90deg, var(--g)); }
+
+  .xv-talk-btn-black::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: radial-gradient(circle at 50% 50%, #0000 0, #0000 20%, #111111aa 50%), radial-gradient(ellipse 100% 100%, #fff, #fff0);
+    background-size: 3px 3px, auto auto;
+    transition: 0.3s;
+  }
+
+  .xv-talk-btn-black:hover::before { opacity: 0.35; }
+
+  /* Gray theme — white pill + gradient glow */
+  .xv-talk-btn-gray {
+    width: auto;
+    min-width: 110px;
+    height: 46px;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  }
+
+  .xv-talk-gray-gradient-container {
+    position: absolute;
+    inset: -6%;
+    overflow: hidden;
+    border-radius: inherit;
+    z-index: -2;
+    filter: blur(10px);
+  }
+
+  .xv-talk-gray-gradient {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    aspect-ratio: 1;
+    border-radius: 100%;
+    transform: translate(-50%, -50%);
+    background-image: linear-gradient(90deg, #60a5fa, #818cf8, #a78bfa, #38bdf8, #22d3ee, #60a5fa);
+    animation: xv-talk-gray-spin 2s linear infinite;
+    filter: blur(8px);
+  }
+
+  @keyframes xv-talk-gray-spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  .xv-talk-gray-label {
+    position: relative;
+    z-index: 1;
+    padding: 8px 18px;
+    border-radius: 9999px;
+    background: #ffffff;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+  }
+
+  /* Voice overlay — gender picker */
+  .xv-voice-gender-toggle {
+    display: inline-flex;
+    border-radius: 9999px;
+    border: 1px solid var(--voice-glass-border, var(--card-border));
+    background: var(--voice-glass, rgba(0,0,0,0.35));
+    overflow: hidden;
+  }
+
+  .xv-voice-gender-btn {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--foreground) 55%, transparent);
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .xv-voice-gender-btn--active {
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+    color: var(--accent);
+  }
+
   .xv-talk-btn-large {
     position: relative;
     display: flex;

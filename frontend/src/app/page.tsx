@@ -10,7 +10,7 @@ import { AppStoreInline } from '@/components/ui/AppStoreInline';
 import { PowerSmashButton, HomeSignInButton } from '@/components/ui/XrogaButtons';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
 import { useThemeStore } from '@/store/useThemeStore';
-import { TalkButton } from '@/components/voice/TalkButton';
+import { TalkButtonChatbarMount } from '@/components/voice/TalkButton';
 import { createClient } from '@/lib/supabase/client';
 
 export default function HomePage() {
@@ -49,7 +49,6 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
           <Logo href="/" variant="homepage" height={76} className="shrink-0 justify-self-start" />
           <div className="justify-self-center flex items-center gap-2">
-            <TalkButton variant="header" />
             <AppStoreInline compact className="hidden lg:inline-flex" />
           </div>
           <div className="flex items-center justify-end gap-3 justify-self-end">
@@ -95,7 +94,8 @@ export default function HomePage() {
             </div>
           )}
 
-          <div className="w-full mb-6">
+          <div className="w-full mb-6 xv-chatbar-stack relative">
+            <TalkButtonChatbarMount />
             <HomepageChatBar />
           </div>
 
