@@ -84,6 +84,7 @@ interface TerminalChatContextValue {
   swarmTodos: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
   swarmStatusLabel: string | null;
   swarmAnalysis: string | null;
+  swarmActivityLog: string[];
   submit: (
     text?: string,
     fromQueue?: boolean,
@@ -153,6 +154,7 @@ export function TerminalChatProvider({
   >([]);
   const [swarmStatusLabel, setSwarmStatusLabel] = useState<string | null>(null);
   const [swarmAnalysis, setSwarmAnalysis] = useState<string | null>(null);
+  const [swarmActivityLog, setSwarmActivityLog] = useState<string[]>([]);
   const [githubGateOpen, setGithubGateOpen] = useState(false);
   const pendingBuildRef = useRef<{
     userPrompt: string;
@@ -499,6 +501,7 @@ export function TerminalChatProvider({
       setSwarmTodos([]);
       setSwarmStatusLabel(null);
       setSwarmAnalysis(null);
+      setSwarmActivityLog([]);
 
       const useCompactPipeline =
         isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt);
@@ -570,8 +573,14 @@ export function TerminalChatProvider({
             if (swarmEv.swarmTodos?.length) setSwarmTodos(swarmEv.swarmTodos);
             if (swarmEv.swarmStatusLabel) setSwarmStatusLabel(swarmEv.swarmStatusLabel);
             if (swarmEv.swarmAnalysis) setSwarmAnalysis(swarmEv.swarmAnalysis);
+            const activity = swarmEv.swarmActivity ?? swarmEv.message;
+            if (activity) {
+              setPipelineMessage(activity);
+              setSwarmActivityLog((prev) =>
+                prev[prev.length - 1] === activity ? prev : [...prev, activity].slice(-24)
+              );
+            }
             if (swarmEv.needsGitHub) setGithubGateOpen(true);
-            if (swarmEv.message) setPipelineMessage(swarmEv.message);
             const pendingVideo = isVideoGenerationPrompt(displayPrompt);
             if (pendingVideo && event.message) {
               setMessages((m) =>
@@ -899,6 +908,7 @@ export function TerminalChatProvider({
         swarmTodos,
         swarmStatusLabel,
         swarmAnalysis,
+        swarmActivityLog,
         followUps,
         reasoning,
         dag,

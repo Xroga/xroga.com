@@ -1,10 +1,6 @@
-/**
- * GitHub repo creation + file push for XROGA builds.
- * Uses Fly.io secret names via stored user OAuth tokens (Supabase).
- */
-
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { deployStaticSite, pollDeploymentReady } from '../../lib/vercel.js';
+import { deployToNetlify, pollNetlifyDeploy } from '../../lib/netlify.js';
 import { getSecret } from '../../config/envSecrets.js';
 
 export interface ProjectFile {
@@ -21,7 +17,9 @@ export interface GitHubPushResult {
 export interface DeployPipelineResult {
   github: GitHubPushResult;
   deployUrl: string;
+  deployPlatform: 'vercel' | 'netlify' | 'none';
   vercelDeploymentId?: string;
+  netlifyDeployId?: string;
 }
 
 interface GitHubIntegrationRow {
@@ -83,7 +81,6 @@ async function createRepo(token: string, name: string): Promise<{ fullName: stri
   return { fullName: repo.full_name, htmlUrl: repo.html_url };
 }
 
-/** Push multiple files in a single commit via Git Data API */
 async function pushFilesToRepo(
   token: string,
   owner: string,
@@ -146,9 +143,7 @@ export async function pushBuildToGitHub(
   slug?: string
 ): Promise<GitHubPushResult> {
   const integration = await getIntegration(userId);
-  if (!integration?.access_token) {
-    throw new Error('GitHub not connected');
-  }
+  if (!integration?.access_token) throw new Error('GitHub not connected');
 
   const token = integration.access_token;
   const username = await getGitHubUsername(token);
@@ -192,29 +187,50 @@ export function landingFilesFromOutput(html: string, css: string, js: string): P
   ];
 }
 
-/** Push to GitHub then deploy static site to Vercel with preview polling */
+async function deployStaticPreview(
+  projectSlug: string,
+  files: ProjectFile[]
+): Promise<{ deployUrl: string; platform: 'vercel' | 'netlify' | 'none'; vercelDeploymentId?: string; netlifyDeployId?: string }> {
+  const staticFiles = files.filter((f) => !f.path.endsWith('.md'));
+
+  if (getSecret('VERCEL_API_KEY')) {
+    try {
+      const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
+      const deployment = await deployStaticSite(projectSlug, vercelFiles);
+      const deployUrl = await pollDeploymentReady(deployment.deploymentId, deployment.deployUrl);
+      return { deployUrl, platform: 'vercel', vercelDeploymentId: deployment.deploymentId };
+    } catch (err) {
+      console.warn('[githubDeploy] Vercel:', (err as Error).message);
+    }
+  }
+
+  if (getSecret('NETLIFY_ACCESS_TOKEN')) {
+    try {
+      const netlifyFiles = staticFiles.map((f) => ({ path: f.path, content: f.content }));
+      const deployment = await deployToNetlify(projectSlug, netlifyFiles);
+      const deployUrl = await pollNetlifyDeploy(deployment.deployId, deployment.deployUrl);
+      return { deployUrl, platform: 'netlify', netlifyDeployId: deployment.deployId };
+    } catch (err) {
+      console.warn('[githubDeploy] Netlify:', (err as Error).message);
+    }
+  }
+
+  return { deployUrl: `https://${projectSlug}.vercel.app`, platform: 'none' };
+}
+
+/** Push to GitHub then deploy to Vercel (preferred) or Netlify */
 export async function pushAndDeployLivePreview(
   userId: string,
   files: ProjectFile[],
   projectSlug: string
 ): Promise<DeployPipelineResult> {
   const github = await pushBuildToGitHub(userId, files, projectSlug);
-
-  let deployUrl = `https://${projectSlug}.vercel.app`;
-  let vercelDeploymentId: string | undefined;
-
-  if (getSecret('VERCEL_TOKEN') || process.env.VERCEL_TOKEN) {
-    try {
-      const vercelFiles = files
-        .filter((f) => !f.path.endsWith('.md'))
-        .map((f) => ({ file: f.path, data: f.content }));
-      const deployment = await deployStaticSite(projectSlug, vercelFiles);
-      vercelDeploymentId = deployment.deploymentId;
-      deployUrl = await pollDeploymentReady(deployment.deploymentId, deployment.deployUrl);
-    } catch (err) {
-      console.warn('[githubDeploy] Vercel deploy:', (err as Error).message);
-    }
-  }
-
-  return { github, deployUrl, vercelDeploymentId };
+  const preview = await deployStaticPreview(projectSlug, files);
+  return {
+    github,
+    deployUrl: preview.deployUrl,
+    deployPlatform: preview.platform,
+    vercelDeploymentId: preview.vercelDeploymentId,
+    netlifyDeployId: preview.netlifyDeployId,
+  };
 }

@@ -48,7 +48,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, imageProgressStep, imageAttempts, videoProgressStep, videoOmniPhase, videoEstimateSeconds, videoStartedAt, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput } =
+  const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, swarmActivityLog, imageProgressStep, imageAttempts, videoProgressStep, videoOmniPhase, videoEstimateSeconds, videoStartedAt, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -396,6 +396,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             statusLabel={swarmStatusLabel}
                             analysis={swarmAnalysis}
                             todos={swarmTodos}
+                            activityLog={swarmActivityLog}
                           />
                         )}
                         {(msg.thinkingSteps?.length || (loading && msg.id === animatingId && showChatThinking)) && (

@@ -16,11 +16,11 @@ export async function deployStaticSite(
   projectName: string,
   files: VercelFile[]
 ): Promise<{ deployUrl: string; deploymentId: string }> {
-  const token = getSecret('VERCEL_TOKEN') ?? process.env.VERCEL_TOKEN;
+  const token = getSecret('VERCEL_API_KEY');
   const teamId = process.env.VERCEL_TEAM_ID;
 
   if (!token) {
-    throw new Error('VERCEL_TOKEN not configured');
+    throw new Error('VERCEL_API_KEY not configured');
   }
 
   const query = teamId ? `?teamId=${teamId}` : '';
@@ -57,7 +57,7 @@ export async function pollDeploymentReady(
   fallbackUrl: string,
   maxWaitMs = 120_000
 ): Promise<string> {
-  const token = getSecret('VERCEL_TOKEN') ?? process.env.VERCEL_TOKEN;
+  const token = getSecret('VERCEL_API_KEY');
   const teamId = process.env.VERCEL_TEAM_ID;
   if (!token) return fallbackUrl;
 

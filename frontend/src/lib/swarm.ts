@@ -64,6 +64,7 @@ export interface SwarmProgressEvent {
   swarmTodos?: SwarmTodoItem[];
   swarmStatusLabel?: string;
   swarmAnalysis?: string;
+  swarmActivity?: string;
   needsGitHub?: boolean;
 }
 
