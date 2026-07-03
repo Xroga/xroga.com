@@ -739,6 +739,91 @@ body.theme-gray * {
     overflow: hidden;
   }
 
+  .xv-voice-close-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .xv-voice-close-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+
+  .xv-voice-cancel-btn {
+    min-width: 3rem;
+    height: 3rem;
+    padding: 0 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(248, 113, 113, 0.35);
+    background: rgba(239, 68, 68, 0.12);
+    color: #fca5a5;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .xv-voice-cancel-btn:hover {
+    background: rgba(239, 68, 68, 0.22);
+    transform: scale(1.04);
+  }
+
+  .xv-voice-bubble {
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .xv-voice-bubble-label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    opacity: 0.65;
+  }
+
+  .xv-voice-bubble--user {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.85);
+    border-bottom-right-radius: 0.25rem;
+  }
+
+  .xv-voice-bubble--user .xv-voice-bubble-label {
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .xv-voice-bubble--ai {
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    color: rgba(254, 243, 199, 0.95);
+    border-bottom-left-radius: 0.25rem;
+  }
+
+  .xv-voice-bubble--ai .xv-voice-bubble-label {
+    color: rgba(251, 191, 36, 0.7);
+  }
+
+  .xv-voice-bubble--live {
+    animation: voice-bubble-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes voice-bubble-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+  }
+
   .xv-voice-overlay {
     color: #fff;
     font-family: var(--font-inter), system-ui, sans-serif;

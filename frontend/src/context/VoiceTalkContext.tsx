@@ -35,6 +35,7 @@ interface VoiceTalkContextValue {
   toggleSpeaker: () => void;
   toggleMute: () => void;
   orbPress: () => void;
+  cancelTalk: () => void;
   error: string | null;
   clearError: () => void;
 }
@@ -314,6 +315,15 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
     else if (stateRef.current === 'recording') stopTalk();
   }, [startTalk, stopTalk]);
 
+  const cancelTalk = useCallback(() => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+    pendingTurnRef.current = null;
+    setLiveReply(null);
+    setLiveUser(null);
+    endVoiceSession();
+  }, [endVoiceSession]);
+
   const toggleMute = useCallback(() => {
     setMuted((m) => {
       const next = !m;
@@ -350,6 +360,7 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
         toggleSpeaker,
         toggleMute,
         orbPress,
+        cancelTalk,
         error,
         clearError: () => setError(null),
       }}
