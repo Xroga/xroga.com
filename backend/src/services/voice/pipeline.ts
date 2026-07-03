@@ -51,33 +51,42 @@ function setCache(transcript: string, text: string, audio: Buffer) {
   responseCache.set(cacheKey(transcript), { text, audio, createdAt: Date.now() });
 }
 
-async function callLlm(
-  system: string,
-  user: string
-): Promise<string> {
-  if (getSecret('GROQ_API_KEY')) {
-    try {
-      return await groqChat(
-        [
-          { role: 'system', content: system },
-          { role: 'user', content: user },
-        ],
-        { model: 'llama-3.3-70b-versatile', maxTokens: 180, temperature: 0.85 }
-      );
-    } catch (e) {
-      if (!(e instanceof Error) || !e.message.includes('429')) throw e;
-      console.warn('[voice] Groq LLM rate limited — falling back to Gemini');
+const GROQ_VOICE_MODELS = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'] as const;
+const GEMINI_VOICE_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'] as const;
+
+async function callLlm(system: string, user: string): Promise<string> {
+  const groqKey = getSecret('GROQ_API_KEY');
+  const geminiKey = getSecret('GEMINI_API_KEY');
+
+  if (groqKey) {
+    for (const model of GROQ_VOICE_MODELS) {
+      try {
+        const reply = await groqChat(
+          [
+            { role: 'system', content: system },
+            { role: 'user', content: user },
+          ],
+          { model, maxTokens: 180, temperature: 0.85 }
+        );
+        if (reply.trim()) return reply.trim();
+      } catch (e) {
+        console.warn(`[voice] Groq ${model} failed:`, (e as Error).message);
+      }
     }
   }
 
-  if (getSecret('GEMINI_API_KEY')) {
-    return geminiGenerate(system, user, {
-      model: 'gemini-2.0-flash',
-      maxTokens: 180,
-    });
+  if (geminiKey) {
+    for (const model of GEMINI_VOICE_MODELS) {
+      try {
+        const reply = await geminiGenerate(system, user, { model, maxTokens: 180 });
+        if (reply.trim()) return reply.trim();
+      } catch (e) {
+        console.warn(`[voice] Gemini ${model} failed:`, (e as Error).message);
+      }
+    }
   }
 
-  throw new Error('No LLM available for voice (set GROQ_API_KEY or GEMINI_API_KEY)');
+  throw new Error('Voice AI is busy right now — please try again in a moment.');
 }
 
 async function generateInternalReply(transcript: string): Promise<string> {
@@ -119,24 +128,30 @@ export async function runVoicePipeline(
   audio: Buffer,
   mimeType: string,
   onStage?: (stage: VoiceStage) => void,
-  onTranscript?: (text: string) => void
+  onTranscript?: (text: string) => void,
+  clientTranscript?: string
 ): Promise<VoicePipelineResult> {
   const { transcribeWithGroqWhisper } = await import('./groqWhisper.js');
 
   // Step 1 — Listen (STT)
   onStage?.('transcribing');
-  let transcript: string;
+  let transcript = '';
   try {
     transcript = await transcribeWithGroqWhisper(audio, mimeType);
   } catch (e) {
     if (e instanceof RateLimitError) {
-      throw new Error('Voice transcription is busy — try again in a moment.');
+      console.warn('[voice] Whisper rate limited — using browser transcript if available');
+    } else {
+      console.warn('[voice] Whisper failed:', (e as Error).message);
     }
-    throw e;
   }
 
-  if (!transcript) {
-    throw new Error('Could not hear you — try speaking a bit louder.');
+  if (!transcript.trim() && clientTranscript?.trim()) {
+    transcript = clientTranscript.trim();
+  }
+
+  if (!transcript.trim()) {
+    throw new Error('Could not hear you — try speaking a bit louder and hold the orb while talking.');
   }
 
   onTranscript?.(transcript);
