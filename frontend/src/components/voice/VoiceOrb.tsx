@@ -14,30 +14,36 @@ interface VoiceOrbProps {
 
 export function VoiceOrb({ state, onClick, size = 'hero', className }: VoiceOrbProps) {
   const isRecording = state === 'recording';
-  const isProcessing =
-    state === 'connecting' || state === 'processing' || state === 'speaking';
-  const isSearching = state === 'processing';
+  const isBusy = state === 'connecting' || state === 'processing';
+  const isSpeaking = state === 'speaking';
 
   return (
     <button
       type="button"
       onClick={onClick}
-      disabled={isProcessing}
+      disabled={isBusy}
       className={cn(
         'xv-voice-orb group relative rounded-full border-0 bg-transparent p-0 outline-none',
         size === 'hero' ? 'xv-voice-orb--hero' : 'xv-voice-orb--control',
         isRecording && 'xv-voice-orb--recording',
-        isProcessing && 'xv-voice-orb--busy',
-        isSearching && 'xv-voice-orb--searching',
+        isBusy && 'xv-voice-orb--busy',
+        isSpeaking && 'xv-voice-orb--speaking',
         className
       )}
       aria-label={
-        isRecording ? 'Stop listening' : isProcessing ? 'Processing' : 'Start talking'
+        isRecording
+          ? 'Stop and send your message'
+          : isBusy
+            ? 'Processing'
+            : isSpeaking
+              ? 'XROGA is speaking'
+              : 'Tap to speak'
       }
     >
       <span className="xv-voice-orb-glow" aria-hidden />
       <span className="xv-voice-orb-ring xv-voice-orb-ring--1" aria-hidden />
       <span className="xv-voice-orb-ring xv-voice-orb-ring--2" aria-hidden />
+      <span className="xv-voice-orb-ring xv-voice-orb-ring--3" aria-hidden />
       <span className="xv-voice-orb-shimmer" aria-hidden />
       <span className="xv-voice-orb-core">
         <span className="xv-voice-orb-logo-wrap">
@@ -48,8 +54,8 @@ export function VoiceOrb({ state, onClick, size = 'hero', className }: VoiceOrbP
             height={size === 'hero' ? 96 : 52}
             className={cn(
               'xv-voice-orb-logo',
-              size === 'hero' ? 'w-16 h-16 sm:w-20 sm:h-20' : 'w-10 h-10',
-              isProcessing && 'xv-voice-orb-logo--busy'
+              size === 'hero' ? 'w-16 h-16 sm:w-24 sm:h-24' : 'w-11 h-11',
+              (isBusy || isSpeaking) && 'xv-voice-orb-logo--busy'
             )}
             priority
           />

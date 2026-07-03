@@ -31,6 +31,8 @@ interface VoiceTalkContextValue {
   liveReply: string | null;
   liveUser: string | null;
   interimUser: string | null;
+  liveStream: MediaStream | null;
+  callSeconds: number;
   captionsOn: boolean;
   speakerOn: boolean;
   muted: boolean;
@@ -51,6 +53,19 @@ export { XROGA_LOGO };
 function voiceWsUrl(token: string): string {
   const wsBase = API_URL.replace(/^http/, 'ws');
   return `${wsBase}/api/voice/ws?token=${encodeURIComponent(token)}`;
+}
+
+function sanitizeVoiceError(msg: string): string {
+  const lower = msg.toLowerCase();
+  if (
+    lower.includes('gemini') ||
+    lower.includes('groq') ||
+    lower.includes('api error') ||
+    lower.includes('whisper')
+  ) {
+    return 'Voice AI is busy right now — please try again in a moment.';
+  }
+  return msg;
 }
 
 type SpeechRecognitionInstance = {
@@ -95,6 +110,8 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
   const [liveReply, setLiveReply] = useState<string | null>(null);
   const [liveUser, setLiveUser] = useState<string | null>(null);
   const [interimUser, setInterimUser] = useState<string | null>(null);
+  const [liveStream, setLiveStream] = useState<MediaStream | null>(null);
+  const [callSeconds, setCallSeconds] = useState(0);
 
   const wsRef = useRef<WebSocket | null>(null);
   const welcomeWsRef = useRef<WebSocket | null>(null);
@@ -106,6 +123,7 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
   const welcomePlayedRef = useRef(false);
   const pendingTurnRef = useRef<{ user: string; reply: string } | null>(null);
   const speechRef = useRef<SpeechRecognitionInstance | null>(null);
+  const clientTranscriptRef = useRef('');
   const stateRef = useRef(state);
   stateRef.current = state;
   const speakerOnRef = useRef(speakerOn);
@@ -123,6 +141,7 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
     recorderRef.current = null;
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
+    setLiveStream(null);
   }, []);
 
   const closeSocket = useCallback(() => {
@@ -136,6 +155,7 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
     cleanupMedia();
     closeSocket();
     sessionRef.current = false;
+    clientTranscriptRef.current = '';
     setInterimUser(null);
     if (stateRef.current !== 'speaking') {
       setState('idle');
@@ -156,17 +176,25 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
     setTurns([]);
     setLiveReply(null);
     setLiveUser(null);
+    setCallSeconds(0);
   }, [endVoiceSession]);
 
   const openOverlay = useCallback(() => {
     setOverlayOpen(true);
     setError(null);
+    setCallSeconds(0);
   }, []);
 
   useEffect(() => {
     if (!overlayOpen) return;
     document.body.classList.add('xv-voice-overlay-open');
     return () => document.body.classList.remove('xv-voice-overlay-open');
+  }, [overlayOpen]);
+
+  useEffect(() => {
+    if (!overlayOpen) return;
+    const id = window.setInterval(() => setCallSeconds((s) => s + 1), 1000);
+    return () => window.clearInterval(id);
   }, [overlayOpen]);
 
   useEffect(() => {
@@ -199,11 +227,13 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
       if (opts.welcome) {
         welcomeAudioRef.current?.pause();
         welcomeAudioRef.current = audio;
+        setState('speaking');
+        setStatusLabel('XROGA is speaking…');
       } else {
         audioRef.current?.pause();
         audioRef.current = audio;
         setState('speaking');
-        setStatusLabel('Speaking…');
+        setStatusLabel('XROGA is speaking…');
       }
 
       const finish = () => {
@@ -212,7 +242,7 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
           welcomeAudioRef.current = null;
           if (!sessionRef.current) {
             setState('idle');
-            setStatusLabel(null);
+            setStatusLabel('Tap orb to speak');
           }
         } else {
           audioRef.current = null;
@@ -221,9 +251,10 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
           setLiveReply(null);
           setLiveUser(null);
           setInterimUser(null);
+          clientTranscriptRef.current = '';
           sessionRef.current = false;
           setState('idle');
-          setStatusLabel(null);
+          setStatusLabel('Tap orb to speak');
           closeSocket();
         }
         opts.onFinish?.();
@@ -262,30 +293,21 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
           reply?: string;
         };
 
-        if (msg.type === 'ready' && mode === 'talk') {
-          return;
-        }
-
         if (msg.type === 'status') {
           if (msg.stage === 'transcribing') {
             setState('processing');
-            setStatusLabel('Transcribing…');
+            setStatusLabel('Understanding you…');
           }
           if (msg.stage === 'routing' || msg.stage === 'thinking') {
             setState('processing');
-            setStatusLabel('Thinking…');
+            setStatusLabel('XROGA is thinking…');
           }
           if (msg.stage === 'searching') {
             setState('processing');
             setStatusLabel('Searching the web…');
           }
           if (msg.stage === 'speaking') {
-            if (mode === 'welcome') {
-              setState('speaking');
-              setStatusLabel('XROGA is greeting you…');
-            } else {
-              setStatusLabel('Speaking…');
-            }
+            setStatusLabel('XROGA is speaking…');
           }
           return;
         }
@@ -293,48 +315,41 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
         if (msg.type === 'user_text' && msg.text) {
           setLiveUser(msg.text);
           setInterimUser(null);
+          clientTranscriptRef.current = msg.text;
           return;
         }
 
         if (msg.type === 'greeting' && msg.text) {
           setWelcomeText(msg.text);
-          if (mode === 'welcome') {
-            setState('speaking');
-          }
           return;
         }
 
         if (msg.type === 'transcript') {
-          if (msg.text) {
-            setLiveUser(msg.text);
+          const userText = msg.text ?? clientTranscriptRef.current ?? '';
+          if (userText) {
+            setLiveUser(userText);
             setInterimUser(null);
           }
           if (msg.reply) {
-            pendingTurnRef.current = {
-              user: msg.text ?? liveUser ?? interimUser ?? '',
-              reply: msg.reply,
-            };
+            pendingTurnRef.current = { user: userText, reply: msg.reply };
             setLiveReply(msg.reply);
           }
           return;
         }
 
-        if (msg.type === 'done' && mode === 'talk') {
-          return;
-        }
-
         if (msg.type === 'error') {
-          setError(msg.message ?? 'Voice error');
+          setError(sanitizeVoiceError(msg.message ?? 'Voice error'));
           if (mode === 'talk') endVoiceSession();
         }
       } catch { /* ignore */ }
     },
-    [endVoiceSession, interimUser, liveUser, playAudioBuffer]
+    [endVoiceSession, playAudioBuffer]
   );
 
   const playWelcome = useCallback(async () => {
     if (welcomePlayedRef.current || sessionRef.current) return;
     welcomePlayedRef.current = true;
+    setStatusLabel('Connecting to XROGA…');
 
     try {
       const token = await getAccessToken();
@@ -344,8 +359,8 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
       ws.binaryType = 'arraybuffer';
       welcomeWsRef.current = ws;
 
-      await new Promise<void>((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('Welcome timeout')), 15000);
+      await new Promise<void>((resolve) => {
+        const timeout = setTimeout(() => resolve(), 15000);
 
         ws.onopen = () => {
           ws.send(JSON.stringify({ type: 'greeting', displayName }));
@@ -355,9 +370,8 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
           handleWsMessage(event, 'welcome');
           if (typeof event.data === 'string') {
             try {
-              const msg = JSON.parse(event.data) as { type: string };
-              if (msg.type === 'greeting') clearTimeout(timeout);
-              if (msg.type === 'done' || msg.type === 'error') {
+              const parsed = JSON.parse(event.data) as { type: string };
+              if (parsed.type === 'done' || parsed.type === 'error') {
                 clearTimeout(timeout);
                 resolve();
               }
@@ -367,19 +381,22 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
 
         ws.onerror = () => {
           clearTimeout(timeout);
-          reject(new Error('Welcome connection failed'));
+          resolve();
         };
       });
     } catch {
       welcomePlayedRef.current = false;
+    } finally {
+      if (!sessionRef.current && stateRef.current !== 'recording' && stateRef.current !== 'processing') {
+        setState('idle');
+        setStatusLabel('Tap orb to speak');
+      }
     }
   }, [displayName, handleWsMessage]);
 
   useEffect(() => {
     if (!overlayOpen) return;
-    const t = window.setTimeout(() => {
-      void playWelcome();
-    }, 400);
+    const t = window.setTimeout(() => void playWelcome(), 350);
     return () => window.clearTimeout(t);
   }, [overlayOpen, playWelcome]);
 
@@ -391,27 +408,32 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
       const recognition = new Ctor();
       recognition.continuous = true;
       recognition.interimResults = true;
-      recognition.lang = 'en-US';
+      recognition.lang = navigator.language || 'en-US';
 
       recognition.onresult = (ev) => {
-        let interim = '';
-        let final = '';
+        let full = '';
         for (let i = 0; i < ev.results.length; i++) {
-          const r = ev.results[i];
-          if (r.isFinal) final += r[0].transcript;
-          else interim += r[0].transcript;
+          full += ev.results[i][0].transcript;
         }
-        if (final.trim()) {
-          setInterimUser(final.trim());
-        } else if (interim.trim()) {
-          setInterimUser(interim.trim());
+        const trimmed = full.trim();
+        if (trimmed) {
+          clientTranscriptRef.current = trimmed;
+          setInterimUser(trimmed);
         }
       };
 
-      recognition.onerror = () => { /* browser may deny — Groq STT is fallback */ };
+      recognition.onend = () => {
+        if (stateRef.current === 'recording') {
+          try {
+            recognition.start();
+          } catch { /* mic busy */ }
+        }
+      };
+
+      recognition.onerror = () => { /* fallback to server STT */ };
       recognition.start();
       speechRef.current = recognition;
-    } catch { /* unsupported */ }
+    } catch { /* unsupported browser */ }
   }, []);
 
   const openVoiceSocket = useCallback(async (): Promise<WebSocket> => {
@@ -477,6 +499,7 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
     setLiveReply(null);
     setLiveUser(null);
     setInterimUser(null);
+    clientTranscriptRef.current = '';
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -487,6 +510,7 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
         },
       });
       streamRef.current = stream;
+      setLiveStream(stream);
       stream.getAudioTracks().forEach((t) => {
         t.enabled = !muted;
       });
@@ -511,11 +535,11 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
         }
       };
 
-      recorder.start(250);
+      recorder.start(200);
       startSpeechRecognition();
     } catch (e) {
       sessionRef.current = false;
-      setError((e as Error).message);
+      setError(sanitizeVoiceError((e as Error).message));
       endVoiceSession();
     }
   }, [endVoiceSession, muted, openVoiceSocket, startSpeechRecognition]);
@@ -528,17 +552,24 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
 
     const ws = wsRef.current;
     const recorder = recorderRef.current;
+    const clientTranscript = clientTranscriptRef.current.trim();
+
+    if (clientTranscript) {
+      setLiveUser(clientTranscript);
+      setInterimUser(null);
+    }
 
     const sendEnd = () => {
       if (ws && ws.readyState === WebSocket.OPEN) {
         setState('processing');
-        setStatusLabel('Thinking…');
-        ws.send(JSON.stringify({ type: 'end' }));
+        setStatusLabel('XROGA is thinking…');
+        ws.send(JSON.stringify({ type: 'end', clientTranscript: clientTranscript || undefined }));
       } else {
         endVoiceSession();
       }
       streamRef.current?.getTracks().forEach((t) => t.stop());
       streamRef.current = null;
+      setLiveStream(null);
       recorderRef.current = null;
     };
 
@@ -562,7 +593,9 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
     setLiveReply(null);
     setLiveUser(null);
     setInterimUser(null);
+    clientTranscriptRef.current = '';
     endVoiceSession();
+    setStatusLabel('Tap orb to speak');
   }, [endVoiceSession]);
 
   const toggleMute = useCallback(() => {
@@ -599,6 +632,8 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
         liveReply,
         liveUser,
         interimUser,
+        liveStream,
+        callSeconds,
         captionsOn,
         speakerOn,
         muted,

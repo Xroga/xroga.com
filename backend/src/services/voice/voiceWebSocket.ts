@@ -3,6 +3,7 @@ import { WebSocketServer, type WebSocket } from 'ws';
 import { verifyAccessToken } from '../../middleware/auth.js';
 import { runVoicePipeline } from './pipeline.js';
 import { synthesizeWelcome } from './welcomeVoice.js';
+import { toVoiceUserError } from './voiceErrors.js';
 
 interface VoiceClientState {
   userId: string;
@@ -37,18 +38,22 @@ async function handleGreeting(ws: WebSocket, displayName?: string) {
     }
     sendJson(ws, { type: 'done' });
   } catch (e) {
-    sendJson(ws, { type: 'error', message: (e as Error).message });
+    sendJson(ws, { type: 'error', message: toVoiceUserError(e) });
   }
 }
 
-async function handleEndOfSpeech(ws: WebSocket, state: VoiceClientState) {
+async function handleEndOfSpeech(
+  ws: WebSocket,
+  state: VoiceClientState,
+  clientTranscript?: string
+) {
   if (state.processing) return;
   state.processing = true;
 
   const audio = Buffer.concat(state.chunks);
   state.chunks = [];
 
-  if (audio.length < 800) {
+  if (audio.length < 800 && !clientTranscript?.trim()) {
     sendJson(ws, { type: 'error', message: 'Recording too short — hold Talk and speak again.' });
     state.processing = false;
     return;
@@ -63,7 +68,8 @@ async function handleEndOfSpeech(ws: WebSocket, state: VoiceClientState) {
       },
       (text) => {
         sendJson(ws, { type: 'user_text', text });
-      }
+      },
+      clientTranscript
     );
 
     sendJson(ws, {
@@ -80,7 +86,7 @@ async function handleEndOfSpeech(ws: WebSocket, state: VoiceClientState) {
 
     sendJson(ws, { type: 'done' });
   } catch (e) {
-    sendJson(ws, { type: 'error', message: (e as Error).message });
+    sendJson(ws, { type: 'error', message: toVoiceUserError(e) });
   } finally {
     state.processing = false;
   }
@@ -138,6 +144,7 @@ export function attachVoiceWebSocket(server: Server) {
           type?: string;
           mimeType?: string;
           displayName?: string;
+          clientTranscript?: string;
         };
 
         if (msg.type === 'greeting') {
@@ -155,7 +162,7 @@ export function attachVoiceWebSocket(server: Server) {
         }
 
         if (msg.type === 'end') {
-          void handleEndOfSpeech(ws, state);
+          void handleEndOfSpeech(ws, state, msg.clientTranscript);
         }
       } catch {
         sendJson(ws, { type: 'error', message: 'Invalid message format' });

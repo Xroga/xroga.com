@@ -742,19 +742,21 @@ body.theme-gray * {
   .xv-voice-close-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.35rem;
-    padding: 0.4rem 0.75rem;
+    padding: 0.45rem 0.7rem;
     border-radius: 9999px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    transition: background 0.2s, color 0.2s;
+    border: 1px solid var(--voice-glass-border, var(--card-border));
+    background: var(--voice-glass, rgba(255, 255, 255, 0.06));
+    color: color-mix(in srgb, var(--foreground) 80%, transparent);
+    backdrop-filter: blur(12px);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
   }
 
   .xv-voice-close-btn:hover {
-    background: rgba(255, 255, 255, 0.12);
-    color: #fff;
+    background: color-mix(in srgb, var(--accent) 12%, var(--voice-glass, rgba(255,255,255,0.1)));
+    color: var(--foreground);
+    transform: scale(1.04);
   }
 
   .xv-voice-cancel-btn {
@@ -849,15 +851,167 @@ body.theme-gray * {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 80% 60% at 50% 45%, color-mix(in srgb, var(--accent) 38%, transparent) 0%, transparent 55%),
+      radial-gradient(ellipse 80% 60% at 50% 38%, color-mix(in srgb, var(--accent) 38%, transparent) 0%, transparent 55%),
       radial-gradient(ellipse 50% 40% at 70% 60%, color-mix(in srgb, var(--primary-glow, var(--accent)) 22%, transparent) 0%, transparent 50%),
       linear-gradient(180deg, var(--background) 0%, color-mix(in srgb, var(--background) 88%, #000) 45%, color-mix(in srgb, var(--background) 95%, var(--accent)) 100%);
   }
 
+  .xv-voice-overlay-noise {
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .xv-voice-call-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--foreground) 30%, transparent);
+  }
+
+  .xv-voice-call-dot--live {
+    background: #22c55e;
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.65);
+    animation: voice-call-dot-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes voice-call-dot-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.65; transform: scale(0.92); }
+  }
+
+  .xv-voice-live-caption {
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    border: 1px solid var(--voice-glass-border, var(--card-border));
+    background: var(--voice-glass, rgba(0, 0, 0, 0.35));
+    backdrop-filter: blur(16px);
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--foreground);
+  }
+
+  .xv-voice-live-caption-label {
+    display: block;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    color: color-mix(in srgb, var(--foreground) 50%, transparent);
+  }
+
+  .xv-voice-live-caption--user {
+    border-color: color-mix(in srgb, var(--foreground) 12%, var(--card-border));
+  }
+
+  .xv-voice-live-caption--ai {
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--card-border));
+    background: color-mix(in srgb, var(--accent) 8%, var(--voice-glass, rgba(0,0,0,0.35)));
+  }
+
+  .xv-voice-live-caption--live {
+    animation: voice-caption-live 1.6s ease-in-out infinite;
+  }
+
+  @keyframes voice-caption-live {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); }
+    50% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+  }
+
+  .xv-voice-control-dock {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid var(--voice-glass-border, var(--card-border));
+    background: var(--voice-glass, rgba(0, 0, 0, 0.45));
+    backdrop-filter: blur(20px);
+    box-shadow: 0 12px 40px color-mix(in srgb, var(--background) 50%, transparent);
+  }
+
+  .xv-voice-dock-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+    background: color-mix(in srgb, var(--foreground) 6%, transparent);
+    color: color-mix(in srgb, var(--foreground) 75%, transparent);
+    transition: transform 0.2s, background 0.2s, color 0.2s, border-color 0.2s;
+  }
+
+  .xv-voice-dock-btn:hover {
+    transform: scale(1.06);
+    background: color-mix(in srgb, var(--foreground) 10%, transparent);
+    color: var(--foreground);
+  }
+
+  .xv-voice-dock-btn--on {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+
+  .xv-voice-dock-btn--primary {
+    width: 3.25rem;
+    height: 3.25rem;
+    background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #fff));
+    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+    color: #fff;
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+
+  .xv-voice-dock-btn--recording {
+    animation: voice-dock-recording 1.2s ease-in-out infinite;
+  }
+
+  @keyframes voice-dock-recording {
+    0%, 100% { box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 35%, transparent); }
+    50% { box-shadow: 0 8px 32px color-mix(in srgb, var(--accent) 55%, transparent); }
+  }
+
+  .xv-voice-dock-btn--danger {
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.35);
+    background: rgba(239, 68, 68, 0.1);
+  }
+
+  .xv-voice-waveform {
+    width: min(280px, 80vw);
+    height: 48px;
+    display: block;
+  }
+
+  .xv-voice-history-user,
+  .xv-voice-history-ai {
+    border-color: var(--voice-glass-border, var(--card-border));
+    background: var(--voice-glass, rgba(0,0,0,0.25));
+    color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  }
+
   .xv-voice-theme-white .xv-voice-overlay-bg {
     background:
-      radial-gradient(ellipse 80% 60% at 50% 45%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 55%),
-      linear-gradient(180deg, #f8fafc 0%, #eef2ff 50%, #f1f5f9 100%);
+      radial-gradient(ellipse 80% 60% at 50% 38%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 55%),
+      linear-gradient(180deg, var(--background) 0%, #eef2ff 50%, #f1f5f9 100%);
+  }
+
+  .xv-voice-theme-black .xv-voice-overlay-bg {
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 40%, color-mix(in srgb, var(--accent) 28%, transparent) 0%, transparent 55%),
+      linear-gradient(180deg, #000 0%, #050505 50%, #0a0a0a 100%);
+  }
+
+  .xv-voice-theme-gray .xv-voice-overlay-bg {
+    background:
+      radial-gradient(ellipse 75% 58% at 50% 40%, color-mix(in srgb, var(--accent) 25%, transparent) 0%, transparent 55%),
+      linear-gradient(180deg, #1a1a1a 0%, #141414 50%, #111 100%);
   }
 
   .xv-voice-theme-white .xv-voice-bubble--user {
@@ -952,14 +1106,14 @@ body.theme-gray * {
   }
 
   .xv-voice-orb--hero {
-    width: 10rem;
-    height: 10rem;
+    width: 11rem;
+    height: 11rem;
   }
 
   @media (min-width: 640px) {
     .xv-voice-orb--hero {
-      width: 12rem;
-      height: 12rem;
+      width: 14rem;
+      height: 14rem;
     }
   }
 
@@ -1029,8 +1183,24 @@ body.theme-gray * {
 
   .xv-voice-orb-ring--2 {
     inset: -16%;
-    border-color: rgba(124, 58, 237, 0.15);
+    border-color: color-mix(in srgb, var(--accent) 22%, transparent);
     animation: voice-orb-ring 2.8s ease-out infinite 0.9s;
+  }
+
+  .xv-voice-orb-ring--3 {
+    inset: -24%;
+    border-color: color-mix(in srgb, var(--primary-glow, var(--accent)) 15%, transparent);
+    animation: voice-orb-ring 2.8s ease-out infinite 1.8s;
+  }
+
+  .xv-voice-orb--speaking .xv-voice-orb-glow {
+    animation: voice-orb-breathe 2s ease-in-out infinite;
+  }
+
+  .xv-voice-orb--speaking .xv-voice-orb-ring--1,
+  .xv-voice-orb--speaking .xv-voice-orb-ring--2,
+  .xv-voice-orb--speaking .xv-voice-orb-ring--3 {
+    animation-duration: 2.2s;
   }
 
   .xv-voice-orb-core {
