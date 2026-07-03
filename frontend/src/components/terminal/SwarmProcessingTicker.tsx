@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { sanitizeXrogaTerminalText } from '@/lib/xrogaBrand';
 
 /** Fast typewriter — shows every word of what XROGA AI is doing */
 export function SwarmProcessingTicker({
@@ -14,7 +15,11 @@ export function SwarmProcessingTicker({
   className?: string;
 }) {
   const [displayed, setDisplayed] = useState('');
-  const source = text?.trim() ?? '';
+  const source = useMemo(() => sanitizeXrogaTerminalText(text?.trim() ?? ''), [text]);
+  const sanitizedLog = useMemo(
+    () => activityLog.map((line) => sanitizeXrogaTerminalText(line)).filter(Boolean),
+    [activityLog]
+  );
 
   useEffect(() => {
     if (!source) {
@@ -32,7 +37,7 @@ export function SwarmProcessingTicker({
     return () => clearInterval(id);
   }, [source]);
 
-  if (!source && !activityLog.length) return null;
+  if (!source && !sanitizedLog.length) return null;
 
   return (
     <div className={cn('space-y-1.5', className)}>
@@ -47,14 +52,14 @@ export function SwarmProcessingTicker({
           </p>
         </div>
       )}
-      {activityLog.length > 1 && (
+      {sanitizedLog.length > 1 && (
         <ul className="max-h-24 overflow-y-auto space-y-0.5 pr-1 scrollbar-thin">
-          {activityLog.slice(-8).map((line, i) => (
+          {sanitizedLog.slice(-8).map((line, i) => (
             <li
               key={`${i}-${line.slice(0, 24)}`}
               className={cn(
                 'text-[9px] leading-snug truncate',
-                i === activityLog.length - 1 ? 'text-[var(--foreground)]/70' : 'text-[var(--muted)]/40'
+                i === sanitizedLog.length - 1 ? 'text-[var(--foreground)]/70' : 'text-[var(--muted)]/40'
               )}
             >
               {line}

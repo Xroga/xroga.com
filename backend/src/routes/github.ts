@@ -60,7 +60,15 @@ async function getUserGitHubToken(userId: string): Promise<string | null> {
     .select('access_token')
     .eq('user_id', userId)
     .maybeSingle();
-  return data?.access_token ?? null;
+  if (data?.access_token) return data.access_token;
+
+  const { data: legacy } = await supabase
+    .from('user_integrations')
+    .select('access_token')
+    .eq('user_id', userId)
+    .eq('provider', 'github')
+    .maybeSingle();
+  return legacy?.access_token ?? null;
 }
 
 async function ghApi<T>(token: string, path: string): Promise<T> {
@@ -195,6 +203,12 @@ router.post('/connect', async (req: AuthRequest, res) => {
 });
 
 router.get('/status', async (req: AuthRequest, res) => {
+  const token = await getUserGitHubToken(req.userId!);
+  if (!token) {
+    res.json({ connected: false });
+    return;
+  }
+
   const supabase = getSupabaseAdmin();
 
   const { data: ghInt } = await supabase
@@ -209,11 +223,6 @@ router.get('/status', async (req: AuthRequest, res) => {
     .eq('user_id', req.userId!)
     .eq('provider', 'github')
     .maybeSingle();
-
-  if (!userInt && !ghInt) {
-    res.json({ connected: false });
-    return;
-  }
 
   const metadata = userInt?.metadata as { username?: string } | null;
 

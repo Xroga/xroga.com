@@ -207,7 +207,7 @@ function emit(
     swarmStatusLabel: statusLabel,
     swarmAnalysis: todos.getAnalysis() || undefined,
     swarmActivity: detail,
-    needsGitHub: statusLabel === 'XROGA GitHub' && detail.includes('Connect'),
+    needsGitHub: statusLabel === 'XROGA GitHub' && detail.includes('Connect GitHub'),
     timestamp: new Date().toISOString(),
   } as SwarmProgressEvent);
 }
