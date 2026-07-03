@@ -825,17 +825,51 @@ body.theme-gray * {
   }
 
   .xv-voice-overlay {
-    color: #fff;
+    color: var(--foreground);
     font-family: var(--font-inter), system-ui, sans-serif;
+  }
+
+  .xv-voice-title {
+    color: color-mix(in srgb, var(--foreground) 95%, transparent);
+  }
+
+  .xv-voice-muted {
+    color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  }
+
+  .xv-voice-muted-dim {
+    color: color-mix(in srgb, var(--foreground) 35%, transparent);
+  }
+
+  .xv-voice-accent {
+    color: var(--accent);
   }
 
   .xv-voice-overlay-bg {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 80% 60% at 50% 45%, rgba(88, 28, 135, 0.45) 0%, transparent 55%),
-      radial-gradient(ellipse 50% 40% at 70% 60%, rgba(236, 72, 153, 0.2) 0%, transparent 50%),
-      linear-gradient(180deg, #0a0a0f 0%, #0d0618 45%, #080810 100%);
+      radial-gradient(ellipse 80% 60% at 50% 45%, color-mix(in srgb, var(--accent) 38%, transparent) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 70% 60%, color-mix(in srgb, var(--primary-glow, var(--accent)) 22%, transparent) 0%, transparent 50%),
+      linear-gradient(180deg, var(--background) 0%, color-mix(in srgb, var(--background) 88%, #000) 45%, color-mix(in srgb, var(--background) 95%, var(--accent)) 100%);
+  }
+
+  .xv-voice-theme-white .xv-voice-overlay-bg {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 45%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 55%),
+      linear-gradient(180deg, #f8fafc 0%, #eef2ff 50%, #f1f5f9 100%);
+  }
+
+  .xv-voice-theme-white .xv-voice-bubble--user {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: #111;
+  }
+
+  .xv-voice-theme-white .xv-voice-bubble--ai {
+    background: color-mix(in srgb, var(--accent) 8%, white);
+    border-color: color-mix(in srgb, var(--accent) 25%, transparent);
+    color: #0f172a;
   }
 
   .xv-voice-tool-btn {
@@ -903,14 +937,6 @@ body.theme-gray * {
     50% { opacity: 1; transform: scaleX(1); }
   }
 
-  .xv-voice-orb-mini {
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 9999px;
-    background: radial-gradient(circle at 35% 30%, #e879f9, #7c3aed 50%, #1e1b4b);
-    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
-  }
-
   /* Glowing voice orb */
   .xv-voice-orb {
     cursor: pointer;
@@ -948,22 +974,28 @@ body.theme-gray * {
     border-radius: 9999px;
     background: radial-gradient(
       circle,
-      rgba(236, 72, 153, 0.35) 0%,
-      rgba(124, 58, 237, 0.25) 35%,
-      rgba(34, 211, 238, 0.12) 55%,
+      color-mix(in srgb, var(--accent) 45%, transparent) 0%,
+      color-mix(in srgb, var(--primary-glow, var(--accent)) 30%, transparent) 35%,
+      color-mix(in srgb, var(--accent) 12%, transparent) 55%,
       transparent 70%
     );
     filter: blur(18px);
     animation: voice-orb-breathe 3.5s ease-in-out infinite;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+  }
+
+  .xv-voice-orb:hover:not(:disabled) .xv-voice-orb-glow {
+    transform: scale(1.08);
+    opacity: 1;
   }
 
   .xv-voice-orb--recording .xv-voice-orb-glow {
     animation: voice-orb-pulse 1.2s ease-in-out infinite;
     background: radial-gradient(
       circle,
-      rgba(244, 114, 182, 0.55) 0%,
-      rgba(168, 85, 247, 0.4) 40%,
-      rgba(34, 211, 238, 0.2) 60%,
+      color-mix(in srgb, var(--accent) 60%, #f472b6) 0%,
+      color-mix(in srgb, var(--accent) 40%, transparent) 40%,
+      color-mix(in srgb, var(--accent) 18%, transparent) 60%,
       transparent 72%
     );
   }
@@ -1012,29 +1044,95 @@ body.theme-gray * {
     border-radius: 9999px;
     background: radial-gradient(
       circle at 32% 28%,
-      rgba(255, 255, 255, 0.15) 0%,
-      rgba(30, 10, 50, 0.85) 35%,
-      rgba(10, 5, 20, 0.95) 100%
+      rgba(255, 255, 255, 0.18) 0%,
+      color-mix(in srgb, var(--background) 75%, #1e1b4b) 35%,
+      color-mix(in srgb, var(--background) 92%, #000) 100%
     );
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, rgba(255, 255, 255, 0.12));
     box-shadow:
       inset 0 2px 24px rgba(255, 255, 255, 0.08),
-      0 16px 48px rgba(88, 28, 135, 0.45),
-      0 0 60px rgba(236, 72, 153, 0.2);
+      0 16px 48px color-mix(in srgb, var(--accent) 35%, transparent),
+      0 0 60px color-mix(in srgb, var(--accent) 22%, transparent);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
   }
 
-  .xv-voice-orb-icon {
-    color: rgba(255, 255, 255, 0.92);
-    filter: drop-shadow(0 0 12px rgba(249, 168, 212, 0.6));
+  .xv-voice-orb:hover:not(:disabled) .xv-voice-orb-core {
+    transform: scale(1.04);
+    box-shadow:
+      inset 0 2px 28px rgba(255, 255, 255, 0.12),
+      0 20px 56px color-mix(in srgb, var(--accent) 45%, transparent),
+      0 0 72px color-mix(in srgb, var(--accent) 35%, transparent);
   }
 
-  .xv-voice-orb--recording .xv-voice-orb-icon {
-    color: #fce7f3;
-    animation: voice-icon-pulse 1s ease-in-out infinite;
+  .xv-voice-orb-shimmer {
+    position: absolute;
+    inset: -4%;
+    border-radius: 9999px;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      color-mix(in srgb, var(--accent) 50%, transparent) 60deg,
+      transparent 120deg,
+      color-mix(in srgb, var(--primary-glow, var(--accent)) 40%, transparent) 200deg,
+      transparent 280deg
+    );
+    opacity: 0;
+    filter: blur(8px);
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    animation: voice-orb-shimmer-spin 8s linear infinite;
   }
 
-  .xv-voice-orb--busy .xv-voice-orb-icon {
-    animation: voice-icon-spin 3s linear infinite;
+  .xv-voice-orb:hover:not(:disabled) .xv-voice-orb-shimmer {
+    opacity: 0.85;
+  }
+
+  .xv-voice-orb-logo-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  .xv-voice-orb-logo {
+    border-radius: 9999px;
+    object-fit: cover;
+    filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 55%, transparent));
+    transition: transform 0.35s ease, filter 0.35s ease;
+  }
+
+  .xv-voice-orb:hover:not(:disabled) .xv-voice-orb-logo {
+    transform: scale(1.06) rotate(-3deg);
+    filter: drop-shadow(0 0 22px color-mix(in srgb, var(--accent) 75%, transparent));
+  }
+
+  .xv-voice-orb--recording .xv-voice-orb-logo {
+    animation: voice-logo-pulse 1s ease-in-out infinite;
+  }
+
+  .xv-voice-orb-logo--busy {
+    animation: voice-logo-pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes voice-orb-shimmer-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes voice-logo-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.92; }
+    50% { transform: scale(1.05); opacity: 1; }
+  }
+
+  .xv-voice-orb-mini {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--accent) 25%, var(--background));
+    box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 40%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
   }
 
   @keyframes voice-orb-breathe {
