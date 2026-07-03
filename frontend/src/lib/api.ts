@@ -22,6 +22,15 @@ function resolveApiUrl(): string {
 }
 
 export function siteUrl(): string {
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    const host = window.location.hostname;
+    if (host === 'xroga.com' || host === 'www.xroga.com') {
+      return `https://${host}`;
+    }
+    if (host === 'localhost' || host === '127.0.0.1') {
+      return window.location.origin.replace(/\/$/, '');
+    }
+  }
   if (process.env.NEXT_PUBLIC_SITE_URL) {
     return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, '');
   }
@@ -29,6 +38,10 @@ export function siteUrl(): string {
     return 'http://localhost:3000';
   }
   return 'https://xroga.com';
+}
+
+export function githubOAuthCallbackUrl(): string {
+  return `${siteUrl()}/dashboard/integrations/github/callback`;
 }
 
 export const API_URL = resolveApiUrl();
@@ -401,11 +414,21 @@ export const api = {
     activity: () => apiFetch<ActivityLog[]>('/api/profile/activity'),
   },
   github: {
-    oauthUrl: () => apiFetch<{ url: string }>('/api/github/oauth'),
+    oauthUrl: () => {
+      const redirectUri = githubOAuthCallbackUrl();
+      return apiFetch<{ url: string; redirectUri: string }>(
+        `/api/github/oauth?redirect_uri=${encodeURIComponent(redirectUri)}`
+      );
+    },
     connect: (code: string, repoStrategy?: string, defaultRepo?: string) =>
       apiFetch<{ connected: boolean; username: string }>('/api/github/connect', {
         method: 'POST',
-        body: JSON.stringify({ code, repoStrategy, defaultRepo }),
+        body: JSON.stringify({
+          code,
+          repoStrategy,
+          defaultRepo,
+          redirectUri: githubOAuthCallbackUrl(),
+        }),
       }),
     status: () => apiFetch<GitHubStatus>('/api/github/status'),
     updateSettings: (repoStrategy: string, defaultRepo?: string) =>

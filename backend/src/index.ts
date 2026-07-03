@@ -74,6 +74,7 @@ app.use(express.json({ limit: '10mb' }));
 import { getImageProviderStatus } from './services/builder/imageGen.js';
 import { getVideoProviderStatus } from './lib/videoProviders.js';
 import { getCouncilKeyStatus, getDeployKeyStatus } from './config/envSecrets.js';
+import { getGitHubOAuthCallbackUrl } from './routes/github.js';
 
 const healthPayload = () => {
   const image = getImageProviderStatus();
@@ -81,7 +82,7 @@ const healthPayload = () => {
   return {
     status: 'ok',
     service: 'xroga-api',
-    version: '1.6.1',
+    version: '1.6.3',
     councilStack: 'groq-gemini-deepseek-mistral',
     councilKeys: getCouncilKeyStatus(),
     deployKeys: getDeployKeyStatus(),
@@ -95,6 +96,7 @@ const healthPayload = () => {
     ),
     authMethod: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'supabase_admin' : 'jwt_local',
     frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
+    githubOAuthRedirectUri: getGitHubOAuthCallbackUrl(),
     imageProviders: image.configured,
     imageReady: image.ready,
     imageKeys: image.keys,
