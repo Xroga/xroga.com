@@ -1,3 +1,5 @@
+import { getSecret } from '../config/envSecrets.js';
+
 interface AnthropicContentBlock {
   type: string;
   text: string;
@@ -12,7 +14,7 @@ export async function claudeGenerate(
   userPrompt: string,
   options?: { maxTokens?: number }
 ): Promise<string> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = getSecret('ANTHROPIC_API_KEY');
   if (!apiKey) {
     throw new Error('ANTHROPIC_API_KEY not configured');
   }

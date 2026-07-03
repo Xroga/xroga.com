@@ -1,3 +1,5 @@
+import { getSecret } from '../config/envSecrets.js';
+
 interface GeminiResponse {
   candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
 }
@@ -7,7 +9,7 @@ export async function geminiGenerate(
   userPrompt: string,
   options?: { model?: string; maxTokens?: number }
 ): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = getSecret('GEMINI_API_KEY');
   if (!apiKey) {
     throw new Error('GEMINI_API_KEY not configured');
   }

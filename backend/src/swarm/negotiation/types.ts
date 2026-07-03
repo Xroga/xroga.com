@@ -36,3 +36,11 @@ export interface VerificationReport {
   pass: boolean;
   report: string;
 }
+
+export type SwarmTodoStatus = 'done' | 'active' | 'pending';
+
+export interface SwarmTodoItem {
+  id: string;
+  label: string;
+  status: SwarmTodoStatus;
+}

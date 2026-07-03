@@ -259,6 +259,10 @@ export interface SwarmProgressEvent {
   /** 7-phase AI Swarm Logic (0–7) */
   negotiationPhase?: number;
   swarmLogic?: boolean;
+  /** Step-by-step XROGA todo list for build UI */
+  swarmTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
+  swarmStatusLabel?: string;
+  swarmAnalysis?: string;
 }
 
 export const FEATURE_ACTION_COSTS: Record<FeatureCategory, number> = {

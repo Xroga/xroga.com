@@ -80,6 +80,9 @@ interface TerminalChatContextValue {
   dag: Array<{ id: string; description: string; agent: string }> | null;
   pipelineCompact: boolean;
   swarmNegotiationPhase: number | null;
+  swarmTodos: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
+  swarmStatusLabel: string | null;
+  swarmAnalysis: string | null;
   submit: (
     text?: string,
     fromQueue?: boolean,
@@ -144,6 +147,11 @@ export function TerminalChatProvider({
   const [dag, setDag] = useState<Array<{ id: string; description: string; agent: string }> | null>(null);
   const [pipelineCompact, setPipelineCompact] = useState(false);
   const [swarmNegotiationPhase, setSwarmNegotiationPhase] = useState<number | null>(null);
+  const [swarmTodos, setSwarmTodos] = useState<
+    Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>
+  >([]);
+  const [swarmStatusLabel, setSwarmStatusLabel] = useState<string | null>(null);
+  const [swarmAnalysis, setSwarmAnalysis] = useState<string | null>(null);
   const chatPrefill = useAppStore((s) => s.chatPrefill);
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
   const setSwarmRunning = useAppStore((s) => s.setSwarmRunning);
@@ -465,6 +473,9 @@ export function TerminalChatProvider({
       setReasoning(null);
       setDag(null);
       setSwarmNegotiationPhase(null);
+      setSwarmTodos([]);
+      setSwarmStatusLabel(null);
+      setSwarmAnalysis(null);
 
       const useCompactPipeline =
         isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt);
@@ -532,6 +543,11 @@ export function TerminalChatProvider({
             if (event.agent) setSwarmActiveAgent(event.agent);
             const negPhase = (event as SwarmProgressEvent).negotiationPhase;
             if (negPhase != null) setSwarmNegotiationPhase(negPhase);
+            const swarmEv = event as SwarmProgressEvent;
+            if (swarmEv.swarmTodos?.length) setSwarmTodos(swarmEv.swarmTodos);
+            if (swarmEv.swarmStatusLabel) setSwarmStatusLabel(swarmEv.swarmStatusLabel);
+            if (swarmEv.swarmAnalysis) setSwarmAnalysis(swarmEv.swarmAnalysis);
+            if (swarmEv.message) setPipelineMessage(swarmEv.message);
             const pendingVideo = isVideoGenerationPrompt(displayPrompt);
             if (pendingVideo && event.message) {
               setMessages((m) =>
@@ -848,6 +864,9 @@ export function TerminalChatProvider({
         videoStartedAt,
         pipelineCompact,
         swarmNegotiationPhase,
+        swarmTodos,
+        swarmStatusLabel,
+        swarmAnalysis,
         followUps,
         reasoning,
         dag,

@@ -61,6 +61,17 @@ export interface SwarmProgressEvent {
   councilLayer?: 'elite' | 'reserve' | 'blackhole';
   negotiationPhase?: number;
   swarmLogic?: boolean;
+  swarmTodos?: SwarmTodoItem[];
+  swarmStatusLabel?: string;
+  swarmAnalysis?: string;
+}
+
+export type SwarmTodoStatus = 'done' | 'active' | 'pending';
+
+export interface SwarmTodoItem {
+  id: string;
+  label: string;
+  status: SwarmTodoStatus;
 }
 
 export interface SwarmCompleteEvent {

@@ -1,6 +1,7 @@
 /**
- * Fly.io secret name aliases — matches keys stored on xroga-api.
- * Use getSecret() everywhere instead of process.env.X directly.
+ * Fly.io secret names — Council keys use EXACT names below (no aliases).
+ * DEEPSEEK_API_KEY | GEMINI_API_KEY | GROQ_API_KEY | MISTRAL_API_KEY
+ * ANTHROPIC_API_KEY | OPENAI_API_KEY
  */
 
 const ALIASES: Record<string, string[]> = {
@@ -50,6 +51,18 @@ export function getSecret(primary: keyof typeof ALIASES | string): string | unde
 
 export function hasSecret(primary: string): boolean {
   return Boolean(getSecret(primary));
+}
+
+/** Elite Council + Reserve — Fly.io secret names */
+export function getCouncilKeyStatus(): Record<string, boolean> {
+  return {
+    DEEPSEEK_API_KEY: hasSecret('DEEPSEEK_API_KEY'),
+    GEMINI_API_KEY: hasSecret('GEMINI_API_KEY'),
+    GROQ_API_KEY: hasSecret('GROQ_API_KEY'),
+    MISTRAL_API_KEY: hasSecret('MISTRAL_API_KEY'),
+    ANTHROPIC_API_KEY: hasSecret('ANTHROPIC_API_KEY'),
+    OPENAI_API_KEY: hasSecret('OPENAI_API_KEY'),
+  };
 }
 
 /** Keys visible to video health checks */
