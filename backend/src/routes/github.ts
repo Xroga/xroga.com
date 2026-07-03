@@ -8,44 +8,86 @@ const router = Router();
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID ?? '';
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET ?? '';
 
-/** Must match GitHub OAuth App → Authorization callback URL exactly */
-export function getGitHubOAuthCallbackUrl(): string {
-  const explicit = process.env.GITHUB_OAUTH_CALLBACK_URL?.trim();
-  if (explicit) return explicit.replace(/\/$/, '');
-  const base = (process.env.FRONTEND_URL ?? 'http://localhost:3000').replace(/\/$/, '');
-  return `${base}/dashboard/integrations/github/callback`;
+const ALLOWED_CALLBACK_ORIGINS = [
+  'https://xroga.com',
+  'https://www.xroga.com',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+];
+
+const CALLBACK_PATH = '/dashboard/integrations/github/callback';
+
+function productionFrontendBase(): string {
+  const raw = (process.env.FRONTEND_URL ?? '').replace(/\/$/, '');
+  if (raw && !/\.vercel\.app$/i.test(raw)) return raw;
+  return 'https://xroga.com';
 }
 
-function buildGitHubAuthorizeUrl(userId: string): string | null {
+/** Must match GitHub OAuth App → Authorization callback URL exactly */
+export function getGitHubOAuthCallbackUrl(requested?: string): string {
+  const explicit = process.env.GITHUB_OAUTH_CALLBACK_URL?.trim();
+  if (explicit) return explicit.replace(/\/$/, '');
+
+  if (requested && isAllowedCallbackUrl(requested)) {
+    return requested.replace(/\/$/, '');
+  }
+
+  const base =
+    process.env.NODE_ENV === 'production'
+      ? productionFrontendBase()
+      : (process.env.FRONTEND_URL ?? 'http://localhost:3000').replace(/\/$/, '');
+
+  return `${base}${CALLBACK_PATH}`;
+}
+
+function isAllowedCallbackUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    const origin = u.origin;
+    return (
+      ALLOWED_CALLBACK_ORIGINS.includes(origin) &&
+      u.pathname.replace(/\/$/, '') === CALLBACK_PATH
+    );
+  } catch {
+    return false;
+  }
+}
+
+function buildGitHubAuthorizeUrl(userId: string, redirectUri: string): string | null {
   if (!GITHUB_CLIENT_ID) return null;
   const state = Buffer.from(JSON.stringify({ userId })).toString('base64url');
-  const redirectUri = getGitHubOAuthCallbackUrl();
   return `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=repo,user:email&state=${state}`;
 }
 
 router.get('/oauth', (req: AuthRequest, res) => {
-  const url = buildGitHubAuthorizeUrl(req.userId!);
+  const requested = typeof req.query.redirect_uri === 'string' ? req.query.redirect_uri : undefined;
+  const redirectUri = getGitHubOAuthCallbackUrl(requested);
+  const url = buildGitHubAuthorizeUrl(req.userId!, redirectUri);
   if (!url) {
     res.status(503).json({ error: 'GitHub OAuth not configured' });
     return;
   }
-  res.json({ url, redirectUri: getGitHubOAuthCallbackUrl() });
+  res.json({ url, redirectUri });
 });
 
 /** Shows exact callback URL — use this to configure GitHub OAuth App */
 router.get('/oauth-config', (_req: AuthRequest, res) => {
+  const redirectUri = getGitHubOAuthCallbackUrl();
   res.json({
-    redirectUri: getGitHubOAuthCallbackUrl(),
+    redirectUri,
     frontendUrl: process.env.FRONTEND_URL ?? null,
     githubOAuthCallbackUrl: process.env.GITHUB_OAUTH_CALLBACK_URL ?? null,
     clientIdConfigured: Boolean(GITHUB_CLIENT_ID),
+    allowedOrigins: ALLOWED_CALLBACK_ORIGINS,
     hint: 'GitHub OAuth App → Authorization callback URL must match redirectUri exactly.',
   });
 });
 
 /** GET /auth/github — redirect straight to GitHub OAuth (alias mount) */
 router.get('/redirect', (req: AuthRequest, res) => {
-  const url = buildGitHubAuthorizeUrl(req.userId!);
+  const requested = typeof req.query.redirect_uri === 'string' ? req.query.redirect_uri : undefined;
+  const redirectUri = getGitHubOAuthCallbackUrl(requested);
+  const url = buildGitHubAuthorizeUrl(req.userId!, redirectUri);
   if (!url) {
     res.status(503).json({ error: 'GitHub OAuth not configured' });
     return;
@@ -58,6 +100,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
     code: z.string().min(1),
     repoStrategy: z.enum(['auto', 'monorepo', 'manual']).optional(),
     defaultRepo: z.string().optional(),
+    redirectUri: z.string().optional(),
   });
 
   const parsed = schema.safeParse(req.body);
@@ -71,7 +114,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
     return;
   }
 
-  const redirectUri = getGitHubOAuthCallbackUrl();
+  const redirectUri = getGitHubOAuthCallbackUrl(parsed.data.redirectUri);
 
   const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
     method: 'POST',

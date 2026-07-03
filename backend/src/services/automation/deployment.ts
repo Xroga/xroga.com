@@ -96,8 +96,8 @@ async function deployVercelHook(): Promise<{ url: string }> {
 }
 
 async function deployVercelCli(cwd: string): Promise<{ url: string }> {
-  const token = process.env.VERCEL_TOKEN;
-  if (!token) throw new Error('VERCEL_TOKEN missing');
+  const token = getSecret('VERCEL_API_KEY');
+  if (!token) throw new Error('VERCEL_API_KEY missing');
   const { stdout } = await execAsync(`npx vercel deploy --prod --token ${token} --yes`, {
     cwd,
     timeout: 180_000,
