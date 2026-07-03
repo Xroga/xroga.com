@@ -2,20 +2,22 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { buildMetadata } from '@/lib/seo';
 import { XROGA_FEATURES } from '@/lib/features';
+import { FEATURE_SEO_PAGES } from '@/lib/featureSeo';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Features — #1 AI Swarm with 92+ Capabilities',
+  title: 'Features — #1 AI Swarm with 98+ Capabilities',
   description:
-    'Explore Xroga AI features: multi-agent Architect·Builder·Reviewer·QA swarms, browser automation, 710+ integrations, deploy to Vercel, build apps, games, websites, and software — the top AI platform.',
+    'Explore Xroga AI features: AI image generation, voice talk, chat, build websites apps games, code debugging, GitHub auto-deploy, Vercel Netlify, and 710+ integrations — the top AI platform.',
   path: '/features',
   keywords: [
     'Xroga features',
     'AI swarm features',
     'best AI features',
-    '#1 AI platform features',
-    'multi-agent AI tools',
-    'AI build apps',
-    'AI automation features',
+    'AI image generation',
+    'talk with AI',
+    'GitHub AI deploy',
+    'Droga AI',
+    'xroga.com features',
   ],
 });
 
@@ -46,21 +48,40 @@ export default function FeaturesPage() {
           Xroga AI Features — #1 AI Swarm Platform
         </h1>
         <p className="text-[var(--muted)] mb-8 leading-relaxed">
-          Every plan unlocks the full stack. Multi-agent swarms trained for realistic planning, routing,
-          and zero-defect delivery — websites, apps, games, software, and automations.
+          Every plan unlocks the full stack. Multi-agent swarms for image generation, voice talk,
+          chat, building websites/apps/games, debugging, GitHub deploy, and 710+ integrations.
         </p>
 
-        <div className="grid sm:grid-cols-2 gap-2 mb-10">
-          {XROGA_FEATURES.map((f) => (
-            <div
-              key={f}
-              className="flex items-start gap-2 p-3 rounded-xl border border-[var(--card-border)] bg-[var(--card)]/50 text-sm"
-            >
-              <span className="text-[var(--accent)] shrink-0">✓</span>
-              <span>{f}</span>
-            </div>
-          ))}
-        </div>
+        <section className="mb-10">
+          <h2 className="text-lg font-bold mb-4">Featured capabilities</h2>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {FEATURE_SEO_PAGES.map((f) => (
+              <Link
+                key={f.slug}
+                href={`/features/${f.slug}`}
+                className="p-4 rounded-xl border border-[var(--card-border)] bg-[var(--card)]/60 hover:border-[var(--accent)] transition-colors group"
+              >
+                <p className="font-semibold text-sm group-hover:text-[var(--accent)]">{f.title}</p>
+                <p className="text-xs text-[var(--muted)] mt-1 line-clamp-2">{f.description}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-10">
+          <h2 className="text-lg font-bold mb-4">Full feature list</h2>
+          <div className="grid sm:grid-cols-2 gap-2">
+            {XROGA_FEATURES.map((f) => (
+              <div
+                key={f}
+                className="flex items-start gap-2 p-3 rounded-xl border border-[var(--card-border)] bg-[var(--card)]/50 text-sm"
+              >
+                <span className="text-[var(--accent)] shrink-0">✓</span>
+                <span>{f}</span>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <div className="flex flex-wrap gap-3">
           <Link
@@ -68,6 +89,12 @@ export default function FeaturesPage() {
             className="px-5 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--background)] font-bold text-sm"
           >
             Get Started — 50 Free Actions
+          </Link>
+          <Link
+            href="/integrations"
+            className="px-5 py-2.5 rounded-xl border border-[var(--card-border)] font-semibold text-sm hover:border-[var(--accent)]"
+          >
+            710+ Integrations
           </Link>
           <Link
             href="/pricing"
