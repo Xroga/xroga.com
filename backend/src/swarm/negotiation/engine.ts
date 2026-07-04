@@ -54,6 +54,8 @@ import {
   pushAndDeployLivePreview,
   landingFilesFromOutput,
 } from '../../services/integrations/githubDeploy.js';
+import { isBuildContinuation } from '../../lib/buildContinuation.js';
+import { routingPrompt } from '../../lib/promptRouting.js';
 
 const MAX_PLAN_ITERATIONS = 3;
 const MAX_STEP_CORRECTIONS = 3;
@@ -226,6 +228,7 @@ function emit(
 
 export function shouldUseNegotiationEngine(prompt: string, category: FeatureCategory): boolean {
   if (['landing_page', 'code_debug', 'browser_automation'].includes(category)) return true;
+  if (isBuildContinuation(prompt)) return true;
   const t = prompt.toLowerCase();
   if (/\b(build|create|make|develop)\b[\s\S]{0,50}\b(website|web app|web\s*page|landing|site|coffee|shop|store)\b/.test(t)) {
     return true;
@@ -333,7 +336,9 @@ async function verifyStepParallel(
 }
 
 export async function runNegotiationEngine(ctx: NegotiationContext): Promise<NegotiationResult> {
-  const { userPrompt, featureCategory, userId } = ctx;
+  const { userPrompt: rawPrompt, featureCategory, userId } = ctx;
+  const userPrompt = rawPrompt.trim();
+  const currentMessage = routingPrompt(userPrompt);
   const todos = createTodoState();
   const buildState = new BuildState();
 
@@ -401,13 +406,16 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   }
 
   let clarifiedBrief: string;
+  const discoveryContext = userPrompt.includes('[Previous conversation')
+    ? userPrompt
+    : `${userPrompt}\n\nOriginal build request context preserved.`;
   try {
     clarifiedBrief = await geminiCall(
       PHASE_0_DISCOVERY,
-      `User request:\n${userPrompt}\n\nPrior analysis: ${analysis.intentLabel}\n\nOutput the Fully Clarified Project Brief now — do NOT ask more questions.`
+      `User request (full thread):\n${discoveryContext}\n\nCurrent answer:\n${currentMessage}\n\nPrior analysis: ${analysis.intentLabel}\n\nOutput the Fully Clarified Project Brief now — do NOT ask more questions. Include the original build goal from the thread (e.g. coffee shop website).`
     );
   } catch {
-    clarifiedBrief = userPrompt;
+    clarifiedBrief = `${currentMessage}\n\n${discoveryContext}`;
   }
 
   if (

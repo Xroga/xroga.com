@@ -24,7 +24,7 @@ import {
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
-import { buildPromptWithMemory } from '@/lib/chatMemory';
+import { buildPromptWithMemory, isBuildThreadContinuation } from '@/lib/chatMemory';
 import { sanitizeChatMessages } from '@/lib/sanitizeChatMessages';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
@@ -579,7 +579,7 @@ export function TerminalChatProvider({
         return;
       }
 
-      if (requiresGitHubForBuild(userPrompt)) {
+      if (requiresGitHubForBuild(userPrompt) || isBuildThreadContinuation(userPrompt, messages)) {
         try {
           const gh = await api.github.status();
           if (!gh.connected) {
@@ -640,7 +640,8 @@ export function TerminalChatProvider({
       setSwarmActivityLog([]);
 
       const useCompactPipeline =
-        isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt);
+        !isBuildThreadContinuation(displayPrompt, messages) &&
+        (isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt));
       setPipelineCompact(useCompactPipeline);
 
       if (isVideoGenerationPrompt(displayPrompt)) {

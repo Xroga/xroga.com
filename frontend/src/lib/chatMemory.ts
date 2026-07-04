@@ -8,9 +8,13 @@ const UPDATE_HINT =
   /\b(update|change|edit|modify|redo|regenerate|same|previous|earlier|last|that image|those images|again)\b/i;
 
 const BUILD_CLARIFICATION =
-  /\b(let me understand|phase 1|what's the name|what colors|online ordering|clarifying|fully clarified|reply with)\b/i;
+  /\b(let me understand|phase 1|what(?:'s| is) the name|what colors|online ordering|clarifying|fully clarified|reply with)\b/i;
 
-const BUILD_INTENT = /\b(build|create|make|design|develop)\b[\s\S]{0,40}\b(website|web\s*page|landing|site|app|shop|coffee)\b/i;
+const BUILD_INTENT =
+  /\b(build|create|make|design|develop)\b[\s\S]{0,60}\b(website|web\s*page|landing|site|app|shop|coffee|store|restaurant)\b/i;
+
+const BUILD_ANSWER =
+  /^[^,\n]{2,40},\s*[^,\n]{3,60},\s*(yes|no)\b/i;
 
 function lastAssistantMessage(messages: ChatMessage[]): ChatMessage | undefined {
   for (let i = messages.length - 1; i >= 0; i--) {
@@ -19,13 +23,42 @@ function lastAssistantMessage(messages: ChatMessage[]): ChatMessage | undefined 
   return undefined;
 }
 
-function isBuildClarificationFollowUp(prompt: string, messages: ChatMessage[]): boolean {
-  if (messages.length < 2) return false;
+function threadHasActiveBuild(messages: ChatMessage[]): boolean {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const m = messages[i];
+    if (!m) continue;
+    if (m.role === 'user' && BUILD_INTENT.test(m.content ?? '')) return true;
+    if (m.role === 'assistant' && BUILD_CLARIFICATION.test(m.content ?? '')) return true;
+  }
+  return false;
+}
+
+/** User line looks like "Cozy Cup, warm brown & gold, yes" */
+export function looksLikeBuildClarificationAnswer(prompt: string): boolean {
+  const t = prompt.trim();
+  if (t.length < 8) return false;
+  if (BUILD_INTENT.test(t)) return false;
+  if (BUILD_ANSWER.test(t)) return true;
+  const hasComma = t.includes(',');
+  const hasColors =
+    /\b(brown|gold|dark|light|warm|minimal|pastel|black|white|blue|green|colorful)\b/i.test(t);
+  const hasYesNo = /\b(yes|no)\b/i.test(t);
+  return hasComma && hasColors && hasYesNo;
+}
+
+export function isBuildThreadContinuation(prompt: string, messages: ChatMessage[]): boolean {
+  if (looksLikeBuildClarificationAnswer(prompt) && threadHasActiveBuild(messages)) return true;
   const lastAssistant = lastAssistantMessage(messages);
   if (!lastAssistant?.content) return false;
-  const assistantAsked = BUILD_CLARIFICATION.test(lastAssistant.content);
-  const userAnswering = prompt.trim().length >= 12 && !BUILD_INTENT.test(prompt);
-  return assistantAsked && userAnswering;
+  return (
+    BUILD_CLARIFICATION.test(lastAssistant.content) &&
+    looksLikeBuildClarificationAnswer(prompt)
+  );
+}
+
+function isBuildClarificationFollowUp(prompt: string, messages: ChatMessage[]): boolean {
+  if (messages.length < 2) return false;
+  return isBuildThreadContinuation(prompt, messages);
 }
 
 function formatContextBlock(messages: ChatMessage[], current: string): string {
@@ -40,6 +73,8 @@ function formatContextBlock(messages: ChatMessage[], current: string): string {
       const o = m.featureOutput as { type?: string; title?: string; prompt?: string };
       if (o.type === 'image') body = `[Generated image: ${o.prompt ?? o.title ?? 'image'}]`;
       else if (o.type === 'video_studio') body = `[Generated video: ${o.title ?? 'video'}]`;
+      else if (o.type === 'landing_page')
+        body = `[Built website: ${(o as { deployUrl?: string }).deployUrl ?? 'live preview'}]`;
     }
     return `${label}: ${body.slice(0, MAX_SNIPPET)}`;
   });
@@ -53,6 +88,10 @@ export function buildPromptWithMemory(prompt: string, messages: ChatMessage[]): 
   if (isTrivialPrompt(trimmed)) return trimmed;
 
   if (isBuildClarificationFollowUp(trimmed, messages)) {
+    return formatContextBlock(messages, trimmed);
+  }
+
+  if (threadHasActiveBuild(messages)) {
     return formatContextBlock(messages, trimmed);
   }
 

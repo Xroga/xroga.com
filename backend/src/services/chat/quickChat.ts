@@ -10,6 +10,7 @@ import { analyzeUserQuery, isSpecificBuildRequest } from '../../lib/queryAnalyze
 import { isMathQuery } from '../../lib/mathQuery.js';
 import { trySolveMathLocally } from '../../lib/mathSolver.js';
 import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
+import { isBuildContinuation } from '../../lib/buildContinuation.js';
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
@@ -23,6 +24,10 @@ export async function quickChat(
   onCouncilProgress?: RouteProgressFn,
   context?: ChatTurn[]
 ): Promise<string> {
+  if (isBuildContinuation(prompt)) {
+    throw new Error('BUILD_CONTINUATION_MUST_USE_NEGOTIATION');
+  }
+
   const userText = routingPrompt(prompt);
   const lower = userText.toLowerCase().trim();
 
