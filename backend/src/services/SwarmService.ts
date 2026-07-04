@@ -247,7 +247,13 @@ export class SwarmService {
     res: Response,
     projectId?: string,
     attachments?: Array<{ url: string; mimeType?: string; name?: string }>,
-    clientMeta?: { assistantMessageId?: string; userMessageId?: string; userPrompt?: string },
+    clientMeta?: {
+      assistantMessageId?: string;
+      userMessageId?: string;
+      userPrompt?: string;
+      buildContinuation?: boolean;
+      buildOriginalPrompt?: string;
+    },
     history?: Array<{ role: 'user' | 'assistant'; content: string }>
   ): Promise<void> {
     sendSSE(res, {

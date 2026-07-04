@@ -8,7 +8,7 @@ import { buildArchitectDAG, isLongRunningTask, formatDuration } from './architec
 import type { SwarmRunResult } from '../services/SwarmService.js';
 import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../types/features.js';
 import type { SwarmCoreAgent, SwarmPlan, SwarmResult } from '../types/index.js';
-import { isBuildContinuation, looksLikeBuildClarificationAnswer } from '../lib/buildContinuation.js';
+import { isBuildContinuation, hasThreadContext, looksLikeBuildClarificationAnswer } from '../lib/buildContinuation.js';
 import {
   enrichPromptWithThread,
   loadRecentChatTurns,
@@ -470,13 +470,44 @@ export class Orchestrator {
       projectId?: string;
       onProgress?: (event: SwarmProgressEvent) => void;
       attachments?: Array<{ url: string; mimeType?: string; name?: string }>;
-      clientMeta?: { assistantMessageId?: string; userMessageId?: string; userPrompt?: string };
+      clientMeta?: {
+        assistantMessageId?: string;
+        userMessageId?: string;
+        userPrompt?: string;
+        buildContinuation?: boolean;
+        buildOriginalPrompt?: string;
+      };
       history?: ChatTurn[];
     }
   ): Promise<SwarmRunResult & { polishedReply: string; followUps?: string[]; reasoning?: string; queued?: boolean; fast?: boolean }> {
     await loadMasterPrompt();
 
     let prompt = ctx.prompt.trim();
+
+    // Explicit build session from frontend — most reliable continuation signal
+    if (
+      ctx.clientMeta?.buildContinuation &&
+      looksLikeBuildClarificationAnswer(prompt) &&
+      !hasThreadContext(prompt)
+    ) {
+      const original = ctx.clientMeta.buildOriginalPrompt?.trim();
+      const turns: ChatTurn[] = ctx.history?.length
+        ? ctx.history
+        : original
+          ? [
+              { role: 'user', content: original },
+              {
+                role: 'assistant',
+                content:
+                  '[Phase 1] Let me understand what you need — project name, colors, and online ordering.',
+              },
+            ]
+          : [];
+      if (turns.length) {
+        prompt = enrichPromptWithThread(prompt, turns);
+      }
+    }
+
     if (!/\[Previous conversation for context/i.test(prompt)) {
       const clientHistory = ctx.history?.filter((t) => t.content?.trim());
       if (clientHistory?.length && shouldContinueWebsiteBuild(prompt, clientHistory)) {
@@ -497,7 +528,11 @@ export class Orchestrator {
     }
 
     // Build continuation — Phase 1 answers must enter negotiation, never fast chat
-    if (isBuildContinuation(prompt) || shouldContinueWebsiteBuild(prompt, ctx.history)) {
+    if (
+      isBuildContinuation(prompt) ||
+      shouldContinueWebsiteBuild(prompt, ctx.history) ||
+      (ctx.clientMeta?.buildContinuation && looksLikeBuildClarificationAnswer(prompt))
+    ) {
       return this.executeNegotiationBuild(ctx, 'landing_page');
     }
 

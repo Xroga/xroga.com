@@ -49,6 +49,8 @@ export function enrichPromptWithThread(prompt: string, turns?: ChatTurn[]): stri
 }
 
 export async function loadRecentChatTurns(userId: string, limit = 8): Promise<ChatTurn[]> {
+  const turns: ChatTurn[] = [];
+
   try {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
@@ -58,19 +60,50 @@ export async function loadRecentChatTurns(userId: string, limit = 8): Promise<Ch
       .order('created_at', { ascending: false })
       .limit(limit);
 
-    if (error || !data?.length) return [];
-
-    return data
-      .reverse()
-      .filter((r) => (r.role === 'user' || r.role === 'assistant') && typeof r.content === 'string')
-      .map((r) => ({
-        role: r.role as 'user' | 'assistant',
-        content: String(r.content).trim(),
-      }))
-      .filter((t) => t.content.length > 0);
+    if (!error && data?.length) {
+      turns.push(
+        ...data
+          .reverse()
+          .filter((r) => (r.role === 'user' || r.role === 'assistant') && typeof r.content === 'string')
+          .map((r) => ({
+            role: r.role as 'user' | 'assistant',
+            content: String(r.content).trim(),
+          }))
+          .filter((t) => t.content.length > 0)
+      );
+    }
   } catch {
-    return [];
+    /* messages table optional */
   }
+
+  if (turns.length >= 2) return turns.slice(-limit);
+
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data: runs } = await supabase
+      .from('swarm_runs')
+      .select('prompt, output, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(4);
+
+    for (const run of runs ?? []) {
+      const p = String(run.prompt ?? '').trim();
+      if (!BUILD_INTENT.test(p)) continue;
+      turns.push({ role: 'user', content: p });
+      const output = run.output as { polishedReply?: string; featureOutput?: { summary?: string } } | null;
+      const assistant =
+        output?.polishedReply?.trim() ||
+        output?.featureOutput?.summary?.trim() ||
+        '[Phase 1] Website build in progress.';
+      turns.push({ role: 'assistant', content: assistant });
+      break;
+    }
+  } catch {
+    /* swarm_runs optional */
+  }
+
+  return turns.slice(-limit);
 }
 
 export async function persistChatTurns(

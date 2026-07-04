@@ -33,7 +33,6 @@ function threadHasActiveBuild(messages: ChatMessage[]): boolean {
   return false;
 }
 
-/** User line looks like "Cozy Cup, warm brown & gold, yes" */
 export function looksLikeBuildClarificationAnswer(prompt: string): boolean {
   const t = prompt.trim();
   if (t.length < 8) return false;
@@ -44,6 +43,13 @@ export function looksLikeBuildClarificationAnswer(prompt: string): boolean {
     /\b(brown|gold|dark|light|warm|minimal|pastel|black|white|blue|green|colorful)\b/i.test(t);
   const hasYesNo = /\b(yes|no)\b/i.test(t);
   return hasComma && hasColors && hasYesNo;
+}
+
+/** Assistant asked Phase 1 build questions — next user message continues the build. */
+export function isPhase1BuildQuestion(text: string): boolean {
+  return /\[Phase 1\]|let me understand what you need|what(?:'|'| is) the name of your project/i.test(
+    text
+  );
 }
 
 export function isBuildThreadContinuation(prompt: string, messages: ChatMessage[]): boolean {

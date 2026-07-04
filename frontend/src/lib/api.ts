@@ -62,6 +62,8 @@ export interface StreamSwarmOptions {
     assistantMessageId?: string;
     userMessageId?: string;
     userPrompt?: string;
+    buildContinuation?: boolean;
+    buildOriginalPrompt?: string;
   };
   onProgress?: (event: SwarmProgressEvent) => void;
   onDelta?: (delta: string) => void;

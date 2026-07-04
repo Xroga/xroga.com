@@ -36,6 +36,8 @@ const executeSchema = z.object({
       assistantMessageId: z.string().optional(),
       userMessageId: z.string().optional(),
       userPrompt: z.string().optional(),
+      buildContinuation: z.boolean().optional(),
+      buildOriginalPrompt: z.string().max(500).optional(),
     })
     .optional(),
 });
