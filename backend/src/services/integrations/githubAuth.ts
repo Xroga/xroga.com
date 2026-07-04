@@ -2,7 +2,13 @@ import { getSupabaseAdmin } from '../../config/supabase.js';
 
 export type GitHubRepoStrategy = 'auto' | 'monorepo' | 'manual';
 
-/** Load GitHub token — github_integrations first, then user_integrations with sync */
+function isMissingTableError(message: string): boolean {
+  return /schema cache|could not find the table|does not exist|relation.*does not exist/i.test(
+    message
+  );
+}
+
+/** Load GitHub token — github_integrations first, optional user_integrations fallback */
 export async function getGitHubToken(userId: string): Promise<string | null> {
   const supabase = getSupabaseAdmin();
 
@@ -12,7 +18,7 @@ export async function getGitHubToken(userId: string): Promise<string | null> {
     .eq('user_id', userId)
     .maybeSingle();
 
-  if (primaryErr) {
+  if (primaryErr && !isMissingTableError(primaryErr.message)) {
     console.warn('[githubAuth] github_integrations lookup:', primaryErr.message);
   }
 
@@ -27,7 +33,10 @@ export async function getGitHubToken(userId: string): Promise<string | null> {
     .maybeSingle();
 
   if (legacyErr) {
-    console.warn('[githubAuth] user_integrations lookup:', legacyErr.message);
+    if (!isMissingTableError(legacyErr.message)) {
+      console.warn('[githubAuth] user_integrations lookup:', legacyErr.message);
+    }
+    return null;
   }
 
   const legacyToken = legacy?.access_token?.trim();
@@ -43,7 +52,7 @@ export async function getGitHubToken(userId: string): Promise<string | null> {
     { onConflict: 'user_id' }
   );
 
-  if (syncErr) {
+  if (syncErr && !isMissingTableError(syncErr.message)) {
     console.warn('[githubAuth] sync legacy token:', syncErr.message);
   }
 
@@ -79,21 +88,6 @@ export async function saveGitHubConnection(
   const repoStrategy = opts.repoStrategy ?? 'auto';
   const defaultRepo = opts.defaultRepo ?? null;
 
-  const { error: userErr } = await supabase.from('user_integrations').upsert(
-    {
-      user_id: userId,
-      provider: 'github',
-      access_token: token,
-      provider_user_id: opts.providerUserId,
-      metadata: { username: opts.username },
-    },
-    { onConflict: 'user_id,provider' }
-  );
-
-  if (userErr) {
-    throw new Error(`Failed to save GitHub integration: ${userErr.message}`);
-  }
-
   const { error: ghErr } = await supabase.from('github_integrations').upsert(
     {
       user_id: userId,
@@ -105,6 +99,26 @@ export async function saveGitHubConnection(
   );
 
   if (ghErr) {
-    throw new Error(`Failed to save GitHub settings: ${ghErr.message}`);
+    if (isMissingTableError(ghErr.message)) {
+      throw new Error(
+        'GitHub storage is not configured on the server. Run Supabase migration 020_user_integrations.sql.'
+      );
+    }
+    throw new Error(`Failed to save GitHub connection: ${ghErr.message}`);
+  }
+
+  const { error: userErr } = await supabase.from('user_integrations').upsert(
+    {
+      user_id: userId,
+      provider: 'github',
+      access_token: token,
+      provider_user_id: opts.providerUserId,
+      metadata: { username: opts.username },
+    },
+    { onConflict: 'user_id,provider' }
+  );
+
+  if (userErr && !isMissingTableError(userErr.message)) {
+    console.warn('[githubAuth] optional user_integrations save:', userErr.message);
   }
 }
