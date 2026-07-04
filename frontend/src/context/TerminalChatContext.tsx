@@ -36,7 +36,8 @@ import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal
 import { GitHubActivationOverlay } from '@/components/terminal/GitHubActivationOverlay';
 import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
 import {
-  isGitHubConnectedSession,
+  clearGitHubConnectedSession,
+  isGitHubConnectRequiredText,
   markGitHubConnectedSession,
   sanitizeXrogaTerminalText,
 } from '@/lib/xrogaBrand';
@@ -168,6 +169,7 @@ export function TerminalChatProvider({
   });
   const afterGitHubActivationRef = useRef<(() => void) | null>(null);
   const skipGithubGateRef = useRef(false);
+  const githubBuildRetryRef = useRef(false);
   const pendingBuildRef = useRef<{
     userPrompt: string;
     fromQueue: boolean;
@@ -232,11 +234,17 @@ export function TerminalChatProvider({
     const params = new URLSearchParams(window.location.search);
     if (params.get('github') !== 'connected') return;
     const rawUser = params.get('username');
-    markGitHubConnectedSession();
-    skipGithubGateRef.current = true;
-    setGithubActivation({
-      open: true,
-      username: rawUser ? decodeURIComponent(rawUser) : undefined,
+    void api.github.status().then((gh) => {
+      if (!gh.connected) {
+        clearGitHubConnectedSession();
+        skipGithubGateRef.current = false;
+        return;
+      }
+      markGitHubConnectedSession();
+      setGithubActivation({
+        open: true,
+        username: rawUser ? decodeURIComponent(rawUser) : gh.username,
+      });
     });
     window.history.replaceState({}, '', '/dashboard');
   }, [pathname]);
@@ -244,9 +252,15 @@ export function TerminalChatProvider({
   useEffect(() => {
     const onGitHubConnected = (e: Event) => {
       const detail = (e as CustomEvent<{ username?: string }>).detail;
-      markGitHubConnectedSession();
-      skipGithubGateRef.current = true;
-      setGithubActivation({ open: true, username: detail?.username });
+      void api.github.status().then((gh) => {
+        if (!gh.connected) {
+          clearGitHubConnectedSession();
+          skipGithubGateRef.current = false;
+          return;
+        }
+        markGitHubConnectedSession();
+        setGithubActivation({ open: true, username: detail?.username ?? gh.username });
+      });
     };
     window.addEventListener(GITHUB_CONNECTED_EVENT, onGitHubConnected);
     return () => window.removeEventListener(GITHUB_CONNECTED_EVENT, onGitHubConnected);
@@ -271,9 +285,55 @@ export function TerminalChatProvider({
           pending.interrupt,
           pending.attachments
         );
-      }, 400);
+      }, 800);
     };
   }, []);
+
+  const handleGitHubBuildBlocked = useCallback(
+    (userPrompt: string, attachments?: ChatAttachment[]) => {
+      void api.github.status().then((gh) => {
+        if (!gh.connected) {
+          clearGitHubConnectedSession();
+          skipGithubGateRef.current = false;
+          pendingBuildRef.current = {
+            userPrompt,
+            fromQueue: false,
+            interrupt: false,
+            attachments,
+          };
+          setGithubGateOpen(true);
+          return;
+        }
+        markGitHubConnectedSession();
+        if (githubBuildRetryRef.current) return;
+        githubBuildRetryRef.current = true;
+        pendingBuildRef.current = {
+          userPrompt,
+          fromQueue: false,
+          interrupt: false,
+          attachments,
+        };
+        afterGitHubActivationRef.current = () => {
+          window.setTimeout(() => {
+            githubBuildRetryRef.current = false;
+            void submitRef.current(userPrompt, false, false, attachments);
+          }, 900);
+        };
+        setGithubActivation({ open: true, username: gh.username });
+      }).catch(() => {
+        clearGitHubConnectedSession();
+        skipGithubGateRef.current = false;
+        pendingBuildRef.current = {
+          userPrompt,
+          fromQueue: false,
+          interrupt: false,
+          attachments,
+        };
+        setGithubGateOpen(true);
+      });
+    },
+    []
+  );
 
   const pushSwarmTerminalLine = useCallback((raw: string) => {
     const line = sanitizeXrogaTerminalText(raw);
@@ -518,16 +578,21 @@ export function TerminalChatProvider({
         return;
       }
 
-      if (requiresGitHubForBuild(userPrompt) && !isGitHubConnectedSession() && !skipGithubGateRef.current) {
+      if (requiresGitHubForBuild(userPrompt)) {
         try {
           const gh = await api.github.status();
           if (!gh.connected) {
+            clearGitHubConnectedSession();
+            skipGithubGateRef.current = false;
             pendingBuildRef.current = { userPrompt, fromQueue, interrupt, attachments };
             setGithubGateOpen(true);
             return;
           }
+          markGitHubConnectedSession();
         } catch {
-          /* backend will enforce if status check fails */
+          pendingBuildRef.current = { userPrompt, fromQueue, interrupt, attachments };
+          setGithubGateOpen(true);
+          return;
         }
       }
 
@@ -649,14 +714,8 @@ export function TerminalChatProvider({
             }
             const activity = swarmEv.swarmActivity ?? swarmEv.message;
             if (activity) pushSwarmTerminalLine(activity);
-            if (swarmEv.needsGitHub && !isGitHubConnectedSession() && !skipGithubGateRef.current) {
-              void api.github.status().then((gh) => {
-                if (!gh.connected) setGithubGateOpen(true);
-              }).catch(() => {
-                setGithubGateOpen(true);
-              });
-            } else if (swarmEv.needsGitHub && (isGitHubConnectedSession() || skipGithubGateRef.current)) {
-              skipGithubGateRef.current = false;
+            if (swarmEv.needsGitHub) {
+              handleGitHubBuildBlocked(displayPrompt, attachments);
             }
             if (swarmEv.swarmTodos?.some((t) => t.id === 'github' && t.status === 'done')) {
               skipGithubGateRef.current = false;
@@ -699,6 +758,15 @@ export function TerminalChatProvider({
               setFollowUps(complete.followUps);
             }
             const output = complete.output as Record<string, unknown> | undefined;
+            const chatContent =
+              output?.type === 'chat' && typeof output.content === 'string' ? output.content : '';
+            if (
+              requiresGitHubForBuild(displayPrompt) &&
+              (isGitHubConnectRequiredText(chatContent) ||
+                complete.followUps?.some((f) => /connect github/i.test(f)))
+            ) {
+              handleGitHubBuildBlocked(displayPrompt, attachments);
+            }
             if (output?.type === 'image_blocked') {
               setMessages((m) =>
                 m.map((msg) =>
@@ -939,7 +1007,7 @@ export function TerminalChatProvider({
         setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, incognito, messages, setSwarmRunning, setActions, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine]
+    [prompt, loading, projectId, incognito, messages, setSwarmRunning, setActions, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked]
   );
 
   submitRef.current = submit;
@@ -1015,11 +1083,18 @@ export function TerminalChatProvider({
           afterGitHubActivationRef.current = null;
         }}
         onConnected={(username) => {
-          markGitHubConnectedSession();
-          skipGithubGateRef.current = true;
-          setGithubGateOpen(false);
-          queueBuildAfterGitHubActivation();
-          setGithubActivation({ open: true, username });
+          void api.github.status().then((gh) => {
+            if (!gh.connected) {
+              clearGitHubConnectedSession();
+              skipGithubGateRef.current = false;
+              return;
+            }
+            markGitHubConnectedSession();
+            skipGithubGateRef.current = true;
+            setGithubGateOpen(false);
+            queueBuildAfterGitHubActivation();
+            setGithubActivation({ open: true, username: username ?? gh.username });
+          });
         }}
       />
       <GitHubActivationOverlay
