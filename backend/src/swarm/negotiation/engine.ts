@@ -13,10 +13,17 @@ import { geminiGenerateCultural } from '../../council/geminiClient.js';
 import { deepseekGenerate } from '../../council/deepseekClient.js';
 import { groqGeneral } from '../../council/groqClient.js';
 import { mistralVerify, mistralChat } from '../../council/mistralClient.js';
-import { blackHoleEmit } from '../../blackhole/synthesizer.js';
 import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
 import { buildLandingFromSwarmAssembly } from './assembleLandingFromSwarm.js';
 import { debugCode } from '../../services/debugging/codeDebugger.js';
+import { defaultPlanForPrompt } from './defaultPlans.js';
+import {
+  formatBuildSuccess,
+  formatPhase1Questions,
+  hasClarifiedBuildBrief,
+  isWebsiteBuildPrompt,
+  stepTargetLabel,
+} from './phaseUi.js';
 import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../../types/features.js';
 import type { NegotiationContext, NegotiationPhase, NegotiationResult, VerificationReport, SwarmTodoItem } from './types.js';
 import {
@@ -48,12 +55,12 @@ const MAX_PLAN_ITERATIONS = 3;
 const MAX_STEP_CORRECTIONS = 3;
 
 const META_TODO_DEFS: Array<{ id: string; label: string }> = [
-  { id: 'github', label: '🔗 GitHub linked — AI SWARM LOGIC ready' },
-  { id: 'analyze', label: '🕳️ XROGA Visionary is scanning your request' },
-  { id: 'plan', label: '📝 AI SWARM LOGIC is plotting the gravitational path' },
-  { id: 'structure', label: '🔄 XROGA Architect is verifying Event Horizon alignment' },
-  { id: 'steps', label: '⚖️ Gravitational Consensus — step-by-step plan locked' },
-  { id: 'verify-plan', label: '✅ Unanimously Approved Master Plan' },
+  { id: 'github', label: 'Phase 1 · GitHub linked' },
+  { id: 'analyze', label: 'Phase 1 · Discovery' },
+  { id: 'plan', label: 'Phase 2 · Planning' },
+  { id: 'structure', label: 'Phase 3 · Plan review' },
+  { id: 'steps', label: 'Phase 3 · Plan approved' },
+  { id: 'verify-plan', label: 'Phase 3 · Unanimously approved plan' },
 ];
 
 function createTodoState() {
@@ -102,7 +109,7 @@ function createTodoState() {
   const setBuildSteps = (steps: string[]) => {
     build = steps.map((s, i) => ({
       id: `build-${i}`,
-      label: `⚙️ Step ${i + 1}: ${s}`,
+      label: `[Phase 4] Step ${i + 1}: ${stepTargetLabel(s, i)}`,
       status: 'pending' as const,
     }));
   };
@@ -126,10 +133,10 @@ function createTodoState() {
 
   const addFinalTodos = () => {
     const extras: SwarmTodoItem[] = [
-      { id: 'final-check', label: '🌀 Phase 7: Final holistic verification (all agents)', status: 'pending' },
-      { id: 'emit', label: '🚀 Phase 8: BLACK HOLE V∞ emission & project assembly', status: 'pending' },
-      { id: 'github-push', label: '📦 Phase 9: Push all files to new GitHub repo', status: 'pending' },
-      { id: 'live-deploy', label: '🌐 Phase 9: Vercel / Netlify live preview URL', status: 'pending' },
+      { id: 'final-check', label: '[Phase 7] Final holistic verification', status: 'pending' },
+      { id: 'emit', label: '[Phase 8] BLACK HOLE V∞ emission', status: 'pending' },
+      { id: 'github-push', label: '[Phase 9] GitHub push', status: 'pending' },
+      { id: 'live-deploy', label: '[Phase 9] Live preview deploy', status: 'pending' },
     ];
     for (const item of extras) {
       if (!build.some((b) => b.id === item.id)) build.push(item);
@@ -346,14 +353,30 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   emit(ctx, 0, BRAND.phase0.scanning, 'reviewer', todos, 'XROGA Visionary');
 
   const analysis = analyzeUserQuery(userPrompt);
-  const skipAnalyzerClarification =
-    featureCategory === 'landing_page' || shouldUseNegotiationEngine(userPrompt, featureCategory);
+  const isWebBuild =
+    featureCategory === 'landing_page' || isWebsiteBuildPrompt(userPrompt, featureCategory);
+
+  // Phase 1: short clarifying questions — never skip for website builds without a clarified brief
+  if (isWebBuild && !hasClarifiedBuildBrief(userPrompt)) {
+    const clarificationText = formatPhase1Questions();
+    todos.setAnalysis('Awaiting your preferences (stack, features, design).');
+    emit(ctx, 0, BRAND.phase0.clarifying, 'reviewer', todos, 'XROGA Visionary');
+    return {
+      success: false,
+      clarifiedBrief: '',
+      approvedPlan: '',
+      assembledCode: '',
+      polishedOutput: clarificationText,
+      needsUserClarification: true,
+      clarificationText,
+    };
+  }
 
   if (
     analysis.needsClarification &&
     analysis.clarificationText &&
     !hasBuildConversationContext(userPrompt) &&
-    !skipAnalyzerClarification
+    !isWebBuild
   ) {
     todos.setAnalysis(analysis.intentLabel);
     emit(ctx, 0, BRAND.phase0.clarifying, 'reviewer', todos, 'XROGA Visionary');
@@ -372,28 +395,28 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   try {
     clarifiedBrief = await geminiCall(
       PHASE_0_DISCOVERY,
-      `User request:\n${userPrompt}\n\nPrior analysis: ${analysis.intentLabel}`
+      `User request:\n${userPrompt}\n\nPrior analysis: ${analysis.intentLabel}\n\nOutput the Fully Clarified Project Brief now — do NOT ask more questions.`
     );
   } catch {
     clarifiedBrief = userPrompt;
   }
 
   if (
-    !hasBuildConversationContext(userPrompt) &&
+    !hasClarifiedBuildBrief(userPrompt) &&
     /clarifying question|\?\s*$/im.test(clarifiedBrief) &&
     clarifiedBrief.split('?').length > 2
   ) {
-    todos.setAnalysis(clarifiedBrief.slice(0, 280));
+    const clarificationText = formatPhase1Questions();
+    todos.setAnalysis('Awaiting your preferences (stack, features, design).');
     emit(ctx, 0, BRAND.phase0.clarifying, 'reviewer', todos, 'XROGA Visionary');
-    const emitted = await blackHoleEmit(clarifiedBrief, userPrompt, 'general', 'elite');
     return {
       success: false,
       clarifiedBrief,
       approvedPlan: '',
       assembledCode: '',
-      polishedOutput: emitted.text,
+      polishedOutput: clarificationText,
       needsUserClarification: true,
-      clarificationText: emitted.text,
+      clarificationText,
     };
   }
 
@@ -453,7 +476,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   todos.completeMeta('verify-plan');
 
   const steps = parsePlanSteps(approvedPlan);
-  if (!steps.length) steps.push('Implement the full project per the approved brief');
+  if (!steps.length) {
+    const fallback = defaultPlanForPrompt(userPrompt);
+    steps.push(...fallback.map((s) => s.replace(/^Step\s+\d+:\s*/i, '')));
+  }
   todos.setBuildSteps(steps);
   todos.activateMeta('steps');
   todos.completeMeta('steps');
@@ -464,12 +490,13 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   for (let si = 0; si < steps.length; si++) {
     const stepLabel = `Step ${si + 1}/${steps.length}`;
+    const target = stepTargetLabel(steps[si]!, si);
     todos.activateBuild(si);
-    emit(ctx, 3, BRAND.phase3.execute(si + 1, steps.length), 'builder', todos, 'XROGA Architect');
+    emit(ctx, 3, BRAND.phase3.execute(si + 1, target), 'builder', todos, 'XROGA Architect');
 
     let stepCode = await deepseekCall(
       PHASE_3_EXECUTE,
-      `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${steps[si]}\n\nUser:\n${userPrompt}`
+      `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${steps[si]}\n\nUser:\n${userPrompt}\n\nRemember: output ONLY fenced code blocks. No explanations.`
     );
 
     let approved = false;
@@ -479,7 +506,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       const failures = reports.filter((r) => !r.pass);
 
       if (!failures.length) {
-        emit(ctx, 4, `STEP ${si + 1} APPROVED — ${BRAND.phase4.allPass}`, 'qa', todos, 'AI SWARM LOGIC');
+        emit(ctx, 4, `[Phase 5] Verification: PASS`, 'qa', todos, 'AI SWARM LOGIC');
         approved = true;
         break;
       }
@@ -538,12 +565,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   let featureOutput: FeatureOutput | null = null;
   let deployError: string | null = null;
 
-  const isWebBuild =
-    featureCategory === 'landing_page' ||
-    /\b(website|web\s*page|landing|site|coffee|shop)\b/i.test(userPrompt);
+  const isWebBuildFinal =
+    featureCategory === 'landing_page' || isWebsiteBuildPrompt(userPrompt, featureCategory);
 
   try {
-    if (isWebBuild) {
+    if (isWebBuildFinal) {
       featureOutput = await buildLandingFromSwarmAssembly(
         assembledCode,
         userPrompt,
@@ -595,20 +621,17 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   const repoUrl =
     featureOutput?.type === 'landing_page' ? featureOutput.githubRepoUrl : undefined;
 
-  const rawEmit = liveUrl
-    ? `Your project is live! 🎉\n\n🔗 Live preview: ${liveUrl}${repoUrl ? `\n📦 GitHub: ${repoUrl}` : ''}\n\n${XROGA_TAGLINE}`
-    : deployError
-      ? `Build complete — GitHub/deploy step failed: ${deployError}\n\n${assembledCode.slice(0, 4000)}`
-      : featureOutput
-        ? `Your project is ready 🎉\n\n${assembledCode.slice(0, 6000)}\n\n${XROGA_TAGLINE}`
-        : `Your build is ready 🎉\n\n${assembledCode}\n\n${XROGA_TAGLINE}`;
-
   let polishedOutput: string;
-  try {
-    const emitted = await blackHoleEmit(rawEmit, userPrompt, 'coding', 'elite');
-    polishedOutput = emitted.text;
-  } catch {
-    polishedOutput = formatPlainProfessional(rawEmit);
+  if (liveUrl) {
+    polishedOutput = formatBuildSuccess(liveUrl, repoUrl);
+  } else if (deployError) {
+    polishedOutput = `[Phase 9] Deploy issue: ${deployError}\n\nYour code was built — connect GitHub and retry deploy.`;
+  } else if (featureOutput?.type === 'landing_page') {
+    polishedOutput = `${BRAND.phase7.success}\n\n${XROGA_TAGLINE}`;
+  } else if (featureOutput) {
+    polishedOutput = `${BRAND.phase7.success}\n\n${formatPlainProfessional(assembledCode.slice(0, 4000))}`;
+  } else {
+    polishedOutput = `${BRAND.phase7.success}\n\n${formatPlainProfessional(assembledCode.slice(0, 6000))}`;
   }
 
   todos.completeFinal('emit');
@@ -632,13 +655,12 @@ export async function runEscapePod(ctx: NegotiationContext): Promise<Negotiation
   emit(ctx, 0, BRAND.escape.pod, 'architect', todos, 'XROGA Escape Pod');
   const raw = await swarmReserveProcess(ctx.userPrompt);
   todos.completeAll();
-  const emitted = await blackHoleEmit(raw, ctx.userPrompt, 'general', 'reserve');
   emit(ctx, 7, BRAND.escape.done, 'complete', todos, 'BLACK HOLE V∞');
   return {
     success: true,
     clarifiedBrief: ctx.userPrompt,
     approvedPlan: 'OSS reserve',
     assembledCode: raw,
-    polishedOutput: emitted.text,
+    polishedOutput: formatPlainProfessional(raw),
   };
 }
