@@ -25,6 +25,9 @@ export interface NegotiationContext {
   userId: string;
   featureCategory: FeatureCategory;
   onProgress?: (event: SwarmProgressEvent) => void;
+  /** Selected repo from chatbar — push updates here instead of creating a new repo */
+  githubTargetRepo?: string;
+  githubTargetBranch?: string;
 }
 
 export interface NegotiationResult {

@@ -78,9 +78,9 @@ export function TerminalDock() {
         )}
       >
         {!incognito && (
-          <div className="flex flex-col px-0.5">
-            <BlackHoleVButton className="xv-blackhole-outside self-start" />
+          <div className="flex flex-row items-start justify-between gap-2 px-0.5 mb-0.5">
             <RepoContextBar outside />
+            <BlackHoleVButton className="xv-blackhole-outside shrink-0 ml-auto self-start" />
           </div>
         )}
         <ChatbarQueueOutside />

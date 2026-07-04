@@ -1,5 +1,6 @@
 'use client';
 
+import { Infinity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SwarmTodoItem } from '@/lib/swarm';
 import { XrogaAgentProcessingPanel } from './XrogaAgentProcessingPanel';
@@ -33,8 +34,9 @@ export function SwarmPhasePanel({
 
   return (
     <div className={cn('my-1')}>
-      <p className="text-[10px] font-bold tracking-wide text-[#60a5fa]/90 mb-1.5 px-0.5">
-        🕳️ AI SWARM LOGIC
+      <p className="text-[10px] font-bold tracking-wide text-[#60a5fa]/90 mb-1.5 px-0.5 flex items-center gap-1 flex-wrap">
+        <span>🕳️ AI SWARM LOGIC — BLACK HOLE V</span>
+        <Infinity className="h-3 w-3 text-[#006aff]" strokeWidth={2.5} />
       </p>
       <XrogaAgentProcessingPanel
         loading={loading}

@@ -39,6 +39,8 @@ const executeSchema = z.object({
       buildContinuation: z.boolean().optional(),
       buildOriginalPrompt: z.string().max(500).optional(),
       buildUpdate: z.boolean().optional(),
+      githubTargetRepo: z.string().max(200).optional(),
+      githubTargetBranch: z.string().max(100).optional(),
     })
     .optional(),
 });

@@ -114,7 +114,7 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
     const meta = repos.find((r) => r.fullName === fullName);
     await loadBranches(fullName, meta?.defaultBranch);
     try {
-      await api.github.updateSettings('auto', fullName);
+      await api.github.updateSettings('manual', fullName);
     } catch { /* non-blocking */ }
   }
 
