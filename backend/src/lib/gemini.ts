@@ -7,9 +7,9 @@ interface GeminiResponse {
 export async function geminiGenerate(
   systemPrompt: string,
   userPrompt: string,
-  options?: { model?: string; maxTokens?: number }
+  options?: { model?: string; maxTokens?: number; apiKey?: string }
 ): Promise<string> {
-  const apiKey = getSecret('GEMINI_API_KEY');
+  const apiKey = options?.apiKey ?? getSecret('GEMINI_API_KEY');
   if (!apiKey) {
     throw new Error('GEMINI_API_KEY not configured');
   }

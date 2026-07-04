@@ -6,9 +6,9 @@ interface GroqResponse {
 
 export async function groqChat(
   messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
-  options?: { model?: string; maxTokens?: number; temperature?: number }
+  options?: { model?: string; maxTokens?: number; temperature?: number; apiKey?: string }
 ): Promise<string> {
-  const apiKey = getSecret('GROQ_API_KEY');
+  const apiKey = options?.apiKey ?? getSecret('GROQ_API_KEY');
   if (!apiKey) {
     throw new Error('GROQ_API_KEY not configured');
   }

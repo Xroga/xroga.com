@@ -17,13 +17,13 @@ export const BRAND = {
     approved: '[Phase 3] Plan approved.',
   },
   phase3: {
-    buildStart: (steps: number) => `⚙️ [Phase 3] Building your website — ${steps} steps`,
-    updateStart: (steps: number) => `⚙️ [Phase 3] Updating your website — ${steps} steps`,
+    buildStart: (steps: number) => `⚙️ [Phase 1] DeepSeek Code — building ${steps} steps`,
+    updateStart: (steps: number) => `⚙️ [Phase 6] Updating your project — ${steps} steps`,
     execute: (step: number, total: number, label: string) =>
-      `⚙️ [Phase 3] Building... Step ${step}/${total} ${label}`,
+      `⚙️ [Phase 1] Building... Step ${step}/${total} ${label}`,
   },
   phase4: {
-    verifying: '🔍 [Phase 4] Verifying...',
+    verifying: '🔍 [Phase 2] Verifying...',
     groqFail: '[Phase 4] Syntax issue detected — fixing...',
     geminiFail: '[Phase 4] Logic issue detected — fixing...',
     mistralFail: '[Phase 4] Edge case detected — fixing...',
@@ -40,13 +40,13 @@ export const BRAND = {
   },
   phase7: {
     emitting: '[Phase 5] Preparing your summary...',
-    success: '🎉 YOUR WEBSITE IS READY!',
+    success: '🎉 YOUR PROJECT IS LIVE!',
   },
   phase8: {
-    githubPush: '🚀 [Phase 5] Creating GitHub repo...',
-    liveDeploy: '🚀 [Phase 5] Deploying to Vercel...',
-    liveReady: '🚀 [Phase 5] Deploying... ✅ Live!',
-    deployFailed: '[Phase 5] Deploy issue — code saved on GitHub.',
+    githubPush: '🚀 [Phase 4] Creating GitHub repo & pushing files...',
+    liveDeploy: '🚀 [Phase 4] Deploying to Vercel...',
+    liveReady: '🚀 [Phase 4] Deploying... ✅ Live!',
+    deployFailed: '[Phase 4] Deploy issue — code saved on GitHub.',
   },
   github: {
     required: '🔗 [Phase 0] Connect GitHub to save your work.',

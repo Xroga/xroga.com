@@ -61,6 +61,8 @@ import {
   threadHasCompletedWebsite,
 } from '../../lib/buildContinuation.js';
 import { routingPrompt } from '../../lib/promptRouting.js';
+import { deepseekCode, groqCode, geminiCode } from '../../services/code/codeClients.js';
+import { resolveApiKey } from '../../config/apiKeyRouter.js';
 
 const MAX_PLAN_ITERATIONS = 3;
 const MAX_STEP_CORRECTIONS = 3;
@@ -218,7 +220,23 @@ function emit(
 ): void {
   const userPhase =
     opts?.userPhase ??
-    (phase <= 0 ? 1 : phase <= 2 ? 1 : phase === 3 ? 3 : phase <= 6 ? 4 : 5);
+    (phase === 0
+      ? 0
+      : phase <= 2
+        ? 1
+        : phase === 3
+          ? 1
+          : phase === 4
+            ? 2
+            : phase === 5
+              ? 2
+              : phase === 6
+                ? 2
+                : phase === 7
+                  ? 5
+                  : phase >= 8
+                    ? 4
+                    : 1);
 
   ctx.onProgress?.({
     runId: crypto.randomUUID(),
@@ -282,6 +300,9 @@ function parsePlanSteps(plan: string): string[] {
 }
 
 async function geminiCall(system: string, user: string, maxTokens = 2048): Promise<string> {
+  if (resolveApiKey('gemini', 'code')) {
+    return geminiCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, { maxTokens });
+  }
   if (getSecret('GEMINI_API_KEY')) {
     return geminiGenerate(`${XROGA_USER_IDENTITY}\n\n${system}`, user, {
       model: 'gemini-2.0-flash',
@@ -292,6 +313,9 @@ async function geminiCall(system: string, user: string, maxTokens = 2048): Promi
 }
 
 async function groqCall(system: string, user: string, maxTokens = 512): Promise<string> {
+  if (resolveApiKey('groq', 'code')) {
+    return groqCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, { maxTokens });
+  }
   if (getSecret('GROQ_API_KEY')) {
     return groqChat(
       [
@@ -305,6 +329,9 @@ async function groqCall(system: string, user: string, maxTokens = 512): Promise<
 }
 
 async function deepseekCall(system: string, user: string, maxTokens = 4096): Promise<string> {
+  if (resolveApiKey('deepseek', 'code')) {
+    return deepseekCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, { maxTokens });
+  }
   if (getSecret('DEEPSEEK_API_KEY')) {
     return deepSeekChat(
       [
@@ -413,7 +440,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     : `${userPrompt}\n\nOriginal build request context preserved.`;
 
   if (isUpdateBuild) {
-    emit(ctx, 0, BRAND.phase0.scanning('website updates'), 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
+    emit(ctx, 0, BRAND.phase0.scanning('website updates'), 'reviewer', todos, 'XROGA Visionary', { userPhase: 6 });
     const latestPrior = pastBuilds[0];
     const priorContext = latestPrior
       ? `Prior build remembered: "${latestPrior.projectName}"${latestPrior.designTheme ? ` (${latestPrior.designTheme})` : ''}${latestPrior.deployUrl ? ` — live at ${latestPrior.deployUrl}` : ''}`
@@ -554,7 +581,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     'builder',
     todos,
     'XROGA Architect',
-    { userPhase: 3 }
+    { userPhase: 1 }
   );
 
   const codeParts: string[] = [];
@@ -565,7 +592,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     const target = stepTargetLabel(steps[si]!, si);
     todos.activateBuild(si);
     emit(ctx, 3, BRAND.phase3.execute(si + 1, steps.length, target), 'builder', todos, 'XROGA Architect', {
-      userPhase: 3,
+      userPhase: 1,
     });
 
     let stepCode = await deepseekCall(
@@ -575,12 +602,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
     let approved = false;
     for (let attempt = 0; attempt < MAX_STEP_CORRECTIONS; attempt++) {
-      emit(ctx, 4, BRAND.phase4.verifying, 'qa', todos, 'AI SWARM LOGIC', { userPhase: 4 });
+      emit(ctx, 4, BRAND.phase4.verifying, 'qa', todos, 'AI SWARM LOGIC', { userPhase: 2 });
       const reports = await verifyStepParallel(stepCode, approvedPlan, userPrompt);
       const failures = reports.filter((r) => !r.pass);
 
       if (!failures.length) {
-        emit(ctx, 4, BRAND.phase4.allPass, 'qa', todos, 'AI SWARM LOGIC', { userPhase: 4 });
+        emit(ctx, 4, BRAND.phase4.allPass, 'qa', todos, 'AI SWARM LOGIC', { userPhase: 2 });
         approved = true;
         break;
       }
@@ -599,7 +626,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
     todos.completeBuild(si);
     // Mark step done with friendly label in activity log
-    emit(ctx, 3, friendlyStepLabel(steps[si]!, si), 'builder', todos, 'XROGA Architect', { userPhase: 3 });
+    emit(ctx, 3, friendlyStepLabel(steps[si]!, si), 'builder', todos, 'XROGA Architect', { userPhase: 1 });
     codeParts.push(`// --- ${stepLabel}: ${steps[si]} ---\n${stepCode}`);
     if (!approved) {
       emit(ctx, 5, BRAND.phase5.maxReached, 'debugger', todos, 'XROGA Architect');
@@ -612,7 +639,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   todos.addFinalTodos();
   todos.activateFinal('final-check');
-  emit(ctx, 6, BRAND.phase6.final, 'truth_council', todos, 'XROGA Collective', { userPhase: 4, silent: true });
+  emit(ctx, 6, BRAND.phase6.final, 'truth_council', todos, 'XROGA Collective', { userPhase: 2, silent: true });
   const finalChecks = await Promise.allSettled([
     deepseekCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 10000)}`),
     geminiCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 10000)}`, 256),
@@ -628,7 +655,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     assembledCode = await deepseekCall(PHASE_5_CORRECT, `Final review issues\n\n${assembledCode}`);
     totalCorrections++;
   } else {
-    emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective', { userPhase: 4 });
+    emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective', { userPhase: 2 });
   }
   buildState.markDone('verified');
   todos.completeFinal('final-check');
@@ -674,7 +701,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     todos.completeFinal('emit');
     buildState.markDone('emitted');
     todos.activateFinal('github-push');
-    emit(ctx, 8, BRAND.phase8.githubPush, 'builder', todos, 'AI SWARM LOGIC', { userPhase: 5 });
+    emit(ctx, 8, BRAND.phase8.githubPush, 'builder', todos, 'AI SWARM LOGIC', { userPhase: 4 });
     try {
       const files = landingFilesFromOutput(featureOutput.html, featureOutput.css, featureOutput.js);
       const pipeline = await pushAndDeployLivePreview(userId, files, projectSlug);
@@ -699,9 +726,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       buildState.markDone('deployed');
       todos.completeFinal('github-push');
       todos.activateFinal('live-deploy');
-      emit(ctx, 8, BRAND.phase8.liveDeploy, 'builder', todos, 'AI SWARM LOGIC', { userPhase: 5 });
+      emit(ctx, 8, BRAND.phase8.liveDeploy, 'builder', todos, 'AI SWARM LOGIC', { userPhase: 4 });
       todos.completeFinal('live-deploy');
-      emit(ctx, 8, BRAND.phase8.liveReady, 'complete', todos, 'BLACK HOLE V∞', { userPhase: 5 });
+      emit(ctx, 8, BRAND.phase8.liveReady, 'complete', todos, 'BLACK HOLE V∞', { userPhase: 4 });
     } catch (err) {
       deployError = (err as Error).message;
       console.warn('[NegotiationEngine] GitHub/deploy pipeline:', deployError);

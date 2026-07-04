@@ -5,13 +5,14 @@ import { cn } from '@/lib/utils';
 import type { SwarmTodoItem } from '@/lib/swarm';
 import { SwarmProcessingTicker } from './SwarmProcessingTicker';
 
-/** User-visible build phases — Phase 2 planning runs silently on the backend */
+/** Dual-pipeline build phases — Chat is separate; this panel is build-only */
 const PHASES = [
   { id: 0, label: '0 · GitHub' },
-  { id: 1, label: '1 · Start & Plan' },
-  { id: 3, label: '3 · Building' },
-  { id: 4, label: '4 · Verifying' },
-  { id: 5, label: '5 · Deploy' },
+  { id: 1, label: '1 · Build' },
+  { id: 2, label: '2 · Verify' },
+  { id: 4, label: '4 · Deploy' },
+  { id: 5, label: '5 · Ready' },
+  { id: 6, label: '6 · Update' },
 ] as const;
 
 interface SwarmPhasePanelProps {
@@ -24,7 +25,7 @@ interface SwarmPhasePanelProps {
   activityLog?: string[];
 }
 
-/** Live build progress — Phases 1, 3, 4, 5 (planning hidden) */
+/** Live 6-phase build progress with structured thought process */
 export function SwarmPhasePanel({
   activePhase,
   loading,
@@ -41,7 +42,9 @@ export function SwarmPhasePanel({
   const liveText = message ?? statusLabel ?? activityLog[activityLog.length - 1];
   const headline = statusLabel ?? 'AI SWARM LOGIC';
 
-  const phaseIndex = phase != null ? PHASES.findIndex((p) => p.id === phase) : -1;
+  const phaseIndex =
+    phase != null ? PHASES.findIndex((p) => p.id === phase || (phase === 3 && p.id === 2)) : -1;
+  const resolvedIndex = phaseIndex >= 0 ? phaseIndex : phase != null && phase > 0 ? PHASES.length - 1 : -1;
 
   return (
     <div className="my-2 rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] px-3 py-2.5 animate-in fade-in duration-200">
@@ -54,8 +57,8 @@ export function SwarmPhasePanel({
       {phase != null && (
         <div className="flex flex-wrap gap-1 mb-2.5">
           {PHASES.map((p, idx) => {
-            const done = phaseIndex >= 0 && idx < phaseIndex;
-            const active = p.id === phase;
+            const done = resolvedIndex >= 0 && idx < resolvedIndex;
+            const active = p.id === phase || (phase === 3 && p.id === 2);
             return (
               <span
                 key={p.id}
@@ -76,9 +79,9 @@ export function SwarmPhasePanel({
       {analysis && !analysis.startsWith('Awaiting:') && (
         <div className="mb-2.5 rounded-lg border border-white/8 bg-black/20 px-2.5 py-2">
           <p className="text-[9px] font-medium uppercase tracking-wider text-[var(--muted)]/70 mb-1">
-            Brief
+            Thought process
           </p>
-          <p className="text-[11px] text-[var(--foreground)]/80 leading-snug line-clamp-3 whitespace-pre-wrap">
+          <p className="text-[11px] text-[var(--foreground)]/80 leading-snug line-clamp-4 whitespace-pre-wrap">
             {analysis}
           </p>
         </div>
