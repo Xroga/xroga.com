@@ -2585,6 +2585,13 @@ body.theme-gray * {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.82; }
   }
+  .xv-agent-live-pulse {
+    animation: xv-agent-live-glow 2.5s ease-in-out infinite;
+  }
+  @keyframes xv-agent-live-glow {
+    0%, 100% { border-color: rgba(96, 165, 250, 0.15); }
+    50% { border-color: rgba(96, 165, 250, 0.35); }
+  }
 
   .xv-orbit-spin {
     animation: xv-orbit-spin 2.4s linear infinite;

@@ -344,6 +344,32 @@ async function deepseekCall(system: string, user: string, maxTokens = 4096): Pro
   return deepseekGenerate(user);
 }
 
+const BUILD_HEARTBEAT_MSGS = [
+  '⚙️ DeepSeek Code — writing HTML structure…',
+  '⚙️ DeepSeek Code — generating CSS styles…',
+  '⚙️ DeepSeek Code — building page sections…',
+  '⚙️ DeepSeek Code — still coding your website…',
+];
+
+/** Emit progress every 5s during long code API calls so the UI never looks frozen */
+async function withBuildHeartbeat<T>(
+  ctx: NegotiationContext,
+  todos: ReturnType<typeof createTodoState>,
+  work: () => Promise<T>
+): Promise<T> {
+  let tick = 0;
+  const id = setInterval(() => {
+    const msg = BUILD_HEARTBEAT_MSGS[tick % BUILD_HEARTBEAT_MSGS.length]!;
+    tick += 1;
+    emit(ctx, 3, msg, 'builder', todos, 'AI SWARM LOGIC', { userPhase: 1 });
+  }, 5000);
+  try {
+    return await work();
+  } finally {
+    clearInterval(id);
+  }
+}
+
 async function verifyStepParallel(
   code: string,
   plan: string,
@@ -603,9 +629,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
     let stepCode = '';
     try {
-      stepCode = await deepseekCall(
-        PHASE_3_EXECUTE,
-        `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${steps[si]}\n\nUser:\n${userPrompt}\n\nTech: plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.`
+      stepCode = await withBuildHeartbeat(ctx, todos, () =>
+        deepseekCall(
+          PHASE_3_EXECUTE,
+          `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${steps[si]}\n\nUser:\n${userPrompt}\n\nTech: plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.`
+        )
       );
     } catch (stepErr) {
       console.warn('[NegotiationEngine] Step code gen:', (stepErr as Error).message);
