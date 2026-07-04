@@ -74,12 +74,12 @@ export function SwarmPhasePanel({
         </div>
       )}
 
-      {analysis && (
+      {analysis && !analysis.startsWith('Awaiting your preferences') && (
         <div className="mb-2.5 rounded-lg border border-white/8 bg-black/20 px-2.5 py-2">
           <p className="text-[9px] font-medium uppercase tracking-wider text-[var(--muted)]/70 mb-1">
-            Event Horizon Analysis
+            Brief
           </p>
-          <p className="text-[11px] text-[var(--foreground)]/80 leading-snug line-clamp-4 whitespace-pre-wrap">
+          <p className="text-[11px] text-[var(--foreground)]/80 leading-snug line-clamp-3 whitespace-pre-wrap">
             {analysis}
           </p>
         </div>

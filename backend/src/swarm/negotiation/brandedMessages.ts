@@ -1,50 +1,49 @@
-/** XROGA AI Swarm Logic — user-facing branded status messages (Phases 1–9) */
+/** XROGA AI Swarm Logic — compact user-facing status (Phases 1–9) */
 
 export const BRAND = {
   phase0: {
-    scanning: '🕳️ XROGA Visionary is scanning your request...',
-    briefCondensed: 'XROGA Pulse condensed the essence.',
-    clarifying: '🧠 XROGA Visionary is aligning the Event Horizon with you...',
-    briefReady: 'Fully Clarified Project Brief ready.',
+    scanning: '[Phase 1] XROGA Visionary is scanning your request...',
+    briefCondensed: '[Phase 1] Brief condensed.',
+    clarifying: '[Phase 1] XROGA Visionary asks clarifying questions.',
+    briefReady: '[Phase 1] Fully Clarified Project Brief ready.',
   },
   phase1: {
-    planning: '📝 AI SWARM LOGIC is plotting the gravitational path...',
-    planReady: (steps: number) => `XROGA Master Plan ready — ${steps} gravitational steps mapped.`,
+    planning: '[Phase 2] AI SWARM LOGIC plots step-by-step plan.',
+    planReady: (steps: number) => `[Phase 2] Master Plan ready — ${steps} steps.`,
   },
   phase2: {
-    reviewing: '🔄 XROGA Architect is verifying the Event Horizon alignment...',
-    negotiating: '⚖️ Gravitational Consensus forming between XROGA Core engines...',
-    approved: 'Unanimously Approved Master Plan locked.',
+    reviewing: '[Phase 3] XROGA Architect reviews the plan.',
+    negotiating: '[Phase 3] Plan cross-verification in progress...',
+    approved: '[Phase 3] XROGA Architect approves the plan.',
   },
   phase3: {
-    execute: (step: number, total: number) =>
-      `⚙️ XROGA Architect is building Step ${step}/${total} at the Singularity Core...`,
+    execute: (step: number, target: string) => `[Phase 4] Executing Step ${step}: ${target}`,
   },
   phase4: {
-    verifying: '🔍 AI SWARM LOGIC is scanning the Event Horizon for anomalies...',
-    groqFail: '⚡ XROGA Pulse detected a quantum fluctuation (syntax issue)!',
-    geminiFail: '🕳️ XROGA Visionary detected a logic drift in the Horizon!',
-    mistralFail: '⚓ XROGA Co-Architect flagged an efficiency edge case!',
-    allPass: 'Step verified — all swarm agents PASS.',
+    verifying: '[Phase 5] Verification in progress...',
+    groqFail: '[Phase 5] Pulse: syntax issue detected.',
+    geminiFail: '[Phase 5] Visionary: logic drift detected.',
+    mistralFail: '[Phase 5] Co-Architect: edge case flagged.',
+    allPass: 'Verification: PASS',
   },
   phase5: {
-    correcting: '🔧 XROGA Architect is stabilizing the rift...',
-    fixed: '✅ Quantum stability restored. Re-verifying Horizon...',
-    maxReached: 'Max correction loops — proceeding with best effort.',
+    correcting: '[Phase 6] Correcting errors...',
+    fixed: '[Phase 6] Corrections done — re-verifying.',
+    maxReached: '[Phase 6] Max correction loops — proceeding with best effort.',
   },
   phase6: {
-    final: '🌀 XROGA Collective is performing a final gravitational collapse test...',
-    allPass: 'Fully Verified & Approved Codebase.',
+    final: '[Phase 7] Final holistic verification (all agents).',
+    allPass: '[Phase 7] Final verification: ALL PASS.',
   },
   phase7: {
-    emitting: '🚀 BLACK HOLE V∞ is emitting the Singularity output...',
-    success: '🎉 Singularity achieved! Your build is ready.',
+    emitting: '[Phase 8] BLACK HOLE V∞ emits the full project.',
+    success: '🎉 SINGULARITY ACHIEVED!',
   },
   phase8: {
-    githubPush: '📦 Phase 9: Creating GitHub repo and pushing all files...',
-    liveDeploy: '🌐 Phase 9: Deploying live preview (Vercel / Netlify)...',
-    liveReady: '🔗 Live preview is ready — click to open.',
-    deployFailed: 'Deploy encountered an issue — code is on GitHub; retry preview shortly.',
+    githubPush: '[Phase 9] Deploying to GitHub + Vercel...',
+    liveDeploy: '[Phase 9] Live preview deploying...',
+    liveReady: '🔗 Live preview is ready.',
+    deployFailed: '[Phase 9] Deploy issue — code saved; retry preview shortly.',
   },
   github: {
     required: '🔗 Connect GitHub to start building.',

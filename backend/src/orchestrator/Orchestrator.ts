@@ -194,12 +194,7 @@ export class Orchestrator {
     }
 
     if (result.needsUserClarification) {
-      const shield = await runThreeLayerShield({
-        content: result.polishedOutput,
-        prompt: ctx.prompt,
-        userId: ctx.userId,
-        includeProsCons: false,
-      });
+      const reply = result.clarificationText ?? result.polishedOutput;
       const buildFollowUps = [
         'HTML/CSS/JS, dark theme, menu + gallery, mobile-first',
         'React + Tailwind, reservations + contact form, no payment yet',
@@ -214,32 +209,39 @@ export class Orchestrator {
           defectsFound: 0,
           plan: defaultPlan(),
           agents: defaultAgents(['architect']),
-          output: { type: 'chat', content: shield.content } as FeatureOutput,
+          output: { type: 'chat', content: reply } as FeatureOutput,
         },
         actions: { success: true, remaining: 0, cost: 1 },
         featureCategory,
-        polishedReply: shield.content,
+        polishedReply: reply,
         followUps: buildFollowUps,
       };
     }
 
-    const shield = await runThreeLayerShield({
-      content: result.polishedOutput,
-      prompt: ctx.prompt,
-      userId: ctx.userId,
-      includeProsCons: false,
-    });
+    const isLanding = result.featureOutput?.type === 'landing_page';
+    let replyText = result.polishedOutput;
+    let shieldFollowUps: string[] = [];
 
-    const structuredOutput = result.featureOutput ?? ({ type: 'chat', content: shield.content } as FeatureOutput);
-    const followUps =
-      result.featureOutput?.type === 'landing_page'
-        ? [
-            'Open live preview',
-            'Push another update',
-            'Add a contact form',
-            'Change the color scheme',
-          ]
-        : [...shield.followUps, 'Deploy this build?', 'Add another feature?'].slice(0, 4);
+    if (!isLanding) {
+      const shield = await runThreeLayerShield({
+        content: result.polishedOutput,
+        prompt: ctx.prompt,
+        userId: ctx.userId,
+        includeProsCons: false,
+      });
+      replyText = shield.content;
+      shieldFollowUps = shield.followUps;
+    }
+
+    const structuredOutput = result.featureOutput ?? ({ type: 'chat', content: replyText } as FeatureOutput);
+    const followUps = isLanding
+      ? [
+          'Open live preview',
+          'Push another update',
+          'Add a contact form',
+          'Change the color scheme',
+        ]
+      : [...shieldFollowUps, 'Deploy this build?', 'Add another feature?'].slice(0, 4);
 
     return {
       runId: crypto.randomUUID(),
@@ -253,7 +255,7 @@ export class Orchestrator {
       },
       actions: { success: true, remaining: 0, cost: featureCategory === 'chat' ? 1 : 15 },
       featureCategory,
-      polishedReply: shield.content,
+      polishedReply: replyText,
       followUps,
     };
   }
