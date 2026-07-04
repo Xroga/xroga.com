@@ -8,7 +8,14 @@ import { buildArchitectDAG, isLongRunningTask, formatDuration } from './architec
 import type { SwarmRunResult } from '../services/SwarmService.js';
 import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../types/features.js';
 import type { SwarmCoreAgent, SwarmPlan, SwarmResult } from '../types/index.js';
-import { isBuildContinuation } from '../lib/buildContinuation.js';
+import { isBuildContinuation, looksLikeBuildClarificationAnswer } from '../lib/buildContinuation.js';
+import {
+  enrichPromptWithThread,
+  loadRecentChatTurns,
+  persistChatTurns,
+  shouldContinueWebsiteBuild,
+} from '../lib/threadMemory.js';
+import type { ChatTurn } from '../lib/conversationContext.js';
 import { routingPrompt } from '../lib/promptRouting.js';
 import { shouldUseFastChat, isTrivialPrompt, requiresFeaturePipeline } from '../lib/promptClassifier.js';
 import { isCapabilitiesQuery } from '../lib/xrogaCapabilities.js';
@@ -464,11 +471,25 @@ export class Orchestrator {
       onProgress?: (event: SwarmProgressEvent) => void;
       attachments?: Array<{ url: string; mimeType?: string; name?: string }>;
       clientMeta?: { assistantMessageId?: string; userMessageId?: string; userPrompt?: string };
+      history?: ChatTurn[];
     }
   ): Promise<SwarmRunResult & { polishedReply: string; followUps?: string[]; reasoning?: string; queued?: boolean; fast?: boolean }> {
     await loadMasterPrompt();
 
-    const userText = routingPrompt(ctx.prompt);
+    let prompt = ctx.prompt.trim();
+    if (!/\[Previous conversation for context/i.test(prompt)) {
+      const clientHistory = ctx.history?.filter((t) => t.content?.trim());
+      if (clientHistory?.length && shouldContinueWebsiteBuild(prompt, clientHistory)) {
+        prompt = enrichPromptWithThread(prompt, clientHistory);
+      } else if (looksLikeBuildClarificationAnswer(prompt)) {
+        const dbTurns = await loadRecentChatTurns(ctx.userId);
+        const merged = enrichPromptWithThread(prompt, dbTurns);
+        if (merged !== prompt) prompt = merged;
+      }
+    }
+
+    ctx.prompt = prompt;
+    const userText = routingPrompt(prompt);
 
     // Capabilities FAQ — never DAG, never background queue
     if (isCapabilitiesQuery(userText)) {
@@ -476,7 +497,7 @@ export class Orchestrator {
     }
 
     // Build continuation — Phase 1 answers must enter negotiation, never fast chat
-    if (isBuildContinuation(ctx.prompt)) {
+    if (isBuildContinuation(prompt) || shouldContinueWebsiteBuild(prompt, ctx.history)) {
       return this.executeNegotiationBuild(ctx, 'landing_page');
     }
 

@@ -12,6 +12,15 @@ const executeSchema = z.object({
   prompt: z.string().min(1).max(10000),
   projectId: z.string().uuid().optional(),
   stream: z.boolean().optional(),
+  history: z
+    .array(
+      z.object({
+        role: z.enum(['user', 'assistant']),
+        content: z.string().max(4000),
+      })
+    )
+    .max(12)
+    .optional(),
   attachments: z
     .array(
       z.object({
@@ -59,7 +68,8 @@ router.post('/execute', async (req: AuthRequest, res) => {
         res,
         parsed.data.projectId,
         parsed.data.attachments,
-        parsed.data.clientMeta
+        parsed.data.clientMeta,
+        parsed.data.history
       );
       endSSE(res);
     } catch (err) {

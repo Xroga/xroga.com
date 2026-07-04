@@ -9,7 +9,7 @@ const BUILD_INTENT_IN_THREAD =
   /\b(build|create|make|develop|design)\b[\s\S]{0,80}\b(website|web\s*page|landing|site|coffee|shop|store|restaurant|bakery|app)\b/i;
 
 const PHASE_1_IN_THREAD =
-  /\[Phase 1\]|let me understand what you need|what(?:'s| is) the name of your project|what colors do you like|online ordering/i;
+  /\[Phase 1\]|let me understand what you need|what(?:'|'| is) the name of your project|what colors do you like|online ordering/i;
 
 const BUILD_ANSWER =
   /^[^,\n]{2,40},\s*[^,\n]{3,60},\s*(yes|no)\b/i;
