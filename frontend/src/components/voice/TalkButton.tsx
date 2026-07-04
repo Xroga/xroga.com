@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 interface TalkButtonProps {
-  variant?: 'header' | 'chatbar';
+  variant?: 'header' | 'chatbar' | 'inline';
   className?: string;
 }
 
@@ -95,6 +95,28 @@ export function TalkButton({ variant = 'chatbar', className }: TalkButtonProps) 
     );
   }
 
+  if (variant === 'inline') {
+    return (
+      <button
+        type="button"
+        onClick={handleClick}
+        className={cn(
+          'xv-talk-inline-btn shrink-0',
+          theme === 'black' && 'xv-talk-inline-btn--black',
+          theme === 'gray' && 'xv-talk-inline-btn--gray',
+          theme === 'white' && 'xv-talk-inline-btn--white',
+          isLive && 'xv-talk-inline-btn--live',
+          className
+        )}
+        aria-label="Talk with XROGA Voice"
+        title="Talk with XROGA Voice"
+      >
+        <Mic className="w-3 h-3 shrink-0" />
+        <span>{label}</span>
+      </button>
+    );
+  }
+
   const themeClass = talkThemeClass(theme);
 
   return (
@@ -113,14 +135,5 @@ export function TalkButton({ variant = 'chatbar', className }: TalkButtonProps) 
         <UiverseTalkInner label={label} active={isLive} />
       )}
     </button>
-  );
-}
-
-/** Row mounted above chatbar shell — outside inner input area */
-export function TalkButtonChatbarMount() {
-  return (
-    <div className="xv-talk-chatbar-mount">
-      <TalkButton variant="chatbar" />
-    </div>
   );
 }
