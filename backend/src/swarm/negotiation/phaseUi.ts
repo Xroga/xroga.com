@@ -1,17 +1,37 @@
-/** Compact user-facing phase progress lines (Phases 1–9) */
+/** Compact beginner-friendly phase progress (Phases 0–9) */
 
 import type { NegotiationPhase } from './types.js';
 import { userPhaseNumber } from './types.js';
 
-export const STANDARD_BUILD_QUESTIONS = [
-  'What tech stack? (React/Next.js or plain HTML/CSS/JS?)',
-  'Key features? (Menu, ordering, gallery, reservations?)',
-  'Design preference? (Colors, style?)',
+export const BEGINNER_BUILD_QUESTIONS = [
+  "What's the name of your project?",
+  'What colors do you like? (e.g., warm brown & gold, minimalist black/white)',
+  'Do you need online ordering? (Yes/No)',
 ] as const;
 
-export function formatPhase1Questions(questions: readonly string[] = STANDARD_BUILD_QUESTIONS): string {
-  const lines = questions.map((q) => `   → ${q}`);
-  return `[Phase 1] XROGA Visionary asks clarifying questions.\n${lines.join('\n')}`;
+export interface BuildSummaryData {
+  projectName: string;
+  pages: string[];
+  features: string[];
+  designTheme: string;
+  liveUrl?: string;
+  repoUrl?: string;
+  memoryNote?: string;
+  needsPayment?: boolean;
+}
+
+export function formatPhase1Questions(
+  memoryNote?: string,
+  questions: readonly string[] = BEGINNER_BUILD_QUESTIONS
+): string {
+  const lines = [
+    '🔍 [Phase 1] Let me understand what you need...',
+    ...questions.map((q) => `   → ${q}`),
+  ];
+  if (memoryNote) {
+    lines.push('', `💬 ${memoryNote}`);
+  }
+  return lines.join('\n');
 }
 
 export function phaseLine(phase: NegotiationPhase, detail: string): string {
@@ -19,70 +39,177 @@ export function phaseLine(phase: NegotiationPhase, detail: string): string {
 }
 
 export const PHASE_UI = {
-  discovery: () => phaseLine(0, 'XROGA Visionary asks clarifying questions.'),
-  briefReady: () => phaseLine(0, 'Fully Clarified Project Brief ready.'),
-  planning: () => phaseLine(1, 'AI SWARM LOGIC plots step-by-step plan.'),
-  planReady: (steps: number) => phaseLine(1, `Master Plan ready — ${steps} steps.`),
-  planReview: () => phaseLine(2, 'XROGA Architect reviews the plan.'),
-  planApproved: () => phaseLine(2, 'XROGA Architect approves the plan.'),
-  execute: (step: number, target: string) => phaseLine(3, `Executing Step ${step}: ${target}`),
-  verify: (pass: boolean) => phaseLine(4, pass ? 'Verification: PASS' : 'Verification: FAIL'),
-  stepApproved: (step: number) => phaseLine(4, `Verification: PASS — Step ${step} approved.`),
-  correct: () => phaseLine(5, 'Correcting errors...'),
-  correctDone: () => phaseLine(5, 'Corrections done — re-verifying.'),
-  finalReview: () => phaseLine(6, 'Final holistic verification (all agents).'),
-  finalPass: () => phaseLine(6, 'Final verification: ALL PASS.'),
-  emit: () => phaseLine(7, 'BLACK HOLE V∞ emits the full project.'),
-  deploy: () => phaseLine(8, 'Deploying to GitHub + Vercel...'),
-  liveReady: (url: string) => phaseLine(8, `Live preview ready: ${url}`),
-  githubRequired: '🔗 Connect GitHub to start building.',
-  githubVerified: 'GitHub connected — AI SWARM LOGIC engaged.',
+  githubConnect: '[Phase 0] Connect GitHub to save your work.',
+  discovery: () => '🔍 [Phase 1] Let me understand what you need...',
+  briefReady: () => '[Phase 1] Project brief ready.',
+  planning: () => '📝 [Phase 2] XROGA is planning...',
+  planReady: (steps: number) => `📝 [Phase 2] ${steps} steps planned. Let's build!`,
+  planReview: () => '[Phase 3] XROGA Architect reviews the plan.',
+  planApproved: () => '[Phase 3] Plan approved.',
+  execute: (step: number, total: number, label: string) =>
+    `⚙️ [Phase 3] Building... Step ${step}/${total} ${label}`,
+  verify: () => '🔍 [Phase 4] Verifying...',
+  verifyPass: () => '🔍 [Phase 4] Verifying... ✅ All checks passed.',
+  correct: () => '[Phase 4] Fixing issues behind the scenes...',
+  finalReview: () => '[Phase 4] Final verification...',
+  finalPass: () => '✅ All checks passed.',
+  emit: () => '[Phase 5] Preparing your summary...',
+  deploy: () => '🚀 [Phase 5] Deploying...',
+  deployGithub: () => '🚀 [Phase 5] Creating GitHub repo...',
+  deployPush: () => '🚀 [Phase 5] Pushing files...',
+  deployVercel: () => '🚀 [Phase 5] Deploying to Vercel...',
+  deployDone: () => '🚀 [Phase 5] Deploying... ✅ Live!',
+  githubRequired: '🔗 [Phase 0] Connect GitHub to save your work.',
+  githubVerified: '✅ GitHub connected — your builds will be saved automatically.',
 } as const;
 
-export function formatBuildSuccess(liveUrl: string, repoUrl?: string): string {
-  const lines = ['🎉 SINGULARITY ACHIEVED!', `🔗 Live Preview: ${liveUrl}`];
-  if (repoUrl) lines.push(`📂 GitHub: ${repoUrl}`);
+export function formatBuildSummaryCard(data: BuildSummaryData): string {
+  const lines = [
+    '🎉 YOUR WEBSITE IS READY!',
+    '',
+    '📌 **Summary:**',
+    `   - Name: ${data.projectName}`,
+    `   - Pages: ${data.pages.join(', ')}`,
+    `   - Features: ${data.features.join(', ')}`,
+    `   - Design: ${data.designTheme}`,
+  ];
+  if (data.liveUrl) {
+    lines.push('', '🔗 **Live Preview:** [Click to Open ↗]', `   → ${data.liveUrl}`);
+  }
+  if (data.repoUrl) {
+    lines.push('', '📂 **GitHub Repository:** [View Files ↗]', `   → ${data.repoUrl}`);
+  }
+  if (data.memoryNote) {
+    lines.push('', `💬 **Old chats remembered:** ${data.memoryNote}`);
+  }
   return lines.join('\n');
 }
 
-export function stepTargetLabel(step: string, index: number): string {
-  const fileMatch = step.match(/\b([\w.-]+\.(html?|css|js|tsx?))\b/i);
-  if (fileMatch?.[1]) return fileMatch[1];
-  if (/\bhtml\b|layout|scaffold|structure/i.test(step)) return 'index.html';
-  if (/\bcss\b|style|theme/i.test(step)) return 'style.css';
-  if (/\bjavascript\b|\bjs\b|interactiv|cart|order/i.test(step)) return 'app.js';
-  return `step-${index + 1}`;
+/** Friendly step label for progress UI (Homepage, Menu, etc.) */
+export function friendlyStepLabel(step: string, index: number): string {
+  const lower = step.toLowerCase();
+  if (/homepage|hero|header|scaffold|structure/i.test(lower)) return '✅ Homepage';
+  if (/menu|drink|food|pricing/i.test(lower)) return '✅ Menu';
+  if (/order|cart|checkout|payment/i.test(lower)) return '✅ Ordering';
+  if (/gallery|photo|image/i.test(lower)) return '✅ Gallery';
+  if (/contact|footer|form/i.test(lower)) return '✅ Contact';
+  if (/responsive|mobile|polish/i.test(lower)) return '✅ Responsive Design';
+  if (/css|style|theme/i.test(lower)) return '✅ Styling';
+  if (/javascript|js|interactiv/i.test(lower)) return '✅ Interactivity';
+  return `✅ Step ${index + 1}`;
 }
 
-/** True when the user already answered stack / features / design in thread context. */
+export function stepTargetLabel(step: string, index: number): string {
+  const label = friendlyStepLabel(step, index).replace(/^✅\s*/, '');
+  return label;
+}
+
+/** Slug for GitHub repo: xroga-cozy-cup */
+export function slugFromProjectName(name: string): string {
+  const slug = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 40);
+  return slug ? `xroga-${slug}` : `xroga-build-${Date.now()}`;
+}
+
+/** Parse project name from user answer or brief. */
+export function parseProjectName(prompt: string, brief?: string): string {
+  const source = brief ?? prompt;
+  const briefMatch = source.match(/Project name[:\s]+([^\n,]+)/i);
+  if (briefMatch?.[1]) return briefMatch[1].trim();
+
+  const current = prompt.match(/\[Current message\]\n([^,\n]+)/)?.[1]?.trim();
+  if (current && current.length >= 2 && current.length < 60) return current;
+
+  const coffee = prompt.match(/\b(build|create|make)\s+(?:a\s+)?(.+?)\s+(website|site|shop)/i);
+  if (coffee?.[2]) return `${coffee[2].trim()} Website`;
+
+  return 'My Website';
+}
+
+/** Parse design theme from user answer or brief. */
+export function parseDesignTheme(prompt: string, brief?: string): string {
+  const source = `${brief ?? ''} ${prompt}`;
+  const themeMatch = source.match(
+    /\b(warm\s+[\w\s&]+|minimalist\s+[\w/]+|dark\s+theme|light\s+theme|colorful|black\/white)[^,\n]*/i
+  );
+  if (themeMatch?.[0]) return themeMatch[0].trim();
+
+  const colorWords = source.match(/\b(brown|gold|blue|green|pastel|neon|modern|elegant)\b[^,\n]*/i);
+  if (colorWords?.[0]) return colorWords[0].trim();
+
+  return 'Modern, clean design';
+}
+
+/** Parse whether user wants online ordering / payments. */
+export function parseNeedsPayment(prompt: string, brief?: string): boolean {
+  const source = `${brief ?? ''} ${prompt}`.toLowerCase();
+  if (/\b(no payment|without payment|no ordering)\b/.test(source)) return false;
+  if (/\b(yes|ordering|payment|stripe|checkout|cart)\b/.test(source)) return true;
+  return false;
+}
+
+/** True when user answered name + colors + payment (beginner 3-question flow). */
 export function hasClarifiedBuildBrief(prompt: string): boolean {
   if (/Fully Clarified Project Brief/i.test(prompt)) return true;
 
   const lower = prompt.toLowerCase();
-  if (/\b(use defaults|start the 9-?phase|just build|go ahead|proceed)\b/i.test(lower)) {
+  if (/\b(use defaults|just build|go ahead|proceed|build it now)\b/i.test(lower)) {
     return true;
   }
 
-  const hasStack =
-    /\b(html|css|js|react|next\.?js|tailwind|vanilla|plain html)\b/i.test(lower) ||
-    /\bhtml\/css\/js\b/i.test(lower);
-  const hasFeatures =
-    /\b(menu|order|gallery|reservation|contact|payment|cart|booking)\b/i.test(lower);
-  const hasDesign =
-    /\b(theme|color|brown|gold|dark|light|modern|minimal|warm|palette)\b/i.test(lower);
+  const currentMsg = prompt.match(/\[Current message\]\n([\s\S]+)$/)?.[1]?.trim() ?? prompt.trim();
+
+  const hasColors =
+    /\b(brown|gold|dark|light|colorful|black|white|blue|green|warm|minimal|vibrant|pastel|theme)\b/i.test(
+      lower
+    );
+  const hasPaymentAnswer =
+    /\b(yes|no)\b/i.test(currentMsg) || /\b(ordering|payment|stripe|checkout)\b/i.test(lower);
+  const hasName =
+    currentMsg.length >= 4 &&
+    (currentMsg.includes(',') || /\b(called|named)\b/i.test(currentMsg) || currentMsg.split(/\s+/).length >= 2);
 
   if (/\[Previous conversation for context/i.test(prompt)) {
-    return hasStack || (hasFeatures && hasDesign) || (hasStack && hasFeatures);
+    return (hasName && hasColors) || (hasColors && hasPaymentAnswer);
   }
 
-  return (
-    hasStack &&
-    hasFeatures &&
-    (hasDesign || /\b(responsive|mobile)\b/i.test(lower) || prompt.length > 120)
-  );
+  return hasName && hasColors && hasPaymentAnswer;
 }
 
 export function isWebsiteBuildPrompt(prompt: string, category?: string): boolean {
   if (category === 'landing_page') return true;
   return /\b(website|web\s*page|landing|site|coffee|shop|store|restaurant|bakery)\b/i.test(prompt);
+}
+
+/** Build summary metadata from brief and plan for the summary card. */
+export function buildSummaryFromBrief(
+  prompt: string,
+  brief: string,
+  liveUrl?: string,
+  repoUrl?: string,
+  memoryNote?: string
+): BuildSummaryData {
+  const projectName = parseProjectName(prompt, brief);
+  const designTheme = parseDesignTheme(prompt, brief);
+  const needsPayment = parseNeedsPayment(prompt, brief);
+
+  const pages = ['Home', 'Menu', 'Gallery', 'Contact'];
+  if (needsPayment) pages.splice(2, 0, 'Order');
+
+  const features = ['Responsive design', designTheme];
+  if (needsPayment) features.unshift('Online ordering');
+
+  return {
+    projectName,
+    pages,
+    features,
+    designTheme,
+    liveUrl,
+    repoUrl,
+    memoryNote,
+    needsPayment,
+  };
 }

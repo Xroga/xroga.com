@@ -1,64 +1,64 @@
-/** XROGA AI Swarm Logic — compact user-facing status (Phases 1–9) */
+/** XROGA — beginner-friendly branded status messages */
 
 export const BRAND = {
   phase0: {
-    scanning: '[Phase 1] XROGA Visionary is scanning your request...',
+    scanning: '🔍 [Phase 1] Let me understand what you need...',
     briefCondensed: '[Phase 1] Brief condensed.',
-    clarifying: '[Phase 1] XROGA Visionary asks clarifying questions.',
-    briefReady: '[Phase 1] Fully Clarified Project Brief ready.',
+    clarifying: '🔍 [Phase 1] Let me understand what you need...',
+    briefReady: '[Phase 1] Project brief ready.',
   },
   phase1: {
-    planning: '[Phase 2] AI SWARM LOGIC plots step-by-step plan.',
-    planReady: (steps: number) => `[Phase 2] Master Plan ready — ${steps} steps.`,
+    planning: '📝 [Phase 2] XROGA is planning...',
+    planReady: (steps: number) => `📝 [Phase 2] ${steps} steps planned. Let's build!`,
   },
   phase2: {
     reviewing: '[Phase 3] XROGA Architect reviews the plan.',
-    negotiating: '[Phase 3] Plan cross-verification in progress...',
-    approved: '[Phase 3] XROGA Architect approves the plan.',
+    negotiating: '[Phase 3] Plan cross-verification...',
+    approved: '[Phase 3] Plan approved.',
   },
   phase3: {
-    execute: (step: number, target: string) => `[Phase 4] Executing Step ${step}: ${target}`,
+    execute: (step: number, total: number, label: string) =>
+      `⚙️ [Phase 3] Building... Step ${step}/${total} ${label}`,
   },
   phase4: {
-    verifying: '[Phase 5] Verification in progress...',
-    groqFail: '[Phase 5] Pulse: syntax issue detected.',
-    geminiFail: '[Phase 5] Visionary: logic drift detected.',
-    mistralFail: '[Phase 5] Co-Architect: edge case flagged.',
-    allPass: 'Verification: PASS',
+    verifying: '🔍 [Phase 4] Verifying...',
+    groqFail: '[Phase 4] Syntax issue detected — fixing...',
+    geminiFail: '[Phase 4] Logic issue detected — fixing...',
+    mistralFail: '[Phase 4] Edge case detected — fixing...',
+    allPass: '✅ All checks passed.',
   },
   phase5: {
-    correcting: '[Phase 6] Correcting errors...',
-    fixed: '[Phase 6] Corrections done — re-verifying.',
-    maxReached: '[Phase 6] Max correction loops — proceeding with best effort.',
+    correcting: '[Phase 4] Fixing issues behind the scenes...',
+    fixed: '[Phase 4] Fixes applied — re-verifying.',
+    maxReached: '[Phase 4] Proceeding with best effort.',
   },
   phase6: {
-    final: '[Phase 7] Final holistic verification (all agents).',
-    allPass: '[Phase 7] Final verification: ALL PASS.',
+    final: '[Phase 4] Final verification...',
+    allPass: '✅ All checks passed.',
   },
   phase7: {
-    emitting: '[Phase 8] BLACK HOLE V∞ emits the full project.',
-    success: '🎉 SINGULARITY ACHIEVED!',
+    emitting: '[Phase 5] Preparing your summary...',
+    success: '🎉 YOUR WEBSITE IS READY!',
   },
   phase8: {
-    githubPush: '[Phase 9] Deploying to GitHub + Vercel...',
-    liveDeploy: '[Phase 9] Live preview deploying...',
-    liveReady: '🔗 Live preview is ready.',
-    deployFailed: '[Phase 9] Deploy issue — code saved; retry preview shortly.',
+    githubPush: '🚀 [Phase 5] Creating GitHub repo...',
+    liveDeploy: '🚀 [Phase 5] Deploying to Vercel...',
+    liveReady: '🚀 [Phase 5] Deploying... ✅ Live!',
+    deployFailed: '[Phase 5] Deploy issue — code saved on GitHub.',
   },
   github: {
-    required: '🔗 Connect GitHub to start building.',
-    verified: 'GitHub connected — AI SWARM LOGIC engaged.',
+    required: '🔗 [Phase 0] Connect GitHub to save your work.',
+    verified: '✅ GitHub connected — your builds will be saved automatically.',
   },
   reserve: {
-    polish: '✨ XROGA Alpha Core is applying ultra-refinement...',
+    polish: '✨ XROGA Alpha Core is applying final polish...',
   },
   escape: {
-    pod: '🛸 XROGA Escape Pod engaged. Quantum tunneling in progress...',
+    pod: '🛸 XROGA Escape Pod engaged.',
     done: '🛸 Escape Pod delivery complete.',
   },
 } as const;
 
-/** Branded agent display names (never expose raw model names to users) */
 export const AGENT_DISPLAY: Record<string, string> = {
   architect: 'XROGA Architect',
   builder: 'XROGA Architect',
