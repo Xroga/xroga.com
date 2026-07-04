@@ -3,20 +3,18 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Rocket, Globe, Search } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
-import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useThemeStore } from '@/store/useThemeStore';
-import { estimatePrompt, uploadChatImage, type ChatAttachment } from '@/lib/api';
+import { uploadChatImage, type ChatAttachment } from '@/lib/api';
 import { IntegrationsModal } from './IntegrationsModal';
 import { GithubRepoModal } from './GithubRepoModal';
-import { ActionCostModal } from './ActionCostModal';
 import { DeployModal } from './DeployModal';
+import { TalkButton } from '@/components/voice/TalkButton';
 import { ChatbarShell } from '@/components/ui/Uiverse';
 import {
   ChatBarDragOverlay,
   ChatBarInputRow,
   ChatBarToolChip,
-  ChatBarFuelMeter,
   useSpeechToText,
 } from './ChatBarParts';
 import { ChatBarFileGrid } from './ChatBarFileGrid';
@@ -45,7 +43,6 @@ export function TerminalChatBar() {
     submit,
     stop,
   } = useTerminalChat();
-  const actions = useAppStore((s) => s.actions);
   const incognito = usePrivacyStore((s) => s.incognito);
   const theme = useThemeStore((s) => s.theme);
   const darkUi = theme === 'black' || theme === 'gray';
@@ -54,7 +51,6 @@ export function TerminalChatBar() {
   const shellRef = useRef<HTMLDivElement>(null);
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const [githubOpen, setGithubOpen] = useState(false);
-  const [costOpen, setCostOpen] = useState(false);
   const [deployOpen, setDeployOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -63,24 +59,6 @@ export function TerminalChatBar() {
   const [dragOver, setDragOver] = useState(false);
   const [listening, setListening] = useState(false);
   const [sendState, setSendState] = useState<SendButtonState>('idle');
-  const [liveEstimate, setLiveEstimate] = useState({ actions: 1, time: '5s' });
-
-  const remaining = actions?.remaining ?? 50;
-
-  useEffect(() => {
-    if (!prompt.trim()) {
-      setLiveEstimate({ actions: 1, time: '5s' });
-      return;
-    }
-    const t = setTimeout(() => {
-      void estimatePrompt(prompt).then((e) =>
-        setLiveEstimate({ actions: e.estimatedActions, time: e.estimatedTime })
-      );
-    }, 400);
-    return () => clearTimeout(t);
-  }, [prompt]);
-
-  const estimate = liveEstimate.actions;
 
   useEffect(() => {
     if (loading) setSendState('thinking');
@@ -253,7 +231,6 @@ export function TerminalChatBar() {
         onClose={() => setGithubOpen(false)}
         onSelect={(t) => setPrompt(prompt + (prompt ? '\n' : '') + t)}
       />
-      <ActionCostModal open={costOpen} onClose={() => setCostOpen(false)} />
       <DeployModal open={deployOpen} onClose={() => setDeployOpen(false)} />
 
       <div className="relative">
@@ -359,11 +336,7 @@ export function TerminalChatBar() {
               </button>
             </ChatBarTip>
             <div className="flex-1 min-w-[2px]" />
-            <ChatBarFuelMeter
-              remaining={remaining}
-              estimate={estimate}
-              onClick={() => setCostOpen(true)}
-            />
+            <TalkButton variant="inline" />
           </div>
           )}
 

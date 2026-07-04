@@ -6,7 +6,6 @@ import { TerminalChatBar } from './TerminalChatBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
 import { RepoContextBar } from './RepoContextBar';
 import { BlackHoleVButton } from './BlackHoleVButton';
-import { TalkButtonChatbarMount } from '@/components/voice/TalkButton';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { ChevronDown } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -86,7 +85,6 @@ export function TerminalDock() {
         )}
         <ChatbarQueueOutside />
         <div className="xv-chatbar-stack relative">
-          <TalkButtonChatbarMount />
           <TerminalChatBar />
         </div>
         {incognito ? (

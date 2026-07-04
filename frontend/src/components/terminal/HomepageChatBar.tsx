@@ -11,6 +11,7 @@ import {
 } from '@/components/terminal/ChatBarParts';
 import { ChatBarFileGrid } from '@/components/terminal/ChatBarFileGrid';
 import type { SendButtonState } from '@/components/terminal/ChatBarButtons';
+import { TalkButton } from '@/components/voice/TalkButton';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -120,6 +121,10 @@ export function HomepageChatBar() {
           }}
         >
           <ChatBarDragOverlay active={dragOver} />
+
+          <div className="flex items-center justify-end px-3 pt-2 pb-0 sm:px-4">
+            <TalkButton variant="inline" className="xv-talk-inline-btn--home" />
+          </div>
 
           <ChatBarFileGrid
             files={files}

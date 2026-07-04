@@ -10,7 +10,6 @@ import { AppStoreInline } from '@/components/ui/AppStoreInline';
 import { PowerSmashButton, HomeSignInButton } from '@/components/ui/XrogaButtons';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
 import { useThemeStore } from '@/store/useThemeStore';
-import { TalkButtonChatbarMount } from '@/components/voice/TalkButton';
 import { createClient } from '@/lib/supabase/client';
 
 export default function HomePage() {
@@ -95,7 +94,6 @@ export default function HomePage() {
           )}
 
           <div className="w-full mb-6 xv-chatbar-stack relative">
-            <TalkButtonChatbarMount />
             <HomepageChatBar />
           </div>
 

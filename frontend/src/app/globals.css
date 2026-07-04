@@ -722,6 +722,61 @@ body.theme-gray * {
     animation: talk-pulse 1.8s ease infinite;
   }
 
+  /* Compact Talk chip — inside chatbar toolbar (replaces fuel meter) */
+  .xv-talk-inline-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 9999px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    border: 1px solid rgba(0, 106, 255, 0.35);
+    background: linear-gradient(135deg, rgba(0, 106, 255, 0.22), rgba(56, 189, 248, 0.1));
+    color: #93c5fd;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .xv-talk-inline-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 106, 255, 0.22);
+  }
+
+  .xv-talk-inline-btn--live {
+    animation: talk-pulse 1.8s ease infinite;
+  }
+
+  .xv-talk-inline-btn--black {
+    border-color: rgba(255, 255, 255, 0.22);
+    background: #111;
+    color: #fff;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.06);
+  }
+
+  .xv-talk-inline-btn--gray {
+    border-color: rgba(255, 255, 255, 0.16);
+    background: linear-gradient(135deg, #2a2a2a, #141414);
+    color: #e5e5e5;
+  }
+
+  .xv-talk-inline-btn--white {
+    border-color: rgba(37, 99, 235, 0.28);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(255, 255, 255, 0.92));
+    color: #1e40af;
+  }
+
+  .xv-talk-inline-btn--home {
+    border-color: rgba(0, 106, 255, 0.45);
+    background: linear-gradient(135deg, rgba(0, 106, 255, 0.3), rgba(56, 189, 248, 0.12));
+    color: #dbeafe;
+    height: 26px;
+    font-size: 10px;
+  }
+
   /* Uiverse blue/sky — image + white themes */
   .xv-talk-btn-uiverse {
     --talk-duration: 7s;
