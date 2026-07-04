@@ -197,18 +197,32 @@ router.get('/status', async (req: AuthRequest, res) => {
     .eq('user_id', req.userId!)
     .maybeSingle();
 
-  const { data: userInt } = await supabase
+  let username: string | null = null;
+
+  const { data: userInt, error: userIntErr } = await supabase
     .from('user_integrations')
-    .select('metadata, provider_user_id')
+    .select('metadata')
     .eq('user_id', req.userId!)
     .eq('provider', 'github')
     .maybeSingle();
 
-  const metadata = userInt?.metadata as { username?: string } | null;
+  if (!userIntErr && userInt?.metadata) {
+    const metadata = userInt.metadata as { username?: string };
+    username = metadata.username ?? null;
+  }
+
+  if (!username) {
+    try {
+      const ghUser = await ghApi<{ login: string }>(token, '/user');
+      username = ghUser.login;
+    } catch {
+      username = 'github-user';
+    }
+  }
 
   res.json({
     connected: true,
-    username: metadata?.username ?? 'github-user',
+    username,
     repoStrategy: ghInt?.repo_strategy ?? 'auto',
     defaultRepo: ghInt?.default_repo ?? null,
   });
@@ -301,7 +315,14 @@ router.patch('/settings', async (req: AuthRequest, res) => {
 router.delete('/disconnect', async (req: AuthRequest, res) => {
   const supabase = getSupabaseAdmin();
   await supabase.from('github_integrations').delete().eq('user_id', req.userId!);
-  await supabase.from('user_integrations').delete().eq('user_id', req.userId!).eq('provider', 'github');
+  const { error } = await supabase
+    .from('user_integrations')
+    .delete()
+    .eq('user_id', req.userId!)
+    .eq('provider', 'github');
+  if (error && !/schema cache|could not find the table/i.test(error.message)) {
+    console.warn('[github/disconnect] user_integrations:', error.message);
+  }
   res.json({ disconnected: true });
 });
 

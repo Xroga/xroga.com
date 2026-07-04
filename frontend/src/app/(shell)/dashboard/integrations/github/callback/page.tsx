@@ -40,10 +40,14 @@ function CallbackHandler() {
         router.replace(`/dashboard?github=connected&username=${user}`);
       })
       .catch((e) => {
-        setMessage((e as Error).message);
-        if (!window.opener) {
-          setTimeout(() => router.replace('/dashboard'), 2500);
+        const msg = (e as Error).message;
+        setMessage(msg);
+        if (window.opener) {
+          window.opener.postMessage({ type: 'xroga-github-error', message: msg }, '*');
+          setTimeout(() => window.close(), 1200);
+          return;
         }
+        setTimeout(() => router.replace('/dashboard'), 2500);
       });
   }, [router, searchParams]);
 

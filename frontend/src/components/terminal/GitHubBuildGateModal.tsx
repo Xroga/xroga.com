@@ -36,6 +36,11 @@ export function GitHubBuildGateModal({ open, onClose, onConnected }: GitHubBuild
         setConnecting(false);
         onConnected(e.data.username as string | undefined);
       }
+      if (e.data?.type === 'xroga-github-error') {
+        stopPoll();
+        setConnecting(false);
+        setError(typeof e.data.message === 'string' ? e.data.message : 'GitHub connection failed');
+      }
     };
     window.addEventListener('message', onMessage);
     return () => {
