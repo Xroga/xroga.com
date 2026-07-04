@@ -1,4 +1,4 @@
-/** XROGA AI Swarm Logic — user-facing branded status messages (Phase 0–7) */
+/** XROGA AI Swarm Logic — user-facing branded status messages (Phases 1–9) */
 
 export const BRAND = {
   phase0: {
@@ -39,9 +39,12 @@ export const BRAND = {
   phase7: {
     emitting: '🚀 BLACK HOLE V∞ is emitting the Singularity output...',
     success: '🎉 Singularity achieved! Your build is ready.',
-    githubPush: '📦 XROGA is pushing code to GitHub...',
-    liveDeploy: '🌐 XROGA is deploying your live preview...',
-    liveReady: '🔗 Live preview is ready — open in a new tab.',
+  },
+  phase8: {
+    githubPush: '📦 Phase 9: Creating GitHub repo and pushing all files...',
+    liveDeploy: '🌐 Phase 9: Deploying live preview (Vercel / Netlify)...',
+    liveReady: '🔗 Live preview is ready — click to open.',
+    deployFailed: 'Deploy encountered an issue — code is on GitHub; retry preview shortly.',
   },
   github: {
     required: '🔗 Connect GitHub to start building.',

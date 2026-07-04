@@ -1,5 +1,5 @@
 /**
- * XROGA 7-Phase Swarm Negotiation Engine
+ * XROGA 9-Phase Swarm Negotiation Engine (internal phases 0–8)
  * DeepSeek + Gemini + Groq + Mistral (Core Quartet) | Claude/GPT (Reserve)
  */
 
@@ -15,7 +15,7 @@ import { groqGeneral } from '../../council/groqClient.js';
 import { mistralVerify, mistralChat } from '../../council/mistralClient.js';
 import { blackHoleEmit } from '../../blackhole/synthesizer.js';
 import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
-import { buildLandingPage } from '../../services/builder/landingPage.js';
+import { buildLandingFromSwarmAssembly } from './assembleLandingFromSwarm.js';
 import { debugCode } from '../../services/debugging/codeDebugger.js';
 import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../../types/features.js';
 import type { NegotiationContext, NegotiationPhase, NegotiationResult, VerificationReport, SwarmTodoItem } from './types.js';
@@ -32,6 +32,8 @@ import {
   PHASE_4_GEMINI_VERIFY,
   PHASE_5_CORRECT,
   PHASE_6_FINAL,
+  PHASE_7_EMIT,
+  XROGA_TAGLINE,
 } from './prompts.js';
 import { BRAND, failureBrand } from './brandedMessages.js';
 import { reservePolish, shouldUseReserve } from './reserve.js';
@@ -124,10 +126,10 @@ function createTodoState() {
 
   const addFinalTodos = () => {
     const extras: SwarmTodoItem[] = [
-      { id: 'github-push', label: '📦 XROGA pushed code to GitHub', status: 'pending' },
-      { id: 'live-deploy', label: '🌐 XROGA deployed live preview (Vercel / Netlify)', status: 'pending' },
-      { id: 'final-check', label: '🌀 XROGA Collective — final gravitational collapse test', status: 'pending' },
-      { id: 'emit', label: '🚀 BLACK HOLE V∞ emitting Singularity output', status: 'pending' },
+      { id: 'final-check', label: '🌀 Phase 7: Final holistic verification (all agents)', status: 'pending' },
+      { id: 'emit', label: '🚀 Phase 8: BLACK HOLE V∞ emission & project assembly', status: 'pending' },
+      { id: 'github-push', label: '📦 Phase 9: Push all files to new GitHub repo', status: 'pending' },
+      { id: 'live-deploy', label: '🌐 Phase 9: Vercel / Netlify live preview URL', status: 'pending' },
     ];
     for (const item of extras) {
       if (!build.some((b) => b.id === item.id)) build.push(item);
@@ -215,16 +217,29 @@ function emit(
 export function shouldUseNegotiationEngine(prompt: string, category: FeatureCategory): boolean {
   if (['landing_page', 'code_debug', 'browser_automation'].includes(category)) return true;
   const t = prompt.toLowerCase();
-  if (/\b(build|create|make|develop)\b[\s\S]{0,50}\b(website|web app|mobile app|game|software|api|script|component)\b/.test(t)) {
+  if (/\b(build|create|make|develop)\b[\s\S]{0,50}\b(website|web app|web\s*page|landing|site|coffee|shop|store)\b/.test(t)) {
+    return true;
+  }
+  if (/\b(build|create|make|develop)\b[\s\S]{0,50}\b(mobile app|game|software|api|script|component)\b/.test(t)) {
     return true;
   }
   if (/\b(debug|fix)\b[\s\S]{0,40}\b(code|bug|error|typescript|python)\b/.test(t)) return true;
   return false;
 }
 
+function hasBuildConversationContext(prompt: string): boolean {
+  return /\[Previous conversation for context/i.test(prompt) || /Fully Clarified Project Brief/i.test(prompt);
+}
+
 function isPass(text: string): boolean {
-  const head = text.trim().slice(0, 120);
-  return /^PASS\b/i.test(head) || /\bUNANIMOUS APPROVAL\b/i.test(head) || /^APPROVED PLAN\b/i.test(head);
+  const head = text.trim().slice(0, 160);
+  return (
+    /^PASS\b/i.test(head) ||
+    /\bUNANIMOUS APPROVAL\b/i.test(head) ||
+    /^APPROVED PLAN\b/i.test(head) ||
+    /\bFULL PROJECT APPROVED\b/i.test(head) ||
+    /\bSTEP\s+\d+\s+APPROVED\b/i.test(head)
+  );
 }
 
 function parsePlanSteps(plan: string): string[] {
@@ -332,7 +347,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   emit(ctx, 0, BRAND.phase0.scanning, 'reviewer', todos, 'XROGA Visionary');
 
   const analysis = analyzeUserQuery(userPrompt);
-  if (analysis.needsClarification && analysis.clarificationText) {
+  if (analysis.needsClarification && analysis.clarificationText && !hasBuildConversationContext(userPrompt)) {
     todos.setAnalysis(analysis.intentLabel);
     emit(ctx, 0, BRAND.phase0.clarifying, 'reviewer', todos, 'XROGA Visionary');
     return {
@@ -356,7 +371,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     clarifiedBrief = userPrompt;
   }
 
-  if (/clarifying question|\?\s*$/im.test(clarifiedBrief) && clarifiedBrief.split('?').length > 2) {
+  if (
+    !hasBuildConversationContext(userPrompt) &&
+    /clarifying question|\?\s*$/im.test(clarifiedBrief) &&
+    clarifiedBrief.split('?').length > 2
+  ) {
     todos.setAnalysis(clarifiedBrief.slice(0, 280));
     emit(ctx, 0, BRAND.phase0.clarifying, 'reviewer', todos, 'XROGA Visionary');
     const emitted = await blackHoleEmit(clarifiedBrief, userPrompt, 'general', 'elite');
@@ -453,7 +472,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       const failures = reports.filter((r) => !r.pass);
 
       if (!failures.length) {
-        emit(ctx, 4, BRAND.phase4.allPass, 'qa', todos, 'AI SWARM LOGIC');
+        emit(ctx, 4, `STEP ${si + 1} APPROVED — ${BRAND.phase4.allPass}`, 'qa', todos, 'AI SWARM LOGIC');
         approved = true;
         break;
       }
@@ -510,11 +529,20 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   todos.activateFinal('emit');
   emit(ctx, 7, BRAND.phase7.emitting, 'builder', todos, 'BLACK HOLE V∞');
   let featureOutput: FeatureOutput | null = null;
+  let deployError: string | null = null;
+
+  const isWebBuild =
+    featureCategory === 'landing_page' ||
+    /\b(website|web\s*page|landing|site|coffee|shop)\b/i.test(userPrompt);
 
   try {
-    if (featureCategory === 'landing_page') {
-      const enriched = `${userPrompt}\n\nApproved Swarm Plan:\n${approvedPlan}\n\nVerified code:\n${assembledCode.slice(0, 4000)}`;
-      featureOutput = await buildLandingPage(enriched);
+    if (isWebBuild) {
+      featureOutput = await buildLandingFromSwarmAssembly(
+        assembledCode,
+        userPrompt,
+        approvedPlan,
+        clarifiedBrief
+      );
     } else if (featureCategory === 'code_debug') {
       featureOutput = await debugCode({
         code: assembledCode,
@@ -528,8 +556,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   const projectSlug = `xroga-build-${Date.now()}`;
   if (featureOutput?.type === 'landing_page') {
+    todos.completeFinal('emit');
     todos.activateFinal('github-push');
-    emit(ctx, 7, BRAND.phase7.githubPush, 'builder', todos, 'AI SWARM LOGIC');
+    emit(ctx, 8, BRAND.phase8.githubPush, 'builder', todos, 'AI SWARM LOGIC');
     try {
       const files = landingFilesFromOutput(featureOutput.html, featureOutput.css, featureOutput.js);
       const pipeline = await pushAndDeployLivePreview(userId, files, projectSlug);
@@ -542,14 +571,16 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       };
       todos.completeFinal('github-push');
       todos.activateFinal('live-deploy');
-      emit(ctx, 7, BRAND.phase7.liveDeploy, 'builder', todos, 'AI SWARM LOGIC');
+      emit(ctx, 8, BRAND.phase8.liveDeploy, 'builder', todos, 'AI SWARM LOGIC');
       todos.completeFinal('live-deploy');
-      emit(ctx, 7, BRAND.phase7.liveReady, 'complete', todos, 'BLACK HOLE V∞');
+      emit(ctx, 8, BRAND.phase8.liveReady, 'complete', todos, 'BLACK HOLE V∞');
     } catch (err) {
-      console.warn('[NegotiationEngine] GitHub/deploy pipeline:', (err as Error).message);
-      todos.completeFinal('github-push');
-      todos.completeFinal('live-deploy');
+      deployError = (err as Error).message;
+      console.warn('[NegotiationEngine] GitHub/deploy pipeline:', deployError);
+      emit(ctx, 8, BRAND.phase8.deployFailed, 'builder', todos, 'AI SWARM LOGIC');
     }
+  } else {
+    todos.completeFinal('emit');
   }
 
   const liveUrl =
@@ -558,10 +589,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     featureOutput?.type === 'landing_page' ? featureOutput.githubRepoUrl : undefined;
 
   const rawEmit = liveUrl
-    ? `Your project is live! 🎉\n\n🔗 Live preview: ${liveUrl}${repoUrl ? `\n📦 GitHub: ${repoUrl}` : ''}`
-    : featureOutput
-      ? `Your project is ready 🎉\n\n${assembledCode.slice(0, 6000)}`
-      : `Your build is ready 🎉\n\n${assembledCode}`;
+    ? `Your project is live! 🎉\n\n🔗 Live preview: ${liveUrl}${repoUrl ? `\n📦 GitHub: ${repoUrl}` : ''}\n\n${XROGA_TAGLINE}`
+    : deployError
+      ? `Build complete — GitHub/deploy step failed: ${deployError}\n\n${assembledCode.slice(0, 4000)}`
+      : featureOutput
+        ? `Your project is ready 🎉\n\n${assembledCode.slice(0, 6000)}\n\n${XROGA_TAGLINE}`
+        : `Your build is ready 🎉\n\n${assembledCode}\n\n${XROGA_TAGLINE}`;
 
   let polishedOutput: string;
   try {
