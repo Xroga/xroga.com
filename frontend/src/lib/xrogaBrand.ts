@@ -8,8 +8,9 @@ const PROVIDER_PATTERNS: Array<[RegExp, string]> = [
   [/\bMistral\b/gi, 'XROGA Co-Architect'],
 ];
 
-export function sanitizeXrogaTerminalText(text: string): string {
-  let out = text;
+export function sanitizeXrogaTerminalText(text: string | null | undefined): string {
+  if (text == null) return '';
+  let out = String(text);
   for (const [pattern, replacement] of PROVIDER_PATTERNS) {
     out = out.replace(pattern, replacement);
   }

@@ -68,7 +68,11 @@ export function FeatureOutputView({
     return <ImageStudioCard data={data} messageId={messageId} onDelete={onDelete} />;
   }
 
-  if (o.type === 'landing_page' && typeof o.deployUrl === 'string') {
+  if (o.type === 'landing_page') {
+    const deployUrl = typeof o.deployUrl === 'string' ? o.deployUrl.trim() : '';
+    const githubRepoUrl = typeof o.githubRepoUrl === 'string' ? o.githubRepoUrl : undefined;
+    if (!deployUrl && !githubRepoUrl) return null;
+
     return (
       <LandingPageCard
         data={{
@@ -77,8 +81,8 @@ export function FeatureOutputView({
           css: typeof o.css === 'string' ? o.css : '',
           js: typeof o.js === 'string' ? o.js : '',
           heroImageUrl: typeof o.heroImageUrl === 'string' ? o.heroImageUrl : undefined,
-          deployUrl: o.deployUrl,
-          githubRepoUrl: typeof o.githubRepoUrl === 'string' ? o.githubRepoUrl : undefined,
+          deployUrl: deployUrl || githubRepoUrl || '',
+          githubRepoUrl,
           githubRepoName: typeof o.githubRepoName === 'string' ? o.githubRepoName : undefined,
         }}
       />

@@ -81,21 +81,22 @@ export function ModernResponseText({
   content: string;
   streaming?: boolean;
 }) {
+  const safeContent = typeof content === 'string' ? content : '';
   const prevLen = useRef(0);
   const blockRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (content.length > prevLen.current && blockRef.current && !streaming) {
+    if (safeContent.length > prevLen.current && blockRef.current && !streaming) {
       blockRef.current.style.animation = 'none';
       void blockRef.current.offsetHeight;
-      if (content.length > 0) {
+      if (safeContent.length > 0) {
         blockRef.current.style.animation = 'xv-response-in 0.35s ease-out';
       }
     }
-    prevLen.current = content.length;
-  }, [content, streaming]);
+    prevLen.current = safeContent.length;
+  }, [safeContent, streaming]);
 
-  if (!content && streaming) {
+  if (!safeContent && streaming) {
     return (
       <span className="xv-stream-cursor inline-flex items-center">
         <span className="w-0.5 h-4 bg-[#006aff]/70 rounded-full animate-pulse" />
@@ -103,14 +104,14 @@ export function ModernResponseText({
     );
   }
 
-  const images = extractImagesFromContent(content);
-  const textOnly = stripImageMarkdown(content);
-  const provider = parseProviderFromContent(content);
+  const images = extractImagesFromContent(safeContent);
+  const textOnly = stripImageMarkdown(safeContent);
+  const provider = parseProviderFromContent(safeContent);
 
-  if (isFailedImageContent(content) && images.length === 0) {
+  if (isFailedImageContent(safeContent) && images.length === 0) {
     return (
       <div ref={blockRef} className="xv-response-text">
-        <p className="whitespace-pre-wrap text-[13px] text-red-300/90">{textOnly || content}</p>
+        <p className="whitespace-pre-wrap text-[13px] text-red-300/90">{textOnly || safeContent}</p>
       </div>
     );
   }
@@ -147,7 +148,7 @@ export function ModernResponseText({
       ref={blockRef}
       className={cn('xv-response-text', streaming && 'xv-streaming')}
     >
-      <PlainAiResponse content={content} streaming={streaming} />
+      <PlainAiResponse content={safeContent} streaming={streaming} />
     </div>
   );
 }

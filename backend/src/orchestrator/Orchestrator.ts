@@ -657,8 +657,13 @@ export class Orchestrator {
     }
 
     // 9-Phase AI Swarm Logic — replaces background queue for build tasks
-    if (shouldUseNegotiationEngine(userText, featureCategory)) {
-      return this.executeNegotiationBuild(ctx, featureCategory);
+    const buildCategory: FeatureCategory =
+      featureCategory === 'chat' && shouldUseNegotiationEngine(userText, 'landing_page')
+        ? 'landing_page'
+        : featureCategory;
+
+    if (shouldUseNegotiationEngine(userText, buildCategory)) {
+      return this.executeNegotiationBuild(ctx, buildCategory);
     }
 
     const plan = await buildArchitectDAG(ctx.prompt, {

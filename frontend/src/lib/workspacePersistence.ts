@@ -1,5 +1,6 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
 import { rehydrateMessagesWithMedia } from '@/lib/messageRehydration';
+import { sanitizeChatMessages } from '@/lib/sanitizeChatMessages';
 import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 
 const KEY = 'xroga_workspace_session';
@@ -38,7 +39,7 @@ export function loadWorkspaceSession(): WorkspaceSession | null {
   const session = readRawSession();
   if (!session) return null;
   if (session.messages?.length) {
-    session.messages = rehydrateMessagesWithMedia(session.messages);
+    session.messages = rehydrateMessagesWithMedia(sanitizeChatMessages(session.messages));
   }
   return session;
 }
