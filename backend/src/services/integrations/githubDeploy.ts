@@ -73,23 +73,44 @@ async function getGitHubUsername(token: string): Promise<string> {
   return user.login;
 }
 
-async function createRepo(token: string, name: string): Promise<{ fullName: string; htmlUrl: string }> {
+async function createRepo(token: string, name: string): Promise<{ fullName: string; htmlUrl: string; owner: string; repo: string }> {
   const res = await ghFetch(token, '/user/repos', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       name,
       private: false,
-      auto_init: false,
+      auto_init: true,
       description: 'Built with XROGA AI Swarm',
     }),
   });
+  if (res.status === 422) {
+    const username = await getGitHubUsername(token);
+    return {
+      fullName: `${username}/${name}`,
+      htmlUrl: `https://github.com/${username}/${name}`,
+      owner: username,
+      repo: name,
+    };
+  }
   if (!res.ok) {
     const err = await res.text();
     throw new Error(`GitHub create repo failed: ${res.status} ${err}`);
   }
   const repo = (await res.json()) as { full_name: string; html_url: string };
-  return { fullName: repo.full_name, htmlUrl: repo.html_url };
+  const [owner, repoName] = repo.full_name.split('/');
+  return { fullName: repo.full_name, htmlUrl: repo.html_url, owner: owner!, repo: repoName! };
+}
+
+async function getBranchHeadSha(token: string, owner: string, repo: string): Promise<string | null> {
+  for (const branch of ['main', 'master']) {
+    const res = await ghFetch(token, `/repos/${owner}/${repo}/git/ref/heads/${branch}`);
+    if (res.ok) {
+      const data = (await res.json()) as { object: { sha: string } };
+      return data.object.sha;
+    }
+  }
+  return null;
 }
 
 async function pushFilesToRepo(
@@ -125,26 +146,41 @@ async function pushFilesToRepo(
   if (!treeRes.ok) throw new Error(`GitHub tree failed: ${treeRes.status}`);
   const tree = (await treeRes.json()) as { sha: string };
 
+  const parentSha = await getBranchHeadSha(token, owner, repo);
+
   const commitRes = await ghFetch(token, `/repos/${owner}/${repo}/git/commits`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message, tree: tree.sha, parents: [] }),
+    body: JSON.stringify({
+      message,
+      tree: tree.sha,
+      parents: parentSha ? [parentSha] : [],
+    }),
   });
   if (!commitRes.ok) throw new Error(`GitHub commit failed: ${commitRes.status}`);
   const commit = (await commitRes.json()) as { sha: string };
 
-  const refRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ref: 'refs/heads/main', sha: commit.sha }),
-  });
-  if (!refRes.ok) {
+  if (parentSha) {
     const updateRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs/heads/main`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sha: commit.sha, force: true }),
+      body: JSON.stringify({ sha: commit.sha }),
     });
-    if (!updateRes.ok) throw new Error(`GitHub ref failed: ${refRes.status}`);
+    if (!updateRes.ok) {
+      const masterRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs/heads/master`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sha: commit.sha }),
+      });
+      if (!masterRes.ok) throw new Error(`GitHub ref update failed: ${updateRes.status}`);
+    }
+  } else {
+    const refRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ref: 'refs/heads/main', sha: commit.sha }),
+    });
+    if (!refRes.ok) throw new Error(`GitHub ref create failed: ${refRes.status}`);
   }
 }
 
@@ -175,9 +211,8 @@ export async function pushBuildToGitHub(
     await pushFilesToRepo(token, owner, repo, files, `XROGA build — ${new Date().toISOString()}`);
   } else {
     const created = await createRepo(token, repoName);
-    const [o, r] = created.fullName.split('/');
-    owner = o!;
-    repo = r!;
+    owner = created.owner;
+    repo = created.repo;
     htmlUrl = created.htmlUrl;
     await pushFilesToRepo(token, owner, repo, files, 'Initial XROGA build');
   }

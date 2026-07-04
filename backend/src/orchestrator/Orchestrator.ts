@@ -40,6 +40,8 @@ import {
   shouldUseNegotiationEngine,
 } from '../swarm/negotiation/engine.js';
 import { isPaidApiAllowed } from '../config/hybridConfig.js';
+import { routeDualPipeline } from '../router/dualPipelineRouter.js';
+import { persistBuildRun } from '../services/memory/buildPersistence.js';
 
 const FRIENDLY_FALLBACKS = [
   "I'm putting the finishing touches on this — here's what I can share right now based on your request.",
@@ -248,15 +250,26 @@ export class Orchestrator {
     const structuredOutput = result.featureOutput ?? ({ type: 'chat', content: replyText } as FeatureOutput);
     const followUps = isLanding
       ? [
-          'Open live preview',
-          'Push another update',
-          'Add a contact form',
           'Change the color scheme',
+          'Add a testimonials section',
+          'Rename the brand',
+          'Open live preview',
         ]
       : [...shieldFollowUps, 'Deploy this build?', 'Add another feature?'].slice(0, 4);
 
+    const runId = crypto.randomUUID();
+    void persistBuildRun({
+      userId: ctx.userId,
+      prompt: ctx.prompt,
+      featureCategory,
+      success: result.success,
+      polishedReply: replyText,
+      featureOutput: structuredOutput.type === 'landing_page' ? structuredOutput : result.featureOutput,
+      runId,
+    });
+
     return {
-      runId: crypto.randomUUID(),
+      runId,
       result: {
         success: result.success,
         iterations: 1,
@@ -574,6 +587,17 @@ export class Orchestrator {
     const featureCategory = hasImageAttachment
       ? resolveAttachmentFeatureCategory(userText, route.category)
       : resolveFeatureCategory(userText, route.category);
+
+    const dualRoute = routeDualPipeline({
+      userId: ctx.userId,
+      prompt: ctx.prompt,
+      history: ctx.history,
+    });
+
+    // Dual pipeline: build intent → code engine (DeepSeek Code), never chat model
+    if (dualRoute.pipeline === 'build') {
+      return this.executeNegotiationBuild(ctx, dualRoute.featureCategory);
+    }
 
     // Fast chat: greetings & simple conversation — no swarm, no architect spam
     if (shouldUseFastChat(ctx.prompt, featureCategory)) {

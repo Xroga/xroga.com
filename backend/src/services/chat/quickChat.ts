@@ -17,7 +17,7 @@ import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
 import type { RouteProgressFn } from '../../orchestrator/xrogaRouter.js';
 import type { ChatTurn } from '../../lib/conversationContext.js';
 
-const CHAT_SYSTEM = `You are XROGA AI — Black Hole V∞. Use your full native knowledge. Know who XROGA is and what we offer. Emojis welcome. Start with a bold headline, then answer naturally. Never mention underlying AI providers.`;
+const CHAT_SYSTEM = `You are XROGA, a helpful assistant. Answer the user's question conversationally. Never mention underlying AI providers. Emojis welcome.`;
 
 export async function quickChat(
   prompt: string,

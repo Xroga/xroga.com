@@ -43,7 +43,7 @@ export function LandingPageCard({ data }: { data: LandingPageOutputData }) {
   return (
     <div className="rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] overflow-hidden">
       <div className="px-3 py-2.5 border-b border-white/10 bg-emerald-500/10">
-        <p className="text-sm font-bold text-emerald-400">🎉 YOUR WEBSITE IS READY!</p>
+        <p className="text-sm font-bold text-emerald-400">🎉 YOUR PROJECT IS LIVE!</p>
       </div>
 
       <div className="px-3 py-3 border-b border-white/10 bg-black/10">

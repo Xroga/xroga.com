@@ -117,7 +117,7 @@ export const PHASE_UI = {
 
 export function formatBuildSummaryCard(data: BuildSummaryData): string {
   const lines = [
-    '🎉 YOUR WEBSITE IS READY!',
+    '🎉 YOUR PROJECT IS LIVE!',
     '',
     '📌 **Summary:**',
     `   - Name: ${data.projectName}`,
@@ -129,11 +129,17 @@ export function formatBuildSummaryCard(data: BuildSummaryData): string {
     lines.push('', '🔗 **Live Preview:** [Click to Open ↗]', `   → ${data.liveUrl}`);
   }
   if (data.repoUrl) {
-    lines.push('', '📂 **GitHub Repository:** [View Files ↗]', `   → ${data.repoUrl}`);
+    lines.push('', '📂 **GitHub:** [View Files ↗]', `   → ${data.repoUrl}`);
   }
   if (data.memoryNote) {
     lines.push('', `💬 **Old chats remembered:** ${data.memoryNote}`);
   }
+  lines.push(
+    '',
+    '💬 **Now, let\'s make it yours:**',
+    '   Reply with brand name, colors, or sections to add/change.',
+    '   Example: "Change name to Blue Bean, navy & white colors, add testimonials"'
+  );
   return lines.join('\n');
 }
 
