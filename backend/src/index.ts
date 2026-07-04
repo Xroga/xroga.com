@@ -77,6 +77,7 @@ import { getImageProviderStatus } from './services/builder/imageGen.js';
 import { getVideoProviderStatus } from './lib/videoProviders.js';
 import { getCouncilKeyStatus, getDeployKeyStatus } from './config/envSecrets.js';
 import { getGitHubOAuthCallbackUrl } from './routes/github.js';
+import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
 
 const healthPayload = () => {
   const image = getImageProviderStatus();
@@ -105,6 +106,7 @@ const healthPayload = () => {
     videoProviders: video.configured,
     videoReady: video.ready,
     videoKeys: video.keys,
+    githubSchemaAutoBootstrap: githubSchemaAutoBootstrapEnabled(),
   };
 };
 
@@ -299,6 +301,9 @@ server.listen(port, '0.0.0.0', () => {
   if (!process.env.SUPABASE_URL) {
     console.warn('WARNING: SUPABASE_URL is not set — authenticated routes will fail');
   }
+  void ensureGithubSchema().catch((err) => {
+    console.warn('[githubSchema] Startup ensure skipped:', (err as Error).message);
+  });
   if (process.env.RUN_SWARM_WORKER === 'true') {
     startSwarmWorker();
   }

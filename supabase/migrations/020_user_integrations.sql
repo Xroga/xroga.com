@@ -47,4 +47,7 @@ BEGIN
   END IF;
 END $$;
 
+GRANT ALL ON TABLE public.user_integrations TO service_role;
+GRANT ALL ON TABLE public.github_integrations TO service_role;
+
 NOTIFY pgrst, 'reload schema';

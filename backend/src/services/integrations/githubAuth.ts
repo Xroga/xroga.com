@@ -1,4 +1,5 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
+import { ensureGithubSchema } from '../../db/ensureGithubSchema.js';
 
 export type GitHubRepoStrategy = 'auto' | 'monorepo' | 'manual';
 
@@ -88,7 +89,9 @@ export async function saveGitHubConnection(
   const repoStrategy = opts.repoStrategy ?? 'auto';
   const defaultRepo = opts.defaultRepo ?? null;
 
-  const { error: ghErr } = await supabase.from('github_integrations').upsert(
+  await ensureGithubSchema();
+
+  let { error: ghErr } = await supabase.from('github_integrations').upsert(
     {
       user_id: userId,
       access_token: token,
@@ -98,10 +101,25 @@ export async function saveGitHubConnection(
     { onConflict: 'user_id' }
   );
 
+  if (ghErr && isMissingTableError(ghErr.message)) {
+    const bootstrapped = await ensureGithubSchema();
+    if (bootstrapped) {
+      ({ error: ghErr } = await supabase.from('github_integrations').upsert(
+        {
+          user_id: userId,
+          access_token: token,
+          repo_strategy: repoStrategy,
+          default_repo: defaultRepo,
+        },
+        { onConflict: 'user_id' }
+      ));
+    }
+  }
+
   if (ghErr) {
     if (isMissingTableError(ghErr.message)) {
       throw new Error(
-        'GitHub storage is not configured on the server. Run Supabase migration 020_user_integrations.sql.'
+        'GitHub storage is not ready yet. Ask your admin to run scripts/apply-github-integration-migration.mjs or paste supabase/migrations/020_user_integrations.sql in Supabase SQL Editor, then try Connect again.'
       );
     }
     throw new Error(`Failed to save GitHub connection: ${ghErr.message}`);

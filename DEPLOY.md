@@ -88,6 +88,17 @@ supabase link --project-ref YOUR_REF
 
 Option B (SQL Editor): paste contents of `supabase/migrations/*.sql` in order.
 
+Option C (GitHub integration only — required for Connect GitHub):
+```bash
+DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db.YOUR_REF.supabase.co:5432/postgres" \
+  node scripts/apply-github-integration-migration.mjs
+```
+
+Then set the same URI on Fly so the API can auto-ensure tables on startup:
+```bash
+fly secrets set -a xroga-api DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db.YOUR_REF.supabase.co:5432/postgres"
+```
+
 ## Verify
 ```bash
 curl https://xroga-api.fly.dev/health
