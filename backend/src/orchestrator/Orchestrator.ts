@@ -169,12 +169,34 @@ export class Orchestrator {
       });
     } catch (err) {
       console.warn('[Orchestrator] Negotiation engine failed, Escape Pod:', (err as Error).message);
-      result = await runEscapePod({
-        userPrompt: userText,
-        userId: ctx.userId,
-        featureCategory,
-        onProgress: ctx.onProgress,
-      });
+      try {
+        result = await runEscapePod({
+          userPrompt: userText,
+          userId: ctx.userId,
+          featureCategory,
+          onProgress: ctx.onProgress,
+        });
+      } catch (escapeErr) {
+        console.warn('[Orchestrator] Escape Pod failed:', (escapeErr as Error).message);
+        const msg = (err as Error).message?.includes('GitHub')
+          ? '🔗 Connect your GitHub account to start building. XROGA will auto-push code and deploy a live preview.'
+          : `⚠️ Build could not complete: ${(err as Error).message?.slice(0, 120) || 'API unavailable'}. Check GitHub connection and DEEPSEEK_CODE_API_KEY on Fly.io.`;
+        return {
+          runId: crypto.randomUUID(),
+          result: {
+            success: false,
+            iterations: 0,
+            defectsFound: 0,
+            plan: defaultPlan(),
+            agents: defaultAgents(['architect']),
+            output: { type: 'chat', content: msg } as FeatureOutput,
+          },
+          actions: { success: true, remaining: 0, cost: 0 },
+          featureCategory,
+          polishedReply: msg,
+          followUps: ['Connect GitHub', 'Try build again'],
+        };
+      }
     }
 
     if (result.needsGitHubConnection) {
@@ -545,31 +567,45 @@ export class Orchestrator {
     ctx.prompt = prompt;
     const userText = routingPrompt(prompt);
 
-    // Capabilities FAQ — never DAG, never background queue
-    if (isCapabilitiesQuery(userText)) {
-      return this.executeFastChat(ctx, 'chat');
-    }
+    const dualRouteEarly = routeDualPipeline({
+      userId: ctx.userId,
+      prompt: ctx.prompt,
+      history: ctx.history,
+    });
 
-    // Build continuation — Phase 1 answers must enter negotiation, never fast chat
+    // BUILD FIRST — never let "build a website" fall through to chat model
     if (
+      dualRouteEarly.pipeline === 'build' ||
       isBuildContinuation(prompt) ||
       shouldContinueWebsiteBuild(prompt, ctx.history) ||
-      (ctx.clientMeta?.buildContinuation && looksLikeBuildClarificationAnswer(prompt))
-    ) {
-      return this.executeNegotiationBuild(ctx, 'landing_page');
-    }
-
-    // Post-build updates — name, colors, sections — re-run build pipeline (never chat)
-    if (
+      (ctx.clientMeta?.buildContinuation && looksLikeBuildClarificationAnswer(prompt)) ||
       isWebsiteBuildUpdate(prompt, ctx.history) ||
       ctx.clientMeta?.buildUpdate ||
       (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history))
     ) {
-      if (!hasThreadContext(prompt) && ctx.history?.length) {
+      if (
+        (isWebsiteBuildUpdate(prompt, ctx.history) ||
+          ctx.clientMeta?.buildUpdate ||
+          (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history))) &&
+        !hasThreadContext(prompt) &&
+        ctx.history?.length
+      ) {
         prompt = enrichPromptForWebsiteContext(prompt, ctx.history);
         ctx.prompt = prompt;
+      } else if (
+        (isBuildContinuation(prompt) || shouldContinueWebsiteBuild(prompt, ctx.history)) &&
+        !hasThreadContext(prompt) &&
+        ctx.history?.length
+      ) {
+        prompt = enrichPromptWithThread(prompt, ctx.history);
+        ctx.prompt = prompt;
       }
-      return this.executeNegotiationBuild(ctx, 'landing_page');
+      return this.executeNegotiationBuild(ctx, dualRouteEarly.featureCategory ?? 'landing_page');
+    }
+
+    // Capabilities FAQ — never DAG, never background queue
+    if (isCapabilitiesQuery(userText)) {
+      return this.executeFastChat(ctx, 'chat');
     }
 
     const hasImageAttachment = ctx.attachments?.some(
@@ -587,17 +623,6 @@ export class Orchestrator {
     const featureCategory = hasImageAttachment
       ? resolveAttachmentFeatureCategory(userText, route.category)
       : resolveFeatureCategory(userText, route.category);
-
-    const dualRoute = routeDualPipeline({
-      userId: ctx.userId,
-      prompt: ctx.prompt,
-      history: ctx.history,
-    });
-
-    // Dual pipeline: build intent → code engine (DeepSeek Code), never chat model
-    if (dualRoute.pipeline === 'build') {
-      return this.executeNegotiationBuild(ctx, dualRoute.featureCategory);
-    }
 
     // Fast chat: greetings & simple conversation — no swarm, no architect spam
     if (shouldUseFastChat(ctx.prompt, featureCategory)) {

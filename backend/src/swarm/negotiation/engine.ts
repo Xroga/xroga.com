@@ -380,6 +380,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   const currentMessage = routingPrompt(userPrompt);
   const todos = createTodoState();
   const buildState = new BuildState();
+  const businessLabel = inferBusinessLabel(userPrompt);
+
+  emit(ctx, 0, BRAND.phase0.scanning(businessLabel), 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
 
   todos.activateMeta('github');
   const githubOk = await isGitHubConnected(userId);
@@ -403,7 +406,6 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   const memoryNote = formatMemorySuggestion(pastBuilds);
 
   todos.activateMeta('analyze');
-  const businessLabel = inferBusinessLabel(userPrompt);
   emit(ctx, 0, BRAND.phase0.scanning(businessLabel), 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
 
   const analysis = analyzeUserQuery(userPrompt);
@@ -514,11 +516,15 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   if (isUpdateBuild) {
     masterPlan = defaultUpdatePlanForPrompt(userPrompt).join('\n');
   } else {
-    masterPlan = await geminiCall(PHASE_1_PLANNING_GEMINI, `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`);
     try {
-      masterPlan = await groqCall(PHASE_1_PLANNING_GROQ, masterPlan, 400);
+      masterPlan = await geminiCall(PHASE_1_PLANNING_GEMINI, `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`);
+      try {
+        masterPlan = await groqCall(PHASE_1_PLANNING_GROQ, masterPlan, 400);
+      } catch {
+        /* keep gemini plan */
+      }
     } catch {
-      /* keep gemini plan */
+      masterPlan = defaultPlanForPrompt(userPrompt).join('\n');
     }
   }
   buildState.markDone('planned');
@@ -595,10 +601,16 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       userPhase: 1,
     });
 
-    let stepCode = await deepseekCall(
-      PHASE_3_EXECUTE,
-      `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${steps[si]}\n\nUser:\n${userPrompt}\n\nTech: plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.`
-    );
+    let stepCode = '';
+    try {
+      stepCode = await deepseekCall(
+        PHASE_3_EXECUTE,
+        `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${steps[si]}\n\nUser:\n${userPrompt}\n\nTech: plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.`
+      );
+    } catch (stepErr) {
+      console.warn('[NegotiationEngine] Step code gen:', (stepErr as Error).message);
+      stepCode = `<!-- Step ${si + 1} fallback -->\n<section><h2>${steps[si]}</h2><p>Content for ${steps[si]}</p></section>`;
+    }
 
     let approved = false;
     for (let attempt = 0; attempt < MAX_STEP_CORRECTIONS; attempt++) {

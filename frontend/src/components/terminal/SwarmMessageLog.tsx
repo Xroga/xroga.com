@@ -21,6 +21,7 @@ import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
+import { isWebsiteBuildPrompt, isWebsiteBuildUpdate } from '@/lib/chatMemory';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
 import { VideoProductionAnimation } from './VideoProductionAnimation';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
@@ -201,10 +202,14 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
 
   const isVideoLoading = loading && isVideoGenerationPrompt(lastUserText);
 
+  const buildPromptActive =
+    isWebsiteBuildPrompt(lastUserText) || isWebsiteBuildUpdate(lastUserText, messages);
+
   const showChatThinking =
     loading &&
     !isVideoLoading &&
     !isImageGenerationPrompt(lastUserText) &&
+    !buildPromptActive &&
     pipelineCompact;
 
   function handleEditAI(content: string) {
@@ -388,7 +393,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
-                        {loading && msg.id === animatingId && (swarmTodos.length > 0 || swarmNegotiationPhase != null) && (
+                        {loading && msg.id === animatingId && (buildPromptActive || swarmTodos.length > 0 || swarmNegotiationPhase != null) && (
                           <SwarmPhasePanel
                             activePhase={swarmNegotiationPhase}
                             loading={loading}

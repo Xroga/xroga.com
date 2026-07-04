@@ -24,7 +24,7 @@ import {
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
-import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
+import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, isWebsiteBuildPrompt, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { sanitizeChatMessages } from '@/lib/sanitizeChatMessages';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
@@ -44,6 +44,9 @@ import {
 } from '@/lib/xrogaBrand';
 import { addPendingVideoJob } from '@/lib/pendingVideoJobs';
 import { useBackgroundVideoJobs } from '@/hooks/useBackgroundVideoJobs';
+
+const GENERIC_SWARM_FALLBACK =
+  "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.";
 
 type MessageRole = 'user' | 'assistant' | 'system';
 
@@ -650,19 +653,24 @@ export function TerminalChatProvider({
       setSwarmAnalysis(null);
       setSwarmActivityLog([]);
 
-      const isWebsiteBuildPrompt =
-        /\b(build|create|make)\b[\s\S]{0,60}\b(website|site|shop|coffee|landing|store|restaurant)\b/i.test(
-          displayPrompt
-        );
+      const buildPromptActive =
+        isWebsiteBuildPrompt(displayPrompt) ||
+        isWebsiteBuildUpdate(displayPrompt, messages);
 
       const useCompactPipeline =
         !isBuildThreadContinuation(displayPrompt, messages) &&
         !isWebsiteBuildUpdate(displayPrompt, messages) &&
         !(completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) &&
         !(activeWebsiteBuildRef.current && looksLikeBuildClarificationAnswer(displayPrompt)) &&
-        !isWebsiteBuildPrompt &&
+        !buildPromptActive &&
         (isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt));
       setPipelineCompact(useCompactPipeline);
+
+      if (buildPromptActive) {
+        setSwarmNegotiationPhase(1);
+        setSwarmStatusLabel('AI SWARM LOGIC');
+        setPipelineMessage('🚀 [Phase 1] Starting your build...');
+      }
 
       if (isVideoGenerationPrompt(displayPrompt)) {
         setPipelineMessage('Omni-Reality Studio — starting video production…');
@@ -873,15 +881,40 @@ export function TerminalChatProvider({
               });
               return;
             }
-            if (output?.type === 'landing_page' && typeof output.deployUrl === 'string') {
+            if (output?.type === 'landing_page') {
               activeWebsiteBuildRef.current = null;
               completedWebsiteBuildRef.current = true;
+              const summary =
+                typeof output.summary === 'string'
+                  ? output.summary
+                  : typeof output.deployUrl === 'string'
+                    ? `🎉 YOUR PROJECT IS LIVE!\n🔗 ${output.deployUrl}`
+                    : '🎉 Build complete — connect GitHub for live preview.';
               setMessages((m) =>
                 m.map((msg) =>
-                  msg.id === assistantId ? { ...msg, content: '', featureOutput: output } : msg
+                  msg.id === assistantId
+                    ? { ...msg, content: summary, featureOutput: output }
+                    : msg
                 )
               );
               return;
+            }
+            if (chatContent && !fullReply.trim()) {
+              fullReply = chatContent;
+              setMessages((m) =>
+                m.map((msg) => (msg.id === assistantId ? { ...msg, content: chatContent } : msg))
+              );
+            }
+            if (
+              buildPromptActive &&
+              (chatContent.includes(GENERIC_SWARM_FALLBACK) || fullReply.includes(GENERIC_SWARM_FALLBACK))
+            ) {
+              const buildError =
+                '⚠️ **Build could not finish.** Connect GitHub under Integrations, then try again.\n\nIf GitHub is connected, check that `DEEPSEEK_CODE_API_KEY` (or `DEEPSEEK_API_KEY`) is set on Fly.io.';
+              fullReply = buildError;
+              setMessages((m) =>
+                m.map((msg) => (msg.id === assistantId ? { ...msg, content: buildError } : msg))
+              );
             }
             if (output?.type === 'video_job_pending' && typeof output.jobId === 'string') {
               const startedAt = Date.now();
@@ -1003,8 +1036,9 @@ export function TerminalChatProvider({
           setMessages((m) => m.filter((msg) => msg.id !== assistantId || msg.content.length > 0));
           return;
         }
-        const friendly =
-          "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.";
+        const friendly = buildPromptActive
+          ? '⚠️ **Build connection lost.** Check your connection and try again. Connect GitHub under Integrations if you have not already.'
+          : GENERIC_SWARM_FALLBACK;
         setMessages((m) => [
           ...m.filter((msg) => msg.id !== assistantId || msg.content.length > 0),
           {
