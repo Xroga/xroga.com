@@ -91,11 +91,21 @@ const TYPE_PATTERNS: Array<{ type: CreationType; label: string; patterns: RegExp
 ];
 
 export function detectCreationType(userText: string, aiText: string): CreationType {
+  const user = userText.toLowerCase();
+  if (/\b(build|create|make|design)\b/.test(user)) {
+    if (/\b(website|web\s*page|landing|site|coffee|shop|restaurant|store)\b/.test(user)) {
+      return 'website';
+    }
+    if (/\b(web\s*app|saas|dashboard|next\.?js|react\s*app)\b/.test(user)) return 'webapp';
+    if (/\b(game|unity|godot)\b/.test(user)) return 'game';
+    if (/\b(video|movie|clip|trailer)\b/.test(user) && !/\bwebsite\b/.test(user)) return 'video';
+  }
+
   const combined = `${userText} ${aiText}`.toLowerCase();
   for (const { type, patterns } of TYPE_PATTERNS) {
     if (patterns.some((p) => p.test(combined))) return type;
   }
-  if (/\b(build|create|make|generate)\b/i.test(userText)) return 'webapp';
+  if (/\b(build|create|make|generate)\b/i.test(userText)) return 'website';
   return 'chat';
 }
 

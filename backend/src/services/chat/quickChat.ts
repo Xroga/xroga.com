@@ -6,7 +6,7 @@ import { loadMasterPrompt } from '../../orchestrator/masterPrompt.js';
 import { buildFullSystemPrompt } from '../../orchestrator/aiTraining.js';
 import { isTrivialPrompt } from '../../lib/promptClassifier.js';
 import { isCapabilitiesQuery, getXrogaCapabilitiesResponse } from '../../lib/xrogaCapabilities.js';
-import { analyzeUserQuery } from '../../lib/queryAnalyzer.js';
+import { analyzeUserQuery, isSpecificBuildRequest } from '../../lib/queryAnalyzer.js';
 import { isMathQuery } from '../../lib/mathQuery.js';
 import { trySolveMathLocally } from '../../lib/mathSolver.js';
 import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
@@ -27,7 +27,11 @@ export async function quickChat(
   const lower = userText.toLowerCase().trim();
 
   const analysis = analyzeUserQuery(userText);
-  if (analysis.needsClarification && analysis.clarificationText) {
+  if (
+    analysis.needsClarification &&
+    analysis.clarificationText &&
+    !isSpecificBuildRequest(userText.toLowerCase().trim())
+  ) {
     return formatPlainProfessional(analysis.clarificationText);
   }
 

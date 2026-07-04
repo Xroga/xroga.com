@@ -200,6 +200,11 @@ export class Orchestrator {
         userId: ctx.userId,
         includeProsCons: false,
       });
+      const buildFollowUps = [
+        'HTML/CSS/JS, dark theme, menu + gallery, mobile-first',
+        'React + Tailwind, reservations + contact form, no payment yet',
+        'Use defaults and start the 9-phase build now',
+      ];
       return {
         runId: crypto.randomUUID(),
         fast: true,
@@ -214,7 +219,7 @@ export class Orchestrator {
         actions: { success: true, remaining: 0, cost: 1 },
         featureCategory,
         polishedReply: shield.content,
-        followUps: shield.followUps,
+        followUps: buildFollowUps,
       };
     }
 
@@ -656,13 +661,12 @@ export class Orchestrator {
       }
     }
 
-    // 9-Phase AI Swarm Logic — replaces background queue for build tasks
-    const buildCategory: FeatureCategory =
-      featureCategory === 'chat' && shouldUseNegotiationEngine(userText, 'landing_page')
-        ? 'landing_page'
-        : featureCategory;
-
-    if (shouldUseNegotiationEngine(userText, buildCategory)) {
+    // 9-Phase AI Swarm Logic — website/app builds always enter negotiation first
+    if (shouldUseNegotiationEngine(userText, featureCategory) || shouldUseNegotiationEngine(userText, 'landing_page')) {
+      const buildCategory: FeatureCategory =
+        featureCategory === 'chat' || featureCategory === 'browser_automation'
+          ? 'landing_page'
+          : featureCategory;
       return this.executeNegotiationBuild(ctx, buildCategory);
     }
 

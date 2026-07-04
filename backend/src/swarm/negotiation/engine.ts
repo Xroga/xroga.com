@@ -346,7 +346,15 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   emit(ctx, 0, BRAND.phase0.scanning, 'reviewer', todos, 'XROGA Visionary');
 
   const analysis = analyzeUserQuery(userPrompt);
-  if (analysis.needsClarification && analysis.clarificationText && !hasBuildConversationContext(userPrompt)) {
+  const skipAnalyzerClarification =
+    featureCategory === 'landing_page' || shouldUseNegotiationEngine(userPrompt, featureCategory);
+
+  if (
+    analysis.needsClarification &&
+    analysis.clarificationText &&
+    !hasBuildConversationContext(userPrompt) &&
+    !skipAnalyzerClarification
+  ) {
     todos.setAnalysis(analysis.intentLabel);
     emit(ctx, 0, BRAND.phase0.clarifying, 'reviewer', todos, 'XROGA Visionary');
     return {

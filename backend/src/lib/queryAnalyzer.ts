@@ -27,9 +27,27 @@ export interface QueryAnalysis {
   clarificationText?: string;
 }
 
+export function isSpecificBuildRequest(t: string): boolean {
+  return (
+    /\b(build|create|make|design|develop)\b[\s\S]{0,80}\b(website|web\s*page|landing\s*page|site|store|shop|app|game|software)\b/i.test(
+      t
+    ) ||
+    /\b(build|create|make)\b[\s\S]{0,50}\b(coffee|restaurant|bakery|salon|portfolio|business)\b/i.test(t)
+  );
+}
+
+function buildTopicFromPrompt(t: string): string | undefined {
+  if (/\b(website|web\s*page|site|landing)\b/.test(t)) return 'website';
+  if (/\b(game)\b/.test(t)) return 'game';
+  if (/\b(app|mobile)\b/.test(t)) return 'app';
+  if (/\b(video|movie|clip)\b/.test(t)) return 'video';
+  return undefined;
+}
+
 function isVagueBuild(input: string): { vague: boolean; topic?: string } {
   const t = input.toLowerCase().trim();
   if (isCapabilitiesQuery(input)) return { vague: false };
+  if (isSpecificBuildRequest(t)) return { vague: false };
   if (/\b(build|create|make)\s+(something|anything|stuff|it|one)\b/.test(t)) {
     return { vague: true, topic: 'project' };
   }
@@ -41,7 +59,8 @@ function isVagueBuild(input: string): { vague: boolean; topic?: string } {
     return { vague: true, topic: topic ?? 'project' };
   }
   if (t.length < 28 && /\b(build|create|make)\b/.test(t) && !/\b(for|that|with|using)\b/.test(t)) {
-    return { vague: true, topic: 'project' };
+    const topic = buildTopicFromPrompt(t) ?? 'project';
+    return { vague: true, topic };
   }
   return { vague: false };
 }
@@ -70,15 +89,17 @@ What is the one main thing the app should do for users?
 Share those details and we can start immediately.`;
   }
   if (topic === 'website') {
-    return `XROGA Visionary — a few details before we build:
+    return `XROGA Visionary — Phase 1 Discovery
 
-1. What tech stack? (HTML/CSS/JS, React, Next.js, etc.)
-2. Key features? (menu, ordering, reservations, gallery, etc.)
-3. Design preference? (colors, style, dark/light theme)
-4. Do you need a payment gateway? (Stripe/PayPal)
-5. Should it be responsive/mobile-first?
+Your coffee shop / website build is clear. Before the 9-phase swarm starts, answer these briefly:
 
-Reply with your choices and we will start the 9-phase build immediately.`;
+1. Tech stack? (HTML/CSS/JS, React, Next.js, etc.)
+2. Key features? (menu, ordering, reservations, gallery, contact form)
+3. Design? (colors, dark/light theme, style)
+4. Payment gateway? (Stripe/PayPal — or skip for now)
+5. Mobile-first / responsive?
+
+Reply in one message — then XROGA will plan, build, push to GitHub, and deploy a live preview.`;
   }
   if (topic === 'game') {
     return `Let me understand your game idea
