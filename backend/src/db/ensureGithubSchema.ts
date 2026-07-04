@@ -1,6 +1,6 @@
 /**
  * Auto-create github_integrations + user_integrations when missing in production.
- * Requires DATABASE_URL or SUPABASE_DB_URL (Supabase → Settings → Database → URI).
+ * Requires DATABASE_URL, SUPABASE_DB_URL, or SUPABASE_URL + SUPABASE_DB_PASSWORD.
  */
 
 const ENSURE_GITHUB_SQL = `
@@ -60,8 +60,28 @@ NOTIFY pgrst, 'reload schema';
 let schemaReady: boolean | null = null;
 let bootstrapAttempted = false;
 
+function supabaseProjectRef(): string | null {
+  const raw = process.env.SUPABASE_URL?.trim();
+  if (!raw) return null;
+  try {
+    const host = new URL(raw).hostname;
+    const match = host.match(/^([a-z0-9]+)\.supabase\.co$/i);
+    return match?.[1] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function databaseUrl(): string | null {
-  return process.env.DATABASE_URL?.trim() || process.env.SUPABASE_DB_URL?.trim() || null;
+  const direct = process.env.DATABASE_URL?.trim() || process.env.SUPABASE_DB_URL?.trim();
+  if (direct) return direct;
+
+  const password = process.env.SUPABASE_DB_PASSWORD?.trim();
+  const ref = supabaseProjectRef();
+  if (password && ref) {
+    return `postgresql://postgres:${encodeURIComponent(password)}@db.${ref}.supabase.co:5432/postgres`;
+  }
+  return null;
 }
 
 /** Returns true if tables exist or were created successfully */
@@ -72,7 +92,7 @@ export async function ensureGithubSchema(): Promise<boolean> {
   if (!url) {
     if (!bootstrapAttempted) {
       console.warn(
-        '[githubSchema] DATABASE_URL not set — cannot auto-create integration tables. Run supabase/migrations/020_user_integrations.sql or set DATABASE_URL on Fly.io.'
+        '[githubSchema] No Postgres URL — set DATABASE_URL or SUPABASE_DB_PASSWORD on Fly.io. GitHub tokens will use Storage fallback.'
       );
       bootstrapAttempted = true;
     }
