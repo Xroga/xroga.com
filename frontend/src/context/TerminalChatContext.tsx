@@ -18,7 +18,7 @@ import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
 import {
   clearWorkspaceSession,
-  loadWorkspaceSession,
+  loadWorkspaceSessionHydrated,
   saveWorkspaceSession,
 } from '@/lib/workspacePersistence';
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
@@ -26,9 +26,7 @@ import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, isWebsiteBuildPrompt, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
-import { sanitizeChatMessages } from '@/lib/sanitizeChatMessages';
-import { saveLandingBuild } from '@/lib/landingBuildStorage';
-import { rehydratePersistedMessages } from '@/lib/rehydratePersistedMessages';
+import { getSelectedRepoContext } from '@/lib/repoContext';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import toast from 'react-hot-toast';
@@ -232,20 +230,24 @@ export function TerminalChatProvider({
       setMessages([]);
       setPrompt('');
       setPromptQueue([]);
+      setSessionReady(true);
       return;
     }
-    const session = loadWorkspaceSession();
-    if (session?.messages?.length) {
-      const restored = sanitizeChatMessages(session.messages);
-      void rehydratePersistedMessages(restored).then((merged) => {
-        setMessages(merged);
-        if (threadHasCompletedWebsite(merged)) {
+    let cancelled = false;
+    void loadWorkspaceSessionHydrated().then((session) => {
+      if (cancelled) return;
+      if (session?.messages?.length) {
+        setMessages(session.messages);
+        if (threadHasCompletedWebsite(session.messages)) {
           completedWebsiteBuildRef.current = true;
         }
-      });
-    }
-    if (session?.prompt) setPrompt(session.prompt);
-    setSessionReady(true);
+      }
+      if (session?.prompt) setPrompt(session.prompt);
+      setSessionReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [incognito]);
 
   useEffect(() => {
@@ -366,10 +368,16 @@ export function TerminalChatProvider({
 
   const hydrateFromSession = useCallback(() => {
     if (incognito) return;
-    const session = loadWorkspaceSession();
-    if (!session) return;
-    if (session.messages?.length) setMessages(sanitizeChatMessages(session.messages));
-    if (session.prompt) setPrompt(session.prompt);
+    void loadWorkspaceSessionHydrated().then((session) => {
+      if (!session) return;
+      if (session.messages?.length) {
+        setMessages(session.messages);
+        if (threadHasCompletedWebsite(session.messages)) {
+          completedWebsiteBuildRef.current = true;
+        }
+      }
+      if (session.prompt) setPrompt(session.prompt);
+    });
   }, [incognito]);
 
   useEffect(() => {
@@ -410,12 +418,14 @@ export function TerminalChatProvider({
     for (const m of messages) {
       const fo = m.featureOutput as { type?: string; html?: string; css?: string; js?: string } | undefined;
       if (fo?.type === 'landing_page' && fo.html?.trim()) {
-        void saveLandingBuild({
-          messageId: m.id,
-          html: fo.html,
-          css: fo.css ?? '',
-          js: fo.js ?? '',
-        });
+        void import('@/lib/landingBuildStorage').then(({ saveLandingBuild }) =>
+          saveLandingBuild({
+            messageId: m.id,
+            html: fo.html!,
+            css: fo.css ?? '',
+            js: fo.js ?? '',
+          })
+        );
       }
     }
     try {
@@ -756,6 +766,8 @@ export function TerminalChatProvider({
           }
         }
 
+        const repoContext = getSelectedRepoContext();
+
         await streamSwarmExecute(apiPrompt, {
           projectId,
           signal: controller.signal,
@@ -769,6 +781,8 @@ export function TerminalChatProvider({
             buildContinuation: isBuildAnswer,
             buildOriginalPrompt: buildSession?.originalPrompt,
             buildUpdate: isBuildUpdate,
+            githubTargetRepo: repoContext?.repo,
+            githubTargetBranch: repoContext?.branch,
           },
           onProgress: (event) => {
             gotEvent = true;

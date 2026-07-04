@@ -716,7 +716,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     emit(ctx, 8, BRAND.phase8.githubPush, 'builder', todos, 'AI SWARM LOGIC', { userPhase: 4 });
     try {
       const files = landingFilesFromOutput(featureOutput.html, featureOutput.css, featureOutput.js);
-      const pipeline = await pushAndDeployLivePreview(userId, files, projectSlug);
+      const pipeline = await pushAndDeployLivePreview(userId, files, projectSlug, {
+        targetRepo: ctx.githubTargetRepo,
+        targetBranch: ctx.githubTargetBranch,
+      });
       featureOutput = {
         ...featureOutput,
         deployUrl: pipeline.deployUrl,

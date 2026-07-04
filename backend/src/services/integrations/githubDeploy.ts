@@ -111,15 +111,25 @@ async function createRepo(token: string, name: string): Promise<{ fullName: stri
   return { fullName: repo.full_name, htmlUrl: repo.html_url, owner: owner!, repo: repoName! };
 }
 
-async function getBranchHeadSha(token: string, owner: string, repo: string): Promise<string | null> {
-  for (const branch of ['main', 'master']) {
+async function getBranchHeadSha(
+  token: string,
+  owner: string,
+  repo: string,
+  preferredBranch?: string
+): Promise<{ sha: string | null; branch: string }> {
+  const candidates = [
+    ...(preferredBranch ? [preferredBranch] : []),
+    'main',
+    'master',
+  ];
+  for (const branch of candidates) {
     const res = await ghFetch(token, `/repos/${owner}/${repo}/git/ref/heads/${branch}`);
     if (res.ok) {
       const data = (await res.json()) as { object: { sha: string } };
-      return data.object.sha;
+      return { sha: data.object.sha, branch };
     }
   }
-  return null;
+  return { sha: null, branch: preferredBranch ?? 'main' };
 }
 
 async function pushFilesToRepo(
@@ -127,7 +137,8 @@ async function pushFilesToRepo(
   owner: string,
   repo: string,
   files: ProjectFile[],
-  message: string
+  message: string,
+  branch = 'main'
 ): Promise<void> {
   const blobs = await Promise.all(
     files.map(async (f) => {
@@ -155,7 +166,7 @@ async function pushFilesToRepo(
   if (!treeRes.ok) throw new Error(`GitHub tree failed: ${treeRes.status}`);
   const tree = (await treeRes.json()) as { sha: string };
 
-  const parentSha = await getBranchHeadSha(token, owner, repo);
+  const { sha: parentSha, branch: resolvedBranch } = await getBranchHeadSha(token, owner, repo, branch);
 
   const commitRes = await ghFetch(token, `/repos/${owner}/${repo}/git/commits`, {
     method: 'POST',
@@ -170,61 +181,71 @@ async function pushFilesToRepo(
   const commit = (await commitRes.json()) as { sha: string };
 
   if (parentSha) {
-    const updateRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs/heads/main`, {
+    const updateRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs/heads/${resolvedBranch}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sha: commit.sha }),
     });
-    if (!updateRes.ok) {
-      const masterRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs/heads/master`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sha: commit.sha }),
-      });
-      if (!masterRes.ok) throw new Error(`GitHub ref update failed: ${updateRes.status}`);
-    }
+    if (!updateRes.ok) throw new Error(`GitHub ref update failed: ${updateRes.status}`);
   } else {
     const refRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ref: 'refs/heads/main', sha: commit.sha }),
+      body: JSON.stringify({ ref: `refs/heads/${resolvedBranch}`, sha: commit.sha }),
     });
     if (!refRes.ok) throw new Error(`GitHub ref create failed: ${refRes.status}`);
   }
 }
 
+export interface GitHubPushOptions {
+  slug?: string;
+  targetRepo?: string;
+  targetBranch?: string;
+}
+
 export async function pushBuildToGitHub(
   userId: string,
   files: ProjectFile[],
-  slug?: string
+  slugOrOpts?: string | GitHubPushOptions
 ): Promise<GitHubPushResult> {
+  const opts: GitHubPushOptions =
+    typeof slugOrOpts === 'string' ? { slug: slugOrOpts } : slugOrOpts ?? {};
+
   const integration = await getIntegration(userId);
   if (!integration?.access_token) throw new Error('GitHub not connected');
 
   const token = integration.access_token;
-  const username = await getGitHubUsername(token);
-  const repoName =
-    integration.repo_strategy === 'manual' && integration.default_repo
-      ? integration.default_repo.split('/').pop()!
-      : slug ?? `xroga-build-${Date.now()}`;
 
-  let owner = username;
-  let repo = repoName;
-  let htmlUrl = `https://github.com/${username}/${repoName}`;
+  const selectedRepo =
+    opts.targetRepo ??
+    (integration.default_repo?.includes('/') ? integration.default_repo : null);
 
-  if (integration.repo_strategy === 'manual' && integration.default_repo?.includes('/')) {
-    const [o, r] = integration.default_repo.split('/');
-    owner = o!;
-    repo = r!;
-    htmlUrl = `https://github.com/${owner}/${repo}`;
-    await pushFilesToRepo(token, owner, repo, files, `XROGA build — ${new Date().toISOString()}`);
-  } else {
-    const created = await createRepo(token, repoName);
-    owner = created.owner;
-    repo = created.repo;
-    htmlUrl = created.htmlUrl;
-    await pushFilesToRepo(token, owner, repo, files, 'Initial XROGA build');
+  if (selectedRepo?.includes('/')) {
+    const [owner, repo] = selectedRepo.split('/');
+    const branch = opts.targetBranch ?? 'main';
+    const htmlUrl = `https://github.com/${owner}/${repo}`;
+    await pushFilesToRepo(
+      token,
+      owner!,
+      repo!,
+      files,
+      `XROGA build — ${new Date().toISOString()}`,
+      branch
+    );
+    return {
+      repoName: `${owner}/${repo}`,
+      repoUrl: htmlUrl,
+      htmlUrl,
+    };
   }
+
+  const repoName = opts.slug ?? `xroga-build-${Date.now()}`;
+
+  const created = await createRepo(token, repoName);
+  const owner = created.owner;
+  const repo = created.repo;
+  const htmlUrl = created.htmlUrl;
+  await pushFilesToRepo(token, owner, repo, files, 'Initial XROGA build');
 
   return { repoName: `${owner}/${repo}`, repoUrl: `https://github.com/${owner}/${repo}`, htmlUrl };
 }
@@ -377,9 +398,14 @@ export async function redeployPreviewFromGitHub(
 export async function pushAndDeployLivePreview(
   userId: string,
   files: ProjectFile[],
-  projectSlug: string
+  projectSlug: string,
+  githubTarget?: { targetRepo?: string; targetBranch?: string }
 ): Promise<DeployPipelineResult> {
-  const github = await pushBuildToGitHub(userId, files, projectSlug);
+  const github = await pushBuildToGitHub(userId, files, {
+    slug: projectSlug,
+    targetRepo: githubTarget?.targetRepo,
+    targetBranch: githubTarget?.targetBranch,
+  });
   const preview = await deployStaticPreview(projectSlug, files);
   return {
     github,

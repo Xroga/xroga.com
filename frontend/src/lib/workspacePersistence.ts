@@ -73,8 +73,17 @@ export function loadWorkspaceSession(): WorkspaceSession | null {
   const session = readRawSession();
   if (!session) return null;
   if (session.messages?.length) {
-    session.messages = rehydrateMessagesWithMedia(sanitizeChatMessages(session.messages));
+    session.messages = sanitizeChatMessages(session.messages);
   }
+  return session;
+}
+
+/** Load session + IndexedDB landing builds + media URLs (use after refresh). */
+export async function loadWorkspaceSessionHydrated(): Promise<WorkspaceSession | null> {
+  const session = loadWorkspaceSession();
+  if (!session?.messages?.length) return session;
+  const { rehydratePersistedMessages } = await import('@/lib/rehydratePersistedMessages');
+  session.messages = await rehydratePersistedMessages(session.messages);
   return session;
 }
 
@@ -92,10 +101,7 @@ export function saveWorkspaceSession(session: Omit<WorkspaceSession, 'updatedAt'
     } catch {
       const slim: WorkspaceSession = {
         ...payload,
-        messages: payload.messages.map((m) => ({
-          ...m,
-          featureOutput: undefined,
-        })),
+        messages: slimLandingForStorage(payload.messages),
       };
       json = JSON.stringify(slim);
     }

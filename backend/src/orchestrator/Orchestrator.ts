@@ -147,6 +147,10 @@ export class Orchestrator {
       userId: string;
       prompt: string;
       onProgress?: (event: SwarmProgressEvent) => void;
+      clientMeta?: {
+        githubTargetRepo?: string;
+        githubTargetBranch?: string;
+      };
     },
     featureCategory: FeatureCategory
   ): Promise<SwarmRunResult & { polishedReply: string; followUps: string[]; fast?: boolean }> {
@@ -157,6 +161,8 @@ export class Orchestrator {
         userId: ctx.userId,
         featureCategory,
         onProgress: ctx.onProgress,
+        githubTargetRepo: ctx.clientMeta?.githubTargetRepo,
+        githubTargetBranch: ctx.clientMeta?.githubTargetBranch,
       });
 
     let result;
@@ -516,6 +522,8 @@ export class Orchestrator {
         buildContinuation?: boolean;
         buildOriginalPrompt?: string;
         buildUpdate?: boolean;
+        githubTargetRepo?: string;
+        githubTargetBranch?: string;
       };
       history?: ChatTurn[];
     }
