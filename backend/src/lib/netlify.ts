@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { getSecret } from '../config/envSecrets.js';
 
 interface NetlifyDeploy {
@@ -6,6 +7,7 @@ interface NetlifyDeploy {
   ssl_url?: string;
   deploy_ssl_url?: string;
   state?: string;
+  required?: string[];
 }
 
 interface NetlifyFile {
@@ -17,13 +19,23 @@ function getNetlifyToken(): string | undefined {
   return getSecret('NETLIFY_ACCESS_TOKEN');
 }
 
-/** Deploy static files to Netlify via Site API (creates site if needed) */
+function sha1(content: string): string {
+  return crypto.createHash('sha1').update(content, 'utf8').digest('hex');
+}
+
+function netlifyPath(filePath: string): string {
+  return filePath.startsWith('/') ? filePath : `/${filePath}`;
+}
+
+/** Deploy static files to Netlify (SHA1 digest + required file upload). */
 export async function deployToNetlify(
   siteName: string,
   files: NetlifyFile[]
 ): Promise<{ deployUrl: string; deployId: string }> {
   const token = getNetlifyToken();
   if (!token) throw new Error('NETLIFY_ACCESS_TOKEN not configured');
+
+  const slug = siteName.slice(0, 60).replace(/[^a-z0-9-]/gi, '-').toLowerCase();
 
   const siteRes = await fetch('https://api.netlify.com/api/v1/sites', {
     method: 'POST',
@@ -32,7 +44,7 @@ export async function deployToNetlify(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      name: siteName.slice(0, 60).replace(/[^a-z0-9-]/gi, '-').toLowerCase(),
+      name: slug,
       custom_domain: null,
     }),
   });
@@ -43,17 +55,27 @@ export async function deployToNetlify(
   if (siteRes.ok) {
     const site = (await siteRes.json()) as { id: string; ssl_url?: string; url?: string };
     siteId = site.id;
-    defaultUrl = site.ssl_url ?? site.url ?? `https://${siteName}.netlify.app`;
+    defaultUrl = site.ssl_url ?? site.url ?? `https://${slug}.netlify.app`;
   } else {
-    const listRes = await fetch(`https://api.netlify.com/api/v1/sites?filter=all&name=${siteName}`, {
+    const listRes = await fetch(`https://api.netlify.com/api/v1/sites?filter=all&name=${slug}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!listRes.ok) throw new Error(`Netlify site lookup failed: ${listRes.status}`);
-    const sites = (await listRes.json()) as Array<{ id: string; ssl_url?: string; url?: string }>;
-    const existing = sites[0];
+    const sites = (await listRes.json()) as Array<{ id: string; ssl_url?: string; url?: string; name?: string }>;
+    const existing = sites.find((s) => s.name === slug) ?? sites[0];
     if (!existing) throw new Error('Netlify site creation failed');
     siteId = existing.id;
-    defaultUrl = existing.ssl_url ?? existing.url ?? `https://${siteName}.netlify.app`;
+    defaultUrl = existing.ssl_url ?? existing.url ?? `https://${slug}.netlify.app`;
+  }
+
+  const fileHashes: Record<string, string> = {};
+  const hashToContent = new Map<string, string>();
+
+  for (const file of files) {
+    const path = netlifyPath(file.path);
+    const hash = sha1(file.content);
+    fileHashes[path] = hash;
+    hashToContent.set(hash, file.content);
   }
 
   const deployRes = await fetch(`https://api.netlify.com/api/v1/sites/${siteId}/deploys`, {
@@ -62,13 +84,7 @@ export async function deployToNetlify(
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      files: Object.fromEntries(
-        files.map((f) => [f.path, Buffer.from(f.content, 'utf8').toString('base64')])
-      ),
-      async: false,
-      draft: false,
-    }),
+    body: JSON.stringify({ files: fileHashes }),
   });
 
   if (!deployRes.ok) {
@@ -77,6 +93,25 @@ export async function deployToNetlify(
   }
 
   const deploy = (await deployRes.json()) as NetlifyDeploy;
+
+  if (deploy.required?.length) {
+    for (const hash of deploy.required) {
+      const content = hashToContent.get(hash);
+      if (!content) continue;
+      const uploadRes = await fetch(`https://api.netlify.com/api/v1/deploys/${deploy.id}/files/${hash}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/octet-stream',
+        },
+        body: content,
+      });
+      if (!uploadRes.ok) {
+        throw new Error(`Netlify file upload failed: ${uploadRes.status}`);
+      }
+    }
+  }
+
   const deployUrl =
     deploy.ssl_url ??
     deploy.deploy_ssl_url ??
@@ -92,7 +127,7 @@ export async function deployToNetlify(
 export async function pollNetlifyDeploy(
   deployId: string,
   fallbackUrl: string,
-  maxWaitMs = 90_000
+  maxWaitMs = 120_000
 ): Promise<string> {
   const token = getNetlifyToken();
   if (!token) return fallbackUrl;

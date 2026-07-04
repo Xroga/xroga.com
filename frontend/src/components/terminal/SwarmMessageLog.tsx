@@ -402,9 +402,11 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             analysis={swarmAnalysis}
                             todos={swarmTodos}
                             activityLog={swarmActivityLog}
+                            startedAt={thinkingStartedAt}
                           />
                         )}
-                        {(msg.thinkingSteps?.length || (loading && msg.id === animatingId && showChatThinking)) && (
+                        {!buildPromptActive &&
+                          (msg.thinkingSteps?.length || (loading && msg.id === animatingId && showChatThinking)) && (
                           <BlackHoleThinkingPanel
                             steps={
                               loading && msg.id === animatingId

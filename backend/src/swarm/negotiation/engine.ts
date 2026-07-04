@@ -720,6 +720,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       featureOutput = {
         ...featureOutput,
         deployUrl: pipeline.deployUrl,
+        deployVerified: pipeline.deployVerified,
         vercelDeploymentId: pipeline.vercelDeploymentId ?? featureOutput.vercelDeploymentId,
         githubRepoUrl: pipeline.github.htmlUrl,
         githubRepoName: pipeline.github.repoName,
@@ -731,7 +732,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         memoryNote,
         summary: formatBuildSummaryCard({
           ...summaryData,
-          liveUrl: pipeline.deployUrl,
+          liveUrl: pipeline.deployVerified ? pipeline.deployUrl : undefined,
           repoUrl: pipeline.github.htmlUrl,
         }),
       };

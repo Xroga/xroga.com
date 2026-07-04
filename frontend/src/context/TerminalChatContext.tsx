@@ -25,6 +25,7 @@ import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls 
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, isWebsiteBuildPrompt, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
+import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import { sanitizeChatMessages } from '@/lib/sanitizeChatMessages';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
@@ -351,7 +352,7 @@ export function TerminalChatProvider({
   );
 
   const pushSwarmTerminalLine = useCallback((raw: string) => {
-    const line = sanitizeXrogaTerminalText(raw);
+    const line = formatAgentActivityLine(sanitizeXrogaTerminalText(raw));
     if (!line) return;
     setPipelineMessage(line);
     setSwarmActivityLog((prev) =>
@@ -669,7 +670,8 @@ export function TerminalChatProvider({
       if (buildPromptActive) {
         setSwarmNegotiationPhase(1);
         setSwarmStatusLabel('AI SWARM LOGIC');
-        setPipelineMessage('🚀 [Phase 1] Starting your build...');
+        setPipelineMessage('Starting your build…');
+        setSwarmActivityLog(['Planning website build pipeline…']);
       }
 
       if (isVideoGenerationPrompt(displayPrompt)) {
