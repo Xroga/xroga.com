@@ -321,4 +321,51 @@ router.delete('/disconnect', async (req: AuthRequest, res) => {
   res.json({ disconnected: true });
 });
 
+/** Redeploy live preview from code already on GitHub — Vercel preferred, Netlify fallback. */
+router.get('/build-files', async (req: AuthRequest, res) => {
+  const repoName = typeof req.query.repoName === 'string' ? req.query.repoName.trim() : '';
+  if (!repoName) {
+    res.status(400).json({ error: 'repoName query required' });
+    return;
+  }
+
+  try {
+    const { fetchBuildFilesFromGitHub } = await import('../services/integrations/githubDeploy.js');
+    const files = await fetchBuildFilesFromGitHub(req.userId!, repoName);
+    const html = files.find((f: { path: string; content: string }) => f.path === 'index.html')?.content ?? '';
+    const css = files.find((f: { path: string; content: string }) => f.path === 'styles.css')?.content ?? '';
+    const js = files.find((f: { path: string; content: string }) => f.path === 'script.js')?.content ?? '';
+    res.json({ html, css, js });
+  } catch (e) {
+    res.status(502).json({ error: (e as Error).message });
+  }
+});
+
+/** Redeploy live preview from files already pushed to GitHub (no full rebuild). */
+router.post('/redeploy-preview', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    repoName: z.string().min(3),
+  });
+
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+
+  try {
+    const { redeployPreviewFromGitHub } = await import('../services/integrations/githubDeploy.js');
+    const result = await redeployPreviewFromGitHub(req.userId!, parsed.data.repoName);
+    res.json({
+      deployUrl: result.deployUrl,
+      deployVerified: result.deployVerified,
+      deployPlatform: result.deployPlatform,
+      vercelDeploymentId: result.vercelDeploymentId,
+      netlifyDeployId: result.netlifyDeployId,
+    });
+  } catch (e) {
+    res.status(502).json({ error: (e as Error).message });
+  }
+});
+
 export default router;

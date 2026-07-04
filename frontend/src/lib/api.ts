@@ -448,6 +448,21 @@ export const api = {
       apiFetch<{ branches: GitHubBranch[] }>(
         `/api/github/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/branches`
       ),
+    redeployPreview: (repoName: string) =>
+      apiFetch<{
+        deployUrl: string;
+        deployVerified: boolean;
+        deployPlatform: 'vercel' | 'netlify' | 'none';
+        vercelDeploymentId?: string;
+        netlifyDeployId?: string;
+      }>('/api/github/redeploy-preview', {
+        method: 'POST',
+        body: JSON.stringify({ repoName }),
+      }),
+    getBuildFiles: (repoName: string) =>
+      apiFetch<{ html: string; css: string; js: string }>(
+        `/api/github/build-files?repoName=${encodeURIComponent(repoName)}`
+      ),
   },
   notifications: {
     list: () => apiFetch<Notification[]>('/api/notifications'),

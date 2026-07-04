@@ -12,11 +12,13 @@ export function FeatureOutputView({
   onDelete,
   messageId,
   onVideoJobResolved,
+  onPreviewUpdate,
 }: {
   output: unknown;
   onDelete?: () => void;
   messageId?: string;
   onVideoJobResolved?: (output: VideoOutputData) => void;
+  onPreviewUpdate?: (messageId: string, output: unknown) => void;
 }) {
   if (!output || typeof output !== 'object') return null;
   const o = output as Record<string, unknown>;
@@ -74,26 +76,33 @@ export function FeatureOutputView({
     const hasHtml = typeof o.html === 'string' && o.html.trim().length > 0;
     if (!hasHtml && !deployUrl && !githubRepoUrl) return null;
 
+    const landingData: import('./LandingPageCard').LandingPageOutputData = {
+      type: 'landing_page',
+      html: typeof o.html === 'string' ? o.html : '',
+      css: typeof o.css === 'string' ? o.css : '',
+      js: typeof o.js === 'string' ? o.js : '',
+      heroImageUrl: typeof o.heroImageUrl === 'string' ? o.heroImageUrl : undefined,
+      deployUrl,
+      deployVerified: o.deployVerified === true,
+      githubRepoUrl,
+      githubRepoName: typeof o.githubRepoName === 'string' ? o.githubRepoName : undefined,
+      projectName: typeof o.projectName === 'string' ? o.projectName : undefined,
+      pages: Array.isArray(o.pages) ? (o.pages as string[]) : undefined,
+      features: Array.isArray(o.features) ? (o.features as string[]) : undefined,
+      designTheme: typeof o.designTheme === 'string' ? o.designTheme : undefined,
+      needsPayment: typeof o.needsPayment === 'boolean' ? o.needsPayment : undefined,
+      memoryNote: typeof o.memoryNote === 'string' ? o.memoryNote : undefined,
+      summary: typeof o.summary === 'string' ? o.summary : undefined,
+    };
+
     return (
       <LandingPageCard
-        data={{
-          type: 'landing_page',
-          html: typeof o.html === 'string' ? o.html : '',
-          css: typeof o.css === 'string' ? o.css : '',
-          js: typeof o.js === 'string' ? o.js : '',
-          heroImageUrl: typeof o.heroImageUrl === 'string' ? o.heroImageUrl : undefined,
-          deployUrl,
-          deployVerified: o.deployVerified === true,
-          githubRepoUrl,
-          githubRepoName: typeof o.githubRepoName === 'string' ? o.githubRepoName : undefined,
-          projectName: typeof o.projectName === 'string' ? o.projectName : undefined,
-          pages: Array.isArray(o.pages) ? (o.pages as string[]) : undefined,
-          features: Array.isArray(o.features) ? (o.features as string[]) : undefined,
-          designTheme: typeof o.designTheme === 'string' ? o.designTheme : undefined,
-          needsPayment: typeof o.needsPayment === 'boolean' ? o.needsPayment : undefined,
-          memoryNote: typeof o.memoryNote === 'string' ? o.memoryNote : undefined,
-          summary: typeof o.summary === 'string' ? o.summary : undefined,
-        }}
+        data={landingData}
+        onPreviewUpdate={
+          messageId && onPreviewUpdate
+            ? (next) => onPreviewUpdate(messageId, next)
+            : undefined
+        }
       />
     );
   }

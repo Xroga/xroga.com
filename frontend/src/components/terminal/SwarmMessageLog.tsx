@@ -441,6 +441,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                               output={msg.featureOutput}
                               messageId={msg.id}
                               onDelete={() => deleteTurn(msg.id)}
+                              onPreviewUpdate={updateFeatureOutput}
                               onVideoJobResolved={(video) => {
                                 updateFeatureOutput(msg.id, video);
                               }}
