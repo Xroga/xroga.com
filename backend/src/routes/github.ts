@@ -5,6 +5,8 @@ import type { AuthRequest } from '../middleware/auth.js';
 import {
   getGitHubToken,
   saveGitHubConnection,
+  clearGitHubConnection,
+  getGitHubStorageMeta,
 } from '../services/integrations/githubAuth.js';
 
 const router = Router();
@@ -197,7 +199,9 @@ router.get('/status', async (req: AuthRequest, res) => {
     .eq('user_id', req.userId!)
     .maybeSingle();
 
-  let username: string | null = null;
+  const storageMeta = await getGitHubStorageMeta(req.userId!);
+
+  let username: string | null = storageMeta?.username ?? null;
 
   const { data: userInt, error: userIntErr } = await supabase
     .from('user_integrations')
@@ -206,7 +210,7 @@ router.get('/status', async (req: AuthRequest, res) => {
     .eq('provider', 'github')
     .maybeSingle();
 
-  if (!userIntErr && userInt?.metadata) {
+  if (!username && !userIntErr && userInt?.metadata) {
     const metadata = userInt.metadata as { username?: string };
     username = metadata.username ?? null;
   }
@@ -223,8 +227,8 @@ router.get('/status', async (req: AuthRequest, res) => {
   res.json({
     connected: true,
     username,
-    repoStrategy: ghInt?.repo_strategy ?? 'auto',
-    defaultRepo: ghInt?.default_repo ?? null,
+    repoStrategy: ghInt?.repo_strategy ?? storageMeta?.repo_strategy ?? 'auto',
+    defaultRepo: ghInt?.default_repo ?? storageMeta?.default_repo ?? null,
   });
 });
 
@@ -313,16 +317,7 @@ router.patch('/settings', async (req: AuthRequest, res) => {
 });
 
 router.delete('/disconnect', async (req: AuthRequest, res) => {
-  const supabase = getSupabaseAdmin();
-  await supabase.from('github_integrations').delete().eq('user_id', req.userId!);
-  const { error } = await supabase
-    .from('user_integrations')
-    .delete()
-    .eq('user_id', req.userId!)
-    .eq('provider', 'github');
-  if (error && !/schema cache|could not find the table/i.test(error.message)) {
-    console.warn('[github/disconnect] user_integrations:', error.message);
-  }
+  await clearGitHubConnection(req.userId!);
   res.json({ disconnected: true });
 });
 

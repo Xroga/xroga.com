@@ -1,7 +1,15 @@
 name: Apply Supabase migrations
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/**'
   workflow_dispatch:
+
+concurrency:
+  group: supabase-migrate
+  cancel-in-progress: false
 
 jobs:
   migrate:

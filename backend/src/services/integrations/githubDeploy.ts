@@ -2,7 +2,7 @@ import { getSupabaseAdmin } from '../../config/supabase.js';
 import { deployStaticSite, pollDeploymentReady } from '../../lib/vercel.js';
 import { deployToNetlify, pollNetlifyDeploy } from '../../lib/netlify.js';
 import { getSecret } from '../../config/envSecrets.js';
-import { getGitHubToken, isGitHubConnected as checkGitHubConnected } from './githubAuth.js';
+import { getGitHubToken, isGitHubConnected as checkGitHubConnected, getGitHubStorageMeta } from './githubAuth.js';
 
 export interface ProjectFile {
   path: string;
@@ -42,10 +42,11 @@ async function getIntegration(userId: string): Promise<GitHubIntegrationRow | nu
 
   if (data?.access_token) return data as GitHubIntegrationRow;
 
+  const storageMeta = await getGitHubStorageMeta(userId);
   return {
     access_token: token,
-    repo_strategy: 'auto',
-    default_repo: null,
+    repo_strategy: storageMeta?.repo_strategy ?? 'auto',
+    default_repo: storageMeta?.default_repo ?? null,
   };
 }
 

@@ -5,7 +5,8 @@
 #   ./scripts/setup-fly-auth.sh \
 #     "https://YOUR_PROJECT.supabase.co" \
 #     "your-jwt-secret" \
-#     "your-service-role-key"
+#     "your-service-role-key" \
+#     "your-database-password"
 #
 # Get all three from Supabase → Project Settings → API:
 #   - Project URL        → arg 1
@@ -34,6 +35,7 @@ SECRETS=(
 
 [[ -n "$JWT_SECRET" ]] && SECRETS+=(SUPABASE_JWT_SECRET="$JWT_SECRET")
 [[ -n "$SERVICE_ROLE_KEY" ]] && SECRETS+=(SUPABASE_SERVICE_ROLE_KEY="$SERVICE_ROLE_KEY")
+[[ -n "$DB_PASSWORD" ]] && SECRETS+=(SUPABASE_DB_PASSWORD="$DB_PASSWORD")
 
 echo "Setting secrets on $APP..."
 flyctl secrets set -a "$APP" "${SECRETS[@]}"

@@ -1,15 +1,15 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { ensureGithubSchema } from '../../db/ensureGithubSchema.js';
+import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
+import {
+  getGitHubTokenFromStorage,
+  isMissingTableError,
+  saveGitHubTokenToStorage,
+  deleteGitHubTokenFromStorage,
+} from './githubTokenStore.js';
 
 export type GitHubRepoStrategy = 'auto' | 'monorepo' | 'manual';
 
-function isMissingTableError(message: string): boolean {
-  return /schema cache|could not find the table|does not exist|relation.*does not exist/i.test(
-    message
-  );
-}
-
-/** Load GitHub token — github_integrations first, optional user_integrations fallback */
+/** Load GitHub token — DB tables first, then private Storage fallback */
 export async function getGitHubToken(userId: string): Promise<string | null> {
   const supabase = getSupabaseAdmin();
 
@@ -33,31 +33,29 @@ export async function getGitHubToken(userId: string): Promise<string | null> {
     .eq('provider', 'github')
     .maybeSingle();
 
-  if (legacyErr) {
-    if (!isMissingTableError(legacyErr.message)) {
-      console.warn('[githubAuth] user_integrations lookup:', legacyErr.message);
-    }
-    return null;
+  if (!legacyErr) {
+    const legacyToken = legacy?.access_token?.trim();
+    if (legacyToken) return legacyToken;
+  } else if (!isMissingTableError(legacyErr.message)) {
+    console.warn('[githubAuth] user_integrations lookup:', legacyErr.message);
   }
 
-  const legacyToken = legacy?.access_token?.trim();
-  if (!legacyToken) return null;
+  const stored = await getGitHubTokenFromStorage(userId);
+  return stored?.access_token?.trim() ?? null;
+}
 
-  const { error: syncErr } = await supabase.from('github_integrations').upsert(
-    {
-      user_id: userId,
-      access_token: legacyToken,
-      repo_strategy: 'auto',
-      default_repo: null,
-    },
-    { onConflict: 'user_id' }
-  );
-
-  if (syncErr && !isMissingTableError(syncErr.message)) {
-    console.warn('[githubAuth] sync legacy token:', syncErr.message);
-  }
-
-  return legacyToken;
+export async function getGitHubStorageMeta(userId: string): Promise<{
+  username?: string;
+  repo_strategy?: GitHubRepoStrategy;
+  default_repo?: string | null;
+} | null> {
+  const stored = await getGitHubTokenFromStorage(userId);
+  if (!stored) return null;
+  return {
+    username: stored.username,
+    repo_strategy: stored.repo_strategy,
+    default_repo: stored.default_repo,
+  };
 }
 
 export async function isGitHubConnected(userId: string, retries = 3): Promise<boolean> {
@@ -68,8 +66,27 @@ export async function isGitHubConnected(userId: string, retries = 3): Promise<bo
       await new Promise((r) => setTimeout(r, 350));
     }
   }
-  console.warn('[githubAuth] no token for user', userId.slice(0, 8));
   return false;
+}
+
+async function saveToStorageFallback(
+  userId: string,
+  storagePayload: {
+    access_token: string;
+    username: string;
+    provider_user_id: string;
+    repo_strategy: GitHubRepoStrategy;
+    default_repo: string | null;
+    updated_at: string;
+  }
+): Promise<void> {
+  const stored = await saveGitHubTokenToStorage(userId, storagePayload);
+  if (!stored) {
+    throw new Error(
+      'Could not save your GitHub connection. Please try again in a moment or contact support.'
+    );
+  }
+  console.log('[githubAuth] Saved GitHub token via Storage for user', userId.slice(0, 8));
 }
 
 export async function saveGitHubConnection(
@@ -89,7 +106,21 @@ export async function saveGitHubConnection(
   const repoStrategy = opts.repoStrategy ?? 'auto';
   const defaultRepo = opts.defaultRepo ?? null;
 
-  await ensureGithubSchema();
+  const storagePayload = {
+    access_token: token,
+    username: opts.username,
+    provider_user_id: opts.providerUserId,
+    repo_strategy: repoStrategy,
+    default_repo: defaultRepo,
+    updated_at: new Date().toISOString(),
+  };
+
+  const schemaReady = githubSchemaAutoBootstrapEnabled() ? await ensureGithubSchema() : false;
+
+  if (!schemaReady) {
+    await saveToStorageFallback(userId, storagePayload);
+    return;
+  }
 
   let { error: ghErr } = await supabase.from('github_integrations').upsert(
     {
@@ -97,31 +128,17 @@ export async function saveGitHubConnection(
       access_token: token,
       repo_strategy: repoStrategy,
       default_repo: defaultRepo,
+      github_username: opts.username,
     },
     { onConflict: 'user_id' }
   );
 
   if (ghErr && isMissingTableError(ghErr.message)) {
-    const bootstrapped = await ensureGithubSchema();
-    if (bootstrapped) {
-      ({ error: ghErr } = await supabase.from('github_integrations').upsert(
-        {
-          user_id: userId,
-          access_token: token,
-          repo_strategy: repoStrategy,
-          default_repo: defaultRepo,
-        },
-        { onConflict: 'user_id' }
-      ));
-    }
+    await saveToStorageFallback(userId, storagePayload);
+    return;
   }
 
   if (ghErr) {
-    if (isMissingTableError(ghErr.message)) {
-      throw new Error(
-        'GitHub storage is not ready yet. Ask your admin to run scripts/apply-github-integration-migration.mjs or paste supabase/migrations/020_user_integrations.sql in Supabase SQL Editor, then try Connect again.'
-      );
-    }
     throw new Error(`Failed to save GitHub connection: ${ghErr.message}`);
   }
 
@@ -135,8 +152,22 @@ export async function saveGitHubConnection(
     },
     { onConflict: 'user_id,provider' }
   );
-
   if (userErr && !isMissingTableError(userErr.message)) {
     console.warn('[githubAuth] optional user_integrations save:', userErr.message);
   }
+
+  void saveGitHubTokenToStorage(userId, storagePayload).catch(() => {
+    /* DB is primary; storage mirror is best-effort */
+  });
+}
+
+export async function clearGitHubConnection(userId: string): Promise<void> {
+  const supabase = getSupabaseAdmin();
+  await supabase.from('github_integrations').delete().eq('user_id', userId);
+  await supabase
+    .from('user_integrations')
+    .delete()
+    .eq('user_id', userId)
+    .eq('provider', 'github');
+  await deleteGitHubTokenFromStorage(userId);
 }

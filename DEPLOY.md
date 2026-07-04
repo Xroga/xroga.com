@@ -96,8 +96,16 @@ DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db.YOUR_REF.supabase.co:5432/p
 
 Then set the same URI on Fly so the API can auto-ensure tables on startup:
 ```bash
-fly secrets set -a xroga-api DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db.YOUR_REF.supabase.co:5432/postgres"
+fly secrets set -a xroga-api \
+  DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db.YOUR_REF.supabase.co:5432/postgres"
 ```
+
+Or set only the database password (auto-builds the connection URL):
+```bash
+fly secrets set -a xroga-api SUPABASE_DB_PASSWORD="your-db-password"
+```
+
+**No migration?** After deploy, GitHub tokens also save to a private Supabase Storage bucket (`xroga-github-tokens`) automatically when DB tables are missing.
 
 ## Verify
 ```bash
