@@ -70,15 +70,15 @@ What is the one main thing the app should do for users?
 Share those details and we can start immediately.`;
   }
   if (topic === 'website') {
-    return `Let me understand your website
+    return `XROGA Visionary — a few details before we build:
 
-A few details will help me design the right thing.
+1. What tech stack? (HTML/CSS/JS, React, Next.js, etc.)
+2. Key features? (menu, ordering, reservations, gallery, etc.)
+3. Design preference? (colors, style, dark/light theme)
+4. Do you need a payment gateway? (Stripe/PayPal)
+5. Should it be responsive/mobile-first?
 
-Quick questions
-What is the site for — business, portfolio, store, or something else?
-Any style you like — minimal, bold, dark, playful?
-
-Tell me and we will build from there.`;
+Reply with your choices and we will start the 9-phase build immediately.`;
   }
   if (topic === 'game') {
     return `Let me understand your game idea

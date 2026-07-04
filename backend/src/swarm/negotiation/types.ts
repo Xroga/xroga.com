@@ -1,18 +1,24 @@
 import type { FeatureCategory, SwarmProgressEvent } from '../../types/features.js';
 
-/** 7-phase AI Swarm Logic negotiation loop (Phase 0–7) */
-export type NegotiationPhase = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+/** 9-phase AI Swarm Logic (internal 0–8 maps to user-facing Phases 1–9) */
+export type NegotiationPhase = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export const PHASE_LABELS: Record<NegotiationPhase, string> = {
-  0: 'Discovery & Clarification',
-  1: 'Initial Planning',
-  2: 'Plan Cross-Verification',
-  3: 'Step-by-Step Execution',
-  4: 'Multi-Agent Verification',
-  5: 'Error Negotiation & Correction',
-  6: 'Final Full-Code Verification',
-  7: 'Black Hole V∞ Emission',
+  0: 'Phase 1: Discovery',
+  1: 'Phase 2: Planning',
+  2: 'Phase 3: Plan Cross-Verification',
+  3: 'Phase 4: Execution',
+  4: 'Phase 5: Verification',
+  5: 'Phase 6: Correction',
+  6: 'Phase 7: Final Holistic Verification',
+  7: 'Phase 8: Black Hole V∞ Emission',
+  8: 'Phase 9: Auto-Deploy & Live Preview',
 };
+
+/** User-facing phase number (1–9) from internal index */
+export function userPhaseNumber(internal: NegotiationPhase): number {
+  return internal + 1;
+}
 
 export interface NegotiationContext {
   userPrompt: string;

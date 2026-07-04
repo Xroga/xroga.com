@@ -123,7 +123,7 @@ export class Orchestrator {
     };
   }
 
-  /** 7-Phase AI Swarm Logic — negotiated build with Core Quartet + Reserve */
+  /** 9-Phase AI Swarm Logic — negotiated build with Core Quartet + Reserve */
   private static async executeNegotiationBuild(
     ctx: {
       userId: string;
@@ -656,7 +656,7 @@ export class Orchestrator {
       }
     }
 
-    // 7-Phase AI Swarm Logic — replaces background queue for build tasks
+    // 9-Phase AI Swarm Logic — replaces background queue for build tasks
     if (shouldUseNegotiationEngine(userText, featureCategory)) {
       return this.executeNegotiationBuild(ctx, featureCategory);
     }

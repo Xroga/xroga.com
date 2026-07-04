@@ -6,14 +6,15 @@ import type { SwarmTodoItem } from '@/lib/swarm';
 import { SwarmProcessingTicker } from './SwarmProcessingTicker';
 
 const PHASES = [
-  { id: 0, label: 'Discovery' },
-  { id: 1, label: 'Planning' },
-  { id: 2, label: 'Verify Plan' },
-  { id: 3, label: 'Execute' },
-  { id: 4, label: 'Verify Code' },
-  { id: 5, label: 'Fix Errors' },
-  { id: 6, label: 'Final Check' },
-  { id: 7, label: 'Emit' },
+  { id: 0, label: '1 · Discovery' },
+  { id: 1, label: '2 · Planning' },
+  { id: 2, label: '3 · Verify Plan' },
+  { id: 3, label: '4 · Execute' },
+  { id: 4, label: '5 · Verify Code' },
+  { id: 5, label: '6 · Fix Errors' },
+  { id: 6, label: '7 · Final Check' },
+  { id: 7, label: '8 · Emit' },
+  { id: 8, label: '9 · Deploy' },
 ] as const;
 
 interface SwarmPhasePanelProps {
@@ -26,7 +27,7 @@ interface SwarmPhasePanelProps {
   activityLog?: string[];
 }
 
-/** Live 7-phase AI Swarm Logic + XROGA branded processing animation */
+/** Live 9-phase AI Swarm Logic + XROGA branded processing animation */
 export function SwarmPhasePanel({
   activePhase,
   loading,
@@ -39,7 +40,7 @@ export function SwarmPhasePanel({
   const showPanel = loading && (todos.length > 0 || activePhase != null || Boolean(message));
   if (!showPanel) return null;
 
-  const phase = activePhase != null ? Math.min(7, Math.max(0, activePhase)) : null;
+  const phase = activePhase != null ? Math.min(8, Math.max(0, activePhase)) : null;
   const liveText = message ?? statusLabel ?? activityLog[activityLog.length - 1];
   const headline = statusLabel ?? 'AI SWARM LOGIC';
 

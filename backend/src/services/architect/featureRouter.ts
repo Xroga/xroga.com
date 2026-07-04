@@ -58,6 +58,7 @@ const RULE_PATTERNS: Array<{ category: FeatureCategory; patterns: RegExp[] }> = 
     category: 'landing_page',
     patterns: [
       /\b(build|create|make|design)\b.*\b(landing\s*page|website|web\s*page|site)\b/i,
+      /\b(build|create|make)\b.*\b(coffee|restaurant|shop|store)\b.*\b(website|site|page)\b/i,
       /\blanding\s*page\b/i,
     ],
   },
