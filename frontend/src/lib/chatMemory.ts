@@ -55,14 +55,24 @@ export function isPhase1BuildQuestion(text: string): boolean {
 /** User wants to change name, colors, or sections after a build. */
 export function isWebsiteUpdateRequest(prompt: string): boolean {
   const t = prompt.trim().toLowerCase();
-  return (
-    (/\b(change|update|edit|modify|rename|switch|make it|adjust)\b/.test(t) &&
-      /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order)\b/.test(
-        t
-      )) ||
-    /\bcan i change\b/.test(t) ||
-    /\b(more updates|another update|add a|remove the)\b/.test(t)
-  );
+  if (/\b(can i change|could you change|please change|i want to change)\b/.test(t)) return true;
+  if (/\b(more updates|another update|add a new|add new|remove the|new section)\b/.test(t)) return true;
+  if (/\b(improve|enhance|polish|refresh)\b/.test(t) && /\b(section|page|design|site|website|menu|hero)\b/.test(t)) {
+    return true;
+  }
+  if (
+    /\b(change|update|edit|modify|rename|switch|adjust|tweak|fix)\b/.test(t) &&
+    /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout|content)\b/.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  if (/\b(make|turn)\s+it\s+(blue|red|green|darker|lighter|warmer|cooler|minimal|modern)\b/.test(t)) {
+    return true;
+  }
+  if (/\b(changed?|changing)\s+(the\s+)?(color|name|theme|section|menu|design)\b/.test(t)) return true;
+  return false;
 }
 
 export function threadHasCompletedWebsite(messages: ChatMessage[]): boolean {
@@ -135,6 +145,10 @@ export function buildPromptWithMemory(prompt: string, messages: ChatMessage[]): 
   }
 
   if (isWebsiteUpdateRequest(trimmed) && threadHasCompletedWebsite(messages)) {
+    return formatContextBlock(messages, trimmed);
+  }
+
+  if (isWebsiteUpdateRequest(trimmed) && threadHasActiveBuild(messages)) {
     return formatContextBlock(messages, trimmed);
   }
 

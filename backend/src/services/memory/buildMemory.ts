@@ -98,11 +98,11 @@ function relativeTime(iso: string): string {
   return 'recently';
 }
 
-/** Friendly memory line shown before Phase 1 questions. */
+/** Friendly memory line from prior builds — shown in summary card. */
 export function formatMemorySuggestion(builds: PastBuild[]): string | undefined {
   if (!builds.length) return undefined;
   const latest = builds[0]!;
   const when = relativeTime(latest.createdAt);
   const theme = latest.designTheme ? ` (${latest.designTheme})` : '';
-  return `Old chats remembered: You built "${latest.projectName}"${theme} ${when}. Want me to use the same theme for this project?`;
+  return `Old chats remembered: You built "${latest.projectName}"${theme} ${when}. Your files and preferences are saved for updates.`;
 }

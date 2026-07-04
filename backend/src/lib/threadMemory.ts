@@ -10,6 +10,7 @@ import {
   hasThreadContext,
   looksLikeBuildClarificationAnswer,
   threadHasBuildIntent,
+  isWebsiteUpdateRequest,
 } from './buildContinuation.js';
 
 const BUILD_INTENT =
@@ -39,11 +40,41 @@ export function formatThreadBlock(turns: ChatTurn[], current: string): string {
   return `[Previous conversation for context — refer when user asks about earlier messages]\n${lines.join('\n')}\n\n[Current message]\n${current}`;
 }
 
+const COMPLETED_MARKERS =
+  /YOUR WEBSITE IS READY|Live Preview|Built website|\[Built website:/i;
+
+export function threadHasCompletedWebsiteFromTurns(turns: ChatTurn[]): boolean {
+  return turns.some((t) => COMPLETED_MARKERS.test(t.content));
+}
+
+/** Merge full thread when user requests website updates — keeps build memory. */
+export function enrichPromptForWebsiteContext(prompt: string, turns?: ChatTurn[]): string {
+  if (hasThreadContext(prompt)) return prompt;
+  const current = routingPrompt(prompt);
+  if (!turns?.length) return prompt;
+
+  const hasCompleted = threadHasCompletedWebsiteFromTurns(turns);
+  const isUpdate = isWebsiteUpdateRequest(current);
+  const hasBuild = threadHasBuildFromTurns(turns);
+
+  if (hasCompleted && (isUpdate || hasBuild)) {
+    return formatThreadBlock(turns, current);
+  }
+  if (isUpdate && hasCompleted) {
+    return formatThreadBlock(turns, current);
+  }
+  return prompt;
+}
+
 /** Merge client or DB history into the prompt when this is a build continuation. */
 export function enrichPromptWithThread(prompt: string, turns?: ChatTurn[]): string {
   if (hasThreadContext(prompt)) return prompt;
   const current = routingPrompt(prompt);
   if (!turns?.length) return prompt;
+
+  const websiteEnriched = enrichPromptForWebsiteContext(prompt, turns);
+  if (websiteEnriched !== prompt) return websiteEnriched;
+
   if (!isBuildContinuationFromTurns(current, turns)) return prompt;
   return formatThreadBlock(turns, current);
 }

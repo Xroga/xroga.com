@@ -22,9 +22,9 @@ import { formatMemorySuggestion, getPreviousBuilds } from '../../services/memory
 import {
   buildSummaryFromBrief,
   formatBuildSummaryCard,
-  formatPhase1Questions,
   friendlyStepLabel,
-  hasClarifiedBuildBrief,
+  inferBusinessLabel,
+  inferDefaultBuildBrief,
   isWebsiteBuildPrompt,
   parseProjectName,
   slugFromProjectName,
@@ -67,11 +67,11 @@ const MAX_STEP_CORRECTIONS = 3;
 
 const META_TODO_DEFS: Array<{ id: string; label: string }> = [
   { id: 'github', label: '[Phase 0] GitHub connected' },
-  { id: 'analyze', label: '[Phase 1] Discovery' },
-  { id: 'plan', label: '[Phase 2] Planning' },
-  { id: 'structure', label: '[Phase 3] Plan review' },
-  { id: 'steps', label: '[Phase 3] Plan approved' },
-  { id: 'verify-plan', label: '[Phase 3] Ready to build' },
+  { id: 'analyze', label: '[Phase 1] Starting build' },
+  { id: 'plan', label: '[Phase 1] Planning steps' },
+  { id: 'structure', label: '[Phase 1] Plan review' },
+  { id: 'steps', label: '[Phase 1] Plan approved' },
+  { id: 'verify-plan', label: '[Phase 1] Ready to build' },
 ];
 
 function createTodoState() {
@@ -376,7 +376,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   const memoryNote = formatMemorySuggestion(pastBuilds);
 
   todos.activateMeta('analyze');
-  emit(ctx, 0, BRAND.phase0.scanning, 'reviewer', todos, 'XROGA Visionary');
+  const businessLabel = inferBusinessLabel(userPrompt);
+  emit(ctx, 0, BRAND.phase0.scanning(businessLabel), 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
 
   const analysis = analyzeUserQuery(userPrompt);
   const isWebBuild =
@@ -387,22 +388,6 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     isWebsiteUpdateRequest(userPrompt) &&
     (hasBuildConversationContext(userPrompt) || threadHasCompletedWebsite(userPrompt));
 
-  // Phase 1: 3 simple beginner questions — skip for website updates
-  if (isWebBuild && !hasClarifiedBuildBrief(userPrompt) && !isUpdateBuild) {
-    const clarificationText = formatPhase1Questions(memoryNote);
-    todos.setAnalysis('Awaiting: project name, colors, and ordering preference.');
-    emit(ctx, 0, BRAND.phase0.clarifying, 'reviewer', todos, 'XROGA Visionary');
-    return {
-      success: false,
-      clarifiedBrief: '',
-      approvedPlan: '',
-      assembledCode: '',
-      polishedOutput: clarificationText,
-      needsUserClarification: true,
-      clarificationText,
-    };
-  }
-
   if (
     analysis.needsClarification &&
     analysis.clarificationText &&
@@ -410,7 +395,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     !isWebBuild
   ) {
     todos.setAnalysis(analysis.intentLabel);
-    emit(ctx, 0, BRAND.phase0.clarifying, 'reviewer', todos, 'XROGA Visionary');
+    emit(ctx, 0, BRAND.phase0.clarifying(businessLabel), 'reviewer', todos, 'XROGA Visionary');
     return {
       success: false,
       clarifiedBrief: '',
@@ -428,10 +413,15 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     : `${userPrompt}\n\nOriginal build request context preserved.`;
 
   if (isUpdateBuild) {
+    emit(ctx, 0, BRAND.phase0.scanning('website updates'), 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
+    const latestPrior = pastBuilds[0];
+    const priorContext = latestPrior
+      ? `Prior build remembered: "${latestPrior.projectName}"${latestPrior.designTheme ? ` (${latestPrior.designTheme})` : ''}${latestPrior.deployUrl ? ` — live at ${latestPrior.deployUrl}` : ''}`
+      : '';
     try {
       clarifiedBrief = await geminiCall(
         PHASE_0_UPDATE_BRIEF,
-        `Thread:\n${discoveryContext}\n\nUpdate request:\n${currentMessage}\n\nOutput the updated Fully Clarified Project Brief.`
+        `Thread:\n${discoveryContext}\n\n${priorContext}\n\nUpdate request:\n${currentMessage}\n\nOutput the updated Fully Clarified Project Brief. Apply changes directly — do NOT ask questions.`
       );
     } catch {
       clarifiedBrief = `Update request: ${currentMessage}\n\n${discoveryContext}`;
@@ -440,6 +430,30 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     todos.setAnalysis(clarifiedBrief.slice(0, 280));
     todos.completeMeta('analyze');
     emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
+  } else if (isWebBuild) {
+    // Auto-infer defaults — no questions, start building immediately
+    clarifiedBrief = inferDefaultBuildBrief(userPrompt, memoryNote);
+    try {
+      const refined = await geminiCall(
+        PHASE_0_DISCOVERY,
+        `User request:\n${discoveryContext}\n\nDefault brief:\n${clarifiedBrief}\n\nRefine the Fully Clarified Project Brief — do NOT ask questions.`
+      );
+      if (refined && !/clarifying question|\?\s*$/im.test(refined) && refined.length > 80) {
+        clarifiedBrief = refined;
+      }
+    } catch {
+      /* keep inferred defaults */
+    }
+    buildState.markDone('clarified');
+    todos.setAnalysis(clarifiedBrief.slice(0, 280));
+    todos.completeMeta('analyze');
+    emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
+    try {
+      clarifiedBrief = await groqCall(PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 120);
+      emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse', { silent: true });
+    } catch {
+      /* keep brief */
+    }
   } else {
   try {
     clarifiedBrief = await geminiCall(
@@ -448,26 +462,6 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     );
   } catch {
     clarifiedBrief = `${currentMessage}\n\n${discoveryContext}`;
-  }
-
-  if (
-    !hasClarifiedBuildBrief(userPrompt) &&
-    !isUpdateBuild &&
-    /clarifying question|\?\s*$/im.test(clarifiedBrief) &&
-    clarifiedBrief.split('?').length > 2
-  ) {
-    const clarificationText = formatPhase1Questions(memoryNote);
-    todos.setAnalysis('Awaiting: project name, colors, and ordering preference.');
-    emit(ctx, 0, BRAND.phase0.clarifying, 'reviewer', todos, 'XROGA Visionary');
-    return {
-      success: false,
-      clarifiedBrief,
-      approvedPlan: '',
-      assembledCode: '',
-      polishedOutput: clarificationText,
-      needsUserClarification: true,
-      clarificationText,
-    };
   }
 
   buildState.assertCanProceed('clarified');
@@ -485,10 +479,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   }
   }
 
-  // Phase 2 planning runs silently — user sees Phase 3 build start next
+  // Phase 2 planning — user sees planning under Phase 1, review runs silently
   todos.activateMeta('plan');
   buildState.assertCanProceed('planned');
-  emit(ctx, 1, BRAND.phase1.planning, 'architect', todos, 'AI SWARM LOGIC', { silent: true });
+  emit(ctx, 1, BRAND.phase1.planning, 'architect', todos, 'AI SWARM LOGIC', { userPhase: 1 });
   let masterPlan: string;
   if (isUpdateBuild) {
     masterPlan = defaultUpdatePlanForPrompt(userPrompt).join('\n');
@@ -503,7 +497,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   buildState.markDone('planned');
   todos.completeMeta('plan');
   emit(ctx, 1, BRAND.phase1.planReady(parsePlanSteps(masterPlan).length), 'architect', todos, 'AI SWARM LOGIC', {
-    silent: true,
+    userPhase: 1,
   });
 
   todos.activateMeta('structure');

@@ -1,6 +1,5 @@
 /**
- * Detect when the user is continuing a website build (Phase 1 answers, etc.)
- * — must route to negotiation engine, NOT fast chat.
+ * Detect website build vs chat — route builds to negotiation engine, NOT fast chat.
  */
 
 import { routingPrompt } from './promptRouting.js';
@@ -9,10 +8,13 @@ const BUILD_INTENT_IN_THREAD =
   /\b(build|create|make|develop|design)\b[\s\S]{0,80}\b(website|web\s*page|landing|site|coffee|shop|store|restaurant|bakery|app)\b/i;
 
 const PHASE_1_IN_THREAD =
-  /\[Phase 1\]|let me understand what you need|what(?:'|'| is) the name of your project|what colors do you like|online ordering/i;
+  /\[Phase 1\]|starting your|steps planned|building your website|updating your website/i;
 
 const BUILD_ANSWER =
   /^[^,\n]{2,40},\s*[^,\n]{3,60},\s*(yes|no)\b/i;
+
+const COMPLETED_WEBSITE_MARKERS =
+  /YOUR WEBSITE IS READY|SINGULARITY ACHIEVED|Live Preview|landing_page|Built website|\[Built website:/i;
 
 /** Full prompt still has the memory wrapper from the frontend. */
 export function hasThreadContext(prompt: string): boolean {
@@ -47,14 +49,14 @@ export function looksLikeBuildClarificationAnswer(prompt: string): boolean {
   return hasComma && hasColors && (hasYesNo || hasName);
 }
 
-/** User is answering Phase 1 after "build a coffee shop website" — continue build pipeline. */
+/** User is continuing a website build thread — route to negotiation, not chat. */
 export function isBuildContinuation(prompt: string): boolean {
   if (/\b(use defaults|just build|build it now|go ahead)\b/i.test(routingPrompt(prompt))) {
     return hasThreadContext(prompt) ? threadHasBuildIntent(prompt) : false;
   }
 
   if (!hasThreadContext(prompt)) {
-    return looksLikeBuildClarificationAnswer(prompt) && false;
+    return false;
   }
 
   return threadHasBuildIntent(prompt) && looksLikeBuildClarificationAnswer(prompt);
@@ -63,29 +65,56 @@ export function isBuildContinuation(prompt: string): boolean {
 /** User wants to update an existing website (name, colors, sections). */
 export function isWebsiteUpdateRequest(prompt: string): boolean {
   const t = routingPrompt(prompt).toLowerCase();
-  return (
-    (/\b(change|update|edit|modify|rename|switch|make it|adjust)\b/.test(t) &&
-      /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order)\b/.test(
-        t
-      )) ||
-    /\bcan i change\b/.test(t) ||
-    /\b(more updates|another update|add a|remove the)\b/.test(t)
-  );
+  if (/\b(can i change|could you change|please change|i want to change)\b/.test(t)) return true;
+  if (/\b(more updates|another update|add a new|add new|remove the|new section)\b/.test(t)) return true;
+  if (/\b(improve|enhance|polish|refresh)\b/.test(t) && /\b(section|page|design|site|website|menu|hero)\b/.test(t)) {
+    return true;
+  }
+  if (
+    /\b(change|update|edit|modify|rename|switch|adjust|tweak|fix)\b/.test(t) &&
+    /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout|content)\b/.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  if (/\b(make|turn)\s+it\s+(blue|red|green|darker|lighter|warmer|cooler|minimal|modern)\b/.test(t)) {
+    return true;
+  }
+  if (/\b(changed?|changing)\s+(the\s+)?(color|name|theme|section|menu|design)\b/.test(t)) return true;
+  return false;
 }
 
 export function threadHasCompletedWebsite(prompt: string): boolean {
   const prior = hasThreadContext(prompt) ? threadText(prompt) : prompt;
-  return (
-    /YOUR WEBSITE IS READY|SINGULARITY ACHIEVED|Live Preview|landing_page|Built website/i.test(prior) ||
-    /\[Built website:/i.test(prior)
-  );
+  return COMPLETED_WEBSITE_MARKERS.test(prior);
+}
+
+export function historyHasCompletedWebsite(
+  history?: Array<{ role: string; content: string }>
+): boolean {
+  return history?.some((h) => COMPLETED_WEBSITE_MARKERS.test(h.content)) ?? false;
 }
 
 /** Update request after a completed build in the same thread. */
-export function isWebsiteBuildUpdate(prompt: string, history?: Array<{ role: string; content: string }>): boolean {
+export function isWebsiteBuildUpdate(
+  prompt: string,
+  history?: Array<{ role: string; content: string }>
+): boolean {
   if (!isWebsiteUpdateRequest(prompt)) return false;
   if (threadHasCompletedWebsite(prompt)) return true;
-  if (history?.some((h) => /YOUR WEBSITE IS READY|Live Preview|Built website/i.test(h.content))) return true;
+  if (historyHasCompletedWebsite(history)) return true;
+  return false;
+}
+
+/** Any message in an active website project — not general chat. */
+export function isActiveWebsiteProjectContext(
+  prompt: string,
+  history?: Array<{ role: string; content: string }>
+): boolean {
+  if (threadHasCompletedWebsite(prompt) || historyHasCompletedWebsite(history)) return true;
+  if (hasThreadContext(prompt) && threadHasBuildIntent(prompt)) return true;
+  if (history?.some((h) => BUILD_INTENT_IN_THREAD.test(h.content))) return true;
   return false;
 }
 

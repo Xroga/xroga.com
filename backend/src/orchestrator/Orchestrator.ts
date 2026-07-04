@@ -13,9 +13,12 @@ import {
   hasThreadContext,
   looksLikeBuildClarificationAnswer,
   isWebsiteBuildUpdate,
+  isWebsiteUpdateRequest,
+  isActiveWebsiteProjectContext,
 } from '../lib/buildContinuation.js';
 import {
   enrichPromptWithThread,
+  enrichPromptForWebsiteContext,
   loadRecentChatTurns,
   persistChatTurns,
   shouldContinueWebsiteBuild,
@@ -208,11 +211,7 @@ export class Orchestrator {
 
     if (result.needsUserClarification) {
       const reply = result.clarificationText ?? result.polishedOutput;
-      const buildFollowUps = [
-        'Cozy Cup, warm brown & gold, yes',
-        'Sunrise Bakery, light pastels, no',
-        'Use defaults and build it now',
-      ];
+      const buildFollowUps = ['Use defaults and build it now', 'Build with warm brown & gold theme'];
       return {
         runId: crypto.randomUUID(),
         fast: true,
@@ -516,8 +515,13 @@ export class Orchestrator {
 
     if (!/\[Previous conversation for context/i.test(prompt)) {
       const clientHistory = ctx.history?.filter((t) => t.content?.trim());
-      if (clientHistory?.length && shouldContinueWebsiteBuild(prompt, clientHistory)) {
-        prompt = enrichPromptWithThread(prompt, clientHistory);
+      if (clientHistory?.length) {
+        const websiteEnriched = enrichPromptForWebsiteContext(prompt, clientHistory);
+        if (websiteEnriched !== prompt) {
+          prompt = websiteEnriched;
+        } else if (shouldContinueWebsiteBuild(prompt, clientHistory)) {
+          prompt = enrichPromptWithThread(prompt, clientHistory);
+        }
       } else if (looksLikeBuildClarificationAnswer(prompt)) {
         const dbTurns = await loadRecentChatTurns(ctx.userId);
         const merged = enrichPromptWithThread(prompt, dbTurns);
@@ -542,10 +546,14 @@ export class Orchestrator {
       return this.executeNegotiationBuild(ctx, 'landing_page');
     }
 
-    // Post-build updates — name, colors, sections — re-run build pipeline
-    if (isWebsiteBuildUpdate(prompt, ctx.history) || ctx.clientMeta?.buildUpdate) {
+    // Post-build updates — name, colors, sections — re-run build pipeline (never chat)
+    if (
+      isWebsiteBuildUpdate(prompt, ctx.history) ||
+      ctx.clientMeta?.buildUpdate ||
+      (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history))
+    ) {
       if (!hasThreadContext(prompt) && ctx.history?.length) {
-        prompt = enrichPromptWithThread(prompt, ctx.history);
+        prompt = enrichPromptForWebsiteContext(prompt, ctx.history);
         ctx.prompt = prompt;
       }
       return this.executeNegotiationBuild(ctx, 'landing_page');

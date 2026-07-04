@@ -39,6 +39,9 @@ export function shouldUseFastChat(prompt: string, category?: string): boolean {
   if (isBuildContinuation(prompt)) return false;
   if (isWebsiteUpdateRequest(prompt) && threadHasCompletedWebsite(prompt)) return false;
   const routeText = routingPrompt(prompt);
+  if (isWebsiteUpdateRequest(routeText) && /\b(website|site|color|section|menu|theme)\b/i.test(routeText)) {
+    return false;
+  }
   if (isCapabilitiesQuery(routeText)) return true;
   if (isMathQuery(routeText)) return true;
   if (requiresFeaturePipeline(routeText)) return false;

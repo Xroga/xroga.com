@@ -3,11 +3,77 @@
 import type { NegotiationPhase } from './types.js';
 import { userPhaseNumber } from './types.js';
 
-export const BEGINNER_BUILD_QUESTIONS = [
-  "What's the name of your project?",
-  'What colors do you like? (e.g., warm brown & gold, minimalist black/white)',
-  'Do you need online ordering? (Yes/No)',
-] as const;
+/** Infer project defaults from the build request — no user questions needed. */
+export function inferDefaultBuildBrief(prompt: string, memoryNote?: string): string {
+  const lower = prompt.toLowerCase();
+  let projectName = 'My Website';
+  let theme = 'Modern, clean design';
+  let ordering = true;
+  let businessType = 'website';
+
+  if (/\bcoffee|caf[eé]|espresso|latte\b/.test(lower)) {
+    projectName = 'Cozy Cup Coffee';
+    theme = 'Warm brown & gold, cozy atmosphere';
+    businessType = 'coffee shop';
+    ordering = true;
+  } else if (/\bbakery|bake|pastry|bread\b/.test(lower)) {
+    projectName = 'Sunrise Bakery';
+    theme = 'Light pastels, warm and inviting';
+    businessType = 'bakery';
+    ordering = true;
+  } else if (/\brestaurant|dining|bistro|pizza\b/.test(lower)) {
+    projectName = 'The Hearth Restaurant';
+    theme = 'Elegant dark theme with gold accents';
+    businessType = 'restaurant';
+    ordering = true;
+  } else if (/\bshop|store|boutique|retail\b/.test(lower)) {
+    projectName = 'Urban Boutique';
+    theme = 'Minimalist black & white, modern';
+    businessType = 'shop';
+    ordering = true;
+  } else {
+    const match = prompt.match(/\b(build|create|make)\s+(?:a\s+)?(.+?)\s+(website|site|shop|store)/i);
+    if (match?.[2]) {
+      const raw = match[2].trim();
+      projectName = raw.replace(/\b\w/g, (c) => c.toUpperCase());
+      if (!/website|site/i.test(projectName)) projectName += ' Website';
+      businessType = raw;
+    }
+  }
+
+  const features = [
+    'Homepage with hero & navigation',
+    'Menu / products with pricing',
+    ...(ordering ? ['Online ordering & cart'] : []),
+    'Photo gallery',
+    'Contact form & footer',
+    'Responsive mobile design',
+  ];
+
+  const lines = [
+    'Fully Clarified Project Brief',
+    '',
+    `Project name: ${projectName}`,
+    `Business type: ${businessType}`,
+    `Design theme: ${theme}`,
+    `Features: ${features.join(', ')}`,
+    'Tech: Plain HTML/CSS/JS, mobile-first',
+  ];
+  if (memoryNote) lines.push('', `Prior builds remembered: ${memoryNote}`);
+  return lines.join('\n');
+}
+
+/** Short label for Phase 1 kickoff message */
+export function inferBusinessLabel(prompt: string): string {
+  const lower = prompt.toLowerCase();
+  if (/\bcoffee|caf[eé]|espresso|latte\b/.test(lower)) return 'coffee shop website';
+  if (/\bbakery|bake|pastry\b/.test(lower)) return 'bakery website';
+  if (/\brestaurant|dining|bistro|pizza\b/.test(lower)) return 'restaurant website';
+  if (/\bshop|store|boutique\b/.test(lower)) return 'shop website';
+  const match = prompt.match(/\b(build|create|make)\s+(?:a\s+)?(.+?)\s+(website|site)/i);
+  if (match?.[2]) return `${match[2].trim()} website`;
+  return 'website';
+}
 
 export interface BuildSummaryData {
   projectName: string;
@@ -20,30 +86,16 @@ export interface BuildSummaryData {
   needsPayment?: boolean;
 }
 
-export function formatPhase1Questions(
-  memoryNote?: string,
-  questions: readonly string[] = BEGINNER_BUILD_QUESTIONS
-): string {
-  const lines = [
-    '🔍 [Phase 1] Let me understand what you need...',
-    ...questions.map((q) => `   → ${q}`),
-  ];
-  if (memoryNote) {
-    lines.push('', `💬 ${memoryNote}`);
-  }
-  return lines.join('\n');
-}
-
 export function phaseLine(phase: NegotiationPhase, detail: string): string {
   return `[Phase ${userPhaseNumber(phase)}] ${detail}`;
 }
 
 export const PHASE_UI = {
   githubConnect: '[Phase 0] Connect GitHub to save your work.',
-  discovery: () => '🔍 [Phase 1] Let me understand what you need...',
-  briefReady: () => '[Phase 1] Project brief ready.',
-  planning: () => '📝 [Phase 2] XROGA is planning...',
-  planReady: (steps: number) => `📝 [Phase 2] ${steps} steps planned. Let's build!`,
+  discovery: (label?: string) => `🚀 [Phase 1] Starting your ${label ?? 'website'}...`,
+  briefReady: () => '[Phase 1] Build plan ready.',
+  planning: () => '📝 [Phase 1] Planning your build steps...',
+  planReady: (steps: number) => `📝 [Phase 1] ${steps} steps planned — starting build`,
   planReview: () => '[Phase 3] XROGA Architect reviews the plan.',
   planApproved: () => '[Phase 3] Plan approved.',
   execute: (step: number, total: number, label: string) =>
