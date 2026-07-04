@@ -17,6 +17,8 @@ export const BRAND = {
     approved: '[Phase 3] Plan approved.',
   },
   phase3: {
+    buildStart: (steps: number) => `⚙️ [Phase 3] Building your website — ${steps} steps`,
+    updateStart: (steps: number) => `⚙️ [Phase 3] Updating your website — ${steps} steps`,
     execute: (step: number, total: number, label: string) =>
       `⚙️ [Phase 3] Building... Step ${step}/${total} ${label}`,
   },

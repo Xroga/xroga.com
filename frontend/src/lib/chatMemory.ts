@@ -52,6 +52,39 @@ export function isPhase1BuildQuestion(text: string): boolean {
   );
 }
 
+/** User wants to change name, colors, or sections after a build. */
+export function isWebsiteUpdateRequest(prompt: string): boolean {
+  const t = prompt.trim().toLowerCase();
+  return (
+    (/\b(change|update|edit|modify|rename|switch|make it|adjust)\b/.test(t) &&
+      /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order)\b/.test(
+        t
+      )) ||
+    /\bcan i change\b/.test(t) ||
+    /\b(more updates|another update|add a|remove the)\b/.test(t)
+  );
+}
+
+export function threadHasCompletedWebsite(messages: ChatMessage[]): boolean {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const m = messages[i];
+    if (!m) continue;
+    if (m.featureOutput && typeof m.featureOutput === 'object') {
+      const o = m.featureOutput as { type?: string; deployUrl?: string };
+      if (o.type === 'landing_page' && o.deployUrl) return true;
+    }
+    if (m.role === 'assistant' && /YOUR WEBSITE IS READY|Live Preview|Built website/i.test(m.content ?? '')) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function isWebsiteBuildUpdate(prompt: string, messages: ChatMessage[]): boolean {
+  if (!isWebsiteUpdateRequest(prompt)) return false;
+  return threadHasCompletedWebsite(messages);
+}
+
 export function isBuildThreadContinuation(prompt: string, messages: ChatMessage[]): boolean {
   if (looksLikeBuildClarificationAnswer(prompt) && threadHasActiveBuild(messages)) return true;
   const lastAssistant = lastAssistantMessage(messages);
@@ -98,6 +131,10 @@ export function buildPromptWithMemory(prompt: string, messages: ChatMessage[]): 
   }
 
   if (threadHasActiveBuild(messages)) {
+    return formatContextBlock(messages, trimmed);
+  }
+
+  if (isWebsiteUpdateRequest(trimmed) && threadHasCompletedWebsite(messages)) {
     return formatContextBlock(messages, trimmed);
   }
 

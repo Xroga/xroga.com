@@ -24,7 +24,7 @@ import {
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
-import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, looksLikeBuildClarificationAnswer } from '@/lib/chatMemory';
+import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { sanitizeChatMessages } from '@/lib/sanitizeChatMessages';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
@@ -182,6 +182,8 @@ export function TerminalChatProvider({
     originalPrompt: string;
     phase1Reply: string;
   } | null>(null);
+  /** Set after a landing page deploy — enables post-build update routing */
+  const completedWebsiteBuildRef = useRef<boolean>(false);
   const chatPrefill = useAppStore((s) => s.chatPrefill);
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
   const setSwarmRunning = useAppStore((s) => s.setSwarmRunning);
@@ -228,7 +230,11 @@ export function TerminalChatProvider({
     }
     const session = loadWorkspaceSession();
     if (session?.messages?.length) {
-      setMessages(sanitizeChatMessages(session.messages));
+      const restored = sanitizeChatMessages(session.messages);
+      setMessages(restored);
+      if (threadHasCompletedWebsite(restored)) {
+        completedWebsiteBuildRef.current = true;
+      }
     }
     if (session?.prompt) setPrompt(session.prompt);
     setSessionReady(true);
@@ -646,6 +652,8 @@ export function TerminalChatProvider({
 
       const useCompactPipeline =
         !isBuildThreadContinuation(displayPrompt, messages) &&
+        !isWebsiteBuildUpdate(displayPrompt, messages) &&
+        !(completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) &&
         !(activeWebsiteBuildRef.current && looksLikeBuildClarificationAnswer(displayPrompt)) &&
         (isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt));
       setPipelineCompact(useCompactPipeline);
@@ -686,6 +694,9 @@ export function TerminalChatProvider({
         const buildSession = activeWebsiteBuildRef.current;
         const isBuildAnswer =
           Boolean(buildSession) && looksLikeBuildClarificationAnswer(displayPrompt);
+        const isBuildUpdate =
+          isWebsiteBuildUpdate(displayPrompt, threadForMemory) ||
+          (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt));
 
         let history = threadForMemory
           .filter((m) => (m.role === 'user' || m.role === 'assistant') && (m.content?.trim() || m.featureOutput))
@@ -726,6 +737,7 @@ export function TerminalChatProvider({
             userPrompt: displayPrompt,
             buildContinuation: isBuildAnswer,
             buildOriginalPrompt: buildSession?.originalPrompt,
+            buildUpdate: isBuildUpdate,
           },
           onProgress: (event) => {
             gotEvent = true;
@@ -752,7 +764,7 @@ export function TerminalChatProvider({
             const layer = (event as { councilLayer?: 'elite' | 'reserve' | 'blackhole' }).councilLayer;
             if (layer) setCouncilLayer(layer);
             if (event.agent) setSwarmActiveAgent(event.agent);
-            const negPhase = (event as SwarmProgressEvent).negotiationPhase;
+            const negPhase = (event as SwarmProgressEvent).userFacingPhase ?? (event as SwarmProgressEvent).negotiationPhase;
             if (negPhase != null) setSwarmNegotiationPhase(negPhase);
             const swarmEv = event as SwarmProgressEvent;
             if (swarmEv.swarmTodos?.length) setSwarmTodos(swarmEv.swarmTodos);
@@ -857,6 +869,7 @@ export function TerminalChatProvider({
             }
             if (output?.type === 'landing_page' && typeof output.deployUrl === 'string') {
               activeWebsiteBuildRef.current = null;
+              completedWebsiteBuildRef.current = true;
               setMessages((m) =>
                 m.map((msg) =>
                   msg.id === assistantId ? { ...msg, content: '', featureOutput: output } : msg

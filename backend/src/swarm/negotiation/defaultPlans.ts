@@ -44,3 +44,16 @@ export function defaultPlanForPrompt(prompt: string): string[] {
 
   return [...(noOrder ? BEGINNER_WEBSITE_PLAN_NO_ORDER : BEGINNER_WEBSITE_PLAN)];
 }
+
+export const WEBSITE_UPDATE_PLAN = [
+  'Step 1: Homepage — apply new name, colors, and branding',
+  'Step 2: Menu & sections — update per user request',
+  'Step 3: Styling — new color theme across CSS',
+  'Step 4: Ordering & gallery — keep working, polish if needed',
+  'Step 5: Contact & footer — sync with new branding',
+  'Step 6: Responsive Design — final mobile polish',
+] as const;
+
+export function defaultUpdatePlanForPrompt(_prompt: string): string[] {
+  return [...WEBSITE_UPDATE_PLAN];
+}

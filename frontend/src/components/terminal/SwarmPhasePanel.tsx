@@ -5,16 +5,13 @@ import { cn } from '@/lib/utils';
 import type { SwarmTodoItem } from '@/lib/swarm';
 import { SwarmProcessingTicker } from './SwarmProcessingTicker';
 
+/** User-visible build phases — Phase 2 planning runs silently on the backend */
 const PHASES = [
   { id: 0, label: '0 · GitHub' },
   { id: 1, label: '1 · Discovery' },
-  { id: 2, label: '2 · Planning' },
   { id: 3, label: '3 · Building' },
   { id: 4, label: '4 · Verifying' },
-  { id: 5, label: '5 · Fixing' },
-  { id: 6, label: '4 · Final check' },
-  { id: 7, label: '5 · Summary' },
-  { id: 8, label: '5 · Deploy' },
+  { id: 5, label: '5 · Deploy' },
 ] as const;
 
 interface SwarmPhasePanelProps {
@@ -27,7 +24,7 @@ interface SwarmPhasePanelProps {
   activityLog?: string[];
 }
 
-/** Live 9-phase AI Swarm Logic + XROGA branded processing animation */
+/** Live build progress — Phases 1, 3, 4, 5 (planning hidden) */
 export function SwarmPhasePanel({
   activePhase,
   loading,
@@ -40,9 +37,11 @@ export function SwarmPhasePanel({
   const showPanel = loading && (todos.length > 0 || activePhase != null || Boolean(message));
   if (!showPanel) return null;
 
-  const phase = activePhase != null ? Math.min(8, Math.max(0, activePhase)) : null;
+  const phase = activePhase != null ? activePhase : null;
   const liveText = message ?? statusLabel ?? activityLog[activityLog.length - 1];
   const headline = statusLabel ?? 'AI SWARM LOGIC';
+
+  const phaseIndex = phase != null ? PHASES.findIndex((p) => p.id === phase) : -1;
 
   return (
     <div className="my-2 rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] px-3 py-2.5 animate-in fade-in duration-200">
@@ -54,8 +53,8 @@ export function SwarmPhasePanel({
 
       {phase != null && (
         <div className="flex flex-wrap gap-1 mb-2.5">
-          {PHASES.map((p) => {
-            const done = p.id < phase;
+          {PHASES.map((p, idx) => {
+            const done = phaseIndex >= 0 && idx < phaseIndex;
             const active = p.id === phase;
             return (
               <span

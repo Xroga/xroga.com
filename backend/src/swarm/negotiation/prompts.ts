@@ -17,6 +17,16 @@ If the user already answered clarifying questions, output the Fully Clarified Pr
 
 export const PHASE_0_GROQ_SUMMARIZE = `Summarize the Fully Clarified Project Brief in under 50 words. Output plain text only.`;
 
+export const PHASE_0_UPDATE_BRIEF = `You are XROGA Visionary. The user already has a live website and wants updates.
+
+Read the conversation thread and the user's latest request (change name, colors, menu, sections, etc.).
+Output a "Fully Clarified Project Brief" with:
+   - Updated project name (if changed)
+   - Updated design theme / colors
+   - List of specific changes requested
+   - Keep existing features unless user asked to remove them
+Do NOT ask clarifying questions — apply the update request directly.`;
+
 export const PHASE_1_PLANNING_GEMINI = `You are XROGA Visionary. Convert the brief into a beginner-friendly step-by-step Master Plan.
    - Step 1: Homepage — hero, header, navigation
    - Step 2: Menu — items and pricing

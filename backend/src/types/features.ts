@@ -268,6 +268,8 @@ export interface SwarmProgressEvent {
   councilLayer?: 'elite' | 'reserve' | 'blackhole';
   /** 7-phase AI Swarm Logic (0–7) */
   negotiationPhase?: number;
+  /** User-visible phase: 1 Discovery, 3 Build, 4 Verify, 5 Deploy (Phase 2 planning is silent) */
+  userFacingPhase?: number;
   swarmLogic?: boolean;
   /** Step-by-step XROGA todo list for build UI */
   swarmTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;

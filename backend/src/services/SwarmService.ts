@@ -253,6 +253,7 @@ export class SwarmService {
       userPrompt?: string;
       buildContinuation?: boolean;
       buildOriginalPrompt?: string;
+      buildUpdate?: boolean;
     },
     history?: Array<{ role: 'user' | 'assistant'; content: string }>
   ): Promise<void> {
@@ -275,6 +276,7 @@ export class SwarmService {
           omniDetail: event.omniDetail,
           imageAttempt: event.imageAttempt,
           negotiationPhase: event.negotiationPhase,
+          userFacingPhase: event.userFacingPhase,
           swarmLogic: event.swarmLogic,
           swarmTodos: event.swarmTodos,
           swarmStatusLabel: event.swarmStatusLabel,

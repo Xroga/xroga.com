@@ -60,6 +60,7 @@ export interface SwarmProgressEvent {
   };
   councilLayer?: 'elite' | 'reserve' | 'blackhole';
   negotiationPhase?: number;
+  userFacingPhase?: number;
   swarmLogic?: boolean;
   swarmTodos?: SwarmTodoItem[];
   swarmStatusLabel?: string;
