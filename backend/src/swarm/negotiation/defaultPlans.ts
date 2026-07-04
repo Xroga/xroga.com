@@ -1,29 +1,46 @@
-/** Fallback step-by-step plans when LLM plan parsing yields no steps */
+/** Beginner-friendly 6-step website plans */
 
-export const DEFAULT_WEBSITE_PLAN = [
-  'Step 1: Setup project structure — index.html, style.css, app.js',
-  'Step 2: Create HTML layout — header, nav, hero section',
-  'Step 3: Add menu section with items and pricing',
-  'Step 4: Add gallery and ordering UI sections',
-  'Step 5: Write CSS — warm theme, typography, layout',
-  'Step 6: Write CSS — responsive menu, gallery, mobile-first',
-  'Step 7: Add JavaScript — cart and ordering interactivity',
-  'Step 8: Add JavaScript — gallery, forms, and polish',
+export const BEGINNER_WEBSITE_PLAN = [
+  'Step 1: Homepage — hero, header, navigation',
+  'Step 2: Menu — drinks, food items, pricing',
+  'Step 3: Ordering — cart and checkout UI',
+  'Step 4: Gallery — photo grid',
+  'Step 5: Contact — form and footer',
+  'Step 6: Responsive Design — mobile-first polish',
+] as const;
+
+export const BEGINNER_WEBSITE_PLAN_NO_ORDER = [
+  'Step 1: Homepage — hero, header, navigation',
+  'Step 2: Menu — items and pricing',
+  'Step 3: Gallery — photo grid',
+  'Step 4: Contact — form and footer',
+  'Step 5: Styling — colors, typography, theme',
+  'Step 6: Responsive Design — mobile-first polish',
 ] as const;
 
 export function defaultPlanForPrompt(prompt: string): string[] {
   const t = prompt.toLowerCase();
+  const noOrder = /\b(no payment|without ordering|no ordering)\b/.test(t) || /\b,\s*no\b/.test(t);
+
   if (/\bcoffee|caf[eé]|espresso|latte\b/.test(t)) {
-    return [
-      'Step 1: index.html — scaffold, meta, link style.css & app.js',
-      'Step 2: index.html — header, hero, warm brown & gold branding',
-      'Step 3: index.html — menu section with drinks & pastries',
-      'Step 4: index.html — gallery grid and order/cart UI',
-      'Step 5: style.css — global styles, colors, typography',
-      'Step 6: style.css — responsive layout for menu & gallery',
-      'Step 7: app.js — cart add/remove and order summary',
-      'Step 8: app.js — gallery interactions and form validation',
-    ];
+    return noOrder
+      ? [
+          'Step 1: Homepage — cozy hero, warm brown & gold branding',
+          'Step 2: Menu — drinks & pastries with prices',
+          'Step 3: Gallery — coffee shop photos',
+          'Step 4: Contact — location, hours, form',
+          'Step 5: Styling — warm brown & gold theme',
+          'Step 6: Responsive Design — mobile-first',
+        ]
+      : [
+          'Step 1: Homepage — cozy hero, warm brown & gold branding',
+          'Step 2: Menu — drinks & pastries with prices',
+          'Step 3: Ordering — cart and order summary',
+          'Step 4: Gallery — coffee shop photos',
+          'Step 5: Contact — location, hours, form',
+          'Step 6: Responsive Design — mobile-first',
+        ];
   }
-  return [...DEFAULT_WEBSITE_PLAN];
+
+  return [...(noOrder ? BEGINNER_WEBSITE_PLAN_NO_ORDER : BEGINNER_WEBSITE_PLAN)];
 }

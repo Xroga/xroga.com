@@ -34,6 +34,14 @@ export interface LandingPageOutput {
   vercelDeploymentId?: string;
   githubRepoUrl?: string;
   githubRepoName?: string;
+  /** Beginner-friendly summary card fields */
+  projectName?: string;
+  pages?: string[];
+  features?: string[];
+  designTheme?: string;
+  needsPayment?: boolean;
+  memoryNote?: string;
+  summary?: string;
 }
 
 export interface ImageBlockedOutput {

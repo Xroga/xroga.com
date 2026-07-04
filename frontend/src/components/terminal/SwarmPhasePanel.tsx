@@ -6,15 +6,15 @@ import type { SwarmTodoItem } from '@/lib/swarm';
 import { SwarmProcessingTicker } from './SwarmProcessingTicker';
 
 const PHASES = [
-  { id: 0, label: '1 · Discovery' },
-  { id: 1, label: '2 · Planning' },
-  { id: 2, label: '3 · Verify Plan' },
-  { id: 3, label: '4 · Execute' },
-  { id: 4, label: '5 · Verify Code' },
-  { id: 5, label: '6 · Fix Errors' },
-  { id: 6, label: '7 · Final Check' },
-  { id: 7, label: '8 · Emit' },
-  { id: 8, label: '9 · Deploy' },
+  { id: 0, label: '0 · GitHub' },
+  { id: 1, label: '1 · Discovery' },
+  { id: 2, label: '2 · Planning' },
+  { id: 3, label: '3 · Building' },
+  { id: 4, label: '4 · Verifying' },
+  { id: 5, label: '5 · Fixing' },
+  { id: 6, label: '4 · Final check' },
+  { id: 7, label: '5 · Summary' },
+  { id: 8, label: '5 · Deploy' },
 ] as const;
 
 interface SwarmPhasePanelProps {
@@ -74,7 +74,7 @@ export function SwarmPhasePanel({
         </div>
       )}
 
-      {analysis && !analysis.startsWith('Awaiting your preferences') && (
+      {analysis && !analysis.startsWith('Awaiting:') && (
         <div className="mb-2.5 rounded-lg border border-white/8 bg-black/20 px-2.5 py-2">
           <p className="text-[9px] font-medium uppercase tracking-wider text-[var(--muted)]/70 mb-1">
             Brief

@@ -196,9 +196,9 @@ export class Orchestrator {
     if (result.needsUserClarification) {
       const reply = result.clarificationText ?? result.polishedOutput;
       const buildFollowUps = [
-        'HTML/CSS/JS, dark theme, menu + gallery, mobile-first',
-        'React + Tailwind, reservations + contact form, no payment yet',
-        'Use defaults and start the 9-phase build now',
+        'Cozy Cup, warm brown & gold, yes',
+        'Sunrise Bakery, light pastels, no',
+        'Use defaults and build it now',
       ];
       return {
         runId: crypto.randomUUID(),

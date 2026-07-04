@@ -8,7 +8,7 @@ const UPDATE_HINT =
   /\b(update|change|edit|modify|redo|regenerate|same|previous|earlier|last|that image|those images|again)\b/i;
 
 const BUILD_CLARIFICATION =
-  /\b(let me understand|quick questions|tech stack|clarifying|fully clarified|reply with)\b/i;
+  /\b(let me understand|phase 1|what's the name|what colors|online ordering|clarifying|fully clarified|reply with)\b/i;
 
 const BUILD_INTENT = /\b(build|create|make|design|develop)\b[\s\S]{0,40}\b(website|web\s*page|landing|site|app|shop|coffee)\b/i;
 
