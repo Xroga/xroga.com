@@ -27,6 +27,7 @@ import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, isWebsiteBuildPrompt, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import { getSelectedRepoContext } from '@/lib/repoContext';
+import { buildHeartbeatActivity } from '@/lib/buildLiveStatus';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import toast from 'react-hot-toast';
@@ -203,6 +204,8 @@ export function TerminalChatProvider({
   const skipNextQueueRef = useRef(false);
   const interruptRef = useRef(false);
   const [sessionReady, setSessionReady] = useState(false);
+  const buildHeartbeatTickRef = useRef(0);
+  const lastActivityAtRef = useRef(0);
 
   queueRef.current = promptQueue;
 
@@ -360,6 +363,7 @@ export function TerminalChatProvider({
   const pushSwarmTerminalLine = useCallback((raw: string) => {
     const line = formatAgentActivityLine(sanitizeXrogaTerminalText(raw));
     if (!line) return;
+    lastActivityAtRef.current = Date.now();
     setPipelineMessage(line);
     setSwarmActivityLog((prev) =>
       prev[prev.length - 1] === line ? prev : [...prev, line].slice(-24)
@@ -434,6 +438,28 @@ export function TerminalChatProvider({
       console.warn('[workspace] persist skipped:', (err as Error).message);
     }
   }, [sessionReady, prompt, messages, incognito]);
+
+  /** Live heartbeat while build runs — updates text every 4s so UI never looks frozen */
+  useEffect(() => {
+    if (!loading || swarmNegotiationPhase == null) return;
+    const started = thinkingStartedAt ?? Date.now();
+    const id = setInterval(() => {
+      const elapsed = Math.max(1, Math.round((Date.now() - started) / 1000));
+      const sinceActivity = Date.now() - (lastActivityAtRef.current || started);
+      if (sinceActivity < 3500) return;
+      buildHeartbeatTickRef.current += 1;
+      const line = buildHeartbeatActivity(
+        elapsed,
+        swarmNegotiationPhase,
+        buildHeartbeatTickRef.current
+      );
+      setPipelineMessage(line);
+      setSwarmActivityLog((prev) =>
+        prev[prev.length - 1] === line ? prev : [...prev, line].slice(-24)
+      );
+    }, 4000);
+    return () => clearInterval(id);
+  }, [loading, swarmNegotiationPhase, thinkingStartedAt]);
 
   const enqueuePrompt = useCallback((text: string) => {
     setPromptQueue((q) => [...q, { id: crypto.randomUUID(), text, createdAt: Date.now() }]);
@@ -697,6 +723,8 @@ export function TerminalChatProvider({
         setSwarmStatusLabel('AI SWARM LOGIC');
         setPipelineMessage('Starting your build…');
         setSwarmActivityLog(['Planning website build pipeline…']);
+        lastActivityAtRef.current = Date.now();
+        buildHeartbeatTickRef.current = 0;
       }
 
       if (isVideoGenerationPrompt(displayPrompt)) {
@@ -711,7 +739,7 @@ export function TerminalChatProvider({
       abortRef.current = controller;
 
       thinkingTimerRef.current = setTimeout(() => {
-        if (!gotEvent) setPipelineMessage('Thinking…');
+        if (!gotEvent && !buildPromptActive) setPipelineMessage('Thinking…');
       }, 1500);
 
       try {

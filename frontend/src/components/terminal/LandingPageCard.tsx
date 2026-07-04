@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ExternalLink, GitBranch, CheckCircle2, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { buildInlinePreviewDocument } from '@/lib/landingPreview';
+import { getSelectedRepoContext } from '@/lib/repoContext';
 
 function deployHostLabel(url: string): string {
   if (!url?.trim()) return 'Preview pending';
@@ -52,9 +53,21 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
   const redeployAttempted = useRef(false);
   const filesLoaded = useRef(false);
 
-  const repoName =
+  const selectedCtx = useMemo(() => getSelectedRepoContext(), []);
+  const resolvedRepoName =
     data.githubRepoName ??
-    (data.githubRepoUrl ? data.githubRepoUrl.replace(/^https:\/\/github\.com\//i, '').replace(/\/$/, '') : '');
+    (data.githubRepoUrl ? data.githubRepoUrl.replace(/^https:\/\/github\.com\//i, '').replace(/\/$/, '') : '') ??
+    selectedCtx?.repo ??
+    '';
+  const resolvedGithubUrl =
+    data.githubRepoUrl ??
+    (resolvedRepoName ? `https://github.com/${resolvedRepoName}` : '');
+  const resolvedBranch = selectedCtx?.branch ?? 'main';
+  const githubFilesUrl = resolvedGithubUrl
+    ? `${resolvedGithubUrl}/tree/${encodeURIComponent(resolvedBranch)}`
+    : '';
+
+  const repoName = resolvedRepoName;
 
   useEffect(() => {
     setLiveUrl(data.deployUrl ?? '');
@@ -130,12 +143,16 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
       window.open(liveUrl, '_blank', 'noopener,noreferrer');
       return;
     }
-    if (!repoName) return;
+    const targetRepo = repoName || selectedCtx?.repo;
+    if (!targetRepo) {
+      setRedeployNote('Connect GitHub and select a repository in the chatbar, then try again.');
+      return;
+    }
 
     setRedeploying(true);
     setRedeployNote('Publishing live preview from GitHub…');
     try {
-      const result = await api.github.redeployPreview(repoName);
+      const result = await api.github.redeployPreview(targetRepo);
       if (result.deployVerified && result.deployUrl) {
         setLiveUrl(result.deployUrl);
         setVerified(true);
@@ -144,13 +161,15 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
           ...data,
           deployUrl: result.deployUrl,
           deployVerified: true,
+          githubRepoUrl: resolvedGithubUrl || data.githubRepoUrl,
+          githubRepoName: targetRepo,
         });
         window.open(result.deployUrl, '_blank', 'noopener,noreferrer');
       } else {
-        setRedeployNote('Could not publish hosted link yet — your preview is shown in the card.');
+        setRedeployNote('Hosted link pending — styled preview is shown in the card above.');
       }
     } catch {
-      setRedeployNote('Could not publish hosted link — your preview is shown in the card.');
+      setRedeployNote('Could not publish hosted link yet — styled preview is shown in the card above.');
     } finally {
       setRedeploying(false);
     }
@@ -215,34 +234,50 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
       )}
 
       <div className="p-3 flex flex-col gap-2">
-        {(repoName || liveUrl) && (
-          <button
-            type="button"
-            onClick={() => void handleOpenLivePreview()}
-            disabled={redeploying}
-            className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-[#006aff] text-white text-sm font-bold hover:bg-[#0056d6] transition-colors shadow-lg shadow-[#006aff]/25 disabled:opacity-70"
-          >
-            {redeploying ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <ExternalLink className="w-4 h-4" />
-            )}
-            🔗 Open Live Preview
-            {verified && liveUrl ? (
-              <span className="text-[10px] font-normal opacity-80">({hostLabel})</span>
-            ) : null}
-          </button>
-        )}
-        {data.githubRepoUrl && (
+        {verified && liveUrl ? (
           <a
-            href={data.githubRepoUrl}
+            href={liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-[#93c5fd]/90 truncate px-1"
+            title={liveUrl}
+          >
+            🌐 Live URL: {liveUrl}
+          </a>
+        ) : null}
+
+        <button
+          type="button"
+          onClick={() => void handleOpenLivePreview()}
+          disabled={redeploying}
+          className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-[#006aff] text-white text-sm font-bold hover:bg-[#0056d6] transition-colors shadow-lg shadow-[#006aff]/25 disabled:opacity-70"
+        >
+          {redeploying ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <ExternalLink className="w-4 h-4" />
+          )}
+          🔗 Open Live Preview
+          {verified && liveUrl ? (
+            <span className="text-[10px] font-normal opacity-80">({hostLabel})</span>
+          ) : null}
+        </button>
+
+        {githubFilesUrl ? (
+          <a
+            href={githubFilesUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 w-full px-3 py-2 rounded-lg bg-white/5 text-[var(--foreground)]/80 text-xs font-medium hover:bg-white/10 transition-colors"
           >
             <GitBranch className="w-3.5 h-3.5" />
             📂 View Files on GitHub
+            <span className="text-[10px] opacity-70">({resolvedRepoName})</span>
           </a>
+        ) : (
+          <p className="text-[10px] text-[var(--muted)] text-center px-2">
+            Select a GitHub repo in the chatbar to save and view your code files.
+          </p>
         )}
         <ul className="flex flex-wrap gap-x-3 gap-y-1 pt-1">
           {['Homepage', 'Menu', data.needsPayment !== false ? 'Ordering' : null, 'Gallery', 'Contact', 'Responsive']

@@ -53,6 +53,7 @@ import { swarmReserveProcess } from '../reserve/orchestrator.js';
 import {
   isGitHubConnected,
   pushAndDeployLivePreview,
+  pushBuildToGitHub,
   landingFilesFromOutput,
 } from '../../services/integrations/githubDeploy.js';
 import {
@@ -344,6 +345,32 @@ async function deepseekCall(system: string, user: string, maxTokens = 4096): Pro
   return deepseekGenerate(user);
 }
 
+const BUILD_HEARTBEAT_MSGS = [
+  '⚙️ DeepSeek Code — writing HTML structure…',
+  '⚙️ DeepSeek Code — generating CSS styles…',
+  '⚙️ DeepSeek Code — building page sections…',
+  '⚙️ DeepSeek Code — still coding your website…',
+];
+
+/** Emit progress every 5s during long code API calls so the UI never looks frozen */
+async function withBuildHeartbeat<T>(
+  ctx: NegotiationContext,
+  todos: ReturnType<typeof createTodoState>,
+  work: () => Promise<T>
+): Promise<T> {
+  let tick = 0;
+  const id = setInterval(() => {
+    const msg = BUILD_HEARTBEAT_MSGS[tick % BUILD_HEARTBEAT_MSGS.length]!;
+    tick += 1;
+    emit(ctx, 3, msg, 'builder', todos, 'AI SWARM LOGIC', { userPhase: 1 });
+  }, 5000);
+  try {
+    return await work();
+  } finally {
+    clearInterval(id);
+  }
+}
+
 async function verifyStepParallel(
   code: string,
   plan: string,
@@ -603,9 +630,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
     let stepCode = '';
     try {
-      stepCode = await deepseekCall(
-        PHASE_3_EXECUTE,
-        `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${steps[si]}\n\nUser:\n${userPrompt}\n\nTech: plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.`
+      stepCode = await withBuildHeartbeat(ctx, todos, () =>
+        deepseekCall(
+          PHASE_3_EXECUTE,
+          `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${steps[si]}\n\nUser:\n${userPrompt}\n\nTech: plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.`
+        )
       );
     } catch (stepErr) {
       console.warn('[NegotiationEngine] Step code gen:', (stepErr as Error).message);
@@ -749,6 +778,47 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       deployError = (err as Error).message;
       console.warn('[NegotiationEngine] GitHub/deploy pipeline:', deployError);
       emit(ctx, 8, BRAND.phase8.deployFailed, 'builder', todos, 'AI SWARM LOGIC');
+
+      if (featureOutput?.type === 'landing_page') {
+        try {
+          const files = landingFilesFromOutput(featureOutput.html, featureOutput.css, featureOutput.js);
+          const github = await pushBuildToGitHub(userId, files, {
+            slug: projectSlug,
+            targetRepo: ctx.githubTargetRepo,
+            targetBranch: ctx.githubTargetBranch,
+          });
+          featureOutput = {
+            ...featureOutput,
+            githubRepoUrl: github.htmlUrl,
+            githubRepoName: github.repoName,
+            projectName: summaryData.projectName,
+            pages: summaryData.pages,
+            features: summaryData.features,
+            designTheme: summaryData.designTheme,
+            needsPayment: summaryData.needsPayment,
+            memoryNote:
+              memoryNote ??
+              `Code pushed to ${github.repoName}. Click Open Live Preview to publish the hosted link.`,
+            summary: formatBuildSummaryCard({
+              ...summaryData,
+              repoUrl: github.htmlUrl,
+            }),
+          };
+          todos.completeFinal('github-push');
+        } catch (pushErr) {
+          const pushMsg = (pushErr as Error).message;
+          console.warn('[NegotiationEngine] GitHub push retry:', pushMsg);
+          const target = ctx.githubTargetRepo;
+          if (target?.includes('/')) {
+            featureOutput = {
+              ...featureOutput,
+              githubRepoUrl: `https://github.com/${target}`,
+              githubRepoName: target,
+              memoryNote: `GitHub push issue: ${pushMsg.slice(0, 140)}. Check repo access and try again.`,
+            };
+          }
+        }
+      }
     }
   } else {
     todos.completeFinal('emit');

@@ -12,6 +12,7 @@ import {
   thoughtLabel,
   type AgentActivityEntry,
 } from '@/lib/agentProcessingFormat';
+import { buildLiveStatusMessage } from '@/lib/buildLiveStatus';
 import { AgentActivityRow, AgentTypewriterText } from './AgentTypewriterText';
 
 interface XrogaAgentProcessingPanelProps {
@@ -110,6 +111,7 @@ export function XrogaAgentProcessingPanel({
   className,
 }: XrogaAgentProcessingPanelProps) {
   const [elapsedMs, setElapsedMs] = useState(0);
+  const [liveTick, setLiveTick] = useState(0);
 
   useEffect(() => {
     if (!loading || !startedAt) return;
@@ -119,7 +121,14 @@ export function XrogaAgentProcessingPanel({
     return () => clearInterval(id);
   }, [loading, startedAt]);
 
+  useEffect(() => {
+    if (!loading) return;
+    const id = setInterval(() => setLiveTick((t) => t + 1), 3500);
+    return () => clearInterval(id);
+  }, [loading]);
+
   const thoughtSeconds = Math.max(1, Math.round(elapsedMs / 1000));
+  const liveStatus = buildLiveStatusMessage(thoughtSeconds, activePhase, liveTick);
   const formattedLines = useMemo(
     () => activityLog.map(formatAgentActivityLine).filter(Boolean),
     [activityLog]
@@ -129,7 +138,6 @@ export function XrogaAgentProcessingPanel({
 
   const displayGoal = goal ?? deriveBuildGoal(null, formattedLines[formattedLines.length - 1]);
   const doneCount = todos.filter((t) => t.status === 'done').length;
-  const activeCount = todos.filter((t) => t.status === 'active').length;
 
   const phaseLabel =
     activePhase === 0
@@ -219,6 +227,15 @@ export function XrogaAgentProcessingPanel({
         </div>
       )}
 
+      {loading && (
+        <div className="rounded-lg border border-[#60a5fa]/20 bg-[#60a5fa]/8 px-3 py-2 xv-agent-live-pulse">
+          <p className="text-[12px] text-[#93c5fd] flex items-center gap-2 leading-snug">
+            <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" strokeWidth={2.5} />
+            <AgentTypewriterText text={liveStatus} active key={liveStatus} className="font-medium" />
+          </p>
+        </div>
+      )}
+
       {entries.length > 0 && (
         <div className="space-y-1 max-h-[160px] overflow-y-auto pr-1 scrollbar-thin border-t border-white/[0.06] pt-2">
           {entries.map((entry, i) => (
@@ -240,15 +257,13 @@ export function XrogaAgentProcessingPanel({
       )}
 
       {loading && (
-        <p className="text-[12px] text-[var(--muted)]/65 xv-agent-planning flex items-center gap-2">
-          {activeCount > 0 ? (
-            <>
-              <Loader2 className="h-3 w-3 animate-spin text-[#60a5fa]/70" strokeWidth={2.5} />
-              Running build pipeline…
-            </>
-          ) : (
-            'Planning next moves…'
-          )}
+        <p className="text-[11px] text-[var(--muted)]/50 flex items-center gap-2">
+          <span className="inline-flex gap-0.5">
+            <span className="w-1 h-1 rounded-full bg-[#60a5fa]/60 xv-agent-thought-pulse" />
+            <span className="w-1 h-1 rounded-full bg-[#60a5fa]/40 xv-agent-thought-pulse [animation-delay:200ms]" />
+            <span className="w-1 h-1 rounded-full bg-[#60a5fa]/25 xv-agent-thought-pulse [animation-delay:400ms]" />
+          </span>
+          Working — lines above update as each step completes
         </p>
       )}
     </div>
