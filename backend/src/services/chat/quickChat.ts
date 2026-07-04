@@ -10,7 +10,7 @@ import { analyzeUserQuery, isSpecificBuildRequest } from '../../lib/queryAnalyze
 import { isMathQuery } from '../../lib/mathQuery.js';
 import { trySolveMathLocally } from '../../lib/mathSolver.js';
 import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
-import { isBuildContinuation } from '../../lib/buildContinuation.js';
+import { isBuildContinuation, isWebsiteUpdateRequest, threadHasCompletedWebsite } from '../../lib/buildContinuation.js';
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
@@ -26,6 +26,10 @@ export async function quickChat(
 ): Promise<string> {
   if (isBuildContinuation(prompt)) {
     throw new Error('BUILD_CONTINUATION_MUST_USE_NEGOTIATION');
+  }
+
+  if (isWebsiteUpdateRequest(prompt) && threadHasCompletedWebsite(prompt)) {
+    throw new Error('WEBSITE_UPDATE_MUST_USE_NEGOTIATION');
   }
 
   const userText = routingPrompt(prompt);

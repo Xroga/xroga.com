@@ -8,7 +8,7 @@ import { SwarmProcessingTicker } from './SwarmProcessingTicker';
 /** User-visible build phases — Phase 2 planning runs silently on the backend */
 const PHASES = [
   { id: 0, label: '0 · GitHub' },
-  { id: 1, label: '1 · Discovery' },
+  { id: 1, label: '1 · Start & Plan' },
   { id: 3, label: '3 · Building' },
   { id: 4, label: '4 · Verifying' },
   { id: 5, label: '5 · Deploy' },

@@ -650,11 +650,17 @@ export function TerminalChatProvider({
       setSwarmAnalysis(null);
       setSwarmActivityLog([]);
 
+      const isWebsiteBuildPrompt =
+        /\b(build|create|make)\b[\s\S]{0,60}\b(website|site|shop|coffee|landing|store|restaurant)\b/i.test(
+          displayPrompt
+        );
+
       const useCompactPipeline =
         !isBuildThreadContinuation(displayPrompt, messages) &&
         !isWebsiteBuildUpdate(displayPrompt, messages) &&
         !(completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) &&
         !(activeWebsiteBuildRef.current && looksLikeBuildClarificationAnswer(displayPrompt)) &&
+        !isWebsiteBuildPrompt &&
         (isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt));
       setPipelineCompact(useCompactPipeline);
 

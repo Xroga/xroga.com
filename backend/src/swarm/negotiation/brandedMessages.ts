@@ -2,14 +2,14 @@
 
 export const BRAND = {
   phase0: {
-    scanning: '🔍 [Phase 1] Let me understand what you need...',
+    scanning: (label = 'website') => `🚀 [Phase 1] Starting your ${label}...`,
     briefCondensed: '[Phase 1] Brief condensed.',
-    clarifying: '🔍 [Phase 1] Let me understand what you need...',
-    briefReady: '[Phase 1] Project brief ready.',
+    clarifying: (label = 'website') => `🚀 [Phase 1] Starting your ${label}...`,
+    briefReady: '[Phase 1] Build plan ready.',
   },
   phase1: {
-    planning: '📝 [Phase 2] XROGA is planning...',
-    planReady: (steps: number) => `📝 [Phase 2] ${steps} steps planned. Let's build!`,
+    planning: '📝 [Phase 1] Planning your build steps...',
+    planReady: (steps: number) => `📝 [Phase 1] ${steps} steps planned — starting build`,
   },
   phase2: {
     reviewing: '[Phase 3] XROGA Architect reviews the plan.',
