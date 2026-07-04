@@ -33,6 +33,9 @@ export function SwarmPhasePanel({
 
   return (
     <div className={cn('my-1')}>
+      <p className="text-[10px] font-bold tracking-wide text-[#60a5fa]/90 mb-1.5 px-0.5">
+        🕳️ AI SWARM LOGIC
+      </p>
       <XrogaAgentProcessingPanel
         loading={loading}
         startedAt={startedAt}
