@@ -53,6 +53,7 @@ import { swarmReserveProcess } from '../reserve/orchestrator.js';
 import {
   isGitHubConnected,
   pushAndDeployLivePreview,
+  pushBuildToGitHub,
   landingFilesFromOutput,
 } from '../../services/integrations/githubDeploy.js';
 import {
@@ -777,6 +778,47 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       deployError = (err as Error).message;
       console.warn('[NegotiationEngine] GitHub/deploy pipeline:', deployError);
       emit(ctx, 8, BRAND.phase8.deployFailed, 'builder', todos, 'AI SWARM LOGIC');
+
+      if (featureOutput?.type === 'landing_page') {
+        try {
+          const files = landingFilesFromOutput(featureOutput.html, featureOutput.css, featureOutput.js);
+          const github = await pushBuildToGitHub(userId, files, {
+            slug: projectSlug,
+            targetRepo: ctx.githubTargetRepo,
+            targetBranch: ctx.githubTargetBranch,
+          });
+          featureOutput = {
+            ...featureOutput,
+            githubRepoUrl: github.htmlUrl,
+            githubRepoName: github.repoName,
+            projectName: summaryData.projectName,
+            pages: summaryData.pages,
+            features: summaryData.features,
+            designTheme: summaryData.designTheme,
+            needsPayment: summaryData.needsPayment,
+            memoryNote:
+              memoryNote ??
+              `Code pushed to ${github.repoName}. Click Open Live Preview to publish the hosted link.`,
+            summary: formatBuildSummaryCard({
+              ...summaryData,
+              repoUrl: github.htmlUrl,
+            }),
+          };
+          todos.completeFinal('github-push');
+        } catch (pushErr) {
+          const pushMsg = (pushErr as Error).message;
+          console.warn('[NegotiationEngine] GitHub push retry:', pushMsg);
+          const target = ctx.githubTargetRepo;
+          if (target?.includes('/')) {
+            featureOutput = {
+              ...featureOutput,
+              githubRepoUrl: `https://github.com/${target}`,
+              githubRepoName: target,
+              memoryNote: `GitHub push issue: ${pushMsg.slice(0, 140)}. Check repo access and try again.`,
+            };
+          }
+        }
+      }
     }
   } else {
     todos.completeFinal('emit');

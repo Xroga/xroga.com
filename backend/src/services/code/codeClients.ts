@@ -131,10 +131,16 @@ export function parseCodeJsonOutput(raw: string): Record<string, string> | null 
 
 export const DEEPSEEK_CODE_BUILD_PROMPT = `You are XROGA Architect (DeepSeek Code). Build a complete, production-ready project.
 
-Detect the appropriate technology stack (plain HTML/CSS/JS for websites, or as appropriate).
+Detect the appropriate technology stack:
+- Websites/landing pages → HTML + CSS + JS (modern, responsive, styled — never bare unstyled links)
+- Games → HTML5 Canvas, Phaser, or Python (pygame) as appropriate
+- Apps/software → use the best language (Python, JavaScript, TypeScript, Go, Rust, etc.)
+- Always output complete, runnable code — no placeholders or TODO stubs
+
 Output files as a JSON dictionary: {"filename": "content", ...}
+For static sites use keys: html, css, js (or index.html, styles.css, script.js)
 Do NOT output explanations — only valid JSON.
-Use sensible defaults: modern design, responsive, clean structure.`;
+Use sensible defaults: modern design, responsive, clean structure, real content from the brief.`;
 
 export const DEEPSEEK_CODE_VERIFY_PROMPT = `You are XROGA Architect (DeepSeek Code). Review the JSON code you generated.
 Check for syntax errors, missing imports, logical flaws, incomplete features.

@@ -156,17 +156,18 @@ async function pushFilesToRepo(
     })
   );
 
+  const { sha: parentSha, branch: resolvedBranch } = await getBranchHeadSha(token, owner, repo, branch);
+
   const treeRes = await ghFetch(token, `/repos/${owner}/${repo}/git/trees`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      base_tree: parentSha ?? undefined,
       tree: blobs.map((b) => ({ path: b.path, mode: '100644', type: 'blob', sha: b.sha })),
     }),
   });
   if (!treeRes.ok) throw new Error(`GitHub tree failed: ${treeRes.status}`);
   const tree = (await treeRes.json()) as { sha: string };
-
-  const { sha: parentSha, branch: resolvedBranch } = await getBranchHeadSha(token, owner, repo, branch);
 
   const commitRes = await ghFetch(token, `/repos/${owner}/${repo}/git/commits`, {
     method: 'POST',
