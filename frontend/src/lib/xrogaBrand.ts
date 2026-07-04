@@ -23,7 +23,18 @@ export function markGitHubConnectedSession() {
   sessionStorage.setItem(GITHUB_CONNECTED_SESSION_KEY, '1');
 }
 
+export function clearGitHubConnectedSession() {
+  if (typeof window === 'undefined') return;
+  sessionStorage.removeItem(GITHUB_CONNECTED_SESSION_KEY);
+}
+
 export function isGitHubConnectedSession(): boolean {
   if (typeof window === 'undefined') return false;
   return sessionStorage.getItem(GITHUB_CONNECTED_SESSION_KEY) === '1';
+}
+
+const GITHUB_CONNECT_MSG = /connect your github account to start building/i;
+
+export function isGitHubConnectRequiredText(text: string): boolean {
+  return GITHUB_CONNECT_MSG.test(text);
 }

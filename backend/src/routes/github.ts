@@ -2,6 +2,10 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from '../middleware/auth.js';
+import {
+  getGitHubToken,
+  saveGitHubConnection,
+} from '../services/integrations/githubAuth.js';
 
 const router = Router();
 
@@ -54,21 +58,7 @@ function isAllowedCallbackUrl(url: string): boolean {
 }
 
 async function getUserGitHubToken(userId: string): Promise<string | null> {
-  const supabase = getSupabaseAdmin();
-  const { data } = await supabase
-    .from('github_integrations')
-    .select('access_token')
-    .eq('user_id', userId)
-    .maybeSingle();
-  if (data?.access_token) return data.access_token;
-
-  const { data: legacy } = await supabase
-    .from('user_integrations')
-    .select('access_token')
-    .eq('user_id', userId)
-    .eq('provider', 'github')
-    .maybeSingle();
-  return legacy?.access_token ?? null;
+  return getGitHubToken(userId);
 }
 
 async function ghApi<T>(token: string, path: string): Promise<T> {
@@ -176,28 +166,18 @@ router.post('/connect', async (req: AuthRequest, res) => {
   });
   const ghUser = (await userRes.json()) as { login: string; id: number };
 
-  const supabase = getSupabaseAdmin();
-
-  await supabase.from('user_integrations').upsert(
-    {
-      user_id: req.userId!,
-      provider: 'github',
-      access_token: tokenData.access_token,
-      provider_user_id: String(ghUser.id),
-      metadata: { username: ghUser.login },
-    },
-    { onConflict: 'user_id,provider' }
-  );
-
-  await supabase.from('github_integrations').upsert(
-    {
-      user_id: req.userId!,
-      access_token: tokenData.access_token,
-      repo_strategy: parsed.data.repoStrategy ?? 'auto',
-      default_repo: parsed.data.defaultRepo ?? null,
-    },
-    { onConflict: 'user_id' }
-  );
+  try {
+    await saveGitHubConnection(req.userId!, tokenData.access_token, {
+      providerUserId: String(ghUser.id),
+      username: ghUser.login,
+      repoStrategy: parsed.data.repoStrategy ?? 'auto',
+      defaultRepo: parsed.data.defaultRepo ?? null,
+    });
+  } catch (saveErr) {
+    console.error('[github/connect] save failed:', (saveErr as Error).message);
+    res.status(500).json({ error: (saveErr as Error).message });
+    return;
+  }
 
   res.json({ connected: true, username: ghUser.login });
 });

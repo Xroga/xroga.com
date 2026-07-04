@@ -2,6 +2,7 @@ import { getSupabaseAdmin } from '../../config/supabase.js';
 import { deployStaticSite, pollDeploymentReady } from '../../lib/vercel.js';
 import { deployToNetlify, pollNetlifyDeploy } from '../../lib/netlify.js';
 import { getSecret } from '../../config/envSecrets.js';
+import { getGitHubToken, isGitHubConnected as checkGitHubConnected } from './githubAuth.js';
 
 export interface ProjectFile {
   path: string;
@@ -29,33 +30,27 @@ interface GitHubIntegrationRow {
 }
 
 async function getIntegration(userId: string): Promise<GitHubIntegrationRow | null> {
+  const token = await getGitHubToken(userId);
+  if (!token) return null;
+
   const supabase = getSupabaseAdmin();
   const { data } = await supabase
     .from('github_integrations')
     .select('access_token, repo_strategy, default_repo')
     .eq('user_id', userId)
     .maybeSingle();
+
   if (data?.access_token) return data as GitHubIntegrationRow;
 
-  const { data: legacy } = await supabase
-    .from('user_integrations')
-    .select('access_token')
-    .eq('user_id', userId)
-    .eq('provider', 'github')
-    .maybeSingle();
-
-  if (!legacy?.access_token) return null;
-
   return {
-    access_token: legacy.access_token,
+    access_token: token,
     repo_strategy: 'auto',
     default_repo: null,
   };
 }
 
 export async function isGitHubConnected(userId: string): Promise<boolean> {
-  const row = await getIntegration(userId);
-  return Boolean(row?.access_token);
+  return checkGitHubConnected(userId);
 }
 
 async function ghFetch(token: string, path: string, init?: RequestInit): Promise<Response> {
