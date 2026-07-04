@@ -1,5 +1,5 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { ensureGithubSchema } from '../../db/ensureGithubSchema.js';
+import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
 import {
   getGitHubTokenFromStorage,
   isMissingTableError,
@@ -69,6 +69,26 @@ export async function isGitHubConnected(userId: string, retries = 3): Promise<bo
   return false;
 }
 
+async function saveToStorageFallback(
+  userId: string,
+  storagePayload: {
+    access_token: string;
+    username: string;
+    provider_user_id: string;
+    repo_strategy: GitHubRepoStrategy;
+    default_repo: string | null;
+    updated_at: string;
+  }
+): Promise<void> {
+  const stored = await saveGitHubTokenToStorage(userId, storagePayload);
+  if (!stored) {
+    throw new Error(
+      'Could not save your GitHub connection. Please try again in a moment or contact support.'
+    );
+  }
+  console.log('[githubAuth] Saved GitHub token via Storage for user', userId.slice(0, 8));
+}
+
 export async function saveGitHubConnection(
   userId: string,
   accessToken: string,
@@ -95,7 +115,12 @@ export async function saveGitHubConnection(
     updated_at: new Date().toISOString(),
   };
 
-  await ensureGithubSchema();
+  const schemaReady = githubSchemaAutoBootstrapEnabled() ? await ensureGithubSchema() : false;
+
+  if (!schemaReady) {
+    await saveToStorageFallback(userId, storagePayload);
+    return;
+  }
 
   let { error: ghErr } = await supabase.from('github_integrations').upsert(
     {
@@ -103,51 +128,37 @@ export async function saveGitHubConnection(
       access_token: token,
       repo_strategy: repoStrategy,
       default_repo: defaultRepo,
+      github_username: opts.username,
     },
     { onConflict: 'user_id' }
   );
 
   if (ghErr && isMissingTableError(ghErr.message)) {
-    await ensureGithubSchema();
-    ({ error: ghErr } = await supabase.from('github_integrations').upsert(
-      {
-        user_id: userId,
-        access_token: token,
-        repo_strategy: repoStrategy,
-        default_repo: defaultRepo,
-      },
-      { onConflict: 'user_id' }
-    ));
-  }
-
-  if (!ghErr) {
-    const { error: userErr } = await supabase.from('user_integrations').upsert(
-      {
-        user_id: userId,
-        provider: 'github',
-        access_token: token,
-        provider_user_id: opts.providerUserId,
-        metadata: { username: opts.username },
-      },
-      { onConflict: 'user_id,provider' }
-    );
-    if (userErr && !isMissingTableError(userErr.message)) {
-      console.warn('[githubAuth] optional user_integrations save:', userErr.message);
-    }
+    await saveToStorageFallback(userId, storagePayload);
     return;
   }
 
-  if (!isMissingTableError(ghErr.message)) {
+  if (ghErr) {
     throw new Error(`Failed to save GitHub connection: ${ghErr.message}`);
   }
 
-  const stored = await saveGitHubTokenToStorage(userId, storagePayload);
-  if (!stored) {
-    throw new Error(
-      'Could not save your GitHub connection. Please try again in a moment or contact support.'
-    );
+  const { error: userErr } = await supabase.from('user_integrations').upsert(
+    {
+      user_id: userId,
+      provider: 'github',
+      access_token: token,
+      provider_user_id: opts.providerUserId,
+      metadata: { username: opts.username },
+    },
+    { onConflict: 'user_id,provider' }
+  );
+  if (userErr && !isMissingTableError(userErr.message)) {
+    console.warn('[githubAuth] optional user_integrations save:', userErr.message);
   }
-  console.log('[githubAuth] Saved GitHub token via Storage fallback for user', userId.slice(0, 8));
+
+  void saveGitHubTokenToStorage(userId, storagePayload).catch(() => {
+    /* DB is primary; storage mirror is best-effort */
+  });
 }
 
 export async function clearGitHubConnection(userId: string): Promise<void> {

@@ -22,15 +22,28 @@ function isMissingTableError(message: string): boolean {
   );
 }
 
-async function ensurePrivateBucket(): Promise<void> {
+function isBucketMissingError(message: string): boolean {
+  return /bucket not found|not found|does not exist/i.test(message);
+}
+
+async function ensurePrivateBucket(): Promise<boolean> {
   const supabase = getSupabaseAdmin();
-  const { error } = await supabase.storage.createBucket(BUCKET, {
+
+  const { data: buckets, error: listErr } = await supabase.storage.listBuckets();
+  if (!listErr && buckets?.some((b) => b.id === BUCKET || b.name === BUCKET)) {
+    return true;
+  }
+
+  const { error: createErr } = await supabase.storage.createBucket(BUCKET, {
     public: false,
     fileSizeLimit: 8192,
   });
-  if (error && !/already exists|duplicate/i.test(error.message)) {
-    console.warn('[githubTokenStore] createBucket:', error.message);
-  }
+
+  if (!createErr) return true;
+  if (/already exists|duplicate/i.test(createErr.message)) return true;
+
+  console.warn('[githubTokenStore] createBucket:', createErr.message);
+  return false;
 }
 
 export async function saveGitHubTokenToStorage(
@@ -38,13 +51,27 @@ export async function saveGitHubTokenToStorage(
   data: StoredGitHubAuth
 ): Promise<boolean> {
   try {
-    await ensurePrivateBucket();
+    const ready = await ensurePrivateBucket();
+    if (!ready) {
+      console.warn('[githubTokenStore] bucket not available');
+      return false;
+    }
+
     const supabase = getSupabaseAdmin();
     const body = JSON.stringify(data);
-    const { error } = await supabase.storage.from(BUCKET).upload(storagePath(userId), body, {
+    let { error } = await supabase.storage.from(BUCKET).upload(storagePath(userId), body, {
       upsert: true,
       contentType: 'application/json',
     });
+
+    if (error && isBucketMissingError(error.message)) {
+      await ensurePrivateBucket();
+      ({ error } = await supabase.storage.from(BUCKET).upload(storagePath(userId), body, {
+        upsert: true,
+        contentType: 'application/json',
+      }));
+    }
+
     if (error) {
       console.warn('[githubTokenStore] upload failed:', error.message);
       return false;
