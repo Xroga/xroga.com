@@ -1,6 +1,8 @@
 'use client';
 
+import { useMemo } from 'react';
 import { ExternalLink, GitBranch, CheckCircle2 } from 'lucide-react';
+import { buildInlinePreviewDocument } from '@/lib/landingPreview';
 
 function deployHostLabel(url: string): string {
   if (!url?.trim()) return 'Preview pending';
@@ -21,6 +23,7 @@ export interface LandingPageOutputData {
   js: string;
   heroImageUrl?: string;
   deployUrl: string;
+  deployVerified?: boolean;
   githubRepoUrl?: string;
   githubRepoName?: string;
   projectName?: string;
@@ -33,12 +36,17 @@ export interface LandingPageOutputData {
 }
 
 export function LandingPageCard({ data }: { data: LandingPageOutputData }) {
-  const hasLiveUrl = Boolean(data.deployUrl?.trim());
+  const hasVerifiedLiveUrl = Boolean(data.deployUrl?.trim() && data.deployVerified === true);
   const hostLabel = deployHostLabel(data.deployUrl);
   const projectName = data.projectName ?? data.githubRepoName?.replace(/^xroga-/, '') ?? 'Your Website';
   const pages = data.pages ?? ['Home', 'Menu', 'Gallery', 'Contact'];
   const features = data.features ?? ['Responsive design', data.designTheme ?? 'Modern theme'];
   const designTheme = data.designTheme ?? 'Modern, clean design';
+
+  const inlinePreview = useMemo(
+    () => buildInlinePreviewDocument(data.html, data.css, data.js),
+    [data.html, data.css, data.js]
+  );
 
   return (
     <div className="rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] overflow-hidden">
@@ -75,21 +83,15 @@ export function LandingPageCard({ data }: { data: LandingPageOutputData }) {
         )}
       </div>
 
-      {hasLiveUrl ? (
-        <iframe
-          src={data.deployUrl}
-          title="Live preview"
-          className="w-full h-[min(280px,45vh)] border-0 bg-white"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-        />
-      ) : (
-        <div className="w-full h-[min(160px,35vh)] flex items-center justify-center bg-black/20 text-[11px] text-[var(--muted)]">
-          Live preview URL pending — check GitHub repo below.
-        </div>
-      )}
+      <iframe
+        srcDoc={inlinePreview}
+        title="Live preview"
+        className="w-full h-[min(280px,45vh)] border-0 bg-white"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+      />
 
       <div className="p-3 flex flex-col gap-2">
-        {hasLiveUrl && (
+        {hasVerifiedLiveUrl && (
           <a
             href={data.deployUrl}
             target="_blank"

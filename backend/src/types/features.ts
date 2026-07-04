@@ -31,6 +31,8 @@ export interface LandingPageOutput {
   js: string;
   heroImageUrl: string;
   deployUrl: string;
+  /** True when deployUrl was HTTP-verified before showing to the user */
+  deployVerified?: boolean;
   vercelDeploymentId?: string;
   githubRepoUrl?: string;
   githubRepoName?: string;

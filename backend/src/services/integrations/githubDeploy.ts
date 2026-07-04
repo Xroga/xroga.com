@@ -1,6 +1,7 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { deployStaticSite, pollDeploymentReady } from '../../lib/vercel.js';
 import { deployToNetlify, pollNetlifyDeploy } from '../../lib/netlify.js';
+import { verifyLivePreviewUrl } from '../../lib/deployVerify.js';
 import { getSecret } from '../../config/envSecrets.js';
 import { getGitHubToken, isGitHubConnected as checkGitHubConnected, getGitHubStorageMeta } from './githubAuth.js';
 
@@ -19,6 +20,7 @@ export interface DeployPipelineResult {
   github: GitHubPushResult;
   deployUrl: string;
   deployPlatform: 'vercel' | 'netlify' | 'none';
+  deployVerified: boolean;
   vercelDeploymentId?: string;
   netlifyDeployId?: string;
 }
@@ -27,6 +29,13 @@ interface GitHubIntegrationRow {
   access_token: string;
   repo_strategy: 'auto' | 'monorepo' | 'manual';
   default_repo: string | null;
+}
+
+interface PreviewDeployResult {
+  deployUrl: string;
+  platform: 'vercel' | 'netlify';
+  vercelDeploymentId?: string;
+  netlifyDeployId?: string;
 }
 
 async function getIntegration(userId: string): Promise<GitHubIntegrationRow | null> {
@@ -233,38 +242,69 @@ export function landingFilesFromOutput(html: string, css: string, js: string): P
   ];
 }
 
+async function deployToVercel(projectSlug: string, staticFiles: ProjectFile[]): Promise<PreviewDeployResult> {
+  const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
+  const deployment = await deployStaticSite(projectSlug, vercelFiles);
+  const deployUrl = await pollDeploymentReady(deployment.deploymentId, deployment.deployUrl);
+  return {
+    deployUrl,
+    platform: 'vercel',
+    vercelDeploymentId: deployment.deploymentId,
+  };
+}
+
+async function deployToNetlifyPreview(projectSlug: string, staticFiles: ProjectFile[]): Promise<PreviewDeployResult> {
+  const netlifyFiles = staticFiles.map((f) => ({ path: f.path, content: f.content }));
+  const deployment = await deployToNetlify(projectSlug, netlifyFiles);
+  const deployUrl = await pollNetlifyDeploy(deployment.deployId, deployment.deployUrl);
+  return {
+    deployUrl,
+    platform: 'netlify',
+    netlifyDeployId: deployment.deployId,
+  };
+}
+
+/** Try Vercel first, then Netlify; verify URL before returning. Retries alternate platform on failure. */
 async function deployStaticPreview(
   projectSlug: string,
   files: ProjectFile[]
-): Promise<{ deployUrl: string; platform: 'vercel' | 'netlify' | 'none'; vercelDeploymentId?: string; netlifyDeployId?: string }> {
+): Promise<{ deployUrl: string; platform: 'vercel' | 'netlify' | 'none'; deployVerified: boolean; vercelDeploymentId?: string; netlifyDeployId?: string }> {
   const staticFiles = files.filter((f) => !f.path.endsWith('.md'));
+  const hasVercel = Boolean(getSecret('VERCEL_API_KEY'));
+  const hasNetlify = Boolean(getSecret('NETLIFY_ACCESS_TOKEN'));
 
-  if (getSecret('VERCEL_API_KEY')) {
+  const attempts: Array<{ name: string; run: () => Promise<PreviewDeployResult> }> = [];
+  if (hasVercel) attempts.push({ name: 'vercel', run: () => deployToVercel(projectSlug, staticFiles) });
+  if (hasNetlify) attempts.push({ name: 'netlify', run: () => deployToNetlifyPreview(projectSlug, staticFiles) });
+  // If Netlify was first to fail verify, retry Vercel explicitly when both keys exist
+  if (hasVercel && hasNetlify) {
+    attempts.push({ name: 'vercel-retry', run: () => deployToVercel(projectSlug, staticFiles) });
+  }
+
+  for (const attempt of attempts) {
     try {
-      const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
-      const deployment = await deployStaticSite(projectSlug, vercelFiles);
-      const deployUrl = await pollDeploymentReady(deployment.deploymentId, deployment.deployUrl);
-      return { deployUrl, platform: 'vercel', vercelDeploymentId: deployment.deploymentId };
+      const result = await attempt.run();
+      const verified = await verifyLivePreviewUrl(result.deployUrl);
+      if (verified) {
+        console.info(`[githubDeploy] Live preview verified on ${result.platform}: ${result.deployUrl}`);
+        return {
+          deployUrl: result.deployUrl,
+          platform: result.platform,
+          deployVerified: true,
+          vercelDeploymentId: result.vercelDeploymentId,
+          netlifyDeployId: result.netlifyDeployId,
+        };
+      }
+      console.warn(`[githubDeploy] ${attempt.name} URL failed verification: ${result.deployUrl}`);
     } catch (err) {
-      console.warn('[githubDeploy] Vercel:', (err as Error).message);
+      console.warn(`[githubDeploy] ${attempt.name}:`, (err as Error).message);
     }
   }
 
-  if (getSecret('NETLIFY_ACCESS_TOKEN')) {
-    try {
-      const netlifyFiles = staticFiles.map((f) => ({ path: f.path, content: f.content }));
-      const deployment = await deployToNetlify(projectSlug, netlifyFiles);
-      const deployUrl = await pollNetlifyDeploy(deployment.deployId, deployment.deployUrl);
-      return { deployUrl, platform: 'netlify', netlifyDeployId: deployment.deployId };
-    } catch (err) {
-      console.warn('[githubDeploy] Netlify:', (err as Error).message);
-    }
-  }
-
-  return { deployUrl: `https://${projectSlug}.vercel.app`, platform: 'none' };
+  return { deployUrl: '', platform: 'none', deployVerified: false };
 }
 
-/** Push to GitHub then deploy to Vercel (preferred) or Netlify */
+/** Push to GitHub then deploy to Vercel (preferred) or Netlify — only returns URL when verified live. */
 export async function pushAndDeployLivePreview(
   userId: string,
   files: ProjectFile[],
@@ -276,6 +316,7 @@ export async function pushAndDeployLivePreview(
     github,
     deployUrl: preview.deployUrl,
     deployPlatform: preview.platform,
+    deployVerified: preview.deployVerified,
     vercelDeploymentId: preview.vercelDeploymentId,
     netlifyDeployId: preview.netlifyDeployId,
   };

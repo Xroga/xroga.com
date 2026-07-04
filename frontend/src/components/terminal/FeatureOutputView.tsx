@@ -71,7 +71,8 @@ export function FeatureOutputView({
   if (o.type === 'landing_page') {
     const deployUrl = typeof o.deployUrl === 'string' ? o.deployUrl.trim() : '';
     const githubRepoUrl = typeof o.githubRepoUrl === 'string' ? o.githubRepoUrl : undefined;
-    if (!deployUrl && !githubRepoUrl) return null;
+    const hasHtml = typeof o.html === 'string' && o.html.trim().length > 0;
+    if (!hasHtml && !deployUrl && !githubRepoUrl) return null;
 
     return (
       <LandingPageCard
@@ -81,9 +82,17 @@ export function FeatureOutputView({
           css: typeof o.css === 'string' ? o.css : '',
           js: typeof o.js === 'string' ? o.js : '',
           heroImageUrl: typeof o.heroImageUrl === 'string' ? o.heroImageUrl : undefined,
-          deployUrl: deployUrl || githubRepoUrl || '',
+          deployUrl,
+          deployVerified: o.deployVerified === true,
           githubRepoUrl,
           githubRepoName: typeof o.githubRepoName === 'string' ? o.githubRepoName : undefined,
+          projectName: typeof o.projectName === 'string' ? o.projectName : undefined,
+          pages: Array.isArray(o.pages) ? (o.pages as string[]) : undefined,
+          features: Array.isArray(o.features) ? (o.features as string[]) : undefined,
+          designTheme: typeof o.designTheme === 'string' ? o.designTheme : undefined,
+          needsPayment: typeof o.needsPayment === 'boolean' ? o.needsPayment : undefined,
+          memoryNote: typeof o.memoryNote === 'string' ? o.memoryNote : undefined,
+          summary: typeof o.summary === 'string' ? o.summary : undefined,
         }}
       />
     );
