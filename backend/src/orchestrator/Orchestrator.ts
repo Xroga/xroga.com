@@ -8,7 +8,12 @@ import { buildArchitectDAG, isLongRunningTask, formatDuration } from './architec
 import type { SwarmRunResult } from '../services/SwarmService.js';
 import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../types/features.js';
 import type { SwarmCoreAgent, SwarmPlan, SwarmResult } from '../types/index.js';
-import { isBuildContinuation, hasThreadContext, looksLikeBuildClarificationAnswer } from '../lib/buildContinuation.js';
+import {
+  isBuildContinuation,
+  hasThreadContext,
+  looksLikeBuildClarificationAnswer,
+  isWebsiteBuildUpdate,
+} from '../lib/buildContinuation.js';
 import {
   enrichPromptWithThread,
   loadRecentChatTurns,
@@ -476,6 +481,7 @@ export class Orchestrator {
         userPrompt?: string;
         buildContinuation?: boolean;
         buildOriginalPrompt?: string;
+        buildUpdate?: boolean;
       };
       history?: ChatTurn[];
     }
@@ -533,6 +539,15 @@ export class Orchestrator {
       shouldContinueWebsiteBuild(prompt, ctx.history) ||
       (ctx.clientMeta?.buildContinuation && looksLikeBuildClarificationAnswer(prompt))
     ) {
+      return this.executeNegotiationBuild(ctx, 'landing_page');
+    }
+
+    // Post-build updates — name, colors, sections — re-run build pipeline
+    if (isWebsiteBuildUpdate(prompt, ctx.history) || ctx.clientMeta?.buildUpdate) {
+      if (!hasThreadContext(prompt) && ctx.history?.length) {
+        prompt = enrichPromptWithThread(prompt, ctx.history);
+        ctx.prompt = prompt;
+      }
       return this.executeNegotiationBuild(ctx, 'landing_page');
     }
 

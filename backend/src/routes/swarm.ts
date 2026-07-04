@@ -38,6 +38,7 @@ const executeSchema = z.object({
       userPrompt: z.string().optional(),
       buildContinuation: z.boolean().optional(),
       buildOriginalPrompt: z.string().max(500).optional(),
+      buildUpdate: z.boolean().optional(),
     })
     .optional(),
 });

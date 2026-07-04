@@ -60,6 +60,35 @@ export function isBuildContinuation(prompt: string): boolean {
   return threadHasBuildIntent(prompt) && looksLikeBuildClarificationAnswer(prompt);
 }
 
+/** User wants to update an existing website (name, colors, sections). */
+export function isWebsiteUpdateRequest(prompt: string): boolean {
+  const t = routingPrompt(prompt).toLowerCase();
+  return (
+    (/\b(change|update|edit|modify|rename|switch|make it|adjust)\b/.test(t) &&
+      /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order)\b/.test(
+        t
+      )) ||
+    /\bcan i change\b/.test(t) ||
+    /\b(more updates|another update|add a|remove the)\b/.test(t)
+  );
+}
+
+export function threadHasCompletedWebsite(prompt: string): boolean {
+  const prior = hasThreadContext(prompt) ? threadText(prompt) : prompt;
+  return (
+    /YOUR WEBSITE IS READY|SINGULARITY ACHIEVED|Live Preview|landing_page|Built website/i.test(prior) ||
+    /\[Built website:/i.test(prior)
+  );
+}
+
+/** Update request after a completed build in the same thread. */
+export function isWebsiteBuildUpdate(prompt: string, history?: Array<{ role: string; content: string }>): boolean {
+  if (!isWebsiteUpdateRequest(prompt)) return false;
+  if (threadHasCompletedWebsite(prompt)) return true;
+  if (history?.some((h) => /YOUR WEBSITE IS READY|Live Preview|Built website/i.test(h.content))) return true;
+  return false;
+}
+
 /** Extract the original build request from thread context for planning. */
 export function extractOriginalBuildRequest(prompt: string): string | null {
   const prior = threadText(prompt);
