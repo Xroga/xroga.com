@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { DashboardView } from '@/components/dashboard/DashboardView';
+import { DashboardErrorBoundary } from '@/components/dashboard/DashboardErrorBoundary';
 import { PAGE_SEO } from '@/lib/dashboard-metadata';
 
 export const metadata = PAGE_SEO.dashboard;
@@ -16,5 +17,9 @@ export default async function DashboardPage() {
 
   const displayName = profile?.display_name ?? user?.email?.split('@')[0] ?? 'there';
 
-  return <DashboardView displayName={displayName} />;
+  return (
+    <DashboardErrorBoundary>
+      <DashboardView displayName={displayName} />
+    </DashboardErrorBoundary>
+  );
 }

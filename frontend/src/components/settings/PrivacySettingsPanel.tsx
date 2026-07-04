@@ -78,14 +78,15 @@ export function PrivacySettingsPanel() {
 }
 
 export function UserPromptBubble({ content }: { content: string }) {
+  const safe = typeof content === 'string' ? content : '';
   const [expanded, setExpanded] = useState(false);
-  const long = content.length > 120;
+  const long = safe.length > 120;
 
   return (
     <div className="inline-block max-w-full text-left">
       <span className="inline-block max-w-full px-3 py-2 rounded-xl bg-gradient-to-br from-[#006aff]/15 to-slate-500/10 border border-[var(--card-border)]/50 shadow-sm">
         <span className="opacity-60 mr-2">&gt;</span>
-        <span className={cn(!expanded && long && 'line-clamp-3')}>{content}</span>
+        <span className={cn(!expanded && long && 'line-clamp-3')}>{safe}</span>
       </span>
       {long && (
         <button
@@ -99,7 +100,7 @@ export function UserPromptBubble({ content }: { content: string }) {
       )}
       {expanded && long && (
         <div className="mt-1.5 mx-1 px-3 py-2 rounded-lg border border-[var(--card-border)]/40 bg-[var(--background)]/60 text-[11px] text-[var(--foreground)] whitespace-pre-wrap break-words">
-          {content}
+          {safe}
         </div>
       )}
     </div>

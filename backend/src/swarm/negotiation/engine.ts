@@ -140,7 +140,6 @@ function createTodoState() {
     for (const item of build) {
       if (item.id === id) item.status = 'active';
       else if (item.status === 'active') item.status = 'done';
-      else if (build.indexOf(item) < build.findIndex((b) => b.id === id)) item.status = 'done';
     }
   };
 

@@ -12,6 +12,7 @@ const BUILD_SUMMARY = [
 ] as const;
 
 function deployHostLabel(url: string): string {
+  if (!url?.trim()) return 'Preview pending';
   try {
     const host = new URL(url).hostname;
     if (host.includes('vercel')) return 'Vercel';
@@ -34,6 +35,7 @@ export interface LandingPageOutputData {
 }
 
 export function LandingPageCard({ data }: { data: LandingPageOutputData }) {
+  const hasLiveUrl = Boolean(data.deployUrl?.trim());
   const hostLabel = deployHostLabel(data.deployUrl);
 
   return (
@@ -57,13 +59,20 @@ export function LandingPageCard({ data }: { data: LandingPageOutputData }) {
         </ul>
       </div>
 
-      <iframe
-        src={data.deployUrl}
-        title="Live preview"
-        className="w-full h-[min(320px,50vh)] border-0 bg-white"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-      />
+      {hasLiveUrl ? (
+        <iframe
+          src={data.deployUrl}
+          title="Live preview"
+          className="w-full h-[min(320px,50vh)] border-0 bg-white"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        />
+      ) : (
+        <div className="w-full h-[min(200px,40vh)] flex items-center justify-center bg-black/20 text-[11px] text-[var(--muted)]">
+          Live preview URL pending — check GitHub repo below.
+        </div>
+      )}
       <div className="p-3 flex flex-wrap gap-2">
+        {hasLiveUrl && (
         <a
           href={data.deployUrl}
           target="_blank"
@@ -74,6 +83,7 @@ export function LandingPageCard({ data }: { data: LandingPageOutputData }) {
           Preview
           <span className="text-[9px] font-normal opacity-75">({hostLabel})</span>
         </a>
+        )}
         {data.githubRepoUrl && (
           <a
             href={data.githubRepoUrl}

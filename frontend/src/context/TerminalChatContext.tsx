@@ -25,6 +25,7 @@ import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls 
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { buildPromptWithMemory } from '@/lib/chatMemory';
+import { sanitizeChatMessages } from '@/lib/sanitizeChatMessages';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import toast from 'react-hot-toast';
@@ -222,7 +223,7 @@ export function TerminalChatProvider({
     }
     const session = loadWorkspaceSession();
     if (session?.messages?.length) {
-      setMessages(session.messages);
+      setMessages(sanitizeChatMessages(session.messages));
     }
     if (session?.prompt) setPrompt(session.prompt);
     setSessionReady(true);
@@ -348,7 +349,7 @@ export function TerminalChatProvider({
     if (incognito) return;
     const session = loadWorkspaceSession();
     if (!session) return;
-    if (session.messages?.length) setMessages(session.messages);
+    if (session.messages?.length) setMessages(sanitizeChatMessages(session.messages));
     if (session.prompt) setPrompt(session.prompt);
   }, [incognito]);
 

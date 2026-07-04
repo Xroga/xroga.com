@@ -17,7 +17,10 @@ export function SwarmProcessingTicker({
   const [displayed, setDisplayed] = useState('');
   const source = useMemo(() => sanitizeXrogaTerminalText(text?.trim() ?? ''), [text]);
   const sanitizedLog = useMemo(
-    () => activityLog.map((line) => sanitizeXrogaTerminalText(line)).filter(Boolean),
+    () =>
+      activityLog
+        .map((line) => (typeof line === 'string' ? sanitizeXrogaTerminalText(line) : ''))
+        .filter(Boolean),
     [activityLog]
   );
 
