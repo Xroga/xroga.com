@@ -79,14 +79,14 @@ router.post('/execute', async (req: AuthRequest, res) => {
       if (err instanceof InsufficientActionsError) {
         res.write(`event: error\ndata: ${JSON.stringify(err.toJSON())}\n\n`);
       } else {
-        const payload = sanitizeSwarmSsePayload(err);
+        const payload = sanitizeSwarmSsePayload(err, parsed.data.prompt);
         sendSSE(res, { event: 'delta', data: { delta: payload.delta ?? FRIENDLY_FALLBACK } });
         sendSSE(res, {
           event: 'complete',
           data: {
             success: true,
             output: { type: 'chat', content: payload.message ?? FRIENDLY_FALLBACK },
-            featureCategory: 'chat',
+            featureCategory: payload.featureCategory ?? 'chat',
           },
         });
       }

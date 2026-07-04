@@ -25,7 +25,7 @@ const BROWSER_INTENT =
   /\b(automate|scrape|scraping|screenshot|playwright|puppeteer)\b|\b(go\s+to|navigate\s+to|visit|open)\b[\s\S]{0,30}(https?:\/\/|www\.|\.com\b)/i;
 
 const LANDING_INTENT =
-  /\b(build|create|make|design)\b[\s\S]{0,40}\b(landing\s*page|website|web\s*page|homepage|portfolio\s*site)\b/i;
+  /\b(build|create|make|design)\b[\s\S]{0,60}\b(landing\s*page|website|web\s*page|homepage|portfolio\s*site|coffee\s*shop|shop|store|restaurant|bakery)\b/i;
 
 const RESEARCH_INTENT = /\b(deep\s+research|research\s+report|write\s+a\s+report\s+on)\b/i;
 const DEBUG_INTENT = /\b(debug|fix)\b[\s\S]{0,30}\b(code|bug|error)\b/i;

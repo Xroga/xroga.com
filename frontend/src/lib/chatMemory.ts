@@ -95,6 +95,14 @@ export function isWebsiteBuildUpdate(prompt: string, messages: ChatMessage[]): b
   return threadHasCompletedWebsite(messages);
 }
 
+/** User wants to build a website — triggers build pipeline UI and routing */
+export function isWebsiteBuildPrompt(prompt: string): boolean {
+  const t = prompt.trim();
+  return /\b(build|create|make)\b[\s\S]{0,80}\b(website|web\s*page|landing|site|shop|coffee|store|restaurant|bakery|app)\b/i.test(
+    t
+  );
+}
+
 export function isBuildThreadContinuation(prompt: string, messages: ChatMessage[]): boolean {
   if (looksLikeBuildClarificationAnswer(prompt) && threadHasActiveBuild(messages)) return true;
   const lastAssistant = lastAssistantMessage(messages);

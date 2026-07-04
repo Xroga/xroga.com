@@ -38,7 +38,9 @@ export function sanitizeChatMessages(messages: unknown): ChatMessage[] {
         const fo = featureOutput as Record<string, unknown>;
         if (fo.type === 'landing_page') {
           const deployUrl = typeof fo.deployUrl === 'string' ? fo.deployUrl.trim() : '';
-          if (!deployUrl) {
+          const hasHtml = typeof fo.html === 'string' && fo.html.length > 0;
+          const hasSummary = typeof fo.summary === 'string' && fo.summary.length > 0;
+          if (!deployUrl && !hasHtml && !hasSummary) {
             featureOutput = undefined;
           }
         }
