@@ -27,6 +27,8 @@ import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, isWebsiteBuildPrompt, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import { sanitizeChatMessages } from '@/lib/sanitizeChatMessages';
+import { saveLandingBuild } from '@/lib/landingBuildStorage';
+import { rehydratePersistedMessages } from '@/lib/rehydratePersistedMessages';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import toast from 'react-hot-toast';
@@ -235,10 +237,12 @@ export function TerminalChatProvider({
     const session = loadWorkspaceSession();
     if (session?.messages?.length) {
       const restored = sanitizeChatMessages(session.messages);
-      setMessages(restored);
-      if (threadHasCompletedWebsite(restored)) {
-        completedWebsiteBuildRef.current = true;
-      }
+      void rehydratePersistedMessages(restored).then((merged) => {
+        setMessages(merged);
+        if (threadHasCompletedWebsite(merged)) {
+          completedWebsiteBuildRef.current = true;
+        }
+      });
     }
     if (session?.prompt) setPrompt(session.prompt);
     setSessionReady(true);
@@ -403,6 +407,17 @@ export function TerminalChatProvider({
 
   useEffect(() => {
     if (!sessionReady || incognito) return;
+    for (const m of messages) {
+      const fo = m.featureOutput as { type?: string; html?: string; css?: string; js?: string } | undefined;
+      if (fo?.type === 'landing_page' && fo.html?.trim()) {
+        void saveLandingBuild({
+          messageId: m.id,
+          html: fo.html,
+          css: fo.css ?? '',
+          js: fo.js ?? '',
+        });
+      }
+    }
     try {
       saveWorkspaceSession({ prompt, messages });
     } catch (err) {
@@ -891,7 +906,7 @@ export function TerminalChatProvider({
                   ? output.summary
                   : typeof output.deployUrl === 'string'
                     ? `🎉 YOUR PROJECT IS LIVE!\n🔗 ${output.deployUrl}`
-                    : '🎉 Build complete — connect GitHub for live preview.';
+                    : '🎉 YOUR PROJECT IS LIVE!\nYour website was built and saved to GitHub.';
               setMessages((m) =>
                 m.map((msg) =>
                   msg.id === assistantId

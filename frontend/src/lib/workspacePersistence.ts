@@ -5,6 +5,40 @@ import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 
 const KEY = 'xroga_workspace_session';
 
+function slimLandingForStorage(messages: ChatMessage[]): ChatMessage[] {
+  return messages.map((m) => {
+    if (!m.featureOutput || typeof m.featureOutput !== 'object') return m;
+    const fo = m.featureOutput as Record<string, unknown>;
+    if (fo.type !== 'landing_page') return m;
+    return {
+      ...m,
+      content: m.content?.trim()
+        ? m.content
+        : typeof fo.summary === 'string'
+          ? fo.summary
+          : '🎉 YOUR PROJECT IS LIVE!',
+      featureOutput: {
+        type: 'landing_page',
+        deployUrl: fo.deployUrl ?? '',
+        deployVerified: fo.deployVerified,
+        githubRepoUrl: fo.githubRepoUrl,
+        githubRepoName: fo.githubRepoName,
+        projectName: fo.projectName,
+        pages: fo.pages,
+        features: fo.features,
+        designTheme: fo.designTheme,
+        needsPayment: fo.needsPayment,
+        memoryNote: fo.memoryNote,
+        summary: fo.summary,
+        heroImageUrl: fo.heroImageUrl,
+        html: '',
+        css: '',
+        js: '',
+      },
+    };
+  });
+}
+
 export type WorkspaceSource = 'projects' | 'chats' | 'automation' | 'media' | 'dashboard';
 
 export interface WorkspaceSession {
@@ -68,15 +102,19 @@ export function saveWorkspaceSession(session: Omit<WorkspaceSession, 'updatedAt'
     if (!safeStorageSet(localStorage, KEY, json)) {
       const slim: WorkspaceSession = {
         ...payload,
-        messages: rehydrateMessagesWithMedia(payload.messages).map((m) => ({
+        messages: slimLandingForStorage(rehydrateMessagesWithMedia(payload.messages)).map((m) => ({
           ...m,
           featureOutput:
-            m.featureOutput && typeof m.featureOutput === 'object' && (m.featureOutput as { type?: string }).type === 'image'
-              ? {
-                  type: 'image',
-                  imageUrl: (m.featureOutput as { imageUrl?: string }).imageUrl ?? '',
-                  prompt: (m.featureOutput as { prompt?: string }).prompt,
-                }
+            m.featureOutput && typeof m.featureOutput === 'object'
+              ? (m.featureOutput as { type?: string }).type === 'image'
+                ? {
+                    type: 'image',
+                    imageUrl: (m.featureOutput as { imageUrl?: string }).imageUrl ?? '',
+                    prompt: (m.featureOutput as { prompt?: string }).prompt,
+                  }
+                : (m.featureOutput as { type?: string }).type === 'landing_page'
+                  ? m.featureOutput
+                  : undefined
               : undefined,
         })),
       };

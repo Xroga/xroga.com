@@ -265,7 +265,7 @@ async function deployToNetlifyPreview(projectSlug: string, staticFiles: ProjectF
 }
 
 /** Try Vercel first, then Netlify; verify URL before returning. Retries alternate platform on failure. */
-async function deployStaticPreview(
+export async function deployStaticPreview(
   projectSlug: string,
   files: ProjectFile[]
 ): Promise<{ deployUrl: string; platform: 'vercel' | 'netlify' | 'none'; deployVerified: boolean; vercelDeploymentId?: string; netlifyDeployId?: string }> {
@@ -302,6 +302,75 @@ async function deployStaticPreview(
   }
 
   return { deployUrl: '', platform: 'none', deployVerified: false };
+}
+
+function parseRepoName(input: string): { owner: string; repo: string } {
+  const trimmed = input.trim().replace(/^https:\/\/github\.com\//i, '').replace(/\/$/, '');
+  const [owner, repo] = trimmed.split('/');
+  if (!owner || !repo) throw new Error('Invalid GitHub repo name');
+  return { owner, repo };
+}
+
+async function fetchRepoTextFile(
+  token: string,
+  owner: string,
+  repo: string,
+  path: string
+): Promise<string | null> {
+  const res = await ghFetch(token, `/repos/${owner}/${repo}/contents/${path}`);
+  if (!res.ok) return null;
+  const data = (await res.json()) as { content?: string; encoding?: string };
+  if (data.encoding !== 'base64' || !data.content) return null;
+  return Buffer.from(data.content, 'base64').toString('utf8');
+}
+
+/** Pull build files from an existing GitHub repo (no rebuild required). */
+export async function fetchBuildFilesFromGitHub(
+  userId: string,
+  repoName: string
+): Promise<ProjectFile[]> {
+  const integration = await getIntegration(userId);
+  if (!integration?.access_token) throw new Error('GitHub not connected');
+
+  const { owner, repo } = parseRepoName(repoName);
+  const token = integration.access_token;
+
+  const indexHtml = (await fetchRepoTextFile(token, owner, repo, 'index.html')) ?? '';
+  const css = (await fetchRepoTextFile(token, owner, repo, 'styles.css')) ?? '';
+  const js = (await fetchRepoTextFile(token, owner, repo, 'script.js')) ?? '';
+
+  if (!indexHtml.trim()) throw new Error('No index.html found in GitHub repo');
+
+  return [
+    { path: 'index.html', content: indexHtml },
+    { path: 'styles.css', content: css },
+    { path: 'script.js', content: js },
+  ];
+}
+
+/** Redeploy live preview from code already on GitHub — Vercel preferred, Netlify fallback. */
+export async function redeployPreviewFromGitHub(
+  userId: string,
+  repoName: string
+): Promise<{
+  deployUrl: string;
+  deployPlatform: 'vercel' | 'netlify' | 'none';
+  deployVerified: boolean;
+  vercelDeploymentId?: string;
+  netlifyDeployId?: string;
+  files: ProjectFile[];
+}> {
+  const files = await fetchBuildFilesFromGitHub(userId, repoName);
+  const slug = repoName.split('/').pop()?.replace(/^xroga-/, '') ?? 'xroga-build';
+  const preview = await deployStaticPreview(slug, files);
+  return {
+    deployUrl: preview.deployUrl,
+    deployPlatform: preview.platform,
+    deployVerified: preview.deployVerified,
+    vercelDeploymentId: preview.vercelDeploymentId,
+    netlifyDeployId: preview.netlifyDeployId,
+    files,
+  };
 }
 
 /** Push to GitHub then deploy to Vercel (preferred) or Netlify — only returns URL when verified live. */

@@ -40,7 +40,9 @@ export function sanitizeChatMessages(messages: unknown): ChatMessage[] {
           const deployUrl = typeof fo.deployUrl === 'string' ? fo.deployUrl.trim() : '';
           const hasHtml = typeof fo.html === 'string' && fo.html.length > 0;
           const hasSummary = typeof fo.summary === 'string' && fo.summary.length > 0;
-          if (!deployUrl && !hasHtml && !hasSummary) {
+          const hasGithub = typeof fo.githubRepoUrl === 'string' && fo.githubRepoUrl.length > 0;
+          const hasContent = typeof m.content === 'string' && m.content.trim().length > 0;
+          if (!deployUrl && !hasHtml && !hasSummary && !hasGithub && !hasContent) {
             featureOutput = undefined;
           }
         }

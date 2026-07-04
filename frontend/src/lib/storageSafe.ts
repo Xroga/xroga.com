@@ -13,9 +13,38 @@ function stripUrl(url: unknown): unknown {
   return url;
 }
 
+function slimLandingOutput(output: unknown): unknown {
+  if (!output || typeof output !== 'object') return output;
+  const o = output as Record<string, unknown>;
+  if (o.type !== 'landing_page') return output;
+
+  return {
+    type: 'landing_page',
+    deployUrl: o.deployUrl ?? '',
+    deployVerified: o.deployVerified,
+    githubRepoUrl: o.githubRepoUrl,
+    githubRepoName: o.githubRepoName,
+    projectName: o.projectName,
+    pages: o.pages,
+    features: o.features,
+    designTheme: o.designTheme,
+    needsPayment: o.needsPayment,
+    memoryNote: o.memoryNote,
+    summary: o.summary,
+    heroImageUrl: o.heroImageUrl,
+    html: '',
+    css: '',
+    js: '',
+  };
+}
+
 function stripFeatureOutput(output: unknown): unknown {
   if (!output || typeof output !== 'object') return output;
   const o = output as Record<string, unknown>;
+
+  if (o.type === 'landing_page') {
+    return slimLandingOutput(output);
+  }
 
   if (o.type === 'video_studio') {
     const next = { ...o };
