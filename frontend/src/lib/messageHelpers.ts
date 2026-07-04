@@ -56,7 +56,22 @@ export function requiresGitHubForBuild(prompt: string): boolean {
     return true;
   }
   if (/\b(debug|fix)\b[\s\S]{0,40}\b(code|bug|error|typescript|python)\b/.test(t)) return true;
+  // Phase 1 answer continuing a build thread
+  if (/\[Previous conversation for context/i.test(prompt)) {
+    const prior = prompt.slice(0, prompt.indexOf('[Current message]'));
+    if (
+      /\b(build|create|make)\b[\s\S]{0,80}\b(website|site|shop|coffee|landing)\b/i.test(prior) &&
+      /,\s*[^,\n]+,\s*(yes|no)\b/i.test(routingPrompt(prompt))
+    ) {
+      return true;
+    }
+  }
   return false;
+}
+
+function routingPrompt(prompt: string): string {
+  const match = /\[Current message\]\s*\n([\s\S]*)$/i.exec(prompt.trim());
+  return match?.[1]?.trim() ?? prompt.trim();
 }
 
 export const SWARM_AGENTS = [

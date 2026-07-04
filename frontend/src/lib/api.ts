@@ -57,6 +57,7 @@ export interface StreamSwarmOptions {
   signal?: AbortSignal;
   compact?: boolean;
   attachments?: ChatAttachment[];
+  history?: Array<{ role: 'user' | 'assistant'; content: string }>;
   clientMeta?: {
     assistantMessageId?: string;
     userMessageId?: string;
@@ -89,6 +90,7 @@ export async function streamSwarmExecute(
       stream: true,
       ...(options.projectId ? { projectId: options.projectId } : {}),
       ...(options.attachments?.length ? { attachments: options.attachments } : {}),
+      ...(options.history?.length ? { history: options.history } : {}),
       ...(options.clientMeta ? { clientMeta: options.clientMeta } : {}),
     }),
     signal: options.signal,

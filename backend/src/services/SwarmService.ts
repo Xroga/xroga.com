@@ -8,6 +8,8 @@ import { sendSSE } from '../lib/sse.js';
 import { InsufficientActionsError } from '../errors/InsufficientActionsError.js';
 import { ensureUserRecords } from './ensureUserRecords.js';
 import { Orchestrator } from '../orchestrator/Orchestrator.js';
+import { persistChatTurns } from '../lib/threadMemory.js';
+import { routingPrompt } from '../lib/promptRouting.js';
 import { getSwarmQueue } from '../config/redis.js';
 import type { SwarmStatus } from '../types/index.js';
 import type { FeatureCategory, SwarmProgressEvent, FeatureOutput } from '../types/features.js';
@@ -245,7 +247,8 @@ export class SwarmService {
     res: Response,
     projectId?: string,
     attachments?: Array<{ url: string; mimeType?: string; name?: string }>,
-    clientMeta?: { assistantMessageId?: string; userMessageId?: string; userPrompt?: string }
+    clientMeta?: { assistantMessageId?: string; userMessageId?: string; userPrompt?: string },
+    history?: Array<{ role: 'user' | 'assistant'; content: string }>
   ): Promise<void> {
     sendSSE(res, {
       event: 'start',
@@ -289,7 +292,7 @@ export class SwarmService {
     try {
       result = await Orchestrator.executeSafe(
         () => this.runCore(userId, prompt, projectId, onProgress, { extras: { attachments } }),
-        { userId, prompt, onProgress, attachments, clientMeta }
+        { userId, prompt, onProgress, attachments, clientMeta, history }
       );
     } finally {
       clearInterval(heartbeat);
@@ -315,6 +318,12 @@ export class SwarmService {
         fast: (result as { fast?: boolean }).fast,
       },
     });
+
+    const replyText = result.polishedReply?.trim();
+    if (replyText) {
+      const userLine = clientMeta?.userPrompt?.trim() || routingPrompt(prompt);
+      void persistChatTurns(userId, userLine, replyText);
+    }
   }
 
   static summarizeOutput(output: unknown): string {

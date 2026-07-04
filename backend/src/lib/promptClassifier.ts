@@ -2,6 +2,7 @@
 
 import { detectFeatureIntent, requiresFeaturePipeline } from './featureIntent.js';
 import { routingPrompt } from './promptRouting.js';
+import { isBuildContinuation } from './buildContinuation.js';
 import { isCapabilitiesQuery } from './xrogaCapabilities.js';
 import { isMathQuery } from './mathQuery.js';
 
@@ -35,6 +36,7 @@ export function isSimpleChat(prompt: string): boolean {
 }
 
 export function shouldUseFastChat(prompt: string, category?: string): boolean {
+  if (isBuildContinuation(prompt)) return false;
   const routeText = routingPrompt(prompt);
   if (isCapabilitiesQuery(routeText)) return true;
   if (isMathQuery(routeText)) return true;

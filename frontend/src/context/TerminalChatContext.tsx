@@ -24,7 +24,7 @@ import {
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
-import { buildPromptWithMemory } from '@/lib/chatMemory';
+import { buildPromptWithMemory, isBuildThreadContinuation } from '@/lib/chatMemory';
 import { sanitizeChatMessages } from '@/lib/sanitizeChatMessages';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
@@ -579,7 +579,7 @@ export function TerminalChatProvider({
         return;
       }
 
-      if (requiresGitHubForBuild(userPrompt)) {
+      if (requiresGitHubForBuild(userPrompt) || isBuildThreadContinuation(userPrompt, messages)) {
         try {
           const gh = await api.github.status();
           if (!gh.connected) {
@@ -640,7 +640,8 @@ export function TerminalChatProvider({
       setSwarmActivityLog([]);
 
       const useCompactPipeline =
-        isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt);
+        !isBuildThreadContinuation(displayPrompt, messages) &&
+        (isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt));
       setPipelineCompact(useCompactPipeline);
 
       if (isVideoGenerationPrompt(displayPrompt)) {
@@ -666,13 +667,29 @@ export function TerminalChatProvider({
         setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
         setAnimatingId(assistantId);
 
-        const apiPrompt = buildPromptWithMemory(displayPrompt, messages);
+        const threadForMemory = messages;
+        const apiPrompt = buildPromptWithMemory(displayPrompt, threadForMemory);
+        const history = threadForMemory
+          .filter((m) => (m.role === 'user' || m.role === 'assistant') && (m.content?.trim() || m.featureOutput))
+          .slice(-10)
+          .map((m) => {
+            let content = m.content?.trim() ?? '';
+            if (!content && m.featureOutput && typeof m.featureOutput === 'object') {
+              const o = m.featureOutput as { type?: string; summary?: string; deployUrl?: string };
+              if (o.type === 'landing_page') {
+                content = o.summary ?? `Built website: ${o.deployUrl ?? 'live'}`;
+              }
+            }
+            return { role: m.role as 'user' | 'assistant', content };
+          })
+          .filter((h) => h.content.length > 0);
 
         await streamSwarmExecute(apiPrompt, {
           projectId,
           signal: controller.signal,
           compact: useCompactPipeline,
           attachments,
+          history,
           clientMeta: {
             assistantMessageId: assistantId,
             userMessageId: userMessageId,
