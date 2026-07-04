@@ -24,7 +24,7 @@ import {
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
-import { buildPromptWithMemory, isBuildThreadContinuation } from '@/lib/chatMemory';
+import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, looksLikeBuildClarificationAnswer } from '@/lib/chatMemory';
 import { sanitizeChatMessages } from '@/lib/sanitizeChatMessages';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
@@ -176,6 +176,11 @@ export function TerminalChatProvider({
     fromQueue: boolean;
     interrupt: boolean;
     attachments?: ChatAttachment[];
+  } | null>(null);
+  /** Set after Phase 1 questions — next message must continue website build */
+  const activeWebsiteBuildRef = useRef<{
+    originalPrompt: string;
+    phase1Reply: string;
   } | null>(null);
   const chatPrefill = useAppStore((s) => s.chatPrefill);
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
@@ -641,6 +646,7 @@ export function TerminalChatProvider({
 
       const useCompactPipeline =
         !isBuildThreadContinuation(displayPrompt, messages) &&
+        !(activeWebsiteBuildRef.current && looksLikeBuildClarificationAnswer(displayPrompt)) &&
         (isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt));
       setPipelineCompact(useCompactPipeline);
 
@@ -667,9 +673,21 @@ export function TerminalChatProvider({
         setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
         setAnimatingId(assistantId);
 
-        const threadForMemory = messages;
+        const threadForMemory: ChatMessage[] = [
+          ...messages,
+          {
+            id: userMessageId,
+            role: 'user',
+            content: displayPrompt,
+            createdAt: Date.now(),
+          },
+        ];
         const apiPrompt = buildPromptWithMemory(displayPrompt, threadForMemory);
-        const history = threadForMemory
+        const buildSession = activeWebsiteBuildRef.current;
+        const isBuildAnswer =
+          Boolean(buildSession) && looksLikeBuildClarificationAnswer(displayPrompt);
+
+        let history = threadForMemory
           .filter((m) => (m.role === 'user' || m.role === 'assistant') && (m.content?.trim() || m.featureOutput))
           .slice(-10)
           .map((m) => {
@@ -684,6 +702,18 @@ export function TerminalChatProvider({
           })
           .filter((h) => h.content.length > 0);
 
+        if (buildSession && isBuildAnswer) {
+          const hasPhase1 = history.some((h) => isPhase1BuildQuestion(h.content));
+          if (!hasPhase1) {
+            history = [
+              { role: 'user', content: buildSession.originalPrompt },
+              { role: 'assistant', content: buildSession.phase1Reply },
+              ...history.filter((h) => h.content !== displayPrompt),
+              { role: 'user', content: displayPrompt },
+            ];
+          }
+        }
+
         await streamSwarmExecute(apiPrompt, {
           projectId,
           signal: controller.signal,
@@ -694,6 +724,8 @@ export function TerminalChatProvider({
             assistantMessageId: assistantId,
             userMessageId: userMessageId,
             userPrompt: displayPrompt,
+            buildContinuation: isBuildAnswer,
+            buildOriginalPrompt: buildSession?.originalPrompt,
           },
           onProgress: (event) => {
             gotEvent = true;
@@ -824,6 +856,7 @@ export function TerminalChatProvider({
               return;
             }
             if (output?.type === 'landing_page' && typeof output.deployUrl === 'string') {
+              activeWebsiteBuildRef.current = null;
               setMessages((m) =>
                 m.map((msg) =>
                   msg.id === assistantId ? { ...msg, content: '', featureOutput: output } : msg
@@ -906,6 +939,27 @@ export function TerminalChatProvider({
             const outputFollowUps = (complete.output as { followUps?: string[] } | undefined)?.followUps;
             if (outputFollowUps?.length) {
               setFollowUps(outputFollowUps);
+            }
+
+            const sessionReply = (fullReply || chatContent).trim();
+            if (sessionReply && isPhase1BuildQuestion(sessionReply)) {
+              const original =
+                [...messages]
+                  .reverse()
+                  .find(
+                    (m) =>
+                      m.role === 'user' &&
+                      /\b(build|create|make)\b[\s\S]{0,60}\b(website|site|shop|coffee|landing)\b/i.test(
+                        m.content ?? ''
+                      )
+                  )
+                  ?.content?.trim() ||
+                lastTurnRef.current?.text ||
+                displayPrompt;
+              activeWebsiteBuildRef.current = {
+                originalPrompt: original,
+                phase1Reply: sessionReply,
+              };
             }
 
             void api.actions.balance().then(setActions).catch(() => {});
