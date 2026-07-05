@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ChevronDown, Infinity } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { XrogaBlackHoleShineText } from '@/components/ui/XrogaBlackHoleShineText';
 
 export interface BlackHoleThinkingPanelProps {
   steps: string[];
@@ -63,15 +64,15 @@ export function BlackHoleThinkingPanel({
         className="relative z-10 flex w-full items-center gap-2 px-3.5 py-2.5 text-left transition-colors hover:bg-white/30 dark:hover:bg-white/5"
         aria-expanded={expanded}
       >
-        <span
+        <XrogaBlackHoleShineText
           className={cn(
-            'text-[12px] font-semibold tracking-tight',
-            'bg-gradient-to-r from-slate-700 via-slate-500 to-[#006aff] bg-clip-text text-transparent',
-            'dark:from-slate-200 dark:via-slate-300 dark:to-blue-300'
+            'text-[12px] tracking-tight',
+            active && 'text-[13px]'
           )}
+          as="span"
         >
-          {active ? 'Thinking…' : `Thought for ${seconds}s`}
-        </span>
+          {active ? 'XROGA AI Black Hole — processing…' : `Thought for ${seconds}s`}
+        </XrogaBlackHoleShineText>
         <span className="flex items-center gap-0.5 text-[10px] font-bold text-slate-500/90 dark:text-slate-400">
           XROGA Black Hole V
           <Infinity className="h-3 w-3 text-[#006aff]" strokeWidth={2.5} />

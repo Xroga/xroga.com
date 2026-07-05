@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { sanitizeXrogaTerminalText } from '@/lib/xrogaBrand';
+import { XrogaBlackHoleShineText } from '@/components/ui/XrogaBlackHoleShineText';
 
 /** Fast typewriter — shows every word of what XROGA AI is doing */
 export function SwarmProcessingTicker({
@@ -45,13 +46,15 @@ export function SwarmProcessingTicker({
   return (
     <div className={cn('space-y-1.5', className)}>
       {source && (
-        <div className="relative overflow-hidden rounded-lg border border-[#006aff]/20 bg-[#006aff]/8 px-2.5 py-2">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.04] to-transparent opacity-80 animate-pulse" />
-          <p className="relative text-[11px] font-medium text-[#93c5fd] leading-snug min-h-[1.25rem]">
-            {displayed}
-            {displayed.length < source.length && (
-              <span className="inline-block w-1.5 h-3 ml-0.5 bg-[#60a5fa] animate-pulse align-middle" />
-            )}
+        <div className="relative overflow-hidden rounded-lg border border-[#006aff]/25 bg-black/40 px-3 py-2.5">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#006aff]/10 to-transparent opacity-90 animate-pulse pointer-events-none" aria-hidden />
+          <p className="relative text-[11px] leading-snug min-h-[1.25rem]">
+            <XrogaBlackHoleShineText className="text-[11px]">
+              {displayed}
+              {displayed.length < source.length && (
+                <span className="inline-block w-1.5 h-3 ml-0.5 bg-[#60a5fa] animate-pulse align-middle xv-agent-cursor" />
+              )}
+            </XrogaBlackHoleShineText>
           </p>
         </div>
       )}

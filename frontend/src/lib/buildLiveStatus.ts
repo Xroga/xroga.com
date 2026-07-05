@@ -1,4 +1,4 @@
-/** Rotating live status lines so users see progress during long silent API calls */
+/** Rotating live status lines — XROGA Black Hole branding (no provider names). */
 
 export function buildLiveStatusMessage(
   elapsedSeconds: number,
@@ -8,23 +8,23 @@ export function buildLiveStatusMessage(
   const phase = activePhase ?? 1;
 
   const buildLines = [
-    'DeepSeek Code writing your project…',
-    'Generating styles & layout…',
-    'Building pages, sections & features…',
+    'XROGA AI Black Hole — writing your project…',
+    'Absorbing multiverse data — generating styles & layout…',
+    'BLACK HOLE V∞ — building pages, sections & features…',
     'Applying theme and responsive design…',
     'Polishing your niche-specific content…',
     'Still coding — your project is taking shape…',
   ];
 
   const verifyLines = [
-    'Groq reviewing syntax…',
-    'Gemini checking page logic…',
-    'Running verification pass…',
+    'XROGA Pulse — reviewing syntax…',
+    'XROGA Visionary — checking page logic…',
+    'AI Swarm Logic — running verification pass…',
   ];
 
   const deployLines = [
     'Pushing files to GitHub…',
-    'Deploying live preview to Vercel…',
+    'Deploying live preview — Vercel / Netlify…',
     'Verifying hosted URL is live…',
   ];
 

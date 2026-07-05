@@ -1,11 +1,15 @@
 /** Strip underlying AI provider names from user-visible terminal text */
 const PROVIDER_PATTERNS: Array<[RegExp, string]> = [
-  [/\b(as (the )?)?(Groq|Gemini|DeepSeek|OpenAI|Anthropic|Claude|GPT-?4|GPT-?3|Mistral|ChatGPT)(\s+(Sprinter|Polymath|Architect|Showrunner|Flash|Neural))?\b/gi, 'XROGA AI'],
-  [/\bI am (the )?(Groq|Gemini|DeepSeek|Claude|GPT)\b[^.\n]*/gi, 'I am XROGA AI'],
+  [/\b(as (the )?)?(Groq|Gemini|DeepSeek|OpenAI|Anthropic|Claude|GPT-?4|GPT-?3|Mistral|ChatGPT)(\s+(Sprinter|Polymath|Architect|Showrunner|Flash|Neural|Code))?\b/gi, 'XROGA AI Black Hole'],
+  [/\bDeepSeek Code\b/gi, 'XROGA AI Black Hole'],
+  [/\bDeepSeek Game Alchemist\b/gi, 'XROGA Game Alchemist'],
+  [/\bI am (the )?(Groq|Gemini|DeepSeek|Claude|GPT)\b[^.\n]*/gi, 'I am XROGA AI Black Hole'],
   [/---\s*(Gemini|Groq|DeepSeek|Mistral|Claude|GPT)[^-\n]*---\s*/gi, ''],
   [/\bGemini Master Plan\b/gi, 'XROGA Master Plan'],
-  [/\bDeepSeek\b/gi, 'XROGA Architect'],
+  [/\bDeepSeek\b/gi, 'XROGA AI Black Hole'],
   [/\bMistral\b/gi, 'XROGA Co-Architect'],
+  [/\bGroq\b/gi, 'XROGA Pulse'],
+  [/\bGemini\b/gi, 'XROGA Visionary'],
 ];
 
 export function sanitizeXrogaTerminalText(text: string | null | undefined): string {

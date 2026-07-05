@@ -363,10 +363,10 @@ async function deepseekCall(system: string, user: string, maxTokens = 4096): Pro
 }
 
 const BUILD_HEARTBEAT_MSGS = [
-  '⚙️ DeepSeek Code — writing HTML structure…',
-  '⚙️ DeepSeek Code — generating CSS styles…',
-  '⚙️ DeepSeek Code — building page sections…',
-  '⚙️ DeepSeek Code — still coding your website…',
+  '⚙️ XROGA AI Black Hole — writing HTML structure…',
+  '⚙️ BLACK HOLE V∞ — generating CSS styles…',
+  '⚙️ XROGA AI Black Hole — building page sections…',
+  '⚙️ AI Swarm Logic — still coding your website…',
 ];
 
 /** Emit progress every 5s during long code API calls so the UI never looks frozen */
@@ -480,7 +480,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   if (needsGameDreamInterview(userPrompt) && !hasGameBuildContext(userPrompt)) {
     todos.setAnalysis('game — dream interview');
-    emit(ctx, 0, BRAND.phase0.clarifying('game'), 'reviewer', todos, 'DeepSeek Game Alchemist');
+    emit(ctx, 0, BRAND.phase0.clarifying('game'), 'reviewer', todos, 'XROGA Game Alchemist');
     return {
       success: false,
       clarifiedBrief: '',
@@ -560,7 +560,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       /* keep brief */
     }
   } else if (isGameBuild) {
-    emit(ctx, 0, BRAND.phase0.scanning('game'), 'reviewer', todos, 'DeepSeek Game Alchemist', { userPhase: 1 });
+    emit(ctx, 0, BRAND.phase0.scanning('game'), 'reviewer', todos, 'XROGA Game Alchemist', { userPhase: 1 });
     try {
       clarifiedBrief = await geminiCall(
         PHASE_0_GAME_DISCOVERY,
@@ -572,7 +572,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     buildState.markDone('clarified');
     todos.setAnalysis(clarifiedBrief.slice(0, 280));
     todos.completeMeta('analyze');
-    emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'DeepSeek Game Alchemist', { userPhase: 1 });
+    emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'XROGA Game Alchemist', { userPhase: 1 });
   } else {
   try {
     clarifiedBrief = await geminiCall(
@@ -691,7 +691,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         : BRAND.phase3.buildStart(steps.length),
     'builder',
     todos,
-    isGameBuild ? 'DeepSeek Game Alchemist' : 'XROGA Architect',
+    isGameBuild ? 'XROGA Game Alchemist' : 'XROGA Architect',
     { userPhase: 1 }
   );
 
@@ -715,7 +715,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     const stepLabel = `Step ${si + 1}/${stepsToRun.length}`;
     const target = stepTargetLabel(stepsToRun[si]!, si);
     todos.activateBuild(si);
-    emit(ctx, 3, BRAND.phase3.execute(si + 1, stepsToRun.length, target), 'builder', todos, isGameBuild ? 'DeepSeek Game Alchemist' : 'XROGA Architect', {
+    emit(ctx, 3, BRAND.phase3.execute(si + 1, stepsToRun.length, target), 'builder', todos, isGameBuild ? 'XROGA Game Alchemist' : 'XROGA Architect', {
       userPhase: 1,
     });
 
@@ -760,7 +760,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
     todos.completeBuild(si);
     // Mark step done with friendly label in activity log
-    emit(ctx, 3, friendlyStepLabel(stepsToRun[si]!, si), 'builder', todos, isGameBuild ? 'DeepSeek Game Alchemist' : 'XROGA Architect', { userPhase: 1 });
+    emit(ctx, 3, friendlyStepLabel(stepsToRun[si]!, si), 'builder', todos, isGameBuild ? 'XROGA Game Alchemist' : 'XROGA Architect', { userPhase: 1 });
     codeParts.push(`// --- ${stepLabel}: ${stepsToRun[si]} ---\n${stepCode}`);
     if (!approved) {
       emit(ctx, 5, BRAND.phase5.maxReached, 'debugger', todos, 'XROGA Architect');

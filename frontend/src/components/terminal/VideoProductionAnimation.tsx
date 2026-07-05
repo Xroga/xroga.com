@@ -13,14 +13,14 @@ const OMNI_STEPS = [
 ] as const;
 
 const PHASE_LABELS: Record<string, string> = {
-  trinity_scripting: 'DeepSeek writing Hollywood storyboard…',
+  trinity_scripting: 'XROGA AI Black Hole — writing Hollywood storyboard…',
   storyboard_ready: 'Storyboard locked — continuity set',
   characters: 'Designing characters & keyframes',
   scene_render: 'Rendering cinematic scene',
   qc_inspect: 'QC shield — inspecting every frame',
-  groq_patch: 'Groq reflex patch — fixing defects',
+  groq_patch: 'XROGA Pulse — reflex patch fixing defects',
   tool_swap: 'Swapping render engine (80/20 vault)',
-  deepseek_simplify: 'DeepSeek simplifying shot complexity',
+  deepseek_simplify: 'XROGA AI Black Hole — simplifying shot complexity',
   parallax_fallback: '2.5D parallax cinematic transition',
   audio_compose: 'ElevenLabs voiceover & cinematic score',
   stitch_assemble: 'FFmpeg assembling final cut',
