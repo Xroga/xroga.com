@@ -3,6 +3,7 @@ import { deployStaticSite, pollDeploymentReady } from '../../lib/vercel.js';
 import { deployToNetlify, pollNetlifyDeploy } from '../../lib/netlify.js';
 import { verifyLivePreviewUrl } from '../../lib/deployVerify.js';
 import { normalizeBuildFiles } from '../../lib/normalizeBuildSource.js';
+import { buildInlinePreviewDocument } from '../../lib/landingPreview.js';
 import { getSecret } from '../../config/envSecrets.js';
 import { getGitHubToken, isGitHubConnected as checkGitHubConnected, getGitHubStorageMeta } from './githubAuth.js';
 
@@ -24,6 +25,11 @@ export interface DeployPipelineResult {
   deployVerified: boolean;
   vercelDeploymentId?: string;
   netlifyDeployId?: string;
+  vercelPreviewUrl?: string;
+  netlifyPreviewUrl?: string;
+  vercel?: PlatformDeployResult;
+  netlify?: PlatformDeployResult;
+  deployError?: string;
 }
 
 interface GitHubIntegrationRow {
@@ -365,6 +371,27 @@ export function landingFilesFromOutput(html: string, css: string, js: string): P
   ];
 }
 
+/** Single merged index.html for Vercel/Netlify — matches in-card preview exactly. */
+export function landingDeployFilesFromOutput(html: string, css: string, js: string): ProjectFile[] {
+  const merged = buildInlinePreviewDocument(html, css, js);
+  return [{ path: 'index.html', content: merged }];
+}
+
+function hostingDeployFiles(files: ProjectFile[]): ProjectFile[] {
+  const html = files.find((f) => f.path === 'index.html')?.content ?? '';
+  const css = files.find((f) => f.path === 'styles.css')?.content ?? '';
+  const js = files.find((f) => f.path === 'script.js')?.content ?? '';
+  if (!html.trim()) return files.filter((f) => !f.path.endsWith('.md'));
+
+  const hasExternalCssLink = /<link[^>]+href=["']styles\.css/i.test(html);
+  const hasInlineStyle = /<style[^>]*>[\s\S]{40,}<\/style>/i.test(html);
+  if (!hasExternalCssLink && hasInlineStyle && !css.trim()) {
+    return [{ path: 'index.html', content: html }];
+  }
+
+  return landingDeployFilesFromOutput(html, css, js);
+}
+
 async function deployToVercel(projectSlug: string, staticFiles: ProjectFile[]): Promise<PreviewDeployResult> {
   const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
   const deployment = await deployStaticSite(projectSlug, vercelFiles);
@@ -392,7 +419,7 @@ export async function deployStaticPreview(
   projectSlug: string,
   files: ProjectFile[]
 ): Promise<{ deployUrl: string; platform: 'vercel' | 'netlify' | 'none'; deployVerified: boolean; vercelDeploymentId?: string; netlifyDeployId?: string }> {
-  const staticFiles = files.filter((f) => !f.path.endsWith('.md'));
+  const staticFiles = hostingDeployFiles(files);
   const hasVercel = Boolean(getSecret('VERCEL_API_KEY'));
   const hasNetlify = Boolean(getSecret('NETLIFY_ACCESS_TOKEN'));
 
@@ -432,6 +459,92 @@ export interface PlatformDeployResult {
   deployVerified: boolean;
   vercelDeploymentId?: string;
   netlifyDeployId?: string;
+  error?: string;
+}
+
+/** Deploy to Vercel and Netlify when keys exist — returns both preview URLs. */
+export async function deployToAllPlatforms(
+  projectSlug: string,
+  files: ProjectFile[]
+): Promise<{
+  vercel?: PlatformDeployResult;
+  netlify?: PlatformDeployResult;
+  deployUrl: string;
+  deployPlatform: 'vercel' | 'netlify' | 'none';
+  deployVerified: boolean;
+  vercelDeploymentId?: string;
+  netlifyDeployId?: string;
+  deployError?: string;
+}> {
+  const staticFiles = hostingDeployFiles(files);
+  const hasVercel = Boolean(getSecret('VERCEL_API_KEY'));
+  const hasNetlify = Boolean(getSecret('NETLIFY_ACCESS_TOKEN'));
+  const errors: string[] = [];
+
+  let vercel: PlatformDeployResult | undefined;
+  let netlify: PlatformDeployResult | undefined;
+
+  if (hasVercel) {
+    try {
+      const result = await deployToVercel(projectSlug, staticFiles);
+      const verified = await verifyLivePreviewUrl(result.deployUrl);
+      vercel = {
+        deployUrl: result.deployUrl,
+        deployVerified: verified,
+        vercelDeploymentId: result.vercelDeploymentId,
+      };
+      if (!verified) errors.push('Vercel URL failed verification');
+    } catch (err) {
+      const msg = (err as Error).message;
+      errors.push(`Vercel: ${msg.slice(0, 120)}`);
+      vercel = { deployUrl: '', deployVerified: false, error: msg.slice(0, 240) };
+    }
+  } else {
+    errors.push('Vercel: VERCEL_API_KEY not set on server');
+    vercel = { deployUrl: '', deployVerified: false, error: 'VERCEL_API_KEY not configured on server' };
+  }
+
+  if (hasNetlify) {
+    try {
+      const result = await deployToNetlifyPreview(projectSlug, staticFiles);
+      const verified = await verifyLivePreviewUrl(result.deployUrl);
+      netlify = {
+        deployUrl: result.deployUrl,
+        deployVerified: verified,
+        netlifyDeployId: result.netlifyDeployId,
+      };
+      if (!verified) errors.push('Netlify URL failed verification');
+    } catch (err) {
+      const msg = (err as Error).message;
+      errors.push(`Netlify: ${msg.slice(0, 120)}`);
+      netlify = { deployUrl: '', deployVerified: false, error: msg.slice(0, 240) };
+    }
+  } else {
+    errors.push('Netlify: NETLIFY_ACCESS_TOKEN not set on server');
+    netlify = { deployUrl: '', deployVerified: false, error: 'NETLIFY_ACCESS_TOKEN not configured on server' };
+  }
+
+  const primary =
+    vercel?.deployVerified && vercel.deployUrl
+      ? { url: vercel.deployUrl, platform: 'vercel' as const, id: vercel.vercelDeploymentId }
+      : netlify?.deployVerified && netlify.deployUrl
+        ? { url: netlify.deployUrl, platform: 'netlify' as const, id: netlify.netlifyDeployId }
+        : vercel?.deployUrl
+          ? { url: vercel.deployUrl, platform: 'vercel' as const, id: vercel.vercelDeploymentId }
+          : netlify?.deployUrl
+            ? { url: netlify.deployUrl, platform: 'netlify' as const, id: netlify.netlifyDeployId }
+            : null;
+
+  return {
+    vercel,
+    netlify,
+    deployUrl: primary?.url ?? '',
+    deployPlatform: primary?.platform ?? 'none',
+    deployVerified: Boolean(vercel?.deployVerified || netlify?.deployVerified),
+    vercelDeploymentId: vercel?.vercelDeploymentId,
+    netlifyDeployId: netlify?.netlifyDeployId,
+    deployError: primary ? undefined : errors.join(' · '),
+  };
 }
 
 /** Deploy generated code directly to one platform (no GitHub required). */
@@ -440,7 +553,7 @@ export async function deployPreviewToPlatform(
   files: ProjectFile[],
   platform: 'vercel' | 'netlify'
 ): Promise<PlatformDeployResult> {
-  const staticFiles = files.filter((f) => !f.path.endsWith('.md'));
+  const staticFiles = hostingDeployFiles(files);
   try {
     const result =
       platform === 'vercel'
@@ -454,8 +567,9 @@ export async function deployPreviewToPlatform(
       netlifyDeployId: result.netlifyDeployId,
     };
   } catch (err) {
-    console.warn(`[githubDeploy] ${platform} deploy:`, (err as Error).message);
-    return { deployUrl: '', deployVerified: false };
+    const msg = (err as Error).message;
+    console.warn(`[githubDeploy] ${platform} deploy:`, msg);
+    return { deployUrl: '', deployVerified: false, error: msg.slice(0, 240) };
   }
 }
 
@@ -471,7 +585,7 @@ export async function deployPreviewFromSource(
   netlify?: PlatformDeployResult;
   files: ProjectFile[];
 }> {
-  const files = landingFilesFromOutput(html, css, js);
+  const files = landingDeployFilesFromOutput(html, css, js);
   const out: { vercel?: PlatformDeployResult; netlify?: PlatformDeployResult; files: ProjectFile[] } = {
     files,
   };
@@ -579,13 +693,18 @@ export async function pushAndDeployLivePreview(
     targetRepo: githubTarget?.targetRepo,
     targetBranch: githubTarget?.targetBranch,
   });
-  const preview = await deployStaticPreview(projectSlug, files);
+  const preview = await deployToAllPlatforms(projectSlug, files);
   return {
     github,
     deployUrl: preview.deployUrl,
-    deployPlatform: preview.platform,
+    deployPlatform: preview.deployPlatform,
     deployVerified: preview.deployVerified,
     vercelDeploymentId: preview.vercelDeploymentId,
     netlifyDeployId: preview.netlifyDeployId,
+    vercelPreviewUrl: preview.vercel?.deployUrl,
+    netlifyPreviewUrl: preview.netlify?.deployUrl,
+    vercel: preview.vercel,
+    netlify: preview.netlify,
+    deployError: preview.deployError,
   };
 }

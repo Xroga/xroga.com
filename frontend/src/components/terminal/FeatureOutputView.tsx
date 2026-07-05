@@ -104,6 +104,9 @@ export function FeatureOutputView({
       needsPayment: typeof o.needsPayment === 'boolean' ? o.needsPayment : undefined,
       memoryNote: typeof o.memoryNote === 'string' ? o.memoryNote : undefined,
       summary: typeof o.summary === 'string' ? o.summary : undefined,
+      vercelPreviewUrl: typeof o.vercelPreviewUrl === 'string' ? o.vercelPreviewUrl : undefined,
+      netlifyPreviewUrl: typeof o.netlifyPreviewUrl === 'string' ? o.netlifyPreviewUrl : undefined,
+      followUps: Array.isArray(o.followUps) ? (o.followUps as string[]) : undefined,
     };
 
     return (

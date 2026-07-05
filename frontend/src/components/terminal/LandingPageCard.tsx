@@ -6,6 +6,8 @@ import { api } from '@/lib/api';
 import { getSelectedRepoContext } from '@/lib/repoContext';
 import { normalizeBuildFiles } from '@/lib/normalizeBuildSource';
 import { BuildCodeSandbox } from './BuildCodeSandbox';
+import { auditLandingSite, LANDING_UPDATE_SUGGESTIONS } from '@/lib/siteHealthAudit';
+import { useTerminalChat } from '@/context/TerminalChatContext';
 
 export interface LandingPageOutputData {
   type: 'landing_page';
@@ -26,6 +28,12 @@ export interface LandingPageOutputData {
   summary?: string;
   vercelPreviewUrl?: string;
   netlifyPreviewUrl?: string;
+  followUps?: string[];
+  siteAudit?: {
+    score: number;
+    issues: Array<{ id: string; severity: string; area: string; message: string; fixPrompt: string }>;
+    working: string[];
+  };
 }
 
 interface LandingPageCardProps {
@@ -72,13 +80,36 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
   const designTheme = data.designTheme ?? 'Modern, clean design';
   const projectSlug = projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40) || 'xroga-build';
 
+  const siteAudit = useMemo(
+    () => auditLandingSite(normalized.html, normalized.css, normalized.js),
+    [normalized.html, normalized.css, normalized.js]
+  );
+
+  const updateSuggestions = data.followUps?.length ? data.followUps : LANDING_UPDATE_SUGGESTIONS;
+  const { setPrompt, submit } = useTerminalChat();
+
   useEffect(() => {
     setPreviewHtml(data.html ?? '');
     setPreviewCss(data.css ?? '');
     setPreviewJs(data.js ?? '');
-    if (data.vercelPreviewUrl) setVercelUrl(data.vercelPreviewUrl);
-    if (data.netlifyPreviewUrl) setNetlifyUrl(data.netlifyPreviewUrl);
-  }, [data.html, data.css, data.js, data.vercelPreviewUrl, data.netlifyPreviewUrl]);
+    if (data.vercelPreviewUrl) {
+      setVercelUrl(data.vercelPreviewUrl);
+      setVercelVerified(true);
+    }
+    if (data.netlifyPreviewUrl) {
+      setNetlifyUrl(data.netlifyPreviewUrl);
+      setNetlifyVerified(true);
+    }
+    if (data.deployUrl && !data.vercelPreviewUrl && !data.netlifyPreviewUrl) {
+      if (data.deployUrl.includes('vercel.app')) {
+        setVercelUrl(data.deployUrl);
+        setVercelVerified(Boolean(data.deployVerified));
+      } else if (data.deployUrl.includes('netlify.app')) {
+        setNetlifyUrl(data.deployUrl);
+        setNetlifyVerified(Boolean(data.deployVerified));
+      }
+    }
+  }, [data.html, data.css, data.js, data.vercelPreviewUrl, data.netlifyPreviewUrl, data.deployUrl, data.deployVerified]);
 
   useEffect(() => {
     if (pushAttempted.current || !resolvedRepoName || !normalized.html.trim()) return;
@@ -131,6 +162,7 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
       const platformResult = platform === 'vercel' ? result.vercel : result.netlify;
       const url = platformResult?.deployUrl || result.deployUrl;
       const verified = platformResult?.deployVerified ?? result.deployVerified;
+      const deployError = platformResult?.error;
 
       if (platform === 'vercel') {
         setVercelUrl(url);
@@ -151,12 +183,16 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
           netlifyPreviewUrl: platform === 'netlify' ? url : netlifyUrl || data.netlifyPreviewUrl,
           deployUrl: url,
           deployVerified: true,
+          siteAudit,
         });
         window.open(url, '_blank', 'noopener,noreferrer');
       } else if (url) {
         setStatusNote(`${platform} URL created — verifying… Try opening again in a moment.`);
       } else {
-        setStatusNote(`${platform} deploy unavailable — check VERCEL_API_KEY or NETLIFY_ACCESS_TOKEN on server.`);
+        setStatusNote(
+          deployError ||
+            `${platform} deploy unavailable — check VERCEL_API_KEY or NETLIFY_ACCESS_TOKEN on server.`
+        );
       }
     } catch (err) {
       setStatusNote(`${platform} deploy failed: ${(err as Error).message?.slice(0, 120) || 'unknown error'}`);
@@ -206,7 +242,84 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
         )}
       </div>
 
-      <BuildCodeSandbox html={normalized.html} css={normalized.css} js={normalized.js} />
+      <BuildCodeSandbox
+        html={normalized.html}
+        css={normalized.css}
+        js={normalized.js}
+        projectTitle={projectName}
+      />
+
+      <div className="px-3 py-3 border-t border-white/10 bg-black/10 space-y-3">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]/70 mb-2">
+            🔧 Site health — {siteAudit.score}/100
+          </p>
+          {siteAudit.working.length > 0 ? (
+            <ul className="flex flex-wrap gap-1.5 mb-2">
+              {siteAudit.working.map((w) => (
+                <li key={w} className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400">
+                  ✓ {w}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {siteAudit.issues.length > 0 ? (
+            <ul className="space-y-2">
+              {siteAudit.issues.map((issue) => (
+                <li
+                  key={issue.id}
+                  className="text-[10px] leading-snug p-2 rounded-lg bg-white/5 border border-white/8"
+                >
+                  <span
+                    className={
+                      issue.severity === 'error'
+                        ? 'text-red-400'
+                        : issue.severity === 'warn'
+                          ? 'text-amber-400'
+                          : 'text-[#93c5fd]'
+                    }
+                  >
+                    {issue.area}: {issue.message}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPrompt(`Update my live website: ${issue.fixPrompt}`);
+                      void submit();
+                    }}
+                    className="mt-1 block text-[9px] text-[#006aff] hover:underline text-left"
+                  >
+                    → Fix this for me
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-[10px] text-emerald-400/90">All core checks passed.</p>
+          )}
+        </div>
+
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]/70 mb-2">
+            ✨ Suggested updates (edits your current GitHub files)
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {updateSuggestions.slice(0, 6).map((suggestion) => (
+              <button
+                key={suggestion}
+                type="button"
+                onClick={() => {
+                  setPrompt(`Update my live website: ${suggestion}`);
+                  void submit();
+                }}
+                className="text-[9px] px-2.5 py-1 rounded-full bg-[#006aff]/15 text-[#93c5fd] border border-[#006aff]/30 hover:bg-[#006aff]/25 transition-colors"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <div className="p-3 flex flex-col gap-2 border-t border-white/10">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]/70">

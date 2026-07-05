@@ -56,6 +56,7 @@ import {
   PHASE_2_DEEPSEEK_REVIEW,
   PHASE_2_GEMINI_AGREE,
   PHASE_3_EXECUTE,
+  PHASE_3_UPDATE_EXECUTE,
   PHASE_4_GROQ_VERIFY,
   PHASE_4_GEMINI_VERIFY,
   PHASE_5_CORRECT,
@@ -69,7 +70,9 @@ import {
   pushAndDeployLivePreview,
   pushBuildToGitHub,
   landingFilesFromOutput,
+  fetchBuildFilesFromGitHub,
 } from '../../services/integrations/githubDeploy.js';
+import { siteCodeFromProjectFiles, LANDING_UPDATE_FOLLOW_UPS } from '../../lib/landingPreview.js';
 import {
   isBuildContinuation,
   isWebsiteUpdateRequest,
@@ -461,6 +464,20 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     isWebsiteUpdateRequest(userPrompt) &&
     (hasBuildConversationContext(userPrompt) || threadHasCompletedWebsite(userPrompt));
 
+  let existingSiteCode: { html: string; css: string; js: string } | null = null;
+  if (isUpdateBuild && ctx.githubTargetRepo?.includes('/')) {
+    try {
+      const files = await fetchBuildFilesFromGitHub(userId, ctx.githubTargetRepo);
+      existingSiteCode = siteCodeFromProjectFiles(files);
+      emit(ctx, 0, BRAND.phase0.scanning('existing GitHub files'), 'reviewer', todos, 'XROGA Visionary', {
+        userPhase: 1,
+        silent: true,
+      });
+    } catch (fetchErr) {
+      console.warn('[NegotiationEngine] Fetch existing site:', (fetchErr as Error).message);
+    }
+  }
+
   if (needsGameDreamInterview(userPrompt) && !hasGameBuildContext(userPrompt)) {
     todos.setAnalysis('game — dream interview');
     emit(ctx, 0, BRAND.phase0.clarifying('game'), 'reviewer', todos, 'DeepSeek Game Alchemist');
@@ -680,10 +697,19 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   const codeParts: string[] = [];
   let totalCorrections = 0;
-  const executePrompt = isGameBuild ? PHASE_3_GAME_EXECUTE : PHASE_3_EXECUTE;
+  const executePrompt = isGameBuild
+    ? PHASE_3_GAME_EXECUTE
+    : isUpdateBuild
+      ? PHASE_3_UPDATE_EXECUTE
+      : PHASE_3_EXECUTE;
   const executeTech = isGameBuild
     ? 'HTML5 Canvas game in browser — html, css, javascript fenced blocks. Complete runnable game code.'
-    : 'plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.';
+    : isUpdateBuild
+      ? 'plain HTML/CSS/JS only. Edit existing files from GitHub. Output ONLY fenced code blocks.'
+      : 'plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.';
+  const existingCodeContext = existingSiteCode
+    ? `\n\nEXISTING SITE (edit — do not rebuild from scratch):\n--- index.html ---\n${existingSiteCode.html.slice(0, 7000)}\n\n--- styles.css ---\n${existingSiteCode.css.slice(0, 5000)}\n\n--- script.js ---\n${existingSiteCode.js.slice(0, 2500)}`
+    : '';
 
   for (let si = 0; si < stepsToRun.length; si++) {
     const stepLabel = `Step ${si + 1}/${stepsToRun.length}`;
@@ -698,7 +724,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       stepCode = await withBuildHeartbeat(ctx, todos, () =>
         deepseekCall(
           executePrompt,
-          `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}`
+          `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`
         )
       );
     } catch (stepErr) {
@@ -824,6 +850,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         deployUrl: pipeline.deployUrl,
         deployVerified: pipeline.deployVerified,
         vercelDeploymentId: pipeline.vercelDeploymentId ?? featureOutput.vercelDeploymentId,
+        vercelPreviewUrl: pipeline.vercelPreviewUrl,
+        netlifyPreviewUrl: pipeline.netlifyPreviewUrl,
+        followUps: [...LANDING_UPDATE_FOLLOW_UPS],
         githubRepoUrl: pipeline.github.htmlUrl,
         githubRepoName: pipeline.github.repoName,
         projectName: summaryData.projectName,
@@ -831,7 +860,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         features: summaryData.features,
         designTheme: summaryData.designTheme,
         needsPayment: summaryData.needsPayment,
-        memoryNote,
+        memoryNote:
+          pipeline.deployError && !pipeline.deployVerified
+            ? `${memoryNote ? `${memoryNote} ` : ''}Hosted preview note: ${pipeline.deployError.slice(0, 160)}`
+            : memoryNote,
         summary: formatBuildSummaryCard({
           ...summaryData,
           liveUrl: pipeline.deployVerified ? pipeline.deployUrl : undefined,
