@@ -22,7 +22,7 @@ export function formatAgentActivityLine(raw: string): string {
     return `Building step ${stepMatch[1]}/${stepMatch[2]} — ${stepMatch[3]!.trim()}`;
   }
 
-  if (/\bverifying\b/i.test(line)) return 'Verifying — Groq + Gemini code review…';
+  if (/\bverifying\b/i.test(line)) return 'Verifying — XROGA Pulse + Visionary code review…';
   if (/\bdeploying\b/i.test(line) || /\bvercel\b/i.test(line)) return 'Deploying live preview to Vercel…';
   if (/\bgithub\b/i.test(line) && /\b(push|repo|creating)\b/i.test(line)) {
     return 'Creating GitHub repo and pushing files…';
@@ -62,7 +62,7 @@ export function parseAgentActivityEntries(lines: string[]): AgentActivityEntry[]
       continue;
     }
 
-    if (/building step|deepseek code|building\.\.\./i.test(line)) {
+    if (/building step|black hole|xroga ai|building\.\.\./i.test(line)) {
       buildStep += 1;
       const file = BUILD_FILES[(buildStep - 1) % BUILD_FILES.length]!;
       entries.push({ id: `${id}-s`, kind: 'status', label: 'Editing' });

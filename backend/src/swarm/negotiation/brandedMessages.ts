@@ -17,7 +17,7 @@ export const BRAND = {
     approved: '[Phase 3] Plan approved.',
   },
   phase3: {
-    buildStart: (steps: number) => `⚙️ [Phase 1] DeepSeek Code — building ${steps} steps`,
+    buildStart: (steps: number) => `⚙️ [Phase 1] XROGA AI Black Hole — building ${steps} steps`,
     updateStart: (steps: number) => `⚙️ [Phase 6] Updating your project — ${steps} steps`,
     execute: (step: number, total: number, label: string) =>
       `⚙️ [Phase 1] Building... Step ${step}/${total} ${label}`,

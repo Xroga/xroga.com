@@ -9,7 +9,7 @@ export const GAME_ACTIVATION_PHRASES = [
   'code a game',
 ];
 
-export const GAME_INTERVIEW_QUESTIONS = `🎮 **DeepSeek Game Alchemist — Let's design your dream game!**
+export const GAME_INTERVIEW_QUESTIONS = `🎮 **XROGA Game Alchemist — Let's design your dream game!**
 
 Before I write a single line of code, answer these like a creative director (one message is fine):
 

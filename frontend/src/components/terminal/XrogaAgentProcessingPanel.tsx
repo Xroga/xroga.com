@@ -14,6 +14,7 @@ import {
 } from '@/lib/agentProcessingFormat';
 import { buildLiveStatusMessage } from '@/lib/buildLiveStatus';
 import { AgentActivityRow, AgentTypewriterText } from './AgentTypewriterText';
+import { XrogaBlackHoleShineText } from '@/components/ui/XrogaBlackHoleShineText';
 
 interface XrogaAgentProcessingPanelProps {
   loading: boolean;
@@ -228,10 +229,12 @@ export function XrogaAgentProcessingPanel({
       )}
 
       {loading && (
-        <div className="rounded-lg border border-[#60a5fa]/20 bg-[#60a5fa]/8 px-3 py-2 xv-agent-live-pulse">
-          <p className="text-[12px] text-[#93c5fd] flex items-center gap-2 leading-snug">
-            <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" strokeWidth={2.5} />
-            <AgentTypewriterText text={liveStatus} active key={liveStatus} className="font-medium" />
+        <div className="rounded-lg border border-[#60a5fa]/20 bg-[#60a5fa]/8 px-3 py-2.5 xv-agent-live-pulse">
+          <p className="text-[12px] flex items-center gap-2 leading-snug">
+            <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0 text-[#93c5fd]" strokeWidth={2.5} />
+            <XrogaBlackHoleShineText className="text-[12px]">
+              <AgentTypewriterText text={liveStatus} active key={liveStatus} />
+            </XrogaBlackHoleShineText>
           </p>
         </div>
       )}

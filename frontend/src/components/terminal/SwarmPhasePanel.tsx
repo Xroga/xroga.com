@@ -4,6 +4,7 @@ import { Infinity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SwarmTodoItem } from '@/lib/swarm';
 import { XrogaAgentProcessingPanel } from './XrogaAgentProcessingPanel';
+import { XrogaBlackHoleShineText } from '@/components/ui/XrogaBlackHoleShineText';
 
 interface SwarmPhasePanelProps {
   activePhase?: number | null;
@@ -34,8 +35,10 @@ export function SwarmPhasePanel({
 
   return (
     <div className={cn('my-1')}>
-      <p className="text-[10px] font-bold tracking-wide text-[#60a5fa]/90 mb-1.5 px-0.5 flex items-center gap-1 flex-wrap">
-        <span>🕳️ AI SWARM LOGIC — BLACK HOLE V</span>
+      <p className="text-[10px] font-bold tracking-wide mb-1.5 px-0.5 flex items-center gap-1 flex-wrap">
+        <XrogaBlackHoleShineText className="text-[10px]">
+          🕳️ AI SWARM LOGIC — BLACK HOLE V
+        </XrogaBlackHoleShineText>
         <Infinity className="h-3 w-3 text-[#006aff]" strokeWidth={2.5} />
       </p>
       <XrogaAgentProcessingPanel

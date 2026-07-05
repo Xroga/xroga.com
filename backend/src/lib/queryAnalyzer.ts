@@ -101,7 +101,7 @@ Tell me your niche in one message — any industry works (restaurant, gym, denta
 Reply once — XROGA will plan, build, push to GitHub, and deploy a live preview.`;
   }
   if (topic === 'game') {
-    return `🎮 **DeepSeek Game Alchemist**
+    return `🎮 **XROGA Game Alchemist**
 
 Games are built **step by step** — each phase is playable before we continue.
 

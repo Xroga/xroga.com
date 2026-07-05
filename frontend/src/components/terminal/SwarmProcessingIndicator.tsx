@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { SWARM_AGENTS, agentIndex } from '@/lib/messageHelpers';
+import { XrogaBlackHoleShineText } from '@/components/ui/XrogaBlackHoleShineText';
 
 interface SwarmProcessingIndicatorProps {
   activeAgent?: string;
@@ -15,9 +16,11 @@ export function SwarmProcessingIndicator({ activeAgent, loading }: SwarmProcessi
 
   return (
     <div className="xv-swarm-processing my-3 p-3 rounded-xl border border-[#006aff]/20 bg-gradient-to-r from-[#006aff]/8 via-transparent to-purple-500/8">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-[#60a5fa] mb-2.5 flex items-center gap-2">
+      <p className="text-[10px] font-bold uppercase tracking-widest mb-2.5 flex items-center gap-2">
         <span className="xv-swarm-pulse-dot w-1.5 h-1.5 rounded-full bg-[#006aff] animate-pulse" />
-        AI Swarm — behind the scenes
+        <XrogaBlackHoleShineText className="text-[10px] uppercase tracking-widest">
+          AI Swarm — BLACK HOLE V∞ behind the scenes
+        </XrogaBlackHoleShineText>
       </p>
       <div className="space-y-1.5">
         {SWARM_AGENTS.map((agent, i) => {
