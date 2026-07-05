@@ -464,8 +464,8 @@ export const api = {
         deployPlatform: 'vercel' | 'netlify' | 'none';
         vercelDeploymentId?: string;
         netlifyDeployId?: string;
-        vercel?: { deployUrl: string; deployVerified: boolean };
-        netlify?: { deployUrl: string; deployVerified: boolean };
+        vercel?: { deployUrl: string; deployVerified: boolean; error?: string };
+        netlify?: { deployUrl: string; deployVerified: boolean; error?: string };
       }>('/api/github/redeploy-preview', {
         method: 'POST',
         body: JSON.stringify(payload),

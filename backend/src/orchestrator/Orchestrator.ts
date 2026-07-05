@@ -278,10 +278,11 @@ export class Orchestrator {
     const structuredOutput = result.featureOutput ?? ({ type: 'chat', content: replyText } as FeatureOutput);
     const followUps = isLanding
       ? [
-          'Change the color scheme',
-          'Add a testimonials section',
-          'Rename the brand',
-          'Open live preview',
+          'Change brand name and hero headline',
+          'Switch to dark mode with a light/dark toggle',
+          'Add animations and modern hover effects',
+          'Update pricing plans and sections',
+          'Fix buttons and JavaScript that are not working',
         ]
       : [...shieldFollowUps, 'Deploy this build?', 'Add another feature?'].slice(0, 4);
 

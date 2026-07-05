@@ -44,6 +44,9 @@ export interface LandingPageOutput {
   needsPayment?: boolean;
   memoryNote?: string;
   summary?: string;
+  vercelPreviewUrl?: string;
+  netlifyPreviewUrl?: string;
+  followUps?: string[];
 }
 
 export interface ImageBlockedOutput {
