@@ -16,7 +16,21 @@ import { mistralVerify, mistralChat } from '../../council/mistralClient.js';
 import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
 import { buildLandingFromSwarmAssembly } from './assembleLandingFromSwarm.js';
 import { debugCode } from '../../services/debugging/codeDebugger.js';
-import { defaultPlanForPrompt, defaultUpdatePlanForPrompt } from './defaultPlans.js';
+import { defaultPlanForPrompt, defaultUpdatePlanForPrompt, defaultGamePlanForPrompt } from './defaultPlans.js';
+import {
+  detectBuildProjectType,
+  hasGameBuildContext,
+  isGameBuildPrompt,
+  isGamePhaseContinuation,
+  needsGameDreamInterview,
+} from './buildTypeDetector.js';
+import {
+  GAME_INTERVIEW_QUESTIONS,
+  GAME_PHASE_COMPLETE_MSG,
+  PHASE_0_GAME_DISCOVERY,
+  PHASE_1_GAME_PLANNING,
+  PHASE_3_GAME_EXECUTE,
+} from './gamePrompts.js';
 import { BuildState } from './buildState.js';
 import { formatMemorySuggestion, getPreviousBuilds } from '../../services/memory/buildMemory.js';
 import {
@@ -436,19 +450,37 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   emit(ctx, 0, BRAND.phase0.scanning(businessLabel), 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
 
   const analysis = analyzeUserQuery(userPrompt);
+  const buildType = detectBuildProjectType(userPrompt);
+  const isGameBuild = buildType === 'game' || isGameBuildPrompt(userPrompt);
   const isWebBuild =
-    featureCategory === 'landing_page' || isWebsiteBuildPrompt(userPrompt, featureCategory);
+    !isGameBuild &&
+    (featureCategory === 'landing_page' || isWebsiteBuildPrompt(userPrompt, featureCategory));
 
   const isUpdateBuild =
     isWebBuild &&
     isWebsiteUpdateRequest(userPrompt) &&
     (hasBuildConversationContext(userPrompt) || threadHasCompletedWebsite(userPrompt));
 
+  if (needsGameDreamInterview(userPrompt) && !hasGameBuildContext(userPrompt)) {
+    todos.setAnalysis('game — dream interview');
+    emit(ctx, 0, BRAND.phase0.clarifying('game'), 'reviewer', todos, 'DeepSeek Game Alchemist');
+    return {
+      success: false,
+      clarifiedBrief: '',
+      approvedPlan: '',
+      assembledCode: '',
+      polishedOutput: formatPlainProfessional(GAME_INTERVIEW_QUESTIONS),
+      needsUserClarification: true,
+      clarificationText: GAME_INTERVIEW_QUESTIONS,
+    };
+  }
+
   if (
     analysis.needsClarification &&
     analysis.clarificationText &&
     !hasBuildConversationContext(userPrompt) &&
-    !isWebBuild
+    !isWebBuild &&
+    !isGameBuild
   ) {
     todos.setAnalysis(analysis.intentLabel);
     emit(ctx, 0, BRAND.phase0.clarifying(businessLabel), 'reviewer', todos, 'XROGA Visionary');
@@ -510,11 +542,25 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     } catch {
       /* keep brief */
     }
+  } else if (isGameBuild) {
+    emit(ctx, 0, BRAND.phase0.scanning('game'), 'reviewer', todos, 'DeepSeek Game Alchemist', { userPhase: 1 });
+    try {
+      clarifiedBrief = await geminiCall(
+        PHASE_0_GAME_DISCOVERY,
+        `User request:\n${discoveryContext}\n\nOutput Dream Game brief — do NOT write code yet.`
+      );
+    } catch {
+      clarifiedBrief = `Game build: ${currentMessage}\n\nPlatform: HTML5 Canvas browser game unless user asked for Python.`;
+    }
+    buildState.markDone('clarified');
+    todos.setAnalysis(clarifiedBrief.slice(0, 280));
+    todos.completeMeta('analyze');
+    emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'DeepSeek Game Alchemist', { userPhase: 1 });
   } else {
   try {
     clarifiedBrief = await geminiCall(
       PHASE_0_DISCOVERY,
-      `User request (full thread):\n${discoveryContext}\n\nCurrent answer:\n${currentMessage}\n\nPrior analysis: ${analysis.intentLabel}\n\nOutput the Fully Clarified Project Brief now — do NOT ask more questions. Include the original build goal from the thread (e.g. coffee shop website).`
+      `User request (full thread):\n${discoveryContext}\n\nCurrent answer:\n${currentMessage}\n\nPrior analysis: ${analysis.intentLabel}\n\nOutput the Fully Clarified Project Brief now — do NOT ask more questions. Match the user's niche from the thread.`
     );
   } catch {
     clarifiedBrief = `${currentMessage}\n\n${discoveryContext}`;
@@ -542,6 +588,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   let masterPlan: string;
   if (isUpdateBuild) {
     masterPlan = defaultUpdatePlanForPrompt(userPrompt).join('\n');
+  } else if (isGameBuild) {
+    try {
+      masterPlan = await geminiCall(PHASE_1_GAME_PLANNING, `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`);
+    } catch {
+      masterPlan = defaultGamePlanForPrompt(userPrompt, 4).join('\n');
+    }
   } else {
     try {
       masterPlan = await geminiCall(PHASE_1_PLANNING_GEMINI, `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`);
@@ -598,10 +650,17 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   const steps = parsePlanSteps(approvedPlan);
   if (!steps.length) {
-    const fallback = isUpdateBuild ? defaultUpdatePlanForPrompt(userPrompt) : defaultPlanForPrompt(userPrompt);
+    const fallback = isUpdateBuild
+      ? defaultUpdatePlanForPrompt(userPrompt)
+      : isGameBuild
+        ? defaultGamePlanForPrompt(userPrompt, 4)
+        : defaultPlanForPrompt(userPrompt);
     steps.push(...fallback.map((s) => s.replace(/^Step\s+\d+:\s*/i, '')));
   }
-  todos.setBuildSteps(steps);
+
+  const gameMaxSteps = isGamePhaseContinuation(userPrompt) ? steps.length : Math.min(steps.length, 2);
+  const stepsToRun = isGameBuild ? steps.slice(0, gameMaxSteps) : steps;
+  todos.setBuildSteps(stepsToRun);
   todos.activateMeta('steps');
   todos.completeMeta('steps');
 
@@ -609,22 +668,28 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     ctx,
     3,
     isUpdateBuild
-      ? BRAND.phase3.updateStart(steps.length)
-      : BRAND.phase3.buildStart(steps.length),
+      ? BRAND.phase3.updateStart(stepsToRun.length)
+      : isGameBuild
+        ? BRAND.phase3.buildStart(stepsToRun.length)
+        : BRAND.phase3.buildStart(steps.length),
     'builder',
     todos,
-    'XROGA Architect',
+    isGameBuild ? 'DeepSeek Game Alchemist' : 'XROGA Architect',
     { userPhase: 1 }
   );
 
   const codeParts: string[] = [];
   let totalCorrections = 0;
+  const executePrompt = isGameBuild ? PHASE_3_GAME_EXECUTE : PHASE_3_EXECUTE;
+  const executeTech = isGameBuild
+    ? 'HTML5 Canvas game in browser — html, css, javascript fenced blocks. Complete runnable game code.'
+    : 'plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.';
 
-  for (let si = 0; si < steps.length; si++) {
-    const stepLabel = `Step ${si + 1}/${steps.length}`;
-    const target = stepTargetLabel(steps[si]!, si);
+  for (let si = 0; si < stepsToRun.length; si++) {
+    const stepLabel = `Step ${si + 1}/${stepsToRun.length}`;
+    const target = stepTargetLabel(stepsToRun[si]!, si);
     todos.activateBuild(si);
-    emit(ctx, 3, BRAND.phase3.execute(si + 1, steps.length, target), 'builder', todos, 'XROGA Architect', {
+    emit(ctx, 3, BRAND.phase3.execute(si + 1, stepsToRun.length, target), 'builder', todos, isGameBuild ? 'DeepSeek Game Alchemist' : 'XROGA Architect', {
       userPhase: 1,
     });
 
@@ -632,13 +697,15 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     try {
       stepCode = await withBuildHeartbeat(ctx, todos, () =>
         deepseekCall(
-          PHASE_3_EXECUTE,
-          `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${steps[si]}\n\nUser:\n${userPrompt}\n\nTech: plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.`
+          executePrompt,
+          `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}`
         )
       );
     } catch (stepErr) {
       console.warn('[NegotiationEngine] Step code gen:', (stepErr as Error).message);
-      stepCode = `<!-- Step ${si + 1} fallback -->\n<section><h2>${steps[si]}</h2><p>Content for ${steps[si]}</p></section>`;
+      stepCode = isGameBuild
+        ? `\`\`\`javascript\n// Step ${si + 1} fallback\nconst canvas=document.createElement('canvas');\n\`\`\``
+        : `<!-- Step ${si + 1} fallback -->\n<section><h2>${stepsToRun[si]}</h2><p>Content for ${stepsToRun[si]}</p></section>`;
     }
 
     let approved = false;
@@ -667,8 +734,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
     todos.completeBuild(si);
     // Mark step done with friendly label in activity log
-    emit(ctx, 3, friendlyStepLabel(steps[si]!, si), 'builder', todos, 'XROGA Architect', { userPhase: 1 });
-    codeParts.push(`// --- ${stepLabel}: ${steps[si]} ---\n${stepCode}`);
+    emit(ctx, 3, friendlyStepLabel(stepsToRun[si]!, si), 'builder', todos, isGameBuild ? 'DeepSeek Game Alchemist' : 'XROGA Architect', { userPhase: 1 });
+    codeParts.push(`// --- ${stepLabel}: ${stepsToRun[si]} ---\n${stepCode}`);
     if (!approved) {
       emit(ctx, 5, BRAND.phase5.maxReached, 'debugger', todos, 'XROGA Architect');
     }
@@ -713,7 +780,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   let deployError: string | null = null;
 
   const isWebBuildFinal =
-    featureCategory === 'landing_page' || isWebsiteBuildPrompt(userPrompt, featureCategory);
+    isGameBuild ||
+    featureCategory === 'landing_page' ||
+    isWebsiteBuildPrompt(userPrompt, featureCategory);
 
   try {
     if (isWebBuildFinal) {
@@ -721,7 +790,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         assembledCode,
         userPrompt,
         approvedPlan,
-        clarifiedBrief
+        clarifiedBrief,
+        isGameBuild ? 'game' : 'website'
       );
     } else if (featureCategory === 'code_debug') {
       featureOutput = await debugCode({
@@ -830,7 +900,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     featureOutput?.type === 'landing_page' ? featureOutput.githubRepoUrl : undefined;
 
   let polishedOutput: string;
-  if (featureOutput?.type === 'landing_page' && featureOutput.summary) {
+  if (isGameBuild && featureOutput?.type === 'landing_page') {
+    const phaseDone = stepsToRun.length;
+    const totalPhases = steps.length;
+    polishedOutput = `${featureOutput.summary ?? '🎮 YOUR GAME IS PLAYABLE!'}\n\n${GAME_PHASE_COMPLETE_MSG(phaseDone, totalPhases)}`;
+  } else if (featureOutput?.type === 'landing_page' && featureOutput.summary) {
     polishedOutput = featureOutput.summary;
   } else if (liveUrl) {
     polishedOutput = formatBuildSummaryCard({

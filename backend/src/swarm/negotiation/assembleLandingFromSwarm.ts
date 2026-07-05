@@ -7,6 +7,7 @@ import { deepseekCode } from '../../services/code/codeClients.js';
 import { resolveApiKey } from '../../config/apiKeyRouter.js';
 import type { LandingPageOutput } from '../../types/features.js';
 import { PHASE_7_EMIT, XROGA_TAGLINE } from './prompts.js';
+import { PHASE_7_GAME_EMIT } from './gamePrompts.js';
 import { normalizeBuildFiles } from '../../lib/normalizeBuildSource.js';
 
 interface ParsedSiteCode {
@@ -84,17 +85,19 @@ async function consolidateWithDeepSeek(
   assembledCode: string,
   userPrompt: string,
   approvedPlan: string,
-  clarifiedBrief: string
+  clarifiedBrief: string,
+  kind: 'website' | 'game' = 'website'
 ): Promise<string> {
   const user = `Brief:\n${clarifiedBrief}\n\nOriginal request:\n${userPrompt}\n\nApproved plan:\n${approvedPlan}\n\nVerified step code:\n${assembledCode.slice(0, 14000)}`;
+  const systemPrompt = kind === 'game' ? PHASE_7_GAME_EMIT : PHASE_7_EMIT;
 
   if (resolveApiKey('deepseek', 'code')) {
-    return deepseekCode(`${XROGA_USER_IDENTITY}\n\n${PHASE_7_EMIT}`, user, { maxTokens: 8192 });
+    return deepseekCode(`${XROGA_USER_IDENTITY}\n\n${systemPrompt}`, user, { maxTokens: 8192 });
   }
   if (getSecret('DEEPSEEK_API_KEY')) {
     return deepSeekChat(
       [
-        { role: 'system', content: `${XROGA_USER_IDENTITY}\n\n${PHASE_7_EMIT}` },
+        { role: 'system', content: `${XROGA_USER_IDENTITY}\n\n${systemPrompt}` },
         { role: 'user', content: user },
       ],
       { model: 'deepseek-chat', maxTokens: 8192 }
@@ -129,17 +132,18 @@ export async function buildLandingFromSwarmAssembly(
   assembledCode: string,
   userPrompt: string,
   approvedPlan: string,
-  clarifiedBrief: string
+  clarifiedBrief: string,
+  kind: 'website' | 'game' = 'website'
 ): Promise<LandingPageOutput> {
   let site = parseAssembledProject(assembledCode);
 
-  // Always consolidate with DeepSeek Code for polished CSS + merged sections
   try {
     const consolidated = await consolidateWithDeepSeek(
       assembledCode,
       userPrompt,
       approvedPlan,
-      clarifiedBrief
+      clarifiedBrief,
+      kind
     );
     const consolidatedSite = parseAssembledProject(consolidated);
     if (consolidatedSite?.html?.trim()) {
