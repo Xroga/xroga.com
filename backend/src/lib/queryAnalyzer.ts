@@ -29,10 +29,10 @@ export interface QueryAnalysis {
 
 export function isSpecificBuildRequest(t: string): boolean {
   return (
-    /\b(build|create|make|design|develop)\b[\s\S]{0,80}\b(website|web\s*page|landing\s*page|site|store|shop|app|game|software)\b/i.test(
+    /\b(build|create|make|design|develop)\b[\s\S]{0,80}\b(website|web\s*page|landing|site|store|shop|restaurant|bakery|salon|gym|clinic|dental|lawyer|portfolio|hotel|saas|ecommerce|nonprofit|church|school|agency|startup|barber|spa|fitness|yoga|real estate|construction|wedding|pet|vet)\b/i.test(
       t
     ) ||
-    /\b(build|create|make)\b[\s\S]{0,50}\b(coffee|restaurant|bakery|salon|portfolio|business)\b/i.test(t)
+    /\b(build|create|make)\b[\s\S]{0,50}\b(game|software|app|api|pygame|phaser)\b/i.test(t)
   );
 }
 
@@ -91,26 +91,27 @@ Share those details and we can start immediately.`;
   if (topic === 'website') {
     return `XROGA Visionary — Phase 1 Discovery
 
-Your coffee shop / website build is clear. Before the 9-phase swarm starts, answer these briefly:
+Tell me your niche in one message — any industry works (restaurant, gym, dental, law firm, portfolio, SaaS, hotel, etc.):
 
-1. Tech stack? (HTML/CSS/JS, React, Next.js, etc.)
-2. Key features? (menu, ordering, reservations, gallery, contact form)
-3. Design? (colors, dark/light theme, style)
-4. Payment gateway? (Stripe/PayPal — or skip for now)
-5. Mobile-first / responsive?
+1. Business name & type?
+2. Key features? (menu, booking, shop, gallery, contact)
+3. Colors / design vibe?
+4. Online ordering or payments? (yes/no)
 
-Reply in one message — then XROGA will plan, build, push to GitHub, and deploy a live preview.`;
+Reply once — XROGA will plan, build, push to GitHub, and deploy a live preview.`;
   }
   if (topic === 'game') {
-    return `Let me understand your game idea
+    return `🎮 **DeepSeek Game Alchemist**
 
-Games need a clear starting point.
+Games are built **step by step** — each phase is playable before we continue.
 
-Quick questions
-What genre — platformer, puzzle, RPG, casual, or other?
-2D or 3D, and who is it for?
+Quick questions:
+1. Favorite games & what you loved about them?
+2. Genre vibe — action, puzzle, RPG, arcade, strategy, sandbox?
+3. 2D or 3D? Browser (HTML5) or Python (Pygame)?
+4. Coding comfort — beginner or experienced?
 
-Describe your vision and we will map the first build step.`;
+Reply with your answers — I'll pitch your Dream Game, then we build Phase 1 together. Reply **NEXT** after each phase for more.`;
   }
   if (topic === 'video') {
     return `Let me understand your video

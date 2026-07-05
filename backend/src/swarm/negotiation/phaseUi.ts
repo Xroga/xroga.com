@@ -26,11 +26,56 @@ export function inferDefaultBuildBrief(prompt: string, memoryNote?: string): str
     theme = 'Elegant dark theme with gold accents';
     businessType = 'restaurant';
     ordering = true;
-  } else if (/\bshop|store|boutique|retail\b/.test(lower)) {
+  } else if (/\bshop|store|boutique|retail|ecommerce\b/.test(lower)) {
     projectName = 'Urban Boutique';
     theme = 'Minimalist black & white, modern';
-    businessType = 'shop';
+    businessType = 'retail shop';
     ordering = true;
+  } else if (/\bsalon|spa|beauty|barber\b/.test(lower)) {
+    projectName = 'Luxe Salon & Spa';
+    theme = 'Soft neutrals, elegant typography';
+    businessType = 'salon / spa';
+    ordering = false;
+  } else if (/\bgym|fitness|yoga|crossfit\b/.test(lower)) {
+    projectName = 'Peak Fitness Studio';
+    theme = 'Bold energetic dark theme';
+    businessType = 'fitness studio';
+    ordering = false;
+  } else if (/\bdental|clinic|medical|doctor|health\b/.test(lower)) {
+    projectName = 'Bright Smile Dental';
+    theme = 'Clean white & teal, trustworthy';
+    businessType = 'healthcare clinic';
+    ordering = false;
+  } else if (/\blawyer|legal|attorney\b/.test(lower)) {
+    projectName = 'Summit Legal Group';
+    theme = 'Professional navy & gold';
+    businessType = 'law firm';
+    ordering = false;
+  } else if (/\breal estate|realtor|property\b/.test(lower)) {
+    projectName = 'Horizon Realty';
+    theme = 'Modern luxury listings';
+    businessType = 'real estate';
+    ordering = false;
+  } else if (/\bhotel|resort|hospitality\b/.test(lower)) {
+    projectName = 'Grand Vista Hotel';
+    theme = 'Luxury hospitality';
+    businessType = 'hotel';
+    ordering = true;
+  } else if (/\bportfolio|photographer|designer|freelance\b/.test(lower)) {
+    projectName = 'Creative Portfolio';
+    theme = 'Minimal showcase';
+    businessType = 'portfolio';
+    ordering = false;
+  } else if (/\bchurch|nonprofit|charity\b/.test(lower)) {
+    projectName = 'Community Hope';
+    theme = 'Warm welcoming';
+    businessType = 'nonprofit';
+    ordering = false;
+  } else if (/\bstartup|saas|tech\b/.test(lower)) {
+    projectName = 'LaunchPad SaaS';
+    theme = 'Modern tech gradient';
+    businessType = 'SaaS startup';
+    ordering = false;
   } else {
     const match = prompt.match(/\b(build|create|make)\s+(?:a\s+)?(.+?)\s+(website|site|shop|store)/i);
     if (match?.[2]) {
@@ -66,10 +111,17 @@ export function inferDefaultBuildBrief(prompt: string, memoryNote?: string): str
 /** Short label for Phase 1 kickoff message */
 export function inferBusinessLabel(prompt: string): string {
   const lower = prompt.toLowerCase();
+  if (/\bgame\b/.test(lower) && /\b(build|create|make|code)\b/.test(lower)) return 'game project';
   if (/\bcoffee|caf[eé]|espresso|latte\b/.test(lower)) return 'coffee shop website';
   if (/\bbakery|bake|pastry\b/.test(lower)) return 'bakery website';
   if (/\brestaurant|dining|bistro|pizza\b/.test(lower)) return 'restaurant website';
-  if (/\bshop|store|boutique\b/.test(lower)) return 'shop website';
+  if (/\bsalon|spa|beauty|barber\b/.test(lower)) return 'salon website';
+  if (/\bgym|fitness|yoga\b/.test(lower)) return 'fitness website';
+  if (/\bdental|clinic|medical\b/.test(lower)) return 'clinic website';
+  if (/\blawyer|legal|attorney\b/.test(lower)) return 'law firm website';
+  if (/\breal estate|realtor\b/.test(lower)) return 'real estate website';
+  if (/\bportfolio|photographer\b/.test(lower)) return 'portfolio website';
+  if (/\bshop|store|boutique|ecommerce\b/.test(lower)) return 'shop website';
   const match = prompt.match(/\b(build|create|make)\s+(?:a\s+)?(.+?)\s+(website|site)/i);
   if (match?.[2]) return `${match[2].trim()} website`;
   return 'website';

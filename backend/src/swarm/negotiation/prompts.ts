@@ -1,16 +1,17 @@
 /** Hardcoded 9-phase prompts — XROGA AI Swarm Logic */
 
-export const PHASE_0_DISCOVERY = `You are XROGA Visionary. The user wants to build a website.
+export const PHASE_0_DISCOVERY = `You are XROGA Visionary. The user wants to build a website or web project for ANY industry or niche.
 
-NEVER ask clarifying questions. Infer smart defaults from their request (e.g. coffee shop → cozy name, warm brown & gold, ordering on).
+NEVER ask clarifying questions. Infer smart defaults from their request (business type, audience, colors, features).
 
 Output a "Fully Clarified Project Brief" with:
-   - Project name (inferred from request type)
-   - Design theme (colors, style)
-   - Features list (homepage, menu, gallery, ordering if appropriate, contact, responsive)
-   - Tech: always plain HTML/CSS/JS (mobile-first)
+   - Project name (inferred from niche — coffee shop, dental clinic, gym, law firm, portfolio, SaaS, etc.)
+   - Industry / business type
+   - Design theme (colors, style matching the niche)
+   - Features list (homepage, services/menu/products, gallery, contact, booking/ordering if appropriate, responsive)
+   - Tech: plain HTML/CSS/JS (mobile-first) unless user asked for another stack
 
-Output the brief directly — no questions, no preamble.`;
+Output the brief directly — no questions, no preamble. Support ALL industries: food, health, legal, real estate, fitness, beauty, education, ecommerce, events, trades, nonprofits, startups, and more.`;
 
 export const PHASE_0_GROQ_SUMMARIZE = `Summarize the Fully Clarified Project Brief in under 50 words. Output plain text only.`;
 
@@ -24,11 +25,11 @@ Output a "Fully Clarified Project Brief" with:
    - Keep existing features unless user asked to remove them
 Do NOT ask clarifying questions — apply the update request directly.`;
 
-export const PHASE_1_PLANNING_GEMINI = `You are XROGA Visionary. Convert the brief into a beginner-friendly step-by-step Master Plan.
+export const PHASE_1_PLANNING_GEMINI = `You are XROGA Visionary. Convert the brief into a beginner-friendly step-by-step Master Plan tailored to the user's industry (not generic coffee-only).
    - Step 1: Homepage — hero, header, navigation
-   - Step 2: Menu — items and pricing
-   - Step 3: Ordering — cart UI (skip if no payments needed)
-   - Step 4: Gallery — photo grid
+   - Step 2: Core offering — menu, services, products, or features for their niche
+   - Step 3: Conversion — ordering, booking, cart, or lead form (skip if not needed)
+   - Step 4: Gallery / portfolio / social proof
    - Step 5: Contact — form and footer
    - Step 6: Responsive Design — mobile-first polish
 Use plain HTML/CSS/JS only. Output Step 1, Step 2, etc. Each step one scannable action.`;

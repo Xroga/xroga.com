@@ -8,12 +8,12 @@ export function buildLiveStatusMessage(
   const phase = activePhase ?? 1;
 
   const buildLines = [
-    'DeepSeek Code writing index.html…',
-    'Generating styles.css & layout…',
-    'Building menu, gallery & contact pages…',
-    'Applying colors and responsive design…',
-    'Polishing coffee shop sections…',
-    'Still coding — your site is taking shape…',
+    'DeepSeek Code writing your project…',
+    'Generating styles & layout…',
+    'Building pages, sections & features…',
+    'Applying theme and responsive design…',
+    'Polishing your niche-specific content…',
+    'Still coding — your project is taking shape…',
   ];
 
   const verifyLines = [

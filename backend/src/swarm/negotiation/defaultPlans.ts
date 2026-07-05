@@ -1,48 +1,86 @@
-/** Beginner-friendly 6-step website plans */
+/** Beginner-friendly 6-step website plans — any niche, not coffee-only */
 
 export const BEGINNER_WEBSITE_PLAN = [
   'Step 1: Homepage — hero, header, navigation',
-  'Step 2: Menu — drinks, food items, pricing',
-  'Step 3: Ordering — cart and checkout UI',
-  'Step 4: Gallery — photo grid',
-  'Step 5: Contact — form and footer',
+  'Step 2: Services / Menu / Products — items and pricing',
+  'Step 3: Booking or Ordering — cart, form, or CTA',
+  'Step 4: Gallery — photo grid or portfolio',
+  'Step 5: Contact — form, map, footer',
   'Step 6: Responsive Design — mobile-first polish',
 ] as const;
 
 export const BEGINNER_WEBSITE_PLAN_NO_ORDER = [
   'Step 1: Homepage — hero, header, navigation',
-  'Step 2: Menu — items and pricing',
-  'Step 3: Gallery — photo grid',
-  'Step 4: Contact — form and footer',
-  'Step 5: Styling — colors, typography, theme',
+  'Step 2: Services / Products — items and pricing',
+  'Step 3: Gallery — photo grid or portfolio',
+  'Step 4: About — story and team',
+  'Step 5: Contact — form and footer',
   'Step 6: Responsive Design — mobile-first polish',
 ] as const;
+
+function nicheFromPrompt(prompt: string): { name: string; theme: string; steps: string[] } | null {
+  const t = prompt.toLowerCase();
+  const plans: Array<{ match: RegExp; name: string; theme: string; steps: string[] }> = [
+    { match: /\bcoffee|caf[eé]|espresso\b/, name: 'Homepage — cozy hero, warm branding', theme: 'warm', steps: ['Menu — drinks & pastries', 'Ordering — cart UI', 'Gallery', 'Contact', 'Responsive'] },
+    { match: /\brestaurant|bistro|dining|pizza\b/, name: 'Homepage — hero, reservations CTA', theme: 'elegant', steps: ['Menu — dishes & prices', 'Reservations / ordering', 'Gallery', 'Contact & hours', 'Responsive'] },
+    { match: /\bbakery|pastry|bread\b/, name: 'Homepage — fresh baked hero', theme: 'pastel', steps: ['Product menu', 'Order online', 'Gallery', 'Contact', 'Responsive'] },
+    { match: /\bsalon|spa|beauty|barber\b/, name: 'Homepage — services hero', theme: 'luxury', steps: ['Services & pricing', 'Book appointment', 'Gallery', 'Contact', 'Responsive'] },
+    { match: /\bgym|fitness|yoga|crossfit\b/, name: 'Homepage — transform hero', theme: 'bold', steps: ['Classes & membership', 'Schedule / join', 'Trainers gallery', 'Contact', 'Responsive'] },
+    { match: /\bdental|clinic|medical|doctor|health\b/, name: 'Homepage — trust hero', theme: 'clean', steps: ['Services', 'Book appointment', 'Team', 'Contact', 'Responsive'] },
+    { match: /\blawyer|legal|attorney\b/, name: 'Homepage — professional hero', theme: 'corporate', steps: ['Practice areas', 'Consultation CTA', 'About', 'Contact', 'Responsive'] },
+    { match: /\breal estate|realtor|property\b/, name: 'Homepage — listings hero', theme: 'modern', steps: ['Featured listings', 'Search / filters', 'About agent', 'Contact', 'Responsive'] },
+    { match: /\bhotel|resort|hospitality\b/, name: 'Homepage — stay hero', theme: 'luxury', steps: ['Rooms & rates', 'Book now', 'Gallery', 'Contact', 'Responsive'] },
+    { match: /\bportfolio|photographer|designer|freelance\b/, name: 'Homepage — showcase hero', theme: 'minimal', steps: ['Portfolio grid', 'About', 'Services', 'Contact', 'Responsive'] },
+    { match: /\becommerce|online store|retail|boutique\b/, name: 'Homepage — shop hero', theme: 'modern', steps: ['Product catalog', 'Cart & checkout UI', 'Featured', 'Contact', 'Responsive'] },
+    { match: /\bchurch|nonprofit|charity\b/, name: 'Homepage — mission hero', theme: 'warm', steps: ['Programs', 'Donate CTA', 'Events', 'Contact', 'Responsive'] },
+    { match: /\bschool|education|tutor|course\b/, name: 'Homepage — learn hero', theme: 'friendly', steps: ['Courses', 'Enroll CTA', 'About', 'Contact', 'Responsive'] },
+    { match: /\bconstruction|plumber|roofing|cleaning|auto repair\b/, name: 'Homepage — services hero', theme: 'professional', steps: ['Services & quotes', 'Gallery / projects', 'Reviews', 'Contact', 'Responsive'] },
+    { match: /\bwedding|event|party planner\b/, name: 'Homepage — celebrate hero', theme: 'elegant', steps: ['Packages', 'Gallery', 'Book consultation', 'Contact', 'Responsive'] },
+    { match: /\bpet|veterinary|vet\b/, name: 'Homepage — care hero', theme: 'friendly', steps: ['Services', 'Book visit', 'Gallery', 'Contact', 'Responsive'] },
+    { match: /\bstartup|saas|tech|software company\b/, name: 'Homepage — product hero', theme: 'tech', steps: ['Features', 'Pricing', 'Testimonials', 'Contact / demo', 'Responsive'] },
+  ];
+
+  for (const p of plans) {
+    if (p.match.test(t)) {
+      return {
+        name: p.name,
+        theme: p.theme,
+        steps: p.steps.map((s, i) => `Step ${i + 2}: ${s}`),
+      };
+    }
+  }
+  return null;
+}
 
 export function defaultPlanForPrompt(prompt: string): string[] {
   const t = prompt.toLowerCase();
   const noOrder = /\b(no payment|without ordering|no ordering)\b/.test(t) || /\b,\s*no\b/.test(t);
+  const niche = nicheFromPrompt(prompt);
 
-  if (/\bcoffee|caf[eé]|espresso|latte\b/.test(t)) {
-    return noOrder
-      ? [
-          'Step 1: Homepage — cozy hero, warm brown & gold branding',
-          'Step 2: Menu — drinks & pastries with prices',
-          'Step 3: Gallery — coffee shop photos',
-          'Step 4: Contact — location, hours, form',
-          'Step 5: Styling — warm brown & gold theme',
-          'Step 6: Responsive Design — mobile-first',
-        ]
-      : [
-          'Step 1: Homepage — cozy hero, warm brown & gold branding',
-          'Step 2: Menu — drinks & pastries with prices',
-          'Step 3: Ordering — cart and order summary',
-          'Step 4: Gallery — coffee shop photos',
-          'Step 5: Contact — location, hours, form',
-          'Step 6: Responsive Design — mobile-first',
-        ];
+  if (niche) {
+    return [`Step 1: ${niche.name}`, ...niche.steps.slice(0, 5)];
   }
 
   return [...(noOrder ? BEGINNER_WEBSITE_PLAN_NO_ORDER : BEGINNER_WEBSITE_PLAN)];
+}
+
+export function defaultGamePlanForPrompt(prompt: string, maxSteps = 4): string[] {
+  const t = prompt.toLowerCase();
+  const genre = /\b(puzzle|platformer|rpg|shooter|arcade|racing|card|strategy)\b/.exec(t)?.[1] ?? 'arcade';
+  const full = [
+    'Step 1: Bare Bones — canvas/window, game loop, player movement, placeholder graphics',
+    'Step 2: Core Gameplay — main mechanic, enemies or obstacles, scoring',
+    'Step 3: UI & States — score, lives, start screen, game over, restart',
+    'Step 4: Polish — particles, screen shake, difficulty curve, sound hooks',
+  ];
+  if (/\b(puzzle|card)\b/.test(t)) {
+    full[1] = 'Step 2: Core Gameplay — puzzle rules, grid/cards, win condition';
+  }
+  if (/\b(rpg|adventure)\b/.test(t)) {
+    full[1] = 'Step 2: Core Gameplay — map movement, encounters, inventory stub';
+  }
+  void genre;
+  return full.slice(0, maxSteps);
 }
 
 export const WEBSITE_UPDATE_PLAN = [

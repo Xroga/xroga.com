@@ -5,7 +5,7 @@
 import { routingPrompt } from './promptRouting.js';
 
 const BUILD_INTENT_IN_THREAD =
-  /\b(build|create|make|develop|design)\b[\s\S]{0,80}\b(website|web\s*page|landing|site|coffee|shop|store|restaurant|bakery|app)\b/i;
+  /\b(build|create|make|develop|design)\b[\s\S]{0,80}\b(website|web\s*page|landing|site|coffee|shop|store|restaurant|bakery|app|game|software|salon|gym|clinic|portfolio|saas)\b/i;
 
 const PHASE_1_IN_THREAD =
   /\[Phase 1\]|starting your|steps planned|building your website|updating your website/i;
