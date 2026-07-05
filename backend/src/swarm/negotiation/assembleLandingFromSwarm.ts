@@ -7,6 +7,7 @@ import { deepseekCode } from '../../services/code/codeClients.js';
 import { resolveApiKey } from '../../config/apiKeyRouter.js';
 import type { LandingPageOutput } from '../../types/features.js';
 import { PHASE_7_EMIT, XROGA_TAGLINE } from './prompts.js';
+import { normalizeBuildFiles } from '../../lib/normalizeBuildSource.js';
 
 interface ParsedSiteCode {
   html: string;
@@ -159,11 +160,13 @@ export async function buildLandingFromSwarmAssembly(
     site.js?.trim() ||
     `document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}}));`;
 
+  const normalized = normalizeBuildFiles(html, css, js);
+
   return {
     type: 'landing_page',
-    html,
-    css,
-    js,
+    html: normalized.html,
+    css: normalized.css,
+    js: normalized.js,
     heroImageUrl: 'https://placehold.co/1200x630/7c3aed/ffffff?text=XROGA+Build',
     deployUrl: '',
   };
