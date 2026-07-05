@@ -2,6 +2,7 @@ import { getSupabaseAdmin } from '../../config/supabase.js';
 import { deployStaticSite, pollDeploymentReady } from '../../lib/vercel.js';
 import { deployToNetlify, pollNetlifyDeploy } from '../../lib/netlify.js';
 import { verifyLivePreviewUrl } from '../../lib/deployVerify.js';
+import { normalizeBuildFiles } from '../../lib/normalizeBuildSource.js';
 import { getSecret } from '../../config/envSecrets.js';
 import { getGitHubToken, isGitHubConnected as checkGitHubConnected, getGitHubStorageMeta } from './githubAuth.js';
 
@@ -132,13 +133,82 @@ async function getBranchHeadSha(
   return { sha: null, branch: preferredBranch ?? 'main' };
 }
 
-async function pushFilesToRepo(
+async function isRepoEmpty(token: string, owner: string, repo: string): Promise<boolean> {
+  const res = await ghFetch(token, `/repos/${owner}/${repo}`);
+  if (!res.ok) return true;
+  const data = (await res.json()) as { size?: number };
+  return (data.size ?? 0) === 0;
+}
+
+async function getExistingFileSha(
+  token: string,
+  owner: string,
+  repo: string,
+  path: string,
+  branch: string
+): Promise<string | undefined> {
+  const res = await ghFetch(
+    token,
+    `/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`
+  );
+  if (!res.ok) return undefined;
+  const data = (await res.json()) as { sha?: string };
+  return data.sha;
+}
+
+/** Contents API — works on empty repos (Git Data API returns 409 on empty repos). */
+async function pushFileViaContents(
+  token: string,
+  owner: string,
+  repo: string,
+  file: ProjectFile,
+  message: string,
+  branch: string,
+  existingSha?: string
+): Promise<void> {
+  const body: Record<string, string> = {
+    message,
+    content: Buffer.from(file.content, 'utf8').toString('base64'),
+    branch,
+  };
+  if (existingSha) body.sha = existingSha;
+
+  const res = await ghFetch(
+    token,
+    `/repos/${owner}/${repo}/contents/${encodeURIComponent(file.path)}`,
+    {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }
+  );
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`GitHub push ${file.path} failed: ${res.status} ${err.slice(0, 240)}`);
+  }
+}
+
+async function pushFilesViaContents(
   token: string,
   owner: string,
   repo: string,
   files: ProjectFile[],
   message: string,
-  branch = 'main'
+  branch: string
+): Promise<void> {
+  for (const file of files) {
+    const sha = await getExistingFileSha(token, owner, repo, file.path, branch);
+    await pushFileViaContents(token, owner, repo, file, message, branch, sha);
+  }
+}
+
+async function pushFilesViaGitData(
+  token: string,
+  owner: string,
+  repo: string,
+  files: ProjectFile[],
+  message: string,
+  branch: string
 ): Promise<void> {
   const blobs = await Promise.all(
     files.map(async (f) => {
@@ -150,7 +220,10 @@ async function pushFilesToRepo(
           encoding: 'base64',
         }),
       });
-      if (!res.ok) throw new Error(`GitHub blob failed: ${res.status}`);
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`GitHub blob failed: ${res.status} ${err.slice(0, 120)}`);
+      }
       const blob = (await res.json()) as { sha: string };
       return { path: f.path, sha: blob.sha };
     })
@@ -195,6 +268,33 @@ async function pushFilesToRepo(
       body: JSON.stringify({ ref: `refs/heads/${resolvedBranch}`, sha: commit.sha }),
     });
     if (!refRes.ok) throw new Error(`GitHub ref create failed: ${refRes.status}`);
+  }
+}
+
+async function pushFilesToRepo(
+  token: string,
+  owner: string,
+  repo: string,
+  files: ProjectFile[],
+  message: string,
+  branch = 'main'
+): Promise<void> {
+  const empty = await isRepoEmpty(token, owner, repo);
+
+  if (empty) {
+    await pushFilesViaContents(token, owner, repo, files, message, branch);
+    return;
+  }
+
+  try {
+    await pushFilesViaGitData(token, owner, repo, files, message, branch);
+  } catch (err) {
+    const msg = (err as Error).message;
+    if (/409|empty/i.test(msg)) {
+      await pushFilesViaContents(token, owner, repo, files, message, branch);
+      return;
+    }
+    throw err;
   }
 }
 
@@ -252,14 +352,15 @@ export async function pushBuildToGitHub(
 }
 
 export function landingFilesFromOutput(html: string, css: string, js: string): ProjectFile[] {
-  const fullHtml = html.includes('<!DOCTYPE')
-    ? html
-    : `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="styles.css"></head><body>${html}<script src="script.js"></script></body></html>`;
+  const normalized = normalizeBuildFiles(html, css, js);
+  const fullHtml = normalized.html.includes('<!DOCTYPE')
+    ? normalized.html
+    : `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="styles.css"></head><body>${normalized.html}<script src="script.js"></script></body></html>`;
 
   return [
     { path: 'index.html', content: fullHtml },
-    { path: 'styles.css', content: css },
-    { path: 'script.js', content: js },
+    { path: 'styles.css', content: normalized.css },
+    { path: 'script.js', content: normalized.js },
     { path: 'README.md', content: '# XROGA Build\n\nAuto-generated by XROGA AI Swarm.\n' },
   ];
 }
@@ -324,6 +425,77 @@ export async function deployStaticPreview(
   }
 
   return { deployUrl: '', platform: 'none', deployVerified: false };
+}
+
+export interface PlatformDeployResult {
+  deployUrl: string;
+  deployVerified: boolean;
+  vercelDeploymentId?: string;
+  netlifyDeployId?: string;
+}
+
+/** Deploy generated code directly to one platform (no GitHub required). */
+export async function deployPreviewToPlatform(
+  projectSlug: string,
+  files: ProjectFile[],
+  platform: 'vercel' | 'netlify'
+): Promise<PlatformDeployResult> {
+  const staticFiles = files.filter((f) => !f.path.endsWith('.md'));
+  try {
+    const result =
+      platform === 'vercel'
+        ? await deployToVercel(projectSlug, staticFiles)
+        : await deployToNetlifyPreview(projectSlug, staticFiles);
+    const verified = await verifyLivePreviewUrl(result.deployUrl);
+    return {
+      deployUrl: result.deployUrl,
+      deployVerified: verified,
+      vercelDeploymentId: result.vercelDeploymentId,
+      netlifyDeployId: result.netlifyDeployId,
+    };
+  } catch (err) {
+    console.warn(`[githubDeploy] ${platform} deploy:`, (err as Error).message);
+    return { deployUrl: '', deployVerified: false };
+  }
+}
+
+/** Deploy from inline html/css/js — tries both platforms when requested. */
+export async function deployPreviewFromSource(
+  projectSlug: string,
+  html: string,
+  css: string,
+  js: string,
+  platform: 'vercel' | 'netlify' | 'both' = 'both'
+): Promise<{
+  vercel?: PlatformDeployResult;
+  netlify?: PlatformDeployResult;
+  files: ProjectFile[];
+}> {
+  const files = landingFilesFromOutput(html, css, js);
+  const out: { vercel?: PlatformDeployResult; netlify?: PlatformDeployResult; files: ProjectFile[] } = {
+    files,
+  };
+
+  if (platform === 'vercel' || platform === 'both') {
+    out.vercel = await deployPreviewToPlatform(projectSlug, files, 'vercel');
+  }
+  if (platform === 'netlify' || platform === 'both') {
+    out.netlify = await deployPreviewToPlatform(projectSlug, files, 'netlify');
+  }
+
+  return out;
+}
+
+/** Push build files to GitHub, then optionally deploy. */
+export async function pushBuildFromSource(
+  userId: string,
+  html: string,
+  css: string,
+  js: string,
+  opts?: GitHubPushOptions
+): Promise<GitHubPushResult> {
+  const files = landingFilesFromOutput(html, css, js);
+  return pushBuildToGitHub(userId, files, opts);
 }
 
 function parseRepoName(input: string): { owner: string; repo: string } {

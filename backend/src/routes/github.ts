@@ -344,7 +344,12 @@ router.get('/build-files', async (req: AuthRequest, res) => {
 /** Redeploy live preview from files already pushed to GitHub (no full rebuild). */
 router.post('/redeploy-preview', async (req: AuthRequest, res) => {
   const schema = z.object({
-    repoName: z.string().min(3),
+    repoName: z.string().min(3).optional(),
+    html: z.string().optional(),
+    css: z.string().optional(),
+    js: z.string().optional(),
+    platform: z.enum(['vercel', 'netlify', 'both']).optional(),
+    projectSlug: z.string().max(80).optional(),
   });
 
   const parsed = schema.safeParse(req.body);
@@ -354,7 +359,45 @@ router.post('/redeploy-preview', async (req: AuthRequest, res) => {
   }
 
   try {
-    const { redeployPreviewFromGitHub } = await import('../services/integrations/githubDeploy.js');
+    const {
+      deployPreviewFromSource,
+      redeployPreviewFromGitHub,
+    } = await import('../services/integrations/githubDeploy.js');
+
+    if (parsed.data.html?.trim()) {
+      const slug = parsed.data.projectSlug ?? 'xroga-build';
+      const platform = parsed.data.platform ?? 'both';
+      const result = await deployPreviewFromSource(
+        slug,
+        parsed.data.html,
+        parsed.data.css ?? '',
+        parsed.data.js ?? '',
+        platform
+      );
+      res.json({
+        vercel: result.vercel,
+        netlify: result.netlify,
+        deployUrl: result.vercel?.deployVerified
+          ? result.vercel.deployUrl
+          : result.netlify?.deployVerified
+            ? result.netlify.deployUrl
+            : result.vercel?.deployUrl || result.netlify?.deployUrl || '',
+        deployVerified:
+          result.vercel?.deployVerified === true || result.netlify?.deployVerified === true,
+        deployPlatform: result.vercel?.deployVerified
+          ? 'vercel'
+          : result.netlify?.deployVerified
+            ? 'netlify'
+            : 'none',
+      });
+      return;
+    }
+
+    if (!parsed.data.repoName) {
+      res.status(400).json({ error: 'repoName or html/css/js required' });
+      return;
+    }
+
     const result = await redeployPreviewFromGitHub(req.userId!, parsed.data.repoName);
     res.json({
       deployUrl: result.deployUrl,
@@ -362,6 +405,46 @@ router.post('/redeploy-preview', async (req: AuthRequest, res) => {
       deployPlatform: result.deployPlatform,
       vercelDeploymentId: result.vercelDeploymentId,
       netlifyDeployId: result.netlifyDeployId,
+    });
+  } catch (e) {
+    res.status(502).json({ error: (e as Error).message });
+  }
+});
+
+/** Push generated code to selected GitHub repo (Contents API — works on empty repos). */
+router.post('/push-build', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    html: z.string().min(1),
+    css: z.string().optional(),
+    js: z.string().optional(),
+    repoName: z.string().min(3),
+    branch: z.string().max(100).optional(),
+    projectSlug: z.string().max(80).optional(),
+  });
+
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+
+  try {
+    const { pushBuildFromSource } = await import('../services/integrations/githubDeploy.js');
+    const github = await pushBuildFromSource(
+      req.userId!,
+      parsed.data.html,
+      parsed.data.css ?? '',
+      parsed.data.js ?? '',
+      {
+        targetRepo: parsed.data.repoName,
+        targetBranch: parsed.data.branch ?? 'main',
+        slug: parsed.data.projectSlug,
+      }
+    );
+    res.json({
+      githubRepoUrl: github.htmlUrl,
+      githubRepoName: github.repoName,
+      pushed: true,
     });
   } catch (e) {
     res.status(502).json({ error: (e as Error).message });
