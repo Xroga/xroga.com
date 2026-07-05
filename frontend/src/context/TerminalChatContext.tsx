@@ -204,6 +204,7 @@ export function TerminalChatProvider({
   const skipNextQueueRef = useRef(false);
   const interruptRef = useRef(false);
   const [sessionReady, setSessionReady] = useState(false);
+  const persistReadyRef = useRef(false);
   const buildHeartbeatTickRef = useRef(0);
   const lastActivityAtRef = useRef(0);
 
@@ -233,6 +234,7 @@ export function TerminalChatProvider({
       setMessages([]);
       setPrompt('');
       setPromptQueue([]);
+      persistReadyRef.current = false;
       setSessionReady(true);
       return;
     }
@@ -246,6 +248,7 @@ export function TerminalChatProvider({
         }
       }
       if (session?.prompt) setPrompt(session.prompt);
+      persistReadyRef.current = true;
       setSessionReady(true);
     });
     return () => {
@@ -373,12 +376,10 @@ export function TerminalChatProvider({
   const hydrateFromSession = useCallback(() => {
     if (incognito) return;
     void loadWorkspaceSessionHydrated().then((session) => {
-      if (!session) return;
-      if (session.messages?.length) {
-        setMessages(session.messages);
-        if (threadHasCompletedWebsite(session.messages)) {
-          completedWebsiteBuildRef.current = true;
-        }
+      if (!session?.messages?.length) return;
+      setMessages(session.messages);
+      if (threadHasCompletedWebsite(session.messages)) {
+        completedWebsiteBuildRef.current = true;
       }
       if (session.prompt) setPrompt(session.prompt);
     });
@@ -400,6 +401,7 @@ export function TerminalChatProvider({
       setPromptQueue([]);
       setMessages(thread);
       setPrompt(threadPrompt);
+      persistReadyRef.current = true;
       saveWorkspaceSession({
         prompt: threadPrompt,
         messages: thread,
@@ -413,12 +415,8 @@ export function TerminalChatProvider({
   );
 
   useEffect(() => {
-    if (incognito || pathname !== '/dashboard') return;
-    hydrateFromSession();
-  }, [pathname, incognito, hydrateFromSession]);
-
-  useEffect(() => {
-    if (!sessionReady || incognito) return;
+    if (!sessionReady || incognito || !persistReadyRef.current) return;
+    if (messages.length === 0 && !prompt.trim()) return;
     for (const m of messages) {
       const fo = m.featureOutput as { type?: string; html?: string; css?: string; js?: string } | undefined;
       if (fo?.type === 'landing_page' && fo.html?.trim()) {
@@ -502,7 +500,9 @@ export function TerminalChatProvider({
     setSwarmRunning(false);
     setAnimatingId(null);
     setSwarmActiveAgent(null);
+    persistReadyRef.current = false;
     if (!usePrivacyStore.getState().incognito) clearWorkspaceSession();
+    persistReadyRef.current = true;
   }, [setSwarmRunning]);
 
   const deleteTurn = useCallback((assistantMessageId: string) => {

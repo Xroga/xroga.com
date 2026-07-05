@@ -41,8 +41,17 @@ export function sanitizeChatMessages(messages: unknown): ChatMessage[] {
           const hasHtml = typeof fo.html === 'string' && fo.html.length > 0;
           const hasSummary = typeof fo.summary === 'string' && fo.summary.length > 0;
           const hasGithub = typeof fo.githubRepoUrl === 'string' && fo.githubRepoUrl.length > 0;
+          const hasProject = typeof fo.projectName === 'string' && fo.projectName.length > 0;
           const hasContent = typeof m.content === 'string' && m.content.trim().length > 0;
-          if (!deployUrl && !hasHtml && !hasSummary && !hasGithub && !hasContent) {
+          // Keep landing cards after refresh — html/css/js restore from IndexedDB separately
+          if (
+            !deployUrl &&
+            !hasHtml &&
+            !hasSummary &&
+            !hasGithub &&
+            !hasProject &&
+            !hasContent
+          ) {
             featureOutput = undefined;
           }
         }
