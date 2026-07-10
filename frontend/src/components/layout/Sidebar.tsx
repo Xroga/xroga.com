@@ -6,8 +6,6 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
-  FolderOpen,
-  MessageSquare,
   Link2,
   Settings,
   Menu,
@@ -22,6 +20,7 @@ import {
   MessageCirclePlus,
   Terminal,
   Gift,
+  History,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniTokenMeter } from './MiniActionMeter';
@@ -30,7 +29,7 @@ import { SidebarSearchModal } from './SidebarSearchModal';
 import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
-import { PalestineSupportBanner } from '@/components/ui/PalestineSupport';
+import { AppStoreSidebarButtons } from '@/components/ui/AppStoreSidebarButtons';
 import { useT } from '@/components/providers/LanguageProvider';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
@@ -49,16 +48,22 @@ import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
 
 const navItems = [
   {
+    href: '/dashboard',
+    label: 'Workspace',
+    icon: Terminal,
+    tip: 'Main workspace — terminal, browser split view, and AI swarm.',
+  },
+  {
     href: '/dashboard/home',
     label: 'Dashboard',
     icon: LayoutDashboard,
     tip: 'Token usage, XRG balance, billing, and recent activity.',
   },
   {
-    href: '/dashboard',
-    label: 'Workspace',
-    icon: Terminal,
-    tip: 'Main workspace — terminal, browser split view, and AI swarm.',
+    href: '/dashboard/history',
+    label: 'Terminal History',
+    icon: History,
+    tip: 'All saved chats, code projects, and business conversations.',
   },
   {
     href: '/dashboard/tasks',
@@ -67,22 +72,10 @@ const navItems = [
     tip: 'Complete daily, weekly, and monthly tasks to earn XRG and token boosts.',
   },
   {
-    href: '/dashboard/projects',
-    label: 'My Projects',
-    icon: FolderOpen,
-    tip: 'All your websites, apps, games, and software projects.',
-  },
-  {
-    href: '/dashboard/chats',
-    label: 'Chats & Reports',
-    icon: MessageSquare,
-    tip: 'Conversations, reports, research, documents, and swarm history.',
-  },
-  {
     href: '/dashboard/automation',
     label: 'Automation',
     icon: Workflow,
-    tip: 'Running, failed, and browser automations — continue or review past runs.',
+    tip: 'Browser automations — continue or review past runs.',
   },
   {
     href: '/dashboard/analytics',
@@ -140,7 +133,6 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const setProfile = useAppStore((s) => s.setProfile);
   const incognito = usePrivacyStore((s) => s.incognito);
   const isMobile = useIsMobile();
-  const isFreeTrial = !planTier || planTier === 'unpaid';
   const avatarUrl = profile?.avatar_url;
   const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
   const userName = incognito ? 'Incognito' : (profile?.display_name ?? displayName ?? 'User');
@@ -259,11 +251,11 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           )}
         </div>
       )}
-      {isFreeTrial && navExpanded && (
+      {navExpanded && (
         <UpgradeProButton onClick={() => router.push('/pricing')} />
       )}
-      {isFreeTrial && !sidebarOpen && !isMobile && (
-        <HoverTip label="Upgrade Plan" description="Unlock more actions and PRO features.">
+      {!navExpanded && !isMobile && (
+        <HoverTip label="Upgrade Plan" description="View plans and upgrade your subscription.">
           <Link
             href="/pricing"
             onClick={() => setMobileOpen(false)}
@@ -274,10 +266,12 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         </HoverTip>
       )}
       {navExpanded ? (
-        <PalestineSupportBanner className="w-full justify-center" />
+        <AppStoreSidebarButtons />
       ) : (
         <div className="flex justify-center">
-          <PalestineSupportBanner compact />
+          <HoverTip label="Download app" description="Google Play & App Store — coming soon">
+            <div className="p-2 rounded-lg glass-panel text-[10px] text-[var(--muted)]">App</div>
+          </HoverTip>
         </div>
       )}
       {displayName && navExpanded && (

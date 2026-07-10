@@ -49,7 +49,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
       >
         <Sidebar displayName={displayName} email={email} onTopUp={() => setTopUpOpen(true)} />
         <div className="xv-main-column flex-1 flex flex-col w-full min-w-0 max-w-full min-h-screen overflow-x-hidden relative z-[2]">
-          <header className="xv-site-header sticky top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3 shrink-0 border-b border-transparent">
+          <header className="xv-site-header xv-site-header-transparent sticky top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3 shrink-0">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <div
                 className={cn(

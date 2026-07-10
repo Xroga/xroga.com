@@ -10,6 +10,7 @@ import {
   Rocket,
   Check,
   Trash2,
+  Share2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -39,6 +40,23 @@ export function MessageBubbleActions({
 }: MessageBubbleActionsProps) {
   const [reaction, setReaction] = useState<'up' | 'down' | null>(null);
   const [copied, setCopied] = useState(false);
+
+  async function handleShare() {
+    const shareText = content.slice(0, 500);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Xroga AI', text: shareText });
+        toast.success('Shared');
+      } else {
+        await navigator.clipboard.writeText(content);
+        toast.success('Copied for sharing');
+      }
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') {
+        toast.error('Share failed');
+      }
+    }
+  }
 
   async function handleCopy() {
     try {
@@ -76,6 +94,9 @@ export function MessageBubbleActions({
           </button>
           <button type="button" onClick={handleCopy} className={btnClass} aria-label="Copy">
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+          </button>
+          <button type="button" onClick={handleShare} className={btnClass} aria-label="Share">
+            <Share2 className="w-3.5 h-3.5" />
           </button>
           {onEdit && (
             <button type="button" onClick={onEdit} className={btnClass} aria-label="Edit in chatbar">

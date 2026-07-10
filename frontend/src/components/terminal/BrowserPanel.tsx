@@ -34,7 +34,7 @@ export function BrowserPanelToggle() {
       </button>
       {tip && (
         <span className="xv-browser-mini-tip absolute right-0 top-full mt-1.5 z-[60] whitespace-nowrap pointer-events-none">
-          Safe search · automations
+          Safe search · automations · runs on your device ($0)
         </span>
       )}
     </span>
@@ -69,7 +69,7 @@ export function BrowserPanel({ mode = 'split' }: BrowserPanelProps) {
     >
       <div className="xv-browser-chrome flex items-center gap-2 px-2 py-1.5 border-b shrink-0">
         <span className="text-[10px] font-terminal flex-1 truncate opacity-80">
-          Xroga Browser {isFull ? '· full' : '· split'}
+          Xroga Browser {isFull ? '· full' : '· split'} · local automation
         </span>
         <button
           type="button"

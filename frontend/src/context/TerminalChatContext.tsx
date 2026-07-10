@@ -26,6 +26,7 @@ import {
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
+import { saveTerminalHistorySession } from '@/lib/terminalHistory';
 import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, isWebsiteBuildPrompt, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import { getSelectedRepoContext } from '@/lib/repoContext';
@@ -233,6 +234,9 @@ export function TerminalChatProvider({
   const persistReadyRef = useRef(false);
   const buildHeartbeatTickRef = useRef(0);
   const lastActivityAtRef = useRef(0);
+  const sessionIdRef = useRef<string>(
+    typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`
+  );
 
   queueRef.current = promptQueue;
 
@@ -519,6 +523,15 @@ export function TerminalChatProvider({
       clearTimeout(thinkingTimerRef.current);
       thinkingTimerRef.current = null;
     }
+    if (!usePrivacyStore.getState().incognito && messages.length > 0) {
+      saveTerminalHistorySession({
+        sessionId: sessionIdRef.current,
+        prompt,
+        messages,
+      });
+    }
+    sessionIdRef.current =
+      typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`;
     setMessages([]);
     setPrompt('');
     setPromptQueue([]);
@@ -529,7 +542,7 @@ export function TerminalChatProvider({
     persistReadyRef.current = false;
     if (!usePrivacyStore.getState().incognito) clearWorkspaceSession();
     persistReadyRef.current = true;
-  }, [setSwarmRunning]);
+  }, [setSwarmRunning, messages, prompt]);
 
   const deleteTurn = useCallback((assistantMessageId: string) => {
     setMessages((current) => {
@@ -1216,6 +1229,11 @@ export function TerminalChatProvider({
                 messages: current,
                 userMessageId: turn.userMessageId,
                 assistantMessageId: turn.assistantId,
+              });
+              saveTerminalHistorySession({
+                sessionId: sessionIdRef.current,
+                prompt: turn.text,
+                messages: current,
               });
               if (shouldSaveToProjects(turn.text)) {
                 saveLocalProject({

@@ -29,6 +29,12 @@ export const PAGE_SEO = {
     '/dashboard/home',
     ['Xroga tokens', 'XRG balance', 'usage dashboard']
   ),
+  terminalHistory: dashboardPageMetadata(
+    'Terminal History',
+    'All saved workspace chats, code projects, and business conversations — restore any session in the terminal.',
+    '/dashboard/history',
+    ['terminal history', 'saved chats', 'code projects']
+  ),
   tasks: dashboardPageMetadata(
     'Earn XRG',
     'Complete daily, weekly, and monthly tasks to earn XRG tokens and boost your monthly quota.',

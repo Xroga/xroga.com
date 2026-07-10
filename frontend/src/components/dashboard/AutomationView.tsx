@@ -14,6 +14,7 @@ import { api, type SwarmRunSummary } from '@/lib/api';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useRouter } from 'next/navigation';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
+import { BrowserAutomationGuide } from '@/components/dashboard/BrowserAutomationGuide';
 import { copyText } from '@/components/ui/SectionRowActions';
 import { UiverseTableCard } from '@/components/ui/UiverseTableCard';
 import { automationTableRows } from '@/lib/tableRows';
@@ -132,6 +133,8 @@ export function AutomationView() {
           <RefreshCw className={cn('w-3.5 h-3.5', loading && 'animate-spin')} /> Refresh
         </button>
       </div>
+
+      <BrowserAutomationGuide />
 
       <SectionSearchBar value={query} onChange={setQuery} placeholder="Search automations…" />
 
