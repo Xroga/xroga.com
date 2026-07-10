@@ -46,20 +46,33 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_POOLER_HOST: ${{ secrets.SUPABASE_POOLER_HOST }}
         run: |
           node --input-type=module -e "
-          import { resolveDatabaseUrls, missingDatabaseUrlHelp } from './scripts/lib/database-url.mjs';
-          if (!resolveDatabaseUrls().length) {
+          import { resolveDatabaseUrls, resolveProjectRef, missingDatabaseUrlHelp } from './scripts/lib/database-url.mjs';
+          const ref = resolveProjectRef();
+          console.log('Project ref:', ref);
+          const urls = resolveDatabaseUrls();
+          if (!urls.length) {
             console.error(missingDatabaseUrlHelp());
-            console.error('');
-            console.error('Add GitHub repository secrets (minimum required):');
-            console.error('  SUPABASE_DB_PASSWORD  (Supabase → Settings → Database → password)');
-            console.error('Optional: SUPABASE_URL or SUPABASE_PROJECT_ID (defaults to mweinwhoekwjrecsodip)');
-            console.error('Optional: DATABASE_URL (full postgres URI — skips the above)');
             process.exit(1);
           }
-          console.log('Database URL resolved successfully.');
+          console.log('Database URL resolved (' + urls.length + ' candidate(s)).');
+          "
+
+      - name: Test database connection (IPv4)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_POOLER_HOST: ${{ secrets.SUPABASE_POOLER_HOST }}
+        run: |
+          node --input-type=module -e "
+          import { connectPostgres } from './scripts/lib/pg-connect.mjs';
+          const client = await connectPostgres();
+          const { rows } = await client.query('SELECT current_database(), version()');
+          console.log('DB OK:', rows[0].current_database);
+          await client.end();
           "
 
       - name: Apply migrations (direct Postgres)
@@ -68,7 +81,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_POOLER_HOST: ${{ secrets.SUPABASE_POOLER_HOST }}
         run: node scripts/apply-supabase-migrations.mjs
 
       - name: Dry-run on pull request (list pending migrations)
@@ -77,6 +90,6 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_POOLER_HOST: ${{ secrets.SUPABASE_POOLER_HOST }}
           DRY_RUN: '1'
         run: node scripts/apply-supabase-migrations.mjs --dry-run

@@ -30,6 +30,7 @@ if (dryRun) {
 
 const client = await connectPostgres();
 
+// Ensure migration tracking table (compatible with Supabase CLI)
 await client.query(`
   CREATE SCHEMA IF NOT EXISTS supabase_migrations;
   CREATE TABLE IF NOT EXISTS supabase_migrations.schema_migrations (
@@ -39,20 +40,43 @@ await client.query(`
   );
 `);
 
+async function isMigrationApplied(version, file) {
+  const { rows } = await client.query(
+    'SELECT 1 FROM supabase_migrations.schema_migrations WHERE version = $1 LIMIT 1',
+    [version]
+  );
+  if (rows.length) return true;
+
+  // Phase 1 table already created via Fly.io bootstrap
+  if (version === '022_phase1_token_usage') {
+    const check = await client.query(
+      "SELECT to_regclass('public.user_token_usage') AS reg"
+    );
+    if (check.rows[0]?.reg) return true;
+  }
+
+  return false;
+}
+
+async function markMigrationApplied(version, file) {
+  await client.query(
+    `INSERT INTO supabase_migrations.schema_migrations (version, name)
+     VALUES ($1, $2)
+     ON CONFLICT (version) DO NOTHING`,
+    [version, file]
+  );
+}
+
 const files = readdirSync(MIGRATIONS_DIR)
   .filter((f) => f.endsWith('.sql'))
   .sort();
-
-const { rows: applied } = await client.query(
-  'SELECT version FROM supabase_migrations.schema_migrations'
-);
-const appliedSet = new Set(applied.map((r) => r.version));
 
 let appliedCount = 0;
 
 for (const file of files) {
   const version = file.replace(/\.sql$/, '');
-  if (appliedSet.has(version)) {
+
+  if (await isMigrationApplied(version, file)) {
     console.log(`skip  ${version} (already applied)`);
     continue;
   }
@@ -69,15 +93,21 @@ for (const file of files) {
   try {
     await client.query('BEGIN');
     await client.query(sql);
-    await client.query(
-      `INSERT INTO supabase_migrations.schema_migrations (version, name) VALUES ($1, $2)`,
-      [version, file]
-    );
+    await markMigrationApplied(version, file);
     await client.query('COMMIT');
     appliedCount += 1;
     console.log(`ok    ${version}`);
   } catch (err) {
     await client.query('ROLLBACK');
+
+    // Idempotent: object already exists from prior manual/CLI apply
+    if (/already exists|duplicate key/i.test(err.message)) {
+      console.warn(`warn  ${version}: ${err.message} — marking applied`);
+      await markMigrationApplied(version, file);
+      appliedCount += 1;
+      continue;
+    }
+
     console.error(`fail  ${version}:`, err.message);
     process.exit(1);
   }
