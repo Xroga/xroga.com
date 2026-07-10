@@ -7,6 +7,7 @@ on:
       - 'supabase/migrations/**'
       - 'scripts/apply-supabase-migrations.mjs'
       - 'scripts/lib/database-url.mjs'
+      - 'scripts/lib/pg-connect.mjs'
       - '.github/workflows/supabase-migrate.yml'
   pull_request:
     branches: [main]
@@ -14,6 +15,7 @@ on:
       - 'supabase/migrations/**'
       - 'scripts/apply-supabase-migrations.mjs'
       - 'scripts/lib/database-url.mjs'
+      - 'scripts/lib/pg-connect.mjs'
       - '.github/workflows/supabase-migrate.yml'
   workflow_dispatch:
 
@@ -31,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: npm
@@ -47,8 +49,8 @@ jobs:
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
           node --input-type=module -e "
-          import { resolveDatabaseUrl, missingDatabaseUrlHelp } from './scripts/lib/database-url.mjs';
-          if (!resolveDatabaseUrl()) {
+          import { resolveDatabaseUrls, missingDatabaseUrlHelp } from './scripts/lib/database-url.mjs';
+          if (!resolveDatabaseUrls().length) {
             console.error(missingDatabaseUrlHelp());
             console.error('');
             console.error('Add GitHub repository secrets (minimum required):');
