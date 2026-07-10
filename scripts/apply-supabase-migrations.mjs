@@ -9,8 +9,8 @@
 import { readdirSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import pg from 'pg';
-import { resolveDatabaseUrl, missingDatabaseUrlHelp } from './lib/database-url.mjs';
+import { resolveDatabaseUrls, missingDatabaseUrlHelp } from './lib/database-url.mjs';
+import { connectPostgres } from './lib/pg-connect.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -18,8 +18,8 @@ const MIGRATIONS_DIR = join(ROOT, 'supabase/migrations');
 
 const dryRun = process.argv.includes('--dry-run') || process.env.DRY_RUN === '1';
 
-const url = resolveDatabaseUrl();
-if (!url) {
+const urls = resolveDatabaseUrls();
+if (!urls.length) {
   console.error(missingDatabaseUrlHelp());
   process.exit(1);
 }
@@ -28,12 +28,7 @@ if (dryRun) {
   console.log('DRY RUN — migrations will not be applied.');
 }
 
-const client = new pg.Client({
-  connectionString: url,
-  ssl: { rejectUnauthorized: false },
-});
-
-await client.connect();
+const client = await connectPostgres();
 
 await client.query(`
   CREATE SCHEMA IF NOT EXISTS supabase_migrations;

@@ -3,6 +3,8 @@
  * Requires DATABASE_URL, SUPABASE_DB_URL, or SUPABASE_URL + SUPABASE_DB_PASSWORD.
  */
 
+import { connectPostgres, resolveDatabaseUrls } from '../lib/postgresConnect.js';
+
 const ENSURE_GITHUB_SQL = `
 CREATE TABLE IF NOT EXISTS public.user_integrations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -60,36 +62,10 @@ NOTIFY pgrst, 'reload schema';
 let schemaReady: boolean | null = null;
 let bootstrapAttempted = false;
 
-function supabaseProjectRef(): string | null {
-  const raw = process.env.SUPABASE_URL?.trim();
-  if (!raw) return null;
-  try {
-    const host = new URL(raw).hostname;
-    const match = host.match(/^([a-z0-9]+)\.supabase\.co$/i);
-    return match?.[1] ?? null;
-  } catch {
-    return null;
-  }
-}
-
-function databaseUrl(): string | null {
-  const direct = process.env.DATABASE_URL?.trim() || process.env.SUPABASE_DB_URL?.trim();
-  if (direct) return direct;
-
-  const password = process.env.SUPABASE_DB_PASSWORD?.trim();
-  const ref = supabaseProjectRef();
-  if (password && ref) {
-    return `postgresql://postgres:${encodeURIComponent(password)}@db.${ref}.supabase.co:5432/postgres`;
-  }
-  return null;
-}
-
-/** Returns true if tables exist or were created successfully */
 export async function ensureGithubSchema(): Promise<boolean> {
   if (schemaReady === true) return true;
 
-  const url = databaseUrl();
-  if (!url) {
+  if (!resolveDatabaseUrls().length) {
     if (!bootstrapAttempted) {
       console.warn(
         '[githubSchema] No Postgres URL — set DATABASE_URL or SUPABASE_DB_PASSWORD on Fly.io. GitHub tokens will use Storage fallback.'
@@ -100,12 +76,7 @@ export async function ensureGithubSchema(): Promise<boolean> {
   }
 
   try {
-    const { default: pg } = await import('pg');
-    const client = new pg.Client({
-      connectionString: url,
-      ssl: { rejectUnauthorized: false },
-    });
-    await client.connect();
+    const client = await connectPostgres();
     await client.query(ENSURE_GITHUB_SQL);
     await client.end();
     schemaReady = true;
@@ -119,5 +90,5 @@ export async function ensureGithubSchema(): Promise<boolean> {
 }
 
 export function githubSchemaAutoBootstrapEnabled(): boolean {
-  return Boolean(databaseUrl());
+  return Boolean(resolveDatabaseUrls().length);
 }
