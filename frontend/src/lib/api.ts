@@ -524,6 +524,23 @@ export const api = {
         body: JSON.stringify({ planTier }),
       }),
   },
+  dashboard: {
+    summary: () => apiFetch<DashboardSummary>('/api/dashboard/summary'),
+    claimEmergencyTokens: () =>
+      apiFetch<{ success: boolean; message: string }>('/api/dashboard/emergency-tokens', {
+        method: 'POST',
+      }),
+  },
+  tasks: {
+    list: () => apiFetch<{ tasks: TaskItem[] }>('/api/tasks'),
+    checkIn: () =>
+      apiFetch<{ success: boolean; message: string }>('/api/tasks/check-in', { method: 'POST' }),
+    submit: (taskId: string, body: { link?: string; screenshotSize?: number }) =>
+      apiFetch<{ success: boolean; message: string }>(`/api/tasks/${taskId}/submit`, {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+  },
   chat: {
     send: (message: string, _userId?: string, onDelta?: (delta: string) => void) =>
       streamSwarmExecute(message, { onDelta }),
@@ -642,4 +659,60 @@ export interface SwarmRunSummary {
   created_at: string;
   completed_at: string | null;
   iteration_count: number;
+}
+
+export interface DashboardSummary {
+  now: string;
+  tokens: {
+    totalLimit: number;
+    totalUsed: number;
+    totalRemaining: number;
+    percentUsed: number;
+    inputUsed: number;
+    inputLimit: number;
+    inputRemaining: number;
+    outputUsed: number;
+    outputLimit: number;
+    outputRemaining: number;
+    emergencyAvailable: boolean;
+    emergencyClaimed: boolean;
+    daysRemaining: number;
+    estimatedDailyUsage: number;
+    quotaPeriodStart: string;
+  };
+  xrg: {
+    totalXrg: number;
+    availableXrg: number;
+    vestedXrg: number;
+    tokenBoostTotal: number;
+    consistencyStreakMonths: number;
+    consistencyBonusPercent: number;
+  };
+  billing: {
+    planTier: string;
+    planName: string;
+    planPrice: string;
+    nextBilling: string;
+    tokensIncluded: number;
+    tokensUsed: number;
+    tokensRemaining: number;
+  };
+  recentActivity: Array<{
+    action: string;
+    created_at: string;
+    projectName?: string;
+  }>;
+}
+
+export interface TaskItem {
+  id: string;
+  cadence: 'daily' | 'weekly' | 'monthly';
+  title: string;
+  description: string;
+  xrgReward: number;
+  tokenBoost: number;
+  verification: 'screenshot' | 'screenshot_link' | 'automatic';
+  completed: boolean;
+  completedAt: string | null;
+  pendingReview: boolean;
 }
