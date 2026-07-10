@@ -1,10 +1,18 @@
 import dns from 'dns';
-import dnsPromises from 'dns/promises';
 import pg from 'pg';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
 dns.setDefaultResultOrder('ipv4first');
+
+const POOLER_REGIONS = [
+  'us-east-1',
+  'us-west-1',
+  'eu-west-1',
+  'eu-central-1',
+  'ap-southeast-1',
+  'ap-northeast-1',
+];
 
 function projectRefFromConfig(): string {
   try {
@@ -16,22 +24,18 @@ function projectRefFromConfig(): string {
   }
 }
 
-function projectRefFromUrl(url: string): string | null {
-  try {
-    const host = new URL(url.trim()).hostname;
-    const match = host.match(/^([a-z0-9]+)\.supabase\.co$/i);
-    return match?.[1] ?? null;
-  } catch {
-    return null;
-  }
-}
-
 function resolveProjectRef(): string {
-  return (
-    projectRefFromConfig() ||
-    (process.env.SUPABASE_URL ? projectRefFromUrl(process.env.SUPABASE_URL) : null) ||
-    'mweinwhoekwjrecsodip'
-  );
+  const fromUrl = process.env.SUPABASE_URL?.trim();
+  if (fromUrl) {
+    try {
+      const host = new URL(fromUrl).hostname;
+      const match = host.match(/^([a-z0-9]+)\.supabase\.co$/i);
+      if (match?.[1]) return match[1];
+    } catch {
+      // ignore
+    }
+  }
+  return projectRefFromConfig();
 }
 
 export function resolveDatabaseUrls(): string[] {
@@ -43,50 +47,30 @@ export function resolveDatabaseUrls(): string[] {
   if (!password) return [];
 
   const urls: string[] = [];
-  const poolerHost = process.env.SUPABASE_POOLER_HOST?.trim();
-  if (poolerHost) {
+  const explicitHost = process.env.SUPABASE_POOLER_HOST?.trim();
+  if (explicitHost) {
     urls.push(
-      `postgresql://postgres.${ref}:${encodeURIComponent(password)}@${poolerHost}:6543/postgres`
+      `postgresql://postgres.${ref}:${encodeURIComponent(password)}@${explicitHost}:5432/postgres`
     );
   }
 
-  urls.push(
-    `postgresql://postgres:${encodeURIComponent(password)}@db.${ref}.supabase.co:5432/postgres`
-  );
+  const regions = process.env.SUPABASE_DB_REGION?.trim()
+    ? [process.env.SUPABASE_DB_REGION.trim()]
+    : POOLER_REGIONS;
 
-  return urls;
-}
-
-async function connectIpv4Direct(password: string, ref: string): Promise<pg.Client> {
-  const hostname = `db.${ref}.supabase.co`;
-  const ipv4 = (await dnsPromises.resolve4(hostname))[0];
-
-  const client = new pg.Client({
-    host: ipv4,
-    port: 5432,
-    user: 'postgres',
-    password,
-    database: 'postgres',
-    ssl: { rejectUnauthorized: false, servername: hostname },
-    connectionTimeoutMillis: 25_000,
-  });
-
-  await client.connect();
-  return client;
-}
-
-export async function connectPostgres(): Promise<pg.Client> {
-  const password = process.env.SUPABASE_DB_PASSWORD?.trim();
-  const ref = resolveProjectRef();
-
-  if (password && !process.env.DATABASE_URL?.trim()) {
-    try {
-      return await connectIpv4Direct(password, ref);
-    } catch {
-      // fall through
+  for (const prefix of ['aws-0', 'aws-1']) {
+    for (const region of regions) {
+      const host = `${prefix}-${region}.pooler.supabase.com`;
+      urls.push(
+        `postgresql://postgres.${ref}:${encodeURIComponent(password)}@${host}:5432/postgres`
+      );
     }
   }
 
+  return [...new Set(urls)];
+}
+
+export async function connectPostgres(): Promise<pg.Client> {
   const urls = resolveDatabaseUrls();
   if (!urls.length) {
     throw new Error('No database URL configured');
@@ -95,34 +79,22 @@ export async function connectPostgres(): Promise<pg.Client> {
   let lastError: Error | undefined;
 
   for (const connectionString of urls) {
+    const client = new pg.Client({
+      connectionString,
+      ssl: { rejectUnauthorized: false },
+      connectionTimeoutMillis: 12_000,
+    });
+
     try {
-      const parsed = new URL(connectionString);
-      const host = parsed.hostname;
-
-      if (/^db\.[a-z0-9]+\.supabase\.co$/i.test(host)) {
-        const ipv4 = (await dnsPromises.resolve4(host))[0];
-        const client = new pg.Client({
-          host: ipv4,
-          port: Number(parsed.port || 5432),
-          user: decodeURIComponent(parsed.username),
-          password: decodeURIComponent(parsed.password),
-          database: parsed.pathname.replace(/^\//, '') || 'postgres',
-          ssl: { rejectUnauthorized: false, servername: host },
-          connectionTimeoutMillis: 25_000,
-        });
-        await client.connect();
-        return client;
-      }
-
-      const client = new pg.Client({
-        connectionString,
-        ssl: { rejectUnauthorized: false },
-        connectionTimeoutMillis: 25_000,
-      });
       await client.connect();
       return client;
     } catch (err) {
       lastError = err as Error;
+      try {
+        await client.end();
+      } catch {
+        // ignore
+      }
     }
   }
 
