@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Logo } from '@/components/layout/Logo';
-import { GALACTIC_PLANS, FREE_TRIAL_ACTIONS, COMING_SOON_PLANS } from '@/lib/plans';
+import { GALACTIC_PLANS, COMING_SOON_PLANS } from '@/lib/plans';
 import { XROGA_FEATURES, FEATURE_COUNT } from '@/lib/features';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
 import { useAppStore } from '@/store/useAppStore';
@@ -50,7 +50,8 @@ function FeaturesExpand() {
 
 export function PricingPageClient() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const actions = useAppStore((s) => s.actions);
+  const tokenUsage = useAppStore((s) => s.tokenUsage);
+  const planTier = useAppStore((s) => s.planTier);
   const router = useRouter();
 
   useEffect(() => {
@@ -61,8 +62,22 @@ export function PricingPageClient() {
         if (session) {
           try {
             const { api } = await import('@/lib/api');
-            const balance = await api.actions.balance();
-            useAppStore.getState().setActions(balance);
+            const summary = await api.dashboard.summary();
+            const { tokens, billing } = summary;
+            useAppStore.getState().setTokenUsage({
+              inputTokensUsed: tokens.inputUsed,
+              outputTokensUsed: tokens.outputUsed,
+              totalTokensUsed: tokens.totalUsed,
+              inputTokensRemaining: tokens.inputRemaining,
+              outputTokensRemaining: tokens.outputRemaining,
+              totalTokensRemaining: tokens.totalRemaining,
+              percentUsed: tokens.percentUsed,
+              quotaPeriodStart: tokens.quotaPeriodStart,
+              emergencyTokensAvailable: tokens.emergencyAvailable,
+              emergencyTokensClaimedThisMonth: tokens.emergencyClaimed,
+              totalLimit: tokens.totalLimit,
+            });
+            useAppStore.getState().setPlanInfo(billing.planTier, billing.planName);
           } catch {
             /* ignore */
           }
@@ -97,10 +112,10 @@ export function PricingPageClient() {
             ALL {FEATURE_COUNT} FEATURES UNLOCKED ON EVERY PLAN
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Pay for <span className="gradient-text">fuel</span>, not features
+            Pay for <span className="gradient-text">tokens</span>, not features
           </h1>
           <p className="text-[var(--muted)] max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            <strong className="text-[var(--foreground)]">Top Up Actions</strong> = buy monthly Swarm fuel. Every plan unlocks
+            <strong className="text-[var(--foreground)]">Monthly token quota</strong> powers Xroga AI Brain. Every plan unlocks
             all {FEATURE_COUNT} features — browser, automation, 710+ integrations. You only pay for compute.
           </p>
           <div className="mt-4 flex justify-center">
@@ -110,9 +125,9 @@ export function PricingPageClient() {
 
         <div className="grid sm:grid-cols-3 gap-3 mb-12">
           {[
-            { icon: Fuel, title: 'Actions = fuel', desc: 'Each chat, build, scrape, or image task burns actions from your balance.' },
+            { icon: Fuel, title: 'Tokens = fuel', desc: 'Each chat, code generation, or AI task uses tokens from your monthly quota.' },
             { icon: Sparkles, title: 'All features included', desc: `Every tier gets the full Xroga stack — all ${FEATURE_COUNT} features, no upsells.` },
-            { icon: Zap, title: 'Top up anytime', desc: 'Upgrade monthly fuel. Pulse is our most popular plan for daily builders.' },
+            { icon: Zap, title: '7M+ tokens/month', desc: 'Upgrade for higher concurrency. Pulse is our most popular plan for daily builders.' },
           ].map(({ icon: Icon, title, desc }) => (
             <div key={title} className="glass-panel rounded-xl p-4 border border-[var(--card-border)]">
               <Icon className="w-5 h-5 text-[var(--accent)] mb-2" />
@@ -126,12 +141,17 @@ export function PricingPageClient() {
           <GalacticPlanCard
             name="Free Trial"
             price="$0"
-            actions={`${FREE_TRIAL_ACTIONS} Actions (one-time)`}
-            features={['1 concurrent task', 'Full Swarm access']}
+            actions="7M tokens/mo"
+            features={['1 concurrent task', 'Full Xroga AI access']}
             cta={
               loggedIn ? (
                 <div className="xv-plan-btn opacity-80 cursor-default text-center">
-                  Plan: {actions?.planTier ?? 'unpaid'}
+                  Plan: {planTier ?? 'unpaid'}
+                  {tokenUsage && (
+                    <span className="block text-[10px] text-[var(--muted)] mt-1">
+                      {(tokenUsage.totalTokensRemaining / 1_000_000).toFixed(1)}M tokens left
+                    </span>
+                  )}
                 </div>
               ) : (
                 <GradientStartButton className="w-full text-sm" onClick={() => router.push('/auth/signup')}>
@@ -142,7 +162,7 @@ export function PricingPageClient() {
           />
 
           {GALACTIC_PLANS.map((plan) => {
-            const isCurrent = loggedIn && actions?.planTier === plan.tier;
+            const isCurrent = loggedIn && planTier === plan.tier;
             const cta = isCurrent ? (
               <div className="text-center py-2 text-sm font-semibold text-cyan-300">Current Plan</div>
             ) : (
@@ -155,7 +175,7 @@ export function PricingPageClient() {
                   key={plan.tier}
                   name={plan.name}
                   price={plan.priceLabel}
-                  actions={plan.actionsLabel}
+                  actions="7M+ tokens/mo"
                   description={plan.tagline ?? 'Best for growing startups'}
                   cta={cta}
                 />
@@ -167,7 +187,7 @@ export function PricingPageClient() {
                 key={plan.tier}
                 name={plan.name}
                 price={plan.priceLabel}
-                actions={plan.actionsLabel}
+                actions="7M+ tokens/mo"
                 current={!!isCurrent}
                 features={[`${plan.concurrency} concurrent tasks`, `All ${FEATURE_COUNT} features unlocked`]}
                 cta={cta}
@@ -220,7 +240,7 @@ export function PricingPageClient() {
             </button>
           ) : (
             <GradientStartButton className="xv-gradient-btn-sm" onClick={() => router.push('/auth/signup')}>
-              Start Free — {FREE_TRIAL_ACTIONS} actions
+              Start Free — 7M tokens
             </GradientStartButton>
           )}
         </div>

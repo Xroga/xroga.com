@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Rocket, X } from 'lucide-react';
+import { Brain, X } from 'lucide-react';
 import { CheckoutButton } from './CheckoutButton';
 
 interface OutOfActionsModalProps {
@@ -20,13 +20,20 @@ export function OutOfActionsModal({ open, onClose }: OutOfActionsModalProps) {
           <X className="w-5 h-5" />
         </button>
         <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
-          <Rocket className="w-7 h-7 text-red-400" />
+          <Brain className="w-7 h-7 text-red-400" />
         </div>
-        <h2 className="text-xl font-bold mb-2">Fuel Tank Empty</h2>
+        <h2 className="text-xl font-bold mb-2">Monthly Token Quota Reached</h2>
         <p className="text-[var(--muted)] text-sm mb-6">
-          You&apos;ve used your free actions. Subscribe to continue building with the Swarm.
+          You&apos;ve used your monthly token allocation. Upgrade your plan or claim emergency tokens from your dashboard.
         </p>
-        <CheckoutButton planTier="nova" label="Subscribe — Nova Plan" className="w-full mb-3" onSuccess={onClose} />
+        <Link
+          href="/dashboard/home"
+          className="block w-full mb-3 px-4 py-2.5 rounded-lg bg-[var(--accent)]/15 text-[var(--accent)] font-semibold text-sm hover:bg-[var(--accent)]/25 transition-colors"
+          onClick={onClose}
+        >
+          View Token Usage
+        </Link>
+        <CheckoutButton planTier="nova" label="Upgrade Plan" className="w-full mb-3" onSuccess={onClose} />
         <Link
           href="/pricing"
           className="block text-sm text-[var(--accent)] hover:underline"

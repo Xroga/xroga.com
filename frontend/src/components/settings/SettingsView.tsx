@@ -6,16 +6,14 @@ import { api, type Profile } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 import toast from 'react-hot-toast';
 import { Save } from 'lucide-react';
-import { LogoutButton, UpgradeProButton, DeleteExpandButton, SettingsTab } from '@/components/ui/Uiverse';
+import { LogoutButton, DeleteExpandButton, SettingsTab } from '@/components/ui/Uiverse';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useThemeStore } from '@/store/useThemeStore';
 import { THEME_OPTIONS } from '@/lib/theme';
-import { ALL_ACTION_COSTS, tasksForActionBudget, budgetTaskLine } from '@/lib/actionCosts';
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
-import { SubscriptionManagePanel } from '@/components/billing/SubscriptionManagePanel';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { useT } from '@/components/providers/LanguageProvider';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
@@ -24,7 +22,7 @@ import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 import { PrivacySettingsPanel } from '@/components/settings/PrivacySettingsPanel';
 import { DataAiSettingsPanel } from '@/components/settings/DataAiSettingsPanel';
 
-const TABS = ['General', 'Privacy', 'Data & AI', 'Plan & Billing', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
+const TABS = ['General', 'Privacy', 'Data & AI', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
 type Tab = (typeof TABS)[number];
 
 export function SettingsView({ email }: { email: string }) {
@@ -44,17 +42,12 @@ export function SettingsView({ email }: { email: string }) {
     soundEffects: true,
   });
   const setStoreProfile = useAppStore((s) => s.setProfile);
-  const actions = useAppStore((s) => s.actions);
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
   const setCustomDesktopBg = useThemeStore((s) => s.setCustomDesktopBg);
   const setCustomMobileBg = useThemeStore((s) => s.setCustomMobileBg);
   const customDesktopBg = useThemeStore((s) => s.customDesktopBg);
   const customMobileBg = useThemeStore((s) => s.customMobileBg);
-  const [calcBudget, setCalcBudget] = useState('50');
-  const calcAffordable = tasksForActionBudget(Math.max(0, parseInt(calcBudget, 10) || 0));
-  const usedActions = actions ? actions.total - actions.remaining : 0;
-  const usedPct = actions?.total ? Math.round((usedActions / actions.total) * 100) : 0;
 
   useEffect(() => {
     api.profile.get()
@@ -201,76 +194,6 @@ export function SettingsView({ email }: { email: string }) {
           {tab === 'Privacy' && <PrivacySettingsPanel />}
 
           {tab === 'Data & AI' && <DataAiSettingsPanel email={email} />}
-
-          {tab === 'Plan & Billing' && (
-            <div className="space-y-5">
-              <h2 className="font-semibold text-lg">Plan & Billing</h2>
-              <div className="p-5 rounded-xl border border-[var(--accent)]/30 bg-gradient-to-br from-[var(--accent)]/10 to-transparent">
-                <p className="font-medium capitalize text-lg">{actions?.planTier ?? 'unpaid'} Plan</p>
-                <div className="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
-                  <div
-                    className="h-full bg-[var(--accent)] rounded-full transition-all"
-                    style={{ width: `${usedPct}%` }}
-                  />
-                </div>
-                <p className="text-sm text-[var(--muted)] mt-2">
-                  <span className="text-[var(--accent)] font-semibold">{actions?.remaining.toLocaleString() ?? 50}</span>
-                  {' / '}
-                  {actions?.total.toLocaleString() ?? 50} Actions remaining ({usedPct}% used)
-                </p>
-                {actions?.concurrencyLimit != null && (
-                  <p className="text-sm text-[var(--muted)] mt-1">
-                    {actions.concurrencyLimit} concurrent task{actions.concurrencyLimit === 1 ? '' : 's'}
-                  </p>
-                )}
-                <div className="mt-4 max-w-xs">
-                  <UpgradeProButton onClick={() => router.push('/pricing')} />
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl border border-[var(--card-border)] bg-white/[0.02] space-y-3">
-                <h3 className="font-medium text-sm">Action calculator</h3>
-                <p className="text-xs text-[var(--muted)]">
-                  Enter actions to see what you can do — including 1-action chat and tasks you cannot afford yet.
-                </p>
-                <input
-                  type="number"
-                  min={0}
-                  value={calcBudget}
-                  onChange={(e) => setCalcBudget(e.target.value)}
-                  className="w-28 px-3 py-2 rounded-lg bg-white/5 border border-[var(--card-border)] text-sm font-mono"
-                />
-                <ul className="text-xs space-y-1 max-h-48 overflow-y-auto">
-                  {calcAffordable.map((c) => {
-                    const budget = parseInt(calcBudget, 10) || 0;
-                    const canDo = budget >= c.cost;
-                    return (
-                      <li
-                        key={c.id}
-                        className={`flex justify-between py-0.5 gap-2 ${!canDo ? 'opacity-50' : ''}`}
-                      >
-                        <span className="text-[var(--muted)] truncate">{c.task}</span>
-                        <span className={`font-mono shrink-0 ${canDo ? '' : 'text-red-400/80'}`}>
-                          {budgetTaskLine(c, budget)}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-
-              <div className="text-xs text-[var(--muted)] space-y-1 max-h-48 overflow-y-auto">
-                {ALL_ACTION_COSTS.map((c) => (
-                  <div key={c.id} className="flex justify-between py-1 border-b border-[var(--card-border)]/40">
-                    <span>{c.task}</span>
-                    <span className="font-mono">{c.cost}</span>
-                  </div>
-                ))}
-              </div>
-
-              <SubscriptionManagePanel />
-            </div>
-          )}
 
           {tab === 'Integrations' && <IntegrationsPanel />}
 

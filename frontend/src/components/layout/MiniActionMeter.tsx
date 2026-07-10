@@ -1,52 +1,63 @@
 'use client';
 
-import { Zap } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { cn } from '@/lib/utils';
 
-interface MiniActionMeterProps {
-  compact?: boolean;
-  onTopUp?: () => void;
-  onPlanUsage?: () => void;
+function formatTokens(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
+  return n.toLocaleString();
 }
 
-export function MiniActionMeter({ compact = false, onTopUp, onPlanUsage }: MiniActionMeterProps) {
-  const actions = useAppStore((s) => s.actions);
+interface MiniTokenMeterProps {
+  compact?: boolean;
+  onUsageClick?: () => void;
+}
 
-  if (!actions) {
+export function MiniTokenMeter({ compact = false, onUsageClick }: MiniTokenMeterProps) {
+  const usage = useAppStore((s) => s.tokenUsage);
+
+  if (!usage) {
     return (
       <div className={cn('xv-fuel-skeleton animate-pulse rounded-lg bg-white/5', compact ? 'h-8' : 'h-10')} />
     );
   }
 
-  const pct = actions.total > 0 ? (actions.remaining / actions.total) * 100 : 0;
+  const total = usage.totalLimit ?? usage.totalTokensRemaining + usage.totalTokensUsed;
+  const remaining = usage.totalTokensRemaining;
+  const pct = total > 0 ? (remaining / total) * 100 : 0;
   const isLow = pct <= 20;
-  const isOut = actions.remaining <= 0;
+  const isOut = remaining <= 0;
 
   const content = (
     <div className="xv-fuel-compact">
       <div className="flex items-center justify-between gap-2 mb-1">
         <div className="flex items-center gap-1 min-w-0">
-          <Zap
+          <Brain
             className={cn(
               'w-3 h-3 shrink-0',
               isOut ? 'text-red-400' : isLow ? 'text-amber-400' : 'text-[var(--accent)]'
             )}
           />
           <span className="text-[10px] font-semibold tabular-nums truncate">
-            {actions.remaining.toLocaleString()}
-            <span className="text-[var(--muted)] font-normal"> / {actions.total.toLocaleString()}</span>
+            {formatTokens(remaining)}
+            <span className="text-[var(--muted)] font-normal"> / {formatTokens(total)}</span>
           </span>
         </div>
-        <span className="text-[8px] uppercase tracking-wider text-[var(--muted)] capitalize shrink-0">
-          {actions.planTier}
+        <span className="text-[8px] uppercase tracking-wider text-[var(--muted)] shrink-0">
+          tokens
         </span>
       </div>
       <div className="h-1 rounded-full bg-white/10 overflow-hidden">
         <div
           className={cn(
             'h-full rounded-full transition-all duration-500',
-            isOut ? 'bg-red-500' : isLow ? 'bg-amber-500' : 'bg-gradient-to-r from-[var(--accent)] to-[var(--primary)]'
+            isOut
+              ? 'bg-red-500'
+              : isLow
+                ? 'bg-amber-500'
+                : 'bg-gradient-to-r from-[var(--accent)] to-violet-500'
           )}
           style={{ width: `${Math.max(pct, 3)}%` }}
         />
@@ -57,25 +68,12 @@ export function MiniActionMeter({ compact = false, onTopUp, onPlanUsage }: MiniA
   const className = cn(
     'w-full text-left rounded-lg bg-white/[0.02] xv-action-meter border border-[var(--card-border)]/40',
     compact ? 'px-2 py-1.5' : 'px-2.5 py-2',
-    (onPlanUsage || onTopUp) && 'hover:border-[var(--accent)]/40 transition-colors cursor-pointer'
+    onUsageClick && 'hover:border-[var(--accent)]/40 transition-colors cursor-pointer'
   );
 
-  const handleClick = () => {
-    if (onPlanUsage) {
-      onPlanUsage();
-      return;
-    }
-    onTopUp?.();
-  };
-
-  if (onPlanUsage || onTopUp) {
+  if (onUsageClick) {
     return (
-      <button
-        type="button"
-        onClick={handleClick}
-        className={className}
-        title="View plan & action usage"
-      >
+      <button type="button" onClick={onUsageClick} className={className} title="View token usage">
         {content}
       </button>
     );
@@ -83,3 +81,6 @@ export function MiniActionMeter({ compact = false, onTopUp, onPlanUsage }: MiniA
 
   return <div className={className}>{content}</div>;
 }
+
+/** @deprecated Use MiniTokenMeter — kept as alias for gradual migration */
+export const MiniActionMeter = MiniTokenMeter;

@@ -12,6 +12,8 @@ import {
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, ApiError, type ChatAttachment, api } from '@/lib/api';
+import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
+import { streamTextReveal } from '@/lib/streamText';
 import type { SwarmProgressEvent } from '@/lib/swarm';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
@@ -192,7 +194,31 @@ export function TerminalChatProvider({
   const chatPrefill = useAppStore((s) => s.chatPrefill);
   const setChatPrefill = useAppStore((s) => s.setChatPrefill);
   const setSwarmRunning = useAppStore((s) => s.setSwarmRunning);
-  const setActions = useAppStore((s) => s.setActions);
+  const setTokenUsage = useAppStore((s) => s.setTokenUsage);
+  const setPlanInfo = useAppStore((s) => s.setPlanInfo);
+
+  const refreshTokenUsage = useCallback(() => {
+    void api.dashboard
+      .summary()
+      .then((summary) => {
+        const { tokens, billing } = summary;
+        setTokenUsage({
+          inputTokensUsed: tokens.inputUsed,
+          outputTokensUsed: tokens.outputUsed,
+          totalTokensUsed: tokens.totalUsed,
+          inputTokensRemaining: tokens.inputRemaining,
+          outputTokensRemaining: tokens.outputRemaining,
+          totalTokensRemaining: tokens.totalRemaining,
+          percentUsed: tokens.percentUsed,
+          quotaPeriodStart: tokens.quotaPeriodStart,
+          emergencyTokensAvailable: tokens.emergencyAvailable,
+          emergencyTokensClaimedThisMonth: tokens.emergencyClaimed,
+          totalLimit: tokens.totalLimit,
+        });
+        setPlanInfo(billing.planTier, billing.planName);
+      })
+      .catch(() => {});
+  }, [setTokenUsage, setPlanInfo]);
   const thinkingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const autoRanRef = useRef(false);
@@ -796,6 +822,41 @@ export function TerminalChatProvider({
 
         const repoContext = getSelectedRepoContext();
 
+        const usePhase1Engine = shouldRouteToPhase1(displayPrompt, threadForMemory, attachments, {
+          completedWebsiteBuild: completedWebsiteBuildRef.current,
+        });
+
+        if (usePhase1Engine) {
+          setPipelineCompact(true);
+          setPipelineMessage('Xroga AI Brain is thinking…');
+          setSwarmStatusLabel('XROGA AI BRAIN');
+          setSwarmActiveAgent('Xroga AI Brain');
+          pushSwarmTerminalLine('Classifying intent and routing to Xroga AI Brain…');
+
+          const result = await api.phase1.chat(displayPrompt, history);
+          gotEvent = true;
+          fullReply = result.response;
+
+          await streamTextReveal(
+            result.response,
+            (partial) => {
+              setMessages((m) =>
+                m.map((msg) =>
+                  msg.id === assistantId
+                    ? { ...msg, content: partial, agent: 'Xroga AI Brain' }
+                    : msg
+                )
+              );
+            },
+            controller.signal
+          );
+
+          setTokenUsage({
+            ...result.usage,
+            totalLimit: result.usage.totalTokensRemaining + result.usage.totalTokensUsed,
+          });
+          refreshTokenUsage();
+        } else {
         await streamSwarmExecute(apiPrompt, {
           projectId,
           signal: controller.signal,
@@ -1073,9 +1134,10 @@ export function TerminalChatProvider({
               };
             }
 
-            void api.actions.balance().then(setActions).catch(() => {});
+            void refreshTokenUsage();
           },
         });
+        }
 
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
@@ -1191,7 +1253,7 @@ export function TerminalChatProvider({
         setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, incognito, messages, setSwarmRunning, setActions, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked]
+    [prompt, loading, projectId, incognito, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, setTokenUsage]
   );
 
   submitRef.current = submit;
