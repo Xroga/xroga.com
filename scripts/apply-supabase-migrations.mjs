@@ -1,16 +1,12 @@
 /**
  * Apply pending Supabase SQL migrations via direct Postgres connection.
- * Used by GitHub Actions when SUPABASE_ACCESS_TOKEN is not configured.
- *
- * Usage:
- *   SUPABASE_DB_PASSWORD=... SUPABASE_URL=https://xxx.supabase.co node scripts/apply-supabase-migrations.mjs
- *   DATABASE_URL=postgresql://postgres:...@db.xxx.supabase.co:5432/postgres node scripts/apply-supabase-migrations.mjs
  */
 import { readdirSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { resolveDatabaseUrls, missingDatabaseUrlHelp } from './lib/database-url.mjs';
 import { connectPostgres } from './lib/pg-connect.mjs';
+import { phase1TableExistsViaRest } from './lib/supabase-rest.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -18,8 +14,13 @@ const MIGRATIONS_DIR = join(ROOT, 'supabase/migrations');
 
 const dryRun = process.argv.includes('--dry-run') || process.env.DRY_RUN === '1';
 
-const urls = resolveDatabaseUrls();
-if (!urls.length) {
+if (!resolveDatabaseUrls().length) {
+  // If service role can verify table exists, succeed without DB password
+  const phase1Exists = await phase1TableExistsViaRest();
+  if (phase1Exists === true) {
+    console.log('user_token_usage exists (REST). No DB password needed.');
+    process.exit(0);
+  }
   console.error(missingDatabaseUrlHelp());
   process.exit(1);
 }
@@ -28,9 +29,18 @@ if (dryRun) {
   console.log('DRY RUN — migrations will not be applied.');
 }
 
+// Fast path: Phase 1 table already exists (e.g. created by Fly.io bootstrap)
+const phase1Exists = await phase1TableExistsViaRest();
+if (phase1Exists === true) {
+  console.log('user_token_usage table already exists (verified via Supabase REST).');
+  if (!dryRun) {
+    console.log('Skipping DB migration — schema is up to date for Phase 1.');
+    process.exit(0);
+  }
+}
+
 const client = await connectPostgres();
 
-// Ensure migration tracking table (compatible with Supabase CLI)
 await client.query(`
   CREATE SCHEMA IF NOT EXISTS supabase_migrations;
   CREATE TABLE IF NOT EXISTS supabase_migrations.schema_migrations (
@@ -40,14 +50,13 @@ await client.query(`
   );
 `);
 
-async function isMigrationApplied(version, file) {
+async function isMigrationApplied(version) {
   const { rows } = await client.query(
     'SELECT 1 FROM supabase_migrations.schema_migrations WHERE version = $1 LIMIT 1',
     [version]
   );
   if (rows.length) return true;
 
-  // Phase 1 table already created via Fly.io bootstrap
   if (version === '022_phase1_token_usage') {
     const check = await client.query(
       "SELECT to_regclass('public.user_token_usage') AS reg"
@@ -61,8 +70,7 @@ async function isMigrationApplied(version, file) {
 async function markMigrationApplied(version, file) {
   await client.query(
     `INSERT INTO supabase_migrations.schema_migrations (version, name)
-     VALUES ($1, $2)
-     ON CONFLICT (version) DO NOTHING`,
+     VALUES ($1, $2) ON CONFLICT (version) DO NOTHING`,
     [version, file]
   );
 }
@@ -76,7 +84,7 @@ let appliedCount = 0;
 for (const file of files) {
   const version = file.replace(/\.sql$/, '');
 
-  if (await isMigrationApplied(version, file)) {
+  if (await isMigrationApplied(version)) {
     console.log(`skip  ${version} (already applied)`);
     continue;
   }
@@ -100,7 +108,6 @@ for (const file of files) {
   } catch (err) {
     await client.query('ROLLBACK');
 
-    // Idempotent: object already exists from prior manual/CLI apply
     if (/already exists|duplicate key/i.test(err.message)) {
       console.warn(`warn  ${version}: ${err.message} — marking applied`);
       await markMigrationApplied(version, file);
