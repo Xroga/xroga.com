@@ -24,7 +24,7 @@ import {
   Gift,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { MiniActionMeter } from './MiniActionMeter';
+import { MiniTokenMeter } from './MiniActionMeter';
 import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
 import { HoverTip } from '@/components/ui/HoverTip';
@@ -134,16 +134,17 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const closeBrowser = useThemeStore((s) => s.closeBrowser);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const setSidebarWidth = useThemeStore((s) => s.setSidebarWidth);
-  const actions = useAppStore((s) => s.actions);
+  const planTier = useAppStore((s) => s.planTier);
+  const tokenUsage = useAppStore((s) => s.tokenUsage);
   const profile = useAppStore((s) => s.profile);
   const setProfile = useAppStore((s) => s.setProfile);
   const incognito = usePrivacyStore((s) => s.incognito);
   const isMobile = useIsMobile();
-  const isFreeTrial = !actions?.planTier || actions.planTier === 'unpaid';
+  const isFreeTrial = !planTier || planTier === 'unpaid';
   const avatarUrl = profile?.avatar_url;
   const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
   const userName = incognito ? 'Incognito' : (profile?.display_name ?? displayName ?? 'User');
-  const userPlan = incognito ? 'Temporary session' : planLabel(actions?.planTier);
+  const userPlan = incognito ? 'Temporary session' : planLabel(planTier);
 
   useEffect(() => {
     api.profile
@@ -229,9 +230,9 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     router.refresh();
   }
 
-  function goToPlanUsage() {
+  function goToTokenUsage() {
     closeMobile();
-    router.push('/dashboard/billing#action-spend');
+    router.push('/dashboard/home');
   }
 
   const bottomSection = (
@@ -239,16 +240,20 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
       {onTopUp && (
         <div className={cn(!navExpanded && 'flex justify-center')}>
           {navExpanded ? (
-            <MiniActionMeter onPlanUsage={goToPlanUsage} onTopUp={onTopUp} />
+            <MiniTokenMeter onUsageClick={goToTokenUsage} />
           ) : (
-            <HoverTip label="Plan & usage" description="View your action calculator and spend.">
+            <HoverTip label="Token usage" description="View your monthly token balance.">
               <button
                 type="button"
-                onClick={goToPlanUsage}
+                onClick={goToTokenUsage}
                 className="p-2 rounded-lg glass-panel flex items-center gap-0.5 text-[10px] font-terminal text-[var(--accent)]"
               >
                 <Zap className="w-3 h-3" />
-                {actions?.remaining ?? 50}
+                {tokenUsage
+                  ? tokenUsage.totalTokensRemaining >= 1_000_000
+                    ? `${(tokenUsage.totalTokensRemaining / 1_000_000).toFixed(1)}M`
+                    : `${Math.round(tokenUsage.totalTokensRemaining / 1000)}K`
+                  : '7M'}
               </button>
             </HoverTip>
           )}

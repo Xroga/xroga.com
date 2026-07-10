@@ -1,29 +1,38 @@
 'use client';
 
-import { Zap } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import Link from 'next/link';
 import { useAppStore } from '@/store/useAppStore';
 import { cn } from '@/lib/utils';
 
-interface HeaderActionMeterProps {
+function formatTokens(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
+  return n.toLocaleString();
+}
+
+interface HeaderTokenMeterProps {
   onClick?: () => void;
   className?: string;
 }
 
-export function HeaderActionMeter({ onClick, className }: HeaderActionMeterProps) {
-  const actions = useAppStore((s) => s.actions);
-  const remaining = actions?.remaining ?? 0;
+export function HeaderTokenMeter({ onClick, className }: HeaderTokenMeterProps) {
+  const usage = useAppStore((s) => s.tokenUsage);
+  const remaining = usage?.totalTokensRemaining ?? 0;
+  const total = usage?.totalLimit ?? 7_000_000;
   const isOut = remaining <= 0;
-  const isLow = actions && actions.total > 0 && remaining / actions.total <= 0.2;
+  const isLow = total > 0 && remaining / total <= 0.2;
 
   const inner = (
-  <>
-      <Zap className={cn('w-4 h-4', isOut ? 'text-red-400' : isLow ? 'text-amber-400' : 'text-[var(--accent)]')} />
+    <>
+      <Brain
+        className={cn('w-4 h-4', isOut ? 'text-red-400' : isLow ? 'text-amber-400' : 'text-[var(--accent)]')}
+      />
       <span className="font-terminal text-sm">
-        <span className={cn('font-semibold', isOut && 'text-red-400')}>
-          {remaining.toLocaleString()}
+        <span className={cn('font-semibold tabular-nums', isOut && 'text-red-400')}>
+          {formatTokens(remaining)}
         </span>
-        <span className="text-[var(--muted)] hidden sm:inline"> actions left</span>
+        <span className="text-[var(--muted)] hidden sm:inline"> tokens left</span>
       </span>
     </>
   );
@@ -43,8 +52,11 @@ export function HeaderActionMeter({ onClick, className }: HeaderActionMeterProps
   }
 
   return (
-    <Link href="/pricing" className={classes}>
+    <Link href="/dashboard/home" className={classes}>
       {inner}
     </Link>
   );
 }
+
+/** @deprecated Use HeaderTokenMeter */
+export const HeaderActionMeter = HeaderTokenMeter;

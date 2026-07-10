@@ -16,6 +16,8 @@ function completionKey(userId: string, taskId: string, period: string) {
 
 function periodKey(cadence: TaskDefinition['cadence']): string {
   const now = new Date();
+  if (cadence === 'once') return 'once';
+  if (cadence === 'special') return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
   if (cadence === 'daily') return now.toISOString().slice(0, 10);
   if (cadence === 'weekly') {
     const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
@@ -87,6 +89,10 @@ export async function submitTask(
 
   if (await isCompleted(userId, task)) {
     return { success: false, message: 'Task already completed for this period' };
+  }
+
+  if (task.id === 'referral') {
+    return { success: false, message: 'Referral rewards credit automatically when your friend subscribes and stays active 30 days.' };
   }
 
   if (task.verification === 'automatic' || taskId === 'daily_checkin') {

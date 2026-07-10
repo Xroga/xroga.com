@@ -531,6 +531,18 @@ export const api = {
         method: 'POST',
       }),
   },
+  phase1: {
+    chat: (message: string, history?: Array<{ role: 'user' | 'assistant'; content: string }>) =>
+      apiFetch<Phase1ChatResult>('/api/phase1/chat', {
+        method: 'POST',
+        body: JSON.stringify({ message, history }),
+      }),
+    usage: () => apiFetch<{ usage: TokenUsage }>('/api/phase1/usage'),
+    claimEmergencyTokens: () =>
+      apiFetch<{ success: boolean; message: string }>('/api/phase1/emergency-tokens', {
+        method: 'POST',
+      }),
+  },
   tasks: {
     list: () => apiFetch<{ tasks: TaskItem[] }>('/api/tasks'),
     checkIn: () =>
@@ -704,14 +716,38 @@ export interface DashboardSummary {
   }>;
 }
 
+export interface TokenUsage {
+  inputTokensUsed: number;
+  outputTokensUsed: number;
+  totalTokensUsed: number;
+  inputTokensRemaining: number;
+  outputTokensRemaining: number;
+  totalTokensRemaining: number;
+  percentUsed: number;
+  quotaPeriodStart: string;
+  emergencyTokensAvailable: boolean;
+  emergencyTokensClaimedThisMonth: boolean;
+  totalLimit?: number;
+}
+
+export interface Phase1ChatResult {
+  response: string;
+  intent: string;
+  usage: TokenUsage;
+}
+
 export interface TaskItem {
   id: string;
-  cadence: 'daily' | 'weekly' | 'monthly';
+  cadence: 'daily' | 'weekly' | 'monthly' | 'once' | 'special';
   title: string;
   description: string;
+  platform?: string;
+  frequency?: string;
   xrgReward: number;
   tokenBoost: number;
   verification: 'screenshot' | 'screenshot_link' | 'automatic';
+  requirements?: string[];
+  examplePost?: string;
   completed: boolean;
   completedAt: string | null;
   pendingReview: boolean;

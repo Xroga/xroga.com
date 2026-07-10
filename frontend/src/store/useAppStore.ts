@@ -1,17 +1,20 @@
 'use client';
 
 import { create } from 'zustand';
-import type { ActionBalance, Notification, Profile } from '@/lib/api';
+import type { Notification, Profile, TokenUsage } from '@/lib/api';
 
 interface AppState {
   profile: Profile | null;
-  actions: ActionBalance | null;
+  tokenUsage: TokenUsage | null;
+  planTier: string | null;
+  planName: string | null;
   notifications: Notification[];
   unreadCount: number;
   chatPrefill: string;
   swarmRunning: boolean;
   setProfile: (profile: Profile | null) => void;
-  setActions: (actions: ActionBalance | null) => void;
+  setTokenUsage: (usage: TokenUsage | null) => void;
+  setPlanInfo: (tier: string | null, name: string | null) => void;
   setNotifications: (notifications: Notification[]) => void;
   setUnreadCount: (count: number) => void;
   setChatPrefill: (text: string) => void;
@@ -20,13 +23,16 @@ interface AppState {
 
 export const useAppStore = create<AppState>((set) => ({
   profile: null,
-  actions: null,
+  tokenUsage: null,
+  planTier: null,
+  planName: null,
   notifications: [],
   unreadCount: 0,
   chatPrefill: '',
   swarmRunning: false,
   setProfile: (profile) => set({ profile }),
-  setActions: (actions) => set({ actions }),
+  setTokenUsage: (tokenUsage) => set({ tokenUsage }),
+  setPlanInfo: (planTier, planName) => set({ planTier, planName }),
   setNotifications: (notifications) => set({ notifications }),
   setUnreadCount: (unreadCount) => set({ unreadCount }),
   setChatPrefill: (chatPrefill) => set({ chatPrefill }),
