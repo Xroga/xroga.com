@@ -6,16 +6,14 @@ on:
     paths:
       - 'supabase/migrations/**'
       - 'scripts/apply-supabase-migrations.mjs'
-      - 'scripts/lib/database-url.mjs'
-      - 'scripts/lib/pg-connect.mjs'
+      - 'scripts/lib/**'
       - '.github/workflows/supabase-migrate.yml'
   pull_request:
     branches: [main]
     paths:
       - 'supabase/migrations/**'
       - 'scripts/apply-supabase-migrations.mjs'
-      - 'scripts/lib/database-url.mjs'
-      - 'scripts/lib/pg-connect.mjs'
+      - 'scripts/lib/**'
       - '.github/workflows/supabase-migrate.yml'
   workflow_dispatch:
 
@@ -27,7 +25,6 @@ jobs:
   migrate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Only apply to production DB on main; PRs validate connectivity + pending list
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
 
     steps:
@@ -41,55 +38,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Validate database credentials
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_POOLER_HOST: ${{ secrets.SUPABASE_POOLER_HOST }}
-        run: |
-          node --input-type=module -e "
-          import { resolveDatabaseUrls, resolveProjectRef, missingDatabaseUrlHelp } from './scripts/lib/database-url.mjs';
-          const ref = resolveProjectRef();
-          console.log('Project ref:', ref);
-          const urls = resolveDatabaseUrls();
-          if (!urls.length) {
-            console.error(missingDatabaseUrlHelp());
-            process.exit(1);
-          }
-          console.log('Database URL resolved (' + urls.length + ' candidate(s)).');
-          "
-
-      - name: Test database connection (IPv4)
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_POOLER_HOST: ${{ secrets.SUPABASE_POOLER_HOST }}
-        run: |
-          node --input-type=module -e "
-          import { connectPostgres } from './scripts/lib/pg-connect.mjs';
-          const client = await connectPostgres();
-          const { rows } = await client.query('SELECT current_database(), version()');
-          console.log('DB OK:', rows[0].current_database);
-          await client.end();
-          "
-
-      - name: Apply migrations (direct Postgres)
+      - name: Apply migrations
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_POOLER_HOST: ${{ secrets.SUPABASE_POOLER_HOST }}
         run: node scripts/apply-supabase-migrations.mjs
 
-      - name: Dry-run on pull request (list pending migrations)
+      - name: Dry-run on pull request
         if: github.event_name == 'pull_request'
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_POOLER_HOST: ${{ secrets.SUPABASE_POOLER_HOST }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           DRY_RUN: '1'
         run: node scripts/apply-supabase-migrations.mjs --dry-run

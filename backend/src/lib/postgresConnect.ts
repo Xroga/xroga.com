@@ -5,14 +5,7 @@ import { join } from 'path';
 
 dns.setDefaultResultOrder('ipv4first');
 
-const POOLER_REGIONS = [
-  'us-east-1',
-  'us-west-1',
-  'eu-west-1',
-  'eu-central-1',
-  'ap-southeast-1',
-  'ap-northeast-1',
-];
+const DEFAULT_POOLER_HOST = 'aws-1-ap-southeast-1.pooler.supabase.com';
 
 function projectRefFromConfig(): string {
   try {
@@ -24,50 +17,33 @@ function projectRefFromConfig(): string {
   }
 }
 
-function resolveProjectRef(): string {
-  const fromUrl = process.env.SUPABASE_URL?.trim();
-  if (fromUrl) {
-    try {
-      const host = new URL(fromUrl).hostname;
-      const match = host.match(/^([a-z0-9]+)\.supabase\.co$/i);
-      if (match?.[1]) return match[1];
-    } catch {
-      // ignore
-    }
-  }
-  return projectRefFromConfig();
+function normalizePassword(raw?: string): string {
+  if (!raw) return '';
+  return raw.trim().replace(/^["']|["']$/g, '');
+}
+
+function poolerHost(): string {
+  return (
+    process.env.SUPABASE_POOLER_HOST?.trim() ||
+    (process.env.SUPABASE_DB_REGION?.trim()
+      ? `aws-1-${process.env.SUPABASE_DB_REGION.trim()}.pooler.supabase.com`
+      : DEFAULT_POOLER_HOST)
+  );
 }
 
 export function resolveDatabaseUrls(): string[] {
   const direct = process.env.DATABASE_URL?.trim() || process.env.SUPABASE_DB_URL?.trim();
   if (direct) return [direct];
 
-  const password = process.env.SUPABASE_DB_PASSWORD?.trim();
-  const ref = resolveProjectRef();
+  const password = normalizePassword(process.env.SUPABASE_DB_PASSWORD);
+  const ref = projectRefFromConfig();
   if (!password) return [];
 
-  const urls: string[] = [];
-  const explicitHost = process.env.SUPABASE_POOLER_HOST?.trim();
-  if (explicitHost) {
-    urls.push(
-      `postgresql://postgres.${ref}:${encodeURIComponent(password)}@${explicitHost}:5432/postgres`
-    );
-  }
-
-  const regions = process.env.SUPABASE_DB_REGION?.trim()
-    ? [process.env.SUPABASE_DB_REGION.trim()]
-    : POOLER_REGIONS;
-
-  for (const prefix of ['aws-0', 'aws-1']) {
-    for (const region of regions) {
-      const host = `${prefix}-${region}.pooler.supabase.com`;
-      urls.push(
-        `postgresql://postgres.${ref}:${encodeURIComponent(password)}@${host}:5432/postgres`
-      );
-    }
-  }
-
-  return [...new Set(urls)];
+  const host = poolerHost();
+  return [
+    `postgresql://postgres.${ref}:${encodeURIComponent(password)}@${host}:5432/postgres`,
+    `postgresql://postgres.${ref}:${encodeURIComponent(password)}@${host}:6543/postgres`,
+  ];
 }
 
 export async function connectPostgres(): Promise<pg.Client> {
@@ -79,10 +55,15 @@ export async function connectPostgres(): Promise<pg.Client> {
   let lastError: Error | undefined;
 
   for (const connectionString of urls) {
+    const url = new URL(connectionString);
     const client = new pg.Client({
-      connectionString,
+      host: url.hostname,
+      port: Number(url.port || 5432),
+      user: decodeURIComponent(url.username),
+      password: decodeURIComponent(url.password),
+      database: url.pathname.replace(/^\//, '') || 'postgres',
       ssl: { rejectUnauthorized: false },
-      connectionTimeoutMillis: 12_000,
+      connectionTimeoutMillis: 15_000,
     });
 
     try {

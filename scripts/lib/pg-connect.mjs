@@ -1,6 +1,5 @@
 /**
- * Postgres connect for Supabase — uses IPv4 pooler (GitHub Actions compatible).
- * Direct db.*.supabase.co is IPv6-only and fails on GitHub runners.
+ * Postgres connect — Supabase pooler (IPv4) for GitHub Actions.
  */
 import dns from 'dns';
 import pg from 'pg';
@@ -8,8 +7,21 @@ import { resolveDatabaseUrls } from './database-url.mjs';
 
 dns.setDefaultResultOrder('ipv4first');
 
-export async function connectPostgres(options = {}) {
-  const urls = resolveDatabaseUrls(options);
+function clientFromUrl(connectionString) {
+  const url = new URL(connectionString);
+  return new pg.Client({
+    host: url.hostname,
+    port: Number(url.port || 5432),
+    user: decodeURIComponent(url.username),
+    password: decodeURIComponent(url.password),
+    database: url.pathname.replace(/^\//, '') || 'postgres',
+    ssl: { rejectUnauthorized: false },
+    connectionTimeoutMillis: 15_000,
+  });
+}
+
+export async function connectPostgres() {
+  const urls = resolveDatabaseUrls();
   if (!urls.length) {
     throw new Error('No database URLs configured');
   }
@@ -18,11 +30,7 @@ export async function connectPostgres(options = {}) {
 
   for (const connectionString of urls) {
     const safeHost = connectionString.replace(/:[^:@/]+@/, ':***@');
-    const client = new pg.Client({
-      connectionString,
-      ssl: { rejectUnauthorized: false },
-      connectionTimeoutMillis: 12_000,
-    });
+    const client = clientFromUrl(connectionString);
 
     try {
       await client.connect();
@@ -30,13 +38,7 @@ export async function connectPostgres(options = {}) {
       return client;
     } catch (err) {
       lastError = err;
-      const msg = err.message ?? String(err);
-      // Wrong region — try next pooler host
-      if (/ENOTFOUND|tenant\/user|does not exist|timeout/i.test(msg)) {
-        console.warn(`Skip ${safeHost}: ${msg}`);
-      } else {
-        console.warn(`Connection failed (${safeHost}): ${msg}`);
-      }
+      console.warn(`Connection failed (${safeHost}): ${err.message}`);
       try {
         await client.end();
       } catch {
@@ -45,5 +47,10 @@ export async function connectPostgres(options = {}) {
     }
   }
 
-  throw lastError ?? new Error('All database connection attempts failed');
+  const hint =
+    lastError?.message?.includes('password authentication failed')
+      ? '\n\nFIX: GitHub secret SUPABASE_DB_PASSWORD must be your DATABASE password (Supabase → Settings → Database → Reset database password). It is NOT the service role key.'
+      : '';
+
+  throw new Error((lastError?.message ?? 'All connection attempts failed') + hint);
 }
