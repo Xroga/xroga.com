@@ -19,6 +19,7 @@ APP="${FLY_APP:-xroga-api}"
 SUPABASE_URL="${1:-}"
 JWT_SECRET="${2:-}"
 SERVICE_ROLE_KEY="${3:-}"
+DB_PASSWORD="${4:-}"
 
 export FLYCTL_INSTALL="${FLYCTL_INSTALL:-$HOME/.fly}"
 export PATH="$FLYCTL_INSTALL/bin:$PATH"

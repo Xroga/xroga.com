@@ -5,6 +5,16 @@ on:
     branches: [main]
     paths:
       - 'supabase/migrations/**'
+      - 'scripts/apply-supabase-migrations.mjs'
+      - 'scripts/lib/database-url.mjs'
+      - '.github/workflows/supabase-migrate.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/**'
+      - 'scripts/apply-supabase-migrations.mjs'
+      - 'scripts/lib/database-url.mjs'
+      - '.github/workflows/supabase-migrate.yml'
   workflow_dispatch:
 
 concurrency:
@@ -14,18 +24,57 @@ concurrency:
 jobs:
   migrate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Only apply to production DB on main; PRs validate connectivity + pending list
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+
     steps:
       - uses: actions/checkout@v5
 
-      - uses: supabase/setup-cli@v1
+      - uses: actions/setup-node@v4
         with:
-          version: latest
+          node-version: '22'
+          cache: npm
 
-      - name: Link and push migrations
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate database credentials
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
-          supabase link --project-ref "$SUPABASE_PROJECT_ID" -p "$SUPABASE_DB_PASSWORD"
-          supabase db push
+          node --input-type=module -e "
+          import { resolveDatabaseUrl, missingDatabaseUrlHelp } from './scripts/lib/database-url.mjs';
+          if (!resolveDatabaseUrl()) {
+            console.error(missingDatabaseUrlHelp());
+            console.error('');
+            console.error('Add GitHub repository secrets:');
+            console.error('  SUPABASE_DB_PASSWORD  (Supabase → Settings → Database → password)');
+            console.error('  SUPABASE_URL          (https://YOUR_REF.supabase.co)  OR  SUPABASE_PROJECT_ID');
+            console.error('Optional: DATABASE_URL (full postgres URI — skips the above)');
+            process.exit(1);
+          }
+          console.log('Database URL resolved successfully.');
+          "
+
+      - name: Apply migrations (direct Postgres)
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: node scripts/apply-supabase-migrations.mjs
+
+      - name: Dry-run on pull request (list pending migrations)
+        if: github.event_name == 'pull_request'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          DRY_RUN: '1'
+        run: node scripts/apply-supabase-migrations.mjs --dry-run

@@ -79,33 +79,49 @@ fly tokens create deploy -a xroga-api
 Without this, GitHub deploys fail and Fly runs **old code** → "Authentication failed".
 
 ## Apply database migrations
-Option A (CLI):
+
+### GitHub Actions (auto on merge to `main`)
+
+Add these **GitHub repository secrets** (Settings → Secrets and variables → Actions):
+
+| Secret | Where to get it |
+|--------|-----------------|
+| `SUPABASE_DB_PASSWORD` | Supabase → Project Settings → **Database** → Database password |
+| `SUPABASE_URL` | `https://mweinwhoekwjrecsodip.supabase.co` (your project URL) |
+
+Optional: `DATABASE_URL` (full Postgres URI) instead of the two above.
+
+Optional: `SUPABASE_PROJECT_ID` = `mweinwhoekwjrecsodip` if you omit `SUPABASE_URL`.
+
+**Note:** `SUPABASE_SERVICE_ROLE_KEY` (Fly.io / Vercel) is **not** the database password and cannot run migrations.
+
+### Fly.io (auto-ensure on API startup)
+
+Set the database password on Fly so the API creates missing tables on boot:
+
+```bash
+fly secrets set -a xroga-api \
+  SUPABASE_DB_PASSWORD="your-database-password"
+```
+
+You already have `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` on Fly — add `SUPABASE_DB_PASSWORD` for persistent token tracking.
+
+### Manual options
+
+Option A (CLI — needs Supabase access token):
 ```bash
 supabase login
-supabase link --project-ref YOUR_REF
+supabase link --project-ref mweinwhoekwjrecsodip
 ./scripts/supabase-db-push.sh
 ```
 
-Option B (SQL Editor): paste contents of `supabase/migrations/*.sql` in order.
-
-Option C (GitHub integration only — required for Connect GitHub):
+Option B (direct script — same as GitHub Actions):
 ```bash
-DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db.YOUR_REF.supabase.co:5432/postgres" \
-  node scripts/apply-github-integration-migration.mjs
+SUPABASE_DB_PASSWORD="..." SUPABASE_URL="https://mweinwhoekwjrecsodip.supabase.co" \
+  node scripts/apply-supabase-migrations.mjs
 ```
 
-Then set the same URI on Fly so the API can auto-ensure tables on startup:
-```bash
-fly secrets set -a xroga-api \
-  DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db.YOUR_REF.supabase.co:5432/postgres"
-```
-
-Or set only the database password (auto-builds the connection URL):
-```bash
-fly secrets set -a xroga-api SUPABASE_DB_PASSWORD="your-db-password"
-```
-
-**No migration?** After deploy, GitHub tokens also save to a private Supabase Storage bucket (`xroga-github-tokens`) automatically when DB tables are missing.
+Option C (SQL Editor): paste contents of `supabase/migrations/*.sql` in order.
 
 ## Verify
 ```bash

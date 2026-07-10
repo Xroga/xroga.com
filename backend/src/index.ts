@@ -80,6 +80,7 @@ import { getVideoProviderStatus } from './lib/videoProviders.js';
 import { getCouncilKeyStatus, getDeployKeyStatus, getPhase1KeyStatus } from './config/envSecrets.js';
 import { getGitHubOAuthCallbackUrl } from './routes/github.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
+import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
 
 const healthPayload = () => {
   const image = getImageProviderStatus();
@@ -307,6 +308,9 @@ server.listen(port, '0.0.0.0', () => {
   }
   void ensureGithubSchema().catch((err) => {
     console.warn('[githubSchema] Startup ensure skipped:', (err as Error).message);
+  });
+  void ensurePhase1Schema().catch((err) => {
+    console.warn('[phase1Schema] Startup ensure skipped:', (err as Error).message);
   });
   if (process.env.RUN_SWARM_WORKER === 'true') {
     startSwarmWorker();
