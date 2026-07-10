@@ -1,37 +1,17 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, Infinity } from 'lucide-react';
+import { useState } from 'react';
+import { Infinity, ChevronDown, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { API_URL } from '@/lib/api';
-import { useMoodStore } from '@/store/useMoodStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
+import { useRef } from 'react';
 
-/** Text-only control outside chatbar: Black Hole V + ∞ */
+/** Black Hole V — Auto mode always ON (toggle disabled). Confirmations always auto. */
 export function BlackHoleVButton({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
-  const [apiVersion, setApiVersion] = useState<string | null>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
-  const autoEnabled = useMoodStore((s) => s.autoEnabled);
-  const setAutoEnabled = useMoodStore((s) => s.setAutoEnabled);
   const xrogaAutoMode = usePrivacyStore((s) => s.xrogaAutoMode);
-  const setXrogaAutoMode = usePrivacyStore((s) => s.setXrogaAutoMode);
-  const confirmationMode = usePrivacyStore((s) => s.confirmationMode);
-  const setConfirmationMode = usePrivacyStore((s) => s.setConfirmationMode);
-
-  const autoOn = xrogaAutoMode && autoEnabled;
-
-  useEffect(() => {
-    fetch(`${API_URL}/health`, { cache: 'no-store' })
-      .then((r) => r.json() as Promise<{ version?: string }>)
-      .then((data) => {
-        if (data.version) setApiVersion(data.version);
-      })
-      .catch(() => {
-        /* silent — popover still works */
-      });
-  }, []);
 
   return (
     <div className={cn('relative shrink-0', className)}>
@@ -40,39 +20,35 @@ export function BlackHoleVButton({ className }: { className?: string }) {
           <div className="flex items-center gap-2 mb-2">
             <span className="text-xs font-bold text-[var(--foreground)]">Black Hole V</span>
             <Infinity className="w-4 h-4 text-[#006aff]" strokeWidth={2.5} />
-            <span className={cn('ml-auto text-[9px] font-bold px-2 py-0.5 rounded-full', autoOn ? 'bg-[#006aff] text-white' : 'bg-white/10 text-[var(--muted)]')}>
-              {autoOn ? 'ON' : 'OFF'}
+            <span className="ml-auto text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#006aff] text-white">
+              ON
             </span>
           </div>
           <p className="text-[10px] text-[var(--muted)] leading-relaxed mb-2.5">
             Our first and last model — every update ships in this one model. All Xroga AI capabilities, balanced for complex tasks.
           </p>
-          {apiVersion && (
-            <p className="text-[9px] font-mono text-[#006aff]/90 mb-2.5">
-              XROGA AI · v{apiVersion}
-            </p>
-          )}
-          <div className="flex items-center justify-between gap-2 py-1.5">
+          <div className="flex items-center justify-between gap-2 py-1.5 opacity-80">
             <span className="text-[10px] font-semibold">Auto mode</span>
-            <button
-              type="button"
-              onClick={() => {
-                const next = !xrogaAutoMode;
-                setXrogaAutoMode(next);
-                setAutoEnabled(next);
-              }}
-              className={cn('w-9 h-5 rounded-full relative transition-colors', xrogaAutoMode ? 'bg-[#006aff]' : 'bg-white/20')}
+            <div
+              className="w-9 h-5 rounded-full relative bg-[#006aff] cursor-not-allowed"
+              title="Auto mode is always enabled"
             >
-              <span className={cn('absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all', xrogaAutoMode ? 'left-4' : 'left-0.5')} />
-            </button>
-          </div>
-          <div className="flex items-center justify-between gap-2 py-1.5">
-            <span className="text-[10px] font-semibold">Confirmations</span>
-            <div className="flex text-[9px] font-bold overflow-hidden rounded-lg border border-[var(--card-border)]">
-              <button type="button" onClick={() => setConfirmationMode('manual')} className={cn('px-2 py-1', confirmationMode === 'manual' ? 'bg-[#006aff] text-white' : 'text-[var(--muted)]')}>Manual</button>
-              <button type="button" onClick={() => setConfirmationMode('auto')} className={cn('px-2 py-1', confirmationMode === 'auto' ? 'bg-[#006aff] text-white' : 'text-[var(--muted)]')}>Auto</button>
+              <span className="absolute top-0.5 left-4 w-4 h-4 rounded-full bg-white" />
+              <Lock className="absolute -right-4 top-0.5 w-3 h-3 text-[var(--muted)]" />
             </div>
           </div>
+          <p className="text-[9px] text-[var(--muted)] mb-2">
+            Auto mode runs continuously — confirmations auto-approve so work completes while you sleep.
+          </p>
+          <div className="flex items-center justify-between gap-2 py-1.5">
+            <span className="text-[10px] font-semibold">Confirmations</span>
+            <div className="flex text-[9px] font-bold overflow-hidden rounded-lg border border-[var(--card-border)] opacity-90">
+              <span className="px-2 py-1 bg-[#006aff] text-white">Auto</span>
+            </div>
+          </div>
+          {!xrogaAutoMode && (
+            <p className="text-[9px] text-amber-400 mt-2">Auto mode will re-enable on next session.</p>
+          )}
         </div>
       </ChatBarPortalPopover>
 
@@ -84,6 +60,7 @@ export function BlackHoleVButton({ className }: { className?: string }) {
       >
         <span>Black Hole V</span>
         <Infinity className="w-3.5 h-3.5 shrink-0 text-[#006aff]" strokeWidth={2.5} />
+        <span className="text-[8px] font-bold text-[#006aff] ml-0.5">ON</span>
         <ChevronDown className={cn('w-3 h-3 opacity-45 transition-transform', open && 'rotate-180')} />
       </button>
     </div>

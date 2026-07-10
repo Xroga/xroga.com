@@ -21,8 +21,9 @@ import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 
 import { PrivacySettingsPanel } from '@/components/settings/PrivacySettingsPanel';
 import { DataAiSettingsPanel } from '@/components/settings/DataAiSettingsPanel';
+import { PlanUsageSettingsPanel } from '@/components/settings/PlanUsageSettingsPanel';
 
-const TABS = ['General', 'Privacy', 'Data & AI', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
+const TABS = ['General', 'Privacy', 'Data & AI', 'Plan & Usage', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
 type Tab = (typeof TABS)[number];
 
 export function SettingsView({ email }: { email: string }) {
@@ -194,6 +195,8 @@ export function SettingsView({ email }: { email: string }) {
           {tab === 'Privacy' && <PrivacySettingsPanel />}
 
           {tab === 'Data & AI' && <DataAiSettingsPanel email={email} />}
+
+          {tab === 'Plan & Usage' && <PlanUsageSettingsPanel />}
 
           {tab === 'Integrations' && <IntegrationsPanel />}
 

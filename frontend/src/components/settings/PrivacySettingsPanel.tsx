@@ -32,9 +32,6 @@ export function PrivacySettingsPanel() {
   const setRememberIp = usePrivacyStore((s) => s.setRememberIp);
   const crossProjectAccess = usePrivacyStore((s) => s.crossProjectAccess);
   const setCrossProjectAccess = usePrivacyStore((s) => s.setCrossProjectAccess);
-  const xrogaAutoMode = usePrivacyStore((s) => s.xrogaAutoMode);
-  const setXrogaAutoMode = usePrivacyStore((s) => s.setXrogaAutoMode);
-
   return (
     <div className="space-y-5">
       <h2 className="font-semibold text-lg">Privacy & AI behavior</h2>
@@ -66,12 +63,17 @@ export function PrivacySettingsPanel() {
           on={crossProjectAccess}
           onChange={setCrossProjectAccess}
         />
-        <ToggleRow
-          label="Xroga Auto mode"
-          desc="Let Black Hole V∞ orchestrate all capabilities automatically for your tasks."
-          on={xrogaAutoMode}
-          onChange={setXrogaAutoMode}
-        />
+        <div className="flex items-start justify-between gap-4 py-3 border-b border-[var(--card-border)]/40">
+          <div className="min-w-0">
+            <p className="text-sm font-medium">Xroga Auto mode</p>
+            <p className="text-xs text-[var(--muted)] mt-0.5 leading-relaxed">
+              Always enabled — Black Hole V∞ orchestrates all capabilities. Confirmations auto-approve.
+            </p>
+          </div>
+          <div className="w-10 h-5 rounded-full shrink-0 relative bg-[#006aff] opacity-80 cursor-not-allowed mt-0.5">
+            <span className="absolute top-0.5 left-5 w-4 h-4 rounded-full bg-white" />
+          </div>
+        </div>
       </div>
     </div>
   );

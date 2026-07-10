@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { api } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
+import { usePrivacyStore } from '@/store/usePrivacyStore';
 
 const FETCH_TIMEOUT_MS = 8000;
 const DEFAULT_TOKEN_LIMIT = 7_000_000;
@@ -22,6 +23,11 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   const setUnreadCount = useAppStore((s) => s.setUnreadCount);
   const setNotifications = useAppStore((s) => s.setNotifications);
   const setProfile = useAppStore((s) => s.setProfile);
+
+  useEffect(() => {
+    usePrivacyStore.getState().setXrogaAutoMode(true);
+    usePrivacyStore.getState().setConfirmationMode('auto');
+  }, []);
 
   useEffect(() => {
     async function load() {
