@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, FolderOpen, MessageSquare, CreditCard, Settings } from 'lucide-react';
+import { Home, FolderOpen, MessageSquare, Gift, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const items = [
-  { href: '/dashboard', label: 'Home', icon: Home },
+  { href: '/dashboard/home', label: 'Dashboard', icon: Home },
   { href: '/dashboard/projects', label: 'Projects', icon: FolderOpen },
   { href: '/dashboard/chats', label: 'Chats', icon: MessageSquare },
-  { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
+  { href: '/dashboard/tasks', label: 'Earn', icon: Gift },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 

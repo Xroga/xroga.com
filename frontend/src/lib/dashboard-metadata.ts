@@ -19,9 +19,21 @@ export function dashboardPageMetadata(
 
 export const PAGE_SEO = {
   dashboard: dashboardPageMetadata(
-    'Dashboard',
-    'Xroga AI Dashboard — terminal, AI Swarm, browser automation, and Black Hole V∞ in one workspace.',
+    'Workspace',
+    'Xroga AI Workspace — terminal, AI Swarm, browser automation, and Black Hole V∞.',
     '/dashboard'
+  ),
+  dashboardHome: dashboardPageMetadata(
+    'Dashboard',
+    'Token usage, XRG balance, billing, and recent activity for your Xroga AI account.',
+    '/dashboard/home',
+    ['Xroga tokens', 'XRG balance', 'usage dashboard']
+  ),
+  tasks: dashboardPageMetadata(
+    'Earn XRG',
+    'Complete daily, weekly, and monthly tasks to earn XRG tokens and boost your monthly quota.',
+    '/dashboard/tasks',
+    ['Xroga tasks', 'earn tokens', 'XRG rewards']
   ),
   projects: dashboardPageMetadata(
     'My Projects',

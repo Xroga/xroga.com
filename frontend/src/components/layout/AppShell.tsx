@@ -57,7 +57,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                   incognito && isDashboard ? 'pl-0 lg:pl-0' : 'pl-11 sm:pl-12 lg:pl-0'
                 )}
               >
-                <Logo href="/dashboard" height={52} variant="header" className="!h-[52px] sm:!h-[68px] lg:!h-[72px]" />
+                <Logo href="/dashboard/home" height={52} variant="header" className="!h-[52px] sm:!h-[68px] lg:!h-[72px]" />
               </div>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0 relative z-[250]">

@@ -9,7 +9,6 @@ import {
   FolderOpen,
   MessageSquare,
   Link2,
-  CreditCard,
   Settings,
   Menu,
   PanelLeftClose,
@@ -21,6 +20,8 @@ import {
   Workflow,
   Lock,
   MessageCirclePlus,
+  Terminal,
+  Gift,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniActionMeter } from './MiniActionMeter';
@@ -43,16 +44,27 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
-import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { GALACTIC_PLANS } from '@/lib/plans';
 import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
 
 const navItems = [
   {
-    href: '/dashboard',
+    href: '/dashboard/home',
     label: 'Dashboard',
     icon: LayoutDashboard,
+    tip: 'Token usage, XRG balance, billing, and recent activity.',
+  },
+  {
+    href: '/dashboard',
+    label: 'Workspace',
+    icon: Terminal,
     tip: 'Main workspace — terminal, browser split view, and AI swarm.',
+  },
+  {
+    href: '/dashboard/tasks',
+    label: 'Earn XRG',
+    icon: Gift,
+    tip: 'Complete daily, weekly, and monthly tasks to earn XRG and token boosts.',
   },
   {
     href: '/dashboard/projects',
@@ -83,12 +95,6 @@ const navItems = [
     label: 'Integrations',
     icon: Link2,
     tip: 'Connect GitHub, Slack, databases, and 710+ tools.',
-  },
-  {
-    href: '/dashboard/billing',
-    label: 'Billing',
-    icon: CreditCard,
-    tip: 'Plans, invoices, action spend, and top-ups.',
   },
   {
     href: '/settings',
@@ -200,8 +206,10 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     );
   }
 
-  const isActive = (href: string) =>
-    pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
+  const isActive = (href: string) => {
+    if (href === '/dashboard') return pathname === '/dashboard';
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
 
   function handleNavClick() {
     closeMobile();
@@ -308,7 +316,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     <>
       <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px] shrink-0">
         <HoverTip label="Xroga AI" description="Dashboard home" block className="shrink min-w-0">
-          <Logo href="/dashboard" height={navExpanded ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
+          <Logo href="/dashboard/home" height={navExpanded ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
         </HoverTip>
         {navExpanded ? (
           <button
@@ -391,11 +399,6 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
                 </Link>
               </SidebarTip>
             ))}
-            {!incognito && (
-              <div className={cn(navExpanded ? 'px-1 pt-1' : 'flex justify-center pt-1')}>
-                <NotificationBell variant={navExpanded ? 'sidebar' : 'header'} />
-              </div>
-            )}
           </div>
         ) : (
           <div className="xv-sidebar-collapsed-nav space-y-1">
@@ -410,11 +413,6 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
                 </Link>
               </SidebarTip>
             ))}
-            {!incognito && (
-              <div className="flex justify-center pt-1">
-                <NotificationBell variant="header" />
-              </div>
-            )}
           </div>
         )}
       </nav>
