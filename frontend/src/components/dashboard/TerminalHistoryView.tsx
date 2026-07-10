@@ -15,7 +15,6 @@ import { formatDistanceToNow } from 'date-fns';
 import {
   loadTerminalHistory,
   removeTerminalHistoryEntry,
-  saveTerminalHistorySession,
   type TerminalHistoryEntry,
 } from '@/lib/terminalHistory';
 import { loadChatArchive, type ChatArchiveEntry } from '@/lib/chatArchive';
