@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       - name: Build API image (same as Fly deploy)
         run: docker build -f Dockerfile.api -t xroga-api:ci .

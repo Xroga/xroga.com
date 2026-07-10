@@ -19,7 +19,9 @@ import billingRouter from './routes/billing.js';
 import billingWebhookRouter from './routes/billingWebhook.js';
 import simpleChatRouter from './routes/simpleChat.js';
 import v1Router from './routes/v1.js';
+import phase1Router from './routes/phase1.js';
 import adminRouter from './routes/admin.js';
+import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
 import videoRouter from './routes/video.js';
 import { adminMiddleware } from './middleware/admin.js';
@@ -75,7 +77,7 @@ app.use(express.json({ limit: '10mb' }));
 
 import { getImageProviderStatus } from './services/builder/imageGen.js';
 import { getVideoProviderStatus } from './lib/videoProviders.js';
-import { getCouncilKeyStatus, getDeployKeyStatus } from './config/envSecrets.js';
+import { getCouncilKeyStatus, getDeployKeyStatus, getPhase1KeyStatus } from './config/envSecrets.js';
 import { getGitHubOAuthCallbackUrl } from './routes/github.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
 
@@ -88,6 +90,7 @@ const healthPayload = () => {
     version: '1.7.1',
     councilStack: 'groq-gemini-deepseek-mistral',
     councilKeys: getCouncilKeyStatus(),
+    phase1Keys: getPhase1KeyStatus(),
     deployKeys: getDeployKeyStatus(),
     promptsSealed: true,
     timestamp: new Date().toISOString(),
@@ -114,7 +117,7 @@ app.get('/', (_req, res) => {
   res.json({
     ...healthPayload(),
     message: 'Xroga API is running',
-    docs: { health: '/health', chat: 'POST /chat', api: '/api' },
+    docs: { health: '/health', phase1: '/api/phase1/health', chat: 'POST /api/phase1/chat' },
   });
 });
 
@@ -252,6 +255,7 @@ app.use('/chat', simpleChatRouter);
 app.use('/api/actions', authMiddleware, actionsRouter);
 app.use('/api/swarm', authMiddleware, swarmRouter);
 app.use('/api/v1', authMiddleware, v1Router);
+app.use('/api/phase1', phase1AuthMiddleware, phase1Router);
 app.use('/api/admin', authMiddleware, adminMiddleware, adminRouter);
 app.use('/api/chat', authMiddleware, chatRouter);
 app.use('/api/projects', authMiddleware, projectsRouter);
