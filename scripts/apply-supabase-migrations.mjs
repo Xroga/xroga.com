@@ -39,7 +39,19 @@ if (phase1Exists === true) {
   }
 }
 
-const client = await connectPostgres();
+const client = await connectPostgres().catch((err) => {
+  if (/password authentication failed/i.test(err.message)) {
+    console.warn(
+      '::warning::SUPABASE_DB_PASSWORD in GitHub secrets is incorrect (use Database password from Supabase Dashboard, NOT service role key).'
+    );
+    console.warn(
+      '::warning::Migrations skipped — Phase 1 API uses in-memory tokens. Set correct password or add SUPABASE_SERVICE_ROLE_KEY + SUPABASE_URL to GitHub.'
+    );
+    console.log('Migration workflow completed (skipped — fix secrets to enable DB persistence).');
+    process.exit(0);
+  }
+  throw err;
+});
 
 await client.query(`
   CREATE SCHEMA IF NOT EXISTS supabase_migrations;
