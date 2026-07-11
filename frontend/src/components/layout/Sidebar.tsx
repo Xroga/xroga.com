@@ -257,25 +257,26 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
       )}
       <SidebarCommunityButton expanded={navExpanded} />
       {navExpanded && (
-        <UpgradeProButton onClick={() => router.push('/pricing')} />
+        <div className="flex items-stretch gap-1.5">
+          <div className="flex-1 min-w-0">
+            <UpgradeProButton onClick={() => router.push('/pricing')} />
+          </div>
+          <DownloadAppButton variant="icon" className="self-center" />
+        </div>
       )}
       {!navExpanded && !isMobile && (
-        <HoverTip label="Upgrade Plan" description="View plans and upgrade your subscription.">
-          <Link
-            href="/pricing"
-            onClick={() => setMobileOpen(false)}
-            className="flex items-center justify-center p-2 mx-auto w-10 h-10 rounded-lg bg-[var(--foreground)] text-[var(--background)]"
-          >
-            <Zap className="w-4 h-4" />
-          </Link>
-        </HoverTip>
-      )}
-      {navExpanded ? (
-        <DownloadAppButton variant="sidebar" />
-      ) : (
-        <div className="flex justify-center">
-          <HoverTip label="Download app" description="Mobile app — launch soon">
-            <DownloadAppButton variant="header" className="!w-10 !h-10 !p-2 !justify-center" />
+        <div className="flex flex-col items-center gap-1">
+          <HoverTip label="Upgrade Plan" description="View plans and upgrade your subscription.">
+            <Link
+              href="/pricing"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center justify-center p-2 mx-auto w-10 h-10 rounded-lg bg-[var(--foreground)] text-[var(--background)]"
+            >
+              <Zap className="w-4 h-4" />
+            </Link>
+          </HoverTip>
+          <HoverTip label="Download app" description="Launch soon">
+            <DownloadAppButton variant="icon" />
           </HoverTip>
         </div>
       )}

@@ -6,12 +6,22 @@ import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageTagMarquee } from '@/components/homepage/HomepageTagMarquee';
-import { DownloadAppButton } from '@/components/ui/DownloadAppButton';
-import { PowerSmashButton, HomeSignInButton } from '@/components/ui/XrogaButtons';
+import { PowerSmashButton } from '@/components/ui/XrogaButtons';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { createClient } from '@/lib/supabase/client';
+
+const FOOTER_LINKS = [
+  { href: '/features', label: 'Features' },
+  { href: '/auth/signup', label: 'Sign Up' },
+  { href: '/about', label: 'About Xroga' },
+  { href: '/docs/api', label: 'API' },
+  { href: '/pricing', label: 'Pricing' },
+  { href: '/privacy', label: 'Privacy' },
+  { href: '/terms', label: 'Terms' },
+  { href: '/refund', label: 'Refund' },
+];
 
 export default function HomePage() {
   const router = useRouter();
@@ -49,26 +59,16 @@ export default function HomePage() {
       <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/50 via-black/20 to-black/55" aria-hidden />
 
       <header className="xv-home-header xv-site-header sticky top-0 z-50 bg-transparent border-none shadow-none">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <Logo href="/" variant="homepage" height={76} className="shrink-0 justify-self-start" />
-          <div className="justify-self-center flex items-center gap-2">
-            <DownloadAppButton variant="header" className="hidden sm:inline-flex" />
-          </div>
-          <div className="flex items-center justify-end gap-3 justify-self-end">
-            {loggedIn && (
-              <PowerSmashButton size="md" onClick={() => router.push('/dashboard')}>
-                Dashboard
-              </PowerSmashButton>
-            )}
-          </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-center">
+          <Logo href="/" variant="homepage" height={76} className="shrink-0" />
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-14 relative">
-        <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[80%] max-w-lg h-40 bg-[#006aff]/15 rounded-full blur-[120px] pointer-events-none" />
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-6 sm:py-10 relative">
+        <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[80%] max-w-lg h-40 bg-[#006aff]/15 rounded-full blur-[120px] pointer-events-none xv-ai-glow-pulse" />
 
         <div className="relative z-10 w-full max-w-5xl text-center">
-          <h1 className="xv-hero-modern-title mb-6">
+          <h1 className="xv-hero-modern-title mb-5">
             <span className="xv-hero-modern-line block">
               <span className="xv-hero-silver">Do </span>
               <span className="xv-hero-silver-italic">Everything</span>
@@ -80,24 +80,18 @@ export default function HomePage() {
           </h1>
 
           {!loggedIn && (
-            <div className="xv-home-auth-row flex items-stretch justify-center gap-3 sm:gap-4 mb-8">
+            <div className="flex justify-center mb-5">
               <PowerSmashButton
                 size="sm"
                 onClick={() => router.push('/auth/signup')}
-                className="xv-get-started-outline xv-home-auth-btn !min-w-[148px] !min-h-[48px]"
+                className="xv-get-started-outline xv-home-auth-btn !min-w-[160px] !min-h-[48px]"
               >
                 Get Started
               </PowerSmashButton>
-              <HomeSignInButton
-                onClick={() => router.push('/auth/login')}
-                className="xv-home-auth-btn !min-w-[148px] !min-h-[48px]"
-              >
-                Sign In
-              </HomeSignInButton>
             </div>
           )}
 
-          <div className="w-full mb-6 xv-chatbar-stack relative">
+          <div className="w-full mb-4 xv-chatbar-stack relative xv-home-chatbar-wrap">
             <HomepageChatBar />
           </div>
 
@@ -105,17 +99,25 @@ export default function HomePage() {
         </div>
       </main>
 
-      <footer className="relative z-10 py-4 px-4 xv-home-footer-scroll">
-        <div className="flex items-center justify-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide max-w-4xl mx-auto pb-1">
-          <Link href="/features" className="xv-footer-pill shrink-0">Features</Link>
-          <Link href="/auth/signup" className="xv-footer-pill shrink-0">Sign Up</Link>
-          <Link href="/auth/login" className="xv-footer-pill shrink-0">Sign In</Link>
-          <Link href="/about" className="xv-footer-pill shrink-0">About Xroga</Link>
-          <Link href="/docs/api" className="xv-footer-pill shrink-0">API</Link>
-          <Link href="/pricing" className="xv-footer-pill shrink-0">Pricing</Link>
-          <Link href="/privacy" className="xv-footer-pill shrink-0">Privacy Policy</Link>
-          <Link href="/terms" className="xv-footer-pill shrink-0">Terms of Service</Link>
-          <Link href="/refund" className="xv-footer-pill shrink-0">Refund Policy</Link>
+      <footer className="relative z-10 py-6 px-4 xv-home-footer-modern">
+        <div className="max-w-3xl mx-auto">
+          <div className="xv-home-footer-glass rounded-2xl px-4 py-4 sm:px-6 sm:py-5">
+            <nav className="flex flex-wrap items-center justify-center gap-x-1 gap-y-2">
+              {FOOTER_LINKS.map(({ href, label }, i) => (
+                <span key={href} className="inline-flex items-center">
+                  <Link href={href} className="xv-home-footer-link">
+                    {label}
+                  </Link>
+                  {i < FOOTER_LINKS.length - 1 && (
+                    <span className="text-white/20 mx-2 hidden sm:inline select-none">·</span>
+                  )}
+                </span>
+              ))}
+            </nav>
+            <p className="text-[10px] text-center text-white/35 mt-3 font-medium tracking-wide">
+              XROGA AI · Black Hole V∞ · Ship something legendary
+            </p>
+          </div>
         </div>
       </footer>
     </div>

@@ -3217,6 +3217,66 @@ body.theme-gray * {
     border-color: var(--accent);
     background: rgba(74, 122, 255, 0.08);
   }
+  .xv-fullscreen-pill--fixed {
+    position: fixed;
+    top: max(0.65rem, env(safe-area-inset-top));
+    right: max(0.75rem, env(safe-area-inset-right));
+    z-index: 240;
+    padding: 0.35rem 0.65rem !important;
+    font-size: 10px !important;
+    backdrop-filter: blur(12px);
+    background: rgba(15, 23, 42, 0.85);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  .xv-ai-live-ring {
+    background: radial-gradient(circle, rgba(74, 122, 255, 0.35) 0%, transparent 70%);
+    animation: xv-ai-pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes xv-ai-pulse {
+    0%, 100% { transform: scale(0.85); opacity: 0.4; }
+    50% { transform: scale(1.15); opacity: 0.75; }
+  }
+  .xv-ai-glow-pulse {
+    animation: xv-glow-breathe 4s ease-in-out infinite;
+  }
+  @keyframes xv-glow-breathe {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, 0) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, 0) scale(1.08); }
+  }
+  .xv-typewriter-cursor::after {
+    content: '|';
+    animation: xv-blink 1s step-end infinite;
+    margin-left: 1px;
+    opacity: 0.7;
+  }
+  @keyframes xv-blink {
+    50% { opacity: 0; }
+  }
+  .xv-home-footer-modern {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  .xv-home-footer-glass {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+  .xv-home-footer-link {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.65);
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .xv-home-footer-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .xv-home-chatbar-wrap {
+    margin-bottom: 0.75rem !important;
+  }
 
   /* Browser theme sync */
   .xv-browser--light .xv-browser-chrome { background: #f1f5f9; color: #0f172a; border-color: #e2e8f0; }
@@ -3344,7 +3404,7 @@ body.theme-gray * {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s, transform 0.2s;
-    z-index: 50;
+    z-index: 280;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.12);
   }

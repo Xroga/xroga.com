@@ -36,8 +36,9 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
   if (hidden) return null;
 
   return (
-    <div className={cn('xv-dashboard-welcome space-y-2.5 mb-2', className)}>
-      <div className="flex flex-wrap items-center gap-2">
+    <div className={cn('xv-dashboard-welcome space-y-2.5 mb-2 relative', className)}>
+      <div className="xv-ai-live-ring pointer-events-none absolute -left-2 top-0 w-12 h-12 rounded-full opacity-60" aria-hidden />
+      <div className="flex flex-wrap items-center gap-2 relative">
         <Sparkles className="w-4 h-4 text-[var(--accent)] shrink-0" />
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
