@@ -3,7 +3,7 @@ import { Rocket, ArrowRight } from 'lucide-react';
 import { GALACTIC_PLANS } from '@/lib/plans';
 import { FEATURE_COUNT } from '@/lib/features';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
-import { PopularPlanCard, GalacticPlanCard } from '@/components/ui/Uiverse';
+import { GalacticPlanPricingCard, PricingPlanGrid } from '@/components/billing/XrogaPricingCard';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 
 export default function UpgradePage() {
@@ -12,41 +12,29 @@ export default function UpgradePage() {
       <div className="max-w-5xl mx-auto space-y-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-            <Rocket className="w-7 h-7 text-[var(--accent)]" />
+            <Rocket className="w-7 h-7 text-[#2dd4bf]" />
             Upgrade Your Plan
           </h1>
           <p className="text-sm text-[var(--muted)] mt-1">
-            All {FEATURE_COUNT} features unlocked on every plan. Top up actions — pay only for fuel.
+            All {FEATURE_COUNT} features unlocked on every plan. Upgrade for more tokens and concurrency.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {GALACTIC_PLANS.map((plan) => {
-            const cta = <CheckoutButton planTier={plan.tier} label="BUY NOW" />;
-            if (plan.highlight) {
-              return (
-                <PopularPlanCard
-                  key={plan.tier}
-                  name={plan.name}
-                  price={plan.priceLabel}
-                  actions={plan.actionsLabel}
-                  description={plan.tagline}
-                  cta={cta}
+        <PricingPlanGrid>
+          {GALACTIC_PLANS.map((plan) => (
+            <GalacticPlanPricingCard
+              key={plan.tier}
+              plan={plan}
+              cta={
+                <CheckoutButton
+                  planTier={plan.tier}
+                  label={`Get ${plan.name} →`}
+                  className="!w-full xv-pricing-cta xv-pricing-cta--outline !rounded-full"
                 />
-              );
-            }
-            return (
-              <GalacticPlanCard
-                key={plan.tier}
-                name={plan.name}
-                price={plan.priceLabel}
-                actions={plan.actionsLabel}
-                features={[`${plan.concurrency} concurrent tasks`]}
-                cta={cta}
-              />
-            );
-          })}
-        </div>
+              }
+            />
+          ))}
+        </PricingPlanGrid>
 
         <div className="flex flex-wrap gap-3">
           <Link href="/dashboard" className="xv-footer-pill !text-sm flex items-center gap-2 !text-[var(--foreground)]">

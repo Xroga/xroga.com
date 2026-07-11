@@ -104,4 +104,9 @@ export const COMING_SOON_PLANS = [
 
 export const FREE_TRIAL_ACTIONS = 50;
 
+/** Feature bullets for pricing cards — tokens only, no legacy "Actions" wording */
+export function getPlanFeatures(plan: GalacticPlan, featureCount: number): string[] {
+  return [`${plan.concurrency} concurrent tasks`, `All ${featureCount} features unlocked`];
+}
+
 export { LOGO_URL, DESKTOP_BG, MOBILE_BG } from '@/lib/theme';

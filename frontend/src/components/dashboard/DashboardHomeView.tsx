@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { api, type DashboardSummary } from '@/lib/api';
 import { GALACTIC_PLANS } from '@/lib/plans';
+import { GalacticPlanPricingCard, PricingPlanGrid } from '@/components/billing/XrogaPricingCard';
 import { formatSafeDate, formatSafeDistance, safeDate } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -324,44 +325,32 @@ export function DashboardHomeView() {
       <section className="glass-panel rounded-xl overflow-hidden">
         <div className="px-4 py-3 border-b border-[var(--card-border)] flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-[var(--accent)]" />
+            <CreditCard className="w-4 h-4 text-[#2dd4bf]" />
             <h2 className="font-semibold text-sm">Pricing Plans</h2>
           </div>
-          <Link href="/pricing" className="text-xs text-[var(--accent)] hover:underline">
+          <Link href="/pricing" className="text-xs text-[#2dd4bf] hover:underline">
             View all
           </Link>
         </div>
-        <div className="p-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {GALACTIC_PLANS.map((plan) => (
-            <div
-              key={plan.tier}
-              className={cn(
-                'rounded-xl border p-4 transition-colors hover:border-[var(--accent)]/40',
-                plan.highlight ? 'border-[var(--accent)]/35 bg-[var(--accent)]/5' : 'border-[var(--card-border)] bg-white/[0.02]'
-              )}
-            >
-              {plan.highlight && (
-                <span className="text-[9px] font-bold uppercase text-[var(--accent)]">Most popular</span>
-              )}
-              <p className="font-bold text-sm mt-0.5">{plan.name}</p>
-              <p className="text-lg font-bold mt-1">
-                {plan.priceLabel}
-                <span className="text-[10px] font-normal text-[var(--muted)]">/mo</span>
-              </p>
-              <div className="mt-2 space-y-1">
-                <p className="text-[10px] text-[var(--accent)] font-semibold">{plan.aiTokensLabel}</p>
-                <p className="text-[10px] text-emerald-400 font-semibold">{plan.xrgLabel}</p>
-                <p className="text-[10px] text-[var(--muted)]">{plan.tagline}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => router.push('/pricing')}
-                className="mt-3 w-full py-1.5 rounded-lg text-[10px] font-bold bg-[var(--accent)]/15 text-[var(--accent)] hover:bg-[var(--accent)]/25"
-              >
-                Upgrade
-              </button>
-            </div>
-          ))}
+        <div className="p-4">
+          <PricingPlanGrid>
+            {GALACTIC_PLANS.map((plan) => (
+              <GalacticPlanPricingCard
+                key={plan.tier}
+                plan={plan}
+                compact
+                cta={
+                  <button
+                    type="button"
+                    onClick={() => router.push('/pricing')}
+                    className="xv-pricing-cta xv-pricing-cta--outline"
+                  >
+                    Get {plan.name} →
+                  </button>
+                }
+              />
+            ))}
+          </PricingPlanGrid>
         </div>
       </section>
     </div>

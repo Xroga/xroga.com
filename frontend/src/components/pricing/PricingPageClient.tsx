@@ -7,9 +7,14 @@ import { Logo } from '@/components/layout/Logo';
 import { GALACTIC_PLANS, COMING_SOON_PLANS } from '@/lib/plans';
 import { XROGA_FEATURES, FEATURE_COUNT } from '@/lib/features';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
+import {
+  GalacticPlanPricingCard,
+  PricingPlanGrid,
+  XrogaPricingCard,
+} from '@/components/billing/XrogaPricingCard';
 import { useAppStore } from '@/store/useAppStore';
 import { Zap, Shield, Layers, Sparkles, ChevronDown, ChevronUp, Fuel, Lock, ArrowRight } from 'lucide-react';
-import { GalacticPlanCard, PopularPlanCard, GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
+import { GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
 import { PowerSmashButton } from '@/components/ui/XrogaButtons';
 import { CurrencyToggle } from '@/hooks/usePlanPrice';
 
@@ -39,7 +44,7 @@ function FeaturesExpand() {
       <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs text-[var(--muted)]">
         {shown.map((f) => (
           <li key={f} className="flex items-start gap-2">
-            <span className="text-[var(--accent)] shrink-0">✓</span>
+            <span className="text-[#2dd4bf] shrink-0">✓</span>
             {f}
           </li>
         ))}
@@ -107,7 +112,7 @@ export function PricingPageClient() {
 
       <main className="max-w-6xl mx-auto px-6 py-16">
         <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-[var(--accent)] mb-6 font-terminal">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-[#2dd4bf] mb-6 font-terminal">
             <Sparkles className="w-3 h-3" />
             ALL {FEATURE_COUNT} FEATURES UNLOCKED ON EVERY PLAN
           </div>
@@ -130,25 +135,25 @@ export function PricingPageClient() {
             { icon: Zap, title: '7M+ tokens/month', desc: 'Upgrade for higher concurrency. Pulse is our most popular plan for daily builders.' },
           ].map(({ icon: Icon, title, desc }) => (
             <div key={title} className="glass-panel rounded-xl p-4 border border-[var(--card-border)]">
-              <Icon className="w-5 h-5 text-[var(--accent)] mb-2" />
+              <Icon className="w-5 h-5 text-[#2dd4bf] mb-2" />
               <p className="text-sm font-semibold mb-1">{title}</p>
               <p className="text-xs text-[var(--muted)] leading-relaxed">{desc}</p>
             </div>
           ))}
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-16">
-          <GalacticPlanCard
+        <PricingPlanGrid className="mb-16">
+          <XrogaPricingCard
             name="Free Trial"
             price="$0"
-            actions="7M tokens/mo"
+            subtitle="7M tokens/mo"
             features={['1 concurrent task', 'Full Xroga AI access']}
             cta={
               loggedIn ? (
-                <div className="xv-plan-btn opacity-80 cursor-default text-center">
-                  Plan: {planTier ?? 'unpaid'}
+                <div className="xv-pricing-cta xv-pricing-cta--solid text-center cursor-default">
+                  <span className="capitalize">Plan: {planTier ?? 'trial'}</span>
                   {tokenUsage && (
-                    <span className="block text-[10px] text-[var(--muted)] mt-1">
+                    <span className="block text-[10px] font-normal opacity-85 mt-0.5">
                       {(tokenUsage.totalTokensRemaining / 1_000_000).toFixed(1)}M tokens left
                     </span>
                   )}
@@ -164,37 +169,20 @@ export function PricingPageClient() {
           {GALACTIC_PLANS.map((plan) => {
             const isCurrent = loggedIn && planTier === plan.tier;
             const cta = isCurrent ? (
-              <div className="text-center py-2 text-sm font-semibold text-cyan-300">Current Plan</div>
+              <div className="text-center py-2 text-sm font-semibold text-[#2dd4bf]">Current Plan</div>
             ) : (
-              <CheckoutButton planTier={plan.tier} label={`Get ${plan.name}`} />
-            );
-
-            if (plan.highlight) {
-              return (
-                <PopularPlanCard
-                  key={plan.tier}
-                  name={plan.name}
-                  price={plan.priceLabel}
-                  actions={`${plan.aiTokensLabel} · ${plan.xrgLabel}`}
-                  description={plan.tagline ?? 'Best for growing startups'}
-                  cta={cta}
-                />
-              );
-            }
-
-            return (
-              <GalacticPlanCard
-                key={plan.tier}
-                name={plan.name}
-                price={plan.priceLabel}
-                actions={`${plan.aiTokensLabel} · ${plan.xrgLabel}`}
-                current={!!isCurrent}
-                features={[`${plan.concurrency} concurrent tasks`, plan.actionsLabel, `All ${FEATURE_COUNT} features unlocked`]}
-                cta={cta}
+              <CheckoutButton
+                planTier={plan.tier}
+                label={`Get ${plan.name} →`}
+                className="!w-full xv-pricing-cta xv-pricing-cta--outline !rounded-full"
               />
             );
+
+            return (
+              <GalacticPlanPricingCard key={plan.tier} plan={plan} current={!!isCurrent} cta={cta} />
+            );
           })}
-        </div>
+        </PricingPlanGrid>
 
         <div className="rounded-2xl border border-dashed border-[var(--card-border)] p-6 mb-12 text-center">
           <p className="text-xs font-semibold text-[var(--muted)] mb-4 flex items-center justify-center gap-1.5">
@@ -222,7 +210,7 @@ export function PricingPageClient() {
             { icon: Zap, title: 'Concurrency Scaling', desc: 'Run multiple Swarm tasks in parallel on higher tiers.' },
           ].map(({ icon: Icon, title, desc }) => (
             <div key={title} className="glass-panel rounded-xl p-6">
-              <Icon className="w-8 h-8 text-[var(--accent)] mb-3" />
+              <Icon className="w-8 h-8 text-[#2dd4bf] mb-3" />
               <h3 className="font-semibold mb-2">{title}</h3>
               <p className="text-sm text-[var(--muted)]">{desc}</p>
             </div>
