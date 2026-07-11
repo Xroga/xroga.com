@@ -3,8 +3,8 @@ export async function streamTextReveal(
   text: string,
   onChunk: (partial: string) => void,
   signal?: AbortSignal,
-  chunkSize = 3,
-  delayMs = 12
+  chunkSize = 8,
+  delayMs = 5
 ): Promise<void> {
   let acc = '';
   for (let i = 0; i < text.length; i += chunkSize) {

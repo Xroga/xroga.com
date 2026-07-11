@@ -34,7 +34,8 @@ type Block =
   | { type: 'numbered'; items: string[] }
   | { type: 'para'; text: string; lead?: boolean }
   | { type: 'hr' }
-  | { type: 'summary'; text: string };
+  | { type: 'summary'; text: string }
+  | { type: 'table'; headers: string[]; rows: string[][] };
 
 function parseBlocks(content: string): Block[] {
   const lines = content.split('\n');
@@ -64,6 +65,31 @@ function parseBlocks(content: string): Block[] {
         i += 1;
       }
       blocks.push({ type: 'summary', text: summaryLines.join(' ') });
+      continue;
+    }
+
+    if (/^\|.+\|/.test(trimmed) && trimmed.includes('|')) {
+      const tableLines: string[] = [trimmed];
+      i += 1;
+      while (i < lines.length && /^\|.+\|/.test((lines[i] ?? '').trim())) {
+        tableLines.push((lines[i] ?? '').trim());
+        i += 1;
+      }
+      const parsed = tableLines
+        .filter((l) => !/^[\|\s:-]+$/.test(l.replace(/\|/g, '').trim()))
+        .map((l) =>
+          l
+            .split('|')
+            .map((c) => c.trim())
+            .filter(Boolean)
+        );
+      if (parsed.length >= 1) {
+        blocks.push({
+          type: 'table',
+          headers: parsed[0] ?? [],
+          rows: parsed.slice(1),
+        });
+      }
       continue;
     }
 
@@ -119,7 +145,7 @@ export function FormattedAiMarkdown({
   const blocks = useMemo(() => parseBlocks(content), [content]);
 
   return (
-    <div className={cn('xv-formatted-response space-y-2.5 text-[13px] leading-relaxed', className)}>
+    <div className={cn('xv-formatted-response space-y-3 text-[14px] sm:text-[15px] leading-relaxed', className)}>
       {blocks.map((block, idx) => {
         if (block.type === 'heading') {
           const Tag = block.level <= 2 ? 'h3' : block.level === 3 ? 'h4' : 'h5';
@@ -128,9 +154,9 @@ export function FormattedAiMarkdown({
               key={idx}
               className={cn(
                 'font-bold text-[var(--foreground)] tracking-tight border-b border-[var(--card-border)]/30 pb-1',
-                block.level === 1 && 'text-base mt-1',
-                block.level === 2 && 'text-sm mt-0.5',
-                block.level >= 3 && 'text-[13px] text-[var(--accent)] border-none pb-0',
+                block.level === 1 && 'text-lg sm:text-xl mt-1',
+                block.level === 2 && 'text-base sm:text-lg mt-0.5',
+                block.level >= 3 && 'text-[15px] text-[var(--accent)] border-none pb-0',
               )}
             >
               {renderInline(block.text)}
@@ -168,24 +194,55 @@ export function FormattedAiMarkdown({
           return (
             <div
               key={idx}
-              className="rounded-xl border border-[var(--accent)]/25 bg-gradient-to-br from-[var(--accent)]/8 to-transparent px-3.5 py-2.5 text-[12px] text-[var(--foreground)]/90 shadow-sm"
+              className="rounded-xl border border-[var(--accent)]/25 bg-gradient-to-br from-[var(--accent)]/8 to-transparent px-4 py-3 text-[14px] text-[var(--foreground)]/90 shadow-sm"
             >
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--accent)] mb-1.5">Key takeaway</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--accent)] mb-2">Summary</p>
               <p className="leading-relaxed">{renderInline(block.text)}</p>
             </div>
           );
         }
-        return (
-          <p
-            key={idx}
-            className={cn(
-              'text-[var(--foreground)]/95',
-              block.lead && 'text-[14px] font-medium leading-snug text-[var(--foreground)]',
-            )}
-          >
-            {renderInline(block.text)}
-          </p>
-        );
+        if (block.type === 'table' && block.headers.length) {
+          return (
+            <div key={idx} className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60">
+              <table className="w-full text-[13px] sm:text-[14px]">
+                <thead>
+                  <tr className="border-b border-[var(--card-border)]/50 bg-[var(--accent)]/5">
+                    {block.headers.map((h, j) => (
+                      <th key={j} className="px-3 py-2 text-left font-semibold text-[var(--foreground)]">
+                        {renderInline(h)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {block.rows.map((row, ri) => (
+                    <tr key={ri} className="border-b border-[var(--card-border)]/30 last:border-0">
+                      {row.map((cell, ci) => (
+                        <td key={ci} className="px-3 py-2 text-[var(--foreground)]/90">
+                          {renderInline(cell)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        }
+        if (block.type === 'para') {
+          return (
+            <p
+              key={idx}
+              className={cn(
+                'text-[var(--foreground)]/95',
+                block.lead && 'text-[15px] sm:text-[16px] font-medium leading-snug text-[var(--foreground)]',
+              )}
+            >
+              {renderInline(block.text)}
+            </p>
+          );
+        }
+        return null;
       })}
       {streaming && content.length > 0 && (
         <span className="inline-block w-0.5 h-[1em] ml-0.5 bg-[#006aff]/80 align-middle animate-pulse rounded-full" />

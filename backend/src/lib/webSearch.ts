@@ -75,27 +75,32 @@ export async function webSearch(
   const tavilyFallbackEnabled = process.env.TAVILY_FALLBACK !== 'false';
 
   const searxResults = await searchSearxngAll(query, maxResults);
-  if (searxResults.length) {
+  if (searxResults.length >= 2) {
     console.info(`[webSearch] SearXNG hit (${searxResults.length}) for: ${query.slice(0, 60)}`);
     return searxResults;
   }
 
-  if (tavilyKey && tavilyFallbackEnabled) {
+  // Supplement with Tavily only when SearXNG is weak (<2 results) — saves API cost
+  if (tavilyKey && tavilyFallbackEnabled && searxResults.length < 2) {
     try {
-      console.info(`[webSearch] SearXNG empty — Tavily fallback for: ${query.slice(0, 60)}`);
-      const results = await tavilySearch(query, maxResults);
-      return results.map((r) => ({
-        title: r.title,
-        url: r.url,
-        content: r.content.slice(0, 500),
-        source: 'tavily' as const,
-      }));
+      console.info(`[webSearch] SearXNG weak (${searxResults.length}) — Tavily supplement for: ${query.slice(0, 60)}`);
+      const tavilyResults = await tavilySearch(query, maxResults);
+      const merged = [
+        ...searxResults,
+        ...tavilyResults.map((r) => ({
+          title: r.title,
+          url: r.url,
+          content: r.content.slice(0, 500),
+          source: 'tavily' as const,
+        })),
+      ];
+      if (merged.length) return merged.slice(0, maxResults);
     } catch (err) {
-      console.warn('[webSearch] Tavily fallback failed:', (err as Error).message);
+      console.warn('[webSearch] Tavily supplement failed:', (err as Error).message);
     }
-  } else if (!tavilyFallbackEnabled) {
-    console.info('[webSearch] Tavily fallback disabled (TAVILY_FALLBACK=false)');
   }
+
+  if (searxResults.length) return searxResults;
 
   return [];
 }

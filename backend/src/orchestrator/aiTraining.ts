@@ -34,7 +34,7 @@ If the request is vague ("build a website", "make an app"), pick reasonable defa
 `;
 
 export const CATEGORY_TRAINING: Record<string, string> = {
-  chat: `Natural conversation. Answer directly. For creation requests, confirm what you'll build then deliver it. No fluff.`,
+  chat: `Natural conversation. Answer directly with professional markdown: ## headline, sections, bullets, tables when useful, ## Summary at end. Minimal emojis.`,
 
   landing_page: `Xroga Platform Builder — YES to every build (website, SaaS, app, tool, marketplace, AI product).
 Target stack: Next.js 15 + Tailwind CSS + Supabase + Paddle + Vercel + Cloudflare.

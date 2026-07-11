@@ -73,7 +73,11 @@ export function FollowUpChips({ items, onSelect }: FollowUpChipsProps) {
   );
 }
 
-/** Modern AI response — text + Image Studio cards with reveal animation */
+function hasMarkdown(content: string): boolean {
+  return /^#{1,4}\s/m.test(content) || /^\|.+\|/m.test(content) || /^[-*•]\s/m.test(content) || /^>\s/m.test(content);
+}
+
+/** Modern AI response — professional markdown or structured plain text */
 export function ModernResponseText({
   content,
   streaming,
@@ -148,7 +152,11 @@ export function ModernResponseText({
       ref={blockRef}
       className={cn('xv-response-text', streaming && 'xv-streaming')}
     >
-      <PlainAiResponse content={safeContent} streaming={streaming} />
+      {hasMarkdown(safeContent) ? (
+        <FormattedAiMarkdown content={safeContent} streaming={streaming} />
+      ) : (
+        <PlainAiResponse content={safeContent} streaming={streaming} />
+      )}
     </div>
   );
 }

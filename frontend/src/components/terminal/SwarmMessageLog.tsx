@@ -206,11 +206,13 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
 
   const buildPromptActive = isWebsiteBuildActive(lastUserText, messages);
 
-  const showChatThinking =
+  const showGeneralChatThinking =
     loading &&
     !isImageGenerationPrompt(lastUserText) &&
-    !buildPromptActive &&
-    pipelineCompact;
+    !buildPromptActive;
+
+  const showChatThinking = showGeneralChatThinking && pipelineCompact;
+  const showProcessingPanel = showGeneralChatThinking && !pipelineCompact;
 
   function handleEditAI(content: string) {
     setPrompt(content);
@@ -408,7 +410,8 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           />
                         )}
                         {!buildPromptActive &&
-                          (msg.thinkingSteps?.length || (loading && msg.id === animatingId && showChatThinking)) && (
+                          (msg.thinkingSteps?.length ||
+                            (loading && msg.id === animatingId && (showChatThinking || showProcessingPanel))) && (
                           <BlackHoleThinkingPanel
                             steps={
                               loading && msg.id === animatingId
@@ -421,7 +424,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                                 : undefined
                             }
                             thoughtMs={msg.thoughtMs}
-                            active={loading && msg.id === animatingId && showChatThinking}
+                            active={loading && msg.id === animatingId && (showChatThinking || showProcessingPanel)}
                             defaultExpanded={loading && msg.id === animatingId}
                           />
                         )}
