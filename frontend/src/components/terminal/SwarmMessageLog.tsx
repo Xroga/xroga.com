@@ -30,6 +30,7 @@ import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox'
 import { UserProfileBox } from '@/components/profile/UserProfileBox';
 import { TerminalSearchBar } from '@/components/terminal/TerminalSearchBar';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { useHydrated } from '@/hooks/useHydrated';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -54,7 +55,9 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
   const profile = useAppStore((s) => s.profile);
-  const storeIncognito = usePrivacyStore((s) => s.incognito);
+  const hydrated = useHydrated();
+  const storeIncognitoRaw = usePrivacyStore((s) => s.incognito);
+  const storeIncognito = hydrated && storeIncognitoRaw;
   const isIncognito = incognito || storeIncognito;
   const { setShowJumpToLatest, registerScrollToLatest } = useTerminalScroll();
   const bottomRef = useRef<HTMLDivElement>(null);

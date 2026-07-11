@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { HatGlasses, X, MessageCircle } from 'lucide-react';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { useHydrated } from '@/hooks/useHydrated';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { INCOGNITO_GUIDANCE } from '@/lib/incognito';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -11,7 +12,9 @@ import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 export function IncognitoModeButton() {
-  const incognito = usePrivacyStore((s) => s.incognito);
+  const hydrated = useHydrated();
+  const incognitoRaw = usePrivacyStore((s) => s.incognito);
+  const incognito = hydrated && incognitoRaw;
   const setIncognito = usePrivacyStore((s) => s.setIncognito);
   const { startNewChat } = useTerminalChat();
   const [infoOpen, setInfoOpen] = useState(false);
