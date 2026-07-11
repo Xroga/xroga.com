@@ -53,6 +53,13 @@ export interface Phase1ChatResponse {
   response: string;
   intent: Phase1Intent;
   usage: TokenUsageSnapshot;
+  webSources?: Array<{
+    title: string;
+    url: string;
+    snippet: string;
+    source: 'searxng' | 'tavily' | 'youtube';
+    thumbnailUrl?: string;
+  }>;
 }
 
 export interface Phase1ErrorResponse {

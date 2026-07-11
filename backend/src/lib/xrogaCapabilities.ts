@@ -18,10 +18,12 @@ export function getXrogaCapabilitiesResponse(): string {
   return `✨ Everything you can build with XROGA
 
 Live right now
-💬 Chat — ask anything: history, science, AI, APIs, logic, math, culture, decisions
+💬 Chat — ask anything; business advice, pricing, and current events use **live web search** automatically
 🎨 **Image generation** — logos, thumbnails, art, mockups, edits, variants, upscale, background removal
-🌐 **Websites & apps** — full code pushed to your GitHub, live preview, crypto dashboards, chatbots, SaaS, CRM
-💻 **Software & code** — APIs, scripts, games, debugging, multi-file projects
+🌐 **Websites & apps** — full code pushed to your GitHub, live preview, crypto dashboards, chatbots, SaaS, CRM, games, APIs
+💻 **Software & code** — any stack, any project type: scripts, tools, extensions, mobile, backend, debugging
+
+When you ask about prices, net worth, strategies, or what's happening now — I search the web and YouTube so answers stay current.
 
 What do you want to create first?`;
 }

@@ -106,7 +106,7 @@ export class Orchestrator {
     }
 
     const { quickChat } = await import('../services/chat/quickChat.js');
-    const reply = await quickChat(userText, (layer, detail) => {
+    const chatResult = await quickChat(userText, (layer, detail) => {
       const msg = detail ?? analysis.thinkingSteps.at(-1) ?? `Black Hole V∞ — ${layer}`;
       ctx.onProgress?.(
         progressEvent('builder', 'building', msg, {
@@ -114,6 +114,7 @@ export class Orchestrator {
         })
       );
     });
+    const reply = chatResult.content;
     const shield = await runThreeLayerShield({
       content: reply,
       prompt: ctx.prompt,
@@ -130,7 +131,11 @@ export class Orchestrator {
         defectsFound: 0,
         plan: defaultPlan(),
         agents: defaultAgents(['builder']),
-        output: { type: 'chat', content: shield.content } as FeatureOutput,
+        output: {
+          type: 'chat',
+          content: shield.content,
+          webSources: chatResult.webSources,
+        } as FeatureOutput,
       },
       actions: { success: true, remaining: 0, cost: isTrivialPrompt(ctx.prompt) ? 0 : 1 },
       featureCategory: category,
@@ -776,7 +781,7 @@ export class Orchestrator {
         try {
           const { quickChat } = await import('../services/chat/quickChat.js');
           const quick = await quickChat(ctx.prompt);
-          if (quick?.trim()) fallbackText = stripFakeImageMarkdown(quick);
+          if (quick.content?.trim()) fallbackText = stripFakeImageMarkdown(quick.content);
         } catch {
           /* use friendly fallback */
         }

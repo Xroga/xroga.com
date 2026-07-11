@@ -6,6 +6,7 @@ import { checkRateLimit } from './rateLimiter.js';
 import { phase1Logger } from './logger.js';
 import { estimateCost } from './models.js';
 import type { Phase1ChatRequest, Phase1ChatResponse, Phase1ErrorResponse } from './types.js';
+import { runLiveResearch } from '../lib/liveResearch.js';
 
 const MODEL_NAME_PATTERN =
   /\b(deepseek|grok|claude|anthropic|xai|sonnet|opus|flash|pro|gpt|openai|gemini|llama|mistral)\b/gi;
@@ -54,6 +55,11 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
   const intent = await classifyIntent(message);
   const plan = buildRoutingPlan(intent, message);
 
+  let liveResearch = await runLiveResearch(message, { intent });
+  if (!liveResearch && (intent === 'business_advice' || intent === 'deep_reasoning')) {
+    liveResearch = await runLiveResearch(message, { intent, force: true });
+  }
+
   if (plan.phase2Message) {
     const usage = await getUsage(userId);
     return {
@@ -80,7 +86,10 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     role: 'primary' | 'secondary',
     context?: string
   ) => {
-    const systemPrompt = getSystemPromptForIntent(intent, role);
+    let systemPrompt = getSystemPromptForIntent(intent, role);
+    if (liveResearch?.context) {
+      systemPrompt = `${systemPrompt}\n\n${liveResearch.context}`;
+    }
     const messages =
       context && role === 'secondary'
         ? [
@@ -140,7 +149,12 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
 
     return {
       ok: true,
-      data: { response, intent, usage },
+      data: {
+        response,
+        intent,
+        usage,
+        webSources: liveResearch?.sources,
+      },
     };
   } catch (err) {
     const error = err as Error;

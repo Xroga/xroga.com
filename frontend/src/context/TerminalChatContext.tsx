@@ -65,6 +65,13 @@ export interface ChatMessage {
   agent?: string;
   createdAt?: number;
   featureOutput?: unknown;
+  webSources?: Array<{
+    title: string;
+    url: string;
+    snippet: string;
+    source: string;
+    thumbnailUrl?: string;
+  }>;
   /** Behind-the-scenes reasoning steps shown after response */
   thinkingSteps?: string[];
   thoughtMs?: number;
@@ -268,6 +275,9 @@ export function TerminalChatProvider({
           completedWebsiteBuildRef.current = true;
         }
       }
+      if (session?.sessionId) {
+        sessionIdRef.current = session.sessionId;
+      }
       if (session?.prompt) setPrompt(session.prompt);
       persistReadyRef.current = true;
       setSessionReady(true);
@@ -403,6 +413,7 @@ export function TerminalChatProvider({
         completedWebsiteBuildRef.current = true;
       }
       if (session.prompt) setPrompt(session.prompt);
+      if (session.sessionId) sessionIdRef.current = session.sessionId;
     });
   }, [incognito]);
 
@@ -426,6 +437,7 @@ export function TerminalChatProvider({
       saveWorkspaceSession({
         prompt: threadPrompt,
         messages: thread,
+        sessionId: sessionIdRef.current,
         source: 'media',
         jumpMessageId,
         selectedId: jumpMessageId ?? thread[thread.length - 1]?.id ?? 'isolated',
@@ -452,7 +464,7 @@ export function TerminalChatProvider({
       }
     }
     try {
-      saveWorkspaceSession({ prompt, messages });
+      saveWorkspaceSession({ prompt, messages, sessionId: sessionIdRef.current });
     } catch (err) {
       console.warn('[workspace] persist skipped:', (err as Error).message);
     }
@@ -845,13 +857,26 @@ export function TerminalChatProvider({
               setMessages((m) =>
                 m.map((msg) =>
                   msg.id === assistantId
-                    ? { ...msg, content: partial, agent: 'Xroga AI Brain' }
+                    ? {
+                        ...msg,
+                        content: partial,
+                        agent: 'Xroga AI Brain',
+                        webSources: result.webSources,
+                      }
                     : msg
                 )
               );
             },
             controller.signal
           );
+
+          if (result.webSources?.length) {
+            setMessages((m) =>
+              m.map((msg) =>
+                msg.id === assistantId ? { ...msg, webSources: result.webSources } : msg
+              )
+            );
+          }
 
           setTokenUsage({
             ...result.usage,
@@ -1039,8 +1064,13 @@ export function TerminalChatProvider({
             }
             if (chatContent && !fullReply.trim() && !buildPromptActive) {
               fullReply = chatContent;
+              const webSources = (output as { webSources?: ChatMessage['webSources'] })?.webSources;
               setMessages((m) =>
-                m.map((msg) => (msg.id === assistantId ? { ...msg, content: chatContent } : msg))
+                m.map((msg) =>
+                  msg.id === assistantId
+                    ? { ...msg, content: chatContent, webSources: webSources ?? msg.webSources }
+                    : msg
+                )
               );
             }
             if (

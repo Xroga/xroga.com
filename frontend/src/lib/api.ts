@@ -842,6 +842,13 @@ export interface Phase1ChatResult {
   response: string;
   intent: string;
   usage: TokenUsage;
+  webSources?: Array<{
+    title: string;
+    url: string;
+    snippet: string;
+    source: string;
+    thumbnailUrl?: string;
+  }>;
 }
 
 export interface TaskItem {

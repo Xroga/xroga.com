@@ -27,6 +27,7 @@ export function ChatArchiveList({ search = '' }: { search?: string }) {
     resumeToDashboard({
       prompt: entry.prompt,
       messages: entry.messages,
+      sessionId: entry.id,
       selectedId: entry.id,
       selectedLabel: entry.title,
       source: 'chats',

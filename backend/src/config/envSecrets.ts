@@ -45,6 +45,7 @@ const ALIASES: Record<string, string[]> = {
   VERCEL_TOKEN: ['VERCEL_API_KEY', 'VERCEL_TOKEN'],
   NETLIFY_ACCESS_TOKEN: ['NETLIFY_ACCESS_TOKEN'],
   TAVILY_API_KEY: ['TAVILY_API_KEY'],
+  YOUTUBE_API_KEY: ['YOUTUBE_API_KEY'],
 };
 
 export function getSecret(primary: keyof typeof ALIASES | string): string | undefined {

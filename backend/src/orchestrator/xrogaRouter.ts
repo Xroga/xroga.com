@@ -26,6 +26,7 @@ import type { ChatTurn } from '../lib/conversationContext.js';
 
 export interface XrogaRouteOptions {
   context?: ChatTurn[];
+  researchContext?: string;
 }
 
 export interface XrogaRouteResult {
@@ -93,6 +94,9 @@ export class XrogaRouter {
   ): Promise<XrogaRouteResult> {
     const input = userInput.trim();
     const ctx = options?.context;
+    const councilInput = options?.researchContext?.trim()
+      ? `${input}\n\n---\n${options.researchContext.trim()}`
+      : input;
     if (!input) {
       return { text: 'What can I help you build?', provider: 'groq', councilLayer: 'elite', intent: 'greeting' };
     }
@@ -164,7 +168,7 @@ export class XrogaRouter {
         const { raw, layer, provider } = await councilOrReserve(
           input,
           'groq',
-          () => groqGeneral(input, ctx),
+          () => groqGeneral(councilInput, ctx),
           onProgress
         );
         onProgress?.('blackhole', 'Composing your answer');
@@ -184,7 +188,7 @@ export class XrogaRouter {
         const { raw, layer, provider } = await councilOrReserve(
           input,
           'gemini',
-          () => geminiGenerateCultural(input, { context: ctx }),
+          () => geminiGenerateCultural(councilInput, { context: ctx }),
           onProgress
         );
         onProgress?.('blackhole', 'Composing your answer');
@@ -201,7 +205,7 @@ export class XrogaRouter {
         const { raw, layer, provider } = await councilOrReserve(
           input,
           'deepseek',
-          () => deepseekGenerate(input, { context: ctx }),
+          () => deepseekGenerate(councilInput, { context: ctx }),
           onProgress
         );
         onProgress?.('blackhole', 'Composing your answer');
@@ -244,7 +248,7 @@ export class XrogaRouter {
         const { raw, layer, provider } = await councilOrReserve(
           input,
           'groq',
-          () => groqGeneral(input, ctx),
+          () => groqGeneral(councilInput, ctx),
           onProgress
         );
         onProgress?.('blackhole', 'Composing your answer');

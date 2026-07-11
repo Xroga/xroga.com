@@ -1,8 +1,13 @@
-import { TerminalHistoryView } from '@/components/dashboard/TerminalHistoryView';
-import { PAGE_SEO } from '@/lib/dashboard-metadata';
+'use client';
 
-export const metadata = PAGE_SEO.terminalHistory;
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function TerminalHistoryPage() {
-  return <TerminalHistoryView />;
+/** Redirect legacy Terminal History route into My Projects */
+export default function HistoryRedirectPage() {
+  const router = useRouter();
+  useEffect(() => {
+    router.replace('/dashboard/projects?tab=conversations');
+  }, [router]);
+  return null;
 }

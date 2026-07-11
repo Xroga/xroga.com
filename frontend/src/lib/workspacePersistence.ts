@@ -51,6 +51,7 @@ export type WorkspaceSource = 'projects' | 'chats' | 'automation' | 'media' | 'd
 export interface WorkspaceSession {
   prompt: string;
   messages: ChatMessage[];
+  sessionId?: string;
   selectedId?: string;
   selectedLabel?: string;
   source?: WorkspaceSource;
@@ -165,6 +166,7 @@ export function clearWorkspaceSession() {
 export function resumeToDashboard(opts: {
   prompt?: string;
   messages?: ChatMessage[];
+  sessionId?: string;
   selectedId: string;
   selectedLabel: string;
   source: WorkspaceSource;
@@ -178,6 +180,7 @@ export function resumeToDashboard(opts: {
   saveWorkspaceSession({
     prompt: opts.prompt ?? existing?.prompt ?? '',
     messages,
+    sessionId: opts.sessionId ?? existing?.sessionId,
     selectedId: opts.selectedId,
     selectedLabel: opts.selectedLabel,
     source: opts.source,
