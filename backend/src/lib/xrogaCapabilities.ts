@@ -15,16 +15,13 @@ export function isCapabilitiesQuery(input: string): boolean {
 }
 
 export function getXrogaCapabilitiesResponse(): string {
-  return `✨ Everything you can imagine — built with XROGA
-
-XROGA builds what you imagine. Some features are live today; others are launching soon 🚀
+  return `✨ Everything you can build with XROGA
 
 Live right now
-💬 Chat — ask anything: history, science, LLM, AI, APIs, logic, math, culture, decisions
-🎨 Images — four modern variants from one prompt, edit, upscale, remove background
+💬 Chat — ask anything: history, science, AI, APIs, logic, math, culture, decisions
+🎨 **Image generation** — logos, thumbnails, art, mockups, edits, variants, upscale, background removal
+🌐 **Websites & apps** — full code pushed to your GitHub, live preview, crypto dashboards, chatbots, SaaS, CRM
+💻 **Software & code** — APIs, scripts, games, debugging, multi-file projects
 
-Coming soon
-🎬 Video generation · 🌐 Websites · 📱 Apps · 🎮 Games · 💻 Software · 🤖 Browser automation
-
-What do you want to build first? 🔥`;
+What do you want to create first?`;
 }

@@ -8,33 +8,26 @@ const IMAGE_EDIT_INTENT = /\[Image(?:\s+Edit)?\]/i;
 const IMAGE_INTENT =
   /\b(generate|create|make|draw|design)\b[\s\S]{0,40}\b(image|picture|logo|illustration|artwork|poster|thumbnail|graphic|photo|avatar|icon)\b|\bimage\s+of\b/i;
 
-const VIDEO_INTENT =
-  /\b(generate|create|make|produce|film|shoot)\b[\s\S]{0,60}\b(video|movie|film|trailer|clip|animation)\b|\b(video|movie|clip)\b[\s\S]{0,30}\b(of|about)\b|\b\d+\s*(?:second|seconds|sec|s)\b[\s\S]{0,40}\bvideo\b/i;
-
-/** User uploaded image → animate / image-to-video / gif */
-const IMAGE_TO_VIDEO_INTENT =
-  /\b(animate|animation|turn\s+(?:this\s+)?(?:image|photo|picture)\s+(?:into|to)|image\s+to\s+video|photo\s+to\s+video|picture\s+to\s+video|make\s+(?:this|the)\s+(?:image|photo)\s+(?:move|alive)|bring\s+(?:this|the)\s+(?:image|photo)\s+to\s+life|convert\s+(?:this\s+)?(?:image|photo)\s+to\s+(?:a\s+)?(?:video|gif)|image\s+to\s+gif|gif\s+from\s+(?:this\s+)?image)\b/i;
-
-const GIF_INTENT = /\b(gif|animated\s+gif|make\s+a\s+gif|as\s+a\s+gif)\b/i;
-
-/** Explicit still-image edit — not video */
-const IMAGE_STYLE_EDIT_INTENT =
-  /\b(style\s+transfer|change\s+style|apply\s+filter|remove\s+background|change\s+background|upscale|enhance\s+photo|make\s+it\s+look\s+like|edit\s+this\s+image|transform\s+this\s+image\s+with)\b/i;
+/** Video removed — detect so we can decline politely (not route to production) */
+export const VIDEO_INTENT =
+  /\b(generate|create|make|produce|film|shoot|animate|turn)\b[\s\S]{0,60}\b(video|movie|film|trailer|clip|animation|gif)\b|\b(video|movie|clip)\b[\s\S]{0,30}\b(of|about)\b|\b\d+\s*(?:second|seconds|sec|s)\b[\s\S]{0,40}\bvideo\b|\bimage\s+to\s+video\b|\bphoto\s+to\s+video\b/i;
 
 const BROWSER_INTENT =
   /\b(automate|scrape|scraping|screenshot|playwright|puppeteer)\b|\b(go\s+to|navigate\s+to|visit|open)\b[\s\S]{0,30}(https?:\/\/|www\.|\.com\b)/i;
 
 const LANDING_INTENT =
-  /\b(build|create|make|design)\b[\s\S]{0,60}\b(landing\s*page|website|web\s*page|homepage|portfolio\s*site|coffee\s*shop|shop|store|restaurant|bakery)\b/i;
+  /\b(build|create|make|design|develop|launch|scaffold)\b[\s\S]{0,80}\b(landing\s*page|website|web\s*page|homepage|portfolio\s*site|coffee\s*shop|shop|store|restaurant|bakery|crm|dashboard|saas|crypto|blockchain|web3|chatbot|bot|software|app|api|platform|dapp|defi|nft|game|tool)\b/i;
 
 const RESEARCH_INTENT = /\b(deep\s+research|research\s+report|write\s+a\s+report\s+on)\b/i;
 const DEBUG_INTENT = /\b(debug|fix)\b[\s\S]{0,30}\b(code|bug|error)\b/i;
 const SOCIAL_INTENT = /\b(post|share|cross.?post)\b[\s\S]{0,30}\b(twitter|linkedin|instagram|facebook|x\.com)\b/i;
 
+/** Explicit still-image edit */
+const IMAGE_STYLE_EDIT_INTENT =
+  /\b(style\s+transfer|change\s+style|apply\s+filter|remove\s+background|change\s+background|upscale|enhance\s+photo|make\s+it\s+look\s+like|edit\s+this\s+image|transform\s+this\s+image\s+with)\b/i;
+
 const INTENT_RULES: Array<{ category: FeatureCategory; test: RegExp }> = [
   { category: 'image_generation', test: IMAGE_EDIT_INTENT },
-  { category: 'video_studio', test: IMAGE_TO_VIDEO_INTENT },
-  { category: 'video_studio', test: VIDEO_INTENT },
   { category: 'image_generation', test: IMAGE_INTENT },
   { category: 'browser_automation', test: BROWSER_INTENT },
   { category: 'landing_page', test: LANDING_INTENT },
@@ -43,9 +36,17 @@ const INTENT_RULES: Array<{ category: FeatureCategory; test: RegExp }> = [
   { category: 'cross_post', test: SOCIAL_INTENT },
 ];
 
+export function isVideoIntent(prompt: string): boolean {
+  return VIDEO_INTENT.test(routingPrompt(prompt).trim());
+}
+
+export const VIDEO_REMOVED_MESSAGE =
+  'Video generation is not available on Xroga. I **can generate images** — logos, thumbnails, artwork, mockups, and photo edits. Describe the visual you want, or ask me to build a website or app.';
+
 export function detectFeatureIntent(prompt: string): FeatureCategory | 'chat' {
   const t = routingPrompt(prompt).trim();
   if (!t) return 'chat';
+  if (isVideoIntent(t)) return 'chat';
   for (const { category, test } of INTENT_RULES) {
     if (test.test(t)) return category;
   }
@@ -56,32 +57,32 @@ export function requiresFeaturePipeline(prompt: string): boolean {
   return detectFeatureIntent(prompt) !== 'chat';
 }
 
-export function isImageToVideoIntent(prompt: string): boolean {
-  const t = routingPrompt(prompt).trim();
-  return IMAGE_TO_VIDEO_INTENT.test(t) || VIDEO_INTENT.test(t) || GIF_INTENT.test(t);
+export function isImageToVideoIntent(_prompt: string): boolean {
+  return false;
 }
 
-export function isGifOutputIntent(prompt: string): boolean {
-  return GIF_INTENT.test(routingPrompt(prompt));
+export function isGifOutputIntent(_prompt: string): boolean {
+  return false;
 }
 
 export function isImageStyleEditIntent(prompt: string): boolean {
   const t = routingPrompt(prompt).trim();
-  return IMAGE_STYLE_EDIT_INTENT.test(t) && !isImageToVideoIntent(t);
+  return IMAGE_STYLE_EDIT_INTENT.test(t);
 }
 
-/** Route chat attachment: image-to-video unless user clearly wants style edit only */
+/** Route chat attachment: style edit → image; otherwise image generation (not video). */
 export function resolveAttachmentFeatureCategory(
   prompt: string,
   classified?: FeatureCategory
 ): FeatureCategory {
   const t = routingPrompt(prompt).trim();
+  if (isVideoIntent(t)) return 'chat';
   if (isImageStyleEditIntent(t)) return 'image_generation';
-  if (isImageToVideoIntent(t)) return 'video_studio';
-  if (!t || t.length < 4) return 'video_studio';
+  if (!t || t.length < 4) return 'image_generation';
   const intent = detectFeatureIntent(prompt);
-  if (intent === 'image_generation' && !isImageToVideoIntent(t)) return 'image_generation';
-  return 'video_studio';
+  if (intent !== 'chat') return intent;
+  if (classified === 'image_generation') return 'image_generation';
+  return 'image_generation';
 }
 
 /** Block LLM-hallucinated image links (ibb.co, fake placeholders, etc.) */
@@ -122,8 +123,8 @@ export function formatFeatureOutput(output: unknown): string {
   if (o.type === 'landing_page' && typeof o.deployUrl === 'string') {
     return `Your website is live: ${o.deployUrl}`;
   }
-  if (o.type === 'video_studio' && typeof o.streamingUrl === 'string') {
-    return `Your video is ready: ${o.streamingUrl}`;
+  if (o.type === 'video_studio' || o.type === 'video_job_pending') {
+    return VIDEO_REMOVED_MESSAGE;
   }
   if (o.type === 'browser_automation') {
     const screenshot = typeof o.screenshotUrl === 'string' ? `\n\nScreenshot: ${o.screenshotUrl}` : '';

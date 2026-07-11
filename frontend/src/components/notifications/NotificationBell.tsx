@@ -8,7 +8,6 @@ import { useAppStore } from '@/store/useAppStore';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
-import { hasPendingVideoJobs } from '@/lib/pendingVideoJobs';
 import toast from 'react-hot-toast';
 
 interface NotificationBellProps {
@@ -63,10 +62,9 @@ export function NotificationBell({ className, variant = 'header' }: Notification
 
   useEffect(() => {
     void refreshNotifications();
-    const fast = hasPendingVideoJobs() ? 15000 : 30000;
     const id = setInterval(() => {
       void refreshNotifications();
-    }, fast);
+    }, 30000);
     return () => clearInterval(id);
   }, []);
 
@@ -149,7 +147,7 @@ export function NotificationBell({ className, variant = 'header' }: Notification
     }
   }
 
-  const showDot = unreadCount > 0 || hasPendingVideoJobs();
+  const showDot = unreadCount > 0;
 
   return (
     <div className={cn('relative', className)} ref={ref}>

@@ -564,11 +564,6 @@ export const api = {
     markAllRead: () => apiFetch('/api/notifications/read-all', { method: 'PATCH' }),
     delete: (id: string) => apiFetch(`/api/notifications/${id}`, { method: 'DELETE' }),
   },
-  videoJobs: {
-    get: (jobId: string) =>
-      apiFetch<VideoJobRecord>(`/api/video/jobs/${jobId}`),
-    listActive: () => apiFetch<VideoJobRecord[]>('/api/video/jobs/active'),
-  },
   swarm: {
     execute: (prompt: string, projectId?: string) =>
       apiFetch('/api/swarm/execute', {
@@ -765,19 +760,6 @@ export interface Notification {
   link: string | null;
   metadata?: Record<string, unknown> | null;
   created_at: string;
-}
-
-export interface VideoJobRecord {
-  id: string;
-  status: 'processing' | 'completed' | 'failed';
-  prompt: string;
-  estimated_seconds: number;
-  progress?: { step?: string; message?: string; percent?: number };
-  output?: Record<string, unknown>;
-  error_message?: string;
-  metadata?: Record<string, unknown>;
-  created_at: string;
-  completed_at?: string;
 }
 
 export interface ActionBalance {

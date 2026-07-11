@@ -5,7 +5,7 @@ import { useAppStore } from '@/store/useAppStore';
 
 const ACTIONS = [
   { icon: '💻', label: 'Build App', prompt: 'Build a full-stack web app for: ' },
-  { icon: '🎬', label: 'Make Movie', prompt: 'Create a cinematic video script and storyboard for: ' },
+  { icon: '🎨', label: 'Generate Image', prompt: 'Generate a professional image for: ' },
   { icon: '🤖', label: 'Automate', prompt: 'Automate this workflow for me: ' },
 ];
 
