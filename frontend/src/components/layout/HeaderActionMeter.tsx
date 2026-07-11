@@ -18,6 +18,7 @@ interface HeaderTokenMeterProps {
 
 export function HeaderTokenMeter({ onClick, className }: HeaderTokenMeterProps) {
   const usage = useAppStore((s) => s.tokenUsage);
+  const planTier = useAppStore((s) => s.planTier);
   const remaining = usage?.totalTokensRemaining ?? 0;
   const total = usage?.totalLimit ?? 7_000_000;
   const isOut = remaining <= 0;
@@ -25,20 +26,29 @@ export function HeaderTokenMeter({ onClick, className }: HeaderTokenMeterProps) 
 
   const inner = (
     <>
+      <div className="xv-token-pill__sheen" aria-hidden />
       <Brain
-        className={cn('w-4 h-4', isOut ? 'text-red-400' : isLow ? 'text-amber-400' : 'text-[var(--accent)]')}
+        className={cn(
+          'w-4 h-4 shrink-0 relative z-[1]',
+          isOut ? 'text-red-400' : isLow ? 'text-amber-400' : 'text-[#2dd4bf]'
+        )}
       />
-      <span className="font-terminal text-sm">
-        <span className={cn('font-semibold tabular-nums', isOut && 'text-red-400')}>
-          {formatTokens(remaining)}
-        </span>
-        <span className="text-[var(--muted)] hidden sm:inline"> tokens left</span>
-      </span>
+      <div className="relative z-[1] text-left leading-tight">
+        <div className={cn('xv-token-pill__plan', isOut && 'text-red-400')}>
+          Plan: {planTier ?? 'trial'}
+        </div>
+        <div className={cn('xv-token-pill__balance tabular-nums', isOut && 'text-red-400/80')}>
+          <span className={cn('font-semibold text-white/90', isOut && 'text-red-400')}>
+            {formatTokens(remaining)}
+          </span>{' '}
+          tokens left
+        </div>
+      </div>
     </>
   );
 
   const classes = cn(
-    'inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-panel text-sm transition-all hover:border-[var(--accent)]/40',
+    'xv-token-pill inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm transition-all',
     isOut && 'border-red-500/40',
     className
   );

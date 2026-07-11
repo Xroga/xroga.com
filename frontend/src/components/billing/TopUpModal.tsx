@@ -2,14 +2,17 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { X, Zap, Sparkles } from 'lucide-react';
+import { X, Zap, Sparkles, ArrowRight } from 'lucide-react';
 import { GALACTIC_PLANS, COMING_SOON_PLANS } from '@/lib/plans';
 import { CheckoutButton } from './CheckoutButton';
 import { CurrencyToggle } from '@/hooks/usePlanPrice';
-import { usePlanPrice } from '@/hooks/usePlanPrice';
 import { useT } from '@/components/providers/LanguageProvider';
 import { useAppStore } from '@/store/useAppStore';
-import { cn } from '@/lib/utils';
+import {
+  GalacticPlanPricingCard,
+  PricingPlanGrid,
+  XrogaPricingCard,
+} from './XrogaPricingCard';
 
 interface TopUpModalProps {
   open: boolean;
@@ -17,7 +20,7 @@ interface TopUpModalProps {
 }
 
 function formatTokens(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(0)}M`;
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
   return n.toLocaleString();
 }
@@ -26,6 +29,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
   const router = useRouter();
   const t = useT();
   const usage = useAppStore((s) => s.tokenUsage);
+  const planTier = useAppStore((s) => s.planTier);
   const remaining = usage?.totalTokensRemaining ?? 0;
   const total = usage?.totalLimit ?? 7_000_000;
   const percentUsed = usage?.percentUsed ?? 0;
@@ -34,28 +38,32 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
 
   return (
     <div className="fixed inset-0 z-[300] flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="absolute inset-0 bg-black/55 backdrop-blur-sm" onClick={onClose} aria-hidden />
-      <div className="relative w-full sm:max-w-2xl xv-topup-modal rounded-t-2xl sm:rounded-2xl border border-[var(--card-border)] max-h-[94vh] overflow-hidden flex flex-col shadow-2xl">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} aria-hidden />
+      <div className="relative w-full sm:max-w-5xl xv-topup-modal rounded-t-2xl sm:rounded-2xl border border-[var(--card-border)] max-h-[94vh] overflow-hidden flex flex-col shadow-2xl">
         <div className="shrink-0 px-5 pt-5 pb-4 border-b border-[var(--card-border)]/60 bg-[var(--card)]/95 backdrop-blur-xl">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-[var(--accent)]/15 flex items-center justify-center">
-                  <Zap className="w-4 h-4 text-[var(--accent)]" />
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-full bg-[#2dd4bf]/15 flex items-center justify-center">
+                  <Zap className="w-4 h-4 text-[#2dd4bf]" />
                 </div>
                 <h2 className="text-lg font-bold">Token Balance & Plans</h2>
               </div>
 
-              <div className="rounded-xl bg-gradient-to-br from-[var(--accent)]/10 to-violet-500/5 border border-[var(--accent)]/20 p-3 mb-3">
-                <div className="flex justify-between text-sm mb-1.5">
-                  <span className="text-[var(--muted)]">Remaining</span>
+              <div className="rounded-xl bg-gradient-to-br from-[#2dd4bf]/10 to-violet-500/5 border border-[#2dd4bf]/25 p-3 mb-3 relative overflow-hidden">
+                <div className="xv-pricing-card__sheen !animate-none opacity-30" aria-hidden />
+                <div className="flex justify-between text-sm mb-1.5 relative">
+                  <span className="text-[var(--muted)]">
+                    Plan: <span className="text-[#2dd4bf] font-semibold capitalize">{planTier ?? 'trial'}</span>
+                  </span>
                   <span className="font-bold font-mono">
-                    {formatTokens(remaining)} <span className="text-[var(--muted)] font-normal">/ {formatTokens(total)}</span>
+                    {formatTokens(remaining)}{' '}
+                    <span className="text-[var(--muted)] font-normal">/ {formatTokens(total)}</span>
                   </span>
                 </div>
                 <div className="h-2 rounded-full bg-white/10 overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-[var(--accent)] to-violet-500 transition-all"
+                    className="h-full rounded-full bg-gradient-to-r from-[#2dd4bf] to-violet-500 transition-all"
                     style={{ width: `${Math.min(100, percentUsed)}%` }}
                   />
                 </div>
@@ -73,19 +81,51 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 py-4 bg-[var(--background)]/80">
-          <p className="text-xs font-semibold text-[var(--muted)] mb-3 flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-[var(--accent)]" />
+        <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 bg-[var(--background)]/90">
+          <p className="text-xs font-semibold text-[var(--muted)] mb-4 flex items-center gap-1.5 px-1">
+            <Sparkles className="w-3.5 h-3.5 text-[#2dd4bf]" />
             Higher plans include more AI tokens & XRG
           </p>
 
-          <div className="space-y-3">
+          <PricingPlanGrid className="mb-4">
+            <XrogaPricingCard
+              compact
+              name="Free Trial"
+              price="$0"
+              subtitle="7M tokens/mo"
+              features={['1 concurrent task', 'Full Xroga AI access']}
+              cta={
+                <div className="xv-pricing-cta xv-pricing-cta--solid text-center cursor-default">
+                  <span className="capitalize">Plan: {planTier ?? 'trial'}</span>
+                  <span className="block text-[10px] font-normal opacity-85 mt-0.5">
+                    {formatTokens(remaining)} tokens left
+                  </span>
+                </div>
+              }
+            />
             {GALACTIC_PLANS.map((plan) => (
-              <PlanRow key={plan.tier} plan={plan} onSuccess={onClose} />
+              <GalacticPlanPricingCard
+                key={plan.tier}
+                plan={plan}
+                compact
+                current={planTier === plan.tier}
+                cta={
+                  planTier === plan.tier ? (
+                    <div className="text-center py-2 text-sm font-semibold text-[#2dd4bf]">Current Plan</div>
+                  ) : (
+                    <CheckoutButton
+                      planTier={plan.tier}
+                      label={`Get ${plan.name} →`}
+                      className="!w-full xv-pricing-cta xv-pricing-cta--outline !rounded-full !py-2.5 !text-xs"
+                      onSuccess={onClose}
+                    />
+                  )
+                }
+              />
             ))}
-          </div>
+          </PricingPlanGrid>
 
-          <div className="mt-4 xv-billing-card rounded-xl border-dashed px-4 py-3 opacity-80">
+          <div className="rounded-xl border border-dashed border-[var(--card-border)] px-4 py-3 opacity-80">
             <p className="text-[10px] font-semibold text-[var(--muted)] mb-2">Micro tiers — coming soon</p>
             <div className="flex gap-2">
               {COMING_SOON_PLANS.map((p) => (
@@ -108,51 +148,11 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
               onClose();
               router.push('/dashboard/home');
             }}
-            className="xv-footer-pill !text-xs !text-[var(--foreground)]"
+            className="xv-footer-pill !text-xs !text-[var(--foreground)] flex items-center gap-1"
           >
-            Dashboard
+            Dashboard <ArrowRight className="w-3 h-3" />
           </button>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function PlanRow({ plan, onSuccess }: { plan: (typeof GALACTIC_PLANS)[0]; onSuccess: () => void }) {
-  const { primary, secondary } = usePlanPrice(plan.usdPrice);
-  return (
-    <div
-      className={cn(
-        'xv-billing-card flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 rounded-xl px-4 py-3.5 transition-all',
-        plan.highlight && 'xv-billing-card--highlight'
-      )}
-    >
-      <div className="flex-1 min-w-[140px]">
-        {plan.highlight && (
-          <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--accent)] block mb-0.5">
-            ★ Most Popular
-          </span>
-        )}
-        <p className="font-bold text-[var(--foreground)]">{plan.name}</p>
-        <p className="text-[10px] text-[var(--muted)]">{plan.tagline}</p>
-        <div className="flex flex-wrap gap-2 mt-1.5">
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] font-semibold">
-            {plan.aiTokensLabel}
-          </span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold">
-            {plan.xrgLabel}
-          </span>
-        </div>
-      </div>
-      <div className="text-left sm:text-right shrink-0">
-        <p className="text-lg font-bold text-[var(--foreground)]">
-          {primary}
-          <span className="text-[10px] font-normal text-[var(--muted)]">/mo</span>
-        </p>
-        {secondary && <p className="text-[9px] text-[var(--muted)]">≈ {secondary}/mo</p>}
-      </div>
-      <div className="w-full sm:w-auto shrink-0 sm:ml-auto">
-        <CheckoutButton planTier={plan.tier} className="!w-full sm:!w-auto min-w-[100px]" onSuccess={onSuccess} />
       </div>
     </div>
   );

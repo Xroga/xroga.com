@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import Image from 'next/image';
 import { Terminal, Palette, MessageCircleHeart } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
@@ -9,7 +8,8 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
 import { BrowserPanelToggle } from './BrowserPanel';
-import { AI_RESPONSE_LOGO_URL, TERMINAL_SKIN_LABELS } from '@/lib/theme';
+import { TERMINAL_SKIN_LABELS } from '@/lib/theme';
+import { ProcessingLogo } from '@/components/layout/ProcessingLogo';
 import { ModelBadge } from '@/components/ui/ModelBadge';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { MessageBubbleActions } from './MessageBubbleActions';
@@ -371,7 +371,12 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                 )}
                 {msg.role === 'assistant' && (
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
-                    <Image src={AI_RESPONSE_LOGO_URL} alt="Xroga" width={32} height={32} unoptimized className="object-contain w-7 h-7 sm:w-8 sm:h-8" />
+                    <ProcessingLogo
+                      variant="response"
+                      height={28}
+                      processing={loading && msg.id === animatingId}
+                      className="!w-7 !h-7 sm:!w-8 sm:!h-8"
+                    />
                   </div>
                 )}
                 <div

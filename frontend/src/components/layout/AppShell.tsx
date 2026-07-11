@@ -9,7 +9,7 @@ import { HeaderActionMeter } from './HeaderActionMeter';
 import { ThemeToggle } from './ThemeToggle';
 import { TopUpModal } from '@/components/billing/TopUpModal';
 import { TerminalDock } from '@/components/terminal/TerminalDock';
-import { TerminalChatProvider } from '@/context/TerminalChatContext';
+import { TerminalChatProvider, useTerminalChat } from '@/context/TerminalChatContext';
 import { TerminalScrollProvider } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePathname } from 'next/navigation';
@@ -24,6 +24,26 @@ interface AppShellProps {
   children: React.ReactNode;
   displayName?: string;
   email?: string;
+}
+
+function HeaderLogo({ incognito, isDashboard }: { incognito: boolean; isDashboard: boolean }) {
+  const loading = useTerminalChat().loading;
+  return (
+    <div
+      className={cn(
+        'xv-mobile-header-logo min-w-0',
+        incognito && isDashboard ? 'pl-0 lg:pl-0' : 'pl-11 sm:pl-12 lg:pl-0'
+      )}
+    >
+      <Logo
+        href="/dashboard/home"
+        height={52}
+        variant="header"
+        processing={isDashboard && loading}
+        className="!h-[52px] sm:!h-[68px] lg:!h-[72px]"
+      />
+    </div>
+  );
 }
 
 export function AppShell({ children, displayName, email }: AppShellProps) {
@@ -56,14 +76,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
         <div className="xv-main-column flex-1 flex flex-col w-full min-w-0 max-w-full min-h-screen overflow-x-hidden relative z-[2]">
           <header className="xv-site-header xv-site-header-transparent sticky top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3 shrink-0">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <div
-                className={cn(
-                  'xv-mobile-header-logo min-w-0',
-                  incognito && isDashboard ? 'pl-0 lg:pl-0' : 'pl-11 sm:pl-12 lg:pl-0'
-                )}
-              >
-                <Logo href="/dashboard/home" height={52} variant="header" className="!h-[52px] sm:!h-[68px] lg:!h-[72px]" />
-              </div>
+              <HeaderLogo incognito={incognito} isDashboard={isDashboard} />
             </div>
             <div className="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0 relative z-[250]">
               {isDashboard && <IncognitoModeButton />}

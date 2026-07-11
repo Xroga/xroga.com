@@ -16,6 +16,7 @@ interface CheckoutButtonProps {
 export function CheckoutButton({
   planTier,
   label = 'Subscribe',
+  className,
   onSuccess,
 }: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
@@ -55,6 +56,14 @@ export function CheckoutButton({
     } finally {
       setLoading(false);
     }
+  }
+
+  if (className) {
+    return (
+      <button type="button" onClick={handleCheckout} disabled={loading} className={className}>
+        {loading ? 'Opening…' : label}
+      </button>
+    );
   }
 
   return <BuyNowButton label={label === 'Subscribe' ? 'BUY NOW' : label} onClick={handleCheckout} disabled={loading} />;

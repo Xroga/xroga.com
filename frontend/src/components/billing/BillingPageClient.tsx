@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { GALACTIC_PLANS, COMING_SOON_PLANS } from '@/lib/plans';
 import { FEATURE_COUNT } from '@/lib/features';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
+import { GalacticPlanPricingCard, PricingPlanGrid } from '@/components/billing/XrogaPricingCard';
 import { useAppStore } from '@/store/useAppStore';
 import { Shield, Layers, Sparkles, Lock, ArrowRight, Brain } from 'lucide-react';
-import { GalacticPlanCard, PopularPlanCard } from '@/components/ui/Uiverse';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SubscriptionManagePanel } from '@/components/billing/SubscriptionManagePanel';
 
@@ -33,7 +33,7 @@ export function BillingPageClient() {
 
         <div className="glass-panel rounded-2xl p-6 border-[var(--primary)]/30">
           <h2 className="font-semibold text-lg flex items-center gap-2">
-            <Brain className="w-5 h-5 text-[var(--accent)]" />
+            <Brain className="w-5 h-5 text-[#2dd4bf]" />
             Current Plan & Tokens
           </h2>
           <p className="text-sm text-[var(--muted)] mt-2">
@@ -49,12 +49,12 @@ export function BillingPageClient() {
             <>
               <div className="mt-3 h-2 rounded-full bg-white/10 overflow-hidden max-w-md">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-[var(--accent)] to-violet-500 transition-all"
+                  className="h-full rounded-full bg-gradient-to-r from-[#2dd4bf] to-violet-500 transition-all"
                   style={{ width: `${Math.max(3, 100 - tokenUsage.percentUsed)}%` }}
                 />
               </div>
               <p className="mt-2 text-sm">
-                <span className="text-[var(--accent)] font-semibold tabular-nums">
+                <span className="text-[#2dd4bf] font-semibold tabular-nums">
                   {formatTokens(tokenUsage.totalTokensRemaining)}
                 </span>
                 <span className="text-[var(--muted)]">
@@ -79,34 +79,31 @@ export function BillingPageClient() {
           <p className="text-sm text-[var(--muted)] mb-6">
             Every tier includes 7M+ monthly tokens, emergency tokens, and full feature access.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {GALACTIC_PLANS.map((plan) =>
-              plan.highlight ? (
-                <PopularPlanCard
-                  key={plan.tier}
-                  name={plan.name}
-                  price={plan.priceLabel}
-                  description={plan.tagline ?? ''}
-                  actions="7M+ tokens/mo"
-                  cta={<CheckoutButton planTier={plan.tier} label={`Get ${plan.name}`} className="w-full" />}
-                />
-              ) : (
-                <GalacticPlanCard
-                  key={plan.tier}
-                  name={plan.name}
-                  price={plan.priceLabel}
-                  actions="7M+ tokens/mo"
-                  features={[`${plan.concurrency} concurrent tasks`, 'All features unlocked']}
-                  cta={<CheckoutButton planTier={plan.tier} label={`Get ${plan.name}`} className="w-full" />}
-                />
-              )
-            )}
-          </div>
+          <PricingPlanGrid>
+            {GALACTIC_PLANS.map((plan) => (
+              <GalacticPlanPricingCard
+                key={plan.tier}
+                plan={plan}
+                current={planTier === plan.tier}
+                cta={
+                  planTier === plan.tier ? (
+                    <div className="text-center py-2 text-sm font-semibold text-[#2dd4bf]">Current Plan</div>
+                  ) : (
+                    <CheckoutButton
+                      planTier={plan.tier}
+                      label={`Get ${plan.name} →`}
+                      className="!w-full xv-pricing-cta xv-pricing-cta--outline !rounded-full"
+                    />
+                  )
+                }
+              />
+            ))}
+          </PricingPlanGrid>
         </div>
 
         <div className="glass-panel rounded-2xl p-6">
           <h3 className="font-semibold mb-3 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[var(--accent)]" />
+            <Sparkles className="w-4 h-4 text-[#2dd4bf]" />
             Coming Soon
           </h3>
           <div className="flex flex-wrap gap-3">
@@ -120,21 +117,21 @@ export function BillingPageClient() {
 
         <div className="grid sm:grid-cols-3 gap-4 text-sm">
           <div className="glass-panel rounded-xl p-4 flex gap-3">
-            <Shield className="w-5 h-5 text-[var(--accent)] shrink-0" />
+            <Shield className="w-5 h-5 text-[#2dd4bf] shrink-0" />
             <div>
               <p className="font-medium">Secure billing</p>
               <p className="text-xs text-[var(--muted)] mt-1">Powered by Paddle — cancel anytime</p>
             </div>
           </div>
           <div className="glass-panel rounded-xl p-4 flex gap-3">
-            <Layers className="w-5 h-5 text-[var(--accent)] shrink-0" />
+            <Layers className="w-5 h-5 text-[#2dd4bf] shrink-0" />
             <div>
               <p className="font-medium">All features unlocked</p>
               <p className="text-xs text-[var(--muted)] mt-1">No feature gating on any tier</p>
             </div>
           </div>
           <div className="glass-panel rounded-xl p-4 flex gap-3">
-            <Lock className="w-5 h-5 text-[var(--accent)] shrink-0" />
+            <Lock className="w-5 h-5 text-[#2dd4bf] shrink-0" />
             <div>
               <p className="font-medium">Token-based usage</p>
               <p className="text-xs text-[var(--muted)] mt-1">Pay for AI compute, not per-feature locks</p>
