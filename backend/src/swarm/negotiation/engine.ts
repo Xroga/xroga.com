@@ -310,7 +310,7 @@ function parsePlanSteps(plan: string): string[] {
     const m = line.match(/^Step\s+(\d+)[.:]\s*(.+)/i) ?? line.match(/^(\d+)[.)]\s+(.+)/);
     if (m?.[2]) steps.push(m[2].trim());
   }
-  if (steps.length) return steps.slice(0, 12);
+  if (steps.length) return steps;
   return plan
     .split(/\n\n+/)
     .map((s) => s.trim())
@@ -347,7 +347,7 @@ async function groqCall(system: string, user: string, maxTokens = 512): Promise<
   return groqGeneral(user);
 }
 
-async function deepseekCall(system: string, user: string, maxTokens = 4096): Promise<string> {
+async function deepseekCall(system: string, user: string, maxTokens = 8192): Promise<string> {
   if (resolveApiKey('deepseek', 'code')) {
     return deepseekCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, { maxTokens });
   }
@@ -722,7 +722,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       ? 'plain HTML/CSS/JS only. Edit existing files from GitHub. Output ONLY fenced code blocks.'
       : 'plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.';
   const existingCodeContext = existingSiteCode
-    ? `\n\nEXISTING SITE (edit — do not rebuild from scratch):\n--- index.html ---\n${existingSiteCode.html.slice(0, 7000)}\n\n--- styles.css ---\n${existingSiteCode.css.slice(0, 5000)}\n\n--- script.js ---\n${existingSiteCode.js.slice(0, 2500)}`
+    ? `\n\nEXISTING SITE (edit — do not rebuild from scratch):\n--- index.html ---\n${existingSiteCode.html}\n\n--- styles.css ---\n${existingSiteCode.css}\n\n--- script.js ---\n${existingSiteCode.js}`
     : '';
 
   for (let si = 0; si < stepsToRun.length; si++) {
@@ -738,7 +738,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       stepCode = await withBuildHeartbeat(ctx, todos, () =>
         deepseekCall(
           executePrompt,
-          `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`
+          `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
+          8192
         )
       );
     } catch (stepErr) {
@@ -950,9 +951,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     const phaseDone = stepsToRun.length;
     const totalPhases = steps.length;
     polishedOutput = `${featureOutput.summary ?? '🎮 YOUR GAME IS PLAYABLE!'}\n\n${GAME_PHASE_COMPLETE_MSG(phaseDone, totalPhases)}`;
-  } else if (featureOutput?.type === 'landing_page' && featureOutput.summary) {
-    polishedOutput = featureOutput.summary;
-  } else if (liveUrl) {
+  } else if (liveUrl && featureOutput?.type !== 'landing_page') {
     polishedOutput = formatBuildSummaryCard({
       ...buildSummaryFromBrief(userPrompt, clarifiedBrief, liveUrl, repoUrl, memoryNote),
       liveUrl,
@@ -960,12 +959,14 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     });
   } else if (deployError) {
     polishedOutput = `[Phase 5] Deploy issue: ${deployError}\n\nYour site was built — check GitHub and retry preview.`;
-  } else if (featureOutput?.type === 'landing_page') {
-    polishedOutput = BRAND.phase7.success;
   } else if (featureOutput) {
     polishedOutput = BRAND.phase7.success;
   } else {
     polishedOutput = BRAND.phase7.success;
+  }
+
+  if (featureOutput?.type === 'landing_page') {
+    polishedOutput = '';
   }
 
   todos.completeFinal('emit');

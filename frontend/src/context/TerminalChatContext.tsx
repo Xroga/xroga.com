@@ -948,6 +948,8 @@ export function TerminalChatProvider({
             if (ev.dag && !useCompactPipeline) setDag(ev.dag);
           },
           onDelta: (delta) => {
+            if (!delta) return;
+            if (buildPromptActive) return;
             gotEvent = true;
             fullReply += delta;
             setMessages((m) =>
@@ -1018,7 +1020,15 @@ export function TerminalChatProvider({
               );
               return;
             }
-            if (chatContent && !fullReply.trim()) {
+            if (buildPromptActive && output && typeof output === 'object' && 'type' in output && output.type !== 'chat') {
+              setMessages((m) =>
+                m.map((msg) =>
+                  msg.id === assistantId ? { ...msg, content: '', featureOutput: output } : msg
+                )
+              );
+              return;
+            }
+            if (chatContent && !fullReply.trim() && !buildPromptActive) {
               fullReply = chatContent;
               setMessages((m) =>
                 m.map((msg) => (msg.id === assistantId ? { ...msg, content: chatContent } : msg))

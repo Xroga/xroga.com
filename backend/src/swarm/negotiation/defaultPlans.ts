@@ -58,7 +58,7 @@ export function defaultPlanForPrompt(prompt: string): string[] {
   const niche = nicheFromPrompt(prompt);
 
   if (niche) {
-    return [`Step 1: ${niche.name}`, ...niche.steps.slice(0, 5)];
+    return [`Step 1: ${niche.name}`, ...niche.steps];
   }
 
   return [...(noOrder ? BEGINNER_WEBSITE_PLAN_NO_ORDER : BEGINNER_WEBSITE_PLAN)];

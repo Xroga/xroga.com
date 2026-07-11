@@ -452,12 +452,19 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             liveAttempts={imageAttempts}
                             promptHint={pipelineMessage?.startsWith('Prompt:') ? pipelineMessage.replace(/^Prompt:\s*/, '') : lastUserText}
                           />
-                        ) : (
+                        ) : !(
+                            loading &&
+                            msg.id === animatingId &&
+                            (buildPromptActive ||
+                              swarmTodos.length > 0 ||
+                              swarmNegotiationPhase != null ||
+                              swarmActivityLog.length > 0)
+                          ) ? (
                           <ModernResponseText
                             content={msg.content}
                             streaming={msg.id === animatingId && loading}
                           />
-                        )}
+                        ) : null}
                       </div>
                       {isLastAssistant && reasoning && (
                         <ReasoningPanel reasoning={reasoning} dag={dag ?? undefined} />

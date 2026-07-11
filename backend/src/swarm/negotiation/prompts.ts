@@ -58,6 +58,8 @@ Once step code is generated, output exactly: Step X Code Ready for Verification.
 CRITICAL RULES:
 - Output ONLY code in fenced blocks with language tags (html, css, javascript).
 - NO explanations, NO essays, NO bullet lists, NO "here is" commentary.
+- NO line limits — generate complete, production-ready code for the step. Never truncate with "..." or "// rest unchanged".
+- Include every section, component, and style needed for this step.
 - NO markdown outside fenced code blocks.
 - Build real files — not pseudocode or placeholders.
 - CSS must be modern: CSS variables, flexbox/grid, typography scale, spacing, hover states, mobile-first media queries.

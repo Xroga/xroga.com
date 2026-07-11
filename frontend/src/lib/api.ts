@@ -193,7 +193,11 @@ export async function streamSwarmExecute(
 
       if (eventName === 'complete') {
         const complete = payload as SwarmCompleteEvent & { followUps?: string[] };
-        const text = swarmOutputToText(complete.output);
+        const outType =
+          complete.output && typeof complete.output === 'object'
+            ? (complete.output as { type?: string }).type
+            : undefined;
+        const text = outType === 'landing_page' ? '' : swarmOutputToText(complete.output);
         if (complete.output && typeof complete.output === 'object') {
           const out = complete.output as { type?: string; imageUrl?: string };
           if (out.type === 'image' && typeof out.imageUrl === 'string' && text) {
