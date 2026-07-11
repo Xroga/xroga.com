@@ -31,10 +31,10 @@ export function ProcessingPipeline({ activeAgent, loading, compact }: Processing
 
   if (compact) {
     return (
-      <div className="xv-thinking-bar flex items-center gap-2.5 py-2.5 px-3 my-2 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+      <div className="xv-thinking-bar flex items-center gap-2.5 py-2.5 px-3 my-2 rounded-lg">
         <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#006aff]/40" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#006aff]" />
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent)]/40" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent)]" />
         </span>
         <span className="text-[13px] text-[var(--foreground)]/80 font-medium">Thinking</span>
         <span className="xv-thinking-dots text-[var(--muted)] text-sm" aria-hidden />
@@ -45,7 +45,7 @@ export function ProcessingPipeline({ activeAgent, loading, compact }: Processing
   const step = activeAgent ? (AGENT_STEP[activeAgent] ?? 0) : 0;
 
   return (
-    <div className="xv-processing-pipeline my-2 px-3 py-2.5 rounded-lg border border-white/[0.08] bg-white/[0.02]">
+    <div className="xv-processing-pipeline">
       <div className="flex items-center gap-3">
         {FULL_STEPS.map((s, i) => {
           const done = i < step;
@@ -55,9 +55,9 @@ export function ProcessingPipeline({ activeAgent, loading, compact }: Processing
               <span
                 className={cn(
                   'w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-300',
-                  done && 'bg-emerald-400',
-                  active && 'bg-[#006aff] animate-pulse scale-125',
-                  !done && !active && 'bg-white/20'
+                  done && 'bg-emerald-500',
+                  active && 'bg-[var(--accent)] animate-pulse scale-125',
+                  !done && !active && 'bg-[var(--foreground)]/20'
                 )}
               />
               <span

@@ -2670,6 +2670,106 @@ body.theme-gray * {
     100% { opacity: 0; transform: translateX(120%); }
   }
 
+  /* Theme-aware AI processing panels — follow site + terminal skin vars */
+  .xv-agent-panel {
+    border-radius: 0.75rem;
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.1));
+    background: var(--card, rgba(12, 12, 14, 0.95));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--foreground);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .xv-thinking-panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.12));
+    background: var(--card, rgba(255, 255, 255, 0.95));
+    color: var(--foreground);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .xv-thinking-panel__header {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    text-align: left;
+    transition: background 0.2s ease;
+  }
+
+  .xv-thinking-panel__header:hover {
+    background: color-mix(in srgb, var(--foreground) 4%, transparent);
+  }
+
+  .xv-thinking-panel__steps {
+    border-top: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+    padding: 0.625rem 0.875rem;
+  }
+
+  .xv-agent-panel__live {
+    border-radius: 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--accent, #006aff) 25%, transparent);
+    background: color-mix(in srgb, var(--accent, #006aff) 8%, transparent);
+  }
+
+  .xv-agent-panel__todo {
+    border-radius: 0.5rem;
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.1));
+    background: color-mix(in srgb, var(--foreground) 3%, transparent);
+  }
+
+  .xv-processing-pipeline {
+    margin: 0.5rem 0;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+    background: color-mix(in srgb, var(--foreground) 2%, transparent);
+  }
+
+  .xv-thinking-bar {
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+    background: color-mix(in srgb, var(--foreground) 3%, transparent);
+  }
+
+  body.theme-white .xv-blackhole-shine,
+  .terminal-skin-light .xv-blackhole-shine,
+  .terminal-skin-light-grid .xv-blackhole-shine {
+    background: linear-gradient(
+      to right,
+      #475569 0%,
+      #1e293b 15%,
+      #006aff 30%,
+      #334155 45%,
+      #006aff 58%,
+      #64748b 75%,
+      #475569 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  body.theme-black .xv-thinking-panel,
+  body.theme-gray .xv-thinking-panel,
+  body.theme-image .xv-thinking-panel,
+  .terminal-skin-dark .xv-thinking-panel,
+  .terminal-skin-amoled .xv-thinking-panel,
+  .terminal-skin-gray .xv-thinking-panel {
+    background: color-mix(in srgb, var(--card, #0c0c0e) 92%, transparent);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  body.theme-white .xv-thinking-panel,
+  .terminal-skin-light .xv-thinking-panel,
+  .terminal-skin-light-grid .xv-thinking-panel {
+    background: color-mix(in srgb, #ffffff 96%, var(--accent, #006aff) 4%);
+    box-shadow: 0 4px 20px rgba(0, 106, 255, 0.08);
+  }
+
   .xv-sidebar-icon-link {
     display: flex;
     align-items: center;

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { INTEGRATIONS, INTEGRATION_CATEGORIES } from '@/lib/integrations';
 import { getIntegrationLogo } from '@/lib/integrationLogos';
 import { GitHubConnect } from '@/components/integrations/GitHubConnect';
+import { ConnectedServicesSection } from '@/components/integrations/ConnectedServicesSection';
 import { CustomCredentialsSection } from '@/components/integrations/CustomCredentialsSection';
 import { IntegrationRequestBanner } from '@/components/integrations/IntegrationRequestBanner';
 import { api } from '@/lib/api';
@@ -62,9 +63,9 @@ export function IntegrationsPanel() {
       return;
     }
     if (oauth) {
-      toast('OAuth flow coming soon — use Custom API Keys for now', { icon: '🔗' });
+      toast('OAuth coming soon — connect via Custom API Keys for now', { icon: '🔗' });
     } else {
-      toast('Add credentials in the section above', { icon: '🔑' });
+      toast('Coming soon — add credentials in Custom API Keys below', { icon: '🔑' });
     }
   }
 
@@ -78,9 +79,11 @@ export function IntegrationsPanel() {
           </span>
         </div>
         <p className="text-sm text-[var(--muted)] mt-1">
-          Connect external services to power your Swarm.
+          Connect external services to power your Swarm. Platform keys are auto-managed — custom keys require your vault password to view.
         </p>
       </div>
+
+      <ConnectedServicesSection />
 
       <CustomCredentialsSection />
 
