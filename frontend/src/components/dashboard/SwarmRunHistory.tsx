@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { api, type SwarmRunSummary } from '@/lib/api';
 import { swarmOutputToText } from '@/lib/swarm';
+import { messagesFromSwarmRun } from '@/lib/swarmRunRestore';
 import { Bot, Loader2 } from 'lucide-react';
 import { UiverseTableCard } from '@/components/ui/UiverseTableCard';
 import { SectionRowActions, copyText, downloadText } from '@/components/ui/SectionRowActions';
@@ -18,6 +19,7 @@ export function SwarmRunHistory({ search = '' }: { search?: string }) {
   const [runs, setRuns] = useState<SwarmRunSummary[]>([]);
   const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [openingId, setOpeningId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
   const { setPrompt } = useTerminalChat();
@@ -44,17 +46,31 @@ export function SwarmRunHistory({ search = '' }: { search?: string }) {
     });
   }, [runs, search, hidden]);
 
-  function openInDashboard(run: SwarmRunSummary) {
+  async function openInDashboard(run: SwarmRunSummary) {
     markItemSeen(run.id);
     setSelectedId(run.id);
-    setPrompt(run.prompt);
-    resumeToDashboard({
-      prompt: run.prompt,
-      selectedId: run.id,
-      selectedLabel: run.prompt.slice(0, 40),
-      source: 'chats',
-    });
-    router.push('/dashboard');
+    setOpeningId(run.id);
+    try {
+      let fullRun = run;
+      try {
+        fullRun = await api.swarm.getRun(run.id);
+      } catch {
+        /* use list payload */
+      }
+      const messages = messagesFromSwarmRun(fullRun);
+      setPrompt(run.prompt);
+      resumeToDashboard({
+        prompt: run.prompt,
+        messages,
+        selectedId: run.id,
+        selectedLabel: run.prompt.slice(0, 40),
+        source: 'chats',
+      });
+      router.push('/dashboard');
+      toast.success('Conversation restored');
+    } finally {
+      setOpeningId(null);
+    }
   }
 
   if (loading) {
@@ -101,10 +117,10 @@ export function SwarmRunHistory({ search = '' }: { search?: string }) {
               title={run.prompt.slice(0, 36) || 'chat'}
               rows={chatTableRows(run, meta)}
               selected={selectedId === run.id}
-              onClick={() => openInDashboard(run)}
+              onClick={() => void openInDashboard(run)}
             />
             <SectionRowActions
-              onEdit={() => openInDashboard(run)}
+              onEdit={() => void openInDashboard(run)}
               onCopy={() => void copyText(run.prompt, 'Prompt copied')}
               onDownload={() =>
                 downloadText(`xroga-chat-${run.id}.txt`, `${run.prompt}\n\n---\n\n${text}`)
@@ -115,12 +131,14 @@ export function SwarmRunHistory({ search = '' }: { search?: string }) {
                 toast.success('Removed from list');
               }}
             />
+            {openingId === run.id && (
+              <p className="text-[10px] text-[var(--muted)] flex items-center gap-1">
+                <Loader2 className="w-3 h-3 animate-spin" /> Restoring conversation…
+              </p>
+            )}
           </div>
         );
       })}
-      <Link href="/dashboard" className="sm:col-span-2 block text-center text-sm text-[var(--accent)] hover:underline">
-        Run a new command →
-      </Link>
     </div>
   );
 }

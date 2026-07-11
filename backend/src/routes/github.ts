@@ -324,6 +324,7 @@ router.delete('/disconnect', async (req: AuthRequest, res) => {
 /** Full repository analysis before builds — tree, languages, and core site files. */
 router.get('/analyze', async (req: AuthRequest, res) => {
   const repoName = typeof req.query.repoName === 'string' ? req.query.repoName.trim() : '';
+  const branch = typeof req.query.branch === 'string' ? req.query.branch.trim() : undefined;
   if (!repoName) {
     res.status(400).json({ error: 'repoName query required' });
     return;
@@ -331,7 +332,7 @@ router.get('/analyze', async (req: AuthRequest, res) => {
 
   try {
     const { analyzeGitHubRepo } = await import('../services/integrations/githubDeploy.js');
-    const analysis = await analyzeGitHubRepo(req.userId!, repoName);
+    const analysis = await analyzeGitHubRepo(req.userId!, repoName, branch);
     res.json(analysis);
   } catch (e) {
     res.status(502).json({ error: (e as Error).message });
@@ -437,6 +438,8 @@ router.post('/push-build', async (req: AuthRequest, res) => {
     repoName: z.string().min(3),
     branch: z.string().max(100).optional(),
     projectSlug: z.string().max(80).optional(),
+    userPrompt: z.string().max(5000).optional(),
+    projectName: z.string().max(200).optional(),
   });
 
   const parsed = schema.safeParse(req.body);
@@ -446,22 +449,30 @@ router.post('/push-build', async (req: AuthRequest, res) => {
   }
 
   try {
-    const { pushBuildFromSource } = await import('../services/integrations/githubDeploy.js');
-    const github = await pushBuildFromSource(
-      req.userId!,
-      parsed.data.html,
-      parsed.data.css ?? '',
-      parsed.data.js ?? '',
-      {
-        targetRepo: parsed.data.repoName,
-        targetBranch: parsed.data.branch ?? 'main',
-        slug: parsed.data.projectSlug,
-      }
-    );
+    const { pushBuildToGitHub } = await import('../services/integrations/githubDeploy.js');
+    const { buildFullProjectFiles, scaffoldFilePaths } = await import('../services/projectScaffold.js');
+
+    const title = parsed.data.projectName ?? parsed.data.projectSlug ?? 'XROGA Build';
+    const prompt = parsed.data.userPrompt ?? title;
+    const files = buildFullProjectFiles({
+      html: parsed.data.html,
+      css: parsed.data.css ?? '',
+      js: parsed.data.js ?? '',
+      projectName: title,
+      userPrompt: prompt,
+    });
+
+    const github = await pushBuildToGitHub(req.userId!, files, {
+      targetRepo: parsed.data.repoName,
+      targetBranch: parsed.data.branch ?? 'main',
+      slug: parsed.data.projectSlug,
+    });
     res.json({
       githubRepoUrl: github.htmlUrl,
       githubRepoName: github.repoName,
       pushed: true,
+      fileCount: files.length,
+      generatedFiles: scaffoldFilePaths(prompt),
     });
   } catch (e) {
     res.status(502).json({ error: (e as Error).message });

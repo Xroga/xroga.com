@@ -400,6 +400,26 @@ export class SwarmService {
       iteration: run.iteration_count,
     };
   }
+
+  /** Merge messagesSnapshot into swarm_runs.output for cloud thread restore. */
+  static async saveRunConversation(
+    userId: string,
+    runId: string,
+    messages: unknown[]
+  ): Promise<void> {
+    const run = await this.getRun(userId, runId);
+    const existing = (run.output as Record<string, unknown> | null) ?? {};
+    const supabase = getSupabaseAdmin();
+    const { error } = await supabase
+      .from('swarm_runs')
+      .update({
+        output: { ...existing, messagesSnapshot: messages },
+        completed_at: run.completed_at ?? new Date().toISOString(),
+      })
+      .eq('id', runId)
+      .eq('user_id', userId);
+    if (error) throw new Error(error.message);
+  }
 }
 
 export function handleInsufficientActions(res: Response, err: InsufficientActionsError): void {

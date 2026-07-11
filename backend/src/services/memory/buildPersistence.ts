@@ -14,6 +14,7 @@ export interface BuildPersistInput {
   polishedReply: string;
   featureOutput?: FeatureOutput;
   runId?: string;
+  messagesSnapshot?: unknown[];
 }
 
 /** Save build result to swarm_runs (negotiation path bypasses runCore). */
@@ -35,6 +36,7 @@ export async function persistBuildRun(input: BuildPersistInput): Promise<string>
         featureOutput: input.featureOutput,
         featureCategory: input.featureCategory,
         pipeline: 'build',
+        ...(input.messagesSnapshot?.length ? { messagesSnapshot: input.messagesSnapshot } : {}),
       },
     });
     if (error && !/does not exist|relation/i.test(error.message)) {

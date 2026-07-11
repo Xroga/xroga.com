@@ -623,9 +623,11 @@ async function fetchRepoTextFile(
   token: string,
   owner: string,
   repo: string,
-  path: string
+  path: string,
+  branch?: string
 ): Promise<string | null> {
-  const res = await ghFetch(token, `/repos/${owner}/${repo}/contents/${path}`);
+  const ref = branch ? `?ref=${encodeURIComponent(branch)}` : '';
+  const res = await ghFetch(token, `/repos/${owner}/${repo}/contents/${path}${ref}`);
   if (!res.ok) return null;
   const data = (await res.json()) as { content?: string; encoding?: string };
   if (data.encoding !== 'base64' || !data.content) return null;
@@ -635,7 +637,8 @@ async function fetchRepoTextFile(
 /** Pull build files from an existing GitHub repo (no rebuild required). */
 export async function fetchBuildFilesFromGitHub(
   userId: string,
-  repoName: string
+  repoName: string,
+  branch?: string
 ): Promise<ProjectFile[]> {
   const integration = await getIntegration(userId);
   if (!integration?.access_token) throw new Error('GitHub not connected');
@@ -643,9 +646,9 @@ export async function fetchBuildFilesFromGitHub(
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
 
-  const indexHtml = (await fetchRepoTextFile(token, owner, repo, 'index.html')) ?? '';
-  const css = (await fetchRepoTextFile(token, owner, repo, 'styles.css')) ?? '';
-  const js = (await fetchRepoTextFile(token, owner, repo, 'script.js')) ?? '';
+  const indexHtml = (await fetchRepoTextFile(token, owner, repo, 'index.html', branch)) ?? '';
+  const css = (await fetchRepoTextFile(token, owner, repo, 'styles.css', branch)) ?? '';
+  const js = (await fetchRepoTextFile(token, owner, repo, 'script.js', branch)) ?? '';
 
   if (!indexHtml.trim()) throw new Error('No index.html found in GitHub repo');
 
@@ -675,7 +678,8 @@ export interface GitHubRepoAnalysis {
 /** Full repository scan before builds — tree, languages, and core site files. */
 export async function analyzeGitHubRepo(
   userId: string,
-  repoName: string
+  repoName: string,
+  preferredBranch?: string
 ): Promise<GitHubRepoAnalysis> {
   const integration = await getIntegration(userId);
   if (!integration?.access_token) throw new Error('GitHub not connected');
@@ -687,6 +691,7 @@ export async function analyzeGitHubRepo(
   if (!repoRes.ok) throw new Error(`GitHub repo lookup failed: ${repoRes.status}`);
   const repoMeta = (await repoRes.json()) as { default_branch?: string; language?: string };
   const defaultBranch = repoMeta.default_branch ?? 'main';
+  const scanBranch = preferredBranch?.trim() || defaultBranch;
 
   const langRes = await ghFetch(token, `/repos/${owner}/${repo}/languages`);
   const languages: Record<string, number> = langRes.ok ? ((await langRes.json()) as Record<string, number>) : {};
@@ -695,7 +700,10 @@ export async function analyzeGitHubRepo(
   let treeSample: Array<{ path: string; size?: number }> = [];
   let topLevelEntries: string[] = [];
 
-  const branchRes = await ghFetch(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(defaultBranch)}`);
+  let branchRes = await ghFetch(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(scanBranch)}`);
+  if (!branchRes.ok && scanBranch !== defaultBranch) {
+    branchRes = await ghFetch(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(defaultBranch)}`);
+  }
   let treeSha: string | null = null;
   if (branchRes.ok) {
     const branchData = (await branchRes.json()) as { commit?: { commit?: { tree?: { sha?: string } } } };
@@ -718,7 +726,7 @@ export async function analyzeGitHubRepo(
   let buildFiles = { html: '', css: '', js: '' };
   let hasBuildFiles = false;
   try {
-    const files = await fetchBuildFilesFromGitHub(userId, repoName);
+    const files = await fetchBuildFilesFromGitHub(userId, repoName, scanBranch);
     hasBuildFiles = true;
     buildFiles = {
       html: files.find((f) => f.path === 'index.html')?.content ?? '',
@@ -757,12 +765,12 @@ export async function analyzeGitHubRepo(
 
   const langList = Object.keys(languages).slice(0, 6).join(', ') || repoMeta.language || 'Unknown';
   const summary = hasBuildFiles
-    ? `Repository ${repoName} (${defaultBranch}): ${fileCount} files. Static site detected. Stack: ${techStack.join(', ')}. Languages: ${langList}.`
-    : `Repository ${repoName} (${defaultBranch}): ${fileCount} files. Stack: ${techStack.join(', ')}. Languages: ${langList}.`;
+    ? `Repository ${repoName} (${scanBranch}): ${fileCount} files. Static site detected. Stack: ${techStack.join(', ')}. Languages: ${langList}.`
+    : `Repository ${repoName} (${scanBranch}): ${fileCount} files. Stack: ${techStack.join(', ')}. Languages: ${langList}.`;
 
   const report = [
     `# Repository Analysis: ${repoName}`,
-    `- Branch: ${defaultBranch}`,
+    `- Branch: ${scanBranch}`,
     `- Total files: ${fileCount}`,
     `- Files analyzed: ${filesAnalyzed}`,
     `- Estimated lines: ~${totalLinesEstimate.toLocaleString()}`,
@@ -773,7 +781,7 @@ export async function analyzeGitHubRepo(
 
   return {
     repoName,
-    defaultBranch,
+    defaultBranch: scanBranch,
     fileCount,
     topLevelEntries,
     hasBuildFiles,

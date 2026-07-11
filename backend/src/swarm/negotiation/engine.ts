@@ -487,7 +487,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   let repoAnalysisSummary: string | null = null;
   if (isWebBuild && ctx.githubTargetRepo?.includes('/')) {
     try {
-      const analysis = await analyzeGitHubRepo(userId, ctx.githubTargetRepo);
+      const analysis = await analyzeGitHubRepo(userId, ctx.githubTargetRepo, ctx.githubTargetBranch);
       repoAnalysisSummary = analysis.summary;
       if (analysis.hasBuildFiles) {
         existingSiteCode = analysis.buildFiles;
@@ -500,7 +500,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       console.warn('[NegotiationEngine] GitHub repo analysis:', (fetchErr as Error).message);
       if (isUpdateBuild) {
         try {
-          const files = await fetchBuildFilesFromGitHub(userId, ctx.githubTargetRepo);
+          const files = await fetchBuildFilesFromGitHub(userId, ctx.githubTargetRepo, ctx.githubTargetBranch);
           existingSiteCode = siteCodeFromProjectFiles(files);
         } catch (fallbackErr) {
           console.warn('[NegotiationEngine] Fetch existing site:', (fallbackErr as Error).message);
@@ -972,6 +972,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         needsPayment: summaryData.needsPayment,
         generatedFiles: generatedPaths,
         fileCount: projectFiles.length,
+        githubPushConfirmed: true,
         memoryNote:
           pipeline.deployError && !pipeline.deployVerified
             ? `${memoryNote ? `${memoryNote} ` : ''}Hosted preview note: ${pipeline.deployError.slice(0, 160)}`
@@ -1020,6 +1021,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             needsPayment: summaryData.needsPayment,
             generatedFiles: generatedPaths,
             fileCount: projectFiles.length,
+            githubPushConfirmed: true,
             memoryNote:
               memoryNote ??
               `Code pushed to ${github.repoName}. Click Open Live Preview to publish the hosted link.`,
@@ -1046,15 +1048,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             error: pushMsg,
             assistantMessageId: ctx.assistantMessageId,
           });
-          const target = ctx.githubTargetRepo;
-          if (target?.includes('/')) {
-            featureOutput = {
-              ...featureOutput,
-              githubRepoUrl: `https://github.com/${target}`,
-              githubRepoName: target,
-              memoryNote: `GitHub push issue: ${pushMsg.slice(0, 140)}. Check repo access and try again.`,
-            };
-          }
+          featureOutput = {
+            ...featureOutput,
+            githubPushConfirmed: false,
+            memoryNote: `GitHub push failed: ${pushMsg.slice(0, 140)}. Use your selected repo in the chatbar and retry.`,
+          };
         }
       }
     }
