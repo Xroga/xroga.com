@@ -29,7 +29,7 @@ import { SidebarSearchModal } from './SidebarSearchModal';
 import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
-import { AppStoreSidebarButtons } from '@/components/ui/AppStoreSidebarButtons';
+import { DownloadAppButton } from '@/components/ui/DownloadAppButton';
 import { SidebarCommunityButton } from '@/components/layout/SidebarCommunityButton';
 import { useT } from '@/components/providers/LanguageProvider';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -271,11 +271,11 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         </HoverTip>
       )}
       {navExpanded ? (
-        <AppStoreSidebarButtons />
+        <DownloadAppButton variant="sidebar" />
       ) : (
         <div className="flex justify-center">
-          <HoverTip label="Download app" description="Google Play & App Store — coming soon">
-            <div className="p-2 rounded-lg glass-panel text-[10px] text-[var(--muted)]">App</div>
+          <HoverTip label="Download app" description="Mobile app — launch soon">
+            <DownloadAppButton variant="header" className="!w-10 !h-10 !p-2 !justify-center" />
           </HoverTip>
         </div>
       )}

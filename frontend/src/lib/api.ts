@@ -576,6 +576,37 @@ export const api = {
         body: JSON.stringify(body),
       }),
   },
+  marketplace: {
+    categories: () => apiFetch<{ categories: string[] }>('/api/marketplace/categories'),
+    listings: (opts?: { category?: string; mine?: boolean }) => {
+      const params = new URLSearchParams();
+      if (opts?.category) params.set('category', opts.category);
+      if (opts?.mine) params.set('mine', '1');
+      const q = params.toString();
+      return apiFetch<{ listings: MarketplaceListing[] }>(`/api/marketplace/listings${q ? `?${q}` : ''}`);
+    },
+    stats: () => apiFetch<MarketplaceStats>('/api/marketplace/stats'),
+    create: (body: CreateListingBody) =>
+      apiFetch<{ success: boolean; message: string; listing?: MarketplaceListing }>('/api/marketplace/listings', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    purchase: (listingId: string) =>
+      apiFetch<{ success: boolean; message: string }>(`/api/marketplace/listings/${listingId}/purchase`, {
+        method: 'POST',
+      }),
+  },
+  influencer: {
+    dashboard: () => apiFetch<InfluencerDashboard>('/api/influencer/dashboard'),
+    apply: (body: InfluencerApplyBody) =>
+      apiFetch<{ success: boolean; message: string }>('/api/influencer/apply', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+  },
+  analytics: {
+    dashboard: () => apiFetch<AnalyticsDashboard>('/api/analytics/dashboard'),
+  },
   chat: {
     send: (message: string, _userId?: string, onDelta?: (delta: string) => void) =>
       streamSwarmExecute(message, { onDelta }),
@@ -832,4 +863,119 @@ export interface TokenDistributionPreview {
   autoHeavyUsers: number;
   autoBuilders: number;
   alreadyDistributed: boolean;
+}
+
+export interface MarketplaceListing {
+  id: string;
+  sellerId: string;
+  sellerName: string;
+  title: string;
+  description: string;
+  category: string;
+  priceXrg: number;
+  previewUrl: string | null;
+  tags: string[];
+  status: string;
+  salesCount: number;
+  createdAt: string;
+  owned?: boolean;
+  purchased?: boolean;
+}
+
+export interface MarketplaceStats {
+  totalListings: number;
+  myListings: number;
+  mySales: number;
+  myPurchases: number;
+}
+
+export interface CreateListingBody {
+  title: string;
+  description: string;
+  category: string;
+  priceXrg: number;
+  previewUrl?: string;
+  tags?: string[];
+}
+
+export interface InfluencerApplyBody {
+  followerCount: number;
+  usernameSlug?: string;
+  applicationNote?: string;
+  socialLinks?: Record<string, string>;
+}
+
+export interface InfluencerDashboard {
+  status: 'none' | 'pending' | 'approved' | 'rejected';
+  tier: string | null;
+  commissionPercent: number;
+  followerCount: number;
+  nextTier: string | null;
+  nextTierFollowers: number | null;
+  usernameSlug: string | null;
+  shareUrl: string | null;
+  stats: {
+    totalReferrals: number;
+    activeReferrals: number;
+    pendingReferrals: number;
+    monthlyCommissionUsd: number;
+    totalCommissionUsd: number;
+    aiTokensEarned: number;
+    xrgTokensEarned: number;
+  };
+  perks: string[];
+  tiers: Array<{
+    tier: string;
+    minFollowers: number;
+    maxFollowers: number | null;
+    commissionPercent: number;
+    aiTokensOneTime: number;
+    xrgTokensOneTime: number;
+    perks: string[];
+  }>;
+}
+
+export interface AnalyticsDashboard {
+  generatedAt: string;
+  user: {
+    tokensUsed: number;
+    tokensRemaining: number;
+    percentUsed: number;
+    xrgBalance: number;
+    referralCount: number;
+    projectsCount: number;
+    daysActiveThisMonth: number;
+  };
+  platform: {
+    dau: number;
+    mau: number;
+    dauMauRatio: number;
+    totalUsers: number;
+    mrrUsd: number;
+    arrUsd: number;
+    communityPoolTokens: number;
+    marketplaceListings: number;
+    totalAiTokensConsumed: number;
+    avgTokensPerUser: number;
+  };
+  targets: {
+    dauMauTarget: number;
+    churnTarget: number;
+    mrrGrowthTarget: number;
+    tokenUsageTarget: number;
+    referralRateTarget: number;
+    npsTarget: number;
+  };
+  revenue: {
+    planTier: string;
+    planPriceUsd: number;
+    monthlyValueUsd: number;
+    estimatedArrUsd: number;
+  };
+  community: {
+    poolBalance: number;
+    myReferrals: number;
+    marketplaceSales: number;
+    marketplacePurchases: number;
+  };
 }

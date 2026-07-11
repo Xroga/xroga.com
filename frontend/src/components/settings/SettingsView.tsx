@@ -179,9 +179,13 @@ export function SettingsView({ email }: { email: string }) {
                     className="w-full px-3 py-2 rounded-lg bg-white/5 border border-[var(--card-border)] text-sm"
                   >
                     <option value="en">English</option>
-                    <option value="ur">Urdu</option>
-                    <option value="hi">Hindi</option>
-                    <option value="ar">Arabic</option>
+                    <option value="ur">Urdu (اردو)</option>
+                    <option value="ar">Arabic (العربية)</option>
+                    <option value="es">Spanish (Español)</option>
+                    <option value="fr">French (Français)</option>
+                    <option value="de">German (Deutsch)</option>
+                    <option value="zh">Chinese (中文)</option>
+                    <option value="hi">Hindi (हिन्दी)</option>
                   </select>
                 </div>
               </div>

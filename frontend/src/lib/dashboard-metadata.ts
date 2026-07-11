@@ -49,9 +49,15 @@ export const PAGE_SEO = {
   ),
   community: dashboardPageMetadata(
     'Community',
-    'Community Pool, referrals, token distribution, and builder marketplace.',
+    'Community Pool, live marketplace, auto token distribution, and referrals.',
     '/dashboard/community',
-    ['Xroga community', 'community pool', 'token requests']
+    ['Xroga community', 'community pool', 'token requests', 'marketplace']
+  ),
+  influencer: dashboardPageMetadata(
+    'Influencer Program',
+    'Earn 2–10% commission on subscription revenue plus higher AI and XRG token bonuses for every referral.',
+    '/dashboard/influencer',
+    ['Xroga influencer', 'creator program', 'referral commission']
   ),
   projects: dashboardPageMetadata(
     'My Projects',

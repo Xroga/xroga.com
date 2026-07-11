@@ -25,7 +25,11 @@ import tasksRouter from './routes/tasks.js';
 import referralsRouter from './routes/referrals.js';
 import communityRouter from './routes/community.js';
 import tokenDistributionRouter from './routes/tokenDistribution.js';
+import marketplaceRouter from './routes/marketplace.js';
+import influencerRouter from './routes/influencer.js';
+import analyticsRouter from './routes/analytics.js';
 import adminRouter from './routes/admin.js';
+import { metricsMiddleware, getMetricsText } from './middleware/metricsMiddleware.js';
 import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
 import videoRouter from './routes/video.js';
@@ -36,6 +40,8 @@ import { attachVoiceWebSocket } from './services/voice/voiceWebSocket.js';
 const app = express();
 
 const port = Number(process.env.PORT) || 8080;
+
+app.use(metricsMiddleware);
 
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -130,6 +136,11 @@ app.get('/', (_req, res) => {
 
 app.get('/health', (_req, res) => {
   res.json(healthPayload());
+});
+
+app.get('/metrics', (_req, res) => {
+  res.setHeader('Content-Type', 'text/plain; version=0.0.4');
+  res.send(getMetricsText());
 });
 
 app.get('/api/health', (_req, res) => {
@@ -268,6 +279,9 @@ app.use('/api/tasks', authMiddleware, tasksRouter);
 app.use('/api/referrals', authMiddleware, referralsRouter);
 app.use('/api/community', authMiddleware, communityRouter);
 app.use('/api/token-distribution', authMiddleware, tokenDistributionRouter);
+app.use('/api/marketplace', authMiddleware, marketplaceRouter);
+app.use('/api/influencer', authMiddleware, influencerRouter);
+app.use('/api/analytics', authMiddleware, analyticsRouter);
 app.use('/api/admin', authMiddleware, adminMiddleware, adminRouter);
 app.use('/api/chat', authMiddleware, chatRouter);
 app.use('/api/projects', authMiddleware, projectsRouter);
@@ -331,6 +345,16 @@ server.listen(port, '0.0.0.0', () => {
       console.warn('[phase3Schema] Startup ensure skipped:', (err as Error).message);
     })
   );
+  void import('./db/ensurePhase4Schema.js').then(({ ensurePhase4Schema }) =>
+    ensurePhase4Schema().catch((err) => {
+      console.warn('[phase4Schema] Startup ensure skipped:', (err as Error).message);
+    })
+  );
+  void import('./config/jobQueues.js').then(({ isQueueSystemReady }) => {
+    if (isQueueSystemReady()) {
+      console.log('[queues] Redis job queues ready (notifications, token-distribution, email)');
+    }
+  });
   if (process.env.RUN_SWARM_WORKER === 'true') {
     startSwarmWorker();
   }

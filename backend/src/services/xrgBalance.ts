@@ -88,3 +88,40 @@ export async function creditXrg(
 
   return updated;
 }
+
+export async function debitXrg(userId: string, xrg: number): Promise<XrgBalance> {
+  if (xrg <= 0) return getXrgBalance(userId);
+  const current = await getXrgBalance(userId);
+  if (current.availableXrg < xrg) {
+    throw new Error('Insufficient XRG balance');
+  }
+  const updated: XrgBalance = {
+    ...current,
+    availableXrg: current.availableXrg - xrg,
+  };
+
+  memory.set(userId, updated);
+
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    try {
+      const supabase = getSupabaseAdmin();
+      await supabase.from('user_xrg_balance').upsert(
+        {
+          user_id: userId,
+          total_xrg: updated.totalXrg,
+          available_xrg: updated.availableXrg,
+          vested_xrg: updated.vestedXrg,
+          token_boost_total: updated.tokenBoostTotal,
+          consistency_streak_months: updated.consistencyStreakMonths,
+          consistency_bonus_percent: updated.consistencyBonusPercent,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'user_id' }
+      );
+    } catch {
+      // memory fallback ok
+    }
+  }
+
+  return updated;
+}
