@@ -11,6 +11,8 @@ interface FullscreenPreviewModalProps {
   css: string;
   js: string;
   title?: string;
+  /** When true, hides sidebar, chatbar, and site chrome via body class */
+  hideAppChrome?: boolean;
 }
 
 export function FullscreenPreviewModal({
@@ -20,6 +22,7 @@ export function FullscreenPreviewModal({
   css,
   js,
   title = 'Full site preview',
+  hideAppChrome = false,
 }: FullscreenPreviewModalProps) {
   const srcDoc = buildInlinePreviewDocument(html, css, js);
 
@@ -29,23 +32,29 @@ export function FullscreenPreviewModal({
       if (e.key === 'Escape') onClose();
     };
     document.body.style.overflow = 'hidden';
+    if (hideAppChrome) {
+      document.body.classList.add('xv-preview-active');
+    }
     window.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = '';
+      if (hideAppChrome) {
+        document.body.classList.remove('xv-preview-active');
+      }
       window.removeEventListener('keydown', onKey);
     };
-  }, [open, onClose]);
+  }, [open, onClose, hideAppChrome]);
 
   if (!open) return null;
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex flex-col bg-black/90 backdrop-blur-sm"
+      className="fixed inset-0 z-[300] flex flex-col bg-black/95 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label={title}
     >
-      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/10 bg-black/60 shrink-0">
+      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/10 bg-black/70 shrink-0">
         <div className="flex items-center gap-2 text-sm font-semibold text-white">
           <Maximize2 className="w-4 h-4 text-[#006aff]" />
           {title}
@@ -56,7 +65,7 @@ export function FullscreenPreviewModal({
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-medium hover:bg-white/20 transition-colors"
         >
           <X className="w-4 h-4" />
-          Close
+          Close preview
         </button>
       </div>
       <iframe

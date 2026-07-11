@@ -32,6 +32,7 @@ export interface LandingPageOutputData {
   followUps?: string[];
   generatedFiles?: string[];
   fileCount?: number;
+  userPrompt?: string;
   siteAudit?: {
     score: number;
     issues: Array<{ id: string; severity: string; area: string; message: string; fixPrompt: string }>;

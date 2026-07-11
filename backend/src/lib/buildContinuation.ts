@@ -93,7 +93,14 @@ export function threadHasCompletedWebsite(prompt: string): boolean {
 export function historyHasCompletedWebsite(
   history?: Array<{ role: string; content: string }>
 ): boolean {
-  return history?.some((h) => COMPLETED_WEBSITE_MARKERS.test(h.content)) ?? false;
+  return (
+    history?.some(
+      (h) =>
+        COMPLETED_WEBSITE_MARKERS.test(h.content) ||
+        /\[Built website:/i.test(h.content) ||
+        /githubPushConfirmed|generatedFiles|landing_page/i.test(h.content)
+    ) ?? false
+  );
 }
 
 /** Update request after a completed build in the same thread. */

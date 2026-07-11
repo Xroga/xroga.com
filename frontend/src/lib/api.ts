@@ -44,6 +44,10 @@ export function githubOAuthCallbackUrl(): string {
   return `${siteUrl()}/dashboard/integrations/github/callback`;
 }
 
+export function vercelOAuthCallbackUrl(): string {
+  return `${siteUrl()}/dashboard/integrations/vercel/callback`;
+}
+
 export const API_URL = resolveApiUrl();
 
 export interface ChatAttachment {
@@ -515,6 +519,32 @@ export const api = {
         report: string;
       }>(
         `/api/github/analyze?repoName=${encodeURIComponent(repoName)}${branch ? `&branch=${encodeURIComponent(branch)}` : ''}`
+      ),
+  },
+  vercel: {
+    oauthUrl: () => {
+      const redirectUri = vercelOAuthCallbackUrl();
+      return apiFetch<{ url: string; redirectUri: string }>(
+        `/api/vercel/oauth?redirect_uri=${encodeURIComponent(redirectUri)}`
+      );
+    },
+    connect: (code: string) =>
+      apiFetch<{ connected: boolean; username: string }>('/api/vercel/connect', {
+        method: 'POST',
+        body: JSON.stringify({ code, redirectUri: vercelOAuthCallbackUrl() }),
+      }),
+    status: () => apiFetch<{ connected: boolean; username?: string }>('/api/vercel/status'),
+    disconnect: () => apiFetch('/api/vercel/disconnect', { method: 'DELETE' }),
+    deploy: (payload: {
+      html: string;
+      css?: string;
+      js?: string;
+      projectSlug?: string;
+      projectName?: string;
+    }) =>
+      apiFetch<{ deployUrl: string; deploymentId?: string; deployVerified?: boolean; error?: string }>(
+        '/api/vercel/deploy',
+        { method: 'POST', body: JSON.stringify(payload) }
       ),
   },
   notifications: {

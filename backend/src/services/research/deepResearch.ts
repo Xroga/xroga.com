@@ -2,7 +2,7 @@ import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { deepSeekChat } from '../../lib/deepseek.js';
 import { geminiGenerate, geminiFactCheck } from '../../lib/gemini.js';
 import { exaSearch } from '../../lib/exa.js';
-import { tavilySearch } from '../../lib/tavily.js';
+import { webSearch } from '../../lib/webSearch.js';
 import { storeUserFile, storeProjectFile } from '../storage/projectFiles.js';
 import type { DeepResearchOutput } from '../../types/features.js';
 
@@ -15,7 +15,7 @@ interface Source {
   title: string;
   url: string;
   excerpt: string;
-  platform: 'exa' | 'tavily';
+  platform: 'exa' | 'tavily' | 'searxng' | 'brave';
 }
 
 const PLAN_SYSTEM = `You are a research architect. Plan a PhD-level research report.
@@ -63,12 +63,12 @@ async function gatherSources(subtopics: string[]): Promise<Source[]> {
           platform: 'exa' as const,
         }))
       ),
-      tavilySearch(topic, 10).then((results) =>
+      webSearch(topic, { maxResults: 10 }).then((results) =>
         results.map((r) => ({
           title: r.title,
           url: r.url,
           excerpt: r.content.slice(0, 500),
-          platform: 'tavily' as const,
+          platform: r.source,
         }))
       ),
     ])

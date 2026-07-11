@@ -33,6 +33,7 @@ import {
 } from './gamePrompts.js';
 import { BuildState } from './buildState.js';
 import { formatMemorySuggestion, getPreviousBuilds } from '../../services/memory/buildMemory.js';
+import { webSearch, formatWebSearchContext } from '../../lib/webSearch.js';
 import {
   buildSummaryFromBrief,
   formatBuildSummaryCard,
@@ -481,6 +482,30 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     !isGameBuild &&
     (featureCategory === 'landing_page' || isWebsiteBuildPrompt(userPrompt, featureCategory));
 
+  let webResearchNote = '';
+  if (isWebBuild) {
+    try {
+      const searchQuery = isWebsiteUpdateRequest(userPrompt)
+        ? `${currentMessage} UI patterns best practices`
+        : `${inferBusinessLabel(userPrompt)} modern web design ${buildType} 2026`;
+      const results = await webSearch(searchQuery, { critical: /\b(crypto|security|compliance|legal|medical)\b/i.test(userPrompt) });
+      if (results.length) {
+        webResearchNote = formatWebSearchContext(results);
+        emit(
+          ctx,
+          0,
+          xrogaPulseLine(`Web research — ${results.length} sources (${results[0]?.source ?? 'search'})`),
+          'reviewer',
+          todos,
+          'XROGA Pulse',
+          { userPhase: 1 }
+        );
+      }
+    } catch (searchErr) {
+      console.warn('[NegotiationEngine] Web search:', (searchErr as Error).message);
+    }
+  }
+
   const isUpdateBuild =
     isWebBuild &&
     isWebsiteUpdateRequest(userPrompt) &&
@@ -497,7 +522,6 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       }
       emit(ctx, 0, BRAND.phase0.scanning(`GitHub repo (${analysis.fileCount} files)`), 'reviewer', todos, 'XROGA Visionary', {
         userPhase: 1,
-        silent: true,
       });
     } catch (fetchErr) {
       console.warn('[NegotiationEngine] GitHub repo analysis:', (fetchErr as Error).message);
@@ -549,8 +573,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   let clarifiedBrief: string;
   const repoContextLine = repoAnalysisSummary ? `\n\nGitHub repo analysis:\n${repoAnalysisSummary}` : '';
   const discoveryContext = userPrompt.includes('[Previous conversation')
-    ? `${userPrompt}${repoContextLine}`
-    : `${userPrompt}${repoContextLine}\n\nOriginal build request context preserved.`;
+    ? `${userPrompt}${repoContextLine}${webResearchNote}`
+    : `${userPrompt}${repoContextLine}${webResearchNote}\n\nOriginal build request context preserved.`;
 
   if (isUpdateBuild) {
     emit(ctx, 0, BRAND.phase0.scanning('website updates'), 'reviewer', todos, 'XROGA Visionary', { userPhase: 6 });
@@ -594,7 +618,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
     try {
       clarifiedBrief = await groqCall(PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 120);
-      emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse', { silent: true });
+      emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse');
     } catch {
       /* keep brief */
     }
@@ -631,7 +655,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   try {
     clarifiedBrief = await groqCall(PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 120);
-    emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse', { silent: true });
+      emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse');
   } catch {
     /* keep gemini brief */
   }
@@ -687,11 +711,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   });
 
   todos.activateMeta('structure');
-  emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect', { silent: true });
+  emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect', { userPhase: 1 });
   let approvedPlan = masterPlan;
   if (!isUpdateBuild) {
   for (let i = 0; i < MAX_PLAN_ITERATIONS; i++) {
-    emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect', { silent: true });
+    emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect', { userPhase: 1 });
     const review = await deepseekCall(
       PHASE_2_DEEPSEEK_REVIEW,
       `User query:\n${userPrompt}\n\nMaster Plan:\n${approvedPlan}`
@@ -703,7 +727,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     }
 
     const corrected = review.replace(/^CORRECTED PLAN\s*/i, '').trim() || review;
-    emit(ctx, 2, BRAND.phase2.negotiating, 'architect', todos, 'XROGA Visionary', { silent: true });
+    emit(ctx, 2, BRAND.phase2.negotiating, 'architect', todos, 'XROGA Visionary', { userPhase: 1 });
     const geminiReply = await geminiCall(
       PHASE_2_GEMINI_AGREE,
       `Original user:\n${userPrompt}\n\nCorrected plan:\n${corrected}`
@@ -720,7 +744,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   todos.activateMeta('verify-plan');
   todos.completeMeta('verify-plan');
   buildState.markDone('plan_approved');
-  emit(ctx, 2, BRAND.phase2.approved, 'reviewer', todos, 'XROGA Architect', { silent: true });
+  emit(ctx, 2, BRAND.phase2.approved, 'reviewer', todos, 'XROGA Architect', { userPhase: 1 });
 
   const steps = parsePlanSteps(approvedPlan);
   if (!steps.length) {
@@ -773,8 +797,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     const target = stepTargetLabel(stepsToRun[si]!, si);
     todos.activateBuild(si);
     emit(ctx, 3, BRAND.phase3.execute(si + 1, stepsToRun.length, target), 'builder', todos, isGameBuild ? 'XROGA Game Alchemist' : 'XROGA Architect', {
-      userPhase: 1,
-      silent: true,
+      userPhase: isUpdateBuild ? 2 : 1,
     });
 
     const passLabel = si === 0 ? xrogaPulseLine(`Scaffolding — ${target}`) : xrogaArchitectureLine(`Logic — ${target}`);
@@ -875,7 +898,6 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   emit(ctx, 6, xrogaCollectiveLine('Security & integration audit'), 'truth_council', todos, 'XROGA Collective', {
     userPhase: 2,
-    silent: true,
   });
   const finalChecks = await Promise.allSettled([
     deepseekCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode}`, 4096),
@@ -904,7 +926,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   }
 
   todos.activateFinal('emit');
-  emit(ctx, 7, BRAND.phase7.emitting, 'builder', todos, 'BLACK HOLE V∞', { userPhase: 5, silent: true });
+  emit(ctx, 7, BRAND.phase7.emitting, 'builder', todos, 'BLACK HOLE V∞', { userPhase: 5 });
   let featureOutput: FeatureOutput | null = null;
   let deployError: string | null = null;
 
@@ -976,6 +998,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         generatedFiles: generatedPaths,
         fileCount: projectFiles.length,
         githubPushConfirmed: true,
+        userPrompt: currentMessage,
         memoryNote:
           pipeline.deployError && !pipeline.deployVerified
             ? `${memoryNote ? `${memoryNote} ` : ''}Hosted preview note: ${pipeline.deployError.slice(0, 160)}`
@@ -1025,6 +1048,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             generatedFiles: generatedPaths,
             fileCount: projectFiles.length,
             githubPushConfirmed: true,
+            userPrompt: currentMessage,
             memoryNote:
               memoryNote ??
               `Code pushed to ${github.repoName}. Click Open Live Preview to publish the hosted link.`,

@@ -3840,6 +3840,18 @@ body.theme-gray * {
     color: rgba(255, 255, 255, 0.88) !important;
   }
 
+  /* Fullscreen site preview — hide app chrome */
+  body.xv-preview-active .xv-sidebar-root,
+  body.xv-preview-active .xv-site-header,
+  body.xv-preview-active .xv-terminal-dock,
+  body.xv-preview-active .xv-mobile-nav {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  body.xv-preview-active .xv-main-column {
+    visibility: hidden !important;
+  }
+
   /* Incognito temporary dashboard */
   .xv-incognito-title {
     text-shadow: 0 0 40px rgba(255, 255, 255, 0.08);

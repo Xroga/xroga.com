@@ -13,6 +13,7 @@ import profileRouter from './routes/profile.js';
 import debugRouter from './routes/debug.js';
 import wellbeingRouter from './routes/wellbeing.js';
 import githubRouter from './routes/github.js';
+import vercelRouter from './routes/vercel.js';
 import notificationsRouter from './routes/notifications.js';
 import videoJobsRouter from './routes/videoJobs.js';
 import billingRouter from './routes/billing.js';
@@ -292,6 +293,7 @@ app.use('/api/video', authMiddleware, videoRouter);
 app.use('/api/debug', authMiddleware, debugRouter);
 app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
 app.use('/api/github', authMiddleware, githubRouter);
+app.use('/api/vercel', authMiddleware, vercelRouter);
 app.get('/auth/github', authMiddleware, (req, res, next) => {
   req.url = '/redirect';
   githubRouter(req, res, next);

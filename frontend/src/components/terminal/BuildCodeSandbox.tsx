@@ -159,6 +159,7 @@ export function BuildCodeSandbox({
         css={normalized.css}
         js={normalized.js}
         title={projectTitle ?? 'Preview'}
+        hideAppChrome
       />
     </>
   );
