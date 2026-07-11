@@ -128,7 +128,7 @@ export function CustomCredentialsSection() {
             Custom API Keys & Webhooks
           </h3>
           <p className="text-[10px] text-[var(--muted)] mt-0.5 leading-snug">
-            Add your own API keys, webhook URLs, or secrets. Locked with your vault password — copy into Cursor or any tool after unlock.
+            Add your own API keys or webhooks. <strong className="text-[var(--foreground)]">Set a vault password</strong> — required every time you view or copy a key.
           </p>
         </div>
         <button

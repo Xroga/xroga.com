@@ -46,8 +46,7 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
   const [netlifyUrl, setNetlifyUrl] = useState(data.netlifyPreviewUrl ?? '');
   const [vercelVerified, setVercelVerified] = useState(false);
   const [netlifyVerified, setNetlifyVerified] = useState(false);
-  const [deployingVercel, setDeployingVercel] = useState(false);
-  const [deployingNetlify, setDeployingNetlify] = useState(false);
+  const [autoDeploying, setAutoDeploying] = useState(false);
   const [pushingGithub, setPushingGithub] = useState(false);
   const [statusNote, setStatusNote] = useState<string | null>(null);
   const [githubPushed, setGithubPushed] = useState(false);
@@ -55,6 +54,7 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
   const [previewCss, setPreviewCss] = useState(data.css ?? '');
   const [previewJs, setPreviewJs] = useState(data.js ?? '');
   const pushAttempted = useRef(false);
+  const autoDeployAttempted = useRef(false);
 
   const selectedCtx = useMemo(() => getSelectedRepoContext(), []);
   const normalized = useMemo(
@@ -145,66 +145,57 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
       .finally(() => setPushingGithub(false));
   }, [resolvedRepoName, resolvedBranch, normalized.html, normalized.css, normalized.js, projectSlug, data, onPreviewUpdate]);
 
-  async function deployPlatform(platform: 'vercel' | 'netlify') {
-    const setDeploying = platform === 'vercel' ? setDeployingVercel : setDeployingNetlify;
-    setDeploying(true);
-    setStatusNote(`Publishing to ${platform === 'vercel' ? 'Vercel' : 'Netlify'}…`);
+  const liveUrl =
+    (vercelUrl && vercelVerified ? vercelUrl : null) ??
+    (netlifyUrl && netlifyVerified ? netlifyUrl : null) ??
+    (data.deployUrl && data.deployVerified ? data.deployUrl : null);
 
-    try {
-      const result = await api.github.redeployPreview({
+  useEffect(() => {
+    if (autoDeployAttempted.current || liveUrl || !normalized.html.trim()) return;
+    autoDeployAttempted.current = true;
+    setAutoDeploying(true);
+    setStatusNote('Auto-deploying to Vercel + Cloudflare CDN…');
+
+    void api.github
+      .redeployPreview({
         html: normalized.html,
         css: normalized.css,
         js: normalized.js,
-        platform,
+        platform: 'vercel',
         projectSlug,
-      });
-
-      const platformResult = platform === 'vercel' ? result.vercel : result.netlify;
-      const url = platformResult?.deployUrl || result.deployUrl;
-      const verified = platformResult?.deployVerified ?? result.deployVerified;
-      const deployError = platformResult?.error;
-
-      if (platform === 'vercel') {
-        setVercelUrl(url);
-        setVercelVerified(verified);
-      } else {
-        setNetlifyUrl(url);
-        setNetlifyVerified(verified);
-      }
-
-      if (url && verified) {
-        setStatusNote(null);
-        onPreviewUpdate?.({
-          ...data,
-          html: normalized.html,
-          css: normalized.css,
-          js: normalized.js,
-          vercelPreviewUrl: platform === 'vercel' ? url : vercelUrl || data.vercelPreviewUrl,
-          netlifyPreviewUrl: platform === 'netlify' ? url : netlifyUrl || data.netlifyPreviewUrl,
-          deployUrl: url,
-          deployVerified: true,
-          siteAudit,
-        });
-        window.open(url, '_blank', 'noopener,noreferrer');
-      } else if (url) {
-        setStatusNote(`${platform} URL created — verifying… Try opening again in a moment.`);
-      } else {
-        setStatusNote(
-          deployError ||
-            `${platform} deploy unavailable — check VERCEL_API_KEY or NETLIFY_ACCESS_TOKEN on server.`
-        );
-      }
-    } catch (err) {
-      setStatusNote(`${platform} deploy failed: ${(err as Error).message?.slice(0, 120) || 'unknown error'}`);
-    } finally {
-      setDeploying(false);
-    }
-  }
+      })
+      .then((result) => {
+        const url = result.vercel?.deployUrl || result.deployUrl;
+        const verified = result.vercel?.deployVerified ?? result.deployVerified;
+        if (url) {
+          setVercelUrl(url);
+          setVercelVerified(Boolean(verified));
+          setStatusNote(verified ? null : 'Live URL created — verifying SSL…');
+          onPreviewUpdate?.({
+            ...data,
+            html: normalized.html,
+            css: normalized.css,
+            js: normalized.js,
+            vercelPreviewUrl: url,
+            deployUrl: url,
+            deployVerified: Boolean(verified),
+            siteAudit,
+          });
+        } else {
+          setStatusNote(result.vercel?.error || 'Auto-deploy pending — preview available below.');
+        }
+      })
+      .catch((err: Error) => {
+        setStatusNote(`Auto-deploy: ${err.message?.slice(0, 120) || 'will retry on next build'}`);
+        autoDeployAttempted.current = false;
+      })
+      .finally(() => setAutoDeploying(false));
+  }, [liveUrl, normalized.html, normalized.css, normalized.js, projectSlug, data, onPreviewUpdate, siteAudit]);
 
   return (
-    <div className="rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] overflow-hidden">
-      <div className="px-3 py-2.5 border-b border-white/10 bg-emerald-500/10">
-        <p className="text-sm font-bold text-emerald-400">🎉 YOUR PROJECT IS LIVE!</p>
+    <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
+      <div className="px-3 py-2.5 border-b border-[var(--card-border)] bg-[var(--accent)]/10">
+        <p className="text-sm font-bold text-[var(--accent)]">🎉 Your project is complete!</p>
       </div>
 
       <div className="px-3 py-3 border-b border-white/10 bg-black/10">
@@ -321,42 +312,27 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
         </div>
       </div>
 
-      <div className="p-3 flex flex-col gap-2 border-t border-white/10">
+      <div className="p-3 flex flex-col gap-2 border-t border-[var(--card-border)]">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]/70">
-          Hosted previews (deploy from generated code — no GitHub required)
+          🚀 Auto-deployment (Vercel + Cloudflare)
         </p>
 
-        {vercelUrl && vercelVerified ? (
-          <a href={vercelUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#93c5fd]/90 truncate px-1" title={vercelUrl}>
-            ▲ Vercel: {vercelUrl}
-          </a>
-        ) : null}
-        {netlifyUrl && netlifyVerified ? (
-          <a href={netlifyUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#93c5fd]/90 truncate px-1" title={netlifyUrl}>
-            ◆ Netlify: {netlifyUrl}
-          </a>
-        ) : null}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => void deployPlatform('vercel')}
-            disabled={deployingVercel}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-black text-white text-xs font-bold hover:bg-black/80 border border-white/15 transition-colors disabled:opacity-70"
+        {liveUrl ? (
+          <a
+            href={liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--background)] text-xs font-bold hover:opacity-90 transition-opacity"
           >
-            {deployingVercel ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ExternalLink className="w-3.5 h-3.5" />}
-            ▲ Vercel — Preview this site
-          </button>
-          <button
-            type="button"
-            onClick={() => void deployPlatform('netlify')}
-            disabled={deployingNetlify}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#00ad9f] text-white text-xs font-bold hover:bg-[#009688] transition-colors disabled:opacity-70"
-          >
-            {deployingNetlify ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ExternalLink className="w-3.5 h-3.5" />}
-            ◆ Netlify — Preview this site
-          </button>
-        </div>
+            <ExternalLink className="w-3.5 h-3.5" />
+            Visit live site — {liveUrl.replace(/^https?:\/\//, '').slice(0, 48)}
+          </a>
+        ) : (
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--card-border)] bg-[var(--foreground)]/5 text-xs text-[var(--muted)]">
+            {autoDeploying ? <Loader2 className="w-3.5 h-3.5 animate-spin text-[var(--accent)]" /> : null}
+            {autoDeploying ? 'Deploying automatically…' : 'Deployment will complete shortly'}
+          </div>
+        )}
 
         {githubFilesUrl ? (
           <a

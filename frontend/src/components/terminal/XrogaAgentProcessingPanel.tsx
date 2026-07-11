@@ -15,6 +15,7 @@ import {
 import { buildLiveStatusMessage } from '@/lib/buildLiveStatus';
 import { AgentActivityRow, AgentTypewriterText } from './AgentTypewriterText';
 import { XrogaBlackHoleShineText } from '@/components/ui/XrogaBlackHoleShineText';
+import { ProcessingPipeline } from './ProcessingPipeline';
 
 interface XrogaAgentProcessingPanelProps {
   loading: boolean;
@@ -43,7 +44,7 @@ function ActivityEntryView({ entry, index, isLast, loading }: { entry: AgentActi
         <span>{entry.label}</span>
         <span className="font-mono text-[11px] text-[var(--foreground)]/80">{entry.file}</span>
         {entry.delta != null && (
-          <span className="font-mono text-[11px] text-emerald-400/90 tabular-nums">+{entry.delta}</span>
+          <span className="font-mono text-[11px] text-emerald-500/90 tabular-nums">+{entry.delta}</span>
         )}
       </AgentActivityRow>
     );
@@ -54,9 +55,7 @@ function ActivityEntryView({ entry, index, isLast, loading }: { entry: AgentActi
       <AgentActivityRow delayMs={delay} dimmed={!isLast}>
         <span>{entry.label}</span>
         <span className="font-mono text-[11px] text-[var(--foreground)]/75">{entry.file}</span>
-        {entry.range && (
-          <span className="font-mono text-[11px] text-[var(--muted)]/60">{entry.range}</span>
-        )}
+        {entry.range && <span className="font-mono text-[11px] text-[var(--muted)]/60">{entry.range}</span>}
       </AgentActivityRow>
     );
   }
@@ -81,11 +80,7 @@ function ActivityEntryView({ entry, index, isLast, loading }: { entry: AgentActi
   if (entry.kind === 'command') {
     return (
       <AgentActivityRow delayMs={delay}>
-        <AgentTypewriterText
-          text={entry.label}
-          active={isLast && loading}
-          className="text-[var(--foreground)]/82"
-        />
+        <AgentTypewriterText text={entry.label} active={isLast && loading} className="text-[var(--foreground)]/82" />
       </AgentActivityRow>
     );
   }
@@ -101,7 +96,7 @@ function ActivityEntryView({ entry, index, isLast, loading }: { entry: AgentActi
   );
 }
 
-/** Cursor-style dark agent log — thoughts, to-dos, typed activity feed */
+/** Theme-aware agent log — thoughts, to-dos, typed activity feed */
 export function XrogaAgentProcessingPanel({
   loading,
   startedAt,
@@ -140,6 +135,9 @@ export function XrogaAgentProcessingPanel({
   const displayGoal = goal ?? deriveBuildGoal(null, formattedLines[formattedLines.length - 1]);
   const doneCount = todos.filter((t) => t.status === 'done').length;
 
+  const pipelineAgent =
+    activePhase === 4 ? 'complete' : activePhase === 2 ? 'reviewer' : activePhase === 1 ? 'builder' : 'architect';
+
   const phaseLabel =
     activePhase === 0
       ? 'GitHub'
@@ -158,16 +156,16 @@ export function XrogaAgentProcessingPanel({
   return (
     <div
       className={cn(
-        'rounded-xl border border-white/[0.08] bg-[#0c0c0e]/95 backdrop-blur-sm',
-        'px-3.5 py-3 space-y-2.5 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]',
-        'animate-in fade-in slide-in-from-bottom-1 duration-300',
+        'xv-agent-panel px-3.5 py-3 space-y-2.5 text-left animate-in fade-in slide-in-from-bottom-1 duration-300',
         className
       )}
     >
-      <p className="text-[13px] leading-snug text-[var(--muted)]/90 font-medium">
+      {loading && <ProcessingPipeline loading activeAgent={pipelineAgent} />}
+
+      <p className="text-[13px] leading-snug text-[var(--muted)] font-medium">
         {thoughtLabel(thoughtSeconds, loading)}
         {loading && (
-          <span className="xv-agent-thought-pulse ml-1 inline-block w-1 h-1 rounded-full bg-[var(--muted)]/60 align-middle" />
+          <span className="xv-agent-thought-pulse ml-1 inline-block w-1 h-1 rounded-full bg-[var(--accent)]/60 align-middle" />
         )}
       </p>
 
@@ -178,7 +176,7 @@ export function XrogaAgentProcessingPanel({
       )}
 
       {(formattedLines.length > 0 || todos.length > 0) && (
-        <p className="text-[12px] text-[var(--muted)]/55 xv-agent-line-in">
+        <p className="text-[12px] text-[var(--muted)]/70 xv-agent-line-in">
           Explored {stats.files} file{stats.files === 1 ? '' : 's'}, {stats.searches} search
           {stats.searches === 1 ? '' : 'es'}
           {stats.commands > 0 ? `, ran ${stats.commands} command${stats.commands === 1 ? '' : 's'}` : ''}
@@ -186,9 +184,9 @@ export function XrogaAgentProcessingPanel({
       )}
 
       {todos.length > 0 && (
-        <div className="rounded-lg border border-white/[0.1] bg-white/[0.03] px-3 py-2.5 animate-in fade-in duration-300 xv-agent-todo-box">
+        <div className="xv-agent-panel__todo px-3 py-2.5 animate-in fade-in duration-300 xv-agent-todo-box">
           <p className="text-[12px] font-medium text-[var(--foreground)]/75 mb-2 flex items-center gap-1.5">
-            <ListTodo className="h-3.5 w-3.5 text-[var(--muted)]/60" strokeWidth={2} />
+            <ListTodo className="h-3.5 w-3.5 text-[var(--muted)]" strokeWidth={2} />
             To-dos {todos.length}
           </p>
           <ul className="space-y-1.5" aria-label="Build to-dos">
@@ -206,8 +204,8 @@ export function XrogaAgentProcessingPanel({
                   {item.status === 'done' ? (
                     <Check className="h-3.5 w-3.5 text-emerald-500/75" strokeWidth={2.5} />
                   ) : item.status === 'active' ? (
-                    <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#60a5fa]/50 bg-[#60a5fa]/10">
-                      <ChevronRight className="h-2.5 w-2.5 text-[#60a5fa]" strokeWidth={2.5} />
+                    <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[var(--accent)]/50 bg-[var(--accent)]/10">
+                      <ChevronRight className="h-2.5 w-2.5 text-[var(--accent)]" strokeWidth={2.5} />
                     </span>
                   ) : (
                     <CircleDashed className="h-3.5 w-3.5 text-[var(--muted)]/28" strokeWidth={2} />
@@ -229,9 +227,9 @@ export function XrogaAgentProcessingPanel({
       )}
 
       {loading && (
-        <div className="rounded-lg border border-[#60a5fa]/20 bg-[#60a5fa]/8 px-3 py-2.5 xv-agent-live-pulse">
+        <div className="xv-agent-panel__live px-3 py-2.5 xv-agent-live-pulse">
           <p className="text-[12px] flex items-center gap-2 leading-snug">
-            <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0 text-[#93c5fd]" strokeWidth={2.5} />
+            <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0 text-[var(--accent)]" strokeWidth={2.5} />
             <XrogaBlackHoleShineText className="text-[12px]">
               <AgentTypewriterText text={liveStatus} active key={liveStatus} />
             </XrogaBlackHoleShineText>
@@ -240,7 +238,7 @@ export function XrogaAgentProcessingPanel({
       )}
 
       {entries.length > 0 && (
-        <div className="space-y-1 max-h-[160px] overflow-y-auto pr-1 scrollbar-thin border-t border-white/[0.06] pt-2">
+        <div className="space-y-1 max-h-[160px] overflow-y-auto pr-1 scrollbar-thin border-t border-[var(--card-border)] pt-2">
           {entries.map((entry, i) => (
             <ActivityEntryView
               key={entry.id}
@@ -262,9 +260,9 @@ export function XrogaAgentProcessingPanel({
       {loading && (
         <p className="text-[11px] text-[var(--muted)]/50 flex items-center gap-2">
           <span className="inline-flex gap-0.5">
-            <span className="w-1 h-1 rounded-full bg-[#60a5fa]/60 xv-agent-thought-pulse" />
-            <span className="w-1 h-1 rounded-full bg-[#60a5fa]/40 xv-agent-thought-pulse [animation-delay:200ms]" />
-            <span className="w-1 h-1 rounded-full bg-[#60a5fa]/25 xv-agent-thought-pulse [animation-delay:400ms]" />
+            <span className="w-1 h-1 rounded-full bg-[var(--accent)]/60 xv-agent-thought-pulse" />
+            <span className="w-1 h-1 rounded-full bg-[var(--accent)]/40 xv-agent-thought-pulse [animation-delay:200ms]" />
+            <span className="w-1 h-1 rounded-full bg-[var(--accent)]/25 xv-agent-thought-pulse [animation-delay:400ms]" />
           </span>
           Working — lines above update as each step completes
         </p>
