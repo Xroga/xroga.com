@@ -4,12 +4,15 @@ import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { useHydrated } from '@/hooks/useHydrated';
 
 const INCOGNITO_GRAY = '#2b2b30';
 
 /** Fixed full-viewport incognito backdrop — solid gray, no image */
 export function IncognitoFullscreenBackground() {
-  const incognito = usePrivacyStore((s) => s.incognito);
+  const hydrated = useHydrated();
+  const incognitoRaw = usePrivacyStore((s) => s.incognito);
+  const incognito = hydrated && incognitoRaw;
   const pathname = usePathname();
   const isDashboard = pathname === '/dashboard' || pathname === '/dashboard/';
   const active = incognito && isDashboard;

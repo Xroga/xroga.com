@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Rocket, Globe, Search } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { useHydrated } from '@/hooks/useHydrated';
 import { useThemeStore } from '@/store/useThemeStore';
 import { uploadChatImage, type ChatAttachment } from '@/lib/api';
 import { IntegrationsModal } from './IntegrationsModal';
@@ -43,7 +44,9 @@ export function TerminalChatBar() {
     submit,
     stop,
   } = useTerminalChat();
-  const incognito = usePrivacyStore((s) => s.incognito);
+  const hydrated = useHydrated();
+  const incognitoRaw = usePrivacyStore((s) => s.incognito);
+  const incognito = hydrated && incognitoRaw;
   const theme = useThemeStore((s) => s.theme);
   const darkUi = theme === 'black' || theme === 'gray';
   const fileRef = useRef<HTMLInputElement>(null);

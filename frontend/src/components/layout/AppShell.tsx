@@ -18,6 +18,7 @@ import { IncognitoModeButton } from '@/components/layout/IncognitoModeButton';
 import { IncognitoFullscreenBackground } from '@/components/incognito/IncognitoFullscreenBackground';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
+import { ShellHydrationGate } from '@/components/layout/ShellHydrationGate';
 import { cn } from '@/lib/utils';
 
 interface AppShellProps {
@@ -44,6 +45,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   }, [incognito, isDashboard]);
 
   return (
+    <ShellHydrationGate>
     <TerminalChatProvider>
       <TerminalScrollProvider>
       <IncognitoFullscreenBackground />
@@ -94,5 +96,6 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
       </div>
       </TerminalScrollProvider>
     </TerminalChatProvider>
+    </ShellHydrationGate>
   );
 }
