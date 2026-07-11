@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '@/lib/api';
 import { getSelectedRepoContext } from '@/lib/repoContext';
+import { markRepoAnalysisStale } from '@/lib/repoAnalysisCache';
 import { normalizeBuildFiles } from '@/lib/normalizeBuildSource';
 import { auditLandingSite, LANDING_UPDATE_SUGGESTIONS } from '@/lib/siteHealthAudit';
 import { useTerminalChat } from '@/context/TerminalChatContext';
@@ -52,10 +53,9 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
   const [previewHtml, setPreviewHtml] = useState(data.html ?? '');
   const [previewCss, setPreviewCss] = useState(data.css ?? '');
   const [previewJs, setPreviewJs] = useState(data.js ?? '');
-  const pushAttempted = useRef(false);
-  const autoDeployAttempted = useRef(false);
+  const pipelineAttempted = useRef(false);
 
-  const selectedCtx = useMemo(() => getSelectedRepoContext(), []);
+  const selectedCtx = getSelectedRepoContext();
   const normalized = useMemo(
     () => normalizeBuildFiles(previewHtml, previewCss, previewJs),
     [previewHtml, previewCss, previewJs]
@@ -108,41 +108,10 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
         setNetlifyVerified(Boolean(data.deployVerified));
       }
     }
-  }, [data.html, data.css, data.js, data.vercelPreviewUrl, data.netlifyPreviewUrl, data.deployUrl, data.deployVerified]);
-
-  useEffect(() => {
-    if (pushAttempted.current || !resolvedRepoName || !normalized.html.trim()) return;
-    pushAttempted.current = true;
-    setPushingGithub(true);
-    setStatusNote('Pushing index.html, styles.css, and script.js to your GitHub repo…');
-
-    void api.github
-      .pushBuild({
-        html: normalized.html,
-        css: normalized.css,
-        js: normalized.js,
-        repoName: resolvedRepoName,
-        branch: resolvedBranch,
-        projectSlug,
-      })
-      .then((result) => {
-        setGithubPushed(true);
-        setStatusNote(`Code saved to ${result.githubRepoName} — refresh GitHub to see your files.`);
-        onPreviewUpdate?.({
-          ...data,
-          html: normalized.html,
-          css: normalized.css,
-          js: normalized.js,
-          githubRepoUrl: result.githubRepoUrl,
-          githubRepoName: result.githubRepoName,
-        });
-      })
-      .catch((err: Error) => {
-        setStatusNote(`GitHub push: ${err.message?.slice(0, 160) || 'failed'}. Preview still works below.`);
-        pushAttempted.current = false;
-      })
-      .finally(() => setPushingGithub(false));
-  }, [resolvedRepoName, resolvedBranch, normalized.html, normalized.css, normalized.js, projectSlug, data, onPreviewUpdate]);
+    if (data.githubRepoName || data.githubRepoUrl) {
+      setGithubPushed(true);
+    }
+  }, [data.html, data.css, data.js, data.vercelPreviewUrl, data.netlifyPreviewUrl, data.deployUrl, data.deployVerified, data.githubRepoName, data.githubRepoUrl]);
 
   const liveUrl =
     (vercelUrl && vercelVerified ? vercelUrl : null) ??
@@ -150,20 +119,65 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
     (data.deployUrl && data.deployVerified ? data.deployUrl : null);
 
   useEffect(() => {
-    if (autoDeployAttempted.current || liveUrl || !normalized.html.trim()) return;
-    autoDeployAttempted.current = true;
-    setAutoDeploying(true);
-    setStatusNote('Auto-deploying to Vercel + Cloudflare CDN…');
+    if (pipelineAttempted.current || !normalized.html.trim()) return;
 
-    void api.github
-      .redeployPreview({
-        html: normalized.html,
-        css: normalized.css,
-        js: normalized.js,
-        platform: 'vercel',
-        projectSlug,
-      })
-      .then((result) => {
+    const alreadyLive =
+      Boolean(data.deployUrl && data.deployVerified) ||
+      Boolean(data.vercelPreviewUrl) ||
+      Boolean(data.netlifyPreviewUrl);
+    const alreadyPushed = Boolean(data.githubRepoName || data.githubRepoUrl);
+
+    if (alreadyLive && alreadyPushed) return;
+
+    pipelineAttempted.current = true;
+
+    async function runPipeline() {
+      let pushed = alreadyPushed;
+
+      if (!pushed && resolvedRepoName) {
+        setPushingGithub(true);
+        setStatusNote('Pushing index.html, styles.css, and script.js to your GitHub repo…');
+        try {
+          const result = await api.github.pushBuild({
+            html: normalized.html,
+            css: normalized.css,
+            js: normalized.js,
+            repoName: resolvedRepoName,
+            branch: resolvedBranch,
+            projectSlug,
+          });
+          pushed = true;
+          setGithubPushed(true);
+          markRepoAnalysisStale(resolvedRepoName);
+          setStatusNote(`Code saved to ${result.githubRepoName} — refresh GitHub to see your files.`);
+          onPreviewUpdate?.({
+            ...data,
+            html: normalized.html,
+            css: normalized.css,
+            js: normalized.js,
+            githubRepoUrl: result.githubRepoUrl,
+            githubRepoName: result.githubRepoName,
+          });
+        } catch (err) {
+          setStatusNote(`GitHub push: ${(err as Error).message?.slice(0, 160) || 'failed'}. Preview still works below.`);
+          pipelineAttempted.current = false;
+        } finally {
+          setPushingGithub(false);
+        }
+      }
+
+      if (alreadyLive || liveUrl) return;
+
+      setAutoDeploying(true);
+      setStatusNote((note) => note ?? 'Auto-deploying to Vercel + Cloudflare CDN…');
+      try {
+        const result = await api.github.redeployPreview({
+          html: normalized.html,
+          css: normalized.css,
+          js: normalized.js,
+          platform: 'vercel',
+          projectSlug,
+        });
         const url = result.vercel?.deployUrl || result.deployUrl;
         const verified = result.vercel?.deployVerified ?? result.deployVerified;
         if (url) {
@@ -183,13 +197,27 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
         } else {
           setStatusNote(result.vercel?.error || 'Auto-deploy pending — preview available below.');
         }
-      })
-      .catch((err: Error) => {
-        setStatusNote(`Auto-deploy: ${err.message?.slice(0, 120) || 'will retry on next build'}`);
-        autoDeployAttempted.current = false;
-      })
-      .finally(() => setAutoDeploying(false));
-  }, [liveUrl, normalized.html, normalized.css, normalized.js, projectSlug, data, onPreviewUpdate, siteAudit]);
+      } catch (err) {
+        setStatusNote(`Auto-deploy: ${(err as Error).message?.slice(0, 120) || 'will retry on next build'}`);
+        pipelineAttempted.current = false;
+      } finally {
+        setAutoDeploying(false);
+      }
+    }
+
+    void runPipeline();
+  }, [
+    normalized.html,
+    normalized.css,
+    normalized.js,
+    resolvedRepoName,
+    resolvedBranch,
+    projectSlug,
+    data,
+    onPreviewUpdate,
+    siteAudit,
+    liveUrl,
+  ]);
 
   function handleFixIssue(prompt: string) {
     setPrompt(`Update my live website: ${prompt}`);

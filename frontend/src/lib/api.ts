@@ -186,7 +186,7 @@ export async function streamSwarmExecute(
         options.onProgress?.(payload as SwarmProgressEvent);
       }
 
-      if (eventName === 'delta' && typeof payload.delta === 'string') {
+      if (eventName === 'delta' && typeof payload.delta === 'string' && payload.delta) {
         finalText += payload.delta;
         options.onDelta?.(payload.delta);
       }

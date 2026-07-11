@@ -963,7 +963,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   } else if (featureOutput?.type === 'landing_page') {
     polishedOutput = BRAND.phase7.success;
   } else if (featureOutput) {
-    polishedOutput = `${BRAND.phase7.success}\n\n${formatPlainProfessional(assembledCode.slice(0, 2000))}`;
+    polishedOutput = BRAND.phase7.success;
   } else {
     polishedOutput = BRAND.phase7.success;
   }
