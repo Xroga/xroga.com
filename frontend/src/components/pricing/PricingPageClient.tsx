@@ -175,7 +175,7 @@ export function PricingPageClient() {
                   key={plan.tier}
                   name={plan.name}
                   price={plan.priceLabel}
-                  actions="7M+ tokens/mo"
+                  actions={`${plan.aiTokensLabel} · ${plan.xrgLabel}`}
                   description={plan.tagline ?? 'Best for growing startups'}
                   cta={cta}
                 />
@@ -187,9 +187,9 @@ export function PricingPageClient() {
                 key={plan.tier}
                 name={plan.name}
                 price={plan.priceLabel}
-                actions="7M+ tokens/mo"
+                actions={`${plan.aiTokensLabel} · ${plan.xrgLabel}`}
                 current={!!isCurrent}
-                features={[`${plan.concurrency} concurrent tasks`, `All ${FEATURE_COUNT} features unlocked`]}
+                features={[`${plan.concurrency} concurrent tasks`, plan.actionsLabel, `All ${FEATURE_COUNT} features unlocked`]}
                 cta={cta}
               />
             );

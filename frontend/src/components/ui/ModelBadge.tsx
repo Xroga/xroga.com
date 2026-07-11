@@ -6,7 +6,6 @@ import {
   XROGA_MODEL_NAME,
   XROGA_MODEL_VERSION,
   XROGA_MODEL_SUBTEXT,
-  XROGA_INFINITY_TOOLTIP,
   XROGA_INFINITY_TOOLTIP_SHORT,
 } from '@/lib/brand';
 
@@ -25,7 +24,7 @@ export function ModelBadge({
   const infinity = (
     <span
       className="xv-infinity-symbol cursor-help inline-flex items-center justify-center font-bold text-[var(--accent)] hover:text-[#a78bfa] transition-colors"
-      title={XROGA_INFINITY_TOOLTIP}
+      title={XROGA_INFINITY_TOOLTIP_SHORT}
       aria-label={XROGA_INFINITY_TOOLTIP_SHORT}
       tabIndex={0}
     >

@@ -240,7 +240,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     <>
       <div
         className={cn(
-          'rounded-xl relative overflow-hidden border',
+          'rounded-xl relative border',
           isIncognito ? 'terminal-skin-dark border-white/15 bg-[#3a3a40]/80 backdrop-blur-md' : `terminal-skin-${terminalSkin}`,
           !isIncognito && (terminalSkin === 'dark' || terminalSkin === 'amoled') ? 'scanlines' : '',
           compact ? '' : 'w-full'
@@ -311,7 +311,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           )}
         </div>
 
-        <div className="px-4 py-3 space-y-3 font-terminal text-[13px]">
+        <div className="px-4 py-3 space-y-3 font-terminal text-[13px] overflow-hidden rounded-b-xl">
           {messages.length === 0 && !loading && (
             <p className="text-[var(--muted)] text-center py-6">
               <span className="opacity-70">&gt;</span>{' '}

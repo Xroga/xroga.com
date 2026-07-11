@@ -18,12 +18,62 @@ import toast from 'react-hot-toast';
 const MAX_ROWS = 6;
 const LINE_HEIGHT = 22;
 
+const TYPEWRITER_FEATURES = [
+  'Build a full-stack SaaS with auth and billing…',
+  'Generate images, code, and deploy to Vercel…',
+  'Run browser automations with zero API cost…',
+  'Create games, apps, and movies with AI Swarm…',
+  'Scrape data, write scripts, and ship in minutes…',
+];
+
 function renameFile(file: File, newName: string) {
   return new File([file], newName, { type: file.type, lastModified: file.lastModified });
 }
 
+function useTypewriterPlaceholder(active: boolean) {
+  const [text, setText] = useState('');
+  const idxRef = useRef(0);
+  const charRef = useRef(0);
+  const deletingRef = useRef(false);
+
+  useEffect(() => {
+    if (!active) return;
+    const tick = (): number => {
+      const phrases = TYPEWRITER_FEATURES;
+      const phrase = phrases[idxRef.current % phrases.length];
+      if (!deletingRef.current) {
+        charRef.current += 1;
+        setText(phrase.slice(0, charRef.current));
+        if (charRef.current >= phrase.length) {
+          deletingRef.current = true;
+          return 2200;
+        }
+        return 42;
+      }
+      charRef.current -= 1;
+      setText(phrase.slice(0, charRef.current));
+      if (charRef.current <= 0) {
+        deletingRef.current = false;
+        idxRef.current += 1;
+        return 400;
+      }
+      return 24;
+    };
+
+    let timeout: ReturnType<typeof setTimeout>;
+    const run = (delay: number) => {
+      timeout = setTimeout(() => run(tick()), delay);
+    };
+    run(600);
+    return () => clearTimeout(timeout);
+  }, [active]);
+
+  return text;
+}
+
 export function HomepageChatBar() {
   const [prompt, setPrompt] = useState('');
+  const [focused, setFocused] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -32,6 +82,7 @@ export function HomepageChatBar() {
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
+  const typewriter = useTypewriterPlaceholder(!prompt && !focused);
 
   const appendSpeech = useCallback((text: string) => setPrompt((p) => (p ? `${p} ${text}` : text)), []);
   const speech = useSpeechToText(appendSpeech);
@@ -54,7 +105,6 @@ export function HomepageChatBar() {
     (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
       const items = e.clipboardData?.items;
       if (!items?.length) return;
-
       const imageFiles: File[] = [];
       for (let i = 0; i < items.length; i += 1) {
         const item = items[i];
@@ -63,7 +113,6 @@ export function HomepageChatBar() {
           if (file) imageFiles.push(file);
         }
       }
-
       if (imageFiles.length > 0) {
         e.preventDefault();
         const dt = new DataTransfer();
@@ -84,6 +133,7 @@ export function HomepageChatBar() {
   }, [prompt]);
 
   function handleBlur() {
+    setFocused(false);
     if (prompt.trim()) {
       const fixed = autocorrectText(prompt);
       if (fixed !== prompt) setPrompt(fixed);
@@ -122,8 +172,8 @@ export function HomepageChatBar() {
         >
           <ChatBarDragOverlay active={dragOver} />
 
-          <div className="flex items-center justify-end px-3 pt-2 pb-0 sm:px-4">
-            <TalkButton variant="inline" className="xv-talk-inline-btn--home" />
+          <div className="flex items-center justify-end px-3 pt-1.5 pb-0 sm:px-4">
+            <TalkButton variant="inline" className="xv-talk-inline-btn--home scale-90" />
           </div>
 
           <ChatBarFileGrid
@@ -134,7 +184,7 @@ export function HomepageChatBar() {
             }
           />
 
-          <div className="px-3 sm:px-4 py-3 sm:py-4 xv-home-chatbar-inner">
+          <div className="px-3 sm:px-4 pb-2.5 sm:pb-3 pt-0 xv-home-chatbar-inner">
             <ChatBarInputRow
               surface="homepage"
               uploading={uploading}
@@ -150,27 +200,41 @@ export function HomepageChatBar() {
               micDisabled={!speech.supported}
               sendState={sendState}
             >
-              <textarea
-                ref={textareaRef}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                onPaste={handlePaste}
-                onBlur={handleBlur}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e);
-                  }
-                }}
-                placeholder="Describe what you want to build…"
-                rows={2}
-                className={cn(
-                  'w-full px-1 py-2 resize-none min-h-[52px] max-h-[140px]',
-                  'bg-transparent focus:outline-none text-sm sm:text-base leading-relaxed',
-                  'xv-home-chatbar-input font-medium'
+              <div className="relative w-full">
+                <textarea
+                  ref={textareaRef}
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  onFocus={() => setFocused(true)}
+                  onPaste={handlePaste}
+                  onBlur={handleBlur}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
+                  placeholder=""
+                  rows={2}
+                  className={cn(
+                    'w-full px-1 py-1 resize-none min-h-[44px] max-h-[120px]',
+                    'bg-transparent focus:outline-none text-sm sm:text-base leading-relaxed',
+                    'xv-home-chatbar-input font-medium'
+                  )}
+                />
+                {!prompt && !focused && (
+                  <div
+                    className="absolute left-1 top-1 right-1 pointer-events-none text-sm sm:text-base leading-relaxed text-white/45 font-medium xv-typewriter-cursor line-clamp-2"
+                    aria-hidden
+                  >
+                    {typewriter}
+                  </div>
                 )}
-              />
+              </div>
             </ChatBarInputRow>
+            <p className="text-[10px] text-white/45 font-medium mt-1 pl-1">
+              Describe what you want to build
+            </p>
             <input ref={fileRef} type="file" multiple className="hidden" onChange={(e) => addFiles(e.target.files)} />
           </div>
         </div>
