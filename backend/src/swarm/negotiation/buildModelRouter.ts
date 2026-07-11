@@ -76,7 +76,7 @@ export async function buildModelCall(
   role: BuildModelRole,
   system: string,
   user: string,
-  maxTokens = 8192
+  maxTokens = 16384
 ): Promise<{ text: string; modelLabel: string }> {
   const label = ROLE_LABEL[role];
   try {

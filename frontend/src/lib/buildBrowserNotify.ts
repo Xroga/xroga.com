@@ -20,11 +20,20 @@ export function showBuildBrowserNotification(opts: {
   if (typeof window === 'undefined' || !('Notification' in window)) return;
   if (Notification.permission !== 'granted') return;
   try {
-    new Notification(opts.title, {
+    const notification = new Notification(opts.title, {
       body: opts.body,
       tag: opts.tag ?? 'xroga-build',
-      icon: '/favicon.ico',
+      icon: '/icon.png',
+      requireInteraction: true,
+      silent: false,
     });
+    notification.onclick = () => {
+      window.focus();
+      if (window.location.pathname !== '/dashboard') {
+        window.location.href = '/dashboard';
+      }
+      notification.close();
+    };
   } catch {
     /* ignore */
   }

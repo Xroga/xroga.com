@@ -53,6 +53,7 @@ import { addPendingVideoJob } from '@/lib/pendingVideoJobs';
 import { addPendingBuildJob, removePendingBuildJob } from '@/lib/pendingBuildJobs';
 import { useBackgroundVideoJobs } from '@/hooks/useBackgroundVideoJobs';
 import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
+import { useBuildCompletionAlerts } from '@/hooks/useBuildCompletionAlerts';
 import { requestBuildNotificationPermission, showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
 
 const GENERIC_SWARM_FALLBACK =
@@ -276,6 +277,8 @@ export function TerminalChatProvider({
       );
     }
   );
+
+  useBuildCompletionAlerts();
 
   useEffect(() => {
     if (incognito) {

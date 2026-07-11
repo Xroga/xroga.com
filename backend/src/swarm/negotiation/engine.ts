@@ -93,6 +93,9 @@ import {
 import { buildFullProjectFiles, scaffoldFilePaths } from '../../services/projectScaffold.js';
 import { notifyBuildComplete, notifyBuildFailed } from '../../services/notificationService.js';
 
+/** Max tokens per build step — no compromise on complete code output */
+const BUILD_STEP_MAX_TOKENS = 16384;
+
 const MAX_PLAN_ITERATIONS = 3;
 const MAX_STEP_CORRECTIONS = 3;
 
@@ -784,7 +787,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           si === 0 ? 'flash' : 'pro',
           executePrompt,
           `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
-          8192
+          BUILD_STEP_MAX_TOKENS
         );
         return text;
       });
@@ -838,9 +841,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   try {
     const { text: uiPolish, modelLabel } = await buildModelCall(
       'sonnet',
-      `You are a UI/UX expert (Claude Sonnet). Polish HTML/CSS/JS for modern responsive design, micro-interactions, accessibility (ARIA), and optional dark mode. Output ONLY fenced html, css, javascript blocks — no commentary.`,
+      `You are XROGA Visionary. Polish HTML/CSS/JS for modern responsive design, micro-interactions, accessibility (ARIA), and optional dark mode. Output ONLY complete fenced html, css, javascript blocks — no commentary, no truncation.`,
       `Brief:\n${clarifiedBrief}\n\nApproved plan:\n${approvedPlan}\n\nCodebase:\n${assembledCode}`,
-      8192
+      BUILD_STEP_MAX_TOKENS
     );
     if (uiPolish?.trim()) {
       assembledCode = `${assembledCode}\n\n// --- UI/UX polish (${modelLabel}) ---\n${uiPolish}`;
@@ -858,8 +861,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     const { text: opusReview } = await buildModelCall(
       'opus',
       PHASE_6_FINAL,
-      `Full codebase:\n${assembledCode.slice(0, 12000)}`,
-      1024
+      `Full codebase:\n${assembledCode}`,
+      2048
     );
     if (!isPass(opusReview)) {
       emit(ctx, 5, xrogaArchitectureLine('Applying quality fixes from review'), 'debugger', todos, 'XROGA Architect');
@@ -875,11 +878,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     silent: true,
   });
   const finalChecks = await Promise.allSettled([
-    deepseekCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 10000)}`),
-    geminiCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 10000)}`, 256),
-    groqCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 8000)}`, 256),
+    deepseekCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode}`, 4096),
+    geminiCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 50000)}`, 512),
+    groqCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 40000)}`, 512),
     getSecret('MISTRAL_API_KEY')
-      ? mistralChat(PHASE_6_FINAL, assembledCode.slice(0, 8000), { maxTokens: 256 })
+      ? mistralChat(PHASE_6_FINAL, assembledCode.slice(0, 40000), { maxTokens: 512 })
       : Promise.resolve('PASS'),
   ]);
 

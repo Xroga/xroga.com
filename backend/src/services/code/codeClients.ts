@@ -57,7 +57,7 @@ export async function deepseekCode(
           { role: 'system', content: system },
           { role: 'user', content: user },
         ],
-        max_tokens: options?.maxTokens ?? 8192,
+        max_tokens: options?.maxTokens ?? 16384,
         temperature: 0.1,
       }),
     });
