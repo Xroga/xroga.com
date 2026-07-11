@@ -4,8 +4,15 @@ export interface WebSearchResult {
   title: string;
   url: string;
   content: string;
-  source: 'searxng' | 'brave' | 'tavily';
+  source: 'searxng' | 'tavily';
 }
+
+/** Public SearXNG instances — no API key required. Override with SEARXNG_URL for self-hosted. */
+const DEFAULT_SEARXNG_INSTANCES = [
+  'https://searx.be',
+  'https://search.im-in.space',
+  'https://opensearch.vnet.fi',
+];
 
 interface SearxResult {
   results?: Array<{ title?: string; url?: string; content?: string }>;
@@ -18,8 +25,8 @@ async function searxngSearch(baseUrl: string, query: string, maxResults: number)
   url.searchParams.set('language', 'en');
 
   const res = await fetch(url.toString(), {
-    headers: { Accept: 'application/json' },
-    signal: AbortSignal.timeout(12_000),
+    headers: { Accept: 'application/json', 'User-Agent': 'XrogaAI/1.0' },
+    signal: AbortSignal.timeout(14_000),
   });
   if (!res.ok) throw new Error(`SearXNG ${res.status}`);
 
@@ -35,75 +42,38 @@ async function searxngSearch(baseUrl: string, query: string, maxResults: number)
     }));
 }
 
-async function braveSearch(apiKey: string, query: string, maxResults: number): Promise<WebSearchResult[]> {
-  const url = new URL('https://api.search.brave.com/res/v1/web/search');
-  url.searchParams.set('q', query);
-  url.searchParams.set('count', String(Math.min(maxResults, 20)));
+function searxngInstances(): string[] {
+  const custom = process.env.SEARXNG_URL?.trim();
+  if (custom) return [custom.replace(/\/$/, ''), ...DEFAULT_SEARXNG_INSTANCES.filter((u) => u !== custom)];
+  return DEFAULT_SEARXNG_INSTANCES;
+}
 
-  const res = await fetch(url.toString(), {
-    headers: {
-      Accept: 'application/json',
-      'X-Subscription-Token': apiKey,
-    },
-    signal: AbortSignal.timeout(12_000),
-  });
-  if (!res.ok) throw new Error(`Brave Search ${res.status}`);
-
-  const data = (await res.json()) as {
-    web?: { results?: Array<{ title?: string; url?: string; description?: string }> };
-  };
-
-  return (data.web?.results ?? [])
-    .filter((r) => r.title && r.url)
-    .slice(0, maxResults)
-    .map((r) => ({
-      title: r.title!,
-      url: r.url!,
-      content: (r.description ?? '').slice(0, 500),
-      source: 'brave' as const,
-    }));
+async function searchSearxngAll(query: string, maxResults: number): Promise<WebSearchResult[]> {
+  for (const base of searxngInstances()) {
+    try {
+      const results = await searxngSearch(base, query, maxResults);
+      if (results.length) return results;
+    } catch (err) {
+      console.warn(`[webSearch] SearXNG ${base}:`, (err as Error).message);
+    }
+  }
+  return [];
 }
 
 /**
- * Free-first web search: SearXNG → Brave → Tavily (critical / fallback).
+ * Free-first web search: SearXNG (no API key) → Tavily (when key set / critical fallback).
  */
 export async function webSearch(
   query: string,
   opts?: { critical?: boolean; maxResults?: number }
 ): Promise<WebSearchResult[]> {
   const maxResults = opts?.maxResults ?? 8;
-  const searxUrl = process.env.SEARXNG_URL?.trim();
-  const braveKey = process.env.BRAVE_SEARCH_API_KEY?.trim();
   const tavilyKey = process.env.TAVILY_API_KEY?.trim();
 
-  if (!opts?.critical && searxUrl) {
-    try {
-      const results = await searxngSearch(searxUrl, query, maxResults);
-      if (results.length) return results;
-    } catch (err) {
-      console.warn('[webSearch] SearXNG:', (err as Error).message);
-    }
-  }
+  const searxResults = await searchSearxngAll(query, maxResults);
+  if (searxResults.length) return searxResults;
 
-  if (braveKey) {
-    try {
-      const results = await braveSearch(braveKey, query, maxResults);
-      if (results.length) return results;
-    } catch (err) {
-      console.warn('[webSearch] Brave:', (err as Error).message);
-    }
-  }
-
-  if (searxUrl && opts?.critical) {
-    try {
-      const results = await searxngSearch(searxUrl, query, maxResults);
-      if (results.length) return results;
-    } catch (err) {
-      console.warn('[webSearch] SearXNG retry:', (err as Error).message);
-    }
-  }
-
-  if (tavilyKey && (opts?.critical || (!searxUrl && !braveKey))) {
+  if (tavilyKey) {
     try {
       const results = await tavilySearch(query, maxResults);
       return results.map((r) => ({

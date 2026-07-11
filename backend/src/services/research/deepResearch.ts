@@ -15,7 +15,7 @@ interface Source {
   title: string;
   url: string;
   excerpt: string;
-  platform: 'exa' | 'tavily' | 'searxng' | 'brave';
+  platform: 'exa' | 'tavily' | 'searxng';
 }
 
 const PLAN_SYSTEM = `You are a research architect. Plan a PhD-level research report.

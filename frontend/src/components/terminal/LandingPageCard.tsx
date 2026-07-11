@@ -5,9 +5,10 @@ import { api } from '@/lib/api';
 import { getSelectedRepoContext } from '@/lib/repoContext';
 import { markRepoAnalysisStale } from '@/lib/repoAnalysisCache';
 import { normalizeBuildFiles } from '@/lib/normalizeBuildSource';
+import { hydrateLandingOutput } from '@/lib/hydrateLandingOutput';
 import { auditLandingSite, LANDING_UPDATE_SUGGESTIONS } from '@/lib/siteHealthAudit';
-import { useTerminalChat } from '@/context/TerminalChatContext';
 import { PostBuildDashboard } from './PostBuildDashboard';
+import { useTerminalChat } from '@/context/TerminalChatContext';
 
 export interface LandingPageOutputData {
   type: 'landing_page';
@@ -117,6 +118,17 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
       setGithubPushed(true);
     }
   }, [data.html, data.css, data.js, data.vercelPreviewUrl, data.netlifyPreviewUrl, data.deployUrl, data.deployVerified, data.githubPushConfirmed]);
+
+  useEffect(() => {
+    if ((data.html?.length ?? 0) > 80) return;
+    void hydrateLandingOutput(data).then((hydrated) => {
+      if (!hydrated.html?.trim()) return;
+      setPreviewHtml(hydrated.html);
+      setPreviewCss(hydrated.css ?? '');
+      setPreviewJs(hydrated.js ?? '');
+      onPreviewUpdate?.(hydrated);
+    });
+  }, [data, onPreviewUpdate]);
 
   const liveUrl =
     (vercelUrl && vercelVerified ? vercelUrl : null) ??

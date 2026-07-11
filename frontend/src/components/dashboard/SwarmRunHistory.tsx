@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { api, type SwarmRunSummary } from '@/lib/api';
 import { swarmOutputToText } from '@/lib/swarm';
 import { messagesFromSwarmRun } from '@/lib/swarmRunRestore';
+import { hydrateLandingOutput } from '@/lib/hydrateLandingOutput';
 import { Bot, Loader2 } from 'lucide-react';
 import { UiverseTableCard } from '@/components/ui/UiverseTableCard';
 import { SectionRowActions, copyText, downloadText } from '@/components/ui/SectionRowActions';
@@ -58,10 +59,22 @@ export function SwarmRunHistory({ search = '' }: { search?: string }) {
         /* use list payload */
       }
       const messages = messagesFromSwarmRun(fullRun);
+      const hydrated = await Promise.all(
+        messages.map(async (m) => {
+          if (m.featureOutput && typeof m.featureOutput === 'object') {
+            const fo = m.featureOutput as { type?: string };
+            if (fo.type === 'landing_page') {
+              const loaded = await hydrateLandingOutput(m.featureOutput as import('@/components/terminal/LandingPageCard').LandingPageOutputData);
+              return { ...m, featureOutput: loaded };
+            }
+          }
+          return m;
+        })
+      );
       setPrompt(run.prompt);
       resumeToDashboard({
         prompt: run.prompt,
-        messages,
+        messages: hydrated,
         selectedId: run.id,
         selectedLabel: run.prompt.slice(0, 40),
         source: 'chats',

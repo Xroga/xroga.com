@@ -24,6 +24,10 @@ router.post('/', async (req: AuthRequest, res) => {
   const schema = z.object({
     name: z.string().min(1).max(200),
     type: z.enum(['app', 'website', 'video', 'game', 'research', 'automation']),
+    github_repo_url: z.string().optional(),
+    github_repo_name: z.string().optional(),
+    deploy_url: z.string().optional(),
+    user_prompt: z.string().optional(),
   });
 
   const parsed = schema.safeParse(req.body);
@@ -33,9 +37,46 @@ router.post('/', async (req: AuthRequest, res) => {
   }
 
   const supabase = getSupabaseAdmin();
+
+  if (parsed.data.github_repo_name) {
+    const { data: existing } = await supabase
+      .from('projects')
+      .select('id')
+      .eq('user_id', req.userId!)
+      .eq('github_repo_name', parsed.data.github_repo_name)
+      .maybeSingle();
+
+    if (existing) {
+      const { data, error } = await supabase
+        .from('projects')
+        .update({
+          name: parsed.data.name,
+          type: parsed.data.type,
+          github_repo_url: parsed.data.github_repo_url ?? null,
+          github_repo_name: parsed.data.github_repo_name,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existing.id)
+        .select()
+        .single();
+      if (error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.status(200).json(data);
+      return;
+    }
+  }
+
   const { data, error } = await supabase
     .from('projects')
-    .insert({ user_id: req.userId!, ...parsed.data })
+    .insert({
+      user_id: req.userId!,
+      name: parsed.data.name,
+      type: parsed.data.type,
+      github_repo_url: parsed.data.github_repo_url ?? null,
+      github_repo_name: parsed.data.github_repo_name ?? null,
+    })
     .select()
     .single();
 
@@ -81,6 +122,38 @@ router.get('/:id/files', async (req: AuthRequest, res) => {
     return;
   }
   res.json(data);
+});
+
+/** Fetch stored code files for a project (AI + user restore). */
+router.get('/:id/code', async (req: AuthRequest, res) => {
+  const supabase = getSupabaseAdmin();
+  const projectId = String(req.params.id);
+
+  const { data: project } = await supabase
+    .from('projects')
+    .select('id, github_repo_name')
+    .eq('id', projectId)
+    .eq('user_id', req.userId!)
+    .single();
+
+  if (!project) {
+    res.status(404).json({ error: 'Project not found' });
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from('project_files')
+    .select('file_name, content, file_url, file_type')
+    .eq('project_id', projectId)
+    .eq('file_type', 'code')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    res.status(500).json({ error: error.message });
+    return;
+  }
+
+  res.json({ projectId, githubRepoName: project.github_repo_name, files: data ?? [] });
 });
 
 router.get('/:id', async (req: AuthRequest, res) => {

@@ -33,6 +33,7 @@ import {
 } from './gamePrompts.js';
 import { BuildState } from './buildState.js';
 import { formatMemorySuggestion, getPreviousBuilds } from '../../services/memory/buildMemory.js';
+import { upsertBuildProject } from '../../services/memory/buildProjectStore.js';
 import { webSearch, formatWebSearchContext } from '../../lib/webSearch.js';
 import {
   buildSummaryFromBrief,
@@ -293,10 +294,10 @@ export function shouldUseNegotiationEngine(prompt: string, category: FeatureCate
   if (isBuildContinuation(prompt)) return true;
   if (isWebsiteUpdateRequest(prompt) && threadHasCompletedWebsite(prompt)) return true;
   const t = prompt.toLowerCase();
-  if (/\b(build|create|make|develop)\b[\s\S]{0,50}\b(website|web app|web\s*page|landing|site|coffee|shop|store)\b/.test(t)) {
+  if (/\b(build|create|make|develop)\b[\s\S]{0,50}\b(website|web app|web\s*page|landing|site|coffee|shop|store|crm|dashboard|crypto|blockchain|web3|chatbot|chat\s*bot|software|saas|platform|dapp)\b/.test(t)) {
     return true;
   }
-  if (/\b(build|create|make|develop)\b[\s\S]{0,50}\b(mobile app|game|software|api|script|component)\b/.test(t)) {
+  if (/\b(build|create|make|develop)\b[\s\S]{0,50}\b(mobile app|game|software|api|script|component|bot|assistant|tool|nft|defi|wallet)\b/.test(t)) {
     return true;
   }
   if (/\b(debug|fix)\b[\s\S]{0,40}\b(code|bug|error|typescript|python)\b/.test(t)) return true;
@@ -1015,6 +1016,16 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       emit(ctx, 8, BRAND.phase8.liveDeploy, 'builder', todos, 'XROGA AI', { userPhase: 4 });
       todos.completeFinal('live-deploy');
       emit(ctx, 8, BRAND.phase8.liveReady, 'complete', todos, 'BLACK HOLE V∞', { userPhase: 4 });
+      void upsertBuildProject({
+        userId,
+        name: summaryData.projectName,
+        type: 'website',
+        userPrompt: currentMessage,
+        githubRepoUrl: pipeline.github.htmlUrl,
+        githubRepoName: pipeline.github.repoName,
+        deployUrl: pipeline.deployVerified ? pipeline.deployUrl : undefined,
+        projectFiles,
+      });
       void notifyBuildComplete(userId, {
         projectName,
         prompt: userPrompt,
@@ -1058,6 +1069,15 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             }),
           };
           todos.completeFinal('github-push');
+          void upsertBuildProject({
+            userId,
+            name: summaryData.projectName,
+            type: 'website',
+            userPrompt: currentMessage,
+            githubRepoUrl: github.htmlUrl,
+            githubRepoName: github.repoName,
+            projectFiles,
+          });
           void notifyBuildComplete(userId, {
             projectName,
             prompt: userPrompt,

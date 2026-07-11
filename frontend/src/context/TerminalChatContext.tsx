@@ -1081,7 +1081,14 @@ export function TerminalChatProvider({
                 const ghName = typeof output.githubRepoName === 'string' ? output.githubRepoName : undefined;
                 if (output.githubPushConfirmed && ghName) {
                   void api.projects
-                    .create({ name: projectName.slice(0, 120), type: 'website' })
+                    .create({
+                      name: projectName.slice(0, 120),
+                      type: 'website',
+                      github_repo_url:
+                        typeof output.githubRepoUrl === 'string' ? output.githubRepoUrl : undefined,
+                      github_repo_name: ghName,
+                      user_prompt: displayPrompt,
+                    })
                     .catch(() => {});
                 }
                 return updated;

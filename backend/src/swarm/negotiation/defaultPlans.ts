@@ -45,6 +45,22 @@ function nicheFromPrompt(prompt: string): { name: string; theme: string; steps: 
       'Responsive Design — mobile-friendly dashboard layout',
     ] },
     { match: /\bstartup|saas|tech|software company\b/, name: 'Homepage — product hero', theme: 'tech', steps: ['Features', 'Pricing', 'Testimonials', 'Contact / demo', 'Responsive'] },
+    { match: /\b(crypto|blockchain|web3|defi|nft|token|wallet|dao|dapp|exchange|staking)\b/, name: 'Web3 Dashboard — wallet connect hero, dark theme', theme: 'crypto dark gradient', steps: [
+      'Token metrics — price, volume, market cap cards',
+      'Wallet connect UI — MetaMask / WalletConnect stub',
+      'Swap / stake interface — form, charts, APY display',
+      'Transaction history table — hash, status, amount',
+      'Security & docs section — audit badges, FAQ',
+      'Responsive Design — mobile-first DeFi layout',
+    ] },
+    { match: /\b(chatbot|chat bot|ai assistant|ai agent|support bot|customer support)\b/, name: 'Chatbot App — conversation UI shell', theme: 'modern AI assistant', steps: [
+      'Chat window — message bubbles, typing indicator',
+      'Input bar — send, attach, voice stub',
+      'Sidebar — conversation history, new chat',
+      'Settings panel — model, tone, API key placeholder',
+      'Embed widget preview — floating launcher button',
+      'Responsive Design — mobile chat layout',
+    ] },
   ];
 
   for (const p of plans) {

@@ -21,6 +21,7 @@ import {
   Terminal,
   Gift,
   History,
+  FolderOpen,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniTokenMeter } from './MiniActionMeter';
@@ -60,6 +61,18 @@ const navItems = [
     label: 'Dashboard',
     icon: LayoutDashboard,
     tip: 'Token usage, XRG balance, billing, and recent activity.',
+  },
+  {
+    href: '/dashboard/projects',
+    label: 'My Projects',
+    icon: FolderOpen,
+    tip: 'All builds — saved code, GitHub repos, and project files.',
+  },
+  {
+    href: '/dashboard/chats',
+    label: 'Build History',
+    icon: MessageCirclePlus,
+    tip: 'Cloud-saved swarm builds and restored terminal conversations.',
   },
   {
     href: '/dashboard/history',
