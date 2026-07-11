@@ -14,25 +14,8 @@ import {
 import { BuildCodeSandbox, type PreviewViewport } from './BuildCodeSandbox';
 import { FreeApiOptionsPanel } from '@/components/integrations/FreeApiOptionsPanel';
 import type { LandingPageOutputData } from './LandingPageCard';
-
-const FILE_TREE = [
-  'src/app/layout.tsx',
-  'src/app/page.tsx',
-  'src/app/dashboard/page.tsx',
-  'src/app/api/auth/route.ts',
-  'src/app/api/tasks/route.ts',
-  'src/components/Navbar.tsx',
-  'src/components/TaskList.tsx',
-  'src/lib/supabase/client.ts',
-  'prisma/schema.prisma',
-  'index.html',
-  'styles.css',
-  'script.js',
-  'package.json',
-  'tailwind.config.ts',
-  '.env.example',
-  'README.md',
-];
+import { XROGA_BUILD_MODELS } from '@/lib/buildPlanningSteps';
+import { scaffoldPathsForPrompt } from '@/lib/buildScaffoldPaths';
 
 interface PostBuildDashboardProps {
   data: LandingPageOutputData;
@@ -97,7 +80,13 @@ export function PostBuildDashboard({
   const [viewport, setViewport] = useState<PreviewViewport>('desktop');
 
   const features = useMemo(() => inferFeatures(data, pages), [data, pages]);
-  const apiRouteCount = Math.min(5, Math.max(2, Math.ceil(pages.length / 2)));
+  const fileTree = useMemo(() => {
+    if (data.generatedFiles?.length) return data.generatedFiles;
+    const hint = [projectName, ...(data.features ?? []), ...(data.pages ?? [])].join(' ');
+    return scaffoldPathsForPrompt(hint);
+  }, [data.generatedFiles, data.features, data.pages, projectName]);
+  const fileCount = data.fileCount ?? fileTree.length;
+  const apiRouteCount = fileTree.filter((p) => p.includes('/api/')).length || Math.min(5, Math.max(2, Math.ceil(pages.length / 2)));
   const deployedAt = new Date().toLocaleTimeString();
 
   const buildLogs = useMemo(() => {
@@ -108,11 +97,11 @@ export function PostBuildDashboard({
     else logs.push('⚠️ Connect GitHub to save code automatically');
     if (liveUrl) logs.push(`✅ Deployed — ${liveUrl}`);
     else if (autoDeploying) logs.push('⏳ Auto-deploying to Vercel + Cloudflare…');
-    logs.push(`✅ ${FILE_TREE.length} files in production scaffold`);
+    logs.push(`✅ ${fileCount} files in production scaffold`);
     logs.push(`✅ Site health ${siteAudit.score}/100`);
     if (statusNote) logs.push(statusNote);
     return logs;
-  }, [githubPushed, pushingGithub, resolvedRepoName, liveUrl, autoDeploying, siteAudit.score, statusNote]);
+  }, [githubPushed, pushingGithub, resolvedRepoName, liveUrl, autoDeploying, siteAudit.score, statusNote, fileCount]);
 
   return (
     <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
@@ -150,7 +139,7 @@ export function PostBuildDashboard({
           <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)] mb-1.5">Summary</p>
           <ul className="space-y-1 text-[11px]">
             <li className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-              <CheckCircle2 className="w-3 h-3 shrink-0" /> {FILE_TREE.length} files generated
+              <CheckCircle2 className="w-3 h-3 shrink-0" /> {fileCount} files generated
             </li>
             <li className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="w-3 h-3 shrink-0" /> {apiRouteCount} API routes scaffolded
@@ -231,7 +220,7 @@ export function PostBuildDashboard({
             <div>
               <p className="text-[10px] font-bold text-[var(--muted)] mb-1.5">📂 File structure</p>
               <ul className="max-h-[160px] overflow-y-auto space-y-0.5 text-[10px] font-mono bg-[var(--foreground)]/[0.03] rounded-lg p-2 border border-[var(--card-border)]">
-                {FILE_TREE.map((path) => (
+                {fileTree.map((path) => (
                   <li key={path} className="flex items-center gap-1.5 py-0.5">
                     <FileCode className="w-3 h-3 text-[var(--accent)] shrink-0" />
                     {path}
@@ -251,23 +240,21 @@ export function PostBuildDashboard({
             </div>
 
             <div>
-              <p className="text-[10px] font-bold text-[var(--muted)] mb-1.5">🧠 AI models used</p>
+              <p className="text-[10px] font-bold text-[var(--muted)] mb-1.5">🧠 XROGA AI roles used</p>
               <ul className="text-[10px] space-y-1 text-[var(--foreground)]/85">
-                <li>DeepSeek Pro — architecture design</li>
-                <li>DeepSeek Flash — code scaffolding (Pass 1)</li>
-                <li>DeepSeek Pro — business logic (Pass 2)</li>
-                <li>Claude Sonnet — UI/UX polish (Pass 3)</li>
-                <li>Claude Opus + DeepSeek Pro — quality & security audit</li>
+                {XROGA_BUILD_MODELS.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
               </ul>
             </div>
 
             <div>
               <p className="text-[10px] font-bold text-[var(--muted)] mb-1.5">💰 Estimated cost</p>
               <ul className="text-[10px] font-mono space-y-0.5 text-[var(--muted)]">
-                <li>DeepSeek Flash: ~$0.05</li>
-                <li>DeepSeek Pro: ~$0.05</li>
-                <li>Claude Sonnet: ~$0.08</li>
-                <li>Claude Opus: ~$0.08</li>
+                <li>XROGA Pulse: ~$0.05</li>
+                <li>XROGA Architect: ~$0.05</li>
+                <li>XROGA Visionary: ~$0.08</li>
+                <li>XROGA Collective: ~$0.08</li>
                 <li className="pt-1 font-bold text-[var(--foreground)]">Total: ~$0.26</li>
               </ul>
             </div>

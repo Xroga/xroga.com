@@ -69,7 +69,6 @@ import {
   isGitHubConnected,
   pushAndDeployLivePreview,
   pushBuildToGitHub,
-  landingFilesFromOutput,
   fetchBuildFilesFromGitHub,
   analyzeGitHubRepo,
 } from '../../services/integrations/githubDeploy.js';
@@ -82,7 +81,17 @@ import {
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { deepseekCode, groqCode, geminiCode } from '../../services/code/codeClients.js';
 import { resolveApiKey } from '../../config/apiKeyRouter.js';
-import { buildModelCall, modelActivityLine } from './buildModelRouter.js';
+import { buildModelCall } from './buildModelRouter.js';
+import {
+  xrogaArchitectureLine,
+  xrogaPulseLine,
+  xrogaVisionaryLine,
+  xrogaCollectiveLine,
+  xrogaBlackHoleLine,
+  xrogaGitHubLine,
+} from './xrogaBrandActivity.js';
+import { buildFullProjectFiles, scaffoldFilePaths } from '../../services/projectScaffold.js';
+import { notifyBuildComplete, notifyBuildFailed } from '../../services/notificationService.js';
 
 const MAX_PLAN_ITERATIONS = 3;
 const MAX_STEP_CORRECTIONS = 3;
@@ -567,7 +576,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         PHASE_0_DISCOVERY,
         `User request:\n${discoveryContext}\n\nDefault brief:\n${clarifiedBrief}\n\nRefine the Fully Clarified Project Brief — do NOT ask questions.`
       );
-      emit(ctx, 0, modelActivityLine(modelLabel, 'Architecture brief refined'), 'architect', todos, 'DeepSeek Pro', {
+      emit(ctx, 0, xrogaArchitectureLine('Project brief refined'), 'architect', todos, 'XROGA Architect', {
         userPhase: 1,
       });
       if (refined && !/clarifying question|\?\s*$/im.test(refined) && refined.length > 80) {
@@ -628,7 +637,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   // Phase 2 planning — user sees planning under Phase 1, review runs silently
   todos.activateMeta('plan');
   buildState.assertCanProceed('planned');
-  emit(ctx, 1, modelActivityLine('DeepSeek Pro', 'Architecture design — system, database, API plan'), 'architect', todos, 'DeepSeek Pro', {
+  emit(ctx, 1, xrogaArchitectureLine('System design, database & API plan'), 'architect', todos, 'XROGA Architect', {
     userPhase: 1,
   });
   let masterPlan: string;
@@ -642,7 +651,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`
       );
       masterPlan = text;
-      emit(ctx, 1, modelActivityLine(modelLabel, 'Game master plan ready'), 'architect', todos, modelLabel, {
+      emit(ctx, 1, xrogaArchitectureLine('Game master plan ready'), 'architect', todos, 'XROGA Architect', {
         userPhase: 1,
       });
     } catch {
@@ -656,7 +665,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`
       );
       masterPlan = text;
-      emit(ctx, 1, modelActivityLine(modelLabel, 'Master plan generated'), 'architect', todos, modelLabel, {
+      emit(ctx, 1, xrogaArchitectureLine('Master plan generated'), 'architect', todos, 'XROGA Architect', {
         userPhase: 1,
       });
       try {
@@ -765,23 +774,14 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       silent: true,
     });
 
-    const stepRole = si === 0 ? 'flash' : 'pro';
-    const stepModelLabel = si === 0 ? 'DeepSeek Flash' : 'DeepSeek Pro';
-    emit(
-      ctx,
-      3,
-      modelActivityLine(stepModelLabel, `Pass ${si + 1} — ${target}`),
-      'builder',
-      todos,
-      stepModelLabel,
-      { userPhase: 1 }
-    );
+    const passLabel = si === 0 ? xrogaPulseLine(`Scaffolding — ${target}`) : xrogaArchitectureLine(`Logic — ${target}`);
+    emit(ctx, 3, passLabel, 'builder', todos, si === 0 ? 'XROGA Pulse' : 'XROGA Architect', { userPhase: 1 });
 
     let stepCode = '';
     try {
       stepCode = await withBuildHeartbeat(ctx, todos, async () => {
         const { text } = await buildModelCall(
-          stepRole,
+          si === 0 ? 'flash' : 'pro',
           executePrompt,
           `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
           8192
@@ -832,15 +832,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   let assembledCode = codeParts.join('\n\n');
 
-  emit(
-    ctx,
-    6,
-    modelActivityLine('Claude Sonnet', 'UI/UX polish — responsive design, dark mode, animations'),
-    'reviewer',
-    todos,
-    'Claude Sonnet',
-    { userPhase: 2 }
-  );
+  emit(ctx, 6, xrogaVisionaryLine('UI polish — responsive design & animations'), 'reviewer', todos, 'XROGA Visionary', {
+    userPhase: 2,
+  });
   try {
     const { text: uiPolish, modelLabel } = await buildModelCall(
       'sonnet',
@@ -857,7 +851,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   todos.addFinalTodos();
   todos.activateFinal('final-check');
-  emit(ctx, 6, modelActivityLine('Claude Opus', 'Quality gate — code standards review'), 'truth_council', todos, 'Claude Opus', {
+  emit(ctx, 6, xrogaCollectiveLine('Quality gate — code standards review'), 'truth_council', todos, 'XROGA Collective', {
     userPhase: 2,
   });
   try {
@@ -868,7 +862,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       1024
     );
     if (!isPass(opusReview)) {
-      emit(ctx, 5, modelActivityLine('DeepSeek Pro', 'Applying quality fixes from review'), 'debugger', todos, 'DeepSeek Pro');
+      emit(ctx, 5, xrogaArchitectureLine('Applying quality fixes from review'), 'debugger', todos, 'XROGA Architect');
       assembledCode = await deepseekCall(PHASE_5_CORRECT, `Quality review:\n${opusReview}\n\nCode:\n${assembledCode}`);
       totalCorrections++;
     }
@@ -876,7 +870,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     /* opus falls back to deepseek inside buildModelCall */
   }
 
-  emit(ctx, 6, modelActivityLine('DeepSeek Pro', 'Security & integration audit'), 'truth_council', todos, 'DeepSeek Pro', {
+  emit(ctx, 6, xrogaCollectiveLine('Security & integration audit'), 'truth_council', todos, 'XROGA Collective', {
     userPhase: 2,
     silent: true,
   });
@@ -945,12 +939,19 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     buildState.markDone('emitted');
     todos.activateFinal('github-push');
     const pushTarget = ctx.githubTargetRepo?.includes('/') ? ctx.githubTargetRepo : 'selected GitHub repo';
-    emit(ctx, 8, `[GitHub] Pushing code to ${pushTarget} (${ctx.githubTargetBranch ?? 'main'})…`, 'builder', todos, 'AI SWARM LOGIC', {
+    emit(ctx, 8, xrogaGitHubLine(pushTarget, ctx.githubTargetBranch ?? 'main'), 'builder', todos, 'XROGA AI', {
       userPhase: 4,
     });
+    const generatedPaths = scaffoldFilePaths(userPrompt);
+    const projectFiles = buildFullProjectFiles({
+      html: featureOutput.html,
+      css: featureOutput.css,
+      js: featureOutput.js,
+      projectName,
+      userPrompt,
+    });
     try {
-      const files = landingFilesFromOutput(featureOutput.html, featureOutput.css, featureOutput.js);
-      const pipeline = await pushAndDeployLivePreview(userId, files, projectSlug, {
+      const pipeline = await pushAndDeployLivePreview(userId, projectFiles, projectSlug, {
         targetRepo: ctx.githubTargetRepo,
         targetBranch: ctx.githubTargetBranch,
       });
@@ -969,6 +970,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         features: summaryData.features,
         designTheme: summaryData.designTheme,
         needsPayment: summaryData.needsPayment,
+        generatedFiles: generatedPaths,
+        fileCount: projectFiles.length,
         memoryNote:
           pipeline.deployError && !pipeline.deployVerified
             ? `${memoryNote ? `${memoryNote} ` : ''}Hosted preview note: ${pipeline.deployError.slice(0, 160)}`
@@ -982,18 +985,26 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       buildState.markDone('deployed');
       todos.completeFinal('github-push');
       todos.activateFinal('live-deploy');
-      emit(ctx, 8, BRAND.phase8.liveDeploy, 'builder', todos, 'AI SWARM LOGIC', { userPhase: 4 });
+      emit(ctx, 8, BRAND.phase8.liveDeploy, 'builder', todos, 'XROGA AI', { userPhase: 4 });
       todos.completeFinal('live-deploy');
       emit(ctx, 8, BRAND.phase8.liveReady, 'complete', todos, 'BLACK HOLE V∞', { userPhase: 4 });
+      void notifyBuildComplete(userId, {
+        projectName,
+        prompt: userPrompt,
+        githubRepoUrl: pipeline.github.htmlUrl,
+        deployUrl: pipeline.deployVerified ? pipeline.deployUrl : undefined,
+        fileCount: projectFiles.length,
+        assistantMessageId: ctx.assistantMessageId,
+        deployError: pipeline.deployError,
+      });
     } catch (err) {
       deployError = (err as Error).message;
       console.warn('[NegotiationEngine] GitHub/deploy pipeline:', deployError);
-      emit(ctx, 8, BRAND.phase8.deployFailed, 'builder', todos, 'AI SWARM LOGIC');
+      emit(ctx, 8, BRAND.phase8.deployFailed, 'builder', todos, 'XROGA AI');
 
       if (featureOutput?.type === 'landing_page') {
         try {
-          const files = landingFilesFromOutput(featureOutput.html, featureOutput.css, featureOutput.js);
-          const github = await pushBuildToGitHub(userId, files, {
+          const github = await pushBuildToGitHub(userId, projectFiles, {
             slug: projectSlug,
             targetRepo: ctx.githubTargetRepo,
             targetBranch: ctx.githubTargetBranch,
@@ -1007,6 +1018,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             features: summaryData.features,
             designTheme: summaryData.designTheme,
             needsPayment: summaryData.needsPayment,
+            generatedFiles: generatedPaths,
+            fileCount: projectFiles.length,
             memoryNote:
               memoryNote ??
               `Code pushed to ${github.repoName}. Click Open Live Preview to publish the hosted link.`,
@@ -1016,9 +1029,23 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             }),
           };
           todos.completeFinal('github-push');
+          void notifyBuildComplete(userId, {
+            projectName,
+            prompt: userPrompt,
+            githubRepoUrl: github.htmlUrl,
+            fileCount: projectFiles.length,
+            assistantMessageId: ctx.assistantMessageId,
+            deployError: deployError,
+          });
         } catch (pushErr) {
           const pushMsg = (pushErr as Error).message;
           console.warn('[NegotiationEngine] GitHub push retry:', pushMsg);
+          void notifyBuildFailed(userId, {
+            projectName,
+            prompt: userPrompt,
+            error: pushMsg,
+            assistantMessageId: ctx.assistantMessageId,
+          });
           const target = ctx.githubTargetRepo;
           if (target?.includes('/')) {
             featureOutput = {

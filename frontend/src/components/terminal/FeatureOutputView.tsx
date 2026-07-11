@@ -107,6 +107,8 @@ export function FeatureOutputView({
       vercelPreviewUrl: typeof o.vercelPreviewUrl === 'string' ? o.vercelPreviewUrl : undefined,
       netlifyPreviewUrl: typeof o.netlifyPreviewUrl === 'string' ? o.netlifyPreviewUrl : undefined,
       followUps: Array.isArray(o.followUps) ? (o.followUps as string[]) : undefined,
+      generatedFiles: Array.isArray(o.generatedFiles) ? (o.generatedFiles as string[]) : undefined,
+      fileCount: typeof o.fileCount === 'number' ? o.fileCount : undefined,
     };
 
     return (

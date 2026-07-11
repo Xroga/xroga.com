@@ -50,7 +50,10 @@ import {
   sanitizeXrogaTerminalText,
 } from '@/lib/xrogaBrand';
 import { addPendingVideoJob } from '@/lib/pendingVideoJobs';
+import { addPendingBuildJob, removePendingBuildJob } from '@/lib/pendingBuildJobs';
 import { useBackgroundVideoJobs } from '@/hooks/useBackgroundVideoJobs';
+import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
+import { requestBuildNotificationPermission, showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
 
 const GENERIC_SWARM_FALLBACK =
   "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.";
@@ -248,6 +251,29 @@ export function TerminalChatProvider({
         )
       );
       toast.error('Video generation failed');
+    }
+  );
+
+  useBackgroundBuildJobs(
+    ({ assistantMessageId, output }) => {
+      toast.success('Your XROGA project is complete!');
+      setMessages((m) =>
+        m.map((msg) =>
+          msg.id === assistantMessageId
+            ? { ...msg, content: '', featureOutput: { ...output, type: 'landing_page' } }
+            : msg
+        )
+      );
+    },
+    (assistantMessageId, error) => {
+      toast.error(error.slice(0, 120) || 'Build failed');
+      setMessages((m) =>
+        m.map((msg) =>
+          msg.id === assistantMessageId
+            ? { ...msg, content: error, featureOutput: undefined }
+            : msg
+        )
+      );
     }
   );
 
@@ -751,13 +777,20 @@ export function TerminalChatProvider({
 
       if (buildPromptActive) {
         setSwarmNegotiationPhase(1);
-        setSwarmStatusLabel('DeepSeek Pro');
-        setPipelineMessage('DeepSeek Pro — architecture design…');
+        setSwarmStatusLabel('XROGA Architect');
+        setPipelineMessage('XROGA Architect — system design & API plan…');
         thinkingStepsRef.current = [...BUILD_PLANNING_STEPS];
         setThinkingSteps([...BUILD_PLANNING_STEPS]);
-        setSwarmActivityLog(['[DeepSeek Pro] Architecture design — system, database, API plan…']);
+        setSwarmActivityLog(['XROGA Architect — planning architecture, database & API routes…']);
         lastActivityAtRef.current = Date.now();
         buildHeartbeatTickRef.current = 0;
+        addPendingBuildJob({
+          assistantMessageId: assistantId,
+          userMessageId: userMessageId,
+          userPrompt: displayPrompt,
+          startedAt: Date.now(),
+        });
+        void requestBuildNotificationPermission();
       }
 
       if (isVideoGenerationPrompt(displayPrompt)) {
@@ -835,11 +868,11 @@ export function TerminalChatProvider({
 
         if (usePhase1Engine) {
           setPipelineCompact(false);
-          setPipelineMessage('Planning with DeepSeek Pro…');
+          setPipelineMessage('Planning with XROGA Architect…');
           setSwarmStatusLabel('XROGA AI BRAIN');
           setSwarmActiveAgent('architect');
-          setThinkingSteps(['Planning architecture', 'Building response', 'Verifying quality']);
-          pushSwarmTerminalLine('DeepSeek Flash → Pro → Grok model collaboration…');
+          setThinkingSteps(['XROGA Architect — planning', 'XROGA Pulse — building', 'XROGA Collective — verifying']);
+          pushSwarmTerminalLine('XROGA AI Black Hole — Architect → Pulse → Collective…');
 
           const result = await api.phase1.chat(displayPrompt, history);
           gotEvent = true;
@@ -1024,6 +1057,14 @@ export function TerminalChatProvider({
             if (output?.type === 'landing_page') {
               activeWebsiteBuildRef.current = null;
               completedWebsiteBuildRef.current = true;
+              removePendingBuildJob(assistantId);
+              const projectName =
+                typeof output.projectName === 'string' ? output.projectName : 'Your project';
+              showBuildBrowserNotification({
+                title: 'Your XROGA project is complete!',
+                body: `${projectName} — open the dashboard to view your build.`,
+                tag: `build-done-${assistantId}`,
+              });
               setMessages((m) =>
                 m.map((msg) =>
                   msg.id === assistantId

@@ -81,3 +81,59 @@ export async function notifyVideoFailed(
     },
   });
 }
+
+export async function notifyBuildComplete(
+  userId: string,
+  params: {
+    projectName: string;
+    prompt: string;
+    githubRepoUrl?: string;
+    deployUrl?: string;
+    fileCount?: number;
+    assistantMessageId?: string;
+    deployError?: string;
+  }
+): Promise<void> {
+  const hasDeployIssue = Boolean(params.deployError && !params.deployUrl);
+  await pushNotification(userId, {
+    title: hasDeployIssue ? 'Your XROGA project is ready (deploy note)' : 'Your XROGA project is complete!',
+    message: hasDeployIssue
+      ? `${params.projectName} — code is on GitHub. Deploy note: ${params.deployError!.slice(0, 120)}`
+      : `${params.projectName} — ${params.fileCount ?? 0} files pushed${params.deployUrl ? `. Live: ${params.deployUrl}` : ''}`,
+    type: hasDeployIssue ? 'warning' : 'success',
+    link: '/dashboard',
+    metadata: {
+      kind: 'build_ready',
+      projectName: params.projectName,
+      prompt: params.prompt,
+      githubRepoUrl: params.githubRepoUrl,
+      deployUrl: params.deployUrl,
+      fileCount: params.fileCount,
+      assistantMessageId: params.assistantMessageId,
+      deployError: params.deployError,
+    },
+  });
+}
+
+export async function notifyBuildFailed(
+  userId: string,
+  params: {
+    projectName: string;
+    prompt: string;
+    error: string;
+    assistantMessageId?: string;
+  }
+): Promise<void> {
+  await pushNotification(userId, {
+    title: 'XROGA build needs attention',
+    message: params.error.slice(0, 200) || 'Build could not finish. Open the dashboard to retry.',
+    type: 'error',
+    link: '/dashboard',
+    metadata: {
+      kind: 'build_failed',
+      projectName: params.projectName,
+      prompt: params.prompt,
+      assistantMessageId: params.assistantMessageId,
+    },
+  });
+}
