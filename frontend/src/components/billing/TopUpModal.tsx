@@ -89,7 +89,6 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
           <PricingPlanGrid className="mb-4">
             <XrogaPricingCard
               compact
-              borderVariant="trial"
               name="Free Trial"
               price="$0"
               subtitle="7M tokens/mo"

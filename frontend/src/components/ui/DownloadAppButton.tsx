@@ -6,7 +6,7 @@ import { Download, Smartphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface DownloadAppButtonProps {
-  variant?: 'sidebar' | 'header' | 'homepage' | 'icon' | 'compact';
+  variant?: 'sidebar' | 'header' | 'homepage' | 'icon' | 'row' | 'compact';
   className?: string;
 }
 
@@ -39,14 +39,33 @@ export function DownloadAppButton({ variant = 'sidebar', className }: DownloadAp
           onClick={() => setOpen(true)}
           title="Download app — Launch soon"
           className={cn(
-            'xv-download-sidebar-btn xv-download-sidebar-btn--compact',
+            'shrink-0 w-9 h-9 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[var(--accent)]/30 transition-all',
             className
           )}
           aria-label="Download app — launch soon"
         >
-          <span className="xv-download-sidebar-btn__icon">
-            <Download className="w-4 h-4" />
-          </span>
+          <Smartphone className="w-4 h-4 text-[var(--accent)]" />
+        </button>
+        {open && <LaunchSoonPopup onClose={() => setOpen(false)} />}
+      </>
+    );
+  }
+
+  if (variant === 'row') {
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          title="Download app — Launch soon"
+          className={cn(
+            'xv-sidebar-download-row shrink-0 flex items-center gap-1.5 px-2.5 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[var(--accent)]/30 transition-all',
+            className
+          )}
+          aria-label="Download app — launch soon"
+        >
+          <Download className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" />
+          <span className="text-[10px] font-bold text-[var(--foreground)] leading-none">App</span>
         </button>
         {open && <LaunchSoonPopup onClose={() => setOpen(false)} />}
       </>
@@ -58,19 +77,23 @@ export function DownloadAppButton({ variant = 'sidebar', className }: DownloadAp
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={cn('xv-download-sidebar-btn', className)}
+        className={cn(
+          'group flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[var(--accent)]/30 transition-all',
+          variant === 'sidebar' && 'w-full px-2.5 py-2 text-left',
+          variant === 'header' && 'px-2.5 py-1.5 text-xs',
+          className
+        )}
         aria-label="Download app — launch soon"
       >
-        <span className="xv-download-sidebar-btn__icon">
-          <Download className="w-4 h-4" />
-        </span>
-        <span className="min-w-0 flex-1 text-left">
-          <span className="block text-[11px] font-semibold text-[var(--foreground)] leading-tight">
+        <Smartphone className={cn('shrink-0 text-[var(--accent)]', variant === 'sidebar' ? 'w-4 h-4' : 'w-3.5 h-3.5')} />
+        <span className="min-w-0 flex-1">
+          <span className={cn('block font-semibold text-[var(--foreground)]', variant === 'sidebar' ? 'text-[11px]' : 'text-xs')}>
             Download app
           </span>
-          <span className="block text-[9px] text-[#4a7aff]/90 font-medium">Launch soon</span>
+          {variant === 'sidebar' && (
+            <span className="block text-[9px] text-amber-400/90 font-medium">Launch soon</span>
+          )}
         </span>
-        <Smartphone className="w-3.5 h-3.5 text-white/25 shrink-0" aria-hidden />
       </button>
       {open && <LaunchSoonPopup onClose={() => setOpen(false)} />}
     </>

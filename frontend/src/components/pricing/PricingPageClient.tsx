@@ -144,7 +144,6 @@ export function PricingPageClient() {
 
         <PricingPlanGrid className="mb-16">
           <XrogaPricingCard
-            borderVariant="trial"
             name="Free Trial"
             price="$0"
             subtitle="7M tokens/mo"
