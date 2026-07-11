@@ -50,9 +50,8 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
                 <h2 className="text-lg font-bold">Token Balance & Plans</h2>
               </div>
 
-              <div className="rounded-xl bg-gradient-to-br from-[#2dd4bf]/10 to-violet-500/5 border border-[#2dd4bf]/25 p-3 mb-3 relative overflow-hidden">
-                <div className="xv-pricing-card__sheen !animate-none opacity-30" aria-hidden />
-                <div className="flex justify-between text-sm mb-1.5 relative">
+              <div className="rounded-xl bg-gradient-to-br from-[#4a7aff]/10 to-violet-500/5 border border-[#4a7aff]/25 p-3 mb-3">
+                <div className="flex justify-between text-sm mb-1.5">
                   <span className="text-[var(--muted)]">
                     Plan: <span className="text-[#2dd4bf] font-semibold capitalize">{planTier ?? 'trial'}</span>
                   </span>
@@ -90,6 +89,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
           <PricingPlanGrid className="mb-4">
             <XrogaPricingCard
               compact
+              borderVariant="trial"
               name="Free Trial"
               price="$0"
               subtitle="7M tokens/mo"
