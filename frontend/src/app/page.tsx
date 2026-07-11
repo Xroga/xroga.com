@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageTagMarquee } from '@/components/homepage/HomepageTagMarquee';
-import { AppStoreInline } from '@/components/ui/AppStoreInline';
+import { DownloadAppButton } from '@/components/ui/DownloadAppButton';
 import { PowerSmashButton, HomeSignInButton } from '@/components/ui/XrogaButtons';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -52,7 +52,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
           <Logo href="/" variant="homepage" height={76} className="shrink-0 justify-self-start" />
           <div className="justify-self-center flex items-center gap-2">
-            <AppStoreInline compact className="hidden lg:inline-flex" />
+            <DownloadAppButton variant="header" className="hidden sm:inline-flex" />
           </div>
           <div className="flex items-center justify-end gap-3 justify-self-end">
             {loggedIn && (
