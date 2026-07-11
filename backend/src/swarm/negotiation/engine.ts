@@ -71,6 +71,7 @@ import {
   pushBuildToGitHub,
   landingFilesFromOutput,
   fetchBuildFilesFromGitHub,
+  analyzeGitHubRepo,
 } from '../../services/integrations/githubDeploy.js';
 import { siteCodeFromProjectFiles, LANDING_UPDATE_FOLLOW_UPS } from '../../lib/landingPreview.js';
 import {
@@ -465,16 +466,28 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     (hasBuildConversationContext(userPrompt) || threadHasCompletedWebsite(userPrompt));
 
   let existingSiteCode: { html: string; css: string; js: string } | null = null;
-  if (isUpdateBuild && ctx.githubTargetRepo?.includes('/')) {
+  let repoAnalysisSummary: string | null = null;
+  if (isWebBuild && ctx.githubTargetRepo?.includes('/')) {
     try {
-      const files = await fetchBuildFilesFromGitHub(userId, ctx.githubTargetRepo);
-      existingSiteCode = siteCodeFromProjectFiles(files);
-      emit(ctx, 0, BRAND.phase0.scanning('existing GitHub files'), 'reviewer', todos, 'XROGA Visionary', {
+      const analysis = await analyzeGitHubRepo(userId, ctx.githubTargetRepo);
+      repoAnalysisSummary = analysis.summary;
+      if (analysis.hasBuildFiles) {
+        existingSiteCode = analysis.buildFiles;
+      }
+      emit(ctx, 0, BRAND.phase0.scanning(`GitHub repo (${analysis.fileCount} files)`), 'reviewer', todos, 'XROGA Visionary', {
         userPhase: 1,
         silent: true,
       });
     } catch (fetchErr) {
-      console.warn('[NegotiationEngine] Fetch existing site:', (fetchErr as Error).message);
+      console.warn('[NegotiationEngine] GitHub repo analysis:', (fetchErr as Error).message);
+      if (isUpdateBuild) {
+        try {
+          const files = await fetchBuildFilesFromGitHub(userId, ctx.githubTargetRepo);
+          existingSiteCode = siteCodeFromProjectFiles(files);
+        } catch (fallbackErr) {
+          console.warn('[NegotiationEngine] Fetch existing site:', (fallbackErr as Error).message);
+        }
+      }
     }
   }
 
@@ -513,9 +526,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   }
 
   let clarifiedBrief: string;
+  const repoContextLine = repoAnalysisSummary ? `\n\nGitHub repo analysis:\n${repoAnalysisSummary}` : '';
   const discoveryContext = userPrompt.includes('[Previous conversation')
-    ? userPrompt
-    : `${userPrompt}\n\nOriginal build request context preserved.`;
+    ? `${userPrompt}${repoContextLine}`
+    : `${userPrompt}${repoContextLine}\n\nOriginal build request context preserved.`;
 
   if (isUpdateBuild) {
     emit(ctx, 0, BRAND.phase0.scanning('website updates'), 'reviewer', todos, 'XROGA Visionary', { userPhase: 6 });

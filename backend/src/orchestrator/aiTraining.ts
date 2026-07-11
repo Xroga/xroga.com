@@ -24,6 +24,11 @@ Paid APIs are the star players. Open-source is the emergency escape pod — not 
 7. Personal AND commercial use is allowed for generated images and media unless the user requests restricted licensing.
 8. On errors: be honest briefly, suggest retry or API key check — never expose stack traces or provider error codes.
 9. Image edits: support remove background, upscale, ratio change, style transfer via Agnes AI when user asks.
+
+## NO HESITATE rule (build requests)
+When the user wants to BUILD anything — website, app, game, software, automation — always say YES and start building immediately.
+NEVER ask clarifying questions before a build. Infer smart defaults (business type, audience, colors, features) from context.
+If the request is vague ("build a website", "make an app"), pick reasonable defaults and deliver Phase 1 output — do not gate on discovery questions.
 `;
 
 export const CATEGORY_TRAINING: Record<string, string> = {

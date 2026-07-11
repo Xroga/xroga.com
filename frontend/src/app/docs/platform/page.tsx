@@ -157,6 +157,40 @@ export default function PlatformDocsPage() {
           </ul>
         </section>
 
+        <section className="glass-panel rounded-2xl p-6">
+          <h2 className="text-xl font-bold mb-4">Security &amp; ownership</h2>
+          <ul className="space-y-2 text-sm text-[var(--muted)]">
+            <li>Full GitHub ownership — your code lives in your repository, not ours</li>
+            <li>Encrypted credential vault for custom API keys (view/copy requires vault password)</li>
+            <li>OAuth integrations — no manual key pasting for Supabase, Vercel, Paddle, and more</li>
+            <li>Auto-deploy uses platform-level keys; your secrets never appear in generated code</li>
+            <li>Row-level security patterns when Supabase auth is enabled</li>
+          </ul>
+        </section>
+
+        <section className="glass-panel rounded-2xl p-6">
+          <h2 className="text-xl font-bold mb-4">Deployment pipeline</h2>
+          <ol className="space-y-2 text-sm text-[var(--muted)] list-decimal list-inside">
+            <li>Build completes → files pushed to GitHub automatically</li>
+            <li>Vercel deploy triggered with platform integration (no manual button)</li>
+            <li>Cloudflare CDN + SSL applied for global edge delivery</li>
+            <li>Live URL verified before shown in your dashboard</li>
+            <li>Updates: tell Xroga what to change → GitHub updated → auto-redeploy</li>
+          </ol>
+        </section>
+
+        <section className="glass-panel rounded-2xl p-6">
+          <h2 className="text-xl font-bold mb-4">Optional integrations (Coming soon)</h2>
+          <div className="grid sm:grid-cols-2 gap-2 text-sm text-[var(--muted)]">
+            {['Stripe', 'Twilio', 'SendGrid', 'Linear', 'Notion', 'Slack'].map((name) => (
+              <div key={name} className="px-3 py-2 rounded-lg border border-[var(--card-border)] bg-[var(--foreground)]/[0.03] opacity-70">
+                {name}
+                <span className="ml-2 text-[10px]">Coming soon</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section className="text-center py-6">
           <Link
             href="/auth/signup"

@@ -21,6 +21,8 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
   const [selectedBranch, setSelectedBranch] = useState('main');
   const [loadingRepos, setLoadingRepos] = useState(false);
   const [loadingBranches, setLoadingBranches] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [repoSummary, setRepoSummary] = useState<string | null>(null);
   const [open, setOpen] = useState<'repo' | 'branch' | null>(null);
   const repoAnchorRef = useRef<HTMLSpanElement>(null);
   const branchAnchorRef = useRef<HTMLSpanElement>(null);
@@ -45,6 +47,23 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
       setSelectedBranch('main');
     } finally {
       setLoadingBranches(false);
+    }
+  }, []);
+
+  const analyzeRepo = useCallback(async (fullName: string) => {
+    setAnalyzing(true);
+    setRepoSummary(null);
+    try {
+      const result = await api.github.analyzeRepo(fullName);
+      setRepoSummary(result.summary);
+      localStorage.setItem(
+        `${STORAGE_KEY}-analysis`,
+        JSON.stringify({ repo: fullName, summary: result.summary, fileCount: result.fileCount, at: Date.now() })
+      );
+    } catch {
+      setRepoSummary(null);
+    } finally {
+      setAnalyzing(false);
     }
   }, []);
 
@@ -84,6 +103,7 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
       if (defaultRepo) {
         const meta = list.find((r) => r.fullName === defaultRepo);
         await loadBranches(defaultRepo, savedBranch ?? meta?.defaultBranch);
+        void analyzeRepo(defaultRepo);
       }
     } catch {
       setConnected(false);
@@ -91,7 +111,7 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
     } finally {
       setLoadingRepos(false);
     }
-  }, [loadBranches]);
+  }, [loadBranches, analyzeRepo]);
 
   useEffect(() => {
     void refresh();
@@ -113,6 +133,7 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
     setOpen(null);
     const meta = repos.find((r) => r.fullName === fullName);
     await loadBranches(fullName, meta?.defaultBranch);
+    void analyzeRepo(fullName);
     try {
       await api.github.updateSettings('manual', fullName);
     } catch { /* non-blocking */ }
@@ -227,6 +248,19 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
           </ul>
         </ChatBarPortalPopover>
       </div>
+
+      {(analyzing || repoSummary) && (
+        <span className="text-[9px] text-[var(--muted)] truncate max-w-[200px] sm:max-w-[320px] shrink-0" title={repoSummary ?? undefined}>
+          {analyzing ? (
+            <span className="inline-flex items-center gap-1">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              Scanning repo…
+            </span>
+          ) : (
+            repoSummary
+          )}
+        </span>
+      )}
     </div>
   );
 }

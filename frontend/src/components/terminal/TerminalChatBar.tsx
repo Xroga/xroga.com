@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Rocket, Globe, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
@@ -9,7 +9,6 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { uploadChatImage, type ChatAttachment } from '@/lib/api';
 import { IntegrationsModal } from './IntegrationsModal';
 import { GithubRepoModal } from './GithubRepoModal';
-import { DeployModal } from './DeployModal';
 import { TalkButton } from '@/components/voice/TalkButton';
 import { ChatbarShell } from '@/components/ui/Uiverse';
 import {
@@ -54,11 +53,8 @@ export function TerminalChatBar() {
   const shellRef = useRef<HTMLDivElement>(null);
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const [githubOpen, setGithubOpen] = useState(false);
-  const [deployOpen, setDeployOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [domain, setDomain] = useState('');
-  const [showDomain, setShowDomain] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [listening, setListening] = useState(false);
   const [sendState, setSendState] = useState<SendButtonState>('idle');
@@ -216,15 +212,7 @@ export function TerminalChatBar() {
     const ro = new ResizeObserver(sync);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [files.length, prompt, showDomain]);
-
-  function handleDeploy() {
-    const d = domain.trim() || 'your-app.vercel.app';
-    setPrompt(
-      (prompt ? prompt + '\n' : '') + `[Deploy] Publish to ${d} via Vercel/GitHub integration`
-    );
-    setShowDomain(false);
-  }
+  }, [files.length, prompt]);
 
   return (
     <>
@@ -234,8 +222,6 @@ export function TerminalChatBar() {
         onClose={() => setGithubOpen(false)}
         onSelect={(t) => setPrompt(prompt + (prompt ? '\n' : '') + t)}
       />
-      <DeployModal open={deployOpen} onClose={() => setDeployOpen(false)} />
-
       <div className="relative">
         <ChatbarShell
           ref={shellRef}
@@ -324,42 +310,9 @@ export function TerminalChatBar() {
                 <span className="hidden lg:inline text-[var(--foreground)]">Integration</span>
               </button>
             </ChatBarTip>
-            <ChatBarTip label="Deploy project" className="shrink-0">
-              <button
-                type="button"
-                onClick={() => setDeployOpen(true)}
-                className={cn(
-                  'shrink-0 flex items-center gap-1 text-[9px] font-bold',
-                  'lg:px-2.5 lg:h-6 lg:rounded-full lg:border lg:border-emerald-500/35 lg:bg-gradient-to-r lg:from-emerald-500/20 lg:to-[#006aff]/15 lg:hover:from-emerald-500/30',
-                  'xv-chatbar-icon-btn lg:w-auto lg:h-6 lg:bg-transparent'
-                )}
-              >
-                <Rocket className={cn('w-3.5 h-3.5', darkUi ? 'text-emerald-400' : 'text-emerald-500')} />
-                <span className="hidden lg:inline text-[var(--foreground)]">Deploy</span>
-              </button>
-            </ChatBarTip>
             <div className="flex-1 min-w-[2px]" />
             <TalkButton variant="inline" />
           </div>
-          )}
-
-          {!incognito && showDomain && (
-            <div className="flex items-center gap-2 px-3 py-2 border-b border-[var(--card-border)]/30">
-              <Globe className="w-3.5 h-3.5 text-[var(--muted)] shrink-0" />
-              <input
-                value={domain}
-                onChange={(e) => setDomain(e.target.value)}
-                placeholder="your-domain.com"
-                className="flex-1 text-xs bg-transparent border border-[var(--card-border)] rounded-lg px-2 py-1.5 text-[var(--foreground)] focus:outline-none focus:border-[var(--accent)]/50"
-              />
-              <button
-                type="button"
-                onClick={handleDeploy}
-                className="text-xs px-3 py-1.5 rounded-lg bg-[var(--accent)] text-[var(--background)] font-medium"
-              >
-                Add to prompt
-              </button>
-            </div>
           )}
 
           {!incognito && (

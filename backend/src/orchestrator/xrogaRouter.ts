@@ -103,7 +103,7 @@ export class XrogaRouter {
         onProgress?.('reserve', step);
       }
 
-      if (analysis.needsClarification && analysis.clarificationText) {
+      if (analysis.needsClarification && analysis.clarificationText && analysis.routeHint !== 'build') {
         onProgress?.('blackhole', analysis.thinkingSteps.at(-1) ?? 'Preparing follow-up questions');
         return {
           text: formatPlainProfessional(analysis.clarificationText),

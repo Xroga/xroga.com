@@ -36,10 +36,12 @@ export async function quickChat(
   const lower = userText.toLowerCase().trim();
 
   const analysis = analyzeUserQuery(userText);
+  const buildIntent =
+    analysis.routeHint === 'build' || isSpecificBuildRequest(userText.toLowerCase().trim());
   if (
     analysis.needsClarification &&
     analysis.clarificationText &&
-    !isSpecificBuildRequest(userText.toLowerCase().trim())
+    !buildIntent
   ) {
     return formatPlainProfessional(analysis.clarificationText);
   }
