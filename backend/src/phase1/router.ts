@@ -63,8 +63,19 @@ export function buildRoutingPlan(intent: Phase1Intent, message: string): Routing
   }
 }
 
+const PROFESSIONAL_FORMAT = `
+Respond in professional markdown:
+- Start with ## headline summarizing the answer
+- Use ## subsections for each major topic
+- Use bullet lists for strategies, steps, pros/cons
+- Use markdown tables when comparing pricing, features, or options
+- End with ## Summary (2–4 bullet takeaways)
+- Minimal emojis (0–1). No markdown symbol spam.
+`;
+
 export function getSystemPromptForIntent(intent: Phase1Intent, role: 'primary' | 'secondary'): string {
-  const base = 'You are Xroga AI. Help the user with their request. Be clear, practical, and production-oriented. Never mention AI model names, providers, or internal routing.';
+  const base =
+    'You are Xroga AI. Be clear, practical, and production-oriented. Never mention AI model names or internal routing.';
 
   if (intent === 'code_generation' && role === 'secondary') {
     return `${base} Review and improve the code architecture. Focus on structure, patterns, and maintainability.`;
@@ -76,19 +87,19 @@ export function getSystemPromptForIntent(intent: Phase1Intent, role: 'primary' |
     return `${base} Produce modern UI/UX with polished frontend code (React + Tailwind when appropriate).`;
   }
   if (intent === 'business_advice' && role === 'primary') {
-    return `${base} Provide structured business advice with pros/cons and actionable strategies. Use live web research when provided — cite current pricing, trends, and real examples.`;
+    return `${base}${PROFESSIONAL_FORMAT} Provide structured business advice with pros/cons, actionable strategies, and a Summary section. Use live web research when provided.`;
   }
   if (intent === 'business_advice' && role === 'secondary') {
-    return `${base} Validate financial assumptions, feasibility, and risks in the business plan.`;
+    return `${base} Validate financial assumptions, feasibility, and risks.`;
+  }
+  if (intent === 'general_chat' || intent === 'deep_reasoning') {
+    return `${base}${PROFESSIONAL_FORMAT}`;
   }
   if (intent === 'security_audit') {
     return `${base} Perform a thorough security review. List vulnerabilities and remediation steps.`;
   }
   if (intent === 'architecture_design') {
     return `${base} Design system architecture with diagrams described in text, trade-offs, and component boundaries.`;
-  }
-  if (intent === 'deep_reasoning') {
-    return `${base} Think step by step. Provide deep analysis with clear reasoning.`;
   }
   return base;
 }

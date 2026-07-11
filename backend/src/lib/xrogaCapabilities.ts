@@ -18,12 +18,12 @@ export function getXrogaCapabilitiesResponse(): string {
   return `✨ Everything you can build with XROGA
 
 Live right now
-💬 Chat — ask anything; business advice, pricing, and current events use **live web search** automatically
+💬 Chat — ask anything; business advice, pricing, and current events use **SearXNG + YouTube** automatically (Tavily only if SearXNG is empty)
 🎨 **Image generation** — logos, thumbnails, art, mockups, edits, variants, upscale, background removal
 🌐 **Websites & apps** — full code pushed to your GitHub, live preview, crypto dashboards, chatbots, SaaS, CRM, games, APIs
 💻 **Software & code** — any stack, any project type: scripts, tools, extensions, mobile, backend, debugging
 
-When you ask about prices, net worth, strategies, or what's happening now — I search the web and YouTube so answers stay current.
+When you ask about prices, net worth, strategies, or what's happening now — I search **SearXNG** (free) and **YouTube** first. Tavily is only used if SearXNG has no results.
 
 What do you want to create first?`;
 }

@@ -12,6 +12,8 @@ const DEFAULT_SEARXNG_INSTANCES = [
   'https://searx.be',
   'https://search.im-in.space',
   'https://opensearch.vnet.fi',
+  'https://searx.tiekoetter.com',
+  'https://search.sapti.me',
 ];
 
 interface SearxResult {
@@ -61,31 +63,44 @@ async function searchSearxngAll(query: string, maxResults: number): Promise<WebS
 }
 
 /**
- * Free-first web search: SearXNG (no API key) → Tavily (when key set / critical fallback).
+ * Free-first web search: SearXNG (no API key) → Tavily ONLY when SearXNG returns nothing.
+ * Set TAVILY_FALLBACK=false to disable Tavily entirely.
  */
 export async function webSearch(
   query: string,
-  opts?: { critical?: boolean; maxResults?: number }
+  opts?: { maxResults?: number }
 ): Promise<WebSearchResult[]> {
   const maxResults = opts?.maxResults ?? 8;
   const tavilyKey = process.env.TAVILY_API_KEY?.trim();
+  const tavilyFallbackEnabled = process.env.TAVILY_FALLBACK !== 'false';
 
   const searxResults = await searchSearxngAll(query, maxResults);
-  if (searxResults.length) return searxResults;
+  if (searxResults.length >= 2) {
+    console.info(`[webSearch] SearXNG hit (${searxResults.length}) for: ${query.slice(0, 60)}`);
+    return searxResults;
+  }
 
-  if (tavilyKey) {
+  // Supplement with Tavily only when SearXNG is weak (<2 results) — saves API cost
+  if (tavilyKey && tavilyFallbackEnabled && searxResults.length < 2) {
     try {
-      const results = await tavilySearch(query, maxResults);
-      return results.map((r) => ({
-        title: r.title,
-        url: r.url,
-        content: r.content.slice(0, 500),
-        source: 'tavily' as const,
-      }));
+      console.info(`[webSearch] SearXNG weak (${searxResults.length}) — Tavily supplement for: ${query.slice(0, 60)}`);
+      const tavilyResults = await tavilySearch(query, maxResults);
+      const merged = [
+        ...searxResults,
+        ...tavilyResults.map((r) => ({
+          title: r.title,
+          url: r.url,
+          content: r.content.slice(0, 500),
+          source: 'tavily' as const,
+        })),
+      ];
+      if (merged.length) return merged.slice(0, maxResults);
     } catch (err) {
-      console.warn('[webSearch] Tavily:', (err as Error).message);
+      console.warn('[webSearch] Tavily supplement failed:', (err as Error).message);
     }
   }
+
+  if (searxResults.length) return searxResults;
 
   return [];
 }

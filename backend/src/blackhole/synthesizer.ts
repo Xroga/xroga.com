@@ -5,6 +5,7 @@ import {
   needsPolish,
 } from './emissionFilter.js';
 import { formatPlainProfessional, buildDecisionPlain } from './plainTextFormat.js';
+import { formatProfessionalMarkdown, hasMarkdownStructure } from './professionalFormat.js';
 import { phi3Polish } from './phi3Polish.js';
 
 export type EmitIntent =
@@ -47,14 +48,24 @@ export async function blackHoleEmit(
   }
 
   if (emitKind === 'decision') {
-    return { text: buildDecisionPlain(cleaned, userInput), layer: 'blackhole' };
+    const decisionText = hasMarkdownStructure(cleaned)
+      ? formatProfessionalMarkdown(cleaned)
+      : buildDecisionPlain(cleaned, userInput);
+    return { text: decisionText, layer: 'blackhole' };
   }
 
-  cleaned = formatPlainProfessional(cleaned);
+  // Preserve markdown structure for professional chat responses
+  if (hasMarkdownStructure(cleaned) || emitKind === 'general' || emitKind === 'cultural') {
+    cleaned = formatProfessionalMarkdown(cleaned);
+  } else if (emitKind === 'quick') {
+    cleaned = formatPlainProfessional(cleaned);
+  } else {
+    cleaned = formatProfessionalMarkdown(cleaned);
+  }
 
-  if (emitKind !== 'quick' && cleaned.length > 80 && needsPolish(cleaned)) {
+  if (emitKind !== 'quick' && cleaned.length > 80 && needsPolish(cleaned) && !hasMarkdownStructure(cleaned)) {
     cleaned = await phi3Polish(cleaned);
-    cleaned = formatPlainProfessional(deAiFilter(cleaned, { keepEmojis: true }));
+    cleaned = formatProfessionalMarkdown(deAiFilter(cleaned, { keepEmojis: false }));
   }
 
   return { text: cleaned, layer: 'blackhole' };

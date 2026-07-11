@@ -36,7 +36,6 @@ import { buildHeartbeatActivity } from '@/lib/buildLiveStatus';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import toast from 'react-hot-toast';
-import { sanitizePlainAiText } from '@/lib/plainAiText';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
@@ -754,6 +753,16 @@ export function TerminalChatProvider({
         (isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt));
       setPipelineCompact(useCompactPipeline);
 
+      if (!buildPromptActive && !useCompactPipeline) {
+        thinkingStepsRef.current = [
+          'Searching live sources (SearXNG + YouTube)',
+          'Analyzing your question',
+          'Composing professional response',
+        ];
+        setThinkingSteps([...thinkingStepsRef.current]);
+        setPipelineMessage('Searching the web…');
+      }
+
       if (buildPromptActive) {
         setSwarmNegotiationPhase(1);
         setSwarmStatusLabel('XROGA Architect');
@@ -841,11 +850,16 @@ export function TerminalChatProvider({
 
         if (usePhase1Engine) {
           setPipelineCompact(false);
-          setPipelineMessage('Planning with XROGA Architect…');
-          setSwarmStatusLabel('XROGA AI BRAIN');
+          setPipelineMessage('Searching live sources…');
+          setSwarmStatusLabel('XROGA AI');
           setSwarmActiveAgent('architect');
-          setThinkingSteps(['XROGA Architect — planning', 'XROGA Pulse — building', 'XROGA Collective — verifying']);
-          pushSwarmTerminalLine('XROGA AI Black Hole — Architect → Pulse → Collective…');
+          thinkingStepsRef.current = [
+            'Searching the web (SearXNG + YouTube)',
+            'Analyzing your question',
+            'Composing professional response',
+          ];
+          setThinkingSteps([...thinkingStepsRef.current]);
+          pushSwarmTerminalLine('Live research → professional answer…');
 
           const result = await api.phase1.chat(displayPrompt, history);
           gotEvent = true;
@@ -1179,10 +1193,9 @@ export function TerminalChatProvider({
           setMessages((m) =>
             m.map((msg) => {
               if (msg.id !== turn.assistantId) return msg;
-              const plain = msg.content ? sanitizePlainAiText(msg.content) : msg.content;
               return {
                 ...msg,
-                content: plain,
+                content: msg.content,
                 thinkingSteps: steps.length ? steps : msg.thinkingSteps,
                 thoughtMs: thoughtMs > 0 ? thoughtMs : msg.thoughtMs,
               };
