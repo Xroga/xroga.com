@@ -88,7 +88,7 @@ async function consolidateWithDeepSeek(
   clarifiedBrief: string,
   kind: 'website' | 'game' = 'website'
 ): Promise<string> {
-  const user = `Brief:\n${clarifiedBrief}\n\nOriginal request:\n${userPrompt}\n\nApproved plan:\n${approvedPlan}\n\nVerified step code:\n${assembledCode.slice(0, 14000)}`;
+  const user = `Brief:\n${clarifiedBrief}\n\nOriginal request:\n${userPrompt}\n\nApproved plan:\n${approvedPlan}\n\nVerified step code:\n${assembledCode}`;
   const systemPrompt = kind === 'game' ? PHASE_7_GAME_EMIT : PHASE_7_EMIT;
 
   if (resolveApiKey('deepseek', 'code')) {
@@ -154,7 +154,7 @@ export async function buildLandingFromSwarmAssembly(
   }
 
   if (!site?.html?.trim()) {
-    const enriched = `${userPrompt}\n\nBrief:\n${clarifiedBrief}\n\nPlan:\n${approvedPlan}\n\nVerified code:\n${assembledCode.slice(0, 5000)}`;
+    const enriched = `${userPrompt}\n\nBrief:\n${clarifiedBrief}\n\nPlan:\n${approvedPlan}\n\nVerified code:\n${assembledCode}`;
     return buildLandingPage(enriched);
   }
 

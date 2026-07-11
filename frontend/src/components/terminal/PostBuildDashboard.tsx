@@ -253,10 +253,11 @@ export function PostBuildDashboard({
             <div>
               <p className="text-[10px] font-bold text-[var(--muted)] mb-1.5">🧠 AI models used</p>
               <ul className="text-[10px] space-y-1 text-[var(--foreground)]/85">
-                <li>DeepSeek Flash — code generation (~350k tokens)</li>
-                <li>DeepSeek Pro — architecture review (~120k tokens)</li>
-                <li>Claude Sonnet — UI/UX polish (~80k tokens)</li>
-                <li>Claude Opus — final quality gate (~30k tokens)</li>
+                <li>DeepSeek Pro — architecture design</li>
+                <li>DeepSeek Flash — code scaffolding (Pass 1)</li>
+                <li>DeepSeek Pro — business logic (Pass 2)</li>
+                <li>Claude Sonnet — UI/UX polish (Pass 3)</li>
+                <li>Claude Opus + DeepSeek Pro — quality & security audit</li>
               </ul>
             </div>
 

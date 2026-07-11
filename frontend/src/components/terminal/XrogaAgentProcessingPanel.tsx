@@ -240,7 +240,7 @@ export function XrogaAgentProcessingPanel({
       )}
 
       {entries.length > 0 && (
-        <div className="space-y-1 max-h-[160px] overflow-y-auto pr-1 scrollbar-thin border-t border-[var(--card-border)] pt-2">
+        <div className="space-y-1 max-h-[280px] overflow-y-auto pr-1 scrollbar-thin border-t border-[var(--card-border)] pt-2">
           {entries.map((entry, i) => (
             <ActivityEntryView
               key={entry.id}

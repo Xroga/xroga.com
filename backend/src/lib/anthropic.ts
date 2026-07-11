@@ -14,6 +14,15 @@ export async function claudeGenerate(
   userPrompt: string,
   options?: { maxTokens?: number }
 ): Promise<string> {
+  return claudeGenerateWithModel('claude-3-5-sonnet-20241022', systemPrompt, userPrompt, options);
+}
+
+export async function claudeGenerateWithModel(
+  model: string,
+  systemPrompt: string,
+  userPrompt: string,
+  options?: { maxTokens?: number }
+): Promise<string> {
   const apiKey = getSecret('ANTHROPIC_API_KEY');
   if (!apiKey) {
     throw new Error('ANTHROPIC_API_KEY not configured');
@@ -27,7 +36,7 @@ export async function claudeGenerate(
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: 'claude-3-5-sonnet-20241022',
+      model,
       max_tokens: options?.maxTokens ?? 4096,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }],

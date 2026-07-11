@@ -308,10 +308,16 @@ export class SwarmService {
       clearInterval(heartbeat);
     }
 
-    sendSSE(res, {
-      event: 'delta',
-      data: { delta: result.polishedReply },
-    });
+    const output = result.result.output as FeatureOutput | undefined;
+    const isLandingBuild = output?.type === 'landing_page';
+    const replyDelta = isLandingBuild ? '' : (result.polishedReply ?? '');
+
+    if (replyDelta) {
+      sendSSE(res, {
+        event: 'delta',
+        data: { delta: replyDelta },
+      });
+    }
 
     sendSSE(res, {
       event: 'complete',

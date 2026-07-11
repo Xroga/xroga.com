@@ -82,6 +82,7 @@ import {
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { deepseekCode, groqCode, geminiCode } from '../../services/code/codeClients.js';
 import { resolveApiKey } from '../../config/apiKeyRouter.js';
+import { buildModelCall, modelActivityLine } from './buildModelRouter.js';
 
 const MAX_PLAN_ITERATIONS = 3;
 const MAX_STEP_CORRECTIONS = 3;
@@ -310,7 +311,7 @@ function parsePlanSteps(plan: string): string[] {
     const m = line.match(/^Step\s+(\d+)[.:]\s*(.+)/i) ?? line.match(/^(\d+)[.)]\s+(.+)/);
     if (m?.[2]) steps.push(m[2].trim());
   }
-  if (steps.length) return steps.slice(0, 12);
+  if (steps.length) return steps;
   return plan
     .split(/\n\n+/)
     .map((s) => s.trim())
@@ -319,35 +320,43 @@ function parsePlanSteps(plan: string): string[] {
 }
 
 async function geminiCall(system: string, user: string, maxTokens = 2048): Promise<string> {
-  if (resolveApiKey('gemini', 'code')) {
-    return geminiCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, { maxTokens });
+  try {
+    if (resolveApiKey('gemini', 'code')) {
+      return geminiCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, { maxTokens });
+    }
+    if (getSecret('GEMINI_API_KEY')) {
+      return geminiGenerate(`${XROGA_USER_IDENTITY}\n\n${system}`, user, {
+        model: 'gemini-2.0-flash',
+        maxTokens,
+      });
+    }
+    return geminiGenerateCultural(user);
+  } catch {
+    return deepseekCall(system, user, maxTokens);
   }
-  if (getSecret('GEMINI_API_KEY')) {
-    return geminiGenerate(`${XROGA_USER_IDENTITY}\n\n${system}`, user, {
-      model: 'gemini-2.0-flash',
-      maxTokens,
-    });
-  }
-  return geminiGenerateCultural(user);
 }
 
 async function groqCall(system: string, user: string, maxTokens = 512): Promise<string> {
-  if (resolveApiKey('groq', 'code')) {
-    return groqCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, { maxTokens });
+  try {
+    if (resolveApiKey('groq', 'code')) {
+      return groqCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, { maxTokens });
+    }
+    if (getSecret('GROQ_API_KEY')) {
+      return groqChat(
+        [
+          { role: 'system', content: `${XROGA_USER_IDENTITY}\n\n${system}` },
+          { role: 'user', content: user },
+        ],
+        { maxTokens }
+      );
+    }
+    return groqGeneral(user);
+  } catch {
+    return deepseekCall(system, user, maxTokens);
   }
-  if (getSecret('GROQ_API_KEY')) {
-    return groqChat(
-      [
-        { role: 'system', content: `${XROGA_USER_IDENTITY}\n\n${system}` },
-        { role: 'user', content: user },
-      ],
-      { maxTokens }
-    );
-  }
-  return groqGeneral(user);
 }
 
-async function deepseekCall(system: string, user: string, maxTokens = 4096): Promise<string> {
+async function deepseekCall(system: string, user: string, maxTokens = 8192): Promise<string> {
   if (resolveApiKey('deepseek', 'code')) {
     return deepseekCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, { maxTokens });
   }
@@ -553,10 +562,14 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     // Auto-infer defaults — no questions, start building immediately
     clarifiedBrief = inferDefaultBuildBrief(userPrompt, memoryNote);
     try {
-      const refined = await geminiCall(
+      const { text: refined, modelLabel } = await buildModelCall(
+        'pro',
         PHASE_0_DISCOVERY,
         `User request:\n${discoveryContext}\n\nDefault brief:\n${clarifiedBrief}\n\nRefine the Fully Clarified Project Brief — do NOT ask questions.`
       );
+      emit(ctx, 0, modelActivityLine(modelLabel, 'Architecture brief refined'), 'architect', todos, 'DeepSeek Pro', {
+        userPhase: 1,
+      });
       if (refined && !/clarifying question|\?\s*$/im.test(refined) && refined.length > 80) {
         clarifiedBrief = refined;
       }
@@ -615,23 +628,41 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   // Phase 2 planning — user sees planning under Phase 1, review runs silently
   todos.activateMeta('plan');
   buildState.assertCanProceed('planned');
-  emit(ctx, 1, BRAND.phase1.planning, 'architect', todos, 'AI SWARM LOGIC', { userPhase: 1 });
+  emit(ctx, 1, modelActivityLine('DeepSeek Pro', 'Architecture design — system, database, API plan'), 'architect', todos, 'DeepSeek Pro', {
+    userPhase: 1,
+  });
   let masterPlan: string;
   if (isUpdateBuild) {
     masterPlan = defaultUpdatePlanForPrompt(userPrompt).join('\n');
   } else if (isGameBuild) {
     try {
-      masterPlan = await geminiCall(PHASE_1_GAME_PLANNING, `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`);
+      const { text, modelLabel } = await buildModelCall(
+        'pro',
+        PHASE_1_GAME_PLANNING,
+        `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`
+      );
+      masterPlan = text;
+      emit(ctx, 1, modelActivityLine(modelLabel, 'Game master plan ready'), 'architect', todos, modelLabel, {
+        userPhase: 1,
+      });
     } catch {
       masterPlan = defaultGamePlanForPrompt(userPrompt, 4).join('\n');
     }
   } else {
     try {
-      masterPlan = await geminiCall(PHASE_1_PLANNING_GEMINI, `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`);
+      const { text, modelLabel } = await buildModelCall(
+        'pro',
+        PHASE_1_PLANNING_GEMINI,
+        `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`
+      );
+      masterPlan = text;
+      emit(ctx, 1, modelActivityLine(modelLabel, 'Master plan generated'), 'architect', todos, modelLabel, {
+        userPhase: 1,
+      });
       try {
         masterPlan = await groqCall(PHASE_1_PLANNING_GROQ, masterPlan, 400);
       } catch {
-        /* keep gemini plan */
+        /* keep plan */
       }
     } catch {
       masterPlan = defaultPlanForPrompt(userPrompt).join('\n');
@@ -722,7 +753,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       ? 'plain HTML/CSS/JS only. Edit existing files from GitHub. Output ONLY fenced code blocks.'
       : 'plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.';
   const existingCodeContext = existingSiteCode
-    ? `\n\nEXISTING SITE (edit — do not rebuild from scratch):\n--- index.html ---\n${existingSiteCode.html.slice(0, 7000)}\n\n--- styles.css ---\n${existingSiteCode.css.slice(0, 5000)}\n\n--- script.js ---\n${existingSiteCode.js.slice(0, 2500)}`
+    ? `\n\nEXISTING SITE (edit — do not rebuild from scratch):\n--- index.html ---\n${existingSiteCode.html}\n\n--- styles.css ---\n${existingSiteCode.css}\n\n--- script.js ---\n${existingSiteCode.js}`
     : '';
 
   for (let si = 0; si < stepsToRun.length; si++) {
@@ -731,16 +762,32 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     todos.activateBuild(si);
     emit(ctx, 3, BRAND.phase3.execute(si + 1, stepsToRun.length, target), 'builder', todos, isGameBuild ? 'XROGA Game Alchemist' : 'XROGA Architect', {
       userPhase: 1,
+      silent: true,
     });
+
+    const stepRole = si === 0 ? 'flash' : 'pro';
+    const stepModelLabel = si === 0 ? 'DeepSeek Flash' : 'DeepSeek Pro';
+    emit(
+      ctx,
+      3,
+      modelActivityLine(stepModelLabel, `Pass ${si + 1} — ${target}`),
+      'builder',
+      todos,
+      stepModelLabel,
+      { userPhase: 1 }
+    );
 
     let stepCode = '';
     try {
-      stepCode = await withBuildHeartbeat(ctx, todos, () =>
-        deepseekCall(
+      stepCode = await withBuildHeartbeat(ctx, todos, async () => {
+        const { text } = await buildModelCall(
+          stepRole,
           executePrompt,
-          `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`
-        )
-      );
+          `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
+          8192
+        );
+        return text;
+      });
     } catch (stepErr) {
       console.warn('[NegotiationEngine] Step code gen:', (stepErr as Error).message);
       stepCode = isGameBuild
@@ -785,9 +832,54 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   let assembledCode = codeParts.join('\n\n');
 
+  emit(
+    ctx,
+    6,
+    modelActivityLine('Claude Sonnet', 'UI/UX polish — responsive design, dark mode, animations'),
+    'reviewer',
+    todos,
+    'Claude Sonnet',
+    { userPhase: 2 }
+  );
+  try {
+    const { text: uiPolish, modelLabel } = await buildModelCall(
+      'sonnet',
+      `You are a UI/UX expert (Claude Sonnet). Polish HTML/CSS/JS for modern responsive design, micro-interactions, accessibility (ARIA), and optional dark mode. Output ONLY fenced html, css, javascript blocks — no commentary.`,
+      `Brief:\n${clarifiedBrief}\n\nApproved plan:\n${approvedPlan}\n\nCodebase:\n${assembledCode}`,
+      8192
+    );
+    if (uiPolish?.trim()) {
+      assembledCode = `${assembledCode}\n\n// --- UI/UX polish (${modelLabel}) ---\n${uiPolish}`;
+    }
+  } catch {
+    /* fallback handled in buildModelCall */
+  }
+
   todos.addFinalTodos();
   todos.activateFinal('final-check');
-  emit(ctx, 6, BRAND.phase6.final, 'truth_council', todos, 'XROGA Collective', { userPhase: 2, silent: true });
+  emit(ctx, 6, modelActivityLine('Claude Opus', 'Quality gate — code standards review'), 'truth_council', todos, 'Claude Opus', {
+    userPhase: 2,
+  });
+  try {
+    const { text: opusReview } = await buildModelCall(
+      'opus',
+      PHASE_6_FINAL,
+      `Full codebase:\n${assembledCode.slice(0, 12000)}`,
+      1024
+    );
+    if (!isPass(opusReview)) {
+      emit(ctx, 5, modelActivityLine('DeepSeek Pro', 'Applying quality fixes from review'), 'debugger', todos, 'DeepSeek Pro');
+      assembledCode = await deepseekCall(PHASE_5_CORRECT, `Quality review:\n${opusReview}\n\nCode:\n${assembledCode}`);
+      totalCorrections++;
+    }
+  } catch {
+    /* opus falls back to deepseek inside buildModelCall */
+  }
+
+  emit(ctx, 6, modelActivityLine('DeepSeek Pro', 'Security & integration audit'), 'truth_council', todos, 'DeepSeek Pro', {
+    userPhase: 2,
+    silent: true,
+  });
   const finalChecks = await Promise.allSettled([
     deepseekCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 10000)}`),
     geminiCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 10000)}`, 256),
@@ -852,7 +944,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     todos.completeFinal('emit');
     buildState.markDone('emitted');
     todos.activateFinal('github-push');
-    emit(ctx, 8, BRAND.phase8.githubPush, 'builder', todos, 'AI SWARM LOGIC', { userPhase: 4 });
+    const pushTarget = ctx.githubTargetRepo?.includes('/') ? ctx.githubTargetRepo : 'selected GitHub repo';
+    emit(ctx, 8, `[GitHub] Pushing code to ${pushTarget} (${ctx.githubTargetBranch ?? 'main'})…`, 'builder', todos, 'AI SWARM LOGIC', {
+      userPhase: 4,
+    });
     try {
       const files = landingFilesFromOutput(featureOutput.html, featureOutput.css, featureOutput.js);
       const pipeline = await pushAndDeployLivePreview(userId, files, projectSlug, {
@@ -950,9 +1045,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     const phaseDone = stepsToRun.length;
     const totalPhases = steps.length;
     polishedOutput = `${featureOutput.summary ?? '🎮 YOUR GAME IS PLAYABLE!'}\n\n${GAME_PHASE_COMPLETE_MSG(phaseDone, totalPhases)}`;
-  } else if (featureOutput?.type === 'landing_page' && featureOutput.summary) {
-    polishedOutput = featureOutput.summary;
-  } else if (liveUrl) {
+  } else if (liveUrl && featureOutput?.type !== 'landing_page') {
     polishedOutput = formatBuildSummaryCard({
       ...buildSummaryFromBrief(userPrompt, clarifiedBrief, liveUrl, repoUrl, memoryNote),
       liveUrl,
@@ -960,12 +1053,14 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     });
   } else if (deployError) {
     polishedOutput = `[Phase 5] Deploy issue: ${deployError}\n\nYour site was built — check GitHub and retry preview.`;
-  } else if (featureOutput?.type === 'landing_page') {
-    polishedOutput = BRAND.phase7.success;
   } else if (featureOutput) {
     polishedOutput = BRAND.phase7.success;
   } else {
     polishedOutput = BRAND.phase7.success;
+  }
+
+  if (featureOutput?.type === 'landing_page') {
+    polishedOutput = '';
   }
 
   todos.completeFinal('emit');

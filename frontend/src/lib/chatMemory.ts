@@ -11,7 +11,10 @@ const BUILD_CLARIFICATION =
   /\b(let me understand|phase 1|what(?:'|'| is) the name|what colors|online ordering|clarifying|fully clarified|reply with)\b/i;
 
 const BUILD_INTENT =
-  /\b(build|create|make|design|develop)\b[\s\S]{0,60}\b(website|web\s*page|landing|site|app|shop|coffee|store|restaurant)\b/i;
+  /\b(build|create|make|design|develop|launch|scaffold)\b[\s\S]{0,80}\b(website|web\s*page|landing|site|app|application|shop|store|saas|chatbot|bot|dashboard|crm|marketplace|platform|software|tool|game|api|portfolio|blog|restaurant|coffee|e[\s-]?commerce)\b/i;
+
+const NON_BUILD_MEDIA =
+  /\b(generate|create|make|draw)\b[\s\S]{0,40}\b(image|picture|photo|logo|thumbnail|video|film|clip|research report|resume|cover letter)\b/i;
 
 const BUILD_ANSWER =
   /^[^,\n]{2,40},\s*[^,\n]{3,60},\s*(yes|no)\b/i;
@@ -95,9 +98,27 @@ export function isWebsiteBuildUpdate(prompt: string, messages: ChatMessage[]): b
   return threadHasCompletedWebsite(messages);
 }
 
-/** User wants to build a website — triggers build pipeline UI and routing */
+/** User wants to build a product — triggers full build pipeline UI and routing */
 export function isWebsiteBuildPrompt(prompt: string): boolean {
   const t = prompt.trim();
+  if (NON_BUILD_MEDIA.test(t)) return false;
+
+  const buildVerb = /\b(build|create|make|develop|design|launch|scaffold|generate)\b/i.test(t);
+  const buildTarget =
+    /\b(website|web\s*page|landing\s*page|site|web\s*app|shop|store|e[\s-]?commerce|portfolio|blog|restaurant|bakery|saas|crm|dashboard|marketplace|platform|chatbot|bot|assistant|tool|software|game|api|app|application|membership|forum|directory|invoice|tracker|planner|clone|startup|storefront|landing|landing page)\b/i.test(
+      t
+    );
+  if (buildVerb && buildTarget) return true;
+
+  if (
+    buildVerb &&
+    /\b(coffee|salon|gym|clinic|hotel|agency|nonprofit|school|construction|wedding|pet|dental|lawyer|real estate|fitness|yoga|photography|consulting|boutique|barber|plumbing|roofing|cleaning|auto repair|veterinary|bistro|pizza|pastry|spa|beauty|barber)\b/i.test(
+      t
+    )
+  ) {
+    return true;
+  }
+
   return /\b(build|create|make)\b[\s\S]{0,80}\b(website|web\s*page|landing|site|shop|coffee|store|restaurant|bakery|app)\b/i.test(
     t
   );
