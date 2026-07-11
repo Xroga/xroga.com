@@ -6,7 +6,7 @@ export const FAVICON_URL = 'https://i.postimg.cc/9Mfm1jdK/xrogaai.png';
 export const FAVICON_LOCAL = '/favicon.png';
 
 export const DEFAULT_DESCRIPTION =
-  'Xroga AI is the AI Swarm Operating System — 710+ integrations, multi-agent Architect·Builder·Reviewer·QA workflows, browser automation, and action-based billing. Built by Muhammad Ibrahim, 19, from Pakistan.';
+  'Xroga AI is the AI Swarm Operating System — 710+ integrations, multi-agent Architect·Builder·Reviewer·QA workflows, browser automation, and token-based billing. Built by Muhammad Ibrahim, 19, from Pakistan.';
 
 /** Brand + typo + related search terms for discoverability */
 export const BRAND_TYPO_KEYWORDS = [
@@ -55,7 +55,7 @@ export const DEFAULT_KEYWORDS = [
   'AI code generation',
   'AI automation platform',
   'AI swarm OS',
-  'action-based AI pricing',
+  'token-based AI pricing',
   '710 integrations AI',
   'zero defects swarm',
   'Vercel deploy AI',
@@ -160,15 +160,18 @@ export function buildWebSiteJsonLd() {
 /** Sitelink-style navigation for Google rich results */
 export function buildSiteNavigationJsonLd() {
   const items = [
-    { name: 'Sign Up', url: `${SITE_URL}/auth/signup`, description: 'Create your Xroga AI account — 50 free actions' },
+    { name: 'Sign Up', url: `${SITE_URL}/auth/signup`, description: 'Create your Xroga AI account — 7M free tokens monthly' },
     { name: 'Sign In', url: `${SITE_URL}/auth/login`, description: 'Log in to your Xroga AI dashboard' },
+    { name: 'Workspace', url: `${SITE_URL}/features/xroga-workspace`, description: 'AI terminal workspace with chat, code, deploy tabs' },
+    { name: 'Community', url: `${SITE_URL}/features/community-hub`, description: 'Referrals, influencers, marketplace, and XRG rewards' },
+    { name: 'Earn XRG', url: `${SITE_URL}/features/earn-xrg-referrals`, description: 'Earn tokens and XRG through tasks and referrals' },
     { name: 'Features', url: `${SITE_URL}/features`, description: '98+ AI swarm features on every plan' },
     { name: 'AI Image Generation', url: `${SITE_URL}/features/ai-image-generation`, description: 'Generate images with Xroga AI' },
     { name: 'Talk with AI', url: `${SITE_URL}/features/ai-voice-talk`, description: 'Push-to-talk voice assistant' },
     { name: 'GitHub Deploy', url: `${SITE_URL}/features/github-auto-deploy`, description: 'Connect GitHub and auto-deploy' },
     { name: 'Integrations', url: `${SITE_URL}/integrations`, description: '710+ integrations' },
     { name: 'Droga AI', url: `${SITE_URL}/droga`, description: 'Looking for Droga AI? This is Xroga AI' },
-    { name: 'Pricing', url: `${SITE_URL}/pricing`, description: 'Honest action-based plans from $19/mo' },
+    { name: 'Pricing', url: `${SITE_URL}/pricing`, description: 'Token-based plans from $19/mo — 7M+ AI tokens included' },
     { name: 'About', url: `${SITE_URL}/about`, description: 'Xroga AI story and mission' },
     { name: 'API Docs', url: `${SITE_URL}/docs/api`, description: 'Xroga AI developer API' },
   ];

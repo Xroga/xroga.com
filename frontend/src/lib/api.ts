@@ -116,7 +116,7 @@ export async function streamSwarmExecute(
     }
     if (res.status === 402 || data.code === 'OUT_OF_ACTIONS') {
       throw new ApiError(
-        data.error ?? 'Out of actions — subscribe to continue.',
+        data.error ?? 'Out of tokens — upgrade your plan to continue.',
         402,
         { code: 'OUT_OF_ACTIONS', paymentLink: data.paymentLink ?? '/pricing' }
       );
@@ -166,7 +166,7 @@ export async function streamSwarmExecute(
       if (eventName === 'error' || payload.error) {
         if (payload.code === 'OUT_OF_ACTIONS') {
           throw new ApiError(
-            String(payload.error ?? 'Out of actions'),
+            String(payload.error ?? 'Out of tokens'),
             402,
             payload as Record<string, unknown>
           );
@@ -375,7 +375,7 @@ export async function apiFetch<T = unknown>(
     }
     if (res.status === 402 || data.code === 'OUT_OF_ACTIONS') {
       throw new ApiError(
-        message || 'Out of actions — subscribe to continue.',
+        message || 'Out of tokens — upgrade your plan to continue.',
         402,
         { ...data, code: 'OUT_OF_ACTIONS', paymentLink: data.paymentLink ?? '/pricing' }
       );

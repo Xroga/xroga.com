@@ -99,7 +99,7 @@ export function FeatureLanding({ page }: { page: FeatureSeoPage }) {
               href="/auth/signup"
               className="px-5 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--background)] font-bold text-sm"
             >
-              Try {page.title} — 50 Free Actions
+              Try {page.title} — 7M Free Tokens
             </Link>
             <Link
               href="/pricing"

@@ -5,6 +5,9 @@ import { getAllFeatureSlugs } from '@/lib/featureSeo';
 const STATIC_ROUTES: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[0]['changeFrequency'] }[] = [
   { path: '', priority: 1, changeFrequency: 'daily' },
   { path: '/features', priority: 0.95, changeFrequency: 'weekly' },
+  { path: '/features/xroga-workspace', priority: 0.93, changeFrequency: 'weekly' },
+  { path: '/features/community-hub', priority: 0.92, changeFrequency: 'weekly' },
+  { path: '/features/earn-xrg-referrals', priority: 0.92, changeFrequency: 'weekly' },
   { path: '/integrations', priority: 0.92, changeFrequency: 'weekly' },
   { path: '/droga', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/pricing', priority: 0.95, changeFrequency: 'weekly' },

@@ -2,18 +2,19 @@ import { PricingPageClient } from '@/components/pricing/PricingPageClient';
 import { buildMetadata } from '@/lib/seo';
 
 export const metadata = buildMetadata({
-  title: 'Pricing — Top Up Actions & Galactic Plans',
+  title: 'Pricing — AI Token Plans & Galactic Tiers',
   description:
-    'Xroga AI pricing: pay for Swarm fuel, not features. Spark 1,500 actions/mo, Pulse 5,000 (most popular), Nova 10,000. All 92 features on every plan. Budget tiers from $6/mo coming soon.',
+    'Xroga AI pricing: pay for tokens, not features. Spark 7M tokens/mo, Pulse 12M (most popular), Nova 20M, Zenith 35M, Singularity 100M. All 98 features on every plan.',
   path: '/pricing',
   keywords: [
     'Xroga pricing',
-    'AI action credits',
+    'AI token plans',
     'Pulse plan',
     'Spark plan',
     'roga pricing',
     'droga ai cost',
-    'top up actions',
+    'top up tokens',
+    '7M free tokens',
   ],
 });
 

@@ -70,7 +70,7 @@ export default function DrogaTypoPage() {
             <h2 className="font-bold mb-2">Xroga AI is not Droga — it is Xroga</h2>
             <p className="text-sm text-[var(--muted)] leading-relaxed">
               X-R-O-G-A · Pronounced like the leading AI swarm platform. Sign up at xroga.com for
-              50 free actions — image AI, talk with AI, multi-agent chat, and live deploy to Vercel
+              7M free AI tokens monthly — image AI, talk with AI, multi-agent chat, and live deploy to Vercel
               and Netlify.
             </p>
           </div>

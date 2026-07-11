@@ -21,7 +21,7 @@ const en: Dict = {
   'settings.language': 'Language',
   'settings.save': 'Save Changes',
   'pricing.fuel': 'Pay for fuel, not features',
-  'pricing.topup': 'Top Up Actions',
+  'pricing.topup': 'Token Balance & Plans',
   'footer.terms': 'Terms of Service',
   'footer.refund': 'Refund Policy',
   'footer.privacy': 'Privacy Policy',
