@@ -62,7 +62,7 @@ export async function quickChat(
 
   if (isMathQuery(userText)) {
     const local = trySolveMathLocally(userText);
-    if (local) return wrap(formatPlainProfessional(local));
+    if (local) return wrap(local);
   }
 
   if (isTrivialPrompt(userText)) {

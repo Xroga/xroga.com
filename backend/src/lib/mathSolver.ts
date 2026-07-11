@@ -50,21 +50,6 @@ function fmt(n: number): string {
   return String(Math.round(n * 1000) / 1000);
 }
 
-function fmtExpr(coef: number, variable: string, constant: number): string {
-  const parts: string[] = [];
-  if (coef !== 0) {
-    if (coef === 1) parts.push(variable);
-    else if (coef === -1) parts.push(`-${variable}`);
-    else parts.push(`${fmt(coef)}${variable}`);
-  }
-  if (constant !== 0) {
-    if (parts.length && constant > 0) parts.push(`+ ${fmt(constant)}`);
-    else if (parts.length && constant < 0) parts.push(`- ${fmt(Math.abs(constant))}`);
-    else parts.push(fmt(constant));
-  }
-  return parts.join(' ') || '0';
-}
-
 export function trySolveMathLocally(prompt: string): string | null {
   const parsed = extractMathEquation(prompt);
   if (!parsed) return null;
@@ -84,13 +69,10 @@ export function trySolveMathLocally(prompt: string): string | null {
   const solution = rhs / coef;
   if (!Number.isFinite(solution)) return null;
 
-  const headline = `Solving for ${variable} step by step`;
-  const intro = `To solve for ${variable} in the equation:`;
-
   const lines: string[] = [
-    headline,
+    `Solving for ${variable} step by step`,
     '',
-    intro,
+    `In plain words: we want to find ${variable} in this equation — isolate ${variable} on one side.`,
     '',
     equation,
     '',
@@ -102,7 +84,9 @@ export function trySolveMathLocally(prompt: string): string | null {
     const op = left.constant > 0 ? 'Subtract' : 'Add';
     const amount = fmt(Math.abs(left.constant));
     lines.push(`Step ${step}`);
-    lines.push(`${op} ${amount} from both sides.`);
+    lines.push(
+      `${op} ${amount} from both sides to move the constant away from the side with ${variable}.`
+    );
     lines.push('');
     lines.push(`${fmt(coef)}${variable} = ${fmt(right.constant)} ${left.constant >= 0 ? '-' : '+'} ${amount}`);
     lines.push('');
@@ -113,14 +97,14 @@ export function trySolveMathLocally(prompt: string): string | null {
 
   if (coef !== 1 && coef !== -1) {
     lines.push(`Step ${step}`);
-    lines.push(`Divide both sides by ${fmt(coef)}.`);
+    lines.push(`Divide both sides by ${fmt(coef)} so ${variable} equals 1 (coefficient becomes 1).`);
     lines.push('');
     lines.push(`${variable} = ${fmt(rhs)}/${fmt(coef)}`);
     lines.push('');
     step += 1;
   } else if (coef === -1) {
     lines.push(`Step ${step}`);
-    lines.push('Multiply both sides by -1.');
+    lines.push(`Multiply both sides by -1 to make ${variable} positive.`);
     lines.push('');
     lines.push(`${variable} = ${fmt(-rhs)}`);
     lines.push('');
@@ -129,27 +113,36 @@ export function trySolveMathLocally(prompt: string): string | null {
 
   lines.push('Answer');
   lines.push(`${variable} = ${fmt(solution)}`);
+  lines.push('');
+  lines.push('Quick check');
+  const checkLeft = left.coef * solution + left.constant;
+  lines.push(
+    `Substituting ${variable} = ${fmt(solution)} gives ${fmt(checkLeft)} on the left, which matches the right side (${rightRaw}).`
+  );
 
   return lines.join('\n');
 }
 
 export const MATH_EXAMPLE_RESPONSE = `Solving for x step by step
 
-To solve for x in the equation:
+In plain words: we want to find x in this equation — isolate x on one side.
 
 7 + 2x = 15
 
 Step 1
-Subtract 7 from both sides.
+Subtract 7 from both sides to move the constant away from the side with x.
 
 2x = 15 - 7
 
 2x = 8
 
 Step 2
-Divide both sides by 2.
+Divide both sides by 2 so x equals 1 (coefficient becomes 1).
 
 x = 8/2
 
 Answer
-x = 4`;
+x = 4
+
+Quick check
+Substituting x = 4 gives 15 on the left, which matches the right side (15).`;

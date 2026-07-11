@@ -3936,6 +3936,30 @@ body.theme-gray * {
   font-size: 1.05em;
 }
 
+.xv-math-solution {
+  gap: 0.875rem;
+}
+
+.xv-math-solution .xv-headline {
+  font-size: clamp(1.1rem, 2.8vw, 1.35rem);
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0.25rem;
+}
+
+.xv-math-step {
+  animation: xv-response-in 0.35s ease-out backwards;
+}
+
+.xv-math-step:nth-child(2) { animation-delay: 0.05s; }
+.xv-math-step:nth-child(3) { animation-delay: 0.1s; }
+.xv-math-step:nth-child(4) { animation-delay: 0.15s; }
+
+.xv-math-answer {
+  animation: xv-response-in 0.4s ease-out backwards;
+  animation-delay: 0.2s;
+}
+
 .xv-formatted-response ul li,
 .xv-formatted-response ol li {
   line-height: 1.55;

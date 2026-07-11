@@ -10,6 +10,7 @@ import {
 } from '@/lib/parseImageContent';
 import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
 import { PlainAiResponse } from '@/lib/plainAiText';
+import { isMathSolutionContent } from '@/lib/mathDetect';
 import { ImageStudioCard } from './ImageStudioCard';
 
 interface ReasoningPanelProps {
@@ -152,10 +153,10 @@ export function ModernResponseText({
       ref={blockRef}
       className={cn('xv-response-text', streaming && 'xv-streaming')}
     >
-      {hasMarkdown(safeContent) ? (
+      {hasMarkdown(safeContent) && !isMathSolutionContent(safeContent) ? (
         <FormattedAiMarkdown content={safeContent} streaming={streaming} />
       ) : (
-        <PlainAiResponse content={safeContent} streaming={streaming} />
+        <PlainAiResponse content={safeContent} streaming={streaming} mathMode={isMathSolutionContent(safeContent)} />
       )}
     </div>
   );

@@ -47,10 +47,12 @@ function normalizeMathContent(content: string): string {
   let out = content;
   out = out.replace(/(\S)\s+Step\s+(\d+)\b/gi, '$1\n\nStep $2');
   out = out.replace(/\s+Answer\b/gi, '\n\nAnswer\n');
+  out = out.replace(/\s+Quick check\b/gi, '\n\nQuick check\n');
   out = out.replace(/steps\s+Step\s+(\d+)/gi, 'steps\n\nStep $1');
   out = out.replace(/Step\s+(\d+)\s*[:.]?\s*/gi, 'Step $1\n');
   out = out.replace(/(\d)\s+(Step\s+\d)/gi, '$1\n\n$2');
   out = out.replace(/(To solve for [^\n]+)\s*(\d)/gi, '$1\n\n$2');
+  out = out.replace(/(In plain words:?)\s*/gi, '$1\n\n');
   out = out.replace(/(equation:)\s*/gi, '$1\n\n');
   return out;
 }
@@ -78,8 +80,16 @@ function isCalloutLine(line: string): boolean {
   return /^(note|implementation note|key takeaway|assumption):/i.test(line);
 }
 
+function isPlainWordsIntro(line: string): boolean {
+  return /^in plain words:?/i.test(line.trim());
+}
+
 function isMathIntro(line: string): boolean {
   return /^to solve for\b/i.test(line.trim());
+}
+
+function stepNumber(step: string): string {
+  return step.replace(/^step\s+/i, '').trim();
 }
 
 function splitCallout(line: string): { label: string; rest: string } {
@@ -129,8 +139,24 @@ export function parseXrogaBlocks(content: string): XrogaBlock[] {
         return;
       }
 
+      if (/^quick check$/i.test(first)) {
+        blocks.push({ type: 'callout', label: 'Quick check', body: lines.slice(1).join('\n').trim() });
+        return;
+      }
+
       if (/^answer$/i.test(first) && lines.length > 1) {
         blocks.push({ type: 'math-answer', text: lines.slice(1).join('\n').trim() });
+        return;
+      }
+
+      if (isPlainWordsIntro(first)) {
+        const bodyText = first.replace(/^in plain words:?\s*/i, '').trim();
+        const rest = lines.slice(1).join('\n').trim();
+        blocks.push({
+          type: 'callout',
+          label: 'In plain words',
+          body: [bodyText, rest].filter(Boolean).join('\n'),
+        });
         return;
       }
 
@@ -260,13 +286,20 @@ function BlockView({ block }: { block: XrogaBlock }) {
           {renderInline(block.text)}
         </p>
       );
-    case 'math-step':
+    case 'math-step': {
+      const num = stepNumber(block.step);
       return (
-        <div className="space-y-2 py-2 border-t border-slate-200/50 dark:border-white/10 first:border-t-0">
-          <p className="text-[14px] sm:text-[15px] font-semibold text-[var(--foreground)]">{block.step}</p>
+        <div className="xv-math-step rounded-xl border border-[var(--card-border)]/50 bg-gradient-to-br from-[var(--accent)]/[0.04] to-transparent px-4 py-3.5 space-y-2.5">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/15 text-[13px] font-bold text-[var(--accent)] tabular-nums">
+              {num}
+            </span>
+            <p className="text-[13px] font-semibold uppercase tracking-wide text-[var(--muted)]">Step {num}</p>
+          </div>
           <MathStepBody body={block.body} />
         </div>
       );
+    }
     case 'math-equation':
       return (
         <div className="xv-math-equation py-2">
@@ -278,12 +311,12 @@ function BlockView({ block }: { block: XrogaBlock }) {
       );
     case 'math-answer':
       return (
-        <div className="pt-3 mt-2 border-t border-slate-200/70 dark:border-white/15 space-y-2">
-          <p className="text-[14px] sm:text-[15px] font-semibold text-[var(--foreground)]">Answer</p>
+        <div className="xv-math-answer rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/[0.08] to-transparent px-4 py-3.5 space-y-2">
+          <p className="text-[12px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Final answer</p>
           <div className="xv-math-equation">
             <MathEquation
               text={block.text}
-              className="text-[17px] sm:text-[18px] font-medium text-[var(--foreground)]"
+              className="text-[18px] sm:text-[20px] font-medium text-[var(--foreground)]"
             />
           </div>
         </div>
@@ -325,10 +358,12 @@ export function PlainAiResponse({
   content,
   streaming,
   className,
+  mathMode = false,
 }: {
   content: string;
   streaming?: boolean;
   className?: string;
+  mathMode?: boolean;
 }) {
   const blocks = useMemo(() => parseXrogaBlocks(content), [content]);
 
@@ -339,7 +374,7 @@ export function PlainAiResponse({
   }
 
   return (
-    <div className={cn('xv-xroga-response space-y-3', className)}>
+    <div className={cn('xv-xroga-response space-y-3', mathMode && 'xv-math-solution', className)}>
       {blocks.map((block, i) => (
         <BlockView key={`${block.type}-${i}`} block={block} />
       ))}

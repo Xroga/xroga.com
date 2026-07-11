@@ -1,4 +1,5 @@
 import type { Phase1Intent, RoutingPlan } from './types.js';
+import { PHASE1_MATH_SYSTEM } from '../prompts/xrogaResponseFormat.js';
 
 const PHASE2_MESSAGE = 'Coming in Phase 2';
 
@@ -22,7 +23,10 @@ function isSecurityCritical(message: string): boolean {
 }
 
 /** Build routing plan from classified intent and message content. */
-export function buildRoutingPlan(intent: Phase1Intent, message: string): RoutingPlan {
+export function buildRoutingPlan(intent: Phase1Intent, message: string, mathQuery = false): RoutingPlan {
+  if (mathQuery) {
+    return { intent: 'deep_reasoning', primary: 'deepseek_pro', secondary: null };
+  }
   switch (intent) {
     case 'code_generation': {
       if (wantsUi(message)) {
@@ -73,9 +77,17 @@ Respond in professional markdown:
 - Minimal emojis (0–1). No markdown symbol spam.
 `;
 
-export function getSystemPromptForIntent(intent: Phase1Intent, role: 'primary' | 'secondary'): string {
+export function getSystemPromptForIntent(
+  intent: Phase1Intent,
+  role: 'primary' | 'secondary',
+  mathQuery = false
+): string {
   const base =
     'You are Xroga AI. Be clear, practical, and production-oriented. Never mention AI model names or internal routing.';
+
+  if (mathQuery && role === 'primary') {
+    return `${base}${PHASE1_MATH_SYSTEM}`;
+  }
 
   if (intent === 'code_generation' && role === 'secondary') {
     return `${base} Review and improve the code architecture. Focus on structure, patterns, and maintainability.`;
