@@ -23,6 +23,7 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
   const [loadingBranches, setLoadingBranches] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [repoSummary, setRepoSummary] = useState<string | null>(null);
+  const [repoTech, setRepoTech] = useState<string[]>([]);
   const [open, setOpen] = useState<'repo' | 'branch' | null>(null);
   const repoAnchorRef = useRef<HTMLSpanElement>(null);
   const branchAnchorRef = useRef<HTMLSpanElement>(null);
@@ -56,6 +57,7 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
     try {
       const result = await api.github.analyzeRepo(fullName);
       setRepoSummary(result.summary);
+      setRepoTech(result.techStack ?? []);
       localStorage.setItem(
         `${STORAGE_KEY}-analysis`,
         JSON.stringify({ repo: fullName, summary: result.summary, fileCount: result.fileCount, at: Date.now() })
@@ -250,14 +252,19 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
       </div>
 
       {(analyzing || repoSummary) && (
-        <span className="text-[9px] text-[var(--muted)] truncate max-w-[200px] sm:max-w-[320px] shrink-0" title={repoSummary ?? undefined}>
+        <span className="text-[9px] text-[var(--muted)] truncate max-w-[200px] sm:max-w-[360px] shrink-0" title={repoSummary ?? undefined}>
           {analyzing ? (
             <span className="inline-flex items-center gap-1">
               <Loader2 className="w-3 h-3 animate-spin" />
-              Scanning repo…
+              Reading repository…
             </span>
           ) : (
-            repoSummary
+            <>
+              {repoTech.length > 0 && (
+                <span className="text-[var(--accent)] mr-1">{repoTech.slice(0, 2).join(' · ')}</span>
+              )}
+              {repoSummary}
+            </>
           )}
         </span>
       )}

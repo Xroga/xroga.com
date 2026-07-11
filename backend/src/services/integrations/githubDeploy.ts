@@ -666,6 +666,10 @@ export interface GitHubRepoAnalysis {
   buildFiles: { html: string; css: string; js: string };
   treeSample: Array<{ path: string; size?: number }>;
   summary: string;
+  techStack: string[];
+  filesAnalyzed: number;
+  totalLinesEstimate: number;
+  report: string;
 }
 
 /** Full repository scan before builds — tree, languages, and core site files. */
@@ -725,10 +729,47 @@ export async function analyzeGitHubRepo(
     /* repo may not have static build files yet */
   }
 
+  const paths = treeSample.map((f) => f.path);
+  const techStack: string[] = [];
+  if (paths.some((p) => p === 'package.json' || p.endsWith('/package.json'))) techStack.push('Node.js / npm');
+  if (paths.some((p) => /next\.config/i.test(p))) techStack.push('Next.js');
+  if (paths.some((p) => /tailwind\.config/i.test(p))) techStack.push('Tailwind CSS');
+  if (paths.some((p) => p.includes('supabase') || p.includes('migrations'))) techStack.push('Supabase');
+  if (paths.some((p) => p === 'index.html')) techStack.push('Static HTML/CSS/JS');
+  if (paths.some((p) => /\.tsx?$/.test(p))) techStack.push('TypeScript');
+  if (techStack.length === 0) techStack.push('Fresh project (scaffold on build)');
+
+  const criticalPaths = [
+    'package.json',
+    'next.config.js',
+    'next.config.ts',
+    'tailwind.config.js',
+    'app/layout.tsx',
+    'app/page.tsx',
+    'index.html',
+    'styles.css',
+    'script.js',
+    'README.md',
+  ];
+  const filesAnalyzed = criticalPaths.filter((cp) => paths.some((p) => p === cp || p.endsWith(`/${cp}`))).length
+    + Math.min(paths.length, 40);
+  const totalLinesEstimate = treeSample.reduce((sum, f) => sum + Math.ceil((f.size ?? 200) / 40), 0);
+
   const langList = Object.keys(languages).slice(0, 6).join(', ') || repoMeta.language || 'Unknown';
   const summary = hasBuildFiles
-    ? `Repository ${repoName} (${defaultBranch}): ${fileCount} files. Static site detected (index.html, styles.css, script.js). Languages: ${langList}.`
-    : `Repository ${repoName} (${defaultBranch}): ${fileCount} files. Top-level: ${topLevelEntries.join(', ') || 'empty'}. Languages: ${langList}.`;
+    ? `Repository ${repoName} (${defaultBranch}): ${fileCount} files. Static site detected. Stack: ${techStack.join(', ')}. Languages: ${langList}.`
+    : `Repository ${repoName} (${defaultBranch}): ${fileCount} files. Stack: ${techStack.join(', ')}. Languages: ${langList}.`;
+
+  const report = [
+    `# Repository Analysis: ${repoName}`,
+    `- Branch: ${defaultBranch}`,
+    `- Total files: ${fileCount}`,
+    `- Files analyzed: ${filesAnalyzed}`,
+    `- Estimated lines: ~${totalLinesEstimate.toLocaleString()}`,
+    `- Tech stack: ${techStack.join(', ')}`,
+    `- Languages: ${langList}`,
+    hasBuildFiles ? '- Build files: index.html, styles.css, script.js ✓' : '- Build files: none yet (fresh build)',
+  ].join('\n');
 
   return {
     repoName,
@@ -740,6 +781,10 @@ export async function analyzeGitHubRepo(
     buildFiles,
     treeSample,
     summary,
+    techStack,
+    filesAnalyzed,
+    totalLinesEstimate,
+    report,
   };
 }
 

@@ -1,13 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Maximize2 } from 'lucide-react';
+import { Maximize2, Monitor, Smartphone, Tablet, RefreshCw } from 'lucide-react';
 import { buildInlinePreviewDocument } from '@/lib/landingPreview';
 import { normalizeBuildFiles } from '@/lib/normalizeBuildSource';
 import { cn } from '@/lib/utils';
 import { FullscreenPreviewModal } from './FullscreenPreviewModal';
 
 type SandboxTab = 'preview' | 'html' | 'css' | 'js';
+export type PreviewViewport = 'mobile' | 'tablet' | 'desktop';
 
 interface BuildCodeSandboxProps {
   html: string;
@@ -15,6 +16,9 @@ interface BuildCodeSandboxProps {
   js: string;
   className?: string;
   projectTitle?: string;
+  viewport?: PreviewViewport;
+  onViewportChange?: (v: PreviewViewport) => void;
+  showViewportControls?: boolean;
 }
 
 const TABS: Array<{ id: SandboxTab; label: string }> = [
@@ -24,9 +28,25 @@ const TABS: Array<{ id: SandboxTab; label: string }> = [
   { id: 'js', label: 'script.js' },
 ];
 
-export function BuildCodeSandbox({ html, css, js, className, projectTitle }: BuildCodeSandboxProps) {
+const VIEWPORT_WIDTH: Record<PreviewViewport, string> = {
+  mobile: '375px',
+  tablet: '768px',
+  desktop: '100%',
+};
+
+export function BuildCodeSandbox({
+  html,
+  css,
+  js,
+  className,
+  projectTitle,
+  viewport = 'desktop',
+  onViewportChange,
+  showViewportControls = false,
+}: BuildCodeSandboxProps) {
   const [tab, setTab] = useState<SandboxTab>('preview');
   const [fullscreen, setFullscreen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const normalized = useMemo(() => normalizeBuildFiles(html, css, js), [html, css, js]);
   const mergedPreview = useMemo(
@@ -45,8 +65,8 @@ export function BuildCodeSandbox({ html, css, js, className, projectTitle }: Bui
 
   return (
     <>
-      <div className={cn('flex flex-col border-t border-white/10 bg-black/20', className)}>
-        <div className="flex items-center gap-1 px-2 py-1.5 border-b border-white/10 overflow-x-auto scrollbar-hide">
+      <div className={cn('flex flex-col border border-[var(--card-border)] rounded-lg bg-[var(--foreground)]/[0.02]', className)}>
+        <div className="flex items-center gap-1 px-2 py-1.5 border-b border-[var(--card-border)] overflow-x-auto scrollbar-hide">
           {TABS.map((t) => (
             <button
               key={t.id}
@@ -55,18 +75,54 @@ export function BuildCodeSandbox({ html, css, js, className, projectTitle }: Bui
               className={cn(
                 'shrink-0 px-2.5 py-1 rounded-md text-[10px] font-mono transition-colors',
                 tab === t.id
-                  ? 'bg-[#006aff]/20 text-[#93c5fd] border border-[#006aff]/40'
-                  : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5'
+                  ? 'bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/30'
+                  : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5'
               )}
             >
               {t.label}
             </button>
           ))}
+          {tab === 'preview' && showViewportControls && onViewportChange ? (
+            <div className="ml-auto flex items-center gap-0.5 shrink-0">
+              {(
+                [
+                  { id: 'mobile' as const, icon: Smartphone, label: 'Mobile' },
+                  { id: 'tablet' as const, icon: Tablet, label: 'Tablet' },
+                  { id: 'desktop' as const, icon: Monitor, label: 'Desktop' },
+                ] as const
+              ).map(({ id, icon: Icon, label }) => (
+                <button
+                  key={id}
+                  type="button"
+                  title={label}
+                  onClick={() => onViewportChange(id)}
+                  className={cn(
+                    'p-1 rounded-md transition-colors',
+                    viewport === id ? 'text-[var(--accent)] bg-[var(--accent)]/10' : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                  )}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                </button>
+              ))}
+              <button
+                type="button"
+                title="Refresh preview"
+                onClick={() => setRefreshKey((k) => k + 1)}
+                className="p-1 rounded-md text-[var(--muted)] hover:text-[var(--foreground)]"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : null}
           {tab === 'preview' ? (
             <button
               type="button"
               onClick={() => setFullscreen(true)}
-              className="ml-auto shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold bg-[#006aff] text-white hover:bg-[#0056d6] transition-colors"
+              className={cn(
+                'shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors',
+                showViewportControls ? '' : 'ml-auto',
+                'bg-[var(--accent)] text-[var(--background)] hover:opacity-90'
+              )}
             >
               <Maximize2 className="w-3.5 h-3.5" />
               Full Preview
@@ -75,15 +131,23 @@ export function BuildCodeSandbox({ html, css, js, className, projectTitle }: Bui
         </div>
 
         {tab === 'preview' ? (
-          <iframe
-            srcDoc={mergedPreview}
-            title="Merged site preview"
-            className="w-full h-[min(360px,50vh)] border-0 bg-white"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-          />
+          <div className="flex justify-center p-2 bg-[var(--foreground)]/[0.03]">
+            <iframe
+              key={refreshKey}
+              srcDoc={mergedPreview}
+              title="Merged site preview"
+              className="rounded-lg border border-[var(--card-border)] bg-white transition-all duration-300"
+              style={{
+                width: VIEWPORT_WIDTH[viewport],
+                maxWidth: '100%',
+                height: viewport === 'mobile' ? 520 : viewport === 'tablet' ? 480 : 360,
+              }}
+              sandbox="allow-scripts allow-same-origin"
+            />
+          </div>
         ) : (
-          <pre className="w-full h-[min(360px,50vh)] overflow-auto p-3 text-[10px] sm:text-[11px] font-mono leading-relaxed text-[var(--foreground)]/90 bg-black/30">
-            {codeContent || '/* empty */'}
+          <pre className="p-3 text-[10px] font-mono text-[var(--foreground)]/85 overflow-auto max-h-[280px] whitespace-pre-wrap break-all">
+            {codeContent || '(empty)'}
           </pre>
         )}
       </div>
@@ -94,7 +158,7 @@ export function BuildCodeSandbox({ html, css, js, className, projectTitle }: Bui
         html={normalized.html}
         css={normalized.css}
         js={normalized.js}
-        title={projectTitle ? `Full preview — ${projectTitle}` : 'Full site preview'}
+        title={projectTitle ?? 'Preview'}
       />
     </>
   );

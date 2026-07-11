@@ -501,6 +501,10 @@ export const api = {
         buildFiles: { html: string; css: string; js: string };
         treeSample: Array<{ path: string; size?: number }>;
         summary: string;
+        techStack: string[];
+        filesAnalyzed: number;
+        totalLinesEstimate: number;
+        report: string;
       }>(`/api/github/analyze?repoName=${encodeURIComponent(repoName)}`),
   },
   notifications: {

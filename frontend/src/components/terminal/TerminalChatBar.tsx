@@ -19,7 +19,7 @@ import {
 } from './ChatBarParts';
 import { ChatBarFileGrid } from './ChatBarFileGrid';
 import type { SendButtonState } from './ChatBarButtons';
-import { GitHubChipIcon, GitLabChipIcon, VercelChipIcon, TwitterChipIcon, ChatBarBrandChip } from './ChatBarButtons';
+import { GitHubChipIcon, GitLabChipIcon, TwitterChipIcon, ChatBarBrandChip } from './ChatBarButtons';
 import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { isVideoGenerationPrompt, isImageToVideoPrompt, isGifPrompt, defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
@@ -270,19 +270,6 @@ export function TerminalChatBar() {
                   label="GitLab"
                   onClick={() => setIntegrationsOpen(true)}
                   accent="#fc6d26"
-                />
-              </span>
-            </ChatBarTip>
-            <ChatBarTip label="Vercel" className="shrink-0">
-              <span className="inline-flex shrink-0 lg:hidden">
-                <ChatBarBrandChip variant="vercel" label="Vercel" onClick={() => setIntegrationsOpen(true)} plain darkUi={darkUi} />
-              </span>
-              <span className="hidden lg:inline-flex shrink-0">
-                <ChatBarToolChip
-                  icon={<VercelChipIcon />}
-                  label="Vercel"
-                  onClick={() => setIntegrationsOpen(true)}
-                  accent="#000"
                 />
               </span>
             </ChatBarTip>
