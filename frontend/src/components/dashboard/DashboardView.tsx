@@ -9,6 +9,7 @@ import { IncognitoDashboard } from '@/components/dashboard/IncognitoDashboard';
 import { useAppStore } from '@/store/useAppStore';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { useHydrated } from '@/hooks/useHydrated';
 import { useEffect } from 'react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -23,7 +24,9 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   const setFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const browserOpen = useThemeStore((s) => s.browserPanelOpen);
   const browserFullscreen = useThemeStore((s) => s.browserFullscreen);
-  const incognito = usePrivacyStore((s) => s.incognito);
+  const hydrated = useHydrated();
+  const incognitoRaw = usePrivacyStore((s) => s.incognito);
+  const incognito = hydrated && incognitoRaw;
   const setProfile = useAppStore((s) => s.setProfile);
 
   useEffect(() => {

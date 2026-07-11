@@ -17,6 +17,7 @@ import { usePathname } from 'next/navigation';
 import { IncognitoModeButton } from '@/components/layout/IncognitoModeButton';
 import { IncognitoFullscreenBackground } from '@/components/incognito/IncognitoFullscreenBackground';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { useHydrated } from '@/hooks/useHydrated';
 import { cn } from '@/lib/utils';
 
 interface AppShellProps {
@@ -27,12 +28,15 @@ interface AppShellProps {
 
 export function AppShell({ children, displayName, email }: AppShellProps) {
   const [topUpOpen, setTopUpOpen] = useState(false);
+  const hydrated = useHydrated();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const pathname = usePathname();
   const isDashboard = pathname === '/dashboard';
-  const incognito = usePrivacyStore((s) => s.incognito);
-  const widthPx = sidebarOpen ? sidebarWidth : 72;
+  const incognitoRaw = usePrivacyStore((s) => s.incognito);
+  const incognito = hydrated && incognitoRaw;
+  const effectiveSidebarOpen = hydrated ? sidebarOpen : true;
+  const widthPx = effectiveSidebarOpen ? (hydrated ? sidebarWidth : 256) : 72;
 
   useEffect(() => {
     document.body.classList.toggle('xv-incognito-active', incognito && isDashboard);

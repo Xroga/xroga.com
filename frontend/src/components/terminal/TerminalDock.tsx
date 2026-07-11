@@ -11,15 +11,18 @@ import { ChevronDown } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useVisualViewportBottom } from '@/hooks/useVisualViewportBottom';
+import { useHydrated } from '@/hooks/useHydrated';
 import { INCOGNITO_PRIVATE_ROOM_NOTICE } from '@/lib/incognito';
 import { cn } from '@/lib/utils';
 
 export function TerminalDock() {
   const pathname = usePathname();
+  const hydrated = useHydrated();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
-  const incognito = usePrivacyStore((s) => s.incognito);
+  const incognitoRaw = usePrivacyStore((s) => s.incognito);
+  const incognito = hydrated && incognitoRaw;
   const keyboardOffset = useVisualViewportBottom();
   const dockInnerRef = useRef<HTMLDivElement>(null);
   const { showJumpToLatest, scrollToLatest } = useTerminalScroll();
@@ -49,7 +52,7 @@ export function TerminalDock() {
         incognito && 'xv-terminal-dock--incognito'
       )}
       style={{
-        '--sidebar-width': `${sidebarOpen ? sidebarWidth : 72}px`,
+        '--sidebar-width': `${(hydrated ? sidebarOpen : true) ? (hydrated ? sidebarWidth : 256) : 72}px`,
         bottom: keyboardOffset,
       } as React.CSSProperties}
     >

@@ -11,7 +11,6 @@ import {
   Trash2,
   Search,
 } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
 import {
   loadTerminalHistory,
   removeTerminalHistoryEntry,
@@ -19,6 +18,7 @@ import {
 } from '@/lib/terminalHistory';
 import { loadChatArchive, type ChatArchiveEntry } from '@/lib/chatArchive';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
+import { formatSafeDistance } from '@/lib/safeDates';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -39,7 +39,7 @@ function HistoryCard({
   onOpen: () => void;
   onDelete: () => void;
 }) {
-  const meta = KIND_META[entry.kind];
+  const meta = KIND_META[entry.kind] ?? KIND_META.chat;
   const Icon = meta.icon;
   const isProject = entry.kind === 'code' && (entry.githubRepoUrl || entry.deployUrl);
 
@@ -69,7 +69,7 @@ function HistoryCard({
             {meta.label}
           </span>
           <span className="text-[10px] text-[var(--muted)] shrink-0">
-            {formatDistanceToNow(new Date(entry.updatedAt), { addSuffix: true })}
+            {formatSafeDistance(entry.updatedAt)}
           </span>
         </div>
 
@@ -140,6 +140,7 @@ export function TerminalHistoryView() {
     const history = loadTerminalHistory();
     const archive = loadChatArchive();
     const archiveAsHistory: TerminalHistoryEntry[] = archive
+      .filter((a) => a.messages?.length)
       .filter((a) => !history.some((h) => h.id === a.id))
       .map((a: ChatArchiveEntry) => ({
         id: a.id,

@@ -10,12 +10,16 @@ import { AppStoreInline } from '@/components/ui/AppStoreInline';
 import { PowerSmashButton, HomeSignInButton } from '@/components/ui/XrogaButtons';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
 import { useThemeStore } from '@/store/useThemeStore';
+import { useHydrated } from '@/hooks/useHydrated';
 import { createClient } from '@/lib/supabase/client';
 
 export default function HomePage() {
   const router = useRouter();
+  const hydrated = useHydrated();
   const customDesktopBg = useThemeStore((s) => s.customDesktopBg);
   const customMobileBg = useThemeStore((s) => s.customMobileBg);
+  const desktopBg = hydrated ? (customDesktopBg ?? DESKTOP_BG) : DESKTOP_BG;
+  const mobileBg = hydrated ? (customMobileBg ?? MOBILE_BG) : MOBILE_BG;
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -34,12 +38,12 @@ export default function HomePage() {
     <div className="xv-homepage min-h-screen flex flex-col relative overflow-x-hidden">
       <div
         className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat md:bg-fixed"
-        style={{ backgroundImage: `url("${customDesktopBg ?? DESKTOP_BG}")` }}
+        style={{ backgroundImage: `url("${desktopBg}")` }}
         aria-hidden
       />
       <div
         className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat md:hidden"
-        style={{ backgroundImage: `url("${customMobileBg ?? MOBILE_BG}")` }}
+        style={{ backgroundImage: `url("${mobileBg}")` }}
         aria-hidden
       />
       <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/50 via-black/20 to-black/55" aria-hidden />
