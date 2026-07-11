@@ -831,11 +831,12 @@ export function TerminalChatProvider({
         });
 
         if (usePhase1Engine) {
-          setPipelineCompact(true);
-          setPipelineMessage('Xroga AI Brain is thinking…');
+          setPipelineCompact(false);
+          setPipelineMessage('Planning with DeepSeek Pro…');
           setSwarmStatusLabel('XROGA AI BRAIN');
-          setSwarmActiveAgent('Xroga AI Brain');
-          pushSwarmTerminalLine('Classifying intent and routing to Xroga AI Brain…');
+          setSwarmActiveAgent('architect');
+          setThinkingSteps(['Planning architecture', 'Building response', 'Verifying quality']);
+          pushSwarmTerminalLine('DeepSeek Flash → Pro → Grok model collaboration…');
 
           const result = await api.phase1.chat(displayPrompt, history);
           gotEvent = true;

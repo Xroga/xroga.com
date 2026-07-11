@@ -62,8 +62,8 @@ export function FollowUpChips({ items, onSelect }: FollowUpChipsProps) {
           type="button"
           onClick={() => onSelect(item)}
           className={cn(
-            'text-[10px] px-2.5 py-1 rounded-full border border-[#006aff]/30',
-            'bg-[#006aff]/10 hover:bg-[#006aff]/20 text-[#93c5fd] transition-colors'
+            'text-[10px] px-2.5 py-1 rounded-full border border-[var(--accent)]/30',
+            'bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 text-[var(--foreground)] transition-colors'
           )}
         >
           {item}
@@ -99,7 +99,7 @@ export function ModernResponseText({
   if (!safeContent && streaming) {
     return (
       <span className="xv-stream-cursor inline-flex items-center">
-        <span className="w-0.5 h-4 bg-[#006aff]/70 rounded-full animate-pulse" />
+        <span className="w-0.5 h-4 bg-[var(--accent)]/70 rounded-full animate-pulse" />
       </span>
     );
   }

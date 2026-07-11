@@ -16,6 +16,7 @@ import { buildLiveStatusMessage } from '@/lib/buildLiveStatus';
 import { AgentActivityRow, AgentTypewriterText } from './AgentTypewriterText';
 import { XrogaBlackHoleShineText } from '@/components/ui/XrogaBlackHoleShineText';
 import { ProcessingPipeline } from './ProcessingPipeline';
+import { ModelCollaborationBar } from './ModelCollaborationBar';
 
 interface XrogaAgentProcessingPanelProps {
   loading: boolean;
@@ -161,6 +162,7 @@ export function XrogaAgentProcessingPanel({
       )}
     >
       {loading && <ProcessingPipeline loading activeAgent={pipelineAgent} />}
+      {loading && <ModelCollaborationBar activePhase={activePhase} loading={loading} />}
 
       <p className="text-[13px] leading-snug text-[var(--muted)] font-medium">
         {thoughtLabel(thoughtSeconds, loading)}

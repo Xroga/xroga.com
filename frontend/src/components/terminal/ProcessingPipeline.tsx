@@ -13,11 +13,11 @@ const AGENT_STEP: Record<string, number> = {
   architect: 0,
   builder: 1,
   reviewer: 2,
-  qa: 3,
-  debugger: 4,
-  automation: 5,
-  truth_council: 5,
-  complete: 5,
+  qa: 2,
+  debugger: 2,
+  automation: 1,
+  truth_council: 2,
+  complete: 2,
 };
 
 interface ProcessingPipelineProps {

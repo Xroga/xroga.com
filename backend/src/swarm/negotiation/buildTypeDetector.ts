@@ -67,11 +67,8 @@ export function hasGameBuildContext(prompt: string): boolean {
   );
 }
 
-export function needsGameDreamInterview(prompt: string): boolean {
-  if (!isGameBuildPrompt(prompt) && !GAME_IDEA.test(prompt)) return false;
-  if (hasGameBuildContext(prompt)) return false;
-  if (isGameInterviewAnswer(prompt) && hasThreadWrapper(prompt)) return false;
-  return true;
+export function needsGameDreamInterview(_prompt: string): boolean {
+  return false;
 }
 
 function hasThreadWrapper(prompt: string): boolean {
