@@ -22,6 +22,7 @@ import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
 import { isWebsiteBuildPrompt, isWebsiteBuildUpdate } from '@/lib/chatMemory';
+import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
 import { VideoProductionAnimation } from './VideoProductionAnimation';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
@@ -389,6 +390,14 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
+                        {loading && msg.id === animatingId && buildPromptActive && (
+                          <BlackHoleThinkingPanel
+                            steps={thinkingSteps.length > 0 ? thinkingSteps : [...BUILD_PLANNING_STEPS]}
+                            startedAt={thinkingStartedAt ?? undefined}
+                            active={loading}
+                            defaultExpanded
+                          />
+                        )}
                         {loading && msg.id === animatingId && (buildPromptActive || swarmTodos.length > 0 || swarmNegotiationPhase != null) && (
                           <SwarmPhasePanel
                             activePhase={swarmNegotiationPhase}

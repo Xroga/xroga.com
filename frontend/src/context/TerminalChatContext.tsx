@@ -29,6 +29,7 @@ import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { saveTerminalHistorySession } from '@/lib/terminalHistory';
 import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
 import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, isWebsiteBuildPrompt, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
+import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import { getSelectedRepoContext } from '@/lib/repoContext';
 import { buildHeartbeatActivity } from '@/lib/buildLiveStatus';
@@ -750,9 +751,11 @@ export function TerminalChatProvider({
 
       if (buildPromptActive) {
         setSwarmNegotiationPhase(1);
-        setSwarmStatusLabel('AI SWARM LOGIC');
-        setPipelineMessage('Starting your build…');
-        setSwarmActivityLog(['Planning website build pipeline…']);
+        setSwarmStatusLabel('DeepSeek Pro');
+        setPipelineMessage('DeepSeek Pro — architecture design…');
+        thinkingStepsRef.current = [...BUILD_PLANNING_STEPS];
+        setThinkingSteps([...BUILD_PLANNING_STEPS]);
+        setSwarmActivityLog(['[DeepSeek Pro] Architecture design — system, database, API plan…']);
         lastActivityAtRef.current = Date.now();
         buildHeartbeatTickRef.current = 0;
       }
@@ -909,6 +912,16 @@ export function TerminalChatProvider({
             if (swarmEv.swarmTodos?.length) setSwarmTodos(swarmEv.swarmTodos);
             if (swarmEv.swarmStatusLabel) {
               setSwarmStatusLabel(sanitizeXrogaTerminalText(swarmEv.swarmStatusLabel));
+            }
+            if (swarmEv.swarmStatusLabel && buildPromptActive) {
+              const modelLabel = sanitizeXrogaTerminalText(swarmEv.swarmStatusLabel);
+              if (modelLabel && !thinkingStepsRef.current.some((s) => s.includes(modelLabel))) {
+                const stepLine = `[${modelLabel}] ${sanitizeXrogaTerminalText(event.message ?? 'Working…')}`;
+                if (!thinkingStepsRef.current.includes(stepLine)) {
+                  thinkingStepsRef.current = [...thinkingStepsRef.current, stepLine];
+                  setThinkingSteps([...thinkingStepsRef.current]);
+                }
+              }
             }
             if (swarmEv.swarmAnalysis) {
               setSwarmAnalysis(sanitizeXrogaTerminalText(swarmEv.swarmAnalysis));
