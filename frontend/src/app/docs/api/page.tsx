@@ -72,10 +72,10 @@ Content-Type: application/json`}
             <h2 className="font-bold text-lg">Rate limits</h2>
           </div>
           <ul className="text-sm text-[var(--muted)] space-y-2 list-disc pl-5">
-            <li>Spark: 1,500 actions/mo · 2 concurrent swarms</li>
-            <li>Pulse: 5,000 actions/mo · 5 concurrent</li>
-            <li>Nova+: 10,000+ actions/mo · higher concurrency</li>
-            <li>API requests share your plan action pool — no feature gating</li>
+            <li>Spark: 7M tokens/mo · 2 concurrent swarms</li>
+            <li>Pulse: 12M tokens/mo · 8 concurrent</li>
+            <li>Nova+: 20M+ tokens/mo · higher concurrency</li>
+            <li>API requests share your plan token quota — no feature gating</li>
           </ul>
         </section>
 
@@ -85,7 +85,7 @@ Content-Type: application/json`}
             <h2 className="font-bold text-lg">Helpful docs</h2>
           </div>
           <ul className="text-sm space-y-2">
-            <li><Link href="/pricing" className="text-[var(--accent)] hover:underline">Plans & action fuel</Link></li>
+            <li><Link href="/pricing" className="text-[var(--accent)] hover:underline">Plans & token quota</Link></li>
             <li><Link href="/terms" className="text-[var(--accent)] hover:underline">Terms of Service</Link></li>
             <li><Link href="/about" className="text-[var(--accent)] hover:underline">About Xroga & the team</Link></li>
             <li><a href="mailto:hello@xroga.com" className="text-[var(--accent)] hover:underline">hello@xroga.com</a> — API & support</li>

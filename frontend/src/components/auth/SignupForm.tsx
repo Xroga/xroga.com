@@ -122,7 +122,7 @@ export function SignupForm() {
   }
 
   return (
-    <AuthModernCard title="Create your Xroga account" subtitle="50 free actions · pick your vibe">
+    <AuthModernCard title="Create your Xroga account" subtitle="7M free tokens · pick your vibe">
       <AuthModernQuote text={quote.text} author={quote.author} compact />
 
       <form onSubmit={handleSignup} className="space-y-3">

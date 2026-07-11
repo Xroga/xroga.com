@@ -257,11 +257,9 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
       )}
       <SidebarCommunityButton expanded={navExpanded} />
       {navExpanded && (
-        <div className="flex items-stretch gap-1.5">
-          <div className="flex-1 min-w-0">
-            <UpgradeProButton onClick={() => router.push('/pricing')} />
-          </div>
-          <DownloadAppButton variant="icon" className="self-center" />
+        <div className="flex flex-col gap-1.5">
+          <UpgradeProButton onClick={() => router.push('/pricing')} />
+          <DownloadAppButton variant="sidebar" />
         </div>
       )}
       {!navExpanded && !isMobile && (
@@ -275,8 +273,8 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
               <Zap className="w-4 h-4" />
             </Link>
           </HoverTip>
-          <HoverTip label="Download app" description="Launch soon">
-            <DownloadAppButton variant="icon" />
+          <HoverTip label="Download app" description="Xroga mobile — launch soon">
+            <DownloadAppButton variant="compact" />
           </HoverTip>
         </div>
       )}

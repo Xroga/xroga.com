@@ -9,7 +9,7 @@ import { HeaderActionMeter } from './HeaderActionMeter';
 import { ThemeToggle } from './ThemeToggle';
 import { TopUpModal } from '@/components/billing/TopUpModal';
 import { TerminalDock } from '@/components/terminal/TerminalDock';
-import { TerminalChatProvider, useTerminalChat } from '@/context/TerminalChatContext';
+import { TerminalChatProvider } from '@/context/TerminalChatContext';
 import { TerminalScrollProvider } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePathname } from 'next/navigation';
@@ -27,7 +27,6 @@ interface AppShellProps {
 }
 
 function HeaderLogo({ incognito, isDashboard }: { incognito: boolean; isDashboard: boolean }) {
-  const loading = useTerminalChat().loading;
   return (
     <div
       className={cn(
@@ -39,7 +38,6 @@ function HeaderLogo({ incognito, isDashboard }: { incognito: boolean; isDashboar
         href="/dashboard/home"
         height={52}
         variant="header"
-        processing={isDashboard && loading}
         className="!h-[52px] sm:!h-[68px] lg:!h-[72px]"
       />
     </div>

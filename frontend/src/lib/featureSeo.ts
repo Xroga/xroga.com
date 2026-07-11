@@ -39,7 +39,7 @@ export const FEATURE_SEO_PAGES: FeatureSeoPage[] = [
     ],
     faq: [
       { q: 'Can Xroga AI generate images from text?', a: 'Yes. Describe what you want in the chat and Xroga routes your prompt to elite image models with quality verification.' },
-      { q: 'Is AI image generation included on all plans?', a: 'Yes. Every Xroga plan includes the full feature stack; images use your action balance.' },
+      { q: 'Is AI image generation included on all plans?', a: 'Yes. Every Xroga plan includes the full feature stack; images use your monthly token quota.' },
     ],
     relatedSlugs: ['ai-chat', 'ai-video-generation', 'build-websites-apps-games'],
   },
@@ -67,7 +67,7 @@ export const FEATURE_SEO_PAGES: FeatureSeoPage[] = [
     ],
     faq: [
       { q: 'How is Xroga chat different from ChatGPT?', a: 'Xroga uses a multi-agent swarm with specialized phases for planning, building, review, and deploy — not a single generic reply.' },
-      { q: 'Can I chat for free?', a: 'New accounts get free actions to try chat, image, and build features on xroga.com.' },
+      { q: 'Can I chat for free?', a: 'New accounts get 7M free AI tokens monthly to try chat, image, and build features on xroga.com.' },
     ],
     relatedSlugs: ['ai-voice-talk', 'code-debugging', 'ai-image-generation'],
   },
@@ -151,7 +151,7 @@ export const FEATURE_SEO_PAGES: FeatureSeoPage[] = [
     ],
     faq: [
       { q: 'Can Xroga fix my code errors?', a: 'Yes. Paste the error message or code snippet and ask Xroga to debug — the swarm runs verification passes.' },
-      { q: 'Is debugging included?', a: 'Yes. Debugging uses the same action balance as chat and build on all plans.' },
+      { q: 'Is debugging included?', a: 'Yes. Debugging uses the same token quota as chat and build on all plans.' },
     ],
     relatedSlugs: ['build-websites-apps-games', 'github-auto-deploy', 'ai-chat'],
   },
@@ -283,6 +283,90 @@ export const FEATURE_SEO_PAGES: FeatureSeoPage[] = [
       { q: 'Does Xroga have browser automation?', a: 'Yes. Open the browser panel on the dashboard and instruct the swarm to browse or scrape.' },
     ],
     relatedSlugs: ['ai-chat', 'integrations', 'build-websites-apps-games'],
+  },
+  {
+    slug: 'xroga-workspace',
+    title: 'Xroga Workspace',
+    headline: 'Xroga Workspace — AI Terminal, Browser Split View & Swarm OS',
+    description:
+      'The Xroga Workspace is your AI command center — chat, code, image, deploy, scrape, and voice tabs in one terminal. Multi-agent swarm with browser automation, 7M free tokens, and live split-view building on xroga.com.',
+    keywords: [
+      'Xroga workspace',
+      'AI workspace',
+      'AI terminal',
+      'AI coding workspace',
+      'browser split view AI',
+      'multi-agent workspace',
+      'AI swarm terminal',
+      'best AI workspace 2026',
+    ],
+    bullets: [
+      'Chat · Code · Image · Script · 3D · Deploy · Scrape · Voice · Review tabs',
+      'Terminal + browser split view with swarm phases and live progress',
+      '7M monthly AI tokens — all 98 features unlocked on every plan',
+      'Save sessions, restore history, and resume builds from anywhere',
+    ],
+    faq: [
+      { q: 'What is the Xroga Workspace?', a: 'It is the main dashboard terminal where you chat with the AI swarm, run browser automations, and ship apps — all in one split-view workspace.' },
+      { q: 'Is the workspace free to try?', a: 'Yes. New users get 7M free AI tokens per month to explore chat, code, image, and automation features.' },
+    ],
+    relatedSlugs: ['ai-chat', 'browser-automation', 'github-auto-deploy'],
+  },
+  {
+    slug: 'community-hub',
+    title: 'Community Hub',
+    headline: 'Xroga Community — Influencers, Referrals, Marketplace & XRG Rewards',
+    description:
+      'Join the Xroga community hub — earn XRG tokens, refer users for instant token bonuses, apply as an influencer, and buy templates in the live marketplace. Built for creators, builders, and power users.',
+    keywords: [
+      'Xroga community',
+      'AI community hub',
+      'Xroga referrals',
+      'Xroga influencer program',
+      'earn XRG tokens',
+      'AI marketplace',
+      'refer friends AI tokens',
+      'Xroga creator program',
+    ],
+    bullets: [
+      'Referral rewards — 250K AI tokens + 5K XRG for you and your friend',
+      'Influencer tiers from Bronze to Diamond with exclusive perks',
+      'Community marketplace — buy and sell templates with XRG',
+      'Auto token distribution pool for active community members',
+    ],
+    faq: [
+      { q: 'How do Xroga referrals work?', a: 'Share your referral link. When a friend signs up, you both receive 250K AI tokens and 5K XRG instantly, plus retention bonuses.' },
+      { q: 'What is the influencer program?', a: 'Apply in the Community hub. Approved influencers get tiered rewards, early access, and revenue share on referrals.' },
+    ],
+    relatedSlugs: ['earn-xrg-referrals', 'xroga-workspace', 'integrations'],
+  },
+  {
+    slug: 'earn-xrg-referrals',
+    title: 'Earn XRG & Referrals',
+    headline: 'Earn XRG Tokens — Tasks, Referrals & Community Rewards on Xroga',
+    description:
+      'Earn XRG on Xroga AI — complete daily tasks, refer users for instant token bonuses, unlock consistency rewards, and stack referral discounts. Tokens power AI; XRG powers the future ecosystem.',
+    keywords: [
+      'earn XRG',
+      'Xroga earn tokens',
+      'AI referral program',
+      'refer and earn AI',
+      'Xroga tasks rewards',
+      'free AI tokens referral',
+      'XRG crypto rewards',
+      'earn tokens AI platform',
+    ],
+    bullets: [
+      'Daily, weekly, and monthly tasks with XRG + token boost rewards',
+      'Referral link — 250K AI tokens + 5K XRG per successful signup',
+      'Retention bonuses and stacked referral discounts',
+      'XRG vests over 30 days — future exchange, staking, and marketplace use',
+    ],
+    faq: [
+      { q: 'What is XRG?', a: 'XRG is Xroga\'s community reward token. Earn it through tasks and referrals; use it in the marketplace and future ecosystem features.' },
+      { q: 'Do referrals give AI tokens or actions?', a: 'Referrals give AI tokens (250K) and XRG (5K) — not legacy action credits. Tokens power all AI features.' },
+    ],
+    relatedSlugs: ['community-hub', 'xroga-workspace', 'ai-chat'],
   },
 ];
 

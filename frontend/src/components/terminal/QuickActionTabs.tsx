@@ -1,32 +1,28 @@
 'use client';
 
+import { useState } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { QUICK_ACTIONS } from '@/lib/quickActions';
-import { StaticQuickTab } from '@/components/ui/Uiverse';
+import { ModernTabBar } from '@/components/ui/ModernTabBar';
 
 export function QuickActionTabs() {
   const { setPrompt, loading } = useTerminalChat();
+  const [activeId, setActiveId] = useState<string>('chat');
+
+  function handleSelect(id: string) {
+    const action = QUICK_ACTIONS.find((a) => a.id === id);
+    if (!action) return;
+    setActiveId(id);
+    setPrompt(action.prompt);
+  }
 
   return (
-    <div className="overflow-x-auto scrollbar-hide -mx-1 px-1 pb-2">
-      <div className="flex gap-2 min-w-max">
-        {QUICK_ACTIONS.map((action) => {
-          const Icon = action.icon;
-          return (
-            <StaticQuickTab
-              key={action.id}
-              disabled={loading}
-              icon={<Icon className="w-3.5 h-3.5 shrink-0" style={{ color: action.color }} />}
-              onClick={(e) => {
-                e.stopPropagation();
-                setPrompt(action.prompt);
-              }}
-            >
-              {action.label}
-            </StaticQuickTab>
-          );
-        })}
-      </div>
-    </div>
+    <ModernTabBar
+      tabs={QUICK_ACTIONS.map(({ id, label, icon }) => ({ id, label, icon }))}
+      activeId={activeId}
+      onSelect={handleSelect}
+      disabled={loading}
+      interactive
+    />
   );
 }
