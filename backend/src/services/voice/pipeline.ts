@@ -12,6 +12,7 @@ import {
 import { RateLimitError } from './groqWhisper.js';
 import { synthesizeWithEdgeTts, type VoiceGender } from './edgeTts.js';
 import { routeVoiceQuery } from './voiceRouter.js';
+import { webSearch } from '../../lib/webSearch.js';
 import {
   searchWithTavily,
   TavilyRateLimitError,
@@ -175,20 +176,35 @@ export async function runVoicePipeline(
   let reply: string;
   let searchedWeb = false;
 
-  if (route.needsSearch && route.searchQuery && getSecret('TAVILY_API_KEY')) {
-    // Step 3a — Retrieve (Tavily) + Think (LLM with live context)
+  if (route.needsSearch && route.searchQuery) {
     onStage?.('searching');
     searchedWeb = true;
 
     try {
-      const search = await searchWithTavily(route.searchQuery);
+      let searchAnswer = '';
+      let sources: string[] = [];
+
+      const searx = await webSearch(route.searchQuery, { maxResults: 5 });
+      if (searx.length) {
+        sources = searx.map((r) => r.url);
+        searchAnswer = searx
+          .slice(0, 4)
+          .map((r) => `${r.title}: ${r.content.slice(0, 120)} (${r.url})`)
+          .join('\n');
+      } else if (getSecret('TAVILY_API_KEY') && process.env.TAVILY_FALLBACK !== 'false') {
+        const search = await searchWithTavily(route.searchQuery);
+        if (!search.empty) {
+          sources = search.sources;
+          searchAnswer = search.answer;
+        }
+      }
 
       onStage?.('thinking');
 
-      if (search.empty) {
+      if (!searchAnswer.trim()) {
         reply = await generateEmptySearchReply(transcript);
       } else {
-        reply = await generateTavilyReply(transcript, search.answer, search.sources);
+        reply = await generateTavilyReply(transcript, searchAnswer, sources);
       }
     } catch (e) {
       onStage?.('thinking');

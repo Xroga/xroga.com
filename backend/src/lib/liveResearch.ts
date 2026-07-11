@@ -33,12 +33,7 @@ export async function runLiveResearch(
   if (!decision.needsResearch && !opts?.force) return null;
 
   const [webResults, youtubeResults] = await Promise.all([
-    webSearch(decision.searchQuery, {
-      critical: decision.reasons.some((r) =>
-        ['pricing', 'net_worth', 'realtime', 'time_sensitive'].includes(r)
-      ),
-      maxResults: 6,
-    }),
+    webSearch(decision.searchQuery, { maxResults: 6 }),
     decision.needsYoutube && decision.youtubeQuery
       ? searchYoutubeVideos(decision.youtubeQuery, 5)
       : Promise.resolve([]),

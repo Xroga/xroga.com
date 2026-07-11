@@ -63,7 +63,11 @@ export function shouldAutoLiveResearch(prompt: string, intent?: string): LiveRes
   if (TIME_SENSITIVE.test(text)) reasons.push('time_sensitive');
   if (REALTIME.test(text)) reasons.push('realtime');
 
-  const needsYoutube = reasons.includes('youtube_recommendation') || YOUTUBE.test(text);
+  const needsYoutube =
+    reasons.includes('youtube_recommendation') ||
+    YOUTUBE.test(text) ||
+    reasons.includes('business_advice') ||
+    intent === 'business_advice';
   const needsResearch = reasons.length > 0;
 
   return {

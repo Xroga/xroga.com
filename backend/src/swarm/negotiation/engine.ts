@@ -489,7 +489,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       const searchQuery = isWebsiteUpdateRequest(userPrompt)
         ? `${currentMessage} UI patterns best practices`
         : `${inferBusinessLabel(userPrompt)} modern web design ${buildType} 2026`;
-      const results = await webSearch(searchQuery, { critical: /\b(crypto|security|compliance|legal|medical)\b/i.test(userPrompt) });
+      const results = await webSearch(searchQuery);
       if (results.length) {
         webResearchNote = formatWebSearchContext(results);
         emit(
