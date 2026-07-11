@@ -6,6 +6,8 @@ import {
 } from './emissionFilter.js';
 import { formatPlainProfessional, buildDecisionPlain } from './plainTextFormat.js';
 import { formatProfessionalMarkdown, hasMarkdownStructure } from './professionalFormat.js';
+import { normalizeMathResponse } from '../lib/formatMathResponse.js';
+import { isMathQuery } from '../lib/mathQuery.js';
 import { phi3Polish } from './phi3Polish.js';
 
 export type EmitIntent =
@@ -52,6 +54,11 @@ export async function blackHoleEmit(
       ? formatProfessionalMarkdown(cleaned)
       : buildDecisionPlain(cleaned, userInput);
     return { text: decisionText, layer: 'blackhole' };
+  }
+
+  // Preserve step-by-step math layout for KaTeX frontend renderer
+  if (isMathQuery(userInput) || /^step\s+\d+/im.test(cleaned) || /^solving for/mi.test(cleaned)) {
+    return { text: normalizeMathResponse(cleaned), layer: 'blackhole' };
   }
 
   // Preserve markdown structure for professional chat responses

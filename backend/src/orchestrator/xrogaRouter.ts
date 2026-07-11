@@ -133,7 +133,7 @@ export class XrogaRouter {
         if (local) {
           onProgress?.('blackhole', 'Formatting your solution');
           return {
-            text: formatPlainProfessional(local),
+            text: local,
             provider: 'xroga-math',
             councilLayer: 'blackhole',
             intent: 'stem',

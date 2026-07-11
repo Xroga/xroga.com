@@ -7,6 +7,10 @@ import { phase1Logger } from './logger.js';
 import { estimateCost } from './models.js';
 import type { Phase1ChatRequest, Phase1ChatResponse, Phase1ErrorResponse } from './types.js';
 import { runLiveResearch } from '../lib/liveResearch.js';
+import { isMathQuery } from '../lib/mathQuery.js';
+import { trySolveMathLocally } from '../lib/mathSolver.js';
+import { normalizeMathResponse } from '../lib/formatMathResponse.js';
+import { PHASE1_MATH_SYSTEM } from '../prompts/xrogaResponseFormat.js';
 
 const MODEL_NAME_PATTERN =
   /\b(deepseek|grok|claude|anthropic|xai|sonnet|opus|flash|pro|gpt|openai|gemini|llama|mistral)\b/gi;
@@ -52,8 +56,26 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
 
   phase1Logger.info('Processing message', { userId, messageLength: message.length });
 
+  const mathQuery = isMathQuery(message);
+
+  if (mathQuery) {
+    const local = trySolveMathLocally(message);
+    if (local) {
+      const usage = await recordUsage(userId, Math.ceil(message.length / 4), 64);
+      phase1Logger.info('Math solved locally', { userId });
+      return {
+        ok: true,
+        data: {
+          response: local,
+          intent: 'deep_reasoning',
+          usage,
+        },
+      };
+    }
+  }
+
   const intent = await classifyIntent(message);
-  const plan = buildRoutingPlan(intent, message);
+  const plan = buildRoutingPlan(intent, message, mathQuery);
 
   let liveResearch = await runLiveResearch(message, { intent });
   if (!liveResearch && (intent === 'business_advice' || intent === 'deep_reasoning')) {
@@ -86,7 +108,7 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     role: 'primary' | 'secondary',
     context?: string
   ) => {
-    let systemPrompt = getSystemPromptForIntent(intent, role);
+    let systemPrompt = getSystemPromptForIntent(intent, role, mathQuery);
     if (liveResearch?.context) {
       systemPrompt = `${systemPrompt}\n\n${liveResearch.context}`;
     }
@@ -135,7 +157,7 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     }
 
     const rawResponse = combineOutputs(outputs);
-    const response = sanitizeResponse(rawResponse);
+    const response = sanitizeResponse(mathQuery ? normalizeMathResponse(rawResponse) : rawResponse);
 
     const usage = await recordUsage(userId, totalInput, totalOutput);
 

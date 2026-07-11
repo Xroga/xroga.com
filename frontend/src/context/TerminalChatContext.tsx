@@ -13,6 +13,7 @@ import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, ApiError, type ChatAttachment, api } from '@/lib/api';
 import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
+import { isMathQueryPrompt } from '@/lib/mathDetect';
 import { streamTextReveal } from '@/lib/streamText';
 import type { SwarmProgressEvent } from '@/lib/swarm';
 import { useAppStore } from '@/store/useAppStore';
@@ -850,16 +851,23 @@ export function TerminalChatProvider({
 
         if (usePhase1Engine) {
           setPipelineCompact(false);
-          setPipelineMessage('Searching live sources…');
+          const mathPrompt = isMathQueryPrompt(displayPrompt);
+          setPipelineMessage(mathPrompt ? 'Working through the math…' : 'Searching live sources…');
           setSwarmStatusLabel('XROGA AI');
           setSwarmActiveAgent('architect');
-          thinkingStepsRef.current = [
-            'Searching the web (SearXNG + YouTube)',
-            'Analyzing your question',
-            'Composing professional response',
-          ];
+          thinkingStepsRef.current = mathPrompt
+            ? [
+                'Reading your math problem',
+                'Working through each step',
+                'Formatting a clear solution',
+              ]
+            : [
+                'Searching the web (SearXNG + YouTube)',
+                'Analyzing your question',
+                'Composing professional response',
+              ];
           setThinkingSteps([...thinkingStepsRef.current]);
-          pushSwarmTerminalLine('Live research → professional answer…');
+          pushSwarmTerminalLine(mathPrompt ? 'Math solver → step-by-step solution…' : 'Live research → professional answer…');
 
           const result = await api.phase1.chat(displayPrompt, history);
           gotEvent = true;
