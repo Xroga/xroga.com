@@ -1,13 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ExternalLink, GitBranch, CheckCircle2, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { getSelectedRepoContext } from '@/lib/repoContext';
 import { normalizeBuildFiles } from '@/lib/normalizeBuildSource';
-import { BuildCodeSandbox } from './BuildCodeSandbox';
 import { auditLandingSite, LANDING_UPDATE_SUGGESTIONS } from '@/lib/siteHealthAudit';
 import { useTerminalChat } from '@/context/TerminalChatContext';
+import { PostBuildDashboard } from './PostBuildDashboard';
 
 export interface LandingPageOutputData {
   type: 'landing_page';
@@ -192,174 +191,34 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
       .finally(() => setAutoDeploying(false));
   }, [liveUrl, normalized.html, normalized.css, normalized.js, projectSlug, data, onPreviewUpdate, siteAudit]);
 
+  function handleFixIssue(prompt: string) {
+    setPrompt(`Update my live website: ${prompt}`);
+    void submit();
+  }
+
+  function handleSuggestion(text: string) {
+    setPrompt(`Update my live website: ${text}`);
+    void submit();
+  }
+
   return (
-    <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
-      <div className="px-3 py-2.5 border-b border-[var(--card-border)] bg-[var(--accent)]/10">
-        <p className="text-sm font-bold text-[var(--accent)]">🎉 Your project is complete!</p>
-      </div>
-
-      <div className="px-3 py-3 border-b border-white/10 bg-black/10">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]/70 mb-2">
-          📌 Summary
-        </p>
-        <ul className="space-y-1.5 text-[11px] text-[var(--foreground)]/85">
-          <li className="flex gap-2">
-            <span className="text-[var(--muted)] shrink-0">Name:</span>
-            <span className="font-medium">{projectName}</span>
-          </li>
-          <li className="flex gap-2">
-            <span className="text-[var(--muted)] shrink-0">Repo:</span>
-            <span>{resolvedRepoName || 'Select repo in chatbar'}</span>
-          </li>
-          <li className="flex gap-2">
-            <span className="text-[var(--muted)] shrink-0">Pages:</span>
-            <span>{pages.join(', ')}</span>
-          </li>
-          <li className="flex gap-2">
-            <span className="text-[var(--muted)] shrink-0">Design:</span>
-            <span>{designTheme}</span>
-          </li>
-        </ul>
-        {data.memoryNote && !statusNote && (
-          <p className="mt-2.5 text-[10px] text-[#93c5fd]/80 leading-snug border-t border-white/8 pt-2">
-            💬 {data.memoryNote}
-          </p>
-        )}
-        {(statusNote || pushingGithub) && (
-          <p className="mt-2 text-[10px] text-[#93c5fd]/75 leading-snug flex items-center gap-1.5">
-            {pushingGithub ? <Loader2 className="w-3 h-3 animate-spin shrink-0" /> : null}
-            {statusNote ?? 'Saving to GitHub…'}
-          </p>
-        )}
-      </div>
-
-      <BuildCodeSandbox
-        html={normalized.html}
-        css={normalized.css}
-        js={normalized.js}
-        projectTitle={projectName}
-      />
-
-      <div className="px-3 py-3 border-t border-white/10 bg-black/10 space-y-3">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]/70 mb-2">
-            🔧 Site health — {siteAudit.score}/100
-          </p>
-          {siteAudit.working.length > 0 ? (
-            <ul className="flex flex-wrap gap-1.5 mb-2">
-              {siteAudit.working.map((w) => (
-                <li key={w} className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400">
-                  ✓ {w}
-                </li>
-              ))}
-            </ul>
-          ) : null}
-          {siteAudit.issues.length > 0 ? (
-            <ul className="space-y-2">
-              {siteAudit.issues.map((issue) => (
-                <li
-                  key={issue.id}
-                  className="text-[10px] leading-snug p-2 rounded-lg bg-white/5 border border-white/8"
-                >
-                  <span
-                    className={
-                      issue.severity === 'error'
-                        ? 'text-red-400'
-                        : issue.severity === 'warn'
-                          ? 'text-amber-400'
-                          : 'text-[#93c5fd]'
-                    }
-                  >
-                    {issue.area}: {issue.message}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPrompt(`Update my live website: ${issue.fixPrompt}`);
-                      void submit();
-                    }}
-                    className="mt-1 block text-[9px] text-[#006aff] hover:underline text-left"
-                  >
-                    → Fix this for me
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-[10px] text-emerald-400/90">All core checks passed.</p>
-          )}
-        </div>
-
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]/70 mb-2">
-            ✨ Suggested updates (edits your current GitHub files)
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {updateSuggestions.slice(0, 6).map((suggestion) => (
-              <button
-                key={suggestion}
-                type="button"
-                onClick={() => {
-                  setPrompt(`Update my live website: ${suggestion}`);
-                  void submit();
-                }}
-                className="text-[9px] px-2.5 py-1 rounded-full bg-[#006aff]/15 text-[#93c5fd] border border-[#006aff]/30 hover:bg-[#006aff]/25 transition-colors"
-              >
-                {suggestion}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="p-3 flex flex-col gap-2 border-t border-[var(--card-border)]">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]/70">
-          🚀 Auto-deployment (Vercel + Cloudflare)
-        </p>
-
-        {liveUrl ? (
-          <a
-            href={liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--background)] text-xs font-bold hover:opacity-90 transition-opacity"
-          >
-            <ExternalLink className="w-3.5 h-3.5" />
-            Visit live site — {liveUrl.replace(/^https?:\/\//, '').slice(0, 48)}
-          </a>
-        ) : (
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--card-border)] bg-[var(--foreground)]/5 text-xs text-[var(--muted)]">
-            {autoDeploying ? <Loader2 className="w-3.5 h-3.5 animate-spin text-[var(--accent)]" /> : null}
-            {autoDeploying ? 'Deploying automatically…' : 'Deployment will complete shortly'}
-          </div>
-        )}
-
-        {githubFilesUrl ? (
-          <a
-            href={githubFilesUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 w-full px-3 py-2 rounded-lg bg-white/5 text-[var(--foreground)]/80 text-xs font-medium hover:bg-white/10 transition-colors"
-          >
-            <GitBranch className="w-3.5 h-3.5" />
-            📂 View Files on GitHub
-            <span className="text-[10px] opacity-70">
-              ({resolvedRepoName}{githubPushed ? ' — pushed' : ''})
-            </span>
-          </a>
-        ) : null}
-
-        <ul className="flex flex-wrap gap-x-3 gap-y-1 pt-1">
-          {['Homepage', 'Menu', data.needsPayment !== false ? 'Ordering' : null, 'Gallery', 'Contact', 'Responsive']
-            .filter(Boolean)
-            .map((step) => (
-              <li key={step} className="flex items-center gap-1 text-[9px] text-emerald-400/90">
-                <CheckCircle2 className="w-3 h-3" />
-                {step}
-              </li>
-            ))}
-        </ul>
-      </div>
-    </div>
+    <PostBuildDashboard
+      data={data}
+      projectName={projectName}
+      pages={pages}
+      designTheme={designTheme}
+      resolvedRepoName={resolvedRepoName}
+      githubFilesUrl={githubFilesUrl}
+      liveUrl={liveUrl}
+      autoDeploying={autoDeploying}
+      githubPushed={githubPushed}
+      statusNote={statusNote}
+      pushingGithub={pushingGithub}
+      normalized={normalized}
+      siteAudit={siteAudit}
+      updateSuggestions={updateSuggestions}
+      onFixIssue={handleFixIssue}
+      onSuggestion={handleSuggestion}
+    />
   );
 }

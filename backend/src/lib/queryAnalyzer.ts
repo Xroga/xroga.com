@@ -177,17 +177,23 @@ export function analyzeUserQuery(rawInput: string): QueryAnalysis {
   ];
 
   if (vague.vague) {
-    thinkingSteps.push('Need a little more detail before building');
-    return {
-      intentLabel: label,
-      routeHint: hint,
-      thinkingSteps,
-      needsClarification: true,
-      clarificationText: buildClarification(vague.topic ?? 'project'),
-    };
+    const isBuildIntent =
+      hint === 'build' ||
+      /\b(build|create|make|website|web\s*page|landing|site|app|game|store|shop|saas)\b/i.test(input);
+    if (!isBuildIntent) {
+      thinkingSteps.push('Need a little more detail before building');
+      return {
+        intentLabel: label,
+        routeHint: hint,
+        thinkingSteps,
+        needsClarification: true,
+        clarificationText: buildClarification(vague.topic ?? 'project'),
+      };
+    }
+    thinkingSteps.push('Inferring smart defaults — proceeding without delay');
+  } else {
+    thinkingSteps.push('Preparing your answer');
   }
-
-  thinkingSteps.push('Preparing your answer');
 
   return {
     intentLabel: label,

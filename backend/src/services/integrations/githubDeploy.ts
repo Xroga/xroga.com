@@ -656,6 +656,93 @@ export async function fetchBuildFilesFromGitHub(
   ];
 }
 
+export interface GitHubRepoAnalysis {
+  repoName: string;
+  defaultBranch: string;
+  fileCount: number;
+  topLevelEntries: string[];
+  hasBuildFiles: boolean;
+  languages: Record<string, number>;
+  buildFiles: { html: string; css: string; js: string };
+  treeSample: Array<{ path: string; size?: number }>;
+  summary: string;
+}
+
+/** Full repository scan before builds — tree, languages, and core site files. */
+export async function analyzeGitHubRepo(
+  userId: string,
+  repoName: string
+): Promise<GitHubRepoAnalysis> {
+  const integration = await getIntegration(userId);
+  if (!integration?.access_token) throw new Error('GitHub not connected');
+
+  const { owner, repo } = parseRepoName(repoName);
+  const token = integration.access_token;
+
+  const repoRes = await ghFetch(token, `/repos/${owner}/${repo}`);
+  if (!repoRes.ok) throw new Error(`GitHub repo lookup failed: ${repoRes.status}`);
+  const repoMeta = (await repoRes.json()) as { default_branch?: string; language?: string };
+  const defaultBranch = repoMeta.default_branch ?? 'main';
+
+  const langRes = await ghFetch(token, `/repos/${owner}/${repo}/languages`);
+  const languages: Record<string, number> = langRes.ok ? ((await langRes.json()) as Record<string, number>) : {};
+
+  let fileCount = 0;
+  let treeSample: Array<{ path: string; size?: number }> = [];
+  let topLevelEntries: string[] = [];
+
+  const branchRes = await ghFetch(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(defaultBranch)}`);
+  let treeSha: string | null = null;
+  if (branchRes.ok) {
+    const branchData = (await branchRes.json()) as { commit?: { commit?: { tree?: { sha?: string } } } };
+    treeSha = branchData.commit?.commit?.tree?.sha ?? null;
+  }
+
+  if (treeSha) {
+    const treeRes = await ghFetch(token, `/repos/${owner}/${repo}/git/trees/${treeSha}?recursive=1`);
+    if (treeRes.ok) {
+      const tree = (await treeRes.json()) as { tree?: Array<{ path: string; type: string; size?: number }> };
+      const blobs = (tree.tree ?? []).filter((t) => t.type === 'blob');
+      fileCount = blobs.length;
+      treeSample = blobs.slice(0, 60).map((f) => ({ path: f.path, size: f.size }));
+      topLevelEntries = [
+        ...new Set(blobs.map((f) => f.path.split('/')[0]).filter((e): e is string => Boolean(e))),
+      ].slice(0, 24);
+    }
+  }
+
+  let buildFiles = { html: '', css: '', js: '' };
+  let hasBuildFiles = false;
+  try {
+    const files = await fetchBuildFilesFromGitHub(userId, repoName);
+    hasBuildFiles = true;
+    buildFiles = {
+      html: files.find((f) => f.path === 'index.html')?.content ?? '',
+      css: files.find((f) => f.path === 'styles.css')?.content ?? '',
+      js: files.find((f) => f.path === 'script.js')?.content ?? '',
+    };
+  } catch {
+    /* repo may not have static build files yet */
+  }
+
+  const langList = Object.keys(languages).slice(0, 6).join(', ') || repoMeta.language || 'Unknown';
+  const summary = hasBuildFiles
+    ? `Repository ${repoName} (${defaultBranch}): ${fileCount} files. Static site detected (index.html, styles.css, script.js). Languages: ${langList}.`
+    : `Repository ${repoName} (${defaultBranch}): ${fileCount} files. Top-level: ${topLevelEntries.join(', ') || 'empty'}. Languages: ${langList}.`;
+
+  return {
+    repoName,
+    defaultBranch,
+    fileCount,
+    topLevelEntries,
+    hasBuildFiles,
+    languages,
+    buildFiles,
+    treeSample,
+    summary,
+  };
+}
+
 /** Redeploy live preview from code already on GitHub — Vercel preferred, Netlify fallback. */
 export async function redeployPreviewFromGitHub(
   userId: string,

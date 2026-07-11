@@ -25,7 +25,7 @@ import { isWebsiteBuildPrompt, isWebsiteBuildUpdate } from '@/lib/chatMemory';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
 import { VideoProductionAnimation } from './VideoProductionAnimation';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
-import { generateMessageSuggestions, isBuildRelated, primaryDeploySuggestion } from '@/lib/messageHelpers';
+import { generateMessageSuggestions } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { UserProfileBox } from '@/components/profile/UserProfileBox';
 import { TerminalSearchBar } from '@/components/terminal/TerminalSearchBar';
@@ -225,12 +225,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     messageRefs.current[messageId]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  function handleDeploy(userText: string, aiText: string) {
-    const primary = primaryDeploySuggestion(userText, aiText);
-    setPrompt(primary?.prompt ?? '[Deploy] Publish my project to the best platform for this build');
-    toast(primary ? `${primary.label} ready — press GO` : 'Deploy prompt added — press GO', { icon: '🚀' });
-  }
-
   function handleSuggestion(text: string) {
     setPrompt(text);
     toast('Suggestion added — press GO', { icon: '💡' });
@@ -333,12 +327,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           {visibleMessages.map((msg) => {
             const isLastAssistant = msg.id === lastAssistantId && !loading;
             const showSuggestions = isLastAssistant && msg.role === 'assistant';
-            const showDeploy =
-              !isIncognito &&
-              msg.role === 'assistant' &&
-              !loading &&
-              isBuildRelated(msg.content, lastUserText);
-            const deploySuggestion = showDeploy ? primaryDeploySuggestion(lastUserText, msg.content) : null;
             const isImageOutput =
               msg.featureOutput != null &&
               (msg.featureOutput as { type?: string }).type === 'image';
@@ -479,9 +467,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           role="assistant"
                           content={msg.content}
                           messageId={msg.id}
-                          showDeploy={showDeploy}
-                          deployLabel={deploySuggestion?.label ?? 'Deploy'}
-                          onDeploy={() => handleDeploy(lastUserText, msg.content)}
                           onEdit={() => handleEditAI(msg.content)}
                           onFeedback={() => setFeedbackOpen(true)}
                           onDelete={() => deleteTurn(msg.id)}

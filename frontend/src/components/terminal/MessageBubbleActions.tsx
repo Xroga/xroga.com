@@ -7,7 +7,6 @@ import {
   Copy,
   Pencil,
   MessageCircleHeart,
-  Rocket,
   Check,
   Trash2,
   Share2,
@@ -19,10 +18,7 @@ interface MessageBubbleActionsProps {
   role: 'user' | 'assistant';
   content: string;
   messageId: string;
-  showDeploy?: boolean;
-  deployLabel?: string;
   onEdit?: () => void;
-  onDeploy?: () => void;
   onFeedback?: () => void;
   onDelete?: () => void;
 }
@@ -31,10 +27,7 @@ export function MessageBubbleActions({
   role,
   content,
   messageId,
-  showDeploy,
-  deployLabel = 'Deploy',
   onEdit,
-  onDeploy,
   onFeedback,
   onDelete,
 }: MessageBubbleActionsProps) {
@@ -75,7 +68,10 @@ export function MessageBubbleActions({
   }
 
   const btnClass =
-    'p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/10 transition-colors';
+    'p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/10 transition-colors';
+
+  const editBtnClass =
+    'p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors';
 
   return (
     <div
@@ -99,19 +95,13 @@ export function MessageBubbleActions({
             <Share2 className="w-3.5 h-3.5" />
           </button>
           {onEdit && (
-            <button type="button" onClick={onEdit} className={btnClass} aria-label="Edit in chatbar">
+            <button type="button" onClick={onEdit} className={editBtnClass} aria-label="Edit in chatbar">
               <Pencil className="w-3.5 h-3.5" />
             </button>
           )}
           {onFeedback && (
             <button type="button" onClick={onFeedback} className={btnClass} aria-label="Feedback">
               <MessageCircleHeart className="w-3.5 h-3.5" />
-            </button>
-          )}
-          {showDeploy && onDeploy && (
-            <button type="button" onClick={onDeploy} className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-gradient-to-r from-emerald-600 to-emerald-400 text-white hover:opacity-90 transition-opacity">
-              <Rocket className="w-3 h-3" />
-              {deployLabel}
             </button>
           )}
           {onDelete && (

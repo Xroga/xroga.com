@@ -321,7 +321,24 @@ router.delete('/disconnect', async (req: AuthRequest, res) => {
   res.json({ disconnected: true });
 });
 
-/** Redeploy live preview from code already on GitHub — Vercel preferred, Netlify fallback. */
+/** Full repository analysis before builds — tree, languages, and core site files. */
+router.get('/analyze', async (req: AuthRequest, res) => {
+  const repoName = typeof req.query.repoName === 'string' ? req.query.repoName.trim() : '';
+  if (!repoName) {
+    res.status(400).json({ error: 'repoName query required' });
+    return;
+  }
+
+  try {
+    const { analyzeGitHubRepo } = await import('../services/integrations/githubDeploy.js');
+    const analysis = await analyzeGitHubRepo(req.userId!, repoName);
+    res.json(analysis);
+  } catch (e) {
+    res.status(502).json({ error: (e as Error).message });
+  }
+});
+
+/** Pull build files from an existing GitHub repo. */
 router.get('/build-files', async (req: AuthRequest, res) => {
   const repoName = typeof req.query.repoName === 'string' ? req.query.repoName.trim() : '';
   if (!repoName) {

@@ -490,6 +490,18 @@ export const api = {
       apiFetch<{ html: string; css: string; js: string }>(
         `/api/github/build-files?repoName=${encodeURIComponent(repoName)}`
       ),
+    analyzeRepo: (repoName: string) =>
+      apiFetch<{
+        repoName: string;
+        defaultBranch: string;
+        fileCount: number;
+        topLevelEntries: string[];
+        hasBuildFiles: boolean;
+        languages: Record<string, number>;
+        buildFiles: { html: string; css: string; js: string };
+        treeSample: Array<{ path: string; size?: number }>;
+        summary: string;
+      }>(`/api/github/analyze?repoName=${encodeURIComponent(repoName)}`),
   },
   notifications: {
     list: () => apiFetch<Notification[]>('/api/notifications'),
