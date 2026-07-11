@@ -10,7 +10,6 @@ import { generateImage } from '../services/builder/imageGen.js';
 import { runBrowserAutomation } from '../services/automation/browser.js';
 import { crossPost } from '../services/social/crossPost.js';
 import { createApiKey } from '../services/integrations/keyManager.js';
-import { produceVideo } from '../services/media/videoStudio.js';
 import { conductDeepResearch } from '../services/research/deepResearch.js';
 import { activateProtection } from '../services/wellbeing/blocker.js';
 import { huntJobs } from '../services/career/jobHunter.js';
@@ -45,7 +44,7 @@ export class FeatureSwarm extends BaseSwarm {
       browser_automation: 'Convert to Playwright script (free local) with Browserbase fallback',
       cross_post: 'Format and post to social platforms',
       key_creation: 'Navigate dev portal and store encrypted API key',
-      video_studio: 'Script → Characters → Storyboard → Scene rendering (Runway/Luma/Hailuo/Kling/Fal) → Audio → FFmpeg assembly',
+      video_studio: 'Removed — image generation and code builds available',
       deep_research: 'Exa+Tavily search, Gemini synthesis, PDF report with bibliography',
       content_blocker: 'Configure Cloudflare Family DNS + ONNX Runtime protection',
       job_hunter: 'Apify scrape, Claude resume tailoring, Browserbase auto-apply',
@@ -136,22 +135,6 @@ export class FeatureSwarm extends BaseSwarm {
         }
         case 'key_creation':
           output = await createApiKey(context.userId, context.prompt);
-          break;
-        case 'video_studio':
-          output = await produceVideo(context.userId, context.prompt, {
-            projectId: context.projectId,
-            runId: context.runId,
-            onProgress: (step, message, detail) => {
-              this.onProgress?.({
-                runId: context.runId,
-                agent: 'builder',
-                status: 'building',
-                message: detail ?? message,
-                videoStep: step,
-                timestamp: new Date().toISOString(),
-              });
-            },
-          });
           break;
         case 'deep_research':
           output = await conductDeepResearch(context.userId, context.prompt, context.projectId);
@@ -257,10 +240,6 @@ export class FeatureSwarm extends BaseSwarm {
       defects.push({ id: 'rev-key-01', severity: 'critical', category: 'security', description: draft.message, suggestion: 'Retry key creation flow' });
     }
 
-    if (draft.type === 'video_studio' && !draft.streamingUrl) {
-      defects.push({ id: 'rev-vid-01', severity: 'critical', category: 'video', description: 'No streaming URL', suggestion: 'Retry video assembly' });
-    }
-
     if (draft.type === 'deep_research' && !draft.pdfUrl) {
       defects.push({ id: 'rev-res-01', severity: 'critical', category: 'research', description: 'PDF not generated', suggestion: 'Retry research pipeline' });
     }
@@ -313,8 +292,6 @@ export class FeatureSwarm extends BaseSwarm {
       errors.push('Landing page missing HTML');
     } else if (draft.type === 'image' && !draft.imageUrl) {
       errors.push('Image output missing URL');
-    } else if (draft.type === 'video_studio' && !draft.streamingUrl) {
-      errors.push('Video missing streaming URL');
     } else if (draft.type === 'deep_research' && !draft.pdfUrl) {
       errors.push('Research PDF missing');
     } else if (draft.type === 'code_debug' && !draft.success) {

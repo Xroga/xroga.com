@@ -28,12 +28,10 @@ import { routingPrompt } from '../lib/promptRouting.js';
 import { shouldUseFastChat, isTrivialPrompt, requiresFeaturePipeline } from '../lib/promptClassifier.js';
 import { isCapabilitiesQuery } from '../lib/xrogaCapabilities.js';
 import { analyzeUserQuery } from '../lib/queryAnalyzer.js';
-import { formatFeatureOutput, stripFakeImageMarkdown } from '../lib/featureIntent.js';
+import { formatFeatureOutput, stripFakeImageMarkdown, isVideoIntent, VIDEO_REMOVED_MESSAGE } from '../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../services/featureExecutor.js';
 import { resolveAttachmentFeatureCategory } from '../lib/featureIntent.js';
 import { getImageProviderStatus } from '../services/builder/imageGen.js';
-import { getVideoProviderStatus } from '../lib/videoProviders.js';
-import { omniPhaseToVideoStep } from '../services/omniReality/omniEvents.js';
 import {
   runNegotiationEngine,
   runEscapePod,
@@ -393,123 +391,6 @@ export class Orchestrator {
     };
   }
 
-  /** Direct video production — waits for MP4, then returns video_studio to the chat */
-  private static async executeVideoFast(
-    ctx: {
-      userId: string;
-      prompt: string;
-      projectId?: string;
-      onProgress?: (event: SwarmProgressEvent) => void;
-      attachments?: Array<{ url: string; mimeType?: string; name?: string }>;
-      clientMeta?: { assistantMessageId?: string; userMessageId?: string; userPrompt?: string };
-    }
-  ): Promise<SwarmRunResult & { polishedReply: string; fast: true; followUps: string[] }> {
-    const runId = crypto.randomUUID();
-    const userPrompt = ctx.clientMeta?.userPrompt ?? routingPrompt(ctx.prompt);
-    const { produceVideo } = await import('../services/media/videoStudio.js');
-    const { parseVideoDuration } = await import('../services/media/videoUtils.js');
-    const { withVideoDeadline, videoDeadlineMs } = await import('../lib/video/videoDeadline.js');
-    const { moderateUploadedImage } = await import('../lib/video/moderateUploadedImage.js');
-    const { notifyVideoReady } = await import('../services/notificationService.js');
-    const { estimateVideoJobSeconds } = await import('../services/media/videoJobService.js');
-
-    const imageAttachment = ctx.attachments?.find(
-      (a) =>
-        a.mimeType?.startsWith('image/') ||
-        a.url.startsWith('data:image/') ||
-        /\.(png|jpe?g|webp|gif)(\?|$)/i.test(a.url)
-    );
-
-    if (imageAttachment) {
-      const moderation = await moderateUploadedImage(imageAttachment.url, userPrompt);
-      if (!moderation.allowed) {
-        throw new Error(moderation.reason ?? 'This image cannot be used for video generation.');
-      }
-    }
-
-    const estimatedSeconds = estimateVideoJobSeconds(userPrompt);
-    ctx.onProgress?.({
-      runId,
-      agent: 'builder',
-      status: 'building',
-      message: 'Omni-Reality Studio — starting video production…',
-      videoStep: 'scripting',
-      omniPhase: 'trinity_scripting',
-      timestamp: new Date().toISOString(),
-    });
-    ctx.onProgress?.({
-      runId,
-      agent: 'builder',
-      status: 'building',
-      message: `Rendering your video (est. ${Math.ceil(estimatedSeconds / 60)} min)…`,
-      videoStep: 'rendering',
-      timestamp: new Date().toISOString(),
-    });
-
-    const deadlineMs = videoDeadlineMs(parseVideoDuration(userPrompt));
-
-    const output = await withVideoDeadline(
-      produceVideo(ctx.userId, userPrompt, {
-      projectId: ctx.projectId,
-      runId,
-      keyframeUrl: imageAttachment?.url,
-      onProgress: (step, message, detail) => {
-        ctx.onProgress?.({
-          runId,
-          agent: 'builder',
-          status: 'building',
-          message: detail ?? message,
-          videoStep: step,
-          timestamp: new Date().toISOString(),
-        });
-      },
-      onOmniEvent: (event) => {
-        ctx.onProgress?.({
-          runId,
-          agent: 'omni_reality',
-          status: 'building',
-          message: event.detail ?? event.message,
-          videoStep: omniPhaseToVideoStep(event.phase),
-          omniPhase: event.phase,
-          omniDetail: event.detail,
-          timestamp: new Date().toISOString(),
-        });
-      },
-    }),
-      deadlineMs,
-      'produce-video'
-    );
-
-    void notifyVideoReady(ctx.userId, {
-      jobId: runId,
-      title: output.title,
-      prompt: userPrompt,
-      streamingUrl: output.streamingUrl,
-      assistantMessageId: ctx.clientMeta?.assistantMessageId,
-      durationSeconds: output.durationSeconds,
-      outputFormat: output.outputFormat,
-    }).catch((err) => console.warn('[VideoFast] notify failed:', (err as Error).message));
-
-    const reply = formatFeatureOutput(output);
-
-    return {
-      runId,
-      fast: true,
-      result: {
-        success: true,
-        iterations: 0,
-        defectsFound: 0,
-        plan: defaultPlan(),
-        agents: defaultAgents(['builder']),
-        output,
-      },
-      actions: { success: true, remaining: 0, cost: output.actionCost },
-      featureCategory: 'video_studio',
-      polishedReply: reply,
-      followUps: output.followUps ?? ['Add subtitles?', 'Generate episode 2?'],
-    };
-  }
-
   static async executeSafe(
     runFn: () => Promise<SwarmRunResult>,
     ctx: {
@@ -694,118 +575,25 @@ export class Orchestrator {
       }
     }
 
-    // Video fast path — full movie pipeline with fallback chains
-    if (featureCategory === 'video_studio') {
-      try {
-        return await this.executeVideoFast(ctx);
-      } catch (vidErr) {
-        await logSystemError({
-          api: 'video_gen',
-          errorMessage: (vidErr as Error).message,
-          fallbackUsed: 'video-emergency-fallback',
-          severity: 'error',
-          userId: ctx.userId,
-        });
-
-        const userPrompt = ctx.clientMeta?.userPrompt ?? routingPrompt(ctx.prompt);
-        try {
-          const { generateLtxHfVideo } = await import('../lib/video/ltxHfVideo.js');
-          const { parseVideoDuration, computeVideoActionCost } = await import('../services/media/videoUtils.js');
-          const { storeUserFile } = await import('../services/storage/projectFiles.js');
-          const durationSeconds = parseVideoDuration(userPrompt);
-          const aspect = /shorts_reels/i.test(userPrompt) ? '9:16' as const : '16:9' as const;
-
-          ctx.onProgress?.(
-            progressEvent('builder', 'building', 'Emergency fallback — delivering playable video…', {
-              videoStep: 'rendering',
-              omniPhase: 'parallax_fallback',
-            })
-          );
-
-          let emergency;
-          try {
-            emergency = await generateLtxHfVideo(userPrompt, durationSeconds, aspect);
-          } catch {
-            const { generateGuaranteedVideo } = await import('../lib/video/guaranteedVideo.js');
-            emergency = await generateGuaranteedVideo(userPrompt, durationSeconds, {
-              userId: ctx.userId,
-              aspectRatio: aspect,
-            });
-          }
-
-          let streamingUrl = emergency.videoUrl;
-          if (streamingUrl.startsWith('http') || streamingUrl.startsWith('data:video/')) {
-            try {
-              const { downloadVideoBuffer } = await import('../lib/ffmpeg.js');
-              const buffer = await downloadVideoBuffer(streamingUrl);
-              const stored = await storeUserFile(ctx.userId, `video-emergency-${Date.now()}.mp4`, buffer, 'video/mp4');
-              streamingUrl = stored.playbackUrl || stored.fileUrl;
-            } catch {
-              /* use source url */
-            }
-          }
-
-          const output = {
-            type: 'video_studio' as const,
-            title: userPrompt.slice(0, 80) || 'Xroga Video',
-            streamingUrl,
-            durationSeconds: emergency.durationSeconds || durationSeconds,
-            actionCost: computeVideoActionCost(durationSeconds),
-            selectedProvider: emergency.provider,
-            providersUsed: [emergency.provider],
-            followUps: ['Try again with more detail?', 'Add subtitles?'],
-          };
-
-          return {
-            runId: crypto.randomUUID(),
-            fast: true,
-            result: {
-              success: true,
-              iterations: 0,
-              defectsFound: 0,
-              plan: defaultPlan(),
-              agents: defaultAgents(['builder']),
-              output,
-            },
-            actions: { success: true, remaining: 0, cost: output.actionCost },
-            featureCategory: 'video_studio',
-            polishedReply: formatFeatureOutput(output),
-            followUps: output.followUps,
-          };
-        } catch (fallbackErr) {
-          console.error('[VideoFast] Emergency fallback failed:', (fallbackErr as Error).message);
-        }
-
-        const status = getVideoProviderStatus();
-        const errMsg = (vidErr as Error).message;
-        const fallbackText = status.ready
-          ? `Video production encountered an issue. Server sees keys for: ${status.configured.join(', ')}. The pipeline will retry with fallback providers.`
-          : `Video production is starting with available fallbacks. Configure RUNWAY_API_KEY, LUMA_API_KEY, AGNES_API_KEY, or KLING_API_KEY on Fly.io for best quality.`;
-
-        const shield = await runThreeLayerShield({
-          content: `${fallbackText}\n\n${errMsg.slice(0, 120)}`,
-          prompt: ctx.prompt,
-          userId: ctx.userId,
-          includeProsCons: false,
-        });
-
-        return {
-          runId: crypto.randomUUID(),
-          fast: true,
-          result: {
-            success: false,
-            iterations: 0,
-            defectsFound: 0,
-            plan: defaultPlan(),
-            agents: defaultAgents(['builder']),
-            output: { type: 'chat', content: shield.content } as FeatureOutput,
-          },
-          actions: { success: true, remaining: 0, cost: 0 },
-          featureCategory: 'video_studio',
-          polishedReply: shield.content,
-          followUps: shield.followUps,
-        };
-      }
+    // Video generation removed — offer image generation instead
+    if (featureCategory === 'video_studio' || isVideoIntent(ctx.prompt)) {
+      const content = VIDEO_REMOVED_MESSAGE;
+      return {
+        runId: crypto.randomUUID(),
+        fast: true,
+        result: {
+          success: true,
+          iterations: 0,
+          defectsFound: 0,
+          plan: defaultPlan(),
+          agents: defaultAgents(['builder']),
+          output: { type: 'chat', content } as FeatureOutput,
+        },
+        actions: { success: true, remaining: 0, cost: 0 },
+        featureCategory: 'chat',
+        polishedReply: content,
+        followUps: ['Generate an image for me', 'Build a website', 'Create a logo'],
+      };
     }
 
     // 9-Phase AI Swarm Logic — website/app builds always enter negotiation first

@@ -38,7 +38,6 @@ import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import toast from 'react-hot-toast';
 import { sanitizePlainAiText } from '@/lib/plainAiText';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
-import { isVideoGenerationPrompt, estimateVideoSeconds } from '@/lib/parseImageContent';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
 import { GitHubActivationOverlay } from '@/components/terminal/GitHubActivationOverlay';
@@ -49,9 +48,7 @@ import {
   markGitHubConnectedSession,
   sanitizeXrogaTerminalText,
 } from '@/lib/xrogaBrand';
-import { addPendingVideoJob } from '@/lib/pendingVideoJobs';
 import { addPendingBuildJob, removePendingBuildJob } from '@/lib/pendingBuildJobs';
-import { useBackgroundVideoJobs } from '@/hooks/useBackgroundVideoJobs';
 import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
 import { useBuildCompletionAlerts } from '@/hooks/useBuildCompletionAlerts';
 import { requestBuildNotificationPermission, showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
@@ -95,10 +92,6 @@ interface TerminalChatContextValue {
   thinkingStartedAt: number | null;
   imageProgressStep: string | null;
   imageAttempts: Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>;
-  videoProgressStep: string | null;
-  videoOmniPhase: string | null;
-  videoEstimateSeconds: number | null;
-  videoStartedAt: number | null;
   followUps: string[];
   reasoning: string | null;
   dag: Array<{ id: string; description: string; agent: string }> | null;
@@ -163,10 +156,6 @@ export function TerminalChatProvider({
   const [imageAttempts, setImageAttempts] = useState<
     Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>
   >([]);
-  const [videoProgressStep, setVideoProgressStep] = useState<string | null>(null);
-  const [videoOmniPhase, setVideoOmniPhase] = useState<string | null>(null);
-  const [videoEstimateSeconds, setVideoEstimateSeconds] = useState<number | null>(null);
-  const [videoStartedAt, setVideoStartedAt] = useState<number | null>(null);
   const [followUps, setFollowUps] = useState<string[]>([]);
   const [reasoning, setReasoning] = useState<string | null>(null);
   const [dag, setDag] = useState<Array<{ id: string; description: string; agent: string }> | null>(null);
@@ -235,25 +224,6 @@ export function TerminalChatProvider({
   );
 
   queueRef.current = promptQueue;
-
-  useBackgroundVideoJobs(
-    ({ assistantMessageId, output }) => {
-      setMessages((m) =>
-        m.map((msg) =>
-          msg.id === assistantMessageId ? { ...msg, content: '', featureOutput: output } : msg
-        )
-      );
-      toast.success('Your video is ready!');
-    },
-    (_jobId, assistantMessageId, error) => {
-      setMessages((m) =>
-        m.map((msg) =>
-          msg.id === assistantMessageId ? { ...msg, content: error, featureOutput: undefined } : msg
-        )
-      );
-      toast.error('Video generation failed');
-    }
-  );
 
   useBackgroundBuildJobs(
     ({ assistantMessageId, output }) => {
@@ -695,8 +665,6 @@ export function TerminalChatProvider({
         setPipelineMessage(null);
         setImageProgressStep(null);
         setImageAttempts([]);
-        setVideoProgressStep(null);
-        setVideoOmniPhase(null);
       } else if (loading && !fromQueue) {
         enqueuePrompt(userPrompt);
         setPrompt('');
@@ -727,7 +695,7 @@ export function TerminalChatProvider({
       const assistantId = crypto.randomUUID();
       const displayPrompt =
         userPrompt ||
-        (attachments?.length ? defaultImageAttachmentPrompt('', true) : '');
+        (attachments?.length ? defaultImageAttachmentPrompt('') : '');
       lastTurnRef.current = { userMessageId, assistantId, text: displayPrompt };
       setMessages((m) => [
         ...m,
@@ -752,10 +720,6 @@ export function TerminalChatProvider({
       setThinkingStartedAt(Date.now());
       setImageProgressStep(null);
       setImageAttempts([]);
-      setVideoProgressStep(null);
-      setVideoOmniPhase(null);
-      setVideoEstimateSeconds(isVideoGenerationPrompt(displayPrompt) ? estimateVideoSeconds(displayPrompt) : null);
-      setVideoStartedAt(isVideoGenerationPrompt(displayPrompt) ? Date.now() : null);
       setFollowUps([]);
       setReasoning(null);
       setDag(null);
@@ -775,7 +739,7 @@ export function TerminalChatProvider({
         !(completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) &&
         !(activeWebsiteBuildRef.current && looksLikeBuildClarificationAnswer(displayPrompt)) &&
         !buildPromptActive &&
-        (isVideoGenerationPrompt(displayPrompt) || isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt));
+        (isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt));
       setPipelineCompact(useCompactPipeline);
 
       if (buildPromptActive) {
@@ -794,12 +758,6 @@ export function TerminalChatProvider({
           startedAt: Date.now(),
         });
         void requestBuildNotificationPermission();
-      }
-
-      if (isVideoGenerationPrompt(displayPrompt)) {
-        setPipelineMessage('Omni-Reality Studio — starting video production…');
-        setVideoOmniPhase('trinity_scripting');
-        setVideoProgressStep('scripting');
       }
 
       let gotEvent = false;
@@ -936,8 +894,6 @@ export function TerminalChatProvider({
                 return [...prev, event.imageAttempt!].slice(0, 4);
               });
             }
-            if (event.videoStep) setVideoProgressStep(event.videoStep);
-            if ((event as { omniPhase?: string }).omniPhase) setVideoOmniPhase((event as { omniPhase?: string }).omniPhase ?? null);
             if (event.message) setPipelineMessage(sanitizeXrogaTerminalText(event.message));
             const layer = (event as { councilLayer?: 'elite' | 'reserve' | 'blackhole' }).councilLayer;
             if (layer) setCouncilLayer(layer);
@@ -969,28 +925,6 @@ export function TerminalChatProvider({
             }
             if (swarmEv.swarmTodos?.some((t) => t.id === 'github' && t.status === 'done')) {
               skipGithubGateRef.current = false;
-            }
-            const pendingVideo = isVideoGenerationPrompt(displayPrompt);
-            if (pendingVideo && event.message) {
-              setMessages((m) =>
-                m.map((msg) => {
-                  if (msg.id !== assistantId) return msg;
-                  const fo = msg.featureOutput as Record<string, unknown> | undefined;
-                  if (fo?.type !== 'video_job_pending') return msg;
-                  return {
-                    ...msg,
-                    featureOutput: {
-                      ...fo,
-                      message: event.message,
-                      progress: {
-                        step: event.videoStep ?? fo.progress,
-                        message: event.message,
-                        omniPhase: (event as { omniPhase?: string }).omniPhase,
-                      },
-                    },
-                  };
-                })
-              );
             }
             const ev = event as SwarmProgressEvent & { dag?: typeof dag; thinking?: string };
             if (ev.thinking && !useCompactPipeline) setReasoning(ev.thinking);
@@ -1120,56 +1054,6 @@ export function TerminalChatProvider({
                 m.map((msg) => (msg.id === assistantId ? { ...msg, content: buildError } : msg))
               );
             }
-            if (output?.type === 'video_job_pending' && typeof output.jobId === 'string') {
-              const startedAt = Date.now();
-              const estimatedSeconds =
-                typeof output.estimatedSeconds === 'number' ? output.estimatedSeconds : 120;
-              const pendingOutput = { ...output, startedAt, userPrompt: displayPrompt };
-              addPendingVideoJob({
-                jobId: output.jobId as string,
-                assistantMessageId: assistantId,
-                userMessageId,
-                userPrompt: displayPrompt,
-                estimatedSeconds,
-                startedAt,
-              });
-              setMessages((m) =>
-                m.map((msg) =>
-                  msg.id === assistantId
-                    ? { ...msg, content: '', featureOutput: pendingOutput }
-                    : msg
-                )
-              );
-              return;
-            }
-            if (output?.type === 'video_studio') {
-              const streamUrl =
-                typeof output.streamingUrl === 'string'
-                  ? output.streamingUrl
-                  : typeof output.videoUrl === 'string'
-                    ? output.videoUrl
-                    : null;
-              if (streamUrl) {
-                const videoOutput = { ...output, streamingUrl: streamUrl, prompt: userPrompt };
-                setMessages((m) => {
-                  const updated = m.map((msg) =>
-                    msg.id === assistantId
-                      ? { ...msg, content: '', featureOutput: videoOutput }
-                      : msg
-                  );
-                  addMediaItem({
-                    name: String(output.title ?? 'Xroga video').slice(0, 40),
-                    type: 'video',
-                    url: streamUrl,
-                    sourceMessageId: assistantId,
-                    sourcePrompt: userPrompt,
-                    messagesSnapshot: updated,
-                  });
-                  return updated;
-                });
-                return;
-              }
-            }
             const text = complete.output
               ? (() => {
                   const o = complete.output as {
@@ -1275,23 +1159,6 @@ export function TerminalChatProvider({
             })
           );
         }
-        if (turn && isVideoGenerationPrompt(turn.text) && !interruptRef.current) {
-          setMessages((m) => {
-            const assistant = m.find((msg) => msg.id === turn.assistantId);
-            if (assistant && !assistant.featureOutput && !assistant.content?.trim()) {
-              return m.map((msg) =>
-                msg.id === turn.assistantId
-                  ? {
-                      ...msg,
-                      content:
-                        'Video took longer than expected. Please try again — if this persists, ensure the latest backend is deployed.',
-                    }
-                  : msg
-              );
-            }
-            return m;
-          });
-        }
         if (!incognito && turn && !interruptRef.current) {
           setMessages((current) => {
             try {
@@ -1331,8 +1198,6 @@ export function TerminalChatProvider({
         setThinkingStartedAt(null);
         setImageProgressStep(null);
         setImageAttempts([]);
-        setVideoProgressStep(null);
-        setVideoOmniPhase(null);
         setPipelineCompact(false);
         interruptRef.current = false;
         if (skipNextQueueRef.current) {
@@ -1382,10 +1247,6 @@ export function TerminalChatProvider({
         thinkingStartedAt,
         imageProgressStep,
         imageAttempts,
-        videoProgressStep,
-        videoOmniPhase,
-        videoEstimateSeconds,
-        videoStartedAt,
         pipelineCompact,
         swarmNegotiationPhase,
         swarmTodos,

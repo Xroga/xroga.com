@@ -265,7 +265,7 @@ export function MediaPageClient() {
             <ImageIcon className="w-12 h-12 mx-auto text-[var(--muted)] mb-4 opacity-50" />
             <p className="text-sm text-[var(--muted)]">No media yet in this view.</p>
             <p className="text-xs text-[var(--muted)] mt-2">
-              Ask Xroga to generate images, video, or audio — they appear here automatically.
+              Ask Xroga to generate images or audio — they appear here automatically.
             </p>
           </div>
         ) : (

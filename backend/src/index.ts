@@ -15,7 +15,6 @@ import wellbeingRouter from './routes/wellbeing.js';
 import githubRouter from './routes/github.js';
 import vercelRouter from './routes/vercel.js';
 import notificationsRouter from './routes/notifications.js';
-import videoJobsRouter from './routes/videoJobs.js';
 import billingRouter from './routes/billing.js';
 import billingWebhookRouter from './routes/billingWebhook.js';
 import simpleChatRouter from './routes/simpleChat.js';
@@ -33,7 +32,6 @@ import adminRouter from './routes/admin.js';
 import { metricsMiddleware, getMetricsText } from './middleware/metricsMiddleware.js';
 import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
-import videoRouter from './routes/video.js';
 import { adminMiddleware } from './middleware/admin.js';
 import { startSwarmWorker } from './workers/swarmWorker.js';
 import { attachVoiceWebSocket } from './services/voice/voiceWebSocket.js';
@@ -88,7 +86,6 @@ app.use('/api/billing/webhook', billingWebhookRouter);
 app.use(express.json({ limit: '10mb' }));
 
 import { getImageProviderStatus } from './services/builder/imageGen.js';
-import { getVideoProviderStatus } from './lib/videoProviders.js';
 import { getCouncilKeyStatus, getDeployKeyStatus, getPhase1KeyStatus } from './config/envSecrets.js';
 import { getGitHubOAuthCallbackUrl } from './routes/github.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
@@ -97,7 +94,6 @@ import { ensureDashboardSchema } from './db/ensureDashboardSchema.js';
 
 const healthPayload = () => {
   const image = getImageProviderStatus();
-  const video = getVideoProviderStatus();
   return {
     status: 'ok',
     service: 'xroga-api',
@@ -120,9 +116,7 @@ const healthPayload = () => {
     imageProviders: image.configured,
     imageReady: image.ready,
     imageKeys: image.keys,
-    videoProviders: video.configured,
-    videoReady: video.ready,
-    videoKeys: video.keys,
+    videoGeneration: 'removed',
     githubSchemaAutoBootstrap: githubSchemaAutoBootstrapEnabled(),
   };
 };
@@ -156,83 +150,6 @@ app.get('/api/health/smoke-image', async (req, res) => {
     const all = req.query.all === '1' ? await smokeTestAllImageProviders() : undefined;
     const full = req.query.full === '1' ? await smokeTestFullPipeline() : undefined;
     res.json({ ...healthPayload(), smoke: quick, allProviders: all, fullPipeline: full });
-  } catch (err) {
-    res.status(500).json({
-      ...healthPayload(),
-      smoke: { ok: false, error: (err as Error).message, tried: [] },
-    });
-  }
-});
-
-app.get('/api/health/omni-reality', async (_req, res) => {
-  try {
-    const { getOmniRealityStatus, getCreditVaultStatus } = await import('./services/omniReality/index.js');
-    const { getVideoKeyStatus } = await import('./config/envSecrets.js');
-    const { getVideoProviderStatus } = await import('./lib/videoProviders.js');
-    res.json({
-      ...healthPayload(),
-      omniReality: getOmniRealityStatus(),
-      creditVault: getCreditVaultStatus(),
-      flySecrets: getVideoKeyStatus(),
-      videoProviders: getVideoProviderStatus(),
-    });
-  } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
-  }
-});
-
-app.get('/api/health/hf-video-spaces', async (_req, res) => {
-  try {
-    const { getHfSpacesCatalog } = await import('./lib/video/videoOrchestrator.js');
-    res.json({
-      tier: 'Tier 0 — community HF Spaces ($0)',
-      spaces: getHfSpacesCatalog(),
-      hfTokenConfigured: Boolean(
-        (await import('./config/envSecrets.js')).hasSecret('HF_TOKEN')
-      ),
-    });
-  } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
-  }
-});
-
-app.get('/api/health/oss-video-catalog', async (_req, res) => {
-  try {
-    const { OPEN_SOURCE_VIDEO_CATALOG } = await import('./lib/video/openSourceVideoCatalog.js');
-    const { getVideoProviderStatus } = await import('./lib/videoProviders.js');
-    const status = getVideoProviderStatus();
-    res.json({
-      catalog: OPEN_SOURCE_VIDEO_CATALOG,
-      configured: status.configured,
-      ready: status.ready,
-      keys: status.keys,
-    });
-  } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
-  }
-});
-
-app.get('/api/health/smoke-video', async (_req, res) => {
-  try {
-    const { smokeTestVideoGeneration } = await import('./lib/videoProviders.js');
-    const smoke = await smokeTestVideoGeneration();
-    if (smoke.ok) {
-      res.json({ ...healthPayload(), smoke });
-      return;
-    }
-    const { generateGuaranteedVideo } = await import('./lib/video/guaranteedVideo.js');
-    const guaranteed = await generateGuaranteedVideo('Smoke test: calm ocean waves at sunset', 3);
-    res.json({
-      ...healthPayload(),
-      smoke: {
-        ok: true,
-        provider: guaranteed.provider,
-        fallback: true,
-        tried: [...(smoke.tried ?? []), 'guaranteed'],
-        apiErrors: smoke.error,
-        providerErrors: smoke.errors,
-      },
-    });
   } catch (err) {
     res.status(500).json({
       ...healthPayload(),
@@ -288,8 +205,6 @@ app.use('/api/chat', authMiddleware, chatRouter);
 app.use('/api/projects', authMiddleware, projectsRouter);
 app.use('/api/profile', authMiddleware, profileRouter);
 app.use('/api/media', authMiddleware, mediaRouter);
-app.use('/api/video/jobs', authMiddleware, videoJobsRouter);
-app.use('/api/video', authMiddleware, videoRouter);
 app.use('/api/debug', authMiddleware, debugRouter);
 app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
 app.use('/api/github', authMiddleware, githubRouter);

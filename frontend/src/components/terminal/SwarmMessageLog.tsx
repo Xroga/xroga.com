@@ -20,11 +20,10 @@ import { ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
 import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
-import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
+import { isImageGenerationPrompt } from '@/lib/parseImageContent';
 import { isWebsiteBuildActive } from '@/lib/chatMemory';
 import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
-import { VideoProductionAnimation } from './VideoProductionAnimation';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -51,7 +50,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, swarmActivityLog, imageProgressStep, imageAttempts, videoProgressStep, videoOmniPhase, videoEstimateSeconds, videoStartedAt, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput } =
+  const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, swarmActivityLog, imageProgressStep, imageAttempts, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -204,13 +203,10 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     return '';
   }, [messages]);
 
-  const isVideoLoading = loading && isVideoGenerationPrompt(lastUserText);
-
   const buildPromptActive = isWebsiteBuildActive(lastUserText, messages);
 
   const showChatThinking =
     loading &&
-    !isVideoLoading &&
     !isImageGenerationPrompt(lastUserText) &&
     !buildPromptActive &&
     pipelineCompact;
@@ -428,28 +424,13 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             defaultExpanded={loading && msg.id === animatingId}
                           />
                         )}
-                        {loading &&
-                        msg.id === animatingId &&
-                        isVideoGenerationPrompt(lastUserText) &&
-                        !msg.featureOutput ? (
-                          <VideoProductionAnimation
-                            message={pipelineMessage ?? undefined}
-                            step={videoProgressStep ?? undefined}
-                            omniPhase={videoOmniPhase}
-                            estimatedSeconds={videoEstimateSeconds ?? 120}
-                            startedAt={videoStartedAt ?? Date.now()}
-                            sublabel="Your video will appear here when rendering finishes"
-                          />
-                        ) : msg.featureOutput ? (
+                        {msg.featureOutput ? (
                           <ChatErrorBoundary>
                             <FeatureOutputView
                               output={msg.featureOutput}
                               messageId={msg.id}
                               onDelete={() => deleteTurn(msg.id)}
                               onPreviewUpdate={updateFeatureOutput}
-                              onVideoJobResolved={(video) => {
-                                updateFeatureOutput(msg.id, video);
-                              }}
                             />
                           </ChatErrorBoundary>
                         ) : loading &&

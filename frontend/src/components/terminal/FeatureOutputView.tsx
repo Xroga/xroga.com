@@ -2,26 +2,31 @@
 
 import { ImageStudioCard, type ImageOutputData } from './ImageStudioCard';
 import { ImageBlockedCard } from './ImageBlockedCard';
-import { VideoStudioCard, type VideoOutputData } from './VideoStudioCard';
-import { VideoJobPendingCard } from './VideoJobPendingCard';
 import { LandingPageCard } from './LandingPageCard';
 import type { ImageBlockedOutput } from '@/lib/imageSafetyMessages';
+import { VIDEO_REMOVED_MESSAGE } from '@/lib/videoRemoved';
 
 export function FeatureOutputView({
   output,
   onDelete,
   messageId,
-  onVideoJobResolved,
   onPreviewUpdate,
 }: {
   output: unknown;
   onDelete?: () => void;
   messageId?: string;
-  onVideoJobResolved?: (output: VideoOutputData) => void;
   onPreviewUpdate?: (messageId: string, output: unknown) => void;
 }) {
   if (!output || typeof output !== 'object') return null;
   const o = output as Record<string, unknown>;
+
+  if (o.type === 'video_studio' || o.type === 'video_job_pending') {
+    return (
+      <p className="text-sm text-[var(--foreground)]/85 rounded-lg border border-[var(--card-border)] p-3">
+        {VIDEO_REMOVED_MESSAGE}
+      </p>
+    );
+  }
 
   if (o.type === 'image_blocked') {
     const data: ImageBlockedOutput = {
@@ -101,6 +106,7 @@ export function FeatureOutputView({
       followUps: Array.isArray(o.followUps) ? (o.followUps as string[]) : undefined,
       generatedFiles: Array.isArray(o.generatedFiles) ? (o.generatedFiles as string[]) : undefined,
       fileCount: typeof o.fileCount === 'number' ? o.fileCount : undefined,
+      userPrompt: typeof o.userPrompt === 'string' ? o.userPrompt : undefined,
     };
 
     return (
@@ -111,44 +117,6 @@ export function FeatureOutputView({
             ? (next) => onPreviewUpdate(messageId, next)
             : undefined
         }
-      />
-    );
-  }
-
-  if (o.type === 'video_studio' && typeof o.streamingUrl === 'string') {
-    const data: VideoOutputData = {
-      type: 'video_studio',
-      title: typeof o.title === 'string' ? o.title : 'Your video',
-      streamingUrl: o.streamingUrl,
-      durationSeconds: typeof o.durationSeconds === 'number' ? o.durationSeconds : undefined,
-      selectedProvider: typeof o.selectedProvider === 'string' ? o.selectedProvider : undefined,
-      videoFormat:
-        o.videoFormat === 'shorts_reels' || o.videoFormat === 'youtube_video' ? o.videoFormat : undefined,
-      prompt: typeof o.prompt === 'string' ? o.prompt : undefined,
-      screenplay: o.screenplay as VideoOutputData['screenplay'],
-      providersUsed: Array.isArray(o.providersUsed) ? (o.providersUsed as string[]) : undefined,
-      reviewScores: o.reviewScores as VideoOutputData['reviewScores'],
-      healingSteps: Array.isArray(o.healingSteps) ? (o.healingSteps as string[]) : undefined,
-      qcScore: typeof o.qcScore === 'number' ? o.qcScore : undefined,
-      omniReality: o.omniReality as VideoOutputData['omniReality'],
-      audioTracks: Array.isArray(o.audioTracks) ? (o.audioTracks as VideoOutputData['audioTracks']) : undefined,
-      variants: Array.isArray(o.variants)
-        ? (o.variants as Array<{ streamingUrl: string; provider: string; label?: string }>)
-        : undefined,
-    };
-    return <VideoStudioCard data={data} onDelete={onDelete} messageId={messageId} />;
-  }
-
-  if (o.type === 'video_job_pending' && typeof o.jobId === 'string') {
-    return (
-      <VideoJobPendingCard
-        jobId={o.jobId}
-        message={typeof o.message === 'string' ? o.message : undefined}
-        estimatedSeconds={typeof o.estimatedSeconds === 'number' ? o.estimatedSeconds : 120}
-        startedAt={typeof o.startedAt === 'number' ? o.startedAt : undefined}
-        userPrompt={typeof o.userPrompt === 'string' ? o.userPrompt : undefined}
-        messageId={messageId}
-        onResolved={(video) => onVideoJobResolved?.(video)}
       />
     );
   }

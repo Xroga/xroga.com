@@ -2,26 +2,16 @@ import { deepSeekChat } from '../../lib/deepseek.js';
 import { groqChat } from '../../lib/groq.js';
 import type { FeatureCategory, FeatureRoute } from '../../types/features.js';
 import { FEATURE_ACTION_COSTS, FEATURE_TASK_TYPES } from '../../types/features.js';
-import { computeVideoActionCost, parseVideoDuration } from '../media/videoUtils.js';
 import { computeDebugActionCost } from '../debugging/codeDebugger.js';
 import { FEATURE_CATALOG, matchFeatureByKeywords, type FeatureCatalogEntry } from '../../config/featureCatalog.js';
 import { isTrivialPrompt } from '../../lib/promptClassifier.js';
 import { routingPrompt } from '../../lib/promptRouting.js';
 
 const CLASSIFICATION_SYSTEM = `You are the Xroga Architect. Classify user requests into a feature ID from the catalog.
-Respond ONLY with JSON: {"featureId":"...","category":"chat|landing_page|image_generation|browser_automation|cross_post|key_creation|video_studio|deep_research|content_blocker|job_hunter|code_debug","confidence":0.0-1.0,"reasoning":"..."}
+Respond ONLY with JSON: {"featureId":"...","category":"chat|landing_page|image_generation|browser_automation|cross_post|key_creation|deep_research|content_blocker|job_hunter|code_debug","confidence":0.0-1.0,"reasoning":"..."}
 Pick the closest featureId from: ${FEATURE_CATALOG.slice(0, 30).map((f) => f.id).join(', ')}...`;
 
 const RULE_PATTERNS: Array<{ category: FeatureCategory; patterns: RegExp[] }> = [
-  {
-    category: 'video_studio',
-    patterns: [
-      /\b(make|create|generate|produce|film|shoot)\b.*\b(video|movie|film|trailer|anime|clip)\b/i,
-      /\b\d+\s*(?:second|seconds|sec|s)\b.*\bvideo\b/i,
-      /\bvideo\s+about\b/i,
-      /\bomni.?video\b/i,
-    ],
-  },
   {
     category: 'deep_research',
     patterns: [
@@ -120,9 +110,6 @@ function mapCatalogToCategory(entry: FeatureCatalogEntry): FeatureCategory {
     social_posting: 'cross_post',
     key_creation: 'key_creation',
     api_vault: 'key_creation',
-    video_studio: 'video_studio',
-    ai_video: 'video_studio',
-    full_episode: 'video_studio',
     deep_research: 'deep_research',
     web_research: 'deep_research',
     content_blocker: 'content_blocker',
@@ -179,7 +166,7 @@ function parseDeepSeekClassification(raw: string, prompt: string): FeatureRoute 
 
     const validCategories: FeatureCategory[] = [
       'chat', 'landing_page', 'image_generation', 'browser_automation', 'cross_post', 'key_creation',
-      'video_studio', 'deep_research', 'content_blocker', 'job_hunter', 'code_debug',
+      'deep_research', 'content_blocker', 'job_hunter', 'code_debug',
     ];
 
     if (!parsed.category || !validCategories.includes(parsed.category as FeatureCategory)) {
@@ -273,8 +260,6 @@ export function computeFeatureActionCost(category: FeatureCategory, prompt: stri
   switch (category) {
     case 'cross_post':
       return getCrossPostPlatformCount(prompt);
-    case 'video_studio':
-      return computeVideoActionCost(parseVideoDuration(prompt));
     case 'code_debug':
       return computeDebugActionCost(extra?.lineCount ?? 100);
     default:

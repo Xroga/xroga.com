@@ -3,7 +3,6 @@ import { generateImage } from './builder/imageGen.js';
 import { buildLandingPage } from './builder/landingPage.js';
 import { runBrowserAutomation } from './automation/browser.js';
 import { crossPost } from './social/crossPost.js';
-import { produceVideo } from './media/videoStudio.js';
 import { conductDeepResearch } from './research/deepResearch.js';
 import { debugCode } from './debugging/codeDebugger.js';
 import { detectFeatureIntent } from '../lib/featureIntent.js';
@@ -25,8 +24,6 @@ export async function executeFeature(
       return await buildLandingPage(prompt);
     case 'browser_automation':
       return await runBrowserAutomation(prompt);
-    case 'video_studio':
-      return await produceVideo(userId, prompt, { projectId: ctx?.projectId, runId: ctx?.extras?.runId as string | undefined });
     case 'deep_research':
       return await conductDeepResearch(userId, prompt, ctx?.projectId);
     case 'code_debug': {

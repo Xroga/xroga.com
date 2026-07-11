@@ -30,39 +30,30 @@ export function isImageGenerationPrompt(text: string): boolean {
   );
 }
 
-export function isVideoGenerationPrompt(text: string): boolean {
-  return /\b(generate|create|make|produce|film|shoot|animate|turn)\b[\s\S]{0,60}\b(video|movie|film|trailer|clip|scene|episode|series|gif|animation)\b|\b(video|movie|clip)\b[\s\S]{0,30}\b(of|about)\b|\b\d+\s*(?:second|seconds|sec|s)\b[\s\S]{0,40}\bvideo\b|\bimage\s+to\s+video\b|\bphoto\s+to\s+video\b/i.test(
-    text
-  );
+/** Video generation removed from Xroga */
+export function isVideoGenerationPrompt(_text: string): boolean {
+  void _text;
+  return false;
 }
 
-export function isImageToVideoPrompt(text: string): boolean {
-  return /\b(animate|animation|turn\s+(?:this\s+)?(?:image|photo|picture)\s+(?:into|to)|image\s+to\s+video|photo\s+to\s+video|make\s+(?:this|the)\s+(?:image|photo)\s+(?:move|alive)|bring\s+(?:this|the)\s+(?:image|photo)\s+to\s+life)\b/i.test(
-    text
-  );
+export function isImageToVideoPrompt(_text: string): boolean {
+  void _text;
+  return false;
 }
 
-export function isGifPrompt(text: string): boolean {
-  return /\b(gif|animated\s+gif|image\s+to\s+gif|make\s+a\s+gif)\b/i.test(text);
+export function isGifPrompt(_text: string): boolean {
+  void _text;
+  return false;
 }
 
-/** Rough ETA for video generation UI (seconds) */
-export function estimateVideoSeconds(prompt: string): number {
-  const cleaned = prompt.replace(/\[xroga-video-format:[^\]]+\]/gi, '');
-  const secMatch = cleaned.match(/(\d+)\s*(?:second|seconds|sec|s)\b/i);
-  const dur = secMatch ? Math.min(parseInt(secMatch[1], 10), 300) : 5;
-  if (dur <= 5) return 90;
-  if (dur <= 10) return 120;
-  if (dur <= 15) return 180;
-  return 240;
+export function estimateVideoSeconds(_prompt: string): number {
+  void _prompt;
+  return 0;
 }
 
-/** Default chat prompt when user attaches image only */
-export function defaultImageAttachmentPrompt(text: string, hasVideoIntent: boolean): string {
+export function defaultImageAttachmentPrompt(text: string): string {
   if (text.trim()) return text;
-  return hasVideoIntent
-    ? 'Turn this image into a cinematic animated video'
-    : 'Turn this image into a cinematic animated video';
+  return 'Edit and enhance this image';
 }
 
 export function parseProviderFromContent(content: string): string | undefined {
