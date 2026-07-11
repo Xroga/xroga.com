@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from './ThemeProvider';
 import { CurrencyDetector } from './CurrencyDetector';
 import { LanguageProvider } from './LanguageProvider';
+import { OfflineOverlay } from '@/components/errors/OfflineOverlay';
 import { ScheduledFeedbackPrompt } from '@/components/feedback/ScheduledFeedbackPrompt';
 import { VoiceTalkProvider } from '@/context/VoiceTalkContext';
 import { VoiceTalkOverlay } from '@/components/voice/VoiceTalkOverlay';
@@ -22,6 +23,7 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
         <VoiceTalkProvider>
           {children}
           <VoiceTalkOverlay />
+          <OfflineOverlay />
         </VoiceTalkProvider>
         <ScheduledFeedbackPrompt />
         <Toaster
