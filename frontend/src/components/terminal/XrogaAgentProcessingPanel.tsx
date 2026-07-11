@@ -15,8 +15,9 @@ import {
 import { buildLiveStatusMessage } from '@/lib/buildLiveStatus';
 import { AgentActivityRow, AgentTypewriterText } from './AgentTypewriterText';
 import { XrogaBlackHoleShineText } from '@/components/ui/XrogaBlackHoleShineText';
-import { ProcessingPipeline } from './ProcessingPipeline';
 import { ModelCollaborationBar } from './ModelCollaborationBar';
+import { BuildPatienceBanner } from './BuildPatienceBanner';
+import { requestBuildNotificationPermission } from '@/lib/buildBrowserNotify';
 
 interface XrogaAgentProcessingPanelProps {
   loading: boolean;
@@ -25,6 +26,7 @@ interface XrogaAgentProcessingPanelProps {
   activityLog?: string[];
   todos?: SwarmTodoItem[];
   activePhase?: number | null;
+  buildPrompt?: string;
   className?: string;
 }
 
@@ -44,9 +46,6 @@ function ActivityEntryView({ entry, index, isLast, loading }: { entry: AgentActi
       <AgentActivityRow delayMs={delay} dimmed={!isLast && !loading}>
         <span>{entry.label}</span>
         <span className="font-mono text-[11px] text-[var(--foreground)]/80">{entry.file}</span>
-        {entry.delta != null && (
-          <span className="font-mono text-[11px] text-emerald-500/90 tabular-nums">+{entry.delta}</span>
-        )}
       </AgentActivityRow>
     );
   }
@@ -105,6 +104,7 @@ export function XrogaAgentProcessingPanel({
   activityLog = [],
   todos = [],
   activePhase,
+  buildPrompt,
   className,
 }: XrogaAgentProcessingPanelProps) {
   const [elapsedMs, setElapsedMs] = useState(0);
@@ -130,29 +130,17 @@ export function XrogaAgentProcessingPanel({
     () => activityLog.map(formatAgentActivityLine).filter(Boolean),
     [activityLog]
   );
-  const entries = useMemo(() => parseAgentActivityEntries(activityLog), [activityLog]);
-  const stats = useMemo(() => computeActivityStats(activityLog, todos), [activityLog, todos]);
+  const entries = useMemo(
+    () => parseAgentActivityEntries(activityLog, buildPrompt),
+    [activityLog, buildPrompt]
+  );
+  const stats = useMemo(
+    () => computeActivityStats(activityLog, todos, buildPrompt),
+    [activityLog, todos, buildPrompt]
+  );
 
   const displayGoal = goal ?? deriveBuildGoal(null, formattedLines[formattedLines.length - 1]);
   const doneCount = todos.filter((t) => t.status === 'done').length;
-
-  const pipelineAgent =
-    activePhase === 4 ? 'complete' : activePhase === 2 ? 'reviewer' : activePhase === 1 ? 'builder' : 'architect';
-
-  const phaseLabel =
-    activePhase === 0
-      ? 'GitHub'
-      : activePhase === 1
-        ? 'Build'
-        : activePhase === 2
-          ? 'Verify'
-          : activePhase === 4
-            ? 'Deploy'
-            : activePhase === 5
-              ? 'Ready'
-              : activePhase === 6
-                ? 'Update'
-                : null;
 
   return (
     <div
@@ -161,7 +149,6 @@ export function XrogaAgentProcessingPanel({
         className
       )}
     >
-      {loading && <ProcessingPipeline loading activeAgent={pipelineAgent} />}
       {loading && <ModelCollaborationBar activePhase={activePhase} loading={loading} />}
 
       <p className="text-[13px] leading-snug text-[var(--muted)] font-medium">
@@ -175,6 +162,13 @@ export function XrogaAgentProcessingPanel({
         <p className="text-[13px] leading-relaxed text-[var(--foreground)]/88">
           <AgentTypewriterText text={displayGoal} active={loading} />
         </p>
+      )}
+
+      {loading && (
+        <BuildPatienceBanner
+          elapsedSeconds={thoughtSeconds}
+          onEnableNotifications={() => void requestBuildNotificationPermission()}
+        />
       )}
 
       {(formattedLines.length > 0 || todos.length > 0) && (
@@ -253,12 +247,6 @@ export function XrogaAgentProcessingPanel({
         </div>
       )}
 
-      {phaseLabel && loading && (
-        <p className="text-[11px] text-[var(--muted)]/45 font-mono xv-agent-line-in">
-          Phase {phaseLabel}
-        </p>
-      )}
-
       {loading && (
         <p className="text-[11px] text-[var(--muted)]/50 flex items-center gap-2">
           <span className="inline-flex gap-0.5">
@@ -266,7 +254,7 @@ export function XrogaAgentProcessingPanel({
             <span className="w-1 h-1 rounded-full bg-[var(--accent)]/40 xv-agent-thought-pulse [animation-delay:200ms]" />
             <span className="w-1 h-1 rounded-full bg-[var(--accent)]/25 xv-agent-thought-pulse [animation-delay:400ms]" />
           </span>
-          Working — lines above update as each step completes
+          BLACK HOLE V∞ — working in the background even if you close this tab
         </p>
       )}
     </div>

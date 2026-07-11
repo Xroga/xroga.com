@@ -29,6 +29,8 @@ export interface LandingPageOutputData {
   vercelPreviewUrl?: string;
   netlifyPreviewUrl?: string;
   followUps?: string[];
+  generatedFiles?: string[];
+  fileCount?: number;
   siteAudit?: {
     score: number;
     issues: Array<{ id: string; severity: string; area: string; message: string; fixPrompt: string }>;

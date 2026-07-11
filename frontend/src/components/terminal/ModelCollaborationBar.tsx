@@ -2,14 +2,14 @@
 
 import { cn } from '@/lib/utils';
 
-/** Spec-aligned build model passes — DeepSeek Pro/Flash + Claude Sonnet/Opus */
-const MODELS = [
-  { id: 'pro-arch', name: 'DeepSeek Pro', role: 'Architecture' },
-  { id: 'flash', name: 'DeepSeek Flash', role: 'Scaffold' },
-  { id: 'pro-logic', name: 'DeepSeek Pro', role: 'Logic' },
-  { id: 'sonnet', name: 'Claude Sonnet', role: 'UI/UX' },
-  { id: 'opus', name: 'Claude Opus', role: 'Quality' },
-  { id: 'pro-sec', name: 'DeepSeek Pro', role: 'Security' },
+/** XROGA AI swarm roles — no external provider names in UI */
+const XROGA_ROLES = [
+  { id: 'architect', name: 'XROGA Architect', role: 'Architecture' },
+  { id: 'pulse', name: 'XROGA Pulse', role: 'Scaffold' },
+  { id: 'architect-logic', name: 'XROGA Architect', role: 'Logic' },
+  { id: 'visionary', name: 'XROGA Visionary', role: 'UI/UX' },
+  { id: 'collective', name: 'XROGA Collective', role: 'Quality' },
+  { id: 'blackhole', name: 'BLACK HOLE V∞', role: 'Security' },
 ] as const;
 
 interface ModelCollaborationBarProps {
@@ -28,7 +28,7 @@ function activeIndexFromPhase(phase: number | null | undefined): number {
   return 1;
 }
 
-/** Shows which AI models collaborate during a build (NO COMPROMISE spec). */
+/** Shows which XROGA AI roles collaborate during a build. */
 export function ModelCollaborationBar({ activePhase, loading, className }: ModelCollaborationBarProps) {
   if (!loading) return null;
 
@@ -36,7 +36,7 @@ export function ModelCollaborationBar({ activePhase, loading, className }: Model
 
   return (
     <div className={cn('flex flex-wrap gap-1.5', className)}>
-      {MODELS.map((m, i) => (
+      {XROGA_ROLES.map((m, i) => (
         <span
           key={m.id}
           className={cn(
@@ -49,10 +49,10 @@ export function ModelCollaborationBar({ activePhase, loading, className }: Model
           )}
           title={`${m.name} — ${m.role}`}
         >
-          {m.name.replace('DeepSeek ', 'DS ').replace('Claude ', '')} · {m.role}
+          {m.name.replace('XROGA ', '')} · {m.role}
         </span>
       ))}
-      <span className="text-[8px] text-[var(--muted)]/50 self-center">→ DeepSeek fallback if unavailable</span>
+      <span className="text-[8px] text-[var(--muted)]/50 self-center">→ XROGA reserve if unavailable</span>
     </div>
   );
 }

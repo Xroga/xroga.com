@@ -47,6 +47,8 @@ export interface LandingPageOutput {
   vercelPreviewUrl?: string;
   netlifyPreviewUrl?: string;
   followUps?: string[];
+  generatedFiles?: string[];
+  fileCount?: number;
 }
 
 export interface ImageBlockedOutput {

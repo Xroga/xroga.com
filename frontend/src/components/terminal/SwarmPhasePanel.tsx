@@ -15,6 +15,7 @@ interface SwarmPhasePanelProps {
   todos?: SwarmTodoItem[];
   activityLog?: string[];
   startedAt?: number | null;
+  buildPrompt?: string;
 }
 
 /** Build pipeline — Cursor-style agent processing panel */
@@ -26,6 +27,7 @@ export function SwarmPhasePanel({
   todos = [],
   activityLog = [],
   startedAt,
+  buildPrompt,
 }: SwarmPhasePanelProps) {
   const showPanel =
     loading && (todos.length > 0 || activePhase != null || Boolean(message) || activityLog.length > 0);
@@ -37,7 +39,7 @@ export function SwarmPhasePanel({
     <div className={cn('my-1')}>
       <p className="text-[10px] font-bold tracking-wide mb-1.5 px-0.5 flex items-center gap-1 flex-wrap">
         <XrogaBlackHoleShineText className="text-[10px]">
-          🕳️ AI SWARM LOGIC — BLACK HOLE V
+          🕳️ XROGA AI SWARM — BLACK HOLE V
         </XrogaBlackHoleShineText>
         <Infinity className="h-3 w-3 text-[#006aff]" strokeWidth={2.5} />
       </p>
@@ -48,6 +50,7 @@ export function SwarmPhasePanel({
         activityLog={activityLog.length ? activityLog : message ? [message] : []}
         todos={todos}
         activePhase={activePhase}
+        buildPrompt={buildPrompt}
       />
     </div>
   );

@@ -150,6 +150,7 @@ export class Orchestrator {
       clientMeta?: {
         githubTargetRepo?: string;
         githubTargetBranch?: string;
+        assistantMessageId?: string;
       };
     },
     featureCategory: FeatureCategory
@@ -163,6 +164,7 @@ export class Orchestrator {
         onProgress: ctx.onProgress,
         githubTargetRepo: ctx.clientMeta?.githubTargetRepo,
         githubTargetBranch: ctx.clientMeta?.githubTargetBranch,
+        assistantMessageId: ctx.clientMeta?.assistantMessageId,
       });
 
     let result;

@@ -28,6 +28,7 @@ export interface NegotiationContext {
   /** Selected repo from chatbar — push updates here instead of creating a new repo */
   githubTargetRepo?: string;
   githubTargetBranch?: string;
+  assistantMessageId?: string;
 }
 
 export interface NegotiationResult {

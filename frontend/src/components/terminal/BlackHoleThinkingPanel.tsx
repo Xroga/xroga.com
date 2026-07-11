@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { ChevronDown, Infinity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { XrogaBlackHoleShineText } from '@/components/ui/XrogaBlackHoleShineText';
-import { ProcessingPipeline } from './ProcessingPipeline';
 
 export interface BlackHoleThinkingPanelProps {
   steps: string[];
@@ -13,7 +12,6 @@ export interface BlackHoleThinkingPanelProps {
   active?: boolean;
   defaultExpanded?: boolean;
   className?: string;
-  showPipeline?: boolean;
 }
 
 /** Cursor-style "Thought for Xs" — theme-aware, expandable planning steps */
@@ -24,7 +22,6 @@ export function BlackHoleThinkingPanel({
   active = false,
   defaultExpanded,
   className,
-  showPipeline = true,
 }: BlackHoleThinkingPanelProps) {
   const [expanded, setExpanded] = useState(defaultExpanded ?? active);
   const [elapsed, setElapsed] = useState(thoughtMs ?? 0);
@@ -42,12 +39,16 @@ export function BlackHoleThinkingPanel({
     steps.length > 0
       ? steps
       : active
-        ? ['Understanding your request', 'Planning architecture with DeepSeek Pro', 'Routing through XROGA Black Hole V∞', 'Composing response']
+        ? [
+            'Understanding your request',
+            'XROGA Architect — system design & API plan',
+            'Routing through XROGA Black Hole V∞',
+            'Composing your project',
+          ]
         : ['Processed with XROGA Black Hole V∞'];
 
   return (
     <div className={cn('space-y-2', className)}>
-      {showPipeline && active && <ProcessingPipeline loading activeAgent="architect" />}
 
       <div className={cn('xv-thinking-panel', active && 'xv-thinking-shimmer')}>
         <div

@@ -408,6 +408,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             todos={swarmTodos}
                             activityLog={swarmActivityLog}
                             startedAt={thinkingStartedAt}
+                            buildPrompt={lastUserText}
                           />
                         )}
                         {!buildPromptActive &&
