@@ -30,6 +30,7 @@ import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
 import { AppStoreSidebarButtons } from '@/components/ui/AppStoreSidebarButtons';
+import { SidebarCommunityButton } from '@/components/layout/SidebarCommunityButton';
 import { useT } from '@/components/providers/LanguageProvider';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
@@ -254,6 +255,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           )}
         </div>
       )}
+      <SidebarCommunityButton expanded={navExpanded} />
       {navExpanded && (
         <UpgradeProButton onClick={() => router.push('/pricing')} />
       )}

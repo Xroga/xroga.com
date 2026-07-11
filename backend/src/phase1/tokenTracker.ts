@@ -7,6 +7,7 @@ interface UserUsageRecord {
   inputTokens: number;
   outputTokens: number;
   emergencyBonus: number;
+  bonusTokens: number;
   emergencyClaimedAt: string | null;
   periodStart: string;
 }
@@ -23,6 +24,7 @@ function emptyRecord(): UserUsageRecord {
     inputTokens: 0,
     outputTokens: 0,
     emergencyBonus: 0,
+    bonusTokens: 0,
     emergencyClaimedAt: null,
     periodStart: currentPeriodStart(),
   };
@@ -57,6 +59,7 @@ async function loadFromDb(userId: string): Promise<UserUsageRecord | null> {
       inputTokens: Number(data.input_tokens ?? 0),
       outputTokens: Number(data.output_tokens ?? 0),
       emergencyBonus: Number(data.emergency_bonus ?? 0),
+      bonusTokens: Number(data.bonus_tokens ?? 0),
       emergencyClaimedAt: data.emergency_claimed_at ?? null,
       periodStart: period,
     };
@@ -76,6 +79,7 @@ async function saveToDb(userId: string, record: UserUsageRecord): Promise<void> 
         input_tokens: record.inputTokens,
         output_tokens: record.outputTokens,
         emergency_bonus: record.emergencyBonus,
+        bonus_tokens: record.bonusTokens,
         emergency_claimed_at: record.emergencyClaimedAt,
         quota_period_start: record.periodStart,
         updated_at: new Date().toISOString(),
@@ -99,9 +103,9 @@ async function getRecord(userId: string): Promise<UserUsageRecord> {
 }
 
 function computeSnapshot(record: UserUsageRecord): TokenUsageSnapshot {
-  const totalLimit = QUOTA.totalTokens + record.emergencyBonus;
-  const inputLimit = QUOTA.inputTokens;
-  const outputLimit = QUOTA.outputTokens + record.emergencyBonus;
+  const totalLimit = QUOTA.totalTokens + record.emergencyBonus + record.bonusTokens;
+  const inputLimit = QUOTA.inputTokens + Math.floor(record.bonusTokens * 0.67);
+  const outputLimit = QUOTA.outputTokens + record.emergencyBonus + Math.ceil(record.bonusTokens * 0.33);
 
   const totalUsed = record.inputTokens + record.outputTokens;
   const totalRemaining = Math.max(0, totalLimit - totalUsed);
@@ -139,13 +143,15 @@ export async function checkQuota(
 ): Promise<{ allowed: boolean; snapshot: TokenUsageSnapshot }> {
   const record = await getRecord(userId);
   const snapshot = computeSnapshot(record);
-  const totalLimit = QUOTA.totalTokens + record.emergencyBonus;
+  const totalLimit = QUOTA.totalTokens + record.emergencyBonus + record.bonusTokens;
 
   const wouldExceedTotal =
     record.inputTokens + record.outputTokens + estimatedInput + estimatedOutput > totalLimit;
-  const wouldExceedInput = record.inputTokens + estimatedInput > QUOTA.inputTokens;
+  const wouldExceedInput =
+    record.inputTokens + estimatedInput > QUOTA.inputTokens + Math.floor(record.bonusTokens * 0.67);
   const wouldExceedOutput =
-    record.outputTokens + estimatedOutput > QUOTA.outputTokens + record.emergencyBonus;
+    record.outputTokens + estimatedOutput >
+    QUOTA.outputTokens + record.emergencyBonus + Math.ceil(record.bonusTokens * 0.33);
 
   const allowed = !wouldExceedTotal && !wouldExceedInput && !wouldExceedOutput;
   return { allowed, snapshot };
@@ -209,4 +215,17 @@ export async function claimEmergencyTokens(userId: string): Promise<{
     message: `Emergency tokens activated: ${QUOTA.emergencyTokens.toLocaleString()} bonus tokens added.`,
     usage: updated,
   };
+}
+
+/** Credit AI usage tokens (referrals, community pool, distribution). */
+export async function creditBonusTokens(
+  userId: string,
+  amount: number
+): Promise<TokenUsageSnapshot> {
+  const record = await getRecord(userId);
+  record.bonusTokens += amount;
+  memoryStore.set(userId, record);
+  await saveToDb(userId, record);
+  phase1Logger.info('Bonus tokens credited', { userId, amount, totalBonus: record.bonusTokens });
+  return computeSnapshot(record);
 }

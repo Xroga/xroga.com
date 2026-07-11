@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { buildMetadata } from '@/lib/seo';
 import { SignupForm } from '@/components/auth/SignupForm';
 import { AuthShell } from '@/components/auth/AuthShell';
@@ -14,7 +15,9 @@ export const metadata: Metadata = buildMetadata({
 export default function SignupPage() {
   return (
     <AuthShell>
-      <SignupForm />
+      <Suspense fallback={null}>
+        <SignupForm />
+      </Suspense>
     </AuthShell>
   );
 }

@@ -22,6 +22,9 @@ import v1Router from './routes/v1.js';
 import phase1Router from './routes/phase1.js';
 import dashboardRouter from './routes/dashboard.js';
 import tasksRouter from './routes/tasks.js';
+import referralsRouter from './routes/referrals.js';
+import communityRouter from './routes/community.js';
+import tokenDistributionRouter from './routes/tokenDistribution.js';
 import adminRouter from './routes/admin.js';
 import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
@@ -262,6 +265,9 @@ app.use('/api/v1', authMiddleware, v1Router);
 app.use('/api/phase1', phase1AuthMiddleware, phase1Router);
 app.use('/api/dashboard', authMiddleware, dashboardRouter);
 app.use('/api/tasks', authMiddleware, tasksRouter);
+app.use('/api/referrals', authMiddleware, referralsRouter);
+app.use('/api/community', authMiddleware, communityRouter);
+app.use('/api/token-distribution', authMiddleware, tokenDistributionRouter);
 app.use('/api/admin', authMiddleware, adminMiddleware, adminRouter);
 app.use('/api/chat', authMiddleware, chatRouter);
 app.use('/api/projects', authMiddleware, projectsRouter);
@@ -320,6 +326,11 @@ server.listen(port, '0.0.0.0', () => {
   void ensureDashboardSchema().catch((err) => {
     console.warn('[dashboardSchema] Startup ensure skipped:', (err as Error).message);
   });
+  void import('./db/ensurePhase3Schema.js').then(({ ensurePhase3Schema }) =>
+    ensurePhase3Schema().catch((err) => {
+      console.warn('[phase3Schema] Startup ensure skipped:', (err as Error).message);
+    })
+  );
   if (process.env.RUN_SWARM_WORKER === 'true') {
     startSwarmWorker();
   }

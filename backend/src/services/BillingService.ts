@@ -150,6 +150,13 @@ export class BillingService {
 
     await ActionService.applyPlan(userId, planTier, plan.actions);
 
+    try {
+      const { processReferralOnSubscribe } = await import('./referralService.js');
+      await processReferralOnSubscribe(userId);
+    } catch (err) {
+      console.warn('[BillingService] referral hook:', (err as Error).message);
+    }
+
     const supabase = getSupabaseAdmin();
     const customerId =
       (data.customer_id as string) ??
