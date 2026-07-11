@@ -325,10 +325,10 @@ export function DashboardHomeView() {
       <section className="glass-panel rounded-xl overflow-hidden">
         <div className="px-4 py-3 border-b border-[var(--card-border)] flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-[#2dd4bf]" />
+            <CreditCard className="w-4 h-4 text-[#4a7aff]" />
             <h2 className="font-semibold text-sm">Pricing Plans</h2>
           </div>
-          <Link href="/pricing" className="text-xs text-[#2dd4bf] hover:underline">
+          <Link href="/pricing" className="text-xs text-[#4a7aff] hover:underline">
             View all
           </Link>
         </div>

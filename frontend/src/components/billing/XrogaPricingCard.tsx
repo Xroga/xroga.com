@@ -13,6 +13,8 @@ export interface XrogaPricingCardProps {
   name: string;
   price: string;
   subtitle: string;
+  tokensLabel?: string;
+  xrgLabel?: string;
   features?: string[];
   cta: ReactNode;
   current?: boolean;
@@ -22,10 +24,24 @@ export interface XrogaPricingCardProps {
   className?: string;
 }
 
-function BrutalPricingCard({
+function PlanCheckIcon() {
+  return (
+    <svg className="xv-plan-check__svg" fill="currentColor" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <path
+        clipRule="evenodd"
+        d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+        fillRule="evenodd"
+      />
+    </svg>
+  );
+}
+
+function StandardPricingCard({
   name,
   price,
   subtitle,
+  tokensLabel,
+  xrgLabel,
   features,
   cta,
   current,
@@ -33,47 +49,44 @@ function BrutalPricingCard({
   className,
 }: Omit<XrogaPricingCardProps, 'popular' | 'compact'>) {
   return (
-    <div className={cn('xv-brutal-card h-full', className)}>
-      <div className="xv-brutal-card__inner">
-        <div className="xv-brutal-card__front">
-          <div className="xv-brutal-card__noise" aria-hidden />
-          <div className="xv-brutal-card__image">
-            <Image
-              src={SIDEBAR_LOGO_URL}
-              alt="Xroga"
-              width={72}
-              height={72}
-              className="xv-brutal-card__logo object-contain"
-              unoptimized
-            />
-          </div>
-          <div className="xv-brutal-card__content">
-            <div>
-              <div className="xv-brutal-card__title flex items-center gap-2">
-                {name}
-                {current && (
-                  <span className="text-[8px] font-bold uppercase tracking-wider bg-black text-white px-1 py-0.5">
-                    Current
-                  </span>
-                )}
-              </div>
-              <div className="xv-brutal-card__price">{price}</div>
-              <div className="xv-brutal-card__desc">{description ?? subtitle}</div>
-            </div>
-            {features && features.length > 0 && (
-              <ul className="space-y-1 my-2">
-                {features.map((f) => (
-                  <li key={f} className="text-[9px] uppercase tracking-wide font-bold flex gap-1.5">
-                    <span>✓</span>
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <div className="xv-brutal-card__cta-wrap">{cta}</div>
-          </div>
+    <div className={cn('xv-plan-card h-full', className)}>
+      <div className="xv-plan-border" aria-hidden />
+      <div className="xv-plan-title__container">
+        <div className="flex items-center gap-2">
+          <Image
+            src={SIDEBAR_LOGO_URL}
+            alt="Xroga"
+            width={24}
+            height={24}
+            className="object-contain rounded shrink-0"
+            unoptimized
+          />
+          <span className="xv-plan-title">{name}</span>
+          {current && <span className="xv-plan-current">Current</span>}
         </div>
+        <p className="xv-plan-price">
+          {price}
+          <span className="xv-plan-price__suffix">/mo</span>
+        </p>
+        {tokensLabel && <p className="xv-plan-tokens">{tokensLabel}</p>}
+        <p className="xv-plan-paragraph">
+          {xrgLabel ? `${xrgLabel}${description ? ` · ${description}` : ''}` : description ?? subtitle}
+        </p>
       </div>
+      <hr className="xv-plan-line" />
+      {features && features.length > 0 && (
+        <ul className="xv-plan-list">
+          {features.map((f) => (
+            <li key={f} className="xv-plan-list__item">
+              <span className="xv-plan-check">
+                <PlanCheckIcon />
+              </span>
+              <span className="xv-plan-list__text">{f}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="xv-plan-cta">{cta}</div>
     </div>
   );
 }
@@ -82,6 +95,8 @@ function PopularPricingCard({
   name,
   price,
   subtitle,
+  tokensLabel,
+  xrgLabel,
   description,
   features,
   cta,
@@ -89,42 +104,48 @@ function PopularPricingCard({
   className,
 }: Omit<XrogaPricingCardProps, 'popular' | 'compact'>) {
   return (
-    <div className={cn('xv-popular-card h-full', className)}>
-      <div className="xv-popular-badge">
-        <p>MOST POPULAR</p>
-        <Sparkles className="w-4 h-4" />
+    <div className={cn('xv-galactic-popular-card h-full', className)}>
+      <div className="xv-galactic-popular-border" aria-hidden />
+      <div className="xv-galactic-popular-badge">
+        <span>MOST POPULAR</span>
+        <Sparkles className="w-4 h-4" aria-hidden />
       </div>
-      <div className="xv-popular-inner">
-        <div className="flex items-center gap-2 mb-1">
+      <div className="xv-galactic-popular-title__container">
+        <div className="flex items-center gap-2">
           <Image
             src={SIDEBAR_LOGO_URL}
             alt="Xroga"
-            width={28}
-            height={28}
-            className="object-contain rounded"
+            width={24}
+            height={24}
+            className="object-contain rounded shrink-0"
             unoptimized
           />
-          <p className="xv-title !mb-0">{name}</p>
-          {current && <span className="text-[9px] text-cyan-300 uppercase font-bold">Current</span>}
+          <span className="xv-galactic-popular-title">{name}</span>
+          {current && <span className="xv-plan-current xv-plan-current--popular">Current</span>}
         </div>
-        <p>
-          <span className="xv-price">{price}</span>
-          <span> / month</span>
+        <p className="xv-galactic-popular-price">
+          {price}
+          <span className="xv-plan-price__suffix">/mo</span>
         </p>
-        <p>{subtitle}</p>
-        {description && <p className="text-[11px] opacity-80">{description}</p>}
-        {features && features.length > 0 && (
-          <ul className="space-y-1 text-[11px] text-[#bab9b9]">
-            {features.map((f) => (
-              <li key={f} className="flex gap-1.5">
-                <span className="text-cyan-400">✓</span>
-                {f}
-              </li>
-            ))}
-          </ul>
-        )}
-        <div className="mt-auto">{cta}</div>
+        {tokensLabel && <p className="xv-galactic-popular-tokens">{tokensLabel}</p>}
+        <p className="xv-galactic-popular-paragraph">
+          {xrgLabel ? `${xrgLabel}${description ? ` · ${description}` : ''}` : description ?? subtitle}
+        </p>
       </div>
+      <hr className="xv-galactic-popular-line" />
+      {features && features.length > 0 && (
+        <ul className="xv-galactic-popular-list">
+          {features.map((f) => (
+            <li key={f} className="xv-galactic-popular-list__item">
+              <span className="xv-galactic-popular-check">
+                <PlanCheckIcon />
+              </span>
+              <span className="xv-galactic-popular-list__text">{f}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="xv-galactic-popular-cta">{cta}</div>
     </div>
   );
 }
@@ -133,7 +154,7 @@ export function XrogaPricingCard(props: XrogaPricingCardProps) {
   if (props.popular) {
     return <PopularPricingCard {...props} />;
   }
-  return <BrutalPricingCard {...props} />;
+  return <StandardPricingCard {...props} />;
 }
 
 export function GalacticPlanPricingCard({
@@ -154,6 +175,8 @@ export function GalacticPlanPricingCard({
       name={plan.name}
       price={plan.priceLabel}
       subtitle={`${plan.aiTokensLabel} · ${plan.xrgLabel}`}
+      tokensLabel={plan.aiTokensLabel}
+      xrgLabel={plan.xrgLabel}
       description={plan.tagline}
       features={getPlanFeatures(plan, FEATURE_COUNT)}
       cta={cta}
