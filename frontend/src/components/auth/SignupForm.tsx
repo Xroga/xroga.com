@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { SIGNUP_QUOTES, randomQuote } from '@/lib/authQuotes';
 import { XROGA_PROFILE_AVATARS } from '@/lib/profileAvatars';
@@ -12,6 +12,7 @@ import { getPasswordStrength } from '@/lib/passwordStrength';
 import { cn } from '@/lib/utils';
 import { useThemeStore } from '@/store/useThemeStore';
 import { THEME_OPTIONS, type ThemeId } from '@/lib/theme';
+import { getStoredReferralCode, storeReferralCode, clearStoredReferralCode } from '@/lib/referralStorage';
 import {
   AuthModernCard,
   AuthModernQuote,
@@ -22,6 +23,9 @@ import {
 } from './AuthModern';
 
 export function SignupForm() {
+  const searchParams = useSearchParams();
+  const refFromUrl = searchParams.get('ref');
+  const [referralCode, setReferralCode] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -34,6 +38,14 @@ export function SignupForm() {
   const router = useRouter();
   const quote = useMemo(() => randomQuote(SIGNUP_QUOTES), []);
   const pwdStrength = getPasswordStrength(password);
+
+  useEffect(() => {
+    const code = refFromUrl ?? getStoredReferralCode();
+    if (code) {
+      setReferralCode(code.toUpperCase());
+      storeReferralCode(code);
+    }
+  }, [refFromUrl]);
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
@@ -82,6 +94,16 @@ export function SignupForm() {
       });
     } catch {
       /* profile may sync on first dashboard load */
+    }
+
+    const code = referralCode.trim() || getStoredReferralCode();
+    if (code) {
+      try {
+        const result = await api.referrals.apply(code);
+        if (result.success) clearStoredReferralCode();
+      } catch {
+        /* apply on dashboard if session not ready */
+      }
     }
 
     setSuccess(true);

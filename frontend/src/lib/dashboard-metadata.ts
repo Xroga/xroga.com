@@ -41,6 +41,18 @@ export const PAGE_SEO = {
     '/dashboard/tasks',
     ['Xroga tasks', 'earn tokens', 'XRG rewards']
   ),
+  referrals: dashboardPageMetadata(
+    'Refer & Earn',
+    'Share your referral link — both earn 250K AI tokens + 5,000 XRG instantly when friends subscribe.',
+    '/dashboard/referrals',
+    ['Xroga referral', 'refer and earn', 'XRG referral']
+  ),
+  community: dashboardPageMetadata(
+    'Community',
+    'Community Pool, referrals, token distribution, and builder marketplace.',
+    '/dashboard/community',
+    ['Xroga community', 'community pool', 'token requests']
+  ),
   projects: dashboardPageMetadata(
     'My Projects',
     'Manage websites, apps, games, software, and browser extensions built with Xroga AI Swarm.',

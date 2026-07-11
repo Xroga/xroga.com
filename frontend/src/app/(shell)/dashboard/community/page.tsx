@@ -1,13 +1,8 @@
-import { CommunityComingSoon } from '@/components/dashboard/CommunityComingSoon';
-import { buildMetadata } from '@/lib/seo';
+import { CommunityView } from '@/components/dashboard/CommunityView';
+import { PAGE_SEO } from '@/lib/dashboard-metadata';
 
-export const metadata = buildMetadata({
-  title: 'Xroga Community — Share & Discover Creations',
-  description:
-    'Coming soon: browse websites, apps, games, 3D models, and media from Xroga builders. Vote, comment, and collaborate.',
-  path: '/dashboard/community',
-});
+export const metadata = PAGE_SEO.community;
 
 export default function CommunityPage() {
-  return <CommunityComingSoon />;
+  return <CommunityView />;
 }

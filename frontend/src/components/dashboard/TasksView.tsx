@@ -16,7 +16,7 @@ const CADENCE_SECTIONS: Array<{
   { cadence: 'weekly', title: 'Weekly Tasks', reset: 'Reset every Monday' },
   { cadence: 'monthly', title: 'Monthly Tasks', reset: 'Reset on the 1st of each month' },
   { cadence: 'special', title: 'Special Tasks', reset: 'Monthly — 1 per user' },
-  { cadence: 'once', title: 'Referral Program', reset: 'Always active — one-time per referral' },
+  { cadence: 'once', title: 'Referral Program', reset: 'Unlimited referrals — instant rewards on subscribe' },
 ];
 
 function TaskRow({
@@ -177,7 +177,10 @@ function TaskRow({
 
           {isReferral && !task.completed && (
             <p className="text-xs text-[var(--muted)]">
-              Share your referral link — rewards credit automatically when your friend subscribes and stays active 30 days.
+              Both earn 250K AI tokens + 5,000 XRG instantly when your friend subscribes, plus 3-month bonuses.{' '}
+              <a href="/dashboard/referrals" className="text-[var(--accent)] font-semibold hover:underline">
+                Open Refer &amp; Earn →
+              </a>
             </p>
           )}
 

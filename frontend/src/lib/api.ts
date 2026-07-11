@@ -553,6 +553,29 @@ export const api = {
         body: JSON.stringify(body),
       }),
   },
+  referrals: {
+    summary: () => apiFetch<ReferralSummary>('/api/referrals/summary'),
+    apply: (code: string) =>
+      apiFetch<{ success: boolean; message: string }>('/api/referrals/apply', {
+        method: 'POST',
+        body: JSON.stringify({ code }),
+      }),
+  },
+  community: {
+    pool: () => apiFetch<CommunityPoolStatus>('/api/community/pool'),
+    requestPool: () =>
+      apiFetch<{ success: boolean; message: string; newBalance?: number }>('/api/community/pool/request', {
+        method: 'POST',
+      }),
+  },
+  tokenDistribution: {
+    preview: () => apiFetch<TokenDistributionPreview>('/api/token-distribution/preview'),
+    confirm: (body: { rollover: boolean; shareTarget?: 'community' | 'friends' | 'team' }) =>
+      apiFetch<{ success: boolean; message: string }>('/api/token-distribution/confirm', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+  },
   chat: {
     send: (message: string, _userId?: string, onDelta?: (delta: string) => void) =>
       streamSwarmExecute(message, { onDelta }),
@@ -751,4 +774,62 @@ export interface TaskItem {
   completed: boolean;
   completedAt: string | null;
   pendingReview: boolean;
+}
+
+export interface ReferralProfile {
+  code: string;
+  referralCount: number;
+  discountPercent: number;
+  lifetimeDiscountPercent: number;
+  referredByCode: string | null;
+  shareUrl: string;
+}
+
+export interface ReferralListItem {
+  id: string;
+  referredLabel: string;
+  createdAt: string;
+  instantRewarded: boolean;
+  retentionReleased: boolean;
+}
+
+export interface ReferralSummary {
+  profile: ReferralProfile;
+  referrals: ReferralListItem[];
+  totalAiTokensEarned: number;
+  totalXrgEarned: number;
+  nextDiscountPercent: number;
+}
+
+export interface CommunityPoolStatus {
+  poolBalance: number;
+  accountAgeDays: number;
+  remainingTokens: number;
+  requestsThisMonth: number;
+  maxRequestsPerMonth: number;
+  maxPerMonth: number;
+  requestAmount: number;
+  eligible: boolean;
+  eligibilityReasons: string[];
+  nextAvailableAt: string | null;
+  history: Array<{
+    id: string;
+    amount: number;
+    status: string;
+    reason: string | null;
+    createdAt: string;
+  }>;
+}
+
+export interface TokenDistributionPreview {
+  unusedTokens: number;
+  manualTotal: number;
+  autoTotal: number;
+  rolloverAmount: number;
+  shareAmount: number;
+  autoPlatform: number;
+  autoCommunity: number;
+  autoHeavyUsers: number;
+  autoBuilders: number;
+  alreadyDistributed: boolean;
 }

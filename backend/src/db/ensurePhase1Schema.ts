@@ -19,6 +19,9 @@ CREATE TABLE IF NOT EXISTS public.user_token_usage (
 
 CREATE INDEX IF NOT EXISTS idx_user_token_usage_period ON public.user_token_usage (quota_period_start);
 
+ALTER TABLE public.user_token_usage
+  ADD COLUMN IF NOT EXISTS bonus_tokens BIGINT NOT NULL DEFAULT 0;
+
 ALTER TABLE public.user_token_usage ENABLE ROW LEVEL SECURITY;
 
 DO $$
