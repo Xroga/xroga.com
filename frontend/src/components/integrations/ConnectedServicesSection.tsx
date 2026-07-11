@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { FreeApiOptionsPanel } from '@/components/integrations/FreeApiOptionsPanel';
 import { CheckCircle2, GitBranch, Key, Lock, Shield } from 'lucide-react';
 import { api } from '@/lib/api';
 import { loadCredentials, hasVault } from '@/lib/credentialVault';
@@ -105,6 +106,11 @@ export function ConnectedServicesSection() {
             </span>
           ))}
         </div>
+      </div>
+
+      <div className="rounded-lg border border-[var(--accent)]/25 bg-[var(--accent)]/5 p-3">
+        <p className="text-xs font-semibold mb-1">Prefer not to add paid API keys?</p>
+        <FreeApiOptionsPanel compact />
       </div>
 
       <p className="text-[11px] text-[var(--muted)] leading-relaxed">

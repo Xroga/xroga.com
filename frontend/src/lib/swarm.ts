@@ -22,8 +22,8 @@ export function swarmOutputToText(output: unknown): string {
   if (typeof o.message === 'string') {
     return o.message;
   }
-  if (o.type === 'landing_page' && o.deployUrl) {
-    return `Landing page deployed: ${o.deployUrl}`;
+  if (o.type === 'landing_page') {
+    return '';
   }
   if (o.type === 'image' && o.imageUrl) {
     const alt = (o.prompt ?? 'Generated image').slice(0, 80);

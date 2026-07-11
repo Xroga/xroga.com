@@ -1009,16 +1009,10 @@ export function TerminalChatProvider({
             if (output?.type === 'landing_page') {
               activeWebsiteBuildRef.current = null;
               completedWebsiteBuildRef.current = true;
-              const summary =
-                typeof output.summary === 'string'
-                  ? output.summary
-                  : typeof output.deployUrl === 'string'
-                    ? `🎉 YOUR PROJECT IS LIVE!\n🔗 ${output.deployUrl}`
-                    : '🎉 YOUR PROJECT IS LIVE!\nYour website was built and saved to GitHub.';
               setMessages((m) =>
                 m.map((msg) =>
                   msg.id === assistantId
-                    ? { ...msg, content: summary, featureOutput: output }
+                    ? { ...msg, content: '', featureOutput: output }
                     : msg
                 )
               );

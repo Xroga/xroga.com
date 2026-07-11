@@ -261,7 +261,7 @@ export class Orchestrator {
     }
 
     const isLanding = result.featureOutput?.type === 'landing_page';
-    let replyText = result.polishedOutput;
+    let replyText = isLanding ? '' : result.polishedOutput;
     let shieldFollowUps: string[] = [];
 
     if (!isLanding) {

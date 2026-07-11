@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChevronDown, Loader2 } from 'lucide-react';
 import { api, type GitHubRepo } from '@/lib/api';
+import { getCachedRepoAnalysis, setCachedRepoAnalysis } from '@/lib/repoAnalysisCache';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
 import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
 import { cn } from '@/lib/utils';
@@ -30,7 +31,7 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
 
   const loadBranches = useCallback(async (fullName: string, preferred?: string) => {
     const [owner, repo] = fullName.split('/');
-    if (!owner || !repo) return;
+    if (!owner || !repo) return 'main';
     setLoadingBranches(true);
     try {
       const { branches: list } = await api.github.listBranches(owner, repo);
@@ -43,25 +44,40 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
             ? 'main'
             : names[0] ?? 'main';
       setSelectedBranch(next);
+      return next;
     } catch {
       setBranches(['main']);
       setSelectedBranch('main');
+      return 'main';
     } finally {
       setLoadingBranches(false);
     }
   }, []);
 
-  const analyzeRepo = useCallback(async (fullName: string) => {
+  const analyzeRepo = useCallback(async (fullName: string, branch: string, force = false) => {
+    if (!force) {
+      const cached = getCachedRepoAnalysis(fullName, branch);
+      if (cached) {
+        setRepoSummary(cached.summary);
+        setRepoTech(cached.techStack ?? []);
+        return;
+      }
+    }
+
     setAnalyzing(true);
     setRepoSummary(null);
     try {
       const result = await api.github.analyzeRepo(fullName);
       setRepoSummary(result.summary);
       setRepoTech(result.techStack ?? []);
-      localStorage.setItem(
-        `${STORAGE_KEY}-analysis`,
-        JSON.stringify({ repo: fullName, summary: result.summary, fileCount: result.fileCount, at: Date.now() })
-      );
+      setCachedRepoAnalysis({
+        repo: fullName,
+        branch,
+        summary: result.summary,
+        techStack: result.techStack ?? [],
+        fileCount: result.fileCount,
+        scannedAt: Date.now(),
+      });
     } catch {
       setRepoSummary(null);
     } finally {
@@ -104,8 +120,8 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
       setSelectedRepo(defaultRepo);
       if (defaultRepo) {
         const meta = list.find((r) => r.fullName === defaultRepo);
-        await loadBranches(defaultRepo, savedBranch ?? meta?.defaultBranch);
-        void analyzeRepo(defaultRepo);
+        const branch = await loadBranches(defaultRepo, savedBranch ?? meta?.defaultBranch);
+        void analyzeRepo(defaultRepo, branch, false);
       }
     } catch {
       setConnected(false);
@@ -134,8 +150,8 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
     setSelectedRepo(fullName);
     setOpen(null);
     const meta = repos.find((r) => r.fullName === fullName);
-    await loadBranches(fullName, meta?.defaultBranch);
-    void analyzeRepo(fullName);
+    const branch = await loadBranches(fullName, meta?.defaultBranch);
+    void analyzeRepo(fullName, branch, false);
     try {
       await api.github.updateSettings('manual', fullName);
     } catch { /* non-blocking */ }
