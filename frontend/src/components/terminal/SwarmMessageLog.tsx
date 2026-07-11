@@ -21,7 +21,7 @@ import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { isImageGenerationPrompt, isVideoGenerationPrompt } from '@/lib/parseImageContent';
-import { isWebsiteBuildPrompt, isWebsiteBuildUpdate } from '@/lib/chatMemory';
+import { isWebsiteBuildActive } from '@/lib/chatMemory';
 import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
 import { VideoProductionAnimation } from './VideoProductionAnimation';
@@ -206,8 +206,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
 
   const isVideoLoading = loading && isVideoGenerationPrompt(lastUserText);
 
-  const buildPromptActive =
-    isWebsiteBuildPrompt(lastUserText) || isWebsiteBuildUpdate(lastUserText, messages);
+  const buildPromptActive = isWebsiteBuildActive(lastUserText, messages);
 
   const showChatThinking =
     loading &&

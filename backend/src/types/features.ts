@@ -51,6 +51,8 @@ export interface LandingPageOutput {
   fileCount?: number;
   /** True only after a successful GitHub push — prevents false "already pushed" skips */
   githubPushConfirmed?: boolean;
+  /** Original user request for summary card */
+  userPrompt?: string;
 }
 
 export interface ImageBlockedOutput {

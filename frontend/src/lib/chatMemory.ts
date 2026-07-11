@@ -11,7 +11,7 @@ const BUILD_CLARIFICATION =
   /\b(let me understand|phase 1|what(?:'|'| is) the name|what colors|online ordering|clarifying|fully clarified|reply with)\b/i;
 
 const BUILD_INTENT =
-  /\b(build|create|make|design|develop|launch|scaffold)\b[\s\S]{0,80}\b(website|web\s*page|landing|site|app|application|shop|store|saas|chatbot|bot|dashboard|crm|marketplace|platform|software|tool|game|api|portfolio|blog|restaurant|coffee|e[\s-]?commerce)\b/i;
+  /\b(build|create|make|design|develop|launch|scaffold)\b[\s\S]{0,80}\b(website|web\s*page|landing|site|app|application|shop|store|saas|chatbot|bot|dashboard|crm|marketplace|platform|software|tool|game|api|portfolio|blog|restaurant|coffee|e[\s-]?commerce|crypto|blockchain|web3|defi|nft|wallet|token|dao)\b/i;
 
 const NON_BUILD_MEDIA =
   /\b(generate|create|make|draw)\b[\s\S]{0,40}\b(image|picture|photo|logo|thumbnail|video|film|clip|research report|resume|cover letter)\b/i;
@@ -83,13 +83,42 @@ export function threadHasCompletedWebsite(messages: ChatMessage[]): boolean {
     const m = messages[i];
     if (!m) continue;
     if (m.featureOutput && typeof m.featureOutput === 'object') {
-      const o = m.featureOutput as { type?: string; deployUrl?: string };
-      if (o.type === 'landing_page' && o.deployUrl) return true;
+      const o = m.featureOutput as {
+        type?: string;
+        deployUrl?: string;
+        githubPushConfirmed?: boolean;
+        githubRepoName?: string;
+        generatedFiles?: string[];
+        html?: string;
+      };
+      if (o.type === 'landing_page') {
+        if (
+          o.deployUrl ||
+          o.githubPushConfirmed ||
+          o.githubRepoName ||
+          (o.generatedFiles?.length ?? 0) > 0 ||
+          (o.html?.length ?? 0) > 80
+        ) {
+          return true;
+        }
+      }
     }
-    if (m.role === 'assistant' && /YOUR WEBSITE IS READY|Live Preview|Built website/i.test(m.content ?? '')) {
+    if (m.role === 'assistant' && /YOUR WEBSITE IS READY|Live Preview|Built website|YOUR PROJECT IS LIVE/i.test(m.content ?? '')) {
       return true;
     }
   }
+  return false;
+}
+
+/** True when a website build or post-build update is in progress — drives processing UI and suppresses code in chat. */
+export function isWebsiteBuildActive(
+  prompt: string,
+  messages: ChatMessage[],
+  opts?: { completedBuildRef?: boolean }
+): boolean {
+  if (isWebsiteBuildPrompt(prompt)) return true;
+  if (isWebsiteBuildUpdate(prompt, messages)) return true;
+  if (opts?.completedBuildRef && isWebsiteUpdateRequest(prompt)) return true;
   return false;
 }
 
@@ -105,7 +134,7 @@ export function isWebsiteBuildPrompt(prompt: string): boolean {
 
   const buildVerb = /\b(build|create|make|develop|design|launch|scaffold|generate)\b/i.test(t);
   const buildTarget =
-    /\b(website|web\s*page|landing\s*page|site|web\s*app|shop|store|e[\s-]?commerce|portfolio|blog|restaurant|bakery|saas|crm|dashboard|marketplace|platform|chatbot|bot|assistant|tool|software|game|api|app|application|membership|forum|directory|invoice|tracker|planner|clone|startup|storefront|landing|landing page)\b/i.test(
+    /\b(website|web\s*page|landing\s*page|site|web\s*app|shop|store|e[\s-]?commerce|portfolio|blog|restaurant|bakery|saas|crm|dashboard|marketplace|platform|chatbot|bot|assistant|tool|software|game|api|app|application|membership|forum|directory|invoice|tracker|planner|clone|startup|storefront|landing|landing page|crypto|blockchain|web3|defi|nft|wallet|token|dao|dapp|exchange|staking)\b/i.test(
       t
     );
   if (buildVerb && buildTarget) return true;

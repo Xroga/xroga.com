@@ -28,7 +28,7 @@ import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { saveTerminalHistorySession } from '@/lib/terminalHistory';
 import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
-import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, isWebsiteBuildPrompt, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
+import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, isWebsiteBuildActive, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import { getSelectedRepoContext } from '@/lib/repoContext';
@@ -765,9 +765,9 @@ export function TerminalChatProvider({
       setSwarmAnalysis(null);
       setSwarmActivityLog([]);
 
-      const buildPromptActive =
-        isWebsiteBuildPrompt(displayPrompt) ||
-        isWebsiteBuildUpdate(displayPrompt, messages);
+      const buildPromptActive = isWebsiteBuildActive(displayPrompt, messages, {
+        completedBuildRef: completedWebsiteBuildRef.current,
+      });
 
       const useCompactPipeline =
         !isBuildThreadContinuation(displayPrompt, messages) &&

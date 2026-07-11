@@ -17,12 +17,19 @@ export async function deployStaticSite(
   files: VercelFile[]
 ): Promise<{ deployUrl: string; deploymentId: string }> {
   const token = getSecret('VERCEL_API_KEY');
-  const teamId = process.env.VERCEL_TEAM_ID;
-
   if (!token) {
     throw new Error('VERCEL_API_KEY not configured');
   }
+  return deployStaticSiteWithToken(projectName, files, token);
+}
 
+/** Deploy using a user's Vercel OAuth token (their account). */
+export async function deployStaticSiteWithToken(
+  projectName: string,
+  files: VercelFile[],
+  token: string
+): Promise<{ deployUrl: string; deploymentId: string }> {
+  const teamId = process.env.VERCEL_TEAM_ID;
   const query = teamId ? `?teamId=${teamId}` : '';
   const response = await fetch(`https://api.vercel.com/v13/deployments${query}`, {
     method: 'POST',
@@ -40,7 +47,7 @@ export async function deployStaticSite(
 
   if (!response.ok) {
     const errText = await response.text();
-    throw new Error(`Vercel deploy failed: ${response.status} ${errText}`);
+    throw new Error(`Vercel deploy failed: ${response.status} ${errText.slice(0, 200)}`);
   }
 
   const deployment = (await response.json()) as VercelDeployment;

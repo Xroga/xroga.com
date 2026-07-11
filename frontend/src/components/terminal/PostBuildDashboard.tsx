@@ -2,19 +2,25 @@
 
 import { useMemo, useState } from 'react';
 import {
-  ExternalLink,
-  GitBranch,
+  AlertTriangle,
   CheckCircle2,
-  Loader2,
   ChevronDown,
   ChevronUp,
+  ExternalLink,
+  Eye,
   FileCode,
-  Share2,
+  FolderTree,
+  GitBranch,
+  Lightbulb,
+  Loader2,
+  Rocket,
+  Sparkles,
+  Wrench,
 } from 'lucide-react';
-import { BuildCodeSandbox, type PreviewViewport } from './BuildCodeSandbox';
-import { FreeApiOptionsPanel } from '@/components/integrations/FreeApiOptionsPanel';
+import { FullscreenPreviewModal } from './FullscreenPreviewModal';
+import { VercelDeployButton } from './VercelDeployButton';
 import type { LandingPageOutputData } from './LandingPageCard';
-import { XROGA_BUILD_MODELS } from '@/lib/buildPlanningSteps';
+import { XROGA_BUILD_PROCESS } from '@/lib/buildPlanningSteps';
 import { scaffoldPathsForPrompt } from '@/lib/buildScaffoldPaths';
 
 interface PostBuildDashboardProps {
@@ -54,8 +60,8 @@ function inferFeatures(data: LandingPageOutputData, pages: string[]): string[] {
   if (data.needsPayment !== false) {
     base.push('Payment-ready structure (Paddle)');
   }
-  base.push('GitHub code ownership', 'Auto-deploy to Vercel + Cloudflare');
-  return base.slice(0, 8);
+  base.push('GitHub code ownership', 'Live preview deployment');
+  return base.slice(0, 10);
 }
 
 export function PostBuildDashboard({
@@ -77,7 +83,10 @@ export function PostBuildDashboard({
   onSuggestion,
 }: PostBuildDashboardProps) {
   const [behindOpen, setBehindOpen] = useState(false);
-  const [viewport, setViewport] = useState<PreviewViewport>('desktop');
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+  const userRequest = data.userPrompt?.trim() || data.summary?.split('\n')[0]?.trim() || projectName;
+  const builtSummary = data.summary?.replace(/^[^\n]*\n?/, '').trim() || `${projectName} — ${pages.join(', ')}`;
 
   const features = useMemo(() => inferFeatures(data, pages), [data, pages]);
   const fileTree = useMemo(() => {
@@ -86,97 +95,148 @@ export function PostBuildDashboard({
     return scaffoldPathsForPrompt(hint);
   }, [data.generatedFiles, data.features, data.pages, projectName]);
   const fileCount = data.fileCount ?? fileTree.length;
-  const apiRouteCount = fileTree.filter((p) => p.includes('/api/')).length || Math.min(5, Math.max(2, Math.ceil(pages.length / 2)));
-  const deployedAt = new Date().toLocaleTimeString();
 
-  const buildLogs = useMemo(() => {
-    const logs: string[] = [];
-    if (githubPushed) logs.push(`✅ Code pushed to GitHub (${resolvedRepoName})`);
-    else if (pushingGithub) logs.push('⏳ Pushing to GitHub…');
-    else if (resolvedRepoName) logs.push('⏳ GitHub push queued…');
-    else logs.push('⚠️ Connect GitHub to save code automatically');
-    if (liveUrl) logs.push(`✅ Deployed — ${liveUrl}`);
-    else if (autoDeploying) logs.push('⏳ Auto-deploying to Vercel + Cloudflare…');
-    logs.push(`✅ ${fileCount} files in production scaffold`);
-    logs.push(`✅ Site health ${siteAudit.score}/100`);
-    if (statusNote) logs.push(statusNote);
-    return logs;
-  }, [githubPushed, pushingGithub, resolvedRepoName, liveUrl, autoDeploying, siteAudit.score, statusNote, fileCount]);
+  const missingItems: string[] = [];
+  if (!githubPushed && !data.githubPushConfirmed) missingItems.push('Code not yet saved to GitHub — connect repo in chatbar');
+  if (!liveUrl && !autoDeploying) missingItems.push('Live URL pending — use Deploy to Vercel or preview below');
+  if (siteAudit.issues.some((i) => i.severity === 'critical')) {
+    missingItems.push(`${siteAudit.issues.filter((i) => i.severity === 'critical').length} critical health issue(s)`);
+  }
 
   return (
     <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
-      {/* Header — summary first */}
-      <div className="px-3 py-3 border-b border-[var(--card-border)] bg-[var(--accent)]/10 space-y-2">
-        <p className="text-sm font-bold text-[var(--accent)]">✅ Project complete!</p>
-        <p className="text-sm font-semibold text-[var(--foreground)]">📁 {projectName}</p>
-        {liveUrl ? (
-          <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] text-[var(--accent)] hover:underline block truncate">
-            🌐 {liveUrl}
-          </a>
-        ) : autoDeploying ? (
-          <p className="text-[11px] text-[var(--muted)] flex items-center gap-1">
-            <Loader2 className="w-3 h-3 animate-spin" /> Deploying automatically…
-          </p>
-        ) : null}
-        {githubFilesUrl ? (
-          <a href={githubFilesUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] text-[var(--muted)] hover:text-[var(--accent)] block truncate">
-            📂 {resolvedRepoName || githubFilesUrl.replace(/^https:\/\/github\.com\//, '')}
-          </a>
-        ) : resolvedRepoName ? (
-          <p className="text-[11px] text-[var(--muted)]">📂 {resolvedRepoName}</p>
-        ) : null}
-      </div>
-
-      {(statusNote || pushingGithub) && !behindOpen && (
-        <p className="px-3 py-2 text-[10px] text-[var(--muted)] border-b border-[var(--card-border)] flex items-center gap-1.5">
-          {pushingGithub ? <Loader2 className="w-3 h-3 animate-spin shrink-0" /> : null}
-          {statusNote}
-        </p>
-      )}
-
-      <div className="p-3 space-y-3">
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)] mb-1.5">Summary</p>
-          <ul className="space-y-1 text-[11px]">
-            <li className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-              <CheckCircle2 className="w-3 h-3 shrink-0" /> {fileCount} files generated
-            </li>
-            <li className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-              <CheckCircle2 className="w-3 h-3 shrink-0" /> {apiRouteCount} API routes scaffolded
-            </li>
-            <li className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-              <CheckCircle2 className="w-3 h-3 shrink-0" /> Database layer ready (Supabase)
-            </li>
-            <li className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-              <CheckCircle2 className="w-3 h-3 shrink-0" /> Authentication configured
-            </li>
-            <li className="flex items-center gap-1.5 text-[var(--foreground)]/80">
-              <span className="w-3 h-3 shrink-0 text-center">🎨</span> Design: {designTheme}
-            </li>
-          </ul>
+      <div className="px-4 py-4 border-b border-[var(--card-border)] bg-gradient-to-br from-[var(--accent)]/12 to-transparent space-y-3">
+        <div className="flex items-start gap-2">
+          <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+          <div className="min-w-0 flex-1">
+            <h2 className="text-lg font-bold text-[var(--foreground)] leading-tight">Project complete</h2>
+            <p className="text-sm font-semibold text-[var(--accent)] mt-0.5 truncate">{projectName}</p>
+          </div>
         </div>
 
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)] mb-1.5">Features</p>
-          <ul className="space-y-0.5 text-[11px] text-[var(--foreground)]/85">
+        {(statusNote || pushingGithub) && (
+          <p className="text-[11px] text-[var(--muted)] flex items-center gap-1.5">
+            {pushingGithub ? <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" /> : null}
+            {statusNote}
+          </p>
+        )}
+      </div>
+
+      <div className="p-4 space-y-5">
+        <section className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-[var(--accent)]" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">What you asked for</h3>
+          </div>
+          <p className="text-base font-semibold text-[var(--foreground)] leading-snug">{userRequest}</p>
+        </section>
+
+        <section className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Rocket className="w-4 h-4 text-[var(--accent)]" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">What we built</h3>
+          </div>
+          <p className="text-sm text-[var(--foreground)]/90 leading-relaxed">{builtSummary}</p>
+          <div className="flex flex-wrap gap-2 pt-1">
+            <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-[var(--foreground)]/5 border border-[var(--card-border)]">
+              <FileCode className="w-3 h-3 text-[var(--accent)]" />
+              {fileCount} files
+            </span>
+            <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-[var(--foreground)]/5 border border-[var(--card-border)]">
+              <Wrench className="w-3 h-3 text-[var(--accent)]" />
+              {designTheme}
+            </span>
+            <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-[var(--foreground)]/5 border border-[var(--card-border)]">
+              Health {siteAudit.score}/100
+            </span>
+          </div>
+        </section>
+
+        <section className="space-y-2">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Features</h3>
+          </div>
+          <ul className="space-y-1 text-[12px] text-[var(--foreground)]/88">
             {features.map((f) => (
-              <li key={f} className="flex gap-1.5">
-                <span className="text-[var(--accent)] shrink-0">•</span>
+              <li key={f} className="flex gap-2 items-start">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                 {f}
               </li>
             ))}
           </ul>
-        </div>
+        </section>
+
+        {(missingItems.length > 0 || siteAudit.issues.length > 0) && (
+          <section className="space-y-2 rounded-lg border border-amber-500/25 bg-amber-500/5 p-3">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-500" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                Missing or needs attention
+              </h3>
+            </div>
+            <ul className="space-y-1.5 text-[11px]">
+              {missingItems.map((item) => (
+                <li key={item} className="flex gap-2 text-[var(--foreground)]/85">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                  {item}
+                </li>
+              ))}
+              {siteAudit.issues.slice(0, 3).map((issue) => (
+                <li key={issue.id} className="flex gap-2 text-[var(--foreground)]/85">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                  <span>
+                    {issue.message}
+                    <button
+                      type="button"
+                      onClick={() => onFixIssue(issue.fixPrompt)}
+                      className="ml-1 text-[var(--accent)] hover:underline font-medium"
+                    >
+                      Fix
+                    </button>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <section className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Lightbulb className="w-4 h-4 text-[var(--accent)]" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Extra suggestions</h3>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {updateSuggestions.slice(0, 5).map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => onSuggestion(s)}
+                className="text-[10px] px-2.5 py-1.5 rounded-lg border border-[var(--accent)]/30 text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </section>
 
         <div className="flex flex-wrap gap-2 pt-1">
+          <button
+            type="button"
+            onClick={() => setPreviewOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--background)] text-xs font-bold hover:opacity-90 shadow-sm transition-opacity"
+          >
+            <Eye className="w-4 h-4" />
+            Preview
+          </button>
           {liveUrl && (
             <a
               href={liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--accent)] text-[var(--background)] text-[11px] font-bold hover:opacity-90"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--card-border)] text-xs font-semibold hover:bg-[var(--foreground)]/5 transition-colors"
             >
-              <ExternalLink className="w-3.5 h-3.5" />
+              <ExternalLink className="w-4 h-4" />
               Visit live site
             </a>
           )}
@@ -185,128 +245,86 @@ export function PostBuildDashboard({
               href={githubFilesUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[var(--card-border)] text-[11px] font-medium hover:bg-[var(--foreground)]/5"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--card-border)] text-xs font-semibold hover:bg-[var(--foreground)]/5 transition-colors"
             >
-              <GitBranch className="w-3.5 h-3.5" />
-              View code
+              <GitBranch className="w-4 h-4" />
+              View on GitHub
             </a>
           )}
+          <VercelDeployButton
+            html={normalized.html}
+            css={normalized.css}
+            js={normalized.js}
+            projectSlug={projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40) || 'xroga-build'}
+            projectName={projectName}
+            onDeployed={(url) => {
+              if (url) window.open(url, '_blank', 'noopener,noreferrer');
+            }}
+          />
           <button
             type="button"
             onClick={() => setBehindOpen((o) => !o)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[var(--accent)]/35 text-[11px] font-bold text-[var(--accent)] hover:bg-[var(--accent)]/10"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--accent)]/35 text-xs font-bold text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors"
           >
-            {behindOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            {behindOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             Behind the scenes
           </button>
         </div>
 
+        {autoDeploying && (
+          <p className="text-[11px] text-[var(--muted)] flex items-center gap-1.5">
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            Deploying automatically…
+          </p>
+        )}
+
         {behindOpen && (
-          <div className="mt-2 pt-3 border-t border-[var(--card-border)] space-y-4 animate-in fade-in slide-in-from-top-1 duration-200">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--accent)]">
-              🔍 Behind the scenes
-            </p>
-
-            <BuildCodeSandbox
-              html={normalized.html}
-              css={normalized.css}
-              js={normalized.js}
-              projectTitle={projectName}
-              viewport={viewport}
-              onViewportChange={setViewport}
-              showViewportControls
-            />
-
-            <div>
-              <p className="text-[10px] font-bold text-[var(--muted)] mb-1.5">📂 File structure</p>
-              <ul className="max-h-[160px] overflow-y-auto space-y-0.5 text-[10px] font-mono bg-[var(--foreground)]/[0.03] rounded-lg p-2 border border-[var(--card-border)]">
-                {fileTree.map((path) => (
-                  <li key={path} className="flex items-center gap-1.5 py-0.5">
-                    <FileCode className="w-3 h-3 text-[var(--accent)] shrink-0" />
-                    {path}
-                  </li>
-                ))}
-              </ul>
+          <div className="pt-4 border-t border-[var(--card-border)] space-y-4 animate-in fade-in slide-in-from-top-1 duration-200">
+            <div className="flex items-center gap-2">
+              <FolderTree className="w-4 h-4 text-[var(--accent)]" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">File structure</h3>
             </div>
-
-            <div>
-              <p className="text-[10px] font-bold text-[var(--muted)] mb-1.5">📊 Build logs</p>
-              <ul className="text-[10px] font-mono space-y-0.5 bg-[var(--foreground)]/[0.03] rounded-lg p-2 border border-[var(--card-border)]">
-                {buildLogs.map((line, i) => (
-                  <li key={i} className="text-[var(--foreground)]/80">{line}</li>
-                ))}
-                <li className="text-[var(--muted)]">⏱ Completed at {deployedAt}</li>
-              </ul>
-            </div>
-
-            <div>
-              <p className="text-[10px] font-bold text-[var(--muted)] mb-1.5">🧠 XROGA AI roles used</p>
-              <ul className="text-[10px] space-y-1 text-[var(--foreground)]/85">
-                {XROGA_BUILD_MODELS.map((line) => (
-                  <li key={line}>{line}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <p className="text-[10px] font-bold text-[var(--muted)] mb-1.5">💰 Estimated cost</p>
-              <ul className="text-[10px] font-mono space-y-0.5 text-[var(--muted)]">
-                <li>XROGA Pulse: ~$0.05</li>
-                <li>XROGA Architect: ~$0.05</li>
-                <li>XROGA Visionary: ~$0.08</li>
-                <li>XROGA Collective: ~$0.08</li>
-                <li className="pt-1 font-bold text-[var(--foreground)]">Total: ~$0.26</li>
-              </ul>
-            </div>
-
-            <FreeApiOptionsPanel compact />
-
-            {siteAudit.issues.length > 0 && (
-              <div>
-                <p className="text-[10px] font-bold text-[var(--muted)] mb-1.5">Health fixes</p>
-                <ul className="space-y-1.5">
-                  {siteAudit.issues.slice(0, 3).map((issue) => (
-                    <li key={issue.id} className="text-[10px] p-2 rounded-lg border border-[var(--card-border)]">
-                      {issue.message}
-                      <button type="button" onClick={() => onFixIssue(issue.fixPrompt)} className="block mt-0.5 text-[var(--accent)] hover:underline">
-                        Fix this
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <div className="flex flex-wrap gap-1.5">
-              {updateSuggestions.slice(0, 4).map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => onSuggestion(s)}
-                  className="text-[9px] px-2 py-1 rounded-full border border-[var(--accent)]/30 text-[var(--accent)] hover:bg-[var(--accent)]/10"
-                >
-                  {s}
-                </button>
+            <ul className="max-h-[200px] overflow-y-auto space-y-0.5 text-[10px] font-mono bg-[var(--foreground)]/[0.03] rounded-lg p-3 border border-[var(--card-border)]">
+              {fileTree.map((path) => (
+                <li key={path} className="flex items-center gap-1.5 py-0.5">
+                  <FileCode className="w-3 h-3 text-[var(--accent)] shrink-0" />
+                  {path}
+                </li>
               ))}
-              <button
-                type="button"
-                onClick={() => onSuggestion('Add a new feature to my app')}
-                className="text-[9px] px-2 py-1 rounded-full border border-[var(--card-border)] inline-flex items-center gap-1"
-              >
-                <Share2 className="w-3 h-3" /> Add feature
-              </button>
-            </div>
+            </ul>
 
-            <button
-              type="button"
-              onClick={() => setBehindOpen(false)}
-              className="text-[10px] text-[var(--muted)] hover:text-[var(--foreground)]"
-            >
-              Close behind the scenes ▲
-            </button>
+            <div className="flex items-center gap-2">
+              <Wrench className="w-4 h-4 text-[var(--accent)]" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">How we built it</h3>
+            </div>
+            <ol className="space-y-2 text-[11px] text-[var(--foreground)]/85">
+              {XROGA_BUILD_PROCESS.map((step, i) => (
+                <li key={step} className="flex gap-2">
+                  <span className="font-bold text-[var(--accent)] shrink-0">{i + 1}.</span>
+                  {step}
+                </li>
+              ))}
+            </ol>
+
+            {resolvedRepoName && (
+              <p className="text-[10px] text-[var(--muted)] flex items-center gap-1.5">
+                <GitBranch className="w-3 h-3" />
+                {githubPushed ? `Pushed to ${resolvedRepoName}` : `Target repo: ${resolvedRepoName}`}
+              </p>
+            )}
           </div>
         )}
       </div>
+
+      <FullscreenPreviewModal
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        html={normalized.html}
+        css={normalized.css}
+        js={normalized.js}
+        title={projectName}
+        hideAppChrome
+      />
     </div>
   );
 }

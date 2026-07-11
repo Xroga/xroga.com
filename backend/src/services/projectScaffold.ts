@@ -14,11 +14,13 @@ function fullHtmlDocument(html: string, css: string, js: string, title: string):
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title}</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 ${normalized.html}
 <script src="script.js"></script>
+<script>if(typeof lucide!=='undefined'){lucide.createIcons();}</script>
 </body>
 </html>`;
 }
