@@ -44,7 +44,7 @@ function FeaturesExpand() {
       <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs text-[var(--muted)]">
         {shown.map((f) => (
           <li key={f} className="flex items-start gap-2">
-            <span className="text-[#2dd4bf] shrink-0">✓</span>
+            <span className="text-[#4a7aff] shrink-0">✓</span>
             {f}
           </li>
         ))}
@@ -112,7 +112,7 @@ export function PricingPageClient() {
 
       <main className="max-w-6xl mx-auto px-6 py-16">
         <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-[#2dd4bf] mb-6 font-terminal">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-[#4a7aff] mb-6 font-terminal">
             <Sparkles className="w-3 h-3" />
             ALL {FEATURE_COUNT} FEATURES UNLOCKED ON EVERY PLAN
           </div>
@@ -135,7 +135,7 @@ export function PricingPageClient() {
             { icon: Zap, title: '7M+ tokens/month', desc: 'Upgrade for higher concurrency. Pulse is our most popular plan for daily builders.' },
           ].map(({ icon: Icon, title, desc }) => (
             <div key={title} className="glass-panel rounded-xl p-4 border border-[var(--card-border)]">
-              <Icon className="w-5 h-5 text-[#2dd4bf] mb-2" />
+              <Icon className="w-5 h-5 text-[#4a7aff] mb-2" />
               <p className="text-sm font-semibold mb-1">{title}</p>
               <p className="text-xs text-[var(--muted)] leading-relaxed">{desc}</p>
             </div>
@@ -146,7 +146,8 @@ export function PricingPageClient() {
           <XrogaPricingCard
             name="Free Trial"
             price="$0"
-            subtitle="7M tokens/mo"
+            subtitle="Full Xroga AI access"
+            tokensLabel="7M AI tokens/mo"
             features={['1 concurrent task', 'Full Xroga AI access']}
             cta={
               loggedIn ? (
@@ -169,7 +170,7 @@ export function PricingPageClient() {
           {GALACTIC_PLANS.map((plan) => {
             const isCurrent = loggedIn && planTier === plan.tier;
             const cta = isCurrent ? (
-              <div className="text-center py-2 text-sm font-semibold text-[#2dd4bf]">Current Plan</div>
+              <div className="text-center py-2 text-sm font-semibold text-[#4a7aff]">Current Plan</div>
             ) : (
               <CheckoutButton
                 planTier={plan.tier}
@@ -210,7 +211,7 @@ export function PricingPageClient() {
             { icon: Zap, title: 'Concurrency Scaling', desc: 'Run multiple Swarm tasks in parallel on higher tiers.' },
           ].map(({ icon: Icon, title, desc }) => (
             <div key={title} className="glass-panel rounded-xl p-6">
-              <Icon className="w-8 h-8 text-[#2dd4bf] mb-3" />
+              <Icon className="w-8 h-8 text-[#4a7aff] mb-3" />
               <h3 className="font-semibold mb-2">{title}</h3>
               <p className="text-sm text-[var(--muted)]">{desc}</p>
             </div>

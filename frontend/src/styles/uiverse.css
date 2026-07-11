@@ -761,57 +761,336 @@ body.theme-gray .xv-chatbar-solid textarea::placeholder {
 .xv-auth-card .xv-auth-submit:hover { transform: scale(1.03); }
 .xv-auth-card .xv-auth-submit:disabled { opacity: 0.6; }
 
-/* ── Plan card (iconicchandu) ── */
+/* ── Plan card (iconicchandu — blue) ── */
 .xv-plan-card {
+  --xv-plan-white: hsl(0, 0%, 100%);
+  --xv-plan-black: hsl(240, 15%, 9%);
+  --xv-plan-paragraph: hsl(0, 0%, 83%);
+  --xv-plan-line-color: hsl(240, 9%, 17%);
+  --xv-plan-primary: hsl(220, 92%, 58%);
+
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
   padding: 1rem;
   width: 100%;
-  background-color: hsla(240,15%,9%,1);
+  background-color: hsla(240, 15%, 9%, 1);
   background-image:
-    radial-gradient(at 88% 40%, hsla(240,15%,9%,1) 0, transparent 85%),
-    radial-gradient(at 0% 64%, hsl(189,99%,26%) 0, transparent 85%),
-    radial-gradient(at 41% 94%, hsl(189,97%,36%) 0, transparent 85%);
+    radial-gradient(at 88% 40%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
+    radial-gradient(at 49% 30%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
+    radial-gradient(at 14% 26%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
+    radial-gradient(at 0% 64%, hsl(220, 99%, 26%) 0px, transparent 85%),
+    radial-gradient(at 41% 94%, hsl(220, 97%, 36%) 0px, transparent 85%),
+    radial-gradient(at 100% 99%, hsl(220, 94%, 13%) 0px, transparent 85%);
   border-radius: 1rem;
-  box-shadow: 0 -16px 24px 0 rgba(255,255,255,0.15) inset;
-  color: #fff;
+  box-shadow: 0px -16px 24px 0px rgba(255, 255, 255, 0.25) inset;
+  color: var(--xv-plan-white);
 }
 .xv-plan-card .xv-plan-border {
   overflow: hidden;
   pointer-events: none;
   position: absolute;
   z-index: -1;
-  inset: -1px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
   border-radius: 1rem;
-  background-image: linear-gradient(0deg, hsl(0,0%,100%) -50%, hsl(0,0%,40%) 100%);
+  background-image: linear-gradient(0deg, hsl(0, 0%, 100%) -50%, hsl(0, 0%, 40%) 100%);
 }
 .xv-plan-card .xv-plan-border::before {
   content: "";
+  pointer-events: none;
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 200%;
-  height: 8rem;
   transform: translate(-50%, -50%);
-  background-image: linear-gradient(0deg, transparent, hsl(189,100%,50%) 40%, hsl(189,100%,50%) 60%, transparent);
-  animation: xv-rotate 8s linear infinite;
+  transform-origin: left;
+  width: 200%;
+  height: 10rem;
+  background-image: linear-gradient(
+    0deg,
+    hsla(0, 0%, 100%, 0) 0%,
+    hsl(220, 100%, 50%) 40%,
+    hsl(220, 100%, 50%) 60%,
+    hsla(0, 0%, 40%, 0) 100%
+  );
+  animation: xv-plan-border-rotate 8s linear infinite;
 }
-.xv-plan-card .xv-plan-btn {
+.xv-plan-card .xv-plan-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--xv-plan-white);
+}
+.xv-plan-card .xv-plan-price {
+  margin-top: 0.35rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--xv-plan-white);
+}
+.xv-plan-card .xv-plan-price__suffix {
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.7;
+  margin-left: 0.15rem;
+}
+.xv-plan-card .xv-plan-tokens {
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: hsl(220, 92%, 68%);
+  letter-spacing: 0.02em;
+}
+.xv-plan-card .xv-plan-paragraph {
+  margin-top: 0.25rem;
+  width: 90%;
+  font-size: 0.65rem;
+  line-height: 1.4;
+  color: var(--xv-plan-paragraph);
+}
+.xv-plan-card .xv-plan-line {
+  width: 100%;
+  height: 0.1rem;
+  background-color: var(--xv-plan-line-color);
+  border: none;
+}
+.xv-plan-card .xv-plan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+.xv-plan-card .xv-plan-list__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.xv-plan-card .xv-plan-check {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1rem;
+  height: 1rem;
+  background-color: var(--xv-plan-primary);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.xv-plan-card .xv-plan-check__svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  fill: var(--xv-plan-black);
+}
+.xv-plan-card .xv-plan-list__text {
+  font-size: 0.75rem;
+  color: var(--xv-plan-white);
+}
+.xv-plan-card .xv-plan-current {
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: hsl(220, 92%, 68%);
+}
+.xv-plan-card .xv-plan-cta {
+  margin-top: auto;
+}
+.xv-plan-card .xv-plan-cta .xv-pricing-cta,
+.xv-plan-card .xv-plan-cta button:not(.xv-buy-now),
+.xv-plan-card .xv-plan-cta .xv-buy-now {
   cursor: pointer;
   padding: 0.5rem;
   width: 100%;
-  background-image: linear-gradient(0deg, hsl(189,92%,58%), hsl(189,99%,26%));
-  font-size: 0.8rem;
-  color: #fff;
+  background-image: linear-gradient(0deg, hsl(220, 92%, 58%), hsl(220, 99%, 26%) 100%);
+  font-size: 0.75rem;
+  color: var(--xv-plan-white);
   border: 0;
   border-radius: 9999px;
-  box-shadow: inset 0 -2px 20px -4px #fff;
+  box-shadow: inset 0 -2px 25px -4px var(--xv-plan-white);
   font-weight: 600;
 }
+.xv-plan-card .xv-plan-cta .xv-pricing-cta--outline {
+  background: transparent;
+  border: 1px solid hsl(220, 92%, 58%);
+  box-shadow: none;
+  color: hsl(220, 92%, 68%);
+}
+.xv-plan-card .xv-plan-cta .xv-pricing-cta--outline:hover {
+  background: hsla(220, 92%, 58%, 0.12);
+}
+.xv-plan-card .xv-plan-cta .xv-pricing-cta--solid {
+  background-image: linear-gradient(0deg, hsl(220, 92%, 58%), hsl(220, 99%, 26%) 100%);
+  color: #fff;
+}
 
-/* ── Popular plan (Cobp) ── */
+/* ── Popular plan (MuhammadHasann — purple) ── */
+.xv-galactic-popular-card {
+  --xv-pop-white: hsl(0, 0%, 100%);
+  --xv-pop-black: hsl(240, 15%, 9%);
+  --xv-pop-paragraph: hsl(0, 0%, 83%);
+  --xv-pop-line-color: hsl(240, 9%, 17%);
+  --xv-pop-primary: hsl(266, 92%, 58%);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%;
+  background-color: hsla(240, 15%, 9%, 1);
+  background-image:
+    radial-gradient(at 88% 40%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
+    radial-gradient(at 49% 30%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
+    radial-gradient(at 14% 26%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
+    radial-gradient(at 0% 64%, hsla(263, 93%, 56%, 1) 0px, transparent 85%),
+    radial-gradient(at 41% 94%, hsla(284, 100%, 84%, 1) 0px, transparent 85%),
+    radial-gradient(at 100% 99%, hsla(306, 100%, 57%, 1) 0px, transparent 85%);
+  border-radius: 1rem;
+  box-shadow: 0px -16px 24px 0px rgba(255, 255, 255, 0.25) inset;
+  color: var(--xv-pop-white);
+}
+.xv-galactic-popular-card .xv-galactic-popular-border {
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  border-radius: 1rem;
+  background-image: linear-gradient(0deg, hsl(0, 0%, 100%) -50%, hsl(0, 0%, 40%) 100%);
+}
+.xv-galactic-popular-card .xv-galactic-popular-border::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: left;
+  width: 200%;
+  height: 10rem;
+  background-image: linear-gradient(
+    0deg,
+    hsla(0, 0%, 100%, 0) 0%,
+    hsl(277, 95%, 60%) 40%,
+    hsl(277, 95%, 60%) 60%,
+    hsla(0, 0%, 40%, 0) 100%
+  );
+  animation: xv-plan-border-rotate 8s linear infinite;
+}
+.xv-galactic-popular-card .xv-galactic-popular-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.12em;
+  color: var(--xv-pop-white);
+  text-transform: uppercase;
+}
+.xv-galactic-popular-card .xv-galactic-popular-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--xv-pop-white);
+}
+.xv-galactic-popular-card .xv-galactic-popular-price {
+  margin-top: 0.35rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--xv-pop-white);
+}
+.xv-galactic-popular-card .xv-galactic-popular-tokens {
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: hsl(284, 100%, 84%);
+  letter-spacing: 0.02em;
+}
+.xv-galactic-popular-card .xv-galactic-popular-paragraph {
+  margin-top: 0.25rem;
+  width: 90%;
+  font-size: 0.65rem;
+  line-height: 1.4;
+  color: var(--xv-pop-paragraph);
+}
+.xv-galactic-popular-card .xv-galactic-popular-line {
+  width: 100%;
+  height: 0.1rem;
+  background-color: var(--xv-pop-line-color);
+  border: none;
+}
+.xv-galactic-popular-card .xv-galactic-popular-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+.xv-galactic-popular-card .xv-galactic-popular-list__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.xv-galactic-popular-card .xv-galactic-popular-check {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1rem;
+  height: 1rem;
+  background-color: var(--xv-pop-primary);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.xv-galactic-popular-card .xv-galactic-popular-check .xv-plan-check__svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  fill: var(--xv-pop-black);
+}
+.xv-galactic-popular-card .xv-galactic-popular-list__text {
+  font-size: 0.75rem;
+  color: var(--xv-pop-white);
+}
+.xv-plan-current--popular {
+  color: hsl(284, 100%, 84%) !important;
+}
+.xv-galactic-popular-card .xv-galactic-popular-cta {
+  margin-top: auto;
+}
+.xv-galactic-popular-card .xv-galactic-popular-cta .xv-pricing-cta,
+.xv-galactic-popular-card .xv-galactic-popular-cta button:not(.xv-buy-now),
+.xv-galactic-popular-card .xv-galactic-popular-cta .xv-buy-now {
+  cursor: pointer;
+  padding: 0.5rem;
+  width: 100%;
+  background-image: linear-gradient(0deg, rgba(94, 58, 238, 1) 0%, rgba(197, 107, 240, 1) 100%);
+  font-size: 0.75rem;
+  color: var(--xv-pop-white);
+  border: 0;
+  border-radius: 9999px;
+  box-shadow: inset 0 -2px 25px -4px var(--xv-pop-white);
+  font-weight: 600;
+}
+.xv-galactic-popular-card .xv-galactic-popular-cta .xv-pricing-cta--outline {
+  background: transparent;
+  border: 1px solid hsl(277, 95%, 60%);
+  box-shadow: none;
+  color: hsl(284, 100%, 84%);
+}
+.xv-galactic-popular-card .xv-galactic-popular-cta .xv-pricing-cta--outline:hover {
+  background: hsla(277, 95%, 60%, 0.15);
+}
+
+@keyframes xv-plan-border-rotate {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Legacy Cobp popular card (Uiverse.tsx) */
 .xv-popular-card {
   width: 100%;
   background: linear-gradient(to top right, #975af4, #2f7cf8 40%, #78aafa 65%, #934cff 100%);

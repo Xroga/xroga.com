@@ -44,8 +44,8 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-full bg-[#2dd4bf]/15 flex items-center justify-center">
-                  <Zap className="w-4 h-4 text-[#2dd4bf]" />
+                <div className="w-8 h-8 rounded-full bg-[#4a7aff]/15 flex items-center justify-center">
+                  <Zap className="w-4 h-4 text-[#4a7aff]" />
                 </div>
                 <h2 className="text-lg font-bold">Token Balance & Plans</h2>
               </div>
@@ -53,7 +53,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
               <div className="rounded-xl bg-gradient-to-br from-[#4a7aff]/10 to-violet-500/5 border border-[#4a7aff]/25 p-3 mb-3">
                 <div className="flex justify-between text-sm mb-1.5">
                   <span className="text-[var(--muted)]">
-                    Plan: <span className="text-[#2dd4bf] font-semibold capitalize">{planTier ?? 'trial'}</span>
+                    Plan: <span className="text-[#4a7aff] font-semibold capitalize">{planTier ?? 'trial'}</span>
                   </span>
                   <span className="font-bold font-mono">
                     {formatTokens(remaining)}{' '}
@@ -62,7 +62,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
                 </div>
                 <div className="h-2 rounded-full bg-white/10 overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-[#2dd4bf] to-violet-500 transition-all"
+                    className="h-full rounded-full bg-gradient-to-r from-[#4a7aff] to-violet-500 transition-all"
                     style={{ width: `${Math.min(100, percentUsed)}%` }}
                   />
                 </div>
@@ -82,7 +82,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
 
         <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 bg-[var(--background)]/90">
           <p className="text-xs font-semibold text-[var(--muted)] mb-4 flex items-center gap-1.5 px-1">
-            <Sparkles className="w-3.5 h-3.5 text-[#2dd4bf]" />
+            <Sparkles className="w-3.5 h-3.5 text-[#4a7aff]" />
             Higher plans include more AI tokens & XRG
           </p>
 
@@ -110,7 +110,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
                 current={planTier === plan.tier}
                 cta={
                   planTier === plan.tier ? (
-                    <div className="text-center py-2 text-sm font-semibold text-[#2dd4bf]">Current Plan</div>
+                    <div className="text-center py-2 text-sm font-semibold text-[#4a7aff]">Current Plan</div>
                   ) : (
                     <CheckoutButton
                       planTier={plan.tier}

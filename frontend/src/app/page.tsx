@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageTagMarquee } from '@/components/homepage/HomepageTagMarquee';
-import { PowerSmashButton } from '@/components/ui/XrogaButtons';
+import { HomeSignInButton, PowerSmashButton } from '@/components/ui/XrogaButtons';
 import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useHydrated } from '@/hooks/useHydrated';
@@ -31,18 +31,16 @@ export default function HomePage() {
   const desktopBg = hydrated ? (customDesktopBg ?? DESKTOP_BG) : DESKTOP_BG;
   const mobileBg = hydrated ? (customMobileBg ?? MOBILE_BG) : MOBILE_BG;
   const [loggedIn, setLoggedIn] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
     createClient()
       .auth.getSession()
       .then(({ data: { session } }) => {
-        if (session) {
-          router.replace('/dashboard');
-          return;
-        }
-        setLoggedIn(false);
+        setLoggedIn(!!session);
+        setAuthReady(true);
       });
-  }, [router]);
+  }, []);
 
   return (
     <div className="xv-homepage min-h-screen flex flex-col relative overflow-x-hidden">
@@ -59,8 +57,17 @@ export default function HomePage() {
       <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/50 via-black/20 to-black/55" aria-hidden />
 
       <header className="xv-home-header xv-site-header sticky top-0 z-50 bg-transparent border-none shadow-none">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-center">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
           <Logo href="/" variant="homepage" height={76} className="shrink-0" />
+          {authReady && loggedIn && (
+            <PowerSmashButton
+              size="sm"
+              onClick={() => router.push('/dashboard')}
+              className="xv-get-started-outline xv-home-auth-btn !min-w-[140px] !min-h-[44px]"
+            >
+              Dashboard
+            </PowerSmashButton>
+          )}
         </div>
       </header>
 
@@ -79,8 +86,14 @@ export default function HomePage() {
             </span>
           </h1>
 
-          {!loggedIn && (
-            <div className="flex justify-center mb-5">
+          {authReady && !loggedIn && (
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-5 xv-home-auth-row">
+              <HomeSignInButton
+                onClick={() => router.push('/auth/login')}
+                className="xv-home-auth-btn !min-w-[148px] !min-h-[48px]"
+              >
+                Sign In
+              </HomeSignInButton>
               <PowerSmashButton
                 size="sm"
                 onClick={() => router.push('/auth/signup')}

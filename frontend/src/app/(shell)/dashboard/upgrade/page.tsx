@@ -12,7 +12,7 @@ export default function UpgradePage() {
       <div className="max-w-5xl mx-auto space-y-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-            <Rocket className="w-7 h-7 text-[#2dd4bf]" />
+            <Rocket className="w-7 h-7 text-[#4a7aff]" />
             Upgrade Your Plan
           </h1>
           <p className="text-sm text-[var(--muted)] mt-1">
