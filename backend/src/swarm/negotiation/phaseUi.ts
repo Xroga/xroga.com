@@ -76,6 +76,16 @@ export function inferDefaultBuildBrief(prompt: string, memoryNote?: string): str
     theme = 'Modern tech gradient';
     businessType = 'SaaS startup';
     ordering = false;
+  } else if (/\b(crypto|blockchain|web3|defi|nft|token|wallet|dao|dapp|exchange)\b/.test(lower)) {
+    projectName = 'ChainVault DeFi';
+    theme = 'Dark Web3 gradient, neon accents';
+    businessType = 'crypto / Web3 platform';
+    ordering = false;
+  } else if (/\b(chatbot|chat bot|ai assistant|ai agent|support bot)\b/.test(lower)) {
+    projectName = 'XROGA AI Assistant';
+    theme = 'Clean AI chat interface';
+    businessType = 'AI chatbot';
+    ordering = false;
   } else {
     const match = prompt.match(/\b(build|create|make)\s+(?:a\s+)?(.+?)\s+(website|site|shop|store)/i);
     if (match?.[2]) {
@@ -122,6 +132,8 @@ export function inferBusinessLabel(prompt: string): string {
   if (/\breal estate|realtor\b/.test(lower)) return 'real estate website';
   if (/\bportfolio|photographer\b/.test(lower)) return 'portfolio website';
   if (/\bshop|store|boutique|ecommerce\b/.test(lower)) return 'shop website';
+  if (/\b(crypto|blockchain|web3|defi|nft|wallet|dao|dapp)\b/.test(lower)) return 'crypto / Web3 platform';
+  if (/\b(chatbot|chat bot|ai assistant|ai agent)\b/.test(lower)) return 'AI chatbot application';
   const match = prompt.match(/\b(build|create|make)\s+(?:a\s+)?(.+?)\s+(website|site)/i);
   if (match?.[2]) return `${match[2].trim()} website`;
   return 'website';
@@ -291,7 +303,9 @@ export function hasClarifiedBuildBrief(prompt: string): boolean {
 
 export function isWebsiteBuildPrompt(prompt: string, category?: string): boolean {
   if (category === 'landing_page') return true;
-  return /\b(website|web\s*page|landing|site|coffee|shop|store|restaurant|bakery)\b/i.test(prompt);
+  return /\b(website|web\s*page|landing|site|coffee|shop|store|restaurant|bakery|crm|dashboard|saas|marketplace|crypto|blockchain|web3|defi|nft|wallet|chatbot|chat\s*bot|software|app|api|tool|platform|dapp|exchange)\b/i.test(
+    prompt
+  );
 }
 
 /** Build summary metadata from brief and plan for the summary card. */

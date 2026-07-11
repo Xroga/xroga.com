@@ -1,6 +1,12 @@
 /** Detect what kind of project the user wants DeepSeek Code to build. */
 
-export type BuildProjectType = 'website' | 'game' | 'software' | 'app' | 'api';
+export type BuildProjectType = 'website' | 'game' | 'software' | 'app' | 'api' | 'crypto' | 'chatbot';
+
+const CRYPTO_TRIGGERS =
+  /\b(build|create|make|develop|launch|design)\b[\s\S]{0,80}\b(crypto|blockchain|web3|defi|nft|token|wallet|dao|dapp|exchange|staking|smart contract|solidity|ethereum|bitcoin)\b/i;
+
+const CHATBOT_TRIGGERS =
+  /\b(build|create|make|develop|design|launch)\b[\s\S]{0,80}\b(chatbot|chat bot|ai assistant|ai agent|conversational ai|support bot|customer support bot|slack bot|discord bot|telegram bot|whatsapp bot)\b/i;
 
 const GAME_TRIGGERS =
   /\b(build|create|make|develop|code|design|prototype)\b[\s\S]{0,60}\b(game|pygame|phaser|unity|godot|platformer|rpg|arcade|puzzle game|deckbuilder)\b/i;
@@ -25,7 +31,9 @@ const NICHE_BUSINESS =
 
 export function detectBuildProjectType(prompt: string): BuildProjectType {
   const t = prompt.toLowerCase();
-  if (GAME_TRIGGERS.test(prompt) || GAME_IDEA.test(prompt) || /\bgame\b/.test(t) && /\b(build|create|make)\b/.test(t)) {
+  if (CRYPTO_TRIGGERS.test(prompt)) return 'crypto';
+  if (CHATBOT_TRIGGERS.test(prompt)) return 'chatbot';
+  if (GAME_TRIGGERS.test(prompt) || GAME_IDEA.test(prompt) || (/\bgame\b/.test(t) && /\b(build|create|make)\b/.test(t))) {
     return 'game';
   }
   if (API_TRIGGERS.test(prompt)) return 'api';

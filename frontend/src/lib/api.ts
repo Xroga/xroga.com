@@ -419,7 +419,17 @@ export const api = {
     list: () => apiFetch<Project[]>('/api/projects'),
     get: (id: string) => apiFetch<ProjectDetail>(`/api/projects/${id}`),
     files: (id: string) => apiFetch<ProjectFile[]>(`/api/projects/${id}/files`),
-    create: (body: { name: string; type: string }) =>
+    getCode: (id: string) =>
+      apiFetch<{ projectId: string; githubRepoName: string | null; files: ProjectFile[] }>(
+        `/api/projects/${id}/code`
+      ),
+    create: (body: {
+      name: string;
+      type: string;
+      github_repo_url?: string;
+      github_repo_name?: string;
+      user_prompt?: string;
+    }) =>
       apiFetch<Project>('/api/projects', { method: 'POST', body: JSON.stringify(body) }),
   },
   profile: {
