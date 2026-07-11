@@ -256,7 +256,7 @@ export type FeatureOutput =
   | ContentBlockerOutput
   | JobHunterOutput
   | CodeDebugOutput
-  | { type: 'chat'; content: string };
+  | { type: 'chat'; content: string; webSources?: Array<{ title: string; url: string; snippet: string; source: string; thumbnailUrl?: string }> };
 
 export interface SwarmProgressEvent {
   runId: string;

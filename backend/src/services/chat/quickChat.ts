@@ -14,16 +14,26 @@ import { isBuildContinuation, isWebsiteUpdateRequest, threadHasCompletedWebsite 
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
+import { runLiveResearch, type LiveSource } from '../../lib/liveResearch.js';
 import type { RouteProgressFn } from '../../orchestrator/xrogaRouter.js';
 import type { ChatTurn } from '../../lib/conversationContext.js';
 
 const CHAT_SYSTEM = `You are XROGA, a helpful assistant. Answer the user's question conversationally. Never mention underlying AI providers. Emojis welcome.`;
 
+export interface QuickChatResult {
+  content: string;
+  webSources?: LiveSource[];
+}
+
+function wrap(content: string, webSources?: LiveSource[]): QuickChatResult {
+  return { content, webSources };
+}
+
 export async function quickChat(
   prompt: string,
   onCouncilProgress?: RouteProgressFn,
   context?: ChatTurn[]
-): Promise<string> {
+): Promise<QuickChatResult> {
   if (isBuildContinuation(prompt)) {
     throw new Error('BUILD_CONTINUATION_MUST_USE_NEGOTIATION');
   }
@@ -43,53 +53,53 @@ export async function quickChat(
     analysis.clarificationText &&
     !buildIntent
   ) {
-    return formatPlainProfessional(analysis.clarificationText);
+    return wrap(formatPlainProfessional(analysis.clarificationText));
   }
 
   if (isCapabilitiesQuery(userText)) {
-    return formatPlainProfessional(getXrogaCapabilitiesResponse());
+    return wrap(formatPlainProfessional(getXrogaCapabilitiesResponse()));
   }
 
   if (isMathQuery(userText)) {
     const local = trySolveMathLocally(userText);
-    if (local) return formatPlainProfessional(local);
+    if (local) return wrap(formatPlainProfessional(local));
   }
 
   if (isTrivialPrompt(userText)) {
     if (/^(thanks|thank\s*you|thx)\b/.test(lower)) {
-      return "You're welcome! Let me know if you need anything else.";
+      return wrap("You're welcome! Let me know if you need anything else.");
     }
     if (/^(bye|goodbye|see\s*ya)\b/.test(lower)) {
-      return 'See you later — happy building!';
+      return wrap('See you later — happy building!');
     }
     if (/^(yes|no|ok|okay|yep|nope|cool|nice|got\s*it)\b/.test(lower)) {
-      return 'Got it. What should we work on next?';
+      return wrap('Got it. What should we work on next?');
     }
-    // Greetings → real Groq Sprinter (not hardcoded)
     try {
       const { groqSprinter } = await import('../../council/groqClient.js');
       const { blackHoleEmit } = await import('../../blackhole/synthesizer.js');
       const raw = await groqSprinter(userText, context);
       const emitted = await blackHoleEmit(raw, userText, 'greeting', 'elite');
-      return emitted.text;
+      return wrap(emitted.text);
     } catch {
       if (/good\s+(morning|afternoon|evening)/.test(lower)) {
         const period = lower.match(/good\s+(\w+)/)?.[1] ?? 'day';
-        return `Good ${period}! What can I help you with?`;
+        return wrap(`Good ${period}! What can I help you with?`);
       }
-      return "Hey! What can I help you with today?";
+      return wrap("Hey! What can I help you with today?");
     }
   }
 
-  // Safety net: feature intents must use real APIs, never text-only LLM
   const intentCategory = detectFeatureIntent(userText);
   if (intentCategory !== 'chat') {
     try {
       const output = await executeFeature(intentCategory, userText);
-      return formatFeatureOutput(output);
+      return wrap(formatFeatureOutput(output));
     } catch (err) {
       console.error(`[quickChat] Feature ${intentCategory} failed:`, (err as Error).message);
-      return `I couldn't complete ${intentCategory.replace(/_/g, ' ')} right now. Please check API keys (Fal, Replicate, Agnes, Luma) and try again.`;
+      return wrap(
+        `I couldn't complete ${intentCategory.replace(/_/g, ' ')} right now. Please check API keys (Fal, Replicate, Agnes, Luma) and try again.`
+      );
     }
   }
 
@@ -100,30 +110,43 @@ export async function quickChat(
   if (category !== 'chat') {
     try {
       const output = await executeFeature(category, userText);
-      return formatFeatureOutput(output);
+      return wrap(formatFeatureOutput(output));
     } catch (err) {
       console.error(`[quickChat] Classified ${category} failed:`, (err as Error).message);
-      return `Generation failed for ${category.replace(/_/g, ' ')}. Verify your API keys and try again.`;
+      return wrap(
+        `Generation failed for ${category.replace(/_/g, ' ')}. Verify your API keys and try again.`
+      );
     }
   }
+
+  onCouncilProgress?.('reserve', 'Searching the web for current information…');
+  const liveResearch = await runLiveResearch(userText);
 
   const creationPrompt = buildFullSystemPrompt(category, userText);
   const complexity = classifyChatComplexity(userText, route.category);
 
-  // Hybrid Council → Reserve → Black Hole V∞ for pure chat
   const { xrogaRouter } = await import('../../orchestrator/xrogaRouter.js');
-  const routed = await xrogaRouter.route(userText, onCouncilProgress, { context });
+  const routed = await xrogaRouter.route(userText, onCouncilProgress, {
+    context,
+    researchContext: liveResearch?.context,
+  });
   if (routed.text?.trim()) {
-    return routed.text.trim();
+    return wrap(routed.text.trim(), liveResearch?.sources);
   }
 
-  const { text } = await chatGenerate(userText, complexity, `${master}\n\n${creationPrompt}\n\n${CHAT_SYSTEM}`);
-  return text?.trim() || "I'm here — tell me what you'd like to work on.";
+  const systemExtra = liveResearch?.context ? `\n\n${liveResearch.context}` : '';
+  const { text } = await chatGenerate(
+    userText,
+    complexity,
+    `${master}\n\n${creationPrompt}${systemExtra}\n\n${CHAT_SYSTEM}`
+  );
+  return wrap(text?.trim() || "I'm here — tell me what you'd like to work on.", liveResearch?.sources);
 }
 
 export async function quickChatWithGroqFallback(prompt: string): Promise<string> {
   try {
-    return await quickChat(prompt);
+    const result = await quickChat(prompt);
+    return result.content;
   } catch {
     if (getSecret('GROQ_API_KEY')) {
       return groqChat(

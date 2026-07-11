@@ -20,7 +20,6 @@ import {
   MessageCirclePlus,
   Terminal,
   Gift,
-  History,
   FolderOpen,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -66,19 +65,7 @@ const navItems = [
     href: '/dashboard/projects',
     label: 'My Projects',
     icon: FolderOpen,
-    tip: 'All builds — saved code, GitHub repos, and project files.',
-  },
-  {
-    href: '/dashboard/chats',
-    label: 'Build History',
-    icon: MessageCirclePlus,
-    tip: 'Cloud-saved swarm builds and restored terminal conversations.',
-  },
-  {
-    href: '/dashboard/history',
-    label: 'Terminal History',
-    icon: History,
-    tip: 'All saved chats, code projects, and business conversations.',
+    tip: 'GitHub builds, saved code, and all past conversations — pick up exactly where you left off.',
   },
   {
     href: '/dashboard/tasks',

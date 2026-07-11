@@ -76,7 +76,7 @@ export function getSystemPromptForIntent(intent: Phase1Intent, role: 'primary' |
     return `${base} Produce modern UI/UX with polished frontend code (React + Tailwind when appropriate).`;
   }
   if (intent === 'business_advice' && role === 'primary') {
-    return `${base} Provide structured business advice with pros/cons and actionable strategies.`;
+    return `${base} Provide structured business advice with pros/cons and actionable strategies. Use live web research when provided — cite current pricing, trends, and real examples.`;
   }
   if (intent === 'business_advice' && role === 'secondary') {
     return `${base} Validate financial assumptions, feasibility, and risks in the business plan.`;

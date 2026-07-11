@@ -17,6 +17,7 @@ import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { BlackHoleThinkingPanel } from './BlackHoleThinkingPanel';
 import { SwarmPhasePanel } from './SwarmPhasePanel';
 import { ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
+import { WebSourcesPanel } from './WebSourcesPanel';
 import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
@@ -454,6 +455,9 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             content={msg.content}
                             streaming={msg.id === animatingId && loading}
                           />
+                        ) : null}
+                        {msg.webSources?.length ? (
+                          <WebSourcesPanel sources={msg.webSources} />
                         ) : null}
                       </div>
                       {isLastAssistant && reasoning && (
