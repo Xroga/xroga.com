@@ -37,6 +37,13 @@ function nicheFromPrompt(prompt: string): { name: string; theme: string; steps: 
     { match: /\bconstruction|plumber|roofing|cleaning|auto repair\b/, name: 'Homepage — services hero', theme: 'professional', steps: ['Services & quotes', 'Gallery / projects', 'Reviews', 'Contact', 'Responsive'] },
     { match: /\bwedding|event|party planner\b/, name: 'Homepage — celebrate hero', theme: 'elegant', steps: ['Packages', 'Gallery', 'Book consultation', 'Contact', 'Responsive'] },
     { match: /\bpet|veterinary|vet\b/, name: 'Homepage — care hero', theme: 'friendly', steps: ['Services', 'Book visit', 'Gallery', 'Contact', 'Responsive'] },
+    { match: /\b(crm|contacts list|deals pipeline|sales pipeline|sales dashboard)\b/, name: 'CRM Dashboard — corporate header, sidebar navigation', theme: 'corporate clean blue/slate', steps: [
+      'Contacts list — searchable table, company names, avatars',
+      'Deals pipeline — kanban columns (Lead, Proposal, Negotiation, Won)',
+      'Tasks board — priority todos, due dates, checkboxes',
+      'Analytics — KPI cards and bar/line charts (revenue, deals, tasks)',
+      'Responsive Design — mobile-friendly dashboard layout',
+    ] },
     { match: /\bstartup|saas|tech|software company\b/, name: 'Homepage — product hero', theme: 'tech', steps: ['Features', 'Pricing', 'Testimonials', 'Contact / demo', 'Responsive'] },
   ];
 

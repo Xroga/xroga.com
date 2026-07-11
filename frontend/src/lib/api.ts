@@ -481,11 +481,15 @@ export const api = {
       repoName: string;
       branch?: string;
       projectSlug?: string;
+      projectName?: string;
+      userPrompt?: string;
     }) =>
       apiFetch<{
         githubRepoUrl: string;
         githubRepoName: string;
         pushed: boolean;
+        fileCount?: number;
+        generatedFiles?: string[];
       }>('/api/github/push-build', {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -494,7 +498,7 @@ export const api = {
       apiFetch<{ html: string; css: string; js: string }>(
         `/api/github/build-files?repoName=${encodeURIComponent(repoName)}`
       ),
-    analyzeRepo: (repoName: string) =>
+    analyzeRepo: (repoName: string, branch?: string) =>
       apiFetch<{
         repoName: string;
         defaultBranch: string;
@@ -509,7 +513,9 @@ export const api = {
         filesAnalyzed: number;
         totalLinesEstimate: number;
         report: string;
-      }>(`/api/github/analyze?repoName=${encodeURIComponent(repoName)}`),
+      }>(
+        `/api/github/analyze?repoName=${encodeURIComponent(repoName)}${branch ? `&branch=${encodeURIComponent(branch)}` : ''}`
+      ),
   },
   notifications: {
     list: () => apiFetch<Notification[]>('/api/notifications'),
@@ -531,6 +537,12 @@ export const api = {
       }),
     stream: streamSwarmExecute,
     history: () => apiFetch<SwarmRunSummary[]>('/api/swarm/history'),
+    getRun: (runId: string) => apiFetch<SwarmRunSummary>(`/api/swarm/runs/${runId}`),
+    saveConversation: (runId: string, messages: unknown[]) =>
+      apiFetch<{ saved: boolean }>(`/api/swarm/runs/${runId}/conversation`, {
+        method: 'PATCH',
+        body: JSON.stringify({ messages }),
+      }),
   },
   billing: {
     plans: () => apiFetch<{ plans: unknown[] }>('/api/billing/plans'),

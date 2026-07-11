@@ -6,7 +6,7 @@ import { buildLandingPage } from '../../services/builder/landingPage.js';
 import { deepseekCode } from '../../services/code/codeClients.js';
 import { resolveApiKey } from '../../config/apiKeyRouter.js';
 import type { LandingPageOutput } from '../../types/features.js';
-import { PHASE_7_EMIT, XROGA_TAGLINE } from './prompts.js';
+import { PHASE_7_EMIT, PHASE_7_CRM_EMIT, XROGA_TAGLINE } from './prompts.js';
 import { PHASE_7_GAME_EMIT } from './gamePrompts.js';
 import { normalizeBuildFiles } from '../../lib/normalizeBuildSource.js';
 
@@ -89,10 +89,13 @@ async function consolidateWithDeepSeek(
   kind: 'website' | 'game' = 'website'
 ): Promise<string> {
   const user = `Brief:\n${clarifiedBrief}\n\nOriginal request:\n${userPrompt}\n\nApproved plan:\n${approvedPlan}\n\nVerified step code:\n${assembledCode}`;
-  const systemPrompt = kind === 'game' ? PHASE_7_GAME_EMIT : PHASE_7_EMIT;
+  const isCrm = /\b(crm|contacts|deals pipeline|sales pipeline|sales dashboard)\b/i.test(userPrompt);
+  const systemPrompt =
+    kind === 'game' ? PHASE_7_GAME_EMIT : isCrm ? PHASE_7_CRM_EMIT : PHASE_7_EMIT;
+  const maxTokens = 16384;
 
   if (resolveApiKey('deepseek', 'code')) {
-    return deepseekCode(`${XROGA_USER_IDENTITY}\n\n${systemPrompt}`, user, { maxTokens: 8192 });
+    return deepseekCode(`${XROGA_USER_IDENTITY}\n\n${systemPrompt}`, user, { maxTokens });
   }
   if (getSecret('DEEPSEEK_API_KEY')) {
     return deepSeekChat(
@@ -100,7 +103,7 @@ async function consolidateWithDeepSeek(
         { role: 'system', content: `${XROGA_USER_IDENTITY}\n\n${systemPrompt}` },
         { role: 'user', content: user },
       ],
-      { model: 'deepseek-chat', maxTokens: 8192 }
+      { model: 'deepseek-chat', maxTokens }
     );
   }
   return deepseekGenerate(user);
@@ -159,7 +162,7 @@ export async function buildLandingFromSwarmAssembly(
   }
 
   const html = ensureFullHtml(site.html, site.css, site.js);
-  const css = site.css?.trim().length > 120 ? site.css.trim() : DEFAULT_CSS;
+  const css = site.css?.trim().length > 40 ? site.css.trim() : DEFAULT_CSS;
   const js =
     site.js?.trim() ||
     `document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}}));`;

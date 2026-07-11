@@ -53,6 +53,7 @@ import { addPendingVideoJob } from '@/lib/pendingVideoJobs';
 import { addPendingBuildJob, removePendingBuildJob } from '@/lib/pendingBuildJobs';
 import { useBackgroundVideoJobs } from '@/hooks/useBackgroundVideoJobs';
 import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
+import { useBuildCompletionAlerts } from '@/hooks/useBuildCompletionAlerts';
 import { requestBuildNotificationPermission, showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
 
 const GENERIC_SWARM_FALLBACK =
@@ -276,6 +277,8 @@ export function TerminalChatProvider({
       );
     }
   );
+
+  useBuildCompletionAlerts();
 
   useEffect(() => {
     if (incognito) {
@@ -1065,13 +1068,24 @@ export function TerminalChatProvider({
                 body: `${projectName} — open the dashboard to view your build.`,
                 tag: `build-done-${assistantId}`,
               });
-              setMessages((m) =>
-                m.map((msg) =>
+              setMessages((m) => {
+                const updated = m.map((msg) =>
                   msg.id === assistantId
                     ? { ...msg, content: '', featureOutput: output }
                     : msg
-                )
-              );
+                );
+                const runId = (complete as { runId?: string }).runId;
+                if (runId) {
+                  void api.swarm.saveConversation(runId, updated).catch(() => {});
+                }
+                const ghName = typeof output.githubRepoName === 'string' ? output.githubRepoName : undefined;
+                if (output.githubPushConfirmed && ghName) {
+                  void api.projects
+                    .create({ name: projectName.slice(0, 120), type: 'website' })
+                    .catch(() => {});
+                }
+                return updated;
+              });
               return;
             }
             if (buildPromptActive && output && typeof output === 'object' && 'type' in output && output.type !== 'chat') {

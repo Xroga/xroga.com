@@ -149,4 +149,33 @@ router.get('/runs/:runId/status', async (req: AuthRequest, res) => {
   }
 });
 
+/** Save full conversation thread to a swarm run (cloud history — Cursor-style restore). */
+router.patch('/runs/:runId/conversation', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    messages: z
+      .array(
+        z.object({
+          id: z.string().optional(),
+          role: z.enum(['user', 'assistant', 'system']),
+          content: z.string().max(50000),
+          createdAt: z.number().optional(),
+          featureOutput: z.unknown().optional(),
+        })
+      )
+      .max(80),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: 'Invalid messages payload' });
+    return;
+  }
+  try {
+    const runId = String(req.params.runId);
+    await SwarmService.saveRunConversation(req.userId!, runId, parsed.data.messages);
+    res.json({ saved: true });
+  } catch (e) {
+    res.status(404).json({ error: (e as Error).message });
+  }
+});
+
 export default router;

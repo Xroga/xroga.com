@@ -146,7 +146,7 @@ export function BuildCodeSandbox({
             />
           </div>
         ) : (
-          <pre className="p-3 text-[10px] font-mono text-[var(--foreground)]/85 overflow-auto max-h-[280px] whitespace-pre-wrap break-all">
+          <pre className="p-3 text-[10px] font-mono text-[var(--foreground)]/85 overflow-auto max-h-[min(70vh,720px)] whitespace-pre-wrap break-words">
             {codeContent || '(empty)'}
           </pre>
         )}

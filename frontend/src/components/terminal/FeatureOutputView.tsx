@@ -5,7 +5,6 @@ import { ImageBlockedCard } from './ImageBlockedCard';
 import { VideoStudioCard, type VideoOutputData } from './VideoStudioCard';
 import { VideoJobPendingCard } from './VideoJobPendingCard';
 import { LandingPageCard } from './LandingPageCard';
-import { getSelectedRepoContext } from '@/lib/repoContext';
 import type { ImageBlockedOutput } from '@/lib/imageSafetyMessages';
 
 export function FeatureOutputView({
@@ -73,17 +72,9 @@ export function FeatureOutputView({
 
   if (o.type === 'landing_page') {
     const deployUrl = typeof o.deployUrl === 'string' ? o.deployUrl.trim() : '';
-    const selectedCtx = typeof window !== 'undefined' ? getSelectedRepoContext() : null;
-    const githubRepoUrl =
-      typeof o.githubRepoUrl === 'string'
-        ? o.githubRepoUrl
-        : selectedCtx?.repo
-          ? `https://github.com/${selectedCtx.repo}`
-          : undefined;
-    const githubRepoName =
-      typeof o.githubRepoName === 'string'
-        ? o.githubRepoName
-        : selectedCtx?.repo;
+    const githubRepoUrl = typeof o.githubRepoUrl === 'string' ? o.githubRepoUrl : undefined;
+    const githubRepoName = typeof o.githubRepoName === 'string' ? o.githubRepoName : undefined;
+    const githubPushConfirmed = o.githubPushConfirmed === true;
     const hasHtml = typeof o.html === 'string' && o.html.trim().length > 0;
     if (!hasHtml && !deployUrl && !githubRepoUrl) return null;
 
@@ -97,6 +88,7 @@ export function FeatureOutputView({
       deployVerified: o.deployVerified === true,
       githubRepoUrl,
       githubRepoName,
+      githubPushConfirmed,
       projectName: typeof o.projectName === 'string' ? o.projectName : undefined,
       pages: Array.isArray(o.pages) ? (o.pages as string[]) : undefined,
       features: Array.isArray(o.features) ? (o.features as string[]) : undefined,

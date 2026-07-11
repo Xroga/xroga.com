@@ -62,7 +62,8 @@ export function NotificationBell({ className, variant = 'header' }: Notification
   }, []);
 
   useEffect(() => {
-    const fast = hasPendingVideoJobs() ? 15000 : 60000;
+    void refreshNotifications();
+    const fast = hasPendingVideoJobs() ? 15000 : 30000;
     const id = setInterval(() => {
       void refreshNotifications();
     }, fast);
@@ -96,6 +97,15 @@ export function NotificationBell({ className, variant = 'header' }: Notification
     const meta = videoMeta(n);
     if (meta.assistantMessageId && (meta.kind === 'video_ready' || meta.kind === 'video_failed')) {
       jumpToVideo(meta.assistantMessageId);
+      return;
+    }
+    if (meta.kind === 'build_ready' || meta.kind === 'build_failed') {
+      setOpen(false);
+      toast.success(n.title, { duration: 6000 });
+      if (pathname !== '/dashboard') {
+        router.push('/dashboard');
+      }
+      window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       return;
     }
     if (n.link) {

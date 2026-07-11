@@ -102,12 +102,22 @@ export const PHASE_7_EMIT = `You are XROGA Architect (DeepSeek Code). Consolidat
 
 Output ONLY valid JSON with keys: html, css, js
 - html: body content OR full index.html with DOCTYPE, viewport meta, semantic sections (hero, menu, gallery, contact as appropriate), real copy — NOT placeholder lorem unless brief says so
-- css: ALL styles merged — min 80 lines. Use CSS custom properties, modern typography (Google-font-like stacks), flexbox/grid layouts, responsive breakpoints, styled nav/buttons/cards, theme colors from the brief
-- js: smooth scroll, mobile nav toggle, form validation, or cart UI as needed
+- css: ALL styles merged — complete stylesheet with NO truncation. Use CSS custom properties, modern typography (Google-font-like stacks), flexbox/grid layouts, responsive breakpoints, styled nav/buttons/cards, theme colors from the brief
+- js: complete working JavaScript — smooth scroll, mobile nav toggle, form validation, interactive charts/tables for dashboards, no placeholder stubs
 
-Quality bar: must look like a professional agency template, not unstyled HTML.
+Quality bar: must look like a professional agency template, not unstyled HTML. Every function must be complete — no "// TODO", no "...", no truncated blocks.
 No markdown, no explanation, only JSON.
 End with tagline in an HTML comment inside html: "Absorbing the multiverse of data to emit the singularity of truth."`;
+
+export const PHASE_7_CRM_EMIT = `You are XROGA Architect. Consolidate verified step code into ONE complete CRM dashboard (static HTML/CSS/JS preview).
+
+Output ONLY valid JSON with keys: html, css, js
+- html: full corporate CRM dashboard — sidebar nav, header, contacts table, deals pipeline kanban, tasks list, analytics KPI cards with chart placeholders (use CSS/SVG or canvas). Real sample data rows — not lorem ipsum.
+- css: complete corporate UI — slate/blue theme, cards, tables, pipeline columns, responsive grid. Minimum 200+ lines, NO truncation.
+- js: working interactions — tab switching, task checkboxes, pipeline drag hints, chart bar animations, mobile sidebar toggle. Complete functions only.
+
+NO line limits. NO "..." or incomplete code. Production-quality corporate CRM UI.
+Output only JSON.`;
 
 export const BRAND_HEADER = '🕳️ XROGA | BLACK HOLE V∞ | AI SWARM LOGIC';
 

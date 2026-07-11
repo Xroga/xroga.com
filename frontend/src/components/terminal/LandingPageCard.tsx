@@ -19,6 +19,7 @@ export interface LandingPageOutputData {
   deployVerified?: boolean;
   githubRepoUrl?: string;
   githubRepoName?: string;
+  githubPushConfirmed?: boolean;
   projectName?: string;
   pages?: string[];
   features?: string[];
@@ -64,10 +65,11 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
   );
 
   const resolvedRepoName =
-    data.githubRepoName ??
-    (data.githubRepoUrl ? data.githubRepoUrl.replace(/^https:\/\/github\.com\//i, '').replace(/\/$/, '') : '') ??
-    selectedCtx?.repo ??
-    '';
+    (data.githubPushConfirmed && data.githubRepoName) ? data.githubRepoName
+    : selectedCtx?.repo ??
+      data.githubRepoName ??
+      (data.githubRepoUrl ? data.githubRepoUrl.replace(/^https:\/\/github\.com\//i, '').replace(/\/$/, '') : '') ??
+      '';
   const resolvedGithubUrl =
     data.githubRepoUrl ??
     (resolvedRepoName ? `https://github.com/${resolvedRepoName}` : '');
@@ -110,10 +112,10 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
         setNetlifyVerified(Boolean(data.deployVerified));
       }
     }
-    if (data.githubRepoName || data.githubRepoUrl) {
+    if (data.githubPushConfirmed) {
       setGithubPushed(true);
     }
-  }, [data.html, data.css, data.js, data.vercelPreviewUrl, data.netlifyPreviewUrl, data.deployUrl, data.deployVerified, data.githubRepoName, data.githubRepoUrl]);
+  }, [data.html, data.css, data.js, data.vercelPreviewUrl, data.netlifyPreviewUrl, data.deployUrl, data.deployVerified, data.githubPushConfirmed]);
 
   const liveUrl =
     (vercelUrl && vercelVerified ? vercelUrl : null) ??
@@ -127,7 +129,7 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
       Boolean(data.deployUrl && data.deployVerified) ||
       Boolean(data.vercelPreviewUrl) ||
       Boolean(data.netlifyPreviewUrl);
-    const alreadyPushed = Boolean(data.githubRepoName || data.githubRepoUrl);
+    const alreadyPushed = data.githubPushConfirmed === true;
 
     if (alreadyLive && alreadyPushed) return;
 
@@ -138,7 +140,7 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
 
       if (!pushed && resolvedRepoName) {
         setPushingGithub(true);
-        setStatusNote('Pushing index.html, styles.css, and script.js to your GitHub repo…');
+        setStatusNote(`Pushing ${data.fileCount ?? 'full'} project files to ${resolvedRepoName} (${resolvedBranch})…`);
         try {
           const result = await api.github.pushBuild({
             html: normalized.html,
@@ -147,6 +149,8 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
             repoName: resolvedRepoName,
             branch: resolvedBranch,
             projectSlug,
+            projectName,
+            userPrompt: projectName,
           });
           pushed = true;
           setGithubPushed(true);
@@ -159,6 +163,9 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
             js: normalized.js,
             githubRepoUrl: result.githubRepoUrl,
             githubRepoName: result.githubRepoName,
+            githubPushConfirmed: true,
+            fileCount: result.fileCount,
+            generatedFiles: result.generatedFiles,
           });
         } catch (err) {
           setStatusNote(`GitHub push: ${(err as Error).message?.slice(0, 160) || 'failed'}. Preview still works below.`);

@@ -67,7 +67,7 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
     setAnalyzing(true);
     setRepoSummary(null);
     try {
-      const result = await api.github.analyzeRepo(fullName);
+      const result = await api.github.analyzeRepo(fullName, branch);
       setRepoSummary(result.summary);
       setRepoTech(result.techStack ?? []);
       setCachedRepoAnalysis({

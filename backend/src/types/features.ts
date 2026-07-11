@@ -49,6 +49,8 @@ export interface LandingPageOutput {
   followUps?: string[];
   generatedFiles?: string[];
   fileCount?: number;
+  /** True only after a successful GitHub push — prevents false "already pushed" skips */
+  githubPushConfirmed?: boolean;
 }
 
 export interface ImageBlockedOutput {
