@@ -42,6 +42,7 @@ import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { useHydrated } from '@/hooks/useHydrated';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { GALACTIC_PLANS } from '@/lib/plans';
 import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
@@ -120,6 +121,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const profileRowRef = useRef<HTMLDivElement>(null);
   const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
   const { startNewChat } = useTerminalChat();
+  const hydrated = useHydrated();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const setSidebarOpen = useThemeStore((s) => s.setSidebarOpen);
   const sidebarPinned = useThemeStore((s) => s.sidebarPinned);
@@ -131,7 +133,8 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const tokenUsage = useAppStore((s) => s.tokenUsage);
   const profile = useAppStore((s) => s.profile);
   const setProfile = useAppStore((s) => s.setProfile);
-  const incognito = usePrivacyStore((s) => s.incognito);
+  const incognitoRaw = usePrivacyStore((s) => s.incognito);
+  const incognito = hydrated && incognitoRaw;
   const isMobile = useIsMobile();
   const avatarUrl = profile?.avatar_url;
   const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
@@ -174,8 +177,8 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     document.addEventListener('mouseup', onUp);
   }
 
-  const asideWidth = sidebarOpen ? sidebarWidth : 72;
-  const navExpanded = isMobile ? mobileOpen : sidebarOpen;
+  const asideWidth = (hydrated ? sidebarOpen : true) ? (hydrated ? sidebarWidth : 256) : 72;
+  const navExpanded = isMobile ? mobileOpen : (hydrated ? sidebarOpen : true);
 
   function closeMobile() {
     setMobileOpen(false);

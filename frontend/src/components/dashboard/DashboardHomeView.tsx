@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { format, formatDistanceToNow } from 'date-fns';
 import Skeleton from 'react-loading-skeleton';
 import {
   Coins,
@@ -14,6 +13,7 @@ import {
   Shield,
 } from 'lucide-react';
 import { api, type DashboardSummary } from '@/lib/api';
+import { formatSafeDate, formatSafeDistance, safeDate } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -100,7 +100,7 @@ export function DashboardHomeView() {
     }
   }
 
-  const now = summary?.now ? new Date(summary.now) : new Date();
+  const now = safeDate(summary?.now) ?? new Date();
   const tokens = summary?.tokens;
   const xrg = summary?.xrg;
   const billing = summary?.billing;
@@ -132,7 +132,7 @@ export function DashboardHomeView() {
         <div>
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-sm text-[var(--muted)] mt-1">
-            {format(now, 'EEEE, MMMM d, yyyy')} · {format(now, 'h:mm a')}
+            {formatSafeDate(now, 'EEEE, MMMM d, yyyy')} · {formatSafeDate(now, 'h:mm a')}
           </p>
         </div>
         <Link
@@ -263,7 +263,7 @@ export function DashboardHomeView() {
                       <p className="text-xs text-violet-400 truncate">{item.projectName}</p>
                     )}
                     <p className="text-xs text-[var(--muted)]">
-                      {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
+                      {formatSafeDistance(item.created_at)}
                     </p>
                   </div>
                 </li>

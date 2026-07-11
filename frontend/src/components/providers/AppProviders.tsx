@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 import { api } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { DEFAULT_TOKEN_USAGE, tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
 
 const FETCH_TIMEOUT_MS = 8000;
-const DEFAULT_TOKEN_LIMIT = 7_000_000;
 
 async function withTimeout<T>(promise: Promise<T>, ms = FETCH_TIMEOUT_MS): Promise<T> {
   return Promise.race([
@@ -39,36 +39,15 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       ]);
 
       if (results[0].status === 'fulfilled') {
-        const summary = results[0].value;
-        const { tokens, billing } = summary;
-        setTokenUsage({
-          inputTokensUsed: tokens.inputUsed,
-          outputTokensUsed: tokens.outputUsed,
-          totalTokensUsed: tokens.totalUsed,
-          inputTokensRemaining: tokens.inputRemaining,
-          outputTokensRemaining: tokens.outputRemaining,
-          totalTokensRemaining: tokens.totalRemaining,
-          percentUsed: tokens.percentUsed,
-          quotaPeriodStart: tokens.quotaPeriodStart,
-          emergencyTokensAvailable: tokens.emergencyAvailable,
-          emergencyTokensClaimedThisMonth: tokens.emergencyClaimed,
-          totalLimit: tokens.totalLimit,
-        });
-        setPlanInfo(billing.planTier, billing.planName);
+        const parsed = tokenUsageFromSummary(results[0].value);
+        if (parsed.usage) {
+          setTokenUsage(parsed.usage);
+          setPlanInfo(parsed.planTier, parsed.planName);
+        } else {
+          setTokenUsage(DEFAULT_TOKEN_USAGE);
+        }
       } else {
-        setTokenUsage({
-          inputTokensUsed: 0,
-          outputTokensUsed: 0,
-          totalTokensUsed: 0,
-          inputTokensRemaining: 4_700_000,
-          outputTokensRemaining: 2_300_000,
-          totalTokensRemaining: DEFAULT_TOKEN_LIMIT,
-          percentUsed: 0,
-          quotaPeriodStart: new Date().toISOString().slice(0, 10),
-          emergencyTokensAvailable: false,
-          emergencyTokensClaimedThisMonth: false,
-          totalLimit: DEFAULT_TOKEN_LIMIT,
-        });
+        setTokenUsage(DEFAULT_TOKEN_USAGE);
       }
       if (results[1].status === 'fulfilled') setUnreadCount(results[1].value.count);
       if (results[2].status === 'fulfilled') setNotifications(results[2].value.slice(0, 5));
