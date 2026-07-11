@@ -1,13 +1,9 @@
-import { InfluencerView } from '@/components/dashboard/InfluencerView';
-import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { PAGE_SEO } from '@/lib/dashboard-metadata';
+import { redirect } from 'next/navigation';
 
 export const metadata = PAGE_SEO.influencer;
 
+/** Standalone route redirects into Community hub influencer tab */
 export default function InfluencerPage() {
-  return (
-    <PageFullscreenFrame>
-      <InfluencerView />
-    </PageFullscreenFrame>
-  );
+  redirect('/dashboard/community?tab=influencer');
 }

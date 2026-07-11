@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Globe,
   Gift,
@@ -9,7 +10,7 @@ import {
   Zap,
   CheckCircle2,
   XCircle,
-  Users,
+  Award,
   Store,
   RefreshCw,
   ShoppingBag,
@@ -21,6 +22,7 @@ import {
   type TokenDistributionPreview,
   type MarketplaceListing,
 } from '@/lib/api';
+import { InfluencerPanel } from '@/components/dashboard/InfluencerPanel';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import Skeleton from 'react-loading-skeleton';
@@ -32,10 +34,19 @@ function formatTokens(n: number): string {
   return n.toLocaleString();
 }
 
-type CommunityTab = 'overview' | 'marketplace' | 'distribution';
+type CommunityTab = 'overview' | 'marketplace' | 'distribution' | 'influencer';
+
+const VALID_TABS: CommunityTab[] = ['overview', 'marketplace', 'distribution', 'influencer'];
+
+function parseTab(value: string | null): CommunityTab {
+  if (value && VALID_TABS.includes(value as CommunityTab)) return value as CommunityTab;
+  return 'overview';
+}
 
 export function CommunityView() {
-  const [tab, setTab] = useState<CommunityTab>('overview');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [tab, setTabState] = useState<CommunityTab>(() => parseTab(searchParams.get('tab')));
   const [pool, setPool] = useState<CommunityPoolStatus | null>(null);
   const [distribution, setDistribution] = useState<TokenDistributionPreview | null>(null);
   const [listings, setListings] = useState<MarketplaceListing[]>([]);
@@ -49,6 +60,16 @@ export function CommunityView() {
   const [creating, setCreating] = useState(false);
   const [newListing, setNewListing] = useState({ title: '', description: '', category: 'template', priceXrg: 1000 });
   const [buyingId, setBuyingId] = useState<string | null>(null);
+
+  function setTab(next: CommunityTab) {
+    setTabState(next);
+    router.replace(`/dashboard/community?tab=${next}`, { scroll: false });
+  }
+
+  useEffect(() => {
+    const fromUrl = parseTab(searchParams.get('tab'));
+    setTabState(fromUrl);
+  }, [searchParams]);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -159,6 +180,7 @@ export function CommunityView() {
 
   const tabs: { id: CommunityTab; label: string; icon: typeof Globe }[] = [
     { id: 'overview', label: 'Overview', icon: Globe },
+    { id: 'influencer', label: 'Influencer', icon: Award },
     { id: 'marketplace', label: 'Marketplace', icon: Store },
     { id: 'distribution', label: 'Auto Distribution', icon: RefreshCw },
   ];
@@ -171,7 +193,7 @@ export function CommunityView() {
           Community
         </h1>
         <p className="text-sm text-[var(--muted)] mt-1">
-          Community Pool, live marketplace, auto token distribution, and referrals.
+          Community Pool, influencer program, live marketplace, and auto token distribution.
         </p>
       </header>
 
@@ -205,14 +227,15 @@ export function CommunityView() {
               <p className="font-semibold text-sm">Refer &amp; Earn</p>
               <p className="text-[10px] text-[var(--muted)] mt-1">250K tokens + 5K XRG per referral</p>
             </Link>
-            <Link
-              href="/dashboard/influencer"
-              className="glass-panel rounded-xl p-4 hover:border-violet-500/40 transition-colors border border-transparent"
+            <button
+              type="button"
+              onClick={() => setTab('influencer')}
+              className="glass-panel rounded-xl p-4 hover:border-violet-500/40 transition-colors border border-transparent text-left"
             >
-              <Users className="w-5 h-5 text-violet-400 mb-2" />
+              <Award className="w-5 h-5 text-violet-400 mb-2" />
               <p className="font-semibold text-sm">Influencer Program</p>
               <p className="text-[10px] text-[var(--muted)] mt-1">2–10% commission + token bonuses</p>
-            </Link>
+            </button>
             <button
               type="button"
               onClick={() => setTab('marketplace')}
@@ -319,6 +342,8 @@ export function CommunityView() {
           </button>
         </>
       )}
+
+      {tab === 'influencer' && <InfluencerPanel embedded />}
 
       {tab === 'marketplace' && (
         <section className="space-y-4">
