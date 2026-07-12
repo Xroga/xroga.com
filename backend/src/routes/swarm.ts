@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { SwarmService, handleInsufficientActions } from '../services/SwarmService.js';
+import { SwarmService, handleInsufficientActions, handleInsufficientTokens } from '../services/SwarmService.js';
 import { InsufficientActionsError } from '../errors/InsufficientActionsError.js';
+import { InsufficientTokensError } from '../errors/InsufficientTokensError.js';
 import { initSSE, endSSE, sendSSE } from '../lib/sse.js';
 import { sanitizeErrorForUser, sanitizeSwarmSsePayload } from '../lib/sanitizeUserResponse.js';
 import type { AuthRequest } from '../middleware/auth.js';
@@ -78,7 +79,9 @@ router.post('/execute', async (req: AuthRequest, res) => {
       );
       endSSE(res);
     } catch (err) {
-      if (err instanceof InsufficientActionsError) {
+      if (err instanceof InsufficientTokensError) {
+        res.write(`event: error\ndata: ${JSON.stringify(err.toJSON())}\n\n`);
+      } else if (err instanceof InsufficientActionsError) {
         res.write(`event: error\ndata: ${JSON.stringify(err.toJSON())}\n\n`);
       } else {
         const payload = sanitizeSwarmSsePayload(err, parsed.data.prompt);
@@ -101,6 +104,10 @@ router.post('/execute', async (req: AuthRequest, res) => {
     const result = await SwarmService.run(req.userId!, parsed.data.prompt, parsed.data.projectId);
     res.json(result);
   } catch (err) {
+    if (err instanceof InsufficientTokensError) {
+      handleInsufficientTokens(res, err);
+      return;
+    }
     if (err instanceof InsufficientActionsError) {
       handleInsufficientActions(res, err);
       return;

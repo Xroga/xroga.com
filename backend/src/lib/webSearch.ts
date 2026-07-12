@@ -1,4 +1,10 @@
+/**
+ * Free-first web search with Tavily escalation for high-stakes queries.
+ * SearXNG default → Tavily supplement → Tavily+SearXNG parallel on critical research.
+ */
+
 import { tavilySearch } from './tavily.js';
+import { cachedPromptResult } from './promptResponseCache.js';
 
 export interface WebSearchResult {
   title: string;
@@ -7,7 +13,6 @@ export interface WebSearchResult {
   source: 'searxng' | 'tavily';
 }
 
-/** Public SearXNG instances — no API key required. Override with SEARXNG_URL for self-hosted. */
 const DEFAULT_SEARXNG_INSTANCES = [
   'https://searx.be',
   'https://search.im-in.space',
@@ -15,6 +20,9 @@ const DEFAULT_SEARXNG_INSTANCES = [
   'https://searx.tiekoetter.com',
   'https://search.sapti.me',
 ];
+
+const TAVILY_CRITICAL =
+  /\b(hackathon|okx|asp\b|deadline|prize|requirements|pricing|net worth|current events|2026|regulation|competitor|market size)\b/i;
 
 interface SearxResult {
   results?: Array<{ title?: string; url?: string; content?: string }>;
@@ -62,47 +70,74 @@ async function searchSearxngAll(query: string, maxResults: number): Promise<WebS
   return [];
 }
 
-/**
- * Free-first web search: SearXNG (no API key) → Tavily ONLY when SearXNG returns nothing.
- * Set TAVILY_FALLBACK=false to disable Tavily entirely.
- */
+function mergeDedupe(a: WebSearchResult[], b: WebSearchResult[], max: number): WebSearchResult[] {
+  const seen = new Set<string>();
+  const out: WebSearchResult[] = [];
+  for (const r of [...a, ...b]) {
+    if (seen.has(r.url)) continue;
+    seen.add(r.url);
+    out.push(r);
+    if (out.length >= max) break;
+  }
+  return out;
+}
+
 export async function webSearch(
   query: string,
-  opts?: { maxResults?: number }
+  opts?: { maxResults?: number; forceTavily?: boolean }
 ): Promise<WebSearchResult[]> {
   const maxResults = opts?.maxResults ?? 8;
   const tavilyKey = process.env.TAVILY_API_KEY?.trim();
-  const tavilyFallbackEnabled = process.env.TAVILY_FALLBACK !== 'false';
+  const tavilyEnabled = process.env.TAVILY_FALLBACK !== 'false';
+  const critical = opts?.forceTavily || TAVILY_CRITICAL.test(query);
 
-  const searxResults = await searchSearxngAll(query, maxResults);
-  if (searxResults.length >= 2) {
-    console.info(`[webSearch] SearXNG hit (${searxResults.length}) for: ${query.slice(0, 60)}`);
-    return searxResults;
-  }
+  return cachedPromptResult('web-search', `${query}:${maxResults}:${critical}`, async () => {
+    const searxResults = await searchSearxngAll(query, maxResults);
 
-  // Supplement with Tavily only when SearXNG is weak (<2 results) — saves API cost
-  if (tavilyKey && tavilyFallbackEnabled && searxResults.length < 2) {
-    try {
-      console.info(`[webSearch] SearXNG weak (${searxResults.length}) — Tavily supplement for: ${query.slice(0, 60)}`);
-      const tavilyResults = await tavilySearch(query, maxResults);
-      const merged = [
-        ...searxResults,
-        ...tavilyResults.map((r) => ({
+    if (critical && tavilyKey && tavilyEnabled) {
+      try {
+        const tavilyResults = await tavilySearch(query, maxResults);
+        const tavilyMapped = tavilyResults.map((r) => ({
           title: r.title,
           url: r.url,
           content: r.content.slice(0, 500),
           source: 'tavily' as const,
-        })),
-      ];
-      if (merged.length) return merged.slice(0, maxResults);
-    } catch (err) {
-      console.warn('[webSearch] Tavily supplement failed:', (err as Error).message);
+        }));
+        const merged = mergeDedupe(tavilyMapped, searxResults, maxResults);
+        if (merged.length) {
+          console.info(`[webSearch] Critical query — Tavily+SearXNG (${merged.length})`);
+          return merged;
+        }
+      } catch (err) {
+        console.warn('[webSearch] Tavily critical failed:', (err as Error).message);
+      }
     }
-  }
 
-  if (searxResults.length) return searxResults;
+    if (searxResults.length >= 3) {
+      return searxResults;
+    }
 
-  return [];
+    if (tavilyKey && tavilyEnabled) {
+      try {
+        const tavilyResults = await tavilySearch(query, maxResults);
+        const merged = mergeDedupe(
+          searxResults,
+          tavilyResults.map((r) => ({
+            title: r.title,
+            url: r.url,
+            content: r.content.slice(0, 500),
+            source: 'tavily' as const,
+          })),
+          maxResults
+        );
+        if (merged.length) return merged;
+      } catch (err) {
+        console.warn('[webSearch] Tavily supplement failed:', (err as Error).message);
+      }
+    }
+
+    return searxResults;
+  });
 }
 
 export function formatWebSearchContext(results: WebSearchResult[]): string {

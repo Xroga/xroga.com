@@ -95,6 +95,9 @@ import {
   xrogaGitHubLine,
 } from './xrogaBrandActivity.js';
 import { buildFullProjectFiles, scaffoldFilePaths } from '../../services/projectScaffold.js';
+import { BuildUsageTracker } from '../../lib/buildUsageTracker.js';
+import { recordUsage } from '../../phase1/tokenTracker.js';
+import { autoPublishBuildToCommunity } from '../../services/communityAutoPublish.js';
 import { notifyBuildComplete, notifyBuildFailed } from '../../services/notificationService.js';
 
 /** Max tokens per build step — no compromise on complete code output */
@@ -416,13 +419,14 @@ async function withBuildHeartbeat<T>(
 async function verifyStepParallel(
   code: string,
   plan: string,
-  prompt: string
+  prompt: string,
+  tracker?: BuildUsageTracker
 ): Promise<VerificationReport[]> {
   const results = await Promise.allSettled([
-    groqCall(PHASE_4_GROQ_VERIFY, `Code:\n${code.slice(0, 6000)}`, 256).then((r) => ({
+    buildModelCall('flash', PHASE_4_GROQ_VERIFY, `Code:\n${code.slice(0, 6000)}`, 256, tracker).then((r) => ({
       agent: 'groq' as const,
-      pass: isPass(r),
-      report: r,
+      pass: isPass(r.text),
+      report: r.text,
     })),
     geminiCall(PHASE_4_GEMINI_VERIFY, `Plan:\n${plan.slice(0, 1500)}\n\nUser: ${prompt.slice(0, 300)}\n\nCode:\n${code.slice(0, 6000)}`, 256).then(
       (r) => ({ agent: 'gemini' as const, pass: isPass(r), report: r })
@@ -444,6 +448,8 @@ async function verifyStepParallel(
 }
 
 export async function runNegotiationEngine(ctx: NegotiationContext): Promise<NegotiationResult> {
+  const usageTracker = ctx.usageTracker ?? new BuildUsageTracker();
+  ctx.usageTracker = usageTracker;
   const { userPrompt: rawPrompt, featureCategory, userId } = ctx;
   const userPrompt = rawPrompt.trim();
   const currentMessage = routingPrompt(userPrompt);
@@ -638,7 +644,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       const { text: refined, modelLabel } = await buildModelCall(
         'pro',
         PHASE_0_DISCOVERY,
-        `User request:\n${discoveryContext}\n\nDefault brief:\n${clarifiedBrief}\n\nRefine the Fully Clarified Project Brief — do NOT ask questions.`
+        `User request:\n${discoveryContext}\n\nDefault brief:\n${clarifiedBrief}\n\nRefine the Fully Clarified Project Brief — do NOT ask questions.`,
+        8192,
+        usageTracker
       );
       emit(ctx, 0, xrogaArchitectureLine('Project brief refined'), 'architect', todos, 'XROGA Architect', {
         userPhase: 1,
@@ -654,7 +662,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     todos.completeMeta('analyze');
     emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
     try {
-      clarifiedBrief = await groqCall(PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 120);
+      clarifiedBrief = (await buildModelCall('flash', PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 256, usageTracker)).text;
       emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse');
     } catch {
       /* keep brief */
@@ -691,7 +699,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
 
   try {
-    clarifiedBrief = await groqCall(PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 120);
+    clarifiedBrief = (await buildModelCall('flash', PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 256, usageTracker)).text;
       emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse');
   } catch {
     /* keep gemini brief */
@@ -712,7 +720,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       const { text, modelLabel } = await buildModelCall(
         'pro',
         PHASE_1_GAME_PLANNING,
-        `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`
+        `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`,
+        8192,
+        usageTracker
       );
       masterPlan = text;
       emit(ctx, 1, xrogaArchitectureLine('Game master plan ready'), 'architect', todos, 'XROGA Architect', {
@@ -728,7 +738,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         const { text: strategy } = await buildModelCall(
           'grok',
           `You are XROGA Strategist (Grok). Analyze the project brief and output a concise build strategy: architecture, key features, UX priorities, and risks. Under 400 words.`,
-          `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`
+          `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`,
+          4096,
+          usageTracker
         );
         strategyContext = `\n\nStrategy:\n${strategy}`;
         emit(ctx, 1, xrogaArchitectureLine('Build strategy — Grok reasoning'), 'architect', todos, 'XROGA Architect', {
@@ -741,14 +753,16 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       const { text, modelLabel } = await buildModelCall(
         'pro',
         PHASE_1_PLANNING_GEMINI,
-        `Brief:\n${clarifiedBrief}${strategyContext}\n\nOriginal:\n${userPrompt}`
+        `Brief:\n${clarifiedBrief}${strategyContext}\n\nOriginal:\n${userPrompt}`,
+        8192,
+        usageTracker
       );
       masterPlan = text;
       emit(ctx, 1, xrogaArchitectureLine('Master plan generated'), 'architect', todos, 'XROGA Architect', {
         userPhase: 1,
       });
       try {
-        masterPlan = await groqCall(PHASE_1_PLANNING_GROQ, masterPlan, 400);
+        masterPlan = (await buildModelCall('flash', PHASE_1_PLANNING_GROQ, masterPlan, 512, usageTracker)).text;
       } catch {
         /* keep plan */
       }
@@ -862,7 +876,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           si === 0 ? 'flash' : 'pro',
           executePrompt,
           `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
-          BUILD_STEP_MAX_TOKENS
+          BUILD_STEP_MAX_TOKENS,
+          usageTracker
         );
         return text;
       });
@@ -876,7 +891,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     let approved = false;
     for (let attempt = 0; attempt < MAX_STEP_CORRECTIONS; attempt++) {
       emit(ctx, 4, BRAND.phase4.verifying, 'qa', todos, 'AI SWARM LOGIC', { userPhase: 2 });
-      const reports = await verifyStepParallel(stepCode, approvedPlan, userPrompt);
+      const reports = await verifyStepParallel(stepCode, approvedPlan, userPrompt, usageTracker);
       const failures = reports.filter((r) => !r.pass);
 
       if (!failures.length) {
@@ -918,7 +933,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       'sonnet',
       `You are XROGA Visionary. Polish HTML/CSS/JS for modern responsive design, micro-interactions, accessibility (ARIA), and optional dark mode. Output ONLY complete fenced html, css, javascript blocks — no commentary, no truncation.`,
       `Brief:\n${clarifiedBrief}\n\nApproved plan:\n${approvedPlan}\n\nCodebase:\n${assembledCode}`,
-      BUILD_STEP_MAX_TOKENS
+      BUILD_STEP_MAX_TOKENS,
+      usageTracker
     );
     if (uiPolish?.trim()) {
       assembledCode = `${assembledCode}\n\n// --- UI/UX polish (${modelLabel}) ---\n${uiPolish}`;
@@ -938,7 +954,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       reviewRole,
       PHASE_6_FINAL,
       `Full codebase:\n${assembledCode}`,
-      2048
+      2048,
+      usageTracker
     );
     if (!isPass(qualityReview)) {
       emit(ctx, 5, xrogaArchitectureLine('Applying quality fixes from review'), 'debugger', todos, 'XROGA Architect');
@@ -955,7 +972,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   const finalChecks = await Promise.allSettled([
     deepseekCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode}`, 4096),
     geminiCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 50000)}`, 512),
-    groqCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 40000)}`, 512),
+    buildModelCall('flash', PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 40000)}`, 512, usageTracker).then(
+      (r) => r.text
+    ),
     getSecret('MISTRAL_API_KEY')
       ? mistralChat(PHASE_6_FINAL, assembledCode.slice(0, 40000), { maxTokens: 512 })
       : Promise.resolve('PASS'),
@@ -1087,6 +1106,13 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         assistantMessageId: ctx.assistantMessageId,
         deployError: pipeline.deployError,
       });
+      void autoPublishBuildToCommunity(userId, {
+        projectName: summaryData.projectName,
+        userPrompt: currentMessage,
+        deployUrl: pipeline.deployVerified ? pipeline.deployUrl : undefined,
+        githubRepoUrl: pipeline.github.htmlUrl,
+        priceXrg: 0,
+      });
     } catch (err) {
       deployError = (err as Error).message;
       console.warn('[NegotiationEngine] GitHub/deploy pipeline:', deployError);
@@ -1191,6 +1217,21 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   todos.completeAll();
   emit(ctx, 7, BRAND.phase7.success, 'complete', todos, 'BLACK HOLE V∞');
 
+  const tokenUsage =
+    usageTracker.totalTokens > 0
+      ? {
+          inputTokens: usageTracker.totalInput,
+          outputTokens: usageTracker.totalOutput,
+          totalTokens: usageTracker.totalTokens,
+          estimatedUsd: usageTracker.estimatedUsd,
+          byModel: usageTracker.snapshot(),
+        }
+      : undefined;
+
+  if (tokenUsage) {
+    await recordUsage(ctx.userId, usageTracker.totalInput, usageTracker.totalOutput);
+  }
+
   return {
     success: true,
     clarifiedBrief,
@@ -1198,6 +1239,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     assembledCode,
     polishedOutput,
     featureOutput: featureOutput ?? undefined,
+    tokenUsage,
   };
 }
 

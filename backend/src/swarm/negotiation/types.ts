@@ -1,4 +1,6 @@
 import type { FeatureCategory, SwarmProgressEvent } from '../../types/features.js';
+import type { BuildUsageTracker } from '../../lib/buildUsageTracker.js';
+import type { ModelUsageLine } from '../../lib/buildUsageTracker.js';
 
 /** 9-phase AI Swarm Logic (internal 0–8 maps to user-facing Phases 1–9) */
 export type NegotiationPhase = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
@@ -29,6 +31,8 @@ export interface NegotiationContext {
   githubTargetRepo?: string;
   githubTargetBranch?: string;
   assistantMessageId?: string;
+  /** Accumulates real API token usage for billing */
+  usageTracker?: BuildUsageTracker;
 }
 
 export interface NegotiationResult {
@@ -41,6 +45,13 @@ export interface NegotiationResult {
   clarificationText?: string;
   needsGitHubConnection?: boolean;
   featureOutput?: import('../../types/features.js').FeatureOutput;
+  tokenUsage?: {
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    estimatedUsd: number;
+    byModel: ModelUsageLine[];
+  };
 }
 
 export interface VerificationReport {

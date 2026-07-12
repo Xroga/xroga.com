@@ -2,6 +2,7 @@ import { QUOTA } from './models.js';
 import { phase1Logger } from './logger.js';
 import type { TokenUsageSnapshot } from './types.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { quotaForPlanTier } from '../config/modelRegistry.js';
 
 interface UserUsageRecord {
   inputTokens: number;
@@ -102,10 +103,25 @@ async function getRecord(userId: string): Promise<UserUsageRecord> {
   return record;
 }
 
-function computeSnapshot(record: UserUsageRecord): TokenUsageSnapshot {
-  const totalLimit = QUOTA.totalTokens + record.emergencyBonus + record.bonusTokens;
-  const inputLimit = QUOTA.inputTokens + Math.floor(record.bonusTokens * 0.67);
-  const outputLimit = QUOTA.outputTokens + record.emergencyBonus + Math.ceil(record.bonusTokens * 0.33);
+async function getPlanTier(userId: string): Promise<string> {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return 'unpaid';
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data } = await supabase.from('user_actions').select('plan_tier').eq('user_id', userId).maybeSingle();
+    return data?.plan_tier ?? 'unpaid';
+  } catch {
+    return 'unpaid';
+  }
+}
+
+async function getTotalLimit(userId: string, record: UserUsageRecord): Promise<number> {
+  const tier = await getPlanTier(userId);
+  return quotaForPlanTier(tier) + record.emergencyBonus + record.bonusTokens;
+}
+
+function computeSnapshot(record: UserUsageRecord, totalLimit: number): TokenUsageSnapshot {
+  const inputLimit = Math.floor(totalLimit * 0.67);
+  const outputLimit = totalLimit - inputLimit;
 
   const totalUsed = record.inputTokens + record.outputTokens;
   const totalRemaining = Math.max(0, totalLimit - totalUsed);
@@ -133,7 +149,8 @@ function computeSnapshot(record: UserUsageRecord): TokenUsageSnapshot {
 
 export async function getUsage(userId: string): Promise<TokenUsageSnapshot> {
   const record = await getRecord(userId);
-  return computeSnapshot(record);
+  const totalLimit = await getTotalLimit(userId, record);
+  return computeSnapshot(record, totalLimit);
 }
 
 export async function checkQuota(
@@ -142,16 +159,15 @@ export async function checkQuota(
   estimatedOutput: number
 ): Promise<{ allowed: boolean; snapshot: TokenUsageSnapshot }> {
   const record = await getRecord(userId);
-  const snapshot = computeSnapshot(record);
-  const totalLimit = QUOTA.totalTokens + record.emergencyBonus + record.bonusTokens;
+  const totalLimit = await getTotalLimit(userId, record);
+  const snapshot = computeSnapshot(record, totalLimit);
+  const inputLimit = Math.floor(totalLimit * 0.67);
+  const outputLimit = totalLimit - inputLimit;
 
   const wouldExceedTotal =
     record.inputTokens + record.outputTokens + estimatedInput + estimatedOutput > totalLimit;
-  const wouldExceedInput =
-    record.inputTokens + estimatedInput > QUOTA.inputTokens + Math.floor(record.bonusTokens * 0.67);
-  const wouldExceedOutput =
-    record.outputTokens + estimatedOutput >
-    QUOTA.outputTokens + record.emergencyBonus + Math.ceil(record.bonusTokens * 0.33);
+  const wouldExceedInput = record.inputTokens + estimatedInput > inputLimit;
+  const wouldExceedOutput = record.outputTokens + estimatedOutput > outputLimit;
 
   const allowed = !wouldExceedTotal && !wouldExceedInput && !wouldExceedOutput;
   return { allowed, snapshot };
@@ -175,7 +191,7 @@ export async function recordUsage(
     total: record.inputTokens + record.outputTokens,
   });
 
-  return computeSnapshot(record);
+  return computeSnapshot(record, await getTotalLimit(userId, record));
 }
 
 export async function claimEmergencyTokens(userId: string): Promise<{
@@ -184,7 +200,8 @@ export async function claimEmergencyTokens(userId: string): Promise<{
   usage: TokenUsageSnapshot;
 }> {
   const record = await getRecord(userId);
-  const snapshot = computeSnapshot(record);
+  const totalLimit = await getTotalLimit(userId, record);
+  const snapshot = computeSnapshot(record, totalLimit);
 
   if (record.emergencyClaimedAt) {
     return {
@@ -207,7 +224,7 @@ export async function claimEmergencyTokens(userId: string): Promise<{
   memoryStore.set(userId, record);
   await saveToDb(userId, record);
 
-  const updated = computeSnapshot(record);
+  const updated = computeSnapshot(record, await getTotalLimit(userId, record));
   phase1Logger.info('Emergency tokens claimed', { userId, bonus: QUOTA.emergencyTokens });
 
   return {
@@ -227,5 +244,5 @@ export async function creditBonusTokens(
   memoryStore.set(userId, record);
   await saveToDb(userId, record);
   phase1Logger.info('Bonus tokens credited', { userId, amount, totalBonus: record.bonusTokens });
-  return computeSnapshot(record);
+  return computeSnapshot(record, await getTotalLimit(userId, record));
 }

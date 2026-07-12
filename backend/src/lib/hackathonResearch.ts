@@ -81,7 +81,7 @@ async function gatherSources(
 
   for (const q of buildSearchQueries(profileId, text).slice(0, 3)) {
     try {
-      const results = await webSearch(q, { maxResults: 3 });
+      const results = await webSearch(q, { maxResults: 3, forceTavily: profileId === 'okx-build-x-series' });
       for (const r of results) {
         if (!sources.some((s) => s.url === r.url)) {
           sources.push({

@@ -1,4 +1,5 @@
 import { InsufficientActionsError } from '../errors/InsufficientActionsError.js';
+import { InsufficientTokensError } from '../errors/InsufficientTokensError.js';
 
 const FRIENDLY_SWARM =
   "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.";
@@ -11,6 +12,9 @@ function isBuildPromptText(prompt: string): boolean {
 }
 
 export function sanitizeErrorForUser(err: unknown, prompt?: string): string {
+  if (err instanceof InsufficientTokensError) {
+    return err.message;
+  }
   if (err instanceof InsufficientActionsError) {
     return err.message;
   }
@@ -26,6 +30,9 @@ export function sanitizeSwarmJsonError(err: unknown): {
   message: string;
   code?: string;
 } {
+  if (err instanceof InsufficientTokensError) {
+    return { success: false, message: err.message, code: 'OUT_OF_TOKENS' };
+  }
   if (err instanceof InsufficientActionsError) {
     return { success: false, message: err.message, code: 'OUT_OF_ACTIONS' };
   }
@@ -37,6 +44,9 @@ export function sanitizeSwarmJsonError(err: unknown): {
 
 /** SSE error events — never expose stack traces or API failures */
 export function sanitizeSwarmSsePayload(err: unknown, prompt?: string): Record<string, unknown> {
+  if (err instanceof InsufficientTokensError) {
+    return { ...err.toJSON(), event: 'out_of_tokens' };
+  }
   if (err instanceof InsufficientActionsError) {
     return { ...err.toJSON(), event: 'out_of_actions' };
   }
