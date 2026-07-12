@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Check, ChevronRight, CircleDashed, ListTodo, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SwarmTodoItem } from '@/lib/swarm';
 import {
@@ -17,6 +17,7 @@ import { AgentActivityRow, AgentTypewriterText } from './AgentTypewriterText';
 import { XrogaBlackHoleShineText } from '@/components/ui/XrogaBlackHoleShineText';
 import { ModelCollaborationBar } from './ModelCollaborationBar';
 import { BuildPatienceBanner } from './BuildPatienceBanner';
+import { BuildTodoList } from './BuildTodoList';
 import { requestBuildNotificationPermission } from '@/lib/buildBrowserNotify';
 
 interface XrogaAgentProcessingPanelProps {
@@ -140,7 +141,6 @@ export function XrogaAgentProcessingPanel({
   );
 
   const displayGoal = goal ?? deriveBuildGoal(null, formattedLines[formattedLines.length - 1]);
-  const doneCount = todos.filter((t) => t.status === 'done').length;
 
   return (
     <div
@@ -150,6 +150,10 @@ export function XrogaAgentProcessingPanel({
       )}
     >
       {loading && <ModelCollaborationBar activePhase={activePhase} loading={loading} />}
+
+      {todos.length > 0 && (
+        <BuildTodoList todos={todos} showProgress={loading} />
+      )}
 
       <p className="text-[13px] leading-snug text-[var(--muted)] font-medium">
         {thoughtLabel(thoughtSeconds, loading)}
@@ -177,49 +181,6 @@ export function XrogaAgentProcessingPanel({
           {stats.searches === 1 ? '' : 'es'}
           {stats.commands > 0 ? `, ran ${stats.commands} command${stats.commands === 1 ? '' : 's'}` : ''}
         </p>
-      )}
-
-      {todos.length > 0 && (
-        <div className="xv-agent-panel__todo px-3 py-2.5 animate-in fade-in duration-300 xv-agent-todo-box">
-          <p className="text-[12px] font-medium text-[var(--foreground)]/75 mb-2 flex items-center gap-1.5">
-            <ListTodo className="h-3.5 w-3.5 text-[var(--muted)]" strokeWidth={2} />
-            To-dos {todos.length}
-          </p>
-          <ul className="space-y-1.5" aria-label="Build to-dos">
-            {todos.map((item) => (
-              <li
-                key={item.id}
-                className={cn(
-                  'flex items-start gap-2 text-[12px] leading-snug transition-all duration-300',
-                  item.status === 'done' && 'text-[var(--muted)]/45 line-through decoration-[var(--muted)]/25',
-                  item.status === 'active' && 'text-[var(--foreground)]/92 xv-agent-todo-active',
-                  item.status === 'pending' && 'text-[var(--muted)]/38'
-                )}
-              >
-                <span className="mt-0.5 shrink-0" aria-hidden>
-                  {item.status === 'done' ? (
-                    <Check className="h-3.5 w-3.5 text-emerald-500/75" strokeWidth={2.5} />
-                  ) : item.status === 'active' ? (
-                    <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[var(--accent)]/50 bg-[var(--accent)]/10">
-                      <ChevronRight className="h-2.5 w-2.5 text-[var(--accent)]" strokeWidth={2.5} />
-                    </span>
-                  ) : (
-                    <CircleDashed className="h-3.5 w-3.5 text-[var(--muted)]/28" strokeWidth={2} />
-                  )}
-                </span>
-                <span className={cn(item.status === 'active' && 'font-medium')}>
-                  {item.label.replace(/^\[Phase \d+\]\s*/i, '')}
-                </span>
-              </li>
-            ))}
-          </ul>
-          {doneCount > 0 && (
-            <p className="mt-2.5 text-[11px] text-[var(--muted)]/55 flex items-center gap-1.5 xv-agent-line-in">
-              <Check className="h-3 w-3 text-emerald-500/65" strokeWidth={2.5} />
-              Completed {doneCount} of {todos.length} to-dos
-            </p>
-          )}
-        </div>
       )}
 
       {loading && (

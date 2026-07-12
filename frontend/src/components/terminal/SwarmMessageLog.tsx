@@ -22,8 +22,7 @@ import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { isImageGenerationPrompt } from '@/lib/parseImageContent';
-import { isWebsiteBuildActive } from '@/lib/chatMemory';
-import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
+import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
@@ -204,12 +203,12 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     return '';
   }, [messages]);
 
-  const buildPromptActive = isWebsiteBuildActive(lastUserText, messages);
+  const codeBuildActive = isCodeBuildProcessing(lastUserText, messages);
 
   const showGeneralChatThinking =
     loading &&
     !isImageGenerationPrompt(lastUserText) &&
-    !buildPromptActive;
+    !codeBuildActive;
 
   const showChatThinking = showGeneralChatThinking && pipelineCompact;
   const showProcessingPanel = showGeneralChatThinking && !pipelineCompact;
@@ -388,15 +387,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
-                        {loading && msg.id === animatingId && buildPromptActive && (
-                          <BlackHoleThinkingPanel
-                            steps={thinkingSteps.length > 0 ? thinkingSteps : [...BUILD_PLANNING_STEPS]}
-                            startedAt={thinkingStartedAt ?? undefined}
-                            active={loading}
-                            defaultExpanded
-                          />
-                        )}
-                        {loading && msg.id === animatingId && (buildPromptActive || swarmTodos.length > 0 || swarmNegotiationPhase != null) && (
+                        {loading && msg.id === animatingId && codeBuildActive && (
                           <SwarmPhasePanel
                             activePhase={swarmNegotiationPhase}
                             loading={loading}
@@ -409,7 +400,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             buildPrompt={lastUserText}
                           />
                         )}
-                        {!buildPromptActive &&
+                        {!codeBuildActive &&
                           (msg.thinkingSteps?.length ||
                             (loading && msg.id === animatingId && (showChatThinking || showProcessingPanel))) && (
                           <BlackHoleThinkingPanel
@@ -449,7 +440,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                         ) : !(
                             loading &&
                             msg.id === animatingId &&
-                            (buildPromptActive ||
+                            (codeBuildActive ||
                               swarmTodos.length > 0 ||
                               swarmNegotiationPhase != null ||
                               swarmActivityLog.length > 0)

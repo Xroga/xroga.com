@@ -29,7 +29,9 @@ import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { saveTerminalHistorySession } from '@/lib/terminalHistory';
 import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
-import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, isWebsiteBuildActive, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
+import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
+import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
+import { seedBuildTodos } from '@/lib/buildDefaultTodos';
 import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import { getSelectedRepoContext } from '@/lib/repoContext';
@@ -742,7 +744,7 @@ export function TerminalChatProvider({
       setSwarmAnalysis(null);
       setSwarmActivityLog([]);
 
-      const buildPromptActive = isWebsiteBuildActive(displayPrompt, messages, {
+      const codeBuildActive = isCodeBuildProcessing(displayPrompt, messages, {
         completedBuildRef: completedWebsiteBuildRef.current,
       });
 
@@ -751,11 +753,11 @@ export function TerminalChatProvider({
         !isWebsiteBuildUpdate(displayPrompt, messages) &&
         !(completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) &&
         !(activeWebsiteBuildRef.current && looksLikeBuildClarificationAnswer(displayPrompt)) &&
-        !buildPromptActive &&
+        !codeBuildActive &&
         (isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt));
       setPipelineCompact(useCompactPipeline);
 
-      if (!buildPromptActive && !useCompactPipeline) {
+      if (!codeBuildActive && !useCompactPipeline) {
         thinkingStepsRef.current = [
           'Searching live sources (SearXNG + YouTube)',
           'Analyzing your question',
@@ -765,13 +767,14 @@ export function TerminalChatProvider({
         setPipelineMessage('Searching the web…');
       }
 
-      if (buildPromptActive) {
-        setSwarmNegotiationPhase(1);
+      if (codeBuildActive) {
+        setSwarmNegotiationPhase(0);
         setSwarmStatusLabel('XROGA Architect');
-        setPipelineMessage('XROGA Architect — system design & API plan…');
+        setSwarmTodos(seedBuildTodos());
+        setPipelineMessage('XROGA Architect — planning architecture, database & API routes…');
         thinkingStepsRef.current = [...BUILD_PLANNING_STEPS];
         setThinkingSteps([...BUILD_PLANNING_STEPS]);
-        setSwarmActivityLog(['XROGA Architect — planning architecture, database & API routes…']);
+        setSwarmActivityLog(['XROGA Architect — analyzing your project and planning the build…']);
         lastActivityAtRef.current = Date.now();
         buildHeartbeatTickRef.current = 0;
         addPendingBuildJob({
@@ -789,7 +792,7 @@ export function TerminalChatProvider({
       abortRef.current = controller;
 
       thinkingTimerRef.current = setTimeout(() => {
-        if (!gotEvent && !buildPromptActive) setPipelineMessage('Thinking…');
+        if (!gotEvent && !codeBuildActive) setPipelineMessage('Thinking…');
       }, 1500);
 
       try {
@@ -953,7 +956,7 @@ export function TerminalChatProvider({
             if (swarmEv.swarmStatusLabel) {
               setSwarmStatusLabel(sanitizeXrogaTerminalText(swarmEv.swarmStatusLabel));
             }
-            if (swarmEv.swarmStatusLabel && buildPromptActive) {
+            if (swarmEv.swarmStatusLabel && codeBuildActive) {
               const modelLabel = sanitizeXrogaTerminalText(swarmEv.swarmStatusLabel);
               if (modelLabel && !thinkingStepsRef.current.some((s) => s.includes(modelLabel))) {
                 const stepLine = `[${modelLabel}] ${sanitizeXrogaTerminalText(event.message ?? 'Working…')}`;
@@ -980,7 +983,7 @@ export function TerminalChatProvider({
           },
           onDelta: (delta) => {
             if (!delta) return;
-            if (buildPromptActive) return;
+            if (codeBuildActive) return;
             gotEvent = true;
             fullReply += delta;
             setMessages((m) =>
@@ -1077,7 +1080,7 @@ export function TerminalChatProvider({
               });
               return;
             }
-            if (buildPromptActive && output && typeof output === 'object' && 'type' in output && output.type !== 'chat') {
+            if (codeBuildActive && output && typeof output === 'object' && 'type' in output && output.type !== 'chat') {
               setMessages((m) =>
                 m.map((msg) =>
                   msg.id === assistantId ? { ...msg, content: '', featureOutput: output } : msg
@@ -1085,7 +1088,7 @@ export function TerminalChatProvider({
               );
               return;
             }
-            if (chatContent && !fullReply.trim() && !buildPromptActive) {
+            if (chatContent && !fullReply.trim() && !codeBuildActive) {
               fullReply = chatContent;
               const webSources = (output as { webSources?: ChatMessage['webSources'] })?.webSources;
               setMessages((m) =>
@@ -1097,7 +1100,7 @@ export function TerminalChatProvider({
               );
             }
             if (
-              buildPromptActive &&
+              codeBuildActive &&
               (chatContent.includes(GENERIC_SWARM_FALLBACK) || fullReply.includes(GENERIC_SWARM_FALLBACK))
             ) {
               const buildError =
@@ -1178,7 +1181,7 @@ export function TerminalChatProvider({
           setMessages((m) => m.filter((msg) => msg.id !== assistantId || msg.content.length > 0));
           return;
         }
-        const friendly = buildPromptActive
+        const friendly = codeBuildActive
           ? '⚠️ **Build connection lost.** Check your connection and try again. Connect GitHub under Integrations if you have not already.'
           : GENERIC_SWARM_FALLBACK;
         setMessages((m) => [
