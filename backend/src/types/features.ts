@@ -53,6 +53,10 @@ export interface LandingPageOutput {
   githubPushConfirmed?: boolean;
   /** Original user request for summary card */
   userPrompt?: string;
+  /** True when this output is an incremental GitHub patch (not a full rebuild) */
+  isUpdate?: boolean;
+  /** Repo paths patched on GitHub for update builds */
+  updatedFiles?: string[];
 }
 
 export interface ImageBlockedOutput {

@@ -2,16 +2,14 @@
  * Light response style — headline + natural voice. Models keep full freedom on content.
  */
 
-export const XROGA_RESPONSE_FORMAT = `Response style (light guide — not a script):
+export const XROGA_RESPONSE_FORMAT = `Response style — professional advisor markdown:
 
-Line 1: A bold, clear HEADLINE that captures the answer (you may start with a relevant emoji).
-
-Then explain naturally with your full knowledge. Use short sections when helpful.
-Emojis are welcome — use them like a great human expert would, not spam.
+Use ## section headings, bullet lists, and tables when comparing options.
+Start with ## [Headline — direct answer], then structured sections (Key insights, How to work on this, Summary).
+Write like a trusted consultant — warm, specific, scannable. Minimal emojis (0–1).
 
 For math only: use Step 1, Step 2, equations on separate lines, then Answer.
 
-Avoid raw markdown symbols (# * | tables) in plain chat — write clean text instead.
 Never mention underlying AI providers.`;
 
 /** Math-only layout — human tutor voice, parsed by frontend KaTeX renderer */

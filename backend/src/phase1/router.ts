@@ -7,6 +7,9 @@ import { getCurrentDateDirective } from '../lib/currentDateContext.js';
 
 const PHASE2_MESSAGE = 'Coming in Phase 2';
 
+const PRICING =
+  /\b(price|pricing|cost|revenue|margin|profit|valuation|subscription|monetiz)\b/i;
+
 const UI_KEYWORDS =
   /\b(ui|ux|frontend|react|tailwind|css|landing\s*page|dashboard\s*ui|design\s*system|component\s*library)\b/i;
 const ARCH_KEYWORDS =
@@ -57,7 +60,9 @@ export function buildRoutingPlan(intent: Phase1Intent, message: string, mathQuer
     case 'ui_ux_design':
       return { intent, primary: 'claude_sonnet', secondary: null };
     case 'business_advice':
-      return { intent, primary: 'grok_fast', secondary: 'deepseek_pro' };
+      return message.length > 420 || PRICING.test(message)
+        ? { intent, primary: 'grok_fast', secondary: 'deepseek_pro' }
+        : { intent, primary: 'grok_fast', secondary: null };
     case 'deep_reasoning':
       return { intent, primary: 'grok_fast', secondary: null, grokReasoningEffort: 'high' };
     case 'general_chat':

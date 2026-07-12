@@ -968,7 +968,7 @@ export function TerminalChatProvider({
         if (usePhase1Engine) {
           setPipelineCompact(false);
           const mathPrompt = isMathQueryPrompt(displayPrompt);
-          setPipelineMessage(mathPrompt ? 'Working through the math…' : 'Searching live sources…');
+          setPipelineMessage(mathPrompt ? 'Working through the math…' : 'Composing your answer…');
           setSwarmStatusLabel('XROGA AI');
           setSwarmActiveAgent('architect');
           thinkingStepsRef.current = mathPrompt
@@ -978,9 +978,8 @@ export function TerminalChatProvider({
                 'Formatting a clear solution',
               ]
             : [
-                'Searching the web (SearXNG + YouTube)',
-                'Analyzing your question',
-                'Composing professional response',
+                'Understanding your question',
+                'Composing a structured response',
               ];
           setThinkingSteps([...thinkingStepsRef.current]);
           pushSwarmTerminalLine(mathPrompt ? 'Math solver → step-by-step solution…' : 'Live research → professional answer…');
