@@ -1,5 +1,7 @@
 /** Beginner-friendly 6-step website plans — any niche, not coffee-only */
 
+import { planIncrementalUpdate } from '../../lib/incrementalUpdate.js';
+
 export const BEGINNER_WEBSITE_PLAN = [
   'Step 1: Homepage — hero, header, navigation',
   'Step 2: Services / Menu / Products — items and pricing',
@@ -115,6 +117,8 @@ export const WEBSITE_UPDATE_PLAN = [
   'Step 6: Responsive Design — final mobile polish',
 ] as const;
 
-export function defaultUpdatePlanForPrompt(_prompt: string): string[] {
-  return [...WEBSITE_UPDATE_PLAN];
+export function defaultUpdatePlanForPrompt(prompt: string): string[] {
+  const { labels, stepCount } = planIncrementalUpdate(prompt);
+  if (stepCount === 1) return [labels[0] ?? 'Apply targeted patch to named files only'];
+  return labels.length >= 2 ? labels : [labels[0] ?? 'Patch files', 'Verify & polish touched UI only'];
 }

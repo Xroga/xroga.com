@@ -74,8 +74,17 @@ import {
   pushAndDeployLivePreview,
   pushBuildToGitHub,
   fetchBuildFilesFromGitHub,
+  fetchGitHubFilesByPaths,
   analyzeGitHubRepo,
 } from '../../services/integrations/githubDeploy.js';
+import {
+  extractPatchedFilesFromAssembly,
+  formatFilesForUpdateContext,
+  landingOutputToPatchedFiles,
+  mergePatchedFiles,
+  planIncrementalUpdate,
+  type UpdateTargetPlan,
+} from '../../lib/incrementalUpdate.js';
 import { siteCodeFromProjectFiles, LANDING_UPDATE_FOLLOW_UPS } from '../../lib/landingPreview.js';
 import {
   isBuildContinuation,
@@ -443,8 +452,13 @@ async function verifyStepParallel(
   code: string,
   plan: string,
   prompt: string,
-  tracker?: BuildUsageTracker
+  tracker?: BuildUsageTracker,
+  light = false
 ): Promise<VerificationReport[]> {
+  if (light) {
+    const r = await buildModelCall('flash', PHASE_4_GROQ_VERIFY, `Code:\n${code.slice(0, 6000)}`, 256, tracker);
+    return [{ agent: 'groq', pass: isPass(r.text), report: r.text }];
+  }
   const results = await Promise.allSettled([
     buildModelCall('flash', PHASE_4_GROQ_VERIFY, `Code:\n${code.slice(0, 6000)}`, 256, tracker).then((r) => ({
       agent: 'groq' as const,
@@ -517,11 +531,20 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         buildType
       ));
 
+  const isUpdateBuild =
+    isProductBuild &&
+    isWebsiteUpdateRequest(userPrompt) &&
+    (hasBuildConversationContext(userPrompt) || threadHasCompletedWebsite(userPrompt));
+
+  let incrementalPlan: UpdateTargetPlan | null = isUpdateBuild
+    ? planIncrementalUpdate(userPrompt)
+    : null;
+
   let webResearchNote = '';
   let uiTrendNote = '';
   let hackathonNote = '';
 
-  if (isProductBuild || isGameBuild) {
+  if ((isProductBuild || isGameBuild) && !isUpdateBuild) {
     try {
       const searchQuery = isWebsiteUpdateRequest(userPrompt)
         ? `${currentMessage} UI patterns best practices`
@@ -594,26 +617,61 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   const isWebBuild = isProductBuild;
 
-  const isUpdateBuild =
-    isWebBuild &&
-    isWebsiteUpdateRequest(userPrompt) &&
-    (hasBuildConversationContext(userPrompt) || threadHasCompletedWebsite(userPrompt));
-
   let existingSiteCode: { html: string; css: string; js: string } | null = null;
+  let targetedUpdateFiles: import('../../services/integrations/githubDeploy.js').ProjectFile[] = [];
   let repoAnalysisSummary: string | null = null;
   if (isWebBuild && ctx.githubTargetRepo?.includes('/')) {
     try {
       const analysis = await analyzeGitHubRepo(userId, ctx.githubTargetRepo, ctx.githubTargetBranch);
       repoAnalysisSummary = analysis.summary;
-      if (analysis.hasBuildFiles) {
+      if (isUpdateBuild) {
+        incrementalPlan = planIncrementalUpdate(
+          userPrompt,
+          analysis.treeSample.map((f) => f.path)
+        );
+        emit(
+          ctx,
+          0,
+          xrogaPulseLine(
+            `Incremental update — ${incrementalPlan.filePaths.size} file(s) only (cached repo, no full re-read)`
+          ),
+          'reviewer',
+          todos,
+          'XROGA Pulse',
+          { userPhase: 6 }
+        );
+        targetedUpdateFiles = await fetchGitHubFilesByPaths(
+          userId,
+          ctx.githubTargetRepo,
+          [...incrementalPlan.filePaths],
+          ctx.githubTargetBranch
+        );
+        if (targetedUpdateFiles.length) {
+          existingSiteCode = siteCodeFromProjectFiles(targetedUpdateFiles);
+        }
+      } else if (analysis.hasBuildFiles) {
         existingSiteCode = analysis.buildFiles;
       }
-      emit(ctx, 0, BRAND.phase0.scanning(`GitHub repo (${analysis.fileCount} files)`), 'reviewer', todos, 'XROGA Visionary', {
-        userPhase: 1,
-      });
+      if (!isUpdateBuild) {
+        emit(ctx, 0, BRAND.phase0.scanning(`GitHub repo (${analysis.fileCount} files)`), 'reviewer', todos, 'XROGA Visionary', {
+          userPhase: 1,
+        });
+      }
     } catch (fetchErr) {
       console.warn('[NegotiationEngine] GitHub repo analysis:', (fetchErr as Error).message);
       if (isUpdateBuild) {
+        try {
+          targetedUpdateFiles = await fetchGitHubFilesByPaths(
+            userId,
+            ctx.githubTargetRepo,
+            [...(incrementalPlan?.filePaths ?? ['index.html', 'styles.css', 'script.js'])],
+            ctx.githubTargetBranch
+          );
+          existingSiteCode = siteCodeFromProjectFiles(targetedUpdateFiles);
+        } catch (fallbackErr) {
+          console.warn('[NegotiationEngine] Fetch targeted files:', (fallbackErr as Error).message);
+        }
+      } else {
         try {
           const files = await fetchBuildFilesFromGitHub(userId, ctx.githubTargetRepo, ctx.githubTargetBranch);
           existingSiteCode = siteCodeFromProjectFiles(files);
@@ -672,10 +730,15 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       ? `Prior build remembered: "${latestPrior.projectName}"${latestPrior.designTheme ? ` (${latestPrior.designTheme})` : ''}${latestPrior.deployUrl ? ` — live at ${latestPrior.deployUrl}` : ''}`
       : '';
     try {
-      clarifiedBrief = await geminiCall(
-        PHASE_0_UPDATE_BRIEF,
-        `Thread:\n${discoveryContext}\n\n${priorContext}\n\nUpdate request:\n${currentMessage}\n\nOutput the updated Fully Clarified Project Brief. Apply changes directly — do NOT ask questions.`
-      );
+      clarifiedBrief = (
+        await buildModelCall(
+          'flash',
+          PHASE_0_UPDATE_BRIEF,
+          `Thread:\n${discoveryContext}\n\n${priorContext}\n\nUpdate request:\n${currentMessage}\n\nOutput the updated Fully Clarified Project Brief. Apply changes directly — do NOT ask questions.`,
+          1024,
+          usageTracker
+        )
+      ).text;
     } catch {
       clarifiedBrief = `Update request: ${currentMessage}\n\n${discoveryContext}`;
     }
@@ -871,7 +934,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   }
 
   const gameMaxSteps = isGamePhaseContinuation(userPrompt) ? steps.length : Math.min(steps.length, 2);
-  const stepsToRun = isGameBuild ? steps.slice(0, gameMaxSteps) : steps;
+  let stepsToRun = isGameBuild ? steps.slice(0, gameMaxSteps) : steps;
+  if (isUpdateBuild && incrementalPlan) {
+    stepsToRun = incrementalPlan.labels.slice(0, incrementalPlan.stepCount);
+  }
   todos.setBuildSteps(stepsToRun);
   todos.activateMeta('steps');
   todos.completeMeta('steps');
@@ -902,9 +968,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     : isUpdateBuild
       ? 'plain HTML/CSS/JS only. Edit existing files from GitHub. Output ONLY fenced code blocks.'
       : 'plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.';
-  const existingCodeContext = existingSiteCode
-    ? `\n\nEXISTING SITE (edit — do not rebuild from scratch):\n--- index.html ---\n${existingSiteCode.html}\n\n--- styles.css ---\n${existingSiteCode.css}\n\n--- script.js ---\n${existingSiteCode.js}`
-    : '';
+  const existingCodeContext = targetedUpdateFiles.length
+    ? `\n\n${formatFilesForUpdateContext(targetedUpdateFiles)}`
+    : existingSiteCode
+      ? `\n\nEXISTING SITE (edit — do not rebuild from scratch):\n--- index.html ---\n${existingSiteCode.html}\n\n--- styles.css ---\n${existingSiteCode.css}\n\n--- script.js ---\n${existingSiteCode.js}`
+      : '';
 
   for (let si = 0; si < stepsToRun.length; si++) {
     const stepLabel = `Step ${si + 1}/${stepsToRun.length}`;
@@ -920,8 +988,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     let stepCode = '';
     try {
       stepCode = await withBuildHeartbeat(ctx, todos, async () => {
-        const role =
-          isUpdateBuild || hackathonNote || repoAnalysisSummary
+        const role = isUpdateBuild
+          ? 'flash'
+          : hackathonNote || repoAnalysisSummary
             ? si % 2 === 0
               ? 'pro'
               : 'flash'
@@ -949,7 +1018,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     let approved = false;
     for (let attempt = 0; attempt < MAX_STEP_CORRECTIONS; attempt++) {
       emit(ctx, 4, BRAND.phase4.verifying, 'qa', todos, 'AI SWARM LOGIC', { userPhase: 2 });
-      const reports = await verifyStepParallel(stepCode, approvedPlan, userPrompt, usageTracker);
+      const reports = await verifyStepParallel(stepCode, approvedPlan, userPrompt, usageTracker, isUpdateBuild);
       const failures = reports.filter((r) => !r.pass);
 
       if (!failures.length) {
@@ -988,6 +1057,30 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   emit(ctx, 6, xrogaVisionaryLine('UI polish — responsive design & animations'), 'reviewer', todos, 'XROGA Visionary', {
     userPhase: 2,
   });
+  if (isUpdateBuild && incrementalPlan?.touchesUi) {
+    try {
+      const { text: grokOutline } = await buildModelCall(
+        'grok',
+        `Brief UI tweak outline (bullets only, max 120 words) for this update — spacing, color, responsive hints. No code.`,
+        `Update:\n${userPrompt.slice(0, 600)}\n\nCode sample:\n${assembledCode.slice(0, 8000)}`,
+        256,
+        usageTracker
+      );
+      const { text: uiPolish, modelLabel } = await buildModelCall(
+        'sonnet',
+        `Apply ONLY these UI tweaks to the fenced html/css blocks below. Return fenced html and/or css blocks only — do not rewrite unrelated files.\n\nOutline:\n${grokOutline}`,
+        `Touched paths: ${[...incrementalPlan.filePaths].join(', ')}\n\n${assembledCode.slice(0, 12000)}`,
+        4096,
+        usageTracker,
+        { userId: ctx.userId, claudeTask: 'ui' }
+      );
+      if (uiPolish?.trim()) {
+        assembledCode = `${assembledCode}\n\n// --- UI/UX polish (${modelLabel}) ---\n${uiPolish}`;
+      }
+    } catch {
+      /* optional grok + sonnet mix */
+    }
+  } else if (!isUpdateBuild) {
   try {
     const { text: uiPolish, modelLabel } = await buildModelCall(
       'sonnet',
@@ -1003,9 +1096,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   } catch {
     /* fallback handled in buildModelCall */
   }
+  }
 
   todos.addFinalTodos();
   todos.activateFinal('final-check');
+  if (!isUpdateBuild) {
   emit(ctx, 6, xrogaCollectiveLine('Quality gate — code standards review'), 'truth_council', todos, 'XROGA Collective', {
     userPhase: 2,
   });
@@ -1060,6 +1155,31 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   } else {
     emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective', { userPhase: 2 });
   }
+  } else {
+    emit(ctx, 6, xrogaPulseLine('Update verify — flash check on touched files only'), 'qa', todos, 'XROGA Pulse', {
+      userPhase: 2,
+    });
+    try {
+      const { text: quickCheck } = await buildModelCall(
+        'flash',
+        PHASE_6_FINAL,
+        `Touched files only:\n${assembledCode.slice(0, 12000)}`,
+        256,
+        usageTracker
+      );
+      if (!isPass(quickCheck)) {
+        assembledCode = await deepseekFlashCall(
+          PHASE_5_CORRECT,
+          `Quick review:\n${quickCheck}\n\nCode:\n${assembledCode}`,
+          4096,
+          usageTracker
+        );
+        totalCorrections++;
+      }
+    } catch {
+      /* skip heavy final audit on updates */
+    }
+  }
   buildState.markDone('verified');
   todos.completeFinal('final-check');
 
@@ -1086,7 +1206,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         userPrompt,
         approvedPlan,
         clarifiedBrief,
-        isGameBuild ? 'game' : 'website'
+        isGameBuild ? 'game' : 'website',
+        { skipConsolidate: isUpdateBuild }
       );
     } else if (featureCategory === 'code_debug') {
       featureOutput = await debugCode({
@@ -1112,13 +1233,30 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       userPhase: 4,
     });
     const generatedPaths = scaffoldFilePaths(userPrompt);
-    const projectFiles = buildFullProjectFiles({
-      html: featureOutput.html,
-      css: featureOutput.css,
-      js: featureOutput.js,
-      projectName,
-      userPrompt,
-    });
+    const updatePaths = incrementalPlan?.filePaths ?? new Set<string>();
+    let projectFiles: import('../../services/integrations/githubDeploy.js').ProjectFile[];
+    if (isUpdateBuild && targetedUpdateFiles.length && updatePaths.size) {
+      const fromAssembly = extractPatchedFilesFromAssembly(assembledCode, updatePaths);
+      const fromLanding = landingOutputToPatchedFiles(
+        featureOutput.html,
+        featureOutput.css,
+        featureOutput.js,
+        updatePaths
+      );
+      const patched = mergePatchedFiles(targetedUpdateFiles, [...fromAssembly, ...fromLanding]);
+      projectFiles = patched.filter((f) => updatePaths.has(f.path));
+      emit(ctx, 8, xrogaGitHubLine(`patch ${projectFiles.length} file(s) only`, ctx.githubTargetBranch ?? 'main'), 'builder', todos, 'XROGA AI', {
+        userPhase: 4,
+      });
+    } else {
+      projectFiles = buildFullProjectFiles({
+        html: featureOutput.html,
+        css: featureOutput.css,
+        js: featureOutput.js,
+        projectName,
+        userPrompt,
+      });
+    }
     try {
       const pipeline = await pushAndDeployLivePreview(userId, projectFiles, projectSlug, {
         targetRepo: ctx.githubTargetRepo,
