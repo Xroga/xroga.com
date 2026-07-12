@@ -4,6 +4,7 @@ import type { AuthRequest } from '../middleware/auth.js';
 import { processMessage } from '../phase1/engine.js';
 import { getUsage, claimEmergencyTokens } from '../phase1/tokenTracker.js';
 import { getSecret, hasSecret } from '../config/envSecrets.js';
+import { phase1Logger } from '../phase1/logger.js';
 import {
   FREE_PLAN_TOKENS,
   quotaAllocationForPlan,
