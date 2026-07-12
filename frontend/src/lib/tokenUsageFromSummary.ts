@@ -1,8 +1,8 @@
 import type { DashboardSummary, TokenUsage } from '@/lib/api';
 
 const DEFAULT_LIMIT = 7_000_000;
-const DEFAULT_INPUT = 3_500_000;
-const DEFAULT_OUTPUT = 3_500_000;
+const DEFAULT_INPUT = 4_700_000;
+const DEFAULT_OUTPUT = 2_300_000;
 
 export function tokenUsageFromSummary(summary: unknown): {
   usage: TokenUsage | null;

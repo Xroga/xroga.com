@@ -525,7 +525,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       const searchQuery = isWebsiteUpdateRequest(userPrompt)
         ? `${currentMessage} UI patterns best practices`
         : `${inferBusinessLabel(userPrompt)} ${buildType} requirements 2026`;
-      const results = await webSearch(searchQuery, { maxResults: 4 });
+      const results = await webSearch(searchQuery, {
+        maxResults: 4,
+        forceTavily: /\bhackathon|okx|asp\b|crypto|web3\b/i.test(userPrompt),
+      });
       if (results.length) {
         webResearchNote = formatWebSearchContext(results);
         emit(
@@ -565,6 +568,26 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       }
     } catch {
       /* optional */
+    }
+
+    if (webResearchNote || uiTrendNote || hackathonNote) {
+      try {
+        const { text: synthesis } = await buildModelCall(
+          'grok',
+          `You are XROGA Strategist (Grok 4). Synthesize web/UI/hackathon research into build priorities, risks, and sponsor gaps. Under 350 words.`,
+          `User:\n${userPrompt}\n\n${webResearchNote}\n${uiTrendNote}\n${hackathonNote}`,
+          3072,
+          usageTracker
+        );
+        if (synthesis?.trim()) {
+          webResearchNote = `${webResearchNote}\n\nGrok research synthesis:\n${synthesis}`;
+          emit(ctx, 0, xrogaArchitectureLine('Grok — research synthesis from web sources'), 'architect', todos, 'XROGA Architect', {
+            userPhase: 1,
+          });
+        }
+      } catch {
+        /* optional grok */
+      }
     }
   }
 
@@ -979,7 +1002,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     userPhase: 2,
   });
   try {
-    const reviewRole = buildType === 'crypto' || hackathonNote ? 'opus' : 'pro';
+    const reviewRole = buildType === 'crypto' ? 'opus' : hackathonNote ? 'grok' : 'pro';
     const { text: qualityReview } = await buildModelCall(
       reviewRole,
       PHASE_6_FINAL,

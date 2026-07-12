@@ -183,65 +183,76 @@ export const MODEL_TABLE = [
   {
     name: 'DeepSeek Flash',
     role: 'Workhorse',
-    usage: '48% in · 52% out',
-    tokens7M: '3.2M',
-    tasks: 'Bulk code output, file reads, fixes',
+    usage: '46% in · 54% out',
+    tokens7M: '3.5M',
+    tasks: 'Bulk code, file reads, fixes',
     cost: '$0.14 in / $0.28 out per 1M',
   },
   {
     name: 'DeepSeek Pro',
     role: 'Brain',
-    usage: '30% in · 24% out',
+    usage: '28% in · 24% out',
     tokens7M: '1.9M',
-    tasks: 'Architecture, plan review, repo analysis, hard logic',
+    tasks: 'Architecture, plan review, repo analysis',
     cost: '$0.435 in / $0.87 out per 1M',
   },
   {
     name: 'Grok 4 Reasoning',
     role: 'Strategist',
-    usage: '4% in · 3% out',
-    tokens7M: '245K',
-    tasks: 'Hackathon strategy, diagnosis',
+    usage: '14% in · 12% out',
+    tokens7M: '934K',
+    tasks: 'Strategy, web research synthesis, hackathon QA',
     cost: '$0.20 in / $0.50 out per 1M',
   },
   {
     name: 'Claude Sonnet 5',
     role: 'Designer',
-    usage: '6% in · 12% out',
-    tokens7M: '630K',
-    tasks: 'UI polish — intro $2/$10 thru Aug 2026',
+    usage: '8% in · 8% out',
+    tokens7M: '560K',
+    tasks: 'UI polish only — intro $2/$10 thru Aug 2026',
     cost: '$2 in / $10 out per 1M',
   },
   {
     name: 'Claude Opus',
     role: 'Quality gate',
-    usage: '12% in · 9% out',
-    tokens7M: '735K',
-    tasks: 'Crypto/hackathon final QA',
+    usage: '4% in · 2% out',
+    tokens7M: '234K',
+    tasks: 'Crypto final QA only (minimal)',
     cost: '$5 in / $25 out per 1M',
+  },
+  {
+    name: 'Web search (Tavily + SearXNG)',
+    role: 'Research',
+    usage: 'External API',
+    tokens7M: '—',
+    tasks: 'Phase 0 — requirements, UI trends, hackathon intel',
+    cost: '~$0.016/build',
   },
 ] as const;
 
-/** 7M = 3.5M input + 3.5M output (separate pools) */
+/** 7M = 4.7M input + 2.3M output */
 export const QUOTA_7M_BREAKDOWN = {
-  inputPool: '3.5M',
-  outputPool: '3.5M',
+  inputPool: '4.7M',
+  outputPool: '2.3M',
   total: '7M',
-  models: MODEL_TABLE.map((m) => ({
+  oneBuildApiUsd: '~$0.22–0.26',
+  full7mLlmUsd: '~$7–8',
+  models: MODEL_TABLE.filter((m) => !m.name.startsWith('Web search')).map((m) => ({
     model: m.name,
     share: m.usage,
     tokens: m.tokens7M,
   })),
+  webSearchPipeline: 'engine Phase 0 → webSearch.ts (SearXNG + Tavily) → Grok synthesis',
 };
 
 export const BUILD_STEPS = [
-  'Understanding & planning (DeepSeek Pro + Grok 4 reasoning)',
-  'GitHub connection & full repository analysis (DeepSeek Flash)',
-  'Bulk code generation (DeepSeek Flash)',
+  'Phase 0 — Web research (SearXNG + Tavily) + Grok synthesis',
+  'Planning (DeepSeek Pro + Grok 4 strategy)',
+  'GitHub repo analysis + bulk code (DeepSeek Flash)',
   'UI polish (Claude Sonnet 5)',
-  'Quality gate — Opus on crypto/hackathon, Flash + Pro otherwise',
-  'Auto-deploy to Vercel + CDN',
-  'Live preview, GitHub access, documentation',
+  'QA — Grok hackathon / Opus crypto only / Pro otherwise',
+  'Auto-deploy to Vercel + GitHub push',
+  'Live preview, GitHub Projects continue',
 ];
 
 export const NO_HESITATE = [

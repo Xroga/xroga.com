@@ -11,7 +11,10 @@ import {
   FREE_PLAN_OUTPUT_TOKENS,
   quotaAllocationForPlan,
   estimateFullQuotaIntroUsd,
+  estimateFullQuotaBreakdownUsd,
+  estimateSingleBuildApiUsd,
   isSonnet5IntroPricingActive,
+  WEB_RESEARCH_COST,
 } from '../config/modelRegistry.js';
 
 const router = Router();
@@ -59,6 +62,13 @@ router.get('/health', (_req, res) => {
       emergencyTokens: 250_000,
       modelMix: quotaAllocationForPlan(FREE_PLAN_INPUT_TOKENS, FREE_PLAN_OUTPUT_TOKENS),
       introApiUsdIfFullPoolUsed: Math.round(estimateFullQuotaIntroUsd() * 100) / 100,
+      fullQuotaCost: estimateFullQuotaBreakdownUsd(),
+      singleBuildCost: estimateSingleBuildApiUsd(),
+      webResearch: {
+        tavilyPerSearchUsd: WEB_RESEARCH_COST.tavilyPerSearchUsd,
+        pipeline: 'SearXNG free → Tavily supplement → Tavily+SearXNG on hackathon/crypto/critical',
+        buildPhases: ['Phase 0 webSearch', 'uiTrendResearch', 'hackathonResearch (Tavily on OKX/ASP)'],
+      },
       sonnet5IntroPricingActive: isSonnet5IntroPricingActive(),
     },
     rateLimit: '100 requests/minute/user',
