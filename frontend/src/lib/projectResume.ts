@@ -4,6 +4,7 @@ import { api, type Project } from '@/lib/api';
 import { saveSelectedRepoContext } from '@/lib/repoContext';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { notifyGithubRepoContext } from '@/lib/githubProjectEvents';
+import { loadTerminalHistory } from '@/lib/terminalHistory';
 
 /** Restore workspace + GitHub repo context so user continues exactly where they left off. */
 export async function continueGithubProject(
@@ -20,22 +21,31 @@ export async function continueGithubProject(
   let prompt = `Continue work on ${project.name}`;
   let messages: ChatMessage[] = [];
 
-  try {
-    const detail = await api.projects.get(project.id);
-    const msgs = detail.project_messages ?? [];
-    if (msgs.length) {
-      messages = msgs
-        .sort((a, b) => Date.parse(a.created_at) - Date.parse(b.created_at))
-        .map((m) => ({
-          id: m.id,
-          role: m.role as 'user' | 'assistant',
-          content: m.content,
-        }));
-      const lastUser = [...msgs].reverse().find((m) => m.role === 'user');
-      if (lastUser?.content?.trim()) prompt = lastUser.content.trim();
+  if (project.id.startsWith('history-')) {
+    const sessionId = project.id.replace(/^history-/, '');
+    const session = loadTerminalHistory().find((h) => h.id === sessionId);
+    if (session?.messages?.length) {
+      messages = session.messages;
+      prompt = session.prompt || session.title;
     }
-  } catch {
-    /* use default prompt */
+  } else {
+    try {
+      const detail = await api.projects.get(project.id);
+      const msgs = detail.project_messages ?? [];
+      if (msgs.length) {
+        messages = msgs
+          .sort((a, b) => Date.parse(a.created_at) - Date.parse(b.created_at))
+          .map((m) => ({
+            id: m.id,
+            role: m.role as 'user' | 'assistant',
+            content: m.content,
+          }));
+        const lastUser = [...msgs].reverse().find((m) => m.role === 'user');
+        if (lastUser?.content?.trim()) prompt = lastUser.content.trim();
+      }
+    } catch {
+      /* use default prompt */
+    }
   }
 
   const fixHint = project.github_repo_name

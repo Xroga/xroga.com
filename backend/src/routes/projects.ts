@@ -16,7 +16,7 @@ router.get('/', async (req: AuthRequest, res) => {
     .order('updated_at', { ascending: false });
 
   if (githubOnly) {
-    query = query.not('github_repo_name', 'is', null);
+    query = query.not('github_repo_name', 'is', null).neq('github_repo_name', '');
   }
 
   const { data, error } = await query;

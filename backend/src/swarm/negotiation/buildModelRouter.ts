@@ -7,8 +7,9 @@ import { getSecret } from '../../config/envSecrets.js';
 import { XROGA_MODELS, type XrogaModelRole } from '../../config/modelRegistry.js';
 import { XROGA_USER_IDENTITY } from '../../prompts/xrogaIdentity.js';
 import type { BuildUsageTracker } from '../../lib/buildUsageTracker.js';
+import { resolveBuildModelRole, type BuildModelRole } from '../../phase1/modelQuotaTracker.js';
 
-export type BuildModelRole = 'flash' | 'pro' | 'grok' | 'sonnet' | 'opus';
+export type { BuildModelRole } from '../../phase1/modelQuotaTracker.js';
 
 const ROLE_MAP: Record<BuildModelRole, XrogaModelRole> = {
   flash: 'deepseek_flash',
@@ -160,8 +161,16 @@ export async function buildModelCall(
   system: string,
   user: string,
   maxTokens = 16384,
-  tracker?: BuildUsageTracker
+  tracker?: BuildUsageTracker,
+  opts?: { userId?: string; claudeTask?: 'ui' | 'qa' | 'general' }
 ): Promise<BuildModelResult> {
+  const estimateIn = Math.ceil((system.length + user.length) / 4);
+  const estimateOut = Math.min(maxTokens, 8192);
+  role = await resolveBuildModelRole(opts?.userId, role, opts?.claudeTask ?? 'general', {
+    input: estimateIn,
+    output: estimateOut,
+  });
+
   const label = ROLE_LABEL[role];
   const xrogaRole = ROLE_MAP[role];
 

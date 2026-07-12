@@ -22,6 +22,9 @@ CREATE INDEX IF NOT EXISTS idx_user_token_usage_period ON public.user_token_usag
 ALTER TABLE public.user_token_usage
   ADD COLUMN IF NOT EXISTS bonus_tokens BIGINT NOT NULL DEFAULT 0;
 
+ALTER TABLE public.user_token_usage
+  ADD COLUMN IF NOT EXISTS model_usage JSONB NOT NULL DEFAULT '{}'::jsonb;
+
 ALTER TABLE public.user_token_usage ENABLE ROW LEVEL SECURITY;
 
 DO $$

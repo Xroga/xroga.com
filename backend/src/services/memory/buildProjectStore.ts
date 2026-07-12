@@ -48,7 +48,7 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
 
   const row = {
     name: input.name.slice(0, 200),
-    type: input.isHackathon ? 'research' : (input.type ?? 'website'),
+    type: input.type ?? 'website',
     status: 'active',
     github_repo_url: input.githubRepoUrl ?? (repoName ? `https://github.com/${repoName}` : null),
     github_repo_name: repoName ?? null,
