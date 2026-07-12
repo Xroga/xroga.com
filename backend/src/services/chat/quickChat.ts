@@ -15,7 +15,7 @@ import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
 import { runLiveResearch, type LiveSource } from '../../lib/liveResearch.js';
-import { filterCitedSources } from '../../lib/filterCitedSources.js';
+import { filterSourcesForUser } from '../../lib/filterCitedSources.js';
 import type { RouteProgressFn } from '../../orchestrator/xrogaRouter.js';
 import type { ChatTurn } from '../../lib/conversationContext.js';
 
@@ -134,7 +134,7 @@ export async function quickChat(
   if (routed.text?.trim()) {
     const text = routed.text.trim();
     const sources = liveResearch?.sources
-      ? filterCitedSources(text, liveResearch.sources, 4)
+      ? filterSourcesForUser(text, liveResearch.sources, 5)
       : undefined;
     return wrap(text, sources);
   }
@@ -147,7 +147,7 @@ export async function quickChat(
   );
   const finalText = text?.trim() || "I'm here — tell me what you'd like to work on.";
   const sources = liveResearch?.sources
-    ? filterCitedSources(finalText, liveResearch.sources, 4)
+    ? filterSourcesForUser(finalText, liveResearch.sources, 5)
     : undefined;
   return wrap(finalText, sources);
 }

@@ -157,6 +157,7 @@ export function FormattedAiMarkdown({
                 block.level === 1 && 'text-lg sm:text-xl mt-1',
                 block.level === 2 && 'text-base sm:text-lg mt-0.5',
                 block.level >= 3 && 'text-[15px] text-[var(--accent)] border-none pb-0',
+                /recommended video/i.test(block.text) && 'text-red-500/90 dark:text-red-400',
               )}
             >
               {renderInline(block.text)}

@@ -7,7 +7,9 @@ export type LiveResearchReason =
   | 'knowledge_cutoff'
   | 'youtube_recommendation'
   | 'time_sensitive'
-  | 'realtime';
+  | 'realtime'
+  | 'crypto'
+  | 'ideas_guidance';
 
 export interface LiveResearchDecision {
   needsResearch: boolean;
@@ -30,13 +32,22 @@ const KNOWLEDGE_CUTOFF =
   /\b(cut.?off|knowledge|training data|up to date|updated|current events|do you know|are you aware|as of today|latest news|what happened|who is the current|who won|when did)\b/i;
 
 const YOUTUBE =
-  /\b(youtube|yt video|video recommendation|channel to watch|best videos|watch on youtube|youtube channel|tutorial video|learn on youtube)\b/i;
+  /\b(youtube|yt video|video recommendation|channel to watch|best videos|watch on youtube|youtube channel|tutorial video|learn on youtube|recommend.*video|video.*recommend)\b/i;
 
 const TIME_SENSITIVE =
   /\b(today|yesterday|this week|this month|right now|currently|latest|recent|breaking|2026|2025)\b/i;
 
 const REALTIME =
   /\b(stock price|crypto price|bitcoin|exchange rate|weather|forecast|election|score|headlines|news about)\b/i;
+
+const CRYPTO =
+  /\b(crypto|cryptocurrency|bitcoin|btc|ethereum|eth|web3|defi|nft|blockchain|token|altcoin|solana|trading|wallet|staking|airdrop)\b/i;
+
+const IDEAS_GUIDANCE =
+  /\b(idea|ideas|how (?:do|can|should|would) i|guide me|walk me through|step by step|roadmap|execute|implement|start a|launch|grow|improve|best way|what should i|recommend|suggest|help me|plan for|work on)\b/i;
+
+const LEARN =
+  /\b(learn|tutorial|course|master|beginner|advanced|explained|how to|teach me)\b/i;
 
 function buildQuery(text: string): string {
   let q = text
@@ -45,6 +56,14 @@ function buildQuery(text: string): string {
     .trim();
   if (q.length > 140) q = q.slice(0, 140);
   return q || text.trim();
+}
+
+function youtubeQueryFrom(text: string): string {
+  const cleaned = text
+    .replace(/\b(youtube|yt|video|channel|recommend|recommendation)\b/gi, '')
+    .replace(/\?+$/, '')
+    .trim();
+  return buildQuery(cleaned || text);
 }
 
 export function shouldAutoLiveResearch(prompt: string, intent?: string): LiveResearchDecision {
@@ -62,19 +81,34 @@ export function shouldAutoLiveResearch(prompt: string, intent?: string): LiveRes
   if (YOUTUBE.test(text)) reasons.push('youtube_recommendation');
   if (TIME_SENSITIVE.test(text)) reasons.push('time_sensitive');
   if (REALTIME.test(text)) reasons.push('realtime');
+  if (CRYPTO.test(text)) reasons.push('crypto');
+  if (IDEAS_GUIDANCE.test(text)) reasons.push('ideas_guidance');
+  if (LEARN.test(text)) reasons.push('youtube_recommendation');
+
+  const substantive = text.length > 35 || reasons.length > 0;
 
   const needsYoutube =
-    reasons.includes('youtube_recommendation') ||
-    YOUTUBE.test(text) ||
-    reasons.includes('business_advice') ||
-    intent === 'business_advice';
-  const needsResearch = reasons.length > 0;
+    substantive &&
+    (reasons.includes('youtube_recommendation') ||
+      YOUTUBE.test(text) ||
+      LEARN.test(text) ||
+      reasons.includes('business_advice') ||
+      reasons.includes('crypto') ||
+      reasons.includes('ideas_guidance') ||
+      reasons.includes('pricing') ||
+      intent === 'business_advice' ||
+      intent === 'deep_reasoning' ||
+      intent === 'general_chat');
+
+  const needsResearch =
+    reasons.length > 0 ||
+    (substantive && (intent === 'business_advice' || intent === 'deep_reasoning' || intent === 'general_chat'));
 
   return {
     needsResearch,
     reasons,
     searchQuery: buildQuery(text),
     needsYoutube,
-    youtubeQuery: needsYoutube ? buildQuery(text.replace(/\byoutube\b/gi, '').trim() || text) : undefined,
+    youtubeQuery: needsYoutube ? youtubeQueryFrom(text) : undefined,
   };
 }

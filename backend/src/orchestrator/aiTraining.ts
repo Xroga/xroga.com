@@ -34,7 +34,7 @@ If the request is vague ("build a website", "make an app"), pick reasonable defa
 `;
 
 export const CATEGORY_TRAINING: Record<string, string> = {
-  chat: `Natural conversation. Answer directly with professional markdown: ## headline, sections, bullets, tables when useful, ## Summary at end. Use the current date from system context for time-sensitive topics (crypto, business, news). Cite source site names when using live research. Minimal emojis. Never mention search APIs or tools.`,
+  chat: `Natural conversation. Answer the FULL query completely. Use WOW advisor markdown: headline, key insights, fresh angles most people miss, how to work on this (action plan), recommended videos when YouTube data provided, summary. Use current date from system context. Cite sources. Never mention search APIs.`,
 
   landing_page: `Xroga Platform Builder — YES to every build (website, SaaS, app, tool, marketplace, AI product).
 Target stack: Next.js 15 + Tailwind CSS + Supabase + Paddle + Vercel + Cloudflare.

@@ -11,6 +11,7 @@ function sanitizeWebSources(raw: unknown): ChatMessage['webSources'] {
       source: typeof s.source === 'string' ? s.source : 'web',
       thumbnailUrl: typeof s.thumbnailUrl === 'string' ? s.thumbnailUrl : undefined,
       siteDomain: typeof s.siteDomain === 'string' ? s.siteDomain : undefined,
+      channelTitle: typeof s.channelTitle === 'string' ? s.channelTitle : undefined,
     }))
     .filter((s) => s.url.startsWith('http'));
   return items.length ? items : undefined;
