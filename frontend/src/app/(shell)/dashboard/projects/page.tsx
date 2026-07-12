@@ -17,7 +17,7 @@ import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { SectionCompactCard } from '@/components/dashboard/SectionCompactCard';
 import { GitHubProjectCard } from '@/components/projects/GitHubProjectCard';
-import { continueGithubProject } from '@/lib/projectResume';
+import { continueGithubProject, loadGithubProjectSession } from '@/lib/projectResume';
 import { GITHUB_PROJECT_SAVED_EVENT } from '@/lib/githubProjectEvents';
 import { SwarmRunHistory } from '@/components/dashboard/SwarmRunHistory';
 import { api, type Project } from '@/lib/api';
@@ -48,7 +48,7 @@ function ProjectsHubInner() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
   const router = useRouter();
-  const { setPrompt, hydrateFromSession } = useTerminalChat();
+  const { setPrompt, restoreTerminalSession } = useTerminalChat();
 
   useEffect(() => {
     setTab(searchParams.get('tab') === 'conversations' ? 'conversations' : 'projects');
@@ -167,19 +167,25 @@ function ProjectsHubInner() {
     );
   }, [history, archives, query]);
 
-  function openConversation(item: (typeof conversationItems)[0]) {
-    setPrompt(item.messages.find((m) => m.role === 'user')?.content ?? item.title);
-    resumeToDashboard({
-      prompt: item.title,
-      messages: item.messages,
+  async function openConversation(item: (typeof conversationItems)[0]) {
+    const { loadTerminalHistoryEntry } = await import('@/lib/terminalSessionStorage');
+    const full = await loadTerminalHistoryEntry(item.sessionId);
+    const messages = full?.messages?.length ? full.messages : item.messages;
+    if (!messages?.length) {
+      toast.error('Could not restore this conversation.');
+      return;
+    }
+    const promptText = item.messages.find((m) => m.role === 'user')?.content ?? item.title;
+    await restoreTerminalSession({
       sessionId: item.sessionId,
+      prompt: promptText,
+      messages,
       selectedId: item.id,
       selectedLabel: item.title,
       source: 'chats',
       jumpMessageId: item.jumpMessageId,
     });
     router.push('/dashboard');
-    setTimeout(() => hydrateFromSession(), 100);
     toast('Restored — exactly where you left off', { icon: '📍' });
   }
 
@@ -208,11 +214,22 @@ function ProjectsHubInner() {
     router.push('/dashboard');
   }
 
-  function openRemoteProject(project: Project) {
-    void continueGithubProject(project, router).then(() => {
-      setTimeout(() => hydrateFromSession(), 100);
-      toast('Restored — continue where you left off', { icon: '📍' });
-    });
+  async function openRemoteProject(project: Project) {
+    const session = await loadGithubProjectSession(project);
+    if (session.messages.length) {
+      await restoreTerminalSession({
+        sessionId: session.sessionId,
+        prompt: session.prompt,
+        messages: session.messages,
+        selectedId: project.id,
+        selectedLabel: project.name,
+        source: 'projects',
+      });
+      router.push('/dashboard');
+    } else {
+      await continueGithubProject(project, router);
+    }
+    toast('Restored — continue where you left off', { icon: '📍' });
   }
 
   async function deleteRemote(id: string) {

@@ -1,5 +1,6 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
 import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
+import { saveTerminalSessionToIndexedDB, deleteTerminalSessionFromIndexedDB } from '@/lib/terminalSessionStorage';
 
 const KEY = 'xroga_terminal_history';
 const BROWSER_KEYWORDS = /scrape|browser|automate|crawl|linkedin jobs|apply to|web search/i;
@@ -123,11 +124,13 @@ export function saveTerminalHistorySession(opts: {
 
   const rest = loadTerminalHistory().filter((e) => e.id !== opts.sessionId);
   save([entry, ...rest]);
+  void saveTerminalSessionToIndexedDB(entry);
   return entry;
 }
 
 export function removeTerminalHistoryEntry(id: string) {
   save(loadTerminalHistory().filter((e) => e.id !== id));
+  void deleteTerminalSessionFromIndexedDB(id);
 }
 
 export function isTerminalHistoryEntry(entry: TerminalHistoryEntry): boolean {

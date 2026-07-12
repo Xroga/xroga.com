@@ -17,7 +17,6 @@ import {
   type TerminalHistoryEntry,
 } from '@/lib/terminalHistory';
 import { loadChatArchive, type ChatArchiveEntry } from '@/lib/chatArchive';
-import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { formatSafeDistance } from '@/lib/safeDates';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
@@ -134,7 +133,7 @@ export function TerminalHistoryView() {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<'all' | TerminalHistoryEntry['kind']>('all');
   const router = useRouter();
-  const { setPrompt } = useTerminalChat();
+  const { restoreTerminalSession } = useTerminalChat();
 
   const reload = useCallback(() => {
     const history = loadTerminalHistory();
@@ -175,18 +174,24 @@ export function TerminalHistoryView() {
     });
   }, [entries, query, filter]);
 
-  function openEntry(entry: TerminalHistoryEntry) {
-    setPrompt(entry.prompt);
-    resumeToDashboard({
-      prompt: entry.prompt,
-      messages: entry.messages,
-      selectedId: entry.id,
-      selectedLabel: entry.title,
+  async function openEntry(entry: TerminalHistoryEntry) {
+    const { loadTerminalHistoryEntry } = await import('@/lib/terminalSessionStorage');
+    const full = await loadTerminalHistoryEntry(entry.id);
+    const resolved = full ?? entry;
+    if (!resolved.messages?.length) {
+      toast.error('This session has no saved messages to restore.');
+      return;
+    }
+    await restoreTerminalSession({
+      sessionId: resolved.id,
+      prompt: resolved.prompt,
+      messages: resolved.messages,
+      selectedId: resolved.id,
+      selectedLabel: resolved.title,
       source: 'dashboard',
-      jumpMessageId: entry.messages[entry.messages.length - 1]?.id,
+      jumpMessageId: resolved.messages[resolved.messages.length - 1]?.id,
     });
     router.push('/dashboard');
-    window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
   }
 
   function deleteEntry(id: string) {

@@ -48,7 +48,11 @@ export function VercelDeployButton({
 
   async function connectVercel() {
     try {
-      const { url } = await api.vercel.oauthUrl();
+      const { url, oauthConfigured } = await api.vercel.oauthUrl();
+      if (!url || !oauthConfigured) {
+        toast.error('Open Integrations → paste your Vercel token from vercel.com/account/tokens');
+        return;
+      }
       const popup = window.open(url, 'xroga-vercel-oauth', 'width=600,height=700,scrollbars=yes');
       if (!popup) {
         toast.error('Allow popups to connect Vercel');

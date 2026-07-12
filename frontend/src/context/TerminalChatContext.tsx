@@ -23,6 +23,7 @@ import {
   clearWorkspaceSession,
   loadWorkspaceSessionHydrated,
   saveWorkspaceSession,
+  type WorkspaceSource,
 } from '@/lib/workspacePersistence';
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
@@ -124,6 +125,16 @@ interface TerminalChatContextValue {
   startNewChat: () => void;
   /** Restore session from workspace (e.g. jump from AI Media) */
   hydrateFromSession: () => void;
+  /** Restore a saved terminal session exactly where the user left off */
+  restoreTerminalSession: (opts: {
+    sessionId: string;
+    prompt: string;
+    messages: ChatMessage[];
+    selectedId?: string;
+    selectedLabel?: string;
+    source?: WorkspaceSource;
+    jumpMessageId?: string;
+  }) => Promise<void>;
   /** Load an isolated prompt+response thread into terminal (new terminal from AI Media) */
   loadIsolatedThread: (messages: ChatMessage[], prompt: string, jumpMessageId?: string) => void;
   /** Permanently removes assistant response + its user prompt from chat, archive, and media */
@@ -231,6 +242,7 @@ export function TerminalChatProvider({
   const interruptRef = useRef(false);
   const [sessionReady, setSessionReady] = useState(false);
   const persistReadyRef = useRef(false);
+  const restoringRef = useRef(false);
   const buildHeartbeatTickRef = useRef(0);
   const lastActivityAtRef = useRef(0);
   const sessionIdRef = useRef<string>(
@@ -440,16 +452,71 @@ export function TerminalChatProvider({
 
   const hydrateFromSession = useCallback(() => {
     if (incognito) return;
+    restoringRef.current = true;
     void loadWorkspaceSessionHydrated().then((session) => {
-      if (!session?.messages?.length) return;
+      if (!session?.messages?.length) {
+        restoringRef.current = false;
+        return;
+      }
       setMessages(session.messages);
       if (threadHasCompletedWebsite(session.messages)) {
         completedWebsiteBuildRef.current = true;
       }
       if (session.prompt) setPrompt(session.prompt);
       if (session.sessionId) sessionIdRef.current = session.sessionId;
+      restoringRef.current = false;
     });
   }, [incognito]);
+
+  const restoreTerminalSession = useCallback(
+    async (opts: {
+      sessionId: string;
+      prompt: string;
+      messages: ChatMessage[];
+      selectedId?: string;
+      selectedLabel?: string;
+      source?: WorkspaceSource;
+      jumpMessageId?: string;
+    }) => {
+      if (incognito) return;
+      restoringRef.current = true;
+      abortRef.current?.abort();
+      setLoading(false);
+      setSwarmRunning(false);
+      setAnimatingId(null);
+      setSwarmActiveAgent(null);
+      setPipelineMessage(null);
+      setSwarmNegotiationPhase(null);
+      setSwarmTodos([]);
+      setSwarmStatusLabel(null);
+      setSwarmAnalysis(null);
+      setSwarmActivityLog([]);
+      setFollowUps([]);
+      setReasoning(null);
+      setDag(null);
+
+      sessionIdRef.current = opts.sessionId;
+      const { rehydratePersistedMessages } = await import('@/lib/rehydratePersistedMessages');
+      const hydrated = await rehydratePersistedMessages(opts.messages);
+      setMessages(hydrated);
+      setPrompt(opts.prompt);
+      completedWebsiteBuildRef.current = threadHasCompletedWebsite(hydrated);
+
+      saveWorkspaceSession({
+        prompt: opts.prompt,
+        messages: hydrated,
+        sessionId: opts.sessionId,
+        selectedId: opts.selectedId ?? opts.sessionId,
+        selectedLabel: opts.selectedLabel ?? opts.prompt.slice(0, 40),
+        source: opts.source ?? 'dashboard',
+        jumpMessageId: opts.jumpMessageId,
+      });
+      persistReadyRef.current = true;
+      window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
+      restoringRef.current = false;
+    },
+    [incognito, setSwarmRunning]
+  );
 
   useEffect(() => {
     const onResume = () => hydrateFromSession();
@@ -482,8 +549,8 @@ export function TerminalChatProvider({
   );
 
   useEffect(() => {
-    if (!sessionReady || incognito || !persistReadyRef.current) return;
-    if (messages.length === 0 && !prompt.trim()) return;
+    if (!sessionReady || incognito || !persistReadyRef.current || restoringRef.current) return;
+    if (messages.length === 0) return;
     for (const m of messages) {
       const fo = m.featureOutput as { type?: string; html?: string; css?: string; js?: string } | undefined;
       if (fo?.type === 'landing_page' && fo.html?.trim()) {
@@ -502,6 +569,20 @@ export function TerminalChatProvider({
     } catch (err) {
       console.warn('[workspace] persist skipped:', (err as Error).message);
     }
+  }, [sessionReady, prompt, messages, incognito]);
+
+  /** Persist terminal history while user works — not only after submit completes */
+  useEffect(() => {
+    if (!sessionReady || incognito || !persistReadyRef.current || restoringRef.current) return;
+    if (messages.length === 0) return;
+    const timer = window.setTimeout(() => {
+      saveTerminalHistorySession({
+        sessionId: sessionIdRef.current,
+        prompt,
+        messages,
+      });
+    }, 800);
+    return () => window.clearTimeout(timer);
   }, [sessionReady, prompt, messages, incognito]);
 
   /** Live heartbeat while build runs — updates text every 4s so UI never looks frozen */
@@ -1393,6 +1474,7 @@ export function TerminalChatProvider({
         stop,
         startNewChat,
         hydrateFromSession,
+        restoreTerminalSession,
         loadIsolatedThread,
         deleteTurn,
         deleteUserTurn,
