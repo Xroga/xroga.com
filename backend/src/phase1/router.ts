@@ -1,5 +1,6 @@
 import type { Phase1Intent, RoutingPlan } from './types.js';
 import { PHASE1_MATH_SYSTEM } from '../prompts/xrogaResponseFormat.js';
+import { WOW_ADVISOR_FORMAT } from '../prompts/wowAdvisorPrompt.js';
 import { getCurrentDateDirective } from '../lib/currentDateContext.js';
 
 const PHASE2_MESSAGE = 'Coming in Phase 2';
@@ -68,17 +69,7 @@ export function buildRoutingPlan(intent: Phase1Intent, message: string, mathQuer
   }
 }
 
-const PROFESSIONAL_FORMAT_BASE = `
-Respond in professional markdown:
-- Start with ## headline summarizing the answer
-- Use ## subsections for each major topic
-- Use bullet lists for strategies, steps, pros/cons
-- Use markdown tables when comparing pricing, features, or options
-- End with ## Summary (2–4 bullet takeaways)
-- When citing live web sources, mention the site name or URL inline
-- Minimal emojis (0–1). No markdown symbol spam.
-- Never mention SearXNG, Tavily, YouTube API, or internal search tools.
-`;
+const PROFESSIONAL_FORMAT_BASE = WOW_ADVISOR_FORMAT;
 
 function professionalFormatBlock(): string {
   return `${getCurrentDateDirective()}\n${PROFESSIONAL_FORMAT_BASE}`;

@@ -10,7 +10,7 @@ import { runLiveResearch } from '../lib/liveResearch.js';
 import { isMathQuery } from '../lib/mathQuery.js';
 import { trySolveMathLocally } from '../lib/mathSolver.js';
 import { normalizeMathResponse } from '../lib/formatMathResponse.js';
-import { filterCitedSources } from '../lib/filterCitedSources.js';
+import { filterSourcesForUser } from '../lib/filterCitedSources.js';
 
 const MODEL_NAME_PATTERN =
   /\b(deepseek|grok|claude|anthropic|xai|sonnet|opus|flash|pro|gpt|openai|gemini|llama|mistral)\b/gi;
@@ -176,7 +176,7 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
         intent,
         usage,
         webSources: liveResearch?.sources
-          ? filterCitedSources(response, liveResearch.sources, 4)
+          ? filterSourcesForUser(response, liveResearch.sources, 5)
           : undefined,
       },
     };
