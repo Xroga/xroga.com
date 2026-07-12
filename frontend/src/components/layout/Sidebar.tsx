@@ -30,6 +30,7 @@ import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
 import { DownloadAppButton } from '@/components/ui/DownloadAppButton';
+import { GitHubProjectsSidebar } from '@/components/layout/GitHubProjectsSidebar';
 import { SidebarCommunityButton } from '@/components/layout/SidebarCommunityButton';
 import { useT } from '@/components/providers/LanguageProvider';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -63,9 +64,9 @@ const navItems = [
   },
   {
     href: '/dashboard/projects',
-    label: 'My Projects',
+    label: 'GitHub Projects',
     icon: FolderOpen,
-    tip: 'GitHub builds, saved code, and all past conversations — pick up exactly where you left off.',
+    tip: 'Connected repos — continue builds, fix bugs in existing code, delete or open any saved project.',
   },
   {
     href: '/dashboard/tasks',
@@ -421,6 +422,8 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           </div>
         )}
       </nav>
+
+      {!incognito && <GitHubProjectsSidebar expanded={navExpanded} />}
 
       {bottomSection}
       {sidebarOpen && (

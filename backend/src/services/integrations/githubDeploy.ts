@@ -12,6 +12,7 @@ import {
   setCachedRepoAnalysis,
   invalidateRepoAnalysis,
 } from '../../lib/repoAnalysisCache.js';
+import { HACKATHON_REPO_TREE_SAMPLE } from '../../config/modelRegistry.js';
 
 export interface ProjectFile {
   path: string;
@@ -342,7 +343,7 @@ export async function pushBuildToGitHub(
       owner!,
       repo!,
       files,
-      `XROGA build — ${new Date().toISOString()}`,
+      `XROGA build update — ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`,
       branch
     );
     invalidateRepoAnalysis(userId, selectedRepo);
@@ -752,7 +753,7 @@ export async function analyzeGitHubRepo(
       const tree = (await treeRes.json()) as { tree?: Array<{ path: string; type: string; size?: number }> };
       const blobs = (tree.tree ?? []).filter((t) => t.type === 'blob');
       fileCount = blobs.length;
-      treeSample = blobs.slice(0, 60).map((f) => ({ path: f.path, size: f.size }));
+      treeSample = blobs.slice(0, HACKATHON_REPO_TREE_SAMPLE).map((f) => ({ path: f.path, size: f.size }));
       topLevelEntries = [
         ...new Set(blobs.map((f) => f.path.split('/')[0]).filter((e): e is string => Boolean(e))),
       ].slice(0, 24);

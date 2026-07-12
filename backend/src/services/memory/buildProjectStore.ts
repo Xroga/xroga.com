@@ -1,8 +1,9 @@
+import { HACKATHON_MAX_STORED_FILES } from '../../config/modelRegistry.js';
+import { getSupabaseAdmin } from '../../config/supabase.js';
+
 /**
  * Persist build output to projects + project_files so users and AI can access old code.
  */
-
-import { getSupabaseAdmin } from '../../config/supabase.js';
 import { storeProjectFile } from '../storage/projectFiles.js';
 import type { ProjectFile } from '../integrations/githubDeploy.js';
 
@@ -71,8 +72,18 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
     projectId = data.id;
   }
 
-  const toStore = input.projectFiles.filter((f) => CORE_FILES.has(f.path) || f.path.startsWith('src/'));
-  for (const file of toStore.slice(0, 24)) {
+  const maxFiles = input.type === 'research' || input.projectFiles.length > 40
+    ? HACKATHON_MAX_STORED_FILES
+    : 48;
+  const toStore = input.projectFiles.filter(
+    (f) =>
+      CORE_FILES.has(f.path) ||
+      f.path.startsWith('src/') ||
+      f.path.startsWith('contracts/') ||
+      f.path.startsWith('apps/') ||
+      f.path.includes('/')
+  );
+  for (const file of toStore.slice(0, maxFiles)) {
     try {
       await storeProjectFile(
         input.userId,

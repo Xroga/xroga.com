@@ -63,8 +63,8 @@ export const MODELS: Record<InternalModelId, ModelConfig> = {
 };
 
 export const QUOTA = {
-  inputTokens: 4_700_000,
-  outputTokens: 2_300_000,
+  inputTokens: 3_500_000,
+  outputTokens: 3_500_000,
   totalTokens: 7_000_000,
   emergencyTokens: 250_000,
   emergencyThreshold: 100_000,

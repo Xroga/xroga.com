@@ -390,7 +390,7 @@ async function deepseekCall(system: string, user: string, maxTokens = 8192): Pro
   return deepseekGenerate(user);
 }
 
-/** Tracked DeepSeek Flash — bulk code, file reads, reviews, fixes */
+/** Tracked DeepSeek Flash — bulk code, file reads, verify, fixes */
 async function deepseekFlashCall(
   system: string,
   user: string,
@@ -398,6 +398,17 @@ async function deepseekFlashCall(
   tracker?: BuildUsageTracker
 ): Promise<string> {
   const { text } = await buildModelCall('flash', system, user, maxTokens, tracker);
+  return text;
+}
+
+/** Tracked DeepSeek Pro — architecture, plan review, repo analysis, hard logic */
+async function deepseekProCall(
+  system: string,
+  user: string,
+  maxTokens = 8192,
+  tracker?: BuildUsageTracker
+): Promise<string> {
+  const { text } = await buildModelCall('pro', system, user, maxTokens, tracker);
   return text;
 }
 
@@ -773,7 +784,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         userPhase: 1,
       });
       try {
-        masterPlan = (await buildModelCall('flash', PHASE_1_PLANNING_GROQ, masterPlan, 512, usageTracker)).text;
+        masterPlan = (await buildModelCall('pro', PHASE_1_PLANNING_GROQ, masterPlan, 1024, usageTracker)).text;
       } catch {
         /* keep plan */
       }
@@ -793,7 +804,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   if (!isUpdateBuild) {
   for (let i = 0; i < MAX_PLAN_ITERATIONS; i++) {
     emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect', { userPhase: 1 });
-    const review = await deepseekFlashCall(
+    const review = await deepseekProCall(
       PHASE_2_DEEPSEEK_REVIEW,
       `User query:\n${userPrompt}\n\nMaster Plan:\n${approvedPlan}`,
       4096,
@@ -885,8 +896,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     let stepCode = '';
     try {
       stepCode = await withBuildHeartbeat(ctx, todos, async () => {
+        const role =
+          hackathonNote && si > 0 && si % 3 === 0
+            ? 'pro'
+            : 'flash';
         const { text } = await buildModelCall(
-          'flash',
+          role,
           executePrompt,
           `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
           BUILD_STEP_MAX_TOKENS,
@@ -917,7 +932,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       emit(ctx, 5, failMsg, 'debugger', todos, 'XROGA Architect');
       emit(ctx, 5, BRAND.phase5.correcting, 'debugger', todos, 'XROGA Architect');
       const errorPlan = failures.map((f) => `[${f.agent}] ${f.report}`).join('\n');
-      stepCode = await deepseekFlashCall(
+      stepCode = await deepseekProCall(
         PHASE_5_CORRECT,
         `Failures:\n${errorPlan}\n\nCode:\n${stepCode}`,
         BUILD_STEP_MAX_TOKENS,
@@ -964,7 +979,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     userPhase: 2,
   });
   try {
-    const reviewRole = buildType === 'crypto' || hackathonNote ? 'opus' : 'flash';
+    const reviewRole = buildType === 'crypto' || hackathonNote ? 'opus' : 'pro';
     const { text: qualityReview } = await buildModelCall(
       reviewRole,
       PHASE_6_FINAL,

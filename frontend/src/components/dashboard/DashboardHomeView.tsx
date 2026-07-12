@@ -164,7 +164,7 @@ export function DashboardHomeView() {
               <div className="flex justify-between mb-1">
                 <span className="text-[var(--muted)]">Input</span>
                 <span className="font-mono text-xs">
-                  {formatTokens(tokens?.inputUsed ?? 0)} / {formatTokens(tokens?.inputLimit ?? 4_700_000)} ({inputPct}%)
+                  {formatTokens(tokens?.inputUsed ?? 0)} / {formatTokens(tokens?.inputLimit ?? 3_500_000)} ({inputPct}%)
                 </span>
               </div>
               <ProgressBar percent={inputPct} className="h-1.5" />
@@ -173,7 +173,7 @@ export function DashboardHomeView() {
               <div className="flex justify-between mb-1">
                 <span className="text-[var(--muted)]">Output</span>
                 <span className="font-mono text-xs">
-                  {formatTokens(tokens?.outputUsed ?? 0)} / {formatTokens(tokens?.outputLimit ?? 2_300_000)} ({outputPct}%)
+                  {formatTokens(tokens?.outputUsed ?? 0)} / {formatTokens(tokens?.outputLimit ?? 3_500_000)} ({outputPct}%)
                 </span>
               </div>
               <ProgressBar percent={outputPct} className="h-1.5" />

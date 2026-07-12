@@ -183,51 +183,56 @@ export const MODEL_TABLE = [
   {
     name: 'DeepSeek Flash',
     role: 'Workhorse',
-    usage: '68%',
-    tokens7M: '4.76M',
-    tasks: 'Bulk code, file reading, fixes, verify passes',
-    cost: '$0.14 / $0.28 per 1M',
+    usage: '48% in · 52% out',
+    tokens7M: '3.2M',
+    tasks: 'Bulk code output, file reads, fixes',
+    cost: '$0.14 in / $0.28 out per 1M',
   },
   {
     name: 'DeepSeek Pro',
     role: 'Brain',
-    usage: '12%',
-    tokens7M: '840K',
-    tasks: 'Architecture, security, DB/API design',
-    cost: '$0.435 / $0.87 per 1M',
+    usage: '30% in · 24% out',
+    tokens7M: '1.9M',
+    tasks: 'Architecture, plan review, repo analysis, hard logic',
+    cost: '$0.435 in / $0.87 out per 1M',
   },
   {
     name: 'Grok 4 Reasoning',
     role: 'Strategist',
-    usage: '4%',
-    tokens7M: '280K',
-    tasks: 'Business logic, hackathon strategy, diagnosis',
-    cost: '$0.20 / $0.50 per 1M',
+    usage: '4% in · 3% out',
+    tokens7M: '245K',
+    tasks: 'Hackathon strategy, diagnosis',
+    cost: '$0.20 in / $0.50 out per 1M',
   },
   {
     name: 'Claude Sonnet 5',
     role: 'Designer',
-    usage: '12%',
-    tokens7M: '840K',
-    tasks: 'UI/UX polish, responsive CSS, a11y',
-    cost: '$2 / $10 per 1M (intro thru Aug 2026)',
+    usage: '6% in · 12% out',
+    tokens7M: '630K',
+    tasks: 'UI polish — intro $2/$10 thru Aug 2026',
+    cost: '$2 in / $10 out per 1M',
   },
   {
     name: 'Claude Opus',
     role: 'Quality gate',
-    usage: '4%',
-    tokens7M: '280K',
-    tasks: 'Crypto/hackathon final QA, edge cases',
-    cost: '$5 / $25 per 1M',
+    usage: '12% in · 9% out',
+    tokens7M: '735K',
+    tasks: 'Crypto/hackathon final QA',
+    cost: '$5 in / $25 out per 1M',
   },
 ] as const;
 
-/** 7M free token pool — how each model consumes credits at target mix */
-export const QUOTA_7M_BREAKDOWN = MODEL_TABLE.map((m) => ({
-  model: m.name,
-  share: m.usage,
-  tokens: m.tokens7M,
-}));
+/** 7M = 3.5M input + 3.5M output (separate pools) */
+export const QUOTA_7M_BREAKDOWN = {
+  inputPool: '3.5M',
+  outputPool: '3.5M',
+  total: '7M',
+  models: MODEL_TABLE.map((m) => ({
+    model: m.name,
+    share: m.usage,
+    tokens: m.tokens7M,
+  })),
+};
 
 export const BUILD_STEPS = [
   'Understanding & planning (DeepSeek Pro + Grok 4 reasoning)',

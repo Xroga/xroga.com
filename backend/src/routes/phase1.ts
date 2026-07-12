@@ -7,6 +7,8 @@ import { getSecret, hasSecret } from '../config/envSecrets.js';
 import { phase1Logger } from '../phase1/logger.js';
 import {
   FREE_PLAN_TOKENS,
+  FREE_PLAN_INPUT_TOKENS,
+  FREE_PLAN_OUTPUT_TOKENS,
   quotaAllocationForPlan,
   estimateFullQuotaIntroUsd,
   isSonnet5IntroPricingActive,
@@ -52,11 +54,11 @@ router.get('/health', (_req, res) => {
     },
     quota: {
       monthlyTotalTokens: FREE_PLAN_TOKENS,
-      inputTokens: Math.floor(FREE_PLAN_TOKENS * 0.67),
-      outputTokens: FREE_PLAN_TOKENS - Math.floor(FREE_PLAN_TOKENS * 0.67),
+      inputTokens: FREE_PLAN_INPUT_TOKENS,
+      outputTokens: FREE_PLAN_OUTPUT_TOKENS,
       emergencyTokens: 250_000,
-      modelMix: quotaAllocationForPlan(FREE_PLAN_TOKENS),
-      introApiUsdIfFullPoolUsed: Math.round(estimateFullQuotaIntroUsd(FREE_PLAN_TOKENS) * 100) / 100,
+      modelMix: quotaAllocationForPlan(FREE_PLAN_INPUT_TOKENS, FREE_PLAN_OUTPUT_TOKENS),
+      introApiUsdIfFullPoolUsed: Math.round(estimateFullQuotaIntroUsd() * 100) / 100,
       sonnet5IntroPricingActive: isSonnet5IntroPricingActive(),
     },
     rateLimit: '100 requests/minute/user',

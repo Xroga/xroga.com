@@ -7,11 +7,19 @@ const router = Router();
 
 router.get('/', async (req: AuthRequest, res) => {
   const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
+  const githubOnly = req.query.github === '1' || req.query.github === 'true';
+
+  let query = supabase
     .from('projects')
     .select('*')
     .eq('user_id', req.userId!)
     .order('updated_at', { ascending: false });
+
+  if (githubOnly) {
+    query = query.not('github_repo_name', 'is', null);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     res.status(500).json({ error: error.message });
@@ -93,6 +101,39 @@ router.post('/', async (req: AuthRequest, res) => {
   });
 
   res.status(201).json(data);
+});
+
+router.delete('/:id', async (req: AuthRequest, res) => {
+  const supabase = getSupabaseAdmin();
+  const projectId = String(req.params.id);
+
+  const { data: project } = await supabase
+    .from('projects')
+    .select('id, name')
+    .eq('id', projectId)
+    .eq('user_id', req.userId!)
+    .maybeSingle();
+
+  if (!project) {
+    res.status(404).json({ error: 'Project not found' });
+    return;
+  }
+
+  const { error } = await supabase.from('projects').delete().eq('id', projectId).eq('user_id', req.userId!);
+
+  if (error) {
+    res.status(500).json({ error: error.message });
+    return;
+  }
+
+  await supabase.from('activity_logs').insert({
+    user_id: req.userId!,
+    project_id: projectId,
+    action: 'deleted_project',
+    details: { name: project.name },
+  });
+
+  res.json({ success: true, id: projectId });
 });
 
 router.get('/:id/files', async (req: AuthRequest, res) => {

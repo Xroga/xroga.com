@@ -4,12 +4,11 @@ import { getUsage, claimEmergencyTokens } from '../phase1/tokenTracker.js';
 import { getXrgBalance } from '../services/xrgBalance.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { GALACTIC_PLANS, planDisplayName } from '../config/galacticPlans.js';
+import { inputLimitForPlan, outputLimitForPlan } from '../config/modelRegistry.js';
 
 const router = Router();
 
 const TOKEN_QUOTA_TOTAL = 7_000_000;
-const TOKEN_INPUT_LIMIT = 4_700_000;
-const TOKEN_OUTPUT_LIMIT = 2_300_000;
 
 function daysRemainingInMonth(): number {
   const now = new Date();
@@ -23,8 +22,8 @@ router.get('/summary', async (req: AuthRequest, res) => {
   const xrg = await getXrgBalance(userId);
 
   const totalLimit = TOKEN_QUOTA_TOTAL + xrg.tokenBoostTotal;
-  const inputLimit = TOKEN_INPUT_LIMIT;
-  const outputLimit = TOKEN_OUTPUT_LIMIT + xrg.tokenBoostTotal;
+  const inputLimit = inputLimitForPlan(totalLimit);
+  const outputLimit = outputLimitForPlan(totalLimit);
 
   let planTier = 'spark';
   let planName = 'Basic';

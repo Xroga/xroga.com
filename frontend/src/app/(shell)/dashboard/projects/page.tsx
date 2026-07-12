@@ -8,7 +8,6 @@ import {
   Plus,
   Rocket,
   Sparkles,
-  ExternalLink,
   MessageSquare,
   Code2,
   Link2,
@@ -17,6 +16,8 @@ import Skeleton from 'react-loading-skeleton';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { SectionCompactCard } from '@/components/dashboard/SectionCompactCard';
+import { GitHubProjectCard } from '@/components/projects/GitHubProjectCard';
+import { continueGithubProject } from '@/lib/projectResume';
 import { SwarmRunHistory } from '@/components/dashboard/SwarmRunHistory';
 import { api, type Project } from '@/lib/api';
 import {
@@ -181,7 +182,20 @@ function ProjectsHubInner() {
   }
 
   function openRemoteProject(project: Project) {
-    router.push(`/dashboard/projects/${project.id}`);
+    void continueGithubProject(project, router).then(() => {
+      setTimeout(() => hydrateFromSession(), 100);
+      toast('Restored — continue where you left off', { icon: '📍' });
+    });
+  }
+
+  async function deleteRemote(id: string) {
+    try {
+      await api.projects.delete(id);
+      setProjects((prev) => prev.filter((p) => p.id !== id));
+      toast.success('Project removed from Xroga');
+    } catch {
+      toast.error('Could not delete project');
+    }
   }
 
   function deleteLocal(id: string) {
@@ -210,10 +224,10 @@ function ProjectsHubInner() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
               <FolderOpen className="w-7 h-7 text-[var(--accent)]" />
-              My Projects
+              GitHub Projects
             </h1>
             <p className="text-sm text-[var(--muted)] mt-1">
-              GitHub-connected builds and every saved conversation — open any item to continue exactly where you left off.
+              Connected repos with exact GitHub links — continue builds, fix bugs in existing code, or remove from Xroga.
             </p>
           </div>
           <Link href="/dashboard" className="xv-footer-pill !text-[var(--foreground)] flex items-center gap-1.5">
@@ -258,40 +272,19 @@ function ProjectsHubInner() {
           ) : hasProjects ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredRemote.map((p) => (
-                <article
+                <GitHubProjectCard
                   key={p.id}
-                  className="group rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 via-transparent to-[var(--card)] overflow-hidden hover:border-[var(--accent)]/40 transition-all"
-                >
-                  <div className="h-20 bg-gradient-to-br from-[var(--accent)]/20 via-violet-500/10 to-transparent relative">
-                    <div className="absolute bottom-2 left-3 flex items-center gap-2 text-xs font-semibold">
-                      <Link2 className="w-4 h-4 text-emerald-400" />
-                      {p.github_repo_name ?? 'GitHub repo'}
-                    </div>
-                  </div>
-                  <div className="p-4 space-y-2">
-                    <h3 className="font-semibold line-clamp-2 group-hover:text-[var(--accent)]">{p.name}</h3>
-                    <p className="text-xs text-[var(--muted)] capitalize">{p.type}</p>
-                    {p.github_repo_url && (
-                      <a
-                        href={p.github_repo_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[10px] text-emerald-400 hover:underline"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <ExternalLink className="w-3 h-3" />
-                        {p.github_repo_name}
-                      </a>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => openRemoteProject(p)}
-                      className="w-full mt-2 px-3 py-2 rounded-lg text-xs font-semibold bg-[var(--accent)]/15 text-[var(--accent)] hover:bg-[var(--accent)]/25"
-                    >
-                      Open project & code
-                    </button>
-                  </div>
-                </article>
+                  project={p}
+                  onContinue={() => openRemoteProject(p)}
+                  onDelete={() => {
+                    if (confirm(`Remove "${p.name}" from Xroga? GitHub repo stays untouched.`)) {
+                      void deleteRemote(p.id);
+                    }
+                  }}
+                  onOpenRepo={() => {
+                    if (p.github_repo_url) window.open(p.github_repo_url, '_blank', 'noopener,noreferrer');
+                  }}
+                />
               ))}
               {filteredLocal.map((p) => (
                 <SectionCompactCard
