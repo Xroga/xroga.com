@@ -167,7 +167,7 @@ export class FeatureSwarm extends BaseSwarm {
           } else {
             const chatResult = await quickChat(context.prompt);
             const content = chatResult.content;
-            output = { type: 'chat', content, webSources: chatResult.webSources };
+            output = { type: 'chat', content, webSources: chatResult.webSources, hackathonBrief: chatResult.hackathonBrief };
           }
         }
       }

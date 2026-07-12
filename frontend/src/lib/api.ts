@@ -838,6 +838,8 @@ export interface TokenUsage {
   totalLimit?: number;
 }
 
+import type { HackathonBriefCardData } from '@/components/terminal/HackathonBriefCard';
+
 export interface Phase1ChatResult {
   response: string;
   intent: string;
@@ -849,6 +851,7 @@ export interface Phase1ChatResult {
     source: string;
     thumbnailUrl?: string;
   }>;
+  hackathonBrief?: HackathonBriefCardData;
 }
 
 export interface TaskItem {

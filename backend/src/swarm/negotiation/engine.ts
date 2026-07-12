@@ -252,7 +252,7 @@ function emit(
   agent: string,
   todos: ReturnType<typeof createTodoState>,
   statusLabel: string,
-  opts?: { silent?: boolean; userPhase?: number }
+  opts?: { silent?: boolean; userPhase?: number; hackathonBrief?: import('../../phase1/types.js').HackathonBriefCard }
 ): void {
   const userPhase =
     opts?.userPhase ??
@@ -287,6 +287,7 @@ function emit(
     swarmAnalysis: todos.getAnalysis() || undefined,
     swarmActivity: opts?.silent ? undefined : detail,
     needsGitHub: statusLabel === 'XROGA GitHub' && detail.includes('Connect GitHub'),
+    hackathonBrief: opts?.hackathonBrief,
     timestamp: new Date().toISOString(),
   } as SwarmProgressEvent);
 }
@@ -529,8 +530,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       const hackathon = await fetchHackathonResearch(userPrompt);
       if (hackathon) {
         hackathonNote = hackathon.context;
-        emit(ctx, 0, xrogaArchitectureLine('Hackathon requirements researched'), 'architect', todos, 'XROGA Architect', {
+        emit(ctx, 0, xrogaArchitectureLine('Hackathon requirements researched — sponsor gaps & ASP ideas mapped'), 'architect', todos, 'XROGA Architect', {
           userPhase: 1,
+          hackathonBrief: hackathon.card,
         });
       }
     } catch {

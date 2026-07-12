@@ -1,5 +1,14 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
 
+import type { HackathonBriefCardData } from '@/components/terminal/HackathonBriefCard';
+
+function sanitizeHackathonBrief(raw: unknown): ChatMessage['hackathonBrief'] {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const b = raw as Record<string, unknown>;
+  if (typeof b.name !== 'string' || typeof b.sponsor !== 'string') return undefined;
+  return raw as HackathonBriefCardData;
+}
+
 function sanitizeWebSources(raw: unknown): ChatMessage['webSources'] {
   if (!Array.isArray(raw)) return undefined;
   const items = raw
@@ -86,6 +95,7 @@ export function sanitizeChatMessages(messages: unknown): ChatMessage[] {
         thinkingSteps,
         thoughtMs: typeof m.thoughtMs === 'number' ? m.thoughtMs : undefined,
         webSources: sanitizeWebSources(m.webSources),
+        hackathonBrief: sanitizeHackathonBrief(m.hackathonBrief),
       };
     });
 }

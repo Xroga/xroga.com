@@ -18,6 +18,7 @@ import { BlackHoleThinkingPanel } from './BlackHoleThinkingPanel';
 import { SwarmPhasePanel } from './SwarmPhasePanel';
 import { ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
 import { WebSourcesPanel } from './WebSourcesPanel';
+import { HackathonBriefCard } from './HackathonBriefCard';
 import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
@@ -450,6 +451,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             streaming={msg.id === animatingId && loading}
                           />
                         ) : null}
+                        {msg.hackathonBrief ? <HackathonBriefCard brief={msg.hackathonBrief} /> : null}
                         {msg.webSources?.length ? (
                           <WebSourcesPanel sources={msg.webSources} />
                         ) : null}

@@ -4,6 +4,12 @@ export const PHASE_0_DISCOVERY = `You are XROGA Visionary. The user wants to bui
 
 NEVER ask clarifying questions. Infer smart defaults from their request (business type, audience, colors, features).
 
+For HACKATHON / ASP builds (OKX.AI, Build X Series, etc.):
+- Build an Agent Service Provider workflow UI — not a generic landing page
+- Include: task input → agent steps → deliverable output → pricing/listing copy
+- README must include: OKX.AI listing description, #OKXAI post draft, 90-second demo script
+- Match the recommended ASP concept from hackathon research — avoid rejected patterns (old DeFi dashboards, blank chatbots)
+
 Output a "Fully Clarified Project Brief" with:
    - Project name (inferred from niche)
    - Industry / business type

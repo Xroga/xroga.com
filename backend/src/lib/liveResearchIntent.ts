@@ -9,7 +9,8 @@ export type LiveResearchReason =
   | 'time_sensitive'
   | 'realtime'
   | 'crypto'
-  | 'ideas_guidance';
+  | 'ideas_guidance'
+  | 'hackathon';
 
 export interface LiveResearchDecision {
   needsResearch: boolean;
@@ -45,6 +46,9 @@ const CRYPTO =
 
 const IDEAS_GUIDANCE =
   /\b(idea|ideas|how (?:do|can|should|would) i|guide me|walk me through|step by step|roadmap|execute|implement|start a|launch|grow|improve|best way|what should i|recommend|suggest|help me|plan for|work on)\b/i;
+
+const HACKATHON =
+  /\b(hackathon|hack\s*athon|devpost|ethglobal|buidl|buildathon|build\s*x\s*series|okx\.?ai|asp\b|agent\s*service\s*provider|x\s*layer|submission\s+deadline|prize\s+pool)\b/i;
 
 const LEARN =
   /\b(learn|tutorial|course|master|beginner|advanced|explained|how to|teach me)\b/i;
@@ -83,6 +87,7 @@ export function shouldAutoLiveResearch(prompt: string, intent?: string): LiveRes
   if (REALTIME.test(text)) reasons.push('realtime');
   if (CRYPTO.test(text)) reasons.push('crypto');
   if (IDEAS_GUIDANCE.test(text)) reasons.push('ideas_guidance');
+  if (HACKATHON.test(text)) reasons.push('hackathon');
   if (LEARN.test(text)) reasons.push('youtube_recommendation');
 
   const substantive = text.length > 35 || reasons.length > 0;

@@ -16,18 +16,27 @@ import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureInten
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
 import { runLiveResearch, type LiveSource } from '../../lib/liveResearch.js';
 import { filterSourcesForUser } from '../../lib/filterCitedSources.js';
+import { isHackathonQuery, fetchHackathonAdvisorBrief } from '../../lib/hackathonResearch.js';
+import { HACKATHON_ADVISOR_FORMAT } from '../../prompts/hackathonAdvisorPrompt.js';
 import type { RouteProgressFn } from '../../orchestrator/xrogaRouter.js';
 import type { ChatTurn } from '../../lib/conversationContext.js';
 
 const CHAT_SYSTEM = `You are XROGA, a helpful assistant. Answer the user's question conversationally. Never mention underlying AI providers. Emojis welcome.`;
 
+import type { HackathonBriefCard } from '../../phase1/types.js';
+
 export interface QuickChatResult {
   content: string;
   webSources?: LiveSource[];
+  hackathonBrief?: HackathonBriefCard;
 }
 
-function wrap(content: string, webSources?: LiveSource[]): QuickChatResult {
-  return { content, webSources };
+function wrap(
+  content: string,
+  webSources?: LiveSource[],
+  hackathonBrief?: QuickChatResult['hackathonBrief']
+): QuickChatResult {
+  return { content, webSources, hackathonBrief };
 }
 
 export async function quickChat(
@@ -123,33 +132,62 @@ export async function quickChat(
   onCouncilProgress?.('reserve', 'Searching the web for current information…');
   const liveResearch = await runLiveResearch(userText);
 
+  let hackathonBrief: QuickChatResult['hackathonBrief'];
+  let hackathonContext = '';
+  if (isHackathonQuery(userText)) {
+    onCouncilProgress?.('reserve', 'Analyzing hackathon requirements & sponsor gaps…');
+    try {
+      const advisor = await fetchHackathonAdvisorBrief(userText);
+      if (advisor) {
+        hackathonBrief = advisor.card;
+        hackathonContext = `\n\n## Hackathon intelligence\n${advisor.markdown}\n\n${HACKATHON_ADVISOR_FORMAT}`;
+      }
+    } catch (err) {
+      console.warn('[quickChat] Hackathon research:', (err as Error).message);
+    }
+  }
+
   const creationPrompt = buildFullSystemPrompt(category, userText);
   const complexity = classifyChatComplexity(userText, route.category);
 
   const { xrogaRouter } = await import('../../orchestrator/xrogaRouter.js');
   const routed = await xrogaRouter.route(userText, onCouncilProgress, {
     context,
-    researchContext: liveResearch?.context,
+    researchContext: `${liveResearch?.context ?? ''}${hackathonContext}`,
   });
   if (routed.text?.trim()) {
     const text = routed.text.trim();
-    const sources = liveResearch?.sources
-      ? filterSourcesForUser(text, liveResearch.sources, 5)
-      : undefined;
-    return wrap(text, sources);
+    const merged = [
+      ...(liveResearch?.sources ?? []),
+      ...(hackathonBrief?.sources?.map((s) => ({
+        title: s.title,
+        url: s.url,
+        snippet: s.snippet,
+        source: 'searxng' as const,
+      })) ?? []),
+    ];
+    const sources = merged.length ? filterSourcesForUser(text, merged, 6) : undefined;
+    return wrap(text, sources, hackathonBrief);
   }
 
-  const systemExtra = liveResearch?.context ? `\n\n${liveResearch.context}` : '';
+  const systemExtra = `${liveResearch?.context ?? ''}${hackathonContext}`;
   const { text } = await chatGenerate(
     userText,
     complexity,
     `${master}\n\n${creationPrompt}${systemExtra}\n\n${CHAT_SYSTEM}`
   );
   const finalText = text?.trim() || "I'm here — tell me what you'd like to work on.";
-  const sources = liveResearch?.sources
-    ? filterSourcesForUser(finalText, liveResearch.sources, 5)
-    : undefined;
-  return wrap(finalText, sources);
+  const merged = [
+    ...(liveResearch?.sources ?? []),
+    ...(hackathonBrief?.sources?.map((s) => ({
+      title: s.title,
+      url: s.url,
+      snippet: s.snippet,
+      source: 'searxng' as const,
+    })) ?? []),
+  ];
+  const sources = merged.length ? filterSourcesForUser(finalText, merged, 6) : undefined;
+  return wrap(finalText, sources, hackathonBrief);
 }
 
 export async function quickChatWithGroqFallback(prompt: string): Promise<string> {
