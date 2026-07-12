@@ -148,6 +148,10 @@ export interface BuildSummaryData {
   repoUrl?: string;
   memoryNote?: string;
   needsPayment?: boolean;
+  isUpdate?: boolean;
+  updatedFiles?: string[];
+  updateRequest?: string;
+  changesSummary?: string;
 }
 
 export function phaseLine(phase: NegotiationPhase, detail: string): string {
@@ -179,7 +183,35 @@ export const PHASE_UI = {
   githubVerified: '✅ GitHub connected — your builds will be saved automatically.',
 } as const;
 
+export function formatUpdateSummaryCard(data: BuildSummaryData): string {
+  const files = data.updatedFiles?.length ? data.updatedFiles : ['index.html'];
+  const lines = [
+    '## Update applied',
+    '',
+    '### What you asked',
+    data.updateRequest?.trim() || 'Project update',
+    '',
+    '### Files updated on GitHub',
+    ...files.map((f) => `- \`${f}\``),
+    '',
+    '### What changed',
+    data.changesSummary?.trim() || `Patched ${files.length} file(s) — code pushed to GitHub and sandbox preview refreshed.`,
+  ];
+  if (data.liveUrl) lines.push('', '### Live preview', data.liveUrl);
+  if (data.repoUrl) lines.push('', '### GitHub', data.repoUrl);
+  return lines.join('\n');
+}
+
+export function inferUpdateChangesSummary(prompt: string, files: string[]): string {
+  const current = prompt.match(/\[Current message\]\n([\s\S]+)$/)?.[1]?.trim();
+  const request = current ?? prompt.replace(/\[Previous conversation[\s\S]*?\[Current message\]\n?/i, '').trim();
+  const short = request.slice(0, 280);
+  const fileNote = files.length ? `Updated ${files.join(', ')}.` : 'Files patched on GitHub.';
+  return `${short}${short.endsWith('.') ? '' : '.'} ${fileNote}`;
+}
+
 export function formatBuildSummaryCard(data: BuildSummaryData): string {
+  if (data.isUpdate) return formatUpdateSummaryCard(data);
   const lines = [
     `Project: ${data.projectName}`,
     `Pages: ${data.pages.join(', ')}`,

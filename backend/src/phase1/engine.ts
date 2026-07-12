@@ -21,8 +21,13 @@ function sanitizeResponse(text: string): string {
   return text.replace(MODEL_NAME_PATTERN, 'Xroga AI');
 }
 
-function combineOutputs(parts: string[]): string {
-  return parts.filter(Boolean).join('\n\n---\n\n');
+function combineOutputs(parts: string[], intent: string): string {
+  const [primary, secondary] = parts.filter(Boolean);
+  if (!secondary) return primary ?? '';
+  if (intent === 'business_advice') {
+    return `${primary}\n\n## Validation notes\n${secondary}`;
+  }
+  return `${primary}\n\n${secondary}`;
 }
 
 export type EngineResult =
@@ -80,9 +85,6 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
   const plan = buildRoutingPlan(intent, message, mathQuery);
 
   let liveResearch = await runLiveResearch(message, { intent });
-  if (!liveResearch && (intent === 'business_advice' || intent === 'deep_reasoning')) {
-    liveResearch = await runLiveResearch(message, { intent, force: true });
-  }
 
   let hackathonBrief: Awaited<ReturnType<typeof fetchHackathonAdvisorBrief>> | null = null;
   if (isHackathonQuery(message)) {
@@ -164,13 +166,13 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
       const primaryOut = await runModel(plan.primary, 'primary');
       outputs.push(primaryOut);
 
-      if (plan.secondary) {
+      if (plan.secondary && primaryOut.length < 1200) {
         const secondaryOut = await runModel(plan.secondary, 'secondary', primaryOut);
-        outputs.push(secondaryOut);
+        if (secondaryOut.trim().length > 80) outputs.push(secondaryOut);
       }
     }
 
-    const rawResponse = combineOutputs(outputs);
+    const rawResponse = combineOutputs(outputs, intent);
     const response = sanitizeResponse(mathQuery ? normalizeMathResponse(rawResponse) : rawResponse);
 
     const usage = await recordLlmUsage(userId, totalInput, totalOutput);

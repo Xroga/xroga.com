@@ -23,6 +23,7 @@ import { VercelDeployButton } from './VercelDeployButton';
 import type { LandingPageOutputData } from './LandingPageCard';
 import { XROGA_BUILD_PROCESS } from '@/lib/buildPlanningSteps';
 import { scaffoldPathsForPrompt } from '@/lib/buildScaffoldPaths';
+import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
 
 interface PostBuildDashboardProps {
   data: LandingPageOutputData;
@@ -87,13 +88,18 @@ export function PostBuildDashboard({
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const userRequest = data.userPrompt?.trim() || projectName;
+  const isUpdate = Boolean(data.isUpdate);
+  const updatedFiles = data.updatedFiles?.length ? data.updatedFiles : [];
   const builtSummary = useMemo(() => {
+    if (isUpdate && data.summary?.includes('##')) {
+      return null;
+    }
     const pageList = pages.length ? pages.join(', ') : 'Home';
     const featureHint = data.features?.slice(0, 4).join(' · ');
     const parts = [`${projectName} with ${pageList} page${pages.length === 1 ? '' : 's'}.`, designTheme];
     if (featureHint) parts.push(featureHint);
     return parts.join(' ');
-  }, [projectName, pages, designTheme, data.features]);
+  }, [projectName, pages, designTheme, data.features, data.summary, isUpdate]);
 
   const features = useMemo(() => inferFeatures(data, pages), [data, pages]);
   const fileTree = useMemo(() => {
@@ -116,7 +122,9 @@ export function PostBuildDashboard({
         <div className="flex items-start gap-2">
           <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
           <div className="min-w-0 flex-1">
-            <h2 className="text-lg font-bold text-[var(--foreground)] leading-tight">Project complete</h2>
+            <h2 className="text-lg font-bold text-[var(--foreground)] leading-tight">
+              {isUpdate ? 'Update applied' : 'Project complete'}
+            </h2>
             <p className="text-sm font-semibold text-[var(--accent)] mt-0.5 truncate">{projectName}</p>
           </div>
         </div>
@@ -133,17 +141,50 @@ export function PostBuildDashboard({
         <section className="space-y-2">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-[var(--accent)]" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">What you asked for</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
+              {isUpdate ? 'Your update request' : 'What you asked for'}
+            </h3>
           </div>
           <p className="text-base font-semibold text-[var(--foreground)] leading-snug">{userRequest}</p>
         </section>
 
+        {isUpdate && updatedFiles.length > 0 && (
+          <section className="space-y-2 rounded-lg border border-emerald-500/25 bg-emerald-500/5 p-3">
+            <div className="flex items-center gap-2">
+              <GitBranch className="w-4 h-4 text-emerald-500" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                Files updated on GitHub
+              </h3>
+            </div>
+            <ul className="space-y-1">
+              {updatedFiles.map((f) => (
+                <li key={f} className="flex items-center gap-2 text-[12px] font-mono text-[var(--foreground)]/90">
+                  <FileCode className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <p className="text-[11px] text-[var(--muted)]">
+              Only these files were patched — your repo stays intact. Sandbox preview below matches GitHub.
+            </p>
+          </section>
+        )}
+
+        {isUpdate && data.summary?.includes('##') ? (
+          <section className="space-y-2 rounded-lg border border-[var(--card-border)] bg-[var(--foreground)]/[0.03] p-3">
+            <FormattedAiMarkdown content={data.summary} />
+          </section>
+        ) : null}
+
+        {!isUpdate && (
         <section className="space-y-2">
           <div className="flex items-center gap-2">
             <Rocket className="w-4 h-4 text-[var(--accent)]" />
             <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">What we built</h3>
           </div>
-          <p className="text-sm text-[var(--foreground)]/90 leading-relaxed">{builtSummary}</p>
+          {builtSummary ? (
+            <p className="text-sm text-[var(--foreground)]/90 leading-relaxed">{builtSummary}</p>
+          ) : null}
           <div className="flex flex-wrap gap-2 pt-1">
             <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-[var(--foreground)]/5 border border-[var(--card-border)]">
               <FileCode className="w-3 h-3 text-[var(--accent)]" />
@@ -158,6 +199,7 @@ export function PostBuildDashboard({
             </span>
           </div>
         </section>
+        )}
 
         <section className="space-y-2">
           <div className="flex items-center gap-2">

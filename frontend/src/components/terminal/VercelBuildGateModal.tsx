@@ -152,15 +152,29 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
             Deploys go to <strong>your</strong> Vercel account — not Xroga&apos;s. Connect once and every build
             auto-deploys the exact code from GitHub.
           </p>
-          <div className="rounded-lg border border-[var(--accent)]/25 bg-[var(--accent)]/5 p-3 text-[11px] text-[var(--muted)] space-y-1.5">
-            <p className="font-semibold text-[var(--foreground)]">Vercel OAuth callback URL (required)</p>
+          <div className="rounded-lg border border-[var(--accent)]/25 bg-[var(--accent)]/5 p-3 text-[11px] text-[var(--muted)] space-y-2">
+            <p className="font-semibold text-[var(--foreground)]">Vercel OAuth app settings</p>
             <p>
-              In your Vercel app settings, add this exact URL — <strong>not</strong> just{' '}
+              In your Vercel app settings, add this exact callback URL — <strong>not</strong> just{' '}
               <code className="text-[10px]">https://xroga.com</code>:
             </p>
             <code className="block text-[10px] font-mono text-emerald-400 break-all">
               https://xroga.com/dashboard/integrations/vercel/callback
             </code>
+            <p>
+              <strong>Client authentication:</strong> use <code className="text-[10px]">client_secret_post</code> (JSON body).
+              Xroga sends <code className="text-[10px]">client_id</code> + <code className="text-[10px]">client_secret</code> in the token exchange — not Basic auth or JWT.
+            </p>
+            <p>
+              <strong>Permissions to enable:</strong> Read User, Read/Write Deployment. Optional: Read Project.
+              You do <strong>not</strong> need openid, email, profile, offline_access, billing, or env-var scopes.
+            </p>
+            <p>
+              <strong>Fly.io secrets:</strong> <code className="text-[10px]">VERCEL_CLIENT_ID</code>,{' '}
+              <code className="text-[10px]">VERCEL_CLIENT_SECRET</code>,{' '}
+              <code className="text-[10px]">VERCEL_OAUTH_CALLBACK_URL</code>.{' '}
+              <code className="text-[10px]">VERCEL_API_KEY</code> is Xroga server-only — not used for user OAuth.
+            </p>
           </div>
           {oauthConfigured === false && !showTokenForm ? (
             <p className="text-xs text-amber-400/90 rounded-lg border border-amber-500/25 bg-amber-500/5 p-2.5">

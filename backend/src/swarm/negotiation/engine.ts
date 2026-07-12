@@ -41,6 +41,7 @@ import { fetchHackathonResearch, isHackathonQuery } from '../../lib/hackathonRes
 import {
   buildSummaryFromBrief,
   formatBuildSummaryCard,
+  inferUpdateChangesSummary,
   friendlyStepLabel,
   inferBusinessLabel,
   inferDefaultBuildBrief,
@@ -1147,7 +1148,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   emit(ctx, 6, xrogaVisionaryLine('UI polish — responsive design & animations'), 'reviewer', todos, 'XROGA Visionary', {
     userPhase: 2,
   });
-  if (isUpdateBuild && incrementalPlan?.touchesUi) {
+  if (isUpdateBuild && incrementalPlan?.touchesUi && incrementalPlan.stepCount > 1) {
     try {
       const { text: grokOutline } = await buildModelCall(
         'grok',
@@ -1375,6 +1376,20 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         targetRepo: ctx.githubTargetRepo,
         targetBranch: ctx.githubTargetBranch,
       });
+      const updatedFilePaths = isUpdateBuild
+        ? [...(incrementalPlan?.filePaths ?? projectFiles.map((f) => f.path))]
+        : generatedPaths;
+      const updateSummaryData = {
+        ...summaryData,
+        isUpdate: isUpdateBuild,
+        updatedFiles: updatedFilePaths,
+        updateRequest: currentMessage,
+        changesSummary: isUpdateBuild
+          ? inferUpdateChangesSummary(userPrompt, updatedFilePaths)
+          : undefined,
+        liveUrl: pipeline.deployVerified ? pipeline.deployUrl : undefined,
+        repoUrl: pipeline.github.htmlUrl,
+      };
       featureOutput = {
         ...featureOutput,
         deployUrl: pipeline.deployUrl,
@@ -1390,19 +1405,17 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         features: summaryData.features,
         designTheme: summaryData.designTheme,
         needsPayment: summaryData.needsPayment,
-        generatedFiles: generatedPaths,
+        generatedFiles: updatedFilePaths,
         fileCount: projectFiles.length,
         githubPushConfirmed: true,
         userPrompt: currentMessage,
+        isUpdate: isUpdateBuild,
+        updatedFiles: updatedFilePaths,
         memoryNote:
           pipeline.deployError && !pipeline.deployVerified
             ? `${memoryNote ? `${memoryNote} ` : ''}Hosted preview note: ${pipeline.deployError.slice(0, 160)}`
             : memoryNote,
-        summary: formatBuildSummaryCard({
-          ...summaryData,
-          liveUrl: pipeline.deployVerified ? pipeline.deployUrl : undefined,
-          repoUrl: pipeline.github.htmlUrl,
-        }),
+        summary: formatBuildSummaryCard(updateSummaryData),
       };
       buildState.markDone('deployed');
       todos.completeFinal('github-push');

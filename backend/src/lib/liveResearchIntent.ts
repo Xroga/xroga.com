@@ -97,17 +97,14 @@ export function shouldAutoLiveResearch(prompt: string, intent?: string): LiveRes
     (reasons.includes('youtube_recommendation') ||
       YOUTUBE.test(text) ||
       LEARN.test(text) ||
-      reasons.includes('business_advice') ||
-      reasons.includes('crypto') ||
-      reasons.includes('ideas_guidance') ||
-      reasons.includes('pricing') ||
-      intent === 'business_advice' ||
-      intent === 'deep_reasoning' ||
-      intent === 'general_chat');
+      (intent === 'business_advice' &&
+        (reasons.includes('business_advice') || reasons.includes('ideas_guidance') || YOUTUBE.test(text))) ||
+      (intent === 'deep_reasoning' && (YOUTUBE.test(text) || LEARN.test(text))) ||
+      reasons.includes('crypto'));
 
   const needsResearch =
     reasons.length > 0 ||
-    (substantive && (intent === 'business_advice' || intent === 'deep_reasoning' || intent === 'general_chat'));
+    (substantive && (intent === 'business_advice' || intent === 'deep_reasoning'));
 
   return {
     needsResearch,
