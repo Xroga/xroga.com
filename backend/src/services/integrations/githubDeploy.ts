@@ -4,6 +4,7 @@ import { deployToNetlify, pollNetlifyDeploy } from '../../lib/netlify.js';
 import { verifyLivePreviewUrl } from '../../lib/deployVerify.js';
 import { normalizeBuildFiles } from '../../lib/normalizeBuildSource.js';
 import { buildInlinePreviewDocument } from '../../lib/landingPreview.js';
+import { vercelStaticSiteJson } from '../../lib/vercelStaticConfig.js';
 import { getSecret } from '../../config/envSecrets.js';
 import { getGitHubToken, isGitHubConnected as checkGitHubConnected, getGitHubStorageMeta } from './githubAuth.js';
 import { getVercelToken } from './vercelAuth.js';
@@ -407,10 +408,13 @@ export function landingFilesFromOutput(html: string, css: string, js: string): P
   ];
 }
 
-/** Single merged index.html for Vercel/Netlify — matches in-card preview exactly. */
+/** Files uploaded to Vercel — merged index.html + vercel.json (matches sandbox preview). */
 export function landingDeployFilesFromOutput(html: string, css: string, js: string): ProjectFile[] {
   const merged = buildInlinePreviewDocument(html, css, js);
-  return [{ path: 'index.html', content: merged }];
+  return [
+    { path: 'index.html', content: merged },
+    { path: 'vercel.json', content: vercelStaticSiteJson() },
+  ];
 }
 
 function hostingDeployFiles(files: ProjectFile[]): ProjectFile[] {

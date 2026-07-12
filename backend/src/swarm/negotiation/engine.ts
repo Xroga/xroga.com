@@ -97,6 +97,7 @@ import {
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { deepseekCode, groqCode, geminiCode } from '../../services/code/codeClients.js';
 import { resolveApiKey } from '../../config/apiKeyRouter.js';
+import { grokSelfReviewCode } from './grokReview.js';
 import { buildModelCall, buildForcedCorrection } from './buildModelRouter.js';
 import {
   xrogaArchitectureLine,
@@ -631,7 +632,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           `You are XROGA Strategist (Grok 4). Synthesize web/UI/hackathon research into build priorities, risks, and sponsor gaps. Under 350 words.`,
           `User:\n${userPrompt}\n\n${webResearchNote}\n${uiTrendNote}\n${hackathonNote}`,
           3072,
-          usageTracker
+          usageTracker,
+          { grokVariant: 'reasoning' }
         );
         if (synthesis?.trim()) {
           webResearchNote = `${webResearchNote}\n\nGrok research synthesis:\n${synthesis}`;
@@ -1152,7 +1154,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         `Brief UI tweak outline (bullets only, max 120 words) for this update — spacing, color, responsive hints. No code.`,
         `Update:\n${userPrompt.slice(0, 600)}\n\nCode sample:\n${assembledCode.slice(0, 8000)}`,
         256,
-        usageTracker
+        usageTracker,
+        { grokVariant: 'fast' }
       );
       const { text: uiPolish, modelLabel } = await buildModelCall(
         'sonnet',
@@ -1188,6 +1191,28 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   todos.addFinalTodos();
   todos.activateFinal('final-check');
+
+  if (!isUpdateBuild) {
+    emit(ctx, 6, xrogaCollectiveLine('Grok 4 — skeptical self-review (catches hallucinations & fake APIs)'), 'truth_council', todos, 'XROGA Collective', {
+      userPhase: 2,
+    });
+    try {
+      const grokReview = await grokSelfReviewCode(assembledCode, userPrompt, usageTracker, ctx.userId);
+      if (!grokReview.pass && grokReview.fixInstructions) {
+        emit(ctx, 5, xrogaArchitectureLine('Grok review found issues — applying fixes'), 'debugger', todos, 'XROGA Architect');
+        assembledCode = await deepseekFlashCall(
+          PHASE_5_CORRECT,
+          `Grok code audit (be skeptical — no fake APIs, no "done" if broken):\n${grokReview.issues}\n\nFix instructions:\n${grokReview.fixInstructions}\n\nCode:\n${assembledCode}`,
+          BUILD_STEP_MAX_TOKENS,
+          usageTracker
+        );
+        totalCorrections++;
+      }
+    } catch {
+      /* optional grok review */
+    }
+  }
+
   if (!isUpdateBuild) {
   emit(ctx, 6, xrogaCollectiveLine('Quality gate — code standards review'), 'truth_council', todos, 'XROGA Collective', {
     userPhase: 2,
