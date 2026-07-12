@@ -8,6 +8,7 @@ import { notifyGithubProjectSaved } from '@/lib/githubProjectEvents';
 import { normalizeBuildFiles } from '@/lib/normalizeBuildSource';
 import { hydrateLandingOutput } from '@/lib/hydrateLandingOutput';
 import { auditLandingSite, LANDING_UPDATE_SUGGESTIONS } from '@/lib/siteHealthAudit';
+import { readBuildPipelineState, writeBuildPipelineState } from '@/lib/buildPipelineState';
 import { PostBuildDashboard } from './PostBuildDashboard';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 
@@ -82,7 +83,7 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
     : '';
 
   const projectName = data.projectName ?? data.githubRepoName?.replace(/^xroga-/, '') ?? 'Your Website';
-  const pages = data.pages ?? ['Home', 'Menu', 'Gallery', 'Contact'];
+  const pages = data.pages ?? ['Home'];
   const designTheme = data.designTheme ?? 'Modern, clean design';
   const projectSlug = projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40) || 'xroga-build';
 
@@ -139,13 +140,19 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
   useEffect(() => {
     if (pipelineAttempted.current || !normalized.html.trim()) return;
 
-    const alreadyLive =
+    const cached = resolvedRepoName ? readBuildPipelineState(resolvedRepoName, resolvedBranch) : null;
+    const alreadyPushed = data.githubPushConfirmed === true || cached?.githubPushed === true;
+    const alreadyDeployed =
       Boolean(data.deployUrl && data.deployVerified) ||
       Boolean(data.vercelPreviewUrl) ||
-      Boolean(data.netlifyPreviewUrl);
-    const alreadyPushed = data.githubPushConfirmed === true;
+      cached?.vercelDeployed === true;
 
-    if (alreadyLive && alreadyPushed) return;
+    if (alreadyPushed) setGithubPushed(true);
+    if (cached?.vercelUrl && !vercelUrl) {
+      setVercelUrl(cached.vercelUrl);
+      setVercelVerified(true);
+    }
+    if (alreadyPushed && (alreadyDeployed || liveUrl)) return;
 
     pipelineAttempted.current = true;
 
@@ -154,7 +161,7 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
 
       if (!pushed && resolvedRepoName) {
         setPushingGithub(true);
-        setStatusNote(`Pushing ${data.fileCount ?? 'full'} project files to ${resolvedRepoName} (${resolvedBranch})…`);
+        setStatusNote(`Pushing ${data.fileCount ?? 'project'} files to ${resolvedRepoName} (${resolvedBranch})…`);
         try {
           const result = await api.github.pushBuild({
             html: normalized.html,
@@ -164,12 +171,16 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
             branch: resolvedBranch,
             projectSlug,
             projectName,
-            userPrompt: projectName,
+            userPrompt: data.userPrompt ?? projectName,
           });
           pushed = true;
           setGithubPushed(true);
+          writeBuildPipelineState(resolvedRepoName, resolvedBranch, {
+            githubPushed: true,
+            pushedAt: Date.now(),
+          });
           markRepoAnalysisStale(resolvedRepoName);
-          setStatusNote(`Code saved to ${result.githubRepoName} — refresh GitHub to see your files.`);
+          setStatusNote(`Code saved to ${result.githubRepoName} — open GitHub Projects to continue this repo.`);
           void api.projects
             .create({
               name: projectName.slice(0, 120),
@@ -177,7 +188,7 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
               github_repo_url: result.githubRepoUrl,
               github_repo_name: result.githubRepoName,
               github_branch: resolvedBranch,
-              user_prompt: projectName,
+              user_prompt: data.userPrompt ?? projectName,
             })
             .then((saved) => notifyGithubProjectSaved(saved.id))
             .catch((err) => console.warn('[LandingPageCard] project save', err));
@@ -193,31 +204,45 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
             generatedFiles: result.generatedFiles,
           });
         } catch (err) {
-          setStatusNote(`GitHub push: ${(err as Error).message?.slice(0, 160) || 'failed'}. Preview still works below.`);
+          setStatusNote(`GitHub push: ${(err as Error).message?.slice(0, 160) || 'failed'}. Sandbox preview works below.`);
           pipelineAttempted.current = false;
         } finally {
           setPushingGithub(false);
         }
+      } else if (pushed && resolvedRepoName) {
+        writeBuildPipelineState(resolvedRepoName, resolvedBranch, { githubPushed: true });
       }
 
-      if (alreadyLive || liveUrl) return;
+      if (alreadyDeployed || liveUrl) return;
 
       setAutoDeploying(true);
-      setStatusNote((note) => note ?? 'Auto-deploying to Vercel + Cloudflare CDN…');
+      setStatusNote((note) => note ?? 'Checking Vercel connection for live deploy…');
       try {
-        const result = await api.github.redeployPreview({
+        const vercelStatus = await api.vercel.status();
+        if (!vercelStatus.connected) {
+          setStatusNote('Sandbox preview is ready below. Connect Vercel to publish a live URL on your account.');
+          return;
+        }
+
+        setStatusNote('Deploying to your Vercel account…');
+        const result = await api.vercel.deploy({
           html: normalized.html,
           css: normalized.css,
           js: normalized.js,
-          platform: 'vercel',
           projectSlug,
+          projectName,
         });
-        const url = result.vercel?.deployUrl || result.deployUrl;
-        const verified = result.vercel?.deployVerified ?? result.deployVerified;
+        const url = result.deployUrl?.trim();
         if (url) {
           setVercelUrl(url);
-          setVercelVerified(Boolean(verified));
-          setStatusNote(verified ? null : 'Live URL created — verifying SSL…');
+          setVercelVerified(true);
+          if (resolvedRepoName) {
+            writeBuildPipelineState(resolvedRepoName, resolvedBranch, {
+              vercelDeployed: true,
+              vercelUrl: url,
+            });
+          }
+          setStatusNote(null);
           onPreviewUpdate?.({
             ...data,
             html: normalized.html,
@@ -225,15 +250,14 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
             js: normalized.js,
             vercelPreviewUrl: url,
             deployUrl: url,
-            deployVerified: Boolean(verified),
+            deployVerified: true,
             siteAudit,
           });
         } else {
-          setStatusNote(result.vercel?.error || 'Auto-deploy pending — preview available below.');
+          setStatusNote(result.error ?? 'Vercel deploy skipped — use sandbox preview below.');
         }
       } catch (err) {
-        setStatusNote(`Auto-deploy: ${(err as Error).message?.slice(0, 120) || 'will retry on next build'}`);
-        pipelineAttempted.current = false;
+        setStatusNote(`Live deploy: ${(err as Error).message?.slice(0, 120) || 'connect Vercel in Integrations'}. Sandbox preview works below.`);
       } finally {
         setAutoDeploying(false);
       }
@@ -247,10 +271,12 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
     resolvedRepoName,
     resolvedBranch,
     projectSlug,
+    projectName,
     data,
     onPreviewUpdate,
     siteAudit,
     liveUrl,
+    vercelUrl,
   ]);
 
   function handleFixIssue(prompt: string) {

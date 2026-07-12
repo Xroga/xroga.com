@@ -4,14 +4,21 @@ import { api, type Project } from '@/lib/api';
 import { saveSelectedRepoContext } from '@/lib/repoContext';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { notifyGithubRepoContext } from '@/lib/githubProjectEvents';
-import { loadTerminalHistory } from '@/lib/terminalHistory';
+import { loadTerminalHistoryEntry } from '@/lib/terminalSessionStorage';
 
-/** Restore workspace + GitHub repo context so user continues exactly where they left off. */
-export async function continueGithubProject(
+export interface GithubProjectSession {
+  project: Project;
+  prompt: string;
+  messages: ChatMessage[];
+  sessionId: string;
+  branch: string;
+}
+
+/** Load messages + prompt for continuing a GitHub-linked project. */
+export async function loadGithubProjectSession(
   project: Project,
-  router: AppRouterInstance,
-  opts?: { branch?: string; onHydrate?: () => void }
-): Promise<void> {
+  opts?: { branch?: string }
+): Promise<GithubProjectSession> {
   const branch = opts?.branch ?? 'main';
   if (project.github_repo_name?.includes('/')) {
     saveSelectedRepoContext({ repo: project.github_repo_name, branch });
@@ -20,10 +27,11 @@ export async function continueGithubProject(
 
   let prompt = `Continue work on ${project.name}`;
   let messages: ChatMessage[] = [];
+  let sessionId = project.id;
 
   if (project.id.startsWith('history-')) {
-    const sessionId = project.id.replace(/^history-/, '');
-    const session = loadTerminalHistory().find((h) => h.id === sessionId);
+    sessionId = project.id.replace(/^history-/, '');
+    const session = await loadTerminalHistoryEntry(sessionId);
     if (session?.messages?.length) {
       messages = session.messages;
       prompt = session.prompt || session.title;
@@ -52,9 +60,27 @@ export async function continueGithubProject(
     ? `\n\nConnected repo: ${project.github_repo_name}. Analyze ALL existing files in GitHub, fix bugs/errors, and apply updates — do NOT rebuild from scratch.`
     : '';
 
-  resumeToDashboard({
+  return {
+    project,
     prompt: `${prompt}${fixHint}`,
-    messages: messages.length ? messages : undefined,
+    messages,
+    sessionId,
+    branch,
+  };
+}
+
+/** Restore workspace + GitHub repo context so user continues exactly where they left off. */
+export async function continueGithubProject(
+  project: Project,
+  router: AppRouterInstance,
+  opts?: { branch?: string; onHydrate?: () => void }
+): Promise<GithubProjectSession> {
+  const session = await loadGithubProjectSession(project, opts);
+
+  resumeToDashboard({
+    prompt: session.prompt,
+    messages: session.messages.length ? session.messages : undefined,
+    sessionId: session.sessionId,
     selectedId: project.id,
     selectedLabel: project.name,
     source: 'projects',
@@ -62,4 +88,5 @@ export async function continueGithubProject(
 
   router.push('/dashboard');
   setTimeout(() => opts?.onHydrate?.(), 150);
+  return session;
 }

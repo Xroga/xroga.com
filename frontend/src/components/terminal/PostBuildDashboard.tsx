@@ -17,6 +17,7 @@ import {
   Sparkles,
   Wrench,
 } from 'lucide-react';
+import { BuildCodeSandbox } from './BuildCodeSandbox';
 import { FullscreenPreviewModal } from './FullscreenPreviewModal';
 import { VercelDeployButton } from './VercelDeployButton';
 import type { LandingPageOutputData } from './LandingPageCard';
@@ -85,8 +86,14 @@ export function PostBuildDashboard({
   const [behindOpen, setBehindOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
 
-  const userRequest = data.userPrompt?.trim() || data.summary?.split('\n')[0]?.trim() || projectName;
-  const builtSummary = data.summary?.replace(/^[^\n]*\n?/, '').trim() || `${projectName} — ${pages.join(', ')}`;
+  const userRequest = data.userPrompt?.trim() || projectName;
+  const builtSummary = useMemo(() => {
+    const pageList = pages.length ? pages.join(', ') : 'Home';
+    const featureHint = data.features?.slice(0, 4).join(' · ');
+    const parts = [`${projectName} with ${pageList} page${pages.length === 1 ? '' : 's'}.`, designTheme];
+    if (featureHint) parts.push(featureHint);
+    return parts.join(' ');
+  }, [projectName, pages, designTheme, data.features]);
 
   const features = useMemo(() => inferFeatures(data, pages), [data, pages]);
   const fileTree = useMemo(() => {
@@ -98,7 +105,7 @@ export function PostBuildDashboard({
 
   const missingItems: string[] = [];
   if (!githubPushed && !data.githubPushConfirmed) missingItems.push('Code not yet saved to GitHub — connect repo in chatbar');
-  if (!liveUrl && !autoDeploying) missingItems.push('Live URL pending — use Deploy to Vercel or preview below');
+  if (!liveUrl && !autoDeploying) missingItems.push('Live URL optional — connect Vercel or use sandbox preview below');
   if (siteAudit.issues.some((i) => i.severity === 'critical')) {
     missingItems.push(`${siteAudit.issues.filter((i) => i.severity === 'critical').length} critical health issue(s)`);
   }
@@ -150,6 +157,23 @@ export function PostBuildDashboard({
               Health {siteAudit.score}/100
             </span>
           </div>
+        </section>
+
+        <section className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Eye className="w-4 h-4 text-[var(--accent)]" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Live sandbox preview</h3>
+          </div>
+          <p className="text-[11px] text-[var(--muted)]">
+            Your code runs here instantly — no Vercel required. Connect Vercel only when you want a public live URL on your account.
+          </p>
+          <BuildCodeSandbox
+            html={normalized.html}
+            css={normalized.css}
+            js={normalized.js}
+            projectTitle={projectName}
+            className="mt-1"
+          />
         </section>
 
         <section className="space-y-2">

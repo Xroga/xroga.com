@@ -539,7 +539,7 @@ export const api = {
   vercel: {
     oauthUrl: () => {
       const redirectUri = vercelOAuthCallbackUrl();
-      return apiFetch<{ url: string; redirectUri: string }>(
+      return apiFetch<{ url: string | null; redirectUri: string; oauthConfigured: boolean }>(
         `/api/vercel/oauth?redirect_uri=${encodeURIComponent(redirectUri)}`
       );
     },
@@ -547,6 +547,11 @@ export const api = {
       apiFetch<{ connected: boolean; username: string }>('/api/vercel/connect', {
         method: 'POST',
         body: JSON.stringify({ code, redirectUri: vercelOAuthCallbackUrl() }),
+      }),
+    connectToken: (token: string) =>
+      apiFetch<{ connected: boolean; username: string }>('/api/vercel/connect-token', {
+        method: 'POST',
+        body: JSON.stringify({ token }),
       }),
     status: () => apiFetch<{ connected: boolean; username?: string }>('/api/vercel/status'),
     disconnect: () => apiFetch('/api/vercel/disconnect', { method: 'DELETE' }),

@@ -23,6 +23,7 @@ import {
   clearWorkspaceSession,
   loadWorkspaceSessionHydrated,
   saveWorkspaceSession,
+  type WorkspaceSource,
 } from '@/lib/workspacePersistence';
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
@@ -41,7 +42,7 @@ import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import { notifyGithubProjectSaved } from '@/lib/githubProjectEvents';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
-import { requiresGitHubForBuild, requiresVercelForBuild } from '@/lib/messageHelpers';
+import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
 import { VercelBuildGateModal } from '@/components/terminal/VercelBuildGateModal';
 import { GitHubActivationOverlay } from '@/components/terminal/GitHubActivationOverlay';
@@ -124,6 +125,16 @@ interface TerminalChatContextValue {
   startNewChat: () => void;
   /** Restore session from workspace (e.g. jump from AI Media) */
   hydrateFromSession: () => void;
+  /** Restore a saved terminal session exactly where the user left off */
+  restoreTerminalSession: (opts: {
+    sessionId: string;
+    prompt: string;
+    messages: ChatMessage[];
+    selectedId?: string;
+    selectedLabel?: string;
+    source?: WorkspaceSource;
+    jumpMessageId?: string;
+  }) => Promise<void>;
   /** Load an isolated prompt+response thread into terminal (new terminal from AI Media) */
   loadIsolatedThread: (messages: ChatMessage[], prompt: string, jumpMessageId?: string) => void;
   /** Permanently removes assistant response + its user prompt from chat, archive, and media */
@@ -231,6 +242,7 @@ export function TerminalChatProvider({
   const interruptRef = useRef(false);
   const [sessionReady, setSessionReady] = useState(false);
   const persistReadyRef = useRef(false);
+  const restoringRef = useRef(false);
   const buildHeartbeatTickRef = useRef(0);
   const lastActivityAtRef = useRef(0);
   const sessionIdRef = useRef<string>(
@@ -440,16 +452,71 @@ export function TerminalChatProvider({
 
   const hydrateFromSession = useCallback(() => {
     if (incognito) return;
+    restoringRef.current = true;
     void loadWorkspaceSessionHydrated().then((session) => {
-      if (!session?.messages?.length) return;
+      if (!session?.messages?.length) {
+        restoringRef.current = false;
+        return;
+      }
       setMessages(session.messages);
       if (threadHasCompletedWebsite(session.messages)) {
         completedWebsiteBuildRef.current = true;
       }
       if (session.prompt) setPrompt(session.prompt);
       if (session.sessionId) sessionIdRef.current = session.sessionId;
+      restoringRef.current = false;
     });
   }, [incognito]);
+
+  const restoreTerminalSession = useCallback(
+    async (opts: {
+      sessionId: string;
+      prompt: string;
+      messages: ChatMessage[];
+      selectedId?: string;
+      selectedLabel?: string;
+      source?: WorkspaceSource;
+      jumpMessageId?: string;
+    }) => {
+      if (incognito) return;
+      restoringRef.current = true;
+      abortRef.current?.abort();
+      setLoading(false);
+      setSwarmRunning(false);
+      setAnimatingId(null);
+      setSwarmActiveAgent(null);
+      setPipelineMessage(null);
+      setSwarmNegotiationPhase(null);
+      setSwarmTodos([]);
+      setSwarmStatusLabel(null);
+      setSwarmAnalysis(null);
+      setSwarmActivityLog([]);
+      setFollowUps([]);
+      setReasoning(null);
+      setDag(null);
+
+      sessionIdRef.current = opts.sessionId;
+      const { rehydratePersistedMessages } = await import('@/lib/rehydratePersistedMessages');
+      const hydrated = await rehydratePersistedMessages(opts.messages);
+      setMessages(hydrated);
+      setPrompt(opts.prompt);
+      completedWebsiteBuildRef.current = threadHasCompletedWebsite(hydrated);
+
+      saveWorkspaceSession({
+        prompt: opts.prompt,
+        messages: hydrated,
+        sessionId: opts.sessionId,
+        selectedId: opts.selectedId ?? opts.sessionId,
+        selectedLabel: opts.selectedLabel ?? opts.prompt.slice(0, 40),
+        source: opts.source ?? 'dashboard',
+        jumpMessageId: opts.jumpMessageId,
+      });
+      persistReadyRef.current = true;
+      window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
+      restoringRef.current = false;
+    },
+    [incognito, setSwarmRunning]
+  );
 
   useEffect(() => {
     const onResume = () => hydrateFromSession();
@@ -482,8 +549,8 @@ export function TerminalChatProvider({
   );
 
   useEffect(() => {
-    if (!sessionReady || incognito || !persistReadyRef.current) return;
-    if (messages.length === 0 && !prompt.trim()) return;
+    if (!sessionReady || incognito || !persistReadyRef.current || restoringRef.current) return;
+    if (messages.length === 0) return;
     for (const m of messages) {
       const fo = m.featureOutput as { type?: string; html?: string; css?: string; js?: string } | undefined;
       if (fo?.type === 'landing_page' && fo.html?.trim()) {
@@ -502,6 +569,20 @@ export function TerminalChatProvider({
     } catch (err) {
       console.warn('[workspace] persist skipped:', (err as Error).message);
     }
+  }, [sessionReady, prompt, messages, incognito]);
+
+  /** Persist terminal history while user works — not only after submit completes */
+  useEffect(() => {
+    if (!sessionReady || incognito || !persistReadyRef.current || restoringRef.current) return;
+    if (messages.length === 0) return;
+    const timer = window.setTimeout(() => {
+      saveTerminalHistorySession({
+        sessionId: sessionIdRef.current,
+        prompt,
+        messages,
+      });
+    }, 800);
+    return () => window.clearTimeout(timer);
   }, [sessionReady, prompt, messages, incognito]);
 
   /** Live heartbeat while build runs — updates text every 4s so UI never looks frozen */
@@ -737,21 +818,6 @@ export function TerminalChatProvider({
         }
       }
 
-      if (requiresVercelForBuild(userPrompt)) {
-        try {
-          const vc = await api.vercel.status();
-          if (!vc.connected) {
-            pendingBuildRef.current = { userPrompt, fromQueue, interrupt, attachments };
-            setVercelGateOpen(true);
-            return;
-          }
-        } catch {
-          pendingBuildRef.current = { userPrompt, fromQueue, interrupt, attachments };
-          setVercelGateOpen(true);
-          return;
-        }
-      }
-
       const userMessageId = crypto.randomUUID();
       const assistantId = crypto.randomUUID();
       const displayPrompt =
@@ -816,7 +882,7 @@ export function TerminalChatProvider({
       if (codeBuildActive) {
         setSwarmNegotiationPhase(0);
         setSwarmStatusLabel('XROGA Architect');
-        setSwarmTodos(seedBuildTodos());
+        setSwarmTodos(seedBuildTodos(displayPrompt));
         setPipelineMessage('XROGA Architect — planning architecture, database & API routes…');
         thinkingStepsRef.current = [...BUILD_PLANNING_STEPS];
         setThinkingSteps([...BUILD_PLANNING_STEPS]);
@@ -1146,8 +1212,9 @@ export function TerminalChatProvider({
                       type: 'website',
                       github_repo_url:
                         typeof output.githubRepoUrl === 'string' ? output.githubRepoUrl : undefined,
-                      github_repo_name: ghName,
-                      github_branch: 'main',
+                      github_repo_name: ghName.includes('/') ? ghName : undefined,
+                      github_branch: repoContext?.branch ?? 'main',
+                      deploy_url: typeof output.deployUrl === 'string' ? output.deployUrl : undefined,
                       user_prompt: displayPrompt,
                     })
                     .then((saved) => notifyGithubProjectSaved(saved.id))
@@ -1181,12 +1248,18 @@ export function TerminalChatProvider({
               codeBuildActive &&
               (chatContent.includes(GENERIC_SWARM_FALLBACK) || fullReply.includes(GENERIC_SWARM_FALLBACK))
             ) {
-              const buildError =
-                '⚠️ **Build could not finish.** Connect GitHub under Integrations, then try again.\n\nIf GitHub is connected, check that `DEEPSEEK_CODE_API_KEY` (or `DEEPSEEK_API_KEY`) is set on Fly.io.';
-              fullReply = buildError;
-              setMessages((m) =>
-                m.map((msg) => (msg.id === assistantId ? { ...msg, content: buildError } : msg))
-              );
+              setMessages((m) => {
+                const existing = m.find((msg) => msg.id === assistantId);
+                const hasLanding =
+                  existing?.featureOutput &&
+                  typeof existing.featureOutput === 'object' &&
+                  (existing.featureOutput as { type?: string }).type === 'landing_page';
+                if (hasLanding) return m;
+                const buildError =
+                  '⚠️ **Build could not finish.** Connect GitHub under Integrations, then try again.';
+                fullReply = buildError;
+                return m.map((msg) => (msg.id === assistantId ? { ...msg, content: buildError } : msg));
+              });
             }
             const text = complete.output
               ? (() => {
@@ -1259,18 +1332,26 @@ export function TerminalChatProvider({
           setMessages((m) => m.filter((msg) => msg.id !== assistantId || msg.content.length > 0));
           return;
         }
-        const friendly = codeBuildActive
-          ? '⚠️ **Build connection lost.** Check your connection and try again. Connect GitHub under Integrations if you have not already.'
-          : GENERIC_SWARM_FALLBACK;
-        setMessages((m) => [
-          ...m.filter((msg) => msg.id !== assistantId || msg.content.length > 0),
-          {
-            id: assistantId,
-            role: 'assistant',
-            content: fullReply || friendly,
-            createdAt: Date.now(),
-          },
-        ]);
+        setMessages((m) => {
+          const existing = m.find((msg) => msg.id === assistantId);
+          const hasFeature =
+            existing?.featureOutput &&
+            typeof existing.featureOutput === 'object' &&
+            (existing.featureOutput as { type?: string }).type === 'landing_page';
+          if (hasFeature) return m.filter((msg) => msg.id !== assistantId || Boolean(msg.content?.trim()));
+          const friendly = codeBuildActive
+            ? '⚠️ **Build connection lost.** Check your connection and try again. Connect GitHub under Integrations if you have not already.'
+            : GENERIC_SWARM_FALLBACK;
+          return [
+            ...m.filter((msg) => msg.id !== assistantId || msg.content.length > 0),
+            {
+              id: assistantId,
+              role: 'assistant',
+              content: fullReply || friendly,
+              createdAt: Date.now(),
+            },
+          ];
+        });
       } finally {
         if (thinkingTimerRef.current) {
           clearTimeout(thinkingTimerRef.current);
@@ -1393,6 +1474,7 @@ export function TerminalChatProvider({
         stop,
         startNewChat,
         hydrateFromSession,
+        restoreTerminalSession,
         loadIsolatedThread,
         deleteTurn,
         deleteUserTurn,

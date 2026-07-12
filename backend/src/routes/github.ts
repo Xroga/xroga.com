@@ -384,13 +384,13 @@ router.post('/redeploy-preview', async (req: AuthRequest, res) => {
 
     if (parsed.data.html?.trim()) {
       const slug = parsed.data.projectSlug ?? 'xroga-build';
-      const platform = parsed.data.platform ?? 'both';
       const result = await deployPreviewFromSource(
         slug,
         parsed.data.html,
         parsed.data.css ?? '',
         parsed.data.js ?? '',
-        platform
+        parsed.data.platform === 'netlify' ? 'vercel' : (parsed.data.platform ?? 'vercel'),
+        req.userId!
       );
       res.json({
         vercel: result.vercel,

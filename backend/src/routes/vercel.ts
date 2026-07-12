@@ -48,11 +48,11 @@ router.get('/oauth', (req: AuthRequest, res) => {
   const requested = typeof req.query.redirect_uri === 'string' ? req.query.redirect_uri : undefined;
   const redirectUri = getVercelOAuthCallbackUrl(requested);
   const url = buildAuthorizeUrl(req.userId!, redirectUri);
-  if (!url) {
-    res.status(503).json({ error: 'Vercel OAuth not configured' });
-    return;
-  }
-  res.json({ url, redirectUri });
+  res.json({
+    url: url ?? null,
+    redirectUri,
+    oauthConfigured: Boolean(url),
+  });
 });
 
 router.post('/connect', async (req: AuthRequest, res) => {
@@ -111,6 +111,38 @@ router.post('/connect', async (req: AuthRequest, res) => {
   await saveVercelConnection(req.userId!, tokenData.access_token, {
     username,
     providerUserId: tokenData.user_id,
+  });
+
+  res.json({ connected: true, username });
+});
+
+/** Connect with user's Vercel personal access token (works without OAuth app on server). */
+router.post('/connect-token', async (req: AuthRequest, res) => {
+  const schema = z.object({ token: z.string().min(12).max(512) });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+
+  const token = parsed.data.token.trim();
+  const userRes = await fetch('https://api.vercel.com/v2/user', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!userRes.ok) {
+    res.status(400).json({
+      error: 'Invalid Vercel token. Create one at vercel.com/account/tokens with Full Account scope.',
+    });
+    return;
+  }
+
+  const user = (await userRes.json()) as { user?: { username?: string; id?: string } };
+  const username = user.user?.username ?? 'vercel-user';
+
+  await saveVercelConnection(req.userId!, token, {
+    username,
+    providerUserId: user.user?.id,
   });
 
   res.json({ connected: true, username });

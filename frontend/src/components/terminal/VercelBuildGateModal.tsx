@@ -10,10 +10,13 @@ interface VercelBuildGateModalProps {
   onConnected: (username?: string) => void;
 }
 
-/** Blocks deploy builds until Vercel OAuth completes */
+/** Connect Vercel via OAuth popup or personal access token (user's account). */
 export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuildGateModalProps) {
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [oauthConfigured, setOauthConfigured] = useState<boolean | null>(null);
+  const [tokenInput, setTokenInput] = useState('');
+  const [showTokenForm, setShowTokenForm] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const stopPoll = useCallback(() => {
@@ -28,8 +31,16 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
       stopPoll();
       setConnecting(false);
       setError(null);
+      setTokenInput('');
+      setShowTokenForm(false);
+      setOauthConfigured(null);
       return;
     }
+    void api.vercel
+      .oauthUrl()
+      .then((res) => setOauthConfigured(res.oauthConfigured))
+      .catch(() => setOauthConfigured(false));
+
     const onMessage = (e: MessageEvent) => {
       if (e.data?.type === 'xroga-vercel-connected') {
         stopPoll();
@@ -53,10 +64,17 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
     setConnecting(true);
     setError(null);
     try {
-      const { url } = await api.vercel.oauthUrl();
+      const { url, oauthConfigured: configured } = await api.vercel.oauthUrl();
+      if (!url || !configured) {
+        setShowTokenForm(true);
+        setConnecting(false);
+        setError(null);
+        return;
+      }
       const popup = window.open(url, 'xroga-vercel-oauth', 'width=600,height=700,scrollbars=yes');
       if (!popup) {
-        setError('Allow popups to connect Vercel, or use Integrations in Settings.');
+        setError('Allow popups to connect Vercel, or paste your token below.');
+        setShowTokenForm(true);
         setConnecting(false);
         return;
       }
@@ -70,7 +88,8 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
             if (status.connected) {
               onConnected(status.username);
             } else {
-              setError('Vercel connection was not completed. Try again.');
+              setError('Vercel connection was not completed. Paste your token below or try again.');
+              setShowTokenForm(true);
             }
             return;
           }
@@ -85,6 +104,26 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
           /* keep polling */
         }
       }, 1500);
+    } catch (e) {
+      setConnecting(false);
+      setShowTokenForm(true);
+      setError((e as Error).message);
+    }
+  }
+
+  async function connectWithToken() {
+    const token = tokenInput.trim();
+    if (token.length < 12) {
+      setError('Paste a valid Vercel token from vercel.com/account/tokens');
+      return;
+    }
+    setConnecting(true);
+    setError(null);
+    try {
+      const res = await api.vercel.connectToken(token);
+      setConnecting(false);
+      setTokenInput('');
+      onConnected(res.username);
     } catch (e) {
       setConnecting(false);
       setError((e as Error).message);
@@ -102,7 +141,7 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
           <div className="flex items-center gap-2">
             <Triangle className="w-5 h-5 text-[var(--foreground)]" />
-            <h2 className="font-semibold text-sm">Connect Vercel for live deploy</h2>
+            <h2 className="font-semibold text-sm">Connect your Vercel account</h2>
           </div>
           <button type="button" onClick={onClose} className="p-2 rounded-lg hover:bg-white/10">
             <X className="w-4 h-4" />
@@ -110,18 +149,64 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
         </div>
         <div className="p-5 space-y-4">
           <p className="text-sm text-[var(--muted)] leading-relaxed">
-            ▲ XROGA needs Vercel to publish your live preview on the first build. Connect once — every hackathon
-            and website deploys automatically with minimal bugs and a working URL.
+            Deploys go to <strong>your</strong> Vercel account — not Xroga&apos;s. Connect once and GitHub builds
+            can auto-deploy to your live URL.
           </p>
+          {oauthConfigured === false && !showTokenForm ? (
+            <p className="text-xs text-amber-400/90 rounded-lg border border-amber-500/25 bg-amber-500/5 p-2.5">
+              OAuth is not configured on the server. Use a personal access token from{' '}
+              <a
+                href="https://vercel.com/account/tokens"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-[var(--accent)]"
+              >
+                vercel.com/account/tokens
+              </a>{' '}
+              (Full Account scope).
+            </p>
+          ) : null}
           {error && <p className="text-xs text-red-400">{error}</p>}
-          <button
-            type="button"
-            onClick={startConnect}
-            disabled={connecting}
-            className="w-full py-3 rounded-xl bg-[var(--foreground)] text-[var(--background)] font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-60 connect-pulse"
-          >
-            {connecting ? 'Waiting for Vercel…' : 'Connect Vercel'}
-          </button>
+          {!showTokenForm ? (
+            <button
+              type="button"
+              onClick={startConnect}
+              disabled={connecting}
+              className="w-full py-3 rounded-xl bg-[var(--foreground)] text-[var(--background)] font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-60 connect-pulse"
+            >
+              {connecting ? 'Waiting for Vercel…' : 'Authorize with Vercel'}
+            </button>
+          ) : null}
+          {(showTokenForm || oauthConfigured === false) && (
+            <div className="space-y-2 pt-1 border-t border-white/10">
+              <p className="text-xs font-semibold text-[var(--foreground)]">Or paste your Vercel token</p>
+              <input
+                type="password"
+                value={tokenInput}
+                onChange={(e) => setTokenInput(e.target.value)}
+                placeholder="vercel_… or personal access token"
+                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-mono focus:outline-none focus:border-[var(--accent)]/50"
+                autoComplete="off"
+              />
+              <button
+                type="button"
+                onClick={() => void connectWithToken()}
+                disabled={connecting}
+                className="w-full py-2.5 rounded-xl border border-[var(--accent)]/40 text-[var(--accent)] font-semibold text-sm hover:bg-[var(--accent)]/10 disabled:opacity-60"
+              >
+                {connecting ? 'Connecting…' : 'Connect with token'}
+              </button>
+            </div>
+          )}
+          {oauthConfigured && !showTokenForm ? (
+            <button
+              type="button"
+              onClick={() => setShowTokenForm(true)}
+              className="w-full text-xs text-[var(--muted)] hover:text-[var(--accent)] underline"
+            >
+              Use personal access token instead
+            </button>
+          ) : null}
         </div>
       </div>
     </div>

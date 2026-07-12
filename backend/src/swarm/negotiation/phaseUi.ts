@@ -181,29 +181,13 @@ export const PHASE_UI = {
 
 export function formatBuildSummaryCard(data: BuildSummaryData): string {
   const lines = [
-    '🎉 YOUR PROJECT IS LIVE!',
-    '',
-    '📌 **Summary:**',
-    `   - Name: ${data.projectName}`,
-    `   - Pages: ${data.pages.join(', ')}`,
-    `   - Features: ${data.features.join(', ')}`,
-    `   - Design: ${data.designTheme}`,
+    `Project: ${data.projectName}`,
+    `Pages: ${data.pages.join(', ')}`,
+    `Features: ${data.features.join(', ')}`,
+    `Design: ${data.designTheme}`,
   ];
-  if (data.liveUrl) {
-    lines.push('', '🔗 **Live Preview:** [Click to Open ↗]', `   → ${data.liveUrl}`);
-  }
-  if (data.repoUrl) {
-    lines.push('', '📂 **GitHub:** [View Files ↗]', `   → ${data.repoUrl}`);
-  }
-  if (data.memoryNote) {
-    lines.push('', `💬 **Old chats remembered:** ${data.memoryNote}`);
-  }
-  lines.push(
-    '',
-    '💬 **Now, let\'s make it yours:**',
-    '   Reply with brand name, colors, or sections to add/change.',
-    '   Example: "Change name to Blue Bean, navy & white colors, add testimonials"'
-  );
+  if (data.liveUrl) lines.push(`Live: ${data.liveUrl}`);
+  if (data.repoUrl) lines.push(`GitHub: ${data.repoUrl}`);
   return lines.join('\n');
 }
 

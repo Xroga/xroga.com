@@ -31,11 +31,28 @@ export function VercelDeployButton({
       setConnected(s.connected);
       setUsername(s.username ?? null);
     }).catch(() => setConnected(false));
+
+    const onMessage = (e: MessageEvent) => {
+      if (e.data?.type === 'xroga-vercel-connected') {
+        setConnected(true);
+        setUsername(typeof e.data.username === 'string' ? e.data.username : null);
+        toast.success('Vercel connected');
+      }
+      if (e.data?.type === 'xroga-vercel-error') {
+        toast.error(typeof e.data.message === 'string' ? e.data.message : 'Vercel connection failed');
+      }
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
   }, []);
 
   async function connectVercel() {
     try {
-      const { url } = await api.vercel.oauthUrl();
+      const { url, oauthConfigured } = await api.vercel.oauthUrl();
+      if (!url || !oauthConfigured) {
+        toast.error('Open Integrations → paste your Vercel token from vercel.com/account/tokens');
+        return;
+      }
       const popup = window.open(url, 'xroga-vercel-oauth', 'width=600,height=700,scrollbars=yes');
       if (!popup) {
         toast.error('Allow popups to connect Vercel');
