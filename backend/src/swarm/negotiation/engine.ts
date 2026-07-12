@@ -97,6 +97,7 @@ import {
 import { buildFullProjectFiles, scaffoldFilePaths } from '../../services/projectScaffold.js';
 import { BuildUsageTracker } from '../../lib/buildUsageTracker.js';
 import { recordUsage } from '../../phase1/tokenTracker.js';
+import { recordModelUsage } from '../../phase1/modelQuotaTracker.js';
 import { autoPublishBuildToCommunity } from '../../services/communityAutoPublish.js';
 import { notifyBuildComplete, notifyBuildFailed } from '../../services/notificationService.js';
 
@@ -993,7 +994,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       `You are XROGA Visionary. Polish HTML/CSS/JS for modern responsive design, micro-interactions, accessibility (ARIA), and optional dark mode. Output ONLY complete fenced html, css, javascript blocks — no commentary, no truncation.`,
       `Brief:\n${clarifiedBrief}\n\nApproved plan:\n${approvedPlan}\n\nCodebase:\n${assembledCode}`,
       BUILD_STEP_MAX_TOKENS,
-      usageTracker
+      usageTracker,
+      { userId: ctx.userId, claudeTask: 'ui' }
     );
     if (uiPolish?.trim()) {
       assembledCode = `${assembledCode}\n\n// --- UI/UX polish (${modelLabel}) ---\n${uiPolish}`;
@@ -1014,7 +1016,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       PHASE_6_FINAL,
       `Full codebase:\n${assembledCode}`,
       2048,
-      usageTracker
+      usageTracker,
+      reviewRole === 'opus' ? { userId: ctx.userId, claudeTask: 'qa' } : undefined
     );
     if (!isPass(qualityReview)) {
       emit(ctx, 5, xrogaArchitectureLine('Applying quality fixes from review'), 'debugger', todos, 'XROGA Architect');
@@ -1303,6 +1306,14 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   if (tokenUsage) {
     await recordUsage(ctx.userId, usageTracker.totalInput, usageTracker.totalOutput);
+    await recordModelUsage(
+      ctx.userId,
+      usageTracker.snapshot().map((l) => ({
+        role: l.role,
+        inputTokens: l.inputTokens,
+        outputTokens: l.outputTokens,
+      }))
+    );
   }
 
   return {

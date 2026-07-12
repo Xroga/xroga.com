@@ -50,14 +50,14 @@ export function GitHubProjectCard({
   return (
     <article
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] transition hover:border-[var(--accent)]/40 hover:shadow-md',
+        'group relative flex flex-col overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] transition hover:border-[var(--accent)]/40 hover:shadow-md',
         compact ? 'text-[11px]' : '',
         className,
       )}
     >
       <div
         className={cn(
-          'relative flex items-center gap-2 border-b border-[var(--border)]/60 bg-gradient-to-r from-[var(--accent)]/10 via-transparent to-emerald-500/5',
+          'relative flex items-center gap-2 border-b border-[var(--card-border)]/60 bg-gradient-to-r from-[var(--accent)]/10 via-transparent to-emerald-500/5',
           compact ? 'px-2.5 py-2' : 'px-3 py-2.5',
         )}
       >
@@ -88,13 +88,13 @@ export function GitHubProjectCard({
 
       <div className={cn('flex flex-1 flex-col gap-2', compact ? 'p-2.5' : 'p-3')}>
         <button type="button" onClick={onContinue} className="text-left">
-          <h3 className={cn('line-clamp-2 font-semibold text-[var(--text)]', compact ? 'text-xs' : 'text-sm')}>
+          <h3 className={cn('line-clamp-2 font-semibold text-[var(--foreground)]', compact ? 'text-xs' : 'text-sm')}>
             {project.name}
           </h3>
-          <p className="mt-0.5 line-clamp-1 capitalize text-[10px] text-[var(--text-muted)]">{project.type}</p>
+          <p className="mt-0.5 line-clamp-1 capitalize text-[10px] text-[var(--muted)]">{project.type}</p>
         </button>
 
-        <div className="flex items-center gap-1.5 text-[10px] text-[var(--text-muted)]">
+        <div className="flex items-center gap-1.5 text-[10px] text-[var(--muted)]">
           <Calendar className="h-3 w-3 shrink-0" aria-hidden />
           <span>Updated {formatRelative(updated)}</span>
         </div>
@@ -103,7 +103,7 @@ export function GitHubProjectCard({
           <button
             type="button"
             onClick={onContinue}
-            className="inline-flex flex-1 items-center justify-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-[10px] font-semibold text-[var(--text)] transition hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+            className="inline-flex flex-1 items-center justify-center gap-1 rounded-lg border border-[var(--card-border)] bg-[var(--background)] px-2 py-1.5 text-[10px] font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
           >
             Continue
           </button>

@@ -9,10 +9,10 @@ import { api, type Project } from '@/lib/api';
 import { GitHubProjectCard } from '@/components/projects/GitHubProjectCard';
 import { continueGithubProject } from '@/lib/projectResume';
 import { GITHUB_PROJECT_SAVED_EVENT } from '@/lib/githubProjectEvents';
+import { mergeGithubProjects } from '@/lib/githubProjectsFromHistory';
+import { loadTerminalHistory } from '@/lib/terminalHistory';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
-
-const BUILD_TYPES = new Set(['website', 'app', 'game', 'software', 'extension', 'tool', 'research', 'automation']);
 
 export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
   const router = useRouter();
@@ -21,16 +21,11 @@ export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(() => {
+    const history = loadTerminalHistory();
     api.projects
       .listGithub()
-      .then((list) =>
-        setProjects(
-          list.filter(
-            (p) => p.github_repo_name && (BUILD_TYPES.has(p.type.toLowerCase()) || Boolean(p.github_repo_name)),
-          ),
-        ),
-      )
-      .catch(() => setProjects([]))
+      .then((list) => setProjects(mergeGithubProjects(list, history)))
+      .catch(() => setProjects(mergeGithubProjects([], history)))
       .finally(() => setLoading(false));
   }, []);
 
@@ -52,6 +47,10 @@ export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
   }
 
   async function handleDelete(project: Project) {
+    if (project.id.startsWith('history-')) {
+      toast('Local session only — open Projects page to manage conversations', { icon: 'ℹ️' });
+      return;
+    }
     if (!confirm(`Remove "${project.name}" from Xroga? Your GitHub repo stays untouched.`)) return;
     try {
       await api.projects.delete(project.id);

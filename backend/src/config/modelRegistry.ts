@@ -65,8 +65,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.14,
     outputPer1M: 0.28,
-    inputSharePct: 38,
-    outputSharePct: 40,
+    inputSharePct: 34,
+    outputSharePct: 38,
     description: 'Workhorse — bulk code output, file reads, fixes, verify',
   },
   deepseek_pro: {
@@ -75,8 +75,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.435,
     outputPer1M: 0.87,
-    inputSharePct: 36,
-    outputSharePct: 32,
+    inputSharePct: 30,
+    outputSharePct: 28,
     description: 'DeepSeek Pro — architecture, repo analysis, plan review, updates, hard logic',
   },
   grok_reasoning: {
@@ -98,9 +98,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     inputPer1MAfterPromo: 3.0,
     outputPer1MAfterPromo: 15.0,
     promoEndsAt: SONNET_5_PROMO_ENDS,
-    inputSharePct: 8,
-    outputSharePct: 8,
-    description: 'Claude Sonnet 5 — UI polish only (intro $2/$10 MTok thru Aug 2026)',
+    inputSharePct: 18,
+    outputSharePct: 18,
+    description: 'Claude Sonnet 5 — UI polish (intro $2/$10 MTok thru Aug 2026)',
   },
   claude_opus: {
     role: 'claude_opus',
@@ -109,7 +109,7 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     inputPer1M: 5.0,
     outputPer1M: 25.0,
     inputSharePct: 4,
-    outputSharePct: 2,
+    outputSharePct: 4,
     description: 'Opus — crypto final QA only (minimal use)',
   },
   gemini_flash: {

@@ -19,6 +19,7 @@ import { SectionCompactCard } from '@/components/dashboard/SectionCompactCard';
 import { GitHubProjectCard } from '@/components/projects/GitHubProjectCard';
 import { continueGithubProject } from '@/lib/projectResume';
 import { GITHUB_PROJECT_SAVED_EVENT } from '@/lib/githubProjectEvents';
+import { mergeGithubProjects } from '@/lib/githubProjectsFromHistory';
 import { SwarmRunHistory } from '@/components/dashboard/SwarmRunHistory';
 import { api, type Project } from '@/lib/api';
 import {
@@ -34,8 +35,6 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import 'react-loading-skeleton/dist/skeleton.css';
-
-const BUILD_TYPES = new Set(['website', 'app', 'game', 'software', 'extension', 'tool']);
 
 type Tab = 'projects' | 'conversations';
 
@@ -61,10 +60,11 @@ function ProjectsHubInner() {
     setHistory(loadTerminalHistory());
     setArchives(loadChatArchive());
     const loadRemote = () => {
+      const history = loadTerminalHistory();
       api.projects
-        .list()
-        .then((list) => setProjects(list.filter((p) => BUILD_TYPES.has(p.type.toLowerCase()))))
-        .catch(() => setProjects([]))
+        .listGithub()
+        .then((list) => setProjects(mergeGithubProjects(list, history)))
+        .catch(() => setProjects(mergeGithubProjects([], history)))
         .finally(() => setLoading(false));
     };
     loadRemote();
@@ -196,6 +196,13 @@ function ProjectsHubInner() {
   }
 
   async function deleteRemote(id: string) {
+    if (id.startsWith('history-')) {
+      removeTerminalHistoryEntry(id.replace(/^history-/, ''));
+      setHistory(loadTerminalHistory());
+      setProjects((prev) => prev.filter((p) => p.id !== id));
+      toast.success('Build session removed');
+      return;
+    }
     try {
       await api.projects.delete(id);
       setProjects((prev) => prev.filter((p) => p.id !== id));
