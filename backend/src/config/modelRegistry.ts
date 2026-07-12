@@ -54,8 +54,9 @@ export const WEB_RESEARCH_COST = {
 export const SONNET_5_PROMO_ENDS = '2026-08-31';
 
 /** Hackathon / large repos — store more files per project */
-export const HACKATHON_MAX_STORED_FILES = 120;
-export const HACKATHON_REPO_TREE_SAMPLE = 200;
+export const HACKATHON_MAX_STORED_FILES = 200;
+export const HACKATHON_GITHUB_BATCH_SIZE = 35;
+export const HACKATHON_REPO_TREE_SAMPLE = 500;
 
 export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
   deepseek_flash: {
@@ -64,8 +65,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.14,
     outputPer1M: 0.28,
-    inputSharePct: 46,
-    outputSharePct: 54,
+    inputSharePct: 38,
+    outputSharePct: 40,
     description: 'Workhorse — bulk code output, file reads, fixes, verify',
   },
   deepseek_pro: {
@@ -74,9 +75,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.435,
     outputPer1M: 0.87,
-    inputSharePct: 28,
-    outputSharePct: 24,
-    description: 'DeepSeek Pro — architecture, repo analysis, security, plan review',
+    inputSharePct: 36,
+    outputSharePct: 32,
+    description: 'DeepSeek Pro — architecture, repo analysis, plan review, updates, hard logic',
   },
   grok_reasoning: {
     role: 'grok_reasoning',

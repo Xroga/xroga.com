@@ -17,6 +17,8 @@ export interface UpsertBuildProjectInput {
   deployUrl?: string;
   projectFiles: ProjectFile[];
   runId?: string;
+  summaryText?: string;
+  isHackathon?: boolean;
 }
 
 const CORE_FILES = new Set([
@@ -46,7 +48,7 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
 
   const row = {
     name: input.name.slice(0, 200),
-    type: input.type ?? 'website',
+    type: input.isHackathon ? 'research' : (input.type ?? 'website'),
     status: 'active',
     github_repo_url: input.githubRepoUrl ?? (repoName ? `https://github.com/${repoName}` : null),
     github_repo_name: repoName ?? null,
@@ -72,17 +74,21 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
     projectId = data.id;
   }
 
-  const maxFiles = input.type === 'research' || input.projectFiles.length > 40
-    ? HACKATHON_MAX_STORED_FILES
-    : 48;
-  const toStore = input.projectFiles.filter(
-    (f) =>
-      CORE_FILES.has(f.path) ||
-      f.path.startsWith('src/') ||
-      f.path.startsWith('contracts/') ||
-      f.path.startsWith('apps/') ||
-      f.path.includes('/')
-  );
+  const maxFiles =
+    input.isHackathon || input.type === 'research' || input.projectFiles.length > 40
+      ? HACKATHON_MAX_STORED_FILES
+      : 64;
+  const toStore =
+    input.isHackathon || input.projectFiles.length > 40
+      ? input.projectFiles
+      : input.projectFiles.filter(
+          (f) =>
+            CORE_FILES.has(f.path) ||
+            f.path.startsWith('src/') ||
+            f.path.startsWith('contracts/') ||
+            f.path.startsWith('apps/') ||
+            f.path.includes('/')
+        );
   for (const file of toStore.slice(0, maxFiles)) {
     try {
       await storeProjectFile(
@@ -103,8 +109,21 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
       project_id: projectId,
       role: 'user',
       content: input.userPrompt.slice(0, 8000),
-      metadata: { runId: input.runId, deployUrl: input.deployUrl, source: 'build' },
+      metadata: {
+        runId: input.runId,
+        deployUrl: input.deployUrl,
+        githubRepoName: repoName,
+        source: 'build',
+      },
     });
+    if (input.summaryText?.trim()) {
+      await supabase.from('project_messages').insert({
+        project_id: projectId,
+        role: 'assistant',
+        content: input.summaryText.slice(0, 12_000),
+        metadata: { deployUrl: input.deployUrl, githubRepoName: repoName, source: 'build_summary' },
+      });
+    }
   } catch {
     /* optional */
   }

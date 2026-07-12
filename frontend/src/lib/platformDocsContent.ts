@@ -183,17 +183,17 @@ export const MODEL_TABLE = [
   {
     name: 'DeepSeek Flash',
     role: 'Workhorse',
-    usage: '46% in · 54% out',
-    tokens7M: '3.5M',
+    usage: '38% in · 40% out',
+    tokens7M: '2.7M',
     tasks: 'Bulk code, file reads, fixes',
     cost: '$0.14 in / $0.28 out per 1M',
   },
   {
     name: 'DeepSeek Pro',
     role: 'Brain',
-    usage: '28% in · 24% out',
-    tokens7M: '1.9M',
-    tasks: 'Architecture, plan review, repo analysis',
+    usage: '36% in · 32% out',
+    tokens7M: '2.5M',
+    tasks: 'Architecture, plan review, repo analysis, updates',
     cost: '$0.435 in / $0.87 out per 1M',
   },
   {

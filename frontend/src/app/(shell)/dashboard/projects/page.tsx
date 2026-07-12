@@ -18,6 +18,7 @@ import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { SectionCompactCard } from '@/components/dashboard/SectionCompactCard';
 import { GitHubProjectCard } from '@/components/projects/GitHubProjectCard';
 import { continueGithubProject } from '@/lib/projectResume';
+import { GITHUB_PROJECT_SAVED_EVENT } from '@/lib/githubProjectEvents';
 import { SwarmRunHistory } from '@/components/dashboard/SwarmRunHistory';
 import { api, type Project } from '@/lib/api';
 import {
@@ -59,11 +60,17 @@ function ProjectsHubInner() {
     setLocalProjects(filterProjectsForSection(loadLocalProjects()));
     setHistory(loadTerminalHistory());
     setArchives(loadChatArchive());
-    api.projects
-      .list()
-      .then((list) => setProjects(list.filter((p) => BUILD_TYPES.has(p.type.toLowerCase()))))
-      .catch(() => setProjects([]))
-      .finally(() => setLoading(false));
+    const loadRemote = () => {
+      api.projects
+        .list()
+        .then((list) => setProjects(list.filter((p) => BUILD_TYPES.has(p.type.toLowerCase()))))
+        .catch(() => setProjects([]))
+        .finally(() => setLoading(false));
+    };
+    loadRemote();
+    const onSaved = () => loadRemote();
+    window.addEventListener(GITHUB_PROJECT_SAVED_EVENT, onSaved);
+    return () => window.removeEventListener(GITHUB_PROJECT_SAVED_EVENT, onSaved);
   }, []);
 
   const filteredLocal = useMemo(() => {

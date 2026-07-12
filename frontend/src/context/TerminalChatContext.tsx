@@ -38,6 +38,7 @@ import { getSelectedRepoContext } from '@/lib/repoContext';
 import { buildHeartbeatActivity } from '@/lib/buildLiveStatus';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
+import { notifyGithubProjectSaved } from '@/lib/githubProjectEvents';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
@@ -1085,6 +1086,7 @@ export function TerminalChatProvider({
                       github_repo_name: ghName,
                       user_prompt: displayPrompt,
                     })
+                    .then((saved) => notifyGithubProjectSaved(saved.id))
                     .catch(() => {});
                 }
                 return updated;

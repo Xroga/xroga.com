@@ -687,7 +687,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     clarifiedBrief = inferDefaultBuildBrief(userPrompt, memoryNote);
     try {
       const { text: refined, modelLabel } = await buildModelCall(
-        'flash',
+        'pro',
         PHASE_0_DISCOVERY,
         `User request:\n${discoveryContext}\n\nDefault brief:\n${clarifiedBrief}\n\nRefine the Fully Clarified Project Brief — do NOT ask questions.`,
         8192,
@@ -920,9 +920,15 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     try {
       stepCode = await withBuildHeartbeat(ctx, todos, async () => {
         const role =
-          hackathonNote && si > 0 && si % 3 === 0
-            ? 'pro'
-            : 'flash';
+          isUpdateBuild || hackathonNote || repoAnalysisSummary
+            ? si % 2 === 0
+              ? 'pro'
+              : 'flash'
+            : si === 0
+              ? 'flash'
+              : si % 2 === 0
+                ? 'pro'
+                : 'flash';
         const { text } = await buildModelCall(
           role,
           executePrompt,
@@ -1159,6 +1165,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         githubRepoName: pipeline.github.repoName,
         deployUrl: pipeline.deployVerified ? pipeline.deployUrl : undefined,
         projectFiles,
+        isHackathon: Boolean(hackathonNote),
+        summaryText: featureOutput.summary,
       });
       void notifyBuildComplete(userId, {
         projectName,
@@ -1218,6 +1226,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             githubRepoUrl: github.htmlUrl,
             githubRepoName: github.repoName,
             projectFiles,
+            isHackathon: Boolean(hackathonNote),
+            summaryText: featureOutput.summary,
           });
           void notifyBuildComplete(userId, {
             projectName,

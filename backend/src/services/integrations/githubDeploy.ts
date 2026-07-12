@@ -12,7 +12,7 @@ import {
   setCachedRepoAnalysis,
   invalidateRepoAnalysis,
 } from '../../lib/repoAnalysisCache.js';
-import { HACKATHON_REPO_TREE_SAMPLE } from '../../config/modelRegistry.js';
+import { HACKATHON_GITHUB_BATCH_SIZE, HACKATHON_REPO_TREE_SAMPLE } from '../../config/modelRegistry.js';
 
 export interface ProjectFile {
   path: string;
@@ -285,6 +285,34 @@ async function pushFilesViaGitData(
 }
 
 async function pushFilesToRepo(
+  token: string,
+  owner: string,
+  repo: string,
+  files: ProjectFile[],
+  message: string,
+  branch = 'main'
+): Promise<void> {
+  if (files.length > HACKATHON_GITHUB_BATCH_SIZE) {
+    const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+    const batches = Math.ceil(files.length / HACKATHON_GITHUB_BATCH_SIZE);
+    for (let i = 0; i < files.length; i += HACKATHON_GITHUB_BATCH_SIZE) {
+      const batch = files.slice(i, i + HACKATHON_GITHUB_BATCH_SIZE);
+      const n = Math.floor(i / HACKATHON_GITHUB_BATCH_SIZE) + 1;
+      await pushFilesToRepoSingle(
+        token,
+        owner,
+        repo,
+        batch,
+        `XROGA hackathon batch ${n}/${batches} — ${stamp}`,
+        branch
+      );
+    }
+    return;
+  }
+  await pushFilesToRepoSingle(token, owner, repo, files, message, branch);
+}
+
+async function pushFilesToRepoSingle(
   token: string,
   owner: string,
   repo: string,

@@ -8,12 +8,15 @@ import toast from 'react-hot-toast';
 import { api, type Project } from '@/lib/api';
 import { GitHubProjectCard } from '@/components/projects/GitHubProjectCard';
 import { continueGithubProject } from '@/lib/projectResume';
+import { GITHUB_PROJECT_SAVED_EVENT } from '@/lib/githubProjectEvents';
+import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 
 const BUILD_TYPES = new Set(['website', 'app', 'game', 'software', 'extension', 'tool', 'research', 'automation']);
 
 export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
   const router = useRouter();
+  const { hydrateFromSession } = useTerminalChat();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,8 +38,16 @@ export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
     load();
   }, [load]);
 
+  useEffect(() => {
+    const onSaved = () => load();
+    window.addEventListener(GITHUB_PROJECT_SAVED_EVENT, onSaved);
+    return () => window.removeEventListener(GITHUB_PROJECT_SAVED_EVENT, onSaved);
+  }, [load]);
+
   async function handleContinue(project: Project) {
-    await continueGithubProject(project, router);
+    await continueGithubProject(project, router, {
+      onHydrate: () => hydrateFromSession(),
+    });
     toast('Restored — continue where you left off', { icon: '📍' });
   }
 
