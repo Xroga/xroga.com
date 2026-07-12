@@ -49,6 +49,41 @@ export interface Phase1ChatRequest {
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
 }
 
+export interface HackathonBriefCard {
+  id: string;
+  name: string;
+  sponsor: string;
+  deadline?: string;
+  prizePool?: string;
+  registrationUrl?: string;
+  listingUrl?: string;
+  productType: string;
+  cryptoRequired: boolean;
+  judgingCriteria: string[];
+  prizeTracks: Array<{ name: string; prize: string; criteria: string }>;
+  submissionSteps: Array<{ order: number; label: string; detail: string }>;
+  sponsorGaps: string[];
+  rejectReasons: string[];
+  innovationSweetSpot: string;
+  recommendedIdeas: Array<{
+    name: string;
+    tagline: string;
+    targetTrack: string;
+    whyNovel: string;
+    sponsorGapFilled: string;
+    demoStory90s: string;
+  }>;
+  recommendedIdea?: {
+    name: string;
+    tagline: string;
+    targetTrack: string;
+    whyNovel: string;
+    sponsorGapFilled: string;
+    demoStory90s: string;
+  };
+  sources: Array<{ title: string; url: string; snippet: string }>;
+}
+
 export interface Phase1ChatResponse {
   response: string;
   intent: Phase1Intent;
@@ -60,6 +95,7 @@ export interface Phase1ChatResponse {
     source: 'searxng' | 'tavily' | 'youtube';
     thumbnailUrl?: string;
   }>;
+  hackathonBrief?: HackathonBriefCard;
 }
 
 export interface Phase1ErrorResponse {

@@ -40,7 +40,8 @@ export const CATEGORY_TRAINING: Record<string, string> = {
 Target: production full-stack quality — modern HTML/CSS/JS preview + complete GitHub scaffold (Next.js, APIs, auth when needed).
 NEVER ask clarifying questions — infer defaults and build. Push only relevant files — no junk in GitHub.
 Live preview deploys to the USER's Vercel account after they connect Integrations — never Xroga's servers.
-Use web + UI trend research for 2026 design. Hackathon/Solana builds must meet sponsor judging criteria.`,
+Use web + UI trend research for 2026 design.
+Hackathon builds: deep sponsor research first — novel ASP ideas that fill marketplace gaps, not recycled templates judges reject.`,
 
   image_generation: `Xroga Image Studio — hybrid pipeline:
 1. **Elite Council**: Groq classifies intent; DeepSeek/Gemini enhance the prompt (Groq/Gemini Flash as speed fallback).
@@ -94,6 +95,10 @@ export const KEYWORD_TRAINING: Array<{ keys: string[]; prompt: string }> = [
   {
     keys: ['saas', 'dashboard', 'admin panel'],
     prompt: `Xroga SaaS Builder. Auth, billing stub, dashboard UI. Deploy frontend Vercel + API Fly.io. Suggest Stripe integration.`,
+  },
+  {
+    keys: ['hackathon', 'okx', 'asp', 'build x', 'devpost', 'ethglobal'],
+    prompt: `Xroga Hackathon Strategist. Parse sponsor requirements, prize tracks, submission checklist, and ecosystem gaps. Generate 2–3 novel ASP ideas in the innovation sweet spot (new but sponsor-fit). Reject patterns: old DeFi dashboards, generic chatbots, over-scoped unrelated tech. Build mode: agent workflow UI + demo script + listing copy.`,
   },
   {
     keys: ['automate', 'scrape', 'playwright', 'puppeteer', 'cron'],

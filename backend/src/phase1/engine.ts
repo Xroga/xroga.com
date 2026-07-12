@@ -11,6 +11,7 @@ import { isMathQuery } from '../lib/mathQuery.js';
 import { trySolveMathLocally } from '../lib/mathSolver.js';
 import { normalizeMathResponse } from '../lib/formatMathResponse.js';
 import { filterSourcesForUser } from '../lib/filterCitedSources.js';
+import { isHackathonQuery, fetchHackathonAdvisorBrief } from '../lib/hackathonResearch.js';
 
 const MODEL_NAME_PATTERN =
   /\b(deepseek|grok|claude|anthropic|xai|sonnet|opus|flash|pro|gpt|openai|gemini|llama|mistral)\b/gi;
@@ -82,6 +83,15 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     liveResearch = await runLiveResearch(message, { intent, force: true });
   }
 
+  let hackathonBrief: Awaited<ReturnType<typeof fetchHackathonAdvisorBrief>> | null = null;
+  if (isHackathonQuery(message)) {
+    try {
+      hackathonBrief = await fetchHackathonAdvisorBrief(message);
+    } catch (err) {
+      console.warn('[Phase1] Hackathon research:', (err as Error).message);
+    }
+  }
+
   if (plan.phase2Message) {
     const usage = await getUsage(userId);
     return {
@@ -108,9 +118,12 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     role: 'primary' | 'secondary',
     context?: string
   ) => {
-    let systemPrompt = getSystemPromptForIntent(intent, role, mathQuery);
+    let systemPrompt = getSystemPromptForIntent(intent, role, mathQuery, message);
     if (liveResearch?.context) {
       systemPrompt = `${systemPrompt}\n\n${liveResearch.context}`;
+    }
+    if (hackathonBrief) {
+      systemPrompt = `${systemPrompt}\n\n## Hackathon intelligence (use this — do not invent rules)\n${hackathonBrief.markdown}`;
     }
     const messages =
       context && role === 'secondary'
@@ -169,15 +182,33 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
       percentUsed: usage.percentUsed,
     });
 
+    const mergedSources = [
+      ...(liveResearch?.sources ?? []),
+      ...(hackathonBrief?.sources.map((s) => ({
+        title: s.title,
+        url: s.url,
+        snippet: s.snippet,
+        source: 'searxng' as const,
+        siteDomain: (() => {
+          try {
+            return new URL(s.url).hostname.replace(/^www\./i, '');
+          } catch {
+            return '';
+          }
+        })(),
+      })) ?? []),
+    ];
+
     return {
       ok: true,
       data: {
         response,
         intent,
         usage,
-        webSources: liveResearch?.sources
-          ? filterSourcesForUser(response, liveResearch.sources, 5)
+        webSources: mergedSources.length
+          ? filterSourcesForUser(response, mergedSources, 6)
           : undefined,
+        hackathonBrief: hackathonBrief?.card,
       },
     };
   } catch (err) {

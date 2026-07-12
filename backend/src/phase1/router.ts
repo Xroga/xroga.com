@@ -1,6 +1,8 @@
 import type { Phase1Intent, RoutingPlan } from './types.js';
 import { PHASE1_MATH_SYSTEM } from '../prompts/xrogaResponseFormat.js';
 import { WOW_ADVISOR_FORMAT } from '../prompts/wowAdvisorPrompt.js';
+import { HACKATHON_ADVISOR_FORMAT } from '../prompts/hackathonAdvisorPrompt.js';
+import { isHackathonQuery } from '../lib/hackathonResearch.js';
 import { getCurrentDateDirective } from '../lib/currentDateContext.js';
 
 const PHASE2_MESSAGE = 'Coming in Phase 2';
@@ -78,7 +80,8 @@ function professionalFormatBlock(): string {
 export function getSystemPromptForIntent(
   intent: Phase1Intent,
   role: 'primary' | 'secondary',
-  mathQuery = false
+  mathQuery = false,
+  userMessage = ''
 ): string {
   const base =
     'You are Xroga AI. Be clear, practical, and production-oriented. Never mention AI model names or internal routing.';
@@ -95,6 +98,9 @@ export function getSystemPromptForIntent(
   }
   if (intent === 'ui_ux_design' || (intent === 'code_generation' && role === 'secondary')) {
     return `${base} Produce modern UI/UX with polished frontend code (React + Tailwind when appropriate).`;
+  }
+  if (isHackathonQuery(userMessage) && role === 'primary') {
+    return `${base}${getCurrentDateDirective()}\n${HACKATHON_ADVISOR_FORMAT}`;
   }
   if (intent === 'business_advice' && role === 'primary') {
     return `${base}${professionalFormatBlock()} Provide structured business advice with pros/cons, actionable strategies, and a Summary section. Use live web research when provided.`;

@@ -75,6 +75,7 @@ export interface ChatMessage {
     thumbnailUrl?: string;
     siteDomain?: string;
   }>;
+  hackathonBrief?: import('@/components/terminal/HackathonBriefCard').HackathonBriefCardData;
   /** Behind-the-scenes reasoning steps shown after response */
   thinkingSteps?: string[];
   thoughtMs?: number;
@@ -888,6 +889,7 @@ export function TerminalChatProvider({
                         content: partial,
                         agent: 'Xroga AI Brain',
                         webSources: result.webSources,
+                        hackathonBrief: result.hackathonBrief,
                       }
                     : msg
                 )
@@ -896,10 +898,12 @@ export function TerminalChatProvider({
             controller.signal
           );
 
-          if (result.webSources?.length) {
+          if (result.webSources?.length || result.hackathonBrief) {
             setMessages((m) =>
               m.map((msg) =>
-                msg.id === assistantId ? { ...msg, webSources: result.webSources } : msg
+                msg.id === assistantId
+                  ? { ...msg, webSources: result.webSources, hackathonBrief: result.hackathonBrief }
+                  : msg
               )
             );
           }
@@ -973,6 +977,13 @@ export function TerminalChatProvider({
             if (activity) pushSwarmTerminalLine(activity);
             if (swarmEv.needsGitHub) {
               handleGitHubBuildBlocked(displayPrompt, attachments);
+            }
+            if (swarmEv.hackathonBrief) {
+              setMessages((m) =>
+                m.map((msg) =>
+                  msg.id === assistantId ? { ...msg, hackathonBrief: swarmEv.hackathonBrief } : msg
+                )
+              );
             }
             if (swarmEv.swarmTodos?.some((t) => t.id === 'github' && t.status === 'done')) {
               skipGithubGateRef.current = false;
@@ -1091,10 +1102,11 @@ export function TerminalChatProvider({
             if (chatContent && !fullReply.trim() && !codeBuildActive) {
               fullReply = chatContent;
               const webSources = (output as { webSources?: ChatMessage['webSources'] })?.webSources;
+              const hackathonBrief = (output as { hackathonBrief?: ChatMessage['hackathonBrief'] })?.hackathonBrief;
               setMessages((m) =>
                 m.map((msg) =>
                   msg.id === assistantId
-                    ? { ...msg, content: chatContent, webSources: webSources ?? msg.webSources }
+                    ? { ...msg, content: chatContent, webSources: webSources ?? msg.webSources, hackathonBrief: hackathonBrief ?? msg.hackathonBrief }
                     : msg
                 )
               );

@@ -135,6 +135,7 @@ export class Orchestrator {
           type: 'chat',
           content: shield.content,
           webSources: chatResult.webSources,
+          hackathonBrief: chatResult.hackathonBrief,
         } as FeatureOutput,
       },
       actions: { success: true, remaining: 0, cost: isTrivialPrompt(ctx.prompt) ? 0 : 1 },
