@@ -4,7 +4,12 @@ import type { AuthRequest } from '../middleware/auth.js';
 import { processMessage } from '../phase1/engine.js';
 import { getUsage, claimEmergencyTokens } from '../phase1/tokenTracker.js';
 import { getSecret, hasSecret } from '../config/envSecrets.js';
-import { phase1Logger } from '../phase1/logger.js';
+import {
+  FREE_PLAN_TOKENS,
+  quotaAllocationForPlan,
+  estimateFullQuotaIntroUsd,
+  isSonnet5IntroPricingActive,
+} from '../config/modelRegistry.js';
 
 const router = Router();
 
@@ -45,10 +50,13 @@ router.get('/health', (_req, res) => {
       gemini: hasSecret('GEMINI_API_KEY'),
     },
     quota: {
-      monthlyTotalTokens: 7_000_000,
-      inputTokens: 4_700_000,
-      outputTokens: 2_300_000,
+      monthlyTotalTokens: FREE_PLAN_TOKENS,
+      inputTokens: Math.floor(FREE_PLAN_TOKENS * 0.67),
+      outputTokens: FREE_PLAN_TOKENS - Math.floor(FREE_PLAN_TOKENS * 0.67),
       emergencyTokens: 250_000,
+      modelMix: quotaAllocationForPlan(FREE_PLAN_TOKENS),
+      introApiUsdIfFullPoolUsed: Math.round(estimateFullQuotaIntroUsd(FREE_PLAN_TOKENS) * 100) / 100,
+      sonnet5IntroPricingActive: isSonnet5IntroPricingActive(),
     },
     rateLimit: '100 requests/minute/user',
     timestamp: new Date().toISOString(),

@@ -762,7 +762,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       }
 
       const { text, modelLabel } = await buildModelCall(
-        'flash',
+        'pro',
         PHASE_1_PLANNING_GEMINI,
         `Brief:\n${clarifiedBrief}${strategyContext}\n\nOriginal:\n${userPrompt}`,
         8192,

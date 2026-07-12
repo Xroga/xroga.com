@@ -35,7 +35,7 @@ export const MODELS: Record<InternalModelId, ModelConfig> = {
   },
   grok_fast: {
     id: 'grok_fast',
-    apiModel: process.env.XROGA_GROK_MODEL?.trim() || 'grok-4-fast-reasoning',
+    apiModel: process.env.XROGA_GROK_MODEL?.trim() || 'grok-4.3',
     provider: 'xai',
     inputCostPer1M: 0.2,
     outputCostPer1M: 0.5,
@@ -44,7 +44,7 @@ export const MODELS: Record<InternalModelId, ModelConfig> = {
   },
   claude_sonnet: {
     id: 'claude_sonnet',
-    apiModel: process.env.XROGA_CLAUDE_SONNET_MODEL?.trim() || 'claude-sonnet-4-20250514',
+    apiModel: process.env.XROGA_CLAUDE_SONNET_MODEL?.trim() || 'claude-sonnet-5',
     provider: 'anthropic',
     inputCostPer1M: 2.0,
     outputCostPer1M: 10.0,
@@ -53,7 +53,7 @@ export const MODELS: Record<InternalModelId, ModelConfig> = {
   },
   claude_opus: {
     id: 'claude_opus',
-    apiModel: process.env.XROGA_CLAUDE_OPUS_MODEL?.trim() || 'claude-opus-4-20250514',
+    apiModel: process.env.XROGA_CLAUDE_OPUS_MODEL?.trim() || 'claude-opus-4-8',
     provider: 'anthropic',
     inputCostPer1M: 5.0,
     outputCostPer1M: 25.0,

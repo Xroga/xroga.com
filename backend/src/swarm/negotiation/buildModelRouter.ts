@@ -21,8 +21,8 @@ const ROLE_MAP: Record<BuildModelRole, XrogaModelRole> = {
 const ROLE_LABEL: Record<BuildModelRole, string> = {
   flash: 'DeepSeek Flash',
   pro: 'DeepSeek Pro',
-  grok: 'Grok Reasoning',
-  sonnet: 'Claude Sonnet',
+  grok: 'Grok 4 Reasoning',
+  sonnet: 'Claude Sonnet 5',
   opus: 'Claude Opus',
 };
 
