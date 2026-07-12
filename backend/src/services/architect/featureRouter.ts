@@ -47,7 +47,7 @@ const RULE_PATTERNS: Array<{ category: FeatureCategory; patterns: RegExp[] }> = 
   {
     category: 'landing_page',
     patterns: [
-      /\b(build|create|make|design)\b.*\b(landing\s*page|website|web\s*page|site)\b/i,
+      /\b(build|create|make|design|develop|launch)\b.*\b(landing\s*page|website|web\s*page|site|saas|dashboard|marketplace|platform|chatbot|crypto|defi|web3|automation|ecommerce|blog|portfolio|app|api|enterprise|social|booking|crm|analytics|debugger|hackathon|solana)\b/i,
       /\b(build|create|make)\b.*\b(coffee|restaurant|shop|store|salon|gym|clinic|dental|lawyer|portfolio|hotel|saas|ecommerce|nonprofit|church|school|agency|startup|barber|spa|fitness|yoga|real estate|construction|wedding|pet|vet|bakery|bistro)\b/i,
       /\b(build|create|make)\b.*\b(game|pygame|phaser|platformer|arcade)\b/i,
       /\blanding\s*page\b/i,

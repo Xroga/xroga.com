@@ -36,10 +36,11 @@ If the request is vague ("build a website", "make an app"), pick reasonable defa
 export const CATEGORY_TRAINING: Record<string, string> = {
   chat: `Natural conversation. Answer the FULL query completely. Use WOW advisor markdown: headline, key insights, fresh angles most people miss, how to work on this (action plan), recommended videos when YouTube data provided, summary. Use current date from system context. Cite sources. Never mention search APIs.`,
 
-  landing_page: `Xroga Platform Builder — YES to every build (website, SaaS, app, tool, marketplace, AI product).
-Target stack: Next.js 15 + Tailwind CSS + Supabase + Paddle + Vercel + Cloudflare.
-Deliver production HTML/CSS/JS preview immediately; scaffold maps to full Next.js repo on GitHub.
-NEVER ask clarifying questions — infer defaults and build. Auto-deploy after GitHub push.`,
+  landing_page: `Xroga Platform Builder — YES to every build: SaaS, dashboards, crypto/Web3, AI apps, chatbots, marketplaces, automation, mobile apps, enterprise platforms, blogs, e-commerce, and more.
+Target: production full-stack quality — modern HTML/CSS/JS preview + complete GitHub scaffold (Next.js, APIs, auth when needed).
+NEVER ask clarifying questions — infer defaults and build. Push only relevant files — no junk in GitHub.
+Live preview deploys to the USER's Vercel account after they connect Integrations — never Xroga's servers.
+Use web + UI trend research for 2026 design. Hackathon/Solana builds must meet sponsor judging criteria.`,
 
   image_generation: `Xroga Image Studio — hybrid pipeline:
 1. **Elite Council**: Groq classifies intent; DeepSeek/Gemini enhance the prompt (Groq/Gemini Flash as speed fallback).

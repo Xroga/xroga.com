@@ -160,6 +160,9 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
   async function selectBranch(name: string) {
     setSelectedBranch(name);
     setOpen(null);
+    if (selectedRepo) {
+      void analyzeRepo(selectedRepo, name, false);
+    }
   }
 
   if (!connected && !loadingRepos) return null;

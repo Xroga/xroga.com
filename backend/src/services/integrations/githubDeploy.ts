@@ -1,11 +1,17 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { deployStaticSite, pollDeploymentReady } from '../../lib/vercel.js';
+import { deployStaticSite, deployStaticSiteWithToken, pollDeploymentReady } from '../../lib/vercel.js';
 import { deployToNetlify, pollNetlifyDeploy } from '../../lib/netlify.js';
 import { verifyLivePreviewUrl } from '../../lib/deployVerify.js';
 import { normalizeBuildFiles } from '../../lib/normalizeBuildSource.js';
 import { buildInlinePreviewDocument } from '../../lib/landingPreview.js';
 import { getSecret } from '../../config/envSecrets.js';
 import { getGitHubToken, isGitHubConnected as checkGitHubConnected, getGitHubStorageMeta } from './githubAuth.js';
+import { getVercelToken } from './vercelAuth.js';
+import {
+  getCachedRepoAnalysis,
+  setCachedRepoAnalysis,
+  invalidateRepoAnalysis,
+} from '../../lib/repoAnalysisCache.js';
 
 export interface ProjectFile {
   path: string;
@@ -339,6 +345,7 @@ export async function pushBuildToGitHub(
       `XROGA build — ${new Date().toISOString()}`,
       branch
     );
+    invalidateRepoAnalysis(userId, selectedRepo);
     return {
       repoName: `${owner}/${repo}`,
       repoUrl: htmlUrl,
@@ -396,6 +403,23 @@ async function deployToVercel(projectSlug: string, staticFiles: ProjectFile[]): 
   const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
   const deployment = await deployStaticSite(projectSlug, vercelFiles);
   const deployUrl = await pollDeploymentReady(deployment.deploymentId, deployment.deployUrl);
+  return {
+    deployUrl,
+    platform: 'vercel',
+    vercelDeploymentId: deployment.deploymentId,
+  };
+}
+
+async function deployToVercelWithUserToken(
+  userId: string,
+  projectSlug: string,
+  staticFiles: ProjectFile[]
+): Promise<PreviewDeployResult> {
+  const token = await getVercelToken(userId);
+  if (!token) throw new Error('Vercel not connected — user must authorize under Integrations');
+  const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
+  const deployment = await deployStaticSiteWithToken(projectSlug, vercelFiles, token);
+  const deployUrl = await pollDeploymentReady(deployment.deploymentId, deployment.deployUrl, token);
   return {
     deployUrl,
     platform: 'vercel',
@@ -462,10 +486,11 @@ export interface PlatformDeployResult {
   error?: string;
 }
 
-/** Deploy to Vercel and Netlify when keys exist — returns both preview URLs. */
+/** Deploy to user's Vercel account when connected; otherwise skip platform deploy. */
 export async function deployToAllPlatforms(
   projectSlug: string,
-  files: ProjectFile[]
+  files: ProjectFile[],
+  userId?: string
 ): Promise<{
   vercel?: PlatformDeployResult;
   netlify?: PlatformDeployResult;
@@ -477,16 +502,16 @@ export async function deployToAllPlatforms(
   deployError?: string;
 }> {
   const staticFiles = hostingDeployFiles(files);
-  const hasVercel = Boolean(getSecret('VERCEL_API_KEY'));
-  const hasNetlify = Boolean(getSecret('NETLIFY_ACCESS_TOKEN'));
   const errors: string[] = [];
 
   let vercel: PlatformDeployResult | undefined;
   let netlify: PlatformDeployResult | undefined;
 
-  if (hasVercel) {
+  const userVercelToken = userId ? await getVercelToken(userId) : null;
+
+  if (userVercelToken && userId) {
     try {
-      const result = await deployToVercel(projectSlug, staticFiles);
+      const result = await deployToVercelWithUserToken(userId, projectSlug, staticFiles);
       const verified = await verifyLivePreviewUrl(result.deployUrl);
       vercel = {
         deployUrl: result.deployUrl,
@@ -500,10 +525,15 @@ export async function deployToAllPlatforms(
       vercel = { deployUrl: '', deployVerified: false, error: msg.slice(0, 240) };
     }
   } else {
-    errors.push('Vercel: VERCEL_API_KEY not set on server');
-    vercel = { deployUrl: '', deployVerified: false, error: 'VERCEL_API_KEY not configured on server' };
+    errors.push('Vercel: Connect your Vercel account under Integrations to deploy live on your domain');
+    vercel = {
+      deployUrl: '',
+      deployVerified: false,
+      error: 'Connect Vercel under Integrations — deploys go to your account, not Xroga servers',
+    };
   }
 
+  const hasNetlify = Boolean(getSecret('NETLIFY_ACCESS_TOKEN'));
   if (hasNetlify) {
     try {
       const result = await deployToNetlifyPreview(projectSlug, staticFiles);
@@ -693,6 +723,12 @@ export async function analyzeGitHubRepo(
   const defaultBranch = repoMeta.default_branch ?? 'main';
   const scanBranch = preferredBranch?.trim() || defaultBranch;
 
+  const cached = getCachedRepoAnalysis(userId, repoName, scanBranch);
+  if (cached) {
+    console.info(`[githubDeploy] Repo cache hit: ${repoName}@${scanBranch}`);
+    return cached;
+  }
+
   const langRes = await ghFetch(token, `/repos/${owner}/${repo}/languages`);
   const languages: Record<string, number> = langRes.ok ? ((await langRes.json()) as Record<string, number>) : {};
 
@@ -779,7 +815,7 @@ export async function analyzeGitHubRepo(
     hasBuildFiles ? '- Build files: index.html, styles.css, script.js ✓' : '- Build files: none yet (fresh build)',
   ].join('\n');
 
-  return {
+  const analysis: GitHubRepoAnalysis = {
     repoName,
     defaultBranch: scanBranch,
     fileCount,
@@ -794,6 +830,8 @@ export async function analyzeGitHubRepo(
     totalLinesEstimate,
     report,
   };
+  setCachedRepoAnalysis(userId, repoName, scanBranch, analysis);
+  return analysis;
 }
 
 /** Redeploy live preview from code already on GitHub — Vercel preferred, Netlify fallback. */
@@ -833,7 +871,7 @@ export async function pushAndDeployLivePreview(
     targetRepo: githubTarget?.targetRepo,
     targetBranch: githubTarget?.targetBranch,
   });
-  const preview = await deployToAllPlatforms(projectSlug, files);
+  const preview = await deployToAllPlatforms(projectSlug, files, userId);
   return {
     github,
     deployUrl: preview.deployUrl,
