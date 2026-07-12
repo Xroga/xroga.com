@@ -2,18 +2,20 @@ import type { Response } from 'express';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { featureSwarm } from '../swarm/FeatureSwarm.js';
 import { ActionService } from './ActionService.js';
-import { classifyFeature, computeFeatureActionCost } from './architect/featureRouter.js';
+import { classifyFeature } from './architect/featureRouter.js';
 import { resolveFeatureCategory } from './featureExecutor.js';
 import { sendSSE } from '../lib/sse.js';
+import { InsufficientTokensError } from '../errors/InsufficientTokensError.js';
 import { InsufficientActionsError } from '../errors/InsufficientActionsError.js';
 import { ensureUserRecords } from './ensureUserRecords.js';
+import { checkQuota, getUsage } from '../phase1/tokenTracker.js';
+import { BUILD_PREFLIGHT_ESTIMATE } from '../config/modelRegistry.js';
 import { Orchestrator } from '../orchestrator/Orchestrator.js';
 import { persistChatTurns } from '../lib/threadMemory.js';
 import { routingPrompt } from '../lib/promptRouting.js';
 import { getSwarmQueue } from '../config/redis.js';
 import type { SwarmStatus } from '../types/index.js';
 import type { FeatureCategory, SwarmProgressEvent, FeatureOutput } from '../types/features.js';
-import { FEATURE_TASK_TYPES } from '../types/features.js';
 
 function isMissingTableError(message: string): boolean {
   return /schema cache|could not find the table|does not exist|relation.*does not exist/i.test(
@@ -24,8 +26,28 @@ function isMissingTableError(message: string): boolean {
 export interface SwarmRunResult {
   runId: string;
   result: Awaited<ReturnType<typeof featureSwarm.execute>>;
-  actions: Awaited<ReturnType<typeof ActionService.deduct>>;
+  /** @deprecated actions billing — use tokenUsage from build result */
+  actions: { success: boolean; remaining: number; cost: number };
+  tokenUsage?: Awaited<ReturnType<typeof getUsage>>;
   featureCategory: FeatureCategory;
+}
+
+function estimateTokensForCategory(category: FeatureCategory): { input: number; output: number } {
+  switch (category) {
+    case 'landing_page':
+    case 'code_debug':
+      return BUILD_PREFLIGHT_ESTIMATE;
+    case 'deep_research':
+      return { input: 80_000, output: 50_000 };
+    case 'job_hunter':
+      return { input: 40_000, output: 25_000 };
+    case 'video_studio':
+      return { input: 20_000, output: 10_000 };
+    case 'image_generation':
+      return { input: 3_000, output: 1_000 };
+    default:
+      return { input: 6_000, output: 4_000 };
+  }
 }
 
 export class SwarmService {
@@ -90,8 +112,15 @@ export class SwarmService {
 
     const route = await classifyFeature(prompt);
     const featureCategory = resolveFeatureCategory(prompt, route.category);
-    const actionCost = computeFeatureActionCost(featureCategory, prompt, { lineCount: options?.lineCount });
-    const taskType = FEATURE_TASK_TYPES[featureCategory];
+    const estimate = estimateTokensForCategory(featureCategory);
+
+    const quota = await checkQuota(userId, estimate.input, estimate.output);
+    if (!quota.allowed) {
+      throw new InsufficientTokensError(
+        estimate.input + estimate.output,
+        quota.snapshot.totalTokensRemaining
+      );
+    }
 
     const balance = await ActionService.getBalance(userId);
     if (balance) {
@@ -108,28 +137,7 @@ export class SwarmService {
       }
     }
 
-    let deductResult: Awaited<ReturnType<typeof ActionService.deduct>> = {
-      success: true,
-      remaining: (await ActionService.getBalance(userId))?.remaining ?? 0,
-      cost: 0,
-    };
-
-    if (actionCost > 0) {
-      const balance = await ActionService.getBalance(userId);
-      if (!balance || balance.remaining < actionCost) {
-        throw new InsufficientActionsError(actionCost, balance?.remaining ?? 0);
-      }
-
-      deductResult = await ActionService.deduct(userId, taskType, {
-        projectId,
-        customCost: actionCost,
-        description: `${featureCategory}: ${prompt.slice(0, 80)}`,
-      });
-
-      if (!deductResult.success) {
-        throw new InsufficientActionsError(actionCost, deductResult.remaining);
-      }
-    }
+    let tokenUsage = quota.snapshot;
 
     const { data: insertedRun, error: insertError } = await supabase
       .from('swarm_runs')
@@ -153,7 +161,6 @@ export class SwarmService {
         persistRun = false;
         run = { id: crypto.randomUUID() };
       } else {
-        await ActionService.refund(userId, actionCost, 'Swarm run creation failed');
         throw new Error(`Failed to create swarm run: ${insertError?.message ?? 'unknown error'}`);
       }
     } else {
@@ -173,13 +180,10 @@ export class SwarmService {
     try {
       result = await featureSwarm.execute(userId, prompt, projectId, run.id, featureCategory, options?.extras);
     } catch (err) {
-      await ActionService.refund(userId, actionCost, 'Swarm execution failed');
       throw err;
     }
 
-    if (!result.success) {
-      await ActionService.refund(userId, Math.floor(actionCost / 2), 'Partial refund – zero defects not reached');
-    }
+    tokenUsage = await getUsage(userId);
 
     if (persistRun) {
       await supabase
@@ -238,7 +242,17 @@ export class SwarmService {
       }
     }
 
-    return { runId: run.id, result, actions: deductResult, featureCategory };
+    return {
+      runId: run.id,
+      result,
+      actions: {
+        success: true,
+        remaining: tokenUsage.totalTokensRemaining,
+        cost: tokenUsage.totalTokensUsed,
+      },
+      tokenUsage,
+      featureCategory,
+    };
   }
 
   static async runWithSSE(
@@ -423,5 +437,9 @@ export class SwarmService {
 }
 
 export function handleInsufficientActions(res: Response, err: InsufficientActionsError): void {
+  res.status(402).json(err.toJSON());
+}
+
+export function handleInsufficientTokens(res: Response, err: import('../errors/InsufficientTokensError.js').InsufficientTokensError): void {
   res.status(402).json(err.toJSON());
 }
