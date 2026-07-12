@@ -1,6 +1,5 @@
 /**
- * Grok self-review — catches hallucinations, fake APIs, and "done but broken" code.
- * Uses Grok 4 reasoning (high effort) to audit output from Grok 4.5 / Flash passes.
+ * Grok self-review loop — Grok 4.5 fixes → Grok 4 Reasoning re-audits until PASS (max rounds).
  */
 
 import { buildModelCall } from './buildModelRouter.js';
@@ -16,6 +15,10 @@ Respond in this exact format:
 VERDICT: PASS or FAIL
 ISSUES: (bullet list — empty if PASS)
 FIXES: (only if FAIL — concise instructions for what to change, not full rewrite)`;
+
+const GROK_FIX_SYSTEM = `You are XROGA Code Fixer (Grok 4.5 Velocity). Apply the audit fixes to the code.
+Return ONLY complete fenced html, css, and/or javascript blocks — no commentary.
+Do not invent APIs. Keep the user's intent. Fix every issue listed.`;
 
 export interface GrokReviewResult {
   pass: boolean;
@@ -34,7 +37,7 @@ export function parseGrokReview(text: string): GrokReviewResult {
   };
 }
 
-/** Skeptical Grok 4 review before deploy — always reasoning mode, not 4.5. */
+/** Skeptical Grok 4 review — always reasoning mode, not 4.5. */
 export async function grokSelfReviewCode(
   assembledCode: string,
   userPrompt: string,
@@ -51,4 +54,48 @@ export async function grokSelfReviewCode(
     { userId, grokVariant: 'reasoning', claudeTask: 'qa' }
   );
   return parseGrokReview(text);
+}
+
+function looksLikeCode(text: string): boolean {
+  const t = text.trim();
+  return t.length > 80 && /```|<html|<!DOCTYPE|function\s|const\s|localStorage/.test(t);
+}
+
+const MAX_GROK_REVIEW_ROUNDS = 3;
+
+/** Grok 4.5 fix → Grok 4 re-audit loop until PASS or max rounds. */
+export async function runGrokCodeReviewLoop(
+  assembledCode: string,
+  userPrompt: string,
+  tracker?: BuildUsageTracker,
+  userId?: string
+): Promise<{ code: string; pass: boolean; rounds: number }> {
+  let code = assembledCode;
+
+  for (let round = 0; round < MAX_GROK_REVIEW_ROUNDS; round++) {
+    const review = await grokSelfReviewCode(code, userPrompt, tracker, userId);
+    if (review.pass) {
+      return { code, pass: true, rounds: round + 1 };
+    }
+
+    if (!review.fixInstructions && !review.issues) break;
+
+    const { text: fixed } = await buildModelCall(
+      'grok',
+      GROK_FIX_SYSTEM,
+      `User request:\n${userPrompt.slice(0, 1500)}\n\nAudit issues:\n${review.issues}\n\nFix instructions:\n${review.fixInstructions}\n\nCurrent code:\n${code.slice(0, 40_000)}`,
+      16384,
+      tracker,
+      { userId, grokVariant: 'fast', claudeTask: 'qa' }
+    );
+
+    if (fixed && looksLikeCode(fixed)) {
+      code = fixed;
+    } else {
+      break;
+    }
+  }
+
+  const finalReview = await grokSelfReviewCode(code, userPrompt, tracker, userId);
+  return { code, pass: finalReview.pass, rounds: MAX_GROK_REVIEW_ROUNDS };
 }

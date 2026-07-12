@@ -98,7 +98,7 @@ import {
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { deepseekCode, groqCode, geminiCode } from '../../services/code/codeClients.js';
 import { resolveApiKey } from '../../config/apiKeyRouter.js';
-import { grokSelfReviewCode } from './grokReview.js';
+import { grokSelfReviewCode, runGrokCodeReviewLoop } from './grokReview.js';
 import { buildModelCall, buildForcedCorrection } from './buildModelRouter.js';
 import {
   xrogaArchitectureLine,
@@ -1069,16 +1069,21 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       userPhase: 2,
     });
     try {
-      const grokReview = await grokSelfReviewCode(assembledCode, userPrompt, usageTracker, ctx.userId);
-      if (!grokReview.pass && grokReview.fixInstructions) {
-        emit(ctx, 5, xrogaArchitectureLine('Grok review found issues — applying fixes'), 'debugger', todos, 'XROGA Architect');
+      const grokLoop = await runGrokCodeReviewLoop(assembledCode, userPrompt, usageTracker, ctx.userId);
+      assembledCode = grokLoop.code;
+      if (!grokLoop.pass) {
+        emit(ctx, 5, xrogaArchitectureLine('Grok review — applying Pulse Core fixes after audit'), 'debugger', todos, 'XROGA Architect');
         assembledCode = await deepseekFlashCall(
           PHASE_5_CORRECT,
-          `Grok code audit (be skeptical — no fake APIs, no "done" if broken):\n${grokReview.issues}\n\nFix instructions:\n${grokReview.fixInstructions}\n\nCode:\n${assembledCode}`,
+          `Grok code audit loop did not fully pass — apply remaining fixes:\n\nCode:\n${assembledCode}`,
           BUILD_STEP_MAX_TOKENS,
           usageTracker
         );
         totalCorrections++;
+      } else {
+        emit(ctx, 6, xrogaCollectiveLine(`Grok self-review passed (${grokLoop.rounds} round(s))`), 'truth_council', todos, 'XROGA Collective', {
+          userPhase: 2,
+        });
       }
     } catch {
       /* optional grok review */

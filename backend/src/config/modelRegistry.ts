@@ -69,8 +69,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.14,
     outputPer1M: 0.28,
-    inputSharePct: 28,
-    outputSharePct: 30,
+    inputSharePct: 25,
+    outputSharePct: 26,
     description: 'Workhorse — bulk code output, file reads, fixes, verify',
   },
   deepseek_pro: {
@@ -80,7 +80,7 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     inputPer1M: 0.435,
     outputPer1M: 0.87,
     inputSharePct: 18,
-    outputSharePct: 17,
+    outputSharePct: 18,
     description: 'DeepSeek Pro — architecture, repo analysis, plan review, updates, hard logic',
   },
   grok_reasoning: {
@@ -89,8 +89,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'xai',
     inputPer1M: 0.2,
     outputPer1M: 0.5,
-    inputSharePct: 30,
-    outputSharePct: 28,
+    inputSharePct: 26,
+    outputSharePct: 24,
     description: 'Grok 4 Reasoning — strategy, synthesis, skeptical code audit (high reasoning)',
   },
   grok_fast: {
@@ -100,7 +100,7 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     inputPer1M: 2.0,
     outputPer1M: 6.0,
     inputSharePct: 15,
-    outputSharePct: 14,
+    outputSharePct: 15,
     description: 'Grok 4.5 — fast UI outlines & iteration (~30% of Grok calls, always self-reviewed)',
   },
   claude_sonnet: {
@@ -112,9 +112,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     inputPer1MAfterPromo: 3.0,
     outputPer1MAfterPromo: 15.0,
     promoEndsAt: SONNET_5_PROMO_ENDS,
-    inputSharePct: 7,
-    outputSharePct: 8,
-    description: 'Claude Sonnet 5 — UI polish only (14%, intro $2/$10 MTok thru Aug 2026)',
+    inputSharePct: 14,
+    outputSharePct: 14,
+    description: 'Claude Sonnet 5 — UI polish & premium UX (14% input / 14% output pool)',
   },
   claude_opus: {
     role: 'claude_opus',

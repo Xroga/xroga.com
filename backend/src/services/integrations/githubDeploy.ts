@@ -97,6 +97,53 @@ async function getGitHubUsername(token: string): Promise<string> {
   return user.login;
 }
 
+interface GitCommitIdentity {
+  name: string;
+  email: string;
+}
+
+/** XROGA bot identity — set email to a verified GitHub account email for contribution graph avatar. */
+function xrogaBotIdentity(): GitCommitIdentity {
+  return {
+    name: process.env.XROGA_GITHUB_BOT_NAME?.trim() || 'XROGA AI',
+    email:
+      process.env.XROGA_GITHUB_BOT_EMAIL?.trim() ||
+      '41898282+xroga-ai@users.noreply.github.com',
+  };
+}
+
+async function getGitHubCoAuthor(token: string): Promise<GitCommitIdentity | null> {
+  try {
+    const res = await ghFetch(token, '/user');
+    if (!res.ok) return null;
+    const user = (await res.json()) as { login: string; name?: string | null; id: number };
+    return {
+      name: (user.name?.trim() || user.login).trim(),
+      email: `${user.id}+${user.login}@users.noreply.github.com`,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function buildBrandedCommitMessage(base: string, coAuthor?: GitCommitIdentity | null): string {
+  const bot = xrogaBotIdentity();
+  let msg = `${base}\n\nBuilt with ${bot.name} — Black Hole V∞ (https://xroga.com)`;
+  if (coAuthor) {
+    msg += `\n\nCo-authored-by: ${coAuthor.name} <${coAuthor.email}>`;
+  }
+  return msg;
+}
+
+function gitCommitAuthorFields() {
+  const bot = xrogaBotIdentity();
+  const date = new Date().toISOString();
+  return {
+    author: { name: bot.name, email: bot.email, date },
+    committer: { name: bot.name, email: bot.email, date },
+  };
+}
+
 async function createRepo(token: string, name: string): Promise<{ fullName: string; htmlUrl: string; owner: string; repo: string }> {
   const res = await ghFetch(token, '/user/repos', {
     method: 'POST',
@@ -263,6 +310,7 @@ async function pushFilesViaGitData(
       message,
       tree: tree.sha,
       parents: parentSha ? [parentSha] : [],
+      ...gitCommitAuthorFields(),
     }),
   });
   if (!commitRes.ok) throw new Error(`GitHub commit failed: ${commitRes.status}`);
@@ -304,7 +352,7 @@ async function pushFilesToRepo(
         owner,
         repo,
         batch,
-        `XROGA hackathon batch ${n}/${batches} — ${stamp}`,
+        buildBrandedCommitMessage(`XROGA hackathon batch ${n}/${batches} — ${stamp}`, null),
         branch
       );
     }
@@ -358,6 +406,7 @@ export async function pushBuildToGitHub(
   if (!integration?.access_token) throw new Error('GitHub not connected');
 
   const token = integration.access_token;
+  const coAuthor = await getGitHubCoAuthor(token);
 
   const selectedRepo =
     opts.targetRepo ??
@@ -372,7 +421,10 @@ export async function pushBuildToGitHub(
       owner!,
       repo!,
       files,
-      `XROGA build update — ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`,
+      buildBrandedCommitMessage(
+        `XROGA build update — ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`,
+        coAuthor
+      ),
       branch
     );
     invalidateRepoAnalysis(userId, selectedRepo);
@@ -389,7 +441,7 @@ export async function pushBuildToGitHub(
   const owner = created.owner;
   const repo = created.repo;
   const htmlUrl = created.htmlUrl;
-  await pushFilesToRepo(token, owner, repo, files, 'Initial XROGA build');
+  await pushFilesToRepo(token, owner, repo, files, buildBrandedCommitMessage('Initial XROGA build', coAuthor));
 
   return { repoName: `${owner}/${repo}`, repoUrl: `https://github.com/${owner}/${repo}`, htmlUrl };
 }

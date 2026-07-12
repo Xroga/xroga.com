@@ -14,6 +14,7 @@ import { trySolveMathLocally } from '../lib/mathSolver.js';
 import { normalizeMathResponse } from '../lib/formatMathResponse.js';
 import { filterSourcesForUser } from '../lib/filterCitedSources.js';
 import { isHackathonQuery, fetchHackathonAdvisorBrief } from '../lib/hackathonResearch.js';
+import { sanitizeChatHonesty } from '../lib/chatHonesty.js';
 
 function toXrogaModelRole(modelId: InternalModelId, reasoningEffort?: 'high'): XrogaModelRole {
   if (modelId === 'grok_fast') {
@@ -187,7 +188,13 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     }
 
     const rawResponse = combineOutputs(outputs, intent);
-    const response = sanitizeResponse(mathQuery ? normalizeMathResponse(rawResponse) : rawResponse);
+    const hadResearch = Boolean(liveResearch?.sources.length || hackathonBrief?.sources.length);
+    const normalized = mathQuery ? normalizeMathResponse(rawResponse) : rawResponse;
+    const response = sanitizeResponse(
+      ['general_chat', 'business_advice', 'deep_reasoning'].includes(intent)
+        ? sanitizeChatHonesty(normalized, { hadLiveResearch: hadResearch })
+        : normalized
+    );
 
     const usage = await recordLlmUsage(userId, totalInput, totalOutput, modelLines);
 

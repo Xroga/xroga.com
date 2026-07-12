@@ -1,4 +1,5 @@
 import { webSearch } from './webSearch.js';
+import { grokAgentSearch, formatGrokSearchContext } from './grokSearch.js';
 import { searchYoutubeVideos } from './youtubeSearch.js';
 import { shouldAutoLiveResearch } from './liveResearchIntent.js';
 import { getCurrentDateDirective } from './currentDateContext.js';
@@ -57,11 +58,26 @@ export async function runLiveResearch(
   if (!decision.needsResearch && !opts?.force) return null;
 
   const fetchYoutube = decision.needsYoutube && Boolean(decision.youtubeQuery);
+  const wantsXSearch =
+    /\b(x\.com|twitter|tweet|hackathon|okx|asp\b|trending|viral)\b/i.test(prompt) ||
+    opts?.intent === 'business_advice';
 
-  const [webResults, youtubeResults] = await Promise.all([
+  const [webResults, youtubeResults, grokBundle] = await Promise.all([
     webSearch(decision.searchQuery, { maxResults: 4 }),
     fetchYoutube ? searchYoutubeVideos(decision.youtubeQuery!, 2) : Promise.resolve([]),
+    wantsXSearch
+      ? grokAgentSearch(decision.searchQuery, { xSearch: true, webSearch: true })
+      : Promise.resolve(null),
   ]);
+
+  const grokHits =
+    grokBundle?.hits.map((h) => ({
+      title: h.title,
+      url: h.url,
+      snippet: h.snippet,
+      source: h.source === 'grok_x' ? ('searxng' as const) : ('tavily' as const),
+      siteDomain: domainFromUrl(h.url),
+    })) ?? [];
 
   const sources: LiveSource[] = [
     ...webResults.map((r) => ({
@@ -71,6 +87,7 @@ export async function runLiveResearch(
       source: r.source,
       siteDomain: domainFromUrl(r.url),
     })),
+    ...grokHits,
     ...youtubeResults.map((v) => ({
       title: v.title,
       url: v.url,
@@ -90,9 +107,14 @@ export async function runLiveResearch(
       `- **${v.title}** by ${v.channelTitle} (${v.url})${v.description ? `\n  Description: ${v.description.slice(0, 120)}` : ''}`
   );
 
+  const grokLines = grokBundle
+    ? [`\nGrok live research:\n${formatGrokSearchContext(grokBundle)}`]
+    : [];
+
   const context = [
     buildLiveResearchSystem(youtubeResults.length),
     webLines.length ? `\nWeb results:\n${webLines.join('\n')}` : '',
+    ...grokLines,
     ytLines.length ? `\nYouTube videos (recommend 1–2 in your answer):\n${ytLines.join('\n')}` : '',
   ]
     .filter(Boolean)
