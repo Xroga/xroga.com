@@ -188,7 +188,7 @@ export const MODEL_TABLE = [
 ];
 
 export const BUILD_STEPS = [
-  'Understanding & planning (DeepSeek Pro + Grok)',
+  'Understanding & planning (DeepSeek Flash + Grok)',
   'GitHub connection & full repository analysis',
   'Architecture design & code generation',
   'Integration wiring (Supabase, Paddle, Cloudflare)',

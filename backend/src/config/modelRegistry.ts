@@ -28,17 +28,17 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.14,
     outputPer1M: 0.28,
-    useCaseSharePct: 12,
-    description: 'Fast passes — step-1 scaffold, short verify, brief condense (replaces Groq)',
+    useCaseSharePct: 72,
+    description: 'Workhorse — bulk code gen, file reads, plan review, fixes, verify passes',
   },
   deepseek_pro: {
     role: 'deepseek_pro',
-    apiModel: envModel('XROGA_DEEPSEEK_PRO_MODEL', 'deepseek-chat'),
+    apiModel: envModel('XROGA_DEEPSEEK_PRO_MODEL', 'deepseek-reasoner'),
     provider: 'deepseek',
-    inputPer1M: 0.14,
-    outputPer1M: 0.28,
-    useCaseSharePct: 58,
-    description: 'Primary builder — plans, code steps 2–N, fixes, final emit',
+    inputPer1M: 0.435,
+    outputPer1M: 0.87,
+    useCaseSharePct: 13,
+    description: 'Deep reasoning — complex architecture only when Flash is insufficient',
   },
   grok_reasoning: {
     role: 'grok_reasoning',
@@ -46,7 +46,7 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'xai',
     inputPer1M: 0.2,
     outputPer1M: 0.5,
-    useCaseSharePct: 4,
+    useCaseSharePct: 3,
     description: 'Strategy + hackathon ideation before planning',
   },
   claude_sonnet: {
@@ -55,8 +55,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'anthropic',
     inputPer1M: 2.0,
     outputPer1M: 10.0,
-    useCaseSharePct: 14,
-    description: 'UI/UX polish pass — responsive CSS, a11y, animations',
+    useCaseSharePct: 7,
+    description: 'UI/UX polish pass only — responsive CSS, a11y, animations',
   },
   claude_opus: {
     role: 'claude_opus',
@@ -64,7 +64,7 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'anthropic',
     inputPer1M: 5.0,
     outputPer1M: 25.0,
-    useCaseSharePct: 3,
+    useCaseSharePct: 2,
     description: 'Final QA — crypto / hackathon builds only',
   },
   gemini_flash: {
@@ -73,15 +73,15 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'google',
     inputPer1M: 0.1,
     outputPer1M: 0.4,
-    useCaseSharePct: 9,
+    useCaseSharePct: 3,
     description: 'Plan cross-check + per-step logic verify',
   },
 };
 
-/** Estimated tokens reserved before a full site build starts */
+/** Estimated tokens reserved before a full site build starts (Flash-heavy pipeline) */
 export const BUILD_PREFLIGHT_ESTIMATE = {
-  input: 140_000,
-  output: 110_000,
+  input: 130_000,
+  output: 100_000,
 };
 
 /** Plan monthly token quotas (unpaid = free testing tier) */
