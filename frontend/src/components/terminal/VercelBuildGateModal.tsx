@@ -155,7 +155,8 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
           <div className="rounded-lg border border-[var(--accent)]/25 bg-[var(--accent)]/5 p-3 text-[11px] text-[var(--muted)] space-y-2">
             <p className="font-semibold text-[var(--foreground)]">Vercel OAuth app settings</p>
             <p>
-              <strong>Callback URL</strong> (required — not just <code className="text-[10px]">https://xroga.com</code>):
+              In your Vercel app settings, add this exact callback URL — <strong>not</strong> just{' '}
+              <code className="text-[10px]">https://xroga.com</code>:
             </p>
             <code className="block text-[10px] font-mono text-emerald-400 break-all">
               https://xroga.com/dashboard/integrations/vercel/callback
