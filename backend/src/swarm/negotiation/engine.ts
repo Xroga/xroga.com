@@ -51,7 +51,7 @@ import {
   stepTargetLabel,
 } from './phaseUi.js';
 import type { FeatureCategory, FeatureOutput, SwarmProgressEvent } from '../../types/features.js';
-import type { NegotiationContext, NegotiationPhase, NegotiationResult, VerificationReport, SwarmTodoItem } from './types.js';
+import type { NegotiationContext, NegotiationPhase, NegotiationResult, VerificationReport } from './types.js';
 import {
   BRAND_HEADER,
   PHASE_0_DISCOVERY,
@@ -113,154 +113,14 @@ import { BuildUsageTracker } from '../../lib/buildUsageTracker.js';
 import { recordLlmUsage } from '../../phase1/usageRecorder.js';
 import { autoPublishBuildToCommunity } from '../../services/communityAutoPublish.js';
 import { notifyBuildComplete, notifyBuildFailed } from '../../services/notificationService.js';
+import { createTodoState } from './todoState.js';
+import { XROGA_MODELS } from '../../config/modelRegistry.js';
 
 /** Max tokens per build step — no compromise on complete code output */
 const BUILD_STEP_MAX_TOKENS = 16384;
 
 const MAX_PLAN_ITERATIONS = 3;
 const MAX_STEP_CORRECTIONS = 3;
-
-const META_TODO_DEFS: Array<{ id: string; label: string }> = [
-  { id: 'github', label: '[Phase 0] GitHub connected' },
-  { id: 'analyze', label: '[Phase 1] Starting build' },
-  { id: 'plan', label: '[Phase 1] Planning steps' },
-  { id: 'structure', label: '[Phase 1] Plan review' },
-  { id: 'steps', label: '[Phase 1] Plan approved' },
-  { id: 'verify-plan', label: '[Phase 1] Ready to build' },
-];
-
-function createTodoState() {
-  const meta: SwarmTodoItem[] = META_TODO_DEFS.map((d) => ({
-    ...d,
-    status: 'pending' as const,
-  }));
-  let build: SwarmTodoItem[] = [];
-  let analysis = '';
-
-  const snapshot = (): SwarmTodoItem[] => [...meta, ...build];
-
-  const setAnalysis = (text: string) => {
-    analysis = text.slice(0, 400);
-  };
-
-  const activateMeta = (id: string) => {
-    let passed = false;
-    for (const item of meta) {
-      if (item.id === id) {
-        item.status = 'active';
-        passed = true;
-      } else if (!passed) {
-        item.status = 'done';
-      } else {
-        item.status = 'pending';
-      }
-    }
-    for (const item of build) {
-      if (item.status === 'active') item.status = 'pending';
-    }
-  };
-
-  const completeMetaThrough = (id: string) => {
-    let found = false;
-    for (const item of meta) {
-      if (item.id === id) {
-        item.status = 'done';
-        found = true;
-      } else if (!found) {
-        item.status = 'done';
-      }
-    }
-  };
-
-  const setBuildSteps = (steps: string[]) => {
-    build = steps.map((s, i) => ({
-      id: `build-${i}`,
-      label: `Step ${i + 1}/${steps.length} ${stepTargetLabel(s, i)}`,
-      status: 'pending' as const,
-    }));
-  };
-
-  const activateBuild = (index: number) => {
-    build.forEach((item, i) => {
-      if (i < index) item.status = 'done';
-      else if (i === index) item.status = 'active';
-      else item.status = 'pending';
-    });
-    for (const item of meta) {
-      if (item.status !== 'done') item.status = 'done';
-    }
-  };
-
-  const completeAllBuild = () => {
-    build.forEach((item) => {
-      item.status = 'done';
-    });
-  };
-
-  const addFinalTodos = () => {
-    const extras: SwarmTodoItem[] = [
-      { id: 'final-check', label: '[Phase 4] Final verification', status: 'pending' },
-      { id: 'emit', label: '[Phase 5] Summary card', status: 'pending' },
-      { id: 'github-push', label: '[Phase 5] GitHub push', status: 'pending' },
-      { id: 'live-deploy', label: '[Phase 5] Live preview', status: 'pending' },
-    ];
-    for (const item of extras) {
-      if (!build.some((b) => b.id === item.id)) build.push(item);
-    }
-  };
-
-  const activateFinal = (id: 'github-push' | 'live-deploy' | 'final-check' | 'emit') => {
-    for (const item of build) {
-      if (item.id === id) item.status = 'active';
-      else if (item.status === 'active') item.status = 'done';
-    }
-  };
-
-  const completeAll = () => {
-    meta.forEach((m) => {
-      m.status = 'done';
-    });
-    build.forEach((b) => {
-      b.status = 'done';
-    });
-  };
-
-  const completeMeta = (id: string) => {
-    for (const item of meta) {
-      if (item.id === id) item.status = 'done';
-    }
-  };
-
-  const completeBuild = (index: number) => {
-    build.forEach((item, i) => {
-      if (i <= index) item.status = 'done';
-      else if (item.status === 'active') item.status = 'pending';
-    });
-  };
-
-  const completeFinal = (id: 'github-push' | 'live-deploy' | 'final-check' | 'emit') => {
-    for (const item of build) {
-      if (item.id === id) item.status = 'done';
-    }
-  };
-
-  return {
-    snapshot,
-    setAnalysis,
-    activateMeta,
-    completeMeta,
-    completeMetaThrough,
-    setBuildSteps,
-    activateBuild,
-    completeBuild,
-    completeAllBuild,
-    addFinalTodos,
-    activateFinal,
-    completeFinal,
-    completeAll,
-    getAnalysis: () => analysis,
-  };
-}
 
 function emit(
   ctx: NegotiationContext,
@@ -391,7 +251,10 @@ async function groqCall(system: string, user: string, maxTokens = 512): Promise<
 
 async function deepseekCall(system: string, user: string, maxTokens = 8192): Promise<string> {
   if (resolveApiKey('deepseek', 'code')) {
-    return deepseekCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, { maxTokens });
+    return deepseekCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, {
+      maxTokens,
+      model: XROGA_MODELS.deepseek_flash.apiModel,
+    });
   }
   if (getSecret('DEEPSEEK_API_KEY')) {
     return deepSeekChat(
@@ -399,7 +262,7 @@ async function deepseekCall(system: string, user: string, maxTokens = 8192): Pro
         { role: 'system', content: `${XROGA_USER_IDENTITY}\n\n${system}` },
         { role: 'user', content: user },
       ],
-      { model: 'deepseek-chat', maxTokens }
+      { model: XROGA_MODELS.deepseek_flash.apiModel, maxTokens }
     );
   }
   return deepseekGenerate(user);
@@ -511,7 +374,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   const { userPrompt: rawPrompt, featureCategory, userId } = ctx;
   const userPrompt = rawPrompt.trim();
   const currentMessage = routingPrompt(userPrompt);
-  const todos = createTodoState();
+  const todos = createTodoState(userPrompt);
   const buildState = new BuildState();
   const businessLabel = inferBusinessLabel(userPrompt);
 
@@ -603,6 +466,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       const uiTrend = await fetchUiTrendResearch(inferBusinessLabel(userPrompt), buildType);
       if (uiTrend) {
         uiTrendNote = uiTrend.context;
+        todos.activate('ui-trends');
         emit(ctx, 0, xrogaVisionaryLine('UI trend research — modern 2026 design patterns'), 'reviewer', todos, 'XROGA Visionary', {
           userPhase: 1,
         });
@@ -613,13 +477,19 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
     try {
       if (isHackathonQuery(userPrompt)) {
+        todos.activate('research');
         const hackathon = await fetchHackathonResearch(userPrompt);
         if (hackathon) {
           hackathonNote = hackathon.context;
+          todos.complete('research');
+          todos.activate('ideas');
           emit(ctx, 0, xrogaArchitectureLine('Hackathon requirements researched — sponsor gaps & ASP ideas mapped'), 'architect', todos, 'XROGA Architect', {
             userPhase: 1,
             hackathonBrief: hackathon.card,
           });
+          todos.complete('ideas');
+        } else {
+          todos.complete('research');
         }
       }
     } catch {
@@ -1038,6 +908,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     const stepLabel = `Step ${si + 1}/${stepsToRun.length}`;
     const target = stepTargetLabel(stepsToRun[si]!, si);
     todos.activateBuild(si);
+    todos.advanceCodeStep(si, stepsToRun.length, target);
     emit(ctx, 3, BRAND.phase3.execute(si + 1, stepsToRun.length, target), 'builder', todos, isGameBuild ? 'XROGA Game Alchemist' : 'XROGA Architect', {
       userPhase: isUpdateBuild ? 2 : 1,
     });
@@ -1586,7 +1457,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
 /** OSS Escape Pod — all paid APIs down */
 export async function runEscapePod(ctx: NegotiationContext): Promise<NegotiationResult> {
-  const todos = createTodoState();
+  const todos = createTodoState(ctx.userPrompt);
   todos.activateMeta('analyze');
   emit(ctx, 0, BRAND.escape.pod, 'architect', todos, 'XROGA Escape Pod');
   const raw = await swarmReserveProcess(ctx.userPrompt);

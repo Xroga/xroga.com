@@ -65,7 +65,7 @@ export const CLAUDE_MONTHLY_BUDGET_USD = 5;
 export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
   deepseek_flash: {
     role: 'deepseek_flash',
-    apiModel: envModel('XROGA_DEEPSEEK_FLASH_MODEL', 'deepseek-chat'),
+    apiModel: envModel('XROGA_DEEPSEEK_FLASH_MODEL', 'deepseek-v4-flash'),
     provider: 'deepseek',
     inputPer1M: 0.14,
     outputPer1M: 0.28,
@@ -75,7 +75,7 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
   },
   deepseek_pro: {
     role: 'deepseek_pro',
-    apiModel: envModel('XROGA_DEEPSEEK_PRO_MODEL', 'deepseek-reasoner'),
+    apiModel: envModel('XROGA_DEEPSEEK_PRO_MODEL', 'deepseek-v4-pro'),
     provider: 'deepseek',
     inputPer1M: 0.435,
     outputPer1M: 0.87,

@@ -53,12 +53,14 @@ async function deepseekCall(
   model: string,
   system: string,
   user: string,
-  maxTokens: number
+  maxTokens: number,
+  opts?: { reasoning?: boolean }
 ): Promise<{ text: string; inputTokens: number; outputTokens: number }> {
   const apiKey = getSecret('DEEPSEEK_API_KEY');
   if (!apiKey) throw new Error('DEEPSEEK_API_KEY not configured');
 
   const sys = `${XROGA_USER_IDENTITY}\n\n${system}`;
+  const useReasoning = opts?.reasoning ?? model.includes('v4-pro');
   const response = await fetch('https://api.deepseek.com/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
@@ -70,8 +72,9 @@ async function deepseekCall(
       ],
       max_tokens: maxTokens,
       temperature: 0.3,
+      ...(useReasoning ? { reasoning_effort: 'high' as const } : {}),
     }),
-    signal: AbortSignal.timeout(90_000),
+    signal: AbortSignal.timeout(useReasoning ? 120_000 : 90_000),
   });
 
   if (!response.ok) throw new Error(`DeepSeek ${response.status}`);
@@ -199,8 +202,14 @@ export async function buildModelCall(
 
     switch (role) {
       case 'flash':
+        result = await deepseekCall(XROGA_MODELS[xrogaRole].apiModel, system, user, maxTokens, {
+          reasoning: false,
+        });
+        break;
       case 'pro':
-        result = await deepseekCall(XROGA_MODELS[xrogaRole].apiModel, system, user, maxTokens);
+        result = await deepseekCall(XROGA_MODELS[xrogaRole].apiModel, system, user, maxTokens, {
+          reasoning: true,
+        });
         break;
       case 'grok':
         result = await grokCall(system, user, maxTokens, grokVariant);

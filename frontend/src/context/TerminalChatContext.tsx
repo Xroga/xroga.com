@@ -33,6 +33,7 @@ import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
 import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { seedBuildTodos } from '@/lib/buildDefaultTodos';
+import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
 import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import { getSelectedRepoContext } from '@/lib/repoContext';
@@ -197,6 +198,7 @@ export function TerminalChatProvider({
     open: false,
   });
   const afterGitHubActivationRef = useRef<(() => void) | null>(null);
+  const buildTodosSeedRef = useRef<Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>>([]);
   const skipGithubGateRef = useRef(false);
   const githubBuildRetryRef = useRef(false);
   const pendingBuildRef = useRef<{
@@ -488,6 +490,7 @@ export function TerminalChatProvider({
       setPipelineMessage(null);
       setSwarmNegotiationPhase(null);
       setSwarmTodos([]);
+      buildTodosSeedRef.current = [];
       setSwarmStatusLabel(null);
       setSwarmAnalysis(null);
       setSwarmActivityLog([]);
@@ -852,6 +855,7 @@ export function TerminalChatProvider({
       setDag(null);
       setSwarmNegotiationPhase(null);
       setSwarmTodos([]);
+      buildTodosSeedRef.current = [];
       setSwarmStatusLabel(null);
       setSwarmAnalysis(null);
       setSwarmActivityLog([]);
@@ -882,7 +886,9 @@ export function TerminalChatProvider({
       if (codeBuildActive) {
         setSwarmNegotiationPhase(0);
         setSwarmStatusLabel('XROGA Architect');
-        setSwarmTodos(seedBuildTodos(displayPrompt));
+        const seededTodos = seedBuildTodos(displayPrompt);
+        buildTodosSeedRef.current = seededTodos;
+        setSwarmTodos(seededTodos);
         setPipelineMessage('XROGA Architect — planning architecture, database & API routes…');
         thinkingStepsRef.current = [...BUILD_PLANNING_STEPS];
         setThinkingSteps([...BUILD_PLANNING_STEPS]);
@@ -1066,7 +1072,13 @@ export function TerminalChatProvider({
             const negPhase = (event as SwarmProgressEvent).userFacingPhase ?? (event as SwarmProgressEvent).negotiationPhase;
             if (negPhase != null) setSwarmNegotiationPhase(negPhase);
             const swarmEv = event as SwarmProgressEvent;
-            if (swarmEv.swarmTodos?.length) setSwarmTodos(swarmEv.swarmTodos);
+            if (swarmEv.swarmTodos?.length) {
+              setSwarmTodos((prev) => {
+                const seeded = buildTodosSeedRef.current.length ? buildTodosSeedRef.current : prev;
+                const merged = normalizeActiveTodo(mergeBuildTodos(seeded, swarmEv.swarmTodos!));
+                return merged;
+              });
+            }
             if (swarmEv.swarmStatusLabel) {
               setSwarmStatusLabel(sanitizeXrogaTerminalText(swarmEv.swarmStatusLabel));
             }
