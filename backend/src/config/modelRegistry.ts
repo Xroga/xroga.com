@@ -58,6 +58,9 @@ export const HACKATHON_MAX_STORED_FILES = 200;
 export const HACKATHON_GITHUB_BATCH_SIZE = 35;
 export const HACKATHON_REPO_TREE_SAMPLE = 500;
 
+/** Platform Claude API budget per user per month (intro pricing) */
+export const CLAUDE_MONTHLY_BUDGET_USD = 5;
+
 export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
   deepseek_flash: {
     role: 'deepseek_flash',
@@ -85,8 +88,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'xai',
     inputPer1M: 0.2,
     outputPer1M: 0.5,
-    inputSharePct: 14,
-    outputSharePct: 12,
+    inputSharePct: 18,
+    outputSharePct: 16,
     description: 'Grok 4 — strategy, research synthesis, hackathon QA, diagnosis',
   },
   claude_sonnet: {
@@ -98,9 +101,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     inputPer1MAfterPromo: 3.0,
     outputPer1MAfterPromo: 15.0,
     promoEndsAt: SONNET_5_PROMO_ENDS,
-    inputSharePct: 18,
-    outputSharePct: 18,
-    description: 'Claude Sonnet 5 — UI polish (intro $2/$10 MTok thru Aug 2026)',
+    inputSharePct: 14,
+    outputSharePct: 14,
+    description: 'Claude Sonnet 5 — UI polish only (14%, intro $2/$10 MTok thru Aug 2026)',
   },
   claude_opus: {
     role: 'claude_opus',
@@ -289,6 +292,18 @@ export const PLAN_TOKEN_QUOTA: Record<string, number> = {
 export function quotaForPlanTier(tier: string | null | undefined): number {
   if (!tier || tier === 'unpaid') return PLAN_TOKEN_QUOTA.unpaid;
   return PLAN_TOKEN_QUOTA[tier] ?? PLAN_TOKEN_QUOTA.spark;
+}
+
+export const CLAUDE_MODEL_ROLES: XrogaModelRole[] = ['claude_sonnet', 'claude_opus'];
+
+/** Combined Claude USD spent this period from usage map */
+export function claudeUsdFromUsage(usage: Partial<Record<XrogaModelRole, { input: number; output: number }>>): number {
+  let total = 0;
+  for (const role of CLAUDE_MODEL_ROLES) {
+    const u = usage[role];
+    if (u) total += estimateUsdCost(u.input, u.output, role);
+  }
+  return total;
 }
 
 export function estimateUsdCost(inputTokens: number, outputTokens: number, role: XrogaModelRole): number {

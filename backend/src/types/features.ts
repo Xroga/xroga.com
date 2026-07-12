@@ -290,6 +290,7 @@ export interface SwarmProgressEvent {
   swarmActivity?: string;
   /** Build blocked until GitHub OAuth completes */
   needsGitHub?: boolean;
+  needsVercel?: boolean;
   /** Structured hackathon brief for requirement-aligned builds */
   hackathonBrief?: import('../phase1/types.js').HackathonBriefCard;
 }

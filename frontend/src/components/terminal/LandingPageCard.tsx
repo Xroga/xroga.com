@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '@/lib/api';
 import { getSelectedRepoContext } from '@/lib/repoContext';
 import { markRepoAnalysisStale } from '@/lib/repoAnalysisCache';
+import { notifyGithubProjectSaved } from '@/lib/githubProjectEvents';
 import { normalizeBuildFiles } from '@/lib/normalizeBuildSource';
 import { hydrateLandingOutput } from '@/lib/hydrateLandingOutput';
 import { auditLandingSite, LANDING_UPDATE_SUGGESTIONS } from '@/lib/siteHealthAudit';
@@ -169,6 +170,17 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
           setGithubPushed(true);
           markRepoAnalysisStale(resolvedRepoName);
           setStatusNote(`Code saved to ${result.githubRepoName} — refresh GitHub to see your files.`);
+          void api.projects
+            .create({
+              name: projectName.slice(0, 120),
+              type: 'website',
+              github_repo_url: result.githubRepoUrl,
+              github_repo_name: result.githubRepoName,
+              github_branch: resolvedBranch,
+              user_prompt: projectName,
+            })
+            .then((saved) => notifyGithubProjectSaved(saved.id))
+            .catch((err) => console.warn('[LandingPageCard] project save', err));
           onPreviewUpdate?.({
             ...data,
             html: normalized.html,

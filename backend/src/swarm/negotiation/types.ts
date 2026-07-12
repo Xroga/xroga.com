@@ -44,6 +44,7 @@ export interface NegotiationResult {
   needsUserClarification?: boolean;
   clarificationText?: string;
   needsGitHubConnection?: boolean;
+  needsVercelConnection?: boolean;
   featureOutput?: import('../../types/features.js').FeatureOutput;
   tokenUsage?: {
     inputTokens: number;

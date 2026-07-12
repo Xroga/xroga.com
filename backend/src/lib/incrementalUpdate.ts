@@ -26,6 +26,18 @@ const UI_KEYWORDS =
 const LOGIC_KEYWORDS =
   /\b(api|endpoint|fetch|bug|error|fix|login|auth|integration|webhook|database|handler|function|submit|form)\b/i;
 
+/** User explicitly asks to read/fix entire codebase — escalate model chain. */
+export function isForcedFullRepoFix(prompt: string): boolean {
+  const t = prompt.toLowerCase();
+  return (
+    /\b(read|analyze|scan|audit|review)\b[\s\S]{0,40}\b(all|every|entire|whole|full)\b[\s\S]{0,40}\b(file|repo|code|codebase|project)\b/.test(
+      t
+    ) ||
+    /\b(fix|correct|repair)\b[\s\S]{0,30}\b(everything|all bugs|all errors|entire app|whole site)\b/.test(t) ||
+    /\bforce\b[\s\S]{0,20}\b(read|fix|correct)\b/.test(t)
+  );
+}
+
 /** Map user language to likely file paths (hackathon + static sites). */
 export function inferPathsFromUpdatePrompt(prompt: string, treePaths: string[]): string[] {
   const t = prompt.toLowerCase();

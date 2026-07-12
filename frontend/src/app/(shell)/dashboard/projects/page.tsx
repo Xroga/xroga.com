@@ -19,7 +19,6 @@ import { SectionCompactCard } from '@/components/dashboard/SectionCompactCard';
 import { GitHubProjectCard } from '@/components/projects/GitHubProjectCard';
 import { continueGithubProject } from '@/lib/projectResume';
 import { GITHUB_PROJECT_SAVED_EVENT } from '@/lib/githubProjectEvents';
-import { mergeGithubProjects } from '@/lib/githubProjectsFromHistory';
 import { SwarmRunHistory } from '@/components/dashboard/SwarmRunHistory';
 import { api, type Project } from '@/lib/api';
 import {
@@ -60,11 +59,10 @@ function ProjectsHubInner() {
     setHistory(loadTerminalHistory());
     setArchives(loadChatArchive());
     const loadRemote = () => {
-      const history = loadTerminalHistory();
       api.projects
         .listGithub()
-        .then((list) => setProjects(mergeGithubProjects(list, history)))
-        .catch(() => setProjects(mergeGithubProjects([], history)))
+        .then((list) => setProjects(list.filter((p) => p.github_repo_name?.includes('/'))))
+        .catch(() => setProjects([]))
         .finally(() => setLoading(false));
     };
     loadRemote();
@@ -196,13 +194,6 @@ function ProjectsHubInner() {
   }
 
   async function deleteRemote(id: string) {
-    if (id.startsWith('history-')) {
-      removeTerminalHistoryEntry(id.replace(/^history-/, ''));
-      setHistory(loadTerminalHistory());
-      setProjects((prev) => prev.filter((p) => p.id !== id));
-      toast.success('Build session removed');
-      return;
-    }
     try {
       await api.projects.delete(id);
       setProjects((prev) => prev.filter((p) => p.id !== id));
@@ -229,7 +220,8 @@ function ProjectsHubInner() {
     toast.success('Conversation removed');
   }
 
-  const hasProjects = filteredLocal.length > 0 || filteredRemote.length > 0;
+  const hasGithubProjects = filteredRemote.length > 0;
+  const hasLocalInConversations = filteredLocal.length > 0;
 
   return (
     <PageFullscreenFrame>
@@ -283,7 +275,7 @@ function ProjectsHubInner() {
                 <Skeleton key={i} height={180} baseColor="var(--card)" highlightColor="var(--card-border)" />
               ))}
             </div>
-          ) : hasProjects ? (
+          ) : hasGithubProjects ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredRemote.map((p) => (
                 <GitHubProjectCard
@@ -298,17 +290,6 @@ function ProjectsHubInner() {
                   onOpenRepo={() => {
                     if (p.github_repo_url) window.open(p.github_repo_url, '_blank', 'noopener,noreferrer');
                   }}
-                />
-              ))}
-              {filteredLocal.map((p) => (
-                <SectionCompactCard
-                  key={p.id}
-                  title={p.name}
-                  subtitle={p.type}
-                  dateIso={p.updatedAt}
-                  onOpen={() => openLocalProject(p)}
-                  onDelete={() => deleteLocal(p.id)}
-                  openLabel="Continue in terminal"
                 />
               ))}
             </div>
@@ -329,6 +310,26 @@ function ProjectsHubInner() {
           )
         ) : (
           <div className="space-y-6">
+            {hasLocalInConversations ? (
+              <div>
+                <h2 className="text-sm font-semibold text-[var(--muted)] mb-3 uppercase tracking-wide">
+                  Terminal builds (no GitHub repo)
+                </h2>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filteredLocal.map((p) => (
+                    <SectionCompactCard
+                      key={p.id}
+                      title={p.name}
+                      subtitle={p.type}
+                      dateIso={p.updatedAt}
+                      onOpen={() => openLocalProject(p)}
+                      onDelete={() => deleteLocal(p.id)}
+                      openLabel="Continue in terminal"
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : null}
             {conversationItems.length > 0 ? (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {conversationItems.map((item) => (

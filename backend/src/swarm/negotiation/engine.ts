@@ -36,6 +36,7 @@ import { formatMemorySuggestion, getPreviousBuilds } from '../../services/memory
 import { upsertBuildProject } from '../../services/memory/buildProjectStore.js';
 import { webSearch, formatWebSearchContext } from '../../lib/webSearch.js';
 import { fetchUiTrendResearch } from '../../lib/uiTrendResearch.js';
+import { formatAiEndpointContext } from '../../lib/aiEndpointCatalog.js';
 import { fetchHackathonResearch } from '../../lib/hackathonResearch.js';
 import {
   buildSummaryFromBrief,
@@ -77,12 +78,14 @@ import {
   fetchGitHubFilesByPaths,
   analyzeGitHubRepo,
 } from '../../services/integrations/githubDeploy.js';
+import { isVercelConnected } from '../../services/integrations/vercelAuth.js';
 import {
   extractPatchedFilesFromAssembly,
   formatFilesForUpdateContext,
   landingOutputToPatchedFiles,
   mergePatchedFiles,
   planIncrementalUpdate,
+  isForcedFullRepoFix,
   type UpdateTargetPlan,
 } from '../../lib/incrementalUpdate.js';
 import { siteCodeFromProjectFiles, LANDING_UPDATE_FOLLOW_UPS } from '../../lib/landingPreview.js';
@@ -94,7 +97,7 @@ import {
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { deepseekCode, groqCode, geminiCode } from '../../services/code/codeClients.js';
 import { resolveApiKey } from '../../config/apiKeyRouter.js';
-import { buildModelCall } from './buildModelRouter.js';
+import { buildModelCall, buildForcedCorrection } from './buildModelRouter.js';
 import {
   xrogaArchitectureLine,
   xrogaPulseLine,
@@ -300,6 +303,7 @@ function emit(
     swarmAnalysis: todos.getAnalysis() || undefined,
     swarmActivity: opts?.silent ? undefined : detail,
     needsGitHub: statusLabel === 'XROGA GitHub' && detail.includes('Connect GitHub'),
+    needsVercel: statusLabel === 'XROGA Deploy' && detail.includes('Connect Vercel'),
     hackathonBrief: opts?.hackathonBrief,
     timestamp: new Date().toISOString(),
   } as SwarmProgressEvent);
@@ -536,6 +540,24 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     isWebsiteUpdateRequest(userPrompt) &&
     (hasBuildConversationContext(userPrompt) || threadHasCompletedWebsite(userPrompt));
 
+  const forcedFullRepoFix = isForcedFullRepoFix(userPrompt);
+
+  if ((isProductBuild || isGameBuild) && !isUpdateBuild) {
+    const vercelOk = await isVercelConnected(userId);
+    if (!vercelOk) {
+      emit(ctx, 0, 'Connect Vercel for live deployment preview', 'architect', todos, 'XROGA Deploy');
+      return {
+        success: false,
+        clarifiedBrief: '',
+        approvedPlan: '',
+        assembledCode: '',
+        polishedOutput:
+          '▲ Connect Vercel under Integrations so XROGA can deploy your live preview on first build — one prompt, working product.',
+        needsVercelConnection: true,
+      };
+    }
+  }
+
   let incrementalPlan: UpdateTargetPlan | null = isUpdateBuild
     ? planIncrementalUpdate(userPrompt)
     : null;
@@ -620,6 +642,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   let existingSiteCode: { html: string; css: string; js: string } | null = null;
   let targetedUpdateFiles: import('../../services/integrations/githubDeploy.js').ProjectFile[] = [];
   let repoAnalysisSummary: string | null = null;
+  let criticalRepoFilesNote = '';
   if (isWebBuild && ctx.githubTargetRepo?.includes('/')) {
     try {
       const analysis = await analyzeGitHubRepo(userId, ctx.githubTargetRepo, ctx.githubTargetBranch);
@@ -651,6 +674,31 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         }
       } else if (analysis.hasBuildFiles) {
         existingSiteCode = analysis.buildFiles;
+      }
+      if ((forcedFullRepoFix || !isUpdateBuild) && analysis.treeSample.length) {
+        const criticalPaths = [
+          'package.json',
+          'index.html',
+          'styles.css',
+          'script.js',
+          'app/page.tsx',
+          'app/layout.tsx',
+          'src/app/page.tsx',
+        ].filter((cp) => analysis.treeSample.some((f) => f.path === cp || f.path.endsWith(`/${cp}`)));
+        if (criticalPaths.length) {
+          const criticalFiles = await fetchGitHubFilesByPaths(
+            userId,
+            ctx.githubTargetRepo,
+            criticalPaths.slice(0, 8),
+            ctx.githubTargetBranch
+          );
+          if (criticalFiles.length) {
+            criticalRepoFilesNote = `\n\n${formatFilesForUpdateContext(criticalFiles, 12_000)}`;
+            emit(ctx, 0, xrogaPulseLine(`Critical repo files loaded (${criticalFiles.length}) for production-quality build`), 'reviewer', todos, 'XROGA Pulse', {
+              userPhase: 1,
+            });
+          }
+        }
       }
       if (!isUpdateBuild) {
         emit(ctx, 0, BRAND.phase0.scanning(`GitHub repo (${analysis.fileCount} files)`), 'reviewer', todos, 'XROGA Visionary', {
@@ -717,8 +765,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   }
 
   let clarifiedBrief: string;
-  const repoContextLine = repoAnalysisSummary ? `\n\nGitHub repo analysis:\n${repoAnalysisSummary}` : '';
-  const researchBundle = `${webResearchNote}${uiTrendNote}${hackathonNote}`;
+  const aiEndpointNote = formatAiEndpointContext(userPrompt);
+  let repoContextLine = repoAnalysisSummary ? `\n\nGitHub repo analysis:\n${repoAnalysisSummary}${criticalRepoFilesNote}` : criticalRepoFilesNote;
+  const researchBundle = `${webResearchNote}${uiTrendNote}${hackathonNote}${aiEndpointNote ? `\n\n${aiEndpointNote}` : ''}`;
   const discoveryContext = userPrompt.includes('[Previous conversation')
     ? `${userPrompt}${repoContextLine}${researchBundle}`
     : `${userPrompt}${repoContextLine}${researchBundle}\n\nOriginal build request context preserved.`;
@@ -1031,12 +1080,23 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       emit(ctx, 5, failMsg, 'debugger', todos, 'XROGA Architect');
       emit(ctx, 5, BRAND.phase5.correcting, 'debugger', todos, 'XROGA Architect');
       const errorPlan = failures.map((f) => `[${f.agent}] ${f.report}`).join('\n');
-      stepCode = await deepseekProCall(
-        PHASE_5_CORRECT,
-        `Failures:\n${errorPlan}\n\nCode:\n${stepCode}`,
-        BUILD_STEP_MAX_TOKENS,
-        usageTracker
-      );
+      if (forcedFullRepoFix) {
+        const corrected = await buildForcedCorrection(
+          PHASE_5_CORRECT,
+          `Failures:\n${errorPlan}\n\nCode:\n${stepCode}`,
+          BUILD_STEP_MAX_TOKENS,
+          usageTracker,
+          { userId: ctx.userId, claudeTask: 'qa' }
+        );
+        stepCode = corrected.text;
+      } else {
+        stepCode = await deepseekProCall(
+          PHASE_5_CORRECT,
+          `Failures:\n${errorPlan}\n\nCode:\n${stepCode}`,
+          BUILD_STEP_MAX_TOKENS,
+          usageTracker
+        );
+      }
       totalCorrections++;
       emit(ctx, 5, BRAND.phase5.fixed, 'debugger', todos, 'XROGA Architect');
     }
@@ -1053,6 +1113,26 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   buildState.markDone('executed');
 
   let assembledCode = codeParts.join('\n\n');
+
+  if (!isUpdateBuild) {
+    emit(ctx, 6, xrogaPulseLine('First-build preflight — runtime & UI sanity check'), 'qa', todos, 'XROGA Pulse', {
+      userPhase: 2,
+    });
+    try {
+      const { text: preflight } = await buildModelCall(
+        'flash',
+        `You are XROGA QA. Check HTML/CSS/JS for broken buttons, dead links, placeholder-only sections, missing event handlers, and mobile layout gaps. If issues found, return corrected fenced html/css/js blocks. If OK, reply PASS only.`,
+        `User request:\n${userPrompt.slice(0, 800)}\n\nCode:\n${assembledCode.slice(0, 50000)}`,
+        8192,
+        usageTracker
+      );
+      if (preflight && !isPass(preflight) && /```/.test(preflight)) {
+        assembledCode = `${assembledCode}\n\n// --- First-build preflight fixes ---\n${preflight}`;
+      }
+    } catch {
+      /* optional preflight */
+    }
+  }
 
   emit(ctx, 6, xrogaVisionaryLine('UI polish — responsive design & animations'), 'reviewer', todos, 'XROGA Visionary', {
     userPhase: 2,
@@ -1304,6 +1384,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         userPrompt: currentMessage,
         githubRepoUrl: pipeline.github.htmlUrl,
         githubRepoName: pipeline.github.repoName,
+        githubBranch: ctx.githubTargetBranch ?? 'main',
         deployUrl: pipeline.deployVerified ? pipeline.deployUrl : undefined,
         projectFiles,
         isHackathon: Boolean(hackathonNote),
@@ -1366,6 +1447,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             userPrompt: currentMessage,
             githubRepoUrl: github.htmlUrl,
             githubRepoName: github.repoName,
+            githubBranch: ctx.githubTargetBranch ?? 'main',
             projectFiles,
             isHackathon: Boolean(hackathonNote),
             summaryText: featureOutput.summary,

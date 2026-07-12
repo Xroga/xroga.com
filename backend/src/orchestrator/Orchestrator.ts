@@ -211,6 +211,40 @@ export class Orchestrator {
       }
     }
 
+    if (result.needsVercelConnection) {
+      ctx.onProgress?.({
+        runId: crypto.randomUUID(),
+        agent: 'architect',
+        status: 'needs_vercel',
+        message: 'Connect Vercel to deploy live preview',
+        negotiationPhase: 0,
+        swarmLogic: true,
+        needsVercel: true,
+        timestamp: new Date().toISOString(),
+      } as SwarmProgressEvent);
+      return {
+        runId: crypto.randomUUID(),
+        fast: true,
+        result: {
+          success: false,
+          iterations: 0,
+          defectsFound: 0,
+          plan: defaultPlan(),
+          agents: defaultAgents(['architect']),
+          output: {
+            type: 'chat',
+            content:
+              '▲ Connect Vercel under Integrations. XROGA deploys your live preview on first build — GitHub + Vercel = working product in one prompt.',
+          } as FeatureOutput,
+        },
+        actions: { success: true, remaining: 0, cost: 0 },
+        featureCategory,
+        polishedReply:
+          '▲ Connect Vercel under Integrations. XROGA deploys your live preview on first build — GitHub + Vercel = working product in one prompt.',
+        followUps: ['Connect Vercel', 'Connect GitHub'],
+      };
+    }
+
     if (result.needsGitHubConnection) {
       ctx.onProgress?.({
         runId: crypto.randomUUID(),

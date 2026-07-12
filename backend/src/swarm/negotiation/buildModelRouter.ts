@@ -211,3 +211,38 @@ export async function buildModelCall(
 export function modelActivityLine(modelLabel: string, action: string): string {
   return `[${modelLabel}] ${action}`;
 }
+
+function looksLikeUsefulCode(text: string): boolean {
+  const t = text.trim();
+  if (t.length < 80) return false;
+  return /```|<html|<!DOCTYPE|function\s|const\s|export\s|class\s/.test(t);
+}
+
+/**
+ * Escalating correction when user forces full repo read / heavy fix.
+ * Flash → Pro → Grok → Sonnet (if Claude budget allows).
+ */
+export async function buildForcedCorrection(
+  system: string,
+  user: string,
+  maxTokens = 16384,
+  tracker?: BuildUsageTracker,
+  opts?: { userId?: string; claudeTask?: 'ui' | 'qa' }
+): Promise<BuildModelResult> {
+  const chain: BuildModelRole[] = ['flash', 'pro', 'grok', 'sonnet'];
+  let last: BuildModelResult | null = null;
+
+  for (const role of chain) {
+    const result = await buildModelCall(role, system, user, maxTokens, tracker, {
+      userId: opts?.userId,
+      claudeTask: opts?.claudeTask ?? (role === 'sonnet' ? 'ui' : 'qa'),
+    });
+    last = result;
+    if (looksLikeUsefulCode(result.text)) return result;
+    if (role === 'sonnet' && result.modelLabel.includes('Flash')) {
+      break;
+    }
+  }
+
+  return last ?? (await buildModelCall('flash', system, user, maxTokens, tracker));
+}

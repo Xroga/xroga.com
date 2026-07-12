@@ -34,6 +34,7 @@ router.post('/', async (req: AuthRequest, res) => {
     type: z.enum(['app', 'website', 'video', 'game', 'research', 'automation']),
     github_repo_url: z.string().optional(),
     github_repo_name: z.string().optional(),
+    github_branch: z.string().optional(),
     deploy_url: z.string().optional(),
     user_prompt: z.string().optional(),
   });
@@ -62,6 +63,7 @@ router.post('/', async (req: AuthRequest, res) => {
           type: parsed.data.type,
           github_repo_url: parsed.data.github_repo_url ?? null,
           github_repo_name: parsed.data.github_repo_name,
+          status: 'completed',
           updated_at: new Date().toISOString(),
         })
         .eq('id', existing.id)
@@ -70,6 +72,19 @@ router.post('/', async (req: AuthRequest, res) => {
       if (error) {
         res.status(500).json({ error: error.message });
         return;
+      }
+      if (parsed.data.user_prompt?.trim()) {
+        await supabase.from('project_messages').insert({
+          project_id: existing.id,
+          role: 'user',
+          content: parsed.data.user_prompt.slice(0, 8000),
+          metadata: {
+            deployUrl: parsed.data.deploy_url,
+            githubRepoName: parsed.data.github_repo_name,
+            githubBranch: parsed.data.github_branch ?? 'main',
+            source: 'client_create',
+          },
+        });
       }
       res.status(200).json(data);
       return;
@@ -82,6 +97,7 @@ router.post('/', async (req: AuthRequest, res) => {
       user_id: req.userId!,
       name: parsed.data.name,
       type: parsed.data.type,
+      status: 'completed',
       github_repo_url: parsed.data.github_repo_url ?? null,
       github_repo_name: parsed.data.github_repo_name ?? null,
     })
@@ -91,6 +107,20 @@ router.post('/', async (req: AuthRequest, res) => {
   if (error) {
     res.status(500).json({ error: error.message });
     return;
+  }
+
+  if (parsed.data.user_prompt?.trim()) {
+    await supabase.from('project_messages').insert({
+      project_id: data.id,
+      role: 'user',
+      content: parsed.data.user_prompt.slice(0, 8000),
+      metadata: {
+        deployUrl: parsed.data.deploy_url,
+        githubRepoName: parsed.data.github_repo_name,
+        githubBranch: parsed.data.github_branch ?? 'main',
+        source: 'client_create',
+      },
+    });
   }
 
   await supabase.from('activity_logs').insert({

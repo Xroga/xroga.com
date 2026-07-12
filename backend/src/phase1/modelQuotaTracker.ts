@@ -5,8 +5,12 @@
 
 import type { XrogaModelRole } from '../config/modelRegistry.js';
 import {
+  CLAUDE_MODEL_ROLES,
+  CLAUDE_MONTHLY_BUDGET_USD,
   CORE_BUILD_MODELS,
   XROGA_MODELS,
+  claudeUsdFromUsage,
+  estimateUsdCost,
   inputLimitForPlan,
   outputLimitForPlan,
   quotaForPlanTier,
@@ -117,9 +121,19 @@ export async function canUseModelRole(
   const limits = modelLimitsForUser(totalLimit, role);
   const used = usage[role] ?? { input: 0, output: 0 };
 
-  return (
-    used.input + estimatedInput <= limits.input && used.output + estimatedOutput <= limits.output
-  );
+  const withinPool =
+    used.input + estimatedInput <= limits.input && used.output + estimatedOutput <= limits.output;
+
+  if (CLAUDE_MODEL_ROLES.includes(role)) {
+    const spent = claudeUsdFromUsage(usage);
+    const next = estimateUsdCost(estimatedInput, estimatedOutput, role);
+    if (spent + next > CLAUDE_MONTHLY_BUDGET_USD) {
+      phase1Logger.info('Claude USD budget exhausted', { userId, spent, next, cap: CLAUDE_MONTHLY_BUDGET_USD });
+      return false;
+    }
+  }
+
+  return withinPool;
 }
 
 /** Record per-model usage after a build completes. */
