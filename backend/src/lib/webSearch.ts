@@ -107,6 +107,6 @@ export async function webSearch(
 
 export function formatWebSearchContext(results: WebSearchResult[]): string {
   if (!results.length) return '';
-  const lines = results.slice(0, 5).map((r) => `- ${r.title} (${r.source}): ${r.content.slice(0, 160)}`);
-  return `\n\nWeb research (${results[0]?.source ?? 'search'}):\n${lines.join('\n')}`;
+  const lines = results.slice(0, 4).map((r) => `- ${r.title} (${r.url}): ${r.content.slice(0, 160)}`);
+  return `\n\nWeb research:\n${lines.join('\n')}`;
 }

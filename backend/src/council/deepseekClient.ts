@@ -7,11 +7,12 @@ import {
   type ChatTurn,
   formatConversationContext,
   FRESHNESS_DIRECTIVE,
+  getCurrentDateDirective,
 } from '../lib/conversationContext.js';
 
 function deepseekSystem(context?: ChatTurn[], mathMode?: boolean): string {
   const mathHint = mathMode ? `\n\n${XROGA_MATH_FORMAT_HINT}` : '';
-  return `${XROGA_USER_IDENTITY}${mathHint}\n\n${FRESHNESS_DIRECTIVE}${formatConversationContext(context)}`;
+  return `${XROGA_USER_IDENTITY}${mathHint}\n\n${getCurrentDateDirective()}\n\n${FRESHNESS_DIRECTIVE}${formatConversationContext(context)}`;
 }
 
 export async function deepseekGenerate(

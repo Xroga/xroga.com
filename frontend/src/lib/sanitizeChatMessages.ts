@@ -1,5 +1,21 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
 
+function sanitizeWebSources(raw: unknown): ChatMessage['webSources'] {
+  if (!Array.isArray(raw)) return undefined;
+  const items = raw
+    .filter((s): s is Record<string, unknown> => Boolean(s) && typeof s === 'object')
+    .map((s) => ({
+      title: typeof s.title === 'string' ? s.title : 'Source',
+      url: typeof s.url === 'string' ? s.url : '',
+      snippet: typeof s.snippet === 'string' ? s.snippet : '',
+      source: typeof s.source === 'string' ? s.source : 'web',
+      thumbnailUrl: typeof s.thumbnailUrl === 'string' ? s.thumbnailUrl : undefined,
+      siteDomain: typeof s.siteDomain === 'string' ? s.siteDomain : undefined,
+    }))
+    .filter((s) => s.url.startsWith('http'));
+  return items.length ? items : undefined;
+}
+
 /** Normalize persisted chat rows so render never crashes on null/invalid fields */
 export function sanitizeChatMessages(messages: unknown): ChatMessage[] {
   if (!Array.isArray(messages)) return [];
@@ -68,6 +84,7 @@ export function sanitizeChatMessages(messages: unknown): ChatMessage[] {
         featureOutput,
         thinkingSteps,
         thoughtMs: typeof m.thoughtMs === 'number' ? m.thoughtMs : undefined,
+        webSources: sanitizeWebSources(m.webSources),
       };
     });
 }

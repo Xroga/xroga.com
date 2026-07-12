@@ -20,3 +20,5 @@ export function formatConversationContext(turns: ChatTurn[] | undefined): string
 
 export const FRESHNESS_DIRECTIVE =
   'Treat this as a new turn. Never copy or lightly rephrase your previous reply. Answer only what the user asked now.';
+
+export { getCurrentDateDirective } from './currentDateContext.js';

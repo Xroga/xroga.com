@@ -1,5 +1,6 @@
 import type { Phase1Intent, RoutingPlan } from './types.js';
 import { PHASE1_MATH_SYSTEM } from '../prompts/xrogaResponseFormat.js';
+import { getCurrentDateDirective } from '../lib/currentDateContext.js';
 
 const PHASE2_MESSAGE = 'Coming in Phase 2';
 
@@ -67,15 +68,21 @@ export function buildRoutingPlan(intent: Phase1Intent, message: string, mathQuer
   }
 }
 
-const PROFESSIONAL_FORMAT = `
+const PROFESSIONAL_FORMAT_BASE = `
 Respond in professional markdown:
 - Start with ## headline summarizing the answer
 - Use ## subsections for each major topic
 - Use bullet lists for strategies, steps, pros/cons
 - Use markdown tables when comparing pricing, features, or options
 - End with ## Summary (2–4 bullet takeaways)
+- When citing live web sources, mention the site name or URL inline
 - Minimal emojis (0–1). No markdown symbol spam.
+- Never mention SearXNG, Tavily, YouTube API, or internal search tools.
 `;
+
+function professionalFormatBlock(): string {
+  return `${getCurrentDateDirective()}\n${PROFESSIONAL_FORMAT_BASE}`;
+}
 
 export function getSystemPromptForIntent(
   intent: Phase1Intent,
@@ -99,13 +106,13 @@ export function getSystemPromptForIntent(
     return `${base} Produce modern UI/UX with polished frontend code (React + Tailwind when appropriate).`;
   }
   if (intent === 'business_advice' && role === 'primary') {
-    return `${base}${PROFESSIONAL_FORMAT} Provide structured business advice with pros/cons, actionable strategies, and a Summary section. Use live web research when provided.`;
+    return `${base}${professionalFormatBlock()} Provide structured business advice with pros/cons, actionable strategies, and a Summary section. Use live web research when provided.`;
   }
   if (intent === 'business_advice' && role === 'secondary') {
     return `${base} Validate financial assumptions, feasibility, and risks.`;
   }
   if (intent === 'general_chat' || intent === 'deep_reasoning') {
-    return `${base}${PROFESSIONAL_FORMAT}`;
+    return `${base}${professionalFormatBlock()}`;
   }
   if (intent === 'security_audit') {
     return `${base} Perform a thorough security review. List vulnerabilities and remediation steps.`;

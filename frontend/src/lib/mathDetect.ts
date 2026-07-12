@@ -8,7 +8,9 @@ export function isMathSolutionContent(content: string): boolean {
     /^step\s+\d+/im.test(content) ||
     /\bsolve\s+for\s+[a-z]\b/i.test(t) ||
     (/\banswer\b/i.test(t) && /=/.test(content) && /\bstep\s+\d+/i.test(t)) ||
-    (/in plain words:/i.test(t) && /=/.test(content))
+    (/in plain words:/i.test(t) && /=/.test(content)) ||
+    /^your problem$/im.test(content) ||
+    /^the bottom line$/im.test(content)
   );
 }
 
