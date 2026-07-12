@@ -85,4 +85,14 @@ export interface SwarmCompleteEvent {
   featureCategory?: string;
   output?: unknown;
   actionsRemaining?: number;
+  tokenUsage?: {
+    inputTokensUsed?: number;
+    outputTokensUsed?: number;
+    totalTokensUsed?: number;
+    totalTokensRemaining?: number;
+    percentUsed?: number;
+    inputTokensRemaining?: number;
+    outputTokensRemaining?: number;
+    quotaPeriodStart?: string;
+  };
 }

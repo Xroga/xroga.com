@@ -108,8 +108,7 @@ import {
 } from './xrogaBrandActivity.js';
 import { buildFullProjectFiles, scaffoldFilePaths } from '../../services/projectScaffold.js';
 import { BuildUsageTracker } from '../../lib/buildUsageTracker.js';
-import { recordUsage } from '../../phase1/tokenTracker.js';
-import { recordModelUsage } from '../../phase1/modelQuotaTracker.js';
+import { recordLlmUsage } from '../../phase1/usageRecorder.js';
 import { autoPublishBuildToCommunity } from '../../services/communityAutoPublish.js';
 import { notifyBuildComplete, notifyBuildFailed } from '../../services/notificationService.js';
 
@@ -488,9 +487,25 @@ async function verifyStepParallel(
   });
 }
 
+async function flushBuildUsage(userId: string, usageTracker: BuildUsageTracker): Promise<void> {
+  if (usageTracker.totalInput + usageTracker.totalOutput <= 0) return;
+  await recordLlmUsage(
+    userId,
+    usageTracker.totalInput,
+    usageTracker.totalOutput,
+    usageTracker.snapshot().map((l) => ({
+      role: l.role,
+      inputTokens: l.inputTokens,
+      outputTokens: l.outputTokens,
+    }))
+  );
+}
+
 export async function runNegotiationEngine(ctx: NegotiationContext): Promise<NegotiationResult> {
   const usageTracker = ctx.usageTracker ?? new BuildUsageTracker();
   ctx.usageTracker = usageTracker;
+
+  try {
   const { userPrompt: rawPrompt, featureCategory, userId } = ctx;
   const userPrompt = rawPrompt.trim();
   const currentMessage = routingPrompt(userPrompt);
@@ -1524,18 +1539,6 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         }
       : undefined;
 
-  if (tokenUsage) {
-    await recordUsage(ctx.userId, usageTracker.totalInput, usageTracker.totalOutput);
-    await recordModelUsage(
-      ctx.userId,
-      usageTracker.snapshot().map((l) => ({
-        role: l.role,
-        inputTokens: l.inputTokens,
-        outputTokens: l.outputTokens,
-      }))
-    );
-  }
-
   return {
     success: true,
     clarifiedBrief,
@@ -1545,6 +1548,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     featureOutput: featureOutput ?? undefined,
     tokenUsage,
   };
+  } finally {
+    await flushBuildUsage(ctx.userId, usageTracker);
+  }
 }
 
 /** OSS Escape Pod — all paid APIs down */

@@ -21,6 +21,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 const ACTION_LABELS: Record<string, string> = {
   swarm_completed: 'Code generated',
+  ai_tokens_used: 'AI tokens used',
   generated_image: 'Image generated',
   file_uploaded: 'File uploaded',
   task_completed: 'Task completed',
@@ -210,6 +211,28 @@ export function DashboardHomeView() {
           </div>
           {claimMsg && <p className="text-xs text-[var(--muted)]">{claimMsg}</p>}
         </WidgetCard>
+
+        {tokens?.byModel?.length ? (
+          <WidgetCard title="AI model usage" icon={Activity} className="md:col-span-2">
+            <p className="text-xs text-[var(--muted)] mb-3">
+              Per-model allocation from your 7M pool — each model has its own limit so usage stays fair.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {tokens.byModel.map((m) => (
+                <div key={m.role} className="rounded-lg border border-[var(--card-border)] p-3 space-y-1.5">
+                  <div className="flex justify-between items-center gap-2">
+                    <span className="text-xs font-semibold truncate">{m.label}</span>
+                    <span className="text-[10px] text-[var(--muted)] shrink-0">{m.percentUsed}%</span>
+                  </div>
+                  <ProgressBar percent={m.percentUsed} className="h-1.5" />
+                  <p className="text-[10px] font-mono text-[var(--muted)]">
+                    {formatTokens(m.totalUsed)} / {formatTokens(m.totalLimit)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </WidgetCard>
+        ) : null}
 
         <WidgetCard title="XRG Balance" icon={Coins}>
           <div className="flex items-baseline gap-2">

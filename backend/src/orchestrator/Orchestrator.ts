@@ -3,6 +3,8 @@ import { classifyFeature } from '../services/architect/featureRouter.js';
 import { getCachedResponse, setCachedResponse } from '../services/responseCache.js';
 import { logSystemError } from '../services/systemErrorLog.js';
 import { runThreeLayerShield } from './threeLayerShield.js';
+import { getUsage } from '../phase1/tokenTracker.js';
+import { recordChatTurnUsage, recordLlmUsage } from '../phase1/usageRecorder.js';
 import { loadMasterPrompt } from './masterPrompt.js';
 import { buildArchitectDAG, isLongRunningTask, formatDuration } from './architectDAG.js';
 import type { SwarmRunResult } from '../services/SwarmService.js';
@@ -122,6 +124,8 @@ export class Orchestrator {
       includeProsCons: false,
     });
 
+    const tokenUsage = await recordChatTurnUsage(ctx.userId, ctx.prompt, shield.content);
+
     return {
       runId: crypto.randomUUID(),
       fast: true,
@@ -138,7 +142,12 @@ export class Orchestrator {
           hackathonBrief: chatResult.hackathonBrief,
         } as FeatureOutput,
       },
-      actions: { success: true, remaining: 0, cost: isTrivialPrompt(ctx.prompt) ? 0 : 1 },
+      actions: {
+        success: true,
+        remaining: tokenUsage.totalTokensRemaining,
+        cost: tokenUsage.totalTokensUsed,
+      },
+      tokenUsage,
       featureCategory: category,
       polishedReply: shield.content,
       followUps: shield.followUps,
@@ -337,6 +346,8 @@ export class Orchestrator {
       runId,
     });
 
+    const tokenUsage = await getUsage(ctx.userId);
+
     return {
       runId,
       result: {
@@ -347,7 +358,12 @@ export class Orchestrator {
         agents: defaultAgents(['architect', 'builder', 'reviewer', 'qa', 'truth_council']),
         output: structuredOutput,
       },
-      actions: { success: true, remaining: 0, cost: featureCategory === 'chat' ? 1 : 15 },
+      actions: {
+        success: true,
+        remaining: tokenUsage.totalTokensRemaining,
+        cost: tokenUsage.totalTokensUsed,
+      },
+      tokenUsage,
       featureCategory,
       polishedReply: replyText,
       followUps,
@@ -413,6 +429,10 @@ export class Orchestrator {
 
     const reply = formatFeatureOutput(output);
 
+    const tokenUsage = await recordLlmUsage(ctx.userId, 3_000, 1_000, [
+      { role: 'deepseek_flash', inputTokens: 3_000, outputTokens: 1_000 },
+    ]);
+
     return {
       runId,
       fast: true,
@@ -424,7 +444,12 @@ export class Orchestrator {
         agents: defaultAgents(['builder']),
         output,
       },
-      actions: { success: true, remaining: 0, cost: 4 },
+      actions: {
+        success: true,
+        remaining: tokenUsage.totalTokensRemaining,
+        cost: tokenUsage.totalTokensUsed,
+      },
+      tokenUsage,
       featureCategory: 'image_generation',
       polishedReply: reply,
       followUps: output.followUps ?? [],

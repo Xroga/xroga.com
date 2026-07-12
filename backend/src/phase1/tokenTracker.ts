@@ -246,3 +246,9 @@ export async function creditBonusTokens(
   phase1Logger.info('Bonus tokens credited', { userId, amount, totalBonus: record.bonusTokens });
   return computeSnapshot(record, await getTotalLimit(userId, record));
 }
+
+/** Total monthly token quota including bonuses (matches checkQuota enforcement). */
+export async function getUserQuotaLimit(userId: string): Promise<number> {
+  const record = await getRecord(userId);
+  return getTotalLimit(userId, record);
+}
