@@ -2,17 +2,25 @@ import { classifyIntent } from './classifier.js';
 import { buildRoutingPlan, getSystemPromptForIntent } from './router.js';
 import { callModel } from './providers/base.js';
 import { checkQuota, getUsage } from './tokenTracker.js';
-import { recordLlmUsage } from './usageRecorder.js';
+import { recordLlmUsage, type ModelUsageLine } from './usageRecorder.js';
 import { checkRateLimit } from './rateLimiter.js';
 import { phase1Logger } from './logger.js';
 import { estimateCost } from './models.js';
-import type { Phase1ChatRequest, Phase1ChatResponse, Phase1ErrorResponse } from './types.js';
+import type { XrogaModelRole } from '../config/modelRegistry.js';
+import type { InternalModelId, Phase1ChatRequest, Phase1ChatResponse, Phase1ErrorResponse } from './types.js';
 import { runLiveResearch } from '../lib/liveResearch.js';
 import { isMathQuery } from '../lib/mathQuery.js';
 import { trySolveMathLocally } from '../lib/mathSolver.js';
 import { normalizeMathResponse } from '../lib/formatMathResponse.js';
 import { filterSourcesForUser } from '../lib/filterCitedSources.js';
 import { isHackathonQuery, fetchHackathonAdvisorBrief } from '../lib/hackathonResearch.js';
+
+function toXrogaModelRole(modelId: InternalModelId, reasoningEffort?: 'high'): XrogaModelRole {
+  if (modelId === 'grok_fast') {
+    return reasoningEffort === 'high' ? 'grok_reasoning' : 'grok_fast';
+  }
+  return modelId as XrogaModelRole;
+}
 
 const MODEL_NAME_PATTERN =
   /\b(deepseek|grok|claude|anthropic|xai|sonnet|opus|flash|pro|gpt|openai|gemini|llama|mistral)\b/gi;
@@ -115,6 +123,7 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
   let totalInput = 0;
   let totalOutput = 0;
   const outputs: string[] = [];
+  const modelLines: ModelUsageLine[] = [];
 
   const runModel = async (
     modelId: NonNullable<typeof plan.primary>,
@@ -148,6 +157,11 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
 
     totalInput += result.inputTokens;
     totalOutput += result.outputTokens;
+    modelLines.push({
+      role: toXrogaModelRole(modelId, plan.grokReasoningEffort),
+      inputTokens: result.inputTokens,
+      outputTokens: result.outputTokens,
+    });
 
     const cost = estimateCost(modelId, result.inputTokens, result.outputTokens);
     phase1Logger.info('Model call completed', {
@@ -175,7 +189,7 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     const rawResponse = combineOutputs(outputs, intent);
     const response = sanitizeResponse(mathQuery ? normalizeMathResponse(rawResponse) : rawResponse);
 
-    const usage = await recordLlmUsage(userId, totalInput, totalOutput);
+    const usage = await recordLlmUsage(userId, totalInput, totalOutput, modelLines);
 
     phase1Logger.info('Message processed', {
       userId,

@@ -178,14 +178,20 @@ export class SwarmService {
     }
 
     let result: Awaited<ReturnType<typeof featureSwarm.execute>>;
+    const usageBefore = await getUsage(userId);
     try {
       result = await featureSwarm.execute(userId, prompt, projectId, run.id, featureCategory, options?.extras);
     } catch (err) {
       throw err;
     }
 
-    const est = estimateTokensForCategory(featureCategory);
-    await recordLlmUsage(userId, est.input, est.output);
+    const usageAfter = await getUsage(userId);
+    if (usageAfter.totalTokensUsed <= usageBefore.totalTokensUsed) {
+      const est = estimateTokensForCategory(featureCategory);
+      await recordLlmUsage(userId, est.input, est.output, [
+        { role: 'deepseek_flash', inputTokens: est.input, outputTokens: est.output },
+      ]);
+    }
     tokenUsage = await getUsage(userId);
 
     if (persistRun) {
