@@ -1,7 +1,8 @@
 import { classifyIntent } from './classifier.js';
 import { buildRoutingPlan, getSystemPromptForIntent } from './router.js';
 import { callModel } from './providers/base.js';
-import { checkQuota, recordUsage, getUsage } from './tokenTracker.js';
+import { checkQuota, getUsage } from './tokenTracker.js';
+import { recordLlmUsage } from './usageRecorder.js';
 import { checkRateLimit } from './rateLimiter.js';
 import { phase1Logger } from './logger.js';
 import { estimateCost } from './models.js';
@@ -62,7 +63,7 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
   if (mathQuery) {
     const local = trySolveMathLocally(message);
     if (local) {
-      const usage = await recordUsage(userId, Math.ceil(message.length / 4), 64);
+      const usage = await recordLlmUsage(userId, Math.ceil(message.length / 4), 64);
       phase1Logger.info('Math solved locally', { userId });
       return {
         ok: true,
@@ -172,7 +173,7 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     const rawResponse = combineOutputs(outputs);
     const response = sanitizeResponse(mathQuery ? normalizeMathResponse(rawResponse) : rawResponse);
 
-    const usage = await recordUsage(userId, totalInput, totalOutput);
+    const usage = await recordLlmUsage(userId, totalInput, totalOutput);
 
     phase1Logger.info('Message processed', {
       userId,

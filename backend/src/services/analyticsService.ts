@@ -104,7 +104,7 @@ export async function getAnalyticsDashboard(userId: string): Promise<AnalyticsDa
           supabase.from('community_pool').select('balance_tokens').eq('id', 1).maybeSingle(),
           supabase.from('marketplace_listings').select('*', { count: 'exact', head: true }).eq('status', 'active'),
           supabase.from('profiles').select('*', { count: 'exact', head: true }),
-          supabase.from('user_token_usage').select('input_tokens_used, output_tokens_used'),
+          supabase.from('user_token_usage').select('input_tokens, output_tokens'),
           supabase.from('user_actions').select('plan_tier').eq('user_id', userId).maybeSingle(),
         ]);
 
@@ -118,7 +118,7 @@ export async function getAnalyticsDashboard(userId: string): Promise<AnalyticsDa
       marketplaceListings = listings ?? 0;
       totalUsers = users ?? 0;
       totalAiTokens = (tokenRows ?? []).reduce(
-        (sum, r) => sum + Number(r.input_tokens_used ?? 0) + Number(r.output_tokens_used ?? 0),
+        (sum, r) => sum + Number(r.input_tokens ?? 0) + Number(r.output_tokens ?? 0),
         0
       );
       if (actions?.plan_tier) planTier = actions.plan_tier;

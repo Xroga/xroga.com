@@ -804,6 +804,17 @@ export interface DashboardSummary {
     daysRemaining: number;
     estimatedDailyUsage: number;
     quotaPeriodStart: string;
+    byModel?: Array<{
+      role: string;
+      label: string;
+      inputUsed: number;
+      outputUsed: number;
+      inputLimit: number;
+      outputLimit: number;
+      totalUsed: number;
+      totalLimit: number;
+      percentUsed: number;
+    }>;
   };
   xrg: {
     totalXrg: number;

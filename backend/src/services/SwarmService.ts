@@ -9,6 +9,7 @@ import { InsufficientTokensError } from '../errors/InsufficientTokensError.js';
 import { InsufficientActionsError } from '../errors/InsufficientActionsError.js';
 import { ensureUserRecords } from './ensureUserRecords.js';
 import { checkQuota, getUsage } from '../phase1/tokenTracker.js';
+import { recordLlmUsage } from '../phase1/usageRecorder.js';
 import { BUILD_PREFLIGHT_ESTIMATE } from '../config/modelRegistry.js';
 import { Orchestrator } from '../orchestrator/Orchestrator.js';
 import { persistChatTurns } from '../lib/threadMemory.js';
@@ -183,6 +184,8 @@ export class SwarmService {
       throw err;
     }
 
+    const est = estimateTokensForCategory(featureCategory);
+    await recordLlmUsage(userId, est.input, est.output);
     tokenUsage = await getUsage(userId);
 
     if (persistRun) {
@@ -343,6 +346,7 @@ export class SwarmService {
         output: result.result.output,
         agents: result.result.agents,
         actionsRemaining: result.actions.remaining,
+        tokenUsage: result.tokenUsage ?? (await getUsage(userId)),
         followUps: (result as { followUps?: string[] }).followUps,
         reasoning: (result as { reasoning?: string }).reasoning,
         queued: (result as { queued?: boolean }).queued,

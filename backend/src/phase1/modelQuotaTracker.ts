@@ -16,6 +16,7 @@ import {
   quotaForPlanTier,
 } from '../config/modelRegistry.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { ensureUserRecords } from '../services/ensureUserRecords.js';
 import { phase1Logger } from './logger.js';
 
 type ModelUsageMap = Partial<Record<XrogaModelRole, { input: number; output: number }>>;
@@ -66,13 +67,14 @@ async function saveModelUsage(userId: string, usage: ModelUsageMap): Promise<voi
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
 
   try {
+    await ensureUserRecords(userId);
     const supabase = getSupabaseAdmin();
     const { error } = await supabase
       .from('user_token_usage')
       .update({ model_usage: usage, updated_at: new Date().toISOString() })
       .eq('user_id', userId);
     if (error) {
-      phase1Logger.debug('model usage update skipped (no row yet)', { userId });
+      phase1Logger.debug('model usage update skipped', { userId, error: error.message });
     }
   } catch (err) {
     phase1Logger.warn('model usage save failed', { error: (err as Error).message });
@@ -181,4 +183,48 @@ export async function resolveBuildModelRole(
   const fallback = claudeFallbackRole(task === 'general' ? 'qa' : task);
   phase1Logger.info('Claude pool exhausted — fallback', { from: role, to: fallback, userId });
   return fallback;
+}
+
+export interface ModelUsageBreakdownRow {
+  role: XrogaModelRole;
+  label: string;
+  inputUsed: number;
+  outputUsed: number;
+  inputLimit: number;
+  outputLimit: number;
+  totalUsed: number;
+  totalLimit: number;
+  percentUsed: number;
+}
+
+const MODEL_LABELS: Record<XrogaModelRole, string> = {
+  deepseek_flash: 'DeepSeek Flash',
+  deepseek_pro: 'DeepSeek Pro',
+  grok_reasoning: 'Grok 4',
+  claude_sonnet: 'Claude Sonnet 5',
+  claude_opus: 'Claude Opus',
+  gemini_flash: 'Gemini Flash',
+};
+
+/** Per-model usage vs allocated pool — for dashboard. */
+export async function getModelUsageBreakdown(userId: string): Promise<ModelUsageBreakdownRow[]> {
+  const [usage, totalLimit] = await Promise.all([loadModelUsage(userId), getTotalLimit(userId)]);
+  return CORE_BUILD_MODELS.map((role) => {
+    const limits = modelLimitsForUser(totalLimit, role);
+    const used = usage[role] ?? { input: 0, output: 0 };
+    const totalLimitForModel = limits.input + limits.output;
+    const totalUsedForModel = used.input + used.output;
+    return {
+      role,
+      label: MODEL_LABELS[role],
+      inputUsed: used.input,
+      outputUsed: used.output,
+      inputLimit: limits.input,
+      outputLimit: limits.output,
+      totalUsed: totalUsedForModel,
+      totalLimit: totalLimitForModel,
+      percentUsed:
+        totalLimitForModel > 0 ? Math.min(100, Math.round((totalUsedForModel / totalLimitForModel) * 100)) : 0,
+    };
+  });
 }

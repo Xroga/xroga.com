@@ -1050,6 +1050,22 @@ export function TerminalChatProvider({
             );
           },
           onComplete: (complete) => {
+            if (complete.tokenUsage) {
+              const tu = complete.tokenUsage;
+              setTokenUsage({
+                inputTokensUsed: tu.inputTokensUsed ?? 0,
+                outputTokensUsed: tu.outputTokensUsed ?? 0,
+                totalTokensUsed: tu.totalTokensUsed ?? 0,
+                inputTokensRemaining: tu.inputTokensRemaining ?? 0,
+                outputTokensRemaining: tu.outputTokensRemaining ?? 0,
+                totalTokensRemaining: tu.totalTokensRemaining ?? 0,
+                percentUsed: tu.percentUsed ?? 0,
+                quotaPeriodStart: tu.quotaPeriodStart ?? new Date().toISOString().slice(0, 10),
+                emergencyTokensAvailable: false,
+                emergencyTokensClaimedThisMonth: false,
+                totalLimit: (tu.totalTokensUsed ?? 0) + (tu.totalTokensRemaining ?? 0),
+              });
+            }
             if (complete.followUps?.length) {
               setFollowUps(complete.followUps);
             }

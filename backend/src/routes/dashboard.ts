@@ -1,14 +1,13 @@
 import { Router } from 'express';
 import type { AuthRequest } from '../middleware/auth.js';
-import { getUsage, claimEmergencyTokens } from '../phase1/tokenTracker.js';
+import { getUsage, claimEmergencyTokens, getUserQuotaLimit } from '../phase1/tokenTracker.js';
+import { getModelUsageBreakdown } from '../phase1/modelQuotaTracker.js';
 import { getXrgBalance } from '../services/xrgBalance.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { GALACTIC_PLANS, planDisplayName } from '../config/galacticPlans.js';
 import { inputLimitForPlan, outputLimitForPlan } from '../config/modelRegistry.js';
 
 const router = Router();
-
-const TOKEN_QUOTA_TOTAL = 7_000_000;
 
 function daysRemainingInMonth(): number {
   const now = new Date();
@@ -20,8 +19,10 @@ router.get('/summary', async (req: AuthRequest, res) => {
   const userId = req.userId!;
   const usage = await getUsage(userId);
   const xrg = await getXrgBalance(userId);
+  const modelBreakdown = await getModelUsageBreakdown(userId);
 
-  const totalLimit = TOKEN_QUOTA_TOTAL + xrg.tokenBoostTotal;
+  const baseLimit = await getUserQuotaLimit(userId);
+  const totalLimit = baseLimit + xrg.tokenBoostTotal;
   const inputLimit = inputLimitForPlan(totalLimit);
   const outputLimit = outputLimitForPlan(totalLimit);
 
@@ -105,6 +106,7 @@ router.get('/summary', async (req: AuthRequest, res) => {
       daysRemaining: daysLeft,
       estimatedDailyUsage: dailyUsage,
       quotaPeriodStart: usage.quotaPeriodStart,
+      byModel: modelBreakdown,
     },
     xrg,
     billing: {
