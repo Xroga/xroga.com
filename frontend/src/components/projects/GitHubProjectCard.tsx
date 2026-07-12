@@ -71,6 +71,7 @@ export function GitHubProjectCard({
         <span className="min-w-0 flex-1 truncate font-mono text-[10px] font-semibold text-emerald-400/90">
           {repo}
         </span>
+        <span className="shrink-0 text-[9px] text-[var(--muted)] font-mono">main</span>
         {project.github_repo_url && onOpenRepo ? (
           <button
             type="button"

@@ -69,6 +69,20 @@ export function requiresGitHubForBuild(prompt: string): boolean {
   return false;
 }
 
+/** Website/game/hackathon builds that need Vercel for live deploy on first prompt */
+export function requiresVercelForBuild(prompt: string): boolean {
+  const t = prompt.toLowerCase();
+  if (
+    /\b(build|create|make|develop|launch|scaffold)\b[\s\S]{0,60}\b(website|web app|landing|game|hackathon|saas|dashboard|marketplace|platform|chatbot|crypto|web3|app)\b/.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  if (/\b(okx|asp|build x)\b/i.test(prompt)) return true;
+  return false;
+}
+
 function routingPrompt(prompt: string): string {
   const match = /\[Current message\]\s*\n([\s\S]*)$/i.exec(prompt.trim());
   return match?.[1]?.trim() ?? prompt.trim();

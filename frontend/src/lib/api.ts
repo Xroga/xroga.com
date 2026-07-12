@@ -429,6 +429,8 @@ export const api = {
       type: string;
       github_repo_url?: string;
       github_repo_name?: string;
+      github_branch?: string;
+      deploy_url?: string;
       user_prompt?: string;
     }) =>
       apiFetch<Project>('/api/projects', { method: 'POST', body: JSON.stringify(body) }),

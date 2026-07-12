@@ -299,6 +299,7 @@ export class SwarmService {
           swarmAnalysis: event.swarmAnalysis,
           swarmActivity: event.swarmActivity,
           needsGitHub: event.needsGitHub,
+          needsVercel: event.needsVercel,
           councilLayer: event.councilLayer,
         },
       });

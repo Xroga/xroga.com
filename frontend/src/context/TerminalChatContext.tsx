@@ -41,8 +41,9 @@ import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import { notifyGithubProjectSaved } from '@/lib/githubProjectEvents';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
-import { requiresGitHubForBuild } from '@/lib/messageHelpers';
+import { requiresGitHubForBuild, requiresVercelForBuild } from '@/lib/messageHelpers';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
+import { VercelBuildGateModal } from '@/components/terminal/VercelBuildGateModal';
 import { GitHubActivationOverlay } from '@/components/terminal/GitHubActivationOverlay';
 import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
 import {
@@ -180,6 +181,7 @@ export function TerminalChatProvider({
   const [swarmAnalysis, setSwarmAnalysis] = useState<string | null>(null);
   const [swarmActivityLog, setSwarmActivityLog] = useState<string[]>([]);
   const [githubGateOpen, setGithubGateOpen] = useState(false);
+  const [vercelGateOpen, setVercelGateOpen] = useState(false);
   const [githubActivation, setGithubActivation] = useState<{ open: boolean; username?: string }>({
     open: false,
   });
@@ -352,6 +354,33 @@ export function TerminalChatProvider({
       }, 800);
     };
   }, []);
+
+  const handleVercelBuildBlocked = useCallback(
+    (userPrompt: string, attachments?: ChatAttachment[]) => {
+      void api.vercel.status().then((vc) => {
+        if (vc.connected) {
+          void submitRef.current(userPrompt, false, false, attachments);
+          return;
+        }
+        pendingBuildRef.current = {
+          userPrompt,
+          fromQueue: false,
+          interrupt: false,
+          attachments,
+        };
+        setVercelGateOpen(true);
+      }).catch(() => {
+        pendingBuildRef.current = {
+          userPrompt,
+          fromQueue: false,
+          interrupt: false,
+          attachments,
+        };
+        setVercelGateOpen(true);
+      });
+    },
+    []
+  );
 
   const handleGitHubBuildBlocked = useCallback(
     (userPrompt: string, attachments?: ChatAttachment[]) => {
@@ -708,6 +737,21 @@ export function TerminalChatProvider({
         }
       }
 
+      if (requiresVercelForBuild(userPrompt)) {
+        try {
+          const vc = await api.vercel.status();
+          if (!vc.connected) {
+            pendingBuildRef.current = { userPrompt, fromQueue, interrupt, attachments };
+            setVercelGateOpen(true);
+            return;
+          }
+        } catch {
+          pendingBuildRef.current = { userPrompt, fromQueue, interrupt, attachments };
+          setVercelGateOpen(true);
+          return;
+        }
+      }
+
       const userMessageId = crypto.randomUUID();
       const assistantId = crypto.randomUUID();
       const displayPrompt =
@@ -979,6 +1023,9 @@ export function TerminalChatProvider({
             if (swarmEv.needsGitHub) {
               handleGitHubBuildBlocked(displayPrompt, attachments);
             }
+            if (swarmEv.needsVercel) {
+              handleVercelBuildBlocked(displayPrompt, attachments);
+            }
             if (swarmEv.hackathonBrief) {
               setMessages((m) =>
                 m.map((msg) =>
@@ -1084,10 +1131,11 @@ export function TerminalChatProvider({
                       github_repo_url:
                         typeof output.githubRepoUrl === 'string' ? output.githubRepoUrl : undefined,
                       github_repo_name: ghName,
+                      github_branch: 'main',
                       user_prompt: displayPrompt,
                     })
                     .then((saved) => notifyGithubProjectSaved(saved.id))
-                    .catch(() => {});
+                    .catch((err) => console.warn('[projects] save failed', err));
                 }
                 return updated;
               });
@@ -1276,7 +1324,7 @@ export function TerminalChatProvider({
         setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, incognito, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, setTokenUsage]
+    [prompt, loading, projectId, incognito, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage]
   );
 
   submitRef.current = submit;
@@ -1360,6 +1408,28 @@ export function TerminalChatProvider({
             queueBuildAfterGitHubActivation();
             setGithubActivation({ open: true, username: username ?? gh.username });
           });
+        }}
+      />
+      <VercelBuildGateModal
+        open={vercelGateOpen}
+        onClose={() => {
+          setVercelGateOpen(false);
+          pendingBuildRef.current = null;
+        }}
+        onConnected={() => {
+          setVercelGateOpen(false);
+          const pending = pendingBuildRef.current;
+          pendingBuildRef.current = null;
+          if (pending) {
+            window.setTimeout(() => {
+              void submitRef.current(
+                pending.userPrompt,
+                pending.fromQueue,
+                pending.interrupt,
+                pending.attachments
+              );
+            }, 600);
+          }
         }}
       />
       <GitHubActivationOverlay

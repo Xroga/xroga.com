@@ -14,6 +14,7 @@ export interface UpsertBuildProjectInput {
   userPrompt: string;
   githubRepoUrl?: string;
   githubRepoName?: string;
+  githubBranch?: string;
   deployUrl?: string;
   projectFiles: ProjectFile[];
   runId?: string;
@@ -49,7 +50,7 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
   const row = {
     name: input.name.slice(0, 200),
     type: input.type ?? 'website',
-    status: 'active',
+    status: 'completed',
     github_repo_url: input.githubRepoUrl ?? (repoName ? `https://github.com/${repoName}` : null),
     github_repo_name: repoName ?? null,
     updated_at: new Date().toISOString(),
@@ -113,6 +114,7 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
         runId: input.runId,
         deployUrl: input.deployUrl,
         githubRepoName: repoName,
+        githubBranch: input.githubBranch ?? 'main',
         source: 'build',
       },
     });
