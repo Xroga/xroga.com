@@ -2589,6 +2589,10 @@ body.theme-gray * {
   .xv-agent-todo-active {
     animation: xv-agent-todo-pulse 1.8s ease-in-out infinite;
   }
+
+  .xv-build-todo-list {
+    animation: xv-agent-todo-in 0.35s ease-out both;
+  }
   @keyframes xv-agent-todo-pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.82; }
