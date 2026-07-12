@@ -213,6 +213,18 @@ export const BUILD_PREFLIGHT_ESTIMATE = {
 /** Typical token burn for one advanced site build (input-heavy) */
 export const TYPICAL_BUILD_TOKENS = BUILD_PREFLIGHT_ESTIMATE;
 
+/** Targeted update — only named files, cached repo, no Phase 0 research */
+export const TYPICAL_UPDATE_TOKENS = {
+  input: 55_000,
+  output: 38_000,
+};
+
+/** UI touch update with Grok + light Sonnet on patched files only */
+export const TYPICAL_UI_UPDATE_TOKENS = {
+  input: 72_000,
+  output: 48_000,
+};
+
 /** Estimate provider API $ for one build at target model mix */
 export function estimateSingleBuildApiUsd(): {
   llmUsd: number;

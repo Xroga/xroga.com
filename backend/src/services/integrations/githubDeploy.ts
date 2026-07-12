@@ -718,6 +718,32 @@ export async function fetchBuildFilesFromGitHub(
   ];
 }
 
+/** Fetch only specific paths for incremental updates (no full-repo read). */
+export async function fetchGitHubFilesByPaths(
+  userId: string,
+  repoName: string,
+  paths: string[],
+  branch?: string
+): Promise<ProjectFile[]> {
+  const integration = await getIntegration(userId);
+  if (!integration?.access_token) throw new Error('GitHub not connected');
+
+  const { owner, repo } = parseRepoName(repoName);
+  const token = integration.access_token;
+  const unique = [...new Set(paths.map((p) => p.replace(/^\//, '')))].slice(0, 12);
+
+  const out: ProjectFile[] = [];
+  for (const path of unique) {
+    const text = await fetchRepoTextFile(token, owner, repo, path, branch);
+    if (text != null) out.push({ path, content: text });
+  }
+
+  if (!out.length) {
+    return fetchBuildFilesFromGitHub(userId, repoName, branch);
+  }
+  return out;
+}
+
 export interface GitHubRepoAnalysis {
   repoName: string;
   defaultBranch: string;

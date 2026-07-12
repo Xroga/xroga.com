@@ -136,9 +136,31 @@ export async function buildLandingFromSwarmAssembly(
   userPrompt: string,
   approvedPlan: string,
   clarifiedBrief: string,
-  kind: 'website' | 'game' = 'website'
+  kind: 'website' | 'game' = 'website',
+  opts?: { skipConsolidate?: boolean }
 ): Promise<LandingPageOutput> {
   let site = parseAssembledProject(assembledCode);
+
+  if (opts?.skipConsolidate) {
+    if (!site?.html?.trim()) {
+      const enriched = `${userPrompt}\n\nBrief:\n${clarifiedBrief}\n\nVerified code:\n${assembledCode}`;
+      return buildLandingPage(enriched);
+    }
+    const html = ensureFullHtml(site.html, site.css, site.js);
+    const css = site.css?.trim().length > 40 ? site.css.trim() : DEFAULT_CSS;
+    const js =
+      site.js?.trim() ||
+      `document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}}));`;
+    const normalized = normalizeBuildFiles(html, css, js);
+    return {
+      type: 'landing_page',
+      html: normalized.html,
+      css: normalized.css,
+      js: normalized.js,
+      heroImageUrl: 'https://placehold.co/1200x630/7c3aed/ffffff?text=XROGA+Build',
+      deployUrl: '',
+    };
+  }
 
   try {
     const consolidated = await consolidateWithDeepSeek(
