@@ -41,7 +41,7 @@ import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import { notifyGithubProjectSaved } from '@/lib/githubProjectEvents';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
-import { requiresGitHubForBuild, requiresVercelForBuild } from '@/lib/messageHelpers';
+import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
 import { VercelBuildGateModal } from '@/components/terminal/VercelBuildGateModal';
 import { GitHubActivationOverlay } from '@/components/terminal/GitHubActivationOverlay';
@@ -737,21 +737,6 @@ export function TerminalChatProvider({
         }
       }
 
-      if (requiresVercelForBuild(userPrompt)) {
-        try {
-          const vc = await api.vercel.status();
-          if (!vc.connected) {
-            pendingBuildRef.current = { userPrompt, fromQueue, interrupt, attachments };
-            setVercelGateOpen(true);
-            return;
-          }
-        } catch {
-          pendingBuildRef.current = { userPrompt, fromQueue, interrupt, attachments };
-          setVercelGateOpen(true);
-          return;
-        }
-      }
-
       const userMessageId = crypto.randomUUID();
       const assistantId = crypto.randomUUID();
       const displayPrompt =
@@ -816,7 +801,7 @@ export function TerminalChatProvider({
       if (codeBuildActive) {
         setSwarmNegotiationPhase(0);
         setSwarmStatusLabel('XROGA Architect');
-        setSwarmTodos(seedBuildTodos());
+        setSwarmTodos(seedBuildTodos(displayPrompt));
         setPipelineMessage('XROGA Architect — planning architecture, database & API routes…');
         thinkingStepsRef.current = [...BUILD_PLANNING_STEPS];
         setThinkingSteps([...BUILD_PLANNING_STEPS]);
@@ -1146,8 +1131,9 @@ export function TerminalChatProvider({
                       type: 'website',
                       github_repo_url:
                         typeof output.githubRepoUrl === 'string' ? output.githubRepoUrl : undefined,
-                      github_repo_name: ghName,
-                      github_branch: 'main',
+                      github_repo_name: ghName.includes('/') ? ghName : undefined,
+                      github_branch: repoContext?.branch ?? 'main',
+                      deploy_url: typeof output.deployUrl === 'string' ? output.deployUrl : undefined,
                       user_prompt: displayPrompt,
                     })
                     .then((saved) => notifyGithubProjectSaved(saved.id))
@@ -1181,12 +1167,18 @@ export function TerminalChatProvider({
               codeBuildActive &&
               (chatContent.includes(GENERIC_SWARM_FALLBACK) || fullReply.includes(GENERIC_SWARM_FALLBACK))
             ) {
-              const buildError =
-                '⚠️ **Build could not finish.** Connect GitHub under Integrations, then try again.\n\nIf GitHub is connected, check that `DEEPSEEK_CODE_API_KEY` (or `DEEPSEEK_API_KEY`) is set on Fly.io.';
-              fullReply = buildError;
-              setMessages((m) =>
-                m.map((msg) => (msg.id === assistantId ? { ...msg, content: buildError } : msg))
-              );
+              setMessages((m) => {
+                const existing = m.find((msg) => msg.id === assistantId);
+                const hasLanding =
+                  existing?.featureOutput &&
+                  typeof existing.featureOutput === 'object' &&
+                  (existing.featureOutput as { type?: string }).type === 'landing_page';
+                if (hasLanding) return m;
+                const buildError =
+                  '⚠️ **Build could not finish.** Connect GitHub under Integrations, then try again.';
+                fullReply = buildError;
+                return m.map((msg) => (msg.id === assistantId ? { ...msg, content: buildError } : msg));
+              });
             }
             const text = complete.output
               ? (() => {
@@ -1259,18 +1251,26 @@ export function TerminalChatProvider({
           setMessages((m) => m.filter((msg) => msg.id !== assistantId || msg.content.length > 0));
           return;
         }
-        const friendly = codeBuildActive
-          ? '⚠️ **Build connection lost.** Check your connection and try again. Connect GitHub under Integrations if you have not already.'
-          : GENERIC_SWARM_FALLBACK;
-        setMessages((m) => [
-          ...m.filter((msg) => msg.id !== assistantId || msg.content.length > 0),
-          {
-            id: assistantId,
-            role: 'assistant',
-            content: fullReply || friendly,
-            createdAt: Date.now(),
-          },
-        ]);
+        setMessages((m) => {
+          const existing = m.find((msg) => msg.id === assistantId);
+          const hasFeature =
+            existing?.featureOutput &&
+            typeof existing.featureOutput === 'object' &&
+            (existing.featureOutput as { type?: string }).type === 'landing_page';
+          if (hasFeature) return m.filter((msg) => msg.id !== assistantId || Boolean(msg.content?.trim()));
+          const friendly = codeBuildActive
+            ? '⚠️ **Build connection lost.** Check your connection and try again. Connect GitHub under Integrations if you have not already.'
+            : GENERIC_SWARM_FALLBACK;
+          return [
+            ...m.filter((msg) => msg.id !== assistantId || msg.content.length > 0),
+            {
+              id: assistantId,
+              role: 'assistant',
+              content: fullReply || friendly,
+              createdAt: Date.now(),
+            },
+          ];
+        });
       } finally {
         if (thinkingTimerRef.current) {
           clearTimeout(thinkingTimerRef.current);

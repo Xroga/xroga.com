@@ -110,8 +110,7 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
         </div>
         <div className="p-5 space-y-4">
           <p className="text-sm text-[var(--muted)] leading-relaxed">
-            ▲ XROGA needs Vercel to publish your live preview on the first build. Connect once — every hackathon
-            and website deploys automatically with minimal bugs and a working URL.
+            Connect Vercel once to publish a live URL on <strong>your</strong> account. Builds work immediately with the sandbox preview — Vercel is only needed for a public deploy link.
           </p>
           {error && <p className="text-xs text-red-400">{error}</p>}
           <button

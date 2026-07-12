@@ -562,46 +562,19 @@ export async function deployToAllPlatforms(
     };
   }
 
-  const hasNetlify = Boolean(getSecret('NETLIFY_ACCESS_TOKEN'));
-  if (hasNetlify) {
-    try {
-      const result = await deployToNetlifyPreview(projectSlug, staticFiles);
-      const verified = await verifyLivePreviewUrl(result.deployUrl);
-      netlify = {
-        deployUrl: result.deployUrl,
-        deployVerified: verified,
-        netlifyDeployId: result.netlifyDeployId,
-      };
-      if (!verified) errors.push('Netlify URL failed verification');
-    } catch (err) {
-      const msg = (err as Error).message;
-      errors.push(`Netlify: ${msg.slice(0, 120)}`);
-      netlify = { deployUrl: '', deployVerified: false, error: msg.slice(0, 240) };
-    }
-  } else {
-    errors.push('Netlify: NETLIFY_ACCESS_TOKEN not set on server');
-    netlify = { deployUrl: '', deployVerified: false, error: 'NETLIFY_ACCESS_TOKEN not configured on server' };
-  }
-
   const primary =
     vercel?.deployVerified && vercel.deployUrl
       ? { url: vercel.deployUrl, platform: 'vercel' as const, id: vercel.vercelDeploymentId }
-      : netlify?.deployVerified && netlify.deployUrl
-        ? { url: netlify.deployUrl, platform: 'netlify' as const, id: netlify.netlifyDeployId }
-        : vercel?.deployUrl
-          ? { url: vercel.deployUrl, platform: 'vercel' as const, id: vercel.vercelDeploymentId }
-          : netlify?.deployUrl
-            ? { url: netlify.deployUrl, platform: 'netlify' as const, id: netlify.netlifyDeployId }
-            : null;
+      : vercel?.deployUrl
+        ? { url: vercel.deployUrl, platform: 'vercel' as const, id: vercel.vercelDeploymentId }
+        : null;
 
   return {
     vercel,
-    netlify,
     deployUrl: primary?.url ?? '',
     deployPlatform: primary?.platform ?? 'none',
-    deployVerified: Boolean(vercel?.deployVerified || netlify?.deployVerified),
+    deployVerified: Boolean(vercel?.deployVerified),
     vercelDeploymentId: vercel?.vercelDeploymentId,
-    netlifyDeployId: netlify?.netlifyDeployId,
     deployError: primary ? undefined : errors.join(' · '),
   };
 }
@@ -632,13 +605,14 @@ export async function deployPreviewToPlatform(
   }
 }
 
-/** Deploy from inline html/css/js — tries both platforms when requested. */
+/** Deploy from inline html/css/js — user's Vercel account only when connected. */
 export async function deployPreviewFromSource(
   projectSlug: string,
   html: string,
   css: string,
   js: string,
-  platform: 'vercel' | 'netlify' | 'both' = 'both'
+  platform: 'vercel' | 'netlify' | 'both' = 'vercel',
+  userId?: string
 ): Promise<{
   vercel?: PlatformDeployResult;
   netlify?: PlatformDeployResult;
@@ -650,10 +624,16 @@ export async function deployPreviewFromSource(
   };
 
   if (platform === 'vercel' || platform === 'both') {
-    out.vercel = await deployPreviewToPlatform(projectSlug, files, 'vercel');
-  }
-  if (platform === 'netlify' || platform === 'both') {
-    out.netlify = await deployPreviewToPlatform(projectSlug, files, 'netlify');
+    if (userId) {
+      const bundle = await deployToAllPlatforms(projectSlug, files, userId);
+      out.vercel = bundle.vercel;
+    } else {
+      out.vercel = {
+        deployUrl: '',
+        deployVerified: false,
+        error: 'Sign in and connect Vercel — deploys use your account only',
+      };
+    }
   }
 
   return out;

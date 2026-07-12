@@ -37,7 +37,7 @@ import { upsertBuildProject } from '../../services/memory/buildProjectStore.js';
 import { webSearch, formatWebSearchContext } from '../../lib/webSearch.js';
 import { fetchUiTrendResearch } from '../../lib/uiTrendResearch.js';
 import { formatAiEndpointContext } from '../../lib/aiEndpointCatalog.js';
-import { fetchHackathonResearch } from '../../lib/hackathonResearch.js';
+import { fetchHackathonResearch, isHackathonQuery } from '../../lib/hackathonResearch.js';
 import {
   buildSummaryFromBrief,
   formatBuildSummaryCard,
@@ -560,16 +560,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   if ((isProductBuild || isGameBuild) && !isUpdateBuild) {
     const vercelOk = await isVercelConnected(userId);
     if (!vercelOk) {
-      emit(ctx, 0, 'Connect Vercel for live deployment preview', 'architect', todos, 'XROGA Deploy');
-      return {
-        success: false,
-        clarifiedBrief: '',
-        approvedPlan: '',
-        assembledCode: '',
-        polishedOutput:
-          '▲ Connect Vercel under Integrations so XROGA can deploy your live preview on first build — one prompt, working product.',
-        needsVercelConnection: true,
-      };
+      emit(ctx, 0, xrogaArchitectureLine('Vercel not connected — sandbox preview ready; connect Vercel for live URL on your account'), 'architect', todos, 'XROGA Deploy', { silent: true });
     }
   }
 
@@ -619,16 +610,18 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     }
 
     try {
-      const hackathon = await fetchHackathonResearch(userPrompt);
-      if (hackathon) {
-        hackathonNote = hackathon.context;
-        emit(ctx, 0, xrogaArchitectureLine('Hackathon requirements researched — sponsor gaps & ASP ideas mapped'), 'architect', todos, 'XROGA Architect', {
-          userPhase: 1,
-          hackathonBrief: hackathon.card,
-        });
+      if (isHackathonQuery(userPrompt)) {
+        const hackathon = await fetchHackathonResearch(userPrompt);
+        if (hackathon) {
+          hackathonNote = hackathon.context;
+          emit(ctx, 0, xrogaArchitectureLine('Hackathon requirements researched — sponsor gaps & ASP ideas mapped'), 'architect', todos, 'XROGA Architect', {
+            userPhase: 1,
+            hackathonBrief: hackathon.card,
+          });
+        }
       }
     } catch {
-      /* optional */
+      /* optional — only for hackathon/OKX prompts */
     }
 
     if (webResearchNote || uiTrendNote || hackathonNote) {

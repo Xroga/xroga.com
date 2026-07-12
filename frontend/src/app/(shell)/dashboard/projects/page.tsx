@@ -59,9 +59,31 @@ function ProjectsHubInner() {
     setHistory(loadTerminalHistory());
     setArchives(loadChatArchive());
     const loadRemote = () => {
+      const normalizeGithubProject = (p: Project): Project => {
+        if (p.github_repo_name?.includes('/')) return p;
+        const url = p.github_repo_url ?? '';
+        const match = url.match(/github\.com\/([^/]+\/[^/?#]+)/i);
+        if (match?.[1]) {
+          return { ...p, github_repo_name: match[1].replace(/\.git$/, '') };
+        }
+        return p;
+      };
       api.projects
         .listGithub()
-        .then((list) => setProjects(list.filter((p) => p.github_repo_name?.includes('/'))))
+        .then((list) => {
+          const normalized = list.map(normalizeGithubProject).filter((p) => p.github_repo_name?.includes('/'));
+          if (normalized.length > 0) {
+            setProjects(normalized);
+            return;
+          }
+          return api.projects.list().then((all) =>
+            setProjects(
+              all
+                .map(normalizeGithubProject)
+                .filter((p) => p.github_repo_name?.includes('/') || Boolean(p.github_repo_url))
+            )
+          );
+        })
         .catch(() => setProjects([]))
         .finally(() => setLoading(false));
     };
