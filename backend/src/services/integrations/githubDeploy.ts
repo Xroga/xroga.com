@@ -12,6 +12,7 @@ import {
   setCachedRepoAnalysis,
   invalidateRepoAnalysis,
 } from '../../lib/repoAnalysisCache.js';
+import { HACKATHON_GITHUB_BATCH_SIZE, HACKATHON_REPO_TREE_SAMPLE } from '../../config/modelRegistry.js';
 
 export interface ProjectFile {
   path: string;
@@ -291,6 +292,34 @@ async function pushFilesToRepo(
   message: string,
   branch = 'main'
 ): Promise<void> {
+  if (files.length > HACKATHON_GITHUB_BATCH_SIZE) {
+    const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+    const batches = Math.ceil(files.length / HACKATHON_GITHUB_BATCH_SIZE);
+    for (let i = 0; i < files.length; i += HACKATHON_GITHUB_BATCH_SIZE) {
+      const batch = files.slice(i, i + HACKATHON_GITHUB_BATCH_SIZE);
+      const n = Math.floor(i / HACKATHON_GITHUB_BATCH_SIZE) + 1;
+      await pushFilesToRepoSingle(
+        token,
+        owner,
+        repo,
+        batch,
+        `XROGA hackathon batch ${n}/${batches} — ${stamp}`,
+        branch
+      );
+    }
+    return;
+  }
+  await pushFilesToRepoSingle(token, owner, repo, files, message, branch);
+}
+
+async function pushFilesToRepoSingle(
+  token: string,
+  owner: string,
+  repo: string,
+  files: ProjectFile[],
+  message: string,
+  branch = 'main'
+): Promise<void> {
   const empty = await isRepoEmpty(token, owner, repo);
 
   if (empty) {
@@ -342,7 +371,7 @@ export async function pushBuildToGitHub(
       owner!,
       repo!,
       files,
-      `XROGA build — ${new Date().toISOString()}`,
+      `XROGA build update — ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`,
       branch
     );
     invalidateRepoAnalysis(userId, selectedRepo);
@@ -752,7 +781,7 @@ export async function analyzeGitHubRepo(
       const tree = (await treeRes.json()) as { tree?: Array<{ path: string; type: string; size?: number }> };
       const blobs = (tree.tree ?? []).filter((t) => t.type === 'blob');
       fileCount = blobs.length;
-      treeSample = blobs.slice(0, 60).map((f) => ({ path: f.path, size: f.size }));
+      treeSample = blobs.slice(0, HACKATHON_REPO_TREE_SAMPLE).map((f) => ({ path: f.path, size: f.size }));
       topLevelEntries = [
         ...new Set(blobs.map((f) => f.path.split('/')[0]).filter((e): e is string => Boolean(e))),
       ].slice(0, 24);

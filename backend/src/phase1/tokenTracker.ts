@@ -2,7 +2,7 @@ import { QUOTA } from './models.js';
 import { phase1Logger } from './logger.js';
 import type { TokenUsageSnapshot } from './types.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
-import { quotaForPlanTier } from '../config/modelRegistry.js';
+import { quotaForPlanTier, inputLimitForPlan, outputLimitForPlan } from '../config/modelRegistry.js';
 
 interface UserUsageRecord {
   inputTokens: number;
@@ -120,8 +120,8 @@ async function getTotalLimit(userId: string, record: UserUsageRecord): Promise<n
 }
 
 function computeSnapshot(record: UserUsageRecord, totalLimit: number): TokenUsageSnapshot {
-  const inputLimit = Math.floor(totalLimit * 0.67);
-  const outputLimit = totalLimit - inputLimit;
+  const inputLimit = inputLimitForPlan(totalLimit);
+  const outputLimit = outputLimitForPlan(totalLimit);
 
   const totalUsed = record.inputTokens + record.outputTokens;
   const totalRemaining = Math.max(0, totalLimit - totalUsed);
@@ -161,8 +161,8 @@ export async function checkQuota(
   const record = await getRecord(userId);
   const totalLimit = await getTotalLimit(userId, record);
   const snapshot = computeSnapshot(record, totalLimit);
-  const inputLimit = Math.floor(totalLimit * 0.67);
-  const outputLimit = totalLimit - inputLimit;
+  const inputLimit = inputLimitForPlan(totalLimit);
+  const outputLimit = outputLimitForPlan(totalLimit);
 
   const wouldExceedTotal =
     record.inputTokens + record.outputTokens + estimatedInput + estimatedOutput > totalLimit;

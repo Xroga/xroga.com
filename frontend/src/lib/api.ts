@@ -417,6 +417,7 @@ export const api = {
   },
   projects: {
     list: () => apiFetch<Project[]>('/api/projects'),
+    listGithub: () => apiFetch<Project[]>('/api/projects?github=1'),
     get: (id: string) => apiFetch<ProjectDetail>(`/api/projects/${id}`),
     files: (id: string) => apiFetch<ProjectFile[]>(`/api/projects/${id}/files`),
     getCode: (id: string) =>
@@ -431,6 +432,8 @@ export const api = {
       user_prompt?: string;
     }) =>
       apiFetch<Project>('/api/projects', { method: 'POST', body: JSON.stringify(body) }),
+    delete: (id: string) =>
+      apiFetch<{ success: boolean; id: string }>(`/api/projects/${id}`, { method: 'DELETE' }),
   },
   profile: {
     get: () => apiFetch<Profile>('/api/profile'),

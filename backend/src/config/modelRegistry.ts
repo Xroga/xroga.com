@@ -3,6 +3,7 @@
  * Users see "Xroga AI" only; this file is internal.
  *
  * Core stack: DeepSeek Flash + Pro, Grok 4 reasoning, Claude Sonnet 5, Claude Opus.
+ * Input and output token pools are tracked separately (not 7M all-input).
  */
 
 export type XrogaModelRole =
@@ -19,10 +20,11 @@ export interface ModelSpec {
   provider: 'deepseek' | 'xai' | 'anthropic' | 'google';
   inputPer1M: number;
   outputPer1M: number;
-  /** Typical % of build pipeline token volume (core five models sum to 100) */
-  useCaseSharePct: number;
+  /** % of monthly INPUT token pool this model typically consumes */
+  inputSharePct: number;
+  /** % of monthly OUTPUT token pool this model typically consumes */
+  outputSharePct: number;
   description: string;
-  /** Optional post-promo API pricing */
   inputPer1MAfterPromo?: number;
   outputPer1MAfterPromo?: number;
   promoEndsAt?: string;
@@ -32,14 +34,29 @@ function envModel(key: string, fallback: string): string {
   return process.env[key]?.trim() || fallback;
 }
 
-/** Free / Spark monthly token pool */
-export const FREE_PLAN_TOKENS = 7_000_000;
+/** Free / Spark monthly pools — more input, less output (67% / 33%) */
+export const FREE_PLAN_INPUT_TOKENS = 4_700_000;
+export const FREE_PLAN_OUTPUT_TOKENS = 2_300_000;
+export const FREE_PLAN_TOKENS = FREE_PLAN_INPUT_TOKENS + FREE_PLAN_OUTPUT_TOKENS;
 
-/** Input/output split aligned with tokenTracker (67% in / 33% out) */
-export const TOKEN_IO_SPLIT = { input: 0.67, output: 0.33 } as const;
+/** External APIs (not counted in LLM token quota) */
+export const WEB_RESEARCH_COST = {
+  /** Tavily ~$0.008 per search (basic) */
+  tavilyPerSearchUsd: 0.008,
+  /** Avg Tavily calls per build when TAVILY_API_KEY set (hackathon/UI/critical) */
+  tavilySearchesPerBuild: 2,
+  /** SearXNG self-hosted / public instances */
+  searxngPerSearchUsd: 0,
+  searxngSearchesPerBuild: 3,
+} as const;
 
 /** Sonnet 5 launch pricing ends Aug 31, 2026 — then $3/$15 per MTok */
 export const SONNET_5_PROMO_ENDS = '2026-08-31';
+
+/** Hackathon / large repos — store more files per project */
+export const HACKATHON_MAX_STORED_FILES = 200;
+export const HACKATHON_GITHUB_BATCH_SIZE = 35;
+export const HACKATHON_REPO_TREE_SAMPLE = 500;
 
 export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
   deepseek_flash: {
@@ -48,8 +65,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.14,
     outputPer1M: 0.28,
-    useCaseSharePct: 68,
-    description: 'Workhorse — bulk code, file reads, step fixes, verify, condense',
+    inputSharePct: 38,
+    outputSharePct: 40,
+    description: 'Workhorse — bulk code output, file reads, fixes, verify',
   },
   deepseek_pro: {
     role: 'deepseek_pro',
@@ -57,8 +75,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.435,
     outputPer1M: 0.87,
-    useCaseSharePct: 12,
-    description: 'Architecture brain — master plan, security, DB/API design, hard logic',
+    inputSharePct: 36,
+    outputSharePct: 32,
+    description: 'DeepSeek Pro — architecture, repo analysis, plan review, updates, hard logic',
   },
   grok_reasoning: {
     role: 'grok_reasoning',
@@ -66,8 +85,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'xai',
     inputPer1M: 0.2,
     outputPer1M: 0.5,
-    useCaseSharePct: 4,
-    description: 'Grok 4 reasoning — strategy, hackathon ideation, diagnosis',
+    inputSharePct: 14,
+    outputSharePct: 12,
+    description: 'Grok 4 — strategy, research synthesis, hackathon QA, diagnosis',
   },
   claude_sonnet: {
     role: 'claude_sonnet',
@@ -78,8 +98,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     inputPer1MAfterPromo: 3.0,
     outputPer1MAfterPromo: 15.0,
     promoEndsAt: SONNET_5_PROMO_ENDS,
-    useCaseSharePct: 12,
-    description: 'Claude Sonnet 5 — UI/UX polish, responsive CSS, a11y (intro $2/$10 MTok)',
+    inputSharePct: 8,
+    outputSharePct: 8,
+    description: 'Claude Sonnet 5 — UI polish only (intro $2/$10 MTok thru Aug 2026)',
   },
   claude_opus: {
     role: 'claude_opus',
@@ -87,8 +108,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'anthropic',
     inputPer1M: 5.0,
     outputPer1M: 25.0,
-    useCaseSharePct: 4,
-    description: 'Quality gate — crypto / hackathon final QA, edge cases, security',
+    inputSharePct: 4,
+    outputSharePct: 2,
+    description: 'Opus — crypto final QA only (minimal use)',
   },
   gemini_flash: {
     role: 'gemini_flash',
@@ -96,12 +118,12 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'google',
     inputPer1M: 0.1,
     outputPer1M: 0.4,
-    useCaseSharePct: 0,
-    description: 'Optional cross-check fallback only — not counted in core 7M mix',
+    inputSharePct: 0,
+    outputSharePct: 0,
+    description: 'Optional cross-check fallback — not in core mix',
   },
 };
 
-/** Core five models used in builds (excludes optional Gemini) */
 export const CORE_BUILD_MODELS: XrogaModelRole[] = [
   'deepseek_flash',
   'deepseek_pro',
@@ -113,10 +135,13 @@ export const CORE_BUILD_MODELS: XrogaModelRole[] = [
 export interface ModelQuotaSlice {
   role: XrogaModelRole;
   label: string;
-  sharePct: number;
-  totalTokens: number;
+  inputSharePct: number;
+  outputSharePct: number;
   inputTokens: number;
   outputTokens: number;
+  totalTokens: number;
+  inputUsdEstimate: number;
+  outputUsdEstimate: number;
   introUsdEstimate: number;
   postPromoUsdEstimate?: number;
 }
@@ -130,13 +155,26 @@ const MODEL_LABELS: Record<XrogaModelRole, string> = {
   gemini_flash: 'Gemini Flash',
 };
 
-/** How the free 7M token pool is allocated across the core model stack */
-export function quotaAllocationForPlan(totalTokens = FREE_PLAN_TOKENS): ModelQuotaSlice[] {
+export function inputLimitForPlan(totalTokens: number): number {
+  const ratio = FREE_PLAN_INPUT_TOKENS / FREE_PLAN_TOKENS;
+  return Math.floor(totalTokens * ratio);
+}
+
+export function outputLimitForPlan(totalTokens: number): number {
+  return totalTokens - inputLimitForPlan(totalTokens);
+}
+
+/** Per-model slice of separate input + output pools (default 3.5M + 3.5M) */
+export function quotaAllocationForPlan(
+  inputPool = FREE_PLAN_INPUT_TOKENS,
+  outputPool = FREE_PLAN_OUTPUT_TOKENS
+): ModelQuotaSlice[] {
   return CORE_BUILD_MODELS.map((role) => {
     const m = XROGA_MODELS[role];
-    const total = Math.round((totalTokens * m.useCaseSharePct) / 100);
-    const inputTokens = Math.round(total * TOKEN_IO_SPLIT.input);
-    const outputTokens = total - inputTokens;
+    const inputTokens = Math.round((inputPool * m.inputSharePct) / 100);
+    const outputTokens = Math.round((outputPool * m.outputSharePct) / 100);
+    const inputUsdEstimate = (inputTokens / 1_000_000) * m.inputPer1M;
+    const outputUsdEstimate = (outputTokens / 1_000_000) * m.outputPer1M;
     const introUsdEstimate = estimateUsdCost(inputTokens, outputTokens, role);
     const postPromoUsdEstimate =
       m.inputPer1MAfterPromo != null && m.outputPer1MAfterPromo != null
@@ -147,28 +185,86 @@ export function quotaAllocationForPlan(totalTokens = FREE_PLAN_TOKENS): ModelQuo
     return {
       role,
       label: MODEL_LABELS[role],
-      sharePct: m.useCaseSharePct,
-      totalTokens: total,
+      inputSharePct: m.inputSharePct,
+      outputSharePct: m.outputSharePct,
       inputTokens,
       outputTokens,
+      totalTokens: inputTokens + outputTokens,
+      inputUsdEstimate: (inputTokens / 1_000_000) * m.inputPer1M,
+      outputUsdEstimate,
       introUsdEstimate,
       postPromoUsdEstimate,
     };
   });
 }
 
-/** Sum of intro API $ if entire 7M pool were consumed at target mix */
-export function estimateFullQuotaIntroUsd(totalTokens = FREE_PLAN_TOKENS): number {
-  return quotaAllocationForPlan(totalTokens).reduce((sum, s) => sum + s.introUsdEstimate, 0);
+export function estimateFullQuotaIntroUsd(
+  inputPool = FREE_PLAN_INPUT_TOKENS,
+  outputPool = FREE_PLAN_OUTPUT_TOKENS
+): number {
+  return quotaAllocationForPlan(inputPool, outputPool).reduce((sum, s) => sum + s.introUsdEstimate, 0);
 }
 
-/** Estimated tokens reserved before a full site build starts */
 export const BUILD_PREFLIGHT_ESTIMATE = {
-  input: 125_000,
-  output: 95_000,
+  input: 145_000,
+  output: 88_000,
 };
 
-/** Plan monthly token quotas (unpaid = free testing tier) */
+/** Typical token burn for one advanced site build (input-heavy) */
+export const TYPICAL_BUILD_TOKENS = BUILD_PREFLIGHT_ESTIMATE;
+
+/** Estimate provider API $ for one build at target model mix */
+export function estimateSingleBuildApiUsd(): {
+  llmUsd: number;
+  webResearchUsd: number;
+  totalUsd: number;
+  inputTokens: number;
+  outputTokens: number;
+} {
+  const { input, output } = TYPICAL_BUILD_TOKENS;
+  let llmUsd = 0;
+  for (const role of CORE_BUILD_MODELS) {
+    const m = XROGA_MODELS[role];
+    const inTok = Math.round((input * m.inputSharePct) / 100);
+    const outTok = Math.round((output * m.outputSharePct) / 100);
+    llmUsd += estimateUsdCost(inTok, outTok, role);
+  }
+  const webResearchUsd =
+    WEB_RESEARCH_COST.tavilySearchesPerBuild * WEB_RESEARCH_COST.tavilyPerSearchUsd;
+  return {
+    llmUsd: Math.round(llmUsd * 1000) / 1000,
+    webResearchUsd: Math.round(webResearchUsd * 1000) / 1000,
+    totalUsd: Math.round((llmUsd + webResearchUsd) * 1000) / 1000,
+    inputTokens: input,
+    outputTokens: output,
+  };
+}
+
+/** Full provider API $ if entire 7M user quota is consumed at target mix */
+export function estimateFullQuotaBreakdownUsd(
+  inputPool = FREE_PLAN_INPUT_TOKENS,
+  outputPool = FREE_PLAN_OUTPUT_TOKENS
+): {
+  llmUsd: number;
+  webResearchUsdEstimate: number;
+  totalUsd: number;
+  perModel: ModelQuotaSlice[];
+} {
+  const perModel = quotaAllocationForPlan(inputPool, outputPool);
+  const llmUsd = perModel.reduce((s, m) => s + m.introUsdEstimate, 0);
+  const buildsAtTypical = Math.floor(
+    FREE_PLAN_TOKENS / (TYPICAL_BUILD_TOKENS.input + TYPICAL_BUILD_TOKENS.output)
+  );
+  const webResearchUsdEstimate =
+    buildsAtTypical * WEB_RESEARCH_COST.tavilySearchesPerBuild * WEB_RESEARCH_COST.tavilyPerSearchUsd;
+  return {
+    llmUsd: Math.round(llmUsd * 100) / 100,
+    webResearchUsdEstimate: Math.round(webResearchUsdEstimate * 100) / 100,
+    totalUsd: Math.round((llmUsd + webResearchUsdEstimate) * 100) / 100,
+    perModel,
+  };
+}
+
 export const PLAN_TOKEN_QUOTA: Record<string, number> = {
   unpaid: FREE_PLAN_TOKENS,
   spark: FREE_PLAN_TOKENS,
@@ -190,4 +286,10 @@ export function estimateUsdCost(inputTokens: number, outputTokens: number, role:
 
 export function isSonnet5IntroPricingActive(asOf = new Date()): boolean {
   return asOf <= new Date(`${SONNET_5_PROMO_ENDS}T23:59:59Z`);
+}
+
+/** @deprecated use inputSharePct on ModelSpec */
+export function useCaseSharePct(role: XrogaModelRole): number {
+  const m = XROGA_MODELS[role];
+  return Math.round((m.inputSharePct + m.outputSharePct) / 2);
 }

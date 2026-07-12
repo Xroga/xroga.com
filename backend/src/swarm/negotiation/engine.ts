@@ -390,7 +390,7 @@ async function deepseekCall(system: string, user: string, maxTokens = 8192): Pro
   return deepseekGenerate(user);
 }
 
-/** Tracked DeepSeek Flash — bulk code, file reads, reviews, fixes */
+/** Tracked DeepSeek Flash — bulk code, file reads, verify, fixes */
 async function deepseekFlashCall(
   system: string,
   user: string,
@@ -398,6 +398,17 @@ async function deepseekFlashCall(
   tracker?: BuildUsageTracker
 ): Promise<string> {
   const { text } = await buildModelCall('flash', system, user, maxTokens, tracker);
+  return text;
+}
+
+/** Tracked DeepSeek Pro — architecture, plan review, repo analysis, hard logic */
+async function deepseekProCall(
+  system: string,
+  user: string,
+  maxTokens = 8192,
+  tracker?: BuildUsageTracker
+): Promise<string> {
+  const { text } = await buildModelCall('pro', system, user, maxTokens, tracker);
   return text;
 }
 
@@ -514,7 +525,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       const searchQuery = isWebsiteUpdateRequest(userPrompt)
         ? `${currentMessage} UI patterns best practices`
         : `${inferBusinessLabel(userPrompt)} ${buildType} requirements 2026`;
-      const results = await webSearch(searchQuery, { maxResults: 4 });
+      const results = await webSearch(searchQuery, {
+        maxResults: 4,
+        forceTavily: /\bhackathon|okx|asp\b|crypto|web3\b/i.test(userPrompt),
+      });
       if (results.length) {
         webResearchNote = formatWebSearchContext(results);
         emit(
@@ -554,6 +568,26 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       }
     } catch {
       /* optional */
+    }
+
+    if (webResearchNote || uiTrendNote || hackathonNote) {
+      try {
+        const { text: synthesis } = await buildModelCall(
+          'grok',
+          `You are XROGA Strategist (Grok 4). Synthesize web/UI/hackathon research into build priorities, risks, and sponsor gaps. Under 350 words.`,
+          `User:\n${userPrompt}\n\n${webResearchNote}\n${uiTrendNote}\n${hackathonNote}`,
+          3072,
+          usageTracker
+        );
+        if (synthesis?.trim()) {
+          webResearchNote = `${webResearchNote}\n\nGrok research synthesis:\n${synthesis}`;
+          emit(ctx, 0, xrogaArchitectureLine('Grok — research synthesis from web sources'), 'architect', todos, 'XROGA Architect', {
+            userPhase: 1,
+          });
+        }
+      } catch {
+        /* optional grok */
+      }
     }
   }
 
@@ -653,7 +687,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     clarifiedBrief = inferDefaultBuildBrief(userPrompt, memoryNote);
     try {
       const { text: refined, modelLabel } = await buildModelCall(
-        'flash',
+        'pro',
         PHASE_0_DISCOVERY,
         `User request:\n${discoveryContext}\n\nDefault brief:\n${clarifiedBrief}\n\nRefine the Fully Clarified Project Brief — do NOT ask questions.`,
         8192,
@@ -773,7 +807,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         userPhase: 1,
       });
       try {
-        masterPlan = (await buildModelCall('flash', PHASE_1_PLANNING_GROQ, masterPlan, 512, usageTracker)).text;
+        masterPlan = (await buildModelCall('pro', PHASE_1_PLANNING_GROQ, masterPlan, 1024, usageTracker)).text;
       } catch {
         /* keep plan */
       }
@@ -793,7 +827,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   if (!isUpdateBuild) {
   for (let i = 0; i < MAX_PLAN_ITERATIONS; i++) {
     emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect', { userPhase: 1 });
-    const review = await deepseekFlashCall(
+    const review = await deepseekProCall(
       PHASE_2_DEEPSEEK_REVIEW,
       `User query:\n${userPrompt}\n\nMaster Plan:\n${approvedPlan}`,
       4096,
@@ -885,8 +919,18 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     let stepCode = '';
     try {
       stepCode = await withBuildHeartbeat(ctx, todos, async () => {
+        const role =
+          isUpdateBuild || hackathonNote || repoAnalysisSummary
+            ? si % 2 === 0
+              ? 'pro'
+              : 'flash'
+            : si === 0
+              ? 'flash'
+              : si % 2 === 0
+                ? 'pro'
+                : 'flash';
         const { text } = await buildModelCall(
-          'flash',
+          role,
           executePrompt,
           `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
           BUILD_STEP_MAX_TOKENS,
@@ -917,7 +961,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       emit(ctx, 5, failMsg, 'debugger', todos, 'XROGA Architect');
       emit(ctx, 5, BRAND.phase5.correcting, 'debugger', todos, 'XROGA Architect');
       const errorPlan = failures.map((f) => `[${f.agent}] ${f.report}`).join('\n');
-      stepCode = await deepseekFlashCall(
+      stepCode = await deepseekProCall(
         PHASE_5_CORRECT,
         `Failures:\n${errorPlan}\n\nCode:\n${stepCode}`,
         BUILD_STEP_MAX_TOKENS,
@@ -964,7 +1008,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     userPhase: 2,
   });
   try {
-    const reviewRole = buildType === 'crypto' || hackathonNote ? 'opus' : 'flash';
+    const reviewRole = buildType === 'crypto' ? 'opus' : hackathonNote ? 'grok' : 'pro';
     const { text: qualityReview } = await buildModelCall(
       reviewRole,
       PHASE_6_FINAL,
@@ -1121,6 +1165,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         githubRepoName: pipeline.github.repoName,
         deployUrl: pipeline.deployVerified ? pipeline.deployUrl : undefined,
         projectFiles,
+        isHackathon: Boolean(hackathonNote),
+        summaryText: featureOutput.summary,
       });
       void notifyBuildComplete(userId, {
         projectName,
@@ -1180,6 +1226,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             githubRepoUrl: github.htmlUrl,
             githubRepoName: github.repoName,
             projectFiles,
+            isHackathon: Boolean(hackathonNote),
+            summaryText: featureOutput.summary,
           });
           void notifyBuildComplete(userId, {
             projectName,

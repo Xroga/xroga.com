@@ -7,9 +7,14 @@ import { getSecret, hasSecret } from '../config/envSecrets.js';
 import { phase1Logger } from '../phase1/logger.js';
 import {
   FREE_PLAN_TOKENS,
+  FREE_PLAN_INPUT_TOKENS,
+  FREE_PLAN_OUTPUT_TOKENS,
   quotaAllocationForPlan,
   estimateFullQuotaIntroUsd,
+  estimateFullQuotaBreakdownUsd,
+  estimateSingleBuildApiUsd,
   isSonnet5IntroPricingActive,
+  WEB_RESEARCH_COST,
 } from '../config/modelRegistry.js';
 
 const router = Router();
@@ -52,11 +57,18 @@ router.get('/health', (_req, res) => {
     },
     quota: {
       monthlyTotalTokens: FREE_PLAN_TOKENS,
-      inputTokens: Math.floor(FREE_PLAN_TOKENS * 0.67),
-      outputTokens: FREE_PLAN_TOKENS - Math.floor(FREE_PLAN_TOKENS * 0.67),
+      inputTokens: FREE_PLAN_INPUT_TOKENS,
+      outputTokens: FREE_PLAN_OUTPUT_TOKENS,
       emergencyTokens: 250_000,
-      modelMix: quotaAllocationForPlan(FREE_PLAN_TOKENS),
-      introApiUsdIfFullPoolUsed: Math.round(estimateFullQuotaIntroUsd(FREE_PLAN_TOKENS) * 100) / 100,
+      modelMix: quotaAllocationForPlan(FREE_PLAN_INPUT_TOKENS, FREE_PLAN_OUTPUT_TOKENS),
+      introApiUsdIfFullPoolUsed: Math.round(estimateFullQuotaIntroUsd() * 100) / 100,
+      fullQuotaCost: estimateFullQuotaBreakdownUsd(),
+      singleBuildCost: estimateSingleBuildApiUsd(),
+      webResearch: {
+        tavilyPerSearchUsd: WEB_RESEARCH_COST.tavilyPerSearchUsd,
+        pipeline: 'SearXNG free → Tavily supplement → Tavily+SearXNG on hackathon/crypto/critical',
+        buildPhases: ['Phase 0 webSearch', 'uiTrendResearch', 'hackathonResearch (Tavily on OKX/ASP)'],
+      },
       sonnet5IntroPricingActive: isSonnet5IntroPricingActive(),
     },
     rateLimit: '100 requests/minute/user',

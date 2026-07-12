@@ -6,6 +6,7 @@ import { api, type GitHubRepo } from '@/lib/api';
 import { getCachedRepoAnalysis, setCachedRepoAnalysis } from '@/lib/repoAnalysisCache';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
 import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
+import { GITHUB_REPO_CONTEXT_EVENT } from '@/lib/githubProjectEvents';
 import { cn } from '@/lib/utils';
 
 const STORAGE_KEY = 'xroga-repo-context';
@@ -134,8 +135,21 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
   useEffect(() => {
     void refresh();
     const onConnected = () => void refresh();
+    const onRepoContext = (e: Event) => {
+      const detail = (e as CustomEvent<{ repo?: string; branch?: string }>).detail;
+      if (!detail?.repo?.includes('/')) return;
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ repo: detail.repo, branch: detail.branch ?? 'main' }),
+      );
+      void refresh();
+    };
     window.addEventListener(GITHUB_CONNECTED_EVENT, onConnected);
-    return () => window.removeEventListener(GITHUB_CONNECTED_EVENT, onConnected);
+    window.addEventListener(GITHUB_REPO_CONTEXT_EVENT, onRepoContext);
+    return () => {
+      window.removeEventListener(GITHUB_CONNECTED_EVENT, onConnected);
+      window.removeEventListener(GITHUB_REPO_CONTEXT_EVENT, onRepoContext);
+    };
   }, [refresh]);
 
   useEffect(() => {
