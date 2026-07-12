@@ -180,19 +180,61 @@ export const PLATFORM_PARTS = [
 ];
 
 export const MODEL_TABLE = [
-  { name: 'DeepSeek Flash', role: 'Workhorse', usage: '80%', tasks: 'Bulk code, file reading, docs, tests', cost: '$0.14/$0.28 per 1M' },
-  { name: 'DeepSeek Pro', role: 'Brain', usage: '15%', tasks: 'Architecture, security, DB design', cost: '$0.435/$0.87 per 1M' },
-  { name: 'Grok', role: 'Strategist', usage: '5%', tasks: 'Business logic, diagnosis, chain-of-thought', cost: '$0.20/$0.50 per 1M' },
-  { name: 'Claude Sonnet', role: 'Designer', usage: '5%', tasks: 'UI/UX, Tailwind, responsive design', cost: '$2/$10 per 1M' },
-  { name: 'Claude Opus', role: 'Quality gate', usage: '<1%', tasks: 'Final review, edge cases, security', cost: '$5/$25 per 1M' },
-];
+  {
+    name: 'DeepSeek Flash',
+    role: 'Workhorse',
+    usage: '68%',
+    tokens7M: '4.76M',
+    tasks: 'Bulk code, file reading, fixes, verify passes',
+    cost: '$0.14 / $0.28 per 1M',
+  },
+  {
+    name: 'DeepSeek Pro',
+    role: 'Brain',
+    usage: '12%',
+    tokens7M: '840K',
+    tasks: 'Architecture, security, DB/API design',
+    cost: '$0.435 / $0.87 per 1M',
+  },
+  {
+    name: 'Grok 4 Reasoning',
+    role: 'Strategist',
+    usage: '4%',
+    tokens7M: '280K',
+    tasks: 'Business logic, hackathon strategy, diagnosis',
+    cost: '$0.20 / $0.50 per 1M',
+  },
+  {
+    name: 'Claude Sonnet 5',
+    role: 'Designer',
+    usage: '12%',
+    tokens7M: '840K',
+    tasks: 'UI/UX polish, responsive CSS, a11y',
+    cost: '$2 / $10 per 1M (intro thru Aug 2026)',
+  },
+  {
+    name: 'Claude Opus',
+    role: 'Quality gate',
+    usage: '4%',
+    tokens7M: '280K',
+    tasks: 'Crypto/hackathon final QA, edge cases',
+    cost: '$5 / $25 per 1M',
+  },
+] as const;
+
+/** 7M free token pool — how each model consumes credits at target mix */
+export const QUOTA_7M_BREAKDOWN = MODEL_TABLE.map((m) => ({
+  model: m.name,
+  share: m.usage,
+  tokens: m.tokens7M,
+}));
 
 export const BUILD_STEPS = [
-  'Understanding & planning (DeepSeek Pro + Grok)',
-  'GitHub connection & full repository analysis',
-  'Architecture design & code generation',
-  'Integration wiring (Supabase, Paddle, Cloudflare)',
-  'Error detection & multi-model review',
+  'Understanding & planning (DeepSeek Pro + Grok 4 reasoning)',
+  'GitHub connection & full repository analysis (DeepSeek Flash)',
+  'Bulk code generation (DeepSeek Flash)',
+  'UI polish (Claude Sonnet 5)',
+  'Quality gate — Opus on crypto/hackathon, Flash + Pro otherwise',
   'Auto-deploy to Vercel + CDN',
   'Live preview, GitHub access, documentation',
 ];

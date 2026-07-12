@@ -390,6 +390,17 @@ async function deepseekCall(system: string, user: string, maxTokens = 8192): Pro
   return deepseekGenerate(user);
 }
 
+/** Tracked DeepSeek Flash — bulk code, file reads, reviews, fixes */
+async function deepseekFlashCall(
+  system: string,
+  user: string,
+  maxTokens = 8192,
+  tracker?: BuildUsageTracker
+): Promise<string> {
+  const { text } = await buildModelCall('flash', system, user, maxTokens, tracker);
+  return text;
+}
+
 const BUILD_HEARTBEAT_MSGS = [
   '⚙️ XROGA AI Black Hole — writing HTML structure…',
   '⚙️ BLACK HOLE V∞ — generating CSS styles…',
@@ -642,7 +653,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     clarifiedBrief = inferDefaultBuildBrief(userPrompt, memoryNote);
     try {
       const { text: refined, modelLabel } = await buildModelCall(
-        'pro',
+        'flash',
         PHASE_0_DISCOVERY,
         `User request:\n${discoveryContext}\n\nDefault brief:\n${clarifiedBrief}\n\nRefine the Fully Clarified Project Brief — do NOT ask questions.`,
         8192,
@@ -718,7 +729,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   } else if (isGameBuild) {
     try {
       const { text, modelLabel } = await buildModelCall(
-        'pro',
+        'flash',
         PHASE_1_GAME_PLANNING,
         `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`,
         8192,
@@ -782,9 +793,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   if (!isUpdateBuild) {
   for (let i = 0; i < MAX_PLAN_ITERATIONS; i++) {
     emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect', { userPhase: 1 });
-    const review = await deepseekCall(
+    const review = await deepseekFlashCall(
       PHASE_2_DEEPSEEK_REVIEW,
-      `User query:\n${userPrompt}\n\nMaster Plan:\n${approvedPlan}`
+      `User query:\n${userPrompt}\n\nMaster Plan:\n${approvedPlan}`,
+      4096,
+      usageTracker
     );
 
     if (isPass(review)) {
@@ -873,7 +886,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     try {
       stepCode = await withBuildHeartbeat(ctx, todos, async () => {
         const { text } = await buildModelCall(
-          si === 0 ? 'flash' : 'pro',
+          'flash',
           executePrompt,
           `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
           BUILD_STEP_MAX_TOKENS,
@@ -904,9 +917,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       emit(ctx, 5, failMsg, 'debugger', todos, 'XROGA Architect');
       emit(ctx, 5, BRAND.phase5.correcting, 'debugger', todos, 'XROGA Architect');
       const errorPlan = failures.map((f) => `[${f.agent}] ${f.report}`).join('\n');
-      stepCode = await deepseekCall(
+      stepCode = await deepseekFlashCall(
         PHASE_5_CORRECT,
-        `Failures:\n${errorPlan}\n\nCode:\n${stepCode}`
+        `Failures:\n${errorPlan}\n\nCode:\n${stepCode}`,
+        BUILD_STEP_MAX_TOKENS,
+        usageTracker
       );
       totalCorrections++;
       emit(ctx, 5, BRAND.phase5.fixed, 'debugger', todos, 'XROGA Architect');
@@ -949,7 +964,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     userPhase: 2,
   });
   try {
-    const reviewRole = buildType === 'crypto' || hackathonNote ? 'opus' : 'pro';
+    const reviewRole = buildType === 'crypto' || hackathonNote ? 'opus' : 'flash';
     const { text: qualityReview } = await buildModelCall(
       reviewRole,
       PHASE_6_FINAL,
@@ -959,7 +974,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     );
     if (!isPass(qualityReview)) {
       emit(ctx, 5, xrogaArchitectureLine('Applying quality fixes from review'), 'debugger', todos, 'XROGA Architect');
-      assembledCode = await deepseekCall(PHASE_5_CORRECT, `Quality review:\n${qualityReview}\n\nCode:\n${assembledCode}`);
+      assembledCode = await deepseekFlashCall(
+        PHASE_5_CORRECT,
+        `Quality review:\n${qualityReview}\n\nCode:\n${assembledCode}`,
+        BUILD_STEP_MAX_TOKENS,
+        usageTracker
+      );
       totalCorrections++;
     }
   } catch {
@@ -970,7 +990,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     userPhase: 2,
   });
   const finalChecks = await Promise.allSettled([
-    deepseekCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode}`, 4096),
+    deepseekFlashCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode}`, 4096, usageTracker),
     geminiCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 50000)}`, 512),
     buildModelCall('flash', PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 40000)}`, 512, usageTracker).then(
       (r) => r.text
@@ -983,7 +1003,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   const finalFail = finalChecks.some((r) => r.status === 'fulfilled' && !isPass(r.value as string));
   if (finalFail) {
     emit(ctx, 5, BRAND.phase5.correcting, 'debugger', todos, 'XROGA Architect');
-    assembledCode = await deepseekCall(PHASE_5_CORRECT, `Final review issues\n\n${assembledCode}`);
+    assembledCode = await deepseekFlashCall(
+      PHASE_5_CORRECT,
+      `Final review issues\n\n${assembledCode}`,
+      BUILD_STEP_MAX_TOKENS,
+      usageTracker
+    );
     totalCorrections++;
   } else {
     emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective', { userPhase: 2 });

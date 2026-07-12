@@ -1,7 +1,6 @@
 /**
  * XROGA build model router — token-metered, cost-optimized.
- * DeepSeek volume | Grok strategy | Claude Sonnet polish | Opus rare QA
- * Groq minimized — flash role uses DeepSeek instead.
+ * DeepSeek Flash workhorse (~70%) | Grok strategy | Claude Sonnet polish | Opus rare QA
  */
 
 import { getSecret } from '../../config/envSecrets.js';
@@ -22,8 +21,8 @@ const ROLE_MAP: Record<BuildModelRole, XrogaModelRole> = {
 const ROLE_LABEL: Record<BuildModelRole, string> = {
   flash: 'DeepSeek Flash',
   pro: 'DeepSeek Pro',
-  grok: 'Grok Reasoning',
-  sonnet: 'Claude Sonnet',
+  grok: 'Grok 4 Reasoning',
+  sonnet: 'Claude Sonnet 5',
   opus: 'Claude Opus',
 };
 
@@ -188,12 +187,12 @@ export async function buildModelCall(
     tracker?.add(xrogaRole, result.inputTokens, result.outputTokens);
     return { text: result.text, modelLabel: label, inputTokens: result.inputTokens, outputTokens: result.outputTokens };
   } catch (err) {
-    console.warn(`[BuildModel] ${label} unavailable — DeepSeek Pro fallback:`, (err as Error).message?.slice(0, 120));
-    const result = await deepseekCall(XROGA_MODELS.deepseek_pro.apiModel, system, user, maxTokens);
-    tracker?.add('deepseek_pro', result.inputTokens, result.outputTokens);
+    console.warn(`[BuildModel] ${label} unavailable — DeepSeek Flash fallback:`, (err as Error).message?.slice(0, 120));
+    const result = await deepseekCall(XROGA_MODELS.deepseek_flash.apiModel, system, user, maxTokens);
+    tracker?.add('deepseek_flash', result.inputTokens, result.outputTokens);
     return {
       text: result.text,
-      modelLabel: 'DeepSeek Pro',
+      modelLabel: 'DeepSeek Flash',
       inputTokens: result.inputTokens,
       outputTokens: result.outputTokens,
     };
