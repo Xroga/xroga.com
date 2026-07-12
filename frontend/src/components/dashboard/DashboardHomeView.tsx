@@ -213,20 +213,26 @@ export function DashboardHomeView() {
         </WidgetCard>
 
         {tokens?.byModel?.length ? (
-          <WidgetCard title="AI model usage" icon={Activity} className="md:col-span-2">
+          <WidgetCard title="Black Hole V∞ engine usage" icon={Activity} className="md:col-span-2">
             <p className="text-xs text-[var(--muted)] mb-3">
-              Per-model allocation from your 7M pool — each model has its own limit so usage stays fair.
+              Per-engine allocation from your 7M token pool — each Xroga AI tier has its own limit. Provider names
+              are never shown; usage is deducted automatically on every build, update, and chat.
             </p>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {tokens.byModel.map((m) => (
                 <div key={m.role} className="rounded-lg border border-[var(--card-border)] p-3 space-y-1.5">
-                  <div className="flex justify-between items-center gap-2">
-                    <span className="text-xs font-semibold truncate">{m.label}</span>
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="min-w-0">
+                      <span className="text-xs font-semibold block truncate">{m.label}</span>
+                      {m.tagline ? (
+                        <span className="text-[10px] text-[var(--muted)] line-clamp-2">{m.tagline}</span>
+                      ) : null}
+                    </div>
                     <span className="text-[10px] text-[var(--muted)] shrink-0">{m.percentUsed}%</span>
                   </div>
                   <ProgressBar percent={m.percentUsed} className="h-1.5" />
                   <p className="text-[10px] font-mono text-[var(--muted)]">
-                    {formatTokens(m.totalUsed)} / {formatTokens(m.totalLimit)}
+                    {formatTokens(m.totalUsed)} / {formatTokens(m.totalLimit)} tokens
                   </p>
                 </div>
               ))}

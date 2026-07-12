@@ -5,6 +5,7 @@
 
 import { getSecret } from '../../config/envSecrets.js';
 import { XROGA_MODELS, type XrogaModelRole } from '../../config/modelRegistry.js';
+import { publicModelLabel } from '../../config/xrogaPublicModels.js';
 import { XROGA_USER_IDENTITY } from '../../prompts/xrogaIdentity.js';
 import type { BuildUsageTracker } from '../../lib/buildUsageTracker.js';
 import { resolveBuildModelRole, type BuildModelRole } from '../../phase1/modelQuotaTracker.js';
@@ -30,11 +31,11 @@ const ROLE_MAP: Record<BuildModelRole, XrogaModelRole> = {
 };
 
 const ROLE_LABEL: Record<BuildModelRole, string> = {
-  flash: 'DeepSeek Flash',
-  pro: 'DeepSeek Pro',
-  grok: 'Grok 4',
-  sonnet: 'Claude Sonnet 5',
-  opus: 'Claude Opus',
+  flash: publicModelLabel('deepseek_flash'),
+  pro: publicModelLabel('deepseek_pro'),
+  grok: publicModelLabel('grok_reasoning'),
+  sonnet: publicModelLabel('claude_sonnet'),
+  opus: publicModelLabel('claude_opus'),
 };
 
 export interface BuildModelResult {
@@ -187,8 +188,8 @@ export async function buildModelCall(
   const label =
     role === 'grok'
       ? grokVariant === 'fast'
-        ? 'Grok 4.5'
-        : 'Grok 4 Reasoning'
+        ? publicModelLabel('grok_fast')
+        : publicModelLabel('grok_reasoning')
       : ROLE_LABEL[role];
   const xrogaRole: XrogaModelRole =
     role === 'grok' ? (grokVariant === 'fast' ? 'grok_fast' : 'grok_reasoning') : ROLE_MAP[role];
@@ -220,7 +221,7 @@ export async function buildModelCall(
     tracker?.add('deepseek_flash', result.inputTokens, result.outputTokens);
     return {
       text: result.text,
-      modelLabel: 'DeepSeek Flash',
+      modelLabel: publicModelLabel('deepseek_flash'),
       inputTokens: result.inputTokens,
       outputTokens: result.outputTokens,
     };

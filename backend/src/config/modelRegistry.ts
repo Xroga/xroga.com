@@ -69,8 +69,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.14,
     outputPer1M: 0.28,
-    inputSharePct: 33,
-    outputSharePct: 36,
+    inputSharePct: 28,
+    outputSharePct: 30,
     description: 'Workhorse — bulk code output, file reads, fixes, verify',
   },
   deepseek_pro: {
@@ -79,8 +79,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.435,
     outputPer1M: 0.87,
-    inputSharePct: 29,
-    outputSharePct: 26,
+    inputSharePct: 18,
+    outputSharePct: 17,
     description: 'DeepSeek Pro — architecture, repo analysis, plan review, updates, hard logic',
   },
   grok_reasoning: {
@@ -89,8 +89,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'xai',
     inputPer1M: 0.2,
     outputPer1M: 0.5,
-    inputSharePct: 15,
-    outputSharePct: 14,
+    inputSharePct: 30,
+    outputSharePct: 28,
     description: 'Grok 4 Reasoning — strategy, synthesis, skeptical code audit (high reasoning)',
   },
   grok_fast: {
@@ -99,8 +99,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'xai',
     inputPer1M: 2.0,
     outputPer1M: 6.0,
-    inputSharePct: 5,
-    outputSharePct: 5,
+    inputSharePct: 15,
+    outputSharePct: 14,
     description: 'Grok 4.5 — fast UI outlines & iteration (~30% of Grok calls, always self-reviewed)',
   },
   claude_sonnet: {
@@ -112,8 +112,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     inputPer1MAfterPromo: 3.0,
     outputPer1MAfterPromo: 15.0,
     promoEndsAt: SONNET_5_PROMO_ENDS,
-    inputSharePct: 14,
-    outputSharePct: 14,
+    inputSharePct: 7,
+    outputSharePct: 8,
     description: 'Claude Sonnet 5 — UI polish only (14%, intro $2/$10 MTok thru Aug 2026)',
   },
   claude_opus: {
@@ -122,8 +122,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'anthropic',
     inputPer1M: 5.0,
     outputPer1M: 25.0,
-    inputSharePct: 4,
-    outputSharePct: 4,
+    inputSharePct: 2,
+    outputSharePct: 3,
     description: 'Opus — crypto final QA only (minimal use)',
   },
   gemini_flash: {
@@ -161,15 +161,7 @@ export interface ModelQuotaSlice {
   postPromoUsdEstimate?: number;
 }
 
-const MODEL_LABELS: Record<XrogaModelRole, string> = {
-  deepseek_flash: 'DeepSeek Flash',
-  deepseek_pro: 'DeepSeek Pro',
-  grok_reasoning: 'Grok 4 Reasoning',
-  grok_fast: 'Grok 4.5',
-  claude_sonnet: 'Claude Sonnet 5',
-  claude_opus: 'Claude Opus',
-  gemini_flash: 'Gemini Flash',
-};
+import { publicModelLabel } from './xrogaPublicModels.js';
 
 export function inputLimitForPlan(totalTokens: number): number {
   const ratio = FREE_PLAN_INPUT_TOKENS / FREE_PLAN_TOKENS;
@@ -200,7 +192,7 @@ export function quotaAllocationForPlan(
 
     return {
       role,
-      label: MODEL_LABELS[role],
+      label: publicModelLabel(role),
       inputSharePct: m.inputSharePct,
       outputSharePct: m.outputSharePct,
       inputTokens,

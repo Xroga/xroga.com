@@ -3,6 +3,7 @@
  * and use DeepSeek Pro / Grok instead.
  */
 
+import { publicModelLabel, publicModelTagline } from '../config/xrogaPublicModels.js';
 import type { XrogaModelRole } from '../config/modelRegistry.js';
 import {
   CLAUDE_MODEL_ROLES,
@@ -22,6 +23,7 @@ import { phase1Logger } from './logger.js';
 type ModelUsageMap = Partial<Record<XrogaModelRole, { input: number; output: number }>>;
 
 const memoryModelUsage = new Map<string, ModelUsageMap>();
+const memoryModelUsagePeriod = new Map<string, string>();
 
 function currentPeriodStart(): string {
   const now = new Date();
@@ -33,10 +35,15 @@ function emptyUsage(): ModelUsageMap {
 }
 
 async function loadModelUsage(userId: string): Promise<ModelUsageMap> {
+  const period = currentPeriodStart();
   const cached = memoryModelUsage.get(userId);
-  if (cached) return cached;
+  if (cached && memoryModelUsagePeriod.get(userId) === period) {
+    return cached;
+  }
 
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    memoryModelUsage.set(userId, emptyUsage());
+    memoryModelUsagePeriod.set(userId, period);
     return emptyUsage();
   }
 
@@ -48,14 +55,21 @@ async function loadModelUsage(userId: string): Promise<ModelUsageMap> {
       .eq('user_id', userId)
       .maybeSingle();
 
-    const period = currentPeriodStart();
     if (!data || data.quota_period_start !== period) {
       memoryModelUsage.set(userId, emptyUsage());
+      memoryModelUsagePeriod.set(userId, period);
+      if (data && data.quota_period_start !== period) {
+        await supabase
+          .from('user_token_usage')
+          .update({ model_usage: {}, updated_at: new Date().toISOString() })
+          .eq('user_id', userId);
+      }
       return emptyUsage();
     }
 
     const parsed = (data.model_usage as ModelUsageMap | null) ?? emptyUsage();
     memoryModelUsage.set(userId, parsed);
+    memoryModelUsagePeriod.set(userId, period);
     return parsed;
   } catch {
     return emptyUsage();
@@ -64,6 +78,7 @@ async function loadModelUsage(userId: string): Promise<ModelUsageMap> {
 
 async function saveModelUsage(userId: string, usage: ModelUsageMap): Promise<void> {
   memoryModelUsage.set(userId, usage);
+  memoryModelUsagePeriod.set(userId, currentPeriodStart());
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
 
   try {
@@ -138,6 +153,21 @@ export async function canUseModelRole(
   return withinPool;
 }
 
+export async function clearModelUsageForUser(userId: string): Promise<void> {
+  memoryModelUsage.set(userId, emptyUsage());
+  memoryModelUsagePeriod.set(userId, currentPeriodStart());
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
+  try {
+    const supabase = getSupabaseAdmin();
+    await supabase
+      .from('user_token_usage')
+      .update({ model_usage: {}, updated_at: new Date().toISOString() })
+      .eq('user_id', userId);
+  } catch {
+    /* optional */
+  }
+}
+
 /** Record per-model usage after a build completes. */
 export async function recordModelUsage(
   userId: string,
@@ -188,6 +218,7 @@ export async function resolveBuildModelRole(
 export interface ModelUsageBreakdownRow {
   role: XrogaModelRole;
   label: string;
+  tagline: string;
   inputUsed: number;
   outputUsed: number;
   inputLimit: number;
@@ -197,17 +228,7 @@ export interface ModelUsageBreakdownRow {
   percentUsed: number;
 }
 
-const MODEL_LABELS: Record<XrogaModelRole, string> = {
-  deepseek_flash: 'DeepSeek Flash',
-  deepseek_pro: 'DeepSeek Pro',
-  grok_reasoning: 'Grok 4 Reasoning',
-  grok_fast: 'Grok 4.5',
-  claude_sonnet: 'Claude Sonnet 5',
-  claude_opus: 'Claude Opus',
-  gemini_flash: 'Gemini Flash',
-};
-
-/** Per-model usage vs allocated pool — for dashboard. */
+/** Per-model usage vs allocated pool — for dashboard (Xroga-branded labels only). */
 export async function getModelUsageBreakdown(userId: string): Promise<ModelUsageBreakdownRow[]> {
   const [usage, totalLimit] = await Promise.all([loadModelUsage(userId), getTotalLimit(userId)]);
   return CORE_BUILD_MODELS.map((role) => {
@@ -217,7 +238,8 @@ export async function getModelUsageBreakdown(userId: string): Promise<ModelUsage
     const totalUsedForModel = used.input + used.output;
     return {
       role,
-      label: MODEL_LABELS[role],
+      label: publicModelLabel(role),
+      tagline: publicModelTagline(role),
       inputUsed: used.input,
       outputUsed: used.output,
       inputLimit: limits.input,

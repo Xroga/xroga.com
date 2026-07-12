@@ -812,6 +812,7 @@ export interface DashboardSummary {
     byModel?: Array<{
       role: string;
       label: string;
+      tagline?: string;
       inputUsed: number;
       outputUsed: number;
       inputLimit: number;

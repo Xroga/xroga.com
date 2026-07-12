@@ -53,6 +53,16 @@ async function loadFromDb(userId: string): Promise<UserUsageRecord | null> {
 
     const period = currentPeriodStart();
     if (data.quota_period_start !== period) {
+      await supabase
+        .from('user_token_usage')
+        .update({
+          input_tokens: 0,
+          output_tokens: 0,
+          model_usage: {},
+          quota_period_start: period,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', userId);
       return emptyRecord();
     }
 
