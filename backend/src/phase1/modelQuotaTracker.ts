@@ -200,7 +200,8 @@ export interface ModelUsageBreakdownRow {
 const MODEL_LABELS: Record<XrogaModelRole, string> = {
   deepseek_flash: 'DeepSeek Flash',
   deepseek_pro: 'DeepSeek Pro',
-  grok_reasoning: 'Grok 4',
+  grok_reasoning: 'Grok 4 Reasoning',
+  grok_fast: 'Grok 4.5',
   claude_sonnet: 'Claude Sonnet 5',
   claude_opus: 'Claude Opus',
   gemini_flash: 'Gemini Flash',

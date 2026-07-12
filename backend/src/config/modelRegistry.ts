@@ -10,6 +10,7 @@ export type XrogaModelRole =
   | 'deepseek_flash'
   | 'deepseek_pro'
   | 'grok_reasoning'
+  | 'grok_fast'
   | 'claude_sonnet'
   | 'claude_opus'
   | 'gemini_flash';
@@ -68,8 +69,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.14,
     outputPer1M: 0.28,
-    inputSharePct: 34,
-    outputSharePct: 38,
+    inputSharePct: 33,
+    outputSharePct: 36,
     description: 'Workhorse — bulk code output, file reads, fixes, verify',
   },
   deepseek_pro: {
@@ -78,19 +79,29 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.435,
     outputPer1M: 0.87,
-    inputSharePct: 30,
-    outputSharePct: 28,
+    inputSharePct: 29,
+    outputSharePct: 26,
     description: 'DeepSeek Pro — architecture, repo analysis, plan review, updates, hard logic',
   },
   grok_reasoning: {
     role: 'grok_reasoning',
-    apiModel: envModel('XROGA_GROK_MODEL', 'grok-4.3'),
+    apiModel: envModel('XROGA_GROK_MODEL', 'grok-4'),
     provider: 'xai',
     inputPer1M: 0.2,
     outputPer1M: 0.5,
-    inputSharePct: 18,
-    outputSharePct: 16,
-    description: 'Grok 4 — strategy, research synthesis, hackathon QA, diagnosis',
+    inputSharePct: 15,
+    outputSharePct: 14,
+    description: 'Grok 4 Reasoning — strategy, synthesis, skeptical code audit (high reasoning)',
+  },
+  grok_fast: {
+    role: 'grok_fast',
+    apiModel: envModel('XROGA_GROK_FAST_MODEL', 'grok-4.5'),
+    provider: 'xai',
+    inputPer1M: 2.0,
+    outputPer1M: 6.0,
+    inputSharePct: 5,
+    outputSharePct: 5,
+    description: 'Grok 4.5 — fast UI outlines & iteration (~30% of Grok calls, always self-reviewed)',
   },
   claude_sonnet: {
     role: 'claude_sonnet',
@@ -131,6 +142,7 @@ export const CORE_BUILD_MODELS: XrogaModelRole[] = [
   'deepseek_flash',
   'deepseek_pro',
   'grok_reasoning',
+  'grok_fast',
   'claude_sonnet',
   'claude_opus',
 ];
@@ -153,6 +165,7 @@ const MODEL_LABELS: Record<XrogaModelRole, string> = {
   deepseek_flash: 'DeepSeek Flash',
   deepseek_pro: 'DeepSeek Pro',
   grok_reasoning: 'Grok 4 Reasoning',
+  grok_fast: 'Grok 4.5',
   claude_sonnet: 'Claude Sonnet 5',
   claude_opus: 'Claude Opus',
   gemini_flash: 'Gemini Flash',

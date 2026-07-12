@@ -149,9 +149,19 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
         </div>
         <div className="p-5 space-y-4">
           <p className="text-sm text-[var(--muted)] leading-relaxed">
-            Deploys go to <strong>your</strong> Vercel account — not Xroga&apos;s. Connect once and GitHub builds
-            can auto-deploy to your live URL.
+            Deploys go to <strong>your</strong> Vercel account — not Xroga&apos;s. Connect once and every build
+            auto-deploys the exact code from GitHub.
           </p>
+          <div className="rounded-lg border border-[var(--accent)]/25 bg-[var(--accent)]/5 p-3 text-[11px] text-[var(--muted)] space-y-1.5">
+            <p className="font-semibold text-[var(--foreground)]">Vercel OAuth callback URL (required)</p>
+            <p>
+              In your Vercel app settings, add this exact URL — <strong>not</strong> just{' '}
+              <code className="text-[10px]">https://xroga.com</code>:
+            </p>
+            <code className="block text-[10px] font-mono text-emerald-400 break-all">
+              https://xroga.com/dashboard/integrations/vercel/callback
+            </code>
+          </div>
           {oauthConfigured === false && !showTokenForm ? (
             <p className="text-xs text-amber-400/90 rounded-lg border border-amber-500/25 bg-amber-500/5 p-2.5">
               OAuth is not configured on the server. Use a personal access token from{' '}

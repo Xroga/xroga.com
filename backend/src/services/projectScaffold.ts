@@ -1,36 +1,19 @@
 import { normalizeBuildFiles } from '../lib/normalizeBuildSource.js';
+import { buildInlinePreviewDocument } from '../lib/landingPreview.js';
+import { vercelStaticSiteJson } from '../lib/vercelStaticConfig.js';
 import type { ProjectFile } from './integrations/githubDeploy.js';
 
 function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 48) || 'xroga-app';
 }
 
-function fullHtmlDocument(html: string, css: string, js: string, title: string): string {
-  const normalized = normalizeBuildFiles(html, css, js);
-  if (/<!DOCTYPE/i.test(normalized.html)) return normalized.html;
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${title}</title>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<link rel="stylesheet" href="styles.css">
-</head>
-<body>
-${normalized.html}
-<script src="script.js"></script>
-<script>if(typeof lucide!=='undefined'){lucide.createIcons();}</script>
-</body>
-</html>`;
-}
+export type ProjectScaffoldKind = 'static' | 'crm' | 'saas';
 
-function detectKind(prompt: string): 'crm' | 'saas' | 'ecommerce' | 'website' {
+function detectKind(prompt: string): ProjectScaffoldKind {
   const t = prompt.toLowerCase();
   if (/\b(crm|contacts|deals pipeline|sales pipeline)\b/.test(t)) return 'crm';
-  if (/\b(ecommerce|e-commerce|store|shop|cart|checkout)\b/.test(t)) return 'ecommerce';
-  if (/\b(saas|dashboard|subscription|kanban|project management)\b/.test(t)) return 'saas';
-  return 'website';
+  if (/\b(saas|dashboard|subscription|kanban|project management|next\.?js app)\b/.test(t)) return 'saas';
+  return 'static';
 }
 
 function packageJson(name: string, slug: string): string {
@@ -123,20 +106,6 @@ export async function POST(request: Request) {
 }`,
   },
   {
-    path: 'src/app/api/deals/route.ts',
-    content: () => `import { NextResponse } from 'next/server';
-export async function GET() {
-  return NextResponse.json({ deals: [] });
-}`,
-  },
-  {
-    path: 'src/app/api/tasks/route.ts',
-    content: () => `import { NextResponse } from 'next/server';
-export async function GET() {
-  return NextResponse.json({ tasks: [] });
-}`,
-  },
-  {
     path: 'src/components/ContactsList.tsx',
     content: () => `'use client';
 export function ContactsList() {
@@ -155,7 +124,6 @@ export function DealsPipeline() {
   return (
     <section className="rounded-xl border bg-white p-4 shadow-sm">
       <h2 className="mb-3 font-semibold">Deals pipeline</h2>
-      <div className="flex gap-2 text-xs"><span className="rounded bg-blue-100 px-2 py-1">Lead</span><span className="rounded bg-amber-100 px-2 py-1">Proposal</span><span className="rounded bg-emerald-100 px-2 py-1">Won</span></div>
     </section>
   );
 }`,
@@ -167,7 +135,6 @@ export function TasksBoard() {
   return (
     <section className="rounded-xl border bg-white p-4 shadow-sm">
       <h2 className="mb-3 font-semibold">Tasks</h2>
-      <p className="text-sm text-slate-600">Follow up with leads, send proposals, schedule demos.</p>
     </section>
   );
 }`,
@@ -185,47 +152,79 @@ export function AnalyticsCharts() {
   );
 }`,
   },
-  {
-    path: 'src/lib/supabase/client.ts',
-    content: () => `import { createClient } from '@supabase/supabase-js';
-export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);`,
-  },
-  {
-    path: 'prisma/schema.prisma',
-    content: () => `generator client { provider = "prisma-client-js" }
-datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
-model Contact { id String @id @default(cuid()) name String email String? company String? createdAt DateTime @default(now()) }
-model Deal { id String @id @default(cuid()) title String stage String value Float? contactId String? createdAt DateTime @default(now()) }
-model Task { id String @id @default(cuid()) title String done Boolean @default(false) createdAt DateTime @default(now()) }`,
-  },
 ];
 
-function genericAppFiles(name: string): Array<{ path: string; content: string }> {
+function staticSiteFiles(opts: {
+  html: string;
+  css: string;
+  js: string;
+  projectName: string;
+}): ProjectFile[] {
+  const title = opts.projectName.slice(0, 80) || 'XROGA Build';
+  const normalized = normalizeBuildFiles(opts.html, opts.css, opts.js);
+  const livePreview = buildInlinePreviewDocument(normalized.html, normalized.css, normalized.js);
+
   return [
+    { path: 'index.html', content: livePreview },
+    { path: 'styles.css', content: normalized.css },
+    { path: 'script.js', content: normalized.js },
+    { path: 'public/index.html', content: livePreview },
+    { path: 'vercel.json', content: vercelStaticSiteJson() },
     {
-      path: 'src/app/layout.tsx',
-      content: `export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (<html lang="en"><body>{children}</body></html>);
-}`,
+      path: '.gitignore',
+      content: 'node_modules/\n.vercel/\n.env\n.env.local\n',
     },
     {
-      path: 'src/app/page.tsx',
-      content: `export default function Page() {
-  return (<main className="p-8"><h1>${name}</h1><p>Built with XROGA AI</p></main>);
-}`,
-    },
-    {
-      path: 'src/lib/supabase/client.ts',
-      content: `import { createClient } from '@supabase/supabase-js';
-export const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);`,
+      path: 'README.md',
+      content: `# ${title}
+
+Built with [XROGA AI](https://xroga.com).
+
+## Live preview
+\`index.html\` is the exact site XROGA generated — same file Vercel deploys to your account.
+
+## Structure
+\`\`\`
+index.html    ← live site (CSS/JS inlined — matches sandbox preview)
+styles.css    ← source for AI updates
+script.js     ← source for AI updates
+vercel.json   ← static deploy config (no build step)
+\`\`\`
+
+## Deploy
+Connect Vercel in XROGA — auto-deploys to **your** Vercel account on build complete.
+`,
     },
   ];
 }
 
-/** Real multi-file project pushed to GitHub — preview HTML + Next.js scaffold. */
+function nextAppScaffold(title: string, slug: string, kind: ProjectScaffoldKind): ProjectFile[] {
+  const files: ProjectFile[] = [];
+  const scaffold = kind === 'crm' ? CRM_FILES : [];
+  for (const f of scaffold) {
+    files.push({ path: f.path, content: f.content(title) });
+  }
+  files.push(
+    { path: 'package.json', content: packageJson(title, slug) },
+    {
+      path: 'vercel.json',
+      content: JSON.stringify({ framework: 'nextjs', buildCommand: 'npm run build', installCommand: 'npm install' }, null, 2),
+    },
+    {
+      path: 'next.config.js',
+      content: `/** @type {import('next').NextConfig} */
+const nextConfig = { reactStrictMode: true };
+module.exports = nextConfig;`,
+    },
+    {
+      path: 'README.md',
+      content: `# ${title}\n\nNext.js app scaffold + static preview in \`index.html\`.\n`,
+    }
+  );
+  return files;
+}
+
+/** GitHub + Vercel project files — static sites match sandbox preview exactly. */
 export function buildFullProjectFiles(opts: {
   html: string;
   css: string;
@@ -236,67 +235,40 @@ export function buildFullProjectFiles(opts: {
   const title = opts.projectName.slice(0, 80) || 'XROGA Build';
   const slug = slugify(title);
   const kind = detectKind(opts.userPrompt);
-  const normalized = normalizeBuildFiles(opts.html, opts.css, opts.js);
 
-  const files: ProjectFile[] = [
-    { path: 'index.html', content: fullHtmlDocument(normalized.html, normalized.css, normalized.js, title) },
-    { path: 'styles.css', content: normalized.css },
-    { path: 'script.js', content: normalized.js },
-    { path: 'public/preview/index.html', content: fullHtmlDocument(normalized.html, normalized.css, normalized.js, title) },
-  ];
-
-  const scaffold = kind === 'crm' ? CRM_FILES : genericAppFiles(title).map((f) => ({ path: f.path, content: () => f.content }));
-  for (const f of scaffold) {
-    files.push({ path: f.path, content: f.content(title) });
+  if (kind === 'static') {
+    return staticSiteFiles({
+      html: opts.html,
+      css: opts.css,
+      js: opts.js,
+      projectName: title,
+    });
   }
 
-  files.push(
-    { path: 'package.json', content: packageJson(title, slug) },
-    {
-      path: 'tailwind.config.ts',
-      content: `import type { Config } from 'tailwindcss';
-const config: Config = { content: ['./src/**/*.{js,ts,jsx,tsx}'], theme: { extend: {} }, plugins: [] };
-export default config;`,
-    },
-    {
-      path: 'tsconfig.json',
-      content: JSON.stringify(
-        { compilerOptions: { target: 'ES2017', lib: ['dom', 'dom.iterable', 'esnext'], jsx: 'preserve', module: 'esnext', strict: true, paths: { '@/*': ['./src/*'] } }, include: ['**/*.ts', '**/*.tsx'], exclude: ['node_modules'] },
-        null,
-        2
-      ),
-    },
-    {
-      path: 'next.config.js',
-      content: `/** @type {import('next').NextConfig} */
-const nextConfig = { reactStrictMode: true };
-module.exports = nextConfig;`,
-    },
-    {
-      path: '.env.example',
-      content: `NEXT_PUBLIC_SUPABASE_URL=\nNEXT_PUBLIC_SUPABASE_ANON_KEY=\nDATABASE_URL=\n`,
-    },
-    {
-      path: 'README.md',
-      content: `# ${title}\n\nBuilt with [XROGA AI](https://xroga.com).\n\n## Preview\nOpen \`index.html\` for the live static preview, or run \`npm run dev\` for the Next.js app.\n\n## Stack\nNext.js 15 · Supabase · Tailwind CSS\n`,
-    }
-  );
-
-  return files;
+  const staticBase = staticSiteFiles({
+    html: opts.html,
+    css: opts.css,
+    js: opts.js,
+    projectName: title,
+  });
+  return [...staticBase, ...nextAppScaffold(title, slug, kind)];
 }
 
 export function scaffoldFilePaths(prompt: string): string[] {
   const kind = detectKind(prompt);
-  const base = ['index.html', 'styles.css', 'script.js', 'public/preview/index.html'];
-  const extra = kind === 'crm' ? CRM_FILES.map((f) => f.path) : genericAppFiles('App').map((f) => f.path);
-  return [
-    ...base,
-    ...extra,
-    'package.json',
-    'tailwind.config.ts',
-    'tsconfig.json',
-    'next.config.js',
-    '.env.example',
+  const staticPaths = [
+    'index.html',
+    'styles.css',
+    'script.js',
+    'public/index.html',
+    'vercel.json',
+    '.gitignore',
     'README.md',
   ];
+  if (kind === 'static') return staticPaths;
+  const extra =
+    kind === 'crm'
+      ? CRM_FILES.map((f) => f.path)
+      : [];
+  return [...staticPaths, ...extra, 'package.json', 'next.config.js'];
 }

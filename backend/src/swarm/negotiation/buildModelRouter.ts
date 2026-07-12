@@ -9,6 +9,16 @@ import { XROGA_USER_IDENTITY } from '../../prompts/xrogaIdentity.js';
 import type { BuildUsageTracker } from '../../lib/buildUsageTracker.js';
 import { resolveBuildModelRole, type BuildModelRole } from '../../phase1/modelQuotaTracker.js';
 
+export type GrokVariant = 'reasoning' | 'fast';
+
+/** ~70% Grok 4 reasoning, ~30% Grok 4.5 fast — fast output always gets self-review pass. */
+export function pickGrokVariant(seed = ''): GrokVariant {
+  let hash = 0;
+  const s = seed || String(Date.now());
+  for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
+  return hash % 100 < 30 ? 'fast' : 'reasoning';
+}
+
 export type { BuildModelRole } from '../../phase1/modelQuotaTracker.js';
 
 const ROLE_MAP: Record<BuildModelRole, XrogaModelRole> = {
@@ -22,7 +32,7 @@ const ROLE_MAP: Record<BuildModelRole, XrogaModelRole> = {
 const ROLE_LABEL: Record<BuildModelRole, string> = {
   flash: 'DeepSeek Flash',
   pro: 'DeepSeek Pro',
-  grok: 'Grok 4 Reasoning',
+  grok: 'Grok 4',
   sonnet: 'Claude Sonnet 5',
   opus: 'Claude Opus',
 };
@@ -79,12 +89,14 @@ async function deepseekCall(
 async function grokCall(
   system: string,
   user: string,
-  maxTokens: number
+  maxTokens: number,
+  variant: GrokVariant = 'reasoning'
 ): Promise<{ text: string; inputTokens: number; outputTokens: number }> {
   const apiKey = getSecret('GROK_API_KEY') ?? getSecret('XAI_API_KEY');
   if (!apiKey) throw new Error('Grok API key not configured');
 
-  const model = XROGA_MODELS.grok_reasoning.apiModel;
+  const model =
+    variant === 'fast' ? XROGA_MODELS.grok_fast.apiModel : XROGA_MODELS.grok_reasoning.apiModel;
   const sys = `${XROGA_USER_IDENTITY}\n\n${system}`;
   const response = await fetch('https://api.x.ai/v1/chat/completions', {
     method: 'POST',
@@ -95,11 +107,11 @@ async function grokCall(
         { role: 'system', content: sys },
         { role: 'user', content: user },
       ],
-      max_tokens: Math.min(maxTokens, 8192),
-      temperature: 0.4,
-      reasoning_effort: 'high',
+      max_tokens: Math.min(maxTokens, variant === 'fast' ? 8192 : 16384),
+      temperature: variant === 'fast' ? 0.35 : 0.4,
+      ...(variant === 'reasoning' ? { reasoning_effort: 'high' as const } : {}),
     }),
-    signal: AbortSignal.timeout(60_000),
+    signal: AbortSignal.timeout(variant === 'fast' ? 45_000 : 90_000),
   });
 
   if (!response.ok) throw new Error(`Grok ${response.status}`);
@@ -162,7 +174,7 @@ export async function buildModelCall(
   user: string,
   maxTokens = 16384,
   tracker?: BuildUsageTracker,
-  opts?: { userId?: string; claudeTask?: 'ui' | 'qa' | 'general' }
+  opts?: { userId?: string; claudeTask?: 'ui' | 'qa' | 'general'; grokVariant?: GrokVariant }
 ): Promise<BuildModelResult> {
   const estimateIn = Math.ceil((system.length + user.length) / 4);
   const estimateOut = Math.min(maxTokens, 8192);
@@ -171,8 +183,15 @@ export async function buildModelCall(
     output: estimateOut,
   });
 
-  const label = ROLE_LABEL[role];
-  const xrogaRole = ROLE_MAP[role];
+  const grokVariant = opts?.grokVariant ?? (role === 'grok' ? pickGrokVariant(user) : 'reasoning');
+  const label =
+    role === 'grok'
+      ? grokVariant === 'fast'
+        ? 'Grok 4.5'
+        : 'Grok 4 Reasoning'
+      : ROLE_LABEL[role];
+  const xrogaRole: XrogaModelRole =
+    role === 'grok' ? (grokVariant === 'fast' ? 'grok_fast' : 'grok_reasoning') : ROLE_MAP[role];
 
   try {
     let result: { text: string; inputTokens: number; outputTokens: number };
@@ -183,7 +202,7 @@ export async function buildModelCall(
         result = await deepseekCall(XROGA_MODELS[xrogaRole].apiModel, system, user, maxTokens);
         break;
       case 'grok':
-        result = await grokCall(system, user, maxTokens);
+        result = await grokCall(system, user, maxTokens, grokVariant);
         break;
       case 'sonnet':
         result = await claudeCall(XROGA_MODELS.claude_sonnet.apiModel, system, user, maxTokens);
