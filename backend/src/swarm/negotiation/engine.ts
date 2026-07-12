@@ -35,6 +35,8 @@ import { BuildState } from './buildState.js';
 import { formatMemorySuggestion, getPreviousBuilds } from '../../services/memory/buildMemory.js';
 import { upsertBuildProject } from '../../services/memory/buildProjectStore.js';
 import { webSearch, formatWebSearchContext } from '../../lib/webSearch.js';
+import { fetchUiTrendResearch } from '../../lib/uiTrendResearch.js';
+import { fetchHackathonResearch } from '../../lib/hackathonResearch.js';
 import {
   buildSummaryFromBrief,
   formatBuildSummaryCard,
@@ -294,13 +296,11 @@ export function shouldUseNegotiationEngine(prompt: string, category: FeatureCate
   if (isBuildContinuation(prompt)) return true;
   if (isWebsiteUpdateRequest(prompt) && threadHasCompletedWebsite(prompt)) return true;
   const t = prompt.toLowerCase();
-  if (/\b(build|create|make|develop)\b[\s\S]{0,50}\b(website|web app|web\s*page|landing|site|coffee|shop|store|crm|dashboard|crypto|blockchain|web3|chatbot|chat\s*bot|software|saas|platform|dapp)\b/.test(t)) {
-    return true;
-  }
-  if (/\b(build|create|make|develop)\b[\s\S]{0,50}\b(mobile app|game|software|api|script|component|bot|assistant|tool|nft|defi|wallet)\b/.test(t)) {
-    return true;
-  }
-  if (/\b(debug|fix)\b[\s\S]{0,40}\b(code|bug|error|typescript|python)\b/.test(t)) return true;
+  const buildVerb = /\b(build|create|make|develop|design|launch|scaffold|generate)\b/;
+  const buildTarget =
+    /\b(website|web app|landing|saas|dashboard|crm|marketplace|platform|chatbot|chat\s*bot|software|tool|app|api|crypto|blockchain|web3|defi|nft|wallet|exchange|swap|bridge|solidity|dapp|bot|assistant|automation|ecommerce|store|shop|blog|portfolio|booking|scheduler|tracker|invoice|forum|messaging|course|membership|job board|directory|admin|analytics|debugger|code builder|image gen|video|mobile app|flutter|react native|game|enterprise|social|video platform|ai agent|swarm|hackathon|solana)\b/;
+  if (buildVerb.test(t) && buildTarget.test(t)) return true;
+  if (/\b(debug|fix)\b[\s\S]{0,40}\b(code|bug|error|typescript|python|solidity)\b/.test(t)) return true;
   return false;
 }
 
@@ -479,23 +479,30 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   const analysis = analyzeUserQuery(userPrompt);
   const buildType = detectBuildProjectType(userPrompt);
   const isGameBuild = buildType === 'game' || isGameBuildPrompt(userPrompt);
-  const isWebBuild =
+  const isProductBuild =
     !isGameBuild &&
-    (featureCategory === 'landing_page' || isWebsiteBuildPrompt(userPrompt, featureCategory));
+    (featureCategory === 'landing_page' ||
+      isWebsiteBuildPrompt(userPrompt, featureCategory) ||
+      ['crypto', 'chatbot', 'software', 'app', 'api', 'saas', 'dashboard', 'marketplace', 'automation'].includes(
+        buildType
+      ));
 
   let webResearchNote = '';
-  if (isWebBuild) {
+  let uiTrendNote = '';
+  let hackathonNote = '';
+
+  if (isProductBuild || isGameBuild) {
     try {
       const searchQuery = isWebsiteUpdateRequest(userPrompt)
         ? `${currentMessage} UI patterns best practices`
-        : `${inferBusinessLabel(userPrompt)} modern web design ${buildType} 2026`;
-      const results = await webSearch(searchQuery);
+        : `${inferBusinessLabel(userPrompt)} ${buildType} requirements 2026`;
+      const results = await webSearch(searchQuery, { maxResults: 4 });
       if (results.length) {
         webResearchNote = formatWebSearchContext(results);
         emit(
           ctx,
           0,
-          xrogaPulseLine(`Web research — ${results.length} sources (${results[0]?.source ?? 'search'})`),
+          xrogaPulseLine(`Web research — ${results.length} sources`),
           'reviewer',
           todos,
           'XROGA Pulse',
@@ -505,7 +512,33 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     } catch (searchErr) {
       console.warn('[NegotiationEngine] Web search:', (searchErr as Error).message);
     }
+
+    try {
+      const uiTrend = await fetchUiTrendResearch(inferBusinessLabel(userPrompt), buildType);
+      if (uiTrend) {
+        uiTrendNote = uiTrend.context;
+        emit(ctx, 0, xrogaVisionaryLine('UI trend research — modern 2026 design patterns'), 'reviewer', todos, 'XROGA Visionary', {
+          userPhase: 1,
+        });
+      }
+    } catch {
+      /* optional */
+    }
+
+    try {
+      const hackathon = await fetchHackathonResearch(userPrompt);
+      if (hackathon) {
+        hackathonNote = hackathon.context;
+        emit(ctx, 0, xrogaArchitectureLine('Hackathon requirements researched'), 'architect', todos, 'XROGA Architect', {
+          userPhase: 1,
+        });
+      }
+    } catch {
+      /* optional */
+    }
   }
+
+  const isWebBuild = isProductBuild;
 
   const isUpdateBuild =
     isWebBuild &&
@@ -573,9 +606,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   let clarifiedBrief: string;
   const repoContextLine = repoAnalysisSummary ? `\n\nGitHub repo analysis:\n${repoAnalysisSummary}` : '';
+  const researchBundle = `${webResearchNote}${uiTrendNote}${hackathonNote}`;
   const discoveryContext = userPrompt.includes('[Previous conversation')
-    ? `${userPrompt}${repoContextLine}${webResearchNote}`
-    : `${userPrompt}${repoContextLine}${webResearchNote}\n\nOriginal build request context preserved.`;
+    ? `${userPrompt}${repoContextLine}${researchBundle}`
+    : `${userPrompt}${repoContextLine}${researchBundle}\n\nOriginal build request context preserved.`;
 
   if (isUpdateBuild) {
     emit(ctx, 0, BRAND.phase0.scanning('website updates'), 'reviewer', todos, 'XROGA Visionary', { userPhase: 6 });
@@ -687,10 +721,25 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     }
   } else {
     try {
+      let strategyContext = '';
+      try {
+        const { text: strategy } = await buildModelCall(
+          'grok',
+          `You are XROGA Strategist (Grok). Analyze the project brief and output a concise build strategy: architecture, key features, UX priorities, and risks. Under 400 words.`,
+          `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`
+        );
+        strategyContext = `\n\nStrategy:\n${strategy}`;
+        emit(ctx, 1, xrogaArchitectureLine('Build strategy — Grok reasoning'), 'architect', todos, 'XROGA Architect', {
+          userPhase: 1,
+        });
+      } catch {
+        /* optional grok */
+      }
+
       const { text, modelLabel } = await buildModelCall(
         'pro',
         PHASE_1_PLANNING_GEMINI,
-        `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`
+        `Brief:\n${clarifiedBrief}${strategyContext}\n\nOriginal:\n${userPrompt}`
       );
       masterPlan = text;
       emit(ctx, 1, xrogaArchitectureLine('Master plan generated'), 'architect', todos, 'XROGA Architect', {
@@ -882,19 +931,20 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     userPhase: 2,
   });
   try {
-    const { text: opusReview } = await buildModelCall(
-      'opus',
+    const reviewRole = buildType === 'crypto' || hackathonNote ? 'opus' : 'pro';
+    const { text: qualityReview } = await buildModelCall(
+      reviewRole,
       PHASE_6_FINAL,
       `Full codebase:\n${assembledCode}`,
       2048
     );
-    if (!isPass(opusReview)) {
+    if (!isPass(qualityReview)) {
       emit(ctx, 5, xrogaArchitectureLine('Applying quality fixes from review'), 'debugger', todos, 'XROGA Architect');
-      assembledCode = await deepseekCall(PHASE_5_CORRECT, `Quality review:\n${opusReview}\n\nCode:\n${assembledCode}`);
+      assembledCode = await deepseekCall(PHASE_5_CORRECT, `Quality review:\n${qualityReview}\n\nCode:\n${assembledCode}`);
       totalCorrections++;
     }
   } catch {
-    /* opus falls back to deepseek inside buildModelCall */
+    /* review falls back inside buildModelCall */
   }
 
   emit(ctx, 6, xrogaCollectiveLine('Security & integration audit'), 'truth_council', todos, 'XROGA Collective', {

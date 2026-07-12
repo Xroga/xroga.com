@@ -1,6 +1,6 @@
 /**
- * XROGA build model router — spec-aligned passes with DeepSeek fallback.
- * Architecture & logic: DeepSeek Pro | Scaffold: DeepSeek Flash | UI: Claude Sonnet | QA: Claude Opus
+ * XROGA build model router — cost-optimized, high quality.
+ * Flash: Groq/DeepSeek | Pro: DeepSeek | Planning: Grok reasoning | UI: Claude Sonnet | QA: DeepSeek Pro (Opus rare)
  */
 
 import { deepSeekChat } from '../../lib/deepseek.js';
@@ -12,11 +12,12 @@ import { getSecret } from '../../config/envSecrets.js';
 import { deepseekCode, groqCode } from '../../services/code/codeClients.js';
 import { resolveApiKey } from '../../config/apiKeyRouter.js';
 
-export type BuildModelRole = 'flash' | 'pro' | 'sonnet' | 'opus';
+export type BuildModelRole = 'flash' | 'pro' | 'grok' | 'sonnet' | 'opus';
 
 const ROLE_LABEL: Record<BuildModelRole, string> = {
   flash: 'DeepSeek Flash',
   pro: 'DeepSeek Pro',
+  grok: 'Grok Reasoning',
   sonnet: 'Claude Sonnet',
   opus: 'Claude Opus',
 };
@@ -54,9 +55,40 @@ async function deepseekFlash(system: string, user: string, maxTokens: number): P
       );
     }
   } catch {
-    /* fall through to DeepSeek Pro */
+    /* fall through */
   }
   return deepseekPro(system, user, maxTokens);
+}
+
+async function grokReasoning(system: string, user: string, maxTokens: number): Promise<string> {
+  const apiKey = getSecret('GROK_API_KEY') ?? getSecret('XAI_API_KEY');
+  if (!apiKey) return deepseekPro(system, user, maxTokens);
+
+  const sys = `${XROGA_USER_IDENTITY}\n\n${system}`;
+  const response = await fetch('https://api.x.ai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'grok-3-mini-fast',
+      messages: [
+        { role: 'system', content: sys },
+        { role: 'user', content: user },
+      ],
+      max_tokens: Math.min(maxTokens, 8192),
+      temperature: 0.4,
+      reasoning_effort: 'high',
+    }),
+    signal: AbortSignal.timeout(45_000),
+  });
+
+  if (!response.ok) throw new Error(`Grok ${response.status}`);
+  const data = (await response.json()) as { choices: Array<{ message: { content: string } }> };
+  const text = data.choices[0]?.message?.content?.trim();
+  if (!text) throw new Error('Grok empty');
+  return text;
 }
 
 async function claudeSonnet(system: string, user: string, maxTokens: number): Promise<string> {
@@ -71,7 +103,7 @@ async function claudeOpus(system: string, user: string, maxTokens: number): Prom
   });
 }
 
-/** Run a build pass on the designated model; any failure routes to DeepSeek Pro. */
+/** Run a build pass; failures route to DeepSeek Pro. */
 export async function buildModelCall(
   role: BuildModelRole,
   system: string,
@@ -87,6 +119,9 @@ export async function buildModelCall(
         break;
       case 'pro':
         text = await deepseekPro(system, user, maxTokens);
+        break;
+      case 'grok':
+        text = await grokReasoning(system, user, maxTokens);
         break;
       case 'sonnet':
         text = await claudeSonnet(system, user, maxTokens);

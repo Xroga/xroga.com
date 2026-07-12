@@ -1,12 +1,36 @@
-/** Detect what kind of project the user wants DeepSeek Code to build. */
+/** Detect what kind of project the user wants Xroga to build. */
 
-export type BuildProjectType = 'website' | 'game' | 'software' | 'app' | 'api' | 'crypto' | 'chatbot';
+export type BuildProjectType =
+  | 'website'
+  | 'game'
+  | 'software'
+  | 'app'
+  | 'api'
+  | 'crypto'
+  | 'chatbot'
+  | 'saas'
+  | 'dashboard'
+  | 'marketplace'
+  | 'automation';
+
+const BUILD_VERB = /\b(build|create|make|develop|launch|design|scaffold|generate)\b/i;
 
 const CRYPTO_TRIGGERS =
-  /\b(build|create|make|develop|launch|design)\b[\s\S]{0,80}\b(crypto|blockchain|web3|defi|nft|token|wallet|dao|dapp|exchange|staking|smart contract|solidity|ethereum|bitcoin)\b/i;
+  /\b(crypto|blockchain|web3|defi|nft|token|wallet|dao|dapp|exchange|swap|bridge|staking|solidity|solana|ethereum|metamask|phantom|uniswap|jupiter|hackathon)\b/i;
 
 const CHATBOT_TRIGGERS =
-  /\b(build|create|make|develop|design|launch)\b[\s\S]{0,80}\b(chatbot|chat bot|ai assistant|ai agent|conversational ai|support bot|customer support bot|slack bot|discord bot|telegram bot|whatsapp bot)\b/i;
+  /\b(chatbot|chat bot|ai assistant|ai agent|gpt|deepseek|cursor|coding agent|conversational ai|support bot|customer support bot|slack bot|discord bot|telegram bot|whatsapp bot|claude)\b/i;
+
+const SAAS_TRIGGERS =
+  /\b(saas|subscription|billing|paddle|stripe|enterprise|multi-tenant|onboarding|workspace)\b/i;
+
+const DASHBOARD_TRIGGERS =
+  /\b(dashboard|analytics|charts|kpi|metrics|admin panel|crm|hr dashboard|inventory|help desk)\b/i;
+
+const MARKETPLACE_TRIGGERS = /\b(marketplace|multi-vendor|listing|booking platform|job board|course platform|membership)\b/i;
+
+const AUTOMATION_TRIGGERS =
+  /\b(automation|browser automation|scrape|workflow|zapier|playwright|email automation|data processing)\b/i;
 
 const GAME_TRIGGERS =
   /\b(build|create|make|develop|code|design|prototype)\b[\s\S]{0,60}\b(game|pygame|phaser|unity|godot|platformer|rpg|arcade|puzzle game|deckbuilder)\b/i;
@@ -15,31 +39,35 @@ const GAME_IDEA =
   /\b(game idea|let'?s make a game|i want to (?:build|make|code) a game|game dev|help me make a game)\b/i;
 
 const SOFTWARE_TRIGGERS =
-  /\b(build|create|make|develop)\b[\s\S]{0,60}\b(software|desktop app|cli tool|python script|automation tool|saas|dashboard app)\b/i;
+  /\b(software|desktop app|cli tool|python script|tool|debugger|code builder|file converter|link shortener|invoice generator|time tracker|expense tracker)\b/i;
 
 const APP_TRIGGERS =
-  /\b(build|create|make|develop)\b[\s\S]{0,60}\b(mobile app|react native|flutter app|ios app|android app)\b/i;
+  /\b(mobile app|react native|flutter app|ios app|android app|meditation app|health tracker|fitness|food delivery|travel app|event app)\b/i;
 
 const API_TRIGGERS =
-  /\b(build|create|make|develop)\b[\s\S]{0,60}\b(api|rest api|graphql|backend|microservice|fastapi|express api)\b/i;
+  /\b(api|rest api|graphql|backend|microservice|fastapi|express api)\b/i;
 
 const WEBSITE_TRIGGERS =
-  /\b(build|create|make|design|develop)\b[\s\S]{0,80}\b(website|web\s*page|landing\s*page|site|store|shop|portfolio|homepage)\b/i;
+  /\b(website|web\s*page|landing\s*page|site|store|shop|portfolio|homepage|blog|forum|messaging|social platform|video platform|image generation|coming soon|event page)\b/i;
 
 const NICHE_BUSINESS =
-  /\b(build|create|make)\b[\s\S]{0,50}\b(coffee|restaurant|bakery|salon|spa|gym|clinic|dental|lawyer|real estate|hotel|agency|nonprofit|church|school|portfolio|ecommerce|boutique|barber|plumber|roofing|cleaning|photography|wedding|fitness|yoga|pet|veterinary|auto repair|construction|consulting|startup|saas)\b/i;
+  /\b(coffee|restaurant|bakery|salon|spa|gym|clinic|dental|lawyer|real estate|hotel|agency|nonprofit|church|school|ecommerce|boutique|barber|plumber|roofing|cleaning|photography|wedding|fitness|yoga|pet|veterinary|auto repair|construction|consulting|startup)\b/i;
 
 export function detectBuildProjectType(prompt: string): BuildProjectType {
-  const t = prompt.toLowerCase();
   if (CRYPTO_TRIGGERS.test(prompt)) return 'crypto';
   if (CHATBOT_TRIGGERS.test(prompt)) return 'chatbot';
-  if (GAME_TRIGGERS.test(prompt) || GAME_IDEA.test(prompt) || (/\bgame\b/.test(t) && /\b(build|create|make)\b/.test(t))) {
+  if (AUTOMATION_TRIGGERS.test(prompt)) return 'automation';
+  if (MARKETPLACE_TRIGGERS.test(prompt)) return 'marketplace';
+  if (DASHBOARD_TRIGGERS.test(prompt)) return 'dashboard';
+  if (SAAS_TRIGGERS.test(prompt)) return 'saas';
+  if (GAME_TRIGGERS.test(prompt) || GAME_IDEA.test(prompt) || (/\bgame\b/.test(prompt.toLowerCase()) && BUILD_VERB.test(prompt))) {
     return 'game';
   }
   if (API_TRIGGERS.test(prompt)) return 'api';
   if (APP_TRIGGERS.test(prompt)) return 'app';
   if (SOFTWARE_TRIGGERS.test(prompt)) return 'software';
   if (WEBSITE_TRIGGERS.test(prompt) || NICHE_BUSINESS.test(prompt)) return 'website';
+  if (BUILD_VERB.test(prompt)) return 'website';
   return 'website';
 }
 
@@ -77,10 +105,6 @@ export function hasGameBuildContext(prompt: string): boolean {
 
 export function needsGameDreamInterview(_prompt: string): boolean {
   return false;
-}
-
-function hasThreadWrapper(prompt: string): boolean {
-  return /\[Previous conversation for context/i.test(prompt);
 }
 
 function routingPromptLocal(prompt: string): string {

@@ -62,9 +62,10 @@ export async function deployStaticSiteWithToken(
 export async function pollDeploymentReady(
   deploymentId: string,
   fallbackUrl: string,
+  authToken?: string,
   maxWaitMs = 120_000
 ): Promise<string> {
-  const token = getSecret('VERCEL_API_KEY');
+  const token = authToken ?? getSecret('VERCEL_API_KEY');
   const teamId = process.env.VERCEL_TEAM_ID;
   if (!token) return fallbackUrl;
 
