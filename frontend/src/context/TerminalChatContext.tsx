@@ -71,6 +71,7 @@ export interface ChatMessage {
     snippet: string;
     source: string;
     thumbnailUrl?: string;
+    siteDomain?: string;
   }>;
   /** Behind-the-scenes reasoning steps shown after response */
   thinkingSteps?: string[];

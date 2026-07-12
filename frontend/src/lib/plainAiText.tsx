@@ -48,6 +48,8 @@ function normalizeMathContent(content: string): string {
   out = out.replace(/(\S)\s+Step\s+(\d+)\b/gi, '$1\n\nStep $2');
   out = out.replace(/\s+Answer\b/gi, '\n\nAnswer\n');
   out = out.replace(/\s+Quick check\b/gi, '\n\nQuick check\n');
+  out = out.replace(/\s+The bottom line\b/gi, '\n\nThe bottom line\n');
+  out = out.replace(/\s+Your problem\b/gi, '\n\nYour problem\n');
   out = out.replace(/steps\s+Step\s+(\d+)/gi, 'steps\n\nStep $1');
   out = out.replace(/Step\s+(\d+)\s*[:.]?\s*/gi, 'Step $1\n');
   out = out.replace(/(\d)\s+(Step\s+\d)/gi, '$1\n\n$2');
@@ -136,6 +138,22 @@ export function parseXrogaBlocks(content: string): XrogaBlock[] {
 
       if (/^step\s+\d+/i.test(first)) {
         blocks.push({ type: 'math-step', step: first, body: lines.slice(1).join('\n') });
+        return;
+      }
+
+      if (/^your problem$/i.test(first)) {
+        const eqLine = lines.slice(1).find((l) => isEquationLine(l));
+        const rest = lines.slice(1).filter((l) => l !== eqLine).join('\n').trim();
+        blocks.push({
+          type: 'callout',
+          label: 'Your problem',
+          body: eqLine ? `__EQ__${eqLine}${rest ? `\n${rest}` : ''}` : lines.slice(1).join('\n'),
+        });
+        return;
+      }
+
+      if (/^the bottom line$/i.test(first)) {
+        blocks.push({ type: 'callout', label: 'The bottom line', body: lines.slice(1).join('\n').trim() });
         return;
       }
 
@@ -245,7 +263,7 @@ function MathStepBody({ body }: { body: string }) {
   return (
     <div className="space-y-3">
       {prose.map((line, i) => (
-        <p key={`p-${i}`} className="text-[14px] sm:text-[15px] leading-relaxed text-[var(--foreground)]/85">
+        <p key={`p-${i}`} className="text-[15px] sm:text-[16px] leading-relaxed text-[var(--foreground)]/90 font-normal">
           {renderInline(line)}
         </p>
       ))}
@@ -321,15 +339,40 @@ function BlockView({ block }: { block: XrogaBlock }) {
           </div>
         </div>
       );
-    case 'callout':
+    case 'callout': {
+      const eqMatch = block.body.match(/^__EQ__([^\n]+)/);
+      const bodyText = eqMatch ? block.body.replace(/^__EQ__[^\n]+\n?/, '') : block.body;
+      const eqText = eqMatch?.[1];
+      const isProblem = block.label === 'Your problem';
+      const isBottomLine = block.label === 'The bottom line';
       return (
-        <div className="rounded-r-xl border-l-4 border-[#006aff]/50 bg-gradient-to-r from-slate-50/95 to-white/60 px-4 py-3 dark:from-white/5 dark:to-transparent">
-          <p className="text-[13px] sm:text-[14px] font-semibold text-[var(--foreground)] mb-1">{block.label}</p>
-          <p className="text-[14px] sm:text-[15px] leading-[1.65] text-[var(--foreground)]/88 whitespace-pre-wrap">
-            {renderInline(block.body)}
+        <div
+          className={cn(
+            'rounded-xl px-4 py-3',
+            isProblem && 'border border-[var(--accent)]/30 bg-[var(--accent)]/[0.06]',
+            isBottomLine && 'border border-emerald-500/25 bg-emerald-500/[0.06]',
+            !isProblem && !isBottomLine && 'rounded-r-xl border-l-4 border-[#006aff]/50 bg-gradient-to-r from-slate-50/95 to-white/60 dark:from-white/5 dark:to-transparent',
+          )}
+        >
+          <p className={cn(
+            'text-[12px] font-semibold uppercase tracking-wider mb-2',
+            isBottomLine ? 'text-emerald-600 dark:text-emerald-400' : 'text-[var(--accent)]',
+          )}>
+            {block.label}
           </p>
+          {eqText && (
+            <div className="xv-math-equation mb-2">
+              <MathEquation text={eqText} className="text-[17px] sm:text-[18px] text-[var(--foreground)]" />
+            </div>
+          )}
+          {bodyText && (
+            <p className="text-[14px] sm:text-[15px] leading-[1.65] text-[var(--foreground)]/88 whitespace-pre-wrap">
+              {renderInline(bodyText)}
+            </p>
+          )}
         </div>
       );
+    }
     case 'list':
       return (
         <div className="space-y-2">

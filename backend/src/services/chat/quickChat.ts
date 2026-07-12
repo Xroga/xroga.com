@@ -15,6 +15,7 @@ import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
 import { runLiveResearch, type LiveSource } from '../../lib/liveResearch.js';
+import { filterCitedSources } from '../../lib/filterCitedSources.js';
 import type { RouteProgressFn } from '../../orchestrator/xrogaRouter.js';
 import type { ChatTurn } from '../../lib/conversationContext.js';
 
@@ -131,7 +132,11 @@ export async function quickChat(
     researchContext: liveResearch?.context,
   });
   if (routed.text?.trim()) {
-    return wrap(routed.text.trim(), liveResearch?.sources);
+    const text = routed.text.trim();
+    const sources = liveResearch?.sources
+      ? filterCitedSources(text, liveResearch.sources, 4)
+      : undefined;
+    return wrap(text, sources);
   }
 
   const systemExtra = liveResearch?.context ? `\n\n${liveResearch.context}` : '';
@@ -140,7 +145,11 @@ export async function quickChat(
     complexity,
     `${master}\n\n${creationPrompt}${systemExtra}\n\n${CHAT_SYSTEM}`
   );
-  return wrap(text?.trim() || "I'm here — tell me what you'd like to work on.", liveResearch?.sources);
+  const finalText = text?.trim() || "I'm here — tell me what you'd like to work on.";
+  const sources = liveResearch?.sources
+    ? filterCitedSources(finalText, liveResearch.sources, 4)
+    : undefined;
+  return wrap(finalText, sources);
 }
 
 export async function quickChatWithGroqFallback(prompt: string): Promise<string> {

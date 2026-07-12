@@ -72,8 +72,9 @@ export function trySolveMathLocally(prompt: string): string | null {
   const lines: string[] = [
     `Solving for ${variable} step by step`,
     '',
-    `In plain words: we want to find ${variable} in this equation — isolate ${variable} on one side.`,
+    `In plain words: you asked us to find ${variable}. We'll isolate ${variable} on one side — like balancing a scale.`,
     '',
+    'Your problem',
     equation,
     '',
   ];
@@ -85,7 +86,7 @@ export function trySolveMathLocally(prompt: string): string | null {
     const amount = fmt(Math.abs(left.constant));
     lines.push(`Step ${step}`);
     lines.push(
-      `${op} ${amount} from both sides to move the constant away from the side with ${variable}.`
+      `Think of it like balancing a scale — ${op.toLowerCase()} ${amount} from both sides so the ${variable} term is alone.`
     );
     lines.push('');
     lines.push(`${fmt(coef)}${variable} = ${fmt(right.constant)} ${left.constant >= 0 ? '-' : '+'} ${amount}`);
@@ -97,7 +98,7 @@ export function trySolveMathLocally(prompt: string): string | null {
 
   if (coef !== 1 && coef !== -1) {
     lines.push(`Step ${step}`);
-    lines.push(`Divide both sides by ${fmt(coef)} so ${variable} equals 1 (coefficient becomes 1).`);
+    lines.push(`Now divide both sides by ${fmt(coef)} — that leaves ${variable} by itself with nothing multiplying it.`);
     lines.push('');
     lines.push(`${variable} = ${fmt(rhs)}/${fmt(coef)}`);
     lines.push('');
@@ -117,7 +118,12 @@ export function trySolveMathLocally(prompt: string): string | null {
   lines.push('Quick check');
   const checkLeft = left.coef * solution + left.constant;
   lines.push(
-    `Substituting ${variable} = ${fmt(solution)} gives ${fmt(checkLeft)} on the left, which matches the right side (${rightRaw}).`
+    `If we put ${variable} = ${fmt(solution)} back in, the left side becomes ${fmt(checkLeft)}, which equals the right side (${rightRaw}). It checks out.`
+  );
+  lines.push('');
+  lines.push('The bottom line');
+  lines.push(
+    `${variable} = ${fmt(solution)} — that's the value that makes the equation true. Both sides balance perfectly.`
   );
 
   return lines.join('\n');
