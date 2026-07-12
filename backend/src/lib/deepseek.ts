@@ -1,3 +1,4 @@
+import { XROGA_MODELS } from '../config/modelRegistry.js';
 import { getSecret } from '../config/envSecrets.js';
 
 interface DeepSeekMessage {
@@ -25,7 +26,7 @@ export async function deepSeekChat(
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: options?.model ?? 'deepseek-chat',
+      model: options?.model ?? XROGA_MODELS.deepseek_flash.apiModel,
       messages,
       max_tokens: options?.maxTokens ?? 1024,
       temperature: 0.3,

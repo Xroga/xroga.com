@@ -1,6 +1,7 @@
 /** Xroga AI Phase 1 — Model registry (internal only; never exposed to users) */
 
 import type { InternalModelId } from './types.js';
+import { XROGA_MODELS } from '../config/modelRegistry.js';
 
 export interface ModelConfig {
   id: InternalModelId;
@@ -17,7 +18,7 @@ export interface ModelConfig {
 export const MODELS: Record<InternalModelId, ModelConfig> = {
   deepseek_flash: {
     id: 'deepseek_flash',
-    apiModel: 'deepseek-chat',
+    apiModel: XROGA_MODELS.deepseek_flash.apiModel,
     provider: 'deepseek',
     inputCostPer1M: 0.14,
     outputCostPer1M: 0.28,
@@ -26,7 +27,7 @@ export const MODELS: Record<InternalModelId, ModelConfig> = {
   },
   deepseek_pro: {
     id: 'deepseek_pro',
-    apiModel: 'deepseek-reasoner',
+    apiModel: XROGA_MODELS.deepseek_pro.apiModel,
     provider: 'deepseek',
     inputCostPer1M: 0.435,
     outputCostPer1M: 0.87,

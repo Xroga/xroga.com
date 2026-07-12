@@ -33,15 +33,17 @@ export function hasChatKey(provider: CodeProvider): boolean {
   return Boolean(getSecret(CODE_KEY_MAP[provider].chat));
 }
 
-/** Preferred models per pipeline */
+import { XROGA_MODELS } from '../config/modelRegistry.js';
+
+/** Preferred models per pipeline — DeepSeek V4 (Flash workhorse, Pro for reasoning) */
 export const CODE_MODELS = {
-  deepseek: 'deepseek-chat',
+  deepseek: XROGA_MODELS.deepseek_flash.apiModel,
   groq: 'llama-3.3-70b-versatile',
   gemini: 'gemini-2.0-flash',
 } as const;
 
 export const CHAT_MODELS = {
-  deepseek: 'deepseek-chat',
+  deepseek: XROGA_MODELS.deepseek_flash.apiModel,
   groq: 'llama-3.1-8b-instant',
   gemini: 'gemini-2.0-flash',
 } as const;
