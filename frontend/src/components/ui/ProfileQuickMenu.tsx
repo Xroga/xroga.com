@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { WandSparkles, Users, MessageCircleHeart, Sparkles } from 'lucide-react';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
@@ -30,8 +31,8 @@ const ITEMS = [
   },
 ];
 
-const MENU_WIDTH = 260;
-const VIEWPORT_PAD = 12;
+const MENU_WIDTH = 272;
+const VIEWPORT_PAD = 16;
 
 interface ProfileQuickMenuProps {
   onLogout?: () => void;
@@ -50,22 +51,26 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
     if (!open) return;
 
     function placeMenu() {
-      const trigger = btnRef.current?.getBoundingClientRect();
+      const trigger = anchorRef?.current?.getBoundingClientRect() ?? btnRef.current?.getBoundingClientRect();
       const menu = menuRef.current;
       if (!trigger || !menu) return;
 
       const menuW = menu.offsetWidth || MENU_WIDTH;
-      const menuH = menu.offsetHeight || 280;
-      const gap = 10;
+      const menuH = menu.offsetHeight || 300;
+      const gap = 12;
 
-      let left = trigger.left + trigger.width / 2 - menuW / 2;
+      let left = trigger.left;
       let top = trigger.top - menuH - gap;
 
       if (top < VIEWPORT_PAD) {
         top = trigger.bottom + gap;
       }
 
-      left = Math.max(VIEWPORT_PAD, Math.min(left, window.innerWidth - menuW - VIEWPORT_PAD));
+      if (left + menuW > window.innerWidth - VIEWPORT_PAD) {
+        left = window.innerWidth - menuW - VIEWPORT_PAD;
+      }
+      left = Math.max(VIEWPORT_PAD, left);
+
       top = Math.max(VIEWPORT_PAD, Math.min(top, window.innerHeight - menuH - VIEWPORT_PAD));
 
       setPos({ top, left });
@@ -111,48 +116,50 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
         <WandSparkles className="w-4 h-4" />
       </button>
 
-      {open && (
-        <>
-          <div className="fixed inset-0 z-[298]" onClick={() => setOpen(false)} aria-hidden />
-          <div
-            ref={menuRef}
-            id="xv-profile-quick-menu"
-            className="fixed z-[300] w-[min(260px,calc(100vw-24px))] animate-in fade-in slide-in-from-bottom-2 duration-200"
-            style={{ top: pos.top, left: pos.left }}
-          >
-            <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)]/98 backdrop-blur-xl shadow-2xl overflow-hidden">
-              <p className="text-[9px] uppercase tracking-widest text-[var(--muted)] px-3 pt-2.5 pb-1 font-semibold">
-                Quick links
-              </p>
-              <ul className="p-1.5 space-y-0.5">
-                {ITEMS.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <li key={item.key}>
-                      <button
-                        type="button"
-                        onClick={() => handleItem(item)}
-                        className="w-full flex items-start gap-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-[var(--accent)]/10 transition-all"
-                      >
-                        <Icon className="w-4 h-4 shrink-0 mt-0.5 text-[var(--accent)]" />
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold">{item.label}</p>
-                          <p className="text-[10px] text-[var(--muted)]">{item.desc}</p>
-                        </div>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-              {onLogout && (
-                <div className="p-2 border-t border-[var(--card-border)]/50 flex justify-center">
-                  <LogoutButton onClick={() => { setOpen(false); onLogout(); }} />
-                </div>
-              )}
+      {open &&
+        createPortal(
+          <>
+            <div className="fixed inset-0 z-[298]" onClick={() => setOpen(false)} aria-hidden />
+            <div
+              ref={menuRef}
+              id="xv-profile-quick-menu"
+              className="fixed z-[300] w-[min(272px,calc(100vw-32px))] animate-in fade-in slide-in-from-bottom-2 duration-200"
+              style={{ top: pos.top, left: pos.left }}
+            >
+              <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] backdrop-blur-xl shadow-2xl overflow-visible">
+                <p className="text-[9px] uppercase tracking-widest text-[var(--muted)] px-3 pt-2.5 pb-1 font-semibold">
+                  Quick links
+                </p>
+                <ul className="p-1.5 space-y-0.5">
+                  {ITEMS.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <li key={item.key}>
+                        <button
+                          type="button"
+                          onClick={() => handleItem(item)}
+                          className="w-full flex items-start gap-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-[var(--accent)]/10 transition-all"
+                        >
+                          <Icon className="w-4 h-4 shrink-0 mt-0.5 text-[var(--accent)]" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs font-semibold leading-snug">{item.label}</p>
+                            <p className="text-[10px] text-[var(--muted)] leading-snug">{item.desc}</p>
+                          </div>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+                {onLogout && (
+                  <div className="p-2.5 border-t border-[var(--card-border)]/50">
+                    <LogoutButton onClick={() => { setOpen(false); onLogout(); }} />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </>
-      )}
+          </>,
+          document.body
+        )}
 
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </>

@@ -20,6 +20,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isHomepage = pathname === '/';
   const isAuthRoute = pathname.startsWith('/auth');
+  const isShellRoute = pathname === '/workspace' || pathname.startsWith('/dashboard');
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -57,17 +58,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         body.style.backgroundSize = 'cover';
         body.style.backgroundPosition = 'center';
         body.style.backgroundAttachment = 'scroll';
-        body.style.backgroundColor = '#0a0e17';
+        body.style.backgroundColor = 'transparent';
       } else if (customDesktopBg) {
         body.style.backgroundImage = `url("${customDesktopBg}")`;
         body.style.backgroundSize = 'cover';
         body.style.backgroundPosition = 'center';
         body.style.backgroundAttachment = 'fixed';
-        body.style.backgroundColor = '#0a0e17';
+        body.style.backgroundColor = 'transparent';
       } else {
         body.style.backgroundImage = '';
         body.style.backgroundAttachment = '';
-        body.style.backgroundColor = '#0a0e17';
+        body.style.backgroundColor = 'transparent';
       }
     } else {
       body.style.backgroundImage = '';
@@ -79,17 +80,25 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const showDesktopSlideshow =
     (isHomepage || isAuthRoute || theme === 'image') && !isMobile && !customDesktopBg;
 
-  const slideshowOverlay =
-    isHomepage
-      ? 'bg-gradient-to-b from-black/50 via-black/20 to-black/55'
-      : isAuthRoute
-        ? 'bg-gradient-to-b from-black/50 via-black/30 to-black/60'
+  const slideshowOverlay = isHomepage
+    ? 'bg-gradient-to-b from-black/50 via-black/20 to-black/55'
+    : isAuthRoute
+      ? 'bg-gradient-to-b from-black/50 via-black/30 to-black/60'
+      : isShellRoute
+        ? 'bg-gradient-to-b from-black/10 via-transparent to-black/20'
         : 'bg-gradient-to-b from-black/45 via-black/25 to-black/55';
 
   return (
     <>
       {showDesktopSlideshow ? (
         <DesktopBackgroundSlideshow images={DESKTOP_BG_SLIDESHOW} overlayClassName={slideshowOverlay} />
+      ) : null}
+      {!isMobile && customDesktopBg && theme === 'image' ? (
+        <div
+          className="fixed inset-0 -z-10 hidden md:block bg-cover bg-center bg-no-repeat bg-fixed"
+          style={{ backgroundImage: `url("${customDesktopBg}")` }}
+          aria-hidden
+        />
       ) : null}
       {children}
     </>

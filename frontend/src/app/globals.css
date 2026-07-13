@@ -2601,6 +2601,34 @@ body.theme-gray * {
     align-self: flex-start;
     max-height: min(68vh, 520px);
   }
+  .xv-chat-turn-rail--dock {
+    position: fixed;
+    right: max(10px, env(safe-area-inset-right));
+    top: calc(4.5rem + env(safe-area-inset-top));
+    bottom: calc(var(--xv-chatbar-height, 220px) + 12px);
+    width: 14px;
+    z-index: 44;
+    pointer-events: none;
+    transition: width 0.2s ease-out;
+  }
+  .xv-chat-turn-rail--dock > * {
+    pointer-events: auto;
+  }
+  .xv-chat-turn-rail--dock.xv-chat-turn-rail--expanded {
+    width: min(220px, calc(100vw - 24px));
+  }
+  .xv-chat-turn-flyout {
+    margin-right: 0;
+    max-height: 100%;
+  }
+  body.xv-terminal-fullscreen-active .xv-chat-turn-rail--dock {
+    top: calc(3.5rem + env(safe-area-inset-top));
+    z-index: 205;
+  }
+  #xv-profile-quick-menu .xv-logout-btn {
+    width: 100%;
+    justify-content: center;
+  }
   .xv-chat-turn-collapsed {
     cursor: default;
   }
@@ -2635,7 +2663,7 @@ body.theme-gray * {
     pointer-events: none;
   }
   .xv-fullscreen-overlay {
-    background: var(--background) !important;
+    background: transparent !important;
   }
 
   .xv-sidebar-profile-row {
