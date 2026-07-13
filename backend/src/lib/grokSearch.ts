@@ -1,6 +1,7 @@
 /**
  * Grok Agent Tools — web_search + x_search via xAI Responses API.
- * Used for live X.com trends, hackathon chatter, and UI research.
+ * EXPENSIVE: $5 per 1k tool calls + model tokens (use grok-4.3, never 4.5).
+ * Prefer SearXNG / Tavily (webSearch.ts) for normal builds.
  */
 
 import { getSecret } from '../config/envSecrets.js';
@@ -63,11 +64,19 @@ function extractCitations(data: unknown): GrokSearchHit[] {
   return hits;
 }
 
-/** Run Grok web + optional X.com search. Returns null if API key missing or call fails. */
+/**
+ * Grok agent search — DISABLED unless XROGA_ALLOW_GROK_AGENT_SEARCH=1.
+ * Always uses grok-4.3 (not 4.5). Prefer webSearch() instead.
+ */
 export async function grokAgentSearch(
   query: string,
   opts?: { xSearch?: boolean; webSearch?: boolean; maxTokens?: number }
 ): Promise<GrokSearchBundle | null> {
+  if (process.env.XROGA_ALLOW_GROK_AGENT_SEARCH !== '1') {
+    console.warn('[grokSearch] skipped — set XROGA_ALLOW_GROK_AGENT_SEARCH=1 to enable (costly)');
+    return null;
+  }
+
   const apiKey = getSecret('GROK_API_KEY') ?? getSecret('XAI_API_KEY');
   if (!apiKey) return null;
 
@@ -84,7 +93,8 @@ export async function grokAgentSearch(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: XROGA_MODELS.grok_fast.apiModel,
+        // Always cheapest suitable chat model for tools — never grok-4.5
+        model: XROGA_MODELS.grok_reasoning.apiModel,
         input: [
           {
             role: 'user',
@@ -92,9 +102,9 @@ export async function grokAgentSearch(
           },
         ],
         tools,
-        max_output_tokens: opts?.maxTokens ?? 1024,
+        max_output_tokens: opts?.maxTokens ?? 512,
       }),
-      signal: AbortSignal.timeout(45_000),
+      signal: AbortSignal.timeout(30_000),
     });
 
     if (!response.ok) {
@@ -107,7 +117,7 @@ export async function grokAgentSearch(
     const hits = extractCitations(data);
     if (!summary && !hits.length) return null;
 
-    return { summary: summary.slice(0, 2000), hits: hits.slice(0, 8) };
+    return { summary: summary.slice(0, 1200), hits: hits.slice(0, 5) };
   } catch (err) {
     console.warn('[grokSearch]', (err as Error).message?.slice(0, 120));
     return null;
@@ -117,7 +127,7 @@ export async function grokAgentSearch(
 export function formatGrokSearchContext(bundle: GrokSearchBundle): string {
   const lines = bundle.hits.map((h) => `- **${h.title}** (${h.url}): ${h.snippet}`);
   return [
-    '## Grok live research (web + X.com when enabled)',
+    '## Live research',
     bundle.summary ? bundle.summary : '',
     lines.length ? `\nSources:\n${lines.join('\n')}` : '',
   ]

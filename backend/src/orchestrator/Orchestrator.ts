@@ -164,6 +164,7 @@ export class Orchestrator {
         githubTargetRepo?: string;
         githubTargetBranch?: string;
         assistantMessageId?: string;
+        abortSignal?: AbortSignal;
       };
     },
     featureCategory: FeatureCategory
@@ -178,6 +179,7 @@ export class Orchestrator {
         githubTargetRepo: ctx.clientMeta?.githubTargetRepo,
         githubTargetBranch: ctx.clientMeta?.githubTargetBranch,
         assistantMessageId: ctx.clientMeta?.assistantMessageId,
+        abortSignal: ctx.clientMeta?.abortSignal,
       });
 
     let result;
@@ -473,6 +475,7 @@ export class Orchestrator {
         buildUpdate?: boolean;
         githubTargetRepo?: string;
         githubTargetBranch?: string;
+        abortSignal?: AbortSignal;
       };
       history?: ChatTurn[];
     }

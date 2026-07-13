@@ -12,12 +12,15 @@ import { resolveBuildModelRole, type BuildModelRole } from '../../phase1/modelQu
 
 export type GrokVariant = 'reasoning' | 'fast';
 
-/** ~70% Grok 4 reasoning, ~30% Grok 4.5 fast — fast output always gets self-review pass. */
-export function pickGrokVariant(seed = ''): GrokVariant {
-  let hash = 0;
-  const s = seed || String(Date.now());
-  for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
-  return hash % 100 < 30 ? 'fast' : 'reasoning';
+/**
+ * Prefer Grok 4.3 (reasoning) always.
+ * Grok 4.5 ($2/$6) only if XROGA_ALLOW_GROK_45=1 — previously 30% burned entire build budgets.
+ */
+export function pickGrokVariant(_seed = ''): GrokVariant {
+  if (process.env.XROGA_ALLOW_GROK_45 === '1') {
+    return 'fast';
+  }
+  return 'reasoning';
 }
 
 export type { BuildModelRole } from '../../phase1/modelQuotaTracker.js';

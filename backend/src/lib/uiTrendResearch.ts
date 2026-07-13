@@ -1,42 +1,34 @@
 import { webSearch } from './webSearch.js';
-import { grokAgentSearch, formatGrokSearchContext } from './grokSearch.js';
 
 export interface UiTrendBundle {
   context: string;
   query: string;
 }
 
-/** Fetch trendy UI/UX inspiration via web search (Pinterest, Dribbble, 2026 trends) — no Pinterest API key required */
+/**
+ * Free/cheap UI inspiration via SearXNG/Tavily only.
+ * NEVER calls Grok agent tools (web_search/x_search cost $5/1k + expensive tokens).
+ */
 export async function fetchUiTrendResearch(
   projectLabel: string,
   buildType: string
 ): Promise<UiTrendBundle | null> {
   const label = projectLabel.slice(0, 80) || 'modern web app';
-  const query = `${label} ${buildType} UI UX design trends 2026 site:pinterest.com OR dribbble OR awwwards`;
+  const query = `${label} ${buildType} modern UI UX design trends 2026`;
 
   try {
-    const [results, grokUi] = await Promise.all([
-      webSearch(query, { maxResults: 4 }),
-      grokAgentSearch(`${label} ${buildType} UI UX design trends 2026`, { xSearch: true, webSearch: true }),
-    ]);
-    const grokNote = grokUi ? `\n${formatGrokSearchContext(grokUi)}` : '';
-
+    const results = await webSearch(query, { maxResults: 3 });
     if (!results.length) {
-      const fallback = await webSearch(`${label} modern UI UX design trends 2026 animations`, {
-        maxResults: 3,
-      });
-      if (!fallback.length) return null;
-      const lines = fallback.map((r) => `- ${r.title}: ${r.content.slice(0, 140)}`);
       return {
         query,
-        context: `\n## UI/UX trend research (apply to design)\nUse modern 2026 aesthetics: glassmorphism accents, bold typography, micro-interactions, dark/light themes, generous whitespace.\n${lines.join('\n')}${grokNote}`,
+        context: `\n## UI/UX guidance (no live search)\nUse modern aesthetics: clear typography, generous whitespace, responsive cards, accessible contrast, mobile-first.\n`,
       };
     }
 
-    const lines = results.map((r) => `- **${r.title}**: ${r.content.slice(0, 160)}`);
+    const lines = results.map((r) => `- **${r.title}**: ${r.content.slice(0, 140)}`);
     return {
       query,
-      context: `\n## UI/UX trend research (Pinterest / design web — apply visually)\nPrioritize: trendy layouts, animated hero sections, card grids, gradient accents, accessible contrast, mobile-first.\n${lines.join('\n')}${grokNote}`,
+      context: `\n## UI/UX trend notes (free web search)\nPrioritize: clean layouts, card grids, gradient accents, accessible contrast, mobile-first.\n${lines.join('\n')}`,
     };
   } catch (err) {
     console.warn('[uiTrendResearch]', (err as Error).message);

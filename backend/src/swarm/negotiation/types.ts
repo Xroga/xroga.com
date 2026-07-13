@@ -33,6 +33,8 @@ export interface NegotiationContext {
   assistantMessageId?: string;
   /** Accumulates real API token usage for billing */
   usageTracker?: BuildUsageTracker;
+  /** Abort when client disconnects — stop further paid API calls */
+  abortSignal?: AbortSignal;
 }
 
 export interface NegotiationResult {

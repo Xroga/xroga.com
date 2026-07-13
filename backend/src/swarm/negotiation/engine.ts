@@ -98,7 +98,7 @@ import {
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { deepseekCode, groqCode, geminiCode } from '../../services/code/codeClients.js';
 import { resolveApiKey } from '../../config/apiKeyRouter.js';
-import { grokSelfReviewCode, runGrokCodeReviewLoop } from './grokReview.js';
+import { runGrokCodeReviewLoop } from './grokReview.js';
 import { buildModelCall, buildForcedCorrection } from './buildModelRouter.js';
 import {
   xrogaArchitectureLine,
@@ -116,12 +116,19 @@ import { autoPublishBuildToCommunity } from '../../services/communityAutoPublish
 import { notifyBuildComplete, notifyBuildFailed } from '../../services/notificationService.js';
 import { createTodoState } from './todoState.js';
 import { XROGA_MODELS } from '../../config/modelRegistry.js';
+import { policyForPrompt } from '../../lib/buildCostPolicy.js';
 
 /** Max tokens per build step — no compromise on complete code output */
 const BUILD_STEP_MAX_TOKENS = 16384;
 
 const MAX_PLAN_ITERATIONS = 3;
 const MAX_STEP_CORRECTIONS = 3;
+
+function assertNotAborted(ctx: NegotiationContext) {
+  if (ctx.abortSignal?.aborted) {
+    throw new Error('CLIENT_DISCONNECTED');
+  }
+}
 
 function emit(
   ctx: NegotiationContext,
@@ -132,6 +139,7 @@ function emit(
   statusLabel: string,
   opts?: { silent?: boolean; userPhase?: number; hackathonBrief?: import('../../phase1/types.js').HackathonBriefCard }
 ): void {
+  assertNotAborted(ctx);
   const userPhase =
     opts?.userPhase ??
     (phase === 0
@@ -374,6 +382,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   try {
   const { userPrompt: rawPrompt, featureCategory, userId } = ctx;
   const userPrompt = rawPrompt.trim();
+  const costPolicy = policyForPrompt(userPrompt);
   const currentMessage = routingPrompt(userPrompt);
   const todos = createTodoState(userPrompt);
   const buildState = new BuildState();
@@ -438,13 +447,15 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   let uiTrendNote = '';
   let hackathonNote = '';
 
-  if ((isProductBuild || isGameBuild) && !isUpdateBuild) {
+  // Cost policy: simple blogs/landings skip paid web research + all Grok agent tools
+  if ((isProductBuild || isGameBuild) && !isUpdateBuild && costPolicy.allowWebResearch) {
     try {
+      assertNotAborted(ctx);
       const searchQuery = isWebsiteUpdateRequest(userPrompt)
         ? `${currentMessage} UI patterns best practices`
         : `${inferBusinessLabel(userPrompt)} ${buildType} requirements 2026`;
       const results = await webSearch(searchQuery, {
-        maxResults: 4,
+        maxResults: 3,
         forceTavily: /\bhackathon|okx|asp\b|crypto|web3\b/i.test(userPrompt),
       });
       if (results.length) {
@@ -464,11 +475,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     }
 
     try {
+      assertNotAborted(ctx);
       const uiTrend = await fetchUiTrendResearch(inferBusinessLabel(userPrompt), buildType);
       if (uiTrend) {
         uiTrendNote = uiTrend.context;
         todos.activate('ui-trends');
-        emit(ctx, 0, xrogaVisionaryLine('UI trend research — modern 2026 design patterns'), 'reviewer', todos, 'XROGA Visionary', {
+        emit(ctx, 0, xrogaVisionaryLine('UI guidance — modern design patterns'), 'reviewer', todos, 'XROGA Visionary', {
           userPhase: 1,
         });
       }
@@ -497,26 +509,36 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       /* optional — only for hackathon/OKX prompts */
     }
 
-    if (webResearchNote || uiTrendNote || hackathonNote) {
+    if (costPolicy.allowGrokResearchSynthesis && (webResearchNote || uiTrendNote || hackathonNote)) {
       try {
+        assertNotAborted(ctx);
         const { text: synthesis } = await buildModelCall(
-          'grok',
-          `You are XROGA Strategist (Grok 4). Synthesize web/UI/hackathon research into build priorities, risks, and sponsor gaps. Under 350 words.`,
+          'pro',
+          `You are XROGA Strategist. Synthesize research into build priorities and risks. Under 250 words. Do not invent sources.`,
           `User:\n${userPrompt}\n\n${webResearchNote}\n${uiTrendNote}\n${hackathonNote}`,
-          3072,
-          usageTracker,
-          { grokVariant: 'reasoning' }
+          1536,
+          usageTracker
         );
         if (synthesis?.trim()) {
-          webResearchNote = `${webResearchNote}\n\nGrok research synthesis:\n${synthesis}`;
-          emit(ctx, 0, xrogaArchitectureLine('Grok — research synthesis from web sources'), 'architect', todos, 'XROGA Architect', {
+          webResearchNote = `${webResearchNote}\n\nResearch synthesis:\n${synthesis}`;
+          emit(ctx, 0, xrogaArchitectureLine('Research synthesis ready'), 'architect', todos, 'XROGA Architect', {
             userPhase: 1,
           });
         }
       } catch {
-        /* optional grok */
+        /* optional */
       }
     }
+  } else if ((isProductBuild || isGameBuild) && !isUpdateBuild && !costPolicy.allowWebResearch) {
+    emit(
+      ctx,
+      0,
+      xrogaPulseLine('Cost-smart path — skipping live web crawl for this simple build'),
+      'reviewer',
+      todos,
+      'XROGA Pulse',
+      { userPhase: 1, silent: true }
+    );
   }
 
   const isWebBuild = isProductBuild;
@@ -1022,18 +1044,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   });
   if (isUpdateBuild && incrementalPlan?.touchesUi && incrementalPlan.stepCount > 1) {
     try {
-      const { text: grokOutline } = await buildModelCall(
-        'grok',
-        `Brief UI tweak outline (bullets only, max 120 words) for this update — spacing, color, responsive hints. No code.`,
-        `Update:\n${userPrompt.slice(0, 600)}\n\nCode sample:\n${assembledCode.slice(0, 8000)}`,
-        256,
-        usageTracker,
-        { grokVariant: 'fast' }
-      );
+      assertNotAborted(ctx);
+      const polishRole = costPolicy.preferFlashUiPolish ? 'flash' : 'sonnet';
       const { text: uiPolish, modelLabel } = await buildModelCall(
-        'sonnet',
-        `Apply ONLY these UI tweaks to the fenced html/css blocks below. Return fenced html and/or css blocks only — do not rewrite unrelated files.\n\nOutline:\n${grokOutline}`,
-        `Touched paths: ${[...incrementalPlan.filePaths].join(', ')}\n\n${assembledCode.slice(0, 12000)}`,
+        polishRole,
+        `Apply ONLY targeted UI tweaks to the fenced html/css blocks below. Return fenced html and/or css blocks only — do not rewrite unrelated files.`,
+        `Update:\n${userPrompt.slice(0, 600)}\nTouched paths: ${[...incrementalPlan.filePaths].join(', ')}\n\n${assembledCode.slice(0, 12000)}`,
         4096,
         usageTracker,
         { userId: ctx.userId, claudeTask: 'ui' }
@@ -1042,12 +1058,14 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         assembledCode = `${assembledCode}\n\n// --- UI/UX polish (${modelLabel}) ---\n${uiPolish}`;
       }
     } catch {
-      /* optional grok + sonnet mix */
+      /* optional */
     }
   } else if (!isUpdateBuild) {
   try {
+    assertNotAborted(ctx);
+    const polishRole = costPolicy.preferFlashUiPolish ? 'flash' : 'sonnet';
     const { text: uiPolish, modelLabel } = await buildModelCall(
-      'sonnet',
+      polishRole,
       `You are XROGA Visionary. Polish HTML/CSS/JS for modern responsive design, micro-interactions, accessibility (ARIA), and optional dark mode. Output ONLY complete fenced html, css, javascript blocks — no commentary, no truncation.`,
       `Brief:\n${clarifiedBrief}\n\nApproved plan:\n${approvedPlan}\n\nCodebase:\n${assembledCode}`,
       BUILD_STEP_MAX_TOKENS,
@@ -1065,29 +1083,36 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   todos.addFinalTodos();
   todos.activateFinal('final-check');
 
-  if (!isUpdateBuild) {
-    emit(ctx, 6, xrogaCollectiveLine('Grok 4 — skeptical self-review (catches hallucinations & fake APIs)'), 'truth_council', todos, 'XROGA Collective', {
+  if (!isUpdateBuild && costPolicy.allowGrokReviewLoop) {
+    emit(ctx, 6, xrogaCollectiveLine('Quality audit — skeptical code review'), 'truth_council', todos, 'XROGA Collective', {
       userPhase: 2,
     });
     try {
-      const grokLoop = await runGrokCodeReviewLoop(assembledCode, userPrompt, usageTracker, ctx.userId);
+      assertNotAborted(ctx);
+      const grokLoop = await runGrokCodeReviewLoop(
+        assembledCode,
+        userPrompt,
+        usageTracker,
+        ctx.userId,
+        costPolicy.grokReviewMaxRounds
+      );
       assembledCode = grokLoop.code;
       if (!grokLoop.pass) {
-        emit(ctx, 5, xrogaArchitectureLine('Grok review — applying Pulse Core fixes after audit'), 'debugger', todos, 'XROGA Architect');
+        emit(ctx, 5, xrogaArchitectureLine('Audit fixes — applying Pulse Core corrections'), 'debugger', todos, 'XROGA Architect');
         assembledCode = await deepseekFlashCall(
           PHASE_5_CORRECT,
-          `Grok code audit loop did not fully pass — apply remaining fixes:\n\nCode:\n${assembledCode}`,
+          `Code audit did not fully pass — apply remaining fixes:\n\nCode:\n${assembledCode}`,
           BUILD_STEP_MAX_TOKENS,
           usageTracker
         );
         totalCorrections++;
       } else {
-        emit(ctx, 6, xrogaCollectiveLine(`Grok self-review passed (${grokLoop.rounds} round(s))`), 'truth_council', todos, 'XROGA Collective', {
+        emit(ctx, 6, xrogaCollectiveLine(`Code audit passed (${grokLoop.rounds} round(s))`), 'truth_council', todos, 'XROGA Collective', {
           userPhase: 2,
         });
       }
     } catch {
-      /* optional grok review */
+      /* optional review */
     }
   }
 
@@ -1465,6 +1490,20 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     featureOutput: featureOutput ?? undefined,
     tokenUsage,
   };
+  } catch (err) {
+    const msg = (err as Error).message || '';
+    if (msg === 'CLIENT_DISCONNECTED' || ctx.abortSignal?.aborted) {
+      console.warn('[NegotiationEngine] Client disconnected — stopping further paid API calls');
+      return {
+        success: false,
+        clarifiedBrief: '',
+        approvedPlan: '',
+        assembledCode: '',
+        polishedOutput:
+          'Connection lost mid-build. We stopped further AI calls to protect your tokens. Reconnect and retry — you only pay for work already completed.',
+      };
+    }
+    throw err;
   } finally {
     await flushBuildUsage(ctx.userId, usageTracker);
   }

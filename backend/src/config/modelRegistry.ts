@@ -69,9 +69,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.14,
     outputPer1M: 0.28,
-    inputSharePct: 25,
-    outputSharePct: 26,
-    description: 'Workhorse — bulk code output, file reads, fixes, verify',
+    inputSharePct: 55,
+    outputSharePct: 56,
+    description: 'Workhorse — bulk code, file reads, fixes, verify, simple UI polish',
   },
   deepseek_pro: {
     role: 'deepseek_pro',
@@ -79,29 +79,31 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.435,
     outputPer1M: 0.87,
-    inputSharePct: 18,
-    outputSharePct: 18,
-    description: 'DeepSeek Pro — architecture, repo analysis, plan review, updates, hard logic',
+    inputSharePct: 27,
+    outputSharePct: 26,
+    description: 'DeepSeek Pro — architecture, plan review, quality gate (replaces most Grok work)',
   },
   grok_reasoning: {
     role: 'grok_reasoning',
-    apiModel: envModel('XROGA_GROK_MODEL', 'grok-4'),
+    /** Official xAI chat id — grok-4.3 @ $1.25/$2.50 (NOT grok-4.5) */
+    apiModel: envModel('XROGA_GROK_MODEL', 'grok-4.3'),
     provider: 'xai',
-    inputPer1M: 0.2,
-    outputPer1M: 0.5,
-    inputSharePct: 26,
-    outputSharePct: 24,
-    description: 'Grok 4 Reasoning — strategy, synthesis, skeptical code audit (high reasoning)',
+    inputPer1M: 1.25,
+    outputPer1M: 2.5,
+    inputSharePct: 8,
+    outputSharePct: 8,
+    description: 'Grok 4.3 — rare strategy/audit only (strict % cap — never web tools on simple builds)',
   },
   grok_fast: {
     role: 'grok_fast',
+    /** grok-4.5 is $2/$6 — almost never use; kept for emergency override only */
     apiModel: envModel('XROGA_GROK_FAST_MODEL', 'grok-4.5'),
     provider: 'xai',
     inputPer1M: 2.0,
     outputPer1M: 6.0,
-    inputSharePct: 15,
-    outputSharePct: 15,
-    description: 'Grok 4.5 — fast UI outlines & iteration (~30% of Grok calls, always self-reviewed)',
+    inputSharePct: 1,
+    outputSharePct: 1,
+    description: 'Grok 4.5 — DISABLED by default for builds (1% hard ceiling)',
   },
   claude_sonnet: {
     role: 'claude_sonnet',
@@ -112,9 +114,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     inputPer1MAfterPromo: 3.0,
     outputPer1MAfterPromo: 15.0,
     promoEndsAt: SONNET_5_PROMO_ENDS,
-    inputSharePct: 14,
-    outputSharePct: 14,
-    description: 'Claude Sonnet 5 — UI polish & premium UX (14% input / 14% output pool)',
+    inputSharePct: 8,
+    outputSharePct: 8,
+    description: 'Claude Sonnet 5 — UI polish only on standard+ builds (strict % + $5 budget)',
   },
   claude_opus: {
     role: 'claude_opus',
@@ -122,9 +124,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'anthropic',
     inputPer1M: 5.0,
     outputPer1M: 25.0,
-    inputSharePct: 2,
-    outputSharePct: 3,
-    description: 'Opus — crypto final QA only (minimal use)',
+    inputSharePct: 1,
+    outputSharePct: 1,
+    description: 'Opus — crypto/security QA only (minimal)',
   },
   gemini_flash: {
     role: 'gemini_flash',
@@ -218,8 +220,14 @@ export const BUILD_PREFLIGHT_ESTIMATE = {
   output: 88_000,
 };
 
-/** Typical token burn for one advanced site build (input-heavy) */
+/** Typical token burn for one standard site build (DeepSeek-heavy mix) */
 export const TYPICAL_BUILD_TOKENS = BUILD_PREFLIGHT_ESTIMATE;
+
+/** Simple blog/landing — Flash-first, no Grok search/review */
+export const SIMPLE_BUILD_TOKENS = {
+  input: 95_000,
+  output: 55_000,
+};
 
 /** Targeted update — only named files, cached repo, no Phase 0 research */
 export const TYPICAL_UPDATE_TOKENS = {
