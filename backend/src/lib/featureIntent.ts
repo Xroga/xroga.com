@@ -41,7 +41,7 @@ export function isVideoIntent(prompt: string): boolean {
 }
 
 export const VIDEO_REMOVED_MESSAGE =
-  'Video generation is not available on Xroga. I **can generate images** — logos, thumbnails, artwork, mockups, and photo edits. Describe the visual you want, or ask me to build a website or app.';
+  'Xroga AI video generation is **not live yet**. I can write a detailed **prompt for Runway, Pika, Kling, or another video AI** — or generate **images** here (logos, thumbnails, artwork, mockups, and edits). I can also build websites, apps, and automations.';
 
 export function detectFeatureIntent(prompt: string): FeatureCategory | 'chat' {
   const t = routingPrompt(prompt).trim();

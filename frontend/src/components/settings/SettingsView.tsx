@@ -15,6 +15,7 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { THEME_OPTIONS } from '@/lib/theme';
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
+import { SlideshowToggle } from '@/components/layout/SlideshowToggle';
 import { useT } from '@/components/providers/LanguageProvider';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
@@ -300,6 +301,17 @@ export function SettingsView({ email }: { email: string }) {
                   </button>
                 ))}
               </div>
+              {theme === 'image' ? (
+                <div className="flex items-center justify-between gap-3 rounded-xl border border-[var(--card-border)] p-3">
+                  <div>
+                    <p className="text-sm font-medium">Wallpaper slideshow</p>
+                    <p className="text-xs text-[var(--muted)] mt-0.5">
+                      Turn off to freeze on the current background image.
+                    </p>
+                  </div>
+                  <SlideshowToggle />
+                </div>
+              ) : null}
               <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t border-[var(--card-border)]">
                 <div>
                   <label className="block text-sm font-medium mb-2">Custom desktop wallpaper</label>

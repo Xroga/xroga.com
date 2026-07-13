@@ -17,6 +17,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const theme = useThemeStore((s) => s.theme);
   const customDesktopBg = useThemeStore((s) => s.customDesktopBg);
   const customMobileBg = useThemeStore((s) => s.customMobileBg);
+  const slideshowEnabled = useThemeStore((s) => s.slideshowEnabled);
+  const slideshowFrozenIndex = useThemeStore((s) => s.slideshowFrozenIndex);
+  const setSlideshowFrozenIndex = useThemeStore((s) => s.setSlideshowFrozenIndex);
   const pathname = usePathname();
   const isHomepage = pathname === '/';
   const isAuthRoute = pathname.startsWith('/auth');
@@ -91,7 +94,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
     <>
       {showDesktopSlideshow ? (
-        <DesktopBackgroundSlideshow images={DESKTOP_BG_SLIDESHOW} overlayClassName={slideshowOverlay} />
+        <DesktopBackgroundSlideshow
+          images={DESKTOP_BG_SLIDESHOW}
+          overlayClassName={slideshowOverlay}
+          enabled={slideshowEnabled}
+          frozenIndex={slideshowFrozenIndex}
+          onActiveIndexChange={setSlideshowFrozenIndex}
+        />
       ) : null}
       {!isMobile && customDesktopBg && theme === 'image' ? (
         <div

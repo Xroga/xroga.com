@@ -3,7 +3,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ThemeId, TerminalSkin } from '@/lib/theme';
-import { CUSTOM_DESKTOP_BG_KEY, CUSTOM_MOBILE_BG_KEY, DEFAULT_TERMINAL_SKIN, TERMINAL_SKIN_CYCLE } from '@/lib/theme';
+import {
+  CUSTOM_DESKTOP_BG_KEY,
+  CUSTOM_MOBILE_BG_KEY,
+  DEFAULT_TERMINAL_SKIN,
+  SLIDESHOW_ENABLED_KEY,
+  SLIDESHOW_FROZEN_INDEX_KEY,
+  TERMINAL_SKIN_CYCLE,
+} from '@/lib/theme';
 
 interface ThemeState {
   theme: ThemeId;
@@ -12,6 +19,8 @@ interface ThemeState {
   sidebarWidth: number;
   customDesktopBg: string | null;
   customMobileBg: string | null;
+  slideshowEnabled: boolean;
+  slideshowFrozenIndex: number;
   terminalFullscreen: boolean;
   terminalSkin: TerminalSkin;
   browserPanelOpen: boolean;
@@ -22,6 +31,8 @@ interface ThemeState {
   toggleSidebar: () => void;
   setCustomDesktopBg: (url: string | null) => void;
   setCustomMobileBg: (url: string | null) => void;
+  setSlideshowEnabled: (enabled: boolean) => void;
+  setSlideshowFrozenIndex: (index: number) => void;
   setTerminalFullscreen: (v: boolean) => void;
   cycleTerminalSkin: () => void;
   setTerminalSkin: (skin: TerminalSkin) => void;
@@ -39,6 +50,8 @@ export const useThemeStore = create<ThemeState>()(
       sidebarWidth: 256,
       customDesktopBg: null,
       customMobileBg: null,
+      slideshowEnabled: true,
+      slideshowFrozenIndex: 0,
       terminalFullscreen: false,
       terminalSkin: DEFAULT_TERMINAL_SKIN.image,
       browserPanelOpen: false,
@@ -63,6 +76,14 @@ export const useThemeStore = create<ThemeState>()(
         if (url) localStorage.setItem(CUSTOM_MOBILE_BG_KEY, url);
         else localStorage.removeItem(CUSTOM_MOBILE_BG_KEY);
         set({ customMobileBg: url });
+      },
+      setSlideshowEnabled: (slideshowEnabled) => {
+        localStorage.setItem(SLIDESHOW_ENABLED_KEY, slideshowEnabled ? '1' : '0');
+        set({ slideshowEnabled });
+      },
+      setSlideshowFrozenIndex: (slideshowFrozenIndex) => {
+        localStorage.setItem(SLIDESHOW_FROZEN_INDEX_KEY, String(slideshowFrozenIndex));
+        set({ slideshowFrozenIndex });
       },
       setTerminalFullscreen: (terminalFullscreen) => set({ terminalFullscreen }),
       cycleTerminalSkin: () =>
@@ -95,6 +116,8 @@ export const useThemeStore = create<ThemeState>()(
         sidebarWidth: s.sidebarWidth,
         customDesktopBg: s.customDesktopBg,
         customMobileBg: s.customMobileBg,
+        slideshowEnabled: s.slideshowEnabled,
+        slideshowFrozenIndex: s.slideshowFrozenIndex,
         terminalSkin: s.terminalSkin,
       }),
       onRehydrateStorage: () => (state) => {
@@ -103,6 +126,13 @@ export const useThemeStore = create<ThemeState>()(
           const m = localStorage.getItem(CUSTOM_MOBILE_BG_KEY);
           if (d) state.customDesktopBg = d;
           if (m) state.customMobileBg = m;
+          const se = localStorage.getItem(SLIDESHOW_ENABLED_KEY);
+          if (se === '0') state.slideshowEnabled = false;
+          const fi = localStorage.getItem(SLIDESHOW_FROZEN_INDEX_KEY);
+          if (fi != null && fi !== '') {
+            const n = parseInt(fi, 10);
+            if (!Number.isNaN(n)) state.slideshowFrozenIndex = n;
+          }
           if (!state.terminalSkin) {
             state.terminalSkin = DEFAULT_TERMINAL_SKIN[state.theme];
           }

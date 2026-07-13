@@ -115,7 +115,7 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
           </div>
         </div>
       ) : (
-        <div className="xv-chat-turn-collapsed flex flex-col items-end justify-center gap-2 py-2">
+        <div className="xv-chat-turn-collapsed flex flex-col items-end justify-center gap-[9px] py-2">
           {collapsedTurns.map((turn) => {
             const active = turn.id === activeId;
             return (
@@ -129,8 +129,8 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
                 className={cn(
                   'rounded-full transition-all duration-200',
                   active
-                    ? 'h-[3px] w-5 bg-[var(--accent)] shadow-[0_0_8px_rgba(96,165,250,0.4)]'
-                    : 'h-[2px] w-2.5 bg-[var(--muted)]/40 hover:w-4 hover:bg-[var(--accent)]/55'
+                    ? 'h-[3px] w-[18px] bg-[#4a9dff] shadow-[0_0_6px_rgba(74,157,255,0.45)]'
+                    : 'h-[2px] w-[10px] bg-[var(--muted)]/35 hover:w-[14px] hover:bg-[#4a9dff]/50'
                 )}
               />
             );

@@ -69,11 +69,11 @@ export default function HomePage() {
         <div className="relative z-10 w-full max-w-5xl text-center">
           <h1 className="xv-hero-modern-title mb-5 font-goga">
             <span className="xv-hero-modern-line block">
-              <span className="xv-hero-silver font-remixa">Do </span>
+              <span className="xv-hero-silver font-azurio">Do </span>
               <span className="xv-hero-silver-italic font-emilio">Everything</span>
             </span>
             <span className="xv-hero-modern-line block mt-1 sm:mt-2">
-              <span className="xv-hero-blue font-remixa">You </span>
+              <span className="xv-hero-blue font-azurio">You </span>
               <span className="xv-hero-blue-italic font-emilio">Imagine</span>
             </span>
           </h1>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import { GitHubIcon } from '@/components/icons/GitHubIcon';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -33,6 +34,7 @@ export function SignupForm() {
   const [theme, setTheme] = useState<ThemeId>('image');
   const setGlobalTheme = useThemeStore((s) => s.setTheme);
   const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const router = useRouter();
@@ -46,6 +48,20 @@ export function SignupForm() {
       storeReferralCode(code);
     }
   }, [refFromUrl]);
+
+  async function handleGitHub() {
+    setError('');
+    setOauthLoading(true);
+    const supabase = createClient();
+    const { error: err } = await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+    if (err) {
+      setOauthLoading(false);
+      setError(err.message);
+    }
+  }
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
@@ -124,6 +140,27 @@ export function SignupForm() {
   return (
     <AuthModernCard title="Create your Xroga account" subtitle="7M free tokens · pick your vibe">
       <AuthModernQuote text={quote.text} author={quote.author} compact />
+
+      <div className="mb-3">
+        <button
+          type="button"
+          onClick={handleGitHub}
+          disabled={oauthLoading || loading}
+          className="flex h-11 w-full items-center justify-center gap-2.5 rounded-xl border border-sky-100 bg-slate-50/80 text-sm font-semibold text-slate-800 transition-colors hover:border-[#006aff]/40 disabled:opacity-60"
+        >
+          <GitHubIcon className="h-5 w-5 shrink-0" />
+          Continue with GitHub
+        </button>
+      </div>
+
+      <div className="relative mb-3">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-sky-100" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white px-2 text-slate-400">or</span>
+        </div>
+      </div>
 
       <form onSubmit={handleSignup} className="space-y-3">
         <div>
@@ -230,7 +267,7 @@ export function SignupForm() {
           </p>
         )}
 
-        <AuthGradientButton type="submit" disabled={loading}>
+        <AuthGradientButton type="submit" disabled={loading || oauthLoading}>
           {loading ? 'Creating…' : 'Create Account'}
         </AuthGradientButton>
       </form>

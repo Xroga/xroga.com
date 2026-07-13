@@ -22,7 +22,7 @@ const TYPEWRITER_FEATURES = [
   'Build a full-stack SaaS with auth and billing…',
   'Generate images, code, and deploy to Vercel…',
   'Run browser automations with zero API cost…',
-  'Create games, apps, and movies with AI Swarm…',
+  'Create games, apps, and automations with AI Swarm…',
   'Scrape data, write scripts, and ship in minutes…',
 ];
 

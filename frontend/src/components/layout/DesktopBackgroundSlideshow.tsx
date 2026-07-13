@@ -9,6 +9,9 @@ interface DesktopBackgroundSlideshowProps {
   intervalMs?: number;
   className?: string;
   overlayClassName?: string;
+  enabled?: boolean;
+  frozenIndex?: number;
+  onActiveIndexChange?: (index: number) => void;
 }
 
 export function DesktopBackgroundSlideshow({
@@ -16,16 +19,31 @@ export function DesktopBackgroundSlideshow({
   intervalMs = SLIDESHOW_INTERVAL_MS,
   className,
   overlayClassName,
+  enabled = true,
+  frozenIndex = 0,
+  onActiveIndexChange,
 }: DesktopBackgroundSlideshowProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(frozenIndex);
 
   useEffect(() => {
-    if (images.length <= 1) return;
+    if (!enabled) {
+      setActiveIndex(frozenIndex);
+    }
+  }, [enabled, frozenIndex]);
+
+  useEffect(() => {
+    onActiveIndexChange?.(activeIndex);
+  }, [activeIndex, onActiveIndexChange]);
+
+  useEffect(() => {
+    if (!enabled || images.length <= 1) return;
     const timer = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % images.length);
     }, intervalMs);
     return () => window.clearInterval(timer);
-  }, [images, intervalMs]);
+  }, [enabled, images, intervalMs]);
+
+  const displayIndex = enabled ? activeIndex : frozenIndex;
 
   return (
     <div className={cn('fixed inset-0 -z-10 hidden md:block overflow-hidden', className)} aria-hidden>
@@ -33,8 +51,8 @@ export function DesktopBackgroundSlideshow({
         <div
           key={src}
           className={cn(
-            'absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed transition-opacity duration-[1100ms] ease-[cubic-bezier(0.4,0,0.2,1)]',
-            index === activeIndex ? 'opacity-100' : 'opacity-0'
+            'absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed transition-opacity duration-[900ms] ease-out',
+            index === displayIndex ? 'opacity-100' : 'opacity-0'
           )}
           style={{ backgroundImage: `url("${src}")` }}
         />

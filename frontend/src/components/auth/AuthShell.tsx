@@ -9,6 +9,9 @@ import { AuthBackHome } from './AuthModern';
 const CEO_QUOTE =
   'If you can dream it, Xroga can build it — one command at a time.';
 
+const AUTH_FEATURES_BLURB =
+  'The first and last AI you will ever need. Build apps, games, code, and automations — with honest token pricing on every action.';
+
 export function AuthShell({
   children,
 }: {
@@ -38,19 +41,19 @@ export function AuthShell({
 
       <div className="xv-auth-quote-panel relative flex flex-col justify-center px-6 sm:px-10 lg:px-14 py-10 lg:py-0 lg:w-[44%] xl:w-[42%] shrink-0 min-h-[220px] lg:min-h-screen border-b lg:border-b-0 lg:border-r border-white/10">
         <div className="absolute inset-0 bg-gradient-to-br from-[#006aff]/15 via-transparent to-[#a78bfa]/10 pointer-events-none" />
-        <Link href="/" className="relative mb-8 lg:mb-12 inline-block">
-          <Logo variant="homepage" height={48} />
+        <Link href="/" className="relative mb-6 lg:mb-10 inline-block">
+          <Logo variant="homepage" height={112} className="!h-[88px] sm:!h-[104px] lg:!h-[120px] w-auto" />
         </Link>
-        <blockquote className="relative xv-auth-ceo-quote">
-          <p className="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.75rem] font-bold leading-[1.15] tracking-tight">
+        <blockquote className="relative xv-auth-ceo-quote font-azurio">
+          <p className="text-2xl sm:text-3xl lg:text-[2.65rem] font-bold leading-[1.12] tracking-tight">
             &ldquo;{CEO_QUOTE}&rdquo;
           </p>
-          <footer className="mt-6 text-sm sm:text-base font-bold tracking-[0.2em] text-[#93c5fd]/90">
-            — XROGA
+          <footer className="mt-6 text-sm sm:text-base font-remixa font-semibold tracking-[0.18em] text-[#93c5fd]/90">
+            — XROGA AI
           </footer>
         </blockquote>
-        <p className="relative mt-8 text-xs sm:text-sm text-white/55 max-w-md leading-relaxed hidden sm:block">
-          The first and last AI you will ever need. Build apps, games, movies, code, and automations — with honest action pricing.
+        <p className="relative mt-8 text-sm sm:text-base text-white/75 max-w-md leading-relaxed font-goga hidden sm:block">
+          {AUTH_FEATURES_BLURB}
         </p>
       </div>
 
