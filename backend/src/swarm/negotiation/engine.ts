@@ -116,7 +116,7 @@ import { autoPublishBuildToCommunity } from '../../services/communityAutoPublish
 import { notifyBuildComplete, notifyBuildFailed } from '../../services/notificationService.js';
 import { createTodoState } from './todoState.js';
 import { XROGA_MODELS } from '../../config/modelRegistry.js';
-import { costAwareRole, policyForPrompt } from '../../lib/buildCostPolicy.js';
+import { costAwareRole, policyForPrompt, strategyGrokVariant } from '../../lib/buildCostPolicy.js';
 
 /** Max tokens per build step — no compromise on complete code output */
 const BUILD_STEP_MAX_TOKENS = 16384;
@@ -386,6 +386,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   console.info('[NegotiationEngine] costPolicy', {
     tier: costPolicy.tier,
     allowGrokStrategy: costPolicy.allowGrokStrategy,
+    allowGrok45: costPolicy.allowGrok45,
+    maxGrok45Calls: costPolicy.maxGrok45Calls,
     allowGrokReviewLoop: costPolicy.allowGrokReviewLoop,
     allowWebResearch: costPolicy.allowWebResearch,
   });
@@ -802,24 +804,40 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   } else {
     try {
       let strategyContext = '';
-      // COST: simple/standard builds skip paid Grok strategist (was ~1–4k Grok tokens every blog).
+      // Strategic Grok 4.5: ONE short brain pass (best model), then Flash/Pro do bulk work.
+      // Never agent web/X search. Cap output tokens so 4.5 stays ~$0.01–0.03.
       if (costPolicy.allowGrokStrategy) {
         try {
           assertNotAborted(ctx);
-          const { text: strategy } = await buildModelCall(
+          const grokVariant = strategyGrokVariant(costPolicy);
+          const { text: strategy, modelLabel } = await buildModelCall(
             'grok',
-            `You are XROGA Strategist (Grok). Analyze the project brief and output a concise build strategy: architecture, key features, UX priorities, and risks. Under 400 words.`,
-            `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`,
-            4096,
+            `You are XROGA Strategist. Output a concise build strategy: architecture, key features, UX priorities, and risks. Under 280 words. No code dumps.`,
+            `Brief:\n${clarifiedBrief.slice(0, 6000)}\n\nOriginal:\n${userPrompt.slice(0, 1500)}`,
+            costPolicy.grok45StrategyMaxTokens,
             usageTracker,
-            { grokVariant: 'reasoning' }
+            {
+              grokVariant,
+              allowGrok45: costPolicy.allowGrok45 && grokVariant === 'fast',
+              maxGrok45Calls: costPolicy.maxGrok45Calls,
+            }
           );
-          strategyContext = `\n\nStrategy:\n${strategy}`;
-          emit(ctx, 1, xrogaArchitectureLine('Build strategy — Grok reasoning'), 'architect', todos, 'XROGA Architect', {
-            userPhase: 1,
-          });
+          strategyContext = `\n\nStrategy (${modelLabel}):\n${strategy}`;
+          emit(
+            ctx,
+            1,
+            xrogaArchitectureLine(
+              grokVariant === 'fast'
+                ? 'Build strategy — Grok 4.5 (strategic, capped)'
+                : 'Build strategy — Grok 4.3'
+            ),
+            'architect',
+            todos,
+            'XROGA Architect',
+            { userPhase: 1 }
+          );
         } catch {
-          /* optional grok */
+          /* optional grok — fall through to Pro plan */
         }
       } else {
         try {

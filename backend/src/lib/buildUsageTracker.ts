@@ -11,6 +11,7 @@ export interface ModelUsageLine {
 
 export class BuildUsageTracker {
   private lines = new Map<XrogaModelRole, ModelUsageLine>();
+  private grok45Calls = 0;
 
   add(role: XrogaModelRole, inputTokens: number, outputTokens: number): void {
     const prev = this.lines.get(role) ?? {
@@ -25,6 +26,17 @@ export class BuildUsageTracker {
     prev.calls += 1;
     prev.estimatedUsd = estimateUsdCost(prev.inputTokens, prev.outputTokens, role);
     this.lines.set(role, prev);
+    if (role === 'grok_fast') this.grok45Calls += 1;
+  }
+
+  /** How many Grok 4.5 calls this build has made so far */
+  get grok45CallCount(): number {
+    return this.grok45Calls;
+  }
+
+  /** True if another Grok 4.5 call stays under the hard cap */
+  canUseGrok45(maxCalls: number): boolean {
+    return this.grok45Calls < Math.max(0, maxCalls);
   }
 
   get totalInput(): number {

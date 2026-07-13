@@ -1,7 +1,8 @@
 /**
  * Cost-control policy for swarm builds.
- * Simple sites (blog, landing, portfolio) must use DeepSeek Flash + light Pro —
- * never Grok (strategy/review/tools), never Sonnet/Opus, never live web crawl.
+ *
+ * Grok 4.5 is allowed strategically (best brain for short strategy) —
+ * NOT zero, NOT for bulk code / agent web search / multi-round loops.
  */
 
 export type BuildCostTier = 'simple_static' | 'standard' | 'premium';
@@ -40,17 +41,23 @@ export interface BuildCostPolicy {
   allowGrokAgentSearch: boolean;
   /** Paid research synthesis step */
   allowGrokResearchSynthesis: boolean;
-  /** Early-build Grok strategist call (was burning $ on every blog) */
+  /** Early-build Grok strategist call (short — best use of 4.5) */
   allowGrokStrategy: boolean;
-  /** runGrokCodeReviewLoop — paid Grok audit */
+  /** runGrokCodeReviewLoop — large context; prefer 4.3 not 4.5 */
   allowGrokReviewLoop: boolean;
   /** Max rounds inside Grok review loop when allowed */
   grokReviewMaxRounds: number;
-  /** Allow pickGrokVariant → grok-4.5 (very expensive) */
+  /** Allow Grok 4.5 for strategic short calls */
   allowGrok45: boolean;
+  /** Use 4.5 (not 4.3) for the strategy step when allowGrok45 */
+  preferGrok45ForStrategy: boolean;
+  /** Hard cap: max Grok 4.5 API calls in one build */
+  maxGrok45Calls: number;
+  /** Max output tokens for a Grok 4.5 strategy call (keeps $ low) */
+  grok45StrategyMaxTokens: number;
   /** Prefer DeepSeek Flash for UI polish instead of Sonnet when true */
   preferFlashUiPolish: boolean;
-  /** Remap expensive roles (grok/sonnet/opus) down to Flash/Pro */
+  /** Remap accidental Sonnet/Opus on simple builds; keep intentional Grok strategy */
   remapExpensiveRoles: boolean;
 }
 
@@ -62,10 +69,14 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
       allowWebResearch: false,
       allowGrokAgentSearch: false,
       allowGrokResearchSynthesis: false,
-      allowGrokStrategy: false,
+      // ONE short Grok 4.5 strategy (~$0.01–0.02) — then Flash/Pro does the rest
+      allowGrokStrategy: true,
       allowGrokReviewLoop: false,
       grokReviewMaxRounds: 0,
-      allowGrok45: false,
+      allowGrok45: true,
+      preferGrok45ForStrategy: true,
+      maxGrok45Calls: 1,
+      grok45StrategyMaxTokens: 1536,
       preferFlashUiPolish: true,
       remapExpensiveRoles: true,
     };
@@ -74,44 +85,58 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
     return {
       tier,
       allowWebResearch: true,
-      allowGrokAgentSearch: false, // still prefer free SearXNG; Grok tools are last resort
+      allowGrokAgentSearch: false,
       allowGrokResearchSynthesis: true,
       allowGrokStrategy: true,
       allowGrokReviewLoop: true,
       grokReviewMaxRounds: 1,
-      allowGrok45: false,
+      allowGrok45: true,
+      preferGrok45ForStrategy: true,
+      maxGrok45Calls: 2,
+      grok45StrategyMaxTokens: 2048,
       preferFlashUiPolish: false,
       remapExpensiveRoles: false,
     };
   }
-  // standard: DeepSeek-heavy; no Grok strategy/review by default (Pro + Flash only + optional Sonnet polish)
+  // standard: 1× strategic 4.5 brain, then DeepSeek/Sonnet — no agent search, no review loop on 4.5
   return {
     tier,
     allowWebResearch: true,
     allowGrokAgentSearch: false,
     allowGrokResearchSynthesis: false,
-    allowGrokStrategy: false,
+    allowGrokStrategy: true,
     allowGrokReviewLoop: false,
     grokReviewMaxRounds: 0,
-    allowGrok45: false,
+    allowGrok45: true,
+    preferGrok45ForStrategy: true,
+    maxGrok45Calls: 1,
+    grok45StrategyMaxTokens: 2048,
     preferFlashUiPolish: false,
     remapExpensiveRoles: false,
   };
 }
 
 /**
- * Hard remap so a simple blog cannot accidentally call Grok/Sonnet/Opus.
- * grok/opus → pro | sonnet → flash
+ * Role remap for cost.
+ * - Simple: Sonnet→Flash, Opus→Pro; Grok kept only when strategy is allowed.
+ * - Elsewhere: if strategy off, accidental grok → Pro.
  */
 export function costAwareRole(
   role: 'flash' | 'pro' | 'grok' | 'sonnet' | 'opus',
   policy: BuildCostPolicy
 ): 'flash' | 'pro' | 'grok' | 'sonnet' | 'opus' {
-  if (!policy.remapExpensiveRoles) {
-    if (!policy.allowGrokStrategy && role === 'grok') return 'pro';
+  if (policy.remapExpensiveRoles) {
+    if (role === 'opus') return 'pro';
+    if (role === 'sonnet') return 'flash';
+    if (role === 'grok' && !policy.allowGrokStrategy) return 'pro';
     return role;
   }
-  if (role === 'grok' || role === 'opus') return 'pro';
-  if (role === 'sonnet') return 'flash';
+  if (!policy.allowGrokStrategy && role === 'grok') return 'pro';
   return role;
+}
+
+/** Pick Grok 4.5 only for short strategy when policy allows; review stays 4.3. */
+export function strategyGrokVariant(policy: BuildCostPolicy): 'reasoning' | 'fast' {
+  if (policy.allowGrok45 && policy.preferGrok45ForStrategy) return 'fast';
+  return 'reasoning';
 }
