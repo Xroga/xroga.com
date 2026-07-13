@@ -285,6 +285,12 @@ function ProjectsHubInner() {
 
   const hasGithubProjects = filteredRemote.length > 0;
   const hasLocalInConversations = filteredLocal.length > 0;
+  const currentRepoProjects = selectedRepo
+    ? filteredRemote.filter((p) => p.github_repo_name === selectedRepo)
+    : filteredRemote;
+  const otherRepoProjects = selectedRepo
+    ? filteredRemote.filter((p) => p.github_repo_name && p.github_repo_name !== selectedRepo)
+    : [];
 
   return (
     <PageFullscreenFrame>
@@ -344,22 +350,58 @@ function ProjectsHubInner() {
               ))}
             </div>
           ) : hasGithubProjects ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredRemote.map((p) => (
-                <GitHubProjectCard
-                  key={p.id}
-                  project={p}
-                  onContinue={() => openRemoteProject(p)}
-                  onDelete={() => {
-                    if (confirm(`Remove "${p.name}" from Xroga? GitHub repo stays untouched.`)) {
-                      void deleteRemote(p.id);
-                    }
-                  }}
-                  onOpenRepo={() => {
-                    if (p.github_repo_url) window.open(p.github_repo_url, '_blank', 'noopener,noreferrer');
-                  }}
-                />
-              ))}
+            <div className="space-y-6">
+              {currentRepoProjects.length > 0 && (
+                <section className="space-y-3">
+                  <div>
+                    <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">
+                      Current GitHub repository
+                    </h2>
+                    {selectedRepo && <p className="text-xs font-mono text-[var(--accent)] mt-1">{selectedRepo}</p>}
+                  </div>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {currentRepoProjects.map((p) => (
+                      <GitHubProjectCard
+                        key={p.id}
+                        project={p}
+                        onContinue={() => openRemoteProject(p)}
+                        onDelete={() => {
+                          if (confirm(`Remove "${p.name}" from Xroga? GitHub repo stays untouched.`)) {
+                            void deleteRemote(p.id);
+                          }
+                        }}
+                        onOpenRepo={() => {
+                          if (p.github_repo_url) window.open(p.github_repo_url, '_blank', 'noopener,noreferrer');
+                        }}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+              {otherRepoProjects.length > 0 && (
+                <section className="space-y-3">
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">
+                    Old GitHub repositories
+                  </h2>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {otherRepoProjects.map((p) => (
+                      <GitHubProjectCard
+                        key={p.id}
+                        project={p}
+                        onContinue={() => openRemoteProject(p)}
+                        onDelete={() => {
+                          if (confirm(`Remove "${p.name}" from Xroga? GitHub repo stays untouched.`)) {
+                            void deleteRemote(p.id);
+                          }
+                        }}
+                        onOpenRepo={() => {
+                          if (p.github_repo_url) window.open(p.github_repo_url, '_blank', 'noopener,noreferrer');
+                        }}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
           ) : (
             <div className="glass-panel rounded-2xl p-10 text-center border border-dashed border-[var(--card-border)]">

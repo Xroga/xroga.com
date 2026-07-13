@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { TerminalChatBar } from './TerminalChatBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
 import { RepoContextBar } from './RepoContextBar';
+import { RepoSessionRail } from './RepoSessionRail';
 import { BlackHoleVButton } from './BlackHoleVButton';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { ChevronDown } from 'lucide-react';
@@ -80,15 +81,20 @@ export function TerminalDock() {
           dashboardFullscreen ? 'max-w-6xl' : 'max-w-3xl'
         )}
       >
-        {!incognito && (
-          <div className="flex flex-row items-start justify-between gap-2 px-0.5 mb-0.5">
-            <RepoContextBar outside />
-            <BlackHoleVButton className="xv-blackhole-outside shrink-0 ml-auto self-start" />
+        <div className="flex items-end gap-3">
+          {!incognito && <RepoSessionRail />}
+          <div className="flex-1 min-w-0">
+            {!incognito && (
+              <div className="flex flex-row items-start justify-between gap-2 px-0.5 mb-0.5">
+                <RepoContextBar outside />
+                <BlackHoleVButton className="xv-blackhole-outside shrink-0 ml-auto self-start" />
+              </div>
+            )}
+            <ChatbarQueueOutside />
+            <div className="xv-chatbar-stack relative">
+              <TerminalChatBar />
+            </div>
           </div>
-        )}
-        <ChatbarQueueOutside />
-        <div className="xv-chatbar-stack relative">
-          <TerminalChatBar />
         </div>
         {incognito ? (
           <p className="text-[10px] sm:text-xs text-center text-white py-2 sm:py-2.5 px-3 font-medium leading-relaxed xv-incognito-room-notice">
