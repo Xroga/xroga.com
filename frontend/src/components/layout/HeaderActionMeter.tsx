@@ -30,14 +30,23 @@ export function HeaderTokenMeter({ onClick, className }: HeaderTokenMeterProps) 
       <Brain
         className={cn(
           'w-4 h-4 shrink-0 relative z-[1]',
-          isOut ? 'text-red-400' : isLow ? 'text-amber-400' : 'text-[#2dd4bf]'
+          isOut ? 'text-red-400' : isLow ? 'text-amber-400' : 'text-[#60a5fa]'
         )}
       />
       <div className="relative z-[1] text-left leading-tight">
-        <div className={cn('xv-token-pill__plan', isOut && 'text-red-400')}>
+        <div className={cn('xv-token-pill__plan hidden sm:block', isOut && 'text-red-400')}>
           Plan: {planTier ?? 'trial'}
         </div>
-        <div className={cn('xv-token-pill__balance tabular-nums', isOut && 'text-red-400/80')}>
+        <div className={cn('xv-token-pill__plan sm:hidden', isOut && 'text-red-400')}>
+          {(planTier ?? 'spark').toUpperCase()}
+        </div>
+        <div className={cn('xv-token-pill__balance tabular-nums hidden sm:block', isOut && 'text-red-400/80')}>
+          <span className={cn('font-semibold text-white/90', isOut && 'text-red-400')}>
+            {formatTokens(remaining)}
+          </span>{' '}
+          tokens left
+        </div>
+        <div className={cn('xv-token-pill__balance tabular-nums sm:hidden', isOut && 'text-red-400/80')}>
           <span className={cn('font-semibold text-white/90', isOut && 'text-red-400')}>
             {formatTokens(remaining)}
           </span>{' '}

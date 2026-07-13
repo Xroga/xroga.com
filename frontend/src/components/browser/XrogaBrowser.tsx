@@ -66,10 +66,19 @@ function shortLabel(url: string | null, fallback = 'New tab'): string {
   if (!url) return fallback;
   try {
     const parsed = new URL(url);
+    if (parsed.hostname.includes('duckduckgo.com')) {
+      const q = parsed.searchParams.get('q');
+      if (q) return decodeURIComponent(q).slice(0, 24);
+    }
     return parsed.hostname.replace(/^www\./, '') || fallback;
   } catch {
     return fallback;
   }
+}
+
+function browserFrameUrl(target: string | null): string | null {
+  if (!target) return null;
+  return `/api/browser-view?target=${encodeURIComponent(target)}`;
 }
 
 const INITIAL_TAB = makeTab('Search');
@@ -82,6 +91,7 @@ export function XrogaBrowser({ className, compact }: XrogaBrowserProps) {
   const bodyClass = THEME_BODY[theme] ?? THEME_BODY.image;
   const chromeClass = THEME_CHROME[theme] ?? THEME_CHROME.image;
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0]!;
+  const activeFrameUrl = browserFrameUrl(activeTab.currentUrl);
 
   const updateTab = useCallback((tabId: string, updater: (tab: BrowserTab) => BrowserTab) => {
     setTabs((current) => current.map((tab) => (tab.id === tabId ? updater(tab) : tab)));
@@ -339,7 +349,7 @@ export function XrogaBrowser({ className, compact }: XrogaBrowserProps) {
               </div>
             )}
             <iframe
-              src={activeTab.currentUrl}
+              src={activeFrameUrl ?? undefined}
               title="Xroga Browser"
               className="absolute inset-0 w-full h-full border-0 bg-white"
               sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
