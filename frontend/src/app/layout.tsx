@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Nunito, Space_Grotesk, Syne } from 'next/font/google';
+import { Instrument_Serif, Inter, JetBrains_Mono, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import '@/styles/uiverse.css';
 import { buildMetadata, FAVICON_URL, FAVICON_LOCAL } from '@/lib/seo';
@@ -7,16 +7,21 @@ import { RootProviders } from '@/components/providers/RootProviders';
 import { SiteJsonLd } from '@/components/seo/SiteJsonLd';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const nunito = Nunito({ subsets: ['latin'], variable: '--font-nunito', weight: ['400', '600', '700', '800'] });
-const spaceGrotesk = Space_Grotesk({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  variable: '--font-space-grotesk',
-  weight: ['400', '500', '600', '700'],
+  variable: '--font-xv-body',
+  weight: ['400', '500', '600', '700', '800'],
 });
-const syne = Syne({
+const instrumentSerif = Instrument_Serif({
   subsets: ['latin'],
-  variable: '--font-syne',
-  weight: ['400', '600', '700', '800'],
+  variable: '--font-xv-display',
+  weight: ['400'],
+  style: ['normal', 'italic'],
+});
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-xv-mono',
+  weight: ['400', '500', '600'],
 });
 
 export const metadata: Metadata = {
@@ -65,7 +70,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="shortcut icon" href="/favicon-32.png" />
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>
-      <body className={`${inter.variable} ${nunito.variable} ${spaceGrotesk.variable} ${syne.variable} font-sans antialiased`}>
+      <body
+        className={`${inter.variable} ${plusJakarta.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+      >
         <SiteJsonLd />
         <RootProviders>{children}</RootProviders>
       </body>
