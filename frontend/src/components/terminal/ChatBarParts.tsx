@@ -203,11 +203,13 @@ export function ChatBarToolChip({
   label,
   onClick,
   accent,
+  connected,
 }: {
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
   accent?: string;
+  connected?: boolean;
 }) {
   return (
     <button
@@ -220,6 +222,7 @@ export function ChatBarToolChip({
           : undefined
       }
     >
+      {connected ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0" /> : null}
       {icon}
       <span>{label}</span>
     </button>

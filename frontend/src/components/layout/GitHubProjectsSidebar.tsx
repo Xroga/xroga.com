@@ -76,10 +76,12 @@ export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
     );
   }
 
-  const visibleProjects = selectedRepo
-    ? projects.filter((p) => p.github_repo_name === selectedRepo)
-    : projects;
-  const recent = visibleProjects.slice(0, 4);
+  const currentProjects = selectedRepo
+    ? projects.filter((p) => p.github_repo_name === selectedRepo).slice(0, 3)
+    : projects.slice(0, 3);
+  const otherProjects = selectedRepo
+    ? projects.filter((p) => p.github_repo_name && p.github_repo_name !== selectedRepo).slice(0, 3)
+    : [];
 
   return (
     <div className="px-2 py-2 border-t border-[var(--card-border)] space-y-2">
@@ -110,26 +112,52 @@ export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
             <div key={i} className="h-20 rounded-lg bg-[var(--card)] animate-pulse" />
           ))}
         </div>
-      ) : recent.length === 0 ? (
+      ) : currentProjects.length === 0 && otherProjects.length === 0 ? (
         <p className="px-1 text-[10px] text-[var(--muted)] leading-relaxed">
           {selectedRepo
             ? 'No saved workspace yet for this repository. Start a new terminal in this repo to create one.'
             : 'Connect GitHub and build — repositories appear here with continue & delete.'}
         </p>
       ) : (
-        <div className={cn('space-y-2 max-h-[min(42vh,320px)] overflow-y-auto pr-0.5')}>
-          {recent.map((p) => (
-            <GitHubProjectCard
-              key={p.id}
-              project={p}
-              compact
-              onContinue={() => void handleContinue(p)}
-              onDelete={() => void handleDelete(p)}
-              onOpenRepo={() => {
-                if (p.github_repo_url) window.open(p.github_repo_url, '_blank', 'noopener,noreferrer');
-              }}
-            />
-          ))}
+        <div className={cn('space-y-3 max-h-[min(48vh,380px)] overflow-y-auto pr-0.5')}>
+          {currentProjects.length > 0 && (
+            <div className="space-y-2">
+              <p className="px-1 text-[10px] font-bold uppercase tracking-wide text-[var(--muted)]">
+                Current repo
+              </p>
+              {currentProjects.map((p) => (
+                <GitHubProjectCard
+                  key={p.id}
+                  project={p}
+                  compact
+                  onContinue={() => void handleContinue(p)}
+                  onDelete={() => void handleDelete(p)}
+                  onOpenRepo={() => {
+                    if (p.github_repo_url) window.open(p.github_repo_url, '_blank', 'noopener,noreferrer');
+                  }}
+                />
+              ))}
+            </div>
+          )}
+          {otherProjects.length > 0 && (
+            <div className="space-y-2">
+              <p className="px-1 text-[10px] font-bold uppercase tracking-wide text-[var(--muted)]">
+                Other repos
+              </p>
+              {otherProjects.map((p) => (
+                <GitHubProjectCard
+                  key={p.id}
+                  project={p}
+                  compact
+                  onContinue={() => void handleContinue(p)}
+                  onDelete={() => void handleDelete(p)}
+                  onOpenRepo={() => {
+                    if (p.github_repo_url) window.open(p.github_repo_url, '_blank', 'noopener,noreferrer');
+                  }}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

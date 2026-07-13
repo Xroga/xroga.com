@@ -1,12 +1,16 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { ChevronDown, Loader2 } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ChevronDown, History, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { api, type GitHubRepo } from '@/lib/api';
 import { getCachedRepoAnalysis, setCachedRepoAnalysis } from '@/lib/repoAnalysisCache';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
 import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
-import { GITHUB_REPO_CONTEXT_EVENT } from '@/lib/githubProjectEvents';
+import { GITHUB_PROJECT_SAVED_EVENT, GITHUB_REPO_CONTEXT_EVENT } from '@/lib/githubProjectEvents';
+import { loadTerminalHistory, type TerminalHistoryEntry } from '@/lib/terminalHistory';
+import { loadTerminalHistoryEntry } from '@/lib/terminalSessionStorage';
+import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 
 const STORAGE_KEY = 'xroga-repo-context';
@@ -16,6 +20,8 @@ interface RepoContextBarProps {
 }
 
 export function RepoContextBar({ outside }: RepoContextBarProps) {
+  const router = useRouter();
+  const { restoreTerminalSession } = useTerminalChat();
   const [connected, setConnected] = useState(false);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
   const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
@@ -26,9 +32,11 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
   const [analyzing, setAnalyzing] = useState(false);
   const [repoSummary, setRepoSummary] = useState<string | null>(null);
   const [repoTech, setRepoTech] = useState<string[]>([]);
-  const [open, setOpen] = useState<'repo' | 'branch' | null>(null);
+  const [repoHistory, setRepoHistory] = useState<TerminalHistoryEntry[]>([]);
+  const [open, setOpen] = useState<'repo' | 'branch' | 'history' | null>(null);
   const repoAnchorRef = useRef<HTMLSpanElement>(null);
   const branchAnchorRef = useRef<HTMLSpanElement>(null);
+  const historyAnchorRef = useRef<HTMLSpanElement>(null);
 
   const loadBranches = useCallback(async (fullName: string, preferred?: string) => {
     const [owner, repo] = fullName.split('/');
@@ -100,6 +108,7 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
 
       const { repos: list } = await api.github.listRepos();
       setRepos(list);
+      setRepoHistory(loadTerminalHistory());
 
       const saved = localStorage.getItem(STORAGE_KEY);
       let savedRepo: string | null = null;
@@ -135,6 +144,11 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
   useEffect(() => {
     void refresh();
     const onConnected = () => void refresh();
+    const onStorage = () => {
+      setRepoHistory(loadTerminalHistory());
+      void refresh();
+    };
+    const onProjectSaved = () => setRepoHistory(loadTerminalHistory());
     const onRepoContext = (e: Event) => {
       const detail = (e as CustomEvent<{ repo?: string; branch?: string }>).detail;
       if (!detail?.repo?.includes('/')) return;
@@ -146,9 +160,13 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
     };
     window.addEventListener(GITHUB_CONNECTED_EVENT, onConnected);
     window.addEventListener(GITHUB_REPO_CONTEXT_EVENT, onRepoContext);
+    window.addEventListener(GITHUB_PROJECT_SAVED_EVENT, onProjectSaved);
+    window.addEventListener('storage', onStorage);
     return () => {
       window.removeEventListener(GITHUB_CONNECTED_EVENT, onConnected);
       window.removeEventListener(GITHUB_REPO_CONTEXT_EVENT, onRepoContext);
+      window.removeEventListener(GITHUB_PROJECT_SAVED_EVENT, onProjectSaved);
+      window.removeEventListener('storage', onStorage);
     };
   }, [refresh]);
 
@@ -177,6 +195,35 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
     if (selectedRepo) {
       void analyzeRepo(selectedRepo, name, false);
     }
+  }
+
+  const currentRepoHistory = useMemo(
+    () => repoHistory.filter((entry) => entry.githubRepoName === selectedRepo).slice(0, 8),
+    [repoHistory, selectedRepo]
+  );
+  const otherRepoHistory = useMemo(
+    () =>
+      repoHistory
+        .filter((entry) => entry.githubRepoName && entry.githubRepoName !== selectedRepo)
+        .slice(0, 8),
+    [repoHistory, selectedRepo]
+  );
+
+  async function openHistoryEntry(entry: TerminalHistoryEntry) {
+    const full = await loadTerminalHistoryEntry(entry.id);
+    const resolved = full ?? entry;
+    if (!resolved.messages?.length) return;
+    await restoreTerminalSession({
+      sessionId: resolved.id,
+      prompt: resolved.prompt,
+      messages: resolved.messages,
+      selectedId: resolved.id,
+      selectedLabel: resolved.title,
+      source: 'projects',
+      jumpMessageId: resolved.messages[resolved.messages.length - 1]?.id,
+    });
+    router.push('/workspace');
+    setOpen(null);
   }
 
   if (!connected && !loadingRepos) return null;
@@ -281,6 +328,78 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
               </li>
             ))}
           </ul>
+        </ChatBarPortalPopover>
+      </div>
+
+      <span className="text-[var(--muted)] opacity-40">/</span>
+
+      <div className="relative shrink-0">
+        <span
+          ref={historyAnchorRef}
+          role="button"
+          tabIndex={0}
+          onClick={() => setOpen(open === 'history' ? null : 'history')}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setOpen(open === 'history' ? null : 'history');
+            }
+          }}
+          className={textTriggerClass}
+        >
+          <History className="w-3 h-3" />
+          history
+          <ChevronDown className={cn('w-3 h-3 opacity-50 transition-transform', open === 'history' && 'rotate-180')} />
+        </span>
+        <ChatBarPortalPopover open={open === 'history'} onClose={() => setOpen(null)} anchorRef={historyAnchorRef} width={300}>
+          <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-2xl p-2 space-y-2">
+            <div>
+              <p className="px-1 pb-1 text-[10px] font-bold uppercase tracking-wide text-[var(--muted)]">
+                Current repo
+              </p>
+              {currentRepoHistory.length > 0 ? (
+                <ul className="space-y-1">
+                  {currentRepoHistory.map((entry) => (
+                    <li key={`current-${entry.id}`}>
+                      <button
+                        type="button"
+                        onClick={() => void openHistoryEntry(entry)}
+                        className="w-full rounded-lg px-2.5 py-2 text-left hover:bg-white/10"
+                      >
+                        <p className="truncate text-[10px] font-semibold text-[var(--foreground)]">{entry.title}</p>
+                        <p className="truncate text-[9px] text-[var(--muted)]">{entry.githubRepoName}</p>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="px-2 py-2 text-[10px] text-[var(--muted)]">No saved conversations for this repository yet.</p>
+              )}
+            </div>
+            <div className="border-t border-[var(--card-border)] pt-2">
+              <p className="px-1 pb-1 text-[10px] font-bold uppercase tracking-wide text-[var(--muted)]">
+                Other repos
+              </p>
+              {otherRepoHistory.length > 0 ? (
+                <ul className="space-y-1 max-h-[180px] overflow-y-auto">
+                  {otherRepoHistory.map((entry) => (
+                    <li key={`other-${entry.id}`}>
+                      <button
+                        type="button"
+                        onClick={() => void openHistoryEntry(entry)}
+                        className="w-full rounded-lg px-2.5 py-2 text-left hover:bg-white/10"
+                      >
+                        <p className="truncate text-[10px] font-semibold text-[var(--foreground)]">{entry.title}</p>
+                        <p className="truncate text-[9px] text-[var(--muted)]">{entry.githubRepoName}</p>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="px-2 py-2 text-[10px] text-[var(--muted)]">No other repository history yet.</p>
+              )}
+            </div>
+          </div>
         </ChatBarPortalPopover>
       </div>
 

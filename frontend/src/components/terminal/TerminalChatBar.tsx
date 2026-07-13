@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Search } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
@@ -19,10 +18,11 @@ import {
 } from './ChatBarParts';
 import { ChatBarFileGrid } from './ChatBarFileGrid';
 import type { SendButtonState } from './ChatBarButtons';
-import { GitHubChipIcon, GitLabChipIcon, TwitterChipIcon, ChatBarBrandChip } from './ChatBarButtons';
+import { GitHubChipIcon, VercelChipIcon, ChatBarBrandChip } from './ChatBarButtons';
 import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
+import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -52,6 +52,8 @@ export function TerminalChatBar() {
   const shellRef = useRef<HTMLDivElement>(null);
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const [githubOpen, setGithubOpen] = useState(false);
+  const [githubConnected, setGithubConnected] = useState(false);
+  const [vercelConnected, setVercelConnected] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -68,6 +70,17 @@ export function TerminalChatBar() {
     const t = setTimeout(() => setSendState('idle'), 1400);
     return () => clearTimeout(t);
   }, [sendState]);
+
+  useEffect(() => {
+    void api.github
+      .status()
+      .then((s) => setGithubConnected(s.connected))
+      .catch(() => setGithubConnected(false));
+    void api.vercel
+      .status()
+      .then((s) => setVercelConnected(s.connected))
+      .catch(() => setVercelConnected(false));
+  }, []);
 
   async function handleSubmit(e: React.FormEvent, interrupt = false) {
     e.preventDefault();
@@ -239,7 +252,7 @@ export function TerminalChatBar() {
           <div className="xv-chatbar-toolbar flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 overflow-x-auto scrollbar-hide flex-nowrap">
             <ChatBarTip label="GitHub repos" className="shrink-0">
               <span className="inline-flex shrink-0 lg:hidden">
-                <ChatBarBrandChip variant="github" label="GitHub" onClick={() => setGithubOpen(true)} plain darkUi={darkUi} />
+                <ChatBarBrandChip variant="github" label="GitHub" onClick={() => setGithubOpen(true)} plain darkUi={darkUi} connected={githubConnected} />
               </span>
               <span className="hidden lg:inline-flex shrink-0">
                 <ChatBarToolChip
@@ -247,45 +260,23 @@ export function TerminalChatBar() {
                   label="GitHub"
                   onClick={() => setGithubOpen(true)}
                   accent="#24292f"
+                  connected={githubConnected}
                 />
               </span>
             </ChatBarTip>
-            <ChatBarTip label="GitLab" className="shrink-0">
+            <ChatBarTip label="Vercel" className="shrink-0">
               <span className="inline-flex shrink-0 lg:hidden">
-                <ChatBarBrandChip variant="gitlab" label="GitLab" onClick={() => setIntegrationsOpen(true)} plain darkUi={darkUi} />
+                <ChatBarBrandChip variant="vercel" label="Vercel" onClick={() => setIntegrationsOpen(true)} plain darkUi={darkUi} connected={vercelConnected} />
               </span>
               <span className="hidden lg:inline-flex shrink-0">
                 <ChatBarToolChip
-                  icon={<GitLabChipIcon />}
-                  label="GitLab"
-                  onClick={() => setIntegrationsOpen(true)}
-                  accent="#fc6d26"
-                />
-              </span>
-            </ChatBarTip>
-            <ChatBarTip label="X / Twitter" className="shrink-0 hidden xs:inline-flex">
-              <span className="inline-flex shrink-0">
-                <ChatBarToolChip
-                  icon={<TwitterChipIcon />}
-                  label="X"
+                  icon={<VercelChipIcon />}
+                  label="Vercel"
                   onClick={() => setIntegrationsOpen(true)}
                   accent="#000"
+                  connected={vercelConnected}
                 />
               </span>
-            </ChatBarTip>
-            <ChatBarTip label="Integrations" className="shrink-0">
-              <button
-                type="button"
-                onClick={() => setIntegrationsOpen(true)}
-                className={cn(
-                  'shrink-0 flex items-center gap-1 text-[9px] font-bold',
-                  'lg:px-2.5 lg:h-6 lg:rounded-full lg:border lg:border-[#006aff]/30 lg:bg-gradient-to-r lg:from-[#006aff]/18 lg:to-[#006aff]/6 lg:hover:from-[#006aff]/28',
-                  'xv-chatbar-icon-btn lg:w-auto lg:h-6 lg:bg-transparent'
-                )}
-              >
-                <Search className={cn('w-3.5 h-3.5', darkUi ? 'text-white' : 'text-[#006aff]')} />
-                <span className="hidden lg:inline text-[var(--foreground)]">Integration</span>
-              </button>
             </ChatBarTip>
             <div className="flex-1 min-w-[2px]" />
             <TalkButton variant="inline" />

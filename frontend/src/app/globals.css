@@ -3613,6 +3613,7 @@ body.theme-gray * {
 
   /* Brand chips — circular icon buttons on mobile */
   .xv-brand-chip {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -4615,19 +4616,19 @@ body.theme-gray * {
 .xv-token-pill {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(45, 212, 191, 0.3);
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(10, 14, 23, 0.95));
-  box-shadow: 0 0 24px rgba(45, 212, 191, 0.08);
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.94), rgba(17, 58, 110, 0.88));
+  box-shadow: 0 0 24px rgba(96, 165, 250, 0.16);
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 .xv-token-pill:hover {
-  border-color: rgba(45, 212, 191, 0.55);
-  box-shadow: 0 0 28px rgba(45, 212, 191, 0.15);
+  border-color: rgba(96, 165, 250, 0.6);
+  box-shadow: 0 0 28px rgba(96, 165, 250, 0.22);
 }
 .xv-token-pill__sheen {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.08), transparent);
+  background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.12), transparent);
   transform: translateX(-100%);
   animation: xv-pricing-sheen 4s ease-in-out infinite;
   pointer-events: none;
@@ -4636,7 +4637,7 @@ body.theme-gray * {
   font-size: 10px;
   font-weight: 700;
   text-transform: capitalize;
-  color: #2dd4bf;
+  color: #60a5fa;
   line-height: 1.2;
 }
 .xv-token-pill__balance {

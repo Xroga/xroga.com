@@ -45,6 +45,7 @@ interface BrowserTab {
   currentUrl: string | null;
   blocked: boolean;
   loading: boolean;
+  loadError: boolean;
   history: string[];
   historyIdx: number;
 }
@@ -57,6 +58,7 @@ function makeTab(label = 'New tab'): BrowserTab {
     currentUrl: null,
     blocked: false,
     loading: false,
+    loadError: false,
     history: [],
     historyIdx: -1,
   };
@@ -66,10 +68,19 @@ function shortLabel(url: string | null, fallback = 'New tab'): string {
   if (!url) return fallback;
   try {
     const parsed = new URL(url);
+    if (parsed.hostname.includes('duckduckgo.com')) {
+      const q = parsed.searchParams.get('q');
+      if (q) return decodeURIComponent(q).slice(0, 24);
+    }
     return parsed.hostname.replace(/^www\./, '') || fallback;
   } catch {
     return fallback;
   }
+}
+
+function browserFrameUrl(target: string | null): string | null {
+  if (!target) return null;
+  return `/api/browser-view?target=${encodeURIComponent(target)}`;
 }
 
 const INITIAL_TAB = makeTab('Search');
@@ -82,6 +93,7 @@ export function XrogaBrowser({ className, compact }: XrogaBrowserProps) {
   const bodyClass = THEME_BODY[theme] ?? THEME_BODY.image;
   const chromeClass = THEME_CHROME[theme] ?? THEME_CHROME.image;
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0]!;
+  const activeFrameUrl = browserFrameUrl(activeTab.currentUrl);
 
   const updateTab = useCallback((tabId: string, updater: (tab: BrowserTab) => BrowserTab) => {
     setTabs((current) => current.map((tab) => (tab.id === tabId ? updater(tab) : tab)));
@@ -111,6 +123,7 @@ export function XrogaBrowser({ className, compact }: XrogaBrowserProps) {
         ...tab,
         blocked: false,
         loading: true,
+        loadError: false,
         currentUrl: url,
         history: nextHistory,
         historyIdx: nextIdx,
@@ -333,18 +346,37 @@ export function XrogaBrowser({ className, compact }: XrogaBrowserProps) {
           </div>
         ) : activeTab.currentUrl ? (
           <>
-            {activeTab.loading && (
+            {activeTab.loading && !activeTab.loadError && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
                 <Loader2 className="w-6 h-6 animate-spin text-[var(--accent)]" />
               </div>
             )}
-            <iframe
-              src={activeTab.currentUrl}
-              title="Xroga Browser"
-              className="absolute inset-0 w-full h-full border-0 bg-white"
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-              onLoad={() => updateTab(activeTab.id, (tab) => ({ ...tab, loading: false }))}
-            />
+            {activeTab.loadError ? (
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-[#f3e8d8] p-6 text-center text-slate-800">
+                <Globe className="h-10 w-10 text-slate-400" />
+                <p className="text-sm font-semibold">Could not load this page inside Xroga Browser</p>
+                <p className="max-w-sm text-xs text-slate-600">
+                  Some sites block embedded views. Open the page externally or try a search instead.
+                </p>
+                <a
+                  href={activeTab.currentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-4 py-1.5 text-xs font-semibold text-[var(--accent)] hover:bg-[var(--accent)]/20"
+                >
+                  Open {shortLabel(activeTab.currentUrl, 'page')} externally
+                </a>
+              </div>
+            ) : (
+              <iframe
+                src={activeFrameUrl ?? undefined}
+                title="Xroga Browser"
+                className="absolute inset-0 w-full h-full border-0 bg-white"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                onLoad={() => updateTab(activeTab.id, (tab) => ({ ...tab, loading: false, loadError: false }))}
+                onError={() => updateTab(activeTab.id, (tab) => ({ ...tab, loading: false, loadError: true }))}
+              />
+            )}
           </>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">

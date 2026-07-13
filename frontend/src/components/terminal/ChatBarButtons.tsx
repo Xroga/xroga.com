@@ -156,12 +156,14 @@ export function ChatBarBrandChip({
   onClick,
   plain = false,
   darkUi = false,
+  connected = false,
 }: {
   variant: 'github' | 'gitlab' | 'vercel';
   label: string;
   onClick: () => void;
   plain?: boolean;
   darkUi?: boolean;
+  connected?: boolean;
 }) {
   const icons = {
     github: <GitHubChipIcon lightBg={!plain} white={plain && darkUi} plain={plain} />,
@@ -181,6 +183,7 @@ export function ChatBarBrandChip({
       aria-label={label}
       title={label}
     >
+      {connected ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 absolute -top-0.5 -right-0.5" /> : null}
       {icons[variant]}
     </button>
   );

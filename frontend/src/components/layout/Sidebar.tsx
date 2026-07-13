@@ -372,23 +372,6 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => {
-          toggleSidebar();
-          setMobileOpen(false);
-        }}
-        className="xv-sidebar-edge-toggle hidden lg:flex"
-        aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
-        style={{ left: sidebarOpen ? asideWidth : 12 }}
-      >
-        {sidebarOpen ? (
-          <PanelLeftClose className="w-3.5 h-3.5" />
-        ) : (
-          <PanelLeft className="w-3.5 h-3.5" />
-        )}
-      </button>
-
       <nav ref={navScrollRef} className="flex-1 p-2 overflow-y-auto overflow-x-hidden min-h-0">
         {navExpanded ? (
           <div className="xv-sidebar-menu">
@@ -465,6 +448,23 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           </>,
           document.body,
         )}
+
+      <button
+        type="button"
+        onClick={() => {
+          toggleSidebar();
+          setMobileOpen(false);
+        }}
+        className="xv-sidebar-edge-toggle hidden lg:flex"
+        aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+        style={{ left: sidebarOpen ? asideWidth : 0 }}
+      >
+        {sidebarOpen ? (
+          <PanelLeftClose className="w-3.5 h-3.5" />
+        ) : (
+          <PanelLeft className="w-3.5 h-3.5" />
+        )}
+      </button>
 
       <div className="xv-sidebar-root hidden lg:block shrink-0" style={{ width: asideWidth }}>
         <aside
