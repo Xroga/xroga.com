@@ -2542,6 +2542,19 @@ body.theme-gray * {
     animation: xv-words-spin 4s ease-in-out infinite;
   }
 
+  .xv-chat-turn-rail {
+    position: sticky;
+    top: 5.5rem;
+    align-self: flex-start;
+    max-height: min(68vh, 520px);
+  }
+  .xv-chat-turn-preview {
+    animation: universe-fade-in 0.2s ease-out;
+  }
+  body.theme-white .xv-chat-turn-panel {
+    background: rgba(255, 255, 255, 0.88);
+  }
+
   body.xv-page-fullscreen-active .xv-dashboard-welcome {
     display: none;
   }
