@@ -1,8 +1,8 @@
 /**
  * Cost-control policy for swarm builds.
  *
- * Grok 4.5 is allowed strategically (best brain for short strategy) —
- * NOT zero, NOT for bulk code / agent web search / multi-round loops.
+ * Grok 4.5 is part of Xroga (small monthly share) — NOT 0% overall —
+ * but NEVER burned on basic blogs. Save 4.5 for standard/premium strategy.
  */
 
 export type BuildCostTier = 'simple_static' | 'standard' | 'premium';
@@ -57,26 +57,26 @@ export interface BuildCostPolicy {
   grok45StrategyMaxTokens: number;
   /** Prefer DeepSeek Flash for UI polish instead of Sonnet when true */
   preferFlashUiPolish: boolean;
-  /** Remap accidental Sonnet/Opus on simple builds; keep intentional Grok strategy */
+  /** Remap expensive roles down on simple builds (Flash/Pro only) */
   remapExpensiveRoles: boolean;
 }
 
 export function policyForPrompt(prompt: string): BuildCostPolicy {
   const tier = getBuildCostTier(prompt);
   if (tier === 'simple_static') {
+    // Basic blog/landing: Flash + Pro ONLY. No Grok 4.5 — save it for harder builds.
     return {
       tier,
       allowWebResearch: false,
       allowGrokAgentSearch: false,
       allowGrokResearchSynthesis: false,
-      // ONE short Grok 4.5 strategy (~$0.01–0.02) — then Flash/Pro does the rest
-      allowGrokStrategy: true,
+      allowGrokStrategy: false,
       allowGrokReviewLoop: false,
       grokReviewMaxRounds: 0,
-      allowGrok45: true,
-      preferGrok45ForStrategy: true,
-      maxGrok45Calls: 1,
-      grok45StrategyMaxTokens: 1536,
+      allowGrok45: false,
+      preferGrok45ForStrategy: false,
+      maxGrok45Calls: 0,
+      grok45StrategyMaxTokens: 0,
       preferFlashUiPolish: true,
       remapExpensiveRoles: true,
     };
@@ -98,7 +98,7 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
       remapExpensiveRoles: false,
     };
   }
-  // standard: 1× strategic 4.5 brain, then DeepSeek/Sonnet — no agent search, no review loop on 4.5
+  // standard: small strategic Grok 4.5 share (part of monthly mix, not 0%)
   return {
     tier,
     allowWebResearch: true,
@@ -118,17 +118,15 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
 
 /**
  * Role remap for cost.
- * - Simple: Sonnet→Flash, Opus→Pro; Grok kept only when strategy is allowed.
- * - Elsewhere: if strategy off, accidental grok → Pro.
+ * Simple builds: grok/sonnet/opus → Flash/Pro only.
  */
 export function costAwareRole(
   role: 'flash' | 'pro' | 'grok' | 'sonnet' | 'opus',
   policy: BuildCostPolicy
 ): 'flash' | 'pro' | 'grok' | 'sonnet' | 'opus' {
   if (policy.remapExpensiveRoles) {
-    if (role === 'opus') return 'pro';
+    if (role === 'grok' || role === 'opus') return 'pro';
     if (role === 'sonnet') return 'flash';
-    if (role === 'grok' && !policy.allowGrokStrategy) return 'pro';
     return role;
   }
   if (!policy.allowGrokStrategy && role === 'grok') return 'pro';
