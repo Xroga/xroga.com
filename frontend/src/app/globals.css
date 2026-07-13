@@ -21,7 +21,7 @@
   --danger: #ef4444;
   --glass-blur: 20px;
   --font-sans: var(--font-xv-body), var(--font-inter), system-ui, sans-serif;
-  --font-display: var(--font-xv-display), Georgia, 'Times New Roman', serif;
+  --font-display: var(--font-xv-body), var(--font-xv-display), system-ui, sans-serif;
   --font-mono: var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace;
   --sidebar-width: 16rem;
 }
@@ -30,8 +30,8 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-sans);
-  font-feature-settings: 'ss01' on, 'cv01' on;
-  letter-spacing: -0.012em;
+  font-feature-settings: 'ss01' on;
+  letter-spacing: 0.02em;
   transition: background 500ms ease, color 500ms ease;
 }
 
@@ -2456,13 +2456,14 @@ body.theme-gray * {
   .xv-welcome-greeting {
     font-size: clamp(1.5rem, 3vw, 2.5rem);
     font-weight: 600;
-    letter-spacing: -0.035em;
+    letter-spacing: 0.04em;
     line-height: 1.12;
     color: var(--foreground);
+    text-transform: lowercase;
   }
   .xv-welcome-name {
     font-weight: 700;
-    letter-spacing: -0.03em;
+    letter-spacing: 0.03em;
     color: var(--foreground);
   }
   .xv-welcome-vmark {
@@ -2474,10 +2475,10 @@ body.theme-gray * {
   }
   .xv-vmark-v {
     font-family: var(--font-display);
-    font-style: italic;
-    font-weight: 400;
+    font-style: normal;
+    font-weight: 700;
     font-size: clamp(3.5rem, 9vw, 6.5rem);
-    letter-spacing: -0.06em;
+    letter-spacing: 0.08em;
     background: linear-gradient(105deg, #ffffff 0%, #c7d2fe 38%, #818cf8 62%, #a78bfa 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -2491,10 +2492,10 @@ body.theme-gray * {
   }
   .xv-vmark-infinity {
     font-family: var(--font-display);
-    font-style: italic;
-    font-weight: 400;
+    font-style: normal;
+    font-weight: 700;
     font-size: clamp(3rem, 8vw, 5.75rem);
-    letter-spacing: -0.04em;
+    letter-spacing: 0.02em;
     background: linear-gradient(120deg, #60a5fa 0%, #a78bfa 55%, #e879f9 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -2526,8 +2527,9 @@ body.theme-gray * {
   }
   .xv-tagline-accent {
     font-family: var(--font-display);
-    font-style: italic;
-    font-weight: 400;
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     background: linear-gradient(90deg, #93c5fd 0%, #a78bfa 48%, #c084fc 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -2541,9 +2543,22 @@ body.theme-gray * {
 
   .xv-chat-turn-rail {
     position: sticky;
-    top: 5.5rem;
+    top: 3.5rem;
     align-self: flex-start;
     max-height: min(68vh, 520px);
+  }
+  .xv-chat-turn-collapsed {
+    cursor: default;
+  }
+  .xv-terminal-header {
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+  body.xv-terminal-fullscreen-active .xv-sidebar-edge-toggle,
+  body.xv-terminal-fullscreen-active .xv-mobile-menu-btn {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
   .xv-chat-turn-preview {
     animation: universe-fade-in 0.2s ease-out;

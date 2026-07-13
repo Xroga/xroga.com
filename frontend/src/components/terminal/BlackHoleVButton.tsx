@@ -8,7 +8,13 @@ import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
 import { useRef } from 'react';
 
 /** Black Hole V — Auto mode always ON (toggle disabled). Confirmations always auto. */
-export function BlackHoleVButton({ className }: { className?: string }) {
+export function BlackHoleVButton({
+  className,
+  compact = false,
+}: {
+  className?: string;
+  compact?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
   const xrogaAutoMode = usePrivacyStore((s) => s.xrogaAutoMode);
@@ -56,12 +62,28 @@ export function BlackHoleVButton({ className }: { className?: string }) {
         ref={btnRef}
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-0.5 px-0 py-0.5 bg-transparent border-0 text-[10px] sm:text-[11px] font-bold text-[var(--foreground)] hover:text-[#006aff] transition-colors"
+        className={cn(
+          'flex items-center gap-0.5 px-0 py-0.5 bg-transparent border-0 font-bold text-[var(--foreground)] hover:text-[#006aff] transition-colors',
+          compact ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-[11px]'
+        )}
+        title="Black Hole V∞"
       >
-        <span>Black Hole V</span>
-        <Infinity className="w-3.5 h-3.5 shrink-0 text-[#006aff]" strokeWidth={2.5} />
-        <span className="text-[8px] font-bold text-[#006aff] ml-0.5">ON</span>
-        <ChevronDown className={cn('w-3 h-3 opacity-45 transition-transform', open && 'rotate-180')} />
+        {compact ? (
+          <>
+            <span className="opacity-80 hidden sm:inline">Black Hole</span>
+            <span className="flex items-center gap-px font-bold text-[#006aff]">
+              V
+              <Infinity className="w-3 h-3 shrink-0" strokeWidth={2.5} />
+            </span>
+          </>
+        ) : (
+          <>
+            <span>Black Hole V</span>
+            <Infinity className="w-3.5 h-3.5 shrink-0 text-[#006aff]" strokeWidth={2.5} />
+            <span className="text-[8px] font-bold text-[#006aff] ml-0.5">ON</span>
+          </>
+        )}
+        <ChevronDown className={cn('w-3 h-3 opacity-45 transition-transform shrink-0', open && 'rotate-180')} />
       </button>
     </div>
   );
