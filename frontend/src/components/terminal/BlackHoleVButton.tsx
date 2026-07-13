@@ -24,7 +24,7 @@ export function BlackHoleVButton({
       <ChatBarPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} width={300}>
         <div className="rounded-2xl border border-[#006aff]/25 bg-[var(--card)] shadow-2xl p-3 animate-in fade-in slide-in-from-bottom-2">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-bold text-[var(--foreground)]">Black Hole V</span>
+            <span className="text-xs font-bold font-azurio text-[var(--foreground)]">Black Hole V</span>
             <Infinity className="w-4 h-4 text-[#006aff]" strokeWidth={2.5} />
             <span className="ml-auto text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#006aff] text-white">
               ON
@@ -63,24 +63,25 @@ export function BlackHoleVButton({
         type="button"
         onClick={() => setOpen(!open)}
         className={cn(
-          'flex items-center gap-0.5 px-0 py-0.5 bg-transparent border-0 font-bold text-[var(--foreground)] hover:text-[#006aff] transition-colors',
+          'flex items-center gap-0.5 px-0 py-0.5 bg-transparent border-0 font-remixa font-semibold text-[var(--foreground)] hover:text-[#006aff] transition-colors',
           compact ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-[11px]'
         )}
         title="Black Hole V∞"
       >
         {compact ? (
           <>
-            <span className="opacity-80 hidden sm:inline">Black Hole</span>
-            <span className="flex items-center gap-px font-bold text-[#006aff]">
+            <span className="font-azurio font-bold opacity-95">Black Hole</span>
+            <span className="flex items-center gap-px font-azurio font-bold text-[#006aff]">
               V
               <Infinity className="w-3 h-3 shrink-0" strokeWidth={2.5} />
             </span>
           </>
         ) : (
           <>
-            <span>Black Hole V</span>
+            <span className="font-azurio font-bold">Black Hole</span>
+            <span className="font-azurio font-bold">V</span>
             <Infinity className="w-3.5 h-3.5 shrink-0 text-[#006aff]" strokeWidth={2.5} />
-            <span className="text-[8px] font-bold text-[#006aff] ml-0.5">ON</span>
+            <span className="text-[8px] font-remixa font-bold text-[#006aff] ml-0.5">ON</span>
           </>
         )}
         <ChevronDown className={cn('w-3 h-3 opacity-45 transition-transform shrink-0', open && 'rotate-180')} />
