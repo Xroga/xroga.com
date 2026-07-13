@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { X, FileText, Image as ImageIcon, Film, Mic } from 'lucide-react';
-import { ChatBarSendButton, ChatBarUploadButton, VoiceWaveform, type SendButtonState, type ChatbarSurface } from './ChatBarButtons';
+import { ChatBarSendButton, ChatBarUploadButton, ChatBarComboAction, VoiceWaveform, type SendButtonState, type ChatbarSurface } from './ChatBarButtons';
 import { cn } from '@/lib/utils';
 
 const FILE_ROWS = 2;
@@ -122,6 +122,8 @@ export function ChatBarInputRow({
   surface = 'dashboard',
   hideUpload = false,
   compactGo = false,
+  comboAction = false,
+  hasText = false,
   children,
 }: {
   uploading: boolean;
@@ -135,6 +137,8 @@ export function ChatBarInputRow({
   surface?: ChatbarSurface;
   hideUpload?: boolean;
   compactGo?: boolean;
+  comboAction?: boolean;
+  hasText?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -142,8 +146,23 @@ export function ChatBarInputRow({
       {!hideUpload && <ChatBarUploadButton onClick={onUploadClick} active={uploading} surface={surface} />}
       <div className="flex-1 min-w-0 relative">{children}</div>
       <div className="xv-chatbar-actions flex items-center gap-1.5 shrink-0">
-        <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || stopping} surface={surface} />
-        <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
+        {comboAction ? (
+          <ChatBarComboAction
+            hasText={hasText}
+            listening={listening}
+            onMicToggle={onMicToggle}
+            micDisabled={micDisabled}
+            sendState={sendState}
+            stopping={stopping}
+            onStop={onStop}
+            surface={surface}
+          />
+        ) : (
+          <>
+            <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || stopping} surface={surface} />
+            <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
+          </>
+        )}
       </div>
     </div>
   );

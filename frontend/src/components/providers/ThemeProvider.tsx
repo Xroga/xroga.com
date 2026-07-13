@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useThemeStore } from '@/store/useThemeStore';
 import { DESKTOP_BG_SLIDESHOW, MOBILE_BG } from '@/lib/theme';
 import { DesktopBackgroundSlideshow } from '@/components/layout/DesktopBackgroundSlideshow';
+import { SlideshowIndexContext } from '@/components/providers/SlideshowIndexContext';
 
 const THEME_COLORS: Record<string, string> = {
   white: '#ffffff',
@@ -19,7 +20,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const customMobileBg = useThemeStore((s) => s.customMobileBg);
   const slideshowEnabled = useThemeStore((s) => s.slideshowEnabled);
   const slideshowFrozenIndex = useThemeStore((s) => s.slideshowFrozenIndex);
-  const setSlideshowFrozenIndex = useThemeStore((s) => s.setSlideshowFrozenIndex);
+  const [slideshowIndex, setSlideshowIndex] = useState(slideshowFrozenIndex);
   const pathname = usePathname();
   const isHomepage = pathname === '/';
   const isAuthRoute = pathname.startsWith('/auth');
@@ -92,14 +93,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         : 'bg-gradient-to-b from-black/45 via-black/25 to-black/55';
 
   return (
-    <>
+    <SlideshowIndexContext.Provider value={slideshowIndex}>
       {showDesktopSlideshow ? (
         <DesktopBackgroundSlideshow
           images={DESKTOP_BG_SLIDESHOW}
           overlayClassName={slideshowOverlay}
           enabled={slideshowEnabled}
           frozenIndex={slideshowFrozenIndex}
-          onActiveIndexChange={setSlideshowFrozenIndex}
+          onActiveIndexChange={setSlideshowIndex}
         />
       ) : null}
       {!isMobile && customDesktopBg && theme === 'image' ? (
@@ -110,6 +111,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         />
       ) : null}
       {children}
-    </>
+    </SlideshowIndexContext.Provider>
   );
 }

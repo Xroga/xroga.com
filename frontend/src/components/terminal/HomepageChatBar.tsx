@@ -11,7 +11,6 @@ import {
 } from '@/components/terminal/ChatBarParts';
 import { ChatBarFileGrid } from '@/components/terminal/ChatBarFileGrid';
 import type { SendButtonState } from '@/components/terminal/ChatBarButtons';
-import { TalkButton } from '@/components/voice/TalkButton';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -172,10 +171,6 @@ export function HomepageChatBar() {
         >
           <ChatBarDragOverlay active={dragOver} />
 
-          <div className="flex items-center justify-end px-3 pt-1.5 pb-0 sm:px-4">
-            <TalkButton variant="inline" className="xv-talk-inline-btn--home scale-90" />
-          </div>
-
           <ChatBarFileGrid
             files={files}
             onRemove={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))}
@@ -199,6 +194,8 @@ export function HomepageChatBar() {
               }}
               micDisabled={!speech.supported}
               sendState={sendState}
+              comboAction
+              hasText={!!prompt.trim()}
             >
               <div className="relative w-full">
                 <textarea

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { clearWorkspaceSession } from '@/lib/workspacePersistence';
+import { resetClientGlitchState } from '@/lib/storageRecovery';
 import { RetroTvErrorPage, RetroTvErrorActions } from '@/components/errors/RetroTvErrorPage';
 
 export default function ShellError({
@@ -26,11 +27,15 @@ export default function ShellError({
         <RetroTvErrorActions
           primaryLabel="Reset workspace & retry"
           onPrimary={() => {
+            resetClientGlitchState();
             clearWorkspaceSession();
             reset();
           }}
           secondaryLabel="Reload workspace"
-          onSecondary={() => window.location.assign('/dashboard')}
+          onSecondary={() => {
+            resetClientGlitchState();
+            window.location.assign('/workspace');
+          }}
         />
       }
     />
