@@ -42,7 +42,7 @@ export function AuthShell({
           <Logo variant="homepage" height={48} />
         </Link>
         <blockquote className="relative xv-auth-ceo-quote">
-          <p className="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.75rem] font-bold leading-[1.15] tracking-tight text-[#e8c4a8]">
+          <p className="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.75rem] font-bold leading-[1.15] tracking-tight">
             &ldquo;{CEO_QUOTE}&rdquo;
           </p>
           <footer className="mt-6 text-sm sm:text-base font-bold tracking-[0.2em] text-[#93c5fd]/90">
