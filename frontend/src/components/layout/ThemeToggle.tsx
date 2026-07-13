@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Palette } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
 import { THEME_OPTIONS } from '@/lib/theme';
+import { SlideshowToggle } from '@/components/layout/SlideshowToggle';
 
 export function ThemeToggle() {
   const theme = useThemeStore((s) => s.theme);
@@ -47,6 +48,9 @@ export function ThemeToggle() {
               <span className="text-xs opacity-70">{opt.description}</span>
             </button>
           ))}
+          <div className="mt-2 pt-2 border-t border-[var(--card-border)]/60 px-1">
+            <SlideshowToggle compact className="w-full justify-center" />
+          </div>
         </div>
       )}
     </div>

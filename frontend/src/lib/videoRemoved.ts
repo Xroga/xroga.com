@@ -1,3 +1,3 @@
-/** Video generation removed — shared message for UI */
+/** Video generation not live — shared message for UI */
 export const VIDEO_REMOVED_MESSAGE =
-  'Video generation is not available on Xroga. I can generate images — logos, thumbnails, artwork, mockups, and photo edits. You can also ask me to build websites, apps, crypto dashboards, and chatbots.';
+  'Xroga AI video generation is not live yet. I can write a detailed prompt you can paste into Runway, Pika, Kling, or another video AI — or generate still images here (logos, thumbnails, artwork, mockups, and edits). I can also build websites, apps, games, and automations.';

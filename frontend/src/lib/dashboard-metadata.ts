@@ -95,9 +95,9 @@ export const PAGE_SEO = {
   ),
   media: dashboardPageMetadata(
     'AI Media',
-    'Images, videos, and audio generated or uploaded in your Xroga AI media library.',
+    'Images and audio generated or uploaded in your Xroga AI media library.',
     '/dashboard/media',
-    ['Xroga AI media', 'AI images', 'AI video']
+    ['Xroga AI media', 'AI images']
   ),
   settings: dashboardPageMetadata(
     'Settings',

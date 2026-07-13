@@ -51,6 +51,8 @@ export const LOGO_URL = HEADER_LOGO_URL;
 
 export const CUSTOM_DESKTOP_BG_KEY = 'xroga_custom_desktop_bg';
 export const CUSTOM_MOBILE_BG_KEY = 'xroga_custom_mobile_bg';
+export const SLIDESHOW_ENABLED_KEY = 'xroga_slideshow_enabled';
+export const SLIDESHOW_FROZEN_INDEX_KEY = 'xroga_slideshow_frozen_index';
 
 export const THEME_OPTIONS: { id: ThemeId; label: string; description: string }[] = [
   { id: 'image', label: 'Image', description: 'Fun & creative work' },

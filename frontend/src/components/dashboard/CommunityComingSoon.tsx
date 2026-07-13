@@ -6,7 +6,7 @@ import {
   Globe,
   Gamepad2,
   Box,
-  Film,
+  ImageIcon,
   Heart,
   MessageSquare,
   Percent,
@@ -18,7 +18,7 @@ import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 const FEATURES = [
   { icon: Globe, label: 'Websites, apps, games & software' },
   { icon: Box, label: 'Browser extensions, tools & 3D models' },
-  { icon: Film, label: 'Videos, images & movie inspirations' },
+  { icon: ImageIcon, label: 'Images & creative inspirations' },
   { icon: Heart, label: 'Help others & get inspired' },
   { icon: Vote, label: 'Vote & comment on creations' },
   { icon: MessageSquare, label: 'Connect with builders worldwide' },
@@ -38,7 +38,7 @@ export function CommunityComingSoon() {
           </h1>
           <p className="text-sm text-[var(--muted)] max-w-xl mx-auto leading-relaxed">
             Discover what other builders create — websites, apps, games, software, extensions, 3D models,
-            videos, and images. Copy designs, vote, comment, and collaborate. A small platform fee supports
+            and images. Copy designs, vote, comment, and collaborate. A small platform fee supports
             Xroga while creators earn the rest.
           </p>
         </div>
