@@ -97,7 +97,7 @@ export function PricingPageClient() {
           <Logo href={loggedIn ? '/dashboard' : '/'} variant="header" height={50} />
           <div className="flex items-center gap-4">
             {loggedIn ? (
-              <PowerSmashButton size="sm" onClick={() => router.push('/dashboard')}>
+              <PowerSmashButton size="sm" onClick={() => router.push('/workspace')}>
                 Dashboard
               </PowerSmashButton>
             ) : (
@@ -222,7 +222,7 @@ export function PricingPageClient() {
           {loggedIn ? (
             <button
               type="button"
-              onClick={() => router.push('/dashboard')}
+              onClick={() => router.push('/workspace')}
               className="xv-footer-pill !text-sm flex items-center gap-2 !text-[var(--foreground)] px-6 py-3"
             >
               Back to Dashboard <ArrowRight className="w-4 h-4" />

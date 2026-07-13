@@ -82,7 +82,7 @@ export function CommunityComingSoon() {
 
         <div className="text-center">
           <Link
-            href="/dashboard"
+            href="/workspace"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--background)] text-sm font-semibold hover:opacity-90"
           >
             Back to Dashboard

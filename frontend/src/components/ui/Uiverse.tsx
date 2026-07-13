@@ -76,14 +76,16 @@ export function StaticQuickTab({
   icon,
   onClick,
   disabled,
+  className,
 }: {
   children: ReactNode;
   icon?: ReactNode;
   onClick?: (e: React.MouseEvent) => void;
   disabled?: boolean;
+  className?: string;
 }) {
   return (
-    <button type="button" onClick={onClick} disabled={disabled} className="xv-quick-tab">
+    <button type="button" onClick={onClick} disabled={disabled} className={cn('xv-quick-tab', className)}>
       {icon}
       {children}
     </button>

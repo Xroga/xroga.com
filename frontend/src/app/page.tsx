@@ -62,7 +62,7 @@ export default function HomePage() {
           {authReady && loggedIn && (
             <PowerSmashButton
               size="sm"
-              onClick={() => router.push('/dashboard')}
+              onClick={() => router.push('/workspace')}
               className="xv-get-started-outline xv-home-auth-btn !min-w-[140px] !min-h-[44px]"
             >
               Dashboard

@@ -33,7 +33,7 @@ export function ChatArchiveList({ search = '' }: { search?: string }) {
       source: 'chats',
       jumpMessageId: entry.assistantMessageId ?? entry.userMessageId,
     });
-    router.push('/dashboard');
+    router.push('/workspace');
   }
 
   function deleteEntry(id: string) {

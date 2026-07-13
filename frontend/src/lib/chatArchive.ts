@@ -1,4 +1,5 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
+import { getSelectedRepoContext } from '@/lib/repoContext';
 import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 
 const KEY = 'xroga_chat_archive';
@@ -11,6 +12,8 @@ export interface ChatArchiveEntry {
   messages: ChatMessage[];
   userMessageId: string;
   assistantMessageId?: string;
+  githubRepoName?: string;
+  githubRepoUrl?: string;
   createdAt: string;
 }
 
@@ -48,6 +51,7 @@ export function archiveChatTurn(opts: {
       .join(' ')
       .slice(0, 160) || opts.prompt.slice(0, 160);
 
+  const selectedRepo = getSelectedRepoContext();
   const entry: ChatArchiveEntry = {
     id: `chat-${opts.userMessageId}`,
     title: opts.prompt.slice(0, 48) || 'Chat',
@@ -56,6 +60,8 @@ export function archiveChatTurn(opts: {
     messages: opts.messages,
     userMessageId: opts.userMessageId,
     assistantMessageId: opts.assistantMessageId,
+    githubRepoName: selectedRepo?.repo,
+    githubRepoUrl: selectedRepo?.repo ? `https://github.com/${selectedRepo.repo}` : undefined,
     createdAt: new Date().toISOString(),
   };
 

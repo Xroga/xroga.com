@@ -1,4 +1,5 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
+import { getSelectedRepoContext } from '@/lib/repoContext';
 import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 import { saveTerminalSessionToIndexedDB, deleteTerminalSessionFromIndexedDB } from '@/lib/terminalSessionStorage';
 
@@ -62,7 +63,11 @@ function extractProjectMeta(messages: ChatMessage[]) {
       };
     }
   }
-  return {};
+  const selectedRepo = getSelectedRepoContext();
+  return {
+    githubRepoUrl: selectedRepo?.repo ? `https://github.com/${selectedRepo.repo}` : undefined,
+    githubRepoName: selectedRepo?.repo,
+  };
 }
 
 export function loadTerminalHistory(): TerminalHistoryEntry[] {

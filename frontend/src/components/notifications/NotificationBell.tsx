@@ -84,8 +84,8 @@ export function NotificationBell({ className, variant = 'header' }: Notification
       jumpMessageId: assistantMessageId,
     });
     setOpen(false);
-    if (pathname !== '/dashboard') {
-      router.push('/dashboard');
+    if (pathname !== '/workspace') {
+      router.push('/workspace');
     }
     window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
   }
@@ -100,8 +100,8 @@ export function NotificationBell({ className, variant = 'header' }: Notification
     if (meta.kind === 'build_ready' || meta.kind === 'build_failed') {
       setOpen(false);
       toast.success(n.title, { duration: 6000 });
-      if (pathname !== '/dashboard') {
-        router.push('/dashboard');
+      if (pathname !== '/workspace') {
+        router.push('/workspace');
       }
       window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       return;

@@ -37,7 +37,7 @@ function CallbackHandler() {
         }
 
         const user = encodeURIComponent(res.username);
-        router.replace(`/dashboard?github=connected&username=${user}`);
+        router.replace(`/workspace?github=connected&username=${user}`);
       })
       .catch((e) => {
         const msg = (e as Error).message;

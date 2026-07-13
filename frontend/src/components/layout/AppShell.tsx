@@ -35,7 +35,7 @@ function HeaderLogo({ incognito, isDashboard }: { incognito: boolean; isDashboar
       )}
     >
       <Logo
-        href="/dashboard/home"
+        href="/dashboard"
         height={52}
         variant="header"
         className="!h-[52px] sm:!h-[68px] lg:!h-[72px]"
@@ -50,11 +50,11 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const pathname = usePathname();
-  const isDashboard = pathname === '/dashboard';
+  const isDashboard = pathname === '/workspace';
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const effectiveSidebarOpen = hydrated ? sidebarOpen : true;
-  const widthPx = effectiveSidebarOpen ? (hydrated ? sidebarWidth : 256) : 72;
+  const widthPx = effectiveSidebarOpen ? (hydrated ? sidebarWidth : 256) : 0;
 
   useEffect(() => {
     document.body.classList.toggle('xv-incognito-active', incognito && isDashboard);

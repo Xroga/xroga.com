@@ -29,7 +29,6 @@ import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { UserProfileBox } from '@/components/profile/UserProfileBox';
-import { TerminalSearchBar } from '@/components/terminal/TerminalSearchBar';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
@@ -219,11 +218,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     toast('AI text loaded — edit and press GO');
   }
 
-  function jumpToMessage(messageId: string) {
-    setSearchHit(messageId);
-    messageRefs.current[messageId]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-
   function handleSuggestion(text: string) {
     setPrompt(text);
     toast('Suggestion added — press GO', { icon: '💡' });
@@ -265,7 +259,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
             <BrowserPanelToggle />
             </>
             )}
-            <TerminalSearchBar messages={messages} searchHit={searchHit} onJump={jumpToMessage} />
             {!isIncognito && (
             <button
               type="button"
@@ -281,7 +274,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           {!isIncognito && (
           <div className="flex sm:hidden items-center gap-0.5 shrink-0">
             <BrowserPanelToggle />
-            <TerminalSearchBar messages={messages} searchHit={searchHit} onJump={jumpToMessage} compact />
             <button
               type="button"
               onClick={cycleTerminalSkin}

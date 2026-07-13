@@ -16,7 +16,6 @@ import {
   Zap,
   BarChart3,
   Workflow,
-  Lock,
   MessageCirclePlus,
   Terminal,
   Gift,
@@ -51,20 +50,20 @@ import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
 
 const navItems = [
   {
-    href: '/dashboard',
+    href: '/workspace',
     label: 'Workspace',
     icon: Terminal,
     tip: 'Main workspace — terminal, browser split view, and AI swarm.',
   },
   {
-    href: '/dashboard/home',
+    href: '/dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
     tip: 'Token usage, XRG balance, billing, and recent activity.',
   },
   {
     href: '/dashboard/projects',
-    label: 'GitHub Projects',
+    label: 'Projects',
     icon: FolderOpen,
     tip: 'Connected repos — continue builds, fix bugs in existing code, delete or open any saved project.',
   },
@@ -125,8 +124,6 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const { startNewChat } = useTerminalChat();
   const hydrated = useHydrated();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
-  const setSidebarOpen = useThemeStore((s) => s.setSidebarOpen);
-  const sidebarPinned = useThemeStore((s) => s.sidebarPinned);
   const toggleSidebar = useThemeStore((s) => s.toggleSidebar);
   const closeBrowser = useThemeStore((s) => s.closeBrowser);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
@@ -179,7 +176,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     document.addEventListener('mouseup', onUp);
   }
 
-  const asideWidth = (hydrated ? sidebarOpen : true) ? (hydrated ? sidebarWidth : 256) : 72;
+  const asideWidth = (hydrated ? sidebarOpen : true) ? (hydrated ? sidebarWidth : 256) : 0;
   const navExpanded = isMobile ? mobileOpen : (hydrated ? sidebarOpen : true);
 
   function closeMobile() {
@@ -205,7 +202,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   }
 
   const isActive = (href: string) => {
-    if (href === '/dashboard') return pathname === '/dashboard';
+    if (href === '/workspace') return pathname === '/workspace';
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
@@ -217,7 +214,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   function handleNewChat() {
     startNewChat();
     handleNavClick();
-    router.push('/dashboard');
+    router.push('/workspace');
   }
 
   async function handleLogout() {
@@ -229,7 +226,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
 
   function goToTokenUsage() {
     closeMobile();
-    router.push('/dashboard/home');
+    router.push('/dashboard');
   }
 
   const bottomSection = (
@@ -322,20 +319,20 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     <>
       <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px] shrink-0">
         <HoverTip label="Xroga AI" description="Dashboard home" block className="shrink min-w-0">
-          <Logo href="/dashboard/home" height={navExpanded ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
+          <Logo href="/dashboard" height={navExpanded ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
         </HoverTip>
         {navExpanded ? (
           <button
             type="button"
             onClick={handleNewChat}
             className="xv-new-chat-btn flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold shrink-0"
-            title="New Chat"
+            title="New Terminal"
           >
             <MessageCirclePlus className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">New Chat</span>
+            <span className="hidden sm:inline">New Terminal</span>
           </button>
         ) : (
-          <SidebarTip label="New Chat" description="Start a fresh workspace session.">
+          <SidebarTip label="New Terminal" description="Start a fresh workspace session.">
             <button type="button" onClick={handleNewChat} className="xv-sidebar-icon-link !w-8 !h-8 !mx-0">
               <MessageCirclePlus className="w-4 h-4" />
             </button>
@@ -382,13 +379,11 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           setMobileOpen(false);
         }}
         className="xv-sidebar-edge-toggle hidden lg:flex"
-        aria-label={sidebarOpen ? 'Lock sidebar closed' : 'Open sidebar'}
-        style={{ left: asideWidth }}
+        aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+        style={{ left: sidebarOpen ? asideWidth : 12 }}
       >
         {sidebarOpen ? (
           <PanelLeftClose className="w-3.5 h-3.5" />
-        ) : sidebarPinned ? (
-          <Lock className="w-3.5 h-3.5" />
         ) : (
           <PanelLeft className="w-3.5 h-3.5" />
         )}
@@ -471,16 +466,13 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           document.body,
         )}
 
-      <div className="xv-sidebar-root hidden lg:block shrink-0">
+      <div className="xv-sidebar-root hidden lg:block shrink-0" style={{ width: asideWidth }}>
         <aside
-          onMouseEnter={() => {
-            if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(true);
-          }}
-          onMouseLeave={() => {
-            if (window.innerWidth >= 1024 && !sidebarPinned) setSidebarOpen(false);
-          }}
           style={{ width: asideWidth }}
-          className="sticky top-0 z-40 flex flex-col border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width] duration-200 xv-sidebar-hover shrink-0 relative"
+          className={cn(
+            'sticky top-0 z-40 border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,opacity] duration-200 xv-sidebar-hover shrink-0 relative overflow-hidden',
+            sidebarOpen ? 'flex flex-col opacity-100' : 'pointer-events-none opacity-0'
+          )}
         >
           {sidebarInner}
         </aside>

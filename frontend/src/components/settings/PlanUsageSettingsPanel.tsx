@@ -55,7 +55,7 @@ export function PlanUsageSettingsPanel() {
         <div className="mt-4 flex flex-wrap gap-2">
           <UpgradeProButton onClick={() => router.push('/pricing')} />
           <Link
-            href="/dashboard/home"
+            href="/dashboard"
             className="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--card-border)] hover:border-[var(--accent)]/40 transition-colors"
           >
             Full dashboard <ArrowRight className="w-3.5 h-3.5" />

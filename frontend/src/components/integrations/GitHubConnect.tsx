@@ -39,7 +39,7 @@ export function GitHubConnect() {
         .then((res) => {
           dispatchGitHubConnected(res.username);
           router.replace(
-            `/dashboard?github=connected&username=${encodeURIComponent(res.username)}`
+            `/workspace?github=connected&username=${encodeURIComponent(res.username)}`
           );
         })
         .catch((e) => toast.error((e as Error).message))

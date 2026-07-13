@@ -191,7 +191,7 @@ export function TerminalHistoryView() {
       source: 'dashboard',
       jumpMessageId: resolved.messages[resolved.messages.length - 1]?.id,
     });
-    router.push('/dashboard');
+    router.push('/workspace');
   }
 
   function deleteEntry(id: string) {

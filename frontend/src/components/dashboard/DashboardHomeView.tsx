@@ -139,7 +139,7 @@ export function DashboardHomeView() {
           </p>
         </div>
         <Link
-          href="/dashboard"
+          href="/workspace"
           className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--accent)] hover:underline"
         >
           Open Workspace

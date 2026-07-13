@@ -100,7 +100,7 @@ export function DashboardView({ displayName }: DashboardViewProps) {
             <SwarmMessageLog />
           </div>
           {browserOpen && (
-            <div className="order-2 min-w-0">
+            <div className="order-2 min-w-0 lg:sticky lg:top-24 self-start">
               <BrowserPanel mode="split" />
             </div>
           )}

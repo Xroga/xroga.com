@@ -309,7 +309,7 @@ export function TerminalChatProvider({
   }, [incognito]);
 
   useEffect(() => {
-    const isDashboard = pathname === '/dashboard' || pathname === '/dashboard/';
+  const isDashboard = pathname === '/workspace' || pathname === '/workspace/';
     if (!isDashboard || typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     if (params.get('github') !== 'connected') return;
@@ -326,7 +326,7 @@ export function TerminalChatProvider({
         username: rawUser ? decodeURIComponent(rawUser) : gh.username,
       });
     });
-    window.history.replaceState({}, '', '/dashboard');
+    window.history.replaceState({}, '', '/workspace');
   }, [pathname]);
 
   useEffect(() => {

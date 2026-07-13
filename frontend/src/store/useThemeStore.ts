@@ -50,9 +50,9 @@ export const useThemeStore = create<ThemeState>()(
       toggleSidebar: () =>
         set((s) => {
           if (s.sidebarOpen) {
-            return { sidebarOpen: false, sidebarPinned: true };
+            return { sidebarOpen: false, sidebarPinned: false };
           }
-          return { sidebarOpen: true, sidebarPinned: true };
+          return { sidebarOpen: true, sidebarPinned: false };
         }),
       setCustomDesktopBg: (url) => {
         if (url) localStorage.setItem(CUSTOM_DESKTOP_BG_KEY, url);
@@ -103,7 +103,6 @@ export const useThemeStore = create<ThemeState>()(
           const m = localStorage.getItem(CUSTOM_MOBILE_BG_KEY);
           if (d) state.customDesktopBg = d;
           if (m) state.customMobileBg = m;
-          if (state.sidebarPinned) state.sidebarOpen = true;
           if (!state.terminalSkin) {
             state.terminalSkin = DEFAULT_TERMINAL_SKIN[state.theme];
           }

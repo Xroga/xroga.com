@@ -16,6 +16,7 @@ export function QuickActionTabs() {
             <StaticQuickTab
               key={action.id}
               disabled={loading}
+              className="border border-white/10 bg-[#0f1117] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] hover:border-white/20 hover:bg-[#151924]"
               icon={<Icon className="w-3.5 h-3.5 shrink-0" style={{ color: action.color }} />}
               onClick={(e) => {
                 e.stopPropagation();

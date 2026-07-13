@@ -34,7 +34,7 @@ function CallbackHandler() {
           return;
         }
 
-        router.replace(`/dashboard?vercel=connected&username=${encodeURIComponent(res.username)}`);
+        router.replace(`/workspace?vercel=connected&username=${encodeURIComponent(res.username)}`);
       })
       .catch((e) => {
         const msg = (e as Error).message;
