@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { Infinity } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { getTimeGreetingKey, t } from '@/lib/i18n/translations';
 import { useLocale } from '@/components/providers/LanguageProvider';
@@ -24,16 +25,18 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
 
   return (
     <div className={cn('xv-dashboard-welcome xv-welcome-modern relative', className)}>
-
       <p className="xv-welcome-greeting relative font-goga">
-        {greeting},{' '}
+        <span className="xv-welcome-greeting-text">{greeting},</span>{' '}
         <span className="xv-welcome-name font-remixa">{name}</span>
       </p>
 
-      <div className="xv-welcome-vmark relative font-azurio" aria-label="Version Infinity">
-        <span className="xv-vmark-v">V</span>
-        <span className="xv-vmark-infinity">∞</span>
-      </div>
+      <p className="xv-welcome-blackhole relative font-azurio" aria-label="Black Hole V Infinity">
+        <span className="xv-welcome-blackhole-label">Black Hole</span>
+        <span className="xv-welcome-blackhole-v">
+          V
+          <Infinity className="inline w-[0.85em] h-[0.85em] -mt-px" strokeWidth={2.5} aria-hidden />
+        </span>
+      </p>
 
       <p className="xv-welcome-tagline-mixed relative font-goga">
         Others count up.{' '}

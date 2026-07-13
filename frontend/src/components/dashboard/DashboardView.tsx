@@ -10,10 +10,9 @@ import { useAppStore } from '@/store/useAppStore';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import { Maximize2, Minimize2 } from 'lucide-react';
 
 interface DashboardViewProps {
   displayName: string;
@@ -28,7 +27,6 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const setProfile = useAppStore((s) => s.setProfile);
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     document.body.classList.toggle('xv-terminal-fullscreen-active', fullscreen);
@@ -47,41 +45,6 @@ export function DashboardView({ displayName }: DashboardViewProps) {
         setProfile({ display_name: displayName, avatar_url: null, timezone: 'UTC', language: 'en' })
       );
   }, [displayName, setProfile]);
-
-  useEffect(() => {
-    if (fullscreen) return;
-    function onScroll() {
-      setScrolled(window.scrollY > 72);
-    }
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [fullscreen]);
-
-  const fullscreenBtn = (
-    <button
-      type="button"
-      onClick={() => (fullscreen ? setFullscreen(false) : setFullscreen(true))}
-      className={cn(
-        'xv-fullscreen-enter-pill flex items-center gap-1.5 font-medium transition-all',
-        scrolled && !fullscreen && 'xv-fullscreen-pill--fixed',
-        fullscreen && 'xv-fullscreen-exit-pill'
-      )}
-      title={fullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
-    >
-      {fullscreen ? (
-        <>
-          <Minimize2 className="w-3 h-3" />
-          <span className="hidden sm:inline">Exit</span>
-        </>
-      ) : (
-        <>
-          <Maximize2 className="w-3 h-3" />
-          <span className={cn(scrolled ? 'sr-only sm:not-sr-only' : 'inline')}>Fullscreen</span>
-        </>
-      )}
-    </button>
-  );
 
   const terminalBlock = (
     <div className={cn('space-y-3 w-full', fullscreen && 'xv-fullscreen-terminal max-w-none')}>
@@ -130,10 +93,7 @@ export function DashboardView({ displayName }: DashboardViewProps) {
 
   return (
     <div className="max-w-5xl mx-auto space-y-4 sm:space-y-5 min-w-0">
-      <div className="flex flex-wrap items-start justify-between gap-2 sm:gap-3">
-        <DashboardWelcome displayName={displayName} hidden={fullscreen} className="flex-1 min-w-0" />
-        {!fullscreen && fullscreenBtn}
-      </div>
+      <DashboardWelcome displayName={displayName} hidden={fullscreen} />
 
       <ApiConnectionBanner />
       {terminalBlock}

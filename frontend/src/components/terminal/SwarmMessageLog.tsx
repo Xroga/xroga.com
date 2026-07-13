@@ -10,7 +10,6 @@ import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
 import { BrowserPanelToggle } from './BrowserPanel';
 import { TERMINAL_SKIN_LABELS } from '@/lib/theme';
 import { ProcessingLogo } from '@/components/layout/ProcessingLogo';
-import { BlackHoleVButton } from './BlackHoleVButton';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
@@ -307,7 +306,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           <div className="hidden sm:flex items-center gap-1 shrink-0">
             {!isIncognito && (
             <>
-            <BlackHoleVButton compact className="shrink-0 mr-0.5" />
             <button
               type="button"
               onClick={cycleTerminalSkin}
@@ -347,7 +345,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           </div>
           {!isIncognito && (
           <div className="flex sm:hidden items-center gap-0.5 shrink-0">
-            <BlackHoleVButton compact className="shrink-0 scale-90 origin-right" />
             <BrowserPanelToggle />
             <button
               type="button"
