@@ -33,7 +33,7 @@ export function DesktopBackgroundSlideshow({
         <div
           key={src}
           className={cn(
-            'absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed transition-opacity duration-[1800ms] ease-in-out',
+            'absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed transition-opacity duration-[1100ms] ease-[cubic-bezier(0.4,0,0.2,1)]',
             index === activeIndex ? 'opacity-100' : 'opacity-0'
           )}
           style={{ backgroundImage: `url("${src}")` }}

@@ -9,6 +9,8 @@ export interface ChatTurn {
   label: string;
 }
 
+const COLLAPSED_MAX = 10;
+
 function clip(text: string, max = 36): string {
   const line = text.replace(/\s+/g, ' ').trim();
   if (line.length <= max) return line;
@@ -31,6 +33,11 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
     () => turns.find((t) => t.id === (hoveredId ?? activeId)) ?? turns[turns.length - 1],
     [turns, hoveredId, activeId]
   );
+
+  const collapsedTurns = useMemo(() => {
+    if (turns.length <= COLLAPSED_MAX) return turns;
+    return turns.slice(-COLLAPSED_MAX);
+  }, [turns]);
 
   useEffect(() => {
     setMounted(true);
@@ -108,8 +115,8 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
           </div>
         </div>
       ) : (
-        <div className="xv-chat-turn-collapsed flex flex-col items-end gap-2 py-3">
-          {turns.map((turn) => {
+        <div className="xv-chat-turn-collapsed flex flex-col items-end justify-center gap-2 py-2">
+          {collapsedTurns.map((turn) => {
             const active = turn.id === activeId;
             return (
               <button
@@ -128,6 +135,11 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
               />
             );
           })}
+          {turns.length > COLLAPSED_MAX ? (
+            <span className="text-[8px] text-[var(--muted)] opacity-60 leading-none" title="Hover to see all">
+              +{turns.length - COLLAPSED_MAX}
+            </span>
+          ) : null}
         </div>
       )}
     </div>

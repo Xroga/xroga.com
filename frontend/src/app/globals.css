@@ -2484,39 +2484,63 @@ body.theme-gray * {
     font-size: clamp(1.35rem, 2.8vw, 2.25rem);
     font-weight: 500;
     letter-spacing: 0.01em;
-    line-height: 1.2;
-    color: var(--muted);
+    line-height: 1.25;
+  }
+  .xv-welcome-greeting-text {
+    color: var(--foreground);
+    font-weight: 500;
+  }
+  body.theme-white .xv-welcome-greeting-text {
+    color: #0f172a;
   }
   .xv-welcome-name {
     font-family: var(--font-remixa);
-    font-weight: 700;
-    letter-spacing: 0.02em;
+    font-weight: 800;
+    letter-spacing: 0.03em;
     background: linear-gradient(
-      120deg,
-      #f8fafc 0%,
-      #e2e8f0 22%,
-      #cbd5e1 42%,
-      #94a3b8 58%,
-      #e2e8f0 78%,
-      #f1f5f9 100%
+      90deg,
+      #64748b 0%,
+      #94a3b8 28%,
+      #cbd5e1 52%,
+      #f1f5f9 78%,
+      #ffffff 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    filter: drop-shadow(0 1px 8px rgba(148, 163, 184, 0.35));
   }
   body.theme-white .xv-welcome-name {
     background: linear-gradient(
-      120deg,
-      #475569 0%,
-      #64748b 25%,
-      #94a3b8 45%,
-      #cbd5e1 65%,
-      #64748b 85%,
-      #334155 100%
+      90deg,
+      #334155 0%,
+      #475569 25%,
+      #64748b 48%,
+      #94a3b8 72%,
+      #cbd5e1 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
+  }
+  .xv-welcome-blackhole {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    margin-top: 0.35rem;
+    font-size: clamp(1.5rem, 3.5vw, 2.35rem);
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  .xv-welcome-blackhole-label {
+    color: var(--foreground);
+  }
+  body.theme-white .xv-welcome-blackhole-label {
+    color: #0f172a;
+  }
+  .xv-welcome-blackhole-v {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.05rem;
+    color: #4a9dff;
   }
   .xv-welcome-vmark {
     display: inline-flex;
@@ -2604,26 +2628,29 @@ body.theme-gray * {
   .xv-chat-turn-rail--dock {
     position: fixed;
     right: max(10px, env(safe-area-inset-right));
-    top: calc(4.5rem + env(safe-area-inset-top));
-    bottom: calc(var(--xv-chatbar-height, 220px) + 12px);
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
     width: 14px;
+    max-height: min(70vh, 420px);
     z-index: 44;
     pointer-events: none;
-    transition: width 0.2s ease-out;
-  }
-  .xv-chat-turn-rail--dock > * {
-    pointer-events: auto;
   }
   .xv-chat-turn-rail--dock.xv-chat-turn-rail--expanded {
     width: min(220px, calc(100vw - 24px));
+    transform: translateY(-50%);
   }
   .xv-chat-turn-flyout {
     margin-right: 0;
     max-height: 100%;
   }
   body.xv-terminal-fullscreen-active .xv-chat-turn-rail--dock {
-    top: calc(3.5rem + env(safe-area-inset-top));
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 205;
+  }
+  .xv-chat-turn-rail--dock > * {
+    pointer-events: auto;
   }
   #xv-profile-quick-menu .xv-logout-btn {
     width: 100%;
