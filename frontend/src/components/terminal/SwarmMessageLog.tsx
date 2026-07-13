@@ -298,7 +298,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
         <div className="xv-terminal-header sticky top-0 z-20 flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 border-b border-[var(--card-border)]/30 overflow-x-auto scrollbar-hide backdrop-blur-xl bg-[var(--card)]/55">
           <Terminal className="w-4 h-4 opacity-70 shrink-0 hidden sm:block" />
           <div className="flex-1 min-w-0">
-            <h3 className="font-terminal text-xs sm:text-sm opacity-90 truncate">
+            <h3 className="font-remixa text-xs sm:text-sm opacity-90 truncate">
               {isIncognito ? 'guest@incognito ~ temporary' : 'xroga@swarm ~ terminal'}
             </h3>
             {isIncognito && (

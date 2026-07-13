@@ -1,21 +1,36 @@
 import type { Metadata, Viewport } from 'next';
-import { Instrument_Serif, Inter, JetBrains_Mono, Orbitron } from 'next/font/google';
+import { Cormorant, Fraunces, Inter, JetBrains_Mono, Outfit, Syne } from 'next/font/google';
 import './globals.css';
+import '@/styles/xroga-fonts.css';
 import '@/styles/uiverse.css';
 import { buildMetadata, FAVICON_URL, FAVICON_LOCAL } from '@/lib/seo';
 import { RootProviders } from '@/components/providers/RootProviders';
 import { SiteJsonLd } from '@/components/seo/SiteJsonLd';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const orbitron = Orbitron({
+/** Azurio role — sharp editorial serif (Fraunces stand-in) */
+const azurio = Fraunces({
   subsets: ['latin'],
-  variable: '--font-xv-body',
-  weight: ['400', '500', '600', '700', '800', '900'],
+  variable: '--font-azurio',
+  weight: ['600', '700', '800', '900'],
 });
-const instrumentSerif = Instrument_Serif({
+/** Goga role — friendly geometric sans body */
+const goga = Outfit({
   subsets: ['latin'],
-  variable: '--font-xv-display',
-  weight: ['400'],
+  variable: '--font-goga',
+  weight: ['400', '500', '600', '700'],
+});
+/** Remixa role — contrasting modern sans for UI/labels */
+const remixa = Syne({
+  subsets: ['latin'],
+  variable: '--font-remixa',
+  weight: ['500', '600', '700', '800'],
+});
+/** Emilio role — elegant thin italic serif accents */
+const emilio = Cormorant({
+  subsets: ['latin'],
+  variable: '--font-emilio',
+  weight: ['300', '400', '500'],
   style: ['normal', 'italic'],
 });
 const jetbrainsMono = JetBrains_Mono({
@@ -71,7 +86,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>
       <body
-        className={`${inter.variable} ${orbitron.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        className={`${inter.variable} ${azurio.variable} ${goga.variable} ${remixa.variable} ${emilio.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
         <SiteJsonLd />
         <RootProviders>{children}</RootProviders>

@@ -17,7 +17,6 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
   const profile = useAppStore((s) => s.profile);
   const locale = useLocale();
   const name = profile?.display_name ?? displayName;
-  const firstName = name.split(/\s+/)[0] ?? name;
 
   const greeting = useMemo(() => t(getTimeGreetingKey(), locale), [locale]);
 
@@ -27,23 +26,23 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
     <div className={cn('xv-dashboard-welcome xv-welcome-modern relative', className)}>
       <div className="xv-welcome-grid-overlay pointer-events-none absolute inset-0 rounded-2xl opacity-35" aria-hidden />
 
-      <p className="xv-welcome-greeting relative">
+      <p className="xv-welcome-greeting relative font-goga">
         {greeting},{' '}
-        <span className="xv-welcome-name">{firstName}</span>
+        <span className="xv-welcome-name font-remixa">{name}</span>
       </p>
 
-      <div className="xv-welcome-vmark relative" aria-label="Version Infinity">
+      <div className="xv-welcome-vmark relative font-azurio" aria-label="Version Infinity">
         <span className="xv-vmark-v">V</span>
         <span className="xv-vmark-infinity">∞</span>
       </div>
 
-      <p className="xv-welcome-tagline-mixed relative">
+      <p className="xv-welcome-tagline-mixed relative font-goga">
         Others count up.{' '}
-        <span className="xv-tagline-accent">We count forever.</span>
+        <span className="xv-tagline-accent font-emilio">We count forever.</span>
       </p>
-      <p className="xv-welcome-tagline-sub relative">
-        The <span className="xv-tagline-accent">first</span> and{' '}
-        <span className="xv-tagline-accent">last</span> model you will ever need.
+      <p className="xv-welcome-tagline-sub relative font-goga">
+        The <span className="xv-tagline-accent font-emilio">first</span> and{' '}
+        <span className="xv-tagline-accent font-emilio">last</span> model you will ever need.
       </p>
 
       <WorkspaceResumeList className="relative" />
