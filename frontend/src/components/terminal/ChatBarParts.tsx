@@ -123,6 +123,7 @@ export function ChatBarInputRow({
   hideUpload = false,
   compactGo = false,
   comboAction = false,
+  goOnly = false,
   hasText = false,
   children,
 }: {
@@ -138,6 +139,7 @@ export function ChatBarInputRow({
   hideUpload?: boolean;
   compactGo?: boolean;
   comboAction?: boolean;
+  goOnly?: boolean;
   hasText?: boolean;
   children: React.ReactNode;
 }) {
@@ -146,7 +148,9 @@ export function ChatBarInputRow({
       {!hideUpload && <ChatBarUploadButton onClick={onUploadClick} active={uploading} surface={surface} />}
       <div className="flex-1 min-w-0 relative">{children}</div>
       <div className="xv-chatbar-actions flex items-center gap-1.5 shrink-0">
-        {comboAction ? (
+        {goOnly ? (
+          <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
+        ) : comboAction ? (
           <ChatBarComboAction
             hasText={hasText}
             listening={listening}

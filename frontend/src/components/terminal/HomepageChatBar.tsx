@@ -7,7 +7,6 @@ import { autocorrectText } from '@/lib/chatSuggestions';
 import {
   ChatBarDragOverlay,
   ChatBarInputRow,
-  useSpeechToText,
 } from '@/components/terminal/ChatBarParts';
 import { ChatBarFileGrid } from '@/components/terminal/ChatBarFileGrid';
 import type { SendButtonState } from '@/components/terminal/ChatBarButtons';
@@ -76,15 +75,11 @@ export function HomepageChatBar() {
   const [dragOver, setDragOver] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [listening, setListening] = useState(false);
   const [sendState, setSendState] = useState<SendButtonState>('idle');
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
   const typewriter = useTypewriterPlaceholder(!prompt && !focused);
-
-  const appendSpeech = useCallback((text: string) => setPrompt((p) => (p ? `${p} ${text}` : text)), []);
-  const speech = useSpeechToText(appendSpeech);
 
   const addFiles = useCallback((list: FileList | null) => {
     if (!list?.length) return;
@@ -184,18 +179,10 @@ export function HomepageChatBar() {
               surface="homepage"
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
-              listening={listening}
-              onMicToggle={() => {
-                if (!speech.supported) {
-                  toast.error('Voice input not supported in this browser');
-                  return;
-                }
-                speech.toggle(listening, setListening);
-              }}
-              micDisabled={!speech.supported}
+              listening={false}
+              onMicToggle={() => {}}
               sendState={sendState}
-              comboAction
-              hasText={!!prompt.trim()}
+              goOnly
             >
               <div className="relative w-full">
                 <textarea

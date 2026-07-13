@@ -1757,7 +1757,36 @@ body.theme-gray * {
     }
   }
 
-  /* Hero — cool silver & exact blue typography (no warm/yellow tones) */
+  /* Hero — professional AI typography */
+  .xv-hero-pro-title {
+    font-family: var(--font-goga), system-ui, sans-serif;
+    font-size: clamp(2.5rem, 7.5vw, 5rem);
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    font-weight: 600;
+  }
+  .xv-hero-pro-line {
+    color: #f1f5f9;
+    font-weight: 500;
+  }
+  .xv-hero-pro-line--blue {
+    color: #dbeafe;
+  }
+  .xv-hero-pro-word {
+    font-weight: 700;
+    background: linear-gradient(120deg, #ffffff 0%, #cbd5e1 45%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .xv-hero-pro-word--blue {
+    background: linear-gradient(120deg, #93c5fd 0%, #4a9dff 42%, #1d4e9e 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Hero — cool silver & exact blue typography (legacy) */
   .xv-hero-modern-title {
     font-family: var(--font-goga), system-ui, sans-serif;
     font-size: clamp(2.75rem, 8vw, 5.5rem);
@@ -2480,36 +2509,43 @@ body.theme-gray * {
       linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
   }
   .xv-welcome-greeting {
-    font-family: var(--font-goga);
-    font-size: clamp(1.35rem, 2.8vw, 2.25rem);
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    line-height: 1.25;
+    font-family: var(--font-remixa);
+    font-size: clamp(1.1rem, 2.2vw, 1.55rem);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.2;
   }
   .xv-welcome-greeting-text {
-    color: var(--foreground);
-    font-weight: 500;
+    color: #93c5fd;
+    font-weight: 600;
+    text-shadow: 0 0 24px rgba(96, 165, 250, 0.25);
   }
   body.theme-white .xv-welcome-greeting-text {
-    color: #0f172a;
+    color: #2563eb;
+    text-shadow: none;
+  }
+  .xv-welcome-name-line {
+    margin-top: 0.15rem;
+    line-height: 1.05;
   }
   .xv-welcome-name {
-    font-family: var(--font-emilio), Georgia, 'Times New Roman', serif;
-    font-style: italic;
-    font-weight: 500;
-    letter-spacing: 0.02em;
+    font-family: var(--font-azurio), Georgia, 'Times New Roman', serif;
+    font-style: normal;
+    font-weight: 800;
+    font-size: clamp(2rem, 4.8vw, 3.35rem);
+    letter-spacing: -0.02em;
     background: linear-gradient(
       90deg,
-      #64748b 0%,
-      #94a3b8 22%,
-      #cbd5e1 48%,
-      #e8eef5 72%,
+      #94a3b8 0%,
+      #cbd5e1 30%,
+      #f1f5f9 55%,
       #ffffff 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    filter: drop-shadow(0 1px 8px rgba(15, 23, 42, 0.35));
+    filter: drop-shadow(0 2px 14px rgba(15, 23, 42, 0.4));
   }
   body.theme-white .xv-welcome-name {
     background: linear-gradient(
@@ -2522,6 +2558,55 @@ body.theme-gray * {
     );
     -webkit-background-clip: text;
     background-clip: text;
+  }
+  .xv-blackhole-identity {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 0.85rem;
+    padding: 0.35rem 0.85rem 0.35rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid rgba(96, 165, 250, 0.28);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.55) 0%, rgba(0, 106, 255, 0.12) 100%);
+    box-shadow: 0 8px 32px rgba(0, 106, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+  }
+  body.theme-white .xv-blackhole-identity {
+    border-color: rgba(37, 99, 235, 0.22);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(219, 234, 254, 0.65) 100%);
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+  }
+  .xv-blackhole-identity__label {
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #e2e8f0;
+  }
+  body.theme-white .xv-blackhole-identity__label {
+    color: #0f172a;
+  }
+  .xv-blackhole-identity__mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.05rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #0ea5e9 0%, #006aff 50%, #6366f1 100%);
+    box-shadow: 0 4px 16px rgba(0, 106, 255, 0.35);
+  }
+  .xv-blackhole-identity__v {
+    font-size: clamp(1.1rem, 2.4vw, 1.45rem);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #fff;
+    line-height: 1;
+  }
+  .xv-blackhole-identity__inf {
+    width: 1.05em;
+    height: 1.05em;
+    color: #fff;
+    opacity: 0.95;
   }
   .xv-welcome-blackhole {
     display: inline-flex;
@@ -2598,53 +2683,54 @@ body.theme-gray * {
     background-clip: text;
   }
   .xv-welcome-taglines {
-    padding: 0.35rem 0.65rem;
-    border-radius: 0.65rem;
-    background: linear-gradient(90deg, rgba(15, 23, 42, 0.42) 0%, rgba(15, 23, 42, 0.18) 100%);
-    backdrop-filter: blur(6px);
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
   }
   body.theme-white .xv-welcome-taglines {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.45) 100%);
+    background: transparent;
   }
   .xv-welcome-tagline-mixed {
     margin-top: 0;
     font-family: var(--font-goga);
-    font-size: clamp(1.15rem, 2.6vw, 1.65rem);
+    font-size: clamp(1.35rem, 3vw, 2rem);
     font-weight: 600;
     letter-spacing: 0.01em;
     line-height: 1.35;
     color: #f8fafc;
-    max-width: 40rem;
-    text-shadow: 0 1px 12px rgba(15, 23, 42, 0.55);
+    max-width: 44rem;
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.75), 0 0 40px rgba(15, 23, 42, 0.45);
   }
   body.theme-white .xv-welcome-tagline-mixed {
     color: #0f172a;
-    text-shadow: none;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
   }
   .xv-welcome-tagline-sub {
     margin-top: 0.35rem;
     font-family: var(--font-goga);
-    font-size: clamp(1rem, 2vw, 1.35rem);
+    font-size: clamp(1.15rem, 2.4vw, 1.65rem);
     font-weight: 500;
     letter-spacing: 0.01em;
     line-height: 1.4;
-    color: rgba(248, 250, 252, 0.92);
-    max-width: 40rem;
-    text-shadow: 0 1px 10px rgba(15, 23, 42, 0.5);
+    color: rgba(248, 250, 252, 0.96);
+    max-width: 44rem;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7), 0 0 32px rgba(15, 23, 42, 0.4);
   }
   body.theme-white .xv-welcome-tagline-sub {
-    color: #334155;
+    color: #1e293b;
     text-shadow: none;
   }
   .xv-tagline-accent {
     font-family: var(--font-emilio);
     font-style: italic;
-    font-weight: 300;
-    letter-spacing: 0.03em;
-    background: linear-gradient(90deg, #93c5fd 0%, #a78bfa 48%, #c084fc 100%);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    background: linear-gradient(90deg, #bfdbfe 0%, #93c5fd 40%, #a78bfa 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.35));
   }
   body.theme-white .xv-tagline-accent {
     background: linear-gradient(90deg, #2563eb 0%, #7c3aed 55%, #9333ea 100%);

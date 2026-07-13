@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import type { ThemeId, TerminalSkin } from '@/lib/theme';
 import {
   CUSTOM_DESKTOP_BG_KEY,
@@ -114,12 +114,33 @@ export const useThemeStore = create<ThemeState>()(
         sidebarOpen: s.sidebarOpen,
         sidebarPinned: s.sidebarPinned,
         sidebarWidth: s.sidebarWidth,
-        customDesktopBg: s.customDesktopBg,
-        customMobileBg: s.customMobileBg,
         slideshowEnabled: s.slideshowEnabled,
         slideshowFrozenIndex: s.slideshowFrozenIndex,
         terminalSkin: s.terminalSkin,
       }),
+      storage: createJSONStorage(() => ({
+        getItem: (name) => {
+          try {
+            return localStorage.getItem(name);
+          } catch {
+            return null;
+          }
+        },
+        setItem: (name, value) => {
+          try {
+            localStorage.setItem(name, value);
+          } catch {
+            localStorage.removeItem(name);
+          }
+        },
+        removeItem: (name) => {
+          try {
+            localStorage.removeItem(name);
+          } catch {
+            /* ignore */
+          }
+        },
+      })),
       onRehydrateStorage: () => (state) => {
         if (state && typeof window !== 'undefined') {
           try {

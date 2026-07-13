@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { clearWorkspaceSession } from '@/lib/workspacePersistence';
 import { resetClientGlitchState } from '@/lib/storageRecovery';
-import { RetroTvErrorPage, RetroTvErrorActions } from '@/components/errors/RetroTvErrorPage';
+import { XrogaErrorPage, XrogaErrorActions } from '@/components/errors/XrogaErrorPage';
 
 export default function ShellError({
   error,
@@ -17,21 +17,19 @@ export default function ShellError({
   }, [error]);
 
   return (
-    <RetroTvErrorPage
-      screenText="ERROR"
-      overlayDigits={['E', 'R', 'R']}
-      title="Something went wrong"
-      description="A display or saved-session glitch interrupted the app. Your account is safe — reset the workspace session and reload."
-      backHref={undefined}
+    <XrogaErrorPage
+      code="Shell"
+      title="Something interrupted your session"
+      description="A display or saved-session conflict stopped the app. Reset the workspace cache and reload — your account is safe."
       actions={
-        <RetroTvErrorActions
-          primaryLabel="Reset workspace & retry"
+        <XrogaErrorActions
+          primaryLabel="Reset workspace"
           onPrimary={() => {
             resetClientGlitchState();
             clearWorkspaceSession();
             reset();
           }}
-          secondaryLabel="Reload workspace"
+          secondaryLabel="Open workspace"
           onSecondary={() => {
             resetClientGlitchState();
             window.location.assign('/workspace');

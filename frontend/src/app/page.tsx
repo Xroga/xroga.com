@@ -67,14 +67,12 @@ export default function HomePage() {
         <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[80%] max-w-lg h-40 bg-[#006aff]/15 rounded-full blur-[120px] pointer-events-none xv-ai-glow-pulse" />
 
         <div className="relative z-10 w-full max-w-5xl text-center">
-          <h1 className="xv-hero-modern-title mb-5 font-goga">
-            <span className="xv-hero-modern-line block">
-              <span className="xv-hero-silver font-azurio">Do </span>
-              <span className="xv-hero-silver-italic font-emilio">Everything</span>
+          <h1 className="xv-hero-pro-title mb-5">
+            <span className="xv-hero-pro-line block font-goga">
+              Do <span className="xv-hero-pro-word">Everything</span>
             </span>
-            <span className="xv-hero-modern-line block mt-1 sm:mt-2">
-              <span className="xv-hero-blue font-azurio">You </span>
-              <span className="xv-hero-blue-italic font-emilio">Imagine</span>
+            <span className="xv-hero-pro-line xv-hero-pro-line--blue block mt-1 sm:mt-2 font-goga">
+              You <span className="xv-hero-pro-word xv-hero-pro-word--blue">Imagine</span>
             </span>
           </h1>
 

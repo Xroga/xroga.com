@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react';
 import { clearWorkspaceSession } from '@/lib/workspacePersistence';
-import { RetroTvErrorPage, RetroTvErrorActions } from '@/components/errors/RetroTvErrorPage';
+import { resetClientGlitchState } from '@/lib/storageRecovery';
+import { XrogaErrorPage, XrogaErrorActions } from '@/components/errors/XrogaErrorPage';
 
 export default function DashboardError({
   error,
@@ -16,21 +17,23 @@ export default function DashboardError({
   }, [error]);
 
   return (
-    <RetroTvErrorPage
-      screenText="ERROR"
-      overlayDigits={['E', 'R', 'R']}
-      title="Something went wrong on the dashboard"
-      description="This is usually a corrupted saved chat session. Reset the workspace, then try your build again."
-      backHref={undefined}
+    <XrogaErrorPage
+      code="Dashboard"
+      title="Dashboard session needs a refresh"
+      description="This is usually a corrupted saved chat session. Reset the workspace cache, then continue building."
       actions={
-        <RetroTvErrorActions
-          primaryLabel="Reset & try again"
+        <XrogaErrorActions
+          primaryLabel="Reset & continue"
           onPrimary={() => {
+            resetClientGlitchState();
             clearWorkspaceSession();
             reset();
           }}
-          secondaryLabel="Reload dashboard"
-          onSecondary={() => window.location.assign('/dashboard')}
+          secondaryLabel="Open workspace"
+          onSecondary={() => {
+            resetClientGlitchState();
+            window.location.assign('/workspace');
+          }}
         />
       }
     />

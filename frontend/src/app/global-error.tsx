@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { RetroTvErrorPage, RetroTvErrorActions } from '@/components/errors/RetroTvErrorPage';
+import { XrogaErrorPage, XrogaErrorActions } from '@/components/errors/XrogaErrorPage';
 import { resetClientGlitchState } from '@/lib/storageRecovery';
 
 export default function GlobalError({
@@ -17,21 +17,19 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body style={{ margin: 0 }}>
-        <RetroTvErrorPage
-          screenText="ERROR"
-          overlayDigits={['E', 'R', 'R']}
-          title="Xroga hit a display glitch"
-          description="A saved session or browser cache mismatch caused a client error. Reload to continue — your account is safe."
-          backHref={undefined}
+      <body style={{ margin: 0, background: '#030712' }}>
+        <XrogaErrorPage
+          code="System"
+          title="Workspace session needs a refresh"
+          description="A cached session conflict interrupted the app. Reset once to continue — your account and projects are safe."
           actions={
-            <RetroTvErrorActions
-              primaryLabel="Reset & retry"
+            <XrogaErrorActions
+              primaryLabel="Reset & continue"
               onPrimary={() => {
                 resetClientGlitchState();
                 reset();
               }}
-              secondaryLabel="Reload workspace"
+              secondaryLabel="Open workspace"
               onSecondary={() => {
                 resetClientGlitchState();
                 window.location.assign('/workspace');
