@@ -16,7 +16,9 @@ router.get('/ai-catalog', (_req, res) => {
     xrogaResearch: {
       searxng: { free: true, note: 'Xroga uses SearXNG for web research during builds and chat.' },
       tavily: { freeTier: true, note: 'Xroga supplements with Tavily when TAVILY_API_KEY is set on server.' },
-      grokSearch: { note: 'Xroga uses Grok web_search + x_search for live trends when GROK_API_KEY is set.' },
+      grokSearch: {
+        note: 'Grok web_search / x_search are OFF by default (costly). Builds use SearXNG/Tavily. Enable only with XROGA_ALLOW_GROK_AGENT_SEARCH=1.',
+      },
     },
   });
 });

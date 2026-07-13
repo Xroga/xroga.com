@@ -287,7 +287,14 @@ export class SwarmService {
       data: { message: 'Ready', prompt: prompt.slice(0, 100) },
     });
 
+    const abort = new AbortController();
+    const onClientGone = () => {
+      if (!abort.signal.aborted) abort.abort();
+    };
+    res.on('close', onClientGone);
+
     const onProgress = (event: SwarmProgressEvent) => {
+      if (abort.signal.aborted) return;
       sendSSE(res, {
         event: 'progress',
         data: {
@@ -319,6 +326,7 @@ export class SwarmService {
         res.write(': keepalive\n\n');
       } catch {
         clearInterval(heartbeat);
+        onClientGone();
       }
     }, 15_000);
 
@@ -326,10 +334,18 @@ export class SwarmService {
     try {
       result = await Orchestrator.executeSafe(
         () => this.runCore(userId, prompt, projectId, onProgress, { extras: { attachments } }),
-        { userId, prompt, onProgress, attachments, clientMeta, history }
+        {
+          userId,
+          prompt,
+          onProgress,
+          attachments,
+          clientMeta: { ...clientMeta, abortSignal: abort.signal },
+          history,
+        }
       );
     } finally {
       clearInterval(heartbeat);
+      res.off('close', onClientGone);
     }
 
     const output = result.result.output as FeatureOutput | undefined;

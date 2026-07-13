@@ -1,173 +1,133 @@
-/* Modern Xroga system error — professional AI, not cartoon */
-.xv-system-error {
-  --font-goga: Outfit, system-ui, sans-serif;
-  --font-remixa: Syne, system-ui, sans-serif;
-  --font-azurio: Fraunces, Georgia, serif;
-  font-family: var(--font-goga);
+/** Inlined CSS for global-error — must not depend on root layout or Tailwind */
+export const GLOBAL_ERROR_CSS = `
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; min-height: 100%; }
+body {
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  background: #030712;
+  color: #f8fafc;
+  -webkit-font-smoothing: antialiased;
+}
+.xv-ge {
+  position: relative;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 1.25rem;
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 106, 255, 0.14) 0%, transparent 55%),
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 106, 255, 0.14) 0%, transparent 55%),
     linear-gradient(180deg, #030712 0%, #0a0e17 45%, #020617 100%);
-  color: #f8fafc;
   overflow: hidden;
 }
-
-.xv-system-error__glow {
+.xv-ge__glow {
   position: absolute;
   inset: 0;
   background: radial-gradient(circle at 50% 38%, rgba(96, 165, 250, 0.12) 0%, transparent 42%);
   pointer-events: none;
 }
-
-.xv-system-error__orb {
+.xv-ge__orb {
   position: absolute;
-  top: 18%;
+  top: 16%;
   left: 50%;
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   transform: translateX(-50%);
   pointer-events: none;
 }
-
-.xv-system-error__core {
+.xv-ge__core {
   position: absolute;
   inset: 38%;
   border-radius: 50%;
   background: #000;
   box-shadow: 0 0 40px 8px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(96, 165, 250, 0.15);
 }
-
-.xv-system-error__ring {
+.xv-ge__ring {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1px solid transparent;
 }
-
-.xv-system-error__ring--outer {
+.xv-ge__ring--outer {
   background: conic-gradient(from 210deg, transparent, rgba(96, 165, 250, 0.55), rgba(129, 140, 248, 0.35), transparent);
   mask: radial-gradient(circle, transparent 58%, black 60%);
   -webkit-mask: radial-gradient(circle, transparent 58%, black 60%);
-  animation: xv-error-orbit 8s linear infinite;
+  animation: xv-ge-spin 8s linear infinite;
 }
-
-.xv-system-error__ring--inner {
+.xv-ge__ring--inner {
   inset: 12%;
   background: conic-gradient(from 30deg, transparent, rgba(56, 189, 248, 0.45), transparent 70%);
   mask: radial-gradient(circle, transparent 52%, black 54%);
   -webkit-mask: radial-gradient(circle, transparent 52%, black 54%);
-  animation: xv-error-orbit 5s linear infinite reverse;
+  animation: xv-ge-spin 5s linear infinite reverse;
 }
-
-@keyframes xv-error-orbit {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.xv-system-error__panel {
+@keyframes xv-ge-spin { to { transform: rotate(360deg); } }
+.xv-ge__panel {
   position: relative;
   z-index: 1;
-  width: min(100%, 32rem);
+  width: min(100%, 28rem);
   text-align: center;
-  margin-top: 5.5rem;
+  margin-top: 4.5rem;
 }
-
-.xv-system-error__code {
-  display: inline-block;
+.xv-ge__code {
+  font-family: 'Syne', system-ui, sans-serif;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: #60a5fa;
-  margin-bottom: 0.75rem;
+  margin: 0 0 0.75rem;
 }
-
-.xv-system-error__brand {
+.xv-ge__brand {
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: rgba(148, 163, 184, 0.85);
-  margin-bottom: 1rem;
+  margin: 0 0 1rem;
 }
-
-.xv-system-error__v {
-  color: #4a9dff;
-  font-family: var(--font-remixa), system-ui, sans-serif;
-  font-weight: 800;
-}
-
-.xv-system-error__title {
-  font-size: clamp(1.5rem, 4vw, 2.15rem);
+.xv-ge__brand-v { color: #4a9dff; font-weight: 800; }
+.xv-ge__title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.45rem, 4vw, 2rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.02em;
   margin: 0 0 0.75rem;
   color: #f8fafc;
 }
-
-.xv-system-error__desc {
+.xv-ge__desc {
   font-size: clamp(0.9rem, 2.2vw, 1rem);
   line-height: 1.65;
   color: rgba(226, 232, 240, 0.72);
   margin: 0 0 1.5rem;
 }
-
-.xv-system-error__actions-wrap {
-  margin-top: 0.25rem;
-}
-
-.xv-system-error__actions {
+.xv-ge__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.625rem;
+  gap: 0.75rem;
   justify-content: center;
+  align-items: center;
 }
-
-.xv-system-error__btn {
-  padding: 0.7rem 1.25rem;
+.xv-ge__btn {
+  padding: 0.75rem 1.35rem;
   border-radius: 0.75rem;
+  font-family: 'Outfit', system-ui, sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.xv-system-error__btn:active {
-  transform: scale(0.98);
-}
-
-.xv-system-error__btn--primary {
   border: none;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.xv-ge__btn:active { transform: scale(0.98); }
+.xv-ge__btn--primary {
   background: linear-gradient(135deg, #006aff 0%, #3b82f6 100%);
   color: #fff;
   box-shadow: 0 8px 24px rgba(0, 106, 255, 0.35);
 }
-
-.xv-system-error__btn--primary:hover {
-  box-shadow: 0 10px 28px rgba(0, 106, 255, 0.45);
-}
-
-.xv-system-error__btn--secondary {
+.xv-ge__btn--secondary {
   border: 1px solid rgba(148, 163, 184, 0.28);
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(15, 23, 42, 0.55);
   color: #e2e8f0;
-  backdrop-filter: blur(8px);
 }
-
-.xv-system-error__link {
-  display: inline-block;
-  margin-top: 1rem;
-  font-size: 0.875rem;
-  color: #60a5fa;
-  text-decoration: none;
-}
-
-.xv-system-error__link:hover {
-  text-decoration: underline;
-}
+`;
