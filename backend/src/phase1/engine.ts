@@ -14,20 +14,15 @@ import { trySolveMathLocally } from '../lib/mathSolver.js';
 import { normalizeMathResponse } from '../lib/formatMathResponse.js';
 import { filterSourcesForUser } from '../lib/filterCitedSources.js';
 import { isHackathonQuery, fetchHackathonAdvisorBrief } from '../lib/hackathonResearch.js';
-import { sanitizeChatHonesty } from '../lib/chatHonesty.js';
+import { sanitizeChatHonesty, CHAT_HONESTY_RULES } from '../lib/chatHonesty.js';
+import { detectThirdPartyProductQuestion, thirdPartySupportSystemBlock } from '../lib/thirdPartyProduct.js';
+import { sanitizeInternalModelLeaks } from '../lib/responseSanitize.js';
 
 function toXrogaModelRole(modelId: InternalModelId, reasoningEffort?: 'high'): XrogaModelRole {
   if (modelId === 'grok_fast') {
     return reasoningEffort === 'high' ? 'grok_reasoning' : 'grok_fast';
   }
   return modelId as XrogaModelRole;
-}
-
-const MODEL_NAME_PATTERN =
-  /\b(deepseek|grok|claude|anthropic|xai|sonnet|opus|flash|pro|gpt|openai|gemini|llama|mistral)\b/gi;
-
-function sanitizeResponse(text: string): string {
-  return text.replace(MODEL_NAME_PATTERN, 'Xroga AI');
 }
 
 function combineOutputs(parts: string[], intent: string): string {
@@ -92,8 +87,39 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
 
   const intent = await classifyIntent(message);
   const plan = buildRoutingPlan(intent, message, mathQuery);
+  const thirdPartyProduct = detectThirdPartyProductQuestion(message);
 
   let liveResearch = await runLiveResearch(message, { intent });
+  if (thirdPartyProduct && !liveResearch) {
+    try {
+      const { webSearch } = await import('../lib/webSearch.js');
+      const results = await webSearch(`${thirdPartyProduct.name} payment billing top up support`, {
+        maxResults: 4,
+      });
+      if (results.length) {
+        liveResearch = {
+          context: `\n## Live web research (${thirdPartyProduct.name} only)\n${results.map((r) => `- ${r.title}: ${r.content.slice(0, 160)} (${r.url})`).join('\n')}\nCite only these URLs — do not invent others.`,
+          sources: results.map((r) => ({
+            title: r.title,
+            url: r.url,
+            snippet: r.content.slice(0, 220),
+            source: r.source,
+            siteDomain: '',
+          })),
+          searchedAt: new Date().toISOString(),
+          reasons: ['third_party_support'],
+          youtubeCount: 0,
+        };
+      }
+    } catch {
+      /* optional */
+    }
+  } else if (thirdPartyProduct) {
+    liveResearch = {
+      ...liveResearch!,
+      context: `${liveResearch!.context}\n\nIMPORTANT: User question is about ${thirdPartyProduct.name}, NOT Xroga.`,
+    };
+  }
 
   let hackathonBrief: Awaited<ReturnType<typeof fetchHackathonAdvisorBrief>> | null = null;
   if (isHackathonQuery(message)) {
@@ -132,6 +158,9 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     context?: string
   ) => {
     let systemPrompt = getSystemPromptForIntent(intent, role, mathQuery, message);
+    if (thirdPartyProduct) {
+      systemPrompt = `${systemPrompt}\n${thirdPartySupportSystemBlock(thirdPartyProduct)}`;
+    }
     if (liveResearch?.context) {
       systemPrompt = `${systemPrompt}\n\n${liveResearch.context}`;
     }
@@ -190,11 +219,14 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     const rawResponse = combineOutputs(outputs, intent);
     const hadResearch = Boolean(liveResearch?.sources.length || hackathonBrief?.sources.length);
     const normalized = mathQuery ? normalizeMathResponse(rawResponse) : rawResponse;
-    const response = sanitizeResponse(
-      ['general_chat', 'business_advice', 'deep_reasoning'].includes(intent)
-        ? sanitizeChatHonesty(normalized, { hadLiveResearch: hadResearch })
-        : normalized
-    );
+    const honestyOpts = {
+      hadLiveResearch: hadResearch,
+      thirdPartyProduct: thirdPartyProduct?.name,
+    };
+    const withHonesty = ['general_chat', 'business_advice', 'deep_reasoning'].includes(intent)
+      ? sanitizeChatHonesty(normalized, honestyOpts)
+      : normalized;
+    const response = sanitizeInternalModelLeaks(withHonesty, message);
 
     const usage = await recordLlmUsage(userId, totalInput, totalOutput, modelLines);
 

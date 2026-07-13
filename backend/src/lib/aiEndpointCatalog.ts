@@ -12,9 +12,12 @@ export interface AiEndpointOption {
   requiresApiKey: boolean;
   endpoint: string;
   signupUrl?: string;
+  topUpUrl?: string;
   notes: string;
   /** Shown in build output / instructions */
   userGuidance: string;
+  /** Xroga platform provides this for builds (Tavily/SearXNG on server) */
+  xrogaProvided?: boolean;
 }
 
 export const AI_ENDPOINT_CATALOG: AiEndpointOption[] = [
@@ -64,6 +67,54 @@ export const AI_ENDPOINT_CATALOG: AiEndpointOption[] = [
       'Mix of free and paid models — create key at openrouter.ai. Use models tagged :free for no cost; paid models show pricing before use.',
   },
   {
+    id: 'grok-xai',
+    name: 'xAI Grok API',
+    category: 'llm',
+    freeTier: false,
+    requiresApiKey: true,
+    endpoint: 'https://api.x.ai/v1/chat/completions',
+    signupUrl: 'https://console.x.ai/',
+    topUpUrl: 'https://console.x.ai/',
+    notes: 'Paid — add credits in xAI console',
+    userGuidance:
+      'Paid API — create key at console.x.ai, add credits to your xAI account, then save the key in Xroga Integrations. Your key stays in your account vault.',
+  },
+  {
+    id: 'gemini-free',
+    name: 'Google Gemini API',
+    category: 'llm',
+    freeTier: true,
+    requiresApiKey: true,
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
+    signupUrl: 'https://aistudio.google.com/apikey',
+    notes: 'Free tier with daily limits',
+    userGuidance: 'Free tier — create API key in Google AI Studio. Add GEMINI_API_KEY to .env or save in Xroga Integrations.',
+  },
+  {
+    id: 'tavily-search',
+    name: 'Tavily Web Search',
+    category: 'search',
+    freeTier: true,
+    requiresApiKey: true,
+    endpoint: 'https://api.tavily.com/search',
+    signupUrl: 'https://tavily.com',
+    notes: 'Xroga uses Tavily on server for research when configured',
+    userGuidance: 'Xroga already uses Tavily + SearXNG for live research during builds. For your own app code, free tier at tavily.com.',
+    xrogaProvided: true,
+  },
+  {
+    id: 'searxng-search',
+    name: 'SearXNG (open-source web search)',
+    category: 'search',
+    freeTier: true,
+    requiresApiKey: false,
+    endpoint: 'Public SearXNG instances or self-hosted',
+    signupUrl: 'https://github.com/searxng/searxng',
+    notes: 'Xroga uses SearXNG for free web research — no key',
+    userGuidance: 'FREE — Xroga searches the web via SearXNG during builds and chat. No API key needed on your side.',
+    xrogaProvided: true,
+  },
+  {
     id: 'deepseek-api',
     name: 'DeepSeek API',
     category: 'llm',
@@ -71,6 +122,7 @@ export const AI_ENDPOINT_CATALOG: AiEndpointOption[] = [
     requiresApiKey: true,
     endpoint: 'https://api.deepseek.com/chat/completions',
     signupUrl: 'https://platform.deepseek.com/api_keys',
+    topUpUrl: 'https://platform.deepseek.com/top_up',
     notes: 'Low-cost paid API',
     userGuidance: 'Paid (low cost) — create API key at platform.deepseek.com. Add DEEPSEEK_API_KEY to .env.',
   },
@@ -121,6 +173,9 @@ export function detectAiIntegrationNeeds(prompt: string): AiEndpointOption[] {
       AI_ENDPOINT_CATALOG.find((e) => e.id === 'openrouter-free-models')!,
       AI_ENDPOINT_CATALOG.find((e) => e.id === 'deepseek-api')!
     );
+    if (/\bgrok\b|\bx\.ai\b/i.test(t)) {
+      picks.push(AI_ENDPOINT_CATALOG.find((e) => e.id === 'grok-xai')!);
+    }
   }
   if (wantImage) picks.push(AI_ENDPOINT_CATALOG.find((e) => e.id === 'pollinations-image')!);
   if (wantVoice) picks.push(AI_ENDPOINT_CATALOG.find((e) => e.id === 'web-speech-api')!);
@@ -153,4 +208,39 @@ export function formatAiEndpointContext(prompt: string): string {
     'In generated code: wire free endpoints first; for paid APIs use .env placeholders and an in-app banner explaining free signup / trial.'
   );
   return lines.join('\n');
+}
+
+/** User-facing summary after build — what AI endpoints were wired. */
+export function integratedAiSummaryForPrompt(prompt: string): Array<{
+  id: string;
+  name: string;
+  freeTier: boolean;
+  requiresApiKey: boolean;
+  endpoint: string;
+  signupUrl?: string;
+  topUpUrl?: string;
+  userGuidance: string;
+  xrogaProvided?: boolean;
+}> {
+  const base = detectAiIntegrationNeeds(prompt);
+  const always = [
+    AI_ENDPOINT_CATALOG.find((e) => e.id === 'searxng-search')!,
+    AI_ENDPOINT_CATALOG.find((e) => e.id === 'tavily-search')!,
+  ];
+  const merged = [...new Map([...always, ...base].filter(Boolean).map((p) => [p.id, p])).values()];
+  return merged.map((o) => ({
+    id: o.id,
+    name: o.name,
+    freeTier: o.freeTier,
+    requiresApiKey: o.requiresApiKey,
+    endpoint: o.endpoint,
+    signupUrl: o.signupUrl,
+    topUpUrl: o.topUpUrl,
+    userGuidance: o.userGuidance,
+    xrogaProvided: o.xrogaProvided,
+  }));
+}
+
+export function catalogForApi(): AiEndpointOption[] {
+  return AI_ENDPOINT_CATALOG;
 }

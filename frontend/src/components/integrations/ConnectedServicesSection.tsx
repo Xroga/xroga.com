@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { FreeApiOptionsPanel } from '@/components/integrations/FreeApiOptionsPanel';
+import { AiIntegrationsPanel } from '@/components/integrations/AiIntegrationsPanel';
 import { CheckCircle2, GitBranch, Key, Lock, Shield } from 'lucide-react';
 import { api } from '@/lib/api';
 import { loadCredentials, hasVault } from '@/lib/credentialVault';
@@ -27,6 +28,8 @@ const OPTIONAL_COMING = [
 export function ConnectedServicesSection() {
   const [githubUser, setGithubUser] = useState<string | null>(null);
   const [githubConnected, setGithubConnected] = useState(false);
+  const [vercelConnected, setVercelConnected] = useState(false);
+  const [vercelUser, setVercelUser] = useState<string | null>(null);
   const [customCount, setCustomCount] = useState(0);
   const vaultReady = hasVault();
 
@@ -40,6 +43,13 @@ export function ConnectedServicesSection() {
       .catch(() => {
         setGithubConnected(false);
       });
+    api.vercel
+      .status()
+      .then((s) => {
+        setVercelConnected(s.connected);
+        setVercelUser(s.username ?? null);
+      })
+      .catch(() => setVercelConnected(false));
     setCustomCount(loadCredentials().length);
   }, []);
 
@@ -76,6 +86,19 @@ export function ConnectedServicesSection() {
           ) : null}
         </div>
 
+        <div className="flex items-start gap-3 p-3 rounded-lg border border-[var(--card-border)] bg-[var(--foreground)]/[0.03]">
+          <Key className="w-5 h-5 shrink-0 mt-0.5 text-[var(--accent)]" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold">Vercel</p>
+            <p className="text-xs text-[var(--muted)]">
+              {vercelConnected
+                ? `Connected as ${vercelUser ?? 'user'} — live preview deploys to your account`
+                : 'Not connected — sandbox preview works; connect for live URL on your domain'}
+            </p>
+          </div>
+          {vercelConnected ? <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> : null}
+        </div>
+
         {AUTO_MANAGED.map((svc) => (
           <div
             key={svc.id}
@@ -108,8 +131,13 @@ export function ConnectedServicesSection() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-[var(--accent)]/25 bg-[var(--accent)]/5 p-3">
-        <p className="text-xs font-semibold mb-1">Prefer not to add paid API keys?</p>
+      <div className="rounded-lg border border-[var(--accent)]/25 bg-[var(--accent)]/5 p-3 space-y-2">
+        <p className="text-xs font-semibold">AI integrations — free first, paid when you choose</p>
+        <AiIntegrationsPanel compact />
+      </div>
+
+      <div className="rounded-lg border border-[var(--card-border)] p-3">
+        <p className="text-xs font-semibold mb-1 text-[var(--muted)]">More free options</p>
         <FreeApiOptionsPanel compact />
       </div>
 
