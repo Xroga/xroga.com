@@ -5,6 +5,7 @@ import { HACKATHON_ADVISOR_FORMAT } from '../prompts/hackathonAdvisorPrompt.js';
 import { isHackathonQuery } from '../lib/hackathonResearch.js';
 import { getCurrentDateDirective } from '../lib/currentDateContext.js';
 import { CHAT_HONESTY_RULES } from '../lib/chatHonesty.js';
+import { detectThirdPartyProductQuestion, thirdPartySupportSystemBlock } from '../lib/thirdPartyProduct.js';
 
 const PHASE2_MESSAGE = 'Coming in Phase 2';
 
@@ -110,12 +111,20 @@ export function getSystemPromptForIntent(
     return `${base}${getCurrentDateDirective()}\n${HACKATHON_ADVISOR_FORMAT}`;
   }
   if (intent === 'business_advice' && role === 'primary') {
-    return `${base}${professionalFormatBlock()} Provide structured business advice with pros/cons, actionable strategies, and a Summary section. Ground claims in live research when provided — never invent market data.`;
+    const thirdParty = detectThirdPartyProductQuestion(userMessage);
+    if (thirdParty) {
+      return `${base}${thirdPartySupportSystemBlock(thirdParty)} Answer about ${thirdParty.name} billing/support — concise, factual, no Xroga promotion.`;
+    }
+    return `${base}${professionalFormatBlock()} Provide structured business advice with pros/cons, actionable strategies, and a Summary section. Ground claims in live research when provided — never invent market data or URLs.`;
   }
   if (intent === 'business_advice' && role === 'secondary') {
     return `${base} Validate financial assumptions, feasibility, and risks.`;
   }
   if (intent === 'general_chat' || intent === 'deep_reasoning') {
+    const thirdParty = detectThirdPartyProductQuestion(userMessage);
+    if (thirdParty) {
+      return `${base}${thirdPartySupportSystemBlock(thirdParty)}`;
+    }
     return `${base}${professionalFormatBlock()}`;
   }
   if (intent === 'security_audit') {
