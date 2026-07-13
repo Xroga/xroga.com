@@ -288,21 +288,28 @@ export function TerminalChatProvider({
       return;
     }
     let cancelled = false;
-    void loadWorkspaceSessionHydrated().then((session) => {
-      if (cancelled) return;
-      if (session?.messages?.length) {
-        setMessages(session.messages);
-        if (threadHasCompletedWebsite(session.messages)) {
-          completedWebsiteBuildRef.current = true;
+    void loadWorkspaceSessionHydrated()
+      .then((session) => {
+        if (cancelled) return;
+        if (session?.messages?.length) {
+          setMessages(session.messages);
+          if (threadHasCompletedWebsite(session.messages)) {
+            completedWebsiteBuildRef.current = true;
+          }
         }
-      }
-      if (session?.sessionId) {
-        sessionIdRef.current = session.sessionId;
-      }
-      if (session?.prompt) setPrompt(session.prompt);
-      persistReadyRef.current = true;
-      setSessionReady(true);
-    });
+        if (session?.sessionId) {
+          sessionIdRef.current = session.sessionId;
+        }
+        if (session?.prompt) setPrompt(session.prompt);
+        persistReadyRef.current = true;
+        setSessionReady(true);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        clearWorkspaceSession();
+        persistReadyRef.current = true;
+        setSessionReady(true);
+      });
     return () => {
       cancelled = true;
     };

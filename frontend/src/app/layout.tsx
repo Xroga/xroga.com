@@ -6,6 +6,7 @@ import '@/styles/uiverse.css';
 import { buildMetadata, FAVICON_URL, FAVICON_LOCAL } from '@/lib/seo';
 import { RootProviders } from '@/components/providers/RootProviders';
 import { SiteJsonLd } from '@/components/seo/SiteJsonLd';
+import { StorageBootstrap } from '@/components/bootstrap/StorageBootstrap';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 /** Azurio role — sharp editorial serif (Fraunces stand-in) */
@@ -79,6 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <StorageBootstrap />
         <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
         <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />

@@ -23,13 +23,14 @@ export function DesktopBackgroundSlideshow({
   frozenIndex = 0,
   onActiveIndexChange,
 }: DesktopBackgroundSlideshowProps) {
-  const [activeIndex, setActiveIndex] = useState(frozenIndex);
+  const safeFrozen = images.length ? Math.min(frozenIndex, images.length - 1) : 0;
+  const [activeIndex, setActiveIndex] = useState(safeFrozen);
 
   useEffect(() => {
     if (!enabled) {
-      setActiveIndex(frozenIndex);
+      setActiveIndex(safeFrozen);
     }
-  }, [enabled, frozenIndex]);
+  }, [enabled, safeFrozen]);
 
   useEffect(() => {
     onActiveIndexChange?.(activeIndex);
@@ -43,7 +44,7 @@ export function DesktopBackgroundSlideshow({
     return () => window.clearInterval(timer);
   }, [enabled, images, intervalMs]);
 
-  const displayIndex = enabled ? activeIndex : frozenIndex;
+  const displayIndex = enabled ? activeIndex % images.length : safeFrozen;
 
   return (
     <div className={cn('fixed inset-0 -z-10 hidden md:block overflow-hidden', className)} aria-hidden>

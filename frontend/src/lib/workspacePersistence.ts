@@ -97,18 +97,24 @@ export function loadWorkspaceSession(): WorkspaceSession | null {
 
 /** Load session + IndexedDB landing builds + media URLs (use after refresh). */
 export async function loadWorkspaceSessionHydrated(): Promise<WorkspaceSession | null> {
-  const [fromLocal, fromIndexed] = await Promise.all([
-    Promise.resolve(readLocalSession()),
-    loadWorkspaceFromIndexedDB(),
-  ]);
+  try {
+    const [fromLocal, fromIndexed] = await Promise.all([
+      Promise.resolve(readLocalSession()),
+      loadWorkspaceFromIndexedDB(),
+    ]);
 
-  const merged = pickNewerSession(fromLocal, fromIndexed);
-  if (!merged?.messages?.length) return merged;
+    const merged = pickNewerSession(fromLocal, fromIndexed);
+    if (!merged?.messages?.length) return merged;
 
-  merged.messages = sanitizeChatMessages(merged.messages);
-  const { rehydratePersistedMessages } = await import('@/lib/rehydratePersistedMessages');
-  merged.messages = await rehydratePersistedMessages(merged.messages);
-  return merged;
+    merged.messages = sanitizeChatMessages(merged.messages);
+    const { rehydratePersistedMessages } = await import('@/lib/rehydratePersistedMessages');
+    merged.messages = await rehydratePersistedMessages(merged.messages);
+    return merged;
+  } catch (err) {
+    console.warn('[workspace] hydrate failed, clearing session:', (err as Error).message);
+    clearWorkspaceSession();
+    return null;
+  }
 }
 
 export function saveWorkspaceSession(session: Omit<WorkspaceSession, 'updatedAt'>) {

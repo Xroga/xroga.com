@@ -3,7 +3,6 @@ export type ThemeId = 'image' | 'white' | 'black' | 'gray';
 export const DESKTOP_BG_SLIDESHOW = [
   '/backgrounds/bg-desktop-1-infinity.png',
   '/backgrounds/bg-desktop-2-earth.png',
-  '/backgrounds/bg-desktop-3-blackhole-rings.png',
   '/backgrounds/bg-desktop-4-blackhole-nebula.png',
 ] as const;
 

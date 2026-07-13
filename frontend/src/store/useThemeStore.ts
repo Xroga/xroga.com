@@ -10,7 +10,13 @@ import {
   SLIDESHOW_ENABLED_KEY,
   SLIDESHOW_FROZEN_INDEX_KEY,
   TERMINAL_SKIN_CYCLE,
+  DESKTOP_BG_SLIDESHOW,
 } from '@/lib/theme';
+import { recoverCorruptStorage } from '@/lib/storageRecovery';
+
+if (typeof window !== 'undefined') {
+  recoverCorruptStorage();
+}
 
 interface ThemeState {
   theme: ThemeId;
@@ -153,7 +159,10 @@ export const useThemeStore = create<ThemeState>()(
             const fi = localStorage.getItem(SLIDESHOW_FROZEN_INDEX_KEY);
             if (fi != null && fi !== '') {
               const n = parseInt(fi, 10);
-              if (!Number.isNaN(n)) state.slideshowFrozenIndex = n;
+              if (!Number.isNaN(n)) {
+                const max = Math.max(0, DESKTOP_BG_SLIDESHOW.length - 1);
+                state.slideshowFrozenIndex = Math.min(Math.max(0, n), max);
+              }
             }
             if (!state.terminalSkin) {
               state.terminalSkin = DEFAULT_TERMINAL_SKIN[state.theme];

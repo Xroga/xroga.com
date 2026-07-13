@@ -16,6 +16,9 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     recoverCorruptStorage();
     getFirstVisitTime();
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('xroga_error_recovery_attempted');
+    }
   }, []);
 
   return (
