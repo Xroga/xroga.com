@@ -26,7 +26,7 @@ export function TerminalDock() {
   const keyboardOffset = useVisualViewportBottom();
   const dockInnerRef = useRef<HTMLDivElement>(null);
   const { showJumpToLatest, scrollToLatest } = useTerminalScroll();
-  const isDashboard = pathname === '/dashboard' || pathname === '/dashboard/';
+  const isDashboard = pathname === '/workspace' || pathname === '/workspace/';
   const dashboardFullscreen = isDashboard && terminalFullscreen;
 
   useEffect(() => {

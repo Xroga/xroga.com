@@ -31,7 +31,7 @@ function GitHubAuthCallback() {
           setTimeout(() => window.close(), 400);
         } else {
           router.replace(
-            `/dashboard?github=connected&username=${encodeURIComponent(res.username)}`
+            `/workspace?github=connected&username=${encodeURIComponent(res.username)}`
           );
         }
       })

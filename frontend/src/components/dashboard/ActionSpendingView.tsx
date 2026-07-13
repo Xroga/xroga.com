@@ -41,7 +41,7 @@ export function ActionSpendingView({ embedded }: { embedded?: boolean }) {
         ) : (
           <p className="text-sm text-[var(--muted)]">Loading token usage…</p>
         )}
-        <Link href="/dashboard/home" className="text-xs text-[var(--accent)] hover:underline">
+        <Link href="/dashboard" className="text-xs text-[var(--accent)] hover:underline">
           Open full dashboard →
         </Link>
       </div>

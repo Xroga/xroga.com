@@ -8,14 +8,16 @@ import toast from 'react-hot-toast';
 import { api, type Project } from '@/lib/api';
 import { GitHubProjectCard } from '@/components/projects/GitHubProjectCard';
 import { continueGithubProject } from '@/lib/projectResume';
-import { GITHUB_PROJECT_SAVED_EVENT } from '@/lib/githubProjectEvents';
+import { GITHUB_PROJECT_SAVED_EVENT, GITHUB_REPO_CONTEXT_EVENT } from '@/lib/githubProjectEvents';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
+import { getSelectedRepoContext } from '@/lib/repoContext';
 
 export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
   const router = useRouter();
   const { hydrateFromSession } = useTerminalChat();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(() => {
@@ -31,9 +33,17 @@ export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
   }, [load]);
 
   useEffect(() => {
+    const syncRepo = () => setSelectedRepo(getSelectedRepoContext()?.repo ?? null);
+    syncRepo();
     const onSaved = () => load();
+    window.addEventListener(GITHUB_REPO_CONTEXT_EVENT, syncRepo);
+    window.addEventListener('storage', syncRepo);
     window.addEventListener(GITHUB_PROJECT_SAVED_EVENT, onSaved);
-    return () => window.removeEventListener(GITHUB_PROJECT_SAVED_EVENT, onSaved);
+    return () => {
+      window.removeEventListener(GITHUB_REPO_CONTEXT_EVENT, syncRepo);
+      window.removeEventListener('storage', syncRepo);
+      window.removeEventListener(GITHUB_PROJECT_SAVED_EVENT, onSaved);
+    };
   }, [load]);
 
   async function handleContinue(project: Project) {
@@ -59,14 +69,17 @@ export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
       <Link
         href="/dashboard/projects"
         className="flex items-center justify-center p-2 mx-auto w-10 h-10 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--card)]"
-        title="GitHub Projects"
+        title="Projects"
       >
         <FolderGit2 className="w-4 h-4" />
       </Link>
     );
   }
 
-  const recent = projects.slice(0, 4);
+  const visibleProjects = selectedRepo
+    ? projects.filter((p) => p.github_repo_name === selectedRepo)
+    : projects;
+  const recent = visibleProjects.slice(0, 4);
 
   return (
     <div className="px-2 py-2 border-t border-[var(--card-border)] space-y-2">
@@ -74,7 +87,7 @@ export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
         <div className="flex items-center gap-1.5 min-w-0">
           <FolderGit2 className="w-3.5 h-3.5 shrink-0 text-[var(--accent)]" />
           <span className="text-[10px] font-bold uppercase tracking-wide text-[var(--muted)] truncate">
-            GitHub Projects
+            Projects
           </span>
         </div>
         <Link
@@ -85,6 +98,11 @@ export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
           <ChevronRight className="w-3 h-3" />
         </Link>
       </div>
+      {selectedRepo && (
+        <p className="px-1 text-[10px] font-mono text-[var(--accent)] truncate">
+          {selectedRepo}
+        </p>
+      )}
 
       {loading ? (
         <div className="space-y-2 px-0.5">
@@ -94,7 +112,9 @@ export function GitHubProjectsSidebar({ expanded }: { expanded: boolean }) {
         </div>
       ) : recent.length === 0 ? (
         <p className="px-1 text-[10px] text-[var(--muted)] leading-relaxed">
-          Connect GitHub and build — repos appear here with continue &amp; delete.
+          {selectedRepo
+            ? 'No saved workspace yet for this repository. Start a new terminal in this repo to create one.'
+            : 'Connect GitHub and build — repositories appear here with continue & delete.'}
         </p>
       ) : (
         <div className={cn('space-y-2 max-h-[min(42vh,320px)] overflow-y-auto pr-0.5')}>

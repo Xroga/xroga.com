@@ -6,8 +6,8 @@ import { Terminal, LayoutDashboard, History, Gift, Settings } from 'lucide-react
 import { cn } from '@/lib/utils';
 
 const items = [
-  { href: '/dashboard', label: 'Workspace', icon: Terminal },
-  { href: '/dashboard/home', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/workspace', label: 'Workspace', icon: Terminal },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/dashboard/history', label: 'History', icon: History },
   { href: '/dashboard/tasks', label: 'Earn', icon: Gift },
   { href: '/settings', label: 'Settings', icon: Settings },
@@ -15,7 +15,7 @@ const items = [
 
 export function MobileNav() {
   const pathname = usePathname();
-  const isDashboard = pathname === '/dashboard' || pathname === '/dashboard/';
+  const isDashboard = pathname === '/workspace' || pathname === '/workspace/';
 
   if (isDashboard) return null;
 

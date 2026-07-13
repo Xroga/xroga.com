@@ -1,3 +1,5 @@
+import { getSelectedRepoContext } from '@/lib/repoContext';
+
 const KEY = 'xroga_local_projects';
 
 export type LocalProjectType = 'website' | 'app' | 'game' | 'software';
@@ -11,6 +13,7 @@ export interface LocalProjectEntry {
   type: LocalProjectType;
   prompt: string;
   sourceMessageId?: string;
+  githubRepoName?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -75,12 +78,14 @@ export function saveLocalProject(opts: {
 }) {
   const type = opts.type ?? inferProjectType(opts.prompt);
   const now = new Date().toISOString();
+  const selectedRepo = getSelectedRepoContext();
   const entry: LocalProjectEntry = {
     id: `proj-${Date.now()}`,
     name: opts.name.slice(0, 64),
     type,
     prompt: opts.prompt,
     sourceMessageId: opts.sourceMessageId,
+    githubRepoName: selectedRepo?.repo,
     createdAt: now,
     updatedAt: now,
   };

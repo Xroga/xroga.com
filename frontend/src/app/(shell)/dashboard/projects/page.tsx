@@ -18,7 +18,7 @@ import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { SectionCompactCard } from '@/components/dashboard/SectionCompactCard';
 import { GitHubProjectCard } from '@/components/projects/GitHubProjectCard';
 import { continueGithubProject, loadGithubProjectSession } from '@/lib/projectResume';
-import { GITHUB_PROJECT_SAVED_EVENT } from '@/lib/githubProjectEvents';
+import { GITHUB_PROJECT_SAVED_EVENT, GITHUB_REPO_CONTEXT_EVENT } from '@/lib/githubProjectEvents';
 import { SwarmRunHistory } from '@/components/dashboard/SwarmRunHistory';
 import { api, type Project } from '@/lib/api';
 import {
@@ -29,6 +29,7 @@ import {
 } from '@/lib/projectArchive';
 import { loadTerminalHistory, removeTerminalHistoryEntry, type TerminalHistoryEntry } from '@/lib/terminalHistory';
 import { loadChatArchive, removeChatArchiveEntry, type ChatArchiveEntry } from '@/lib/chatArchive';
+import { getSelectedRepoContext } from '@/lib/repoContext';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
@@ -45,6 +46,7 @@ function ProjectsHubInner() {
   const [localProjects, setLocalProjects] = useState<LocalProjectEntry[]>([]);
   const [history, setHistory] = useState<TerminalHistoryEntry[]>([]);
   const [archives, setArchives] = useState<ChatArchiveEntry[]>([]);
+  const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
   const router = useRouter();
@@ -53,6 +55,17 @@ function ProjectsHubInner() {
   useEffect(() => {
     setTab(searchParams.get('tab') === 'conversations' ? 'conversations' : 'projects');
   }, [searchParams]);
+
+  useEffect(() => {
+    const syncRepo = () => setSelectedRepo(getSelectedRepoContext()?.repo ?? null);
+    syncRepo();
+    window.addEventListener(GITHUB_REPO_CONTEXT_EVENT, syncRepo);
+    window.addEventListener('storage', syncRepo);
+    return () => {
+      window.removeEventListener(GITHUB_REPO_CONTEXT_EVENT, syncRepo);
+      window.removeEventListener('storage', syncRepo);
+    };
+  }, []);
 
   useEffect(() => {
     setLocalProjects(filterProjectsForSection(loadLocalProjects()));
@@ -95,22 +108,28 @@ function ProjectsHubInner() {
 
   const filteredLocal = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return localProjects;
-    return localProjects.filter(
+    const repoScoped = selectedRepo
+      ? localProjects.filter((p) => p.githubRepoName === selectedRepo)
+      : localProjects;
+    if (!q) return repoScoped;
+    return repoScoped.filter(
       (p) => p.name.toLowerCase().includes(q) || p.prompt.toLowerCase().includes(q) || p.type.includes(q),
     );
-  }, [localProjects, query]);
+  }, [localProjects, query, selectedRepo]);
 
   const filteredRemote = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return projects;
-    return projects.filter(
+    const repoScoped = selectedRepo
+      ? projects.filter((p) => p.github_repo_name === selectedRepo)
+      : projects;
+    if (!q) return repoScoped;
+    return repoScoped.filter(
       (p) =>
         p.name.toLowerCase().includes(q) ||
         p.type.toLowerCase().includes(q) ||
         (p.github_repo_name?.toLowerCase().includes(q) ?? false),
     );
-  }, [projects, query]);
+  }, [projects, query, selectedRepo]);
 
   const conversationItems = useMemo(() => {
     const seen = new Set<string>();
@@ -155,17 +174,22 @@ function ProjectsHubInner() {
         messages: a.messages,
         sessionId: a.id,
         jumpMessageId: a.assistantMessageId ?? a.userMessageId,
+        githubRepoUrl: a.githubRepoUrl,
+        githubRepoName: a.githubRepoName,
         kind: 'archive',
       });
     }
 
     items.sort((a, b) => Date.parse(b.dateIso) - Date.parse(a.dateIso));
+    const repoScoped = selectedRepo
+      ? items.filter((i) => i.githubRepoName === selectedRepo)
+      : items;
     const q = query.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter(
+    if (!q) return repoScoped;
+    return repoScoped.filter(
       (i) => i.title.toLowerCase().includes(q) || i.subtitle.toLowerCase().includes(q),
     );
-  }, [history, archives, query]);
+  }, [history, archives, query, selectedRepo]);
 
   async function openConversation(item: (typeof conversationItems)[0]) {
     const { loadTerminalHistoryEntry } = await import('@/lib/terminalSessionStorage');
@@ -185,7 +209,7 @@ function ProjectsHubInner() {
       source: 'chats',
       jumpMessageId: item.jumpMessageId,
     });
-    router.push('/dashboard');
+    router.push('/workspace');
     toast('Restored — exactly where you left off', { icon: '📍' });
   }
 
@@ -211,7 +235,7 @@ function ProjectsHubInner() {
       source: 'projects',
       jumpMessageId: p.sourceMessageId,
     });
-    router.push('/dashboard');
+    router.push('/workspace');
   }
 
   async function openRemoteProject(project: Project) {
@@ -225,7 +249,7 @@ function ProjectsHubInner() {
         selectedLabel: project.name,
         source: 'projects',
       });
-      router.push('/dashboard');
+      router.push('/workspace');
     } else {
       await continueGithubProject(project, router);
     }
@@ -269,14 +293,19 @@ function ProjectsHubInner() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
               <FolderOpen className="w-7 h-7 text-[var(--accent)]" />
-              GitHub Projects
+              Projects
             </h1>
             <p className="text-sm text-[var(--muted)] mt-1">
-              Connected repos with exact GitHub links — continue builds, fix bugs in existing code, or remove from Xroga.
+              Repository-scoped builds and conversations — choose a repo once, then work only inside that repo until you open a new terminal.
             </p>
+            {selectedRepo && (
+              <p className="mt-2 text-xs font-mono text-[var(--accent)]">
+                Current repository: {selectedRepo}
+              </p>
+            )}
           </div>
-          <Link href="/dashboard" className="xv-footer-pill !text-[var(--foreground)] flex items-center gap-1.5">
-            <Plus className="w-3.5 h-3.5" /> New via Command
+          <Link href="/workspace" className="xv-footer-pill !text-[var(--foreground)] flex items-center gap-1.5">
+            <Plus className="w-3.5 h-3.5" /> New Terminal
           </Link>
         </div>
 
@@ -340,7 +369,7 @@ function ProjectsHubInner() {
                 Ask Xroga to build anything — crypto dashboards, chatbots, SaaS, games, APIs, and more.
               </p>
               <Link
-                href="/dashboard"
+                href="/workspace"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--background)] text-sm font-semibold hover:opacity-90"
               >
                 <Rocket className="w-4 h-4" /> Go to Workspace

@@ -74,7 +74,7 @@ export function ActionMeterLarge() {
             <AlertTriangle className="w-4 h-4" />
             {isOut ? 'Out of tokens' : 'Running low'}
           </div>
-          <Link href="/dashboard/home" className="text-[var(--accent)] hover:underline text-xs">
+          <Link href="/dashboard" className="text-[var(--accent)] hover:underline text-xs">
             View usage →
           </Link>
         </div>

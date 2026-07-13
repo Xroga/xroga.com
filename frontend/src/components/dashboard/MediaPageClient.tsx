@@ -129,7 +129,7 @@ export function MediaPageClient() {
       source: 'media',
       jumpMessageId: item.sourceMessageId,
     });
-    router.push('/dashboard');
+    router.push('/workspace');
     setTimeout(() => hydrateFromSession(), 100);
     toast('Old terminal — exact spot where this image was created', { icon: '📍' });
   }
@@ -146,14 +146,14 @@ export function MediaPageClient() {
     }
 
     loadIsolatedThread(thread, prompt, item.sourceMessageId);
-    router.push('/dashboard');
+    router.push('/workspace');
     setTimeout(() => hydrateFromSession(), 100);
     toast('New terminal — your prompt and image output', { icon: '✨' });
   }
 
   function handleBlankNewTerminal() {
     startNewChat();
-    router.push('/dashboard');
+    router.push('/workspace');
     toast('Fresh empty terminal', { icon: '🆕' });
   }
 

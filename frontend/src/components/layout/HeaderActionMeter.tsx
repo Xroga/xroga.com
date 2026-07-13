@@ -62,7 +62,7 @@ export function HeaderTokenMeter({ onClick, className }: HeaderTokenMeterProps) 
   }
 
   return (
-    <Link href="/dashboard/home" className={classes}>
+    <Link href="/dashboard" className={classes}>
       {inner}
     </Link>
   );

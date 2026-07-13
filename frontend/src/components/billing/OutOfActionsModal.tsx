@@ -27,7 +27,7 @@ export function OutOfActionsModal({ open, onClose }: OutOfActionsModalProps) {
           You&apos;ve used your monthly token allocation. Upgrade your plan or claim emergency tokens from your dashboard.
         </p>
         <Link
-          href="/dashboard/home"
+          href="/dashboard"
           className="block w-full mb-3 px-4 py-2.5 rounded-lg bg-[var(--accent)]/15 text-[var(--accent)] font-semibold text-sm hover:bg-[var(--accent)]/25 transition-colors"
           onClick={onClose}
         >

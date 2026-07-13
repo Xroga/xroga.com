@@ -14,7 +14,7 @@ export function IncognitoFullscreenBackground() {
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const pathname = usePathname();
-  const isDashboard = pathname === '/dashboard' || pathname === '/dashboard/';
+  const isDashboard = pathname === '/workspace' || pathname === '/workspace/';
   const active = incognito && isDashboard;
 
   useEffect(() => {

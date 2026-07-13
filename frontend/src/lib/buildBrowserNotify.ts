@@ -29,8 +29,8 @@ export function showBuildBrowserNotification(opts: {
     });
     notification.onclick = () => {
       window.focus();
-      if (window.location.pathname !== '/dashboard') {
-        window.location.href = '/dashboard';
+      if (window.location.pathname !== '/workspace') {
+        window.location.href = '/workspace';
       }
       notification.close();
     };

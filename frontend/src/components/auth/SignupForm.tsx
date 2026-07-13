@@ -108,7 +108,7 @@ export function SignupForm() {
 
     setSuccess(true);
     setLoading(false);
-    setTimeout(() => router.push('/dashboard'), 1500);
+    setTimeout(() => router.push('/workspace'), 1500);
   }
 
   if (success) {

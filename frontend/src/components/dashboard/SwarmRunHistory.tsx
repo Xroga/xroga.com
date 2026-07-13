@@ -79,7 +79,7 @@ export function SwarmRunHistory({ search = '' }: { search?: string }) {
         selectedLabel: run.prompt.slice(0, 40),
         source: 'chats',
       });
-      router.push('/dashboard');
+      router.push('/workspace');
       toast.success('Conversation restored');
     } finally {
       setOpeningId(null);
@@ -101,7 +101,7 @@ export function SwarmRunHistory({ search = '' }: { search?: string }) {
         <p className="font-medium mb-1">No Swarm runs yet</p>
         <p className="text-sm text-[var(--muted)] mb-6">Send a command from the dashboard terminal to see history here.</p>
         <Link
-          href="/dashboard"
+          href="/workspace"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent)] text-[var(--background)] text-sm font-semibold"
         >
           Open Dashboard

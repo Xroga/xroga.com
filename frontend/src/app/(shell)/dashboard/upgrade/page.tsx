@@ -37,7 +37,7 @@ export default function UpgradePage() {
         </PricingPlanGrid>
 
         <div className="flex flex-wrap gap-3">
-          <Link href="/dashboard" className="xv-footer-pill !text-sm flex items-center gap-2 !text-[var(--foreground)]">
+          <Link href="/workspace" className="xv-footer-pill !text-sm flex items-center gap-2 !text-[var(--foreground)]">
             Back to Dashboard <ArrowRight className="w-4 h-4" />
           </Link>
           <Link href="/pricing" className="xv-footer-pill !text-sm">

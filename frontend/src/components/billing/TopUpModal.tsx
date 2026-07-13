@@ -145,7 +145,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
             type="button"
             onClick={() => {
               onClose();
-              router.push('/dashboard/home');
+              router.push('/dashboard');
             }}
             className="xv-footer-pill !text-xs !text-[var(--foreground)] flex items-center gap-1"
           >

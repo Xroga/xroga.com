@@ -65,7 +65,7 @@ export function BillingPageClient() {
             </>
           )}
           <Link
-            href="/dashboard/home"
+            href="/dashboard"
             className="inline-flex items-center gap-2 mt-4 xv-footer-pill !text-sm !text-[var(--foreground)]"
           >
             View Dashboard <ArrowRight className="w-4 h-4" />

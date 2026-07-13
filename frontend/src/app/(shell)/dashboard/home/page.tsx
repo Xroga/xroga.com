@@ -1,8 +1,5 @@
-import { DashboardHomeView } from '@/components/dashboard/DashboardHomeView';
-import { PAGE_SEO } from '@/lib/dashboard-metadata';
-
-export const metadata = PAGE_SEO.dashboardHome;
+import { redirect } from 'next/navigation';
 
 export default function DashboardHomePage() {
-  return <DashboardHomeView />;
+  redirect('/dashboard');
 }

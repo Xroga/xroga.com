@@ -193,7 +193,7 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
             pushedAt: Date.now(),
           });
           markRepoAnalysisStale(resolvedRepoName);
-          setStatusNote(`Code saved to ${result.githubRepoName} — open GitHub Projects to continue this repo.`);
+          setStatusNote(`Code saved to ${result.githubRepoName} — open Projects to continue this repository.`);
           void api.projects
             .create({
               name: projectName.slice(0, 120),

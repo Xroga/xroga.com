@@ -110,7 +110,7 @@ export function AutomationView() {
       selectedLabel: run.prompt.slice(0, 40),
       source: 'automation',
     });
-    router.push('/dashboard');
+    router.push('/workspace');
   }
 
   return (

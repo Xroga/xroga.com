@@ -21,12 +21,12 @@ export const PAGE_SEO = {
   dashboard: dashboardPageMetadata(
     'Workspace',
     'Xroga AI Workspace — terminal, AI Swarm, browser automation, and Black Hole V∞.',
-    '/dashboard'
+    '/workspace'
   ),
   dashboardHome: dashboardPageMetadata(
     'Dashboard',
     'Token usage, XRG balance, billing, and recent activity for your Xroga AI account.',
-    '/dashboard/home',
+    '/dashboard',
     ['Xroga tokens', 'XRG balance', 'usage dashboard']
   ),
   terminalHistory: dashboardPageMetadata(

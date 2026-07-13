@@ -86,7 +86,7 @@ export async function continueGithubProject(
     source: 'projects',
   });
 
-  router.push('/dashboard');
+  router.push('/workspace');
   setTimeout(() => opts?.onHydrate?.(), 150);
   return session;
 }
