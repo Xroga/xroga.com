@@ -39,7 +39,7 @@ export function XrogaErrorPage({
         </p>
         <h1 className="xv-system-error__title font-azurio">{title}</h1>
         <p className="xv-system-error__desc font-goga">{description}</p>
-        {actions ? <div className="xv-system-error__actions">{actions}</div> : null}
+        {actions ? <div className="xv-system-error__actions-wrap">{actions}</div> : null}
         {backHref && !actions ? (
           <Link href={backHref} className="xv-system-error__link font-goga">
             {backLabel}
