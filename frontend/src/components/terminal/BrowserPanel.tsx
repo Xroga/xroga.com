@@ -80,14 +80,17 @@ export function BrowserPanel({ mode = 'split' }: BrowserPanelProps) {
   return (
     <div
       className={cn(
-        'rounded-xl border border-[var(--card-border)] overflow-hidden flex flex-col min-h-[280px]',
-        mode === 'full' && 'h-[min(70vh,520px)]',
+        'rounded-xl border border-[var(--card-border)] overflow-hidden flex flex-col min-h-[280px] bg-[var(--card)]/80 backdrop-blur-md',
+        mode === 'full' ? 'h-[min(70vh,520px)]' : 'h-[min(calc(100vh-10rem),760px)]',
         themeClass
       )}
     >
       <div className="xv-browser-chrome flex items-center gap-2 px-3 py-2 border-b shrink-0">
         <Globe className="w-3.5 h-3.5 opacity-70" />
         <span className="text-[10px] font-semibold flex-1">Xroga Browser</span>
+        <span className="hidden md:inline text-[10px] text-[var(--muted)]">
+          Use this area for live research, docs, site reviews, and browser-led tasks.
+        </span>
         <button
           type="button"
           onClick={() => setBrowserFullscreen(!browserFullscreen)}
