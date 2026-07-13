@@ -3,12 +3,12 @@
 import { Monitor, Shield, Zap, Brain, Globe, Save } from 'lucide-react';
 
 const STEPS = [
-  { n: 1, model: 'DeepSeek Flash', role: 'Task Parsing', desc: 'Converts your request into structured browser steps', cost: '~$0.001' },
-  { n: 2, model: 'Gemini Flash-Lite', role: 'Page Analysis', desc: 'Identifies forms, buttons, and fields on each page', cost: '~$0.001/page' },
-  { n: 3, model: 'Grok', role: 'Decision Making', desc: 'Handles CAPTCHAs, errors, and unexpected pages', cost: '~$0.002' },
-  { n: 4, model: 'DeepSeek Pro', role: 'Value Generation', desc: 'Fills forms using your stored profile data', cost: '~$0.001' },
-  { n: 5, model: 'Your Browser', role: 'Local Execution', desc: 'Extension runs all actions on your machine — $0 cost', cost: '$0' },
-  { n: 6, model: 'DeepSeek Flash', role: 'Skill Saving', desc: 'Successful workflows saved for instant reuse', cost: '~$0.0005' },
+  { n: 1, role: 'Task Parsing', desc: 'Converts your request into structured browser steps', cost: '~$0.001' },
+  { n: 2, role: 'Page Analysis', desc: 'Identifies forms, buttons, and fields on each page', cost: '~$0.001/page' },
+  { n: 3, role: 'Decision Making', desc: 'Handles CAPTCHAs, errors, and unexpected pages', cost: '~$0.002' },
+  { n: 4, role: 'Value Generation', desc: 'Fills forms using your stored profile data', cost: '~$0.001' },
+  { n: 5, role: 'Local Execution', desc: 'Extension runs all actions on your machine — $0 cost', cost: '$0' },
+  { n: 6, role: 'Skill Saving', desc: 'Successful workflows saved for instant reuse', cost: '~$0.0005' },
 ];
 
 export function BrowserAutomationGuide() {
@@ -58,7 +58,6 @@ export function BrowserAutomationGuide() {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm font-semibold">{s.role}</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/5 text-[var(--muted)]">{s.model}</span>
                   <span className="text-[10px] text-emerald-400 ml-auto">{s.cost}</span>
                 </div>
                 <p className="text-xs text-[var(--muted)] mt-0.5">{s.desc}</p>
@@ -73,7 +72,7 @@ export function BrowserAutomationGuide() {
             CAPTCHA detected?
           </p>
           <p className="text-[var(--muted)] mt-1">
-            Grok pauses automation and asks you to solve it manually in the Xroga browser panel, then click Continue. Your session stays local.
+            Automation pauses and asks you to solve it manually in the Xroga browser panel, then click Continue. Your session stays local.
           </p>
         </div>
 
