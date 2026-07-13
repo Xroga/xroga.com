@@ -118,7 +118,7 @@ export function DashboardView({ displayName }: DashboardViewProps) {
 
   if (fullscreen) {
     return (
-      <div className="xv-fullscreen-overlay xv-dashboard-fullscreen fixed inset-0 z-[200] flex flex-col bg-[var(--background)] w-screen">
+      <div className="xv-fullscreen-overlay xv-dashboard-fullscreen fixed inset-0 z-[200] flex flex-col bg-transparent w-screen">
         <div className="flex-1 overflow-y-auto overflow-x-hidden w-full max-w-none px-4 sm:px-8 lg:px-12 pt-3 sm:pt-4 pb-[min(340px,calc(48vh+env(safe-area-inset-bottom)))]">
           <div className="w-full max-w-none mx-auto">
             {terminalBlock}

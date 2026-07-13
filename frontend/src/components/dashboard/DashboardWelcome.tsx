@@ -24,7 +24,6 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
 
   return (
     <div className={cn('xv-dashboard-welcome xv-welcome-modern relative', className)}>
-      <div className="xv-welcome-grid-overlay pointer-events-none absolute inset-0 rounded-2xl opacity-35" aria-hidden />
 
       <p className="xv-welcome-greeting relative font-goga">
         {greeting},{' '}

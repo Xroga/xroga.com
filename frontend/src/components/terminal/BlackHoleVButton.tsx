@@ -69,13 +69,13 @@ export function BlackHoleVButton({
         title="Black Hole V∞"
       >
         {compact ? (
-          <>
-            <span className="font-azurio font-bold opacity-95">Black Hole</span>
-            <span className="flex items-center gap-px font-azurio font-bold text-[#006aff]">
+          <span className="font-azurio font-bold whitespace-nowrap flex items-center gap-0.5">
+            <span>Black Hole</span>
+            <span className="inline-flex items-center gap-px text-[#006aff]">
               V
               <Infinity className="w-3 h-3 shrink-0" strokeWidth={2.5} />
             </span>
-          </>
+          </span>
         ) : (
           <>
             <span className="font-azurio font-bold">Black Hole</span>
