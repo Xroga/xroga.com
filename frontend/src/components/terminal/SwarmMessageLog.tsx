@@ -33,6 +33,7 @@ import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
 import { cn } from '@/lib/utils';
+import { ChatTurnRail, buildChatTurns } from './ChatTurnRail';
 import toast from 'react-hot-toast';
 
 const AGENT_STYLES: Record<string, string> = {
@@ -68,6 +69,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   const jumpHandledRef = useRef<string | null>(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [searchHit, setSearchHit] = useState<string | null>(null);
+  const [activeTurnId, setActiveTurnId] = useState<string | null>(null);
 
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
     stickToBottomRef.current = true;
@@ -167,6 +169,63 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     [messages]
   );
 
+  const chatTurns = useMemo(() => buildChatTurns(visibleMessages), [visibleMessages]);
+
+  useEffect(() => {
+    if (chatTurns.length === 0) {
+      setActiveTurnId(null);
+      return;
+    }
+
+    const scrollRoot =
+      document.querySelector<HTMLElement>('main.flex-1.overflow-y-auto') ??
+      document.querySelector<HTMLElement>('.xv-fullscreen-overlay .overflow-y-auto') ??
+      null;
+
+    const ratios = new Map<string, number>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = entry.target.getAttribute('data-turn-id');
+          if (!id) continue;
+          ratios.set(id, entry.intersectionRatio);
+        }
+
+        let bestId: string | null = null;
+        let bestRatio = 0;
+        for (const turn of chatTurns) {
+          const ratio = ratios.get(turn.id) ?? 0;
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestId = turn.id;
+          }
+        }
+        if (bestId) setActiveTurnId(bestId);
+      },
+      {
+        root: scrollRoot,
+        rootMargin: '-12% 0px -55% 0px',
+        threshold: [0, 0.15, 0.35, 0.55, 0.75, 1],
+      }
+    );
+
+    for (const turn of chatTurns) {
+      const el = messageRefs.current[turn.id];
+      if (el) observer.observe(el);
+    }
+
+    return () => observer.disconnect();
+  }, [chatTurns]);
+
+  function jumpToTurn(turnId: string) {
+    messageRefs.current[turnId]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setSearchHit(turnId);
+    setActiveTurnId(turnId);
+    userScrolledUpRef.current = true;
+    setShowJumpToLatest(true);
+  }
+
   const lastAssistantId = useMemo(() => {
     for (let i = visibleMessages.length - 1; i >= 0; i--) {
       const m = visibleMessages[i];
@@ -225,9 +284,10 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
 
   return (
     <>
+      <div className={cn('flex items-stretch gap-0 min-w-0', compact ? '' : 'w-full')}>
       <div
         className={cn(
-          'rounded-xl relative border',
+          'rounded-xl relative border flex-1 min-w-0',
           isIncognito ? 'terminal-skin-dark border-white/15 bg-[#3a3a40]/80 backdrop-blur-md' : `terminal-skin-${terminalSkin}`,
           !isIncognito && (terminalSkin === 'dark' || terminalSkin === 'amoled') ? 'scanlines' : '',
           compact ? '' : 'w-full'
@@ -330,6 +390,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
               <div
                 key={msg.id}
                 ref={(el) => { messageRefs.current[msg.id] = el; }}
+                data-turn-id={msg.role === 'user' ? msg.id : undefined}
                 className={cn(
                   'group flex gap-2',
                   msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
@@ -489,6 +550,14 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
             <TerminalFollowUpStrip items={lastImageFollowUps} />
           </div>
         )}
+      </div>
+      {!isIncognito && (
+        <ChatTurnRail
+          turns={chatTurns}
+          activeId={activeTurnId ?? chatTurns[chatTurns.length - 1]?.id ?? null}
+          onJump={jumpToTurn}
+        />
+      )}
       </div>
       <OutOfActionsModal open={outOfActionsOpen} onClose={() => setOutOfActionsOpen(false)} />
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
