@@ -69,8 +69,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.14,
     outputPer1M: 0.28,
-    inputSharePct: 60,
-    outputSharePct: 60,
+    inputSharePct: 58,
+    outputSharePct: 58,
     description: 'Workhorse — bulk code, file reads, fixes, verify, simple UI polish',
   },
   deepseek_pro: {
@@ -101,9 +101,9 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'xai',
     inputPer1M: 2.0,
     outputPer1M: 6.0,
-    inputSharePct: 0,
-    outputSharePct: 0,
-    description: 'Grok 4.5 — DISABLED by default for builds (0% — needs XROGA_ALLOW_GROK_45=1)',
+    inputSharePct: 2,
+    outputSharePct: 2,
+    description: 'Grok 4.5 — strategic short brain only (1 call/build cap; never web tools / bulk code)',
   },
   claude_sonnet: {
     role: 'claude_sonnet',

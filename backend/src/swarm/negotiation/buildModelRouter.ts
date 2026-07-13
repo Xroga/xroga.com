@@ -13,19 +13,23 @@ import { resolveBuildModelRole, type BuildModelRole } from '../../phase1/modelQu
 export type GrokVariant = 'reasoning' | 'fast';
 
 /**
- * Prefer Grok 4.3 (reasoning) always.
- * Grok 4.5 ($2/$6) only if XROGA_ALLOW_GROK_45=1 — previously 30% burned entire build budgets.
+ * Default: Grok 4.3.
+ * Strategic Grok 4.5 when caller opts in (and tracker cap allows).
+ * Env XROGA_ALLOW_GROK_45=1 forces 4.5 for all Grok roles (ops override).
  */
-export function pickGrokVariant(_seed = ''): GrokVariant {
-  if (process.env.XROGA_ALLOW_GROK_45 === '1') {
-    return 'fast';
-  }
+export function pickGrokVariant(
+  _seed = '',
+  opts?: { preferFast?: boolean; allowGrok45?: boolean }
+): GrokVariant {
+  if (process.env.XROGA_ALLOW_GROK_45 === '1') return 'fast';
+  if (opts?.preferFast && opts?.allowGrok45) return 'fast';
   return 'reasoning';
 }
 
-/** Absolute hard stop: never send grok-4.5 unless ops unlock. */
-export function resolveGrokApiModel(variant: GrokVariant): string {
-  if (variant === 'fast' && process.env.XROGA_ALLOW_GROK_45 === '1') {
+/** Resolve API model id — 4.5 only when explicitly allowed for this call. */
+export function resolveGrokApiModel(variant: GrokVariant, allowGrok45 = false): string {
+  const unlocked = allowGrok45 || process.env.XROGA_ALLOW_GROK_45 === '1';
+  if (variant === 'fast' && unlocked) {
     return XROGA_MODELS.grok_fast.apiModel;
   }
   return XROGA_MODELS.grok_reasoning.apiModel;
@@ -105,15 +109,18 @@ async function grokCall(
   system: string,
   user: string,
   maxTokens: number,
-  variant: GrokVariant = 'reasoning'
+  variant: GrokVariant = 'reasoning',
+  allowGrok45 = false
 ): Promise<{ text: string; inputTokens: number; outputTokens: number }> {
   const apiKey = getSecret('GROK_API_KEY') ?? getSecret('XAI_API_KEY');
   if (!apiKey) throw new Error('Grok API key not configured');
 
-  const model = resolveGrokApiModel(variant);
-  if (/4\.5|grok-4-5/i.test(model) && process.env.XROGA_ALLOW_GROK_45 !== '1') {
-    throw new Error('Grok 4.5 blocked by cost policy');
+  let effectiveVariant = variant;
+  if (effectiveVariant === 'fast' && !allowGrok45 && process.env.XROGA_ALLOW_GROK_45 !== '1') {
+    effectiveVariant = 'reasoning';
   }
+
+  const model = resolveGrokApiModel(effectiveVariant, allowGrok45);
   const sys = `${XROGA_USER_IDENTITY}\n\n${system}`;
   const response = await fetch('https://api.x.ai/v1/chat/completions', {
     method: 'POST',
@@ -124,11 +131,11 @@ async function grokCall(
         { role: 'system', content: sys },
         { role: 'user', content: user },
       ],
-      max_tokens: Math.min(maxTokens, variant === 'fast' ? 8192 : 16384),
-      temperature: variant === 'fast' ? 0.35 : 0.4,
-      ...(variant === 'reasoning' ? { reasoning_effort: 'high' as const } : {}),
+      max_tokens: Math.min(maxTokens, effectiveVariant === 'fast' ? 4096 : 16384),
+      temperature: effectiveVariant === 'fast' ? 0.35 : 0.4,
+      ...(effectiveVariant === 'reasoning' ? { reasoning_effort: 'high' as const } : {}),
     }),
-    signal: AbortSignal.timeout(variant === 'fast' ? 45_000 : 90_000),
+    signal: AbortSignal.timeout(effectiveVariant === 'fast' ? 45_000 : 90_000),
   });
 
   if (!response.ok) throw new Error(`Grok ${response.status}`);
@@ -191,7 +198,15 @@ export async function buildModelCall(
   user: string,
   maxTokens = 16384,
   tracker?: BuildUsageTracker,
-  opts?: { userId?: string; claudeTask?: 'ui' | 'qa' | 'general'; grokVariant?: GrokVariant }
+  opts?: {
+    userId?: string;
+    claudeTask?: 'ui' | 'qa' | 'general';
+    grokVariant?: GrokVariant;
+    /** Permit Grok 4.5 for this call (still subject to maxGrok45Calls) */
+    allowGrok45?: boolean;
+    /** Hard cap of Grok 4.5 calls this build (default 1) */
+    maxGrok45Calls?: number;
+  }
 ): Promise<BuildModelResult> {
   const estimateIn = Math.ceil((system.length + user.length) / 4);
   const estimateOut = Math.min(maxTokens, 8192);
@@ -200,7 +215,20 @@ export async function buildModelCall(
     output: estimateOut,
   });
 
-  const grokVariant = opts?.grokVariant ?? (role === 'grok' ? pickGrokVariant(user) : 'reasoning');
+  const want45 = Boolean(opts?.allowGrok45) || process.env.XROGA_ALLOW_GROK_45 === '1';
+  const max45 = opts?.maxGrok45Calls ?? 1;
+  const underCap = !tracker || tracker.canUseGrok45(max45);
+  const allow45ThisCall = want45 && underCap;
+
+  let grokVariant =
+    opts?.grokVariant ??
+    (role === 'grok'
+      ? pickGrokVariant(user, { preferFast: allow45ThisCall, allowGrok45: allow45ThisCall })
+      : 'reasoning');
+  if (grokVariant === 'fast' && !allow45ThisCall) {
+    grokVariant = 'reasoning';
+  }
+
   const label =
     role === 'grok'
       ? grokVariant === 'fast'
@@ -225,7 +253,7 @@ export async function buildModelCall(
         });
         break;
       case 'grok':
-        result = await grokCall(system, user, maxTokens, grokVariant);
+        result = await grokCall(system, user, maxTokens, grokVariant, allow45ThisCall);
         break;
       case 'sonnet':
         result = await claudeCall(XROGA_MODELS.claude_sonnet.apiModel, system, user, maxTokens);
