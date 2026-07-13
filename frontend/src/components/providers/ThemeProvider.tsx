@@ -1,9 +1,10 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useThemeStore } from '@/store/useThemeStore';
-import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
+import { DESKTOP_BG_SLIDESHOW, MOBILE_BG } from '@/lib/theme';
+import { DesktopBackgroundSlideshow } from '@/components/layout/DesktopBackgroundSlideshow';
 
 const THEME_COLORS: Record<string, string> = {
   white: '#ffffff',
@@ -18,11 +19,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const customMobileBg = useThemeStore((s) => s.customMobileBg);
   const pathname = usePathname();
   const isHomepage = pathname === '/';
+  const isAuthRoute = pathname.startsWith('/auth');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1023px)');
+    const sync = () => setIsMobile(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
 
-    const isMobile = window.matchMedia('(max-width: 1023px)').matches;
     const body = document.body;
 
     body.classList.remove('theme-image', 'theme-white', 'theme-black', 'theme-gray');
@@ -38,20 +48,50 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
     themeMeta.setAttribute('content', THEME_COLORS[effectiveTheme] ?? '#0a0a0a');
 
-    const useWallpaper = isHomepage || theme === 'image';
+    const useWallpaper = isHomepage || isAuthRoute || theme === 'image';
+
     if (useWallpaper) {
-      const url = isMobile ? (customMobileBg ?? MOBILE_BG) : (customDesktopBg ?? DESKTOP_BG);
-      body.style.backgroundImage = `url("${url}")`;
-      body.style.backgroundSize = 'cover';
-      body.style.backgroundPosition = 'center';
-      body.style.backgroundAttachment = isMobile ? 'scroll' : 'fixed';
-      body.style.backgroundColor = '#0a0e17';
+      if (isMobile) {
+        const url = customMobileBg ?? MOBILE_BG;
+        body.style.backgroundImage = `url("${url}")`;
+        body.style.backgroundSize = 'cover';
+        body.style.backgroundPosition = 'center';
+        body.style.backgroundAttachment = 'scroll';
+        body.style.backgroundColor = '#0a0e17';
+      } else if (customDesktopBg) {
+        body.style.backgroundImage = `url("${customDesktopBg}")`;
+        body.style.backgroundSize = 'cover';
+        body.style.backgroundPosition = 'center';
+        body.style.backgroundAttachment = 'fixed';
+        body.style.backgroundColor = '#0a0e17';
+      } else {
+        body.style.backgroundImage = '';
+        body.style.backgroundAttachment = '';
+        body.style.backgroundColor = '#0a0e17';
+      }
     } else {
       body.style.backgroundImage = '';
       body.style.backgroundAttachment = '';
       body.style.backgroundColor = '';
     }
-  }, [theme, customDesktopBg, customMobileBg, isHomepage]);
+  }, [theme, customDesktopBg, customMobileBg, isHomepage, isAuthRoute, isMobile]);
 
-  return <>{children}</>;
+  const showDesktopSlideshow =
+    (isHomepage || isAuthRoute || theme === 'image') && !isMobile && !customDesktopBg;
+
+  const slideshowOverlay =
+    isHomepage
+      ? 'bg-gradient-to-b from-black/50 via-black/20 to-black/55'
+      : isAuthRoute
+        ? 'bg-gradient-to-b from-black/50 via-black/30 to-black/60'
+        : 'bg-gradient-to-b from-black/45 via-black/25 to-black/55';
+
+  return (
+    <>
+      {showDesktopSlideshow ? (
+        <DesktopBackgroundSlideshow images={DESKTOP_BG_SLIDESHOW} overlayClassName={slideshowOverlay} />
+      ) : null}
+      {children}
+    </>
+  );
 }

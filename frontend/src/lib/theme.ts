@@ -1,7 +1,15 @@
 export type ThemeId = 'image' | 'white' | 'black' | 'gray';
 
-export const DESKTOP_BG =
-  'https://i.postimg.cc/nz3pSJb9/465a6a92f304015dfc23b37d2d4ff078-(1)-(1)-(1).jpg';
+export const DESKTOP_BG_SLIDESHOW = [
+  '/backgrounds/bg-desktop-1-infinity.png',
+  '/backgrounds/bg-desktop-2-earth.png',
+  '/backgrounds/bg-desktop-3-blackhole-rings.png',
+  '/backgrounds/bg-desktop-4-blackhole-nebula.png',
+] as const;
+
+export const SLIDESHOW_INTERVAL_MS = 5000;
+
+export const DESKTOP_BG = DESKTOP_BG_SLIDESHOW[0];
 export const MOBILE_BG =
   'https://i.pinimg.com/736x/49/17/78/491778bbd33b7d4b832c8f06415d4e33.jpg';
 

@@ -7,7 +7,7 @@ import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageTagMarquee } from '@/components/homepage/HomepageTagMarquee';
 import { HomeSignInButton, PowerSmashButton } from '@/components/ui/XrogaButtons';
-import { DESKTOP_BG, MOBILE_BG } from '@/lib/theme';
+import { MOBILE_BG } from '@/lib/theme';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { createClient } from '@/lib/supabase/client';
@@ -26,9 +26,7 @@ const FOOTER_LINKS = [
 export default function HomePage() {
   const router = useRouter();
   const hydrated = useHydrated();
-  const customDesktopBg = useThemeStore((s) => s.customDesktopBg);
   const customMobileBg = useThemeStore((s) => s.customMobileBg);
-  const desktopBg = hydrated ? (customDesktopBg ?? DESKTOP_BG) : DESKTOP_BG;
   const mobileBg = hydrated ? (customMobileBg ?? MOBILE_BG) : MOBILE_BG;
   const [loggedIn, setLoggedIn] = useState(false);
   const [authReady, setAuthReady] = useState(false);
@@ -45,16 +43,10 @@ export default function HomePage() {
   return (
     <div className="xv-homepage min-h-screen flex flex-col relative overflow-x-hidden">
       <div
-        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat md:bg-fixed"
-        style={{ backgroundImage: `url("${desktopBg}")` }}
-        aria-hidden
-      />
-      <div
         className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat md:hidden"
         style={{ backgroundImage: `url("${mobileBg}")` }}
         aria-hidden
       />
-      <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/50 via-black/20 to-black/55" aria-hidden />
 
       <header className="xv-home-header xv-site-header sticky top-0 z-50 bg-transparent border-none shadow-none">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
