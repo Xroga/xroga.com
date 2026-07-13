@@ -45,6 +45,7 @@ export function fixMisattributedThirdParty(
     new RegExp(`Xroga AI's (automated )?risk`, 'gi'),
     `${name}'s risk`
   );
+  out = out.replace(new RegExp(`Xroga AI risk control`, 'gi'), `${name} risk control`);
   out = out.replace(
     new RegExp(`Xroga AI (doesn't|does not|FAQ|API|support|billing)`, 'gi'),
     `${name} $1`

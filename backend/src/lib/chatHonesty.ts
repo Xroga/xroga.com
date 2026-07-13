@@ -37,6 +37,7 @@ export function sanitizeChatHonesty(
   // Strip fabricated URLs/domains that insert "xroga" into third-party names
   out = out.replace(/https?:\/\/[^\s)\]"']*xroga[^\s)\]"']*/gi, '');
   out = out.replace(/api-docs\.Xroga\s*AI\.com/gi, 'api-docs.deepseek.com');
+  out = out.replace(/api-docs\.DeepSeek\.com/gi, 'api-docs.deepseek.com');
   out = out.replace(/r\/Xroga\s*AI/gi, 'r/deepseek');
 
   if (!opts?.hadLiveResearch) {
