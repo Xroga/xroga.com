@@ -1,6 +1,9 @@
 /* Modern Xroga system error — professional AI, not cartoon */
 .xv-system-error {
-  position: relative;
+  --font-goga: Outfit, system-ui, sans-serif;
+  --font-remixa: Syne, system-ui, sans-serif;
+  --font-azurio: Fraunces, Georgia, serif;
+  font-family: var(--font-goga);
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;

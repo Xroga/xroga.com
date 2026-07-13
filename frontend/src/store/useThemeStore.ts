@@ -11,6 +11,11 @@ import {
   SLIDESHOW_FROZEN_INDEX_KEY,
   TERMINAL_SKIN_CYCLE,
 } from '@/lib/theme';
+import { recoverCorruptStorage } from '@/lib/storageRecovery';
+
+if (typeof window !== 'undefined') {
+  recoverCorruptStorage();
+}
 
 interface ThemeState {
   theme: ThemeId;

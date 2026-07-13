@@ -62,7 +62,10 @@ export function XrogaErrorActions({
   onSecondary?: () => void;
 }) {
   return (
-    <>
+    <div
+      className="xv-system-error__actions"
+      style={{ display: 'flex', flexWrap: 'wrap', gap: '0.625rem', justifyContent: 'center' }}
+    >
       <button type="button" onClick={onPrimary} className="xv-system-error__btn xv-system-error__btn--primary font-goga">
         {primaryLabel}
       </button>
@@ -75,6 +78,6 @@ export function XrogaErrorActions({
           {secondaryLabel}
         </button>
       ) : null}
-    </>
+    </div>
   );
 }
