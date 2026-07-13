@@ -201,11 +201,56 @@ export function PostBuildDashboard({
         </section>
         )}
 
+        {data.integratedAi && data.integratedAi.length > 0 && (
+          <section className="space-y-2 rounded-lg border border-[var(--accent)]/20 bg-[var(--accent)]/5 p-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
+              AI integrations in your project
+            </h3>
+            <ul className="space-y-2 text-[11px]">
+              {data.integratedAi.map((item) => (
+                <li key={item.id} className="leading-snug">
+                  <span className="font-semibold text-[var(--foreground)]">{item.name}</span>
+                  {item.xrogaProvided ? (
+                    <span className="ml-1 text-[9px] font-bold text-emerald-600">· XROGA ACTIVE</span>
+                  ) : item.freeTier ? (
+                    <span className="ml-1 text-[9px] font-bold text-emerald-600">· FREE</span>
+                  ) : (
+                    <span className="ml-1 text-[9px] font-bold text-amber-600">· PAID</span>
+                  )}
+                  <p className="text-[var(--muted)] mt-0.5">{item.userGuidance}</p>
+                  {item.signupUrl && (
+                    <a
+                      href={item.signupUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[var(--accent)] hover:underline"
+                    >
+                      {item.requiresApiKey ? 'Get API key' : 'Docs'}
+                    </a>
+                  )}
+                  {item.topUpUrl && !item.freeTier && (
+                    <>
+                      {' · '}
+                      <a
+                        href={item.topUpUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-amber-600 hover:underline"
+                      >
+                        Top up credits
+                      </a>
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <p className="text-[10px] text-[var(--muted)]">
+              Add your own API keys anytime under Dashboard → Integrations.
+            </p>
+          </section>
+        )}
+
         <section className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Eye className="w-4 h-4 text-[var(--accent)]" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Live sandbox preview</h3>
-          </div>
           <p className="text-[11px] text-[var(--muted)]">
             Your code runs here instantly — no Vercel required. Connect Vercel only when you want a public live URL on your account.
           </p>

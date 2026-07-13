@@ -57,6 +57,18 @@ export interface LandingPageOutput {
   isUpdate?: boolean;
   /** Repo paths patched on GitHub for update builds */
   updatedFiles?: string[];
+  /** AI/API endpoints integrated or recommended for this build */
+  integratedAi?: Array<{
+    id: string;
+    name: string;
+    freeTier: boolean;
+    requiresApiKey: boolean;
+    endpoint: string;
+    signupUrl?: string;
+    topUpUrl?: string;
+    userGuidance: string;
+    xrogaProvided?: boolean;
+  }>;
 }
 
 export interface ImageBlockedOutput {

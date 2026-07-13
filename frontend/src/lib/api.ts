@@ -567,6 +567,35 @@ export const api = {
         { method: 'POST', body: JSON.stringify(payload) }
       ),
   },
+  integrations: {
+    aiCatalog: () =>
+      apiFetch<{
+        catalog: Array<{
+          id: string;
+          name: string;
+          category: string;
+          freeTier: boolean;
+          requiresApiKey: boolean;
+          endpoint: string;
+          signupUrl?: string;
+          topUpUrl?: string;
+          userGuidance: string;
+          xrogaProvided?: boolean;
+        }>;
+        xrogaResearch: Record<string, unknown>;
+      }>('/api/integrations/ai-catalog'),
+    providerKeys: () =>
+      apiFetch<{ keys: Array<{ provider: string; connected: boolean; masked?: string }> }>(
+        '/api/integrations/provider-keys'
+      ),
+    saveProviderKey: (provider: string, apiKey: string) =>
+      apiFetch<{ ok: boolean; provider: string; masked?: string }>('/api/integrations/provider-keys', {
+        method: 'POST',
+        body: JSON.stringify({ provider, apiKey }),
+      }),
+    deleteProviderKey: (provider: string) =>
+      apiFetch(`/api/integrations/provider-keys/${encodeURIComponent(provider)}`, { method: 'DELETE' }),
+  },
   notifications: {
     list: () => apiFetch<Notification[]>('/api/notifications'),
     unreadCount: () => apiFetch<{ count: number }>('/api/notifications/unread-count'),

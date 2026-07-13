@@ -43,6 +43,17 @@ export interface LandingPageOutputData {
     issues: Array<{ id: string; severity: string; area: string; message: string; fixPrompt: string }>;
     working: string[];
   };
+  integratedAi?: Array<{
+    id: string;
+    name: string;
+    freeTier: boolean;
+    requiresApiKey: boolean;
+    endpoint: string;
+    signupUrl?: string;
+    topUpUrl?: string;
+    userGuidance: string;
+    xrogaProvided?: boolean;
+  }>;
 }
 
 interface LandingPageCardProps {

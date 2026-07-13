@@ -36,7 +36,7 @@ import { formatMemorySuggestion, getPreviousBuilds } from '../../services/memory
 import { upsertBuildProject } from '../../services/memory/buildProjectStore.js';
 import { webSearch, formatWebSearchContext } from '../../lib/webSearch.js';
 import { fetchUiTrendResearch } from '../../lib/uiTrendResearch.js';
-import { formatAiEndpointContext } from '../../lib/aiEndpointCatalog.js';
+import { formatAiEndpointContext, integratedAiSummaryForPrompt } from '../../lib/aiEndpointCatalog.js';
 import { fetchHackathonResearch, isHackathonQuery } from '../../lib/hackathonResearch.js';
 import {
   buildSummaryFromBrief,
@@ -109,6 +109,7 @@ import {
   xrogaGitHubLine,
 } from './xrogaBrandActivity.js';
 import { buildFullProjectFiles, scaffoldFilePaths } from '../../services/projectScaffold.js';
+import { buildProviderEnvFiles } from '../../services/integrations/userProviderKeys.js';
 import { BuildUsageTracker } from '../../lib/buildUsageTracker.js';
 import { recordLlmUsage } from '../../phase1/usageRecorder.js';
 import { autoPublishBuildToCommunity } from '../../services/communityAutoPublish.js';
@@ -1215,6 +1216,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   const summaryData = buildSummaryFromBrief(userPrompt, clarifiedBrief, undefined, undefined, memoryNote);
 
   if (featureOutput?.type === 'landing_page') {
+    featureOutput = {
+      ...featureOutput,
+      integratedAi: integratedAiSummaryForPrompt(userPrompt),
+      userPrompt,
+    };
     todos.completeFinal('emit');
     buildState.markDone('emitted');
     todos.activateFinal('github-push');
@@ -1246,6 +1252,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         projectName,
         userPrompt,
       });
+      const envFiles = await buildProviderEnvFiles(userId);
+      if (envFiles.length) {
+        projectFiles = [...projectFiles, ...envFiles];
+      }
     }
     try {
       const pipeline = await pushAndDeployLivePreview(userId, projectFiles, projectSlug, {
