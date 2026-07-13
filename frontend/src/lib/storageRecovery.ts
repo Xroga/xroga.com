@@ -1,5 +1,6 @@
 const THEME_STORAGE_KEY = 'xroga-theme';
 const WORKSPACE_KEY = 'xroga_workspace_session';
+const MAX_THEME_JSON_BYTES = 120_000;
 
 /** Clear corrupt persisted state that can brick the client on load */
 export function recoverCorruptStorage() {
@@ -7,7 +8,20 @@ export function recoverCorruptStorage() {
 
   try {
     const themeRaw = localStorage.getItem(THEME_STORAGE_KEY);
-    if (themeRaw) JSON.parse(themeRaw);
+    if (!themeRaw) return;
+
+    if (themeRaw.length > MAX_THEME_JSON_BYTES) {
+      localStorage.removeItem(THEME_STORAGE_KEY);
+      return;
+    }
+
+    const parsed = JSON.parse(themeRaw) as { state?: Record<string, unknown> };
+    const state = parsed?.state;
+    if (state && (typeof state.customDesktopBg === 'string' || typeof state.customMobileBg === 'string')) {
+      delete state.customDesktopBg;
+      delete state.customMobileBg;
+      localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ ...parsed, state }));
+    }
   } catch {
     localStorage.removeItem(THEME_STORAGE_KEY);
   }

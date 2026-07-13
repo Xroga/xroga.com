@@ -26,19 +26,21 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
   return (
     <div className={cn('xv-dashboard-welcome xv-welcome-modern relative', className)}>
       <p className="xv-welcome-greeting relative">
-        <span className="xv-welcome-greeting-text font-goga">{greeting},</span>{' '}
-        <span className="xv-welcome-name font-emilio">{name}</span>
+        <span className="xv-welcome-greeting-text font-remixa">{greeting},</span>
+      </p>
+      <p className="xv-welcome-name-line relative">
+        <span className="xv-welcome-name font-azurio">{name}</span>
       </p>
 
-      <p className="xv-welcome-blackhole relative" aria-label="Black Hole V Infinity">
-        <span className="xv-welcome-blackhole-label font-azurio">Black Hole</span>
-        <span className="xv-welcome-blackhole-v font-remixa">
-          V
-          <Infinity className="inline w-[0.9em] h-[0.9em] -mt-px" strokeWidth={2.5} aria-hidden />
+      <div className="xv-blackhole-identity relative" aria-label="Black Hole V Infinity">
+        <span className="xv-blackhole-identity__label font-goga">Black Hole</span>
+        <span className="xv-blackhole-identity__mark font-remixa">
+          <span className="xv-blackhole-identity__v">V</span>
+          <Infinity className="xv-blackhole-identity__inf" strokeWidth={2.75} aria-hidden />
         </span>
-      </p>
+      </div>
 
-      <div className="xv-welcome-taglines relative mt-2 space-y-1.5 max-w-2xl">
+      <div className="xv-welcome-taglines relative mt-3 space-y-2 max-w-3xl">
         <p className="xv-welcome-tagline-mixed font-goga">
           Others count up.{' '}
           <span className="xv-tagline-accent font-emilio">We count forever.</span>
