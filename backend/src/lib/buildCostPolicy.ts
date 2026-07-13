@@ -1,7 +1,7 @@
 /**
  * Cost-control policy for swarm builds.
  * Simple sites (blog, landing, portfolio) must use DeepSeek Flash + light Pro —
- * never Grok web/X search or Grok 4.5 review loops.
+ * never Grok (strategy/review/tools), never Sonnet/Opus, never live web crawl.
  */
 
 export type BuildCostTier = 'simple_static' | 'standard' | 'premium';
@@ -12,7 +12,11 @@ export function isSimpleStaticBuild(prompt: string): boolean {
   if (/\b(crm|saas|dashboard|hackathon|crypto|web3|defi|nft|marketplace|enterprise|multi.?tenant)\b/.test(t)) {
     return false;
   }
-  if (/\b(blog|landing|portfolio|personal site|marketing site|simple website|simple site|homepage|coffee shop|restaurant|bakery)\b/.test(t)) {
+  if (
+    /\b(blog|landing|portfolio|personal site|marketing site|simple website|simple site|homepage|coffee shop|restaurant|bakery)\b/.test(
+      t
+    )
+  ) {
     return true;
   }
   // Short "build a website / site for X" without heavy keywords → treat as simple
@@ -34,9 +38,11 @@ export interface BuildCostPolicy {
   allowWebResearch: boolean;
   /** Run Grok agent tools (web_search / x_search) — EXPENSIVE ($5/1k + tokens) */
   allowGrokAgentSearch: boolean;
-  /** Grok synthesis of research notes */
+  /** Paid research synthesis step */
   allowGrokResearchSynthesis: boolean;
-  /** runGrokCodeReviewLoop — can be 4–7 Grok API calls */
+  /** Early-build Grok strategist call (was burning $ on every blog) */
+  allowGrokStrategy: boolean;
+  /** runGrokCodeReviewLoop — paid Grok audit */
   allowGrokReviewLoop: boolean;
   /** Max rounds inside Grok review loop when allowed */
   grokReviewMaxRounds: number;
@@ -44,6 +50,8 @@ export interface BuildCostPolicy {
   allowGrok45: boolean;
   /** Prefer DeepSeek Flash for UI polish instead of Sonnet when true */
   preferFlashUiPolish: boolean;
+  /** Remap expensive roles (grok/sonnet/opus) down to Flash/Pro */
+  remapExpensiveRoles: boolean;
 }
 
 export function policyForPrompt(prompt: string): BuildCostPolicy {
@@ -54,10 +62,12 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
       allowWebResearch: false,
       allowGrokAgentSearch: false,
       allowGrokResearchSynthesis: false,
+      allowGrokStrategy: false,
       allowGrokReviewLoop: false,
       grokReviewMaxRounds: 0,
       allowGrok45: false,
       preferFlashUiPolish: true,
+      remapExpensiveRoles: true,
     };
   }
   if (tier === 'premium') {
@@ -66,20 +76,42 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
       allowWebResearch: true,
       allowGrokAgentSearch: false, // still prefer free SearXNG; Grok tools are last resort
       allowGrokResearchSynthesis: true,
+      allowGrokStrategy: true,
       allowGrokReviewLoop: true,
       grokReviewMaxRounds: 1,
       allowGrok45: false,
       preferFlashUiPolish: false,
+      remapExpensiveRoles: false,
     };
   }
+  // standard: DeepSeek-heavy; no Grok strategy/review by default (Pro + Flash only + optional Sonnet polish)
   return {
     tier,
     allowWebResearch: true,
     allowGrokAgentSearch: false,
     allowGrokResearchSynthesis: false,
-    allowGrokReviewLoop: true,
-    grokReviewMaxRounds: 1,
+    allowGrokStrategy: false,
+    allowGrokReviewLoop: false,
+    grokReviewMaxRounds: 0,
     allowGrok45: false,
     preferFlashUiPolish: false,
+    remapExpensiveRoles: false,
   };
+}
+
+/**
+ * Hard remap so a simple blog cannot accidentally call Grok/Sonnet/Opus.
+ * grok/opus → pro | sonnet → flash
+ */
+export function costAwareRole(
+  role: 'flash' | 'pro' | 'grok' | 'sonnet' | 'opus',
+  policy: BuildCostPolicy
+): 'flash' | 'pro' | 'grok' | 'sonnet' | 'opus' {
+  if (!policy.remapExpensiveRoles) {
+    if (!policy.allowGrokStrategy && role === 'grok') return 'pro';
+    return role;
+  }
+  if (role === 'grok' || role === 'opus') return 'pro';
+  if (role === 'sonnet') return 'flash';
+  return role;
 }

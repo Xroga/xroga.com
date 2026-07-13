@@ -116,7 +116,7 @@ import { autoPublishBuildToCommunity } from '../../services/communityAutoPublish
 import { notifyBuildComplete, notifyBuildFailed } from '../../services/notificationService.js';
 import { createTodoState } from './todoState.js';
 import { XROGA_MODELS } from '../../config/modelRegistry.js';
-import { policyForPrompt } from '../../lib/buildCostPolicy.js';
+import { costAwareRole, policyForPrompt } from '../../lib/buildCostPolicy.js';
 
 /** Max tokens per build step — no compromise on complete code output */
 const BUILD_STEP_MAX_TOKENS = 16384;
@@ -383,6 +383,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   const { userPrompt: rawPrompt, featureCategory, userId } = ctx;
   const userPrompt = rawPrompt.trim();
   const costPolicy = policyForPrompt(userPrompt);
+  console.info('[NegotiationEngine] costPolicy', {
+    tier: costPolicy.tier,
+    allowGrokStrategy: costPolicy.allowGrokStrategy,
+    allowGrokReviewLoop: costPolicy.allowGrokReviewLoop,
+    allowWebResearch: costPolicy.allowWebResearch,
+  });
   const currentMessage = routingPrompt(userPrompt);
   const todos = createTodoState(userPrompt);
   const buildState = new BuildState();
@@ -796,24 +802,48 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   } else {
     try {
       let strategyContext = '';
-      try {
-        const { text: strategy } = await buildModelCall(
-          'grok',
-          `You are XROGA Strategist (Grok). Analyze the project brief and output a concise build strategy: architecture, key features, UX priorities, and risks. Under 400 words.`,
-          `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`,
-          4096,
-          usageTracker
-        );
-        strategyContext = `\n\nStrategy:\n${strategy}`;
-        emit(ctx, 1, xrogaArchitectureLine('Build strategy — Grok reasoning'), 'architect', todos, 'XROGA Architect', {
-          userPhase: 1,
-        });
-      } catch {
-        /* optional grok */
+      // COST: simple/standard builds skip paid Grok strategist (was ~1–4k Grok tokens every blog).
+      if (costPolicy.allowGrokStrategy) {
+        try {
+          assertNotAborted(ctx);
+          const { text: strategy } = await buildModelCall(
+            'grok',
+            `You are XROGA Strategist (Grok). Analyze the project brief and output a concise build strategy: architecture, key features, UX priorities, and risks. Under 400 words.`,
+            `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`,
+            4096,
+            usageTracker,
+            { grokVariant: 'reasoning' }
+          );
+          strategyContext = `\n\nStrategy:\n${strategy}`;
+          emit(ctx, 1, xrogaArchitectureLine('Build strategy — Grok reasoning'), 'architect', todos, 'XROGA Architect', {
+            userPhase: 1,
+          });
+        } catch {
+          /* optional grok */
+        }
+      } else {
+        try {
+          assertNotAborted(ctx);
+          const strategyRole = costAwareRole('pro', costPolicy);
+          const { text: strategy } = await buildModelCall(
+            strategyRole,
+            `You are XROGA Strategist. Analyze the project brief and output a concise build strategy: architecture, key features, UX priorities, and risks. Under 300 words.`,
+            `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`,
+            2048,
+            usageTracker
+          );
+          strategyContext = `\n\nStrategy:\n${strategy}`;
+          emit(ctx, 1, xrogaArchitectureLine('Build strategy — DeepSeek (cost-smart)'), 'architect', todos, 'XROGA Architect', {
+            userPhase: 1,
+            silent: true,
+          });
+        } catch {
+          /* optional */
+        }
       }
 
       const { text, modelLabel } = await buildModelCall(
-        'pro',
+        costAwareRole('pro', costPolicy),
         PHASE_1_PLANNING_GEMINI,
         `Brief:\n${clarifiedBrief}${strategyContext}\n\nOriginal:\n${userPrompt}`,
         8192,
@@ -1045,7 +1075,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   if (isUpdateBuild && incrementalPlan?.touchesUi && incrementalPlan.stepCount > 1) {
     try {
       assertNotAborted(ctx);
-      const polishRole = costPolicy.preferFlashUiPolish ? 'flash' : 'sonnet';
+      const polishRole = costAwareRole(
+        costPolicy.preferFlashUiPolish ? 'flash' : 'sonnet',
+        costPolicy
+      );
       const { text: uiPolish, modelLabel } = await buildModelCall(
         polishRole,
         `Apply ONLY targeted UI tweaks to the fenced html/css blocks below. Return fenced html and/or css blocks only — do not rewrite unrelated files.`,
@@ -1063,7 +1096,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   } else if (!isUpdateBuild) {
   try {
     assertNotAborted(ctx);
-    const polishRole = costPolicy.preferFlashUiPolish ? 'flash' : 'sonnet';
+    const polishRole = costAwareRole(
+      costPolicy.preferFlashUiPolish ? 'flash' : 'sonnet',
+      costPolicy
+    );
     const { text: uiPolish, modelLabel } = await buildModelCall(
       polishRole,
       `You are XROGA Visionary. Polish HTML/CSS/JS for modern responsive design, micro-interactions, accessibility (ARIA), and optional dark mode. Output ONLY complete fenced html, css, javascript blocks — no commentary, no truncation.`,
@@ -1121,14 +1157,21 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     userPhase: 2,
   });
   try {
-    const reviewRole = buildType === 'crypto' ? 'opus' : hackathonNote ? 'grok' : 'pro';
+    const reviewRole = costAwareRole(
+      buildType === 'crypto' ? 'opus' : hackathonNote && costPolicy.allowGrokStrategy ? 'grok' : 'pro',
+      costPolicy
+    );
     const { text: qualityReview } = await buildModelCall(
       reviewRole,
       PHASE_6_FINAL,
       `Full codebase:\n${assembledCode}`,
       2048,
       usageTracker,
-      reviewRole === 'opus' ? { userId: ctx.userId, claudeTask: 'qa' } : undefined
+      reviewRole === 'opus'
+        ? { userId: ctx.userId, claudeTask: 'qa' }
+        : reviewRole === 'grok'
+          ? { grokVariant: 'reasoning' }
+          : undefined
     );
     if (!isPass(qualityReview)) {
       emit(ctx, 5, xrogaArchitectureLine('Applying quality fixes from review'), 'debugger', todos, 'XROGA Architect');

@@ -23,6 +23,14 @@ export function pickGrokVariant(_seed = ''): GrokVariant {
   return 'reasoning';
 }
 
+/** Absolute hard stop: never send grok-4.5 unless ops unlock. */
+export function resolveGrokApiModel(variant: GrokVariant): string {
+  if (variant === 'fast' && process.env.XROGA_ALLOW_GROK_45 === '1') {
+    return XROGA_MODELS.grok_fast.apiModel;
+  }
+  return XROGA_MODELS.grok_reasoning.apiModel;
+}
+
 export type { BuildModelRole } from '../../phase1/modelQuotaTracker.js';
 
 const ROLE_MAP: Record<BuildModelRole, XrogaModelRole> = {
@@ -102,8 +110,10 @@ async function grokCall(
   const apiKey = getSecret('GROK_API_KEY') ?? getSecret('XAI_API_KEY');
   if (!apiKey) throw new Error('Grok API key not configured');
 
-  const model =
-    variant === 'fast' ? XROGA_MODELS.grok_fast.apiModel : XROGA_MODELS.grok_reasoning.apiModel;
+  const model = resolveGrokApiModel(variant);
+  if (/4\.5|grok-4-5/i.test(model) && process.env.XROGA_ALLOW_GROK_45 !== '1') {
+    throw new Error('Grok 4.5 blocked by cost policy');
+  }
   const sys = `${XROGA_USER_IDENTITY}\n\n${system}`;
   const response = await fetch('https://api.x.ai/v1/chat/completions', {
     method: 'POST',
@@ -261,7 +271,7 @@ export async function buildForcedCorrection(
   tracker?: BuildUsageTracker,
   opts?: { userId?: string; claudeTask?: 'ui' | 'qa' }
 ): Promise<BuildModelResult> {
-  const chain: BuildModelRole[] = ['flash', 'pro', 'grok', 'sonnet'];
+  const chain: BuildModelRole[] = ['flash', 'pro', 'sonnet'];
   let last: BuildModelResult | null = null;
 
   for (const role of chain) {

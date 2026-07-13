@@ -195,9 +195,9 @@ const ROLE_TO_XROGA: Record<BuildModelRole, XrogaModelRole> = {
   opus: 'claude_opus',
 };
 
-/** Pick fallback when Claude pool is empty — DeepSeek Pro for UI/QA, Grok for strategy. */
+/** Pick fallback when Claude pool is empty — NEVER escalate to Grok (cost). */
 export function claudeFallbackRole(task: 'ui' | 'qa'): BuildModelRole {
-  return task === 'ui' ? 'grok' : 'pro';
+  return task === 'ui' ? 'flash' : 'pro';
 }
 
 export async function resolveBuildModelRole(
