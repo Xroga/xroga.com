@@ -178,7 +178,9 @@ function staticSiteFiles(opts: {
       path: 'README.md',
       content: `# ${title}
 
-Built with [XROGA AI](https://xroga.com).
+[![Built with XROGA AI](https://xroga.com/icon.png)](https://xroga.com)
+
+Built with [XROGA AI](https://xroga.com) — Black Hole V∞.
 
 ## Live preview
 \`index.html\` is the exact site XROGA generated — same file Vercel deploys to your account.

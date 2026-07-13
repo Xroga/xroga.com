@@ -4,6 +4,7 @@ import { WOW_ADVISOR_FORMAT } from '../prompts/wowAdvisorPrompt.js';
 import { HACKATHON_ADVISOR_FORMAT } from '../prompts/hackathonAdvisorPrompt.js';
 import { isHackathonQuery } from '../lib/hackathonResearch.js';
 import { getCurrentDateDirective } from '../lib/currentDateContext.js';
+import { CHAT_HONESTY_RULES } from '../lib/chatHonesty.js';
 
 const PHASE2_MESSAGE = 'Coming in Phase 2';
 
@@ -89,7 +90,8 @@ export function getSystemPromptForIntent(
   userMessage = ''
 ): string {
   const base =
-    'You are Xroga AI. Be clear, practical, and production-oriented. Never mention AI model names or internal routing.';
+    'You are Xroga AI. Be clear, practical, and production-oriented. Never mention AI model names or internal routing.' +
+    CHAT_HONESTY_RULES;
 
   if (mathQuery && role === 'primary') {
     return `${base}${PHASE1_MATH_SYSTEM}`;
@@ -108,7 +110,7 @@ export function getSystemPromptForIntent(
     return `${base}${getCurrentDateDirective()}\n${HACKATHON_ADVISOR_FORMAT}`;
   }
   if (intent === 'business_advice' && role === 'primary') {
-    return `${base}${professionalFormatBlock()} Provide structured business advice with pros/cons, actionable strategies, and a Summary section. Use live web research when provided.`;
+    return `${base}${professionalFormatBlock()} Provide structured business advice with pros/cons, actionable strategies, and a Summary section. Ground claims in live research when provided — never invent market data.`;
   }
   if (intent === 'business_advice' && role === 'secondary') {
     return `${base} Validate financial assumptions, feasibility, and risks.`;
