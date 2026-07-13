@@ -36,11 +36,11 @@ import { seedBuildTodos } from '@/lib/buildDefaultTodos';
 import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
 import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
-import { getSelectedRepoContext } from '@/lib/repoContext';
+import { clearSelectedRepoContext, getSelectedRepoContext } from '@/lib/repoContext';
 import { buildHeartbeatActivity } from '@/lib/buildLiveStatus';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
-import { notifyGithubProjectSaved } from '@/lib/githubProjectEvents';
+import { notifyGithubProjectSaved, GITHUB_REPO_CONTEXT_EVENT } from '@/lib/githubProjectEvents';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
@@ -662,6 +662,8 @@ export function TerminalChatProvider({
     setSwarmActiveAgent(null);
     persistReadyRef.current = false;
     if (!usePrivacyStore.getState().incognito) clearWorkspaceSession();
+    clearSelectedRepoContext();
+    window.dispatchEvent(new CustomEvent(GITHUB_REPO_CONTEXT_EVENT, { detail: { repo: null, branch: null } }));
     persistReadyRef.current = true;
   }, [setSwarmRunning, messages, prompt]);
 

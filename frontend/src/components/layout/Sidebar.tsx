@@ -19,7 +19,6 @@ import {
   MessageCirclePlus,
   Terminal,
   Gift,
-  FolderOpen,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MiniTokenMeter } from './MiniActionMeter';
@@ -29,7 +28,6 @@ import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
 import { DownloadAppButton } from '@/components/ui/DownloadAppButton';
-import { GitHubProjectsSidebar } from '@/components/layout/GitHubProjectsSidebar';
 import { SidebarCommunityButton } from '@/components/layout/SidebarCommunityButton';
 import { useT } from '@/components/providers/LanguageProvider';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -60,12 +58,6 @@ const navItems = [
     label: 'Dashboard',
     icon: LayoutDashboard,
     tip: 'Token usage, XRG balance, billing, and recent activity.',
-  },
-  {
-    href: '/dashboard/projects',
-    label: 'Projects',
-    icon: FolderOpen,
-    tip: 'Connected repos — continue builds, fix bugs in existing code, delete or open any saved project.',
   },
   {
     href: '/dashboard/tasks',
@@ -203,6 +195,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
 
   const isActive = (href: string) => {
     if (href === '/workspace') return pathname === '/workspace';
+    if (href === '/dashboard') return pathname === '/dashboard' || pathname === '/dashboard/';
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
@@ -228,6 +221,8 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     closeMobile();
     router.push('/dashboard');
   }
+
+  const logoHref = pathname.startsWith('/dashboard') ? '/dashboard' : '/workspace';
 
   const bottomSection = (
     <div className="p-2 mt-auto space-y-2 xv-sidebar-bottom">
@@ -319,7 +314,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     <>
       <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px] shrink-0">
         <HoverTip label="Xroga AI" description="Dashboard home" block className="shrink min-w-0">
-          <Logo href="/dashboard" height={navExpanded ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
+          <Logo href={logoHref} height={navExpanded ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
         </HoverTip>
         {navExpanded ? (
           <button
@@ -400,8 +395,6 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           </div>
         )}
       </nav>
-
-      {!incognito && <GitHubProjectsSidebar expanded={navExpanded} />}
 
       {bottomSection}
       {sidebarOpen && (

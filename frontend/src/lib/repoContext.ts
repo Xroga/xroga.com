@@ -26,3 +26,8 @@ export function saveSelectedRepoContext(ctx: SelectedRepoContext): void {
   if (typeof window === 'undefined') return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ctx));
 }
+
+export function clearSelectedRepoContext(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(STORAGE_KEY);
+}

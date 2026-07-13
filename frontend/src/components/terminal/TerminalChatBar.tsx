@@ -19,6 +19,7 @@ import {
 import { ChatBarFileGrid } from './ChatBarFileGrid';
 import type { SendButtonState } from './ChatBarButtons';
 import { GitHubChipIcon, VercelChipIcon, ChatBarBrandChip } from './ChatBarButtons';
+import { Search } from 'lucide-react';
 import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
@@ -250,6 +251,14 @@ export function TerminalChatBar() {
 
           {!incognito && (
           <div className="xv-chatbar-toolbar flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 overflow-x-auto scrollbar-hide flex-nowrap">
+            <ChatBarTip label="Search integrations" className="shrink-0">
+              <ChatBarToolChip
+                icon={<Search className="w-3.5 h-3.5" />}
+                label="Integrations"
+                onClick={() => setIntegrationsOpen(true)}
+                accent="#006aff"
+              />
+            </ChatBarTip>
             <ChatBarTip label="GitHub repos" className="shrink-0">
               <span className="inline-flex shrink-0 lg:hidden">
                 <ChatBarBrandChip variant="github" label="GitHub" onClick={() => setGithubOpen(true)} plain darkUi={darkUi} connected={githubConnected} />

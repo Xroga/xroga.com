@@ -7,7 +7,7 @@ export const DESKTOP_BG_SLIDESHOW = [
   '/backgrounds/bg-desktop-4-blackhole-nebula.png',
 ] as const;
 
-export const SLIDESHOW_INTERVAL_MS = 5000;
+export const SLIDESHOW_INTERVAL_MS = 8000;
 
 export const DESKTOP_BG = DESKTOP_BG_SLIDESHOW[0];
 export const MOBILE_BG =

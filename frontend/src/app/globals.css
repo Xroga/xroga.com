@@ -3206,6 +3206,18 @@ body.theme-gray * {
     color: #ffffff !important;
   }
 
+  body.theme-image .xv-terminal-dock .xv-go-btn {
+    border-color: rgba(255, 255, 255, 0.35) !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+  }
+  body.theme-image .xv-terminal-dock .xv-go-btn__icon {
+    background: linear-gradient(to bottom, #ffffff, #60a5fa) !important;
+    color: #006aff !important;
+  }
+  body.theme-image .xv-terminal-dock .xv-go-btn__text {
+    color: #ffffff !important;
+  }
+
   body.theme-black .xv-chatbar-secondary-btn,
   body.theme-black .xv-mic-btn:not(.xv-terminal-dock *) {
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
