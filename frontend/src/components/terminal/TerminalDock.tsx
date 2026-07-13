@@ -4,8 +4,8 @@ import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { TerminalChatBar } from './TerminalChatBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
+import { TerminalWorkspacePanel } from './TerminalWorkspacePanel';
 import { RepoContextBar } from './RepoContextBar';
-import { RepoSessionRail } from './RepoSessionRail';
 import { BlackHoleVButton } from './BlackHoleVButton';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { ChevronDown } from 'lucide-react';
@@ -82,13 +82,15 @@ export function TerminalDock() {
         )}
       >
         <div className="flex items-end gap-3">
-          {!incognito && <RepoSessionRail />}
           <div className="flex-1 min-w-0">
             {!incognito && (
-              <div className="flex flex-row items-start justify-between gap-2 px-0.5 mb-0.5">
-                <RepoContextBar outside />
-                <BlackHoleVButton className="xv-blackhole-outside shrink-0 ml-auto self-start" />
-              </div>
+              <>
+                <TerminalWorkspacePanel />
+                <div className="flex flex-row items-start justify-between gap-2 px-0.5 mb-0.5">
+                  <RepoContextBar outside />
+                  <BlackHoleVButton className="xv-blackhole-outside shrink-0 ml-auto self-start" />
+                </div>
+              </>
             )}
             <ChatbarQueueOutside />
             <div className="xv-chatbar-stack relative">

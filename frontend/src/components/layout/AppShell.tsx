@@ -27,6 +27,8 @@ interface AppShellProps {
 }
 
 function HeaderLogo({ incognito, isDashboard }: { incognito: boolean; isDashboard: boolean }) {
+  const pathname = usePathname();
+  const logoHref = pathname.startsWith('/dashboard') ? '/dashboard' : '/workspace';
   return (
     <div
       className={cn(
@@ -35,7 +37,7 @@ function HeaderLogo({ incognito, isDashboard }: { incognito: boolean; isDashboar
       )}
     >
       <Logo
-        href="/dashboard"
+        href={logoHref}
         height={52}
         variant="header"
         className="!h-[52px] sm:!h-[68px] lg:!h-[72px]"
