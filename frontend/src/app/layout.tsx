@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Nunito } from 'next/font/google';
+import { Inter, Nunito, Space_Grotesk, Syne } from 'next/font/google';
 import './globals.css';
 import '@/styles/uiverse.css';
 import { buildMetadata, FAVICON_URL, FAVICON_LOCAL } from '@/lib/seo';
@@ -8,6 +8,16 @@ import { SiteJsonLd } from '@/components/seo/SiteJsonLd';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const nunito = Nunito({ subsets: ['latin'], variable: '--font-nunito', weight: ['400', '600', '700', '800'] });
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-space-grotesk',
+  weight: ['400', '500', '600', '700'],
+});
+const syne = Syne({
+  subsets: ['latin'],
+  variable: '--font-syne',
+  weight: ['400', '600', '700', '800'],
+});
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -55,7 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="shortcut icon" href="/favicon-32.png" />
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>
-      <body className={`${inter.variable} ${nunito.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${nunito.variable} ${spaceGrotesk.variable} ${syne.variable} font-sans antialiased`}>
         <SiteJsonLd />
         <RootProviders>{children}</RootProviders>
       </body>

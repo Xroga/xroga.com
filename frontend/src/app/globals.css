@@ -2420,6 +2420,128 @@ body.theme-gray * {
     animation: universe-fade-in 0.4s ease-out;
   }
 
+  /* Modern geometric welcome — Space Grotesk + Syne */
+  .xv-welcome-modern {
+    font-family: var(--font-space-grotesk), var(--font-inter), system-ui, sans-serif;
+    padding: 0.25rem 0 0.5rem;
+  }
+  .xv-welcome-grid-overlay {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+  }
+  body.theme-white .xv-welcome-grid-overlay {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  }
+  .xv-welcome-greeting {
+    font-size: clamp(1.35rem, 2.8vw, 2.25rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--foreground);
+  }
+  .xv-welcome-name {
+    font-family: var(--font-syne), var(--font-space-grotesk), sans-serif;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ffffff 0%, #a8b4c4 55%, #6b7280 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  body.theme-white .xv-welcome-name {
+    background: linear-gradient(135deg, #0f172a 0%, #334155 55%, #64748b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  .xv-welcome-brand-row {
+    margin-top: 0.35rem;
+  }
+  .xv-welcome-xroga {
+    font-family: var(--font-syne), sans-serif;
+    font-size: clamp(2rem, 5vw, 3.75rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  body.theme-white .xv-welcome-xroga {
+    color: #0f172a;
+  }
+  .xv-welcome-blackhole {
+    font-family: var(--font-syne), sans-serif;
+    font-size: clamp(1.75rem, 4.2vw, 3.25rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    background: linear-gradient(180deg, #ffffff 0%, #c4b5fd 42%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  body.theme-white .xv-welcome-blackhole {
+    background: linear-gradient(180deg, #1e293b 0%, #6366f1 45%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  .xv-welcome-v {
+    font-family: var(--font-syne), sans-serif;
+    font-size: clamp(1.5rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1;
+    color: #60a5fa;
+    text-shadow: 0 0 24px rgba(96, 165, 250, 0.35);
+  }
+  .xv-welcome-taglines {
+    margin-top: 0.65rem;
+    font-size: clamp(0.72rem, 1.4vw, 0.92rem);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--muted);
+    max-width: 42rem;
+  }
+  .xv-welcome-ship {
+    border-left: 3px solid rgba(96, 165, 250, 0.35);
+    padding-left: 0.85rem;
+  }
+  .xv-welcome-rotate.xv-rotating-words--dashboard {
+    --rw-accent: #60a5fa;
+    font-family: var(--font-syne), var(--font-space-grotesk), sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .xv-welcome-rotate .xv-rotating-prefix {
+    font-weight: 600;
+    color: var(--foreground);
+    opacity: 0.75;
+  }
+  .xv-welcome-rotate .xv-rotating-word {
+    background: linear-gradient(180deg, #ffffff 0%, #ddd6fe 38%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+  }
+  body.theme-white .xv-welcome-rotate .xv-rotating-word {
+    background: linear-gradient(180deg, #0f172a 0%, #6366f1 50%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  .xv-welcome-rotate .xv-rotating-words-slot {
+    height: 1.35em;
+  }
+  .xv-welcome-rotate .xv-rotating-word {
+    height: 1.35em;
+    line-height: 1.35em;
+  }
+  .xv-welcome-rotate .xv-rotating-words-track {
+    animation: xv-words-spin 4s ease-in-out infinite;
+  }
+
   body.xv-page-fullscreen-active .xv-dashboard-welcome {
     display: none;
   }
