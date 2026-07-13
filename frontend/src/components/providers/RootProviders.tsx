@@ -10,9 +10,11 @@ import { ScheduledFeedbackPrompt } from '@/components/feedback/ScheduledFeedback
 import { VoiceTalkProvider } from '@/context/VoiceTalkContext';
 import { VoiceTalkOverlay } from '@/components/voice/VoiceTalkOverlay';
 import { getFirstVisitTime } from '@/lib/scheduledFeedback';
+import { recoverCorruptStorage } from '@/lib/storageRecovery';
 
 export function RootProviders({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    recoverCorruptStorage();
     getFirstVisitTime();
   }, []);
 

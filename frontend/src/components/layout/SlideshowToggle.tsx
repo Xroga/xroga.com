@@ -2,19 +2,29 @@
 
 import { Images } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
+import { useSlideshowIndex } from '@/components/providers/SlideshowIndexContext';
 import { cn } from '@/lib/utils';
 
 export function SlideshowToggle({ className, compact }: { className?: string; compact?: boolean }) {
   const theme = useThemeStore((s) => s.theme);
   const slideshowEnabled = useThemeStore((s) => s.slideshowEnabled);
   const setSlideshowEnabled = useThemeStore((s) => s.setSlideshowEnabled);
+  const setSlideshowFrozenIndex = useThemeStore((s) => s.setSlideshowFrozenIndex);
+  const slideIndex = useSlideshowIndex();
 
   if (theme !== 'image') return null;
 
   return (
     <button
       type="button"
-      onClick={() => setSlideshowEnabled(!slideshowEnabled)}
+      onClick={() => {
+        if (slideshowEnabled) {
+          setSlideshowFrozenIndex(slideIndex);
+          setSlideshowEnabled(false);
+        } else {
+          setSlideshowEnabled(true);
+        }
+      }}
       className={cn(
         'inline-flex items-center gap-2 rounded-lg border transition-colors',
         compact

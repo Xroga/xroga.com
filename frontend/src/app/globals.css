@@ -3444,6 +3444,86 @@ body.theme-gray * {
     width: 52px;
   }
 
+  /* Homepage combo mic / GO! — one control, context-aware */
+  .xv-combo-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    cursor: pointer;
+    transition: width 0.28s ease, background 0.28s ease, border-color 0.28s ease, transform 0.15s ease;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .xv-combo-action:active {
+    transform: scale(0.96);
+  }
+  .xv-combo-action--mic {
+    width: 38px;
+    height: 38px;
+    border-radius: 0.85rem;
+    background: rgba(0, 106, 255, 0.14);
+    border-color: rgba(96, 165, 250, 0.35);
+    backdrop-filter: blur(8px);
+  }
+  .xv-combo-action--listen {
+    background: rgba(239, 68, 68, 0.16);
+    border-color: rgba(248, 113, 113, 0.45);
+  }
+  .xv-combo-action--go {
+    width: 72px;
+    height: 36px;
+    background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+    border-color: rgba(255, 255, 255, 0.55);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.18);
+  }
+  .xv-combo-action--stop {
+    width: 68px;
+    height: 36px;
+    background: rgb(12, 12, 12);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  .xv-combo-action__icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #fff;
+    background: linear-gradient(180deg, #60a5fa 0%, #006aff 100%);
+    box-shadow: 0 4px 12px rgba(0, 106, 255, 0.35);
+  }
+  .xv-combo-action__icon--mic {
+    width: auto;
+    height: auto;
+    background: transparent;
+    box-shadow: none;
+    color: #93c5fd;
+  }
+  .xv-combo-action__icon--stop {
+    background: linear-gradient(180deg, #f87171, #dc2626);
+  }
+  .xv-combo-action__label {
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: #006aff;
+    padding-right: 0.55rem;
+    padding-left: 0.2rem;
+    white-space: nowrap;
+  }
+  .xv-combo-action--stop .xv-combo-action__label {
+    color: #fff;
+    padding-left: 0.35rem;
+  }
+  .xv-combo-action--go:hover .xv-combo-action__icon {
+    transform: scale(1.04);
+  }
+
   /* White theme dashboard chatbar — blue/silver upload gradient */
   body.theme-white .xv-terminal-dock .xv-power-smash-upload__shell {
     background: linear-gradient(165deg, #4d94ff 0%, #006aff 50%, #0052cc 100%) !important;

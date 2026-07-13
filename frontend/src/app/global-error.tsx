@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { RetroTvErrorPage, RetroTvErrorActions } from '@/components/errors/RetroTvErrorPage';
+import { resetClientGlitchState } from '@/lib/storageRecovery';
 
 export default function GlobalError({
   error,
@@ -27,16 +28,14 @@ export default function GlobalError({
             <RetroTvErrorActions
               primaryLabel="Reset & retry"
               onPrimary={() => {
-                try {
-                  localStorage.removeItem('xroga_workspace_session');
-                  sessionStorage.removeItem('xroga_workspace_session');
-                } catch {
-                  /* ignore */
-                }
+                resetClientGlitchState();
                 reset();
               }}
               secondaryLabel="Reload workspace"
-              onSecondary={() => window.location.assign('/dashboard')}
+              onSecondary={() => {
+                resetClientGlitchState();
+                window.location.assign('/workspace');
+              }}
             />
           }
         />

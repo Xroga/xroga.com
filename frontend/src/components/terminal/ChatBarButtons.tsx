@@ -1,10 +1,87 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Rocket, Square, CloudUpload } from 'lucide-react';
+import { Rocket, Square, CloudUpload, Mic } from 'lucide-react';
 
 export type SendButtonState = 'idle' | 'sending' | 'thinking' | 'launched';
 export type ChatbarSurface = 'homepage' | 'dashboard' | 'incognito';
+
+export function ChatBarComboAction({
+  hasText,
+  listening,
+  onMicToggle,
+  micDisabled,
+  sendState = 'idle',
+  stopping = false,
+  onStop,
+  surface = 'homepage',
+}: {
+  hasText: boolean;
+  listening: boolean;
+  onMicToggle: () => void;
+  micDisabled?: boolean;
+  sendState?: SendButtonState;
+  stopping?: boolean;
+  onStop?: () => void;
+  surface?: ChatbarSurface;
+}) {
+  const busy = stopping || sendState === 'sending' || sendState === 'thinking';
+  const launchReady = hasText || sendState === 'launched';
+
+  if (busy) {
+    return (
+      <button
+        type="button"
+        onClick={onStop}
+        className={cn('xv-combo-action xv-combo-action--stop shrink-0', surface === 'homepage' && 'xv-combo-action--home')}
+        aria-label="Stop response"
+      >
+        <span className="xv-combo-action__icon xv-combo-action__icon--stop">
+          <Square className="w-2.5 h-2.5 fill-current" />
+        </span>
+        <span className="xv-combo-action__label">Stop</span>
+      </button>
+    );
+  }
+
+  if (launchReady) {
+    return (
+      <button
+        type="submit"
+        className={cn('xv-combo-action xv-combo-action--go shrink-0', surface === 'homepage' && 'xv-combo-action--home')}
+        aria-label="Launch"
+      >
+        <span className="xv-combo-action__icon">
+          <Rocket className="w-3 h-3" />
+        </span>
+        <span className="xv-combo-action__label">GO!</span>
+      </button>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onMicToggle}
+      disabled={micDisabled}
+      className={cn(
+        'xv-combo-action xv-combo-action--mic shrink-0',
+        surface === 'homepage' && 'xv-combo-action--home',
+        listening && 'xv-combo-action--listen'
+      )}
+      title={listening ? 'Stop listening' : 'Speak to text'}
+      aria-label={listening ? 'Stop voice input' : 'Start voice input'}
+    >
+      {listening ? (
+        <VoiceWaveform active />
+      ) : (
+        <span className="xv-combo-action__icon xv-combo-action__icon--mic">
+          <Mic className="w-4 h-4" />
+        </span>
+      )}
+    </button>
+  );
+}
 
 export function ChatBarSendButton({
   stopping = false,

@@ -122,19 +122,23 @@ export const useThemeStore = create<ThemeState>()(
       }),
       onRehydrateStorage: () => (state) => {
         if (state && typeof window !== 'undefined') {
-          const d = localStorage.getItem(CUSTOM_DESKTOP_BG_KEY);
-          const m = localStorage.getItem(CUSTOM_MOBILE_BG_KEY);
-          if (d) state.customDesktopBg = d;
-          if (m) state.customMobileBg = m;
-          const se = localStorage.getItem(SLIDESHOW_ENABLED_KEY);
-          if (se === '0') state.slideshowEnabled = false;
-          const fi = localStorage.getItem(SLIDESHOW_FROZEN_INDEX_KEY);
-          if (fi != null && fi !== '') {
-            const n = parseInt(fi, 10);
-            if (!Number.isNaN(n)) state.slideshowFrozenIndex = n;
-          }
-          if (!state.terminalSkin) {
-            state.terminalSkin = DEFAULT_TERMINAL_SKIN[state.theme];
+          try {
+            const d = localStorage.getItem(CUSTOM_DESKTOP_BG_KEY);
+            const m = localStorage.getItem(CUSTOM_MOBILE_BG_KEY);
+            if (d) state.customDesktopBg = d;
+            if (m) state.customMobileBg = m;
+            const se = localStorage.getItem(SLIDESHOW_ENABLED_KEY);
+            if (se === '0') state.slideshowEnabled = false;
+            const fi = localStorage.getItem(SLIDESHOW_FROZEN_INDEX_KEY);
+            if (fi != null && fi !== '') {
+              const n = parseInt(fi, 10);
+              if (!Number.isNaN(n)) state.slideshowFrozenIndex = n;
+            }
+            if (!state.terminalSkin) {
+              state.terminalSkin = DEFAULT_TERMINAL_SKIN[state.theme];
+            }
+          } catch {
+            localStorage.removeItem('xroga-theme');
           }
         }
       },
