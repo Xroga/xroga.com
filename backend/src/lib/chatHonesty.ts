@@ -17,9 +17,12 @@ export function sanitizeChatHonesty(
   if (!out) return out;
 
   if (opts?.thirdPartyProduct) {
-    // User asked about another product — strip wrongful Xroga branding entirely
     out = out.replace(/\b(XROGA AI|Xroga AI|Black Hole V∞)\b/gi, opts.thirdPartyProduct);
     out = out.replace(/\bthis platform\b/gi, opts.thirdPartyProduct);
+    out = out.replace(
+      new RegExp(`${opts.thirdPartyProduct} ${opts.thirdPartyProduct}`, 'gi'),
+      opts.thirdPartyProduct
+    );
   } else {
     let brandCount = 0;
     out = out.replace(/\b(XROGA AI|Xroga AI|Black Hole V∞)\b/g, (match) => {
