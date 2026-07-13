@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import 'xterm/css/xterm.css';
 @import 'katex/dist/katex.min.css';
 
@@ -20,8 +20,9 @@
   --warning: #fbbf24;
   --danger: #ef4444;
   --glass-blur: 20px;
-  --font-sans: 'Inter', var(--font-geist-sans), system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-xv-body), var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-xv-display), Georgia, 'Times New Roman', serif;
+  --font-mono: var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace;
   --sidebar-width: 16rem;
 }
 
@@ -29,7 +30,22 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-sans);
+  font-feature-settings: 'ss01' on, 'cv01' on;
+  letter-spacing: -0.012em;
   transition: background 500ms ease, color 500ms ease;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+input,
+textarea,
+select {
+  font-family: var(--font-sans);
 }
 
 body.theme-image {
@@ -1820,7 +1836,7 @@ body.theme-gray * {
     letter-spacing: 0.02em;
   }
   .xv-hero-axrina-title {
-    font-family: var(--font-nunito), 'Nunito', var(--font-inter), system-ui, sans-serif;
+    font-family: var(--font-sans);
     font-size: clamp(2rem, 6.5vw, 4.25rem);
     font-weight: 800;
     line-height: 1.12;
@@ -1842,7 +1858,7 @@ body.theme-gray * {
   }
   .xv-hero-axrina-sub {
     color: rgba(232, 196, 168, 0.75);
-    font-family: 'Nunito', var(--font-inter), sans-serif;
+    font-family: var(--font-sans);
   }
   .xv-get-started-outline {
     background: rgba(0, 106, 255, 0.85) !important;
@@ -1855,7 +1871,7 @@ body.theme-gray * {
 
   /* Auth shell */
   .xv-auth-ceo-quote {
-    font-family: 'Nunito', var(--font-inter), sans-serif;
+    font-family: var(--font-sans);
   }
   .xv-auth-form-panel .xv-auth-card {
     background: transparent;
@@ -1864,7 +1880,7 @@ body.theme-gray * {
     padding: 0;
   }
   .xv-auth-form-panel .xv-auth-heading {
-    font-family: 'Nunito', var(--font-inter), sans-serif;
+    font-family: var(--font-sans);
     font-size: 1.35rem;
     font-weight: 800;
     text-align: center;
@@ -1893,7 +1909,7 @@ body.theme-gray * {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    font-family: 'Nunito', var(--font-inter), sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: -0.02em;
   }
   .xv-auth-gradient-text {
@@ -2420,9 +2436,9 @@ body.theme-gray * {
     animation: universe-fade-in 0.4s ease-out;
   }
 
-  /* Modern geometric welcome — Space Grotesk + Syne */
+  /* Modern welcome — Plus Jakarta + Instrument Serif */
   .xv-welcome-modern {
-    font-family: var(--font-space-grotesk), var(--font-inter), system-ui, sans-serif;
+    font-family: var(--font-sans);
     padding: 0.25rem 0 0.5rem;
   }
   .xv-welcome-grid-overlay {
@@ -2438,108 +2454,89 @@ body.theme-gray * {
       linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
   }
   .xv-welcome-greeting {
-    font-size: clamp(1.35rem, 2.8vw, 2.25rem);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
     font-weight: 600;
-    letter-spacing: -0.03em;
-    line-height: 1.15;
+    letter-spacing: -0.035em;
+    line-height: 1.12;
     color: var(--foreground);
   }
   .xv-welcome-name {
-    font-family: var(--font-syne), var(--font-space-grotesk), sans-serif;
-    font-weight: 700;
-    background: linear-gradient(135deg, #ffffff 0%, #a8b4c4 55%, #6b7280 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  body.theme-white .xv-welcome-name {
-    background: linear-gradient(135deg, #0f172a 0%, #334155 55%, #64748b 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-  }
-  .xv-welcome-brand-row {
-    margin-top: 0.35rem;
-  }
-  .xv-welcome-xroga {
-    font-family: var(--font-syne), sans-serif;
-    font-size: clamp(2rem, 5vw, 3.75rem);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    line-height: 1;
-    text-transform: uppercase;
-    color: #fff;
-  }
-  body.theme-white .xv-welcome-xroga {
-    color: #0f172a;
-  }
-  .xv-welcome-blackhole {
-    font-family: var(--font-syne), sans-serif;
-    font-size: clamp(1.75rem, 4.2vw, 3.25rem);
     font-weight: 700;
     letter-spacing: -0.03em;
-    line-height: 1;
-    background: linear-gradient(180deg, #ffffff 0%, #c4b5fd 42%, #7c3aed 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  body.theme-white .xv-welcome-blackhole {
-    background: linear-gradient(180deg, #1e293b 0%, #6366f1 45%, #7c3aed 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-  }
-  .xv-welcome-v {
-    font-family: var(--font-syne), sans-serif;
-    font-size: clamp(1.5rem, 3.5vw, 2.75rem);
-    font-weight: 800;
-    line-height: 1;
-    color: #60a5fa;
-    text-shadow: 0 0 24px rgba(96, 165, 250, 0.35);
-  }
-  .xv-welcome-taglines {
-    margin-top: 0.65rem;
-    font-size: clamp(0.72rem, 1.4vw, 0.92rem);
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    color: var(--muted);
-    max-width: 42rem;
-  }
-  .xv-welcome-ship {
-    border-left: 3px solid rgba(96, 165, 250, 0.35);
-    padding-left: 0.85rem;
-  }
-  .xv-welcome-rotate.xv-rotating-words--dashboard {
-    --rw-accent: #60a5fa;
-    font-family: var(--font-syne), var(--font-space-grotesk), sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
-  .xv-welcome-rotate .xv-rotating-prefix {
-    font-weight: 600;
     color: var(--foreground);
-    opacity: 0.75;
   }
-  .xv-welcome-rotate .xv-rotating-word {
-    background: linear-gradient(180deg, #ffffff 0%, #ddd6fe 38%, #8b5cf6 100%);
+  .xv-welcome-vmark {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.02em;
+    margin-top: 0.15rem;
+    line-height: 0.9;
+  }
+  .xv-vmark-v {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(3.5rem, 9vw, 6.5rem);
+    letter-spacing: -0.06em;
+    background: linear-gradient(105deg, #ffffff 0%, #c7d2fe 38%, #818cf8 62%, #a78bfa 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    font-weight: 700;
+    filter: drop-shadow(0 8px 28px rgba(129, 140, 248, 0.22));
   }
-  body.theme-white .xv-welcome-rotate .xv-rotating-word {
-    background: linear-gradient(180deg, #0f172a 0%, #6366f1 50%, #7c3aed 100%);
+  body.theme-white .xv-vmark-v {
+    background: linear-gradient(105deg, #0f172a 0%, #4338ca 42%, #7c3aed 100%);
     -webkit-background-clip: text;
     background-clip: text;
   }
-  .xv-welcome-rotate .xv-rotating-words-slot {
-    height: 1.35em;
+  .xv-vmark-infinity {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(3rem, 8vw, 5.75rem);
+    letter-spacing: -0.04em;
+    background: linear-gradient(120deg, #60a5fa 0%, #a78bfa 55%, #e879f9 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transform: translateY(0.06em);
   }
-  .xv-welcome-rotate .xv-rotating-word {
-    height: 1.35em;
-    line-height: 1.35em;
+  body.theme-white .xv-vmark-infinity {
+    background: linear-gradient(120deg, #2563eb 0%, #7c3aed 70%, #c026d3 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
   }
-  .xv-welcome-rotate .xv-rotating-words-track {
-    animation: xv-words-spin 4s ease-in-out infinite;
+  .xv-welcome-tagline-mixed {
+    margin-top: 0.55rem;
+    font-size: clamp(1rem, 2.2vw, 1.45rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.25;
+    color: var(--foreground);
+    max-width: 40rem;
+  }
+  .xv-welcome-tagline-sub {
+    margin-top: 0.35rem;
+    font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.35;
+    color: var(--muted);
+    max-width: 40rem;
+  }
+  .xv-tagline-accent {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    background: linear-gradient(90deg, #93c5fd 0%, #a78bfa 48%, #c084fc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  body.theme-white .xv-tagline-accent {
+    background: linear-gradient(90deg, #2563eb 0%, #7c3aed 55%, #9333ea 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
   }
 
   .xv-chat-turn-rail {
