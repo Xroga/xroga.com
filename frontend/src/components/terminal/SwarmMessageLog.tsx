@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import { Terminal, Palette, MessageCircleHeart } from 'lucide-react';
+import { Terminal, Palette, MessageCircleHeart, Maximize2, Minimize2 } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -10,7 +10,7 @@ import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
 import { BrowserPanelToggle } from './BrowserPanel';
 import { TERMINAL_SKIN_LABELS } from '@/lib/theme';
 import { ProcessingLogo } from '@/components/layout/ProcessingLogo';
-import { ModelBadge } from '@/components/ui/ModelBadge';
+import { BlackHoleVButton } from './BlackHoleVButton';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
@@ -55,6 +55,8 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
+  const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
+  const setTerminalFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const profile = useAppStore((s) => s.profile);
   const hydrated = useHydrated();
   const storeIncognitoRaw = usePrivacyStore((s) => s.incognito);
@@ -293,13 +295,12 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           compact ? '' : 'w-full'
         )}
       >
-        <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 border-b border-[var(--card-border)]/30 overflow-x-auto scrollbar-hide">
+        <div className="xv-terminal-header sticky top-0 z-20 flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 border-b border-[var(--card-border)]/30 overflow-x-auto scrollbar-hide backdrop-blur-xl bg-[var(--card)]/55">
           <Terminal className="w-4 h-4 opacity-70 shrink-0 hidden sm:block" />
           <div className="flex-1 min-w-0">
             <h3 className="font-terminal text-xs sm:text-sm opacity-90 truncate">
               {isIncognito ? 'guest@incognito ~ temporary' : 'xroga@swarm ~ terminal'}
             </h3>
-            {!isIncognito && <ModelBadge variant="inline" className="text-[8px] sm:text-[9px] opacity-90" />}
             {isIncognito && (
               <p className="text-[8px] sm:text-[9px] text-white/55 font-medium">Private room · not saved</p>
             )}
@@ -307,6 +308,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           <div className="hidden sm:flex items-center gap-1 shrink-0">
             {!isIncognito && (
             <>
+            <BlackHoleVButton compact className="shrink-0 mr-0.5" />
             <button
               type="button"
               onClick={cycleTerminalSkin}
@@ -317,6 +319,19 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
               <span className="hidden md:inline opacity-70">{TERMINAL_SKIN_LABELS[terminalSkin]}</span>
             </button>
             <BrowserPanelToggle />
+            <button
+              type="button"
+              onClick={() => setTerminalFullscreen(!terminalFullscreen)}
+              className="p-1 rounded-md hover:bg-white/10 transition-colors text-[var(--muted)] hover:text-[var(--foreground)] shrink-0"
+              title={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
+              aria-label={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
+            >
+              {terminalFullscreen ? (
+                <Minimize2 className="w-3 h-3" />
+              ) : (
+                <Maximize2 className="w-3 h-3" />
+              )}
+            </button>
             </>
             )}
             {!isIncognito && (
@@ -333,6 +348,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           </div>
           {!isIncognito && (
           <div className="flex sm:hidden items-center gap-0.5 shrink-0">
+            <BlackHoleVButton compact className="shrink-0 scale-90 origin-right" />
             <BrowserPanelToggle />
             <button
               type="button"
@@ -342,6 +358,15 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
               aria-label="Terminal theme"
             >
               <Palette className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setTerminalFullscreen(!terminalFullscreen)}
+              className="p-1.5 rounded-lg hover:bg-white/10 shrink-0"
+              title={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+              aria-label={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+            >
+              {terminalFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
             </button>
             <button
               type="button"

@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['var(--font-xv-body)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-xv-display)', 'Georgia', 'serif'],
+        display: ['var(--font-xv-body)', 'var(--font-xv-display)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-xv-mono)', 'JetBrains Mono', 'ui-monospace', 'monospace'],
       },
       colors: {

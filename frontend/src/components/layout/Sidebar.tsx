@@ -120,6 +120,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const closeBrowser = useThemeStore((s) => s.closeBrowser);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const setSidebarWidth = useThemeStore((s) => s.setSidebarWidth);
+  const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
   const planTier = useAppStore((s) => s.planTier);
   const tokenUsage = useAppStore((s) => s.tokenUsage);
   const profile = useAppStore((s) => s.profile);
@@ -415,8 +416,9 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
       <button
         type="button"
         className={cn(
-          'lg:hidden fixed top-[max(0.75rem,env(safe-area-inset-top))] left-3 p-2.5 rounded-xl glass-panel shadow-lg z-[80]',
+          'xv-mobile-menu-btn lg:hidden fixed top-[max(0.75rem,env(safe-area-inset-top))] left-3 p-2.5 rounded-xl glass-panel shadow-lg z-[80]',
           mobileOpen && 'opacity-0 pointer-events-none',
+          terminalFullscreen && 'hidden',
         )}
         onClick={() => setMobileOpen(true)}
         aria-label="Open menu"
@@ -448,7 +450,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
           toggleSidebar();
           setMobileOpen(false);
         }}
-        className="xv-sidebar-edge-toggle hidden lg:flex"
+        className={cn('xv-sidebar-edge-toggle hidden lg:flex', terminalFullscreen && '!hidden')}
         aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
         style={{ left: sidebarOpen ? asideWidth : 0 }}
       >

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Instrument_Serif, Inter, JetBrains_Mono, Plus_Jakarta_Sans } from 'next/font/google';
+import { Instrument_Serif, Inter, JetBrains_Mono, Orbitron } from 'next/font/google';
 import './globals.css';
 import '@/styles/uiverse.css';
 import { buildMetadata, FAVICON_URL, FAVICON_LOCAL } from '@/lib/seo';
@@ -7,10 +7,10 @@ import { RootProviders } from '@/components/providers/RootProviders';
 import { SiteJsonLd } from '@/components/seo/SiteJsonLd';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const plusJakarta = Plus_Jakarta_Sans({
+const orbitron = Orbitron({
   subsets: ['latin'],
   variable: '--font-xv-body',
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['400', '500', '600', '700', '800', '900'],
 });
 const instrumentSerif = Instrument_Serif({
   subsets: ['latin'],
@@ -71,7 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>
       <body
-        className={`${inter.variable} ${plusJakarta.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        className={`${inter.variable} ${orbitron.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
         <SiteJsonLd />
         <RootProviders>{children}</RootProviders>

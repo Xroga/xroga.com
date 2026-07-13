@@ -42,7 +42,8 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
   return (
     <div
       className={cn(
-        'xv-chat-turn-rail hidden lg:flex flex-col shrink-0 w-[min(220px,22vw)] pl-2',
+        'xv-chat-turn-rail hidden lg:flex flex-col shrink-0 transition-[width] duration-200 ease-out',
+        expanded ? 'w-[min(220px,22vw)] pl-2' : 'w-5',
         className
       )}
       onMouseEnter={() => setExpanded(true)}
@@ -51,74 +52,78 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
         setHoveredId(null);
       }}
     >
-      {expanded && previewTurn ? (
-        <div className="xv-chat-turn-preview mb-2 rounded-xl border border-[var(--card-border)] bg-[var(--card)]/95 px-3 py-2 text-[11px] leading-snug text-[var(--foreground)] shadow-lg backdrop-blur-md">
-          {previewTurn.label}
-        </div>
-      ) : null}
+      {expanded ? (
+        <>
+          {previewTurn ? (
+            <div className="xv-chat-turn-preview mb-2 rounded-xl border border-[var(--card-border)] bg-[var(--card)]/95 px-3 py-2 text-[11px] leading-snug text-[var(--foreground)] shadow-lg backdrop-blur-md">
+              {previewTurn.label}
+            </div>
+          ) : null}
 
-      <div className="xv-chat-turn-panel flex-1 rounded-2xl border border-[var(--card-border)]/80 bg-[var(--card)]/55 backdrop-blur-md shadow-lg overflow-hidden">
-        <div className="max-h-[min(52vh,420px)] overflow-y-auto py-2 px-1.5 space-y-0.5 scrollbar-thin">
+          <div className="xv-chat-turn-panel flex-1 rounded-2xl border border-[var(--card-border)]/80 bg-[var(--card)]/55 backdrop-blur-md shadow-lg overflow-hidden">
+            <div className="max-h-[min(52vh,420px)] overflow-y-auto py-2 px-1.5 space-y-0.5 scrollbar-thin">
+              {turns.map((turn) => {
+                const active = turn.id === activeId;
+                return (
+                  <button
+                    key={turn.id}
+                    type="button"
+                    onMouseEnter={() => setHoveredId(turn.id)}
+                    onFocus={() => setHoveredId(turn.id)}
+                    onClick={() => onJump(turn.id)}
+                    className={cn(
+                      'group flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors',
+                      active
+                        ? 'bg-[var(--accent)]/12 text-[var(--accent)]'
+                        : 'text-[var(--muted)] hover:bg-white/5 hover:text-[var(--foreground)]'
+                    )}
+                    aria-label={`Jump to: ${clip(turn.label, 80)}`}
+                  >
+                    <span
+                      className={cn(
+                        'min-w-0 flex-1 text-[10px] leading-snug',
+                        active ? 'font-semibold' : 'font-medium opacity-85'
+                      )}
+                    >
+                      {clip(turn.label)}
+                    </span>
+                    <span
+                      className={cn(
+                        'h-0.5 shrink-0 rounded-full transition-all',
+                        active
+                          ? 'w-5 bg-[var(--accent)]'
+                          : 'w-2.5 bg-[var(--muted)]/40 group-hover:w-4 group-hover:bg-[var(--accent)]/55'
+                      )}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="xv-chat-turn-collapsed flex flex-col items-end gap-2 py-3 pr-0.5">
           {turns.map((turn) => {
             const active = turn.id === activeId;
             return (
               <button
-                key={turn.id}
+                key={`tick-${turn.id}`}
                 type="button"
                 onMouseEnter={() => setHoveredId(turn.id)}
-                onFocus={() => setHoveredId(turn.id)}
                 onClick={() => onJump(turn.id)}
+                title={clip(turn.label, 60)}
+                aria-label={`Jump to prompt ${clip(turn.label, 40)}`}
                 className={cn(
-                  'group flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors',
+                  'rounded-full transition-all duration-200',
                   active
-                    ? 'bg-[var(--accent)]/12 text-[var(--accent)]'
-                    : 'text-[var(--muted)] hover:bg-white/5 hover:text-[var(--foreground)]'
+                    ? 'h-[3px] w-5 bg-[var(--accent)] shadow-[0_0_8px_rgba(96,165,250,0.4)]'
+                    : 'h-[2px] w-2.5 bg-[var(--muted)]/40 hover:w-4 hover:bg-[var(--accent)]/55'
                 )}
-                aria-label={`Jump to: ${clip(turn.label, 80)}`}
-              >
-                <span
-                  className={cn(
-                    'min-w-0 flex-1 text-[10px] leading-snug',
-                    active ? 'font-semibold' : 'font-medium opacity-85'
-                  )}
-                >
-                  {clip(turn.label)}
-                </span>
-                <span
-                  className={cn(
-                    'h-0.5 shrink-0 rounded-full transition-all',
-                    active
-                      ? 'w-5 bg-[var(--accent)]'
-                      : 'w-2.5 bg-[var(--muted)]/40 group-hover:w-4 group-hover:bg-[var(--accent)]/55'
-                  )}
-                />
-              </button>
+              />
             );
           })}
         </div>
-      </div>
-
-      <div className="mt-2 flex flex-col items-center gap-2 py-1">
-        {turns.map((turn) => {
-          const active = turn.id === activeId;
-          return (
-            <button
-              key={`dot-${turn.id}`}
-              type="button"
-              onMouseEnter={() => setHoveredId(turn.id)}
-              onClick={() => onJump(turn.id)}
-              title={clip(turn.label, 60)}
-              aria-label={`Jump to prompt ${clip(turn.label, 40)}`}
-              className={cn(
-                'rounded-full transition-all',
-                active
-                  ? 'h-1.5 w-6 bg-[var(--accent)] shadow-[0_0_10px_rgba(96,165,250,0.45)]'
-                  : 'h-1 w-3 bg-[var(--muted)]/45 hover:w-5 hover:bg-[var(--accent)]/65'
-              )}
-            />
-          );
-        })}
-      </div>
+      )}
     </div>
   );
 }

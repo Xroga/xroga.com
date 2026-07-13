@@ -86,7 +86,6 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   const terminalBlock = (
     <div className={cn('space-y-3 w-full', fullscreen && 'xv-fullscreen-terminal max-w-none')}>
       <QuickActionTabs />
-      {fullscreen && <div className="flex justify-end">{fullscreenBtn}</div>}
       {browserFullscreen && browserOpen ? (
         <BrowserPanel mode="full" />
       ) : (
