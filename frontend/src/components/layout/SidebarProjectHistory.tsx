@@ -27,6 +27,7 @@ import {
 import {
   ensureSelectedRepoFolder,
   loadRepoSessionsIndex,
+  type RepoActivityKind,
   type RepoSessionIndexEntry,
 } from '@/lib/repoSessionsIndex';
 import { formatSafeDistance } from '@/lib/safeDates';
@@ -44,10 +45,19 @@ type RepoSession = {
   githubBranch?: string;
   cloudSynced: boolean;
   kind: 'local' | 'cloud' | 'index';
+  activityKind?: RepoActivityKind;
   entry?: TerminalHistoryEntry;
   project?: Project;
   index?: RepoSessionIndexEntry;
 };
+
+function activityLabel(kind?: RepoActivityKind | TerminalHistoryEntry['kind']): string {
+  if (kind === 'code') return 'Build';
+  if (kind === 'image') return 'Image';
+  if (kind === 'research' || kind === 'business') return 'Research';
+  if (kind === 'mixed') return 'Mixed';
+  return 'Chat';
+}
 
 type RepoFolder = {
   key: string;
@@ -173,6 +183,16 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         githubBranch: e.githubBranch || 'main',
         cloudSynced: Boolean(e.cloudProjectId),
         kind: 'local',
+        activityKind:
+          e.kind === 'code'
+            ? 'code'
+            : e.kind === 'image'
+              ? 'image'
+              : e.kind === 'research' || e.kind === 'business'
+                ? 'research'
+                : e.kind === 'mixed'
+                  ? 'mixed'
+                  : 'chat',
         entry: e,
       });
     }
@@ -188,6 +208,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         githubBranch: ix.githubBranch || 'main',
         cloudSynced: Boolean(ix.cloudProjectId),
         kind: 'index',
+        activityKind: ix.activityKind ?? 'chat',
         index: ix,
       });
     }
@@ -205,6 +226,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         githubBranch: 'main',
         cloudSynced: true,
         kind: 'cloud',
+        activityKind: 'code',
         project: p,
       });
     }
@@ -359,7 +381,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
       {folders.length === 0 ? (
         <p className="px-2 py-2 text-[10px] text-[var(--muted)] leading-relaxed">
-          Connect GitHub in Integrations, pick a repo in the chat bar, then build — it will show up here.
+          Connect GitHub, select a repo, then chat / research / generate / build. Everything stays under that
+          repo here on Xroga (only code goes to GitHub).
         </p>
       ) : (
         <div className="space-y-0.5 max-h-[280px] overflow-y-auto pr-0.5 scrollbar-thin">
@@ -411,6 +434,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                           <div className="mt-0.5 flex items-center gap-1.5 text-[var(--muted)]">
                             <GitBranch className="h-2.5 w-2.5 text-violet-400" />
                             {session.cloudSynced && <Cloud className="h-2.5 w-2.5 opacity-70" />}
+                            <span className="text-[9px] uppercase tracking-wide opacity-80">
+                              {activityLabel(session.activityKind)}
+                            </span>
                           </div>
                         </button>
                       );

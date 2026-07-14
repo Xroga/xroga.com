@@ -2,12 +2,16 @@ import type { ChatMessage } from '@/context/TerminalChatContext';
 import { getSelectedRepoContext } from '@/lib/repoContext';
 import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 import { saveTerminalSessionToIndexedDB, deleteTerminalSessionFromIndexedDB } from '@/lib/terminalSessionStorage';
-import { markRepoSessionCloudId, registerRepoSession } from '@/lib/repoSessionsIndex';
+import {
+  markRepoSessionCloudId,
+  registerRepoSession,
+  type RepoActivityKind,
+} from '@/lib/repoSessionsIndex';
 
 const KEY = 'xroga_terminal_history';
 const BROWSER_KEYWORDS = /scrape|browser|automate|crawl|linkedin jobs|apply to|web search/i;
 
-export type TerminalHistoryKind = 'chat' | 'code' | 'business' | 'mixed';
+export type TerminalHistoryKind = 'chat' | 'code' | 'business' | 'mixed' | 'image' | 'research';
 export type TerminalHistoryStatus = 'active' | 'stopped' | 'complete';
 
 export interface TerminalHistoryEntry {
@@ -31,20 +35,6 @@ export interface TerminalHistoryEntry {
   updatedAt: string;
 }
 
-function isMediaOnly(messages: ChatMessage[], prompt: string): boolean {
-  const p = prompt.toLowerCase();
-  if (/\b(generate|create|make|draw|design)\b.{0,40}\b(image|picture|photo|logo|thumbnail|poster)\b/i.test(prompt)) {
-    return true;
-  }
-  if (/\b(video|clip|animation|movie|reel)\b/i.test(p) && /\b(generate|create|make|produce)\b/i.test(p)) {
-    return true;
-  }
-  return messages.every((m) => {
-    const fo = m.featureOutput as { type?: string } | undefined;
-    return fo?.type === 'image' || fo?.type === 'video_job_pending' || fo?.type === 'video_studio';
-  });
-}
-
 function isAutomationPrompt(prompt: string): boolean {
   return BROWSER_KEYWORDS.test(prompt);
 }
@@ -53,13 +43,33 @@ function detectKind(messages: ChatMessage[], prompt: string): TerminalHistoryKin
   const hasLanding = messages.some(
     (m) => (m.featureOutput as { type?: string } | undefined)?.type === 'landing_page'
   );
+  const hasImage = messages.some((m) => {
+    const t = (m.featureOutput as { type?: string } | undefined)?.type;
+    return t === 'image' || t === 'video_studio' || t === 'video_job_pending';
+  });
+  const isResearch =
+    /\b(research|search|find|compare|market|competitor|strategy|advice|hackathon)\b/i.test(prompt) &&
+    !hasLanding;
   const isBusiness = /\b(business|startup|dropship|marketing|strategy|revenue|monetiz)\b/i.test(prompt);
   if (hasLanding) return 'code';
-  if (isBusiness) return 'business';
+  if (hasImage) return 'image';
+  if (isResearch || isBusiness) return 'research';
   if (/\b(code|build|api|react|python|script|function|debug|fix)\b/i.test(prompt)) return 'mixed';
   return 'chat';
 }
 
+function toActivityKind(kind: TerminalHistoryKind): RepoActivityKind {
+  if (kind === 'code') return 'code';
+  if (kind === 'image') return 'image';
+  if (kind === 'research' || kind === 'business') return 'research';
+  if (kind === 'mixed') return 'mixed';
+  return 'chat';
+}
+
+/**
+ * Always prefer the selected repo workspace — chats/images/research belong to that
+ * Xroga project. Code may later push to GitHub; chat never goes to GitHub.
+ */
 function extractProjectMeta(messages: ChatMessage[]) {
   const selectedRepo = getSelectedRepoContext();
   for (let i = messages.length - 1; i >= 0; i--) {
@@ -128,7 +138,8 @@ export function saveTerminalHistorySession(opts: {
 
   const firstUser = opts.messages.find((m) => m.role === 'user');
   const titlePrompt = firstUser?.content?.trim() || opts.prompt.trim() || 'Terminal session';
-  if (isMediaOnly(opts.messages, titlePrompt)) return null;
+  // Keep automation out of the Repositories tree; everything else (chat/image/research/code)
+  // saves under the selected GitHub repo workspace on Xroga.
   if (isAutomationPrompt(titlePrompt)) return null;
 
   const preview =
@@ -144,6 +155,10 @@ export function saveTerminalHistorySession(opts: {
   const kind = detectKind(opts.messages, titlePrompt);
   const status = opts.status ?? detectStatus(opts.messages, kind);
 
+  // Prefer sticky repo from an existing session if user briefly lost selection
+  const githubRepoName = meta.githubRepoName ?? existing?.githubRepoName;
+  const githubBranch = meta.githubBranch ?? existing?.githubBranch ?? 'main';
+
   const entry: TerminalHistoryEntry = {
     id: opts.sessionId,
     title: titlePrompt.slice(0, 56),
@@ -152,9 +167,11 @@ export function saveTerminalHistorySession(opts: {
     messages: opts.messages,
     kind,
     status,
-    ...meta,
-    githubBranch: meta.githubBranch ?? existing?.githubBranch,
+    githubRepoUrl: meta.githubRepoUrl ?? (githubRepoName ? `https://github.com/${githubRepoName}` : undefined),
+    githubRepoName,
+    githubBranch,
     cloudProjectId: existing?.cloudProjectId,
+    deployUrl: meta.deployUrl ?? existing?.deployUrl,
     messageCount: opts.messages.length,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
@@ -164,7 +181,6 @@ export function saveTerminalHistorySession(opts: {
   save([entry, ...rest]);
   void saveTerminalSessionToIndexedDB(entry);
 
-  // Lightweight sidebar index — survives even if full history write is quota-trimmed later
   if (entry.githubRepoName?.includes('/')) {
     registerRepoSession({
       githubRepoName: entry.githubRepoName,
@@ -173,6 +189,7 @@ export function saveTerminalHistorySession(opts: {
       sessionId: entry.id,
       cloudProjectId: entry.cloudProjectId,
       status: entry.status,
+      activityKind: toActivityKind(kind),
     });
   }
 
@@ -198,6 +215,5 @@ export function attachCloudProjectId(sessionId: string, cloudProjectId: string) 
 
 export function isTerminalHistoryEntry(entry: TerminalHistoryEntry): boolean {
   if (isAutomationPrompt(entry.prompt)) return false;
-  if (isMediaOnly(entry.messages, entry.prompt)) return false;
   return true;
 }
