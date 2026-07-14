@@ -8,7 +8,11 @@ import { XROGA_MODELS, type XrogaModelRole } from '../../config/modelRegistry.js
 import { publicModelLabel } from '../../config/xrogaPublicModels.js';
 import { XROGA_USER_IDENTITY } from '../../prompts/xrogaIdentity.js';
 import type { BuildUsageTracker } from '../../lib/buildUsageTracker.js';
-import { resolveBuildModelRole, type BuildModelRole } from '../../phase1/modelQuotaTracker.js';
+import {
+  canUseModelRole,
+  resolveBuildModelRole,
+  type BuildModelRole,
+} from '../../phase1/modelQuotaTracker.js';
 
 export type GrokVariant = 'reasoning' | 'fast';
 
@@ -218,7 +222,11 @@ export async function buildModelCall(
   const want45 = Boolean(opts?.allowGrok45) || process.env.XROGA_ALLOW_GROK_45 === '1';
   const max45 = opts?.maxGrok45Calls ?? 1;
   const underCap = !tracker || tracker.canUseGrok45(max45);
-  const allow45ThisCall = want45 && underCap;
+  // Hard 2% Grok 4.5 sharePct — do not exceed allocated slice even when strategy wants it
+  const grok45QuotaOk =
+    !opts?.userId ||
+    (await canUseModelRole(opts.userId, 'grok_fast', estimateIn, estimateOut));
+  const allow45ThisCall = want45 && underCap && grok45QuotaOk;
 
   let grokVariant =
     opts?.grokVariant ??
@@ -227,6 +235,16 @@ export async function buildModelCall(
       : 'reasoning');
   if (grokVariant === 'fast' && !allow45ThisCall) {
     grokVariant = 'reasoning';
+  }
+  // If Grok 4.3 slice is also exhausted, resolveBuildModelRole already remapped off 'grok'.
+  if (role === 'grok' && grokVariant === 'reasoning' && opts?.userId) {
+    const grok43Ok = await canUseModelRole(opts.userId, 'grok_reasoning', estimateIn, estimateOut);
+    if (!grok43Ok) {
+      role = await resolveBuildModelRole(opts.userId, 'pro', opts?.claudeTask ?? 'general', {
+        input: estimateIn,
+        output: estimateOut,
+      });
+    }
   }
 
   const label =
