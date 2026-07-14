@@ -211,7 +211,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     startNewChat();
     handleNavClick();
     router.push('/workspace');
-    // Open repo select if none chosen — #1 appears under that repo after first chat.
+    // Clear repo + open chatbar "Select repository" — never auto-pick for the user.
     window.setTimeout(() => {
       window.dispatchEvent(new CustomEvent('xroga-request-new-terminal'));
     }, 80);
