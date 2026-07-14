@@ -49,23 +49,24 @@ export function FullscreenPreviewModal({
 
   return (
     <div
-      className="fixed inset-0 z-[300] flex flex-col bg-black/95 backdrop-blur-sm"
+      className="fixed inset-0 z-[300] flex flex-col bg-[#0b0d12]"
       role="dialog"
       aria-modal="true"
       aria-label={title}
     >
-      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/10 bg-black/70 shrink-0">
-        <div className="flex items-center gap-2 text-sm font-semibold text-white">
-          <Maximize2 className="w-4 h-4 text-[#006aff]" />
-          {title}
+      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/15 bg-black/90 shrink-0">
+        <div className="flex items-center gap-2 text-sm font-semibold text-white min-w-0">
+          <Maximize2 className="w-4 h-4 text-[#006aff] shrink-0" />
+          <span className="truncate">{title}</span>
+          <span className="hidden sm:inline text-[11px] font-normal text-white/50">Press Esc to exit</span>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-medium hover:bg-white/20 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-bold hover:bg-white/90 transition-colors shrink-0 shadow-lg"
         >
           <X className="w-4 h-4" />
-          Close preview
+          Exit preview
         </button>
       </div>
       <iframe
@@ -74,6 +75,16 @@ export function FullscreenPreviewModal({
         className="flex-1 w-full border-0 bg-white"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
       />
+      {/* Floating exit — always visible even if iframe covers the top bar visually */}
+      <button
+        type="button"
+        onClick={onClose}
+        className="fixed top-4 right-4 z-[310] inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#006aff] text-white text-sm font-bold shadow-xl hover:opacity-95"
+        aria-label="Exit full preview"
+      >
+        <X className="w-4 h-4" />
+        Exit
+      </button>
     </div>
   );
 }

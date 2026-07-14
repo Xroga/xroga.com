@@ -119,7 +119,7 @@ export function BuildCodeSandbox({
               type="button"
               onClick={() => setFullscreen(true)}
               className={cn(
-                'shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors',
+                'shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors',
                 showViewportControls ? '' : 'ml-auto',
                 'bg-[var(--accent)] text-[var(--background)] hover:opacity-90'
               )}
@@ -131,19 +131,28 @@ export function BuildCodeSandbox({
         </div>
 
         {tab === 'preview' ? (
-          <div className="flex justify-center p-2 bg-[var(--foreground)]/[0.03]">
-            <iframe
-              key={refreshKey}
-              srcDoc={mergedPreview}
-              title="Merged site preview"
-              className="rounded-lg border border-[var(--card-border)] bg-white transition-all duration-300"
-              style={{
-                width: VIEWPORT_WIDTH[viewport],
-                maxWidth: '100%',
-                height: viewport === 'mobile' ? 520 : viewport === 'tablet' ? 480 : 360,
-              }}
-              sandbox="allow-scripts allow-same-origin"
-            />
+          <div className="flex flex-col gap-2 p-2 bg-[var(--foreground)]/[0.03]">
+            <p className="text-[10px] text-[var(--muted)] px-1">
+              Scroll inside the frame to see the full site — or open{' '}
+              <button type="button" className="underline text-[var(--accent)]" onClick={() => setFullscreen(true)}>
+                Full Preview
+              </button>{' '}
+              (Exit button top-right).
+            </p>
+            <div className="flex justify-center">
+              <iframe
+                key={refreshKey}
+                srcDoc={mergedPreview}
+                title="Merged site preview"
+                className="rounded-lg border border-[var(--card-border)] bg-white transition-all duration-300"
+                style={{
+                  width: VIEWPORT_WIDTH[viewport],
+                  maxWidth: '100%',
+                  height: viewport === 'mobile' ? 640 : viewport === 'tablet' ? 620 : 560,
+                }}
+                sandbox="allow-scripts allow-same-origin"
+              />
+            </div>
           </div>
         ) : (
           <pre className="p-3 text-[10px] font-mono text-[var(--foreground)]/85 overflow-auto max-h-[min(70vh,720px)] whitespace-pre-wrap break-words">

@@ -9,6 +9,10 @@ import type { LandingPageOutput } from '../../types/features.js';
 import { PHASE_7_EMIT, PHASE_7_CRM_EMIT, XROGA_TAGLINE } from './prompts.js';
 import { PHASE_7_GAME_EMIT } from './gamePrompts.js';
 import { normalizeBuildFiles } from '../../lib/normalizeBuildSource.js';
+import {
+  generateQualityBlogSite,
+  looksLikeGenericFallbackSite,
+} from '../../lib/blogSiteTemplate.js';
 
 interface ParsedSiteCode {
   html: string;
@@ -142,22 +146,35 @@ export async function buildLandingFromSwarmAssembly(
   let site = parseAssembledProject(assembledCode);
 
   if (opts?.skipConsolidate) {
-    if (!site?.html?.trim()) {
-      const enriched = `${userPrompt}\n\nBrief:\n${clarifiedBrief}\n\nVerified code:\n${assembledCode}`;
-      return buildLandingPage(enriched);
+    if (!site?.html?.trim() || looksLikeGenericFallbackSite(site.html, site.css ?? '')) {
+      // Prefer quality blog template over Claude stub / empty Flash essays
+      const blog = generateQualityBlogSite(userPrompt || clarifiedBrief);
+      const normalized = normalizeBuildFiles(blog.html, blog.css, blog.js);
+      return {
+        type: 'landing_page',
+        html: normalized.html,
+        css: normalized.css,
+        js: normalized.js,
+        heroImageUrl: 'https://placehold.co/1200x630/0f6b5c/f6f1e8?text=Blog',
+        deployUrl: '',
+      };
     }
     const html = ensureFullHtml(site.html, site.css, site.js);
     const css = site.css?.trim().length > 40 ? site.css.trim() : DEFAULT_CSS;
     const js =
       site.js?.trim() ||
       `document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}}));`;
-    const normalized = normalizeBuildFiles(html, css, js);
+    let normalized = normalizeBuildFiles(html, css, js);
+    if (looksLikeGenericFallbackSite(normalized.html, normalized.css)) {
+      const blog = generateQualityBlogSite(userPrompt || clarifiedBrief);
+      normalized = normalizeBuildFiles(blog.html, blog.css, blog.js);
+    }
     return {
       type: 'landing_page',
       html: normalized.html,
       css: normalized.css,
       js: normalized.js,
-      heroImageUrl: 'https://placehold.co/1200x630/7c3aed/ffffff?text=XROGA+Build',
+      heroImageUrl: 'https://placehold.co/1200x630/0f6b5c/f6f1e8?text=Blog',
       deployUrl: '',
     };
   }
@@ -178,9 +195,24 @@ export async function buildLandingFromSwarmAssembly(
     console.warn('[assembleLanding] DeepSeek consolidate:', (err as Error).message);
   }
 
-  if (!site?.html?.trim()) {
-    const enriched = `${userPrompt}\n\nBrief:\n${clarifiedBrief}\n\nPlan:\n${approvedPlan}\n\nVerified code:\n${assembledCode}`;
-    return buildLandingPage(enriched);
+  if (!site?.html?.trim() || looksLikeGenericFallbackSite(site.html, site.css ?? '')) {
+    try {
+      const enriched = `${userPrompt}\n\nBrief:\n${clarifiedBrief}\n\nPlan:\n${approvedPlan}`;
+      const built = await buildLandingPage(enriched);
+      if (!looksLikeGenericFallbackSite(built.html, built.css)) return built;
+    } catch {
+      /* fall through to template */
+    }
+    const blog = generateQualityBlogSite(userPrompt || clarifiedBrief);
+    const normalizedBlog = normalizeBuildFiles(blog.html, blog.css, blog.js);
+    return {
+      type: 'landing_page',
+      html: normalizedBlog.html,
+      css: normalizedBlog.css,
+      js: normalizedBlog.js,
+      heroImageUrl: 'https://placehold.co/1200x630/0f6b5c/f6f1e8?text=Blog',
+      deployUrl: '',
+    };
   }
 
   const html = ensureFullHtml(site.html, site.css, site.js);
@@ -189,14 +221,18 @@ export async function buildLandingFromSwarmAssembly(
     site.js?.trim() ||
     `document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}}));`;
 
-  const normalized = normalizeBuildFiles(html, css, js);
+  let normalized = normalizeBuildFiles(html, css, js);
+  if (looksLikeGenericFallbackSite(normalized.html, normalized.css)) {
+    const blog = generateQualityBlogSite(userPrompt || clarifiedBrief);
+    normalized = normalizeBuildFiles(blog.html, blog.css, blog.js);
+  }
 
   return {
     type: 'landing_page',
     html: normalized.html,
     css: normalized.css,
     js: normalized.js,
-    heroImageUrl: 'https://placehold.co/1200x630/7c3aed/ffffff?text=XROGA+Build',
+    heroImageUrl: 'https://placehold.co/1200x630/0f6b5c/f6f1e8?text=Blog',
     deployUrl: '',
   };
 }

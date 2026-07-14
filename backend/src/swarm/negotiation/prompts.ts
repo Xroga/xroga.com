@@ -68,9 +68,10 @@ CRITICAL RULES:
 - Include every section, component, and style needed for this step.
 - NO markdown outside fenced code blocks.
 - Build real files — not pseudocode or placeholders.
-- CSS must be modern: CSS variables, flexbox/grid, typography scale, spacing, hover states, mobile-first media queries.
+- CSS must be modern: CSS variables, flexbox/grid, typography scale, spacing, hover states, mobile-first media queries (@media required).
 - HTML must be semantic (header, nav, main, section, footer) with real content matching the brief — never bare blue links.
 - Match the project theme (colors, fonts, mood) from the brief.
+- If the user asked for a BLOG: build a real blog (unique brand name, hero, 3+ post cards with titles/excerpts, about, footer). NEVER output the generic stub with "Fast / Modern / Reliable" or "Built by Xroga AI Swarm". NEVER put the raw user prompt into an H1.
 - For games, apps, or non-HTML stacks: use the best language/framework for the task (Python, JavaScript, TypeScript, etc.) and output complete runnable code.`;
 
 export const PHASE_3_UPDATE_EXECUTE = `You are XROGA Architect (DeepSeek Code). The user already has a live project and wants TARGETED updates only.
