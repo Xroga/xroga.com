@@ -191,9 +191,21 @@ export function saveTerminalHistorySession(opts: {
       status: entry.status,
       activityKind: toActivityKind(kind),
     });
+    // Permanent account storage — survives New Terminal / refresh / new devices
+    void import('@/lib/cloudTerminalSessions').then(({ pushTerminalSessionToCloud }) => {
+      void pushTerminalSessionToCloud(entry);
+    });
   }
 
   return entry;
+}
+
+/** Force-upload an already-saved session so prior #N is durable before clearing. */
+export async function flushTerminalHistorySessionToCloud(sessionId: string): Promise<void> {
+  const entry = loadTerminalHistory().find((e) => e.id === sessionId);
+  if (!entry?.githubRepoName?.includes('/') || !entry.messages?.length) return;
+  const { flushTerminalSessionToCloud } = await import('@/lib/cloudTerminalSessions');
+  await flushTerminalSessionToCloud(entry);
 }
 
 export function removeTerminalHistoryEntry(id: string) {

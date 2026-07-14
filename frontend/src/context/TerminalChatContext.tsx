@@ -718,13 +718,17 @@ export function TerminalChatProvider({
       thinkingTimerRef.current = null;
     }
     if (!usePrivacyStore.getState().incognito && messages.length > 0) {
-      // Keep prior chat under the selected GitHub repo so sidebar can restore it.
+      // Keep prior chat under the selected GitHub repo (#N) in permanent account storage.
+      const priorId = sessionIdRef.current;
       saveTerminalHistorySession({
-        sessionId: sessionIdRef.current,
+        sessionId: priorId,
         prompt,
         messages,
         status: messages.some((m) => m.buildStopped) ? 'stopped' : undefined,
       });
+      void import('@/lib/terminalHistory').then(({ flushTerminalHistorySessionToCloud }) =>
+        flushTerminalHistorySessionToCloud(priorId)
+      );
     }
     sessionIdRef.current =
       typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`;
