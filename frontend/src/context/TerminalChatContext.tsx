@@ -44,7 +44,6 @@ import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import {
   notifyGithubProjectSaved,
   notifyGithubRepoContext,
-  GITHUB_REPO_CONTEXT_EVENT,
 } from '@/lib/githubProjectEvents';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
