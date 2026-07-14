@@ -595,7 +595,7 @@ export function TerminalChatProvider({
     return () => window.clearTimeout(timer);
   }, [sessionReady, prompt, messages, incognito]);
 
-  /** Live heartbeat while build runs — updates text every 4s so UI never looks frozen */
+  /** Live status text only — do NOT invent file-create activity (felt fake). */
   useEffect(() => {
     if (!loading || swarmNegotiationPhase == null) return;
     const started = thinkingStartedAt ?? Date.now();
@@ -610,9 +610,6 @@ export function TerminalChatProvider({
         buildHeartbeatTickRef.current
       );
       setPipelineMessage(line);
-      setSwarmActivityLog((prev) =>
-        prev[prev.length - 1] === line ? prev : [...prev, line].slice(-24)
-      );
     }, 4000);
     return () => clearInterval(id);
   }, [loading, swarmNegotiationPhase, thinkingStartedAt]);
@@ -1078,7 +1075,9 @@ export function TerminalChatProvider({
             const layer = (event as { councilLayer?: 'elite' | 'reserve' | 'blackhole' }).councilLayer;
             if (layer) setCouncilLayer(layer);
             if (event.agent) setSwarmActiveAgent(event.agent);
-            const negPhase = (event as SwarmProgressEvent).userFacingPhase ?? (event as SwarmProgressEvent).negotiationPhase;
+            // Prefer negotiationPhase so chips advance (userFacingPhase was often stuck at 1).
+            const swarmPhaseEv = event as SwarmProgressEvent;
+            const negPhase = swarmPhaseEv.negotiationPhase ?? swarmPhaseEv.userFacingPhase;
             if (negPhase != null) setSwarmNegotiationPhase(negPhase);
             const swarmEv = event as SwarmProgressEvent;
             if (swarmEv.swarmTodos?.length) {

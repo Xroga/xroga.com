@@ -57,11 +57,18 @@ export function parseAgentActivityEntries(lines: string[], buildPrompt?: string)
       continue;
     }
 
-    if (/scaffold|logic|black hole|xroga pulse|xroga architect|building/i.test(line)) {
-      const file = scaffoldPaths[editIndex % scaffoldPaths.length]!;
+    // Only claim file writes from explicit create/write lines — never invent vercel.json from heartbeat copy.
+    if (/\b(created|wrote|writing|saved)\b/i.test(line) && /\.(html|css|js|tsx?|json|md)\b/i.test(line)) {
+      const fileMatch = line.match(/[\w./-]+\.(html|css|js|tsx?|json|md)\b/i);
+      const file = fileMatch?.[0] ?? scaffoldPaths[editIndex % scaffoldPaths.length]!;
       editIndex += 1;
       entries.push({ id: `${id}-s`, kind: 'status', label: 'Writing' });
       entries.push({ id, kind: 'edit', label: 'Created', file });
+      continue;
+    }
+
+    if (/scaffold|logic|black hole|xroga pulse|xroga architect|building|absorbing|still coding/i.test(line)) {
+      entries.push({ id, kind: 'text', label: line });
       continue;
     }
 
@@ -88,20 +95,14 @@ export function parseAgentActivityEntries(lines: string[], buildPrompt?: string)
 
 export function computeActivityStats(
   lines: string[],
-  todos: Array<{ status: string }>,
-  buildPrompt?: string
+  _todos: Array<{ status: string }>,
+  _buildPrompt?: string
 ): { files: number; searches: number; commands: number } {
-  const scaffoldCount = buildPrompt ? scaffoldPathsForPrompt(buildPrompt).length : 12;
-  const doneTodos = todos.filter((t) => t.status === 'done' || t.status === 'active').length;
-  const edits = lines.filter((l) => /scaffold|logic|github|html|css|architect|pulse/i.test(l)).length;
-  const searches = lines.filter((l) => /plan|verify|review|architect|collective/i.test(l)).length;
-  const commands = lines.filter((l) => /deploy|push|vercel|run|live/i.test(l)).length;
+  const edits = lines.filter((l) => /\b(created|wrote|writing|saved)\b/i.test(l)).length;
+  const searches = lines.filter((l) => /\b(plan|verify|review|research)\b/i.test(l)).length;
+  const commands = lines.filter((l) => /\b(deploy|push|vercel|github)\b/i.test(l)).length;
 
-  return {
-    files: Math.min(scaffoldCount, Math.max(doneTodos, edits + 1)),
-    searches: Math.max(searches, 1),
-    commands: Math.max(commands, lines.length > 3 ? 1 : 0),
-  };
+  return { files: edits, searches, commands };
 }
 
 export function deriveBuildGoal(analysis?: string | null, latestActivity?: string | null): string | null {

@@ -72,6 +72,7 @@ export function buildTodosForPrompt(userPrompt: string): BuildTodoDef[] {
       { id: 'github', label: 'Connect GitHub repository' },
       { id: 'analyze', label: 'Analyze blog requirements (posts, layout, storage)' },
       { id: 'plan', label: 'Plan blog structure, pages & features' },
+      { id: 'structure', label: 'Approve blog build plan' },
       { id: 'ui-trends', label: 'Apply clean, modern blog UI/UX' },
       { id: 'code-gen', label: 'Generate blog code step by step' },
       { id: 'verify', label: 'Verify responsive design & localStorage/posts' },
