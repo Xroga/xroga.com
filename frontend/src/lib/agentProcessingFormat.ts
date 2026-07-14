@@ -95,9 +95,11 @@ export function parseAgentActivityEntries(lines: string[], buildPrompt?: string)
 
 export function computeActivityStats(
   lines: string[],
-  _todos: Array<{ status: string }>,
-  _buildPrompt?: string
+  todos?: Array<{ status: string }>,
+  buildPrompt?: string
 ): { files: number; searches: number; commands: number } {
+  void todos;
+  void buildPrompt;
   const edits = lines.filter((l) => /\b(created|wrote|writing|saved)\b/i.test(l)).length;
   const searches = lines.filter((l) => /\b(plan|verify|review|research)\b/i.test(l)).length;
   const commands = lines.filter((l) => /\b(deploy|push|vercel|github)\b/i.test(l)).length;
