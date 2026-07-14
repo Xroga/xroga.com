@@ -92,9 +92,11 @@ import {
 import { siteCodeFromProjectFiles, LANDING_UPDATE_FOLLOW_UPS } from '../../lib/landingPreview.js';
 import {
   isBuildContinuation,
+  isSelectedRepoUpdateRequest,
   isWebsiteUpdateRequest,
   threadHasCompletedWebsite,
 } from '../../lib/buildContinuation.js';
+import { deepseekInteractiveQaFix } from '../../lib/siteInteractiveQa.js';
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { deepseekCode, groqCode, geminiCode } from '../../services/code/codeClients.js';
 import { resolveApiKey } from '../../config/apiKeyRouter.js';
@@ -427,10 +429,13 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         buildType
       ));
 
+  // Updates: thread markers OR selected GitHub repo + update language (patch, don't rebuild new site)
   const isUpdateBuild =
     isProductBuild &&
-    isWebsiteUpdateRequest(userPrompt) &&
-    (hasBuildConversationContext(userPrompt) || threadHasCompletedWebsite(userPrompt));
+    (isWebsiteUpdateRequest(userPrompt) || isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo)) &&
+    (hasBuildConversationContext(userPrompt) ||
+      threadHasCompletedWebsite(userPrompt) ||
+      isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo));
 
   const forcedFullRepoFix = isForcedFullRepoFix(userPrompt);
 
@@ -1224,12 +1229,17 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   }
 
   if (!isUpdateBuild) {
-  // Simple blogs: skip quality LLM pass — one-shot Flash already shipped (speed > perfect polish).
+  // Simple blogs: ONE DeepSeek interactive QA (buttons/JS) — no 4-model parallel audit.
   if (costPolicy.tier === 'simple_static') {
-    emit(ctx, 6, xrogaCollectiveLine('Fast path — quality check skipped for speed'), 'truth_council', todos, 'XROGA Collective', {
-      silent: true,
-    });
-    emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective');
+    emit(ctx, 6, xrogaPulseLine('DeepSeek QA — buttons, forms & click handlers'), 'qa', todos, 'XROGA Pulse');
+    try {
+      const qa = await deepseekInteractiveQaFix(assembledCode, userPrompt, usageTracker);
+      assembledCode = qa.code;
+      if (qa.fixed) totalCorrections++;
+      emit(ctx, 6, qa.fixed ? xrogaArchitectureLine('DeepSeek applied interactive fixes') : BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective');
+    } catch {
+      emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective', { silent: true });
+    }
   } else {
   emit(ctx, 6, xrogaCollectiveLine('Quality gate — code standards review'), 'truth_council', todos, 'XROGA Collective');
   try {
@@ -1263,52 +1273,80 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     /* review falls back inside buildModelCall */
   }
 
-  emit(ctx, 6, xrogaCollectiveLine('Security & integration audit'), 'truth_council', todos, 'XROGA Collective');
-  const finalChecks = await Promise.allSettled([
-    deepseekFlashCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode}`, 4096, usageTracker, userId),
-    geminiCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 50000)}`, 512),
-    buildModelCall('flash', PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 40000)}`, 512, usageTracker, { userId }).then(
-      (r) => r.text
-    ),
-    getSecret('MISTRAL_API_KEY')
-      ? mistralChat(PHASE_6_FINAL, assembledCode.slice(0, 40000), { maxTokens: 512 })
-      : Promise.resolve('PASS'),
-  ]);
-
-  const finalFail = finalChecks.some((r) => r.status === 'fulfilled' && !isPass(r.value as string));
-  if (finalFail) {
-    emit(ctx, 5, BRAND.phase5.correcting, 'debugger', todos, 'XROGA Architect');
-    assembledCode = await deepseekFlashCall(
-      PHASE_5_CORRECT,
-      `Final review issues\n\n${assembledCode}`,
-      BUILD_STEP_MAX_TOKENS,
-      usageTracker, userId
+  // Cost: one DeepSeek final + interactive QA — not Flash+Gemini+Flash+Mistral in parallel
+  emit(ctx, 6, xrogaCollectiveLine('DeepSeek final audit (single pass)'), 'truth_council', todos, 'XROGA Collective');
+  try {
+    const finalReview = await deepseekFlashCall(
+      PHASE_6_FINAL,
+      `Full codebase:\n${assembledCode}`,
+      4096,
+      usageTracker,
+      userId
     );
-    totalCorrections++;
-  } else {
+    if (!isPass(finalReview)) {
+      emit(ctx, 5, BRAND.phase5.correcting, 'debugger', todos, 'XROGA Architect');
+      assembledCode = await deepseekFlashCall(
+        PHASE_5_CORRECT,
+        `Final review:\n${finalReview}\n\n${assembledCode}`,
+        BUILD_STEP_MAX_TOKENS,
+        usageTracker,
+        userId
+      );
+      totalCorrections++;
+    }
+    const qa = await deepseekInteractiveQaFix(assembledCode, userPrompt, usageTracker);
+    assembledCode = qa.code;
+    if (qa.fixed) totalCorrections++;
     emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective');
+  } catch {
+    emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective', { silent: true });
+  }
+  // Premium crypto: one extra Gemini sanity (still not a 4-way fan-out)
+  if (costPolicy.tier === 'premium' && buildType === 'crypto') {
+    try {
+      const gem = await geminiCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 40000)}`, 512);
+      if (!isPass(gem)) {
+        assembledCode = await deepseekFlashCall(
+          PHASE_5_CORRECT,
+          `Gemini notes:\n${gem}\n\n${assembledCode}`,
+          BUILD_STEP_MAX_TOKENS,
+          usageTracker,
+          userId
+        );
+        totalCorrections++;
+      }
+    } catch {
+      /* optional */
+    }
   }
   }
   } else {
-    emit(ctx, 6, xrogaPulseLine('Update verify — flash check on touched files only'), 'qa', todos, 'XROGA Pulse', {
+    emit(ctx, 6, xrogaPulseLine('Update verify — DeepSeek QA on touched files'), 'qa', todos, 'XROGA Pulse', {
       userPhase: 2,
     });
     try {
-      const { text: quickCheck } = await buildModelCall(
-        'flash',
-        PHASE_6_FINAL,
-        `Touched files only:\n${assembledCode.slice(0, 12000)}`,
-        256,
-        usageTracker
-      );
-      if (!isPass(quickCheck)) {
-        assembledCode = await deepseekFlashCall(
-          PHASE_5_CORRECT,
-          `Quick review:\n${quickCheck}\n\nCode:\n${assembledCode}`,
-          4096,
-          usageTracker, userId
-        );
+      const qa = await deepseekInteractiveQaFix(assembledCode, userPrompt, usageTracker);
+      assembledCode = qa.code;
+      if (qa.fixed) {
         totalCorrections++;
+      } else {
+        const { text: quickCheck } = await buildModelCall(
+          'flash',
+          PHASE_6_FINAL,
+          `Touched files only:\n${assembledCode.slice(0, 12000)}`,
+          256,
+          usageTracker
+        );
+        if (!isPass(quickCheck)) {
+          assembledCode = await deepseekFlashCall(
+            PHASE_5_CORRECT,
+            `Quick review:\n${quickCheck}\n\nCode:\n${assembledCode}`,
+            4096,
+            usageTracker,
+            userId
+          );
+          totalCorrections++;
+        }
       }
     } catch {
       /* skip heavy final audit on updates */

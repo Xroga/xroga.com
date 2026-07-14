@@ -1022,9 +1022,11 @@ export function TerminalChatProvider({
         const buildSession = activeWebsiteBuildRef.current;
         const isBuildAnswer =
           Boolean(buildSession) && looksLikeBuildClarificationAnswer(displayPrompt);
+        const repoContextEarly = getSelectedRepoContext();
         const isBuildUpdate =
           isWebsiteBuildUpdate(displayPrompt, threadForMemory) ||
-          (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt));
+          (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) ||
+          (Boolean(repoContextEarly?.repo?.includes('/')) && isWebsiteUpdateRequest(displayPrompt));
 
         // Never send prior build essays with "hi"/thanks — that burns tokens and continues the blog guide.
         let history = isTrivialPrompt(displayPrompt)
@@ -1058,7 +1060,7 @@ export function TerminalChatProvider({
           }
         }
 
-        const repoContext = getSelectedRepoContext();
+        const repoContext = repoContextEarly ?? getSelectedRepoContext();
 
         const usePhase1Engine = shouldRouteToPhase1(displayPrompt, threadForMemory, attachments, {
           completedWebsiteBuild: completedWebsiteBuildRef.current,
@@ -1329,16 +1331,67 @@ export function TerminalChatProvider({
             if (output?.type === 'landing_page') {
               buildHadVisibleResult = true;
               activeWebsiteBuildRef.current = null;
+              // Only true updates reuse the same sandbox — a new "build …" gets a new preview card
+              const reusePreview =
+                Boolean((output as { isUpdate?: boolean }).isUpdate) || isBuildUpdate;
               completedWebsiteBuildRef.current = true;
               removePendingBuildJob(assistantId);
               const projectName =
                 typeof output.projectName === 'string' ? output.projectName : 'Your project';
               showBuildBrowserNotification({
-                title: 'Your XROGA project is complete!',
-                body: `${projectName} — open the dashboard to view your build.`,
+                title: reusePreview ? 'Preview updated' : 'Your XROGA project is complete!',
+                body: reusePreview
+                  ? `${projectName} — same preview updated with your changes.`
+                  : `${projectName} — open the dashboard to view your build.`,
                 tag: `build-done-${assistantId}`,
               });
               setMessages((m) => {
+                // One preview card: updates merge into the first landing_page in this thread
+                if (reusePreview) {
+                  let anchorId: string | null = null;
+                  for (let i = 0; i < m.length; i++) {
+                    const fo = m[i]?.featureOutput as { type?: string } | undefined;
+                    if (m[i]!.id !== assistantId && fo?.type === 'landing_page') {
+                      anchorId = m[i]!.id;
+                      break;
+                    }
+                  }
+                  if (anchorId) {
+                    const updated = m.map((msg) => {
+                      if (msg.id === anchorId) {
+                        const prev = (msg.featureOutput ?? {}) as Record<string, unknown>;
+                        return {
+                          ...msg,
+                          featureOutput: {
+                            ...prev,
+                            ...output,
+                            type: 'landing_page',
+                            isUpdate: true,
+                          },
+                        };
+                      }
+                      if (msg.id === assistantId) {
+                        const paths = Array.isArray((output as { updatedFiles?: string[] }).updatedFiles)
+                          ? ((output as { updatedFiles?: string[] }).updatedFiles as string[]).slice(0, 6).join(', ')
+                          : '';
+                        return {
+                          ...msg,
+                          content:
+                            `✅ Updated the current preview` +
+                            (paths ? ` (${paths})` : '') +
+                            `. Scroll up — same sandbox, new changes. Selected GitHub repo was patched when connected.`,
+                          featureOutput: undefined,
+                        };
+                      }
+                      return msg;
+                    });
+                    const runIdReuse = (complete as { runId?: string }).runId;
+                    if (runIdReuse) {
+                      void api.swarm.saveConversation(runIdReuse, updated).catch(() => {});
+                    }
+                    return updated;
+                  }
+                }
                 const updated = m.map((msg) =>
                   msg.id === assistantId
                     ? { ...msg, content: '', featureOutput: output }

@@ -82,7 +82,25 @@ export function isWebsiteUpdateRequest(prompt: string): boolean {
     return true;
   }
   if (/\b(changed?|changing)\s+(the\s+)?(color|name|theme|section|menu|design)\b/.test(t)) return true;
+  // "update in current github / selected repo / same preview"
+  if (
+    /\b(update|patch|push|apply|fix|edit)\b/.test(t) &&
+    /\b(github|repo|preview|codebase|current (site|website|project)|selected repo|existing (repo|code|site))\b/.test(t)
+  ) {
+    return true;
+  }
+  if (/\b(same|current|existing)\s+preview\b/.test(t)) return true;
+  if (/\bin\s+(the\s+)?(current|selected|existing)\s+(github\s+)?repo\b/.test(t)) return true;
   return false;
+}
+
+/** Selected GitHub repo + update language → patch that repo (even if chat markers are weak). */
+export function isSelectedRepoUpdateRequest(
+  prompt: string,
+  githubTargetRepo?: string | null
+): boolean {
+  if (!githubTargetRepo?.includes('/')) return false;
+  return isWebsiteUpdateRequest(prompt);
 }
 
 export function threadHasCompletedWebsite(prompt: string): boolean {
