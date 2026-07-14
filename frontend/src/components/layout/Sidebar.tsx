@@ -24,6 +24,7 @@ import { cn } from '@/lib/utils';
 import { MiniTokenMeter } from './MiniActionMeter';
 import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
+import { SidebarProjectHistory } from './SidebarProjectHistory';
 import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
@@ -395,6 +396,7 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
             ))}
           </div>
         )}
+        <SidebarProjectHistory expanded={navExpanded} />
       </nav>
 
       {bottomSection}
