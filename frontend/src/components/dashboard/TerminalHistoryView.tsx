@@ -10,6 +10,8 @@ import {
   ExternalLink,
   Trash2,
   Search,
+  Image as ImageIcon,
+  BookOpen,
 } from 'lucide-react';
 import {
   loadTerminalHistory,
@@ -27,6 +29,8 @@ const KIND_META = {
   code: { label: 'Code Project', icon: Code2, color: 'text-emerald-400 bg-emerald-500/10' },
   business: { label: 'Business', icon: Briefcase, color: 'text-violet-400 bg-violet-500/10' },
   mixed: { label: 'Code & Chat', icon: Code2, color: 'text-cyan-400 bg-cyan-500/10' },
+  image: { label: 'Image', icon: ImageIcon, color: 'text-pink-400 bg-pink-500/10' },
+  research: { label: 'Research', icon: BookOpen, color: 'text-amber-400 bg-amber-500/10' },
 };
 
 function HistoryCard({

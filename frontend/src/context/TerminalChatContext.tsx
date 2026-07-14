@@ -37,11 +37,7 @@ import { seedBuildTodos } from '@/lib/buildDefaultTodos';
 import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
 import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
-import {
-  clearSelectedRepoContext,
-  getSelectedRepoContext,
-  saveSelectedRepoContext,
-} from '@/lib/repoContext';
+import { getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
 import { buildHeartbeatActivity } from '@/lib/buildLiveStatus';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
@@ -739,8 +735,8 @@ export function TerminalChatProvider({
     setSwarmActiveAgent(null);
     persistReadyRef.current = false;
     if (!usePrivacyStore.getState().incognito) clearWorkspaceSession();
-    clearSelectedRepoContext();
-    window.dispatchEvent(new CustomEvent(GITHUB_REPO_CONTEXT_EVENT, { detail: { repo: null, branch: null } }));
+    // Keep selected GitHub repo — new chat is another session under the same Xroga repo workspace.
+    // (Code still goes to GitHub; chats/images/research stay on Xroga under that repo.)
     persistReadyRef.current = true;
   }, [setSwarmRunning, messages, prompt]);
 

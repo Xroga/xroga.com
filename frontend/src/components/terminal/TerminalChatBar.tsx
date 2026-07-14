@@ -8,6 +8,7 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { uploadChatImage, type ChatAttachment } from '@/lib/api';
 import { IntegrationsModal } from './IntegrationsModal';
 import { GithubRepoModal } from './GithubRepoModal';
+import { RepoWorkspaceGateModal } from './RepoWorkspaceGateModal';
 import { TalkButton } from '@/components/voice/TalkButton';
 import { ChatbarShell } from '@/components/ui/Uiverse';
 import {
@@ -26,6 +27,10 @@ import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
+import { checkRepoWorkspaceReady } from '@/lib/repoWorkspaceGate';
+import { getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
+import { notifyGithubRepoContext } from '@/lib/githubProjectEvents';
+import { ensureSelectedRepoFolder } from '@/lib/repoSessionsIndex';
 
 const MAX_ROWS = 13;
 const LINE_HEIGHT = 20;
@@ -60,6 +65,11 @@ export function TerminalChatBar() {
   const [dragOver, setDragOver] = useState(false);
   const [listening, setListening] = useState(false);
   const [sendState, setSendState] = useState<SendButtonState>('idle');
+  const [repoGate, setRepoGate] = useState<{
+    open: boolean;
+    reason: 'not_connected' | 'no_repo_selected';
+    message: string;
+  }>({ open: false, reason: 'not_connected', message: '' });
 
   useEffect(() => {
     if (loading) setSendState('thinking');
@@ -83,11 +93,39 @@ export function TerminalChatBar() {
       .catch(() => setVercelConnected(false));
   }, []);
 
+  async function ensureRepoWorkspace(): Promise<boolean> {
+    if (incognito) return true;
+    // Auto-pick default repo when connected but nothing selected
+    try {
+      const status = await api.github.status();
+      setGithubConnected(status.connected);
+      if (status.connected && status.defaultRepo?.includes('/') && !getSelectedRepoContext()?.repo) {
+        saveSelectedRepoContext({ repo: status.defaultRepo, branch: 'main' });
+        notifyGithubRepoContext(status.defaultRepo, 'main');
+        ensureSelectedRepoFolder();
+      }
+    } catch {
+      /* gate will handle */
+    }
+    const ready = await checkRepoWorkspaceReady();
+    if (ready.ok) {
+      ensureSelectedRepoFolder();
+      return true;
+    }
+    setRepoGate({ open: true, reason: ready.reason, message: ready.message });
+    return false;
+  }
+
   async function handleSubmit(e: React.FormEvent, interrupt = false) {
     e.preventDefault();
     const text = autocorrectText(prompt.trim());
     if (!text && files.length === 0) return;
     if (text !== prompt) setPrompt(text);
+
+    if (!(await ensureRepoWorkspace())) {
+      setSendState('idle');
+      return;
+    }
 
     if (loading && !interrupt) {
       await submit(text, false, false);
@@ -135,6 +173,7 @@ export function TerminalChatBar() {
   }
 
   async function applyStyleFromFile(file: File, stylePrompt: string) {
+    if (!(await ensureRepoWorkspace())) return;
     setUploading(true);
     try {
       const url = await uploadChatImage(file);
@@ -225,6 +264,20 @@ export function TerminalChatBar() {
         open={githubOpen}
         onClose={() => setGithubOpen(false)}
         onSelect={(t) => setPrompt(prompt + (prompt ? '\n' : '') + t)}
+      />
+      <RepoWorkspaceGateModal
+        open={repoGate.open}
+        reason={repoGate.reason}
+        message={repoGate.message}
+        onClose={() => setRepoGate((g) => ({ ...g, open: false }))}
+        onReady={() => {
+          setRepoGate((g) => ({ ...g, open: false }));
+          void api.github
+            .status()
+            .then((s) => setGithubConnected(s.connected))
+            .catch(() => {});
+          ensureSelectedRepoFolder();
+        }}
       />
       <div className="relative">
         <ChatbarShell

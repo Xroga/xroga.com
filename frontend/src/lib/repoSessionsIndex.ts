@@ -8,6 +8,8 @@ import { safeStorageSet } from '@/lib/storageSafe';
 
 const KEY = 'xroga_repo_sessions_v1';
 
+export type RepoActivityKind = 'chat' | 'code' | 'image' | 'research' | 'mixed';
+
 export interface RepoSessionIndexEntry {
   id: string;
   title: string;
@@ -18,6 +20,8 @@ export interface RepoSessionIndexEntry {
   cloudProjectId?: string;
   sessionId?: string;
   status?: 'active' | 'stopped' | 'complete';
+  /** What's in this terminal session — stored on Xroga under the repo (not pushed to GitHub) */
+  activityKind?: RepoActivityKind;
 }
 
 function loadRaw(): RepoSessionIndexEntry[] {
@@ -49,6 +53,7 @@ export function registerRepoSession(opts: {
   sessionId?: string;
   cloudProjectId?: string;
   status?: 'active' | 'stopped' | 'complete';
+  activityKind?: RepoActivityKind;
 }): RepoSessionIndexEntry | null {
   const repo = opts.githubRepoName.trim();
   if (!repo.includes('/')) return null;
@@ -67,6 +72,7 @@ export function registerRepoSession(opts: {
     cloudProjectId: opts.cloudProjectId ?? prev?.cloudProjectId,
     sessionId: opts.sessionId ?? prev?.sessionId,
     status: opts.status ?? prev?.status ?? 'complete',
+    activityKind: opts.activityKind ?? prev?.activityKind ?? 'chat',
   };
   const rest = existing.filter((e) => e.id !== entry.id);
   saveRaw([entry, ...rest]);
