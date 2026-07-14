@@ -69,8 +69,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.14,
     outputPer1M: 0.28,
-    inputSharePct: 58,
-    outputSharePct: 58,
+    inputSharePct: 60,
+    outputSharePct: 60,
     description: 'Workhorse — bulk code, file reads, fixes, verify, simple UI polish',
   },
   deepseek_pro: {
@@ -79,8 +79,8 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'deepseek',
     inputPer1M: 0.435,
     outputPer1M: 0.87,
-    inputSharePct: 30,
-    outputSharePct: 30,
+    inputSharePct: 27,
+    outputSharePct: 27,
     description: 'DeepSeek Pro — architecture, plan review, quality gate (replaces most Grok work)',
   },
   grok_reasoning: {
@@ -90,20 +90,20 @@ export const XROGA_MODELS: Record<XrogaModelRole, ModelSpec> = {
     provider: 'xai',
     inputPer1M: 1.25,
     outputPer1M: 2.5,
-    inputSharePct: 3,
-    outputSharePct: 3,
-    description: 'Grok 4.3 — premium/hackathon strategy/audit only (off on simple+standard by default)',
+    inputSharePct: 4,
+    outputSharePct: 4,
+    description: 'Grok 4.3 — standard/premium audit & reasoning (not on simple blogs)',
   },
   grok_fast: {
     role: 'grok_fast',
-    /** grok-4.5 is $2/$6 — almost never use; kept for emergency override only */
+    /** grok-4.5 is $2/$6 — small monthly share, strategic only (NOT 0%, NOT on basic blogs) */
     apiModel: envModel('XROGA_GROK_FAST_MODEL', 'grok-4.5'),
     provider: 'xai',
     inputPer1M: 2.0,
     outputPer1M: 6.0,
     inputSharePct: 2,
     outputSharePct: 2,
-    description: 'Grok 4.5 — strategic short brain only (1 call/build cap; never web tools / bulk code)',
+    description: 'Grok 4.5 — ~2% of 7M pool; 1 short strategy on standard/premium only',
   },
   claude_sonnet: {
     role: 'claude_sonnet',
