@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { api } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
-import { DEFAULT_TOKEN_USAGE, tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
+import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
 
 const FETCH_TIMEOUT_MS = 8000;
 
@@ -43,12 +43,10 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         if (parsed.usage) {
           setTokenUsage(parsed.usage);
           setPlanInfo(parsed.planTier, parsed.planName);
-        } else {
-          setTokenUsage(DEFAULT_TOKEN_USAGE);
         }
-      } else {
-        setTokenUsage(DEFAULT_TOKEN_USAGE);
+        // Do NOT overwrite real usage with DEFAULT (0%) when the payload is unexpected.
       }
+      // On summary fetch failure, keep the last known usage — never flash 0% after leave/return.
       if (results[1].status === 'fulfilled') setUnreadCount(results[1].value.count);
       if (results[2].status === 'fulfilled') setNotifications(results[2].value.slice(0, 5));
       if (results[3].status === 'fulfilled') setProfile(results[3].value);

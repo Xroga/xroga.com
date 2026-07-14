@@ -81,7 +81,8 @@ export function DashboardHomeView() {
     api.dashboard
       .summary()
       .then(setSummary)
-      .catch(() => setSummary(null))
+      // Keep last good summary on failure — never flash empty/0% usage after leave/return.
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

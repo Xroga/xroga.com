@@ -1,23 +1,5 @@
-/**
- * Auto-create user_token_usage table when missing in production.
- * Requires DATABASE_URL, SUPABASE_DB_URL, or SUPABASE_URL + SUPABASE_DB_PASSWORD.
- */
-
-import { connectPostgres, resolveDatabaseUrls } from '../lib/postgresConnect.js';
-
-const ENSURE_PHASE1_SQL = `
-CREATE TABLE IF NOT EXISTS public.user_token_usage (
-  user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  input_tokens BIGINT NOT NULL DEFAULT 0,
-  output_tokens BIGINT NOT NULL DEFAULT 0,
-  emergency_bonus BIGINT NOT NULL DEFAULT 0,
-  emergency_claimed_at TIMESTAMPTZ,
-  quota_period_start DATE NOT NULL DEFAULT DATE_TRUNC('month', NOW())::DATE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE INDEX IF NOT EXISTS idx_user_token_usage_period ON public.user_token_usage (quota_period_start);
+-- Durable token usage: model_usage column + atomic increment RPCs
+-- Prevents multi-instance Fly race where absolute upserts wipe real usage back to 0%.
 
 ALTER TABLE public.user_token_usage
   ADD COLUMN IF NOT EXISTS bonus_tokens BIGINT NOT NULL DEFAULT 0;
@@ -25,7 +7,7 @@ ALTER TABLE public.user_token_usage
 ALTER TABLE public.user_token_usage
   ADD COLUMN IF NOT EXISTS model_usage JSONB NOT NULL DEFAULT '{}'::jsonb;
 
--- Atomic increment so multi-instance API cannot overwrite usage back to 0%.
+-- Atomically add input/output tokens for the current quota month.
 CREATE OR REPLACE FUNCTION public.increment_user_token_usage(
   p_user_id UUID,
   p_input BIGINT,
@@ -48,7 +30,11 @@ DECLARE
   v_period DATE := COALESCE(p_period, DATE_TRUNC('month', TIMEZONE('utc', NOW()))::DATE);
 BEGIN
   INSERT INTO public.user_token_usage AS t (
-    user_id, input_tokens, output_tokens, quota_period_start, updated_at
+    user_id,
+    input_tokens,
+    output_tokens,
+    quota_period_start,
+    updated_at
   )
   VALUES (
     p_user_id,
@@ -88,13 +74,18 @@ BEGIN
 
   RETURN QUERY
   SELECT
-    u.input_tokens, u.output_tokens, u.emergency_bonus, u.bonus_tokens,
-    u.emergency_claimed_at, u.quota_period_start
+    u.input_tokens,
+    u.output_tokens,
+    u.emergency_bonus,
+    u.bonus_tokens,
+    u.emergency_claimed_at,
+    u.quota_period_start
   FROM public.user_token_usage u
   WHERE u.user_id = p_user_id;
 END;
 $$;
 
+-- Merge per-engine usage deltas into model_usage JSONB (additive, same month).
 CREATE OR REPLACE FUNCTION public.merge_user_model_usage(
   p_user_id UUID,
   p_delta JSONB,
@@ -145,7 +136,10 @@ BEGIN
   END LOOP;
 
   UPDATE public.user_token_usage
-  SET model_usage = v_merged, quota_period_start = v_period, updated_at = NOW()
+  SET
+    model_usage = v_merged,
+    quota_period_start = v_period,
+    updated_at = NOW()
   WHERE user_id = p_user_id;
 
   RETURN v_merged;
@@ -155,57 +149,4 @@ $$;
 GRANT EXECUTE ON FUNCTION public.increment_user_token_usage(UUID, BIGINT, BIGINT, DATE) TO service_role;
 GRANT EXECUTE ON FUNCTION public.merge_user_model_usage(UUID, JSONB, DATE) TO service_role;
 
-ALTER TABLE public.user_token_usage ENABLE ROW LEVEL SECURITY;
-
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies
-    WHERE schemaname = 'public' AND tablename = 'user_token_usage'
-      AND policyname = 'Users can read own token usage'
-  ) THEN
-    CREATE POLICY "Users can read own token usage"
-      ON public.user_token_usage FOR SELECT
-      USING (auth.uid() = user_id);
-  END IF;
-END $$;
-
-GRANT SELECT, INSERT, UPDATE ON TABLE public.user_token_usage TO service_role;
-GRANT SELECT ON TABLE public.user_token_usage TO authenticated;
-
 NOTIFY pgrst, 'reload schema';
-`;
-
-let schemaReady: boolean | null = null;
-let bootstrapAttempted = false;
-
-export function phase1SchemaAutoBootstrapEnabled(): boolean {
-  return Boolean(process.env.SUPABASE_URL || resolveDatabaseUrls().length);
-}
-
-export async function ensurePhase1Schema(): Promise<boolean> {
-  if (schemaReady === true) return true;
-
-  if (!resolveDatabaseUrls().length) {
-    if (!bootstrapAttempted) {
-      console.warn(
-        '[phase1Schema] No Postgres URL — set DATABASE_URL or SUPABASE_DB_PASSWORD on Fly.io. Token usage will use in-memory fallback.'
-      );
-      bootstrapAttempted = true;
-    }
-    return false;
-  }
-
-  try {
-    const client = await connectPostgres();
-    await client.query(ENSURE_PHASE1_SQL);
-    await client.end();
-    schemaReady = true;
-    console.log('[phase1Schema] user_token_usage table ensured');
-    return true;
-  } catch (err) {
-    console.error('[phase1Schema] Bootstrap failed:', (err as Error).message);
-    schemaReady = false;
-    return false;
-  }
-}
