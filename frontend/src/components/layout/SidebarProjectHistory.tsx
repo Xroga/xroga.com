@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Cloud, Filter, FolderGit2, FolderOpen, GitBranch, ChevronDown, ChevronRight } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import {
   loadTerminalHistory,
@@ -23,10 +24,12 @@ import {
   type RepoSessionIndexEntry,
 } from '@/lib/repoSessionsIndex';
 import { syncRepoTerminalSessions } from '@/lib/syncRepoTerminalSessions';
+import { resolveTerminalToOpen } from '@/lib/restoreRepoTerminal';
 import { formatCompactAgo } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
 import { api, type Project } from '@/lib/api';
 import { loadGithubProjectSession } from '@/lib/projectResume';
+import { loadWorkspaceSession } from '@/lib/workspacePersistence';
 
 type RepoSession = {
   id: string;
@@ -36,7 +39,7 @@ type RepoSession = {
   githubRepoName?: string;
   githubBranch?: string;
   cloudSynced: boolean;
-  kind: 'local' | 'cloud' | 'index';
+  kind: 'local' | 'cloud' | 'index' | 'live';
   activityKind?: RepoActivityKind;
   entry?: TerminalHistoryEntry;
   project?: Project;
@@ -71,7 +74,7 @@ function activityFromHistory(kind: TerminalHistoryEntry['kind']): RepoActivityKi
 /** Used repos only — every terminal session under each selected / past repo. */
 export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const router = useRouter();
-  const { restoreTerminalSession, startNewChat, messages } = useTerminalChat();
+  const { restoreTerminalSession, messages } = useTerminalChat();
   const [entries, setEntries] = useState<TerminalHistoryEntry[]>([]);
   const [indexEntries, setIndexEntries] = useState<RepoSessionIndexEntry[]>([]);
   const [cloudProjects, setCloudProjects] = useState<Project[]>([]);
@@ -79,14 +82,22 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const [filterRecent, setFilterRecent] = useState(true);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [liveEmpty, setLiveEmpty] = useState(false);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
   const refreshLocal = useCallback(() => {
     const selected = getSelectedRepoContext();
     setSelectedRepo(selected?.repo?.includes('/') ? selected.repo : null);
-    // Sync live terminal under selected repo (fixes empty sidebar while chatting in blogsite)
     const synced = syncRepoTerminalSessions();
-    setEntries(synced.length ? synced : loadTerminalHistory().filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/')));
+    setEntries(
+      synced.length
+        ? synced
+        : loadTerminalHistory().filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/'))
+    );
     setIndexEntries(loadRepoSessionsIndex());
+    const ws = loadWorkspaceSession();
+    setLiveEmpty(!ws?.messages?.length);
+    setActiveSessionId(ws?.sessionId ?? null);
   }, []);
 
   const refreshCloud = useCallback(() => {
@@ -117,10 +128,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     };
   }, [refreshLocal, refreshCloud]);
 
-  // Re-sync when live messages change (new chat turns under current repo)
+  // Re-sync when live messages change — also when they become empty (New Terminal)
   useEffect(() => {
-    if (!expanded || !messages.length) return;
-    const t = window.setTimeout(() => refreshLocal(), 400);
+    if (!expanded) return;
+    const t = window.setTimeout(() => refreshLocal(), 300);
     return () => window.clearTimeout(t);
   }, [messages, expanded, refreshLocal]);
 
@@ -132,9 +143,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       if (list.some((s) => s.id === session.id)) return;
       const stubIdx = list.findIndex(
         (s) =>
-          s.kind === 'index' &&
+          (s.kind === 'index' || s.kind === 'live') &&
           s.githubRepoName === session.githubRepoName &&
-          (session.kind === 'local' || session.kind === 'cloud')
+          (session.kind === 'local' || session.kind === 'cloud') &&
+          (s.id.startsWith('live-') || s.title === 'New terminal' || s.title === 'Current terminal')
       );
       if (stubIdx >= 0) list.splice(stubIdx, 1);
       list.push(session);
@@ -161,7 +173,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       if (!isRealRepoSession(ix)) continue;
       if (entries.some((e) => e.id === ix.sessionId || e.id === ix.id)) continue;
       push(ix.githubRepoName, {
-        id: ix.id,
+        id: ix.sessionId || ix.id,
         title: ix.title,
         updatedAt: ix.updatedAt,
         status: ix.status,
@@ -193,20 +205,37 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       });
     }
 
-    // Always show currently selected repo folder (even if only just started chatting)
-    if (selectedRepo?.includes('/') && !map.has(selectedRepo)) {
-      map.set(selectedRepo, [
-        {
+    // Selected repo always appears. Empty live workspace = "New terminal" stub
+    // (does not replace prior sessions — those stay listed with their titles).
+    if (selectedRepo?.includes('/')) {
+      const list = map.get(selectedRepo) ?? [];
+      const hasLiveStub = list.some((s) => s.id.startsWith('live-'));
+      if (liveEmpty && !hasLiveStub) {
+        list.unshift({
           id: `live-${selectedRepo}`,
-          title: 'Current terminal',
+          title: list.length ? 'New terminal' : 'Current terminal',
           updatedAt: new Date().toISOString(),
           githubRepoName: selectedRepo,
           githubBranch: getSelectedRepoContext()?.branch || 'main',
           cloudSynced: false,
-          kind: 'index',
+          kind: 'live',
           activityKind: 'chat',
-        },
-      ]);
+        });
+        map.set(selectedRepo, list);
+      } else if (!map.has(selectedRepo)) {
+        map.set(selectedRepo, [
+          {
+            id: `live-${selectedRepo}`,
+            title: 'Current terminal',
+            updatedAt: new Date().toISOString(),
+            githubRepoName: selectedRepo,
+            githubBranch: getSelectedRepoContext()?.branch || 'main',
+            cloudSynced: false,
+            kind: 'live',
+            activityKind: 'chat',
+          },
+        ]);
+      }
     }
 
     let foldersList = Array.from(map.entries())
@@ -214,23 +243,27 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       .map(([key, sessions]) => ({
         key,
         label: repoLabel(key),
-        // Multiple terminals under the same repo — newest first
         sessions: sessions
-          .sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
+          .sort((a, b) => {
+            // Keep New terminal stub first when present, then newest chats
+            if (a.id.startsWith('live-') && !b.id.startsWith('live-')) return -1;
+            if (b.id.startsWith('live-') && !a.id.startsWith('live-')) return 1;
+            return Date.parse(b.updatedAt) - Date.parse(a.updatedAt);
+          })
           .slice(0, 20),
       }));
 
     foldersList.sort((a, b) => {
       if (selectedRepo && a.key === selectedRepo) return -1;
       if (selectedRepo && b.key === selectedRepo) return 1;
-      const aT = Date.parse(a.sessions[0]?.updatedAt ?? 0);
-      const bT = Date.parse(b.sessions[0]?.updatedAt ?? 0);
+      const aT = Date.parse(a.sessions.find((s) => !s.id.startsWith('live-'))?.updatedAt ?? a.sessions[0]?.updatedAt ?? 0);
+      const bT = Date.parse(b.sessions.find((s) => !s.id.startsWith('live-'))?.updatedAt ?? b.sessions[0]?.updatedAt ?? 0);
       return bT - aT;
     });
 
     if (filterRecent) foldersList = foldersList.slice(0, 12);
     return foldersList;
-  }, [entries, indexEntries, cloudProjects, filterRecent, selectedRepo]);
+  }, [entries, indexEntries, cloudProjects, filterRecent, selectedRepo, liveEmpty]);
 
   useEffect(() => {
     setOpenFolders((prev) => {
@@ -238,20 +271,38 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       for (const f of folders) {
         if (next[f.key] === undefined) next[f.key] = true;
       }
-      // Keep selected repo expanded
       if (selectedRepo) next[selectedRepo] = true;
       return next;
     });
   }, [folders, selectedRepo]);
+
+  async function applyRestore(entry: TerminalHistoryEntry, branch: string) {
+    if (entry.githubRepoName?.includes('/')) {
+      saveSelectedRepoContext({ repo: entry.githubRepoName, branch: entry.githubBranch || branch });
+      notifyGithubRepoContext(entry.githubRepoName, entry.githubBranch || branch);
+    }
+    await restoreTerminalSession({
+      sessionId: entry.id,
+      prompt: entry.prompt,
+      messages: entry.messages,
+      selectedId: entry.id,
+      selectedLabel: entry.title,
+      source: 'projects',
+      jumpMessageId: entry.messages[entry.messages.length - 1]?.id,
+    });
+    router.push('/workspace');
+    toast.success('Restored your previous terminal');
+  }
 
   async function openSession(session: RepoSession) {
     if (busyId) return;
     setBusyId(session.id);
     try {
       const branch = session.githubBranch || 'main';
-      if (session.githubRepoName?.includes('/')) {
-        saveSelectedRepoContext({ repo: session.githubRepoName, branch });
-        notifyGithubRepoContext(session.githubRepoName, branch);
+      const repo = session.githubRepoName;
+      if (repo?.includes('/')) {
+        saveSelectedRepoContext({ repo, branch });
+        notifyGithubRepoContext(repo, branch);
       }
 
       if (session.kind === 'cloud' && session.project) {
@@ -267,11 +318,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
             ? fullLocal.messages
             : loaded.messages;
         const prompt = fullLocal?.prompt || loaded.prompt;
-        const sessionId = fullLocal?.id || loaded.sessionId;
+        const restoreId = fullLocal?.id || loaded.sessionId;
 
-        startNewChat();
         await restoreTerminalSession({
-          sessionId,
+          sessionId: restoreId,
           prompt: prompt || session.title,
           messages: msgs.length ? msgs : [],
           selectedId: session.project.id,
@@ -283,28 +333,65 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         return;
       }
 
-      if (session.id.startsWith('live-')) {
+      if (!repo?.includes('/')) {
         router.push('/workspace');
         return;
       }
 
-      const historyId = session.entry?.id || session.index?.sessionId || session.id;
-      const full = await loadTerminalHistoryEntry(historyId);
-      if (full?.messages?.length) {
-        startNewChat();
-        await restoreTerminalSession({
-          sessionId: full.id,
-          prompt: full.prompt,
-          messages: full.messages,
-          selectedId: full.id,
-          selectedLabel: full.title,
-          source: 'projects',
-          jumpMessageId: full.messages[full.messages.length - 1]?.id,
-        });
-        router.push('/workspace');
+      const preferId = session.id.startsWith('live-')
+        ? undefined
+        : session.entry?.id || session.index?.sessionId || session.id;
+
+      // Explicit New terminal stub — intentional blank workspace
+      if (session.kind === 'live' || session.id.startsWith('live-')) {
+        const resolved = await resolveTerminalToOpen(repo);
+        if (resolved.kind === 'live' || resolved.kind === 'empty') {
+          router.push('/workspace');
+          return;
+        }
+        // Live empty but prior chats exist: if user clicked the New terminal
+        // stub, stay blank; folder restore uses openRepoFolder instead.
+        if (session.title === 'New terminal') {
+          router.push('/workspace');
+          return;
+        }
+        await applyRestore(resolved.entry, branch);
         return;
       }
 
+      const resolved = await resolveTerminalToOpen(repo, preferId);
+      if (resolved.kind === 'live') {
+        router.push('/workspace');
+        return;
+      }
+      if (resolved.kind === 'restore') {
+        await applyRestore(resolved.entry, branch);
+        return;
+      }
+
+      toast('No saved chat found for this terminal yet — prior chats stay listed under this repo.');
+      router.push('/workspace');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  /** Clicking the repo folder reopens the latest prior terminal — not a blank slate. */
+  async function openRepoFolder(folder: RepoFolder) {
+    if (busyId) return;
+    setBusyId(folder.key);
+    setOpenFolders((prev) => ({ ...prev, [folder.key]: true }));
+    try {
+      const branch =
+        folder.sessions[0]?.githubBranch || getSelectedRepoContext()?.branch || 'main';
+      saveSelectedRepoContext({ repo: folder.key, branch });
+      notifyGithubRepoContext(folder.key, branch);
+
+      const resolved = await resolveTerminalToOpen(folder.key);
+      if (resolved.kind === 'restore') {
+        await applyRestore(resolved.entry, branch);
+        return;
+      }
       router.push('/workspace');
     } finally {
       setBusyId(null);
@@ -342,60 +429,77 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
             const isOpen = openFolders[folder.key] !== false;
             const FolderIcon = isOpen ? FolderOpen : FolderGit2;
             const isActiveRepo = selectedRepo === folder.key;
+            const priorCount = folder.sessions.filter((s) => !s.id.startsWith('live-')).length;
             return (
               <div key={folder.key} className="space-y-0.5">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setOpenFolders((prev) => ({ ...prev, [folder.key]: !isOpen }))
-                  }
-                  className={cn(
-                    'w-full flex items-center gap-1 px-1.5 py-1 rounded-md text-[10px] hover:bg-[var(--foreground)]/5',
-                    isActiveRepo
-                      ? 'text-[var(--foreground)] font-semibold'
-                      : 'text-[var(--muted)] hover:text-[var(--foreground)]'
-                  )}
-                >
-                  {isOpen ? (
-                    <ChevronDown className="h-3 w-3 shrink-0 opacity-70" />
-                  ) : (
-                    <ChevronRight className="h-3 w-3 shrink-0 opacity-70" />
-                  )}
-                  <FolderIcon className="h-3 w-3 shrink-0" />
-                  <span className="truncate font-medium" title={folder.key}>
-                    {folder.label}
-                  </span>
-                  {folder.sessions.length > 1 ? (
-                    <span className="text-[9px] text-[var(--muted)] tabular-nums ml-auto">
-                      {folder.sessions.length}
+                <div className="flex items-center gap-0.5">
+                  <button
+                    type="button"
+                    aria-label={isOpen ? 'Collapse' : 'Expand'}
+                    onClick={() =>
+                      setOpenFolders((prev) => ({ ...prev, [folder.key]: !isOpen }))
+                    }
+                    className="p-1 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
+                  >
+                    {isOpen ? (
+                      <ChevronDown className="h-3 w-3 shrink-0 opacity-70" />
+                    ) : (
+                      <ChevronRight className="h-3 w-3 shrink-0 opacity-70" />
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busyId === folder.key}
+                    title="Open latest terminal for this repo"
+                    onClick={() => void openRepoFolder(folder)}
+                    className={cn(
+                      'flex-1 min-w-0 flex items-center gap-1 px-1 py-1 rounded-md text-[10px] hover:bg-[var(--foreground)]/5',
+                      isActiveRepo
+                        ? 'text-[var(--foreground)] font-semibold'
+                        : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                    )}
+                  >
+                    <FolderIcon className="h-3 w-3 shrink-0" />
+                    <span className="truncate font-medium" title={folder.key}>
+                      {folder.label}
                     </span>
-                  ) : null}
-                </button>
+                    {priorCount > 0 ? (
+                      <span className="text-[9px] text-[var(--muted)] tabular-nums ml-auto">
+                        {priorCount}
+                      </span>
+                    ) : null}
+                  </button>
+                </div>
                 {isOpen
-                  ? folder.sessions.map((session) => (
-                      <button
-                        key={session.id}
-                        type="button"
-                        disabled={busyId === session.id}
-                        onClick={() => void openSession(session)}
-                        className={cn(
-                          'w-full flex items-center gap-1.5 rounded-md pl-6 pr-2 py-1.5 transition-colors',
-                          'hover:bg-[var(--foreground)]/8',
-                          isActiveRepo && 'bg-[var(--foreground)]/[0.04]'
-                        )}
-                      >
-                        <p className="flex-1 min-w-0 text-left text-[11px] font-medium text-[var(--foreground)]/90 truncate leading-snug">
-                          {oneLine(session.title, 28)}
-                        </p>
-                        <GitBranch className="h-2.5 w-2.5 text-violet-400 shrink-0" />
-                        {session.cloudSynced ? (
-                          <Cloud className="h-2.5 w-2.5 text-[var(--muted)] shrink-0 opacity-70" />
-                        ) : null}
-                        <span className="text-[9px] text-[var(--muted)] shrink-0 tabular-nums min-w-[1.5rem] text-right">
-                          {formatCompactAgo(session.updatedAt)}
-                        </span>
-                      </button>
-                    ))
+                  ? folder.sessions.map((session) => {
+                      const isActiveSession =
+                        !session.id.startsWith('live-') && session.id === activeSessionId;
+                      return (
+                        <button
+                          key={session.id}
+                          type="button"
+                          disabled={busyId === session.id}
+                          onClick={() => void openSession(session)}
+                          className={cn(
+                            'w-full flex items-center gap-1.5 rounded-md pl-6 pr-2 py-1.5 transition-colors',
+                            'hover:bg-[var(--foreground)]/8',
+                            (isActiveRepo || isActiveSession) && 'bg-[var(--foreground)]/[0.04]',
+                            isActiveSession && 'ring-1 ring-[var(--accent)]/25'
+                          )}
+                        >
+                          <p className="flex-1 min-w-0 text-left text-[11px] font-medium text-[var(--foreground)]/90 truncate leading-snug">
+                            {oneLine(session.title, 28)}
+                          </p>
+                          <GitBranch className="h-2.5 w-2.5 text-violet-400 shrink-0" />
+                          {session.cloudSynced ? (
+                            <Cloud className="h-2.5 w-2.5 text-[var(--muted)] shrink-0 opacity-70" />
+                          ) : null}
+                          <span className="text-[9px] text-[var(--muted)] shrink-0 tabular-nums min-w-[1.5rem] text-right">
+                            {formatCompactAgo(session.updatedAt)}
+                          </span>
+                        </button>
+                      );
+                    })
                   : null}
               </div>
             );
