@@ -10,6 +10,7 @@ import type { TokenUsageSnapshot } from './types.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { quotaForPlanTier, inputLimitForPlan, outputLimitForPlan } from '../config/modelRegistry.js';
 import { ensureUserRecords } from '../services/ensureUserRecords.js';
+import { ensurePhase1Schema } from '../db/ensurePhase1Schema.js';
 import { connectPostgres, resolveDatabaseUrls } from '../lib/postgresConnect.js';
 
 interface UserUsageRecord {
@@ -185,6 +186,139 @@ function recordFromIncrementRow(row: IncrementRow): UserUsageRecord {
   };
 }
 
+/** Inline SQL increment — works even when migration RPC was never applied. */
+const INLINE_INCREMENT_SQL = `
+INSERT INTO public.user_token_usage AS t (
+  user_id, input_tokens, output_tokens, quota_period_start, updated_at
+)
+VALUES ($1::uuid, $2::bigint, $3::bigint, $4::date, NOW())
+ON CONFLICT (user_id) DO UPDATE
+SET
+  input_tokens = CASE
+    WHEN t.quota_period_start IS DISTINCT FROM EXCLUDED.quota_period_start
+      THEN EXCLUDED.input_tokens
+    ELSE t.input_tokens + EXCLUDED.input_tokens
+  END,
+  output_tokens = CASE
+    WHEN t.quota_period_start IS DISTINCT FROM EXCLUDED.quota_period_start
+      THEN EXCLUDED.output_tokens
+    ELSE t.output_tokens + EXCLUDED.output_tokens
+  END,
+  model_usage = CASE
+    WHEN t.quota_period_start IS DISTINCT FROM EXCLUDED.quota_period_start
+      THEN '{}'::jsonb
+    ELSE t.model_usage
+  END,
+  emergency_bonus = CASE
+    WHEN t.quota_period_start IS DISTINCT FROM EXCLUDED.quota_period_start THEN 0
+    ELSE t.emergency_bonus
+  END,
+  emergency_claimed_at = CASE
+    WHEN t.quota_period_start IS DISTINCT FROM EXCLUDED.quota_period_start THEN NULL
+    ELSE t.emergency_claimed_at
+  END,
+  bonus_tokens = CASE
+    WHEN t.quota_period_start IS DISTINCT FROM EXCLUDED.quota_period_start THEN 0
+    ELSE t.bonus_tokens
+  END,
+  quota_period_start = EXCLUDED.quota_period_start,
+  updated_at = NOW()
+RETURNING input_tokens, output_tokens, emergency_bonus, bonus_tokens, emergency_claimed_at, quota_period_start
+`;
+
+/**
+ * REST optimistic lock — works with only SUPABASE_SERVICE_ROLE_KEY
+ * (no DATABASE_URL / RPC required). Retries on concurrent writers.
+ */
+async function incrementViaOptimisticRest(
+  userId: string,
+  input: number,
+  output: number,
+  period: string
+): Promise<UserUsageRecord | null> {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
+  const supabase = getSupabaseAdmin();
+  await ensureUserRecords(userId);
+
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const { data: row, error: readErr } = await supabase
+      .from('user_token_usage')
+      .select(
+        'input_tokens, output_tokens, emergency_bonus, bonus_tokens, emergency_claimed_at, quota_period_start'
+      )
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (readErr) {
+      phase1Logger.warn('Token usage optimistic read failed', { userId, error: readErr.message });
+      return null;
+    }
+
+    if (!row) {
+      const { error: seedErr } = await supabase.from('user_token_usage').upsert(
+        {
+          user_id: userId,
+          input_tokens: 0,
+          output_tokens: 0,
+          emergency_bonus: 0,
+          bonus_tokens: 0,
+          quota_period_start: period,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'user_id', ignoreDuplicates: true }
+      );
+      if (seedErr) {
+        phase1Logger.warn('Token usage seed failed', { userId, error: seedErr.message });
+        return null;
+      }
+      continue;
+    }
+
+    const prevIn = Number(row.input_tokens ?? 0);
+    const prevOut = Number(row.output_tokens ?? 0);
+    const rowPeriod = normalizePeriodDate(row.quota_period_start);
+    const rolled = Boolean(rowPeriod && rowPeriod !== period);
+
+    const nextIn = rolled ? input : prevIn + input;
+    const nextOut = rolled ? output : prevOut + output;
+    const patch: Record<string, unknown> = {
+      input_tokens: nextIn,
+      output_tokens: nextOut,
+      quota_period_start: period,
+      updated_at: new Date().toISOString(),
+    };
+    if (rolled) {
+      patch.model_usage = {};
+      patch.emergency_bonus = 0;
+      patch.bonus_tokens = 0;
+      patch.emergency_claimed_at = null;
+    }
+
+    // Conditional update: only apply if counters are still what we read.
+    // Do NOT filter on quota_period_start — Supabase may return DATE as timestamptz strings.
+    const { data: updated, error: upErr } = await supabase
+      .from('user_token_usage')
+      .update(patch)
+      .eq('user_id', userId)
+      .eq('input_tokens', prevIn)
+      .eq('output_tokens', prevOut)
+      .select(
+        'input_tokens, output_tokens, emergency_bonus, bonus_tokens, emergency_claimed_at, quota_period_start'
+      )
+      .maybeSingle();
+
+    if (upErr) {
+      phase1Logger.warn('Token usage optimistic update failed', { userId, error: upErr.message });
+      return null;
+    }
+    if (updated) return recordFromIncrementRow(updated as IncrementRow);
+    // Concurrent writer won — retry
+  }
+
+  phase1Logger.warn('Token usage optimistic increment exhausted retries', { userId });
+  return null;
+}
+
 /** Additive DB write — safe across multiple Fly instances (no absolute overwrite races). */
 async function incrementUsageAtomic(
   userId: string,
@@ -195,26 +329,48 @@ async function incrementUsageAtomic(
   const input = Math.max(0, Math.round(inputTokens));
   const output = Math.max(0, Math.round(outputTokens));
 
+  // Ensure atomic RPCs / columns exist before first bill (boot may still be racing).
+  if (resolveDatabaseUrls().length) {
+    await ensurePhase1Schema().catch(() => false);
+  }
+
   if (resolveDatabaseUrls().length) {
     try {
       const client = await connectPostgres();
       try {
-        const { rows } = await client.query<IncrementRow>(
-          `SELECT * FROM public.increment_user_token_usage($1::uuid, $2::bigint, $3::bigint, $4::date)`,
-          [userId, input, output, period]
-        );
+        // Prefer RPC when 026 is applied
+        try {
+          const { rows } = await client.query<IncrementRow>(
+            `SELECT * FROM public.increment_user_token_usage($1::uuid, $2::bigint, $3::bigint, $4::date)`,
+            [userId, input, output, period]
+          );
+          if (rows[0]) return recordFromIncrementRow(rows[0]);
+        } catch (rpcErr) {
+          // Function missing — fall through to inline UPSERT so usage still persists
+          phase1Logger.warn('increment_user_token_usage missing — using inline SQL', {
+            error: (rpcErr as Error).message,
+          });
+        }
+        const { rows } = await client.query<IncrementRow>(INLINE_INCREMENT_SQL, [
+          userId,
+          input,
+          output,
+          period,
+        ]);
         if (rows[0]) return recordFromIncrementRow(rows[0]);
       } finally {
         await client.end().catch(() => undefined);
       }
     } catch (err) {
-      phase1Logger.warn('Token usage postgres increment failed — trying supabase rpc', {
+      phase1Logger.warn('Token usage postgres increment failed — trying supabase paths', {
         error: (err as Error).message,
       });
     }
   }
 
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
+
+  // Supabase RPC (needs migration 026 applied + PostgREST reload)
   try {
     await ensureUserRecords(userId);
     const supabase = getSupabaseAdmin();
@@ -224,17 +380,47 @@ async function incrementUsageAtomic(
       p_output: output,
       p_period: period,
     });
-    if (error) {
-      phase1Logger.warn('increment_user_token_usage rpc failed', { userId, error: error.message });
-      return null;
+    if (!error) {
+      const row = Array.isArray(data) ? data[0] : data;
+      if (row) return recordFromIncrementRow(row as IncrementRow);
+    } else {
+      phase1Logger.warn('increment_user_token_usage rpc failed — trying optimistic REST', {
+        userId,
+        error: error.message,
+      });
     }
-    const row = Array.isArray(data) ? data[0] : data;
-    if (!row) return null;
-    return recordFromIncrementRow(row as IncrementRow);
   } catch (err) {
-    phase1Logger.warn('increment_user_token_usage rpc exception', { error: (err as Error).message });
-    return null;
+    phase1Logger.warn('increment_user_token_usage rpc exception — trying optimistic REST', {
+      error: (err as Error).message,
+    });
   }
+
+  // Last durable path: conditional REST update (service role only — no DB password needed)
+  return incrementViaOptimisticRest(userId, input, output, period);
+}
+
+function preferHigherUsage(db: UserUsageRecord, memory: UserUsageRecord): UserUsageRecord {
+  const period = currentPeriodStart();
+  const mem = maybeResetPeriod(memory);
+  const dbNorm = maybeResetPeriod(db);
+  // After month roll, never resurrect last month's memory over a fresh DB row.
+  if (normalizePeriodDate(mem.periodStart) !== period) return dbNorm;
+  if (normalizePeriodDate(dbNorm.periodStart) !== period) return mem;
+
+  const memTotal = mem.inputTokens + mem.outputTokens;
+  const dbTotal = dbNorm.inputTokens + dbNorm.outputTokens;
+  if (memTotal <= dbTotal) return dbNorm;
+
+  // Same-process bills ahead of DB (failed/slow persist) — keep truth + heal DB.
+  return {
+    ...dbNorm,
+    inputTokens: Math.max(dbNorm.inputTokens, mem.inputTokens),
+    outputTokens: Math.max(dbNorm.outputTokens, mem.outputTokens),
+    emergencyBonus: Math.max(dbNorm.emergencyBonus, mem.emergencyBonus),
+    bonusTokens: Math.max(dbNorm.bonusTokens, mem.bonusTokens),
+    emergencyClaimedAt: dbNorm.emergencyClaimedAt ?? mem.emergencyClaimedAt,
+    periodStart: period,
+  };
 }
 
 async function getRecord(userId: string, opts?: { forceDb?: boolean }): Promise<UserUsageRecord> {
@@ -248,10 +434,40 @@ async function getRecord(userId: string, opts?: { forceDb?: boolean }): Promise<
   }
 
   const fromDb = await loadFromDb(userId);
-  let record = fromDb ?? emptyRecord();
-  record = maybeResetPeriod(record);
-  memoryStore.set(userId, record);
-  return record;
+  const cached = memoryStore.get(userId);
+
+  if (fromDb) {
+    let record = maybeResetPeriod(fromDb);
+    if (cached) {
+      const merged = preferHigherUsage(record, cached);
+      const healed = merged.inputTokens + merged.outputTokens > record.inputTokens + record.outputTokens;
+      memoryStore.set(userId, merged);
+      if (healed) {
+        phase1Logger.warn('Token usage memory ahead of DB — healing persist', {
+          userId,
+          memory: merged.inputTokens + merged.outputTokens,
+          db: record.inputTokens + record.outputTokens,
+        });
+        void saveToDb(userId, merged).catch(() => undefined);
+      }
+      return merged;
+    }
+    memoryStore.set(userId, record);
+    return record;
+  }
+
+  // DB null/error: do NOT clobber recent in-process bills with fake zeros (refresh flicker).
+  if (cached && cached.inputTokens + cached.outputTokens > 0) {
+    phase1Logger.warn('Token usage DB empty — keeping memory until persist succeeds', {
+      userId,
+      total: cached.inputTokens + cached.outputTokens,
+    });
+    return maybeResetPeriod(cached);
+  }
+
+  const empty = emptyRecord();
+  memoryStore.set(userId, empty);
+  return empty;
 }
 
 async function getPlanTier(userId: string): Promise<string> {
@@ -345,16 +561,21 @@ export async function recordUsage(
     return computeSnapshot(atomic, await getTotalLimit(userId, atomic));
   }
 
-  // Fallback: force DB read + absolute upsert (racy, but last resort)
+  // Fallback: force DB read + absolute upsert (racy, but last resort) — retry once
   const record = await getRecord(userId, { forceDb: true });
   record.inputTokens += Math.max(0, Math.round(inputTokens));
   record.outputTokens += Math.max(0, Math.round(outputTokens));
   memoryStore.set(userId, record);
-  const saved = await saveToDb(userId, record);
+  let saved = await saveToDb(userId, record);
   if (!saved) {
-    phase1Logger.warn('Usage billed in-memory only — dashboard may reset until DB save works', {
+    await new Promise((r) => setTimeout(r, 200));
+    saved = await saveToDb(userId, record);
+  }
+  if (!saved) {
+    phase1Logger.error('CRITICAL: usage not persisted — dashboard will reset after refresh', {
       userId,
       total: record.inputTokens + record.outputTokens,
+      hint: 'Set DATABASE_URL / SUPABASE_DB_PASSWORD and apply migration 026',
     });
   }
 
