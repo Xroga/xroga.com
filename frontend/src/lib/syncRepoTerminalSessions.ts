@@ -52,7 +52,7 @@ export function syncRepoTerminalSessions(): TerminalHistoryEntry[] {
   const branch = selected.branch || 'main';
   let changed = false;
   const next = all.map((e) => {
-    // Bind live / matching sessionIds missing a repo to the selected workspace
+    // Bind the live session (and only the live session) when it lacks a repo stamp.
     const isLive = ws?.sessionId && e.id === ws.sessionId;
     if (!e.githubRepoName?.includes('/') && isLive) {
       changed = true;

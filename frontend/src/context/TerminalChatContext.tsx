@@ -718,6 +718,7 @@ export function TerminalChatProvider({
       thinkingTimerRef.current = null;
     }
     if (!usePrivacyStore.getState().incognito && messages.length > 0) {
+      // Keep prior chat under the selected GitHub repo so sidebar can restore it.
       saveTerminalHistorySession({
         sessionId: sessionIdRef.current,
         prompt,
@@ -739,6 +740,8 @@ export function TerminalChatProvider({
     // Keep selected GitHub repo — new chat is another session under the same Xroga repo workspace.
     // (Code still goes to GitHub; chats/images/research stay on Xroga under that repo.)
     persistReadyRef.current = true;
+    // Refresh Repositories sidebar so the prior terminal stays listed (not "lost").
+    window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
   }, [setSwarmRunning, messages, prompt]);
 
   const deleteTurn = useCallback((assistantMessageId: string) => {

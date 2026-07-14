@@ -18,7 +18,7 @@ interface RepoContextBarProps {
 }
 
 export function RepoContextBar({ outside }: RepoContextBarProps) {
-  const { messages } = useTerminalChat();
+  const { messages, restoreTerminalSession } = useTerminalChat();
   const repoLocked = messages.length > 0;
   const [connected, setConnected] = useState(false);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
@@ -186,6 +186,28 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
     try {
       await api.github.updateSettings('manual', fullName);
     } catch { /* non-blocking */ }
+
+    // If workspace is empty, reopen the latest saved terminal for this repo
+    // so switching back to blogsite (etc.) doesn't look like data was deleted.
+    if (messages.length === 0) {
+      try {
+        const { loadBestTerminalForRepo } = await import('@/lib/restoreRepoTerminal');
+        const best = await loadBestTerminalForRepo(fullName);
+        if (best?.messages?.length) {
+          await restoreTerminalSession({
+            sessionId: best.id,
+            prompt: best.prompt,
+            messages: best.messages,
+            selectedId: best.id,
+            selectedLabel: best.title,
+            source: 'projects',
+            jumpMessageId: best.messages[best.messages.length - 1]?.id,
+          });
+        }
+      } catch {
+        /* non-blocking */
+      }
+    }
   }
 
   async function selectBranch(name: string) {
