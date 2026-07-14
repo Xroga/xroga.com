@@ -622,7 +622,9 @@ export function TerminalChatProvider({
         prompt,
         messages,
       });
-    }, 800);
+      // Keep Repositories sidebar live under the selected GitHub repo
+      window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
+    }, 500);
     return () => window.clearTimeout(timer);
   }, [sessionReady, prompt, messages, incognito]);
 

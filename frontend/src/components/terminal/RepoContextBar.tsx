@@ -178,6 +178,9 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
     const meta = repos.find((r) => r.fullName === fullName);
     const branch = await loadBranches(fullName, meta?.defaultBranch);
     saveSelectedRepoContext({ repo: fullName, branch });
+    // Attach live terminal + past saves under this repo so Repositories sidebar fills immediately
+    const { syncRepoTerminalSessions } = await import('@/lib/syncRepoTerminalSessions');
+    syncRepoTerminalSessions();
     notifyGithubRepoContext(fullName, branch);
     void analyzeRepo(fullName, branch, false);
     try {
