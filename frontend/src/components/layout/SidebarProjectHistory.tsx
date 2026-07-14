@@ -16,7 +16,10 @@ import {
   GITHUB_REPO_CONTEXT_EVENT,
   notifyGithubRepoContext,
 } from '@/lib/githubProjectEvents';
-import { syncRepoTerminalSessions } from '@/lib/syncRepoTerminalSessions';
+import {
+  ensureLiveTerminalUnderSelectedRepo,
+  syncRepoTerminalSessions,
+} from '@/lib/syncRepoTerminalSessions';
 import { resolveTerminalToOpen, loadTerminalFromAnywhere } from '@/lib/restoreRepoTerminal';
 import {
   allocateTerminalNumber,
@@ -61,7 +64,7 @@ function repoLabel(full: string): string {
  */
 export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const router = useRouter();
-  const { restoreTerminalSession, messages } = useTerminalChat();
+  const { restoreTerminalSession, messages, sessionId, prompt } = useTerminalChat();
   const [entries, setEntries] = useState<TerminalHistoryEntry[]>([]);
   const [cloudSessions, setCloudSessions] = useState<CloudTerminalSessionSummary[]>([]);
   const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
@@ -73,6 +76,14 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const refreshLocal = useCallback(() => {
     const selected = getSelectedRepoContext();
     setSelectedRepo(selected?.repo?.includes('/') ? selected.repo : null);
+    // Stamp live chat as #1/#2 under the selected repo (fixes "chat but still 0 terminals")
+    if (messages.length > 0 && sessionId) {
+      ensureLiveTerminalUnderSelectedRepo({
+        sessionId,
+        messages,
+        prompt,
+      });
+    }
     const synced = syncRepoTerminalSessions();
     setEntries(
       synced.length
@@ -80,8 +91,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         : loadTerminalHistory().filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/'))
     );
     const ws = loadWorkspaceSession();
-    setActiveSessionId(ws?.sessionId ?? null);
-  }, []);
+    setActiveSessionId(ws?.sessionId ?? sessionId ?? null);
+  }, [messages, sessionId, prompt]);
 
   const refreshCloud = useCallback(() => {
     void (async () => {
@@ -122,12 +133,16 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   // Refresh as soon as the user chats — #1 / #2 should appear quickly
   useEffect(() => {
     if (!expanded) return;
+    if (messages.length === 0) {
+      refreshLocal();
+      return;
+    }
     const t = window.setTimeout(() => {
       refreshLocal();
-      if (messages.length > 0) refreshCloud();
-    }, 200);
+      refreshCloud();
+    }, 100);
     return () => window.clearTimeout(t);
-  }, [messages, expanded, refreshLocal, refreshCloud]);
+  }, [messages, sessionId, expanded, refreshLocal, refreshCloud]);
 
   const folders = useMemo((): RepoFolder[] => {
     const map = new Map<string, RepoSession[]>();

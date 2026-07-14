@@ -174,6 +174,8 @@ interface TerminalChatContextValue {
   editQueuedPrompt: (id: string, text: string) => void;
   sendQueuedNow: (id: string) => void;
   clearQueue: () => void;
+  /** Live terminal session id — used to bind #1 / #2 under the selected repo */
+  sessionId: string;
   projectId?: string;
 }
 
@@ -281,6 +283,11 @@ export function TerminalChatProvider({
   const sessionIdRef = useRef<string>(
     typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`
   );
+  const [liveSessionId, setLiveSessionId] = useState(sessionIdRef.current);
+  const setSessionId = useCallback((id: string) => {
+    sessionIdRef.current = id;
+    setLiveSessionId(id);
+  }, []);
 
   queueRef.current = promptQueue;
 
@@ -329,7 +336,7 @@ export function TerminalChatProvider({
           }
         }
         if (session?.sessionId) {
-          sessionIdRef.current = session.sessionId;
+          setSessionId(session.sessionId);
         }
         if (session?.prompt) setPrompt(session.prompt);
         persistReadyRef.current = true;
@@ -503,10 +510,10 @@ export function TerminalChatProvider({
         completedWebsiteBuildRef.current = true;
       }
       if (session.prompt) setPrompt(session.prompt);
-      if (session.sessionId) sessionIdRef.current = session.sessionId;
+      if (session.sessionId) setSessionId(session.sessionId);
       restoringRef.current = false;
     });
-  }, [incognito]);
+  }, [incognito, setSessionId]);
 
   const restoreTerminalSession = useCallback(
     async (opts: {
@@ -536,7 +543,7 @@ export function TerminalChatProvider({
       setReasoning(null);
       setDag(null);
 
-      sessionIdRef.current = opts.sessionId;
+      setSessionId(opts.sessionId);
       const { rehydratePersistedMessages } = await import('@/lib/rehydratePersistedMessages');
       const hydrated = await rehydratePersistedMessages(opts.messages);
       setMessages(hydrated);
@@ -556,7 +563,7 @@ export function TerminalChatProvider({
       window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       restoringRef.current = false;
     },
-    [incognito, setSwarmRunning]
+    [incognito, setSwarmRunning, setSessionId]
   );
 
   useEffect(() => {
@@ -622,9 +629,16 @@ export function TerminalChatProvider({
         prompt,
         messages,
       });
-      // Keep Repositories sidebar live under the selected GitHub repo
-      window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
-    }, 500);
+      // Force #1/#2 under selected repo even if first save raced before repo stamp
+      void import('@/lib/syncRepoTerminalSessions').then(({ ensureLiveTerminalUnderSelectedRepo }) => {
+        ensureLiveTerminalUnderSelectedRepo({
+          sessionId: sessionIdRef.current,
+          messages,
+          prompt,
+        });
+        window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
+      });
+    }, 250);
     return () => window.clearTimeout(timer);
   }, [sessionReady, prompt, messages, incognito]);
 
@@ -734,8 +748,9 @@ export function TerminalChatProvider({
         window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       });
     }
-    sessionIdRef.current =
-      typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`;
+    setSessionId(
+      typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`
+    );
     setMessages([]);
     setPrompt('');
     setPromptQueue([]);
@@ -750,7 +765,7 @@ export function TerminalChatProvider({
     persistReadyRef.current = true;
     // Refresh Repositories sidebar so the prior terminal stays listed (not "lost").
     window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
-  }, [setSwarmRunning, messages, prompt]);
+  }, [setSwarmRunning, messages, prompt, setSessionId]);
 
   const deleteTurn = useCallback((assistantMessageId: string) => {
     setMessages((current) => {
@@ -1806,6 +1821,7 @@ export function TerminalChatProvider({
         editQueuedPrompt,
         sendQueuedNow,
         clearQueue,
+        sessionId: liveSessionId,
         projectId,
       }}
     >
