@@ -30,7 +30,7 @@ import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { saveTerminalHistorySession } from '@/lib/terminalHistory';
 import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
-import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
+import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildPrompt, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { seedBuildTodos } from '@/lib/buildDefaultTodos';
 import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
@@ -1049,6 +1049,8 @@ export function TerminalChatProvider({
           completedWebsiteBuild: completedWebsiteBuildRef.current,
         });
 
+        let runSwarmBuild = !usePhase1Engine;
+
         if (usePhase1Engine) {
           setPipelineCompact(false);
           const mathPrompt = isMathQueryPrompt(displayPrompt);
@@ -1068,46 +1070,69 @@ export function TerminalChatProvider({
           setThinkingSteps([...thinkingStepsRef.current]);
           pushSwarmTerminalLine(mathPrompt ? 'Math solver → step-by-step solution…' : 'Live research → professional answer…');
 
-          const result = await api.phase1.chat(displayPrompt, history);
-          gotEvent = true;
-          fullReply = result.response;
+          try {
+            const result = await api.phase1.chat(displayPrompt, history);
+            gotEvent = true;
+            fullReply = result.response;
 
-          await streamTextReveal(
-            result.response,
-            (partial) => {
+            await streamTextReveal(
+              result.response,
+              (partial) => {
+                setMessages((m) =>
+                  m.map((msg) =>
+                    msg.id === assistantId
+                      ? {
+                          ...msg,
+                          content: partial,
+                          agent: 'Xroga AI Brain',
+                          webSources: result.webSources,
+                          hackathonBrief: result.hackathonBrief,
+                        }
+                      : msg
+                  )
+                );
+              },
+              controller.signal
+            );
+
+            if (result.webSources?.length || result.hackathonBrief) {
               setMessages((m) =>
                 m.map((msg) =>
                   msg.id === assistantId
-                    ? {
-                        ...msg,
-                        content: partial,
-                        agent: 'Xroga AI Brain',
-                        webSources: result.webSources,
-                        hackathonBrief: result.hackathonBrief,
-                      }
+                    ? { ...msg, webSources: result.webSources, hackathonBrief: result.hackathonBrief }
                     : msg
                 )
               );
-            },
-            controller.signal
-          );
+            }
 
-          if (result.webSources?.length || result.hackathonBrief) {
-            setMessages((m) =>
-              m.map((msg) =>
-                msg.id === assistantId
-                  ? { ...msg, webSources: result.webSources, hackathonBrief: result.hackathonBrief }
-                  : msg
-              )
-            );
+            setTokenUsage({
+              ...result.usage,
+              totalLimit: result.usage.totalTokensRemaining + result.usage.totalTokensUsed,
+            });
+            refreshTokenUsage();
+          } catch (phase1Err) {
+            // Server rejected a product-build that slipped into chat — fall through to real build swarm.
+            const code =
+              phase1Err instanceof ApiError ? String(phase1Err.data?.code ?? '') : '';
+            if (code === 'USE_BUILD_PIPELINE' || (phase1Err instanceof ApiError && phase1Err.status === 409)) {
+              runSwarmBuild = true;
+              setPipelineMessage('Switching to XROGA build swarm…');
+              pushSwarmTerminalLine('Build request detected — starting real site generation…');
+              if (isWebsiteBuildPrompt(displayPrompt) || requiresGitHubForBuild(displayPrompt)) {
+                setSwarmNegotiationPhase(0);
+                setSwarmStatusLabel('XROGA Architect');
+                const seededTodos = seedBuildTodos(displayPrompt);
+                buildTodosSeedRef.current = seededTodos;
+                liveBuildSnapshotRef.current.todos = seededTodos;
+                setSwarmTodos(seededTodos);
+              }
+            } else {
+              throw phase1Err;
+            }
           }
+        }
 
-          setTokenUsage({
-            ...result.usage,
-            totalLimit: result.usage.totalTokensRemaining + result.usage.totalTokensUsed,
-          });
-          refreshTokenUsage();
-        } else {
+        if (runSwarmBuild) {
         await streamSwarmExecute(apiPrompt, {
           projectId,
           signal: controller.signal,

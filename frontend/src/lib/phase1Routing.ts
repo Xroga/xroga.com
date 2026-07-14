@@ -21,6 +21,21 @@ const IMAGE_GEN_PROMPT =
 const BROWSER_AUTOMATION =
   /\b(automate|browser|scrape|fill form|linkedin jobs|apply to)\b/i;
 
+/** Extra guard — catch blog/site builds that slip past isWebsiteBuildPrompt. */
+function looksLikeProductBuild(prompt: string): boolean {
+  const t = prompt.trim();
+  if (!t) return false;
+  if (
+    /\b(build|building|create|creating|make|making|develop)\b[\s\S]{0,100}\b(website|site|blog|landing|portfolio|app|saas|dashboard)\b/i.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  if (t.length < 180 && /\b(blog|landing|portfolio)\s+(website|site|page)\b/i.test(t)) return true;
+  return false;
+}
+
 /** Route to Phase 1 engine for text AI; swarm handles builds, media, and attachments. */
 export function shouldRouteToPhase1(
   prompt: string,
@@ -31,11 +46,13 @@ export function shouldRouteToPhase1(
   if (attachments?.length) return false;
   // Greetings / "hi" / thanks → cheap swarm fast-chat (never Phase 1 WOW essays + history bleed).
   if (isTrivialPrompt(prompt)) return false;
+  // Builds must NEVER hit Phase 1 — it answers with long how-to essays instead of shipping code.
+  if (looksLikeProductBuild(prompt) || isWebsiteBuildPrompt(prompt)) return false;
   if (isVideoGenerationPrompt(prompt)) return false;
   if (IMAGE_GEN_PROMPT.test(prompt)) return false;
   if (BROWSER_AUTOMATION.test(prompt)) return false;
   if (requiresGitHubForBuild(prompt) || isBuildThreadContinuation(prompt, messages as Parameters<typeof isBuildThreadContinuation>[1])) return false;
-  if (isWebsiteBuildPrompt(prompt) || isWebsiteBuildUpdate(prompt, messages as Parameters<typeof isWebsiteBuildUpdate>[1])) return false;
+  if (isWebsiteBuildUpdate(prompt, messages as Parameters<typeof isWebsiteBuildUpdate>[1])) return false;
   if (options?.completedWebsiteBuild && isWebsiteUpdateRequest(prompt)) return false;
   return true;
 }

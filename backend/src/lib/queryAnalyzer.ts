@@ -29,7 +29,7 @@ export interface QueryAnalysis {
 
 export function isSpecificBuildRequest(t: string): boolean {
   return (
-    /\b(build|create|make|design|develop)\b[\s\S]{0,80}\b(website|web\s*page|landing|site|store|shop|restaurant|bakery|salon|gym|clinic|dental|lawyer|portfolio|hotel|saas|ecommerce|nonprofit|church|school|agency|startup|barber|spa|fitness|yoga|real estate|construction|wedding|pet|vet)\b/i.test(
+    /\b(build|building|create|making|make|design|develop)\b[\s\S]{0,100}\b(website|web\s*page|landing|site|blog|store|shop|restaurant|bakery|salon|gym|clinic|dental|lawyer|portfolio|hotel|saas|ecommerce|nonprofit|church|school|agency|startup|barber|spa|fitness|yoga|real estate|construction|wedding|pet|vet)\b/i.test(
       t
     ) ||
     /\b(build|create|make)\b[\s\S]{0,50}\b(game|software|app|api|pygame|phaser)\b/i.test(t)

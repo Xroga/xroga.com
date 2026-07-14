@@ -7,6 +7,7 @@ import { buildFullSystemPrompt } from '../../orchestrator/aiTraining.js';
 import { isTrivialPrompt } from '../../lib/promptClassifier.js';
 import { isCapabilitiesQuery, getXrogaCapabilitiesResponse } from '../../lib/xrogaCapabilities.js';
 import { analyzeUserQuery, isSpecificBuildRequest } from '../../lib/queryAnalyzer.js';
+import { isProductBuildRequest } from '../../lib/buildIntent.js';
 import { isMathQuery } from '../../lib/mathQuery.js';
 import { trySolveMathLocally } from '../../lib/mathSolver.js';
 import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
@@ -54,6 +55,11 @@ export async function quickChat(
 
   const userText = routingPrompt(prompt);
   const lower = userText.toLowerCase().trim();
+
+  // Never answer "build a blog website" with a how-to essay in fast chat
+  if (isProductBuildRequest(userText) || isSpecificBuildRequest(lower)) {
+    throw new Error('PRODUCT_BUILD_MUST_USE_NEGOTIATION');
+  }
 
   const analysis = analyzeUserQuery(userText);
   const buildIntent =

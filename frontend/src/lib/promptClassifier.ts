@@ -7,7 +7,7 @@ const TRIVIAL =
   /^(thanks|thank\s*you|thx|ok|okay|k|yes|no|yep|nope|bye|goodbye|see\s*ya|cool|nice|got\s*it)\b[!.,?\s]*$/i;
 
 const BUILD_INTENT =
-  /\b(build|create|make|generate|deploy|code|debug|fix|website|app|video|image|scrape|automate|research|script|api|game|3d|landing)\b/i;
+  /\b(build|building|create|creating|make|making|generate|deploy|code|debug|fix|website|blog|portfolio|app|video|image|scrape|automate|research|script|api|game|3d|landing)\b/i;
 
 export function isTrivialPrompt(prompt: string): boolean {
   const t = prompt.trim();

@@ -49,9 +49,17 @@ export function isBuildRelated(text: string, userText?: string): boolean {
 export function requiresGitHubForBuild(prompt: string): boolean {
   const t = prompt.toLowerCase();
   if (
-    /\b(build|create|make|develop)\b[\s\S]{0,50}\b(website|web app|landing|mobile app|game|software|api|script|component|page)\b/.test(
+    /\b(build|building|create|creating|make|making|develop|developing)\b[\s\S]{0,100}\b(website|web app|landing|mobile app|game|software|api|script|component|page|blog|portfolio|site)\b/.test(
       t
     )
+  ) {
+    return true;
+  }
+  // "simple blog about AI" without the word website — still a site build
+  if (
+    /\b(build|building|create|make)\b/.test(t) &&
+    /\b(blog|landing|portfolio)\b/.test(t) &&
+    t.length < 200
   ) {
     return true;
   }
