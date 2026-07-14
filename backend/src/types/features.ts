@@ -57,6 +57,21 @@ export interface LandingPageOutput {
   isUpdate?: boolean;
   /** Repo paths patched on GitHub for update builds */
   updatedFiles?: string[];
+  /** Short bullets for the update turn (Plan A) */
+  changesSummary?: string[];
+  /** Expandable before/after diffs for the terminal file trail */
+  fileTrail?: Array<{
+    path: string;
+    before: string;
+    after: string;
+    added: number;
+    removed: number;
+  }>;
+  /** Prior file contents for one-click rollback */
+  previousFiles?: Array<{ path: string; content: string }>;
+  /** Tip commit SHA after push */
+  commitSha?: string;
+  githubBranch?: string;
   /** AI/API endpoints integrated or recommended for this build */
   integratedAi?: Array<{
     id: string;

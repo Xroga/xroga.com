@@ -3,6 +3,8 @@
 import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { QuickActionTabs } from '@/components/terminal/QuickActionTabs';
 import { BrowserPanel } from '@/components/terminal/BrowserPanel';
+import { ProjectWorkspaceRail } from '@/components/terminal/ProjectWorkspaceRail';
+import { ProjectPreviewDock } from '@/components/terminal/ProjectPreviewDock';
 import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
 import { DashboardWelcome } from '@/components/dashboard/DashboardWelcome';
 import { IncognitoDashboard } from '@/components/dashboard/IncognitoDashboard';
@@ -49,6 +51,7 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   const terminalBlock = (
     <div className={cn('space-y-3 w-full', fullscreen && 'xv-fullscreen-terminal max-w-none')}>
       <QuickActionTabs />
+      <ProjectWorkspaceRail />
       {browserFullscreen && browserOpen ? (
         <BrowserPanel mode="full" />
       ) : (
@@ -60,6 +63,7 @@ export function DashboardView({ displayName }: DashboardViewProps) {
         >
           <div className="space-y-3 min-w-0 order-1">
             <SwarmMessageLog />
+            <ProjectPreviewDock />
           </div>
           {browserOpen && (
             <div className="order-2 min-w-0 lg:sticky lg:top-24 self-start">

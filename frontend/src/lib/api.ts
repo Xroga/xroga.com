@@ -526,7 +526,7 @@ export const api = {
         body: JSON.stringify(payload),
       }),
     pushBuild: (payload: {
-      html: string;
+      html?: string;
       css?: string;
       js?: string;
       repoName: string;
@@ -534,13 +534,17 @@ export const api = {
       projectSlug?: string;
       projectName?: string;
       userPrompt?: string;
+      incremental?: boolean;
+      files?: Array<{ path: string; content: string }>;
     }) =>
       apiFetch<{
         githubRepoUrl: string;
         githubRepoName: string;
+        commitSha?: string;
         pushed: boolean;
         fileCount?: number;
         generatedFiles?: string[];
+        incremental?: boolean;
       }>('/api/github/push-build', {
         method: 'POST',
         body: JSON.stringify(payload),
