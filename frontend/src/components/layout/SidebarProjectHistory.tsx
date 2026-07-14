@@ -2,15 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Cloud,
-  Filter,
-  FolderGit2,
-  FolderOpen,
-  GitBranch,
-  ChevronDown,
-  ChevronRight,
-} from 'lucide-react';
+import { Cloud, Filter, FolderGit2, FolderOpen, GitBranch, ChevronDown, ChevronRight } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import {
   loadTerminalHistory,
@@ -25,16 +17,15 @@ import {
   notifyGithubRepoContext,
 } from '@/lib/githubProjectEvents';
 import {
-  ensureSelectedRepoFolder,
+  isRealRepoSession,
   loadRepoSessionsIndex,
   type RepoActivityKind,
   type RepoSessionIndexEntry,
 } from '@/lib/repoSessionsIndex';
-import { formatSafeDistance } from '@/lib/safeDates';
+import { formatCompactAgo } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
 import { api, type Project } from '@/lib/api';
 import { loadGithubProjectSession } from '@/lib/projectResume';
-import { mergeGithubProjects } from '@/lib/githubProjectsFromHistory';
 
 type RepoSession = {
   id: string;
@@ -51,21 +42,13 @@ type RepoSession = {
   index?: RepoSessionIndexEntry;
 };
 
-function activityLabel(kind?: RepoActivityKind | TerminalHistoryEntry['kind']): string {
-  if (kind === 'code') return 'Build';
-  if (kind === 'image') return 'Image';
-  if (kind === 'research' || kind === 'business') return 'Research';
-  if (kind === 'mixed') return 'Mixed';
-  return 'Chat';
-}
-
 type RepoFolder = {
   key: string;
   label: string;
   sessions: RepoSession[];
 };
 
-function oneLine(text: string, max = 42): string {
+function oneLine(text: string, max = 40): string {
   const line = text.replace(/\s+/g, ' ').trim();
   if (line.length <= max) return line;
   return `${line.slice(0, max - 1)}…`;
@@ -76,64 +59,40 @@ function repoLabel(full: string): string {
   return full.split('/')[1] || full;
 }
 
-/** Cursor-style Repositories sidebar — never empty when GitHub is connected / used. */
+function activityFromHistory(kind: TerminalHistoryEntry['kind']): RepoActivityKind {
+  if (kind === 'code') return 'code';
+  if (kind === 'image') return 'image';
+  if (kind === 'research' || kind === 'business') return 'research';
+  if (kind === 'mixed') return 'mixed';
+  return 'chat';
+}
+
+/** Only repos the user actually used on Xroga — Cursor-style session rows. */
 export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const router = useRouter();
   const { restoreTerminalSession, startNewChat } = useTerminalChat();
   const [entries, setEntries] = useState<TerminalHistoryEntry[]>([]);
   const [indexEntries, setIndexEntries] = useState<RepoSessionIndexEntry[]>([]);
   const [cloudProjects, setCloudProjects] = useState<Project[]>([]);
-  const [connectedRepos, setConnectedRepos] = useState<string[]>([]);
   const [filterRecent, setFilterRecent] = useState(true);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const refreshLocal = useCallback(() => {
-    ensureSelectedRepoFolder();
     setEntries(
       loadTerminalHistory()
-        .filter((e) => e.messageCount > 0 || Boolean(e.githubRepoName))
-        .slice(0, 48)
+        .filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/'))
+        .slice(0, 60)
     );
     setIndexEntries(loadRepoSessionsIndex());
   }, []);
 
   const refreshCloud = useCallback(() => {
+    // Only projects already saved from Xroga work — never dump every GitHub repo
     void api.projects
-      .list()
-      .then((list) => {
-        const all = Array.isArray(list) ? list : [];
-        const withGithub = all.filter((p) => p.github_repo_name?.includes('/'));
-        setCloudProjects(withGithub.length ? withGithub : all.filter((p) => p.github_repo_name));
-      })
-      .catch(() => {
-        void api.projects
-          .listGithub()
-          .then((list) => setCloudProjects(Array.isArray(list) ? list : []))
-          .catch(() => setCloudProjects([]));
-      });
-
-    void api.github
-      .status()
-      .then((st) => {
-        if (st.defaultRepo?.includes('/')) {
-          setConnectedRepos((prev) =>
-            prev.includes(st.defaultRepo!) ? prev : [st.defaultRepo!, ...prev]
-          );
-        }
-        if (!st.connected) return;
-        return api.github.listRepos();
-      })
-      .then((res) => {
-        if (!res?.repos?.length) return;
-        setConnectedRepos((prev) => {
-          const names = res.repos.map((r) => r.fullName).filter((n) => n.includes('/'));
-          return Array.from(new Set([...names.slice(0, 20), ...prev]));
-        });
-      })
-      .catch(() => {
-        /* optional — local index still works */
-      });
+      .listGithub()
+      .then((list) => setCloudProjects(Array.isArray(list) ? list.filter((p) => p.github_repo_name?.includes('/')) : []))
+      .catch(() => setCloudProjects([]));
   }, []);
 
   useEffect(() => {
@@ -158,9 +117,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const folders = useMemo((): RepoFolder[] => {
     const map = new Map<string, RepoSession[]>();
     const push = (key: string, session: RepoSession) => {
+      if (!key.includes('/') && key !== 'Recent') return;
       const list = map.get(key) ?? [];
       if (list.some((s) => s.id === session.id)) return;
-      // Prefer richer local/cloud over bare index stub
       const stubIdx = list.findIndex(
         (s) =>
           s.kind === 'index' &&
@@ -173,32 +132,25 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     };
 
     for (const e of entries) {
-      const key = e.githubRepoName?.includes('/') ? e.githubRepoName : 'Recent';
-      push(key, {
+      if (!e.githubRepoName?.includes('/')) continue;
+      push(e.githubRepoName, {
         id: e.id,
-        title: e.title,
+        title: e.title || 'Session',
         updatedAt: e.updatedAt,
         status: e.status,
         githubRepoName: e.githubRepoName,
         githubBranch: e.githubBranch || 'main',
         cloudSynced: Boolean(e.cloudProjectId),
         kind: 'local',
-        activityKind:
-          e.kind === 'code'
-            ? 'code'
-            : e.kind === 'image'
-              ? 'image'
-              : e.kind === 'research' || e.kind === 'business'
-                ? 'research'
-                : e.kind === 'mixed'
-                  ? 'mixed'
-                  : 'chat',
+        activityKind: activityFromHistory(e.kind),
         entry: e,
       });
     }
 
     for (const ix of indexEntries) {
-      if (!ix.githubRepoName?.includes('/')) continue;
+      if (!isRealRepoSession(ix)) continue;
+      // Prefer local history row when same session already listed
+      if (entries.some((e) => e.id === ix.sessionId || e.id === ix.id)) continue;
       push(ix.githubRepoName, {
         id: ix.id,
         title: ix.title,
@@ -213,16 +165,21 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       });
     }
 
-    const merged = mergeGithubProjects(cloudProjects, entries);
-    for (const p of merged) {
-      const key = p.github_repo_name?.includes('/') ? p.github_repo_name : 'Recent';
+    for (const p of cloudProjects) {
+      const key = p.github_repo_name!;
+      // Skip cloud-only stub if this repo already has local sessions
+      if (map.has(key) && (map.get(key)?.length ?? 0) > 0) {
+        // Still allow cloud project if it's a distinct saved build not in local
+        const already = map.get(key)!.some((s) => s.id === p.id || s.title === p.name);
+        if (already) continue;
+      }
       if (p.id.startsWith('history-')) continue;
       push(key, {
         id: p.id,
-        title: p.name,
+        title: p.name || repoLabel(key),
         updatedAt: p.updated_at || p.created_at,
         status: 'complete',
-        githubRepoName: p.github_repo_name ?? undefined,
+        githubRepoName: key,
         githubBranch: 'main',
         cloudSynced: true,
         kind: 'cloud',
@@ -231,56 +188,26 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       });
     }
 
-    // Connected GitHub accounts: show repo folders even with no session yet
-    for (const repo of connectedRepos) {
-      if (!repo.includes('/')) continue;
-      if (!map.has(repo)) {
-        map.set(repo, [
-          {
-            id: `connected-${repo}`,
-            title: 'Open in workspace',
-            updatedAt: new Date().toISOString(),
-            githubRepoName: repo,
-            githubBranch: 'main',
-            cloudSynced: true,
-            kind: 'index',
-          },
-        ]);
-      }
-    }
-
-    const selected = getSelectedRepoContext()?.repo;
-    if (selected?.includes('/') && !map.has(selected)) {
-      map.set(selected, [
-        {
-          id: `selected-${selected}`,
-          title: 'Current selection',
-          updatedAt: new Date().toISOString(),
-          githubRepoName: selected,
-          githubBranch: getSelectedRepoContext()?.branch || 'main',
-          cloudSynced: false,
-          kind: 'index',
-        },
-      ]);
-    }
-
-    let foldersList = Array.from(map.entries()).map(([key, sessions]) => ({
-      key,
-      label: key === 'Recent' ? 'Recent' : repoLabel(key),
-      sessions: sessions.sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt)).slice(0, 8),
-    }));
+    // Drop empty folders and "Recent" without a real repo
+    let foldersList = Array.from(map.entries())
+      .filter(([key, sessions]) => key.includes('/') && sessions.length > 0)
+      .map(([key, sessions]) => ({
+        key,
+        label: repoLabel(key),
+        sessions: sessions
+          .sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
+          .slice(0, 8),
+      }));
 
     foldersList.sort((a, b) => {
-      if (a.key === 'Recent') return 1;
-      if (b.key === 'Recent') return -1;
       const aT = Date.parse(a.sessions[0]?.updatedAt ?? 0);
       const bT = Date.parse(b.sessions[0]?.updatedAt ?? 0);
       return bT - aT;
     });
 
-    if (filterRecent) foldersList = foldersList.slice(0, 10);
+    if (filterRecent) foldersList = foldersList.slice(0, 8);
     return foldersList;
-  }, [entries, indexEntries, cloudProjects, connectedRepos, filterRecent]);
+  }, [entries, indexEntries, cloudProjects, filterRecent]);
 
   useEffect(() => {
     setOpenFolders((prev) => {
@@ -320,7 +247,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         startNewChat();
         await restoreTerminalSession({
           sessionId,
-          prompt: prompt || `Continue ${session.githubRepoName}`,
+          prompt: prompt || session.title,
           messages: messages.length ? messages : [],
           selectedId: session.project.id,
           selectedLabel: session.title,
@@ -348,8 +275,6 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         return;
       }
 
-      // Repo folder with no chat yet — just select repo and open workspace
-      startNewChat();
       router.push('/workspace');
     } finally {
       setBusyId(null);
@@ -368,7 +293,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         </span>
         <button
           type="button"
-          title={filterRecent ? 'Showing recent repos' : 'Show all'}
+          title={filterRecent ? 'Showing recent used repos' : 'Show all used repos'}
           onClick={() => setFilterRecent((v) => !v)}
           className={cn(
             'p-1 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5',
@@ -381,11 +306,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
       {folders.length === 0 ? (
         <p className="px-2 py-2 text-[10px] text-[var(--muted)] leading-relaxed">
-          Connect GitHub, select a repo, then chat / research / generate / build. Everything stays under that
-          repo here on Xroga (only code goes to GitHub).
+          Repos appear here after you work in them on Xroga — chat, research, images, or builds.
         </p>
       ) : (
-        <div className="space-y-0.5 max-h-[280px] overflow-y-auto pr-0.5 scrollbar-thin">
+        <div className="xv-repos-scroll space-y-0.5 max-h-[280px] overflow-y-auto pr-1">
           {folders.map((folder) => {
             const isOpen = openFolders[folder.key] !== false;
             const FolderIcon = isOpen ? FolderOpen : FolderGit2;
@@ -418,26 +342,21 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                           disabled={busyId === session.id}
                           onClick={() => void openSession(session)}
                           className={cn(
-                            'w-full text-left rounded-md pl-6 pr-2 py-1.5 transition-colors',
+                            'w-full flex items-center gap-1.5 rounded-md pl-6 pr-2 py-1.5 transition-colors',
                             'hover:bg-[var(--foreground)]/8',
                             isSelected && 'bg-[var(--foreground)]/10'
                           )}
                         >
-                          <div className="flex items-start justify-between gap-1">
-                            <p className="text-[11px] font-medium text-[var(--foreground)]/90 truncate leading-snug">
-                              {oneLine(session.title, 34)}
-                            </p>
-                            <span className="text-[9px] text-[var(--muted)] shrink-0 tabular-nums">
-                              {formatSafeDistance(session.updatedAt)}
-                            </span>
-                          </div>
-                          <div className="mt-0.5 flex items-center gap-1.5 text-[var(--muted)]">
-                            <GitBranch className="h-2.5 w-2.5 text-violet-400" />
-                            {session.cloudSynced && <Cloud className="h-2.5 w-2.5 opacity-70" />}
-                            <span className="text-[9px] uppercase tracking-wide opacity-80">
-                              {activityLabel(session.activityKind)}
-                            </span>
-                          </div>
+                          <p className="flex-1 min-w-0 text-left text-[11px] font-medium text-[var(--foreground)]/90 truncate leading-snug">
+                            {oneLine(session.title, 28)}
+                          </p>
+                          <GitBranch className="h-2.5 w-2.5 text-violet-400 shrink-0" />
+                          {session.cloudSynced ? (
+                            <Cloud className="h-2.5 w-2.5 text-[var(--muted)] shrink-0 opacity-70" />
+                          ) : null}
+                          <span className="text-[9px] text-[var(--muted)] shrink-0 tabular-nums min-w-[1.5rem] text-right">
+                            {formatCompactAgo(session.updatedAt)}
+                          </span>
                         </button>
                       );
                     })
