@@ -11,6 +11,12 @@ export const BEGINNER_WEBSITE_PLAN = [
   'Step 6: Responsive Design — mobile-first polish',
 ] as const;
 
+/** Fast path for simple blogs/landings — 2 steps max */
+export const SIMPLE_STATIC_PLAN = [
+  'Step 1: Complete blog site — index.html with header, nav, hero, post list (localStorage), about, footer',
+  'Step 2: styles.css + script.js — modern responsive layout, post CRUD, mobile polish',
+] as const;
+
 export const BEGINNER_WEBSITE_PLAN_NO_ORDER = [
   'Step 1: Homepage — hero, header, navigation',
   'Step 2: Services / Products — items and pricing',
@@ -79,6 +85,9 @@ function nicheFromPrompt(prompt: string): { name: string; theme: string; steps: 
 
 export function defaultPlanForPrompt(prompt: string): string[] {
   const t = prompt.toLowerCase();
+  if (/\b(blog|landing|portfolio|simple website|simple site|personal site)\b/.test(t)) {
+    return [...SIMPLE_STATIC_PLAN];
+  }
   const noOrder = /\b(no payment|without ordering|no ordering)\b/.test(t) || /\b,\s*no\b/.test(t);
   const niche = nicheFromPrompt(prompt);
 

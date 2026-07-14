@@ -120,9 +120,13 @@ import { costAwareRole, policyForPrompt, strategyGrokVariant } from '../../lib/b
 
 /** Max tokens per build step — no compromise on complete code output */
 const BUILD_STEP_MAX_TOKENS = 16384;
+const SIMPLE_BUILD_STEP_MAX_TOKENS = 8192;
 
 const MAX_PLAN_ITERATIONS = 3;
 const MAX_STEP_CORRECTIONS = 3;
+const SIMPLE_MAX_PLAN_ITERATIONS = 1;
+const SIMPLE_MAX_STEP_CORRECTIONS = 1;
+const SIMPLE_MAX_STEPS = 2;
 
 function assertNotAborted(ctx: NegotiationContext) {
   if (ctx.abortSignal?.aborted) {
@@ -140,25 +144,8 @@ function emit(
   opts?: { silent?: boolean; userPhase?: number; hackathonBrief?: import('../../phase1/types.js').HackathonBriefCard }
 ): void {
   assertNotAborted(ctx);
-  const userPhase =
-    opts?.userPhase ??
-    (phase === 0
-      ? 0
-      : phase <= 2
-        ? 1
-        : phase === 3
-          ? 1
-          : phase === 4
-            ? 2
-            : phase === 5
-              ? 2
-              : phase === 6
-                ? 2
-                : phase === 7
-                  ? 5
-                  : phase >= 8
-                    ? 4
-                    : 1);
+  // Keep userFacingPhase aligned with negotiationPhase so any consumer advances.
+  const userPhase = opts?.userPhase ?? phase;
 
   ctx.onProgress?.({
     runId: crypto.randomUUID(),
@@ -300,13 +287,13 @@ async function deepseekProCall(
 }
 
 const BUILD_HEARTBEAT_MSGS = [
-  '⚙️ XROGA AI Black Hole — writing HTML structure…',
-  '⚙️ BLACK HOLE V∞ — generating CSS styles…',
-  '⚙️ XROGA AI Black Hole — building page sections…',
-  '⚙️ AI Swarm Logic — still coding your website…',
+  '⚙️ Still writing code — this step is in progress…',
+  '⚙️ Generating page sections…',
+  '⚙️ Applying styles & layout…',
+  '⚙️ AI Swarm Logic — coding step still running…',
 ];
 
-/** Emit progress every 5s during long code API calls so the UI never looks frozen */
+/** Emit silent keepalive so UI todos update without inventing fake file edits */
 async function withBuildHeartbeat<T>(
   ctx: NegotiationContext,
   todos: ReturnType<typeof createTodoState>,
@@ -316,7 +303,8 @@ async function withBuildHeartbeat<T>(
   const id = setInterval(() => {
     const msg = BUILD_HEARTBEAT_MSGS[tick % BUILD_HEARTBEAT_MSGS.length]!;
     tick += 1;
-    emit(ctx, 3, msg, 'builder', todos, 'AI SWARM LOGIC', { userPhase: 1 });
+    // silent: true → status Label + todos refresh without fake "Created vercel.json"
+    emit(ctx, 3, msg, 'builder', todos, 'AI SWARM LOGIC', { silent: true });
   }, 5000);
   try {
     return await work();
@@ -887,15 +875,17 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   });
 
   todos.activateMeta('structure');
-  emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect', { userPhase: 1 });
+  emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect');
   let approvedPlan = masterPlan;
+  const planIterations =
+    costPolicy.tier === 'simple_static' ? SIMPLE_MAX_PLAN_ITERATIONS : MAX_PLAN_ITERATIONS;
   if (!isUpdateBuild) {
-  for (let i = 0; i < MAX_PLAN_ITERATIONS; i++) {
-    emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect', { userPhase: 1 });
+  for (let i = 0; i < planIterations; i++) {
+    emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect');
     const review = await deepseekProCall(
       PHASE_2_DEEPSEEK_REVIEW,
       `User query:\n${userPrompt}\n\nMaster Plan:\n${approvedPlan}`,
-      4096,
+      costPolicy.tier === 'simple_static' ? 2048 : 4096,
       usageTracker
     );
 
@@ -905,7 +895,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     }
 
     const corrected = review.replace(/^CORRECTED PLAN\s*/i, '').trim() || review;
-    emit(ctx, 2, BRAND.phase2.negotiating, 'architect', todos, 'XROGA Visionary', { userPhase: 1 });
+    // Simple blogs: accept DeepSeek plan correction — skip Gemini agree loop (saves minutes)
+    if (costPolicy.tier === 'simple_static') {
+      approvedPlan = corrected;
+      break;
+    }
+    emit(ctx, 2, BRAND.phase2.negotiating, 'architect', todos, 'XROGA Visionary');
     const geminiReply = await geminiCall(
       PHASE_2_GEMINI_AGREE,
       `Original user:\n${userPrompt}\n\nCorrected plan:\n${corrected}`
@@ -936,12 +931,21 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   const gameMaxSteps = isGamePhaseContinuation(userPrompt) ? steps.length : Math.min(steps.length, 2);
   let stepsToRun = isGameBuild ? steps.slice(0, gameMaxSteps) : steps;
+  if (costPolicy.tier === 'simple_static') {
+    stepsToRun = steps.slice(0, SIMPLE_MAX_STEPS);
+  }
   if (isUpdateBuild && incrementalPlan) {
     stepsToRun = incrementalPlan.labels.slice(0, incrementalPlan.stepCount);
   }
   todos.setBuildSteps(stepsToRun);
   todos.activateMeta('steps');
   todos.completeMeta('steps');
+
+  const stepTokenBudget =
+    costPolicy.tier === 'simple_static' ? SIMPLE_BUILD_STEP_MAX_TOKENS : BUILD_STEP_MAX_TOKENS;
+  const stepCorrectionsMax =
+    costPolicy.tier === 'simple_static' ? SIMPLE_MAX_STEP_CORRECTIONS : MAX_STEP_CORRECTIONS;
+  const lightVerify = isUpdateBuild || costPolicy.tier === 'simple_static';
 
   emit(
     ctx,
@@ -950,11 +954,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       ? BRAND.phase3.updateStart(stepsToRun.length)
       : isGameBuild
         ? BRAND.phase3.buildStart(stepsToRun.length)
-        : BRAND.phase3.buildStart(steps.length),
+        : BRAND.phase3.buildStart(stepsToRun.length),
     'builder',
     todos,
-    isGameBuild ? 'XROGA Game Alchemist' : 'XROGA Architect',
-    { userPhase: 1 }
+    isGameBuild ? 'XROGA Game Alchemist' : 'XROGA Architect'
   );
 
   const codeParts: string[] = [];
@@ -980,32 +983,33 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     const target = stepTargetLabel(stepsToRun[si]!, si);
     todos.activateBuild(si);
     todos.advanceCodeStep(si, stepsToRun.length, target);
-    emit(ctx, 3, BRAND.phase3.execute(si + 1, stepsToRun.length, target), 'builder', todos, isGameBuild ? 'XROGA Game Alchemist' : 'XROGA Architect', {
-      userPhase: isUpdateBuild ? 2 : 1,
-    });
+    emit(ctx, 3, BRAND.phase3.execute(si + 1, stepsToRun.length, target), 'builder', todos, isGameBuild ? 'XROGA Game Alchemist' : 'XROGA Architect');
 
     const passLabel = si === 0 ? xrogaPulseLine(`Scaffolding — ${target}`) : xrogaArchitectureLine(`Logic — ${target}`);
-    emit(ctx, 3, passLabel, 'builder', todos, si === 0 ? 'XROGA Pulse' : 'XROGA Architect', { userPhase: 1 });
+    emit(ctx, 3, passLabel, 'builder', todos, si === 0 ? 'XROGA Pulse' : 'XROGA Architect');
 
     let stepCode = '';
     try {
       stepCode = await withBuildHeartbeat(ctx, todos, async () => {
-        const role = isUpdateBuild
-          ? 'flash'
-          : hackathonNote || repoAnalysisSummary
-            ? si % 2 === 0
-              ? 'pro'
-              : 'flash'
-            : si === 0
+        const role =
+          costPolicy.tier === 'simple_static'
+            ? 'flash'
+            : isUpdateBuild
               ? 'flash'
-              : si % 2 === 0
-                ? 'pro'
-                : 'flash';
+              : hackathonNote || repoAnalysisSummary
+                ? si % 2 === 0
+                  ? 'pro'
+                  : 'flash'
+                : si === 0
+                  ? 'flash'
+                  : si % 2 === 0
+                    ? 'pro'
+                    : 'flash';
         const { text } = await buildModelCall(
           role,
           executePrompt,
           `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
-          BUILD_STEP_MAX_TOKENS,
+          stepTokenBudget,
           usageTracker
         );
         return text;
@@ -1018,9 +1022,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     }
 
     let approved = false;
-    for (let attempt = 0; attempt < MAX_STEP_CORRECTIONS; attempt++) {
-      emit(ctx, 4, BRAND.phase4.verifying, 'qa', todos, 'AI SWARM LOGIC', { userPhase: 2 });
-      const reports = await verifyStepParallel(stepCode, approvedPlan, userPrompt, usageTracker, isUpdateBuild);
+    for (let attempt = 0; attempt < stepCorrectionsMax; attempt++) {
+      emit(ctx, 4, BRAND.phase4.verifying, 'qa', todos, 'AI SWARM LOGIC');
+      const reports = await verifyStepParallel(stepCode, approvedPlan, userPrompt, usageTracker, lightVerify);
       const failures = reports.filter((r) => !r.pass);
 
       if (!failures.length) {
@@ -1046,7 +1050,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         stepCode = await deepseekProCall(
           PHASE_5_CORRECT,
           `Failures:\n${errorPlan}\n\nCode:\n${stepCode}`,
-          BUILD_STEP_MAX_TOKENS,
+          stepTokenBudget,
           usageTracker
         );
       }
@@ -1056,7 +1060,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
     todos.completeBuild(si);
     // Mark step done with friendly label in activity log
-    emit(ctx, 3, friendlyStepLabel(stepsToRun[si]!, si), 'builder', todos, isGameBuild ? 'XROGA Game Alchemist' : 'XROGA Architect', { userPhase: 1 });
+    emit(ctx, 3, friendlyStepLabel(stepsToRun[si]!, si), 'builder', todos, isGameBuild ? 'XROGA Game Alchemist' : 'XROGA Architect');
     codeParts.push(`// --- ${stepLabel}: ${stepsToRun[si]} ---\n${stepCode}`);
     if (!approved) {
       emit(ctx, 5, BRAND.phase5.maxReached, 'debugger', todos, 'XROGA Architect');
@@ -1067,10 +1071,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   let assembledCode = codeParts.join('\n\n');
 
-  if (!isUpdateBuild) {
-    emit(ctx, 6, xrogaPulseLine('First-build preflight — runtime & UI sanity check'), 'qa', todos, 'XROGA Pulse', {
-      userPhase: 2,
-    });
+  if (!isUpdateBuild && costPolicy.tier !== 'simple_static') {
+    emit(ctx, 6, xrogaPulseLine('First-build preflight — runtime & UI sanity check'), 'qa', todos, 'XROGA Pulse');
     try {
       const { text: preflight } = await buildModelCall(
         'flash',
@@ -1087,9 +1089,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     }
   }
 
-  emit(ctx, 6, xrogaVisionaryLine('UI polish — responsive design & animations'), 'reviewer', todos, 'XROGA Visionary', {
-    userPhase: 2,
-  });
+  emit(ctx, 6, xrogaVisionaryLine('UI polish — responsive design & animations'), 'reviewer', todos, 'XROGA Visionary');
   if (isUpdateBuild && incrementalPlan?.touchesUi && incrementalPlan.stepCount > 1) {
     try {
       assertNotAborted(ctx);
@@ -1114,6 +1114,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   } else if (!isUpdateBuild) {
   try {
     assertNotAborted(ctx);
+    todos.activate('ui-trends');
     const polishRole = costAwareRole(
       costPolicy.preferFlashUiPolish ? 'flash' : 'sonnet',
       costPolicy
@@ -1122,15 +1123,21 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       polishRole,
       `You are XROGA Visionary. Polish HTML/CSS/JS for modern responsive design, micro-interactions, accessibility (ARIA), and optional dark mode. Output ONLY complete fenced html, css, javascript blocks — no commentary, no truncation.`,
       `Brief:\n${clarifiedBrief}\n\nApproved plan:\n${approvedPlan}\n\nCodebase:\n${assembledCode}`,
-      BUILD_STEP_MAX_TOKENS,
+      stepTokenBudget,
       usageTracker,
       { userId: ctx.userId, claudeTask: 'ui' }
     );
     if (uiPolish?.trim()) {
       assembledCode = `${assembledCode}\n\n// --- UI/UX polish (${modelLabel}) ---\n${uiPolish}`;
     }
+    todos.complete('ui-trends');
   } catch {
     /* fallback handled in buildModelCall */
+    try {
+      todos.complete('ui-trends');
+    } catch {
+      /* optional */
+    }
   }
   }
 
@@ -1171,9 +1178,33 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   }
 
   if (!isUpdateBuild) {
-  emit(ctx, 6, xrogaCollectiveLine('Quality gate — code standards review'), 'truth_council', todos, 'XROGA Collective', {
-    userPhase: 2,
-  });
+  // Simple blogs: one Flash quality check — skip Gemini/Mistral multi-agent council (was burning ~minutes).
+  if (costPolicy.tier === 'simple_static') {
+    emit(ctx, 6, xrogaCollectiveLine('Quick quality check'), 'truth_council', todos, 'XROGA Collective');
+    try {
+      const { text: qualityReview } = await buildModelCall(
+        'flash',
+        PHASE_6_FINAL,
+        `Full codebase:\n${assembledCode.slice(0, 40000)}`,
+        1024,
+        usageTracker
+      );
+      if (!isPass(qualityReview)) {
+        assembledCode = await deepseekFlashCall(
+          PHASE_5_CORRECT,
+          `Quality review:\n${qualityReview}\n\nCode:\n${assembledCode}`,
+          stepTokenBudget,
+          usageTracker
+        );
+        totalCorrections++;
+      } else {
+        emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective');
+      }
+    } catch {
+      /* skip */
+    }
+  } else {
+  emit(ctx, 6, xrogaCollectiveLine('Quality gate — code standards review'), 'truth_council', todos, 'XROGA Collective');
   try {
     const reviewRole = costAwareRole(
       buildType === 'crypto' ? 'opus' : hackathonNote && costPolicy.allowGrokStrategy ? 'grok' : 'pro',
@@ -1205,9 +1236,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     /* review falls back inside buildModelCall */
   }
 
-  emit(ctx, 6, xrogaCollectiveLine('Security & integration audit'), 'truth_council', todos, 'XROGA Collective', {
-    userPhase: 2,
-  });
+  emit(ctx, 6, xrogaCollectiveLine('Security & integration audit'), 'truth_council', todos, 'XROGA Collective');
   const finalChecks = await Promise.allSettled([
     deepseekFlashCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode}`, 4096, usageTracker),
     geminiCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 50000)}`, 512),
@@ -1230,7 +1259,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     );
     totalCorrections++;
   } else {
-    emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective', { userPhase: 2 });
+    emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective');
+  }
   }
   } else {
     emit(ctx, 6, xrogaPulseLine('Update verify — flash check on touched files only'), 'qa', todos, 'XROGA Pulse', {

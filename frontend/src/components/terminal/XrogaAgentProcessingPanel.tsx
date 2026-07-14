@@ -175,11 +175,17 @@ export function XrogaAgentProcessingPanel({
         />
       )}
 
-      {(formattedLines.length > 0 || todos.length > 0) && (
+      {(formattedLines.length > 0 || todos.length > 0) && (stats.files > 0 || stats.searches > 0 || stats.commands > 0) && (
         <p className="text-[12px] text-[var(--muted)]/70 xv-agent-line-in">
-          Explored {stats.files} file{stats.files === 1 ? '' : 's'}, {stats.searches} search
-          {stats.searches === 1 ? '' : 'es'}
-          {stats.commands > 0 ? `, ran ${stats.commands} command${stats.commands === 1 ? '' : 's'}` : ''}
+          {stats.files > 0
+            ? `Updated ${stats.files} file${stats.files === 1 ? '' : 's'}`
+            : 'Working'}
+          {stats.searches > 0
+            ? `${stats.files > 0 ? ', ' : ''}${stats.searches} check${stats.searches === 1 ? '' : 's'}`
+            : ''}
+          {stats.commands > 0
+            ? `, ran ${stats.commands} command${stats.commands === 1 ? '' : 's'}`
+            : ''}
         </p>
       )}
 

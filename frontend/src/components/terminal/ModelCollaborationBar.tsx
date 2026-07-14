@@ -18,14 +18,16 @@ interface ModelCollaborationBarProps {
   className?: string;
 }
 
+/** Map negotiationPhase (0–8) → role chip. Must advance during real builds. */
 function activeIndexFromPhase(phase: number | null | undefined): number {
-  if (phase == null || phase <= 1) return 0;
-  if (phase === 3) return 2;
-  if (phase === 2) return 3;
-  if (phase === 4) return 5;
-  if (phase === 5) return 5;
-  if (phase >= 6) return 4;
-  return 1;
+  if (phase == null || phase <= 0) return 0; // Architect · Architecture
+  if (phase === 1 || phase === 2) return 0; // plan / structure still Architect
+  if (phase === 3) return 1; // Pulse · Scaffold
+  if (phase === 4) return 2; // Architect · Logic (verify/fix loop)
+  if (phase === 5) return 2; // corrections
+  if (phase === 6) return 4; // Collective · Quality (+ Visionary polish before)
+  if (phase >= 7) return 5; // BLACK HOLE · Security / deploy
+  return 0;
 }
 
 /** Shows which XROGA AI roles collaborate during a build. */
