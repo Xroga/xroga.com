@@ -62,6 +62,19 @@ import { requestBuildNotificationPermission, showBuildBrowserNotification } from
 const GENERIC_SWARM_FALLBACK =
   "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.";
 
+function lastUserPromptNear(
+  messages: ChatMessage[],
+  assistantMessageId: string
+): string {
+  const idx = messages.findIndex((m) => m.id === assistantMessageId);
+  for (let i = idx - 1; i >= 0; i--) {
+    if (messages[i]?.role === 'user' && messages[i]?.content?.trim()) {
+      return messages[i]!.content.trim();
+    }
+  }
+  return '';
+}
+
 type MessageRole = 'user' | 'assistant' | 'system';
 
 export interface ChatMessage {
@@ -83,6 +96,13 @@ export interface ChatMessage {
   /** Behind-the-scenes reasoning steps shown after response */
   thinkingSteps?: string[];
   thoughtMs?: number;
+  /** User stopped mid-build — show Retry card, keep in history */
+  buildStopped?: boolean;
+  stoppedTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
+  stoppedPhase?: number | null;
+  stoppedActivityLog?: string[];
+  originalBuildPrompt?: string;
+  githubRepoName?: string;
 }
 
 export interface QueuedPrompt {
@@ -123,6 +143,8 @@ interface TerminalChatContextValue {
     attachments?: ChatAttachment[]
   ) => Promise<void>;
   stop: () => void;
+  /** Continue a stopped build from checkpoint + GitHub (not from scratch) */
+  retryStoppedBuild: (assistantMessageId: string) => Promise<void>;
   startNewChat: () => void;
   /** Restore session from workspace (e.g. jump from AI Media) */
   hydrateFromSession: () => void;
@@ -199,6 +221,11 @@ export function TerminalChatProvider({
   });
   const afterGitHubActivationRef = useRef<(() => void) | null>(null);
   const buildTodosSeedRef = useRef<Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>>([]);
+  const liveBuildSnapshotRef = useRef<{
+    todos: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
+    phase: number | null;
+    activity: string[];
+  }>({ todos: [], phase: null, activity: [] });
   const skipGithubGateRef = useRef(false);
   const githubBuildRetryRef = useRef(false);
   const pendingBuildRef = useRef<{
@@ -642,6 +669,42 @@ export function TerminalChatProvider({
     abortRef.current?.abort();
   }, []);
 
+  const retryStoppedBuild = useCallback(async (assistantMessageId: string) => {
+    const msg = messages.find((m) => m.id === assistantMessageId && m.buildStopped);
+    if (!msg) {
+      toast.error('Stopped build not found');
+      return;
+    }
+    const original = msg.originalBuildPrompt?.trim() || lastUserPromptNear(messages, assistantMessageId);
+    if (!original) {
+      toast.error('Original build prompt missing');
+      return;
+    }
+    if (msg.githubRepoName?.includes('/')) {
+      // keep / reconnect the same repo so engine loads existing files
+      const { saveSelectedRepoContext } = await import('@/lib/repoContext');
+      const { notifyGithubRepoContext } = await import('@/lib/githubProjectEvents');
+      saveSelectedRepoContext({ repo: msg.githubRepoName, branch: 'main' });
+      notifyGithubRepoContext(msg.githubRepoName, 'main');
+    }
+
+    const continuePrompt = [
+      'Continue this build from where it was stopped.',
+      'Analyze existing GitHub project files first.',
+      'Finish remaining todos and incomplete sections only.',
+      'Do NOT rebuild the entire website from scratch.',
+      '',
+      `Original request:\n${original}`,
+      msg.stoppedTodos?.length
+        ? `\nLast progress:\n${msg.stoppedTodos.map((t) => `- [${t.status}] ${t.label}`).join('\n')}`
+        : '',
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    await submitRef.current(continuePrompt, false, false);
+  }, [messages]);
+
   const startNewChat = useCallback(() => {
     abortRef.current?.abort();
     if (thinkingTimerRef.current) {
@@ -653,6 +716,7 @@ export function TerminalChatProvider({
         sessionId: sessionIdRef.current,
         prompt,
         messages,
+        status: messages.some((m) => m.buildStopped) ? 'stopped' : undefined,
       });
     }
     sessionIdRef.current =
@@ -862,6 +926,7 @@ export function TerminalChatProvider({
       setSwarmNegotiationPhase(null);
       setSwarmTodos([]);
       buildTodosSeedRef.current = [];
+      liveBuildSnapshotRef.current = { todos: [], phase: null, activity: [] };
       setSwarmStatusLabel(null);
       setSwarmAnalysis(null);
       setSwarmActivityLog([]);
@@ -894,6 +959,7 @@ export function TerminalChatProvider({
         setSwarmStatusLabel('XROGA Architect');
         const seededTodos = seedBuildTodos(displayPrompt);
         buildTodosSeedRef.current = seededTodos;
+        liveBuildSnapshotRef.current.todos = seededTodos;
         setSwarmTodos(seededTodos);
         setPipelineMessage('XROGA Architect — planning architecture, database & API routes…');
         thinkingStepsRef.current = [...BUILD_PLANNING_STEPS];
@@ -1084,8 +1150,12 @@ export function TerminalChatProvider({
               setSwarmTodos((prev) => {
                 const seeded = buildTodosSeedRef.current.length ? buildTodosSeedRef.current : prev;
                 const merged = normalizeActiveTodo(mergeBuildTodos(seeded, swarmEv.swarmTodos!));
+                liveBuildSnapshotRef.current.todos = merged;
                 return merged;
               });
+            }
+            if (negPhase != null) {
+              liveBuildSnapshotRef.current.phase = negPhase;
             }
             if (swarmEv.swarmStatusLabel) {
               setSwarmStatusLabel(sanitizeXrogaTerminalText(swarmEv.swarmStatusLabel));
@@ -1104,7 +1174,13 @@ export function TerminalChatProvider({
               setSwarmAnalysis(sanitizeXrogaTerminalText(swarmEv.swarmAnalysis));
             }
             const activity = swarmEv.swarmActivity ?? swarmEv.message;
-            if (activity) pushSwarmTerminalLine(activity);
+            if (activity) {
+              liveBuildSnapshotRef.current.activity = [
+                ...liveBuildSnapshotRef.current.activity,
+                sanitizeXrogaTerminalText(activity),
+              ].slice(-24);
+              pushSwarmTerminalLine(activity);
+            }
             if (swarmEv.needsGitHub) {
               handleGitHubBuildBlocked(displayPrompt, attachments);
             }
@@ -1340,10 +1416,56 @@ export function TerminalChatProvider({
             cleanupInProgressAssistant();
             return;
           }
-          setMessages((m) => [
-            ...m,
-            { id: crypto.randomUUID(), role: 'system', content: '[Stopped] Response cancelled.', createdAt: Date.now() },
-          ]);
+          const repo = getSelectedRepoContext()?.repo;
+          const snap = liveBuildSnapshotRef.current;
+          const todosSnapshot = snap.todos.length ? [...snap.todos] : [...buildTodosSeedRef.current];
+          const phaseSnapshot = snap.phase;
+          const activitySnapshot = [...snap.activity].slice(-12);
+          const original = lastTurnRef.current?.text || displayPrompt;
+
+          setMessages((m) => {
+            const next = m.map((msg) => {
+              if (msg.id !== assistantId) return msg;
+              return {
+                ...msg,
+                content:
+                  msg.content?.trim() ||
+                  'Build stopped. Your progress is saved — tap Retry to continue from where you left off (GitHub files kept; not a fresh rebuild).',
+                buildStopped: true,
+                originalBuildPrompt: original,
+                githubRepoName: repo,
+                stoppedTodos: todosSnapshot.length ? todosSnapshot : msg.stoppedTodos,
+                stoppedPhase: phaseSnapshot,
+                stoppedActivityLog: activitySnapshot,
+                thinkingSteps: thinkingStepsRef.current.length
+                  ? [...thinkingStepsRef.current]
+                  : msg.thinkingSteps,
+                thoughtMs: Date.now() - thinkingStartedAtRef.current,
+              };
+            });
+            // Persist immediately so sidebar history shows Open/stopped even after New chat.
+            try {
+              if (!usePrivacyStore.getState().incognito) {
+                saveTerminalHistorySession({
+                  sessionId: sessionIdRef.current,
+                  prompt: original,
+                  messages: next,
+                  status: 'stopped',
+                });
+                if (shouldSaveToProjects(original)) {
+                  saveLocalProject({
+                    name: original.slice(0, 48),
+                    prompt: original,
+                    sourceMessageId: assistantId,
+                  });
+                }
+                window.dispatchEvent(new Event('xroga-resume-workspace'));
+              }
+            } catch {
+              /* ignore */
+            }
+            return next;
+          });
           return;
         }
         if (err instanceof ApiError && err.status === 402) {
@@ -1491,6 +1613,7 @@ export function TerminalChatProvider({
         dag,
         submit,
         stop,
+        retryStoppedBuild,
         startNewChat,
         hydrateFromSession,
         restoreTerminalSession,

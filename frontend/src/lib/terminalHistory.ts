@@ -7,6 +7,7 @@ const KEY = 'xroga_terminal_history';
 const BROWSER_KEYWORDS = /scrape|browser|automate|crawl|linkedin jobs|apply to|web search/i;
 
 export type TerminalHistoryKind = 'chat' | 'code' | 'business' | 'mixed';
+export type TerminalHistoryStatus = 'active' | 'stopped' | 'complete';
 
 export interface TerminalHistoryEntry {
   id: string;
@@ -15,6 +16,8 @@ export interface TerminalHistoryEntry {
   prompt: string;
   messages: ChatMessage[];
   kind: TerminalHistoryKind;
+  /** stopped = user cancelled mid-build (can Retry later) */
+  status?: TerminalHistoryStatus;
   githubRepoUrl?: string;
   githubRepoName?: string;
   deployUrl?: string;
@@ -91,10 +94,19 @@ function save(entries: TerminalHistoryEntry[]) {
   safeStorageSet(localStorage, KEY, JSON.stringify(slim));
 }
 
+function detectStatus(messages: ChatMessage[], kind: TerminalHistoryKind): TerminalHistoryStatus {
+  if (messages.some((m) => m.buildStopped)) return 'stopped';
+  if (kind === 'code' || messages.some((m) => (m.featureOutput as { type?: string } | undefined)?.type === 'landing_page')) {
+    return 'complete';
+  }
+  return 'active';
+}
+
 export function saveTerminalHistorySession(opts: {
   sessionId: string;
   prompt: string;
   messages: ChatMessage[];
+  status?: TerminalHistoryStatus;
 }): TerminalHistoryEntry | null {
   if (!opts.messages.length) return null;
 
@@ -113,6 +125,8 @@ export function saveTerminalHistorySession(opts: {
   const meta = extractProjectMeta(opts.messages);
   const existing = loadTerminalHistory().find((e) => e.id === opts.sessionId);
   const now = new Date().toISOString();
+  const kind = detectKind(opts.messages, titlePrompt);
+  const status = opts.status ?? detectStatus(opts.messages, kind);
 
   const entry: TerminalHistoryEntry = {
     id: opts.sessionId,
@@ -120,7 +134,8 @@ export function saveTerminalHistorySession(opts: {
     preview,
     prompt: opts.prompt || titlePrompt,
     messages: opts.messages,
-    kind: detectKind(opts.messages, titlePrompt),
+    kind,
+    status,
     ...meta,
     messageCount: opts.messages.length,
     createdAt: existing?.createdAt ?? now,

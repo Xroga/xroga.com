@@ -21,6 +21,7 @@ import { HackathonBriefCard } from './HackathonBriefCard';
 import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
+import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { isImageGenerationPrompt } from '@/lib/parseImageContent';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
@@ -50,7 +51,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, swarmActivityLog, imageProgressStep, imageAttempts, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput } =
+  const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, swarmActivityLog, imageProgressStep, imageAttempts, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -494,6 +495,18 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             defaultExpanded={loading && msg.id === animatingId}
                           />
                         )}
+                        {msg.buildStopped ? (
+                          <StoppedBuildResumeCard
+                            meta={{
+                              originalPrompt: msg.originalBuildPrompt || lastUserText,
+                              githubRepoName: msg.githubRepoName,
+                              todos: msg.stoppedTodos,
+                              phase: msg.stoppedPhase,
+                              activityLog: msg.stoppedActivityLog,
+                            }}
+                            onRetry={() => void retryStoppedBuild(msg.id)}
+                          />
+                        ) : null}
                         {msg.featureOutput ? (
                           <ChatErrorBoundary>
                             <FeatureOutputView
