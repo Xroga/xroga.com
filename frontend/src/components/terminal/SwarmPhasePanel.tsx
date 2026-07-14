@@ -16,6 +16,7 @@ interface SwarmPhasePanelProps {
   activityLog?: string[];
   startedAt?: number | null;
   buildPrompt?: string;
+  peakNudge?: string | null;
 }
 
 /** Build pipeline — Cursor-style agent processing panel */
@@ -28,6 +29,7 @@ export function SwarmPhasePanel({
   activityLog = [],
   startedAt,
   buildPrompt,
+  peakNudge,
 }: SwarmPhasePanelProps) {
   const showPanel =
     loading && (todos.length > 0 || activePhase != null || Boolean(message) || activityLog.length > 0);
@@ -51,6 +53,7 @@ export function SwarmPhasePanel({
         todos={todos}
         activePhase={activePhase}
         buildPrompt={buildPrompt}
+        peakNudge={peakNudge}
       />
     </div>
   );

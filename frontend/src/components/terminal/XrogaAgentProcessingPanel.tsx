@@ -19,6 +19,7 @@ import { ModelCollaborationBar } from './ModelCollaborationBar';
 import { BuildPatienceBanner } from './BuildPatienceBanner';
 import { BuildTodoList } from './BuildTodoList';
 import { requestBuildNotificationPermission } from '@/lib/buildBrowserNotify';
+import { getDeepSeekPeakStatus } from '@/lib/deepseekPeakHours';
 
 interface XrogaAgentProcessingPanelProps {
   loading: boolean;
@@ -29,6 +30,7 @@ interface XrogaAgentProcessingPanelProps {
   activePhase?: number | null;
   buildPrompt?: string;
   className?: string;
+  peakNudge?: string | null;
 }
 
 function ActivityEntryView({ entry, index, isLast, loading }: { entry: AgentActivityEntry; index: number; isLast: boolean; loading: boolean }) {
@@ -107,9 +109,11 @@ export function XrogaAgentProcessingPanel({
   activePhase,
   buildPrompt,
   className,
+  peakNudge,
 }: XrogaAgentProcessingPanelProps) {
   const [elapsedMs, setElapsedMs] = useState(0);
   const [liveTick, setLiveTick] = useState(0);
+  const softPeak = peakNudge ?? (loading ? getDeepSeekPeakStatus().nudge : null);
 
   useEffect(() => {
     if (!loading || !startedAt) return;
@@ -153,6 +157,12 @@ export function XrogaAgentProcessingPanel({
 
       {todos.length > 0 && (
         <BuildTodoList todos={todos} showProgress={loading} />
+      )}
+
+      {softPeak && loading && (
+        <p className="text-[11px] leading-relaxed text-[var(--foreground)]/75 rounded-lg border border-[var(--card-border)]/50 bg-[var(--card)]/60 px-2.5 py-2">
+          {softPeak}
+        </p>
       )}
 
       <p className="text-[13px] leading-snug text-[var(--muted)] font-medium">

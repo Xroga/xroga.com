@@ -51,7 +51,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, swarmActivityLog, imageProgressStep, imageAttempts, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild } =
+  const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, swarmActivityLog, imageProgressStep, imageAttempts, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, heavyBuildActive, heavyAssistantId, deepseekPeakNudge } =
     useTerminalChat();
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
@@ -264,11 +264,18 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     return '';
   }, [messages]);
 
-  const codeBuildActive = isCodeBuildProcessing(lastUserText, messages);
+  const codeBuildActive =
+    heavyBuildActive ||
+    swarmTodos.length > 0 ||
+    swarmNegotiationPhase != null ||
+    isCodeBuildProcessing(lastUserText, messages);
+
+  const buildPanelMessageId = heavyAssistantId ?? animatingId;
 
   const showGeneralChatThinking =
     loading &&
     !isImageGenerationPrompt(lastUserText) &&
+    !heavyBuildActive &&
     !codeBuildActive;
 
   const showChatThinking = showGeneralChatThinking && pipelineCompact;
@@ -463,22 +470,33 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
-                        {loading && msg.id === animatingId && codeBuildActive && (
+                        {heavyBuildActive &&
+                          buildPanelMessageId &&
+                          msg.id === buildPanelMessageId &&
+                          (swarmTodos.length > 0 || swarmNegotiationPhase != null || loading) && (
                           <SwarmPhasePanel
                             activePhase={swarmNegotiationPhase}
-                            loading={loading}
+                            loading={heavyBuildActive}
                             message={pipelineMessage}
                             statusLabel={swarmStatusLabel}
                             analysis={swarmAnalysis}
                             todos={swarmTodos}
-                            activityLog={swarmActivityLog}
+                            activityLog={
+                              deepseekPeakNudge && !swarmActivityLog.includes(deepseekPeakNudge)
+                                ? [deepseekPeakNudge, ...swarmActivityLog]
+                                : swarmActivityLog
+                            }
                             startedAt={thinkingStartedAt}
                             buildPrompt={lastUserText}
+                            peakNudge={deepseekPeakNudge}
                           />
                         )}
-                        {!codeBuildActive &&
+                        {msg.id !== buildPanelMessageId &&
                           (msg.thinkingSteps?.length ||
-                            (loading && msg.id === animatingId && (showChatThinking || showProcessingPanel))) && (
+                            (loading &&
+                              msg.id === animatingId &&
+                              (showChatThinking || showProcessingPanel) &&
+                              !heavyBuildActive)) && (
                           <BlackHoleThinkingPanel
                             steps={
                               loading && msg.id === animatingId
@@ -518,21 +536,17 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           </ChatErrorBoundary>
                         ) : loading &&
                         msg.id === animatingId &&
-                        isImageGenerationPrompt(lastUserText) ? (
+                        isImageGenerationPrompt(lastUserText) &&
+                        !heavyBuildActive ? (
                           <ImageGeneratingAnimation
                             message={pipelineMessage ?? undefined}
                             step={imageProgressStep ?? undefined}
                             liveAttempts={imageAttempts}
                             promptHint={pipelineMessage?.startsWith('Prompt:') ? pipelineMessage.replace(/^Prompt:\s*/, '') : lastUserText}
                           />
-                        ) : !(
-                            loading &&
-                            msg.id === animatingId &&
-                            (codeBuildActive ||
-                              swarmTodos.length > 0 ||
-                              swarmNegotiationPhase != null ||
-                              swarmActivityLog.length > 0)
-                          ) ? (
+                        ) : heavyBuildActive &&
+                          msg.id === buildPanelMessageId &&
+                          !msg.content?.trim() ? null : (
                           <ModernResponseText
                             content={
                               msg.content?.trim()
@@ -543,7 +557,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             }
                             streaming={msg.id === animatingId && loading}
                           />
-                        ) : null}
+                        )}
                         {msg.hackathonBrief ? <HackathonBriefCard brief={msg.hackathonBrief} /> : null}
                         {msg.webSources?.length ? (
                           <WebSourcesPanel sources={msg.webSources} />

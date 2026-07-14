@@ -68,6 +68,8 @@ export interface SwarmProgressEvent {
   swarmActivity?: string;
   needsGitHub?: boolean;
   needsVercel?: boolean;
+  deepseekPeak?: boolean;
+  heavyBusy?: boolean;
   hackathonBrief?: import('@/components/terminal/HackathonBriefCard').HackathonBriefCardData;
 }
 

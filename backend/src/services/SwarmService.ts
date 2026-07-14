@@ -317,6 +317,8 @@ export class SwarmService {
           needsGitHub: event.needsGitHub,
           needsVercel: event.needsVercel,
           councilLayer: event.councilLayer,
+          deepseekPeak: (event as SwarmProgressEvent & { deepseekPeak?: boolean }).deepseekPeak,
+          heavyBusy: (event as SwarmProgressEvent & { heavyBusy?: boolean }).heavyBusy,
         },
       });
     };
