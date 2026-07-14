@@ -718,7 +718,8 @@ export function TerminalChatProvider({
       thinkingTimerRef.current = null;
     }
     if (!usePrivacyStore.getState().incognito && messages.length > 0) {
-      // Keep prior chat under the selected GitHub repo (#N) in permanent account storage.
+      // Keep prior chat under the selected GitHub repo (#N) in permanent account storage
+      // BEFORE wiping the live workspace — so clicking #1 later restores exact history.
       const priorId = sessionIdRef.current;
       saveTerminalHistorySession({
         sessionId: priorId,
@@ -726,9 +727,12 @@ export function TerminalChatProvider({
         messages,
         status: messages.some((m) => m.buildStopped) ? 'stopped' : undefined,
       });
-      void import('@/lib/terminalHistory').then(({ flushTerminalHistorySessionToCloud }) =>
-        flushTerminalHistorySessionToCloud(priorId)
-      );
+      void import('@/lib/cloudTerminalSessions').then(async ({ flushTerminalSessionToCloud }) => {
+        const { loadTerminalHistory } = await import('@/lib/terminalHistory');
+        const entry = loadTerminalHistory().find((e) => e.id === priorId);
+        if (entry?.messages?.length) await flushTerminalSessionToCloud(entry);
+        window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
+      });
     }
     sessionIdRef.current =
       typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`;

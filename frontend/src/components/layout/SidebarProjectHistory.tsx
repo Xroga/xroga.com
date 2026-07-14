@@ -19,6 +19,7 @@ import {
 import { syncRepoTerminalSessions } from '@/lib/syncRepoTerminalSessions';
 import { resolveTerminalToOpen, loadTerminalFromAnywhere } from '@/lib/restoreRepoTerminal';
 import {
+  allocateTerminalNumber,
   cachedTerminalNumber,
   cloudTerminalLabel,
   listCloudTerminalSessions,
@@ -38,8 +39,8 @@ type RepoSession = {
   githubRepoName?: string;
   githubBranch?: string;
   cloudSynced: boolean;
-  kind: 'local' | 'cloud' | 'live';
-  terminalNumber?: number;
+  kind: 'local' | 'cloud';
+  terminalNumber: number;
   entry?: TerminalHistoryEntry;
 };
 
@@ -54,17 +55,19 @@ function repoLabel(full: string): string {
   return full.split('/')[1] || full;
 }
 
-/** Used repos with permanent #1 / #2 terminals under each GitHub repo. */
+/**
+ * Repositories sidebar — only real numbered terminals (#1, #2, …).
+ * No "New terminal" stub here — use the sidebar New Terminal button instead.
+ */
 export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const router = useRouter();
-  const { restoreTerminalSession, messages, startNewChat } = useTerminalChat();
+  const { restoreTerminalSession, messages } = useTerminalChat();
   const [entries, setEntries] = useState<TerminalHistoryEntry[]>([]);
   const [cloudSessions, setCloudSessions] = useState<CloudTerminalSessionSummary[]>([]);
   const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
   const [filterRecent, setFilterRecent] = useState(true);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [liveEmpty, setLiveEmpty] = useState(false);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
   const refreshLocal = useCallback(() => {
@@ -77,7 +80,6 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         : loadTerminalHistory().filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/'))
     );
     const ws = loadWorkspaceSession();
-    setLiveEmpty(!ws?.messages?.length);
     setActiveSessionId(ws?.sessionId ?? null);
   }, []);
 
@@ -117,11 +119,15 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     };
   }, [refreshLocal, refreshCloud]);
 
+  // Refresh as soon as the user chats — #1 / #2 should appear quickly
   useEffect(() => {
     if (!expanded) return;
-    const t = window.setTimeout(() => refreshLocal(), 300);
+    const t = window.setTimeout(() => {
+      refreshLocal();
+      if (messages.length > 0) refreshCloud();
+    }, 200);
     return () => window.clearTimeout(t);
-  }, [messages, expanded, refreshLocal]);
+  }, [messages, expanded, refreshLocal, refreshCloud]);
 
   const folders = useMemo((): RepoFolder[] => {
     const map = new Map<string, RepoSession[]>();
@@ -130,10 +136,15 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       const list = map.get(key) ?? [];
       const idx = list.findIndex((s) => s.id === session.id);
       if (idx >= 0) {
-        // Prefer cloud-numbered rows over local duplicates
-        if (session.cloudSynced || (session.terminalNumber && !list[idx]!.terminalNumber)) {
-          list[idx] = { ...list[idx]!, ...session, cloudSynced: true };
-        }
+        const prev = list[idx]!;
+        const number = session.cloudSynced ? session.terminalNumber : prev.terminalNumber;
+        list[idx] = {
+          ...prev,
+          ...session,
+          cloudSynced: prev.cloudSynced || session.cloudSynced,
+          terminalNumber: number,
+          title: cloudTerminalLabel(number),
+        };
         map.set(key, list);
         return;
       }
@@ -141,7 +152,6 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       map.set(key, list);
     };
 
-    // Permanent cloud sessions first (source of truth for #N labels)
     for (const s of cloudSessions) {
       if (!s.githubRepoName?.includes('/') || s.messageCount <= 0) continue;
       push(s.githubRepoName, {
@@ -157,53 +167,26 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       });
     }
 
-    // Local cache fills gaps (offline / not yet uploaded)
     for (const e of entries) {
-      if (!e.githubRepoName?.includes('/')) continue;
-      const n = cachedTerminalNumber(e.id);
+      if (!e.githubRepoName?.includes('/') || e.messageCount <= 0) continue;
+      const n =
+        cachedTerminalNumber(e.id) ??
+        allocateTerminalNumber(e.id, e.githubRepoName);
       push(e.githubRepoName, {
         id: e.id,
-        title: n ? cloudTerminalLabel(n) : e.title || 'Terminal',
+        title: cloudTerminalLabel(n),
         updatedAt: e.updatedAt,
         status: e.status,
         githubRepoName: e.githubRepoName,
         githubBranch: e.githubBranch || 'main',
-        cloudSynced: Boolean(n),
+        cloudSynced: Boolean(cachedTerminalNumber(e.id)),
         kind: 'local',
         terminalNumber: n,
         entry: e,
       });
     }
 
-    // Empty live workspace under selected repo → optional New terminal row
-    if (selectedRepo?.includes('/') && liveEmpty) {
-      const list = map.get(selectedRepo) ?? [];
-      if (!list.some((s) => s.id.startsWith('live-'))) {
-        list.unshift({
-          id: `live-${selectedRepo}`,
-          title: 'New terminal',
-          updatedAt: new Date().toISOString(),
-          githubRepoName: selectedRepo,
-          githubBranch: getSelectedRepoContext()?.branch || 'main',
-          cloudSynced: false,
-          kind: 'live',
-        });
-        map.set(selectedRepo, list);
-      }
-    } else if (selectedRepo?.includes('/') && !map.has(selectedRepo)) {
-      map.set(selectedRepo, [
-        {
-          id: `live-${selectedRepo}`,
-          title: 'New terminal',
-          updatedAt: new Date().toISOString(),
-          githubRepoName: selectedRepo,
-          githubBranch: getSelectedRepoContext()?.branch || 'main',
-          cloudSynced: false,
-          kind: 'live',
-        },
-      ]);
-    }
-
+    // Only folders that have at least one real numbered terminal — never "New terminal"
     let foldersList = Array.from(map.entries())
       .filter(([key, sessions]) => key.includes('/') && sessions.length > 0)
       .map(([key, sessions]) => ({
@@ -211,11 +194,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         label: repoLabel(key),
         sessions: sessions
           .sort((a, b) => {
-            if (a.id.startsWith('live-') && !b.id.startsWith('live-')) return -1;
-            if (b.id.startsWith('live-') && !a.id.startsWith('live-')) return 1;
-            const an = a.terminalNumber ?? 9999;
-            const bn = b.terminalNumber ?? 9999;
-            if (an !== bn) return an - bn;
+            if (a.terminalNumber !== b.terminalNumber) {
+              return a.terminalNumber - b.terminalNumber;
+            }
             return Date.parse(a.updatedAt) - Date.parse(b.updatedAt);
           })
           .slice(0, 24),
@@ -224,14 +205,14 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     foldersList.sort((a, b) => {
       if (selectedRepo && a.key === selectedRepo) return -1;
       if (selectedRepo && b.key === selectedRepo) return 1;
-      const aT = Date.parse(a.sessions.find((s) => !s.id.startsWith('live-'))?.updatedAt ?? '0');
-      const bT = Date.parse(b.sessions.find((s) => !s.id.startsWith('live-'))?.updatedAt ?? '0');
+      const aT = Date.parse(a.sessions[a.sessions.length - 1]?.updatedAt ?? '0');
+      const bT = Date.parse(b.sessions[b.sessions.length - 1]?.updatedAt ?? '0');
       return bT - aT;
     });
 
     if (filterRecent) foldersList = foldersList.slice(0, 12);
     return foldersList;
-  }, [entries, cloudSessions, filterRecent, selectedRepo, liveEmpty]);
+  }, [entries, cloudSessions, filterRecent, selectedRepo]);
 
   useEffect(() => {
     setOpenFolders((prev) => {
@@ -252,7 +233,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       });
       notifyGithubRepoContext(entry.githubRepoName, entry.githubBranch || branch);
     }
-    const n = cachedTerminalNumber(entry.id);
+    const n =
+      cachedTerminalNumber(entry.id) ??
+      (entry.githubRepoName
+        ? allocateTerminalNumber(entry.id, entry.githubRepoName)
+        : undefined);
     await restoreTerminalSession({
       sessionId: entry.id,
       prompt: entry.prompt,
@@ -272,25 +257,24 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     try {
       const branch = session.githubBranch || 'main';
       const repo = session.githubRepoName;
-      if (repo?.includes('/')) {
-        saveSelectedRepoContext({ repo, branch });
-        notifyGithubRepoContext(repo, branch);
-      }
-
-      // New terminal — intentional blank (does not delete #1/#2)
-      if (session.kind === 'live' || session.id.startsWith('live-')) {
-        startNewChat();
-        router.push('/workspace');
-        return;
-      }
-
       if (!repo?.includes('/')) {
         router.push('/workspace');
         return;
       }
 
-      const preferId = session.id;
-      const resolved = await resolveTerminalToOpen(repo, preferId);
+      saveSelectedRepoContext({ repo, branch });
+      notifyGithubRepoContext(repo, branch);
+
+      // Same session already open with messages — stay
+      if (session.id === activeSessionId) {
+        const ws = loadWorkspaceSession();
+        if (ws?.messages?.length && ws.sessionId === session.id) {
+          router.push('/workspace');
+          return;
+        }
+      }
+
+      const resolved = await resolveTerminalToOpen(repo, session.id);
       if (resolved.kind === 'live') {
         router.push('/workspace');
         return;
@@ -300,8 +284,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         return;
       }
 
-      // Last try: direct cloud/local load
-      const direct = await loadTerminalFromAnywhere(preferId, repo);
+      const direct = await loadTerminalFromAnywhere(session.id, repo);
       if (direct?.messages?.length) {
         await applyRestore(direct, branch);
         return;
@@ -319,16 +302,21 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     setBusyId(folder.key);
     setOpenFolders((prev) => ({ ...prev, [folder.key]: true }));
     try {
-      const branch =
-        folder.sessions.find((s) => !s.id.startsWith('live-'))?.githubBranch ||
-        getSelectedRepoContext()?.branch ||
-        'main';
+      const latest =
+        folder.sessions[folder.sessions.length - 1] || folder.sessions[0];
+      const branch = latest?.githubBranch || getSelectedRepoContext()?.branch || 'main';
       saveSelectedRepoContext({ repo: folder.key, branch });
       notifyGithubRepoContext(folder.key, branch);
 
-      const resolved = await resolveTerminalToOpen(folder.key);
+      // Prefer highest # terminal (most recent number) that has data
+      const preferId = latest?.id;
+      const resolved = await resolveTerminalToOpen(folder.key, preferId);
       if (resolved.kind === 'restore') {
         await applyRestore(resolved.entry, branch);
+        return;
+      }
+      if (resolved.kind === 'live') {
+        router.push('/workspace');
         return;
       }
       router.push('/workspace');
@@ -360,7 +348,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
       {folders.length === 0 ? (
         <p className="px-2 py-2 text-[10px] text-[var(--muted)] leading-relaxed">
-          Select a GitHub repo, then chat — terminals appear as #1, #2 under the repo (saved to your account).
+          Click New Terminal, select a GitHub repo, then chat — #1 terminal appears here and is saved to your account.
         </p>
       ) : (
         <div className="xv-repos-scroll space-y-0.5 max-h-[280px] overflow-y-auto pr-1">
@@ -368,7 +356,6 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
             const isOpen = openFolders[folder.key] !== false;
             const FolderIcon = isOpen ? FolderOpen : FolderGit2;
             const isActiveRepo = selectedRepo === folder.key;
-            const priorCount = folder.sessions.filter((s) => !s.id.startsWith('live-')).length;
             return (
               <div key={folder.key} className="space-y-0.5">
                 <div className="flex items-center gap-0.5">
@@ -402,17 +389,14 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                     <span className="truncate font-medium" title={folder.key}>
                       {folder.label}
                     </span>
-                    {priorCount > 0 ? (
-                      <span className="text-[9px] text-[var(--muted)] tabular-nums ml-auto">
-                        {priorCount}
-                      </span>
-                    ) : null}
+                    <span className="text-[9px] text-[var(--muted)] tabular-nums ml-auto">
+                      {folder.sessions.length}
+                    </span>
                   </button>
                 </div>
                 {isOpen
                   ? folder.sessions.map((session) => {
-                      const isActiveSession =
-                        !session.id.startsWith('live-') && session.id === activeSessionId;
+                      const isActiveSession = session.id === activeSessionId;
                       return (
                         <button
                           key={session.id}
@@ -426,7 +410,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                             isActiveSession && 'ring-1 ring-[var(--accent)]/25'
                           )}
                         >
-                          <p className="flex-1 min-w-0 text-left text-[11px] font-medium text-[var(--foreground)]/90 truncate leading-snug">
+                          <p className="flex-1 min-w-0 text-left text-[11px] font-semibold text-[var(--foreground)]/90 truncate leading-snug">
                             {session.title}
                           </p>
                           <GitBranch className="h-2.5 w-2.5 text-violet-400 shrink-0" />
