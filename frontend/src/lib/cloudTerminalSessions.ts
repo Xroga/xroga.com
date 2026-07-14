@@ -10,6 +10,8 @@ import type { ChatMessage } from '@/context/TerminalChatContext';
 
 const CLOUD_EVENT = 'xroga-cloud-terminals-changed';
 const ordinalCache = new Map<string, number>();
+/** Highest terminal # seen per repo — used to assign #1, #2 immediately on first chat */
+const repoMaxNumber = new Map<string, number>();
 const pendingUploads = new Map<string, ReturnType<typeof setTimeout>>();
 const lastUploadedAt = new Map<string, number>();
 
@@ -32,8 +34,25 @@ export function cachedTerminalNumber(sessionId: string): number | undefined {
   return ordinalCache.get(sessionId);
 }
 
-export function rememberTerminalNumber(sessionId: string, n: number) {
-  if (sessionId && n >= 1) ordinalCache.set(sessionId, n);
+export function rememberTerminalNumber(sessionId: string, n: number, repo?: string) {
+  if (sessionId && n >= 1) {
+    ordinalCache.set(sessionId, n);
+    if (repo?.includes('/')) {
+      repoMaxNumber.set(repo, Math.max(repoMaxNumber.get(repo) ?? 0, n));
+    }
+  }
+}
+
+/**
+ * Assign #N for this session under a repo immediately (before cloud round-trip)
+ * so Repositories shows "#1 terminal" as soon as the user starts chatting.
+ */
+export function allocateTerminalNumber(sessionId: string, repo: string): number {
+  const existing = ordinalCache.get(sessionId);
+  if (existing) return existing;
+  const next = (repoMaxNumber.get(repo) ?? 0) + 1;
+  rememberTerminalNumber(sessionId, next, repo);
+  return next;
 }
 
 async function pushTerminalSessionToCloudNow(
@@ -52,7 +71,7 @@ async function pushTerminalSessionToCloudNow(
       kind: entry.kind,
       status: entry.status || 'active',
     });
-    rememberTerminalNumber(session.id, session.terminalNumber);
+    rememberTerminalNumber(session.id, session.terminalNumber, session.githubRepoName);
     lastUploadedAt.set(session.id, Date.now());
     notifyCloudTerminalsChanged();
     return session;
@@ -62,7 +81,7 @@ async function pushTerminalSessionToCloudNow(
   }
 }
 
-/** Debounced upsert — keeps account storage fresh without flooding the API. */
+/** Debounced upsert — first save for a session is nearly instant so #N appears quickly. */
 export function pushTerminalSessionToCloud(
   entry: TerminalHistoryEntry
 ): Promise<CloudTerminalSession | null> {
@@ -72,11 +91,14 @@ export function pushTerminalSessionToCloud(
   const existing = pendingUploads.get(entry.id);
   if (existing) clearTimeout(existing);
 
+  const isFirstUpload = !lastUploadedAt.has(entry.id);
+  const delay = isFirstUpload ? 80 : 900;
+
   return new Promise((resolve) => {
     const timer = setTimeout(() => {
       pendingUploads.delete(entry.id);
       void pushTerminalSessionToCloudNow(entry).then(resolve);
-    }, 900);
+    }, delay);
     pendingUploads.set(entry.id, timer);
   });
 }
@@ -98,7 +120,9 @@ export async function listCloudTerminalSessions(
 ): Promise<CloudTerminalSessionSummary[]> {
   try {
     const { sessions } = await api.terminalSessions.list(repo);
-    for (const s of sessions) rememberTerminalNumber(s.id, s.terminalNumber);
+    for (const s of sessions) {
+      rememberTerminalNumber(s.id, s.terminalNumber, s.githubRepoName);
+    }
     return sessions;
   } catch {
     return [];
@@ -110,7 +134,7 @@ export async function loadCloudTerminalSession(
 ): Promise<TerminalHistoryEntry | null> {
   try {
     const { session } = await api.terminalSessions.get(sessionId);
-    rememberTerminalNumber(session.id, session.terminalNumber);
+    rememberTerminalNumber(session.id, session.terminalNumber, session.githubRepoName);
     return cloudToHistoryEntry(session);
   } catch {
     return null;

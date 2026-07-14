@@ -207,9 +207,14 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   }
 
   function handleNewChat() {
+    // Fresh blank workspace; prior #N is flushed to permanent storage inside startNewChat.
     startNewChat();
     handleNavClick();
     router.push('/workspace');
+    // Open repo select if none chosen — #1 appears under that repo after first chat.
+    window.setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('xroga-request-new-terminal'));
+    }, 80);
   }
 
   async function handleLogout() {

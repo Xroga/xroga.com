@@ -7,6 +7,11 @@ import {
   registerRepoSession,
   type RepoActivityKind,
 } from '@/lib/repoSessionsIndex';
+import {
+  allocateTerminalNumber,
+  cloudTerminalLabel,
+  pushTerminalSessionToCloud,
+} from '@/lib/cloudTerminalSessions';
 
 const KEY = 'xroga_terminal_history';
 const BROWSER_KEYWORDS = /scrape|browser|automate|crawl|linkedin jobs|apply to|web search/i;
@@ -159,9 +164,15 @@ export function saveTerminalHistorySession(opts: {
   const githubRepoName = meta.githubRepoName ?? existing?.githubRepoName;
   const githubBranch = meta.githubBranch ?? existing?.githubBranch ?? 'main';
 
+  // Assign #1 / #2 before persist so sidebar + storage use the numbered title.
+  const terminalNumber =
+    githubRepoName?.includes('/')
+      ? allocateTerminalNumber(opts.sessionId, githubRepoName)
+      : undefined;
+
   const entry: TerminalHistoryEntry = {
     id: opts.sessionId,
-    title: titlePrompt.slice(0, 56),
+    title: terminalNumber ? cloudTerminalLabel(terminalNumber) : titlePrompt.slice(0, 56),
     preview,
     prompt: opts.prompt || titlePrompt,
     messages: opts.messages,
@@ -181,7 +192,7 @@ export function saveTerminalHistorySession(opts: {
   save([entry, ...rest]);
   void saveTerminalSessionToIndexedDB(entry);
 
-  if (entry.githubRepoName?.includes('/')) {
+  if (entry.githubRepoName?.includes('/') && terminalNumber) {
     registerRepoSession({
       githubRepoName: entry.githubRepoName,
       githubBranch: entry.githubBranch,
@@ -191,10 +202,7 @@ export function saveTerminalHistorySession(opts: {
       status: entry.status,
       activityKind: toActivityKind(kind),
     });
-    // Permanent account storage — survives New Terminal / refresh / new devices
-    void import('@/lib/cloudTerminalSessions').then(({ pushTerminalSessionToCloud }) => {
-      void pushTerminalSessionToCloud(entry);
-    });
+    void pushTerminalSessionToCloud(entry);
   }
 
   return entry;

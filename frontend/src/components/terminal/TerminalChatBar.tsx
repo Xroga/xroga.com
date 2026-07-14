@@ -93,6 +93,31 @@ export function TerminalChatBar() {
       .catch(() => setVercelConnected(false));
   }, []);
 
+  // Sidebar "New Terminal" → ensure GitHub repo is selected before work starts
+  useEffect(() => {
+    const onNewTerminal = () => {
+      if (incognito) return;
+      void (async () => {
+        try {
+          const status = await api.github.status();
+          setGithubConnected(status.connected);
+          if (status.connected && status.defaultRepo?.includes('/') && !getSelectedRepoContext()?.repo) {
+            saveSelectedRepoContext({ repo: status.defaultRepo, branch: 'main' });
+            notifyGithubRepoContext(status.defaultRepo, 'main');
+          }
+        } catch {
+          /* gate handles */
+        }
+        const ready = await checkRepoWorkspaceReady();
+        if (!ready.ok) {
+          setRepoGate({ open: true, reason: ready.reason, message: ready.message });
+        }
+      })();
+    };
+    window.addEventListener('xroga-request-new-terminal', onNewTerminal);
+    return () => window.removeEventListener('xroga-request-new-terminal', onNewTerminal);
+  }, [incognito]);
+
   async function ensureRepoWorkspace(): Promise<boolean> {
     if (incognito) return true;
     // Auto-pick default repo when connected but nothing selected
