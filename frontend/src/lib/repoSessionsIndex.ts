@@ -41,8 +41,23 @@ function saveRaw(entries: RepoSessionIndexEntry[]) {
   safeStorageSet(localStorage, KEY, JSON.stringify(entries.slice(0, 80)));
 }
 
+const STUB_TITLES = new Set(['Current project', 'Current selection', 'Open in workspace']);
+
+/** True real Xroga work — not a placeholder folder for unused GitHub repos. */
+export function isRealRepoSession(e: RepoSessionIndexEntry): boolean {
+  if (!e.githubRepoName?.includes('/')) return false;
+  if (e.id.startsWith('connected-') || e.id.startsWith('selected-')) return false;
+  if (e.sessionId?.startsWith('selected-') || e.sessionId?.startsWith('connected-')) return false;
+  if (STUB_TITLES.has(e.title)) return false;
+  return Boolean(e.sessionId || e.cloudProjectId || e.title.trim().length > 0);
+}
+
 export function loadRepoSessionsIndex(): RepoSessionIndexEntry[] {
-  return loadRaw().sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt));
+  const raw = loadRaw();
+  const cleaned = raw.filter(isRealRepoSession);
+  // Drop leftover stubs from older builds so unused repos disappear
+  if (cleaned.length !== raw.length) saveRaw(cleaned);
+  return cleaned.sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt));
 }
 
 /** Upsert a session under a GitHub repo so the sidebar always has something to show. */
@@ -88,17 +103,12 @@ export function markRepoSessionCloudId(sessionId: string, cloudProjectId: string
   saveRaw(next);
 }
 
-/** Ensure currently selected repo appears as a folder even before first save. */
+/**
+ * Do not invent placeholder sessions for unused repos.
+ * Returns an existing real session for the selected repo, or null.
+ */
 export function ensureSelectedRepoFolder(): RepoSessionIndexEntry | null {
   const selected = getSelectedRepoContext();
   if (!selected?.repo?.includes('/')) return null;
-  const existing = loadRaw().find((e) => e.githubRepoName === selected.repo);
-  if (existing) return existing;
-  return registerRepoSession({
-    githubRepoName: selected.repo,
-    githubBranch: selected.branch,
-    title: 'Current project',
-    sessionId: `selected-${selected.repo}`,
-    status: 'active',
-  });
+  return loadRepoSessionsIndex().find((e) => e.githubRepoName === selected.repo) ?? null;
 }

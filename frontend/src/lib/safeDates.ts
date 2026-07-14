@@ -19,6 +19,26 @@ export function formatSafeDistance(
   }
 }
 
+/** Compact relative time for dense sidebars: 12m, 6d, 2h */
+export function formatCompactAgo(
+  value?: string | number | Date | null,
+  fallback = ''
+): string {
+  const d = safeDate(value);
+  if (!d) return fallback;
+  const sec = Math.max(0, Math.floor((Date.now() - d.getTime()) / 1000));
+  if (sec < 60) return `${Math.max(1, sec)}s`;
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min}m`;
+  const hr = Math.floor(min / 60);
+  if (hr < 48) return `${hr}h`;
+  const days = Math.floor(hr / 24);
+  if (days < 60) return `${days}d`;
+  const months = Math.floor(days / 30);
+  if (months < 24) return `${months}mo`;
+  return `${Math.floor(months / 12)}y`;
+}
+
 export function formatSafeDate(
   value: string | number | Date | null | undefined,
   pattern: string,
