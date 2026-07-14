@@ -437,6 +437,38 @@ export const api = {
     delete: (id: string) =>
       apiFetch<{ success: boolean; id: string }>(`/api/projects/${id}`, { method: 'DELETE' }),
   },
+  /** Permanent terminal sessions under a GitHub repo (#1, #2, …) — stored in Supabase */
+  terminalSessions: {
+    list: (repo?: string) =>
+      apiFetch<{ sessions: CloudTerminalSessionSummary[] }>(
+        repo
+          ? `/api/terminal-sessions?repo=${encodeURIComponent(repo)}`
+          : '/api/terminal-sessions'
+      ),
+    get: (id: string) =>
+      apiFetch<{ session: CloudTerminalSession }>(`/api/terminal-sessions/${encodeURIComponent(id)}`),
+    upsert: (
+      id: string,
+      body: {
+        githubRepoName: string;
+        githubBranch?: string;
+        title?: string;
+        prompt?: string;
+        preview?: string;
+        messages: unknown[];
+        kind?: string;
+        status?: string;
+      }
+    ) =>
+      apiFetch<{ session: CloudTerminalSession }>(`/api/terminal-sessions/${encodeURIComponent(id)}`, {
+        method: 'PUT',
+        body: JSON.stringify({ ...body, id }),
+      }),
+    delete: (id: string) =>
+      apiFetch<{ success: boolean; id: string }>(`/api/terminal-sessions/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+      }),
+  },
   profile: {
     get: () => apiFetch<Profile>('/api/profile'),
     update: (body: Partial<Profile>) =>
@@ -759,6 +791,25 @@ export interface Project {
   github_repo_name: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface CloudTerminalSessionSummary {
+  id: string;
+  githubRepoName: string;
+  githubBranch: string;
+  terminalNumber: number;
+  title: string;
+  prompt: string;
+  preview: string;
+  kind: string;
+  status: string;
+  messageCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CloudTerminalSession extends CloudTerminalSessionSummary {
+  messages: unknown[];
 }
 
 export interface ProjectFile {

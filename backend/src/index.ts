@@ -9,6 +9,7 @@ import actionsRouter from './routes/actions.js';
 import swarmRouter from './routes/swarm.js';
 import chatRouter from './routes/chat.js';
 import projectsRouter from './routes/projects.js';
+import terminalSessionsRouter from './routes/terminalSessions.js';
 import profileRouter from './routes/profile.js';
 import debugRouter from './routes/debug.js';
 import wellbeingRouter from './routes/wellbeing.js';
@@ -92,6 +93,7 @@ import { getGitHubOAuthCallbackUrl } from './routes/github.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
 import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
 import { ensureDashboardSchema } from './db/ensureDashboardSchema.js';
+import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
 
 const healthPayload = () => {
   const image = getImageProviderStatus();
@@ -204,6 +206,7 @@ app.use('/api/analytics', authMiddleware, analyticsRouter);
 app.use('/api/admin', authMiddleware, adminMiddleware, adminRouter);
 app.use('/api/chat', authMiddleware, chatRouter);
 app.use('/api/projects', authMiddleware, projectsRouter);
+app.use('/api/terminal-sessions', authMiddleware, terminalSessionsRouter);
 app.use('/api/profile', authMiddleware, profileRouter);
 app.use('/api/media', authMiddleware, mediaRouter);
 app.use('/api/debug', authMiddleware, debugRouter);
@@ -258,6 +261,9 @@ server.listen(port, '0.0.0.0', () => {
   });
   void ensureDashboardSchema().catch((err) => {
     console.warn('[dashboardSchema] Startup ensure skipped:', (err as Error).message);
+  });
+  void ensureTerminalSessionsSchema().catch((err) => {
+    console.warn('[terminalSessionsSchema] Startup ensure skipped:', (err as Error).message);
   });
   void import('./db/ensurePhase3Schema.js').then(({ ensurePhase3Schema }) =>
     ensurePhase3Schema().catch((err) => {
