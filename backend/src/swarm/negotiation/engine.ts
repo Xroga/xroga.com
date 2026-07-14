@@ -293,7 +293,7 @@ const BUILD_HEARTBEAT_MSGS = [
   '⚙️ AI Swarm Logic — coding step still running…',
 ];
 
-/** Emit silent keepalive so UI todos update without inventing fake file edits */
+/** Keepalive so build UI stays visible during long Flash generation (honest status, no fake files). */
 async function withBuildHeartbeat<T>(
   ctx: NegotiationContext,
   todos: ReturnType<typeof createTodoState>,
@@ -303,9 +303,8 @@ async function withBuildHeartbeat<T>(
   const id = setInterval(() => {
     const msg = BUILD_HEARTBEAT_MSGS[tick % BUILD_HEARTBEAT_MSGS.length]!;
     tick += 1;
-    // silent: true → status Label + todos refresh without fake "Created vercel.json"
-    emit(ctx, 3, msg, 'builder', todos, 'AI SWARM LOGIC', { silent: true });
-  }, 5000);
+    emit(ctx, 3, msg, 'builder', todos, 'XROGA Pulse');
+  }, 4000);
   try {
     return await work();
   } finally {

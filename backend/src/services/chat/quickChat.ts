@@ -85,17 +85,18 @@ export async function quickChat(
     if (/^(yes|no|ok|okay|yep|nope|cool|nice|got\s*it)\b/.test(lower)) {
       return wrap('Got it. What should we work on next?');
     }
+    if (/good\s+(morning|afternoon|evening)/.test(lower)) {
+      const period = lower.match(/good\s+(\w+)/)?.[1] ?? 'day';
+      return wrap(`Good ${period}! What can I help you with?`);
+    }
+    // Fixed-string greetings by default — no history, no LLM essay, near-zero cost.
+    // Optional short LLM only when Groq is available and we want variety (still no context).
     try {
       const { groqSprinter } = await import('../../council/groqClient.js');
-      const { blackHoleEmit } = await import('../../blackhole/synthesizer.js');
-      const raw = await groqSprinter(userText, context);
-      const emitted = await blackHoleEmit(raw, userText, 'greeting', 'elite');
-      return wrap(emitted.text);
+      const raw = await groqSprinter(userText, undefined);
+      const cleaned = raw.trim().split(/\n/)[0]?.slice(0, 180) || "Hey! What can I help you with today?";
+      return wrap(cleaned);
     } catch {
-      if (/good\s+(morning|afternoon|evening)/.test(lower)) {
-        const period = lower.match(/good\s+(\w+)/)?.[1] ?? 'day';
-        return wrap(`Good ${period}! What can I help you with?`);
-      }
       return wrap("Hey! What can I help you with today?");
     }
   }

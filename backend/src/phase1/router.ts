@@ -125,6 +125,10 @@ export function getSystemPromptForIntent(
     if (thirdParty) {
       return `${base}${thirdPartySupportSystemBlock(thirdParty)}`;
     }
+    // Short chat must stay short — WOW advisor essays burn tokens on "hi" / simple questions.
+    if (intent === 'general_chat' && userMessage.trim().length < 120) {
+      return `${base}${getCurrentDateDirective()}\nReply in 1–3 short sentences. Be warm and helpful. Do NOT continue prior build guides or write long articles unless the user asked for one. Never mention underlying AI providers.`;
+    }
     return `${base}${professionalFormatBlock()}`;
   }
   if (intent === 'security_audit') {
