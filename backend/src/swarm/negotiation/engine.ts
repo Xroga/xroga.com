@@ -124,9 +124,9 @@ const SIMPLE_BUILD_STEP_MAX_TOKENS = 8192;
 
 const MAX_PLAN_ITERATIONS = 3;
 const MAX_STEP_CORRECTIONS = 3;
-const SIMPLE_MAX_PLAN_ITERATIONS = 1;
-const SIMPLE_MAX_STEP_CORRECTIONS = 1;
-const SIMPLE_MAX_STEPS = 2;
+const SIMPLE_MAX_PLAN_ITERATIONS = 0; // skip plan review entirely
+const SIMPLE_MAX_STEP_CORRECTIONS = 0; // ship first Flash draft
+const SIMPLE_MAX_STEPS = 1; // one-shot complete site
 
 function assertNotAborted(ctx: NegotiationContext) {
   if (ctx.abortSignal?.aborted) {
@@ -698,32 +698,35 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   } else if (isWebBuild) {
     // Auto-infer defaults — no questions, start building immediately
     clarifiedBrief = inferDefaultBuildBrief(userPrompt, memoryNote);
-    try {
-      const { text: refined, modelLabel } = await buildModelCall(
-        'pro',
-        PHASE_0_DISCOVERY,
-        `User request:\n${discoveryContext}\n\nDefault brief:\n${clarifiedBrief}\n\nRefine the Fully Clarified Project Brief — do NOT ask questions.`,
-        8192,
-        usageTracker
-      );
-      emit(ctx, 0, xrogaArchitectureLine('Project brief refined'), 'architect', todos, 'XROGA Architect', {
-        userPhase: 1,
-      });
-      if (refined && !/clarifying question|\?\s*$/im.test(refined) && refined.length > 80) {
-        clarifiedBrief = refined;
+    // Simple blogs: skip Pro brief refine + summarize (was adding minutes before any code).
+    if (costPolicy.tier !== 'simple_static') {
+      try {
+        const { text: refined, modelLabel } = await buildModelCall(
+          'pro',
+          PHASE_0_DISCOVERY,
+          `User request:\n${discoveryContext}\n\nDefault brief:\n${clarifiedBrief}\n\nRefine the Fully Clarified Project Brief — do NOT ask questions.`,
+          8192,
+          usageTracker
+        );
+        emit(ctx, 0, xrogaArchitectureLine('Project brief refined'), 'architect', todos, 'XROGA Architect');
+        if (refined && !/clarifying question|\?\s*$/im.test(refined) && refined.length > 80) {
+          clarifiedBrief = refined;
+        }
+      } catch {
+        /* keep inferred defaults */
       }
-    } catch {
-      /* keep inferred defaults */
     }
     buildState.markDone('clarified');
     todos.setAnalysis(clarifiedBrief.slice(0, 280));
     todos.completeMeta('analyze');
-    emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
-    try {
-      clarifiedBrief = (await buildModelCall('flash', PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 256, usageTracker)).text;
-      emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse');
-    } catch {
-      /* keep brief */
+    emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'XROGA Visionary');
+    if (costPolicy.tier !== 'simple_static') {
+      try {
+        clarifiedBrief = (await buildModelCall('flash', PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 256, usageTracker)).text;
+        emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse');
+      } catch {
+        /* keep brief */
+      }
     }
   } else if (isGameBuild) {
     emit(ctx, 0, BRAND.phase0.scanning('game'), 'reviewer', todos, 'XROGA Game Alchemist', { userPhase: 1 });
@@ -789,6 +792,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     } catch {
       masterPlan = defaultGamePlanForPrompt(userPrompt, 4).join('\n');
     }
+  } else if (costPolicy.tier === 'simple_static') {
+    // Ultra-fast: fixed 2-line plan — no Grok/Pro strategy, no plan condense.
+    masterPlan = defaultPlanForPrompt(userPrompt).join('\n');
+    emit(ctx, 1, xrogaArchitectureLine('Fast plan ready — building blog now'), 'architect', todos, 'XROGA Architect');
   } else {
     try {
       let strategyContext = '';
@@ -821,8 +828,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             ),
             'architect',
             todos,
-            'XROGA Architect',
-            { userPhase: 1 }
+            'XROGA Architect'
           );
         } catch {
           /* optional grok — fall through to Pro plan */
@@ -840,7 +846,6 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           );
           strategyContext = `\n\nStrategy:\n${strategy}`;
           emit(ctx, 1, xrogaArchitectureLine('Build strategy — DeepSeek (cost-smart)'), 'architect', todos, 'XROGA Architect', {
-            userPhase: 1,
             silent: true,
           });
         } catch {
@@ -856,9 +861,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         usageTracker
       );
       masterPlan = text;
-      emit(ctx, 1, xrogaArchitectureLine('Master plan generated'), 'architect', todos, 'XROGA Architect', {
-        userPhase: 1,
-      });
+      emit(ctx, 1, xrogaArchitectureLine('Master plan generated'), 'architect', todos, 'XROGA Architect');
       try {
         masterPlan = (await buildModelCall('pro', PHASE_1_PLANNING_GROQ, masterPlan, 1024, usageTracker)).text;
       } catch {
@@ -879,7 +882,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   let approvedPlan = masterPlan;
   const planIterations =
     costPolicy.tier === 'simple_static' ? SIMPLE_MAX_PLAN_ITERATIONS : MAX_PLAN_ITERATIONS;
-  if (!isUpdateBuild) {
+  if (!isUpdateBuild && planIterations > 0) {
   for (let i = 0; i < planIterations; i++) {
     emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect');
     const review = await deepseekProCall(
@@ -1021,7 +1024,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         : `<!-- Step ${si + 1} fallback -->\n<section><h2>${stepsToRun[si]}</h2><p>Content for ${stepsToRun[si]}</p></section>`;
     }
 
-    let approved = false;
+    let approved = costPolicy.tier === 'simple_static';
     for (let attempt = 0; attempt < stepCorrectionsMax; attempt++) {
       emit(ctx, 4, BRAND.phase4.verifying, 'qa', todos, 'AI SWARM LOGIC');
       const reports = await verifyStepParallel(stepCode, approvedPlan, userPrompt, usageTracker, lightVerify);
@@ -1111,7 +1114,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     } catch {
       /* optional */
     }
-  } else if (!isUpdateBuild) {
+  } else if (!isUpdateBuild && costPolicy.tier !== 'simple_static') {
   try {
     assertNotAborted(ctx);
     todos.activate('ui-trends');
@@ -1139,6 +1142,17 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       /* optional */
     }
   }
+  } else if (!isUpdateBuild && costPolicy.tier === 'simple_static') {
+    // One-shot Flash already includes UI — mark polish todo done without a second 8k call.
+    try {
+      todos.activate('ui-trends');
+      todos.complete('ui-trends');
+      emit(ctx, 6, xrogaVisionaryLine('UI included in fast one-shot build'), 'reviewer', todos, 'XROGA Visionary', {
+        silent: true,
+      });
+    } catch {
+      /* optional */
+    }
   }
 
   todos.addFinalTodos();
@@ -1178,31 +1192,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   }
 
   if (!isUpdateBuild) {
-  // Simple blogs: one Flash quality check — skip Gemini/Mistral multi-agent council (was burning ~minutes).
+  // Simple blogs: skip quality LLM pass — one-shot Flash already shipped (speed > perfect polish).
   if (costPolicy.tier === 'simple_static') {
-    emit(ctx, 6, xrogaCollectiveLine('Quick quality check'), 'truth_council', todos, 'XROGA Collective');
-    try {
-      const { text: qualityReview } = await buildModelCall(
-        'flash',
-        PHASE_6_FINAL,
-        `Full codebase:\n${assembledCode.slice(0, 40000)}`,
-        1024,
-        usageTracker
-      );
-      if (!isPass(qualityReview)) {
-        assembledCode = await deepseekFlashCall(
-          PHASE_5_CORRECT,
-          `Quality review:\n${qualityReview}\n\nCode:\n${assembledCode}`,
-          stepTokenBudget,
-          usageTracker
-        );
-        totalCorrections++;
-      } else {
-        emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective');
-      }
-    } catch {
-      /* skip */
-    }
+    emit(ctx, 6, xrogaCollectiveLine('Fast path — quality check skipped for speed'), 'truth_council', todos, 'XROGA Collective', {
+      silent: true,
+    });
+    emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective');
   } else {
   emit(ctx, 6, xrogaCollectiveLine('Quality gate — code standards review'), 'truth_council', todos, 'XROGA Collective');
   try {
@@ -1314,7 +1309,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         approvedPlan,
         clarifiedBrief,
         isGameBuild ? 'game' : 'website',
-        { skipConsolidate: isUpdateBuild }
+        { skipConsolidate: isUpdateBuild || costPolicy.tier === 'simple_static' }
       );
     } else if (featureCategory === 'code_debug') {
       featureOutput = await debugCode({

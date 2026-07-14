@@ -11,10 +11,9 @@ export const BEGINNER_WEBSITE_PLAN = [
   'Step 6: Responsive Design — mobile-first polish',
 ] as const;
 
-/** Fast path for simple blogs/landings — 2 steps max */
+/** Fast path for simple blogs/landings — 1 shot complete site */
 export const SIMPLE_STATIC_PLAN = [
-  'Step 1: Complete blog site — index.html with header, nav, hero, post list (localStorage), about, footer',
-  'Step 2: styles.css + script.js — modern responsive layout, post CRUD, mobile polish',
+  'Step 1: Complete simple blog — single index.html + embedded/linked CSS+JS: header, nav, hero, post list with localStorage add/edit/delete, about blurb, footer, responsive modern UI',
 ] as const;
 
 export const BEGINNER_WEBSITE_PLAN_NO_ORDER = [
