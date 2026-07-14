@@ -7,7 +7,6 @@ import {
   Filter,
   FolderGit2,
   FolderOpen,
-  FolderPlus,
   GitBranch,
   ChevronDown,
   ChevronRight,
@@ -25,6 +24,11 @@ import {
   GITHUB_REPO_CONTEXT_EVENT,
   notifyGithubRepoContext,
 } from '@/lib/githubProjectEvents';
+import {
+  ensureSelectedRepoFolder,
+  loadRepoSessionsIndex,
+  type RepoSessionIndexEntry,
+} from '@/lib/repoSessionsIndex';
 import { formatSafeDistance } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
 import { api, type Project } from '@/lib/api';
@@ -39,10 +43,10 @@ type RepoSession = {
   githubRepoName?: string;
   githubBranch?: string;
   cloudSynced: boolean;
-  /** local history id or cloud project id */
-  kind: 'local' | 'cloud';
+  kind: 'local' | 'cloud' | 'index';
   entry?: TerminalHistoryEntry;
   project?: Project;
+  index?: RepoSessionIndexEntry;
 };
 
 type RepoFolder = {
@@ -62,29 +66,64 @@ function repoLabel(full: string): string {
   return full.split('/')[1] || full;
 }
 
-/** Cursor-style Repositories sidebar: connected GitHub repos + sessions; click resumes terminal. */
+/** Cursor-style Repositories sidebar — never empty when GitHub is connected / used. */
 export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const router = useRouter();
   const { restoreTerminalSession, startNewChat } = useTerminalChat();
   const [entries, setEntries] = useState<TerminalHistoryEntry[]>([]);
+  const [indexEntries, setIndexEntries] = useState<RepoSessionIndexEntry[]>([]);
   const [cloudProjects, setCloudProjects] = useState<Project[]>([]);
+  const [connectedRepos, setConnectedRepos] = useState<string[]>([]);
   const [filterRecent, setFilterRecent] = useState(true);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const refreshLocal = useCallback(() => {
+    ensureSelectedRepoFolder();
     setEntries(
       loadTerminalHistory()
-        .filter((e) => e.messageCount > 0)
+        .filter((e) => e.messageCount > 0 || Boolean(e.githubRepoName))
         .slice(0, 48)
     );
+    setIndexEntries(loadRepoSessionsIndex());
   }, []);
 
   const refreshCloud = useCallback(() => {
     void api.projects
-      .listGithub()
-      .then((list) => setCloudProjects(Array.isArray(list) ? list : []))
-      .catch(() => setCloudProjects([]));
+      .list()
+      .then((list) => {
+        const all = Array.isArray(list) ? list : [];
+        const withGithub = all.filter((p) => p.github_repo_name?.includes('/'));
+        setCloudProjects(withGithub.length ? withGithub : all.filter((p) => p.github_repo_name));
+      })
+      .catch(() => {
+        void api.projects
+          .listGithub()
+          .then((list) => setCloudProjects(Array.isArray(list) ? list : []))
+          .catch(() => setCloudProjects([]));
+      });
+
+    void api.github
+      .status()
+      .then((st) => {
+        if (st.defaultRepo?.includes('/')) {
+          setConnectedRepos((prev) =>
+            prev.includes(st.defaultRepo!) ? prev : [st.defaultRepo!, ...prev]
+          );
+        }
+        if (!st.connected) return;
+        return api.github.listRepos();
+      })
+      .then((res) => {
+        if (!res?.repos?.length) return;
+        setConnectedRepos((prev) => {
+          const names = res.repos.map((r) => r.fullName).filter((n) => n.includes('/'));
+          return Array.from(new Set([...names.slice(0, 20), ...prev]));
+        });
+      })
+      .catch(() => {
+        /* optional — local index still works */
+      });
   }, []);
 
   useEffect(() => {
@@ -97,12 +136,12 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     window.addEventListener(GITHUB_REPO_CONTEXT_EVENT, onRefresh);
     window.addEventListener(GITHUB_PROJECT_SAVED_EVENT, onRefresh);
     window.addEventListener('storage', refreshLocal);
-    window.addEventListener('xroga-resume-workspace', refreshLocal);
+    window.addEventListener('xroga-resume-workspace', onRefresh);
     return () => {
       window.removeEventListener(GITHUB_REPO_CONTEXT_EVENT, onRefresh);
       window.removeEventListener(GITHUB_PROJECT_SAVED_EVENT, onRefresh);
       window.removeEventListener('storage', refreshLocal);
-      window.removeEventListener('xroga-resume-workspace', refreshLocal);
+      window.removeEventListener('xroga-resume-workspace', onRefresh);
     };
   }, [refreshLocal, refreshCloud]);
 
@@ -111,6 +150,14 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     const push = (key: string, session: RepoSession) => {
       const list = map.get(key) ?? [];
       if (list.some((s) => s.id === session.id)) return;
+      // Prefer richer local/cloud over bare index stub
+      const stubIdx = list.findIndex(
+        (s) =>
+          s.kind === 'index' &&
+          s.githubRepoName === session.githubRepoName &&
+          (session.kind === 'local' || session.kind === 'cloud')
+      );
+      if (stubIdx >= 0) list.splice(stubIdx, 1);
       list.push(session);
       map.set(key, list);
     };
@@ -130,10 +177,24 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       });
     }
 
+    for (const ix of indexEntries) {
+      if (!ix.githubRepoName?.includes('/')) continue;
+      push(ix.githubRepoName, {
+        id: ix.id,
+        title: ix.title,
+        updatedAt: ix.updatedAt,
+        status: ix.status,
+        githubRepoName: ix.githubRepoName,
+        githubBranch: ix.githubBranch || 'main',
+        cloudSynced: Boolean(ix.cloudProjectId),
+        kind: 'index',
+        index: ix,
+      });
+    }
+
     const merged = mergeGithubProjects(cloudProjects, entries);
     for (const p of merged) {
       const key = p.github_repo_name?.includes('/') ? p.github_repo_name : 'Recent';
-      // Avoid duplicating history-* already shown from local entries
       if (p.id.startsWith('history-')) continue;
       push(key, {
         id: p.id,
@@ -146,6 +207,39 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         kind: 'cloud',
         project: p,
       });
+    }
+
+    // Connected GitHub accounts: show repo folders even with no session yet
+    for (const repo of connectedRepos) {
+      if (!repo.includes('/')) continue;
+      if (!map.has(repo)) {
+        map.set(repo, [
+          {
+            id: `connected-${repo}`,
+            title: 'Open in workspace',
+            updatedAt: new Date().toISOString(),
+            githubRepoName: repo,
+            githubBranch: 'main',
+            cloudSynced: true,
+            kind: 'index',
+          },
+        ]);
+      }
+    }
+
+    const selected = getSelectedRepoContext()?.repo;
+    if (selected?.includes('/') && !map.has(selected)) {
+      map.set(selected, [
+        {
+          id: `selected-${selected}`,
+          title: 'Current selection',
+          updatedAt: new Date().toISOString(),
+          githubRepoName: selected,
+          githubBranch: getSelectedRepoContext()?.branch || 'main',
+          cloudSynced: false,
+          kind: 'index',
+        },
+      ]);
     }
 
     let foldersList = Array.from(map.entries()).map(([key, sessions]) => ({
@@ -162,18 +256,15 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       return bT - aT;
     });
 
-    if (filterRecent) {
-      foldersList = foldersList.slice(0, 8);
-    }
-
+    if (filterRecent) foldersList = foldersList.slice(0, 10);
     return foldersList;
-  }, [entries, cloudProjects, filterRecent]);
+  }, [entries, indexEntries, cloudProjects, connectedRepos, filterRecent]);
 
   useEffect(() => {
     setOpenFolders((prev) => {
       const next = { ...prev };
       for (const f of folders) {
-        if (next[f.key] === undefined) next[f.key] = f.key !== 'Recent' || folders.length === 1;
+        if (next[f.key] === undefined) next[f.key] = true;
       }
       return next;
     });
@@ -191,7 +282,6 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
       if (session.kind === 'cloud' && session.project) {
         const loaded = await loadGithubProjectSession(session.project, { branch });
-        // Prefer fuller local history if same repo has a newer local session
         const localMatch = entries.find(
           (e) =>
             e.githubRepoName === session.githubRepoName &&
@@ -205,15 +295,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         const prompt = fullLocal?.prompt || loaded.prompt;
         const sessionId = fullLocal?.id || loaded.sessionId;
 
-        if (!messages.length && !prompt.trim()) {
-          router.push('/dashboard/projects');
-          return;
-        }
-
         startNewChat();
         await restoreTerminalSession({
           sessionId,
-          prompt,
+          prompt: prompt || `Continue ${session.githubRepoName}`,
           messages: messages.length ? messages : [],
           selectedId: session.project.id,
           selectedLabel: session.title,
@@ -224,21 +309,25 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         return;
       }
 
-      const full = session.entry
-        ? ((await loadTerminalHistoryEntry(session.entry.id)) ?? session.entry)
-        : null;
-      if (!full?.messages?.length) return;
+      const historyId = session.entry?.id || session.index?.sessionId || session.id;
+      const full = await loadTerminalHistoryEntry(historyId);
+      if (full?.messages?.length) {
+        startNewChat();
+        await restoreTerminalSession({
+          sessionId: full.id,
+          prompt: full.prompt,
+          messages: full.messages,
+          selectedId: full.id,
+          selectedLabel: full.title,
+          source: 'projects',
+          jumpMessageId: full.messages[full.messages.length - 1]?.id,
+        });
+        router.push('/workspace');
+        return;
+      }
 
+      // Repo folder with no chat yet — just select repo and open workspace
       startNewChat();
-      await restoreTerminalSession({
-        sessionId: full.id,
-        prompt: full.prompt,
-        messages: full.messages,
-        selectedId: full.id,
-        selectedLabel: full.title,
-        source: 'projects',
-        jumpMessageId: full.messages[full.messages.length - 1]?.id,
-      });
       router.push('/workspace');
     } finally {
       setBusyId(null);
@@ -255,32 +344,22 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
           Repositories
         </span>
-        <div className="flex items-center gap-0.5">
-          <button
-            type="button"
-            title={filterRecent ? 'Showing recent repos' : 'Show all'}
-            onClick={() => setFilterRecent((v) => !v)}
-            className={cn(
-              'p-1 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5',
-              filterRecent && 'text-[var(--accent)]'
-            )}
-          >
-            <Filter className="h-3 w-3" />
-          </button>
-          <button
-            type="button"
-            title="Open projects hub"
-            onClick={() => router.push('/dashboard/projects')}
-            className="p-1 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
-          >
-            <FolderPlus className="h-3 w-3" />
-          </button>
-        </div>
+        <button
+          type="button"
+          title={filterRecent ? 'Showing recent repos' : 'Show all'}
+          onClick={() => setFilterRecent((v) => !v)}
+          className={cn(
+            'p-1 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5',
+            filterRecent && 'text-[var(--accent)]'
+          )}
+        >
+          <Filter className="h-3 w-3" />
+        </button>
       </div>
 
       {folders.length === 0 ? (
         <p className="px-2 py-2 text-[10px] text-[var(--muted)] leading-relaxed">
-          Connect GitHub and build — each repo and chat session appears here so you can continue exactly where you left off.
+          Connect GitHub in Integrations, pick a repo in the chat bar, then build — it will show up here.
         </p>
       ) : (
         <div className="space-y-0.5 max-h-[280px] overflow-y-auto pr-0.5 scrollbar-thin">
@@ -308,8 +387,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                 </button>
                 {isOpen
                   ? folder.sessions.map((session) => {
-                      const isSelected =
-                        selected && session.githubRepoName === selected;
+                      const isSelected = selected && session.githubRepoName === selected;
                       return (
                         <button
                           key={session.id}
@@ -333,9 +411,6 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                           <div className="mt-0.5 flex items-center gap-1.5 text-[var(--muted)]">
                             <GitBranch className="h-2.5 w-2.5 text-violet-400" />
                             {session.cloudSynced && <Cloud className="h-2.5 w-2.5 opacity-70" />}
-                            {session.status === 'stopped' && (
-                              <span className="text-[9px] text-amber-500">Open</span>
-                            )}
                           </div>
                         </button>
                       );

@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '@/lib/api';
 import { getSelectedRepoContext } from '@/lib/repoContext';
 import { markRepoAnalysisStale } from '@/lib/repoAnalysisCache';
-import { notifyGithubProjectSaved } from '@/lib/githubProjectEvents';
+import { notifyGithubProjectSaved, notifyGithubRepoContext } from '@/lib/githubProjectEvents';
+import { registerRepoSession } from '@/lib/repoSessionsIndex';
 import { normalizeBuildFiles } from '@/lib/normalizeBuildSource';
 import { hydrateLandingOutput } from '@/lib/hydrateLandingOutput';
 import { auditLandingSite, LANDING_UPDATE_SUGGESTIONS } from '@/lib/siteHealthAudit';
@@ -194,6 +195,13 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
           });
           markRepoAnalysisStale(resolvedRepoName);
           setStatusNote(`Code saved to ${result.githubRepoName} — open Projects to continue this repository.`);
+          registerRepoSession({
+            githubRepoName: result.githubRepoName,
+            githubBranch: resolvedBranch,
+            title: projectName.slice(0, 80),
+            status: 'complete',
+          });
+          notifyGithubRepoContext(result.githubRepoName, resolvedBranch);
           void api.projects
             .create({
               name: projectName.slice(0, 120),
