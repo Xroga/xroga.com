@@ -644,6 +644,28 @@ export const api = {
         body: JSON.stringify({ message, history }),
       }),
     usage: () => apiFetch<{ usage: TokenUsage }>('/api/phase1/usage'),
+    economics: () =>
+      apiFetch<{
+        currency: string;
+        freeUserMonthlyTokens: number;
+        freeUserWorstCaseApiUsd: number;
+        perBuild: Array<{
+          tier: string;
+          label: string;
+          totalTokens: number;
+          totalUsd: number;
+          buildsPerFreeMonth: number;
+          howAi: string;
+        }>;
+        planProfitIfFullTokenBurn: Array<{
+          tier: string;
+          priceUsd: number;
+          tokens: number;
+          apiCostIfFullBurnUsd: number;
+          grossProfitUsd: number;
+          marginPct: number;
+        }>;
+      }>('/api/phase1/economics'),
     claimEmergencyTokens: () =>
       apiFetch<{ success: boolean; message: string }>('/api/phase1/emergency-tokens', {
         method: 'POST',

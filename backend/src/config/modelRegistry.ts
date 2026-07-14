@@ -229,6 +229,12 @@ export const SIMPLE_BUILD_TOKENS = {
   output: 55_000,
 };
 
+/** Premium crypto/hackathon after lean policy (1× Grok 4.5 strategy, Pro gate, Flash QA) */
+export const PREMIUM_BUILD_TOKENS = {
+  input: 280_000,
+  output: 160_000,
+};
+
 /** Targeted update — only named files, cached repo, no Phase 0 research */
 export const TYPICAL_UPDATE_TOKENS = {
   input: 55_000,
@@ -241,7 +247,156 @@ export const TYPICAL_UI_UPDATE_TOKENS = {
   output: 48_000,
 };
 
-/** Estimate provider API $ for one build at target model mix */
+/** Mix fractions for a given build tier (sums ~100). Used for honest COGS. */
+const TIER_MIX: Record<
+  'simple_static' | 'standard' | 'premium' | 'update',
+  Partial<Record<XrogaModelRole, number>>
+> = {
+  simple_static: { deepseek_flash: 90, deepseek_pro: 10 },
+  standard: {
+    deepseek_flash: 55,
+    deepseek_pro: 30,
+    grok_fast: 5,
+    grok_reasoning: 4,
+    claude_sonnet: 6,
+  },
+  premium: {
+    deepseek_flash: 58,
+    deepseek_pro: 28,
+    grok_fast: 6,
+    grok_reasoning: 4,
+    claude_sonnet: 4,
+  },
+  update: { deepseek_flash: 85, deepseek_pro: 15 },
+};
+
+function llmUsdForMix(
+  input: number,
+  output: number,
+  mix: Partial<Record<XrogaModelRole, number>>
+): number {
+  let usd = 0;
+  for (const role of CORE_BUILD_MODELS) {
+    const pct = mix[role] ?? 0;
+    if (!pct) continue;
+    usd += estimateUsdCost(Math.round((input * pct) / 100), Math.round((output * pct) / 100), role);
+  }
+  return Math.round(usd * 1000) / 1000;
+}
+
+export type BuildEconomicsTier = 'simple_static' | 'standard' | 'premium' | 'update';
+
+export interface BuildTierEconomics {
+  tier: BuildEconomicsTier;
+  label: string;
+  inputTokens: number;
+  outputTokens: number;
+  totalTokens: number;
+  llmUsd: number;
+  webResearchUsd: number;
+  totalUsd: number;
+  buildsPerFreeMonth: number;
+  howAi: string;
+}
+
+/** Honest per-tier COGS from published $/MTok × expected mix (not the monthly sharePct table). */
+export function estimateBuildTierEconomics(tier: BuildEconomicsTier): BuildTierEconomics {
+  const mix = TIER_MIX[tier];
+  if (tier === 'simple_static') {
+    const { input, output } = SIMPLE_BUILD_TOKENS;
+    const llmUsd = llmUsdForMix(input, output, mix);
+    return {
+      tier,
+      label: 'Small website / blog',
+      inputTokens: input,
+      outputTokens: output,
+      totalTokens: input + output,
+      llmUsd,
+      webResearchUsd: 0,
+      totalUsd: llmUsd,
+      buildsPerFreeMonth: Math.floor(FREE_PLAN_TOKENS / (input + output)),
+      howAi: 'Flash one-shot + DeepSeek interactive QA — no Grok/Claude',
+    };
+  }
+  if (tier === 'update') {
+    const { input, output } = TYPICAL_UPDATE_TOKENS;
+    const llmUsd = llmUsdForMix(input, output, mix);
+    return {
+      tier,
+      label: 'Incremental update',
+      inputTokens: input,
+      outputTokens: output,
+      totalTokens: input + output,
+      llmUsd,
+      webResearchUsd: 0,
+      totalUsd: llmUsd,
+      buildsPerFreeMonth: Math.floor(FREE_PLAN_TOKENS / (input + output)),
+      howAi: 'Targeted file patch + DeepSeek QA on selected GitHub repo',
+    };
+  }
+  if (tier === 'premium') {
+    const { input, output } = PREMIUM_BUILD_TOKENS;
+    const llmUsd = llmUsdForMix(input, output, mix);
+    const webResearchUsd = Math.round(WEB_RESEARCH_COST.tavilyPerSearchUsd * 2 * 1000) / 1000;
+    return {
+      tier,
+      label: 'Hackathon / crypto',
+      inputTokens: input,
+      outputTokens: output,
+      totalTokens: input + output,
+      llmUsd,
+      webResearchUsd,
+      totalUsd: Math.round((llmUsd + webResearchUsd) * 1000) / 1000,
+      buildsPerFreeMonth: Math.floor(FREE_PLAN_TOKENS / (input + output)),
+      howAi: 'SearXNG(+Tavily) + 1× Grok 4.5 strategy + Flash/Pro code + Pro gate + DeepSeek QA',
+    };
+  }
+  const { input, output } = TYPICAL_BUILD_TOKENS;
+  const llmUsd = llmUsdForMix(input, output, mix);
+  const webResearchUsd = Math.round(WEB_RESEARCH_COST.tavilyPerSearchUsd * 1 * 1000) / 1000;
+  return {
+    tier: 'standard',
+    label: 'AI SaaS / dashboard',
+    inputTokens: input,
+    outputTokens: output,
+    totalTokens: input + output,
+    llmUsd,
+    webResearchUsd,
+    totalUsd: Math.round((llmUsd + webResearchUsd) * 1000) / 1000,
+    buildsPerFreeMonth: Math.floor(FREE_PLAN_TOKENS / (input + output)),
+    howAi: 'Research + Flash/Pro + light Grok strategy + DeepSeek final QA',
+  };
+}
+
+/** Paid plan revenue vs worst-case API COGS if user burns full monthly tokens. */
+export function estimatePlanProfitTable(): Array<{
+  tier: string;
+  priceUsd: number;
+  tokens: number;
+  apiCostIfFullBurnUsd: number;
+  grossProfitUsd: number;
+  marginPct: number;
+}> {
+  const prices: Record<string, number> = {
+    unpaid: 0,
+    spark: 19,
+    pulse: 29,
+    nova: 49,
+    zenith: 99,
+    singularity: 999,
+  };
+  const base = estimateFullQuotaBreakdownUsd();
+  const perToken = base.totalUsd / FREE_PLAN_TOKENS;
+  return Object.entries(PLAN_TOKEN_QUOTA).map(([tier, tokens]) => {
+    const priceUsd = prices[tier] ?? 0;
+    const apiCostIfFullBurnUsd = Math.round(perToken * tokens * 100) / 100;
+    const grossProfitUsd = Math.round((priceUsd - apiCostIfFullBurnUsd) * 100) / 100;
+    const marginPct = priceUsd > 0 ? Math.round((grossProfitUsd / priceUsd) * 1000) / 10 : 0;
+    return { tier, priceUsd, tokens, apiCostIfFullBurnUsd, grossProfitUsd, marginPct };
+  });
+}
+
+/** Estimate provider API $ for one standard site build at monthly share mix */
 export function estimateSingleBuildApiUsd(): {
   llmUsd: number;
   webResearchUsd: number;
@@ -249,22 +404,13 @@ export function estimateSingleBuildApiUsd(): {
   inputTokens: number;
   outputTokens: number;
 } {
-  const { input, output } = TYPICAL_BUILD_TOKENS;
-  let llmUsd = 0;
-  for (const role of CORE_BUILD_MODELS) {
-    const m = XROGA_MODELS[role];
-    const inTok = Math.round((input * m.inputSharePct) / 100);
-    const outTok = Math.round((output * m.outputSharePct) / 100);
-    llmUsd += estimateUsdCost(inTok, outTok, role);
-  }
-  const webResearchUsd =
-    WEB_RESEARCH_COST.tavilySearchesPerBuild * WEB_RESEARCH_COST.tavilyPerSearchUsd;
+  const e = estimateBuildTierEconomics('standard');
   return {
-    llmUsd: Math.round(llmUsd * 1000) / 1000,
-    webResearchUsd: Math.round(webResearchUsd * 1000) / 1000,
-    totalUsd: Math.round((llmUsd + webResearchUsd) * 1000) / 1000,
-    inputTokens: input,
-    outputTokens: output,
+    llmUsd: e.llmUsd,
+    webResearchUsd: e.webResearchUsd,
+    totalUsd: e.totalUsd,
+    inputTokens: e.inputTokens,
+    outputTokens: e.outputTokens,
   };
 }
 
