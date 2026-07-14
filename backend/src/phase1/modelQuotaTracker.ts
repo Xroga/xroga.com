@@ -52,6 +52,34 @@ function parseModelUsage(raw: unknown): ModelUsageMap {
   return out;
 }
 
+/** Prefer higher of DB vs memory per role so refresh cannot flash 0% mid-session. */
+function preferHigherModelUsage(db: ModelUsageMap, memory: ModelUsageMap): ModelUsageMap {
+  const roles = new Set([...Object.keys(db), ...Object.keys(memory)]);
+  const out: ModelUsageMap = {};
+  for (const role of roles) {
+    const a = db[role as XrogaModelRole] ?? { input: 0, output: 0 };
+    const b = memory[role as XrogaModelRole] ?? { input: 0, output: 0 };
+    out[role as XrogaModelRole] = {
+      input: Math.max(a.input, b.input),
+      output: Math.max(a.output, b.output),
+    };
+  }
+  return out;
+}
+
+function applyModelDelta(base: ModelUsageMap, delta: ModelUsageMap): ModelUsageMap {
+  const out: ModelUsageMap = { ...base };
+  for (const [role, add] of Object.entries(delta)) {
+    if (!add) continue;
+    const prev = out[role as XrogaModelRole] ?? { input: 0, output: 0 };
+    out[role as XrogaModelRole] = {
+      input: prev.input + Math.max(0, add.input),
+      output: prev.output + Math.max(0, add.output),
+    };
+  }
+  return out;
+}
+
 async function loadModelUsage(userId: string, opts?: { forceDb?: boolean }): Promise<ModelUsageMap> {
   const period = currentPeriodStart();
   const cached = memoryModelUsage.get(userId);
@@ -80,6 +108,8 @@ async function loadModelUsage(userId: string, opts?: { forceDb?: boolean }): Pro
     }
 
     if (!data) {
+      // Do not wipe in-process bills when the row is briefly missing.
+      if (cached && totalModelTokens(cached) > 0) return cached;
       memoryModelUsage.set(userId, emptyUsage());
       memoryModelUsagePeriod.set(userId, period);
       return emptyUsage();
@@ -105,13 +135,69 @@ async function loadModelUsage(userId: string, opts?: { forceDb?: boolean }): Pro
       return parsed;
     }
 
-    const parsed = parseModelUsage(data.model_usage);
+    let parsed = parseModelUsage(data.model_usage);
+    if (cached && memoryModelUsagePeriod.get(userId) === period) {
+      const merged = preferHigherModelUsage(parsed, cached);
+      if (totalModelTokens(merged) > totalModelTokens(parsed)) {
+        phase1Logger.warn('Model usage memory ahead of DB — healing persist', {
+          userId,
+          memory: totalModelTokens(cached),
+          db: totalModelTokens(parsed),
+        });
+        parsed = merged;
+        void saveModelUsageFallback(userId, parsed).catch(() => undefined);
+      }
+    }
     memoryModelUsage.set(userId, parsed);
     memoryModelUsagePeriod.set(userId, period);
     return parsed;
   } catch (err) {
     phase1Logger.warn('model usage load failed', { error: (err as Error).message });
     return cached ?? emptyUsage();
+  }
+}
+
+async function mergeModelUsageViaSqlTx(
+  userId: string,
+  delta: ModelUsageMap,
+  period: string
+): Promise<ModelUsageMap | null> {
+  const client = await connectPostgres();
+  try {
+    await client.query('BEGIN');
+    await client.query(
+      `INSERT INTO public.user_token_usage (user_id, quota_period_start, updated_at)
+       VALUES ($1::uuid, $2::date, NOW())
+       ON CONFLICT (user_id) DO NOTHING`,
+      [userId, period]
+    );
+    const { rows } = await client.query<{ model_usage: unknown; quota_period_start: string }>(
+      `SELECT model_usage, quota_period_start FROM public.user_token_usage
+       WHERE user_id = $1::uuid FOR UPDATE`,
+      [userId]
+    );
+    const row = rows[0];
+    if (!row) {
+      await client.query('ROLLBACK');
+      return null;
+    }
+    const rowPeriod = normalizePeriodDate(row.quota_period_start);
+    const base =
+      rowPeriod && rowPeriod !== period ? emptyUsage() : parseModelUsage(row.model_usage);
+    const merged = applyModelDelta(base, delta);
+    await client.query(
+      `UPDATE public.user_token_usage
+       SET model_usage = $2::jsonb, quota_period_start = $3::date, updated_at = NOW()
+       WHERE user_id = $1::uuid`,
+      [userId, JSON.stringify(merged), period]
+    );
+    await client.query('COMMIT');
+    return merged;
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => undefined);
+    throw err;
+  } finally {
+    await client.end().catch(() => undefined);
   }
 }
 
@@ -131,15 +217,21 @@ async function mergeModelUsageAtomic(userId: string, delta: ModelUsageMap): Prom
           `SELECT public.merge_user_model_usage($1::uuid, $2::jsonb, $3::date) AS merge_user_model_usage`,
           [userId, JSON.stringify(deltaJson), period]
         );
-        const merged = parseModelUsage(rows[0]?.merge_user_model_usage);
-        return merged;
+        return parseModelUsage(rows[0]?.merge_user_model_usage);
       } finally {
         await client.end().catch(() => undefined);
       }
-    } catch (err) {
-      phase1Logger.warn('model usage postgres merge failed — trying supabase rpc', {
-        error: (err as Error).message,
+    } catch (rpcErr) {
+      phase1Logger.warn('merge_user_model_usage missing — using SQL transaction merge', {
+        error: (rpcErr as Error).message,
       });
+      try {
+        return await mergeModelUsageViaSqlTx(userId, delta, period);
+      } catch (err) {
+        phase1Logger.warn('model usage postgres merge failed — trying supabase rpc', {
+          error: (err as Error).message,
+        });
+      }
     }
   }
 
@@ -150,15 +242,13 @@ async function mergeModelUsageAtomic(userId: string, delta: ModelUsageMap): Prom
       p_delta: deltaJson,
       p_period: period,
     });
-    if (error) {
-      phase1Logger.warn('merge_user_model_usage rpc failed', { userId, error: error.message });
-      return null;
-    }
-    return parseModelUsage(data);
+    if (!error) return parseModelUsage(data);
+    phase1Logger.warn('merge_user_model_usage rpc failed', { userId, error: error.message });
   } catch (err) {
     phase1Logger.warn('merge_user_model_usage rpc exception', { error: (err as Error).message });
-    return null;
   }
+
+  return null;
 }
 
 async function saveModelUsageFallback(userId: string, usage: ModelUsageMap): Promise<boolean> {

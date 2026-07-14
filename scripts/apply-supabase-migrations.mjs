@@ -29,14 +29,11 @@ if (dryRun) {
   console.log('DRY RUN — migrations will not be applied.');
 }
 
-// Fast path: Phase 1 table already exists (e.g. created by Fly.io bootstrap)
+// Table existing does NOT mean migrations 024/026 (bonus_tokens, atomic RPCs) are applied.
+// Always walk schema_migrations — skipping here caused dashboard usage to reset after refresh.
 const phase1Exists = await phase1TableExistsViaRest();
 if (phase1Exists === true) {
-  console.log('user_token_usage table already exists (verified via Supabase REST).');
-  if (!dryRun) {
-    console.log('Skipping DB migration — schema is up to date for Phase 1.');
-    process.exit(0);
-  }
+  console.log('user_token_usage table exists — still applying any pending migrations (024/026…).');
 }
 
 const client = await connectPostgres().catch((err) => {
