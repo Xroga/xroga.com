@@ -9,6 +9,7 @@ import { deepSeekChat } from '../../lib/deepseek.js';
 import { getSecret } from '../../config/envSecrets.js';
 import { XROGA_USER_IDENTITY } from '../../prompts/xrogaIdentity.js';
 import { analyzeUserQuery } from '../../lib/queryAnalyzer.js';
+import { looksLikeBuildEssay } from '../../lib/buildIntent.js';
 import { geminiGenerateCultural } from '../../council/geminiClient.js';
 import { deepseekGenerate } from '../../council/deepseekClient.js';
 import { groqGeneral } from '../../council/groqClient.js';
@@ -171,7 +172,8 @@ export function shouldUseNegotiationEngine(prompt: string, category: FeatureCate
   if (isBuildContinuation(prompt)) return true;
   if (isWebsiteUpdateRequest(prompt) && threadHasCompletedWebsite(prompt)) return true;
   const t = prompt.toLowerCase();
-  const buildVerb = /\b(build|create|make|develop|design|launch|scaffold|generate)\b/;
+  const buildVerb =
+    /\b(build|building|create|creating|make|making|develop|developing|design|designing|launch|scaffold|generate|generating)\b/;
   const buildTarget =
     /\b(website|web app|landing|saas|dashboard|crm|marketplace|platform|chatbot|chat\s*bot|software|tool|app|api|crypto|blockchain|web3|defi|nft|wallet|exchange|swap|bridge|solidity|dapp|bot|assistant|automation|ecommerce|store|shop|blog|portfolio|booking|scheduler|tracker|invoice|forum|messaging|course|membership|job board|directory|admin|analytics|debugger|code builder|image gen|video|mobile app|flutter|react native|game|enterprise|social|video platform|ai agent|swarm|hackathon|solana)\b/;
   if (buildVerb.test(t) && buildTarget.test(t)) return true;
@@ -1016,6 +1018,30 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         );
         return text;
       });
+      // Flash sometimes writes a how-to essay instead of code — reject and force a code-only retry.
+      if (!isGameBuild && looksLikeBuildEssay(stepCode)) {
+        emit(
+          ctx,
+          3,
+          xrogaPulseLine('Retrying — code only (no essay)'),
+          'builder',
+          todos,
+          'XROGA Pulse'
+        );
+        const retry = await buildModelCall(
+          'flash',
+          `${PHASE_3_EXECUTE}\n\nABSOLUTE RULE: The user asked you to BUILD the website, not explain how. Output ONLY three fenced blocks: html, css, javascript. Zero prose. Zero "Introduction". Zero SEO tips.`,
+          `Build this site NOW as real working files.\nUser request:\n${userPrompt}\n\nPlan:\n${approvedPlan}\n\nReturn complete index.html + styles.css + script.js content in fenced blocks.`,
+          stepTokenBudget,
+          usageTracker
+        );
+        if (retry.text?.trim() && !looksLikeBuildEssay(retry.text)) {
+          stepCode = retry.text;
+        } else if (retry.text?.trim()) {
+          // Still essay-ish — keep any HTML island if present; assembler / template will harden
+          stepCode = retry.text;
+        }
+      }
     } catch (stepErr) {
       console.warn('[NegotiationEngine] Step code gen:', (stepErr as Error).message);
       stepCode = isGameBuild

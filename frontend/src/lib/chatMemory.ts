@@ -130,9 +130,13 @@ export function isWebsiteBuildUpdate(prompt: string, messages: ChatMessage[]): b
 /** User wants to build a product — triggers full build pipeline UI and routing */
 export function isWebsiteBuildPrompt(prompt: string): boolean {
   const t = prompt.trim();
-  if (NON_BUILD_MEDIA.test(t)) return false;
+  if (NON_BUILD_MEDIA.test(t) && !/\b(website|site|blog|app|landing)\b/i.test(t)) return false;
 
-  const buildVerb = /\b(build|create|make|develop|design|launch|scaffold|generate)\b/i.test(t);
+  // Include "building/creating" — stemmed forms previously fell through to chat essays
+  const buildVerb =
+    /\b(build|building|create|creating|make|making|develop|developing|design|designing|launch|launching|scaffold|generate|generating)\b/i.test(
+      t
+    );
   const buildTarget =
     /\b(website|web\s*page|landing\s*page|site|web\s*app|shop|store|e[\s-]?commerce|portfolio|blog|restaurant|bakery|saas|crm|dashboard|marketplace|platform|chatbot|bot|assistant|tool|software|game|api|app|application|membership|forum|directory|invoice|tracker|planner|clone|startup|storefront|landing|landing page|crypto|blockchain|web3|defi|nft|wallet|token|dao|dapp|exchange|staking)\b/i.test(
       t
@@ -148,7 +152,16 @@ export function isWebsiteBuildPrompt(prompt: string): boolean {
     return true;
   }
 
-  return /\b(build|create|make)\b[\s\S]{0,80}\b(website|web\s*page|landing|site|shop|coffee|store|restaurant|bakery|app)\b/i.test(
+  // "simple blog website about AI" / "blog about X" — still a product build
+  if (
+    t.length < 180 &&
+    /\b(blog|landing|portfolio)\b/i.test(t) &&
+    /\b(website|site|page|about|for)\b/i.test(t)
+  ) {
+    return true;
+  }
+
+  return /\b(build|building|create|make)\b[\s\S]{0,100}\b(website|web\s*page|landing|site|blog|shop|coffee|store|restaurant|bakery|app)\b/i.test(
     t
   );
 }

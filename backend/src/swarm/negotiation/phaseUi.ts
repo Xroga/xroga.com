@@ -319,7 +319,8 @@ export function hasClarifiedBuildBrief(prompt: string): boolean {
 
 export function isWebsiteBuildPrompt(prompt: string, category?: string): boolean {
   if (category === 'landing_page') return true;
-  return /\b(website|web\s*page|landing|site|coffee|shop|store|restaurant|bakery|crm|dashboard|saas|marketplace|crypto|blockchain|web3|defi|nft|wallet|chatbot|chat\s*bot|software|app|api|tool|platform|dapp|exchange)\b/i.test(
+  // Include blog — "build a simple blog about AI" must never become a chat essay
+  return /\b(website|web\s*page|landing|site|blog|portfolio|coffee|shop|store|restaurant|bakery|crm|dashboard|saas|marketplace|crypto|blockchain|web3|defi|nft|wallet|chatbot|chat\s*bot|software|app|api|tool|platform|dapp|exchange)\b/i.test(
     prompt
   );
 }

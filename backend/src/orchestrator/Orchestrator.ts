@@ -586,7 +586,21 @@ export class Orchestrator {
 
     // Fast chat: greetings & simple conversation — no swarm, no architect spam
     if (shouldUseFastChat(ctx.prompt, featureCategory)) {
-      return this.executeFastChat(ctx, featureCategory);
+      try {
+        return await this.executeFastChat(ctx, featureCategory);
+      } catch (fastErr) {
+        const msg = (fastErr as Error).message || '';
+        // Product builds must never become chat essays — fall through to negotiation.
+        if (
+          msg.includes('PRODUCT_BUILD_MUST_USE_NEGOTIATION') ||
+          msg.includes('BUILD_CONTINUATION_MUST_USE_NEGOTIATION') ||
+          msg.includes('WEBSITE_UPDATE_MUST_USE_NEGOTIATION')
+        ) {
+          console.warn('[Orchestrator] Fast chat rejected build — using negotiation engine');
+        } else {
+          throw fastErr;
+        }
+      }
     }
 
     // Image fast path — skip 5-agent swarm; call image APIs directly

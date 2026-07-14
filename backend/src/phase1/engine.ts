@@ -18,6 +18,7 @@ import { sanitizeChatHonesty, CHAT_HONESTY_RULES } from '../lib/chatHonesty.js';
 import { detectThirdPartyProductQuestion, thirdPartySupportSystemBlock } from '../lib/thirdPartyProduct.js';
 import { sanitizeInternalModelLeaks } from '../lib/responseSanitize.js';
 import { isTrivialPrompt } from '../lib/promptClassifier.js';
+import { isProductBuildRequest } from '../lib/buildIntent.js';
 
 function toXrogaModelRole(modelId: InternalModelId, reasoningEffort?: 'high'): XrogaModelRole {
   if (modelId === 'grok_fast') {
@@ -67,6 +68,19 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
   }
 
   phase1Logger.info('Processing message', { userId, messageLength: message.length });
+
+  // Hard block: product builds must use negotiation swarm — Phase 1 writes costly how-to essays.
+  if (isProductBuildRequest(message)) {
+    phase1Logger.warn('Rejected product build routed to Phase 1', { userId, preview: message.slice(0, 80) });
+    return {
+      ok: false,
+      status: 409,
+      data: {
+        error: 'This is a product build request. Use the Xroga build swarm, not chat Q&A.',
+        code: 'USE_BUILD_PIPELINE',
+      },
+    };
+  }
 
   // Cheap path: never burn a full model call + prior build history on "hi".
   if (isTrivialPrompt(message)) {
