@@ -1,6 +1,6 @@
 /**
  * Keep Repositories sidebar in sync with the selected GitHub repo + live terminal.
- * Ensures first chat under a repo immediately becomes "#1 terminal".
+ * Ensures first chat under a repo immediately becomes "#1 terminal" in local + cloud storage.
  */
 
 import { getSelectedRepoContext } from '@/lib/repoContext';
@@ -10,12 +10,13 @@ import {
   saveTerminalHistorySession,
   type TerminalHistoryEntry,
 } from '@/lib/terminalHistory';
-import { registerRepoSession } from '@/lib/repoSessionsIndex';
+import { registerRepoSession, loadRepoSessionsIndex } from '@/lib/repoSessionsIndex';
 import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 import { saveTerminalSessionToIndexedDB } from '@/lib/terminalSessionStorage';
 import {
   allocateTerminalNumber,
   cloudTerminalLabel,
+  flushTerminalSessionToCloud,
   pushTerminalSessionToCloud,
 } from '@/lib/cloudTerminalSessions';
 import type { ChatMessage } from '@/context/TerminalChatContext';
@@ -55,6 +56,8 @@ export function ensureLiveTerminalUnderSelectedRepo(opts?: {
   sessionId?: string;
   messages?: ChatMessage[];
   prompt?: string;
+  /** Flush cloud immediately so #1 survives refresh / other devices */
+  flushCloud?: boolean;
 }): TerminalHistoryEntry | null {
   const selected = getSelectedRepoContext();
   if (!selected?.repo?.includes('/')) return null;
@@ -65,47 +68,67 @@ export function ensureLiveTerminalUnderSelectedRepo(opts?: {
   const prompt = opts?.prompt || ws?.prompt || ws?.selectedLabel || 'Terminal';
   if (!sessionId || !messages?.length) return null;
 
-  // Persist with selected repo in scope (extractProjectMeta reads localStorage)
+  // Persist with forced selected repo — never rely on a racing localStorage read alone.
   saveTerminalHistorySession({
     sessionId,
     prompt,
     messages,
     status: 'active',
+    forceRepo: selected.repo,
+    forceBranch: selected.branch || 'main',
   });
 
   let entry = loadTerminalHistory().find((e) => e.id === sessionId) ?? null;
-  if (!entry) return null;
+  if (!entry) {
+    // localStorage may have failed — still build an entry for IDB + index + cloud
+    const n = allocateTerminalNumber(sessionId, selected.repo);
+    entry = {
+      id: sessionId,
+      title: cloudTerminalLabel(n),
+      preview: prompt.slice(0, 200),
+      prompt,
+      messages,
+      kind: 'chat',
+      status: 'active',
+      githubRepoName: selected.repo,
+      githubBranch: selected.branch || 'main',
+      githubRepoUrl: `https://github.com/${selected.repo}`,
+      messageCount: messages.length,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+  }
 
-  if (!entry.githubRepoName?.includes('/')) {
+  if (entry.githubRepoName !== selected.repo || !entry.title.startsWith('#')) {
     entry = stampRepoOnEntry(entry, selected.repo, selected.branch || 'main');
-    const rest = loadTerminalHistory().filter((e) => e.id !== entry!.id);
-    persistHistory([entry, ...rest]);
-    void saveTerminalSessionToIndexedDB(entry);
-  } else if (!entry.title.startsWith('#')) {
-    const n = allocateTerminalNumber(entry.id, entry.githubRepoName);
-    entry = { ...entry, title: cloudTerminalLabel(n) };
     const rest = loadTerminalHistory().filter((e) => e.id !== entry!.id);
     persistHistory([entry, ...rest]);
   }
 
-  const n = allocateTerminalNumber(entry.id, entry.githubRepoName!);
+  void saveTerminalSessionToIndexedDB(entry);
+
+  const n = allocateTerminalNumber(entry.id, selected.repo);
+  const labeled = { ...entry, title: cloudTerminalLabel(n), githubRepoName: selected.repo };
   registerRepoSession({
-    githubRepoName: entry.githubRepoName!,
-    githubBranch: entry.githubBranch || selected.branch || 'main',
-    title: cloudTerminalLabel(n),
-    sessionId: entry.id,
+    githubRepoName: selected.repo,
+    githubBranch: labeled.githubBranch || selected.branch || 'main',
+    title: labeled.title,
+    sessionId: labeled.id,
     status: 'active',
     activityKind: 'chat',
   });
-  void pushTerminalSessionToCloud({ ...entry, title: cloudTerminalLabel(n) });
 
-  return { ...entry, title: cloudTerminalLabel(n) };
+  if (opts?.flushCloud) {
+    void flushTerminalSessionToCloud(labeled);
+  } else {
+    void pushTerminalSessionToCloud(labeled);
+  }
+
+  return labeled;
 }
 
 /**
- * 1) Save live workspace session under the selected repo
- * 2) Attach selected repo to that session if it was missing
- * Returns history entries that belong to real repos (for sidebar).
+ * History entries for the Repositories sidebar — history + index ids with message bodies.
  */
 export function syncRepoTerminalSessions(): TerminalHistoryEntry[] {
   ensureLiveTerminalUnderSelectedRepo();
@@ -123,11 +146,11 @@ export function syncRepoTerminalSessions(): TerminalHistoryEntry[] {
   let changed = false;
   const next = all.map((e) => {
     const isLive = ws?.sessionId && e.id === ws.sessionId;
-    if (isLive && !e.githubRepoName?.includes('/')) {
+    if (isLive && (!e.githubRepoName?.includes('/') || e.githubRepoName === repo) && !e.title.startsWith('#')) {
       changed = true;
       return stampRepoOnEntry(e, repo, branch);
     }
-    if (isLive && e.githubRepoName === repo && !e.title.startsWith('#')) {
+    if (isLive && !e.githubRepoName?.includes('/')) {
       changed = true;
       return stampRepoOnEntry(e, repo, branch);
     }
@@ -153,5 +176,21 @@ export function syncRepoTerminalSessions(): TerminalHistoryEntry[] {
     }
   }
 
-  return next.filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/'));
+  // Heal: index may have session ids history lost — keep them visible by identity.
+  const fromHistory = next.filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/'));
+  const have = new Set(fromHistory.map((e) => e.id));
+  for (const idx of loadRepoSessionsIndex()) {
+    if (!idx.githubRepoName?.includes('/') || !idx.sessionId || have.has(idx.sessionId)) continue;
+    const hist = all.find((e) => e.id === idx.sessionId);
+    if (hist?.messages?.length) {
+      fromHistory.push({
+        ...hist,
+        githubRepoName: hist.githubRepoName || idx.githubRepoName,
+        title: idx.title.startsWith('#') ? idx.title : hist.title,
+      });
+      have.add(idx.sessionId);
+    }
+  }
+
+  return fromHistory;
 }

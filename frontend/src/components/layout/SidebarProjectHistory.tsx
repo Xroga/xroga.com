@@ -29,6 +29,7 @@ import {
   migrateLocalSessionsToCloud,
   onCloudTerminalsChanged,
 } from '@/lib/cloudTerminalSessions';
+import { loadRepoSessionsIndex } from '@/lib/repoSessionsIndex';
 import type { CloudTerminalSessionSummary } from '@/lib/api';
 import { formatCompactAgo } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
@@ -82,14 +83,58 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         sessionId,
         messages,
         prompt,
+        flushCloud: true,
       });
     }
     const synced = syncRepoTerminalSessions();
-    setEntries(
+    let nextEntries =
       synced.length
         ? synced
-        : loadTerminalHistory().filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/'))
-    );
+        : loadTerminalHistory().filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/'));
+
+    // Live chat must appear under the selected repo even if history write lagged.
+    if (selected?.repo?.includes('/') && messages.length > 0 && sessionId) {
+      const n = allocateTerminalNumber(sessionId, selected.repo);
+      const live: TerminalHistoryEntry = {
+        id: sessionId,
+        title: cloudTerminalLabel(n),
+        preview: prompt.slice(0, 200),
+        prompt,
+        messages,
+        kind: 'chat',
+        status: 'active',
+        githubRepoName: selected.repo,
+        githubBranch: selected.branch || 'main',
+        messageCount: messages.length,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      if (!nextEntries.some((e) => e.id === sessionId)) {
+        nextEntries = [live, ...nextEntries];
+      } else {
+        nextEntries = nextEntries.map((e) =>
+          e.id === sessionId
+            ? {
+                ...e,
+                ...live,
+                createdAt: e.createdAt || live.createdAt,
+              }
+            : e
+        );
+      }
+    }
+
+    // Index can retain #N after localStorage quota drops messages — surface those ids.
+    for (const idx of loadRepoSessionsIndex()) {
+      if (!idx.githubRepoName?.includes('/') || !idx.sessionId) continue;
+      if (nextEntries.some((e) => e.id === idx.sessionId)) continue;
+      const hist = loadTerminalHistory().find((e) => e.id === idx.sessionId);
+      if (hist?.messages?.length) {
+        nextEntries = [...nextEntries, hist];
+      }
+    }
+
+    setEntries(nextEntries);
     const ws = loadWorkspaceSession();
     setActiveSessionId(ws?.sessionId ?? sessionId ?? null);
   }, [messages, sessionId, prompt]);
@@ -425,7 +470,14 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                 {isOpen ? (
                   folder.sessions.length === 0 ? (
                     <p className="pl-6 pr-2 py-1.5 text-[10px] text-[var(--muted)] leading-snug">
-                      Chat below to create <span className="font-semibold text-[var(--foreground)]/80">#1 terminal</span>
+                      {isActiveRepo && messages.length > 0
+                        ? 'Saving #1 terminal to your account…'
+                        : (
+                          <>
+                            Chat below to create{' '}
+                            <span className="font-semibold text-[var(--foreground)]/80">#1 terminal</span>
+                          </>
+                        )}
                     </p>
                   ) : (
                     folder.sessions.map((session) => {

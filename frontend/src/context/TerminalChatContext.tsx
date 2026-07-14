@@ -358,33 +358,53 @@ export function TerminalChatProvider({
       setSessionReady(true);
       return;
     }
+    // Allow #1 terminal saves immediately — do not wait for hydrate (race caused empty sidebar).
+    persistReadyRef.current = true;
+    setSessionReady(true);
     let cancelled = false;
     void loadWorkspaceSessionHydrated()
       .then((session) => {
         if (cancelled) return;
-        if (session?.messages?.length) {
-          setMessages(session.messages);
-          if (threadHasCompletedWebsite(session.messages)) {
-            completedWebsiteBuildRef.current = true;
+        let adoptedStored = false;
+        // Never wipe a live conversation the user already started while hydrate was in flight.
+        setMessages((current) => {
+          if (current.length > 0) return current;
+          if (session?.messages?.length) {
+            adoptedStored = true;
+            if (threadHasCompletedWebsite(session.messages)) {
+              completedWebsiteBuildRef.current = true;
+            }
+            return session.messages;
           }
-        }
-        if (session?.sessionId) {
+          return current;
+        });
+        if (adoptedStored && session?.sessionId) {
           setSessionId(session.sessionId);
         }
-        if (session?.prompt) setPrompt(session.prompt);
+        setPrompt((current) => (current?.trim() ? current : session?.prompt || ''));
         persistReadyRef.current = true;
         setSessionReady(true);
+        if (adoptedStored && session?.messages?.length && session.sessionId) {
+          void import('@/lib/syncRepoTerminalSessions').then(({ ensureLiveTerminalUnderSelectedRepo }) => {
+            ensureLiveTerminalUnderSelectedRepo({
+              sessionId: session.sessionId,
+              messages: session.messages,
+              prompt: session.prompt || '',
+              flushCloud: true,
+            });
+            window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
+          });
+        }
       })
       .catch(() => {
         if (cancelled) return;
-        clearWorkspaceSession();
         persistReadyRef.current = true;
         setSessionReady(true);
       });
     return () => {
       cancelled = true;
     };
-  }, [incognito]);
+  }, [incognito, setSessionId]);
 
   useEffect(() => {
   const isDashboard = pathname === '/workspace' || pathname === '/workspace/';
@@ -672,22 +692,26 @@ export function TerminalChatProvider({
   useEffect(() => {
     if (!sessionReady || incognito || !persistReadyRef.current || restoringRef.current) return;
     if (messages.length === 0) return;
+    const selected = getSelectedRepoContext();
+    // Immediate local stamp (keeps #1 in sidebar without waiting)
+    saveTerminalHistorySession({
+      sessionId: sessionIdRef.current,
+      prompt,
+      messages,
+      forceRepo: selected?.repo,
+      forceBranch: selected?.branch,
+    });
     const timer = window.setTimeout(() => {
-      saveTerminalHistorySession({
-        sessionId: sessionIdRef.current,
-        prompt,
-        messages,
-      });
-      // Force #1/#2 under selected repo even if first save raced before repo stamp
       void import('@/lib/syncRepoTerminalSessions').then(({ ensureLiveTerminalUnderSelectedRepo }) => {
         ensureLiveTerminalUnderSelectedRepo({
           sessionId: sessionIdRef.current,
           messages,
           prompt,
+          flushCloud: true,
         });
         window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       });
-    }, 250);
+    }, 80);
     return () => window.clearTimeout(timer);
   }, [sessionReady, prompt, messages, incognito]);
 
@@ -1081,10 +1105,22 @@ export function TerminalChatProvider({
                 userMessageId,
                 assistantMessageId: assistantId,
               });
+              const selected = getSelectedRepoContext();
               saveTerminalHistorySession({
                 sessionId: sessionIdRef.current,
                 prompt: displayPrompt,
                 messages: current,
+                forceRepo: selected?.repo,
+                forceBranch: selected?.branch,
+              });
+              void import('@/lib/syncRepoTerminalSessions').then(({ ensureLiveTerminalUnderSelectedRepo }) => {
+                ensureLiveTerminalUnderSelectedRepo({
+                  sessionId: sessionIdRef.current,
+                  messages: current,
+                  prompt: displayPrompt,
+                  flushCloud: true,
+                });
+                window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
               });
             } catch {
               /* ignore */
