@@ -202,11 +202,28 @@ router.put('/:id', async (req: AuthRequest, res) => {
       created_at: existing?.created_at ?? new Date().toISOString(),
     };
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('terminal_sessions')
       .upsert(row, { onConflict: 'id' })
       .select('*')
       .single();
+
+    // Unique (user, repo, terminal_number) race — reallocate and retry once.
+    if (error && /terminal_number|uq_terminal_sessions|duplicate key/i.test(error.message || '')) {
+      const retryNumber = await nextTerminalNumber(userId, body.githubRepoName);
+      const retryRow = {
+        ...row,
+        terminal_number: retryNumber,
+        title: (body.title || `Terminal #${retryNumber}`).slice(0, 120),
+      };
+      const retry = await supabase
+        .from('terminal_sessions')
+        .upsert(retryRow, { onConflict: 'id' })
+        .select('*')
+        .single();
+      data = retry.data;
+      error = retry.error;
+    }
 
     if (error) {
       res.status(500).json({ error: error.message });

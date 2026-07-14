@@ -138,6 +138,9 @@ export function saveTerminalHistorySession(opts: {
   prompt: string;
   messages: ChatMessage[];
   status?: TerminalHistoryStatus;
+  /** Force bind under this repo (selected workspace) even if localStorage briefly lags */
+  forceRepo?: string;
+  forceBranch?: string;
 }): TerminalHistoryEntry | null {
   if (!opts.messages.length) return null;
 
@@ -160,9 +163,16 @@ export function saveTerminalHistorySession(opts: {
   const kind = detectKind(opts.messages, titlePrompt);
   const status = opts.status ?? detectStatus(opts.messages, kind);
 
-  // Prefer sticky repo from an existing session if user briefly lost selection
-  const githubRepoName = meta.githubRepoName ?? existing?.githubRepoName;
-  const githubBranch = meta.githubBranch ?? existing?.githubBranch ?? 'main';
+  // Prefer: explicit force → selected/meta → sticky existing session
+  const forcedRepo = opts.forceRepo?.includes('/') ? opts.forceRepo : undefined;
+  const githubRepoName =
+    forcedRepo ?? meta.githubRepoName ?? existing?.githubRepoName ?? getSelectedRepoContext()?.repo;
+  const githubBranch =
+    opts.forceBranch?.trim() ||
+    meta.githubBranch ||
+    existing?.githubBranch ||
+    getSelectedRepoContext()?.branch ||
+    'main';
 
   // Assign #1 / #2 before persist so sidebar + storage use the numbered title.
   const terminalNumber =
