@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Maximize2 } from 'lucide-react';
 import { buildInlinePreviewDocument } from '@/lib/landingPreview';
 
@@ -15,6 +16,12 @@ interface FullscreenPreviewModalProps {
   hideAppChrome?: boolean;
 }
 
+/**
+ * Full-site preview overlay.
+ * Must portal to document.body — nesting under .xv-main-column is broken because
+ * body.xv-preview-active sets visibility:hidden on that column, which also hides
+ * position:fixed children (users then only see the Earth wallpaper).
+ */
 export function FullscreenPreviewModal({
   open,
   onClose,
@@ -24,7 +31,12 @@ export function FullscreenPreviewModal({
   title = 'Full site preview',
   hideAppChrome = false,
 }: FullscreenPreviewModalProps) {
+  const [mounted, setMounted] = useState(false);
   const srcDoc = buildInlinePreviewDocument(html, css, js);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -45,16 +57,16 @@ export function FullscreenPreviewModal({
     };
   }, [open, onClose, hideAppChrome]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[300] flex flex-col bg-[#0b0d12]"
+      className="xv-fullscreen-preview-root fixed inset-0 z-[300] flex flex-col bg-[#0b0d12]"
       role="dialog"
       aria-modal="true"
       aria-label={title}
     >
-      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/15 bg-black/90 shrink-0">
+      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/15 bg-black shrink-0 relative z-[2]">
         <div className="flex items-center gap-2 text-sm font-semibold text-white min-w-0">
           <Maximize2 className="w-4 h-4 text-[#006aff] shrink-0" />
           <span className="truncate">{title}</span>
@@ -72,10 +84,9 @@ export function FullscreenPreviewModal({
       <iframe
         srcDoc={srcDoc}
         title={title}
-        className="flex-1 w-full border-0 bg-white"
+        className="flex-1 w-full border-0 bg-white relative z-[1]"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
       />
-      {/* Floating exit — always visible even if iframe covers the top bar visually */}
       <button
         type="button"
         onClick={onClose}
@@ -85,6 +96,7 @@ export function FullscreenPreviewModal({
         <X className="w-4 h-4" />
         Exit
       </button>
-    </div>
+    </div>,
+    document.body
   );
 }
