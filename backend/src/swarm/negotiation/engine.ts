@@ -1243,21 +1243,15 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   } else {
   emit(ctx, 6, xrogaCollectiveLine('Quality gate — code standards review'), 'truth_council', todos, 'XROGA Collective');
   try {
-    const reviewRole = costAwareRole(
-      buildType === 'crypto' ? 'opus' : hackathonNote && costPolicy.allowGrokStrategy ? 'grok' : 'pro',
-      costPolicy
-    );
+    // Quality gate: DeepSeek Pro (never Opus on default path — too expensive for marginal gain).
+    const reviewRole = costAwareRole('pro', costPolicy);
     const { text: qualityReview } = await buildModelCall(
       reviewRole,
       PHASE_6_FINAL,
       `Full codebase:\n${assembledCode}`,
       2048,
       usageTracker,
-      reviewRole === 'opus'
-        ? { userId: ctx.userId, claudeTask: 'qa' }
-        : reviewRole === 'grok'
-          ? { grokVariant: 'reasoning' }
-          : undefined
+      { userId }
     );
     if (!isPass(qualityReview)) {
       emit(ctx, 5, xrogaArchitectureLine('Applying quality fixes from review'), 'debugger', todos, 'XROGA Architect');
@@ -1300,24 +1294,6 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective');
   } catch {
     emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective', { silent: true });
-  }
-  // Premium crypto: one extra Gemini sanity (still not a 4-way fan-out)
-  if (costPolicy.tier === 'premium' && buildType === 'crypto') {
-    try {
-      const gem = await geminiCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 40000)}`, 512);
-      if (!isPass(gem)) {
-        assembledCode = await deepseekFlashCall(
-          PHASE_5_CORRECT,
-          `Gemini notes:\n${gem}\n\n${assembledCode}`,
-          BUILD_STEP_MAX_TOKENS,
-          usageTracker,
-          userId
-        );
-        totalCorrections++;
-      }
-    } catch {
-      /* optional */
-    }
   }
   }
   } else {

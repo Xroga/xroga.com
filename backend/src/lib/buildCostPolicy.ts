@@ -82,19 +82,21 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
     };
   }
   if (tier === 'premium') {
+    // Crypto/hackathon: best work, lean cost — 1× short Grok 4.5 strategy, Flash UI,
+    // SearXNG research (no expensive Grok research synthesis / review loop / Opus).
     return {
       tier,
       allowWebResearch: true,
       allowGrokAgentSearch: false,
-      allowGrokResearchSynthesis: true,
+      allowGrokResearchSynthesis: false,
       allowGrokStrategy: true,
-      allowGrokReviewLoop: true,
-      grokReviewMaxRounds: 1,
+      allowGrokReviewLoop: false,
+      grokReviewMaxRounds: 0,
       allowGrok45: true,
       preferGrok45ForStrategy: true,
-      maxGrok45Calls: 2,
-      grok45StrategyMaxTokens: 2048,
-      preferFlashUiPolish: false,
+      maxGrok45Calls: 1,
+      grok45StrategyMaxTokens: 1536,
+      preferFlashUiPolish: true,
       remapExpensiveRoles: false,
     };
   }

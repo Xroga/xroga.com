@@ -13,6 +13,10 @@ import {
   estimateFullQuotaIntroUsd,
   estimateFullQuotaBreakdownUsd,
   estimateSingleBuildApiUsd,
+  estimateBuildTierEconomics,
+  estimatePlanProfitTable,
+  XROGA_MODELS,
+  CLAUDE_MONTHLY_BUDGET_USD,
   isSonnet5IntroPricingActive,
   WEB_RESEARCH_COST,
 } from '../config/modelRegistry.js';
@@ -72,6 +76,33 @@ router.get('/health', (_req, res) => {
       sonnet5IntroPricingActive: isSonnet5IntroPricingActive(),
     },
     rateLimit: '100 requests/minute/user',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+/**
+ * GET /api/phase1/economics — real COGS per build tier + plan profit (provider $).
+ * Uses published $/MTok × expected model mix for each build type.
+ */
+router.get('/economics', (_req, res) => {
+  const tiers = (['simple_static', 'standard', 'premium', 'update'] as const).map((t) =>
+    estimateBuildTierEconomics(t)
+  );
+  res.json({
+    currency: 'USD',
+    note: 'Provider API cost (what Xroga pays). User sees tokens, not these dollars.',
+    freeUserMonthlyTokens: FREE_PLAN_TOKENS,
+    freeUserWorstCaseApiUsd: estimateFullQuotaBreakdownUsd().totalUsd,
+    claudeMonthlyBudgetUsd: CLAUDE_MONTHLY_BUDGET_USD,
+    perBuild: tiers,
+    planProfitIfFullTokenBurn: estimatePlanProfitTable(),
+    modelRatesPer1M: Object.fromEntries(
+      Object.entries(XROGA_MODELS).map(([role, m]) => [
+        role,
+        { input: m.inputPer1M, output: m.outputPer1M, inputSharePct: m.inputSharePct },
+      ])
+    ),
+    singleBuildCost: estimateSingleBuildApiUsd(),
     timestamp: new Date().toISOString(),
   });
 });

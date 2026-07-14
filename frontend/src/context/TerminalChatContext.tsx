@@ -28,7 +28,7 @@ import {
 import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls } from '@/lib/mediaStorage';
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
-import { saveTerminalHistorySession } from '@/lib/terminalHistory';
+import { attachCloudProjectId, saveTerminalHistorySession } from '@/lib/terminalHistory';
 import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
 import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildPrompt, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
@@ -1414,7 +1414,10 @@ export function TerminalChatProvider({
                       deploy_url: typeof output.deployUrl === 'string' ? output.deployUrl : undefined,
                       user_prompt: displayPrompt,
                     })
-                    .then((saved) => notifyGithubProjectSaved(saved.id))
+                    .then((saved) => {
+                      attachCloudProjectId(sessionIdRef.current, saved.id);
+                      notifyGithubProjectSaved(saved.id);
+                    })
                     .catch((err) => console.warn('[projects] save failed', err));
                 }
                 return updated;

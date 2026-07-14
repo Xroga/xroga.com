@@ -20,6 +20,10 @@ export interface TerminalHistoryEntry {
   status?: TerminalHistoryStatus;
   githubRepoUrl?: string;
   githubRepoName?: string;
+  /** Branch last used with this session (restore fidelity) */
+  githubBranch?: string;
+  /** Supabase project id when synced to cloud */
+  cloudProjectId?: string;
   deployUrl?: string;
   messageCount: number;
   createdAt: string;
@@ -56,20 +60,31 @@ function detectKind(messages: ChatMessage[], prompt: string): TerminalHistoryKin
 }
 
 function extractProjectMeta(messages: ChatMessage[]) {
+  const selectedRepo = getSelectedRepoContext();
   for (let i = messages.length - 1; i >= 0; i--) {
     const fo = messages[i]?.featureOutput as Record<string, unknown> | undefined;
     if (fo?.type === 'landing_page') {
+      const repo =
+        (typeof fo.githubRepoName === 'string' && fo.githubRepoName.includes('/')
+          ? fo.githubRepoName
+          : undefined) ?? selectedRepo?.repo;
       return {
-        githubRepoUrl: typeof fo.githubRepoUrl === 'string' ? fo.githubRepoUrl : undefined,
-        githubRepoName: typeof fo.githubRepoName === 'string' ? fo.githubRepoName : undefined,
+        githubRepoUrl:
+          typeof fo.githubRepoUrl === 'string'
+            ? fo.githubRepoUrl
+            : repo
+              ? `https://github.com/${repo}`
+              : undefined,
+        githubRepoName: repo,
+        githubBranch: selectedRepo?.branch || 'main',
         deployUrl: typeof fo.deployUrl === 'string' ? fo.deployUrl : undefined,
       };
     }
   }
-  const selectedRepo = getSelectedRepoContext();
   return {
     githubRepoUrl: selectedRepo?.repo ? `https://github.com/${selectedRepo.repo}` : undefined,
     githubRepoName: selectedRepo?.repo,
+    githubBranch: selectedRepo?.branch || undefined,
   };
 }
 
@@ -137,6 +152,8 @@ export function saveTerminalHistorySession(opts: {
     kind,
     status,
     ...meta,
+    githubBranch: meta.githubBranch ?? existing?.githubBranch,
+    cloudProjectId: existing?.cloudProjectId,
     messageCount: opts.messages.length,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
@@ -151,6 +168,17 @@ export function saveTerminalHistorySession(opts: {
 export function removeTerminalHistoryEntry(id: string) {
   save(loadTerminalHistory().filter((e) => e.id !== id));
   void deleteTerminalSessionFromIndexedDB(id);
+}
+
+/** Link a local terminal session to a Supabase projects row (cloud badge in sidebar). */
+export function attachCloudProjectId(sessionId: string, cloudProjectId: string) {
+  const entries = loadTerminalHistory();
+  const next = entries.map((e) =>
+    e.id === sessionId ? { ...e, cloudProjectId, updatedAt: new Date().toISOString() } : e
+  );
+  save(next);
+  const hit = next.find((e) => e.id === sessionId);
+  if (hit) void saveTerminalSessionToIndexedDB(hit);
 }
 
 export function isTerminalHistoryEntry(entry: TerminalHistoryEntry): boolean {

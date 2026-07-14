@@ -51,6 +51,36 @@ export async function loadGithubProjectSession(
         const lastUser = [...msgs].reverse().find((m) => m.role === 'user');
         if (lastUser?.content?.trim()) prompt = lastUser.content.trim();
       }
+      // Restore sandbox preview from stored project files when messages lack featureOutput
+      const files = detail.project_files ?? [];
+      const byName = (n: string) =>
+        files.find((f) => (f.file_path || f.file_name || '').toLowerCase().endsWith(n))?.content ?? '';
+      const html = byName('index.html') || byName('.html');
+      const css = byName('styles.css') || byName('.css');
+      const js = byName('script.js') || byName('.js');
+      if (html?.trim()) {
+        const landingMsg: ChatMessage = {
+          id: `landing-${project.id}`,
+          role: 'assistant',
+          content: '',
+          featureOutput: {
+            type: 'landing_page',
+            html,
+            css: css || '',
+            js: js || '',
+            projectName: project.name,
+            githubRepoName: project.github_repo_name,
+            githubRepoUrl: project.github_repo_url,
+            githubPushConfirmed: true,
+            deployUrl: '',
+          },
+          createdAt: Date.now(),
+        };
+        const hasLanding = messages.some(
+          (m) => (m.featureOutput as { type?: string } | undefined)?.type === 'landing_page'
+        );
+        if (!hasLanding) messages = [...messages, landingMsg];
+      }
     } catch {
       /* use default prompt */
     }
