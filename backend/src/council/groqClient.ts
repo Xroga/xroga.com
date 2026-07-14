@@ -21,10 +21,16 @@ function isGreetingText(input: string): boolean {
 export async function groqSprinter(userInput: string, context?: ChatTurn[]): Promise<string> {
   if (!getSecret('GROQ_API_KEY')) throw new Error('GROQ_API_KEY not configured');
   const greeting = isGreetingText(userInput);
-  const maxTokens = greeting ? 200 : API_ROLES.groq.maxOutputTokens;
+  const maxTokens = greeting ? 80 : API_ROLES.groq.maxOutputTokens;
+  // Never inject prior build transcripts into greetings (topic bleed + cost).
   const text = await groqChat(
     [
-      { role: 'system', content: groqSystem(context) },
+      {
+        role: 'system',
+        content: greeting
+          ? `${XROGA_USER_IDENTITY}\nReply in one short friendly sentence. Do not continue previous topics or write guides.`
+          : groqSystem(context),
+      },
       { role: 'user', content: userInput },
     ],
     { maxTokens }

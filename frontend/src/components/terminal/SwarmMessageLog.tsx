@@ -534,7 +534,13 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                               swarmActivityLog.length > 0)
                           ) ? (
                           <ModernResponseText
-                            content={msg.content}
+                            content={
+                              msg.content?.trim()
+                                ? msg.content
+                                : !loading && !msg.featureOutput && !msg.buildStopped
+                                  ? 'No response yet — try sending your prompt again.'
+                                  : msg.content
+                            }
                             streaming={msg.id === animatingId && loading}
                           />
                         ) : null}

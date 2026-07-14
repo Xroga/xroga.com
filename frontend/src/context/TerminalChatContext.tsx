@@ -978,6 +978,7 @@ export function TerminalChatProvider({
 
       let gotEvent = false;
       let fullReply = '';
+      let buildHadVisibleResult = false;
       const controller = new AbortController();
       abortRef.current = controller;
 
@@ -1010,20 +1011,25 @@ export function TerminalChatProvider({
           isWebsiteBuildUpdate(displayPrompt, threadForMemory) ||
           (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt));
 
-        let history = threadForMemory
-          .filter((m) => (m.role === 'user' || m.role === 'assistant') && (m.content?.trim() || m.featureOutput))
-          .slice(-10)
-          .map((m) => {
-            let content = m.content?.trim() ?? '';
-            if (!content && m.featureOutput && typeof m.featureOutput === 'object') {
-              const o = m.featureOutput as { type?: string; summary?: string; deployUrl?: string };
-              if (o.type === 'landing_page') {
-                content = o.summary ?? `Built website: ${o.deployUrl ?? 'live'}`;
-              }
-            }
-            return { role: m.role as 'user' | 'assistant', content };
-          })
-          .filter((h) => h.content.length > 0);
+        // Never send prior build essays with "hi"/thanks — that burns tokens and continues the blog guide.
+        let history = isTrivialPrompt(displayPrompt)
+          ? ([] as Array<{ role: 'user' | 'assistant'; content: string }>)
+          : threadForMemory
+              .filter((m) => (m.role === 'user' || m.role === 'assistant') && (m.content?.trim() || m.featureOutput))
+              .slice(-10)
+              .map((m) => {
+                let content = m.content?.trim() ?? '';
+                if (!content && m.featureOutput && typeof m.featureOutput === 'object') {
+                  const o = m.featureOutput as { type?: string; summary?: string; deployUrl?: string };
+                  if (o.type === 'landing_page') {
+                    content = o.summary ?? `Built website: ${o.deployUrl ?? 'live'}`;
+                  }
+                }
+                // Cap history turn size so old builds don't dominate cost on normal chat.
+                if (content.length > 1200) content = `${content.slice(0, 1200)}…`;
+                return { role: m.role as 'user' | 'assistant', content };
+              })
+              .filter((h) => h.content.length > 0);
 
         if (buildSession && isBuildAnswer) {
           const hasPhase1 = history.some((h) => isPhase1BuildQuestion(h.content));
@@ -1241,6 +1247,7 @@ export function TerminalChatProvider({
               handleGitHubBuildBlocked(displayPrompt, attachments);
             }
             if (output?.type === 'image_blocked') {
+              buildHadVisibleResult = true;
               setMessages((m) =>
                 m.map((msg) =>
                   msg.id === assistantId
@@ -1259,6 +1266,7 @@ export function TerminalChatProvider({
               return;
             }
             if (output?.type === 'image' && typeof output.imageUrl === 'string') {
+              buildHadVisibleResult = true;
               setMessages((m) => {
                 const updated = m.map((msg) =>
                   msg.id === assistantId
@@ -1279,6 +1287,7 @@ export function TerminalChatProvider({
               return;
             }
             if (output?.type === 'landing_page') {
+              buildHadVisibleResult = true;
               activeWebsiteBuildRef.current = null;
               completedWebsiteBuildRef.current = true;
               removePendingBuildJob(assistantId);
@@ -1320,6 +1329,7 @@ export function TerminalChatProvider({
               return;
             }
             if (codeBuildActive && output && typeof output === 'object' && 'type' in output && output.type !== 'chat') {
+              buildHadVisibleResult = true;
               setMessages((m) =>
                 m.map((msg) =>
                   msg.id === assistantId ? { ...msg, content: '', featureOutput: output } : msg
@@ -1327,14 +1337,21 @@ export function TerminalChatProvider({
               );
               return;
             }
-            if (chatContent && !fullReply.trim() && !codeBuildActive) {
+            // Builds previously ignored chat/error completes → blank terminal after a few seconds.
+            if (chatContent && !fullReply.trim()) {
+              buildHadVisibleResult = true;
               fullReply = chatContent;
               const webSources = (output as { webSources?: ChatMessage['webSources'] })?.webSources;
               const hackathonBrief = (output as { hackathonBrief?: ChatMessage['hackathonBrief'] })?.hackathonBrief;
               setMessages((m) =>
                 m.map((msg) =>
                   msg.id === assistantId
-                    ? { ...msg, content: chatContent, webSources: webSources ?? msg.webSources, hackathonBrief: hackathonBrief ?? msg.hackathonBrief }
+                    ? {
+                        ...msg,
+                        content: chatContent,
+                        webSources: webSources ?? msg.webSources,
+                        hackathonBrief: hackathonBrief ?? msg.hackathonBrief,
+                      }
                     : msg
                 )
               );
@@ -1407,6 +1424,20 @@ export function TerminalChatProvider({
             void refreshTokenUsage();
           },
         });
+
+        // Stream ended with no visible build result → never leave a blank assistant bubble.
+        if (codeBuildActive && !fullReply.trim() && !buildHadVisibleResult) {
+          setMessages((m) => {
+            const existing = m.find((msg) => msg.id === assistantId);
+            if (existing?.content?.trim() || existing?.featureOutput) return m;
+            const fallback =
+              '⚠️ **Build ended without output.** Check GitHub under Integrations, then retry. If this keeps happening, open a new chat and try again.';
+            fullReply = fallback;
+            return m.map((msg) =>
+              msg.id === assistantId ? { ...msg, content: fallback } : msg
+            );
+          });
+        }
         }
 
       } catch (err) {
@@ -1470,7 +1501,18 @@ export function TerminalChatProvider({
         }
         if (err instanceof ApiError && err.status === 402) {
           setOutOfActionsOpen(true);
-          setMessages((m) => m.filter((msg) => msg.id !== assistantId || msg.content.length > 0));
+          setMessages((m) =>
+            m.map((msg) =>
+              msg.id === assistantId
+                ? {
+                    ...msg,
+                    content:
+                      msg.content?.trim() ||
+                      '⚠️ **Token quota reached.** Upgrade your plan or claim emergency tokens in the Dashboard to continue building.',
+                  }
+                : msg
+            )
+          );
           return;
         }
         setMessages((m) => {

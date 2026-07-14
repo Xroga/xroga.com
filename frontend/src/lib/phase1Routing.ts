@@ -7,6 +7,7 @@ import {
   isWebsiteBuildUpdate,
   isWebsiteUpdateRequest,
 } from '@/lib/chatMemory';
+import { isTrivialPrompt } from '@/lib/promptClassifier';
 
 interface ChatMessageLike {
   id?: string;
@@ -28,6 +29,8 @@ export function shouldRouteToPhase1(
   options?: { completedWebsiteBuild?: boolean }
 ): boolean {
   if (attachments?.length) return false;
+  // Greetings / "hi" / thanks → cheap swarm fast-chat (never Phase 1 WOW essays + history bleed).
+  if (isTrivialPrompt(prompt)) return false;
   if (isVideoGenerationPrompt(prompt)) return false;
   if (IMAGE_GEN_PROMPT.test(prompt)) return false;
   if (BROWSER_AUTOMATION.test(prompt)) return false;

@@ -17,6 +17,7 @@ import { isHackathonQuery, fetchHackathonAdvisorBrief } from '../lib/hackathonRe
 import { sanitizeChatHonesty, CHAT_HONESTY_RULES } from '../lib/chatHonesty.js';
 import { detectThirdPartyProductQuestion, thirdPartySupportSystemBlock } from '../lib/thirdPartyProduct.js';
 import { sanitizeInternalModelLeaks } from '../lib/responseSanitize.js';
+import { isTrivialPrompt } from '../lib/promptClassifier.js';
 
 function toXrogaModelRole(modelId: InternalModelId, reasoningEffort?: 'high'): XrogaModelRole {
   if (modelId === 'grok_fast') {
@@ -66,6 +67,36 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
   }
 
   phase1Logger.info('Processing message', { userId, messageLength: message.length });
+
+  // Cheap path: never burn a full model call + prior build history on "hi".
+  if (isTrivialPrompt(message)) {
+    const lower = message.trim().toLowerCase();
+    let reply = "Hey! What can I help you with today?";
+    if (/^(thanks|thank\s*you|thx)\b/.test(lower)) {
+      reply = "You're welcome! Let me know if you need anything else.";
+    } else if (/^(bye|goodbye|see\s*ya)\b/.test(lower)) {
+      reply = 'See you later — happy building!';
+    } else if (/^(yes|no|ok|okay|yep|nope|cool|nice|got\s*it)\b/.test(lower)) {
+      reply = 'Got it. What should we work on next?';
+    } else if (/good\s+(morning|afternoon|evening)/.test(lower)) {
+      const period = lower.match(/good\s+(\w+)/)?.[1] ?? 'day';
+      reply = `Good ${period}! What can I help you with?`;
+    }
+    const usage = await recordLlmUsage(
+      userId,
+      Math.ceil(message.length / 4),
+      Math.ceil(reply.length / 4)
+    );
+    phase1Logger.info('Trivial greeting short-circuit', { userId });
+    return {
+      ok: true,
+      data: {
+        response: reply,
+        intent: 'general_chat',
+        usage,
+      },
+    };
+  }
 
   const mathQuery = isMathQuery(message);
 
@@ -142,8 +173,17 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     };
   }
 
+  // Short general chat: drop prior build essays (cost + topic bleed).
+  const shortGeneralChat = intent === 'general_chat' && message.trim().length < 120;
+  const useHistory = shortGeneralChat
+    ? []
+    : history.map((h) => ({
+        role: h.role as 'user' | 'assistant',
+        content: h.content.length > 1200 ? `${h.content.slice(0, 1200)}…` : h.content,
+      }));
+
   const conversationMessages = [
-    ...history.map((h) => ({ role: h.role as 'user' | 'assistant', content: h.content })),
+    ...useHistory,
     { role: 'user' as const, content: message },
   ];
 
@@ -151,6 +191,7 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
   let totalOutput = 0;
   const outputs: string[] = [];
   const modelLines: ModelUsageLine[] = [];
+  const maxTokens = shortGeneralChat ? 512 : 4096;
 
   const runModel = async (
     modelId: NonNullable<typeof plan.primary>,
@@ -161,7 +202,7 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     if (thirdPartyProduct) {
       systemPrompt = `${systemPrompt}\n${thirdPartySupportSystemBlock(thirdPartyProduct)}`;
     }
-    if (liveResearch?.context) {
+    if (liveResearch?.context && !shortGeneralChat) {
       systemPrompt = `${systemPrompt}\n\n${liveResearch.context}`;
     }
     if (hackathonBrief) {
@@ -181,7 +222,7 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
     const result = await callModel(modelId, {
       systemPrompt,
       messages,
-      maxTokens: 4096,
+      maxTokens,
       reasoningEffort: plan.grokReasoningEffort,
     });
 
@@ -210,7 +251,7 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
       const primaryOut = await runModel(plan.primary, 'primary');
       outputs.push(primaryOut);
 
-      if (plan.secondary && primaryOut.length < 1200) {
+      if (plan.secondary && primaryOut.length < 1200 && !shortGeneralChat) {
         const secondaryOut = await runModel(plan.secondary, 'secondary', primaryOut);
         if (secondaryOut.trim().length > 80) outputs.push(secondaryOut);
       }
