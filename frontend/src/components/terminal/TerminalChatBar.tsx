@@ -28,8 +28,6 @@ import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { checkRepoWorkspaceReady } from '@/lib/repoWorkspaceGate';
-import { getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
-import { notifyGithubRepoContext } from '@/lib/githubProjectEvents';
 import { ensureSelectedRepoFolder } from '@/lib/repoSessionsIndex';
 
 const MAX_ROWS = 13;
@@ -93,25 +91,41 @@ export function TerminalChatBar() {
       .catch(() => setVercelConnected(false));
   }, []);
 
-  // Sidebar "New Terminal" → ensure GitHub repo is selected before work starts
+  // Sidebar "New Terminal" → clear repo, open chatbar picker (do NOT auto-select)
   useEffect(() => {
     const onNewTerminal = () => {
       if (incognito) return;
       void (async () => {
+        const { clearSelectedRepoContext, markFreshTerminalIntent } = await import('@/lib/repoContext');
+        const {
+          notifyOpenRepoPicker,
+          notifyRepoContextCleared,
+        } = await import('@/lib/githubProjectEvents');
+        markFreshTerminalIntent();
+        clearSelectedRepoContext();
+        notifyRepoContextCleared();
         try {
           const status = await api.github.status();
           setGithubConnected(status.connected);
-          if (status.connected && status.defaultRepo?.includes('/') && !getSelectedRepoContext()?.repo) {
-            saveSelectedRepoContext({ repo: status.defaultRepo, branch: 'main' });
-            notifyGithubRepoContext(status.defaultRepo, 'main');
+          if (!status.connected) {
+            setRepoGate({
+              open: true,
+              reason: 'not_connected',
+              message:
+                'Connect GitHub first, then select a repository in the chat bar to start #1 terminal.',
+            });
+            return;
           }
         } catch {
-          /* gate handles */
+          setRepoGate({
+            open: true,
+            reason: 'not_connected',
+            message: 'Connect GitHub first so you can select a repository.',
+          });
+          return;
         }
-        const ready = await checkRepoWorkspaceReady();
-        if (!ready.ok) {
-          setRepoGate({ open: true, reason: ready.reason, message: ready.message });
-        }
+        // Open chatbar "Select repository" dropdown — user must choose
+        notifyOpenRepoPicker();
       })();
     };
     window.addEventListener('xroga-request-new-terminal', onNewTerminal);
@@ -120,15 +134,10 @@ export function TerminalChatBar() {
 
   async function ensureRepoWorkspace(): Promise<boolean> {
     if (incognito) return true;
-    // Auto-pick default repo when connected but nothing selected
+    // Never auto-pick a repo — user selects in the chat bar.
     try {
       const status = await api.github.status();
       setGithubConnected(status.connected);
-      if (status.connected && status.defaultRepo?.includes('/') && !getSelectedRepoContext()?.repo) {
-        saveSelectedRepoContext({ repo: status.defaultRepo, branch: 'main' });
-        notifyGithubRepoContext(status.defaultRepo, 'main');
-        ensureSelectedRepoFolder();
-      }
     } catch {
       /* gate will handle */
     }
@@ -136,6 +145,10 @@ export function TerminalChatBar() {
     if (ready.ok) {
       ensureSelectedRepoFolder();
       return true;
+    }
+    if (ready.reason === 'no_repo_selected') {
+      const { notifyOpenRepoPicker } = await import('@/lib/githubProjectEvents');
+      notifyOpenRepoPicker();
     }
     setRepoGate({ open: true, reason: ready.reason, message: ready.message });
     return false;

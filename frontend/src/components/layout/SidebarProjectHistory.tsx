@@ -186,9 +186,17 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       });
     }
 
-    // Only folders that have at least one real numbered terminal — never "New terminal"
+    // Show currently selected repo even before first chat (#1 appears after first message).
+    // Never invent a "New terminal" stub row.
+    if (selectedRepo?.includes('/') && !map.has(selectedRepo)) {
+      map.set(selectedRepo, []);
+    }
+
     let foldersList = Array.from(map.entries())
-      .filter(([key, sessions]) => key.includes('/') && sessions.length > 0)
+      .filter(
+        ([key, sessions]) =>
+          key.includes('/') && (sessions.length > 0 || key === selectedRepo)
+      )
       .map(([key, sessions]) => ({
         key,
         label: repoLabel(key),
@@ -308,7 +316,12 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       saveSelectedRepoContext({ repo: folder.key, branch });
       notifyGithubRepoContext(folder.key, branch);
 
-      // Prefer highest # terminal (most recent number) that has data
+      // Repo selected but no #1 yet — stay on fresh workspace
+      if (!folder.sessions.length) {
+        router.push('/workspace');
+        return;
+      }
+
       const preferId = latest?.id;
       const resolved = await resolveTerminalToOpen(folder.key, preferId);
       if (resolved.kind === 'restore') {
@@ -394,8 +407,13 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                     </span>
                   </button>
                 </div>
-                {isOpen
-                  ? folder.sessions.map((session) => {
+                {isOpen ? (
+                  folder.sessions.length === 0 ? (
+                    <p className="pl-6 pr-2 py-1.5 text-[10px] text-[var(--muted)] leading-snug">
+                      Chat below to create <span className="font-semibold text-[var(--foreground)]/80">#1 terminal</span>
+                    </p>
+                  ) : (
+                    folder.sessions.map((session) => {
                       const isActiveSession = session.id === activeSessionId;
                       return (
                         <button
@@ -423,7 +441,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                         </button>
                       );
                     })
-                  : null}
+                  )
+                ) : null}
               </div>
             );
           })}

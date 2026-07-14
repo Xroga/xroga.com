@@ -6,8 +6,14 @@ import { api, type GitHubRepo } from '@/lib/api';
 import { getCachedRepoAnalysis, setCachedRepoAnalysis } from '@/lib/repoAnalysisCache';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
 import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
-import { GITHUB_PROJECT_SAVED_EVENT, GITHUB_REPO_CONTEXT_EVENT, notifyGithubRepoContext } from '@/lib/githubProjectEvents';
-import { saveSelectedRepoContext } from '@/lib/repoContext';
+import {
+  GITHUB_PROJECT_SAVED_EVENT,
+  GITHUB_REPO_CONTEXT_EVENT,
+  OPEN_REPO_PICKER_EVENT,
+  REPO_CONTEXT_CLEARED_EVENT,
+  notifyGithubRepoContext,
+} from '@/lib/githubProjectEvents';
+import { consumeFreshTerminalIntent, saveSelectedRepoContext } from '@/lib/repoContext';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 
@@ -155,14 +161,31 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
       );
       void refresh();
     };
+    const onCleared = () => {
+      setSelectedRepo(null);
+      setSelectedBranch('main');
+      setRepoSummary(null);
+      setOpen(null);
+    };
+    const onOpenPicker = () => {
+      setSelectedRepo(null);
+      setSelectedBranch('main');
+      setRepoSummary(null);
+      // Force chatbar "Select repository" dropdown open
+      window.setTimeout(() => setOpen('repo'), 30);
+    };
     window.addEventListener(GITHUB_CONNECTED_EVENT, onConnected);
     window.addEventListener(GITHUB_REPO_CONTEXT_EVENT, onRepoContext);
     window.addEventListener(GITHUB_PROJECT_SAVED_EVENT, onProjectSaved);
+    window.addEventListener(REPO_CONTEXT_CLEARED_EVENT, onCleared);
+    window.addEventListener(OPEN_REPO_PICKER_EVENT, onOpenPicker);
     window.addEventListener('storage', onStorage);
     return () => {
       window.removeEventListener(GITHUB_CONNECTED_EVENT, onConnected);
       window.removeEventListener(GITHUB_REPO_CONTEXT_EVENT, onRepoContext);
       window.removeEventListener(GITHUB_PROJECT_SAVED_EVENT, onProjectSaved);
+      window.removeEventListener(REPO_CONTEXT_CLEARED_EVENT, onCleared);
+      window.removeEventListener(OPEN_REPO_PICKER_EVENT, onOpenPicker);
       window.removeEventListener('storage', onStorage);
     };
   }, [refresh]);
@@ -187,8 +210,13 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
       await api.github.updateSettings('manual', fullName);
     } catch { /* non-blocking */ }
 
-    // If workspace is empty, reopen the latest saved terminal for this repo
-    // so switching back to blogsite (etc.) doesn't look like data was deleted.
+    // New Terminal flow: keep blank workspace so the next chat creates #1 / #2.
+    // Only auto-resume when user is NOT starting a fresh terminal.
+    if (consumeFreshTerminalIntent()) {
+      window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
+      return;
+    }
+
     if (messages.length === 0) {
       try {
         const { loadBestTerminalForRepo } = await import('@/lib/restoreRepoTerminal');
