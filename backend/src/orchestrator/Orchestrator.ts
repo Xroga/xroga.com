@@ -42,6 +42,12 @@ import {
 import { isPaidApiAllowed } from '../config/hybridConfig.js';
 import { routeDualPipeline } from '../router/dualPipelineRouter.js';
 import { persistBuildRun } from '../services/memory/buildPersistence.js';
+import { getDeepSeekPeakStatus } from '../lib/deepseekPeakHours.js';
+import {
+  acquireHeavyBuildSlot,
+  releaseHeavyBuildSlot,
+  HEAVY_BUSY_MESSAGE,
+} from '../lib/heavyBuildLock.js';
 
 const FRIENDLY_FALLBACKS = [
   "I'm putting the finishing touches on this — here's what I can share right now based on your request.",
@@ -170,6 +176,50 @@ export class Orchestrator {
     featureCategory: FeatureCategory
   ): Promise<SwarmRunResult & { polishedReply: string; followUps: string[]; fast?: boolean }> {
     const userText = routingPrompt(ctx.prompt);
+    const lockToken =
+      ctx.clientMeta?.assistantMessageId?.trim() ||
+      `heavy-${ctx.userId}-${Date.now()}`;
+
+    const slot = await acquireHeavyBuildSlot(ctx.userId, lockToken);
+    if (!slot.ok) {
+      ctx.onProgress?.(
+        progressEvent('architect', 'queued', HEAVY_BUSY_MESSAGE, {
+          swarmStatusLabel: 'Build queued',
+          swarmActivity: HEAVY_BUSY_MESSAGE,
+          heavyBusy: true,
+        })
+      );
+      return {
+        runId: crypto.randomUUID(),
+        result: {
+          success: false,
+          iterations: 0,
+          defectsFound: 0,
+          plan: defaultPlan(),
+          agents: defaultAgents(['architect']),
+          output: {
+            type: 'chat',
+            content: HEAVY_BUSY_MESSAGE,
+          } as FeatureOutput,
+        },
+        actions: { success: true, remaining: 0, cost: 0 },
+        featureCategory,
+        polishedReply: HEAVY_BUSY_MESSAGE,
+        followUps: ['Keep chatting / planning', 'Continue when ready'],
+      };
+    }
+
+    const peak = getDeepSeekPeakStatus();
+    if (peak.nudge) {
+      ctx.onProgress?.(
+        progressEvent('architect', 'planning', peak.nudge, {
+          swarmStatusLabel: 'XROGA Architect',
+          swarmActivity: peak.nudge,
+          deepseekPeak: true,
+        })
+      );
+    }
+
     const runNegotiation = async () =>
       runNegotiationEngine({
         userPrompt: ctx.prompt.trim(),
@@ -204,6 +254,7 @@ export class Orchestrator {
         const msg = (err as Error).message?.includes('GitHub')
           ? '🔗 Connect your GitHub account to start building. XROGA will auto-push code and deploy a live preview.'
           : `⚠️ Build could not complete: ${(err as Error).message?.slice(0, 120) || 'API unavailable'}. Check GitHub connection and DEEPSEEK_CODE_API_KEY on Fly.io.`;
+        await releaseHeavyBuildSlot(ctx.userId, lockToken);
         return {
           runId: crypto.randomUUID(),
           result: {
@@ -221,6 +272,9 @@ export class Orchestrator {
         };
       }
     }
+
+    // Release as soon as negotiation/escape finishes (success or soft failure payload).
+    await releaseHeavyBuildSlot(ctx.userId, lockToken);
 
     if (result.needsVercelConnection) {
       ctx.onProgress?.({

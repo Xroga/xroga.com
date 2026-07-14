@@ -17,6 +17,7 @@ export function BuildTodoList({
   if (!todos.length) return null;
 
   const doneCount = todos.filter((t) => t.status === 'done').length;
+  const active = todos.find((t) => t.status === 'active');
   const cleanLabel = (label: string) => label.replace(/^\[Phase \d+\]\s*/i, '').trim();
 
   return (
@@ -31,6 +32,11 @@ export function BuildTodoList({
         <span>To-dos</span>
         <span className="text-[var(--muted)]/50 tabular-nums">{todos.length}</span>
       </p>
+      {showProgress && active && (
+        <p className="text-[12px] text-[var(--accent)] font-medium mb-2 leading-snug">
+          Next: {cleanLabel(active.label)}
+        </p>
+      )}
       <ul className="space-y-2" aria-label="Build to-dos">
         {todos.map((item) => (
           <li

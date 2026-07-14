@@ -48,6 +48,13 @@ import {
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
+import {
+  classifyWorkLane,
+  nextHeavyQueuePosition,
+  type WorkLane,
+} from '@/lib/workLanes';
+import { getDeepSeekPeakStatus } from '@/lib/deepseekPeakHours';
+import { runLightLaneChat } from '@/lib/runLightLaneChat';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
 import { VercelBuildGateModal } from '@/components/terminal/VercelBuildGateModal';
 import { GitHubActivationOverlay } from '@/components/terminal/GitHubActivationOverlay';
@@ -113,6 +120,12 @@ export interface QueuedPrompt {
   id: string;
   text: string;
   createdAt: number;
+  /** Light = chat/planning; heavy = full build / multi-model job */
+  lane: WorkLane;
+  /** When true, do not auto-start after current heavy build — wait for Continue */
+  hold: boolean;
+  /** Display position for heavy queue (#2, #3, …) */
+  queueLabel?: string;
 }
 
 interface TerminalChatContextValue {
@@ -121,6 +134,12 @@ interface TerminalChatContextValue {
   setPrompt: (v: string) => void;
   promptQueue: QueuedPrompt[];
   loading: boolean;
+  /** True while a website/product build (heavy lane) is running */
+  heavyBuildActive: boolean;
+  /** Assistant message id that owns the live build todo panel */
+  heavyAssistantId: string | null;
+  /** Soft DeepSeek peak-hour message (non-blocking) */
+  deepseekPeakNudge: string | null;
   outOfActionsOpen: boolean;
   setOutOfActionsOpen: (v: boolean) => void;
   animatingId: string | null;
@@ -172,6 +191,10 @@ interface TerminalChatContextValue {
   updateFeatureOutput: (messageId: string, output: unknown) => void;
   removeFromQueue: (id: string) => void;
   editQueuedPrompt: (id: string, text: string) => void;
+  /** Release hold so queued heavy build auto-starts when ready */
+  continueQueuedWhenReady: (id: string) => void;
+  /** Hold a queued heavy build until Continue */
+  holdQueuedBuild: (id: string) => void;
   sendQueuedNow: (id: string) => void;
   clearQueue: () => void;
   /** Live terminal session id — used to bind #1 / #2 under the selected repo */
@@ -194,7 +217,17 @@ export function TerminalChatProvider({
   const incognito = usePrivacyStore((s) => s.incognito);
   const [prompt, setPrompt] = useState('');
   const [promptQueue, setPromptQueue] = useState<QueuedPrompt[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [heavyLoading, setHeavyLoading] = useState(false);
+  const [lightLoading, setLightLoading] = useState(false);
+  const loading = heavyLoading || lightLoading;
+  const [heavyBuildActive, setHeavyBuildActive] = useState(false);
+  const [heavyAssistantId, setHeavyAssistantId] = useState<string | null>(null);
+  const [deepseekPeakNudge, setDeepseekPeakNudge] = useState<string | null>(null);
+  const heavyBuildActiveRef = useRef(false);
+  /** Any heavy-lane job (build, image, scrape) — max 1 */
+  const heavyJobActiveRef = useRef(false);
+  const lightBusyRef = useRef(false);
+  const lightAbortRef = useRef<AbortController | null>(null);
   const [outOfActionsOpen, setOutOfActionsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [animatingId, setAnimatingId] = useState<string | null>(null);
@@ -528,7 +561,15 @@ export function TerminalChatProvider({
       if (incognito) return;
       restoringRef.current = true;
       abortRef.current?.abort();
-      setLoading(false);
+      lightAbortRef.current?.abort();
+      setHeavyLoading(false);
+      setLightLoading(false);
+      setHeavyBuildActive(false);
+      heavyBuildActiveRef.current = false;
+      heavyJobActiveRef.current = false;
+      setHeavyAssistantId(null);
+      setDeepseekPeakNudge(null);
+      lightBusyRef.current = false;
       setSwarmRunning(false);
       setAnimatingId(null);
       setSwarmActiveAgent(null);
@@ -576,7 +617,15 @@ export function TerminalChatProvider({
     (thread: ChatMessage[], threadPrompt: string, jumpMessageId?: string) => {
       if (incognito) return;
       abortRef.current?.abort();
-      setLoading(false);
+      lightAbortRef.current?.abort();
+      setHeavyLoading(false);
+      setLightLoading(false);
+      setHeavyBuildActive(false);
+      heavyBuildActiveRef.current = false;
+      heavyJobActiveRef.current = false;
+      setHeavyAssistantId(null);
+      setDeepseekPeakNudge(null);
+      lightBusyRef.current = false;
       setSwarmRunning(false);
       setAnimatingId(null);
       setPromptQueue([]);
@@ -661,9 +710,25 @@ export function TerminalChatProvider({
     return () => clearInterval(id);
   }, [loading, swarmNegotiationPhase, thinkingStartedAt]);
 
-  const enqueuePrompt = useCallback((text: string) => {
-    setPromptQueue((q) => [...q, { id: crypto.randomUUID(), text, createdAt: Date.now() }]);
-    toast.success('Queued — sends when current response finishes');
+  const enqueuePrompt = useCallback((text: string, lane: WorkLane = 'heavy') => {
+    const position = lane === 'heavy' ? nextHeavyQueuePosition(queueRef.current) : undefined;
+    const label = lane === 'heavy' ? `#${position}` : undefined;
+    setPromptQueue((q) => [
+      ...q,
+      {
+        id: crypto.randomUUID(),
+        text,
+        createdAt: Date.now(),
+        lane,
+        hold: false,
+        queueLabel: label,
+      },
+    ]);
+    if (lane === 'heavy') {
+      toast.success(`Queued as ${label} — finishes after current build. Chat still open.`);
+    } else {
+      toast.success('Queued — sends when current reply finishes');
+    }
   }, []);
 
   const cleanupInProgressAssistant = useCallback(() => {
@@ -679,13 +744,24 @@ export function TerminalChatProvider({
   }, []);
 
   const processNextInQueue = useCallback(() => {
-    const next = queueRef.current[0];
+    // Prefer releasing the next heavy build that is not on hold; never steal a hold.
+    const q = queueRef.current;
+    const nextHeavy = q.find((p) => p.lane === 'heavy' && !p.hold);
+    const nextLight = q.find((p) => p.lane === 'light' && !p.hold);
+    const next = heavyJobActiveRef.current ? nextLight : nextHeavy ?? nextLight;
     if (!next) return;
-    setPromptQueue((q) => q.slice(1));
+    setPromptQueue((prev) => prev.filter((p) => p.id !== next.id));
     void submitRef.current(next.text, true);
   }, []);
 
   const stop = useCallback(() => {
+    // Stop aborts the focused stream; never kill a light reply silent to a build stop preference —
+    // prefer aborting heavy when active, else light.
+    if (heavyBuildActiveRef.current && abortRef.current) {
+      abortRef.current.abort();
+      return;
+    }
+    lightAbortRef.current?.abort();
     abortRef.current?.abort();
   }, []);
 
@@ -754,7 +830,16 @@ export function TerminalChatProvider({
     setMessages([]);
     setPrompt('');
     setPromptQueue([]);
-    setLoading(false);
+    setHeavyLoading(false);
+    setLightLoading(false);
+    setHeavyBuildActive(false);
+    heavyBuildActiveRef.current = false;
+    heavyJobActiveRef.current = false;
+    setHeavyAssistantId(null);
+    setDeepseekPeakNudge(null);
+    lightBusyRef.current = false;
+    lightAbortRef.current?.abort();
+    lightAbortRef.current = null;
     setSwarmRunning(false);
     setAnimatingId(null);
     setSwarmActiveAgent(null);
@@ -854,19 +939,50 @@ export function TerminalChatProvider({
     setPrompt(text);
   }, []);
 
+  const continueQueuedWhenReady = useCallback((id: string) => {
+    setPromptQueue((q) => q.map((p) => (p.id === id ? { ...p, hold: false } : p)));
+    toast.success('Will start when the current build finishes');
+    if (!heavyBuildActiveRef.current) {
+      setTimeout(() => {
+        const item = queueRef.current.find((p) => p.id === id && !p.hold);
+        if (!item) return;
+        setPromptQueue((prev) => prev.filter((p) => p.id !== item.id));
+        void submitRef.current(item.text, true);
+      }, 40);
+    }
+  }, []);
+
+  const holdQueuedBuild = useCallback((id: string) => {
+    setPromptQueue((q) => q.map((p) => (p.id === id ? { ...p, hold: true } : p)));
+    toast('Held — tap Continue when ready');
+  }, []);
+
   const sendQueuedNow = useCallback((id: string) => {
     const item = queueRef.current.find((p) => p.id === id);
     if (!item) return;
+
+    // Never kill an in-progress heavy build for a queued second build.
+    if (item.lane === 'heavy' && heavyBuildActiveRef.current) {
+      setPromptQueue((q) => q.map((p) => (p.id === id ? { ...p, hold: false } : p)));
+      toast.success('Priority kept — starts right after the current build (won’t stop it)');
+      return;
+    }
+
     setPromptQueue((q) => q.filter((p) => p.id !== id));
-    if (loading) {
+    if (item.lane === 'light' && lightBusyRef.current) {
+      lightAbortRef.current?.abort();
+      setLightLoading(false);
+      lightBusyRef.current = false;
+    } else if (loading && !heavyBuildActiveRef.current) {
       skipNextQueueRef.current = true;
       interruptRef.current = true;
       abortRef.current?.abort();
       cleanupInProgressAssistant();
-      setLoading(false);
+      setHeavyLoading(false);
+      setLightLoading(false);
       setSwarmRunning(false);
     }
-    void submitRef.current(item.text, false, true);
+    void submitRef.current(item.text, false, item.lane !== 'heavy');
   }, [loading, cleanupInProgressAssistant, setSwarmRunning]);
 
   const clearQueue = useCallback(() => setPromptQueue([]), []);
@@ -876,6 +992,137 @@ export function TerminalChatProvider({
       m.map((msg) => (msg.id === messageId ? { ...msg, featureOutput: output } : msg))
     );
   }, []);
+
+  /** Light lane while a heavy build runs — chat/planning without clearing todos. */
+  const submitLightAlongsideHeavy = useCallback(
+    async (userPrompt: string) => {
+      if (lightBusyRef.current) {
+        enqueuePrompt(userPrompt, 'light');
+        setPrompt('');
+        return;
+      }
+
+      const userMessageId = crypto.randomUUID();
+      const assistantId = crypto.randomUUID();
+      const displayPrompt = userPrompt.trim();
+      setMessages((m) => [
+        ...m,
+        { id: userMessageId, role: 'user', content: displayPrompt, createdAt: Date.now() },
+      ]);
+      setPrompt('');
+      setLightLoading(true);
+      lightBusyRef.current = true;
+
+      const controller = new AbortController();
+      lightAbortRef.current = controller;
+      setAnimatingId(assistantId);
+      setMessages((m) => [
+        ...m,
+        { id: assistantId, role: 'assistant', content: '', createdAt: Date.now(), agent: 'Xroga AI Brain' },
+      ]);
+
+      const threadForMemory = [
+        ...messages,
+        { id: userMessageId, role: 'user' as const, content: displayPrompt, createdAt: Date.now() },
+      ];
+      const history = threadForMemory
+        .filter((m) => (m.role === 'user' || m.role === 'assistant') && m.content?.trim())
+        .slice(-10)
+        .map((m) => ({
+          role: m.role as 'user' | 'assistant',
+          content: (m.content ?? '').length > 1200 ? `${(m.content ?? '').slice(0, 1200)}…` : (m.content ?? ''),
+        }))
+        .filter((h) => h.content.length > 0);
+
+      try {
+        const result = await runLightLaneChat({
+          prompt: displayPrompt,
+          history,
+          signal: controller.signal,
+          onPartial: (partial) => {
+            setMessages((m) =>
+              m.map((msg) =>
+                msg.id === assistantId
+                  ? { ...msg, content: partial, agent: 'Xroga AI Brain' }
+                  : msg
+              )
+            );
+          },
+        });
+        if (result.webSources?.length || result.hackathonBrief) {
+          setMessages((m) =>
+            m.map((msg) =>
+              msg.id === assistantId
+                ? {
+                    ...msg,
+                    webSources: result.webSources,
+                    hackathonBrief: result.hackathonBrief as ChatMessage['hackathonBrief'],
+                  }
+                : msg
+            )
+          );
+        }
+        if (result.usage) {
+          setTokenUsage({
+            ...result.usage,
+            totalLimit: result.usage.totalTokensRemaining + result.usage.totalTokensUsed,
+            quotaPeriodStart: new Date().toISOString().slice(0, 10),
+            emergencyTokensAvailable: false,
+            emergencyTokensClaimedThisMonth: false,
+          });
+          refreshTokenUsage();
+        }
+        if (!incognito) {
+          setMessages((current) => {
+            try {
+              archiveChatTurn({
+                prompt: displayPrompt,
+                messages: current,
+                userMessageId,
+                assistantMessageId: assistantId,
+              });
+              saveTerminalHistorySession({
+                sessionId: sessionIdRef.current,
+                prompt: displayPrompt,
+                messages: current,
+              });
+            } catch {
+              /* ignore */
+            }
+            return current;
+          });
+        }
+      } catch (err) {
+        if ((err as Error)?.name !== 'AbortError') {
+          const msg = (err as Error)?.message || 'Chat failed';
+          setMessages((m) =>
+            m.map((msgRow) => (msgRow.id === assistantId ? { ...msgRow, content: msg } : msgRow))
+          );
+          toast.error(msg);
+        }
+      } finally {
+        lightBusyRef.current = false;
+        lightAbortRef.current = null;
+        setLightLoading(false);
+        // Keep animatingId on heavy assistant if build still running.
+        if (heavyBuildActiveRef.current && heavyAssistantId) {
+          setAnimatingId(heavyAssistantId);
+        } else {
+          setAnimatingId(null);
+        }
+        setTimeout(processNextInQueue, 50);
+      }
+    },
+    [
+      messages,
+      enqueuePrompt,
+      incognito,
+      refreshTokenUsage,
+      setTokenUsage,
+      heavyAssistantId,
+      processNextInQueue,
+    ]
+  );
 
   const submit = useCallback(
     async (
@@ -887,18 +1134,49 @@ export function TerminalChatProvider({
       const userPrompt = (overrideText ?? prompt).trim();
       if (!userPrompt && !attachments?.length) return;
 
+      const lane = classifyWorkLane(userPrompt, messages, attachments, {
+        completedWebsiteBuild: completedWebsiteBuildRef.current,
+      });
+
+      // Two lanes: light chat/planning always open during any heavy job.
+      if (heavyJobActiveRef.current && lane === 'light' && !interrupt) {
+        await submitLightAlongsideHeavy(userPrompt);
+        return;
+      }
+
+      if (heavyJobActiveRef.current && lane === 'heavy' && !fromQueue) {
+        enqueuePrompt(userPrompt, 'heavy');
+        setPrompt('');
+        return;
+      }
+
+      if (heavyJobActiveRef.current && lane === 'heavy' && fromQueue) {
+        if (heavyLoading) {
+          enqueuePrompt(userPrompt, 'heavy');
+          return;
+        }
+      }
+
       if (loading && interrupt) {
+        // Interrupt never kills an active heavy build unless the user pressed Stop on that build.
+        if (heavyJobActiveRef.current && lane === 'heavy') {
+          toast.error('Finish or stop the current build before starting another');
+          enqueuePrompt(userPrompt, 'heavy');
+          setPrompt('');
+          return;
+        }
         skipNextQueueRef.current = true;
         interruptRef.current = true;
         abortRef.current?.abort();
         cleanupInProgressAssistant();
-        setLoading(false);
+        setHeavyLoading(false);
+        setLightLoading(false);
         setSwarmRunning(false);
         setPipelineMessage(null);
         setImageProgressStep(null);
         setImageAttempts([]);
       } else if (loading && !fromQueue) {
-        enqueuePrompt(userPrompt);
+        enqueuePrompt(userPrompt, lane);
         setPrompt('');
         return;
       } else if (loading) {
@@ -956,7 +1234,30 @@ export function TerminalChatProvider({
         },
       ]);
       if (!fromQueue) setPrompt('');
-      setLoading(true);
+
+      const codeBuildActive = isCodeBuildProcessing(displayPrompt, messages, {
+        completedBuildRef: completedWebsiteBuildRef.current,
+      });
+      const startingHeavyJob = lane === 'heavy' || codeBuildActive;
+      const startingHeavyBuild =
+        codeBuildActive ||
+        isWebsiteBuildPrompt(displayPrompt) ||
+        isWebsiteBuildUpdate(displayPrompt, messages) ||
+        isBuildThreadContinuation(displayPrompt, messages);
+
+      if (startingHeavyJob) {
+        setHeavyLoading(true);
+        heavyJobActiveRef.current = true;
+        if (startingHeavyBuild) {
+          setHeavyBuildActive(true);
+          heavyBuildActiveRef.current = true;
+          setHeavyAssistantId(assistantId);
+          const peak = getDeepSeekPeakStatus();
+          setDeepseekPeakNudge(peak.nudge);
+        }
+      } else {
+        setLightLoading(true);
+      }
       setSwarmRunning(true);
       setSwarmActiveAgent(null);
       setPipelineMessage(null);
@@ -970,17 +1271,17 @@ export function TerminalChatProvider({
       setFollowUps([]);
       setReasoning(null);
       setDag(null);
-      setSwarmNegotiationPhase(null);
-      setSwarmTodos([]);
-      buildTodosSeedRef.current = [];
-      liveBuildSnapshotRef.current = { todos: [], phase: null, activity: [] };
-      setSwarmStatusLabel(null);
-      setSwarmAnalysis(null);
-      setSwarmActivityLog([]);
 
-      const codeBuildActive = isCodeBuildProcessing(displayPrompt, messages, {
-        completedBuildRef: completedWebsiteBuildRef.current,
-      });
+      // Never wipe live build todos unless this submit is starting a heavy build.
+      if (startingHeavyBuild) {
+        setSwarmNegotiationPhase(null);
+        setSwarmTodos([]);
+        buildTodosSeedRef.current = [];
+        liveBuildSnapshotRef.current = { todos: [], phase: null, activity: [] };
+        setSwarmStatusLabel(null);
+        setSwarmAnalysis(null);
+        setSwarmActivityLog([]);
+      }
 
       const useCompactPipeline =
         !isBuildThreadContinuation(displayPrompt, messages) &&
@@ -991,7 +1292,7 @@ export function TerminalChatProvider({
         (isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt));
       setPipelineCompact(useCompactPipeline);
 
-      if (!codeBuildActive && !useCompactPipeline) {
+      if (!codeBuildActive && !useCompactPipeline && !startingHeavyJob) {
         thinkingStepsRef.current = [
           'Searching live sources (SearXNG + YouTube)',
           'Analyzing your question',
@@ -1001,7 +1302,7 @@ export function TerminalChatProvider({
         setPipelineMessage('Searching the web…');
       }
 
-      if (codeBuildActive) {
+      if (startingHeavyBuild) {
         setSwarmNegotiationPhase(0);
         setSwarmStatusLabel('XROGA Architect');
         const seededTodos = seedBuildTodos(displayPrompt);
@@ -1011,7 +1312,11 @@ export function TerminalChatProvider({
         setPipelineMessage('XROGA Architect — planning architecture, database & API routes…');
         thinkingStepsRef.current = [...BUILD_PLANNING_STEPS];
         setThinkingSteps([...BUILD_PLANNING_STEPS]);
-        setSwarmActivityLog(['XROGA Architect — analyzing your project and planning the build…']);
+        const peakLine = getDeepSeekPeakStatus().nudge;
+        setSwarmActivityLog([
+          'XROGA Architect — analyzing your project and planning the build…',
+          ...(peakLine ? [peakLine] : []),
+        ]);
         lastActivityAtRef.current = Date.now();
         buildHeartbeatTickRef.current = 0;
         addPendingBuildJob({
@@ -1254,6 +1559,9 @@ export function TerminalChatProvider({
               setSwarmAnalysis(sanitizeXrogaTerminalText(swarmEv.swarmAnalysis));
             }
             const activity = swarmEv.swarmActivity ?? swarmEv.message;
+            if ((swarmEv as SwarmProgressEvent & { deepseekPeak?: boolean }).deepseekPeak && activity) {
+              setDeepseekPeakNudge(sanitizeXrogaTerminalText(activity));
+            }
             if (activity) {
               liveBuildSnapshotRef.current.activity = [
                 ...liveBuildSnapshotRef.current.activity,
@@ -1739,17 +2047,41 @@ export function TerminalChatProvider({
         }
         lastTurnRef.current = null;
         abortRef.current = null;
-        setLoading(false);
-        setSwarmRunning(false);
-        setAnimatingId(null);
-        setSwarmActiveAgent(null);
-        setPipelineMessage(null);
-        setCouncilLayer(null);
-        setThinkingSteps([]);
-        setThinkingStartedAt(null);
-        setImageProgressStep(null);
-        setImageAttempts([]);
-        setPipelineCompact(false);
+        if (startingHeavyJob) {
+          setHeavyLoading(false);
+          heavyJobActiveRef.current = false;
+          if (startingHeavyBuild) {
+            setHeavyBuildActive(false);
+            heavyBuildActiveRef.current = false;
+            setHeavyAssistantId(null);
+            setDeepseekPeakNudge(null);
+            setSwarmNegotiationPhase(null);
+          }
+          setSwarmRunning(false);
+          setAnimatingId(null);
+          setSwarmActiveAgent(null);
+          setPipelineMessage(null);
+          setCouncilLayer(null);
+          setThinkingSteps([]);
+          setThinkingStartedAt(null);
+          setImageProgressStep(null);
+          setImageAttempts([]);
+          setPipelineCompact(false);
+        } else {
+          setLightLoading(false);
+          if (!heavyBuildActiveRef.current) {
+            setSwarmRunning(false);
+            setAnimatingId(null);
+            setSwarmActiveAgent(null);
+            setPipelineMessage(null);
+            setCouncilLayer(null);
+            setThinkingSteps([]);
+            setThinkingStartedAt(null);
+            setImageProgressStep(null);
+            setImageAttempts([]);
+            setPipelineCompact(false);
+          }
+        }
         interruptRef.current = false;
         if (skipNextQueueRef.current) {
           skipNextQueueRef.current = false;
@@ -1758,7 +2090,7 @@ export function TerminalChatProvider({
         setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, incognito, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage]
+    [prompt, loading, heavyLoading, projectId, incognito, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage, submitLightAlongsideHeavy]
   );
 
   submitRef.current = submit;
@@ -1788,6 +2120,9 @@ export function TerminalChatProvider({
         setPrompt,
         promptQueue,
         loading,
+        heavyBuildActive,
+        heavyAssistantId,
+        deepseekPeakNudge,
         outOfActionsOpen,
         setOutOfActionsOpen,
         animatingId,
@@ -1819,6 +2154,8 @@ export function TerminalChatProvider({
         updateFeatureOutput,
         removeFromQueue,
         editQueuedPrompt,
+        continueQueuedWhenReady,
+        holdQueuedBuild,
         sendQueuedNow,
         clearQueue,
         sessionId: liveSessionId,

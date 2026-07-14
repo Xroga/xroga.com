@@ -5,8 +5,15 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 
 /** Queued prompts — attached above the chatbar shell */
 export function ChatbarQueueOutside() {
-  const { promptQueue, sendQueuedNow, editQueuedPrompt, removeFromQueue, clearQueue, loading } =
-    useTerminalChat();
+  const {
+    promptQueue,
+    continueQueuedWhenReady,
+    holdQueuedBuild,
+    editQueuedPrompt,
+    removeFromQueue,
+    clearQueue,
+    heavyBuildActive,
+  } = useTerminalChat();
 
   if (promptQueue.length === 0) return null;
 
@@ -14,11 +21,12 @@ export function ChatbarQueueOutside() {
     <div className="xv-chatbar-queue-outside mb-1.5">
       <ChatPromptQueue
         queue={promptQueue}
-        onSendNow={sendQueuedNow}
+        onContinue={continueQueuedWhenReady}
+        onHold={holdQueuedBuild}
         onEdit={editQueuedPrompt}
         onRemove={removeFromQueue}
         onClear={clearQueue}
-        loading={loading}
+        heavyBuildActive={heavyBuildActive}
       />
     </div>
   );
