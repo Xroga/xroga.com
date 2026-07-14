@@ -71,7 +71,6 @@ import {
 } from './prompts.js';
 import { BRAND, failureBrand } from './brandedMessages.js';
 import { reservePolish, shouldUseReserve } from './reserve.js';
-import { swarmReserveProcess } from '../reserve/orchestrator.js';
 import {
   isGitHubConnected,
   pushAndDeployLivePreview,
@@ -271,9 +270,10 @@ async function deepseekFlashCall(
   system: string,
   user: string,
   maxTokens = 8192,
-  tracker?: BuildUsageTracker
+  tracker?: BuildUsageTracker,
+  userId?: string
 ): Promise<string> {
-  const { text } = await buildModelCall('flash', system, user, maxTokens, tracker);
+  const { text } = await buildModelCall('flash', system, user, maxTokens, tracker, { userId });
   return text;
 }
 
@@ -282,9 +282,10 @@ async function deepseekProCall(
   system: string,
   user: string,
   maxTokens = 8192,
-  tracker?: BuildUsageTracker
+  tracker?: BuildUsageTracker,
+  userId?: string
 ): Promise<string> {
-  const { text } = await buildModelCall('pro', system, user, maxTokens, tracker);
+  const { text } = await buildModelCall('pro', system, user, maxTokens, tracker, { userId });
   return text;
 }
 
@@ -319,14 +320,16 @@ async function verifyStepParallel(
   plan: string,
   prompt: string,
   tracker?: BuildUsageTracker,
-  light = false
+  light = false,
+  userId?: string
 ): Promise<VerificationReport[]> {
+  const quotaOpts = userId ? { userId } : undefined;
   if (light) {
-    const r = await buildModelCall('flash', PHASE_4_GROQ_VERIFY, `Code:\n${code.slice(0, 6000)}`, 256, tracker);
+    const r = await buildModelCall('flash', PHASE_4_GROQ_VERIFY, `Code:\n${code.slice(0, 6000)}`, 256, tracker, quotaOpts);
     return [{ agent: 'groq', pass: isPass(r.text), report: r.text }];
   }
   const results = await Promise.allSettled([
-    buildModelCall('flash', PHASE_4_GROQ_VERIFY, `Code:\n${code.slice(0, 6000)}`, 256, tracker).then((r) => ({
+    buildModelCall('flash', PHASE_4_GROQ_VERIFY, `Code:\n${code.slice(0, 6000)}`, 256, tracker, quotaOpts).then((r) => ({
       agent: 'groq' as const,
       pass: isPass(r.text),
       report: r.text,
@@ -388,22 +391,24 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   emit(ctx, 0, BRAND.phase0.scanning(businessLabel), 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
 
   todos.activateMeta('github');
-  const githubOk = await isGitHubConnected(userId);
-  if (!githubOk) {
-    emit(ctx, 0, BRAND.github.required, 'architect', todos, 'AI SWARM LOGIC');
-    return {
-      success: false,
-      clarifiedBrief: '',
-      approvedPlan: '',
-      assembledCode: '',
-      polishedOutput:
-        '🔗 [Phase 0] Connect GitHub to save your work. XROGA will push your code and deploy a live preview automatically.',
-      needsGitHubConnection: true,
-    };
+  // Soft gate: always BUILD the site first. GitHub is optional deploy — never brick the user with a chat wall.
+  const githubConnected = await isGitHubConnected(userId);
+  if (!githubConnected) {
+    emit(
+      ctx,
+      0,
+      xrogaArchitectureLine('GitHub not connected — building sandbox preview first; connect later to push live'),
+      'architect',
+      todos,
+      'XROGA Architect',
+      { userPhase: 1 }
+    );
+    todos.completeMeta('github');
+  } else {
+    buildState.markDone('auth');
+    todos.completeMeta('github');
+    emit(ctx, 0, BRAND.github.verified, 'architect', todos, 'AI SWARM LOGIC');
   }
-  buildState.markDone('auth');
-  todos.completeMeta('github');
-  emit(ctx, 0, BRAND.github.verified, 'architect', todos, 'AI SWARM LOGIC');
 
   const pastBuilds = await getPreviousBuilds(userId);
   const memoryNote = formatMemorySuggestion(pastBuilds);
@@ -723,7 +728,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'XROGA Visionary');
     if (costPolicy.tier !== 'simple_static') {
       try {
-        clarifiedBrief = (await buildModelCall('flash', PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 256, usageTracker)).text;
+        clarifiedBrief = (await buildModelCall('flash', PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 256, usageTracker, { userId })).text;
         emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse');
       } catch {
         /* keep brief */
@@ -761,7 +766,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
 
   try {
-    clarifiedBrief = (await buildModelCall('flash', PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 256, usageTracker)).text;
+    clarifiedBrief = (await buildModelCall('flash', PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 256, usageTracker, { userId })).text;
       emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse');
   } catch {
     /* keep gemini brief */
@@ -864,7 +869,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       masterPlan = text;
       emit(ctx, 1, xrogaArchitectureLine('Master plan generated'), 'architect', todos, 'XROGA Architect');
       try {
-        masterPlan = (await buildModelCall('pro', PHASE_1_PLANNING_GROQ, masterPlan, 1024, usageTracker)).text;
+        masterPlan = (await buildModelCall('pro', PHASE_1_PLANNING_GROQ, masterPlan, 1024, usageTracker, { userId })).text;
       } catch {
         /* keep plan */
       }
@@ -890,7 +895,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       PHASE_2_DEEPSEEK_REVIEW,
       `User query:\n${userPrompt}\n\nMaster Plan:\n${approvedPlan}`,
       costPolicy.tier === 'simple_static' ? 2048 : 4096,
-      usageTracker
+      usageTracker, userId
     );
 
     if (isPass(review)) {
@@ -1014,7 +1019,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           executePrompt,
           `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
           stepTokenBudget,
-          usageTracker
+          usageTracker,
+          { userId }
         );
         return text;
       });
@@ -1033,7 +1039,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           `${PHASE_3_EXECUTE}\n\nABSOLUTE RULE: The user asked you to BUILD the website, not explain how. Output ONLY three fenced blocks: html, css, javascript. Zero prose. Zero "Introduction". Zero SEO tips.`,
           `Build this site NOW as real working files.\nUser request:\n${userPrompt}\n\nPlan:\n${approvedPlan}\n\nReturn complete index.html + styles.css + script.js content in fenced blocks.`,
           stepTokenBudget,
-          usageTracker
+          usageTracker,
+          { userId }
         );
         if (retry.text?.trim() && !looksLikeBuildEssay(retry.text)) {
           stepCode = retry.text;
@@ -1052,7 +1059,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     let approved = costPolicy.tier === 'simple_static';
     for (let attempt = 0; attempt < stepCorrectionsMax; attempt++) {
       emit(ctx, 4, BRAND.phase4.verifying, 'qa', todos, 'AI SWARM LOGIC');
-      const reports = await verifyStepParallel(stepCode, approvedPlan, userPrompt, usageTracker, lightVerify);
+      const reports = await verifyStepParallel(stepCode, approvedPlan, userPrompt, usageTracker, lightVerify, userId);
       const failures = reports.filter((r) => !r.pass);
 
       if (!failures.length) {
@@ -1079,7 +1086,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           PHASE_5_CORRECT,
           `Failures:\n${errorPlan}\n\nCode:\n${stepCode}`,
           stepTokenBudget,
-          usageTracker
+          usageTracker, userId
         );
       }
       totalCorrections++;
@@ -1203,7 +1210,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           PHASE_5_CORRECT,
           `Code audit did not fully pass — apply remaining fixes:\n\nCode:\n${assembledCode}`,
           BUILD_STEP_MAX_TOKENS,
-          usageTracker
+          usageTracker, userId
         );
         totalCorrections++;
       } else {
@@ -1248,7 +1255,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         PHASE_5_CORRECT,
         `Quality review:\n${qualityReview}\n\nCode:\n${assembledCode}`,
         BUILD_STEP_MAX_TOKENS,
-        usageTracker
+        usageTracker, userId
       );
       totalCorrections++;
     }
@@ -1258,9 +1265,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   emit(ctx, 6, xrogaCollectiveLine('Security & integration audit'), 'truth_council', todos, 'XROGA Collective');
   const finalChecks = await Promise.allSettled([
-    deepseekFlashCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode}`, 4096, usageTracker),
+    deepseekFlashCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode}`, 4096, usageTracker, userId),
     geminiCall(PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 50000)}`, 512),
-    buildModelCall('flash', PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 40000)}`, 512, usageTracker).then(
+    buildModelCall('flash', PHASE_6_FINAL, `Full codebase:\n${assembledCode.slice(0, 40000)}`, 512, usageTracker, { userId }).then(
       (r) => r.text
     ),
     getSecret('MISTRAL_API_KEY')
@@ -1275,7 +1282,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       PHASE_5_CORRECT,
       `Final review issues\n\n${assembledCode}`,
       BUILD_STEP_MAX_TOKENS,
-      usageTracker
+      usageTracker, userId
     );
     totalCorrections++;
   } else {
@@ -1299,7 +1306,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           PHASE_5_CORRECT,
           `Quick review:\n${quickCheck}\n\nCode:\n${assembledCode}`,
           4096,
-          usageTracker
+          usageTracker, userId
         );
         totalCorrections++;
       }
@@ -1393,7 +1400,38 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         projectFiles = [...projectFiles, ...envFiles];
       }
     }
-    try {
+    if (!githubConnected) {
+      // Ship the site in-chat; connect GitHub later to push/deploy.
+      featureOutput = {
+        ...featureOutput,
+        projectName: summaryData.projectName,
+        pages: summaryData.pages,
+        features: summaryData.features,
+        designTheme: summaryData.designTheme,
+        needsPayment: summaryData.needsPayment,
+        generatedFiles: generatedPaths,
+        fileCount: projectFiles.length,
+        githubPushConfirmed: false,
+        userPrompt: currentMessage,
+        followUps: ['Connect GitHub to push & deploy', ...LANDING_UPDATE_FOLLOW_UPS.slice(0, 3)],
+        memoryNote:
+          'Your site is ready in sandbox preview. Connect GitHub under Integrations to push and get a live URL.',
+        summary: formatBuildSummaryCard({
+          ...summaryData,
+          liveUrl: featureOutput.deployUrl || undefined,
+        }),
+      };
+      todos.completeFinal('github-push');
+      emit(
+        ctx,
+        8,
+        xrogaArchitectureLine('Sandbox ready — connect GitHub anytime to go live'),
+        'builder',
+        todos,
+        'XROGA Architect',
+        { userPhase: 5 }
+      );
+    } else try {
       const pipeline = await pushAndDeployLivePreview(userId, projectFiles, projectSlug, {
         targetRepo: ctx.githubTargetRepo,
         targetBranch: ctx.githubTargetBranch,
@@ -1620,19 +1658,51 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   }
 }
 
-/** OSS Escape Pod — all paid APIs down */
+/** OSS Escape Pod — paid APIs down: still ship a real sandbox site, never a how-to essay. */
 export async function runEscapePod(ctx: NegotiationContext): Promise<NegotiationResult> {
   const todos = createTodoState(ctx.userPrompt);
   todos.activateMeta('analyze');
   emit(ctx, 0, BRAND.escape.pod, 'architect', todos, 'XROGA Escape Pod');
-  const raw = await swarmReserveProcess(ctx.userPrompt);
+  const plan = defaultPlanForPrompt(ctx.userPrompt).join('\n');
+  let featureOutput: FeatureOutput | undefined;
+  try {
+    // Prefer assembler/template landing page — Escape Pod must never return chat essays.
+    featureOutput = await buildLandingFromSwarmAssembly(
+      '',
+      ctx.userPrompt,
+      plan,
+      ctx.userPrompt,
+      'website',
+      { skipConsolidate: true }
+    );
+  } catch (err) {
+    console.warn('[EscapePod] landing assembly failed:', (err as Error).message);
+  }
   todos.completeAll();
   emit(ctx, 7, BRAND.escape.done, 'complete', todos, 'BLACK HOLE V∞');
+  if (featureOutput?.type === 'landing_page') {
+    featureOutput = {
+      ...featureOutput,
+      memoryNote:
+        'Built in Escape Pod sandbox (paid APIs unavailable). Connect GitHub to push live when ready.',
+      userPrompt: ctx.userPrompt,
+    };
+    return {
+      success: true,
+      clarifiedBrief: ctx.userPrompt,
+      approvedPlan: plan,
+      assembledCode: featureOutput.html ?? '',
+      polishedOutput: '',
+      featureOutput,
+    };
+  }
+  // Last resort: still avoid essays — return minimal success card text only
   return {
-    success: true,
+    success: false,
     clarifiedBrief: ctx.userPrompt,
-    approvedPlan: 'OSS reserve',
-    assembledCode: raw,
-    polishedOutput: formatPlainProfessional(raw),
+    approvedPlan: plan,
+    assembledCode: '',
+    polishedOutput:
+      'Build engines are temporarily unavailable. Please retry in a moment — XROGA will generate your site files, not a written guide.',
   };
 }

@@ -873,7 +873,13 @@ export function TerminalChatProvider({
         return;
       }
 
-      if (requiresGitHubForBuild(userPrompt) || isBuildThreadContinuation(userPrompt, messages)) {
+      // Website/blog builds: do NOT hard-block on GitHub — ship sandbox preview first.
+      // GitHub gate only for update continuations that already depend on an existing repo.
+      const websiteBuildStart = isWebsiteBuildPrompt(userPrompt);
+      if (
+        !websiteBuildStart &&
+        (requiresGitHubForBuild(userPrompt) || isBuildThreadContinuation(userPrompt, messages))
+      ) {
         try {
           const gh = await api.github.status();
           if (!gh.connected) {
@@ -889,6 +895,15 @@ export function TerminalChatProvider({
           setGithubGateOpen(true);
           return;
         }
+      } else if (websiteBuildStart) {
+        // Soft-check GitHub in background — never block the build card
+        void api.github
+          .status()
+          .then((gh) => {
+            if (gh.connected) markGitHubConnectedSession();
+            else clearGitHubConnectedSession();
+          })
+          .catch(() => clearGitHubConnectedSession());
       }
 
       const userMessageId = crypto.randomUUID();
