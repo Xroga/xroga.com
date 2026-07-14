@@ -4312,7 +4312,9 @@ body.theme-gray * {
     color: rgba(255, 255, 255, 0.88) !important;
   }
 
-  /* Fullscreen site preview — hide app chrome */
+  /* Fullscreen site preview — hide app chrome only.
+     Do NOT hide .xv-main-column with visibility:hidden when the modal lived inside it —
+     that also hid the preview (Earth wallpaper flash). Modal now portals to body. */
   body.xv-preview-active .xv-sidebar-root,
   body.xv-preview-active .xv-site-header,
   body.xv-preview-active .xv-terminal-dock,
@@ -4320,8 +4322,9 @@ body.theme-gray * {
     visibility: hidden !important;
     pointer-events: none !important;
   }
-  body.xv-preview-active .xv-main-column {
-    visibility: hidden !important;
+  body.xv-preview-active .xv-fullscreen-preview-root {
+    visibility: visible !important;
+    pointer-events: auto !important;
   }
 
   /* Incognito temporary dashboard */
