@@ -541,12 +541,14 @@ export class Orchestrator {
       (ctx.clientMeta?.buildContinuation && looksLikeBuildClarificationAnswer(prompt)) ||
       isWebsiteBuildUpdate(prompt, ctx.history) ||
       ctx.clientMeta?.buildUpdate ||
-      (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history))
+      (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history)) ||
+      (isWebsiteUpdateRequest(userText) && Boolean(ctx.clientMeta?.githubTargetRepo?.includes('/')))
     ) {
       if (
         (isWebsiteBuildUpdate(prompt, ctx.history) ||
           ctx.clientMeta?.buildUpdate ||
-          (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history))) &&
+          (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history)) ||
+          (isWebsiteUpdateRequest(userText) && Boolean(ctx.clientMeta?.githubTargetRepo?.includes('/')))) &&
         !hasThreadContext(prompt) &&
         ctx.history?.length
       ) {
