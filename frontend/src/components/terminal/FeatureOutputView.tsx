@@ -76,6 +76,9 @@ export function FeatureOutputView({
   }
 
   if (o.type === 'landing_page') {
+    // Plan A: incremental updates render as UpdateFileTrail on the message — not a new card.
+    if (o.isUpdate === true) return null;
+
     const deployUrl = typeof o.deployUrl === 'string' ? o.deployUrl.trim() : '';
     const githubRepoUrl = typeof o.githubRepoUrl === 'string' ? o.githubRepoUrl : undefined;
     const githubRepoName = typeof o.githubRepoName === 'string' ? o.githubRepoName : undefined;
@@ -107,6 +110,7 @@ export function FeatureOutputView({
       generatedFiles: Array.isArray(o.generatedFiles) ? (o.generatedFiles as string[]) : undefined,
       fileCount: typeof o.fileCount === 'number' ? o.fileCount : undefined,
       userPrompt: typeof o.userPrompt === 'string' ? o.userPrompt : undefined,
+      isUpdate: o.isUpdate === true,
     };
 
     return (

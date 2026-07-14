@@ -60,21 +60,32 @@ export function isWebsiteUpdateRequest(prompt: string): boolean {
   const t = prompt.trim().toLowerCase();
   if (/\b(can i change|could you change|please change|i want to change)\b/.test(t)) return true;
   if (/\b(more updates|another update|add a new|add new|remove the|new section)\b/.test(t)) return true;
+  if (/\b(dark\s*mode|night\s*mode|day\s*mode|theme\s*toggle|light\s*mode)\b/.test(t)) return true;
+  if (/\b(broken|doesn'?t\s+work|not\s+working)\b/.test(t) && /\b(button|link|toggle|form|menu)\b/.test(t)) {
+    return true;
+  }
   if (/\b(improve|enhance|polish|refresh)\b/.test(t) && /\b(section|page|design|site|website|menu|hero)\b/.test(t)) {
     return true;
   }
   if (
-    /\b(change|update|edit|modify|rename|switch|adjust|tweak|fix)\b/.test(t) &&
+    /\b(change|update|edit|modify|rename|switch|adjust|tweak|fix|patch)\b/.test(t) &&
     /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout|content)\b/.test(
       t
     )
   ) {
     return true;
   }
-  if (/\b(make|turn)\s+it\s+(blue|red|green|darker|lighter|warmer|cooler|minimal|modern)\b/.test(t)) {
+  if (/\b(make|turn)\s+it\s+(blue|red|green|darker|lighter|warmer|cooler|minimal|modern|emerald)\b/.test(t)) {
     return true;
   }
   if (/\b(changed?|changing)\s+(the\s+)?(color|name|theme|section|menu|design)\b/.test(t)) return true;
+  if (
+    /\b(update|patch|push|apply|fix|edit)\b/.test(t) &&
+    /\b(github|repo|preview|codebase|current (site|website|project)|selected repo|existing (repo|code|site))\b/.test(t)
+  ) {
+    return true;
+  }
+  if (/\b(same|current|existing)\s+preview\b/.test(t)) return true;
   return false;
 }
 

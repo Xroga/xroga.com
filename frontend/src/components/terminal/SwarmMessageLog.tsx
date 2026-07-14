@@ -22,6 +22,7 @@ import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
+import { UpdateFileTrail } from './UpdateFileTrail';
 import { isImageGenerationPrompt } from '@/lib/parseImageContent';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { ImageGeneratingAnimation } from './ImageStudioCard';
@@ -34,6 +35,8 @@ import { useHydrated } from '@/hooks/useHydrated';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
 import { cn } from '@/lib/utils';
 import { ChatTurnRail, buildChatTurns } from './ChatTurnRail';
+import { api } from '@/lib/api';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import toast from 'react-hot-toast';
 
 const AGENT_STYLES: Record<string, string> = {
@@ -53,6 +56,9 @@ interface SwarmMessageLogProps {
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
   const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, swarmActivityLog, imageProgressStep, imageAttempts, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, heavyBuildActive, heavyAssistantId, deepseekPeakNudge } =
     useTerminalChat();
+  const [rollbackId, setRollbackId] = useState<string | null>(null);
+  const applyBuild = useProjectWorkspaceStore((s) => s.applyBuild);
+  const clearRollbackBuffer = useProjectWorkspaceStore((s) => s.clearRollbackBuffer);
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
   const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
@@ -525,6 +531,65 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             onRetry={() => void retryStoppedBuild(msg.id)}
                           />
                         ) : null}
+                        {msg.updateTrail ? (
+                          <UpdateFileTrail
+                            headline={msg.updateTrail.headline}
+                            changes={msg.updateTrail.changes}
+                            files={msg.updateTrail.files}
+                            statusLine={msg.updateTrail.statusLine}
+                            rollingBack={rollbackId === msg.id}
+                            onRollback={
+                              msg.updateTrail.previousFiles?.length &&
+                              msg.updateTrail.githubRepoName?.includes('/')
+                                ? () => {
+                                    void (async () => {
+                                      const trail = msg.updateTrail!;
+                                      const repo = trail.githubRepoName!;
+                                      setRollbackId(msg.id);
+                                      try {
+                                        const result = await api.github.pushBuild({
+                                          repoName: repo,
+                                          branch: trail.githubBranch || 'main',
+                                          incremental: true,
+                                          files: trail.previousFiles!,
+                                          userPrompt: 'Rollback last XROGA update',
+                                          projectName: 'Rollback',
+                                        });
+                                        // Restore dock preview from previous html/css/js if present
+                                        const prevHtml =
+                                          trail.previousFiles!.find((f) => f.path.endsWith('index.html') || f.path === 'index.html')
+                                            ?.content ?? '';
+                                        const prevCss =
+                                          trail.previousFiles!.find((f) => f.path.endsWith('.css'))?.content ?? '';
+                                        const prevJs =
+                                          trail.previousFiles!.find((f) => f.path.endsWith('.js') && !f.path.endsWith('.json'))
+                                            ?.content ?? '';
+                                        applyBuild({
+                                          repo: result.githubRepoName,
+                                          branch: trail.githubBranch || 'main',
+                                          html: prevHtml,
+                                          css: prevCss,
+                                          js: prevJs,
+                                          commitSha: result.commitSha ?? null,
+                                          status: 'pushed',
+                                          changesSummary: ['Rolled back last update'],
+                                          fileTrail: [],
+                                          previousFiles: null,
+                                          openPreview: true,
+                                        });
+                                        clearRollbackBuffer();
+                                        toast.success('Rolled back last update on GitHub');
+                                      } catch (err) {
+                                        toast.error((err as Error).message || 'Rollback failed');
+                                      } finally {
+                                        setRollbackId(null);
+                                      }
+                                    })();
+                                  }
+                                : undefined
+                            }
+                          />
+                        ) : null}
                         {msg.featureOutput ? (
                           <ChatErrorBoundary>
                             <FeatureOutputView
@@ -546,12 +611,12 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           />
                         ) : heavyBuildActive &&
                           msg.id === buildPanelMessageId &&
-                          !msg.content?.trim() ? null : (
+                          !msg.content?.trim() ? null : msg.updateTrail && !msg.content?.trim() ? null : (
                           <ModernResponseText
                             content={
                               msg.content?.trim()
                                 ? msg.content
-                                : !loading && !msg.featureOutput && !msg.buildStopped
+                                : !loading && !msg.featureOutput && !msg.buildStopped && !msg.updateTrail
                                   ? 'No response yet — try sending your prompt again.'
                                   : msg.content
                             }

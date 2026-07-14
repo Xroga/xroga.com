@@ -17,7 +17,6 @@ import {
   Sparkles,
   Wrench,
 } from 'lucide-react';
-import { BuildCodeSandbox } from './BuildCodeSandbox';
 import { FullscreenPreviewModal } from './FullscreenPreviewModal';
 import { VercelDeployButton } from './VercelDeployButton';
 import type { LandingPageOutputData } from './LandingPageCard';
@@ -250,17 +249,11 @@ export function PostBuildDashboard({
           </section>
         )}
 
+        {/* Plan A: single preview lives in ProjectPreviewDock — avoid per-card tabs */}
         <section className="space-y-2">
           <p className="text-[11px] text-[var(--muted)]">
-            Your code runs here instantly — no Vercel required. Connect Vercel only when you want a public live URL on your account.
+            Preview opens in the project panel below (one preview per repo). Connect Vercel when you want a public live URL.
           </p>
-          <BuildCodeSandbox
-            html={normalized.html}
-            css={normalized.css}
-            js={normalized.js}
-            projectTitle={projectName}
-            className="mt-1"
-          />
         </section>
 
         <section className="space-y-2">

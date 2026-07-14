@@ -87,6 +87,9 @@ import {
   mergePatchedFiles,
   planIncrementalUpdate,
   isForcedFullRepoFix,
+  shouldAllowFullScaffoldOnUpdate,
+  buildFileTrailDiffs,
+  shortChangeSummary,
   type UpdateTargetPlan,
 } from '../../lib/incrementalUpdate.js';
 import { siteCodeFromProjectFiles, LANDING_UPDATE_FOLLOW_UPS } from '../../lib/landingPreview.js';
@@ -1388,19 +1391,65 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     const generatedPaths = scaffoldFilePaths(userPrompt);
     const updatePaths = incrementalPlan?.filePaths ?? new Set<string>();
     let projectFiles: import('../../services/integrations/githubDeploy.js').ProjectFile[];
-    if (isUpdateBuild && targetedUpdateFiles.length && updatePaths.size) {
-      const fromAssembly = extractPatchedFilesFromAssembly(assembledCode, updatePaths);
+    let fileTrail: ReturnType<typeof buildFileTrailDiffs> = [];
+    let previousFilesForRollback: Array<{ path: string; content: string }> = [];
+
+    // Plan A: updates ALWAYS patch targeted files — never full scaffold unless forced rebuild.
+    if (isUpdateBuild && !shouldAllowFullScaffoldOnUpdate(userPrompt)) {
+      if (!targetedUpdateFiles.length && ctx.githubTargetRepo?.includes('/') && updatePaths.size) {
+        try {
+          targetedUpdateFiles = await fetchGitHubFilesByPaths(
+            userId,
+            ctx.githubTargetRepo,
+            [...updatePaths],
+            ctx.githubTargetBranch
+          );
+        } catch (refetchErr) {
+          console.warn('[NegotiationEngine] Update refetch:', (refetchErr as Error).message);
+        }
+      }
+      if (!targetedUpdateFiles.length) {
+        // Last resort for static sites: fetch the triad
+        const defaults = ['index.html', 'styles.css', 'script.js'];
+        if (ctx.githubTargetRepo?.includes('/')) {
+          try {
+            targetedUpdateFiles = await fetchGitHubFilesByPaths(
+              userId,
+              ctx.githubTargetRepo,
+              defaults,
+              ctx.githubTargetBranch
+            );
+            for (const d of defaults) updatePaths.add(d);
+          } catch {
+            /* keep empty */
+          }
+        }
+      }
+      const allow = updatePaths.size ? updatePaths : new Set(targetedUpdateFiles.map((f) => f.path));
+      const fromAssembly = extractPatchedFilesFromAssembly(assembledCode, allow);
       const fromLanding = landingOutputToPatchedFiles(
         featureOutput.html,
         featureOutput.css,
         featureOutput.js,
-        updatePaths
+        allow
       );
       const patched = mergePatchedFiles(targetedUpdateFiles, [...fromAssembly, ...fromLanding]);
-      projectFiles = patched.filter((f) => updatePaths.has(f.path));
-      emit(ctx, 8, xrogaGitHubLine(`patch ${projectFiles.length} file(s) only`, ctx.githubTargetBranch ?? 'main'), 'builder', todos, 'XROGA AI', {
-        userPhase: 4,
-      });
+      projectFiles = patched.filter((f) => allow.has(f.path));
+      if (!projectFiles.length && targetedUpdateFiles.length) {
+        // Model returned nothing useful — keep originals (no destructive full rebuild)
+        projectFiles = targetedUpdateFiles;
+      }
+      previousFilesForRollback = targetedUpdateFiles.map((f) => ({ path: f.path, content: f.content }));
+      fileTrail = buildFileTrailDiffs(targetedUpdateFiles, projectFiles);
+      emit(
+        ctx,
+        8,
+        xrogaGitHubLine(`patch ${projectFiles.length} file(s) only`, ctx.githubTargetBranch ?? 'main'),
+        'builder',
+        todos,
+        'XROGA AI',
+        { userPhase: 4 }
+      );
     } else {
       projectFiles = buildFullProjectFiles({
         html: featureOutput.html,
@@ -1451,8 +1500,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         targetBranch: ctx.githubTargetBranch,
       });
       const updatedFilePaths = isUpdateBuild
-        ? [...(incrementalPlan?.filePaths ?? projectFiles.map((f) => f.path))]
+        ? projectFiles.map((f) => f.path)
         : generatedPaths;
+      const changeBullets = isUpdateBuild
+        ? shortChangeSummary(userPrompt, updatedFilePaths)
+        : undefined;
       const updateSummaryData = {
         ...summaryData,
         isUpdate: isUpdateBuild,
@@ -1485,6 +1537,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         userPrompt: currentMessage,
         isUpdate: isUpdateBuild,
         updatedFiles: updatedFilePaths,
+        changesSummary: changeBullets,
+        fileTrail: isUpdateBuild ? fileTrail : undefined,
+        previousFiles: isUpdateBuild ? previousFilesForRollback : undefined,
+        commitSha: pipeline.github.commitSha,
+        githubBranch: pipeline.github.branch ?? ctx.githubTargetBranch ?? 'main',
         memoryNote:
           pipeline.deployError && !pipeline.deployVerified
             ? `${memoryNote ? `${memoryNote} ` : ''}Hosted preview note: ${pipeline.deployError.slice(0, 160)}`

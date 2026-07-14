@@ -432,7 +432,7 @@ router.post('/redeploy-preview', async (req: AuthRequest, res) => {
 /** Push generated code to selected GitHub repo (Contents API — works on empty repos). */
 router.post('/push-build', async (req: AuthRequest, res) => {
   const schema = z.object({
-    html: z.string().min(1),
+    html: z.string().min(1).optional(),
     css: z.string().optional(),
     js: z.string().optional(),
     repoName: z.string().min(3),
@@ -440,6 +440,12 @@ router.post('/push-build', async (req: AuthRequest, res) => {
     projectSlug: z.string().max(80).optional(),
     userPrompt: z.string().max(5000).optional(),
     projectName: z.string().max(200).optional(),
+    /** Plan A: push only these paths (exact update / rollback) — never full scaffold */
+    files: z
+      .array(z.object({ path: z.string().min(1).max(260), content: z.string() }))
+      .max(40)
+      .optional(),
+    incremental: z.boolean().optional(),
   });
 
   const parsed = schema.safeParse(req.body);
@@ -454,13 +460,25 @@ router.post('/push-build', async (req: AuthRequest, res) => {
 
     const title = parsed.data.projectName ?? parsed.data.projectSlug ?? 'XROGA Build';
     const prompt = parsed.data.userPrompt ?? title;
-    const files = buildFullProjectFiles({
-      html: parsed.data.html,
-      css: parsed.data.css ?? '',
-      js: parsed.data.js ?? '',
-      projectName: title,
-      userPrompt: prompt,
-    });
+    const incremental =
+      parsed.data.incremental === true ||
+      (Array.isArray(parsed.data.files) && parsed.data.files.length > 0);
+
+    let files: Array<{ path: string; content: string }>;
+    if (incremental && parsed.data.files?.length) {
+      files = parsed.data.files.filter((f) => f.path.trim() && f.content != null);
+    } else if (parsed.data.html?.trim()) {
+      files = buildFullProjectFiles({
+        html: parsed.data.html,
+        css: parsed.data.css ?? '',
+        js: parsed.data.js ?? '',
+        projectName: title,
+        userPrompt: prompt,
+      });
+    } else {
+      res.status(400).json({ error: 'html or files required' });
+      return;
+    }
 
     const github = await pushBuildToGitHub(req.userId!, files, {
       targetRepo: parsed.data.repoName,
@@ -470,9 +488,11 @@ router.post('/push-build', async (req: AuthRequest, res) => {
     res.json({
       githubRepoUrl: github.htmlUrl,
       githubRepoName: github.repoName,
+      commitSha: github.commitSha,
       pushed: true,
       fileCount: files.length,
-      generatedFiles: scaffoldFilePaths(prompt),
+      generatedFiles: incremental ? files.map((f) => f.path) : scaffoldFilePaths(prompt),
+      incremental,
     });
   } catch (e) {
     res.status(502).json({ error: (e as Error).message });

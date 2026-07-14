@@ -24,6 +24,9 @@ export interface GitHubPushResult {
   repoName: string;
   repoUrl: string;
   htmlUrl: string;
+  /** Tip commit SHA after push (for rollback) */
+  commitSha?: string;
+  branch?: string;
 }
 
 export interface DeployPipelineResult {
@@ -256,10 +259,16 @@ async function pushFilesViaContents(
   files: ProjectFile[],
   message: string,
   branch: string
-): Promise<void> {
+): Promise<string | undefined> {
   for (const file of files) {
     const sha = await getExistingFileSha(token, owner, repo, file.path, branch);
     await pushFileViaContents(token, owner, repo, file, message, branch, sha);
+  }
+  try {
+    const { sha } = await getBranchHeadSha(token, owner, repo, branch);
+    return sha ?? undefined;
+  } catch {
+    return undefined;
   }
 }
 
@@ -270,7 +279,7 @@ async function pushFilesViaGitData(
   files: ProjectFile[],
   message: string,
   branch: string
-): Promise<void> {
+): Promise<string> {
   const blobs = await Promise.all(
     files.map(async (f) => {
       const res = await ghFetch(token, `/repos/${owner}/${repo}/git/blobs`, {
@@ -331,6 +340,7 @@ async function pushFilesViaGitData(
     });
     if (!refRes.ok) throw new Error(`GitHub ref create failed: ${refRes.status}`);
   }
+  return commit.sha;
 }
 
 async function pushFilesToRepo(
@@ -340,14 +350,15 @@ async function pushFilesToRepo(
   files: ProjectFile[],
   message: string,
   branch = 'main'
-): Promise<void> {
+): Promise<string | undefined> {
   if (files.length > HACKATHON_GITHUB_BATCH_SIZE) {
     const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
     const batches = Math.ceil(files.length / HACKATHON_GITHUB_BATCH_SIZE);
+    let lastSha: string | undefined;
     for (let i = 0; i < files.length; i += HACKATHON_GITHUB_BATCH_SIZE) {
       const batch = files.slice(i, i + HACKATHON_GITHUB_BATCH_SIZE);
       const n = Math.floor(i / HACKATHON_GITHUB_BATCH_SIZE) + 1;
-      await pushFilesToRepoSingle(
+      lastSha = await pushFilesToRepoSingle(
         token,
         owner,
         repo,
@@ -356,9 +367,9 @@ async function pushFilesToRepo(
         branch
       );
     }
-    return;
+    return lastSha;
   }
-  await pushFilesToRepoSingle(token, owner, repo, files, message, branch);
+  return pushFilesToRepoSingle(token, owner, repo, files, message, branch);
 }
 
 async function pushFilesToRepoSingle(
@@ -368,21 +379,19 @@ async function pushFilesToRepoSingle(
   files: ProjectFile[],
   message: string,
   branch = 'main'
-): Promise<void> {
+): Promise<string | undefined> {
   const empty = await isRepoEmpty(token, owner, repo);
 
   if (empty) {
-    await pushFilesViaContents(token, owner, repo, files, message, branch);
-    return;
+    return pushFilesViaContents(token, owner, repo, files, message, branch);
   }
 
   try {
-    await pushFilesViaGitData(token, owner, repo, files, message, branch);
+    return await pushFilesViaGitData(token, owner, repo, files, message, branch);
   } catch (err) {
     const msg = (err as Error).message;
     if (/409|empty/i.test(msg)) {
-      await pushFilesViaContents(token, owner, repo, files, message, branch);
-      return;
+      return pushFilesViaContents(token, owner, repo, files, message, branch);
     }
     throw err;
   }
@@ -416,7 +425,7 @@ export async function pushBuildToGitHub(
     const [owner, repo] = selectedRepo.split('/');
     const branch = opts.targetBranch ?? 'main';
     const htmlUrl = `https://github.com/${owner}/${repo}`;
-    await pushFilesToRepo(
+    const commitSha = await pushFilesToRepo(
       token,
       owner!,
       repo!,
@@ -432,6 +441,8 @@ export async function pushBuildToGitHub(
       repoName: `${owner}/${repo}`,
       repoUrl: htmlUrl,
       htmlUrl,
+      commitSha,
+      branch,
     };
   }
 
@@ -441,9 +452,21 @@ export async function pushBuildToGitHub(
   const owner = created.owner;
   const repo = created.repo;
   const htmlUrl = created.htmlUrl;
-  await pushFilesToRepo(token, owner, repo, files, buildBrandedCommitMessage('Initial XROGA build', coAuthor));
+  const commitSha = await pushFilesToRepo(
+    token,
+    owner,
+    repo,
+    files,
+    buildBrandedCommitMessage('Initial XROGA build', coAuthor)
+  );
 
-  return { repoName: `${owner}/${repo}`, repoUrl: `https://github.com/${owner}/${repo}`, htmlUrl };
+  return {
+    repoName: `${owner}/${repo}`,
+    repoUrl: `https://github.com/${owner}/${repo}`,
+    htmlUrl,
+    commitSha,
+    branch: 'main',
+  };
 }
 
 export function landingFilesFromOutput(html: string, css: string, js: string): ProjectFile[] {

@@ -114,6 +114,22 @@ export interface ChatMessage {
   stoppedActivityLog?: string[];
   originalBuildPrompt?: string;
   githubRepoName?: string;
+  /** Plan A update turn — file trail + diffs (not a landing card) */
+  updateTrail?: {
+    headline: string;
+    changes?: string[];
+    files: Array<{
+      path: string;
+      before: string;
+      after: string;
+      added: number;
+      removed: number;
+    }>;
+    statusLine?: string;
+    previousFiles?: Array<{ path: string; content: string }>;
+    githubRepoName?: string;
+    githubBranch?: string;
+  };
 }
 
 export interface QueuedPrompt {
@@ -1707,22 +1723,67 @@ export function TerminalChatProvider({
             if (output?.type === 'landing_page') {
               buildHadVisibleResult = true;
               activeWebsiteBuildRef.current = null;
-              // Only true updates reuse the same sandbox — a new "build …" gets a new preview card
+              // Plan A: updates refresh the single docked preview — never spawn a new card/tabs
               const reusePreview =
                 Boolean((output as { isUpdate?: boolean }).isUpdate) || isBuildUpdate;
               completedWebsiteBuildRef.current = true;
               removePendingBuildJob(assistantId);
               const projectName =
                 typeof output.projectName === 'string' ? output.projectName : 'Your project';
+              const outRepo =
+                (typeof (output as { githubRepoName?: string }).githubRepoName === 'string' &&
+                (output as { githubRepoName: string }).githubRepoName.includes('/')
+                  ? (output as { githubRepoName: string }).githubRepoName
+                  : undefined) ||
+                (repoContext?.repo?.includes('/') ? repoContext.repo : undefined);
+              const fileTrailRaw = (
+                Array.isArray((output as { fileTrail?: unknown }).fileTrail)
+                  ? (output as { fileTrail: NonNullable<ChatMessage['updateTrail']>['files'] }).fileTrail
+                  : []
+              ).filter((f) => f && typeof f.path === 'string');
+              const changesSummary = Array.isArray((output as { changesSummary?: string[] }).changesSummary)
+                ? ((output as { changesSummary: string[] }).changesSummary)
+                : undefined;
+              const previousFiles = Array.isArray((output as { previousFiles?: Array<{ path: string; content: string }> }).previousFiles)
+                ? (output as { previousFiles: Array<{ path: string; content: string }> }).previousFiles
+                : undefined;
+
+              // Always refresh the one project workspace preview
+              void import('@/store/useProjectWorkspaceStore').then(({ useProjectWorkspaceStore }) => {
+                useProjectWorkspaceStore.getState().applyBuild({
+                  repo: outRepo,
+                  branch:
+                    (output as { githubBranch?: string }).githubBranch ||
+                    repoContext?.branch ||
+                    'main',
+                  projectName,
+                  html: String((output as { html?: string }).html ?? ''),
+                  css: String((output as { css?: string }).css ?? ''),
+                  js: String((output as { js?: string }).js ?? ''),
+                  deployUrl:
+                    (typeof (output as { deployUrl?: string }).deployUrl === 'string' &&
+                    (output as { deployVerified?: boolean }).deployVerified
+                      ? (output as { deployUrl: string }).deployUrl
+                      : (output as { vercelPreviewUrl?: string }).vercelPreviewUrl) || null,
+                  githubRepoUrl: (output as { githubRepoUrl?: string }).githubRepoUrl ?? null,
+                  commitSha: (output as { commitSha?: string }).commitSha ?? null,
+                  status: (output as { deployVerified?: boolean }).deployVerified ? 'live' : 'pushed',
+                  changesSummary,
+                  fileTrail: fileTrailRaw,
+                  previousFiles: previousFiles ?? null,
+                  openPreview: true,
+                });
+              });
+
               showBuildBrowserNotification({
                 title: reusePreview ? 'Preview updated' : 'Your XROGA project is complete!',
                 body: reusePreview
-                  ? `${projectName} — same preview updated with your changes.`
-                  : `${projectName} — open the dashboard to view your build.`,
+                  ? `${projectName} — same preview updated with exact file patches.`
+                  : `${projectName} — project rail + preview are ready.`,
                 tag: `build-done-${assistantId}`,
               });
               setMessages((m) => {
-                // One preview card: updates merge into the first landing_page in this thread
+                // Updates: file trail on this turn; merge html into first landing_page for thread memory
                 if (reusePreview) {
                   let anchorId: string | null = null;
                   for (let i = 0; i < m.length; i++) {
@@ -1732,41 +1793,53 @@ export function TerminalChatProvider({
                       break;
                     }
                   }
-                  if (anchorId) {
-                    const updated = m.map((msg) => {
-                      if (msg.id === anchorId) {
-                        const prev = (msg.featureOutput ?? {}) as Record<string, unknown>;
-                        return {
-                          ...msg,
-                          featureOutput: {
-                            ...prev,
-                            ...output,
-                            type: 'landing_page',
-                            isUpdate: true,
-                          },
-                        };
-                      }
-                      if (msg.id === assistantId) {
-                        const paths = Array.isArray((output as { updatedFiles?: string[] }).updatedFiles)
-                          ? ((output as { updatedFiles?: string[] }).updatedFiles as string[]).slice(0, 6).join(', ')
-                          : '';
-                        return {
-                          ...msg,
-                          content:
-                            `✅ Updated the current preview` +
-                            (paths ? ` (${paths})` : '') +
-                            `. Scroll up — same sandbox, new changes. Selected GitHub repo was patched when connected.`,
-                          featureOutput: undefined,
-                        };
-                      }
-                      return msg;
-                    });
-                    const runIdReuse = (complete as { runId?: string }).runId;
-                    if (runIdReuse) {
-                      void api.swarm.saveConversation(runIdReuse, updated).catch(() => {});
+                  const paths = Array.isArray((output as { updatedFiles?: string[] }).updatedFiles)
+                    ? ((output as { updatedFiles?: string[] }).updatedFiles as string[]).slice(0, 6)
+                    : fileTrailRaw.map((f) => f.path);
+                  const statusBits = [
+                    outRepo ? `Pushed to ${outRepo}` : null,
+                    'Preview updated',
+                    (output as { deployVerified?: boolean }).deployVerified ? 'Vercel: Ready' : null,
+                  ].filter(Boolean);
+                  const updated = m.map((msg) => {
+                    if (anchorId && msg.id === anchorId) {
+                      const prev = (msg.featureOutput ?? {}) as Record<string, unknown>;
+                      return {
+                        ...msg,
+                        featureOutput: {
+                          ...prev,
+                          ...output,
+                          type: 'landing_page',
+                          isUpdate: true,
+                        },
+                      };
                     }
-                    return updated;
+                    if (msg.id === assistantId) {
+                      return {
+                        ...msg,
+                        content: '',
+                        featureOutput: undefined,
+                        updateTrail: {
+                          headline: `Updating ${projectName} · ${paths[0] ? paths.join(', ') : 'targeted files'}`,
+                          changes: changesSummary,
+                          files: fileTrailRaw,
+                          statusLine: statusBits.join(' · '),
+                          previousFiles,
+                          githubRepoName: outRepo,
+                          githubBranch:
+                            (output as { githubBranch?: string }).githubBranch ||
+                            repoContext?.branch ||
+                            'main',
+                        },
+                      };
+                    }
+                    return msg;
+                  });
+                  const runIdReuse = (complete as { runId?: string }).runId;
+                  if (runIdReuse) {
+                    void api.swarm.saveConversation(runIdReuse, updated).catch(() => {});
                   }
+                  return updated;
                 }
                 const updated = m.map((msg) =>
                   msg.id === assistantId

@@ -39,6 +39,8 @@ export interface LandingPageOutputData {
   userPrompt?: string;
   isUpdate?: boolean;
   updatedFiles?: string[];
+  changesSummary?: string[];
+  commitSha?: string;
   siteAudit?: {
     score: number;
     issues: Array<{ id: string; severity: string; area: string; message: string; fixPrompt: string }>;
@@ -167,6 +169,9 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
       setVercelVerified(true);
     }
     if (alreadyPushed && (alreadyDeployed || liveUrl)) return;
+
+    // Plan A: never re-scaffold from the card after an incremental update (engine already pushed).
+    if (data.isUpdate) return;
 
     pipelineAttempted.current = true;
 
