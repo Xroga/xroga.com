@@ -2,6 +2,7 @@ import type { ChatMessage } from '@/context/TerminalChatContext';
 import { getSelectedRepoContext } from '@/lib/repoContext';
 import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 import { saveTerminalSessionToIndexedDB, deleteTerminalSessionFromIndexedDB } from '@/lib/terminalSessionStorage';
+import { markRepoSessionCloudId, registerRepoSession } from '@/lib/repoSessionsIndex';
 
 const KEY = 'xroga_terminal_history';
 const BROWSER_KEYWORDS = /scrape|browser|automate|crawl|linkedin jobs|apply to|web search/i;
@@ -162,6 +163,19 @@ export function saveTerminalHistorySession(opts: {
   const rest = loadTerminalHistory().filter((e) => e.id !== opts.sessionId);
   save([entry, ...rest]);
   void saveTerminalSessionToIndexedDB(entry);
+
+  // Lightweight sidebar index — survives even if full history write is quota-trimmed later
+  if (entry.githubRepoName?.includes('/')) {
+    registerRepoSession({
+      githubRepoName: entry.githubRepoName,
+      githubBranch: entry.githubBranch,
+      title: entry.title,
+      sessionId: entry.id,
+      cloudProjectId: entry.cloudProjectId,
+      status: entry.status,
+    });
+  }
+
   return entry;
 }
 
@@ -179,6 +193,7 @@ export function attachCloudProjectId(sessionId: string, cloudProjectId: string) 
   save(next);
   const hit = next.find((e) => e.id === sessionId);
   if (hit) void saveTerminalSessionToIndexedDB(hit);
+  markRepoSessionCloudId(sessionId, cloudProjectId);
 }
 
 export function isTerminalHistoryEntry(entry: TerminalHistoryEntry): boolean {

@@ -29,6 +29,7 @@ import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls 
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { attachCloudProjectId, saveTerminalHistorySession } from '@/lib/terminalHistory';
+import { registerRepoSession } from '@/lib/repoSessionsIndex';
 import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
 import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildPrompt, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
@@ -36,11 +37,19 @@ import { seedBuildTodos } from '@/lib/buildDefaultTodos';
 import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
 import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
-import { clearSelectedRepoContext, getSelectedRepoContext } from '@/lib/repoContext';
+import {
+  clearSelectedRepoContext,
+  getSelectedRepoContext,
+  saveSelectedRepoContext,
+} from '@/lib/repoContext';
 import { buildHeartbeatActivity } from '@/lib/buildLiveStatus';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
-import { notifyGithubProjectSaved, GITHUB_REPO_CONTEXT_EVENT } from '@/lib/githubProjectEvents';
+import {
+  notifyGithubProjectSaved,
+  notifyGithubRepoContext,
+  GITHUB_REPO_CONTEXT_EVENT,
+} from '@/lib/githubProjectEvents';
 import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
@@ -1401,15 +1410,34 @@ export function TerminalChatProvider({
                 if (runId) {
                   void api.swarm.saveConversation(runId, updated).catch(() => {});
                 }
-                const ghName = typeof output.githubRepoName === 'string' ? output.githubRepoName : undefined;
-                if (output.githubPushConfirmed && ghName) {
+                const ghName =
+                  (typeof output.githubRepoName === 'string' && output.githubRepoName.includes('/')
+                    ? output.githubRepoName
+                    : undefined) ||
+                  (repoContext?.repo?.includes('/') ? repoContext.repo : undefined);
+                if (ghName) {
+                  registerRepoSession({
+                    githubRepoName: ghName,
+                    githubBranch: repoContext?.branch ?? 'main',
+                    title: projectName.slice(0, 80),
+                    sessionId: sessionIdRef.current,
+                    status: 'complete',
+                  });
+                  saveSelectedRepoContext({
+                    repo: ghName,
+                    branch: repoContext?.branch ?? 'main',
+                  });
+                  notifyGithubRepoContext(ghName, repoContext?.branch ?? 'main');
+                  // Save to Supabase even if push later — so sidebar cloud list is never empty
                   void api.projects
                     .create({
                       name: projectName.slice(0, 120),
                       type: 'website',
                       github_repo_url:
-                        typeof output.githubRepoUrl === 'string' ? output.githubRepoUrl : undefined,
-                      github_repo_name: ghName.includes('/') ? ghName : undefined,
+                        typeof output.githubRepoUrl === 'string'
+                          ? output.githubRepoUrl
+                          : `https://github.com/${ghName}`,
+                      github_repo_name: ghName,
                       github_branch: repoContext?.branch ?? 'main',
                       deploy_url: typeof output.deployUrl === 'string' ? output.deployUrl : undefined,
                       user_prompt: displayPrompt,
@@ -1420,6 +1448,13 @@ export function TerminalChatProvider({
                     })
                     .catch((err) => console.warn('[projects] save failed', err));
                 }
+                // Always persist history immediately for sidebar (don't wait for debounce)
+                saveTerminalHistorySession({
+                  sessionId: sessionIdRef.current,
+                  prompt: displayPrompt,
+                  messages: updated,
+                  status: 'complete',
+                });
                 return updated;
               });
               return;
