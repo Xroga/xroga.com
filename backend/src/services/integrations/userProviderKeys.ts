@@ -156,43 +156,96 @@ const ENV_VAR_BY_PROVIDER: Record<string, string> = {
   replicate: 'REPLICATE_API_TOKEN',
 };
 
-/** `.env.example` for repos — placeholders only; real keys stay in Xroga vault. */
+/**
+ * `.env.example` for repos — placeholders only.
+ * Real keys stay AES-encrypted in the Xroga vault and are used via
+ * `/api/integrations/live-ai/*` — never written into GitHub.
+ */
 export async function buildProviderEnvFiles(
   userId: string
 ): Promise<Array<{ path: string; content: string }>> {
   const keys = await listUserProviderKeys(userId);
-  if (!keys.length) return [];
 
   const lines = [
-    '# API keys saved in your Xroga account (Integrations → AI)',
-    '# Copy to .env.local for local dev. On Vercel: Project → Settings → Environment Variables.',
+    '# ── Xroga AI keys ───────────────────────────────────────────',
+    '# Paste values locally into .env.local (gitignored).',
+    '# Keys you save in Xroga → Integrations are encrypted in your account',
+    '# and used by the live preview proxy — they are NEVER committed here.',
+    '',
+    '# Free (no key): Pollinations text + images work in script.js out of the box.',
     '',
   ];
-  for (const k of keys) {
+  const providers =
+    keys.length > 0
+      ? keys
+      : Object.keys(ENV_VAR_BY_PROVIDER).map((provider) => ({
+          provider,
+          connected: false,
+          masked: undefined as string | undefined,
+        }));
+
+  for (const k of providers) {
     const varName = ENV_VAR_BY_PROVIDER[k.provider] ?? `${k.provider.toUpperCase()}_API_KEY`;
-    lines.push(`${varName}=  # Connected in Xroga (${k.masked ?? 'saved'})`);
+    if (k.connected) {
+      lines.push(`${varName}=  # ✓ saved encrypted in Xroga (${k.masked ?? '••••'}) — paste here only for local/Vercel`);
+    } else {
+      lines.push(`# ${varName}=  # optional — paste in Xroga Integrations (encrypted) or here for local`);
+    }
   }
   lines.push('');
 
+  const connected = keys.filter((k) => k.connected);
   return [
     { path: '.env.example', content: lines.join('\n') },
     {
       path: 'AI_INTEGRATIONS.md',
-      content: `# AI integrations
+      content: `# AI integrations (free first + your encrypted keys)
 
-Keys below are stored encrypted in your **Xroga account** — not committed to GitHub.
+## Already live in this project (no key)
+- **Chat / text** — Pollinations free API (\`js/xroga-live-ai.js\`)
+- **Images** — \`https://image.pollinations.ai/...\`
+- **Voice** — browser Web Speech API
+- **Web research during Xroga builds** — SearXNG (free, platform-side)
 
-${keys
-  .map(
-    (k) =>
-      `- **${k.provider}** (${k.masked ?? 'connected'}) — set \`${ENV_VAR_BY_PROVIDER[k.provider] ?? `${k.provider.toUpperCase()}_API_KEY`}\` in Vercel env vars`
-  )
-  .join('\n')}
+## Paste your API key (encrypted)
+1. Open **[Xroga → Integrations → AI](https://xroga.com/dashboard/integrations)**
+2. Find Groq / Gemini / OpenRouter / DeepSeek / etc.
+3. Paste the key → **Save to Xroga**
+4. Stored with **AES-256-GCM** in your account vault
+5. Preview on xroga.com can call \`/api/integrations/live-ai/chat\` using your key — **secret never goes to GitHub**
 
-Paid APIs (Grok, DeepSeek, etc.): top up credits on the provider site, then your saved key works in generated code.
+${
+  connected.length
+    ? `### Keys connected in your account\n${connected
+        .map(
+          (k) =>
+            `- **${k.provider}** (${k.masked ?? 'saved'}) → env \`${ENV_VAR_BY_PROVIDER[k.provider] ?? `${k.provider.toUpperCase()}_API_KEY`}\``
+        )
+        .join('\n')}`
+    : '### No keys saved yet\nAdd one in Integrations to upgrade from free Pollinations to faster models.'
+}
+
+## Vercel production
+Copy from \`.env.example\` into Vercel → Project → Settings → Environment Variables (optional).
+Xroga preview does not need this if you saved keys in Integrations.
 `,
     },
   ];
+}
+
+/** Decrypt vault keys for server-side deploy env sync only (never log values). */
+export async function resolveProviderEnvForDeploy(
+  userId: string
+): Promise<Record<string, string>> {
+  const keys = await listUserProviderKeys(userId);
+  const out: Record<string, string> = {};
+  for (const k of keys) {
+    if (!k.connected) continue;
+    const plain = await getUserProviderKey(userId, k.provider);
+    const varName = ENV_VAR_BY_PROVIDER[k.provider];
+    if (plain && varName) out[varName] = plain;
+  }
+  return out;
 }
 
 /** Resolve user BYOK key for runtime (build / inference). */

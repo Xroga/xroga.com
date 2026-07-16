@@ -1,6 +1,12 @@
 import { normalizeBuildFiles } from '../lib/normalizeBuildSource.js';
 import { buildInlinePreviewDocument } from '../lib/landingPreview.js';
 import { vercelStaticSiteJson } from '../lib/vercelStaticConfig.js';
+import {
+  ensureLiveAiScriptTag,
+  liveAiProjectFiles,
+  mergeLiveAiIntoJs,
+  needsLiveAiRuntime,
+} from '../lib/liveAiRuntime.js';
 import type { ProjectFile } from './integrations/githubDeploy.js';
 
 function slugify(name: string): string {
@@ -159,10 +165,15 @@ function staticSiteFiles(opts: {
   css: string;
   js: string;
   projectName: string;
+  userPrompt?: string;
 }): ProjectFile[] {
   const title = opts.projectName.slice(0, 80) || 'XROGA Build';
-  const normalized = normalizeBuildFiles(opts.html, opts.css, opts.js);
+  const prompt = opts.userPrompt ?? '';
+  const jsWithLive = mergeLiveAiIntoJs(opts.js, prompt);
+  const htmlWithTag = needsLiveAiRuntime(prompt) ? ensureLiveAiScriptTag(opts.html) : opts.html;
+  const normalized = normalizeBuildFiles(htmlWithTag, opts.css, jsWithLive);
   const livePreview = buildInlinePreviewDocument(normalized.html, normalized.css, normalized.js);
+  const liveExtras = liveAiProjectFiles(prompt);
 
   return [
     { path: 'index.html', content: livePreview },
@@ -185,6 +196,14 @@ Built with [XROGA AI](https://xroga.com) — Black Hole V∞.
 ## Live preview
 \`index.html\` is the exact site XROGA generated — same file Vercel deploys to your account.
 
+${
+  needsLiveAiRuntime(prompt)
+    ? `## Free AI (works in preview)
+Chat / images use **Pollinations** (no API key). Paste your own encrypted keys in Xroga → Integrations to upgrade models — secrets stay in your account vault, not GitHub.
+See \`AI_LIVE.md\`.
+`
+    : ''
+}
 ## Structure
 \`\`\`
 index.html    ← live site (CSS/JS inlined — matches sandbox preview)
@@ -197,6 +216,7 @@ vercel.json   ← static deploy config (no build step)
 Connect Vercel in XROGA — auto-deploys to **your** Vercel account on build complete.
 `,
     },
+    ...liveExtras,
   ];
 }
 
@@ -244,6 +264,7 @@ export function buildFullProjectFiles(opts: {
       css: opts.css,
       js: opts.js,
       projectName: title,
+      userPrompt: opts.userPrompt,
     });
   }
 
@@ -252,6 +273,7 @@ export function buildFullProjectFiles(opts: {
     css: opts.css,
     js: opts.js,
     projectName: title,
+    userPrompt: opts.userPrompt,
   });
   return [...staticBase, ...nextAppScaffold(title, slug, kind)];
 }

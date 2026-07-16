@@ -13,7 +13,7 @@ export function FreeApiOptionsPanel({ compact }: { compact?: boolean }) {
   return (
     <div className={compact ? 'space-y-1.5' : 'space-y-2'}>
       <p className={`text-[var(--muted)] ${compact ? 'text-[9px]' : 'text-[10px]'}`}>
-        No paid API keys? Xroga can use free tiers and open-source models — $0 to launch.
+        No paid keys needed to launch — Xroga wires Pollinations + SearXNG so your preview works live. Paste your own key anytime (encrypted).
       </p>
       <ul className={`space-y-1 ${compact ? 'text-[9px]' : 'text-[10px]'}`}>
         {options.map((o) => (

@@ -138,14 +138,49 @@ export const AI_ENDPOINT_CATALOG: AiEndpointOption[] = [
     userGuidance: 'Paid — create key at console.anthropic.com. Trial credits may cover early usage.',
   },
   {
+    id: 'pollinations-text',
+    name: 'Pollinations.ai (text chat, no key)',
+    category: 'llm',
+    freeTier: true,
+    requiresApiKey: false,
+    endpoint: 'https://text.pollinations.ai/{prompt}',
+    signupUrl: 'https://pollinations.ai',
+    notes: 'Public text API — Xroga wires this into chatbots so preview works live',
+    userGuidance:
+      'FREE — no API key. Xroga injects this into your site so chat works in preview immediately. Upgrade later with an encrypted Groq/OpenRouter key in Integrations.',
+  },
+  {
     id: 'pollinations-image',
     name: 'Pollinations.ai (image, no key)',
     category: 'image',
     freeTier: true,
     requiresApiKey: false,
     endpoint: 'https://image.pollinations.ai/prompt/{encoded_prompt}',
+    signupUrl: 'https://pollinations.ai',
     notes: 'Public image URL — no auth',
-    userGuidance: 'Free — no API key. Use URL with encoded prompt for demo images in UI.',
+    userGuidance: 'Free — no API key. Live image URLs work in preview with zero setup.',
+  },
+  {
+    id: 'freetheai',
+    name: 'FreeTheAI (OpenAI-compatible)',
+    category: 'llm',
+    freeTier: true,
+    requiresApiKey: true,
+    endpoint: 'https://api.freetheai.xyz/v1/chat/completions',
+    signupUrl: 'https://freetheai.xyz',
+    notes: 'Free OpenAI-compatible gateway',
+    userGuidance: 'Free tier — create a key at freetheai.xyz and paste it in Xroga Integrations (encrypted).',
+  },
+  {
+    id: 'localai',
+    name: 'LocalAI (self-hosted open source)',
+    category: 'llm',
+    freeTier: true,
+    requiresApiKey: false,
+    endpoint: 'http://localhost:8080/v1/chat/completions',
+    signupUrl: 'https://localai.io',
+    notes: 'Open-source local inference — $0',
+    userGuidance: 'Free — run LocalAI on your machine. Point OPENAI_BASE_URL at localhost for offline demos.',
   },
   {
     id: 'web-speech-api',
@@ -168,9 +203,12 @@ export function detectAiIntegrationNeeds(prompt: string): AiEndpointOption[] {
 
   if (wantLlm) {
     picks.push(
-      AI_ENDPOINT_CATALOG.find((e) => e.id === 'ollama-local')!,
+      AI_ENDPOINT_CATALOG.find((e) => e.id === 'pollinations-text')!,
       AI_ENDPOINT_CATALOG.find((e) => e.id === 'groq-free')!,
       AI_ENDPOINT_CATALOG.find((e) => e.id === 'openrouter-free-models')!,
+      AI_ENDPOINT_CATALOG.find((e) => e.id === 'freetheai')!,
+      AI_ENDPOINT_CATALOG.find((e) => e.id === 'ollama-local')!,
+      AI_ENDPOINT_CATALOG.find((e) => e.id === 'localai')!,
       AI_ENDPOINT_CATALOG.find((e) => e.id === 'deepseek-api')!
     );
     if (/\bgrok\b|\bx\.ai\b/i.test(t)) {
@@ -205,7 +243,9 @@ export function formatAiEndpointContext(prompt: string): string {
     );
   }
   lines.push(
-    'In generated code: wire free endpoints first; for paid APIs use .env placeholders and an in-app banner explaining free signup / trial.'
+    'CRITICAL: Wire FREE live endpoints so the preview works immediately (Pollinations text/image, Web Speech).',
+    'For paid/faster models: tell the user to paste their API key in Xroga → Integrations (encrypted vault) — NEVER commit secrets to GitHub.',
+    'Use window.XrogaLiveAi.chat / .imageUrl / .search from js/xroga-live-ai.js when present.'
   );
   return lines.join('\n');
 }

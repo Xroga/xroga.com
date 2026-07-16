@@ -32,14 +32,16 @@ const PROVIDER_FOR_ID: Record<string, string> = {
   'openrouter-free-models': 'openrouter',
   'huggingface-inference-free': 'huggingface',
   'gemini-free': 'gemini',
+  freetheai: 'openrouter',
 };
 
 /** AI integrations catalog + BYOK key connect (server vault) */
 export function AiIntegrationsPanel({ compact }: { compact?: boolean }) {
   const [catalog, setCatalog] = useState<CatalogItem[]>([]);
   const [keys, setKeys] = useState<KeyStatus[]>([]);
-  const [connecting, setConnecting] = useState<string | null>(null);
-  const [draftKey, setDraftKey] = useState('');
+  const [savingId, setSavingId] = useState<string | null>(null);
+  /** Per-row drafts so paste fields don't fight each other */
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
 
   const load = useCallback(async () => {
     try {
@@ -65,32 +67,37 @@ export function AiIntegrationsPanel({ compact }: { compact?: boolean }) {
 
   async function saveKey(item: CatalogItem) {
     const provider = PROVIDER_FOR_ID[item.id];
-    if (!provider || !draftKey.trim()) {
+    const draft = (drafts[item.id] || '').trim();
+    if (!provider || !draft) {
       toast.error('Paste your API key first');
       return;
     }
-    setConnecting(item.id);
+    setSavingId(item.id);
     try {
-      await api.integrations.saveProviderKey(provider, draftKey.trim());
-      toast.success(`${item.name} key saved to your Xroga account`);
-      setDraftKey('');
+      await api.integrations.saveProviderKey(provider, draft);
+      toast.success(`${item.name} key encrypted & saved to your Xroga account`);
+      setDrafts((d) => ({ ...d, [item.id]: '' }));
       await load();
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
-      setConnecting(null);
+      setSavingId(null);
     }
   }
 
   const show = catalog.filter(
-    (c) => c.xrogaProvided || c.freeTier || ['grok-xai', 'deepseek-api', 'groq-free', 'gemini-free'].includes(c.id)
+    (c) =>
+      c.xrogaProvided ||
+      c.freeTier ||
+      ['grok-xai', 'deepseek-api', 'groq-free', 'gemini-free', 'pollinations-text'].includes(c.id)
   );
 
   return (
     <div className={compact ? 'space-y-2' : 'space-y-3'}>
       <p className={`text-[var(--muted)] ${compact ? 'text-[9px]' : 'text-[11px]'} leading-relaxed`}>
-        Xroga uses <strong className="text-[var(--foreground)]">SearXNG + Tavily</strong> for live web research during builds.
-        Generated code can use <strong className="text-[var(--foreground)]">free endpoints</strong> first — add paid keys only when you need them.
+        <strong className="text-[var(--foreground)]">Free web search:</strong> SearXNG during builds.
+        <strong className="text-[var(--foreground)]"> Free AI in your site:</strong> Pollinations (no key) so previews work live.
+        Paste your own key below — <strong className="text-[var(--foreground)]">AES-encrypted</strong> in your account, never committed to GitHub.
       </p>
       <ul className={`space-y-2 ${compact ? 'text-[10px]' : 'text-[12px]'}`}>
         {show.map((item) => {
@@ -150,28 +157,35 @@ export function AiIntegrationsPanel({ compact }: { compact?: boolean }) {
                 <div className="flex flex-col sm:flex-row gap-1.5 pt-1">
                   <input
                     type="password"
-                    placeholder={connected ? `Replace key (${keys.find((k) => k.provider === provider)?.masked})` : 'Paste API key — stored encrypted in your account'}
+                    autoComplete="off"
+                    placeholder={
+                      connected
+                        ? `Replace key (${keys.find((k) => k.provider === provider)?.masked})`
+                        : 'Paste API key here — encrypted in your Xroga account'
+                    }
                     className="flex-1 min-w-0 rounded-md border border-[var(--card-border)] bg-[var(--background)] px-2 py-1.5 text-[11px] font-mono"
-                    value={connecting === item.id ? draftKey : ''}
-                    onChange={(e) => {
-                      setConnecting(item.id);
-                      setDraftKey(e.target.value);
-                    }}
+                    value={drafts[item.id] ?? ''}
+                    onChange={(e) => setDrafts((d) => ({ ...d, [item.id]: e.target.value }))}
                   />
                   <button
                     type="button"
-                    disabled={connecting === item.id && !draftKey.trim()}
+                    disabled={savingId === item.id || !(drafts[item.id] || '').trim()}
                     onClick={() => void saveKey(item)}
                     className="shrink-0 inline-flex items-center justify-center gap-1 rounded-md bg-[var(--accent)] text-white px-3 py-1.5 text-[10px] font-semibold disabled:opacity-50"
                   >
                     <Key className="h-3 w-3" />
-                    Save to Xroga
+                    {savingId === item.id ? 'Saving…' : 'Save encrypted'}
                   </button>
                 </div>
               )}
+              {!item.requiresApiKey && item.freeTier && !item.xrogaProvided && (
+                <p className="text-[9px] text-emerald-600/90">
+                  No key needed — Xroga wires this into your generated site so the preview works live.
+                </p>
+              )}
               {!item.freeTier && item.requiresApiKey && !connected && !item.xrogaProvided && (
                 <p className="text-[9px] text-amber-600/90">
-                  Paid API — add credits on the provider site, then save your key here. Xroga never charges your card for third-party APIs.
+                  Paid API — add credits on the provider site, then paste your key here. Encrypted vault; never pushed to GitHub.
                 </p>
               )}
             </li>
