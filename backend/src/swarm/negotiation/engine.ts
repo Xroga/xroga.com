@@ -17,6 +17,8 @@ import { mistralVerify, mistralChat } from '../../council/mistralClient.js';
 import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
 import { buildLandingFromSwarmAssembly } from './assembleLandingFromSwarm.js';
 import { generatePromptMatchedSite } from '../../lib/promptSiteScaffold.js';
+import { emitRealSiteWithDeepSeek } from '../../lib/deepseekRealSiteEmit.js';
+import { looksLikePromptScaffold } from '../../lib/siteQualityGate.js';
 import { debugCode } from '../../services/debugging/codeDebugger.js';
 import { defaultPlanForPrompt, defaultUpdatePlanForPrompt, defaultGamePlanForPrompt } from './defaultPlans.js';
 import {
@@ -131,7 +133,8 @@ import { createBuildBudget } from '../../lib/buildBudget.js';
 
 /** Max tokens per build step — no compromise on complete code output */
 const BUILD_STEP_MAX_TOKENS = 16384;
-const SIMPLE_BUILD_STEP_MAX_TOKENS = 8192;
+/** Landings with toggle+pricing need room — 8k truncated Flash into scaffold fallbacks */
+const SIMPLE_BUILD_STEP_MAX_TOKENS = 12288;
 
 function assertNotAborted(ctx: NegotiationContext) {
   if (ctx.abortSignal?.aborted) {
@@ -1527,6 +1530,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           skipConsolidate,
           // Updates: patch from assembly only — never replace the live repo with a scaffold
           allowScaffoldFallback: !isUpdateBuild,
+          tracker: usageTracker,
+          userId,
         }
       );
     } else if (featureCategory === 'code_debug') {
@@ -1540,7 +1545,39 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     console.warn('[NegotiationEngine] Feature builder:', (err as Error).message);
   }
 
-  // Never return a web build with empty HTML — that becomes "No response" after tokens were spent
+  // Reject local scaffolds — force one more DeepSeek pass so users see real AI HTML
+  if (
+    isWebBuildFinal &&
+    !isUpdateBuild &&
+    featureOutput?.type === 'landing_page' &&
+    looksLikePromptScaffold(
+      (featureOutput as { html?: string }).html || '',
+      (featureOutput as { css?: string }).css || '',
+      (featureOutput as { js?: string }).js || ''
+    )
+  ) {
+    emit(ctx, 7, xrogaPulseLine('Scaffold detected — regenerating with DeepSeek'), 'builder', todos, 'XROGA Pulse');
+    const real = await emitRealSiteWithDeepSeek(userPrompt, {
+      brief: clarifiedBrief,
+      plan: approvedPlan,
+      tracker: usageTracker,
+      userId,
+      maxTokens: 12288,
+    });
+    if (real) {
+      featureOutput = {
+        type: 'landing_page',
+        html: real.html,
+        css: real.css,
+        js: real.js,
+        heroImageUrl: '',
+        deployUrl: '',
+        summary: 'AI-generated preview (DeepSeek)',
+      };
+    }
+  }
+
+  // Empty HTML: DeepSeek emit first, scaffold only if AI unavailable
   if (
     isWebBuildFinal &&
     !isUpdateBuild &&
@@ -1548,25 +1585,46 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       featureOutput.type !== 'landing_page' ||
       !(featureOutput as { html?: string }).html?.trim())
   ) {
-    console.warn('[NegotiationEngine] Empty landing output — shipping prompt-matched scaffold');
-    const matched = generatePromptMatchedSite(userPrompt || clarifiedBrief);
-    featureOutput = {
-      type: 'landing_page',
-      html: matched.html,
-      css: matched.css,
-      js: matched.js,
-      heroImageUrl: '',
-      deployUrl: '',
-      summary: 'Sandbox preview ready (assembled from your prompt).',
-    };
-    emit(
-      ctx,
-      7,
-      xrogaPulseLine('Shipped sandbox preview from your prompt'),
-      'builder',
-      todos,
-      'XROGA Pulse'
-    );
+    console.warn('[NegotiationEngine] Empty landing — DeepSeek real emit');
+    const real = await emitRealSiteWithDeepSeek(userPrompt, {
+      brief: clarifiedBrief,
+      plan: approvedPlan,
+      tracker: usageTracker,
+      userId,
+      maxTokens: 12288,
+    });
+    if (real) {
+      featureOutput = {
+        type: 'landing_page',
+        html: real.html,
+        css: real.css,
+        js: real.js,
+        heroImageUrl: '',
+        deployUrl: '',
+        summary: 'AI-generated preview (DeepSeek)',
+      };
+      emit(ctx, 7, xrogaPulseLine('Shipped DeepSeek-generated preview'), 'builder', todos, 'XROGA Pulse');
+    } else {
+      console.warn('[NegotiationEngine] DeepSeek emit failed — last-resort scaffold');
+      const matched = generatePromptMatchedSite(userPrompt || clarifiedBrief);
+      featureOutput = {
+        type: 'landing_page',
+        html: matched.html,
+        css: matched.css,
+        js: matched.js,
+        heroImageUrl: '',
+        deployUrl: '',
+        summary: 'Fallback scaffold (AI emit unavailable)',
+      };
+      emit(
+        ctx,
+        7,
+        xrogaPulseLine('AI emit unavailable — shipped fallback scaffold'),
+        'builder',
+        todos,
+        'XROGA Pulse'
+      );
+    }
   }
 
   const projectName = parseProjectName(userPrompt, clarifiedBrief);
@@ -1955,14 +2013,14 @@ export async function runEscapePod(ctx: NegotiationContext): Promise<Negotiation
   const plan = defaultPlanForPrompt(ctx.userPrompt).join('\n');
   let featureOutput: FeatureOutput | undefined;
   try {
-    // Prefer assembler/template landing page — Escape Pod must never return chat essays.
+    // Prefer real DeepSeek HTML even in Escape Pod — scaffold only if AI is down
     featureOutput = await buildLandingFromSwarmAssembly(
       '',
       ctx.userPrompt,
       plan,
       ctx.userPrompt,
       'website',
-      { skipConsolidate: true }
+      { skipConsolidate: true, allowScaffoldFallback: true, userId: ctx.userId }
     );
   } catch (err) {
     console.warn('[EscapePod] landing assembly failed:', (err as Error).message);

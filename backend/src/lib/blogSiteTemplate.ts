@@ -100,8 +100,11 @@ export function looksLikeGenericFallbackSite(html: string, css = ''): boolean {
   if (/Built by Xroga AI Swarm/i.test(blob)) return true;
   if (/Ready to begin\?/i.test(blob) && /Contact Us/i.test(blob)) return true;
   if (/Get Started/i.test(html) && /Xroga/i.test(html) && /Fast<\/h3>/i.test(html)) return true;
-  // Truncated prompt dumped as hero title
+  // Truncated / raw prompt dumped as hero title
   if (/<h1[^>]*>\s*Build a simple blog/i.test(html)) return true;
+  if (/<h1[^>]*>\s*Build a modern Landing/i.test(html)) return true;
+  if (/<h1[^>]*>\s*Modern Landing Page called/i.test(html)) return true;
+  if (/Custom site\s*·/i.test(html) && /Layout seed keeps each build/i.test(html)) return true;
   if (/linear-gradient\(135deg,\s*#7c3aed/i.test(css || blob) && /Zero-defect|Lightning-fast/i.test(blob)) {
     return true;
   }
