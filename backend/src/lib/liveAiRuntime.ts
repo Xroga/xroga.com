@@ -5,6 +5,7 @@
  */
 
 import { detectAiIntegrationNeeds } from './aiEndpointCatalog.js';
+import { detectFieldDomains, detectFieldEndpoints } from './fieldEndpointCatalog.js';
 import type { ProjectFile } from '../services/integrations/githubDeploy.js';
 
 /** Browser client — works on GitHub Pages / Vercel static / Xroga sandbox. */
@@ -104,6 +105,39 @@ export function liveAiBrowserClientSource(): string {
     global.speechSynthesis.speak(u);
   };
 
+  /** Live crypto prices — CoinGecko free, no API key */
+  X.cryptoPrices = function (ids) {
+    var list = (ids && ids.length ? ids : ['bitcoin', 'ethereum', 'solana', 'arbitrum']).join(',');
+    var url = 'https://api.coingecko.com/api/v3/simple/price?ids=' + encodeURIComponent(list)
+      + '&vs_currencies=usd&include_24hr_change=true';
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('CoinGecko ' + r.status);
+      return r.json();
+    });
+  };
+
+  X.cryptoMarkets = function (n) {
+    var url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page='
+      + (n || 8) + '&page=1&sparkline=false';
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('CoinGecko markets ' + r.status);
+      return r.json();
+    });
+  };
+
+  /** Open-Meteo weather — no key */
+  X.weather = function (lat, lon) {
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + (lat || 40.71)
+      + '&longitude=' + (lon || -74.01) + '&current_weather=true';
+    return fetch(url).then(function (r) { return r.json(); });
+  };
+
+  /** Frankfurter FX — no key */
+  X.fxRates = function (base) {
+    return fetch('https://api.frankfurter.app/latest?from=' + encodeURIComponent(base || 'USD'))
+      .then(function (r) { return r.json(); });
+  };
+
   global.XrogaLiveAi = X;
 })(typeof window !== 'undefined' ? window : globalThis);
 `;
@@ -158,7 +192,10 @@ export function liveChatbotFormJs(brand: string): string {
 export function needsLiveAiRuntime(prompt: string): boolean {
   const t = prompt.toLowerCase();
   if (detectAiIntegrationNeeds(prompt).length) return true;
-  return /\b(chatbot|ai assistant|search|image gen|voice|llm|gpt)\b/.test(t);
+  if (detectFieldEndpoints(prompt).some((e) => e.freeTier && !e.requiresApiKey)) return true;
+  const domains = detectFieldDomains(prompt);
+  if (domains.some((d) => d !== 'general')) return true;
+  return /\b(chatbot|ai assistant|search|image gen|voice|llm|gpt|crypto|dashboard)\b/.test(t);
 }
 
 /** Append free AI client + optional feature hooks into site JS. */
@@ -187,6 +224,43 @@ document.getElementById('xroga-search-form')?.addEventListener('submit', async (
     : '<p>No results</p>';
 });`);
   }
+  // Auto-bind crypto dashboards to live CoinGecko if DOM markers exist
+  if (detectFieldDomains(prompt).includes('crypto')) {
+    extras.push(`
+(async function xrogaLiveCrypto() {
+  if (!window.XrogaLiveAi?.cryptoPrices) return;
+  try {
+    const data = await window.XrogaLiveAi.cryptoPrices(['bitcoin','ethereum','solana','arbitrum']);
+    const map = { bitcoin: 'BTC', ethereum: 'ETH', solana: 'SOL', arbitrum: 'ARB' };
+    const tbody = document.querySelector('#markets tbody') || document.querySelector('.table tbody');
+    if (tbody) {
+      tbody.innerHTML = Object.keys(map).map((id) => {
+        const row = data[id]; if (!row) return '';
+        const ch = Number(row.usd_24h_change || 0);
+        const cls = ch >= 0 ? 'up' : 'down';
+        return '<tr><td><strong>' + map[id] + '</strong></td><td>$' + Number(row.usd).toLocaleString(undefined,{maximumFractionDigits:2}) + '</td><td class="' + cls + '">' + (ch>=0?'+':'') + ch.toFixed(2) + '%</td></tr>';
+      }).join('');
+    }
+    const btc = data.bitcoin?.usd;
+    const kpi = document.querySelector('.kpi strong');
+    if (kpi && btc) kpi.textContent = '$' + Number(btc).toLocaleString(undefined,{maximumFractionDigits:0});
+    document.querySelectorAll('[data-live-price]').forEach((el) => {
+      const id = el.getAttribute('data-live-price');
+      if (id && data[id]?.usd != null) el.textContent = '$' + Number(data[id].usd).toLocaleString();
+    });
+  } catch (e) { console.warn('[XrogaLiveAi] crypto prices', e); }
+})();`);
+  }
+  if (detectFieldDomains(prompt).includes('weather')) {
+    extras.push(`
+(async function xrogaLiveWeather() {
+  try {
+    const w = await window.XrogaLiveAi?.weather?.();
+    const el = document.getElementById('xroga-weather') || document.querySelector('[data-live-weather]');
+    if (el && w?.current_weather) el.textContent = w.current_weather.temperature + '°C · wind ' + w.current_weather.windspeed + ' km/h';
+  } catch (e) { console.warn('[XrogaLiveAi] weather', e); }
+})();`);
+  }
   return `${client}\n\n${js}\n\n${extras.join('\n')}`;
 }
 
@@ -199,26 +273,28 @@ export function liveAiProjectFiles(prompt: string): ProjectFile[] {
     },
     {
       path: 'AI_LIVE.md',
-      content: `# Live free AI in this project
+      content: `# Live free APIs (auto-integrated by field)
 
-This site ships with **working free AI** so the preview is live:
+Xroga detects your product field (crypto, weather, AI chat, …) and wires **free live endpoints** so the preview works with real data.
 
-| Feature | Free endpoint | API key? |
-|---------|---------------|----------|
-| Chat / text | [Pollinations](https://pollinations.ai) text API | No |
+| Field | Free endpoint | API key? |
+|-------|---------------|----------|
+| Crypto prices | [CoinGecko](https://www.coingecko.com/en/api) \`simple/price\` | No |
+| Chat / text | [Pollinations](https://pollinations.ai) | No |
 | Images | \`image.pollinations.ai\` | No |
+| Weather | [Open-Meteo](https://open-meteo.com) | No |
+| FX rates | Frankfurter | No |
+| Web search | DuckDuckGo (+ Xroga SearXNG on xroga.com) | No |
 | Voice | Browser Web Speech API | No |
-| Web search | DuckDuckGo Instant Answer (+ Xroga SearXNG when previewed on xroga.com) | No |
+
+Use \`window.XrogaLiveAi.cryptoPrices()\`, \`.chat()\`, \`.weather()\`, \`.search()\`.
 
 ## Bring your own key (encrypted)
 
 1. Open **Xroga → Integrations → AI**
-2. Paste your Groq / Gemini / OpenRouter / DeepSeek key
-3. Keys are **AES-encrypted in your Xroga account** — never committed to GitHub
-4. On xroga.com previews, chat can use your vault key via \`/api/integrations/live-ai/chat\`
-5. For Vercel production with your key: copy vars from \`.env.example\` into Vercel → Settings → Environment Variables
-
-Xroga also runs **free SearXNG web research** during builds (platform-side).
+2. Paste Groq / Gemini / OpenRouter / DeepSeek key
+3. **AES-encrypted** in your account — never committed to GitHub
+4. Preview on xroga.com can use \`/api/integrations/live-ai/chat\` with your vault key
 `,
     },
   ];
