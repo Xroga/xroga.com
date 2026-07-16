@@ -83,9 +83,18 @@ function pickBrand(prompt: string, seed: number, fallbacks: string[]): string {
 
 function taglineFromPrompt(prompt: string, seed: number, defaults: string[]): string {
   const raw = cleanPrompt(prompt);
-  if (raw.length > 24 && raw.length < 160 && !/^build\b/i.test(raw)) return raw;
-  const short = raw.replace(/^(build|create|make|design)\s+(me\s+|a\s+|an\s+)*/i, '').trim();
-  if (short.length > 12 && short.length < 120) return short.charAt(0).toUpperCase() + short.slice(1);
+  // NEVER use the full build instruction as the H1 (users screenshot this as "fake AI")
+  if (/^(build|create|make|design)\b/i.test(raw)) {
+    const brand = pickBrand(prompt, seed, ['HiBee', 'Lumen', 'Harbor', 'Brightside']);
+    const benefit =
+      /\bpricing|ai\b/i.test(raw)
+        ? `${brand} — AI plans with clarity`
+        : /\bnight|day|toggle|dark\b/i.test(raw)
+          ? `${brand} — day & night, beautifully`
+          : defaults[seed % defaults.length]!;
+    return benefit;
+  }
+  if (raw.length > 24 && raw.length < 80 && !/\blanding page\b/i.test(raw)) return raw;
   return defaults[seed % defaults.length]!;
 }
 

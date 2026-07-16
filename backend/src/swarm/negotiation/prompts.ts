@@ -78,6 +78,9 @@ CRITICAL RULES:
 - FREE LIVE AI: for chatbots/AI features, call window.XrogaLiveAi.chat (Pollinations — no key) so preview works. Never hardcode user secrets; say paste keys in Xroga Integrations (encrypted).
 - FIELD APIs (auto): crypto → fetch CoinGecko simple/price live into KPI/tables; weather → Open-Meteo; FX → Frankfurter. Wire on page load with try/catch — user must see LIVE data in preview.
 - NEVER output the generic stub with "Fast / Modern / Reliable" or "Built by Xroga AI Swarm". NEVER put the raw user prompt into an H1.
+- NEVER output scaffold markers: "Custom site ·", "Layout seed keeps each build", "Offer 1 tailored to".
+- Landing pages that ask for night/day or dark mode MUST include a working theme toggle + JS.
+- Landing pages that ask for pricing / AI plans MUST include a #pricing section with 3 plan cards and prices.
 - For games, apps, or non-HTML stacks: use the best language/framework for the task (Python, JavaScript, TypeScript, etc.) and output complete runnable code.`;
 
 export const PHASE_3_UPDATE_EXECUTE = `You are XROGA Architect (DeepSeek Code). The user already has a live project and wants TARGETED updates only.
