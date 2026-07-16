@@ -65,11 +65,12 @@ function repoLabel(full: string): string {
  */
 export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const router = useRouter();
-  const { restoreTerminalSession, messages, sessionId, prompt } = useTerminalChat();
+  const { restoreTerminalSession, startNewChat, messages, sessionId, prompt } = useTerminalChat();
   const [entries, setEntries] = useState<TerminalHistoryEntry[]>([]);
   const [cloudSessions, setCloudSessions] = useState<CloudTerminalSessionSummary[]>([]);
   const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
-  const [filterRecent, setFilterRecent] = useState(true);
+  /** Default off so every used repo stays visible; filter trims to recent when toggled. */
+  const [filterRecent, setFilterRecent] = useState(false);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -92,35 +93,49 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         ? synced
         : loadTerminalHistory().filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/'));
 
-    // Live chat must appear under the selected repo even if history write lagged.
-    if (selected?.repo?.includes('/') && messages.length > 0 && sessionId) {
-      const n = allocateTerminalNumber(sessionId, selected.repo);
-      const live: TerminalHistoryEntry = {
-        id: sessionId,
-        title: cloudTerminalLabel(n),
-        preview: prompt.slice(0, 200),
-        prompt,
-        messages,
-        kind: 'chat',
-        status: 'active',
-        githubRepoName: selected.repo,
-        githubBranch: selected.branch || 'main',
-        messageCount: messages.length,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      if (!nextEntries.some((e) => e.id === sessionId)) {
-        nextEntries = [live, ...nextEntries];
-      } else {
-        nextEntries = nextEntries.map((e) =>
-          e.id === sessionId
-            ? {
-                ...e,
-                ...live,
-                createdAt: e.createdAt || live.createdAt,
-              }
-            : e
-        );
+    // Live chat appears under its sticky repo (or selected if still unbound).
+    // Never rewrite an existing #N onto a newly selected repo.
+    if (messages.length > 0 && sessionId) {
+      const hist = loadTerminalHistory().find((e) => e.id === sessionId);
+      const bindRepo =
+        (hist?.githubRepoName?.includes('/') ? hist.githubRepoName : null) ??
+        (selected?.repo?.includes('/') ? selected.repo : null);
+      if (bindRepo) {
+        const n = allocateTerminalNumber(sessionId, bindRepo);
+        const live: TerminalHistoryEntry = {
+          id: sessionId,
+          title: cloudTerminalLabel(n),
+          preview: prompt.slice(0, 200),
+          prompt,
+          messages,
+          kind: hist?.kind ?? 'chat',
+          status: 'active',
+          githubRepoName: bindRepo,
+          githubBranch: hist?.githubBranch || selected?.branch || 'main',
+          messageCount: messages.length,
+          createdAt: hist?.createdAt ?? new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        if (!nextEntries.some((e) => e.id === sessionId)) {
+          nextEntries = [live, ...nextEntries];
+        } else {
+          nextEntries = nextEntries.map((e) =>
+            e.id === sessionId
+              ? {
+                  ...e,
+                  messages: live.messages,
+                  prompt: live.prompt,
+                  preview: live.preview,
+                  messageCount: live.messageCount,
+                  updatedAt: live.updatedAt,
+                  status: 'active',
+                  // Keep sticky repo + #N title from history
+                  githubRepoName: e.githubRepoName || live.githubRepoName,
+                  title: e.title.startsWith('#') ? e.title : live.title,
+                }
+              : e
+          );
+        }
       }
     }
 
@@ -270,15 +285,22 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           .slice(0, 24),
       }));
 
+    // Newest activity first; currently selected repo stays at the top.
     foldersList.sort((a, b) => {
       if (selectedRepo && a.key === selectedRepo) return -1;
       if (selectedRepo && b.key === selectedRepo) return 1;
-      const aT = Date.parse(a.sessions[a.sessions.length - 1]?.updatedAt ?? '0');
-      const bT = Date.parse(b.sessions[b.sessions.length - 1]?.updatedAt ?? '0');
+      const aT = Math.max(
+        0,
+        ...a.sessions.map((s) => Date.parse(s.updatedAt) || 0)
+      );
+      const bT = Math.max(
+        0,
+        ...b.sessions.map((s) => Date.parse(s.updatedAt) || 0)
+      );
       return bT - aT;
     });
 
-    if (filterRecent) foldersList = foldersList.slice(0, 12);
+    if (filterRecent) foldersList = foldersList.slice(0, 40);
     return foldersList;
   }, [entries, cloudSessions, filterRecent, selectedRepo]);
 
@@ -376,10 +398,21 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       const latest =
         folder.sessions[folder.sessions.length - 1] || folder.sessions[0];
       const branch = latest?.githubBranch || getSelectedRepoContext()?.branch || 'main';
+      const prevRepo = getSelectedRepoContext()?.repo;
+
+      // Switching folders mid-chat: flush old #N (sticky), then open this folder's terminal.
+      if (
+        messages.length > 0 &&
+        prevRepo?.includes('/') &&
+        prevRepo !== folder.key
+      ) {
+        startNewChat();
+      }
+
       saveSelectedRepoContext({ repo: folder.key, branch });
       notifyGithubRepoContext(folder.key, branch);
 
-      // Repo selected but no #1 yet — stay on fresh workspace
+      // Repo selected but no #1 yet — stay on fresh workspace (old repos stay listed)
       if (!folder.sessions.length) {
         router.push('/workspace');
         return;

@@ -77,10 +77,15 @@ export function registerRepoSession(opts: {
   const id = opts.sessionId?.trim() || `repo-${repo}-${opts.title.slice(0, 24)}`;
   const existing = loadRaw();
   const prev = existing.find((e) => e.id === id || (e.sessionId && e.sessionId === opts.sessionId));
+  // Sticky: never move an indexed session to a different repo folder.
+  const boundRepo =
+    prev?.githubRepoName?.includes('/') && prev.githubRepoName !== repo
+      ? prev.githubRepoName
+      : repo;
   const entry: RepoSessionIndexEntry = {
     id: prev?.id ?? id,
-    title: (opts.title || repo).slice(0, 80),
-    githubRepoName: repo,
+    title: (opts.title || boundRepo).slice(0, 80),
+    githubRepoName: boundRepo,
     githubBranch: opts.githubBranch?.trim() || prev?.githubBranch || 'main',
     updatedAt: now,
     createdAt: prev?.createdAt ?? now,

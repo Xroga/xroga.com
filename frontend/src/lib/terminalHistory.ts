@@ -163,16 +163,23 @@ export function saveTerminalHistorySession(opts: {
   const kind = detectKind(opts.messages, titlePrompt);
   const status = opts.status ?? detectStatus(opts.messages, kind);
 
-  // Prefer: explicit force → selected/meta → sticky existing session
-  const forcedRepo = opts.forceRepo?.includes('/') ? opts.forceRepo : undefined;
+  // Sticky: once a session is bound to a repo, never relocate it when the user
+  // selects a different repo (old #1 must stay under the old folder).
+  const stickyRepo = existing?.githubRepoName?.includes('/') ? existing.githubRepoName : undefined;
+  const forcedRepo =
+    !stickyRepo && opts.forceRepo?.includes('/') ? opts.forceRepo : undefined;
   const githubRepoName =
-    forcedRepo ?? meta.githubRepoName ?? existing?.githubRepoName ?? getSelectedRepoContext()?.repo;
-  const githubBranch =
-    opts.forceBranch?.trim() ||
-    meta.githubBranch ||
-    existing?.githubBranch ||
-    getSelectedRepoContext()?.branch ||
-    'main';
+    stickyRepo ??
+    forcedRepo ??
+    (meta.githubRepoName?.includes('/') ? meta.githubRepoName : undefined) ??
+    getSelectedRepoContext()?.repo;
+  const githubBranch = stickyRepo
+    ? existing?.githubBranch || opts.forceBranch?.trim() || meta.githubBranch || 'main'
+    : opts.forceBranch?.trim() ||
+      meta.githubBranch ||
+      existing?.githubBranch ||
+      getSelectedRepoContext()?.branch ||
+      'main';
 
   // Assign #1 / #2 before persist so sidebar + storage use the numbered title.
   const terminalNumber =
