@@ -458,11 +458,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     hardMs: buildBudget.limits.hardMs,
   });
   const currentMessage = routingPrompt(userPrompt);
-  const githubConnectedEarly = await isGitHubConnected(userId).catch(() => false);
   const hasSelectedRepo = Boolean(ctx.githubTargetRepo?.includes('/'));
+  // Optimistic todos so UI paints before GitHub status round-trip
   const todos = createTodoState(userPrompt, {
     hasSelectedRepo,
-    githubConnected: githubConnectedEarly,
+    githubConnected: hasSelectedRepo,
   });
   const buildState = new BuildState();
   const businessLabel = inferBusinessLabel(userPrompt);
@@ -484,7 +484,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     );
   };
 
+  // First SSE progress ASAP — do not wait on GitHub connectivity
   emit(ctx, 0, BRAND.phase0.scanning(businessLabel), 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
+
+  const githubConnectedEarly = await isGitHubConnected(userId).catch(() => false);
 
   // Soft gate: always BUILD first. Never leave UI stuck on "Connect GitHub".
   const githubConnected = githubConnectedEarly;

@@ -1,30 +1,25 @@
 export type ThemeId = 'image' | 'white' | 'black' | 'gray';
 
+/** Compressed WebP slideshow — never mount multi‑MB PNGs */
 export const DESKTOP_BG_SLIDESHOW = [
-  '/backgrounds/bg-desktop-1-infinity.png',
-  '/backgrounds/bg-desktop-2-earth.png',
-  '/backgrounds/bg-desktop-4-blackhole-nebula.png',
+  '/backgrounds/bg-desktop-1-infinity.webp',
+  '/backgrounds/bg-desktop-2-earth.webp',
+  '/backgrounds/bg-desktop-4-blackhole-nebula.webp',
 ] as const;
 
 export const SLIDESHOW_INTERVAL_MS = 8000;
 
 export const DESKTOP_BG = DESKTOP_BG_SLIDESHOW[0];
-export const MOBILE_BG =
-  'https://i.pinimg.com/736x/49/17/78/491778bbd33b7d4b832c8f06415d4e33.jpg';
+export const MOBILE_BG = '/backgrounds/bg-desktop-1-infinity.webp';
 
-/** Dashboard header logo (outside sidebar) */
-export const HEADER_LOGO_URL =
-  'https://i.postimg.cc/pLxrn9yP/Green-Minimalist-Summer-Big-Sale-Medium-Banner-10-removebg-preview-(1).png';
-
-/** Homepage hero logo */
-export const HOMEPAGE_LOGO_URL =
-  'https://i.postimg.cc/pLxrn9yP/Green-Minimalist-Summer-Big-Sale-Medium-Banner-10-removebg-preview-(1).png';
-
-/** Sidebar + AI response avatar logo */
-export const SIDEBAR_LOGO_URL =
-  'https://i.postimg.cc/bJnL5jV7/Red-and-Blue-Modern-X-letter-Digital-Marketing-Logo-1-removebg-preview-1.png';
-
-export const AI_RESPONSE_LOGO_URL = SIDEBAR_LOGO_URL;
+/**
+ * Local brand marks (tiny PNGs). Remote Postimg megabyte logos were blanking
+ * AI response avatars until a 1MB download finished.
+ */
+export const HEADER_LOGO_URL = '/brand/xroga-mark.png';
+export const HOMEPAGE_LOGO_URL = '/brand/xroga-mark-192.png';
+export const SIDEBAR_LOGO_URL = '/brand/xroga-mark.png';
+export const AI_RESPONSE_LOGO_URL = '/brand/xroga-mark.png';
 
 export type TerminalSkin = 'dark' | 'light' | 'light-grid' | 'gray' | 'amoled';
 

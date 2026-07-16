@@ -48,7 +48,7 @@ interface VoiceTalkContextValue {
 
 const VoiceTalkContext = createContext<VoiceTalkContextValue | null>(null);
 
-const XROGA_LOGO = 'https://i.postimg.cc/9Mfm1jdK/xrogaai.png';
+const XROGA_LOGO = '/brand/xroga-mark.png';
 export { XROGA_LOGO };
 
 function voiceWsUrl(token: string): string {

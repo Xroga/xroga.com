@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 
 export const SITE_URL = 'https://xroga.com';
 export const SITE_NAME = 'Xroga AI';
-export const FAVICON_URL = 'https://i.postimg.cc/9Mfm1jdK/xrogaai.png';
-export const FAVICON_LOCAL = '/favicon.png';
+export const FAVICON_URL = 'https://xroga.com/brand/xroga-mark-192.png';
+export const FAVICON_LOCAL = '/favicon-32.png';
 
 export const DEFAULT_DESCRIPTION =
   'Xroga AI is the AI Swarm Operating System — 710+ integrations, multi-agent Architect·Builder·Reviewer·QA workflows, browser automation, and token-based billing. Built by Muhammad Ibrahim, 19, from Pakistan.';

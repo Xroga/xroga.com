@@ -106,13 +106,11 @@ export const useProjectWorkspaceStore = create<ProjectWorkspaceState>()(
     }),
     {
       name: 'xroga-project-workspace',
+      // Never persist full HTML/CSS/JS in localStorage — that bloated refresh + corrupted sessions
       partialize: (s) => ({
         repo: s.repo,
         branch: s.branch,
         projectName: s.projectName,
-        html: s.html,
-        css: s.css,
-        js: s.js,
         deployUrl: s.deployUrl,
         githubRepoUrl: s.githubRepoUrl,
         commitSha: s.commitSha,
