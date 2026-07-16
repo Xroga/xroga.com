@@ -99,7 +99,7 @@ async function tryRealDeepSeekSite(
   clarifiedBrief: string,
   approvedPlan: string,
   heroImageUrl: string,
-  opts?: { tracker?: BuildUsageTracker; userId?: string }
+  opts?: { tracker?: BuildUsageTracker; userId?: string; integrationContext?: string }
 ): Promise<LandingPageOutput | null> {
   console.info('[assembleLanding] requesting real DeepSeek site emit (not scaffold)');
   const real = await emitRealSiteWithDeepSeek(userPrompt, {
@@ -108,6 +108,7 @@ async function tryRealDeepSeekSite(
     tracker: opts?.tracker,
     userId: opts?.userId,
     maxTokens: 12288,
+    integrationContext: opts?.integrationContext,
   });
   if (!real) return null;
   const patched = await patchMissingSiteFeatures(userPrompt, real, {
@@ -123,12 +124,16 @@ async function consolidateWithDeepSeek(
   userPrompt: string,
   approvedPlan: string,
   clarifiedBrief: string,
-  kind: 'website' | 'game' = 'website'
+  kind: 'website' | 'game' = 'website',
+  integrationContext?: string
 ): Promise<string> {
-  const user = `Brief:\n${clarifiedBrief}\n\nOriginal request:\n${userPrompt}\n\nApproved plan:\n${approvedPlan}\n\nVerified step code:\n${assembledCode}
+  const integrations = integrationContext?.trim()
+    ? `\n\nLIVE INTEGRATIONS (wire into final JS):\n${integrationContext.trim().slice(0, 3500)}`
+    : '';
+  const user = `Brief:\n${clarifiedBrief}\n\nOriginal request:\n${userPrompt}\n\nApproved plan:\n${approvedPlan}\n\nVerified step code:\n${assembledCode}${integrations}
 
-CRITICAL: Emit the product the user asked for. Crypto/dashboard → dashboard UI. SaaS → SaaS. Blog ONLY if they asked for a blog. Never rewrite a dashboard into a blog.
-NEVER put the raw user prompt in an H1. NEVER output "Custom site ·" or "Layout seed" scaffolds.`;
+CRITICAL: Emit the product the user asked for. Crypto/dashboard → dashboard UI. Chatbot → chat UI. SaaS → SaaS. Blog ONLY if they asked for a blog. Never rewrite a dashboard into a blog.
+NEVER put the raw user prompt in an H1. NEVER output "Custom site ·", "Escape Pod", or "Layout seed" scaffolds.`;
   const isCrm = /\b(crm|contacts|deals pipeline|sales pipeline|sales dashboard)\b/i.test(userPrompt);
   const systemPrompt =
     kind === 'game' ? PHASE_7_GAME_EMIT : isCrm ? PHASE_7_CRM_EMIT : PHASE_7_EMIT;
@@ -166,6 +171,7 @@ export async function buildLandingFromSwarmAssembly(
     allowScaffoldFallback?: boolean;
     tracker?: BuildUsageTracker;
     userId?: string;
+    integrationContext?: string;
   }
 ): Promise<LandingPageOutput> {
   let site = parseAssembledProject(assembledCode);
@@ -189,7 +195,11 @@ export async function buildLandingFromSwarmAssembly(
       clarifiedBrief,
       approvedPlan,
       heroImageUrl,
-      { tracker: opts.tracker, userId: opts.userId }
+      {
+        tracker: opts.tracker,
+        userId: opts.userId,
+        integrationContext: opts.integrationContext,
+      }
     );
     if (real) return real;
 
@@ -228,7 +238,8 @@ export async function buildLandingFromSwarmAssembly(
       userPrompt,
       approvedPlan,
       clarifiedBrief,
-      kind
+      kind,
+      opts?.integrationContext
     );
     const consolidatedSite = parseAssembledProject(consolidated);
     if (isUsableModelSite(consolidatedSite)) {
@@ -252,7 +263,11 @@ export async function buildLandingFromSwarmAssembly(
     clarifiedBrief,
     approvedPlan,
     heroImageUrl,
-    { tracker: opts?.tracker, userId: opts?.userId }
+    {
+      tracker: opts?.tracker,
+      userId: opts?.userId,
+      integrationContext: opts?.integrationContext,
+    }
   );
   if (real) return real;
 

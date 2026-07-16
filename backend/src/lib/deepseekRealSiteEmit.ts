@@ -31,7 +31,7 @@ HARD RULES:
 - Real product UI — modern typography, CSS variables, flex/grid, hover states, mobile @media.
 - EVERY control the user asked for must work (send, theme toggle, swap preview, nav) — no dead buttons.
 - NEVER put the raw user prompt into an H1. Invent a short brand headline.
-- NEVER output scaffold markers like "Custom site ·", "Layout seed", "Offer 1 tailored to", "OrbitSwap demo wallet".
+- NEVER output scaffold markers like "Custom site ·", "Layout seed", "Offer 1 tailored to", "OrbitSwap demo wallet", "Escape Pod".
 - NEVER output essays, SEO tips, or "here is how to build".
 - NEVER use emoji characters in HTML/CSS/JS. Use Lucide icons only:
   <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
@@ -39,6 +39,7 @@ HARD RULES:
 - NEVER set CTA href to https://xroga.com — use #contact, #pricing, or button handlers.
 - Dark/light / night/day → id="theme-toggle" + data-theme + localStorage persist.
 - Pricing / AI plans → #pricing with 3 real plan cards.
+- When LIVE INTEGRATIONS are provided below, wire those free endpoints in script.js on load (try/catch + graceful fallback). Prefer window.XrogaLiveAi.chat for chatbots and CoinGecko for crypto.
 - Complete working JS — no "// TODO", no "...", no truncated blocks.`;
 
 export async function emitRealSiteWithDeepSeek(
@@ -50,10 +51,15 @@ export async function emitRealSiteWithDeepSeek(
     userId?: string;
     maxTokens?: number;
     fixMissing?: string[];
+    /** Free AI / field API endpoint research — must be wired into generated JS */
+    integrationContext?: string;
   }
 ): Promise<{ html: string; css: string; js: string } | null> {
   const fixNote = opts?.fixMissing?.length
     ? `\n\nMISSING FEATURES TO ADD NOW: ${opts.fixMissing.join(', ')}. Keep the rest of the site.`
+    : '';
+  const integrations = opts?.integrationContext?.trim()
+    ? `\n\nLIVE INTEGRATIONS (wire into script.js — free endpoints first):\n${opts.integrationContext.trim().slice(0, 3500)}`
     : '';
 
   const user = `User request:\n${userPrompt.slice(0, 2000)}
@@ -61,7 +67,7 @@ export async function emitRealSiteWithDeepSeek(
 Brief:\n${(opts?.brief || userPrompt).slice(0, 1500)}
 
 Plan:\n${(opts?.plan || 'One-shot complete site').slice(0, 1200)}
-${fixNote}
+${fixNote}${integrations}
 
 Build the FULL site now as three fenced blocks (html, css, javascript).`;
 

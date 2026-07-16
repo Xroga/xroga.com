@@ -28,7 +28,10 @@ Output a "Fully Clarified Project Brief" with:
 
 Output the brief directly — no questions, no preamble. YES to every build request.`;
 
-export const PHASE_0_GROQ_SUMMARIZE = `Summarize the Fully Clarified Project Brief in under 50 words. Output plain text only.`;
+export const PHASE_0_GROQ_SUMMARIZE = `Summarize the Fully Clarified Project Brief in under 50 words.
+Preserve: product type, project name, and must-have UI features (e.g. #messages/#chat-form for chatbot; CoinGecko KPIs + swap for crypto).
+Do NOT rewrite a chatbot/crypto/SaaS brief into Homepage→Menu→Gallery→Contact.
+Output plain text only. Live API integration lines may be appended separately — do not invent restaurant features.`;
 
 export const PHASE_0_UPDATE_BRIEF = `You are XROGA Visionary. The user already has a live website and wants updates.
 
