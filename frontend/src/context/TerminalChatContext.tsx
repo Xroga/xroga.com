@@ -35,7 +35,7 @@ import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { seedBuildTodos } from '@/lib/buildDefaultTodos';
 import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
-import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
+import { planningStepsForPrompt, startPipelineMessageForPrompt } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import { getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
 import { isKeepaliveActivity } from '@/lib/buildLiveStatus';
@@ -747,29 +747,26 @@ export function TerminalChatProvider({
   }, [sessionReady, prompt, messages, incognito]);
 
   /**
-   * Stall guard: if no real todo/phase progress for ~100s (or wall >7m),
-   * abort the stream so fake busy UI cannot burn API credits.
+   * Soft stall WARNING only — never abort mid-build.
+   * Aborting at 150s was cancelling real DeepSeek calls after credits were spent
+   * (HelpBee screenshot). Server budget ships early; client must not kill paid work.
    */
   useEffect(() => {
     if (!loading || !heavyBuildActive) return;
-    // DeepSeek Pro can take up to ~120s per call — don't abort mid-call
-    const STALL_MS = 150_000;
-    const HARD_MS = 7 * 60_000;
+    const WARN_MS = 3 * 60_000;
     const started = thinkingStartedAt ?? Date.now();
-    if (!lastRealProgressAtRef.current) {
-      lastRealProgressAtRef.current = started;
-    }
+    let warned = false;
     const id = window.setInterval(() => {
-      if (!heavyBuildActiveRef.current || !abortRef.current) return;
-      const now = Date.now();
-      const sinceReal = now - (lastRealProgressAtRef.current || started);
-      const wall = now - started;
-      if (sinceReal < STALL_MS && wall < HARD_MS) return;
-      stallAbortRef.current = true;
-      console.warn('[chat] auto-stop stalled build', { sinceReal, wall });
-      toast.error('Build stalled — stopped to protect your API credits');
-      abortRef.current.abort();
-    }, 5000);
+      if (!heavyBuildActiveRef.current) return;
+      const wall = Date.now() - started;
+      if (!warned && wall >= WARN_MS) {
+        warned = true;
+        toast('Still building — waiting on AI (do not stop unless you want to cancel)', {
+          icon: '⏳',
+          duration: 6000,
+        });
+      }
+    }, 10_000);
     return () => window.clearInterval(id);
   }, [loading, heavyBuildActive, thinkingStartedAt]);
 
@@ -1389,12 +1386,14 @@ export function TerminalChatProvider({
         buildTodosSeedRef.current = seededTodos;
         liveBuildSnapshotRef.current.todos = seededTodos;
         setSwarmTodos(seededTodos);
-        setPipelineMessage('XROGA Architect — planning architecture, database & API routes…');
-        thinkingStepsRef.current = [...BUILD_PLANNING_STEPS];
-        setThinkingSteps([...BUILD_PLANNING_STEPS]);
+        const startMsg = startPipelineMessageForPrompt(displayPrompt);
+        const planSteps = planningStepsForPrompt(displayPrompt);
+        setPipelineMessage(startMsg);
+        thinkingStepsRef.current = [...planSteps];
+        setThinkingSteps([...planSteps]);
         const peakLine = getDeepSeekPeakStatus().nudge;
         setSwarmActivityLog([
-          'XROGA Architect — analyzing your project and planning the build…',
+          startMsg,
           ...(peakLine ? [peakLine] : []),
         ]);
         lastActivityAtRef.current = Date.now();

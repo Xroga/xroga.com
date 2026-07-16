@@ -4,8 +4,11 @@
 
 import { seedUserTodos, type UserTodoItem } from './buildUserTodos.js';
 
-export function createTodoState(userPrompt: string) {
-  const items: UserTodoItem[] = seedUserTodos(userPrompt);
+export function createTodoState(
+  userPrompt: string,
+  opts?: { hasSelectedRepo?: boolean; githubConnected?: boolean }
+) {
+  const items: UserTodoItem[] = seedUserTodos(userPrompt, opts);
   let analysis = '';
   let codeGenBaseLabel = items.find((t) => t.id === 'code-gen')?.label ?? 'Generate code step by step';
   let codeStepCurrent = 0;
