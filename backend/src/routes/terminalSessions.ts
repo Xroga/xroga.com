@@ -177,18 +177,24 @@ router.put('/:id', async (req: AuthRequest, res) => {
     const supabase = getSupabaseAdmin();
     const { data: existing } = await supabase
       .from('terminal_sessions')
-      .select('id, terminal_number, created_at')
+      .select('id, terminal_number, created_at, github_repo_name')
       .eq('user_id', userId)
       .eq('id', id)
       .maybeSingle();
 
+    // Sticky: once a terminal is under a repo, never relocate it on upsert.
+    const githubRepoName =
+      typeof existing?.github_repo_name === 'string' && existing.github_repo_name.includes('/')
+        ? existing.github_repo_name
+        : body.githubRepoName;
+
     const terminalNumber =
-      existing?.terminal_number ?? (await nextTerminalNumber(userId, body.githubRepoName));
+      existing?.terminal_number ?? (await nextTerminalNumber(userId, githubRepoName));
 
     const row = {
       id,
       user_id: userId,
-      github_repo_name: body.githubRepoName,
+      github_repo_name: githubRepoName,
       github_branch: body.githubBranch?.trim() || 'main',
       terminal_number: terminalNumber,
       title: (body.title || `Terminal #${terminalNumber}`).slice(0, 120),
@@ -210,7 +216,7 @@ router.put('/:id', async (req: AuthRequest, res) => {
 
     // Unique (user, repo, terminal_number) race — reallocate and retry once.
     if (error && /terminal_number|uq_terminal_sessions|duplicate key/i.test(error.message || '')) {
-      const retryNumber = await nextTerminalNumber(userId, body.githubRepoName);
+      const retryNumber = await nextTerminalNumber(userId, githubRepoName);
       const retryRow = {
         ...row,
         terminal_number: retryNumber,

@@ -43,13 +43,44 @@ export function rememberTerminalNumber(sessionId: string, n: number, repo?: stri
   }
 }
 
+/** Seed max # from local history titles so #2 works after reload before cloud returns. */
+function seedRepoMaxFromLocalHistory(repo: string) {
+  if (typeof window === 'undefined') return;
+  if ((repoMaxNumber.get(repo) ?? 0) > 0) return;
+  try {
+    const raw = localStorage.getItem('xroga_terminal_history');
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as Array<{
+      id?: string;
+      githubRepoName?: string;
+      title?: string;
+    }>;
+    if (!Array.isArray(parsed)) return;
+    let max = 0;
+    for (const e of parsed) {
+      if (e.githubRepoName !== repo || !e.id) continue;
+      const m = e.title?.match(/^#(\d+)\s+terminal/i);
+      const n = m ? Number(m[1]) : 0;
+      if (n >= 1) {
+        rememberTerminalNumber(e.id, n, repo);
+        max = Math.max(max, n);
+      }
+    }
+    if (max > 0) repoMaxNumber.set(repo, Math.max(repoMaxNumber.get(repo) ?? 0, max));
+  } catch {
+    /* ignore */
+  }
+}
+
 /**
  * Assign #N for this session under a repo immediately (before cloud round-trip)
  * so Repositories shows "#1 terminal" as soon as the user starts chatting.
+ * Same session id always keeps its number; a new session under the same repo gets #2, #3, …
  */
 export function allocateTerminalNumber(sessionId: string, repo: string): number {
   const existing = ordinalCache.get(sessionId);
   if (existing) return existing;
+  seedRepoMaxFromLocalHistory(repo);
   const next = (repoMaxNumber.get(repo) ?? 0) + 1;
   rememberTerminalNumber(sessionId, next, repo);
   return next;

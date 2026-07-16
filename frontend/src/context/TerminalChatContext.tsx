@@ -729,6 +729,7 @@ export function TerminalChatProvider({
     if (messages.length === 0) return;
     const selected = getSelectedRepoContext();
     const timer = window.setTimeout(() => {
+      // Sticky binding inside save/ensure — do not relocate #N when selected repo changes.
       saveTerminalHistorySession({
         sessionId: sessionIdRef.current,
         prompt,

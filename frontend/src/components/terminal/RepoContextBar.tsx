@@ -24,7 +24,7 @@ interface RepoContextBarProps {
 }
 
 export function RepoContextBar({ outside }: RepoContextBarProps) {
-  const { messages, restoreTerminalSession } = useTerminalChat();
+  const { messages, restoreTerminalSession, startNewChat } = useTerminalChat();
   const repoLocked = messages.length > 0;
   const [connected, setConnected] = useState(false);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
@@ -210,8 +210,29 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
     setOpen(null);
     const meta = repos.find((r) => r.fullName === fullName);
     const branch = await loadBranches(fullName, meta?.defaultBranch);
+
+    // Mid-chat repo switch: keep the old #N under its repo, start a blank session for the new one.
+    const prev = (() => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw) as { repo?: string };
+      } catch {
+        return null;
+      }
+    })();
+    let startedFreshSession = false;
+    if (
+      messages.length > 0 &&
+      prev?.repo?.includes('/') &&
+      prev.repo !== fullName
+    ) {
+      startNewChat();
+      startedFreshSession = true;
+    }
+
     saveSelectedRepoContext({ repo: fullName, branch });
-    // Attach live terminal + past saves under this repo so Repositories sidebar fills immediately
+    // Sync sidebar — sticky binding keeps prior terminals under their own folders
     const { syncRepoTerminalSessions } = await import('@/lib/syncRepoTerminalSessions');
     syncRepoTerminalSessions();
     notifyGithubRepoContext(fullName, branch);
@@ -222,7 +243,7 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
 
     // New Terminal flow: keep blank workspace so the next chat creates #1 / #2.
     // Only auto-resume when user is NOT starting a fresh terminal.
-    if (consumeFreshTerminalIntent()) {
+    if (consumeFreshTerminalIntent() || startedFreshSession) {
       window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       return;
     }

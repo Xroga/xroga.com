@@ -1,6 +1,7 @@
 /**
  * Keep Repositories sidebar in sync with the selected GitHub repo + live terminal.
  * Ensures first chat under a repo immediately becomes "#1 terminal" in local + cloud storage.
+ * Sessions stay sticky under their original repo — selecting another repo never relocates them.
  */
 
 import { getSelectedRepoContext } from '@/lib/repoContext';
@@ -49,8 +50,8 @@ function stampRepoOnEntry(
 }
 
 /**
- * Force the live chat into history under the selected repo as #1 / #2.
- * Call whenever messages change or sidebar refreshes.
+ * Bind the live chat under its sticky repo (or the selected repo if unbound).
+ * Never moves an existing #N from repo A to repo B when the user picks a new repo.
  */
 export function ensureLiveTerminalUnderSelectedRepo(opts?: {
   sessionId?: string;
@@ -60,28 +61,33 @@ export function ensureLiveTerminalUnderSelectedRepo(opts?: {
   flushCloud?: boolean;
 }): TerminalHistoryEntry | null {
   const selected = getSelectedRepoContext();
-  if (!selected?.repo?.includes('/')) return null;
-
   const ws = loadWorkspaceSession();
   const sessionId = opts?.sessionId || ws?.sessionId;
   const messages = opts?.messages?.length ? opts.messages : ws?.messages;
   const prompt = opts?.prompt || ws?.prompt || ws?.selectedLabel || 'Terminal';
   if (!sessionId || !messages?.length) return null;
 
-  // Persist with forced selected repo — never rely on a racing localStorage read alone.
+  const existing = loadTerminalHistory().find((e) => e.id === sessionId);
+  const stickyRepo = existing?.githubRepoName?.includes('/') ? existing.githubRepoName : null;
+  const bindRepo = stickyRepo ?? (selected?.repo?.includes('/') ? selected.repo : null);
+  if (!bindRepo) return null;
+  const bindBranch = stickyRepo
+    ? existing?.githubBranch || selected?.branch || 'main'
+    : selected?.branch || 'main';
+
+  // Only force-bind when the session has no repo yet — never relocate.
   saveTerminalHistorySession({
     sessionId,
     prompt,
     messages,
     status: 'active',
-    forceRepo: selected.repo,
-    forceBranch: selected.branch || 'main',
+    forceRepo: stickyRepo ? undefined : bindRepo,
+    forceBranch: stickyRepo ? undefined : bindBranch,
   });
 
   let entry = loadTerminalHistory().find((e) => e.id === sessionId) ?? null;
   if (!entry) {
-    // localStorage may have failed — still build an entry for IDB + index + cloud
-    const n = allocateTerminalNumber(sessionId, selected.repo);
+    const n = allocateTerminalNumber(sessionId, bindRepo);
     entry = {
       id: sessionId,
       title: cloudTerminalLabel(n),
@@ -90,28 +96,38 @@ export function ensureLiveTerminalUnderSelectedRepo(opts?: {
       messages,
       kind: 'chat',
       status: 'active',
-      githubRepoName: selected.repo,
-      githubBranch: selected.branch || 'main',
-      githubRepoUrl: `https://github.com/${selected.repo}`,
+      githubRepoName: bindRepo,
+      githubBranch: bindBranch,
+      githubRepoUrl: `https://github.com/${bindRepo}`,
       messageCount: messages.length,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
   }
 
-  if (entry.githubRepoName !== selected.repo || !entry.title.startsWith('#')) {
-    entry = stampRepoOnEntry(entry, selected.repo, selected.branch || 'main');
+  // Heal missing # title under the session's own repo — do not change repos.
+  if (!entry.githubRepoName?.includes('/')) {
+    entry = stampRepoOnEntry(entry, bindRepo, bindBranch);
+    const rest = loadTerminalHistory().filter((e) => e.id !== entry!.id);
+    persistHistory([entry, ...rest]);
+  } else if (!entry.title.startsWith('#')) {
+    entry = stampRepoOnEntry(entry, entry.githubRepoName, entry.githubBranch || bindBranch);
     const rest = loadTerminalHistory().filter((e) => e.id !== entry!.id);
     persistHistory([entry, ...rest]);
   }
 
   void saveTerminalSessionToIndexedDB(entry);
 
-  const n = allocateTerminalNumber(entry.id, selected.repo);
-  const labeled = { ...entry, title: cloudTerminalLabel(n), githubRepoName: selected.repo };
+  const repoForIndex = entry.githubRepoName!.includes('/') ? entry.githubRepoName! : bindRepo;
+  const n = allocateTerminalNumber(entry.id, repoForIndex);
+  const labeled = {
+    ...entry,
+    title: cloudTerminalLabel(n),
+    githubRepoName: repoForIndex,
+  };
   registerRepoSession({
-    githubRepoName: selected.repo,
-    githubBranch: labeled.githubBranch || selected.branch || 'main',
+    githubRepoName: repoForIndex,
+    githubBranch: labeled.githubBranch || bindBranch,
     title: labeled.title,
     sessionId: labeled.id,
     status: 'active',
@@ -146,11 +162,16 @@ export function syncRepoTerminalSessions(): TerminalHistoryEntry[] {
   let changed = false;
   const next = all.map((e) => {
     const isLive = ws?.sessionId && e.id === ws.sessionId;
-    if (isLive && (!e.githubRepoName?.includes('/') || e.githubRepoName === repo) && !e.title.startsWith('#')) {
+    // Only stamp unbound live sessions onto the selected repo — never relocate.
+    if (isLive && !e.githubRepoName?.includes('/')) {
       changed = true;
       return stampRepoOnEntry(e, repo, branch);
     }
-    if (isLive && !e.githubRepoName?.includes('/')) {
+    if (
+      isLive &&
+      e.githubRepoName === repo &&
+      !e.title.startsWith('#')
+    ) {
       changed = true;
       return stampRepoOnEntry(e, repo, branch);
     }
