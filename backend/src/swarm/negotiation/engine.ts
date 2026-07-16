@@ -446,7 +446,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     hardMs: buildBudget.limits.hardMs,
   });
   const currentMessage = routingPrompt(userPrompt);
-  const todos = createTodoState(userPrompt);
+  const githubConnectedEarly = await isGitHubConnected(userId).catch(() => false);
+  const hasSelectedRepo = Boolean(ctx.githubTargetRepo?.includes('/'));
+  const todos = createTodoState(userPrompt, {
+    hasSelectedRepo,
+    githubConnected: githubConnectedEarly,
+  });
   const buildState = new BuildState();
   const businessLabel = inferBusinessLabel(userPrompt);
   const markShipEarly = (reason: string) => {
@@ -469,24 +474,31 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   emit(ctx, 0, BRAND.phase0.scanning(businessLabel), 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
 
-  todos.activateMeta('github');
-  // Soft gate: always BUILD the site first. GitHub is optional deploy — never brick the user with a chat wall.
-  const githubConnected = await isGitHubConnected(userId);
-  if (!githubConnected) {
+  // Soft gate: always BUILD first. Never leave UI stuck on "Connect GitHub".
+  const githubConnected = githubConnectedEarly;
+  todos.completeMeta('github');
+  if (!githubConnected && !hasSelectedRepo) {
     emit(
       ctx,
       0,
-      xrogaArchitectureLine('GitHub not connected — building sandbox preview first; connect later to push live'),
+      xrogaArchitectureLine('Building sandbox preview first — GitHub optional for push later'),
       'architect',
       todos,
       'XROGA Architect',
       { userPhase: 1 }
     );
-    todos.completeMeta('github');
   } else {
     buildState.markDone('auth');
-    todos.completeMeta('github');
-    emit(ctx, 0, BRAND.github.verified, 'architect', todos, 'AI SWARM LOGIC');
+    emit(
+      ctx,
+      0,
+      hasSelectedRepo
+        ? xrogaArchitectureLine(`Using selected repo ${ctx.githubTargetRepo}`)
+        : BRAND.github.verified,
+      'architect',
+      todos,
+      'AI SWARM LOGIC'
+    );
   }
 
   const pastBuilds = await getPreviousBuilds(userId);
@@ -1935,7 +1947,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
 /** OSS Escape Pod — paid APIs down: still ship a real sandbox site, never a how-to essay. */
 export async function runEscapePod(ctx: NegotiationContext): Promise<NegotiationResult> {
-  const todos = createTodoState(ctx.userPrompt);
+  const todos = createTodoState(ctx.userPrompt, {
+    hasSelectedRepo: Boolean(ctx.githubTargetRepo?.includes('/')),
+  });
   todos.activateMeta('analyze');
   emit(ctx, 0, BRAND.escape.pod, 'architect', todos, 'XROGA Escape Pod');
   const plan = defaultPlanForPrompt(ctx.userPrompt).join('\n');

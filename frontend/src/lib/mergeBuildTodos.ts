@@ -12,7 +12,21 @@ export function mergeBuildTodos(seeded: SwarmTodoItem[], incoming: SwarmTodoItem
   const hasUserFacing = incoming.some((t) =>
     ['ui-trends', 'code-gen', 'research', 'ideas', 'submission'].includes(t.id)
   );
-  if (hasUserFacing) return incoming;
+  if (hasUserFacing) {
+    // Keep seeded "Using selected GitHub repo" done — never re-activate Connect GitHub
+    return incoming.map((t) => {
+      if (t.id !== 'github') return t;
+      const seed = seeded.find((s) => s.id === 'github');
+      if (seed?.status === 'done' || t.status === 'done') {
+        return {
+          ...t,
+          status: 'done' as const,
+          label: seed?.label?.includes('selected') ? seed.label : t.label.replace(/^Connect GitHub.*/i, 'Using your selected GitHub repo'),
+        };
+      }
+      return t;
+    });
+  }
 
   const backendDone = (id: string) => incomingById.get(id)?.status === 'done';
   const backendActive = (id: string) => incomingById.get(id)?.status === 'active';

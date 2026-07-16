@@ -20,7 +20,10 @@ function isHackathonPrompt(prompt: string): boolean {
 }
 
 function isBlogPrompt(prompt: string): boolean {
-  return /\b(blog|miniblog|mini\s*blog|blog\s*site|blog\s*post|personal\s*blog)\b/i.test(prompt);
+  return (
+    /\b(blog|miniblog|mini\s*blog|blog\s*site|blog\s*post|personal\s*blog)\b/i.test(prompt) &&
+    !/\b(crypto|dashboard|chatbot|landing)\b/i.test(prompt)
+  );
 }
 
 function isGamePrompt(prompt: string): boolean {
@@ -31,87 +34,142 @@ function isUpdatePrompt(prompt: string): boolean {
   return /\b(update|change|fix|modify|edit|adjust|tweak|add\s+a|remove|replace)\b/i.test(prompt);
 }
 
-export function buildTodosForPrompt(userPrompt: string): BuildTodoDef[] {
+function isChatbotPrompt(prompt: string): boolean {
+  return /\b(chatbot|chat\s*bot|support bot|ai assistant|helpbee|conversation ui)\b/i.test(prompt);
+}
+
+function isCryptoPrompt(prompt: string): boolean {
+  return /\b(crypto|blockchain|web3|defi|nft|token|wallet|dao|dapp|exchange|staking|coingecko|nebuladex)\b/i.test(
+    prompt
+  );
+}
+
+function isLandingPrompt(prompt: string): boolean {
+  return /\b(landing|homepage|marketing site|pricing|night.?day|toggle)\b/i.test(prompt);
+}
+
+export function buildTodosForPrompt(
+  userPrompt: string,
+  opts?: { hasSelectedRepo?: boolean; githubConnected?: boolean }
+): BuildTodoDef[] {
   const prompt = userPrompt.trim();
+  const ready = Boolean(opts?.hasSelectedRepo || opts?.githubConnected);
+  const gh = ready ? 'Using your selected GitHub repo' : 'Prepare sandbox (GitHub optional)';
   const hackathon = isHackathonPrompt(prompt);
   const blog = isBlogPrompt(prompt);
   const game = isGamePrompt(prompt);
   const update = isUpdatePrompt(prompt);
+  const chatbot = isChatbotPrompt(prompt);
+  const crypto = isCryptoPrompt(prompt);
+  const landing = isLandingPrompt(prompt);
 
   if (update && !hackathon) {
     return [
-      { id: 'github', label: 'Load your GitHub project' },
+      { id: 'github', label: ready ? 'Load files from selected repo' : 'Load project files' },
       { id: 'analyze', label: 'Find files mentioned in your update' },
-      { id: 'plan', label: 'Plan minimal code changes (token-efficient)' },
+      { id: 'plan', label: 'Plan minimal code changes' },
       { id: 'code-gen', label: 'Apply patch to only the files you asked for' },
       { id: 'verify', label: 'Verify build still works' },
       { id: 'github-push', label: 'Push updated files to GitHub' },
-      { id: 'live-deploy', label: 'Refresh live preview on your Vercel account' },
+      { id: 'live-deploy', label: 'Refresh live preview' },
     ];
   }
 
   if (hackathon) {
     return [
-      { id: 'github', label: 'Connect GitHub repository' },
-      { id: 'research', label: 'Research hackathon rules, sponsor gaps & prize tracks' },
-      { id: 'ideas', label: 'Generate novel ASP concept aligned to requirements' },
-      { id: 'analyze', label: 'Analyze scope & read repo (cached — once per branch)' },
+      { id: 'github', label: gh },
+      { id: 'research', label: 'Research hackathon rules & prize tracks' },
+      { id: 'ideas', label: 'Generate novel concept aligned to requirements' },
+      { id: 'analyze', label: 'Analyze scope' },
       { id: 'plan', label: 'Plan architecture, APIs & database' },
-      { id: 'structure', label: 'Review and approve build plan' },
-      { id: 'ui-trends', label: 'Apply 2026 UI/UX trends & animations' },
       { id: 'code-gen', label: 'Generate code step by step' },
-      { id: 'verify', label: 'Verify quality, security & integrations' },
-      { id: 'submission', label: 'Prepare demo script, listing copy & #OKXAI post draft' },
-      { id: 'github-push', label: 'Push only relevant files to GitHub' },
-      { id: 'live-deploy', label: 'Deploy live preview to your Vercel account' },
+      { id: 'verify', label: 'Verify quality & integrations' },
+      { id: 'github-push', label: 'Push files to GitHub' },
+      { id: 'live-deploy', label: 'Deploy live preview' },
     ];
   }
 
-  if (blog) {
+  if (chatbot) {
     return [
-      { id: 'github', label: 'Connect GitHub repository' },
-      { id: 'analyze', label: 'Analyze blog requirements (posts, layout, storage)' },
-      { id: 'plan', label: 'Plan blog structure, pages & features' },
-      { id: 'structure', label: 'Approve blog build plan' },
-      { id: 'ui-trends', label: 'Apply clean, modern blog UI/UX' },
-      { id: 'code-gen', label: 'Generate blog code step by step' },
-      { id: 'verify', label: 'Verify responsive design & localStorage/posts' },
-      { id: 'github-push', label: 'Push blog files to GitHub' },
-      { id: 'live-deploy', label: 'Deploy live preview to your Vercel account' },
+      { id: 'github', label: gh },
+      { id: 'analyze', label: 'Analyze chatbot UX — bubbles, input, sidebar' },
+      { id: 'plan', label: 'Plan chat layout, history & free AI wiring' },
+      { id: 'code-gen', label: 'Build chat UI + send handlers' },
+      { id: 'ui-trends', label: 'Polish typing indicator & mobile chat' },
+      { id: 'verify', label: 'Verify messages send & AI replies work' },
+      { id: 'github-push', label: 'Push chatbot files to GitHub' },
+      { id: 'live-deploy', label: 'Open sandbox / live preview' },
+    ];
+  }
+
+  if (crypto) {
+    return [
+      { id: 'github', label: gh },
+      { id: 'analyze', label: 'Analyze crypto dashboard — prices, charts, wallet' },
+      { id: 'plan', label: 'Plan metrics, CoinGecko feed & swap UI' },
+      { id: 'code-gen', label: 'Build dark dashboard with live prices' },
+      { id: 'ui-trends', label: 'Polish charts, wallet stub & mobile layout' },
+      { id: 'verify', label: 'Verify price fetch & interactive controls' },
+      { id: 'github-push', label: 'Push dashboard files to GitHub' },
+      { id: 'live-deploy', label: 'Open sandbox / live preview' },
+    ];
+  }
+
+  if (landing || blog) {
+    const name =
+      /\b(?:called|named)\s+([A-Za-z0-9][\w-]{1,32})\b/i.exec(prompt)?.[1] ||
+      (blog ? 'blog' : 'landing page');
+    return [
+      { id: 'github', label: gh },
+      { id: 'analyze', label: `Analyze ${name} — sections, theme, pricing` },
+      { id: 'plan', label: `Plan ${name} pages & theme toggles` },
+      { id: 'code-gen', label: `Generate ${name} HTML/CSS/JS` },
+      { id: 'ui-trends', label: 'Polish responsive layout & interactions' },
+      { id: 'verify', label: 'Verify buttons, toggle & pricing section' },
+      { id: 'github-push', label: 'Push site files to GitHub' },
+      { id: 'live-deploy', label: 'Open sandbox / live preview' },
     ];
   }
 
   if (game) {
     return [
-      { id: 'github', label: 'Connect GitHub repository' },
+      { id: 'github', label: gh },
       { id: 'analyze', label: 'Analyze game concept & mechanics' },
       { id: 'plan', label: 'Plan game loop, controls & assets' },
-      { id: 'ui-trends', label: 'Apply polished game UI & animations' },
       { id: 'code-gen', label: 'Generate playable game code' },
-      { id: 'verify', label: 'Verify gameplay, controls & performance' },
+      { id: 'verify', label: 'Verify gameplay & controls' },
       { id: 'github-push', label: 'Push game files to GitHub' },
-      { id: 'live-deploy', label: 'Deploy playable preview to your Vercel account' },
+      { id: 'live-deploy', label: 'Deploy playable preview' },
     ];
   }
 
   return [
-    { id: 'github', label: 'Connect GitHub repository' },
+    { id: 'github', label: gh },
     { id: 'analyze', label: 'Analyze your requirements & scope' },
-    { id: 'plan', label: 'Plan architecture, pages & features' },
-    { id: 'structure', label: 'Review and approve build plan' },
-    { id: 'ui-trends', label: 'Apply modern UI/UX design patterns' },
-    { id: 'code-gen', label: 'Generate code step by step' },
-    { id: 'verify', label: 'Verify quality, security & responsiveness' },
+    { id: 'plan', label: 'Plan pages, features & layout' },
+    { id: 'code-gen', label: 'Generate project files' },
+    { id: 'ui-trends', label: 'Apply UI polish' },
+    { id: 'verify', label: 'Verify quality & responsiveness' },
     { id: 'github-push', label: 'Push project files to GitHub' },
-    { id: 'live-deploy', label: 'Deploy live preview to your Vercel account' },
+    { id: 'live-deploy', label: 'Open sandbox / live preview' },
   ];
 }
 
-export function seedUserTodos(userPrompt: string): UserTodoItem[] {
-  const defs = buildTodosForPrompt(userPrompt);
-  return defs.map((d, i) => ({
-    id: d.id,
-    label: d.label,
-    status: i === 0 ? 'active' : 'pending',
-  }));
+export function seedUserTodos(
+  userPrompt: string,
+  opts?: { hasSelectedRepo?: boolean; githubConnected?: boolean }
+): UserTodoItem[] {
+  const ready = Boolean(opts?.hasSelectedRepo || opts?.githubConnected);
+  const defs = buildTodosForPrompt(userPrompt, opts);
+  return defs.map((d) => {
+    if (d.id === 'github' && ready) {
+      return { id: d.id, label: d.label, status: 'done' as const };
+    }
+    const firstActiveId = ready ? defs.find((x) => x.id !== 'github')?.id : defs[0]?.id;
+    return {
+      id: d.id,
+      label: d.label,
+      status: d.id === firstActiveId ? ('active' as const) : ('pending' as const),
+    };
+  });
 }
