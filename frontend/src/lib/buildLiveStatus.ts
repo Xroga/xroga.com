@@ -26,8 +26,6 @@ function formatElapsed(elapsedSeconds: number): string {
  */
 export function buildLiveStatusMessage(
   elapsedSeconds: number,
-  _activePhase?: number | null,
-  _tick = 0,
   lastRealActivity?: string | null
 ): string {
   const time = formatElapsed(elapsedSeconds);
@@ -38,11 +36,7 @@ export function buildLiveStatusMessage(
   return `Waiting on AI model response… (${time})`;
 }
 
-/** @deprecated Use buildLiveStatusMessage — kept for call sites that still import this name */
-export function buildHeartbeatActivity(
-  elapsedSeconds: number,
-  activePhase?: number | null,
-  tick = 0
-): string {
-  return buildLiveStatusMessage(elapsedSeconds, activePhase, tick);
+/** @deprecated Use buildLiveStatusMessage — kept for older call sites */
+export function buildHeartbeatActivity(elapsedSeconds: number): string {
+  return buildLiveStatusMessage(elapsedSeconds);
 }

@@ -135,7 +135,7 @@ export function XrogaAgentProcessingPanel({
     return null;
   }, [formattedLines]);
 
-  const liveStatus = buildLiveStatusMessage(thoughtSeconds, activePhase, 0, lastRealActivity);
+  const liveStatus = buildLiveStatusMessage(thoughtSeconds, lastRealActivity);
   const entries = useMemo(
     () => parseAgentActivityEntries(activityLog, buildPrompt),
     [activityLog, buildPrompt]
