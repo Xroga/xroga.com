@@ -38,6 +38,10 @@ import { upsertBuildProject } from '../../services/memory/buildProjectStore.js';
 import { webSearch, formatWebSearchContext } from '../../lib/webSearch.js';
 import { fetchUiTrendResearch } from '../../lib/uiTrendResearch.js';
 import { formatAiEndpointContext, integratedAiSummaryForPrompt } from '../../lib/aiEndpointCatalog.js';
+import {
+  formatFieldEndpointContext,
+  fieldEndpointSummaryForPrompt,
+} from '../../lib/fieldEndpointCatalog.js';
 import { fetchHackathonResearch, isHackathonQuery } from '../../lib/hackathonResearch.js';
 import {
   buildSummaryFromBrief,
@@ -716,8 +720,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   let clarifiedBrief: string;
   const aiEndpointNote = formatAiEndpointContext(userPrompt);
+  const fieldEndpointNote = formatFieldEndpointContext(userPrompt);
   let repoContextLine = repoAnalysisSummary ? `\n\nGitHub repo analysis:\n${repoAnalysisSummary}${criticalRepoFilesNote}` : criticalRepoFilesNote;
-  const researchBundle = `${webResearchNote}${uiTrendNote}${hackathonNote}${aiEndpointNote ? `\n\n${aiEndpointNote}` : ''}`;
+  const researchBundle = `${webResearchNote}${uiTrendNote}${hackathonNote}${aiEndpointNote ? `\n\n${aiEndpointNote}` : ''}${fieldEndpointNote ? `\n\n${fieldEndpointNote}` : ''}`;
   const discoveryContext = userPrompt.includes('[Previous conversation')
     ? `${userPrompt}${repoContextLine}${researchBundle}`
     : `${userPrompt}${repoContextLine}${researchBundle}\n\nOriginal build request context preserved.`;
@@ -1424,7 +1429,17 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   if (featureOutput?.type === 'landing_page') {
     featureOutput = {
       ...featureOutput,
-      integratedAi: integratedAiSummaryForPrompt(userPrompt),
+      integratedAi: [
+        ...integratedAiSummaryForPrompt(userPrompt),
+        ...fieldEndpointSummaryForPrompt(userPrompt).map((e) => ({
+          id: e.id,
+          name: `${e.name} (${e.domain})`,
+          freeTier: e.freeTier,
+          requiresApiKey: e.requiresApiKey,
+          endpoint: e.endpoint,
+          userGuidance: e.wireHint,
+        })),
+      ],
       userPrompt,
     };
     todos.completeFinal('emit');

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import type { AuthRequest } from '../middleware/auth.js';
 import { catalogForApi } from '../lib/aiEndpointCatalog.js';
+import { FIELD_ENDPOINT_CATALOG } from '../lib/fieldEndpointCatalog.js';
 import {
   deleteUserProviderKey,
   listUserProviderKeys,
@@ -15,6 +16,8 @@ router.use(liveAiProxy);
 router.get('/ai-catalog', (_req, res) => {
   res.json({
     catalog: catalogForApi(),
+    /** Field APIs auto-wired by product type (crypto, weather, …) */
+    fieldEndpoints: FIELD_ENDPOINT_CATALOG,
     xrogaResearch: {
       searxng: { free: true, note: 'Xroga uses SearXNG for web research during builds and chat.' },
       tavily: { freeTier: true, note: 'Xroga supplements with Tavily when TAVILY_API_KEY is set on server.' },
@@ -22,6 +25,8 @@ router.get('/ai-catalog', (_req, res) => {
         note: 'Grok web_search / x_search are OFF by default (costly). Builds use SearXNG/Tavily. Enable only with XROGA_ALLOW_GROK_AGENT_SEARCH=1.',
       },
     },
+    autoIntegrate:
+      'On every build Xroga detects the field (crypto, AI chat, weather, …) and wires free live endpoints into your code so the preview works with real data.',
   });
 });
 
