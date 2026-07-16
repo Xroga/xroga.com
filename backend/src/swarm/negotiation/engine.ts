@@ -16,6 +16,7 @@ import { groqGeneral } from '../../council/groqClient.js';
 import { mistralVerify, mistralChat } from '../../council/mistralClient.js';
 import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
 import { buildLandingFromSwarmAssembly } from './assembleLandingFromSwarm.js';
+import { generatePromptMatchedSite } from '../../lib/promptSiteScaffold.js';
 import { debugCode } from '../../services/debugging/codeDebugger.js';
 import { defaultPlanForPrompt, defaultUpdatePlanForPrompt, defaultGamePlanForPrompt } from './defaultPlans.js';
 import {
@@ -1527,6 +1528,35 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     console.warn('[NegotiationEngine] Feature builder:', (err as Error).message);
   }
 
+  // Never return a web build with empty HTML — that becomes "No response" after tokens were spent
+  if (
+    isWebBuildFinal &&
+    !isUpdateBuild &&
+    (!featureOutput ||
+      featureOutput.type !== 'landing_page' ||
+      !(featureOutput as { html?: string }).html?.trim())
+  ) {
+    console.warn('[NegotiationEngine] Empty landing output — shipping prompt-matched scaffold');
+    const matched = generatePromptMatchedSite(userPrompt || clarifiedBrief);
+    featureOutput = {
+      type: 'landing_page',
+      html: matched.html,
+      css: matched.css,
+      js: matched.js,
+      heroImageUrl: '',
+      deployUrl: '',
+      summary: 'Sandbox preview ready (assembled from your prompt).',
+    };
+    emit(
+      ctx,
+      7,
+      xrogaPulseLine('Shipped sandbox preview from your prompt'),
+      'builder',
+      todos,
+      'XROGA Pulse'
+    );
+  }
+
   const projectName = parseProjectName(userPrompt, clarifiedBrief);
   const projectSlug = slugFromProjectName(projectName);
   const summaryData = buildSummaryFromBrief(userPrompt, clarifiedBrief, undefined, undefined, memoryNote);
@@ -1852,7 +1882,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   }
 
   if (featureOutput?.type === 'landing_page') {
-    polishedOutput = '';
+    // Keep a short reply so clients never show blank "No response" if the card fails to mount
+    const htmlLen = (featureOutput as { html?: string }).html?.trim().length ?? 0;
+    polishedOutput =
+      htmlLen > 40
+        ? '✅ Preview ready — your site is in the project card below.'
+        : '⚠️ Build finished but preview HTML was empty. Retry to ship a sandbox site.';
   }
 
   todos.completeFinal('emit');

@@ -617,7 +617,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                               msg.content?.trim()
                                 ? msg.content
                                 : !loading && !msg.featureOutput && !msg.buildStopped && !msg.updateTrail
-                                  ? 'No response yet — try sending your prompt again.'
+                                  ? '⚠️ No preview was delivered for this turn. Send the prompt again — if you already selected a GitHub repo, you should not need the Connect popup.'
                                   : msg.content
                             }
                             streaming={msg.id === animatingId && loading}
