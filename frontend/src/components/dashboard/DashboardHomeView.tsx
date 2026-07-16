@@ -157,8 +157,11 @@ export function DashboardHomeView() {
                 {formatTokens(tokens?.totalRemaining ?? 0)} / {formatTokens(tokens?.totalLimit ?? 7_000_000)}
               </span>
             </div>
-            <ProgressBar percent={tokens?.percentUsed ?? 0} />
-            <p className="text-xs text-[var(--muted)] text-right">{tokens?.percentUsed ?? 0}% used</p>
+            {/* Bar fills with remaining fuel — not % used (empty bar looked like “0 left”) */}
+            <ProgressBar percent={Math.max(0, 100 - (tokens?.percentUsed ?? 0))} />
+            <p className="text-xs text-[var(--muted)] text-right">
+              {tokens?.percentUsed ?? 0}% used · {formatTokens(tokens?.totalUsed ?? 0)} spent
+            </p>
           </div>
 
           <div className="space-y-2 text-sm">

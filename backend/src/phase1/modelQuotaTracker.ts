@@ -501,9 +501,14 @@ export async function getModelUsageBreakdown(userId: string): Promise<ModelUsage
       totalUsed: totalUsedForModel,
       totalLimit: totalLimitForModel,
       percentUsed:
-        totalLimitForModel > 0
-          ? Math.min(100, Math.round((totalUsedForModel / totalLimitForModel) * 100))
-          : 0,
+        totalUsedForModel <= 0
+          ? 0
+          : totalLimitForModel > 0
+            ? Math.min(
+                100,
+                Math.max(0.1, Math.round((totalUsedForModel / totalLimitForModel) * 1000) / 10)
+              )
+            : 0,
     };
   });
 }

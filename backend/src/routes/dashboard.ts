@@ -83,24 +83,30 @@ router.get('/summary', async (req: AuthRequest, res) => {
   }
 
   const daysLeft = daysRemainingInMonth();
+  const totalUsed = usage.totalTokensUsed;
+  // Recompute against the same totalLimit the UI shows (includes XRG boost)
+  const totalRemaining = Math.max(0, totalLimit - totalUsed);
+  const inputRemaining = Math.max(0, inputLimit - usage.inputTokensUsed);
+  const outputRemaining = Math.max(0, outputLimit - usage.outputTokensUsed);
+  const rawPct = totalLimit > 0 ? (totalUsed / totalLimit) * 100 : 0;
+  const percentUsed =
+    totalUsed <= 0 ? 0 : Math.min(100, Math.max(0.1, Math.round(rawPct * 10) / 10));
   const dailyUsage =
-    daysLeft > 0
-      ? Math.round(usage.totalTokensUsed / Math.max(1, new Date().getUTCDate()))
-      : 0;
+    daysLeft > 0 ? Math.round(totalUsed / Math.max(1, new Date().getUTCDate())) : 0;
 
   res.json({
     now: new Date().toISOString(),
     tokens: {
       totalLimit,
-      totalUsed: usage.totalTokensUsed,
-      totalRemaining: usage.totalTokensRemaining,
-      percentUsed: usage.percentUsed,
+      totalUsed,
+      totalRemaining,
+      percentUsed,
       inputUsed: usage.inputTokensUsed,
       inputLimit,
-      inputRemaining: usage.inputTokensRemaining,
+      inputRemaining,
       outputUsed: usage.outputTokensUsed,
       outputLimit,
-      outputRemaining: usage.outputTokensRemaining,
+      outputRemaining,
       emergencyAvailable: usage.emergencyTokensAvailable,
       emergencyClaimed: usage.emergencyTokensClaimedThisMonth,
       daysRemaining: daysLeft,

@@ -1102,7 +1102,11 @@ export function TerminalChatProvider({
             )
           );
         }
-        if (result.usage) {
+        if (
+          result.usage &&
+          typeof result.usage.totalTokensRemaining === 'number' &&
+          result.usage.totalTokensRemaining + result.usage.totalTokensUsed > 0
+        ) {
           setTokenUsage({
             ...result.usage,
             totalLimit: result.usage.totalTokensRemaining + result.usage.totalTokensUsed,
@@ -1110,8 +1114,9 @@ export function TerminalChatProvider({
             emergencyTokensAvailable: false,
             emergencyTokensClaimedThisMonth: false,
           });
-          refreshTokenUsage();
         }
+        // Always re-fetch DB-authoritative usage after a chat turn
+        refreshTokenUsage();
         if (!incognito) {
           setMessages((current) => {
             try {

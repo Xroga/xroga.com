@@ -282,11 +282,40 @@ export async function buildModelCall(
     }
 
     tracker?.add(xrogaRole, result.inputTokens, result.outputTokens);
+    // Bill immediately so dashboard reflects real API spend even if the build crashes later
+    if (opts?.userId && tracker) {
+      const delta = tracker.unbilledDelta();
+      if (delta.length) {
+        const input = delta.reduce((s, d) => s + d.inputTokens, 0);
+        const output = delta.reduce((s, d) => s + d.outputTokens, 0);
+        try {
+          const { recordLlmUsage } = await import('../../phase1/usageRecorder.js');
+          await recordLlmUsage(opts.userId, input, output, delta);
+          tracker.markBilled(delta);
+        } catch (billErr) {
+          console.warn('[BuildModel] usage persist failed:', (billErr as Error).message?.slice(0, 120));
+        }
+      }
+    }
     return { text: result.text, modelLabel: label, inputTokens: result.inputTokens, outputTokens: result.outputTokens };
   } catch (err) {
     console.warn(`[BuildModel] ${label} unavailable — DeepSeek Flash fallback:`, (err as Error).message?.slice(0, 120));
     const result = await deepseekCall(XROGA_MODELS.deepseek_flash.apiModel, system, user, maxTokens);
     tracker?.add('deepseek_flash', result.inputTokens, result.outputTokens);
+    if (opts?.userId && tracker) {
+      const delta = tracker.unbilledDelta();
+      if (delta.length) {
+        const input = delta.reduce((s, d) => s + d.inputTokens, 0);
+        const output = delta.reduce((s, d) => s + d.outputTokens, 0);
+        try {
+          const { recordLlmUsage } = await import('../../phase1/usageRecorder.js');
+          await recordLlmUsage(opts.userId, input, output, delta);
+          tracker.markBilled(delta);
+        } catch (billErr) {
+          console.warn('[BuildModel] usage persist failed:', (billErr as Error).message?.slice(0, 120));
+        }
+      }
+    }
     return {
       text: result.text,
       modelLabel: publicModelLabel('deepseek_flash'),
