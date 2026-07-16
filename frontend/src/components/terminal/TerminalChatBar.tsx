@@ -57,6 +57,25 @@ export function TerminalChatBar() {
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
+  /**
+   * Cursor-style typing: local draft owns keystrokes so the swarm tree does not
+   * re-render on every letter (that caused double characters / rewritten input).
+   */
+  const [draft, setDraft] = useState(prompt);
+  const draftRef = useRef(draft);
+  draftRef.current = draft;
+  const composingRef = useRef(false);
+  const lastExternalPrompt = useRef(prompt);
+
+  // Sync only when parent injects a new prompt (prefill / clear) — never while typing
+  useEffect(() => {
+    if (prompt === lastExternalPrompt.current) return;
+    lastExternalPrompt.current = prompt;
+    if (prompt !== draftRef.current) {
+      setDraft(prompt);
+      draftRef.current = prompt;
+    }
+  }, [prompt]);
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const [githubOpen, setGithubOpen] = useState(false);
   const [githubConnected, setGithubConnected] = useState(false);
@@ -139,7 +158,7 @@ export function TerminalChatBar() {
     if (incognito) return true;
     // Sandbox website/landing/chatbot/crypto builds must not be blocked by a flaky GitHub status
     // when the user already selected a repo in the footer (or when building a simple site).
-    const p = (promptText || prompt || '').trim();
+    const p = (promptText || draftRef.current || prompt || '').trim();
     // Advice / Q&A / research must never be blocked by the Connect-GitHub modal
     if (
       p &&
@@ -183,9 +202,14 @@ export function TerminalChatBar() {
 
   async function handleSubmit(e: React.FormEvent, interrupt = false) {
     e.preventDefault();
-    const text = autocorrectText(prompt.trim());
+    if (composingRef.current) return;
+    const raw = (textareaRef.current?.value ?? draft).trim();
+    const text = autocorrectText(raw);
     if (!text && files.length === 0) return;
-    if (text !== prompt) setPrompt(text);
+    setDraft(text);
+    draftRef.current = text;
+    setPrompt(text);
+    lastExternalPrompt.current = text;
 
     if (!(await ensureRepoWorkspace(text))) {
       setSendState('idle');
@@ -233,6 +257,10 @@ export function TerminalChatBar() {
       text ||
       (hasImages ? defaultImageAttachmentPrompt('') : undefined);
 
+    setDraft('');
+    draftRef.current = '';
+    lastExternalPrompt.current = '';
+    setPrompt('');
     await submit(promptText, false, false, attachments);
     if (!loading) setSendState('launched');
   }
@@ -258,32 +286,24 @@ export function TerminalChatBar() {
   /** Baseline prompt before the current mic session — speech replaces after baseline. */
   const speechBaseRef = useRef('');
   const speechActiveRef = useRef(false);
-  const applySpeech = useCallback(
-    (transcript: string) => {
-      if (!speechActiveRef.current) {
-        speechBaseRef.current = prompt;
-        speechActiveRef.current = true;
-      }
-      const base = speechBaseRef.current.trim();
-      const next = transcript.trim();
-      setPrompt(base && next ? `${base} ${next}` : next || base);
-    },
-    [prompt, setPrompt]
-  );
+  const applySpeech = useCallback((transcript: string) => {
+    if (!speechActiveRef.current) {
+      speechBaseRef.current = draftRef.current;
+      speechActiveRef.current = true;
+    }
+    const base = speechBaseRef.current.trim();
+    const next = transcript.trim();
+    const merged = base && next ? `${base} ${next}` : next || base;
+    setDraft(merged);
+    draftRef.current = merged;
+  }, []);
   const speech = useSpeechToText(applySpeech);
 
   const addFiles = useCallback((list: FileList | null) => {
     if (!list?.length) return;
-    setUploading(true);
     const incoming = Array.from(list).filter((f) => f.type.startsWith('image/'));
-    if (!incoming.length) {
-      setUploading(false);
-      return;
-    }
-    setTimeout(() => {
-      setFiles((prev) => [...prev, ...incoming]);
-      setUploading(false);
-    }, Math.min(1200, 300 + incoming.length * 150));
+    if (!incoming.length) return;
+    setFiles((prev) => [...prev, ...incoming]);
   }, []);
 
   const handlePaste = useCallback(
@@ -319,7 +339,7 @@ export function TerminalChatBar() {
     const maxH = LINE_HEIGHT * MAX_ROWS;
     const nextH = Math.max(MIN_INPUT_H, Math.min(el.scrollHeight, maxH));
     el.style.height = `${nextH}px`;
-  }, [prompt]);
+  }, [draft]);
 
   useEffect(() => {
     const el = shellRef.current;
@@ -331,7 +351,7 @@ export function TerminalChatBar() {
     const ro = new ResizeObserver(sync);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [files.length, prompt]);
+  }, [files.length, draft]);
 
   return (
     <>
@@ -339,7 +359,11 @@ export function TerminalChatBar() {
       <GithubRepoModal
         open={githubOpen}
         onClose={() => setGithubOpen(false)}
-        onSelect={(t) => setPrompt(prompt + (prompt ? '\n' : '') + t)}
+        onSelect={(t) => {
+          const next = draftRef.current + (draftRef.current ? '\n' : '') + t;
+          setDraft(next);
+          draftRef.current = next;
+        }}
       />
       <RepoWorkspaceGateModal
         open={repoGate.open}
@@ -439,7 +463,7 @@ export function TerminalChatBar() {
               listening={listening}
               hideUpload={incognito}
               surface={incognito ? 'incognito' : 'dashboard'}
-              compactGo={!!prompt.trim()}
+              compactGo={!!draft.trim()}
               onMicToggle={() => {
                 if (!speech.supported) {
                   toast.error('Voice input not supported in this browser');
@@ -448,7 +472,7 @@ export function TerminalChatBar() {
                 if (listening) {
                   speechActiveRef.current = false;
                 } else {
-                  speechBaseRef.current = prompt;
+                  speechBaseRef.current = draftRef.current;
                   speechActiveRef.current = true;
                 }
                 speech.toggle(listening, setListening);
@@ -468,19 +492,28 @@ export function TerminalChatBar() {
               )}
               <textarea
                 ref={textareaRef}
-                value={prompt}
+                value={draft}
                 onChange={(e) => {
-                  // Avoid fighting IME composition (double letters / sticky word count)
-                  if ((e.nativeEvent as InputEvent).isComposing) return;
                   speechActiveRef.current = false;
-                  setPrompt(e.target.value);
+                  const next = e.target.value;
+                  setDraft(next);
+                  draftRef.current = next;
+                }}
+                onCompositionStart={() => {
+                  composingRef.current = true;
+                }}
+                onCompositionEnd={(e) => {
+                  composingRef.current = false;
+                  const next = e.currentTarget.value;
+                  setDraft(next);
+                  draftRef.current = next;
                 }}
                 onPaste={handlePaste}
                 onKeyDown={(e) => {
-                  if ((e.nativeEvent as KeyboardEvent).isComposing) return;
+                  if (composingRef.current || (e.nativeEvent as KeyboardEvent).isComposing) return;
                   if (e.key === 'Enter' && e.shiftKey) {
                     e.preventDefault();
-                    if (prompt.trim()) void handleSubmit(e, true);
+                    if (draftRef.current.trim()) void handleSubmit(e, true);
                     return;
                   }
                   if (e.key === 'Enter' && !e.shiftKey) {
@@ -490,11 +523,14 @@ export function TerminalChatBar() {
                 }}
                 placeholder={incognito ? 'Type a private message…' : 'Xroga AI do everything..'}
                 rows={1}
+                spellCheck={false}
+                autoCorrect="off"
+                autoCapitalize="off"
                 className={cn(
                   'w-full pr-2 py-1.5 rounded-xl resize-none max-h-[260px] min-h-[36px]',
                   incognito ? 'pl-3 text-white placeholder:text-white/45' : 'pl-6 text-[var(--foreground)] placeholder:text-[var(--muted)]',
                   'bg-transparent focus:outline-none text-sm font-terminal leading-[20px]',
-                  !loading && !prompt && 'cursor-blink'
+                  !loading && !draft && 'cursor-blink'
                 )}
               />
             </ChatBarInputRow>

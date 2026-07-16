@@ -13,6 +13,15 @@ export function looksLikePromptScaffold(html: string, css = '', js = ''): boolea
   // Hero is basically the raw build prompt
   if (/<h1[^>]*>\s*Modern Landing Page called/i.test(html)) return true;
   if (/<h1[^>]*>\s*Build a (modern |simple )?(landing|website|blog)/i.test(html)) return true;
+  // Crypto / swap template fingerprints (promptSiteScaffold)
+  if (/OrbitSwap|XrogaSwap|Connect wallet \(demo\)|Fake wallet|0xA1b2.*demo/i.test(blob)) return true;
+  if (/local swap preview|swap math is local-only|demo wallet only/i.test(blob)) return true;
+  // Chatbot template fingerprints
+  if (/AI assistant shell|Live replies use free open AI \(Pollinations\)/i.test(blob) && /chat-form/i.test(blob)) {
+    // Only treat as scaffold when the whole site is the thin template (tiny HTML)
+    if (html.trim().length < 3500) return true;
+  }
+  if (/Fallback scaffold|Escape Pod sandbox/i.test(blob)) return true;
   return false;
 }
 
@@ -46,17 +55,27 @@ export function missingPromptFeatures(prompt: string, html: string, css = '', js
   }
 
   if (
-    /\b(chatbot|chat bot|message bubbles|typing indicator)\b/i.test(p) &&
-    !/\b(chat-window|message-bubble|typing|XrogaLiveAi|chat-log|id=["']chat)/i.test(blob)
+    /\b(chatbot|chat bot|ai assistant|message bubbles|typing indicator)\b/i.test(p) &&
+    !/\b(chat-form|id=["']messages|message-bubble|XrogaLiveAi\.chat|chat-log|id=["']chat)/i.test(blob)
   ) {
-    missing.push('chatbot UI');
+    missing.push('working chatbot UI + live chat wiring');
   }
 
   if (
-    /\b(crypto|coingecko|token price|sparkline)\b/i.test(p) &&
-    !/\b(coingecko|sparkline|token|wallet|crypto)/i.test(blob)
+    /\b(crypto|coingecko|token price|sparkline|defi|web3)\b/i.test(p) &&
+    !(
+      /\b(coingecko|cryptoPrices|data-live-price)\b/i.test(blob) &&
+      /\b(wallet|swap|markets|token|kpi)\b/i.test(blob)
+    )
   ) {
-    missing.push('crypto dashboard widgets');
+    missing.push('live crypto prices + dashboard/swap UI');
+  }
+
+  if (
+    /\b(swap|bridge|exchange)\b/i.test(p) &&
+    !/\b(swap|from-token|to-token|bridge|exchange)\b/i.test(blob)
+  ) {
+    missing.push('swap / bridge UI');
   }
 
   return missing;

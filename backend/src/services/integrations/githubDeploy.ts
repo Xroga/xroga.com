@@ -278,7 +278,8 @@ async function pushFilesViaGitData(
   repo: string,
   files: ProjectFile[],
   message: string,
-  branch: string
+  branch: string,
+  deletePaths: string[] = []
 ): Promise<string> {
   const blobs = await Promise.all(
     files.map(async (f) => {
@@ -295,9 +296,14 @@ async function pushFilesViaGitData(
         throw new Error(`GitHub blob failed: ${res.status} ${err.slice(0, 120)}`);
       }
       const blob = (await res.json()) as { sha: string };
-      return { path: f.path, sha: blob.sha };
+      return { path: f.path, sha: blob.sha as string | null };
     })
   );
+
+  // GitHub Git Data API: sha null removes path from base_tree
+  const deletes = [...new Set(deletePaths.map((p) => p.replace(/^\//, '')))]
+    .filter((p) => p && !blobs.some((b) => b.path === p))
+    .map((path) => ({ path, sha: null as string | null }));
 
   const { sha: parentSha, branch: resolvedBranch } = await getBranchHeadSha(token, owner, repo, branch);
 
@@ -306,7 +312,12 @@ async function pushFilesViaGitData(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       base_tree: parentSha ?? undefined,
-      tree: blobs.map((b) => ({ path: b.path, mode: '100644', type: 'blob', sha: b.sha })),
+      tree: [...blobs, ...deletes].map((b) => ({
+        path: b.path,
+        mode: '100644',
+        type: 'blob',
+        sha: b.sha,
+      })),
     }),
   });
   if (!treeRes.ok) throw new Error(`GitHub tree failed: ${treeRes.status}`);
@@ -349,7 +360,8 @@ async function pushFilesToRepo(
   repo: string,
   files: ProjectFile[],
   message: string,
-  branch = 'main'
+  branch = 'main',
+  deletePaths: string[] = []
 ): Promise<string | undefined> {
   if (files.length > HACKATHON_GITHUB_BATCH_SIZE) {
     const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
@@ -358,18 +370,21 @@ async function pushFilesToRepo(
     for (let i = 0; i < files.length; i += HACKATHON_GITHUB_BATCH_SIZE) {
       const batch = files.slice(i, i + HACKATHON_GITHUB_BATCH_SIZE);
       const n = Math.floor(i / HACKATHON_GITHUB_BATCH_SIZE) + 1;
+      // Apply deletes only on the final batch so base_tree stays coherent
+      const dels = i + HACKATHON_GITHUB_BATCH_SIZE >= files.length ? deletePaths : [];
       lastSha = await pushFilesToRepoSingle(
         token,
         owner,
         repo,
         batch,
         buildBrandedCommitMessage(`XROGA hackathon batch ${n}/${batches} — ${stamp}`, null),
-        branch
+        branch,
+        dels
       );
     }
     return lastSha;
   }
-  return pushFilesToRepoSingle(token, owner, repo, files, message, branch);
+  return pushFilesToRepoSingle(token, owner, repo, files, message, branch, deletePaths);
 }
 
 async function pushFilesToRepoSingle(
@@ -378,16 +393,18 @@ async function pushFilesToRepoSingle(
   repo: string,
   files: ProjectFile[],
   message: string,
-  branch = 'main'
+  branch = 'main',
+  deletePaths: string[] = []
 ): Promise<string | undefined> {
   const empty = await isRepoEmpty(token, owner, repo);
 
   if (empty) {
+    // Empty repo cannot delete paths — just push files
     return pushFilesViaContents(token, owner, repo, files, message, branch);
   }
 
   try {
-    return await pushFilesViaGitData(token, owner, repo, files, message, branch);
+    return await pushFilesViaGitData(token, owner, repo, files, message, branch, deletePaths);
   } catch (err) {
     const msg = (err as Error).message;
     if (/409|empty/i.test(msg)) {
@@ -401,6 +418,8 @@ export interface GitHubPushOptions {
   slug?: string;
   targetRepo?: string;
   targetBranch?: string;
+  /** Paths to remove from the target branch (Git Data API sha:null). */
+  deletePaths?: string[];
 }
 
 export async function pushBuildToGitHub(
@@ -434,7 +453,8 @@ export async function pushBuildToGitHub(
         `XROGA build update — ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`,
         coAuthor
       ),
-      branch
+      branch,
+      opts.deletePaths ?? []
     );
     invalidateRepoAnalysis(userId, selectedRepo);
     return {
@@ -990,12 +1010,13 @@ export async function pushAndDeployLivePreview(
   userId: string,
   files: ProjectFile[],
   projectSlug: string,
-  githubTarget?: { targetRepo?: string; targetBranch?: string }
+  githubTarget?: { targetRepo?: string; targetBranch?: string; deletePaths?: string[] }
 ): Promise<DeployPipelineResult> {
   const github = await pushBuildToGitHub(userId, files, {
     slug: projectSlug,
     targetRepo: githubTarget?.targetRepo,
     targetBranch: githubTarget?.targetBranch,
+    deletePaths: githubTarget?.deletePaths,
   });
   const preview = await deployToAllPlatforms(projectSlug, files, userId);
   return {

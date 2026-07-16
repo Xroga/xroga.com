@@ -262,6 +262,13 @@ document.getElementById('xroga-search-form')?.addEventListener('submit', async (
   } catch (e) { console.warn('[XrogaLiveAi] weather', e); }
 })();`);
   }
+  // Auto-bind chatbot forms when the model emitted UI but forgot live chat wiring
+  if (
+    /\b(chatbot|chat bot|ai assistant|live chat|message bubbles)\b/i.test(prompt) &&
+    !/XrogaLiveAi\.chat/i.test(js)
+  ) {
+    extras.push(liveChatbotFormJs('Xroga Assistant'));
+  }
   return `${client}\n\n${js}\n\n${extras.join('\n')}`;
 }
 

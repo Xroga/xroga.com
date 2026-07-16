@@ -89,6 +89,7 @@ import {
 import { isVercelConnected } from '../../services/integrations/vercelAuth.js';
 import {
   extractPatchedFilesFromAssembly,
+  extractDeletedPathsFromAssembly,
   formatFilesForUpdateContext,
   landingOutputToPatchedFiles,
   mergePatchedFiles,
@@ -97,6 +98,8 @@ import {
   shouldAllowFullScaffoldOnUpdate,
   buildFileTrailDiffs,
   shortChangeSummary,
+  changeSummaryFromFileTrail,
+  inferDeletePathsFromPrompt,
   type UpdateTargetPlan,
 } from '../../lib/incrementalUpdate.js';
 import { siteCodeFromProjectFiles, LANDING_UPDATE_FOLLOW_UPS } from '../../lib/landingPreview.js';
@@ -663,20 +666,21 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   let targetedUpdateFiles: import('../../services/integrations/githubDeploy.js').ProjectFile[] = [];
   let repoAnalysisSummary: string | null = null;
   let criticalRepoFilesNote = '';
+  let repoTreePaths: string[] = [];
+  let updateDeletePaths: string[] = [];
   if (isWebBuild && ctx.githubTargetRepo?.includes('/')) {
     try {
       const analysis = await analyzeGitHubRepo(userId, ctx.githubTargetRepo, ctx.githubTargetBranch);
       repoAnalysisSummary = analysis.summary;
+      repoTreePaths = analysis.treeSample.map((f) => f.path);
       if (isUpdateBuild) {
-        incrementalPlan = planIncrementalUpdate(
-          userPrompt,
-          analysis.treeSample.map((f) => f.path)
-        );
+        incrementalPlan = planIncrementalUpdate(userPrompt, repoTreePaths);
+        updateDeletePaths = inferDeletePathsFromPrompt(userPrompt, repoTreePaths);
         emit(
           ctx,
           0,
           xrogaPulseLine(
-            `Incremental update — ${incrementalPlan.filePaths.size} file(s) only (cached repo, no full re-read)`
+            `Incremental update — reading ${incrementalPlan.filePaths.size} exact file(s) from GitHub`
           ),
           'reviewer',
           todos,
@@ -689,8 +693,35 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           [...incrementalPlan.filePaths],
           ctx.githubTargetBranch
         );
+        // If path inference missed, load entrypoints from the real tree (not sandbox priorSite)
+        if (!targetedUpdateFiles.length && repoTreePaths.length) {
+          const fallbackPaths = [
+            ...repoTreePaths.filter((p) => /(?:^|\/)(index\.html|app\/page\.(tsx|jsx|js)|src\/app\/page\.(tsx|jsx|js)|pages\/index\.(tsx|jsx|js)|styles\.css|script\.js|package\.json)$/i.test(p)),
+          ].slice(0, 8);
+          if (fallbackPaths.length) {
+            targetedUpdateFiles = await fetchGitHubFilesByPaths(
+              userId,
+              ctx.githubTargetRepo,
+              fallbackPaths,
+              ctx.githubTargetBranch
+            );
+            for (const p of fallbackPaths) incrementalPlan.filePaths.add(p);
+          }
+        }
         if (targetedUpdateFiles.length) {
           existingSiteCode = siteCodeFromProjectFiles(targetedUpdateFiles);
+        } else {
+          emit(
+            ctx,
+            0,
+            xrogaPulseLine(
+              'Could not load target files from GitHub — refusing sandbox priorSite overwrite on a selected repo'
+            ),
+            'reviewer',
+            todos,
+            'XROGA Pulse',
+            { userPhase: 6 }
+          );
         }
       } else if (analysis.hasBuildFiles) {
         existingSiteCode = analysis.buildFiles;
@@ -750,8 +781,14 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     }
   }
 
-  // Sandbox updates: use last in-chat preview when GitHub files were not loaded
-  if (isUpdateBuild && !targetedUpdateFiles.length && ctx.priorSite?.html?.trim()) {
+  // Sandbox-only updates: use last in-chat preview when NO GitHub repo is selected.
+  // Never substitute priorSite over a selected GitHub project (that caused cosmetic "updates").
+  if (
+    isUpdateBuild &&
+    !targetedUpdateFiles.length &&
+    ctx.priorSite?.html?.trim() &&
+    !ctx.githubTargetRepo?.includes('/')
+  ) {
     const priorHtml = ctx.priorSite.html;
     const priorCss = ctx.priorSite.css || '';
     const priorJs = ctx.priorSite.js || '';
@@ -767,7 +804,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     emit(
       ctx,
       0,
-      xrogaPulseLine('Incremental update — patching sandbox preview (no GitHub re-read)'),
+      xrogaPulseLine('Incremental update — patching sandbox preview (no GitHub repo selected)'),
       'reviewer',
       todos,
       'XROGA Pulse',
@@ -1129,13 +1166,17 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   const executeTech = isGameBuild
     ? 'HTML5 Canvas game in browser — html, css, javascript fenced blocks. Complete runnable game code.'
     : isUpdateBuild
-      ? 'plain HTML/CSS/JS only. Edit existing files from GitHub. Output ONLY fenced code blocks.'
+      ? 'Edit ONLY the GitHub files provided. Use path-labeled fences (e.g. ```app/page.tsx). DELETE fences for removals. Output ONLY fenced code blocks.'
       : 'plain HTML/CSS/JS only. Output ONLY fenced code blocks. No explanations.';
-  const existingCodeContext = targetedUpdateFiles.length
-    ? `\n\n${formatFilesForUpdateContext(targetedUpdateFiles)}`
-    : existingSiteCode
-      ? `\n\nEXISTING SITE (edit — do not rebuild from scratch):\n--- index.html ---\n${existingSiteCode.html}\n\n--- styles.css ---\n${existingSiteCode.css}\n\n--- script.js ---\n${existingSiteCode.js}`
+  const deleteContext =
+    isUpdateBuild && updateDeletePaths.length
+      ? `\n\nDELETE THESE PATHS (emit DELETE fences; do not recreate):\n${updateDeletePaths.map((p) => `- ${p}`).join('\n')}`
       : '';
+  const existingCodeContext = targetedUpdateFiles.length
+    ? `\n\n${formatFilesForUpdateContext(targetedUpdateFiles)}${deleteContext}`
+    : existingSiteCode
+      ? `\n\nEXISTING SITE (edit — do not rebuild from scratch):\n--- index.html ---\n${existingSiteCode.html}\n\n--- styles.css ---\n${existingSiteCode.css}\n\n--- script.js ---\n${existingSiteCode.js}${deleteContext}`
+      : deleteContext;
 
   for (let si = 0; si < stepsToRun.length; si++) {
     assertNotAborted(ctx);
@@ -1568,6 +1609,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           { silent: true }
         );
       }
+      // Crypto / chatbot / swap must come from the LLM APIs — never ship template Escape Pod UIs
+      const refuseScaffold =
+        isUpdateBuild ||
+        buildType === 'crypto' ||
+        buildType === 'chatbot' ||
+        /\b(swap|bridge|defi\s*dashboard|web3)\b/i.test(userPrompt);
       featureOutput = await buildLandingFromSwarmAssembly(
         assembledCode,
         userPrompt,
@@ -1576,8 +1623,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         isGameBuild ? 'game' : 'website',
         {
           skipConsolidate,
-          // Updates: patch from assembly only — never replace the live repo with a scaffold
-          allowScaffoldFallback: !isUpdateBuild,
+          // Updates + crypto/chatbot: never replace real AI output with a fake scaffold
+          allowScaffoldFallback: !refuseScaffold,
           tracker: usageTracker,
           userId,
         }
@@ -1653,21 +1700,91 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       };
       emit(ctx, 7, xrogaPulseLine('Shipped DeepSeek-generated preview'), 'builder', todos, 'XROGA Pulse');
     } else {
-      console.warn('[NegotiationEngine] DeepSeek emit failed — last-resort scaffold');
-      const matched = generatePromptMatchedSite(userPrompt || clarifiedBrief);
+      const refuseScaffoldEmpty =
+        buildType === 'crypto' ||
+        buildType === 'chatbot' ||
+        /\b(swap|bridge|defi\s*dashboard|web3)\b/i.test(userPrompt);
+      if (refuseScaffoldEmpty) {
+        console.warn('[NegotiationEngine] DeepSeek emit failed — refusing crypto/chatbot scaffold');
+        emit(
+          ctx,
+          7,
+          xrogaPulseLine(
+            'AI emit failed for this product — retry the build (no fake template will be shipped)'
+          ),
+          'builder',
+          todos,
+          'XROGA Pulse'
+        );
+      } else {
+        console.warn('[NegotiationEngine] DeepSeek emit failed — last-resort scaffold');
+        const matched = generatePromptMatchedSite(userPrompt || clarifiedBrief);
+        featureOutput = {
+          type: 'landing_page',
+          html: matched.html,
+          css: matched.css,
+          js: matched.js,
+          heroImageUrl: '',
+          deployUrl: '',
+          summary: 'Fallback scaffold (AI emit unavailable)',
+        };
+        emit(
+          ctx,
+          7,
+          xrogaPulseLine('AI emit unavailable — shipped fallback scaffold'),
+          'builder',
+          todos,
+          'XROGA Pulse'
+        );
+      }
+    }
+  }
+
+  // Second scaffold reject after empty-path recovery (crypto/chatbot templates must not ship)
+  if (
+    isWebBuildFinal &&
+    !isUpdateBuild &&
+    featureOutput?.type === 'landing_page' &&
+    looksLikePromptScaffold(
+      (featureOutput as { html?: string }).html || '',
+      (featureOutput as { css?: string }).css || '',
+      (featureOutput as { js?: string }).js || ''
+    ) &&
+    (buildType === 'crypto' ||
+      buildType === 'chatbot' ||
+      /\b(swap|bridge|defi)\b/i.test(userPrompt))
+  ) {
+    emit(
+      ctx,
+      7,
+      xrogaPulseLine('Template UI blocked — regenerating real product with DeepSeek'),
+      'builder',
+      todos,
+      'XROGA Pulse'
+    );
+    const realRetry = await emitRealSiteWithDeepSeek(userPrompt, {
+      brief: clarifiedBrief,
+      plan: approvedPlan,
+      tracker: usageTracker,
+      userId,
+      maxTokens: 12288,
+    });
+    if (realRetry && !looksLikePromptScaffold(realRetry.html, realRetry.css, realRetry.js)) {
       featureOutput = {
         type: 'landing_page',
-        html: matched.html,
-        css: matched.css,
-        js: matched.js,
+        html: realRetry.html,
+        css: realRetry.css,
+        js: realRetry.js,
         heroImageUrl: '',
         deployUrl: '',
-        summary: 'Fallback scaffold (AI emit unavailable)',
+        summary: 'AI-generated preview (DeepSeek)',
       };
+    } else {
+      featureOutput = null;
       emit(
         ctx,
         7,
-        xrogaPulseLine('AI emit unavailable — shipped fallback scaffold'),
+        xrogaPulseLine('Could not produce a real crypto/chatbot build — tap Retry (no fake template)'),
         'builder',
         todos,
         'XROGA Pulse'
@@ -1788,6 +1905,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     let projectFiles: import('../../services/integrations/githubDeploy.js').ProjectFile[];
     let fileTrail: ReturnType<typeof buildFileTrailDiffs> = [];
     let previousFilesForRollback: Array<{ path: string; content: string }> = [];
+    let deletedPathsForPush: string[] = [...updateDeletePaths];
 
     // Plan A: updates ALWAYS patch targeted files — never full scaffold unless forced rebuild.
     if (isUpdateBuild && !shouldAllowFullScaffoldOnUpdate(userPrompt)) {
@@ -1803,10 +1921,18 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           console.warn('[NegotiationEngine] Update refetch:', (refetchErr as Error).message);
         }
       }
-      if (!targetedUpdateFiles.length) {
-        // Last resort for static sites: fetch the triad
-        const defaults = ['index.html', 'styles.css', 'script.js'];
-        if (ctx.githubTargetRepo?.includes('/')) {
+      if (!targetedUpdateFiles.length && ctx.githubTargetRepo?.includes('/')) {
+        // Last resort: real tree entrypoints first, then static triad only if present in tree
+        const defaults = (
+          repoTreePaths.length
+            ? repoTreePaths.filter((p) =>
+                /(?:^|\/)(index\.html|app\/page\.(tsx|jsx|js)|src\/app\/page\.(tsx|jsx|js)|pages\/index\.(tsx|jsx|js)|styles\.css|script\.js)$/i.test(
+                  p
+                )
+              )
+            : ['index.html', 'styles.css', 'script.js']
+        ).slice(0, 8);
+        if (defaults.length) {
           try {
             targetedUpdateFiles = await fetchGitHubFilesByPaths(
               userId,
@@ -1820,25 +1946,55 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           }
         }
       }
+      if (
+        !targetedUpdateFiles.length &&
+        ctx.githubTargetRepo?.includes('/') &&
+        !shouldAllowFullScaffoldOnUpdate(userPrompt)
+      ) {
+        emit(
+          ctx,
+          8,
+          xrogaPulseLine(
+            'Update aborted — selected GitHub repo returned 0 readable files for this patch. Check repo/branch access.'
+          ),
+          'builder',
+          todos,
+          'XROGA Pulse',
+          { userPhase: 4 }
+        );
+      }
       const allow = updatePaths.size ? updatePaths : new Set(targetedUpdateFiles.map((f) => f.path));
+      for (const d of updateDeletePaths) allow.add(d);
       const fromAssembly = extractPatchedFilesFromAssembly(assembledCode, allow);
+      const fromDeletes = extractDeletedPathsFromAssembly(assembledCode, allow);
+      deletedPathsForPush = [...new Set([...deletedPathsForPush, ...fromDeletes])];
       // Prefer fenced patches from the model; only map landing triad when assembly had no path hits
-      const fromLanding = fromAssembly.length
-        ? []
-        : landingOutputToPatchedFiles(
-            featureOutput.html,
-            featureOutput.css,
-            featureOutput.js,
-            allow
-          );
+      // AND the allowed set actually includes triad paths (never invent Next.js triad files).
+      const triadAllowed =
+        allow.has('index.html') || allow.has('styles.css') || allow.has('script.js');
+      const fromLanding =
+        fromAssembly.length || !triadAllowed
+          ? []
+          : landingOutputToPatchedFiles(
+              featureOutput.html,
+              featureOutput.css,
+              featureOutput.js,
+              allow
+            );
       const patched = mergePatchedFiles(targetedUpdateFiles, [...fromAssembly, ...fromLanding]);
-      projectFiles = patched.filter((f) => allow.has(f.path));
-      if (!projectFiles.length && targetedUpdateFiles.length) {
+      projectFiles = patched.filter((f) => allow.has(f.path) && !deletedPathsForPush.includes(f.path));
+      if (!projectFiles.length && targetedUpdateFiles.length && !deletedPathsForPush.length) {
         // Model returned nothing useful — keep originals (no destructive full rebuild)
         projectFiles = targetedUpdateFiles;
       }
       previousFilesForRollback = targetedUpdateFiles.map((f) => ({ path: f.path, content: f.content }));
-      fileTrail = buildFileTrailDiffs(targetedUpdateFiles, projectFiles);
+      fileTrail = buildFileTrailDiffs(
+        targetedUpdateFiles,
+        [
+          ...projectFiles,
+          ...deletedPathsForPush.map((path) => ({ path, content: '' })),
+        ]
+      );
       // Preview must reflect patched files (not stale pre-update HTML)
       const synced = siteCodeFromProjectFiles(projectFiles);
       if (synced.html?.trim()) {
@@ -1850,16 +2006,34 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           js: polishedPatch.js,
           isUpdate: true,
         };
-        projectFiles = mergePatchedFiles(projectFiles, [
-          { path: 'index.html', content: polishedPatch.html },
-          { path: 'styles.css', content: polishedPatch.css },
-          { path: 'script.js', content: polishedPatch.js },
-        ]);
+        // Only write triad paths that already exist in the allow/project set — never invent them
+        const triadPatches: Array<{ path: string; content: string }> = [];
+        if (allow.has('index.html') || projectFiles.some((f) => f.path === 'index.html')) {
+          triadPatches.push({ path: 'index.html', content: polishedPatch.html });
+        }
+        if (
+          polishedPatch.css?.trim() &&
+          (allow.has('styles.css') || projectFiles.some((f) => f.path === 'styles.css'))
+        ) {
+          triadPatches.push({ path: 'styles.css', content: polishedPatch.css });
+        }
+        if (
+          polishedPatch.js?.trim() &&
+          (allow.has('script.js') || projectFiles.some((f) => f.path === 'script.js'))
+        ) {
+          triadPatches.push({ path: 'script.js', content: polishedPatch.js });
+        }
+        if (triadPatches.length) {
+          projectFiles = mergePatchedFiles(projectFiles, triadPatches);
+        }
       }
       emit(
         ctx,
         8,
-        xrogaGitHubLine(`patch ${projectFiles.length} file(s) only`, ctx.githubTargetBranch ?? 'main'),
+        xrogaGitHubLine(
+          `patch ${projectFiles.length} file(s)${deletedPathsForPush.length ? ` · delete ${deletedPathsForPush.length}` : ''} only`,
+          ctx.githubTargetBranch ?? 'main'
+        ),
         'builder',
         todos,
         'XROGA AI',
@@ -1897,7 +2071,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         isUpdate: isUpdateBuild,
         updatedFiles: isUpdateBuild ? sandboxPaths : undefined,
         changesSummary: isUpdateBuild
-          ? shortChangeSummary(userPrompt, sandboxPaths)
+          ? fileTrail.length || deletedPathsForPush.length
+            ? changeSummaryFromFileTrail(fileTrail, deletedPathsForPush)
+            : shortChangeSummary(userPrompt, sandboxPaths)
           : undefined,
         fileTrail: isUpdateBuild ? fileTrail : undefined,
         previousFiles: isUpdateBuild ? previousFilesForRollback : undefined,
@@ -1927,12 +2103,15 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       const pipeline = await pushAndDeployLivePreview(userId, projectFiles, projectSlug, {
         targetRepo: ctx.githubTargetRepo,
         targetBranch: ctx.githubTargetBranch,
+        deletePaths: isUpdateBuild ? deletedPathsForPush : undefined,
       });
       const updatedFilePaths = isUpdateBuild
-        ? projectFiles.map((f) => f.path)
+        ? [...projectFiles.map((f) => f.path), ...deletedPathsForPush]
         : generatedPaths;
       const changeBullets = isUpdateBuild
-        ? shortChangeSummary(userPrompt, updatedFilePaths)
+        ? fileTrail.length || deletedPathsForPush.length
+          ? changeSummaryFromFileTrail(fileTrail, deletedPathsForPush)
+          : shortChangeSummary(userPrompt, updatedFilePaths)
         : undefined;
       const updateSummaryData = {
         ...summaryData,

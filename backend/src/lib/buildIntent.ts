@@ -7,11 +7,11 @@ const BUILD_VERB =
   /\b(build|building|create|creating|make|making|develop|developing|design|designing|launch|launching|scaffold|generate|generating)\b/i;
 
 const BUILD_TARGET =
-  /\b(website|web\s*sites?|web\s*pages?|landing\s*pages?|sites?|web\s*apps?|blogs?|portfolios?|shop|store|e[\s-]?commerce|restaurant|bakery|saas|crm|dashboard|marketplace|platform|chatbots?|software|games?|apps?|applications?|apis?|crypto|web3|defi|nft|dapp)\b/i;
+  /\b(website|web\s*sites?|web\s*pages?|landing\s*pages?|sites?|web\s*apps?|blogs?|portfolios?|shop|store|e[\s-]?commerce|restaurant|bakery|saas|crm|dashboard|marketplace|platform|chatbots?|chat\s*bots?|software|games?|apps?|applications?|apis?|crypto|web3|defi|nft|dapp|swap|bridge|wallet|token|assistant|bot|tool|kanban|tracker|portal)\b/i;
 
-/** Strong: verb near a buildable product (blog counts — classic failure case). */
+/** Strong: verb near a buildable product (blog/crypto/chatbot count — classic failure cases). */
 const STRONG_BUILD =
-  /\b(build|building|create|creating|make|making|generate|generating|develop|developing)\b[\s\S]{0,100}\b(website|web\s*app|web\s*page|landing|site|blog|portfolio|coffee|shop|store|restaurant|bakery|salon|app|game|software|api|saas|dashboard|crm|marketplace)\b/i;
+  /\b(build|building|create|creating|make|making|generate|generating|develop|developing)\b[\s\S]{0,120}\b(website|web\s*app|web\s*page|landing|site|blog|portfolio|coffee|shop|store|restaurant|bakery|salon|app|game|software|api|saas|dashboard|crm|marketplace|chatbot|chat\s*bot|crypto|web3|defi|nft|swap|bridge|wallet|dapp|assistant|bot|platform|tool|kanban|tracker)\b/i;
 
 const NON_BUILD_MEDIA =
   /\b(generate|create|make|draw)\b[\s\S]{0,40}\b(image|picture|photo|logo|thumbnail|video|film|clip|research report|resume|cover letter)\b/i;

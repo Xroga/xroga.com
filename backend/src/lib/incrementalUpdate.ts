@@ -26,7 +26,9 @@ export interface FileTrailDiff {
   removed: number;
 }
 
-const PATH_IN_PROMPT = /\b([\w.-]+\/(?:[\w.-]+\/)*[\w.-]+\.(?:tsx?|jsx?|css|html|json|py|go|rs|vue|svelte))\b/gi;
+/** Path with folders, or bare filename with a known extension. */
+const PATH_IN_PROMPT =
+  /\b((?:[\w.-]+\/)*[\w.-]+\.(?:tsx?|jsx?|css|scss|html|json|md|py|go|rs|vue|svelte|mjs|cjs))\b/gi;
 
 const UI_KEYWORDS =
   /\b(ui|ux|button|color|theme|style|layout|font|hero|navbar|nav|menu|mobile|responsive|dark\s*mode|night\s*mode|day\s*mode|light\s*mode|animation|polish|design|palette|brand)\b/i;
@@ -45,6 +47,22 @@ const BROKEN_CONTROL =
 
 const NEW_SECTION =
   /\b(add|create|new)\b[\s\S]{0,40}\b(section|page|feature|newsletter|footer|gallery|modal|form|faq)\b/i;
+
+const DELETE_INTENT =
+  /\b(delete|remove|drop|erase|unlink)\b[\s\S]{0,60}\b([\w./-]+\.\w+|file|component|page|section)\b/i;
+
+const EDIT_INTENT =
+  /\b(edit|update|change|modify|fix|rewrite|patch|replace)\b[\s\S]{0,80}\b([\w./-]+\.\w+|file|component|page|section|header|footer|hero)\b/i;
+
+/** Resolve bare filenames (e.g. page.tsx) against the repo tree. */
+function resolveAgainstTree(candidate: string, treePaths: string[]): string[] {
+  const clean = candidate.replace(/^\.\//, '').replace(/^\//, '');
+  if (!clean) return [];
+  if (treePaths.includes(clean)) return [clean];
+  const base = clean.includes('/') ? clean.split('/').pop()! : clean;
+  const hits = treePaths.filter((p) => p === clean || p.endsWith(`/${base}`) || p.endsWith(clean));
+  return hits.slice(0, 4);
+}
 
 /** User explicitly asks to rebuild entire site from scratch. */
 export function isForcedFullRebuild(prompt: string): boolean {
@@ -78,25 +96,36 @@ export function shouldAllowFullScaffoldOnUpdate(prompt: string): boolean {
 export function inferPathsFromUpdatePrompt(prompt: string, treePaths: string[]): string[] {
   const t = prompt.toLowerCase();
   const paths = new Set<string>();
+  const addResolved = (candidate: string) => {
+    const resolved = treePaths.length ? resolveAgainstTree(candidate, treePaths) : [candidate];
+    for (const p of resolved.length ? resolved : [candidate]) paths.add(p);
+  };
 
   let match: RegExpExecArray | null;
   const re = new RegExp(PATH_IN_PROMPT.source, 'gi');
   while ((match = re.exec(prompt)) !== null) {
-    paths.add(match[1]!);
+    addResolved(match[1]!);
+  }
+
+  if (DELETE_INTENT.test(prompt) || EDIT_INTENT.test(prompt)) {
+    const named = prompt.match(
+      /\b(?:delete|remove|drop|erase|edit|update|change|modify|fix|rewrite|patch|replace)\b[\s\S]{0,80}?\b((?:[\w.-]+\/)*[\w.-]+\.\w+)\b/i
+    );
+    if (named?.[1]) addResolved(named[1]);
   }
 
   if (/\b(index|html|page|section|header|footer|hero)\b/i.test(t) || NEW_SECTION.test(t)) {
-    paths.add('index.html');
+    addResolved('index.html');
   }
   if (/\b(css|style|theme|color|font|layout)\b/i.test(t) || DARK_MODE.test(t) || COLOR_CHANGE.test(t)) {
-    paths.add('styles.css');
+    addResolved('styles.css');
   }
   if (
     /\b(js|script|button|click|handler|api|fetch|logic|toggle)\b/i.test(t) ||
     DARK_MODE.test(t) ||
     BROKEN_CONTROL.test(t)
   ) {
-    paths.add('script.js');
+    addResolved('script.js');
   }
 
   if (treePaths.length) {
@@ -112,32 +141,67 @@ export function inferPathsFromUpdatePrompt(prompt: string, treePaths: string[]):
     if (DARK_MODE.test(t) || COLOR_CHANGE.test(t)) {
       pick((p) => /theme|globals?\.(css|scss)|tailwind|styles?\./i.test(p));
     }
-    if (/\breact|tsx|component\b/i.test(t) || NEW_SECTION.test(t)) {
+    if (/\breact|tsx|component\b/i.test(t) || NEW_SECTION.test(t) || EDIT_INTENT.test(prompt)) {
       pick((p) => /\.(tsx|jsx)$/.test(p) && /component|app|page|layout/i.test(p));
     }
     if (/\bapi\b/i.test(t)) {
       pick((p) => /api\/|routes\/|server\./i.test(p));
     }
-    if (BROKEN_CONTROL.test(t)) {
+    if (BROKEN_CONTROL.test(t) || EDIT_INTENT.test(prompt)) {
       pick((p) => /\.(html|js|tsx|jsx)$/.test(p) && /index|app|page|main|script/i.test(p), 3);
+    }
+    if (DELETE_INTENT.test(prompt) && paths.size === 0) {
+      pick((p) => /\.(md|txt|html)$/i.test(p) && /readme|todo|temp|draft/i.test(p), 2);
     }
   }
 
   if (!paths.size) {
-    paths.add('index.html');
-    if (UI_KEYWORDS.test(t)) paths.add('styles.css');
-    if (LOGIC_KEYWORDS.test(t)) paths.add('script.js');
-    if (!UI_KEYWORDS.test(t) && !LOGIC_KEYWORDS.test(t)) {
-      paths.add('styles.css');
-      paths.add('script.js');
+    // Prefer real tree entrypoints over inventing triad paths for Next/app repos
+    if (treePaths.length) {
+      const entry =
+        treePaths.find((p) => p === 'index.html') ||
+        treePaths.find((p) => /(?:^|\/)app\/page\.(tsx|jsx|js)$/i.test(p)) ||
+        treePaths.find((p) => /(?:^|\/)src\/app\/page\.(tsx|jsx|js)$/i.test(p)) ||
+        treePaths.find((p) => /(?:^|\/)pages\/index\.(tsx|jsx|js)$/i.test(p));
+      if (entry) paths.add(entry);
+      else {
+        paths.add('index.html');
+        paths.add('styles.css');
+        paths.add('script.js');
+      }
+    } else {
+      paths.add('index.html');
+      if (UI_KEYWORDS.test(t)) paths.add('styles.css');
+      if (LOGIC_KEYWORDS.test(t)) paths.add('script.js');
+      if (!UI_KEYWORDS.test(t) && !LOGIC_KEYWORDS.test(t)) {
+        paths.add('styles.css');
+        paths.add('script.js');
+      }
     }
   }
 
   return [...paths].slice(0, 12);
 }
 
+/** Paths the user explicitly asked to delete from the repo. */
+export function inferDeletePathsFromPrompt(prompt: string, treePaths: string[]): string[] {
+  if (!DELETE_INTENT.test(prompt)) return [];
+  const out = new Set<string>();
+  let match: RegExpExecArray | null;
+  const re = new RegExp(PATH_IN_PROMPT.source, 'gi');
+  while ((match = re.exec(prompt)) !== null) {
+    for (const p of resolveAgainstTree(match[1]!, treePaths.length ? treePaths : [match[1]!])) {
+      out.add(p);
+    }
+  }
+  return [...out].slice(0, 8);
+}
+
 export function planIncrementalUpdate(prompt: string, treePaths: string[] = []): UpdateTargetPlan {
   const filePaths = new Set(inferPathsFromUpdatePrompt(prompt, treePaths));
+  for (const del of inferDeletePathsFromPrompt(prompt, treePaths)) {
+    filePaths.add(del);
+  }
   const touchesUi =
     UI_KEYWORDS.test(prompt) ||
     DARK_MODE.test(prompt) ||
@@ -150,12 +214,14 @@ export function planIncrementalUpdate(prompt: string, treePaths: string[] = []):
     [...filePaths].some((p) => /\.(js|ts|py|go)$/i.test(p));
 
   const labels: string[] = [];
+  if (DELETE_INTENT.test(prompt)) labels.push('Delete — remove named files');
   if (DARK_MODE.test(prompt)) labels.push('Theme — dark/light toggle');
   else if (COLOR_CHANGE.test(prompt)) labels.push('Theme — colors only');
   else if (BROKEN_CONTROL.test(prompt)) labels.push('Fix — broken control');
   else if (NEW_SECTION.test(prompt)) labels.push('Feature — new section');
+  else if (EDIT_INTENT.test(prompt) && !labels.length) labels.push('Edit — exact file patches');
   if (touchesUi && !labels.length) labels.push('UI/UX — targeted files only');
-  if (touchesLogic && !labels.some((l) => /Fix|Feature|Theme/.test(l))) {
+  if (touchesLogic && !labels.some((l) => /Fix|Feature|Theme|Edit|Delete/.test(l))) {
     labels.push('Logic/API — targeted files only');
   }
   if (!labels.length) labels.push('Patch — user-requested files only');
@@ -193,6 +259,34 @@ export function mergePatchedFiles(
 
 const FENCE_WITH_PATH = /```([^\n`]+)\n([\s\S]*?)```/g;
 
+function normalizeFencePathLabel(label: string, allowedPaths: Set<string>): string | null {
+  const raw = label.trim().replace(/^\//, '');
+  // ```DELETE path/to/file.tsx``` or ```delete: path```
+  const deleteMatch = raw.match(/^(?:DELETE|delete)\s*:?\s*(.+)$/);
+  if (deleteMatch?.[1]) {
+    const p = deleteMatch[1].trim().replace(/^\//, '');
+    return allowedPaths.has(p) ? p : null;
+  }
+  // ```tsx path/to/File.tsx``` / ```typescript:src/app.ts```
+  const langPath = raw.match(
+    /^(?:tsx?|jsx?|javascript|typescript|css|scss|html|json|markdown|md|python|py|go|rust|vue|svelte)\s*:?\s+([\w./-]+\.\w+)$/i
+  );
+  if (langPath?.[1]) {
+    const p = langPath[1].replace(/^\//, '');
+    return allowedPaths.has(p) ? p : null;
+  }
+  if (/^[\w./-]+\.\w+$/.test(raw) && allowedPaths.has(raw)) return raw;
+  // Basename match against allowed set
+  if (/^[\w.-]+\.\w+$/.test(raw)) {
+    const hit = [...allowedPaths].find((p) => p === raw || p.endsWith(`/${raw}`));
+    if (hit) return hit;
+  }
+  if (/^(html|htm)$/i.test(raw) && allowedPaths.has('index.html')) return 'index.html';
+  if (/^css$/i.test(raw) && allowedPaths.has('styles.css')) return 'styles.css';
+  if (/^(javascript|js)$/i.test(raw) && allowedPaths.has('script.js')) return 'script.js';
+  return null;
+}
+
 /** Pull only paths the user asked to change from swarm step output. */
 export function extractPatchedFilesFromAssembly(
   assembledCode: string,
@@ -206,26 +300,39 @@ export function extractPatchedFilesFromAssembly(
   while ((match = re.exec(assembledCode)) !== null) {
     const label = match[1]!.trim();
     const content = match[2]!.trim();
-    if (!content) continue;
-
-    let path: string | null = null;
-    if (/^[\w./-]+\.\w+$/.test(label) && allowedPaths.has(label.replace(/^\//, ''))) {
-      path = label.replace(/^\//, '');
-    } else if (/^(html|htm)$/i.test(label) && allowedPaths.has('index.html')) {
-      path = 'index.html';
-    } else if (/^css$/i.test(label) && allowedPaths.has('styles.css')) {
-      path = 'styles.css';
-    } else if (/^(javascript|js)$/i.test(label) && allowedPaths.has('script.js')) {
-      path = 'script.js';
-    }
-
-    if (path && !seen.has(path)) {
-      seen.add(path);
-      patched.push({ path, content });
-    }
+    const path = normalizeFencePathLabel(label, allowedPaths);
+    if (!path || seen.has(path)) continue;
+    const isDelete = /^(?:DELETE|delete)\b/i.test(label);
+    // Empty fences only count when explicitly labeled DELETE
+    if (!content && !isDelete) continue;
+    if (isDelete) continue; // handled by extractDeletedPathsFromAssembly
+    seen.add(path);
+    patched.push({ path, content });
   }
 
   return patched;
+}
+
+/** Paths marked for deletion in assembly (DELETE fences or empty path fences). */
+export function extractDeletedPathsFromAssembly(
+  assembledCode: string,
+  allowedPaths: Set<string>
+): string[] {
+  const deleted: string[] = [];
+  const seen = new Set<string>();
+  let match: RegExpExecArray | null;
+  const re = new RegExp(FENCE_WITH_PATH.source, 'g');
+  while ((match = re.exec(assembledCode)) !== null) {
+    const label = match[1]!.trim();
+    const content = match[2]!.trim();
+    if (!/^(?:DELETE|delete)\b/i.test(label) && content.length > 0) continue;
+    const path = normalizeFencePathLabel(label, allowedPaths);
+    if (path && !seen.has(path)) {
+      seen.add(path);
+      deleted.push(path);
+    }
+  }
+  return deleted;
 }
 
 /** Map landing output (html/css/js) onto repo paths for incremental GitHub push. */
@@ -281,6 +388,7 @@ export function buildFileTrailDiffs(
 
 export function shortChangeSummary(prompt: string, paths: string[]): string[] {
   const bullets: string[] = [];
+  if (DELETE_INTENT.test(prompt)) bullets.push('Removed requested file(s) from the repo');
   if (DARK_MODE.test(prompt)) bullets.push('Added or wired dark/light theme toggle');
   if (COLOR_CHANGE.test(prompt)) bullets.push('Updated brand / theme colors');
   if (BROKEN_CONTROL.test(prompt)) bullets.push('Fixed broken control / interaction');
@@ -289,4 +397,23 @@ export function shortChangeSummary(prompt: string, paths: string[]): string[] {
   bullets.push(paths.length ? `Files: ${paths.slice(0, 5).join(', ')}` : 'No extra files regenerated');
   bullets.push('No full site rebuild');
   return bullets.slice(0, 3);
+}
+
+/** Honest summary from real before/after diffs — prefer over keyword cosmetics. */
+export function changeSummaryFromFileTrail(
+  trail: FileTrailDiff[],
+  deletedPaths: string[] = []
+): string[] {
+  const bullets: string[] = [];
+  for (const d of deletedPaths.slice(0, 3)) {
+    bullets.push(`Deleted ${d}`);
+  }
+  for (const t of trail.slice(0, 5)) {
+    if (deletedPaths.includes(t.path)) continue;
+    if (!t.before?.trim()) bullets.push(`Created ${t.path} (+${t.added} lines)`);
+    else bullets.push(`Updated ${t.path} (+${t.added}/−${t.removed})`);
+  }
+  if (!bullets.length) bullets.push('No file content changed on disk');
+  bullets.push('Targeted patch — not a full rebuild');
+  return bullets.slice(0, 6);
 }

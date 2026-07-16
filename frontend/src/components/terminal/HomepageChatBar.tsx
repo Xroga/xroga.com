@@ -74,25 +74,19 @@ export function HomepageChatBar() {
   const [focused, setFocused] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-  const [uploading, setUploading] = useState(false);
+  const uploading = false;
   const [sendState, setSendState] = useState<SendButtonState>('idle');
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const composingRef = useRef(false);
   const router = useRouter();
   const typewriter = useTypewriterPlaceholder(!prompt && !focused);
 
   const addFiles = useCallback((list: FileList | null) => {
     if (!list?.length) return;
-    setUploading(true);
     const incoming = Array.from(list).filter((f) => f.type.startsWith('image/'));
-    if (!incoming.length) {
-      setUploading(false);
-      return;
-    }
-    setTimeout(() => {
-      setFiles((prev) => [...prev, ...incoming]);
-      setUploading(false);
-    }, Math.min(1200, 300 + incoming.length * 150));
+    if (!incoming.length) return;
+    setFiles((prev) => [...prev, ...incoming]);
   }, []);
 
   const handlePaste = useCallback(
@@ -132,7 +126,8 @@ export function HomepageChatBar() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const text = autocorrectText(prompt.trim());
+    if (composingRef.current) return;
+    const text = autocorrectText((textareaRef.current?.value ?? prompt).trim());
     setSendState('sending');
     localStorage.setItem(PENDING_PROMPT_KEY, text || 'Build with attached files');
     setTimeout(() => setSendState('launched'), 400);
@@ -185,14 +180,20 @@ export function HomepageChatBar() {
                   ref={textareaRef}
                   value={prompt}
                   onChange={(e) => {
-                    if ((e.nativeEvent as InputEvent).isComposing) return;
                     setPrompt(e.target.value);
+                  }}
+                  onCompositionStart={() => {
+                    composingRef.current = true;
+                  }}
+                  onCompositionEnd={(e) => {
+                    composingRef.current = false;
+                    setPrompt(e.currentTarget.value);
                   }}
                   onFocus={() => setFocused(true)}
                   onPaste={handlePaste}
                   onBlur={handleBlur}
                   onKeyDown={(e) => {
-                    if ((e.nativeEvent as KeyboardEvent).isComposing) return;
+                    if (composingRef.current || (e.nativeEvent as KeyboardEvent).isComposing) return;
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
                       handleSubmit(e);
@@ -200,6 +201,9 @@ export function HomepageChatBar() {
                   }}
                   placeholder=""
                   rows={2}
+                  spellCheck={false}
+                  autoCorrect="off"
+                  autoCapitalize="off"
                   className={cn(
                     'w-full px-1 py-1 resize-none min-h-[44px] max-h-[120px]',
                     'bg-transparent focus:outline-none text-sm sm:text-base leading-relaxed',
