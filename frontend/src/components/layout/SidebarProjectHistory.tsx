@@ -358,8 +358,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         return;
       }
 
-      toast.error('Could not load that terminal — try again in a moment.');
+      // Session stub exists (e.g. #1 under modernpage) but history body is empty —
+      // still open the workspace with this repo selected so chat/builds work.
+      setActiveSessionId(session.id);
       router.push('/workspace');
+      toast('Opened terminal — start chatting or building in this repo');
     } finally {
       setBusyId(null);
     }

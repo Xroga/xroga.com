@@ -611,13 +611,17 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           />
                         ) : heavyBuildActive &&
                           msg.id === buildPanelMessageId &&
-                          !msg.content?.trim() ? null : msg.updateTrail && !msg.content?.trim() ? null : (
+                          !msg.content?.trim() &&
+                          (msg.featureOutput || swarmTodos.length > 0) ? null : msg.updateTrail &&
+                          !msg.content?.trim() ? null : (
                           <ModernResponseText
                             content={
                               msg.content?.trim()
                                 ? msg.content
                                 : !loading && !msg.featureOutput && !msg.buildStopped && !msg.updateTrail
-                                  ? '⚠️ No preview was delivered for this turn. Send the prompt again — if you already selected a GitHub repo, you should not need the Connect popup.'
+                                  ? codeBuildActive || heavyBuildActive
+                                    ? '⚠️ No preview was delivered for this turn. Send the prompt again — if you already selected a GitHub repo, you should not need the Connect popup.'
+                                    : 'No answer was delivered for this turn. Send your question again — chat and advice replies should appear here.'
                                   : msg.content
                             }
                             streaming={msg.id === animatingId && loading}
