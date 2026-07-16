@@ -76,6 +76,7 @@ CRITICAL RULES:
   * SaaS / marketplace / chatbot / portfolio / game → that product — NOT a blog
   * blog / journal / newsletter ONLY → real blog (unique brand, hero, 3+ post cards, about, footer)
 - FREE LIVE AI: for chatbots/AI features, call window.XrogaLiveAi.chat (Pollinations — no key) so preview works. Never hardcode user secrets; say paste keys in Xroga Integrations (encrypted).
+- FIELD APIs (auto): crypto → fetch CoinGecko simple/price live into KPI/tables; weather → Open-Meteo; FX → Frankfurter. Wire on page load with try/catch — user must see LIVE data in preview.
 - NEVER output the generic stub with "Fast / Modern / Reliable" or "Built by Xroga AI Swarm". NEVER put the raw user prompt into an H1.
 - For games, apps, or non-HTML stacks: use the best language/framework for the task (Python, JavaScript, TypeScript, etc.) and output complete runnable code.`;
 

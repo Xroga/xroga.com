@@ -134,15 +134,7 @@ function cryptoDashboard(prompt: string, seed: number): SiteFiles {
     'Live crypto portfolio & market pulse',
     'Track tokens, swaps, and on-chain activity',
   ]);
-  const price = (1200 + (seed % 90000) / 100).toFixed(2);
-  const change = (((seed % 1700) - 850) / 100).toFixed(2);
-  const vol = (12 + (seed % 80)).toFixed(1);
-  const tokens = [
-    { sym: 'BTC', name: 'Bitcoin', p: (42000 + (seed % 8000)).toFixed(0), c: ((seed % 500) / 100 - 2).toFixed(2) },
-    { sym: 'ETH', name: 'Ethereum', p: (2200 + (seed % 900)).toFixed(0), c: ((seed % 400) / 100 - 1).toFixed(2) },
-    { sym: 'SOL', name: 'Solana', p: (90 + (seed % 80)).toFixed(1), c: ((seed % 600) / 100 - 2).toFixed(2) },
-    { sym: 'ARB', name: 'Arbitrum', p: (1 + (seed % 200) / 100).toFixed(2), c: ((seed % 300) / 100 - 1).toFixed(2) },
-  ];
+  const price = (42000 + (seed % 8000)).toFixed(0);
   const accent = ['#22d3ee', '#a3e635', '#f59e0b', '#818cf8'][seed % 4]!;
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -176,11 +168,12 @@ function cryptoDashboard(prompt: string, seed: number): SiteFiles {
 
       <section id="overview" class="panel active">
         <div class="kpis">
-          <article class="kpi"><span>Portfolio</span><strong>$${price}</strong><em class="${Number(change) >= 0 ? 'up' : 'down'}">${Number(change) >= 0 ? '+' : ''}${change}%</em></article>
-          <article class="kpi"><span>24h volume</span><strong>$${vol}M</strong><em class="muted">simulated</em></article>
+          <article class="kpi"><span>BTC (live)</span><strong data-live-price="bitcoin">$${price}</strong><em class="muted" id="btc-change">CoinGecko</em></article>
+          <article class="kpi"><span>ETH (live)</span><strong data-live-price="ethereum">—</strong><em class="muted">CoinGecko</em></article>
+          <article class="kpi"><span>SOL (live)</span><strong data-live-price="solana">—</strong><em class="muted">CoinGecko</em></article>
           <article class="kpi"><span>Open positions</span><strong>${3 + (seed % 5)}</strong><em class="muted">demo</em></article>
-          <article class="kpi"><span>Gas (gwei)</span><strong>${8 + (seed % 40)}</strong><em class="muted">est.</em></article>
         </div>
+        <p class="muted" style="margin:0 0 1rem;font-size:.8rem">Live prices via free CoinGecko API — auto-integrated by Xroga (no API key).</p>
         <div class="chart-card">
           <h2>Price pulse</h2>
           <canvas id="spark" width="900" height="220" aria-label="Price chart"></canvas>
@@ -188,15 +181,14 @@ function cryptoDashboard(prompt: string, seed: number): SiteFiles {
       </section>
 
       <section id="markets" class="panel">
-        <h2>Markets</h2>
+        <h2>Markets <span class="muted" style="font-weight:400;font-size:.85rem">· live CoinGecko</span></h2>
         <table class="table">
           <thead><tr><th>Asset</th><th>Price</th><th>24h</th></tr></thead>
           <tbody>
-            ${tokens
-              .map(
-                (t) => `<tr><td><strong>${t.sym}</strong><span class="muted"> ${escapeHtml(t.name)}</span></td><td>$${t.p}</td><td class="${Number(t.c) >= 0 ? 'up' : 'down'}">${Number(t.c) >= 0 ? '+' : ''}${t.c}%</td></tr>`
-              )
-              .join('')}
+            <tr><td><strong>BTC</strong><span class="muted"> Bitcoin</span></td><td>Loading…</td><td>—</td></tr>
+            <tr><td><strong>ETH</strong><span class="muted"> Ethereum</span></td><td>Loading…</td><td>—</td></tr>
+            <tr><td><strong>SOL</strong><span class="muted"> Solana</span></td><td>Loading…</td><td>—</td></tr>
+            <tr><td><strong>ARB</strong><span class="muted"> Arbitrum</span></td><td>Loading…</td><td>—</td></tr>
           </tbody>
         </table>
       </section>
@@ -208,7 +200,7 @@ function cryptoDashboard(prompt: string, seed: number): SiteFiles {
           <label>To<select name="to"><option>USDC</option><option>ETH</option><option>ARB</option></select></label>
           <label>Amount<input name="amount" type="number" min="0" step="0.01" value="${(1 + (seed % 9) / 10).toFixed(1)}" /></label>
           <button class="btn" type="submit">Preview swap</button>
-          <p class="muted" id="swap-out">Rates are demo-only — wire your RPC later.</p>
+          <p class="muted" id="swap-out">Fetching live rates from CoinGecko…</p>
         </form>
       </section>
 
@@ -218,6 +210,7 @@ function cryptoDashboard(prompt: string, seed: number): SiteFiles {
       </section>
     </main>
   </div>
+  <script src="js/xroga-live-ai.js"></script>
   <script src="script.js"></script>
 </body>
 </html>`;
@@ -323,9 +316,48 @@ h1{font-size:clamp(1.35rem,3vw,1.9rem);max-width:36rem}
     const out = document.getElementById('swap-out');
     if (out) out.textContent = 'Preview: ' + fd.get('amount') + ' ' + fd.get('from') + ' ≈ ' + (Number(fd.get('amount')) * (1.2 + (seed % 40) / 100)).toFixed(3) + ' ' + fd.get('to');
   });
+
+  // LIVE free crypto prices (CoinGecko — auto-integrated, no API key)
+  (async () => {
+    try {
+      const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,arbitrum&vs_currencies=usd&include_24hr_change=true';
+      const data = await fetch(url).then((r) => r.json());
+      const map = { bitcoin: 'BTC', ethereum: 'ETH', solana: 'SOL', arbitrum: 'ARB' };
+      const names = { bitcoin: 'Bitcoin', ethereum: 'Ethereum', solana: 'Solana', arbitrum: 'Arbitrum' };
+      document.querySelectorAll('[data-live-price]').forEach((el) => {
+        const id = el.getAttribute('data-live-price');
+        if (id && data[id]?.usd != null) {
+          el.textContent = '$' + Number(data[id].usd).toLocaleString(undefined, { maximumFractionDigits: 2 });
+        }
+      });
+      const btcCh = document.getElementById('btc-change');
+      if (btcCh && data.bitcoin) {
+        const ch = Number(data.bitcoin.usd_24h_change || 0);
+        btcCh.textContent = (ch >= 0 ? '+' : '') + ch.toFixed(2) + '% 24h';
+        btcCh.className = ch >= 0 ? 'up' : 'down';
+      }
+      const tbody = document.querySelector('#markets tbody');
+      if (tbody) {
+        tbody.innerHTML = Object.keys(map).map((id) => {
+          const row = data[id];
+          if (!row) return '';
+          const ch = Number(row.usd_24h_change || 0);
+          return '<tr><td><strong>' + map[id] + '</strong><span class="muted"> ' + names[id] + '</span></td><td>$'
+            + Number(row.usd).toLocaleString(undefined, { maximumFractionDigits: 2 })
+            + '</td><td class="' + (ch >= 0 ? 'up' : 'down') + '">' + (ch >= 0 ? '+' : '') + ch.toFixed(2) + '%</td></tr>';
+        }).join('');
+      }
+      const out = document.getElementById('swap-out');
+      if (out && data.ethereum && data.bitcoin) {
+        out.textContent = 'Live rates ready (CoinGecko). ETH $' + Number(data.ethereum.usd).toLocaleString() + ' · BTC $' + Number(data.bitcoin.usd).toLocaleString();
+      }
+    } catch (err) {
+      console.warn('[crypto] live prices unavailable', err);
+    }
+  })();
 })();`;
 
-  return { html, css, js };
+  return { html, css, js: `${liveAiBrowserClientSource()}\n${js}` };
 }
 
 function saasLanding(prompt: string, seed: number): SiteFiles {
