@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Loader2, Rocket, TriangleAlert } from 'lucide-react';
 import { api } from '@/lib/api';
+import { listenVercelOAuthMessages, openVercelOAuthPopup } from '@/lib/vercelConnect';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import toast from 'react-hot-toast';
 
 interface VercelDeployButtonProps {
@@ -25,57 +27,70 @@ export function VercelDeployButton({
   const [connected, setConnected] = useState<boolean | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [deploying, setDeploying] = useState(false);
+  const [liveUrl, setLiveUrl] = useState<string | null>(null);
+  const applyBuild = useProjectWorkspaceStore((s) => s.applyBuild);
+  const storeDeployUrl = useProjectWorkspaceStore((s) => s.deployUrl);
 
   useEffect(() => {
-    void api.vercel.status().then((s) => {
-      setConnected(s.connected);
-      setUsername(s.username ?? null);
-    }).catch(() => setConnected(false));
+    void api.vercel
+      .status()
+      .then((s) => {
+        setConnected(s.connected);
+        setUsername(s.username ?? null);
+      })
+      .catch(() => setConnected(false));
 
-    const onMessage = (e: MessageEvent) => {
-      if (e.data?.type === 'xroga-vercel-connected') {
+    const stop = listenVercelOAuthMessages(
+      (name) => {
         setConnected(true);
-        setUsername(typeof e.data.username === 'string' ? e.data.username : null);
-        toast.success('Vercel connected');
-      }
-      if (e.data?.type === 'xroga-vercel-error') {
-        toast.error(typeof e.data.message === 'string' ? e.data.message : 'Vercel connection failed');
-      }
-    };
-    window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
+        setUsername(name ?? null);
+        toast.success(name ? `Vercel connected as @${name}` : 'Vercel connected');
+      },
+      (msg) => toast.error(msg)
+    );
+    return stop;
   }, []);
 
-  async function connectVercel() {
-    try {
-      const { url, oauthConfigured } = await api.vercel.oauthUrl();
-      if (!url || !oauthConfigured) {
-        toast.error('Open Integrations → paste your Vercel token from vercel.com/account/tokens');
-        return;
-      }
-      const popup = window.open(url, 'xroga-vercel-oauth', 'width=600,height=700,scrollbars=yes');
-      if (!popup) {
-        toast.error('Allow popups to connect Vercel');
-        return;
-      }
-      const poll = setInterval(async () => {
-        if (popup.closed) {
-          clearInterval(poll);
-          const status = await api.vercel.status().catch(() => ({ connected: false, username: undefined }));
-          setConnected(status.connected);
-          setUsername(status.username ?? null);
-          if (status.connected) toast.success('Vercel connected');
-        }
-      }, 800);
-    } catch (err) {
-      toast.error((err as Error).message || 'Vercel OAuth not configured');
+  useEffect(() => {
+    if (storeDeployUrl?.includes('vercel.app')) setLiveUrl(storeDeployUrl);
+  }, [storeDeployUrl]);
+
+  async function connectVercel(): Promise<boolean> {
+    const result = await openVercelOAuthPopup();
+    if (!result.opened) {
+      toast.error(result.error || 'Could not open Vercel authorization');
+      return false;
     }
+    toast('Complete authorization in the Vercel window…', { icon: '▲' });
+    return new Promise((resolve) => {
+      const started = Date.now();
+      const poll = setInterval(async () => {
+        try {
+          const status = await api.vercel.status();
+          if (status.connected) {
+            clearInterval(poll);
+            setConnected(true);
+            setUsername(status.username ?? null);
+            toast.success('Vercel connected');
+            resolve(true);
+            return;
+          }
+        } catch {
+          /* keep polling */
+        }
+        if (Date.now() - started > 120_000) {
+          clearInterval(poll);
+          toast.error('Vercel authorization timed out — try again');
+          resolve(false);
+        }
+      }, 900);
+    });
   }
 
   async function deploy() {
     if (!connected) {
-      await connectVercel();
-      return;
+      const ok = await connectVercel();
+      if (!ok) return;
     }
     setDeploying(true);
     try {
@@ -87,16 +102,41 @@ export function VercelDeployButton({
         projectName,
       });
       if (result.deployUrl) {
-        toast.success('Deployed to your Vercel account');
+        setLiveUrl(result.deployUrl);
+        applyBuild({
+          html,
+          css,
+          js,
+          projectName,
+          deployUrl: result.deployUrl,
+          status: 'live',
+          openPreview: true,
+        });
+        toast.success('Live on your Vercel domain');
         onDeployed?.(result.deployUrl);
       } else {
         toast.error(result.error ?? 'Deploy failed');
       }
     } catch (err) {
-      toast.error((err as Error).message?.slice(0, 120) || 'Deploy failed');
+      toast.error((err as Error).message?.slice(0, 140) || 'Deploy failed');
     } finally {
       setDeploying(false);
     }
+  }
+
+  if (liveUrl) {
+    return (
+      <a
+        href={liveUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={username ? `Open @${username} Vercel preview` : 'Open Vercel preview'}
+        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#006aff]/35 bg-[#006aff]/10 text-[#006aff] text-xs font-bold hover:bg-[#006aff]/15 transition-colors"
+      >
+        <Rocket className="w-4 h-4" />
+        Vercel preview
+      </a>
+    );
   }
 
   return (
@@ -104,7 +144,7 @@ export function VercelDeployButton({
       type="button"
       onClick={() => void deploy()}
       disabled={deploying}
-      title={connected ? `Deploy as @${username ?? 'you'}` : 'Connect Vercel to deploy to your account'}
+      title={connected ? `Deploy as @${username ?? 'you'}` : 'Authorize Vercel, then deploy to your account'}
       className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 dark:border-white/15 bg-black text-white dark:bg-white dark:text-black text-xs font-bold hover:opacity-90 transition-opacity disabled:opacity-60"
     >
       {deploying ? (
@@ -114,7 +154,7 @@ export function VercelDeployButton({
       ) : (
         <Rocket className="w-4 h-4" />
       )}
-      {deploying ? 'Deploying…' : connected ? 'Deploy to Vercel' : 'Connect Vercel & deploy'}
+      {deploying ? 'Deploying…' : connected ? 'Deploy to Vercel' : 'Authorize Vercel & deploy'}
     </button>
   );
 }

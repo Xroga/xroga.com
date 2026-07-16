@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 import { FreeApiOptionsPanel } from '@/components/integrations/FreeApiOptionsPanel';
 import { AiIntegrationsPanel } from '@/components/integrations/AiIntegrationsPanel';
-import { CheckCircle2, GitBranch, Key, Lock, Shield } from 'lucide-react';
+import { CheckCircle2, GitBranch, Key, Lock, Shield, Triangle } from 'lucide-react';
 import { api } from '@/lib/api';
 import { loadCredentials, hasVault } from '@/lib/credentialVault';
+import { listenVercelOAuthMessages, openVercelOAuthPopup } from '@/lib/vercelConnect';
+import toast from 'react-hot-toast';
 
 const AUTO_MANAGED = [
   { id: 'supabase', name: 'Supabase', detail: 'Database, Auth, Realtime, Storage' },
-  { id: 'vercel', name: 'Vercel', detail: 'Frontend deployment' },
   { id: 'cloudflare', name: 'Cloudflare', detail: 'CDN, DNS, SSL, R2 storage' },
   { id: 'paddle', name: 'Paddle', detail: 'Payments (PK/IN friendly)' },
   { id: 'brevo', name: 'Brevo', detail: 'Transactional email' },
@@ -87,14 +88,42 @@ export function ConnectedServicesSection() {
         </div>
 
         <div className="flex items-start gap-3 p-3 rounded-lg border border-[var(--card-border)] bg-[var(--foreground)]/[0.03]">
-          <Key className="w-5 h-5 shrink-0 mt-0.5 text-[var(--accent)]" />
+          <Triangle className="w-5 h-5 shrink-0 mt-0.5 text-[var(--accent)]" />
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold">Vercel</p>
             <p className="text-xs text-[var(--muted)]">
               {vercelConnected
-                ? `Connected as ${vercelUser ?? 'user'} — live preview deploys to your account`
-                : 'Not connected — sandbox preview works; connect for live URL on your domain'}
+                ? `Connected as @${vercelUser ?? 'user'} — deploys go to your Vercel domain`
+                : 'Connect your Vercel account — authorize once, then every build can go live on your domain'}
             </p>
+            {!vercelConnected ? (
+              <button
+                type="button"
+                className="mt-2 text-xs font-bold px-3 py-1.5 rounded-lg bg-[var(--foreground)] text-[var(--background)] hover:opacity-90"
+                onClick={() => {
+                  const stop = listenVercelOAuthMessages(
+                    (username) => {
+                      stop();
+                      setVercelConnected(true);
+                      setVercelUser(username ?? null);
+                      toast.success(username ? `Vercel connected as @${username}` : 'Vercel connected');
+                    },
+                    (msg) => {
+                      stop();
+                      toast.error(msg);
+                    }
+                  );
+                  void openVercelOAuthPopup().then((result) => {
+                    if (!result.opened) {
+                      stop();
+                      toast.error(result.error || 'Could not open Vercel authorization');
+                    }
+                  });
+                }}
+              >
+                Authorize with Vercel
+              </button>
+            ) : null}
           </div>
           {vercelConnected ? <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> : null}
         </div>

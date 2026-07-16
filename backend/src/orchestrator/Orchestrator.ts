@@ -411,7 +411,28 @@ export class Orchestrator {
       runId,
     });
 
-    const tokenUsage = await getUsage(ctx.userId);
+    // Prefer DB snapshot after flush; if engine tracked spend but DB still reads 0, force-bill once.
+    let tokenUsage = await getUsage(ctx.userId);
+    const engineSpend = result.tokenUsage;
+    if (
+      engineSpend &&
+      engineSpend.totalTokens > 0 &&
+      tokenUsage.totalTokensUsed <= 0
+    ) {
+      try {
+        const { recordLlmUsage } = await import('../phase1/usageRecorder.js');
+        tokenUsage = await recordLlmUsage(
+          ctx.userId,
+          engineSpend.inputTokens,
+          engineSpend.outputTokens
+        );
+      } catch (billErr) {
+        console.warn(
+          '[Orchestrator] post-build usage recover failed:',
+          (billErr as Error).message?.slice(0, 120)
+        );
+      }
+    }
 
     return {
       runId,

@@ -196,14 +196,6 @@ Built with [XROGA AI](https://xroga.com) — Black Hole V∞.
 ## Live preview
 \`index.html\` is the exact site XROGA generated — same file Vercel deploys to your account.
 
-${
-  needsLiveAiRuntime(prompt)
-    ? `## Free AI (works in preview)
-Chat / images use **Pollinations** (no API key). Paste your own encrypted keys in Xroga → Integrations to upgrade models — secrets stay in your account vault, not GitHub.
-See \`AI_LIVE.md\`.
-`
-    : ''
-}
 ## Structure
 \`\`\`
 index.html    ← live site (CSS/JS inlined — matches sandbox preview)
@@ -213,10 +205,11 @@ vercel.json   ← static deploy config (no build step)
 \`\`\`
 
 ## Deploy
-Connect Vercel in XROGA — auto-deploys to **your** Vercel account on build complete.
+Connect Vercel in XROGA — deploys to **your** Vercel account and domain.
 `,
     },
-    ...liveExtras,
+    // Keep runtime helpers; never include *.md marketing docs (AI_LIVE.md etc.)
+    ...liveExtras.filter((f) => !/\.md$/i.test(f.path) && !/^AI_LIVE/i.test(f.path)),
   ];
 }
 

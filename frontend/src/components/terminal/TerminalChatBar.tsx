@@ -246,11 +246,22 @@ export function TerminalChatBar() {
     }
   }
 
-  const appendSpeech = useCallback(
-    (text: string) => setPrompt(prompt ? `${prompt} ${text}` : text),
-    [setPrompt, prompt]
+  /** Baseline prompt before the current mic session — speech replaces after baseline. */
+  const speechBaseRef = useRef('');
+  const speechActiveRef = useRef(false);
+  const applySpeech = useCallback(
+    (transcript: string) => {
+      if (!speechActiveRef.current) {
+        speechBaseRef.current = prompt;
+        speechActiveRef.current = true;
+      }
+      const base = speechBaseRef.current.trim();
+      const next = transcript.trim();
+      setPrompt(base && next ? `${base} ${next}` : next || base);
+    },
+    [prompt, setPrompt]
   );
-  const speech = useSpeechToText(appendSpeech);
+  const speech = useSpeechToText(applySpeech);
 
   const addFiles = useCallback((list: FileList | null) => {
     if (!list?.length) return;
@@ -425,6 +436,12 @@ export function TerminalChatBar() {
                   toast.error('Voice input not supported in this browser');
                   return;
                 }
+                if (listening) {
+                  speechActiveRef.current = false;
+                } else {
+                  speechBaseRef.current = prompt;
+                  speechActiveRef.current = true;
+                }
                 speech.toggle(listening, setListening);
               }}
               micDisabled={!speech.supported}
@@ -443,13 +460,15 @@ export function TerminalChatBar() {
               <textarea
                 ref={textareaRef}
                 value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                onPaste={handlePaste}
-                onBlur={() => {
-                  const fixed = autocorrectText(prompt);
-                  if (fixed !== prompt) setPrompt(fixed);
+                onChange={(e) => {
+                  // Avoid fighting IME composition (double letters / sticky word count)
+                  if ((e.nativeEvent as InputEvent).isComposing) return;
+                  speechActiveRef.current = false;
+                  setPrompt(e.target.value);
                 }}
+                onPaste={handlePaste}
                 onKeyDown={(e) => {
+                  if ((e.nativeEvent as KeyboardEvent).isComposing) return;
                   if (e.key === 'Enter' && e.shiftKey) {
                     e.preventDefault();
                     if (prompt.trim()) void handleSubmit(e, true);

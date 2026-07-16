@@ -175,6 +175,8 @@ export function ChatBarInputRow({
 export function useSpeechToText(onResult: (text: string) => void) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
+  /** Latest full transcript for this speech session (replace, don't append). */
+  const sessionTranscriptRef = useRef('');
 
   useEffect(() => {
     return () => {
@@ -195,15 +197,27 @@ export function useSpeechToText(onResult: (text: string) => void) {
       return;
     }
 
+    sessionTranscriptRef.current = '';
     const rec = new SR();
     rec.continuous = false;
     rec.interimResults = true;
     rec.lang = 'en-US';
-    rec.onresult = (e: { results: Iterable<{ 0: { transcript: string } }> }) => {
-      const transcript = Array.from(e.results)
-        .map((r) => r[0].transcript)
-        .join('');
-      if (transcript) onResult(transcript);
+    rec.onresult = (e: {
+      resultIndex: number;
+      results: ArrayLike<{ isFinal?: boolean; 0: { transcript: string } }>;
+    }) => {
+      let interim = '';
+      let finalPiece = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const piece = e.results[i]?.[0]?.transcript ?? '';
+        if (e.results[i]?.isFinal) finalPiece += piece;
+        else interim += piece;
+      }
+      if (finalPiece) {
+        sessionTranscriptRef.current = `${sessionTranscriptRef.current} ${finalPiece}`.trim();
+      }
+      const next = `${sessionTranscriptRef.current}${interim ? ` ${interim}` : ''}`.trim();
+      if (next) onResult(next);
     };
     rec.onend = () => setListening(false);
     rec.onerror = () => setListening(false);

@@ -128,10 +128,6 @@ export function HomepageChatBar() {
 
   function handleBlur() {
     setFocused(false);
-    if (prompt.trim()) {
-      const fixed = autocorrectText(prompt);
-      if (fixed !== prompt) setPrompt(fixed);
-    }
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -188,11 +184,15 @@ export function HomepageChatBar() {
                 <textarea
                   ref={textareaRef}
                   value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
+                  onChange={(e) => {
+                    if ((e.nativeEvent as InputEvent).isComposing) return;
+                    setPrompt(e.target.value);
+                  }}
                   onFocus={() => setFocused(true)}
                   onPaste={handlePaste}
                   onBlur={handleBlur}
                   onKeyDown={(e) => {
+                    if ((e.nativeEvent as KeyboardEvent).isComposing) return;
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
                       handleSubmit(e);

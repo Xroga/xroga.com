@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -45,6 +45,7 @@ interface PostBuildDashboardProps {
   updateSuggestions: string[];
   onFixIssue: (prompt: string) => void;
   onSuggestion: (prompt: string) => void;
+  onLiveUrl?: (url: string) => void;
 }
 
 function inferFeatures(data: LandingPageOutputData, pages: string[]): string[] {
@@ -82,9 +83,15 @@ export function PostBuildDashboard({
   updateSuggestions,
   onFixIssue,
   onSuggestion,
+  onLiveUrl,
 }: PostBuildDashboardProps) {
   const [behindOpen, setBehindOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [deployedUrl, setDeployedUrl] = useState<string | null>(liveUrl);
+
+  useEffect(() => {
+    if (liveUrl) setDeployedUrl(liveUrl);
+  }, [liveUrl]);
 
   const userRequest = data.userPrompt?.trim() || projectName;
   const isUpdate = Boolean(data.isUpdate);
@@ -252,7 +259,9 @@ export function PostBuildDashboard({
         {/* Plan A: single preview lives in ProjectPreviewDock — avoid per-card tabs */}
         <section className="space-y-2">
           <p className="text-[11px] text-[var(--muted)]">
-            Preview opens in the project panel below (one preview per repo). Connect Vercel when you want a public live URL.
+            {deployedUrl || liveUrl
+              ? 'Live preview uses your Vercel domain in the project panel below.'
+              : 'Sandbox preview is in the project panel below. Authorize Vercel once to publish on your own domain.'}
           </p>
         </section>
 
@@ -333,9 +342,9 @@ export function PostBuildDashboard({
             <Eye className="w-4 h-4" />
             Preview
           </button>
-          {liveUrl && (
+          {(deployedUrl || liveUrl) && (
             <a
-              href={liveUrl}
+              href={(deployedUrl || liveUrl)!}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--card-border)] text-xs font-semibold hover:bg-[var(--foreground)]/5 transition-colors"
@@ -362,7 +371,9 @@ export function PostBuildDashboard({
             projectSlug={projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40) || 'xroga-build'}
             projectName={projectName}
             onDeployed={(url) => {
-              if (url) window.open(url, '_blank', 'noopener,noreferrer');
+              if (!url) return;
+              setDeployedUrl(url);
+              onLiveUrl?.(url);
             }}
           />
           <button
