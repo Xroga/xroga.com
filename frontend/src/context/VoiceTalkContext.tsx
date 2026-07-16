@@ -132,6 +132,12 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
   speakerOnRef.current = speakerOn;
   const voiceGenderRef = useRef(voiceGender);
   voiceGenderRef.current = voiceGender;
+  const overlayOpenRef = useRef(overlayOpen);
+  overlayOpenRef.current = overlayOpen;
+  const turnsRef = useRef(turns);
+  turnsRef.current = turns;
+  const continuousRef = useRef(true);
+  const startTalkRef = useRef<() => Promise<void>>(async () => {});
 
   const cleanupMedia = useCallback(() => {
     speechRef.current?.abort();
@@ -256,10 +262,21 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
           setLiveUser(null);
           setInterimUser(null);
           clientTranscriptRef.current = '';
-          sessionRef.current = false;
-          setState('idle');
-          setStatusLabel('Tap orb to speak');
           closeSocket();
+          sessionRef.current = false;
+          // Smooth conversation: auto-listen again while Talk overlay stays open
+          if (overlayOpenRef.current && continuousRef.current) {
+            setState('idle');
+            setStatusLabel('Listening again… speak when ready');
+            window.setTimeout(() => {
+              if (overlayOpenRef.current && continuousRef.current && stateRef.current === 'idle') {
+                void startTalkRef.current();
+              }
+            }, 450);
+          } else {
+            setState('idle');
+            setStatusLabel('Tap orb to speak');
+          }
         }
         opts.onFinish?.();
       };
@@ -300,18 +317,18 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
         if (msg.type === 'status') {
           if (msg.stage === 'transcribing') {
             setState('processing');
-            setStatusLabel('Understanding you…');
+            setStatusLabel('Listening with Groq — understanding your words…');
           }
           if (msg.stage === 'routing' || msg.stage === 'thinking') {
             setState('processing');
-            setStatusLabel('XROGA is thinking…');
+            setStatusLabel('Thinking of a real answer…');
           }
           if (msg.stage === 'searching') {
             setState('processing');
-            setStatusLabel('Searching the web…');
+            setStatusLabel('Checking live information…');
           }
           if (msg.stage === 'speaking') {
-            setStatusLabel('XROGA is speaking…');
+            setStatusLabel('Speaking your answer…');
           }
           return;
         }
@@ -494,11 +511,13 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
 
   const startTalk = useCallback(async () => {
     if (sessionRef.current) return;
+    if (stateRef.current === 'speaking' || stateRef.current === 'processing') return;
 
     welcomeAudioRef.current?.pause();
     welcomeAudioRef.current = null;
 
     sessionRef.current = true;
+    continuousRef.current = true;
     setError(null);
     setLiveReply(null);
     setLiveUser(null);
@@ -541,12 +560,15 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
 
       recorder.start(200);
       startSpeechRecognition();
+      setStatusLabel('Listening… tap orb when you finish speaking');
     } catch (e) {
       sessionRef.current = false;
       setError(sanitizeVoiceError((e as Error).message));
       endVoiceSession();
     }
   }, [endVoiceSession, muted, openVoiceSocket, startSpeechRecognition]);
+
+  startTalkRef.current = startTalk;
 
   const stopTalk = useCallback(() => {
     if (!sessionRef.current || stateRef.current !== 'recording') return;
@@ -566,8 +588,19 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
     const sendEnd = () => {
       if (ws && ws.readyState === WebSocket.OPEN) {
         setState('processing');
-        setStatusLabel('XROGA is thinking…');
-        ws.send(JSON.stringify({ type: 'end', clientTranscript: clientTranscript || undefined, voiceGender: voiceGenderRef.current }));
+        setStatusLabel('Understanding you…');
+        const history = turnsRef.current.slice(-8).map((t) => ({
+          role: t.role,
+          text: t.text,
+        }));
+        ws.send(
+          JSON.stringify({
+            type: 'end',
+            clientTranscript: clientTranscript || undefined,
+            voiceGender: voiceGenderRef.current,
+            history,
+          })
+        );
       } else {
         endVoiceSession();
       }
@@ -591,6 +624,7 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
   }, [startTalk, stopTalk]);
 
   const cancelTalk = useCallback(() => {
+    continuousRef.current = false;
     audioRef.current?.pause();
     audioRef.current = null;
     pendingTurnRef.current = null;
@@ -601,6 +635,11 @@ export function VoiceTalkProvider({ children }: { children: ReactNode }) {
     endVoiceSession();
     setStatusLabel('Tap orb to speak');
   }, [endVoiceSession]);
+
+  // Closing overlay stops continuous listen loop
+  useEffect(() => {
+    if (!overlayOpen) continuousRef.current = false;
+  }, [overlayOpen]);
 
   const toggleMute = useCallback(() => {
     setMuted((m) => {

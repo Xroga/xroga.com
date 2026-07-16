@@ -5,6 +5,7 @@ import { runVoicePipeline } from './pipeline.js';
 import { synthesizeWelcome } from './welcomeVoice.js';
 import { toVoiceUserError } from './voiceErrors.js';
 import type { VoiceGender } from './edgeTts.js';
+import type { VoiceHistoryTurn } from './voicePrompt.js';
 
 interface VoiceClientState {
   userId: string;
@@ -47,7 +48,8 @@ async function handleEndOfSpeech(
   ws: WebSocket,
   state: VoiceClientState,
   clientTranscript?: string,
-  voiceGender?: VoiceGender
+  voiceGender?: VoiceGender,
+  history: VoiceHistoryTurn[] = []
 ) {
   if (state.processing) return;
   state.processing = true;
@@ -72,7 +74,8 @@ async function handleEndOfSpeech(
         sendJson(ws, { type: 'user_text', text });
       },
       clientTranscript,
-      voiceGender ?? 'female'
+      voiceGender ?? 'female',
+      history
     );
 
     sendJson(ws, {
@@ -149,6 +152,7 @@ export function attachVoiceWebSocket(server: Server) {
           displayName?: string;
           clientTranscript?: string;
           voiceGender?: VoiceGender;
+          history?: VoiceHistoryTurn[];
         };
 
         if (msg.type === 'greeting') {
@@ -166,7 +170,17 @@ export function attachVoiceWebSocket(server: Server) {
         }
 
         if (msg.type === 'end') {
-          void handleEndOfSpeech(ws, state, msg.clientTranscript, msg.voiceGender);
+          const history = Array.isArray(msg.history)
+            ? msg.history
+                .filter(
+                  (h): h is VoiceHistoryTurn =>
+                    !!h &&
+                    (h.role === 'user' || h.role === 'assistant') &&
+                    typeof h.text === 'string'
+                )
+                .slice(-8)
+            : [];
+          void handleEndOfSpeech(ws, state, msg.clientTranscript, msg.voiceGender, history);
         }
       } catch {
         sendJson(ws, { type: 'error', message: 'Invalid message format' });
