@@ -71,7 +71,11 @@ CRITICAL RULES:
 - CSS must be modern: CSS variables, flexbox/grid, typography scale, spacing, hover states, mobile-first media queries (@media required).
 - HTML must be semantic (header, nav, main, section, footer) with real content matching the brief — never bare blue links.
 - Match the project theme (colors, fonts, mood) from the brief.
-- If the user asked for a BLOG: build a real blog (unique brand name, hero, 3+ post cards with titles/excerpts, about, footer). NEVER output the generic stub with "Fast / Modern / Reliable" or "Built by Xroga AI Swarm". NEVER put the raw user prompt into an H1.
+- MATCH THE PRODUCT TYPE EXACTLY from the user brief:
+  * crypto / DeFi / web3 / dashboard → dashboard UI (KPIs, charts, tables, wallet/swap) — NOT a blog
+  * SaaS / marketplace / chatbot / portfolio / game → that product — NOT a blog
+  * blog / journal / newsletter ONLY → real blog (unique brand, hero, 3+ post cards, about, footer)
+- NEVER output the generic stub with "Fast / Modern / Reliable" or "Built by Xroga AI Swarm". NEVER put the raw user prompt into an H1.
 - For games, apps, or non-HTML stacks: use the best language/framework for the task (Python, JavaScript, TypeScript, etc.) and output complete runnable code.`;
 
 export const PHASE_3_UPDATE_EXECUTE = `You are XROGA Architect (DeepSeek Code). The user already has a live project and wants TARGETED updates only.
@@ -107,14 +111,15 @@ export const PHASE_6_FINAL = `Assemble the entire codebase (all steps). All four
    - Project completeness.
 If any fail → note issues. Output exactly PASS or FAILURE REPORT with details. If all pass, output: FULL PROJECT APPROVED.`;
 
-export const PHASE_7_EMIT = `You are XROGA Architect (DeepSeek Code). Consolidate all verified step code into ONE polished, production-ready static website.
+export const PHASE_7_EMIT = `You are XROGA Architect (DeepSeek Code). Consolidate all verified step code into ONE polished, production-ready static product that MATCHES the user brief.
 
 Output ONLY valid JSON with keys: html, css, js
-- html: body content OR full index.html with DOCTYPE, viewport meta, semantic sections (hero, menu, gallery, contact as appropriate), real copy — NOT placeholder lorem unless brief says so
-- css: ALL styles merged — complete stylesheet with NO truncation. Use CSS custom properties, modern typography (Google-font-like stacks), flexbox/grid layouts, responsive breakpoints, styled nav/buttons/cards, theme colors from the brief
-- js: complete working JavaScript — smooth scroll, mobile nav toggle, form validation, interactive charts/tables for dashboards, no placeholder stubs
+- html: body content OR full index.html with DOCTYPE, viewport meta, semantic sections matching the REQUESTED product (crypto dashboard ≠ blog ≠ SaaS landing). Real copy — NOT placeholder lorem unless brief says so
+- css: ALL styles merged — complete stylesheet with NO truncation. Use CSS custom properties, modern typography, flexbox/grid, responsive breakpoints, theme colors from the brief
+- js: complete working JavaScript — tabs, nav, forms, charts/tables for dashboards, wallet/swap stubs when relevant
 
-Quality bar: must look like a professional agency template, not unstyled HTML. Every function must be complete — no "// TODO", no "...", no truncated blocks.
+CRITICAL: Do NOT convert a crypto/dashboard/SaaS/app into a blog. Blog structure only if the user asked for a blog.
+Quality bar: professional product UI, not unstyled HTML. Every function complete — no "// TODO", no "...", no truncated blocks.
 No markdown, no explanation, only JSON.
 End with tagline in an HTML comment inside html: "Absorbing the multiverse of data to emit the singularity of truth."`;
 
