@@ -1358,7 +1358,11 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         approvedPlan,
         clarifiedBrief,
         isGameBuild ? 'game' : 'website',
-        { skipConsolidate: isUpdateBuild || costPolicy.tier === 'simple_static' }
+        {
+          skipConsolidate: isUpdateBuild || costPolicy.tier === 'simple_static',
+          // Updates: patch from assembly only — never replace the live repo with a scaffold
+          allowScaffoldFallback: !isUpdateBuild,
+        }
       );
     } else if (featureCategory === 'code_debug') {
       featureOutput = await debugCode({
@@ -1427,12 +1431,15 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       }
       const allow = updatePaths.size ? updatePaths : new Set(targetedUpdateFiles.map((f) => f.path));
       const fromAssembly = extractPatchedFilesFromAssembly(assembledCode, allow);
-      const fromLanding = landingOutputToPatchedFiles(
-        featureOutput.html,
-        featureOutput.css,
-        featureOutput.js,
-        allow
-      );
+      // Prefer fenced patches from the model; only map landing triad when assembly had no path hits
+      const fromLanding = fromAssembly.length
+        ? []
+        : landingOutputToPatchedFiles(
+            featureOutput.html,
+            featureOutput.css,
+            featureOutput.js,
+            allow
+          );
       const patched = mergePatchedFiles(targetedUpdateFiles, [...fromAssembly, ...fromLanding]);
       projectFiles = patched.filter((f) => allow.has(f.path));
       if (!projectFiles.length && targetedUpdateFiles.length) {

@@ -144,16 +144,28 @@ export async function buildLandingFromSwarmAssembly(
   approvedPlan: string,
   clarifiedBrief: string,
   kind: 'website' | 'game' = 'website',
-  opts?: { skipConsolidate?: boolean }
+  opts?: { skipConsolidate?: boolean; /** false on updates — never invent a new site over the user's repo */ allowScaffoldFallback?: boolean }
 ): Promise<LandingPageOutput> {
   let site = parseAssembledProject(assembledCode);
 
   const promptForScaffold = userPrompt || clarifiedBrief;
   const heroImageUrl = heroPlaceholderForPrompt(promptForScaffold);
+  const allowScaffold = opts?.allowScaffoldFallback !== false;
 
   if (opts?.skipConsolidate) {
     if (!site?.html?.trim() || looksLikeGenericFallbackSite(site.html, site.css ?? '')) {
-      // Match the user's product (crypto/dashboard/saas/…) — never force a blog
+      if (!allowScaffold) {
+        // Update mode: return empty so engine keeps original GitHub files
+        return {
+          type: 'landing_page',
+          html: site?.html?.trim() || '',
+          css: site?.css?.trim() || '',
+          js: site?.js?.trim() || '',
+          heroImageUrl,
+          deployUrl: '',
+        };
+      }
+      // New builds / Escape Pod: match the user's product (crypto/dashboard/saas/…) — never force a blog
       const matched = generatePromptMatchedSite(promptForScaffold);
       const normalized = normalizeBuildFiles(matched.html, matched.css, matched.js);
       return {
@@ -172,6 +184,16 @@ export async function buildLandingFromSwarmAssembly(
       `document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}}));`;
     let normalized = normalizeBuildFiles(html, css, js);
     if (looksLikeGenericFallbackSite(normalized.html, normalized.css)) {
+      if (!allowScaffold) {
+        return {
+          type: 'landing_page',
+          html: '',
+          css: '',
+          js: '',
+          heroImageUrl,
+          deployUrl: '',
+        };
+      }
       const matched = generatePromptMatchedSite(promptForScaffold);
       normalized = normalizeBuildFiles(matched.html, matched.css, matched.js);
     }
