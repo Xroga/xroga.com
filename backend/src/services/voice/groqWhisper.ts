@@ -12,6 +12,11 @@ export async function transcribeWithGroqWhisper(audio: Buffer, mimeType = 'audio
   form.append('model', 'whisper-large-v3-turbo');
   form.append('response_format', 'json');
   form.append('language', 'en');
+  // Bias Whisper toward clear conversational English (improves understanding)
+  form.append(
+    'prompt',
+    'XROGA voice conversation. Clear speech about business, technology, advice, and questions.'
+  );
 
   const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
     method: 'POST',

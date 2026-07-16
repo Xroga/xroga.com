@@ -8,6 +8,8 @@ import {
   VOICE_TAVILY_EMPTY_PROMPT,
   VOICE_SEARCH_UNAVAILABLE_PROMPT,
   buildTavilyUserPrompt,
+  buildConversationUserPrompt,
+  type VoiceHistoryTurn,
 } from './voicePrompt.js';
 import { RateLimitError } from './groqWhisper.js';
 import { synthesizeWithEdgeTts, type VoiceGender } from './edgeTts.js';
@@ -67,7 +69,7 @@ async function callLlm(system: string, user: string): Promise<string> {
             { role: 'system', content: system },
             { role: 'user', content: user },
           ],
-          { model, maxTokens: 180, temperature: 0.85 }
+          { model, maxTokens: 280, temperature: 0.7 }
         );
         if (reply.trim()) return reply.trim();
       } catch (e) {
@@ -90,24 +92,56 @@ async function callLlm(system: string, user: string): Promise<string> {
   throw new Error('Voice AI is busy right now — please try again in a moment.');
 }
 
-async function generateInternalReply(transcript: string): Promise<string> {
-  return callLlm(VOICE_SYSTEM_PROMPT, transcript);
+async function generateInternalReply(
+  transcript: string,
+  history: VoiceHistoryTurn[] = []
+): Promise<string> {
+  return callLlm(VOICE_SYSTEM_PROMPT, buildConversationUserPrompt(transcript, history));
 }
 
 async function generateTavilyReply(
   transcript: string,
   searchAnswer: string,
-  sources: string[]
+  sources: string[],
+  history: VoiceHistoryTurn[] = []
 ): Promise<string> {
-  return callLlm(VOICE_TAVILY_PROMPT, buildTavilyUserPrompt(transcript, searchAnswer, sources));
+  return callLlm(
+    VOICE_TAVILY_PROMPT,
+    buildTavilyUserPrompt(transcript, searchAnswer, sources, history)
+  );
 }
 
-async function generateEmptySearchReply(transcript: string): Promise<string> {
-  return callLlm(VOICE_TAVILY_EMPTY_PROMPT, `User asked: ${transcript}`);
+async function generateEmptySearchReply(
+  transcript: string,
+  history: VoiceHistoryTurn[] = []
+): Promise<string> {
+  return callLlm(
+    VOICE_TAVILY_EMPTY_PROMPT,
+    buildConversationUserPrompt(transcript, history)
+  );
 }
 
-async function generateSearchUnavailableReply(transcript: string): Promise<string> {
-  return callLlm(VOICE_SEARCH_UNAVAILABLE_PROMPT, transcript);
+async function generateSearchUnavailableReply(
+  transcript: string,
+  history: VoiceHistoryTurn[] = []
+): Promise<string> {
+  return callLlm(
+    VOICE_SEARCH_UNAVAILABLE_PROMPT,
+    buildConversationUserPrompt(transcript, history)
+  );
+}
+
+/** Prefer Groq Whisper; fall back to browser transcript; pick the clearer text. */
+function resolveTranscript(whisper: string, client?: string): string {
+  const w = whisper.trim();
+  const c = client?.trim() ?? '';
+  if (w && c) {
+    // If Whisper is very short vs browser, or looks garbled, prefer longer clear client text
+    if (w.length < 8 && c.length >= 8) return c;
+    if (c.length > w.length * 1.6 && c.split(/\s+/).length >= 4) return c;
+    return w;
+  }
+  return w || c;
 }
 
 export type VoiceStage =
@@ -131,15 +165,18 @@ export async function runVoicePipeline(
   onStage?: (stage: VoiceStage) => void,
   onTranscript?: (text: string) => void,
   clientTranscript?: string,
-  voiceGender: VoiceGender = 'female'
+  voiceGender: VoiceGender = 'female',
+  history: VoiceHistoryTurn[] = []
 ): Promise<VoicePipelineResult> {
   const { transcribeWithGroqWhisper } = await import('./groqWhisper.js');
 
-  // Step 1 — Listen (STT)
+  // Step 1 — Listen (Groq Whisper STT + browser transcript fallback)
   onStage?.('transcribing');
-  let transcript = '';
+  let whisperText = '';
   try {
-    transcript = await transcribeWithGroqWhisper(audio, mimeType);
+    if (audio.length >= 800) {
+      whisperText = await transcribeWithGroqWhisper(audio, mimeType);
+    }
   } catch (e) {
     if (e instanceof RateLimitError) {
       console.warn('[voice] Whisper rate limited — using browser transcript if available');
@@ -148,9 +185,7 @@ export async function runVoicePipeline(
     }
   }
 
-  if (!transcript.trim() && clientTranscript?.trim()) {
-    transcript = clientTranscript.trim();
-  }
+  const transcript = resolveTranscript(whisperText, clientTranscript);
 
   if (!transcript.trim()) {
     throw new Error('Could not hear you — try speaking a bit louder and hold the orb while talking.');
@@ -158,7 +193,8 @@ export async function runVoicePipeline(
 
   onTranscript?.(transcript);
 
-  const cached = getCached(transcript);
+  // Skip cache when we have conversation history — cached one-shots break continuity
+  const cached = history.length === 0 ? getCached(transcript) : null;
   if (cached) {
     onStage?.('speaking');
     return {
@@ -202,9 +238,9 @@ export async function runVoicePipeline(
       onStage?.('thinking');
 
       if (!searchAnswer.trim()) {
-        reply = await generateEmptySearchReply(transcript);
+        reply = await generateEmptySearchReply(transcript, history);
       } else {
-        reply = await generateTavilyReply(transcript, searchAnswer, sources);
+        reply = await generateTavilyReply(transcript, searchAnswer, sources, history);
       }
     } catch (e) {
       onStage?.('thinking');
@@ -214,16 +250,16 @@ export async function runVoicePipeline(
         (e instanceof Error && e.message.includes('TAVILY'))
       ) {
         console.warn('[voice] Tavily fallback:', (e as Error).message);
-        reply = await generateSearchUnavailableReply(transcript);
+        reply = await generateSearchUnavailableReply(transcript, history);
         searchedWeb = false;
       } else {
         throw e;
       }
     }
   } else {
-    // Step 3b — Think (internal LLM only)
+    // Step 3b — Think (Groq LLM with conversation context)
     onStage?.('thinking');
-    reply = await generateInternalReply(transcript);
+    reply = await generateInternalReply(transcript, history);
   }
 
   if (!reply) {
@@ -233,7 +269,9 @@ export async function runVoicePipeline(
   // Step 4 — Speak (TTS)
   onStage?.('speaking');
   const audioOut = await synthesizeWithEdgeTts(reply, voiceGender);
-  setCache(transcript, reply, audioOut);
+  if (history.length === 0) {
+    setCache(transcript, reply, audioOut);
+  }
 
   return { transcript, reply, audio: audioOut, cached: false, searchedWeb };
 }
