@@ -500,6 +500,11 @@ function computeSnapshot(record: UserUsageRecord, totalLimit: number): TokenUsag
     totalRemaining < QUOTA.emergencyThreshold &&
     totalRemaining > 0;
 
+  // One decimal so small chats (~a few K tokens) don't round to a fake "0% used"
+  const rawPct = totalLimit > 0 ? (totalUsed / totalLimit) * 100 : 0;
+  const percentUsed =
+    totalUsed <= 0 ? 0 : Math.min(100, Math.max(0.1, Math.round(rawPct * 10) / 10));
+
   return {
     inputTokensUsed: record.inputTokens,
     outputTokensUsed: record.outputTokens,
@@ -507,7 +512,7 @@ function computeSnapshot(record: UserUsageRecord, totalLimit: number): TokenUsag
     inputTokensRemaining: inputRemaining,
     outputTokensRemaining: outputRemaining,
     totalTokensRemaining: totalRemaining,
-    percentUsed: totalLimit > 0 ? Math.min(100, Math.round((totalUsed / totalLimit) * 100)) : 0,
+    percentUsed,
     quotaPeriodStart: record.periodStart,
     emergencyTokensAvailable: emergencyAvailable,
     emergencyTokensClaimedThisMonth: Boolean(record.emergencyClaimedAt),

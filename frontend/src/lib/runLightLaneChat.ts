@@ -19,7 +19,7 @@ export interface LightLaneChatResult {
     siteDomain?: string;
   }>;
   hackathonBrief?: unknown;
-  usage: {
+  usage?: {
     inputTokensUsed: number;
     outputTokensUsed: number;
     totalTokensUsed: number;
@@ -61,18 +61,11 @@ export async function runLightLaneChat(opts: {
       const fallback =
         'Your current build is still running. I can keep planning with you in chat — when you are ready for another full build, it will queue as #2 after this one finishes.';
       await streamTextReveal(fallback, opts.onPartial, opts.signal);
+      // Do NOT invent 0 remaining — that flashed “0 tokens left” in the sidebar.
+      // Caller should refresh from /dashboard/summary; omit usage here.
       return {
         response: fallback,
-        usage: {
-          inputTokensUsed: 0,
-          outputTokensUsed: 0,
-          totalTokensUsed: 0,
-          inputTokensRemaining: 0,
-          outputTokensRemaining: 0,
-          totalTokensRemaining: 0,
-          percentUsed: 0,
-        },
-      };
+      } as LightLaneChatResult;
     }
     throw err;
   }

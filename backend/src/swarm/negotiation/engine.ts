@@ -214,20 +214,33 @@ function parsePlanSteps(plan: string): string[] {
     .slice(0, 8);
 }
 
-async function geminiCall(system: string, user: string, maxTokens = 2048): Promise<string> {
+async function geminiCall(
+  system: string,
+  user: string,
+  maxTokens = 2048,
+  tracker?: BuildUsageTracker
+): Promise<string> {
   try {
+    let text: string;
     if (resolveApiKey('gemini', 'code')) {
-      return geminiCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, { maxTokens });
-    }
-    if (getSecret('GEMINI_API_KEY')) {
-      return geminiGenerate(`${XROGA_USER_IDENTITY}\n\n${system}`, user, {
+      text = await geminiCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, { maxTokens });
+    } else if (getSecret('GEMINI_API_KEY')) {
+      text = await geminiGenerate(`${XROGA_USER_IDENTITY}\n\n${system}`, user, {
         model: 'gemini-2.0-flash',
         maxTokens,
       });
+    } else {
+      text = await geminiGenerateCultural(user);
     }
-    return geminiGenerateCultural(user);
+    // Gemini is not in the core 7M mix — bill as Flash-equivalent for honest pool deduction
+    tracker?.add(
+      'deepseek_flash',
+      Math.max(1, Math.ceil((system.length + user.length) / 4)),
+      Math.max(1, Math.ceil((text?.length ?? 0) / 4))
+    );
+    return text;
   } catch {
-    return deepseekCall(system, user, maxTokens);
+    return deepseekCall(system, user, maxTokens, tracker);
   }
 }
 
@@ -251,23 +264,46 @@ async function groqCall(system: string, user: string, maxTokens = 512): Promise<
   }
 }
 
-async function deepseekCall(system: string, user: string, maxTokens = 8192): Promise<string> {
+async function deepseekCall(
+  system: string,
+  user: string,
+  maxTokens = 8192,
+  tracker?: BuildUsageTracker
+): Promise<string> {
   if (resolveApiKey('deepseek', 'code')) {
-    return deepseekCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, {
+    const text = await deepseekCode(`${XROGA_USER_IDENTITY}\n\n${system}`, user, {
       maxTokens,
       model: XROGA_MODELS.deepseek_flash.apiModel,
     });
+    tracker?.add(
+      'deepseek_flash',
+      Math.max(1, Math.ceil((system.length + user.length) / 4)),
+      Math.max(1, Math.ceil((text?.length ?? 0) / 4))
+    );
+    return text;
   }
   if (getSecret('DEEPSEEK_API_KEY')) {
-    return deepSeekChat(
+    const text = await deepSeekChat(
       [
         { role: 'system', content: `${XROGA_USER_IDENTITY}\n\n${system}` },
         { role: 'user', content: user },
       ],
       { model: XROGA_MODELS.deepseek_flash.apiModel, maxTokens }
     );
+    tracker?.add(
+      'deepseek_flash',
+      Math.max(1, Math.ceil((system.length + user.length) / 4)),
+      Math.max(1, Math.ceil((text?.length ?? 0) / 4))
+    );
+    return text;
   }
-  return deepseekGenerate(user);
+  const text = await deepseekGenerate(user);
+  tracker?.add(
+    'deepseek_flash',
+    Math.max(1, Math.ceil((system.length + user.length) / 4)),
+    Math.max(1, Math.ceil((text?.length ?? 0) / 4))
+  );
+  return text;
 }
 
 /** Tracked DeepSeek Flash — bulk code, file reads, verify, fixes */
@@ -339,9 +375,12 @@ async function verifyStepParallel(
       pass: isPass(r.text),
       report: r.text,
     })),
-    geminiCall(PHASE_4_GEMINI_VERIFY, `Plan:\n${plan.slice(0, 1500)}\n\nUser: ${prompt.slice(0, 300)}\n\nCode:\n${code.slice(0, 6000)}`, 256).then(
-      (r) => ({ agent: 'gemini' as const, pass: isPass(r), report: r })
-    ),
+    geminiCall(
+      PHASE_4_GEMINI_VERIFY,
+      `Plan:\n${plan.slice(0, 1500)}\n\nUser: ${prompt.slice(0, 300)}\n\nCode:\n${code.slice(0, 6000)}`,
+      256,
+      tracker
+    ).then((r) => ({ agent: 'gemini' as const, pass: isPass(r), report: r })),
     getSecret('MISTRAL_API_KEY')
       ? mistralVerify(code, plan, prompt).then((r) => ({
           agent: 'mistral' as const,
@@ -358,18 +397,15 @@ async function verifyStepParallel(
   });
 }
 
+/** Persist any unbilled API tokens from this build (idempotent via tracker deltas). */
 async function flushBuildUsage(userId: string, usageTracker: BuildUsageTracker): Promise<void> {
-  if (usageTracker.totalInput + usageTracker.totalOutput <= 0) return;
-  await recordLlmUsage(
-    userId,
-    usageTracker.totalInput,
-    usageTracker.totalOutput,
-    usageTracker.snapshot().map((l) => ({
-      role: l.role,
-      inputTokens: l.inputTokens,
-      outputTokens: l.outputTokens,
-    }))
-  );
+  const delta = usageTracker.unbilledDelta();
+  if (!delta.length) return;
+  const input = delta.reduce((s, d) => s + d.inputTokens, 0);
+  const output = delta.reduce((s, d) => s + d.outputTokens, 0);
+  if (input + output <= 0) return;
+  await recordLlmUsage(userId, input, output, delta);
+  usageTracker.markBilled(delta);
 }
 
 export async function runNegotiationEngine(ctx: NegotiationContext): Promise<NegotiationResult> {
@@ -747,7 +783,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     try {
       clarifiedBrief = await geminiCall(
         PHASE_0_GAME_DISCOVERY,
-        `User request:\n${discoveryContext}\n\nOutput Dream Game brief — do NOT write code yet.`
+        `User request:\n${discoveryContext}\n\nOutput Dream Game brief — do NOT write code yet.`,
+        2048,
+        usageTracker
       );
     } catch {
       clarifiedBrief = `Game build: ${currentMessage}\n\nPlatform: HTML5 Canvas browser game unless user asked for Python.`;
@@ -760,7 +798,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   try {
     clarifiedBrief = await geminiCall(
       PHASE_0_DISCOVERY,
-      `User request (full thread):\n${discoveryContext}\n\nCurrent answer:\n${currentMessage}\n\nPrior analysis: ${analysis.intentLabel}\n\nOutput the Fully Clarified Project Brief now — do NOT ask more questions. Match the user's niche from the thread.`
+      `User request (full thread):\n${discoveryContext}\n\nCurrent answer:\n${currentMessage}\n\nPrior analysis: ${analysis.intentLabel}\n\nOutput the Fully Clarified Project Brief now — do NOT ask more questions. Match the user's niche from the thread.`,
+      2048,
+      usageTracker
     );
   } catch {
     clarifiedBrief = `${currentMessage}\n\n${discoveryContext}`;
@@ -920,7 +960,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     emit(ctx, 2, BRAND.phase2.negotiating, 'architect', todos, 'XROGA Visionary');
     const geminiReply = await geminiCall(
       PHASE_2_GEMINI_AGREE,
-      `Original user:\n${userPrompt}\n\nCorrected plan:\n${corrected}`
+      `Original user:\n${userPrompt}\n\nCorrected plan:\n${corrected}`,
+      2048,
+      usageTracker
     );
 
     if (isPass(geminiReply)) {
