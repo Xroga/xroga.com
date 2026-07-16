@@ -114,7 +114,7 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
       remapExpensiveRoles: false,
       maxPlanIterations: 1,
       maxStepCorrections: 1,
-      maxBuildSteps: 3,
+      maxBuildSteps: 2,
       lightVerifyAlways: true,
     };
   }
@@ -131,12 +131,12 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
     preferGrok45ForStrategy: true,
     maxGrok45Calls: 1,
     grok45StrategyMaxTokens: 2048,
-    preferFlashUiPolish: false,
+    preferFlashUiPolish: true,
     remapExpensiveRoles: false,
     maxPlanIterations: 1,
-    maxStepCorrections: 2,
-    maxBuildSteps: 4,
-    lightVerifyAlways: false,
+    maxStepCorrections: 1,
+    maxBuildSteps: 3,
+    lightVerifyAlways: true,
   };
 }
 

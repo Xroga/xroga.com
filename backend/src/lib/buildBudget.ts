@@ -58,12 +58,13 @@ export class BuildBudget {
 export function budgetLimitsForTier(tier: BuildCostTier): BuildBudgetLimits {
   switch (tier) {
     case 'simple_static':
-      return { softMs: 3 * 60_000, hardMs: 5 * 60_000, softCalls: 10, hardCalls: 16 };
+      // Ship in a couple minutes — blogs should never feel like a 10m wait
+      return { softMs: 2 * 60_000, hardMs: 3.5 * 60_000, softCalls: 8, hardCalls: 12 };
     case 'standard':
-      return { softMs: 6 * 60_000, hardMs: 9 * 60_000, softCalls: 22, hardCalls: 32 };
+      return { softMs: 4 * 60_000, hardMs: 6 * 60_000, softCalls: 16, hardCalls: 24 };
     case 'premium':
-      // Crypto/hackathon: quality matter, but never 30min API burn
-      return { softMs: 7 * 60_000, hardMs: 10 * 60_000, softCalls: 24, hardCalls: 36 };
+      // Crypto/hackathon: quality, but users hate multi-minute fake polish loops
+      return { softMs: 5 * 60_000, hardMs: 7 * 60_000, softCalls: 18, hardCalls: 28 };
   }
 }
 

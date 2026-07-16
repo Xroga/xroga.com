@@ -12,7 +12,7 @@ import {
   thoughtLabel,
   type AgentActivityEntry,
 } from '@/lib/agentProcessingFormat';
-import { buildLiveStatusMessage } from '@/lib/buildLiveStatus';
+import { buildLiveStatusMessage, isKeepaliveActivity } from '@/lib/buildLiveStatus';
 import { AgentActivityRow, AgentTypewriterText } from './AgentTypewriterText';
 import { XrogaBlackHoleShineText } from '@/components/ui/XrogaBlackHoleShineText';
 import { ModelCollaborationBar } from './ModelCollaborationBar';
@@ -99,7 +99,7 @@ function ActivityEntryView({ entry, index, isLast, loading }: { entry: AgentActi
   );
 }
 
-/** Theme-aware agent log — thoughts, to-dos, typed activity feed */
+/** Theme-aware agent log — real todos + real activity only (no fake rotating polish). */
 export function XrogaAgentProcessingPanel({
   loading,
   startedAt,
@@ -112,7 +112,6 @@ export function XrogaAgentProcessingPanel({
   peakNudge,
 }: XrogaAgentProcessingPanelProps) {
   const [elapsedMs, setElapsedMs] = useState(0);
-  const [liveTick, setLiveTick] = useState(0);
   const softPeak = peakNudge ?? (loading ? getDeepSeekPeakStatus().nudge : null);
 
   useEffect(() => {
@@ -123,18 +122,20 @@ export function XrogaAgentProcessingPanel({
     return () => clearInterval(id);
   }, [loading, startedAt]);
 
-  useEffect(() => {
-    if (!loading) return;
-    const id = setInterval(() => setLiveTick((t) => t + 1), 3500);
-    return () => clearInterval(id);
-  }, [loading]);
-
   const thoughtSeconds = Math.max(1, Math.round(elapsedMs / 1000));
-  const liveStatus = buildLiveStatusMessage(thoughtSeconds, activePhase, liveTick);
   const formattedLines = useMemo(
     () => activityLog.map(formatAgentActivityLine).filter(Boolean),
     [activityLog]
   );
+  const lastRealActivity = useMemo(() => {
+    for (let i = formattedLines.length - 1; i >= 0; i--) {
+      const line = formattedLines[i]!;
+      if (!isKeepaliveActivity(line)) return line;
+    }
+    return null;
+  }, [formattedLines]);
+
+  const liveStatus = buildLiveStatusMessage(thoughtSeconds, activePhase, 0, lastRealActivity);
   const entries = useMemo(
     () => parseAgentActivityEntries(activityLog, buildPrompt),
     [activityLog, buildPrompt]
@@ -144,7 +145,7 @@ export function XrogaAgentProcessingPanel({
     [activityLog, todos, buildPrompt]
   );
 
-  const displayGoal = goal ?? deriveBuildGoal(null, formattedLines[formattedLines.length - 1]);
+  const displayGoal = goal ?? deriveBuildGoal(null, lastRealActivity);
 
   return (
     <div
@@ -174,7 +175,7 @@ export function XrogaAgentProcessingPanel({
 
       {displayGoal && (
         <p className="text-[13px] leading-relaxed text-[var(--foreground)]/88">
-          <AgentTypewriterText text={displayGoal} active={loading} />
+          {displayGoal}
         </p>
       )}
 
@@ -185,14 +186,10 @@ export function XrogaAgentProcessingPanel({
         />
       )}
 
-      {(formattedLines.length > 0 || todos.length > 0) && (stats.files > 0 || stats.searches > 0 || stats.commands > 0) && (
+      {/* Only show file/check counts from real write/deploy lines — never invented */}
+      {stats.files > 0 && (
         <p className="text-[12px] text-[var(--muted)]/70 xv-agent-line-in">
-          {stats.files > 0
-            ? `Updated ${stats.files} file${stats.files === 1 ? '' : 's'}`
-            : 'Working'}
-          {stats.searches > 0
-            ? `${stats.files > 0 ? ', ' : ''}${stats.searches} check${stats.searches === 1 ? '' : 's'}`
-            : ''}
+          Updated {stats.files} file{stats.files === 1 ? '' : 's'}
           {stats.commands > 0
             ? `, ran ${stats.commands} command${stats.commands === 1 ? '' : 's'}`
             : ''}
@@ -200,11 +197,11 @@ export function XrogaAgentProcessingPanel({
       )}
 
       {loading && (
-        <div className="xv-agent-panel__live px-3 py-2.5 xv-agent-live-pulse">
+        <div className="xv-agent-panel__live px-3 py-2.5">
           <p className="text-[12px] flex items-center gap-2 leading-snug">
             <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0 text-[var(--accent)]" strokeWidth={2.5} />
             <XrogaBlackHoleShineText className="text-[12px]">
-              <AgentTypewriterText text={liveStatus} active key={liveStatus} />
+              {liveStatus}
             </XrogaBlackHoleShineText>
           </p>
         </div>
@@ -225,13 +222,8 @@ export function XrogaAgentProcessingPanel({
       )}
 
       {loading && (
-        <p className="text-[11px] text-[var(--muted)]/50 flex items-center gap-2">
-          <span className="inline-flex gap-0.5">
-            <span className="w-1 h-1 rounded-full bg-[var(--accent)]/60 xv-agent-thought-pulse" />
-            <span className="w-1 h-1 rounded-full bg-[var(--accent)]/40 xv-agent-thought-pulse [animation-delay:200ms]" />
-            <span className="w-1 h-1 rounded-full bg-[var(--accent)]/25 xv-agent-thought-pulse [animation-delay:400ms]" />
-          </span>
-          BLACK HOLE V∞ — working in the background even if you close this tab
+        <p className="text-[11px] text-[var(--muted)]/50">
+          Real API work in progress — if this stalls with no new to-dos, we auto-stop to protect your credits.
         </p>
       )}
     </div>

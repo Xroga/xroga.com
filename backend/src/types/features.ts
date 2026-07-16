@@ -319,6 +319,8 @@ export interface SwarmProgressEvent {
   swarmAnalysis?: string;
   /** Live branded activity line for processing animation */
   swarmActivity?: string;
+  /** Stream keepalive only — not real progress (client must not reset stall timers) */
+  keepalive?: boolean;
   /** Build blocked until GitHub OAuth completes */
   needsGitHub?: boolean;
   needsVercel?: boolean;

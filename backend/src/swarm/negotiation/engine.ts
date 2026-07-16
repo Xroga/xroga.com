@@ -145,11 +145,17 @@ function emit(
   agent: string,
   todos: ReturnType<typeof createTodoState>,
   statusLabel: string,
-  opts?: { silent?: boolean; userPhase?: number; hackathonBrief?: import('../../phase1/types.js').HackathonBriefCard }
+  opts?: {
+    silent?: boolean;
+    keepalive?: boolean;
+    userPhase?: number;
+    hackathonBrief?: import('../../phase1/types.js').HackathonBriefCard;
+  }
 ): void {
   assertNotAborted(ctx);
   // Keep userFacingPhase aligned with negotiationPhase so any consumer advances.
   const userPhase = opts?.userPhase ?? phase;
+  const keepalive = Boolean(opts?.keepalive || (opts?.silent && !detail));
 
   ctx.onProgress?.({
     runId: crypto.randomUUID(),
@@ -163,6 +169,7 @@ function emit(
     swarmStatusLabel: statusLabel,
     swarmAnalysis: todos.getAnalysis() || undefined,
     swarmActivity: opts?.silent ? undefined : detail,
+    keepalive,
     needsGitHub: statusLabel === 'XROGA GitHub' && detail.includes('Connect GitHub'),
     needsVercel: statusLabel === 'XROGA Deploy' && detail.includes('Connect Vercel'),
     hackathonBrief: opts?.hackathonBrief,
@@ -329,25 +336,33 @@ async function deepseekProCall(
   return text;
 }
 
-const BUILD_HEARTBEAT_MSGS = [
-  '⚙️ Still writing code — this step is in progress…',
-  '⚙️ Generating page sections…',
-  '⚙️ Applying styles & layout…',
-  '⚙️ AI Swarm Logic — coding step still running…',
-];
-
-/** Keepalive so build UI stays visible during long Flash generation (honest status, no fake files). */
+/**
+ * During long model waits: one honest line, then silent connection keepalives.
+ * Never rotate fake “Generating styles / polishing…” — that looked like real progress.
+ */
 async function withBuildHeartbeat<T>(
   ctx: NegotiationContext,
   todos: ReturnType<typeof createTodoState>,
-  work: () => Promise<T>
+  work: () => Promise<T>,
+  stepHint?: string
 ): Promise<T> {
-  let tick = 0;
+  const hint = stepHint?.trim() ? ` — ${stepHint.trim().slice(0, 80)}` : '';
+  emit(
+    ctx,
+    3,
+    `Waiting on AI model response${hint}`,
+    'builder',
+    todos,
+    'XROGA Pulse'
+  );
+  // Silent todo snapshots keep the stream alive without fake activity text
   const id = setInterval(() => {
-    const msg = BUILD_HEARTBEAT_MSGS[tick % BUILD_HEARTBEAT_MSGS.length]!;
-    tick += 1;
-    emit(ctx, 3, msg, 'builder', todos, 'XROGA Pulse');
-  }, 4000);
+    try {
+      emit(ctx, 3, '', 'builder', todos, 'XROGA Pulse', { silent: true });
+    } catch {
+      /* aborted */
+    }
+  }, 20_000);
   try {
     return await work();
   } finally {
@@ -1062,26 +1077,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   for (let si = 0; si < stepsToRun.length; si++) {
     assertNotAborted(ctx);
     if (buildBudget.hardExceeded(usageTracker)) {
+      // Leave unfinished todos pending — do NOT fake-complete them
       markShipEarly('time/call budget reached');
-      // Mark remaining todos done so UI doesn't look stuck forever
-      for (let rj = si; rj < stepsToRun.length; rj++) {
-        try {
-          todos.completeBuild(rj);
-        } catch {
-          /* optional */
-        }
-      }
       break;
     }
     if (si > 0 && buildBudget.softExceeded(usageTracker)) {
       markShipEarly('soft budget — finishing with completed steps');
-      for (let rj = si; rj < stepsToRun.length; rj++) {
-        try {
-          todos.completeBuild(rj);
-        } catch {
-          /* optional */
-        }
-      }
       break;
     }
 
@@ -1096,31 +1097,36 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
     let stepCode = '';
     try {
-      stepCode = await withBuildHeartbeat(ctx, todos, async () => {
-        const role =
-          costPolicy.tier === 'simple_static'
-            ? 'flash'
-            : isUpdateBuild
+      stepCode = await withBuildHeartbeat(
+        ctx,
+        todos,
+        async () => {
+          const role =
+            costPolicy.tier === 'simple_static'
               ? 'flash'
-              : hackathonNote || repoAnalysisSummary
-                ? si % 2 === 0
-                  ? 'pro'
-                  : 'flash'
-                : si === 0
-                  ? 'flash'
-                  : si % 2 === 0
+              : isUpdateBuild
+                ? 'flash'
+                : hackathonNote || repoAnalysisSummary
+                  ? si % 2 === 0
                     ? 'pro'
-                    : 'flash';
-        const { text } = await buildModelCall(
-          role,
-          executePrompt,
-          `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
-          stepTokenBudget,
-          usageTracker,
-          { userId }
-        );
-        return text;
-      });
+                    : 'flash'
+                  : si === 0
+                    ? 'flash'
+                    : si % 2 === 0
+                      ? 'pro'
+                      : 'flash';
+          const { text } = await buildModelCall(
+            role,
+            executePrompt,
+            `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
+            stepTokenBudget,
+            usageTracker,
+            { userId }
+          );
+          return text;
+        },
+        `step ${si + 1}/${stepsToRun.length}`
+      );
       // Flash sometimes writes a how-to essay instead of code — reject and force a code-only retry.
       if (!isGameBuild && looksLikeBuildEssay(stepCode)) {
         emit(
