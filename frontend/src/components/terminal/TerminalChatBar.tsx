@@ -29,6 +29,8 @@ import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { checkRepoWorkspaceReady } from '@/lib/repoWorkspaceGate';
 import { ensureSelectedRepoFolder } from '@/lib/repoSessionsIndex';
+import { isWebsiteBuildPrompt } from '@/lib/chatMemory';
+import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 
 const MAX_ROWS = 13;
 const LINE_HEIGHT = 20;
@@ -132,8 +134,19 @@ export function TerminalChatBar() {
     return () => window.removeEventListener('xroga-request-new-terminal', onNewTerminal);
   }, [incognito]);
 
-  async function ensureRepoWorkspace(): Promise<boolean> {
+  async function ensureRepoWorkspace(promptText?: string): Promise<boolean> {
     if (incognito) return true;
+    // Sandbox website/landing/chatbot/crypto builds must not be blocked by a flaky GitHub status
+    // when the user already selected a repo in the footer (or when building a simple site).
+    const p = (promptText || prompt || '').trim();
+    if (p && (isWebsiteBuildPrompt(p) || requiresGitHubForBuild(p))) {
+      const selected = (await import('@/lib/repoContext')).getSelectedRepoContext();
+      if (selected?.repo?.includes('/')) {
+        ensureSelectedRepoFolder();
+        setGithubConnected(true);
+        return true;
+      }
+    }
     // Never auto-pick a repo — user selects in the chat bar.
     try {
       const status = await api.github.status();
@@ -144,6 +157,11 @@ export function TerminalChatBar() {
     const ready = await checkRepoWorkspaceReady();
     if (ready.ok) {
       ensureSelectedRepoFolder();
+      return true;
+    }
+    // Website builds can run in sandbox without GitHub — never brick the user on Connect modal
+    if (p && (isWebsiteBuildPrompt(p) || requiresGitHubForBuild(p))) {
+      console.warn('[TerminalChatBar] allowing sandbox build without repo gate');
       return true;
     }
     if (ready.reason === 'no_repo_selected') {
@@ -160,7 +178,7 @@ export function TerminalChatBar() {
     if (!text && files.length === 0) return;
     if (text !== prompt) setPrompt(text);
 
-    if (!(await ensureRepoWorkspace())) {
+    if (!(await ensureRepoWorkspace(text))) {
       setSendState('idle');
       return;
     }
@@ -211,7 +229,7 @@ export function TerminalChatBar() {
   }
 
   async function applyStyleFromFile(file: File, stylePrompt: string) {
-    if (!(await ensureRepoWorkspace())) return;
+    if (!(await ensureRepoWorkspace(stylePrompt))) return;
     setUploading(true);
     try {
       const url = await uploadChatImage(file);

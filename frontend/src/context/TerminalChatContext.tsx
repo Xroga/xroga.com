@@ -61,6 +61,7 @@ import { GitHubActivationOverlay } from '@/components/terminal/GitHubActivationO
 import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
 import {
   clearGitHubConnectedSession,
+  isGitHubConnectedSession,
   isGitHubConnectRequiredText,
   markGitHubConnectedSession,
   sanitizeXrogaTerminalText,
@@ -515,6 +516,12 @@ export function TerminalChatProvider({
 
   const handleGitHubBuildBlocked = useCallback(
     (userPrompt: string, attachments?: ChatAttachment[]) => {
+      const selectedRepo = getSelectedRepoContext()?.repo;
+      // Already have a selected repo in the footer — never pop Connect GitHub again
+      if (selectedRepo?.includes('/') || isGitHubConnectedSession()) {
+        markGitHubConnectedSession();
+        return;
+      }
       void api.github.status().then((gh) => {
         if (!gh.connected) {
           clearGitHubConnectedSession();
@@ -545,6 +552,11 @@ export function TerminalChatProvider({
         };
         setGithubActivation({ open: true, username: gh.username });
       }).catch(() => {
+        // Status flaky — if user already selected a repo, do not block with Connect modal
+        if (getSelectedRepoContext()?.repo?.includes('/')) {
+          markGitHubConnectedSession();
+          return;
+        }
         clearGitHubConnectedSession();
         skipGithubGateRef.current = false;
         pendingBuildRef.current = {
@@ -1771,6 +1783,26 @@ export function TerminalChatProvider({
               return;
             }
             if (output?.type === 'landing_page') {
+              const landingHtml = String((output as { html?: string }).html ?? '').trim();
+              const hasRenderableLanding =
+                landingHtml.length > 40 ||
+                Boolean((output as { deployUrl?: string }).deployUrl) ||
+                Boolean((output as { githubRepoUrl?: string }).githubRepoUrl);
+              if (!hasRenderableLanding) {
+                // Empty landing payload after spend — never leave a blank "No response" bubble
+                const failMsg =
+                  '⚠️ **Build finished without a preview.** Tokens were used, but no HTML was returned. Tap Retry — we will ship a sandbox site from your prompt.';
+                fullReply = failMsg;
+                setMessages((m) =>
+                  m.map((msg) =>
+                    msg.id === assistantId
+                      ? { ...msg, content: failMsg, featureOutput: undefined }
+                      : msg
+                  )
+                );
+                removePendingBuildJob(assistantId);
+                return;
+              }
               buildHadVisibleResult = true;
               activeWebsiteBuildRef.current = null;
               // Plan A: updates refresh the single docked preview — never spawn a new card/tabs
@@ -1893,7 +1925,11 @@ export function TerminalChatProvider({
                 }
                 const updated = m.map((msg) =>
                   msg.id === assistantId
-                    ? { ...msg, content: '', featureOutput: output }
+                    ? {
+                        ...msg,
+                        content: '✅ Preview ready — your site is in the project card below.',
+                        featureOutput: output,
+                      }
                     : msg
                 );
                 const runId = (complete as { runId?: string }).runId;
@@ -2046,16 +2082,21 @@ export function TerminalChatProvider({
           },
         });
 
-        // Stream ended with no visible build result → never leave a blank assistant bubble.
+        // Stream ended with no visible build result → never leave a blank "No response" bubble.
         if (codeBuildActive && !fullReply.trim() && !buildHadVisibleResult) {
           setMessages((m) => {
             const existing = m.find((msg) => msg.id === assistantId);
-            if (existing?.content?.trim() || existing?.featureOutput) return m;
+            const fo = existing?.featureOutput as { type?: string; html?: string } | undefined;
+            const foOk =
+              fo?.type === 'landing_page' && typeof fo.html === 'string' && fo.html.trim().length > 40;
+            if (existing?.content?.trim() || foOk) return m;
             const fallback =
-              '⚠️ **Build ended without output.** Check GitHub under Integrations, then retry. If this keeps happening, open a new chat and try again.';
+              '⚠️ **Build ended without a preview.** API work may have been billed, but nothing renderable was delivered. Tap **Retry** or send the prompt again — sandbox builds no longer require a GitHub popup when a repo is already selected.';
             fullReply = fallback;
             return m.map((msg) =>
-              msg.id === assistantId ? { ...msg, content: fallback } : msg
+              msg.id === assistantId
+                ? { ...msg, content: fallback, featureOutput: undefined }
+                : msg
             );
           });
         }
