@@ -387,14 +387,16 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
           {analyzing ? (
             <span className="inline-flex items-center gap-1">
               <Loader2 className="w-3 h-3 animate-spin" />
-              Reading repository…
+              Scanning repo metadata…
             </span>
           ) : (
             <>
               {repoTech.length > 0 && (
                 <span className="text-[var(--accent)] mr-1">{repoTech.slice(0, 2).join(' · ')}</span>
               )}
-              {repoSummary}
+              <span title="Quick metadata scan (file tree + stack). Full file bodies load when you ask to update.">
+                {repoSummary}
+              </span>
             </>
           )}
         </span>
