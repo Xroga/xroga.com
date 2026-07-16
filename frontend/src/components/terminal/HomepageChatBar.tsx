@@ -74,7 +74,7 @@ export function HomepageChatBar() {
   const [focused, setFocused] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-  const [uploading, setUploading] = useState(false);
+  const uploading = false;
   const [sendState, setSendState] = useState<SendButtonState>('idle');
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
