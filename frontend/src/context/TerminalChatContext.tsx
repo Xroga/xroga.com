@@ -38,7 +38,7 @@ import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
 import { BUILD_PLANNING_STEPS } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import { getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
-import { buildHeartbeatActivity } from '@/lib/buildLiveStatus';
+import { isKeepaliveActivity } from '@/lib/buildLiveStatus';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
 import {
@@ -327,8 +327,11 @@ export function TerminalChatProvider({
   const [sessionReady, setSessionReady] = useState(false);
   const persistReadyRef = useRef(false);
   const restoringRef = useRef(false);
-  const buildHeartbeatTickRef = useRef(0);
   const lastActivityAtRef = useRef(0);
+  /** Only advances on real todo/phase/activity — keepalive does not count */
+  const lastRealProgressAtRef = useRef(0);
+  /** Set when client auto-aborts a stalled fake-busy build */
+  const stallAbortRef = useRef(false);
   const sessionIdRef = useRef<string>(
     typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`
   );
@@ -731,24 +734,32 @@ export function TerminalChatProvider({
     return () => window.clearTimeout(timer);
   }, [sessionReady, prompt, messages, incognito]);
 
-  /** Live status text only — do NOT invent file-create activity (felt fake). */
+  /**
+   * Stall guard: if no real todo/phase progress for ~100s (or wall >7m),
+   * abort the stream so fake busy UI cannot burn API credits.
+   */
   useEffect(() => {
-    if (!loading || swarmNegotiationPhase == null) return;
+    if (!loading || !heavyBuildActive) return;
+    // DeepSeek Pro can take up to ~120s per call — don't abort mid-call
+    const STALL_MS = 150_000;
+    const HARD_MS = 7 * 60_000;
     const started = thinkingStartedAt ?? Date.now();
-    const id = setInterval(() => {
-      const elapsed = Math.max(1, Math.round((Date.now() - started) / 1000));
-      const sinceActivity = Date.now() - (lastActivityAtRef.current || started);
-      if (sinceActivity < 3500) return;
-      buildHeartbeatTickRef.current += 1;
-      const line = buildHeartbeatActivity(
-        elapsed,
-        swarmNegotiationPhase,
-        buildHeartbeatTickRef.current
-      );
-      setPipelineMessage(line);
-    }, 4000);
-    return () => clearInterval(id);
-  }, [loading, swarmNegotiationPhase, thinkingStartedAt]);
+    if (!lastRealProgressAtRef.current) {
+      lastRealProgressAtRef.current = started;
+    }
+    const id = window.setInterval(() => {
+      if (!heavyBuildActiveRef.current || !abortRef.current) return;
+      const now = Date.now();
+      const sinceReal = now - (lastRealProgressAtRef.current || started);
+      const wall = now - started;
+      if (sinceReal < STALL_MS && wall < HARD_MS) return;
+      stallAbortRef.current = true;
+      console.warn('[chat] auto-stop stalled build', { sinceReal, wall });
+      toast.error('Build stalled — stopped to protect your API credits');
+      abortRef.current.abort();
+    }, 5000);
+    return () => window.clearInterval(id);
+  }, [loading, heavyBuildActive, thinkingStartedAt]);
 
   const enqueuePrompt = useCallback((text: string, lane: WorkLane = 'heavy') => {
     const position = lane === 'heavy' ? nextHeavyQueuePosition(queueRef.current) : undefined;
@@ -1375,7 +1386,8 @@ export function TerminalChatProvider({
           ...(peakLine ? [peakLine] : []),
         ]);
         lastActivityAtRef.current = Date.now();
-        buildHeartbeatTickRef.current = 0;
+        lastRealProgressAtRef.current = Date.now();
+        stallAbortRef.current = false;
         addPendingBuildJob({
           assistantMessageId: assistantId,
           userMessageId: userMessageId,
@@ -1566,11 +1578,30 @@ export function TerminalChatProvider({
               clearTimeout(thinkingTimerRef.current);
               thinkingTimerRef.current = null;
             }
-            const label = sanitizeXrogaTerminalText(event.message ?? event.status ?? 'Thinking…');
-            setPipelineMessage(label);
-            if (label && !thinkingStepsRef.current.includes(label)) {
-              thinkingStepsRef.current = [...thinkingStepsRef.current, label];
-              setThinkingSteps([...thinkingStepsRef.current]);
+            const swarmEv = event as SwarmProgressEvent;
+            // Silent keepalives: refresh todos only — never fake pipeline activity
+            if (swarmEv.keepalive) {
+              if (swarmEv.swarmTodos?.length) {
+                setSwarmTodos((prev) => {
+                  const seeded = buildTodosSeedRef.current.length ? buildTodosSeedRef.current : prev;
+                  const merged = normalizeActiveTodo(mergeBuildTodos(seeded, swarmEv.swarmTodos!));
+                  liveBuildSnapshotRef.current.todos = merged;
+                  return merged;
+                });
+              }
+              return;
+            }
+
+            const rawLabel = event.message || event.status || '';
+            const label = sanitizeXrogaTerminalText(rawLabel);
+            const isKeepaliveLine = !label || isKeepaliveActivity(label) || /^phase_\d+$/i.test(label);
+
+            if (label && !isKeepaliveLine) {
+              setPipelineMessage(label);
+              if (!thinkingStepsRef.current.includes(label)) {
+                thinkingStepsRef.current = [...thinkingStepsRef.current, label];
+                setThinkingSteps([...thinkingStepsRef.current]);
+              }
             }
             if (event.imageStep) setImageProgressStep(event.imageStep);
             if (event.imageAttempt?.imageUrl) {
@@ -1579,22 +1610,29 @@ export function TerminalChatProvider({
                 return [...prev, event.imageAttempt!].slice(0, 4);
               });
             }
-            if (event.message) setPipelineMessage(sanitizeXrogaTerminalText(event.message));
+            if (event.message && !isKeepaliveLine) {
+              setPipelineMessage(sanitizeXrogaTerminalText(event.message));
+            }
             const layer = (event as { councilLayer?: 'elite' | 'reserve' | 'blackhole' }).councilLayer;
             if (layer) setCouncilLayer(layer);
             if (event.agent) setSwarmActiveAgent(event.agent);
             // Prefer negotiationPhase so chips advance (userFacingPhase was often stuck at 1).
-            const swarmPhaseEv = event as SwarmProgressEvent;
-            const negPhase = swarmPhaseEv.negotiationPhase ?? swarmPhaseEv.userFacingPhase;
+            const negPhase = swarmEv.negotiationPhase ?? swarmEv.userFacingPhase;
+            const prevPhase = liveBuildSnapshotRef.current.phase;
             if (negPhase != null) setSwarmNegotiationPhase(negPhase);
-            const swarmEv = event as SwarmProgressEvent;
+            let todosChanged = false;
             if (swarmEv.swarmTodos?.length) {
-              setSwarmTodos((prev) => {
-                const seeded = buildTodosSeedRef.current.length ? buildTodosSeedRef.current : prev;
-                const merged = normalizeActiveTodo(mergeBuildTodos(seeded, swarmEv.swarmTodos!));
-                liveBuildSnapshotRef.current.todos = merged;
-                return merged;
-              });
+              const seeded = buildTodosSeedRef.current.length
+                ? buildTodosSeedRef.current
+                : liveBuildSnapshotRef.current.todos;
+              const merged = normalizeActiveTodo(mergeBuildTodos(seeded, swarmEv.swarmTodos));
+              const prevKey = liveBuildSnapshotRef.current.todos
+                .map((t) => `${t.id}:${t.status}`)
+                .join('|');
+              const nextKey = merged.map((t) => `${t.id}:${t.status}`).join('|');
+              todosChanged = prevKey !== nextKey;
+              liveBuildSnapshotRef.current.todos = merged;
+              setSwarmTodos(merged);
             }
             if (negPhase != null) {
               liveBuildSnapshotRef.current.phase = negPhase;
@@ -1602,7 +1640,7 @@ export function TerminalChatProvider({
             if (swarmEv.swarmStatusLabel) {
               setSwarmStatusLabel(sanitizeXrogaTerminalText(swarmEv.swarmStatusLabel));
             }
-            if (swarmEv.swarmStatusLabel && codeBuildActive) {
+            if (swarmEv.swarmStatusLabel && codeBuildActive && !isKeepaliveLine) {
               const modelLabel = sanitizeXrogaTerminalText(swarmEv.swarmStatusLabel);
               if (modelLabel && !thinkingStepsRef.current.some((s) => s.includes(modelLabel))) {
                 const stepLine = `[${modelLabel}] ${sanitizeXrogaTerminalText(event.message ?? 'Working…')}`;
@@ -1619,12 +1657,19 @@ export function TerminalChatProvider({
             if ((swarmEv as SwarmProgressEvent & { deepseekPeak?: boolean }).deepseekPeak && activity) {
               setDeepseekPeakNudge(sanitizeXrogaTerminalText(activity));
             }
-            if (activity) {
+            const activityText = activity ? sanitizeXrogaTerminalText(activity) : '';
+            const realActivity = Boolean(activityText) && !isKeepaliveActivity(activityText);
+            if (realActivity) {
               liveBuildSnapshotRef.current.activity = [
                 ...liveBuildSnapshotRef.current.activity,
-                sanitizeXrogaTerminalText(activity),
+                activityText,
               ].slice(-24);
-              pushSwarmTerminalLine(activity);
+              pushSwarmTerminalLine(activityText);
+            }
+            // Stall clock only moves on real progress (todo/phase/activity), not heartbeats
+            if (realActivity || todosChanged || (negPhase != null && negPhase !== prevPhase)) {
+              lastRealProgressAtRef.current = Date.now();
+              lastActivityAtRef.current = Date.now();
             }
             if (swarmEv.needsGitHub) {
               handleGitHubBuildBlocked(displayPrompt, attachments);
@@ -2023,21 +2068,25 @@ export function TerminalChatProvider({
             cleanupInProgressAssistant();
             return;
           }
+          const wasStall = stallAbortRef.current;
+          stallAbortRef.current = false;
           const repo = getSelectedRepoContext()?.repo;
           const snap = liveBuildSnapshotRef.current;
           const todosSnapshot = snap.todos.length ? [...snap.todos] : [...buildTodosSeedRef.current];
           const phaseSnapshot = snap.phase;
           const activitySnapshot = [...snap.activity].slice(-12);
           const original = lastTurnRef.current?.text || displayPrompt;
+          const stallMessage =
+            '⚠️ **Build stalled — no real progress.** Fake busy animations were stopped and further API calls were cancelled to protect your credits.\n\nTap **Retry** to continue, or start a new chat with a clearer prompt.';
+          const userStopMessage =
+            'Build stopped. Your progress is saved — tap Retry to continue from where you left off (GitHub files kept; not a fresh rebuild).';
 
           setMessages((m) => {
             const next = m.map((msg) => {
               if (msg.id !== assistantId) return msg;
               return {
                 ...msg,
-                content:
-                  msg.content?.trim() ||
-                  'Build stopped. Your progress is saved — tap Retry to continue from where you left off (GitHub files kept; not a fresh rebuild).',
+                content: msg.content?.trim() || (wasStall ? stallMessage : userStopMessage),
                 buildStopped: true,
                 originalBuildPrompt: original,
                 githubRepoName: repo,

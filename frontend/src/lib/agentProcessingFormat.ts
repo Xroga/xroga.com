@@ -1,7 +1,6 @@
 /** Structured XROGA-branded agent activity entries */
 
 import { sanitizeXrogaTerminalText } from '@/lib/xrogaBrand';
-import { scaffoldPathsForPrompt } from '@/lib/buildScaffoldPaths';
 
 export type AgentActivityKind = 'text' | 'status' | 'edit' | 'read' | 'grep' | 'explore' | 'command';
 
@@ -40,11 +39,10 @@ export function formatAgentActivityLine(raw: string): string {
   return cleaned || line;
 }
 
-/** Map swarm progress lines → honest activity rows (real scaffold paths when editing). */
+/** Map swarm progress lines → honest activity rows (never invent file paths). */
 export function parseAgentActivityEntries(lines: string[], buildPrompt?: string): AgentActivityEntry[] {
   const entries: AgentActivityEntry[] = [];
-  const scaffoldPaths = buildPrompt ? scaffoldPathsForPrompt(buildPrompt) : scaffoldPathsForPrompt('crm');
-  let editIndex = 0;
+  void buildPrompt;
 
   for (let i = 0; i < lines.length; i++) {
     const raw = lines[i]!;
@@ -57,17 +55,19 @@ export function parseAgentActivityEntries(lines: string[], buildPrompt?: string)
       continue;
     }
 
-    // Only claim file writes from explicit create/write lines — never invent vercel.json from heartbeat copy.
+    // Only claim file writes when a real filename is present — never invent scaffold paths.
     if (/\b(created|wrote|writing|saved)\b/i.test(line) && /\.(html|css|js|tsx?|json|md)\b/i.test(line)) {
       const fileMatch = line.match(/[\w./-]+\.(html|css|js|tsx?|json|md)\b/i);
-      const file = fileMatch?.[0] ?? scaffoldPaths[editIndex % scaffoldPaths.length]!;
-      editIndex += 1;
+      if (!fileMatch?.[0]) {
+        entries.push({ id, kind: 'text', label: line });
+        continue;
+      }
       entries.push({ id: `${id}-s`, kind: 'status', label: 'Writing' });
-      entries.push({ id, kind: 'edit', label: 'Created', file });
+      entries.push({ id, kind: 'edit', label: 'Created', file: fileMatch[0] });
       continue;
     }
 
-    if (/scaffold|logic|black hole|xroga pulse|xroga architect|building|absorbing|still coding/i.test(line)) {
+    if (/waiting on ai model|shipping best result|scaffold|logic|black hole|xroga pulse|xroga architect|building/i.test(line)) {
       entries.push({ id, kind: 'text', label: line });
       continue;
     }
@@ -100,8 +100,11 @@ export function computeActivityStats(
 ): { files: number; searches: number; commands: number } {
   void todos;
   void buildPrompt;
-  const edits = lines.filter((l) => /\b(created|wrote|writing|saved)\b/i.test(l)).length;
-  const searches = lines.filter((l) => /\b(plan|verify|review|research)\b/i.test(l)).length;
+  // Count only lines that name a real file — keyword "writing" alone is not a file update
+  const edits = lines.filter(
+    (l) => /\b(created|wrote|writing|saved)\b/i.test(l) && /\.(html|css|js|tsx?|json|md)\b/i.test(l)
+  ).length;
+  const searches = 0;
   const commands = lines.filter((l) => /\b(deploy|push|vercel|github)\b/i.test(l)).length;
 
   return { files: edits, searches, commands };

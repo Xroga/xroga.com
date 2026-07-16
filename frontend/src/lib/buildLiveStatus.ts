@@ -1,57 +1,42 @@
-/** Rotating live status lines — XROGA Black Hole branding (no provider names). */
+/** Honest build waiting copy — no rotating marketing lines that look like fake work. */
 
-export function buildLiveStatusMessage(
-  elapsedSeconds: number,
-  activePhase?: number | null,
-  tick = 0
-): string {
-  const phase = activePhase ?? 1;
-
-  const buildLines =
-    elapsedSeconds >= 8 * 60
-      ? [
-          'Taking longer than usual — finishing with the best draft…',
-          'Budget guard active — shipping soon instead of endless polish…',
-          'Still coding — press Stop if nothing new appears…',
-        ]
-      : [
-          'XROGA AI Black Hole — writing your project…',
-          'Absorbing multiverse data — generating styles & layout…',
-          'BLACK HOLE V∞ — building pages, sections & features…',
-          'Applying theme and responsive design…',
-          'Polishing your niche-specific content…',
-          'Still coding — your project is taking shape…',
-        ];
-
-  const verifyLines = [
-    'XROGA Pulse — reviewing syntax…',
-    'XROGA Visionary — checking page logic…',
-    'AI Swarm Logic — running verification pass…',
-  ];
-
-  const deployLines = [
-    'Pushing files to GitHub…',
-    'Deploying live preview — Vercel / Netlify…',
-    'Verifying hosted URL is live…',
-  ];
-
-  const pool =
-    phase === 2 ? verifyLines : phase === 4 || phase === 5 ? deployLines : buildLines;
-
-  const idx = tick % pool.length;
-  const base = pool[idx] ?? buildLines[0]!;
-  const mins = Math.floor(elapsedSeconds / 60);
-  const secs = elapsedSeconds % 60;
-  const time =
-    mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
-
-  return `${base} (${time})`;
+/** Heartbeat / keepalive lines that are NOT real progress (ignore for stall detection). */
+export function isKeepaliveActivity(line: string): boolean {
+  const t = line.trim();
+  if (!t) return true;
+  return (
+    /still writing code|generating page sections|applying styles & layout|coding step still running/i.test(
+      t
+    ) ||
+    /absorbing multiverse|polishing your niche|still coding — your project/i.test(t) ||
+    /budget guard|taking longer than usual|waiting on ai model/i.test(t) ||
+    /^phase_\d+$/i.test(t)
+  );
 }
 
-export function buildHeartbeatActivity(
+function formatElapsed(elapsedSeconds: number): string {
+  const mins = Math.floor(elapsedSeconds / 60);
+  const secs = elapsedSeconds % 60;
+  return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+}
+
+/**
+ * Single honest status: last real swarm line, or "waiting on model".
+ * No tick-based rotation — that looked like progress while nothing changed.
+ */
+export function buildLiveStatusMessage(
   elapsedSeconds: number,
-  activePhase?: number | null,
-  tick = 0
+  lastRealActivity?: string | null
 ): string {
-  return buildLiveStatusMessage(elapsedSeconds, activePhase, tick);
+  const time = formatElapsed(elapsedSeconds);
+  const real = lastRealActivity?.trim();
+  if (real && !isKeepaliveActivity(real)) {
+    return `${real} (${time})`;
+  }
+  return `Waiting on AI model response… (${time})`;
+}
+
+/** @deprecated Use buildLiveStatusMessage — kept for older call sites */
+export function buildHeartbeatActivity(elapsedSeconds: number): string {
+  return buildLiveStatusMessage(elapsedSeconds);
 }
