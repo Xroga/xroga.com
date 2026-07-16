@@ -22,12 +22,12 @@ const IMAGE_GEN_PROMPT =
 const BROWSER_AUTOMATION =
   /\b(automate|browser|scrape|fill form|linkedin jobs|apply to)\b/i;
 
-/** Extra guard — catch blog/site builds that slip past isWebsiteBuildPrompt. */
+/** Extra guard — catch product builds that slip past isWebsiteBuildPrompt into Phase 1 essays. */
 function looksLikeProductBuild(prompt: string): boolean {
   const t = prompt.trim();
   if (!t) return false;
   if (
-    /\b(build|building|create|creating|make|making|develop)\b[\s\S]{0,100}\b(website|site|blog|landing|portfolio|app|saas|dashboard)\b/i.test(
+    /\b(build|building|create|creating|make|making|develop)\b[\s\S]{0,120}\b(website|site|blog|landing|portfolio|app|saas|dashboard|chatbot|chat\s*bot|crypto|web3|defi|swap|wallet|marketplace|crm|assistant|bot|platform)\b/i.test(
       t
     )
   ) {

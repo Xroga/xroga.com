@@ -102,7 +102,7 @@ export function getSystemPromptForIntent(
     return `${base} Review and improve the code architecture. Focus on structure, patterns, and maintainability.`;
   }
   if (intent === 'code_generation' && role === 'primary') {
-    return `${base} Generate clean, working code with brief explanations where helpful.`;
+    return `${base} Generate clean, working code. Prefer complete runnable files over long essays. Brief notes only when needed. If the user asked to BUILD a website/chatbot/crypto app, say they should use the Xroga build pipeline — do not write a how-to guide instead of code.`;
   }
   if (intent === 'ui_ux_design' || (intent === 'code_generation' && role === 'secondary')) {
     return `${base} Produce modern UI/UX with polished frontend code (React + Tailwind when appropriate).`;
