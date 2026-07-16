@@ -22,6 +22,13 @@ export function userPhaseNumber(internal: NegotiationPhase): number {
   return internal + 1;
 }
 
+export interface PriorSandboxSite {
+  html: string;
+  css?: string;
+  js?: string;
+  projectName?: string;
+}
+
 export interface NegotiationContext {
   userPrompt: string;
   userId: string;
@@ -35,6 +42,10 @@ export interface NegotiationContext {
   usageTracker?: BuildUsageTracker;
   /** Abort when client disconnects — stop further paid API calls */
   abortSignal?: AbortSignal;
+  /** Sandbox HTML from the last landing_page in the chat (updates without GitHub). */
+  priorSite?: PriorSandboxSite;
+  /** Client flagged this turn as an in-thread site update */
+  buildUpdate?: boolean;
 }
 
 export interface NegotiationResult {

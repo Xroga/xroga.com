@@ -26,7 +26,11 @@ HARD RULES:
 - NEVER put the raw user prompt into an H1. Invent a short brand headline (e.g. brand name + benefit).
 - NEVER output scaffold markers like "Custom site ·", "Layout seed", "Offer 1 tailored to".
 - NEVER output essays, SEO tips, or "here is how to build".
-- If the user asked for night/day or dark mode: include a working theme toggle button + data-theme or .dark class + JS.
+- NEVER use emoji characters anywhere in HTML/CSS/JS. Use Lucide icons only:
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <i data-lucide="sun"></i> (etc.) and call lucide.createIcons() in script.js.
+- NEVER set CTA href to https://xroga.com or any xroga.com URL — use #contact, #pricing, or button handlers.
+- If the user asked for night/day or dark mode: include a working theme toggle button (id="theme-toggle") + data-theme light/dark + JS that toggles and persists to localStorage.
 - If the user asked for pricing / AI plans: include a #pricing section with 3 real plan cards and prices.
 - If chatbot: message bubbles, typing indicator, sidebar, wire window.XrogaLiveAi.chat when available.
 - If crypto: KPI cards + CoinGecko fetch (try/catch).

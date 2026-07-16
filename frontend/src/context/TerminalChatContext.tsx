@@ -1315,6 +1315,11 @@ export function TerminalChatProvider({
       const codeBuildActive = isCodeBuildProcessing(displayPrompt, messages, {
         completedBuildRef: completedWebsiteBuildRef.current,
       });
+      const isBuildUpdateEarly =
+        isWebsiteBuildUpdate(displayPrompt, messages) ||
+        (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) ||
+        (Boolean(getSelectedRepoContext()?.repo?.includes('/')) &&
+          isWebsiteUpdateRequest(displayPrompt));
       const startingHeavyJob = lane === 'heavy' || codeBuildActive;
       const startingHeavyBuild =
         codeBuildActive ||
@@ -1444,6 +1449,33 @@ export function TerminalChatProvider({
           isWebsiteBuildUpdate(displayPrompt, threadForMemory) ||
           (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) ||
           (Boolean(repoContextEarly?.repo?.includes('/')) && isWebsiteUpdateRequest(displayPrompt));
+
+        // Sandbox updates need prior HTML — otherwise the AI patches nothing and the stream dies empty
+        let priorSite:
+          | { html: string; css?: string; js?: string; projectName?: string }
+          | undefined;
+        if (isBuildUpdate) {
+          for (let i = threadForMemory.length - 1; i >= 0; i--) {
+            const fo = threadForMemory[i]?.featureOutput as
+              | {
+                  type?: string;
+                  html?: string;
+                  css?: string;
+                  js?: string;
+                  projectName?: string;
+                }
+              | undefined;
+            if (fo?.type === 'landing_page' && typeof fo.html === 'string' && fo.html.trim().length > 40) {
+              priorSite = {
+                html: fo.html.slice(0, 350_000),
+                css: typeof fo.css === 'string' ? fo.css.slice(0, 180_000) : undefined,
+                js: typeof fo.js === 'string' ? fo.js.slice(0, 180_000) : undefined,
+                projectName: typeof fo.projectName === 'string' ? fo.projectName : undefined,
+              };
+              break;
+            }
+          }
+        }
 
         // Never send prior build essays with "hi"/thanks — that burns tokens and continues the blog guide.
         let history = isTrivialPrompt(displayPrompt)
@@ -1582,6 +1614,7 @@ export function TerminalChatProvider({
             buildUpdate: isBuildUpdate,
             githubTargetRepo: repoContext?.repo,
             githubTargetBranch: repoContext?.branch,
+            ...(priorSite ? { priorSite } : {}),
           },
           onProgress: (event) => {
             gotEvent = true;
@@ -1810,7 +1843,9 @@ export function TerminalChatProvider({
               completedWebsiteBuildRef.current = true;
               removePendingBuildJob(assistantId);
               const projectName =
-                typeof output.projectName === 'string' ? output.projectName : 'Your project';
+                (typeof output.projectName === 'string' && output.projectName.trim()) ||
+                priorSite?.projectName ||
+                'Your project';
               const outRepo =
                 (typeof (output as { githubRepoName?: string }).githubRepoName === 'string' &&
                 (output as { githubRepoName: string }).githubRepoName.includes('/')
@@ -1857,10 +1892,12 @@ export function TerminalChatProvider({
               });
 
               showBuildBrowserNotification({
-                title: reusePreview ? 'Preview updated' : 'Your XROGA project is complete!',
+                title: reusePreview
+                  ? `${projectName} updated!`
+                  : `${projectName} is ready!`,
                 body: reusePreview
-                  ? `${projectName} — same preview updated with exact file patches.`
-                  : `${projectName} — project rail + preview are ready.`,
+                  ? `xroga.com · ${projectName} — project rail + preview updated.`
+                  : `xroga.com · ${projectName} — project rail + preview are ready.`,
                 tag: `build-done-${assistantId}`,
               });
               setMessages((m) => {
@@ -2188,7 +2225,9 @@ export function TerminalChatProvider({
             (existing.featureOutput as { type?: string }).type === 'landing_page';
           if (hasFeature) return m.filter((msg) => msg.id !== assistantId || Boolean(msg.content?.trim()));
           const friendly = codeBuildActive
-            ? '⚠️ **Build connection lost.** Check your connection and try again. Connect GitHub under Integrations if you have not already.'
+            ? isBuildUpdateEarly
+              ? '⚠️ **Update interrupted.** Keep this chat open and retry — we patch your current preview (night/day, buttons, copy) without rebuilding from scratch. If it keeps failing, reconnect under Integrations and try again.'
+              : '⚠️ **Build connection lost.** Check your connection and try again. Connect GitHub under Integrations if you have not already.'
             : GENERIC_SWARM_FALLBACK;
           return [
             ...m.filter((msg) => msg.id !== assistantId || msg.content.length > 0),
