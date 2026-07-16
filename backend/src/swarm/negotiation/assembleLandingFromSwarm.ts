@@ -14,11 +14,25 @@ import {
   generatePromptMatchedSite,
   heroPlaceholderForPrompt,
 } from '../../lib/promptSiteScaffold.js';
+import { mergeLiveAiIntoJs, needsLiveAiRuntime } from '../../lib/liveAiRuntime.js';
 
 interface ParsedSiteCode {
   html: string;
   css: string;
   js: string;
+}
+
+function withLiveAi(
+  out: LandingPageOutput,
+  prompt: string
+): LandingPageOutput {
+  if (!needsLiveAiRuntime(prompt) || out.type !== 'landing_page') return out;
+  // Skip double-inject if scaffold already embedded the client
+  if (/XrogaLiveAi|text\.pollinations\.ai/i.test(out.js || '')) return out;
+  return {
+    ...out,
+    js: mergeLiveAiIntoJs(out.js || '', prompt),
+  };
 }
 
 function extractFencedBlocks(code: string): ParsedSiteCode {
@@ -168,14 +182,17 @@ export async function buildLandingFromSwarmAssembly(
       // New builds / Escape Pod: match the user's product (crypto/dashboard/saas/…) — never force a blog
       const matched = generatePromptMatchedSite(promptForScaffold);
       const normalized = normalizeBuildFiles(matched.html, matched.css, matched.js);
-      return {
-        type: 'landing_page',
-        html: normalized.html,
-        css: normalized.css,
-        js: normalized.js,
-        heroImageUrl,
-        deployUrl: '',
-      };
+      return withLiveAi(
+        {
+          type: 'landing_page',
+          html: normalized.html,
+          css: normalized.css,
+          js: normalized.js,
+          heroImageUrl,
+          deployUrl: '',
+        },
+        promptForScaffold
+      );
     }
     const html = ensureFullHtml(site.html, site.css, site.js);
     const css = site.css?.trim().length > 40 ? site.css.trim() : DEFAULT_CSS;
@@ -197,14 +214,17 @@ export async function buildLandingFromSwarmAssembly(
       const matched = generatePromptMatchedSite(promptForScaffold);
       normalized = normalizeBuildFiles(matched.html, matched.css, matched.js);
     }
-    return {
-      type: 'landing_page',
-      html: normalized.html,
-      css: normalized.css,
-      js: normalized.js,
-      heroImageUrl,
-      deployUrl: '',
-    };
+    return withLiveAi(
+      {
+        type: 'landing_page',
+        html: normalized.html,
+        css: normalized.css,
+        js: normalized.js,
+        heroImageUrl,
+        deployUrl: '',
+      },
+      promptForScaffold
+    );
   }
 
   try {
@@ -227,20 +247,25 @@ export async function buildLandingFromSwarmAssembly(
     try {
       const enriched = `${userPrompt}\n\nBrief:\n${clarifiedBrief}\n\nPlan:\n${approvedPlan}`;
       const built = await buildLandingPage(enriched);
-      if (!looksLikeGenericFallbackSite(built.html, built.css)) return built;
+      if (!looksLikeGenericFallbackSite(built.html, built.css)) {
+        return withLiveAi(built, promptForScaffold);
+      }
     } catch {
       /* fall through to prompt-matched scaffold */
     }
     const matched = generatePromptMatchedSite(promptForScaffold);
     const normalizedMatched = normalizeBuildFiles(matched.html, matched.css, matched.js);
-    return {
-      type: 'landing_page',
-      html: normalizedMatched.html,
-      css: normalizedMatched.css,
-      js: normalizedMatched.js,
-      heroImageUrl,
-      deployUrl: '',
-    };
+    return withLiveAi(
+      {
+        type: 'landing_page',
+        html: normalizedMatched.html,
+        css: normalizedMatched.css,
+        js: normalizedMatched.js,
+        heroImageUrl,
+        deployUrl: '',
+      },
+      promptForScaffold
+    );
   }
 
   const html = ensureFullHtml(site.html, site.css, site.js);
@@ -255,12 +280,15 @@ export async function buildLandingFromSwarmAssembly(
     normalized = normalizeBuildFiles(matched.html, matched.css, matched.js);
   }
 
-  return {
-    type: 'landing_page',
-    html: normalized.html,
-    css: normalized.css,
-    js: normalized.js,
-    heroImageUrl,
-    deployUrl: '',
-  };
+  return withLiveAi(
+    {
+      type: 'landing_page',
+      html: normalized.html,
+      css: normalized.css,
+      js: normalized.js,
+      heroImageUrl,
+      deployUrl: '',
+    },
+    promptForScaffold
+  );
 }

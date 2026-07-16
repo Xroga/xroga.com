@@ -65,9 +65,10 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
   const tier = getBuildCostTier(prompt);
   if (tier === 'simple_static') {
     // Basic blog/landing: Flash + Pro ONLY. No Grok 4.5 — save it for harder builds.
+    // Free SearXNG research is OK (no paid Tavily/Grok search).
     return {
       tier,
-      allowWebResearch: false,
+      allowWebResearch: true,
       allowGrokAgentSearch: false,
       allowGrokResearchSynthesis: false,
       allowGrokStrategy: false,

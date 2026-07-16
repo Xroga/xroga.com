@@ -6,8 +6,10 @@ import {
   listUserProviderKeys,
   saveUserProviderKey,
 } from '../services/integrations/userProviderKeys.js';
+import liveAiProxy from './liveAiProxy.js';
 
 const router = Router();
+router.use(liveAiProxy);
 
 /** Public AI integration catalog — free/paid endpoints for generated code */
 router.get('/ai-catalog', (_req, res) => {

@@ -6,6 +6,7 @@
 
 import { detectBuildProjectType, type BuildProjectType } from '../swarm/negotiation/buildTypeDetector.js';
 import { generateQualityBlogSite, type SiteFiles } from './blogSiteTemplate.js';
+import { liveAiBrowserClientSource, liveChatbotFormJs } from './liveAiRuntime.js';
 
 function escapeHtml(s: string): string {
   return s
@@ -570,6 +571,7 @@ function chatbotSite(prompt: string, seed: number): SiteFiles {
       <form id="chat-form"><input name="q" required placeholder="Ask something…" /><button class="btn" type="submit">Send</button></form>
     </main>
   </div>
+  <script src="js/xroga-live-ai.js"></script>
   <script src="script.js"></script>
 </body>
 </html>`;
@@ -593,12 +595,8 @@ main{display:grid;grid-template-rows:auto 1fr auto;min-height:100vh}header{paddi
 #chat-form{display:flex;gap:.5rem;padding:1rem;border-top:1px solid var(--border)}
 #chat-form input{flex:1;padding:.75rem;border-radius:10px;border:1px solid var(--border);background:#070b16;color:var(--text)}
 @media(max-width:800px){.shell{grid-template-columns:1fr}aside{display:none}}`;
-  const safeBrand = brand.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-  const js = `const messages=document.getElementById('messages');const history=document.getElementById('history');const seed=${seed};
-function add(role,text){const d=document.createElement('div');d.className='bubble '+(role==='user'?'user':'');d.textContent=text;messages.appendChild(d);messages.scrollTop=messages.scrollHeight}
-add('bot','Hi — I am ${safeBrand} (demo seed '+seed.toString(16)+'). Wire your model API next.');
-document.getElementById('chat-form')?.addEventListener('submit',(e)=>{e.preventDefault();const fd=new FormData(e.target);const q=String(fd.get('q')||'').trim();if(!q)return;add('user',q);const li=document.createElement('li');li.textContent=q.slice(0,40);history?.appendChild(li);add('bot','Demo reply for: '+q);e.target.reset()});
-document.getElementById('new-chat')?.addEventListener('click',()=>{messages.innerHTML='';add('bot','New chat started.')});`;
+  // Live free AI (Pollinations) — preview works without any paid key
+  const js = `${liveAiBrowserClientSource()}\n${liveChatbotFormJs(brand)}`;
   return { html, css, js };
 }
 
