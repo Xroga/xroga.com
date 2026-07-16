@@ -1563,43 +1563,55 @@ export function TerminalChatProvider({
           try {
             const result = await api.phase1.chat(displayPrompt, history);
             gotEvent = true;
-            fullReply = result.response;
+            fullReply = (result.response || '').trim();
+            // Empty Phase 1 must never leave a blank bubble — fall through to swarm or show retry text
+            if (!fullReply) {
+              if (isWebsiteBuildPrompt(displayPrompt) || requiresGitHubForBuild(displayPrompt)) {
+                runSwarmBuild = true;
+                setPipelineMessage('Switching to XROGA build swarm…');
+              } else {
+                fullReply =
+                  'I could not finish that reply. Please send your question again — I am ready to answer.';
+              }
+            }
 
-            await streamTextReveal(
-              result.response,
-              (partial) => {
+            if (fullReply && !runSwarmBuild) {
+              await streamTextReveal(
+                fullReply,
+                (partial) => {
+                  setMessages((m) =>
+                    m.map((msg) =>
+                      msg.id === assistantId
+                        ? {
+                            ...msg,
+                            content: partial,
+                            agent: 'Xroga AI Brain',
+                            webSources: result.webSources,
+                            hackathonBrief: result.hackathonBrief,
+                          }
+                        : msg
+                    )
+                  );
+                },
+                controller.signal
+              );
+
+              if (result.webSources?.length || result.hackathonBrief) {
                 setMessages((m) =>
                   m.map((msg) =>
                     msg.id === assistantId
-                      ? {
-                          ...msg,
-                          content: partial,
-                          agent: 'Xroga AI Brain',
-                          webSources: result.webSources,
-                          hackathonBrief: result.hackathonBrief,
-                        }
+                      ? { ...msg, webSources: result.webSources, hackathonBrief: result.hackathonBrief }
                       : msg
                   )
                 );
-              },
-              controller.signal
-            );
+              }
 
-            if (result.webSources?.length || result.hackathonBrief) {
-              setMessages((m) =>
-                m.map((msg) =>
-                  msg.id === assistantId
-                    ? { ...msg, webSources: result.webSources, hackathonBrief: result.hackathonBrief }
-                    : msg
-                )
-              );
+              setTokenUsage({
+                ...result.usage,
+                totalLimit: result.usage.totalTokensRemaining + result.usage.totalTokensUsed,
+              });
+              refreshTokenUsage();
             }
-
-            setTokenUsage({
-              ...result.usage,
-              totalLimit: result.usage.totalTokensRemaining + result.usage.totalTokensUsed,
-            });
-            refreshTokenUsage();
           } catch (phase1Err) {
             // Server rejected a product-build that slipped into chat — fall through to real build swarm.
             const code =
@@ -1762,7 +1774,9 @@ export function TerminalChatProvider({
           },
           onDelta: (delta) => {
             if (!delta) return;
-            if (codeBuildActive) return;
+            // Only suppress stream text during intentional product builds (landing card path).
+            // Broader codeBuildActive was swallowing chat/error replies → blank bubbles.
+            if (startingHeavyBuild) return;
             gotEvent = true;
             fullReply += delta;
             setMessages((m) =>

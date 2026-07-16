@@ -374,13 +374,23 @@ export class Orchestrator {
       };
     }
 
-    const isLanding = result.featureOutput?.type === 'landing_page';
-    let replyText = isLanding ? '' : result.polishedOutput;
+    const landingHtml =
+      result.featureOutput?.type === 'landing_page'
+        ? String((result.featureOutput as { html?: string }).html || '').trim()
+        : '';
+    const isLanding = result.featureOutput?.type === 'landing_page' && landingHtml.length > 40;
+    // Landing without HTML must never clear the chat bubble — show a real retry message
+    let replyText = isLanding
+      ? ''
+      : result.polishedOutput?.trim() ||
+        (result.featureOutput?.type === 'landing_page'
+          ? 'Build finished without a usable preview. Tap Retry — Xroga will regenerate real files (not a template).'
+          : '');
     let shieldFollowUps: string[] = [];
 
-    if (!isLanding) {
+    if (!isLanding && replyText) {
       const shield = await runThreeLayerShield({
-        content: result.polishedOutput,
+        content: replyText,
         prompt: ctx.prompt,
         userId: ctx.userId,
         includeProsCons: false,
@@ -389,7 +399,12 @@ export class Orchestrator {
       shieldFollowUps = shield.followUps;
     }
 
-    const structuredOutput = result.featureOutput ?? ({ type: 'chat', content: replyText } as FeatureOutput);
+    const structuredOutput =
+      isLanding && result.featureOutput
+        ? result.featureOutput
+        : result.featureOutput?.type === 'landing_page' && !isLanding
+          ? ({ type: 'chat', content: replyText } as FeatureOutput)
+          : result.featureOutput ?? ({ type: 'chat', content: replyText } as FeatureOutput);
     const followUps = isLanding
       ? [
           'Change brand name and hero headline',

@@ -8,7 +8,7 @@ import type { BuildUsageTracker } from './buildUsageTracker.js';
 import { parseAssembledProject } from './parseAssembledSite.js';
 import { looksLikePromptScaffold, missingPromptFeatures } from './siteQualityGate.js';
 
-const REAL_SITE_SYSTEM = `You are XROGA Architect using DeepSeek. Build a COMPLETE, polished static website the user asked for.
+const REAL_SITE_SYSTEM = `You are XROGA Architect using DeepSeek. Build the EXACT product the user asked for as a COMPLETE, polished static web app.
 
 Output ONLY three fenced blocks:
 \`\`\`html
@@ -21,20 +21,25 @@ Output ONLY three fenced blocks:
 ...complete script.js...
 \`\`\`
 
+PRODUCT MATCH (mandatory):
+- chatbot / AI assistant → chat UI (#messages, #chat-form), user/assistant bubbles, typing indicator, Enter-to-send, localStorage history, working theme toggle if asked, wire window.XrogaLiveAi.chat OR natural mock streaming replies — NOT a blog
+- crypto / DeFi / swap / web3 → KPI cards, markets table, wallet UI, swap form, CoinGecko fetch on load (try/catch) — NOT a blog
+- SaaS / marketplace / dashboard / CRM → that product shell — NOT a blog
+- blog / journal ONLY if the user asked for a blog
+
 HARD RULES:
 - Real product UI — modern typography, CSS variables, flex/grid, hover states, mobile @media.
-- NEVER put the raw user prompt into an H1. Invent a short brand headline (e.g. brand name + benefit).
-- NEVER output scaffold markers like "Custom site ·", "Layout seed", "Offer 1 tailored to".
+- EVERY control the user asked for must work (send, theme toggle, swap preview, nav) — no dead buttons.
+- NEVER put the raw user prompt into an H1. Invent a short brand headline.
+- NEVER output scaffold markers like "Custom site ·", "Layout seed", "Offer 1 tailored to", "OrbitSwap demo wallet".
 - NEVER output essays, SEO tips, or "here is how to build".
-- NEVER use emoji characters anywhere in HTML/CSS/JS. Use Lucide icons only:
+- NEVER use emoji characters in HTML/CSS/JS. Use Lucide icons only:
   <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
-  <i data-lucide="sun"></i> (etc.) and call lucide.createIcons() in script.js.
-- NEVER set CTA href to https://xroga.com or any xroga.com URL — use #contact, #pricing, or button handlers.
-- If the user asked for night/day or dark mode: include a working theme toggle button (id="theme-toggle") + data-theme light/dark + JS that toggles and persists to localStorage.
-- If the user asked for pricing / AI plans: include a #pricing section with 3 real plan cards and prices.
-- If chatbot: message bubbles, typing indicator, sidebar, wire window.XrogaLiveAi.chat when available.
-- If crypto: KPI cards + CoinGecko fetch (try/catch).
-- Complete working JS for toggles, nav, forms — no "// TODO".`;
+  <i data-lucide="sun"></i> and lucide.createIcons() in script.js.
+- NEVER set CTA href to https://xroga.com — use #contact, #pricing, or button handlers.
+- Dark/light / night/day → id="theme-toggle" + data-theme + localStorage persist.
+- Pricing / AI plans → #pricing with 3 real plan cards.
+- Complete working JS — no "// TODO", no "...", no truncated blocks.`;
 
 export async function emitRealSiteWithDeepSeek(
   userPrompt: string,

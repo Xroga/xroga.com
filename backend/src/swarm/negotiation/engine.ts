@@ -2396,12 +2396,17 @@ export async function runEscapePod(ctx: NegotiationContext): Promise<Negotiation
         'Built in Escape Pod sandbox (paid APIs unavailable). Connect GitHub to push live when ready.',
       userPrompt: ctx.userPrompt,
     };
+    const escapeHtml = (featureOutput.html || '').trim();
     return {
       success: true,
       clarifiedBrief: ctx.userPrompt,
       approvedPlan: plan,
       assembledCode: featureOutput.html ?? '',
-      polishedOutput: '',
+      // Never return empty polishedOutput alone — UI must always have visible text if card fails
+      polishedOutput:
+        escapeHtml.length > 40
+          ? '✅ Preview ready — Escape Pod sandbox (connect GitHub anytime to go live).'
+          : 'Escape Pod could not assemble preview HTML. Tap Retry to rebuild.',
       featureOutput,
       tokenUsage:
         usageTracker.totalTokens > 0
