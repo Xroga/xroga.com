@@ -29,7 +29,8 @@ import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { checkRepoWorkspaceReady } from '@/lib/repoWorkspaceGate';
 import { ensureSelectedRepoFolder } from '@/lib/repoSessionsIndex';
-import { isWebsiteBuildPrompt } from '@/lib/chatMemory';
+import { isGeneralAdviceOrKnowledgePrompt, isWebsiteBuildPrompt } from '@/lib/chatMemory';
+import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 
 const MAX_ROWS = 13;
@@ -139,6 +140,14 @@ export function TerminalChatBar() {
     // Sandbox website/landing/chatbot/crypto builds must not be blocked by a flaky GitHub status
     // when the user already selected a repo in the footer (or when building a simple site).
     const p = (promptText || prompt || '').trim();
+    // Advice / Q&A / research must never be blocked by the Connect-GitHub modal
+    if (
+      p &&
+      (isGeneralAdviceOrKnowledgePrompt(p) ||
+        shouldRouteToPhase1(p, [], undefined, { completedWebsiteBuild: false }))
+    ) {
+      return true;
+    }
     if (p && (isWebsiteBuildPrompt(p) || requiresGitHubForBuild(p))) {
       const selected = (await import('@/lib/repoContext')).getSelectedRepoContext();
       if (selected?.repo?.includes('/')) {

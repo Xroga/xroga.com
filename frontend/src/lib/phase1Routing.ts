@@ -3,6 +3,7 @@ import { isVideoGenerationPrompt } from '@/lib/parseImageContent';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import {
   isBuildThreadContinuation,
+  isGeneralAdviceOrKnowledgePrompt,
   isWebsiteBuildPrompt,
   isWebsiteBuildUpdate,
   isWebsiteUpdateRequest,
@@ -51,6 +52,8 @@ export function shouldRouteToPhase1(
   if (isVideoGenerationPrompt(prompt)) return false;
   if (IMAGE_GEN_PROMPT.test(prompt)) return false;
   if (BROWSER_AUTOMATION.test(prompt)) return false;
+  // Advice / strategy / research always stays on Phase 1 — even after a site build in #1 terminal
+  if (isGeneralAdviceOrKnowledgePrompt(prompt)) return true;
   if (requiresGitHubForBuild(prompt) || isBuildThreadContinuation(prompt, messages as Parameters<typeof isBuildThreadContinuation>[1])) return false;
   if (isWebsiteBuildUpdate(prompt, messages as Parameters<typeof isWebsiteBuildUpdate>[1])) return false;
   if (options?.completedWebsiteBuild && isWebsiteUpdateRequest(prompt)) return false;
