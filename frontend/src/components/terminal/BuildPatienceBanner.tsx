@@ -33,23 +33,24 @@ export function BuildPatienceBanner({
         <>
           <p className="text-[12px] font-semibold text-[var(--foreground)] flex items-center gap-1.5">
             <Square className="h-3.5 w-3.5 text-amber-600 shrink-0" />
-            {Math.floor(elapsedSeconds / 60)}m with little progress — protecting your API credits
+            {Math.floor(elapsedSeconds / 60)}m — still waiting on the model (or quota)
           </p>
           <p className="text-[11px] leading-relaxed text-[var(--foreground)]/80">
-            If to-dos are not advancing, we auto-stop fake busy loops. Press <strong>Stop</strong> anytime —
-            you only pay for real completed API work, not spinning animations.
+            This banner is honest progress, not a fake busy loop. If todos are frozen or tokens show
+            exhausted, press <strong>Stop</strong> and <strong>Retry</strong> — you only pay for completed
+            API calls, not waiting time.
           </p>
         </>
       ) : (
         <>
           <p className="text-[12px] font-semibold text-[var(--foreground)] flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-[var(--accent)] shrink-0" />
-            Real build in progress — not a fake animation
+            Real build in progress — waiting on model responses
           </p>
           <p className="text-[11px] leading-relaxed text-[var(--foreground)]/80 flex items-start gap-1.5">
             <Coffee className="h-3.5 w-3.5 text-[var(--muted)] shrink-0 mt-0.5" />
-            Status updates only when the swarm actually moves. Builds auto-ship or stop within a few
-            minutes so you are not left waiting on endless polish.
+            Status updates when the swarm actually advances. Complex products (chatbot/crypto) take a few
+            minutes; we skip endless polish loops so you get runnable code sooner.
           </p>
         </>
       )}

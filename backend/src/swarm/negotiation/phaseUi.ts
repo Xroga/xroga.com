@@ -96,19 +96,60 @@ export function inferDefaultBuildBrief(prompt: string, memoryNote?: string): str
     }
   }
 
-  const features = [
-    'Homepage with hero & navigation',
-    'Menu / products with pricing',
-    ...(ordering ? ['Online ordering & cart'] : []),
-    'Photo gallery',
-    'Contact form & footer',
-    'Responsive mobile design',
-  ];
+  let productType = 'website';
+  let features: string[];
+  if (/\b(chatbot|chat bot|ai assistant|ai agent|support bot)\b/.test(lower)) {
+    productType = 'chatbot';
+    features = [
+      'Chat shell with #messages + #chat-form',
+      'User/assistant bubbles + typing indicator',
+      'Enter-to-send + localStorage history',
+      'Theme toggle persisted to localStorage (if asked)',
+      'Live AI via window.XrogaLiveAi.chat OR mock streaming replies',
+      'Responsive mobile chat layout',
+    ];
+  } else if (/\b(crypto|blockchain|web3|defi|nft|token|wallet|dao|dapp|exchange|swap|bridge)\b/.test(lower)) {
+    productType = 'crypto';
+    features = [
+      'Dashboard shell with KPI cards',
+      'Markets table with live CoinGecko fetch (try/catch)',
+      'Wallet connect stub + swap/bridge UI',
+      'Transaction / activity table',
+      'Dark Web3 theme + responsive layout',
+    ];
+  } else if (/\b(saas|startup|tech)\b/.test(lower)) {
+    productType = 'saas';
+    features = [
+      'Product hero + navigation',
+      'Features / pricing sections',
+      'Auth or demo CTA',
+      'Contact / footer',
+      'Responsive mobile design',
+    ];
+  } else if (/\b(dashboard|crm|analytics|admin)\b/.test(lower)) {
+    productType = 'dashboard';
+    features = [
+      'Sidebar + top bar shell',
+      'KPI cards + charts',
+      'Data table with search/filter',
+      'Responsive layout',
+    ];
+  } else {
+    features = [
+      'Homepage with hero & navigation',
+      'Menu / products with pricing',
+      ...(ordering ? ['Online ordering & cart'] : []),
+      'Photo gallery',
+      'Contact form & footer',
+      'Responsive mobile design',
+    ];
+  }
 
   const lines = [
     'Fully Clarified Project Brief',
     '',
     `Project name: ${projectName}`,
+    `Product type: ${productType}`,
     `Business type: ${businessType}`,
     `Design theme: ${theme}`,
     `Features: ${features.join(', ')}`,
@@ -223,9 +264,13 @@ export function formatBuildSummaryCard(data: BuildSummaryData): string {
   return lines.join('\n');
 }
 
-/** Friendly step label for progress UI (Homepage, Menu, etc.) */
+/** Friendly step label for progress UI — product-aware, not coffee-shop only */
 export function friendlyStepLabel(step: string, index: number): string {
   const lower = step.toLowerCase();
+  if (/chat shell|messages|composer|sidebar history|conversation/i.test(lower)) return '✅ Chat UI';
+  if (/typing|send|enter-to-send|localstorage|mock stream|xroga.?live.?ai/i.test(lower)) return '✅ Chat Logic';
+  if (/kpi|markets?|coingecko|token metrics|dashboard shell/i.test(lower)) return '✅ Markets';
+  if (/wallet|swap|bridge|stake/i.test(lower)) return '✅ Wallet / Swap';
   if (/homepage|hero|header|scaffold|structure/i.test(lower)) return '✅ Homepage';
   if (/menu|drink|food|pricing/i.test(lower)) return '✅ Menu';
   if (/order|cart|checkout|payment/i.test(lower)) return '✅ Ordering';
@@ -368,11 +413,24 @@ export function buildSummaryFromBrief(
   const designTheme = parseDesignTheme(prompt, brief);
   const needsPayment = parseNeedsPayment(prompt, brief);
 
-  const pages = ['Home', 'Menu', 'Gallery', 'Contact'];
-  if (needsPayment) pages.splice(2, 0, 'Order');
-
-  const features = ['Responsive design', designTheme];
-  if (needsPayment) features.unshift('Online ordering');
+  const source = `${brief}\n${prompt}`.toLowerCase();
+  let pages: string[];
+  let features: string[];
+  if (/\b(chatbot|chat bot|ai assistant|ai agent)\b/.test(source)) {
+    pages = ['Chat', 'History', 'Settings'];
+    features = ['Working chat UI', 'Typing indicator', 'localStorage history', designTheme];
+  } else if (/\b(crypto|web3|defi|swap|wallet|dapp)\b/.test(source)) {
+    pages = ['Dashboard', 'Markets', 'Swap', 'Wallet'];
+    features = ['Live CoinGecko prices', 'KPI cards', 'Swap UI', designTheme];
+  } else if (/\b(saas|dashboard|crm)\b/.test(source)) {
+    pages = ['Home', 'Features', 'Pricing', 'Contact'];
+    features = ['Product shell', designTheme];
+  } else {
+    pages = ['Home', 'Menu', 'Gallery', 'Contact'];
+    if (needsPayment) pages.splice(2, 0, 'Order');
+    features = ['Responsive design', designTheme];
+    if (needsPayment) features.unshift('Online ordering');
+  }
 
   return {
     projectName,

@@ -40,13 +40,17 @@ function nicheFromPrompt(prompt: string): { name: string; theme: string; steps: 
   const plans: Array<{ match: RegExp; name: string; theme: string; steps: string[] }> = [
     // Keep niche step lists short (≤2). Engine also caps maxBuildSteps — long plans
     // caused 25–30min DeepSeek Pro correction loops with no shipped product.
-    { match: /\b(crypto|blockchain|web3|defi|nft|token|wallet|dao|dapp|exchange|staking)\b/, name: 'Web3 Dashboard — wallet connect hero, dark theme', theme: 'crypto dark gradient', steps: [
-      'Complete dashboard — live token metrics, charts, wallet stub, swap/stake UI, tx table, responsive dark theme',
-      'Polish interactions — working buttons, CoinGecko price fetch, mobile layout',
+    { match: /\b(crypto|blockchain|web3|defi|nft|token|wallet|dao|dapp|exchange|staking|swap|bridge)\b/, name: 'Web3 Dashboard — wallet connect hero, dark theme', theme: 'crypto dark gradient', steps: [
+      'Dashboard shell — KPI cards, nav, dark Web3 theme (not a blog)',
+      'Markets table — live CoinGecko simple/price + markets fetch with try/catch',
+      'Wallet connect stub + swap/bridge form with preview amounts',
+      'Polish — tx/activity table, working buttons, mobile layout',
     ] },
     { match: /\b(chatbot|chat bot|ai assistant|ai agent|support bot|customer support)\b/, name: 'Chatbot App — conversation UI shell', theme: 'modern AI assistant', steps: [
-      'Complete chat app — message bubbles, input bar, sidebar history, settings, responsive layout',
-      'Polish — typing indicator, send handlers, mobile chat shell',
+      'Chat shell — #messages, #chat-form, sidebar history, composer (not a blog)',
+      'Send/Enter + typing indicator + user/assistant bubbles + localStorage history',
+      'Theme toggle (if asked) + responsive mobile chat layout',
+      'Live AI — window.XrogaLiveAi.chat OR natural mock streaming replies',
     ] },
     { match: /\b(crm|contacts list|deals pipeline|sales pipeline|sales dashboard)\b/, name: 'CRM Dashboard — corporate header, sidebar navigation', theme: 'corporate clean blue/slate', steps: [
       'Complete CRM — contacts table, deals kanban, tasks, KPI charts, responsive layout',

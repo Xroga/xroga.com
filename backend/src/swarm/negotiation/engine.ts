@@ -133,7 +133,12 @@ import { autoPublishBuildToCommunity } from '../../services/communityAutoPublish
 import { notifyBuildComplete, notifyBuildFailed } from '../../services/notificationService.js';
 import { createTodoState } from './todoState.js';
 import { XROGA_MODELS } from '../../config/modelRegistry.js';
-import { costAwareRole, policyForPrompt, strategyGrokVariant } from '../../lib/buildCostPolicy.js';
+import {
+  costAwareRole,
+  isComplexProductBuild,
+  policyForPrompt,
+  strategyGrokVariant,
+} from '../../lib/buildCostPolicy.js';
 import { createBuildBudget } from '../../lib/buildBudget.js';
 
 /** Max tokens per build step — no compromise on complete code output */
@@ -849,11 +854,20 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   let clarifiedBrief: string;
   const aiEndpointNote = formatAiEndpointContext(userPrompt);
   const fieldEndpointNote = formatFieldEndpointContext(userPrompt);
+  /** Free AI + field APIs — kept outside the 50-word summarize so DeepSeek still wires them. */
+  const liveIntegrationsNote = [aiEndpointNote, fieldEndpointNote].filter(Boolean).join('\n\n');
   let repoContextLine = repoAnalysisSummary ? `\n\nGitHub repo analysis:\n${repoAnalysisSummary}${criticalRepoFilesNote}` : criticalRepoFilesNote;
-  const researchBundle = `${webResearchNote}${uiTrendNote}${hackathonNote}${aiEndpointNote ? `\n\n${aiEndpointNote}` : ''}${fieldEndpointNote ? `\n\n${fieldEndpointNote}` : ''}`;
+  const researchBundle = `${webResearchNote}${uiTrendNote}${hackathonNote}${liveIntegrationsNote ? `\n\n${liveIntegrationsNote}` : ''}`;
   const discoveryContext = userPrompt.includes('[Previous conversation')
     ? `${userPrompt}${repoContextLine}${researchBundle}`
     : `${userPrompt}${repoContextLine}${researchBundle}\n\nOriginal build request context preserved.`;
+  const appendLiveIntegrations = (brief: string): string => {
+    if (!liveIntegrationsNote.trim()) return brief;
+    if (/LIVE INTEGRATIONS|AUTO-INTEGRATE live free APIs|AI \/ API integration options/i.test(brief)) {
+      return brief;
+    }
+    return `${brief.trim()}\n\n--- LIVE INTEGRATIONS (do not drop — wire into generated JS) ---\n${liveIntegrationsNote}`;
+  };
 
   if (isUpdateBuild) {
     emit(ctx, 0, BRAND.phase0.scanning('website updates'), 'reviewer', todos, 'XROGA Visionary', { userPhase: 6 });
@@ -907,11 +921,16 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'XROGA Visionary');
     if (costPolicy.tier !== 'simple_static') {
       try {
-        clarifiedBrief = (await buildModelCall('flash', PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 256, usageTracker, { userId })).text;
+        const condensed = (
+          await buildModelCall('flash', PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 256, usageTracker, { userId })
+        ).text;
+        if (condensed?.trim()) clarifiedBrief = appendLiveIntegrations(condensed.trim());
         emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse');
       } catch {
-        /* keep brief */
+        clarifiedBrief = appendLiveIntegrations(clarifiedBrief);
       }
+    } else {
+      clarifiedBrief = appendLiveIntegrations(clarifiedBrief);
     }
   } else if (isGameBuild) {
     emit(ctx, 0, BRAND.phase0.scanning('game'), 'reviewer', todos, 'XROGA Game Alchemist', { userPhase: 1 });
@@ -949,10 +968,13 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   emit(ctx, 0, BRAND.phase0.briefReady, 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
 
   try {
-    clarifiedBrief = (await buildModelCall('flash', PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 256, usageTracker, { userId })).text;
-      emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse');
+    const condensed = (
+      await buildModelCall('flash', PHASE_0_GROQ_SUMMARIZE, clarifiedBrief, 256, usageTracker, { userId })
+    ).text;
+    if (condensed?.trim()) clarifiedBrief = appendLiveIntegrations(condensed.trim());
+    emit(ctx, 0, BRAND.phase0.briefCondensed, 'qa', todos, 'XROGA Pulse');
   } catch {
-    /* keep gemini brief */
+    clarifiedBrief = appendLiveIntegrations(clarifiedBrief);
   }
   }
 
@@ -1205,11 +1227,17 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         ctx,
         todos,
         async () => {
+          // Chatbot/crypto: Flash-first for speed; one Pro pass on the last step for quality.
+          const complexFast =
+            (buildType === 'chatbot' || buildType === 'crypto' || isComplexProductBuild(userPrompt)) &&
+            !hackathonNote;
           const role =
-            costPolicy.tier === 'simple_static'
+            costPolicy.tier === 'simple_static' || isUpdateBuild
               ? 'flash'
-              : isUpdateBuild
-                ? 'flash'
+              : complexFast
+                ? si === stepsToRun.length - 1 && stepsToRun.length > 1
+                  ? 'pro'
+                  : 'flash'
                 : hackathonNote || repoAnalysisSummary
                   ? si % 2 === 0
                     ? 'pro'
@@ -1219,10 +1247,13 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
                     : si % 2 === 0
                       ? 'pro'
                       : 'flash';
+          const integrationsForStep = liveIntegrationsNote
+            ? `\n\nLIVE INTEGRATIONS TO WIRE IN THIS STEP (free endpoints first):\n${liveIntegrationsNote.slice(0, 2800)}`
+            : '';
           const { text } = await buildModelCall(
             role,
             executePrompt,
-            `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}`,
+            `Approved Plan:\n${approvedPlan}\n\nExecute now: Step ${si + 1} — ${stepsToRun[si]}\n\nUser:\n${userPrompt}\n\nTech: ${executeTech}${existingCodeContext}${integrationsForStep}`,
             stepTokenBudget,
             usageTracker,
             { userId }
@@ -1589,12 +1620,18 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     featureCategory === 'landing_page' ||
     isWebsiteBuildPrompt(userPrompt, featureCategory);
 
+  // Crypto/chatbot must still consolidate unless hard budget — soft skip was shipping thin shells.
+  const complexProduct =
+    buildType === 'crypto' ||
+    buildType === 'chatbot' ||
+    isComplexProductBuild(userPrompt);
+  const hardBudget = buildBudget.hardExceeded(usageTracker);
   const skipConsolidate =
     isUpdateBuild ||
     costPolicy.tier === 'simple_static' ||
-    shipEarly ||
-    buildBudget.softExceeded(usageTracker) ||
-    !buildBudget.canAffordLongCall(usageTracker);
+    hardBudget ||
+    (!complexProduct &&
+      (shipEarly || buildBudget.softExceeded(usageTracker) || !buildBudget.canAffordLongCall(usageTracker)));
 
   try {
     if (isWebBuildFinal) {
@@ -1627,6 +1664,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           allowScaffoldFallback: !refuseScaffold,
           tracker: usageTracker,
           userId,
+          integrationContext: liveIntegrationsNote,
         }
       );
     } else if (featureCategory === 'code_debug') {
@@ -1658,6 +1696,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       tracker: usageTracker,
       userId,
       maxTokens: 12288,
+      integrationContext: liveIntegrationsNote,
     });
     if (real) {
       featureOutput = {
@@ -1687,6 +1726,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       tracker: usageTracker,
       userId,
       maxTokens: 12288,
+      integrationContext: liveIntegrationsNote,
     });
     if (real) {
       featureOutput = {
@@ -1768,6 +1808,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       tracker: usageTracker,
       userId,
       maxTokens: 12288,
+      integrationContext: liveIntegrationsNote,
     });
     if (realRetry && !looksLikePromptScaffold(realRetry.html, realRetry.css, realRetry.js)) {
       featureOutput = {

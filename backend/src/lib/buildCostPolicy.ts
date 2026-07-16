@@ -7,10 +7,14 @@
 
 export type BuildCostTier = 'simple_static' | 'standard' | 'premium';
 
+/** Complex products must never take the 1-step blog/landing cheap path. */
+const COMPLEX_PRODUCT =
+  /\b(crm|saas|dashboard|hackathon|crypto|web3|defi|nft|marketplace|enterprise|multi.?tenant|chatbot|chat\s*bot|ai assistant|ai agent|support bot|customer support|swap|bridge|wallet|dapp|kanban|tracker|analytics)\b/i;
+
 /** True for blogs, landings, portfolios, marketing sites — cheap path */
 export function isSimpleStaticBuild(prompt: string): boolean {
   const t = prompt.toLowerCase();
-  if (/\b(crm|saas|dashboard|hackathon|crypto|web3|defi|nft|marketplace|enterprise|multi.?tenant)\b/.test(t)) {
+  if (COMPLEX_PRODUCT.test(t)) {
     return false;
   }
   if (
@@ -25,6 +29,11 @@ export function isSimpleStaticBuild(prompt: string): boolean {
     return true;
   }
   return false;
+}
+
+/** Chatbot / crypto / swap need more assemble steps than a coffee landing. */
+export function isComplexProductBuild(prompt: string): boolean {
+  return COMPLEX_PRODUCT.test(prompt);
 }
 
 export function getBuildCostTier(prompt: string): BuildCostTier {
@@ -71,6 +80,7 @@ export interface BuildCostPolicy {
 
 export function policyForPrompt(prompt: string): BuildCostPolicy {
   const tier = getBuildCostTier(prompt);
+  const complex = isComplexProductBuild(prompt);
   if (tier === 'simple_static') {
     // Basic blog/landing: Flash + Pro ONLY. No Grok 4.5 — save it for harder builds.
     // Free SearXNG research is OK (no paid Tavily/Grok search).
@@ -97,7 +107,7 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
   if (tier === 'premium') {
     // Crypto/hackathon: best work, lean cost — 1× short Grok 4.5 strategy, Flash UI,
     // SearXNG research (no expensive Grok research synthesis / review loop / Opus).
-    // Hard step/correction caps stop 30min DeepSeek Pro burn loops.
+    // More steps for crypto/chatbot so dashboards aren't truncated to a thin shell.
     return {
       tier,
       allowWebResearch: true,
@@ -114,7 +124,7 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
       remapExpensiveRoles: false,
       maxPlanIterations: 1,
       maxStepCorrections: 1,
-      maxBuildSteps: 2,
+      maxBuildSteps: complex ? 4 : 3,
       lightVerifyAlways: true,
     };
   }
@@ -135,7 +145,7 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
     remapExpensiveRoles: false,
     maxPlanIterations: 1,
     maxStepCorrections: 1,
-    maxBuildSteps: 3,
+    maxBuildSteps: complex ? 4 : 3,
     lightVerifyAlways: true,
   };
 }
