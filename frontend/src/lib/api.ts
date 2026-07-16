@@ -373,7 +373,19 @@ export async function apiFetch<T = unknown>(
     (headers as Record<string, string>)['Authorization'] = `Bearer ${accessToken}`;
   }
 
-  const res = await fetch(`${API_URL}${path}`, { ...options, headers });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, { ...options, headers });
+  } catch (err) {
+    const raw = (err as Error).message || 'Failed to fetch';
+    throw new ApiError(
+      /failed to fetch|networkerror|load failed/i.test(raw)
+        ? 'Cannot reach the Xroga API. Check your connection and try again.'
+        : raw,
+      0,
+      { code: 'NETWORK_ERROR' }
+    );
+  }
   const data = await res.json().catch(() => ({ error: res.statusText }));
 
   if (!res.ok) {

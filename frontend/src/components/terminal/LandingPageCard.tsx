@@ -333,6 +333,31 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
       updateSuggestions={updateSuggestions}
       onFixIssue={handleFixIssue}
       onSuggestion={handleSuggestion}
+      onLiveUrl={(url) => {
+        setVercelUrl(url);
+        setVercelVerified(true);
+        setStatusNote(null);
+        void import('@/store/useProjectWorkspaceStore').then(({ useProjectWorkspaceStore }) => {
+          useProjectWorkspaceStore.getState().applyBuild({
+            html: normalized.html,
+            css: normalized.css,
+            js: normalized.js,
+            projectName,
+            deployUrl: url,
+            status: 'live',
+            openPreview: true,
+          });
+        });
+        onPreviewUpdate?.({
+          ...data,
+          html: normalized.html,
+          css: normalized.css,
+          js: normalized.js,
+          vercelPreviewUrl: url,
+          deployUrl: url,
+          deployVerified: true,
+        });
+      }}
     />
   );
 }

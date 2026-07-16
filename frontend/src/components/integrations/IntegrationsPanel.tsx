@@ -62,6 +62,27 @@ export function IntegrationsPanel() {
       }
       return;
     }
+    if (id === 'vercel') {
+      const { openVercelOAuthPopup, listenVercelOAuthMessages } = await import(
+        '@/lib/vercelConnect'
+      );
+      const stop = listenVercelOAuthMessages(
+        (username) => {
+          stop();
+          toast.success(username ? `Vercel connected as @${username}` : 'Vercel connected');
+        },
+        (msg) => {
+          stop();
+          toast.error(msg);
+        }
+      );
+      const result = await openVercelOAuthPopup();
+      if (!result.opened) {
+        stop();
+        toast.error(result.error || 'Could not open Vercel authorization');
+      }
+      return;
+    }
     if (oauth) {
       toast('OAuth coming soon — connect via Custom API Keys for now', { icon: '🔗' });
     } else {

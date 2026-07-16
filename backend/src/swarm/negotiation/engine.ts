@@ -424,8 +424,15 @@ async function flushBuildUsage(userId: string, usageTracker: BuildUsageTracker):
   const input = delta.reduce((s, d) => s + d.inputTokens, 0);
   const output = delta.reduce((s, d) => s + d.outputTokens, 0);
   if (input + output <= 0) return;
-  await recordLlmUsage(userId, input, output, delta);
-  usageTracker.markBilled(delta);
+  try {
+    await recordLlmUsage(userId, input, output, delta);
+    usageTracker.markBilled(delta);
+  } catch (err) {
+    console.error(
+      '[NegotiationEngine] CRITICAL: failed to persist build token usage',
+      (err as Error).message?.slice(0, 200)
+    );
+  }
 }
 
 export async function runNegotiationEngine(ctx: NegotiationContext): Promise<NegotiationResult> {
@@ -622,7 +629,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           `You are XROGA Strategist. Synthesize research into build priorities and risks. Under 250 words. Do not invent sources.`,
           `User:\n${userPrompt}\n\n${webResearchNote}\n${uiTrendNote}\n${hackathonNote}`,
           1536,
-          usageTracker
+          usageTracker,
+          { userId }
         );
         if (synthesis?.trim()) {
           webResearchNote = `${webResearchNote}\n\nResearch synthesis:\n${synthesis}`;
@@ -820,7 +828,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           PHASE_0_UPDATE_BRIEF,
           `Thread:\n${discoveryContext}\n\n${priorContext}\n\nUpdate request:\n${currentMessage}\n\nOutput the updated Fully Clarified Project Brief. Apply changes directly — do NOT ask questions.`,
           1024,
-          usageTracker
+          usageTracker,
+          { userId }
         )
       ).text;
     } catch {
@@ -841,7 +850,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           PHASE_0_DISCOVERY,
           `User request:\n${discoveryContext}\n\nDefault brief:\n${clarifiedBrief}\n\nRefine the Fully Clarified Project Brief — do NOT ask questions.`,
           8192,
-          usageTracker
+          usageTracker,
+          { userId }
         );
         emit(ctx, 0, xrogaArchitectureLine('Project brief refined'), 'architect', todos, 'XROGA Architect');
         if (refined && !/clarifying question|\?\s*$/im.test(refined) && refined.length > 80) {
@@ -922,7 +932,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         PHASE_1_GAME_PLANNING,
         `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`,
         8192,
-        usageTracker
+        usageTracker,
+        { userId }
       );
       masterPlan = text;
       emit(ctx, 1, xrogaArchitectureLine('Game master plan ready'), 'architect', todos, 'XROGA Architect', {
@@ -981,7 +992,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             `You are XROGA Strategist. Analyze the project brief and output a concise build strategy: architecture, key features, UX priorities, and risks. Under 300 words.`,
             `Brief:\n${clarifiedBrief}\n\nOriginal:\n${userPrompt}`,
             2048,
-            usageTracker
+            usageTracker,
+            { userId }
           );
           strategyContext = `\n\nStrategy:\n${strategy}`;
           emit(ctx, 1, xrogaArchitectureLine('Build strategy — DeepSeek (cost-smart)'), 'architect', todos, 'XROGA Architect', {
@@ -997,7 +1009,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         PHASE_1_PLANNING_GEMINI,
         `Brief:\n${clarifiedBrief}${strategyContext}\n\nOriginal:\n${userPrompt}`,
         8192,
-        usageTracker
+        usageTracker,
+        { userId }
       );
       masterPlan = text;
       emit(ctx, 1, xrogaArchitectureLine('Master plan generated'), 'architect', todos, 'XROGA Architect');
@@ -1490,7 +1503,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           PHASE_6_FINAL,
           `Touched files only:\n${assembledCode.slice(0, 12000)}`,
           256,
-          usageTracker
+          usageTracker,
+          { userId }
         );
         if (!isPass(quickCheck)) {
           assembledCode = await deepseekFlashCall(
@@ -2148,6 +2162,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
 /** OSS Escape Pod — paid APIs down: still ship a real sandbox site, never a how-to essay. */
 export async function runEscapePod(ctx: NegotiationContext): Promise<NegotiationResult> {
+  const usageTracker = ctx.usageTracker ?? new BuildUsageTracker();
+  ctx.usageTracker = usageTracker;
   const todos = createTodoState(ctx.userPrompt, {
     hasSelectedRepo: Boolean(ctx.githubTargetRepo?.includes('/')),
   });
@@ -2163,10 +2179,31 @@ export async function runEscapePod(ctx: NegotiationContext): Promise<Negotiation
       plan,
       ctx.userPrompt,
       'website',
-      { skipConsolidate: true, allowScaffoldFallback: true, userId: ctx.userId }
+      {
+        skipConsolidate: true,
+        allowScaffoldFallback: true,
+        userId: ctx.userId,
+        tracker: usageTracker,
+      }
     );
   } catch (err) {
     console.warn('[EscapePod] landing assembly failed:', (err as Error).message);
+  }
+  await flushBuildUsage(ctx.userId, usageTracker);
+  // Scaffold-only path: still bill a small estimate so dashboard never stays 0% after a ship
+  if (usageTracker.totalTokens <= 0 && featureOutput?.type === 'landing_page') {
+    const htmlLen = (featureOutput as { html?: string }).html?.length ?? 0;
+    if (htmlLen > 40) {
+      try {
+        await recordLlmUsage(
+          ctx.userId,
+          Math.max(80, Math.ceil(ctx.userPrompt.length / 4)),
+          Math.max(200, Math.ceil(htmlLen / 4))
+        );
+      } catch {
+        /* ignore */
+      }
+    }
   }
   todos.completeAll();
   emit(ctx, 7, BRAND.escape.done, 'complete', todos, 'BLACK HOLE V∞');
@@ -2184,6 +2221,16 @@ export async function runEscapePod(ctx: NegotiationContext): Promise<Negotiation
       assembledCode: featureOutput.html ?? '',
       polishedOutput: '',
       featureOutput,
+      tokenUsage:
+        usageTracker.totalTokens > 0
+          ? {
+              inputTokens: usageTracker.totalInput,
+              outputTokens: usageTracker.totalOutput,
+              totalTokens: usageTracker.totalTokens,
+              estimatedUsd: usageTracker.estimatedUsd,
+              byModel: usageTracker.snapshot(),
+            }
+          : undefined,
     };
   }
   // Last resort: still avoid essays — return minimal success card text only
