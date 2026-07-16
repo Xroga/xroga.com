@@ -325,6 +325,10 @@ router.delete('/disconnect', async (req: AuthRequest, res) => {
 router.get('/analyze', async (req: AuthRequest, res) => {
   const repoName = typeof req.query.repoName === 'string' ? req.query.repoName.trim() : '';
   const branch = typeof req.query.branch === 'string' ? req.query.branch.trim() : undefined;
+  const lite =
+    req.query.lite === '1' ||
+    req.query.lite === 'true' ||
+    req.query.mode === 'lite';
   if (!repoName) {
     res.status(400).json({ error: 'repoName query required' });
     return;
@@ -332,7 +336,26 @@ router.get('/analyze', async (req: AuthRequest, res) => {
 
   try {
     const { analyzeGitHubRepo } = await import('../services/integrations/githubDeploy.js');
-    const analysis = await analyzeGitHubRepo(req.userId!, repoName, branch);
+    const analysis = await analyzeGitHubRepo(req.userId!, repoName, branch, { lite });
+    if (lite) {
+      // Keep UI payload tiny — no multi‑hundred‑KB buildFiles
+      res.json({
+        repoName: analysis.repoName,
+        defaultBranch: analysis.defaultBranch,
+        fileCount: analysis.fileCount,
+        hasBuildFiles: analysis.hasBuildFiles,
+        summary: analysis.summary,
+        techStack: analysis.techStack,
+        filesAnalyzed: analysis.filesAnalyzed,
+        totalLinesEstimate: analysis.totalLinesEstimate,
+        languages: analysis.languages,
+        topLevelEntries: analysis.topLevelEntries?.slice?.(0, 24) ?? analysis.topLevelEntries,
+        treeSample: (analysis.treeSample ?? []).slice(0, 40),
+        report: analysis.report,
+        buildFiles: { html: '', css: '', js: '' },
+      });
+      return;
+    }
     res.json(analysis);
   } catch (e) {
     res.status(502).json({ error: (e as Error).message });

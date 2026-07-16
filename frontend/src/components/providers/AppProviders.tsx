@@ -30,30 +30,54 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    async function load() {
-      const results = await Promise.allSettled([
-        withTimeout(api.dashboard.summary()),
-        withTimeout(api.notifications.unreadCount()),
-        withTimeout(api.notifications.list()),
-        withTimeout(api.profile.get()),
-      ]);
+    let cancelled = false;
 
-      if (results[0].status === 'fulfilled') {
-        const parsed = tokenUsageFromSummary(results[0].value);
+    async function loadCore() {
+      // Tokens first — everything else can wait so refresh feels instant
+      try {
+        const summary = await withTimeout(api.dashboard.summary());
+        if (cancelled) return;
+        const parsed = tokenUsageFromSummary(summary);
         if (parsed.usage) {
           setTokenUsage(parsed.usage);
           setPlanInfo(parsed.planTier, parsed.planName);
         }
-        // Do NOT overwrite real usage with DEFAULT (0%) when the payload is unexpected.
+      } catch {
+        /* keep last known usage */
       }
-      // On summary fetch failure, keep the last known usage — never flash 0% after leave/return.
-      if (results[1].status === 'fulfilled') setUnreadCount(results[1].value.count);
-      if (results[2].status === 'fulfilled') setNotifications(results[2].value.slice(0, 5));
-      if (results[3].status === 'fulfilled') setProfile(results[3].value);
     }
-    load();
-    const interval = setInterval(load, 120000);
-    return () => clearInterval(interval);
+
+    async function loadSecondary() {
+      const results = await Promise.allSettled([
+        withTimeout(api.notifications.unreadCount()),
+        withTimeout(api.notifications.list()),
+        withTimeout(api.profile.get()),
+      ]);
+      if (cancelled) return;
+      if (results[0].status === 'fulfilled') setUnreadCount(results[0].value.count);
+      if (results[1].status === 'fulfilled') setNotifications(results[1].value.slice(0, 5));
+      if (results[2].status === 'fulfilled') setProfile(results[2].value);
+    }
+
+    void loadCore().then(() => {
+      if (cancelled) return;
+      if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+        (
+          window as Window & { requestIdleCallback: (cb: () => void) => number }
+        ).requestIdleCallback(() => void loadSecondary());
+      } else {
+        globalThis.setTimeout(() => void loadSecondary(), 400);
+      }
+    });
+
+    const interval = setInterval(() => {
+      void loadCore();
+      void loadSecondary();
+    }, 180000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, [setTokenUsage, setPlanInfo, setUnreadCount, setNotifications, setProfile]);
 
   return <>{children}</>;

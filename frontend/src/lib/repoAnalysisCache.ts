@@ -1,4 +1,6 @@
 const CACHE_KEY = 'xroga-repo-analysis-cache';
+/** Keep picker snappy — re-scan at most every 15 minutes unless marked stale */
+const CACHE_TTL_MS = 15 * 60 * 1000;
 
 export interface CachedRepoAnalysis {
   repo: string;
@@ -16,6 +18,7 @@ export function getCachedRepoAnalysis(repo: string, branch: string): CachedRepoA
     if (!raw) return null;
     const parsed = JSON.parse(raw) as CachedRepoAnalysis;
     if (parsed.repo !== repo || parsed.branch !== branch) return null;
+    if (!parsed.scannedAt || Date.now() - parsed.scannedAt > CACHE_TTL_MS) return null;
     return parsed;
   } catch {
     return null;

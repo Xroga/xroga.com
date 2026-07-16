@@ -26,10 +26,10 @@ export function Logo({ href = '/dashboard', height = 50, className, variant = 'h
       <Image
         src={src}
         alt="Xroga"
-        fill
-        className="object-contain object-left"
+        width={Math.round(width)}
+        height={Math.round(height)}
+        className="object-contain object-left h-full w-full"
         style={{ background: 'transparent' }}
-        unoptimized
         priority
       />
     </div>

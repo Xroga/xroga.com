@@ -82,9 +82,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <StorageBootstrap />
         <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
-        <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
+        <link rel="icon" href="/icon.png" type="image/png" sizes="64x64" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
         <link rel="shortcut icon" href="/favicon-32.png" />
+        <link rel="preconnect" href="https://xroga-api.fly.dev" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>
       <body

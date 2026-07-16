@@ -60,6 +60,8 @@ export interface StreamSwarmOptions {
   projectId?: string;
   signal?: AbortSignal;
   compact?: boolean;
+  /** Reuse a session token already fetched — skips a second Supabase round-trip */
+  accessToken?: string | null;
   attachments?: ChatAttachment[];
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
   clientMeta?: {
@@ -88,7 +90,7 @@ export async function streamSwarmExecute(
   prompt: string,
   options: StreamSwarmOptions = {}
 ): Promise<string> {
-  const token = await getAccessToken();
+  const token = options.accessToken ?? (await getAccessToken());
   if (!token) {
     throw new Error('Please sign in to chat.');
   }
@@ -184,11 +186,11 @@ export async function streamSwarmExecute(
         throw new Error(String(payload.error ?? 'Swarm stream error'));
       }
 
-      if (eventName === 'pipeline') {
+      if (eventName === 'start' || eventName === 'pipeline') {
         options.onProgress?.({
           agent: 'routing',
           status: 'connecting',
-          message: String(payload.message ?? 'Connecting…'),
+          message: String(payload.message ?? 'Ready'),
         } as SwarmProgressEvent);
       }
 
@@ -571,7 +573,7 @@ export const api = {
       apiFetch<{ html: string; css: string; js: string }>(
         `/api/github/build-files?repoName=${encodeURIComponent(repoName)}`
       ),
-    analyzeRepo: (repoName: string, branch?: string) =>
+    analyzeRepo: (repoName: string, branch?: string, opts?: { lite?: boolean }) =>
       apiFetch<{
         repoName: string;
         defaultBranch: string;
@@ -587,7 +589,9 @@ export const api = {
         totalLinesEstimate: number;
         report: string;
       }>(
-        `/api/github/analyze?repoName=${encodeURIComponent(repoName)}${branch ? `&branch=${encodeURIComponent(branch)}` : ''}`
+        `/api/github/analyze?repoName=${encodeURIComponent(repoName)}${
+          branch ? `&branch=${encodeURIComponent(branch)}` : ''
+        }${opts?.lite === false ? '' : '&lite=1'}`
       ),
   },
   vercel: {

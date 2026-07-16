@@ -823,8 +823,10 @@ export interface GitHubRepoAnalysis {
 export async function analyzeGitHubRepo(
   userId: string,
   repoName: string,
-  preferredBranch?: string
+  preferredBranch?: string,
+  opts?: { lite?: boolean }
 ): Promise<GitHubRepoAnalysis> {
+  const lite = Boolean(opts?.lite);
   const integration = await getIntegration(userId);
   if (!integration?.access_token) throw new Error('GitHub not connected');
 
@@ -875,16 +877,23 @@ export async function analyzeGitHubRepo(
 
   let buildFiles = { html: '', css: '', js: '' };
   let hasBuildFiles = false;
-  try {
-    const files = await fetchBuildFilesFromGitHub(userId, repoName, scanBranch);
-    hasBuildFiles = true;
-    buildFiles = {
-      html: files.find((f) => f.path === 'index.html')?.content ?? '',
-      css: files.find((f) => f.path === 'styles.css')?.content ?? '',
-      js: files.find((f) => f.path === 'script.js')?.content ?? '',
-    };
-  } catch {
-    /* repo may not have static build files yet */
+  // Lite analyze (repo picker / UI): skip downloading full HTML/CSS/JS — massive speed win
+  if (!lite) {
+    try {
+      const files = await fetchBuildFilesFromGitHub(userId, repoName, scanBranch);
+      hasBuildFiles = true;
+      buildFiles = {
+        html: files.find((f) => f.path === 'index.html')?.content ?? '',
+        css: files.find((f) => f.path === 'styles.css')?.content ?? '',
+        js: files.find((f) => f.path === 'script.js')?.content ?? '',
+      };
+    } catch {
+      /* repo may not have static build files yet */
+    }
+  } else {
+    hasBuildFiles = treeSample.some(
+      (f) => f.path === 'index.html' || f.path.endsWith('/index.html') || f.path === 'package.json'
+    );
   }
 
   const paths = treeSample.map((f) => f.path);
@@ -944,7 +953,10 @@ export async function analyzeGitHubRepo(
     totalLinesEstimate,
     report,
   };
-  setCachedRepoAnalysis(userId, repoName, scanBranch, analysis);
+  // Never cache lite scans (empty buildFiles) — would poison full build analysis
+  if (!lite) {
+    setCachedRepoAnalysis(userId, repoName, scanBranch, analysis);
+  }
   return analysis;
 }
 

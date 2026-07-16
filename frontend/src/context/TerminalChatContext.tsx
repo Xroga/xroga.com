@@ -699,24 +699,28 @@ export function TerminalChatProvider({
   useEffect(() => {
     if (!sessionReady || incognito || !persistReadyRef.current || restoringRef.current) return;
     if (messages.length === 0) return;
-    for (const m of messages) {
-      const fo = m.featureOutput as { type?: string; html?: string; css?: string; js?: string } | undefined;
-      if (fo?.type === 'landing_page' && fo.html?.trim()) {
-        void import('@/lib/landingBuildStorage').then(({ saveLandingBuild }) =>
-          saveLandingBuild({
-            messageId: m.id,
-            html: fo.html!,
-            css: fo.css ?? '',
-            js: fo.js ?? '',
-          })
-        );
+    // Debounce — streaming deltas were writing IndexedDB every token and freezing the UI
+    const timer = window.setTimeout(() => {
+      for (const m of messages) {
+        const fo = m.featureOutput as { type?: string; html?: string; css?: string; js?: string } | undefined;
+        if (fo?.type === 'landing_page' && fo.html?.trim()) {
+          void import('@/lib/landingBuildStorage').then(({ saveLandingBuild }) =>
+            saveLandingBuild({
+              messageId: m.id,
+              html: fo.html!,
+              css: fo.css ?? '',
+              js: fo.js ?? '',
+            })
+          );
+        }
       }
-    }
-    try {
-      saveWorkspaceSession({ prompt, messages, sessionId: sessionIdRef.current });
-    } catch (err) {
-      console.warn('[workspace] persist skipped:', (err as Error).message);
-    }
+      try {
+        saveWorkspaceSession({ prompt, messages, sessionId: sessionIdRef.current });
+      } catch (err) {
+        console.warn('[workspace] persist skipped:', (err as Error).message);
+      }
+    }, 450);
+    return () => window.clearTimeout(timer);
   }, [sessionReady, prompt, messages, incognito]);
 
   /** Persist terminal history while user works — not only after submit completes */
@@ -724,15 +728,14 @@ export function TerminalChatProvider({
     if (!sessionReady || incognito || !persistReadyRef.current || restoringRef.current) return;
     if (messages.length === 0) return;
     const selected = getSelectedRepoContext();
-    // Immediate local stamp (keeps #1 in sidebar without waiting)
-    saveTerminalHistorySession({
-      sessionId: sessionIdRef.current,
-      prompt,
-      messages,
-      forceRepo: selected?.repo,
-      forceBranch: selected?.branch,
-    });
     const timer = window.setTimeout(() => {
+      saveTerminalHistorySession({
+        sessionId: sessionIdRef.current,
+        prompt,
+        messages,
+        forceRepo: selected?.repo,
+        forceBranch: selected?.branch,
+      });
       void import('@/lib/syncRepoTerminalSessions').then(({ ensureLiveTerminalUnderSelectedRepo }) => {
         ensureLiveTerminalUnderSelectedRepo({
           sessionId: sessionIdRef.current,
@@ -742,7 +745,7 @@ export function TerminalChatProvider({
         });
         window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       });
-    }, 80);
+    }, 500);
     return () => window.clearTimeout(timer);
   }, [sessionReady, prompt, messages, incognito]);
 
@@ -1424,12 +1427,15 @@ export function TerminalChatProvider({
       }, 1500);
 
       try {
+        // Paint assistant row immediately — don't wait on auth before the bubble appears
+        setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
+        setAnimatingId(assistantId);
+        setPipelineMessage('Connecting…');
+
         const supabase = createClient();
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.access_token) throw new Error('Please sign in to chat.');
-
-        setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
-        setAnimatingId(assistantId);
+        const accessToken = session.access_token;
 
         const threadForMemory: ChatMessage[] = [
           ...messages,
@@ -1466,10 +1472,11 @@ export function TerminalChatProvider({
                 }
               | undefined;
             if (fo?.type === 'landing_page' && typeof fo.html === 'string' && fo.html.trim().length > 40) {
+              // Cap payload — huge priorSite was freezing send on updates
               priorSite = {
-                html: fo.html.slice(0, 350_000),
-                css: typeof fo.css === 'string' ? fo.css.slice(0, 180_000) : undefined,
-                js: typeof fo.js === 'string' ? fo.js.slice(0, 180_000) : undefined,
+                html: fo.html.slice(0, 80_000),
+                css: typeof fo.css === 'string' ? fo.css.slice(0, 40_000) : undefined,
+                js: typeof fo.js === 'string' ? fo.js.slice(0, 40_000) : undefined,
                 projectName: typeof fo.projectName === 'string' ? fo.projectName : undefined,
               };
               break;
@@ -1603,6 +1610,7 @@ export function TerminalChatProvider({
           projectId,
           signal: controller.signal,
           compact: useCompactPipeline,
+          accessToken,
           attachments,
           history,
           clientMeta: {

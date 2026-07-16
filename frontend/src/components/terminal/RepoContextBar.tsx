@@ -78,7 +78,7 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
     setAnalyzing(true);
     setRepoSummary(null);
     try {
-      const result = await api.github.analyzeRepo(fullName, branch);
+      const result = await api.github.analyzeRepo(fullName, branch, { lite: true });
       setRepoSummary(result.summary);
       setRepoTech(result.techStack ?? []);
       setCachedRepoAnalysis({
@@ -135,7 +135,17 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
       if (defaultRepo) {
         const meta = list.find((r) => r.fullName === defaultRepo);
         const branch = await loadBranches(defaultRepo, savedBranch ?? meta?.defaultBranch);
-        void analyzeRepo(defaultRepo, branch, false);
+        // Defer lite analyze so the repo picker paints first
+        const runAnalyze = () => void analyzeRepo(defaultRepo, branch, false);
+        if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+          (
+            window as Window & {
+              requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number;
+            }
+          ).requestIdleCallback(runAnalyze, { timeout: 1200 });
+        } else {
+          globalThis.setTimeout(runAnalyze, 200);
+        }
       }
     } catch {
       setConnected(false);
