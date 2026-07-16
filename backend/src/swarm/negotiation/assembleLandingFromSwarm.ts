@@ -116,7 +116,11 @@ CRITICAL: Emit the product the user asked for. Crypto/dashboard → dashboard UI
   const maxTokens = 16384;
 
   if (resolveApiKey('deepseek', 'code')) {
-    return deepseekCode(`${XROGA_USER_IDENTITY}\n\n${systemPrompt}`, user, { maxTokens });
+    // Hard timeout — consolidate used to hang 10–20+ minutes with no AbortSignal
+    return deepseekCode(`${XROGA_USER_IDENTITY}\n\n${systemPrompt}`, user, {
+      maxTokens,
+      timeoutMs: 90_000,
+    });
   }
   if (getSecret('DEEPSEEK_API_KEY')) {
     return deepSeekChat(
@@ -124,7 +128,7 @@ CRITICAL: Emit the product the user asked for. Crypto/dashboard → dashboard UI
         { role: 'system', content: `${XROGA_USER_IDENTITY}\n\n${systemPrompt}` },
         { role: 'user', content: user },
       ],
-      { model: 'deepseek-chat', maxTokens }
+      { model: 'deepseek-chat', maxTokens, timeoutMs: 90_000 }
     );
   }
   return deepseekGenerate(user);

@@ -59,6 +59,14 @@ export interface BuildCostPolicy {
   preferFlashUiPolish: boolean;
   /** Remap expensive roles down on simple builds (Flash/Pro only) */
   remapExpensiveRoles: boolean;
+  /** Plan review/agree loop iterations */
+  maxPlanIterations: number;
+  /** Per-step verify→correct attempts (Pro corrections are expensive) */
+  maxStepCorrections: number;
+  /** Cap plan steps so crypto doesn't run 7×120s Pro loops */
+  maxBuildSteps: number;
+  /** Use single Flash verify instead of Flash+Gemini+Mistral */
+  lightVerifyAlways: boolean;
 }
 
 export function policyForPrompt(prompt: string): BuildCostPolicy {
@@ -80,11 +88,16 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
       grok45StrategyMaxTokens: 0,
       preferFlashUiPolish: true,
       remapExpensiveRoles: true,
+      maxPlanIterations: 0,
+      maxStepCorrections: 0,
+      maxBuildSteps: 1,
+      lightVerifyAlways: true,
     };
   }
   if (tier === 'premium') {
     // Crypto/hackathon: best work, lean cost — 1× short Grok 4.5 strategy, Flash UI,
     // SearXNG research (no expensive Grok research synthesis / review loop / Opus).
+    // Hard step/correction caps stop 30min DeepSeek Pro burn loops.
     return {
       tier,
       allowWebResearch: true,
@@ -99,6 +112,10 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
       grok45StrategyMaxTokens: 1536,
       preferFlashUiPolish: true,
       remapExpensiveRoles: false,
+      maxPlanIterations: 1,
+      maxStepCorrections: 1,
+      maxBuildSteps: 3,
+      lightVerifyAlways: true,
     };
   }
   // standard: small strategic Grok 4.5 share (part of monthly mix, not 0%)
@@ -116,6 +133,10 @@ export function policyForPrompt(prompt: string): BuildCostPolicy {
     grok45StrategyMaxTokens: 2048,
     preferFlashUiPolish: false,
     remapExpensiveRoles: false,
+    maxPlanIterations: 1,
+    maxStepCorrections: 2,
+    maxBuildSteps: 4,
+    lightVerifyAlways: false,
   };
 }
 

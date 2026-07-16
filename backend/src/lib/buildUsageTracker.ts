@@ -66,6 +66,13 @@ export class BuildUsageTracker {
     return this.totalInput + this.totalOutput;
   }
 
+  /** Sum of per-model API call counts for this build */
+  get totalCalls(): number {
+    let n = 0;
+    for (const l of this.lines.values()) n += l.calls;
+    return n;
+  }
+
   get estimatedUsd(): number {
     let n = 0;
     for (const l of this.lines.values()) n += l.estimatedUsd;

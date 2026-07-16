@@ -7,14 +7,21 @@ export function buildLiveStatusMessage(
 ): string {
   const phase = activePhase ?? 1;
 
-  const buildLines = [
-    'XROGA AI Black Hole — writing your project…',
-    'Absorbing multiverse data — generating styles & layout…',
-    'BLACK HOLE V∞ — building pages, sections & features…',
-    'Applying theme and responsive design…',
-    'Polishing your niche-specific content…',
-    'Still coding — your project is taking shape…',
-  ];
+  const buildLines =
+    elapsedSeconds >= 8 * 60
+      ? [
+          'Taking longer than usual — finishing with the best draft…',
+          'Budget guard active — shipping soon instead of endless polish…',
+          'Still coding — press Stop if nothing new appears…',
+        ]
+      : [
+          'XROGA AI Black Hole — writing your project…',
+          'Absorbing multiverse data — generating styles & layout…',
+          'BLACK HOLE V∞ — building pages, sections & features…',
+          'Applying theme and responsive design…',
+          'Polishing your niche-specific content…',
+          'Still coding — your project is taking shape…',
+        ];
 
   const verifyLines = [
     'XROGA Pulse — reviewing syntax…',
