@@ -809,7 +809,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   } else if (costPolicy.tier === 'simple_static') {
     // Ultra-fast: fixed 2-line plan — no Grok/Pro strategy, no plan condense.
     masterPlan = defaultPlanForPrompt(userPrompt).join('\n');
-    emit(ctx, 1, xrogaArchitectureLine('Fast plan ready — building blog now'), 'architect', todos, 'XROGA Architect');
+    emit(ctx, 1, xrogaArchitectureLine('Fast plan ready — building your site now'), 'architect', todos, 'XROGA Architect');
   } else {
     try {
       let strategyContext = '';

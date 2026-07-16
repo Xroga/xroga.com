@@ -89,7 +89,11 @@ function topicFromPrompt(prompt: string): { brand: string; topic: string; taglin
   return { brand, topic, tagline, posts };
 }
 
-/** True when HTML/CSS is the old boring Xroga stub users screenshot. */
+/**
+ * True when HTML/CSS is the old boring Xroga marketing stub users screenshot.
+ * Do NOT treat short dashboards/apps as "generic" — that incorrectly forced every
+ * failed/compact build into the same blog template.
+ */
 export function looksLikeGenericFallbackSite(html: string, css = ''): boolean {
   const blob = `${html}\n${css}`;
   if (/Lightning-fast performance/i.test(blob) && /Zero-defect/i.test(blob)) return true;
@@ -101,8 +105,13 @@ export function looksLikeGenericFallbackSite(html: string, css = ''): boolean {
   if (/linear-gradient\(135deg,\s*#7c3aed/i.test(css || blob) && /Zero-defect|Lightning-fast/i.test(blob)) {
     return true;
   }
-  // Tiny stub masquerading as a site (no blog structure)
-  if (html.length < 1200 && !/post-card|article|blog/i.test(html) && /btn-primary/i.test(html)) {
+  // Only flag tiny stubs that still look like the old 3-pillar marketing shell
+  if (
+    html.length < 900 &&
+    /btn-primary/i.test(html) &&
+    /Fast|Modern|Reliable/i.test(blob) &&
+    !/dashboard|swap|wallet|kpi|marketplace|portfolio|chat|canvas/i.test(blob)
+  ) {
     return true;
   }
   return false;

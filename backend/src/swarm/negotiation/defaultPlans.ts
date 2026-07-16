@@ -11,10 +11,18 @@ export const BEGINNER_WEBSITE_PLAN = [
   'Step 6: Responsive Design — mobile-first polish',
 ] as const;
 
-/** Fast path for simple blogs/landings — 1 shot complete site */
-export const SIMPLE_STATIC_PLAN = [
-  'Step 1: Complete simple blog — single index.html + embedded/linked CSS+JS: header, nav, hero, post list with localStorage add/edit/delete, about blurb, footer, responsive modern UI',
+/** Fast path for simple blogs — 1 shot complete blog */
+export const SIMPLE_BLOG_PLAN = [
+  'Step 1: Complete simple blog — single index.html + CSS+JS: header, nav, hero, post list with localStorage add/edit/delete, about blurb, footer, responsive modern UI',
 ] as const;
+
+/** Fast path for simple landings/portfolios — 1 shot, NOT a blog */
+export const SIMPLE_LANDING_PLAN = [
+  'Step 1: Complete site matching the user brief — index.html + CSS+JS: header, hero, services/features, CTA, contact, footer. Do NOT build a blog unless the user asked for a blog.',
+] as const;
+
+/** @deprecated use SIMPLE_BLOG_PLAN / SIMPLE_LANDING_PLAN — kept for imports */
+export const SIMPLE_STATIC_PLAN = SIMPLE_BLOG_PLAN;
 
 export const BEGINNER_WEBSITE_PLAN_NO_ORDER = [
   'Step 1: Homepage — hero, header, navigation',
@@ -84,8 +92,17 @@ function nicheFromPrompt(prompt: string): { name: string; theme: string; steps: 
 
 export function defaultPlanForPrompt(prompt: string): string[] {
   const t = prompt.toLowerCase();
-  if (/\b(blog|landing|portfolio|simple website|simple site|personal site)\b/.test(t)) {
-    return [...SIMPLE_STATIC_PLAN];
+  // Blog plan ONLY when the user asked for a blog — never force blogs onto landings/portfolios/crypto
+  if (/\b(blog|journal|newsletter)\b/.test(t) && !/\b(crypto|dashboard|saas|marketplace|defi|web3)\b/.test(t)) {
+    return [...SIMPLE_BLOG_PLAN];
+  }
+  if (/\b(portfolio|personal site)\b/.test(t)) {
+    return [
+      'Step 1: Portfolio site — hero, project grid, about, contact form, responsive CSS/JS — not a blog',
+    ];
+  }
+  if (/\b(landing|simple website|simple site|homepage|marketing site)\b/.test(t)) {
+    return [...SIMPLE_LANDING_PLAN];
   }
   const noOrder = /\b(no payment|without ordering|no ordering)\b/.test(t) || /\b,\s*no\b/.test(t);
   const niche = nicheFromPrompt(prompt);

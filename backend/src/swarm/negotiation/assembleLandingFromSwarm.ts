@@ -9,10 +9,11 @@ import type { LandingPageOutput } from '../../types/features.js';
 import { PHASE_7_EMIT, PHASE_7_CRM_EMIT, XROGA_TAGLINE } from './prompts.js';
 import { PHASE_7_GAME_EMIT } from './gamePrompts.js';
 import { normalizeBuildFiles } from '../../lib/normalizeBuildSource.js';
+import { looksLikeGenericFallbackSite } from '../../lib/blogSiteTemplate.js';
 import {
-  generateQualityBlogSite,
-  looksLikeGenericFallbackSite,
-} from '../../lib/blogSiteTemplate.js';
+  generatePromptMatchedSite,
+  heroPlaceholderForPrompt,
+} from '../../lib/promptSiteScaffold.js';
 
 interface ParsedSiteCode {
   html: string;
@@ -92,7 +93,9 @@ async function consolidateWithDeepSeek(
   clarifiedBrief: string,
   kind: 'website' | 'game' = 'website'
 ): Promise<string> {
-  const user = `Brief:\n${clarifiedBrief}\n\nOriginal request:\n${userPrompt}\n\nApproved plan:\n${approvedPlan}\n\nVerified step code:\n${assembledCode}`;
+  const user = `Brief:\n${clarifiedBrief}\n\nOriginal request:\n${userPrompt}\n\nApproved plan:\n${approvedPlan}\n\nVerified step code:\n${assembledCode}
+
+CRITICAL: Emit the product the user asked for. Crypto/dashboard → dashboard UI. SaaS → SaaS. Blog ONLY if they asked for a blog. Never rewrite a dashboard into a blog.`;
   const isCrm = /\b(crm|contacts|deals pipeline|sales pipeline|sales dashboard)\b/i.test(userPrompt);
   const systemPrompt =
     kind === 'game' ? PHASE_7_GAME_EMIT : isCrm ? PHASE_7_CRM_EMIT : PHASE_7_EMIT;
@@ -145,17 +148,20 @@ export async function buildLandingFromSwarmAssembly(
 ): Promise<LandingPageOutput> {
   let site = parseAssembledProject(assembledCode);
 
+  const promptForScaffold = userPrompt || clarifiedBrief;
+  const heroImageUrl = heroPlaceholderForPrompt(promptForScaffold);
+
   if (opts?.skipConsolidate) {
     if (!site?.html?.trim() || looksLikeGenericFallbackSite(site.html, site.css ?? '')) {
-      // Prefer quality blog template over Claude stub / empty Flash essays
-      const blog = generateQualityBlogSite(userPrompt || clarifiedBrief);
-      const normalized = normalizeBuildFiles(blog.html, blog.css, blog.js);
+      // Match the user's product (crypto/dashboard/saas/…) — never force a blog
+      const matched = generatePromptMatchedSite(promptForScaffold);
+      const normalized = normalizeBuildFiles(matched.html, matched.css, matched.js);
       return {
         type: 'landing_page',
         html: normalized.html,
         css: normalized.css,
         js: normalized.js,
-        heroImageUrl: 'https://placehold.co/1200x630/0f6b5c/f6f1e8?text=Blog',
+        heroImageUrl,
         deployUrl: '',
       };
     }
@@ -166,15 +172,15 @@ export async function buildLandingFromSwarmAssembly(
       `document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}}));`;
     let normalized = normalizeBuildFiles(html, css, js);
     if (looksLikeGenericFallbackSite(normalized.html, normalized.css)) {
-      const blog = generateQualityBlogSite(userPrompt || clarifiedBrief);
-      normalized = normalizeBuildFiles(blog.html, blog.css, blog.js);
+      const matched = generatePromptMatchedSite(promptForScaffold);
+      normalized = normalizeBuildFiles(matched.html, matched.css, matched.js);
     }
     return {
       type: 'landing_page',
       html: normalized.html,
       css: normalized.css,
       js: normalized.js,
-      heroImageUrl: 'https://placehold.co/1200x630/0f6b5c/f6f1e8?text=Blog',
+      heroImageUrl,
       deployUrl: '',
     };
   }
@@ -201,16 +207,16 @@ export async function buildLandingFromSwarmAssembly(
       const built = await buildLandingPage(enriched);
       if (!looksLikeGenericFallbackSite(built.html, built.css)) return built;
     } catch {
-      /* fall through to template */
+      /* fall through to prompt-matched scaffold */
     }
-    const blog = generateQualityBlogSite(userPrompt || clarifiedBrief);
-    const normalizedBlog = normalizeBuildFiles(blog.html, blog.css, blog.js);
+    const matched = generatePromptMatchedSite(promptForScaffold);
+    const normalizedMatched = normalizeBuildFiles(matched.html, matched.css, matched.js);
     return {
       type: 'landing_page',
-      html: normalizedBlog.html,
-      css: normalizedBlog.css,
-      js: normalizedBlog.js,
-      heroImageUrl: 'https://placehold.co/1200x630/0f6b5c/f6f1e8?text=Blog',
+      html: normalizedMatched.html,
+      css: normalizedMatched.css,
+      js: normalizedMatched.js,
+      heroImageUrl,
       deployUrl: '',
     };
   }
@@ -223,8 +229,8 @@ export async function buildLandingFromSwarmAssembly(
 
   let normalized = normalizeBuildFiles(html, css, js);
   if (looksLikeGenericFallbackSite(normalized.html, normalized.css)) {
-    const blog = generateQualityBlogSite(userPrompt || clarifiedBrief);
-    normalized = normalizeBuildFiles(blog.html, blog.css, blog.js);
+    const matched = generatePromptMatchedSite(promptForScaffold);
+    normalized = normalizeBuildFiles(matched.html, matched.css, matched.js);
   }
 
   return {
@@ -232,7 +238,7 @@ export async function buildLandingFromSwarmAssembly(
     html: normalized.html,
     css: normalized.css,
     js: normalized.js,
-    heroImageUrl: 'https://placehold.co/1200x630/0f6b5c/f6f1e8?text=Blog',
+    heroImageUrl,
     deployUrl: '',
   };
 }
