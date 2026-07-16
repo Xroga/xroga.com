@@ -12,7 +12,7 @@ interface DeepSeekResponse {
 
 export async function deepSeekChat(
   messages: DeepSeekMessage[],
-  options?: { model?: string; maxTokens?: number }
+  options?: { model?: string; maxTokens?: number; timeoutMs?: number }
 ): Promise<string> {
   const apiKey = getSecret('DEEPSEEK_API_KEY');
   if (!apiKey) {
@@ -31,6 +31,7 @@ export async function deepSeekChat(
       max_tokens: options?.maxTokens ?? 1024,
       temperature: 0.3,
     }),
+    signal: AbortSignal.timeout(options?.timeoutMs ?? 90_000),
   });
 
   if (!response.ok) {

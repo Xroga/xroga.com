@@ -21,7 +21,12 @@ async function withRetry<T>(fn: () => Promise<T>, label: string): Promise<T> {
       return await fn();
     } catch (err) {
       lastErr = err as Error;
-      const isRateLimit = /429|rate.?limit|quota/i.test(lastErr.message);
+      const msg = lastErr.message || '';
+      // Timeouts / aborts: fail fast — retrying burns more API time with no progress
+      if (/aborted|timeout|TimeoutError|AbortError/i.test(msg) || lastErr.name === 'TimeoutError' || lastErr.name === 'AbortError') {
+        throw lastErr;
+      }
+      const isRateLimit = /429|rate.?limit|quota/i.test(msg);
       if (attempt < MAX_RETRIES - 1 && isRateLimit) {
         await sleep(BASE_DELAY_MS * Math.pow(2, attempt));
         continue;
@@ -39,10 +44,12 @@ async function withRetry<T>(fn: () => Promise<T>, label: string): Promise<T> {
 export async function deepseekCode(
   system: string,
   user: string,
-  options?: { maxTokens?: number; model?: string }
+  options?: { maxTokens?: number; model?: string; timeoutMs?: number }
 ): Promise<string> {
   const apiKey = resolveApiKey('deepseek', 'code');
   if (!apiKey) throw new Error('DEEPSEEK_CODE_API_KEY / DEEPSEEK_API_KEY not configured');
+
+  const timeoutMs = options?.timeoutMs ?? 90_000;
 
   return withRetry(async () => {
     const response = await fetch('https://api.deepseek.com/chat/completions', {
@@ -60,6 +67,7 @@ export async function deepseekCode(
         max_tokens: options?.maxTokens ?? 16384,
         temperature: 0.1,
       }),
+      signal: AbortSignal.timeout(timeoutMs),
     });
 
     if (!response.ok) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Coffee, Sparkles } from 'lucide-react';
+import { Bell, Coffee, Sparkles, Square } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface BuildPatienceBannerProps {
@@ -9,7 +9,7 @@ interface BuildPatienceBannerProps {
   onEnableNotifications?: () => void;
 }
 
-/** Shown during long builds — reassures user they can leave the tab open or step away. */
+/** Shown during long builds — reassures early; warns about API cost if stuck. */
 export function BuildPatienceBanner({
   elapsedSeconds,
   className,
@@ -17,23 +17,46 @@ export function BuildPatienceBanner({
 }: BuildPatienceBannerProps) {
   if (elapsedSeconds < 90) return null;
 
+  // After ~8 minutes the build should already have shipped or hit budget —
+  // lingering usually means wasted provider spend.
+  const costRisk = elapsedSeconds >= 8 * 60;
+
   return (
     <div
       className={cn(
-        'rounded-lg border border-[var(--accent)]/25 bg-[var(--accent)]/8 px-3 py-2.5 space-y-1.5 animate-in fade-in duration-500',
+        'rounded-lg border px-3 py-2.5 space-y-1.5 animate-in fade-in duration-500',
+        costRisk
+          ? 'border-amber-500/40 bg-amber-500/10'
+          : 'border-[var(--accent)]/25 bg-[var(--accent)]/8',
         className
       )}
     >
-      <p className="text-[12px] font-semibold text-[var(--foreground)] flex items-center gap-1.5">
-        <Sparkles className="h-3.5 w-3.5 text-[var(--accent)] shrink-0" />
-        XROGA is still building — you&apos;re in good hands
-      </p>
-      <p className="text-[11px] leading-relaxed text-[var(--foreground)]/80 flex items-start gap-1.5">
-        <Coffee className="h-3.5 w-3.5 text-[var(--muted)] shrink-0 mt-0.5" />
-        Please don&apos;t stop this response or change your selected repository. You can close this tab,
-        use other apps, or even sleep — BLACK HOLE V∞ keeps working in the background.
-      </p>
-      {onEnableNotifications && (
+      {costRisk ? (
+        <>
+          <p className="text-[12px] font-semibold text-[var(--foreground)] flex items-center gap-1.5">
+            <Square className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+            Still building after {Math.floor(elapsedSeconds / 60)}m — this may be wasting API cost
+          </p>
+          <p className="text-[11px] leading-relaxed text-[var(--foreground)]/80">
+            Press <strong>Stop</strong> if todos are not advancing. You only pay for work already
+            completed; leaving a stuck polish loop running burns DeepSeek/Grok credits with no new
+            preview.
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="text-[12px] font-semibold text-[var(--foreground)] flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-[var(--accent)] shrink-0" />
+            XROGA is still building — you&apos;re in good hands
+          </p>
+          <p className="text-[11px] leading-relaxed text-[var(--foreground)]/80 flex items-start gap-1.5">
+            <Coffee className="h-3.5 w-3.5 text-[var(--muted)] shrink-0 mt-0.5" />
+            You can leave this tab open. If the timer passes ~8 minutes with no progress, press Stop
+            to protect API credits — builds now auto-ship when their budget is reached.
+          </p>
+        </>
+      )}
+      {onEnableNotifications && !costRisk && (
         <button
           type="button"
           onClick={onEnableNotifications}

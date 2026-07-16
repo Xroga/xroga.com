@@ -126,16 +126,11 @@ import { notifyBuildComplete, notifyBuildFailed } from '../../services/notificat
 import { createTodoState } from './todoState.js';
 import { XROGA_MODELS } from '../../config/modelRegistry.js';
 import { costAwareRole, policyForPrompt, strategyGrokVariant } from '../../lib/buildCostPolicy.js';
+import { createBuildBudget } from '../../lib/buildBudget.js';
 
 /** Max tokens per build step — no compromise on complete code output */
 const BUILD_STEP_MAX_TOKENS = 16384;
 const SIMPLE_BUILD_STEP_MAX_TOKENS = 8192;
-
-const MAX_PLAN_ITERATIONS = 3;
-const MAX_STEP_CORRECTIONS = 3;
-const SIMPLE_MAX_PLAN_ITERATIONS = 0; // skip plan review entirely
-const SIMPLE_MAX_STEP_CORRECTIONS = 0; // ship first Flash draft
-const SIMPLE_MAX_STEPS = 1; // one-shot complete site
 
 function assertNotAborted(ctx: NegotiationContext) {
   if (ctx.abortSignal?.aborted) {
@@ -420,6 +415,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   const { userPrompt: rawPrompt, featureCategory, userId } = ctx;
   const userPrompt = rawPrompt.trim();
   const costPolicy = policyForPrompt(userPrompt);
+  const buildBudget = createBuildBudget(costPolicy.tier);
+  let shipEarly = false;
   console.info('[NegotiationEngine] costPolicy', {
     tier: costPolicy.tier,
     allowGrokStrategy: costPolicy.allowGrokStrategy,
@@ -427,11 +424,32 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     maxGrok45Calls: costPolicy.maxGrok45Calls,
     allowGrokReviewLoop: costPolicy.allowGrokReviewLoop,
     allowWebResearch: costPolicy.allowWebResearch,
+    maxBuildSteps: costPolicy.maxBuildSteps,
+    maxStepCorrections: costPolicy.maxStepCorrections,
+    softMs: buildBudget.limits.softMs,
+    hardMs: buildBudget.limits.hardMs,
   });
   const currentMessage = routingPrompt(userPrompt);
   const todos = createTodoState(userPrompt);
   const buildState = new BuildState();
   const businessLabel = inferBusinessLabel(userPrompt);
+  const markShipEarly = (reason: string) => {
+    if (shipEarly) return;
+    shipEarly = true;
+    console.warn('[NegotiationEngine] ship-early:', reason, {
+      elapsedMs: buildBudget.elapsedMs(),
+      calls: usageTracker.totalCalls,
+      tier: costPolicy.tier,
+    });
+    emit(
+      ctx,
+      6,
+      xrogaPulseLine(`Shipping best result now — ${reason}`),
+      'builder',
+      todos,
+      'XROGA Pulse'
+    );
+  };
 
   emit(ctx, 0, BRAND.phase0.scanning(businessLabel), 'reviewer', todos, 'XROGA Visionary', { userPhase: 1 });
 
@@ -939,8 +957,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   todos.activateMeta('structure');
   emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect');
   let approvedPlan = masterPlan;
-  const planIterations =
-    costPolicy.tier === 'simple_static' ? SIMPLE_MAX_PLAN_ITERATIONS : MAX_PLAN_ITERATIONS;
+  const planIterations = costPolicy.maxPlanIterations;
   if (!isUpdateBuild && planIterations > 0) {
   for (let i = 0; i < planIterations; i++) {
     emit(ctx, 2, BRAND.phase2.reviewing, 'reviewer', todos, 'XROGA Architect');
@@ -995,8 +1012,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   const gameMaxSteps = isGamePhaseContinuation(userPrompt) ? steps.length : Math.min(steps.length, 2);
   let stepsToRun = isGameBuild ? steps.slice(0, gameMaxSteps) : steps;
-  if (costPolicy.tier === 'simple_static') {
-    stepsToRun = steps.slice(0, SIMPLE_MAX_STEPS);
+  if (!isGameBuild) {
+    stepsToRun = steps.slice(0, Math.max(1, costPolicy.maxBuildSteps));
   }
   if (isUpdateBuild && incrementalPlan) {
     stepsToRun = incrementalPlan.labels.slice(0, incrementalPlan.stepCount);
@@ -1007,9 +1024,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   const stepTokenBudget =
     costPolicy.tier === 'simple_static' ? SIMPLE_BUILD_STEP_MAX_TOKENS : BUILD_STEP_MAX_TOKENS;
-  const stepCorrectionsMax =
-    costPolicy.tier === 'simple_static' ? SIMPLE_MAX_STEP_CORRECTIONS : MAX_STEP_CORRECTIONS;
-  const lightVerify = isUpdateBuild || costPolicy.tier === 'simple_static';
+  const stepCorrectionsMax = costPolicy.maxStepCorrections;
+  const lightVerify =
+    isUpdateBuild || costPolicy.lightVerifyAlways || costPolicy.tier === 'simple_static';
 
   emit(
     ctx,
@@ -1043,6 +1060,31 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       : '';
 
   for (let si = 0; si < stepsToRun.length; si++) {
+    assertNotAborted(ctx);
+    if (buildBudget.hardExceeded(usageTracker)) {
+      markShipEarly('time/call budget reached');
+      // Mark remaining todos done so UI doesn't look stuck forever
+      for (let rj = si; rj < stepsToRun.length; rj++) {
+        try {
+          todos.completeBuild(rj);
+        } catch {
+          /* optional */
+        }
+      }
+      break;
+    }
+    if (si > 0 && buildBudget.softExceeded(usageTracker)) {
+      markShipEarly('soft budget — finishing with completed steps');
+      for (let rj = si; rj < stepsToRun.length; rj++) {
+        try {
+          todos.completeBuild(rj);
+        } catch {
+          /* optional */
+        }
+      }
+      break;
+    }
+
     const stepLabel = `Step ${si + 1}/${stepsToRun.length}`;
     const target = stepTargetLabel(stepsToRun[si]!, si);
     todos.activateBuild(si);
@@ -1111,10 +1153,25 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         : `<!-- Step ${si + 1} fallback -->\n<section><h2>${stepsToRun[si]}</h2><p>Content for ${stepsToRun[si]}</p></section>`;
     }
 
-    let approved = costPolicy.tier === 'simple_static';
+    let approved = costPolicy.tier === 'simple_static' || stepCorrectionsMax <= 0;
+    // Prefer Flash for corrections — Pro+reasoning_effort high was burning 2min/call in loops
+    const useLightCorrections =
+      costPolicy.tier === 'premium' || buildBudget.softExceeded(usageTracker) || lightVerify;
     for (let attempt = 0; attempt < stepCorrectionsMax; attempt++) {
+      assertNotAborted(ctx);
+      if (buildBudget.hardExceeded(usageTracker)) {
+        markShipEarly('budget during step verify');
+        break;
+      }
       emit(ctx, 4, BRAND.phase4.verifying, 'qa', todos, 'AI SWARM LOGIC');
-      const reports = await verifyStepParallel(stepCode, approvedPlan, userPrompt, usageTracker, lightVerify, userId);
+      const reports = await verifyStepParallel(
+        stepCode,
+        approvedPlan,
+        userPrompt,
+        usageTracker,
+        lightVerify || useLightCorrections,
+        userId
+      );
       const failures = reports.filter((r) => !r.pass);
 
       if (!failures.length) {
@@ -1136,6 +1193,14 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           { userId: ctx.userId, claudeTask: 'qa' }
         );
         stepCode = corrected.text;
+      } else if (useLightCorrections) {
+        stepCode = await deepseekFlashCall(
+          PHASE_5_CORRECT,
+          `Failures:\n${errorPlan}\n\nCode:\n${stepCode}`,
+          stepTokenBudget,
+          usageTracker,
+          userId
+        );
       } else {
         stepCode = await deepseekProCall(
           PHASE_5_CORRECT,
@@ -1161,15 +1226,23 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   let assembledCode = codeParts.join('\n\n');
 
-  if (!isUpdateBuild && costPolicy.tier !== 'simple_static') {
+  if (
+    !shipEarly &&
+    !isUpdateBuild &&
+    costPolicy.tier !== 'simple_static' &&
+    !buildBudget.softExceeded(usageTracker) &&
+    buildBudget.canAffordLongCall(usageTracker)
+  ) {
     emit(ctx, 6, xrogaPulseLine('First-build preflight — runtime & UI sanity check'), 'qa', todos, 'XROGA Pulse');
     try {
+      assertNotAborted(ctx);
       const { text: preflight } = await buildModelCall(
         'flash',
         `You are XROGA QA. Check HTML/CSS/JS for broken buttons, dead links, placeholder-only sections, missing event handlers, and mobile layout gaps. If issues found, return corrected fenced html/css/js blocks. If OK, reply PASS only.`,
         `User request:\n${userPrompt.slice(0, 800)}\n\nCode:\n${assembledCode.slice(0, 50000)}`,
         8192,
-        usageTracker
+        usageTracker,
+        { userId }
       );
       if (preflight && !isPass(preflight) && /```/.test(preflight)) {
         assembledCode = `${assembledCode}\n\n// --- First-build preflight fixes ---\n${preflight}`;
@@ -1179,8 +1252,19 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     }
   }
 
+  const skipOptionalPolish = shipEarly || buildBudget.softExceeded(usageTracker);
   emit(ctx, 6, xrogaVisionaryLine('UI polish — responsive design & animations'), 'reviewer', todos, 'XROGA Visionary');
-  if (isUpdateBuild && incrementalPlan?.touchesUi && incrementalPlan.stepCount > 1) {
+  if (skipOptionalPolish && !isUpdateBuild && costPolicy.tier !== 'simple_static') {
+    try {
+      todos.activate('ui-trends');
+      todos.complete('ui-trends');
+      emit(ctx, 6, xrogaVisionaryLine('UI polish skipped — shipping current build'), 'reviewer', todos, 'XROGA Visionary', {
+        silent: true,
+      });
+    } catch {
+      /* optional */
+    }
+  } else if (isUpdateBuild && incrementalPlan?.touchesUi && incrementalPlan.stepCount > 1) {
     try {
       assertNotAborted(ctx);
       const polishRole = costAwareRole(
@@ -1201,7 +1285,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     } catch {
       /* optional */
     }
-  } else if (!isUpdateBuild && costPolicy.tier !== 'simple_static') {
+  } else if (!isUpdateBuild && costPolicy.tier !== 'simple_static' && !skipOptionalPolish) {
   try {
     assertNotAborted(ctx);
     todos.activate('ui-trends');
@@ -1212,8 +1296,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     const { text: uiPolish, modelLabel } = await buildModelCall(
       polishRole,
       `You are XROGA Visionary. Polish HTML/CSS/JS for modern responsive design, micro-interactions, accessibility (ARIA), and optional dark mode. Output ONLY complete fenced html, css, javascript blocks — no commentary, no truncation.`,
-      `Brief:\n${clarifiedBrief}\n\nApproved plan:\n${approvedPlan}\n\nCodebase:\n${assembledCode}`,
-      stepTokenBudget,
+      `Brief:\n${clarifiedBrief}\n\nApproved plan:\n${approvedPlan}\n\nCodebase:\n${assembledCode.slice(0, 40_000)}`,
+      Math.min(stepTokenBudget, 8192),
       usageTracker,
       { userId: ctx.userId, claudeTask: 'ui' }
     );
@@ -1245,7 +1329,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   todos.addFinalTodos();
   todos.activateFinal('final-check');
 
-  if (!isUpdateBuild && costPolicy.allowGrokReviewLoop) {
+  if (
+    !shipEarly &&
+    !isUpdateBuild &&
+    costPolicy.allowGrokReviewLoop &&
+    !buildBudget.softExceeded(usageTracker)
+  ) {
     emit(ctx, 6, xrogaCollectiveLine('Quality audit — skeptical code review'), 'truth_council', todos, 'XROGA Collective', {
       userPhase: 2,
     });
@@ -1290,40 +1379,27 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     } catch {
       emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective', { silent: true });
     }
-  } else {
-  emit(ctx, 6, xrogaCollectiveLine('Quality gate — code standards review'), 'truth_council', todos, 'XROGA Collective');
-  try {
-    // Quality gate: DeepSeek Pro (never Opus on default path — too expensive for marginal gain).
-    const reviewRole = costAwareRole('pro', costPolicy);
-    const { text: qualityReview } = await buildModelCall(
-      reviewRole,
-      PHASE_6_FINAL,
-      `Full codebase:\n${assembledCode}`,
-      2048,
-      usageTracker,
-      { userId }
-    );
-    if (!isPass(qualityReview)) {
-      emit(ctx, 5, xrogaArchitectureLine('Applying quality fixes from review'), 'debugger', todos, 'XROGA Architect');
-      assembledCode = await deepseekFlashCall(
-        PHASE_5_CORRECT,
-        `Quality review:\n${qualityReview}\n\nCode:\n${assembledCode}`,
-        BUILD_STEP_MAX_TOKENS,
-        usageTracker, userId
-      );
-      totalCorrections++;
+  } else if (shipEarly || buildBudget.softExceeded(usageTracker) || !buildBudget.canAffordLongCall(usageTracker)) {
+    // Budget tight: one Flash interactive QA max — never Pro quality + final + QA triple pass
+    emit(ctx, 6, xrogaPulseLine('Quick QA — shipping before budget overrun'), 'qa', todos, 'XROGA Pulse');
+    try {
+      assertNotAborted(ctx);
+      const qa = await deepseekInteractiveQaFix(assembledCode, userPrompt, usageTracker);
+      assembledCode = qa.code;
+      if (qa.fixed) totalCorrections++;
+      emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective');
+    } catch {
+      emit(ctx, 6, BRAND.phase6.allPass, 'truth_council', todos, 'XROGA Collective', { silent: true });
     }
-  } catch {
-    /* review falls back inside buildModelCall */
-  }
-
-  // Cost: one DeepSeek final + interactive QA — not Flash+Gemini+Flash+Mistral in parallel
+  } else {
+  // Single Flash final + interactive QA (skip Pro quality gate — was duplicate DeepSeek burn)
   emit(ctx, 6, xrogaCollectiveLine('DeepSeek final audit (single pass)'), 'truth_council', todos, 'XROGA Collective');
   try {
+    assertNotAborted(ctx);
     const finalReview = await deepseekFlashCall(
       PHASE_6_FINAL,
-      `Full codebase:\n${assembledCode}`,
-      4096,
+      `Full codebase:\n${assembledCode.slice(0, 40_000)}`,
+      2048,
       usageTracker,
       userId
     );
@@ -1331,8 +1407,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       emit(ctx, 5, BRAND.phase5.correcting, 'debugger', todos, 'XROGA Architect');
       assembledCode = await deepseekFlashCall(
         PHASE_5_CORRECT,
-        `Final review:\n${finalReview}\n\n${assembledCode}`,
-        BUILD_STEP_MAX_TOKENS,
+        `Final review:\n${finalReview}\n\n${assembledCode.slice(0, 40_000)}`,
+        Math.min(BUILD_STEP_MAX_TOKENS, 8192),
         usageTracker,
         userId
       );
@@ -1381,7 +1457,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   buildState.markDone('verified');
   todos.completeFinal('final-check');
 
-  if (shouldUseReserve(userPrompt, totalCorrections)) {
+  if (
+    !shipEarly &&
+    !buildBudget.softExceeded(usageTracker) &&
+    buildBudget.canAffordLongCall(usageTracker) &&
+    shouldUseReserve(userPrompt, totalCorrections)
+  ) {
     emit(ctx, 6, BRAND.reserve.polish, 'architect', todos, 'XROGA Alpha Core');
     const polished = await reservePolish(assembledCode, userPrompt, 'repeated_failure');
     if (polished) assembledCode = polished;
@@ -1397,8 +1478,26 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     featureCategory === 'landing_page' ||
     isWebsiteBuildPrompt(userPrompt, featureCategory);
 
+  const skipConsolidate =
+    isUpdateBuild ||
+    costPolicy.tier === 'simple_static' ||
+    shipEarly ||
+    buildBudget.softExceeded(usageTracker) ||
+    !buildBudget.canAffordLongCall(usageTracker);
+
   try {
     if (isWebBuildFinal) {
+      if (skipConsolidate && !isUpdateBuild) {
+        emit(
+          ctx,
+          7,
+          xrogaPulseLine('Assembling site — skipped long consolidate to save API cost'),
+          'builder',
+          todos,
+          'XROGA Pulse',
+          { silent: true }
+        );
+      }
       featureOutput = await buildLandingFromSwarmAssembly(
         assembledCode,
         userPrompt,
@@ -1406,7 +1505,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         clarifiedBrief,
         isGameBuild ? 'game' : 'website',
         {
-          skipConsolidate: isUpdateBuild || costPolicy.tier === 'simple_static',
+          skipConsolidate,
           // Updates: patch from assembly only — never replace the live repo with a scaffold
           allowScaffoldFallback: !isUpdateBuild,
         }

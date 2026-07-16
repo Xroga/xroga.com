@@ -38,28 +38,19 @@ function nicheFromPrompt(prompt: string): { name: string; theme: string; steps: 
   // Product niches FIRST. Every alternation must use \b on EACH term —
   // otherwise /\bsalon|spa|beauty\b/ matches "spa" inside "sparkline" and steals crypto builds.
   const plans: Array<{ match: RegExp; name: string; theme: string; steps: string[] }> = [
+    // Keep niche step lists short (≤2). Engine also caps maxBuildSteps — long plans
+    // caused 25–30min DeepSeek Pro correction loops with no shipped product.
     { match: /\b(crypto|blockchain|web3|defi|nft|token|wallet|dao|dapp|exchange|staking)\b/, name: 'Web3 Dashboard — wallet connect hero, dark theme', theme: 'crypto dark gradient', steps: [
-      'Token metrics — price, volume, market cap cards',
-      'Wallet connect UI — MetaMask / WalletConnect stub',
-      'Swap / stake interface — form, charts, APY display',
-      'Transaction history table — hash, status, amount',
-      'Security & docs section — audit badges, FAQ',
-      'Responsive Design — mobile-first DeFi layout',
+      'Complete dashboard — live token metrics, charts, wallet stub, swap/stake UI, tx table, responsive dark theme',
+      'Polish interactions — working buttons, CoinGecko price fetch, mobile layout',
     ] },
     { match: /\b(chatbot|chat bot|ai assistant|ai agent|support bot|customer support)\b/, name: 'Chatbot App — conversation UI shell', theme: 'modern AI assistant', steps: [
-      'Chat window — message bubbles, typing indicator',
-      'Input bar — send, attach, voice stub',
-      'Sidebar — conversation history, new chat',
-      'Settings panel — model, tone, API key placeholder',
-      'Embed widget preview — floating launcher button',
-      'Responsive Design — mobile chat layout',
+      'Complete chat app — message bubbles, input bar, sidebar history, settings, responsive layout',
+      'Polish — typing indicator, send handlers, mobile chat shell',
     ] },
     { match: /\b(crm|contacts list|deals pipeline|sales pipeline|sales dashboard)\b/, name: 'CRM Dashboard — corporate header, sidebar navigation', theme: 'corporate clean blue/slate', steps: [
-      'Contacts list — searchable table, company names, avatars',
-      'Deals pipeline — kanban columns (Lead, Proposal, Negotiation, Won)',
-      'Tasks board — priority todos, due dates, checkboxes',
-      'Analytics — KPI cards and bar/line charts (revenue, deals, tasks)',
-      'Responsive Design — mobile-friendly dashboard layout',
+      'Complete CRM — contacts table, deals kanban, tasks, KPI charts, responsive layout',
+      'Polish — search/filter, click handlers, mobile sidebar',
     ] },
     { match: /\b(startup|saas|software company)\b/, name: 'Homepage — product hero', theme: 'tech', steps: ['Features', 'Pricing', 'Testimonials', 'Contact / demo', 'Responsive'] },
     { match: /\b(coffee|caf[eé]|espresso)\b/, name: 'Homepage — cozy hero, warm branding', theme: 'warm', steps: ['Menu — drinks & pastries', 'Ordering — cart UI', 'Gallery', 'Contact', 'Responsive'] },
