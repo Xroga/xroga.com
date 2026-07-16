@@ -5,6 +5,7 @@
 import { routingPrompt } from '../lib/promptRouting.js';
 import {
   isBuildContinuation,
+  isGeneralAdviceOrKnowledgePrompt,
   isWebsiteBuildUpdate,
   isWebsiteUpdateRequest,
 } from '../lib/buildContinuation.js';
@@ -18,7 +19,9 @@ export function classifyPipelineIntent(
   history?: Array<{ role: string; content: string }>
 ): PipelineIntent {
   const text = routingPrompt(prompt).trim();
-  const lower = text.toLowerCase();
+
+  // Advice / strategy / Q&A must stay on chat — never a silent landing-page build
+  if (isGeneralAdviceOrKnowledgePrompt(text)) return 'chat';
 
   if (isBuildContinuation(prompt)) return 'build';
   if (isWebsiteBuildUpdate(prompt, history)) return 'build';
@@ -33,7 +36,7 @@ export function classifyPipelineIntent(
     return 'build';
   }
 
-  if (/\b(build|building|create|make)\b/i.test(lower) && text.length < 140) return 'build';
+  // Removed bare "create/make + short text → build" — it stole "make a strategy" / "create a plan"
 
   return 'chat';
 }

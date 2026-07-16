@@ -31,7 +31,7 @@ import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { attachCloudProjectId, saveTerminalHistorySession } from '@/lib/terminalHistory';
 import { registerRepoSession } from '@/lib/repoSessionsIndex';
 import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
-import { buildPromptWithMemory, isBuildThreadContinuation, isPhase1BuildQuestion, isWebsiteBuildPrompt, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
+import { buildPromptWithMemory, isBuildThreadContinuation, isGeneralAdviceOrKnowledgePrompt, isPhase1BuildQuestion, isWebsiteBuildPrompt, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { seedBuildTodos } from '@/lib/buildDefaultTodos';
 import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
@@ -1315,20 +1315,24 @@ export function TerminalChatProvider({
       ]);
       if (!fromQueue) setPrompt('');
 
-      const codeBuildActive = isCodeBuildProcessing(displayPrompt, messages, {
-        completedBuildRef: completedWebsiteBuildRef.current,
-      });
+      // Advice/Q&A inside a repo terminal must never look like a code build
+      const adviceTurn = isGeneralAdviceOrKnowledgePrompt(displayPrompt);
+      const codeBuildActive =
+        !adviceTurn &&
+        isCodeBuildProcessing(displayPrompt, messages, {
+          completedBuildRef: completedWebsiteBuildRef.current,
+        });
       const isBuildUpdateEarly =
-        isWebsiteBuildUpdate(displayPrompt, messages) ||
-        (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) ||
-        (Boolean(getSelectedRepoContext()?.repo?.includes('/')) &&
-          isWebsiteUpdateRequest(displayPrompt));
-      const startingHeavyJob = lane === 'heavy' || codeBuildActive;
+        !adviceTurn &&
+        (isWebsiteBuildUpdate(displayPrompt, messages) ||
+          (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)));
+      const startingHeavyJob = !adviceTurn && (lane === 'heavy' || codeBuildActive);
       const startingHeavyBuild =
-        codeBuildActive ||
-        isWebsiteBuildPrompt(displayPrompt) ||
-        isWebsiteBuildUpdate(displayPrompt, messages) ||
-        isBuildThreadContinuation(displayPrompt, messages);
+        !adviceTurn &&
+        (codeBuildActive ||
+          isWebsiteBuildPrompt(displayPrompt) ||
+          isWebsiteBuildUpdate(displayPrompt, messages) ||
+          isBuildThreadContinuation(displayPrompt, messages));
 
       if (startingHeavyJob) {
         setHeavyLoading(true);
@@ -1358,6 +1362,7 @@ export function TerminalChatProvider({
       setDag(null);
 
       // Never wipe live build todos unless this submit is starting a heavy build.
+      // Light/advice turns clear leftover build chrome so #1 terminal can show chat thinking again.
       if (startingHeavyBuild) {
         setSwarmNegotiationPhase(null);
         setSwarmTodos([]);
@@ -1366,6 +1371,13 @@ export function TerminalChatProvider({
         setSwarmStatusLabel(null);
         setSwarmAnalysis(null);
         setSwarmActivityLog([]);
+      } else if (adviceTurn || lane === 'light') {
+        setSwarmNegotiationPhase(null);
+        setSwarmTodos([]);
+        setSwarmStatusLabel(null);
+        setSwarmAnalysis(null);
+        setHeavyBuildActive(false);
+        heavyBuildActiveRef.current = false;
       }
 
       const useCompactPipeline =
@@ -1451,10 +1463,11 @@ export function TerminalChatProvider({
         const isBuildAnswer =
           Boolean(buildSession) && looksLikeBuildClarificationAnswer(displayPrompt);
         const repoContextEarly = getSelectedRepoContext();
+        // Require a real prior site / update intent — selected repo alone must NOT force a build
         const isBuildUpdate =
-          isWebsiteBuildUpdate(displayPrompt, threadForMemory) ||
-          (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) ||
-          (Boolean(repoContextEarly?.repo?.includes('/')) && isWebsiteUpdateRequest(displayPrompt));
+          !adviceTurn &&
+          (isWebsiteBuildUpdate(displayPrompt, threadForMemory) ||
+            (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)));
 
         // Sandbox updates need prior HTML — otherwise the AI patches nothing and the stream dies empty
         let priorSite:
@@ -1526,6 +1539,10 @@ export function TerminalChatProvider({
 
         if (usePhase1Engine) {
           setPipelineCompact(false);
+          setHeavyBuildActive(false);
+          heavyBuildActiveRef.current = false;
+          setSwarmTodos([]);
+          setSwarmNegotiationPhase(null);
           const mathPrompt = isMathQueryPrompt(displayPrompt);
           setPipelineMessage(mathPrompt ? 'Working through the math…' : 'Composing your answer…');
           setSwarmStatusLabel('XROGA AI');
@@ -2126,16 +2143,17 @@ export function TerminalChatProvider({
           },
         });
 
-        // Stream ended with no visible build result → never leave a blank "No response" bubble.
-        if (codeBuildActive && !fullReply.trim() && !buildHadVisibleResult) {
+        // Stream ended empty → never leave a blank bubble (chat or build).
+        if (!fullReply.trim() && !buildHadVisibleResult) {
           setMessages((m) => {
             const existing = m.find((msg) => msg.id === assistantId);
             const fo = existing?.featureOutput as { type?: string; html?: string } | undefined;
             const foOk =
               fo?.type === 'landing_page' && typeof fo.html === 'string' && fo.html.trim().length > 40;
             if (existing?.content?.trim() || foOk) return m;
-            const fallback =
-              '⚠️ **Build ended without a preview.** API work may have been billed, but nothing renderable was delivered. Tap **Retry** or send the prompt again — sandbox builds no longer require a GitHub popup when a repo is already selected.';
+            const fallback = codeBuildActive
+              ? '⚠️ **Build ended without a preview.** Tap **Retry** or send the prompt again — if a GitHub repo is already selected, you should not need the Connect popup.'
+              : 'I could not finish that reply. Please send your question again — advice and research answers should appear here in the terminal.';
             fullReply = fallback;
             return m.map((msg) =>
               msg.id === assistantId
@@ -2306,6 +2324,8 @@ export function TerminalChatProvider({
             setHeavyAssistantId(null);
             setDeepseekPeakNudge(null);
             setSwarmNegotiationPhase(null);
+            // Clear build todos so the next Q&A in #1 is not stuck in "build mode" UI
+            setSwarmTodos([]);
           }
           setSwarmRunning(false);
           setAnimatingId(null);

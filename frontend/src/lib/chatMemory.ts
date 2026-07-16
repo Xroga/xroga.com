@@ -55,13 +55,54 @@ export function isPhase1BuildQuestion(text: string): boolean {
   );
 }
 
+/** Site/UI nouns — required for most “update” phrases so advice is not misrouted. */
+const SITE_UI_NOUN =
+  /\b(website|site|webpage|web\s*page|landing|homepage|hero|navbar|nav\b|css|html|preview|deploy|header|footer|repo|github|codebase|section|menu|layout|stylesheet)\b/i;
+
+/**
+ * Business advice / strategy / research / Q&A — must stay on Phase 1 chat,
+ * even inside a repo terminal that already built a site.
+ */
+export function isGeneralAdviceOrKnowledgePrompt(prompt: string): boolean {
+  const t = prompt.trim();
+  if (!t || isWebsiteBuildPrompt(t)) return false;
+  // Explicit site-patch language wins over advice heuristics
+  if (
+    SITE_UI_NOUN.test(t) &&
+    /\b(change|update|edit|fix|patch|delete|remove)\b/i.test(t) &&
+    /\b(color|theme|button|section|hero|css|html|page|header|footer|deploy|preview)\b/i.test(t)
+  ) {
+    return false;
+  }
+  return (
+    /\b(advice|advise|strategy|strategies|recommend|recommendation|should i|how (do|can|should) (i|we)|what (is|are|should|would|can)|explain|analyze|analysis|research|market|business|pricing|competitor|competitors|growth|marketing|revenue|current (news|data|trends|info|information)|best practice|opinion|tips?|guide me|help me (with|understand|decide))\b/i.test(
+      t
+    ) ||
+    (/^(why|who|when|where|which)\b/i.test(t) && t.length < 280 && !SITE_UI_NOUN.test(t))
+  );
+}
+
 /** User wants to change name, colors, or sections after a build. */
 export function isWebsiteUpdateRequest(prompt: string): boolean {
   const t = prompt.trim().toLowerCase();
-  if (/\b(can i change|could you change|please change|i want to change)\b/.test(t)) return true;
-  if (/\b(more updates|another update|add a new|add new|remove the|new section)\b/.test(t)) return true;
+  // Never treat advice / strategy / research as a site patch
+  if (isGeneralAdviceOrKnowledgePrompt(prompt)) return false;
+
   if (/\b(dark\s*mode|night\s*mode|day\s*mode|theme\s*toggle|light\s*mode)\b/.test(t)) return true;
   if (/\b(broken|doesn'?t\s+work|not\s+working)\b/.test(t) && /\b(button|link|toggle|form|menu)\b/.test(t)) {
+    return true;
+  }
+  // "can I change…" only if clearly about the site/UI
+  if (
+    /\b(can i change|could you change|please change|i want to change)\b/.test(t) &&
+    SITE_UI_NOUN.test(t)
+  ) {
+    return true;
+  }
+  if (
+    /\b(more updates|another update|add a new|add new|remove the|new section)\b/.test(t) &&
+    SITE_UI_NOUN.test(t)
+  ) {
     return true;
   }
   if (/\b(improve|enhance|polish|refresh)\b/.test(t) && /\b(section|page|design|site|website|menu|hero)\b/.test(t)) {
@@ -69,9 +110,19 @@ export function isWebsiteUpdateRequest(prompt: string): boolean {
   }
   if (
     /\b(change|update|edit|modify|rename|switch|adjust|tweak|fix|patch)\b/.test(t) &&
-    /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout|content)\b/.test(
+    /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout)\b/.test(
       t
-    )
+    ) &&
+    (SITE_UI_NOUN.test(t) ||
+      /\b(color|theme|logo|header|footer|hero|button|font|background|layout|menu|section)\b/.test(t))
+  ) {
+    return true;
+  }
+  // "update the content on the site" — content alone is not enough (matches "content strategy")
+  if (
+    /\b(change|update|edit|modify|fix|patch)\b/.test(t) &&
+    /\bcontent\b/.test(t) &&
+    SITE_UI_NOUN.test(t)
   ) {
     return true;
   }

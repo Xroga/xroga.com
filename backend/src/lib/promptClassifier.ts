@@ -42,8 +42,12 @@ export function shouldUseFastChat(prompt: string, category?: string): boolean {
   if (isWebsiteUpdateRequest(routeText) && /\b(website|site|color|section|menu|theme)\b/i.test(routeText)) {
     return false;
   }
-  // Never fast-chat product builds (blogs/sites) — they become long essays
-  if (/\b(build|building|create|make)\b[\s\S]{0,100}\b(blog|website|site|landing|portfolio|app)\b/i.test(routeText)) {
+  // Never fast-chat product builds — they become long essays instead of shipping code
+  if (
+    /\b(build|building|create|make)\b[\s\S]{0,120}\b(blog|website|site|landing|portfolio|app|chatbot|chat\s*bot|crypto|web3|defi|swap|dashboard|saas|wallet|dapp|assistant|bot|platform)\b/i.test(
+      routeText
+    )
+  ) {
     return false;
   }
   if (isCapabilitiesQuery(routeText)) return true;

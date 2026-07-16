@@ -623,7 +623,9 @@ export class Orchestrator {
       history: ctx.history,
     });
 
-    // BUILD FIRST — never let "build a website" fall through to chat model
+    // BUILD FIRST — never let "build a website" fall through to chat model.
+    // Do NOT force a landing build merely because a GitHub repo is selected — that
+    // swallowed advice/Q&A inside #1 terminal under REPOSITORIES.
     if (
       dualRouteEarly.pipeline === 'build' ||
       isBuildContinuation(prompt) ||
@@ -631,14 +633,12 @@ export class Orchestrator {
       (ctx.clientMeta?.buildContinuation && looksLikeBuildClarificationAnswer(prompt)) ||
       isWebsiteBuildUpdate(prompt, ctx.history) ||
       ctx.clientMeta?.buildUpdate ||
-      (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history)) ||
-      (isWebsiteUpdateRequest(userText) && Boolean(ctx.clientMeta?.githubTargetRepo?.includes('/')))
+      (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history))
     ) {
       if (
         (isWebsiteBuildUpdate(prompt, ctx.history) ||
           ctx.clientMeta?.buildUpdate ||
-          (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history)) ||
-          (isWebsiteUpdateRequest(userText) && Boolean(ctx.clientMeta?.githubTargetRepo?.includes('/')))) &&
+          (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history))) &&
         !hasThreadContext(prompt) &&
         ctx.history?.length
       ) {

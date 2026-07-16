@@ -62,15 +62,49 @@ export function isBuildContinuation(prompt: string): boolean {
   return threadHasBuildIntent(prompt) && looksLikeBuildClarificationAnswer(prompt);
 }
 
+const SITE_UI_NOUN =
+  /\b(website|site|webpage|web\s*page|landing|homepage|hero|navbar|nav\b|css|html|preview|deploy|header|footer|repo|github|codebase|section|menu|layout|stylesheet)\b/i;
+
+/** Advice / strategy / research — must not enter negotiation website builds. */
+export function isGeneralAdviceOrKnowledgePrompt(prompt: string): boolean {
+  const t = routingPrompt(prompt);
+  if (!t) return false;
+  if (
+    SITE_UI_NOUN.test(t) &&
+    /\b(change|update|edit|fix|patch|delete|remove)\b/i.test(t) &&
+    /\b(color|theme|button|section|hero|css|html|page|header|footer|deploy|preview)\b/i.test(t)
+  ) {
+    return false;
+  }
+  return (
+    /\b(advice|advise|strategy|strategies|recommend|recommendation|should i|how (do|can|should) (i|we)|what (is|are|should|would|can)|explain|analyze|analysis|research|market|business|pricing|competitor|competitors|growth|marketing|revenue|current (news|data|trends|info|information)|best practice|opinion|tips?|guide me|help me (with|understand|decide))\b/i.test(
+      t
+    ) ||
+    (/^(why|who|when|where|which)\b/i.test(t) && t.length < 280 && !SITE_UI_NOUN.test(t))
+  );
+}
+
 /** User wants to update an existing website (name, colors, sections). */
 export function isWebsiteUpdateRequest(prompt: string): boolean {
   const t = routingPrompt(prompt).toLowerCase();
-  if (/\b(can i change|could you change|please change|i want to change)\b/.test(t)) return true;
-  if (/\b(more updates|another update|add a new|add new|remove the|new section)\b/.test(t)) return true;
+  if (isGeneralAdviceOrKnowledgePrompt(prompt)) return false;
+
   if (/\b(dark\s*mode|night\s*mode|day\s*mode|theme\s*toggle|light\s*mode|night\s*\/\s*day|night\/day)\b/.test(t)) {
     return true;
   }
   if (/\b(broken|doesn'?t\s+work|not\s+working)\b/.test(t) && /\b(button|link|toggle|form|menu)\b/.test(t)) {
+    return true;
+  }
+  if (
+    /\b(can i change|could you change|please change|i want to change)\b/.test(t) &&
+    SITE_UI_NOUN.test(t)
+  ) {
+    return true;
+  }
+  if (
+    /\b(more updates|another update|add a new|add new|remove the|new section)\b/.test(t) &&
+    SITE_UI_NOUN.test(t)
+  ) {
     return true;
   }
   if (/\b(improve|enhance|polish|refresh)\b/.test(t) && /\b(section|page|design|site|website|menu|hero)\b/.test(t)) {
@@ -78,9 +112,18 @@ export function isWebsiteUpdateRequest(prompt: string): boolean {
   }
   if (
     /\b(change|update|edit|modify|rename|switch|adjust|tweak|fix|patch)\b/.test(t) &&
-    /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout|content|toggle|night|day)\b/.test(
+    /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout|toggle|night|day)\b/.test(
       t
-    )
+    ) &&
+    (SITE_UI_NOUN.test(t) ||
+      /\b(color|theme|logo|header|footer|hero|button|font|background|layout|menu|section)\b/.test(t))
+  ) {
+    return true;
+  }
+  if (
+    /\b(change|update|edit|modify|fix|patch)\b/.test(t) &&
+    /\bcontent\b/.test(t) &&
+    SITE_UI_NOUN.test(t)
   ) {
     return true;
   }
@@ -102,12 +145,16 @@ export function isWebsiteUpdateRequest(prompt: string): boolean {
   return false;
 }
 
-/** Selected GitHub repo + update language → patch that repo (even if chat markers are weak). */
+/**
+ * Selected GitHub repo + clear site-update language → patch that repo.
+ * Requires a real update intent — never “repo selected ⇒ every message is a build”.
+ */
 export function isSelectedRepoUpdateRequest(
   prompt: string,
   githubTargetRepo?: string | null
 ): boolean {
   if (!githubTargetRepo?.includes('/')) return false;
+  if (isGeneralAdviceOrKnowledgePrompt(prompt)) return false;
   return isWebsiteUpdateRequest(prompt);
 }
 

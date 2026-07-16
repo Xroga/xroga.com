@@ -1609,6 +1609,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           { silent: true }
         );
       }
+      // Crypto / chatbot / swap must come from the LLM APIs — never ship template Escape Pod UIs
+      const refuseScaffold =
+        isUpdateBuild ||
+        buildType === 'crypto' ||
+        buildType === 'chatbot' ||
+        /\b(swap|bridge|defi\s*dashboard|web3)\b/i.test(userPrompt);
       featureOutput = await buildLandingFromSwarmAssembly(
         assembledCode,
         userPrompt,
@@ -1617,8 +1623,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         isGameBuild ? 'game' : 'website',
         {
           skipConsolidate,
-          // Updates: patch from assembly only — never replace the live repo with a scaffold
-          allowScaffoldFallback: !isUpdateBuild,
+          // Updates + crypto/chatbot: never replace real AI output with a fake scaffold
+          allowScaffoldFallback: !refuseScaffold,
           tracker: usageTracker,
           userId,
         }
@@ -1694,21 +1700,91 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       };
       emit(ctx, 7, xrogaPulseLine('Shipped DeepSeek-generated preview'), 'builder', todos, 'XROGA Pulse');
     } else {
-      console.warn('[NegotiationEngine] DeepSeek emit failed — last-resort scaffold');
-      const matched = generatePromptMatchedSite(userPrompt || clarifiedBrief);
+      const refuseScaffoldEmpty =
+        buildType === 'crypto' ||
+        buildType === 'chatbot' ||
+        /\b(swap|bridge|defi\s*dashboard|web3)\b/i.test(userPrompt);
+      if (refuseScaffoldEmpty) {
+        console.warn('[NegotiationEngine] DeepSeek emit failed — refusing crypto/chatbot scaffold');
+        emit(
+          ctx,
+          7,
+          xrogaPulseLine(
+            'AI emit failed for this product — retry the build (no fake template will be shipped)'
+          ),
+          'builder',
+          todos,
+          'XROGA Pulse'
+        );
+      } else {
+        console.warn('[NegotiationEngine] DeepSeek emit failed — last-resort scaffold');
+        const matched = generatePromptMatchedSite(userPrompt || clarifiedBrief);
+        featureOutput = {
+          type: 'landing_page',
+          html: matched.html,
+          css: matched.css,
+          js: matched.js,
+          heroImageUrl: '',
+          deployUrl: '',
+          summary: 'Fallback scaffold (AI emit unavailable)',
+        };
+        emit(
+          ctx,
+          7,
+          xrogaPulseLine('AI emit unavailable — shipped fallback scaffold'),
+          'builder',
+          todos,
+          'XROGA Pulse'
+        );
+      }
+    }
+  }
+
+  // Second scaffold reject after empty-path recovery (crypto/chatbot templates must not ship)
+  if (
+    isWebBuildFinal &&
+    !isUpdateBuild &&
+    featureOutput?.type === 'landing_page' &&
+    looksLikePromptScaffold(
+      (featureOutput as { html?: string }).html || '',
+      (featureOutput as { css?: string }).css || '',
+      (featureOutput as { js?: string }).js || ''
+    ) &&
+    (buildType === 'crypto' ||
+      buildType === 'chatbot' ||
+      /\b(swap|bridge|defi)\b/i.test(userPrompt))
+  ) {
+    emit(
+      ctx,
+      7,
+      xrogaPulseLine('Template UI blocked — regenerating real product with DeepSeek'),
+      'builder',
+      todos,
+      'XROGA Pulse'
+    );
+    const realRetry = await emitRealSiteWithDeepSeek(userPrompt, {
+      brief: clarifiedBrief,
+      plan: approvedPlan,
+      tracker: usageTracker,
+      userId,
+      maxTokens: 12288,
+    });
+    if (realRetry && !looksLikePromptScaffold(realRetry.html, realRetry.css, realRetry.js)) {
       featureOutput = {
         type: 'landing_page',
-        html: matched.html,
-        css: matched.css,
-        js: matched.js,
+        html: realRetry.html,
+        css: realRetry.css,
+        js: realRetry.js,
         heroImageUrl: '',
         deployUrl: '',
-        summary: 'Fallback scaffold (AI emit unavailable)',
+        summary: 'AI-generated preview (DeepSeek)',
       };
+    } else {
+      featureOutput = null;
       emit(
         ctx,
         7,
-        xrogaPulseLine('AI emit unavailable — shipped fallback scaffold'),
+        xrogaPulseLine('Could not produce a real crypto/chatbot build — tap Retry (no fake template)'),
         'builder',
         todos,
         'XROGA Pulse'
