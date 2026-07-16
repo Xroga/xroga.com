@@ -67,12 +67,18 @@ export function isWebsiteUpdateRequest(prompt: string): boolean {
   const t = routingPrompt(prompt).toLowerCase();
   if (/\b(can i change|could you change|please change|i want to change)\b/.test(t)) return true;
   if (/\b(more updates|another update|add a new|add new|remove the|new section)\b/.test(t)) return true;
+  if (/\b(dark\s*mode|night\s*mode|day\s*mode|theme\s*toggle|light\s*mode|night\s*\/\s*day|night\/day)\b/.test(t)) {
+    return true;
+  }
+  if (/\b(broken|doesn'?t\s+work|not\s+working)\b/.test(t) && /\b(button|link|toggle|form|menu)\b/.test(t)) {
+    return true;
+  }
   if (/\b(improve|enhance|polish|refresh)\b/.test(t) && /\b(section|page|design|site|website|menu|hero)\b/.test(t)) {
     return true;
   }
   if (
-    /\b(change|update|edit|modify|rename|switch|adjust|tweak|fix)\b/.test(t) &&
-    /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout|content)\b/.test(
+    /\b(change|update|edit|modify|rename|switch|adjust|tweak|fix|patch)\b/.test(t) &&
+    /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout|content|toggle|night|day)\b/.test(
       t
     )
   ) {
@@ -85,7 +91,9 @@ export function isWebsiteUpdateRequest(prompt: string): boolean {
   // "update in current github / selected repo / same preview"
   if (
     /\b(update|patch|push|apply|fix|edit)\b/.test(t) &&
-    /\b(github|repo|preview|codebase|current (site|website|project)|selected repo|existing (repo|code|site))\b/.test(t)
+    /\b(github|repo|preview|codebase|current (site|website|project)|selected repo|existing (repo|code|site)|our (site|website|project))\b/.test(
+      t
+    )
   ) {
     return true;
   }

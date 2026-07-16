@@ -71,6 +71,12 @@ export interface StreamSwarmOptions {
     buildUpdate?: boolean;
     githubTargetRepo?: string;
     githubTargetBranch?: string;
+    priorSite?: {
+      html: string;
+      css?: string;
+      js?: string;
+      projectName?: string;
+    };
   };
   onProgress?: (event: SwarmProgressEvent) => void;
   onDelta?: (delta: string) => void;

@@ -254,15 +254,46 @@ export function slugFromProjectName(name: string): string {
 
 /** Parse project name from user answer or brief. */
 export function parseProjectName(prompt: string, brief?: string): string {
-  const source = brief ?? prompt;
+  const source = `${brief ?? ''}\n${prompt}`;
+
   const briefMatch = source.match(/Project name[:\s]+([^\n,]+)/i);
-  if (briefMatch?.[1]) return briefMatch[1].trim();
+  if (briefMatch?.[1]) {
+    const n = briefMatch[1].trim().replace(/["']/g, '');
+    if (n.length >= 2 && n.length < 60) return n;
+  }
+
+  const named =
+    source.match(/["']([A-Za-z0-9][\w\s-]{1,28})["']/)?.[1] ||
+    source.match(/\b(?:called|named|brand(?:ed)?)\s+([A-Za-z][\w-]{1,28})\b/i)?.[1];
+  if (named?.trim()) return named.trim();
+
+  // Prefer original build line over update messages like "update night/day…"
+  const buildLine =
+    source.match(
+      /\b(?:build|create|make)\s+(?:a\s+|an\s+)?(?:modern\s+|simple\s+)?(?:landing\s+page|website|site|app)?\s*(?:called|named)\s+([A-Za-z][\w-]{1,28})/i
+    )?.[1] ||
+    source.match(/\b(?:for|brand)\s+([A-Za-z][\w-]{1,28})\b/i)?.[1];
+  if (buildLine?.trim() && !/^(website|site|app|page|the|our|my)$/i.test(buildLine)) {
+    return buildLine.trim();
+  }
 
   const current = prompt.match(/\[Current message\]\n([^,\n]+)/)?.[1]?.trim();
-  if (current && current.length >= 2 && current.length < 60) return current;
+  if (
+    current &&
+    current.length >= 2 &&
+    current.length < 60 &&
+    !/\b(update|change|fix|edit|toggle|night|day)\b/i.test(current)
+  ) {
+    return current;
+  }
 
   const coffee = prompt.match(/\b(build|create|make)\s+(?:a\s+)?(.+?)\s+(website|site|shop)/i);
-  if (coffee?.[2]) return `${coffee[2].trim()} Website`;
+  if (coffee?.[2]) {
+    const raw = coffee[2].trim();
+    if (!/\b(modern|simple|landing|called|named)\b/i.test(raw) && raw.length < 40) {
+      return `${raw} Website`;
+    }
+  }
 
   return 'My Website';
 }

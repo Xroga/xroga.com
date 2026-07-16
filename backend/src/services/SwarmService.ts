@@ -279,6 +279,12 @@ export class SwarmService {
       buildUpdate?: boolean;
       githubTargetRepo?: string;
       githubTargetBranch?: string;
+      priorSite?: {
+        html: string;
+        css?: string;
+        js?: string;
+        projectName?: string;
+      };
     },
     history?: Array<{ role: 'user' | 'assistant'; content: string }>
   ): Promise<void> {

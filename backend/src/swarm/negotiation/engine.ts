@@ -107,6 +107,8 @@ import {
   threadHasCompletedWebsite,
 } from '../../lib/buildContinuation.js';
 import { deepseekInteractiveQaFix } from '../../lib/siteInteractiveQa.js';
+import { extractProjectNameFromHtml, polishShippedSite } from '../../lib/siteShipPolish.js';
+import { parseAssembledProject } from '../../lib/parseAssembledSite.js';
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { deepseekCode, groqCode, geminiCode } from '../../services/code/codeClients.js';
 import { resolveApiKey } from '../../config/apiKeyRouter.js';
@@ -524,8 +526,12 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
   // Updates: thread markers OR selected GitHub repo + update language (patch, don't rebuild new site)
   const isUpdateBuild =
     isProductBuild &&
-    (isWebsiteUpdateRequest(userPrompt) || isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo)) &&
-    (hasBuildConversationContext(userPrompt) ||
+    (Boolean(ctx.buildUpdate) ||
+      isWebsiteUpdateRequest(userPrompt) ||
+      isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo)) &&
+    (Boolean(ctx.buildUpdate) ||
+      Boolean(ctx.priorSite?.html?.trim()) ||
+      hasBuildConversationContext(userPrompt) ||
       threadHasCompletedWebsite(userPrompt) ||
       isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo));
 
@@ -731,6 +737,31 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         }
       }
     }
+  }
+
+  // Sandbox updates: use last in-chat preview when GitHub files were not loaded
+  if (isUpdateBuild && !targetedUpdateFiles.length && ctx.priorSite?.html?.trim()) {
+    const priorHtml = ctx.priorSite.html;
+    const priorCss = ctx.priorSite.css || '';
+    const priorJs = ctx.priorSite.js || '';
+    existingSiteCode = { html: priorHtml, css: priorCss, js: priorJs };
+    targetedUpdateFiles = [
+      { path: 'index.html', content: priorHtml },
+      ...(priorCss.trim() ? [{ path: 'styles.css', content: priorCss }] : []),
+      ...(priorJs.trim() ? [{ path: 'script.js', content: priorJs }] : []),
+    ];
+    if (!incrementalPlan) {
+      incrementalPlan = planIncrementalUpdate(userPrompt);
+    }
+    emit(
+      ctx,
+      0,
+      xrogaPulseLine('Incremental update — patching sandbox preview (no GitHub re-read)'),
+      'reviewer',
+      todos,
+      'XROGA Pulse',
+      { userPhase: 6 }
+    );
   }
 
   if (needsGameDreamInterview(userPrompt) && !hasGameBuildContext(userPrompt)) {
@@ -1627,13 +1658,94 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     }
   }
 
-  const projectName = parseProjectName(userPrompt, clarifiedBrief);
+  // Updates with empty assembly: rebuild landing from prior sandbox / targeted files
+  if (
+    isUpdateBuild &&
+    (!featureOutput ||
+      featureOutput.type !== 'landing_page' ||
+      !(featureOutput as { html?: string }).html?.trim())
+  ) {
+    const fromAssembly = parseAssembledProject(assembledCode);
+    const baseHtml =
+      fromAssembly?.html?.trim() ||
+      existingSiteCode?.html ||
+      ctx.priorSite?.html ||
+      targetedUpdateFiles.find((f) => /index\.html$/i.test(f.path))?.content ||
+      '';
+    const baseCss =
+      fromAssembly?.css?.trim() ||
+      existingSiteCode?.css ||
+      ctx.priorSite?.css ||
+      targetedUpdateFiles.find((f) => /\.css$/i.test(f.path))?.content ||
+      '';
+    const baseJs =
+      fromAssembly?.js?.trim() ||
+      existingSiteCode?.js ||
+      ctx.priorSite?.js ||
+      targetedUpdateFiles.find((f) => /\.js$/i.test(f.path))?.content ||
+      '';
+    if (baseHtml.trim().length > 40) {
+      const polishedRecover = polishShippedSite(userPrompt, {
+        html: baseHtml,
+        css: baseCss,
+        js: baseJs,
+      });
+      featureOutput = {
+        type: 'landing_page',
+        html: polishedRecover.html,
+        css: polishedRecover.css,
+        js: polishedRecover.js,
+        heroImageUrl: '',
+        deployUrl: '',
+        summary: 'Update applied to sandbox preview',
+        isUpdate: true,
+      };
+      emit(ctx, 7, xrogaPulseLine('Update recovered onto sandbox preview'), 'builder', todos, 'XROGA Pulse');
+    }
+  }
+
+  // Deterministic polish: theme toggle, Lucide (no emoji), no dead xroga.com CTAs
+  if (featureOutput?.type === 'landing_page') {
+    const polished = polishShippedSite(userPrompt, {
+      html: (featureOutput as { html?: string }).html || '',
+      css: (featureOutput as { css?: string }).css || '',
+      js: (featureOutput as { js?: string }).js || '',
+    });
+    featureOutput = {
+      ...featureOutput,
+      html: polished.html,
+      css: polished.css,
+      js: polished.js,
+    };
+  }
+
+  const parsedName = parseProjectName(userPrompt, clarifiedBrief);
+  const htmlName =
+    featureOutput?.type === 'landing_page'
+      ? extractProjectNameFromHtml((featureOutput as { html?: string }).html || '')
+      : null;
+  const rememberedName =
+    (typeof ctx.priorSite?.projectName === 'string' && ctx.priorSite.projectName.trim()) ||
+    (typeof pastBuilds[0]?.projectName === 'string' && pastBuilds[0].projectName.trim()) ||
+    '';
+  const projectName =
+    (isUpdateBuild && rememberedName && (parsedName === 'My Website' || /\bupdate\b/i.test(parsedName))
+      ? rememberedName
+      : null) ||
+    (parsedName !== 'My Website' ? parsedName : null) ||
+    rememberedName ||
+    htmlName ||
+    parsedName;
   const projectSlug = slugFromProjectName(projectName);
-  const summaryData = buildSummaryFromBrief(userPrompt, clarifiedBrief, undefined, undefined, memoryNote);
+  const summaryData = {
+    ...buildSummaryFromBrief(userPrompt, clarifiedBrief, undefined, undefined, memoryNote),
+    projectName,
+  };
 
   if (featureOutput?.type === 'landing_page') {
     featureOutput = {
       ...featureOutput,
+      projectName,
       integratedAi: [
         ...integratedAiSummaryForPrompt(userPrompt),
         ...fieldEndpointSummaryForPrompt(userPrompt).map((e) => ({
@@ -1710,6 +1822,23 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       }
       previousFilesForRollback = targetedUpdateFiles.map((f) => ({ path: f.path, content: f.content }));
       fileTrail = buildFileTrailDiffs(targetedUpdateFiles, projectFiles);
+      // Preview must reflect patched files (not stale pre-update HTML)
+      const synced = siteCodeFromProjectFiles(projectFiles);
+      if (synced.html?.trim()) {
+        const polishedPatch = polishShippedSite(userPrompt, synced);
+        featureOutput = {
+          ...featureOutput,
+          html: polishedPatch.html,
+          css: polishedPatch.css,
+          js: polishedPatch.js,
+          isUpdate: true,
+        };
+        projectFiles = mergePatchedFiles(projectFiles, [
+          { path: 'index.html', content: polishedPatch.html },
+          { path: 'styles.css', content: polishedPatch.css },
+          { path: 'script.js', content: polishedPatch.js },
+        ]);
+      }
       emit(
         ctx,
         8,
@@ -1734,6 +1863,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     }
     if (!githubConnected) {
       // Ship the site in-chat; connect GitHub later to push/deploy.
+      const sandboxPaths = isUpdateBuild
+        ? projectFiles.map((f) => f.path)
+        : generatedPaths;
       featureOutput = {
         ...featureOutput,
         projectName: summaryData.projectName,
@@ -1741,15 +1873,26 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         features: summaryData.features,
         designTheme: summaryData.designTheme,
         needsPayment: summaryData.needsPayment,
-        generatedFiles: generatedPaths,
+        generatedFiles: sandboxPaths,
         fileCount: projectFiles.length,
         githubPushConfirmed: false,
         userPrompt: currentMessage,
+        isUpdate: isUpdateBuild,
+        updatedFiles: isUpdateBuild ? sandboxPaths : undefined,
+        changesSummary: isUpdateBuild
+          ? shortChangeSummary(userPrompt, sandboxPaths)
+          : undefined,
+        fileTrail: isUpdateBuild ? fileTrail : undefined,
+        previousFiles: isUpdateBuild ? previousFilesForRollback : undefined,
         followUps: ['Connect GitHub to push & deploy', ...LANDING_UPDATE_FOLLOW_UPS.slice(0, 3)],
-        memoryNote:
-          'Your site is ready in sandbox preview. Connect GitHub under Integrations to push and get a live URL.',
+        memoryNote: isUpdateBuild
+          ? 'Update applied in sandbox preview. Connect GitHub under Integrations to push live.'
+          : 'Your site is ready in sandbox preview. Connect GitHub under Integrations to push and get a live URL.',
         summary: formatBuildSummaryCard({
           ...summaryData,
+          isUpdate: isUpdateBuild,
+          updatedFiles: isUpdateBuild ? sandboxPaths : undefined,
+          updateRequest: isUpdateBuild ? currentMessage : undefined,
           liveUrl: featureOutput.deployUrl || undefined,
         }),
       };
