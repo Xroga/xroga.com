@@ -42,7 +42,7 @@ export function shouldRouteToPhase1(
   prompt: string,
   messages: ChatMessageLike[],
   attachments?: ChatAttachment[],
-  options?: { completedWebsiteBuild?: boolean }
+  options?: { completedWebsiteBuild?: boolean; selectedRepo?: string | null }
 ): boolean {
   if (attachments?.length) return false;
   // Greetings / "hi" / thanks → cheap swarm fast-chat (never Phase 1 WOW essays + history bleed).
@@ -56,6 +56,10 @@ export function shouldRouteToPhase1(
   if (isGeneralAdviceOrKnowledgePrompt(prompt)) return true;
   if (requiresGitHubForBuild(prompt) || isBuildThreadContinuation(prompt, messages as Parameters<typeof isBuildThreadContinuation>[1])) return false;
   if (isWebsiteBuildUpdate(prompt, messages as Parameters<typeof isWebsiteBuildUpdate>[1])) return false;
-  if (options?.completedWebsiteBuild && isWebsiteUpdateRequest(prompt)) return false;
+  // Site patches: prior build OR selected GitHub repo → negotiation incremental update (never how-to essays)
+  if (isWebsiteUpdateRequest(prompt)) {
+    if (options?.completedWebsiteBuild) return false;
+    if (options?.selectedRepo?.includes('/')) return false;
+  }
   return true;
 }

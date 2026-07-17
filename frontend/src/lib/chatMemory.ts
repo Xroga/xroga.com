@@ -57,7 +57,7 @@ export function isPhase1BuildQuestion(text: string): boolean {
 
 /** Site/UI nouns — required for most “update” phrases so advice is not misrouted. */
 const SITE_UI_NOUN =
-  /\b(website|site|webpage|web\s*page|landing|homepage|hero|navbar|nav\b|css|html|preview|deploy|header|footer|repo|github|codebase|section|menu|layout|stylesheet)\b/i;
+  /\b(website|site|webpage|web\s*page|landing|homepage|hero|navbar|nav\b|css|html|preview|deploy|header|footer|repo|github|codebase|section|menu|layout|stylesheet|dashboard|crypto|chatbot|app|swap|wallet|defi|web3)\b/i;
 
 /**
  * Business advice / strategy / research / Q&A — must stay on Phase 1 chat,
@@ -88,7 +88,14 @@ export function isWebsiteUpdateRequest(prompt: string): boolean {
   // Never treat advice / strategy / research as a site patch
   if (isGeneralAdviceOrKnowledgePrompt(prompt)) return false;
 
-  if (/\b(dark\s*mode|night\s*mode|day\s*mode|theme\s*toggle|light\s*mode)\b/.test(t)) return true;
+  // Keep in sync with backend/src/lib/buildContinuation.ts
+  if (
+    /\b(dark\s*mode|night\s*mode|day\s*mode|theme\s*toggle|light\s*mode|night\s*\/\s*day|night\/day)\b/.test(
+      t
+    )
+  ) {
+    return true;
+  }
   if (/\b(broken|doesn'?t\s+work|not\s+working)\b/.test(t) && /\b(button|link|toggle|form|menu)\b/.test(t)) {
     return true;
   }
@@ -105,16 +112,21 @@ export function isWebsiteUpdateRequest(prompt: string): boolean {
   ) {
     return true;
   }
-  if (/\b(improve|enhance|polish|refresh)\b/.test(t) && /\b(section|page|design|site|website|menu|hero)\b/.test(t)) {
+  if (
+    /\b(improve|enhance|polish|refresh)\b/.test(t) &&
+    /\b(section|page|design|site|website|menu|hero|dashboard)\b/.test(t)
+  ) {
     return true;
   }
   if (
     /\b(change|update|edit|modify|rename|switch|adjust|tweak|fix|patch)\b/.test(t) &&
-    /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout)\b/.test(
+    /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout|toggle|night|day|dashboard)\b/.test(
       t
     ) &&
     (SITE_UI_NOUN.test(t) ||
-      /\b(color|theme|logo|header|footer|hero|button|font|background|layout|menu|section)\b/.test(t))
+      /\b(color|theme|logo|header|footer|hero|button|font|background|layout|menu|section|toggle|dashboard)\b/.test(
+        t
+      ))
   ) {
     return true;
   }
@@ -132,11 +144,14 @@ export function isWebsiteUpdateRequest(prompt: string): boolean {
   if (/\b(changed?|changing)\s+(the\s+)?(color|name|theme|section|menu|design)\b/.test(t)) return true;
   if (
     /\b(update|patch|push|apply|fix|edit)\b/.test(t) &&
-    /\b(github|repo|preview|codebase|current (site|website|project)|selected repo|existing (repo|code|site))\b/.test(t)
+    /\b(github|repo|preview|codebase|current (site|website|project)|selected repo|existing (repo|code|site)|our (site|website|project)|this (crypto|dashboard|site|website|app|chatbot))\b/.test(
+      t
+    )
   ) {
     return true;
   }
   if (/\b(same|current|existing)\s+preview\b/.test(t)) return true;
+  if (/\bin\s+(the\s+)?(current|selected|existing)\s+(github\s+)?repo\b/.test(t)) return true;
   return false;
 }
 

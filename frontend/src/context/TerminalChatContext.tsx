@@ -1323,16 +1323,19 @@ export function TerminalChatProvider({
         isCodeBuildProcessing(displayPrompt, messages, {
           completedBuildRef: completedWebsiteBuildRef.current,
         });
+      const selectedRepoForUpdate = getSelectedRepoContext()?.repo;
       const isBuildUpdateEarly =
         !adviceTurn &&
         (isWebsiteBuildUpdate(displayPrompt, messages) ||
-          (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)));
-      const startingHeavyJob = !adviceTurn && (lane === 'heavy' || codeBuildActive);
+          (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) ||
+          (Boolean(selectedRepoForUpdate?.includes('/')) && isWebsiteUpdateRequest(displayPrompt)));
+      const startingHeavyJob = !adviceTurn && (lane === 'heavy' || codeBuildActive || isBuildUpdateEarly);
       const startingHeavyBuild =
         !adviceTurn &&
         (codeBuildActive ||
           isWebsiteBuildPrompt(displayPrompt) ||
           isWebsiteBuildUpdate(displayPrompt, messages) ||
+          isBuildUpdateEarly ||
           isBuildThreadContinuation(displayPrompt, messages));
 
       if (startingHeavyJob) {
@@ -1384,6 +1387,7 @@ export function TerminalChatProvider({
       const useCompactPipeline =
         !isBuildThreadContinuation(displayPrompt, messages) &&
         !isWebsiteBuildUpdate(displayPrompt, messages) &&
+        !isBuildUpdateEarly &&
         !(completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) &&
         !(activeWebsiteBuildRef.current && looksLikeBuildClarificationAnswer(displayPrompt)) &&
         !codeBuildActive &&
@@ -1464,11 +1468,13 @@ export function TerminalChatProvider({
         const isBuildAnswer =
           Boolean(buildSession) && looksLikeBuildClarificationAnswer(displayPrompt);
         const repoContextEarly = getSelectedRepoContext();
-        // Require a real prior site / update intent — selected repo alone must NOT force a build
+        // Selected repo + update language → incremental GitHub patch (not advice essays)
         const isBuildUpdate =
           !adviceTurn &&
           (isWebsiteBuildUpdate(displayPrompt, threadForMemory) ||
-            (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)));
+            (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) ||
+            (Boolean(repoContextEarly?.repo?.includes('/')) &&
+              isWebsiteUpdateRequest(displayPrompt)));
 
         // Sandbox updates need prior HTML — otherwise the AI patches nothing and the stream dies empty
         let priorSite:
@@ -1532,9 +1538,12 @@ export function TerminalChatProvider({
 
         const repoContext = repoContextEarly ?? getSelectedRepoContext();
 
-        const usePhase1Engine = shouldRouteToPhase1(displayPrompt, threadForMemory, attachments, {
-          completedWebsiteBuild: completedWebsiteBuildRef.current,
-        });
+        const usePhase1Engine =
+          !isBuildUpdate &&
+          shouldRouteToPhase1(displayPrompt, threadForMemory, attachments, {
+            completedWebsiteBuild: completedWebsiteBuildRef.current,
+            selectedRepo: repoContext?.repo ?? repoContextEarly?.repo,
+          });
 
         let runSwarmBuild = !usePhase1Engine;
 
@@ -1620,8 +1629,18 @@ export function TerminalChatProvider({
             if (code === 'USE_BUILD_PIPELINE' || (phase1Err instanceof ApiError && phase1Err.status === 409)) {
               runSwarmBuild = true;
               setPipelineMessage('Switching to XROGA build swarm…');
-              pushSwarmTerminalLine('Build request detected — starting real site generation…');
-              if (isWebsiteBuildPrompt(displayPrompt) || requiresGitHubForBuild(displayPrompt)) {
+              pushSwarmTerminalLine(
+                isWebsiteUpdateRequest(displayPrompt)
+                  ? 'Update request detected — patching your GitHub files…'
+                  : 'Build request detected — starting real site generation…'
+              );
+              if (
+                isWebsiteBuildPrompt(displayPrompt) ||
+                requiresGitHubForBuild(displayPrompt) ||
+                isWebsiteUpdateRequest(displayPrompt)
+              ) {
+                setHeavyBuildActive(true);
+                heavyBuildActiveRef.current = true;
                 setSwarmNegotiationPhase(0);
                 setSwarmStatusLabel('XROGA Architect');
                 const seededTodos = seedBuildTodos(displayPrompt);
@@ -1649,7 +1668,9 @@ export function TerminalChatProvider({
             userPrompt: displayPrompt,
             buildContinuation: isBuildAnswer,
             buildOriginalPrompt: buildSession?.originalPrompt,
-            buildUpdate: isBuildUpdate,
+            buildUpdate:
+              isBuildUpdate ||
+              (Boolean(repoContext?.repo?.includes('/')) && isWebsiteUpdateRequest(displayPrompt)),
             githubTargetRepo: repoContext?.repo,
             githubTargetBranch: repoContext?.branch,
             ...(priorSite ? { priorSite } : {}),

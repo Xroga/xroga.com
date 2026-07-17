@@ -137,7 +137,7 @@ export function BuildCodeSandbox({
               <button type="button" className="underline text-[var(--accent)]" onClick={() => setFullscreen(true)}>
                 Full Preview
               </button>{' '}
-              (Exit button top-right).
+              (use Exit preview in the header).
             </p>
             <div className="flex justify-center">
               <iframe
