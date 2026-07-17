@@ -619,9 +619,22 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                               msg.content?.trim()
                                 ? msg.content
                                 : !loading && !msg.featureOutput && !msg.buildStopped && !msg.updateTrail
-                                  ? codeBuildActive || heavyBuildActive
-                                    ? '⚠️ No preview was delivered for this turn. Send the update again — we patch your current GitHub project (e.g. OrbitVault), not a new site.'
-                                    : 'No answer was delivered for this turn. Send your question again — chat and advice replies should appear here.'
+                                  ? (() => {
+                                      if (!(codeBuildActive || heavyBuildActive)) {
+                                        return 'No answer was delivered for this turn. Send your question again — chat and advice replies should appear here.';
+                                      }
+                                      // Never show OrbitVault/update copy on a NEW build (e.g. "build a landing page").
+                                      const updateAsk =
+                                        /\b(update|patch|fix|edit|change|toggle|night\s*\/\s*day|night\/day|theme\s*toggle|dark\s*mode)\b/i.test(
+                                          lastUserText
+                                        ) &&
+                                        !/\b(build|create|make|generate|scaffold)\b[\s\S]{0,80}\b(website|landing|site|page|app|dashboard|chatbot)\b/i.test(
+                                          lastUserText
+                                        );
+                                      return updateAsk
+                                        ? '⚠️ No preview was delivered for this update. Send again — we patch your selected GitHub project files, not a brand-new site.'
+                                        : '⚠️ No preview was delivered for this build. Send again — we will generate a real preview for your selected repo (or sandbox if push fails).';
+                                    })()
                                   : msg.content
                             }
                             streaming={msg.id === animatingId && loading}

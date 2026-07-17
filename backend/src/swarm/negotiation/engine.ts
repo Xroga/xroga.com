@@ -541,9 +541,18 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         buildType
       ));
 
-  // Updates: selected repo + update language always patches — never full rebuild product.
+  // Updates only when the user asked to PATCH — never treat "build a landing page" as an update
+  // just because a GitHub repo is selected (that wiped new builds with empty update paths).
+  const explicitNewBuild =
+    /\b(build|create|make|generate|scaffold|develop|spin\s*up)\b/i.test(userPrompt) &&
+    /\b(landing\s*page|website|web\s*site|\bsite\b|\bpage\b|\bapp\b|dashboard|chatbot|saas|platform|product|swap)\b/i.test(
+      userPrompt
+    ) &&
+    !isWebsiteUpdateRequest(userPrompt) &&
+    !/\b(update|patch|fix|edit)\b/i.test(routingPrompt(userPrompt).slice(0, 80));
   const isUpdateBuild =
-    (isProductBuild || Boolean(ctx.githubTargetRepo?.includes('/'))) &&
+    !explicitNewBuild &&
+    isProductBuild &&
     (Boolean(ctx.buildUpdate) ||
       isWebsiteUpdateRequest(userPrompt) ||
       isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo)) &&
@@ -551,8 +560,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       Boolean(ctx.priorSite?.html?.trim()) ||
       hasBuildConversationContext(userPrompt) ||
       threadHasCompletedWebsite(userPrompt) ||
-      isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo) ||
-      Boolean(ctx.githubTargetRepo?.includes('/') && isWebsiteUpdateRequest(userPrompt)));
+      isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo));
 
   const forcedFullRepoFix = isForcedFullRepoFix(userPrompt);
 
@@ -1706,12 +1714,17 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     if (isWebBuildFinal) {
       // Updates: NEVER full-site assemble/emit (that invents "Crypto Pulse" over OrbitVault).
       // Preview starts from the current repo/prior site; GitHub patches apply next.
-      if (isUpdateBuild && !shouldAllowFullScaffoldOnUpdate(userPrompt)) {
-        const baseHtml =
-          existingSiteCode?.html ||
-          ctx.priorSite?.html ||
-          targetedUpdateFiles.find((f) => /index\.html$/i.test(f.path))?.content ||
-          '';
+      const updateBaseHtml =
+        existingSiteCode?.html ||
+        ctx.priorSite?.html ||
+        targetedUpdateFiles.find((f) => /index\.html$/i.test(f.path))?.content ||
+        '';
+      const canPatchExisting =
+        isUpdateBuild &&
+        !shouldAllowFullScaffoldOnUpdate(userPrompt) &&
+        updateBaseHtml.trim().length > 40;
+
+      if (canPatchExisting) {
         const baseCss =
           existingSiteCode?.css ||
           ctx.priorSite?.css ||
@@ -1722,41 +1735,26 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           ctx.priorSite?.js ||
           targetedUpdateFiles.find((f) => /\.js$/i.test(f.path))?.content ||
           '';
-        if (baseHtml.trim().length > 40) {
-          const polishedBase = polishShippedSite(userPrompt, {
-            html: baseHtml,
-            css: baseCss,
-            js: baseJs,
-          });
-          const keepName =
-            (typeof ctx.priorSite?.projectName === 'string' && ctx.priorSite.projectName.trim()) ||
-            extractProjectNameFromHtml(baseHtml) ||
-            undefined;
-          featureOutput = {
-            type: 'landing_page',
-            html: polishedBase.html,
-            css: polishedBase.css,
-            js: polishedBase.js,
-            heroImageUrl: '',
-            deployUrl: '',
-            summary: 'Incremental update on current project',
-            isUpdate: true,
-            ...(keepName ? { projectName: keepName } : {}),
-          };
-        } else {
-          // Last resort: still mark as update so UI does not invent a new product
-          featureOutput = {
-            type: 'landing_page',
-            html: ctx.priorSite?.html || '',
-            css: ctx.priorSite?.css || '',
-            js: ctx.priorSite?.js || '',
-            heroImageUrl: '',
-            deployUrl: '',
-            summary: 'Incremental GitHub file update',
-            isUpdate: true,
-            ...(ctx.priorSite?.projectName ? { projectName: ctx.priorSite.projectName } : {}),
-          };
-        }
+        const polishedBase = polishShippedSite(userPrompt, {
+          html: updateBaseHtml,
+          css: baseCss,
+          js: baseJs,
+        });
+        const keepName =
+          (typeof ctx.priorSite?.projectName === 'string' && ctx.priorSite.projectName.trim()) ||
+          extractProjectNameFromHtml(updateBaseHtml) ||
+          undefined;
+        featureOutput = {
+          type: 'landing_page',
+          html: polishedBase.html,
+          css: polishedBase.css,
+          js: polishedBase.js,
+          heroImageUrl: '',
+          deployUrl: '',
+          summary: 'Incremental update on current project',
+          isUpdate: true,
+          ...(keepName ? { projectName: keepName } : {}),
+        };
         emit(
           ctx,
           7,
@@ -1766,6 +1764,18 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           'XROGA Pulse'
         );
       } else {
+        // Empty prior/repo HTML used to ship a blank "update" preview (OrbitVault warning on new builds).
+        // If we can't patch real HTML, generate a full preview instead of returning empty files.
+        if (isUpdateBuild && !canPatchExisting) {
+          emit(
+            ctx,
+            7,
+            xrogaPulseLine('No existing site HTML to patch — generating a full preview for this repo'),
+            'builder',
+            todos,
+            'XROGA Pulse'
+          );
+        }
         if (skipConsolidate) {
           emit(
             ctx,
@@ -1789,7 +1799,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           clarifiedBrief,
           isGameBuild ? 'game' : 'website',
           {
-            skipConsolidate,
+            // Empty-base "update" fallthrough must consolidate — soft skip left blank previews.
+            skipConsolidate: isUpdateBuild && !canPatchExisting ? false : skipConsolidate,
             allowScaffoldFallback: !refuseScaffold,
             tracker: usageTracker,
             userId,

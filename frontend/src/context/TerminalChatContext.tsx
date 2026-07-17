@@ -1663,10 +1663,20 @@ export function TerminalChatProvider({
                 );
               }
 
-              setTokenUsage({
-                ...result.usage,
-                totalLimit: result.usage.totalTokensRemaining + result.usage.totalTokensUsed,
-              });
+              if (
+                result.usage &&
+                typeof result.usage.totalTokensRemaining === 'number' &&
+                result.usage.totalTokensRemaining + (result.usage.totalTokensUsed ?? 0) > 0
+              ) {
+                setTokenUsage({
+                  ...result.usage,
+                  totalLimit:
+                    result.usage.totalTokensRemaining + (result.usage.totalTokensUsed ?? 0),
+                  quotaPeriodStart: new Date().toISOString().slice(0, 10),
+                  emergencyTokensAvailable: false,
+                  emergencyTokensClaimedThisMonth: false,
+                });
+              }
               refreshTokenUsage();
             }
           } catch (phase1Err) {
@@ -1855,19 +1865,44 @@ export function TerminalChatProvider({
           onComplete: (complete) => {
             if (complete.tokenUsage) {
               const tu = complete.tokenUsage;
-              setTokenUsage({
-                inputTokensUsed: tu.inputTokensUsed ?? 0,
-                outputTokensUsed: tu.outputTokensUsed ?? 0,
-                totalTokensUsed: tu.totalTokensUsed ?? 0,
-                inputTokensRemaining: tu.inputTokensRemaining ?? 0,
-                outputTokensRemaining: tu.outputTokensRemaining ?? 0,
-                totalTokensRemaining: tu.totalTokensRemaining ?? 0,
-                percentUsed: tu.percentUsed ?? 0,
-                quotaPeriodStart: tu.quotaPeriodStart ?? new Date().toISOString().slice(0, 10),
-                emergencyTokensAvailable: false,
-                emergencyTokensClaimedThisMonth: false,
-                totalLimit: (tu.totalTokensUsed ?? 0) + (tu.totalTokensRemaining ?? 0),
-              });
+              // Never invent 0 remaining when the field is missing — that flashed “0 tokens left”
+              // after builds/hard refresh even when quota was fine.
+              const prevUsage = useAppStore.getState().tokenUsage;
+              const remaining =
+                typeof tu.totalTokensRemaining === 'number'
+                  ? tu.totalTokensRemaining
+                  : prevUsage?.totalTokensRemaining;
+              const used =
+                typeof tu.totalTokensUsed === 'number'
+                  ? tu.totalTokensUsed
+                  : prevUsage?.totalTokensUsed ?? 0;
+              if (typeof remaining === 'number') {
+                setTokenUsage({
+                  inputTokensUsed: tu.inputTokensUsed ?? prevUsage?.inputTokensUsed ?? 0,
+                  outputTokensUsed: tu.outputTokensUsed ?? prevUsage?.outputTokensUsed ?? 0,
+                  totalTokensUsed: used,
+                  inputTokensRemaining:
+                    typeof tu.inputTokensRemaining === 'number'
+                      ? tu.inputTokensRemaining
+                      : prevUsage?.inputTokensRemaining ?? 0,
+                  outputTokensRemaining:
+                    typeof tu.outputTokensRemaining === 'number'
+                      ? tu.outputTokensRemaining
+                      : prevUsage?.outputTokensRemaining ?? 0,
+                  totalTokensRemaining: remaining,
+                  percentUsed: tu.percentUsed ?? prevUsage?.percentUsed ?? 0,
+                  quotaPeriodStart:
+                    tu.quotaPeriodStart ??
+                    prevUsage?.quotaPeriodStart ??
+                    new Date().toISOString().slice(0, 10),
+                  emergencyTokensAvailable: false,
+                  emergencyTokensClaimedThisMonth: false,
+                  totalLimit:
+                    remaining + used > 0
+                      ? remaining + used
+                      : prevUsage?.totalLimit || 7_000_000,
+                });
+              }
             }
             if (complete.followUps?.length) {
               setFollowUps(complete.followUps);

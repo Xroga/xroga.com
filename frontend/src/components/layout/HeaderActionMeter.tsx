@@ -19,10 +19,12 @@ interface HeaderTokenMeterProps {
 export function HeaderTokenMeter({ onClick, className }: HeaderTokenMeterProps) {
   const usage = useAppStore((s) => s.tokenUsage);
   const planTier = useAppStore((s) => s.planTier);
-  const remaining = usage?.totalTokensRemaining ?? 0;
+  // null usage = still loading — do NOT flash “0 tokens left”
+  const remaining = usage?.totalTokensRemaining;
   const total = usage?.totalLimit ?? 7_000_000;
-  const isOut = remaining <= 0;
-  const isLow = total > 0 && remaining / total <= 0.2;
+  const loaded = typeof remaining === 'number';
+  const isOut = loaded && remaining <= 0;
+  const isLow = loaded && total > 0 && remaining / total <= 0.2;
 
   const inner = (
     <>
@@ -42,13 +44,13 @@ export function HeaderTokenMeter({ onClick, className }: HeaderTokenMeterProps) 
         </div>
         <div className={cn('xv-token-pill__balance tabular-nums hidden sm:block', isOut && 'text-red-400/80')}>
           <span className={cn('font-semibold text-white/90', isOut && 'text-red-400')}>
-            {formatTokens(remaining)}
+            {loaded ? formatTokens(remaining) : '—'}
           </span>{' '}
           tokens left
         </div>
         <div className={cn('xv-token-pill__balance tabular-nums sm:hidden', isOut && 'text-red-400/80')}>
           <span className={cn('font-semibold text-white/90', isOut && 'text-red-400')}>
-            {formatTokens(remaining)}
+            {loaded ? formatTokens(remaining) : '—'}
           </span>{' '}
           tokens left
         </div>
