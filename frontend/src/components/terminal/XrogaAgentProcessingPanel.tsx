@@ -19,7 +19,6 @@ import { ModelCollaborationBar } from './ModelCollaborationBar';
 import { BuildPatienceBanner } from './BuildPatienceBanner';
 import { BuildTodoList } from './BuildTodoList';
 import { requestBuildNotificationPermission } from '@/lib/buildBrowserNotify';
-import { getDeepSeekPeakStatus } from '@/lib/deepseekPeakHours';
 
 interface XrogaAgentProcessingPanelProps {
   loading: boolean;
@@ -112,7 +111,7 @@ export function XrogaAgentProcessingPanel({
   peakNudge,
 }: XrogaAgentProcessingPanelProps) {
   const [elapsedMs, setElapsedMs] = useState(0);
-  const softPeak = peakNudge ?? (loading ? getDeepSeekPeakStatus().nudge : null);
+  const softPeak = peakNudge ?? null;
 
   useEffect(() => {
     if (!loading || !startedAt) return;

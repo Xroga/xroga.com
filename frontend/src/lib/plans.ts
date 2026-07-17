@@ -27,9 +27,9 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     actionsLabel: '1,500 Actions/mo',
     actions: 1500,
     aiTokens: 7_000_000,
-    aiTokensLabel: '7M AI tokens/mo',
-    xrgBonus: 5_000,
-    xrgLabel: '5K XRG bonus',
+    aiTokensLabel: '2 concurrent tasks',
+    xrgBonus: 0,
+    xrgLabel: 'Solo builders & side projects',
     concurrency: 2,
     tagline: 'Solo builders & side projects',
   },
@@ -42,9 +42,9 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     actionsLabel: '5,000 Actions/mo',
     actions: 5000,
     aiTokens: 12_000_000,
-    aiTokensLabel: '12M AI tokens/mo',
-    xrgBonus: 15_000,
-    xrgLabel: '15K XRG bonus',
+    aiTokensLabel: '8 concurrent tasks',
+    xrgBonus: 0,
+    xrgLabel: 'Most popular — daily swarm power',
     concurrency: 8,
     highlight: true,
     tagline: 'Most popular — daily swarm power',
@@ -58,9 +58,9 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     actionsLabel: '10,000 Actions/mo',
     actions: 10000,
     aiTokens: 20_000_000,
-    aiTokensLabel: '20M AI tokens/mo',
-    xrgBonus: 30_000,
-    xrgLabel: '30K XRG bonus',
+    aiTokensLabel: '12 concurrent tasks',
+    xrgBonus: 0,
+    xrgLabel: 'Teams shipping every week',
     concurrency: 12,
     tagline: 'Teams shipping every week',
   },
@@ -73,9 +73,9 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     actionsLabel: '6,000 Actions/mo',
     actions: 6000,
     aiTokens: 35_000_000,
-    aiTokensLabel: '35M AI tokens/mo',
-    xrgBonus: 75_000,
-    xrgLabel: '75K XRG bonus',
+    aiTokensLabel: '30 concurrent tasks',
+    xrgBonus: 0,
+    xrgLabel: 'High concurrency & priority',
     concurrency: 30,
     tagline: 'High concurrency & priority',
   },
@@ -88,9 +88,9 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     actionsLabel: '50,000 Actions/mo',
     actions: 50000,
     aiTokens: 100_000_000,
-    aiTokensLabel: '100M AI tokens/mo',
-    xrgBonus: 250_000,
-    xrgLabel: '250K XRG bonus',
+    aiTokensLabel: '100 concurrent tasks',
+    xrgBonus: 0,
+    xrgLabel: 'Enterprise-scale swarm',
     concurrency: 100,
     tagline: 'Enterprise-scale swarm',
   },
@@ -104,9 +104,13 @@ export const COMING_SOON_PLANS = [
 
 export const FREE_TRIAL_ACTIONS = 50;
 
-/** Feature bullets for pricing cards — tokens only, no legacy "Actions" wording */
+/** Feature bullets for pricing cards — no token/XRG quota marketing */
 export function getPlanFeatures(plan: GalacticPlan, featureCount: number): string[] {
-  return [`${plan.concurrency} concurrent tasks`, `All ${featureCount} features unlocked`];
+  return [
+    `${plan.concurrency} concurrent tasks`,
+    `All ${featureCount} features unlocked`,
+    plan.tagline ?? 'Full Xroga access',
+  ];
 }
 
 export { LOGO_URL, DESKTOP_BG, MOBILE_BG } from '@/lib/theme';

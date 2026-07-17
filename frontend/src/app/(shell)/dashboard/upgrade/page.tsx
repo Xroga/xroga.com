@@ -16,7 +16,7 @@ export default function UpgradePage() {
             Upgrade Your Plan
           </h1>
           <p className="text-sm text-[var(--muted)] mt-1">
-            All {FEATURE_COUNT} features unlocked on every plan. Upgrade for more tokens and concurrency.
+            All {FEATURE_COUNT} features unlocked on every plan. Upgrade for higher concurrency.
           </p>
         </div>
 

@@ -3,17 +3,17 @@
 /** Shown when users hesitate to provide paid API keys — free alternatives. */
 export function FreeApiOptionsPanel({ compact }: { compact?: boolean }) {
   const options = [
-    { name: 'Groq', detail: 'Free tier · no credit card · fast inference', url: 'https://console.groq.com' },
-    { name: 'Google Gemini', detail: '1,500 requests/day free', url: 'https://aistudio.google.com' },
+    { name: 'Google Gemini', detail: 'Generous free developer tier', url: 'https://aistudio.google.com' },
     { name: 'Pollinations', detail: 'Text + images · no API key required', url: 'https://pollinations.ai' },
-    { name: 'FreeTheAi', detail: '60+ models · OpenAI-compatible · free', url: 'https://freetheai.xyz' },
+    { name: 'FreeTheAi', detail: 'OpenAI-compatible free models', url: 'https://freetheai.xyz' },
     { name: 'LocalAI', detail: 'Self-hosted · open-source · $0', url: 'https://localai.io' },
   ];
 
   return (
     <div className={compact ? 'space-y-1.5' : 'space-y-2'}>
       <p className={`text-[var(--muted)] ${compact ? 'text-[9px]' : 'text-[10px]'}`}>
-        No paid keys needed to launch — Xroga wires Pollinations + SearXNG so your preview works live. Paste your own key anytime (encrypted).
+        Legacy DeepSeek / Claude / Grok / Groq options are retired. Use the free options below until
+        the new AI system ships.
       </p>
       <ul className={`space-y-1 ${compact ? 'text-[9px]' : 'text-[10px]'}`}>
         {options.map((o) => (
