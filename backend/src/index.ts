@@ -38,7 +38,9 @@ import { adminMiddleware } from './middleware/admin.js';
 import { getGitHubOAuthCallbackUrl } from './routes/github.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
 import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
-import { RETIRED_AI_CODE, RETIRED_AI_MESSAGE } from './routes/retiredSurface.js';
+import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
+import { modelKeyStatus } from './ai/openaiCompat.js';
+import { getAiStackKeyStatus } from './config/envSecrets.js';
 
 const app = express();
 
@@ -94,10 +96,11 @@ app.use(express.json({ limit: '10mb' }));
 const healthPayload = () => ({
   status: 'ok',
   service: 'xroga-api',
-  version: '2.0.0-ai-cleared',
-  aiBackend: 'retired',
-  aiBackendCode: RETIRED_AI_CODE,
-  aiBackendMessage: RETIRED_AI_MESSAGE,
+  version: '3.0.0-ai-swarm',
+  aiBackend: 'kimi-glm-deepseek-grok',
+  aiPipeline: 'converter→builder',
+  aiKeys: modelKeyStatus(),
+  aiStackKeys: getAiStackKeyStatus(),
   timestamp: new Date().toISOString(),
   authConfigured: Boolean(process.env.SUPABASE_URL),
   dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
@@ -108,19 +111,21 @@ const healthPayload = () => ({
   authMethod: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'supabase_admin' : 'jwt_local',
   frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
   githubOAuthRedirectUri: getGitHubOAuthCallbackUrl(),
-  imageGeneration: 'removed',
-  videoGeneration: 'removed',
-  webSearch: 'removed',
-  automation: 'removed',
-  tokenMeters: 'removed',
+  research: 'tavily+searxng',
   githubSchemaAutoBootstrap: githubSchemaAutoBootstrapEnabled(),
 });
 
 app.get('/', (_req, res) => {
   res.json({
     ...healthPayload(),
-    message: 'Xroga API is running — legacy AI backend cleared; awaiting new AI backend',
-    docs: { health: '/health', github: '/api/github', billing: '/api/billing' },
+    message: 'Xroga API is running — Converter → Builder AI Swarm (Kimi / GLM / DeepSeek / Grok)',
+    docs: {
+      health: '/health',
+      chat: '/api/phase1/chat',
+      build: '/api/swarm/execute',
+      github: '/api/github',
+      billing: '/api/billing',
+    },
   });
 });
 
@@ -140,7 +145,9 @@ app.get('/api/health', (_req, res) => {
 app.get('/api/config', (_req, res) => {
   res.json({
     frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
-    aiBackend: 'retired',
+    aiBackend: 'kimi-glm-deepseek-grok',
+    aiPipeline: 'converter→builder',
+    keys: modelKeyStatus(),
   });
 });
 
@@ -195,10 +202,14 @@ const server = createServer(app);
 server.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
   console.log(`Environment: ${process.env.NODE_ENV ?? 'development'}`);
-  console.log('[AI] Legacy DeepSeek/Claude/Grok/Groq backend RETIRED — ready for new AI backend');
+  console.log('[AI] Converter→Builder online — Kimi K3 / GLM-5.2 / DeepSeek V4 / Grok 4.x + Tavily');
+  console.log('[AI] Keys:', JSON.stringify(modelKeyStatus()));
   if (!process.env.SUPABASE_URL) {
     console.warn('WARNING: SUPABASE_URL is not set — authenticated routes will fail');
   }
+  void ensurePhase1Schema().catch((err) => {
+    console.warn('[phase1Schema] Startup ensure skipped:', (err as Error).message);
+  });
   void ensureGithubSchema().catch((err) => {
     console.warn('[githubSchema] Startup ensure skipped:', (err as Error).message);
   });

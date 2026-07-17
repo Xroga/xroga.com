@@ -1,8 +1,9 @@
 import type { DashboardSummary, TokenUsage } from '@/lib/api';
 
-const DEFAULT_LIMIT = 7_000_000;
-const DEFAULT_INPUT = 4_700_000;
-const DEFAULT_OUTPUT = 2_300_000;
+/** Matches backend MONTHLY_TOTAL_TOKENS (~$16.77 multi-model pool). */
+const DEFAULT_LIMIT = 6_172_222;
+const DEFAULT_INPUT = 3_086_111;
+const DEFAULT_OUTPUT = 3_086_111;
 
 export function tokenUsageFromSummary(summary: unknown): {
   usage: TokenUsage | null;
@@ -20,7 +21,7 @@ export function tokenUsageFromSummary(summary: unknown): {
   const billing = s.billing;
   const tokens = s.tokens;
 
-  // Legacy token meters retired — summary may return tokens: null
+  // tokens may be null only during brief API transitions
   if (tokens == null) {
     return {
       usage: null,

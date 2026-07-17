@@ -949,7 +949,8 @@ export interface DashboardSummary {
       totalLimit: number;
       percentUsed: number;
     }>;
-  };
+  } | null;
+  aiBackend?: string;
   xrg: {
     totalXrg: number;
     availableXrg: number;

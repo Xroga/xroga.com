@@ -2,19 +2,17 @@ import { Router } from 'express';
 import type { AuthRequest } from '../middleware/auth.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { GALACTIC_PLANS, planDisplayName } from '../config/galacticPlans.js';
+import { MONTHLY_TOTAL_TOKENS, MONTHLY_USER_PRICE_USD } from '../ai/models.js';
+import { getUsage, usageToDashboardTokens } from '../ai/quota.js';
 
 const router = Router();
 
-/**
- * Dashboard summary without legacy token/XRG/provider usage meters.
- * Cleared for the next AI backend.
- */
 router.get('/summary', async (req: AuthRequest, res) => {
   const userId = req.userId!;
 
   let planTier = 'spark';
   let planName = 'Basic';
-  let planPrice = '$19/month';
+  let planPrice = `$${MONTHLY_USER_PRICE_USD}/month`;
   let nextBilling = '';
 
   try {
@@ -30,7 +28,7 @@ router.get('/summary', async (req: AuthRequest, res) => {
         planTier = actions.plan_tier;
         const plan = GALACTIC_PLANS.find((p) => p.tier === planTier);
         planName = planDisplayName(planTier);
-        planPrice = plan ? `${plan.priceLabel}/month` : '$19/month';
+        planPrice = plan ? `${plan.priceLabel}/month` : `$${MONTHLY_USER_PRICE_USD}/month`;
       }
       if (actions?.reset_date) {
         nextBilling = new Date(actions.reset_date).toISOString().slice(0, 10);
@@ -68,27 +66,39 @@ router.get('/summary', async (req: AuthRequest, res) => {
     // empty ok
   }
 
+  const usage = await getUsage(userId);
+  const tokens = usageToDashboardTokens(usage);
+
   res.json({
     now: new Date().toISOString(),
-    tokens: null,
-    xrg: null,
+    tokens,
+    xrg: {
+      totalXrg: 0,
+      availableXrg: 0,
+      vestedXrg: 0,
+      tokenBoostTotal: 0,
+      consistencyStreakMonths: 0,
+      consistencyBonusPercent: 0,
+    },
     billing: {
       planTier,
       planName,
       planPrice,
       nextBilling,
+      tokensIncluded: MONTHLY_TOTAL_TOKENS,
+      tokensUsed: tokens.totalUsed,
+      tokensRemaining: tokens.totalRemaining,
     },
     recentActivity,
-    legacyAiRetired: true,
+    aiBackend: 'kimi-glm-deepseek-grok',
   });
 });
 
 router.post('/emergency-tokens', (_req, res) => {
   res.status(410).json({
     success: false,
-    message: 'Emergency tokens and legacy token pools have been removed.',
-    code: 'AI_BACKEND_RETIRED',
-    retired: true,
+    message: 'Emergency tokens are not available on the current AI plan.',
+    code: 'NOT_SUPPORTED',
   });
 });
 

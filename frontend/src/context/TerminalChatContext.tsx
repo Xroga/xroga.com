@@ -53,7 +53,6 @@ import {
   nextHeavyQueuePosition,
   type WorkLane,
 } from '@/lib/workLanes';
-import { getDeepSeekPeakStatus } from '@/lib/deepseekPeakHours';
 import { runLightLaneChat } from '@/lib/runLightLaneChat';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
 import { VercelBuildGateModal } from '@/components/terminal/VercelBuildGateModal';
@@ -1345,8 +1344,7 @@ export function TerminalChatProvider({
           setHeavyBuildActive(true);
           heavyBuildActiveRef.current = true;
           setHeavyAssistantId(assistantId);
-          const peak = getDeepSeekPeakStatus();
-          setDeepseekPeakNudge(peak.nudge);
+          setDeepseekPeakNudge(null);
         }
       } else {
         setLightLoading(true);
@@ -1416,11 +1414,7 @@ export function TerminalChatProvider({
         setPipelineMessage(startMsg);
         thinkingStepsRef.current = [...planSteps];
         setThinkingSteps([...planSteps]);
-        const peakLine = getDeepSeekPeakStatus().nudge;
-        setSwarmActivityLog([
-          startMsg,
-          ...(peakLine ? [peakLine] : []),
-        ]);
+        setSwarmActivityLog([startMsg]);
         lastActivityAtRef.current = Date.now();
         lastRealProgressAtRef.current = Date.now();
         stallAbortRef.current = false;
@@ -1814,9 +1808,6 @@ export function TerminalChatProvider({
               setSwarmAnalysis(sanitizeXrogaTerminalText(swarmEv.swarmAnalysis));
             }
             const activity = swarmEv.swarmActivity ?? swarmEv.message;
-            if ((swarmEv as SwarmProgressEvent & { deepseekPeak?: boolean }).deepseekPeak && activity) {
-              setDeepseekPeakNudge(sanitizeXrogaTerminalText(activity));
-            }
             const activityText = activity ? sanitizeXrogaTerminalText(activity) : '';
             const realActivity = Boolean(activityText) && !isKeepaliveActivity(activityText);
             if (realActivity) {

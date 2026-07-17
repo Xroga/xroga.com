@@ -12,8 +12,8 @@ export function FreeApiOptionsPanel({ compact }: { compact?: boolean }) {
   return (
     <div className={compact ? 'space-y-1.5' : 'space-y-2'}>
       <p className={`text-[var(--muted)] ${compact ? 'text-[9px]' : 'text-[10px]'}`}>
-        Legacy DeepSeek / Claude / Grok / Groq options are retired. Use the free options below until
-        the new AI system ships.
+        Optional free providers for personal experiments. Xroga chat and builds use the hosted
+        AI Swarm — no personal model keys required.
       </p>
       <ul className={`space-y-1 ${compact ? 'text-[9px]' : 'text-[10px]'}`}>
         {options.map((o) => (
