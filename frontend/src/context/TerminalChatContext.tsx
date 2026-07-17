@@ -1903,10 +1903,6 @@ export function TerminalChatProvider({
                 Boolean((output as { isUpdate?: boolean }).isUpdate) || isBuildUpdate;
               completedWebsiteBuildRef.current = true;
               removePendingBuildJob(assistantId);
-              const projectName =
-                (typeof output.projectName === 'string' && output.projectName.trim()) ||
-                priorSite?.projectName ||
-                'Your project';
               const outRepo =
                 (typeof (output as { githubRepoName?: string }).githubRepoName === 'string' &&
                 (output as { githubRepoName: string }).githubRepoName.includes('/')
@@ -1926,17 +1922,39 @@ export function TerminalChatProvider({
                 : undefined;
 
               // Always refresh the one project workspace preview
+              let projectName =
+                (typeof output.projectName === 'string' && output.projectName.trim()) ||
+                priorSite?.projectName ||
+                'Your project';
               void import('@/store/useProjectWorkspaceStore').then(({ useProjectWorkspaceStore }) => {
-                useProjectWorkspaceStore.getState().applyBuild({
+                const ws = useProjectWorkspaceStore.getState();
+                // Updates keep current project name (OrbitVault) — never swap to a new invented brand
+                projectName = reusePreview
+                  ? ws.projectName ||
+                    priorSite?.projectName ||
+                    (typeof output.projectName === 'string' && output.projectName.trim()) ||
+                    'Your project'
+                  : (typeof output.projectName === 'string' && output.projectName.trim()) ||
+                    priorSite?.projectName ||
+                    ws.projectName ||
+                    'Your project';
+                const nextHtml = String((output as { html?: string }).html ?? '');
+                const nextCss = String((output as { css?: string }).css ?? '');
+                const nextJs = String((output as { js?: string }).js ?? '');
+                // If update returned empty HTML, keep showing the current project preview
+                const html = reusePreview && !nextHtml.trim() && ws.html?.trim() ? ws.html : nextHtml;
+                const css = reusePreview && !nextCss.trim() && ws.css?.trim() ? ws.css : nextCss;
+                const js = reusePreview && !nextJs.trim() && ws.js?.trim() ? ws.js : nextJs;
+                ws.applyBuild({
                   repo: outRepo,
                   branch:
                     (output as { githubBranch?: string }).githubBranch ||
                     repoContext?.branch ||
                     'main',
                   projectName,
-                  html: String((output as { html?: string }).html ?? ''),
-                  css: String((output as { css?: string }).css ?? ''),
-                  js: String((output as { js?: string }).js ?? ''),
+                  html,
+                  css,
+                  js,
                   deployUrl:
                     (typeof (output as { deployUrl?: string }).deployUrl === 'string' &&
                     (output as { deployVerified?: boolean }).deployVerified

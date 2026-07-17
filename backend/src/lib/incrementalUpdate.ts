@@ -98,6 +98,8 @@ export function inferPathsFromUpdatePrompt(prompt: string, treePaths: string[]):
   const paths = new Set<string>();
   const addResolved = (candidate: string) => {
     const resolved = treePaths.length ? resolveAgainstTree(candidate, treePaths) : [candidate];
+    // When we know the real tree, never invent paths that do not exist (stops fake triad files).
+    if (treePaths.length && !resolved.length) return;
     for (const p of resolved.length ? resolved : [candidate]) paths.add(p);
   };
 

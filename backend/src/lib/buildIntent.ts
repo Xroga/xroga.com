@@ -38,8 +38,10 @@ export function isProductBuildRequest(prompt: string): boolean {
 export function looksLikeBuildEssay(text: string): boolean {
   const t = text.trim();
   if (!t || t.length < 400) return false;
+  // Path-labeled fences (index.html, app/page.tsx) count as real code — updates use these.
   const hasCode =
-    /```(?:html|css|javascript|js)/i.test(t) ||
+    /```(?:html|css|javascript|js|tsx?|jsx?)(?:\s|[\w./-])/i.test(t) ||
+    /```(?:[\w.-]+\/)*[\w.-]+\.\w{1,12}\b/i.test(t) ||
     /<!DOCTYPE\s+html/i.test(t) ||
     /<html[\s>]/i.test(t);
   const essaySignals =

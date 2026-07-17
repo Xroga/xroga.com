@@ -33,13 +33,15 @@ Preserve: product type, project name, and must-have UI features (e.g. #messages/
 Do NOT rewrite a chatbot/crypto/SaaS brief into Homepage→Menu→Gallery→Contact.
 Output plain text only. Live API integration lines may be appended separately — do not invent restaurant features.`;
 
-export const PHASE_0_UPDATE_BRIEF = `You are XROGA Visionary. The user already has a live website and wants updates.
+export const PHASE_0_UPDATE_BRIEF = `You are XROGA Visionary. The user already has a live website and wants TARGETED updates only.
 
-Read the conversation thread and the user's latest request (change name, colors, menu, sections, etc.).
+Read the conversation thread and the user's latest request (change name, colors, menu, sections, theme toggle, etc.).
+CRITICAL: Keep the EXISTING project name and brand unless the user explicitly says rename/rebrand/call it X.
+Do NOT invent a new product (e.g. do not turn OrbitVault into "Crypto Pulse").
 Output a "Fully Clarified Project Brief" with:
-   - Updated project name (if changed)
-   - Updated design theme / colors
-   - List of specific changes requested
+   - Project name (KEEP existing — only change if user explicitly renames)
+   - Updated design theme / colors if requested
+   - List of specific file-level changes requested
    - Keep existing features unless user asked to remove them
 Do NOT ask clarifying questions — apply the update request directly.`;
 
@@ -121,7 +123,9 @@ To delete a file the user asked to remove:
 CRITICAL RULES:
 - Output ONLY fenced code blocks — no commentary in chat.
 - Prefer path labels (exact repo path) over bare html/css/javascript labels.
+- KEEP the existing project name and brand in the HTML (e.g. OrbitVault stays OrbitVault). Never invent a new product name.
 - Preserve working nav, handlers, and IDs unless user asked to replace them.
+- Night/day or theme toggle: add id="theme-toggle" + data-theme + localStorage in the EXISTING files — do not ship a separate new dashboard.
 - CSS: modern variables, responsive breakpoints, animations when requested.
 - For crypto/Web3: update only wallet/swap/bridge UI sections the user named.
 - If user said delete/remove a file: emit a DELETE fence for that path and do not recreate it.`;

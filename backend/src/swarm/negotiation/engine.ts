@@ -1272,14 +1272,25 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           todos,
           'XROGA Pulse'
         );
-        const retry = await buildModelCall(
-          'flash',
-          `${PHASE_3_EXECUTE}\n\nABSOLUTE RULE: The user asked you to BUILD the website, not explain how. Output ONLY three fenced blocks: html, css, javascript. Zero prose. Zero "Introduction". Zero SEO tips.`,
-          `Build this site NOW as real working files.\nUser request:\n${userPrompt}\n\nPlan:\n${approvedPlan}\n\nReturn complete index.html + styles.css + script.js content in fenced blocks.`,
-          stepTokenBudget,
-          usageTracker,
-          { userId }
-        );
+        const retry = isUpdateBuild
+          ? await buildModelCall(
+              'flash',
+              `${PHASE_3_UPDATE_EXECUTE}\n\nABSOLUTE RULE: Patch ONLY the listed GitHub files. Output path-labeled fences (e.g. \`\`\`index.html). Keep the existing brand/project name. Never rebuild a new product.`,
+              `Update request:\n${userPrompt}\n\nPlan:\n${approvedPlan}\n\nTarget files:\n${[...((incrementalPlan?.filePaths && incrementalPlan.filePaths.size)
+                ? incrementalPlan.filePaths
+                : targetedUpdateFiles.map((f) => f.path))].slice(0, 12).join('\n') || 'index.html\nstyles.css\nscript.js'}\n\n${existingCodeContext}\n\nOutput ONLY path-labeled fenced code for those files.`,
+              stepTokenBudget,
+              usageTracker,
+              { userId }
+            )
+          : await buildModelCall(
+              'flash',
+              `${PHASE_3_EXECUTE}\n\nABSOLUTE RULE: The user asked you to BUILD the website, not explain how. Output ONLY three fenced blocks: html, css, javascript. Zero prose. Zero "Introduction". Zero SEO tips.`,
+              `Build this site NOW as real working files.\nUser request:\n${userPrompt}\n\nPlan:\n${approvedPlan}\n\nReturn complete index.html + styles.css + script.js content in fenced blocks.`,
+              stepTokenBudget,
+              usageTracker,
+              { userId }
+            );
         if (retry.text?.trim() && !looksLikeBuildEssay(retry.text)) {
           stepCode = retry.text;
         } else if (retry.text?.trim()) {
@@ -1635,38 +1646,92 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
 
   try {
     if (isWebBuildFinal) {
-      if (skipConsolidate && !isUpdateBuild) {
+      // Updates: NEVER full-site assemble/emit (that invents "Crypto Pulse" over OrbitVault).
+      // Preview starts from the current repo/prior site; GitHub patches apply next.
+      if (isUpdateBuild && !shouldAllowFullScaffoldOnUpdate(userPrompt)) {
+        const baseHtml =
+          existingSiteCode?.html ||
+          ctx.priorSite?.html ||
+          targetedUpdateFiles.find((f) => /index\.html$/i.test(f.path))?.content ||
+          '';
+        const baseCss =
+          existingSiteCode?.css ||
+          ctx.priorSite?.css ||
+          targetedUpdateFiles.find((f) => /\.css$/i.test(f.path))?.content ||
+          '';
+        const baseJs =
+          existingSiteCode?.js ||
+          ctx.priorSite?.js ||
+          targetedUpdateFiles.find((f) => /\.js$/i.test(f.path))?.content ||
+          '';
+        if (baseHtml.trim().length > 40) {
+          const polishedBase = polishShippedSite(userPrompt, {
+            html: baseHtml,
+            css: baseCss,
+            js: baseJs,
+          });
+          featureOutput = {
+            type: 'landing_page',
+            html: polishedBase.html,
+            css: polishedBase.css,
+            js: polishedBase.js,
+            heroImageUrl: '',
+            deployUrl: '',
+            summary: 'Incremental update on current project',
+            isUpdate: true,
+          };
+        } else {
+          featureOutput = {
+            type: 'landing_page',
+            html: '',
+            css: '',
+            js: '',
+            heroImageUrl: '',
+            deployUrl: '',
+            summary: 'Incremental GitHub file update',
+            isUpdate: true,
+          };
+        }
         emit(
           ctx,
           7,
-          xrogaPulseLine('Assembling site — skipped long consolidate to save API cost'),
+          xrogaPulseLine('Updating current project files — not creating a new site'),
           'builder',
           todos,
-          'XROGA Pulse',
-          { silent: true }
+          'XROGA Pulse'
+        );
+      } else {
+        if (skipConsolidate) {
+          emit(
+            ctx,
+            7,
+            xrogaPulseLine('Assembling site — skipped long consolidate to save API cost'),
+            'builder',
+            todos,
+            'XROGA Pulse',
+            { silent: true }
+          );
+        }
+        // Crypto / chatbot / swap must come from the LLM APIs — never ship template Escape Pod UIs
+        const refuseScaffold =
+          buildType === 'crypto' ||
+          buildType === 'chatbot' ||
+          /\b(swap|bridge|defi\s*dashboard|web3)\b/i.test(userPrompt);
+        featureOutput = await buildLandingFromSwarmAssembly(
+          assembledCode,
+          userPrompt,
+          approvedPlan,
+          clarifiedBrief,
+          isGameBuild ? 'game' : 'website',
+          {
+            skipConsolidate,
+            allowScaffoldFallback: !refuseScaffold,
+            tracker: usageTracker,
+            userId,
+            integrationContext: liveIntegrationsNote,
+          }
         );
       }
-      // Crypto / chatbot / swap must come from the LLM APIs — never ship template Escape Pod UIs
-      const refuseScaffold =
-        isUpdateBuild ||
-        buildType === 'crypto' ||
-        buildType === 'chatbot' ||
-        /\b(swap|bridge|defi\s*dashboard|web3)\b/i.test(userPrompt);
-      featureOutput = await buildLandingFromSwarmAssembly(
-        assembledCode,
-        userPrompt,
-        approvedPlan,
-        clarifiedBrief,
-        isGameBuild ? 'game' : 'website',
-        {
-          skipConsolidate,
-          // Updates + crypto/chatbot: never replace real AI output with a fake scaffold
-          allowScaffoldFallback: !refuseScaffold,
-          tracker: usageTracker,
-          userId,
-          integrationContext: liveIntegrationsNote,
-        }
-      );
     } else if (featureCategory === 'code_debug') {
       featureOutput = await debugCode({
         code: assembledCode,
@@ -1899,18 +1964,32 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     featureOutput?.type === 'landing_page'
       ? extractProjectNameFromHtml((featureOutput as { html?: string }).html || '')
       : null;
+  const existingHtmlName =
+    extractProjectNameFromHtml(existingSiteCode?.html || '') ||
+    extractProjectNameFromHtml(
+      targetedUpdateFiles.find((f) => /index\.html$/i.test(f.path))?.content || ''
+    ) ||
+    '';
   const rememberedName =
     (typeof ctx.priorSite?.projectName === 'string' && ctx.priorSite.projectName.trim()) ||
     (typeof pastBuilds[0]?.projectName === 'string' && pastBuilds[0].projectName.trim()) ||
+    existingHtmlName ||
     '';
-  const projectName =
-    (isUpdateBuild && rememberedName && (parsedName === 'My Website' || /\bupdate\b/i.test(parsedName))
-      ? rememberedName
-      : null) ||
-    (parsedName !== 'My Website' ? parsedName : null) ||
-    rememberedName ||
-    htmlName ||
-    parsedName;
+  const userExplicitRename =
+    /\b(rename|rebrand|call(?:ed)?\s+it|change\s+(?:the\s+)?name|named)\b/i.test(userPrompt);
+  // Updates keep OrbitVault / current brand — never invent "Crypto Pulse"
+  const projectName = isUpdateBuild && !userExplicitRename
+    ? rememberedName ||
+      existingHtmlName ||
+      htmlName ||
+      (ctx.githubTargetRepo?.includes('/')
+        ? ctx.githubTargetRepo.split('/')[1]!.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+        : '') ||
+      parsedName
+    : (parsedName !== 'My Website' ? parsedName : null) ||
+      rememberedName ||
+      htmlName ||
+      parsedName;
   const projectSlug = slugFromProjectName(projectName);
   const summaryData = {
     ...buildSummaryFromBrief(userPrompt, clarifiedBrief, undefined, undefined, memoryNote),
@@ -2006,15 +2085,24 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       }
       const allow = updatePaths.size ? updatePaths : new Set(targetedUpdateFiles.map((f) => f.path));
       for (const d of updateDeletePaths) allow.add(d);
+      // Only allow paths that exist in the targeted set or real repo tree — never invent triad files.
+      const knownPaths = new Set([
+        ...targetedUpdateFiles.map((f) => f.path),
+        ...repoTreePaths,
+      ]);
+      if (knownPaths.size) {
+        for (const p of [...allow]) {
+          if (!knownPaths.has(p) && !updateDeletePaths.includes(p)) allow.delete(p);
+        }
+      }
       const fromAssembly = extractPatchedFilesFromAssembly(assembledCode, allow);
       const fromDeletes = extractDeletedPathsFromAssembly(assembledCode, allow);
       deletedPathsForPush = [...new Set([...deletedPathsForPush, ...fromDeletes])];
-      // Prefer fenced patches from the model; only map landing triad when assembly had no path hits
-      // AND the allowed set actually includes triad paths (never invent Next.js triad files).
-      const triadAllowed =
-        allow.has('index.html') || allow.has('styles.css') || allow.has('script.js');
+      // Prefer fenced patches from the model. If none, push polished CURRENT triad
+      // (theme toggle etc.) — never a newly invented product brand.
+      const triadInRepo = targetedUpdateFiles.some((f) => f.path === 'index.html') || allow.has('index.html');
       const fromLanding =
-        fromAssembly.length || !triadAllowed
+        fromAssembly.length || !triadInRepo || !featureOutput.html?.trim()
           ? []
           : landingOutputToPatchedFiles(
               featureOutput.html,
@@ -2036,7 +2124,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           ...deletedPathsForPush.map((path) => ({ path, content: '' })),
         ]
       );
-      // Preview must reflect patched files (not stale pre-update HTML)
+      // Preview must reflect patched CURRENT project (not a newly invented site)
       const synced = siteCodeFromProjectFiles(projectFiles);
       if (synced.html?.trim()) {
         const polishedPatch = polishShippedSite(userPrompt, synced);
