@@ -1,10 +1,11 @@
 /**
- * Fly.io secret names — Council keys use EXACT names below (no aliases).
- * DEEPSEEK_API_KEY | GEMINI_API_KEY | GROQ_API_KEY | MISTRAL_API_KEY
- * ANTHROPIC_API_KEY | OPENAI_API_KEY
+ * Fly.io secret names for the active AI stack:
+ * KIMI_API_KEY | GLM_API_KEY | DEEPSEEK_API_KEY | GROK_API_KEY | TAVILY_API_KEY
  */
 
 const ALIASES: Record<string, string[]> = {
+  KIMI_API_KEY: ['KIMI_API_KEY', 'MOONSHOT_API_KEY'],
+  GLM_API_KEY: ['GLM_API_KEY', 'ZHIPU_API_KEY', 'BIGMODEL_API_KEY'],
   FAL_KEY: ['FAL_KEY', 'FAL_API_KEY'],
   AGNES_API_KEY: ['AGNES_API_KEY'],
   KLING_API_KEY: ['KLING_API_KEY', 'KLING_ACCESS_KEY'],
@@ -69,31 +70,25 @@ export function getDeployKeyStatus(): Record<string, boolean> {
   };
 }
 
-/** Elite Council + Reserve — Fly.io secret names */
-export function getCouncilKeyStatus(): Record<string, boolean> {
+/** Active multi-model AI stack — Fly.io secret names */
+export function getAiStackKeyStatus(): Record<string, boolean> {
   return {
+    KIMI_API_KEY: hasSecret('KIMI_API_KEY'),
+    GLM_API_KEY: hasSecret('GLM_API_KEY'),
     DEEPSEEK_API_KEY: hasSecret('DEEPSEEK_API_KEY'),
-    DEEPSEEK_CODE_API_KEY: hasSecret('DEEPSEEK_CODE_API_KEY'),
-    GEMINI_API_KEY: hasSecret('GEMINI_API_KEY'),
-    GEMINI_CODE_API_KEY: hasSecret('GEMINI_CODE_API_KEY'),
-    GROQ_API_KEY: hasSecret('GROQ_API_KEY'),
-    GROQ_CODE_API_KEY: hasSecret('GROQ_CODE_API_KEY'),
-    MISTRAL_API_KEY: hasSecret('MISTRAL_API_KEY'),
-    ANTHROPIC_API_KEY: hasSecret('ANTHROPIC_API_KEY'),
-    GROK_API_KEY: hasSecret('GROK_API_KEY'),
-    OPENAI_API_KEY: hasSecret('OPENAI_API_KEY'),
+    GROK_API_KEY: hasSecret('GROK_API_KEY') || hasSecret('XAI_API_KEY'),
     TAVILY_API_KEY: hasSecret('TAVILY_API_KEY'),
   };
 }
 
-/** Phase 1 AI engine — required provider keys */
+/** @deprecated use getAiStackKeyStatus */
+export function getCouncilKeyStatus(): Record<string, boolean> {
+  return getAiStackKeyStatus();
+}
+
+/** Phase 1 / swarm AI engine — required provider keys */
 export function getPhase1KeyStatus(): Record<string, boolean> {
-  return {
-    DEEPSEEK_API_KEY: hasSecret('DEEPSEEK_API_KEY'),
-    GROK_API_KEY: hasSecret('GROK_API_KEY') || hasSecret('XAI_API_KEY'),
-    ANTHROPIC_API_KEY: hasSecret('ANTHROPIC_API_KEY'),
-    GEMINI_API_KEY: hasSecret('GEMINI_API_KEY'),
-  };
+  return getAiStackKeyStatus();
 }
 
 /** Keys visible to video health checks */

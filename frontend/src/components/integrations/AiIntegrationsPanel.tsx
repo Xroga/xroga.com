@@ -102,8 +102,8 @@ export function AiIntegrationsPanel({ compact }: { compact?: boolean }) {
   return (
     <div className={compact ? 'space-y-2' : 'space-y-3'}>
       <p className={`text-[var(--muted)] ${compact ? 'text-[9px]' : 'text-[11px]'} leading-relaxed`}>
-        Legacy DeepSeek / Claude / Grok / Groq key vaults and usage meters are retired.
-        Keep GitHub and deploy integrations connected for builds.
+        Xroga hosts the AI stack (Apex / Horizon / Forge / Live). Connect GitHub and Vercel
+        for push and deploy — no personal model API keys required.
       </p>
       <ul className={`space-y-2 ${compact ? 'text-[10px]' : 'text-[12px]'}`}>
         {show.map((item) => {

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Skeleton from 'react-loading-skeleton';
-import { CreditCard, Activity, ArrowUpRight } from 'lucide-react';
+import { CreditCard, Activity, ArrowUpRight, Cpu } from 'lucide-react';
 import { api, type DashboardSummary } from '@/lib/api';
 import { GALACTIC_PLANS } from '@/lib/plans';
 import { GalacticPlanPricingCard, PricingPlanGrid } from '@/components/billing/XrogaPricingCard';
@@ -64,6 +64,8 @@ export function DashboardHomeView() {
 
   const now = safeDate(summary?.now) ?? new Date();
   const billing = summary?.billing;
+  const tokens = summary?.tokens;
+  const modelPools = tokens?.byModel ?? [];
 
   if (loading) {
     return (
@@ -94,6 +96,48 @@ export function DashboardHomeView() {
           <ArrowUpRight className="w-3.5 h-3.5" />
         </Link>
       </header>
+
+      {tokens && (
+        <WidgetCard title="AI Capacity" icon={Cpu} className="md:col-span-2">
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-baseline justify-between gap-2 text-sm">
+              <p>
+                <span className="text-[var(--muted)]">Monthly pool: </span>
+                <strong>{tokens.totalUsed.toLocaleString()}</strong>
+                <span className="text-[var(--muted)]"> / {tokens.totalLimit.toLocaleString()} tokens</span>
+              </p>
+              <p className="text-xs text-[var(--muted)]">{tokens.percentUsed}% used</p>
+            </div>
+            <div className="h-2 rounded-full bg-[var(--foreground)]/10 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-[var(--accent)] transition-all"
+                style={{ width: `${Math.min(100, tokens.percentUsed)}%` }}
+              />
+            </div>
+            {modelPools.length > 0 && (
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {modelPools.map((pool) => (
+                  <li
+                    key={pool.role}
+                    className="rounded-lg border border-[var(--card-border)] px-3 py-2 text-xs"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-semibold">{pool.label}</span>
+                      <span className="text-[var(--muted)]">{pool.percentUsed}%</span>
+                    </div>
+                    {pool.tagline && (
+                      <p className="text-[var(--muted)] mt-0.5">{pool.tagline}</p>
+                    )}
+                    <p className="mt-1 text-[var(--muted)]">
+                      {pool.totalUsed.toLocaleString()} / {pool.totalLimit.toLocaleString()}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </WidgetCard>
+      )}
 
       <div className="grid gap-4 md:grid-cols-2">
         <WidgetCard title="Recent Activity" icon={Activity}>

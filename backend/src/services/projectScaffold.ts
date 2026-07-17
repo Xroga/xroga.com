@@ -25,7 +25,7 @@ export function buildFullProjectFiles(opts: {
     { path: 'vercel.json', content: vercelStaticSiteJson() },
     {
       path: 'README.md',
-      content: `# ${name}\n\nStatic site files. Legacy AI scaffolding retired — awaiting new AI backend.\n`,
+      content: `# ${name}\n\nBuilt with Xroga AI Swarm (Converter → Builder).\n\n${opts.userPrompt ? `## Prompt\n\n${opts.userPrompt.slice(0, 500)}\n` : ''}`,
     },
   ];
 }
