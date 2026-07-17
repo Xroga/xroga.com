@@ -24,10 +24,26 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
+          set -euo pipefail
           flyctl auth docker
           IMAGE="registry.fly.io/xroga-api:${GITHUB_SHA}"
           docker build -f Dockerfile.api -t "$IMAGE" .
-          docker push "$IMAGE"
+
+          # Fly registry occasionally returns 502 during push — retry with backoff.
+          attempt=1
+          max_attempts=5
+          delay=8
+          until docker push "$IMAGE"; do
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "docker push failed after ${max_attempts} attempts"
+              exit 1
+            fi
+            echo "docker push failed (attempt ${attempt}/${max_attempts}) — retrying in ${delay}s"
+            sleep "$delay"
+            attempt=$((attempt + 1))
+            delay=$((delay * 2))
+          done
+
           echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
 
       - name: Deploy to Fly.io
@@ -45,5 +61,5 @@ jobs:
           sleep 15
           curl -fsS "https://xroga-api.fly.dev/health"
           echo ""
-          curl -fsS "https://xroga-api.fly.dev/api/health/smoke-video" | head -c 1000 || true
+          curl -fsS "https://xroga-api.fly.dev/api/health"
           echo ""
