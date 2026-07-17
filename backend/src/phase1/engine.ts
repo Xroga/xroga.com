@@ -19,6 +19,7 @@ import { detectThirdPartyProductQuestion, thirdPartySupportSystemBlock } from '.
 import { sanitizeInternalModelLeaks } from '../lib/responseSanitize.js';
 import { isTrivialPrompt } from '../lib/promptClassifier.js';
 import { isProductBuildRequest } from '../lib/buildIntent.js';
+import { isWebsiteUpdateRequest } from '../lib/buildContinuation.js';
 
 function toXrogaModelRole(modelId: InternalModelId, reasoningEffort?: 'high'): XrogaModelRole {
   if (modelId === 'grok_fast') {
@@ -77,6 +78,19 @@ export async function processMessage(req: Phase1ChatRequest): Promise<EngineResu
       status: 409,
       data: {
         error: 'This is a product build request. Use the Xroga build swarm, not chat Q&A.',
+        code: 'USE_BUILD_PIPELINE',
+      },
+    };
+  }
+
+  // Site patches (theme toggle, night/day, dashboard updates) must patch GitHub — never how-to advice.
+  if (isWebsiteUpdateRequest(message)) {
+    phase1Logger.warn('Rejected website update routed to Phase 1', { userId, preview: message.slice(0, 80) });
+    return {
+      ok: false,
+      status: 409,
+      data: {
+        error: 'This is a website update request. Use the Xroga build swarm to patch files.',
         code: 'USE_BUILD_PIPELINE',
       },
     };

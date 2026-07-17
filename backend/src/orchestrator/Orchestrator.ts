@@ -15,6 +15,7 @@ import {
   hasThreadContext,
   looksLikeBuildClarificationAnswer,
   isWebsiteBuildUpdate,
+  isSelectedRepoUpdateRequest,
   isWebsiteUpdateRequest,
   isActiveWebsiteProjectContext,
 } from '../lib/buildContinuation.js';
@@ -648,12 +649,14 @@ export class Orchestrator {
       (ctx.clientMeta?.buildContinuation && looksLikeBuildClarificationAnswer(prompt)) ||
       isWebsiteBuildUpdate(prompt, ctx.history) ||
       ctx.clientMeta?.buildUpdate ||
-      (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history))
+      (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history)) ||
+      isSelectedRepoUpdateRequest(userText, ctx.clientMeta?.githubTargetRepo)
     ) {
       if (
         (isWebsiteBuildUpdate(prompt, ctx.history) ||
           ctx.clientMeta?.buildUpdate ||
-          (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history))) &&
+          (isWebsiteUpdateRequest(userText) && isActiveWebsiteProjectContext(prompt, ctx.history)) ||
+          isSelectedRepoUpdateRequest(userText, ctx.clientMeta?.githubTargetRepo)) &&
         !hasThreadContext(prompt) &&
         ctx.history?.length
       ) {

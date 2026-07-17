@@ -87,15 +87,6 @@ export function FullscreenPreviewModal({
         className="flex-1 w-full border-0 bg-white relative z-[1]"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
       />
-      <button
-        type="button"
-        onClick={onClose}
-        className="fixed top-4 right-4 z-[310] inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#006aff] text-white text-sm font-bold shadow-xl hover:opacity-95"
-        aria-label="Exit full preview"
-      >
-        <X className="w-4 h-4" />
-        Exit
-      </button>
     </div>,
     document.body
   );

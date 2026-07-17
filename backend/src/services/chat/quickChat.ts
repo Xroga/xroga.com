@@ -11,7 +11,7 @@ import { isProductBuildRequest } from '../../lib/buildIntent.js';
 import { isMathQuery } from '../../lib/mathQuery.js';
 import { trySolveMathLocally } from '../../lib/mathSolver.js';
 import { formatPlainProfessional } from '../../blackhole/plainTextFormat.js';
-import { isBuildContinuation, isWebsiteUpdateRequest, threadHasCompletedWebsite } from '../../lib/buildContinuation.js';
+import { isBuildContinuation, isWebsiteUpdateRequest } from '../../lib/buildContinuation.js';
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { detectFeatureIntent, formatFeatureOutput } from '../../lib/featureIntent.js';
 import { executeFeature, resolveFeatureCategory } from '../featureExecutor.js';
@@ -49,7 +49,8 @@ export async function quickChat(
     throw new Error('BUILD_CONTINUATION_MUST_USE_NEGOTIATION');
   }
 
-  if (isWebsiteUpdateRequest(prompt) && threadHasCompletedWebsite(prompt)) {
+  // Any clear site-update intent must patch files — never answer with how-to essays.
+  if (isWebsiteUpdateRequest(prompt)) {
     throw new Error('WEBSITE_UPDATE_MUST_USE_NEGOTIATION');
   }
 

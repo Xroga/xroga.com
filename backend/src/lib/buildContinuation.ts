@@ -63,7 +63,7 @@ export function isBuildContinuation(prompt: string): boolean {
 }
 
 const SITE_UI_NOUN =
-  /\b(website|site|webpage|web\s*page|landing|homepage|hero|navbar|nav\b|css|html|preview|deploy|header|footer|repo|github|codebase|section|menu|layout|stylesheet)\b/i;
+  /\b(website|site|webpage|web\s*page|landing|homepage|hero|navbar|nav\b|css|html|preview|deploy|header|footer|repo|github|codebase|section|menu|layout|stylesheet|dashboard|crypto|chatbot|app|swap|wallet|defi|web3)\b/i;
 
 /** Advice / strategy / research — must not enter negotiation website builds. */
 export function isGeneralAdviceOrKnowledgePrompt(prompt: string): boolean {
@@ -112,11 +112,13 @@ export function isWebsiteUpdateRequest(prompt: string): boolean {
   }
   if (
     /\b(change|update|edit|modify|rename|switch|adjust|tweak|fix|patch)\b/.test(t) &&
-    /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout|toggle|night|day)\b/.test(
+    /\b(name|color|theme|title|menu|section|page|design|logo|header|footer|gallery|order|hero|font|background|button|layout|toggle|night|day|dashboard)\b/.test(
       t
     ) &&
     (SITE_UI_NOUN.test(t) ||
-      /\b(color|theme|logo|header|footer|hero|button|font|background|layout|menu|section)\b/.test(t))
+      /\b(color|theme|logo|header|footer|hero|button|font|background|layout|menu|section|toggle|dashboard)\b/.test(
+        t
+      ))
   ) {
     return true;
   }
@@ -134,7 +136,7 @@ export function isWebsiteUpdateRequest(prompt: string): boolean {
   // "update in current github / selected repo / same preview"
   if (
     /\b(update|patch|push|apply|fix|edit)\b/.test(t) &&
-    /\b(github|repo|preview|codebase|current (site|website|project)|selected repo|existing (repo|code|site)|our (site|website|project))\b/.test(
+    /\b(github|repo|preview|codebase|current (site|website|project)|selected repo|existing (repo|code|site)|our (site|website|project)|this (crypto|dashboard|site|website|app|chatbot))\b/.test(
       t
     )
   ) {
