@@ -234,13 +234,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     return null;
   }, [visibleMessages]);
 
-  const lastUserMessageId = useMemo(() => {
-    for (let i = visibleMessages.length - 1; i >= 0; i--) {
-      if (visibleMessages[i].role === 'user') return visibleMessages[i].id;
-    }
-    return null;
-  }, [visibleMessages]);
-
   const lastUserText = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i].role === 'user') return messages[i].content;

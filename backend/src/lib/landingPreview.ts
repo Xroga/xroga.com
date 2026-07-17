@@ -38,28 +38,10 @@ export function siteCodeFromProjectFiles(files: Array<{ path: string; content: s
     files.find((f) => f.path === name)?.content ??
     files.find((f) => f.path.endsWith(`/${name}`))?.content ??
     '';
-  const indexHtml =
-    byPath('index.html') ||
-    files.find((f) => /(?:^|\/)index\.html$/i.test(f.path))?.content ||
-    '';
-  const css =
-    byPath('styles.css') ||
-    files.find((f) => /(?:^|\/)(styles?|globals?)\.css$/i.test(f.path))?.content ||
-    '';
-  const js =
-    byPath('script.js') ||
-    files.find((f) => /(?:^|\/)(script|main|app)\.js$/i.test(f.path) && !/node_modules/.test(f.path))
-      ?.content ||
-    '';
-  const normalized = normalizeBuildFiles(indexHtml, css, js);
-  return { html: normalized.html, css: normalized.css, js: normalized.js };
-}
 
-export const LANDING_UPDATE_FOLLOW_UPS = [
-  'Change brand name and hero headline',
-  'Switch to dark mode with a light/dark toggle',
-  'Add animations and modern hover effects',
-  'Add a testimonials or logos section',
-  'Update pricing plans and features',
-  'Fix buttons and JavaScript that are not working',
-] as const;
+  return {
+    html: byPath('index.html'),
+    css: byPath('styles.css') || byPath('style.css'),
+    js: byPath('script.js') || byPath('main.js'),
+  };
+}

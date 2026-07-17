@@ -5,7 +5,7 @@ import { VIDEO_REMOVED_MESSAGE } from '@/lib/videoRemoved';
 
 export function FeatureOutputView({
   output,
-  onDelete,
+  onDelete: _onDelete,
   messageId,
   onPreviewUpdate,
 }: {
@@ -14,6 +14,7 @@ export function FeatureOutputView({
   messageId?: string;
   onPreviewUpdate?: (messageId: string, output: unknown) => void;
 }) {
+  void _onDelete;
   if (!output || typeof output !== 'object') return null;
   const o = output as Record<string, unknown>;
 

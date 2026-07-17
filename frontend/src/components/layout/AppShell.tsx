@@ -22,7 +22,7 @@ interface AppShellProps {
   email?: string;
 }
 
-function HeaderLogo({ isDashboard }: { isDashboard: boolean }) {
+function HeaderLogo() {
   const pathname = usePathname();
   const logoHref = pathname.startsWith('/dashboard') ? '/dashboard' : '/workspace';
   return (
@@ -66,7 +66,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
             <div className="xv-main-column flex-1 flex flex-col w-full min-w-0 max-w-full min-h-screen overflow-x-hidden relative z-[2]">
               <header className="xv-site-header xv-site-header-transparent sticky top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3 shrink-0">
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <HeaderLogo isDashboard={isDashboard} />
+                  <HeaderLogo />
                 </div>
                 <div className="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0 relative z-[250]">
                   <ThemeToggle />

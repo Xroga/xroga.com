@@ -1,30 +1,16 @@
 import { Router } from 'express';
 import type { AuthRequest } from '../middleware/auth.js';
-import { getUsage, claimEmergencyTokens, getUserQuotaLimit } from '../phase1/tokenTracker.js';
-import { getModelUsageBreakdown } from '../phase1/modelQuotaTracker.js';
-import { getXrgBalance } from '../services/xrgBalance.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { GALACTIC_PLANS, planDisplayName } from '../config/galacticPlans.js';
-import { inputLimitForPlan, outputLimitForPlan } from '../config/modelRegistry.js';
 
 const router = Router();
 
-function daysRemainingInMonth(): number {
-  const now = new Date();
-  const last = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0));
-  return Math.max(0, last.getUTCDate() - now.getUTCDate());
-}
-
+/**
+ * Dashboard summary without legacy token/XRG/provider usage meters.
+ * Cleared for the next AI backend.
+ */
 router.get('/summary', async (req: AuthRequest, res) => {
   const userId = req.userId!;
-  const usage = await getUsage(userId);
-  const xrg = await getXrgBalance(userId);
-  const modelBreakdown = await getModelUsageBreakdown(userId);
-
-  const baseLimit = await getUserQuotaLimit(userId);
-  const totalLimit = baseLimit + xrg.tokenBoostTotal;
-  const inputLimit = inputLimitForPlan(totalLimit);
-  const outputLimit = outputLimitForPlan(totalLimit);
 
   let planTier = 'spark';
   let planName = 'Basic';
@@ -82,55 +68,28 @@ router.get('/summary', async (req: AuthRequest, res) => {
     // empty ok
   }
 
-  const daysLeft = daysRemainingInMonth();
-  const totalUsed = usage.totalTokensUsed;
-  // Recompute against the same totalLimit the UI shows (includes XRG boost)
-  const totalRemaining = Math.max(0, totalLimit - totalUsed);
-  const inputRemaining = Math.max(0, inputLimit - usage.inputTokensUsed);
-  const outputRemaining = Math.max(0, outputLimit - usage.outputTokensUsed);
-  const rawPct = totalLimit > 0 ? (totalUsed / totalLimit) * 100 : 0;
-  const percentUsed =
-    totalUsed <= 0 ? 0 : Math.min(100, Math.max(0.1, Math.round(rawPct * 10) / 10));
-  const dailyUsage =
-    daysLeft > 0 ? Math.round(totalUsed / Math.max(1, new Date().getUTCDate())) : 0;
-
   res.json({
     now: new Date().toISOString(),
-    tokens: {
-      totalLimit,
-      totalUsed,
-      totalRemaining,
-      percentUsed,
-      inputUsed: usage.inputTokensUsed,
-      inputLimit,
-      inputRemaining,
-      outputUsed: usage.outputTokensUsed,
-      outputLimit,
-      outputRemaining,
-      emergencyAvailable: usage.emergencyTokensAvailable,
-      emergencyClaimed: usage.emergencyTokensClaimedThisMonth,
-      daysRemaining: daysLeft,
-      estimatedDailyUsage: dailyUsage,
-      quotaPeriodStart: usage.quotaPeriodStart,
-      byModel: modelBreakdown,
-    },
-    xrg,
+    tokens: null,
+    xrg: null,
     billing: {
       planTier,
       planName,
       planPrice,
       nextBilling,
-      tokensIncluded: totalLimit,
-      tokensUsed: usage.totalTokensUsed,
-      tokensRemaining: usage.totalTokensRemaining,
     },
     recentActivity,
+    legacyAiRetired: true,
   });
 });
 
-router.post('/emergency-tokens', async (req: AuthRequest, res) => {
-  const result = await claimEmergencyTokens(req.userId!);
-  res.status(result.success ? 200 : 400).json(result);
+router.post('/emergency-tokens', (_req, res) => {
+  res.status(410).json({
+    success: false,
+    message: 'Emergency tokens and legacy token pools have been removed.',
+    code: 'AI_BACKEND_RETIRED',
+    retired: true,
+  });
 });
 
 export default router;

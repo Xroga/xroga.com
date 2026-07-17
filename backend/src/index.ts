@@ -35,8 +35,10 @@ import { metricsMiddleware, getMetricsText } from './middleware/metricsMiddlewar
 import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
 import { adminMiddleware } from './middleware/admin.js';
-import { startSwarmWorker } from './workers/swarmWorker.js';
-import { attachVoiceWebSocket } from './services/voice/voiceWebSocket.js';
+import { getGitHubOAuthCallbackUrl } from './routes/github.js';
+import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
+import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
+import { RETIRED_AI_CODE, RETIRED_AI_MESSAGE } from './routes/retiredSurface.js';
 
 const app = express();
 
@@ -44,9 +46,11 @@ const port = Number(process.env.PORT) || 8080;
 
 app.use(metricsMiddleware);
 
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: 'cross-origin' },
-}));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  })
+);
 app.use(morgan('dev'));
 
 const allowedOrigins = [
@@ -87,48 +91,36 @@ app.use('/api/billing/webhook', billingWebhookRouter);
 
 app.use(express.json({ limit: '10mb' }));
 
-import { getImageProviderStatus } from './services/builder/imageGen.js';
-import { getCouncilKeyStatus, getDeployKeyStatus, getPhase1KeyStatus } from './config/envSecrets.js';
-import { getGitHubOAuthCallbackUrl } from './routes/github.js';
-import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
-import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
-import { ensureDashboardSchema } from './db/ensureDashboardSchema.js';
-import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
-
-const healthPayload = () => {
-  const image = getImageProviderStatus();
-  return {
-    status: 'ok',
-    service: 'xroga-api',
-    version: '1.7.1',
-    councilStack: 'groq-gemini-deepseek-mistral',
-    councilKeys: getCouncilKeyStatus(),
-    phase1Keys: getPhase1KeyStatus(),
-    deployKeys: getDeployKeyStatus(),
-    promptsSealed: true,
-    timestamp: new Date().toISOString(),
-    authConfigured: Boolean(process.env.SUPABASE_URL),
-    dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
-    jwtConfigured: Boolean(
-      process.env.SUPABASE_URL &&
-        (process.env.SUPABASE_JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY)
-    ),
-    authMethod: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'supabase_admin' : 'jwt_local',
-    frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
-    githubOAuthRedirectUri: getGitHubOAuthCallbackUrl(),
-    imageProviders: image.configured,
-    imageReady: image.ready,
-    imageKeys: image.keys,
-    videoGeneration: 'removed',
-    githubSchemaAutoBootstrap: githubSchemaAutoBootstrapEnabled(),
-  };
-};
+const healthPayload = () => ({
+  status: 'ok',
+  service: 'xroga-api',
+  version: '2.0.0-ai-cleared',
+  aiBackend: 'retired',
+  aiBackendCode: RETIRED_AI_CODE,
+  aiBackendMessage: RETIRED_AI_MESSAGE,
+  timestamp: new Date().toISOString(),
+  authConfigured: Boolean(process.env.SUPABASE_URL),
+  dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+  jwtConfigured: Boolean(
+    process.env.SUPABASE_URL &&
+      (process.env.SUPABASE_JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY)
+  ),
+  authMethod: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'supabase_admin' : 'jwt_local',
+  frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
+  githubOAuthRedirectUri: getGitHubOAuthCallbackUrl(),
+  imageGeneration: 'removed',
+  videoGeneration: 'removed',
+  webSearch: 'removed',
+  automation: 'removed',
+  tokenMeters: 'removed',
+  githubSchemaAutoBootstrap: githubSchemaAutoBootstrapEnabled(),
+});
 
 app.get('/', (_req, res) => {
   res.json({
     ...healthPayload(),
-    message: 'Xroga API is running',
-    docs: { health: '/health', phase1: '/api/phase1/health', chat: 'POST /api/phase1/chat' },
+    message: 'Xroga API is running — legacy AI backend cleared; awaiting new AI backend',
+    docs: { health: '/health', github: '/api/github', billing: '/api/billing' },
   });
 });
 
@@ -145,48 +137,11 @@ app.get('/api/health', (_req, res) => {
   res.json(healthPayload());
 });
 
-app.get('/api/health/smoke-image', async (req, res) => {
-  try {
-    const { smokeTestImageGeneration, smokeTestFullPipeline, smokeTestAllImageProviders } =
-      await import('./services/builder/imageGen.js');
-    const quick = await smokeTestImageGeneration();
-    const all = req.query.all === '1' ? await smokeTestAllImageProviders() : undefined;
-    const full = req.query.full === '1' ? await smokeTestFullPipeline() : undefined;
-    res.json({ ...healthPayload(), smoke: quick, allProviders: all, fullPipeline: full });
-  } catch (err) {
-    res.status(500).json({
-      ...healthPayload(),
-      smoke: { ok: false, error: (err as Error).message, tried: [] },
-    });
-  }
-});
-
 app.get('/api/config', (_req, res) => {
   res.json({
-    authConfigured: Boolean(process.env.SUPABASE_URL),
-    apiUrl: process.env.FRONTEND_URL ?? null,
+    frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
+    aiBackend: 'retired',
   });
-});
-
-/** Public video stream — keys are unguessable (userId + timestamp + filename) */
-app.get('/api/media/stream', async (req, res) => {
-  const key = typeof req.query.key === 'string' ? req.query.key : '';
-  if (!key || !key.startsWith('users/') || key.includes('..')) {
-    res.status(400).json({ error: 'Invalid media key' });
-    return;
-  }
-  try {
-    const { readStoredFile } = await import('./services/storage/projectFiles.js');
-    const { buffer, contentType } = await readStoredFile(key);
-    res.setHeader('Content-Type', contentType.startsWith('video/') ? contentType : 'video/mp4');
-    res.setHeader('Cache-Control', 'public, max-age=86400');
-    res.setHeader('Accept-Ranges', 'bytes');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.send(buffer);
-  } catch (err) {
-    console.error('[MediaStream]', (err as Error).message);
-    res.status(404).json({ error: 'Video not found' });
-  }
 });
 
 app.use('/chat', simpleChatRouter);
@@ -228,61 +183,28 @@ app.use((_req, res) => {
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err);
   if (!res.headersSent) {
-    res.status(200).json({
-      success: true,
-      message:
-        "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.",
+    res.status(500).json({
+      error: 'Internal server error',
+      code: 'INTERNAL_ERROR',
     });
   }
 });
 
 const server = createServer(app);
-attachVoiceWebSocket(server);
 
 server.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
   console.log(`Environment: ${process.env.NODE_ENV ?? 'development'}`);
-  void import('./services/builder/imageGen.js').then(({ getConfiguredImageProviders }) => {
-    const providers = getConfiguredImageProviders();
-    if (providers.length) {
-      console.log(`[ImageGen] Configured providers: ${providers.join(', ')}`);
-    } else {
-      console.warn('[ImageGen] WARNING: No image API keys set — image generation will fail');
-    }
-  });
+  console.log('[AI] Legacy DeepSeek/Claude/Grok/Groq backend RETIRED — ready for new AI backend');
   if (!process.env.SUPABASE_URL) {
     console.warn('WARNING: SUPABASE_URL is not set — authenticated routes will fail');
   }
   void ensureGithubSchema().catch((err) => {
     console.warn('[githubSchema] Startup ensure skipped:', (err as Error).message);
   });
-  void ensurePhase1Schema().catch((err) => {
-    console.warn('[phase1Schema] Startup ensure skipped:', (err as Error).message);
-  });
-  void ensureDashboardSchema().catch((err) => {
-    console.warn('[dashboardSchema] Startup ensure skipped:', (err as Error).message);
-  });
   void ensureTerminalSessionsSchema().catch((err) => {
     console.warn('[terminalSessionsSchema] Startup ensure skipped:', (err as Error).message);
   });
-  void import('./db/ensurePhase3Schema.js').then(({ ensurePhase3Schema }) =>
-    ensurePhase3Schema().catch((err) => {
-      console.warn('[phase3Schema] Startup ensure skipped:', (err as Error).message);
-    })
-  );
-  void import('./db/ensurePhase4Schema.js').then(({ ensurePhase4Schema }) =>
-    ensurePhase4Schema().catch((err) => {
-      console.warn('[phase4Schema] Startup ensure skipped:', (err as Error).message);
-    })
-  );
-  void import('./config/jobQueues.js').then(({ isQueueSystemReady }) => {
-    if (isQueueSystemReady()) {
-      console.log('[queues] Redis job queues ready (notifications, token-distribution, email)');
-    }
-  });
-  if (process.env.RUN_SWARM_WORKER === 'true') {
-    startSwarmWorker();
-  }
 });
 
 process.on('uncaughtException', (err) => {

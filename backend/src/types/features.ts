@@ -287,7 +287,7 @@ export type FeatureOutput =
   | ContentBlockerOutput
   | JobHunterOutput
   | CodeDebugOutput
-  | { type: 'chat'; content: string; webSources?: Array<{ title: string; url: string; snippet: string; source: string; thumbnailUrl?: string }>; hackathonBrief?: import('../phase1/types.js').HackathonBriefCard };
+  | { type: 'chat'; content: string; webSources?: Array<{ title: string; url: string; snippet: string; source: string; thumbnailUrl?: string }>; hackathonBrief?: unknown };
 
 export interface SwarmProgressEvent {
   runId: string;
@@ -325,7 +325,7 @@ export interface SwarmProgressEvent {
   needsGitHub?: boolean;
   needsVercel?: boolean;
   /** Structured hackathon brief for requirement-aligned builds */
-  hackathonBrief?: import('../phase1/types.js').HackathonBriefCard;
+  hackathonBrief?: unknown;
 }
 
 export const FEATURE_ACTION_COSTS: Record<FeatureCategory, number> = {

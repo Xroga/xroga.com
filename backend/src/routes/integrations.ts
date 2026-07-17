@@ -1,68 +1,25 @@
 import { Router } from 'express';
-import type { AuthRequest } from '../middleware/auth.js';
-import { catalogForApi } from '../lib/aiEndpointCatalog.js';
-import { FIELD_ENDPOINT_CATALOG } from '../lib/fieldEndpointCatalog.js';
-import {
-  deleteUserProviderKey,
-  listUserProviderKeys,
-  saveUserProviderKey,
-} from '../services/integrations/userProviderKeys.js';
-import liveAiProxy from './liveAiProxy.js';
+import { retiredJson } from './retiredSurface.js';
 
 const router = Router();
-router.use(liveAiProxy);
 
-/** Public AI integration catalog — free/paid endpoints for generated code */
+/** Legacy AI provider catalog / BYOK / live AI proxy — retired. */
 router.get('/ai-catalog', (_req, res) => {
   res.json({
-    catalog: catalogForApi(),
-    /** Field APIs auto-wired by product type (crypto, weather, …) */
-    fieldEndpoints: FIELD_ENDPOINT_CATALOG,
-    xrogaResearch: {
-      searxng: { free: true, note: 'Xroga uses SearXNG for web research during builds and chat.' },
-      tavily: { freeTier: true, note: 'Xroga supplements with Tavily when TAVILY_API_KEY is set on server.' },
-      grokSearch: {
-        note: 'Grok web_search / x_search are OFF by default (costly). Builds use SearXNG/Tavily. Enable only with XROGA_ALLOW_GROK_AGENT_SEARCH=1.',
-      },
-    },
-    autoIntegrate:
-      'On every build Xroga detects the field (crypto, AI chat, weather, …) and wires free live endpoints into your code so the preview works with real data.',
+    catalog: [],
+    fieldEndpoints: [],
+    legacyAiRetired: true,
+    message: 'Legacy DeepSeek/Claude/Grok/Groq integrations removed. Awaiting new AI backend.',
   });
 });
 
-router.get('/provider-keys', async (req: AuthRequest, res) => {
-  try {
-    const userId = req.userId!;
-    const keys = await listUserProviderKeys(userId);
-    res.json({ keys });
-  } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
-  }
+router.get('/provider-keys', (_req, res) => {
+  res.json({ keys: [], legacyAiRetired: true });
 });
 
-router.post('/provider-keys', async (req: AuthRequest, res) => {
-  try {
-    const userId = req.userId!;
-    const { provider, apiKey } = req.body as { provider?: string; apiKey?: string };
-    if (!provider?.trim() || !apiKey?.trim()) {
-      res.status(400).json({ error: 'provider and apiKey required' });
-      return;
-    }
-    const status = await saveUserProviderKey(userId, provider, apiKey);
-    res.json({ ok: true, ...status });
-  } catch (err) {
-    res.status(400).json({ error: (err as Error).message });
-  }
-});
-
-router.delete('/provider-keys/:provider', async (req: AuthRequest, res) => {
-  try {
-    const userId = req.userId!;
-    await deleteUserProviderKey(userId, String(req.params.provider));
-    res.json({ ok: true });
-  } catch (err) {
-    res.status(400).json({ error: (err as Error).message });
-  }
-});
+router.post('/provider-keys', (_req, res) => retiredJson(res));
+router.delete('/provider-keys/:provider', (_req, res) => retiredJson(res));
+router.use('/live-ai', (_req, res) => retiredJson(res));
+router.use('/search', (_req, res) => retiredJson(res));
 
 export default router;
