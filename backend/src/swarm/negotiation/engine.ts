@@ -110,7 +110,7 @@ import {
   threadHasCompletedWebsite,
 } from '../../lib/buildContinuation.js';
 import { deepseekInteractiveQaFix } from '../../lib/siteInteractiveQa.js';
-import { extractProjectNameFromHtml, polishShippedSite } from '../../lib/siteShipPolish.js';
+import { extractProjectNameFromHtml, polishShippedSite, pickUpdateSiteBase } from '../../lib/siteShipPolish.js';
 import { parseAssembledProject } from '../../lib/parseAssembledSite.js';
 import { routingPrompt } from '../../lib/promptRouting.js';
 import { deepseekCode, groqCode, geminiCode } from '../../services/code/codeClients.js';
@@ -541,9 +541,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         buildType
       ));
 
-  // Updates: thread markers OR selected GitHub repo + update language (patch, don't rebuild new site)
+  // Updates: selected repo + update language always patches — never full rebuild product.
   const isUpdateBuild =
-    isProductBuild &&
+    (isProductBuild || Boolean(ctx.githubTargetRepo?.includes('/'))) &&
     (Boolean(ctx.buildUpdate) ||
       isWebsiteUpdateRequest(userPrompt) ||
       isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo)) &&
@@ -551,7 +551,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       Boolean(ctx.priorSite?.html?.trim()) ||
       hasBuildConversationContext(userPrompt) ||
       threadHasCompletedWebsite(userPrompt) ||
-      isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo));
+      isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo) ||
+      Boolean(ctx.githubTargetRepo?.includes('/') && isWebsiteUpdateRequest(userPrompt)));
 
   const forcedFullRepoFix = isForcedFullRepoFix(userPrompt);
 
@@ -698,6 +699,25 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           [...incrementalPlan.filePaths],
           ctx.githubTargetBranch
         );
+        // Always include static triad when present in the tree (night/day updates need them).
+        if (repoTreePaths.length) {
+          const triad = ['index.html', 'styles.css', 'script.js'].filter((p) =>
+            repoTreePaths.some((t) => t === p || t.endsWith(`/${p}`))
+          );
+          const missing = triad.filter((p) => !targetedUpdateFiles.some((f) => f.path === p || f.path.endsWith(`/${p}`)));
+          if (missing.length) {
+            const extra = await fetchGitHubFilesByPaths(
+              userId,
+              ctx.githubTargetRepo,
+              missing,
+              ctx.githubTargetBranch
+            );
+            if (extra.length) {
+              targetedUpdateFiles = [...targetedUpdateFiles, ...extra];
+              for (const p of missing) incrementalPlan.filePaths.add(p);
+            }
+          }
+        }
         // If path inference missed, load entrypoints from the real tree (not sandbox priorSite)
         if (!targetedUpdateFiles.length && repoTreePaths.length) {
           const fallbackPaths = [
@@ -720,7 +740,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             ctx,
             0,
             xrogaPulseLine(
-              'Could not load target files from GitHub — refusing sandbox priorSite overwrite on a selected repo'
+              'Could not load target files from GitHub — will use live workspace preview if available'
             ),
             'reviewer',
             todos,
@@ -786,9 +806,47 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
     }
   }
 
-  // Sandbox-only updates: use last in-chat preview when NO GitHub repo is selected.
-  // Never substitute priorSite over a selected GitHub project (that caused cosmetic "updates").
-  if (
+  // Prefer live workspace / prior OrbitVault over a wrongly rebuilt Crypto Pulse on GitHub.
+  // Also fill empty GitHub HTML so updates always have a preview base.
+  if (isUpdateBuild && ctx.priorSite?.html?.trim()) {
+    const githubBefore = existingSiteCode?.html?.trim() || '';
+    const chosen = pickUpdateSiteBase(existingSiteCode, ctx.priorSite);
+    if (chosen?.html?.trim()) {
+      const usedPrior = chosen.html === ctx.priorSite.html;
+      existingSiteCode = chosen;
+      if (usedPrior) {
+        const priorHtml = chosen.html;
+        const priorCss = chosen.css || '';
+        const priorJs = chosen.js || '';
+        const priorFiles = [
+          { path: 'index.html', content: priorHtml },
+          ...(priorCss.trim() ? [{ path: 'styles.css', content: priorCss }] : []),
+          ...(priorJs.trim() ? [{ path: 'script.js', content: priorJs }] : []),
+        ];
+        if (!targetedUpdateFiles.length) {
+          targetedUpdateFiles = priorFiles;
+        } else {
+          // Restore OrbitVault triad onto the push set (undo Crypto Pulse overwrite)
+          targetedUpdateFiles = mergePatchedFiles(targetedUpdateFiles, priorFiles);
+        }
+        if (!incrementalPlan) incrementalPlan = planIncrementalUpdate(userPrompt);
+        for (const f of priorFiles) incrementalPlan.filePaths.add(f.path);
+        emit(
+          ctx,
+          0,
+          xrogaPulseLine(
+            githubBefore && githubBefore !== priorHtml
+              ? 'Keeping your current project as update base — not replacing it with a new site'
+              : 'Using live project preview as update base (keeping current brand)'
+          ),
+          'reviewer',
+          todos,
+          'XROGA Pulse',
+          { userPhase: 6 }
+        );
+      }
+    }
+  } else if (
     isUpdateBuild &&
     !targetedUpdateFiles.length &&
     ctx.priorSite?.html?.trim() &&
@@ -1670,6 +1728,10 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             css: baseCss,
             js: baseJs,
           });
+          const keepName =
+            (typeof ctx.priorSite?.projectName === 'string' && ctx.priorSite.projectName.trim()) ||
+            extractProjectNameFromHtml(baseHtml) ||
+            undefined;
           featureOutput = {
             type: 'landing_page',
             html: polishedBase.html,
@@ -1679,17 +1741,20 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
             deployUrl: '',
             summary: 'Incremental update on current project',
             isUpdate: true,
+            ...(keepName ? { projectName: keepName } : {}),
           };
         } else {
+          // Last resort: still mark as update so UI does not invent a new product
           featureOutput = {
             type: 'landing_page',
-            html: '',
-            css: '',
-            js: '',
+            html: ctx.priorSite?.html || '',
+            css: ctx.priorSite?.css || '',
+            js: ctx.priorSite?.js || '',
             heroImageUrl: '',
             deployUrl: '',
             summary: 'Incremental GitHub file update',
             isUpdate: true,
+            ...(ctx.priorSite?.projectName ? { projectName: ctx.priorSite.projectName } : {}),
           };
         }
         emit(

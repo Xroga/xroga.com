@@ -1476,11 +1476,33 @@ export function TerminalChatProvider({
             (Boolean(repoContextEarly?.repo?.includes('/')) &&
               isWebsiteUpdateRequest(displayPrompt)));
 
-        // Sandbox updates need prior HTML — otherwise the AI patches nothing and the stream dies empty
+        // Prefer the LIVE workspace project (OrbitVault), not a later bad "Crypto Pulse" card.
         let priorSite:
           | { html: string; css?: string; js?: string; projectName?: string }
           | undefined;
         if (isBuildUpdate) {
+          try {
+            const { useProjectWorkspaceStore } = await import('@/store/useProjectWorkspaceStore');
+            const ws = useProjectWorkspaceStore.getState();
+            if (ws.html?.trim().length > 40) {
+              priorSite = {
+                html: ws.html.slice(0, 80_000),
+                css: ws.css?.slice(0, 40_000),
+                js: ws.js?.slice(0, 40_000),
+                projectName: ws.projectName || undefined,
+              };
+            }
+          } catch {
+            /* ignore */
+          }
+
+          const candidates: Array<{
+            html: string;
+            css?: string;
+            js?: string;
+            projectName?: string;
+            score: number;
+          }> = [];
           for (let i = threadForMemory.length - 1; i >= 0; i--) {
             const fo = threadForMemory[i]?.featureOutput as
               | {
@@ -1492,14 +1514,39 @@ export function TerminalChatProvider({
                 }
               | undefined;
             if (fo?.type === 'landing_page' && typeof fo.html === 'string' && fo.html.trim().length > 40) {
-              // Cap payload — huge priorSite was freezing send on updates
-              priorSite = {
-                html: fo.html.slice(0, 80_000),
+              const name = (fo.projectName || '').toLowerCase();
+              const html = fo.html;
+              let score = html.length;
+              if (/orbit|vault/i.test(name) || /orbitvault/i.test(html)) score += 50_000;
+              if (/swap|stake|connect wallet/i.test(html)) score += 20_000;
+              if (/crypto\s*pulse/i.test(name) || /crypto\s*pulse/i.test(html)) score -= 40_000;
+              if (priorSite?.projectName && name === priorSite.projectName.toLowerCase()) score += 30_000;
+              candidates.push({
+                html: html.slice(0, 80_000),
                 css: typeof fo.css === 'string' ? fo.css.slice(0, 40_000) : undefined,
                 js: typeof fo.js === 'string' ? fo.js.slice(0, 40_000) : undefined,
                 projectName: typeof fo.projectName === 'string' ? fo.projectName : undefined,
+                score,
+              });
+            }
+          }
+          candidates.sort((a, b) => b.score - a.score);
+          const best = candidates[0];
+          if (best) {
+            const wsPulse =
+              priorSite &&
+              /crypto\s*pulse/i.test(`${priorSite.projectName || ''} ${priorSite.html.slice(0, 2500)}`);
+            const bestOrbit =
+              /orbit\s*vault|orbitvault/i.test(`${best.projectName || ''} ${best.html.slice(0, 2500)}`) ||
+              (/\bswap\b/i.test(best.html) && /\bstake\b/i.test(best.html));
+            // Restore OrbitVault if workspace was overwritten by Crypto Pulse
+            if (!priorSite || (wsPulse && bestOrbit)) {
+              priorSite = {
+                html: best.html,
+                css: best.css,
+                js: best.js,
+                projectName: best.projectName,
               };
-              break;
             }
           }
         }
@@ -1942,9 +1989,29 @@ export function TerminalChatProvider({
                 const nextCss = String((output as { css?: string }).css ?? '');
                 const nextJs = String((output as { js?: string }).js ?? '');
                 // If update returned empty HTML, keep showing the current project preview
-                const html = reusePreview && !nextHtml.trim() && ws.html?.trim() ? ws.html : nextHtml;
-                const css = reusePreview && !nextCss.trim() && ws.css?.trim() ? ws.css : nextCss;
-                const js = reusePreview && !nextJs.trim() && ws.js?.trim() ? ws.js : nextJs;
+                let html = reusePreview && !nextHtml.trim() && ws.html?.trim() ? ws.html : nextHtml;
+                let css = reusePreview && !nextCss.trim() && ws.css?.trim() ? ws.css : nextCss;
+                let js = reusePreview && !nextJs.trim() && ws.js?.trim() ? ws.js : nextJs;
+                // Never replace the current project with a differently branded rebuild on updates
+                if (reusePreview && ws.html?.trim() && nextHtml.trim()) {
+                  const wsBrand = (ws.projectName || '').trim().toLowerCase();
+                  const nextBrand = (projectName || '').trim().toLowerCase();
+                  const wsSnippet = ws.html.slice(0, 2500);
+                  const nextSnippet = nextHtml.slice(0, 2500);
+                  const brandsDiffer =
+                    (wsBrand && nextBrand && wsBrand !== nextBrand) ||
+                    (/orbit\s*vault|orbitvault/i.test(wsSnippet) &&
+                      /crypto\s*pulse/i.test(nextSnippet) &&
+                      !/orbit\s*vault|orbitvault/i.test(nextSnippet));
+                  const wiped =
+                    nextHtml.length < ws.html.length * 0.45 && ws.html.length > 2500;
+                  if (brandsDiffer || wiped) {
+                    html = ws.html;
+                    css = ws.css || css;
+                    js = ws.js || js;
+                    projectName = ws.projectName || projectName;
+                  }
+                }
                 ws.applyBuild({
                   repo: outRepo,
                   branch:

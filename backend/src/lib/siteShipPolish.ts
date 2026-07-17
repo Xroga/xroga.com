@@ -227,9 +227,60 @@ export function extractProjectNameFromHtml(html: string): string | null {
       return brand;
     }
   }
+  // Logo / brand text in header (OrbitVault, etc.)
+  const brandEl = html.match(
+    /<(?:a|span|div)[^>]*(?:class|id)=["'][^"']*(?:logo|brand|site-name)[^"']*["'][^>]*>([\s\S]*?)<\//i
+  )?.[1]
+    ?.replace(/<[^>]+>/g, '')
+    .trim();
+  if (brandEl && brandEl.length >= 2 && brandEl.length <= 40) return brandEl.split(/\s+/).slice(0, 3).join(' ');
+
   const h1 = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)?.[1]?.replace(/<[^>]+>/g, '').trim();
-  if (h1 && h1.length >= 2 && h1.length <= 40 && !/modern landing|build a /i.test(h1)) {
+  if (h1 && h1.length >= 2 && h1.length <= 40 && !/modern landing|build a |cross-chain|command/i.test(h1)) {
     return h1.split(/\s+/).slice(0, 3).join(' ');
   }
   return null;
+}
+
+/**
+ * Pick the real current project HTML for updates.
+ * Live workspace / prior preview wins whenever GitHub looks like a different product
+ * (e.g. OrbitVault overwritten by Crypto Pulse). Never wipe the user's current project.
+ */
+export function pickUpdateSiteBase(
+  github: { html: string; css: string; js: string } | null | undefined,
+  prior: { html: string; css?: string; js?: string; projectName?: string } | null | undefined
+): { html: string; css: string; js: string } | null {
+  const g = github?.html?.trim()
+    ? { html: github.html, css: github.css || '', js: github.js || '' }
+    : null;
+  const p = prior?.html?.trim()
+    ? { html: prior.html, css: prior.css || '', js: prior.js || '' }
+    : null;
+  if (!g && !p) return null;
+  if (!g) return p;
+  if (!p) return g;
+
+  const gName = (extractProjectNameFromHtml(g.html) || '').toLowerCase().trim();
+  const pName = (prior?.projectName || extractProjectNameFromHtml(p.html) || '').toLowerCase().trim();
+
+  // Different brands → always keep the live prior project (do not replace current code)
+  if (pName && gName && pName !== gName) {
+    return p;
+  }
+
+  const pRich = /\b(swap|stake|wallet|connect wallet|dashboard|markets?)\b/i.test(p.html);
+  const gRich = /\b(swap|stake|wallet|connect wallet|dashboard|markets?)\b/i.test(g.html);
+
+  // Thin rebuild (Pulse table) must not replace a richer current dashboard
+  if (pRich && !gRich) return p;
+  if (p.html.length > g.html.length * 1.15 && pRich) return p;
+
+  // Same brand: prefer GitHub (source of truth) when substantial; else prior
+  if (pName && gName && pName === gName) {
+    return g.html.length >= 200 ? g : p;
+  }
+
+  // Unknown names: prefer the larger live preview so we never shrink/wipe the UI
+  return p.html.length >= g.html.length ? p : g;
 }
