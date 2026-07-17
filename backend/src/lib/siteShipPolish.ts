@@ -244,7 +244,8 @@ export function extractProjectNameFromHtml(html: string): string | null {
 
 /**
  * Pick the real current project HTML for updates.
- * Prefer OrbitVault-style prior/workspace over a wrongly rebuilt "Crypto Pulse" on GitHub.
+ * Live workspace / prior preview wins whenever GitHub looks like a different product
+ * (e.g. OrbitVault overwritten by Crypto Pulse). Never wipe the user's current project.
  */
 export function pickUpdateSiteBase(
   github: { html: string; css: string; js: string } | null | undefined,
@@ -260,20 +261,26 @@ export function pickUpdateSiteBase(
   if (!g) return p;
   if (!p) return g;
 
-  const gName = (extractProjectNameFromHtml(g.html) || '').toLowerCase();
-  const pName = (prior?.projectName || extractProjectNameFromHtml(p.html) || '').toLowerCase();
+  const gName = (extractProjectNameFromHtml(g.html) || '').toLowerCase().trim();
+  const pName = (prior?.projectName || extractProjectNameFromHtml(p.html) || '').toLowerCase().trim();
 
-  // GitHub was overwritten by a bad full rebuild (Crypto Pulse) — restore the live prior project.
+  // Different brands → always keep the live prior project (do not replace current code)
   if (pName && gName && pName !== gName) {
-    if (/orbit|vault/.test(pName) || (/pulse/.test(gName) && !/pulse/.test(pName))) {
-      return p;
-    }
+    return p;
   }
-  // Richer dashboard (swap/stake/wallet) wins over thin Pulse table
-  const pRich = /\b(swap|stake|wallet|connect wallet|orbit)\b/i.test(p.html);
-  const gRich = /\b(swap|stake|wallet|connect wallet|orbit)\b/i.test(g.html);
-  if (pRich && !gRich) return p;
-  if (p.html.length > g.html.length * 1.25 && pRich) return p;
 
-  return g;
+  const pRich = /\b(swap|stake|wallet|connect wallet|dashboard|markets?)\b/i.test(p.html);
+  const gRich = /\b(swap|stake|wallet|connect wallet|dashboard|markets?)\b/i.test(g.html);
+
+  // Thin rebuild (Pulse table) must not replace a richer current dashboard
+  if (pRich && !gRich) return p;
+  if (p.html.length > g.html.length * 1.15 && pRich) return p;
+
+  // Same brand: prefer GitHub (source of truth) when substantial; else prior
+  if (pName && gName && pName === gName) {
+    return g.html.length >= 200 ? g : p;
+  }
+
+  // Unknown names: prefer the larger live preview so we never shrink/wipe the UI
+  return p.html.length >= g.html.length ? p : g;
 }

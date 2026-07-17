@@ -541,9 +541,9 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
         buildType
       ));
 
-  // Updates: thread markers OR selected GitHub repo + update language (patch, don't rebuild new site)
+  // Updates: selected repo + update language always patches — never full rebuild product.
   const isUpdateBuild =
-    isProductBuild &&
+    (isProductBuild || Boolean(ctx.githubTargetRepo?.includes('/'))) &&
     (Boolean(ctx.buildUpdate) ||
       isWebsiteUpdateRequest(userPrompt) ||
       isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo)) &&
@@ -551,7 +551,8 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
       Boolean(ctx.priorSite?.html?.trim()) ||
       hasBuildConversationContext(userPrompt) ||
       threadHasCompletedWebsite(userPrompt) ||
-      isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo));
+      isSelectedRepoUpdateRequest(userPrompt, ctx.githubTargetRepo) ||
+      Boolean(ctx.githubTargetRepo?.includes('/') && isWebsiteUpdateRequest(userPrompt)));
 
   const forcedFullRepoFix = isForcedFullRepoFix(userPrompt);
 
@@ -835,7 +836,7 @@ export async function runNegotiationEngine(ctx: NegotiationContext): Promise<Neg
           0,
           xrogaPulseLine(
             githubBefore && githubBefore !== priorHtml
-              ? 'Restoring your current project (OrbitVault) as update base — not Crypto Pulse'
+              ? 'Keeping your current project as update base — not replacing it with a new site'
               : 'Using live project preview as update base (keeping current brand)'
           ),
           'reviewer',

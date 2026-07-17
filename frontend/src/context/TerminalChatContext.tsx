@@ -1992,15 +1992,20 @@ export function TerminalChatProvider({
                 let html = reusePreview && !nextHtml.trim() && ws.html?.trim() ? ws.html : nextHtml;
                 let css = reusePreview && !nextCss.trim() && ws.css?.trim() ? ws.css : nextCss;
                 let js = reusePreview && !nextJs.trim() && ws.js?.trim() ? ws.js : nextJs;
-                // Never replace OrbitVault with a newly invented Crypto Pulse on updates
+                // Never replace the current project with a differently branded rebuild on updates
                 if (reusePreview && ws.html?.trim() && nextHtml.trim()) {
-                  const wsBrand = `${ws.projectName || ''} ${ws.html.slice(0, 2000)}`;
-                  const nextBrand = `${projectName} ${nextHtml.slice(0, 2000)}`;
-                  if (
-                    /orbit\s*vault|orbitvault/i.test(wsBrand) &&
-                    /crypto\s*pulse/i.test(nextBrand) &&
-                    !/orbit\s*vault|orbitvault/i.test(nextBrand)
-                  ) {
+                  const wsBrand = (ws.projectName || '').trim().toLowerCase();
+                  const nextBrand = (projectName || '').trim().toLowerCase();
+                  const wsSnippet = ws.html.slice(0, 2500);
+                  const nextSnippet = nextHtml.slice(0, 2500);
+                  const brandsDiffer =
+                    (wsBrand && nextBrand && wsBrand !== nextBrand) ||
+                    (/orbit\s*vault|orbitvault/i.test(wsSnippet) &&
+                      /crypto\s*pulse/i.test(nextSnippet) &&
+                      !/orbit\s*vault|orbitvault/i.test(nextSnippet));
+                  const wiped =
+                    nextHtml.length < ws.html.length * 0.45 && ws.html.length > 2500;
+                  if (brandsDiffer || wiped) {
                     html = ws.html;
                     css = ws.css || css;
                     js = ws.js || js;
