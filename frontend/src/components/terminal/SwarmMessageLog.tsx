@@ -620,7 +620,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                                 ? msg.content
                                 : !loading && !msg.featureOutput && !msg.buildStopped && !msg.updateTrail
                                   ? codeBuildActive || heavyBuildActive
-                                    ? '⚠️ No preview was delivered for this turn. Send the prompt again — if you already selected a GitHub repo, you should not need the Connect popup.'
+                                    ? '⚠️ No preview was delivered for this turn. Send the update again — we patch your current GitHub project (e.g. OrbitVault), not a new site.'
                                     : 'No answer was delivered for this turn. Send your question again — chat and advice replies should appear here.'
                                   : msg.content
                             }

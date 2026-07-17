@@ -34,9 +34,23 @@ export function siteCodeFromProjectFiles(files: Array<{ path: string; content: s
   css: string;
   js: string;
 } {
-  const indexHtml = files.find((f) => f.path === 'index.html')?.content ?? '';
-  const css = files.find((f) => f.path === 'styles.css')?.content ?? '';
-  const js = files.find((f) => f.path === 'script.js')?.content ?? '';
+  const byPath = (name: string) =>
+    files.find((f) => f.path === name)?.content ??
+    files.find((f) => f.path.endsWith(`/${name}`))?.content ??
+    '';
+  const indexHtml =
+    byPath('index.html') ||
+    files.find((f) => /(?:^|\/)index\.html$/i.test(f.path))?.content ||
+    '';
+  const css =
+    byPath('styles.css') ||
+    files.find((f) => /(?:^|\/)(styles?|globals?)\.css$/i.test(f.path))?.content ||
+    '';
+  const js =
+    byPath('script.js') ||
+    files.find((f) => /(?:^|\/)(script|main|app)\.js$/i.test(f.path) && !/node_modules/.test(f.path))
+      ?.content ||
+    '';
   const normalized = normalizeBuildFiles(indexHtml, css, js);
   return { html: normalized.html, css: normalized.css, js: normalized.js };
 }
