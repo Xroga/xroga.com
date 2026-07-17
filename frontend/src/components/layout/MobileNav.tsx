@@ -2,14 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Terminal, LayoutDashboard, History, Gift, Settings } from 'lucide-react';
+import { Terminal, LayoutDashboard, Settings, Link2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const items = [
   { href: '/workspace', label: 'Workspace', icon: Terminal },
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/dashboard/history', label: 'History', icon: History },
-  { href: '/dashboard/tasks', label: 'Earn', icon: Gift },
+  { href: '/dashboard/integrations', label: 'Integrations', icon: Link2 },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 

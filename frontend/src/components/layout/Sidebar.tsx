@@ -12,16 +12,11 @@ import {
   PanelLeftClose,
   PanelLeft,
   Search,
-  Image as ImageIcon,
   Zap,
-  BarChart3,
-  Workflow,
   MessageCirclePlus,
   Terminal,
-  Gift,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { MiniTokenMeter } from './MiniActionMeter';
 import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
 import { SidebarProjectHistory } from './SidebarProjectHistory';
@@ -30,7 +25,6 @@ import { SidebarTip } from '@/components/ui/SidebarTip';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
 import { DownloadAppButton } from '@/components/ui/DownloadAppButton';
 import { SidebarCommunityButton } from '@/components/layout/SidebarCommunityButton';
-import { useT } from '@/components/providers/LanguageProvider';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/lib/supabase/client';
@@ -52,37 +46,19 @@ const navItems = [
     href: '/workspace',
     label: 'Workspace',
     icon: Terminal,
-    tip: 'Main workspace — terminal, browser split view, and AI swarm.',
+    tip: 'Main workspace — build and chat with Xroga AI.',
   },
   {
     href: '/dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
-    tip: 'Token usage, XRG balance, billing, and recent activity.',
-  },
-  {
-    href: '/dashboard/tasks',
-    label: 'Earn XRG',
-    icon: Gift,
-    tip: 'Complete daily, weekly, and monthly tasks to earn XRG and token boosts.',
-  },
-  {
-    href: '/dashboard/automation',
-    label: 'Automation',
-    icon: Workflow,
-    tip: 'Browser automations — continue or review past runs.',
-  },
-  {
-    href: '/dashboard/analytics',
-    label: 'Analytics',
-    icon: BarChart3,
-    tip: 'Usage stats and build analytics for your account.',
+    tip: 'Recent activity, billing, and plan overview.',
   },
   {
     href: '/dashboard/integrations',
     label: 'Integrations',
     icon: Link2,
-    tip: 'Connect GitHub, Slack, databases, and 710+ tools.',
+    tip: 'Connect GitHub, Slack, databases, and tools.',
   },
   {
     href: '/settings',
@@ -95,7 +71,6 @@ const navItems = [
 interface SidebarProps {
   displayName?: string;
   email?: string;
-  onTopUp?: () => void;
 }
 
 function planLabel(tier?: string | null) {
@@ -104,8 +79,7 @@ function planLabel(tier?: string | null) {
   return plan ? `${plan.name} Plan` : `${tier.charAt(0).toUpperCase()}${tier.slice(1)} Plan`;
 }
 
-export function Sidebar({ displayName, onTopUp }: SidebarProps) {
-  const t = useT();
+export function Sidebar({ displayName }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -123,7 +97,6 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
   const setSidebarWidth = useThemeStore((s) => s.setSidebarWidth);
   const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
   const planTier = useAppStore((s) => s.planTier);
-  const tokenUsage = useAppStore((s) => s.tokenUsage);
   const profile = useAppStore((s) => s.profile);
   const setProfile = useAppStore((s) => s.setProfile);
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
@@ -224,37 +197,10 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
     router.refresh();
   }
 
-  function goToTokenUsage() {
-    closeMobile();
-    router.push('/dashboard');
-  }
-
   const logoHref = pathname.startsWith('/dashboard') ? '/dashboard' : '/workspace';
 
   const bottomSection = (
     <div className="p-2 mt-auto space-y-2 xv-sidebar-bottom">
-      {onTopUp && (
-        <div className={cn(!navExpanded && 'flex justify-center')}>
-          {navExpanded ? (
-            <MiniTokenMeter onUsageClick={goToTokenUsage} />
-          ) : (
-            <HoverTip label="Token usage" description="View your monthly token balance.">
-              <button
-                type="button"
-                onClick={goToTokenUsage}
-                className="p-2 rounded-lg glass-panel flex items-center gap-0.5 text-[10px] font-terminal text-[var(--accent)]"
-              >
-                <Zap className="w-3 h-3" />
-                {tokenUsage
-                  ? tokenUsage.totalTokensRemaining >= 1_000_000
-                    ? `${(tokenUsage.totalTokensRemaining / 1_000_000).toFixed(1)}M`
-                    : `${Math.round(tokenUsage.totalTokensRemaining / 1000)}K`
-                  : '7M'}
-              </button>
-            </HoverTip>
-          )}
-        </div>
-      )}
       <SidebarCommunityButton expanded={navExpanded} />
       {navExpanded && (
         <div className="flex items-stretch gap-1.5">
@@ -350,25 +296,6 @@ export function Sidebar({ displayName, onTopUp }: SidebarProps) {
             >
               <Search className="w-3.5 h-3.5" />
             </button>
-          </HoverTip>
-          <HoverTip label={t('media.label')} description="Images, videos, and audio library.">
-            <Link
-              href="/dashboard/media"
-              onClick={handleNavClick}
-              className={cn(
-                'flex items-center gap-1 px-1.5 py-1 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors',
-                pathname.startsWith('/dashboard/media') && 'bg-[var(--accent)]/15 text-[var(--accent)]',
-                !navExpanded && 'p-1.5'
-              )}
-              aria-label={t('media.label')}
-            >
-              <ImageIcon className="w-3.5 h-3.5 shrink-0" />
-              {navExpanded && (
-                <span className="xv-ai-media-label text-[10px] font-bold tracking-wide whitespace-nowrap">
-                  {t('media.label')}
-                </span>
-              )}
-            </Link>
           </HoverTip>
           {isMobile && mobileOpen && <ModalCloseButton onClick={closeMobile} />}
         </div>

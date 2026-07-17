@@ -6,26 +6,18 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
-import { OutOfActionsModal } from '@/components/billing/OutOfActionsModal';
-import { BrowserPanelToggle } from './BrowserPanel';
 import { TERMINAL_SKIN_LABELS } from '@/lib/theme';
 import { ProcessingLogo } from '@/components/layout/ProcessingLogo';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
-import { BlackHoleThinkingPanel } from './BlackHoleThinkingPanel';
 import { SwarmPhasePanel } from './SwarmPhasePanel';
-import { ReasoningPanel, ModernResponseText } from './ReasoningAndFollowUps';
-import { WebSourcesPanel } from './WebSourcesPanel';
-import { HackathonBriefCard } from './HackathonBriefCard';
-import { TerminalFollowUpStrip } from './TerminalFollowUpStrip';
+import { ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { UpdateFileTrail } from './UpdateFileTrail';
-import { isImageGenerationPrompt } from '@/lib/parseImageContent';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
-import { ImageGeneratingAnimation } from './ImageStudioCard';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -54,7 +46,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, pipelineCompact, pipelineMessage, thinkingSteps, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, swarmActivityLog, imageProgressStep, imageAttempts, reasoning, dag, outOfActionsOpen, setOutOfActionsOpen, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, heavyBuildActive, heavyAssistantId, deepseekPeakNudge } =
+  const { messages, loading, animatingId, pipelineMessage, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, swarmActivityLog, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const applyBuild = useProjectWorkspaceStore((s) => s.applyBuild);
@@ -154,7 +146,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     if (finished && stickToBottomRef.current && !userScrolledUpRef.current) {
       scrollToBottom('smooth');
     }
-  }, [messages, loading, imageAttempts, imageProgressStep, pipelineMessage, scrollToBottom]);
+  }, [messages, loading, pipelineMessage, scrollToBottom]);
 
   useEffect(() => {
     const session = loadWorkspaceSession();
@@ -242,27 +234,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     return null;
   }, [visibleMessages]);
 
-  const lastImageFollowUps = useMemo(() => {
-    for (let i = visibleMessages.length - 1; i >= 0; i--) {
-      const m = visibleMessages[i];
-      if (m.role !== 'assistant' || !m.featureOutput) continue;
-      const out = m.featureOutput as { type?: string; followUps?: string[] };
-      if (out.type === 'image' && Array.isArray(out.followUps) && out.followUps.length > 0) {
-        return out.followUps;
-      }
-    }
-    return undefined;
-  }, [visibleMessages]);
-
-  const showImageFollowUps = Boolean(lastImageFollowUps?.length) && !loading;
-
-  const lastUserMessageId = useMemo(() => {
-    for (let i = visibleMessages.length - 1; i >= 0; i--) {
-      if (visibleMessages[i].role === 'user') return visibleMessages[i].id;
-    }
-    return null;
-  }, [visibleMessages]);
-
   const lastUserText = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i].role === 'user') return messages[i].content;
@@ -277,15 +248,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     isCodeBuildProcessing(lastUserText, messages);
 
   const buildPanelMessageId = heavyAssistantId ?? animatingId;
-
-  const showGeneralChatThinking =
-    loading &&
-    !isImageGenerationPrompt(lastUserText) &&
-    !heavyBuildActive &&
-    !codeBuildActive;
-
-  const showChatThinking = showGeneralChatThinking && pipelineCompact;
-  const showProcessingPanel = showGeneralChatThinking && !pipelineCompact;
 
   function handleEditAI(content: string) {
     setPrompt(content);
@@ -329,7 +291,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
               <Palette className="w-3.5 h-3.5" />
               <span className="hidden md:inline opacity-70">{TERMINAL_SKIN_LABELS[terminalSkin]}</span>
             </button>
-            <BrowserPanelToggle />
             <button
               type="button"
               onClick={() => setTerminalFullscreen(!terminalFullscreen)}
@@ -359,7 +320,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           </div>
           {!isIncognito && (
           <div className="flex sm:hidden items-center gap-0.5 shrink-0">
-            <BrowserPanelToggle />
             <button
               type="button"
               onClick={cycleTerminalSkin}
@@ -399,15 +359,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                 ? 'Start a temporary chat — questions & conversation only…'
                 : 'Ask Xroga to build anything…'}
             </p>
-          )}
-
-          {loading && !lastUserMessageId && showChatThinking && (
-            <BlackHoleThinkingPanel
-              steps={thinkingSteps}
-              startedAt={thinkingStartedAt ?? undefined}
-              active
-              defaultExpanded
-            />
           )}
 
           {visibleMessages.map((msg) => {
@@ -487,36 +438,9 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             statusLabel={swarmStatusLabel}
                             analysis={swarmAnalysis}
                             todos={swarmTodos}
-                            activityLog={
-                              deepseekPeakNudge && !swarmActivityLog.includes(deepseekPeakNudge)
-                                ? [deepseekPeakNudge, ...swarmActivityLog]
-                                : swarmActivityLog
-                            }
+                            activityLog={swarmActivityLog}
                             startedAt={thinkingStartedAt}
                             buildPrompt={lastUserText}
-                            peakNudge={deepseekPeakNudge}
-                          />
-                        )}
-                        {msg.id !== buildPanelMessageId &&
-                          (msg.thinkingSteps?.length ||
-                            (loading &&
-                              msg.id === animatingId &&
-                              (showChatThinking || showProcessingPanel) &&
-                              !heavyBuildActive)) && (
-                          <BlackHoleThinkingPanel
-                            steps={
-                              loading && msg.id === animatingId
-                                ? thinkingSteps
-                                : (msg.thinkingSteps ?? [])
-                            }
-                            startedAt={
-                              loading && msg.id === animatingId
-                                ? (thinkingStartedAt ?? undefined)
-                                : undefined
-                            }
-                            thoughtMs={msg.thoughtMs}
-                            active={loading && msg.id === animatingId && (showChatThinking || showProcessingPanel)}
-                            defaultExpanded={loading && msg.id === animatingId}
                           />
                         )}
                         {msg.buildStopped ? (
@@ -590,7 +514,8 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             }
                           />
                         ) : null}
-                        {msg.featureOutput ? (
+                        {msg.featureOutput &&
+                        (msg.featureOutput as { type?: string }).type !== 'image' ? (
                           <ChatErrorBoundary>
                             <FeatureOutputView
                               output={msg.featureOutput}
@@ -599,16 +524,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                               onPreviewUpdate={updateFeatureOutput}
                             />
                           </ChatErrorBoundary>
-                        ) : loading &&
-                        msg.id === animatingId &&
-                        isImageGenerationPrompt(lastUserText) &&
-                        !heavyBuildActive ? (
-                          <ImageGeneratingAnimation
-                            message={pipelineMessage ?? undefined}
-                            step={imageProgressStep ?? undefined}
-                            liveAttempts={imageAttempts}
-                            promptHint={pipelineMessage?.startsWith('Prompt:') ? pipelineMessage.replace(/^Prompt:\s*/, '') : lastUserText}
-                          />
                         ) : heavyBuildActive &&
                           msg.id === buildPanelMessageId &&
                           !msg.content?.trim() &&
@@ -640,14 +555,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             streaming={msg.id === animatingId && loading}
                           />
                         )}
-                        {msg.hackathonBrief ? <HackathonBriefCard brief={msg.hackathonBrief} /> : null}
-                        {msg.webSources?.length ? (
-                          <WebSourcesPanel sources={msg.webSources} />
-                        ) : null}
                       </div>
-                      {isLastAssistant && reasoning && (
-                        <ReasoningPanel reasoning={reasoning} dag={dag ?? undefined} />
-                      )}
                       {msg.content && (
                         <MessageBubbleActions
                           role="assistant"
@@ -681,11 +589,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           <div ref={bottomRef} />
         </div>
 
-        {showImageFollowUps && (
-          <div className="border-t border-[var(--card-border)]/40 px-3 sm:px-4 py-2.5 bg-[var(--background)]/40">
-            <TerminalFollowUpStrip items={lastImageFollowUps} />
-          </div>
-        )}
       </div>
       {!isIncognito && (
         <ChatTurnRail
@@ -694,7 +597,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           onJump={jumpToTurn}
         />
       )}
-      <OutOfActionsModal open={outOfActionsOpen} onClose={() => setOutOfActionsOpen(false)} />
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </>
   );

@@ -20,6 +20,15 @@ export function tokenUsageFromSummary(summary: unknown): {
   const billing = s.billing;
   const tokens = s.tokens;
 
+  // Legacy token meters retired — summary may return tokens: null
+  if (tokens == null) {
+    return {
+      usage: null,
+      planTier: billing?.planTier ?? null,
+      planName: billing?.planName ?? null,
+    };
+  }
+
   if (tokens && typeof tokens.totalUsed === 'number') {
     return {
       usage: {

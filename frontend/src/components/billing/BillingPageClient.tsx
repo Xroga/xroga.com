@@ -1,23 +1,15 @@
 'use client';
 
-import Link from 'next/link';
 import { GALACTIC_PLANS, COMING_SOON_PLANS } from '@/lib/plans';
 import { FEATURE_COUNT } from '@/lib/features';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
 import { GalacticPlanPricingCard, PricingPlanGrid } from '@/components/billing/XrogaPricingCard';
 import { useAppStore } from '@/store/useAppStore';
-import { Shield, Layers, Sparkles, Lock, ArrowRight, Brain } from 'lucide-react';
+import { Shield, Layers, Sparkles, Lock } from 'lucide-react';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SubscriptionManagePanel } from '@/components/billing/SubscriptionManagePanel';
 
-function formatTokens(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
-  return n.toLocaleString();
-}
-
 export function BillingPageClient() {
-  const tokenUsage = useAppStore((s) => s.tokenUsage);
   const planName = useAppStore((s) => s.planName);
   const planTier = useAppStore((s) => s.planTier);
 
@@ -32,44 +24,16 @@ export function BillingPageClient() {
         </div>
 
         <div className="glass-panel rounded-2xl p-6 border-[var(--primary)]/30">
-          <h2 className="font-semibold text-lg flex items-center gap-2">
-            <Brain className="w-5 h-5 text-[#4a7aff]" />
-            Current Plan & Tokens
-          </h2>
-          <p className="text-sm text-[var(--muted)] mt-2">
-            Xroga AI Brain uses a monthly token quota. Features never gate — you only pay for compute.
-          </p>
+          <h2 className="font-semibold text-lg">Current Plan</h2>
           <p className="mt-3 text-sm">
             <span className="font-semibold">{planName ?? 'Basic'}</span>
             {planTier && planTier !== 'unpaid' && (
               <span className="text-[var(--muted)] capitalize"> ({planTier})</span>
             )}
           </p>
-          {tokenUsage && (
-            <>
-              <div className="mt-3 h-2 rounded-full bg-white/10 overflow-hidden max-w-md">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#4a7aff] to-violet-500 transition-all"
-                  style={{ width: `${Math.max(3, 100 - tokenUsage.percentUsed)}%` }}
-                />
-              </div>
-              <p className="mt-2 text-sm">
-                <span className="text-[#4a7aff] font-semibold tabular-nums">
-                  {formatTokens(tokenUsage.totalTokensRemaining)}
-                </span>
-                <span className="text-[var(--muted)]">
-                  {' '}
-                  / {formatTokens(tokenUsage.totalLimit ?? 7_000_000)} tokens remaining ({tokenUsage.percentUsed}% used)
-                </span>
-              </p>
-            </>
-          )}
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 mt-4 xv-footer-pill !text-sm !text-[var(--foreground)]"
-          >
-            View Dashboard <ArrowRight className="w-4 h-4" />
-          </Link>
+          <p className="text-xs text-[var(--muted)] mt-2">
+            Legacy token meters and provider usage panels have been removed from billing.
+          </p>
         </div>
 
         <SubscriptionManagePanel />
@@ -77,7 +41,7 @@ export function BillingPageClient() {
         <div>
           <h2 className="text-xl font-bold mb-2">Galactic Plans</h2>
           <p className="text-sm text-[var(--muted)] mb-6">
-            Every tier includes 7M+ monthly tokens, emergency tokens, and full feature access.
+            Choose concurrency and plan tier. Token/XRG marketing quotas are retired.
           </p>
           <PricingPlanGrid>
             {GALACTIC_PLANS.map((plan) => (
@@ -119,22 +83,24 @@ export function BillingPageClient() {
           <div className="glass-panel rounded-xl p-4 flex gap-3">
             <Shield className="w-5 h-5 text-[#4a7aff] shrink-0" />
             <div>
-              <p className="font-medium">Secure billing</p>
-              <p className="text-xs text-[var(--muted)] mt-1">Powered by Paddle — cancel anytime</p>
+              <p className="font-semibold">Secure checkout</p>
+              <p className="text-[var(--muted)] text-xs mt-1">Billing runs through Paddle.</p>
             </div>
           </div>
           <div className="glass-panel rounded-xl p-4 flex gap-3">
             <Layers className="w-5 h-5 text-[#4a7aff] shrink-0" />
             <div>
-              <p className="font-medium">All features unlocked</p>
-              <p className="text-xs text-[var(--muted)] mt-1">No feature gating on any tier</p>
+              <p className="font-semibold">All features</p>
+              <p className="text-[var(--muted)] text-xs mt-1">
+                Every paid tier unlocks the full product surface.
+              </p>
             </div>
           </div>
           <div className="glass-panel rounded-xl p-4 flex gap-3">
             <Lock className="w-5 h-5 text-[#4a7aff] shrink-0" />
             <div>
-              <p className="font-medium">Token-based usage</p>
-              <p className="text-xs text-[var(--muted)] mt-1">Pay for AI compute, not per-feature locks</p>
+              <p className="font-semibold">Cancel anytime</p>
+              <p className="text-[var(--muted)] text-xs mt-1">Manage or cancel from subscription settings.</p>
             </div>
           </div>
         </div>

@@ -25,15 +25,22 @@ interface KeyStatus {
 }
 
 const PROVIDER_FOR_ID: Record<string, string> = {
-  'grok-xai': 'grok',
-  'deepseek-api': 'deepseek',
-  'groq-free': 'groq',
-  'anthropic-api': 'anthropic',
   'openrouter-free-models': 'openrouter',
   'huggingface-inference-free': 'huggingface',
   'gemini-free': 'gemini',
   freetheai: 'openrouter',
 };
+
+const REMOVED_LEGACY_PROVIDERS = new Set([
+  'grok-xai',
+  'deepseek-api',
+  'groq-free',
+  'anthropic-api',
+  'claude',
+  'grok',
+  'deepseek',
+  'groq',
+]);
 
 /** AI integrations catalog + BYOK key connect (server vault) */
 export function AiIntegrationsPanel({ compact }: { compact?: boolean }) {
@@ -87,17 +94,16 @@ export function AiIntegrationsPanel({ compact }: { compact?: boolean }) {
 
   const show = catalog.filter(
     (c) =>
-      c.xrogaProvided ||
-      c.freeTier ||
-      ['grok-xai', 'deepseek-api', 'groq-free', 'gemini-free', 'pollinations-text'].includes(c.id)
+      !REMOVED_LEGACY_PROVIDERS.has(c.id) &&
+      !/deepseek|claude|anthropic|groq|grok/i.test(`${c.id} ${c.name}`) &&
+      (c.xrogaProvided || c.freeTier || ['gemini-free', 'pollinations-text'].includes(c.id))
   );
 
   return (
     <div className={compact ? 'space-y-2' : 'space-y-3'}>
       <p className={`text-[var(--muted)] ${compact ? 'text-[9px]' : 'text-[11px]'} leading-relaxed`}>
-        <strong className="text-[var(--foreground)]">Free web search:</strong> SearXNG during builds.
-        <strong className="text-[var(--foreground)]"> Free AI in your site:</strong> Pollinations (no key) so previews work live.
-        Paste your own key below — <strong className="text-[var(--foreground)]">AES-encrypted</strong> in your account, never committed to GitHub.
+        Legacy DeepSeek / Claude / Grok / Groq key vaults and usage meters are retired.
+        Keep GitHub and deploy integrations connected for builds.
       </p>
       <ul className={`space-y-2 ${compact ? 'text-[10px]' : 'text-[12px]'}`}>
         {show.map((item) => {
