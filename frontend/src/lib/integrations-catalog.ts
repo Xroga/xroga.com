@@ -105,8 +105,22 @@ export const INTEGRATION_CATALOG: Integration[] = [
     "id": "supabase",
     "name": "Supabase",
     "category": "Developer & Code",
-    "status": "connected",
-    "description": "Database, Auth, RLS"
+    "status": "not_connected",
+    "description": "Database, Auth, Realtime, Storage"
+  },
+  {
+    "id": "brevo",
+    "name": "Brevo",
+    "category": "Social Media & Communication",
+    "status": "not_connected",
+    "description": "Transactional email"
+  },
+  {
+    "id": "cloudflare",
+    "name": "Cloudflare",
+    "category": "Developer & Code",
+    "status": "not_connected",
+    "description": "CDN, DNS, SSL, R2 storage"
   },
   {
     "id": "upstash_redis",

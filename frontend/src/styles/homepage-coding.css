@@ -106,13 +106,23 @@
 }
 
 .xv-home-coding .xv-hc-brand {
-  font-family: var(--hc-font-serif);
-  font-weight: 700;
-  font-size: clamp(2.6rem, 8vw, 4.75rem);
-  line-height: 0.95;
-  letter-spacing: -0.03em;
+  font-family: var(--hc-font-pixel);
+  font-weight: 400;
+  font-size: clamp(1.85rem, 6.5vw, 3.6rem);
+  line-height: 1.05;
+  letter-spacing: 0.08em;
+  color: #ffffff !important;
+  text-shadow: 0 0 28px rgba(74, 163, 255, 0.35);
   margin-bottom: 0.85rem;
   animation: xv-hc-fade-up 0.75s ease 0.05s both;
+}
+
+/* Defeat global h1–h6 theme foreground (white theme = black) on homepage */
+.xv-home-coding h1,
+.xv-home-coding h2,
+.xv-home-coding h3,
+.xv-home-coding h4 {
+  color: #ffffff !important;
 }
 
 .xv-home-coding .xv-hc-headline {
@@ -259,6 +269,7 @@
   letter-spacing: -0.03em;
   max-width: 18ch;
   margin: 0 auto 0.85rem;
+  color: #ffffff !important;
 }
 
 .xv-home-coding .xv-hc-section-title em {
@@ -266,6 +277,7 @@
   font-style: italic;
   font-weight: 600;
   font-synthesis: none;
+  color: #ffffff !important;
 }
 
 .xv-home-coding .xv-hc-section-copy {
@@ -343,12 +355,14 @@
   line-height: 1.15;
   letter-spacing: -0.03em;
   margin-bottom: 0.75rem;
+  color: #ffffff !important;
 }
 
 .xv-home-coding .xv-hc-features-headline em {
   font-family: var(--hc-font-serif);
   font-style: italic;
   font-weight: 600;
+  color: #ffffff !important;
 }
 
 .xv-home-coding .xv-hc-features-lead {
@@ -377,6 +391,7 @@
   font-family: var(--hc-font-sans);
   font-size: 0.95rem;
   margin-bottom: 0.25rem;
+  color: #ffffff !important;
 }
 
 .xv-home-coding .xv-hc-feature-list span {
@@ -475,6 +490,7 @@
   font-weight: 700;
   letter-spacing: -0.02em;
   margin-bottom: 0.3rem;
+  color: #ffffff !important;
 }
 
 .xv-home-coding .xv-hc-demo-card-head p {

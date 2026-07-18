@@ -17,6 +17,7 @@ export function ThemeToggle() {
   const setSlideshowEnabled = useThemeStore((s) => s.setSlideshowEnabled);
   const [open, setOpen] = useState(false);
   const current = normalizeTheme(theme);
+  const currentLabel = THEME_OPTIONS.find((o) => o.id === current)?.label ?? 'White';
 
   useEffect(() => {
     if (!open) return;
@@ -37,11 +38,14 @@ export function ThemeToggle() {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="p-2 rounded-lg glass-panel hover:border-[var(--accent)]/40 transition-colors"
+        className="inline-flex items-center gap-1.5 px-2 py-1.5 rounded-lg glass-panel hover:border-[var(--accent)]/40 transition-colors"
         aria-label="Change theme"
-        title={`Theme: ${current}`}
+        title={`Theme: ${currentLabel}`}
       >
         <Palette className="w-4 h-4 text-[var(--accent)]" />
+        <span className="hidden md:inline text-[10px] font-coding text-[var(--foreground)] opacity-80">
+          {currentLabel}
+        </span>
       </button>
       {open && (
         <div className="absolute right-0 top-full mt-2 w-56 glass-panel-strong rounded-xl p-2 z-[250] shadow-xl border border-[var(--card-border)]">
@@ -56,7 +60,7 @@ export function ThemeToggle() {
               className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                 current === opt.id
                   ? 'bg-[var(--accent-dim)] text-[var(--foreground)]'
-                  : 'hover:bg-black/5 dark:hover:bg-white/5 text-[var(--muted)]'
+                  : 'hover:bg-[var(--foreground)]/5 text-[var(--muted)]'
               }`}
             >
               <span className="font-medium block font-claude">{opt.label}</span>
