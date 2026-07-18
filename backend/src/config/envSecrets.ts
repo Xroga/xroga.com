@@ -1,9 +1,16 @@
 /**
  * Fly.io secret names for the active AI stack:
- * KIMI_API_KEY | GLM_API_KEY | DEEPSEEK_API_KEY | GROK_API_KEY | TAVILY_API_KEY
+ * OPENROUTER_API_KEY  → DeepSeek V4 Flash/Pro ONLY
+ * KIMI_API_KEY        → Moonshot official (not OpenRouter)
+ * GLM_API_KEY         → Zhipu official (not OpenRouter)
+ * GROK_API_KEY        → xAI official (not OpenRouter)
+ * TAVILY_API_KEY      → Tavily official
+ *
+ * DEEPSEEK_API_KEY removed — DeepSeek is OpenRouter-only.
  */
 
 const ALIASES: Record<string, string[]> = {
+  OPENROUTER_API_KEY: ['OPENROUTER_API_KEY'],
   KIMI_API_KEY: ['KIMI_API_KEY', 'MOONSHOT_API_KEY'],
   GLM_API_KEY: ['GLM_API_KEY', 'ZHIPU_API_KEY', 'BIGMODEL_API_KEY'],
   FAL_KEY: ['FAL_KEY', 'FAL_API_KEY'],
@@ -17,6 +24,7 @@ const ALIASES: Record<string, string[]> = {
   REPLICATE_API_TOKEN: ['REPLICATE_API_TOKEN'],
   STABILITY_API_KEY: ['STABILITY_API_KEY', 'STABILITY_KEY'],
   ELEVENLABS_API_KEY: ['ELEVENLABS_API_KEY'],
+  // Legacy — ignored for AI stack; DeepSeek is OpenRouter-only
   DEEPSEEK_API_KEY: ['DEEPSEEK_API_KEY'],
   DEEPSEEK_CODE_API_KEY: ['DEEPSEEK_CODE_API_KEY', 'DEEPSEEK_API_KEY'],
   GEMINI_API_KEY: ['GEMINI_API_KEY'],
@@ -73,9 +81,9 @@ export function getDeployKeyStatus(): Record<string, boolean> {
 /** Active multi-model AI stack — Fly.io secret names */
 export function getAiStackKeyStatus(): Record<string, boolean> {
   return {
+    OPENROUTER_API_KEY: hasSecret('OPENROUTER_API_KEY'), // DeepSeek only
     KIMI_API_KEY: hasSecret('KIMI_API_KEY'),
     GLM_API_KEY: hasSecret('GLM_API_KEY'),
-    DEEPSEEK_API_KEY: hasSecret('DEEPSEEK_API_KEY'),
     GROK_API_KEY: hasSecret('GROK_API_KEY') || hasSecret('XAI_API_KEY'),
     TAVILY_API_KEY: hasSecret('TAVILY_API_KEY'),
   };
