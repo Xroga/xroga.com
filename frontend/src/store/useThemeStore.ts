@@ -11,6 +11,8 @@ import {
   SLIDESHOW_FROZEN_INDEX_KEY,
   TERMINAL_SKIN_CYCLE,
   DESKTOP_BG_SLIDESHOW,
+  normalizeTheme,
+  skinForTheme,
 } from '@/lib/theme';
 import { recoverCorruptStorage } from '@/lib/storageRecovery';
 
@@ -50,19 +52,26 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: 'image',
+      theme: 'white',
       sidebarOpen: true,
       sidebarPinned: true,
       sidebarWidth: 256,
       customDesktopBg: null,
       customMobileBg: null,
-      slideshowEnabled: true,
+      slideshowEnabled: false,
       slideshowFrozenIndex: 0,
       terminalFullscreen: false,
-      terminalSkin: 'dark',
+      terminalSkin: 'light',
       browserPanelOpen: false,
       browserFullscreen: false,
-      setTheme: (theme) => set({ theme }),
+      setTheme: (theme) => {
+        const next = normalizeTheme(theme);
+        set({
+          theme: next,
+          terminalSkin: skinForTheme(next),
+          slideshowEnabled: false,
+        });
+      },
       setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
       setSidebarWidth: (sidebarWidth) =>
         set({ sidebarWidth: Math.min(420, Math.max(200, sidebarWidth)) }),
@@ -150,12 +159,17 @@ export const useThemeStore = create<ThemeState>()(
       onRehydrateStorage: () => (state) => {
         if (state && typeof window !== 'undefined') {
           try {
+            const next = normalizeTheme(state.theme);
+            if (state.theme !== next) {
+              state.theme = next;
+            }
+            state.slideshowEnabled = false;
+            state.terminalSkin = skinForTheme(next);
+
             const d = localStorage.getItem(CUSTOM_DESKTOP_BG_KEY);
             const m = localStorage.getItem(CUSTOM_MOBILE_BG_KEY);
             if (d) state.customDesktopBg = d;
             if (m) state.customMobileBg = m;
-            const se = localStorage.getItem(SLIDESHOW_ENABLED_KEY);
-            if (se === '0') state.slideshowEnabled = false;
             const fi = localStorage.getItem(SLIDESHOW_FROZEN_INDEX_KEY);
             if (fi != null && fi !== '') {
               const n = parseInt(fi, 10);
@@ -165,7 +179,7 @@ export const useThemeStore = create<ThemeState>()(
               }
             }
             if (!state.terminalSkin) {
-              state.terminalSkin = DEFAULT_TERMINAL_SKIN[state.theme];
+              state.terminalSkin = DEFAULT_TERMINAL_SKIN[next];
             }
           } catch {
             localStorage.removeItem('xroga-theme');

@@ -7,21 +7,24 @@
 @import 'katex/dist/katex.min.css';
 
 :root {
-  --background: #0a0e17;
-  --foreground: #ffffff;
-  --card: rgba(20, 30, 60, 0.6);
-  --card-border: rgba(74, 122, 255, 0.25);
-  --primary: #4a7aff;
-  --primary-glow: #6b9fff;
-  --accent: #4a7aff;
-  --accent-dim: rgba(74, 122, 255, 0.12);
-  --muted: #b8c6e0;
-  --success: #4a7aff;
+  /* Default = White theme */
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --card: rgba(255, 255, 255, 0.88);
+  --card-border: rgba(15, 23, 42, 0.12);
+  --primary: #006aff;
+  --primary-glow: #3b82f6;
+  --accent: #006aff;
+  --accent-dim: rgba(0, 106, 255, 0.1);
+  --muted: #4a5568;
+  --success: #006aff;
   --warning: #fbbf24;
   --danger: #ef4444;
   --glass-blur: 20px;
   --font-sans: var(--font-goga), var(--font-inter), system-ui, sans-serif;
-  --font-display: var(--font-azurio), Georgia, serif;
+  --font-display: var(--font-source-serif), var(--font-azurio), Georgia, serif;
+  --font-claude: var(--font-source-serif), var(--font-azurio), Georgia, serif;
+  --font-coding: var(--font-pixel), var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace;
   --font-mono: var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace;
   --sidebar-width: 16rem;
 }
@@ -40,7 +43,8 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-azurio);
+  font-family: var(--font-claude);
+  color: var(--foreground);
 }
 
 button,
@@ -48,19 +52,19 @@ input,
 textarea,
 select {
   font-family: var(--font-goga);
-}
-
-body.theme-image {
-  --foreground: #ffffff;
-  --muted: #b8c6e0;
+  color: inherit;
 }
 
 body.theme-white {
   --background: #ffffff;
-  --foreground: #000000;
-  --card: rgba(255, 255, 255, 0.75);
-  --card-border: rgba(74, 122, 255, 0.25);
+  --foreground: #0a0a0a;
+  --card: rgba(255, 255, 255, 0.92);
+  --card-border: rgba(15, 23, 42, 0.12);
   --muted: #4a5568;
+  --primary: #006aff;
+  --accent: #006aff;
+  --primary-glow: #3b82f6;
+  --accent-dim: rgba(0, 106, 255, 0.1);
 }
 
 body.theme-white .xv-sidebar-menu a,
@@ -82,48 +86,122 @@ body.theme-white .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active {
   border-color: rgba(74, 122, 255, 0.35);
 }
 
-body.theme-image .xv-chatbar-disclaimer {
-  color: rgba(0, 0, 0, 0.75);
-  text-shadow: none;
-}
-
 body.theme-white .xv-chatbar-disclaimer {
   color: rgba(0, 0, 0, 0.65);
 }
 
+/* Claude + coding fonts across workspace chrome */
+.xv-welcome-greeting-text,
+.xv-welcome-name,
+.xv-welcome-taglines,
+.xv-dashboard-welcome h1,
+.xv-dashboard-welcome h2 {
+  font-family: var(--font-claude);
+}
+
+.xv-go-btn__text,
+.xv-chatbar-chip,
+.xv-sidebar-menu .xv-menu-label,
+.xv-hover-tip,
+.font-coding {
+  font-family: var(--font-coding);
+}
+
+body.theme-white .glass-panel,
 body.theme-white .glass-panel-strong {
-  background: rgba(255, 255, 255, 0.85);
-  color: #000;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--foreground);
+  border-color: var(--card-border);
+}
+
+body.theme-white .xv-site-header-transparent {
+  background: rgba(255, 255, 255, 0.82);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  color: var(--foreground);
+}
+
+body.theme-white .xv-sidebar-root,
+body.theme-white aside.xv-sidebar-root,
+body.theme-white .xv-sidebar-root > div {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(15, 23, 42, 0.1);
+  color: var(--foreground);
 }
 
 body.theme-black {
   --background: #000000;
-  --foreground: #ffffff;
-  --card: rgba(0, 0, 0, 0.85);
-  --card-border: rgba(163, 163, 163, 0.28);
+  --foreground: #f5f5f5;
+  --card: rgba(12, 12, 12, 0.92);
+  --card-border: rgba(255, 255, 255, 0.14);
   --muted: #a3a3a3;
   --primary: #ffffff;
   --accent: #ffffff;
+  --primary-glow: #e5e5e5;
+  --accent-dim: rgba(255, 255, 255, 0.1);
 }
 
+body.theme-black .glass-panel,
 body.theme-black .glass-panel-strong {
   background: rgba(0, 0, 0, 0.92);
   border-color: rgba(163, 163, 163, 0.22);
+  color: var(--foreground);
+}
+
+body.theme-black .xv-site-header-transparent {
+  background: rgba(0, 0, 0, 0.82);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--foreground);
+}
+
+body.theme-black .xv-sidebar-root,
+body.theme-black aside.xv-sidebar-root,
+body.theme-black .xv-sidebar-root > div {
+  background: rgba(0, 0, 0, 0.96);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--foreground);
+}
+
+body.theme-black .xv-sidebar-menu a,
+body.theme-black .xv-sidebar-menu button.xv-menu-item {
+  color: rgba(245, 245, 245, 0.85);
 }
 
 body.theme-gray {
   --background: #1a1a1a;
-  --foreground: #ffffff;
-  --card: rgba(40, 40, 40, 0.85);
-  --card-border: rgba(0, 0, 0, 0.35);
+  --foreground: #f3f4f6;
+  --card: rgba(36, 36, 36, 0.92);
+  --card-border: rgba(255, 255, 255, 0.1);
   --muted: #a3a3a3;
   --primary: #e5e5e5;
   --accent: #f5f5f5;
+  --primary-glow: #d4d4d4;
+  --accent-dim: rgba(255, 255, 255, 0.08);
 }
 
+body.theme-gray .glass-panel,
 body.theme-gray .glass-panel-strong {
-  background: rgba(30, 30, 30, 0.92);
+  background: rgba(30, 30, 30, 0.94);
   border-color: rgba(0, 0, 0, 0.3);
+  color: var(--foreground);
+}
+
+body.theme-gray .xv-site-header-transparent {
+  background: rgba(26, 26, 26, 0.88);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--foreground);
+}
+
+body.theme-gray .xv-sidebar-root,
+body.theme-gray aside.xv-sidebar-root,
+body.theme-gray .xv-sidebar-root > div {
+  background: rgba(22, 22, 22, 0.96);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--foreground);
+}
+
+body.theme-gray .xv-sidebar-menu a,
+body.theme-gray .xv-sidebar-menu button.xv-menu-item {
+  color: rgba(243, 244, 246, 0.85);
 }
 
 /* Softer borders site-wide on dark themes */
@@ -140,20 +218,36 @@ body.theme-gray * {
     font-family: var(--font-mono);
   }
 
+  .font-pixel {
+    font-family: var(--font-pixel), 'Courier New', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  .font-coding {
+    font-family: var(--font-coding);
+    letter-spacing: 0.02em;
+  }
+
+  .font-claude {
+    font-family: var(--font-claude);
+  }
+
   .glass-panel {
     background: var(--card);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid var(--card-border);
-    transition: background 500ms ease, border-color 300ms ease;
+    color: var(--foreground);
+    transition: background 500ms ease, border-color 300ms ease, color 300ms ease;
   }
 
   .glass-panel-strong {
-    background: rgba(10, 20, 45, 0.75);
+    background: var(--card);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(74, 122, 255, 0.15);
-    transition: background 500ms ease, border-color 300ms ease;
+    border: 1px solid var(--card-border);
+    color: var(--foreground);
+    transition: background 500ms ease, border-color 300ms ease, color 300ms ease;
   }
 
   .terminal-grid {
@@ -163,6 +257,8 @@ body.theme-gray * {
   .terminal-layout {
     min-height: 100vh;
     min-height: 100dvh;
+    background: var(--background);
+    color: var(--foreground);
   }
 
   @media (min-width: 1024px) {
@@ -170,114 +266,6 @@ body.theme-gray * {
       height: 100dvh;
       overflow: hidden;
     }
-  }
-
-  /* Workspace / dashboard — deep-work navy (no photo wallpaper, no bg animation) */
-  body.xv-deep-work-shell {
-    --background: #05080f;
-    --foreground: #f4f7ff;
-    --muted: #b8c6e0;
-    --card: rgba(12, 22, 42, 0.78);
-    --card-border: rgba(74, 163, 255, 0.24);
-    --accent: #4aa3ff;
-    --primary: #4aa3ff;
-    --primary-glow: #7ec0ff;
-    --accent-dim: rgba(74, 163, 255, 0.14);
-    background-color: #05080f !important;
-    background-image: none !important;
-  }
-
-  body.xv-deep-work-shell .terminal-layout {
-    background:
-      radial-gradient(ellipse 90% 45% at 50% -10%, rgba(74, 163, 255, 0.16) 0%, transparent 55%),
-      linear-gradient(180deg, #070b16 0%, #05080f 48%, #04070d 100%);
-  }
-
-  body.xv-deep-work-shell .xv-site-header-transparent {
-    background: rgba(5, 8, 15, 0.72) !important;
-    backdrop-filter: blur(18px) saturate(1.1);
-    border-bottom: 1px solid rgba(74, 163, 255, 0.14);
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
-  }
-
-  body.xv-deep-work-shell .glass-panel,
-  body.xv-deep-work-shell .glass-panel-strong {
-    background: rgba(10, 18, 36, 0.78) !important;
-    border-color: rgba(74, 163, 255, 0.22) !important;
-    backdrop-filter: blur(18px);
-    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.28);
-  }
-
-  body.xv-deep-work-shell .xv-sidebar-root,
-  body.xv-deep-work-shell aside.xv-sidebar-root,
-  body.xv-deep-work-shell .xv-sidebar-root > div {
-    background: rgba(6, 10, 20, 0.92) !important;
-    border-color: rgba(74, 163, 255, 0.14) !important;
-  }
-
-  body.xv-deep-work-shell .xv-sidebar-menu a,
-  body.xv-deep-work-shell .xv-sidebar-menu button.xv-menu-item {
-    color: rgba(244, 247, 255, 0.78);
-    border-radius: 0.75rem;
-  }
-
-  body.xv-deep-work-shell .xv-sidebar-menu a:hover,
-  body.xv-deep-work-shell .xv-sidebar-menu button.xv-menu-item:hover,
-  body.xv-deep-work-shell .xv-sidebar-menu a.xv-active,
-  body.xv-deep-work-shell .xv-sidebar-menu button.xv-menu-item.xv-active {
-    background: rgba(74, 163, 255, 0.12) !important;
-    color: #f4f7ff !important;
-  }
-
-  /* Force chat/terminal panels into modern deep navy even if old light skin persisted */
-  body.xv-deep-work-shell .terminal-skin-light,
-  body.xv-deep-work-shell .terminal-skin-light-grid,
-  body.xv-deep-work-shell .terminal-skin-dark,
-  body.xv-deep-work-shell .terminal-skin-amoled,
-  body.xv-deep-work-shell .terminal-skin-gray {
-    background: rgba(8, 14, 28, 0.88) !important;
-    border-color: rgba(74, 163, 255, 0.22) !important;
-    color: #f4f7ff !important;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(16px);
-  }
-
-  body.xv-deep-work-shell .xv-terminal-dock,
-  body.xv-deep-work-shell .xv-chatbar-solid {
-    background: rgba(8, 14, 28, 0.82) !important;
-    border-color: rgba(74, 163, 255, 0.28) !important;
-    backdrop-filter: blur(18px);
-  }
-
-  body.xv-deep-work-shell .xv-chatbar-solid textarea,
-  body.xv-deep-work-shell .xv-chatbar-solid .xv-chatbar-input,
-  body.xv-deep-work-shell .xv-terminal-dock textarea {
-    color: #f4f7ff !important;
-  }
-
-  body.xv-deep-work-shell .xv-chatbar-solid textarea::placeholder,
-  body.xv-deep-work-shell .xv-terminal-dock textarea::placeholder {
-    color: rgba(184, 198, 224, 0.55) !important;
-  }
-
-  body.xv-deep-work-shell .xv-go-btn,
-  body.xv-deep-work-shell .xv-terminal-dock .xv-go-btn {
-    border: 1px solid rgba(120, 180, 255, 0.45) !important;
-    background: linear-gradient(
-      135deg,
-      rgba(74, 163, 255, 0.35) 0%,
-      rgba(30, 90, 200, 0.18) 55%,
-      rgba(10, 20, 40, 0.4) 100%
-    ) !important;
-    color: #f4f8ff !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 24px rgba(20, 80, 180, 0.2);
-  }
-
-  body.xv-deep-work-shell .xv-welcome-card,
-  body.xv-deep-work-shell .xv-dashboard-welcome {
-    background: rgba(10, 18, 36, 0.55);
-    border: 1px solid rgba(74, 163, 255, 0.18);
-    border-radius: 1rem;
   }
 
   .gradient-text {
@@ -397,15 +385,6 @@ body.theme-gray * {
   .terminal-chatbar-float {
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-  }
-
-  .chatbar-theme-image {
-    background: transparent;
-    color: #000;
-    --foreground: #000;
-    --muted: #374151;
-    --accent: #4a7aff;
-    --background: transparent;
   }
 
   .chatbar-theme-white {
@@ -3267,7 +3246,6 @@ body.theme-gray * {
 
   body.theme-black .xv-thinking-panel,
   body.theme-gray .xv-thinking-panel,
-  body.theme-image .xv-thinking-panel,
   .terminal-skin-dark .xv-thinking-panel,
   .terminal-skin-amoled .xv-thinking-panel,
   .terminal-skin-gray .xv-thinking-panel {
@@ -3794,16 +3772,18 @@ body.theme-gray * {
     color: #ffffff !important;
   }
 
-  body.theme-image .xv-terminal-dock .xv-go-btn {
-    border-color: rgba(255, 255, 255, 0.35) !important;
-    background-color: rgba(255, 255, 255, 0.08) !important;
-  }
-  body.theme-image .xv-terminal-dock .xv-go-btn__icon {
-    background: linear-gradient(to bottom, #ffffff, #60a5fa) !important;
-    color: #006aff !important;
-  }
-  body.theme-image .xv-terminal-dock .xv-go-btn__text {
+  body.theme-white .xv-terminal-dock .xv-go-btn {
+    background: #006aff !important;
+    border: 2px solid rgba(0, 106, 255, 0.35) !important;
     color: #ffffff !important;
+  }
+  body.theme-white .xv-terminal-dock .xv-go-btn__text {
+    color: #ffffff !important;
+    font-family: var(--font-coding);
+  }
+  body.theme-white .xv-terminal-dock .xv-go-btn__icon {
+    background: #ffffff !important;
+    color: #006aff !important;
   }
 
   body.theme-black .xv-chatbar-secondary-btn,

@@ -12,10 +12,9 @@ import { cn } from '@/lib/utils';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useThemeStore } from '@/store/useThemeStore';
-import { THEME_OPTIONS } from '@/lib/theme';
+import { THEME_OPTIONS, normalizeTheme, skinForTheme, type CoreThemeId } from '@/lib/theme';
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
-import { SlideshowToggle } from '@/components/layout/SlideshowToggle';
 import { useT } from '@/components/providers/LanguageProvider';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
@@ -46,10 +45,8 @@ export function SettingsView({ email }: { email: string }) {
   const setStoreProfile = useAppStore((s) => s.setProfile);
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
-  const setCustomDesktopBg = useThemeStore((s) => s.setCustomDesktopBg);
-  const setCustomMobileBg = useThemeStore((s) => s.setCustomMobileBg);
-  const customDesktopBg = useThemeStore((s) => s.customDesktopBg);
-  const customMobileBg = useThemeStore((s) => s.customMobileBg);
+  const setTerminalSkin = useThemeStore((s) => s.setTerminalSkin);
+  const currentTheme = normalizeTheme(theme);
 
   useEffect(() => {
     api.profile.get()
@@ -279,98 +276,31 @@ export function SettingsView({ email }: { email: string }) {
 
           {tab === 'Theme' && (
             <div className="space-y-4">
-              <h2 className="font-semibold">Theme</h2>
-              <p className="text-sm text-[var(--muted)]">
-                Choose your workspace background. Image mode uses galactic wallpapers — or upload your own.
+              <h2 className="font-semibold font-claude">Theme</h2>
+              <p className="text-sm text-[var(--muted)] font-coding">
+                White, Gray, or Black — applies across workspace, sidebar, chat, and buttons.
               </p>
-              <div className="grid sm:grid-cols-2 gap-3">
+              <div className="grid sm:grid-cols-3 gap-3">
                 {THEME_OPTIONS.map((opt) => (
                   <button
                     key={opt.id}
                     type="button"
-                    onClick={() => setTheme(opt.id)}
+                    onClick={() => {
+                      const id = opt.id as CoreThemeId;
+                      setTheme(id);
+                      setTerminalSkin(skinForTheme(id));
+                    }}
                     className={cn(
                       'text-left p-4 rounded-xl border transition-colors universe-float',
-                      theme === opt.id
-                        ? 'border-[var(--accent)] bg-[var(--accent)]/10'
-                        : 'border-[var(--card-border)] hover:border-[var(--primary)]/40'
+                      currentTheme === opt.id
+                        ? 'border-[var(--accent)] bg-[var(--accent-dim)] text-[var(--foreground)]'
+                        : 'border-[var(--card-border)] text-[var(--muted)] hover:border-[var(--primary)]/40 hover:text-[var(--foreground)]'
                     )}
                   >
-                    <p className="font-medium">{opt.label}</p>
-                    <p className="text-xs text-[var(--muted)] mt-1">{opt.description}</p>
+                    <p className="font-medium font-claude">{opt.label}</p>
+                    <p className="text-xs mt-1 opacity-70 font-coding">{opt.description}</p>
                   </button>
                 ))}
-              </div>
-              {theme === 'image' ? (
-                <div className="flex items-center justify-between gap-3 rounded-xl border border-[var(--card-border)] p-3">
-                  <div>
-                    <p className="text-sm font-medium">Wallpaper slideshow</p>
-                    <p className="text-xs text-[var(--muted)] mt-0.5">
-                      Turn off to freeze on the current background image.
-                    </p>
-                  </div>
-                  <SlideshowToggle />
-                </div>
-              ) : null}
-              <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t border-[var(--card-border)]">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Custom desktop wallpaper</label>
-                  <p className="text-xs text-[var(--muted)] mb-2">PNG, JPG, WebP · recommended 1920×1080 or higher · keep file under 5MB</p>
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp,image/gif"
-                    className="text-xs w-full"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      const reader = new FileReader();
-                      reader.onload = () => {
-                        setCustomDesktopBg(reader.result as string);
-                        setTheme('image');
-                        toast.success('Desktop wallpaper updated');
-                      };
-                      reader.readAsDataURL(file);
-                    }}
-                  />
-                  {customDesktopBg && (
-                    <button
-                      type="button"
-                      className="text-xs text-red-400 mt-2 hover:underline"
-                      onClick={() => setCustomDesktopBg(null)}
-                    >
-                      Remove custom desktop
-                    </button>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Custom mobile wallpaper</label>
-                  <p className="text-xs text-[var(--muted)] mb-2">PNG, JPG, WebP · recommended 1080×1920 portrait · light images work best</p>
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp,image/gif"
-                    className="text-xs w-full"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      const reader = new FileReader();
-                      reader.onload = () => {
-                        setCustomMobileBg(reader.result as string);
-                        setTheme('image');
-                        toast.success('Mobile wallpaper updated');
-                      };
-                      reader.readAsDataURL(file);
-                    }}
-                  />
-                  {customMobileBg && (
-                    <button
-                      type="button"
-                      className="text-xs text-red-400 mt-2 hover:underline"
-                      onClick={() => setCustomMobileBg(null)}
-                    >
-                      Remove custom mobile
-                    </button>
-                  )}
-                </div>
               </div>
             </div>
           )}
