@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepagePipelineDemo } from '@/components/homepage/HomepagePipelineDemo';
+import { HomepageEmpowerSection } from '@/components/homepage/HomepageEmpowerSection';
 import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
 
@@ -144,6 +145,8 @@ export default function HomePage() {
           <HomepagePipelineDemo />
         </div>
       </section>
+
+      <HomepageEmpowerSection />
 
       <section className="xv-hc-features" aria-labelledby="features-heading">
         <div className="xv-hc-features-inner">
