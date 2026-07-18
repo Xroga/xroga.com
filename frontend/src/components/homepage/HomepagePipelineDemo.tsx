@@ -78,7 +78,7 @@ export function HomepagePipelineDemo() {
             </p>
           </div>
           <ul className="xv-hc-demo-checks">
-            {['Preview ready', 'Tests green', 'Domain mapped'].map((item, i) => (
+            {['Preview ready', 'Checks passed', 'Domain mapped'].map((item, i) => (
               <li
                 key={item}
                 className={cn(stepIdx >= i + 3 && 'is-done')}
@@ -88,7 +88,7 @@ export function HomepagePipelineDemo() {
               </li>
             ))}
           </ul>
-          <button type="button" className="xv-hc-demo-merge" tabIndex={-1}>
+          <button type="button" className="xv-hc-demo-merge xv-hc-btn-glass" tabIndex={-1}>
             Deploy live
           </button>
         </div>

@@ -7,11 +7,13 @@ import { DESKTOP_BG_SLIDESHOW, MOBILE_BG } from '@/lib/theme';
 import { DesktopBackgroundSlideshow } from '@/components/layout/DesktopBackgroundSlideshow';
 import { SlideshowIndexContext } from '@/components/providers/SlideshowIndexContext';
 
+const DEEP_WORK_BG = '#05080f';
+
 const THEME_COLORS: Record<string, string> = {
   white: '#ffffff',
   black: '#000000',
   gray: '#1a1a1a',
-  image: '#0a0e17',
+  image: DEEP_WORK_BG,
 };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
@@ -40,9 +42,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const body = document.body;
 
-    body.classList.remove('theme-image', 'theme-white', 'theme-black', 'theme-gray');
-    const effectiveTheme = isHomepage ? 'image' : theme;
+    body.classList.remove(
+      'theme-image',
+      'theme-white',
+      'theme-black',
+      'theme-gray',
+      'xv-deep-work-shell',
+    );
+
+    // Homepage owns its static deep-work image; workspace/dashboard use solid deep-work navy
+    const effectiveTheme = isHomepage || isShellRoute ? 'image' : theme;
     body.classList.add(`theme-${effectiveTheme}`);
+    if (isShellRoute) {
+      body.classList.add('xv-deep-work-shell');
+    }
     body.style.transition = 'background 500ms ease, color 500ms ease';
 
     let themeMeta = document.querySelector('meta[name="theme-color"]');
@@ -51,9 +64,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       themeMeta.setAttribute('name', 'theme-color');
       document.head.appendChild(themeMeta);
     }
-    themeMeta.setAttribute('content', THEME_COLORS[effectiveTheme] ?? '#0a0a0a');
+    themeMeta.setAttribute(
+      'content',
+      isHomepage || isShellRoute ? DEEP_WORK_BG : (THEME_COLORS[effectiveTheme] ?? '#0a0a0a'),
+    );
 
-    const useWallpaper = isHomepage || isAuthRoute || theme === 'image';
+    // No photo slideshow / wallpaper on homepage or workspace shell
+    if (isHomepage || isShellRoute) {
+      body.style.backgroundImage = '';
+      body.style.backgroundAttachment = '';
+      body.style.backgroundSize = '';
+      body.style.backgroundPosition = '';
+      body.style.backgroundColor = DEEP_WORK_BG;
+      return;
+    }
+
+    const useWallpaper = isAuthRoute || theme === 'image';
 
     if (useWallpaper) {
       if (isMobile) {
@@ -79,18 +105,27 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       body.style.backgroundAttachment = '';
       body.style.backgroundColor = '';
     }
-  }, [theme, customDesktopBg, customMobileBg, isHomepage, isAuthRoute, isMobile]);
+  }, [
+    theme,
+    customDesktopBg,
+    customMobileBg,
+    isHomepage,
+    isAuthRoute,
+    isShellRoute,
+    isMobile,
+  ]);
 
+  // Slideshow only on auth (and non-shell image theme) — never homepage or workspace
   const showDesktopSlideshow =
-    (isHomepage || isAuthRoute || theme === 'image') && !isMobile && !customDesktopBg;
+    !isHomepage &&
+    !isShellRoute &&
+    (isAuthRoute || theme === 'image') &&
+    !isMobile &&
+    !customDesktopBg;
 
-  const slideshowOverlay = isHomepage
-    ? 'bg-gradient-to-b from-black/50 via-black/20 to-black/55'
-    : isAuthRoute
-      ? 'bg-gradient-to-b from-black/50 via-black/30 to-black/60'
-      : isShellRoute
-        ? 'bg-gradient-to-b from-black/10 via-transparent to-black/20'
-        : 'bg-gradient-to-b from-black/45 via-black/25 to-black/55';
+  const slideshowOverlay = isAuthRoute
+    ? 'bg-gradient-to-b from-black/50 via-black/30 to-black/60'
+    : 'bg-gradient-to-b from-black/45 via-black/25 to-black/55';
 
   return (
     <SlideshowIndexContext.Provider value={slideshowIndex}>
@@ -103,7 +138,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           onActiveIndexChange={setSlideshowIndex}
         />
       ) : null}
-      {!isMobile && customDesktopBg && theme === 'image' ? (
+      {!isMobile && !isHomepage && !isShellRoute && customDesktopBg && theme === 'image' ? (
         <div
           className="fixed inset-0 -z-10 hidden md:block bg-cover bg-center bg-no-repeat bg-fixed"
           style={{ backgroundImage: `url("${customDesktopBg}")` }}

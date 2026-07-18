@@ -15,90 +15,34 @@
   background: var(--hc-bg);
 }
 
+/* Static deep-work wallpaper — no background animation */
+.xv-home-coding .xv-hc-bg-image {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--hc-bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.xv-home-coding .xv-hc-bg-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(5, 8, 15, 0.35) 0%, rgba(5, 8, 15, 0.55) 45%, rgba(5, 8, 15, 0.88) 100%);
+}
+
 .xv-home-coding .xv-hc-hero {
   position: relative;
+  z-index: 1;
   min-height: min(100svh, 920px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background:
-    radial-gradient(ellipse 70% 55% at 50% 28%, rgba(74, 163, 255, 0.28) 0%, transparent 62%),
-    radial-gradient(ellipse 90% 70% at 50% 100%, rgba(8, 20, 48, 0.9) 0%, var(--hc-bg) 70%),
-    var(--hc-navy);
-}
-
-.xv-home-coding .xv-hc-hero-pattern {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.22;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M24 10 L30 20 H18 Z' fill='none' stroke='%234aa3ff' stroke-width='1.2' opacity='0.85'/%3E%3C/svg%3E");
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 75% 60% at 50% 35%, #000 20%, transparent 75%);
-  animation: xv-hc-pattern-drift 28s linear infinite;
-}
-
-@keyframes xv-hc-pattern-drift {
-  from { background-position: 0 0; }
-  to { background-position: 0 -96px; }
-}
-
-.xv-home-coding .xv-hc-hero-orb {
-  position: absolute;
-  border-radius: 999px;
-  pointer-events: none;
-  filter: blur(40px);
-  opacity: 0.45;
-  z-index: 1;
-}
-
-.xv-home-coding .xv-hc-hero-orb--a {
-  width: min(42vw, 420px);
-  height: min(42vw, 420px);
-  left: 8%;
-  top: 18%;
-  background: rgba(74, 163, 255, 0.35);
-  animation: xv-hc-orb-a 14s ease-in-out infinite;
-}
-
-.xv-home-coding .xv-hc-hero-orb--b {
-  width: min(36vw, 340px);
-  height: min(36vw, 340px);
-  right: 10%;
-  bottom: 12%;
-  background: rgba(120, 180, 255, 0.22);
-  animation: xv-hc-orb-b 18s ease-in-out infinite;
-}
-
-@keyframes xv-hc-orb-a {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(8%, 10%) scale(1.12); }
-}
-
-@keyframes xv-hc-orb-b {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-10%, -8%) scale(1.18); }
-}
-
-.xv-home-coding .xv-hc-hero-scan {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(74, 163, 255, 0.05) 48%,
-    transparent 52%
-  );
-  background-size: 100% 220%;
-  animation: xv-hc-scan 9s linear infinite;
-  mix-blend-mode: screen;
-}
-
-@keyframes xv-hc-scan {
-  from { background-position: 0 -40%; }
-  to { background-position: 0 140%; }
+  background: transparent;
 }
 
 .xv-home-coding .xv-hc-header {
@@ -209,26 +153,44 @@
   animation: xv-hc-fade-up 0.9s ease 0.2s both;
 }
 
-.xv-home-coding .xv-hc-btn-primary {
+.xv-home-coding .xv-hc-btn-primary,
+.xv-home-coding .xv-hc-btn-glass,
+.xv-home-coding .xv-hc-demo-merge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 2.85rem;
   padding: 0.7rem 1.35rem;
   border-radius: 999px;
-  background: #fff;
-  color: #05080f;
+  border: 1px solid rgba(120, 180, 255, 0.45);
+  background: linear-gradient(
+    135deg,
+    rgba(74, 163, 255, 0.28) 0%,
+    rgba(30, 90, 200, 0.12) 55%,
+    rgba(10, 20, 40, 0.35) 100%
+  );
+  color: #f4f8ff;
   font-family: var(--hc-font-sans);
   font-weight: 700;
   font-size: 0.78rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 28px rgba(20, 80, 180, 0.18);
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
 }
 
-.xv-home-coding .xv-hc-btn-primary:hover {
+.xv-home-coding .xv-hc-btn-primary:hover,
+.xv-home-coding .xv-hc-btn-glass:hover,
+.xv-home-coding .xv-hc-demo-merge:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 30px rgba(74, 163, 255, 0.25);
+  border-color: rgba(160, 210, 255, 0.65);
+  background: linear-gradient(
+    135deg,
+    rgba(90, 175, 255, 0.38) 0%,
+    rgba(40, 110, 220, 0.18) 55%,
+    rgba(10, 20, 40, 0.4) 100%
+  );
 }
 
 .xv-home-coding .xv-hc-btn-ghost {
@@ -238,20 +200,21 @@
   min-height: 2.85rem;
   padding: 0.7rem 1.35rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(8, 14, 28, 0.45);
+  border: 1px solid rgba(120, 180, 255, 0.28);
+  background: rgba(8, 14, 28, 0.35);
   color: #fff;
   font-family: var(--hc-font-sans);
   font-weight: 650;
   font-size: 0.78rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  backdrop-filter: blur(12px);
   transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .xv-home-coding .xv-hc-btn-ghost:hover {
   border-color: rgba(74, 163, 255, 0.55);
-  background: rgba(74, 163, 255, 0.1);
+  background: rgba(74, 163, 255, 0.12);
 }
 
 .xv-home-coding .xv-hc-chat {
@@ -262,8 +225,9 @@
 
 .xv-home-coding .xv-hc-section {
   position: relative;
+  z-index: 1;
   padding: 4.5rem 1.25rem;
-  background: linear-gradient(180deg, var(--hc-bg) 0%, #070b14 100%);
+  background: transparent;
 }
 
 .xv-home-coding .xv-hc-section-inner {
@@ -337,8 +301,10 @@
 }
 
 .xv-home-coding .xv-hc-features {
+  position: relative;
+  z-index: 1;
   padding: 1rem 1.25rem 5rem;
-  background: #070b14;
+  background: transparent;
 }
 
 .xv-home-coding .xv-hc-features-inner {
@@ -420,9 +386,12 @@
 }
 
 .xv-home-coding .xv-hc-footer {
+  position: relative;
+  z-index: 1;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding: 1.75rem 1.25rem 2.25rem;
-  background: #05080f;
+  background: rgba(5, 8, 15, 0.55);
+  backdrop-filter: blur(12px);
 }
 
 .xv-home-coding .xv-hc-footer nav {
@@ -473,8 +442,10 @@
 
 /* Live simulated pipeline widgets */
 .xv-home-coding .xv-hc-live {
+  position: relative;
+  z-index: 1;
   padding: 0 1.25rem 4.5rem;
-  background: #070b14;
+  background: transparent;
 }
 
 .xv-home-coding .xv-hc-live-inner {
@@ -600,7 +571,7 @@
 }
 
 .xv-home-coding .xv-hc-demo-checks li.is-done {
-  color: #9dffc2;
+  color: #b7d7ff;
 }
 
 .xv-home-coding .xv-hc-demo-check {
@@ -613,8 +584,8 @@
 }
 
 .xv-home-coding .xv-hc-demo-checks li.is-done .xv-hc-demo-check {
-  border-color: #34d399;
-  background: rgba(52, 211, 153, 0.2);
+  border-color: #4aa3ff;
+  background: rgba(74, 163, 255, 0.2);
 }
 
 .xv-home-coding .xv-hc-demo-checks li.is-done .xv-hc-demo-check::after {
@@ -624,30 +595,18 @@
   top: 0.08rem;
   width: 0.25rem;
   height: 0.45rem;
-  border-right: 1.5px solid #34d399;
-  border-bottom: 1.5px solid #34d399;
+  border-right: 1.5px solid #4aa3ff;
+  border-bottom: 1.5px solid #4aa3ff;
   transform: rotate(40deg);
 }
 
 .xv-home-coding .xv-hc-demo-merge {
-  display: block;
+  display: flex;
   width: calc(100% - 1.9rem);
   margin: 0 0.95rem 0.95rem;
-  border: none;
-  border-radius: 0.65rem;
-  background: #22c55e;
-  color: #04140a;
-  font-weight: 700;
+  border-radius: 0.75rem;
   font-size: 0.82rem;
-  padding: 0.7rem 0.9rem;
   cursor: default;
-  box-shadow: 0 0 24px rgba(34, 197, 94, 0.25);
-  animation: xv-hc-merge-pulse 2.8s ease-in-out infinite;
-}
-
-@keyframes xv-hc-merge-pulse {
-  0%, 100% { box-shadow: 0 0 16px rgba(34, 197, 94, 0.18); }
-  50% { box-shadow: 0 0 28px rgba(34, 197, 94, 0.4); }
 }
 
 .xv-home-coding .xv-hc-demo-timeline {
@@ -682,7 +641,7 @@
 }
 
 .xv-home-coding .xv-hc-demo-step.is-done .xv-hc-demo-step-dot {
-  background: #34d399;
+  background: #4aa3ff;
 }
 
 .xv-home-coding .xv-hc-demo-step.is-active .xv-hc-demo-step-dot {
