@@ -26,15 +26,15 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
   return (
     <div className={cn('xv-dashboard-welcome xv-welcome-modern relative', className)}>
       <p className="xv-welcome-greeting relative">
-        <span className="xv-welcome-greeting-text font-coding">{greeting},</span>
+        <span className="xv-welcome-greeting-text font-claude">{greeting},</span>
       </p>
       <p className="xv-welcome-name-line relative">
-        <span className="xv-welcome-name font-claude">{name}</span>
+        <span className="xv-welcome-name font-pixel">{name}</span>
       </p>
 
       <div className="xv-blackhole-identity relative" aria-label="Black Hole V Infinity">
-        <span className="xv-blackhole-identity__label font-coding">Black Hole</span>
-        <span className="xv-blackhole-identity__mark font-claude">
+        <span className="xv-blackhole-identity__label">BLACK HOLE</span>
+        <span className="xv-blackhole-identity__mark">
           <span className="xv-blackhole-identity__v">V</span>
           <Infinity className="xv-blackhole-identity__inf" strokeWidth={2.75} aria-hidden />
         </span>
