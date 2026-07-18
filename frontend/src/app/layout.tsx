@@ -111,7 +111,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>
       <body
-        className={`${inter.variable} ${azurio.variable} ${goga.variable} ${remixa.variable} ${emilio.variable} ${jetbrainsMono.variable} ${pixelCoding.variable} ${sourceSerif.variable} font-sans antialiased`}
+        className={`theme-white ${inter.variable} ${azurio.variable} ${goga.variable} ${remixa.variable} ${emilio.variable} ${jetbrainsMono.variable} ${pixelCoding.variable} ${sourceSerif.variable} font-sans antialiased`}
       >
         <SiteJsonLd />
         <RootProviders>{children}</RootProviders>

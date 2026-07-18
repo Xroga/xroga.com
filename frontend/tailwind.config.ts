@@ -10,12 +10,15 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['var(--font-goga)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-azurio)', 'Georgia', 'serif'],
+        display: ['var(--font-source-serif)', 'var(--font-azurio)', 'Georgia', 'serif'],
         azurio: ['var(--font-azurio)', 'Georgia', 'serif'],
         goga: ['var(--font-goga)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
         remixa: ['var(--font-remixa)', 'var(--font-goga)', 'system-ui', 'sans-serif'],
         emilio: ['var(--font-emilio)', 'Georgia', 'serif'],
         mono: ['var(--font-xv-mono)', 'JetBrains Mono', 'ui-monospace', 'monospace'],
+        pixel: ['var(--font-pixel)', 'Courier New', 'monospace'],
+        coding: ['var(--font-pixel)', 'var(--font-xv-mono)', 'JetBrains Mono', 'ui-monospace', 'monospace'],
+        claude: ['var(--font-source-serif)', 'var(--font-azurio)', 'Georgia', 'serif'],
       },
       colors: {
         background: "var(--background)",

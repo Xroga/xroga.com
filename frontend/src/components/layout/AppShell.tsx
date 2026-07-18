@@ -15,6 +15,7 @@ import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { ShellHydrationGate } from '@/components/layout/ShellHydrationGate';
 import { cn } from '@/lib/utils';
+import { normalizeTheme, skinForTheme } from '@/lib/theme';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -44,7 +45,6 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   const theme = useThemeStore((s) => s.theme);
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
   const setTerminalSkin = useThemeStore((s) => s.setTerminalSkin);
-  const setSlideshowEnabled = useThemeStore((s) => s.setSlideshowEnabled);
   const pathname = usePathname();
   const isDashboard = pathname === '/workspace';
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
@@ -52,14 +52,12 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   const effectiveSidebarOpen = hydrated ? sidebarOpen : true;
   const widthPx = effectiveSidebarOpen ? (hydrated ? sidebarWidth : 256) : 0;
 
-  // Migrate legacy “Image + light terminal + slideshow” into deep-work navy
+  // Keep terminal skin aligned with shell theme (white→light, gray→gray, black→amoled)
   useEffect(() => {
     if (!hydrated) return;
-    setSlideshowEnabled(false);
-    if (terminalSkin === 'light' || terminalSkin === 'light-grid') {
-      setTerminalSkin(theme === 'black' ? 'amoled' : theme === 'gray' ? 'gray' : 'dark');
-    }
-  }, [hydrated, theme, terminalSkin, setSlideshowEnabled, setTerminalSkin]);
+    const expected = skinForTheme(normalizeTheme(theme));
+    if (terminalSkin !== expected) setTerminalSkin(expected);
+  }, [hydrated, theme, terminalSkin, setTerminalSkin]);
 
   useEffect(() => {
     document.body.classList.toggle('xv-incognito-active', incognito && isDashboard);

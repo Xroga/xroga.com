@@ -338,8 +338,9 @@
   border-radius: 12px;
   background: rgba(1, 2, 1, 0.75);
 }
-body.theme-image .xv-poda-main { background: rgba(255,255,255,0.15); }
 body.theme-white .xv-poda-main { background: rgba(255,255,255,0.95); }
+body.theme-black .xv-poda-main { background: rgba(0,0,0,0.85); }
+body.theme-gray .xv-poda-main { background: rgba(26,26,26,0.9); }
 
 /* ── Upgrade to PRO (compact + hover animation) ── */
 .xv-upgrade-pro {
@@ -572,28 +573,6 @@ body.theme-white .xv-chatbar-solid {
   background: transparent;
   border: 1px solid rgba(0, 0, 0, 0.15);
   color: #000;
-}
-body.theme-image .xv-chatbar-solid {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #fff;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-body.theme-image .xv-chatbar-solid textarea,
-body.theme-image .xv-chatbar-solid button,
-body.theme-image .xv-chatbar-solid .xv-chatbar-input,
-body.theme-image .xv-chatbar-solid .xv-chatbar-chip,
-body.theme-image .xv-chatbar-solid .xv-chatbar-secondary-btn {
-  color: #fff !important;
-}
-body.theme-image .xv-chatbar-solid textarea::placeholder {
-  color: rgba(255, 255, 255, 0.55) !important;
-}
-@media (max-width: 1023px) {
-  body.theme-image .xv-chatbar-solid {
-    border-color: rgba(255, 255, 255, 0.18);
-  }
 }
 body.theme-black .xv-chatbar-solid,
 body.theme-gray .xv-chatbar-solid {

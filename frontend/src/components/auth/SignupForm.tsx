@@ -12,7 +12,7 @@ import { isTemporaryEmail } from '@/lib/emailValidation';
 import { getPasswordStrength } from '@/lib/passwordStrength';
 import { cn } from '@/lib/utils';
 import { useThemeStore } from '@/store/useThemeStore';
-import { THEME_OPTIONS, type ThemeId } from '@/lib/theme';
+import { THEME_OPTIONS, type CoreThemeId } from '@/lib/theme';
 import { getStoredReferralCode, storeReferralCode, clearStoredReferralCode } from '@/lib/referralStorage';
 import {
   AuthModernCard,
@@ -31,7 +31,7 @@ export function SignupForm() {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(XROGA_PROFILE_AVATARS[0]?.url ?? '');
-  const [theme, setTheme] = useState<ThemeId>('image');
+  const [theme, setTheme] = useState<CoreThemeId>('white');
   const setGlobalTheme = useThemeStore((s) => s.setTheme);
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState(false);
@@ -165,7 +165,7 @@ export function SignupForm() {
       <form onSubmit={handleSignup} className="space-y-3">
         <div>
           <AuthModernLabel>Workspace theme</AuthModernLabel>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {THEME_OPTIONS.map((opt) => (
               <button
                 key={opt.id}
@@ -178,8 +178,8 @@ export function SignupForm() {
                     : 'border-sky-100 bg-slate-50/80 hover:border-[#006aff]/40'
                 )}
               >
-                <p className="font-bold text-slate-800">{opt.label}</p>
-                <p className="text-[10px] text-slate-500 mt-0.5">{opt.description}</p>
+                <p className="font-bold text-slate-800 font-claude">{opt.label}</p>
+                <p className="text-[10px] text-slate-500 mt-0.5 font-coding">{opt.description}</p>
               </button>
             ))}
           </div>
