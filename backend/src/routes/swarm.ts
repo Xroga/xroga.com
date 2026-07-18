@@ -10,7 +10,7 @@ const router = Router();
 /**
  * POST /api/swarm/execute
  * SSE stream: start → progress → delta* → complete
- * Converter (DeepSeek Flash) → Builder (Kimi / GLM / DeepSeek Pro / Grok)
+ * Converter (deepseek/deepseek-v4-flash via OpenRouter) → Builder (Kimi / GLM / DeepSeek Pro / Grok)
  */
 router.post('/execute', async (req: AuthRequest, res) => {
   const userId = req.userId;

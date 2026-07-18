@@ -39,7 +39,7 @@ import { getGitHubOAuthCallbackUrl } from './routes/github.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
 import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
 import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
-import { modelKeyStatus } from './ai/openaiCompat.js';
+import { modelKeyStatus, modelTransportStatus } from './ai/openaiCompat.js';
 import { getAiStackKeyStatus } from './config/envSecrets.js';
 
 const app = express();
@@ -99,8 +99,10 @@ const healthPayload = () => ({
   version: '3.0.0-ai-swarm',
   aiBackend: 'kimi-glm-deepseek-grok',
   aiPipeline: 'converter→builder',
+  aiTransport: 'openrouter+xai',
   aiKeys: modelKeyStatus(),
   aiStackKeys: getAiStackKeyStatus(),
+  aiModelRoutes: modelTransportStatus(),
   timestamp: new Date().toISOString(),
   authConfigured: Boolean(process.env.SUPABASE_URL),
   dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
@@ -202,8 +204,9 @@ const server = createServer(app);
 server.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
   console.log(`Environment: ${process.env.NODE_ENV ?? 'development'}`);
-  console.log('[AI] Converter→Builder online — Kimi K3 / GLM-5.2 / DeepSeek V4 / Grok 4.x + Tavily');
+  console.log('[AI] Converter→Builder online — OpenRouter (Kimi/GLM/DeepSeek) + Grok + Tavily');
   console.log('[AI] Keys:', JSON.stringify(modelKeyStatus()));
+  console.log('[AI] Routes:', JSON.stringify(modelTransportStatus()));
   if (!process.env.SUPABASE_URL) {
     console.warn('WARNING: SUPABASE_URL is not set — authenticated routes will fail');
   }

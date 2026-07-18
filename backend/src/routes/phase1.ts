@@ -112,7 +112,7 @@ router.get('/economics', (_req, res) => {
         totalTokens: 20_000,
         totalUsd: 0.11,
         buildsPerFreeMonth: 50,
-        howAi: 'DeepSeek V4 Pro / Converter → Builder',
+        howAi: 'OpenRouter DeepSeek V4 Pro / Converter → Builder',
       },
       {
         tier: 'medium',

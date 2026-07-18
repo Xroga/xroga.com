@@ -56,12 +56,19 @@ curl https://xroga-api.fly.dev/health
 Set image keys directly on the Fly app:
 ```bash
 fly secrets set -a xroga-api \
+  OPENROUTER_API_KEY="..." \
+  GROK_API_KEY="..." \
+  TAVILY_API_KEY="..." \
   FAL_API_KEY="..." \
   REPLICATE_API_TOKEN="..." \
-  AGNES_API_KEY="..." \
-  GROQ_API_KEY="..." \
-  DEEPSEEK_API_KEY="..."
+  AGNES_API_KEY="..."
 ```
+
+AI stack notes:
+- **DeepSeek V4 Flash/Pro** → OpenRouter only (`deepseek/deepseek-v4-flash`, `deepseek/deepseek-v4-pro`)
+- **Kimi K3 / GLM-5.2** → OpenRouter (`moonshotai/kimi-k3`, `z-ai/glm-5.2`); optional native `KIMI_API_KEY` / `GLM_API_KEY` fallbacks
+- **Grok** → `GROK_API_KEY` (xAI), OpenRouter fallback if unset
+- Do **not** set `DEEPSEEK_API_KEY` — it is unused
 
 Verify the server sees your keys:
 ```bash

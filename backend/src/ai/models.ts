@@ -1,6 +1,12 @@
 /**
  * Xroga multi-model stack — monthly per-user budgets and routing roles.
- * Keys on Fly.io: KIMI_API_KEY | GLM_API_KEY | DEEPSEEK_API_KEY | GROK_API_KEY | TAVILY_API_KEY
+ *
+ * Fly.io secrets:
+ *   OPENROUTER_API_KEY  → Kimi K3, GLM-5.2, DeepSeek V4 Flash/Pro (OpenRouter budgets)
+ *   GROK_API_KEY        → Grok 4.5 / 4.3 (xAI native)
+ *   TAVILY_API_KEY      → research gather
+ *
+ * Optional native fallbacks: KIMI_API_KEY, GLM_API_KEY (used only if OpenRouter missing).
  */
 
 export type ModelId =
@@ -11,14 +17,25 @@ export type ModelId =
   | 'grok_4_5'
   | 'grok_4_3';
 
+export type ProviderKind = 'openrouter' | 'xai' | 'moonshot' | 'zhipu';
+
 export interface ModelDef {
   id: ModelId;
   /** Public Xroga label — never expose raw provider names in UI copy when avoidable */
   label: string;
   role: string;
+  /** Primary OpenAI-compatible model id (OpenRouter slug or native id) */
   apiModel: string;
+  /** Preferred transport */
+  provider: ProviderKind;
   baseUrl: string;
-  secretKey: 'KIMI_API_KEY' | 'GLM_API_KEY' | 'DEEPSEEK_API_KEY' | 'GROK_API_KEY';
+  secretKey: 'OPENROUTER_API_KEY' | 'GROK_API_KEY' | 'KIMI_API_KEY' | 'GLM_API_KEY';
+  /** Optional native fallback when OpenRouter is unset */
+  nativeFallback?: {
+    apiModel: string;
+    baseUrl: string;
+    secretKey: 'KIMI_API_KEY' | 'GLM_API_KEY' | 'GROK_API_KEY';
+  };
   /** Monthly USD budget allocation */
   budgetUsd: number;
   /** Monthly token pool (input + output combined target) */
@@ -31,6 +48,8 @@ export interface ModelDef {
   tagline: string;
 }
 
+export const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
+
 export const MONTHLY_TOTAL_BUDGET_USD = 16.77;
 export const MONTHLY_USER_PRICE_USD = 19;
 export const MONTHLY_TOTAL_TOKENS = 6_172_222;
@@ -40,9 +59,15 @@ export const MODELS: Record<ModelId, ModelDef> = {
     id: 'kimi_k3',
     label: 'Xroga Apex',
     role: 'Flagship — complex reasoning, full-stack, crypto, long-horizon coding',
-    apiModel: 'kimi-k3',
-    baseUrl: 'https://api.moonshot.ai/v1',
-    secretKey: 'KIMI_API_KEY',
+    apiModel: 'moonshotai/kimi-k3',
+    provider: 'openrouter',
+    baseUrl: OPENROUTER_BASE_URL,
+    secretKey: 'OPENROUTER_API_KEY',
+    nativeFallback: {
+      apiModel: 'kimi-k3',
+      baseUrl: 'https://api.moonshot.ai/v1',
+      secretKey: 'KIMI_API_KEY',
+    },
     budgetUsd: 8.0,
     monthlyTokens: 888_888,
     inputTokens: 444_444,
@@ -56,9 +81,15 @@ export const MODELS: Record<ModelId, ModelDef> = {
     id: 'glm_5_2',
     label: 'Xroga Horizon',
     role: 'Long-context specialist — large codebases, project-level engineering',
-    apiModel: 'glm-5.2',
-    baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
-    secretKey: 'GLM_API_KEY',
+    apiModel: 'z-ai/glm-5.2',
+    provider: 'openrouter',
+    baseUrl: OPENROUTER_BASE_URL,
+    secretKey: 'OPENROUTER_API_KEY',
+    nativeFallback: {
+      apiModel: 'glm-5.2',
+      baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
+      secretKey: 'GLM_API_KEY',
+    },
     budgetUsd: 5.8,
     monthlyTokens: 2_000_000,
     inputTokens: 1_000_000,
@@ -72,9 +103,10 @@ export const MODELS: Record<ModelId, ModelDef> = {
     id: 'deepseek_v4_pro',
     label: 'Xroga Forge',
     role: 'Cost-effective volume — agent tasks and knowledge work',
-    apiModel: 'deepseek-v4-pro',
-    baseUrl: 'https://api.deepseek.com',
-    secretKey: 'DEEPSEEK_API_KEY',
+    apiModel: 'deepseek/deepseek-v4-pro',
+    provider: 'openrouter',
+    baseUrl: OPENROUTER_BASE_URL,
+    secretKey: 'OPENROUTER_API_KEY',
     budgetUsd: 0.65,
     monthlyTokens: 1_500_000,
     inputTokens: 750_000,
@@ -88,15 +120,16 @@ export const MODELS: Record<ModelId, ModelDef> = {
     id: 'deepseek_v4_flash',
     label: 'Xroga Pulse',
     role: 'Fast converter + high-volume chat and simple tasks',
-    apiModel: 'deepseek-v4-flash',
-    baseUrl: 'https://api.deepseek.com',
-    secretKey: 'DEEPSEEK_API_KEY',
+    apiModel: 'deepseek/deepseek-v4-flash',
+    provider: 'openrouter',
+    baseUrl: OPENROUTER_BASE_URL,
+    secretKey: 'OPENROUTER_API_KEY',
     budgetUsd: 0.32,
     monthlyTokens: 1_000_000,
     inputTokens: 500_000,
     outputTokens: 500_000,
-    inputUsdPer1M: 0.14,
-    outputUsdPer1M: 0.28,
+    inputUsdPer1M: 0.09,
+    outputUsdPer1M: 0.18,
     contextWindow: 1_000_000,
     tagline: 'Converter & Volume',
   },
@@ -105,6 +138,7 @@ export const MODELS: Record<ModelId, ModelDef> = {
     label: 'Xroga Live',
     role: 'Real-time intelligence — web/X search, crypto news, coding agents',
     apiModel: 'grok-4.5',
+    provider: 'xai',
     baseUrl: 'https://api.x.ai/v1',
     secretKey: 'GROK_API_KEY',
     budgetUsd: 1.0,
@@ -121,6 +155,7 @@ export const MODELS: Record<ModelId, ModelDef> = {
     label: 'Xroga Lens',
     role: 'Backup — file analysis, document processing, 1M context',
     apiModel: 'grok-4.3',
+    provider: 'xai',
     baseUrl: 'https://api.x.ai/v1',
     secretKey: 'GROK_API_KEY',
     budgetUsd: 1.0,
@@ -156,7 +191,7 @@ export function dashboardModelPools() {
     {
       role: 'deepseek_v4',
       label: 'Xroga Forge / Pulse',
-      tagline: 'Volume workhorse (Pro + Flash)',
+      tagline: 'Volume workhorse (Pro + Flash via OpenRouter)',
       totalLimit: MODELS.deepseek_v4_pro.monthlyTokens + MODELS.deepseek_v4_flash.monthlyTokens,
       budgetUsd: MODELS.deepseek_v4_pro.budgetUsd + MODELS.deepseek_v4_flash.budgetUsd,
     },
