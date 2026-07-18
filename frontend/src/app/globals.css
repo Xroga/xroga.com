@@ -90,24 +90,27 @@ body.theme-white .xv-chatbar-disclaimer {
   color: rgba(0, 0, 0, 0.65);
 }
 
-/* Claude + coding fonts across workspace chrome */
-.xv-welcome-name,
+/* Claude serif: greeting + tagline · pixel coding: display name */
+.xv-welcome-greeting,
+.xv-welcome-greeting-text,
 .xv-welcome-tagline-sub,
+.xv-tagline-accent,
 .xv-dashboard-welcome h1,
 .xv-dashboard-welcome h2 {
   font-family: var(--font-claude);
 }
 
-.xv-welcome-greeting,
-.xv-welcome-greeting-text,
-.xv-blackhole-identity__label,
+.xv-welcome-name,
+.font-pixel {
+  font-family: var(--font-pixel), var(--font-coding);
+}
+
 .xv-go-btn__text,
 .xv-chatbar-chip,
 .xv-sidebar-menu .xv-menu-label,
 .xv-hover-tip,
 .xv-terminal-header h3,
-.font-coding,
-.font-pixel {
+.font-coding {
   font-family: var(--font-pixel), var(--font-coding);
 }
 
@@ -2625,33 +2628,33 @@ body.theme-gray * {
       linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
   }
   .xv-welcome-greeting {
-    font-family: var(--font-pixel), var(--font-coding);
-    font-size: clamp(0.72rem, 1.6vw, 0.95rem);
-    font-weight: 400;
-    letter-spacing: 0.04em;
+    font-family: var(--font-claude);
+    font-size: clamp(1.15rem, 2.4vw, 1.55rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
     text-transform: none;
-    line-height: 1.45;
+    line-height: 1.35;
   }
   .xv-welcome-greeting-text {
     color: var(--foreground);
-    font-family: var(--font-pixel), var(--font-coding) !important;
-    font-weight: 400;
+    font-family: var(--font-claude) !important;
+    font-weight: 500;
     text-shadow: none;
   }
   body.theme-white .xv-welcome-greeting-text {
-    color: #0a0a0a;
+    color: #141414;
     text-shadow: none;
   }
   .xv-welcome-name-line {
-    margin-top: 0.15rem;
-    line-height: 1.05;
+    margin-top: 0.35rem;
+    line-height: 1.15;
   }
   .xv-welcome-name {
-    font-family: var(--font-claude);
+    font-family: var(--font-pixel), var(--font-coding) !important;
     font-style: normal;
-    font-weight: 700;
-    font-size: clamp(2rem, 4.8vw, 3.35rem);
-    letter-spacing: -0.02em;
+    font-weight: 400;
+    font-size: clamp(1.05rem, 2.8vw, 1.65rem);
+    letter-spacing: 0.04em;
     background: none;
     -webkit-background-clip: unset;
     background-clip: unset;
@@ -2667,30 +2670,38 @@ body.theme-gray * {
     filter: none;
     text-shadow: none;
   }
+  /* Modern BLACK HOLE · V∞ pill (white shell + gradient mark) */
   .xv-blackhole-identity {
     display: inline-flex;
     align-items: center;
-    gap: 0.65rem;
-    margin-top: 0.85rem;
-    padding: 0.35rem 0.85rem 0.35rem 0.65rem;
+    gap: 0.55rem;
+    margin-top: 0.95rem;
+    padding: 0.28rem 0.35rem 0.28rem 0.9rem;
     border-radius: 999px;
-    border: 1px solid rgba(96, 165, 250, 0.28);
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.55) 0%, rgba(0, 106, 255, 0.12) 100%);
-    box-shadow: 0 8px 32px rgba(0, 106, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(10px);
+    border: 1px solid rgba(147, 180, 255, 0.45);
+    background: #ffffff;
+    box-shadow:
+      0 10px 36px rgba(120, 150, 255, 0.28),
+      0 0 0 1px rgba(255, 255, 255, 0.8);
+    backdrop-filter: none;
+  }
+  body.theme-black .xv-blackhole-identity,
+  body.theme-gray .xv-blackhole-identity {
+    background: #ffffff;
+    border-color: rgba(147, 180, 255, 0.4);
   }
   body.theme-white .xv-blackhole-identity {
-    border-color: rgba(37, 99, 235, 0.22);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(219, 234, 254, 0.65) 100%);
-    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+    border-color: rgba(147, 180, 255, 0.45);
+    background: #ffffff;
+    box-shadow: 0 12px 40px rgba(120, 150, 255, 0.22);
   }
   .xv-blackhole-identity__label {
-    font-size: clamp(0.55rem, 1.3vw, 0.72rem);
-    font-weight: 400;
-    letter-spacing: 0.08em;
+    font-size: clamp(0.68rem, 1.4vw, 0.82rem);
+    font-weight: 700;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    font-family: var(--font-pixel), var(--font-coding) !important;
-    color: #e2e8f0;
+    font-family: var(--font-remixa), var(--font-goga), system-ui, sans-serif !important;
+    color: #0a0a0a;
   }
 
   .xv-integration-blur {
@@ -2709,29 +2720,30 @@ body.theme-gray * {
     min-height: 10rem;
   }
   body.theme-white .xv-blackhole-identity__label {
-    color: #0f172a;
+    color: #0a0a0a;
   }
   .xv-blackhole-identity__mark {
     display: inline-flex;
     align-items: center;
-    gap: 0.05rem;
-    padding: 0.2rem 0.55rem;
+    gap: 0.02rem;
+    padding: 0.32rem 0.7rem;
     border-radius: 999px;
-    background: linear-gradient(135deg, #0ea5e9 0%, #006aff 50%, #6366f1 100%);
-    box-shadow: 0 4px 16px rgba(0, 106, 255, 0.35);
+    background: linear-gradient(105deg, #38bdf8 0%, #3b82f6 42%, #8b5cf6 100%);
+    box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
   }
   .xv-blackhole-identity__v {
-    font-size: clamp(1.1rem, 2.4vw, 1.45rem);
+    font-family: var(--font-remixa), system-ui, sans-serif;
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
     font-weight: 800;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     color: #fff;
     line-height: 1;
   }
   .xv-blackhole-identity__inf {
-    width: 1.05em;
-    height: 1.05em;
+    width: 0.95em;
+    height: 0.95em;
     color: #fff;
-    opacity: 0.95;
+    opacity: 1;
   }
   .xv-welcome-blackhole {
     display: inline-flex;
@@ -2834,23 +2846,23 @@ body.theme-gray * {
   .xv-welcome-tagline-sub {
     margin-top: 0.35rem;
     font-family: var(--font-claude) !important;
-    font-size: clamp(1.15rem, 2.4vw, 1.65rem);
+    font-size: clamp(1.2rem, 2.5vw, 1.75rem);
     font-weight: 500;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.015em;
     line-height: 1.4;
     color: rgba(248, 250, 252, 0.96);
     max-width: 44rem;
     text-shadow: none;
   }
   body.theme-white .xv-welcome-tagline-sub {
-    color: #1e293b;
+    color: #1a1a1a;
     text-shadow: none;
   }
   .xv-tagline-accent {
-    font-family: var(--font-claude);
+    font-family: var(--font-claude) !important;
     font-style: italic;
     font-weight: 600;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.015em;
     background: none;
     -webkit-background-clip: unset;
     background-clip: unset;
@@ -2862,6 +2874,31 @@ body.theme-gray * {
     -webkit-background-clip: unset;
     background-clip: unset;
     color: inherit;
+  }
+
+  /* Modern workspace chatbar shell */
+  .xv-chatbar-solid,
+  .xv-terminal-dock .xv-chatbar-solid {
+    border-radius: 1.15rem !important;
+    border: 1px solid color-mix(in srgb, var(--card-border) 85%, var(--accent) 15%) !important;
+    background: color-mix(in srgb, var(--card) 92%, transparent) !important;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+  }
+  body.theme-white .xv-chatbar-solid,
+  body.theme-white .xv-terminal-dock .xv-chatbar-solid {
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-color: rgba(15, 23, 42, 0.1) !important;
+    box-shadow: 0 16px 44px rgba(15, 23, 42, 0.08);
+  }
+  .xv-chatbar-row-modern {
+    gap: 0.55rem;
+  }
+  .xv-chatbar-toolbar {
+    border-bottom: 1px solid color-mix(in srgb, var(--card-border) 80%, transparent);
+  }
+  .xv-chatbar-input-form textarea {
+    font-family: var(--font-goga), system-ui, sans-serif;
   }
 
   .xv-chat-turn-rail {

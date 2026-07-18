@@ -144,9 +144,8 @@ export function ChatBarInputRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn('relative flex items-end gap-1.5', surface === 'homepage' && 'xv-chatbar-row--home')}>
-      {/* File upload retired with the legacy AI stack */}
-      {false && !hideUpload && (
+    <div className={cn('relative flex items-end gap-1.5 xv-chatbar-row-modern', surface === 'homepage' && 'xv-chatbar-row--home')}>
+      {!hideUpload && (
         <ChatBarUploadButton onClick={onUploadClick} active={uploading} surface={surface} />
       )}
       <div className="flex-1 min-w-0 relative">{children}</div>

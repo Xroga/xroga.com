@@ -1,29 +1,12 @@
 'use client';
 
-import { Brain, CircleDot, Lock, Zap } from 'lucide-react';
+import { GitBranch, Layers, Orbit, Rocket, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const ROUTES = [
-  {
-    id: 'standard',
-    name: 'Swarm Core',
-    tag: 'All users',
-    locked: false,
-    active: true,
-  },
-  {
-    id: 'max',
-    name: 'Swarm Max',
-    tag: 'Pro only',
-    locked: true,
-    active: false,
-  },
-] as const;
-
-const STATS = [
-  { icon: Zap, label: 'Speed', value: 'High' },
-  { icon: Brain, label: 'Intelligence', value: 'High' },
-  { icon: CircleDot, label: 'Token cost', value: 'Balanced' },
+const PIPELINE = [
+  { id: 'convert', label: 'Converter', detail: 'Brief from your prompt' },
+  { id: 'build', label: 'Builder', detail: 'Apex · Horizon · Forge' },
+  { id: 'ship', label: 'Ship', detail: 'GitHub → Vercel live' },
 ] as const;
 
 export function HomepageEmpowerSection() {
@@ -31,87 +14,95 @@ export function HomepageEmpowerSection() {
     <section className="xv-hc-empower" aria-labelledby="empower-heading">
       <div className="xv-hc-empower-inner">
         <header className="xv-hc-empower-head">
+          <p className="xv-hc-empower-kicker font-pixel">BLACK HOLE OS</p>
           <h2 id="empower-heading" className="xv-hc-empower-title font-claude">
-            Empowering builders with a swarm that actually ships
+            One swarm. Your repo. Live domain.
           </h2>
           <p className="xv-hc-empower-sub">
-            Xroga handles routing, testing, and deploy — so you stay on the product, not the
-            plumbing.
+            Xroga is not a chat toy — it converts intent, writes the product, and lands it on GitHub
+            + Vercel while you stay in Workspace.
           </p>
         </header>
 
         <div className="xv-hc-empower-grid">
-          {/* Full-width top card */}
           <article className="xv-hc-empower-card xv-hc-empower-card--wide">
             <div className="xv-hc-empower-card-copy">
-              <h3 className="font-claude">The right agent, every prompt</h3>
+              <h3 className="font-claude">Converter → Builder → Live</h3>
               <p>
-                Xroga routes each request across Apex, Horizon, Forge, and Live — balancing quality,
-                speed, and cost without you picking models.
+                Every prompt becomes a builder brief, then a real project. No model picker, no
+                template catalog — just the Xroga swarm finishing the loop.
               </p>
             </div>
             <div className="xv-hc-empower-mock" aria-hidden>
               <div className="xv-hc-empower-agent">
-                <p className="xv-hc-empower-agent-title font-coding">Xroga Agent</p>
-                <ul className="xv-hc-empower-routes">
-                  {ROUTES.map((r) => (
-                    <li
-                      key={r.id}
-                      className={cn('xv-hc-empower-route', r.active && 'is-active')}
-                    >
-                      <span className="xv-hc-empower-route-dot" />
-                      <span className="xv-hc-empower-route-name">{r.name}</span>
-                      {r.locked ? (
-                        <span className="xv-hc-empower-route-tag xv-hc-empower-route-tag--lock">
-                          <Lock className="w-3 h-3" />
-                          {r.tag}
-                        </span>
-                      ) : (
-                        <span className="xv-hc-empower-route-tag">{r.tag}</span>
-                      )}
+                <p className="xv-hc-empower-agent-title font-coding">
+                  <Orbit className="w-3 h-3 inline mr-1" />
+                  Pipeline
+                </p>
+                <ol className="xv-hc-empower-pipeline">
+                  {PIPELINE.map((step, i) => (
+                    <li key={step.id} className={cn('xv-hc-empower-pipe-step', i === 1 && 'is-active')}>
+                      <span className="xv-hc-empower-pipe-idx font-pixel">{i + 1}</span>
+                      <div>
+                        <strong>{step.label}</strong>
+                        <span>{step.detail}</span>
+                      </div>
                     </li>
                   ))}
-                </ul>
+                </ol>
               </div>
               <div className="xv-hc-empower-stats">
-                {STATS.map(({ icon: Icon, label, value }) => (
-                  <div key={label} className="xv-hc-empower-stat">
-                    <Icon className="w-3.5 h-3.5" />
-                    <div>
-                      <strong>{label}</strong>
-                      <span>{value}</span>
-                    </div>
+                <div className="xv-hc-empower-stat">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <div>
+                    <strong>Swarm roles</strong>
+                    <span>Apex · Horizon · Forge · Live</span>
                   </div>
-                ))}
+                </div>
+                <div className="xv-hc-empower-stat">
+                  <GitBranch className="w-3.5 h-3.5" />
+                  <div>
+                    <strong>Ownership</strong>
+                    <span>Pushed to your GitHub</span>
+                  </div>
+                </div>
+                <div className="xv-hc-empower-stat">
+                  <Rocket className="w-3.5 h-3.5" />
+                  <div>
+                    <strong>Deploy</strong>
+                    <span>Live on your Vercel domain</span>
+                  </div>
+                </div>
               </div>
             </div>
           </article>
 
-          {/* Metric card */}
           <article className="xv-hc-empower-card xv-hc-empower-card--metric">
             <p className="xv-hc-empower-metric font-claude">
-              98%
-              <span>fewer dead ends</span>
+              100%
+              <span>finish rate target</span>
             </p>
             <p className="xv-hc-empower-card-body">
-              The swarm tests, refactors, and iterates in-loop — so you keep building instead of
-              babysitting broken previews.
+              When the swarm guides a build, we aim for a complete handoff — preview, files, push,
+              and deploy — not a half-done demo.
             </p>
           </article>
 
-          {/* Scale card */}
           <article className="xv-hc-empower-card xv-hc-empower-card--scale">
             <div className="xv-hc-empower-card-copy">
-              <h3 className="font-claude">Ship big without breaking</h3>
+              <h3 className="font-claude">Stay on one project thread</h3>
               <p>
-                Context stays locked to your GitHub project. Update night/day themes, auth, or whole
-                pages — without rewriting from scratch.
+                Updates patch your selected repo — themes, auth, pages — without throwing away the
+                build you already shipped.
               </p>
             </div>
             <div className="xv-hc-empower-scale-visual" aria-hidden>
               <div className="xv-hc-empower-scale-bar">
-                <span className="font-coding">repo · workspace · preview</span>
-                <em>1,000× context</em>
+                <span className="font-coding">
+                  <Layers className="w-3 h-3 inline mr-1" />
+                  workspace · repo · preview
+                </span>
+                <em>continuous</em>
               </div>
               <div className="xv-hc-empower-scale-pane" />
             </div>

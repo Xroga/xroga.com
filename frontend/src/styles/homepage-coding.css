@@ -628,6 +628,16 @@
   margin: 0 auto 2rem;
 }
 
+.xv-home-coding .xv-hc-empower-kicker {
+  display: inline-block;
+  font-size: 0.48rem;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 0.4rem 0.65rem;
+  margin-bottom: 0.9rem;
+}
+
 .xv-home-coding .xv-hc-empower-title {
   font-size: clamp(1.55rem, 3.6vw, 2.35rem);
   font-weight: 700;
@@ -724,7 +734,7 @@
   margin-bottom: 0.65rem;
 }
 
-.xv-home-coding .xv-hc-empower-routes {
+.xv-home-coding .xv-hc-empower-pipeline {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -732,53 +742,54 @@
   gap: 0.45rem;
 }
 
-.xv-home-coding .xv-hc-empower-route {
+.xv-home-coding .xv-hc-empower-pipe-step {
   display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.45rem 0.5rem;
-  border-radius: 0.65rem;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.5rem 0.55rem;
+  border-radius: 0.7rem;
   border: 1px solid transparent;
   color: rgba(244, 247, 255, 0.72);
-  font-size: 0.82rem;
 }
 
-.xv-home-coding .xv-hc-empower-route.is-active {
+.xv-home-coding .xv-hc-empower-pipe-step.is-active {
   border-color: rgba(74, 163, 255, 0.35);
   background: rgba(74, 163, 255, 0.1);
   color: #fff;
 }
 
-.xv-home-coding .xv-hc-empower-route-dot {
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.xv-home-coding .xv-hc-empower-route.is-active .xv-hc-empower-route-dot {
-  background: var(--hc-blue);
-  box-shadow: 0 0 10px var(--hc-blue);
-}
-
-.xv-home-coding .xv-hc-empower-route-name {
-  flex: 1;
-  font-weight: 600;
-}
-
-.xv-home-coding .xv-hc-empower-route-tag {
+.xv-home-coding .xv-hc-empower-pipe-idx {
   display: inline-flex;
   align-items: center;
-  gap: 0.2rem;
-  font-size: 0.62rem;
-  padding: 0.15rem 0.4rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.65);
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.42rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
 }
 
-.xv-home-coding .xv-hc-empower-route-tag--lock {
-  background: rgba(255, 255, 255, 0.06);
+.xv-home-coding .xv-hc-empower-pipe-step.is-active .xv-hc-empower-pipe-idx {
+  border-color: rgba(74, 163, 255, 0.55);
+  background: rgba(74, 163, 255, 0.18);
+  color: #fff;
+}
+
+.xv-home-coding .xv-hc-empower-pipe-step strong {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.xv-home-coding .xv-hc-empower-pipe-step span {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--hc-muted);
+  margin-top: 0.1rem;
 }
 
 .xv-home-coding .xv-hc-empower-stats {
