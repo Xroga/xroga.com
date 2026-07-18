@@ -2,31 +2,19 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { Rocket } from 'lucide-react';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
 import { autocorrectText } from '@/lib/chatSuggestions';
-import {
-  ChatBarDragOverlay,
-  ChatBarInputRow,
-} from '@/components/terminal/ChatBarParts';
-import { ChatBarFileGrid } from '@/components/terminal/ChatBarFileGrid';
-import type { SendButtonState } from '@/components/terminal/ChatBarButtons';
 import { cn } from '@/lib/utils';
-import toast from 'react-hot-toast';
-
-const MAX_ROWS = 6;
-const LINE_HEIGHT = 22;
 
 const TYPEWRITER_FEATURES = [
-  'Build a full-stack SaaS with auth and billing…',
-  'Generate images, code, and deploy to Vercel…',
-  'Run browser automations with zero API cost…',
   'Create games, apps, and automations with AI Swarm…',
-  'Scrape data, write scripts, and ship in minutes…',
+  'Build a full-stack SaaS with auth and billing…',
+  'Push to GitHub and go live on Vercel…',
+  'Ship a landing page from one prompt…',
+  'Update your repo — theme, auth, pages — in chat…',
 ];
-
-function renameFile(file: File, newName: string) {
-  return new File([file], newName, { type: file.type, lastModified: file.lastModified });
-}
 
 function useTypewriterPlaceholder(active: boolean) {
   const [text, setText] = useState('');
@@ -72,158 +60,117 @@ function useTypewriterPlaceholder(active: boolean) {
 export function HomepageChatBar() {
   const [prompt, setPrompt] = useState('');
   const [focused, setFocused] = useState(false);
-  const [dragOver, setDragOver] = useState(false);
-  const [files, setFiles] = useState<File[]>([]);
-  const uploading = false;
-  const [sendState, setSendState] = useState<SendButtonState>('idle');
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [sending, setSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const composingRef = useRef(false);
   const router = useRouter();
   const typewriter = useTypewriterPlaceholder(!prompt && !focused);
 
-  const addFiles = useCallback((list: FileList | null) => {
-    if (!list?.length) return;
-    const incoming = Array.from(list).filter((f) => f.type.startsWith('image/'));
-    if (!incoming.length) return;
-    setFiles((prev) => [...prev, ...incoming]);
-  }, []);
-
-  const handlePaste = useCallback(
-    (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-      const items = e.clipboardData?.items;
-      if (!items?.length) return;
-      const imageFiles: File[] = [];
-      for (let i = 0; i < items.length; i += 1) {
-        const item = items[i];
-        if (item?.kind === 'file' && item.type.startsWith('image/')) {
-          const file = item.getAsFile();
-          if (file) imageFiles.push(file);
-        }
-      }
-      if (imageFiles.length > 0) {
-        e.preventDefault();
-        const dt = new DataTransfer();
-        imageFiles.forEach((f) => dt.items.add(f));
-        addFiles(dt.files);
-        toast.success(imageFiles.length === 1 ? 'Image pasted' : `${imageFiles.length} images pasted`);
-      }
-    },
-    [addFiles]
-  );
-
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = 'auto';
-    const maxH = LINE_HEIGHT * MAX_ROWS;
-    el.style.height = `${Math.min(el.scrollHeight, maxH)}px`;
+    el.style.height = `${Math.min(el.scrollHeight, 110)}px`;
   }, [prompt]);
 
-  function handleBlur() {
-    setFocused(false);
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (composingRef.current) return;
-    const text = autocorrectText((textareaRef.current?.value ?? prompt).trim());
-    setSendState('sending');
-    localStorage.setItem(PENDING_PROMPT_KEY, text || 'Build with attached files');
-    setTimeout(() => setSendState('launched'), 400);
-    setTimeout(() => router.push('/auth/signup'), 900);
-  }
+  const handleSubmit = useCallback(
+    (e?: React.FormEvent) => {
+      e?.preventDefault();
+      if (composingRef.current || sending) return;
+      const text = autocorrectText((textareaRef.current?.value ?? prompt).trim());
+      setSending(true);
+      localStorage.setItem(PENDING_PROMPT_KEY, text || 'Build with Xroga AI Swarm');
+      setTimeout(() => router.push('/auth/signup'), 700);
+    },
+    [prompt, router, sending]
+  );
 
   return (
-    <div className="w-full max-w-2xl mx-auto relative">
+    <div className="w-full max-w-xl mx-auto relative xv-hc-prompt">
       <form onSubmit={handleSubmit} className="w-full">
         <div
           className={cn(
-            'xv-home-chatbar-shell xv-home-chatbox relative rounded-2xl overflow-hidden transition-all duration-300',
-            'bg-transparent backdrop-blur-md border border-[#006aff]/35',
-            'shadow-[0_16px_56px_rgba(0,106,255,0.12),0_4px_16px_rgba(0,0,0,0.08)]',
-            dragOver && 'ring-2 ring-[#006aff]/50 scale-[1.01] border-[#006aff]/60'
+            'xv-hc-prompt-shell',
+            focused && 'is-focused',
+            sending && 'is-sending'
           )}
-          onDragOver={(e) => {
-            e.preventDefault();
-            setDragOver(true);
-          }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={(e) => {
-            e.preventDefault();
-            setDragOver(false);
-            addFiles(e.dataTransfer.files);
-          }}
         >
-          <ChatBarDragOverlay active={dragOver} />
+          <div className="xv-hc-prompt-main">
+            <div className="relative w-full min-w-0">
+              <textarea
+                ref={textareaRef}
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                onCompositionStart={() => {
+                  composingRef.current = true;
+                }}
+                onCompositionEnd={(e) => {
+                  composingRef.current = false;
+                  setPrompt(e.currentTarget.value);
+                }}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
+                onKeyDown={(e) => {
+                  if (composingRef.current || (e.nativeEvent as KeyboardEvent).isComposing) return;
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit();
+                  }
+                }}
+                placeholder=""
+                rows={2}
+                spellCheck={false}
+                autoCorrect="off"
+                autoCapitalize="off"
+                aria-label="Describe what you want to build"
+                className="xv-hc-prompt-input"
+              />
+              {!prompt && !focused && (
+                <div className="xv-hc-prompt-typewriter" aria-hidden>
+                  {typewriter}
+                  <i className="xv-hc-prompt-caret" />
+                </div>
+              )}
+            </div>
 
-          <ChatBarFileGrid
-            files={files}
-            onRemove={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))}
-            onRename={(i, name) =>
-              setFiles((prev) => prev.map((f, j) => (j === i ? renameFile(f, name) : f)))
-            }
-          />
-
-          <div className="px-3 sm:px-4 pb-2.5 sm:pb-3 pt-0 xv-home-chatbar-inner">
-            <ChatBarInputRow
-              surface="homepage"
-              uploading={uploading}
-              onUploadClick={() => fileRef.current?.click()}
-              listening={false}
-              onMicToggle={() => {}}
-              sendState={sendState}
-              goOnly
+            <button
+              type="submit"
+              className="xv-hc-prompt-go"
+              disabled={sending}
+              aria-label="GO"
             >
-              <div className="relative w-full">
-                <textarea
-                  ref={textareaRef}
-                  value={prompt}
-                  onChange={(e) => {
-                    setPrompt(e.target.value);
-                  }}
-                  onCompositionStart={() => {
-                    composingRef.current = true;
-                  }}
-                  onCompositionEnd={(e) => {
-                    composingRef.current = false;
-                    setPrompt(e.currentTarget.value);
-                  }}
-                  onFocus={() => setFocused(true)}
-                  onPaste={handlePaste}
-                  onBlur={handleBlur}
-                  onKeyDown={(e) => {
-                    if (composingRef.current || (e.nativeEvent as KeyboardEvent).isComposing) return;
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSubmit(e);
-                    }
-                  }}
-                  placeholder=""
-                  rows={2}
-                  spellCheck={false}
-                  autoCorrect="off"
-                  autoCapitalize="off"
-                  className={cn(
-                    'w-full px-1 py-1 resize-none min-h-[44px] max-h-[120px]',
-                    'bg-transparent focus:outline-none text-sm sm:text-base leading-relaxed',
-                    'xv-home-chatbar-input font-medium'
-                  )}
+              <Rocket className="w-3.5 h-3.5" aria-hidden />
+              <span>{sending ? '…' : 'GO!'}</span>
+            </button>
+          </div>
+
+          <div className="xv-hc-prompt-footer">
+            <div className="xv-hc-prompt-integrations" aria-label="Ships with GitHub and Vercel">
+              <span className="xv-hc-prompt-integration">
+                <Image
+                  src="https://cdn.simpleicons.org/github/ffffff"
+                  alt=""
+                  width={14}
+                  height={14}
+                  unoptimized
+                  className="xv-hc-prompt-integration-logo"
                 />
-                {!prompt && !focused && (
-                  <div
-                    className="absolute left-1 top-1 right-1 pointer-events-none text-sm sm:text-base leading-relaxed text-white/45 font-medium xv-typewriter-cursor line-clamp-2"
-                    aria-hidden
-                  >
-                    {typewriter}
-                  </div>
-                )}
-              </div>
-            </ChatBarInputRow>
-            <p className="text-[10px] text-white/45 font-medium mt-1 pl-1">
-              Describe what you want to build
-            </p>
-            <input ref={fileRef} type="file" multiple className="hidden" onChange={(e) => addFiles(e.target.files)} />
+                <span>GitHub</span>
+              </span>
+              <span className="xv-hc-prompt-integration-sep" aria-hidden />
+              <span className="xv-hc-prompt-integration">
+                <Image
+                  src="https://cdn.simpleicons.org/vercel/ffffff"
+                  alt=""
+                  width={14}
+                  height={14}
+                  unoptimized
+                  className="xv-hc-prompt-integration-logo"
+                />
+                <span>Vercel</span>
+              </span>
+            </div>
+            <p className="xv-hc-prompt-hint">Describe what you want to build</p>
           </div>
         </div>
       </form>
