@@ -2,18 +2,19 @@
 
 ## Stack (Fly.io secrets)
 
-| Secret | Models |
-|---|---|
-| `OPENROUTER_API_KEY` | **Kimi K3** (`moonshotai/kimi-k3`), **GLM-5.2** (`z-ai/glm-5.2`), **DeepSeek V4 Flash** (`deepseek/deepseek-v4-flash`), **DeepSeek V4 Pro** (`deepseek/deepseek-v4-pro`) |
-| `GROK_API_KEY` | Grok 4.5 + 4.3 (`api.x.ai`) — falls back to OpenRouter `x-ai/grok-*` if missing |
-| `TAVILY_API_KEY` | Research gather (SearXNG free fallback) |
-| `KIMI_API_KEY` / `GLM_API_KEY` | Optional native fallbacks if OpenRouter is unset |
+| Secret | Source | Models |
+|---|---|---|
+| `OPENROUTER_API_KEY` | OpenRouter | **DeepSeek only** — `deepseek/deepseek-v4-flash`, `deepseek/deepseek-v4-pro` |
+| `KIMI_API_KEY` | Moonshot official | Kimi K3 (`kimi-k3` @ `api.moonshot.ai`) |
+| `GLM_API_KEY` | Zhipu / BigModel official | GLM-5.2 (`glm-5.2` @ `open.bigmodel.cn`) |
+| `GROK_API_KEY` | xAI official | Grok 4.5 + 4.3 (`api.x.ai`) |
+| `TAVILY_API_KEY` | Tavily official | Research gather (SearXNG free fallback) |
 
 **`DEEPSEEK_API_KEY` is not used.** DeepSeek runs only through OpenRouter.
 
-Monthly budget target: **$16.77** API / **$19** user charge / **~6.17M** tokens.
+Kimi / GLM / Grok / Tavily are **not** routed through OpenRouter.
 
-OpenRouter budgets should mirror the per-model USD caps (Kimi $8 / GLM $5.80 / DeepSeek $0.97).
+Monthly budget target: **$16.77** API / **$19** user charge / **~6.17M** tokens.
 
 ## Pipeline (no template catalogs)
 
@@ -28,7 +29,3 @@ OpenRouter budgets should mirror the per-model USD caps (Kimi $8 / GLM $5.80 / D
 - `POST /api/phase1/chat` — light Q&A / research (409 `USE_BUILD_PIPELINE` for builds)
 - `POST /api/swarm/execute` — SSE build stream (`start` → `progress` → `delta` → `complete`)
 - `GET /api/phase1/usage` / `GET /api/dashboard/summary` — quota + `byModel` pools
-
-## Quotas
-
-Uses `user_token_usage` (+ `increment_user_token_usage` / `merge_user_model_usage` RPCs) with in-memory fallback.

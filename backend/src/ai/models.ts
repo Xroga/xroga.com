@@ -2,11 +2,13 @@
  * Xroga multi-model stack — monthly per-user budgets and routing roles.
  *
  * Fly.io secrets:
- *   OPENROUTER_API_KEY  → Kimi K3, GLM-5.2, DeepSeek V4 Flash/Pro (OpenRouter budgets)
- *   GROK_API_KEY        → Grok 4.5 / 4.3 (xAI native)
+ *   OPENROUTER_API_KEY  → DeepSeek V4 Flash/Pro ONLY
+ *   KIMI_API_KEY        → Kimi K3 (Moonshot official)
+ *   GLM_API_KEY         → GLM-5.2 (Zhipu / BigModel official)
+ *   GROK_API_KEY        → Grok 4.5 / 4.3 (xAI official)
  *   TAVILY_API_KEY      → research gather
  *
- * Optional native fallbacks: KIMI_API_KEY, GLM_API_KEY (used only if OpenRouter missing).
+ * DEEPSEEK_API_KEY is unused — DeepSeek runs only via OpenRouter.
  */
 
 export type ModelId =
@@ -24,18 +26,10 @@ export interface ModelDef {
   /** Public Xroga label — never expose raw provider names in UI copy when avoidable */
   label: string;
   role: string;
-  /** Primary OpenAI-compatible model id (OpenRouter slug or native id) */
   apiModel: string;
-  /** Preferred transport */
   provider: ProviderKind;
   baseUrl: string;
-  secretKey: 'OPENROUTER_API_KEY' | 'GROK_API_KEY' | 'KIMI_API_KEY' | 'GLM_API_KEY';
-  /** Optional native fallback when OpenRouter is unset */
-  nativeFallback?: {
-    apiModel: string;
-    baseUrl: string;
-    secretKey: 'KIMI_API_KEY' | 'GLM_API_KEY' | 'GROK_API_KEY';
-  };
+  secretKey: 'OPENROUTER_API_KEY' | 'KIMI_API_KEY' | 'GLM_API_KEY' | 'GROK_API_KEY';
   /** Monthly USD budget allocation */
   budgetUsd: number;
   /** Monthly token pool (input + output combined target) */
@@ -59,15 +53,10 @@ export const MODELS: Record<ModelId, ModelDef> = {
     id: 'kimi_k3',
     label: 'Xroga Apex',
     role: 'Flagship — complex reasoning, full-stack, crypto, long-horizon coding',
-    apiModel: 'moonshotai/kimi-k3',
-    provider: 'openrouter',
-    baseUrl: OPENROUTER_BASE_URL,
-    secretKey: 'OPENROUTER_API_KEY',
-    nativeFallback: {
-      apiModel: 'kimi-k3',
-      baseUrl: 'https://api.moonshot.ai/v1',
-      secretKey: 'KIMI_API_KEY',
-    },
+    apiModel: 'kimi-k3',
+    provider: 'moonshot',
+    baseUrl: 'https://api.moonshot.ai/v1',
+    secretKey: 'KIMI_API_KEY',
     budgetUsd: 8.0,
     monthlyTokens: 888_888,
     inputTokens: 444_444,
@@ -81,15 +70,10 @@ export const MODELS: Record<ModelId, ModelDef> = {
     id: 'glm_5_2',
     label: 'Xroga Horizon',
     role: 'Long-context specialist — large codebases, project-level engineering',
-    apiModel: 'z-ai/glm-5.2',
-    provider: 'openrouter',
-    baseUrl: OPENROUTER_BASE_URL,
-    secretKey: 'OPENROUTER_API_KEY',
-    nativeFallback: {
-      apiModel: 'glm-5.2',
-      baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
-      secretKey: 'GLM_API_KEY',
-    },
+    apiModel: 'glm-5.2',
+    provider: 'zhipu',
+    baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
+    secretKey: 'GLM_API_KEY',
     budgetUsd: 5.8,
     monthlyTokens: 2_000_000,
     inputTokens: 1_000_000,

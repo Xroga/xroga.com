@@ -29,11 +29,6 @@ interface ResolvedEndpoint {
   defaultHeaders?: Record<string, string>;
 }
 
-const GROK_OPENROUTER: Record<'grok_4_5' | 'grok_4_3', string> = {
-  grok_4_5: 'x-ai/grok-4.5',
-  grok_4_3: 'x-ai/grok-4.3',
-};
-
 function openRouterHeaders(): Record<string, string> {
   const referer = process.env.FRONTEND_URL || 'https://xroga.com';
   return {
@@ -44,68 +39,44 @@ function openRouterHeaders(): Record<string, string> {
 
 /**
  * Resolve API endpoint for a model.
- * DeepSeek / Kimi / GLM → OpenRouter (OPENROUTER_API_KEY) with optional native fallback.
- * Grok → xAI (GROK_API_KEY), then OpenRouter if xAI missing.
+ * - DeepSeek → OpenRouter ONLY (OPENROUTER_API_KEY)
+ * - Kimi → Moonshot official (KIMI_API_KEY)
+ * - GLM → Zhipu official (GLM_API_KEY)
+ * - Grok → xAI official (GROK_API_KEY)
  */
 export function resolveEndpoint(modelId: ModelId): ResolvedEndpoint {
   const def = MODELS[modelId];
 
-  // OpenRouter-primary models (Kimi, GLM, DeepSeek)
   if (def.provider === 'openrouter') {
     const orKey = getSecret('OPENROUTER_API_KEY');
-    if (orKey) {
-      return {
-        apiKey: orKey,
-        baseUrl: OPENROUTER_BASE_URL,
-        apiModel: def.apiModel,
-        provider: 'openrouter',
-        defaultHeaders: openRouterHeaders(),
-      };
+    if (!orKey) {
+      throw new Error(
+        `OPENROUTER_API_KEY is not configured (required for ${def.apiModel}). ` +
+          'DeepSeek runs only via OpenRouter — DEEPSEEK_API_KEY is not used.',
+      );
     }
-    if (def.nativeFallback) {
-      const nativeKey = getSecret(def.nativeFallback.secretKey);
-      if (nativeKey) {
-        return {
-          apiKey: nativeKey,
-          baseUrl: def.nativeFallback.baseUrl,
-          apiModel: def.nativeFallback.apiModel,
-          provider: def.nativeFallback.secretKey.replace('_API_KEY', '').toLowerCase(),
-        };
-      }
-    }
-    throw new Error(
-      `OPENROUTER_API_KEY is not configured (required for ${def.apiModel}). ` +
-        (def.nativeFallback
-          ? `Optional native fallback ${def.nativeFallback.secretKey} also missing.`
-          : 'No native DeepSeek key — DeepSeek runs only via OpenRouter.'),
-    );
+    return {
+      apiKey: orKey,
+      baseUrl: OPENROUTER_BASE_URL,
+      apiModel: def.apiModel,
+      provider: 'openrouter',
+      defaultHeaders: openRouterHeaders(),
+    };
   }
 
-  // Grok — prefer xAI, fall back to OpenRouter
   if (def.provider === 'xai') {
     const grokKey = getSecret('GROK_API_KEY') || getSecret('XAI_API_KEY');
-    if (grokKey) {
-      return {
-        apiKey: grokKey,
-        baseUrl: def.baseUrl,
-        apiModel: def.apiModel,
-        provider: 'xai',
-      };
+    if (!grokKey) {
+      throw new Error('GROK_API_KEY is not configured on the server');
     }
-    const orKey = getSecret('OPENROUTER_API_KEY');
-    if (orKey && (modelId === 'grok_4_5' || modelId === 'grok_4_3')) {
-      return {
-        apiKey: orKey,
-        baseUrl: OPENROUTER_BASE_URL,
-        apiModel: GROK_OPENROUTER[modelId],
-        provider: 'openrouter',
-        defaultHeaders: openRouterHeaders(),
-      };
-    }
-    throw new Error('GROK_API_KEY is not configured (OPENROUTER_API_KEY fallback also missing)');
+    return {
+      apiKey: grokKey,
+      baseUrl: def.baseUrl,
+      apiModel: def.apiModel,
+      provider: 'xai',
+    };
   }
 
-  // Generic native
   const apiKey = getSecret(def.secretKey);
   if (!apiKey) {
     throw new Error(`${def.secretKey} is not configured on the server`);
@@ -173,7 +144,6 @@ export function modelKeyStatus(): Record<string, boolean> {
     GLM_API_KEY: Boolean(getSecret('GLM_API_KEY')),
     GROK_API_KEY: Boolean(getSecret('GROK_API_KEY') || getSecret('XAI_API_KEY')),
     TAVILY_API_KEY: Boolean(getSecret('TAVILY_API_KEY')),
-    // DeepSeek is OpenRouter-only — surface readiness via OpenRouter
     DEEPSEEK_VIA_OPENROUTER: Boolean(getSecret('OPENROUTER_API_KEY')),
   };
 }
