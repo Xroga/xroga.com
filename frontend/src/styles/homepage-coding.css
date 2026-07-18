@@ -7,9 +7,10 @@
   --hc-blue-soft: rgba(74, 163, 255, 0.35);
   --hc-ink: #f4f7ff;
   --hc-muted: rgba(220, 230, 255, 0.62);
-  --font-pixel: var(--font-pixel), ui-monospace, monospace;
-  --font-serif-display: var(--font-source-serif), var(--font-azurio), Georgia, serif;
-  --font-sans-display: var(--font-remixa), var(--font-goga), system-ui, sans-serif;
+  /* Do not shadow next/font vars — alias them */
+  --hc-font-pixel: var(--font-pixel), 'Courier New', monospace;
+  --hc-font-serif: var(--font-source-serif), var(--font-azurio), Georgia, serif;
+  --hc-font-sans: var(--font-remixa), var(--font-goga), system-ui, sans-serif;
   color: var(--hc-ink);
   background: var(--hc-bg);
 }
@@ -80,7 +81,7 @@
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   background: rgba(5, 10, 20, 0.55);
-  font-family: var(--font-pixel);
+  font-family: var(--hc-font-pixel);
   font-size: 0.52rem;
   letter-spacing: 0.06em;
   color: rgba(255, 255, 255, 0.88);
@@ -103,7 +104,7 @@
 }
 
 .xv-home-coding .xv-hc-brand {
-  font-family: var(--font-serif-display);
+  font-family: var(--hc-font-serif);
   font-weight: 700;
   font-size: clamp(2.6rem, 8vw, 4.75rem);
   line-height: 0.95;
@@ -113,7 +114,7 @@
 }
 
 .xv-home-coding .xv-hc-headline {
-  font-family: var(--font-sans-display);
+  font-family: var(--hc-font-sans);
   font-weight: 700;
   font-size: clamp(1.55rem, 4.6vw, 2.85rem);
   line-height: 1.15;
@@ -124,7 +125,7 @@
 }
 
 .xv-home-coding .xv-hc-headline-em {
-  font-family: var(--font-serif-display);
+  font-family: var(--hc-font-serif);
   font-style: italic;
   font-weight: 600;
   color: #dcecff;
@@ -159,7 +160,7 @@
   border-radius: 999px;
   background: #fff;
   color: #05080f;
-  font-family: var(--font-sans-display);
+  font-family: var(--hc-font-sans);
   font-weight: 700;
   font-size: 0.78rem;
   letter-spacing: 0.06em;
@@ -182,7 +183,7 @@
   border: 1px solid rgba(255, 255, 255, 0.22);
   background: rgba(8, 14, 28, 0.45);
   color: #fff;
-  font-family: var(--font-sans-display);
+  font-family: var(--hc-font-sans);
   font-weight: 650;
   font-size: 0.78rem;
   letter-spacing: 0.06em;
@@ -214,8 +215,8 @@
 }
 
 .xv-home-coding .xv-hc-pixel-kicker {
-  font-family: var(--font-pixel);
-  font-size: clamp(0.7rem, 2.4vw, 1rem);
+  font-family: var(--hc-font-pixel);
+  font-size: clamp(0.85rem, 3vw, 1.35rem);
   letter-spacing: 0.14em;
   color: #fff;
   text-shadow: 0 0 24px rgba(74, 163, 255, 0.35);
@@ -229,7 +230,7 @@
 }
 
 .xv-home-coding .xv-hc-section-title {
-  font-family: var(--font-sans-display);
+  font-family: var(--hc-font-sans);
   font-weight: 700;
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   line-height: 1.2;
@@ -239,7 +240,7 @@
 }
 
 .xv-home-coding .xv-hc-section-title em {
-  font-family: var(--font-serif-display);
+  font-family: var(--hc-font-serif);
   font-style: italic;
   font-weight: 600;
   font-synthesis: none;
@@ -289,7 +290,7 @@
 
 .xv-home-coding .xv-hc-features-label {
   display: inline-block;
-  font-family: var(--font-pixel);
+  font-family: var(--hc-font-pixel);
   font-size: 0.48rem;
   letter-spacing: 0.12em;
   padding: 0.45rem 0.65rem;
@@ -312,7 +313,7 @@
 }
 
 .xv-home-coding .xv-hc-features-headline {
-  font-family: var(--font-sans-display);
+  font-family: var(--hc-font-sans);
   font-weight: 700;
   font-size: clamp(1.7rem, 3.5vw, 2.5rem);
   line-height: 1.15;
@@ -321,7 +322,7 @@
 }
 
 .xv-home-coding .xv-hc-features-headline em {
-  font-family: var(--font-serif-display);
+  font-family: var(--hc-font-serif);
   font-style: italic;
   font-weight: 600;
 }
@@ -349,7 +350,7 @@
 
 .xv-home-coding .xv-hc-feature-list strong {
   display: block;
-  font-family: var(--font-sans-display);
+  font-family: var(--hc-font-sans);
   font-size: 0.95rem;
   margin-bottom: 0.25rem;
 }
@@ -387,7 +388,7 @@
 
 .xv-home-coding .xv-hc-footer p {
   text-align: center;
-  font-family: var(--font-pixel);
+  font-family: var(--hc-font-pixel);
   font-size: 0.42rem;
   letter-spacing: 0.08em;
   color: rgba(255, 255, 255, 0.35);
