@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
+import { HomepagePipelineDemo } from '@/components/homepage/HomepagePipelineDemo';
 import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
 
@@ -25,16 +26,16 @@ const AI_FEATURES = [
     body: 'Any prompt becomes a clear builder brief, then ships as a real product — no template catalog.',
   },
   {
-    title: 'Multi-model AI Swarm',
-    body: 'Kimi for hard builds, GLM for long codebases, DeepSeek for volume, Grok for live intel.',
+    title: 'Xroga AI Swarm',
+    body: 'Apex for hard builds, Horizon for long codebases, Forge for volume, Live for real-time intel.',
   },
   {
-    title: 'Ship to GitHub & Vercel',
-    body: 'Preview in the workspace, then push and deploy when you are ready — no fake URLs.',
+    title: 'GitHub push · Vercel live',
+    body: 'Preview in Workspace, auto-push the repo, then go live on your domain — no fake URLs.',
   },
   {
-    title: 'Deep research lane',
-    body: 'Tavily and SearXNG gather sources; the swarm synthesizes reports you can actually use.',
+    title: 'Research that ships',
+    body: 'Gather sources, synthesize the report, then turn findings into code in the same flow.',
   },
 ];
 
@@ -59,6 +60,9 @@ export default function HomePage() {
     <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
       <section className="xv-hc-hero">
         <div className="xv-hc-hero-pattern" aria-hidden />
+        <div className="xv-hc-hero-orb xv-hc-hero-orb--a" aria-hidden />
+        <div className="xv-hc-hero-orb xv-hc-hero-orb--b" aria-hidden />
+        <div className="xv-hc-hero-scan" aria-hidden />
 
         <header className="xv-hc-header">
           <div className="xv-hc-header-inner">
@@ -85,7 +89,7 @@ export default function HomePage() {
         <div className="xv-hc-hero-main">
           <p className="xv-hc-badge">
             <span className="xv-hc-badge-dot" aria-hidden />
-            NEW: MULTI-MODEL AI SWARM
+            NEW: XROGA AI SWARM
           </p>
 
           <h1 className="xv-hc-brand">XROGA</h1>
@@ -95,8 +99,8 @@ export default function HomePage() {
           </p>
 
           <p className="xv-hc-sub">
-            Describe the product. Our converter writes the brief. The swarm codes, previews, and
-            prepares GitHub-ready files.
+            Describe the product. Converter writes the brief. The swarm codes, debugs, pushes to
+            GitHub, and deploys live to your domain.
           </p>
 
           <div className="xv-hc-ctas">
@@ -124,13 +128,19 @@ export default function HomePage() {
             CODING
           </p>
           <h2 className="xv-hc-section-title">
-            Build better products. <em>Agents for your repo.</em> Models for every lane.
+            Build better products. <em>Agents for your repo.</em> One modern flow.
           </h2>
           <p className="xv-hc-section-copy">
-            Full-stack sites, games, crypto tools, and long-horizon refactors — routed to the right
-            model so you can ship for a full month without burning one engine.
+            Prompt in Workspace → analyze → build → debug → push GitHub → live on Vercel with your
+            domain. Continuous loop, not a one-shot demo.
           </p>
           <div className="xv-hc-mark" aria-hidden />
+        </div>
+      </section>
+
+      <section className="xv-hc-live" aria-label="Live build simulation">
+        <div className="xv-hc-live-inner">
+          <HomepagePipelineDemo />
         </div>
       </section>
 
@@ -144,7 +154,7 @@ export default function HomePage() {
               </h2>
               <p className="xv-hc-features-lead">
                 One intelligent flow for any request — apps, games, research, and repo work —
-                powered by official Kimi, GLM, Grok keys plus DeepSeek on OpenRouter.
+                powered by the Xroga AI Swarm: Apex, Horizon, Forge, and Live.
               </p>
             </div>
             <ul className="xv-hc-feature-list">
