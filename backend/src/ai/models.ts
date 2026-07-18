@@ -175,7 +175,7 @@ export function dashboardModelPools() {
     {
       role: 'deepseek_v4',
       label: 'Xroga Forge / Pulse',
-      tagline: 'Volume workhorse (Pro + Flash via OpenRouter)',
+      tagline: 'Volume workhorse',
       totalLimit: MODELS.deepseek_v4_pro.monthlyTokens + MODELS.deepseek_v4_flash.monthlyTokens,
       budgetUsd: MODELS.deepseek_v4_pro.budgetUsd + MODELS.deepseek_v4_flash.budgetUsd,
     },

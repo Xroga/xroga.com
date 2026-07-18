@@ -1,14 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import { Terminal, Palette, MessageCircleHeart, Maximize2, Minimize2 } from 'lucide-react';
+import { Terminal, Maximize2, Minimize2 } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
-import { TERMINAL_SKIN_LABELS } from '@/lib/theme';
 import { ProcessingLogo } from '@/components/layout/ProcessingLogo';
-import { FeedbackModal } from '@/components/feedback/FeedbackModal';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { SwarmPhasePanel } from './SwarmPhasePanel';
@@ -52,7 +51,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   const applyBuild = useProjectWorkspaceStore((s) => s.applyBuild);
   const clearRollbackBuffer = useProjectWorkspaceStore((s) => s.clearRollbackBuffer);
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
-  const cycleTerminalSkin = useThemeStore((s) => s.cycleTerminalSkin);
   const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
   const setTerminalFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const profile = useAppStore((s) => s.profile);
@@ -67,7 +65,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   const userScrolledUpRef = useRef(false);
   const prevLoadingRef = useRef(false);
   const jumpHandledRef = useRef<string | null>(null);
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [searchHit, setSearchHit] = useState<string | null>(null);
   const [activeTurnId, setActiveTurnId] = useState<string | null>(null);
 
@@ -269,92 +266,40 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           compact ? '' : 'w-full'
         )}
       >
-        <div className="xv-terminal-header sticky top-0 z-20 flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 border-b border-[var(--card-border)]/30 overflow-x-auto scrollbar-hide backdrop-blur-xl bg-[var(--card)]/55">
-          <Terminal className="w-4 h-4 opacity-70 shrink-0 hidden sm:block" />
+        <div className="xv-terminal-header sticky top-0 z-20 flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 border-b border-[var(--card-border)]/40 overflow-x-auto scrollbar-hide backdrop-blur-xl bg-[var(--card)]/70">
+          <Terminal className="w-4 h-4 opacity-70 shrink-0 hidden sm:block text-[var(--accent)]" />
           <div className="flex-1 min-w-0">
-            <h3 className="font-remixa text-xs sm:text-sm opacity-90 truncate">
-              {isIncognito ? 'guest@incognito ~ temporary' : 'xroga@swarm ~ terminal'}
+            <h3 className="font-coding text-[10px] sm:text-xs tracking-wide opacity-90 truncate text-[var(--foreground)]">
+              {isIncognito ? '>_ guest@incognito · temporary' : '>_ xroga@swarm · terminal'}
             </h3>
             {isIncognito && (
-              <p className="text-[8px] sm:text-[9px] text-white/55 font-medium">Private room · not saved</p>
-            )}
-          </div>
-          <div className="hidden sm:flex items-center gap-1 shrink-0">
-            {!isIncognito && (
-            <>
-            <button
-              type="button"
-              onClick={cycleTerminalSkin}
-              className="flex items-center gap-1 p-1.5 rounded-lg hover:bg-white/10 transition-colors text-[10px] font-terminal shrink-0"
-              title="Cycle terminal color (white / black / gray) — independent of site theme"
-            >
-              <Palette className="w-3.5 h-3.5" />
-              <span className="hidden md:inline opacity-70">{TERMINAL_SKIN_LABELS[terminalSkin]}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setTerminalFullscreen(!terminalFullscreen)}
-              className="p-1 rounded-md hover:bg-white/10 transition-colors text-[var(--muted)] hover:text-[var(--foreground)] shrink-0"
-              title={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
-              aria-label={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
-            >
-              {terminalFullscreen ? (
-                <Minimize2 className="w-3 h-3" />
-              ) : (
-                <Maximize2 className="w-3 h-3" />
-              )}
-            </button>
-            </>
-            )}
-            {!isIncognito && (
-            <button
-              type="button"
-              onClick={() => setFeedbackOpen(true)}
-              className="xv-feedback-btn p-1.5 rounded-lg shrink-0"
-              title="Send feedback"
-              aria-label="Feedback"
-            >
-              <MessageCircleHeart className="w-4 h-4" />
-            </button>
+              <p className="text-[8px] sm:text-[9px] text-[var(--muted)] font-coding">Private room · not saved</p>
             )}
           </div>
           {!isIncognito && (
-          <div className="flex sm:hidden items-center gap-0.5 shrink-0">
-            <button
-              type="button"
-              onClick={cycleTerminalSkin}
-              className="p-1.5 rounded-lg hover:bg-white/10 shrink-0"
-              title="Terminal theme"
-              aria-label="Terminal theme"
-            >
-              <Palette className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setTerminalFullscreen(!terminalFullscreen)}
-              className="p-1.5 rounded-lg hover:bg-white/10 shrink-0"
-              title={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-              aria-label={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-            >
-              {terminalFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-            </button>
-            <button
-              type="button"
-              onClick={() => setFeedbackOpen(true)}
-              className="xv-feedback-btn p-1.5 rounded-lg shrink-0"
-              title="Feedback"
-              aria-label="Feedback"
-            >
-              <MessageCircleHeart className="w-4 h-4" />
-            </button>
-          </div>
+            <div className="flex items-center gap-1 shrink-0">
+              <ThemeToggle />
+              <button
+                type="button"
+                onClick={() => setTerminalFullscreen(!terminalFullscreen)}
+                className="p-1.5 rounded-md hover:bg-[var(--foreground)]/5 transition-colors text-[var(--muted)] hover:text-[var(--foreground)] shrink-0"
+                title={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
+                aria-label={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
+              >
+                {terminalFullscreen ? (
+                  <Minimize2 className="w-3.5 h-3.5" />
+                ) : (
+                  <Maximize2 className="w-3.5 h-3.5" />
+                )}
+              </button>
+            </div>
           )}
         </div>
 
-        <div className="px-4 py-3 space-y-3 font-terminal text-[13px] overflow-hidden rounded-b-xl">
+        <div className="xv-terminal-body px-4 py-3 space-y-3 font-coding text-[13px] overflow-hidden rounded-b-xl">
           {messages.length === 0 && !loading && (
-            <p className="text-[var(--muted)] text-center py-6">
-              <span className="opacity-70">&gt;</span>{' '}
+            <p className="text-[var(--muted)] text-center py-8 font-coding tracking-wide">
+              <span className="opacity-70 text-[var(--accent)]">&gt;</span>{' '}
               {isIncognito
                 ? 'Start a temporary chat — questions & conversation only…'
                 : 'Ask Xroga to build anything…'}
@@ -562,7 +507,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           content={msg.content}
                           messageId={msg.id}
                           onEdit={() => handleEditAI(msg.content)}
-                          onFeedback={() => setFeedbackOpen(true)}
                           onDelete={() => deleteTurn(msg.id)}
                         />
                       )}
@@ -597,7 +541,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           onJump={jumpToTurn}
         />
       )}
-      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </>
   );
 }

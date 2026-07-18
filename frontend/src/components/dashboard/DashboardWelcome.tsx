@@ -26,28 +26,24 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
   return (
     <div className={cn('xv-dashboard-welcome xv-welcome-modern relative', className)}>
       <p className="xv-welcome-greeting relative">
-        <span className="xv-welcome-greeting-text font-remixa">{greeting},</span>
+        <span className="xv-welcome-greeting-text font-coding">{greeting},</span>
       </p>
       <p className="xv-welcome-name-line relative">
-        <span className="xv-welcome-name font-azurio">{name}</span>
+        <span className="xv-welcome-name font-claude">{name}</span>
       </p>
 
       <div className="xv-blackhole-identity relative" aria-label="Black Hole V Infinity">
-        <span className="xv-blackhole-identity__label font-goga">Black Hole</span>
-        <span className="xv-blackhole-identity__mark font-remixa">
+        <span className="xv-blackhole-identity__label font-coding">Black Hole</span>
+        <span className="xv-blackhole-identity__mark font-claude">
           <span className="xv-blackhole-identity__v">V</span>
           <Infinity className="xv-blackhole-identity__inf" strokeWidth={2.75} aria-hidden />
         </span>
       </div>
 
       <div className="xv-welcome-taglines relative mt-3 space-y-2 max-w-3xl">
-        <p className="xv-welcome-tagline-mixed font-goga">
-          Others count up.{' '}
-          <span className="xv-tagline-accent font-emilio">We count forever.</span>
-        </p>
-        <p className="xv-welcome-tagline-sub font-goga">
-          The <span className="xv-tagline-accent font-emilio">first</span> and{' '}
-          <span className="xv-tagline-accent font-emilio">last</span> model you will ever need.
+        <p className="xv-welcome-tagline-sub font-claude">
+          The <span className="xv-tagline-accent">first</span> and{' '}
+          <span className="xv-tagline-accent">last</span> model you will ever need.
         </p>
       </div>
 

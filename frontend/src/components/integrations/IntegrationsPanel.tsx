@@ -13,6 +13,7 @@ import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { ConnectButton } from '@/components/ui/Uiverse';
 import { cn } from '@/lib/utils';
+import { isConnectableIntegration } from '@/lib/connectableIntegrations';
 
 export function IntegrationsPanel() {
   const [search, setSearch] = useState('');
@@ -99,8 +100,8 @@ export function IntegrationsPanel() {
             {INTEGRATIONS.length} total
           </span>
         </div>
-        <p className="text-sm text-[var(--muted)] mt-1">
-          Connect external services to power your Swarm. Platform keys are auto-managed — custom keys require your vault password to view.
+        <p className="text-sm text-[var(--muted)] mt-1 font-coding">
+          Connect GitHub, Vercel, Supabase, Brevo, Cloudflare, Paddle, and Lemon Squeezy. Everything else is coming soon.
         </p>
       </div>
 
@@ -134,15 +135,22 @@ export function IntegrationsPanel() {
           </div>
           <div className="divide-y divide-[var(--card-border)]">
             {items.map((item) => {
-              const connected =
-                item.status === 'connected' ||
-                (item.id === 'github' && githubConnected);
+              const connectable = isConnectableIntegration(item.id);
+              const isLiveConnected = item.id === 'github' && githubConnected;
               return (
                 <div
                   key={item.id}
-                  className="integration-card flex items-center justify-between gap-4 px-4 py-3 hover:bg-white/[0.03]"
+                  className={cn(
+                    'integration-card relative flex items-center justify-between gap-4 px-4 py-3',
+                    connectable ? 'hover:bg-white/[0.03]' : 'overflow-hidden'
+                  )}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div
+                    className={cn(
+                      'flex items-center gap-3 min-w-0 flex-1',
+                      !connectable && 'xv-integration-blur'
+                    )}
+                  >
                     <div className="w-10 h-10 rounded-xl integration-logo-wrap flex items-center justify-center shrink-0 overflow-hidden">
                       {getIntegrationLogo(item.id, item.name) ? (
                         <Image
@@ -158,35 +166,46 @@ export function IntegrationsPanel() {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium">{item.name}</p>
+                      <p className="text-sm font-medium font-claude">{item.name}</p>
                       {item.description && (
-                        <p className="text-xs text-[var(--muted)]">{item.description}</p>
+                        <p className="text-xs text-[var(--muted)] font-coding">{item.description}</p>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span
-                      className={cn(
-                        'text-xs px-2.5 py-1 rounded-full font-medium transition-colors',
-                        connected
-                          ? 'bg-blue-500/20 text-blue-400 connect-pulse'
-                          : 'bg-white/5 text-[var(--muted)]'
-                      )}
-                    >
-                      {connected ? 'Connected' : 'Not connected'}
-                    </span>
-                    <ConnectButton
-                      connected={connected}
-                      label={connected ? 'Manage' : 'Connect'}
-                      onClick={() => {
-                        if (connected && item.id === 'github') {
-                          window.location.href = '/dashboard/integrations';
-                        } else if (!connected) {
-                          void handleConnect(item.id, item.oauth);
-                        }
-                      }}
-                    />
-                  </div>
+                  {connectable ? (
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span
+                        className={cn(
+                          'text-xs px-2.5 py-1 rounded-full font-medium transition-colors font-coding',
+                          isLiveConnected
+                            ? 'bg-blue-500/20 text-blue-400 connect-pulse'
+                            : 'bg-white/5 text-[var(--muted)]'
+                        )}
+                      >
+                        {isLiveConnected ? 'Connected' : 'Not connected'}
+                      </span>
+                      <ConnectButton
+                        connected={isLiveConnected}
+                        label={isLiveConnected ? 'Manage' : 'Connect'}
+                        onClick={() => {
+                          if (isLiveConnected && item.id === 'github') {
+                            window.location.href = '/dashboard/integrations';
+                          } else if (!isLiveConnected) {
+                            void handleConnect(item.id, item.oauth);
+                          }
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="shrink-0 relative z-[1]">
+                      <span className="text-[10px] px-2.5 py-1 rounded-md bg-[var(--foreground)]/10 text-[var(--muted)] font-coding uppercase tracking-wider">
+                        Coming soon
+                      </span>
+                    </div>
+                  )}
+                  {!connectable && (
+                    <div className="pointer-events-none absolute inset-0 bg-[var(--background)]/25 backdrop-blur-[1.5px]" />
+                  )}
                 </div>
               );
             })}
