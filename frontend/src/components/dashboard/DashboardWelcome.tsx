@@ -42,8 +42,8 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
 
       <div className="xv-welcome-taglines relative mt-3 space-y-2 max-w-3xl">
         <p className="xv-welcome-tagline-sub font-claude">
-          The <span className="xv-tagline-accent">first</span> and{' '}
-          <span className="xv-tagline-accent">last</span> model you will ever need.
+          The <span className="xv-tagline-accent font-claude">first</span> and{' '}
+          <span className="xv-tagline-accent font-claude">last</span> model you will ever need.
         </p>
       </div>
 
