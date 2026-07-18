@@ -26,7 +26,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isHomepage = pathname === '/';
   const isAuthRoute = pathname.startsWith('/auth');
-  const isShellRoute = pathname === '/workspace' || pathname.startsWith('/dashboard');
+  const isShellRoute =
+    pathname === '/workspace' ||
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/settings');
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -50,12 +53,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       'xv-deep-work-shell',
     );
 
-    // Homepage owns its static deep-work image; workspace/dashboard use solid deep-work navy
-    const effectiveTheme = isHomepage || isShellRoute ? 'image' : theme;
+    // Homepage always deep-work image class (static wallpaper owned by page)
+    // Shell respects user theme pick (Deep Work / Black / Gray) — never photo wallpaper
+    const effectiveTheme = isHomepage ? 'image' : theme;
     body.classList.add(`theme-${effectiveTheme}`);
-    if (isShellRoute) {
+
+    const useDeepWorkShell =
+      isShellRoute && (theme === 'image' || theme === 'black' || theme === 'gray');
+    if (useDeepWorkShell) {
       body.classList.add('xv-deep-work-shell');
+      if (theme === 'black') {
+        body.style.setProperty('--background', '#000000');
+      } else if (theme === 'gray') {
+        body.style.setProperty('--background', '#12151c');
+      } else {
+        body.style.setProperty('--background', DEEP_WORK_BG);
+      }
+    } else {
+      body.style.removeProperty('--background');
     }
+
     body.style.transition = 'background 500ms ease, color 500ms ease';
 
     let themeMeta = document.querySelector('meta[name="theme-color"]');
@@ -66,7 +83,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
     themeMeta.setAttribute(
       'content',
-      isHomepage || isShellRoute ? DEEP_WORK_BG : (THEME_COLORS[effectiveTheme] ?? '#0a0a0a'),
+      isHomepage || useDeepWorkShell
+        ? (theme === 'black' ? '#000000' : theme === 'gray' ? '#12151c' : DEEP_WORK_BG)
+        : (THEME_COLORS[effectiveTheme] ?? '#0a0a0a'),
     );
 
     // No photo slideshow / wallpaper on homepage or workspace shell
@@ -75,7 +94,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       body.style.backgroundAttachment = '';
       body.style.backgroundSize = '';
       body.style.backgroundPosition = '';
-      body.style.backgroundColor = DEEP_WORK_BG;
+      body.style.backgroundColor =
+        theme === 'black' && isShellRoute
+          ? '#000000'
+          : theme === 'gray' && isShellRoute
+            ? '#12151c'
+            : DEEP_WORK_BG;
       return;
     }
 
@@ -115,7 +139,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     isMobile,
   ]);
 
-  // Slideshow only on auth (and non-shell image theme) — never homepage or workspace
   const showDesktopSlideshow =
     !isHomepage &&
     !isShellRoute &&
