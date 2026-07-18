@@ -5,11 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
-import { HomepageTagMarquee } from '@/components/homepage/HomepageTagMarquee';
-import { HomeSignInButton, PowerSmashButton } from '@/components/ui/XrogaButtons';
-import { MOBILE_BG } from '@/lib/theme';
-import { useThemeStore } from '@/store/useThemeStore';
-import { useHydrated } from '@/hooks/useHydrated';
+import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
 
 const FOOTER_LINKS = [
@@ -23,11 +19,27 @@ const FOOTER_LINKS = [
   { href: '/refund', label: 'Refund' },
 ];
 
+const AI_FEATURES = [
+  {
+    title: 'Converter → Builder',
+    body: 'Any prompt becomes a clear builder brief, then ships as a real product — no template catalog.',
+  },
+  {
+    title: 'Multi-model AI Swarm',
+    body: 'Kimi for hard builds, GLM for long codebases, DeepSeek for volume, Grok for live intel.',
+  },
+  {
+    title: 'Ship to GitHub & Vercel',
+    body: 'Preview in the workspace, then push and deploy when you are ready — no fake URLs.',
+  },
+  {
+    title: 'Deep research lane',
+    body: 'Tavily and SearXNG gather sources; the swarm synthesizes reports you can actually use.',
+  },
+];
+
 export default function HomePage() {
   const router = useRouter();
-  const hydrated = useHydrated();
-  const customMobileBg = useThemeStore((s) => s.customMobileBg);
-  const mobileBg = hydrated ? (customMobileBg ?? MOBILE_BG) : MOBILE_BG;
   const [loggedIn, setLoggedIn] = useState(false);
   const [authReady, setAuthReady] = useState(false);
 
@@ -40,88 +52,122 @@ export default function HomePage() {
       });
   }, []);
 
+  const primaryHref = loggedIn ? '/workspace' : '/auth/signup';
+  const primaryLabel = loggedIn ? 'Open Workspace' : 'Start Building';
+
   return (
-    <div className="xv-homepage min-h-screen flex flex-col relative overflow-x-hidden">
-      <div
-        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat md:hidden"
-        style={{ backgroundImage: `url("${mobileBg}")` }}
-        aria-hidden
-      />
+    <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
+      <section className="xv-hc-hero">
+        <div className="xv-hc-hero-pattern" aria-hidden />
 
-      <header className="xv-home-header xv-site-header sticky top-0 z-50 bg-transparent border-none shadow-none">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
-          <Logo href="/" variant="homepage" height={76} className="shrink-0" />
-          {authReady && loggedIn && (
-            <PowerSmashButton
-              size="sm"
-              onClick={() => router.push('/workspace')}
-              className="xv-get-started-outline xv-home-auth-btn !min-w-[140px] !min-h-[44px]"
+        <header className="xv-hc-header">
+          <div className="xv-hc-header-inner">
+            <Logo href="/" variant="homepage" height={64} className="shrink-0" />
+            {authReady && (
+              <div className="flex items-center gap-2">
+                {!loggedIn && (
+                  <Link href="/auth/login" className="xv-hc-btn-ghost !min-h-[2.4rem] !px-4 !text-[0.7rem]">
+                    Sign In
+                  </Link>
+                )}
+                <button
+                  type="button"
+                  onClick={() => router.push(loggedIn ? '/workspace' : '/auth/signup')}
+                  className="xv-hc-btn-primary !min-h-[2.4rem] !px-4 !text-[0.7rem]"
+                >
+                  {loggedIn ? 'Dashboard' : 'Get Started'}
+                </button>
+              </div>
+            )}
+          </div>
+        </header>
+
+        <div className="xv-hc-hero-main">
+          <p className="xv-hc-badge">
+            <span className="xv-hc-badge-dot" aria-hidden />
+            NEW: MULTI-MODEL AI SWARM
+          </p>
+
+          <h1 className="xv-hc-brand">XROGA</h1>
+
+          <p className="xv-hc-headline">
+            AI That <span className="xv-hc-headline-em">Builds Your Stack</span> From One Prompt
+          </p>
+
+          <p className="xv-hc-sub">
+            Describe the product. Our converter writes the brief. The swarm codes, previews, and
+            prepares GitHub-ready files.
+          </p>
+
+          <div className="xv-hc-ctas">
+            <button
+              type="button"
+              onClick={() => router.push(primaryHref)}
+              className="xv-hc-btn-primary"
             >
-              Dashboard
-            </PowerSmashButton>
-          )}
-        </div>
-      </header>
+              {primaryLabel}
+            </button>
+            <Link href="/pricing" className="xv-hc-btn-ghost">
+              View Pricing
+            </Link>
+          </div>
 
-      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-6 sm:py-10 relative">
-        <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[80%] max-w-lg h-40 bg-[#006aff]/15 rounded-full blur-[120px] pointer-events-none xv-ai-glow-pulse" />
-
-        <div className="relative z-10 w-full max-w-5xl text-center">
-          <h1 className="xv-hero-pro-title mb-5">
-            <span className="xv-hero-pro-line block font-goga">
-              Do <span className="xv-hero-pro-word">Everything</span>
-            </span>
-            <span className="xv-hero-pro-line xv-hero-pro-line--blue block mt-1 sm:mt-2 font-goga">
-              You <span className="xv-hero-pro-word xv-hero-pro-word--blue">Imagine</span>
-            </span>
-          </h1>
-
-          {authReady && !loggedIn && (
-            <div className="flex flex-wrap items-center justify-center gap-3 mb-5 xv-home-auth-row">
-              <HomeSignInButton
-                onClick={() => router.push('/auth/login')}
-                className="xv-home-auth-btn !min-w-[148px] !min-h-[48px]"
-              >
-                Sign In
-              </HomeSignInButton>
-              <PowerSmashButton
-                size="sm"
-                onClick={() => router.push('/auth/signup')}
-                className="xv-get-started-outline xv-home-auth-btn !min-w-[160px] !min-h-[48px]"
-              >
-                Get Started
-              </PowerSmashButton>
-            </div>
-          )}
-
-          <div className="w-full mb-4 xv-chatbar-stack relative xv-home-chatbar-wrap">
+          <div className="xv-hc-chat xv-home-chatbar-wrap">
             <HomepageChatBar />
           </div>
-
-          <HomepageTagMarquee />
         </div>
-      </main>
+      </section>
 
-      <footer className="relative z-10 py-6 px-4 xv-home-footer-modern">
-        <div className="max-w-3xl mx-auto">
-          <div className="xv-home-footer-glass rounded-2xl px-4 py-4 sm:px-6 sm:py-5">
-            <nav className="flex flex-wrap items-center justify-center gap-x-1 gap-y-2">
-              {FOOTER_LINKS.map(({ href, label }, i) => (
-                <span key={href} className="inline-flex items-center">
-                  <Link href={href} className="xv-home-footer-link">
-                    {label}
-                  </Link>
-                  {i < FOOTER_LINKS.length - 1 && (
-                    <span className="text-white/20 mx-2 hidden sm:inline select-none">·</span>
-                  )}
-                </span>
+      <section className="xv-hc-section" aria-labelledby="coding-heading">
+        <div className="xv-hc-section-inner">
+          <p className="xv-hc-pixel-kicker" id="coding-heading">
+            CODING
+          </p>
+          <h2 className="xv-hc-section-title">
+            Build better products. <em>Agents for your repo.</em> Models for every lane.
+          </h2>
+          <p className="xv-hc-section-copy">
+            Full-stack sites, games, crypto tools, and long-horizon refactors — routed to the right
+            model so you can ship for a full month without burning one engine.
+          </p>
+          <div className="xv-hc-mark" aria-hidden />
+        </div>
+      </section>
+
+      <section className="xv-hc-features" aria-labelledby="features-heading">
+        <div className="xv-hc-features-inner">
+          <span className="xv-hc-features-label">WHAT WE SHIP</span>
+          <div className="xv-hc-features-grid">
+            <div>
+              <h2 className="xv-hc-features-headline" id="features-heading">
+                Swarm at full throttle. <em>Precision builds.</em>
+              </h2>
+              <p className="xv-hc-features-lead">
+                One intelligent flow for any request — apps, games, research, and repo work —
+                powered by official Kimi, GLM, Grok keys plus DeepSeek on OpenRouter.
+              </p>
+            </div>
+            <ul className="xv-hc-feature-list">
+              {AI_FEATURES.map((f) => (
+                <li key={f.title}>
+                  <strong>{f.title}</strong>
+                  <span>{f.body}</span>
+                </li>
               ))}
-            </nav>
-            <p className="text-[10px] text-center text-white/35 mt-3 font-medium tracking-wide">
-              XROGA AI · Black Hole V∞ · Ship something legendary
-            </p>
+            </ul>
           </div>
         </div>
+      </section>
+
+      <footer className="xv-hc-footer">
+        <nav aria-label="Footer">
+          {FOOTER_LINKS.map(({ href, label }) => (
+            <Link key={href} href={href}>
+              {label}
+            </Link>
+          ))}
+        </nav>
+        <p>XROGA AI · BLACK HOLE V∞ · SHIP SOMETHING LEGENDARY</p>
       </footer>
     </div>
   );

@@ -1,5 +1,14 @@
 import type { Metadata, Viewport } from 'next';
-import { Cormorant, Fraunces, Inter, JetBrains_Mono, Outfit, Syne } from 'next/font/google';
+import {
+  Cormorant,
+  Fraunces,
+  Inter,
+  JetBrains_Mono,
+  Outfit,
+  Press_Start_2P,
+  Source_Serif_4,
+  Syne,
+} from 'next/font/google';
 import './globals.css';
 import '@/styles/xroga-fonts.css';
 import '@/styles/uiverse.css';
@@ -38,6 +47,19 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-xv-mono',
   weight: ['400', '500', '600'],
+});
+/** Pixel coding vibe — homepage accents */
+const pixelCoding = Press_Start_2P({
+  subsets: ['latin'],
+  variable: '--font-pixel',
+  weight: ['400'],
+});
+/** High-contrast editorial serif (Claude-like display) */
+const sourceSerif = Source_Serif_4({
+  subsets: ['latin'],
+  variable: '--font-source-serif',
+  weight: ['400', '600', '700'],
+  style: ['normal', 'italic'],
 });
 
 export const metadata: Metadata = {
@@ -89,7 +111,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>
       <body
-        className={`${inter.variable} ${azurio.variable} ${goga.variable} ${remixa.variable} ${emilio.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        className={`${inter.variable} ${azurio.variable} ${goga.variable} ${remixa.variable} ${emilio.variable} ${jetbrainsMono.variable} ${pixelCoding.variable} ${sourceSerif.variable} font-sans antialiased`}
       >
         <SiteJsonLd />
         <RootProviders>{children}</RootProviders>
