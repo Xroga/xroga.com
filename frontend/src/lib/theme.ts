@@ -27,7 +27,8 @@ export const DEFAULT_TERMINAL_SKIN: Record<ThemeId, TerminalSkin> = {
   white: 'light',
   black: 'amoled',
   gray: 'gray',
-  image: 'light',
+  /** Deep-work navy (homepage vibe) — never photo wallpaper */
+  image: 'dark',
 };
 
 export const TERMINAL_SKIN_CYCLE: TerminalSkin[] = ['light', 'amoled', 'gray', 'dark', 'light-grid'];
@@ -49,8 +50,11 @@ export const SLIDESHOW_ENABLED_KEY = 'xroga_slideshow_enabled';
 export const SLIDESHOW_FROZEN_INDEX_KEY = 'xroga_slideshow_frozen_index';
 
 export const THEME_OPTIONS: { id: ThemeId; label: string; description: string }[] = [
-  { id: 'image', label: 'Image', description: 'Fun & creative work' },
-  { id: 'white', label: 'White', description: 'Pure deep work' },
-  { id: 'black', label: 'Black', description: 'Aesthetic attitude' },
-  { id: 'gray', label: 'Gray', description: 'Focused mode' },
+  { id: 'image', label: 'Deep Work', description: 'Navy focus — homepage vibe' },
+  { id: 'black', label: 'Black', description: 'AMOLED / high contrast' },
+  { id: 'gray', label: 'Gray', description: 'Soft focused mode' },
+  { id: 'white', label: 'White', description: 'Bright writing mode' },
 ];
+
+/** Themes shown inside Workspace / Dashboard (no wallpaper slideshow). */
+export const SHELL_THEME_OPTIONS = THEME_OPTIONS.filter((o) => o.id !== 'white');

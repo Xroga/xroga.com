@@ -41,12 +41,25 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   const hydrated = useHydrated();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
+  const theme = useThemeStore((s) => s.theme);
+  const terminalSkin = useThemeStore((s) => s.terminalSkin);
+  const setTerminalSkin = useThemeStore((s) => s.setTerminalSkin);
+  const setSlideshowEnabled = useThemeStore((s) => s.setSlideshowEnabled);
   const pathname = usePathname();
   const isDashboard = pathname === '/workspace';
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const effectiveSidebarOpen = hydrated ? sidebarOpen : true;
   const widthPx = effectiveSidebarOpen ? (hydrated ? sidebarWidth : 256) : 0;
+
+  // Migrate legacy “Image + light terminal + slideshow” into deep-work navy
+  useEffect(() => {
+    if (!hydrated) return;
+    setSlideshowEnabled(false);
+    if (terminalSkin === 'light' || terminalSkin === 'light-grid') {
+      setTerminalSkin(theme === 'black' ? 'amoled' : theme === 'gray' ? 'gray' : 'dark');
+    }
+  }, [hydrated, theme, terminalSkin, setSlideshowEnabled, setTerminalSkin]);
 
   useEffect(() => {
     document.body.classList.toggle('xv-incognito-active', incognito && isDashboard);

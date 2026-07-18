@@ -59,7 +59,7 @@ export const useThemeStore = create<ThemeState>()(
       slideshowEnabled: true,
       slideshowFrozenIndex: 0,
       terminalFullscreen: false,
-      terminalSkin: DEFAULT_TERMINAL_SKIN.image,
+      terminalSkin: 'dark',
       browserPanelOpen: false,
       browserFullscreen: false,
       setTheme: (theme) => set({ theme }),
