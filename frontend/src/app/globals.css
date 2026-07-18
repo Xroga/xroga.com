@@ -172,6 +172,44 @@ body.theme-gray * {
     }
   }
 
+  /* Workspace / dashboard — deep-work navy (no photo wallpaper, no bg animation) */
+  body.xv-deep-work-shell {
+    --background: #05080f;
+    --foreground: #f4f7ff;
+    --muted: #b8c6e0;
+    --card: rgba(12, 22, 42, 0.72);
+    --card-border: rgba(74, 163, 255, 0.22);
+    --accent: #4aa3ff;
+    --accent-dim: rgba(74, 163, 255, 0.14);
+    background-color: #05080f !important;
+    background-image: none !important;
+  }
+
+  body.xv-deep-work-shell .terminal-layout {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(74, 163, 255, 0.12) 0%, transparent 55%),
+      #05080f;
+  }
+
+  body.xv-deep-work-shell .xv-site-header-transparent {
+    background: rgba(5, 8, 15, 0.55);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(74, 163, 255, 0.1);
+  }
+
+  body.xv-deep-work-shell .glass-panel,
+  body.xv-deep-work-shell .glass-panel-strong {
+    background: rgba(10, 18, 36, 0.72);
+    border-color: rgba(74, 163, 255, 0.2);
+    backdrop-filter: blur(18px);
+  }
+
+  body.xv-deep-work-shell .xv-sidebar-root,
+  body.xv-deep-work-shell aside {
+    background: rgba(6, 10, 20, 0.85);
+    border-color: rgba(74, 163, 255, 0.12);
+  }
+
   .gradient-text {
     background: linear-gradient(135deg, #4a7aff, #6b9fff);
     -webkit-background-clip: text;

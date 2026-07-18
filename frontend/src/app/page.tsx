@@ -58,12 +58,13 @@ export default function HomePage() {
 
   return (
     <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
-      <section className="xv-hc-hero">
-        <div className="xv-hc-hero-pattern" aria-hidden />
-        <div className="xv-hc-hero-orb xv-hc-hero-orb--a" aria-hidden />
-        <div className="xv-hc-hero-orb xv-hc-hero-orb--b" aria-hidden />
-        <div className="xv-hc-hero-scan" aria-hidden />
+      <div
+        className="xv-hc-bg-image"
+        style={{ backgroundImage: 'url("/backgrounds/xroga-deep-work-bg.webp")' }}
+        aria-hidden
+      />
 
+      <section className="xv-hc-hero">
         <header className="xv-hc-header">
           <div className="xv-hc-header-inner">
             <Logo href="/" variant="homepage" height={64} className="shrink-0" />
