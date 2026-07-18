@@ -9,7 +9,7 @@ router.get('/ai-catalog', (_req, res) => {
     catalog: [],
     fieldEndpoints: [],
     legacyAiRetired: true,
-    message: 'Legacy DeepSeek/Claude/Grok/Groq integrations removed. Awaiting new AI backend.',
+    message: 'AI keys are server-managed: OpenRouter (DeepSeek only) + official Kimi/GLM/Grok/Tavily.',
   });
 });
 
