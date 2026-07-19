@@ -22,10 +22,10 @@ router.get('/', async (req: AuthRequest, res) => {
 
 router.patch('/', async (req: AuthRequest, res) => {
   const schema = z.object({
-    display_name: z.string().min(1).max(100).optional(),
-    avatar_url: z.string().url().optional(),
-    timezone: z.string().optional(),
-    language: z.string().optional(),
+    display_name: z.string().max(100).optional(),
+    avatar_url: z.union([z.string().url(), z.literal('')]).optional(),
+    timezone: z.string().max(64).optional(),
+    language: z.string().max(16).optional(),
   });
 
   const parsed = schema.safeParse(req.body);
@@ -34,10 +34,25 @@ router.patch('/', async (req: AuthRequest, res) => {
     return;
   }
 
+  const patch: Record<string, string> = {};
+  if (parsed.data.display_name !== undefined) {
+    patch.display_name = parsed.data.display_name.trim() || 'User';
+  }
+  if (parsed.data.avatar_url !== undefined) {
+    patch.avatar_url = parsed.data.avatar_url;
+  }
+  if (parsed.data.timezone !== undefined) patch.timezone = parsed.data.timezone;
+  if (parsed.data.language !== undefined) patch.language = parsed.data.language;
+
+  if (!Object.keys(patch).length) {
+    res.status(400).json({ error: 'No profile fields to update' });
+    return;
+  }
+
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('profiles')
-    .update(parsed.data)
+    .update(patch)
     .eq('id', req.userId!)
     .select()
     .single();

@@ -152,7 +152,7 @@ export function HomepageChatBar() {
           </div>
 
           <div className="xv-hc-prompt-footer">
-            <div className="xv-hc-prompt-integrations" aria-label="Ships with GitHub and Vercel">
+            <div className="xv-hc-prompt-integrations" aria-label="Ships with GitHub, Vercel, and Supabase">
               <span className="xv-hc-prompt-integration">
                 <Image
                   src="https://cdn.simpleicons.org/github/ffffff"
@@ -175,6 +175,18 @@ export function HomepageChatBar() {
                   className="xv-hc-prompt-integration-logo"
                 />
                 <span>Vercel</span>
+              </span>
+              <span className="xv-hc-prompt-integration-sep" aria-hidden />
+              <span className="xv-hc-prompt-integration">
+                <Image
+                  src="https://cdn.simpleicons.org/supabase/3ECF8E"
+                  alt=""
+                  width={14}
+                  height={14}
+                  unoptimized
+                  className="xv-hc-prompt-integration-logo"
+                />
+                <span>Supabase</span>
               </span>
             </div>
             <p className="xv-hc-prompt-hint">Describe what you want to build</p>

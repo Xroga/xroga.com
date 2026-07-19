@@ -91,6 +91,9 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
   const expoKey = keys.find((k) => k.provider === 'expo' && k.connected);
   const appleKey = keys.find((k) => k.provider === 'apple_asc' && k.connected);
   const googleKey = keys.find((k) => k.provider === 'google_play' && k.connected);
+  const supabaseKey = keys.find(
+    (k) => (k.provider === 'supabase' || k.provider === 'supabase_anon') && k.connected,
+  );
 
   let expoTokenValid: boolean | null = null;
   if (expoKey) {
@@ -118,6 +121,14 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
       done: vercelConnected,
       required: true,
       hint: 'Deploys go to your Vercel account (you pay hosting)',
+      href: '/dashboard/integrations',
+    },
+    {
+      id: 'supabase',
+      label: 'Connect Supabase',
+      done: Boolean(supabaseKey),
+      required: false,
+      hint: 'Optional — your project keys for auth & data on deploy',
       href: '/dashboard/integrations',
     },
   ];

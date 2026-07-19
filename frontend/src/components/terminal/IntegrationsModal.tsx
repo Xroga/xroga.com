@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import { Search, X, Plug } from 'lucide-react';
 import { INTEGRATIONS, INTEGRATION_CATEGORIES } from '@/lib/integrations';
 import { getIntegrationLogo } from '@/lib/integrationLogos';
+import { isConnectableIntegration } from '@/lib/connectableIntegrations';
+import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 interface IntegrationsModalProps {
@@ -32,7 +34,11 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
     );
   }, [search]);
 
-  function handleConnect(name: string) {
+  function handleConnect(id: string, name: string) {
+    if (!isConnectableIntegration(id)) {
+      toast('Coming soon', { icon: '⏳' });
+      return;
+    }
     toast(`Open Integrations to connect ${name}`, { icon: '🔌' });
     onClose();
     router.push('/dashboard/integrations');
@@ -72,33 +78,57 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {items.map((item) => {
                     const logo = getIntegrationLogo(item.id);
+                    const connectable = isConnectableIntegration(item.id);
                     const connected = item.status === 'connected';
                     return (
                       <div
                         key={item.id}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.07] transition-colors"
+                        className={cn(
+                          'relative flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] transition-colors overflow-hidden',
+                          connectable ? 'hover:bg-white/[0.07]' : 'opacity-80'
+                        )}
                       >
-                        <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center shrink-0 overflow-hidden">
-                          {logo ? (
-                            <Image src={logo} alt="" width={22} height={22} unoptimized className="object-contain" />
-                          ) : (
-                            <span className="text-xs font-bold">{item.name.charAt(0)}</span>
+                        <div
+                          className={cn(
+                            'flex items-center gap-3 min-w-0 flex-1',
+                            !connectable && 'blur-[1.5px] opacity-70'
                           )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium truncate">{item.name}</p>
-                          <p className="text-[10px] text-[var(--muted)]">
-                            {connected ? 'Connected' : 'Not connected'}
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleConnect(item.name)}
-                          className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-[var(--accent)]/15 border border-[var(--accent)]/35 text-[var(--foreground)] hover:bg-[var(--accent)]/25 transition-colors"
                         >
-                          <Plug className="w-3 h-3" />
-                          {connected ? 'Manage' : 'Install'}
-                        </button>
+                          <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center shrink-0 overflow-hidden">
+                            {logo ? (
+                              <Image src={logo} alt="" width={22} height={22} unoptimized className="object-contain" />
+                            ) : (
+                              <span className="text-xs font-bold">{item.name.charAt(0)}</span>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium truncate">{item.name}</p>
+                            <p className="text-[10px] text-[var(--muted)]">
+                              {connectable
+                                ? connected
+                                  ? 'Connected'
+                                  : 'Available'
+                                : 'Coming soon'}
+                            </p>
+                          </div>
+                        </div>
+                        {connectable ? (
+                          <button
+                            type="button"
+                            onClick={() => handleConnect(item.id, item.name)}
+                            className="shrink-0 relative z-[1] flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-[var(--accent)]/15 border border-[var(--accent)]/35 text-[var(--foreground)] hover:bg-[var(--accent)]/25 transition-colors"
+                          >
+                            <Plug className="w-3 h-3" />
+                            {connected ? 'Manage' : 'Install'}
+                          </button>
+                        ) : (
+                          <span className="shrink-0 relative z-[1] text-[9px] px-2 py-1 rounded-md bg-white/10 text-[var(--muted)] uppercase tracking-wider font-semibold">
+                            Soon
+                          </span>
+                        )}
+                        {!connectable && (
+                          <div className="pointer-events-none absolute inset-0 bg-[var(--background)]/20 backdrop-blur-[1px]" />
+                        )}
                       </div>
                     );
                   })}

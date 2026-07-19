@@ -16,7 +16,9 @@ interface LogoProps {
 export function Logo({ href = '/dashboard', height = 50, className, variant = 'header', onClick }: LogoProps) {
   const src =
     variant === 'homepage' ? HOMEPAGE_LOGO_URL : variant === 'sidebar' ? SIDEBAR_LOGO_URL : HEADER_LOGO_URL;
-  const width = variant === 'homepage' ? height * 2.8 : variant === 'header' ? height * 2.2 : height * 1.1;
+  // Home/workspace logo is a wide transparent banner; sidebar stays square mark
+  const width =
+    variant === 'homepage' ? height * 3.6 : variant === 'header' ? height * 3.2 : height * 1.1;
 
   const inner = (
     <div

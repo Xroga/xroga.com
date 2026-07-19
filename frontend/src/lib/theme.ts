@@ -15,8 +15,10 @@ export const SLIDESHOW_INTERVAL_MS = 8000;
 export const DESKTOP_BG = DESKTOP_BG_SLIDESHOW[0];
 export const MOBILE_BG = '/backgrounds/bg-desktop-1-infinity.webp';
 
-export const HEADER_LOGO_URL = '/brand/xroga-mark.png';
-export const HOMEPAGE_LOGO_URL = '/brand/xroga-mark-192.png';
+/** Homepage + workspace header only (not sidebar). */
+export const HEADER_LOGO_URL = '/brand/xroga-home-workspace.png';
+export const HOMEPAGE_LOGO_URL = '/brand/xroga-home-workspace.png';
+/** Sidebar keeps the compact mark. */
 export const SIDEBAR_LOGO_URL = '/brand/xroga-mark.png';
 export const AI_RESPONSE_LOGO_URL = '/brand/xroga-mark.png';
 
