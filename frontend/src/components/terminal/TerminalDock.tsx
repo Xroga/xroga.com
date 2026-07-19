@@ -99,11 +99,8 @@ export function TerminalDock() {
             {INCOGNITO_PRIVATE_ROOM_NOTICE}
           </p>
         ) : (
-          <p className="text-[8px] sm:text-[10px] text-center text-[var(--muted)] py-1 sm:py-1.5 px-2 font-terminal xv-chatbar-disclaimer leading-relaxed">
-            <span className="hidden sm:inline">
-              We give our best, but perfection is Allah&apos;s alone. XROGA AI verifies every critical output before publish.
-            </span>
-            <span className="sm:hidden">Allah alone is perfect · XROGA verifies outputs</span>
+          <p className="text-[9px] sm:text-[10px] text-center text-[var(--muted)] py-1 sm:py-1.5 px-3 font-terminal xv-chatbar-disclaimer leading-snug max-w-xl mx-auto">
+            We give our best — perfection is Allah&apos;s alone. Xroga verifies before publish.
           </p>
         )}
       </div>

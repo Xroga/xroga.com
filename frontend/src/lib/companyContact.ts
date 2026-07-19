@@ -4,7 +4,7 @@
  */
 const phoneDisplay =
   (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SUPPORT_PHONE?.trim()) ||
-  '+92 300 8471947';
+  '+92 321 7831302';
 
 export const COMPANY_CONTACT = {
   brand: 'Xroga AI',

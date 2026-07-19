@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard,
   Link2,
@@ -16,6 +16,7 @@ import {
   MessageCirclePlus,
   Terminal,
   Rocket,
+  Gauge,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
@@ -68,6 +69,12 @@ const navItems = [
     tip: 'Ship web on your Vercel; mobile stores via your Expo/Apple/Google accounts.',
   },
   {
+    href: '/settings?tab=plan',
+    label: 'Plan & Usage',
+    icon: Gauge,
+    tip: 'See your plan, tokens, and usage.',
+  },
+  {
     href: '/settings',
     label: 'Settings',
     icon: Settings,
@@ -88,6 +95,7 @@ function planLabel(tier?: string | null) {
 
 export function Sidebar({ displayName }: SidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -178,7 +186,11 @@ export function Sidebar({ displayName }: SidebarProps) {
   const isActive = (href: string) => {
     if (href === '/workspace') return pathname === '/workspace';
     if (href === '/dashboard') return pathname === '/dashboard' || pathname === '/dashboard/';
-    return pathname === href || pathname.startsWith(`${href}/`);
+    const [path, query] = href.split('?');
+    if (pathname !== path && !pathname.startsWith(`${path}/`)) return false;
+    if (query?.includes('tab=plan')) return searchParams.get('tab') === 'plan';
+    if (path === '/settings') return searchParams.get('tab') !== 'plan';
+    return true;
   };
 
   function handleNavClick() {

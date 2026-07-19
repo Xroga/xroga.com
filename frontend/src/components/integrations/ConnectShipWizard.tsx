@@ -2,20 +2,20 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Check, Circle, KeyRound, GitBranch, Triangle } from 'lucide-react';
+import { Check, Circle, KeyRound, GitBranch, Triangle, Database } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
 import { AiIntegrationsPanel } from './AiIntegrationsPanel';
 
-type StepId = 'github' | 'vercel' | 'keys';
+type StepId = 'github' | 'vercel' | 'supabase' | 'keys';
 
 /**
- * Non-dev friendly connect flow: GitHub → Vercel → API keys.
- * Shown at top of Integrations so ship loop isn't a scavenger hunt.
+ * Ship flow: GitHub → Vercel → Supabase (optional) → extra API keys (optional).
  */
 export function ConnectShipWizard() {
   const [githubOk, setGithubOk] = useState(false);
   const [vercelOk, setVercelOk] = useState(false);
+  const [supabaseOk, setSupabaseOk] = useState(false);
   const [keysOk, setKeysOk] = useState(false);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<StepId | null>(null);
@@ -27,12 +27,16 @@ export function ConnectShipWizard() {
       const [gh, ve, keys] = await Promise.all([
         api.github.status().catch(() => ({ connected: false })),
         api.vercel.status().catch(() => ({ connected: false })),
-        api.integrations.providerKeys().catch(() => ({ keys: [] as Array<{ connected?: boolean }> })),
+        api.integrations.providerKeys().catch(() => ({ keys: [] as Array<{ provider?: string; connected?: boolean }> })),
       ]);
       setGithubOk(Boolean((gh as { connected?: boolean }).connected));
       setVercelOk(Boolean((ve as { connected?: boolean }).connected));
-      const list = (keys as { keys?: Array<{ connected?: boolean }> }).keys ?? [];
-      setKeysOk(list.some((k) => k.connected));
+      const list = (keys as { keys?: Array<{ provider?: string; connected?: boolean }> }).keys ?? [];
+      const connected = list.filter((k) => k.connected);
+      setSupabaseOk(
+        connected.some((k) => k.provider === 'supabase' || k.provider === 'supabase_anon')
+      );
+      setKeysOk(connected.some((k) => k.provider && !String(k.provider).startsWith('supabase')));
     } finally {
       setLoading(false);
     }
@@ -73,13 +77,14 @@ export function ConnectShipWizard() {
     title: string;
     body: string;
     done: boolean;
+    optional?: boolean;
     action: () => void;
     label: string;
   }> = [
     {
       id: 'github',
       title: '1. Connect GitHub',
-      body: 'So Xroga can push working code and update the same repo (edit/delete).',
+      body: 'Xroga pushes working code to your repo and updates the same project (edit/delete).',
       done: githubOk,
       action: connectGithub,
       label: githubOk ? 'Connected' : 'Connect GitHub',
@@ -87,16 +92,26 @@ export function ConnectShipWizard() {
     {
       id: 'vercel',
       title: '2. Connect Vercel',
-      body: 'Deploys go to your Vercel account — no GitHub↔Vercel project link required. Prefer a Full Account token for env sync.',
+      body: 'Deploys go to your Vercel account (you pay hosting). Prefer a Full Account token for env sync.',
       done: vercelOk,
       action: connectVercel,
       label: vercelOk ? 'Connected' : 'Connect Vercel',
     },
     {
+      id: 'supabase',
+      title: '3. Connect Supabase',
+      body: 'Optional — paste your project anon / service keys so auth & data work on your deploy.',
+      done: supabaseOk,
+      optional: true,
+      action: () => setShowKeys(true),
+      label: supabaseOk ? 'Keys saved' : 'Add Supabase keys',
+    },
+    {
       id: 'keys',
-      title: '3. Add product API keys',
-      body: 'Optional but powerful — OpenAI, Supabase, Stripe… encrypted here, synced into Vercel env on deploy.',
+      title: '4. Other product API keys',
+      body: 'Optional — OpenAI, Stripe, Resend… encrypted here, synced into Vercel env on deploy.',
       done: keysOk,
+      optional: true,
       action: () => setShowKeys(true),
       label: keysOk ? 'Keys saved' : 'Add API keys',
     },
@@ -113,8 +128,8 @@ export function ConnectShipWizard() {
           </p>
           <h2 className="text-lg sm:text-xl font-bold mt-1">Connect once · ship forever</h2>
           <p className="text-sm text-[var(--muted)] mt-1 max-w-xl">
-            For everyone — developers and non-developers. Finish these three steps so builds reach
-            GitHub + Vercel and live features can use your keys. For Android/iOS store builds, open{' '}
+            Connect GitHub + Vercel to ship. Supabase and other API keys are optional. For
+            Android/iOS stores, open{' '}
             <Link href="/dashboard/publish" className="text-[var(--accent)] hover:underline">
               Publish
             </Link>{' '}
@@ -147,18 +162,24 @@ export function ConnectShipWizard() {
                 )}
               </span>
               <div className="min-w-0">
-                <p className="font-semibold text-sm flex items-center gap-2">
+                <p className="font-semibold text-sm flex items-center gap-2 flex-wrap">
                   {s.id === 'github' ? <GitBranch className="w-4 h-4" /> : null}
                   {s.id === 'vercel' ? <Triangle className="w-4 h-4" /> : null}
+                  {s.id === 'supabase' ? <Database className="w-4 h-4" /> : null}
                   {s.id === 'keys' ? <KeyRound className="w-4 h-4" /> : null}
                   {s.title}
+                  {s.optional ? (
+                    <span className="text-[10px] uppercase tracking-wide text-[var(--muted)] font-medium">
+                      optional
+                    </span>
+                  ) : null}
                 </p>
                 <p className="text-xs text-[var(--muted)] mt-0.5 leading-relaxed">{s.body}</p>
               </div>
             </div>
             <button
               type="button"
-              disabled={s.done || busy === s.id}
+              disabled={(s.done && s.id !== 'keys' && s.id !== 'supabase') || busy === s.id}
               onClick={s.action}
               className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--accent)] text-[var(--background)] disabled:opacity-50"
             >
