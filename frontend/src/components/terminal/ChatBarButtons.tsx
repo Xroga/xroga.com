@@ -48,13 +48,13 @@ export function ChatBarComboAction({
     return (
       <button
         type="submit"
-        className={cn('xv-combo-action xv-combo-action--go shrink-0', surface === 'homepage' && 'xv-combo-action--home')}
+        className={cn('xv-go-btn shrink-0', surface === 'homepage' && 'xv-go-btn--home')}
         aria-label="Launch"
       >
-        <span className="xv-combo-action__icon">
-          <Rocket className="w-3 h-3" />
+        <span className="xv-go-btn__liquid" aria-hidden />
+        <span className="xv-go-btn__icon">
+          <Rocket className="w-3.5 h-3.5" />
         </span>
-        <span className="xv-combo-action__label">GO!</span>
       </button>
     );
   }
@@ -88,7 +88,7 @@ export function ChatBarSendButton({
   onStop,
   state = 'idle',
   surface = 'dashboard',
-  compact = false,
+  compact: _compact = false,
 }: {
   stopping?: boolean;
   onStop?: () => void;
@@ -96,6 +96,7 @@ export function ChatBarSendButton({
   surface?: ChatbarSurface;
   compact?: boolean;
 }) {
+  void _compact;
   const busy = stopping || state === 'sending' || state === 'thinking';
 
   if (busy) {
@@ -103,13 +104,17 @@ export function ChatBarSendButton({
       <button
         type="button"
         onClick={onStop}
-        className={cn('xv-go-btn xv-go-btn--stop shrink-0', compact && 'xv-go-btn--compact', surface === 'homepage' && 'xv-go-btn--home', surface === 'incognito' && 'xv-go-btn--incognito')}
+        className={cn(
+          'xv-go-btn xv-go-btn--stop shrink-0',
+          surface === 'homepage' && 'xv-go-btn--home',
+          surface === 'incognito' && 'xv-go-btn--incognito'
+        )}
         aria-label="Stop response"
       >
+        <span className="xv-go-btn__liquid xv-go-btn__liquid--stop" aria-hidden />
         <span className="xv-go-btn__icon xv-go-btn__icon--stop">
-          <Square className="w-2.5 h-2.5 fill-current" />
+          <Square className="w-3 h-3 fill-current" />
         </span>
-        <span className="xv-go-btn__text">Stop</span>
       </button>
     );
   }
@@ -117,13 +122,17 @@ export function ChatBarSendButton({
   return (
     <button
       type="submit"
-      className={cn('xv-go-btn shrink-0', compact && 'xv-go-btn--compact', surface === 'homepage' && 'xv-go-btn--home', surface === 'incognito' && 'xv-go-btn--incognito')}
+      className={cn(
+        'xv-go-btn shrink-0',
+        surface === 'homepage' && 'xv-go-btn--home',
+        surface === 'incognito' && 'xv-go-btn--incognito'
+      )}
       aria-label="Launch"
     >
+      <span className="xv-go-btn__liquid" aria-hidden />
       <span className="xv-go-btn__icon">
-        <Rocket className="w-3 h-3" />
+        <Rocket className="w-3.5 h-3.5" />
       </span>
-      <span className="xv-go-btn__text">{compact ? 'Go' : 'GO!'}</span>
     </button>
   );
 }
