@@ -8,6 +8,11 @@ export interface FilePatch {
   replace: string;
 }
 
+/** Explicit file deletion requested by the model */
+export interface FileDelete {
+  path: string;
+}
+
 export interface ProjectFile {
   path: string;
   content: string;
@@ -26,6 +31,7 @@ const PATCH_BLOCK_RE =
   /\*\*\*\s*Update File:\s*(.+?)\s*\n(?:<<<SEARCH|<<<<<<< SEARCH)\n([\s\S]*?)\n(?:===|=======)\n([\s\S]*?)\n(?:>>>REPLACE|>>>>>>> REPLACE)/g;
 
 const JSON_FENCE_RE = /```json\s*([\s\S]*?)```/gi;
+const DELETE_FILE_RE = /\*\*\*\s*Delete File:\s*([^\n*]+)/gi;
 
 /**
  * Parse SEARCH/REPLACE patch blocks or a JSON `{ patches: [...] }` fence.
@@ -47,7 +53,7 @@ export function extractSearchReplacePatches(text: string): FilePatch[] {
 
   for (const match of text.matchAll(JSON_FENCE_RE)) {
     const raw = match[1].trim();
-    if (!raw.includes('"patches"')) continue;
+    if (!raw.includes('"patches"') && !raw.includes('"deletes"')) continue;
     try {
       const parsed = JSON.parse(raw) as { patches?: Array<Partial<FilePatch>> };
       if (!Array.isArray(parsed.patches)) continue;
@@ -62,6 +68,55 @@ export function extractSearchReplacePatches(text: string): FilePatch[] {
   }
 
   return patches;
+}
+
+/** Parse `*** Delete File: path` and JSON `{ "deletes": ["a.js"] }`. */
+export function extractDeletePaths(text: string): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  const add = (path: string) => {
+    const p = path.trim().replace(/^\.\//, '');
+    if (!p || seen.has(p)) return;
+    seen.add(p);
+    out.push(p);
+  };
+
+  for (const match of text.matchAll(DELETE_FILE_RE)) {
+    add(match[1]);
+  }
+
+  for (const match of text.matchAll(JSON_FENCE_RE)) {
+    const raw = match[1].trim();
+    if (!raw.includes('"deletes"')) continue;
+    try {
+      const parsed = JSON.parse(raw) as { deletes?: unknown };
+      if (!Array.isArray(parsed.deletes)) continue;
+      for (const d of parsed.deletes) {
+        if (typeof d === 'string') add(d);
+        else if (d && typeof d === 'object' && typeof (d as { path?: string }).path === 'string') {
+          add((d as { path: string }).path);
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  return out;
+}
+
+/** Remove deleted paths from a file set. */
+export function applyDeletes(
+  files: ProjectFile[],
+  deletePaths: string[],
+): { files: ProjectFile[]; deleted: string[] } {
+  if (!deletePaths.length) return { files, deleted: [] };
+  const del = new Set(deletePaths.map((p) => p.replace(/^\.\//, '')));
+  const deleted = files.map((f) => f.path).filter((p) => del.has(p));
+  return {
+    files: files.filter((f) => !del.has(f.path)),
+    deleted,
+  };
 }
 
 function flexibleWhitespacePattern(search: string): RegExp | null {

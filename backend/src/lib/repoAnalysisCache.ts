@@ -40,7 +40,11 @@ export function setCachedRepoAnalysis(
   cache.set(key, { key, analysis, scannedAt: Date.now() });
 }
 
-/** Invalidate when user switches repo or after a successful push */
+/**
+ * Invalidate GitHub tree analysis after push / repo switch.
+ * Note: project memory (file snapshots for cheap updates) is separate and
+ * is patched in-place by the build pipeline — do not clear it here.
+ */
 export function invalidateRepoAnalysis(userId: string, repo?: string): void {
   for (const key of cache.keys()) {
     if (key.startsWith(`${userId}:`)) {

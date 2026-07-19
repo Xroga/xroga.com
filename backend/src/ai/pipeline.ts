@@ -17,8 +17,10 @@ import {
   siteLooksComplete,
 } from './siteBuilder.js';
 import {
+  applyDeletes,
   applyPatches,
   buildFileTrail,
+  extractDeletePaths,
   extractSearchReplacePatches,
   type ProjectFile,
 } from './patches.js';
@@ -26,12 +28,21 @@ import { reviewBuildOutput } from './qa.js';
 import { completeRun, createRun } from './runStore.js';
 import {
   fetchBuildFilesFromGitHub,
+  fetchGitHubFilesByPaths,
   landingFilesFromOutput,
   pushBuildToGitHub,
   deployToAllPlatforms,
   isGitHubConnected,
 } from '../services/integrations/githubDeploy.js';
 import { getVercelToken } from '../services/integrations/vercelAuth.js';
+import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
+import {
+  getProjectMemory,
+  patchProjectMemory,
+  setProjectMemory,
+  shouldGenerateAiSummary,
+} from './projectMemory.js';
+import { summarizeRepoForUpdates } from './repoSummarize.js';
 
 export interface PipelineProgress {
   agent?: string;
@@ -164,31 +175,72 @@ function mergeFileMaps(base: ProjectFile[], overlay: ProjectFile[]): ProjectFile
 async function hydratePriorFiles(
   userId: string,
   meta?: BuildClientMeta,
-): Promise<{ files: ProjectFile[]; projectName?: string } | null> {
-  if (meta?.priorSite?.html?.trim()) {
+): Promise<{
+  files: ProjectFile[];
+  projectName?: string;
+  fromMemory: boolean;
+  aiSummary?: string;
+}> {
+  const branch = meta?.githubTargetBranch || 'main';
+  const repo = meta?.githubTargetRepo ?? null;
+
+  // 1) Hot memory — no GitHub re-read
+  const mem = getProjectMemory(userId, repo, branch);
+  if (mem?.files?.length) {
     return {
-      files: landingFilesFromOutput(
-        meta.priorSite.html,
-        meta.priorSite.css ?? '',
-        meta.priorSite.js ?? '',
-      ),
-      projectName: meta.priorSite.projectName,
+      files: mem.files,
+      projectName: mem.projectName || meta?.priorSite?.projectName,
+      fromMemory: true,
+      aiSummary: mem.aiSummary,
     };
   }
-  if (meta?.githubTargetRepo?.includes('/')) {
+
+  // 2) Client priorSite (workspace preview) — cheap, no GitHub
+  if (meta?.priorSite?.html?.trim()) {
+    const files = landingFilesFromOutput(
+      meta.priorSite.html,
+      meta.priorSite.css ?? '',
+      meta.priorSite.js ?? '',
+    );
+    setProjectMemory({
+      userId,
+      repo,
+      branch,
+      projectName: meta.priorSite.projectName,
+      files,
+    });
+    return {
+      files,
+      projectName: meta.priorSite.projectName,
+      fromMemory: false,
+      aiSummary: undefined,
+    };
+  }
+
+  // 3) GitHub — only classic build paths (not full tree AI analyze)
+  if (repo?.includes('/')) {
     try {
-      const files = await fetchBuildFilesFromGitHub(
+      const files = await fetchGitHubFilesByPaths(
         userId,
-        meta.githubTargetRepo,
-        meta.githubTargetBranch,
+        repo,
+        ['index.html', 'styles.css', 'script.js', 'package.json', 'README.md'],
+        branch,
       );
-      if (!files.some((f) => f.path === 'index.html' && f.content.trim())) return null;
-      return { files };
+      if (!files.some((f) => f.path.endsWith('index.html') && f.content.trim())) {
+        const full = await fetchBuildFilesFromGitHub(userId, repo, branch);
+        if (!full.some((f) => f.path === 'index.html' && f.content.trim())) {
+          return { files: [], fromMemory: false };
+        }
+        setProjectMemory({ userId, repo, branch, files: full });
+        return { files: full, fromMemory: false };
+      }
+      setProjectMemory({ userId, repo, branch, files });
+      return { files, fromMemory: false };
     } catch (err) {
       console.warn('[pipeline] fetch prior from GitHub failed:', (err as Error).message);
     }
   }
-  return null;
+  return { files: [], fromMemory: false };
 }
 
 async function callBuilderStream(
@@ -321,18 +373,61 @@ export async function runBuildPipeline(opts: {
   const route = routePrompt(opts.prompt);
 
   const prior = await hydratePriorFiles(opts.userId, meta);
-  const isUpdate = Boolean(meta?.buildUpdate && prior?.files?.length);
+  const isUpdate = Boolean(meta?.buildUpdate && prior.files.length);
+  let cachedSummary = prior.aiSummary;
+  let usage: UsageSnapshot | null = null;
 
   emit({
     agent: 'router',
     status: 'routing',
-    message: isUpdate ? `Update mode · ${route.reason}` : route.reason,
+    message: isUpdate
+      ? `Update mode · ${prior.fromMemory ? 'memory hit (no re-read)' : 'hydrated'} · ${route.reason}`
+      : route.reason,
     swarmStatusLabel: isUpdate ? 'Updating' : 'Routing',
     swarmActivity: isUpdate
-      ? `Patching ${prior?.projectName || meta?.githubTargetRepo || 'project'}`
+      ? `Patching ${prior.projectName || meta?.githubTargetRepo || 'project'}`
       : `Assigning ${MODELS[route.builder].label}`,
     swarmTodos: todosForBuild('route'),
   });
+
+  // Optional one-time AI memo (GLM / DeepSeek Pro) — skipped when memory already has it
+  if (
+    isUpdate &&
+    shouldGenerateAiSummary(
+      userFacingPrompt,
+      getProjectMemory(opts.userId, meta?.githubTargetRepo, meta?.githubTargetBranch),
+      prior.files.length,
+    )
+  ) {
+    emit({
+      agent: 'analyst',
+      status: 'summarizing',
+      message: 'One-time project memo for cheaper future updates…',
+      swarmStatusLabel: 'Memo',
+      swarmActivity: 'DeepSeek Pro / GLM (once)',
+      swarmTodos: todosForBuild('route'),
+    });
+    const memo = await summarizeRepoForUpdates({
+      prompt: userFacingPrompt,
+      projectName: prior.projectName,
+      paths: prior.files.map((f) => f.path),
+      sampleFiles: prior.files.slice(0, 6),
+      preferLongContext: prior.files.length >= 20 || route.kind === 'build_long_horizon',
+    });
+    if (memo) {
+      cachedSummary = memo.summary;
+      usage = await recordUsage(opts.userId, memo.modelId, memo.inputTokens, memo.outputTokens);
+      setProjectMemory({
+        userId: opts.userId,
+        repo: meta?.githubTargetRepo,
+        branch: meta?.githubTargetBranch,
+        projectName: prior.projectName,
+        files: prior.files,
+        aiSummary: memo.summary,
+        aiSummaryModel: memo.modelId,
+      });
+    }
+  }
 
   let researchBlock = '';
   let research: ResearchBundle | null = null;
@@ -350,11 +445,22 @@ export async function runBuildPipeline(opts: {
     researchBlock = formatResearchForPrompt(research);
   }
 
+  // Cost-effective: only send targeted file contents to the builder
+  const selection = isUpdate
+    ? selectFilesForUpdate(prior.files, userFacingPrompt)
+    : { selected: prior.files, skippedPaths: [] as string[], reason: '' };
+  const likelyDeletes = isUpdate
+    ? guessDeletePaths(
+        userFacingPrompt,
+        prior.files.map((f) => f.path),
+      )
+    : [];
+
   emit({
     agent: 'converter',
     status: 'converting',
     message: isUpdate
-      ? 'Converting update into a patch brief…'
+      ? `Converting update into a patch brief… (${selection.reason || 'targeted files'})`
       : 'Converting your request into a builder brief…',
     swarmStatusLabel: 'Briefing',
     swarmActivity: `Converter · ${MODELS[route.converter].label}`,
@@ -363,11 +469,11 @@ export async function runBuildPipeline(opts: {
 
   const converted = await convertUserRequest(
     isUpdate
-      ? `INCREMENTAL UPDATE to existing project "${prior?.projectName || 'current site'}". Apply only this change using SEARCH/REPLACE patches: ${opts.prompt}`
+      ? `INCREMENTAL UPDATE to existing project "${prior.projectName || 'current site'}". Apply only this change using SEARCH/REPLACE patches (or Delete File). Do not re-analyze the whole repo: ${opts.prompt}`
       : opts.prompt,
     researchBlock || undefined,
   );
-  let usage: UsageSnapshot = await recordUsage(
+  usage = await recordUsage(
     opts.userId,
     'deepseek_v4_flash',
     converted.inputTokens,
@@ -378,7 +484,7 @@ export async function runBuildPipeline(opts: {
     agent: 'builder',
     status: 'building',
     message: isUpdate
-      ? `Applying surgical update with ${MODELS[route.builder].label}…`
+      ? `Surgical update · ${selection.selected.length} files in context${prior.fromMemory ? ' · memory' : ''}`
       : `Building with ${MODELS[route.builder].label}…`,
     swarmStatusLabel: isUpdate ? 'Patching' : 'Building',
     swarmActivity: MODELS[route.builder].tagline,
@@ -394,7 +500,14 @@ export async function runBuildPipeline(opts: {
       : '';
 
   const updateBlock =
-    isUpdate && prior ? `\n\n${incrementalUpdateContext(prior.files)}` : '';
+    isUpdate
+      ? `\n\n${incrementalUpdateContext(selection.selected, {
+          allPaths: prior.files.map((f) => f.path),
+          cachedSummary,
+          selectionNote: selection.reason,
+          likelyDeletes,
+        })}`
+      : '';
 
   const builderUser = `${converted.instruction}${historyNote}${
     researchBlock ? `\n\n${researchBlock}` : ''
@@ -417,10 +530,11 @@ export async function runBuildPipeline(opts: {
 
   // Resolve output files: patches first, then full files, then classic site
   let nextFiles: ProjectFile[] = [];
-  let previousFiles: ProjectFile[] = prior?.files ?? [];
+  let previousFiles: ProjectFile[] = prior.files;
   let usedPatches = false;
+  let deletedPaths: string[] = [];
 
-  if (isUpdate && prior) {
+  if (isUpdate && prior.files.length) {
     const patches = extractSearchReplacePatches(result.text);
     if (patches.length) {
       const applied = applyPatches(prior.files, patches);
@@ -429,12 +543,19 @@ export async function runBuildPipeline(opts: {
         usedPatches = true;
       }
     }
+    const modelDeletes = extractDeletePaths(result.text);
+    if (modelDeletes.length) {
+      const base = nextFiles.length ? nextFiles : prior.files;
+      const removed = applyDeletes(base, modelDeletes);
+      nextFiles = removed.files;
+      deletedPaths = removed.deleted;
+    }
   }
 
   if (!nextFiles.length) {
     const extracted = extractProjectFiles(result.text);
     if (extracted.length) {
-      nextFiles = isUpdate && prior ? mergeFileMaps(prior.files, extracted) : extracted;
+      nextFiles = isUpdate && prior.files.length ? mergeFileMaps(prior.files, extracted) : extracted;
     }
   }
 
@@ -442,20 +563,21 @@ export async function runBuildPipeline(opts: {
     const site = extractSiteFiles(result.text);
     if (site) {
       nextFiles = landingFilesFromOutput(site.html, site.css, site.js);
-      if (isUpdate && prior) nextFiles = mergeFileMaps(prior.files, nextFiles);
+      if (isUpdate && prior.files.length) nextFiles = mergeFileMaps(prior.files, nextFiles);
     }
   }
 
   // Recovery: incomplete update → keep prior and retry once with stricter patch prompt
-  if (isUpdate && prior) {
+  if (isUpdate && prior.files.length) {
     const site = filesToSite(nextFiles);
     const bad =
-      !nextFiles.length ||
+      (!nextFiles.length && !deletedPaths.length) ||
       (site.html.trim().length > 0 &&
         site.html.length < (filesToSite(prior.files).html.length * 0.35) &&
-        !usedPatches);
+        !usedPatches &&
+        !deletedPaths.length);
 
-    if (bad || !nextFiles.length) {
+    if (bad || (!nextFiles.length && !deletedPaths.length)) {
       emit({
         agent: 'builder',
         status: 'recovering',
@@ -471,7 +593,12 @@ export async function runBuildPipeline(opts: {
             { role: 'system', content: BUILDER_SYSTEM },
             {
               role: 'user',
-              content: `${incrementalUpdateContext(prior.files)}\n\nUser update (MUST use SEARCH/REPLACE only):\n${userFacingPrompt}`,
+              content: `${incrementalUpdateContext(selection.selected, {
+                allPaths: prior.files.map((f) => f.path),
+                cachedSummary,
+                selectionNote: selection.reason,
+                likelyDeletes,
+              })}\n\nUser update (MUST use SEARCH/REPLACE or Delete File only):\n${userFacingPrompt}`,
             },
           ],
           { maxTokens: 8192, temperature: 0.2, onDelta: opts.onDelta },
@@ -531,13 +658,14 @@ export async function runBuildPipeline(opts: {
       modelLabel: MODELS[result.modelId].label,
       webSources: research?.sources,
     };
-    completeRun(runId, { output: chatOut, featureCategory: 'chat', tokenUsage: usageToTokenUsage(usage) });
+    const chatUsage = usageToTokenUsage(usage!);
+    completeRun(runId, { output: chatOut, featureCategory: 'chat', tokenUsage: chatUsage });
     return {
       runId,
       success: true,
       featureCategory: route.kind === 'research' ? 'deep_research' : 'chat',
       output: chatOut,
-      tokenUsage: usageToTokenUsage(usage),
+      tokenUsage: chatUsage,
       followUps: isBuildPrompt(opts.prompt)
         ? ['Try again with more detail', 'Ask for HTML/CSS/JS output']
         : ['Ask a follow-up', 'Start a full build'],
@@ -558,12 +686,10 @@ export async function runBuildPipeline(opts: {
   }
 
   const projectName = isUpdate
-    ? prior?.projectName || projectNameFromPrompt(opts.prompt)
+    ? prior.projectName || projectNameFromPrompt(opts.prompt)
     : projectNameFromPrompt(opts.prompt);
 
-  previousFiles = prior?.files?.length
-    ? prior.files
-    : landingFilesFromOutput('', '', '');
+  previousFiles = prior.files.length ? prior.files : landingFilesFromOutput('', '', '');
 
   // QA review loop
   emit({
@@ -692,7 +818,10 @@ export async function runBuildPipeline(opts: {
 
   const changesSummary = isUpdate
     ? [
+        ...(prior.fromMemory ? ['Used project memory (no full repo re-read)'] : []),
         ...(usedPatches ? ['Applied surgical SEARCH/REPLACE patches'] : []),
+        ...(deletedPaths.length ? [`Deleted ${deletedPaths.join(', ')}`] : []),
+        ...(selection.reason ? [selection.reason] : []),
         ...changesFromTrail(effectiveTrail, userFacingPrompt),
         ...(qa.issues.length ? [`QA notes: ${qa.issues.slice(0, 2).join('; ')}`] : []),
       ]
@@ -714,13 +843,17 @@ export async function runBuildPipeline(opts: {
 
   const githubOk = await isGitHubConnected(opts.userId);
   const filesToPush = isUpdate ? (changedFiles.length ? changedFiles : []) : nextFiles;
+  const shouldPush =
+    githubOk &&
+    (meta?.githubTargetRepo || !isUpdate) &&
+    (filesToPush.length > 0 || deletedPaths.length > 0);
 
-  if (githubOk && filesToPush.length && (meta?.githubTargetRepo || !isUpdate)) {
+  if (shouldPush) {
     emit({
       agent: 'deploy',
       status: 'pushing',
       message: meta?.githubTargetRepo
-        ? `Pushing ${filesToPush.length} file(s) to ${meta.githubTargetRepo}…`
+        ? `Pushing ${filesToPush.length} change(s)${deletedPaths.length ? ` · delete ${deletedPaths.length}` : ''} to ${meta.githubTargetRepo}…`
         : `Pushing ${filesToPush.length} file(s) to GitHub…`,
       swarmStatusLabel: 'Pushing',
       swarmActivity: meta?.githubTargetRepo || 'GitHub',
@@ -731,6 +864,7 @@ export async function runBuildPipeline(opts: {
         targetRepo: meta?.githubTargetRepo,
         targetBranch: githubBranch,
         slug: `xroga-${projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)}`,
+        deletePaths: deletedPaths,
       });
       githubRepoUrl = pushed.htmlUrl;
       githubRepoName = pushed.repoName;
@@ -746,6 +880,30 @@ export async function runBuildPipeline(opts: {
         swarmStatusLabel: 'Push failed',
         swarmActivity: (err as Error).message.slice(0, 120),
         swarmTodos: todosForBuild('push'),
+      });
+    }
+  }
+
+  // Refresh hot memory so next update skips GitHub/AI re-analyze
+  if (nextFiles.length || deletedPaths.length) {
+    if (isUpdate) {
+      patchProjectMemory(
+        opts.userId,
+        meta?.githubTargetRepo,
+        githubBranch,
+        nextFiles,
+        deletedPaths,
+        { commitSha, projectName },
+      );
+    } else {
+      setProjectMemory({
+        userId: opts.userId,
+        repo: githubRepoName || meta?.githubTargetRepo,
+        branch: githubBranch,
+        projectName,
+        files: nextFiles,
+        commitSha,
+        aiSummary: cachedSummary,
       });
     }
   }
@@ -833,12 +991,16 @@ export async function runBuildPipeline(opts: {
       issues: qa.issues,
       fixHints: qa.fixHints,
     },
+    memoryHit: isUpdate ? prior.fromMemory : false,
+    contextFiles: isUpdate ? selection.selected.map((f) => f.path) : undefined,
+    deletedFiles: deletedPaths.length ? deletedPaths : undefined,
   };
 
+  const finalUsage = usageToTokenUsage(usage!);
   completeRun(runId, {
     output,
     featureCategory: 'landing_page',
-    tokenUsage: usageToTokenUsage(usage),
+    tokenUsage: finalUsage,
     success: true,
   });
 
@@ -847,7 +1009,7 @@ export async function runBuildPipeline(opts: {
     success: true,
     featureCategory: 'landing_page',
     output,
-    tokenUsage: usageToTokenUsage(usage),
+    tokenUsage: finalUsage,
     followUps: isUpdate
       ? ['Undo last update', 'Make another tweak', 'Open preview']
       : ['Refine the design', 'Add another feature', 'Open preview'],
