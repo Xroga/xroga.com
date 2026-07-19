@@ -75,6 +75,24 @@ describe('applyPatches', () => {
     assert.equal(result.applied.length, 1);
     assert.match(result.files[0].content, /const a\s*=\s*2/);
   });
+
+  it('creates a new file when SEARCH is <<NEW FILE>>', () => {
+    const result = applyPatches(files, [
+      { path: 'app/api/hello.ts', search: '<<NEW FILE>>', replace: 'export const ok = true;\n' },
+    ]);
+    assert.equal(result.applied.length, 1);
+    assert.deepEqual(result.createdPaths, ['app/api/hello.ts']);
+    assert.ok(result.files.some((f) => f.path === 'app/api/hello.ts' && f.content.includes('ok')));
+  });
+
+  it('normalizes CRLF so Windows-style files still patch', () => {
+    const crlf: ProjectFile[] = [{ path: 'a.txt', content: 'hello\r\nworld\r\n' }];
+    const result = applyPatches(crlf, [
+      { path: 'a.txt', search: 'hello\nworld', replace: 'hello\nplanet' },
+    ]);
+    assert.equal(result.applied.length, 1);
+    assert.match(result.files[0].content, /planet/);
+  });
 });
 
 describe('lineDiffCounts', () => {

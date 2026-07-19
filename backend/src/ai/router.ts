@@ -19,10 +19,10 @@ export interface RouteDecision {
 }
 
 const BUILD_RE =
-  /\b(build|create|make|generate|scaffold|develop|spin\s*up|code|app|website|landing|page|dashboard|saas|chatbot|bot|game|crypto|swap|defi|platform|product)\b/i;
+  /\b(build|create|make|generate|scaffold|develop|spin\s*up|code|app|website|landing|page|dashboard|saas|chatbot|bot|game|crypto|swap|defi|platform|product|android|ios|mobile|expo)\b/i;
 
 const COMPLEX_RE =
-  /\b(crypto|exchange|staking|wallet|full[- ]?stack|compiler|chip|autonomous|from scratch|complex|enterprise|multi[- ]?tenant)\b/i;
+  /\b(crypto|exchange|staking|wallet|full[- ]?stack|compiler|chip|autonomous|from scratch|complex|enterprise|multi[- ]?tenant|android|ios|react\s*native|expo)\b/i;
 
 const LONG_HORIZON_RE =
   /\b(refactor|codebase|repository|repo|large|suite|web\s*\+\s*mobile|mini[- ]?program|880k|long[- ]?horizon|project[- ]?level)\b/i;

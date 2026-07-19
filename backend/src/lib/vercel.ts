@@ -7,46 +7,119 @@ interface VercelDeployment {
   alias?: string[];
 }
 
-interface VercelFile {
+export interface VercelFile {
   file: string;
   data: string;
 }
 
+export type VercelFramework = 'nextjs' | 'vite' | 'null' | null;
+
+export interface DeploySiteOptions {
+  /** Prefer user's personal account — only pass teamId when known for that user. */
+  teamId?: string | null;
+  framework?: VercelFramework;
+  /** When true, upload full source tree (framework build). */
+  sourceDeploy?: boolean;
+}
+
+async function resolveTeamId(token: string, preferred?: string | null): Promise<string | undefined> {
+  if (preferred) return preferred;
+  // Do NOT fall back to process.env.VERCEL_TEAM_ID for user tokens —
+  // that is the Xroga platform team and breaks personal-account deploys.
+  try {
+    const res = await fetch('https://api.vercel.com/v2/user', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return undefined;
+    // Personal tokens work without teamId; team tokens may still deploy without it.
+    return undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function teamQuery(teamId?: string): string {
+  return teamId ? `?teamId=${encodeURIComponent(teamId)}` : '';
+}
+
 export async function deployStaticSite(
   projectName: string,
-  files: VercelFile[]
+  files: VercelFile[],
+  opts?: DeploySiteOptions,
 ): Promise<{ deployUrl: string; deploymentId: string }> {
   const token = getSecret('VERCEL_API_KEY');
   if (!token) {
     throw new Error('VERCEL_API_KEY not configured');
   }
-  return deployStaticSiteWithToken(projectName, files, token);
+  return deployStaticSiteWithToken(projectName, files, token, {
+    ...opts,
+    // Platform key may use platform team
+    teamId: opts?.teamId ?? process.env.VERCEL_TEAM_ID ?? null,
+  });
 }
 
-/** Deploy using a user's Vercel OAuth token (their account). */
+/** Deploy using a user's Vercel OAuth/PAT token (their account). No GitHub↔Vercel link required. */
 export async function deployStaticSiteWithToken(
   projectName: string,
   files: VercelFile[],
-  token: string
+  token: string,
+  opts?: DeploySiteOptions,
 ): Promise<{ deployUrl: string; deploymentId: string }> {
-  const teamId = process.env.VERCEL_TEAM_ID;
-  const query = teamId ? `?teamId=${teamId}` : '';
+  const teamId = await resolveTeamId(token, opts?.teamId);
+  const query = teamQuery(teamId);
+  const framework =
+    opts?.framework === 'null' || opts?.framework === null || opts?.framework === undefined
+      ? null
+      : opts.framework;
+
+  const body: Record<string, unknown> = {
+    name: projectName,
+    files,
+    projectSettings: {
+      framework,
+      ...(framework === 'nextjs'
+        ? { buildCommand: 'npm run build', installCommand: 'npm install' }
+        : {}),
+    },
+    target: 'production',
+  };
+
   const response = await fetch(`https://api.vercel.com/v13/deployments${query}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      name: projectName,
-      files,
-      projectSettings: { framework: null },
-      target: 'production',
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
     const errText = await response.text();
+    // Retry as static if framework build rejected
+    if (framework && /framework|build|package/i.test(errText)) {
+      const retry = await fetch(`https://api.vercel.com/v13/deployments${query}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: projectName,
+          files,
+          projectSettings: { framework: null },
+          target: 'production',
+        }),
+      });
+      if (!retry.ok) {
+        const retryErr = await retry.text();
+        throw new Error(`Vercel deploy failed: ${retry.status} ${retryErr.slice(0, 200)}`);
+      }
+      const deployment = (await retry.json()) as VercelDeployment;
+      const deployUrl = deployment.url.startsWith('http')
+        ? deployment.url
+        : `https://${deployment.url}`;
+      return { deployUrl, deploymentId: deployment.id };
+    }
     throw new Error(`Vercel deploy failed: ${response.status} ${errText.slice(0, 200)}`);
   }
 
@@ -63,13 +136,15 @@ export async function pollDeploymentReady(
   deploymentId: string,
   fallbackUrl: string,
   authToken?: string,
-  maxWaitMs = 120_000
+  maxWaitMs = 180_000,
+  teamId?: string | null,
 ): Promise<string> {
   const token = authToken ?? getSecret('VERCEL_API_KEY');
-  const teamId = process.env.VERCEL_TEAM_ID;
+  const resolvedTeam =
+    teamId ?? (authToken ? undefined : process.env.VERCEL_TEAM_ID) ?? undefined;
   if (!token) return fallbackUrl;
 
-  const query = teamId ? `?teamId=${teamId}` : '';
+  const query = teamQuery(resolvedTeam);
   const started = Date.now();
 
   while (Date.now() - started < maxWaitMs) {
