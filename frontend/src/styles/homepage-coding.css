@@ -400,6 +400,151 @@
   line-height: 1.5;
 }
 
+.xv-home-coding .xv-hc-compare,
+.xv-home-coding .xv-hc-faq,
+.xv-home-coding .xv-hc-mid-cta {
+  position: relative;
+  z-index: 1;
+  padding: 3.5rem 1.25rem;
+}
+
+.xv-home-coding .xv-hc-compare-inner,
+.xv-home-coding .xv-hc-faq-inner,
+.xv-home-coding .xv-hc-mid-cta-inner {
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+.xv-home-coding .xv-hc-mid-cta {
+  text-align: center;
+  padding-bottom: 4.5rem;
+}
+
+.xv-home-coding .xv-hc-mid-cta .xv-hc-section-copy {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.xv-home-coding .xv-hc-mid-cta .xv-hc-ctas {
+  justify-content: center;
+}
+
+.xv-home-coding .xv-hc-compare-scroll {
+  margin-top: 1.75rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.85rem;
+  background: rgba(8, 14, 28, 0.55);
+}
+
+.xv-home-coding .xv-hc-compare-table {
+  width: 100%;
+  min-width: 40rem;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.xv-home-coding .xv-hc-compare-table th,
+.xv-home-coding .xv-hc-compare-table td {
+  padding: 0.85rem 0.95rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(244, 247, 255, 0.72);
+  line-height: 1.45;
+}
+
+.xv-home-coding .xv-hc-compare-table thead th {
+  font-family: var(--hc-font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.28);
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+.xv-home-coding .xv-hc-compare-table tbody th {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  white-space: nowrap;
+  width: 7.5rem;
+}
+
+.xv-home-coding .xv-hc-compare-table .is-xroga {
+  color: #dceaff;
+  background: rgba(74, 163, 255, 0.08);
+}
+
+.xv-home-coding .xv-hc-compare-table thead th.is-xroga {
+  color: #8ec5ff;
+}
+
+.xv-home-coding .xv-hc-compare-table tbody tr:last-child th,
+.xv-home-coding .xv-hc-compare-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.xv-home-coding .xv-hc-faq-list {
+  margin-top: 1.75rem;
+  display: grid;
+  gap: 0.35rem;
+  max-width: 44rem;
+}
+
+.xv-home-coding .xv-hc-faq-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.xv-home-coding .xv-hc-faq-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0.15rem;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font-family: var(--hc-font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.xv-home-coding .xv-hc-faq-q:hover {
+  color: #b7d7ff;
+}
+
+.xv-home-coding .xv-hc-faq-icon {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.35rem;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.xv-home-coding .xv-hc-faq-a {
+  padding: 0 0.15rem 1.05rem;
+}
+
+.xv-home-coding .xv-hc-faq-a p {
+  margin: 0;
+  color: var(--hc-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  max-width: 40rem;
+  animation: xv-hc-fade-up 0.3s ease;
+}
+
 .xv-home-coding .xv-hc-footer {
   position: relative;
   z-index: 1;
@@ -428,12 +573,21 @@
   color: #fff;
 }
 
-.xv-home-coding .xv-hc-footer p {
+.xv-home-coding .xv-hc-footer p,
+.xv-home-coding .xv-hc-footer-meta {
   text-align: center;
-  font-family: var(--hc-font-pixel);
-  font-size: 0.42rem;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.35);
+  font-family: var(--hc-font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.xv-home-coding .xv-hc-footer-meta a {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.xv-home-coding .xv-hc-footer-meta a:hover {
+  color: #fff;
 }
 
 @keyframes xv-hc-fade-up {
@@ -818,9 +972,9 @@
 }
 
 .xv-home-coding .xv-hc-empower-metric {
-  font-size: clamp(3.2rem, 8vw, 4.5rem);
+  font-size: clamp(2.1rem, 5vw, 3rem);
   font-weight: 700;
-  line-height: 0.95;
+  line-height: 1.05;
   color: #ffffff !important;
   letter-spacing: -0.03em;
   margin: 0 0 0.85rem;
@@ -830,7 +984,7 @@
 .xv-home-coding .xv-hc-empower-metric span {
   display: block;
   margin-top: 0.35rem;
-  font-size: clamp(1.15rem, 2.5vw, 1.55rem);
+  font-size: clamp(0.95rem, 2vw, 1.2rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   color: rgba(244, 247, 255, 0.88);

@@ -7,18 +7,20 @@ import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepagePipelineDemo } from '@/components/homepage/HomepagePipelineDemo';
 import { HomepageEmpowerSection } from '@/components/homepage/HomepageEmpowerSection';
+import { HomepageCompareSection } from '@/components/homepage/HomepageCompareSection';
+import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
 import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
 
 const FOOTER_LINKS = [
   { href: '/features', label: 'Features' },
-  { href: '/auth/signup', label: 'Sign Up' },
-  { href: '/about', label: 'About Xroga' },
-  { href: '/docs/api', label: 'API' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
   { href: '/pricing', label: 'Pricing' },
-  { href: '/privacy', label: 'Privacy' },
   { href: '/terms', label: 'Terms' },
+  { href: '/privacy', label: 'Privacy' },
   { href: '/refund', label: 'Refund' },
+  { href: '/auth/signup', label: 'Sign Up' },
 ];
 
 const AI_FEATURES = [
@@ -97,12 +99,12 @@ export default function HomePage() {
           <h1 className="xv-hc-brand">XROGA</h1>
 
           <p className="xv-hc-headline">
-            AI That <span className="xv-hc-headline-em">Builds Your Stack</span> From One Prompt
+            AI That <span className="xv-hc-headline-em">Builds & Ships</span> Your Stack
           </p>
 
           <p className="xv-hc-sub">
             Describe the product. Converter writes the brief. The swarm codes, debugs, pushes to
-            GitHub, and deploys live to your domain.
+            your GitHub, and deploys live on Vercel — then you iterate with follow-up prompts.
           </p>
 
           <div className="xv-hc-ctas">
@@ -157,8 +159,9 @@ export default function HomePage() {
                 Swarm at full throttle. <em>Precision builds.</em>
               </h2>
               <p className="xv-hc-features-lead">
-                One intelligent flow for any request — apps, games, research, and repo work —
-                powered by the Xroga AI Swarm: Apex, Horizon, Forge, and Live.
+                Xroga AI is a paid AI Swarm product: prompt → brief → code → QA → GitHub → live
+                domain. Built for apps, games, research, and repo updates — Apex, Horizon, Forge,
+                and Live.
               </p>
             </div>
             <ul className="xv-hc-feature-list">
@@ -173,6 +176,31 @@ export default function HomePage() {
         </div>
       </section>
 
+      <HomepageCompareSection />
+
+      <HomepageFaqSection />
+
+      <section className="xv-hc-mid-cta" aria-label="Start building">
+        <div className="xv-hc-mid-cta-inner">
+          <h2 className="xv-hc-section-title">Ready when you are.</h2>
+          <p className="xv-hc-section-copy">
+            Start from a prompt. Own the repo. Ship on your domain.
+          </p>
+          <div className="xv-hc-ctas">
+            <button
+              type="button"
+              onClick={() => router.push(primaryHref)}
+              className="xv-hc-btn-primary"
+            >
+              {primaryLabel}
+            </button>
+            <Link href="/contact" className="xv-hc-btn-ghost">
+              Contact
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <footer className="xv-hc-footer">
         <nav aria-label="Footer">
           {FOOTER_LINKS.map(({ href, label }) => (
@@ -181,7 +209,11 @@ export default function HomePage() {
             </Link>
           ))}
         </nav>
-        <p>XROGA AI · BLACK HOLE V∞ · SHIP SOMETHING LEGENDARY</p>
+        <p className="xv-hc-footer-meta">
+          XROGA AI · <a href="mailto:hello@xroga.com">hello@xroga.com</a> ·{' '}
+          <Link href="/contact">Contact</Link> · <Link href="/terms">Terms</Link> ·{' '}
+          <Link href="/privacy">Privacy</Link> · <Link href="/refund">Refund</Link>
+        </p>
       </footer>
     </div>
   );

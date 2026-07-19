@@ -79,12 +79,12 @@ export function HomepageEmpowerSection() {
 
           <article className="xv-hc-empower-card xv-hc-empower-card--metric">
             <p className="xv-hc-empower-metric font-claude">
-              100%
-              <span>finish rate target</span>
+              Full loop
+              <span>preview → push → live</span>
             </p>
             <p className="xv-hc-empower-card-body">
-              When the swarm guides a build, we aim for a complete handoff — preview, files, push,
-              and deploy — not a half-done demo.
+              The swarm is built to hand off a real project — Workspace preview, files in your
+              GitHub, and a Vercel deploy — not a half-finished chat demo.
             </p>
           </article>
 

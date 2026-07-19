@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Logo } from '@/components/layout/Logo';
@@ -17,6 +18,7 @@ import { Zap, Shield, Layers, Sparkles, ChevronDown, ChevronUp, Lock, ArrowRight
 import { GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
 import { PowerSmashButton } from '@/components/ui/XrogaButtons';
 import { CurrencyToggle } from '@/hooks/usePlanPrice';
+import { COMPANY_CONTACT } from '@/lib/companyContact';
 
 function FeaturesExpand() {
   const [open, setOpen] = useState(false);
@@ -215,6 +217,32 @@ export function PricingPageClient() {
             </GradientStartButton>
           )}
         </div>
+
+        <footer className="mt-14 pt-8 border-t border-[var(--card-border)] text-center text-xs text-[var(--muted)] space-y-2">
+          <p>
+            {COMPANY_CONTACT.productDescription.slice(0, 160)}…
+          </p>
+          <nav className="flex flex-wrap justify-center gap-x-3 gap-y-1" aria-label="Legal">
+            <Link href="/contact" className="text-[var(--accent)] hover:underline">
+              Contact
+            </Link>
+            <Link href="/terms" className="hover:underline">
+              Terms
+            </Link>
+            <Link href="/privacy" className="hover:underline">
+              Privacy
+            </Link>
+            <Link href="/refund" className="hover:underline">
+              Refund
+            </Link>
+            <a href={`mailto:${COMPANY_CONTACT.email}`} className="hover:underline">
+              {COMPANY_CONTACT.email}
+            </a>
+            <a href={`tel:${COMPANY_CONTACT.phoneTel}`} className="hover:underline">
+              {COMPANY_CONTACT.phoneDisplay}
+            </a>
+          </nav>
+        </footer>
       </main>
     </div>
   );
