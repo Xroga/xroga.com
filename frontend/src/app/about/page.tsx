@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { buildMetadata, FAVICON_URL, SITE_URL } from '@/lib/seo';
+import { COMPANY_CONTACT } from '@/lib/companyContact';
 
 export const metadata: Metadata = buildMetadata({
   title: 'About Xroga AI & CEO Muhammad Ibrahim',
-  description:
-    'Meet Xroga AI — the AI Swarm Operating System built by Muhammad Ibrahim, a 19-year-old founder from Pakistan. Our mission, team, and what Xroga can do for you.',
+  description: COMPANY_CONTACT.productDescription,
   path: '/about',
   keywords: ['about Xroga', 'Muhammad Ibrahim CEO', 'Pakistan AI founder', 'Xroga mission'],
 });
@@ -14,17 +14,26 @@ export const metadata: Metadata = buildMetadata({
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Xroga AI',
+  name: COMPANY_CONTACT.brand,
   url: SITE_URL,
   logo: FAVICON_URL,
-  description:
-    'AI Swarm Operating System with multi-agent workflows, 710+ integrations, and browser automation.',
+  description: COMPANY_CONTACT.productDescription,
+  email: COMPANY_CONTACT.email,
+  telephone: COMPANY_CONTACT.phoneTel,
   founder: {
     '@type': 'Person',
     name: 'Muhammad Ibrahim',
     nationality: 'Pakistani',
     jobTitle: 'Founder & CEO',
     age: 19,
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    email: COMPANY_CONTACT.email,
+    telephone: COMPANY_CONTACT.phoneTel,
+    areaServed: 'Worldwide',
+    availableLanguage: ['English'],
   },
 };
 
@@ -68,10 +77,45 @@ export default function AboutPage() {
           <section className="glass-panel rounded-2xl p-6 space-y-3">
             <h2 className="text-xl font-semibold">What is Xroga AI?</h2>
             <p className="text-sm text-[var(--muted)] leading-relaxed">
-              Xroga AI is not a single chatbot. It is a coordinated swarm of AI agents — Architect, Builder,
-              Reviewer, QA Tester, and Truth Council — that negotiate until your task reaches zero defects.
-              Connect 710+ integrations, automate browsers, generate code, media, research, and full applications
-              with transparent action-based billing.
+              {COMPANY_CONTACT.productDescription}
+            </p>
+            <p className="text-sm text-[var(--muted)] leading-relaxed">
+              It is not a single chatbot. A coordinated swarm — Converter, Builder roles (Apex, Horizon,
+              Forge, Live), and QA — turns a prompt into previewable code, pushes your GitHub, and deploys
+              on Vercel. Billing is monthly via Paddle with AI credit by plan.
+            </p>
+          </section>
+
+          <section className="glass-panel rounded-2xl p-6 space-y-3">
+            <h2 className="text-xl font-semibold">Contact</h2>
+            <p className="text-sm text-[var(--muted)]">
+              Email:{' '}
+              <a href={`mailto:${COMPANY_CONTACT.email}`} className="text-[var(--accent)] hover:underline">
+                {COMPANY_CONTACT.email}
+              </a>
+            </p>
+            <p className="text-sm text-[var(--muted)]">
+              Phone:{' '}
+              <a href={`tel:${COMPANY_CONTACT.phoneTel}`} className="text-[var(--accent)] hover:underline">
+                {COMPANY_CONTACT.phoneDisplay}
+              </a>
+            </p>
+            <p className="text-sm text-[var(--muted)]">
+              <Link href="/contact" className="text-[var(--accent)] hover:underline">
+                Full contact page
+              </Link>
+              {' · '}
+              <Link href="/terms" className="text-[var(--accent)] hover:underline">
+                Terms
+              </Link>
+              {' · '}
+              <Link href="/privacy" className="text-[var(--accent)] hover:underline">
+                Privacy
+              </Link>
+              {' · '}
+              <Link href="/refund" className="text-[var(--accent)] hover:underline">
+                Refund
+              </Link>
             </p>
           </section>
 

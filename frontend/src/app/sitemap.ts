@@ -14,10 +14,11 @@ const STATIC_ROUTES: { path: string; priority: number; changeFrequency: Metadata
   { path: '/auth/signup', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/auth/login', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/about', priority: 0.85, changeFrequency: 'monthly' },
+  { path: '/contact', priority: 0.85, changeFrequency: 'monthly' },
   { path: '/docs/api', priority: 0.8, changeFrequency: 'monthly' },
-  { path: '/terms', priority: 0.4, changeFrequency: 'yearly' },
-  { path: '/privacy', priority: 0.4, changeFrequency: 'yearly' },
-  { path: '/refund', priority: 0.4, changeFrequency: 'yearly' },
+  { path: '/terms', priority: 0.5, changeFrequency: 'yearly' },
+  { path: '/privacy', priority: 0.5, changeFrequency: 'yearly' },
+  { path: '/refund', priority: 0.5, changeFrequency: 'yearly' },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
