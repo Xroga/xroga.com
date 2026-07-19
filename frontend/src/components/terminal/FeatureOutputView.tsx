@@ -1,13 +1,14 @@
 'use client';
 
-import { LandingPageCard } from './LandingPageCard';
+import { TerminalBuildReport } from './TerminalBuildReport';
 import { VIDEO_REMOVED_MESSAGE } from '@/lib/videoRemoved';
+import type { FileTrailItem } from '@/store/useProjectWorkspaceStore';
 
 export function FeatureOutputView({
   output,
   onDelete: _onDelete,
-  messageId,
-  onPreviewUpdate,
+  messageId: _messageId,
+  onPreviewUpdate: _onPreviewUpdate,
 }: {
   output: unknown;
   onDelete?: () => void;
@@ -15,73 +16,80 @@ export function FeatureOutputView({
   onPreviewUpdate?: (messageId: string, output: unknown) => void;
 }) {
   void _onDelete;
+  void _messageId;
+  void _onPreviewUpdate;
   if (!output || typeof output !== 'object') return null;
   const o = output as Record<string, unknown>;
 
   if (o.type === 'video_studio' || o.type === 'video_job_pending') {
     return (
-      <p className="text-sm text-[var(--foreground)]/85 rounded-lg border border-[var(--card-border)] p-3">
-        {VIDEO_REMOVED_MESSAGE}
-      </p>
+      <p className="text-sm text-[var(--foreground)]/85 py-1">{VIDEO_REMOVED_MESSAGE}</p>
     );
   }
 
   if (o.type === 'image_blocked' || o.type === 'image') {
     return (
-      <p className="text-sm text-[var(--muted)] rounded-lg border border-[var(--card-border)] p-3">
+      <p className="text-sm text-[var(--muted)] py-1">
         Legacy image generation has been removed while we rebuild the AI system.
       </p>
     );
   }
 
   if (o.type === 'landing_page') {
-    // Plan A: incremental updates render as UpdateFileTrail on the message — not a new card.
-    if (o.isUpdate === true) return null;
+    // Prefer updateTrail on the message; if featureOutput still carries build data, render terminal report (no card).
+    const isUpdate = o.isUpdate === true;
+    const projectName = typeof o.projectName === 'string' ? o.projectName : 'Project';
+    const userPrompt = typeof o.userPrompt === 'string' ? o.userPrompt : undefined;
+    const changes = Array.isArray(o.changesSummary)
+      ? (o.changesSummary as string[])
+      : undefined;
+    const files = (
+      Array.isArray(o.fileTrail) ? (o.fileTrail as FileTrailItem[]) : []
+    )
+      .filter((f) => f && typeof f.path === 'string')
+      .map((f) => ({
+        path: f.path,
+        before: typeof f.before === 'string' ? f.before : '',
+        after: typeof f.after === 'string' ? f.after : '',
+        added: Number(f.added) || 0,
+        removed: Number(f.removed) || 0,
+      }));
 
-    const deployUrl = typeof o.deployUrl === 'string' ? o.deployUrl.trim() : '';
-    const githubRepoUrl = typeof o.githubRepoUrl === 'string' ? o.githubRepoUrl : undefined;
-    const githubRepoName = typeof o.githubRepoName === 'string' ? o.githubRepoName : undefined;
-    const githubPushConfirmed = o.githubPushConfirmed === true;
-    const hasHtml = typeof o.html === 'string' && o.html.trim().length > 0;
-    if (!hasHtml && !deployUrl && !githubRepoUrl) return null;
+    const statusLines: string[] = [];
+    if (o.githubPushConfirmed && typeof o.githubRepoName === 'string') {
+      statusLines.push(`GitHub · ${o.githubRepoName}`);
+    } else if (typeof o.githubRepoName === 'string' && o.githubRepoName.includes('/')) {
+      statusLines.push(`GitHub target · ${o.githubRepoName}`);
+    }
+    if (o.deployVerified && typeof o.deployUrl === 'string' && o.deployUrl) {
+      statusLines.push(`Vercel · live`);
+    } else {
+      statusLines.push('Preview · sandbox panel');
+    }
+    if (o.usedSurgicalPatches) statusLines.push('Patches · surgical SEARCH/REPLACE');
 
-    const landingData: import('./LandingPageCard').LandingPageOutputData = {
-      type: 'landing_page',
-      html: typeof o.html === 'string' ? o.html : '',
-      css: typeof o.css === 'string' ? o.css : '',
-      js: typeof o.js === 'string' ? o.js : '',
-      heroImageUrl: typeof o.heroImageUrl === 'string' ? o.heroImageUrl : undefined,
-      deployUrl,
-      deployVerified: o.deployVerified === true,
-      githubRepoUrl,
-      githubRepoName,
-      githubPushConfirmed,
-      projectName: typeof o.projectName === 'string' ? o.projectName : undefined,
-      pages: Array.isArray(o.pages) ? (o.pages as string[]) : undefined,
-      features: Array.isArray(o.features) ? (o.features as string[]) : undefined,
-      designTheme: typeof o.designTheme === 'string' ? o.designTheme : undefined,
-      needsPayment: typeof o.needsPayment === 'boolean' ? o.needsPayment : undefined,
-      memoryNote: typeof o.memoryNote === 'string' ? o.memoryNote : undefined,
-      summary: typeof o.summary === 'string' ? o.summary : undefined,
-      vercelPreviewUrl: typeof o.vercelPreviewUrl === 'string' ? o.vercelPreviewUrl : undefined,
-      netlifyPreviewUrl: typeof o.netlifyPreviewUrl === 'string' ? o.netlifyPreviewUrl : undefined,
-      followUps: Array.isArray(o.followUps) ? (o.followUps as string[]) : undefined,
-      generatedFiles: Array.isArray(o.generatedFiles) ? (o.generatedFiles as string[]) : undefined,
-      fileCount: typeof o.fileCount === 'number' ? o.fileCount : undefined,
-      userPrompt: typeof o.userPrompt === 'string' ? o.userPrompt : undefined,
-      isUpdate: o.isUpdate === true,
-    };
+    const qa = o.qa as { issues?: string[] } | undefined;
 
     return (
-      <LandingPageCard
-        data={landingData}
-        onPreviewUpdate={
-          messageId && onPreviewUpdate
-            ? (next) => onPreviewUpdate(messageId, next)
-            : undefined
+      <TerminalBuildReport
+        headline={isUpdate ? `Updated ${projectName}` : `${projectName} ready`}
+        projectName={projectName}
+        userPrompt={userPrompt}
+        changes={changes}
+        files={files}
+        statusLines={statusLines}
+        githubUrl={typeof o.githubRepoUrl === 'string' ? o.githubRepoUrl : null}
+        deployUrl={
+          o.deployVerified && typeof o.deployUrl === 'string' ? o.deployUrl : null
         }
+        qaIssues={qa?.issues}
+        isUpdate={isUpdate}
       />
     );
+  }
+
+  if (o.type === 'chat' && typeof o.content === 'string') {
+    return null; // chat content rendered as ModernResponseText
   }
 
   return null;

@@ -2086,7 +2086,24 @@ export function TerminalChatProvider({
                 tag: `build-done-${assistantId}`,
               });
               setMessages((m) => {
-                // Updates: file trail on this turn; merge html into first landing_page for thread memory
+                const paths = Array.isArray((output as { updatedFiles?: string[] }).updatedFiles)
+                  ? ((output as { updatedFiles?: string[] }).updatedFiles as string[]).slice(0, 6)
+                  : fileTrailRaw.map((f) => f.path);
+                const statusBits = [
+                  outRepo
+                    ? (output as { githubPushConfirmed?: boolean }).githubPushConfirmed
+                      ? `GitHub · pushed ${outRepo}`
+                      : `GitHub · ${outRepo}`
+                    : null,
+                  (output as { deployVerified?: boolean }).deployVerified
+                    ? 'Vercel · live'
+                    : 'Preview · project panel',
+                  (output as { usedSurgicalPatches?: boolean }).usedSurgicalPatches
+                    ? 'Patches · surgical'
+                    : null,
+                ].filter(Boolean) as string[];
+
+                // Updates + new builds: terminal trail (no separate project card)
                 if (reusePreview) {
                   let anchorId: string | null = null;
                   for (let i = 0; i < m.length; i++) {
@@ -2096,24 +2113,28 @@ export function TerminalChatProvider({
                       break;
                     }
                   }
-                  const paths = Array.isArray((output as { updatedFiles?: string[] }).updatedFiles)
-                    ? ((output as { updatedFiles?: string[] }).updatedFiles as string[]).slice(0, 6)
-                    : fileTrailRaw.map((f) => f.path);
-                  const statusBits = [
-                    outRepo ? `Pushed to ${outRepo}` : null,
-                    'Preview updated',
-                    (output as { deployVerified?: boolean }).deployVerified ? 'Vercel: Ready' : null,
-                  ].filter(Boolean);
                   const updated = m.map((msg) => {
                     if (anchorId && msg.id === anchorId) {
                       const prev = (msg.featureOutput ?? {}) as Record<string, unknown>;
+                      // Keep anchor for memory/preview — do not mark isUpdate (that hid the report)
                       return {
                         ...msg,
                         featureOutput: {
                           ...prev,
-                          ...output,
+                          html: (output as { html?: string }).html ?? prev.html,
+                          css: (output as { css?: string }).css ?? prev.css,
+                          js: (output as { js?: string }).js ?? prev.js,
+                          githubRepoName: outRepo ?? prev.githubRepoName,
+                          githubRepoUrl:
+                            (output as { githubRepoUrl?: string }).githubRepoUrl ?? prev.githubRepoUrl,
+                          githubPushConfirmed:
+                            (output as { githubPushConfirmed?: boolean }).githubPushConfirmed ??
+                            prev.githubPushConfirmed,
+                          deployUrl: (output as { deployUrl?: string }).deployUrl ?? prev.deployUrl,
+                          deployVerified:
+                            (output as { deployVerified?: boolean }).deployVerified ??
+                            prev.deployVerified,
                           type: 'landing_page',
-                          isUpdate: true,
                         },
                       };
                     }
@@ -2123,7 +2144,7 @@ export function TerminalChatProvider({
                         content: '',
                         featureOutput: undefined,
                         updateTrail: {
-                          headline: `Updating ${projectName} · ${paths[0] ? paths.join(', ') : 'targeted files'}`,
+                          headline: `Updated ${projectName}${paths[0] ? ` · ${paths.join(', ')}` : ''}`,
                           changes: changesSummary,
                           files: fileTrailRaw,
                           statusLine: statusBits.join(' · '),
@@ -2148,8 +2169,33 @@ export function TerminalChatProvider({
                   msg.id === assistantId
                     ? {
                         ...msg,
-                        content: '✅ Preview ready — your site is in the project card below.',
-                        featureOutput: output,
+                        content: '',
+                        // Terminal report via FeatureOutputView (no card chrome)
+                        featureOutput: {
+                          ...output,
+                          type: 'landing_page',
+                          isUpdate: false,
+                          changesSummary:
+                            changesSummary ??
+                            [
+                              `${projectName} ready`,
+                              fileTrailRaw.length
+                                ? `${fileTrailRaw.length} files in trail`
+                                : undefined,
+                            ].filter(Boolean),
+                          fileTrail: fileTrailRaw.length
+                            ? fileTrailRaw
+                            : [
+                                {
+                                  path: 'index.html',
+                                  before: '',
+                                  after: String((output as { html?: string }).html ?? ''),
+                                  added: 0,
+                                  removed: 0,
+                                },
+                              ],
+                        },
+                        updateTrail: undefined,
                       }
                     : msg
                 );

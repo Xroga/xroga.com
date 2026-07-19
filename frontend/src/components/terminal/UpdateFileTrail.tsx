@@ -11,24 +11,24 @@ function DiffBlock({ item }: { item: FileTrailItem }) {
   const afterLines = String(item.after ?? '').split('\n').slice(0, 80);
 
   return (
-    <div className="rounded-lg border border-[var(--card-border)]/50 bg-[var(--card)]/40 overflow-hidden">
+    <div className="font-mono text-[11px] border-l border-[var(--foreground)]/10 pl-2">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center gap-2 px-2.5 py-1.5 text-left text-[11px] hover:bg-[var(--foreground)]/5"
+        className="w-full flex items-center gap-2 py-1 text-left hover:text-[var(--accent)]"
       >
         <FileCode2 className="h-3 w-3 text-[var(--accent)] shrink-0" />
-        <span className="font-mono font-semibold truncate flex-1">{item.path}</span>
+        <span className="font-semibold truncate flex-1">{item.path}</span>
         <span className="text-[10px] tabular-nums text-emerald-500 shrink-0">+{item.added}</span>
         <span className="text-[10px] tabular-nums text-rose-400 shrink-0">−{item.removed}</span>
         <ChevronDown className={cn('h-3 w-3 text-[var(--muted)] transition-transform', open && 'rotate-180')} />
       </button>
       {open && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 border-t border-[var(--card-border)]/40 text-[10px] font-mono max-h-48 overflow-auto">
-          <pre className="p-2 bg-rose-500/5 text-[var(--muted)] whitespace-pre-wrap break-all">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] max-h-48 overflow-auto pb-1">
+          <pre className="text-[var(--muted)] whitespace-pre-wrap break-all">
             {beforeLines.join('\n') || '(empty)'}
           </pre>
-          <pre className="p-2 bg-emerald-500/5 text-[var(--foreground)]/85 whitespace-pre-wrap break-all">
+          <pre className="text-[var(--foreground)]/85 whitespace-pre-wrap break-all">
             {afterLines.join('\n') || '(empty)'}
           </pre>
         </div>
@@ -81,7 +81,7 @@ export function UpdateFileTrail({
             type="button"
             disabled={rollingBack}
             onClick={onRollback}
-            className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-md border border-[var(--card-border)]/60 hover:bg-[var(--foreground)]/5 text-[var(--foreground)]/80 disabled:opacity-50"
+            className="inline-flex items-center gap-1 text-[11px] text-[var(--foreground)]/70 hover:text-[var(--foreground)] disabled:opacity-50"
           >
             <RotateCcw className={cn('h-3 w-3', rollingBack && 'animate-spin')} />
             {rollingBack ? 'Rolling back…' : 'Undo last update'}
