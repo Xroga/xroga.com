@@ -102,11 +102,14 @@ export function DashboardHomeView() {
           <div className="space-y-3">
             <div className="flex flex-wrap items-baseline justify-between gap-2 text-sm">
               <p>
-                <span className="text-[var(--muted)]">Monthly pool: </span>
+                <span className="text-[var(--muted)]">Tokens used: </span>
                 <strong>{tokens.totalUsed.toLocaleString()}</strong>
-                <span className="text-[var(--muted)]"> / {tokens.totalLimit.toLocaleString()} tokens</span>
+                <span className="text-[var(--muted)]">
+                  {' '}
+                  / {tokens.totalLimit.toLocaleString()}
+                </span>
               </p>
-              <p className="text-xs text-[var(--muted)]">{tokens.percentUsed}% used</p>
+              <p className="text-xs text-[var(--muted)]">{tokens.percentUsed}% of token pool</p>
             </div>
             <div className="h-2 rounded-full bg-[var(--foreground)]/10 overflow-hidden">
               <div
@@ -114,6 +117,24 @@ export function DashboardHomeView() {
                 style={{ width: `${Math.min(100, tokens.percentUsed)}%` }}
               />
             </div>
+            {typeof tokens.creditRemainingUsd === 'number' && (
+              <div className="flex flex-wrap items-baseline justify-between gap-2 text-sm pt-1">
+                <p>
+                  <span className="text-[var(--muted)]">AI credit left: </span>
+                  <strong>${tokens.creditRemainingUsd.toFixed(2)}</strong>
+                  {typeof tokens.planBudgetUsd === 'number' && (
+                    <span className="text-[var(--muted)]">
+                      {' '}
+                      of ${(tokens.planBudgetUsd + (tokens.rolloverUsd ?? 0)).toFixed(2)}
+                      {(tokens.rolloverUsd ?? 0) > 0 ? ' (incl. rollover)' : ''}
+                    </span>
+                  )}
+                </p>
+                <p className="text-xs text-[var(--muted)]">
+                  {tokens.percentCreditUsed ?? 0}% credit used · deducted per call
+                </p>
+              </div>
+            )}
             {modelPools.length > 0 && (
               <ul className="grid gap-2 sm:grid-cols-2">
                 {modelPools.map((pool) => (
@@ -129,8 +150,13 @@ export function DashboardHomeView() {
                       <p className="text-[var(--muted)] mt-0.5">{pool.tagline}</p>
                     )}
                     <p className="mt-1 text-[var(--muted)]">
-                      {pool.totalUsed.toLocaleString()} / {pool.totalLimit.toLocaleString()}
+                      {pool.totalUsed.toLocaleString()} / {pool.totalLimit.toLocaleString()} tokens
                     </p>
+                    {typeof pool.creditRemainingUsd === 'number' && (
+                      <p className="text-[var(--muted)]">
+                        Cap left: ${pool.creditRemainingUsd.toFixed(2)}
+                      </p>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -173,6 +199,22 @@ export function DashboardHomeView() {
             <p>
               <span className="text-[var(--muted)]">Next billing: </span>
               <strong>{billing?.nextBilling ?? '—'}</strong>
+            </p>
+            {typeof billing?.creditRemainingUsd === 'number' && (
+              <p>
+                <span className="text-[var(--muted)]">AI credit remaining: </span>
+                <strong>${billing.creditRemainingUsd.toFixed(2)}</strong>
+                {typeof billing.rolloverUsd === 'number' && billing.rolloverUsd > 0 && (
+                  <span className="text-[var(--muted)]">
+                    {' '}
+                    (+${billing.rolloverUsd.toFixed(2)} rolled over)
+                  </span>
+                )}
+              </p>
+            )}
+            <p>
+              <span className="text-[var(--muted)]">Tokens remaining: </span>
+              <strong>{(billing?.tokensRemaining ?? tokens?.totalRemaining ?? 0).toLocaleString()}</strong>
             </p>
           </div>
 

@@ -47,12 +47,15 @@ export function HeaderTokenMeter({ onClick, className }: HeaderTokenMeterProps) 
             {loaded ? formatTokens(remaining) : '—'}
           </span>{' '}
           tokens left
+          {typeof usage?.creditRemainingUsd === 'number' && (
+            <span className="text-white/50"> · ${usage.creditRemainingUsd.toFixed(2)} credit</span>
+          )}
         </div>
         <div className={cn('xv-token-pill__balance tabular-nums sm:hidden', isOut && 'text-red-400/80')}>
           <span className={cn('font-semibold text-white/90', isOut && 'text-red-400')}>
             {loaded ? formatTokens(remaining) : '—'}
           </span>{' '}
-          tokens left
+          left
         </div>
       </div>
     </>

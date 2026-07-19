@@ -1889,9 +1889,19 @@ export function TerminalChatProvider({
                   emergencyTokensAvailable: false,
                   emergencyTokensClaimedThisMonth: false,
                   totalLimit:
-                    remaining + used > 0
-                      ? remaining + used
-                      : prevUsage?.totalLimit || 7_000_000,
+                    typeof tu.totalLimit === 'number'
+                      ? tu.totalLimit
+                      : remaining + used > 0
+                        ? remaining + used
+                        : prevUsage?.totalLimit || 7_000_000,
+                  planBudgetUsd: tu.planBudgetUsd ?? prevUsage?.planBudgetUsd,
+                  rolloverUsd: tu.rolloverUsd ?? prevUsage?.rolloverUsd,
+                  spentUsd: tu.spentUsd ?? prevUsage?.spentUsd,
+                  creditRemainingUsd:
+                    tu.creditRemainingUsd ?? prevUsage?.creditRemainingUsd,
+                  percentCreditUsed:
+                    tu.percentCreditUsed ?? prevUsage?.percentCreditUsed,
+                  planTier: tu.planTier ?? prevUsage?.planTier,
                 });
               }
             }

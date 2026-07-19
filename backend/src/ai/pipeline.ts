@@ -20,7 +20,13 @@ import {
   prepareAttachments,
   type ChatAttachment,
 } from './attachments.js';
-import { assertHasQuota, recordUsage, usageToTokenUsage, type UsageSnapshot } from './quota.js';
+import {
+  assertCanUseModel,
+  assertHasQuota,
+  recordUsage,
+  usageToTokenUsage,
+  type UsageSnapshot,
+} from './quota.js';
 import { formatResearchForPrompt, gatherResearch, type ResearchBundle } from './research.js';
 import { isBuildPrompt, routePrompt, type RouteDecision } from './router.js';
 import {
@@ -258,12 +264,20 @@ async function hydratePriorFiles(
 async function callBuilderStream(
   preferred: ModelId,
   messages: ChatMessage[],
-  opts: { maxTokens?: number; temperature?: number; onDelta?: DeltaFn },
+  opts: {
+    maxTokens?: number;
+    temperature?: number;
+    onDelta?: DeltaFn;
+    userId?: string;
+  },
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
   const order = [preferred, ...BUILDER_FALLBACKS.filter((m) => m !== preferred)];
   let lastErr: Error | null = null;
   for (const modelId of order) {
     try {
+      if (opts.userId) {
+        await assertCanUseModel(opts.userId, modelId);
+      }
       return await chatCompletionStream(modelId, messages, {
         maxTokens: opts.maxTokens,
         temperature: opts.temperature,
@@ -271,6 +285,9 @@ async function callBuilderStream(
       });
     } catch (err) {
       lastErr = err as Error;
+      const code = (lastErr as Error & { code?: string }).code;
+      // Hard out of total credit — do not try cheaper models forever
+      if (code === 'OUT_OF_TOKENS') throw lastErr;
       console.warn(`[pipeline] ${modelId} stream failed:`, lastErr.message);
     }
   }
@@ -351,6 +368,7 @@ export async function runChatPipeline(opts: {
       pick.modelId,
       [{ role: 'system', content: system }, ...historyMsgs, userMessage],
       {
+        userId: opts.userId,
         maxTokens: 6144,
         temperature: 0.35,
         onDelta: opts.onDelta,
@@ -408,6 +426,7 @@ export async function runChatPipeline(opts: {
     route.builder,
     [{ role: 'system', content: CHAT_SYSTEM }, ...historyMsgs, { role: 'user', content: userContent }],
     {
+      userId: opts.userId,
       maxTokens: route.kind === 'research' ? 8192 : 4096,
       temperature: 0.5,
       onDelta: opts.onDelta,
@@ -541,6 +560,10 @@ export async function runBuildPipeline(opts: {
       swarmActivity: 'DeepSeek Pro / GLM (once)',
       swarmTodos: todosForBuild('route'),
     });
+    await assertCanUseModel(
+      opts.userId,
+      prior.files.length >= 20 || route.kind === 'build_long_horizon' ? 'glm_5_2' : 'deepseek_v4_pro',
+    );
     const memo = await summarizeRepoForUpdates({
       prompt: userFacingPrompt,
       projectName: prior.projectName,
@@ -604,7 +627,7 @@ export async function runBuildPipeline(opts: {
             ),
           },
         ],
-        { maxTokens: 2048, temperature: 0.3 },
+        { userId: opts.userId, maxTokens: 2048, temperature: 0.3 },
       );
       usage = await recordUsage(
         opts.userId,
@@ -643,6 +666,7 @@ export async function runBuildPipeline(opts: {
     swarmTodos: todosForBuild('convert'),
   });
 
+  await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
   const converted = await convertUserRequest(
     isUpdate
       ? `INCREMENTAL UPDATE to existing project "${prior.projectName || 'current site'}". Apply only this change using SEARCH/REPLACE patches (or Delete File). Do not re-analyze the whole repo: ${opts.prompt}`
@@ -696,6 +720,7 @@ export async function runBuildPipeline(opts: {
       { role: 'user', content: builderUser },
     ],
     {
+        userId: opts.userId,
       maxTokens: 16384,
       temperature: isUpdate ? 0.3 : 0.45,
       onDelta: opts.onDelta,
@@ -777,7 +802,7 @@ export async function runBuildPipeline(opts: {
               })}\n\nUser update (MUST use SEARCH/REPLACE or Delete File only):\n${userFacingPrompt}`,
             },
           ],
-          { maxTokens: 8192, temperature: 0.2, onDelta: opts.onDelta },
+          { userId: opts.userId, maxTokens: 8192, temperature: 0.2, onDelta: opts.onDelta },
         );
         usage = await recordUsage(
           opts.userId,
@@ -877,6 +902,7 @@ export async function runBuildPipeline(opts: {
     swarmTodos: todosForBuild('qa'),
   });
   const siteForQa = filesToSite(nextFiles);
+  await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
   let qa = await reviewBuildOutput({
     prompt: userFacingPrompt,
     html: siteForQa.html,
@@ -914,7 +940,7 @@ export async function runBuildPipeline(opts: {
           { role: 'system', content: BUILDER_SYSTEM },
           { role: 'user', content: fixPrompt },
         ],
-        { maxTokens: 12288, temperature: 0.25, onDelta: opts.onDelta },
+        { userId: opts.userId, maxTokens: 12288, temperature: 0.25, onDelta: opts.onDelta },
       );
       usage = await recordUsage(
         opts.userId,

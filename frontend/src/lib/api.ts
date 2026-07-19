@@ -953,6 +953,11 @@ export interface DashboardSummary {
     daysRemaining: number;
     estimatedDailyUsage: number;
     quotaPeriodStart: string;
+    planBudgetUsd?: number;
+    rolloverUsd?: number;
+    spentUsd?: number;
+    creditRemainingUsd?: number;
+    percentCreditUsed?: number;
     byModel?: Array<{
       role: string;
       label: string;
@@ -964,6 +969,9 @@ export interface DashboardSummary {
       totalUsed: number;
       totalLimit: number;
       percentUsed: number;
+      budgetUsd?: number;
+      spentUsd?: number;
+      creditRemainingUsd?: number;
     }>;
   } | null;
   aiBackend?: string;
@@ -983,6 +991,10 @@ export interface DashboardSummary {
     tokensIncluded: number;
     tokensUsed: number;
     tokensRemaining: number;
+    apiBudgetUsd?: number;
+    creditRemainingUsd?: number;
+    spentUsd?: number;
+    rolloverUsd?: number;
   };
   recentActivity: Array<{
     action: string;
@@ -1003,6 +1015,12 @@ export interface TokenUsage {
   emergencyTokensAvailable: boolean;
   emergencyTokensClaimedThisMonth: boolean;
   totalLimit?: number;
+  planBudgetUsd?: number;
+  rolloverUsd?: number;
+  spentUsd?: number;
+  creditRemainingUsd?: number;
+  percentCreditUsed?: number;
+  planTier?: string;
 }
 
 import type { HackathonBriefCardData } from '@/components/terminal/HackathonBriefCard';
