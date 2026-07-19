@@ -21,8 +21,9 @@ export interface FileTrailEntry {
   removed: number;
 }
 
+/** Merge-safe delimiters (preferred). Also accept legacy git-conflict-style markers. */
 const PATCH_BLOCK_RE =
-  /\*\*\*\s*Update File:\s*(.+?)\s*\n<<<<<<< SEARCH\n([\s\S]*?)\n=======\n([\s\S]*?)\n>>>>>>> REPLACE/g;
+  /\*\*\*\s*Update File:\s*(.+?)\s*\n(?:<<<SEARCH|<<<<<<< SEARCH)\n([\s\S]*?)\n(?:===|=======)\n([\s\S]*?)\n(?:>>>REPLACE|>>>>>>> REPLACE)/g;
 
 const JSON_FENCE_RE = /```json\s*([\s\S]*?)```/gi;
 

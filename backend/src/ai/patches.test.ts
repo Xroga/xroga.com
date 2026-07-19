@@ -10,7 +10,22 @@ import {
 import { extractProjectFiles } from './siteBuilder.js';
 
 describe('extractSearchReplacePatches', () => {
-  it('parses SEARCH/REPLACE blocks', () => {
+  it('parses SEARCH/REPLACE blocks (merge-safe delimiters)', () => {
+    const text = `*** Update File: src/app.js
+<<<SEARCH
+const x = 1;
+===
+const x = 2;
+>>>REPLACE`;
+
+    const patches = extractSearchReplacePatches(text);
+    assert.equal(patches.length, 1);
+    assert.equal(patches[0].path, 'src/app.js');
+    assert.equal(patches[0].search, 'const x = 1;');
+    assert.equal(patches[0].replace, 'const x = 2;');
+  });
+
+  it('parses legacy git-conflict-style SEARCH/REPLACE blocks', () => {
     const text = `*** Update File: src/app.js
 <<<<<<< SEARCH
 const x = 1;
@@ -20,8 +35,6 @@ const x = 2;
 
     const patches = extractSearchReplacePatches(text);
     assert.equal(patches.length, 1);
-    assert.equal(patches[0].path, 'src/app.js');
-    assert.equal(patches[0].search, 'const x = 1;');
     assert.equal(patches[0].replace, 'const x = 2;');
   });
 

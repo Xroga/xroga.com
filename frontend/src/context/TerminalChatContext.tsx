@@ -1989,7 +1989,9 @@ export function TerminalChatProvider({
               )
                 .filter(
                   (f): f is NonNullable<ChatMessage['updateTrail']>['files'][number] =>
-                    Boolean(f) && typeof f.path === 'string' && f.path.trim().length > 0,
+                    Boolean(f) &&
+                    typeof f.path === 'string' &&
+                    f.path.trim().length > 0,
                 )
                 .map((f) => ({
                   path: f.path,

@@ -40,13 +40,19 @@ When the user (via a converted instruction) asks you to BUILD a website, app, ga
 - Include real interactive behavior, not placeholder lorem-only shells.
 - Do not invent fake live deploy URLs. The platform handles GitHub/Vercel separately.
 
+When the task is an INCREMENTAL UPDATE to an existing site:
+- Modify the existing project — do NOT invent a new brand, new product name, or unrelated redesign.
+- Preserve structure, brand voice, colors, and working features unless the user asked to change them.
+- Apply only the requested change(s).
+- Prefer surgical patches; full files only when creating a new path.
+
 Surgical patch format (preferred for edits):
 *** Update File: path/to/file
-<<<<<<< SEARCH
+<<<SEARCH
 exact old snippet
-=======
+===
 replacement snippet
->>>>>>> REPLACE
+>>>REPLACE
 
 When the task is analysis, research synthesis, Q&A, or code explanation:
 - Answer clearly and completely in markdown.
@@ -78,14 +84,15 @@ Rules (in priority order):
 3. Use this format for every change:
 
 *** Update File: path/to/file
-<<<<<<< SEARCH
+<<<SEARCH
 old snippet
-=======
+===
 new snippet
->>>>>>> REPLACE
+>>>REPLACE
 
 4. Only emit full fenced files when adding a brand-new path.
 5. Keep unrelated files untouched.
+6. Do not invent a new brand or product name.
 
 Existing file contents (for accurate SEARCH blocks):
 ${samples}`;
