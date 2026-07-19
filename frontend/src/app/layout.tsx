@@ -1,15 +1,4 @@
 import type { Metadata, Viewport } from 'next';
-import {
-  Cormorant,
-  Fraunces,
-  Inter,
-  JetBrains_Mono,
-  Newsreader,
-  Outfit,
-  Press_Start_2P,
-  Source_Serif_4,
-  Syne,
-} from 'next/font/google';
 import './globals.css';
 import '@/styles/xroga-fonts.css';
 import '@/styles/uiverse.css';
@@ -17,58 +6,7 @@ import { buildMetadata, FAVICON_URL, FAVICON_LOCAL } from '@/lib/seo';
 import { RootProviders } from '@/components/providers/RootProviders';
 import { SiteJsonLd } from '@/components/seo/SiteJsonLd';
 import { StorageBootstrap } from '@/components/bootstrap/StorageBootstrap';
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-/** Azurio role — sharp editorial serif (Fraunces stand-in) */
-const azurio = Fraunces({
-  subsets: ['latin'],
-  variable: '--font-azurio',
-  weight: ['600', '700', '800', '900'],
-});
-/** Goga role — friendly geometric sans body */
-const goga = Outfit({
-  subsets: ['latin'],
-  variable: '--font-goga',
-  weight: ['400', '500', '600', '700'],
-});
-/** Remixa role — contrasting modern sans for UI/labels */
-const remixa = Syne({
-  subsets: ['latin'],
-  variable: '--font-remixa',
-  weight: ['500', '600', '700', '800'],
-});
-/** Emilio role — elegant thin italic serif accents */
-const emilio = Cormorant({
-  subsets: ['latin'],
-  variable: '--font-emilio',
-  weight: ['300', '400', '500'],
-  style: ['normal', 'italic'],
-});
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-xv-mono',
-  weight: ['400', '500', '600'],
-});
-/** Pixel coding vibe — homepage accents */
-const pixelCoding = Press_Start_2P({
-  subsets: ['latin'],
-  variable: '--font-pixel',
-  weight: ['400'],
-});
-/** High-contrast editorial serif (Claude-like display) */
-const sourceSerif = Source_Serif_4({
-  subsets: ['latin'],
-  variable: '--font-source-serif',
-  weight: ['400', '600', '700'],
-  style: ['normal', 'italic'],
-});
-/** Literary high-contrast serif — closest Claude brand match for taglines */
-const claudeSerif = Newsreader({
-  subsets: ['latin'],
-  variable: '--font-claude-serif',
-  weight: ['400', '500', '600', '700'],
-  style: ['normal', 'italic'],
-});
+import { rootFontVariables } from '@/lib/fonts';
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -118,9 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://xroga-api.fly.dev" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>
-      <body
-        className={`theme-white ${inter.variable} ${azurio.variable} ${goga.variable} ${remixa.variable} ${emilio.variable} ${jetbrainsMono.variable} ${pixelCoding.variable} ${sourceSerif.variable} ${claudeSerif.variable} font-sans antialiased`}
-      >
+      <body className={`theme-white ${rootFontVariables} font-sans antialiased`}>
         <SiteJsonLd />
         <RootProviders>{children}</RootProviders>
       </body>

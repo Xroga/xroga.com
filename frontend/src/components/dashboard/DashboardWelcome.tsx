@@ -6,6 +6,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { getTimeGreetingKey, t } from '@/lib/i18n/translations';
 import { useLocale } from '@/components/providers/LanguageProvider';
 import { WorkspaceResumeList } from '@/components/dashboard/WorkspaceResumeList';
+import { claudeSerif, pixelCoding } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
 
 interface DashboardWelcomeProps {
@@ -26,10 +27,10 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
   return (
     <div className={cn('xv-dashboard-welcome xv-welcome-modern relative', className)}>
       <p className="xv-welcome-greeting relative">
-        <span className="xv-welcome-greeting-text font-claude">{greeting},</span>
+        <span className={cn('xv-welcome-greeting-text', claudeSerif.className)}>{greeting},</span>
       </p>
       <p className="xv-welcome-name-line relative">
-        <span className="xv-welcome-name font-pixel">{name}</span>
+        <span className={cn('xv-welcome-name', pixelCoding.className)}>{name}</span>
       </p>
 
       <div className="xv-blackhole-identity relative" aria-label="Black Hole V Infinity">
@@ -41,7 +42,11 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
       </div>
 
       <div className="xv-welcome-taglines relative mt-3 space-y-2 max-w-3xl">
-        <p className="xv-welcome-tagline-sub">
+        {/*
+          Anthropic Serif is proprietary — Newsreader (claudeSerif.className) is the open stand-in.
+          Applying next/font className directly so body Outfit/sans cannot override it.
+        */}
+        <p className={cn('xv-welcome-tagline-sub', claudeSerif.className)}>
           The <span className="xv-tagline-accent">first</span> and{' '}
           <span className="xv-tagline-accent">last</span> model you will ever need.
         </p>
