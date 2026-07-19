@@ -3,6 +3,7 @@ import { FREE_TRIAL_ACTIONS } from '../config/plans.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ACTION_COSTS, type TaskType } from '../types/index.js';
 import { ensureUserRecords } from './ensureUserRecords.js';
+import { syncPlanBudget } from '../ai/quota.js';
 
 export interface DeductResult {
   success: boolean;
@@ -236,5 +237,8 @@ export class ActionService {
       actions_cost: 0,
       description: `Plan upgraded to ${planTier} (${totalActions} actions)`,
     });
+
+    // Keep AI $ budget / token pool aligned with Paddle plan (same across devices via Supabase).
+    await syncPlanBudget(userId, planTier);
   }
 }

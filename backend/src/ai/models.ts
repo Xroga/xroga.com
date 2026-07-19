@@ -155,36 +155,65 @@ export const MODELS: Record<ModelId, ModelDef> = {
 
 export const MODEL_LIST = Object.values(MODELS);
 
+/** Real provider cost for a single call from token counts. */
+export function costUsdForTokens(
+  modelId: ModelId,
+  inputTokens: number,
+  outputTokens: number,
+): number {
+  const def = MODELS[modelId];
+  const inTok = Math.max(0, inputTokens || 0);
+  const outTok = Math.max(0, outputTokens || 0);
+  const usd =
+    (inTok / 1_000_000) * def.inputUsdPer1M + (outTok / 1_000_000) * def.outputUsdPer1M;
+  return Math.round(usd * 1_000_000) / 1_000_000;
+}
+
+/** Scale base Spark pool limits by plan API budget. */
+export function scaleFactorForBudget(apiBudgetUsd: number): number {
+  if (!apiBudgetUsd || apiBudgetUsd <= 0) return 0;
+  return apiBudgetUsd / MONTHLY_TOTAL_BUDGET_USD;
+}
+
 /** Dashboard-friendly rollup (DeepSeek Pro+Flash combined, Grok 4.5+4.3 combined). */
-export function dashboardModelPools() {
+export function dashboardModelPools(apiBudgetUsd: number = MONTHLY_TOTAL_BUDGET_USD) {
+  const scale = scaleFactorForBudget(apiBudgetUsd);
   return [
     {
       role: 'kimi_k3',
       label: MODELS.kimi_k3.label,
       tagline: MODELS.kimi_k3.tagline,
-      totalLimit: MODELS.kimi_k3.monthlyTokens,
-      budgetUsd: MODELS.kimi_k3.budgetUsd,
+      totalLimit: Math.round(MODELS.kimi_k3.monthlyTokens * scale),
+      budgetUsd: Math.round(MODELS.kimi_k3.budgetUsd * scale * 100) / 100,
     },
     {
       role: 'glm_5_2',
       label: MODELS.glm_5_2.label,
       tagline: MODELS.glm_5_2.tagline,
-      totalLimit: MODELS.glm_5_2.monthlyTokens,
-      budgetUsd: MODELS.glm_5_2.budgetUsd,
+      totalLimit: Math.round(MODELS.glm_5_2.monthlyTokens * scale),
+      budgetUsd: Math.round(MODELS.glm_5_2.budgetUsd * scale * 100) / 100,
     },
     {
       role: 'deepseek_v4',
       label: 'Xroga Forge / Pulse',
       tagline: 'Volume workhorse',
-      totalLimit: MODELS.deepseek_v4_pro.monthlyTokens + MODELS.deepseek_v4_flash.monthlyTokens,
-      budgetUsd: MODELS.deepseek_v4_pro.budgetUsd + MODELS.deepseek_v4_flash.budgetUsd,
+      totalLimit: Math.round(
+        (MODELS.deepseek_v4_pro.monthlyTokens + MODELS.deepseek_v4_flash.monthlyTokens) * scale,
+      ),
+      budgetUsd:
+        Math.round(
+          (MODELS.deepseek_v4_pro.budgetUsd + MODELS.deepseek_v4_flash.budgetUsd) * scale * 100,
+        ) / 100,
     },
     {
       role: 'grok',
       label: 'Xroga Live / Lens',
       tagline: 'Real-time + document backup',
-      totalLimit: MODELS.grok_4_5.monthlyTokens + MODELS.grok_4_3.monthlyTokens,
-      budgetUsd: MODELS.grok_4_5.budgetUsd + MODELS.grok_4_3.budgetUsd,
+      totalLimit: Math.round(
+        (MODELS.grok_4_5.monthlyTokens + MODELS.grok_4_3.monthlyTokens) * scale,
+      ),
+      budgetUsd:
+        Math.round((MODELS.grok_4_5.budgetUsd + MODELS.grok_4_3.budgetUsd) * scale * 100) / 100,
     },
   ];
 }

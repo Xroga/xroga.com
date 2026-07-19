@@ -2,7 +2,8 @@ import { Router } from 'express';
 import type { AuthRequest } from '../middleware/auth.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { GALACTIC_PLANS, planDisplayName } from '../config/galacticPlans.js';
-import { MONTHLY_TOTAL_TOKENS, MONTHLY_USER_PRICE_USD } from '../ai/models.js';
+import { MONTHLY_USER_PRICE_USD } from '../ai/models.js';
+import { getApiBudgetUsd, getTokenPool } from '../config/plans.js';
 import { getUsage, usageToDashboardTokens } from '../ai/quota.js';
 
 const router = Router();
@@ -68,6 +69,8 @@ router.get('/summary', async (req: AuthRequest, res) => {
 
   const usage = await getUsage(userId);
   const tokens = usageToDashboardTokens(usage);
+  const effectiveTier = usage.planTier || planTier;
+  const tokensIncluded = getTokenPool(effectiveTier);
 
   res.json({
     now: new Date().toISOString(),
@@ -81,13 +84,17 @@ router.get('/summary', async (req: AuthRequest, res) => {
       consistencyBonusPercent: 0,
     },
     billing: {
-      planTier,
+      planTier: effectiveTier,
       planName,
       planPrice,
       nextBilling,
-      tokensIncluded: MONTHLY_TOTAL_TOKENS,
+      tokensIncluded,
       tokensUsed: tokens.totalUsed,
       tokensRemaining: tokens.totalRemaining,
+      apiBudgetUsd: usage.planBudgetUsd || getApiBudgetUsd(effectiveTier),
+      creditRemainingUsd: usage.creditRemainingUsd,
+      spentUsd: usage.spentUsd,
+      rolloverUsd: usage.rolloverUsd,
     },
     recentActivity,
     aiBackend: 'kimi-glm-deepseek-grok',

@@ -14,6 +14,7 @@ import {
   dashboardModelPools,
 } from '../ai/models.js';
 import { modelKeyStatus } from '../ai/openaiCompat.js';
+import { GALACTIC_PLANS, getPlanByTier } from '../config/plans.js';
 
 const router = Router();
 
@@ -68,10 +69,10 @@ router.post('/chat', async (req: AuthRequest, res) => {
         code: 'USE_BUILD_PIPELINE',
       });
     }
-    if (e.code === 'OUT_OF_TOKENS') {
+    if (e.code === 'OUT_OF_TOKENS' || e.code === 'MODEL_CAP_REACHED') {
       return res.status(402).json({
         error: e.message,
-        code: 'OUT_OF_ACTIONS',
+        code: e.code === 'MODEL_CAP_REACHED' ? 'MODEL_CAP_REACHED' : 'OUT_OF_ACTIONS',
         paymentLink: '/pricing',
       });
     }
@@ -95,11 +96,14 @@ router.get('/usage', async (req: AuthRequest, res) => {
 });
 
 router.get('/economics', (_req, res) => {
-  const pools = dashboardModelPools();
+  const pools = dashboardModelPools(MONTHLY_TOTAL_BUDGET_USD);
+  const trial = getPlanByTier('unpaid')!;
   res.json({
     currency: 'USD',
-    freeUserMonthlyTokens: MONTHLY_TOTAL_TOKENS,
-    freeUserWorstCaseApiUsd: MONTHLY_TOTAL_BUDGET_USD,
+    metering: 'real_provider_tokens_to_usd',
+    rollover: 'unused_api_credit_rolls_1_month_max',
+    freeUserMonthlyTokens: trial.tokenPool,
+    freeUserWorstCaseApiUsd: trial.apiBudgetUsd,
     userChargeUsd: MONTHLY_USER_PRICE_USD,
     profitPerUserUsd: Math.round((MONTHLY_USER_PRICE_USD - MONTHLY_TOTAL_BUDGET_USD) * 100) / 100,
     marginPct: Math.round(((MONTHLY_USER_PRICE_USD - MONTHLY_TOTAL_BUDGET_USD) / MONTHLY_USER_PRICE_USD) * 1000) / 10,
@@ -109,9 +113,27 @@ router.get('/economics', (_req, res) => {
       tagline: m.tagline,
       budgetUsd: m.budgetUsd,
       monthlyTokens: m.monthlyTokens,
+      inputUsdPer1M: m.inputUsdPer1M,
+      outputUsdPer1M: m.outputUsdPer1M,
       role: m.role,
     })),
     pools,
+    plans: [
+      {
+        tier: 'unpaid',
+        priceUsd: 0,
+        tokens: trial.tokenPool,
+        apiBudgetUsd: trial.apiBudgetUsd,
+      },
+      ...GALACTIC_PLANS.map((p) => ({
+        tier: p.tier,
+        priceUsd: Number(p.priceLabel.replace(/[^0-9.]/g, '')) || 0,
+        tokens: p.tokenPool,
+        apiBudgetUsd: p.apiBudgetUsd,
+        grossProfitIfFullBurnUsd:
+          Math.round((Number(p.priceLabel.replace(/[^0-9.]/g, '')) - p.apiBudgetUsd) * 100) / 100,
+      })),
+    ],
     perBuild: [
       {
         tier: 'simple',

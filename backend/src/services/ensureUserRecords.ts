@@ -1,4 +1,4 @@
-import { FREE_TRIAL_ACTIONS } from '../config/plans.js';
+import { FREE_TRIAL_ACTIONS, getApiBudgetUsd } from '../config/plans.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 
 function currentPeriodStart(): string {
@@ -8,7 +8,7 @@ function currentPeriodStart(): string {
 
 /**
  * Ensures profile + user_actions + token quota exist after auth.
- * Free/unpaid users receive 7M tokens/month for testing.
+ * AI credit/token pools come from plan tier (shared across devices via Supabase).
  */
 export async function ensureUserRecords(userId: string, email?: string): Promise<void> {
   const supabase = getSupabaseAdmin();
@@ -43,6 +43,7 @@ export async function ensureUserRecords(userId: string, email?: string): Promise
     // Do NOT return early — token quota row must still be provisioned below.
   }
 
+  const planTier = (actions?.plan_tier as string) || 'unpaid';
   const period = currentPeriodStart();
   const { data: tokenRow, error: tokenSelectErr } = await supabase
     .from('user_token_usage')
@@ -59,6 +60,10 @@ export async function ensureUserRecords(userId: string, email?: string): Promise
         output_tokens: 0,
         emergency_bonus: 0,
         bonus_tokens: 0,
+        spent_usd: 0,
+        rollover_usd: 0,
+        plan_budget_usd: getApiBudgetUsd(planTier),
+        plan_tier: planTier,
         quota_period_start: period,
         updated_at: new Date().toISOString(),
       },

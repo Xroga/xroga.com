@@ -98,5 +98,12 @@ export interface SwarmCompleteEvent {
     inputTokensRemaining?: number;
     outputTokensRemaining?: number;
     quotaPeriodStart?: string;
+    totalLimit?: number;
+    planBudgetUsd?: number;
+    rolloverUsd?: number;
+    spentUsd?: number;
+    creditRemainingUsd?: number;
+    percentCreditUsed?: number;
+    planTier?: string;
   };
 }

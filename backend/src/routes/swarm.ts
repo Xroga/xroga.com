@@ -139,13 +139,19 @@ router.post('/execute', async (req: AuthRequest, res) => {
   } catch (err) {
     clearInterval(keepalive);
     const e = err as Error & { code?: string };
-    const code = e.code === 'OUT_OF_TOKENS' ? 'OUT_OF_ACTIONS' : 'BUILD_FAILED';
+    const code =
+      e.code === 'OUT_OF_TOKENS'
+        ? 'OUT_OF_ACTIONS'
+        : e.code === 'MODEL_CAP_REACHED'
+          ? 'MODEL_CAP_REACHED'
+          : 'BUILD_FAILED';
     sendSSE(res, {
       event: 'error',
       data: {
         error: e.message || 'Build failed',
         code,
-        paymentLink: code === 'OUT_OF_ACTIONS' ? '/pricing' : undefined,
+        paymentLink:
+          code === 'OUT_OF_ACTIONS' || code === 'MODEL_CAP_REACHED' ? '/pricing' : undefined,
       },
     });
     if (!res.writableEnded) res.end();
