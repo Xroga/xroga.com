@@ -151,24 +151,43 @@ export async function chatCompletion(
 export async function chatCompletionStream(
   modelId: ModelId,
   messages: ChatMessage[],
-  opts: { maxTokens?: number; temperature?: number; onDelta?: (delta: string) => void } = {},
+  opts: {
+    maxTokens?: number;
+    temperature?: number;
+    onDelta?: (delta: string) => void;
+    signal?: AbortSignal;
+  } = {},
 ): Promise<ChatResult> {
   const endpoint = resolveEndpoint(modelId);
   const client = clientFor(endpoint);
 
-  const stream = await client.chat.completions.create({
-    model: endpoint.apiModel,
-    messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
-    max_tokens: opts.maxTokens ?? 8192,
-    temperature: opts.temperature ?? 0.4,
-    stream: true,
-  });
+  if (opts.signal?.aborted) {
+    const err = new Error('Build cancelled') as Error & { code?: string };
+    err.code = 'BUILD_CANCELLED';
+    throw err;
+  }
+
+  const stream = await client.chat.completions.create(
+    {
+      model: endpoint.apiModel,
+      messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
+      max_tokens: opts.maxTokens ?? 8192,
+      temperature: opts.temperature ?? 0.4,
+      stream: true,
+    },
+    opts.signal ? { signal: opts.signal } : undefined,
+  );
 
   let text = '';
   let inputTokens = messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
   let outputTokens = 0;
 
   for await (const chunk of stream) {
+    if (opts.signal?.aborted) {
+      const err = new Error('Build cancelled') as Error & { code?: string };
+      err.code = 'BUILD_CANCELLED';
+      throw err;
+    }
     const delta = chunk.choices[0]?.delta?.content ?? '';
     if (delta) {
       text += delta;

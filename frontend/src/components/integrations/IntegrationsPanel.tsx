@@ -9,6 +9,7 @@ import { GitHubConnect } from '@/components/integrations/GitHubConnect';
 import { ConnectedServicesSection } from '@/components/integrations/ConnectedServicesSection';
 import { CustomCredentialsSection } from '@/components/integrations/CustomCredentialsSection';
 import { IntegrationRequestBanner } from '@/components/integrations/IntegrationRequestBanner';
+import { ConnectShipWizard } from '@/components/integrations/ConnectShipWizard';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { ConnectButton } from '@/components/ui/Uiverse';
@@ -104,6 +105,8 @@ export function IntegrationsPanel() {
           Connect GitHub, Vercel, Supabase, Brevo, Cloudflare, Paddle, and Lemon Squeezy. Everything else is coming soon.
         </p>
       </div>
+
+      <ConnectShipWizard />
 
       <ConnectedServicesSection />
 

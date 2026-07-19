@@ -91,6 +91,18 @@ export default nextConfig;
 `,
     },
     {
+      path: 'vercel.json',
+      content: JSON.stringify(
+        {
+          framework: 'nextjs',
+          buildCommand: 'npm run build',
+          installCommand: 'npm install',
+        },
+        null,
+        2,
+      ),
+    },
+    {
       path: 'next-env.d.ts',
       content: `/// <reference types="next" />
 /// <reference types="next/image-types/global" />

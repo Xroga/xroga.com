@@ -1177,3 +1177,35 @@ export async function pushAndDeployLivePreview(
     deployError: preview.deployError,
   };
 }
+
+/** Roll back a branch tip to a previous commit SHA (requires GitHub connected). */
+export async function rollbackRepoToCommit(
+  userId: string,
+  repoName: string,
+  commitSha: string,
+  branch = 'main',
+): Promise<{ ok: boolean; branch: string; commitSha: string; htmlUrl: string }> {
+  const integration = await getIntegration(userId);
+  if (!integration?.access_token) throw new Error('GitHub not connected');
+  if (!repoName.includes('/')) throw new Error('repoName must be owner/repo');
+  if (!/^[0-9a-f]{7,40}$/i.test(commitSha)) throw new Error('Invalid commit SHA');
+
+  const { owner, repo } = parseRepoName(repoName);
+  const token = integration.access_token;
+  const res = await ghFetch(token, `/repos/${owner}/${repo}/git/refs/heads/${branch}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sha: commitSha, force: true }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Rollback failed: ${res.status} ${err.slice(0, 200)}`);
+  }
+  invalidateRepoAnalysis(userId, repoName);
+  return {
+    ok: true,
+    branch,
+    commitSha,
+    htmlUrl: `https://github.com/${owner}/${repo}/tree/${branch}`,
+  };
+}

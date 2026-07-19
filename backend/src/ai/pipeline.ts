@@ -63,11 +63,16 @@ import {
 import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
 import {
   getProjectMemory,
+  getProjectMemoryAsync,
   patchProjectMemory,
   setProjectMemory,
   shouldGenerateAiSummary,
 } from './projectMemory.js';
 import { summarizeRepoForUpdates } from './repoSummarize.js';
+import { scanProjectFiles, redactCriticalSecrets } from './securityScan.js';
+import { staticValidateProject } from './staticValidate.js';
+import { RunTrace } from './runTrace.js';
+import { verifyShippedProduct } from '../lib/shipVerify.js';
 
 export interface PipelineProgress {
   agent?: string;
@@ -209,8 +214,8 @@ async function hydratePriorFiles(
   const branch = meta?.githubTargetBranch || 'main';
   const repo = meta?.githubTargetRepo ?? null;
 
-  // 1) Hot memory — no GitHub re-read
-  const mem = getProjectMemory(userId, repo, branch);
+  // 1) Hot + DB memory — no GitHub re-read when snapshot exists
+  const mem = await getProjectMemoryAsync(userId, repo, branch);
   if (mem?.files?.length) {
     return {
       files: mem.files,
@@ -269,25 +274,34 @@ async function callBuilderStream(
     temperature?: number;
     onDelta?: DeltaFn;
     userId?: string;
+    signal?: AbortSignal;
   },
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
   const order = [preferred, ...BUILDER_FALLBACKS.filter((m) => m !== preferred)];
   let lastErr: Error | null = null;
   for (const modelId of order) {
     try {
+      if (opts.signal?.aborted) {
+        const err = new Error('Build cancelled') as Error & { code?: string };
+        err.code = 'BUILD_CANCELLED';
+        throw err;
+      }
       if (opts.userId) {
         await assertCanUseModel(opts.userId, modelId);
+      }
+      if (modelId !== preferred) {
+        console.warn(`[pipeline] Falling back from ${preferred} → ${modelId}`);
       }
       return await chatCompletionStream(modelId, messages, {
         maxTokens: opts.maxTokens,
         temperature: opts.temperature,
         onDelta: opts.onDelta,
+        signal: opts.signal,
       });
     } catch (err) {
       lastErr = err as Error;
       const code = (lastErr as Error & { code?: string }).code;
-      // Hard out of total credit — do not try cheaper models forever
-      if (code === 'OUT_OF_TOKENS') throw lastErr;
+      if (code === 'OUT_OF_TOKENS' || code === 'BUILD_CANCELLED') throw lastErr;
       console.warn(`[pipeline] ${modelId} stream failed:`, lastErr.message);
     }
   }
@@ -460,12 +474,24 @@ export async function runBuildPipeline(opts: {
   signal?: AbortSignal;
 }): Promise<BuildPipelineResult> {
   const runId = randomUUID();
-  const emit = (ev: PipelineProgress) => opts.onProgress?.(ev);
+  const trace = new RunTrace(runId, opts.userId);
+  const emit = (ev: PipelineProgress) => {
+    if (ev.agent && ev.status) trace.add(ev.agent, ev.status, ev.message);
+    opts.onProgress?.(ev);
+  };
+  const throwIfAborted = () => {
+    if (opts.signal?.aborted) {
+      const err = new Error('Build cancelled') as Error & { code?: string };
+      err.code = 'BUILD_CANCELLED';
+      throw err;
+    }
+  };
   const meta = parseClientMeta(opts.clientMeta);
   const userFacingPrompt = (meta?.userPrompt || opts.prompt).trim();
 
   createRun(opts.userId, userFacingPrompt, runId);
   await assertHasQuota(opts.userId);
+  throwIfAborted();
 
   // Attachments without a build intent → vision/doc analyze (not a site rebuild)
   const preparedEarly = await prepareAttachments(opts.attachments);
@@ -627,7 +653,7 @@ export async function runBuildPipeline(opts: {
             ),
           },
         ],
-        { userId: opts.userId, maxTokens: 2048, temperature: 0.3 },
+        { userId: opts.userId, maxTokens: 2048, temperature: 0.3, signal: opts.signal },
       );
       usage = await recordUsage(
         opts.userId,
@@ -720,10 +746,11 @@ export async function runBuildPipeline(opts: {
       { role: 'user', content: builderUser },
     ],
     {
-        userId: opts.userId,
+      userId: opts.userId,
       maxTokens: 16384,
       temperature: isUpdate ? 0.3 : 0.45,
       onDelta: opts.onDelta,
+      signal: opts.signal,
     },
   );
 
@@ -736,36 +763,40 @@ export async function runBuildPipeline(opts: {
   let deletedPaths: string[] = [];
 
   let patchFailures: string[] = [];
+  let patchAborted = false;
   if (isUpdate && prior.files.length) {
+    throwIfAborted();
     const patches = extractSearchReplacePatches(result.text);
     if (patches.length) {
       const applied = applyPatches(prior.files, patches);
-      if (applied.applied.length) {
-        nextFiles = applied.files;
-        usedPatches = true;
-      }
       if (applied.failed.length) {
+        // Do NOT half-apply — abort update to protect the live site
         patchFailures = applied.failureReasons;
+        patchAborted = true;
+        nextFiles = prior.files;
+        usedPatches = false;
         emit({
-          agent: 'builder',
-          status: 'patch_warning',
-          message: `${applied.failed.length} patch(es) missed SEARCH — will retry / merge safely`,
-          swarmStatusLabel: 'Patch QA',
+          agent: 'reviewer',
+          status: 'patch_aborted',
+          message: `Aborted unsafe update — ${applied.failed.length} patch(es) missed SEARCH. Site unchanged.`,
+          swarmStatusLabel: 'Aborted',
           swarmActivity: applied.failureReasons.slice(0, 2).join('; ') || 'SEARCH miss',
           swarmTodos: todosForBuild('build'),
         });
+        trace.setMeta({ patchAborted: true, patchFailures });
+      } else if (applied.applied.length) {
+        nextFiles = applied.files;
+        usedPatches = true;
       }
     }
-    const modelDeletes = extractDeletePaths(result.text);
-    if (modelDeletes.length) {
-      const base = nextFiles.length ? nextFiles : prior.files;
-      const removed = applyDeletes(base, modelDeletes);
-      nextFiles = removed.files;
-      deletedPaths = removed.deleted;
-      // Only delete paths that existed — never invent deletes
-      deletedPaths = removed.deleted.filter((p) =>
-        prior.files.some((f) => f.path === p),
-      );
+    if (!patchAborted) {
+      const modelDeletes = extractDeletePaths(result.text);
+      if (modelDeletes.length) {
+        const base = nextFiles.length ? nextFiles : prior.files;
+        const removed = applyDeletes(base, modelDeletes);
+        nextFiles = removed.files;
+        deletedPaths = removed.deleted.filter((p) => prior.files.some((f) => f.path === p));
+      }
     }
   }
 
@@ -818,7 +849,13 @@ export async function runBuildPipeline(opts: {
               })}\n\nUser update (MUST use SEARCH/REPLACE or Delete File only):\n${userFacingPrompt}`,
             },
           ],
-          { userId: opts.userId, maxTokens: 8192, temperature: 0.2, onDelta: opts.onDelta },
+          {
+            userId: opts.userId,
+            maxTokens: 8192,
+            temperature: 0.2,
+            onDelta: opts.onDelta,
+            signal: opts.signal,
+          },
         );
         usage = await recordUsage(
           opts.userId,
@@ -948,15 +985,34 @@ export async function runBuildPipeline(opts: {
     swarmActivity: 'DeepSeek review',
     swarmTodos: todosForBuild('qa'),
   });
+  throwIfAborted();
   const siteForQa = filesToSite(nextFiles);
   await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
+  emit({
+    agent: 'reviewer',
+    status: 'reviewing',
+    message: 'Multi-agent review — structure + quality…',
+    swarmStatusLabel: 'Reviewer',
+    swarmActivity: 'Static validate + QA',
+    swarmTodos: todosForBuild('qa'),
+  });
+  const staticPre = staticValidateProject(nextFiles);
   let qa = await reviewBuildOutput({
     prompt: userFacingPrompt,
     html: siteForQa.html,
     css: siteForQa.css,
     js: siteForQa.js,
     isUpdate,
+    files: nextFiles,
   });
+  if (!staticPre.ok) {
+    qa = {
+      ...qa,
+      ok: false,
+      issues: [...staticPre.issues, ...qa.issues],
+      fixHints: [...staticPre.fixHints, ...qa.fixHints],
+    };
+  }
   if (qa.inputTokens || qa.outputTokens) {
     usage = await recordUsage(
       opts.userId,
@@ -987,7 +1043,13 @@ export async function runBuildPipeline(opts: {
           { role: 'system', content: BUILDER_SYSTEM },
           { role: 'user', content: fixPrompt },
         ],
-        { userId: opts.userId, maxTokens: 12288, temperature: 0.25, onDelta: opts.onDelta },
+        {
+          userId: opts.userId,
+          maxTokens: 12288,
+          temperature: 0.25,
+          onDelta: opts.onDelta,
+          signal: opts.signal,
+        },
       );
       usage = await recordUsage(
         opts.userId,
@@ -1091,6 +1153,8 @@ export async function runBuildPipeline(opts: {
   let githubRepoName = meta?.githubTargetRepo;
   let githubPushConfirmed = false;
   let commitSha: string | undefined;
+  const priorCommitSha =
+    getProjectMemory(opts.userId, meta?.githubTargetRepo, meta?.githubTargetBranch)?.commitSha;
   let githubBranch = meta?.githubTargetBranch || 'main';
   let deployUrl = '';
   let deployVerified = false;
@@ -1108,6 +1172,40 @@ export async function runBuildPipeline(opts: {
     console.warn('[pipeline] secret docs skipped:', (err as Error).message);
   }
 
+  // Security agent — block critical secret leaks before GitHub push
+  throwIfAborted();
+  emit({
+    agent: 'security',
+    status: 'scanning',
+    message: 'Scanning for secrets & risky patterns…',
+    swarmStatusLabel: 'Security',
+    swarmActivity: 'Pre-push scan',
+    swarmTodos: todosForBuild('push'),
+  });
+  let security = scanProjectFiles(nextFiles);
+  if (security.blocked) {
+    nextFiles = redactCriticalSecrets(nextFiles);
+    security = scanProjectFiles(nextFiles);
+    emit({
+      agent: 'security',
+      status: security.blocked ? 'blocked' : 'redacted',
+      message: security.blocked
+        ? 'Critical secrets still present — push blocked'
+        : 'Redacted secrets from files — safe to continue',
+      swarmStatusLabel: security.blocked ? 'Blocked' : 'Redacted',
+      swarmActivity: security.findings
+        .filter((f) => f.severity === 'critical')
+        .slice(0, 2)
+        .map((f) => f.message)
+        .join('; '),
+      swarmTodos: todosForBuild('push'),
+    });
+  }
+  trace.setMeta({
+    securityFindings: security.findings.length,
+    securityBlocked: security.blocked,
+  });
+
   const githubOk = await isGitHubConnected(opts.userId);
   let filesToPush = isUpdate ? (changedFiles.length ? changedFiles : []) : nextFiles;
   if (isUpdate && nextFiles.length) {
@@ -1119,8 +1217,11 @@ export async function runBuildPipeline(opts: {
     }
   }
   // Updates must target the same repo — never create a new repo for edit/delete
+  // Abort push when patches failed or secrets still blocked
   const shouldPush =
     githubOk &&
+    !patchAborted &&
+    !security.blocked &&
     (isUpdate ? Boolean(meta?.githubTargetRepo) : true) &&
     (filesToPush.length > 0 || deletedPaths.length > 0);
 
@@ -1131,6 +1232,16 @@ export async function runBuildPipeline(opts: {
       message: 'Select the same GitHub repo to update (edit/delete) — no new repo will be created.',
       swarmStatusLabel: 'Need repo',
       swarmActivity: 'Pick target repo',
+      swarmTodos: todosForBuild('push'),
+    });
+  }
+  if (patchAborted) {
+    emit({
+      agent: 'deploy',
+      status: 'push_skipped',
+      message: 'Push skipped — unsafe patches aborted; your live site was not changed.',
+      swarmStatusLabel: 'Protected',
+      swarmActivity: 'No push',
       swarmTodos: todosForBuild('push'),
     });
   }
@@ -1198,6 +1309,8 @@ export async function runBuildPipeline(opts: {
   // Vercel redeploy via file-upload API — does NOT require GitHub↔Vercel project link
   const vercelToken = await getVercelToken(opts.userId);
   const canDeployVercel =
+    !patchAborted &&
+    !security.blocked &&
     Boolean(vercelToken) &&
     nextFiles.some(
       (f) =>
@@ -1253,24 +1366,72 @@ export async function runBuildPipeline(opts: {
     }
   }
 
+  // Post-deploy verify + keys proof (honest pass/fail in chat)
+  let shipVerify: Awaited<ReturnType<typeof verifyShippedProduct>> | null = null;
+  if (githubPushConfirmed || deployUrl) {
+    throwIfAborted();
+    emit({
+      agent: 'verifier',
+      status: 'verifying',
+      message: 'Verifying GitHub push + live URL + /api/health…',
+      swarmStatusLabel: 'Verify',
+      swarmActivity: deployUrl || githubRepoUrl || 'checks',
+      swarmTodos: todosForBuild('push'),
+    });
+    const expectApi = nextFiles.some((f) => f.path.includes('app/api/'));
+    shipVerify = await verifyShippedProduct({
+      deployUrl: deployUrl || vercelPreviewUrl,
+      githubPushConfirmed,
+      githubRepoUrl,
+      expectApiHealth: expectApi,
+    });
+    deployVerified = shipVerify.liveOk || deployVerified;
+    emit({
+      agent: 'verifier',
+      status: shipVerify.pass ? 'verified' : 'verify_failed',
+      message: shipVerify.summaryLines.join('\n'),
+      swarmStatusLabel: shipVerify.pass ? 'Verified' : 'Verify failed',
+      swarmActivity: shipVerify.pass ? 'All checks green' : 'See chat for failures',
+      swarmTodos: todosForBuild('done').map((t) => ({ ...t, status: 'done' as const })),
+    });
+    trace.setMeta({ shipVerify: shipVerify.summaryLines });
+  }
+
   const outSite = filesToSite(nextFiles);
+
+  const shipOk =
+    !patchAborted &&
+    !security.blocked &&
+    (shouldPush ? githubPushConfirmed : true) &&
+    (deployUrl ? Boolean(shipVerify?.liveOk ?? deployVerified) : true);
+
+  const overallSuccess = shipOk && !patchAborted;
 
   emit({
     agent: 'builder',
-    status: 'complete',
-    message: isUpdate
-      ? githubPushConfirmed
-        ? 'Update pushed'
-        : 'Update ready'
-      : 'Site ready',
-    swarmStatusLabel: 'Done',
-    swarmActivity: deployVerified
-      ? `Live · ${deployUrl}`
-      : githubPushConfirmed
-        ? `Pushed to ${githubRepoName}`
-        : 'Preview ready',
+    status: overallSuccess ? 'complete' : 'complete_with_errors',
+    message: patchAborted
+      ? 'Update aborted — site unchanged'
+      : overallSuccess
+        ? isUpdate
+          ? githubPushConfirmed
+            ? 'Update shipped & verified'
+            : 'Update ready'
+          : 'Build shipped & verified'
+        : 'Build finished with failures — see verify report',
+    swarmStatusLabel: overallSuccess ? 'Done' : 'Needs attention',
+    swarmActivity: shipVerify?.summaryLines?.[0] ||
+      (deployVerified
+        ? `Live · ${deployUrl}`
+        : githubPushConfirmed
+          ? `Pushed to ${githubRepoName}`
+          : 'Preview ready'),
     swarmTodos: todosForBuild('done').map((t) => ({ ...t, status: 'done' as const })),
   });
+
+  const verifyMarkdown = shipVerify?.summaryLines?.length
+    ? `\n\n### Ship check\n${shipVerify.summaryLines.join('\n')}`
+    : '';
 
   const output: Record<string, unknown> = {
     type: 'landing_page',
@@ -1281,15 +1442,30 @@ export async function runBuildPipeline(opts: {
     generatedFiles: nextFiles.map((f) => f.path),
     fileCount: nextFiles.length,
     projectName,
-    message: isUpdate
-      ? `Updated **${projectName}** with ${MODELS[result.modelId].label}.`
-      : `Built **${projectName}** with ${MODELS[result.modelId].label}.`,
+    message: (
+      (patchAborted
+        ? `⚠️ **Update aborted** for **${projectName}** — patches did not match safely. Your live site was **not** changed.`
+        : overallSuccess
+          ? isUpdate
+            ? `Updated **${projectName}** with ${MODELS[result.modelId].label}.`
+            : `Built **${projectName}** with ${MODELS[result.modelId].label}.`
+          : `⚠️ **${projectName}** finished with failures — check GitHub/Vercel status below.`) +
+      verifyMarkdown
+    ),
     modelLabel: MODELS[result.modelId].label,
     userPrompt: userFacingPrompt,
     isUpdate,
     usedSurgicalPatches: usedPatches,
+    patchAborted,
+    patchFailures: patchFailures.length ? patchFailures : undefined,
     updatedFiles: isUpdate ? effectiveTrail.map((f) => f.path) : undefined,
-    changesSummary,
+    changesSummary: [
+      ...changesSummary,
+      ...(shipVerify?.summaryLines || []),
+      ...(security.findings.length
+        ? [`Security: ${security.findings.length} finding(s)${security.blocked ? ' (blocked)' : ''}`]
+        : []),
+    ],
     fileTrail: effectiveTrail,
     previousFiles: isUpdate
       ? previousFiles.map((f) => ({ path: f.path, content: f.content }))
@@ -1298,18 +1474,28 @@ export async function runBuildPipeline(opts: {
     githubRepoName,
     githubPushConfirmed,
     commitSha,
+    previousCommitSha: priorCommitSha,
     githubBranch,
     deployUrl,
-    deployVerified,
+    deployVerified: Boolean(shipVerify?.liveOk ?? deployVerified),
     vercelPreviewUrl,
+    shipVerify,
+    canRollback: Boolean(commitSha && githubRepoName),
     qa: {
       ok: qa.ok,
       issues: qa.issues,
       fixHints: qa.fixHints,
+      staticKind: qa.staticKind,
+    },
+    security: {
+      ok: security.ok,
+      blocked: security.blocked,
+      findings: security.findings.slice(0, 20),
     },
     memoryHit: isUpdate ? prior.fromMemory : false,
     contextFiles: isUpdate ? selection.selected.map((f) => f.path) : undefined,
     deletedFiles: deletedPaths.length ? deletedPaths : undefined,
+    runTrace: trace.summary(),
   };
 
   const finalUsage = usageToTokenUsage(usage!);
@@ -1317,18 +1503,23 @@ export async function runBuildPipeline(opts: {
     output,
     featureCategory: 'landing_page',
     tokenUsage: finalUsage,
-    success: true,
+    success: overallSuccess,
   });
+  void trace.persist();
 
   return {
     runId,
-    success: true,
+    success: overallSuccess,
     featureCategory: 'landing_page',
     output,
     tokenUsage: finalUsage,
-    followUps: isUpdate
-      ? ['Undo last update', 'Make another tweak', 'Open preview']
-      : ['Refine the design', 'Add another feature', 'Open preview'],
+    followUps: patchAborted
+      ? ['Retry update with clearer instructions', 'Show current files', 'Open preview']
+      : isUpdate
+        ? commitSha
+          ? ['Rollback last commit', 'Make another tweak', 'Open preview']
+          : ['Make another tweak', 'Open preview']
+        : ['Refine the design', 'Add another feature', 'Open preview'],
     route,
   };
 }

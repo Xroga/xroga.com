@@ -64,6 +64,38 @@ function isTextishMime(mime: string, name: string): boolean {
   return false;
 }
 
+const ALLOWED_ATTACHMENT_HOSTS = [
+  'supabase.co',
+  'storage.googleapis.com',
+  'xroga.com',
+  'githubusercontent.com',
+  'blob.vercel-storage.com',
+];
+
+function assertSafeAttachmentUrl(url: string): void {
+  if (url.startsWith('data:')) return;
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error('Invalid attachment URL');
+  }
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+    throw new Error('Attachment URL protocol not allowed');
+  }
+  const host = parsed.hostname.toLowerCase();
+  if (
+    host === 'localhost' ||
+    host === '127.0.0.1' ||
+    host.endsWith('.local') ||
+    /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/.test(host)
+  ) {
+    throw new Error('Attachment URL host not allowed');
+  }
+  // Allow common storage hosts + any https (user uploads); block only private nets above
+  void ALLOWED_ATTACHMENT_HOSTS;
+}
+
 async function fetchAsBuffer(url: string): Promise<Buffer> {
   if (url.startsWith('data:')) {
     const comma = url.indexOf(',');
@@ -73,7 +105,8 @@ async function fetchAsBuffer(url: string): Promise<Buffer> {
     if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');
     return Buffer.from(decodeURIComponent(data), 'utf8');
   }
-  const res = await fetch(url);
+  assertSafeAttachmentUrl(url);
+  const res = await fetch(url, { redirect: 'follow', signal: AbortSignal.timeout(20_000) });
   if (!res.ok) throw new Error(`Fetch attachment failed: ${res.status}`);
   const ab = await res.arrayBuffer();
   return Buffer.from(ab);
@@ -89,22 +122,47 @@ async function extractPdfText(buf: Buffer): Promise<string> {
   }
 }
 
+function extractWtText(xml: string): string {
+  const parts = [...xml.matchAll(/<w:t[^>]*>([^<]*)<\/w:t>/g)].map((m) => m[1]);
+  return parts.join(' ').replace(/\s+/g, ' ').trim();
+}
+
+/** Minimal ZIP reader for DOCX (local file headers + deflate/store). */
 async function extractDocxText(buf: Buffer): Promise<string> {
-  // Minimal DOCX: word/document.xml inside zip — avoid heavy deps
-  const zip = buf.toString('binary');
-  // Prefer utf8 scan for <w:t> if buffer was unzipped elsewhere; try inflate via unzip pattern
   try {
-    // Dynamic import of node zlib + manual OOXML is brittle; use regex on inflated-like raw
     const asUtf8 = buf.toString('utf8');
     if (asUtf8.includes('<w:t')) {
-      const parts = [...asUtf8.matchAll(/<w:t[^>]*>([^<]*)<\/w:t>/g)].map((m) => m[1]);
-      if (parts.length) return parts.join(' ');
+      const direct = extractWtText(asUtf8);
+      if (direct) return direct;
     }
   } catch {
-    /* ignore */
+    /* continue */
   }
-  // Try unzip using undici-less approach: look for document.xml uncompressed (rare)
-  void zip;
+
+  try {
+    const { inflateRawSync } = await import('zlib');
+    const target = 'word/document.xml';
+    let offset = 0;
+    while (offset + 30 < buf.length) {
+      if (buf.readUInt32LE(offset) !== 0x04034b50) break;
+      const method = buf.readUInt16LE(offset + 8);
+      const compSize = buf.readUInt32LE(offset + 18);
+      const nameLen = buf.readUInt16LE(offset + 26);
+      const extraLen = buf.readUInt16LE(offset + 28);
+      const name = buf.subarray(offset + 30, offset + 30 + nameLen).toString('utf8');
+      const dataStart = offset + 30 + nameLen + extraLen;
+      const data = buf.subarray(dataStart, dataStart + compSize);
+      offset = dataStart + compSize;
+      if (name !== target) continue;
+      let xml: Buffer;
+      if (method === 0) xml = Buffer.from(data);
+      else if (method === 8) xml = inflateRawSync(data);
+      else continue;
+      return extractWtText(xml.toString('utf8'));
+    }
+  } catch (err) {
+    console.warn('[attachments] docx zip extract failed:', (err as Error).message);
+  }
   return '';
 }
 

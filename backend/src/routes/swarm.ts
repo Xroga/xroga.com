@@ -75,10 +75,13 @@ router.post('/execute', async (req: AuthRequest, res) => {
     }
   }, 15_000);
 
+  const ac = new AbortController();
   const abort = () => {
     clearInterval(keepalive);
+    if (!ac.signal.aborted) ac.abort();
   };
   req.on('close', abort);
+  req.on('aborted', abort);
 
   try {
     sendSSE(res, {
@@ -87,7 +90,10 @@ router.post('/execute', async (req: AuthRequest, res) => {
     });
     sendSSE(res, {
       event: 'pipeline',
-      data: { message: 'Converter → Builder → QA → Deploy', stage: 'init' },
+      data: {
+        message: 'Architect → Builder → Reviewer → Security → Deploy → Verify',
+        stage: 'init',
+      },
     });
 
     const result = await runBuildPipeline({
@@ -98,12 +104,12 @@ router.post('/execute', async (req: AuthRequest, res) => {
       clientMeta,
       attachments,
       onProgress: (event) => {
-        sendSSE(res, { event: 'progress', data: { ...event } });
+        if (!res.writableEnded) sendSSE(res, { event: 'progress', data: { ...event } });
       },
       onDelta: (delta) => {
-        sendSSE(res, { event: 'delta', data: { delta } });
+        if (!res.writableEnded) sendSSE(res, { event: 'delta', data: { delta } });
       },
-      signal: undefined,
+      signal: ac.signal,
     });
 
     if (result.output?.type === 'landing_page') {
@@ -144,17 +150,21 @@ router.post('/execute', async (req: AuthRequest, res) => {
         ? 'OUT_OF_ACTIONS'
         : e.code === 'MODEL_CAP_REACHED'
           ? 'MODEL_CAP_REACHED'
-          : 'BUILD_FAILED';
-    sendSSE(res, {
-      event: 'error',
-      data: {
-        error: e.message || 'Build failed',
-        code,
-        paymentLink:
-          code === 'OUT_OF_ACTIONS' || code === 'MODEL_CAP_REACHED' ? '/pricing' : undefined,
-      },
-    });
-    if (!res.writableEnded) res.end();
+          : e.code === 'BUILD_CANCELLED'
+            ? 'BUILD_CANCELLED'
+            : 'BUILD_FAILED';
+    if (!res.writableEnded) {
+      sendSSE(res, {
+        event: 'error',
+        data: {
+          error: e.message || 'Build failed',
+          code,
+          paymentLink:
+            code === 'OUT_OF_ACTIONS' || code === 'MODEL_CAP_REACHED' ? '/pricing' : undefined,
+        },
+      });
+      res.end();
+    }
   }
 });
 

@@ -522,4 +522,47 @@ router.post('/push-build', async (req: AuthRequest, res) => {
   }
 });
 
+/** Roll back the selected repo branch to a prior commit SHA from a Xroga build. */
+router.post('/rollback', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    repoName: z.string().min(3),
+    commitSha: z.string().min(7).max(40),
+    branch: z.string().max(100).optional(),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const { rollbackRepoToCommit, deployToAllPlatforms, fetchBuildFilesFromGitHub } =
+      await import('../services/integrations/githubDeploy.js');
+    const rolled = await rollbackRepoToCommit(
+      req.userId!,
+      parsed.data.repoName,
+      parsed.data.commitSha,
+      parsed.data.branch ?? 'main',
+    );
+    let deployUrl = '';
+    let deployVerified = false;
+    try {
+      const files = await fetchBuildFilesFromGitHub(
+        req.userId!,
+        parsed.data.repoName,
+        parsed.data.branch ?? 'main',
+      );
+      const slug =
+        parsed.data.repoName.split('/').pop()?.replace(/^xroga-/, '') ?? 'xroga-build';
+      const preview = await deployToAllPlatforms(slug, files, req.userId!);
+      deployUrl = preview.deployUrl;
+      deployVerified = preview.deployVerified;
+    } catch {
+      /* rollback on GitHub still succeeded */
+    }
+    res.json({ ...rolled, deployUrl, deployVerified });
+  } catch (e) {
+    res.status(502).json({ error: (e as Error).message });
+  }
+});
+
 export default router;

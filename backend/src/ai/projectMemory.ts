@@ -1,8 +1,9 @@
 /**
- * Cost-effective project memory — keep file snapshots + optional AI summary
- * so updates do not re-read / re-analyze the whole repo every turn.
+ * Project memory — hot in-process cache + Supabase persistence
+ * so same-repo updates survive API restarts.
  */
 
+import { getSupabaseAdmin } from '../config/supabase.js';
 import type { ProjectFile } from './patches.js';
 
 export interface ProjectMemory {
@@ -10,13 +11,9 @@ export interface ProjectMemory {
   repo: string | null;
   branch: string;
   projectName?: string;
-  /** Full file snapshot for the active project */
   files: ProjectFile[];
-  /** Path index only (cheap listing for prompts) */
   paths: string[];
-  /** Cached AI understanding — filled once, reused */
   aiSummary?: string;
-  /** Which model wrote aiSummary */
   aiSummaryModel?: string;
   commitSha?: string;
   updatedAt: number;
@@ -24,7 +21,7 @@ export interface ProjectMemory {
 }
 
 const store = new Map<string, ProjectMemory>();
-const TTL_MS = 24 * 60 * 60 * 1000; // 24h
+const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7d hot cache
 const MAX_FILE_CHARS = 120_000;
 
 function key(userId: string, repo: string | null, branch: string): string {
@@ -43,6 +40,72 @@ function trimFiles(files: ProjectFile[]): ProjectFile[] {
   return out;
 }
 
+function fromRow(row: Record<string, unknown>): ProjectMemory {
+  const files = Array.isArray(row.files) ? (row.files as ProjectFile[]) : [];
+  return {
+    userId: String(row.user_id),
+    repo: (row.repo as string | null) ?? null,
+    branch: String(row.branch || 'main'),
+    projectName: typeof row.project_name === 'string' ? row.project_name : undefined,
+    files,
+    paths: Array.isArray(row.paths) ? (row.paths as string[]) : files.map((f) => f.path),
+    aiSummary: typeof row.ai_summary === 'string' ? row.ai_summary : undefined,
+    aiSummaryModel: typeof row.ai_summary_model === 'string' ? row.ai_summary_model : undefined,
+    commitSha: typeof row.commit_sha === 'string' ? row.commit_sha : undefined,
+    updatedAt: row.updated_at ? new Date(String(row.updated_at)).getTime() : Date.now(),
+    hits: Number(row.hits || 0),
+  };
+}
+
+async function loadFromDb(
+  userId: string,
+  repo: string | null,
+  branch: string,
+): Promise<ProjectMemory | null> {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
+  try {
+    const supabase = getSupabaseAdmin();
+    let q = supabase
+      .from('project_memory')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('branch', branch || 'main')
+      .limit(1);
+    q = repo ? q.eq('repo', repo) : q.is('repo', null);
+    const { data, error } = await q.maybeSingle();
+    if (error || !data) return null;
+    return fromRow(data as Record<string, unknown>);
+  } catch (err) {
+    console.warn('[projectMemory] load failed:', (err as Error).message);
+    return null;
+  }
+}
+
+async function saveToDb(mem: ProjectMemory): Promise<void> {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
+  try {
+    const supabase = getSupabaseAdmin();
+    await supabase.from('project_memory').upsert(
+      {
+        user_id: mem.userId,
+        repo: mem.repo,
+        branch: mem.branch,
+        project_name: mem.projectName ?? null,
+        files: mem.files,
+        paths: mem.paths,
+        ai_summary: mem.aiSummary ?? null,
+        ai_summary_model: mem.aiSummaryModel ?? null,
+        commit_sha: mem.commitSha ?? null,
+        hits: mem.hits,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'user_id,repo,branch' },
+    );
+  } catch (err) {
+    console.warn('[projectMemory] save failed:', (err as Error).message);
+  }
+}
+
 export function getProjectMemory(
   userId: string,
   repo: string | null | undefined,
@@ -57,6 +120,22 @@ export function getProjectMemory(
   }
   mem.hits += 1;
   return mem;
+}
+
+/** Hot cache first, then Supabase — use in hydratePriorFiles. */
+export async function getProjectMemoryAsync(
+  userId: string,
+  repo: string | null | undefined,
+  branch?: string,
+): Promise<ProjectMemory | null> {
+  const hot = getProjectMemory(userId, repo, branch);
+  if (hot?.files?.length) return hot;
+
+  const b = branch || 'main';
+  const db = await loadFromDb(userId, repo ?? null, b);
+  if (!db?.files?.length) return null;
+  store.set(key(userId, repo ?? null, b), db);
+  return db;
 }
 
 export function setProjectMemory(input: {
@@ -87,6 +166,7 @@ export function setProjectMemory(input: {
     hits: (prev?.hits ?? 0) + 1,
   };
   store.set(key(input.userId, repo, branch), mem);
+  void saveToDb(mem);
   return mem;
 }
 
@@ -99,7 +179,18 @@ export function patchProjectMemory(
   meta?: { commitSha?: string; projectName?: string },
 ): ProjectMemory | null {
   const mem = getProjectMemory(userId, repo, branch);
-  if (!mem) return null;
+  if (!mem) {
+    // Still persist a fresh snapshot from changed files
+    if (!changed.length) return null;
+    return setProjectMemory({
+      userId,
+      repo,
+      branch,
+      projectName: meta?.projectName,
+      files: changed,
+      commitSha: meta?.commitSha,
+    });
+  }
   const map = new Map(mem.files.map((f) => [f.path, f.content]));
   for (const f of changed) map.set(f.path, f.content);
   for (const p of deletedPaths) map.delete(p);
@@ -115,14 +206,15 @@ export function patchProjectMemory(
   });
 }
 
-/** True when user explicitly wants repo understanding / big refactor. */
 export function userWantsRepoIntelligence(prompt: string): boolean {
-  return /\b(analyze|analyse|understand|explain)\b[\s\S]{0,40}\b(repo|repository|codebase|project)\b/i.test(
-    prompt,
-  ) || /\b(architecture|refactor\s+(the\s+)?(whole|entire|full)|project[- ]level)\b/i.test(prompt);
+  return (
+    /\b(analyze|analyse|understand|explain)\b[\s\S]{0,40}\b(repo|repository|codebase|project)\b/i.test(
+      prompt,
+    ) ||
+    /\b(architecture|refactor\s+(the\s+)?(whole|entire|full)|project[- ]level)\b/i.test(prompt)
+  );
 }
 
-/** Prefer AI summary only when missing and the job is complex / large. */
 export function shouldGenerateAiSummary(
   prompt: string,
   mem: ProjectMemory | null,
@@ -130,7 +222,6 @@ export function shouldGenerateAiSummary(
 ): boolean {
   if (mem?.aiSummary?.trim()) return false;
   if (userWantsRepoIntelligence(prompt)) return true;
-  // Large projects before a complex update — once only
   if (fileCount >= 12 && /\b(refactor|migrate|restructure|overhaul)\b/i.test(prompt)) {
     return true;
   }
