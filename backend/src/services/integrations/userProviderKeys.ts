@@ -1,0 +1,352 @@
+/**
+ * User BYOK / product API keys — AES-256-GCM in user_integrations.
+ * Secrets never go into GitHub; synced to the user's Vercel project env on deploy.
+ */
+
+import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
+import { getSupabaseAdmin } from '../../config/supabase.js';
+
+const PROVIDER_PREFIX = 'apikey_';
+
+/** Providers users can paste for their own live products (not Xroga platform keys). */
+export const ALLOWED_PROVIDERS = [
+  'openai',
+  'anthropic',
+  'groq',
+  'gemini',
+  'openrouter',
+  'deepseek',
+  'grok',
+  'tavily',
+  'huggingface',
+  'replicate',
+  'stripe',
+  'supabase',
+  'supabase_anon',
+  'resend',
+  'custom',
+] as const;
+
+export type AllowedProvider = (typeof ALLOWED_PROVIDERS)[number];
+
+export const ENV_VAR_BY_PROVIDER: Record<string, string> = {
+  grok: 'XAI_API_KEY',
+  deepseek: 'DEEPSEEK_API_KEY',
+  openai: 'OPENAI_API_KEY',
+  anthropic: 'ANTHROPIC_API_KEY',
+  groq: 'GROQ_API_KEY',
+  gemini: 'GEMINI_API_KEY',
+  tavily: 'TAVILY_API_KEY',
+  huggingface: 'HF_TOKEN',
+  openrouter: 'OPENROUTER_API_KEY',
+  replicate: 'REPLICATE_API_TOKEN',
+  stripe: 'STRIPE_SECRET_KEY',
+  supabase: 'SUPABASE_SERVICE_ROLE_KEY',
+  supabase_anon: 'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+  resend: 'RESEND_API_KEY',
+  custom: 'CUSTOM_API_KEY',
+};
+
+const ALLOWED_SET = new Set<string>(ALLOWED_PROVIDERS);
+
+function normalizeProvider(provider: string): string {
+  const p = provider.trim().toLowerCase().replace(/^apikey_/, '');
+  if (p === 'xai') return 'grok';
+  return p;
+}
+
+function encryptionKey(): Buffer {
+  const secret =
+    process.env.USER_SECRETS_ENCRYPTION_KEY ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_JWT_SECRET ||
+    'xroga-dev-key';
+  return scryptSync(secret.slice(0, 64), 'xroga-provider-keys-v2', 32);
+}
+
+function encryptApiKey(plain: string): string {
+  const iv = randomBytes(12);
+  const cipher = createCipheriv('aes-256-gcm', encryptionKey(), iv);
+  const enc = Buffer.concat([cipher.update(plain, 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return `v1:${iv.toString('base64')}:${tag.toString('base64')}:${enc.toString('base64')}`;
+}
+
+function decryptApiKey(stored: string): string | null {
+  if (!stored.startsWith('v1:')) {
+    try {
+      const raw = Buffer.from(stored.replace(/^enc:/, ''), 'base64').toString('utf8');
+      const idx = raw.indexOf(':');
+      return idx >= 0 ? raw.slice(idx + 1) : raw;
+    } catch {
+      return null;
+    }
+  }
+  const parts = stored.split(':');
+  if (parts.length < 4) return null;
+  try {
+    const iv = Buffer.from(parts[1]!, 'base64');
+    const tag = Buffer.from(parts[2]!, 'base64');
+    const data = Buffer.from(parts.slice(3).join(':'), 'base64');
+    const decipher = createDecipheriv('aes-256-gcm', encryptionKey(), iv);
+    decipher.setAuthTag(tag);
+    return Buffer.concat([decipher.update(data), decipher.final()]).toString('utf8');
+  } catch {
+    return null;
+  }
+}
+
+function maskKey(key: string): string {
+  if (key.length <= 8) return '••••••••';
+  return `${key.slice(0, 4)}••••${key.slice(-4)}`;
+}
+
+function sanitizeEnvVarName(name: string): string {
+  const raw = name.trim();
+  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(raw) || raw.length < 2 || raw.length > 64) {
+    throw new Error('Invalid env var name — use UPPER_SNAKE_CASE');
+  }
+  return raw.toUpperCase();
+}
+
+export interface UserProviderKeyStatus {
+  provider: string;
+  connected: boolean;
+  masked?: string;
+  envVar?: string;
+  connectedAt?: string;
+}
+
+export interface SaveKeyOptions {
+  /** Required when provider is `custom`; optional override for others. */
+  envVarName?: string;
+}
+
+export function envVarForProvider(provider: string, override?: string): string {
+  if (override?.trim()) return sanitizeEnvVarName(override);
+  const p = normalizeProvider(provider);
+  return ENV_VAR_BY_PROVIDER[p] ?? `${p.toUpperCase()}_API_KEY`;
+}
+
+export async function saveUserProviderKey(
+  userId: string,
+  provider: string,
+  apiKey: string,
+  opts?: SaveKeyOptions,
+): Promise<UserProviderKeyStatus> {
+  const p = normalizeProvider(provider);
+  if (!ALLOWED_SET.has(p)) {
+    throw new Error(`Provider "${provider}" is not supported`);
+  }
+  if (p === 'custom' && !opts?.envVarName?.trim()) {
+    throw new Error('Custom keys require an env var name (e.g. MY_SERVICE_API_KEY)');
+  }
+  const trimmed = apiKey.trim();
+  if (trimmed.length < 8) throw new Error('API key too short');
+
+  const envVar = envVarForProvider(p, opts?.envVarName);
+  const supabase = getSupabaseAdmin();
+  const now = new Date().toISOString();
+  const { error } = await supabase.from('user_integrations').upsert(
+    {
+      user_id: userId,
+      provider: `${PROVIDER_PREFIX}${p === 'custom' ? `custom_${envVar.toLowerCase()}` : p}`,
+      access_token: encryptApiKey(trimmed),
+      metadata: {
+        type: 'user_api_key',
+        provider: p,
+        env_var: envVar,
+        connected_at: now,
+        masked: maskKey(trimmed),
+      },
+    },
+    { onConflict: 'user_id,provider' },
+  );
+
+  if (error) throw new Error(error.message);
+
+  return { provider: p, connected: true, masked: maskKey(trimmed), envVar, connectedAt: now };
+}
+
+export async function listUserProviderKeys(userId: string): Promise<UserProviderKeyStatus[]> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from('user_integrations')
+    .select('provider, metadata, updated_at')
+    .eq('user_id', userId)
+    .like('provider', `${PROVIDER_PREFIX}%`);
+
+  if (error) throw new Error(error.message);
+
+  return (data ?? []).map((row) => {
+    const meta = (row.metadata ?? {}) as {
+      provider?: string;
+      masked?: string;
+      connected_at?: string;
+      env_var?: string;
+    };
+    const provider = meta.provider ?? String(row.provider).replace(PROVIDER_PREFIX, '');
+    return {
+      provider,
+      connected: true,
+      masked: meta.masked,
+      envVar: meta.env_var ?? envVarForProvider(provider),
+      connectedAt: meta.connected_at ?? row.updated_at,
+    };
+  });
+}
+
+export async function deleteUserProviderKey(userId: string, provider: string): Promise<void> {
+  const p = normalizeProvider(provider);
+  const supabase = getSupabaseAdmin();
+  // custom_* rows: delete by prefix match when provider is custom_FOO
+  if (p.startsWith('custom_') || p === 'custom') {
+    const { data } = await supabase
+      .from('user_integrations')
+      .select('provider')
+      .eq('user_id', userId)
+      .like('provider', `${PROVIDER_PREFIX}custom%`);
+    for (const row of data ?? []) {
+      await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', row.provider);
+    }
+    return;
+  }
+  const { error } = await supabase
+    .from('user_integrations')
+    .delete()
+    .eq('user_id', userId)
+    .eq('provider', `${PROVIDER_PREFIX}${p}`);
+  if (error) throw new Error(error.message);
+}
+
+/** Placeholders only for GitHub — never plaintext secrets. */
+export async function buildProviderEnvFiles(
+  userId: string,
+): Promise<Array<{ path: string; content: string }>> {
+  const keys = await listUserProviderKeys(userId);
+  const lines = [
+    '# ── Secrets (NEVER commit real values) ─────────────────────',
+    '# Save keys in Xroga → Integrations (encrypted vault).',
+    '# On deploy, Xroga syncs them to your Vercel project env automatically.',
+    '# For local: copy to .env.local (gitignored).',
+    '',
+  ];
+
+  const rows =
+    keys.length > 0
+      ? keys
+      : Object.entries(ENV_VAR_BY_PROVIDER)
+          .filter(([p]) => p !== 'custom')
+          .map(([provider, envVar]) => ({
+            provider,
+            connected: false,
+            masked: undefined as string | undefined,
+            envVar,
+          }));
+
+  for (const k of rows) {
+    const varName = k.envVar ?? envVarForProvider(k.provider);
+    if (k.connected) {
+      lines.push(`${varName}=  # ✓ in Xroga vault (${k.masked ?? '••••'}) — synced to Vercel on deploy`);
+    } else {
+      lines.push(`# ${varName}=`);
+    }
+  }
+  lines.push('');
+
+  const connected = keys.filter((k) => k.connected);
+  return [
+    { path: '.env.example', content: lines.join('\n') },
+    {
+      path: 'SECRETS.md',
+      content: `# Secrets & API keys (safe pattern)
+
+## Never do this
+- Do **not** paste API keys into chat or commit them to GitHub
+- Do **not** put secret keys in \`NEXT_PUBLIC_*\` (browser-visible)
+
+## Do this
+1. Open **Xroga → Integrations**
+2. Paste your key (OpenAI, Stripe, Supabase, custom…) → **Save**
+3. Keys are stored **AES-256-GCM encrypted** in your account
+4. When you deploy with **Vercel connected**, Xroga upserts them as project env vars
+5. In code, read \`process.env.OPENAI_API_KEY\` (server/API routes only)
+
+## Free client-safe APIs (optional demos)
+Some public APIs work in the browser without secrets (e.g. demo image APIs). Prefer server routes for anything paid or private.
+
+${
+  connected.length
+    ? `### Keys in your vault\n${connected
+        .map((k) => `- **${k.provider}** → \`${k.envVar ?? envVarForProvider(k.provider)}\` (${k.masked ?? 'saved'})`)
+        .join('\n')}`
+    : '### No keys saved yet\nAdd one under Integrations before shipping paid AI/features.'
+}
+`,
+    },
+  ];
+}
+
+export async function getUserProviderKey(userId: string, provider: string): Promise<string | null> {
+  const p = normalizeProvider(provider);
+  const supabase = getSupabaseAdmin();
+  if (p === 'custom' || p.startsWith('custom_')) {
+    const { data } = await supabase
+      .from('user_integrations')
+      .select('access_token, provider')
+      .eq('user_id', userId)
+      .like('provider', `${PROVIDER_PREFIX}custom%`);
+    const row = (data ?? [])[0];
+    if (!row?.access_token) return null;
+    return decryptApiKey(row.access_token);
+  }
+  const { data, error } = await supabase
+    .from('user_integrations')
+    .select('access_token')
+    .eq('user_id', userId)
+    .eq('provider', `${PROVIDER_PREFIX}${p}`)
+    .maybeSingle();
+  if (error || !data?.access_token) return null;
+  return decryptApiKey(data.access_token);
+}
+
+/** Decrypt vault → env map for Vercel sync only (never log values). */
+export async function resolveProviderEnvForDeploy(userId: string): Promise<Record<string, string>> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from('user_integrations')
+    .select('provider, access_token, metadata')
+    .eq('user_id', userId)
+    .like('provider', `${PROVIDER_PREFIX}%`);
+  if (error || !data?.length) return {};
+
+  const out: Record<string, string> = {};
+  for (const row of data) {
+    const meta = (row.metadata ?? {}) as { env_var?: string; provider?: string };
+    const provider = meta.provider ?? String(row.provider).replace(PROVIDER_PREFIX, '');
+    const varName = meta.env_var ?? envVarForProvider(provider);
+    const plain = row.access_token ? decryptApiKey(row.access_token) : null;
+    if (plain && varName) out[varName] = plain;
+  }
+  return out;
+}
+
+/** Catalog for Integrations UI */
+export function providerCatalog() {
+  return [
+    { id: 'openai', name: 'OpenAI', envVar: 'OPENAI_API_KEY', freeTier: false, category: 'ai' },
+    { id: 'anthropic', name: 'Anthropic', envVar: 'ANTHROPIC_API_KEY', freeTier: false, category: 'ai' },
+    { id: 'groq', name: 'Groq', envVar: 'GROQ_API_KEY', freeTier: true, category: 'ai' },
+    { id: 'gemini', name: 'Google Gemini', envVar: 'GEMINI_API_KEY', freeTier: true, category: 'ai' },
+    { id: 'openrouter', name: 'OpenRouter', envVar: 'OPENROUTER_API_KEY', freeTier: true, category: 'ai' },
+    { id: 'deepseek', name: 'DeepSeek', envVar: 'DEEPSEEK_API_KEY', freeTier: false, category: 'ai' },
+    { id: 'grok', name: 'xAI Grok', envVar: 'XAI_API_KEY', freeTier: false, category: 'ai' },
+    { id: 'stripe', name: 'Stripe', envVar: 'STRIPE_SECRET_KEY', freeTier: false, category: 'payments' },
+    { id: 'supabase', name: 'Supabase service role', envVar: 'SUPABASE_SERVICE_ROLE_KEY', freeTier: true, category: 'backend' },
+    { id: 'supabase_anon', name: 'Supabase anon key', envVar: 'NEXT_PUBLIC_SUPABASE_ANON_KEY', freeTier: true, category: 'backend' },
+    { id: 'resend', name: 'Resend email', envVar: 'RESEND_API_KEY', freeTier: true, category: 'email' },
+    { id: 'tavily', name: 'Tavily search', envVar: 'TAVILY_API_KEY', freeTier: true, category: 'search' },
+    { id: 'huggingface', name: 'Hugging Face', envVar: 'HF_TOKEN', freeTier: true, category: 'ai' },
+    { id: 'custom', name: 'Custom env var', envVar: 'CUSTOM_API_KEY', freeTier: false, category: 'custom' },
+  ];
+}

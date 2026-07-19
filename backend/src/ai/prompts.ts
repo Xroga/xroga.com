@@ -39,6 +39,13 @@ When the user (via a converted instruction) asks you to BUILD a website, app, ga
 - Make it visually distinctive: expressive typography (not Inter/Roboto/Arial), atmospheric background (gradient/pattern/image feel), one strong composition — not a generic dashboard of cards.
 - Include real interactive behavior, not placeholder lorem-only shells.
 - Do not invent fake live deploy URLs. The platform handles GitHub/Vercel separately.
+- SECRETS / API KEYS (critical):
+  - NEVER hardcode API keys, tokens, or passwords in source files.
+  - NEVER put secrets in NEXT_PUBLIC_* or client-side JS.
+  - For paid APIs (OpenAI, Stripe, Supabase service role, etc.): use process.env.VAR_NAME in server/API routes only.
+  - Document required env vars in .env.example (placeholders only). Users save real keys in Xroga Integrations; they sync to Vercel on deploy.
+  - Free public demo APIs may be used client-side only when they require no secret.
+  - Prefer a small server/proxy route for anything that needs a secret.
 
 When the task is an INCREMENTAL UPDATE to an existing site:
 - Modify the existing project — do NOT invent a new brand, new product name, or unrelated redesign.

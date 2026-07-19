@@ -53,6 +53,7 @@ import {
   isGitHubConnected,
 } from '../services/integrations/githubDeploy.js';
 import { getVercelToken } from '../services/integrations/vercelAuth.js';
+import { buildProviderEnvFiles } from '../services/integrations/userProviderKeys.js';
 import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
 import {
   getProjectMemory,
@@ -1043,8 +1044,28 @@ export async function runBuildPipeline(opts: {
   let deployVerified = false;
   let vercelPreviewUrl: string | undefined;
 
+  // Placeholders only (.env.example / SECRETS.md) — never plaintext vault secrets in Git
+  try {
+    const secretDocs = await buildProviderEnvFiles(opts.userId);
+    if (secretDocs.length) {
+      const byPath = new Map(nextFiles.map((f) => [f.path, f]));
+      for (const f of secretDocs) byPath.set(f.path, f);
+      nextFiles = Array.from(byPath.values());
+    }
+  } catch (err) {
+    console.warn('[pipeline] secret docs skipped:', (err as Error).message);
+  }
+
   const githubOk = await isGitHubConnected(opts.userId);
-  const filesToPush = isUpdate ? (changedFiles.length ? changedFiles : []) : nextFiles;
+  let filesToPush = isUpdate ? (changedFiles.length ? changedFiles : []) : nextFiles;
+  if (isUpdate && nextFiles.length) {
+    const docs = nextFiles.filter((f) => f.path === '.env.example' || f.path === 'SECRETS.md');
+    if (docs.length) {
+      const byPath = new Map(filesToPush.map((f) => [f.path, f]));
+      for (const f of docs) byPath.set(f.path, f);
+      filesToPush = Array.from(byPath.values());
+    }
+  }
   const shouldPush =
     githubOk &&
     (meta?.githubTargetRepo || !isUpdate) &&
