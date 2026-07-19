@@ -15,6 +15,7 @@ import {
   Zap,
   MessageCirclePlus,
   Terminal,
+  Rocket,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
@@ -59,6 +60,12 @@ const navItems = [
     label: 'Integrations',
     icon: Link2,
     tip: 'Connect GitHub, Slack, databases, and tools.',
+  },
+  {
+    href: '/dashboard/publish',
+    label: 'Publish',
+    icon: Rocket,
+    tip: 'Ship web on your Vercel; mobile stores via your Expo/Apple/Google accounts.',
   },
   {
     href: '/settings',

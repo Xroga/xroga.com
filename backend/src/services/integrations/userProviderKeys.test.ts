@@ -22,12 +22,21 @@ describe('userProviderKeys mapping', () => {
     assert.throws(() => envVarForProvider('custom', 'bad-name!'));
   });
 
-  it('catalog covers AI + backend + payments', () => {
+  it('catalog covers AI + backend + payments + publish', () => {
     const ids = providerCatalog().map((p) => p.id);
     assert.ok(ids.includes('openai'));
     assert.ok(ids.includes('stripe'));
     assert.ok(ids.includes('supabase'));
+    assert.ok(ids.includes('expo'));
+    assert.ok(ids.includes('apple_asc'));
+    assert.ok(ids.includes('google_play'));
     assert.ok(ids.includes('custom'));
+  });
+
+  it('maps publish providers to env vars', () => {
+    assert.equal(envVarForProvider('expo'), 'EXPO_TOKEN');
+    assert.equal(envVarForProvider('apple_asc'), 'EXPO_APPLE_APP_SPECIFIC_PASSWORD');
+    assert.equal(envVarForProvider('google_play'), 'GOOGLE_SERVICE_ACCOUNT_JSON');
   });
 
   it('every catalog entry has env mapping except custom default', () => {

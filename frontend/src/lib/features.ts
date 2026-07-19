@@ -23,6 +23,8 @@ export const XROGA_FEATURES = [
   'Vercel deploy hook',
   'Website generation',
   'Expo Android/iOS app scaffold',
+  'User-owned publish (Vercel + Expo/EAS)',
+  'Encrypted Expo / store credential vault',
   'Next.js auth + API scaffold',
   '3D/2D game builds',
   'Image generation',

@@ -24,6 +24,10 @@ export const ALLOWED_PROVIDERS = [
   'supabase',
   'supabase_anon',
   'resend',
+  /** User-owned mobile publish (EAS / stores) — Xroga never pays Apple/Google fees */
+  'expo',
+  'apple_asc',
+  'google_play',
   'custom',
 ] as const;
 
@@ -44,8 +48,14 @@ export const ENV_VAR_BY_PROVIDER: Record<string, string> = {
   supabase: 'SUPABASE_SERVICE_ROLE_KEY',
   supabase_anon: 'NEXT_PUBLIC_SUPABASE_ANON_KEY',
   resend: 'RESEND_API_KEY',
+  expo: 'EXPO_TOKEN',
+  apple_asc: 'EXPO_APPLE_APP_SPECIFIC_PASSWORD',
+  google_play: 'GOOGLE_SERVICE_ACCOUNT_JSON',
   custom: 'CUSTOM_API_KEY',
 };
+
+/** These are for EAS/store submit — never sync into Vercel web project env. */
+export const PUBLISH_ONLY_PROVIDERS = new Set(['expo', 'apple_asc', 'google_play']);
 
 const ALLOWED_SET = new Set<string>(ALLOWED_PROVIDERS);
 
@@ -142,7 +152,9 @@ export async function saveUserProviderKey(
     throw new Error('Custom keys require an env var name (e.g. MY_SERVICE_API_KEY)');
   }
   const trimmed = apiKey.trim();
-  if (trimmed.length < 8) throw new Error('API key too short');
+  const minLen = p === 'google_play' ? 32 : 8;
+  if (trimmed.length < minLen) throw new Error('API key / credential too short');
+  if (trimmed.length > 48_000) throw new Error('Credential too long (max ~48KB)');
 
   const envVar = envVarForProvider(p, opts?.envVarName);
   const supabase = getSupabaseAdmin();
@@ -153,9 +165,10 @@ export async function saveUserProviderKey(
       provider: `${PROVIDER_PREFIX}${p === 'custom' ? `custom_${envVar.toLowerCase()}` : p}`,
       access_token: encryptApiKey(trimmed),
       metadata: {
-        type: 'user_api_key',
+        type: PUBLISH_ONLY_PROVIDERS.has(p) ? 'user_publish_credential' : 'user_api_key',
         provider: p,
         env_var: envVar,
+        sync_target: PUBLISH_ONLY_PROVIDERS.has(p) ? 'eas' : 'vercel',
         connected_at: now,
         masked: maskKey(trimmed),
       },
@@ -322,8 +335,13 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
 
   const out: Record<string, string> = {};
   for (const row of data) {
-    const meta = (row.metadata ?? {}) as { env_var?: string; provider?: string };
+    const meta = (row.metadata ?? {}) as {
+      env_var?: string;
+      provider?: string;
+      sync_target?: string;
+    };
     const provider = meta.provider ?? String(row.provider).replace(PROVIDER_PREFIX, '');
+    if (PUBLISH_ONLY_PROVIDERS.has(provider) || meta.sync_target === 'eas') continue;
     const varName = meta.env_var ?? envVarForProvider(provider);
     const plain = row.access_token ? decryptApiKey(row.access_token) : null;
     if (plain && varName) out[varName] = plain;
@@ -347,6 +365,27 @@ export function providerCatalog() {
     { id: 'resend', name: 'Resend email', envVar: 'RESEND_API_KEY', freeTier: true, category: 'email' },
     { id: 'tavily', name: 'Tavily search', envVar: 'TAVILY_API_KEY', freeTier: true, category: 'search' },
     { id: 'huggingface', name: 'Hugging Face', envVar: 'HF_TOKEN', freeTier: true, category: 'ai' },
+    {
+      id: 'expo',
+      name: 'Expo access token (EAS)',
+      envVar: 'EXPO_TOKEN',
+      freeTier: true,
+      category: 'publish',
+    },
+    {
+      id: 'apple_asc',
+      name: 'Apple app-specific password',
+      envVar: 'EXPO_APPLE_APP_SPECIFIC_PASSWORD',
+      freeTier: false,
+      category: 'publish',
+    },
+    {
+      id: 'google_play',
+      name: 'Google Play service account JSON',
+      envVar: 'GOOGLE_SERVICE_ACCOUNT_JSON',
+      freeTier: false,
+      category: 'publish',
+    },
     { id: 'custom', name: 'Custom env var', envVar: 'CUSTOM_API_KEY', freeTier: false, category: 'custom' },
   ];
 }

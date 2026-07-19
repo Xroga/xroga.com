@@ -249,11 +249,83 @@ const styles = StyleSheet.create({
 `,
     },
     {
+      path: 'eas.json',
+      content: JSON.stringify(
+        {
+          cli: { version: '>= 12.0.0', appVersionSource: 'remote' },
+          build: {
+            development: {
+              developmentClient: true,
+              distribution: 'internal',
+            },
+            preview: {
+              distribution: 'internal',
+            },
+            production: {
+              autoIncrement: true,
+            },
+          },
+          submit: {
+            production: {},
+          },
+        },
+        null,
+        2,
+      ),
+    },
+    {
       path: '.env.example',
       content: `# Optional product keys (sync from Xroga Integrations when you add a backend API)
 EXPO_PUBLIC_SUPABASE_URL=
 EXPO_PUBLIC_SUPABASE_ANON_KEY=
 EXPO_PUBLIC_API_URL=
+
+# Store publish (keep local / CI secrets — never commit real values)
+# Save EXPO_TOKEN in Xroga → Publish (encrypted vault) or export locally:
+# EXPO_TOKEN=
+`,
+    },
+    {
+      path: 'PUBLISH.md',
+      content: `# Publish ${name} (you own the store accounts)
+
+Xroga builds the Expo app and pushes it to **your GitHub**.  
+**Apple / Google fees are paid by you** — Xroga never auto-publishes on a shared developer account.
+
+## 1. Preview on a phone
+\`\`\`bash
+npm install
+npx expo start
+\`\`\`
+
+## 2. Connect publish credentials in Xroga
+1. Open **Dashboard → Publish** (or Integrations)
+2. Paste your **Expo access token** (expo.dev → Settings → Access tokens)
+3. Optional: Apple app-specific password + Google Play service account JSON
+4. Tokens are stored **AES-256-GCM encrypted** in your Xroga account (Fly API vault)
+
+## 3. Build with EAS (your Expo bill)
+\`\`\`bash
+npm i -g eas-cli
+export EXPO_TOKEN=…   # from Xroga vault / expo.dev
+eas build:configure
+eas build -p android --profile production
+eas build -p ios --profile production
+\`\`\`
+
+## 4. Submit to stores (your Apple/Google accounts)
+\`\`\`bash
+eas submit -p android
+eas submit -p ios
+\`\`\`
+
+### What you pay
+- Google Play Console — one-time developer fee
+- Apple Developer Program — annual fee
+- Expo EAS — your Expo plan / build minutes
+
+### What Xroga pays
+- Nothing for App Store / Play Store. We only encrypt your tokens and guide the flow.
 `,
     },
     {
@@ -269,12 +341,15 @@ npx expo start
 \`\`\`
 Scan the QR code with **Expo Go** (Android or iOS).
 
-## Store builds
+## Publish to stores (your accounts)
+See **[PUBLISH.md](./PUBLISH.md)** — Expo/EAS builds on **your** Expo account.  
+Apple / Google fees are yours; Xroga does not auto-publish for free on shared accounts.
+
 \`\`\`bash
 npm i -g eas-cli
 eas login
-eas build -p android
-eas build -p ios
+eas build -p android --profile production
+eas build -p ios --profile production
 \`\`\`
 
 ## Updates

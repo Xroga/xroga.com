@@ -16,6 +16,7 @@ import wellbeingRouter from './routes/wellbeing.js';
 import githubRouter from './routes/github.js';
 import vercelRouter from './routes/vercel.js';
 import integrationsRouter from './routes/integrations.js';
+import publishRouter from './routes/publish.js';
 import notificationsRouter from './routes/notifications.js';
 import billingRouter from './routes/billing.js';
 import billingWebhookRouter from './routes/billingWebhook.js';
@@ -179,6 +180,7 @@ app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
 app.use('/api/github', authMiddleware, githubRouter);
 app.use('/api/vercel', authMiddleware, vercelRouter);
 app.use('/api/integrations', authMiddleware, integrationsRouter);
+app.use('/api/publish', authMiddleware, publishRouter);
 app.get('/auth/github', authMiddleware, (req, res, next) => {
   req.url = '/redirect';
   githubRouter(req, res, next);

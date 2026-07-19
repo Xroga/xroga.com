@@ -42,11 +42,15 @@ describe('scaffolds', () => {
     const files = buildExpoScaffold({ projectName: 'FitTrack', userPrompt: 'android ios app' });
     const paths = new Set(files.map((f) => f.path));
     assert.ok(paths.has('app.json'));
+    assert.ok(paths.has('eas.json'));
+    assert.ok(paths.has('PUBLISH.md'));
     assert.ok(paths.has('app/index.tsx'));
     assert.ok(paths.has('package.json'));
     const appJson = files.find((f) => f.path === 'app.json')!.content;
     assert.match(appJson, /"ios"/);
     assert.match(appJson, /"android"/);
+    const publish = files.find((f) => f.path === 'PUBLISH.md')!.content;
+    assert.match(publish, /you own the store accounts/i);
   });
 
   it('merge prefers non-empty AI files over scaffold', () => {

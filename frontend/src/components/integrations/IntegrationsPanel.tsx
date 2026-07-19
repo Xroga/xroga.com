@@ -10,6 +10,7 @@ import { ConnectedServicesSection } from '@/components/integrations/ConnectedSer
 import { CustomCredentialsSection } from '@/components/integrations/CustomCredentialsSection';
 import { IntegrationRequestBanner } from '@/components/integrations/IntegrationRequestBanner';
 import { ConnectShipWizard } from '@/components/integrations/ConnectShipWizard';
+import { UserOwnedPublishPanel } from '@/components/publish/UserOwnedPublishPanel';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { ConnectButton } from '@/components/ui/Uiverse';
@@ -107,6 +108,8 @@ export function IntegrationsPanel() {
       </div>
 
       <ConnectShipWizard />
+
+      <UserOwnedPublishPanel compact />
 
       <ConnectedServicesSection />
 

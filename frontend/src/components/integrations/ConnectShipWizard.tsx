@@ -114,7 +114,11 @@ export function ConnectShipWizard() {
           <h2 className="text-lg sm:text-xl font-bold mt-1">Connect once · ship forever</h2>
           <p className="text-sm text-[var(--muted)] mt-1 max-w-xl">
             For everyone — developers and non-developers. Finish these three steps so builds reach
-            GitHub + Vercel and live features can use your keys.
+            GitHub + Vercel and live features can use your keys. For Android/iOS store builds, open{' '}
+            <Link href="/dashboard/publish" className="text-[var(--accent)] hover:underline">
+              Publish
+            </Link>{' '}
+            (your Expo/Apple/Google accounts — Xroga does not pay store fees).
           </p>
         </div>
         <div
