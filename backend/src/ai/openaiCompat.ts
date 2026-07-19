@@ -6,9 +6,13 @@ import {
   type ModelId,
 } from './models.js';
 
+export type ContentPart =
+  | { type: 'text'; text: string }
+  | { type: 'image_url'; image_url: { url: string; detail?: 'auto' | 'low' | 'high' } };
+
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
-  content: string;
+  content: string | ContentPart[];
 }
 
 export interface ChatResult {
@@ -99,6 +103,17 @@ function clientFor(endpoint: ResolvedEndpoint): OpenAI {
   });
 }
 
+function contentTokenEstimate(content: string | ContentPart[]): number {
+  if (typeof content === 'string') return estimateTokens(content);
+  let n = 0;
+  for (const part of content) {
+    if (part.type === 'text') n += estimateTokens(part.text);
+    // Rough vision token budget per image
+    if (part.type === 'image_url') n += 1200;
+  }
+  return Math.max(1, n);
+}
+
 export async function chatCompletion(
   modelId: ModelId,
   messages: ChatMessage[],
@@ -109,7 +124,7 @@ export async function chatCompletion(
 
   const completion = await client.chat.completions.create({
     model: endpoint.apiModel,
-    messages,
+    messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
     max_tokens: opts.maxTokens ?? 8192,
     temperature: opts.temperature ?? 0.4,
     ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
@@ -119,7 +134,7 @@ export async function chatCompletion(
   const text = (choice?.content ?? '').trim();
   const inputTokens =
     completion.usage?.prompt_tokens ??
-    estimateTokens(messages.map((m) => m.content).join('\n'));
+    messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
   const outputTokens = completion.usage?.completion_tokens ?? estimateTokens(text);
 
   return {
@@ -143,14 +158,14 @@ export async function chatCompletionStream(
 
   const stream = await client.chat.completions.create({
     model: endpoint.apiModel,
-    messages,
+    messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
     max_tokens: opts.maxTokens ?? 8192,
     temperature: opts.temperature ?? 0.4,
     stream: true,
   });
 
   let text = '';
-  let inputTokens = estimateTokens(messages.map((m) => m.content).join('\n'));
+  let inputTokens = messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
   let outputTokens = 0;
 
   for await (const chunk of stream) {
@@ -180,6 +195,19 @@ export async function chatCompletionStream(
     outputTokens,
     totalTokens: inputTokens + outputTokens,
   };
+}
+
+/** Build OpenAI-compatible multimodal user content (text + images). */
+export function buildVisionUserContent(
+  text: string,
+  imageUrls: string[],
+  detail: 'auto' | 'low' | 'high' = 'high',
+): ContentPart[] {
+  const parts: ContentPart[] = [{ type: 'text', text }];
+  for (const url of imageUrls.slice(0, 4)) {
+    parts.push({ type: 'image_url', image_url: { url, detail } });
+  }
+  return parts;
 }
 
 export function estimateTokens(text: string): number {

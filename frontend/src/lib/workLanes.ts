@@ -41,7 +41,15 @@ export function classifyWorkLane(
   attachments?: ChatAttachment[],
   opts?: { completedWebsiteBuild?: boolean }
 ): WorkLane {
-  if (attachments?.length) return 'heavy';
+  // Image/doc analyze is light unless it's a build-from-screenshot / update job
+  if (attachments?.length) {
+    const buildWithAttach =
+      isWebsiteBuildPrompt(prompt) ||
+      requiresGitHubForBuild(prompt) ||
+      (opts?.completedWebsiteBuild && isWebsiteUpdateRequest(prompt)) ||
+      isWebsiteBuildUpdate(prompt, messages as Parameters<typeof isWebsiteBuildUpdate>[1]);
+    return buildWithAttach ? 'heavy' : 'light';
+  }
   if (isVideoGenerationPrompt(prompt)) return 'heavy';
   if (IMAGE_GEN_PROMPT.test(prompt)) return 'heavy';
   if (BROWSER_AUTOMATION.test(prompt)) return 'heavy';

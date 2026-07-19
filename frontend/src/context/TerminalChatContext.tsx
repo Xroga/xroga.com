@@ -1308,7 +1308,7 @@ export function TerminalChatProvider({
           id: userMessageId,
           role: 'user',
           content: attachments?.length
-            ? `${displayPrompt}${displayPrompt ? '\n' : ''}📎 ${attachments.length} image(s) attached`
+            ? `${displayPrompt}${displayPrompt ? '\n' : ''}📎 ${attachments.length} file(s) attached`
             : displayPrompt,
           createdAt: Date.now(),
         },
@@ -1612,7 +1612,7 @@ export function TerminalChatProvider({
           pushSwarmTerminalLine(mathPrompt ? 'Math solver → step-by-step solution…' : 'Live research → professional answer…');
 
           try {
-            const result = await api.phase1.chat(displayPrompt, history);
+            const result = await api.phase1.chat(displayPrompt, history, attachments);
             gotEvent = true;
             fullReply = (result.response || '').trim();
             // Empty Phase 1 must never leave a blank bubble — fall through to swarm or show retry text

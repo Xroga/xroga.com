@@ -23,7 +23,6 @@ import { GitHubChipIcon, VercelChipIcon, ChatBarBrandChip } from './ChatBarButto
 import { Search } from 'lucide-react';
 import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
-import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -231,20 +230,28 @@ export function TerminalChatBar() {
     setSendState('sending');
 
     let attachments: ChatAttachment[] | undefined;
-    const imageFiles = files.filter((f) => f.type.startsWith('image/'));
-    if (imageFiles.length > 0) {
+    const uploadable = files.filter(
+      (f) =>
+        f.type.startsWith('image/') ||
+        f.type === 'application/pdf' ||
+        f.type.startsWith('text/') ||
+        /json|markdown|csv|msword|officedocument/i.test(f.type) ||
+        /\.(png|jpe?g|webp|gif|pdf|txt|md|csv|json|docx)$/i.test(f.name),
+    );
+    if (uploadable.length > 0) {
       setUploading(true);
       try {
+        const { uploadChatFile } = await import('@/lib/api');
         attachments = await Promise.all(
-          imageFiles.slice(0, 4).map(async (f) => ({
-            url: await uploadChatImage(f),
-            mimeType: f.type,
+          uploadable.slice(0, 4).map(async (f) => ({
+            url: await uploadChatFile(f),
+            mimeType: f.type || undefined,
             name: f.name,
           }))
         );
         setFiles([]);
       } catch {
-        toast.error('Image upload failed — try a smaller file');
+        toast.error('Upload failed — try a smaller file');
         setUploading(false);
         setSendState('idle');
         return;
@@ -252,10 +259,12 @@ export function TerminalChatBar() {
       setUploading(false);
     }
 
-    const hasImages = Boolean(attachments?.length);
+    const hasAttach = Boolean(attachments?.length);
     const promptText =
       text ||
-      (hasImages ? defaultImageAttachmentPrompt('') : undefined);
+      (hasAttach
+        ? (await import('@/lib/parseImageContent')).defaultAttachmentPrompt('', uploadable)
+        : undefined);
 
     setDraft('');
     draftRef.current = '';
@@ -301,9 +310,19 @@ export function TerminalChatBar() {
 
   const addFiles = useCallback((list: FileList | null) => {
     if (!list?.length) return;
-    const incoming = Array.from(list).filter((f) => f.type.startsWith('image/'));
-    if (!incoming.length) return;
-    setFiles((prev) => [...prev, ...incoming]);
+    const incoming = Array.from(list).filter(
+      (f) =>
+        f.type.startsWith('image/') ||
+        f.type === 'application/pdf' ||
+        f.type.startsWith('text/') ||
+        /json|markdown|csv|msword|officedocument/i.test(f.type) ||
+        /\.(png|jpe?g|webp|gif|pdf|txt|md|csv|json|docx)$/i.test(f.name),
+    );
+    if (!incoming.length) {
+      toast.error('Supported: images, PDF, TXT, MD, CSV, JSON, DOCX');
+      return;
+    }
+    setFiles((prev) => [...prev, ...incoming].slice(0, 4));
   }, []);
 
   const handlePaste = useCallback(
@@ -534,7 +553,15 @@ export function TerminalChatBar() {
                 )}
               />
             </ChatBarInputRow>
-            <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => addFiles(e.target.files)} disabled={incognito} />
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*,.pdf,.txt,.md,.csv,.json,.docx,application/pdf,text/plain,text/markdown,text/csv,application/json,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              multiple
+              className="hidden"
+              onChange={(e) => addFiles(e.target.files)}
+              disabled={incognito}
+            />
           </form>
         </ChatbarShell>
       </div>

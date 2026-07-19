@@ -37,14 +37,21 @@ function looksLikeProductBuild(prompt: string): boolean {
   return false;
 }
 
-/** Route to Phase 1 engine for text AI; swarm handles builds, media, and attachments. */
+/** Route to Phase 1 engine for text AI; swarm handles builds. Image/doc analyze can use Phase 1 or swarm. */
 export function shouldRouteToPhase1(
   prompt: string,
   messages: ChatMessageLike[],
   attachments?: ChatAttachment[],
   options?: { completedWebsiteBuild?: boolean; selectedRepo?: string | null }
 ): boolean {
-  if (attachments?.length) return false;
+  // Attachments for analyze (not a product build) → Phase 1 vision/doc path
+  if (attachments?.length) {
+    if (looksLikeProductBuild(prompt) || isWebsiteBuildPrompt(prompt)) return false;
+    if (isWebsiteUpdateRequest(prompt) && (options?.completedWebsiteBuild || options?.selectedRepo?.includes('/'))) {
+      return false;
+    }
+    return true;
+  }
   // Greetings / "hi" / thanks → cheap swarm fast-chat (never Phase 1 WOW essays + history bleed).
   if (isTrivialPrompt(prompt)) return false;
   // Builds must NEVER hit Phase 1 — it answers with long how-to essays instead of shipping code.

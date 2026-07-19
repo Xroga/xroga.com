@@ -1,13 +1,25 @@
 import { randomUUID } from 'crypto';
 import { convertUserRequest } from './converter.js';
 import { MODELS, type ModelId } from './models.js';
-import { chatCompletionStream, type ChatMessage } from './openaiCompat.js';
+import {
+  buildVisionUserContent,
+  chatCompletionStream,
+  type ChatMessage,
+} from './openaiCompat.js';
 import {
   BUILDER_SYSTEM,
   CHAT_SYSTEM,
+  DOC_SYSTEM,
+  VISION_SYSTEM,
   incrementalUpdateContext,
   researchSynthesisPrompt,
 } from './prompts.js';
+import {
+  defaultAttachmentPrompt,
+  pickAttachmentModel,
+  prepareAttachments,
+  type ChatAttachment,
+} from './attachments.js';
 import { assertHasQuota, recordUsage, usageToTokenUsage, type UsageSnapshot } from './quota.js';
 import { formatResearchForPrompt, gatherResearch, type ResearchBundle } from './research.js';
 import { isBuildPrompt, routePrompt, type RouteDecision } from './router.js';
@@ -295,14 +307,78 @@ function wantsResearch(prompt: string, _isUpdate: boolean): boolean {
 
 /**
  * Light chat / research Q&A — Phase 1 lane (no site build).
+ * Also handles image vision (Grok) and document analysis.
  */
 export async function runChatPipeline(opts: {
   userId: string;
   prompt: string;
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
+  attachments?: ChatAttachment[];
   onDelta?: DeltaFn;
 }): Promise<ChatPipelineResult> {
   await assertHasQuota(opts.userId);
+
+  const prepared = await prepareAttachments(opts.attachments);
+  const hasAttachments = prepared.hasImages || prepared.hasDocuments;
+
+  // Attachment analyze path — never force a website build
+  if (hasAttachments) {
+    const prompt = defaultAttachmentPrompt(prepared, opts.prompt);
+    const pick = pickAttachmentModel(prompt, prepared);
+    const system = prepared.hasImages ? VISION_SYSTEM : DOC_SYSTEM;
+
+    let userText = prompt;
+    if (prepared.documentBlock) {
+      userText += `\n\nAttached document text:\n${prepared.documentBlock}`;
+    }
+
+    const userMessage: ChatMessage = prepared.hasImages
+      ? {
+          role: 'user',
+          content: buildVisionUserContent(
+            userText,
+            prepared.images.map((i) => i.url),
+            'high',
+          ),
+        }
+      : { role: 'user', content: userText };
+
+    const historyMsgs: ChatMessage[] = (opts.history ?? [])
+      .slice(-8)
+      .map((h) => ({ role: h.role, content: h.content.slice(0, 4000) }));
+
+    const result = await callBuilderStream(
+      pick.modelId,
+      [{ role: 'system', content: system }, ...historyMsgs, userMessage],
+      {
+        maxTokens: 6144,
+        temperature: 0.35,
+        onDelta: opts.onDelta,
+      },
+    );
+
+    const usage = await recordUsage(
+      opts.userId,
+      result.modelId,
+      result.inputTokens,
+      result.outputTokens,
+    );
+
+    return {
+      response: result.text,
+      intent: pick.kind === 'document' ? 'file_analysis' : 'vision_analysis',
+      usage: usageToTokenUsage(usage),
+      modelId: result.modelId,
+      route: {
+        kind: pick.kind === 'document' ? 'file_analysis' : 'realtime',
+        converter: 'deepseek_v4_flash',
+        builder: pick.modelId,
+        useResearch: false,
+        reason: pick.reason,
+      },
+    };
+  }
+
   const route = routePrompt(opts.prompt);
 
   if (isBuildPrompt(opts.prompt) && route.kind.startsWith('build')) {
@@ -359,6 +435,7 @@ export async function runBuildPipeline(opts: {
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
   projectId?: string;
   clientMeta?: BuildClientMeta | Record<string, unknown>;
+  attachments?: ChatAttachment[];
   onProgress?: ProgressFn;
   onDelta?: DeltaFn;
   signal?: AbortSignal;
@@ -370,6 +447,63 @@ export async function runBuildPipeline(opts: {
 
   createRun(opts.userId, userFacingPrompt, runId);
   await assertHasQuota(opts.userId);
+
+  // Attachments without a build intent → vision/doc analyze (not a site rebuild)
+  const preparedEarly = await prepareAttachments(opts.attachments);
+  const attachmentOnlyAnalyze =
+    (preparedEarly.hasImages || preparedEarly.hasDocuments) &&
+    !isBuildPrompt(opts.prompt) &&
+    !meta?.buildUpdate;
+
+  if (attachmentOnlyAnalyze) {
+    emit({
+      agent: 'vision',
+      status: 'analyzing',
+      message: preparedEarly.hasImages
+        ? 'Analyzing image(s) with Grok vision…'
+        : 'Analyzing document(s)…',
+      swarmStatusLabel: 'Analyze',
+      swarmActivity: preparedEarly.hasImages ? 'Grok vision' : 'Doc extract',
+      swarmTodos: todosForBuild('route'),
+    });
+    const chat = await runChatPipeline({
+      userId: opts.userId,
+      prompt: opts.prompt,
+      history: opts.history,
+      attachments: opts.attachments,
+      onDelta: opts.onDelta,
+    });
+    const output = {
+      type: 'chat',
+      content: chat.response,
+      modelLabel: MODELS[chat.modelId].label,
+      analyzeKind: chat.intent,
+    };
+    completeRun(runId, {
+      output,
+      featureCategory: chat.intent === 'file_analysis' ? 'deep_research' : 'chat',
+      tokenUsage: chat.usage,
+      success: true,
+    });
+    emit({
+      agent: 'vision',
+      status: 'complete',
+      message: 'Analysis ready',
+      swarmStatusLabel: 'Done',
+      swarmActivity: MODELS[chat.modelId].label,
+      swarmTodos: todosForBuild('done').map((t) => ({ ...t, status: 'done' as const })),
+    });
+    return {
+      runId,
+      success: true,
+      featureCategory: chat.intent === 'file_analysis' ? 'deep_research' : 'chat',
+      output,
+      tokenUsage: chat.usage,
+      followUps: ['Ask a follow-up', 'Apply this to my project', 'Upload another file'],
+      route: chat.route,
+    };
+  }
+
   const route = routePrompt(opts.prompt);
 
   const prior = await hydratePriorFiles(opts.userId, meta);
@@ -445,6 +579,48 @@ export async function runBuildPipeline(opts: {
     researchBlock = formatResearchForPrompt(research);
   }
 
+  // Build/update with screenshot: Grok vision → text brief for the (non-vision) builder
+  let designReference = '';
+  if (preparedEarly.hasImages) {
+    emit({
+      agent: 'vision',
+      status: 'analyzing',
+      message: 'Reading attached image(s) with Grok for design/error context…',
+      swarmStatusLabel: 'Vision',
+      swarmActivity: 'Grok 4.3',
+      swarmTodos: todosForBuild('convert'),
+    });
+    try {
+      const vision = await callBuilderStream(
+        'grok_4_3',
+        [
+          { role: 'system', content: VISION_SYSTEM },
+          {
+            role: 'user',
+            content: buildVisionUserContent(
+              `User will build/update a product from this image. Extract UI structure, colors, typography, copy, and any errors visible.\n\nUser request:\n${userFacingPrompt}`,
+              preparedEarly.images.map((i) => i.url),
+              'high',
+            ),
+          },
+        ],
+        { maxTokens: 2048, temperature: 0.3 },
+      );
+      usage = await recordUsage(
+        opts.userId,
+        vision.modelId,
+        vision.inputTokens,
+        vision.outputTokens,
+      );
+      designReference = `\n\nDESIGN / SCREENSHOT REFERENCE (from Grok vision):\n${vision.text.slice(0, 6000)}`;
+    } catch (err) {
+      console.warn('[pipeline] vision brief failed:', (err as Error).message);
+    }
+  }
+  if (preparedEarly.documentBlock) {
+    designReference += `\n\nATTACHED DOCUMENT TEXT:\n${preparedEarly.documentBlock.slice(0, 12000)}`;
+  }
+
   // Cost-effective: only send targeted file contents to the builder
   const selection = isUpdate
     ? selectFilesForUpdate(prior.files, userFacingPrompt)
@@ -511,7 +687,7 @@ export async function runBuildPipeline(opts: {
 
   const builderUser = `${converted.instruction}${historyNote}${
     researchBlock ? `\n\n${researchBlock}` : ''
-  }${updateBlock}\n\nOriginal user request:\n${opts.prompt}`;
+  }${designReference}${updateBlock}\n\nOriginal user request:\n${opts.prompt}`;
 
   let result = await callBuilderStream(
     route.builder,

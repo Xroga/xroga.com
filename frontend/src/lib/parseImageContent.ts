@@ -53,7 +53,24 @@ export function estimateVideoSeconds(_prompt: string): number {
 
 export function defaultImageAttachmentPrompt(text: string): string {
   if (text.trim()) return text;
-  return 'Edit and enhance this image';
+  return 'Analyze this image. Describe what you see, extract any errors or UI copy, and suggest concrete next steps.';
+}
+
+export function defaultAttachmentPrompt(text: string, files?: Array<{ type?: string; name?: string }>): string {
+  if (text.trim()) return text;
+  const hasDoc = files?.some(
+    (f) =>
+      (f.type && !f.type.startsWith('image/')) ||
+      /\.(pdf|docx?|txt|md|csv|json)$/i.test(f.name || ''),
+  );
+  const hasImage = files?.some((f) => f.type?.startsWith('image/') || /\.(png|jpe?g|webp|gif)$/i.test(f.name || ''));
+  if (hasImage && hasDoc) {
+    return 'Analyze the attached image(s) and document(s). Summarize findings and suggest next steps.';
+  }
+  if (hasDoc) {
+    return 'Analyze the attached document(s). Summarize key points and actionable takeaways.';
+  }
+  return defaultImageAttachmentPrompt('');
 }
 
 export function parseProviderFromContent(content: string): string | undefined {
