@@ -7,8 +7,8 @@ import type { FileTrailItem } from '@/store/useProjectWorkspaceStore';
 
 function DiffBlock({ item }: { item: FileTrailItem }) {
   const [open, setOpen] = useState(false);
-  const beforeLines = item.before.split('\n').slice(0, 80);
-  const afterLines = item.after.split('\n').slice(0, 80);
+  const beforeLines = String(item.before ?? '').split('\n').slice(0, 80);
+  const afterLines = String(item.after ?? '').split('\n').slice(0, 80);
 
   return (
     <div className="rounded-lg border border-[var(--card-border)]/50 bg-[var(--card)]/40 overflow-hidden">

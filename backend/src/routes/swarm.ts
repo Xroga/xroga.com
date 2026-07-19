@@ -31,11 +31,21 @@ router.post('/execute', async (req: AuthRequest, res) => {
     : [];
   const projectId =
     typeof req.body?.projectId === 'string' ? req.body.projectId : undefined;
+  const clientMeta =
+    req.body?.clientMeta && typeof req.body.clientMeta === 'object'
+      ? (req.body.clientMeta as Record<string, unknown>)
+      : undefined;
   const wantStream = req.body?.stream !== false;
 
   if (!wantStream) {
     try {
-      const result = await runBuildPipeline({ userId, prompt: prompt.trim(), history, projectId });
+      const result = await runBuildPipeline({
+        userId,
+        prompt: prompt.trim(),
+        history,
+        projectId,
+        clientMeta,
+      });
       return res.json(result);
     } catch (err) {
       const e = err as Error & { code?: string };
@@ -77,6 +87,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
       prompt: prompt.trim(),
       history,
       projectId,
+      clientMeta,
       onProgress: (event) => {
         sendSSE(res, { event: 'progress', data: { ...event } });
       },

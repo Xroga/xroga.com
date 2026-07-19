@@ -1986,7 +1986,20 @@ export function TerminalChatProvider({
                 Array.isArray((output as { fileTrail?: unknown }).fileTrail)
                   ? (output as { fileTrail: NonNullable<ChatMessage['updateTrail']>['files'] }).fileTrail
                   : []
-              ).filter((f) => f && typeof f.path === 'string');
+              )
+                .filter(
+                  (f): f is NonNullable<ChatMessage['updateTrail']>['files'][number] =>
+                    Boolean(f) &&
+                    typeof f.path === 'string' &&
+                    f.path.trim().length > 0,
+                )
+                .map((f) => ({
+                  path: f.path,
+                  before: typeof f.before === 'string' ? f.before : '',
+                  after: typeof f.after === 'string' ? f.after : '',
+                  added: Number.isFinite(Number(f.added)) ? Number(f.added) : 0,
+                  removed: Number.isFinite(Number(f.removed)) ? Number(f.removed) : 0,
+                }));
               const changesSummary = Array.isArray((output as { changesSummary?: string[] }).changesSummary)
                 ? ((output as { changesSummary: string[] }).changesSummary)
                 : undefined;

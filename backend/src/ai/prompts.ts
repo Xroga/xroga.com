@@ -39,11 +39,53 @@ When the user (via a converted instruction) asks you to BUILD a website, app, ga
 - Include real interactive behavior, not placeholder lorem-only shells.
 - Do not invent fake live deploy URLs. The platform handles GitHub/Vercel separately.
 
+When the task is an INCREMENTAL UPDATE to an existing site:
+- Modify the existing project — do NOT invent a new brand, new product name, or unrelated redesign.
+- Preserve structure, brand voice, colors, and working features unless the user asked to change them.
+- Apply only the requested change(s).
+- Still return the FULL updated files in fenced blocks (\`\`\`html, \`\`\`css, \`\`\`js) so the platform can diff and push.
+
 When the task is analysis, research synthesis, Q&A, or code explanation:
 - Answer clearly and completely in markdown.
 - Cite research sources when research context is provided.
 
 Always follow the converted instruction precisely.`;
+
+/** Injected into the builder user message for update turns. */
+export function incrementalUpdateContext(opts: {
+  userRequest: string;
+  projectName?: string;
+  priorHtml: string;
+  priorCss?: string;
+  priorJs?: string;
+}): string {
+  const name = opts.projectName?.trim() || 'the current project';
+  const html = opts.priorHtml.slice(0, 60_000);
+  const css = (opts.priorCss ?? '').slice(0, 24_000);
+  const js = (opts.priorJs ?? '').slice(0, 24_000);
+  return `INCREMENTAL UPDATE — do not rebuild from scratch.
+
+Project name to preserve: ${name}
+User update request: ${opts.userRequest}
+
+Current index.html:
+\`\`\`html
+${html}
+\`\`\`
+
+Current styles.css:
+\`\`\`css
+${css}
+\`\`\`
+
+Current script.js:
+\`\`\`javascript
+${js}
+\`\`\`
+
+Return the FULL updated index.html (+ styles.css / script.js if changed) in fenced code blocks.
+Keep the same brand and product. Only apply the requested update.`;
+}
 
 export const CHAT_SYSTEM = `You are Xroga's AI assistant — fast, precise, and practical.
 Answer questions, explain code, plan features, and help the user build.
