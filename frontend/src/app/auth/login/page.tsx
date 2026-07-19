@@ -6,9 +6,9 @@ import { AuthShell } from '@/components/auth/AuthShell';
 export const metadata: Metadata = buildMetadata({
   title: 'Sign In — Log In to Xroga AI Dashboard',
   description:
-    'Sign in to Xroga AI — the #1 AI Swarm Operating System. Access your dashboard, projects, automations, and multi-agent builder swarms.',
+    'Sign in to Xroga AI Workspace — the #1 coding agent. Continue building web apps, push to GitHub, deploy on Vercel, and update your repos.',
   path: '/auth/login',
-  keywords: ['Xroga login', 'Xroga sign in', 'AI dashboard login', 'xroga.com login'],
+  keywords: ['Xroga login', 'Xroga sign in', 'AI coding agent login', 'xroga.com login', 'Xroga workspace login'],
 });
 
 export default function LoginPage() {

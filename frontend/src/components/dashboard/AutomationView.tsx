@@ -122,7 +122,7 @@ export function AutomationView() {
             Automation
           </h1>
           <p className="text-sm text-[var(--muted)] mt-1">
-            Previous Swarm runs, browser automations, and tasks in progress.
+            Previous coding-agent builds, Workspace runs, and tasks in progress.
           </p>
         </div>
         <button

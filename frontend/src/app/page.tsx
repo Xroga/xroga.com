@@ -29,8 +29,8 @@ const AI_FEATURES = [
     body: 'Any prompt becomes a clear builder brief, then ships as a real product — no template catalog.',
   },
   {
-    title: 'Xroga AI Swarm',
-    body: 'Apex for hard builds, Horizon for long codebases, Forge for volume, Live for real-time intel.',
+    title: '#1 Coding Agent',
+    body: 'For developers and non-developers — plain language in, working web app out, then ship.',
   },
   {
     title: 'GitHub push · Vercel live',
@@ -156,12 +156,12 @@ export default function HomePage() {
           <div className="xv-hc-features-grid">
             <div>
               <h2 className="xv-hc-features-headline" id="features-heading">
-                Swarm at full throttle. <em>Precision builds.</em>
+                Coding agent that ships. <em>Same repo, forever.</em>
               </h2>
               <p className="xv-hc-features-lead">
-                Xroga AI is a paid AI Swarm product: prompt → brief → code → QA → GitHub → live
-                domain. Built for apps, games, research, and repo updates — Apex, Horizon, Forge,
-                and Live.
+                Xroga AI is the #1 coding agent for everyone: prompt → brief → code → QA → your
+                GitHub → your Vercel. Edit, update, and delete without starting over — no coding
+                knowledge required to start.
               </p>
             </div>
             <ul className="xv-hc-feature-list">

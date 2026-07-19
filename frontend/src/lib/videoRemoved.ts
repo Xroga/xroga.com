@@ -1,3 +1,3 @@
 /** Video generation not live — shared message for UI */
 export const VIDEO_REMOVED_MESSAGE =
-  'Xroga AI video generation is not live yet. I can write a detailed prompt you can paste into Runway, Pika, Kling, or another video AI — or generate still images here (logos, thumbnails, artwork, mockups, and edits). I can also build websites, apps, games, and automations.';
+  'Xroga focuses on the coding agent — websites and web apps to your GitHub and Vercel. Video generation is not part of the product. I can help with still images (logos, thumbnails, mockups) or build/update your web project instead.';

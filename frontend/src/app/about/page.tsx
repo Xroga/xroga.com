@@ -67,10 +67,10 @@ export default function AboutPage() {
               className="mx-auto"
               unoptimized
             />
-            <h1 className="text-3xl sm:text-4xl font-bold">Xroga AI & Our Mission</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold">Xroga AI — #1 Coding Agent</h1>
             <p className="text-[var(--muted)] max-w-2xl mx-auto">
-              We are building the world&apos;s most capable AI Swarm Operating System — where specialized
-              agents plan, build, review, and verify until the output is ready to ship.
+              For developers and people with no coding knowledge: describe a web product, get working
+              code on your GitHub, live on your Vercel, then keep updating the same repo.
             </p>
           </section>
 
@@ -122,11 +122,11 @@ export default function AboutPage() {
           <section className="glass-panel rounded-2xl p-6 space-y-3">
             <h2 className="text-xl font-semibold">What can Xroga do?</h2>
             <ul className="text-sm text-[var(--muted)] space-y-2 list-disc pl-5">
-              <li>Build full-stack apps, websites, and mobile games from natural language</li>
-              <li>Run browser automation — scrape, research, and automate workflows</li>
-              <li>Generate images, video scripts, voice, and 3D assets</li>
-              <li>Debug code, run QA simulations, and verify outputs before publish</li>
-              <li>Connect GitHub, cloud, payments, and hundreds more services</li>
+              <li>Build websites, web apps, dashboards, and browser games from plain language</li>
+              <li>Push working code to your GitHub and update the same repo (edit/delete)</li>
+              <li>Deploy live on your Vercel account</li>
+              <li>Sync your product API keys securely into Vercel env</li>
+              <li>Works for developers and non-developers — no coding knowledge required to start</li>
             </ul>
           </section>
 

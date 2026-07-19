@@ -4,6 +4,10 @@ import { useId, useState } from 'react';
 
 const FAQS: Array<{ q: string; a: string }> = [
   {
+    q: 'What is Xroga AI?',
+    a: 'Xroga AI is the #1 coding agent for developers and non-developers. It builds web apps, pushes working code to your GitHub, deploys on your Vercel, syncs your API keys securely into Vercel env, and updates the same repo (edit/delete) without starting over. No coding knowledge required to start.',
+  },
+  {
     q: 'Can Xroga build anything from one prompt?',
     a: 'It can start almost any web product from one clear prompt — landing pages, dashboards, games, tools — then push GitHub and deploy. Complex systems (heavy backends, custom infra, pixel-perfect native apps) usually need follow-up prompts and your connected GitHub/Vercel. One prompt starts the ship loop; big products iterate.',
   },
@@ -22,6 +26,10 @@ const FAQS: Array<{ q: string; a: string }> = [
   {
     q: 'Do I need to know how to code?',
     a: 'No for the first ship. Describe the product in plain language. Developers can still open the repo and refine — Xroga does not lock you into a black box.',
+  },
+  {
+    q: 'Is Xroga for browser automation or video?',
+    a: 'No. Xroga is a coding agent for web apps — build, push to GitHub, deploy on Vercel, sync API keys, update the same repo. Not a browser-automation or video product.',
   },
   {
     q: 'Where is billing and support?',

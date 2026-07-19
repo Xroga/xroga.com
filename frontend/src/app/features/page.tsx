@@ -5,17 +5,17 @@ import { XROGA_FEATURES } from '@/lib/features';
 import { FEATURE_SEO_PAGES } from '@/lib/featureSeo';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Features — #1 AI Swarm with 98+ Capabilities',
+  title: 'Features — #1 Coding Agent | GitHub + Vercel Ship Loop',
   description:
-    'Explore Xroga AI features: AI image generation, voice talk, chat, build websites apps games, code debugging, GitHub auto-deploy, Vercel Netlify, and 710+ integrations — the top AI platform.',
+    'Xroga AI features for everyone: #1 coding agent chat, build websites & web apps (no coding knowledge required), GitHub push, Vercel deploy, secure API key sync, Workspace preview, and repo edit/delete without starting over.',
   path: '/features',
   keywords: [
     'Xroga features',
-    'AI swarm features',
-    'best AI features',
-    'AI image generation',
-    'talk with AI',
+    'AI coding agent features',
+    'build website with AI',
     'GitHub AI deploy',
+    'Vercel AI deploy',
+    'AI for non developers',
     'Droga AI',
     'xroga.com features',
   ],
@@ -45,11 +45,12 @@ export default function FeaturesPage() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-8 py-10">
         <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">
-          Xroga AI Features — #1 AI Swarm Platform
+          Xroga AI Features — #1 Coding Agent
         </h1>
         <p className="text-[var(--muted)] mb-8 leading-relaxed">
-          Every plan unlocks the full stack. Multi-agent swarms for image generation, voice talk,
-          chat, building websites/apps/games, debugging, GitHub deploy, and 710+ integrations.
+          Built for developers and people with no coding knowledge. Describe a web product, get
+          working code on your GitHub, live on your Vercel, sync API keys securely, and keep
+          updating the same repo — without starting over.
         </p>
 
         <section className="mb-10">

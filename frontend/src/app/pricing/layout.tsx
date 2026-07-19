@@ -4,9 +4,14 @@ import { buildMetadata } from '@/lib/seo';
 export const metadata: Metadata = buildMetadata({
   title: 'Pricing — Galactic Action Plans',
   description:
-    'Xroga AI pricing: action-based plans for building apps, games, websites, and browser automation. Honest per-task costs with 710+ integrations.',
+    'Xroga AI pricing for the #1 coding agent — plans with AI tokens to build websites and web apps, push to GitHub, deploy on Vercel, and keep updating the same repo. For developers and non-developers.',
   path: '/pricing',
-  keywords: ['Xroga pricing', 'AI actions', 'AI subscription'],
+  keywords: [
+    'Xroga pricing',
+    'AI coding agent pricing',
+    'AI website builder pricing',
+    'Xroga subscription',
+  ],
 });
 
 export default function PricingLayout({ children }: { children: React.ReactNode }) {
