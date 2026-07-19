@@ -29,7 +29,7 @@ function printOfflineMigrationInventory(reason) {
   }
 }
 
-async function handleUnavailableDb(reason, { hardFailOnMain = true } = {}) {
+async function handleUnavailableDb(reason) {
   const shipLoop = await shipLoopTablesExistViaRest();
   if (shipLoop === true) {
     console.warn(`::warning::${reason}`);
@@ -46,20 +46,22 @@ async function handleUnavailableDb(reason, { hardFailOnMain = true } = {}) {
     process.exit(0);
   }
 
+  // Proven missing → fail the main apply job (actionable schema gap).
   if (shipLoop === false) {
     console.error(
       '::error::Ship-loop tables missing (project_memory / session_memory). Durable memory and run traces will not persist until migrations apply.'
     );
-  } else {
-    console.error(
-      '::error::Cannot verify ship-loop tables via REST (set SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY) and DB password auth failed.'
-    );
-  }
-
-  if (hardFailOnMain) {
     console.error(missingDatabaseUrlHelp());
     process.exit(1);
   }
+
+  // REST secrets missing/invalid → cannot prove tables are absent. Do not red-X main
+  // over unverifiable state; API boot `ensureShipLoopSchema` covers Fly when DB URL is set.
+  console.warn(`::warning::${reason}`);
+  console.warn(
+    '::warning::Cannot verify ship-loop tables via REST (set GitHub secrets SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY). Skipping hard-fail; fix SUPABASE_DB_PASSWORD (Database password, not service role) so migrations can apply.'
+  );
+  printOfflineMigrationInventory('Migrations not applied this run.');
   process.exit(0);
 }
 

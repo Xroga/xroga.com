@@ -27,7 +27,9 @@ export function normalizePassword(raw) {
 }
 
 export function supabaseRestUrl() {
-  const url = process.env.SUPABASE_URL?.trim();
+  const url =
+    process.env.SUPABASE_URL?.trim() ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
   if (url) return url.replace(/\/$/, '');
   return `https://${projectRefFromConfig()}.supabase.co`;
 }
@@ -36,7 +38,8 @@ export function supabaseRestUrl() {
 export async function tableExistsViaRest(table, select = '*') {
   const key =
     process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() ||
-    process.env.SUPABASE_SERVICE_KEY?.trim();
+    process.env.SUPABASE_SERVICE_KEY?.trim() ||
+    process.env.SUPABASE_SECRET_KEY?.trim();
   if (!key) return null;
 
   const base = supabaseRestUrl();
