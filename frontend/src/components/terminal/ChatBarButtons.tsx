@@ -1,9 +1,10 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Rocket, Square, CloudUpload, Mic } from 'lucide-react';
+import { CloudUpload, Mic } from 'lucide-react';
+import { ChatBarShipIcon, type SendButtonState } from './ChatBarShipIcon';
 
-export type SendButtonState = 'idle' | 'sending' | 'thinking' | 'launched';
+export type { SendButtonState };
 export type ChatbarSurface = 'homepage' | 'dashboard' | 'incognito';
 
 export function ChatBarComboAction({
@@ -37,7 +38,7 @@ export function ChatBarComboAction({
         aria-label="Stop response"
       >
         <span className="xv-combo-action__icon xv-combo-action__icon--stop">
-          <Square className="w-2.5 h-2.5 fill-current" />
+          <ChatBarShipIcon state={stopping ? 'thinking' : sendState} size={14} />
         </span>
         <span className="xv-combo-action__label">Stop</span>
       </button>
@@ -53,7 +54,7 @@ export function ChatBarComboAction({
       >
         <span className="xv-go-btn__liquid" aria-hidden />
         <span className="xv-go-btn__icon">
-          <Rocket className="w-3.5 h-3.5" />
+          <ChatBarShipIcon state={sendState} size={14} />
         </span>
       </button>
     );
@@ -113,7 +114,7 @@ export function ChatBarSendButton({
       >
         <span className="xv-go-btn__liquid xv-go-btn__liquid--stop" aria-hidden />
         <span className="xv-go-btn__icon xv-go-btn__icon--stop">
-          <Square className="w-3 h-3 fill-current" />
+          <ChatBarShipIcon state={stopping ? 'thinking' : state} size={14} />
         </span>
       </button>
     );
@@ -131,7 +132,7 @@ export function ChatBarSendButton({
     >
       <span className="xv-go-btn__liquid" aria-hidden />
       <span className="xv-go-btn__icon">
-        <Rocket className="w-3.5 h-3.5" />
+        <ChatBarShipIcon state={state} size={14} />
       </span>
     </button>
   );
