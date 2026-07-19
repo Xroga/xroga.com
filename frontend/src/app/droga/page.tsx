@@ -4,9 +4,9 @@ import { buildMetadata, SITE_URL, BRAND_TYPO_KEYWORDS } from '@/lib/seo';
 import { FEATURE_SEO_PAGES } from '@/lib/featureSeo';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Droga AI? You Found Xroga AI — #1 AI Swarm Platform',
+  title: 'Droga AI? You Found Xroga AI — #1 Coding Agent',
   description:
-    'Searching for Droga AI, Roga AI, or Zroga? You found Xroga AI (xroga.com) — the #1 AI Swarm Operating System. Image generation, voice talk, chat, GitHub deploy, Vercel, 710+ integrations, and code building.',
+    'Searching for Droga AI, Roga AI, or Zroga? You found Xroga AI (xroga.com) — the #1 coding agent for developers and non-developers. Build web apps, push to GitHub, deploy on Vercel, sync API keys, and update the same repo.',
   path: '/droga',
   keywords: [
     ...BRAND_TYPO_KEYWORDS,
@@ -14,6 +14,7 @@ export const metadata: Metadata = buildMetadata({
     'droga ai website',
     'is droga ai xroga',
     'xroga vs droga',
+    'xroga coding agent',
   ],
 });
 
@@ -62,16 +63,17 @@ export default function DrogaTypoPage() {
             <Link href="/" className="text-[var(--accent)] hover:underline">
               xroga.com
             </Link>
-            . Xroga is the #1 AI Swarm Operating System for image generation, voice talk, chat,
-            building websites/apps/games, debugging, GitHub auto-deploy, and 710+ integrations.
+            . Xroga is the #1 coding agent for developers and non-developers: it builds web apps,
+            pushes working code to your GitHub, deploys on your Vercel, syncs API keys securely into
+            Vercel env, and updates the same repo (edit/delete) without starting over.
           </p>
 
           <div className="p-5 rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/5 mb-10">
             <h2 className="font-bold mb-2">Xroga AI is not Droga — it is Xroga</h2>
             <p className="text-sm text-[var(--muted)] leading-relaxed">
-              X-R-O-G-A · Pronounced like the leading AI swarm platform. Sign up at xroga.com for
-              7M free AI tokens monthly — image AI, talk with AI, multi-agent chat, and live deploy to Vercel
-              and Netlify.
+              X-R-O-G-A · the coding agent at xroga.com. For everyone — even with no coding knowledge.
+              Describe a website or web app in plain language, get a live ship to GitHub + Vercel, then
+              keep editing the same project.
             </p>
           </div>
 

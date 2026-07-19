@@ -1,7 +1,7 @@
 /** 92 features unlocked on every Xroga plan */
 export const XROGA_FEATURES = [
   'Multi-agent Swarm (Architect·Builder·Reviewer·QA)',
-  'Browser automation & scrape',
+  'GitHub push & Vercel deploy',
   'Xroga Safe Browser (zero adult content)',
   '710+ integrations catalog',
   'GitHub connect & deploy',
@@ -16,7 +16,7 @@ export const XROGA_FEATURES = [
   'Drag & drop attachments',
   'Project file manager',
   'Swarm run history',
-  'Automation hub',
+  'Build run history',
   'Build history',
   'Action spend analytics',
   'Custom domain deploy',
@@ -88,8 +88,8 @@ export const XROGA_FEATURES = [
   'Pro upgrade CTA',
   'Mini action meter',
   'Header action meter',
-  'Automation continue',
-  'Running/failed/browser filters',
+  'Continue build runs',
+  'Running/failed build filters',
   'Project detail view',
   'File preview',
   'Chats / swarm history',

@@ -10,9 +10,9 @@ import { rootFontVariables } from '@/lib/fonts';
 
 export const metadata: Metadata = {
   ...buildMetadata({
-    title: 'Xroga AI — #1 Top AI Swarm Operating System | Best AI to Build Apps & Games',
+    title: 'Xroga AI — #1 Coding Agent | Build Web Apps → GitHub + Vercel',
     description:
-      'Xroga AI is the #1 AI Swarm Operating System — best top AI platform to build websites, mobile apps, games, software, and browser automation. Sign up free. Also found as Roga AI, Droga AI, xroga.com.',
+      'Xroga AI is the #1 coding agent for developers and non-developers. Describe a website or web app in plain language — Xroga builds it, pushes working code to your GitHub, deploys on your Vercel, syncs your API keys securely into Vercel env, and updates the same repo (edit/delete) without starting over. No coding knowledge required to start. Also known as Roga AI, Droga AI, xroga.com.',
     path: '/',
   }),
   metadataBase: new URL('https://xroga.com'),

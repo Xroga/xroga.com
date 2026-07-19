@@ -9,7 +9,7 @@ import { autocorrectText } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
 
 const TYPEWRITER_FEATURES = [
-  'Create games, apps, and automations with AI Swarm…',
+  'Build a website or web app — ship to GitHub + Vercel…',
   'Build a full-stack SaaS with auth and billing…',
   'Push to GitHub and go live on Vercel…',
   'Ship a landing page from one prompt…',
@@ -79,7 +79,7 @@ export function HomepageChatBar() {
       if (composingRef.current || sending) return;
       const text = autocorrectText((textareaRef.current?.value ?? prompt).trim());
       setSending(true);
-      localStorage.setItem(PENDING_PROMPT_KEY, text || 'Build with Xroga AI Swarm');
+      localStorage.setItem(PENDING_PROMPT_KEY, text || 'Build a web app with Xroga AI');
       setTimeout(() => router.push('/auth/signup'), 700);
     },
     [prompt, router, sending]

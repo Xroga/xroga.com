@@ -1,11 +1,11 @@
 import { buildMetadata } from '@/lib/seo';
 
 export const metadata = buildMetadata({
-  title: 'Automation — Swarm Runs & Browser Tasks',
+  title: 'Build Runs — Workspace History',
   description:
-    'View running, failed, and completed Xroga AI automations. Continue browser scrape and research tasks from your swarm history.',
+    'View running, failed, and completed Xroga AI build runs in Workspace. Continue coding-agent tasks, GitHub pushes, and Vercel deploys from your history.',
   path: '/dashboard/automation',
-  keywords: ['AI automation', 'browser automation', 'swarm history'],
+  keywords: ['Xroga build history', 'coding agent runs', 'workspace history'],
 });
 
 export default function AutomationLayout({ children }: { children: React.ReactNode }) {

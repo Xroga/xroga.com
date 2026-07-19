@@ -15,5 +15,5 @@ export const COMPANY_CONTACT = {
   phoneTel: phoneDisplay.replace(/[^\d+]/g, ''),
   region: 'Pakistan',
   productDescription:
-    'Xroga AI is a paid AI Swarm platform that turns natural-language prompts into real software: Converter writes a build brief, the multi-model swarm codes and debugs, then pushes to your GitHub and deploys live on Vercel with your domain. Subscriptions are billed monthly via Paddle and include AI token/credit capacity by plan.',
+    'Xroga AI is the #1 coding agent for developers and non-developers. It builds web apps from plain language, pushes working code to your GitHub, deploys on your Vercel, syncs your API keys securely into Vercel env, and updates the same repo (edit/delete) without starting over. No coding knowledge required to start. Subscriptions are billed monthly via Paddle with AI token capacity by plan.',
 };

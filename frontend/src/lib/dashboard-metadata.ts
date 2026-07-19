@@ -19,9 +19,16 @@ export function dashboardPageMetadata(
 
 export const PAGE_SEO = {
   dashboard: dashboardPageMetadata(
-    'Workspace',
-    'Xroga AI Workspace — terminal, AI Swarm, browser automation, and Black Hole V∞.',
-    '/workspace'
+    'Workspace — #1 Coding Agent',
+    'Xroga AI Workspace: the #1 coding agent for developers and non-developers. Build web apps from a prompt, push working code to your GitHub, deploy on your Vercel, sync API keys securely into Vercel env, and update the same repo (edit/delete) without starting over. No coding knowledge required to start.',
+    '/workspace',
+    [
+      'Xroga workspace',
+      'AI coding agent workspace',
+      'build website no code',
+      'GitHub Vercel AI workspace',
+      'update GitHub repo AI',
+    ]
   ),
   dashboardHome: dashboardPageMetadata(
     'Dashboard',
@@ -61,31 +68,32 @@ export const PAGE_SEO = {
   ),
   projects: dashboardPageMetadata(
     'My Projects',
-    'Manage websites, apps, games, software, and browser extensions built with Xroga AI Swarm.',
+    'Manage websites, web apps, and games you built with Xroga AI — linked to your GitHub repos and Vercel deploys.',
     '/dashboard/projects',
-    ['Xroga projects', 'AI built apps']
+    ['Xroga projects', 'AI built web apps', 'GitHub projects AI']
   ),
   chats: dashboardPageMetadata(
     'Chats & Reports',
-    'Conversations, reports, research, documents, and Swarm history — continue any task from Xroga AI.',
+    'Conversations, reports, research, and coding-agent history — continue any build from Xroga AI Workspace.',
     '/dashboard/chats',
-    ['Xroga chats', 'AI reports']
+    ['Xroga chats', 'AI coding agent history']
   ),
   automation: dashboardPageMetadata(
-    'Automation',
-    'Running, failed, and browser automations — continue or review past Xroga AI automation runs.',
-    '/dashboard/automation'
+    'Build Runs',
+    'Build run history for Xroga AI coding agent — continue Workspace builds, GitHub pushes, and Vercel deploys.',
+    '/dashboard/automation',
+    ['Xroga build runs', 'coding agent history']
   ),
   analytics: dashboardPageMetadata(
     'Analytics',
-    'Usage stats and build analytics for your Xroga AI account and Swarm activity.',
+    'Usage stats and build analytics for your Xroga AI coding agent account.',
     '/dashboard/analytics'
   ),
   integrations: dashboardPageMetadata(
     'Integrations',
-    'Connect GitHub, GitLab, Slack, databases, and 710+ tools to your Xroga AI workspace.',
+    'Connect GitHub and Vercel to Xroga AI Workspace. Sync product API keys securely into Vercel env.',
     '/dashboard/integrations',
-    ['Xroga integrations', 'GitHub AI', 'GitLab AI']
+    ['Xroga integrations', 'GitHub AI', 'Vercel AI', 'sync API keys']
   ),
   billing: dashboardPageMetadata(
     'Billing',

@@ -4,15 +4,15 @@ import { buildMetadata, SITE_URL } from '@/lib/seo';
 import { INTEGRATION_CATEGORIES, INTEGRATIONS } from '@/lib/integrations';
 
 export const metadata: Metadata = buildMetadata({
-  title: '710+ Integrations — Connect GitHub, Vercel, Stripe & More',
+  title: 'Integrations — GitHub, Vercel & Secure API Keys',
   description:
-    'Xroga AI integrates with 710+ tools — GitHub, Vercel, Netlify, Stripe, Slack, OpenAI, AWS, Google, and 34 categories. One AI swarm OS for your entire stack.',
+    'Connect GitHub and Vercel to Xroga AI coding agent. Push working code, deploy live, and sync your product API keys securely into Vercel env — for developers and non-developers.',
   path: '/integrations',
   keywords: [
     'Xroga integrations',
-    'AI platform integrations',
     'GitHub Vercel AI integration',
-    '710 integrations',
+    'sync API keys Vercel',
+    'AI coding agent integrations',
     'connect API keys AI',
   ],
 });

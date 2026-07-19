@@ -10,7 +10,7 @@ const CEO_QUOTE =
   'If you can dream it, Xroga can build it — one command at a time.';
 
 const AUTH_FEATURES_BLURB =
-  'The first and last AI you will ever need. Build apps, games, code, and automations — with honest token pricing on every action.';
+  'The #1 coding agent for everyone — developers and non-developers. Build web apps, push to GitHub, deploy on Vercel, and update the same repo.';
 
 export function AuthShell({
   children,
