@@ -14,6 +14,55 @@ const MIGRATIONS_DIR = join(ROOT, 'supabase/migrations');
 
 const dryRun = process.argv.includes('--dry-run') || process.env.DRY_RUN === '1';
 
+function listMigrationFiles() {
+  return readdirSync(MIGRATIONS_DIR)
+    .filter((f) => f.endsWith('.sql'))
+    .sort();
+}
+
+function printOfflineMigrationInventory(reason) {
+  const files = listMigrationFiles();
+  console.warn(`::warning::${reason}`);
+  console.log(`Migration files in repo (${files.length}):`);
+  for (const file of files) {
+    console.log(`  ${file.replace(/\.sql$/, '')}`);
+  }
+}
+
+async function handleUnavailableDb(reason, { hardFailOnMain = true } = {}) {
+  const shipLoop = await shipLoopTablesExistViaRest();
+  if (shipLoop === true) {
+    console.warn(`::warning::${reason}`);
+    console.warn(
+      '::warning::project_memory + session_memory already exist via REST. Fix DB password before the next schema change.'
+    );
+    process.exit(0);
+  }
+
+  if (dryRun) {
+    printOfflineMigrationInventory(
+      `${reason} Dry-run cannot verify applied state — listing migration files only.`
+    );
+    process.exit(0);
+  }
+
+  if (shipLoop === false) {
+    console.error(
+      '::error::Ship-loop tables missing (project_memory / session_memory). Durable memory and run traces will not persist until migrations apply.'
+    );
+  } else {
+    console.error(
+      '::error::Cannot verify ship-loop tables via REST (set SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY) and DB password auth failed.'
+    );
+  }
+
+  if (hardFailOnMain) {
+    console.error(missingDatabaseUrlHelp());
+    process.exit(1);
+  }
+  process.exit(0);
+}
+
 if (!resolveDatabaseUrls().length) {
   // If service role can verify required tables exist, succeed without DB password
   const phase1Exists = await phase1TableExistsViaRest();
@@ -22,13 +71,7 @@ if (!resolveDatabaseUrls().length) {
     console.log('Required tables exist (REST). No DB password needed.');
     process.exit(0);
   }
-  if (shipLoopExists === false) {
-    console.error(
-      'Ship-loop tables missing (project_memory / session_memory) and no DATABASE_URL / SUPABASE_DB_PASSWORD configured.'
-    );
-  }
-  console.error(missingDatabaseUrlHelp());
-  process.exit(1);
+  await handleUnavailableDb('No DATABASE_URL / SUPABASE_DB_PASSWORD configured.');
 }
 
 if (dryRun) {
@@ -44,20 +87,9 @@ if (phase1Exists === true) {
 
 const client = await connectPostgres().catch(async (err) => {
   if (/password authentication failed/i.test(err.message)) {
-    console.error(
-      '::error::SUPABASE_DB_PASSWORD in GitHub secrets is incorrect (use Database password from Supabase Dashboard → Database settings, NOT the service role key).'
+    await handleUnavailableDb(
+      'SUPABASE_DB_PASSWORD in GitHub secrets is incorrect (use Database password from Supabase Dashboard → Database settings, NOT the service role key).'
     );
-    const shipLoop = await shipLoopTablesExistViaRest();
-    if (shipLoop === true) {
-      console.warn(
-        '::warning::DB password auth failed, but project_memory + session_memory already exist via REST. Fix the secret before the next schema change.'
-      );
-      process.exit(0);
-    }
-    console.error(
-      'Ship-loop tables missing (project_memory / session_memory). Cannot skip — durable memory and run traces will not persist.'
-    );
-    process.exit(1);
   }
   throw err;
 });
@@ -96,9 +128,7 @@ async function markMigrationApplied(version, file) {
   );
 }
 
-const files = readdirSync(MIGRATIONS_DIR)
-  .filter((f) => f.endsWith('.sql'))
-  .sort();
+const files = listMigrationFiles();
 
 let appliedCount = 0;
 
