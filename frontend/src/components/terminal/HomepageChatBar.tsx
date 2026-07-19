@@ -3,10 +3,10 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Rocket } from 'lucide-react';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
+import { ChatBarShipIcon, type SendButtonState } from './ChatBarShipIcon';
 
 const TYPEWRITER_FEATURES = [
   'Build a website or web app — ship to GitHub + Vercel…',
@@ -61,6 +61,7 @@ export function HomepageChatBar() {
   const [prompt, setPrompt] = useState('');
   const [focused, setFocused] = useState(false);
   const [sending, setSending] = useState(false);
+  const [sendState, setSendState] = useState<SendButtonState>('idle');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const composingRef = useRef(false);
   const router = useRouter();
@@ -79,8 +80,12 @@ export function HomepageChatBar() {
       if (composingRef.current || sending) return;
       const text = autocorrectText((textareaRef.current?.value ?? prompt).trim());
       setSending(true);
+      setSendState('sending');
       localStorage.setItem(PENDING_PROMPT_KEY, text || 'Build a web app with Xroga AI');
-      setTimeout(() => router.push('/auth/signup'), 700);
+      setTimeout(() => {
+        setSendState('launched');
+        router.push('/auth/signup');
+      }, 700);
     },
     [prompt, router, sending]
   );
@@ -141,7 +146,7 @@ export function HomepageChatBar() {
             >
               <span className="xv-go-btn__liquid" aria-hidden />
               <span className="xv-go-btn__icon">
-                <Rocket className="w-3.5 h-3.5" aria-hidden />
+                <ChatBarShipIcon state={sendState} size={14} />
               </span>
             </button>
           </div>
