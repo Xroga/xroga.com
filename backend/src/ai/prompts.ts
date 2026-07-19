@@ -54,15 +54,26 @@ exact old snippet
 replacement snippet
 >>>REPLACE
 
+To delete a file:
+*** Delete File: path/to/file
+
 When the task is analysis, research synthesis, Q&A, or code explanation:
 - Answer clearly and completely in markdown.
 - Cite research sources when research context is provided.
 
 Always follow the converted instruction precisely.`;
 
-export function incrementalUpdateContext(files: Array<{ path: string; content: string }>): string {
-  const listing = files
-    .map((f) => `- ${f.path} (${f.content.length} chars)`)
+export function incrementalUpdateContext(
+  files: Array<{ path: string; content: string }>,
+  opts?: {
+    allPaths?: string[];
+    cachedSummary?: string;
+    selectionNote?: string;
+    likelyDeletes?: string[];
+  },
+): string {
+  const listing = (opts?.allPaths?.length ? opts.allPaths : files.map((f) => f.path))
+    .map((p) => `- ${p}`)
     .join('\n');
 
   const samples = files
@@ -73,9 +84,21 @@ export function incrementalUpdateContext(files: Array<{ path: string; content: s
     )
     .join('\n\n');
 
-  return `INCREMENTAL UPDATE — edit the existing project surgically.
+  const summaryBlock = opts?.cachedSummary?.trim()
+    ? `\nCached project memo (do not re-analyze the whole repo):\n${opts.cachedSummary.trim().slice(0, 2500)}\n`
+    : '';
 
-Current project files:
+  const selectNote = opts?.selectionNote
+    ? `\nContext budget: ${opts.selectionNote}\n`
+    : '';
+
+  const deleteHint = opts?.likelyDeletes?.length
+    ? `\nUser likely wants to delete: ${opts.likelyDeletes.join(', ')}\nUse:\n*** Delete File: path\n`
+    : '';
+
+  return `INCREMENTAL UPDATE — edit the existing project surgically (cost-effective).
+${summaryBlock}${selectNote}${deleteHint}
+All known paths (names only — do not request a full re-read):
 ${listing}
 
 Rules (in priority order):
@@ -90,11 +113,14 @@ old snippet
 new snippet
 >>>REPLACE
 
-4. Only emit full fenced files when adding a brand-new path.
-5. Keep unrelated files untouched.
-6. Do not invent a new brand or product name.
+4. To delete a file:
+*** Delete File: path/to/file
 
-Existing file contents (for accurate SEARCH blocks):
+5. Only emit full fenced files when adding a brand-new path.
+6. Keep unrelated files untouched. Do not invent a new brand or product name.
+7. Only use the file contents provided below — do not ask to re-scan the repository.
+
+File contents provided for this turn (targeted):
 ${samples}`;
 }
 
