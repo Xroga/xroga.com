@@ -4,6 +4,7 @@ import {
   Fraunces,
   Inter,
   JetBrains_Mono,
+  Newsreader,
   Outfit,
   Press_Start_2P,
   Source_Serif_4,
@@ -61,6 +62,13 @@ const sourceSerif = Source_Serif_4({
   weight: ['400', '600', '700'],
   style: ['normal', 'italic'],
 });
+/** Literary high-contrast serif — closest Claude brand match for taglines */
+const claudeSerif = Newsreader({
+  subsets: ['latin'],
+  variable: '--font-claude-serif',
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+});
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -111,7 +119,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>
       <body
-        className={`theme-white ${inter.variable} ${azurio.variable} ${goga.variable} ${remixa.variable} ${emilio.variable} ${jetbrainsMono.variable} ${pixelCoding.variable} ${sourceSerif.variable} font-sans antialiased`}
+        className={`theme-white ${inter.variable} ${azurio.variable} ${goga.variable} ${remixa.variable} ${emilio.variable} ${jetbrainsMono.variable} ${pixelCoding.variable} ${sourceSerif.variable} ${claudeSerif.variable} font-sans antialiased`}
       >
         <SiteJsonLd />
         <RootProviders>{children}</RootProviders>

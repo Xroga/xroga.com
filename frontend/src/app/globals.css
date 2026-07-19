@@ -22,8 +22,8 @@
   --danger: #ef4444;
   --glass-blur: 20px;
   --font-sans: var(--font-goga), var(--font-inter), system-ui, sans-serif;
-  --font-display: var(--font-source-serif), var(--font-azurio), Georgia, serif;
-  --font-claude: var(--font-source-serif), var(--font-azurio), Georgia, serif;
+  --font-display: var(--font-claude-serif), var(--font-source-serif), var(--font-azurio), Georgia, serif;
+  --font-claude: var(--font-claude-serif), var(--font-source-serif), Georgia, 'Times New Roman', serif;
   --font-coding: var(--font-pixel), var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace;
   --font-mono: var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace;
   --sidebar-width: 16rem;
@@ -236,7 +236,7 @@ body.theme-gray * {
   }
 
   .font-claude {
-    font-family: var(--font-claude);
+    font-family: var(--font-claude-serif), var(--font-claude), Georgia, serif;
   }
 
   .glass-panel {
@@ -2844,25 +2844,27 @@ body.theme-gray * {
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
   }
   .xv-welcome-tagline-sub {
-    margin-top: 0.35rem;
-    font-family: var(--font-claude) !important;
-    font-size: clamp(1.2rem, 2.5vw, 1.75rem);
+    margin-top: 0.45rem;
+    font-family: var(--font-claude-serif), var(--font-claude), Georgia, serif !important;
+    font-size: clamp(1.35rem, 2.8vw, 1.95rem);
     font-weight: 500;
-    letter-spacing: -0.015em;
-    line-height: 1.4;
-    color: rgba(248, 250, 252, 0.96);
-    max-width: 44rem;
+    font-optical-sizing: auto;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+    color: rgba(248, 250, 252, 0.98);
+    max-width: 40rem;
     text-shadow: none;
+    font-feature-settings: 'kern' 1, 'liga' 1;
   }
   body.theme-white .xv-welcome-tagline-sub {
-    color: #1a1a1a;
+    color: #111111;
     text-shadow: none;
   }
   .xv-tagline-accent {
-    font-family: var(--font-claude) !important;
+    font-family: inherit !important;
     font-style: italic;
     font-weight: 600;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
     background: none;
     -webkit-background-clip: unset;
     background-clip: unset;
