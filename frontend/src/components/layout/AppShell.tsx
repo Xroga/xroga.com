@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { MobileNav } from './MobileNav';
 import { Logo } from './Logo';
