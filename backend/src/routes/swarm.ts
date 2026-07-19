@@ -4,13 +4,19 @@ import { runBuildPipeline } from '../ai/pipeline.js';
 import { MODELS } from '../ai/models.js';
 import { initSSE, sendSSE, endSSE } from '../lib/sse.js';
 import { buildFullProjectFiles } from '../services/projectScaffold.js';
+import {
+  completeRun,
+  createRun,
+  getRun,
+  listRunsForUser,
+  saveConversation,
+} from '../ai/runStore.js';
 
 const router = Router();
 
 /**
  * POST /api/swarm/execute
  * SSE stream: start → progress → delta* → complete
- * Converter (deepseek/deepseek-v4-flash via OpenRouter) → Builder (Kimi / GLM / DeepSeek Pro / Grok)
  */
 router.post('/execute', async (req: AuthRequest, res) => {
   const userId = req.userId;
@@ -31,11 +37,21 @@ router.post('/execute', async (req: AuthRequest, res) => {
     : [];
   const projectId =
     typeof req.body?.projectId === 'string' ? req.body.projectId : undefined;
+  const clientMeta =
+    req.body?.clientMeta && typeof req.body.clientMeta === 'object'
+      ? (req.body.clientMeta as Record<string, unknown>)
+      : undefined;
   const wantStream = req.body?.stream !== false;
 
   if (!wantStream) {
     try {
-      const result = await runBuildPipeline({ userId, prompt: prompt.trim(), history, projectId });
+      const result = await runBuildPipeline({
+        userId,
+        prompt: prompt.trim(),
+        history,
+        projectId,
+        clientMeta,
+      });
       return res.json(result);
     } catch (err) {
       const e = err as Error & { code?: string };
@@ -69,7 +85,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
     });
     sendSSE(res, {
       event: 'pipeline',
-      data: { message: 'Converter → Builder pipeline', stage: 'init' },
+      data: { message: 'Converter → Builder → QA → Deploy', stage: 'init' },
     });
 
     const result = await runBuildPipeline({
@@ -77,6 +93,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
       prompt: prompt.trim(),
       history,
       projectId,
+      clientMeta,
       onProgress: (event) => {
         sendSSE(res, { event: 'progress', data: { ...event } });
       },
@@ -86,19 +103,20 @@ router.post('/execute', async (req: AuthRequest, res) => {
       signal: undefined,
     });
 
-    // Attach scaffold paths for GitHub push helpers (no fake deploy URLs)
     if (result.output?.type === 'landing_page') {
       const html = String(result.output.html ?? '');
       const css = String(result.output.css ?? '');
       const js = String(result.output.js ?? '');
-      const files = buildFullProjectFiles({
-        html,
-        css,
-        js,
-        projectName: String(result.output.projectName ?? 'Xroga Build'),
-        userPrompt: prompt,
-      });
-      result.output.scaffoldPaths = files.map((f) => f.path);
+      if (html.trim()) {
+        const files = buildFullProjectFiles({
+          html,
+          css,
+          js,
+          projectName: String(result.output.projectName ?? 'Xroga Build'),
+          userPrompt: prompt,
+        });
+        result.output.scaffoldPaths = files.map((f) => f.path);
+      }
       result.output.builderModel = MODELS[result.route.builder].label;
     }
 
@@ -131,24 +149,67 @@ router.post('/execute', async (req: AuthRequest, res) => {
   }
 });
 
-router.get('/history', (_req, res) => {
-  res.json([]);
+router.get('/history', (req: AuthRequest, res) => {
+  const userId = req.userId;
+  if (!userId) return res.status(401).json({ error: 'Sign in required' });
+  const runs = listRunsForUser(userId).map((r) => ({
+    id: r.id,
+    prompt: r.prompt,
+    status: r.status,
+    featureCategory: r.featureCategory,
+    created_at: r.created_at,
+    completed_at: r.completed_at,
+    iteration_count: r.iteration_count,
+  }));
+  res.json(runs);
 });
 
-router.get('/runs/:runId', (req, res) => {
+router.get('/runs/:runId', (req: AuthRequest, res) => {
+  const runId = String(req.params.runId || '');
+  const run = getRun(runId);
+  if (!run) {
+    return res.json({
+      id: runId,
+      prompt: '',
+      status: 'unknown',
+      output: null,
+      created_at: new Date().toISOString(),
+      completed_at: null,
+      iteration_count: 0,
+    });
+  }
+  if (req.userId && run.userId !== req.userId) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
   res.json({
-    id: req.params.runId,
-    prompt: '',
-    status: 'unknown',
-    output: null,
-    created_at: new Date().toISOString(),
-    completed_at: null,
-    iteration_count: 0,
+    id: run.id,
+    prompt: run.prompt,
+    status: run.status,
+    output: run.output,
+    featureCategory: run.featureCategory,
+    created_at: run.created_at,
+    completed_at: run.completed_at,
+    iteration_count: run.iteration_count,
+    messages: run.messages ?? [],
   });
 });
 
-router.post('/runs/:runId/conversation', (_req, res) => {
-  res.json({ saved: true });
-});
+function saveConversationHandler(req: AuthRequest, res: import('express').Response) {
+  const runId = String(req.params.runId || '');
+  const messages = Array.isArray(req.body?.messages) ? req.body.messages : [];
+  if (!runId) return res.status(400).json({ error: 'runId required' });
+
+  // Ensure a stub run exists so conversation can attach
+  if (!getRun(runId) && req.userId) {
+    createRun(req.userId, '', runId);
+    completeRun(runId, { output: { type: 'chat', content: '' }, success: true });
+  }
+
+  const saved = saveConversation(runId, messages);
+  res.json({ saved: true, persisted: saved });
+}
+
+router.post('/runs/:runId/conversation', saveConversationHandler);
+router.patch('/runs/:runId/conversation', saveConversationHandler);
 
 export default router;

@@ -32,18 +32,64 @@ export const BUILDER_SYSTEM = `You are a senior full-stack developer and product
 When the user (via a converted instruction) asks you to BUILD a website, app, game, tool, landing page, or any interactive product:
 - Deliver a COMPLETE, working single-page (or multi-file) project.
 - Prefer vanilla HTML + CSS + JS that runs in a browser preview without a build step, unless the instruction requires otherwise.
-- Put the full HTML document in a \`\`\`html fenced block (include <!DOCTYPE html>...</html>).
-- Put extra CSS in a \`\`\`css fenced block if not fully inlined.
-- Put extra JS in a \`\`\`javascript or \`\`\`js fenced block if not fully inlined.
+- For NEW files, output full file contents in fenced blocks with paths, e.g. \`\`\`html path=index.html or \`\`\`file:package.json.
+- For UPDATES to existing files, prefer surgical SEARCH/REPLACE patches (see incremental update context when provided) instead of re-emitting entire files.
+- Classic fences still work: \`\`\`html, \`\`\`css, \`\`\`javascript — mapped to index.html, styles.css, script.js when no path is given.
+- When the instruction requires React, Next.js, Vite, or similar, emit the full multi-file tree (package.json, src/*, config files) with path-tagged fences.
 - Make it visually distinctive: expressive typography (not Inter/Roboto/Arial), atmospheric background (gradient/pattern/image feel), one strong composition — not a generic dashboard of cards.
 - Include real interactive behavior, not placeholder lorem-only shells.
 - Do not invent fake live deploy URLs. The platform handles GitHub/Vercel separately.
+
+Surgical patch format (preferred for edits):
+*** Update File: path/to/file
+<<<<<<< SEARCH
+exact old snippet
+=======
+replacement snippet
+>>>>>>> REPLACE
 
 When the task is analysis, research synthesis, Q&A, or code explanation:
 - Answer clearly and completely in markdown.
 - Cite research sources when research context is provided.
 
 Always follow the converted instruction precisely.`;
+
+export function incrementalUpdateContext(files: Array<{ path: string; content: string }>): string {
+  const listing = files
+    .map((f) => `- ${f.path} (${f.content.length} chars)`)
+    .join('\n');
+
+  const samples = files
+    .slice(0, 8)
+    .map(
+      (f) =>
+        `### ${f.path}\n\`\`\`\n${f.content.slice(0, 6000)}${f.content.length > 6000 ? '\n…' : ''}\n\`\`\``,
+    )
+    .join('\n\n');
+
+  return `INCREMENTAL UPDATE — edit the existing project surgically.
+
+Current project files:
+${listing}
+
+Rules (in priority order):
+1. Prefer SEARCH/REPLACE patches — do NOT re-output whole files unless creating a new file.
+2. Each patch must match existing content exactly (the SEARCH block must appear verbatim in the file).
+3. Use this format for every change:
+
+*** Update File: path/to/file
+<<<<<<< SEARCH
+old snippet
+=======
+new snippet
+>>>>>>> REPLACE
+
+4. Only emit full fenced files when adding a brand-new path.
+5. Keep unrelated files untouched.
+
+Existing file contents (for accurate SEARCH blocks):
+${samples}`;
+}
 
 export const CHAT_SYSTEM = `You are Xroga's AI assistant — fast, precise, and practical.
 Answer questions, explain code, plan features, and help the user build.

@@ -133,6 +133,55 @@ export async function chatCompletion(
   };
 }
 
+export async function chatCompletionStream(
+  modelId: ModelId,
+  messages: ChatMessage[],
+  opts: { maxTokens?: number; temperature?: number; onDelta?: (delta: string) => void } = {},
+): Promise<ChatResult> {
+  const endpoint = resolveEndpoint(modelId);
+  const client = clientFor(endpoint);
+
+  const stream = await client.chat.completions.create({
+    model: endpoint.apiModel,
+    messages,
+    max_tokens: opts.maxTokens ?? 8192,
+    temperature: opts.temperature ?? 0.4,
+    stream: true,
+  });
+
+  let text = '';
+  let inputTokens = estimateTokens(messages.map((m) => m.content).join('\n'));
+  let outputTokens = 0;
+
+  for await (const chunk of stream) {
+    const delta = chunk.choices[0]?.delta?.content ?? '';
+    if (delta) {
+      text += delta;
+      opts.onDelta?.(delta);
+    }
+
+    if (chunk.usage) {
+      inputTokens = chunk.usage.prompt_tokens ?? inputTokens;
+      outputTokens = chunk.usage.completion_tokens ?? outputTokens;
+    }
+  }
+
+  text = text.trim();
+  if (!outputTokens) {
+    outputTokens = estimateTokens(text);
+  }
+
+  return {
+    text,
+    modelId,
+    apiModel: endpoint.apiModel,
+    provider: endpoint.provider,
+    inputTokens,
+    outputTokens,
+    totalTokens: inputTokens + outputTokens,
+  };
+}
+
 export function estimateTokens(text: string): number {
   return Math.max(1, Math.ceil(text.length / 4));
 }

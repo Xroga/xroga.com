@@ -1,9 +1,10 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { ExternalLink, X } from 'lucide-react';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { buildInlinePreviewDocument } from '@/lib/landingPreview';
+import { api } from '@/lib/api';
 
 /** Single bottom/side preview — uses user's Vercel domain when live, else sandbox srcDoc. */
 export function ProjectPreviewDock() {
@@ -13,8 +14,44 @@ export function ProjectPreviewDock() {
   const css = useProjectWorkspaceStore((s) => s.css);
   const js = useProjectWorkspaceStore((s) => s.js);
   const repo = useProjectWorkspaceStore((s) => s.repo);
+  const branch = useProjectWorkspaceStore((s) => s.branch);
   const deployUrl = useProjectWorkspaceStore((s) => s.deployUrl);
   const lastUpdateAt = useProjectWorkspaceStore((s) => s.lastUpdateAt);
+  const hydratePreviewFromDisk = useProjectWorkspaceStore((s) => s.hydratePreviewFromDisk);
+  const applyBuild = useProjectWorkspaceStore((s) => s.applyBuild);
+  const hydratedRef = useRef(false);
+
+  useEffect(() => {
+    if (hydratedRef.current) return;
+    hydratedRef.current = true;
+    void (async () => {
+      await hydratePreviewFromDisk();
+      const state = useProjectWorkspaceStore.getState();
+      if (state.html?.trim()) {
+        if (!state.previewOpen) setPreviewOpen(true);
+        return;
+      }
+      // Fallback: reload preview files from GitHub when metadata survived refresh
+      if (state.repo?.includes('/')) {
+        try {
+          const files = await api.github.getBuildFiles(state.repo);
+          if (files.html?.trim()) {
+            applyBuild({
+              repo: state.repo,
+              branch: state.branch || branch || 'main',
+              html: files.html,
+              css: files.css || '',
+              js: files.js || '',
+              openPreview: true,
+              status: state.deployUrl ? 'live' : 'pushed',
+            });
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+    })();
+  }, [hydratePreviewFromDisk, applyBuild, setPreviewOpen, branch]);
 
   const sandboxDoc = useMemo(
     () => (html?.trim() ? buildInlinePreviewDocument(html, css, js) : ''),
