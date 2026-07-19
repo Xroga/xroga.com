@@ -78,8 +78,14 @@ export async function deployStaticSiteWithToken(
     projectSettings: {
       framework,
       ...(framework === 'nextjs'
-        ? { buildCommand: 'npm run build', installCommand: 'npm install' }
-        : {}),
+        ? {
+            buildCommand: 'npm run build',
+            installCommand: 'npm install',
+            outputDirectory: '.next',
+          }
+        : framework === 'vite'
+          ? { buildCommand: 'npm run build', installCommand: 'npm install' }
+          : {}),
     },
     target: 'production',
   };

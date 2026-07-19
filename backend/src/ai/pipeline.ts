@@ -71,6 +71,13 @@ import {
 import { summarizeRepoForUpdates } from './repoSummarize.js';
 import { scanProjectFiles, redactCriticalSecrets } from './securityScan.js';
 import { staticValidateProject } from './staticValidate.js';
+import { compileValidateProject } from './compileValidate.js';
+import { formatArchitectForBuilder, runArchitectPlan } from './architect.js';
+import {
+  loadSessionHistory,
+  mergeHistories,
+  saveSessionHistory,
+} from './sessionMemory.js';
 import { RunTrace } from './runTrace.js';
 import { verifyShippedProduct } from '../lib/shipVerify.js';
 
@@ -309,17 +316,37 @@ async function callBuilderStream(
 }
 
 function todosForBuild(
-  step: 'route' | 'research' | 'convert' | 'build' | 'qa' | 'push' | 'done',
+  step:
+    | 'route'
+    | 'research'
+    | 'convert'
+    | 'architect'
+    | 'build'
+    | 'qa'
+    | 'compile'
+    | 'push'
+    | 'done',
 ) {
   const steps = [
     { id: 'route', label: 'Route request' },
     { id: 'research', label: 'Gather research' },
     { id: 'convert', label: 'Convert to builder brief' },
+    { id: 'architect', label: 'Architect file plan' },
     { id: 'build', label: 'Generate product' },
     { id: 'qa', label: 'Review quality' },
+    { id: 'compile', label: 'Compile validate' },
     { id: 'push', label: 'Push & deploy' },
   ] as const;
-  const order = ['route', 'research', 'convert', 'build', 'qa', 'push'] as const;
+  const order = [
+    'route',
+    'research',
+    'convert',
+    'architect',
+    'build',
+    'qa',
+    'compile',
+    'push',
+  ] as const;
   const idx = step === 'done' ? order.length : order.indexOf(step);
   return steps.map((s, i) => ({
     id: s.id,
@@ -492,6 +519,10 @@ export async function runBuildPipeline(opts: {
   createRun(opts.userId, userFacingPrompt, runId);
   await assertHasQuota(opts.userId);
   throwIfAborted();
+
+  // Durable chat memory across sessions (DB + client history)
+  const dbHistory = await loadSessionHistory(opts.userId, meta?.githubTargetRepo, 12);
+  const history = mergeHistories(dbHistory, opts.history ?? []);
 
   // Attachments without a build intent → vision/doc analyze (not a site rebuild)
   const preparedEarly = await prepareAttachments(opts.attachments);
@@ -706,6 +737,49 @@ export async function runBuildPipeline(opts: {
     converted.outputTokens,
   );
 
+  // Architect agent — concrete file plan (real multi-agent stage)
+  throwIfAborted();
+  emit({
+    agent: 'architect',
+    status: 'planning',
+    message: 'Architect planning file tree…',
+    swarmStatusLabel: 'Architect',
+    swarmActivity: 'File plan',
+    swarmTodos: todosForBuild('architect'),
+  });
+  let architectBlock = '';
+  let architectPlanSummary: { stack: string; files: string[]; notes: string[] } | undefined;
+  try {
+    await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
+    const plan = await runArchitectPlan({
+      brief: converted.instruction,
+      userPrompt: userFacingPrompt,
+      isUpdate,
+    });
+    usage = await recordUsage(
+      opts.userId,
+      'deepseek_v4_flash',
+      plan.inputTokens,
+      plan.outputTokens,
+    );
+    architectBlock = formatArchitectForBuilder(plan);
+    architectPlanSummary = {
+      stack: plan.stack,
+      files: plan.files.map((f) => f.path),
+      notes: plan.notes,
+    };
+    emit({
+      agent: 'architect',
+      status: 'planned',
+      message: `Plan: ${plan.stack} · ${plan.files.length} files`,
+      swarmStatusLabel: 'Architect',
+      swarmActivity: plan.stack,
+      swarmTodos: todosForBuild('architect'),
+    });
+  } catch (err) {
+    console.warn('[pipeline] architect failed (continuing):', (err as Error).message);
+  }
+
   emit({
     agent: 'builder',
     status: 'building',
@@ -718,8 +792,8 @@ export async function runBuildPipeline(opts: {
   });
 
   const historyNote =
-    opts.history?.length
-      ? `\n\nRecent conversation context:\n${opts.history
+    history.length
+      ? `\n\nRecent conversation context:\n${history
           .slice(-6)
           .map((h) => `${h.role}: ${h.content.slice(0, 500)}`)
           .join('\n')}`
@@ -735,7 +809,7 @@ export async function runBuildPipeline(opts: {
         })}`
       : '';
 
-  const builderUser = `${converted.instruction}${historyNote}${
+  const builderUser = `${converted.instruction}${architectBlock}${historyNote}${
     researchBlock ? `\n\n${researchBlock}` : ''
   }${designReference}${updateBlock}\n\nOriginal user request:\n${opts.prompt}`;
 
@@ -996,6 +1070,7 @@ export async function runBuildPipeline(opts: {
     swarmActivity: 'Static validate + QA',
     swarmTodos: todosForBuild('qa'),
   });
+  // Parallel-ish reviewer: static structure + LLM QA together
   const staticPre = staticValidateProject(nextFiles);
   let qa = await reviewBuildOutput({
     prompt: userFacingPrompt,
@@ -1022,7 +1097,51 @@ export async function runBuildPipeline(opts: {
     );
   }
 
-  // One fix pass if QA failed and we have fix hints
+  // Real compile: npm install --ignore-scripts + tsc --noEmit (framework projects)
+  throwIfAborted();
+  emit({
+    agent: 'compiler',
+    status: 'compiling',
+    message: 'Compile validate — npm install + tsc…',
+    swarmStatusLabel: 'Compile',
+    swarmActivity: 'Sandbox tsc',
+    swarmTodos: todosForBuild('compile'),
+  });
+  let compile = await compileValidateProject(nextFiles, { signal: opts.signal });
+  if (!compile.skipped && !compile.ok) {
+    qa = {
+      ...qa,
+      ok: false,
+      issues: [...qa.issues, ...compile.issues.map((i) => `compile: ${i}`)],
+      fixHints: [
+        ...qa.fixHints,
+        'Fix TypeScript/compile errors before ship',
+        ...compile.issues.slice(0, 3),
+      ],
+    };
+    emit({
+      agent: 'compiler',
+      status: 'compile_failed',
+      message: compile.issues.slice(0, 3).join('; ') || 'Compile failed',
+      swarmStatusLabel: 'Compile failed',
+      swarmActivity: `${compile.durationMs}ms`,
+      swarmTodos: todosForBuild('compile'),
+    });
+  } else {
+    emit({
+      agent: 'compiler',
+      status: compile.skipped ? 'skipped' : 'compiled',
+      message: compile.skipped
+        ? 'Compile skipped (static site)'
+        : `Compile OK · install ${compile.installOk ? '✓' : '✗'} · tsc ${compile.tscOk ? '✓' : '✗'}`,
+      swarmStatusLabel: compile.skipped ? 'Compile skip' : 'Compiled',
+      swarmActivity: `${compile.durationMs}ms`,
+      swarmTodos: todosForBuild('compile'),
+    });
+  }
+  trace.setMeta({ compile: { ok: compile.ok, skipped: compile.skipped, issues: compile.issues } });
+
+  // One fix pass if QA/compile failed and we have fix hints
   if (!qa.ok && qa.fixHints.length && !opts.signal?.aborted) {
     emit({
       agent: 'builder',
@@ -1088,6 +1207,7 @@ export async function runBuildPipeline(opts: {
         css: reQaSite.css,
         js: reQaSite.js,
         isUpdate,
+        files: nextFiles,
       });
       if (qa.inputTokens || qa.outputTokens) {
         usage = await recordUsage(
@@ -1096,6 +1216,15 @@ export async function runBuildPipeline(opts: {
           qa.inputTokens,
           qa.outputTokens,
         );
+      }
+      // Re-compile after fix pass
+      compile = await compileValidateProject(nextFiles, { signal: opts.signal });
+      if (!compile.skipped && !compile.ok) {
+        qa = {
+          ...qa,
+          ok: false,
+          issues: [...qa.issues, ...compile.issues.map((i) => `compile: ${i}`)],
+        };
       }
     } catch (err) {
       console.warn('[pipeline] QA fix pass failed:', (err as Error).message);
@@ -1218,12 +1347,25 @@ export async function runBuildPipeline(opts: {
   }
   // Updates must target the same repo — never create a new repo for edit/delete
   // Abort push when patches failed or secrets still blocked
+  const compileBlocksShip = !compile.skipped && compile.ok === false;
   const shouldPush =
     githubOk &&
     !patchAborted &&
     !security.blocked &&
+    !compileBlocksShip &&
     (isUpdate ? Boolean(meta?.githubTargetRepo) : true) &&
     (filesToPush.length > 0 || deletedPaths.length > 0);
+
+  if (compileBlocksShip) {
+    emit({
+      agent: 'deploy',
+      status: 'push_skipped',
+      message: 'Push skipped — compile failed. Fix TypeScript/install errors first.',
+      swarmStatusLabel: 'Compile block',
+      swarmActivity: compile.issues.slice(0, 2).join('; ') || 'tsc failed',
+      swarmTodos: todosForBuild('push'),
+    });
+  }
 
   if (isUpdate && githubOk && !meta?.githubTargetRepo) {
     emit({
@@ -1311,6 +1453,7 @@ export async function runBuildPipeline(opts: {
   const canDeployVercel =
     !patchAborted &&
     !security.blocked &&
+    !compileBlocksShip &&
     Boolean(vercelToken) &&
     nextFiles.some(
       (f) =>
@@ -1402,10 +1545,11 @@ export async function runBuildPipeline(opts: {
   const shipOk =
     !patchAborted &&
     !security.blocked &&
+    !compileBlocksShip &&
     (shouldPush ? githubPushConfirmed : true) &&
     (deployUrl ? Boolean(shipVerify?.liveOk ?? deployVerified) : true);
 
-  const overallSuccess = shipOk && !patchAborted;
+  const overallSuccess = shipOk && !patchAborted && (compile.skipped || compile.ok);
 
   emit({
     agent: 'builder',
@@ -1432,6 +1576,12 @@ export async function runBuildPipeline(opts: {
   const verifyMarkdown = shipVerify?.summaryLines?.length
     ? `\n\n### Ship check\n${shipVerify.summaryLines.join('\n')}`
     : '';
+  const compileMarkdown =
+    !compile.skipped
+      ? `\n\n### Compile\n${compile.ok ? '✅' : '❌'} npm install ${compile.installOk ? 'OK' : 'FAIL'} · tsc ${compile.tscOk ? 'OK' : 'FAIL'}${
+          compile.issues.length ? `\n${compile.issues.slice(0, 5).map((i) => `- ${i}`).join('\n')}` : ''
+        }`
+      : '';
 
   const output: Record<string, unknown> = {
     type: 'landing_page',
@@ -1450,7 +1600,8 @@ export async function runBuildPipeline(opts: {
             ? `Updated **${projectName}** with ${MODELS[result.modelId].label}.`
             : `Built **${projectName}** with ${MODELS[result.modelId].label}.`
           : `⚠️ **${projectName}** finished with failures — check GitHub/Vercel status below.`) +
-      verifyMarkdown
+      verifyMarkdown +
+      compileMarkdown
     ),
     modelLabel: MODELS[result.modelId].label,
     userPrompt: userFacingPrompt,
@@ -1459,8 +1610,17 @@ export async function runBuildPipeline(opts: {
     patchAborted,
     patchFailures: patchFailures.length ? patchFailures : undefined,
     updatedFiles: isUpdate ? effectiveTrail.map((f) => f.path) : undefined,
+    architectPlan: architectPlanSummary,
     changesSummary: [
       ...changesSummary,
+      ...(architectPlanSummary
+        ? [`Architect: ${architectPlanSummary.stack} · ${architectPlanSummary.files.length} files`]
+        : []),
+      ...(compile.skipped
+        ? []
+        : [
+            `Compile: ${compile.ok ? 'passed' : 'failed'} (${compile.durationMs}ms)`,
+          ]),
       ...(shipVerify?.summaryLines || []),
       ...(security.findings.length
         ? [`Security: ${security.findings.length} finding(s)${security.blocked ? ' (blocked)' : ''}`]
@@ -1487,12 +1647,21 @@ export async function runBuildPipeline(opts: {
       fixHints: qa.fixHints,
       staticKind: qa.staticKind,
     },
+    compile: {
+      ok: compile.ok,
+      skipped: compile.skipped,
+      installOk: compile.installOk,
+      tscOk: compile.tscOk,
+      issues: compile.issues,
+      durationMs: compile.durationMs,
+    },
     security: {
       ok: security.ok,
       blocked: security.blocked,
       findings: security.findings.slice(0, 20),
     },
     memoryHit: isUpdate ? prior.fromMemory : false,
+    sessionMemoryLoaded: dbHistory.length,
     contextFiles: isUpdate ? selection.selected.map((f) => f.path) : undefined,
     deletedFiles: deletedPaths.length ? deletedPaths : undefined,
     runTrace: trace.summary(),
@@ -1506,6 +1675,14 @@ export async function runBuildPipeline(opts: {
     success: overallSuccess,
   });
   void trace.persist();
+  void saveSessionHistory(opts.userId, githubRepoName || meta?.githubTargetRepo, [
+    ...history,
+    { role: 'user', content: userFacingPrompt },
+    {
+      role: 'assistant',
+      content: String(output.message || '').slice(0, 6000),
+    },
+  ]);
 
   return {
     runId,
