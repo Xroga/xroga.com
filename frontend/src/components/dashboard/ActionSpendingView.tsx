@@ -33,16 +33,6 @@ export function ActionSpendingView({ embedded }: { embedded?: boolean }) {
                 style={{ width: `${Math.max(4, 100 - usage.percentUsed)}%` }}
               />
             </div>
-            {typeof usage.creditRemainingUsd === 'number' && (
-              <p className="text-xs text-[var(--muted)]">
-                AI credit left: ${usage.creditRemainingUsd.toFixed(2)}
-                {typeof usage.percentCreditUsed === 'number'
-                  ? ` · ${usage.percentCreditUsed}% used`
-                  : ''}
-                {' '}
-                (real per-call deductions · unused credit rolls over)
-              </p>
-            )}
             <p className="text-xs text-[var(--muted)]">
               Input: {formatTokens(usage.inputTokensRemaining)} left · Output:{' '}
               {formatTokens(usage.outputTokensRemaining)} left
