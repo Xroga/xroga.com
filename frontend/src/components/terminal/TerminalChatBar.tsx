@@ -23,7 +23,6 @@ import { GitHubChipIcon, VercelChipIcon, ChatBarBrandChip } from './ChatBarButto
 import { Search } from 'lucide-react';
 import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
-import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
