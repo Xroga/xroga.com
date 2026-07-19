@@ -8,7 +8,9 @@ import {
   completeRun,
   createRun,
   getRun,
+  getRunAsync,
   listRunsForUser,
+  listRunsForUserAsync,
   saveConversation,
 } from '../ai/runStore.js';
 
@@ -168,10 +170,11 @@ router.post('/execute', async (req: AuthRequest, res) => {
   }
 });
 
-router.get('/history', (req: AuthRequest, res) => {
+router.get('/history', async (req: AuthRequest, res) => {
   const userId = req.userId;
   if (!userId) return res.status(401).json({ error: 'Sign in required' });
-  const runs = listRunsForUser(userId).map((r) => ({
+  const listed = await listRunsForUserAsync(userId);
+  const runs = listed.map((r) => ({
     id: r.id,
     prompt: r.prompt,
     status: r.status,
@@ -183,9 +186,9 @@ router.get('/history', (req: AuthRequest, res) => {
   res.json(runs);
 });
 
-router.get('/runs/:runId', (req: AuthRequest, res) => {
+router.get('/runs/:runId', async (req: AuthRequest, res) => {
   const runId = String(req.params.runId || '');
-  const run = getRun(runId);
+  const run = await getRunAsync(runId);
   if (!run) {
     return res.json({
       id: runId,
