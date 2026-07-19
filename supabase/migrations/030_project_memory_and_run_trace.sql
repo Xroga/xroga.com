@@ -1,10 +1,11 @@
 -- Persistent project memory (same-repo updates across API restarts)
 -- + lightweight run traces for observability
 
+-- repo uses sentinel '_local' (NOT NULL) so upserts work without NULLS NOT DISTINCT
 CREATE TABLE IF NOT EXISTS project_memory (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  repo TEXT,
+  repo TEXT NOT NULL DEFAULT '_local',
   branch TEXT NOT NULL DEFAULT 'main',
   project_name TEXT,
   files JSONB NOT NULL DEFAULT '[]'::jsonb,
@@ -15,7 +16,7 @@ CREATE TABLE IF NOT EXISTS project_memory (
   hits INTEGER NOT NULL DEFAULT 0,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE NULLS NOT DISTINCT (user_id, repo, branch)
+  UNIQUE (user_id, repo, branch)
 );
 
 CREATE INDEX IF NOT EXISTS idx_project_memory_user ON project_memory(user_id);
@@ -59,5 +60,6 @@ END $$;
 
 GRANT ALL ON TABLE public.project_memory TO service_role;
 GRANT ALL ON TABLE public.swarm_run_traces TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.project_memory TO authenticated;
 
 NOTIFY pgrst, 'reload schema';

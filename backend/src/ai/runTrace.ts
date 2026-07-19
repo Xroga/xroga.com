@@ -3,6 +3,7 @@
  */
 
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
 
 export interface TraceStage {
   agent: string;
@@ -50,6 +51,7 @@ export class RunTrace {
   async persist(): Promise<void> {
     if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
     try {
+      await ensureShipLoopSchema();
       const supabase = getSupabaseAdmin();
       await supabase.from('swarm_run_traces').upsert(
         {
