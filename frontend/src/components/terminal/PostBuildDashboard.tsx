@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -14,6 +15,7 @@ import {
   Lightbulb,
   Loader2,
   Rocket,
+  Smartphone,
   Sparkles,
   Wrench,
 } from 'lucide-react';
@@ -114,10 +116,23 @@ export function PostBuildDashboard({
     return scaffoldPathsForPrompt(hint);
   }, [data.generatedFiles, data.features, data.pages, projectName]);
   const fileCount = data.fileCount ?? fileTree.length;
+  const isExpoApp = useMemo(() => {
+    const paths = fileTree.map((p) => p.toLowerCase());
+    return (
+      paths.some((p) => p === 'app.json' || p.endsWith('/app.json') || p === 'eas.json') ||
+      paths.some((p) => p.includes('expo-router') || p.startsWith('app/')) ||
+      /\b(expo|android|ios|react native|play store|app store)\b/i.test(
+        [projectName, data.userPrompt, ...(data.features ?? [])].filter(Boolean).join(' ')
+      )
+    );
+  }, [fileTree, projectName, data.userPrompt, data.features]);
 
   const missingItems: string[] = [];
   if (!githubPushed && !data.githubPushConfirmed) missingItems.push('Code not yet saved to GitHub — connect repo in chatbar');
   if (!liveUrl && !autoDeploying) missingItems.push('Live URL optional — connect Vercel or use sandbox preview below');
+  if (isExpoApp) {
+    missingItems.push('Mobile store publish uses your Expo/Apple/Google accounts — open Publish (no Xroga store fees)');
+  }
   if (siteAudit.issues.some((i) => i.severity === 'critical')) {
     missingItems.push(`${siteAudit.issues.filter((i) => i.severity === 'critical').length} critical health issue(s)`);
   }
@@ -376,6 +391,13 @@ export function PostBuildDashboard({
               onLiveUrl?.(url);
             }}
           />
+          <Link
+            href="/dashboard/publish"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--card-border)] text-xs font-semibold hover:bg-[var(--foreground)]/5 transition-colors"
+          >
+            {isExpoApp ? <Smartphone className="w-4 h-4" /> : <Rocket className="w-4 h-4" />}
+            {isExpoApp ? 'Publish mobile (your stores)' : 'Publish setup'}
+          </Link>
           <button
             type="button"
             onClick={() => setBehindOpen((o) => !o)}

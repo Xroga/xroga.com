@@ -4,6 +4,7 @@ import type { AuthRequest } from '../middleware/auth.js';
 import { retiredJson } from './retiredSurface.js';
 import {
   ALLOWED_PROVIDERS,
+  PUBLISH_ONLY_PROVIDERS,
   deleteUserProviderKey,
   listUserProviderKeys,
   providerCatalog,
@@ -28,7 +29,9 @@ router.get('/ai-catalog', (_req, res) => {
     userGuidance:
       p.id === 'custom'
         ? 'Paste any secret and set the env var name. Synced to your Vercel project on deploy — never committed to GitHub.'
-        : `Saved encrypted in your Xroga vault as ${p.envVar}. Auto-synced to Vercel when you deploy.`,
+        : p.category === 'publish'
+          ? `Saved encrypted in your Xroga vault as ${p.envVar}. Used for your Expo/EAS store builds — you pay Apple/Google fees, not Xroga. Never committed to GitHub.`
+          : `Saved encrypted in your Xroga vault as ${p.envVar}. Auto-synced to Vercel when you deploy.`,
     xrogaProvided: false,
   }));
   res.json({
@@ -55,7 +58,7 @@ router.get('/provider-keys', async (req: AuthRequest, res) => {
 router.post('/provider-keys', async (req: AuthRequest, res) => {
   const schema = z.object({
     provider: z.string().min(2).max(64),
-    apiKey: z.string().min(8).max(4096),
+    apiKey: z.string().min(8).max(48_000),
     envVarName: z.string().min(2).max(64).optional(),
     /** Optional: sync to this Vercel project immediately */
     vercelProject: z.string().min(2).max(64).optional(),
@@ -76,7 +79,8 @@ router.post('/provider-keys', async (req: AuthRequest, res) => {
 
     let envSync: unknown = null;
     const project = parsed.data.vercelProject?.trim();
-    if (project && (await getVercelToken(req.userId!))) {
+    const isPublish = PUBLISH_ONLY_PROVIDERS.has(saved.provider);
+    if (!isPublish && project && (await getVercelToken(req.userId!))) {
       envSync = await syncUserVaultToVercel(req.userId!, project);
     }
 
@@ -86,8 +90,9 @@ router.post('/provider-keys', async (req: AuthRequest, res) => {
       masked: saved.masked,
       envVar: saved.envVar,
       envSync,
-      message:
-        'Key encrypted in your account. Connect Vercel and deploy (or pass vercelProject) to sync env vars.',
+      message: isPublish
+        ? 'Publish credential encrypted in your account. Used for your Expo/EAS store flow — Apple/Google fees stay on you.'
+        : 'Key encrypted in your account. Connect Vercel and deploy (or pass vercelProject) to sync env vars.',
     });
   } catch (err) {
     res.status(400).json({ error: (err as Error).message });

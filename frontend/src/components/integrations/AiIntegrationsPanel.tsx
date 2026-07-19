@@ -38,7 +38,7 @@ export function AiIntegrationsPanel({ compact }: { compact?: boolean }) {
         api.integrations.aiCatalog(),
         api.integrations.providerKeys(),
       ]);
-      setCatalog(cat.catalog ?? []);
+      setCatalog((cat.catalog ?? []).filter((item) => item.category !== 'publish'));
       setKeys(k.keys ?? []);
     } catch {
       /* optional */
@@ -112,7 +112,8 @@ export function AiIntegrationsPanel({ compact }: { compact?: boolean }) {
         Paste keys for <strong>your live product</strong> (OpenAI, Stripe, Supabase…). Stored with
         AES-256-GCM in your account — never committed to GitHub. When Vercel is connected, deploy
         auto-syncs them as project env vars. Use a <strong>Full Account</strong> Vercel token for
-        env write access.
+        env write access. Expo / Apple / Google Play credentials live under{' '}
+        <strong>Publish</strong> (not synced to Vercel).
       </p>
 
       <div className="flex flex-col sm:flex-row gap-1.5">

@@ -694,6 +694,60 @@ export const api = {
         body: JSON.stringify({ projectSlug }),
       }),
   },
+  publish: {
+    status: () =>
+      apiFetch<{
+        ok: boolean;
+        web: {
+          ready: boolean;
+          githubConnected: boolean;
+          vercelConnected: boolean;
+          checklist: Array<{
+            id: string;
+            label: string;
+            done: boolean;
+            required: boolean;
+            hint?: string;
+            href?: string;
+          }>;
+        };
+        mobile: {
+          ready: boolean;
+          expoTokenSaved: boolean;
+          expoTokenValid: boolean | null;
+          appleSaved: boolean;
+          googlePlaySaved: boolean;
+          checklist: Array<{
+            id: string;
+            label: string;
+            done: boolean;
+            required: boolean;
+            hint?: string;
+            href?: string;
+          }>;
+          commands: string[];
+        };
+        costs: { xrogaPays: string[]; userPays: string[] };
+        message?: string;
+      }>('/api/publish/status'),
+    saveExpoToken: (token: string) =>
+      apiFetch<{
+        ok: boolean;
+        verified?: boolean;
+        username?: string;
+        masked?: string;
+        envVar?: string;
+        message?: string;
+      }>('/api/publish/expo-token', {
+        method: 'POST',
+        body: JSON.stringify({ token }),
+      }),
+    verifyExpo: () =>
+      apiFetch<{ ok: boolean; verified?: boolean; username?: string }>('/api/publish/verify-expo', {
+        method: 'POST',
+        body: JSON.stringify({}),
+      }),
+  },
   notifications: {
     list: () => apiFetch<Notification[]>('/api/notifications'),
     unreadCount: () => apiFetch<{ count: number }>('/api/notifications/unread-count'),

@@ -95,6 +95,12 @@ export const PAGE_SEO = {
     '/dashboard/integrations',
     ['Xroga integrations', 'GitHub AI', 'Vercel AI', 'sync API keys']
   ),
+  publish: dashboardPageMetadata(
+    'Publish',
+    'Publish on your accounts: GitHub + Vercel for web, Expo/EAS for Android and iOS. Store fees are yours — Xroga never pays App Store or Play Store for you.',
+    '/dashboard/publish',
+    ['publish app', 'Expo EAS', 'Vercel deploy', 'App Store guide', 'Play Store guide']
+  ),
   billing: dashboardPageMetadata(
     'Billing',
     'Plans, invoices, action spend, pause or cancel subscription, and top-ups for Xroga AI.',
