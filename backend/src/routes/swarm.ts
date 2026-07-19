@@ -28,8 +28,9 @@ router.post('/execute', async (req: AuthRequest, res) => {
     (typeof req.body?.prompt === 'string' && req.body.prompt) ||
     (typeof req.body?.message === 'string' && req.body.message) ||
     '';
-  if (!prompt.trim()) {
-    return res.status(400).json({ error: 'prompt is required' });
+  const attachments = Array.isArray(req.body?.attachments) ? req.body.attachments : undefined;
+  if (!prompt.trim() && !(attachments && attachments.length)) {
+    return res.status(400).json({ error: 'prompt or attachments required' });
   }
 
   const history = Array.isArray(req.body?.history)
@@ -51,6 +52,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
         history,
         projectId,
         clientMeta,
+        attachments,
       });
       return res.json(result);
     } catch (err) {
@@ -94,6 +96,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
       history,
       projectId,
       clientMeta,
+      attachments,
       onProgress: (event) => {
         sendSSE(res, { event: 'progress', data: { ...event } });
       },

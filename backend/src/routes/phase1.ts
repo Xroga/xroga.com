@@ -35,8 +35,9 @@ router.post('/chat', async (req: AuthRequest, res) => {
     (typeof req.body?.message === 'string' && req.body.message) ||
     (typeof req.body?.prompt === 'string' && req.body.prompt) ||
     '';
-  if (!message.trim()) {
-    return res.status(400).json({ error: 'message is required' });
+  const attachments = Array.isArray(req.body?.attachments) ? req.body.attachments : undefined;
+  if (!message.trim() && !(attachments && attachments.length)) {
+    return res.status(400).json({ error: 'message or attachments required' });
   }
 
   const history = Array.isArray(req.body?.history)
@@ -44,7 +45,12 @@ router.post('/chat', async (req: AuthRequest, res) => {
     : [];
 
   try {
-    const result = await runChatPipeline({ userId, prompt: message.trim(), history });
+    const result = await runChatPipeline({
+      userId,
+      prompt: message.trim(),
+      history,
+      attachments,
+    });
     return res.json({
       response: result.response,
       intent: result.intent,
@@ -52,6 +58,7 @@ router.post('/chat', async (req: AuthRequest, res) => {
       webSources: result.webSources,
       modelId: result.modelId,
       modelLabel: MODELS[result.modelId].label,
+      routeReason: result.route.reason,
     });
   } catch (err) {
     const e = err as Error & { code?: string };

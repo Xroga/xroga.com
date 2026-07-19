@@ -333,30 +333,38 @@ export async function getAccessToken(): Promise<string | null> {
   return session?.access_token ?? null;
 }
 
+/** Read any chat attachment as a data URL (works offline when media upload is retired). */
 export async function uploadChatImage(file: File): Promise<string> {
-  const dataBase64 = await new Promise<string>((resolve, reject) => {
+  return uploadChatFile(file);
+}
+
+export async function uploadChatFile(file: File): Promise<string> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      const comma = result.indexOf(',');
-      resolve(comma >= 0 ? result.slice(comma + 1) : result);
-    };
+    reader.onload = () => resolve(String(reader.result || ''));
     reader.onerror = () => reject(new Error('Failed to read file'));
     reader.readAsDataURL(file);
   });
+
+  const comma = dataUrl.indexOf(',');
+  const dataBase64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
+  const contentType = file.type || 'application/octet-stream';
 
   try {
     const data = await apiFetch<{ url: string }>('/api/media/upload', {
       method: 'POST',
       body: JSON.stringify({
         filename: file.name,
-        contentType: file.type || 'image/png',
+        contentType,
         dataBase64,
       }),
     });
     return data.url;
   } catch {
-    return `data:${file.type || 'image/png'};base64,${dataBase64}`;
+    // Media route may be retired — data URLs work for Grok vision + server extract
+    return dataUrl.startsWith('data:')
+      ? dataUrl
+      : `data:${contentType};base64,${dataBase64}`;
   }
 }
 
@@ -696,10 +704,18 @@ export const api = {
       }),
   },
   phase1: {
-    chat: (message: string, history?: Array<{ role: 'user' | 'assistant'; content: string }>) =>
+    chat: (
+      message: string,
+      history?: Array<{ role: 'user' | 'assistant'; content: string }>,
+      attachments?: ChatAttachment[],
+    ) =>
       apiFetch<Phase1ChatResult>('/api/phase1/chat', {
         method: 'POST',
-        body: JSON.stringify({ message, history }),
+        body: JSON.stringify({
+          message,
+          history,
+          ...(attachments?.length ? { attachments } : {}),
+        }),
       }),
     usage: () => apiFetch<{ usage: TokenUsage }>('/api/phase1/usage'),
     economics: () =>
