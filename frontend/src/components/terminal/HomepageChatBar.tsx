@@ -135,12 +135,14 @@ export function HomepageChatBar() {
 
             <button
               type="submit"
-              className="xv-hc-prompt-go"
+              className="xv-go-btn xv-go-btn--home shrink-0"
               disabled={sending}
-              aria-label="GO"
+              aria-label="Launch"
             >
-              <Rocket className="w-3.5 h-3.5" aria-hidden />
-              <span>{sending ? '…' : 'GO!'}</span>
+              <span className="xv-go-btn__liquid" aria-hidden />
+              <span className="xv-go-btn__icon">
+                <Rocket className="w-3.5 h-3.5" aria-hidden />
+              </span>
             </button>
           </div>
 

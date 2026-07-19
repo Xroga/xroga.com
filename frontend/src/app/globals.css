@@ -1829,16 +1829,17 @@ body.theme-gray * {
     .xv-homepage .xv-home-chatbar-inner .xv-power-smash-upload__shell svg {
       color: #006aff !important;
     }
-    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home {
-      background: linear-gradient(135deg, #e2e8f0, #60a5fa, #ffffff);
-      border-color: rgba(0, 106, 255, 0.3);
+    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home,
+    .xv-home-coding .xv-go-btn--home {
+      background-color: #000 !important;
+      border: 0 !important;
+      width: 36px;
+      height: 36px;
     }
-    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home .xv-go-btn__text {
-      color: #006aff;
-    }
-    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home .xv-go-btn__icon {
-      background: linear-gradient(to bottom, #60a5fa, #006aff);
-      color: white;
+    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home .xv-go-btn__icon,
+    .xv-home-coding .xv-go-btn--home .xv-go-btn__icon {
+      background: transparent !important;
+      color: #fff !important;
     }
   }
   @media (max-width: 639px) {
@@ -1863,16 +1864,10 @@ body.theme-gray * {
     .xv-homepage .xv-home-chatbar-inner .xv-power-smash-upload__shell svg {
       color: #006aff !important;
     }
-    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home {
-      background: linear-gradient(135deg, #ffffff, #94a3b8, #0f172a);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home .xv-go-btn__text {
-      color: #fff;
-    }
-    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home .xv-go-btn__icon {
-      background: linear-gradient(to bottom, #f8fafc, #64748b);
-      color: #0f172a;
+    .xv-homepage .xv-home-chatbar-inner .xv-go-btn--home,
+    .xv-home-coding .xv-go-btn--home {
+      background-color: #000 !important;
+      border: 0 !important;
     }
   }
 
@@ -3636,69 +3631,97 @@ body.theme-gray * {
     50% { transform: scale(1.03); opacity: 0.92; }
   }
 
-  /* GO! send button — compact */
+  /* Small icon-only GO button with liquid water fill (Uiverse-inspired) */
   .xv-go-btn {
-    width: 72px;
-    height: 34px;
-    border-radius: 40px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    background-color: rgb(12, 12, 12);
-    display: flex;
+    position: relative;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    padding: 0;
+    border-radius: 999px;
+    border: 0;
+    outline: 0;
+    background-color: #000;
+    color: #fff;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition-duration: 0.3s;
     overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
   }
-  .xv-go-btn:active { transform: scale(0.95); }
+  .xv-go-btn:active { transform: scale(0.94); }
+  .xv-go-btn:disabled { opacity: 0.7; cursor: wait; }
+
+  .xv-go-btn__liquid {
+    background-color: #2893eb;
+    width: 100%;
+    height: 70%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    box-shadow:
+      inset 5px -5px 25px #104e81,
+      inset -5px 0 25px #104e81;
+    pointer-events: none;
+  }
+  .xv-go-btn__liquid::after {
+    content: '';
+    width: 180%;
+    height: 280%;
+    background: #000;
+    z-index: 1;
+    position: absolute;
+    left: -40%;
+    top: -220%;
+    border-radius: 45%;
+    animation: xv-go-liquid-spin 5s linear 2s infinite;
+  }
+  .xv-go-btn__liquid::before {
+    content: '';
+    width: 180%;
+    height: 280%;
+    background-color: rgb(68, 160, 235);
+    z-index: 1;
+    position: absolute;
+    left: -40%;
+    top: -220%;
+    border-radius: 40%;
+    animation: xv-go-liquid-spin 5s linear 1.8s infinite;
+  }
+  .xv-go-btn__liquid--stop {
+    background-color: #ef4444;
+    box-shadow:
+      inset 5px -5px 25px #7f1d1d,
+      inset -5px 0 25px #7f1d1d;
+  }
+  .xv-go-btn__liquid--stop::before {
+    background-color: #f87171;
+  }
+
   .xv-go-btn__icon {
-    width: 24px;
-    height: 24px;
-    background: linear-gradient(to bottom, rgb(255, 136, 255), rgb(172, 70, 255));
-    border-radius: 50px;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 2;
-    transition-duration: 0.3s;
-    color: white;
-    flex-shrink: 0;
+    color: #fff;
+    background: transparent !important;
+    border-radius: 0;
   }
   .xv-go-btn__icon--stop {
-    background: linear-gradient(to bottom, #f87171, #dc2626);
+    background: transparent !important;
   }
   .xv-go-btn__text {
-    height: 100%;
-    width: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    z-index: 1;
-    transition-duration: 0.3s;
-    font-size: 0.82em;
-    font-weight: 700;
+    display: none !important;
   }
-  .xv-go-btn:hover .xv-go-btn__icon { width: 68px; }
-  .xv-go-btn:hover .xv-go-btn__text {
-    transform: translate(8px);
-    width: 0;
-    font-size: 0;
-  }
-  .xv-go-btn--compact {
-    width: 56px;
-    height: 32px;
-  }
-  .xv-go-btn--compact .xv-go-btn__icon {
-    width: 22px;
-    height: 22px;
-  }
-  .xv-go-btn--compact .xv-go-btn__text {
-    width: 28px;
-    font-size: 0.72em;
-  }
-  .xv-go-btn--compact:hover .xv-go-btn__icon {
-    width: 52px;
+
+  @keyframes xv-go-liquid-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 
   /* Homepage combo mic / GO! — one control, context-aware */
@@ -3792,11 +3815,12 @@ body.theme-gray * {
     color: #ffffff !important;
   }
   body.theme-white .xv-terminal-dock .xv-go-btn {
-    background: linear-gradient(135deg, #0f172a, #006aff);
-    border-color: rgba(0, 106, 255, 0.35);
+    background-color: #000 !important;
+    border: 0 !important;
   }
   body.theme-white .xv-terminal-dock .xv-go-btn__icon {
-    background: linear-gradient(to bottom, #60a5fa, #006aff);
+    background: transparent !important;
+    color: #fff !important;
   }
 
   /* Black & gray theme chatbar — gradient upload & GO */
@@ -3818,32 +3842,22 @@ body.theme-gray * {
     color: #0f172a !important;
   }
   body.theme-black .xv-terminal-dock .xv-go-btn,
-  body.theme-gray .xv-terminal-dock .xv-go-btn {
-    background: #ffffff !important;
-    border: 2px solid rgba(15, 23, 42, 0.2) !important;
-  }
-  body.theme-black .xv-terminal-dock .xv-go-btn__text,
-  body.theme-gray .xv-terminal-dock .xv-go-btn__text {
-    color: #0f172a !important;
+  body.theme-gray .xv-terminal-dock .xv-go-btn,
+  body.theme-white .xv-terminal-dock .xv-go-btn {
+    background-color: #000 !important;
+    border: 0 !important;
+    color: #fff !important;
   }
   body.theme-black .xv-terminal-dock .xv-go-btn__icon,
-  body.theme-gray .xv-terminal-dock .xv-go-btn__icon {
-    background: #0f172a !important;
-    color: #ffffff !important;
-  }
-
-  body.theme-white .xv-terminal-dock .xv-go-btn {
-    background: #006aff !important;
-    border: 2px solid rgba(0, 106, 255, 0.35) !important;
-    color: #ffffff !important;
-  }
-  body.theme-white .xv-terminal-dock .xv-go-btn__text {
-    color: #ffffff !important;
-    font-family: var(--font-coding);
-  }
+  body.theme-gray .xv-terminal-dock .xv-go-btn__icon,
   body.theme-white .xv-terminal-dock .xv-go-btn__icon {
-    background: #ffffff !important;
-    color: #006aff !important;
+    background: transparent !important;
+    color: #fff !important;
+  }
+  body.theme-black .xv-terminal-dock .xv-go-btn__text,
+  body.theme-gray .xv-terminal-dock .xv-go-btn__text,
+  body.theme-white .xv-terminal-dock .xv-go-btn__text {
+    display: none !important;
   }
 
   body.theme-black .xv-chatbar-secondary-btn,
@@ -4385,8 +4399,9 @@ body.theme-gray * {
       height: 34px !important;
     }
     .xv-go-btn {
-      width: 68px;
+      width: 34px;
       height: 34px;
+      min-width: 34px;
     }
   }
 
@@ -4424,12 +4439,9 @@ body.theme-gray * {
       padding: 0.35rem 0.5rem;
     }
     .xv-go-btn {
-      width: 76px;
-      height: 36px;
-    }
-    .xv-go-btn__text {
-      width: 44px;
-      font-size: 0.85em;
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
     }
   }
 
@@ -4473,12 +4485,12 @@ body.theme-gray * {
     color: #fff !important;
   }
   body.xv-incognito-active .xv-go-btn--incognito {
-    background: rgba(255, 255, 255, 0.14) !important;
-    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    background-color: #000 !important;
+    border: 0 !important;
     color: #fff !important;
   }
-  body.xv-incognito-active .xv-go-btn--incognito .xv-go-btn__text,
   body.xv-incognito-active .xv-go-btn--incognito .xv-go-btn__icon {
+    background: transparent !important;
     color: #fff !important;
   }
   body.xv-incognito-active .xv-incognito-room-notice {
