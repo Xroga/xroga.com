@@ -6,7 +6,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { resolveDatabaseUrls, missingDatabaseUrlHelp } from './lib/database-url.mjs';
 import { connectPostgres } from './lib/pg-connect.mjs';
-import { phase1TableExistsViaRest } from './lib/supabase-rest.mjs';
+import { phase1TableExistsViaRest, shipLoopTablesExistViaRest } from './lib/supabase-rest.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -15,11 +15,17 @@ const MIGRATIONS_DIR = join(ROOT, 'supabase/migrations');
 const dryRun = process.argv.includes('--dry-run') || process.env.DRY_RUN === '1';
 
 if (!resolveDatabaseUrls().length) {
-  // If service role can verify table exists, succeed without DB password
+  // If service role can verify required tables exist, succeed without DB password
   const phase1Exists = await phase1TableExistsViaRest();
-  if (phase1Exists === true) {
-    console.log('user_token_usage exists (REST). No DB password needed.');
+  const shipLoopExists = await shipLoopTablesExistViaRest();
+  if (phase1Exists === true && shipLoopExists === true) {
+    console.log('Required tables exist (REST). No DB password needed.');
     process.exit(0);
+  }
+  if (shipLoopExists === false) {
+    console.error(
+      'Ship-loop tables missing (project_memory / session_memory) and no DATABASE_URL / SUPABASE_DB_PASSWORD configured.'
+    );
   }
   console.error(missingDatabaseUrlHelp());
   process.exit(1);
@@ -36,16 +42,22 @@ if (phase1Exists === true) {
   console.log('user_token_usage table exists — still applying any pending migrations (024/026…).');
 }
 
-const client = await connectPostgres().catch((err) => {
+const client = await connectPostgres().catch(async (err) => {
   if (/password authentication failed/i.test(err.message)) {
-    console.warn(
-      '::warning::SUPABASE_DB_PASSWORD in GitHub secrets is incorrect (use Database password from Supabase Dashboard, NOT service role key).'
+    console.error(
+      '::error::SUPABASE_DB_PASSWORD in GitHub secrets is incorrect (use Database password from Supabase Dashboard → Database settings, NOT the service role key).'
     );
-    console.warn(
-      '::warning::Migrations skipped — Phase 1 API uses in-memory tokens. Set correct password or add SUPABASE_SERVICE_ROLE_KEY + SUPABASE_URL to GitHub.'
+    const shipLoop = await shipLoopTablesExistViaRest();
+    if (shipLoop === true) {
+      console.warn(
+        '::warning::DB password auth failed, but project_memory + session_memory already exist via REST. Fix the secret before the next schema change.'
+      );
+      process.exit(0);
+    }
+    console.error(
+      'Ship-loop tables missing (project_memory / session_memory). Cannot skip — durable memory and run traces will not persist.'
     );
-    console.log('Migration workflow completed (skipped — fix secrets to enable DB persistence).');
-    process.exit(0);
+    process.exit(1);
   }
   throw err;
 });

@@ -3,6 +3,7 @@
  */
 
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
 
 export interface SwarmRunRecord {
   id: string;
@@ -160,6 +161,7 @@ export async function listRunsForUserAsync(userId: string, limit = 30): Promise<
 async function persistToSupabase(rec: SwarmRunRecord): Promise<void> {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
   try {
+    await ensureShipLoopSchema();
     const supabase = getSupabaseAdmin();
     await supabase.from('swarm_runs').upsert(
       {

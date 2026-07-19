@@ -39,6 +39,7 @@ import { getGitHubOAuthCallbackUrl } from './routes/github.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
 import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
 import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
+import { ensureShipLoopSchema } from './db/ensureShipLoopSchema.js';
 import { modelKeyStatus, modelTransportStatus } from './ai/openaiCompat.js';
 import { getAiStackKeyStatus } from './config/envSecrets.js';
 
@@ -218,6 +219,9 @@ server.listen(port, '0.0.0.0', () => {
   });
   void ensureTerminalSessionsSchema().catch((err) => {
     console.warn('[terminalSessionsSchema] Startup ensure skipped:', (err as Error).message);
+  });
+  void ensureShipLoopSchema().catch((err) => {
+    console.warn('[shipLoopSchema] Startup ensure skipped:', (err as Error).message);
   });
 });
 

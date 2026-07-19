@@ -33,5 +33,7 @@ BEGIN
 END $$;
 
 GRANT ALL ON TABLE public.session_memory TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.session_memory TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.project_memory TO authenticated;
 
 NOTIFY pgrst, 'reload schema';

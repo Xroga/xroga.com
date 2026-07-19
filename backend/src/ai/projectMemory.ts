@@ -4,7 +4,10 @@
  */
 
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
 import type { ProjectFile } from './patches.js';
+
+const LOCAL_REPO = '_local';
 
 export interface ProjectMemory {
   userId: string;
@@ -24,8 +27,12 @@ const store = new Map<string, ProjectMemory>();
 const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7d hot cache
 const MAX_FILE_CHARS = 120_000;
 
+function normalizeRepo(repo: string | null | undefined): string {
+  return repo?.includes('/') ? repo : LOCAL_REPO;
+}
+
 function key(userId: string, repo: string | null, branch: string): string {
-  return `${userId}:${repo || 'local'}:${branch || 'main'}`;
+  return `${userId}:${normalizeRepo(repo)}:${branch || 'main'}`;
 }
 
 function trimFiles(files: ProjectFile[]): ProjectFile[] {
@@ -42,9 +49,10 @@ function trimFiles(files: ProjectFile[]): ProjectFile[] {
 
 function fromRow(row: Record<string, unknown>): ProjectMemory {
   const files = Array.isArray(row.files) ? (row.files as ProjectFile[]) : [];
+  const rawRepo = typeof row.repo === 'string' ? row.repo : null;
   return {
     userId: String(row.user_id),
-    repo: (row.repo as string | null) ?? null,
+    repo: rawRepo && rawRepo.includes('/') ? rawRepo : null,
     branch: String(row.branch || 'main'),
     projectName: typeof row.project_name === 'string' ? row.project_name : undefined,
     files,
@@ -64,15 +72,15 @@ async function loadFromDb(
 ): Promise<ProjectMemory | null> {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
   try {
+    await ensureShipLoopSchema();
     const supabase = getSupabaseAdmin();
-    let q = supabase
+    const { data, error } = await supabase
       .from('project_memory')
       .select('*')
       .eq('user_id', userId)
       .eq('branch', branch || 'main')
-      .limit(1);
-    q = repo ? q.eq('repo', repo) : q.is('repo', null);
-    const { data, error } = await q.maybeSingle();
+      .eq('repo', normalizeRepo(repo))
+      .maybeSingle();
     if (error || !data) return null;
     return fromRow(data as Record<string, unknown>);
   } catch (err) {
@@ -84,11 +92,12 @@ async function loadFromDb(
 async function saveToDb(mem: ProjectMemory): Promise<void> {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
   try {
+    await ensureShipLoopSchema();
     const supabase = getSupabaseAdmin();
     await supabase.from('project_memory').upsert(
       {
         user_id: mem.userId,
-        repo: mem.repo,
+        repo: normalizeRepo(mem.repo),
         branch: mem.branch,
         project_name: mem.projectName ?? null,
         files: mem.files,
@@ -148,7 +157,7 @@ export function setProjectMemory(input: {
   aiSummaryModel?: string;
   commitSha?: string;
 }): ProjectMemory {
-  const repo = input.repo ?? null;
+  const repo = input.repo?.includes('/') ? input.repo : null;
   const branch = input.branch || 'main';
   const files = trimFiles(input.files);
   const prev = getProjectMemory(input.userId, repo, branch);

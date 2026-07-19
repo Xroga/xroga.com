@@ -32,8 +32,8 @@ export function supabaseRestUrl() {
   return `https://${projectRefFromConfig()}.supabase.co`;
 }
 
-/** Check if user_token_usage exists using service role (no DB password needed). */
-export async function phase1TableExistsViaRest() {
+/** Check if a public table exists using service role (no DB password needed). */
+export async function tableExistsViaRest(table, select = '*') {
   const key =
     process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() ||
     process.env.SUPABASE_SERVICE_KEY?.trim();
@@ -41,7 +41,7 @@ export async function phase1TableExistsViaRest() {
 
   const base = supabaseRestUrl();
   try {
-    const res = await fetch(`${base}/rest/v1/user_token_usage?select=user_id&limit=1`, {
+    const res = await fetch(`${base}/rest/v1/${table}?select=${encodeURIComponent(select)}&limit=1`, {
       headers: {
         apikey: key,
         Authorization: `Bearer ${key}`,
@@ -50,9 +50,23 @@ export async function phase1TableExistsViaRest() {
     // 200 or 206 = table exists; 42P01 often comes as 404/500 from PostgREST
     if (res.ok) return true;
     const text = await res.text();
-    if (/relation.*does not exist|42P01/i.test(text)) return false;
+    if (/relation.*does not exist|42P01|Could not find the table/i.test(text)) return false;
     return null;
   } catch {
     return null;
   }
+}
+
+/** Check if user_token_usage exists using service role (no DB password needed). */
+export async function phase1TableExistsViaRest() {
+  return tableExistsViaRest('user_token_usage', 'user_id');
+}
+
+/** Ship-loop durable memory tables (030/031). */
+export async function shipLoopTablesExistViaRest() {
+  const project = await tableExistsViaRest('project_memory', 'id');
+  const session = await tableExistsViaRest('session_memory', 'id');
+  if (project === true && session === true) return true;
+  if (project === false || session === false) return false;
+  return null;
 }
