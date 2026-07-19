@@ -651,16 +651,36 @@ export const api = {
         xrogaResearch: Record<string, unknown>;
       }>('/api/integrations/ai-catalog'),
     providerKeys: () =>
-      apiFetch<{ keys: Array<{ provider: string; connected: boolean; masked?: string }> }>(
-        '/api/integrations/provider-keys'
-      ),
-    saveProviderKey: (provider: string, apiKey: string) =>
-      apiFetch<{ ok: boolean; provider: string; masked?: string }>('/api/integrations/provider-keys', {
+      apiFetch<{
+        keys: Array<{ provider: string; connected: boolean; masked?: string; envVar?: string }>;
+      }>('/api/integrations/provider-keys'),
+    saveProviderKey: (
+      provider: string,
+      apiKey: string,
+      opts?: { envVarName?: string; vercelProject?: string },
+    ) =>
+      apiFetch<{
+        ok: boolean;
+        provider: string;
+        masked?: string;
+        envVar?: string;
+        envSync?: unknown;
+      }>('/api/integrations/provider-keys', {
         method: 'POST',
-        body: JSON.stringify({ provider, apiKey }),
+        body: JSON.stringify({
+          provider,
+          apiKey,
+          envVarName: opts?.envVarName,
+          vercelProject: opts?.vercelProject,
+        }),
       }),
     deleteProviderKey: (provider: string) =>
       apiFetch(`/api/integrations/provider-keys/${encodeURIComponent(provider)}`, { method: 'DELETE' }),
+    syncVercelEnv: (projectSlug: string) =>
+      apiFetch<{ ok: boolean; result?: unknown }>('/api/integrations/sync-vercel-env', {
+        method: 'POST',
+        body: JSON.stringify({ projectSlug }),
+      }),
   },
   notifications: {
     list: () => apiFetch<Notification[]>('/api/notifications'),

@@ -1,5 +1,6 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { deployStaticSite, deployStaticSiteWithToken, pollDeploymentReady } from '../../lib/vercel.js';
+import { syncEnvVarsToVercelProject, type VercelEnvSyncResult } from '../../lib/vercelEnv.js';
 import { deployToNetlify, pollNetlifyDeploy } from '../../lib/netlify.js';
 import { verifyLivePreviewUrl } from '../../lib/deployVerify.js';
 import { normalizeBuildFiles } from '../../lib/normalizeBuildSource.js';
@@ -8,6 +9,7 @@ import { vercelStaticSiteJson } from '../../lib/vercelStaticConfig.js';
 import { getSecret } from '../../config/envSecrets.js';
 import { getGitHubToken, isGitHubConnected as checkGitHubConnected, getGitHubStorageMeta } from './githubAuth.js';
 import { getVercelToken } from './vercelAuth.js';
+import { resolveProviderEnvForDeploy } from './userProviderKeys.js';
 import {
   getCachedRepoAnalysis,
   setCachedRepoAnalysis,
@@ -538,13 +540,46 @@ async function deployToVercel(projectSlug: string, staticFiles: ProjectFile[]): 
   };
 }
 
+export async function syncUserVaultToVercel(
+  userId: string,
+  projectSlug: string,
+): Promise<VercelEnvSyncResult | null> {
+  const token = await getVercelToken(userId);
+  if (!token) return null;
+  const env = await resolveProviderEnvForDeploy(userId);
+  if (!Object.keys(env).length) {
+    return { ok: true, projectName: projectSlug, upserted: [], skipped: [] };
+  }
+  const teamId = process.env.VERCEL_TEAM_ID;
+  return syncEnvVarsToVercelProject({
+    token,
+    projectName: projectSlug,
+    env,
+    teamId: teamId || undefined,
+  });
+}
+
 async function deployToVercelWithUserToken(
   userId: string,
   projectSlug: string,
   staticFiles: ProjectFile[]
-): Promise<PreviewDeployResult> {
+): Promise<PreviewDeployResult & { envSync?: VercelEnvSyncResult }> {
   const token = await getVercelToken(userId);
   if (!token) throw new Error('Vercel not connected — user must authorize under Integrations');
+
+  // Sync encrypted vault secrets → Vercel env before deploy (never into GitHub files)
+  let envSync: VercelEnvSyncResult | undefined;
+  try {
+    envSync = (await syncUserVaultToVercel(userId, projectSlug)) ?? undefined;
+    if (envSync && !envSync.ok && envSync.error) {
+      console.warn('[vercel] env sync partial/failed:', envSync.error);
+    } else if (envSync?.upserted?.length) {
+      console.log(`[vercel] synced ${envSync.upserted.length} env var(s) to project ${projectSlug}`);
+    }
+  } catch (err) {
+    console.warn('[vercel] env sync skipped:', (err as Error).message);
+  }
+
   const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
   const deployment = await deployStaticSiteWithToken(projectSlug, vercelFiles, token);
   const deployUrl = await pollDeploymentReady(deployment.deploymentId, deployment.deployUrl, token);
@@ -552,6 +587,7 @@ async function deployToVercelWithUserToken(
     deployUrl,
     platform: 'vercel',
     vercelDeploymentId: deployment.deploymentId,
+    envSync,
   };
 }
 

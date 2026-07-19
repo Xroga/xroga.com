@@ -11,6 +11,7 @@ import {
 import { deployStaticSiteWithToken } from '../lib/vercel.js';
 import { normalizeBuildFiles } from '../lib/normalizeBuildSource.js';
 import { buildFullProjectFiles } from '../services/projectScaffold.js';
+import { syncUserVaultToVercel } from '../services/integrations/githubDeploy.js';
 
 const router = Router();
 
@@ -196,8 +197,14 @@ router.post('/deploy', async (req: AuthRequest, res) => {
   const staticFiles = projectFiles.map((f) => ({ file: f.path, data: f.content }));
 
   try {
+    const envSync = await syncUserVaultToVercel(req.userId!, slug);
     const deployment = await deployStaticSiteWithToken(slug, staticFiles, token);
-    res.json({ deployUrl: deployment.deployUrl, deploymentId: deployment.deploymentId, deployVerified: true });
+    res.json({
+      deployUrl: deployment.deployUrl,
+      deploymentId: deployment.deploymentId,
+      deployVerified: true,
+      envSync,
+    });
   } catch (err) {
     res.status(502).json({ error: (err as Error).message.slice(0, 240), deployUrl: '' });
   }
