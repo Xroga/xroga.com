@@ -254,17 +254,47 @@ async function pushFileViaContents(
   }
 }
 
+async function deleteFileViaContents(
+  token: string,
+  owner: string,
+  repo: string,
+  path: string,
+  message: string,
+  branch: string,
+): Promise<void> {
+  const sha = await getExistingFileSha(token, owner, repo, path, branch);
+  if (!sha) return;
+  const res = await ghFetch(
+    token,
+    `/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`,
+    {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, sha, branch }),
+    },
+  );
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`GitHub delete ${path} failed: ${res.status} ${err.slice(0, 200)}`);
+  }
+}
+
 async function pushFilesViaContents(
   token: string,
   owner: string,
   repo: string,
   files: ProjectFile[],
   message: string,
-  branch: string
+  branch: string,
+  deletePaths: string[] = [],
 ): Promise<string | undefined> {
   for (const file of files) {
     const sha = await getExistingFileSha(token, owner, repo, file.path, branch);
     await pushFileViaContents(token, owner, repo, file, message, branch, sha);
+  }
+  for (const path of [...new Set(deletePaths.map((p) => p.replace(/^\//, '')))].filter(Boolean)) {
+    if (files.some((f) => f.path === path)) continue;
+    await deleteFileViaContents(token, owner, repo, path, message, branch);
   }
   try {
     const { sha } = await getBranchHeadSha(token, owner, repo, branch);
@@ -401,8 +431,8 @@ async function pushFilesToRepoSingle(
   const empty = await isRepoEmpty(token, owner, repo);
 
   if (empty) {
-    // Empty repo cannot delete paths — just push files
-    return pushFilesViaContents(token, owner, repo, files, message, branch);
+    // Empty repo: push files; deletes are no-ops
+    return pushFilesViaContents(token, owner, repo, files, message, branch, deletePaths);
   }
 
   try {
@@ -410,9 +440,11 @@ async function pushFilesToRepoSingle(
   } catch (err) {
     const msg = (err as Error).message;
     if (/409|empty/i.test(msg)) {
-      return pushFilesViaContents(token, owner, repo, files, message, branch);
+      return pushFilesViaContents(token, owner, repo, files, message, branch, deletePaths);
     }
-    throw err;
+    // Fall back to Contents API (supports delete) when Git Data fails
+    console.warn('[githubDeploy] Git Data push failed, Contents API fallback:', msg.slice(0, 160));
+    return pushFilesViaContents(token, owner, repo, files, message, branch, deletePaths);
   }
 }
 
@@ -514,7 +546,34 @@ export function landingDeployFilesFromOutput(html: string, css: string, js: stri
   ];
 }
 
+function isFrameworkSourceTree(files: ProjectFile[]): boolean {
+  const pkg = files.find((f) => f.path === 'package.json')?.content ?? '';
+  if (/"next"|"expo"|"vite"|"react-native"/i.test(pkg)) return true;
+  return files.some(
+    (f) =>
+      f.path.startsWith('app/') ||
+      f.path.startsWith('src/') ||
+      f.path === 'next.config.ts' ||
+      f.path === 'next.config.js' ||
+      f.path === 'app.json',
+  );
+}
+
+/**
+ * Prepare files for Vercel file-upload deploy.
+ * Framework projects keep the full source tree (no GitHub↔Vercel link required).
+ * Classic static sites still merge into a single preview HTML.
+ */
 function hostingDeployFiles(files: ProjectFile[]): ProjectFile[] {
+  if (isFrameworkSourceTree(files)) {
+    // Cap payload — skip lockfiles / binaries; keep README
+    return files.filter(
+      (f) =>
+        !/node_modules\/|package-lock\.json|yarn\.lock|\.(png|jpe?g|gif|webp|ico)$/i.test(f.path) &&
+        (!f.path.endsWith('.md') || f.path === 'README.md'),
+    );
+  }
+
   const html = files.find((f) => f.path === 'index.html')?.content ?? '';
   const css = files.find((f) => f.path === 'styles.css')?.content ?? '';
   const js = files.find((f) => f.path === 'script.js')?.content ?? '';
@@ -527,6 +586,14 @@ function hostingDeployFiles(files: ProjectFile[]): ProjectFile[] {
   }
 
   return landingDeployFilesFromOutput(html, css, js);
+}
+
+function frameworkForDeploy(files: ProjectFile[]): 'nextjs' | 'vite' | null {
+  const pkg = files.find((f) => f.path === 'package.json')?.content ?? '';
+  if (/"next"/i.test(pkg)) return 'nextjs';
+  if (/"vite"/i.test(pkg) && !/"expo"/i.test(pkg)) return 'vite';
+  // Expo / RN: deploy the static index.html preview page only
+  return null;
 }
 
 async function deployToVercel(projectSlug: string, staticFiles: ProjectFile[]): Promise<PreviewDeployResult> {
@@ -550,12 +617,12 @@ export async function syncUserVaultToVercel(
   if (!Object.keys(env).length) {
     return { ok: true, projectName: projectSlug, upserted: [], skipped: [] };
   }
-  const teamId = process.env.VERCEL_TEAM_ID;
+  // Use the user's account (no platform VERCEL_TEAM_ID) so env lands on their project
   return syncEnvVarsToVercelProject({
     token,
     projectName: projectSlug,
     env,
-    teamId: teamId || undefined,
+    teamId: undefined,
   });
 }
 
@@ -581,8 +648,19 @@ async function deployToVercelWithUserToken(
   }
 
   const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
-  const deployment = await deployStaticSiteWithToken(projectSlug, vercelFiles, token);
-  const deployUrl = await pollDeploymentReady(deployment.deploymentId, deployment.deployUrl, token);
+  const framework = frameworkForDeploy(staticFiles);
+  const deployment = await deployStaticSiteWithToken(projectSlug, vercelFiles, token, {
+    framework,
+    sourceDeploy: Boolean(framework),
+    teamId: null,
+  });
+  const deployUrl = await pollDeploymentReady(
+    deployment.deploymentId,
+    deployment.deployUrl,
+    token,
+    framework ? 240_000 : 180_000,
+    null,
+  );
   return {
     deployUrl,
     platform: 'vercel',
@@ -809,6 +887,34 @@ async function fetchRepoTextFile(
 }
 
 /** Pull build files from an existing GitHub repo (no rebuild required). */
+const UPDATE_HYDRATE_PATHS = [
+  'index.html',
+  'styles.css',
+  'script.js',
+  'package.json',
+  'README.md',
+  'app.json',
+  'next.config.ts',
+  'next.config.js',
+  'tsconfig.json',
+  'app/page.tsx',
+  'app/layout.tsx',
+  'app/globals.css',
+  'app/index.tsx',
+  'app/_layout.tsx',
+  'app/about.tsx',
+  'app/login/page.tsx',
+  'app/api/health/route.ts',
+  'app/api/chat/route.ts',
+  'lib/supabase/client.ts',
+  'lib/supabase/server.ts',
+  '.env.example',
+  'src/App.tsx',
+  'src/main.tsx',
+  'src/App.jsx',
+  'src/main.jsx',
+];
+
 export async function fetchBuildFilesFromGitHub(
   userId: string,
   repoName: string,
@@ -820,17 +926,17 @@ export async function fetchBuildFilesFromGitHub(
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
 
-  const indexHtml = (await fetchRepoTextFile(token, owner, repo, 'index.html', branch)) ?? '';
-  const css = (await fetchRepoTextFile(token, owner, repo, 'styles.css', branch)) ?? '';
-  const js = (await fetchRepoTextFile(token, owner, repo, 'script.js', branch)) ?? '';
+  const out: ProjectFile[] = [];
+  for (const path of UPDATE_HYDRATE_PATHS) {
+    const text = await fetchRepoTextFile(token, owner, repo, path, branch);
+    if (text != null) out.push({ path, content: text });
+  }
 
-  if (!indexHtml.trim()) throw new Error('No index.html found in GitHub repo');
+  if (!out.length) {
+    throw new Error('No buildable files found in GitHub repo');
+  }
 
-  return [
-    { path: 'index.html', content: indexHtml },
-    { path: 'styles.css', content: css },
-    { path: 'script.js', content: js },
-  ];
+  return out;
 }
 
 /** Fetch only specific paths for incremental updates (no full-repo read). */
@@ -845,7 +951,7 @@ export async function fetchGitHubFilesByPaths(
 
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
-  const unique = [...new Set(paths.map((p) => p.replace(/^\//, '')))].slice(0, 12);
+  const unique = [...new Set(paths.map((p) => p.replace(/^\//, '')))].slice(0, 40);
 
   const out: ProjectFile[] = [];
   for (const path of unique) {
@@ -858,6 +964,8 @@ export async function fetchGitHubFilesByPaths(
   }
   return out;
 }
+
+export { UPDATE_HYDRATE_PATHS };
 
 export interface GitHubRepoAnalysis {
   repoName: string;

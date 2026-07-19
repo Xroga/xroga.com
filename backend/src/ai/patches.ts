@@ -136,59 +136,124 @@ function flexibleWhitespacePattern(search: string): RegExp | null {
   }
 }
 
+function normalizeEol(s: string): string {
+  return s.replace(/\r\n/g, '\n');
+}
+
 function applySinglePatch(content: string, patch: FilePatch): string | null {
-  if (content.includes(patch.search)) {
-    return content.replace(patch.search, patch.replace);
+  const haystack = normalizeEol(content);
+  const search = normalizeEol(patch.search);
+  const replace = normalizeEol(patch.replace);
+
+  // Empty SEARCH on existing file → append; used carefully by callers for new files
+  if (!search.trim()) {
+    return replace;
   }
 
-  const trimmedSearch = patch.search.trim();
-  if (trimmedSearch && trimmedSearch !== patch.search && content.includes(trimmedSearch)) {
-    return content.replace(trimmedSearch, patch.replace);
+  if (haystack.includes(search)) {
+    return haystack.replace(search, replace);
   }
 
-  const flex = flexibleWhitespacePattern(patch.search);
+  const trimmedSearch = search.trim();
+  if (trimmedSearch && trimmedSearch !== search && haystack.includes(trimmedSearch)) {
+    return haystack.replace(trimmedSearch, replace);
+  }
+
+  // Indentation-tolerant: collapse leading spaces per line
+  const collapseIndent = (s: string) =>
+    s
+      .split('\n')
+      .map((line) => line.replace(/^\s+/, ''))
+      .join('\n');
+  const collapsedHay = collapseIndent(haystack);
+  const collapsedSearch = collapseIndent(search);
+  if (collapsedSearch.trim() && collapsedHay.includes(collapsedSearch)) {
+    // Map back by finding first line of search in original
+    const firstLine = search.split('\n').map((l) => l.trim()).find(Boolean);
+    if (firstLine) {
+      const idx = haystack.indexOf(firstLine);
+      if (idx >= 0) {
+        // Best-effort: replace first occurrence of flexible whitespace match
+        const flex = flexibleWhitespacePattern(search);
+        if (flex) {
+          const match = haystack.match(flex);
+          if (match) return haystack.replace(match[0], replace);
+        }
+      }
+    }
+  }
+
+  const flex = flexibleWhitespacePattern(search);
   if (flex) {
-    const match = content.match(flex);
+    const match = haystack.match(flex);
     if (match) {
-      return content.replace(match[0], patch.replace);
+      return haystack.replace(match[0], replace);
     }
   }
 
   return null;
 }
 
+export interface ApplyPatchesResult {
+  files: ProjectFile[];
+  applied: FilePatch[];
+  failed: FilePatch[];
+  /** Human-readable reasons for failed patches (same order as failed) */
+  failureReasons: string[];
+  createdPaths: string[];
+}
+
 /**
  * Apply patches to project files. Failed patches leave files unchanged.
+ * Empty SEARCH + missing path creates a new file (safe additive update).
  */
 export function applyPatches(
   files: ProjectFile[],
   patches: FilePatch[],
-): { files: ProjectFile[]; applied: FilePatch[]; failed: FilePatch[] } {
-  const byPath = new Map(files.map((f) => [f.path, f.content]));
+): ApplyPatchesResult {
+  const byPath = new Map(files.map((f) => [f.path.replace(/^\.\//, ''), f.content]));
   const applied: FilePatch[] = [];
   const failed: FilePatch[] = [];
+  const failureReasons: string[] = [];
+  const createdPaths: string[] = [];
 
   for (const patch of patches) {
-    const current = byPath.get(patch.path);
+    const path = patch.path.replace(/^\.\//, '');
+    const normalizedPatch = { ...patch, path };
+    const current = byPath.get(path);
+
+    // Create new file when SEARCH is empty / placeholder and path missing
     if (current === undefined) {
-      failed.push(patch);
+      const searchTrim = normalizeEol(patch.search).trim();
+      if (!searchTrim || searchTrim === '<<NEW FILE>>' || searchTrim === '(new file)') {
+        byPath.set(path, normalizeEol(patch.replace));
+        applied.push(normalizedPatch);
+        createdPaths.push(path);
+        continue;
+      }
+      failed.push(normalizedPatch);
+      failureReasons.push(`missing file: ${path}`);
       continue;
     }
 
-    const next = applySinglePatch(current, patch);
+    const next = applySinglePatch(current, normalizedPatch);
     if (next === null) {
-      failed.push(patch);
+      failed.push(normalizedPatch);
+      failureReasons.push(`SEARCH not found in ${path}`);
       continue;
     }
 
-    byPath.set(patch.path, next);
-    applied.push(patch);
+    byPath.set(path, next);
+    applied.push(normalizedPatch);
   }
 
+  const paths = new Set([...files.map((f) => f.path.replace(/^\.\//, '')), ...byPath.keys()]);
   return {
-    files: files.map((f) => ({ path: f.path, content: byPath.get(f.path) ?? f.content })),
+    files: [...paths].map((path) => ({ path, content: byPath.get(path) ?? '' })),
     applied,
     failed,
+    failureReasons,
+    createdPaths,
   };
 }
 

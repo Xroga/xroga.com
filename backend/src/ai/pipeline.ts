@@ -45,6 +45,7 @@ import {
 import { reviewBuildOutput } from './qa.js';
 import { completeRun, createRun } from './runStore.js';
 import {
+  UPDATE_HYDRATE_PATHS,
   fetchBuildFilesFromGitHub,
   fetchGitHubFilesByPaths,
   landingFilesFromOutput,
@@ -54,6 +55,11 @@ import {
 } from '../services/integrations/githubDeploy.js';
 import { getVercelToken } from '../services/integrations/vercelAuth.js';
 import { buildProviderEnvFiles } from '../services/integrations/userProviderKeys.js';
+import {
+  buildScaffoldForPrompt,
+  detectScaffoldKind,
+  mergeScaffoldWithGenerated,
+} from '../services/projectScaffold.js';
 import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
 import {
   getProjectMemory,
@@ -236,20 +242,13 @@ async function hydratePriorFiles(
     };
   }
 
-  // 3) GitHub — only classic build paths (not full tree AI analyze)
+  // 3) GitHub — hydrate classic + Next/Expo paths so patches match the live repo
   if (repo?.includes('/')) {
     try {
-      const files = await fetchGitHubFilesByPaths(
-        userId,
-        repo,
-        ['index.html', 'styles.css', 'script.js', 'package.json', 'README.md'],
-        branch,
-      );
-      if (!files.some((f) => f.path.endsWith('index.html') && f.content.trim())) {
+      const files = await fetchGitHubFilesByPaths(userId, repo, UPDATE_HYDRATE_PATHS, branch);
+      if (!files.length) {
         const full = await fetchBuildFilesFromGitHub(userId, repo, branch);
-        if (!full.some((f) => f.path === 'index.html' && f.content.trim())) {
-          return { files: [], fromMemory: false };
-        }
+        if (!full.length) return { files: [], fromMemory: false };
         setProjectMemory({ userId, repo, branch, files: full });
         return { files: full, fromMemory: false };
       }
@@ -736,6 +735,7 @@ export async function runBuildPipeline(opts: {
   let usedPatches = false;
   let deletedPaths: string[] = [];
 
+  let patchFailures: string[] = [];
   if (isUpdate && prior.files.length) {
     const patches = extractSearchReplacePatches(result.text);
     if (patches.length) {
@@ -744,6 +744,17 @@ export async function runBuildPipeline(opts: {
         nextFiles = applied.files;
         usedPatches = true;
       }
+      if (applied.failed.length) {
+        patchFailures = applied.failureReasons;
+        emit({
+          agent: 'builder',
+          status: 'patch_warning',
+          message: `${applied.failed.length} patch(es) missed SEARCH — will retry / merge safely`,
+          swarmStatusLabel: 'Patch QA',
+          swarmActivity: applied.failureReasons.slice(0, 2).join('; ') || 'SEARCH miss',
+          swarmTodos: todosForBuild('build'),
+        });
+      }
     }
     const modelDeletes = extractDeletePaths(result.text);
     if (modelDeletes.length) {
@@ -751,6 +762,10 @@ export async function runBuildPipeline(opts: {
       const removed = applyDeletes(base, modelDeletes);
       nextFiles = removed.files;
       deletedPaths = removed.deleted;
+      // Only delete paths that existed — never invent deletes
+      deletedPaths = removed.deleted.filter((p) =>
+        prior.files.some((f) => f.path === p),
+      );
     }
   }
 
@@ -875,21 +890,52 @@ export async function runBuildPipeline(opts: {
     };
   }
 
-  // Ensure landing trio for sandbox when we have html
-  if (finalSite.html.trim() && !nextFiles.some((f) => f.path === 'index.html')) {
-    nextFiles = mergeFileMaps(
-      nextFiles,
-      landingFilesFromOutput(finalSite.html, finalSite.css, finalSite.js),
-    );
-  } else if (finalSite.html.trim()) {
-    // Sync classic files from map
-    const synced = landingFilesFromOutput(finalSite.html, finalSite.css, finalSite.js);
-    nextFiles = mergeFileMaps(synced, nextFiles);
+  // Ensure landing trio for sandbox when we have html (skip for Expo/Next source trees)
+  const isFrameworkOut = nextFiles.some(
+    (f) =>
+      f.path === 'package.json' ||
+      f.path.startsWith('app/') ||
+      f.path === 'app.json',
+  );
+  if (!isFrameworkOut) {
+    if (finalSite.html.trim() && !nextFiles.some((f) => f.path === 'index.html')) {
+      nextFiles = mergeFileMaps(
+        nextFiles,
+        landingFilesFromOutput(finalSite.html, finalSite.css, finalSite.js),
+      );
+    } else if (finalSite.html.trim()) {
+      const synced = landingFilesFromOutput(finalSite.html, finalSite.css, finalSite.js);
+      nextFiles = mergeFileMaps(synced, nextFiles);
+    }
   }
 
   const projectName = isUpdate
     ? prior.projectName || projectNameFromPrompt(opts.prompt)
     : projectNameFromPrompt(opts.prompt);
+
+  // New builds: merge deterministic scaffold (auth/API or Expo) under AI output
+  // so user vault keys can power live /api routes and mobile apps ship complete.
+  if (!isUpdate && nextFiles.length) {
+    const scaffoldKind = detectScaffoldKind(userFacingPrompt);
+    if (scaffoldKind === 'nextjs' || scaffoldKind === 'expo') {
+      const { files: scaffoldFiles } = buildScaffoldForPrompt({
+        prompt: userFacingPrompt,
+        projectName,
+      });
+      nextFiles = mergeScaffoldWithGenerated(scaffoldFiles, nextFiles);
+      emit({
+        agent: 'builder',
+        status: 'scaffolding',
+        message:
+          scaffoldKind === 'expo'
+            ? 'Merged Android/iOS Expo scaffold under your build'
+            : 'Merged Next.js auth/API scaffold (vault keys → Vercel env)',
+        swarmStatusLabel: 'Scaffold',
+        swarmActivity: scaffoldKind,
+        swarmTodos: todosForBuild('build'),
+      });
+    }
+  }
 
   previousFiles = prior.files.length ? prior.files : landingFilesFromOutput('', '', '');
 
@@ -1024,6 +1070,9 @@ export async function runBuildPipeline(opts: {
         ...(prior.fromMemory ? ['Used project memory (no full repo re-read)'] : []),
         ...(usedPatches ? ['Applied surgical SEARCH/REPLACE patches'] : []),
         ...(deletedPaths.length ? [`Deleted ${deletedPaths.join(', ')}`] : []),
+        ...(patchFailures.length
+          ? [`Skipped unsafe patches: ${patchFailures.slice(0, 3).join('; ')}`]
+          : []),
         ...(selection.reason ? [selection.reason] : []),
         ...changesFromTrail(effectiveTrail, userFacingPrompt),
         ...(qa.issues.length ? [`QA notes: ${qa.issues.slice(0, 2).join('; ')}`] : []),
@@ -1031,6 +1080,9 @@ export async function runBuildPipeline(opts: {
     : [
         `Built ${projectName}`,
         `${nextFiles.length} project files`,
+        ...(detectScaffoldKind(userFacingPrompt) !== 'static'
+          ? [`Scaffold: ${detectScaffoldKind(userFacingPrompt)}`]
+          : []),
         ...(qa.issues.length ? [`QA notes: ${qa.issues.slice(0, 2).join('; ')}`] : []),
       ];
 
@@ -1066,10 +1118,22 @@ export async function runBuildPipeline(opts: {
       filesToPush = Array.from(byPath.values());
     }
   }
+  // Updates must target the same repo — never create a new repo for edit/delete
   const shouldPush =
     githubOk &&
-    (meta?.githubTargetRepo || !isUpdate) &&
+    (isUpdate ? Boolean(meta?.githubTargetRepo) : true) &&
     (filesToPush.length > 0 || deletedPaths.length > 0);
+
+  if (isUpdate && githubOk && !meta?.githubTargetRepo) {
+    emit({
+      agent: 'deploy',
+      status: 'push_skipped',
+      message: 'Select the same GitHub repo to update (edit/delete) — no new repo will be created.',
+      swarmStatusLabel: 'Need repo',
+      swarmActivity: 'Pick target repo',
+      swarmTodos: todosForBuild('push'),
+    });
+  }
 
   if (shouldPush) {
     emit({
@@ -1131,15 +1195,27 @@ export async function runBuildPipeline(opts: {
     }
   }
 
-  // Vercel redeploy (new builds + updates) when user connected
+  // Vercel redeploy via file-upload API — does NOT require GitHub↔Vercel project link
   const vercelToken = await getVercelToken(opts.userId);
-  if (vercelToken && nextFiles.some((f) => f.path.endsWith('.html') || f.path === 'index.html')) {
+  const canDeployVercel =
+    Boolean(vercelToken) &&
+    nextFiles.some(
+      (f) =>
+        f.path.endsWith('.html') ||
+        f.path === 'index.html' ||
+        f.path === 'package.json' ||
+        f.path.endsWith('.tsx') ||
+        f.path.endsWith('.jsx'),
+    );
+  if (canDeployVercel) {
     emit({
       agent: 'deploy',
       status: 'deploying',
-      message: isUpdate ? 'Redeploying preview to Vercel…' : 'Deploying to Vercel…',
+      message: isUpdate
+        ? 'Redeploying on your Vercel (no GitHub link required)…'
+        : 'Deploying to your Vercel account…',
       swarmStatusLabel: 'Deploying',
-      swarmActivity: 'Vercel',
+      swarmActivity: 'Vercel file upload',
       swarmTodos: todosForBuild('push'),
     });
     try {
@@ -1150,13 +1226,30 @@ export async function runBuildPipeline(opts: {
           .replace(/^-|-$/g, '')
           .slice(0, 40) || 'xroga-build';
       const deployed = await deployToAllPlatforms(slug, nextFiles, opts.userId);
-      if (deployed.deployVerified && deployed.deployUrl) {
+      if (deployed.deployUrl) {
         deployUrl = deployed.deployUrl;
-        deployVerified = true;
+        deployVerified = deployed.deployVerified;
         vercelPreviewUrl = deployed.vercel?.deployUrl || deployed.deployUrl;
+      } else if (deployed.deployError) {
+        emit({
+          agent: 'deploy',
+          status: 'deploy_failed',
+          message: deployed.deployError,
+          swarmStatusLabel: 'Deploy issue',
+          swarmActivity: deployed.deployError.slice(0, 120),
+          swarmTodos: todosForBuild('push'),
+        });
       }
     } catch (err) {
       console.warn('[pipeline] Vercel deploy failed:', (err as Error).message);
+      emit({
+        agent: 'deploy',
+        status: 'deploy_failed',
+        message: `Vercel deploy failed: ${(err as Error).message}`,
+        swarmStatusLabel: 'Deploy failed',
+        swarmActivity: (err as Error).message.slice(0, 120),
+        swarmTodos: todosForBuild('push'),
+      });
     }
   }
 

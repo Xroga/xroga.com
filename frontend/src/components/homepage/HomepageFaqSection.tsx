@@ -32,6 +32,10 @@ const FAQS: Array<{ q: string; a: string }> = [
     a: 'No. Xroga is a coding agent for web apps — build, push to GitHub, deploy on Vercel, sync API keys, update the same repo. Not a browser-automation or video product.',
   },
   {
+    q: 'Can Xroga build Android and iOS apps?',
+    a: 'Yes for Expo / React Native scaffolds — Xroga generates the mobile project, pushes it to your GitHub, and you run it in Expo Go or ship store builds with EAS. Native App Store submission still uses Expo/EAS on your machine.',
+  },
+  {
     q: 'Where is billing and support?',
     a: 'Checkout and subscriptions are handled by Paddle. For help: hello@xroga.com or the phone on our Contact page. See Terms, Privacy, and Refund Policy in the footer.',
   },
