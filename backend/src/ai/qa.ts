@@ -1,4 +1,6 @@
 import { chatCompletion } from './openaiCompat.js';
+import type { ProjectFile } from './patches.js';
+import { staticValidateProject } from './staticValidate.js';
 
 export interface ReviewBuildOutputOpts {
   prompt: string;
@@ -6,6 +8,8 @@ export interface ReviewBuildOutputOpts {
   css: string;
   js: string;
   isUpdate?: boolean;
+  /** Framework / multi-file tree for Next/Expo QA */
+  files?: ProjectFile[];
 }
 
 export interface ReviewBuildOutputResult {
@@ -14,17 +18,19 @@ export interface ReviewBuildOutputResult {
   fixHints: string[];
   inputTokens: number;
   outputTokens: number;
+  staticKind?: string;
 }
 
-const REVIEW_SYSTEM = `You are a strict QA reviewer for browser-previewable web builds.
+const REVIEW_SYSTEM = `You are a strict QA reviewer for Xroga builds (static HTML, Next.js, or Expo).
 Respond with JSON only: { "ok": boolean, "issues": string[], "fixHints": string[] }.
 - ok=true when the build satisfies the user prompt with no critical defects.
-- issues: concrete problems (broken layout, missing interactivity, accessibility gaps).
-- fixHints: short, actionable repair suggestions the builder can apply.
+- For Next/Expo: check entry files, env usage (no hardcoded secrets), and that the ask was met.
+- issues: concrete problems.
+- fixHints: short, actionable repairs.
 No markdown. No extra keys.`;
 
 function parseReviewJson(text: string): Pick<ReviewBuildOutputResult, 'ok' | 'issues' | 'fixHints'> {
-  const fallback = { ok: true, issues: [] as string[], fixHints: [] as string[] };
+  const fallback = { ok: false, issues: ['QA parse failed — treat as needs review'], fixHints: [] as string[] };
   const trimmed = text.trim();
   if (!trimmed) return fallback;
 
@@ -51,26 +57,57 @@ function parseReviewJson(text: string): Pick<ReviewBuildOutputResult, 'ok' | 'is
   }
 }
 
+function frameworkSamples(files: ProjectFile[]): string {
+  const prefer = [
+    'package.json',
+    'app/page.tsx',
+    'app/layout.tsx',
+    'app/index.tsx',
+    'app.json',
+    'app/api/health/route.ts',
+    'app/api/chat/route.ts',
+    'index.html',
+  ];
+  const picked: ProjectFile[] = [];
+  for (const p of prefer) {
+    const f = files.find((x) => x.path === p);
+    if (f) picked.push(f);
+  }
+  if (!picked.length) picked.push(...files.slice(0, 4));
+  return picked
+    .map((f) => `### ${f.path}\n${f.content.slice(0, 2500)}`)
+    .join('\n\n')
+    .slice(0, 14000);
+}
+
 /**
- * Non-blocking QA pass over generated site files. Returns ok=true when the review cannot run.
+ * QA: static structure checks + LLM review (HTML or framework samples).
+ * Does NOT fail-open on parse errors anymore.
  */
 export async function reviewBuildOutput(
   opts: ReviewBuildOutputOpts,
 ): Promise<ReviewBuildOutputResult> {
-  const empty: ReviewBuildOutputResult = {
-    ok: true,
-    issues: [],
-    fixHints: [],
+  const emptyFail: ReviewBuildOutputResult = {
+    ok: false,
+    issues: ['QA unavailable'],
+    fixHints: ['Retry build'],
     inputTokens: 0,
     outputTokens: 0,
   };
 
+  const staticResult = opts.files?.length
+    ? staticValidateProject(opts.files)
+    : { ok: true, issues: [] as string[], fixHints: [] as string[], kind: 'static' as const };
+
   const userPayload = {
     prompt: opts.prompt.slice(0, 4000),
     isUpdate: Boolean(opts.isUpdate),
-    html: opts.html.slice(0, 12000),
-    css: opts.css.slice(0, 8000),
-    js: opts.js.slice(0, 8000),
+    kind: staticResult.kind,
+    html: opts.html.slice(0, 8000),
+    css: opts.css.slice(0, 4000),
+    js: opts.js.slice(0, 4000),
+    files: opts.files?.length ? frameworkSamples(opts.files) : undefined,
+    staticIssues: staticResult.issues,
   };
 
   try {
@@ -87,12 +124,30 @@ export async function reviewBuildOutput(
     );
 
     const parsed = parseReviewJson(result.text);
+    const issues = [...staticResult.issues, ...parsed.issues];
+    const fixHints = [...staticResult.fixHints, ...parsed.fixHints];
+    const ok = staticResult.ok && parsed.ok && issues.filter((i) => /missing|not valid|secret/i.test(i)).length === 0;
+
     return {
-      ...parsed,
+      ok,
+      issues: [...new Set(issues)].slice(0, 12),
+      fixHints: [...new Set(fixHints)].slice(0, 12),
       inputTokens: result.inputTokens,
       outputTokens: result.outputTokens,
+      staticKind: staticResult.kind,
     };
   } catch {
-    return empty;
+    // Still surface static validation if LLM QA fails
+    if (staticResult.issues.length) {
+      return {
+        ok: staticResult.ok,
+        issues: staticResult.issues,
+        fixHints: staticResult.fixHints,
+        inputTokens: 0,
+        outputTokens: 0,
+        staticKind: staticResult.kind,
+      };
+    }
+    return emptyFail;
   }
 }

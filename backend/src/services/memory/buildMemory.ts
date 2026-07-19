@@ -45,7 +45,8 @@ export async function getPreviousBuilds(userId: string, limit = 5): Promise<Past
       .from('swarm_runs')
       .select('prompt, output, created_at')
       .eq('user_id', userId)
-      .eq('status', 'completed')
+      // runStore persists status as 'complete' (not 'completed')
+      .in('status', ['complete', 'completed'])
       .order('created_at', { ascending: false })
       .limit(limit * 3);
 
@@ -58,17 +59,20 @@ export async function getPreviousBuilds(userId: string, limit = 5): Promise<Past
         (output?.featureOutput as Record<string, unknown> | undefined) ??
         ((output?.output as Record<string, unknown> | undefined)?.featureOutput as
           | Record<string, unknown>
-          | undefined);
+          | undefined) ??
+        output;
 
       const isLanding =
         featureOutput?.type === 'landing_page' ||
-        /\b(website|landing|coffee|shop|site)\b/i.test(String(row.prompt ?? ''));
+        /\b(website|landing|coffee|shop|site|app|saas|expo|android|ios)\b/i.test(
+          String(row.prompt ?? ''),
+        );
 
       if (!isLanding && builds.length === 0) continue;
 
       const prompt = String(row.prompt ?? '');
-      const projectName = extractProjectName(prompt, featureOutput);
-      const designTheme = extractTheme(prompt, featureOutput);
+      const projectName = extractProjectName(prompt, featureOutput ?? undefined);
+      const designTheme = extractTheme(prompt, featureOutput ?? undefined);
       const deployUrl =
         typeof featureOutput?.deployUrl === 'string' ? featureOutput.deployUrl : undefined;
 

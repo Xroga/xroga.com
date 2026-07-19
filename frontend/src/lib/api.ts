@@ -577,6 +577,18 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(payload),
       }),
+    rollback: (payload: { repoName: string; commitSha: string; branch?: string }) =>
+      apiFetch<{
+        ok: boolean;
+        branch: string;
+        commitSha: string;
+        htmlUrl: string;
+        deployUrl?: string;
+        deployVerified?: boolean;
+      }>('/api/github/rollback', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      }),
     getBuildFiles: (repoName: string) =>
       apiFetch<{ html: string; css: string; js: string }>(
         `/api/github/build-files?repoName=${encodeURIComponent(repoName)}`
