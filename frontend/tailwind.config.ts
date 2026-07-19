@@ -18,7 +18,7 @@ const config: Config = {
         mono: ['var(--font-xv-mono)', 'JetBrains Mono', 'ui-monospace', 'monospace'],
         pixel: ['var(--font-pixel)', 'Courier New', 'monospace'],
         coding: ['var(--font-pixel)', 'var(--font-xv-mono)', 'JetBrains Mono', 'ui-monospace', 'monospace'],
-        claude: ['var(--font-source-serif)', 'var(--font-azurio)', 'Georgia', 'serif'],
+        claude: ['var(--font-claude-serif)', 'var(--font-source-serif)', 'Georgia', 'serif'],
       },
       colors: {
         background: "var(--background)",
