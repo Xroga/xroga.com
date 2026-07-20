@@ -53,6 +53,13 @@ export function mergeBuildTodos(seeded: SwarmTodoItem[], incoming: SwarmTodoItem
         else if (backendActive('github')) status = 'active';
         break;
       case 'research':
+        if (incomingById.get('research')?.status === 'skipped') {
+          return {
+            ...todo,
+            status: 'skipped' as const,
+            label: incomingById.get('research')?.label || 'Research skipped — no live sources',
+          };
+        }
         if (backendDone('research')) status = 'done';
         else if (backendActive('research')) status = 'active';
         break;

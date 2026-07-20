@@ -90,7 +90,7 @@ export interface PipelineProgress {
   message?: string;
   swarmStatusLabel?: string;
   swarmActivity?: string;
-  swarmTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
+  swarmTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' | 'skipped' }>;
   keepalive?: boolean;
   /** Open GitHub connect gate early (before long build finishes). */
   needsGitHub?: boolean;
@@ -326,6 +326,17 @@ async function callBuilderStream(
   throw lastErr ?? new Error('All AI models failed');
 }
 
+type ResearchTodoState = 'omit' | 'pending' | 'active' | 'done' | 'skipped';
+
+type BuildTodoStatus = 'done' | 'active' | 'pending' | 'skipped';
+
+/**
+ * Build pipeline todos. Research is never auto-checked when it was skipped or never run.
+ * researchState:
+ *   omit    — not requested (step removed from list)
+ *   skipped — ran, no live sources (honest skipped status, not a green check)
+ *   done    — real sources returned
+ */
 function todosForBuild(
   step:
     | 'route'
@@ -337,8 +348,9 @@ function todosForBuild(
     | 'compile'
     | 'push'
     | 'done',
+  researchState: ResearchTodoState = 'omit',
 ) {
-  const steps = [
+  const all = [
     { id: 'route', label: 'Route request' },
     { id: 'research', label: 'Gather research' },
     { id: 'convert', label: 'Convert to builder brief' },
@@ -348,22 +360,35 @@ function todosForBuild(
     { id: 'compile', label: 'Compile validate' },
     { id: 'push', label: 'Push & deploy' },
   ] as const;
-  const order = [
-    'route',
-    'research',
-    'convert',
-    'architect',
-    'build',
-    'qa',
-    'compile',
-    'push',
-  ] as const;
-  const idx = step === 'done' ? order.length : order.indexOf(step);
-  return steps.map((s, i) => ({
-    id: s.id,
-    label: s.label,
-    status: (i < idx ? 'done' : i === idx ? 'active' : 'pending') as 'done' | 'active' | 'pending',
-  }));
+
+  const steps =
+    researchState === 'omit' ? all.filter((s) => s.id !== 'research') : [...all];
+
+  const order = steps.map((s) => s.id);
+  const idx = step === 'done' ? order.length : Math.max(0, order.indexOf(step));
+
+  return steps.map((s, i) => {
+    if (s.id === 'research') {
+      if (researchState === 'skipped') {
+        return {
+          id: s.id,
+          label: 'Research skipped — no live sources',
+          status: 'skipped' as BuildTodoStatus,
+        };
+      }
+      if (researchState === 'active') {
+        return { id: s.id, label: s.label, status: 'active' as BuildTodoStatus };
+      }
+      if (researchState === 'done') {
+        return { id: s.id, label: s.label, status: 'done' as BuildTodoStatus };
+      }
+      return { id: s.id, label: s.label, status: 'pending' as BuildTodoStatus };
+    }
+
+    const status: BuildTodoStatus =
+      i < idx ? 'done' : i === idx ? 'active' : 'pending';
+    return { id: s.id, label: s.label, status };
+  });
 }
 
 function wantsResearch(prompt: string, _isUpdate: boolean): boolean {
@@ -567,7 +592,7 @@ export async function runBuildPipeline(opts: {
         : 'Analyzing document(s)…',
       swarmStatusLabel: 'Analyze',
       swarmActivity: preparedEarly.hasImages ? 'Grok vision' : 'Doc extract',
-      swarmTodos: todosForBuild('route'),
+      swarmTodos: todosForBuild('route', 'omit'),
     });
     const chat = await runChatPipeline({
       userId: opts.userId,
@@ -594,7 +619,7 @@ export async function runBuildPipeline(opts: {
       message: 'Analysis ready',
       swarmStatusLabel: 'Done',
       swarmActivity: MODELS[chat.modelId].label,
-      swarmTodos: todosForBuild('done').map((t) => ({ ...t, status: 'done' as const })),
+      swarmTodos: todosForBuild('done', 'omit').map((t) => ({ ...t, status: 'done' as const })),
     });
     return {
       runId,
@@ -613,6 +638,21 @@ export async function runBuildPipeline(opts: {
   const isUpdate = Boolean(meta?.buildUpdate && prior.files.length);
   let cachedSummary = prior.aiSummary;
   let usage: UsageSnapshot | null = null;
+  /** Tracks whether research ran / skipped so todos never green-check empty research. */
+  let researchState: ResearchTodoState = 'omit';
+  const todos = (
+    step: Parameters<typeof todosForBuild>[0],
+  ) => todosForBuild(step, researchState);
+  const emitModelSwitch = (from: ModelId, to: ModelId) => {
+    emit({
+      agent: 'builder',
+      status: 'model_fallback',
+      message: `Switched ${MODELS[from].label} → ${MODELS[to].label} (capacity or availability)`,
+      swarmStatusLabel: MODELS[to].label,
+      swarmActivity: 'Fallback',
+      swarmTodos: todos('build'),
+    });
+  };
 
   emit({
     agent: 'router',
@@ -624,7 +664,7 @@ export async function runBuildPipeline(opts: {
     swarmActivity: isUpdate
       ? `Patching ${prior.projectName || meta?.githubTargetRepo || 'project'}`
       : `Assigning ${MODELS[route.builder].label}`,
-    swarmTodos: todosForBuild('route'),
+    swarmTodos: todos('route'),
   });
 
   // Early OAuth preflight — warn before long build so users connect before waiting
@@ -645,7 +685,7 @@ export async function runBuildPipeline(opts: {
       message: `Connect integrations now so this build can ship live: ${earlyShipBlockers[0]}`,
       swarmStatusLabel: 'Authorize',
       swarmActivity: earlyShipBlockers.join(' · '),
-      swarmTodos: todosForBuild('route'),
+      swarmTodos: todos('route'),
       needsGitHub: !githubOkEarly,
       needsVercel: githubOkEarly && !vercelOkEarly,
       needsRepoPick: Boolean(isUpdate && githubOkEarly && !meta?.githubTargetRepo),
@@ -659,7 +699,7 @@ export async function runBuildPipeline(opts: {
         : 'Ship ready · GitHub + Vercel connected',
       swarmStatusLabel: 'Ship ready',
       swarmActivity: meta?.githubTargetRepo || 'Authorize OK',
-      swarmTodos: todosForBuild('route'),
+      swarmTodos: todos('route'),
     });
   }
 
@@ -678,7 +718,7 @@ export async function runBuildPipeline(opts: {
       message: 'One-time project memo for cheaper future updates…',
       swarmStatusLabel: 'Memo',
       swarmActivity: 'DeepSeek Pro / GLM (once)',
-      swarmTodos: todosForBuild('route'),
+      swarmTodos: todos('route'),
     });
     await assertCanUseModel(
       opts.userId,
@@ -710,28 +750,31 @@ export async function runBuildPipeline(opts: {
   let research: ResearchBundle | null = null;
   const needResearch = route.useResearch || wantsResearch(opts.prompt, isUpdate);
   if (needResearch) {
+    researchState = 'active';
     emit({
       agent: 'research',
       status: 'searching',
       message: 'Live research (web + X via Xroga Live)…',
       swarmStatusLabel: 'Research',
       swarmActivity: 'Xroga Live · web + X',
-      swarmTodos: todosForBuild('research'),
+      swarmTodos: todos('research'),
     });
     research = await gatherResearch(opts.prompt);
     researchBlock = formatResearchForPrompt(research);
     if (!researchBlock) {
       // Do not fake a research step when nothing came back
       research = null;
+      researchState = 'skipped';
       emit({
         agent: 'research',
         status: 'skipped',
         message: 'No live sources available — continuing without research',
         swarmStatusLabel: 'Research skipped',
         swarmActivity: 'Build continues',
-        swarmTodos: todosForBuild('convert'),
+        swarmTodos: todos('convert'),
       });
     } else {
+      researchState = 'done';
       emit({
         agent: 'research',
         status: 'ready',
@@ -741,7 +784,7 @@ export async function runBuildPipeline(opts: {
             : `Research ready · ${research.sources.length} source(s)`,
         swarmStatusLabel: 'Research',
         swarmActivity: research.provider,
-        swarmTodos: todosForBuild('convert'),
+        swarmTodos: todos('convert'),
       });
     }
   }
@@ -755,7 +798,7 @@ export async function runBuildPipeline(opts: {
       message: 'Reading attached image(s) with Grok for design/error context…',
       swarmStatusLabel: 'Vision',
       swarmActivity: 'Grok 4.3',
-      swarmTodos: todosForBuild('convert'),
+      swarmTodos: todos('convert'),
     });
     try {
       const vision = await callBuilderStream(
@@ -771,7 +814,7 @@ export async function runBuildPipeline(opts: {
             ),
           },
         ],
-        { userId: opts.userId, maxTokens: 2048, temperature: 0.3, signal: opts.signal },
+        { userId: opts.userId, maxTokens: 2048, temperature: 0.3, signal: opts.signal, onModelFallback: emitModelSwitch },
       );
       usage = await recordUsage(
         opts.userId,
@@ -780,6 +823,14 @@ export async function runBuildPipeline(opts: {
         vision.outputTokens,
       );
       designReference = `\n\nDESIGN / SCREENSHOT REFERENCE (from Grok vision):\n${vision.text.slice(0, 6000)}`;
+      emit({
+        agent: 'vision',
+        status: 'model_active',
+        message: `Vision with ${MODELS[vision.modelId].label}`,
+        swarmStatusLabel: MODELS[vision.modelId].label,
+        swarmActivity: 'Vision brief',
+        swarmTodos: todos('convert'),
+      });
     } catch (err) {
       console.warn('[pipeline] vision brief failed:', (err as Error).message);
     }
@@ -807,7 +858,7 @@ export async function runBuildPipeline(opts: {
       : 'Converting your request into a builder brief…',
     swarmStatusLabel: 'Briefing',
     swarmActivity: `Converter · ${MODELS[route.converter].label}`,
-    swarmTodos: todosForBuild('convert'),
+    swarmTodos: todos('convert'),
   });
 
   await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
@@ -832,7 +883,7 @@ export async function runBuildPipeline(opts: {
     message: 'Architect planning file tree…',
     swarmStatusLabel: 'Architect',
     swarmActivity: 'File plan',
-    swarmTodos: todosForBuild('architect'),
+    swarmTodos: todos('architect'),
   });
   let architectBlock = '';
   let architectPlanSummary: { stack: string; files: string[]; notes: string[] } | undefined;
@@ -861,7 +912,7 @@ export async function runBuildPipeline(opts: {
       message: `Plan: ${plan.stack} · ${plan.files.length} files`,
       swarmStatusLabel: 'Architect',
       swarmActivity: plan.stack,
-      swarmTodos: todosForBuild('architect'),
+      swarmTodos: todos('architect'),
     });
   } catch (err) {
     console.warn('[pipeline] architect failed (continuing):', (err as Error).message);
@@ -875,7 +926,7 @@ export async function runBuildPipeline(opts: {
       : `Building with ${MODELS[route.builder].label}…`,
     swarmStatusLabel: isUpdate ? 'Patching' : 'Building',
     swarmActivity: MODELS[route.builder].tagline,
-    swarmTodos: todosForBuild('build'),
+    swarmTodos: todos('build'),
   });
 
   const historyNote =
@@ -913,14 +964,7 @@ export async function runBuildPipeline(opts: {
       onDelta: opts.onDelta,
       signal: opts.signal,
       onModelFallback: (from, to) => {
-        emit({
-          agent: 'builder',
-          status: 'model_fallback',
-          message: `Switched ${MODELS[from].label} → ${MODELS[to].label} (capacity or availability)`,
-          swarmStatusLabel: MODELS[to].label,
-          swarmActivity: 'Fallback',
-          swarmTodos: todosForBuild('build'),
-        });
+        emitModelSwitch(from, to);
       },
     },
   );
@@ -931,7 +975,7 @@ export async function runBuildPipeline(opts: {
     message: `Building with ${MODELS[result.modelId].label}`,
     swarmStatusLabel: MODELS[result.modelId].label,
     swarmActivity: result.modelId === route.builder ? 'Preferred model' : 'Fallback model',
-    swarmTodos: todosForBuild('build'),
+    swarmTodos: todos('build'),
   });
 
   usage = await recordUsage(opts.userId, result.modelId, result.inputTokens, result.outputTokens);
@@ -961,7 +1005,7 @@ export async function runBuildPipeline(opts: {
           message: `Aborted unsafe update — ${applied.failed.length} patch(es) missed SEARCH. Site unchanged.`,
           swarmStatusLabel: 'Aborted',
           swarmActivity: applied.failureReasons.slice(0, 2).join('; ') || 'SEARCH miss',
-          swarmTodos: todosForBuild('build'),
+          swarmTodos: todos('build'),
         });
         trace.setMeta({ patchAborted: true, patchFailures });
       } else if (applied.applied.length) {
@@ -1012,7 +1056,7 @@ export async function runBuildPipeline(opts: {
         message: 'Update incomplete — retrying with stricter patch instructions…',
         swarmStatusLabel: 'Recovering',
         swarmActivity: 'Retry patch',
-        swarmTodos: todosForBuild('build'),
+        swarmTodos: todos('build'),
       });
       try {
         const retry = await callBuilderStream(
@@ -1035,6 +1079,7 @@ export async function runBuildPipeline(opts: {
             temperature: 0.2,
             onDelta: opts.onDelta,
             signal: opts.signal,
+            onModelFallback: emitModelSwitch,
           },
         );
         usage = await recordUsage(
@@ -1084,7 +1129,7 @@ export async function runBuildPipeline(opts: {
       message: 'Response ready',
       swarmStatusLabel: 'Done',
       swarmActivity: 'Answer ready',
-      swarmTodos: todosForBuild('done').map((t) => ({ ...t, status: 'done' as const })),
+      swarmTodos: todos('done').map((t) => ({ ...t, status: 'done' as const })),
     });
     const chatOut = {
       type: 'chat',
@@ -1156,7 +1201,7 @@ export async function runBuildPipeline(opts: {
               : 'Merged Next.js auth/API scaffold (vault keys → Vercel env)',
         swarmStatusLabel: 'Scaffold',
         swarmActivity: featureBits.length ? featureBits.join(', ') : scaffoldKind,
-        swarmTodos: todosForBuild('build'),
+        swarmTodos: todos('build'),
       });
     }
   }
@@ -1170,7 +1215,7 @@ export async function runBuildPipeline(opts: {
     message: 'Reviewing build quality…',
     swarmStatusLabel: 'QA',
     swarmActivity: 'DeepSeek review',
-    swarmTodos: todosForBuild('qa'),
+    swarmTodos: todos('qa'),
   });
   throwIfAborted();
   const siteForQa = filesToSite(nextFiles);
@@ -1181,7 +1226,7 @@ export async function runBuildPipeline(opts: {
     message: 'Multi-agent review — structure + quality…',
     swarmStatusLabel: 'Reviewer',
     swarmActivity: 'Static validate + QA',
-    swarmTodos: todosForBuild('qa'),
+    swarmTodos: todos('qa'),
   });
   // Parallel-ish reviewer: static structure + LLM QA together
   const staticPre = staticValidateProject(nextFiles);
@@ -1218,7 +1263,7 @@ export async function runBuildPipeline(opts: {
     message: 'Compile validate — npm install + tsc…',
     swarmStatusLabel: 'Compile',
     swarmActivity: 'Sandbox tsc',
-    swarmTodos: todosForBuild('compile'),
+    swarmTodos: todos('compile'),
   });
   let compile = await compileValidateProject(nextFiles, { signal: opts.signal });
   if (!compile.skipped && !compile.ok) {
@@ -1238,7 +1283,7 @@ export async function runBuildPipeline(opts: {
       message: compile.issues.slice(0, 3).join('; ') || 'Compile failed',
       swarmStatusLabel: 'Compile failed',
       swarmActivity: `${compile.durationMs}ms`,
-      swarmTodos: todosForBuild('compile'),
+      swarmTodos: todos('compile'),
     });
   } else {
     emit({
@@ -1249,7 +1294,7 @@ export async function runBuildPipeline(opts: {
         : `Compile OK · install ${compile.installOk ? '✓' : '✗'} · tsc ${compile.tscOk ? '✓' : '✗'}`,
       swarmStatusLabel: compile.skipped ? 'Compile skip' : 'Compiled',
       swarmActivity: `${compile.durationMs}ms`,
-      swarmTodos: todosForBuild('compile'),
+      swarmTodos: todos('compile'),
     });
   }
   trace.setMeta({ compile: { ok: compile.ok, skipped: compile.skipped, issues: compile.issues } });
@@ -1262,7 +1307,7 @@ export async function runBuildPipeline(opts: {
       message: 'QA found issues — applying fix pass…',
       swarmStatusLabel: 'Fixing',
       swarmActivity: qa.issues.slice(0, 2).join('; ') || 'QA fixes',
-      swarmTodos: todosForBuild('qa'),
+      swarmTodos: todos('qa'),
     });
     try {
       const fixPrompt = isUpdate
@@ -1281,6 +1326,7 @@ export async function runBuildPipeline(opts: {
           temperature: 0.25,
           onDelta: opts.onDelta,
           signal: opts.signal,
+          onModelFallback: emitModelSwitch,
         },
       );
       usage = await recordUsage(
@@ -1464,7 +1510,7 @@ export async function runBuildPipeline(opts: {
     message: 'Scanning for secrets & risky patterns…',
     swarmStatusLabel: 'Security',
     swarmActivity: 'Pre-push scan',
-    swarmTodos: todosForBuild('push'),
+    swarmTodos: todos('push'),
   });
   let security = scanProjectFiles(nextFiles);
   if (security.blocked) {
@@ -1482,7 +1528,7 @@ export async function runBuildPipeline(opts: {
         .slice(0, 2)
         .map((f) => f.message)
         .join('; '),
-      swarmTodos: todosForBuild('push'),
+      swarmTodos: todos('push'),
     });
   }
   trace.setMeta({
@@ -1543,7 +1589,7 @@ export async function runBuildPipeline(opts: {
       message: 'Push skipped — compile failed. Fix TypeScript/install errors first.',
       swarmStatusLabel: 'Compile block',
       swarmActivity: compile.issues.slice(0, 2).join('; ') || 'tsc failed',
-      swarmTodos: todosForBuild('push'),
+      swarmTodos: todos('push'),
     });
   }
 
@@ -1555,7 +1601,7 @@ export async function runBuildPipeline(opts: {
         'No target repo yet. Ship once (we create + remember it), or pick your live repo in Terminal — updates never invent a new repo.',
       swarmStatusLabel: 'Need repo',
       swarmActivity: 'Pick or ship once',
-      swarmTodos: todosForBuild('push'),
+      swarmTodos: todos('push'),
     });
   }
   if (patchAborted) {
@@ -1565,7 +1611,7 @@ export async function runBuildPipeline(opts: {
       message: 'Push skipped — unsafe patches aborted; your live site was not changed.',
       swarmStatusLabel: 'Protected',
       swarmActivity: 'No push',
-      swarmTodos: todosForBuild('push'),
+      swarmTodos: todos('push'),
     });
   }
 
@@ -1578,7 +1624,7 @@ export async function runBuildPipeline(opts: {
         : `Pushing ${filesToPush.length} file(s) to GitHub…`,
       swarmStatusLabel: 'Pushing',
       swarmActivity: meta?.githubTargetRepo || 'GitHub',
-      swarmTodos: todosForBuild('push'),
+      swarmTodos: todos('push'),
     });
     try {
       const pushed = await pushBuildToGitHub(opts.userId, filesToPush, {
@@ -1600,7 +1646,7 @@ export async function runBuildPipeline(opts: {
         message: `GitHub push failed: ${(err as Error).message}`,
         swarmStatusLabel: 'Push failed',
         swarmActivity: (err as Error).message.slice(0, 120),
-        swarmTodos: todosForBuild('push'),
+        swarmTodos: todos('push'),
       });
     }
   }
@@ -1653,7 +1699,7 @@ export async function runBuildPipeline(opts: {
         : 'Deploying to your Vercel account…',
       swarmStatusLabel: 'Deploying',
       swarmActivity: 'Vercel file upload',
-      swarmTodos: todosForBuild('push'),
+      swarmTodos: todos('push'),
     });
     try {
       const slug =
@@ -1674,7 +1720,7 @@ export async function runBuildPipeline(opts: {
           message: deployed.deployError,
           swarmStatusLabel: 'Deploy issue',
           swarmActivity: deployed.deployError.slice(0, 120),
-          swarmTodos: todosForBuild('push'),
+          swarmTodos: todos('push'),
         });
       }
     } catch (err) {
@@ -1685,7 +1731,7 @@ export async function runBuildPipeline(opts: {
         message: `Vercel deploy failed: ${(err as Error).message}`,
         swarmStatusLabel: 'Deploy failed',
         swarmActivity: (err as Error).message.slice(0, 120),
-        swarmTodos: todosForBuild('push'),
+        swarmTodos: todos('push'),
       });
     }
   }
@@ -1700,7 +1746,7 @@ export async function runBuildPipeline(opts: {
       message: 'Verifying GitHub push + live URL + /api/health…',
       swarmStatusLabel: 'Verify',
       swarmActivity: deployUrl || githubRepoUrl || 'checks',
-      swarmTodos: todosForBuild('push'),
+      swarmTodos: todos('push'),
     });
     const expectApi = nextFiles.some((f) => f.path.includes('app/api/'));
     shipVerify = await verifyShippedProduct({
@@ -1716,7 +1762,7 @@ export async function runBuildPipeline(opts: {
       message: shipVerify.summaryLines.join('\n'),
       swarmStatusLabel: shipVerify.pass ? 'Verified' : 'Verify failed',
       swarmActivity: shipVerify.pass ? 'All checks green' : 'See chat for failures',
-      swarmTodos: todosForBuild('done').map((t) => ({ ...t, status: 'done' as const })),
+      swarmTodos: todos('done').map((t) => ({ ...t, status: 'done' as const })),
     });
     trace.setMeta({ shipVerify: shipVerify.summaryLines });
   }
@@ -1765,7 +1811,7 @@ export async function runBuildPipeline(opts: {
         : githubPushConfirmed
           ? `Pushed to ${githubRepoName}`
           : shipBlockers[0] || 'Preview ready'),
-    swarmTodos: todosForBuild('done').map((t) => ({ ...t, status: 'done' as const })),
+    swarmTodos: todos('done').map((t) => ({ ...t, status: 'done' as const })),
   });
 
   const verifyMarkdown = shipVerify?.summaryLines?.length

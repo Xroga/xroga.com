@@ -42,8 +42,8 @@ export function tokenUsageFromSummary(summary: unknown): {
         percentUsed: tokens.percentUsed ?? 0,
         quotaPeriodStart:
           tokens.quotaPeriodStart ?? new Date().toISOString().slice(0, 10),
-        emergencyTokensAvailable: Boolean(tokens.emergencyAvailable),
-        emergencyTokensClaimedThisMonth: Boolean(tokens.emergencyClaimed),
+        emergencyTokensAvailable: false,
+        emergencyTokensClaimedThisMonth: false,
         totalLimit: tokens.totalLimit ?? DEFAULT_LIMIT,
         planBudgetUsd: tokens.planBudgetUsd,
         rolloverUsd: tokens.rolloverUsd,

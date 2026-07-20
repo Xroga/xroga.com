@@ -980,10 +980,6 @@ export const api = {
   },
   dashboard: {
     summary: () => apiFetch<DashboardSummary>('/api/dashboard/summary'),
-    claimEmergencyTokens: () =>
-      apiFetch<{ success: boolean; message: string }>('/api/dashboard/emergency-tokens', {
-        method: 'POST',
-      }),
   },
   phase1: {
     chat: (
@@ -1022,10 +1018,6 @@ export const api = {
           marginPct: number;
         }>;
       }>('/api/phase1/economics'),
-    claimEmergencyTokens: () =>
-      apiFetch<{ success: boolean; message: string }>('/api/phase1/emergency-tokens', {
-        method: 'POST',
-      }),
   },
   tasks: {
     list: () => apiFetch<{ tasks: TaskItem[] }>('/api/tasks'),

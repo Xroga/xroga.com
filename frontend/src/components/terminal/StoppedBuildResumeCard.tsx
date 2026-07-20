@@ -2,11 +2,12 @@
 
 import { FolderGit2, GitBranch, Play, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import type { SwarmTodoItem } from '@/lib/swarm';
 
 export interface StoppedBuildMeta {
   originalPrompt: string;
   githubRepoName?: string | null;
-  todos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
+  todos?: SwarmTodoItem[];
   phase?: number | null;
   activityLog?: string[];
 }
@@ -81,10 +82,18 @@ export function StoppedBuildResumeCard({ meta, onRetry, className }: StoppedBuil
                   'h-1.5 w-1.5 rounded-full shrink-0',
                   t.status === 'done' && 'bg-emerald-500',
                   t.status === 'active' && 'bg-amber-500',
-                  t.status === 'pending' && 'bg-[var(--muted)]/40'
+                  t.status === 'pending' && 'bg-[var(--muted)]/40',
+                  t.status === 'skipped' && 'bg-amber-500/50'
                 )}
               />
-              <span className={cn(t.status === 'done' && 'line-through opacity-70')}>{t.label}</span>
+              <span
+                className={cn(
+                  t.status === 'done' && 'line-through opacity-70',
+                  t.status === 'skipped' && 'opacity-80'
+                )}
+              >
+                {t.label}
+              </span>
             </li>
           ))}
         </ul>
