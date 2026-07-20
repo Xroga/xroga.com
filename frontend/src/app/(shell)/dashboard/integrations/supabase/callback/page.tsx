@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api, getAccessToken } from '@/lib/api';
+import { publishOAuthResult } from '@/lib/oauthPopupResult';
 
 async function waitForSession(maxMs = 8000): Promise<boolean> {
   const started = Date.now();
@@ -26,8 +27,8 @@ function CallbackHandler() {
 
     const finishError = (msg: string) => {
       setMessage(msg);
-      if (window.opener) {
-        window.opener.postMessage({ type: 'xroga-supabase-error', message: msg }, '*');
+      publishOAuthResult({ type: 'xroga-supabase-error', message: msg });
+      if (window.opener && !window.opener.closed) {
         setTimeout(() => window.close(), 1200);
       } else {
         const q = new URLSearchParams({ supabase: 'error', message: msg.slice(0, 180) });
@@ -62,25 +63,31 @@ function CallbackHandler() {
             : 'Supabase authorized');
         setMessage(msg);
 
-        if (window.opener) {
-          window.opener.postMessage(
-            {
-              type: 'xroga-supabase-connected',
-              needsProjectPick: Boolean(res.needsProjectPick),
-              projects: res.projects ?? [],
-              autoSelected: res.autoSelected,
-              provisioned: Boolean(res.provision?.schemaApplied || res.status?.provisioned),
-              message: msg,
-            },
-            '*',
-          );
+        const payload = {
+          type: 'xroga-supabase-connected' as const,
+          needsProjectPick: Boolean(res.needsProjectPick),
+          projects: res.projects ?? [],
+          autoSelected: Boolean(res.autoSelected),
+          provisioned: Boolean(res.provision?.schemaApplied || res.status?.provisioned),
+          message: msg,
+        };
+        publishOAuthResult(payload);
+
+        if (window.opener && !window.opener.closed) {
           setTimeout(() => window.close(), 500);
           return;
         }
 
         const q = new URLSearchParams({ supabase: 'connected' });
         if (res.needsProjectPick) q.set('pick', '1');
-        router.replace(`/dashboard/integrations?${q.toString()}`);
+        setTimeout(() => {
+          try {
+            window.close();
+          } catch {
+            /* ignore */
+          }
+          router.replace(`/dashboard/integrations?${q.toString()}`);
+        }, 500);
       } catch (e) {
         finishError((e as Error).message || 'Supabase connection failed');
       }

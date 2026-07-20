@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api, getAccessToken } from '@/lib/api';
+import { publishOAuthResult } from '@/lib/oauthPopupResult';
 
 async function waitForSession(maxMs = 8000): Promise<boolean> {
   const started = Date.now();
@@ -29,8 +30,8 @@ function CallbackHandler() {
 
     const finishError = (msg: string) => {
       setMessage(msg);
-      if (window.opener) {
-        window.opener.postMessage({ type: 'xroga-vercel-error', message: msg }, '*');
+      publishOAuthResult({ type: 'xroga-vercel-error', message: msg });
+      if (window.opener && !window.opener.closed) {
         setTimeout(() => window.close(), 1400);
         return;
       }
@@ -44,7 +45,7 @@ function CallbackHandler() {
     }
 
     if (!code || !state) {
-      if (window.opener) {
+      if (window.opener && !window.opener.closed) {
         window.close();
       } else {
         router.replace('/dashboard/integrations?vercel=missing_code');
@@ -62,19 +63,29 @@ function CallbackHandler() {
       try {
         const res = await api.vercel.connect(code, state);
         setMessage(`Connected as @${res.username}`);
+        publishOAuthResult({
+          type: 'xroga-vercel-connected',
+          username: res.username,
+        });
 
-        if (window.opener) {
-          window.opener.postMessage(
-            { type: 'xroga-vercel-connected', username: res.username },
-            '*'
-          );
-          setTimeout(() => window.close(), 400);
+        if (window.opener && !window.opener.closed) {
+          setTimeout(() => window.close(), 500);
           return;
         }
 
-        router.replace(
-          `/dashboard/integrations?vercel=connected&username=${encodeURIComponent(res.username)}`
-        );
+        // Popup lost opener (COOP) or same-tab flow — land on Integrations with success flag
+        setMessage(`Connected as @${res.username}. You can close this window.`);
+        setTimeout(() => {
+          try {
+            window.close();
+          } catch {
+            /* ignore */
+          }
+          // If close was blocked (same-tab), navigate
+          router.replace(
+            `/dashboard/integrations?vercel=connected&username=${encodeURIComponent(res.username)}`
+          );
+        }, 600);
       } catch (e) {
         finishError((e as Error).message || 'Vercel connection failed');
       }

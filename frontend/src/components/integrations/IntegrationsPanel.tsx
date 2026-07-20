@@ -112,11 +112,9 @@ export function IntegrationsPanel() {
       );
       const stop = listenVercelOAuthMessages(
         (username) => {
-          stop();
           toast.success(username ? `Vercel connected as @${username}` : 'Vercel connected');
         },
         (msg) => {
-          stop();
           toast.error(msg);
         }
       );

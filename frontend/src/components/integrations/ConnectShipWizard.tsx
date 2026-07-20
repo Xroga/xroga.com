@@ -1,10 +1,11 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Check, Circle, KeyRound, GitBranch, Triangle, Database } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
+import { clearOAuthResult, subscribeOAuthResults } from '@/lib/oauthPopupResult';
 import { AiIntegrationsPanel } from './AiIntegrationsPanel';
 import { SupabaseConnectPanel } from './SupabaseConnectPanel';
 
@@ -22,6 +23,7 @@ export function ConnectShipWizard() {
   const [busy, setBusy] = useState<StepId | null>(null);
   const [showKeys, setShowKeys] = useState(false);
   const [showSupabase, setShowSupabase] = useState(false);
+  const stopVercelListen = useRef<(() => void) | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -57,22 +59,36 @@ export function ConnectShipWizard() {
   }, [refresh]);
 
   useEffect(() => {
-    const onMsg = (e: MessageEvent) => {
-      if (e.data?.type === 'xroga-github-connected') {
+    return () => {
+      stopVercelListen.current?.();
+      stopVercelListen.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    const unsub = subscribeOAuthResults((data) => {
+      if (data.type === 'xroga-github-connected') {
         setGithubOk(true);
         toast.success(
-          typeof e.data.username === 'string'
-            ? `GitHub connected as @${e.data.username}`
+          typeof data.username === 'string'
+            ? `GitHub connected as @${data.username}`
             : 'GitHub connected',
         );
         void refresh();
       }
-      if (e.data?.type === 'xroga-github-error' && typeof e.data.message === 'string') {
-        toast.error(e.data.message);
+      if (data.type === 'xroga-github-error' && typeof data.message === 'string') {
+        toast.error(data.message);
       }
-    };
-    window.addEventListener('message', onMsg);
-    return () => window.removeEventListener('message', onMsg);
+      // Vercel success/error is handled by listenVercelOAuthMessages during Authorize
+      // to avoid double toasts (storage + postMessage + poll).
+      if (data.type === 'xroga-supabase-connected') {
+        if (data.provisioned) {
+          setSupabaseOk(true);
+        }
+        void refresh();
+      }
+    });
+    return unsub;
   }, [refresh]);
 
   // After same-tab Vercel/GitHub return (?vercel=connected on integrations)
@@ -87,24 +103,37 @@ export function ConnectShipWizard() {
       setGithubOk(true);
       void refresh();
     }
+    if (q.get('supabase') === 'connected') {
+      void refresh();
+    }
+    const vercelErr = q.get('vercel') === 'error' ? q.get('message') : null;
+    const githubErr = q.get('github') === 'error' ? q.get('message') : null;
+    if (vercelErr) toast.error(vercelErr);
+    if (githubErr) toast.error(githubErr);
   }, [refresh]);
 
   async function connectGithub() {
     setBusy('github');
     try {
+      clearOAuthResult();
       const { url } = await api.github.oauthUrl();
       if (!url) {
         toast.error('GitHub OAuth not configured');
         return;
       }
-      const popup = window.open(url, 'xroga-github-oauth', 'width=600,height=720,scrollbars=yes');
+      const popup = window.open(
+        'about:blank',
+        'xroga-github-oauth',
+        'width=600,height=720,scrollbars=yes,resizable=yes',
+      );
       if (!popup) {
         window.location.href = url;
       } else {
         try {
+          popup.location.href = url;
           popup.focus();
         } catch {
-          /* ignore */
+          window.location.href = url;
         }
       }
     } catch {
@@ -117,25 +146,26 @@ export function ConnectShipWizard() {
   async function connectVercel() {
     setBusy('vercel');
     try {
+      stopVercelListen.current?.();
       const { openVercelOAuthPopup, listenVercelOAuthMessages } = await import('@/lib/vercelConnect');
-      const stop = listenVercelOAuthMessages(
+      stopVercelListen.current = listenVercelOAuthMessages(
         (username) => {
-          stop();
+          stopVercelListen.current = null;
           setVercelOk(true);
           toast.success(username ? `Vercel connected as @${username}` : 'Vercel connected');
           void refresh();
         },
         (msg) => {
-          stop();
+          stopVercelListen.current = null;
           toast.error(msg);
         },
       );
       const result = await openVercelOAuthPopup();
       if (!result.opened) {
-        stop();
+        stopVercelListen.current?.();
+        stopVercelListen.current = null;
         toast.error(result.error || 'Could not start Vercel authorize');
       } else if (!result.popup) {
-        // Same-tab fallback — page will navigate away; keep listener briefly irrelevant
         toast.success('Continue authorizing Vercel in this tab…');
       }
     } catch {

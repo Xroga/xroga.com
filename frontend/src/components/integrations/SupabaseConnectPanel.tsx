@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
+import { clearOAuthResult, subscribeOAuthResults } from '@/lib/oauthPopupResult';
 
 type Props = {
   onConnected?: () => void;
@@ -55,19 +56,11 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
   }, [refresh]);
 
   useEffect(() => {
-    function onMsg(ev: MessageEvent) {
-      const data = ev.data as {
-        type?: string;
-        needsProjectPick?: boolean;
-        projects?: ListedProject[];
-        provisioned?: boolean;
-        message?: string;
-      };
-      if (!data || typeof data !== 'object') return;
+    const unsub = subscribeOAuthResults((data) => {
       if (data.type === 'xroga-supabase-connected') {
         setOauthConnected(true);
         setProvisioned(Boolean(data.provisioned));
-        setProjects(data.projects ?? []);
+        setProjects((data.projects as ListedProject[]) ?? []);
         setMessage(data.message || 'Authorized');
         if (data.provisioned) {
           toast.success('Supabase ready — memory & storage on your project');
@@ -80,23 +73,34 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
       if (data.type === 'xroga-supabase-error' && data.message) {
         toast.error(data.message);
       }
-    }
-    window.addEventListener('message', onMsg);
-    return () => window.removeEventListener('message', onMsg);
+    });
+    return unsub;
   }, [onConnected, refresh]);
 
   async function authorize() {
     setBusy(true);
     try {
+      clearOAuthResult();
       const { url, oauthConfigured: ok } = await api.supabase.oauthUrl();
       if (!ok || !url) {
         setOauthConfigured(false);
         toast.error('Supabase OAuth not configured on the server yet');
         return;
       }
-      const w = window.open(url, 'xroga-supabase-oauth', 'width=560,height=720');
+      const w = window.open(
+        'about:blank',
+        'xroga-supabase-oauth',
+        'width=560,height=720,scrollbars=yes,resizable=yes',
+      );
       if (!w) {
         window.location.href = url;
+      } else {
+        try {
+          w.location.href = url;
+          w.focus();
+        } catch {
+          window.location.href = url;
+        }
       }
     } catch (err) {
       toast.error((err as Error).message || 'Could not start Supabase authorize');

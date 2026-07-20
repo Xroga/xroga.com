@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api, getAccessToken } from '@/lib/api';
 import { dispatchGitHubConnected } from '@/lib/githubEvents';
+import { publishOAuthResult } from '@/lib/oauthPopupResult';
 
 async function waitForSession(maxMs = 8000): Promise<boolean> {
   const started = Date.now();
@@ -27,8 +28,8 @@ function CallbackHandler() {
 
     const finishError = (msg: string) => {
       setMessage(msg);
-      if (window.opener) {
-        window.opener.postMessage({ type: 'xroga-github-error', message: msg }, '*');
+      publishOAuthResult({ type: 'xroga-github-error', message: msg });
+      if (window.opener && !window.opener.closed) {
         setTimeout(() => window.close(), 1400);
         return;
       }
@@ -61,20 +62,27 @@ function CallbackHandler() {
         const res = await api.github.connect(code, 'auto');
         setMessage(`Connected as @${res.username}`);
 
-        if (window.opener) {
-          window.opener.postMessage(
-            { type: 'xroga-github-connected', username: res.username },
-            '*'
-          );
-          dispatchGitHubConnected(res.username);
+        publishOAuthResult({
+          type: 'xroga-github-connected',
+          username: res.username,
+        });
+        dispatchGitHubConnected(res.username);
+
+        if (window.opener && !window.opener.closed) {
           setTimeout(() => window.close(), 400);
           return;
         }
 
-        dispatchGitHubConnected(res.username);
-        router.replace(
-          `/dashboard/integrations?github=connected&username=${encodeURIComponent(res.username)}`
-        );
+        setTimeout(() => {
+          try {
+            window.close();
+          } catch {
+            /* ignore */
+          }
+          router.replace(
+            `/dashboard/integrations?github=connected&username=${encodeURIComponent(res.username)}`
+          );
+        }, 500);
       } catch (e) {
         finishError((e as Error).message || 'GitHub connection failed');
       }
