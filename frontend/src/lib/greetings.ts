@@ -1,7 +1,7 @@
 const INSPIRING_LINES = [
   'Your Swarm is ready — ship something legendary today.',
   'One command away from your next app, game, or automation.',
-  '710+ integrations. Zero excuses. Build with Xroga.',
+  'GitHub + Vercel + Supabase — authorize once, then ship.',
   'Fuel the swarm — turn ideas into deployed products.',
   'Architect · Builder · Reviewer · QA — all working for you.',
   'Automate the boring. Create the extraordinary.',
