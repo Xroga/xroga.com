@@ -38,7 +38,14 @@ export function AiIntegrationsPanel({ compact }: { compact?: boolean }) {
         api.integrations.aiCatalog(),
         api.integrations.providerKeys(),
       ]);
-      setCatalog((cat.catalog ?? []).filter((item) => item.category !== 'publish'));
+      setCatalog(
+        (cat.catalog ?? []).filter(
+          (item) =>
+            item.category !== 'publish' &&
+            item.id !== 'supabase_pat' &&
+            item.id !== 'supabase_db_password',
+        ),
+      );
       setKeys(k.keys ?? []);
     } catch {
       /* optional */
