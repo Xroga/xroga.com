@@ -76,7 +76,7 @@ export interface SwarmProgressEvent {
   hackathonBrief?: import('@/components/terminal/HackathonBriefCard').HackathonBriefCardData;
 }
 
-export type SwarmTodoStatus = 'done' | 'active' | 'pending';
+export type SwarmTodoStatus = 'done' | 'active' | 'pending' | 'skipped';
 
 export interface SwarmTodoItem {
   id: string;

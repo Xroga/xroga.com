@@ -109,7 +109,7 @@ export interface ChatMessage {
   thoughtMs?: number;
   /** User stopped mid-build — show Retry card, keep in history */
   buildStopped?: boolean;
-  stoppedTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
+  stoppedTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' | 'skipped' }>;
   stoppedPhase?: number | null;
   stoppedActivityLog?: string[];
   originalBuildPrompt?: string;
@@ -171,7 +171,7 @@ interface TerminalChatContextValue {
   dag: Array<{ id: string; description: string; agent: string }> | null;
   pipelineCompact: boolean;
   swarmNegotiationPhase: number | null;
-  swarmTodos: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
+  swarmTodos: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' | 'skipped' }>;
   swarmStatusLabel: string | null;
   swarmAnalysis: string | null;
   swarmActivityLog: string[];
@@ -264,7 +264,7 @@ export function TerminalChatProvider({
   const [pipelineCompact, setPipelineCompact] = useState(false);
   const [swarmNegotiationPhase, setSwarmNegotiationPhase] = useState<number | null>(null);
   const [swarmTodos, setSwarmTodos] = useState<
-    Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>
+    Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' | 'skipped' }>
   >([]);
   const [swarmStatusLabel, setSwarmStatusLabel] = useState<string | null>(null);
   const [swarmAnalysis, setSwarmAnalysis] = useState<string | null>(null);
@@ -275,9 +275,9 @@ export function TerminalChatProvider({
     open: false,
   });
   const afterGitHubActivationRef = useRef<(() => void) | null>(null);
-  const buildTodosSeedRef = useRef<Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>>([]);
+  const buildTodosSeedRef = useRef<Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' | 'skipped' }>>([]);
   const liveBuildSnapshotRef = useRef<{
-    todos: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
+    todos: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' | 'skipped' }>;
     phase: number | null;
     activity: string[];
   }>({ todos: [], phase: null, activity: [] });
@@ -1394,12 +1394,11 @@ export function TerminalChatProvider({
 
       if (!codeBuildActive && !useCompactPipeline && !startingHeavyJob) {
         thinkingStepsRef.current = [
-          'Searching live sources (SearXNG + YouTube)',
           'Analyzing your question',
-          'Composing professional response',
+          'Composing a clear response',
         ];
         setThinkingSteps([...thinkingStepsRef.current]);
-        setPipelineMessage('Searching the web…');
+        setPipelineMessage('Composing your answer…');
       }
 
       if (startingHeavyBuild) {

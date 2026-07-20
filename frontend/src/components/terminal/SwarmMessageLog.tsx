@@ -16,6 +16,7 @@ import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { UpdateFileTrail } from './UpdateFileTrail';
+import { WebSourcesPanel } from './WebSourcesPanel';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
@@ -500,6 +501,9 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                             streaming={msg.id === animatingId && loading}
                           />
                         )}
+                        {msg.webSources && msg.webSources.length > 0 ? (
+                          <WebSourcesPanel sources={msg.webSources} />
+                        ) : null}
                       </div>
                       {msg.content && (
                         <MessageBubbleActions

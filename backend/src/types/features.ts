@@ -314,7 +314,7 @@ export interface SwarmProgressEvent {
   userFacingPhase?: number;
   swarmLogic?: boolean;
   /** Step-by-step XROGA todo list for build UI */
-  swarmTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
+  swarmTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' | 'skipped' }>;
   swarmStatusLabel?: string;
   swarmAnalysis?: string;
   /** Live branded activity line for processing animation */
