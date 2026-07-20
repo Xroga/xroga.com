@@ -3,12 +3,21 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Infinity } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepagePipelineDemo } from '@/components/homepage/HomepagePipelineDemo';
 import { HomepageEmpowerSection } from '@/components/homepage/HomepageEmpowerSection';
+import { HomepageBlackHolePower } from '@/components/homepage/HomepageBlackHolePower';
+import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
+import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
 import { HomepageCompareSection } from '@/components/homepage/HomepageCompareSection';
 import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
+import {
+  XROGA_MODEL_FULL,
+  XROGA_MODEL_TAGLINE,
+  XROGA_MODEL_UPDATE,
+} from '@/lib/brand';
 import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
 
@@ -25,8 +34,8 @@ const FOOTER_LINKS = [
 
 const AI_FEATURES = [
   {
-    title: 'Converter → Builder',
-    body: 'Any prompt becomes a clear builder brief, then ships as a real product — no template catalog.',
+    title: 'Black Hole V∞',
+    body: 'One evolving model — Apex · Horizon · Forge · Pulse · Live · Lens inside a single event horizon. No model picker.',
   },
   {
     title: '#1 Coding Agent',
@@ -34,7 +43,7 @@ const AI_FEATURES = [
   },
   {
     title: 'GitHub push · Vercel live',
-    body: 'Preview in Workspace, auto-push the repo, then go live on your domain — no fake URLs.',
+    body: 'Preview in Workspace, auto-push the repo, then go live on your domain — sticky updates forever.',
   },
   {
     title: 'Research that ships',
@@ -93,18 +102,22 @@ export default function HomePage() {
         <div className="xv-hc-hero-main">
           <p className="xv-hc-badge">
             <span className="xv-hc-badge-dot" aria-hidden />
-            NEW: XROGA AI SWARM
+            {XROGA_MODEL_UPDATE}
           </p>
 
           <h1 className="xv-hc-brand">XROGA</h1>
 
           <p className="xv-hc-headline">
-            AI That <span className="xv-hc-headline-em">Builds & Ships</span> Your Stack
+            Powered by{' '}
+            <span className="xv-hc-headline-em">
+              Black Hole V
+              <Infinity className="xv-hc-bh-hero-inf inline" strokeWidth={2.5} aria-hidden />
+            </span>
           </p>
 
           <p className="xv-hc-sub">
-            Describe the product. Converter writes the brief. The swarm codes, debugs, pushes to
-            your GitHub, and deploys live on Vercel — then you iterate with follow-up prompts.
+            {XROGA_MODEL_TAGLINE} One swarm. Full power. Continuous Event Horizon updates —
+            so you never wait for “the next model.” Prompt → build → GitHub → live on Vercel.
           </p>
 
           <div className="xv-hc-ctas">
@@ -125,6 +138,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <HomepageBlackHolePower />
 
       <section className="xv-hc-section" aria-labelledby="coding-heading">
         <div className="xv-hc-section-inner">
@@ -150,6 +165,8 @@ export default function HomePage() {
 
       <HomepageEmpowerSection />
 
+      <HomepageShipStack />
+
       <section className="xv-hc-features" aria-labelledby="features-heading">
         <div className="xv-hc-features-inner">
           <span className="xv-hc-features-label">WHAT WE SHIP</span>
@@ -159,8 +176,8 @@ export default function HomePage() {
                 Coding agent that ships. <em>Same repo, forever.</em>
               </h2>
               <p className="xv-hc-features-lead">
-                Xroga AI is the #1 coding agent for everyone: prompt → brief → code → QA → your
-                GitHub → your Vercel. Edit, update, and delete without starting over — no coding
+                Xroga AI is the #1 coding agent for everyone: prompt → Black Hole V∞ → code → QA →
+                your GitHub → your Vercel. Edit, update, and delete without starting over — no coding
                 knowledge required to start.
               </p>
             </div>
@@ -176,6 +193,8 @@ export default function HomePage() {
         </div>
       </section>
 
+      <HomepageEnterpriseProof />
+
       <HomepageCompareSection />
 
       <HomepageFaqSection />
@@ -184,7 +203,7 @@ export default function HomePage() {
         <div className="xv-hc-mid-cta-inner">
           <h2 className="xv-hc-section-title">Ready when you are.</h2>
           <p className="xv-hc-section-copy">
-            Start from a prompt. Own the repo. Ship on your domain.
+            Meet {XROGA_MODEL_FULL}. Own the repo. Ship on your domain.
           </p>
           <div className="xv-hc-ctas">
             <button
@@ -210,7 +229,7 @@ export default function HomePage() {
           ))}
         </nav>
         <p className="xv-hc-footer-meta">
-          XROGA AI · <a href="mailto:hello@xroga.com">hello@xroga.com</a> ·{' '}
+          XROGA AI · {XROGA_MODEL_FULL} · <a href="mailto:hello@xroga.com">hello@xroga.com</a> ·{' '}
           <Link href="/contact">Contact</Link> · <Link href="/terms">Terms</Link> ·{' '}
           <Link href="/privacy">Privacy</Link> · <Link href="/refund">Refund</Link>
         </p>
