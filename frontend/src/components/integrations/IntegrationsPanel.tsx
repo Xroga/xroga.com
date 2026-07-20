@@ -87,9 +87,7 @@ export function IntegrationsPanel() {
       return;
     }
     if (id === 'supabase') {
-      toast('Use Ship setup → Connect Supabase (URL + anon + service role)', {
-        icon: '🗄',
-      });
+      toast('Use Ship setup → Authorize Supabase (no paste)', { icon: '🗄' });
       document.getElementById('ship-setup')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }

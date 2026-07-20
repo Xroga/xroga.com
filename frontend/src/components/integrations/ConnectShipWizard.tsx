@@ -30,15 +30,15 @@ export function ConnectShipWizard() {
         api.github.status().catch(() => ({ connected: false })),
         api.vercel.status().catch(() => ({ connected: false })),
         api.integrations.providerKeys().catch(() => ({ keys: [] as Array<{ provider?: string; connected?: boolean }> })),
-        api.integrations.supabaseStatus().catch(() => ({ ready: false, connected: false })),
+        api.supabase.status().catch(() => ({ ready: false, connected: false, provisioned: false })),
       ]);
       setGithubOk(Boolean((gh as { connected?: boolean }).connected));
       setVercelOk(Boolean((ve as { connected?: boolean }).connected));
       const list = (keys as { keys?: Array<{ provider?: string; connected?: boolean }> }).keys ?? [];
       const connected = list.filter((k) => k.connected);
       setSupabaseOk(
-        Boolean((sb as { ready?: boolean; provisioned?: boolean }).ready) ||
-          Boolean((sb as { provisioned?: boolean }).provisioned),
+        Boolean((sb as { provisioned?: boolean }).provisioned) ||
+          Boolean((sb as { ready?: boolean }).ready),
       );
       setKeysOk(
         connected.some(
@@ -93,43 +93,43 @@ export function ConnectShipWizard() {
   }> = [
     {
       id: 'github',
-      title: '1. Connect GitHub',
-      body: 'Xroga pushes working code to your repo and updates the same project (edit/delete).',
+      title: '1. GitHub',
+      body: 'Authorize once. We push and update your code automatically.',
       done: githubOk,
       action: connectGithub,
-      label: githubOk ? 'Connected' : 'Connect GitHub',
+      label: githubOk ? 'Connected' : 'Authorize',
     },
     {
       id: 'vercel',
-      title: '2. Connect Vercel',
-      body: 'Deploys go to your Vercel account (you pay hosting). Prefer a Full Account token for env sync.',
+      title: '2. Vercel',
+      body: 'Authorize once. We deploy live to your account automatically.',
       done: vercelOk,
       action: connectVercel,
-      label: vercelOk ? 'Connected' : 'Connect Vercel',
+      label: vercelOk ? 'Connected' : 'Authorize',
     },
     {
       id: 'supabase',
-      title: '3. Connect Supabase',
-      body: 'One-click: Access Token → pick project. Xroga auto-creates schema, AI memory & storage on YOUR Supabase.',
+      title: '3. Supabase',
+      body: 'Authorize once. We set up your database, AI memory, and storage — no paste, no SQL.',
       done: supabaseOk,
       optional: true,
       action: () => {
         setShowSupabase(true);
         setShowKeys(false);
       },
-      label: supabaseOk ? 'Connected' : 'Connect Supabase',
+      label: supabaseOk ? 'Connected' : 'Authorize',
     },
     {
       id: 'keys',
-      title: '4. Other product API keys',
-      body: 'Optional — OpenAI, Stripe, Resend… encrypted here, synced into Vercel env on deploy.',
+      title: '4. Extra keys',
+      body: 'Optional — OpenAI, Stripe, Resend for live product features.',
       done: keysOk,
       optional: true,
       action: () => {
         setShowKeys(true);
         setShowSupabase(false);
       },
-      label: keysOk ? 'Keys saved' : 'Add API keys',
+      label: keysOk ? 'Saved' : 'Add keys',
     },
   ];
 
@@ -145,14 +145,10 @@ export function ConnectShipWizard() {
           <p className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
             Ship setup
           </p>
-          <h2 className="text-lg sm:text-xl font-bold mt-1">Connect once · ship forever</h2>
+          <h2 className="text-lg sm:text-xl font-bold mt-1">3 clicks · then just describe</h2>
           <p className="text-sm text-[var(--muted)] mt-1 max-w-xl">
-            Connect GitHub + Vercel to ship. Supabase puts data on <strong>your</strong> project.
-            For Android/iOS stores, open{' '}
-            <Link href="/dashboard/publish" className="text-[var(--accent)] hover:underline">
-              Publish
-            </Link>{' '}
-            (your Expo/Apple/Google accounts — Xroga does not pay store fees).
+            Authorize GitHub + Vercel (+ Supabase). Then open Workspace and tell Xroga what to
+            build — we code, push, and deploy for you.
           </p>
         </div>
         <div
