@@ -7,35 +7,59 @@ import {
   type OAuthResultPayload,
 } from '@/lib/oauthPopupResult';
 
+export const VERCEL_INTEGRATIONS_PATH =
+  '/dashboard/integrations?focus=vercel&vercel=setup#ship-setup';
+
+/** True when authorize failed because PKCE/session table is missing or DB bootstrap failed. */
+export function isVercelSessionStoreError(message?: string): boolean {
+  if (!message) return false;
+  return /user_integrations|session store|schema cache|Could not find the table/i.test(message);
+}
+
+/** Leave chat/popup and open Integrations (Ship setup + token paste). */
+export function goToVercelIntegrations(opts?: { error?: string }): void {
+  if (typeof window === 'undefined') return;
+  try {
+    if (opts?.error) {
+      sessionStorage.setItem('xroga-vercel-setup-error', opts.error.slice(0, 280));
+    }
+  } catch {
+    /* ignore */
+  }
+  window.location.assign(VERCEL_INTEGRATIONS_PATH);
+}
+
 export async function openVercelOAuthPopup(): Promise<{
   opened: boolean;
   /** true when a real popup window was opened; false when we fell back to same-tab */
   popup: boolean;
   oauthConfigured: boolean;
   error?: string;
+  /** Caller should leave popup UX and open Integrations */
+  goToIntegrations?: boolean;
 }> {
   try {
     clearOAuthResult();
-    const { url, oauthConfigured } = await api.vercel.oauthUrl();
+    // Resolve authorize URL BEFORE opening any window — never leave a blank popup on failure
+    const res = await api.vercel.oauthUrl();
+    const { url, oauthConfigured } = res;
     if (!url || !oauthConfigured) {
       return {
         opened: false,
         popup: false,
         oauthConfigured: false,
+        goToIntegrations: true,
         error:
-          'Vercel OAuth is not configured on the server. Paste a personal token from vercel.com/account/tokens instead.',
+          'Vercel OAuth is not configured on the server. Open Integrations and paste a personal token from vercel.com/account/tokens.',
       };
     }
 
-    // Open blank first (keeps user-gesture → popup), then navigate — more reliable than
-    // window.open(longCrossOriginUrl) which some browsers treat as a blocked navigation.
     const popup = window.open(
       'about:blank',
       'xroga-vercel-oauth',
-      'width=600,height=720,scrollbars=yes,resizable=yes'
+      'width=600,height=720,scrollbars=yes,resizable=yes',
     );
     if (!popup) {
-      // Popup blocked (mobile / strict browsers) — same-tab authorize still works
       window.location.href = url;
       return { opened: true, popup: false, oauthConfigured: true };
     }
@@ -44,7 +68,6 @@ export async function openVercelOAuthPopup(): Promise<{
       popup.location.href = url;
       popup.focus();
     } catch {
-      // If we cannot set location (rare), fall back to same-tab
       try {
         popup.close();
       } catch {
@@ -60,13 +83,17 @@ export async function openVercelOAuthPopup(): Promise<{
     const network =
       /failed to fetch|networkerror|load failed|network request failed/i.test(raw) ||
       raw === 'Failed to fetch';
+    const sessionStore = isVercelSessionStoreError(raw);
     return {
       opened: false,
       popup: false,
-      oauthConfigured: true,
+      oauthConfigured: !sessionStore,
+      goToIntegrations: true,
       error: network
-        ? 'Cannot reach the Xroga API to start Vercel login. Check your connection and try again — or paste a Vercel token under Integrations.'
-        : raw || 'Could not start Vercel authorization',
+        ? 'Cannot reach the Xroga API to start Vercel login. Open Integrations to paste a Vercel token.'
+        : sessionStore
+          ? 'Vercel authorize needs a database table that is missing. Opening Integrations — paste a Vercel personal token to connect now.'
+          : raw || 'Could not start Vercel authorization',
     };
   }
 }
@@ -142,7 +169,6 @@ export function listenVercelOAuthMessages(
   }, pollMs);
 
   timeout = window.setTimeout(() => {
-    // Soft stop — do not toast error if caller already cleaned up; only notify if still waiting
     finishErr('Vercel authorization timed out. Click Authorize again.');
   }, pollTimeoutMs);
 

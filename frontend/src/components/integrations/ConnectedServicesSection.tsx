@@ -50,8 +50,22 @@ export function ConnectedServicesSection() {
   const [githubConnected, setGithubConnected] = useState(false);
   const [vercelConnected, setVercelConnected] = useState(false);
   const [vercelUser, setVercelUser] = useState<string | null>(null);
+  const [showVercelToken, setShowVercelToken] = useState(false);
+  const [vercelToken, setVercelToken] = useState('');
+  const [vercelBusy, setVercelBusy] = useState(false);
   const [customCount, setCustomCount] = useState(0);
   const vaultReady = hasVault();
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const q = new URLSearchParams(window.location.search);
+    if (q.get('vercel') === 'setup' || q.get('focus') === 'vercel') {
+      setShowVercelToken(true);
+    }
+    const onSetup = () => setShowVercelToken(true);
+    window.addEventListener('xroga-vercel-setup', onSetup);
+    return () => window.removeEventListener('xroga-vercel-setup', onSetup);
+  }, []);
 
   useEffect(() => {
     api.github
@@ -138,34 +152,92 @@ export function ConnectedServicesSection() {
                 : 'Connect your Vercel account — authorize once, then every build can go live'}
             </p>
             {!vercelConnected ? (
-              <button
-                type="button"
-                className="mt-2 text-xs font-bold px-3 py-1.5 rounded-lg bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 font-coding"
-                onClick={() => {
-                  const stop = listenVercelOAuthMessages(
-                    (username) => {
-                      stop();
-                      setVercelConnected(true);
-                      setVercelUser(username ?? null);
-                      toast.success(username ? `Vercel connected as @${username}` : 'Vercel connected');
-                    },
-                    (msg) => {
-                      stop();
-                      toast.error(msg);
-                    }
-                  );
-                  void openVercelOAuthPopup().then((result) => {
-                    if (!result.opened) {
-                      stop();
-                      toast.error(result.error || 'Could not open Vercel authorization');
-                    } else if (!result.popup) {
-                      toast.success('Continue authorizing Vercel in this tab…');
-                    }
-                  });
-                }}
-              >
-                Connect Vercel
-              </button>
+              <div className="mt-2 space-y-2">
+                <button
+                  type="button"
+                  className="text-xs font-bold px-3 py-1.5 rounded-lg bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 font-coding"
+                  onClick={() => {
+                    const stop = listenVercelOAuthMessages(
+                      (username) => {
+                        stop();
+                        setVercelConnected(true);
+                        setVercelUser(username ?? null);
+                        toast.success(username ? `Vercel connected as @${username}` : 'Vercel connected');
+                      },
+                      (msg) => {
+                        stop();
+                        setShowVercelToken(true);
+                        toast.error(msg);
+                      }
+                    );
+                    void openVercelOAuthPopup().then((result) => {
+                      if (result.goToIntegrations && !result.opened) {
+                        stop();
+                        setShowVercelToken(true);
+                        toast.error(
+                          result.error ||
+                            'OAuth session store unavailable — paste a Vercel personal token below',
+                        );
+                        return;
+                      }
+                      if (!result.opened) {
+                        stop();
+                        setShowVercelToken(true);
+                        toast.error(result.error || 'Could not open Vercel authorization');
+                      } else if (!result.popup) {
+                        toast.success('Continue authorizing Vercel in this tab…');
+                      }
+                    });
+                  }}
+                >
+                  Authorize Vercel
+                </button>
+                <button
+                  type="button"
+                  className="ml-2 text-xs text-[var(--muted)] hover:text-[var(--accent)] underline font-coding"
+                  onClick={() => setShowVercelToken((v) => !v)}
+                >
+                  {showVercelToken ? 'Hide token' : 'Paste token instead'}
+                </button>
+                {showVercelToken ? (
+                  <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                    <input
+                      type="password"
+                      value={vercelToken}
+                      onChange={(e) => setVercelToken(e.target.value)}
+                      placeholder="vercel_… personal access token"
+                      className="flex-1 px-3 py-1.5 rounded-lg bg-white/5 border border-[var(--card-border)] text-xs font-mono"
+                      autoComplete="off"
+                    />
+                    <button
+                      type="button"
+                      disabled={vercelBusy}
+                      className="text-xs font-bold px-3 py-1.5 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent)]/10 disabled:opacity-50 font-coding"
+                      onClick={() => {
+                        const token = vercelToken.trim();
+                        if (token.length < 12) {
+                          toast.error('Paste a valid token from vercel.com/account/tokens');
+                          return;
+                        }
+                        setVercelBusy(true);
+                        void api.vercel
+                          .connectToken(token)
+                          .then((res) => {
+                            setVercelConnected(true);
+                            setVercelUser(res.username);
+                            setVercelToken('');
+                            setShowVercelToken(false);
+                            toast.success(`Vercel connected as @${res.username}`);
+                          })
+                          .catch((e) => toast.error((e as Error).message))
+                          .finally(() => setVercelBusy(false));
+                      }}
+                    >
+                      {vercelBusy ? 'Saving…' : 'Save token'}
+                    </button>
+                  </div>
+                ) : null}
+              </div>
             ) : null}
           </div>
           {vercelConnected ? <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> : null}

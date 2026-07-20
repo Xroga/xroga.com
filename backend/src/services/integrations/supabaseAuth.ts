@@ -5,6 +5,8 @@
 
 import { createHash, randomBytes } from 'crypto';
 import { getSupabaseAdmin } from '../../config/supabase.js';
+import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
+import { isMissingTableError } from './githubTokenStore.js';
 
 const PROVIDER = 'supabase_oauth';
 const PKCE_PROVIDER = 'supabase_oauth_pkce';
@@ -74,20 +76,43 @@ export async function buildSupabaseAuthorizeUrl(
     JSON.stringify({ userId, t: Date.now(), n: randomBytes(8).toString('hex') }),
   ).toString('base64url');
 
+  if (githubSchemaAutoBootstrapEnabled()) {
+    await ensureGithubSchema();
+  }
+
   const supabase = getSupabaseAdmin();
-  const { error: pkceErr } = await supabase.from('user_integrations').upsert(
-    {
-      user_id: userId,
-      provider: PKCE_PROVIDER,
-      access_token: verifier,
-      metadata: { state, redirect_uri: redirectUri, created_at: new Date().toISOString() },
-    },
-    { onConflict: 'user_id,provider' },
-  );
+  let pkceErr = (
+    await supabase.from('user_integrations').upsert(
+      {
+        user_id: userId,
+        provider: PKCE_PROVIDER,
+        access_token: verifier,
+        metadata: { state, redirect_uri: redirectUri, created_at: new Date().toISOString() },
+      },
+      { onConflict: 'user_id,provider' },
+    )
+  ).error;
+  if (pkceErr && isMissingTableError(pkceErr.message)) {
+    await ensureGithubSchema();
+    await new Promise((r) => setTimeout(r, 400));
+    pkceErr = (
+      await supabase.from('user_integrations').upsert(
+        {
+          user_id: userId,
+          provider: PKCE_PROVIDER,
+          access_token: verifier,
+          metadata: { state, redirect_uri: redirectUri, created_at: new Date().toISOString() },
+        },
+        { onConflict: 'user_id,provider' },
+      )
+    ).error;
+  }
   if (pkceErr) {
     console.error('[supabaseAuth] PKCE store failed:', pkceErr.message);
     throw new Error(
-      `Could not start Supabase authorize (session store failed): ${pkceErr.message}`,
+      isMissingTableError(pkceErr.message)
+        ? 'Supabase authorize needs the user_integrations table. Apply migration 020 or set DATABASE_URL so the API can auto-create it.'
+        : `Could not start Supabase authorize (session store failed): ${pkceErr.message}`,
     );
   }
 

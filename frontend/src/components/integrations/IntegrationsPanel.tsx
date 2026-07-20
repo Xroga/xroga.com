@@ -56,6 +56,23 @@ export function IntegrationsPanel() {
       );
     } else if (vercel === 'error' || vercel === 'missing_code') {
       toast.error(message || 'Vercel authorize failed — try again');
+    } else if (vercel === 'setup' || q.get('focus') === 'vercel') {
+      try {
+        const stored = sessionStorage.getItem('xroga-vercel-setup-error');
+        if (stored) {
+          toast.error(stored);
+          sessionStorage.removeItem('xroga-vercel-setup-error');
+        } else {
+          toast('Connect Vercel here — Authorize, or paste a personal token under Connected services', {
+            icon: '▲',
+          });
+        }
+      } catch {
+        toast('Connect Vercel in Ship setup below', { icon: '▲' });
+      }
+      setTimeout(() => {
+        document.getElementById('ship-setup')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 200);
     }
     if (github === 'connected') {
       setGithubConnected(true);
@@ -140,6 +157,32 @@ export function IntegrationsPanel() {
         },
       );
       const result = await openVercelOAuthPopup();
+      if (result.goToIntegrations && !result.opened) {
+        stop();
+        toast.error(
+          result.error ||
+            'OAuth session store unavailable — paste a Vercel personal token in Ship setup',
+        );
+        try {
+          sessionStorage.setItem(
+            'xroga-vercel-setup-error',
+            (result.error || 'session store failed').slice(0, 280),
+          );
+        } catch {
+          /* ignore */
+        }
+        // Stay on Integrations — scroll to Ship setup token paste (no blank popup loop)
+        const url = new URL(window.location.href);
+        url.searchParams.set('focus', 'vercel');
+        url.searchParams.set('vercel', 'setup');
+        url.hash = 'ship-setup';
+        window.history.replaceState({}, '', url.toString());
+        window.dispatchEvent(new Event('xroga-vercel-setup'));
+        setTimeout(() => {
+          document.getElementById('ship-setup')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 50);
+        return;
+      }
       if (!result.opened) {
         stop();
         toast.error(result.error || 'Could not open Vercel authorization');

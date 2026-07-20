@@ -499,7 +499,16 @@ export function TerminalChatProvider({
           interrupt: false,
           attachments,
         };
-        setVercelGateOpen(true);
+        // Don't trap users in a chat popup — send them to Integrations Ship setup
+        try {
+          sessionStorage.setItem(
+            'xroga-vercel-pending-prompt',
+            JSON.stringify({ userPrompt: userPrompt.slice(0, 2000), t: Date.now() }),
+          );
+        } catch {
+          /* ignore */
+        }
+        window.location.assign('/dashboard/integrations?focus=vercel&vercel=setup#ship-setup');
       }).catch(() => {
         pendingBuildRef.current = {
           userPrompt,
@@ -507,7 +516,7 @@ export function TerminalChatProvider({
           interrupt: false,
           attachments,
         };
-        setVercelGateOpen(true);
+        window.location.assign('/dashboard/integrations?focus=vercel&vercel=setup#ship-setup');
       });
     },
     []
