@@ -131,7 +131,7 @@
   font-size: clamp(1.55rem, 4.6vw, 2.85rem);
   line-height: 1.15;
   letter-spacing: -0.03em;
-  max-width: 18ch;
+  max-width: 22ch;
   margin: 0 auto 1rem;
   animation: xv-hc-fade-up 0.8s ease 0.1s both;
 }
@@ -141,6 +141,32 @@
   font-style: italic;
   font-weight: 600;
   color: #dcecff;
+}
+
+.xv-home-coding .xv-hc-headline-rotator {
+  display: inline-grid;
+  vertical-align: baseline;
+  min-width: 11ch;
+  text-align: left;
+}
+
+.xv-home-coding .xv-hc-headline-word {
+  display: inline-block;
+  color: #8ec5ff;
+  animation: xv-hc-word-swap 0.55s ease both;
+}
+
+@keyframes xv-hc-word-swap {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
 }
 
 .xv-home-coding .xv-hc-sub {
@@ -630,9 +656,8 @@
 }
 
 .xv-home-coding .xv-hc-prompt-main {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  display: block;
+  width: 100%;
 }
 
 .xv-home-coding .xv-hc-prompt-input {
@@ -718,6 +743,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .xv-home-coding .xv-hc-prompt-integration {
@@ -737,6 +764,8 @@
 
 .xv-home-coding .xv-hc-prompt-integration-logo {
   opacity: 0.92;
+  width: 14px;
+  height: 14px;
 }
 
 .xv-home-coding .xv-hc-prompt-integration-sep {
@@ -747,20 +776,17 @@
 }
 
 .xv-home-coding .xv-hc-prompt-hint {
-  margin: 0;
-  color: rgba(220, 230, 255, 0.42);
-  font-size: 0.72rem;
-  font-family: var(--font-goga), system-ui, sans-serif;
+  display: none;
 }
 
 @media (max-width: 520px) {
   .xv-home-coding .xv-hc-prompt-footer {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
   }
-  .xv-home-coding .xv-hc-prompt-go {
-    min-height: 2.4rem;
-    padding: 0.5rem 0.95rem;
+  .xv-home-coding .xv-hc-prompt-integrations {
+    flex-wrap: wrap;
   }
 }
 
@@ -2248,14 +2274,95 @@
   background:
     radial-gradient(circle at 50% 0%, rgba(74, 163, 255, 0.16), transparent 60%),
     rgba(8, 14, 28, 0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+.xv-home-coding .xv-hc-ent-banner--alive::before {
+  content: '';
+  position: absolute;
+  inset: -40% -20%;
+  background: conic-gradient(
+    from 120deg,
+    transparent 0deg,
+    rgba(74, 163, 255, 0.12) 80deg,
+    transparent 160deg
+  );
+  animation: xv-hc-ent-sweep 8s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes xv-hc-ent-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.xv-home-coding .xv-hc-ent-orbit {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin-bottom: 0.85rem;
+}
+
+.xv-home-coding .xv-hc-ent-orbit-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1px dashed rgba(74, 163, 255, 0.45);
+  animation: xv-hc-ent-orbit-spin 10s linear infinite;
+}
+
+@keyframes xv-hc-ent-orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .xv-home-coding .xv-hc-ent-inf {
   width: 1.75rem;
   height: 1.75rem;
   color: var(--hc-blue);
-  margin-bottom: 0.75rem;
+  position: relative;
+  z-index: 1;
   animation: xv-hc-bh-inf-pulse 2.8s ease-in-out infinite;
+}
+
+.xv-home-coding .xv-hc-ent-signal {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 1.15rem;
+}
+
+.xv-home-coding .xv-hc-ent-signal span {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--hc-blue);
+  animation: xv-hc-ent-signal 1.4s ease-in-out infinite;
+}
+
+.xv-home-coding .xv-hc-ent-signal span:nth-child(2) {
+  animation-delay: 0.18s;
+}
+
+.xv-home-coding .xv-hc-ent-signal span:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+@keyframes xv-hc-ent-signal {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
 }
 
 .xv-home-coding .xv-hc-ent-kicker {
@@ -2263,6 +2370,7 @@
   font-size: 0.5rem;
   letter-spacing: 0.14em;
   color: var(--hc-blue);
+  position: relative;
 }
 
 .xv-home-coding .xv-hc-ent-title {
@@ -2271,6 +2379,7 @@
   font-size: clamp(1.65rem, 3.8vw, 2.35rem);
   letter-spacing: -0.03em;
   line-height: 1.2;
+  position: relative;
 }
 
 .xv-home-coding .xv-hc-ent-lead {
@@ -2278,6 +2387,7 @@
   color: var(--hc-muted);
   font-size: 0.95rem;
   line-height: 1.55;
+  position: relative;
 }
 
 .xv-home-coding .xv-hc-ent-grid {
@@ -2301,6 +2411,37 @@
   border-radius: 1rem;
   padding: 1.25rem 1.2rem;
   animation: xv-hc-fade-up 0.7s ease both;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.xv-home-coding .xv-hc-ent-card--alive:hover {
+  border-color: rgba(74, 163, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.xv-home-coding .xv-hc-ent-card-glow {
+  position: absolute;
+  inset: auto -20% -40% auto;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(74, 163, 255, 0.18), transparent 70%);
+  pointer-events: none;
+  animation: xv-hc-ent-glow 4.5s ease-in-out infinite;
+}
+
+@keyframes xv-hc-ent-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.1);
+  }
 }
 
 .xv-home-coding .xv-hc-ent-icon {

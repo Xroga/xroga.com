@@ -478,7 +478,6 @@ export function TerminalChatBar() {
               </span>
             </ChatBarTip>
             <div className="flex-1 min-w-[2px]" />
-            <TalkButton variant="inline" />
           </div>
           )}
 
@@ -501,6 +500,7 @@ export function TerminalChatBar() {
               hideUpload={incognito}
               surface={incognito ? 'incognito' : 'dashboard'}
               compactGo={!!draft.trim()}
+              talkSlot={incognito ? undefined : <TalkButton variant="inline" />}
               onMicToggle={() => {
                 if (!speech.supported) {
                   toast.error('Voice input not supported in this browser');
@@ -564,7 +564,7 @@ export function TerminalChatBar() {
                 autoCorrect="off"
                 autoCapitalize="off"
                 className={cn(
-                  'w-full pr-2 py-1.5 rounded-xl resize-none max-h-[260px] min-h-[36px]',
+                  'w-full pr-2 py-1.5 rounded-xl resize-none max-h-[260px] min-h-[40px]',
                   incognito ? 'pl-3 text-white placeholder:text-white/45' : 'pl-6 text-[var(--foreground)] placeholder:text-[var(--muted)]',
                   'bg-transparent focus:outline-none text-sm font-terminal leading-[20px]',
                   !loading && !draft && 'cursor-blink'

@@ -16,6 +16,8 @@ interface ShipIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
   /** When true, boat rocks on water until set false (send → AI complete). */
   sailing?: boolean;
+  /** Thicker stroke for send button presence. */
+  bold?: boolean;
 }
 
 const PATH_VARIANTS: Variants = {
@@ -47,7 +49,7 @@ const G_VARIANTS: Variants = {
 };
 
 const ShipIcon = forwardRef<ShipIconHandle, ShipIconProps>(
-  ({ onMouseEnter, onMouseLeave, className, size = 28, sailing = false, ...props }, ref) => {
+  ({ onMouseEnter, onMouseLeave, className, size = 28, sailing = false, bold = false, ...props }, ref) => {
     const controls = useAnimation();
     const isControlledRef = useRef(false);
 
@@ -101,11 +103,12 @@ const ShipIcon = forwardRef<ShipIconHandle, ShipIconProps>(
           stroke="currentColor"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="2"
+          strokeWidth={bold ? 2.75 : 2}
           viewBox="0 0 24 24"
           width={size}
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden
+          className={bold ? 'xv-ship-icon--bold' : undefined}
         >
           <motion.path
             animate={controls}

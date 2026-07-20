@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { X, FileText, Image as ImageIcon, Film, Mic } from 'lucide-react';
 import { ChatBarSendButton, ChatBarUploadButton, ChatBarComboAction, VoiceWaveform, type SendButtonState, type ChatbarSurface } from './ChatBarButtons';
 import { cn } from '@/lib/utils';
@@ -93,19 +93,26 @@ export function ChatBarMicButton({
       onClick={onToggle}
       disabled={disabled}
       className={cn(
-        'xv-mic-btn relative p-1.5 rounded-xl transition-all shrink-0',
+        'xv-mic-btn xv-mic-btn--dictate relative inline-flex items-center gap-1 px-2 py-1.5 rounded-xl transition-all shrink-0',
         surface === 'homepage' && 'xv-mic-btn--home',
         surface === 'incognito' && 'xv-mic-btn--incognito',
         listening
-          ? 'bg-red-500/15 text-red-400'
+          ? 'bg-red-500/15 text-red-400 xv-mic-btn--listening'
           : surface === 'incognito'
             ? 'border border-white/25 text-white hover:bg-white/10'
             : 'xv-chatbar-secondary-btn hover:bg-white/10 text-[var(--foreground)]'
       )}
-      title={listening ? 'Stop listening' : 'Speak to text'}
-      aria-label={listening ? 'Stop voice input' : 'Start voice input'}
+      title={listening ? 'Stop voice-to-text' : 'Voice to text — dictate into the chat'}
+      aria-label={listening ? 'Stop voice-to-text' : 'Voice to text'}
     >
-      {listening ? <VoiceWaveform active /> : <Mic className="w-4 h-4" />}
+      {listening ? (
+        <VoiceWaveform active />
+      ) : (
+        <Mic className="w-4 h-4 xv-mic-dictate-icon" strokeWidth={2.25} />
+      )}
+      <span className="xv-mic-btn__label hidden sm:inline text-[10px] font-semibold tracking-wide uppercase opacity-80">
+        {listening ? 'Listening' : 'Dictate'}
+      </span>
     </button>
   );
 }
@@ -125,6 +132,7 @@ export function ChatBarInputRow({
   comboAction = false,
   goOnly = false,
   hasText = false,
+  talkSlot,
   children,
 }: {
   uploading: boolean;
@@ -141,34 +149,44 @@ export function ChatBarInputRow({
   comboAction?: boolean;
   goOnly?: boolean;
   hasText?: boolean;
-  children: React.ReactNode;
+  talkSlot?: ReactNode;
+  children: ReactNode;
 }) {
   return (
-    <div className={cn('relative flex items-end gap-1.5 xv-chatbar-row-modern', surface === 'homepage' && 'xv-chatbar-row--home')}>
-      {!hideUpload && (
-        <ChatBarUploadButton onClick={onUploadClick} active={uploading} surface={surface} />
+    <div
+      className={cn(
+        'relative flex flex-col gap-1.5 xv-chatbar-row-modern xv-chatbar-row--stacked',
+        surface === 'homepage' && 'xv-chatbar-row--home'
       )}
-      <div className="flex-1 min-w-0 relative">{children}</div>
-      <div className="xv-chatbar-actions flex items-center gap-1.5 shrink-0">
-        {goOnly ? (
-          <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
-        ) : comboAction ? (
-          <ChatBarComboAction
-            hasText={hasText}
-            listening={listening}
-            onMicToggle={onMicToggle}
-            micDisabled={micDisabled}
-            sendState={sendState}
-            stopping={stopping}
-            onStop={onStop}
-            surface={surface}
-          />
-        ) : (
-          <>
-            <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || stopping} surface={surface} />
-            <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
-          </>
+    >
+      <div className="w-full min-w-0 relative">{children}</div>
+      <div className="xv-chatbar-tools flex items-center gap-1.5 w-full">
+        {!hideUpload && (
+          <ChatBarUploadButton onClick={onUploadClick} active={uploading} surface={surface} />
         )}
+        <div className="flex-1 min-w-[4px]" />
+        <div className="xv-chatbar-actions flex items-center gap-1.5 shrink-0">
+          {goOnly ? (
+            <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
+          ) : comboAction ? (
+            <ChatBarComboAction
+              hasText={hasText}
+              listening={listening}
+              onMicToggle={onMicToggle}
+              micDisabled={micDisabled}
+              sendState={sendState}
+              stopping={stopping}
+              onStop={onStop}
+              surface={surface}
+            />
+          ) : (
+            <>
+              <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || stopping} surface={surface} />
+              {talkSlot}
+              <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

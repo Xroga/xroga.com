@@ -45,10 +45,21 @@ const AI_FEATURES = [
   },
 ];
 
+const HERO_BUILD_WORDS = [
+  'Websites',
+  'SaaS apps',
+  'Hackathon MVPs',
+  'Landing pages',
+  'Dashboards',
+  'Internal tools',
+  'Your stack',
+] as const;
+
 export default function HomePage() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
   const [authReady, setAuthReady] = useState(false);
+  const [buildWordIdx, setBuildWordIdx] = useState(0);
 
   useEffect(() => {
     createClient()
@@ -57,6 +68,13 @@ export default function HomePage() {
         setLoggedIn(!!session);
         setAuthReady(true);
       });
+  }, []);
+
+  useEffect(() => {
+    const t = window.setInterval(() => {
+      setBuildWordIdx((i) => (i + 1) % HERO_BUILD_WORDS.length);
+    }, 2400);
+    return () => window.clearInterval(t);
   }, []);
 
   const primaryHref = loggedIn ? '/workspace' : '/auth/signup';
@@ -102,7 +120,12 @@ export default function HomePage() {
           <h1 className="xv-hc-brand">XROGA</h1>
 
           <p className="xv-hc-headline">
-            AI That <span className="xv-hc-headline-em">Builds & Ships</span> Your Stack
+            AI That <span className="xv-hc-headline-em">Builds & Ships</span>{' '}
+            <span className="xv-hc-headline-rotator" aria-live="polite">
+              <span key={HERO_BUILD_WORDS[buildWordIdx]} className="xv-hc-headline-word">
+                {HERO_BUILD_WORDS[buildWordIdx]}
+              </span>
+            </span>
           </p>
 
           <p className="xv-hc-sub">
@@ -118,9 +141,9 @@ export default function HomePage() {
             >
               {primaryLabel}
             </button>
-            <Link href="/pricing" className="xv-hc-btn-ghost">
-              View Pricing
-            </Link>
+            <a href="#ship-loop" className="xv-hc-btn-ghost">
+              See how it ships
+            </a>
           </div>
 
           <div className="xv-hc-chat xv-home-chatbar-wrap">
@@ -145,7 +168,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="xv-hc-live" aria-label="Live build simulation">
+      <section className="xv-hc-live" id="ship-loop" aria-label="Live build simulation">
         <div className="xv-hc-live-inner">
           <HomepagePipelineDemo />
         </div>
