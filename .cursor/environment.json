@@ -1,0 +1,26 @@
+{
+  "name": "xroga",
+  "install": "bash .cursor/install.sh",
+  "terminals": [
+    {
+      "name": "backend",
+      "command": "npm run dev:backend",
+      "description": "Express API on port 8080 (tsx watch). Health: curl http://localhost:8080/health"
+    },
+    {
+      "name": "frontend",
+      "command": "npm run dev:frontend",
+      "description": "Next.js 14 App Router on port 3000. Requires NEXT_PUBLIC_API_URL=http://localhost:8080"
+    }
+  ],
+  "ports": [
+    {
+      "name": "frontend",
+      "port": 3000
+    },
+    {
+      "name": "backend",
+      "port": 8080
+    }
+  ]
+}
