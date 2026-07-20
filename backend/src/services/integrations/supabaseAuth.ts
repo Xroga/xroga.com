@@ -1,12 +1,18 @@
 /**
  * Supabase Management API OAuth — user clicks Authorize, no paste.
  * Tokens grant project list, API keys, and SQL via /database/query.
+ * PKCE + tokens work via DB or Storage fallback when user_integrations is missing.
  */
 
 import { createHash, randomBytes } from 'crypto';
-import { getSupabaseAdmin } from '../../config/supabase.js';
-import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
-import { isMissingTableError } from './githubTokenStore.js';
+import {
+  clearPkceSession,
+  clearProviderToken,
+  loadPkceSession,
+  loadProviderToken,
+  storePkceSession,
+  storeProviderToken,
+} from './oauthPkceStore.js';
 
 const PROVIDER = 'supabase_oauth';
 const PKCE_PROVIDER = 'supabase_oauth_pkce';
@@ -76,45 +82,12 @@ export async function buildSupabaseAuthorizeUrl(
     JSON.stringify({ userId, t: Date.now(), n: randomBytes(8).toString('hex') }),
   ).toString('base64url');
 
-  if (githubSchemaAutoBootstrapEnabled()) {
-    await ensureGithubSchema();
-  }
-
-  const supabase = getSupabaseAdmin();
-  let pkceErr = (
-    await supabase.from('user_integrations').upsert(
-      {
-        user_id: userId,
-        provider: PKCE_PROVIDER,
-        access_token: verifier,
-        metadata: { state, redirect_uri: redirectUri, created_at: new Date().toISOString() },
-      },
-      { onConflict: 'user_id,provider' },
-    )
-  ).error;
-  if (pkceErr && isMissingTableError(pkceErr.message)) {
-    await ensureGithubSchema();
-    await new Promise((r) => setTimeout(r, 400));
-    pkceErr = (
-      await supabase.from('user_integrations').upsert(
-        {
-          user_id: userId,
-          provider: PKCE_PROVIDER,
-          access_token: verifier,
-          metadata: { state, redirect_uri: redirectUri, created_at: new Date().toISOString() },
-        },
-        { onConflict: 'user_id,provider' },
-      )
-    ).error;
-  }
-  if (pkceErr) {
-    console.error('[supabaseAuth] PKCE store failed:', pkceErr.message);
-    throw new Error(
-      isMissingTableError(pkceErr.message)
-        ? 'Supabase authorize needs the user_integrations table. Apply migration 020 or set DATABASE_URL so the API can auto-create it.'
-        : `Could not start Supabase authorize (session store failed): ${pkceErr.message}`,
-    );
-  }
+  await storePkceSession(userId, PKCE_PROVIDER, {
+    verifier,
+    state,
+    redirect_uri: redirectUri,
+    created_at: new Date().toISOString(),
+  });
 
   const params = new URLSearchParams({
     response_type: 'code',
@@ -145,26 +118,18 @@ export async function exchangeSupabaseOAuthCode(opts: {
     throw new Error('Supabase OAuth not configured — set SUPABASE_OAUTH_CLIENT_ID/SECRET');
   }
 
-  const supabase = getSupabaseAdmin();
-  const { data: pkce } = await supabase
-    .from('user_integrations')
-    .select('access_token, metadata')
-    .eq('user_id', opts.userId)
-    .eq('provider', PKCE_PROVIDER)
-    .maybeSingle();
-
-  const meta = (pkce?.metadata ?? {}) as { state?: string; redirect_uri?: string };
-  if (!pkce?.access_token || meta.state !== opts.state) {
+  const pkce = await loadPkceSession(opts.userId, PKCE_PROVIDER, opts.state);
+  if (!pkce?.verifier) {
     throw new Error('Invalid or expired OAuth state — try Connect Supabase again');
   }
 
-  const redirectUri = (meta.redirect_uri || opts.redirectUri).replace(/\/$/, '');
+  const redirectUri = (pkce.redirect_uri || opts.redirectUri).replace(/\/$/, '');
 
   const body = new URLSearchParams({
     grant_type: 'authorization_code',
     code: opts.code,
     redirect_uri: redirectUri,
-    code_verifier: pkce.access_token,
+    code_verifier: pkce.verifier,
   });
 
   const res = await fetch(TOKEN, {
@@ -193,39 +158,23 @@ export async function exchangeSupabaseOAuthCode(opts: {
     ? new Date(Date.now() + json.expires_in * 1000).toISOString()
     : null;
 
-  await supabase.from('user_integrations').upsert(
-    {
-      user_id: opts.userId,
-      provider: PROVIDER,
-      access_token: json.access_token,
-      refresh_token: json.refresh_token ?? null,
-      metadata: {
-        connected_at: new Date().toISOString(),
-        expires_at: expiresAt,
-        token_type: json.token_type || 'bearer',
-      },
+  await storeProviderToken(opts.userId, PROVIDER, {
+    access_token: json.access_token,
+    refresh_token: json.refresh_token ?? null,
+    metadata: {
+      connected_at: new Date().toISOString(),
+      expires_at: expiresAt,
+      token_type: json.token_type || 'bearer',
     },
-    { onConflict: 'user_id,provider' },
-  );
+  });
 
-  await supabase
-    .from('user_integrations')
-    .delete()
-    .eq('user_id', opts.userId)
-    .eq('provider', PKCE_PROVIDER);
+  await clearPkceSession(opts.userId, PKCE_PROVIDER);
 
   return json;
 }
 
 export async function getSupabaseOAuthAccessToken(userId: string): Promise<string | null> {
-  const supabase = getSupabaseAdmin();
-  const { data } = await supabase
-    .from('user_integrations')
-    .select('access_token, refresh_token, metadata')
-    .eq('user_id', userId)
-    .eq('provider', PROVIDER)
-    .maybeSingle();
-
+  const data = await loadProviderToken(userId, PROVIDER);
   if (!data?.access_token) return null;
 
   const meta = (data.metadata ?? {}) as { expires_at?: string };
@@ -276,21 +225,15 @@ export async function refreshSupabaseOAuthToken(
     ? new Date(Date.now() + json.expires_in * 1000).toISOString()
     : null;
 
-  const supabase = getSupabaseAdmin();
-  await supabase.from('user_integrations').upsert(
-    {
-      user_id: userId,
-      provider: PROVIDER,
-      access_token: json.access_token,
-      refresh_token: json.refresh_token ?? refreshToken,
-      metadata: {
-        connected_at: new Date().toISOString(),
-        expires_at: expiresAt,
-        refreshed_at: new Date().toISOString(),
-      },
+  await storeProviderToken(userId, PROVIDER, {
+    access_token: json.access_token,
+    refresh_token: json.refresh_token ?? refreshToken,
+    metadata: {
+      connected_at: new Date().toISOString(),
+      expires_at: expiresAt,
+      refreshed_at: new Date().toISOString(),
     },
-    { onConflict: 'user_id,provider' },
-  );
+  });
 
   return json;
 }
@@ -300,9 +243,8 @@ export async function isSupabaseOAuthConnected(userId: string): Promise<boolean>
 }
 
 export async function clearSupabaseOAuth(userId: string): Promise<void> {
-  const supabase = getSupabaseAdmin();
-  await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', PROVIDER);
-  await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', PKCE_PROVIDER);
+  await clearProviderToken(userId, PROVIDER);
+  await clearPkceSession(userId, PKCE_PROVIDER);
 }
 
 export function parseOAuthState(state: string): { userId: string } | null {
