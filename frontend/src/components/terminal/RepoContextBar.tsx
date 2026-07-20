@@ -125,16 +125,18 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
       const defaultRepo =
         savedRepo && list.some((r) => r.fullName === savedRepo)
           ? savedRepo
-          : repoLocked
-            ? (status.defaultRepo && list.some((r) => r.fullName === status.defaultRepo)
-                ? status.defaultRepo
-                : list[0]?.fullName ?? null)
-            : null;
+          : status.defaultRepo && list.some((r) => r.fullName === status.defaultRepo)
+            ? status.defaultRepo
+            : repoLocked
+              ? list[0]?.fullName ?? null
+              : null;
 
       setSelectedRepo(defaultRepo);
       if (defaultRepo) {
         const meta = list.find((r) => r.fullName === defaultRepo);
         const branch = await loadBranches(defaultRepo, savedBranch ?? meta?.defaultBranch);
+        // Persist sticky selection for pipeline clientMeta
+        saveSelectedRepoContext({ repo: defaultRepo, branch });
         // Defer lite analyze so the repo picker paints first
         const runAnalyze = () => void analyzeRepo(defaultRepo, branch, false);
         if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {

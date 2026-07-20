@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { detectScaffoldKind } from './detectScaffold.js';
+import { detectScaffoldFeatures, detectScaffoldKind } from './detectScaffold.js';
 import { buildExpoScaffold } from './expoScaffold.js';
 import { buildNextjsScaffold } from './nextjsScaffold.js';
 import {
@@ -19,8 +19,26 @@ describe('detectScaffoldKind', () => {
     assert.equal(detectScaffoldKind('Next.js app with Supabase login'), 'nextjs');
   });
 
+  it('picks nextjs for crypto and automation prompts', () => {
+    assert.equal(detectScaffoldKind('Build a crypto portfolio tracker with wallet connect'), 'nextjs');
+    assert.equal(detectScaffoldKind('Create an automation agent that runs on a schedule'), 'nextjs');
+  });
+
   it('defaults to static for simple sites', () => {
     assert.equal(detectScaffoldKind('Build a simple landing page for a cafe'), 'static');
+  });
+});
+
+describe('detectScaffoldFeatures', () => {
+  it('flags crypto and agent keywords', () => {
+    assert.deepEqual(detectScaffoldFeatures('crypto wallet dashboard'), {
+      crypto: true,
+      agent: false,
+    });
+    assert.deepEqual(detectScaffoldFeatures('automation agent with cron'), {
+      crypto: false,
+      agent: true,
+    });
   });
 });
 
@@ -58,6 +76,40 @@ describe('scaffolds', () => {
     const sql = files.find((f) => f.path === 'supabase/migrations/001_initial.sql')!.content;
     assert.match(sql, /storage\.buckets/);
     assert.match(sql, /storage\.objects/);
+  });
+
+  it('crypto prompt adds prices API + wallet stub + CRYPTO.md', () => {
+    const files = buildNextjsScaffold({
+      projectName: 'Coin Desk',
+      userPrompt: 'Build a crypto dashboard with wallet connect and live prices',
+    });
+    const paths = new Set(files.map((f) => f.path));
+    assert.ok(paths.has('app/api/prices/route.ts'));
+    assert.ok(paths.has('lib/crypto/walletStub.ts'));
+    assert.ok(paths.has('components/CryptoPrices.tsx'));
+    assert.ok(paths.has('CRYPTO.md'));
+    const prices = files.find((f) => f.path === 'app/api/prices/route.ts')!.content;
+    assert.match(prices, /coingecko/i);
+    assert.match(prices, /not financial advice/i);
+    const page = files.find((f) => f.path === 'app/page.tsx')!.content;
+    assert.match(page, /CryptoPrices/);
+  });
+
+  it('automation prompt adds agent runner + cron + AGENT.md', () => {
+    const files = buildNextjsScaffold({
+      projectName: 'Ops Bot',
+      userPrompt: 'Build an automation agent with scheduled cron workflow',
+    });
+    const paths = new Set(files.map((f) => f.path));
+    assert.ok(paths.has('lib/agent/runner.ts'));
+    assert.ok(paths.has('app/api/agent/run/route.ts'));
+    assert.ok(paths.has('app/api/cron/agent/route.ts'));
+    assert.ok(paths.has('AGENT.md'));
+    const vercel = files.find((f) => f.path === 'vercel.json')!.content;
+    assert.match(vercel, /\/api\/cron\/agent/);
+    const runner = files.find((f) => f.path === 'lib/agent/runner.ts')!.content;
+    assert.match(runner, /runAgentOnce/);
+    assert.match(runner, /always-on ops/i);
   });
 
   it('expo scaffold includes android/ios config', () => {

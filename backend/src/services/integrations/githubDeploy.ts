@@ -7,7 +7,7 @@ import { normalizeBuildFiles } from '../../lib/normalizeBuildSource.js';
 import { buildInlinePreviewDocument } from '../../lib/landingPreview.js';
 import { vercelStaticSiteJson } from '../../lib/vercelStaticConfig.js';
 import { getSecret } from '../../config/envSecrets.js';
-import { getGitHubToken, isGitHubConnected as checkGitHubConnected, getGitHubStorageMeta } from './githubAuth.js';
+import { getGitHubToken, isGitHubConnected as checkGitHubConnected, getGitHubStorageMeta, setGithubDefaultRepo } from './githubAuth.js';
 import { getVercelToken } from './vercelAuth.js';
 import { resolveProviderEnvForDeploy } from './userProviderKeys.js';
 import {
@@ -81,6 +81,13 @@ async function getIntegration(userId: string): Promise<GitHubIntegrationRow | nu
 
 export async function isGitHubConnected(userId: string): Promise<boolean> {
   return checkGitHubConnected(userId);
+}
+
+/** Sticky ship target from first create / last update — used when client omits githubTargetRepo. */
+export async function getGithubDefaultRepo(userId: string): Promise<string | null> {
+  const integration = await getIntegration(userId);
+  const repo = integration?.default_repo?.trim() || null;
+  return repo?.includes('/') ? repo : null;
 }
 
 async function ghFetch(token: string, path: string, init?: RequestInit): Promise<Response> {
@@ -491,6 +498,8 @@ export async function pushBuildToGitHub(
       opts.deletePaths ?? []
     );
     invalidateRepoAnalysis(userId, selectedRepo);
+    // Keep sticky default on updates too
+    await setGithubDefaultRepo(userId, selectedRepo).catch(() => undefined);
     return {
       repoName: `${owner}/${repo}`,
       repoUrl: htmlUrl,
@@ -514,8 +523,14 @@ export async function pushBuildToGitHub(
     buildBrandedCommitMessage('Initial XROGA build', coAuthor)
   );
 
+  const fullName = `${owner}/${repo}`;
+  // Bind this as the sticky update target for later prompts (no re-pick needed)
+  await setGithubDefaultRepo(userId, fullName).catch((err) => {
+    console.warn('[githubDeploy] default_repo persist:', (err as Error).message);
+  });
+
   return {
-    repoName: `${owner}/${repo}`,
+    repoName: fullName,
     repoUrl: `https://github.com/${owner}/${repo}`,
     htmlUrl,
     commitSha,

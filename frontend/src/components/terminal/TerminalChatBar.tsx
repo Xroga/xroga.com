@@ -145,7 +145,16 @@ export function TerminalChatBar() {
           });
           return;
         }
-        // Open chatbar "Select repository" dropdown — user must choose
+        // Prefer sticky default from first ship so New Terminal still updates the live product.
+        // User can switch repos in the bar when they want a brand-new product.
+        if (status.defaultRepo?.includes('/')) {
+          const { saveSelectedRepoContext } = await import('@/lib/repoContext');
+          const { notifyGithubRepoContext } = await import('@/lib/githubProjectEvents');
+          saveSelectedRepoContext({ repo: status.defaultRepo, branch: 'main' });
+          notifyGithubRepoContext(status.defaultRepo, 'main');
+          return;
+        }
+        // First-time: open picker so they pick once
         notifyOpenRepoPicker();
       })();
     };
@@ -174,10 +183,19 @@ export function TerminalChatBar() {
         return true;
       }
     }
-    // Never auto-pick a repo — user selects in the chat bar.
+    // Auto-bind sticky default_repo from first ship when nothing is selected yet.
     try {
       const status = await api.github.status();
       setGithubConnected(status.connected);
+      if (status.connected && status.defaultRepo?.includes('/')) {
+        const selected = (await import('@/lib/repoContext')).getSelectedRepoContext();
+        if (!selected?.repo?.includes('/')) {
+          const { saveSelectedRepoContext } = await import('@/lib/repoContext');
+          const { notifyGithubRepoContext } = await import('@/lib/githubProjectEvents');
+          saveSelectedRepoContext({ repo: status.defaultRepo, branch: 'main' });
+          notifyGithubRepoContext(status.defaultRepo, 'main');
+        }
+      }
     } catch {
       /* gate will handle */
     }
