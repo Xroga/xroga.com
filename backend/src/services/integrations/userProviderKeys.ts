@@ -37,6 +37,7 @@ export const ALLOWED_PROVIDERS = [
   'resend',
   /** User-owned mobile publish (EAS / stores) — Xroga never pays Apple/Google fees */
   'expo',
+  'expo_project_id',
   'apple_asc',
   'google_play',
   'custom',
@@ -67,13 +68,19 @@ export const ENV_VAR_BY_PROVIDER: Record<string, string> = {
   supabase_db_password: 'SUPABASE_DB_PASSWORD',
   resend: 'RESEND_API_KEY',
   expo: 'EXPO_TOKEN',
+  expo_project_id: 'EXPO_EAS_PROJECT_ID',
   apple_asc: 'EXPO_APPLE_APP_SPECIFIC_PASSWORD',
   google_play: 'GOOGLE_SERVICE_ACCOUNT_JSON',
   custom: 'CUSTOM_API_KEY',
 };
 
 /** These are for EAS/store submit — never sync into Vercel web project env. */
-export const PUBLISH_ONLY_PROVIDERS = new Set(['expo', 'apple_asc', 'google_play']);
+export const PUBLISH_ONLY_PROVIDERS = new Set([
+  'expo',
+  'expo_project_id',
+  'apple_asc',
+  'google_play',
+]);
 
 /** Server-only provision credentials — never sync to Vercel (or expose to browser). */
 export const SUPABASE_SERVER_ONLY_PROVIDERS = new Set(['supabase_pat', 'supabase_db_password']);

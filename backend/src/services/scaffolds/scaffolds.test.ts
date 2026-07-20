@@ -66,13 +66,17 @@ describe('scaffolds', () => {
     assert.ok(paths.has('app.json'));
     assert.ok(paths.has('eas.json'));
     assert.ok(paths.has('PUBLISH.md'));
+    assert.ok(paths.has('.eas/workflows/publish-android.yml'));
+    assert.ok(paths.has('.eas/workflows/publish-ios.yml'));
     assert.ok(paths.has('app/index.tsx'));
     assert.ok(paths.has('package.json'));
     const appJson = files.find((f) => f.path === 'app.json')!.content;
     assert.match(appJson, /"ios"/);
     assert.match(appJson, /"android"/);
+    assert.match(appJson, /projectId/);
     const publish = files.find((f) => f.path === 'PUBLISH.md')!.content;
-    assert.match(publish, /you own the store accounts/i);
+    assert.match(publish, /non-developer path/i);
+    assert.match(publish, /Publish to Google Play/i);
   });
 
   it('merge prefers non-empty AI files over scaffold', () => {

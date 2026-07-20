@@ -139,17 +139,18 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
   const mobileChecklist: PublishChecklistItem[] = [
     {
       id: 'github',
-      label: 'Connect GitHub (same repo as the Expo app)',
+      label: '1. Authorize GitHub',
       done: githubConnected,
       required: true,
+      hint: 'Same repo Xroga pushes your Expo app to',
       href: '/dashboard/integrations',
     },
     {
       id: 'expo',
-      label: 'Save Expo access token (EAS)',
+      label: '2. Save Expo access token (free)',
       done: Boolean(expoKey),
       required: true,
-      hint: 'expo.dev → Account settings → Access tokens',
+      hint: 'expo.dev → Settings → Access tokens — we encrypt it',
       href: 'https://expo.dev/settings/access-tokens',
     },
     {
@@ -160,23 +161,23 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
       hint:
         expoTokenValid === false
           ? 'Token saved but Expo rejected it — paste a fresh one'
-          : 'Click Verify after saving',
-    },
-    {
-      id: 'apple',
-      label: 'Apple Developer (optional for iOS submit)',
-      done: Boolean(appleKey),
-      required: false,
-      hint: 'You pay Apple’s developer fee — store app-specific password here',
-      href: 'https://developer.apple.com',
+          : 'Saved & verified automatically when you paste',
     },
     {
       id: 'google',
-      label: 'Google Play Console (optional for Android submit)',
+      label: '3a. Pay Google (~$25 once) + paste Play JSON',
       done: Boolean(googleKey),
       required: false,
-      hint: 'You pay Google’s one-time fee — paste service account JSON',
+      hint: 'Then click Publish to Google Play — EAS builds & submits on your account',
       href: 'https://play.google.com/console',
+    },
+    {
+      id: 'apple',
+      label: '3b. Pay Apple (~$99/yr) + app-specific password',
+      done: Boolean(appleKey),
+      required: false,
+      hint: 'Then click Publish to App Store — EAS builds & submits on your account',
+      href: 'https://developer.apple.com',
     },
   ];
 
@@ -195,25 +196,23 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
       googlePlaySaved: Boolean(googleKey),
       checklist: mobileChecklist,
       commands: [
+        '# Usually not needed — use one-click Publish buttons above',
         'npm i -g eas-cli',
-        'export EXPO_TOKEN=…   # or: eas login',
-        'cd your-repo && eas build:configure',
-        'eas build -p android --profile production',
-        'eas build -p ios --profile production',
-        'eas submit -p android   # needs Play service account',
-        'eas submit -p ios       # needs Apple credentials',
+        'export EXPO_TOKEN=…',
+        'eas build -p android --profile production && eas submit -p android',
+        'eas build -p ios --profile production && eas submit -p ios',
       ],
     },
     costs: {
       xrogaPays: [
         'Xroga AI build / chat usage (your Xroga plan)',
-        'Encrypted vault storage on our API (included)',
+        'Encrypted vault + one-click EAS trigger (included)',
       ],
       userPays: [
-        'Vercel hosting (your Vercel plan — often free hobby tier)',
-        'Apple Developer Program (~$99/yr) if you submit to App Store',
-        'Google Play Console (~$25 one-time) if you submit to Play Store',
-        'EAS build minutes on your Expo account (Expo free tier available)',
+        'Google Play Console (~$25 one-time) for Android store',
+        'Apple Developer Program (~$99/yr) for iOS store',
+        'Expo EAS build minutes on your Expo account',
+        'Vercel hosting only if you also ship a web app',
       ],
     },
   };

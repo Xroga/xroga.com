@@ -6,6 +6,10 @@ import {
   verifyExpoToken,
 } from '../services/publish/userOwnedPublish.js';
 import {
+  listExpoApps,
+  triggerEasPublish,
+} from '../services/publish/easPublish.js';
+import {
   getUserProviderKey,
   saveUserProviderKey,
 } from '../services/integrations/userProviderKeys.js';
@@ -16,11 +20,13 @@ const router = Router();
 router.get('/status', async (req: AuthRequest, res) => {
   try {
     const status = await getPublishStatus(req.userId!);
+    const projectId = await getUserProviderKey(req.userId!, 'expo_project_id');
     res.json({
       ok: true,
       ...status,
+      easProjectId: projectId || null,
       message:
-        'Web ships via your GitHub + Vercel. Mobile store builds use your Expo/EAS account — Apple/Google fees are yours, not Xroga’s.',
+        'Web: Authorize GitHub + Vercel. Mobile: you pay Apple/Google once, save credentials, then one-click EAS publish on your Expo account.',
     });
   } catch (err) {
     res.status(500).json({ ok: false, error: (err as Error).message });
@@ -56,7 +62,7 @@ router.post('/expo-token', async (req: AuthRequest, res) => {
       username: verified.username,
       masked: saved.masked,
       envVar: saved.envVar,
-      message: `Expo token saved encrypted for @${verified.username}. Use EAS on your machine/account — Xroga does not pay store fees.`,
+      message: `Expo connected as @${verified.username}. Next: pay Apple/Google (if submitting), then click Publish.`,
     });
   } catch (err) {
     res.status(400).json({ ok: false, error: (err as Error).message });
@@ -81,6 +87,74 @@ router.post('/verify-expo', async (req: AuthRequest, res) => {
       return;
     }
     res.json({ ok: true, verified: true, username: verified.username });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: (err as Error).message });
+  }
+});
+
+/** Save EAS project UUID (from expo.dev project settings). */
+router.post('/eas-project', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    projectId: z.string().min(8).max(80),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ ok: false, error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const saved = await saveUserProviderKey(
+      req.userId!,
+      'expo_project_id',
+      parsed.data.projectId.trim(),
+    );
+    res.json({ ok: true, masked: saved.masked, message: 'EAS project linked' });
+  } catch (err) {
+    res.status(400).json({ ok: false, error: (err as Error).message });
+  }
+});
+
+/** List Expo apps for this user's token (project picker). */
+router.get('/expo-apps', async (req: AuthRequest, res) => {
+  try {
+    const token = await getUserProviderKey(req.userId!, 'expo');
+    if (!token) {
+      res.status(403).json({ ok: false, apps: [], error: 'Save Expo token first' });
+      return;
+    }
+    const apps = await listExpoApps(token);
+    res.json({ ok: true, apps });
+  } catch (err) {
+    res.status(400).json({ ok: false, apps: [], error: (err as Error).message });
+  }
+});
+
+/**
+ * One-click: trigger EAS build (+ submit when store creds exist).
+ * User must have paid Apple/Google and saved credentials — Xroga only dispatches.
+ */
+router.post('/eas-publish', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    platform: z.enum(['android', 'ios']),
+    projectId: z.string().min(8).max(80).optional(),
+    gitRef: z.string().min(1).max(120).optional(),
+    submit: z.boolean().optional(),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ ok: false, error: parsed.error.flatten() });
+    return;
+  }
+
+  try {
+    const result = await triggerEasPublish({
+      userId: req.userId!,
+      platform: parsed.data.platform,
+      projectId: parsed.data.projectId,
+      gitRef: parsed.data.gitRef,
+      submit: parsed.data.submit,
+    });
+    res.status(result.ok ? 200 : 400).json(result);
   } catch (err) {
     res.status(500).json({ ok: false, error: (err as Error).message });
   }
