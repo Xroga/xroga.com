@@ -80,11 +80,86 @@ export function buildExpoScaffold(opts: {
               bundler: 'metro',
             },
             plugins: ['expo-router'],
+            extra: {
+              eas: {
+                projectId: 'REPLACE_WITH_EAS_PROJECT_ID',
+              },
+            },
           },
         },
         null,
         2,
       ),
+    },
+    {
+      path: '.eas/workflows/build-android.yml',
+      content: `name: Build Android
+on:
+  workflow_dispatch: {}
+jobs:
+  build_android:
+    name: Build Android
+    type: build
+    params:
+      platform: android
+      profile: production
+`,
+    },
+    {
+      path: '.eas/workflows/build-ios.yml',
+      content: `name: Build iOS
+on:
+  workflow_dispatch: {}
+jobs:
+  build_ios:
+    name: Build iOS
+    type: build
+    params:
+      platform: ios
+      profile: production
+`,
+    },
+    {
+      path: '.eas/workflows/publish-android.yml',
+      content: `name: Publish Android
+on:
+  workflow_dispatch: {}
+jobs:
+  build_android:
+    name: Build Android
+    type: build
+    params:
+      platform: android
+      profile: production
+  submit_android:
+    name: Submit Play Store
+    type: submit
+    needs: [build_android]
+    params:
+      platform: android
+      profile: production
+`,
+    },
+    {
+      path: '.eas/workflows/publish-ios.yml',
+      content: `name: Publish iOS
+on:
+  workflow_dispatch: {}
+jobs:
+  build_ios:
+    name: Build iOS
+    type: build
+    params:
+      platform: ios
+      profile: production
+  submit_ios:
+    name: Submit App Store
+    type: submit
+    needs: [build_ios]
+    params:
+      platform: ios
+      profile: production
+`,
     },
     {
       path: 'tsconfig.json',
@@ -287,45 +362,37 @@ EXPO_PUBLIC_API_URL=
     },
     {
       path: 'PUBLISH.md',
-      content: `# Publish ${name} (you own the store accounts)
+      content: `# Publish ${name} (non-developer path)
 
 Xroga builds the Expo app and pushes it to **your GitHub**.  
-**Apple / Google fees are paid by you** — Xroga never auto-publishes on a shared developer account.
+You pay Apple / Google / Expo — then click **Publish** in Xroga. We trigger EAS for you.
 
-## 1. Preview on a phone
-\`\`\`bash
-npm install
-npx expo start
-\`\`\`
+## Simple path (recommended)
 
-## 2. Connect publish credentials in Xroga
-1. Open **Dashboard → Publish** (or Integrations)
-2. Paste your **Expo access token** (expo.dev → Settings → Access tokens)
-3. Optional: Apple app-specific password + Google Play service account JSON
-4. Tokens are stored **AES-256-GCM encrypted** in your Xroga account (Fly API vault)
+1. **Authorize GitHub** in Xroga (same as web apps)
+2. Create a free [Expo](https://expo.dev) account → Access tokens → paste in **Xroga → Publish**
+3. Link the EAS project (Project ID from expo.dev → Project settings) — or pick it after saving the token
+4. **Android:** pay Google Play Console (~$25 once) → paste service account JSON → click **Publish to Google Play**
+5. **iOS:** pay Apple Developer (~$99/yr) → paste app-specific password → click **Publish to App Store**
 
-## 3. Build with EAS (your Expo bill)
+Xroga calls EAS Workflows on **your** Expo account. Store review is still Apple/Google (not instant).
+
+## What you pay vs Xroga
+
+| You pay | Xroga pays |
+|---------|------------|
+| Google Play / Apple Developer fees | Nothing for stores |
+| Expo EAS build minutes | Encrypted vault + one-click trigger |
+| Your GitHub + (optional) Vercel | AI build usage on your Xroga plan |
+
+## Advanced (CLI)
+
 \`\`\`bash
 npm i -g eas-cli
-export EXPO_TOKEN=…   # from Xroga vault / expo.dev
-eas build:configure
+export EXPO_TOKEN=…
 eas build -p android --profile production
-eas build -p ios --profile production
-\`\`\`
-
-## 4. Submit to stores (your Apple/Google accounts)
-\`\`\`bash
 eas submit -p android
-eas submit -p ios
 \`\`\`
-
-### What you pay
-- Google Play Console — one-time developer fee
-- Apple Developer Program — annual fee
-- Expo EAS — your Expo plan / build minutes
-
-### What Xroga pays
-- Nothing for App Store / Play Store. We only encrypt your tokens and guide the flow.
 `,
     },
     {

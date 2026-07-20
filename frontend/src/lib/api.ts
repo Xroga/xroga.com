@@ -896,6 +896,7 @@ export const api = {
           commands: string[];
         };
         costs: { xrogaPays: string[]; userPays: string[] };
+        easProjectId?: string | null;
         message?: string;
       }>('/api/publish/status'),
     saveExpoToken: (token: string) =>
@@ -914,6 +915,33 @@ export const api = {
       apiFetch<{ ok: boolean; verified?: boolean; username?: string }>('/api/publish/verify-expo', {
         method: 'POST',
         body: JSON.stringify({}),
+      }),
+    saveEasProject: (projectId: string) =>
+      apiFetch<{ ok: boolean; message?: string }>('/api/publish/eas-project', {
+        method: 'POST',
+        body: JSON.stringify({ projectId }),
+      }),
+    listExpoApps: () =>
+      apiFetch<{
+        ok: boolean;
+        apps: Array<{ id: string; name: string; slug?: string }>;
+      }>('/api/publish/expo-apps'),
+    easPublish: (body: {
+      platform: 'android' | 'ios';
+      projectId?: string;
+      gitRef?: string;
+      submit?: boolean;
+    }) =>
+      apiFetch<{
+        ok: boolean;
+        url?: string;
+        workflowRunId?: string;
+        message?: string;
+        error?: string;
+        fileName?: string;
+      }>('/api/publish/eas-publish', {
+        method: 'POST',
+        body: JSON.stringify(body),
       }),
   },
   notifications: {

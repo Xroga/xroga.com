@@ -89,13 +89,16 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
   const [expoToken, setExpoToken] = useState('');
   const [applePass, setApplePass] = useState('');
   const [googleJson, setGoogleJson] = useState('');
+  const [easProjectId, setEasProjectId] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
+  const [lastRunUrl, setLastRunUrl] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.publish.status();
       setStatus(res);
+      if (res.easProjectId) setEasProjectId(res.easProjectId);
     } catch {
       setStatus(null);
     } finally {
@@ -162,6 +165,41 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
     }
   }
 
+  async function saveEasProject() {
+    const id = easProjectId.trim();
+    if (!id) {
+      toast.error('Paste EAS project ID from expo.dev');
+      return;
+    }
+    setBusy('eas-project');
+    try {
+      await api.publish.saveEasProject(id);
+      toast.success('EAS project linked');
+      await refresh();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function publishPlatform(platform: 'android' | 'ios') {
+    setBusy(`publish-${platform}`);
+    try {
+      const res = await api.publish.easPublish({
+        platform,
+        projectId: easProjectId.trim() || undefined,
+        submit: true,
+      });
+      if (res.url) setLastRunUrl(res.url);
+      toast.success(res.message || `${platform} publish started`);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
   if (loading && !status) {
     return (
       <div className="rounded-2xl border border-[var(--card-border)] p-6 flex items-center gap-2 text-sm text-[var(--muted)]">
@@ -184,10 +222,9 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
           </p>
           <h2 className="text-lg sm:text-xl font-bold mt-1">Ship on your accounts</h2>
           <p className="text-sm text-[var(--muted)] mt-1 max-w-2xl">
-            <strong>Honest for non-developers:</strong> web publish (GitHub + Vercel Authorize) is
-            one-click. Mobile App Store / Play Store still needs <em>your</em> paid Apple ($99/yr)
-            and/or Google Play ($25) accounts — Xroga stores tokens and shows EAS commands; we cannot
-            skip Apple/Google developer enrollment or pay those fees for you.
+            <strong>Web:</strong> Authorize GitHub + Vercel (+ Supabase) — automatic.{" "}
+            <strong>Mobile:</strong> you pay Google/Apple once, save credentials, then one-click
+            Publish. Xroga triggers EAS; store review is still Apple/Google.
           </p>
         </div>
         <div className="flex items-center gap-1.5 rounded-full border border-[var(--card-border)] p-1 text-xs">
@@ -257,13 +294,11 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 px-3 py-2.5 text-xs text-[var(--foreground)] leading-relaxed">
-            <strong>Can every user publish mobile automatically?</strong> Not fully.
-            Anyone can get an Expo build setup with a free Expo account + access token.
-            Submitting to the <em>App Store</em> or <em>Play Store</em> always requires that
-            user (or their company) enrolls with Apple/Google and pays those fees. Xroga
-            encrypts credentials and prints EAS commands — it does not run store review or
-            pay developer program fees.
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-3 py-2.5 text-xs text-[var(--foreground)] leading-relaxed">
+            <strong>Non-developer path:</strong> You pay Google (~$25 once) and/or Apple (~$99/yr).
+            Save credentials below → click <strong>Publish</strong>. Xroga triggers EAS on{' '}
+            <em>your</em> Expo account. Store review still takes Apple/Google time (not instant).
+            Callback / web Authorize is separate — see Ship setup for GitHub + Vercel + Supabase.
           </div>
           <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--background)]/40 px-3">
             {(status?.mobile.checklist ?? []).map((item) => (
@@ -273,7 +308,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
 
           <div className="rounded-xl border border-[var(--card-border)] p-3 space-y-2">
             <p className="text-sm font-semibold flex items-center gap-1.5">
-              <KeyRound className="w-4 h-4" /> Expo access token
+              <KeyRound className="w-4 h-4" /> Expo access token (free)
             </p>
             <p className="text-xs text-[var(--muted)]">
               Create at{' '}
@@ -285,7 +320,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
               >
                 expo.dev/settings/access-tokens
               </a>
-              . We encrypt it (AES-256-GCM) — never commit to GitHub.
+              . Encrypted (AES-256-GCM) — never committed to GitHub.
             </p>
             <div className="flex flex-col sm:flex-row gap-2">
               <input
@@ -304,45 +339,30 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
               >
                 {busy === 'expo' ? 'Saving…' : 'Save & verify'}
               </button>
-              {status?.mobile.expoTokenSaved ? (
-                <button
-                  type="button"
-                  disabled={busy === 'verify'}
-                  onClick={() => void verifyExpo()}
-                  className="shrink-0 rounded-md border border-[var(--card-border)] px-3 py-2 text-xs font-semibold"
-                >
-                  {busy === 'verify' ? 'Checking…' : 'Re-verify'}
-                </button>
-              ) : null}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 pt-1">
+              <input
+                placeholder="EAS project ID (UUID from expo.dev)"
+                value={easProjectId}
+                onChange={(e) => setEasProjectId(e.target.value)}
+                className="flex-1 min-w-0 rounded-md border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-sm font-mono"
+              />
+              <button
+                type="button"
+                disabled={busy === 'eas-project'}
+                onClick={() => void saveEasProject()}
+                className="shrink-0 rounded-md border border-[var(--card-border)] px-3 py-2 text-xs font-semibold disabled:opacity-60"
+              >
+                {busy === 'eas-project' ? 'Saving…' : 'Link project'}
+              </button>
             </div>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3">
             <div className="rounded-xl border border-[var(--card-border)] p-3 space-y-2">
-              <p className="text-sm font-semibold">Apple (optional)</p>
+              <p className="text-sm font-semibold">Google Play (~$25 once)</p>
               <p className="text-[11px] text-[var(--muted)]">
-                App-specific password for EAS submit. You pay Apple Developer fees.
-              </p>
-              <input
-                type="password"
-                placeholder="Apple app-specific password"
-                value={applePass}
-                onChange={(e) => setApplePass(e.target.value)}
-                className="w-full rounded-md border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-sm font-mono"
-              />
-              <button
-                type="button"
-                disabled={busy === 'apple_asc'}
-                onClick={() => void saveProvider('apple_asc', applePass)}
-                className="rounded-md border border-[var(--card-border)] px-3 py-1.5 text-xs font-semibold"
-              >
-                {busy === 'apple_asc' ? 'Saving…' : status?.mobile.appleSaved ? 'Replace' : 'Save'}
-              </button>
-            </div>
-            <div className="rounded-xl border border-[var(--card-border)] p-3 space-y-2">
-              <p className="text-sm font-semibold">Google Play (optional)</p>
-              <p className="text-[11px] text-[var(--muted)]">
-                Service account JSON for EAS submit. You pay Play Console fee.
+                Pay Google → create service account JSON → paste → Publish.
               </p>
               <textarea
                 rows={3}
@@ -351,27 +371,82 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
                 onChange={(e) => setGoogleJson(e.target.value)}
                 className="w-full rounded-md border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-xs font-mono"
               />
-              <button
-                type="button"
-                disabled={busy === 'google_play'}
-                onClick={() => void saveProvider('google_play', googleJson)}
-                className="rounded-md border border-[var(--card-border)] px-3 py-1.5 text-xs font-semibold"
-              >
-                {busy === 'google_play'
-                  ? 'Saving…'
-                  : status?.mobile.googlePlaySaved
-                    ? 'Replace'
-                    : 'Save'}
-              </button>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={busy === 'google_play'}
+                  onClick={() => void saveProvider('google_play', googleJson)}
+                  className="rounded-md border border-[var(--card-border)] px-3 py-1.5 text-xs font-semibold"
+                >
+                  {busy === 'google_play'
+                    ? 'Saving…'
+                    : status?.mobile.googlePlaySaved
+                      ? 'Replace JSON'
+                      : 'Save JSON'}
+                </button>
+                <button
+                  type="button"
+                  disabled={busy === 'publish-android' || !status?.mobile.ready}
+                  onClick={() => void publishPlatform('android')}
+                  className="rounded-md bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-bold disabled:opacity-50"
+                >
+                  {busy === 'publish-android' ? 'Starting…' : 'Publish to Google Play'}
+                </button>
+              </div>
+            </div>
+            <div className="rounded-xl border border-[var(--card-border)] p-3 space-y-2">
+              <p className="text-sm font-semibold">Apple App Store (~$99/yr)</p>
+              <p className="text-[11px] text-[var(--muted)]">
+                Pay Apple → app-specific password → paste → Publish.
+              </p>
+              <input
+                type="password"
+                placeholder="Apple app-specific password"
+                value={applePass}
+                onChange={(e) => setApplePass(e.target.value)}
+                className="w-full rounded-md border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-sm font-mono"
+              />
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={busy === 'apple_asc'}
+                  onClick={() => void saveProvider('apple_asc', applePass)}
+                  className="rounded-md border border-[var(--card-border)] px-3 py-1.5 text-xs font-semibold"
+                >
+                  {busy === 'apple_asc' ? 'Saving…' : status?.mobile.appleSaved ? 'Replace' : 'Save'}
+                </button>
+                <button
+                  type="button"
+                  disabled={busy === 'publish-ios' || !status?.mobile.ready}
+                  onClick={() => void publishPlatform('ios')}
+                  className="rounded-md bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-bold disabled:opacity-50"
+                >
+                  {busy === 'publish-ios' ? 'Starting…' : 'Publish to App Store'}
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-[var(--card-border)] p-3">
-            <p className="text-sm font-semibold mb-2">EAS commands (your machine / CI)</p>
-            <pre className="text-[11px] font-mono text-[var(--muted)] whitespace-pre-wrap leading-relaxed">
+          {lastRunUrl ? (
+            <p className="text-xs">
+              Last EAS run:{' '}
+              <a
+                href={lastRunUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[var(--accent)] font-semibold hover:underline"
+              >
+                Open on expo.dev
+              </a>
+            </p>
+          ) : null}
+
+          <details className="rounded-xl border border-[var(--card-border)] p-3">
+            <summary className="text-sm font-semibold cursor-pointer">Advanced: CLI commands</summary>
+            <pre className="mt-2 text-[11px] font-mono text-[var(--muted)] whitespace-pre-wrap leading-relaxed">
               {(status?.mobile.commands ?? []).join('\n')}
             </pre>
-          </div>
+          </details>
         </div>
       )}
 
