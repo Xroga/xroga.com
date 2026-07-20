@@ -19,7 +19,13 @@ The dev servers need local env files that are gitignored:
 - `backend/.env` — copy from `backend/.env.example` (`cp backend/.env.example backend/.env`). The backend boots fine with the placeholder values; it only logs warnings for missing AI/image keys.
 - `frontend/.env.local` — must set `NEXT_PUBLIC_API_URL=http://localhost:8080` so the frontend talks to the local backend. Copy from `frontend/.env.local.example` and override that value (the example points at the production Fly URL).
 
-Optional secrets (Supabase, AI keys, etc.) belong in the Cursor Cloud Agents **Secrets** tab — not in committed files. Placeholder env values are enough to boot and exercise non-auth UI flows.
+### Supabase user OAuth (production)
+For “Authorize Supabase” (no paste), create an OAuth App under the Xroga Supabase org and set on Fly:
+- `SUPABASE_OAUTH_CLIENT_ID`
+- `SUPABASE_OAUTH_CLIENT_SECRET`
+- `SUPABASE_OAUTH_CALLBACK_URL=https://xroga.com/dashboard/integrations/supabase/callback`
+
+After the user authorizes, Xroga lists projects, fetches API keys, and runs SQL (`/database/query`) to create schema + AI memory tables + storage buckets on **their** project.
 
 ### Running
 - Both together: `npm run dev` (concurrently runs frontend + backend).

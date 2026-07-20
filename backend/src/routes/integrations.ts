@@ -192,14 +192,17 @@ router.post('/supabase/provision', async (req: AuthRequest, res) => {
   try {
     const { getUserProviderKey } = await import('../services/integrations/userProviderKeys.js');
     const { provisionUserSupabase } = await import('../services/integrations/supabaseProvision.js');
-    const [url, service, pat, dbPass] = await Promise.all([
+    const [url, service, dbPass] = await Promise.all([
       getUserProviderKey(req.userId!, 'supabase_url'),
       getUserProviderKey(req.userId!, 'supabase'),
-      getUserProviderKey(req.userId!, 'supabase_pat'),
       getUserProviderKey(req.userId!, 'supabase_db_password'),
     ]);
+    const { getUserSupabaseManagementToken } = await import(
+      '../services/integrations/supabaseProvision.js'
+    );
+    const pat = await getUserSupabaseManagementToken(req.userId!);
     if (!url || !service) {
-      res.status(400).json({ error: 'Connect Supabase keys first' });
+      res.status(400).json({ error: 'Connect Supabase first' });
       return;
     }
     const provision = await provisionUserSupabase({
