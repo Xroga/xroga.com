@@ -28,20 +28,20 @@ const FOOTER_LINKS = [
 
 const AI_FEATURES = [
   {
-    title: 'Converter → Builder',
-    body: 'Any prompt becomes a clear builder brief, then ships as a real product — no template catalog.',
+    title: 'Converter → Builder → Ship',
+    body: 'Pulse briefs · Apex/Horizon/Forge build · sticky GitHub + Vercel live — one continuous loop.',
   },
   {
     title: '#1 Coding Agent',
-    body: 'For developers and non-developers — plain language in, working web app out, then ship.',
+    body: 'Black Hole V∞: frontier coding depth, long-context repos, live web+X research — no vendor model picker.',
   },
   {
     title: 'GitHub push · Vercel live',
-    body: 'Preview in Workspace, auto-push the repo, then go live on your domain — no fake URLs.',
+    body: 'Preview in Workspace, auto-push the sticky repo, go live on your domain — ownership stays yours.',
   },
   {
     title: 'Research that ships',
-    body: 'Gather sources, synthesize the report, then turn findings into code in the same flow.',
+    body: 'Gather live sources when needed, then turn findings into code in the same flow — never a fake research step.',
   },
 ];
 

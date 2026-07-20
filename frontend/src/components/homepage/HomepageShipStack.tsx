@@ -13,32 +13,32 @@ const STEPS = [
   {
     Icon: Workflow,
     title: 'Prompt once',
-    body: 'Describe the product — website, SaaS, crypto dashboard, ASP agent. Black Hole V∞ converts intent into a builder brief.',
+    body: 'Describe the product — website, SaaS, crypto dashboard, ASP agent. Pulse converts intent into a builder brief Black Hole V∞ can execute.',
   },
   {
     Icon: GitBranch,
-    title: 'Own the repo',
-    body: 'First ship creates your GitHub repository. Every later prompt updates that same live product — no orphan repos.',
+    title: 'Own the sticky repo',
+    body: 'First ship creates your GitHub repository and remembers it. Later prompts update that same live product — no orphan repos.',
   },
   {
     Icon: Rocket,
     title: 'Go live on Vercel',
-    body: 'Deploy to your Vercel project and domain. Preview in Workspace, then ship for real.',
+    body: 'Deploy to your Vercel project and domain. Preview in Workspace, then ship for real on accounts you authorize.',
   },
   {
     Icon: RefreshCw,
     title: 'Iterate forever',
-    body: 'Follow-ups patch code, redeploy, and keep the sticky repo in sync. Hackathon polish without starting over.',
+    body: 'Follow-ups surgically patch code and redeploy. Hackathon polish and enterprise iteration without restarting the build.',
   },
   {
     Icon: Globe2,
     title: 'Research that ships',
-    body: 'When you need live rules, markets, or hackathon intel, the swarm gathers sources then turns them into product.',
+    body: 'Live web + X intel when you need current rules or markets — then the same swarm turns findings into product files.',
   },
   {
     Icon: ShieldCheck,
     title: 'Your keys, your stack',
-    body: 'Authorize GitHub + Vercel (+ optional Supabase). Secrets stay in your vault — Xroga builds on your accounts.',
+    body: 'Authorize GitHub + Vercel (+ optional Supabase). Secrets stay in your vault. Xroga builds on your ownership.',
   },
 ] as const;
 
@@ -53,8 +53,9 @@ export function HomepageShipStack() {
           From prompt to <em>production ownership.</em>
         </h2>
         <p className="xv-hc-section-copy">
-          Big companies care about who owns the code and where it runs. Xroga answers both: your
-          GitHub, your Vercel, continuous updates inside Black Hole V∞.
+          Enterprises ask who owns the code and where it runs. Xroga answers both: your GitHub,
+          your Vercel, continuous updates inside Black Hole V∞ — the #1 coding agent that finishes
+          the loop.
         </p>
 
         <ul className="xv-hc-ship-grid">
