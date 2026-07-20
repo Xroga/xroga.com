@@ -5,6 +5,7 @@
 
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
+import { getUserSupabaseAdmin } from '../services/integrations/supabaseProvision.js';
 import type { ProjectFile } from './patches.js';
 
 const LOCAL_REPO = '_local';
@@ -65,11 +66,45 @@ function fromRow(row: Record<string, unknown>): ProjectMemory {
   };
 }
 
+function fromUserRow(row: Record<string, unknown>): ProjectMemory {
+  const files = Array.isArray(row.files) ? (row.files as ProjectFile[]) : [];
+  const rawRepo = typeof row.repo === 'string' ? row.repo : null;
+  return {
+    userId: String(row.xroga_user_id || row.user_id),
+    repo: rawRepo && rawRepo.includes('/') ? rawRepo : null,
+    branch: String(row.branch || 'main'),
+    projectName: typeof row.project_name === 'string' ? row.project_name : undefined,
+    files,
+    paths: Array.isArray(row.paths) ? (row.paths as string[]) : files.map((f) => f.path),
+    aiSummary: typeof row.ai_summary === 'string' ? row.ai_summary : undefined,
+    aiSummaryModel: typeof row.ai_summary_model === 'string' ? row.ai_summary_model : undefined,
+    commitSha: typeof row.commit_sha === 'string' ? row.commit_sha : undefined,
+    updatedAt: row.updated_at ? new Date(String(row.updated_at)).getTime() : Date.now(),
+    hits: Number(row.hits || 0),
+  };
+}
+
 async function loadFromDb(
   userId: string,
   repo: string | null,
   branch: string,
 ): Promise<ProjectMemory | null> {
+  try {
+    const userClient = await getUserSupabaseAdmin(userId);
+    if (userClient) {
+      const { data, error } = await userClient
+        .from('xroga_project_memory')
+        .select('*')
+        .eq('xroga_user_id', userId)
+        .eq('branch', branch || 'main')
+        .eq('repo', normalizeRepo(repo))
+        .maybeSingle();
+      if (!error && data) return fromUserRow(data as Record<string, unknown>);
+    }
+  } catch (err) {
+    console.warn('[projectMemory] user project load:', (err as Error).message);
+  }
+
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
   try {
     await ensureShipLoopSchema();
@@ -90,6 +125,32 @@ async function loadFromDb(
 }
 
 async function saveToDb(mem: ProjectMemory): Promise<void> {
+  try {
+    const userClient = await getUserSupabaseAdmin(mem.userId);
+    if (userClient) {
+      const { error } = await userClient.from('xroga_project_memory').upsert(
+        {
+          xroga_user_id: mem.userId,
+          repo: normalizeRepo(mem.repo),
+          branch: mem.branch,
+          project_name: mem.projectName ?? null,
+          files: mem.files,
+          paths: mem.paths,
+          ai_summary: mem.aiSummary ?? null,
+          ai_summary_model: mem.aiSummaryModel ?? null,
+          commit_sha: mem.commitSha ?? null,
+          hits: mem.hits,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'xroga_user_id,repo,branch' },
+      );
+      if (!error) return;
+      console.warn('[projectMemory] user project save:', error.message);
+    }
+  } catch (err) {
+    console.warn('[projectMemory] user project save:', (err as Error).message);
+  }
+
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
   try {
     await ensureShipLoopSchema();

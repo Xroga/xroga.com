@@ -1301,6 +1301,45 @@ export async function runBuildPipeline(opts: {
     console.warn('[pipeline] secret docs skipped:', (err as Error).message);
   }
 
+  // Auto-provision user's Supabase (schema + AI memory + storage) when connected
+  try {
+    const { getUserProviderKey } = await import('../services/integrations/userProviderKeys.js');
+    const { provisionUserSupabase } = await import('../services/integrations/supabaseProvision.js');
+    const [sbUrl, sbService, sbPat, sbDb] = await Promise.all([
+      getUserProviderKey(opts.userId, 'supabase_url'),
+      getUserProviderKey(opts.userId, 'supabase'),
+      getUserProviderKey(opts.userId, 'supabase_pat'),
+      getUserProviderKey(opts.userId, 'supabase_db_password'),
+    ]);
+    if (sbUrl && sbService && (sbPat || sbDb)) {
+      emit({
+        agent: 'deploy',
+        status: 'provisioning_supabase',
+        message: 'Setting up schema, AI memory & storage on your Supabase…',
+        swarmStatusLabel: 'Supabase',
+        swarmActivity: 'Auto-provision',
+      });
+      const provisioned = await provisionUserSupabase({
+        projectUrl: sbUrl,
+        serviceRoleKey: sbService,
+        accessToken: sbPat || undefined,
+        dbPassword: sbDb || undefined,
+        projectName,
+      });
+      if (provisioned.ok) {
+        emit({
+          agent: 'deploy',
+          status: 'supabase_ready',
+          message: provisioned.message,
+          swarmStatusLabel: 'Supabase ready',
+          swarmActivity: provisioned.schemaApplied ? 'Memory on your project' : 'Storage ready',
+        });
+      }
+    }
+  } catch (err) {
+    console.warn('[pipeline] supabase provision skipped:', (err as Error).message);
+  }
+
   // Security agent — block critical secret leaks before GitHub push
   throwIfAborted();
   emit({

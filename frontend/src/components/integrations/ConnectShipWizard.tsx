@@ -36,7 +36,10 @@ export function ConnectShipWizard() {
       setVercelOk(Boolean((ve as { connected?: boolean }).connected));
       const list = (keys as { keys?: Array<{ provider?: string; connected?: boolean }> }).keys ?? [];
       const connected = list.filter((k) => k.connected);
-      setSupabaseOk(Boolean((sb as { ready?: boolean }).ready));
+      setSupabaseOk(
+        Boolean((sb as { ready?: boolean; provisioned?: boolean }).ready) ||
+          Boolean((sb as { provisioned?: boolean }).provisioned),
+      );
       setKeysOk(
         connected.some(
           (k) =>
@@ -107,7 +110,7 @@ export function ConnectShipWizard() {
     {
       id: 'supabase',
       title: '3. Connect Supabase',
-      body: 'Your project URL + keys — auth, DB, and storage for shipped apps live in YOUR Supabase account.',
+      body: 'One-click: Access Token → pick project. Xroga auto-creates schema, AI memory & storage on YOUR Supabase.',
       done: supabaseOk,
       optional: true,
       action: () => {

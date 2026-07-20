@@ -697,16 +697,27 @@ export const api = {
       apiFetch<{
         connected: boolean;
         ready: boolean;
+        provisioned?: boolean;
         hasUrl: boolean;
         hasAnonKey: boolean;
         hasServiceRole: boolean;
+        hasAccessToken?: boolean;
+        hasDbPassword?: boolean;
         urlMasked?: string;
         message: string;
       }>('/api/integrations/supabase/status'),
-    connectSupabase: (body: {
-      projectUrl: string;
-      anonKey: string;
-      serviceRoleKey?: string;
+    listSupabaseProjects: (accessToken: string) =>
+      apiFetch<{
+        projects: Array<{ id: string; ref: string; name: string; region?: string }>;
+        error?: string;
+      }>('/api/integrations/supabase/list-projects', {
+        method: 'POST',
+        body: JSON.stringify({ accessToken }),
+      }),
+    oneClickSupabase: (body: {
+      accessToken: string;
+      projectRef: string;
+      projectName?: string;
       vercelProject?: string;
     }) =>
       apiFetch<{
@@ -714,10 +725,47 @@ export const api = {
         status?: {
           connected: boolean;
           ready: boolean;
+          provisioned?: boolean;
+          message: string;
+        };
+        provision?: {
+          ok: boolean;
+          schemaApplied?: boolean;
+          memoryTablesReady?: boolean;
+          buckets?: string[];
+          message?: string;
+        };
+        message?: string;
+        error?: string;
+        envSync?: unknown;
+      }>('/api/integrations/supabase/one-click', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    connectSupabase: (body: {
+      projectUrl: string;
+      anonKey: string;
+      serviceRoleKey?: string;
+      accessToken?: string;
+      dbPassword?: string;
+      projectName?: string;
+      vercelProject?: string;
+    }) =>
+      apiFetch<{
+        ok: boolean;
+        status?: {
+          connected: boolean;
+          ready: boolean;
+          provisioned?: boolean;
           hasUrl: boolean;
           hasAnonKey: boolean;
           hasServiceRole: boolean;
           message: string;
+        };
+        provision?: {
+          ok: boolean;
+          schemaApplied?: boolean;
+          message?: string;
         };
         message?: string;
         error?: string;
@@ -726,6 +774,14 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(body),
       }),
+    provisionSupabase: (projectName?: string) =>
+      apiFetch<{ ok: boolean; provision?: unknown; message?: string; error?: string }>(
+        '/api/integrations/supabase/provision',
+        {
+          method: 'POST',
+          body: JSON.stringify({ projectName }),
+        },
+      ),
   },
   publish: {
     status: () =>

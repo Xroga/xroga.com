@@ -25,6 +25,10 @@ export const ALLOWED_PROVIDERS = [
   'supabase_url',
   'supabase',
   'supabase_anon',
+  /** Management API personal access token — used to auto-provision; never sync to Vercel */
+  'supabase_pat',
+  /** Database password — optional fallback for SQL provision; never sync to Vercel */
+  'supabase_db_password',
   'resend',
   /** User-owned mobile publish (EAS / stores) — Xroga never pays Apple/Google fees */
   'expo',
@@ -50,6 +54,8 @@ export const ENV_VAR_BY_PROVIDER: Record<string, string> = {
   supabase_url: 'NEXT_PUBLIC_SUPABASE_URL',
   supabase: 'SUPABASE_SERVICE_ROLE_KEY',
   supabase_anon: 'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+  supabase_pat: 'SUPABASE_ACCESS_TOKEN',
+  supabase_db_password: 'SUPABASE_DB_PASSWORD',
   resend: 'RESEND_API_KEY',
   expo: 'EXPO_TOKEN',
   apple_asc: 'EXPO_APPLE_APP_SPECIFIC_PASSWORD',
@@ -59,6 +65,9 @@ export const ENV_VAR_BY_PROVIDER: Record<string, string> = {
 
 /** These are for EAS/store submit — never sync into Vercel web project env. */
 export const PUBLISH_ONLY_PROVIDERS = new Set(['expo', 'apple_asc', 'google_play']);
+
+/** Server-only provision credentials — never sync to Vercel (or expose to browser). */
+export const SUPABASE_SERVER_ONLY_PROVIDERS = new Set(['supabase_pat', 'supabase_db_password']);
 
 const ALLOWED_SET = new Set<string>(ALLOWED_PROVIDERS);
 
@@ -155,7 +164,7 @@ export async function saveUserProviderKey(
     throw new Error('Custom keys require an env var name (e.g. MY_SERVICE_API_KEY)');
   }
   const trimmed = apiKey.trim();
-  const minLen = p === 'google_play' ? 32 : p === 'supabase_url' ? 12 : 8;
+  const minLen = p === 'google_play' ? 32 : p === 'supabase_url' ? 12 : p === 'supabase_db_password' ? 4 : 8;
   if (trimmed.length < minLen) throw new Error('API key / credential too short');
   if (trimmed.length > 48_000) throw new Error('Credential too long (max ~48KB)');
 
@@ -174,16 +183,25 @@ export async function saveUserProviderKey(
   const envVar = envVarForProvider(p, opts?.envVarName);
   const supabase = getSupabaseAdmin();
   const now = new Date().toISOString();
+  const syncTarget = PUBLISH_ONLY_PROVIDERS.has(p)
+    ? 'eas'
+    : SUPABASE_SERVER_ONLY_PROVIDERS.has(p)
+      ? 'xroga_server'
+      : 'vercel';
   const { error } = await supabase.from('user_integrations').upsert(
     {
       user_id: userId,
       provider: `${PROVIDER_PREFIX}${p === 'custom' ? `custom_${envVar.toLowerCase()}` : p}`,
       access_token: encryptApiKey(trimmed),
       metadata: {
-        type: PUBLISH_ONLY_PROVIDERS.has(p) ? 'user_publish_credential' : 'user_api_key',
+        type: PUBLISH_ONLY_PROVIDERS.has(p)
+          ? 'user_publish_credential'
+          : SUPABASE_SERVER_ONLY_PROVIDERS.has(p)
+            ? 'supabase_provision'
+            : 'user_api_key',
         provider: p,
         env_var: envVar,
-        sync_target: PUBLISH_ONLY_PROVIDERS.has(p) ? 'eas' : 'vercel',
+        sync_target: syncTarget,
         connected_at: now,
         masked: maskKey(trimmed),
       },
@@ -357,6 +375,7 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
     };
     const provider = meta.provider ?? String(row.provider).replace(PROVIDER_PREFIX, '');
     if (PUBLISH_ONLY_PROVIDERS.has(provider) || meta.sync_target === 'eas') continue;
+    if (SUPABASE_SERVER_ONLY_PROVIDERS.has(provider) || meta.sync_target === 'xroga_server') continue;
     const varName = meta.env_var ?? envVarForProvider(provider);
     const plain = row.access_token ? decryptApiKey(row.access_token) : null;
     if (plain && varName) out[varName] = plain;
@@ -384,6 +403,20 @@ export function providerCatalog() {
     },
     { id: 'supabase', name: 'Supabase service role', envVar: 'SUPABASE_SERVICE_ROLE_KEY', freeTier: true, category: 'backend' },
     { id: 'supabase_anon', name: 'Supabase anon key', envVar: 'NEXT_PUBLIC_SUPABASE_ANON_KEY', freeTier: true, category: 'backend' },
+    {
+      id: 'supabase_pat',
+      name: 'Supabase access token (auto-provision)',
+      envVar: 'SUPABASE_ACCESS_TOKEN',
+      freeTier: true,
+      category: 'backend',
+    },
+    {
+      id: 'supabase_db_password',
+      name: 'Supabase DB password (auto-provision fallback)',
+      envVar: 'SUPABASE_DB_PASSWORD',
+      freeTier: true,
+      category: 'backend',
+    },
     { id: 'resend', name: 'Resend email', envVar: 'RESEND_API_KEY', freeTier: true, category: 'email' },
     { id: 'tavily', name: 'Tavily search', envVar: 'TAVILY_API_KEY', freeTier: true, category: 'search' },
     { id: 'huggingface', name: 'Hugging Face', envVar: 'HF_TOKEN', freeTier: true, category: 'ai' },
@@ -415,9 +448,12 @@ export function providerCatalog() {
 export interface UserSupabaseStatus {
   connected: boolean;
   ready: boolean;
+  provisioned: boolean;
   hasUrl: boolean;
   hasAnonKey: boolean;
   hasServiceRole: boolean;
+  hasAccessToken: boolean;
+  hasDbPassword: boolean;
   urlMasked?: string;
   message: string;
 }
@@ -429,20 +465,30 @@ export async function getUserSupabaseStatus(userId: string): Promise<UserSupabas
   const url = byProvider.get('supabase_url');
   const anon = byProvider.get('supabase_anon');
   const service = byProvider.get('supabase');
+  const pat = byProvider.get('supabase_pat');
+  const dbPass = byProvider.get('supabase_db_password');
   const hasUrl = Boolean(url?.connected);
   const hasAnonKey = Boolean(anon?.connected);
   const hasServiceRole = Boolean(service?.connected);
-  const ready = hasUrl && hasAnonKey;
+  const hasAccessToken = Boolean(pat?.connected);
+  const hasDbPassword = Boolean(dbPass?.connected);
+  const ready = hasUrl && hasAnonKey && hasServiceRole;
+  const provisioned = ready && (hasAccessToken || hasDbPassword);
   return {
-    connected: hasUrl || hasAnonKey || hasServiceRole,
+    connected: hasUrl || hasAnonKey || hasServiceRole || hasAccessToken,
     ready,
+    provisioned,
     hasUrl,
     hasAnonKey,
     hasServiceRole,
+    hasAccessToken,
+    hasDbPassword,
     urlMasked: url?.masked,
-    message: ready
-      ? 'Your Supabase project is connected. Built apps use YOUR URL/keys on Vercel — data stays in your project.'
-      : 'Add project URL + anon key so auth/storage hit your Supabase account (service role recommended for server routes).',
+    message: provisioned
+      ? 'Your Supabase is connected and auto-provisioned — AI memory & storage live in YOUR project.'
+      : ready
+        ? 'Keys saved. Add Access Token (or DB password) once so Xroga can auto-create tables & storage.'
+        : 'One-click: paste a Supabase Access Token and pick your project — Xroga sets up schema, storage, and memory automatically.',
   };
 }
 
@@ -450,15 +496,19 @@ export interface ConnectUserSupabaseInput {
   projectUrl: string;
   anonKey: string;
   serviceRoleKey?: string;
+  accessToken?: string;
+  dbPassword?: string;
+  projectName?: string;
 }
 
-/** Save URL + anon (+ optional service role) as one connect step. */
+/** Save URL + anon (+ optional service role) and auto-provision when possible. */
 export async function connectUserSupabase(
   userId: string,
   input: ConnectUserSupabaseInput,
 ): Promise<{
   status: UserSupabaseStatus;
   saved: UserProviderKeyStatus[];
+  provision?: import('./supabaseProvision.js').ProvisionResult;
 }> {
   const saved: UserProviderKeyStatus[] = [];
   saved.push(await saveUserProviderKey(userId, 'supabase_url', input.projectUrl.trim()));
@@ -467,6 +517,47 @@ export async function connectUserSupabase(
   if (service) {
     saved.push(await saveUserProviderKey(userId, 'supabase', service));
   }
+  const accessToken = input.accessToken?.trim();
+  if (accessToken) {
+    saved.push(await saveUserProviderKey(userId, 'supabase_pat', accessToken));
+  }
+  const dbPassword = input.dbPassword?.trim();
+  if (dbPassword) {
+    saved.push(await saveUserProviderKey(userId, 'supabase_db_password', dbPassword));
+  }
+
+  let provision: import('./supabaseProvision.js').ProvisionResult | undefined;
+  if (service && (accessToken || dbPassword)) {
+    const { provisionUserSupabase } = await import('./supabaseProvision.js');
+    provision = await provisionUserSupabase({
+      projectUrl: input.projectUrl.trim(),
+      serviceRoleKey: service,
+      accessToken,
+      dbPassword,
+      projectName: input.projectName,
+    });
+  } else if (service) {
+    const { ensureStorageBuckets, projectRefFromUrl } = await import('./supabaseProvision.js');
+    const ref = projectRefFromUrl(input.projectUrl.trim());
+    const buckets = await ensureStorageBuckets(input.projectUrl.trim(), service).catch(() => []);
+    provision = {
+      ok: buckets.length > 0,
+      method: 'keys_only',
+      projectRef: ref || undefined,
+      projectUrl: input.projectUrl.trim(),
+      buckets,
+      schemaApplied: false,
+      memoryTablesReady: false,
+      message: buckets.length
+        ? 'Storage bucket ready. Add Access Token for full one-click schema + AI memory setup.'
+        : 'Keys saved. Add Access Token (Account → Access Tokens) for automatic schema setup.',
+    };
+  }
+
   const status = await getUserSupabaseStatus(userId);
-  return { status, saved };
+  if (provision?.message) {
+    status.message = provision.message;
+    if (provision.schemaApplied) status.provisioned = true;
+  }
+  return { status, saved, provision };
 }
