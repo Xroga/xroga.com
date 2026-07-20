@@ -89,7 +89,8 @@ console.log('Wrote', outPath);
 
 /**
  * Chrome Manifest V3 extension scaffold.
- * Ships to GitHub; zip for sideload / Chrome Web Store (user pays ~$5 CWS once).
+ * Pushes to GitHub; packages zip for sideload / manual Chrome Web Store upload (user pays ~$5 CWS).
+ * Not a finished CWS listing — Xroga does not publish to the store.
  */
 export function buildChromeExtensionScaffold(opts: {
   projectName: string;
