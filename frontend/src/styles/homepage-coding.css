@@ -1043,6 +1043,407 @@
   mask-image: linear-gradient(180deg, #000 35%, transparent 100%);
 }
 
+/* ─── Live ops dashboard (empower replacement) ─── */
+.xv-home-coding .xv-hc-ops {
+  position: relative;
+  z-index: 1;
+  padding: 1rem 1.15rem 4rem;
+}
+
+.xv-home-coding .xv-hc-ops-inner {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.xv-home-coding .xv-hc-ops-head {
+  text-align: center;
+  max-width: 38rem;
+  margin: 0 auto 1.5rem;
+}
+
+.xv-home-coding .xv-hc-ops-kicker {
+  display: inline-block;
+  font-size: 0.45rem;
+  letter-spacing: 0.14em;
+  color: rgba(126, 196, 255, 0.85);
+  border: 1px solid rgba(74, 163, 255, 0.35);
+  padding: 0.35rem 0.6rem;
+  margin-bottom: 0.75rem;
+  border-radius: 0.35rem;
+}
+
+.xv-home-coding .xv-hc-ops-title {
+  font-family: var(--hc-font-serif);
+  font-size: clamp(1.55rem, 3.5vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin: 0 0 0.55rem;
+  line-height: 1.15;
+}
+
+.xv-home-coding .xv-hc-ops-title em {
+  font-style: italic;
+  color: var(--hc-blue);
+}
+
+.xv-home-coding .xv-hc-ops-sub {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--hc-muted);
+}
+
+.xv-home-coding .xv-hc-ops-dash {
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(165deg, rgba(12, 20, 38, 0.95), rgba(4, 8, 16, 0.98));
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  animation: xv-hc-fade-up 0.7s ease both;
+}
+
+.xv-home-coding .xv-hc-ops-chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.xv-home-coding .xv-hc-ops-dots {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.xv-home-coding .xv-hc-ops-dots span {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.xv-home-coding .xv-hc-ops-dots span:nth-child(1) { background: #ff5f57; }
+.xv-home-coding .xv-hc-ops-dots span:nth-child(2) { background: #febc2e; }
+.xv-home-coding .xv-hc-ops-dots span:nth-child(3) { background: #28c840; }
+
+.xv-home-coding .xv-hc-ops-chrome-path {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.5);
+  flex: 1;
+  min-width: 0;
+}
+
+.xv-home-coding .xv-hc-ops-livepill {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.22rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+}
+
+.xv-home-coding .xv-hc-ops-livepill.is-live {
+  border-color: rgba(52, 211, 153, 0.45);
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.12);
+}
+
+.xv-home-coding .xv-hc-ops-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+@media (min-width: 900px) {
+  .xv-home-coding .xv-hc-ops-body {
+    grid-template-columns: 13.5rem minmax(0, 1fr) 12.5rem;
+  }
+}
+
+.xv-home-coding .xv-hc-ops-rail {
+  padding: 0.9rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+@media (min-width: 900px) {
+  .xv-home-coding .xv-hc-ops-rail {
+    border-bottom: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+.xv-home-coding .xv-hc-ops-rail-label {
+  font-size: 0.42rem;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 0.65rem 0.25rem;
+}
+
+.xv-home-coding .xv-hc-ops-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.xv-home-coding .xv-hc-ops-step {
+  display: grid;
+  grid-template-columns: 1.1rem 1fr auto;
+  gap: 0.45rem;
+  align-items: start;
+  padding: 0.45rem 0.4rem;
+  border-radius: 0.55rem;
+  color: rgba(255, 255, 255, 0.4);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.xv-home-coding .xv-hc-ops-step.is-active {
+  background: rgba(74, 163, 255, 0.14);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(74, 163, 255, 0.35);
+}
+
+.xv-home-coding .xv-hc-ops-step.is-done {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.xv-home-coding .xv-hc-ops-step-ico {
+  display: grid;
+  place-items: center;
+  margin-top: 0.1rem;
+}
+
+.xv-home-coding .xv-hc-ops-step.is-done .xv-hc-ops-step-ico {
+  color: #34d399;
+}
+
+.xv-home-coding .xv-hc-ops-step.is-active .xv-hc-ops-step-ico {
+  color: var(--hc-blue);
+}
+
+.xv-home-coding .xv-hc-ops-spin {
+  animation: xv-hc-ops-spin 0.9s linear infinite;
+}
+
+@keyframes xv-hc-ops-spin {
+  to { transform: rotate(360deg); }
+}
+
+.xv-home-coding .xv-hc-ops-step strong {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.xv-home-coding .xv-hc-ops-step span {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--hc-muted);
+  margin-top: 0.08rem;
+}
+
+.xv-home-coding .xv-hc-ops-step em {
+  font-style: normal;
+  font-size: 0.58rem;
+  font-family: var(--hc-font-pixel);
+  letter-spacing: 0.04em;
+  color: rgba(126, 196, 255, 0.55);
+  margin-top: 0.15rem;
+}
+
+.xv-home-coding .xv-hc-ops-step.is-active em {
+  color: var(--hc-blue);
+}
+
+.xv-home-coding .xv-hc-ops-main {
+  padding: 0.9rem 1rem 1rem;
+  min-width: 0;
+}
+
+.xv-home-coding .xv-hc-ops-prompt {
+  border-radius: 0.7rem;
+  border: 1px solid rgba(74, 163, 255, 0.28);
+  background: rgba(74, 163, 255, 0.08);
+  padding: 0.65rem 0.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.xv-home-coding .xv-hc-ops-prompt > span {
+  display: block;
+  font-size: 0.4rem;
+  letter-spacing: 0.12em;
+  color: rgba(126, 196, 255, 0.7);
+  margin-bottom: 0.3rem;
+}
+
+.xv-home-coding .xv-hc-ops-prompt p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #fff;
+  line-height: 1.4;
+  animation: xv-hc-fade-up 0.4s ease both;
+}
+
+.xv-home-coding .xv-hc-ops-caret {
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.95em;
+  margin-left: 0.15rem;
+  background: var(--hc-blue);
+  vertical-align: text-bottom;
+  animation: xv-hc-ops-blink 1s step-end infinite;
+}
+
+@keyframes xv-hc-ops-blink {
+  50% { opacity: 0; }
+}
+
+.xv-home-coding .xv-hc-ops-files {
+  list-style: none;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.xv-home-coding .xv-hc-ops-file {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.55rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.72rem;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.xv-home-coding .xv-hc-ops-file code {
+  font-family: var(--hc-font-coding, ui-monospace, monospace);
+  font-size: 0.72rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.xv-home-coding .xv-hc-ops-file.is-done {
+  color: rgba(255, 255, 255, 0.78);
+  border-color: rgba(52, 211, 153, 0.2);
+}
+
+.xv-home-coding .xv-hc-ops-file.is-writing {
+  color: #fff;
+  border-color: rgba(74, 163, 255, 0.4);
+  background: rgba(74, 163, 255, 0.1);
+}
+
+.xv-home-coding .xv-hc-ops-activity {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.xv-home-coding .xv-hc-ops-actline {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.28);
+  transition: color 0.3s ease;
+}
+
+.xv-home-coding .xv-hc-ops-actline.is-on {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.xv-home-coding .xv-hc-ops-actdot {
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.xv-home-coding .xv-hc-ops-actline.is-on .xv-hc-ops-actdot {
+  background: #34d399;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+}
+
+.xv-home-coding .xv-hc-ops-side {
+  padding: 0.9rem 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.18);
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+}
+
+@media (min-width: 900px) {
+  .xv-home-coding .xv-hc-ops-side {
+    border-top: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+.xv-home-coding .xv-hc-ops-side-card {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding: 0.55rem 0.6rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--hc-blue);
+}
+
+.xv-home-coding .xv-hc-ops-side-card strong {
+  display: block;
+  font-size: 0.72rem;
+  color: #fff;
+  font-weight: 650;
+}
+
+.xv-home-coding .xv-hc-ops-side-card span {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--hc-muted);
+  margin-top: 0.1rem;
+  font-family: var(--hc-font-coding, ui-monospace, monospace);
+  word-break: break-all;
+}
+
+.xv-home-coding .xv-hc-ops-side-card span.is-live-url {
+  color: #34d399;
+}
+
+.xv-home-coding .xv-hc-ops-side-note {
+  margin: 0.25rem 0 0;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.xv-home-coding .xv-hc-ops-foot {
+  margin: 1.15rem auto 0;
+  max-width: 40rem;
+  text-align: center;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--hc-muted);
+}
+
 /* Live simulated pipeline widgets */
 .xv-home-coding .xv-hc-live {
   position: relative;
@@ -1496,82 +1897,93 @@
 }
 
 .xv-home-coding .xv-hc-bh-planbar {
-  margin: 0 0 1.75rem;
-  padding: 1.1rem 1.15rem 1.15rem;
-  border: 1px solid rgba(74, 163, 255, 0.28);
-  border-radius: 1rem;
-  background: linear-gradient(145deg, rgba(18, 36, 68, 0.75), rgba(8, 14, 28, 0.88));
-  animation: xv-hc-fade-up 0.65s ease both;
+  margin: 0 0 1.35rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(8, 14, 28, 0.72);
+  backdrop-filter: blur(10px);
+  animation: xv-hc-fade-up 0.55s ease both;
 }
 
-.xv-home-coding .xv-hc-bh-planbar-label {
-  margin: 0 0 0.85rem;
-  font-size: 0.78rem;
-  color: var(--hc-muted);
-  text-align: center;
-  letter-spacing: 0.02em;
-}
-
-.xv-home-coding .xv-hc-bh-plan-btns {
+.xv-home-coding .xv-hc-bh-plan-row {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
-  gap: 0.45rem;
+  gap: 0.45rem 0.65rem;
 }
 
-.xv-home-coding .xv-hc-bh-plan-btn {
-  min-width: 4.6rem;
-  padding: 0.55rem 0.7rem 0.5rem;
-  border-radius: 0.7rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(6, 10, 20, 0.65);
-  color: var(--hc-ink);
-  cursor: pointer;
-  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+.xv-home-coding .xv-hc-bh-plan-tag {
+  font-size: 0.42rem;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.45);
+  padding: 0 0.25rem;
 }
 
-.xv-home-coding .xv-hc-bh-plan-btn:hover {
-  border-color: rgba(74, 163, 255, 0.45);
-  transform: translateY(-1px);
+.xv-home-coding .xv-hc-bh-plan-seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.15rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.28);
 }
 
-.xv-home-coding .xv-hc-bh-plan-btn.is-active {
-  border-color: rgba(74, 163, 255, 0.75);
-  background: rgba(74, 163, 255, 0.16);
-  box-shadow: 0 0 0 1px rgba(74, 163, 255, 0.25);
-}
-
-.xv-home-coding .xv-hc-bh-plan-btn.is-popular:not(.is-active) {
-  border-color: rgba(126, 196, 255, 0.35);
-}
-
-.xv-home-coding .xv-hc-bh-plan-name {
-  display: block;
-  font-size: 0.78rem;
-  font-weight: 650;
+.xv-home-coding .xv-hc-bh-plan-chip {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: rgba(244, 247, 255, 0.62);
+  font-size: 0.72rem;
+  font-weight: 600;
   letter-spacing: -0.01em;
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.28rem;
+  transition: background 0.18s ease, color 0.18s ease;
 }
 
-.xv-home-coding .xv-hc-bh-plan-price {
-  display: block;
-  margin-top: 0.12rem;
-  font-size: 0.68rem;
-  color: var(--hc-blue);
+.xv-home-coding .xv-hc-bh-plan-chip em {
+  font-style: normal;
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: rgba(126, 196, 255, 0.55);
   font-variant-numeric: tabular-nums;
 }
 
-.xv-home-coding .xv-hc-bh-plan-summary {
-  margin: 0.9rem 0 0;
-  text-align: center;
-  font-size: 0.8rem;
+.xv-home-coding .xv-hc-bh-plan-chip:hover {
+  color: #fff;
+}
+
+.xv-home-coding .xv-hc-bh-plan-chip.is-active {
+  background: rgba(74, 163, 255, 0.22);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(74, 163, 255, 0.45);
+}
+
+.xv-home-coding .xv-hc-bh-plan-chip.is-active em {
+  color: rgba(126, 196, 255, 0.95);
+}
+
+.xv-home-coding .xv-hc-bh-plan-meta {
+  margin: 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: 0.72rem;
   color: var(--hc-muted);
-  line-height: 1.45;
+  white-space: nowrap;
 }
 
-.xv-home-coding .xv-hc-bh-plan-tokens {
+.xv-home-coding .xv-hc-bh-plan-meta strong {
   color: var(--hc-blue);
-  font-weight: 650;
   font-variant-numeric: tabular-nums;
+  font-size: 0.82rem;
 }
 
 .xv-home-coding .xv-hc-bh-stats {

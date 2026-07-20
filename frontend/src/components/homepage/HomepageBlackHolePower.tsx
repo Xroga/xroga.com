@@ -11,6 +11,7 @@ import {
   Sparkles,
   Zap,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import {
   BLACK_HOLE_POWER,
   XROGA_MODEL_FULL,
@@ -159,29 +160,34 @@ export function HomepageBlackHolePower() {
           <p className="xv-hc-bh-firstlast">{XROGA_MODEL_FIRST_LAST}</p>
         </header>
 
-        <div className="xv-hc-bh-planbar" role="group" aria-label="Compare plan token pools">
-          <p className="xv-hc-bh-planbar-label">
-            See Black Hole capacity by plan — pool scales; cores stay the same swarm
-          </p>
-          <div className="xv-hc-bh-plan-btns">
-            {GALACTIC_PLANS.map((p) => (
-              <button
-                key={p.tier}
-                type="button"
-                className={`xv-hc-bh-plan-btn${planTier === p.tier ? ' is-active' : ''}${p.highlight ? ' is-popular' : ''}`}
-                onClick={() => setPlanTier(p.tier)}
-                aria-pressed={planTier === p.tier}
-              >
-                <span className="xv-hc-bh-plan-name">{p.name}</span>
-                <span className="xv-hc-bh-plan-price">{p.priceLabel}</span>
-              </button>
-            ))}
+        <div className="xv-hc-bh-planbar" role="group" aria-label="Plan capacity">
+          <div className="xv-hc-bh-plan-row">
+            <span className="xv-hc-bh-plan-tag font-pixel">PLAN</span>
+            <div className="xv-hc-bh-plan-seg">
+              {GALACTIC_PLANS.map((p) => (
+                <button
+                  key={p.tier}
+                  type="button"
+                  className={cn(
+                    'xv-hc-bh-plan-chip',
+                    planTier === p.tier && 'is-active',
+                    p.highlight && 'is-popular'
+                  )}
+                  onClick={() => setPlanTier(p.tier)}
+                  aria-pressed={planTier === p.tier}
+                >
+                  {p.name}
+                  <em>{p.priceLabel}</em>
+                </button>
+              ))}
+            </div>
+            <p className="xv-hc-bh-plan-meta">
+              <strong>{poolLabel}</strong>
+              <span>
+                tokens · {plan.concurrency}×
+              </span>
+            </p>
           </div>
-          <p className="xv-hc-bh-plan-summary">
-            <strong>{plan.name}</strong> · {plan.priceLabel}/mo ·{' '}
-            <span className="xv-hc-bh-plan-tokens">{poolLabel} tokens</span> · {plan.concurrency}{' '}
-            concurrent · {plan.tagline}
-          </p>
         </div>
 
         <div className="xv-hc-bh-stats" role="list">
@@ -227,8 +233,7 @@ export function HomepageBlackHolePower() {
           You never pick a vendor model. Xroga routes Apex · Horizon · Forge · Pulse · Live · Lens
           inside Black Hole V∞ — frontier coding depth, long-context repos, volume execution, live
           web+X intel, and multimodal docs as one #1 coding agent. Continuously trained by Event
-          Horizon updates. Switch plans above to see how your monthly pool and per-core capacity
-          scale from Spark to Singularity.
+          Horizon updates. Use the plan chips above to scale pool + per-core capacity.
         </p>
       </div>
     </section>
