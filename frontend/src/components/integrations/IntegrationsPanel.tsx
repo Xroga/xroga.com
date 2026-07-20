@@ -145,11 +145,11 @@ export function IntegrationsPanel() {
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="font-semibold text-lg">Integrations</h2>
           <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/30">
-            {INTEGRATIONS.length} total
+            7 live connect · rest coming soon
           </span>
         </div>
         <p className="text-sm text-[var(--muted)] mt-1 font-coding">
-          Connect GitHub, Vercel, Supabase, Brevo, Cloudflare, and Lemon Squeezy. Everything else is coming soon.
+          Live today: GitHub, Vercel, Supabase, Brevo, Cloudflare, Lemon Squeezy (+ Expo in Publish). The long catalog below is a wishlist — not all OAuth yet.
         </p>
       </div>
 

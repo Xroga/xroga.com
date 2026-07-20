@@ -91,6 +91,7 @@ import {
 } from './sessionMemory.js';
 import { RunTrace } from './runTrace.js';
 import { verifyShippedProduct } from '../lib/shipVerify.js';
+import { computeShipOutcome } from './shipOutcome.js';
 
 export interface PipelineProgress {
   agent?: string;
@@ -1582,6 +1583,9 @@ export async function runBuildPipeline(opts: {
     message: '',
   }));
   const compileBlocksShip = !compile.skipped && compile.ok === false;
+  // Re-check structure right before push (after QA fix passes may have changed files)
+  const structureFinal = staticValidateProject(nextFiles);
+  const qaBlocksShip = !structureFinal.ok;
   const shipBlockers: string[] = [];
   if (!githubOk) shipBlockers.push('Connect GitHub to push code to your repo');
   if (!isNonWebProduct && !vercelOk) {
@@ -1595,6 +1599,11 @@ export async function runBuildPipeline(opts: {
   if (patchAborted) shipBlockers.push('Unsafe patches aborted — live site unchanged');
   if (security.blocked) shipBlockers.push('Critical secrets blocked the push');
   if (compileBlocksShip) shipBlockers.push('Compile failed — fix TypeScript/install before ship');
+  if (qaBlocksShip) {
+    shipBlockers.push(
+      `Critical structure: ${structureFinal.issues[0] || 'fix project files before ship'}`,
+    );
+  }
   // Informational — does not block fullyShipped (sites can ship without DB)
   const supabaseNote = supabaseStatus.provisioned
     ? 'Supabase provisioned on your project'
@@ -1618,8 +1627,20 @@ export async function runBuildPipeline(opts: {
     !patchAborted &&
     !security.blocked &&
     !compileBlocksShip &&
+    !qaBlocksShip &&
     (isUpdate ? Boolean(meta?.githubTargetRepo) : true) &&
     (filesToPush.length > 0 || deletedPaths.length > 0);
+
+  if (qaBlocksShip) {
+    emit({
+      agent: 'deploy',
+      status: 'push_skipped',
+      message: `Push skipped — critical structure: ${structureFinal.issues[0] || 'fix files'}`,
+      swarmStatusLabel: 'Structure block',
+      swarmActivity: structureFinal.issues.slice(0, 2).join('; '),
+      swarmTodos: todos('push'),
+    });
+  }
 
   if (compileBlocksShip) {
     emit({
@@ -1693,10 +1714,13 @@ export async function runBuildPipeline(opts: {
   // Free-path artifacts for Chrome / Electron after sticky push
   let chromeZipDownloadUrl: string | undefined;
   let chromeReleaseUrl: string | undefined;
+  let chromeZipError: string | undefined;
   let desktopReleaseTag: string | undefined;
   let desktopActionsUrl: string | undefined;
   let desktopReleasesUrl: string | undefined;
-  let nonWebArtifactOk = false;
+  let electronReleaseError: string | undefined;
+  let chromeZipOk = false;
+  let electronReleaseTriggered = false;
 
   if (githubPushConfirmed && githubRepoName && productScaffoldKind === 'chrome') {
     emit({
@@ -1713,32 +1737,41 @@ export async function runBuildPipeline(opts: {
         repoFullName: githubRepoName,
         files: nextFiles,
       });
-      if (zipped.ok) {
-        nonWebArtifactOk = true;
+      if (zipped.ok && zipped.downloadUrl) {
+        chromeZipOk = true;
         chromeZipDownloadUrl = zipped.downloadUrl;
         chromeReleaseUrl = zipped.releaseUrl;
         emit({
           agent: 'deploy',
           status: 'packaged',
-          message: zipped.downloadUrl
-            ? `extension.zip ready — ${zipped.downloadUrl}`
-            : 'Chrome release created — download extension.zip from Releases',
+          message: `extension.zip ready — ${zipped.downloadUrl}`,
           swarmStatusLabel: 'Zip ready',
           swarmActivity: zipped.tag || 'extension.zip',
           swarmTodos: todos('push'),
         });
       } else {
+        chromeZipError = zipped.error || 'extension.zip upload failed';
+        chromeReleaseUrl = zipped.releaseUrl;
         emit({
           agent: 'deploy',
           status: 'package_failed',
-          message: zipped.error || 'Could not upload extension zip',
-          swarmStatusLabel: 'Zip issue',
-          swarmActivity: zipped.error?.slice(0, 100) || 'retry from Releases',
+          message: chromeZipError,
+          swarmStatusLabel: 'Zip failed',
+          swarmActivity: chromeZipError.slice(0, 100),
           swarmTodos: todos('push'),
         });
       }
     } catch (err) {
-      console.warn('[pipeline] chrome zip:', (err as Error).message);
+      chromeZipError = (err as Error).message;
+      console.warn('[pipeline] chrome zip:', chromeZipError);
+      emit({
+        agent: 'deploy',
+        status: 'package_failed',
+        message: chromeZipError,
+        swarmStatusLabel: 'Zip failed',
+        swarmActivity: chromeZipError.slice(0, 100),
+        swarmTodos: todos('push'),
+      });
     }
   }
 
@@ -1761,35 +1794,40 @@ export async function runBuildPipeline(opts: {
       desktopActionsUrl = released.actionsUrl;
       desktopReleasesUrl = released.releasesUrl;
       if (released.ok) {
-        nonWebArtifactOk = true;
+        electronReleaseTriggered = true;
         emit({
           agent: 'deploy',
           status: 'release_triggered',
           message: released.tag
-            ? `Tagged ${released.tag} — Actions will build unsigned zip (see Releases when green)`
-            : 'Desktop release workflow dispatched',
+            ? `Tagged ${released.tag} — Actions will build unsigned zip (not finished yet — wait for green)`
+            : 'Desktop release workflow dispatched — wait for Actions to finish',
           swarmStatusLabel: 'Release started',
           swarmActivity: released.actionsUrl || released.tag || 'Actions',
           swarmTodos: todos('push'),
         });
       } else {
+        electronReleaseError = released.error || 'Could not start desktop release';
         emit({
           agent: 'deploy',
           status: 'release_failed',
-          message: released.error || 'Could not start desktop release',
-          swarmStatusLabel: 'Release issue',
-          swarmActivity: released.error?.slice(0, 100) || 'tag v* on GitHub',
+          message: electronReleaseError,
+          swarmStatusLabel: 'Release failed',
+          swarmActivity: electronReleaseError.slice(0, 100),
           swarmTodos: todos('push'),
         });
       }
     } catch (err) {
-      console.warn('[pipeline] electron release:', (err as Error).message);
+      electronReleaseError = (err as Error).message;
+      console.warn('[pipeline] electron release:', electronReleaseError);
+      emit({
+        agent: 'deploy',
+        status: 'release_failed',
+        message: electronReleaseError,
+        swarmStatusLabel: 'Release failed',
+        swarmActivity: electronReleaseError.slice(0, 100),
+        swarmTodos: todos('push'),
+      });
     }
-  }
-
-  if (githubPushConfirmed && productScaffoldKind === 'expo') {
-    // Expo free path = sticky GitHub + Expo Go; EAS is optional in Publish panel
-    nonWebArtifactOk = true;
   }
 
   // Refresh hot memory so next update skips GitHub/AI re-analyze
@@ -1877,7 +1915,7 @@ export async function runBuildPipeline(opts: {
     }
   }
 
-  // Post-deploy verify + keys proof (honest pass/fail in chat)
+  // Post-deploy verify — honest pass/fail (no force-green)
   let shipVerify: Awaited<ReturnType<typeof verifyShippedProduct>> | null = null;
   if (githubPushConfirmed || deployUrl) {
     throwIfAborted();
@@ -1887,7 +1925,7 @@ export async function runBuildPipeline(opts: {
       agent: 'verifier',
       status: 'verifying',
       message: isNonWebProduct
-        ? 'Verifying GitHub push (preview URL optional for desktop/extension/mobile)…'
+        ? 'Verifying GitHub + free-path artifacts (honest)…'
         : 'Verifying GitHub push + live URL + /api/health…',
       swarmStatusLabel: 'Verify',
       swarmActivity: deployUrl || githubRepoUrl || 'checks',
@@ -1899,110 +1937,114 @@ export async function runBuildPipeline(opts: {
       githubRepoUrl,
       expectApiHealth: expectApi,
     });
-    // Non-web: GitHub push is the success bar; preview URL is optional
-    if (isNonWebProduct && githubPushConfirmed) {
-      shipVerify = {
-        ...shipVerify,
-        pass: true,
-        liveOk: Boolean(shipVerify.liveOk || deployUrl),
-        summaryLines: [
-          ...(shipVerify.summaryLines || []),
-          productScaffoldKind === 'chrome'
-            ? chromeZipDownloadUrl
-              ? `✅ extension.zip: ${chromeZipDownloadUrl}`
-              : 'ℹ️ Sideload from repo or download zip from Releases when ready'
-            : productScaffoldKind === 'electron'
-              ? desktopActionsUrl
-                ? `✅ Desktop release triggered — ${desktopActionsUrl}`
-                : 'ℹ️ Tag v* or run Desktop release workflow on GitHub'
-              : '✅ Mobile on GitHub — Connect Expo in Publish for EAS (optional)',
-        ],
-      };
-    }
     deployVerified = shipVerify.liveOk || deployVerified;
+  }
+
+  const outcome = computeShipOutcome({
+    kind: productScaffoldKind,
+    patchAborted,
+    securityBlocked: security.blocked,
+    compileBlocksShip,
+    qaBlocksShip,
+    githubConnected: githubOk,
+    vercelConnected: vercelOk,
+    shouldPush,
+    githubPushConfirmed,
+    deployUrl: deployUrl || undefined,
+    liveOk: deployUrl ? Boolean(shipVerify?.liveOk ?? deployVerified) : undefined,
+    chromeZipOk,
+    electronReleaseTriggered,
+    chromeZipError,
+    electronReleaseError,
+  });
+
+  // Merge pre-push blockers (e.g. missing sticky repo) that outcome may not know
+  const finalBlockers = [...new Set([...outcome.shipBlockers, ...shipBlockers])];
+  const fullyShipped = outcome.fullyShipped;
+  const buildOk = outcome.buildOk;
+  // Honest API success: build produced usable code. Shipped is a separate flag.
+  const overallSuccess = buildOk;
+  const statusMessage = outcome.statusMessage;
+
+  if (shipVerify || githubPushConfirmed || deployUrl) {
+    const summaryLines = [
+      ...outcome.verifyLines,
+      ...(chromeZipDownloadUrl ? [`Download: ${chromeZipDownloadUrl}`] : []),
+      ...(desktopActionsUrl ? [`Actions: ${desktopActionsUrl}`] : []),
+      ...(outcome.nextSteps.length
+        ? outcome.nextSteps.map((s) => `➡️ ${s}`)
+        : []),
+      ...(shipVerify?.summaryLines?.filter(
+        (l) => !outcome.verifyLines.some((v) => l.includes(v.slice(2))),
+      ) || []),
+    ];
+    shipVerify = {
+      liveOk: Boolean(shipVerify?.liveOk ?? deployVerified),
+      liveUrl: shipVerify?.liveUrl || deployUrl || '',
+      healthOk: shipVerify?.healthOk ?? null,
+      healthBody: shipVerify?.healthBody,
+      keysProof: shipVerify?.keysProof ?? {
+        checked: false,
+        message: isNonWebProduct ? 'Non-web free path — no /api/health expected' : 'No keys proof',
+      },
+      githubOk: githubPushConfirmed,
+      summaryLines,
+      pass: outcome.verifyPass,
+    };
     emit({
       agent: 'verifier',
-      status: shipVerify.pass ? 'verified' : 'verify_failed',
-      message: shipVerify.summaryLines.join('\n'),
-      swarmStatusLabel: shipVerify.pass ? 'Verified' : 'Verify failed',
-      swarmActivity: shipVerify.pass ? 'All checks green' : 'See chat for failures',
-      swarmTodos: todos('done').map((t) => ({ ...t, status: 'done' as const })),
+      status: outcome.verifyPass ? 'verified' : 'verify_failed',
+      message: summaryLines.join('\n'),
+      swarmStatusLabel: outcome.verifyPass ? outcome.statusLabel : 'Incomplete',
+      swarmActivity: outcome.verifyPass
+        ? outcome.statusLabel
+        : finalBlockers[0] || 'See ship blockers',
+      swarmTodos: todos('done').map((t) => ({
+        ...t,
+        status: (outcome.verifyPass ? 'done' : 'pending') as 'done' | 'pending',
+      })),
     });
-    trace.setMeta({ shipVerify: shipVerify.summaryLines });
+    trace.setMeta({ shipVerify: summaryLines, fullyShipped, buildOk });
   }
 
   const outSite = filesToSite(nextFiles);
 
-  const shipOk =
-    !patchAborted &&
-    !security.blocked &&
-    !compileBlocksShip &&
-    (shouldPush ? githubPushConfirmed : true) &&
-    (isNonWebProduct
-      ? true
-      : deployUrl
-        ? Boolean(shipVerify?.liveOk ?? deployVerified)
-        : true);
-
-  const fullyShipped = isNonWebProduct
-    ? shipOk && githubPushConfirmed && (nonWebArtifactOk || productScaffoldKind === 'expo')
-    : shipOk &&
-      githubPushConfirmed &&
-      Boolean(deployUrl) &&
-      Boolean(shipVerify?.liveOk ?? deployVerified);
-
-  const overallSuccess = shipOk && !patchAborted && (compile.skipped || compile.ok);
-
-  const statusMessage = patchAborted
-    ? 'Update aborted — site unchanged'
-    : fullyShipped
-      ? isNonWebProduct
-        ? productScaffoldKind === 'chrome'
-          ? 'Extension pushed · zip on GitHub Releases'
-          : productScaffoldKind === 'electron'
-            ? 'Desktop pushed · release building on Actions'
-            : 'Mobile pushed to GitHub — Connect Expo for EAS'
-        : isUpdate
-          ? 'Update shipped & verified'
-          : 'Build shipped & verified'
-      : githubPushConfirmed && !deployUrl && !isNonWebProduct
-        ? 'Pushed to GitHub — connect Vercel to go live'
-        : overallSuccess
-          ? isUpdate
-            ? 'Update ready (connect GitHub + Vercel to ship)'
-            : isNonWebProduct
-              ? 'Build ready (connect GitHub to push extension/desktop/mobile)'
-              : 'Build ready (connect GitHub + Vercel to ship)'
-          : shipBlockers.length
-            ? `Build finished — ship blocked: ${shipBlockers[0]}`
-            : 'Build finished with failures — see verify report';
-
   emit({
     agent: 'builder',
-    status: overallSuccess ? 'complete' : 'complete_with_errors',
+    status: fullyShipped ? 'complete' : buildOk ? 'complete_incomplete_ship' : 'complete_with_errors',
     message: statusMessage,
-    swarmStatusLabel: fullyShipped ? 'Shipped' : overallSuccess ? 'Ready' : 'Needs attention',
+    swarmStatusLabel: fullyShipped
+      ? outcome.statusLabel
+      : buildOk
+        ? 'Built · not fully shipped'
+        : 'Needs attention',
     swarmActivity: shipVerify?.summaryLines?.[0] ||
       (deployVerified
         ? `Live · ${deployUrl}`
         : githubPushConfirmed
           ? `Pushed to ${githubRepoName}`
-          : shipBlockers[0] || 'Preview ready'),
-    swarmTodos: todos('done').map((t) => ({ ...t, status: 'done' as const })),
+          : finalBlockers[0] || 'Preview ready'),
+    swarmTodos: todos('done').map((t) => ({
+      ...t,
+      status: (fullyShipped ? 'done' : 'pending') as 'done' | 'pending',
+    })),
   });
 
   const verifyMarkdown = shipVerify?.summaryLines?.length
     ? `\n\n### Ship check\n${shipVerify.summaryLines.join('\n')}`
     : '';
-  const blockersMarkdown = shipBlockers.length
-    ? `\n\n### Ship blockers\n${shipBlockers.map((b) => `- ${b}`).join('\n')}`
+  const blockersMarkdown = finalBlockers.length
+    ? `\n\n### Ship blockers\n${finalBlockers.map((b) => `- ${b}`).join('\n')}`
+    : '';
+  const nextStepsMarkdown = outcome.nextSteps.length
+    ? `\n\n### Next steps\n${outcome.nextSteps.map((s) => `- ${s}`).join('\n')}`
     : '';
   const compileMarkdown =
     !compile.skipped
       ? `\n\n### Compile\n${compile.ok ? '✅' : '❌'} npm install ${compile.installOk ? 'OK' : 'FAIL'} · tsc ${compile.tscOk ? 'OK' : 'FAIL'}${
           compile.issues.length ? `\n${compile.issues.slice(0, 5).map((i) => `- ${i}`).join('\n')}` : ''
         }`
-      : '';
+      : `\n\n### Structure\n${structureFinal.ok ? '✅' : '❌'} ${structureFinal.issues.slice(0, 3).join('; ') || compile.reason || 'skipped compile'}`;
 
   const output: Record<string, unknown> = {
     type: 'landing_page',
@@ -2017,20 +2059,21 @@ export async function runBuildPipeline(opts: {
       (patchAborted
         ? `⚠️ **Update aborted** for **${projectName}** — patches did not match safely. Your live site was **not** changed.`
         : fullyShipped
-          ? isNonWebProduct
-            ? productScaffoldKind === 'chrome'
-              ? `Built **${projectName}** — pushed to GitHub and packaged \`extension.zip\` on Releases.`
-              : productScaffoldKind === 'electron'
-                ? `Built **${projectName}** — pushed to GitHub and triggered desktop release (unsigned zip via Actions).`
-                : `Built **${projectName}** — pushed to GitHub. Open Publish → Connect Expo for one-click EAS (you pay store/EAS fees).`
-            : isUpdate
-              ? `Updated **${projectName}** with ${MODELS[result.modelId].label} — pushed to GitHub and live on Vercel.`
-              : `Built **${projectName}** with ${MODELS[result.modelId].label} — pushed to GitHub and live on Vercel.`
-          : overallSuccess
-            ? `Built **${projectName}** with ${MODELS[result.modelId].label}.${shipBlockers.length ? ' Connect integrations below to finish shipping.' : ''}`
-            : `⚠️ **${projectName}** finished with failures — check GitHub/Vercel status below.`) +
+          ? productScaffoldKind === 'chrome'
+            ? `Shipped **${projectName}** — GitHub + \`extension.zip\` on Releases.`
+            : productScaffoldKind === 'electron'
+              ? `**${projectName}** on GitHub — desktop release **started** (wait for Actions zip; not finished yet).`
+              : productScaffoldKind === 'expo'
+                ? `**${projectName}** on GitHub (Expo Go path). **EAS/App Store/Play not done** — Publish → Connect Expo.`
+                : isUpdate
+                  ? `Updated **${projectName}** — pushed to GitHub and live on Vercel.`
+                  : `Shipped **${projectName}** — pushed to GitHub and live on Vercel.`
+          : buildOk
+            ? `Built **${projectName}** — **not fully shipped.** ${finalBlockers[0] || 'Finish integrations / artifacts below.'}`
+            : `⚠️ **${projectName}** finished with blockers — see ship check below.`) +
       verifyMarkdown +
       blockersMarkdown +
+      nextStepsMarkdown +
       compileMarkdown
     ),
     modelLabel: MODELS[result.modelId].label,
@@ -2047,7 +2090,7 @@ export async function runBuildPipeline(opts: {
         ? [`Architect: ${architectPlanSummary.stack} · ${architectPlanSummary.files.length} files`]
         : []),
       ...(compile.skipped
-        ? []
+        ? [`Structure: ${structureFinal.ok ? 'ok' : 'blocked'}`]
         : [
             `Compile: ${compile.ok ? 'passed' : 'failed'} (${compile.durationMs}ms)`,
           ]),
@@ -2064,13 +2107,16 @@ export async function runBuildPipeline(opts: {
     githubRepoName,
     githubPushConfirmed,
     fullyShipped,
+    buildOk,
+    shipped: fullyShipped,
+    nextSteps: outcome.nextSteps,
     scaffoldKind: productScaffoldKind,
     chromeZipDownloadUrl,
     chromeReleaseUrl,
     desktopReleaseTag,
     desktopActionsUrl,
     desktopReleasesUrl,
-    shipBlockers: shipBlockers.length ? shipBlockers : undefined,
+    shipBlockers: finalBlockers.length ? finalBlockers : undefined,
     supabase: {
       connected: Boolean(supabaseStatus.connected),
       provisioned: Boolean(supabaseStatus.provisioned || supabaseStatus.ready),

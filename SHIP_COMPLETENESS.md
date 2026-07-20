@@ -1,24 +1,16 @@
-# Ship completeness — coding-agent loops
+# Honest ship status
 
-Branch: `cursor/complete-ship-loops-a9a2`
+## Truth rules (enforced in code)
+- **Built** ≠ **Shipped**. UI says “ship incomplete” until free-path artifacts / live URL pass.
+- Web shipped = GitHub push + Vercel live URL check.
+- Chrome shipped = GitHub push + `extension.zip` on Releases (download URL required).
+- Electron shipped = GitHub push + release **triggered** (Actions zip may still be building — next step says wait).
+- Expo “shipped” free path = GitHub only; next step always says EAS/stores not done.
+- Critical structure issues block push.
+- Verify is never force-green.
 
-## Closed loops (agent finishes free path)
-
-| Product | Free path Xroga completes | User-paid (documented) |
-|---------|---------------------------|-------------------------|
-| **Web** (static / Next) | Build → sticky GitHub → Vercel (+ optional Supabase) | — |
-| **Chrome MV3** | Build → GitHub → `extension.zip` on Releases | CWS ~$5 |
-| **Electron desktop** | Build → GitHub → tag / Actions release workflow | Code signing / stores |
-| **Expo mobile** | Build → GitHub (+ preview page) | EAS / Apple / Google via **your** Expo token |
-
-## Intentionally not productized
-- Image / video studios, browser-automation farms
-- Paying store fees or holding signing certs for users
-- Managed always-on bot farm
-- True Expo OAuth (user robot/access token only)
-
-## Key wiring
-- `compileValidate` skips Chrome / Electron / Expo (no false tsc block)
-- Vercel deploy for non-web = preview story page only (incl. Expo)
-- `nonWebShip.ts` — Chrome zip upload + Electron release trigger
-- Ship blockers: Vercel required for web only
+## Still not automatic (honest)
+- Waiting for Electron Actions to finish building the zip
+- EAS / App Store / Play submit
+- CWS publish fee, code signing
+- 710+ OAuth catalog (wishlist; ~7 live connects)

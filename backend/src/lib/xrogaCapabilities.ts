@@ -20,18 +20,18 @@ export function getXrogaCapabilitiesResponse(): string {
 **#1 coding agent — prompt → your GitHub → live**
 
 Live product loops
-🌐 **Web apps & sites** — Converter briefs → swarm builds → sticky GitHub repo → your Vercel (optional Supabase keys in vault)
-📱 **Mobile (Expo)** — Android/iOS scaffold → push GitHub → Expo Go / one-click EAS on **your** Expo account (you pay Apple/Google/EAS)
-🧩 **Chrome extension (MV3)** — scaffold → sticky GitHub → \`extension.zip\` on Releases (sideload free; CWS ~$5 on your account)
-🖥️ **Desktop (Electron)** — scaffold → sticky GitHub → Actions release zip (unsigned free path; you pay signing/stores if needed)
-📊 **Crypto market dashboards** — prices UI + wallet-connect demo — **not** an exchange, custody, or trading system
-⚙️ **Agent runner scaffolds** — cron/LLM stubs on your stack — not a managed always-on bot farm
+🌐 **Web apps & sites** — build → sticky GitHub → your Vercel (optional Supabase). “Shipped” only when live URL checks out.
+📱 **Mobile (Expo)** — scaffold → GitHub (Expo Go). EAS / stores need Publish → your Expo token (you pay fees).
+🧩 **Chrome MV3** — scaffold → GitHub → \`extension.zip\` on Releases (required for “shipped”).
+🖥️ **Desktop (Electron)** — scaffold → GitHub → Actions release **started** (download zip when Actions is green).
+📊 **Crypto dashboards** — UI demos — not an exchange or custody.
+⚙️ **Agent scaffolds** — cron/LLM stubs — not a managed bot farm.
 
 Research
 🔍 Live web + X research when keys are set — empty research is skipped (never faked)
 
 Not part of the product
-❌ Image / video studios, browser-automation farms, or paying App Store fees for you
+❌ Image / video studios, browser-automation farms, paying App Store fees, or claiming “710+ live OAuths”
 
 What do you want to ship first?`;
 }

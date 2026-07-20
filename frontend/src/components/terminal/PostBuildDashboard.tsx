@@ -180,7 +180,15 @@ export function PostBuildDashboard({
           <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
           <div className="min-w-0 flex-1">
             <h2 className="text-lg font-bold text-[var(--foreground)] leading-tight">
-              {isUpdate ? 'Update applied' : 'Project complete'}
+              {data.fullyShipped
+                ? isUpdate
+                  ? 'Update shipped'
+                  : 'Project shipped'
+                : data.buildOk === false
+                  ? 'Build needs attention'
+                  : isUpdate
+                    ? 'Update built — ship incomplete'
+                    : 'Built — ship incomplete'}
             </h2>
             <p className="text-sm font-semibold text-[var(--accent)] mt-0.5 truncate">{projectName}</p>
           </div>
@@ -331,15 +339,21 @@ export function PostBuildDashboard({
           </ul>
         </section>
 
-        {(missingItems.length > 0 || siteAudit.issues.length > 0) && (
+        {(missingItems.length > 0 || siteAudit.issues.length > 0 || (data.nextSteps && data.nextSteps.length > 0)) && (
           <section className="space-y-2 rounded-lg border border-amber-500/25 bg-amber-500/5 p-3">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-500" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                Missing or needs attention
+                {data.fullyShipped ? 'Next steps' : 'Missing or needs attention'}
               </h3>
             </div>
             <ul className="space-y-1.5 text-[11px]">
+              {(data.nextSteps ?? []).map((item) => (
+                <li key={item} className="flex gap-2 text-[var(--foreground)]/85">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                  {item}
+                </li>
+              ))}
               {missingItems.map((item) => (
                 <li key={item} className="flex gap-2 text-[var(--foreground)]/85">
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />

@@ -25,6 +25,9 @@ export interface LandingPageOutputData {
   githubRepoName?: string;
   githubPushConfirmed?: boolean;
   fullyShipped?: boolean;
+  buildOk?: boolean;
+  shipped?: boolean;
+  nextSteps?: string[];
   scaffoldKind?: string;
   chromeZipDownloadUrl?: string;
   chromeReleaseUrl?: string;
