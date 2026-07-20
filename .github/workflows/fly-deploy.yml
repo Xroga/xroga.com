@@ -3,6 +3,7 @@ name: Deploy to Fly.io
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: fly-deploy-xroga-api
@@ -18,22 +19,36 @@ jobs:
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      # Remote builds avoid flaky `flyctl auth docker` / registry.fly.io 401s in CI.
+      - name: Check Fly token
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${FLY_API_TOKEN:-}" ]; then
+            echo "::error::FLY_API_TOKEN GitHub secret is empty. Create a token at https://fly.io/user/personal_access_tokens and set it in repo Settings → Secrets → Actions."
+            exit 1
+          fi
+          if ! flyctl auth whoami; then
+            echo "::error::FLY_API_TOKEN is invalid or expired (token validation failed). Regenerate at https://fly.io/user/personal_access_tokens and update the GitHub secret FLY_API_TOKEN, then re-run this workflow."
+            exit 1
+          fi
+
+      # Remote builds avoid flaky registry.fly.io docker login 401s in CI.
       - name: Deploy to Fly.io (remote build)
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
           set -euo pipefail
           attempt=1
-          max_attempts=4
-          delay=12
+          max_attempts=5
+          delay=15
           until flyctl deploy \
             --config fly.api.toml \
             -a xroga-api \
             --remote-only \
             --ha=false; do
             if [ "$attempt" -ge "$max_attempts" ]; then
-              echo "flyctl deploy failed after ${max_attempts} attempts"
+              echo "::error::flyctl deploy failed after ${max_attempts} attempts. If you see 'token validation error', refresh GitHub secret FLY_API_TOKEN from https://fly.io/user/personal_access_tokens"
               exit 1
             fi
             echo "deploy failed (attempt ${attempt}/${max_attempts}) — retrying in ${delay}s"
@@ -49,3 +64,12 @@ jobs:
           echo ""
           curl -fsS "https://xroga-api.fly.dev/api/health"
           echo ""
+          # Supabase OAuth route should exist after this deploy (401 without user token is OK)
+          code=$(curl -s -o /tmp/sb.json -w '%{http_code}' "https://xroga-api.fly.dev/api/supabase/oauth" || true)
+          echo "GET /api/supabase/oauth → HTTP $code"
+          cat /tmp/sb.json || true
+          echo ""
+          if [ "$code" = "404" ]; then
+            echo "::error::Supabase OAuth route still 404 — deploy may have used an old image"
+            exit 1
+          fi
