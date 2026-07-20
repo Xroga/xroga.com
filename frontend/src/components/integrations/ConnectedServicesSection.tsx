@@ -158,6 +158,8 @@ export function ConnectedServicesSection() {
                     if (!result.opened) {
                       stop();
                       toast.error(result.error || 'Could not open Vercel authorization');
+                    } else if (!result.popup) {
+                      toast.success('Continue authorizing Vercel in this tab…');
                     }
                   });
                 }}

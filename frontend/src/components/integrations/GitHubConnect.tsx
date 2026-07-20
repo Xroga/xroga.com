@@ -51,7 +51,22 @@ export function GitHubConnect() {
     setConnecting(true);
     try {
       const { url } = await api.github.oauthUrl();
-      window.location.href = url;
+      if (!url) {
+        toast.error('GitHub OAuth not configured');
+        setConnecting(false);
+        return;
+      }
+      const popup = window.open(url, 'xroga-github-oauth', 'width=600,height=720,scrollbars=yes');
+      if (!popup) {
+        window.location.href = url;
+        return;
+      }
+      try {
+        popup.focus();
+      } catch {
+        /* ignore */
+      }
+      setConnecting(false);
     } catch (e) {
       toast.error((e as Error).message);
       setConnecting(false);

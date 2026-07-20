@@ -30,10 +30,25 @@ function frontendBase(): string {
 }
 
 export function getSupabaseOAuthCallbackUrl(requested?: string): string {
+  const path = '/dashboard/integrations/supabase/callback';
+  const allowed = [
+    'https://xroga.com',
+    'https://www.xroga.com',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+  ];
+  if (requested) {
+    try {
+      const u = new URL(requested);
+      if (allowed.includes(u.origin) && u.pathname.replace(/\/$/, '') === path) {
+        return requested.replace(/\/$/, '');
+      }
+    } catch {
+      /* fall through */
+    }
+  }
   const explicit = process.env.SUPABASE_OAUTH_CALLBACK_URL?.trim();
   if (explicit) return explicit.replace(/\/$/, '');
-  const path = '/dashboard/integrations/supabase/callback';
-  if (requested?.includes(path)) return requested.replace(/\/$/, '');
   return `${frontendBase()}${path}`;
 }
 
@@ -60,15 +75,21 @@ export async function buildSupabaseAuthorizeUrl(
   ).toString('base64url');
 
   const supabase = getSupabaseAdmin();
-  await supabase.from('user_integrations').upsert(
+  const { error: pkceErr } = await supabase.from('user_integrations').upsert(
     {
       user_id: userId,
       provider: PKCE_PROVIDER,
       access_token: verifier,
-      metadata: { state, created_at: new Date().toISOString() },
+      metadata: { state, redirect_uri: redirectUri, created_at: new Date().toISOString() },
     },
     { onConflict: 'user_id,provider' },
   );
+  if (pkceErr) {
+    console.error('[supabaseAuth] PKCE store failed:', pkceErr.message);
+    throw new Error(
+      `Could not start Supabase authorize (session store failed): ${pkceErr.message}`,
+    );
+  }
 
   const params = new URLSearchParams({
     response_type: 'code',
@@ -107,15 +128,17 @@ export async function exchangeSupabaseOAuthCode(opts: {
     .eq('provider', PKCE_PROVIDER)
     .maybeSingle();
 
-  const meta = (pkce?.metadata ?? {}) as { state?: string };
+  const meta = (pkce?.metadata ?? {}) as { state?: string; redirect_uri?: string };
   if (!pkce?.access_token || meta.state !== opts.state) {
     throw new Error('Invalid or expired OAuth state — try Connect Supabase again');
   }
 
+  const redirectUri = (meta.redirect_uri || opts.redirectUri).replace(/\/$/, '');
+
   const body = new URLSearchParams({
     grant_type: 'authorization_code',
     code: opts.code,
-    redirect_uri: opts.redirectUri,
+    redirect_uri: redirectUri,
     code_verifier: pkce.access_token,
   });
 

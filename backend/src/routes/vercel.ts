@@ -12,6 +12,7 @@ import {
   parseVercelOAuthState,
   saveVercelConnection,
   vercelOAuthConfigured,
+  verifyVercelTokenLive,
 } from '../services/integrations/vercelAuth.js';
 import { deployStaticSiteWithToken } from '../lib/vercel.js';
 import { normalizeBuildFiles } from '../lib/normalizeBuildSource.js';
@@ -140,11 +141,28 @@ router.post('/connect-token', async (req: AuthRequest, res) => {
 
 router.get('/status', async (req: AuthRequest, res) => {
   const connected = await isVercelConnected(req.userId!);
-  const username = connected ? await getVercelUsername(req.userId!) : null;
+  let username = connected ? await getVercelUsername(req.userId!) : null;
+  let tokenValid: boolean | null = null;
+  if (connected) {
+    const live = await verifyVercelTokenLive(req.userId!);
+    tokenValid = live.ok;
+    if (live.ok && live.username) username = live.username;
+    if (!live.ok && live.error && live.error !== 'not_connected') {
+      // Stale/revoked token — report disconnected so UI can re-authorize
+      res.json({
+        connected: false,
+        oauthConfigured: vercelOAuthConfigured(),
+        tokenValid: false,
+        error: 'Vercel token expired or revoked — Authorize again',
+      });
+      return;
+    }
+  }
   res.json({
     connected,
     username: username ?? undefined,
     oauthConfigured: vercelOAuthConfigured(),
+    tokenValid,
   });
 });
 

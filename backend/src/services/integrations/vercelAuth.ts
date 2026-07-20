@@ -8,6 +8,14 @@ import { getSupabaseAdmin } from '../../config/supabase.js';
 import { isMissingTableError } from './githubTokenStore.js';
 
 const PKCE_PROVIDER = 'vercel_oauth_pkce';
+const CALLBACK_PATH = '/dashboard/integrations/vercel/callback';
+
+const ALLOWED_CALLBACK_ORIGINS = [
+  'https://xroga.com',
+  'https://www.xroga.com',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+];
 
 export function vercelOAuthConfigured(): boolean {
   return Boolean(clientId() && clientSecret());
@@ -21,18 +29,43 @@ function clientSecret(): string {
   return (process.env.VERCEL_CLIENT_SECRET ?? process.env.VERCEL_OAUTH_CLIENT_SECRET ?? '').trim();
 }
 
-function frontendBase(): string {
-  const raw = (process.env.FRONTEND_URL ?? 'http://localhost:3000').replace(/\/$/, '');
-  if (/\.vercel\.app$/i.test(raw)) return 'https://xroga.com';
-  return raw;
+function productionFrontendBase(): string {
+  const raw = (process.env.FRONTEND_URL ?? '').replace(/\/$/, '');
+  if (raw && !/\.vercel\.app$/i.test(raw)) return raw;
+  return 'https://xroga.com';
 }
 
+function isAllowedCallbackUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    return (
+      ALLOWED_CALLBACK_ORIGINS.includes(u.origin) &&
+      u.pathname.replace(/\/$/, '') === CALLBACK_PATH
+    );
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Must match the Vercel App → Redirect URI exactly, and be identical between
+ * authorize + token exchange. Prefer an allowlisted requested URI (www vs apex,
+ * localhost) so popup and full-page flows stay consistent.
+ */
 export function getVercelOAuthCallbackUrl(requested?: string): string {
+  if (requested && isAllowedCallbackUrl(requested)) {
+    return requested.replace(/\/$/, '');
+  }
+
   const explicit = process.env.VERCEL_OAUTH_CALLBACK_URL?.trim();
   if (explicit) return explicit.replace(/\/$/, '');
-  const path = '/dashboard/integrations/vercel/callback';
-  if (requested?.includes(path)) return requested.replace(/\/$/, '');
-  return `${frontendBase()}${path}`;
+
+  const base =
+    process.env.NODE_ENV === 'production'
+      ? productionFrontendBase()
+      : (process.env.FRONTEND_URL ?? 'http://localhost:3000').replace(/\/$/, '');
+
+  return `${base}${CALLBACK_PATH}`;
 }
 
 /** OIDC scopes for Vercel Apps. API permissions are configured in the App console separately. */
@@ -63,15 +96,27 @@ export async function buildVercelAuthorizeUrl(
   ).toString('base64url');
 
   const supabase = getSupabaseAdmin();
-  await supabase.from('user_integrations').upsert(
+  const { error: pkceErr } = await supabase.from('user_integrations').upsert(
     {
       user_id: userId,
       provider: PKCE_PROVIDER,
       access_token: verifier,
-      metadata: { state, nonce, created_at: new Date().toISOString() },
+      metadata: {
+        state,
+        nonce,
+        redirect_uri: redirectUri,
+        created_at: new Date().toISOString(),
+      },
     },
     { onConflict: 'user_id,provider' },
   );
+
+  if (pkceErr) {
+    console.error('[vercelAuth] PKCE store failed:', pkceErr.message);
+    throw new Error(
+      `Could not start Vercel authorize (session store failed): ${pkceErr.message}. Check Supabase service role + user_integrations table.`,
+    );
+  }
 
   const params = new URLSearchParams({
     client_id: clientId(),
@@ -98,24 +143,35 @@ export async function exchangeVercelOAuthCode(opts: {
   }
 
   const supabase = getSupabaseAdmin();
-  const { data: pkce } = await supabase
+  const { data: pkce, error: pkceReadErr } = await supabase
     .from('user_integrations')
     .select('access_token, metadata')
     .eq('user_id', opts.userId)
     .eq('provider', PKCE_PROVIDER)
     .maybeSingle();
 
-  const meta = (pkce?.metadata ?? {}) as { state?: string };
-  if (!pkce?.access_token || meta.state !== opts.state) {
-    throw new Error('Invalid or expired OAuth state — try Authorize Vercel again');
+  if (pkceReadErr && !isMissingTableError(pkceReadErr.message)) {
+    console.warn('[vercelAuth] PKCE read:', pkceReadErr.message);
   }
+
+  const meta = (pkce?.metadata ?? {}) as { state?: string; redirect_uri?: string };
+  if (!pkce?.access_token || meta.state !== opts.state) {
+    throw new Error('Invalid or expired OAuth state — click Authorize Vercel again');
+  }
+
+  // Must be the exact redirect_uri used in the authorize request
+  const redirectUri =
+    (meta.redirect_uri && isAllowedCallbackUrl(meta.redirect_uri)
+      ? meta.redirect_uri
+      : opts.redirectUri
+    ).replace(/\/$/, '');
 
   const body = new URLSearchParams({
     grant_type: 'authorization_code',
     client_id: clientId(),
     client_secret: clientSecret(),
     code: opts.code,
-    redirect_uri: opts.redirectUri,
+    redirect_uri: redirectUri,
     code_verifier: pkce.access_token,
   });
 
@@ -136,7 +192,11 @@ export async function exchangeVercelOAuthCode(opts: {
   await supabase.from('user_integrations').delete().eq('user_id', opts.userId).eq('provider', PKCE_PROVIDER);
 
   if (!tokenData.access_token) {
-    throw new Error(tokenData.error_description || tokenData.error || 'Vercel token exchange failed');
+    throw new Error(
+      tokenData.error_description ||
+        tokenData.error ||
+        `Vercel token exchange failed (${tokenRes.status})`,
+    );
   }
 
   return {
@@ -148,8 +208,15 @@ export async function exchangeVercelOAuthCode(opts: {
 
 export function parseVercelOAuthState(state: string): { userId: string } | null {
   try {
-    const parsed = JSON.parse(Buffer.from(state, 'base64url').toString('utf8')) as { userId?: string };
+    const parsed = JSON.parse(Buffer.from(state, 'base64url').toString('utf8')) as {
+      userId?: string;
+      t?: number;
+    };
     if (!parsed.userId) return null;
+    // Reject states older than 30 minutes
+    if (typeof parsed.t === 'number' && Date.now() - parsed.t > 30 * 60 * 1000) {
+      return null;
+    }
     return { userId: parsed.userId };
   } catch {
     return null;
@@ -188,6 +255,28 @@ export async function getVercelUsername(userId: string): Promise<string | null> 
 export async function isVercelConnected(userId: string): Promise<boolean> {
   const token = await getVercelToken(userId);
   return Boolean(token);
+}
+
+/** Verify the stored token still talks to Vercel (catches revoked tokens). */
+export async function verifyVercelTokenLive(userId: string): Promise<{
+  ok: boolean;
+  username?: string;
+  error?: string;
+}> {
+  const token = await getVercelToken(userId);
+  if (!token) return { ok: false, error: 'not_connected' };
+  try {
+    const res = await fetch('https://api.vercel.com/v2/user', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) {
+      return { ok: false, error: `vercel_api_${res.status}` };
+    }
+    const u = (await res.json()) as { user?: { username?: string } };
+    return { ok: true, username: u.user?.username };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
 }
 
 export async function saveVercelConnection(

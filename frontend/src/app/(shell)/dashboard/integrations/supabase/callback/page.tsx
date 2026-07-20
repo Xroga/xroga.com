@@ -2,7 +2,18 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { api } from '@/lib/api';
+import { api, getAccessToken } from '@/lib/api';
+import { publishOAuthResult } from '@/lib/oauthPopupResult';
+
+async function waitForSession(maxMs = 8000): Promise<boolean> {
+  const started = Date.now();
+  while (Date.now() - started < maxMs) {
+    const token = await getAccessToken();
+    if (token) return true;
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  return false;
+}
 
 function CallbackHandler() {
   const router = useRouter();
@@ -14,26 +25,37 @@ function CallbackHandler() {
     const state = searchParams.get('state');
     const err = searchParams.get('error_description') || searchParams.get('error');
 
-    if (err) {
-      setMessage(err);
-      if (window.opener) {
-        window.opener.postMessage({ type: 'xroga-supabase-error', message: err }, '*');
+    const finishError = (msg: string) => {
+      setMessage(msg);
+      publishOAuthResult({ type: 'xroga-supabase-error', message: msg });
+      if (window.opener && !window.opener.closed) {
         setTimeout(() => window.close(), 1200);
       } else {
-        setTimeout(() => router.replace('/dashboard/integrations'), 2500);
+        const q = new URLSearchParams({ supabase: 'error', message: msg.slice(0, 180) });
+        setTimeout(() => router.replace(`/dashboard/integrations?${q.toString()}`), 2500);
       }
+    };
+
+    if (err) {
+      finishError(String(err));
       return;
     }
 
     if (!code || !state) {
       if (window.opener) window.close();
-      else router.replace('/dashboard/integrations');
+      else router.replace('/dashboard/integrations?supabase=missing_code');
       return;
     }
 
-    void api.supabase
-      .connect(code, state)
-      .then((res) => {
+    void (async () => {
+      const hasSession = await waitForSession();
+      if (!hasSession) {
+        finishError('Sign in to Xroga again, then click Authorize Supabase');
+        return;
+      }
+
+      try {
+        const res = await api.supabase.connect(code, state);
         const msg =
           res.message ||
           (res.autoSelected
@@ -41,40 +63,39 @@ function CallbackHandler() {
             : 'Supabase authorized');
         setMessage(msg);
 
-        if (window.opener) {
-          window.opener.postMessage(
-            {
-              type: 'xroga-supabase-connected',
-              needsProjectPick: Boolean(res.needsProjectPick),
-              projects: res.projects ?? [],
-              autoSelected: res.autoSelected,
-              provisioned: Boolean(res.provision?.schemaApplied || res.status?.provisioned),
-              message: msg,
-            },
-            '*',
-          );
+        const payload = {
+          type: 'xroga-supabase-connected' as const,
+          needsProjectPick: Boolean(res.needsProjectPick),
+          projects: res.projects ?? [],
+          autoSelected: Boolean(res.autoSelected),
+          provisioned: Boolean(res.provision?.schemaApplied || res.status?.provisioned),
+          message: msg,
+        };
+        publishOAuthResult(payload);
+
+        if (window.opener && !window.opener.closed) {
           setTimeout(() => window.close(), 500);
           return;
         }
 
         const q = new URLSearchParams({ supabase: 'connected' });
         if (res.needsProjectPick) q.set('pick', '1');
-        router.replace(`/dashboard/integrations?${q.toString()}`);
-      })
-      .catch((e) => {
-        const msg = (e as Error).message;
-        setMessage(msg);
-        if (window.opener) {
-          window.opener.postMessage({ type: 'xroga-supabase-error', message: msg }, '*');
-          setTimeout(() => window.close(), 1200);
-          return;
-        }
-        setTimeout(() => router.replace('/dashboard/integrations'), 2500);
-      });
+        setTimeout(() => {
+          try {
+            window.close();
+          } catch {
+            /* ignore */
+          }
+          router.replace(`/dashboard/integrations?${q.toString()}`);
+        }, 500);
+      } catch (e) {
+        finishError((e as Error).message || 'Supabase connection failed');
+      }
+    })();
   }, [router, searchParams]);
 
   return (
-    <div className="flex items-center justify-center min-h-[40vh]">
+    <div className="flex flex-col items-center justify-center min-h-[40vh] gap-3 px-4 text-center">
       <p className="text-[var(--muted)] font-mono text-sm">{message}</p>
     </div>
   );
