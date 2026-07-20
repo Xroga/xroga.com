@@ -84,7 +84,7 @@ export function BillingPageClient() {
             <Shield className="w-5 h-5 text-[#4a7aff] shrink-0" />
             <div>
               <p className="font-semibold">Secure checkout</p>
-              <p className="text-[var(--muted)] text-xs mt-1">Billing runs through Paddle.</p>
+              <p className="text-[var(--muted)] text-xs mt-1">Billing runs through Lemon Squeezy.</p>
             </div>
           </div>
           <div className="glass-panel rounded-xl p-4 flex gap-3">

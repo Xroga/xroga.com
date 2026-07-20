@@ -2,11 +2,16 @@ import { Router } from 'express';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
 import {
+  buildVercelAuthorizeUrl,
   clearVercelConnection,
+  exchangeVercelOAuthCode,
+  getVercelOAuthCallbackUrl,
   getVercelToken,
   getVercelUsername,
   isVercelConnected,
+  parseVercelOAuthState,
   saveVercelConnection,
+  vercelOAuthConfigured,
 } from '../services/integrations/vercelAuth.js';
 import { deployStaticSiteWithToken } from '../lib/vercel.js';
 import { normalizeBuildFiles } from '../lib/normalizeBuildSource.js';
@@ -15,50 +20,32 @@ import { syncUserVaultToVercel } from '../services/integrations/githubDeploy.js'
 
 const router = Router();
 
-const VERCEL_CLIENT_ID = process.env.VERCEL_CLIENT_ID ?? process.env.VERCEL_OAUTH_CLIENT_ID ?? '';
-const VERCEL_CLIENT_SECRET = process.env.VERCEL_CLIENT_SECRET ?? process.env.VERCEL_OAUTH_CLIENT_SECRET ?? '';
-
-const CALLBACK_PATH = '/dashboard/integrations/vercel/callback';
-
-function frontendBase(): string {
-  const raw = (process.env.FRONTEND_URL ?? 'http://localhost:3000').replace(/\/$/, '');
-  if (/\.vercel\.app$/i.test(raw)) return 'https://xroga.com';
-  return raw;
-}
-
-export function getVercelOAuthCallbackUrl(requested?: string): string {
-  const explicit = process.env.VERCEL_OAUTH_CALLBACK_URL?.trim();
-  if (explicit) return explicit.replace(/\/$/, '');
-  if (requested?.includes(CALLBACK_PATH)) return requested.replace(/\/$/, '');
-  return `${frontendBase()}${CALLBACK_PATH}`;
-}
-
-function buildAuthorizeUrl(userId: string, redirectUri: string): string | null {
-  if (!VERCEL_CLIENT_ID) return null;
-  const state = Buffer.from(JSON.stringify({ userId })).toString('base64url');
-  const params = new URLSearchParams({
-    client_id: VERCEL_CLIENT_ID,
-    redirect_uri: redirectUri,
-    scope: 'deployment',
-    state,
-  });
-  return `https://vercel.com/oauth/authorize?${params.toString()}`;
-}
-
-router.get('/oauth', (req: AuthRequest, res) => {
+router.get('/oauth', async (req: AuthRequest, res) => {
   const requested = typeof req.query.redirect_uri === 'string' ? req.query.redirect_uri : undefined;
   const redirectUri = getVercelOAuthCallbackUrl(requested);
-  const url = buildAuthorizeUrl(req.userId!, redirectUri);
-  res.json({
-    url: url ?? null,
-    redirectUri,
-    oauthConfigured: Boolean(url),
-  });
+  try {
+    const built = await buildVercelAuthorizeUrl(req.userId!, redirectUri);
+    res.json({
+      url: built?.url ?? null,
+      redirectUri,
+      oauthConfigured: Boolean(built),
+      message: built
+        ? 'Redirect user to authorize Vercel'
+        : 'Set VERCEL_CLIENT_ID and VERCEL_CLIENT_SECRET on the API (Vercel App cl_…)',
+    });
+  } catch (err) {
+    res.status(500).json({
+      url: null,
+      oauthConfigured: vercelOAuthConfigured(),
+      error: (err as Error).message,
+    });
+  }
 });
 
 router.post('/connect', async (req: AuthRequest, res) => {
   const schema = z.object({
     code: z.string().min(1),
+    state: z.string().min(1),
     redirectUri: z.string().optional(),
   });
   const parsed = schema.safeParse(req.body);
@@ -66,60 +53,66 @@ router.post('/connect', async (req: AuthRequest, res) => {
     res.status(400).json({ error: parsed.error.flatten() });
     return;
   }
-  if (!VERCEL_CLIENT_ID || !VERCEL_CLIENT_SECRET) {
-    res.status(503).json({ error: 'Vercel OAuth not configured' });
+
+  const stateInfo = parseVercelOAuthState(parsed.data.state);
+  if (!stateInfo || stateInfo.userId !== req.userId) {
+    res.status(400).json({ error: 'OAuth state mismatch — start Authorize again' });
     return;
   }
 
-  const redirectUri = getVercelOAuthCallbackUrl(parsed.data.redirectUri);
-  const tokenRes = await fetch('https://api.vercel.com/v2/oauth/access_token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      client_id: VERCEL_CLIENT_ID,
-      client_secret: VERCEL_CLIENT_SECRET,
-      code: parsed.data.code,
-      redirect_uri: redirectUri,
-    }),
-  });
-
-  const tokenData = (await tokenRes.json()) as {
-    access_token?: string;
-    error?: string;
-    error_description?: string;
-    user_id?: string;
-    team_id?: string;
-  };
-
-  if (!tokenData.access_token) {
-    res.status(400).json({ error: tokenData.error_description ?? tokenData.error ?? 'Token exchange failed' });
-    return;
-  }
-
-  let username = 'vercel-user';
   try {
-    const userRes = await fetch('https://api.vercel.com/v2/user', {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` },
+    const redirectUri = getVercelOAuthCallbackUrl(parsed.data.redirectUri);
+    const tokens = await exchangeVercelOAuthCode({
+      userId: req.userId!,
+      code: parsed.data.code,
+      state: parsed.data.state,
+      redirectUri,
     });
-    if (userRes.ok) {
-      const user = (await userRes.json()) as { user?: { username?: string; id?: string } };
-      username = user.user?.username ?? username;
+
+    let username = 'vercel-user';
+    let providerUserId: string | undefined;
+    try {
+      const userRes = await fetch('https://api.vercel.com/login/oauth/userinfo', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${tokens.access_token}` },
+      });
+      if (userRes.ok) {
+        const user = (await userRes.json()) as {
+          preferred_username?: string;
+          name?: string;
+          sub?: string;
+        };
+        username = user.preferred_username || user.name || username;
+        providerUserId = user.sub;
+      } else {
+        const legacy = await fetch('https://api.vercel.com/v2/user', {
+          headers: { Authorization: `Bearer ${tokens.access_token}` },
+        });
+        if (legacy.ok) {
+          const u = (await legacy.json()) as { user?: { username?: string; id?: string } };
+          username = u.user?.username ?? username;
+          providerUserId = u.user?.id;
+        }
+      }
+    } catch {
+      /* keep default */
     }
-  } catch {
-    /* keep default */
+
+    await saveVercelConnection(req.userId!, tokens.access_token, {
+      username,
+      providerUserId,
+      refreshToken: tokens.refresh_token,
+      expiresIn: tokens.expires_in,
+    });
+
+    res.json({ connected: true, username });
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message });
   }
-
-  await saveVercelConnection(req.userId!, tokenData.access_token, {
-    username,
-    providerUserId: tokenData.user_id,
-  });
-
-  res.json({ connected: true, username });
 });
 
-/** Connect with user's Vercel personal access token (works without OAuth app on server). */
 router.post('/connect-token', async (req: AuthRequest, res) => {
-  const schema = z.object({ token: z.string().min(12).max(512) });
+  const schema = z.object({ token: z.string().min(20).max(500) });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.flatten() });
@@ -130,29 +123,29 @@ router.post('/connect-token', async (req: AuthRequest, res) => {
   const userRes = await fetch('https://api.vercel.com/v2/user', {
     headers: { Authorization: `Bearer ${token}` },
   });
-
   if (!userRes.ok) {
     res.status(400).json({
       error: 'Invalid Vercel token. Create one at vercel.com/account/tokens with Full Account scope.',
     });
     return;
   }
-
   const user = (await userRes.json()) as { user?: { username?: string; id?: string } };
   const username = user.user?.username ?? 'vercel-user';
-
   await saveVercelConnection(req.userId!, token, {
     username,
     providerUserId: user.user?.id,
   });
-
   res.json({ connected: true, username });
 });
 
 router.get('/status', async (req: AuthRequest, res) => {
   const connected = await isVercelConnected(req.userId!);
   const username = connected ? await getVercelUsername(req.userId!) : null;
-  res.json({ connected, username });
+  res.json({
+    connected,
+    username: username ?? undefined,
+    oauthConfigured: vercelOAuthConfigured(),
+  });
 });
 
 router.delete('/disconnect', async (req: AuthRequest, res) => {
@@ -176,11 +169,15 @@ router.post('/deploy', async (req: AuthRequest, res) => {
 
   const token = await getVercelToken(req.userId!);
   if (!token) {
-    res.status(403).json({ error: 'Connect Vercel first', connected: false });
+    res.status(403).json({ error: 'Authorize Vercel first', connected: false });
     return;
   }
 
-  const normalized = normalizeBuildFiles(parsed.data.html, parsed.data.css ?? '', parsed.data.js ?? '');
+  const normalized = normalizeBuildFiles(
+    parsed.data.html,
+    parsed.data.css ?? '',
+    parsed.data.js ?? '',
+  );
   const slug =
     parsed.data.projectSlug?.replace(/[^a-z0-9-]/gi, '-').slice(0, 40) ||
     parsed.data.projectName?.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40) ||

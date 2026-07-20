@@ -65,7 +65,7 @@ export function SubscriptionManagePanel() {
       <div className="p-4 sm:p-5 rounded-xl border border-[var(--card-border)] bg-white/[0.02] space-y-3">
         <h3 className="font-semibold text-sm">Payment methods</h3>
         <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
-          Checkout is powered by Paddle — cards, PayPal, Google Pay, and UPI (region-dependent).
+          Checkout is powered by Lemon Squeezy — cards and local methods via Lemon as merchant of record.
         </p>
         <PaymentMethodIcons />
       </div>

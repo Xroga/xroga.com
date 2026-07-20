@@ -7,7 +7,7 @@ import { LegalPageShell } from '@/components/legal/LegalPageShell';
 export const metadata: Metadata = buildMetadata({
   title: 'Refund Policy',
   description:
-    'Xroga AI Refund Policy — cancellation, pause options, and how Paddle billing disputes work.',
+    'Xroga AI Refund Policy — cancellation, pause options, and how Lemon Squeezy billing disputes work.',
   path: '/refund',
 });
 
@@ -43,15 +43,15 @@ export default function RefundPage() {
           We generally do not offer retroactive refunds for the current billing period after AI
           capacity has been available to your account. If you were charged in error, charged twice,
           or experienced a verified service failure preventing use, email us within 14 days of the
-          charge with your Paddle receipt ID.
+          charge with your Lemon Squeezy receipt ID.
         </p>
       </section>
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Payments & disputes</h2>
         <p className="text-[var(--muted)]">
-          Checkout is powered by Paddle. Payment method options depend on your region. For
-          chargebacks or payment disputes, contact Paddle and{' '}
+          Checkout is powered by Lemon Squeezy. Payment method options depend on your region. For
+          chargebacks or payment disputes, contact Lemon Squeezy and{' '}
           <a href={`mailto:${COMPANY_CONTACT.email}`} className="text-[var(--accent)] hover:underline">
             {COMPANY_CONTACT.email}
           </a>{' '}

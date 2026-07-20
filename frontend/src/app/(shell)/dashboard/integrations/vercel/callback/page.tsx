@@ -11,7 +11,8 @@ function CallbackHandler() {
 
   useEffect(() => {
     const code = searchParams.get('code');
-    if (!code) {
+    const state = searchParams.get('state');
+    if (!code || !state) {
       if (window.opener) {
         window.close();
       } else {
@@ -21,7 +22,7 @@ function CallbackHandler() {
     }
 
     void api.vercel
-      .connect(code)
+      .connect(code, state)
       .then((res) => {
         setMessage(`Connected as @${res.username}`);
 

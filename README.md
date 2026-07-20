@@ -107,7 +107,7 @@ npm run dev
 
 ## Roadmap
 
-- **Phase 5**: Paddle payments, pricing page, go-live
+- **Phase 5**: Lemon Squeezy payments, pricing page, go-live
 
 ## License
 

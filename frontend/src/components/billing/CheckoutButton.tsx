@@ -32,24 +32,9 @@ export function CheckoutButton({
         return;
       }
 
-      const paddleToken = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
-      if (paddleToken && result.priceId) {
-        const { initializePaddle } = await import('@paddle/paddle-js');
-        const paddle = await initializePaddle({
-          token: paddleToken,
-          environment: (process.env.NEXT_PUBLIC_PADDLE_ENV as 'sandbox' | 'production') ?? 'production',
-        });
-        if (paddle) {
-          paddle.Checkout.open({
-            items: [{ priceId: result.priceId, quantity: 1 }],
-            customData: result.customData,
-          });
-          onSuccess?.();
-          return;
-        }
-      }
-
-      toast.error('Checkout not configured. Add Paddle keys in Vercel & Fly — see docs/PADDLE_SETUP.md');
+      toast.error(
+        'Checkout not configured. Add Lemon Squeezy keys on Fly (LEMONSQUEEZY_API_KEY, STORE_ID, VARIANT_*) — see docs/LEMONSQUEEZY_SETUP.md',
+      );
     } catch (err) {
       const message = err instanceof ApiError ? err.message : (err as Error).message;
       toast.error(message);
@@ -66,5 +51,11 @@ export function CheckoutButton({
     );
   }
 
-  return <BuyNowButton label={label === 'Subscribe' ? 'BUY NOW' : label} onClick={handleCheckout} disabled={loading} />;
+  return (
+    <BuyNowButton
+      label={label === 'Subscribe' ? 'BUY NOW' : label}
+      onClick={handleCheckout}
+      disabled={loading}
+    />
+  );
 }

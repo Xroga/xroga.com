@@ -7,7 +7,7 @@ import { LegalPageShell } from '@/components/legal/LegalPageShell';
 export const metadata: Metadata = buildMetadata({
   title: 'Contact',
   description:
-    'Contact Xroga AI support — email and phone for billing, product, and Paddle subscription questions.',
+    'Contact Xroga AI support — email and phone for billing, product, and Lemon Squeezy subscription questions.',
   path: '/contact',
 });
 
@@ -15,7 +15,7 @@ export default function ContactPage() {
   return (
     <LegalPageShell title="Contact">
       <p className="text-[var(--muted)]">
-        Reach the Xroga team for product questions, billing (Paddle), account help, or partnership
+        Reach the Xroga team for product questions, billing (Lemon Squeezy), account help, or partnership
         inquiries. We respond during Pakistan business hours.
       </p>
 
@@ -50,7 +50,7 @@ export default function ContactPage() {
           </a>
         </p>
         <p className="text-[var(--muted)] text-xs">
-          Billing / refunds: include your Paddle receipt ID. Product: include your account email.
+          Billing / refunds: include your Lemon Squeezy receipt ID. Product: include your account email.
         </p>
       </section>
 

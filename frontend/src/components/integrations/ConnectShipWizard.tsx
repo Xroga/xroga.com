@@ -102,7 +102,7 @@ export function ConnectShipWizard() {
     {
       id: 'vercel',
       title: '2. Vercel',
-      body: 'Authorize once. We deploy live to your account automatically.',
+      body: 'Authorize once (Vercel App). With Project + Deployment + Env permissions, we deploy and sync keys automatically.',
       done: vercelOk,
       action: connectVercel,
       label: vercelOk ? 'Connected' : 'Authorize',
@@ -110,7 +110,7 @@ export function ConnectShipWizard() {
     {
       id: 'supabase',
       title: '3. Supabase',
-      body: 'Authorize once. We set up your database, AI memory, and storage — no paste, no SQL.',
+      body: 'Authorize once. We fetch keys and run SQL (schema, memory, storage). Create a project here if you have none.',
       done: supabaseOk,
       optional: true,
       action: () => {

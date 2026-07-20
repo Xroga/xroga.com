@@ -165,24 +165,16 @@ create policy "uploads_delete_own"
 
 This app is wired so **auth, database, and storage hit your Supabase project** — not Xroga's.
 
-## 1. Connect in Xroga
-1. Open **Integrations → Connect Supabase**
-2. Paste:
-   - Project URL (\`https://xxxx.supabase.co\`)
-   - Anon (public) key
-   - Service role key (server routes — never expose in the browser)
-3. Connect **Vercel** so Xroga syncs these as project env vars on deploy
+## 1. Connect in Xroga (recommended)
+1. Open **Ship setup → Authorize Supabase** (Org OAuth App — no paste)
+2. Pick an existing project **or create one** in the panel
+3. Xroga fetches keys and applies schema + AI memory + storage RLS automatically
+4. Connect **Vercel** so keys sync as project env vars on deploy  
+   (OAuth deploy works; env write may need a **Full Account** Vercel token)
 
-## 2. Apply this migration
-In the [Supabase SQL Editor](https://supabase.com/dashboard/project/_/sql):
-1. Open \`supabase/migrations/001_initial.sql\`
-2. Run it once on **your** project
-
-Or with CLI (linked to your project):
-
-\`\`\`bash
-supabase db push
-\`\`\`
+## 2. This migration file
+\`supabase/migrations/001_initial.sql\` matches what Xroga auto-applies on Authorize.
+Keep it in the repo for \`supabase db push\` / SQL Editor if you rebuild outside Xroga.
 
 ## 3. Confirm
 - \`/api/health\` on your Vercel deploy should show \`hasSupabase: true\`

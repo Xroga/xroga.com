@@ -238,7 +238,7 @@ export class ActionService {
       description: `Plan upgraded to ${planTier} (${totalActions} actions)`,
     });
 
-    // Keep AI $ budget / token pool aligned with Paddle plan (same across devices via Supabase).
+    // Keep AI $ budget / token pool aligned with Lemon Squeezy plan (same across devices via Supabase).
     await syncPlanBudget(userId, planTier);
   }
 }

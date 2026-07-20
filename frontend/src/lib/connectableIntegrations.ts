@@ -7,7 +7,6 @@ export const CONNECTABLE_INTEGRATION_IDS = new Set([
   'cloudflare',
   'cloudflare_r2',
   'cloudflare_workers_dns',
-  'paddle',
   'lemon_squeezy',
 ]);
 

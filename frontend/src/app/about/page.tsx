@@ -82,7 +82,7 @@ export default function AboutPage() {
             <p className="text-sm text-[var(--muted)] leading-relaxed">
               It is not a single chatbot. A coordinated swarm — Converter, Builder roles (Apex, Horizon,
               Forge, Live), and QA — turns a prompt into previewable code, pushes your GitHub, and deploys
-              on Vercel. Billing is monthly via Paddle with AI credit by plan.
+              on Vercel. Billing is monthly via Lemon Squeezy with AI credit by plan.
             </p>
           </section>
 

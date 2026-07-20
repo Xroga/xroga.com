@@ -13,7 +13,7 @@ export const INTEGRATION_LOGOS: Record<string, string> = {
   upstash_redis: 'https://cdn.simpleicons.org/upstash/00E9A3',
   stripe: 'https://cdn.simpleicons.org/stripe/635BFF',
   paypal: 'https://cdn.simpleicons.org/paypal/00457C',
-  paddle: 'https://cdn.simpleicons.org/paddle/000000',
+  lemon_squeezy: 'https://cdn.simpleicons.org/lemonsqueezy/FFC233',
   shopify: 'https://cdn.simpleicons.org/shopify/7AB55C',
   openai: 'https://cdn.simpleicons.org/openai/412991',
   anthropic: 'https://cdn.simpleicons.org/anthropic/191919',

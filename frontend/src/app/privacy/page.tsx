@@ -42,7 +42,7 @@ export default function PrivacyPage() {
           <li>Account: email, display name, auth identifiers (via Supabase Auth).</li>
           <li>Product usage: prompts, project files, AI token/credit usage for quota and billing fairness.</li>
           <li>Integrations you connect: GitHub / Vercel tokens stored to push and deploy on your behalf.</li>
-          <li>Payments: processed by Paddle — we do not store full card numbers.</li>
+          <li>Payments: processed by Lemon Squeezy — we do not store full card numbers.</li>
         </ul>
       </section>
 
@@ -59,7 +59,7 @@ export default function PrivacyPage() {
         <h2 className="text-lg font-semibold">4. Processors</h2>
         <p className="text-[var(--muted)]">
           Infrastructure and AI providers may process prompts/code as needed to fulfill requests
-          (e.g. hosting, database, model APIs). Payment data is handled by Paddle as merchant of
+          (e.g. hosting, database, model APIs). Payment data is handled by Lemon Squeezy as merchant of
           record where applicable.
         </p>
       </section>

@@ -62,7 +62,7 @@ function inferFeatures(data: LandingPageOutputData, pages: string[]): string[] {
     base.unshift('User authentication (login, signup, logout)');
   }
   if (data.needsPayment !== false) {
-    base.push('Payment-ready structure (Paddle)');
+    base.push('Payment-ready structure (Lemon Squeezy)');
   }
   base.push('GitHub code ownership', 'Live preview deployment');
   return base.slice(0, 10);

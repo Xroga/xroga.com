@@ -26,14 +26,9 @@ const CONNECTABLE = [
     detail: 'CDN, DNS, SSL, R2 storage',
   },
   {
-    id: 'paddle',
-    name: 'Paddle',
-    detail: 'Payments (PK/IN friendly)',
-  },
-  {
     id: 'lemon_squeezy',
     name: 'Lemon Squeezy',
-    detail: 'Payments & subscriptions',
+    detail: 'Payments & subscriptions (MoR)',
   },
 ] as const;
 

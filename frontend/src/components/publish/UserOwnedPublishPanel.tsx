@@ -184,8 +184,10 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
           </p>
           <h2 className="text-lg sm:text-xl font-bold mt-1">Ship on your accounts</h2>
           <p className="text-sm text-[var(--muted)] mt-1 max-w-2xl">
-            Xroga builds the app. You publish with <strong>your</strong> GitHub, Vercel, Expo, Apple,
-            and Google accounts — store fees are never billed to Xroga.
+            <strong>Honest for non-developers:</strong> web publish (GitHub + Vercel Authorize) is
+            one-click. Mobile App Store / Play Store still needs <em>your</em> paid Apple ($99/yr)
+            and/or Google Play ($25) accounts — Xroga stores tokens and shows EAS commands; we cannot
+            skip Apple/Google developer enrollment or pay those fees for you.
           </p>
         </div>
         <div className="flex items-center gap-1.5 rounded-full border border-[var(--card-border)] p-1 text-xs">
@@ -255,6 +257,14 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
         </div>
       ) : (
         <div className="space-y-4">
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 px-3 py-2.5 text-xs text-[var(--foreground)] leading-relaxed">
+            <strong>Can every user publish mobile automatically?</strong> Not fully.
+            Anyone can get an Expo build setup with a free Expo account + access token.
+            Submitting to the <em>App Store</em> or <em>Play Store</em> always requires that
+            user (or their company) enrolls with Apple/Google and pays those fees. Xroga
+            encrypts credentials and prints EAS commands — it does not run store review or
+            pay developer program fees.
+          </div>
           <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--background)]/40 px-3">
             {(status?.mobile.checklist ?? []).map((item) => (
               <StepRow key={item.id} item={item} />
