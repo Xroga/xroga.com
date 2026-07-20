@@ -9,7 +9,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: 'What is Black Hole V∞?',
-    a: 'Black Hole V∞ is Xroga’s only public model. Under the hood it routes specialist cores (Apex, Horizon, Forge, Pulse, Live, Lens) — you never pick a vendor model. New capability ships as Event Horizon updates inside V∞, so you don’t wait for “the next model.”',
+    a: 'Black Hole V∞ is Xroga’s only public model. Under the hood it routes specialist cores (Apex, Horizon, Forge, Pulse, Live, Lens) — you never pick a vendor model. New capability ships as Event Horizon updates inside V∞. On the homepage, use the plan buttons to see how monthly tokens and per-core capacity scale from Spark to Singularity.',
   },
   {
     q: 'Can Xroga build anything from one prompt?',
@@ -21,7 +21,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: 'What do I get on a paid plan?',
-    a: 'Monthly AI credit and token capacity, swarm builds, Workspace preview, GitHub push, and Vercel deploy. Higher plans unlock more concurrency and a larger AI budget. Payments run through Lemon Squeezy.',
+    a: 'Monthly token pool and concurrency — Spark ~6.17M tokens / 2 concurrent; Pulse ~9.42M / 8; up to Singularity ~325M / 100. All features on every plan. Use the Black Hole plan changer on the homepage to preview pool + per-core capacity. Payments run through Lemon Squeezy.',
   },
   {
     q: 'Do unused credits expire?',

@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import {
   Binary,
   Brain,
@@ -17,76 +18,119 @@ import {
   XROGA_MODEL_UPDATE,
   XROGA_MODEL_FIRST_LAST,
 } from '@/lib/brand';
+import { GALACTIC_PLANS, SPARK_TOKEN_POOL, type GalacticPlan } from '@/lib/plans';
 
 /**
  * Public swarm cores — Xroga product names only.
- * Underlying provider APIs are never named on the homepage.
+ * Capability language mirrors real specialist power; provider brands never appear.
  */
-const CORES = [
+const CORE_DEFS = [
   {
     name: 'Apex',
     role: 'Chief Architect',
     power: 98,
-    focus: 'Complex full-stack · crypto · long-horizon builds',
+    focus:
+      'Flagship coding depth — multi-file systems, crypto/SaaS architectures, long-horizon agentic builds that rival top frontier coding agents',
     Icon: Brain,
-    training: 'Reasoning capacity',
-    count: '888K+',
+    training: 'Reasoning · code king',
+    sparkTokens: 888_888,
+    edge: 'Hard problems. Clean architecture. Ships.',
   },
   {
     name: 'Horizon',
     role: 'Project Engineer',
     power: 94,
-    focus: 'Million-token context · whole-repo engineering',
+    focus:
+      'Million-token whole-repo engineering — refactors, migrations, and project continuity across massive codebases',
     Icon: Layers,
-    training: 'Long-context capacity',
-    count: '2.0M+',
+    training: 'Long-context · repo mind',
+    sparkTokens: 2_000_000,
+    edge: 'Sees the whole tree. Keeps the thread.',
   },
   {
     name: 'Forge',
     role: 'Deep Executor',
     power: 91,
-    focus: 'Agent tasks · knowledge work · volume shipping',
+    focus:
+      'High-volume execution — agent tasks, knowledge work, and shipping throughput when you need bulk delivery',
     Icon: Binary,
-    training: 'Execution capacity',
-    count: '1.5M+',
+    training: 'Execution · volume',
+    sparkTokens: 1_500_000,
+    edge: 'Turns plans into finished files.',
   },
   {
     name: 'Pulse',
     role: 'Converter',
     power: 88,
-    focus: 'Prompt → builder brief · high-speed chat',
+    focus:
+      'Prompt → precise builder brief at speed — routes intent so Apex / Horizon / Forge build the right product',
     Icon: Zap,
-    training: 'Converter capacity',
-    count: '1.0M+',
+    training: 'Converter · velocity',
+    sparkTokens: 1_000_000,
+    edge: 'No template catalog. Real briefs.',
   },
   {
     name: 'Live',
     role: 'Real-Time Intel',
     power: 90,
-    focus: 'Web research · news · live-aware coding',
+    focus:
+      'Native web + X firehose research — markets, hackathon rules, news — then fold facts into code in the same loop',
     Icon: Radar,
-    training: 'Realtime capacity',
-    count: '250K+',
+    training: 'Realtime · web + X',
+    sparkTokens: 250_000,
+    edge: 'Current world → shipping product.',
   },
   {
     name: 'Lens',
     role: 'Document Mind',
     power: 87,
-    focus: 'Files · PDFs · vision · 1M backup context',
+    focus:
+      'PDFs, screenshots, specs, and vision — multimodal context that feeds the same build (not a side chat)',
     Icon: Sparkles,
-    training: 'Multimodal capacity',
-    count: '533K+',
+    training: 'Multimodal · docs',
+    sparkTokens: 533_000,
+    edge: 'Files become build fuel.',
   },
 ] as const;
 
-const HEADLINE_STATS = [
-  { label: 'Context window', value: `${BLACK_HOLE_POWER.contextWindow}`, unit: 'tokens' },
-  { label: 'Spark monthly pool', value: BLACK_HOLE_POWER.monthlyPoolSpark, unit: 'tokens' },
-  { label: 'Swarm cores', value: String(BLACK_HOLE_POWER.swarmCores), unit: 'specialists' },
-  { label: 'Ship loop', value: 'Own', unit: 'GitHub + Vercel' },
-] as const;
+function formatPool(n: number): string {
+  if (n >= 1_000_000) {
+    const m = n / 1_000_000;
+    const s = m >= 100 ? m.toFixed(0) : m >= 10 ? m.toFixed(1) : m.toFixed(2);
+    return `${s.replace(/\.0$/, '')}M`;
+  }
+  if (n >= 1_000) return `${Math.round(n / 1_000)}K`;
+  return n.toLocaleString();
+}
+
+function scaleTokens(sparkTokens: number, planPool: number): number {
+  return Math.round(sparkTokens * (planPool / SPARK_TOKEN_POOL));
+}
 
 export function HomepageBlackHolePower() {
+  const [planTier, setPlanTier] = useState<GalacticPlan['tier']>('spark');
+  const plan = useMemo(
+    () => GALACTIC_PLANS.find((p) => p.tier === planTier) ?? GALACTIC_PLANS[0]!,
+    [planTier]
+  );
+
+  const poolLabel = formatPool(plan.aiTokens);
+  const cores = useMemo(
+    () =>
+      CORE_DEFS.map((c) => ({
+        ...c,
+        count: `${formatPool(scaleTokens(c.sparkTokens, plan.aiTokens))}+`,
+      })),
+    [plan.aiTokens]
+  );
+
+  const headlineStats = [
+    { label: 'Context window', value: BLACK_HOLE_POWER.contextWindow, unit: 'tokens' },
+    { label: `${plan.name} monthly pool`, value: poolLabel, unit: 'tokens' },
+    { label: 'Concurrent swarms', value: String(plan.concurrency), unit: 'parallel' },
+    { label: 'Ship loop', value: 'Own', unit: 'GitHub + Vercel' },
+  ] as const;
+
   return (
     <section className="xv-hc-bh" aria-labelledby="blackhole-heading">
       <div className="xv-hc-bh-inner">
@@ -115,8 +159,33 @@ export function HomepageBlackHolePower() {
           <p className="xv-hc-bh-firstlast">{XROGA_MODEL_FIRST_LAST}</p>
         </header>
 
+        <div className="xv-hc-bh-planbar" role="group" aria-label="Compare plan token pools">
+          <p className="xv-hc-bh-planbar-label">
+            See Black Hole capacity by plan — pool scales; cores stay the same swarm
+          </p>
+          <div className="xv-hc-bh-plan-btns">
+            {GALACTIC_PLANS.map((p) => (
+              <button
+                key={p.tier}
+                type="button"
+                className={`xv-hc-bh-plan-btn${planTier === p.tier ? ' is-active' : ''}${p.highlight ? ' is-popular' : ''}`}
+                onClick={() => setPlanTier(p.tier)}
+                aria-pressed={planTier === p.tier}
+              >
+                <span className="xv-hc-bh-plan-name">{p.name}</span>
+                <span className="xv-hc-bh-plan-price">{p.priceLabel}</span>
+              </button>
+            ))}
+          </div>
+          <p className="xv-hc-bh-plan-summary">
+            <strong>{plan.name}</strong> · {plan.priceLabel}/mo ·{' '}
+            <span className="xv-hc-bh-plan-tokens">{poolLabel} tokens</span> · {plan.concurrency}{' '}
+            concurrent · {plan.tagline}
+          </p>
+        </div>
+
         <div className="xv-hc-bh-stats" role="list">
-          {HEADLINE_STATS.map((s) => (
+          {headlineStats.map((s) => (
             <div key={s.label} className="xv-hc-bh-stat" role="listitem">
               <span className="xv-hc-bh-stat-value">{s.value}</span>
               <span className="xv-hc-bh-stat-unit">{s.unit}</span>
@@ -126,7 +195,7 @@ export function HomepageBlackHolePower() {
         </div>
 
         <ul className="xv-hc-bh-cores">
-          {CORES.map((core, i) => (
+          {cores.map((core, i) => (
             <li
               key={core.name}
               className="xv-hc-bh-core"
@@ -142,6 +211,7 @@ export function HomepageBlackHolePower() {
                 </div>
               </div>
               <p className="xv-hc-bh-core-focus">{core.focus}</p>
+              <p className="xv-hc-bh-core-edge">{core.edge}</p>
               <div className="xv-hc-bh-core-meter" aria-hidden>
                 <div className="xv-hc-bh-core-meter-fill" style={{ width: `${core.power}%` }} />
               </div>
@@ -155,8 +225,10 @@ export function HomepageBlackHolePower() {
 
         <p className="xv-hc-bh-footnote">
           You never pick a vendor model. Xroga routes Apex · Horizon · Forge · Pulse · Live · Lens
-          inside Black Hole V∞ — so enterprises see one #1 coding agent, continuously trained by
-          Event Horizon updates.
+          inside Black Hole V∞ — frontier coding depth, long-context repos, volume execution, live
+          web+X intel, and multimodal docs as one #1 coding agent. Continuously trained by Event
+          Horizon updates. Switch plans above to see how your monthly pool and per-core capacity
+          scale from Spark to Singularity.
         </p>
       </div>
     </section>

@@ -1,12 +1,12 @@
 'use client';
 
-import { GitBranch, Layers, Orbit, Rocket, Sparkles } from 'lucide-react';
+import { GitBranch, Layers, Orbit, Rocket, Sparkles, Terminal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const PIPELINE = [
-  { id: 'convert', label: 'Converter', detail: 'Brief from your prompt' },
-  { id: 'build', label: 'Builder', detail: 'Apex · Horizon · Forge' },
-  { id: 'ship', label: 'Ship', detail: 'GitHub → Vercel live' },
+  { id: 'convert', label: 'Converter', detail: 'Pulse turns intent into a builder brief' },
+  { id: 'build', label: 'Builder', detail: 'Apex · Horizon · Forge write the product' },
+  { id: 'ship', label: 'Ship', detail: 'Your GitHub → your Vercel domain' },
 ] as const;
 
 export function HomepageEmpowerSection() {
@@ -19,8 +19,9 @@ export function HomepageEmpowerSection() {
             One swarm. Your repo. Live domain.
           </h2>
           <p className="xv-hc-empower-sub">
-            Xroga is not a chat toy — it converts intent, writes the product, and lands it on GitHub
-            + Vercel while you stay in Workspace.
+            Xroga is a production coding agent — not a chat demo. Describe the product once;
+            Black Hole V∞ converts, builds, previews in Workspace, pushes your sticky GitHub repo,
+            and deploys on your Vercel domain.
           </p>
         </header>
 
@@ -29,8 +30,8 @@ export function HomepageEmpowerSection() {
             <div className="xv-hc-empower-card-copy">
               <h3 className="font-claude">Converter → Builder → Live</h3>
               <p>
-                Every prompt becomes a builder brief, then a real project. No model picker, no
-                template catalog — just the Xroga swarm finishing the loop.
+                Every prompt becomes a real project: brief, files, QA, then ownership. No model
+                picker. No template catalog. The swarm finishes the loop on accounts you control.
               </p>
             </div>
             <div className="xv-hc-empower-mock" aria-hidden>
@@ -56,14 +57,14 @@ export function HomepageEmpowerSection() {
                   <Sparkles className="w-3.5 h-3.5" />
                   <div>
                     <strong>Swarm roles</strong>
-                    <span>Apex · Horizon · Forge · Live</span>
+                    <span>Apex · Horizon · Forge · Live · Lens</span>
                   </div>
                 </div>
                 <div className="xv-hc-empower-stat">
                   <GitBranch className="w-3.5 h-3.5" />
                   <div>
                     <strong>Ownership</strong>
-                    <span>Pushed to your GitHub</span>
+                    <span>Sticky repo on your GitHub</span>
                   </div>
                 </div>
                 <div className="xv-hc-empower-stat">
@@ -71,6 +72,13 @@ export function HomepageEmpowerSection() {
                   <div>
                     <strong>Deploy</strong>
                     <span>Live on your Vercel domain</span>
+                  </div>
+                </div>
+                <div className="xv-hc-empower-stat">
+                  <Terminal className="w-3.5 h-3.5" />
+                  <div>
+                    <strong>Workspace</strong>
+                    <span>Preview · patch · ship again</span>
                   </div>
                 </div>
               </div>
@@ -83,8 +91,9 @@ export function HomepageEmpowerSection() {
               <span>preview → push → live</span>
             </p>
             <p className="xv-hc-empower-card-body">
-              The swarm is built to hand off a real project — Workspace preview, files in your
-              GitHub, and a Vercel deploy — not a half-finished chat demo.
+              Hand-off is a real project: Workspace preview, files in your GitHub, Vercel deploy.
+              Connect integrations early so a long build can finish shipped — not stuck at the last
+              mile.
             </p>
           </article>
 
@@ -92,15 +101,15 @@ export function HomepageEmpowerSection() {
             <div className="xv-hc-empower-card-copy">
               <h3 className="font-claude">Stay on one project thread</h3>
               <p>
-                Updates patch your selected repo — themes, auth, pages — without throwing away the
-                build you already shipped.
+                First ship remembers the sticky repo. Follow-ups patch themes, auth, pages, and
+                agents on the same live product — continuous polish without starting over.
               </p>
             </div>
             <div className="xv-hc-empower-scale-visual" aria-hidden>
               <div className="xv-hc-empower-scale-bar">
                 <span className="font-coding">
                   <Layers className="w-3 h-3 inline mr-1" />
-                  workspace · repo · preview
+                  workspace · sticky repo · live preview
                 </span>
                 <em>continuous</em>
               </div>
