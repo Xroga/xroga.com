@@ -126,9 +126,9 @@ export function TerminalChatBar() {
         clearSelectedRepoContext();
         notifyRepoContextCleared();
         try {
-          const status = await api.github.status();
-          setGithubConnected(status.connected);
-          if (!status.connected) {
+          const ghStatus = await api.github.status();
+          setGithubConnected(ghStatus.connected);
+          if (!ghStatus.connected) {
             setRepoGate({
               open: true,
               reason: 'not_connected',
@@ -137,21 +137,21 @@ export function TerminalChatBar() {
             });
             return;
           }
+          // Prefer sticky default from first ship so New Terminal still updates the live product.
+          // User can switch repos in the bar when they want a brand-new product.
+          if (ghStatus.defaultRepo?.includes('/')) {
+            const { saveSelectedRepoContext } = await import('@/lib/repoContext');
+            const { notifyGithubRepoContext } = await import('@/lib/githubProjectEvents');
+            saveSelectedRepoContext({ repo: ghStatus.defaultRepo, branch: 'main' });
+            notifyGithubRepoContext(ghStatus.defaultRepo, 'main');
+            return;
+          }
         } catch {
           setRepoGate({
             open: true,
             reason: 'not_connected',
             message: 'Connect GitHub first so you can select a repository.',
           });
-          return;
-        }
-        // Prefer sticky default from first ship so New Terminal still updates the live product.
-        // User can switch repos in the bar when they want a brand-new product.
-        if (status.defaultRepo?.includes('/')) {
-          const { saveSelectedRepoContext } = await import('@/lib/repoContext');
-          const { notifyGithubRepoContext } = await import('@/lib/githubProjectEvents');
-          saveSelectedRepoContext({ repo: status.defaultRepo, branch: 'main' });
-          notifyGithubRepoContext(status.defaultRepo, 'main');
           return;
         }
         // First-time: open picker so they pick once
