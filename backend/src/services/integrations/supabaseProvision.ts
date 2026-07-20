@@ -461,6 +461,18 @@ export async function getUserSupabaseAdmin(userId: string): Promise<SupabaseClie
   });
 }
 
+/** Prefer OAuth Management token, then pasted PAT. */
+export async function getUserSupabaseManagementToken(userId: string): Promise<string | null> {
+  try {
+    const { getSupabaseOAuthAccessToken } = await import('./supabaseAuth.js');
+    const oauth = await getSupabaseOAuthAccessToken(userId);
+    if (oauth) return oauth;
+  } catch {
+    /* oauth module optional at boot */
+  }
+  return getUserProviderKey(userId, 'supabase_pat');
+}
+
 export async function userSupabaseMemoryReady(userId: string): Promise<boolean> {
   const client = await getUserSupabaseAdmin(userId);
   if (!client) return false;

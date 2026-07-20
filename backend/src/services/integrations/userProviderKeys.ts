@@ -472,23 +472,32 @@ export async function getUserSupabaseStatus(userId: string): Promise<UserSupabas
   const hasServiceRole = Boolean(service?.connected);
   const hasAccessToken = Boolean(pat?.connected);
   const hasDbPassword = Boolean(dbPass?.connected);
+  let oauthConnected = false;
+  try {
+    const { isSupabaseOAuthConnected } = await import('./supabaseAuth.js');
+    oauthConnected = await isSupabaseOAuthConnected(userId);
+  } catch {
+    /* ignore */
+  }
   const ready = hasUrl && hasAnonKey && hasServiceRole;
-  const provisioned = ready && (hasAccessToken || hasDbPassword);
+  const provisioned = ready && (hasAccessToken || hasDbPassword || oauthConnected);
   return {
-    connected: hasUrl || hasAnonKey || hasServiceRole || hasAccessToken,
+    connected: hasUrl || hasAnonKey || hasServiceRole || hasAccessToken || oauthConnected,
     ready,
     provisioned,
     hasUrl,
     hasAnonKey,
     hasServiceRole,
-    hasAccessToken,
+    hasAccessToken: hasAccessToken || oauthConnected,
     hasDbPassword,
     urlMasked: url?.masked,
     message: provisioned
       ? 'Your Supabase is connected and auto-provisioned — AI memory & storage live in YOUR project.'
-      : ready
-        ? 'Keys saved. Add Access Token (or DB password) once so Xroga can auto-create tables & storage.'
-        : 'One-click: paste a Supabase Access Token and pick your project — Xroga sets up schema, storage, and memory automatically.',
+      : oauthConnected
+        ? 'Authorized — pick a project and Xroga sets up schema, memory & storage automatically.'
+        : ready
+          ? 'Keys saved. Authorize Supabase OAuth so Xroga can auto-run SQL on your project.'
+          : 'Click Authorize Supabase — no keys to paste. Xroga handles keys, SQL, memory & storage.',
   };
 }
 
