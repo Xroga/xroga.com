@@ -91,9 +91,10 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
   const expoKey = keys.find((k) => k.provider === 'expo' && k.connected);
   const appleKey = keys.find((k) => k.provider === 'apple_asc' && k.connected);
   const googleKey = keys.find((k) => k.provider === 'google_play' && k.connected);
-  const supabaseKey = keys.find(
-    (k) => (k.provider === 'supabase' || k.provider === 'supabase_anon') && k.connected,
-  );
+  const supabaseUrl = keys.find((k) => k.provider === 'supabase_url' && k.connected);
+  const supabaseAnon = keys.find((k) => k.provider === 'supabase_anon' && k.connected);
+  const supabaseService = keys.find((k) => k.provider === 'supabase' && k.connected);
+  const supabaseReady = Boolean(supabaseUrl && supabaseAnon);
 
   let expoTokenValid: boolean | null = null;
   if (expoKey) {
@@ -125,10 +126,12 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
     },
     {
       id: 'supabase',
-      label: 'Connect Supabase',
-      done: Boolean(supabaseKey),
+      label: 'Connect Supabase (your project)',
+      done: supabaseReady,
       required: false,
-      hint: 'Optional — your project keys for auth & data on deploy',
+      hint: supabaseReady
+        ? `Ready${supabaseService ? ' (+ service role)' : ''} — data stays in your Supabase`
+        : 'Add project URL + anon key — auth/DB/storage use YOUR account',
       href: '/dashboard/integrations',
     },
   ];

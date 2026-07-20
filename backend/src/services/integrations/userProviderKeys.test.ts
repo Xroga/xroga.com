@@ -12,6 +12,8 @@ describe('userProviderKeys mapping', () => {
     assert.equal(envVarForProvider('stripe'), 'STRIPE_SECRET_KEY');
     assert.equal(envVarForProvider('xai'), 'XAI_API_KEY');
     assert.equal(envVarForProvider('grok'), 'XAI_API_KEY');
+    assert.equal(envVarForProvider('supabase_url'), 'NEXT_PUBLIC_SUPABASE_URL');
+    assert.equal(envVarForProvider('supabase_anon'), 'NEXT_PUBLIC_SUPABASE_ANON_KEY');
   });
 
   it('allows custom env override', () => {
@@ -27,6 +29,8 @@ describe('userProviderKeys mapping', () => {
     assert.ok(ids.includes('openai'));
     assert.ok(ids.includes('stripe'));
     assert.ok(ids.includes('supabase'));
+    assert.ok(ids.includes('supabase_url'));
+    assert.ok(ids.includes('supabase_anon'));
     assert.ok(ids.includes('expo'));
     assert.ok(ids.includes('apple_asc'));
     assert.ok(ids.includes('google_play'));

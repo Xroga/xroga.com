@@ -5,7 +5,9 @@ import { retiredJson } from './retiredSurface.js';
 import {
   ALLOWED_PROVIDERS,
   PUBLISH_ONLY_PROVIDERS,
+  connectUserSupabase,
   deleteUserProviderKey,
+  getUserSupabaseStatus,
   listUserProviderKeys,
   providerCatalog,
   saveUserProviderKey,
@@ -29,9 +31,13 @@ router.get('/ai-catalog', (_req, res) => {
     userGuidance:
       p.id === 'custom'
         ? 'Paste any secret and set the env var name. Synced to your Vercel project on deploy — never committed to GitHub.'
-        : p.category === 'publish'
-          ? `Saved encrypted in your Xroga vault as ${p.envVar}. Used for your Expo/EAS store builds — you pay Apple/Google fees, not Xroga. Never committed to GitHub.`
-          : `Saved encrypted in your Xroga vault as ${p.envVar}. Auto-synced to Vercel when you deploy.`,
+        : p.id === 'supabase_url'
+          ? 'Your Supabase project URL (https://xxxx.supabase.co). Built apps use THIS project for auth/DB/storage — not Xroga’s.'
+          : p.id.startsWith('supabase')
+            ? `Saved encrypted as ${p.envVar}. Pair with project URL so your deploy talks to YOUR Supabase.`
+            : p.category === 'publish'
+              ? `Saved encrypted in your Xroga vault as ${p.envVar}. Used for your Expo/EAS store builds — you pay Apple/Google fees, not Xroga. Never committed to GitHub.`
+              : `Saved encrypted in your Xroga vault as ${p.envVar}. Auto-synced to Vercel when you deploy.`,
     xrogaProvided: false,
   }));
   res.json({
@@ -44,6 +50,169 @@ router.get('/ai-catalog', (_req, res) => {
       'Paste API keys for your live product. Xroga encrypts them and syncs to your Vercel env on deploy. Platform AI (Apex/Horizon/Forge/Live) uses Xroga keys — not these.',
     allowedProviders: ALLOWED_PROVIDERS,
   });
+});
+
+router.get('/supabase/status', async (req: AuthRequest, res) => {
+  try {
+    const status = await getUserSupabaseStatus(req.userId!);
+    res.json(status);
+  } catch (err) {
+    res.status(500).json({
+      connected: false,
+      ready: false,
+      provisioned: false,
+      hasUrl: false,
+      hasAnonKey: false,
+      hasServiceRole: false,
+      hasAccessToken: false,
+      hasDbPassword: false,
+      message: (err as Error).message,
+    });
+  }
+});
+
+/** List projects for a Supabase personal access token (one-click picker). */
+router.post('/supabase/list-projects', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    accessToken: z.string().min(20).max(4096),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const { listSupabaseProjects } = await import('../services/integrations/supabaseProvision.js');
+    const projects = await listSupabaseProjects(parsed.data.accessToken.trim());
+    res.json({ projects });
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message, projects: [] });
+  }
+});
+
+/**
+ * One-click connect: Access Token + project ref →
+ * fetch keys, save vault, auto-create schema/memory/storage on THEIR Supabase.
+ */
+router.post('/supabase/one-click', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    accessToken: z.string().min(20).max(4096),
+    projectRef: z.string().min(10).max(64),
+    projectName: z.string().min(1).max(120).optional(),
+    vercelProject: z.string().min(2).max(64).optional(),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const { oneClickConnectSupabase } = await import('../services/integrations/supabaseProvision.js');
+    const result = await oneClickConnectSupabase({
+      userId: req.userId!,
+      accessToken: parsed.data.accessToken,
+      projectRef: parsed.data.projectRef,
+      projectName: parsed.data.projectName,
+      vercelProject: parsed.data.vercelProject,
+    });
+
+    let envSync: unknown = null;
+    const project = parsed.data.vercelProject?.trim();
+    if (project && (await getVercelToken(req.userId!))) {
+      envSync = await syncUserVaultToVercel(req.userId!, project);
+    }
+
+    res.json({
+      ok: result.status.ready && result.provision.ok,
+      status: result.status,
+      provision: result.provision,
+      envSync,
+      message: result.provision.message || result.status.message,
+    });
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message });
+  }
+});
+
+/** Connect with pasted keys + optional PAT/DB password → auto-provision. */
+router.post('/supabase/connect', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    projectUrl: z.string().url().max(512),
+    anonKey: z.string().min(20).max(4096),
+    serviceRoleKey: z.string().min(20).max(4096).optional(),
+    accessToken: z.string().min(20).max(4096).optional(),
+    dbPassword: z.string().min(4).max(512).optional(),
+    projectName: z.string().min(1).max(120).optional(),
+    vercelProject: z.string().min(2).max(64).optional(),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const { status, saved, provision } = await connectUserSupabase(req.userId!, {
+      projectUrl: parsed.data.projectUrl,
+      anonKey: parsed.data.anonKey,
+      serviceRoleKey: parsed.data.serviceRoleKey,
+      accessToken: parsed.data.accessToken,
+      dbPassword: parsed.data.dbPassword,
+      projectName: parsed.data.projectName,
+    });
+
+    let envSync: unknown = null;
+    const project = parsed.data.vercelProject?.trim();
+    if (project && (await getVercelToken(req.userId!))) {
+      envSync = await syncUserVaultToVercel(req.userId!, project);
+    }
+
+    res.json({
+      ok: status.ready,
+      status,
+      provision,
+      saved: saved.map((s) => ({ provider: s.provider, envVar: s.envVar, masked: s.masked })),
+      envSync,
+      message: provision?.message || status.message,
+    });
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message });
+  }
+});
+
+/** Re-run provision on an already-connected project. */
+router.post('/supabase/provision', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    projectName: z.string().min(1).max(120).optional(),
+  });
+  const parsed = schema.safeParse(req.body ?? {});
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const { getUserProviderKey } = await import('../services/integrations/userProviderKeys.js');
+    const { provisionUserSupabase } = await import('../services/integrations/supabaseProvision.js');
+    const [url, service, pat, dbPass] = await Promise.all([
+      getUserProviderKey(req.userId!, 'supabase_url'),
+      getUserProviderKey(req.userId!, 'supabase'),
+      getUserProviderKey(req.userId!, 'supabase_pat'),
+      getUserProviderKey(req.userId!, 'supabase_db_password'),
+    ]);
+    if (!url || !service) {
+      res.status(400).json({ error: 'Connect Supabase keys first' });
+      return;
+    }
+    const provision = await provisionUserSupabase({
+      projectUrl: url,
+      serviceRoleKey: service,
+      accessToken: pat || undefined,
+      dbPassword: dbPass || undefined,
+      projectName: parsed.data.projectName,
+    });
+    res.json({ ok: provision.ok, provision, message: provision.message });
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message });
+  }
 });
 
 router.get('/provider-keys', async (req: AuthRequest, res) => {

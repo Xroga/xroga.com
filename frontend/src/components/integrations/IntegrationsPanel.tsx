@@ -86,6 +86,13 @@ export function IntegrationsPanel() {
       }
       return;
     }
+    if (id === 'supabase') {
+      toast('Use Ship setup → Connect Supabase (URL + anon + service role)', {
+        icon: '🗄',
+      });
+      document.getElementById('ship-setup')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     if (oauth) {
       toast('OAuth coming soon — connect via Custom API Keys for now', { icon: '🔗' });
     } else {
