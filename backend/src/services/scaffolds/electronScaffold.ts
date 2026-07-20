@@ -199,7 +199,7 @@ jobs:
       <h1>${name}</h1>
       <p>Electron desktop scaffold by <strong>Xroga</strong>. This page is a web preview of the product story.</p>
       <div class="card">
-        <p><strong>Free path:</strong> <code>npm install && npm start</code> locally, or tag <code>v1.0.0</code> to cut a GitHub Release zip (unsigned).</p>
+        <p><strong>Free path:</strong> <code>npm install && npm start</code> locally. After ship, Xroga tags a release so GitHub Actions builds an unsigned zip.</p>
         <p><strong>Paid by you (optional):</strong> Apple/Windows code signing and store fees — Xroga only scaffolds + triggers workflows on your GitHub.</p>
       </div>
     </main>
@@ -214,7 +214,7 @@ jobs:
 ## Free path — local + GitHub Releases
 1. \`npm install && npm start\` — run unsigned locally
 2. Push to your sticky GitHub repo (Xroga does this in the ship loop)
-3. Tag a version (\`git tag v1.0.0 && git push --tags\`) or run the **Desktop release** workflow
+3. Xroga creates a \`v*\` tag (or dispatches **Desktop release**) so Actions builds the zip
 4. Download the zip from GitHub Releases and distribute to testers
 
 ## Paid by you (optional, unavoidable for stores/signing)

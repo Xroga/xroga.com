@@ -38,7 +38,7 @@ export function MediaGalleryModal({ open, onClose }: MediaGalleryModalProps) {
               <ImageIcon className="w-12 h-12 mx-auto text-[var(--muted)] mb-3 opacity-50" />
               <p className="text-sm text-[var(--muted)]">No media yet</p>
               <p className="text-xs text-[var(--muted)] mt-1">
-                Generated images, videos, and audio will appear here
+                Generated images, videos, and audio are not part of Xroga — ship web, mobile, desktop, and extensions instead.
               </p>
             </div>
           ) : (

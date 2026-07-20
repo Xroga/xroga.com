@@ -25,6 +25,12 @@ export interface LandingPageOutputData {
   githubRepoName?: string;
   githubPushConfirmed?: boolean;
   fullyShipped?: boolean;
+  scaffoldKind?: string;
+  chromeZipDownloadUrl?: string;
+  chromeReleaseUrl?: string;
+  desktopReleaseTag?: string;
+  desktopActionsUrl?: string;
+  desktopReleasesUrl?: string;
   shipBlockers?: string[];
   shipVerify?: { pass?: boolean; liveOk?: boolean; summaryLines?: string[] };
   projectName?: string;

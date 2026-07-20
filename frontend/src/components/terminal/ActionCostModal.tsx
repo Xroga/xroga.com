@@ -43,7 +43,7 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
   const sections = [
     { title: 'core ai tasks', items: CORE_ACTION_COSTS },
     { title: 'ai agent workflow', items: AGENT_WORKFLOW_COSTS },
-    { title: 'media & entertainment', items: MEDIA_ACTION_COSTS },
+    { title: 'scripts & writing', items: MEDIA_ACTION_COSTS },
   ];
 
   return (
