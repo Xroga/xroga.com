@@ -3,6 +3,9 @@ import { describe, it } from 'node:test';
 import { detectScaffoldFeatures, detectScaffoldKind } from './detectScaffold.js';
 import { buildExpoScaffold } from './expoScaffold.js';
 import { buildNextjsScaffold } from './nextjsScaffold.js';
+import { buildChromeExtensionScaffold } from './chromeExtensionScaffold.js';
+import { buildElectronScaffold } from './electronScaffold.js';
+import { chromeExtensionZipFilter, packageBuildZip } from './packageBuildZip.js';
 import {
   buildScaffoldForPrompt,
   mergeScaffoldWithGenerated,
@@ -12,6 +15,16 @@ describe('detectScaffoldKind', () => {
   it('picks expo for android/ios prompts', () => {
     assert.equal(detectScaffoldKind('Build an Android and iOS fitness app'), 'expo');
     assert.equal(detectScaffoldKind('Create an Expo mobile app for recipes'), 'expo');
+  });
+
+  it('picks chrome for extension prompts', () => {
+    assert.equal(detectScaffoldKind('Build a Chrome MV3 extension for tabs'), 'chrome');
+    assert.equal(detectScaffoldKind('Create a browser extension that highlights prices'), 'chrome');
+  });
+
+  it('picks electron for desktop prompts', () => {
+    assert.equal(detectScaffoldKind('Build an Electron desktop app for notes'), 'electron');
+    assert.equal(detectScaffoldKind('Create a desktop app with Tauri-like Electron shell'), 'electron');
   });
 
   it('picks nextjs for auth/saas/api prompts', () => {
@@ -129,6 +142,40 @@ describe('scaffolds', () => {
     const publish = files.find((f) => f.path === 'PUBLISH.md')!.content;
     assert.match(publish, /non-developer path/i);
     assert.match(publish, /Publish to Google Play/i);
+  });
+
+  it('chrome extension scaffold includes MV3 manifest + zip script', () => {
+    const files = buildChromeExtensionScaffold({
+      projectName: 'Price Highlighter',
+      userPrompt: 'Chrome MV3 extension',
+    });
+    const paths = new Set(files.map((f) => f.path));
+    assert.ok(paths.has('manifest.json'));
+    assert.ok(paths.has('background.js'));
+    assert.ok(paths.has('popup.html'));
+    assert.ok(paths.has('scripts/zip-extension.mjs'));
+    assert.ok(paths.has('PUBLISH.md'));
+    const manifest = files.find((f) => f.path === 'manifest.json')!.content;
+    assert.match(manifest, /"manifest_version": 3/);
+    const zip = packageBuildZip(files, { include: chromeExtensionZipFilter });
+    assert.ok(zip.length > 40);
+    assert.equal(zip[0], 0x50);
+    assert.equal(zip[1], 0x4b);
+  });
+
+  it('electron scaffold includes Releases workflow', () => {
+    const files = buildElectronScaffold({
+      projectName: 'Notes Desk',
+      userPrompt: 'Electron desktop app',
+    });
+    const paths = new Set(files.map((f) => f.path));
+    assert.ok(paths.has('main.js'));
+    assert.ok(paths.has('preload.js'));
+    assert.ok(paths.has('renderer/index.html'));
+    assert.ok(paths.has('.github/workflows/release.yml'));
+    assert.ok(paths.has('PUBLISH.md'));
+    const pkg = files.find((f) => f.path === 'package.json')!.content;
+    assert.match(pkg, /"electron"/);
   });
 
   it('merge prefers non-empty AI files over scaffold', () => {

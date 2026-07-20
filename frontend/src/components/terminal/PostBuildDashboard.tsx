@@ -127,11 +127,39 @@ export function PostBuildDashboard({
     );
   }, [fileTree, projectName, data.userPrompt, data.features]);
 
+  const isChromeExtension = useMemo(() => {
+    const paths = fileTree.map((p) => p.toLowerCase());
+    return (
+      paths.some((p) => p === 'manifest.json') ||
+      /\b(chrome extension|mv3|browser extension)\b/i.test(
+        [projectName, data.userPrompt, ...(data.features ?? [])].filter(Boolean).join(' ')
+      )
+    );
+  }, [fileTree, projectName, data.userPrompt, data.features]);
+
+  const isElectronApp = useMemo(() => {
+    const paths = fileTree.map((p) => p.toLowerCase());
+    return (
+      paths.some((p) => p === 'main.js' || p.startsWith('renderer/')) ||
+      /\b(electron|desktop app|tauri)\b/i.test(
+        [projectName, data.userPrompt, ...(data.features ?? [])].filter(Boolean).join(' ')
+      )
+    );
+  }, [fileTree, projectName, data.userPrompt, data.features]);
+
   const missingItems: string[] = [];
   if (!githubPushed && !data.githubPushConfirmed) missingItems.push('Code not yet saved to GitHub — connect repo in chatbar');
-  if (!liveUrl && !autoDeploying) missingItems.push('Live URL optional — connect Vercel or use sandbox preview below');
+  if (!liveUrl && !autoDeploying && !isChromeExtension && !isElectronApp) {
+    missingItems.push('Live URL optional — connect Vercel or use sandbox preview below');
+  }
   if (isExpoApp) {
-    missingItems.push('Mobile store publish uses your Expo/Apple/Google accounts — open Publish (no Xroga store fees)');
+    missingItems.push('Mobile: Connect Expo in Publish → one-click EAS on your account (you pay store/EAS fees)');
+  }
+  if (isChromeExtension) {
+    missingItems.push('Chrome: sideload free, or npm run zip → Chrome Web Store (~$5 on your account)');
+  }
+  if (isElectronApp) {
+    missingItems.push('Desktop: npm start locally, or tag a release for GitHub Releases (unsigned free path)');
   }
   if (siteAudit.issues.some((i) => i.severity === 'critical')) {
     missingItems.push(`${siteAudit.issues.filter((i) => i.severity === 'critical').length} critical health issue(s)`);

@@ -1,4 +1,4 @@
-export type ScaffoldKind = 'static' | 'nextjs' | 'expo';
+export type ScaffoldKind = 'static' | 'nextjs' | 'expo' | 'chrome' | 'electron';
 
 export type ScaffoldFeatures = {
   crypto: boolean;
@@ -7,6 +7,12 @@ export type ScaffoldFeatures = {
 
 const MOBILE_RE =
   /\b(android|ios|iphone|ipad|react\s*native|expo|mobile\s*app|native\s*app|app\s*store|play\s*store|capacitor)\b/i;
+
+const CHROME_RE =
+  /\b(chrome\s*extension|browser\s*extension|mv3|manifest\s*v3|edge\s*extension|firefox\s*add[- ]?on)\b/i;
+
+const ELECTRON_RE =
+  /\b(electron|tauri|desktop\s*app|native\s*desktop|windows\s*app|mac\s*app|linux\s*desktop)\b/i;
 
 const NEXT_RE =
   /\b(next\.?js|full[- ]?stack|saas|dashboard|auth|login|signup|supabase|database|postgres|api\s*route|server\s*action|stripe|billing|lemon\s*squeezy)\b/i;
@@ -32,6 +38,11 @@ export function detectScaffoldFeatures(prompt: string): ScaffoldFeatures {
 /** Pick a deterministic scaffold so builds ship with real structure, not empty hope. */
 export function detectScaffoldKind(prompt: string): ScaffoldKind {
   const t = prompt.trim();
+
+  // Extension / desktop before generic "app" keywords
+  if (CHROME_RE.test(t)) return 'chrome';
+  if (ELECTRON_RE.test(t) && !MOBILE_RE.test(t)) return 'electron';
+
   if (MOBILE_RE.test(t) && !/\b(landing|marketing\s*site|website\s*only)\b/i.test(t)) {
     return 'expo';
   }
@@ -53,4 +64,9 @@ export function isMobileBuildPrompt(prompt: string): boolean {
 
 export function needsBackendScaffold(prompt: string): boolean {
   return detectScaffoldKind(prompt) === 'nextjs';
+}
+
+/** Products that should not pretend to be a Next.js Vercel framework build. */
+export function isNonWebFrameworkScaffold(kind: ScaffoldKind): boolean {
+  return kind === 'expo' || kind === 'chrome' || kind === 'electron';
 }

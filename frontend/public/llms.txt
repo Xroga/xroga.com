@@ -22,18 +22,27 @@ Xroga builds web apps, pushes working code to your GitHub, deploys on your Verce
 
 ## What Xroga is NOT
 - Not a browser automation platform
-- Not a video generation platform
-- Not a native iOS/Android App Store builder
+- Not a video or image generation studio
+- Not a native App Store publisher that pays Apple/Google fees for you
 - Not “AI Swarm Operating System” as the primary product name
 - Not the same product as Cursor (Cursor is an AI coding IDE; Xroga is a build-and-ship coding agent)
 
 ## How it works
-1. User describes a website or web app in plain language
-2. Xroga generates working code in Workspace
-3. Code is pushed to the user’s GitHub
-4. App deploys on the user’s Vercel
+1. User describes a website, web app, Expo mobile app, Chrome extension, or Electron desktop app
+2. Xroga generates working code in Workspace (deterministic scaffolds + swarm)
+3. Code is pushed to the user’s sticky GitHub repo
+4. Web apps deploy on the user’s Vercel; mobile can one-click trigger EAS on the user’s Expo account
 5. Product API keys can sync securely into Vercel env
 6. User can edit, update, or delete files in the same repo and redeploy
+
+## Mobile / stores (honest)
+- Expo scaffold + optional one-click EAS trigger using the user’s Expo access token
+- User pays: Google Play (~$25), Apple Developer (~$99/yr), Expo EAS minutes
+- Xroga does not pay store or EAS fees
+
+## Extensions / desktop (honest)
+- Chrome MV3 scaffold + zip for sideload; CWS listing is ~$5 on the user’s developer account
+- Electron scaffold + GitHub Releases workflow (free unsigned path); signing/store fees are the user’s
 
 ## Core URLs
 - Homepage: https://xroga.com/

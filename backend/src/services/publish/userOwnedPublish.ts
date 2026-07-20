@@ -147,28 +147,28 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
     },
     {
       id: 'expo',
-      label: '2. Save Expo access token (free)',
+      label: '2. Connect Expo account (access token)',
       done: Boolean(expoKey),
       required: true,
-      hint: 'expo.dev → Settings → Access tokens — we encrypt it',
+      hint: 'Free robot/access token — Expo has no GitHub-style Authorize for CI',
       href: 'https://expo.dev/settings/access-tokens',
     },
     {
       id: 'expo_valid',
-      label: 'Expo token verified',
+      label: 'Expo connected & verified',
       done: expoTokenValid === true,
       required: true,
       hint:
         expoTokenValid === false
           ? 'Token saved but Expo rejected it — paste a fresh one'
-          : 'Saved & verified automatically when you paste',
+          : 'Verified automatically when you Connect Expo',
     },
     {
       id: 'google',
       label: '3a. Pay Google (~$25 once) + paste Play JSON',
       done: Boolean(googleKey),
       required: false,
-      hint: 'Then click Publish to Google Play — EAS builds & submits on your account',
+      hint: 'Pay on Google’s page → paste JSON → Publish. Fees stay on Google, not Xroga.',
       href: 'https://play.google.com/console',
     },
     {
@@ -176,7 +176,7 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
       label: '3b. Pay Apple (~$99/yr) + app-specific password',
       done: Boolean(appleKey),
       required: false,
-      hint: 'Then click Publish to App Store — EAS builds & submits on your account',
+      hint: 'Pay on Apple’s enroll page → paste password → Publish. Fees stay on Apple.',
       href: 'https://developer.apple.com',
     },
   ];

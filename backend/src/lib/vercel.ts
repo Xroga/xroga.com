@@ -101,8 +101,9 @@ export async function deployStaticSiteWithToken(
 
   if (!response.ok) {
     const errText = await response.text();
-    // Retry as static if framework build rejected
-    if (framework && /framework|build|package/i.test(errText)) {
+    // Next/Vite: do NOT silently fall back to static — that ships a fake "live" site.
+    // Static-only deploys may still retry without framework when the API rejects settings.
+    if (framework && framework !== 'nextjs' && framework !== 'vite' && /framework|build|package/i.test(errText)) {
       const retry = await fetch(`https://api.vercel.com/v13/deployments${query}`, {
         method: 'POST',
         headers: {
@@ -125,6 +126,11 @@ export async function deployStaticSiteWithToken(
         ? deployment.url
         : `https://${deployment.url}`;
       return { deployUrl, deploymentId: deployment.id };
+    }
+    if (framework === 'nextjs' || framework === 'vite') {
+      throw new Error(
+        `Vercel ${framework} deploy failed (no silent static fallback): ${response.status} ${errText.slice(0, 280)}`,
+      );
     }
     throw new Error(`Vercel deploy failed: ${response.status} ${errText.slice(0, 200)}`);
   }

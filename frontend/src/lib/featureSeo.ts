@@ -15,34 +15,37 @@ export interface FeatureSeoPage {
 }
 
 export const FEATURE_SEO_PAGES: FeatureSeoPage[] = [
-  {
-    slug: 'ai-image-generation',
-    title: 'AI Image Generation',
-    headline: 'AI Image Generation — Create Stunning Visuals with Xroga AI',
-    description:
-      'Generate photorealistic images, thumbnails, logos, and art with Xroga AI. Multi-model image swarm, variants, editing, and instant download — the best AI image generator for creators and developers.',
-    keywords: [
-      'AI image generation',
-      'AI image generator',
-      'text to image AI',
-      'Xroga image AI',
-      'best AI image tool',
-      'AI art generator',
-      'AI thumbnail maker',
-      'generate images with AI',
-    ],
-    bullets: [
-      'Text-to-image with multiple AI models and automatic best-result selection',
-      'Image editing, variants, aspect ratios, and studio-grade exports',
-      'Thumbnails, logos, social posts, and marketing creatives in one chat',
-      'Saved to your media gallery — reuse across web builds and chat projects',
-    ],
-    faq: [
-      { q: 'Can Xroga AI generate images from text?', a: 'Yes. Describe what you want in the chat and Xroga routes your prompt to elite image models with quality verification.' },
-      { q: 'Is AI image generation included on all plans?', a: 'Yes. Every Xroga plan includes the full feature stack; images use your monthly token quota.' },
-    ],
-    relatedSlugs: ['ai-chat', 'build-websites-apps-games', 'xroga-workspace'],
-  },
+    {
+      slug: 'ai-image-generation',
+      title: 'Build Apps With Images (Coding Agent)',
+      headline: 'Xroga Builds Products — Not an Image Studio',
+      description:
+        'Xroga is a coding agent: prompt → GitHub → Vercel. It does not generate images or run an image studio. Use it to ship websites and apps that display your own assets.',
+      keywords: [
+        'AI coding agent',
+        'build website with AI',
+        'Xroga AI',
+        'GitHub Vercel deploy',
+        'not an image generator',
+      ],
+      bullets: [
+        'Ship websites and web apps that can host your logos, screenshots, and media',
+        'Push to your GitHub and deploy on your Vercel from Workspace',
+        'Image / video generation studios are not part of Xroga',
+        'For visuals, bring your own assets or wire a third-party API in the app you ship',
+      ],
+      faq: [
+        {
+          q: 'Can Xroga AI generate images from text?',
+          a: 'No. Image generation is not a Xroga product. Xroga builds and ships code (GitHub + Vercel). Embed your own images or call an image API from the app you ship.',
+        },
+        {
+          q: 'What should I use Xroga for instead?',
+          a: 'Describe a website, SaaS, dashboard, Expo app, Chrome extension, or Electron desktop app — Xroga scaffolds, pushes your sticky repo, and deploys web apps on your Vercel.',
+        },
+      ],
+      relatedSlugs: ['ai-chat', 'build-websites-apps-games', 'xroga-workspace'],
+    },
   {
     slug: 'ai-chat',
     title: 'AI Coding Agent Chat',
@@ -277,7 +280,7 @@ export const FEATURE_SEO_PAGES: FeatureSeoPage[] = [
     faq: [
       {
         q: 'Can Xroga generate videos?',
-        a: 'No. Xroga is a coding agent for web apps — GitHub + Vercel. For visuals today, use AI image generation or build a site that embeds your own video player.',
+        a: 'No. Xroga is a coding agent for web apps, Expo mobile, Chrome extensions, and Electron desktops — GitHub (+ Vercel for web). It does not generate video or images. Embed your own media in the product you ship.',
       },
     ],
     relatedSlugs: ['build-websites-apps-games', 'ai-chat', 'xroga-workspace'],
