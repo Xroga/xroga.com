@@ -8,6 +8,10 @@ Xroga is an npm-workspaces monorepo ("AI Swarm OS"):
 - `backend/` — Express API run via `tsx watch`, dev server on port **8080** (not 4000 as the README's endpoint table implies — `backend/src/index.ts` defaults to `PORT || 8080`).
 - `supabase/` — SQL migrations only (no local DB needed to boot the app).
 
+### Cloud environment config
+- `.cursor/environment.json` — install script, terminals (backend + frontend), and ports 3000/8080.
+- `.cursor/install.sh` — idempotent update: `npm install` + create `backend/.env` / `frontend/.env.local` if missing (points API at `http://localhost:8080`).
+
 Dependencies for both workspaces are installed from the repo root with a single `npm install` (handled by the startup update script). Package manager is **npm** (root `package-lock.json`).
 
 ### Env files (not committed; recreate if missing)
@@ -15,10 +19,13 @@ The dev servers need local env files that are gitignored:
 - `backend/.env` — copy from `backend/.env.example` (`cp backend/.env.example backend/.env`). The backend boots fine with the placeholder values; it only logs warnings for missing AI/image keys.
 - `frontend/.env.local` — must set `NEXT_PUBLIC_API_URL=http://localhost:8080` so the frontend talks to the local backend. Copy from `frontend/.env.local.example` and override that value (the example points at the production Fly URL).
 
+Optional secrets (Supabase, AI keys, etc.) belong in the Cursor Cloud Agents **Secrets** tab — not in committed files. Placeholder env values are enough to boot and exercise non-auth UI flows.
+
 ### Running
 - Both together: `npm run dev` (concurrently runs frontend + backend).
 - Individually: `npm run dev:frontend` / `npm run dev:backend`.
 - Verify backend: `curl http://localhost:8080/health` → returns JSON with `status: "ok"`.
+- Verify frontend: `curl -s -o /dev/null -w '%{http_code}' http://localhost:3000` → `200`.
 
 ### Lint / test / build
 - Lint: `npm run lint` (frontend only; passes with pre-existing warnings).
