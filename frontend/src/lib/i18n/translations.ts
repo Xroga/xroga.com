@@ -27,7 +27,7 @@ const en: Dict = {
   'footer.privacy': 'Privacy Policy',
   'deploy.title': 'Deploy & Domains',
   'media.label': 'AI Media',
-  'checkout.methods': 'Cards · PayPal · Google Pay · UPI via Paddle',
+  'checkout.methods': 'Cards & local methods via Lemon Squeezy',
   'nav.workspace': 'Workspace',
   'nav.dashboard': 'Dashboard',
   'nav.analytics': 'Analytics',

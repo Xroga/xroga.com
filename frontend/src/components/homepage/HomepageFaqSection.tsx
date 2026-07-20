@@ -17,7 +17,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: 'What do I get on a paid plan?',
-    a: 'Monthly AI credit and token capacity, swarm builds, Workspace preview, GitHub push, and Vercel deploy. Higher plans unlock more concurrency and a larger AI budget. Payments run through Paddle.',
+    a: 'Monthly AI credit and token capacity, swarm builds, Workspace preview, GitHub push, and Vercel deploy. Higher plans unlock more concurrency and a larger AI budget. Payments run through Lemon Squeezy.',
   },
   {
     q: 'Do unused credits expire?',
@@ -37,7 +37,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: 'Where is billing and support?',
-    a: 'Checkout and subscriptions are handled by Paddle. For help: hello@xroga.com or the phone on our Contact page. See Terms, Privacy, and Refund Policy in the footer.',
+    a: 'Checkout and subscriptions are handled by Lemon Squeezy. For help: hello@xroga.com or the phone on our Contact page. See Terms, Privacy, and Refund Policy in the footer.',
   },
 ];
 

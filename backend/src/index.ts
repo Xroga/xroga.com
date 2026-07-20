@@ -91,7 +91,7 @@ const corsOptions: cors.CorsOptions = {
 
 app.use(cors(corsOptions));
 
-// Paddle webhook needs raw body — mount before express.json()
+// Lemon Squeezy webhook needs raw body — mount before express.json()
 app.use('/api/billing/webhook', billingWebhookRouter);
 
 app.use(express.json({ limit: '10mb' }));

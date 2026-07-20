@@ -108,7 +108,7 @@ export function IntegrationsPanel() {
           </span>
         </div>
         <p className="text-sm text-[var(--muted)] mt-1 font-coding">
-          Connect GitHub, Vercel, Supabase, Brevo, Cloudflare, Paddle, and Lemon Squeezy. Everything else is coming soon.
+          Connect GitHub, Vercel, Supabase, Brevo, Cloudflare, and Lemon Squeezy. Everything else is coming soon.
         </p>
       </div>
 

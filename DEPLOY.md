@@ -47,21 +47,44 @@ fly secrets set -a xroga-api \
 
 After authorize, Xroga lists projects (or creates one in-panel), fetches keys, auto-runs SQL (schema + AI memory + storage RLS), and best-effort syncs vault keys to the user's newest Vercel/`xroga*` project.
 
-## Vercel OAuth (user connect — authorize deploy)
-Vercel Integration / OAuth App callback (exact):
+## Vercel OAuth (Sign in with Vercel App — authorize deploy + env)
+
+Create a **Vercel App** (Dashboard → Settings → Apps) — Client ID looks like `cl_…`.
+
+**Authorization Callback URL (exact):**
 `https://xroga.com/dashboard/integrations/vercel/callback`
+
+**Grant types:** Authorization Code + Refresh Token
+
+**Scopes (OIDC):**
+- `openid` · `email` · `profile` · `offline_access`
+
+**API Permissions to enable (minimum for Xroga ship):**
+- Read User
+- Read/Write Project
+- Read/Write Deployment
+- Read/Write All Project Environment Variables *(or both Production + Non-Production R/W)*
+- Read Team *(if users deploy under a team)*
+
+Optional later: Read/Write Domain, Blob, Edge Config — not required for core ship.
+
+Do **not** enable Read/Write Billing or Domain Registrar unless you have a clear product need.
 
 Fly secrets:
 ```bash
 fly secrets set -a xroga-api \
-  VERCEL_CLIENT_ID="from_vercel_integration" \
-  VERCEL_CLIENT_SECRET="from_vercel_integration" \
-  VERCEL_OAUTH_CALLBACK_URL="https://xroga.com/dashboard/integrations/vercel/callback"
+  VERCEL_CLIENT_ID="cl_…" \
+  VERCEL_CLIENT_SECRET="…" \
+  VERCEL_OAUTH_CALLBACK_URL="https://xroga.com/dashboard/integrations/vercel/callback" \
+  VERCEL_OAUTH_SCOPES="openid email profile offline_access"
 ```
 
-Optional: `VERCEL_OAUTH_SCOPES` if your Integration Console grants more than `deployment`.
+Xroga uses PKCE + `https://api.vercel.com/login/oauth/token` (Apps API). After Authorize, users can deploy and sync vault env without a separate Full Account PAT **if** the env permissions above are granted on the App.
 
-**Env vars on the user's Vercel project:** OAuth with only `deployment` often cannot write env. Users who need Supabase/AI keys on the live site should also paste a **Full Account** token under Integrations (or expand integration permissions). Deploy-without-env still works after Authorize.
+## Lemon Squeezy (platform subscriptions)
+
+See `docs/LEMONSQUEEZY_SETUP.md`. Webhook:
+`https://xroga-api.fly.dev/api/billing/webhook/lemon-squeezy`
 
 ## GitHub OAuth (user connect — not Fly URL)
 GitHub OAuth App → Authorization callback URL (exact):

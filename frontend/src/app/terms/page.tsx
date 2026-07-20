@@ -7,7 +7,7 @@ import { LegalPageShell } from '@/components/legal/LegalPageShell';
 export const metadata: Metadata = buildMetadata({
   title: 'Terms and Conditions',
   description:
-    'Xroga AI Terms and Conditions — subscriptions via Paddle, acceptable use, and service scope.',
+    'Xroga AI Terms and Conditions — subscriptions via Lemon Squeezy, acceptable use, and service scope.',
   path: '/terms',
 });
 
@@ -35,11 +35,11 @@ export default function TermsPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">3. Payments (Paddle)</h2>
+        <h2 className="text-lg font-semibold">3. Payments (Lemon Squeezy)</h2>
         <p className="text-[var(--muted)]">
-          Paid plans are billed through Paddle (merchant of record where applicable). Supported
+          Paid plans are billed through Lemon Squeezy (merchant of record where applicable). Supported
           methods may include cards, PayPal, Google Pay, and other local methods. Prices may show
-          in local currency; Paddle handles conversion and taxes where required. Plan AI credit /
+          in local currency; Lemon Squeezy handles conversion and taxes where required. Plan AI credit /
           token capacity is described on{' '}
           <Link href="/pricing" className="text-[var(--accent)] hover:underline">
             Pricing

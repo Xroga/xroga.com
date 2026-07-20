@@ -1,29 +1,32 @@
 import crypto from 'crypto';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ActionService } from './ActionService.js';
-import { GALACTIC_PLANS, getPaddlePriceId, getPlanByTier } from '../config/plans.js';
+import { GALACTIC_PLANS, getLemonVariantId, getPlanByTier } from '../config/plans.js';
 import type { PlanTier } from '../types/index.js';
 
-function paddleApiBase(): string {
-  const env = process.env.PADDLE_ENV ?? process.env.NEXT_PUBLIC_PADDLE_ENV ?? 'production';
-  return env === 'sandbox' ? 'https://sandbox-api.paddle.com' : 'https://api.paddle.com';
-}
-
+/**
+ * Xroga platform billing via Lemon Squeezy (merchant of record).
+ * Paddle has been removed — use LEMONSQUEEZY_* env vars only.
+ */
 export class BillingService {
   static billingStatus() {
-    const apiKey = !!process.env.PADDLE_API_KEY;
-    const webhook = !!process.env.PADDLE_WEBHOOK_SECRET;
-    const clientConfigured = !!process.env.PADDLE_VENDOR_ID;
+    const apiKey = !!process.env.LEMONSQUEEZY_API_KEY;
+    const webhook = !!process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
+    const store = !!process.env.LEMONSQUEEZY_STORE_ID;
     return {
-      paddleApi: apiKey,
-      paddleWebhook: webhook,
-      paddleClient: clientConfigured,
-      environment: process.env.PADDLE_ENV ?? 'production',
+      lemonApi: apiKey,
+      lemonWebhook: webhook,
+      lemonStore: store,
+      /** @deprecated kept for older clients — always false */
+      paddleApi: false,
+      paddleWebhook: false,
+      paddleClient: false,
+      environment: process.env.LEMONSQUEEZY_STORE_ID ? 'production' : 'unconfigured',
       plans: GALACTIC_PLANS.map((plan) => ({
         tier: plan.tier,
         name: plan.name,
         priceId: process.env[plan.envPriceKey] ?? null,
-        ready: !!(process.env[plan.envPriceKey] && apiKey),
+        ready: !!(process.env[plan.envPriceKey] && apiKey && store),
       })),
     };
   }
@@ -43,101 +46,125 @@ export class BillingService {
   static async createCheckout(
     userId: string,
     planTier: PlanTier,
-    userEmail?: string
+    userEmail?: string,
   ): Promise<{ checkoutUrl?: string; priceId: string; customData: Record<string, string> }> {
-    const priceId = getPaddlePriceId(planTier);
-    if (!priceId) {
-      throw new Error(`Paddle price not configured for plan: ${planTier}`);
+    const variantId = getLemonVariantId(planTier);
+    if (!variantId) {
+      throw new Error(`Lemon Squeezy variant not configured for plan: ${planTier}`);
     }
 
+    const storeId = (process.env.LEMONSQUEEZY_STORE_ID || '').trim();
+    const apiKey = (process.env.LEMONSQUEEZY_API_KEY || '').trim();
     const customData = { user_id: userId, plan_tier: planTier };
-    const apiKey = process.env.PADDLE_API_KEY;
 
-    if (!apiKey) {
-      return { priceId, customData };
+    if (!apiKey || !storeId) {
+      return { priceId: variantId, customData };
     }
 
-    const body: Record<string, unknown> = {
-      items: [{ price_id: priceId, quantity: 1 }],
-      custom_data: customData,
+    const checkoutData: Record<string, unknown> = {
+      custom: customData,
+    };
+    if (userEmail) checkoutData.email = userEmail;
+
+    const body = {
+      data: {
+        type: 'checkouts',
+        attributes: {
+          checkout_data: checkoutData,
+          product_options: {
+            redirect_url:
+              (process.env.LEMONSQUEEZY_REDIRECT_URL || '').trim() ||
+              `${(process.env.FRONTEND_URL || 'https://xroga.com').replace(/\/$/, '')}/dashboard/billing?checkout=success`,
+          },
+        },
+        relationships: {
+          store: { data: { type: 'stores', id: String(storeId) } },
+          variant: { data: { type: 'variants', id: String(variantId) } },
+        },
+      },
     };
 
-    if (userEmail) {
-      body.customer = { email: userEmail };
-    }
-
-    const response = await fetch(`${paddleApiBase()}/transactions`, {
+    const response = await fetch('https://api.lemonsqueezy.com/v1/checkouts', {
       method: 'POST',
       headers: {
+        Accept: 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
         Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
     });
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error('[BillingService] Paddle transaction error:', errText);
-      return { priceId, customData };
+      console.error('[BillingService] Lemon checkout error:', errText);
+      throw new Error('Could not create Lemon Squeezy checkout');
     }
 
     const data = (await response.json()) as {
-      data?: { checkout?: { url?: string } };
+      data?: { attributes?: { url?: string } };
     };
 
     return {
-      checkoutUrl: data.data?.checkout?.url,
-      priceId,
+      checkoutUrl: data.data?.attributes?.url,
+      priceId: variantId,
       customData,
     };
   }
 
   static verifyWebhookSignature(rawBody: string, signatureHeader: string | undefined): boolean {
-    const secret = process.env.PADDLE_WEBHOOK_SECRET;
+    const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
     if (!secret || !signatureHeader) return false;
 
-    const parts = Object.fromEntries(
-      signatureHeader.split(';').map((p) => {
-        const [k, v] = p.split('=');
-        return [k.trim(), v];
-      })
-    );
-
-    const ts = parts.ts;
-    const h1 = parts.h1;
-    if (!ts || !h1) return false;
-
-    const payload = `${ts}:${rawBody}`;
-    const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex');
-    if (h1.length !== expected.length) return false;
-    return crypto.timingSafeEqual(Buffer.from(h1), Buffer.from(expected));
+    const digest = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+    const a = Buffer.from(digest, 'utf8');
+    const b = Buffer.from(signatureHeader, 'utf8');
+    if (a.length !== b.length) return false;
+    return crypto.timingSafeEqual(a, b);
   }
 
   static async handleWebhookEvent(event: {
-    event_type?: string;
-    data?: Record<string, unknown>;
+    meta?: { event_name?: string; custom_data?: Record<string, unknown> };
+    data?: {
+      type?: string;
+      id?: string;
+      attributes?: Record<string, unknown>;
+    };
   }): Promise<void> {
-    const type = event.event_type ?? '';
-    const data = event.data ?? {};
+    const type = event.meta?.event_name ?? '';
+    if (
+      type === 'subscription_created' ||
+      type === 'subscription_updated' ||
+      type === 'subscription_payment_success' ||
+      type === 'order_created'
+    ) {
+      await this.syncFromLemonPayload(event);
+    }
 
-    if (type === 'subscription.created' || type === 'transaction.completed') {
-      await this.syncFromPaddlePayload(data);
+    if (type === 'subscription_cancelled' || type === 'subscription_expired') {
+      const custom = event.meta?.custom_data ?? {};
+      const userId = String(custom.user_id || '');
+      if (userId) {
+        console.log(`[BillingService] Lemon ${type} for user ${userId} — plan left until period end`);
+      }
     }
   }
 
-  static async syncFromPaddlePayload(data: Record<string, unknown>): Promise<void> {
-    const customData = (data.custom_data ?? data.customData) as Record<string, string> | undefined;
-    const userId = customData?.user_id;
-    let planTier = customData?.plan_tier as PlanTier | undefined;
+  static async syncFromLemonPayload(event: {
+    meta?: { custom_data?: Record<string, unknown> };
+    data?: { attributes?: Record<string, unknown>; id?: string };
+  }): Promise<void> {
+    const custom = (event.meta?.custom_data ?? {}) as Record<string, string>;
+    const userId = custom.user_id ? String(custom.user_id) : '';
+    let planTier = custom.plan_tier as PlanTier | undefined;
 
     if (!userId) {
-      console.warn('[BillingService] webhook missing user_id in custom_data');
+      console.warn('[BillingService] Lemon webhook missing user_id in meta.custom_data');
       return;
     }
 
     if (!planTier) {
-      const priceId = this.extractPriceId(data);
-      planTier = this.tierFromPriceId(priceId);
+      const variantId = this.extractVariantId(event.data?.attributes);
+      planTier = this.tierFromVariantId(variantId);
     }
 
     if (!planTier) {
@@ -150,19 +177,20 @@ export class BillingService {
 
     await ActionService.applyPlan(userId, planTier, plan.actions);
 
-    // Legacy referral/token hooks removed with the old AI backend.
-
     const supabase = getSupabaseAdmin();
     const customerId =
-      (data.customer_id as string) ??
-      ((data.customer as Record<string, string> | undefined)?.id);
+      (event.data?.attributes?.customer_id as string | number | undefined) ??
+      (event.data?.attributes?.user_email as string | undefined);
 
     if (customerId) {
       const { error } = await supabase
         .from('profiles')
-        .update({ paddle_customer_id: customerId })
+        .update({
+          lemon_squeezy_customer_id: String(customerId),
+          paddle_customer_id: String(customerId),
+        })
         .eq('id', userId);
-      if (error && !error.message.includes('paddle_customer_id')) {
+      if (error && !/lemon_squeezy_customer_id|paddle_customer_id/i.test(error.message)) {
         console.warn('[BillingService] profile update:', error.message);
       }
     }
@@ -170,17 +198,18 @@ export class BillingService {
     console.log(`[BillingService] Applied ${planTier} plan (${plan.actions} actions) to user ${userId}`);
   }
 
-  private static extractPriceId(data: Record<string, unknown>): string | undefined {
-    const items = data.items as Array<{ price?: { id?: string }; price_id?: string }> | undefined;
-    if (items?.[0]?.price?.id) return items[0].price.id;
-    if (items?.[0]?.price_id) return items[0].price_id;
+  private static extractVariantId(attrs?: Record<string, unknown>): string | undefined {
+    if (!attrs) return undefined;
+    if (attrs.variant_id != null) return String(attrs.variant_id);
+    const first = attrs.first_order_item as { variant_id?: string | number } | undefined;
+    if (first?.variant_id != null) return String(first.variant_id);
     return undefined;
   }
 
-  private static tierFromPriceId(priceId?: string): PlanTier | undefined {
-    if (!priceId) return undefined;
+  private static tierFromVariantId(variantId?: string): PlanTier | undefined {
+    if (!variantId) return undefined;
     for (const plan of GALACTIC_PLANS) {
-      if (process.env[plan.envPriceKey] === priceId) return plan.tier;
+      if (process.env[plan.envPriceKey] === variantId) return plan.tier;
     }
     return undefined;
   }

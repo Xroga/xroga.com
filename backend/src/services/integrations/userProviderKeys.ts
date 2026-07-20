@@ -21,6 +21,11 @@ export const ALLOWED_PROVIDERS = [
   'huggingface',
   'replicate',
   'stripe',
+  /** User Lemon Squeezy for subscriptions in THEIR generated apps */
+  'lemon_squeezy',
+  'lemon_squeezy_store',
+  'lemon_squeezy_webhook',
+  'lemon_squeezy_variant',
   /** User's Supabase project — data/auth/storage live on THEIR account */
   'supabase_url',
   'supabase',
@@ -51,6 +56,10 @@ export const ENV_VAR_BY_PROVIDER: Record<string, string> = {
   openrouter: 'OPENROUTER_API_KEY',
   replicate: 'REPLICATE_API_TOKEN',
   stripe: 'STRIPE_SECRET_KEY',
+  lemon_squeezy: 'LEMONSQUEEZY_API_KEY',
+  lemon_squeezy_store: 'LEMONSQUEEZY_STORE_ID',
+  lemon_squeezy_webhook: 'LEMONSQUEEZY_WEBHOOK_SECRET',
+  lemon_squeezy_variant: 'LEMONSQUEEZY_VARIANT_ID',
   supabase_url: 'NEXT_PUBLIC_SUPABASE_URL',
   supabase: 'SUPABASE_SERVICE_ROLE_KEY',
   supabase_anon: 'NEXT_PUBLIC_SUPABASE_ANON_KEY',

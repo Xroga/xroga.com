@@ -130,7 +130,7 @@ const REFINE_BY_TYPE: Record<CreationType, string[]> = {
 
 const FOLLOWUP_BY_TYPE: Record<CreationType, string[]> = {
   website: ['Add a pricing section', 'Add online ordering', 'Make it responsive'],
-  webapp: ['Add user login with Supabase', 'Add Paddle payments', 'Add analytics dashboard'],
+  webapp: ['Add user login with Supabase', 'Add Lemon Squeezy payments', 'Add analytics dashboard'],
   mobile_app: ['Build as PWA', 'Add app icon & splash screen', 'Add offline mode'],
   game: ['Add multiplayer', 'Publish playable demo', 'Add score leaderboard'],
   software: ['Windows + Mac builds', 'Add installer', 'Add user settings'],

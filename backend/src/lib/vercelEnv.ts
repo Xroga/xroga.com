@@ -178,7 +178,7 @@ export async function syncEnvVarsToVercelProject(opts: {
       error: ok
         ? undefined
         : skipped.length
-          ? `Could not write ${skipped.length} env var(s). Use a Vercel Full Account token under Integrations (OAuth "deployment" scope cannot set env).`
+          ? `Could not write ${skipped.length} env var(s). Re-authorize Vercel with Read/Write Project Environment Variables enabled on the Xroga AI App (or use a Full Account token).`
           : undefined,
     };
   } catch (err) {

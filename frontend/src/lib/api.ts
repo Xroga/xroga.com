@@ -625,10 +625,10 @@ export const api = {
         `/api/vercel/oauth?redirect_uri=${encodeURIComponent(redirectUri)}`
       );
     },
-    connect: (code: string) =>
+    connect: (code: string, state: string) =>
       apiFetch<{ connected: boolean; username: string }>('/api/vercel/connect', {
         method: 'POST',
-        body: JSON.stringify({ code, redirectUri: vercelOAuthCallbackUrl() }),
+        body: JSON.stringify({ code, state, redirectUri: vercelOAuthCallbackUrl() }),
       }),
     connectToken: (token: string) =>
       apiFetch<{ connected: boolean; username: string }>('/api/vercel/connect-token', {

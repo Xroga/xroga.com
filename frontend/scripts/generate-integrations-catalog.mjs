@@ -180,7 +180,7 @@ function slugify(name) {
     .slice(0, 60);
 }
 
-const CONNECTED = new Set(['github', 'supabase', 'upstash_redis', 'paddle', 'cloudflare_r2', 'r2']);
+const CONNECTED = new Set(['github', 'supabase', 'upstash_redis', 'lemon_squeezy', 'cloudflare_r2', 'r2']);
 const OAUTH = new Set([
   'github', 'gitlab', 'vercel', 'netlify', 'railway', 'digitalocean', 'heroku', 'render',
   'xbox_series_x_s_one', 'playstation_ps5_ps4', 'steam_pc', 'epic_games', 'twitter_x', 'linkedin',
@@ -192,7 +192,8 @@ const OAUTH = new Set([
 const DESCRIPTIONS = {
   supabase: 'Database, Auth, RLS',
   upstash_redis: 'Task queue & caching',
-  paddle: 'Subscription billing',
+  lemon_squeezy: 'Subscription billing (merchant of record)',
+  lemonsqueezy: 'Subscription billing (merchant of record)',
   cloudflare_r2: 'Object storage',
   r2: 'Object storage',
   xbox_series_x_s_one: 'Xbox Store API — Series X|S & Xbox One',
@@ -210,7 +211,7 @@ for (const [category, names] of Object.entries(CATALOG)) {
       id = `${slugify(name)}_${suffix++}`;
     }
     seen.add(id);
-    const connected = CONNECTED.has(id) || name === 'Supabase' || name === 'Upstash Redis' || name === 'Paddle' || name === 'Cloudflare R2';
+    const connected = CONNECTED.has(id) || name === 'Supabase' || name === 'Upstash Redis' || name === 'Lemon Squeezy' || name === 'Cloudflare R2';
     const entry = {
       id,
       name,

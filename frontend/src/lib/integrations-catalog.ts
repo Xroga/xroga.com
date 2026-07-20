@@ -668,17 +668,11 @@ export const INTEGRATION_CATALOG: Integration[] = [
     "oauth": true
   },
   {
-    "id": "paddle",
-    "name": "Paddle",
-    "category": "E-commerce & Payments",
-    "status": "connected",
-    "description": "Subscription billing"
-  },
-  {
     "id": "lemon_squeezy",
     "name": "Lemon Squeezy",
     "category": "E-commerce & Payments",
-    "status": "not_connected"
+    "status": "connected",
+    "description": "Subscription billing (merchant of record)"
   },
   {
     "id": "binance",

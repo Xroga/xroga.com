@@ -510,6 +510,99 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 OPENAI_API_KEY=
 OPENROUTER_API_KEY=
 STRIPE_SECRET_KEY=
+# Lemon Squeezy (subscriptions in THIS app — save in Xroga Integrations vault)
+LEMONSQUEEZY_API_KEY=
+LEMONSQUEEZY_STORE_ID=
+LEMONSQUEEZY_WEBHOOK_SECRET=
+LEMONSQUEEZY_VARIANT_ID=
+`,
+    },
+    {
+      path: 'app/api/checkout/route.ts',
+      content: `import { NextResponse } from 'next/server';
+
+/** Create a Lemon Squeezy checkout for YOUR store (keys from Vercel env via Xroga vault). */
+export async function POST(request: Request) {
+  const apiKey = process.env.LEMONSQUEEZY_API_KEY;
+  const storeId = process.env.LEMONSQUEEZY_STORE_ID;
+  const variantId = process.env.LEMONSQUEEZY_VARIANT_ID;
+  if (!apiKey || !storeId || !variantId) {
+    return NextResponse.json(
+      { error: 'Lemon Squeezy not configured — save keys in Xroga Integrations' },
+      { status: 503 },
+    );
+  }
+
+  let email: string | undefined;
+  let userId: string | undefined;
+  try {
+    const body = (await request.json()) as { email?: string; userId?: string };
+    email = body.email;
+    userId = body.userId;
+  } catch {
+    /* optional body */
+  }
+
+  const checkoutData: Record<string, unknown> = {
+    custom: { user_id: userId || 'anonymous', app: '${slug}' },
+  };
+  if (email) checkoutData.email = email;
+
+  const res = await fetch('https://api.lemonsqueezy.com/v1/checkouts', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+      Authorization: \`Bearer \${apiKey}\`,
+    },
+    body: JSON.stringify({
+      data: {
+        type: 'checkouts',
+        attributes: { checkout_data: checkoutData },
+        relationships: {
+          store: { data: { type: 'stores', id: String(storeId) } },
+          variant: { data: { type: 'variants', id: String(variantId) } },
+        },
+      },
+    }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    return NextResponse.json({ error: text.slice(0, 200) }, { status: 502 });
+  }
+
+  const data = (await res.json()) as { data?: { attributes?: { url?: string } } };
+  return NextResponse.json({ checkoutUrl: data.data?.attributes?.url });
+}
+`,
+    },
+    {
+      path: 'app/api/webhooks/lemon-squeezy/route.ts',
+      content: `import { createHmac, timingSafeEqual } from 'crypto';
+import { NextResponse } from 'next/server';
+
+export async function POST(request: Request) {
+  const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
+  const raw = await request.text();
+  const signature = request.headers.get('x-signature') || '';
+
+  if (secret) {
+    const digest = createHmac('sha256', secret).update(raw).digest('hex');
+    const a = Buffer.from(digest, 'utf8');
+    const b = Buffer.from(signature, 'utf8');
+    if (a.length !== b.length || !timingSafeEqual(a, b)) {
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    }
+  }
+
+  const event = JSON.parse(raw) as {
+    meta?: { event_name?: string; custom_data?: Record<string, unknown> };
+  };
+  // Upgrade the signed-in user in YOUR Supabase (profiles.plan) using meta.custom_data.user_id
+  console.log('[lemon-webhook]', event.meta?.event_name, event.meta?.custom_data);
+  return NextResponse.json({ received: true });
+}
 `,
     },
     {
@@ -523,11 +616,13 @@ Built with **Xroga AI** — coding agent that pushes to your GitHub and deploys 
 - \`/api/health\` and \`/api/chat\`
 - Supabase auth (\`/login\`, \`/auth/*\`) against **your** project
 - \`supabase/migrations/001_initial.sql\` — profiles, RLS, optional storage
+- Lemon Squeezy checkout (\`/api/checkout\`) + webhook (\`/api/webhooks/lemon-squeezy\`)
 
 ## Ship
 1. Authorize GitHub + Vercel in Xroga Ship setup
 2. Authorize Supabase (create or pick your project) — Xroga applies schema + memory + storage
-3. Build in Workspace — Xroga pushes, syncs vault → Vercel env when possible, deploys
+3. Optional: save Lemon Squeezy API key / store / variant / webhook secret in Xroga Integrations
+4. Build in Workspace — Xroga pushes, syncs vault → Vercel env when possible, deploys
 
 ${opts.userPrompt ? `## Prompt\n\n${opts.userPrompt.slice(0, 800)}\n` : ''}
 `,

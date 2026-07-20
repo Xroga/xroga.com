@@ -42,7 +42,7 @@ export const GALACTIC_PLANS: PlanDefinition[] = [
     actionsLabel: '1,500 Actions/mo',
     actions: 1500,
     concurrency: 2,
-    envPriceKey: 'PADDLE_PRICE_SPARK',
+    envPriceKey: 'LEMONSQUEEZY_VARIANT_SPARK',
     paid: true,
     apiBudgetUsd: MONTHLY_TOTAL_BUDGET_USD,
     tokenPool: MONTHLY_TOTAL_TOKENS,
@@ -54,7 +54,7 @@ export const GALACTIC_PLANS: PlanDefinition[] = [
     actionsLabel: '5,000 Actions/mo',
     actions: 5000,
     concurrency: 8,
-    envPriceKey: 'PADDLE_PRICE_PULSE',
+    envPriceKey: 'LEMONSQUEEZY_VARIANT_PULSE',
     paid: true,
     highlight: true,
     apiBudgetUsd: budgetFromPrice(29),
@@ -67,7 +67,7 @@ export const GALACTIC_PLANS: PlanDefinition[] = [
     actionsLabel: '10,000 Actions/mo',
     actions: 10000,
     concurrency: 12,
-    envPriceKey: 'PADDLE_PRICE_NOVA',
+    envPriceKey: 'LEMONSQUEEZY_VARIANT_NOVA',
     paid: true,
     apiBudgetUsd: budgetFromPrice(49),
     tokenPool: tokensFromBudget(budgetFromPrice(49)),
@@ -79,7 +79,7 @@ export const GALACTIC_PLANS: PlanDefinition[] = [
     actionsLabel: '6,000 Actions/mo',
     actions: 6000,
     concurrency: 30,
-    envPriceKey: 'PADDLE_PRICE_ZENITH',
+    envPriceKey: 'LEMONSQUEEZY_VARIANT_ZENITH',
     paid: true,
     apiBudgetUsd: budgetFromPrice(99),
     tokenPool: tokensFromBudget(budgetFromPrice(99)),
@@ -91,7 +91,7 @@ export const GALACTIC_PLANS: PlanDefinition[] = [
     actionsLabel: '50,000 Actions/mo',
     actions: 50000,
     concurrency: 100,
-    envPriceKey: 'PADDLE_PRICE_SINGULARITY',
+    envPriceKey: 'LEMONSQUEEZY_VARIANT_SINGULARITY',
     paid: true,
     apiBudgetUsd: budgetFromPrice(999),
     tokenPool: tokensFromBudget(budgetFromPrice(999)),
@@ -126,11 +126,16 @@ export function getTokenPool(tier: string): number {
   return getPlanByTier(tier)?.tokenPool ?? tokensFromBudget(TRIAL_API_BUDGET_USD);
 }
 
-export function getPaddlePriceId(tier: PlanTier): string | undefined {
+export function getLemonVariantId(tier: PlanTier): string | undefined {
   if (tier === 'unpaid') return undefined;
   const plan = getPlanByTier(tier);
   if (!plan?.envPriceKey) return undefined;
   return process.env[plan.envPriceKey];
+}
+
+/** @deprecated use getLemonVariantId */
+export function getPaddlePriceId(tier: PlanTier): string | undefined {
+  return getLemonVariantId(tier);
 }
 
 export function getConcurrencyForTier(tier: string): number {

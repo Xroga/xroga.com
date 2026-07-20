@@ -102,7 +102,7 @@ export function ConnectShipWizard() {
     {
       id: 'vercel',
       title: '2. Vercel',
-      body: 'Authorize once to deploy live. For env sync (Supabase/AI keys), use a Full Account token if OAuth cannot write env.',
+      body: 'Authorize once (Vercel App). With Project + Deployment + Env permissions, we deploy and sync keys automatically.',
       done: vercelOk,
       action: connectVercel,
       label: vercelOk ? 'Connected' : 'Authorize',
