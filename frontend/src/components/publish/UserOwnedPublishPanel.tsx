@@ -129,19 +129,6 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
     }
   }
 
-  async function verifyExpo() {
-    setBusy('verify');
-    try {
-      const res = await api.publish.verifyExpo();
-      toast.success(res.username ? `Verified @${res.username}` : 'Expo token verified');
-      await refresh();
-    } catch (e) {
-      toast.error((e as Error).message);
-    } finally {
-      setBusy(null);
-    }
-  }
-
   async function saveProvider(provider: 'apple_asc' | 'google_play', value: string) {
     if (!value.trim()) {
       toast.error('Paste the credential first');
