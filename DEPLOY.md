@@ -29,6 +29,22 @@ NEXT_PUBLIC_SITE_URL=https://xroga.com
 
 JWT Secret is in Supabase → Project Settings → API → JWT Settings.
 
+## Supabase OAuth (user connect — authorize, no paste)
+Create an OAuth App in your Supabase org → OAuth Apps.
+
+Callback URL (exact):
+`https://xroga.com/dashboard/integrations/supabase/callback`
+
+Fly secrets:
+```bash
+fly secrets set -a xroga-api \
+  SUPABASE_OAUTH_CLIENT_ID="from_supabase_oauth_app" \
+  SUPABASE_OAUTH_CLIENT_SECRET="from_supabase_oauth_app" \
+  SUPABASE_OAUTH_CALLBACK_URL="https://xroga.com/dashboard/integrations/supabase/callback"
+```
+
+After authorize, Xroga lists projects, fetches keys, and auto-runs SQL (schema + AI memory + storage) on the user's project.
+
 ## GitHub OAuth (user connect — not Fly URL)
 GitHub OAuth App → Authorization callback URL (exact):
 `https://xroga.com/dashboard/integrations/github/callback`

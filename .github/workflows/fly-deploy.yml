@@ -16,45 +16,31 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: docker/setup-buildx-action@v4
-
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Build and push image to Fly registry
+      # Remote builds avoid flaky `flyctl auth docker` / registry.fly.io 401s in CI.
+      - name: Deploy to Fly.io (remote build)
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
           set -euo pipefail
-          flyctl auth docker
-          IMAGE="registry.fly.io/xroga-api:${GITHUB_SHA}"
-          docker build -f Dockerfile.api -t "$IMAGE" .
-
-          # Fly registry occasionally returns 502 during push — retry with backoff.
           attempt=1
-          max_attempts=5
-          delay=8
-          until docker push "$IMAGE"; do
+          max_attempts=4
+          delay=12
+          until flyctl deploy \
+            --config fly.api.toml \
+            -a xroga-api \
+            --remote-only \
+            --ha=false; do
             if [ "$attempt" -ge "$max_attempts" ]; then
-              echo "docker push failed after ${max_attempts} attempts"
+              echo "flyctl deploy failed after ${max_attempts} attempts"
               exit 1
             fi
-            echo "docker push failed (attempt ${attempt}/${max_attempts}) — retrying in ${delay}s"
+            echo "deploy failed (attempt ${attempt}/${max_attempts}) — retrying in ${delay}s"
             sleep "$delay"
             attempt=$((attempt + 1))
             delay=$((delay * 2))
           done
-
-          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
-
-      - name: Deploy to Fly.io
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-        run: |
-          flyctl deploy \
-            --config fly.api.toml \
-            -a xroga-api \
-            --image "$IMAGE" \
-            --ha=false
 
       - name: Verify health
         run: |
