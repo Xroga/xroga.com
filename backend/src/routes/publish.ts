@@ -26,7 +26,7 @@ router.get('/status', async (req: AuthRequest, res) => {
       ...status,
       easProjectId: projectId || null,
       message:
-        'Web: Authorize GitHub + Vercel. Mobile: you pay Apple/Google once, save credentials, then one-click EAS publish on your Expo account.',
+        'Web: Authorize GitHub + Vercel for live deploy. Mobile: Connect Expo → Start EAS workflow (build handoff). Pasting Apple/Google credentials here does not guarantee store submission.',
     });
   } catch (err) {
     res.status(500).json({ ok: false, error: (err as Error).message });
@@ -62,7 +62,7 @@ router.post('/expo-token', async (req: AuthRequest, res) => {
       username: verified.username,
       masked: saved.masked,
       envVar: saved.envVar,
-      message: `Expo connected as @${verified.username}. Next: pay Apple/Google (if submitting), then click Publish.`,
+      message: `Expo connected as @${verified.username}. Next: link EAS project, then Start EAS workflow (store submit needs Expo/EAS credentials).`,
     });
   } catch (err) {
     res.status(400).json({ ok: false, error: (err as Error).message });

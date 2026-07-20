@@ -218,7 +218,7 @@ export default function HomeScreen() {
       <Text style={styles.kicker}>Xroga · Android + iOS</Text>
       <Text style={styles.title}>${name.replace(/`/g, "'")}</Text>
       <Text style={styles.body}>
-        Built by Xroga AI. Open in Expo Go, then ship store builds with EAS.
+        Built by Xroga AI. Open in Expo Go. Store builds need EAS setup on your Expo account — not automatic.
         Code lives on your GitHub — keep updating the same repo.
       </Text>
       <Link href="/about" asChild>
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     <h1>${name}</h1>
     <p>This repo is an <strong>Expo</strong> app for <strong>Android + iOS</strong>, built by Xroga AI.</p>
     <p>Clone from GitHub → <code>npm i</code> → <code>npx expo start</code> → open in Expo Go.</p>
-    <p>Vercel hosts this preview page; native binaries ship via Expo/EAS from the same GitHub repo.</p>
+    <p>Vercel hosts this <strong>preview story page only</strong> — not the mobile app. Native binaries need Expo/EAS on your account after setup.</p>
   </main>
 </body>
 </html>
@@ -362,28 +362,28 @@ EXPO_PUBLIC_API_URL=
     },
     {
       path: 'PUBLISH.md',
-      content: `# Publish ${name} (non-developer path)
+      content: `# Build / store handoff for ${name}
 
 Xroga builds the Expo app and pushes it to **your GitHub**.  
-You pay Apple / Google / Expo — then click **Publish** in Xroga. We trigger EAS for you.
+That is **source ready** (Expo Go path) — **not** App Store / Google Play published.
 
-## Simple path (recommended)
+## What Xroga does
+1. Generate Expo scaffold + push to your GitHub
+2. Optional: dispatch an **EAS workflow** after you Connect Expo in Xroga → Publish
 
-1. **Authorize GitHub** in Xroga (same as web apps)
-2. Create a free [Expo](https://expo.dev) account → Access tokens → paste in **Xroga → Publish**
-3. Link the EAS project (Project ID from expo.dev → Project settings) — or pick it after saving the token
-4. **Android:** pay Google Play Console (~$25 once) → paste service account JSON → click **Publish to Google Play**
-5. **iOS:** pay Apple Developer (~$99/yr) → paste app-specific password → click **Publish to App Store**
+## What you still do for stores
+1. Create an [Expo](https://expo.dev) account → Access tokens → Connect in **Xroga → Publish**
+2. Link the EAS project ID
+3. Configure Apple / Google credentials **inside Expo/EAS** (pasting them only in Xroga does not complete store submit)
+4. Click **Start Android/iOS EAS workflow** in Xroga — watch the run on expo.dev
+5. Apple/Google store review is separate and not automatic
 
-Xroga calls EAS Workflows on **your** Expo account. Store review is still Apple/Google (not instant).
-
-## What you pay vs Xroga
-
+## Fees (you pay)
 | You pay | Xroga pays |
 |---------|------------|
 | Google Play / Apple Developer fees | Nothing for stores |
-| Expo EAS build minutes | Encrypted vault + one-click trigger |
-| Your GitHub + (optional) Vercel | AI build usage on your Xroga plan |
+| Expo EAS build minutes | Encrypted vault + workflow dispatch |
+| Your GitHub | AI build usage on your Xroga plan |
 
 ## Advanced (CLI)
 
@@ -391,7 +391,7 @@ Xroga calls EAS Workflows on **your** Expo account. Store review is still Apple/
 npm i -g eas-cli
 export EXPO_TOKEN=…
 eas build -p android --profile production
-eas submit -p android
+eas submit -p android   # only after Expo/EAS has Play credentials
 \`\`\`
 `,
     },
@@ -408,9 +408,9 @@ npx expo start
 \`\`\`
 Scan the QR code with **Expo Go** (Android or iOS).
 
-## Publish to stores (your accounts)
-See **[PUBLISH.md](./PUBLISH.md)** — Expo/EAS builds on **your** Expo account.  
-Apple / Google fees are yours; Xroga does not auto-publish for free on shared accounts.
+## Build for stores (handoff)
+See **[PUBLISH.md](./PUBLISH.md)** — EAS workflows on **your** Expo account.  
+App Store / Play approval is separate; Xroga does not publish to stores for you.
 
 \`\`\`bash
 npm i -g eas-cli

@@ -25,6 +25,8 @@ export interface LandingPageOutputData {
   githubRepoName?: string;
   githubPushConfirmed?: boolean;
   fullyShipped?: boolean;
+  /** Non-web free-path artifact/source ready — not store published */
+  handoffReady?: boolean;
   buildOk?: boolean;
   shipped?: boolean;
   nextSteps?: string[];
@@ -179,6 +181,7 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
       cached?.vercelDeployed === true;
     const backendShipped =
       data.fullyShipped === true ||
+      data.handoffReady === true ||
       Boolean(data.shipVerify) ||
       (Array.isArray(data.shipBlockers) && data.shipBlockers.length > 0);
 

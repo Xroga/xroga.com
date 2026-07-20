@@ -199,8 +199,8 @@ jobs:
       <h1>${name}</h1>
       <p>Electron desktop scaffold by <strong>Xroga</strong>. This page is a web preview of the product story.</p>
       <div class="card">
-        <p><strong>Free path:</strong> <code>npm install && npm start</code> locally. After ship, Xroga tags a release so GitHub Actions builds an unsigned zip.</p>
-        <p><strong>Paid by you (optional):</strong> Apple/Windows code signing and store fees — Xroga only scaffolds + triggers workflows on your GitHub.</p>
+        <p><strong>Free path:</strong> <code>npm install && npm start</code> locally. After GitHub push, Xroga can start an unsigned zip workflow on GitHub Actions.</p>
+        <p><strong>Not included:</strong> code signing, notarization, or Mac/Microsoft Store publish — those stay on you.</p>
       </div>
     </main>
   </body>
@@ -209,20 +209,20 @@ jobs:
     },
     {
       path: 'PUBLISH.md',
-      content: `# Publish ${name} (Electron desktop)
+      content: `# Package ${name} (Electron desktop)
 
 ## Free path — local + GitHub Releases
 1. \`npm install && npm start\` — run unsigned locally
 2. Push to your sticky GitHub repo (Xroga does this in the ship loop)
-3. Xroga creates a \`v*\` tag (or dispatches **Desktop release**) so Actions builds the zip
-4. Download the zip from GitHub Releases and distribute to testers
+3. Xroga can create a \`v*\` tag / dispatch **Desktop release** so Actions builds an unsigned zip
+4. Download the zip from GitHub Releases for testing — this is **not** a store release
 
-## Paid by you (optional, unavoidable for stores/signing)
+## Not done by Xroga
 - Apple Developer / notarization
 - Windows code signing certificate
-- Microsoft Store / Mac App Store fees
+- Microsoft Store / Mac App Store submission
 
-Xroga does **not** hold signing certificates or pay store fees — same pattern as Expo/EAS on **your** accounts.
+Xroga scaffolds + can trigger GitHub Actions on **your** repo. It does not sign or store-publish the app.
 `,
     },
     {

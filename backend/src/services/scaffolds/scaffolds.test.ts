@@ -140,8 +140,8 @@ describe('scaffolds', () => {
     assert.match(appJson, /"android"/);
     assert.match(appJson, /projectId/);
     const publish = files.find((f) => f.path === 'PUBLISH.md')!.content;
-    assert.match(publish, /non-developer path/i);
-    assert.match(publish, /Publish to Google Play/i);
+    assert.match(publish, /store handoff/i);
+    assert.match(publish, /not.*App Store|not.*Google Play/i);
   });
 
   it('chrome extension scaffold includes MV3 manifest + zip script', () => {
