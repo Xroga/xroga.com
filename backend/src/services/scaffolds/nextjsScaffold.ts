@@ -1,5 +1,7 @@
 import type { ProjectFile } from '../integrations/githubDeploy.js';
 import { buildSupabaseProjectSql } from './supabaseProjectSql.js';
+import { detectScaffoldFeatures } from './detectScaffold.js';
+import { buildAgentFeatureFiles, buildCryptoFeatureFiles } from './featurePacks.js';
 
 function slugify(name: string): string {
   return name
@@ -13,6 +15,7 @@ function slugify(name: string): string {
  * Production-shaped Next.js App Router scaffold.
  * Env vars match Xroga vault → Vercel sync (OPENAI_*, SUPABASE_*, STRIPE_*, etc.).
  * Supabase data/auth/storage use the USER's project keys — never Xroga's platform DB.
+ * Crypto + automation packs layer on when the prompt asks for them.
  */
 export function buildNextjsScaffold(opts: {
   projectName: string;
@@ -20,12 +23,40 @@ export function buildNextjsScaffold(opts: {
 }): ProjectFile[] {
   const name = opts.projectName.trim() || 'Xroga App';
   const slug = slugify(name);
+  const features = detectScaffoldFeatures(opts.userPrompt || '');
   const supabaseSql = buildSupabaseProjectSql({
     projectName: name,
     userPrompt: opts.userPrompt,
   });
 
-  return [
+  const vercelConfig: Record<string, unknown> = {
+    framework: 'nextjs',
+    buildCommand: 'npm run build',
+    installCommand: 'npm install',
+  };
+  if (features.agent) {
+    vercelConfig.crons = [{ path: '/api/cron/agent', schedule: '0 14 * * *' }];
+  }
+
+  const featureImports = [
+    features.crypto ? `import { CryptoPrices } from '@/components/CryptoPrices';` : '',
+    features.crypto ? `import { WalletConnectButton } from '@/components/WalletConnectButton';` : '',
+    features.agent ? `import { AgentRunner } from '@/components/AgentRunner';` : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const featureSections = [
+    features.crypto
+      ? `      <CryptoPrices />
+      <WalletConnectButton />`
+      : '',
+    features.agent ? `      <AgentRunner />` : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const base: ProjectFile[] = [
     {
       path: 'package.json',
       content: JSON.stringify(
@@ -98,15 +129,7 @@ export default nextConfig;
     },
     {
       path: 'vercel.json',
-      content: JSON.stringify(
-        {
-          framework: 'nextjs',
-          buildCommand: 'npm run build',
-          installCommand: 'npm install',
-        },
-        null,
-        2,
-      ),
+      content: JSON.stringify(vercelConfig, null, 2),
     },
     {
       path: 'middleware.ts',
@@ -226,7 +249,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     },
     {
       path: 'app/page.tsx',
-      content: `import Link from 'next/link';
+      content: `${featureImports ? featureImports + '\n' : ''}import Link from 'next/link';
 
 export default function HomePage() {
   return (
@@ -257,6 +280,7 @@ export default function HomePage() {
           <code>supabase/migrations/001_initial.sql</code> once).
         </p>
       </section>
+${featureSections}
     </main>
   );
 }
@@ -515,6 +539,11 @@ LEMONSQUEEZY_API_KEY=
 LEMONSQUEEZY_STORE_ID=
 LEMONSQUEEZY_WEBHOOK_SECRET=
 LEMONSQUEEZY_VARIANT_ID=
+# Automation agent (optional)
+AGENT_MODEL=gpt-4o-mini
+AGENT_CRON_SECRET=
+CRON_SECRET=
+AGENT_CRON_GOAL=
 `,
     },
     {
@@ -617,16 +646,21 @@ Built with **Xroga AI** — coding agent that pushes to your GitHub and deploys 
 - Supabase auth (\`/login\`, \`/auth/*\`) against **your** project
 - \`supabase/migrations/001_initial.sql\` — profiles, RLS, optional storage
 - Lemon Squeezy checkout (\`/api/checkout\`) + webhook (\`/api/webhooks/lemon-squeezy\`)
-
+${features.crypto ? '- Crypto pack: live \`/api/prices\` + wallet connect demo — see CRYPTO.md\n' : ''}${features.agent ? '- Automation pack: \`/api/agent/run\` + Vercel Cron — see AGENT.md\n' : ''}
 ## Ship
 1. Authorize GitHub + Vercel in Xroga Ship setup
 2. Authorize Supabase (create or pick your project) — Xroga applies schema + memory + storage
 3. Optional: save Lemon Squeezy API key / store / variant / webhook secret in Xroga Integrations
 4. Build in Workspace — Xroga pushes, syncs vault → Vercel env when possible, deploys
+5. Later prompts update the **same** GitHub repo automatically (we remember it after first ship)
 
 ${opts.userPrompt ? `## Prompt\n\n${opts.userPrompt.slice(0, 800)}\n` : ''}
 `,
     },
     ...supabaseSql,
   ];
+
+  if (features.crypto) base.push(...buildCryptoFeatureFiles(slug));
+  if (features.agent) base.push(...buildAgentFeatureFiles(slug));
+  return base;
 }

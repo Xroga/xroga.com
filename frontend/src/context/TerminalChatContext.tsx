@@ -1578,12 +1578,28 @@ export function TerminalChatProvider({
         }
 
         const repoContext = repoContextEarly ?? getSelectedRepoContext();
+        // Sticky fallback: if chat bar has no selection yet, use GitHub default_repo from first ship.
+        let stickyTargetRepo = repoContext?.repo;
+        let stickyTargetBranch = repoContext?.branch ?? 'main';
+        if (!stickyTargetRepo?.includes('/')) {
+          try {
+            const ghStatus = await api.github.status();
+            if (ghStatus.defaultRepo?.includes('/')) {
+              stickyTargetRepo = ghStatus.defaultRepo;
+              stickyTargetBranch = 'main';
+              saveSelectedRepoContext({ repo: stickyTargetRepo, branch: stickyTargetBranch });
+              notifyGithubRepoContext(stickyTargetRepo, stickyTargetBranch);
+            }
+          } catch {
+            /* non-blocking */
+          }
+        }
 
         const usePhase1Engine =
           !isBuildUpdate &&
           shouldRouteToPhase1(displayPrompt, threadForMemory, attachments, {
             completedWebsiteBuild: completedWebsiteBuildRef.current,
-            selectedRepo: repoContext?.repo ?? repoContextEarly?.repo,
+            selectedRepo: stickyTargetRepo ?? repoContext?.repo ?? repoContextEarly?.repo,
           });
 
         let runSwarmBuild = !usePhase1Engine;
@@ -1721,9 +1737,9 @@ export function TerminalChatProvider({
             buildOriginalPrompt: buildSession?.originalPrompt,
             buildUpdate:
               isBuildUpdate ||
-              (Boolean(repoContext?.repo?.includes('/')) && isWebsiteUpdateRequest(displayPrompt)),
-            githubTargetRepo: repoContext?.repo,
-            githubTargetBranch: repoContext?.branch,
+              (Boolean(stickyTargetRepo?.includes('/')) && isWebsiteUpdateRequest(displayPrompt)),
+            githubTargetRepo: stickyTargetRepo,
+            githubTargetBranch: stickyTargetBranch,
             ...(priorSite ? { priorSite } : {}),
           },
           onProgress: (event) => {
@@ -2231,6 +2247,8 @@ export function TerminalChatProvider({
                     branch: repoContext?.branch ?? 'main',
                   });
                   notifyGithubRepoContext(ghName, repoContext?.branch ?? 'main');
+                  // Persist sticky default on the server so later prompts / devices hit the same repo
+                  void api.github.updateSettings('manual', ghName).catch(() => {});
                   // Save to Supabase even if push later — so sidebar cloud list is never empty
                   void api.projects
                     .create({

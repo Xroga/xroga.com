@@ -52,6 +52,7 @@ import {
   pushBuildToGitHub,
   deployToAllPlatforms,
   isGitHubConnected,
+  getGithubDefaultRepo,
 } from '../services/integrations/githubDeploy.js';
 import { getVercelToken } from '../services/integrations/vercelAuth.js';
 import { getUserSupabaseStatus } from '../services/integrations/userProviderKeys.js';
@@ -61,6 +62,7 @@ import {
   detectScaffoldKind,
   mergeScaffoldWithGenerated,
 } from '../services/projectScaffold.js';
+import { detectScaffoldFeatures } from '../services/scaffolds/detectScaffold.js';
 import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
 import {
   getProjectMemory,
@@ -514,7 +516,22 @@ export async function runBuildPipeline(opts: {
       throw err;
     }
   };
-  const meta = parseClientMeta(opts.clientMeta);
+  const metaRaw = parseClientMeta(opts.clientMeta);
+  // Prefer Terminal selection; fall back to sticky default from first ship so updates hit the live product.
+  const stickyDefault =
+    !metaRaw?.githubTargetRepo?.includes('/')
+      ? await getGithubDefaultRepo(opts.userId).catch(() => null)
+      : null;
+  const meta: BuildClientMeta | undefined = metaRaw
+    ? {
+        ...metaRaw,
+        githubTargetRepo:
+          metaRaw.githubTargetRepo ||
+          (stickyDefault?.includes('/') ? stickyDefault : undefined),
+      }
+    : stickyDefault?.includes('/')
+      ? { githubTargetRepo: stickyDefault }
+      : undefined;
   const userFacingPrompt = (meta?.userPrompt || opts.prompt).trim();
 
   createRun(opts.userId, userFacingPrompt, runId);
@@ -1035,15 +1052,22 @@ export async function runBuildPipeline(opts: {
         projectName,
       });
       nextFiles = mergeScaffoldWithGenerated(scaffoldFiles, nextFiles);
+      const features = detectScaffoldFeatures(userFacingPrompt);
+      const featureBits = [
+        features.crypto ? 'crypto prices + wallet demo' : null,
+        features.agent ? 'automation agent + cron' : null,
+      ].filter(Boolean);
       emit({
         agent: 'builder',
         status: 'scaffolding',
         message:
           scaffoldKind === 'expo'
             ? 'Merged Android/iOS Expo scaffold under your build'
-            : 'Merged Next.js auth/API scaffold (vault keys → Vercel env)',
+            : featureBits.length
+              ? `Merged Next.js scaffold with ${featureBits.join(' · ')}`
+              : 'Merged Next.js auth/API scaffold (vault keys → Vercel env)',
         swarmStatusLabel: 'Scaffold',
-        swarmActivity: scaffoldKind,
+        swarmActivity: featureBits.length ? featureBits.join(', ') : scaffoldKind,
         swarmTodos: todosForBuild('build'),
       });
     }
@@ -1391,7 +1415,9 @@ export async function runBuildPipeline(opts: {
   if (!githubOk) shipBlockers.push('Connect GitHub to push code to your repo');
   if (!vercelOk) shipBlockers.push('Connect Vercel to deploy live to your account');
   if (isUpdate && githubOk && !meta?.githubTargetRepo) {
-    shipBlockers.push('Select the same GitHub repo to update (no new repo for edits)');
+    shipBlockers.push(
+      'Update mode needs your ship repo. After the first build we remember it — or pick it once in Terminal.',
+    );
   }
   if (patchAborted) shipBlockers.push('Unsafe patches aborted — live site unchanged');
   if (security.blocked) shipBlockers.push('Critical secrets blocked the push');
@@ -1437,9 +1463,10 @@ export async function runBuildPipeline(opts: {
     emit({
       agent: 'deploy',
       status: 'push_skipped',
-      message: 'Select the same GitHub repo to update (edit/delete) — no new repo will be created.',
+      message:
+        'No target repo yet. Ship once (we create + remember it), or pick your live repo in Terminal — updates never invent a new repo.',
       swarmStatusLabel: 'Need repo',
-      swarmActivity: 'Pick target repo',
+      swarmActivity: 'Pick or ship once',
       swarmTodos: todosForBuild('push'),
     });
   }

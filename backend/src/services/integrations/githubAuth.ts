@@ -171,3 +171,32 @@ export async function clearGitHubConnection(userId: string): Promise<void> {
     .eq('provider', 'github');
   await deleteGitHubTokenFromStorage(userId);
 }
+
+/** Persist the live ship target so later updates auto-bind without re-picking. */
+export async function setGithubDefaultRepo(userId: string, repoFullName: string): Promise<void> {
+  const repo = repoFullName.trim();
+  if (!repo.includes('/')) return;
+
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase
+    .from('github_integrations')
+    .update({ default_repo: repo, repo_strategy: 'manual' })
+    .eq('user_id', userId);
+
+  if (error && !isMissingTableError(error.message)) {
+    console.warn('[githubAuth] setGithubDefaultRepo:', error.message);
+  }
+
+  const token = await getGitHubToken(userId);
+  const stored = await getGitHubTokenFromStorage(userId);
+  if (token) {
+    await saveGitHubTokenToStorage(userId, {
+      access_token: token,
+      username: stored?.username ?? 'github-user',
+      provider_user_id: stored?.provider_user_id ?? '',
+      repo_strategy: 'manual',
+      default_repo: repo,
+      updated_at: new Date().toISOString(),
+    }).catch(() => undefined);
+  }
+}
