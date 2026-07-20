@@ -48,6 +48,10 @@ export function vercelOAuthCallbackUrl(): string {
   return `${siteUrl()}/dashboard/integrations/vercel/callback`;
 }
 
+export function supabaseOAuthCallbackUrl(): string {
+  return `${siteUrl()}/dashboard/integrations/supabase/callback`;
+}
+
 export const API_URL = resolveApiUrl();
 
 export interface ChatAttachment {
@@ -644,6 +648,81 @@ export const api = {
         '/api/vercel/deploy',
         { method: 'POST', body: JSON.stringify(payload) }
       ),
+  },
+  supabase: {
+    oauthUrl: () => {
+      const redirectUri = supabaseOAuthCallbackUrl();
+      return apiFetch<{
+        url: string | null;
+        redirectUri: string;
+        oauthConfigured: boolean;
+        message?: string;
+      }>(`/api/supabase/oauth?redirect_uri=${encodeURIComponent(redirectUri)}`);
+    },
+    connect: (code: string, state: string) =>
+      apiFetch<{
+        ok: boolean;
+        oauthConnected?: boolean;
+        projects?: Array<{ id: string; ref: string; name: string; region?: string }>;
+        autoSelected?: string | null;
+        needsProjectPick?: boolean;
+        provision?: { ok?: boolean; schemaApplied?: boolean; message?: string };
+        status?: { ready?: boolean; provisioned?: boolean; message?: string };
+        message?: string;
+        error?: string;
+      }>('/api/supabase/connect', {
+        method: 'POST',
+        body: JSON.stringify({ code, state, redirectUri: supabaseOAuthCallbackUrl() }),
+      }),
+    status: () =>
+      apiFetch<{
+        connected: boolean;
+        ready: boolean;
+        provisioned?: boolean;
+        oauthConnected?: boolean;
+        oauthConfigured?: boolean;
+        message: string;
+      }>('/api/supabase/status'),
+    projects: () =>
+      apiFetch<{
+        projects: Array<{ id: string; ref: string; name: string; region?: string }>;
+      }>('/api/supabase/projects'),
+    selectProject: (body: {
+      projectRef: string;
+      projectName?: string;
+      vercelProject?: string;
+    }) =>
+      apiFetch<{
+        ok: boolean;
+        provision?: { ok?: boolean; schemaApplied?: boolean; message?: string };
+        status?: { ready?: boolean; provisioned?: boolean; message?: string };
+        message?: string;
+        error?: string;
+      }>('/api/supabase/select-project', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    organizations: () =>
+      apiFetch<{
+        organizations: Array<{ id: string; name: string; slug?: string }>;
+      }>('/api/supabase/organizations'),
+    createProject: (body: {
+      name: string;
+      organizationId: string;
+      region?: string;
+      vercelProject?: string;
+    }) =>
+      apiFetch<{
+        ok: boolean;
+        projectRef?: string;
+        provision?: { message?: string };
+        message?: string;
+        error?: string;
+      }>('/api/supabase/create-project', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    disconnect: () => apiFetch('/api/supabase/disconnect', { method: 'DELETE' }),
   },
   integrations: {
     aiCatalog: () =>

@@ -1305,12 +1305,15 @@ export async function runBuildPipeline(opts: {
   try {
     const { getUserProviderKey } = await import('../services/integrations/userProviderKeys.js');
     const { provisionUserSupabase } = await import('../services/integrations/supabaseProvision.js');
-    const [sbUrl, sbService, sbPat, sbDb] = await Promise.all([
+    const [sbUrl, sbService, sbDb] = await Promise.all([
       getUserProviderKey(opts.userId, 'supabase_url'),
       getUserProviderKey(opts.userId, 'supabase'),
-      getUserProviderKey(opts.userId, 'supabase_pat'),
       getUserProviderKey(opts.userId, 'supabase_db_password'),
     ]);
+    const { getUserSupabaseManagementToken } = await import(
+      '../services/integrations/supabaseProvision.js'
+    );
+    const sbPat = await getUserSupabaseManagementToken(opts.userId);
     if (sbUrl && sbService && (sbPat || sbDb)) {
       emit({
         agent: 'deploy',

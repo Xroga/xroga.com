@@ -30,15 +30,15 @@ export function ConnectShipWizard() {
         api.github.status().catch(() => ({ connected: false })),
         api.vercel.status().catch(() => ({ connected: false })),
         api.integrations.providerKeys().catch(() => ({ keys: [] as Array<{ provider?: string; connected?: boolean }> })),
-        api.integrations.supabaseStatus().catch(() => ({ ready: false, connected: false })),
+        api.supabase.status().catch(() => ({ ready: false, connected: false, provisioned: false })),
       ]);
       setGithubOk(Boolean((gh as { connected?: boolean }).connected));
       setVercelOk(Boolean((ve as { connected?: boolean }).connected));
       const list = (keys as { keys?: Array<{ provider?: string; connected?: boolean }> }).keys ?? [];
       const connected = list.filter((k) => k.connected);
       setSupabaseOk(
-        Boolean((sb as { ready?: boolean; provisioned?: boolean }).ready) ||
-          Boolean((sb as { provisioned?: boolean }).provisioned),
+        Boolean((sb as { provisioned?: boolean }).provisioned) ||
+          Boolean((sb as { ready?: boolean }).ready),
       );
       setKeysOk(
         connected.some(
@@ -110,14 +110,14 @@ export function ConnectShipWizard() {
     {
       id: 'supabase',
       title: '3. Connect Supabase',
-      body: 'One-click: Access Token → pick project. Xroga auto-creates schema, AI memory & storage on YOUR Supabase.',
+      body: 'Authorize once — Xroga fetches keys and auto-runs SQL (schema, AI memory, storage) on YOUR project.',
       done: supabaseOk,
       optional: true,
       action: () => {
         setShowSupabase(true);
         setShowKeys(false);
       },
-      label: supabaseOk ? 'Connected' : 'Connect Supabase',
+      label: supabaseOk ? 'Connected' : 'Authorize Supabase',
     },
     {
       id: 'keys',
