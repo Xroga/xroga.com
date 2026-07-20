@@ -1,4 +1,5 @@
 import type { ProjectFile } from '../integrations/githubDeploy.js';
+import { buildSupabaseProjectSql } from './supabaseProjectSql.js';
 
 function slugify(name: string): string {
   return name
@@ -11,6 +12,7 @@ function slugify(name: string): string {
 /**
  * Production-shaped Next.js App Router scaffold.
  * Env vars match Xroga vault → Vercel sync (OPENAI_*, SUPABASE_*, STRIPE_*, etc.).
+ * Supabase data/auth/storage use the USER's project keys — never Xroga's platform DB.
  */
 export function buildNextjsScaffold(opts: {
   projectName: string;
@@ -18,6 +20,10 @@ export function buildNextjsScaffold(opts: {
 }): ProjectFile[] {
   const name = opts.projectName.trim() || 'Xroga App';
   const slug = slugify(name);
+  const supabaseSql = buildSupabaseProjectSql({
+    projectName: name,
+    userPrompt: opts.userPrompt,
+  });
 
   return [
     {
@@ -103,9 +109,100 @@ export default nextConfig;
       ),
     },
     {
-      path: 'next-env.d.ts',
-      content: `/// <reference types="next" />
-/// <reference types="next/image-types/global" />
+      path: 'middleware.ts',
+      content: `import { createServerClient } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
+
+/** Refresh Supabase auth cookies on every request (user's project). */
+export async function middleware(request: NextRequest) {
+  let response = NextResponse.next({ request });
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return response;
+
+  const supabase = createServerClient(url, key, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        for (const { name, value } of cookiesToSet) {
+          request.cookies.set(name, value);
+        }
+        response = NextResponse.next({ request });
+        for (const { name, value, options } of cookiesToSet) {
+          response.cookies.set(name, value, options);
+        }
+      },
+    },
+  });
+
+  await supabase.auth.getUser();
+  return response;
+}
+
+export const config = {
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+};
+`,
+    },
+    {
+      path: 'app/globals.css',
+      content: `:root {
+  --bg: #0b0f14;
+  --fg: #f4f7fb;
+  --muted: #9aa7b5;
+  --card: #121821;
+  --accent: #5b8cff;
+  --border: rgba(255, 255, 255, 0.1);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: radial-gradient(1200px 600px at 10% -10%, #1a2740 0%, var(--bg) 55%);
+  color: var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+a { color: var(--accent); }
+main { max-width: 960px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+.hero { display: grid; gap: 0.75rem; margin-bottom: 2rem; }
+.hero h1 { font-size: clamp(2rem, 4vw, 3rem); margin: 0; letter-spacing: -0.03em; }
+.hero p { margin: 0; color: var(--muted); line-height: 1.55; max-width: 42rem; }
+.panel {
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.25rem;
+  display: grid;
+  gap: 0.85rem;
+}
+.row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+button, .button {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.7rem 1.1rem;
+  background: var(--accent);
+  color: #061018;
+  font-weight: 650;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.25);
+  color: inherit;
+}
 `,
     },
     {
@@ -115,7 +212,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: ${JSON.stringify(name)},
-  description: 'Built with Xroga AI — coding agent that ships to GitHub + Vercel',
+  description: 'Built with Xroga AI — ships to your GitHub + Vercel; data on your Supabase.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -128,57 +225,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 `,
     },
     {
-      path: 'app/globals.css',
-      content: `:root {
-  --bg: #0b1220;
-  --fg: #f4f7fb;
-  --accent: #3d9cf0;
-  --muted: #9db0c7;
-  --panel: rgba(255, 255, 255, 0.05);
-}
-
-* { box-sizing: border-box; }
-html, body {
-  margin: 0;
-  min-height: 100%;
-  font-family: "Segoe UI", "Avenir Next", Georgia, sans-serif;
-  color: var(--fg);
-  background:
-    radial-gradient(1200px 600px at 10% -10%, #1a3a5c 0%, transparent 55%),
-    radial-gradient(900px 500px at 90% 0%, #12324a 0%, transparent 50%),
-    var(--bg);
-}
-a { color: var(--accent); }
-main { max-width: 920px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
-.hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -0.03em; margin: 0 0 0.75rem; }
-.hero p { color: var(--muted); font-size: 1.1rem; line-height: 1.6; max-width: 38rem; }
-.panel {
-  margin-top: 2rem;
-  padding: 1.25rem 1.4rem;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 18px;
-  background: var(--panel);
-}
-.row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; }
-button, .btn {
-  appearance: none;
-  border: 0;
-  border-radius: 999px;
-  padding: 0.7rem 1.15rem;
-  font-weight: 650;
-  cursor: pointer;
-  background: var(--accent);
-  color: #041018;
-  text-decoration: none;
-}
-button.ghost, .btn.ghost {
-  background: transparent;
-  color: var(--fg);
-  border: 1px solid rgba(255,255,255,0.2);
-}
-`,
-    },
-    {
       path: 'app/page.tsx',
       content: `import Link from 'next/link';
 
@@ -186,21 +232,28 @@ export default function HomePage() {
   return (
     <main>
       <section className="hero">
+        <p style={{ color: 'var(--muted)', fontSize: 14, margin: 0 }}>Built with Xroga</p>
         <h1>${name.replace(/`/g, '')}</h1>
         <p>
-          Shipped by Xroga AI — working code on your GitHub, live on your Vercel.
-          API routes and auth read secrets from Vercel env (never hardcoded).
+          Live on your Vercel. Code on your GitHub. Auth, database, and storage use
+          <strong> your Supabase project</strong> when connected in Xroga Integrations.
         </p>
         <div className="row">
-          <Link className="btn" href="/login">Sign in</Link>
-          <a className="btn ghost" href="/api/health">Health API</a>
+          <Link className="button" href="/login">
+            Sign in
+          </Link>
+          <a className="button" href="/api/health">
+            Health
+          </a>
         </div>
       </section>
       <section className="panel">
         <strong>Live features</strong>
         <p style={{ color: 'var(--muted)', marginBottom: 0 }}>
-          Connect Supabase + OpenAI (or Stripe) keys in Xroga Integrations — they sync into
-          this Vercel project env and power <code>/api/*</code> routes.
+          Connect Supabase (URL + anon + service role) and OpenAI/Stripe in Xroga
+          Integrations — they sync into this Vercel project env and power{' '}
+          <code>/api/*</code> routes. Apply <code>supabase/migrations/001_initial.sql</code>{' '}
+          in your Supabase SQL editor once.
         </p>
       </section>
     </main>
@@ -216,25 +269,14 @@ export default function HomePage() {
       <section className="hero">
         <h1>Sign in</h1>
         <p>
-          Wire Supabase Auth with <code>NEXT_PUBLIC_SUPABASE_URL</code> and
-          <code> NEXT_PUBLIC_SUPABASE_ANON_KEY</code> from your Xroga vault.
+          Magic link auth against <strong>your</strong> Supabase Auth
+          (<code>NEXT_PUBLIC_SUPABASE_URL</code> from Xroga vault → Vercel).
         </p>
       </section>
       <form className="panel" action="/auth/sign-in" method="post">
         <label style={{ display: 'grid', gap: '0.4rem' }}>
           Email
-          <input
-            name="email"
-            type="email"
-            required
-            style={{
-              padding: '0.7rem 0.85rem',
-              borderRadius: 12,
-              border: '1px solid rgba(255,255,255,0.18)',
-              background: 'rgba(0,0,0,0.25)',
-              color: 'inherit',
-            }}
-          />
+          <input name="email" type="email" required placeholder="you@company.com" />
         </label>
         <div className="row">
           <button type="submit">Continue with magic link</button>
@@ -261,15 +303,42 @@ export function createClient() {
     },
     {
       path: 'lib/supabase/server.ts',
-      content: `import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+      content: `import { createServerClient } from '@supabase/ssr';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { cookies } from 'next/headers';
 
-/** Server-only client — uses service role when available, else anon. */
-export function createServerClient() {
+/** Cookie-aware server client for the USER's Supabase project. */
+export async function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key =
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) {
-    throw new Error('Missing Supabase env — sync keys from Xroga Integrations → Vercel');
+    throw new Error('Missing Supabase env — connect Supabase in Xroga Integrations → sync to Vercel');
+  }
+  const cookieStore = await cookies();
+  return createServerClient(url, key, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        try {
+          for (const { name, value, options } of cookiesToSet) {
+            cookieStore.set(name, value, options);
+          }
+        } catch {
+          /* called from a Server Component — middleware will refresh */
+        }
+      },
+    },
+  });
+}
+
+/** Service-role client for trusted server routes only (never import in client components). */
+export function createServiceClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY — save service role in Xroga vault');
   }
   return createSupabaseClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -286,7 +355,10 @@ export async function GET() {
     ok: true,
     app: ${JSON.stringify(name)},
     hasOpenAI: Boolean(process.env.OPENAI_API_KEY),
-    hasSupabase: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+    hasSupabase: Boolean(
+      process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    ),
+    hasSupabaseServiceRole: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
     hasStripe: Boolean(process.env.STRIPE_SECRET_KEY),
   });
 }
@@ -356,15 +428,15 @@ export async function POST(req: Request) {
     {
       path: 'app/auth/callback/route.ts',
       content: `import { NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
-/** Supabase Auth callback — exchange code for session when configured. */
+/** Supabase Auth callback — exchange code and persist cookies (user's project). */
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get('code');
   if (code) {
     try {
-      const supabase = createServerClient();
+      const supabase = await createClient();
       await supabase.auth.exchangeCodeForSession(code);
     } catch {
       /* env may be missing until user syncs keys */
@@ -377,7 +449,7 @@ export async function GET(request: Request) {
     {
       path: 'app/auth/sign-in/route.ts',
       content: `import { NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   const form = await request.formData();
@@ -387,7 +459,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const supabase = createServerClient();
+    const supabase = await createClient();
     const origin = new URL(request.url).origin;
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -402,7 +474,7 @@ export async function POST(request: Request) {
       {
         error:
           (err as Error).message ||
-          'Supabase not configured — sync supabase + supabase_anon keys from Xroga',
+          'Supabase not configured — connect project URL + anon key in Xroga Integrations',
       },
       { status: 503 },
     );
@@ -411,8 +483,26 @@ export async function POST(request: Request) {
 `,
     },
     {
+      path: 'app/auth/sign-out/route.ts',
+      content: `import { NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+
+export async function POST(request: Request) {
+  const origin = new URL(request.url).origin;
+  try {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+  } catch {
+    /* ignore */
+  }
+  return NextResponse.redirect(new URL('/', origin), 303);
+}
+`,
+    },
+    {
       path: '.env.example',
       content: `# Synced from Xroga Integrations → Vercel env (never commit real secrets)
+# Data/auth/storage use YOUR Supabase project when these are set.
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
@@ -428,17 +518,20 @@ STRIPE_SECRET_KEY=
 Built with **Xroga AI** — coding agent that pushes to your GitHub and deploys on your Vercel.
 
 ## What you get
-- Next.js App Router UI
-- \`/api/health\` and \`/api/chat\` (uses \`OPENAI_API_KEY\` / \`OPENROUTER_API_KEY\` from Vercel env)
-- Supabase auth scaffolding (\`/login\`, \`/auth/*\`)
+- Next.js App Router UI + middleware session refresh
+- \`/api/health\` and \`/api/chat\`
+- Supabase auth (\`/login\`, \`/auth/*\`) against **your** project
+- \`supabase/migrations/001_initial.sql\` — profiles, RLS, optional storage
 
-## Secrets
-1. Save keys in Xroga → Integrations (openai, supabase, stripe, …)
-2. Connect Vercel (Full Account PAT recommended for env write)
-3. Redeploy — Xroga syncs vault → Vercel env (never into Git)
+## Ship
+1. Connect GitHub + Vercel in Xroga
+2. Connect Supabase (URL + anon + service role) — data stays in **your** project
+3. Apply \`supabase/migrations/001_initial.sql\` in your Supabase SQL editor
+4. Build in Workspace — Xroga pushes, syncs vault → Vercel env, deploys
 
 ${opts.userPrompt ? `## Prompt\n\n${opts.userPrompt.slice(0, 800)}\n` : ''}
 `,
     },
+    ...supabaseSql,
   ];
 }

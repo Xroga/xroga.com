@@ -21,6 +21,8 @@ export const ALLOWED_PROVIDERS = [
   'huggingface',
   'replicate',
   'stripe',
+  /** User's Supabase project — data/auth/storage live on THEIR account */
+  'supabase_url',
   'supabase',
   'supabase_anon',
   'resend',
@@ -45,6 +47,7 @@ export const ENV_VAR_BY_PROVIDER: Record<string, string> = {
   openrouter: 'OPENROUTER_API_KEY',
   replicate: 'REPLICATE_API_TOKEN',
   stripe: 'STRIPE_SECRET_KEY',
+  supabase_url: 'NEXT_PUBLIC_SUPABASE_URL',
   supabase: 'SUPABASE_SERVICE_ROLE_KEY',
   supabase_anon: 'NEXT_PUBLIC_SUPABASE_ANON_KEY',
   resend: 'RESEND_API_KEY',
@@ -152,9 +155,21 @@ export async function saveUserProviderKey(
     throw new Error('Custom keys require an env var name (e.g. MY_SERVICE_API_KEY)');
   }
   const trimmed = apiKey.trim();
-  const minLen = p === 'google_play' ? 32 : 8;
+  const minLen = p === 'google_play' ? 32 : p === 'supabase_url' ? 12 : 8;
   if (trimmed.length < minLen) throw new Error('API key / credential too short');
   if (trimmed.length > 48_000) throw new Error('Credential too long (max ~48KB)');
+
+  if (p === 'supabase_url') {
+    let parsed: URL;
+    try {
+      parsed = new URL(trimmed);
+    } catch {
+      throw new Error('Supabase URL must be a valid https URL (e.g. https://xxxx.supabase.co)');
+    }
+    if (parsed.protocol !== 'https:') {
+      throw new Error('Supabase URL must use https://');
+    }
+  }
 
   const envVar = envVarForProvider(p, opts?.envVarName);
   const supabase = getSupabaseAdmin();
@@ -360,6 +375,13 @@ export function providerCatalog() {
     { id: 'deepseek', name: 'DeepSeek', envVar: 'DEEPSEEK_API_KEY', freeTier: false, category: 'ai' },
     { id: 'grok', name: 'xAI Grok', envVar: 'XAI_API_KEY', freeTier: false, category: 'ai' },
     { id: 'stripe', name: 'Stripe', envVar: 'STRIPE_SECRET_KEY', freeTier: false, category: 'payments' },
+    {
+      id: 'supabase_url',
+      name: 'Supabase project URL',
+      envVar: 'NEXT_PUBLIC_SUPABASE_URL',
+      freeTier: true,
+      category: 'backend',
+    },
     { id: 'supabase', name: 'Supabase service role', envVar: 'SUPABASE_SERVICE_ROLE_KEY', freeTier: true, category: 'backend' },
     { id: 'supabase_anon', name: 'Supabase anon key', envVar: 'NEXT_PUBLIC_SUPABASE_ANON_KEY', freeTier: true, category: 'backend' },
     { id: 'resend', name: 'Resend email', envVar: 'RESEND_API_KEY', freeTier: true, category: 'email' },
@@ -388,4 +410,63 @@ export function providerCatalog() {
     },
     { id: 'custom', name: 'Custom env var', envVar: 'CUSTOM_API_KEY', freeTier: false, category: 'custom' },
   ];
+}
+
+export interface UserSupabaseStatus {
+  connected: boolean;
+  ready: boolean;
+  hasUrl: boolean;
+  hasAnonKey: boolean;
+  hasServiceRole: boolean;
+  urlMasked?: string;
+  message: string;
+}
+
+/** True when the user can power a generated app against THEIR Supabase project. */
+export async function getUserSupabaseStatus(userId: string): Promise<UserSupabaseStatus> {
+  const keys = await listUserProviderKeys(userId);
+  const byProvider = new Map(keys.map((k) => [k.provider, k]));
+  const url = byProvider.get('supabase_url');
+  const anon = byProvider.get('supabase_anon');
+  const service = byProvider.get('supabase');
+  const hasUrl = Boolean(url?.connected);
+  const hasAnonKey = Boolean(anon?.connected);
+  const hasServiceRole = Boolean(service?.connected);
+  const ready = hasUrl && hasAnonKey;
+  return {
+    connected: hasUrl || hasAnonKey || hasServiceRole,
+    ready,
+    hasUrl,
+    hasAnonKey,
+    hasServiceRole,
+    urlMasked: url?.masked,
+    message: ready
+      ? 'Your Supabase project is connected. Built apps use YOUR URL/keys on Vercel — data stays in your project.'
+      : 'Add project URL + anon key so auth/storage hit your Supabase account (service role recommended for server routes).',
+  };
+}
+
+export interface ConnectUserSupabaseInput {
+  projectUrl: string;
+  anonKey: string;
+  serviceRoleKey?: string;
+}
+
+/** Save URL + anon (+ optional service role) as one connect step. */
+export async function connectUserSupabase(
+  userId: string,
+  input: ConnectUserSupabaseInput,
+): Promise<{
+  status: UserSupabaseStatus;
+  saved: UserProviderKeyStatus[];
+}> {
+  const saved: UserProviderKeyStatus[] = [];
+  saved.push(await saveUserProviderKey(userId, 'supabase_url', input.projectUrl.trim()));
+  saved.push(await saveUserProviderKey(userId, 'supabase_anon', input.anonKey.trim()));
+  const service = input.serviceRoleKey?.trim();
+  if (service) {
+    saved.push(await saveUserProviderKey(userId, 'supabase', service));
+  }
+  const status = await getUserSupabaseStatus(userId);
+  return { status, saved };
 }

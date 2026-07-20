@@ -6,11 +6,12 @@ import { Check, Circle, KeyRound, GitBranch, Triangle, Database } from 'lucide-r
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
 import { AiIntegrationsPanel } from './AiIntegrationsPanel';
+import { SupabaseConnectPanel } from './SupabaseConnectPanel';
 
 type StepId = 'github' | 'vercel' | 'supabase' | 'keys';
 
 /**
- * Ship flow: GitHub → Vercel → Supabase (optional) → extra API keys (optional).
+ * Ship flow: GitHub → Vercel → Supabase (user's project) → extra API keys.
  */
 export function ConnectShipWizard() {
   const [githubOk, setGithubOk] = useState(false);
@@ -20,23 +21,29 @@ export function ConnectShipWizard() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<StepId | null>(null);
   const [showKeys, setShowKeys] = useState(false);
+  const [showSupabase, setShowSupabase] = useState(false);
 
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const [gh, ve, keys] = await Promise.all([
+      const [gh, ve, keys, sb] = await Promise.all([
         api.github.status().catch(() => ({ connected: false })),
         api.vercel.status().catch(() => ({ connected: false })),
         api.integrations.providerKeys().catch(() => ({ keys: [] as Array<{ provider?: string; connected?: boolean }> })),
+        api.integrations.supabaseStatus().catch(() => ({ ready: false, connected: false })),
       ]);
       setGithubOk(Boolean((gh as { connected?: boolean }).connected));
       setVercelOk(Boolean((ve as { connected?: boolean }).connected));
       const list = (keys as { keys?: Array<{ provider?: string; connected?: boolean }> }).keys ?? [];
       const connected = list.filter((k) => k.connected);
-      setSupabaseOk(
-        connected.some((k) => k.provider === 'supabase' || k.provider === 'supabase_anon')
+      setSupabaseOk(Boolean((sb as { ready?: boolean }).ready));
+      setKeysOk(
+        connected.some(
+          (k) =>
+            k.provider &&
+            !String(k.provider).startsWith('supabase'),
+        ),
       );
-      setKeysOk(connected.some((k) => k.provider && !String(k.provider).startsWith('supabase')));
     } finally {
       setLoading(false);
     }
@@ -100,11 +107,14 @@ export function ConnectShipWizard() {
     {
       id: 'supabase',
       title: '3. Connect Supabase',
-      body: 'Optional — paste your project anon / service keys so auth & data work on your deploy.',
+      body: 'Your project URL + keys — auth, DB, and storage for shipped apps live in YOUR Supabase account.',
       done: supabaseOk,
       optional: true,
-      action: () => setShowKeys(true),
-      label: supabaseOk ? 'Keys saved' : 'Add Supabase keys',
+      action: () => {
+        setShowSupabase(true);
+        setShowKeys(false);
+      },
+      label: supabaseOk ? 'Connected' : 'Connect Supabase',
     },
     {
       id: 'keys',
@@ -112,7 +122,10 @@ export function ConnectShipWizard() {
       body: 'Optional — OpenAI, Stripe, Resend… encrypted here, synced into Vercel env on deploy.',
       done: keysOk,
       optional: true,
-      action: () => setShowKeys(true),
+      action: () => {
+        setShowKeys(true);
+        setShowSupabase(false);
+      },
       label: keysOk ? 'Keys saved' : 'Add API keys',
     },
   ];
@@ -120,7 +133,10 @@ export function ConnectShipWizard() {
   const ready = githubOk && vercelOk;
 
   return (
-    <section className="mb-8 rounded-2xl border border-[var(--card-border)] bg-[var(--card)]/40 p-5 sm:p-6">
+    <section
+      id="ship-setup"
+      className="mb-8 rounded-2xl border border-[var(--card-border)] bg-[var(--card)]/40 p-5 sm:p-6"
+    >
       <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
@@ -128,8 +144,8 @@ export function ConnectShipWizard() {
           </p>
           <h2 className="text-lg sm:text-xl font-bold mt-1">Connect once · ship forever</h2>
           <p className="text-sm text-[var(--muted)] mt-1 max-w-xl">
-            Connect GitHub + Vercel to ship. Supabase and other API keys are optional. For
-            Android/iOS stores, open{' '}
+            Connect GitHub + Vercel to ship. Supabase puts data on <strong>your</strong> project.
+            For Android/iOS stores, open{' '}
             <Link href="/dashboard/publish" className="text-[var(--accent)] hover:underline">
               Publish
             </Link>{' '}
@@ -197,6 +213,17 @@ export function ConnectShipWizard() {
           </Link>{' '}
           and describe what to build.
         </p>
+      ) : null}
+
+      {showSupabase ? (
+        <div id="ship-setup-supabase" className="mt-5 pt-5 border-t border-[var(--card-border)]">
+          <SupabaseConnectPanel
+            onConnected={() => {
+              void refresh();
+              setShowSupabase(false);
+            }}
+          />
+        </div>
       ) : null}
 
       {showKeys ? (

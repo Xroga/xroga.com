@@ -24,6 +24,9 @@ export interface LandingPageOutputData {
   githubRepoUrl?: string;
   githubRepoName?: string;
   githubPushConfirmed?: boolean;
+  fullyShipped?: boolean;
+  shipBlockers?: string[];
+  shipVerify?: { pass?: boolean; liveOk?: boolean; summaryLines?: string[] };
   projectName?: string;
   pages?: string[];
   features?: string[];
@@ -162,13 +165,18 @@ export function LandingPageCard({ data, onPreviewUpdate }: LandingPageCardProps)
       Boolean(data.deployUrl && data.deployVerified) ||
       Boolean(data.vercelPreviewUrl) ||
       cached?.vercelDeployed === true;
+    const backendShipped =
+      data.fullyShipped === true ||
+      Boolean(data.shipVerify) ||
+      (Array.isArray(data.shipBlockers) && data.shipBlockers.length > 0);
 
     if (alreadyPushed) setGithubPushed(true);
     if (cached?.vercelUrl && !vercelUrl) {
       setVercelUrl(cached.vercelUrl);
       setVercelVerified(true);
     }
-    if (alreadyPushed && (alreadyDeployed || liveUrl)) return;
+    // Backend pipeline already handled push/deploy (or reported blockers) — do not duplicate.
+    if (backendShipped || (alreadyPushed && (alreadyDeployed || liveUrl))) return;
 
     // Plan A: never re-scaffold from the card after an incremental update (engine already pushed).
     if (data.isUpdate) return;

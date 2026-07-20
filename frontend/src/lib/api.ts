@@ -693,6 +693,39 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ projectSlug }),
       }),
+    supabaseStatus: () =>
+      apiFetch<{
+        connected: boolean;
+        ready: boolean;
+        hasUrl: boolean;
+        hasAnonKey: boolean;
+        hasServiceRole: boolean;
+        urlMasked?: string;
+        message: string;
+      }>('/api/integrations/supabase/status'),
+    connectSupabase: (body: {
+      projectUrl: string;
+      anonKey: string;
+      serviceRoleKey?: string;
+      vercelProject?: string;
+    }) =>
+      apiFetch<{
+        ok: boolean;
+        status?: {
+          connected: boolean;
+          ready: boolean;
+          hasUrl: boolean;
+          hasAnonKey: boolean;
+          hasServiceRole: boolean;
+          message: string;
+        };
+        message?: string;
+        error?: string;
+        envSync?: unknown;
+      }>('/api/integrations/supabase/connect', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
   },
   publish: {
     status: () =>

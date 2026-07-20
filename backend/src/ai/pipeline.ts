@@ -1336,6 +1336,18 @@ export async function runBuildPipeline(opts: {
   });
 
   const githubOk = await isGitHubConnected(opts.userId);
+  const vercelOk = Boolean(await getVercelToken(opts.userId));
+  const compileBlocksShip = !compile.skipped && compile.ok === false;
+  const shipBlockers: string[] = [];
+  if (!githubOk) shipBlockers.push('Connect GitHub to push code to your repo');
+  if (!vercelOk) shipBlockers.push('Connect Vercel to deploy live to your account');
+  if (isUpdate && githubOk && !meta?.githubTargetRepo) {
+    shipBlockers.push('Select the same GitHub repo to update (no new repo for edits)');
+  }
+  if (patchAborted) shipBlockers.push('Unsafe patches aborted — live site unchanged');
+  if (security.blocked) shipBlockers.push('Critical secrets blocked the push');
+  if (compileBlocksShip) shipBlockers.push('Compile failed — fix TypeScript/install before ship');
+
   let filesToPush = isUpdate ? (changedFiles.length ? changedFiles : []) : nextFiles;
   if (isUpdate && nextFiles.length) {
     const docs = nextFiles.filter((f) => f.path === '.env.example' || f.path === 'SECRETS.md');
@@ -1347,7 +1359,6 @@ export async function runBuildPipeline(opts: {
   }
   // Updates must target the same repo — never create a new repo for edit/delete
   // Abort push when patches failed or secrets still blocked
-  const compileBlocksShip = !compile.skipped && compile.ok === false;
   const shouldPush =
     githubOk &&
     !patchAborted &&
@@ -1549,32 +1560,49 @@ export async function runBuildPipeline(opts: {
     (shouldPush ? githubPushConfirmed : true) &&
     (deployUrl ? Boolean(shipVerify?.liveOk ?? deployVerified) : true);
 
+  const fullyShipped =
+    shipOk &&
+    githubPushConfirmed &&
+    Boolean(deployUrl) &&
+    Boolean(shipVerify?.liveOk ?? deployVerified);
+
   const overallSuccess = shipOk && !patchAborted && (compile.skipped || compile.ok);
+
+  const statusMessage = patchAborted
+    ? 'Update aborted — site unchanged'
+    : fullyShipped
+      ? isUpdate
+        ? 'Update shipped & verified'
+        : 'Build shipped & verified'
+      : githubPushConfirmed && !deployUrl
+        ? 'Pushed to GitHub — connect Vercel to go live'
+        : overallSuccess
+          ? isUpdate
+            ? 'Update ready (connect GitHub + Vercel to ship)'
+            : 'Build ready (connect GitHub + Vercel to ship)'
+          : shipBlockers.length
+            ? `Build finished — ship blocked: ${shipBlockers[0]}`
+            : 'Build finished with failures — see verify report';
 
   emit({
     agent: 'builder',
     status: overallSuccess ? 'complete' : 'complete_with_errors',
-    message: patchAborted
-      ? 'Update aborted — site unchanged'
-      : overallSuccess
-        ? isUpdate
-          ? githubPushConfirmed
-            ? 'Update shipped & verified'
-            : 'Update ready'
-          : 'Build shipped & verified'
-        : 'Build finished with failures — see verify report',
-    swarmStatusLabel: overallSuccess ? 'Done' : 'Needs attention',
+    message: statusMessage,
+    swarmStatusLabel: fullyShipped ? 'Shipped' : overallSuccess ? 'Ready' : 'Needs attention',
     swarmActivity: shipVerify?.summaryLines?.[0] ||
       (deployVerified
         ? `Live · ${deployUrl}`
         : githubPushConfirmed
           ? `Pushed to ${githubRepoName}`
-          : 'Preview ready'),
+          : shipBlockers[0] || 'Preview ready'),
     swarmTodos: todosForBuild('done').map((t) => ({ ...t, status: 'done' as const })),
   });
 
   const verifyMarkdown = shipVerify?.summaryLines?.length
     ? `\n\n### Ship check\n${shipVerify.summaryLines.join('\n')}`
+    : '';
+  const blockersMarkdown = shipBlockers.length
+    ? `\n\n### Ship blockers\n${shipBlockers.map((b) => `- ${b}`).join('\n')}`
     : '';
   const compileMarkdown =
     !compile.skipped
@@ -1595,12 +1623,15 @@ export async function runBuildPipeline(opts: {
     message: (
       (patchAborted
         ? `⚠️ **Update aborted** for **${projectName}** — patches did not match safely. Your live site was **not** changed.`
-        : overallSuccess
+        : fullyShipped
           ? isUpdate
-            ? `Updated **${projectName}** with ${MODELS[result.modelId].label}.`
-            : `Built **${projectName}** with ${MODELS[result.modelId].label}.`
-          : `⚠️ **${projectName}** finished with failures — check GitHub/Vercel status below.`) +
+            ? `Updated **${projectName}** with ${MODELS[result.modelId].label} — pushed to GitHub and live on Vercel.`
+            : `Built **${projectName}** with ${MODELS[result.modelId].label} — pushed to GitHub and live on Vercel.`
+          : overallSuccess
+            ? `Built **${projectName}** with ${MODELS[result.modelId].label}.${shipBlockers.length ? ' Connect integrations below to finish shipping.' : ''}`
+            : `⚠️ **${projectName}** finished with failures — check GitHub/Vercel status below.`) +
       verifyMarkdown +
+      blockersMarkdown +
       compileMarkdown
     ),
     modelLabel: MODELS[result.modelId].label,
@@ -1633,6 +1664,8 @@ export async function runBuildPipeline(opts: {
     githubRepoUrl,
     githubRepoName,
     githubPushConfirmed,
+    fullyShipped,
+    shipBlockers: shipBlockers.length ? shipBlockers : undefined,
     commitSha,
     previousCommitSha: priorCommitSha,
     githubBranch,
