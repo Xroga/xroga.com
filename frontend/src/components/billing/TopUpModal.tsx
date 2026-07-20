@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { X, Zap, Sparkles, ArrowRight } from 'lucide-react';
-import { GALACTIC_PLANS, COMING_SOON_PLANS } from '@/lib/plans';
+import { GALACTIC_PLANS, COMING_SOON_PLANS, TRIAL_TOKEN_POOL } from '@/lib/plans';
 import { CheckoutButton } from './CheckoutButton';
 import { CurrencyToggle } from '@/hooks/usePlanPrice';
 import { useT } from '@/components/providers/LanguageProvider';
@@ -31,7 +31,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
   const usage = useAppStore((s) => s.tokenUsage);
   const planTier = useAppStore((s) => s.planTier);
   const remaining = usage?.totalTokensRemaining ?? 0;
-  const total = usage?.totalLimit ?? 7_000_000;
+  const total = usage?.totalLimit ?? 6_172_222;
   const percentUsed = usage?.percentUsed ?? 0;
 
   if (!open) return null;
@@ -83,7 +83,7 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
         <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 bg-[var(--background)]/90">
           <p className="text-xs font-semibold text-[var(--muted)] mb-4 flex items-center gap-1.5 px-1">
             <Sparkles className="w-3.5 h-3.5 text-[#4a7aff]" />
-            Higher plans include more AI tokens & XRG
+            Higher plans include larger monthly token pools & more concurrency
           </p>
 
           <PricingPlanGrid className="mb-4">
@@ -91,8 +91,9 @@ export function TopUpModal({ open, onClose }: TopUpModalProps) {
               compact
               name="Free Trial"
               price="$0"
-              subtitle="7M tokens/mo"
-              features={['1 concurrent task', 'Full Xroga AI access']}
+              subtitle="~0.55M trial tokens"
+              tokensLabel="~0.55M trial tokens"
+              features={['1 concurrent task', `~${formatTokens(TRIAL_TOKEN_POOL)} trial tokens`, 'Full Xroga AI access']}
               cta={
                 <div className="xv-pricing-cta xv-pricing-cta--solid text-center cursor-default">
                   <span className="capitalize">Plan: {planTier ?? 'trial'}</span>

@@ -89,7 +89,7 @@ export default function FeaturesPage() {
             href="/auth/signup"
             className="px-5 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--background)] font-bold text-sm"
           >
-            Get Started — 7M Free Tokens
+            Get Started — Free trial
           </Link>
           <Link
             href="/integrations"

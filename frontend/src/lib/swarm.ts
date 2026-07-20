@@ -68,6 +68,7 @@ export interface SwarmProgressEvent {
   swarmActivity?: string;
   needsGitHub?: boolean;
   needsVercel?: boolean;
+  needsRepoPick?: boolean;
   deepseekPeak?: boolean;
   heavyBusy?: boolean;
   /** Silent stream keepalive — not real progress; do not reset stall timers */

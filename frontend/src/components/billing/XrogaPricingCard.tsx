@@ -175,6 +175,7 @@ export function GalacticPlanPricingCard({
       name={plan.name}
       price={plan.priceLabel}
       subtitle={plan.tagline ?? `${plan.concurrency} concurrent tasks`}
+      tokensLabel={plan.tokensLabel}
       description={plan.tagline}
       features={getPlanFeatures(plan, FEATURE_COUNT)}
       cta={cta}

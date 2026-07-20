@@ -1625,7 +1625,9 @@ export function TerminalChatProvider({
                 'Composing a structured response',
               ];
           setThinkingSteps([...thinkingStepsRef.current]);
-          pushSwarmTerminalLine(mathPrompt ? 'Math solver → step-by-step solution…' : 'Live research → professional answer…');
+          pushSwarmTerminalLine(
+            mathPrompt ? 'Math solver → step-by-step solution…' : 'Composing a clear answer…'
+          );
 
           try {
             const result = await api.phase1.chat(displayPrompt, history, attachments);
@@ -1839,10 +1841,53 @@ export function TerminalChatProvider({
               lastActivityAtRef.current = Date.now();
             }
             if (swarmEv.needsGitHub) {
-              handleGitHubBuildBlocked(displayPrompt, attachments);
+              // Backend said GitHub OAuth is missing — force the gate (ignore stale session flag)
+              clearGitHubConnectedSession();
+              skipGithubGateRef.current = false;
+              pendingBuildRef.current = {
+                userPrompt: displayPrompt,
+                fromQueue: false,
+                interrupt: false,
+                attachments,
+              };
+              setGithubGateOpen(true);
+              pushSwarmTerminalLine(
+                'Authorize GitHub now — connect before ship so this build can push live.'
+              );
+            } else if (swarmEv.needsRepoPick) {
+              pendingBuildRef.current = {
+                userPrompt: displayPrompt,
+                fromQueue: false,
+                interrupt: false,
+                attachments,
+              };
+              void api.github.status().then((gh) => {
+                if (gh.connected) {
+                  setGithubActivation({ open: true, username: gh.username });
+                } else {
+                  setGithubGateOpen(true);
+                }
+              });
+              pushSwarmTerminalLine(
+                'Pick or confirm your sticky ship repo — updates reuse the same live product.'
+              );
             }
             if (swarmEv.needsVercel) {
               handleVercelBuildBlocked(displayPrompt, attachments);
+              pushSwarmTerminalLine(
+                'Authorize Vercel now — connect before ship so deploy can finish live.'
+              );
+            }
+            if (swarmEv.status === 'skipped' && swarmEv.agent === 'research') {
+              pushSwarmTerminalLine(
+                sanitizeXrogaTerminalText(
+                  swarmEv.message || 'Research skipped — no live sources available'
+                )
+              );
+            }
+            if (swarmEv.status === 'model_fallback' || swarmEv.status === 'model_active') {
+              const line = sanitizeXrogaTerminalText(swarmEv.message || '');
+              if (line) pushSwarmTerminalLine(line);
             }
             if (swarmEv.hackathonBrief) {
               setMessages((m) =>
@@ -1909,7 +1954,7 @@ export function TerminalChatProvider({
                       ? tu.totalLimit
                       : remaining + used > 0
                         ? remaining + used
-                        : prevUsage?.totalLimit || 7_000_000,
+                        : prevUsage?.totalLimit || 6_172_222,
                   planBudgetUsd: tu.planBudgetUsd ?? prevUsage?.planBudgetUsd,
                   rolloverUsd: tu.rolloverUsd ?? prevUsage?.rolloverUsd,
                   spentUsd: tu.spentUsd ?? prevUsage?.spentUsd,
@@ -2470,7 +2515,7 @@ export function TerminalChatProvider({
                     ...msg,
                     content:
                       msg.content?.trim() ||
-                      '⚠️ **Token quota reached.** Upgrade your plan or claim emergency tokens in the Dashboard to continue building.',
+                      '⚠️ **Token quota reached.** Upgrade your plan to continue building.',
                   }
                 : msg
             )

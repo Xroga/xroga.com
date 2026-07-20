@@ -72,9 +72,10 @@ Content-Type: application/json`}
             <h2 className="font-bold text-lg">Rate limits</h2>
           </div>
           <ul className="text-sm text-[var(--muted)] space-y-2 list-disc pl-5">
-            <li>Spark: 7M tokens/mo · 2 concurrent swarms</li>
-            <li>Pulse: 12M tokens/mo · 8 concurrent</li>
-            <li>Nova+: 20M+ tokens/mo · higher concurrency</li>
+            <li>Free trial: ~0.55M tokens · 1 concurrent</li>
+            <li>Spark: 6.17M tokens/mo · 2 concurrent swarms</li>
+            <li>Pulse: 9.42M tokens/mo · 8 concurrent</li>
+            <li>Nova: 15.9M · Zenith: 32.2M · Singularity: 325M</li>
             <li>API requests share your plan token quota — no feature gating</li>
           </ul>
         </section>

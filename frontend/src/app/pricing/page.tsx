@@ -4,7 +4,7 @@ import { buildMetadata } from '@/lib/seo';
 export const metadata = buildMetadata({
   title: 'Pricing — AI Token Plans & Galactic Tiers',
   description:
-    'Xroga AI pricing: pay for tokens, not features. Spark 7M tokens/mo, Pulse 12M (most popular), Nova 20M, Zenith 35M, Singularity 100M. All 98 features on every plan.',
+    'Xroga AI pricing: pay for tokens, not features. Free trial ~0.55M tokens. Spark 6.17M tokens/mo, Pulse 9.42M (most popular), Nova 15.9M, Zenith 32.2M, Singularity 325M. All features on every plan.',
   path: '/pricing',
   keywords: [
     'Xroga pricing',
@@ -14,7 +14,7 @@ export const metadata = buildMetadata({
     'roga pricing',
     'droga ai cost',
     'top up tokens',
-    '7M free tokens',
+    '6.17M tokens',
   ],
 });
 

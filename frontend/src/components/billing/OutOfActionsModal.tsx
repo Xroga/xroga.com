@@ -24,7 +24,7 @@ export function OutOfActionsModal({ open, onClose }: OutOfActionsModalProps) {
         </div>
         <h2 className="text-xl font-bold mb-2">Monthly Token Quota Reached</h2>
         <p className="text-[var(--muted)] text-sm mb-6">
-          You&apos;ve used your monthly token allocation. Upgrade your plan or claim emergency tokens from your dashboard.
+          You&apos;ve used your monthly token allocation. Upgrade your plan to continue.
         </p>
         <Link
           href="/dashboard"

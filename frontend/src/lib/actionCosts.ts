@@ -1,4 +1,7 @@
-/** Master action cost reference — synced with backend ACTION_COSTS */
+/**
+ * Relative complexity units for UI estimates.
+ * Billing is tokens (Spark ~6.17M/mo) — these are not a separate “actions” meter.
+ */
 
 export interface ActionCostItem {
   id: string;

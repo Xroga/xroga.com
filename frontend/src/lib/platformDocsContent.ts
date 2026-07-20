@@ -28,7 +28,7 @@ export const PLATFORM_PARTS = [
           'Chatbots, content generators, tutors, automation',
           'Image generators, voice assistants, research tools',
         ],
-        stack: 'Next.js + DeepSeek/Claude + Supabase · Cloudflare R2',
+        stack: 'Next.js + Black Hole V∞ swarm + Supabase · Cloudflare R2',
       },
       {
         heading: 'Mobile-ready PWAs & software tools',
@@ -85,9 +85,9 @@ export const PLATFORM_PARTS = [
       {
         heading: 'Every project includes',
         items: [
-          'Frontend: Next.js + Tailwind (Claude Sonnet for UI)',
-          'Backend: Supabase Edge Functions (DeepSeek Pro)',
-          'Database: PostgreSQL schema + RLS (DeepSeek Pro)',
+          'Frontend: Next.js + Tailwind (Black Hole V∞ Apex / Horizon)',
+          'Backend: Supabase Edge Functions (Forge / Pulse)',
+          'Database: PostgreSQL schema + RLS',
           'Auth: Supabase Auth · Payments: Lemon Squeezy/Stripe',
           'Deploy: Vercel + Cloudflare · GitHub repo + README',
         ],
@@ -103,8 +103,9 @@ export const PLATFORM_PARTS = [
         heading: 'Describe → Connect → Live',
         items: [
           'Describe what you want in chat',
-          'Connect required services (one-click each)',
+          'Connect GitHub + Vercel early (optional Supabase) — before long builds finish',
           'Xroga generates, deploys, and shows live preview',
+          'First ship remembers sticky repo — later prompts update the same live product',
           'Never touch API keys, DNS, SSL, or terminal',
         ],
         stack: 'Minutes to live app',
@@ -181,83 +182,84 @@ export const PLATFORM_PARTS = [
 
 export const MODEL_TABLE = [
   {
-    name: 'DeepSeek Flash',
-    role: 'Workhorse',
-    usage: '34% in · 38% out',
-    tokens7M: '2.5M',
-    tasks: 'Bulk code, file reads, fixes',
-    cost: '$0.14 in / $0.28 out per 1M',
+    name: 'Xroga Apex',
+    role: 'Chief Architect',
+    usage: 'Flagship core',
+    tokensPool: '889K',
+    tasks: 'Complex full-stack, crypto, long-horizon builds',
+    cost: 'Inside Black Hole V∞',
   },
   {
-    name: 'DeepSeek Pro',
-    role: 'Brain',
-    usage: '30% in · 28% out',
-    tokens7M: '2.2M',
-    tasks: 'Architecture, plan review, repo analysis, updates',
-    cost: '$0.435 in / $0.87 out per 1M',
+    name: 'Xroga Horizon',
+    role: 'Project Engineer',
+    usage: 'Long-context core',
+    tokensPool: '2.0M',
+    tasks: 'Whole-repo engineering, large codebases',
+    cost: 'Inside Black Hole V∞',
   },
   {
-    name: 'Grok 4 Reasoning',
-    role: 'Strategist',
-    usage: '18% in · 16% out',
-    tokens7M: '1.1M',
-    tasks: 'Strategy, web research synthesis, hackathon QA',
-    cost: '$0.20 in / $0.50 out per 1M',
+    name: 'Xroga Forge',
+    role: 'Deep Executor',
+    usage: 'Volume core',
+    tokensPool: '1.5M',
+    tasks: 'Agent tasks, knowledge work, shipping',
+    cost: 'Inside Black Hole V∞',
   },
   {
-    name: 'Claude Sonnet 5',
-    role: 'Designer',
-    usage: '14% in · 14% out',
-    tokens7M: '980K',
-    tasks: 'UI polish — $5/mo Claude budget cap; falls back to Grok/DeepSeek',
-    cost: '$2 in / $10 out per 1M (intro thru Aug 2026)',
+    name: 'Xroga Pulse',
+    role: 'Converter',
+    usage: 'Fast core',
+    tokensPool: '1.0M',
+    tasks: 'Prompt → builder brief, high-volume chat',
+    cost: 'Inside Black Hole V∞',
   },
   {
-    name: 'Claude Opus',
-    role: 'Quality gate',
-    usage: '4% in · 4% out',
-    tokens7M: '280K',
-    tasks: 'Crypto final QA only (minimal)',
-    cost: '$5 in / $25 out per 1M',
+    name: 'Xroga Live',
+    role: 'Real-Time Intel',
+    usage: 'Live core',
+    tokensPool: '250K',
+    tasks: 'Web + X live search, news, research synthesis',
+    cost: 'Inside Black Hole V∞',
   },
   {
-    name: 'Web search (Tavily + SearXNG)',
-    role: 'Research',
-    usage: 'External API',
-    tokens7M: '—',
-    tasks: 'Phase 0 — requirements, UI trends, hackathon intel',
-    cost: '~$0.016/build',
+    name: 'Xroga Lens',
+    role: 'Document Mind',
+    usage: 'Vision/docs core',
+    tokensPool: '533K',
+    tasks: 'Files, PDFs, vision, backup context',
+    cost: 'Inside Black Hole V∞',
   },
 ] as const;
 
-/** 7M = 4.7M input + 2.3M output */
-export const QUOTA_7M_BREAKDOWN = {
-  inputPool: '4.7M',
-  outputPool: '2.3M',
-  total: '7M',
-  oneBuildApiUsd: '~$0.22–0.26',
-  full7mLlmUsd: '~$7–8',
-  models: MODEL_TABLE.filter((m) => !m.name.startsWith('Web search')).map((m) => ({
+/** Spark monthly pool — matches backend MONTHLY_TOTAL_TOKENS */
+export const QUOTA_SPARK_BREAKDOWN = {
+  inputPool: '~3.09M',
+  outputPool: '~3.09M',
+  total: '6.17M',
+  oneBuildApiUsd: 'varies by core',
+  models: MODEL_TABLE.map((m) => ({
     model: m.name,
     share: m.usage,
-    tokens: m.tokens7M,
+    tokens: m.tokensPool,
   })),
-  webSearchPipeline: 'engine Phase 0 → webSearch.ts (SearXNG + Tavily) → Grok synthesis',
+  webSearchPipeline: 'Xroga Live (native web + X firehose) → Tavily/SearXNG fallback',
 };
 
+/** @deprecated alias — Spark is 6.17M */
+export const QUOTA_7M_BREAKDOWN = QUOTA_SPARK_BREAKDOWN;
+
 export const BUILD_STEPS = [
-  'Phase 0 — Web research (SearXNG + Tavily) + Grok synthesis',
-  'Planning (DeepSeek Pro + Grok 4 strategy)',
-  'GitHub repo analysis + bulk code (DeepSeek Flash)',
-  'UI polish (Claude Sonnet 5)',
-  'QA — Grok hackathon / Opus crypto only / Pro otherwise',
-  'Auto-deploy to Vercel + GitHub push',
-  'Live preview, GitHub Projects continue',
+  'Live research — Xroga Live (web + X) when needed',
+  'Convert prompt → builder brief (Pulse)',
+  'Architect + generate (Apex / Horizon / Forge)',
+  'QA + compile validate',
+  'Push GitHub + deploy Vercel (sticky repo)',
+  'Follow-up prompts update the same live product',
 ];
 
 export const NO_HESITATE = [
   { ask: 'Can you build a website?', answer: 'YES — any website' },
   { ask: 'Can you build a SaaS?', answer: 'YES — any SaaS' },
   { ask: 'Can you build an AI tool?', answer: 'YES — any AI tool' },
-  { ask: 'Can you build anything?', answer: 'YES — ANYTHING. No hesitation.' },
+  { ask: 'Do I wait for a new model?', answer: 'NO — Black Hole V∞ updates continuously' },
 ];

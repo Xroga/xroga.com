@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Logo } from '@/components/layout/Logo';
-import { GALACTIC_PLANS, COMING_SOON_PLANS } from '@/lib/plans';
+import { GALACTIC_PLANS, COMING_SOON_PLANS, TRIAL_TOKEN_POOL } from '@/lib/plans';
 import { XROGA_FEATURES, FEATURE_COUNT } from '@/lib/features';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
 import {
@@ -112,8 +112,8 @@ export function PricingPageClient() {
             Plans built for <span className="gradient-text">builders</span>
           </h1>
           <p className="text-[var(--muted)] max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            Pick a concurrency tier. Legacy token quotas and XRG bonus marketing have been removed
-            from pricing while the new AI system lands.
+            Pay for tokens and concurrency — not gated features. Spark starts at 6.17M tokens/mo.
+            Free trial is ~0.55M tokens (not a full Spark pool).
           </p>
           <div className="mt-4 flex justify-center">
             <CurrencyToggle />
@@ -130,12 +130,12 @@ export function PricingPageClient() {
             {
               icon: Zap,
               title: 'Concurrency scaling',
-              desc: 'Higher plans run more swarm tasks in parallel.',
+              desc: 'Higher plans run more swarm tasks in parallel — Spark 2 → Singularity 100.',
             },
             {
               icon: Shield,
-              title: 'Simple billing',
-              desc: 'No token meters or provider usage percentages on the plan cards.',
+              title: 'Honest token pools',
+              desc: 'Each card shows the real monthly token pool. Trial is tiny; Spark is 6.17M.',
             },
           ].map(({ icon: Icon, title, desc }) => (
             <div key={title} className="glass-panel rounded-xl p-4 border border-[var(--card-border)]">
@@ -150,8 +150,13 @@ export function PricingPageClient() {
           <XrogaPricingCard
             name="Free Trial"
             price="$0"
-            subtitle="Full Xroga AI access"
-            features={['1 concurrent task', 'Full Xroga AI access']}
+            subtitle="Try before you subscribe"
+            tokensLabel="~0.55M trial tokens"
+            features={[
+              '1 concurrent task',
+              `~${(TRIAL_TOKEN_POOL / 1_000_000).toFixed(2)}M trial tokens`,
+              'Full Xroga AI access',
+            ]}
             cta={
               loggedIn ? (
                 <div className="xv-pricing-cta xv-pricing-cta--solid text-center cursor-default">
