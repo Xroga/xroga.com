@@ -156,10 +156,18 @@ export function PostBuildDashboard({
     missingItems.push('Mobile: Connect Expo in Publish → one-click EAS on your account (you pay store/EAS fees)');
   }
   if (isChromeExtension) {
-    missingItems.push('Chrome: sideload free, or npm run zip → Chrome Web Store (~$5 on your account)');
+    if (data.chromeZipDownloadUrl) {
+      missingItems.push('Chrome: download extension.zip from Releases → sideload or CWS (~$5 on your account)');
+    } else {
+      missingItems.push('Chrome: sideload from GitHub repo (free), or download zip from Releases / npm run zip');
+    }
   }
   if (isElectronApp) {
-    missingItems.push('Desktop: npm start locally, or tag a release for GitHub Releases (unsigned free path)');
+    if (data.desktopActionsUrl || data.desktopReleasesUrl) {
+      missingItems.push('Desktop: wait for Actions → download unsigned zip from GitHub Releases');
+    } else {
+      missingItems.push('Desktop: npm start locally, or open GitHub Actions / Releases for the unsigned zip');
+    }
   }
   if (siteAudit.issues.some((i) => i.severity === 'critical')) {
     missingItems.push(`${siteAudit.issues.filter((i) => i.severity === 'critical').length} critical health issue(s)`);
@@ -377,6 +385,50 @@ export function PostBuildDashboard({
         </section>
 
         <div className="flex flex-wrap gap-2 pt-1">
+          {data.chromeZipDownloadUrl ? (
+            <a
+              href={data.chromeZipDownloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--foreground)] text-[var(--background)] text-xs font-bold hover:opacity-90 shadow-sm transition-opacity"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Download extension.zip
+            </a>
+          ) : null}
+          {data.chromeReleaseUrl && !data.chromeZipDownloadUrl ? (
+            <a
+              href={data.chromeReleaseUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--card-border)] text-xs font-bold hover:border-[var(--accent)]/50 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Open Chrome Releases
+            </a>
+          ) : null}
+          {data.desktopReleasesUrl ? (
+            <a
+              href={data.desktopReleasesUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--foreground)] text-[var(--background)] text-xs font-bold hover:opacity-90 shadow-sm transition-opacity"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Desktop Releases
+            </a>
+          ) : null}
+          {data.desktopActionsUrl ? (
+            <a
+              href={data.desktopActionsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--card-border)] text-xs font-bold hover:border-[var(--accent)]/50 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              GitHub Actions
+            </a>
+          ) : null}
           <button
             type="button"
             onClick={() => setPreviewOpen(true)}

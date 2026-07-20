@@ -21,9 +21,9 @@ export function getXrogaCapabilitiesResponse(): string {
 
 Live product loops
 🌐 **Web apps & sites** — Converter briefs → swarm builds → sticky GitHub repo → your Vercel (optional Supabase keys in vault)
-📱 **Mobile (Expo)** — Android/iOS scaffold → push GitHub → one-click EAS trigger on **your** Expo account (you pay Apple/Google/EAS)
-🧩 **Chrome extension (MV3)** — scaffold + zip for sideload / Chrome Web Store (you pay ~$5 CWS once)
-🖥️ **Desktop (Electron)** — scaffold + GitHub Releases workflow (free unsigned path; you pay signing/stores if you need them)
+📱 **Mobile (Expo)** — Android/iOS scaffold → push GitHub → Expo Go / one-click EAS on **your** Expo account (you pay Apple/Google/EAS)
+🧩 **Chrome extension (MV3)** — scaffold → sticky GitHub → \`extension.zip\` on Releases (sideload free; CWS ~$5 on your account)
+🖥️ **Desktop (Electron)** — scaffold → sticky GitHub → Actions release zip (unsigned free path; you pay signing/stores if needed)
 📊 **Crypto market dashboards** — prices UI + wallet-connect demo — **not** an exchange, custody, or trading system
 ⚙️ **Agent runner scaffolds** — cron/LLM stubs on your stack — not a managed always-on bot farm
 

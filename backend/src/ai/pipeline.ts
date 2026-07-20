@@ -62,7 +62,15 @@ import {
   detectScaffoldKind,
   mergeScaffoldWithGenerated,
 } from '../services/projectScaffold.js';
-import { detectScaffoldFeatures } from '../services/scaffolds/detectScaffold.js';
+import {
+  detectScaffoldFeatures,
+  isNonWebFrameworkScaffold,
+  type ScaffoldKind,
+} from '../services/scaffolds/detectScaffold.js';
+import {
+  shipChromeExtensionZip,
+  triggerElectronDesktopRelease,
+} from '../services/publish/nonWebShip.js';
 import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
 import {
   getProjectMemory,
@@ -670,9 +678,13 @@ export async function runBuildPipeline(opts: {
   // Early OAuth preflight — warn before long build so users connect before waiting
   const githubOkEarly = await isGitHubConnected(opts.userId);
   const vercelOkEarly = Boolean(await getVercelToken(opts.userId));
+  const scaffoldKindEarly = detectScaffoldKind(userFacingPrompt);
+  const needsVercelEarly = !isNonWebFrameworkScaffold(scaffoldKindEarly);
   const earlyShipBlockers: string[] = [];
   if (!githubOkEarly) earlyShipBlockers.push('Connect GitHub to push code to your repo');
-  if (!vercelOkEarly) earlyShipBlockers.push('Connect Vercel to deploy live to your account');
+  if (needsVercelEarly && !vercelOkEarly) {
+    earlyShipBlockers.push('Connect Vercel to deploy live to your account');
+  }
   if (isUpdate && githubOkEarly && !meta?.githubTargetRepo) {
     earlyShipBlockers.push(
       'Update mode needs your ship repo — we remember it after first ship, or pick it once in Terminal.',
@@ -687,7 +699,7 @@ export async function runBuildPipeline(opts: {
       swarmActivity: earlyShipBlockers.join(' · '),
       swarmTodos: todos('route'),
       needsGitHub: !githubOkEarly,
-      needsVercel: githubOkEarly && !vercelOkEarly,
+      needsVercel: needsVercelEarly && !vercelOkEarly,
       needsRepoPick: Boolean(isUpdate && githubOkEarly && !meta?.githubTargetRepo),
     });
   } else {
@@ -696,7 +708,9 @@ export async function runBuildPipeline(opts: {
       status: 'ship_preflight_ok',
       message: meta?.githubTargetRepo
         ? `Ship ready · target ${meta.githubTargetRepo}`
-        : 'Ship ready · GitHub + Vercel connected',
+        : needsVercelEarly
+          ? 'Ship ready · GitHub + Vercel connected'
+          : 'Ship ready · GitHub connected (desktop/extension/mobile)',
       swarmStatusLabel: 'Ship ready',
       swarmActivity: meta?.githubTargetRepo || 'Authorize OK',
       swarmTodos: todos('route'),
@@ -1177,8 +1191,10 @@ export async function runBuildPipeline(opts: {
 
   // New builds: merge deterministic scaffold under AI output
   // so user vault keys can power live /api routes and mobile/extension/desktop ship complete.
+  let productScaffoldKind: ScaffoldKind = 'static';
   if (!isUpdate && nextFiles.length) {
     const scaffoldKind = detectScaffoldKind(userFacingPrompt);
+    productScaffoldKind = scaffoldKind;
     if (
       scaffoldKind === 'nextjs' ||
       scaffoldKind === 'expo' ||
@@ -1199,9 +1215,9 @@ export async function runBuildPipeline(opts: {
         scaffoldKind === 'expo'
           ? 'Merged Android/iOS Expo scaffold under your build'
           : scaffoldKind === 'chrome'
-            ? 'Merged Chrome MV3 extension scaffold (+ zip path)'
+            ? 'Merged Chrome MV3 extension scaffold (+ release zip after push)'
             : scaffoldKind === 'electron'
-              ? 'Merged Electron desktop scaffold (+ GitHub Releases workflow)'
+              ? 'Merged Electron desktop scaffold (+ GitHub Releases trigger)'
               : featureBits.length
                 ? `Merged Next.js scaffold with ${featureBits.join(' · ')}`
                 : 'Merged Next.js auth/API scaffold (vault keys → Vercel env)';
@@ -1214,7 +1230,18 @@ export async function runBuildPipeline(opts: {
         swarmTodos: todos('build'),
       });
     }
+  } else if (nextFiles.length) {
+    // Updates: infer kind from tree so ship rules stay correct
+    if (nextFiles.some((f) => f.path === 'manifest.json')) productScaffoldKind = 'chrome';
+    else if (nextFiles.some((f) => f.path === 'app.json')) productScaffoldKind = 'expo';
+    else {
+      const pkg = nextFiles.find((f) => f.path === 'package.json')?.content ?? '';
+      if (/"electron"/i.test(pkg) && !/"next"/i.test(pkg)) productScaffoldKind = 'electron';
+      else if (/"next"/i.test(pkg)) productScaffoldKind = 'nextjs';
+    }
   }
+
+  const isNonWebProduct = isNonWebFrameworkScaffold(productScaffoldKind);
 
   previousFiles = prior.files.length ? prior.files : landingFilesFromOutput('', '', '');
 
@@ -1557,7 +1584,9 @@ export async function runBuildPipeline(opts: {
   const compileBlocksShip = !compile.skipped && compile.ok === false;
   const shipBlockers: string[] = [];
   if (!githubOk) shipBlockers.push('Connect GitHub to push code to your repo');
-  if (!vercelOk) shipBlockers.push('Connect Vercel to deploy live to your account');
+  if (!isNonWebProduct && !vercelOk) {
+    shipBlockers.push('Connect Vercel to deploy live to your account');
+  }
   if (isUpdate && githubOk && !meta?.githubTargetRepo) {
     shipBlockers.push(
       'Update mode needs your ship repo. After the first build we remember it — or pick it once in Terminal.',
@@ -1661,6 +1690,108 @@ export async function runBuildPipeline(opts: {
     }
   }
 
+  // Free-path artifacts for Chrome / Electron after sticky push
+  let chromeZipDownloadUrl: string | undefined;
+  let chromeReleaseUrl: string | undefined;
+  let desktopReleaseTag: string | undefined;
+  let desktopActionsUrl: string | undefined;
+  let desktopReleasesUrl: string | undefined;
+  let nonWebArtifactOk = false;
+
+  if (githubPushConfirmed && githubRepoName && productScaffoldKind === 'chrome') {
+    emit({
+      agent: 'deploy',
+      status: 'packaging',
+      message: 'Packaging Chrome extension.zip on GitHub Releases…',
+      swarmStatusLabel: 'Extension zip',
+      swarmActivity: githubRepoName,
+      swarmTodos: todos('push'),
+    });
+    try {
+      const zipped = await shipChromeExtensionZip({
+        userId: opts.userId,
+        repoFullName: githubRepoName,
+        files: nextFiles,
+      });
+      if (zipped.ok) {
+        nonWebArtifactOk = true;
+        chromeZipDownloadUrl = zipped.downloadUrl;
+        chromeReleaseUrl = zipped.releaseUrl;
+        emit({
+          agent: 'deploy',
+          status: 'packaged',
+          message: zipped.downloadUrl
+            ? `extension.zip ready — ${zipped.downloadUrl}`
+            : 'Chrome release created — download extension.zip from Releases',
+          swarmStatusLabel: 'Zip ready',
+          swarmActivity: zipped.tag || 'extension.zip',
+          swarmTodos: todos('push'),
+        });
+      } else {
+        emit({
+          agent: 'deploy',
+          status: 'package_failed',
+          message: zipped.error || 'Could not upload extension zip',
+          swarmStatusLabel: 'Zip issue',
+          swarmActivity: zipped.error?.slice(0, 100) || 'retry from Releases',
+          swarmTodos: todos('push'),
+        });
+      }
+    } catch (err) {
+      console.warn('[pipeline] chrome zip:', (err as Error).message);
+    }
+  }
+
+  if (githubPushConfirmed && githubRepoName && productScaffoldKind === 'electron') {
+    emit({
+      agent: 'deploy',
+      status: 'releasing',
+      message: 'Triggering Electron desktop release on GitHub Actions…',
+      swarmStatusLabel: 'Desktop release',
+      swarmActivity: githubRepoName,
+      swarmTodos: todos('push'),
+    });
+    try {
+      const released = await triggerElectronDesktopRelease({
+        userId: opts.userId,
+        repoFullName: githubRepoName,
+        commitSha,
+      });
+      desktopReleaseTag = released.tag;
+      desktopActionsUrl = released.actionsUrl;
+      desktopReleasesUrl = released.releasesUrl;
+      if (released.ok) {
+        nonWebArtifactOk = true;
+        emit({
+          agent: 'deploy',
+          status: 'release_triggered',
+          message: released.tag
+            ? `Tagged ${released.tag} — Actions will build unsigned zip (see Releases when green)`
+            : 'Desktop release workflow dispatched',
+          swarmStatusLabel: 'Release started',
+          swarmActivity: released.actionsUrl || released.tag || 'Actions',
+          swarmTodos: todos('push'),
+        });
+      } else {
+        emit({
+          agent: 'deploy',
+          status: 'release_failed',
+          message: released.error || 'Could not start desktop release',
+          swarmStatusLabel: 'Release issue',
+          swarmActivity: released.error?.slice(0, 100) || 'tag v* on GitHub',
+          swarmTodos: todos('push'),
+        });
+      }
+    } catch (err) {
+      console.warn('[pipeline] electron release:', (err as Error).message);
+    }
+  }
+
+  if (githubPushConfirmed && productScaffoldKind === 'expo') {
+    // Expo free path = sticky GitHub + Expo Go; EAS is optional in Publish panel
+    nonWebArtifactOk = true;
+  }
+
   // Refresh hot memory so next update skips GitHub/AI re-analyze
   if (nextFiles.length || deletedPaths.length) {
     if (isUpdate) {
@@ -1750,21 +1881,44 @@ export async function runBuildPipeline(opts: {
   let shipVerify: Awaited<ReturnType<typeof verifyShippedProduct>> | null = null;
   if (githubPushConfirmed || deployUrl) {
     throwIfAborted();
+    const expectApi =
+      !isNonWebProduct && nextFiles.some((f) => f.path.includes('app/api/'));
     emit({
       agent: 'verifier',
       status: 'verifying',
-      message: 'Verifying GitHub push + live URL + /api/health…',
+      message: isNonWebProduct
+        ? 'Verifying GitHub push (preview URL optional for desktop/extension/mobile)…'
+        : 'Verifying GitHub push + live URL + /api/health…',
       swarmStatusLabel: 'Verify',
       swarmActivity: deployUrl || githubRepoUrl || 'checks',
       swarmTodos: todos('push'),
     });
-    const expectApi = nextFiles.some((f) => f.path.includes('app/api/'));
     shipVerify = await verifyShippedProduct({
       deployUrl: deployUrl || vercelPreviewUrl,
       githubPushConfirmed,
       githubRepoUrl,
       expectApiHealth: expectApi,
     });
+    // Non-web: GitHub push is the success bar; preview URL is optional
+    if (isNonWebProduct && githubPushConfirmed) {
+      shipVerify = {
+        ...shipVerify,
+        pass: true,
+        liveOk: Boolean(shipVerify.liveOk || deployUrl),
+        summaryLines: [
+          ...(shipVerify.summaryLines || []),
+          productScaffoldKind === 'chrome'
+            ? chromeZipDownloadUrl
+              ? `✅ extension.zip: ${chromeZipDownloadUrl}`
+              : 'ℹ️ Sideload from repo or download zip from Releases when ready'
+            : productScaffoldKind === 'electron'
+              ? desktopActionsUrl
+                ? `✅ Desktop release triggered — ${desktopActionsUrl}`
+                : 'ℹ️ Tag v* or run Desktop release workflow on GitHub'
+              : '✅ Mobile on GitHub — Connect Expo in Publish for EAS (optional)',
+        ],
+      };
+    }
     deployVerified = shipVerify.liveOk || deployVerified;
     emit({
       agent: 'verifier',
@@ -1784,28 +1938,41 @@ export async function runBuildPipeline(opts: {
     !security.blocked &&
     !compileBlocksShip &&
     (shouldPush ? githubPushConfirmed : true) &&
-    (deployUrl ? Boolean(shipVerify?.liveOk ?? deployVerified) : true);
+    (isNonWebProduct
+      ? true
+      : deployUrl
+        ? Boolean(shipVerify?.liveOk ?? deployVerified)
+        : true);
 
-  const fullyShipped =
-    shipOk &&
-    githubPushConfirmed &&
-    Boolean(deployUrl) &&
-    Boolean(shipVerify?.liveOk ?? deployVerified);
+  const fullyShipped = isNonWebProduct
+    ? shipOk && githubPushConfirmed && (nonWebArtifactOk || productScaffoldKind === 'expo')
+    : shipOk &&
+      githubPushConfirmed &&
+      Boolean(deployUrl) &&
+      Boolean(shipVerify?.liveOk ?? deployVerified);
 
   const overallSuccess = shipOk && !patchAborted && (compile.skipped || compile.ok);
 
   const statusMessage = patchAborted
     ? 'Update aborted — site unchanged'
     : fullyShipped
-      ? isUpdate
-        ? 'Update shipped & verified'
-        : 'Build shipped & verified'
-      : githubPushConfirmed && !deployUrl
+      ? isNonWebProduct
+        ? productScaffoldKind === 'chrome'
+          ? 'Extension pushed · zip on GitHub Releases'
+          : productScaffoldKind === 'electron'
+            ? 'Desktop pushed · release building on Actions'
+            : 'Mobile pushed to GitHub — Connect Expo for EAS'
+        : isUpdate
+          ? 'Update shipped & verified'
+          : 'Build shipped & verified'
+      : githubPushConfirmed && !deployUrl && !isNonWebProduct
         ? 'Pushed to GitHub — connect Vercel to go live'
         : overallSuccess
           ? isUpdate
             ? 'Update ready (connect GitHub + Vercel to ship)'
-            : 'Build ready (connect GitHub + Vercel to ship)'
+            : isNonWebProduct
+              ? 'Build ready (connect GitHub to push extension/desktop/mobile)'
+              : 'Build ready (connect GitHub + Vercel to ship)'
           : shipBlockers.length
             ? `Build finished — ship blocked: ${shipBlockers[0]}`
             : 'Build finished with failures — see verify report';
@@ -1850,9 +2017,15 @@ export async function runBuildPipeline(opts: {
       (patchAborted
         ? `⚠️ **Update aborted** for **${projectName}** — patches did not match safely. Your live site was **not** changed.`
         : fullyShipped
-          ? isUpdate
-            ? `Updated **${projectName}** with ${MODELS[result.modelId].label} — pushed to GitHub and live on Vercel.`
-            : `Built **${projectName}** with ${MODELS[result.modelId].label} — pushed to GitHub and live on Vercel.`
+          ? isNonWebProduct
+            ? productScaffoldKind === 'chrome'
+              ? `Built **${projectName}** — pushed to GitHub and packaged \`extension.zip\` on Releases.`
+              : productScaffoldKind === 'electron'
+                ? `Built **${projectName}** — pushed to GitHub and triggered desktop release (unsigned zip via Actions).`
+                : `Built **${projectName}** — pushed to GitHub. Open Publish → Connect Expo for one-click EAS (you pay store/EAS fees).`
+            : isUpdate
+              ? `Updated **${projectName}** with ${MODELS[result.modelId].label} — pushed to GitHub and live on Vercel.`
+              : `Built **${projectName}** with ${MODELS[result.modelId].label} — pushed to GitHub and live on Vercel.`
           : overallSuccess
             ? `Built **${projectName}** with ${MODELS[result.modelId].label}.${shipBlockers.length ? ' Connect integrations below to finish shipping.' : ''}`
             : `⚠️ **${projectName}** finished with failures — check GitHub/Vercel status below.`) +
@@ -1891,6 +2064,12 @@ export async function runBuildPipeline(opts: {
     githubRepoName,
     githubPushConfirmed,
     fullyShipped,
+    scaffoldKind: productScaffoldKind,
+    chromeZipDownloadUrl,
+    chromeReleaseUrl,
+    desktopReleaseTag,
+    desktopActionsUrl,
+    desktopReleasesUrl,
     shipBlockers: shipBlockers.length ? shipBlockers : undefined,
     supabase: {
       connected: Boolean(supabaseStatus.connected),
@@ -1956,11 +2135,23 @@ export async function runBuildPipeline(opts: {
     tokenUsage: finalUsage,
     followUps: patchAborted
       ? ['Retry update with clearer instructions', 'Show current files', 'Open preview']
-      : isUpdate
-        ? commitSha
-          ? ['Rollback last commit', 'Make another tweak', 'Open preview']
-          : ['Make another tweak', 'Open preview']
-        : ['Refine the design', 'Add another feature', 'Open preview'],
+      : productScaffoldKind === 'chrome'
+        ? chromeZipDownloadUrl
+          ? ['Download extension.zip', 'Sideload in Chrome', 'Refine the extension']
+          : ['Open GitHub Releases', 'Sideload from repo', 'Refine the extension']
+        : productScaffoldKind === 'electron'
+          ? [
+              desktopReleasesUrl ? 'Open GitHub Releases' : 'Open GitHub Actions',
+              'Run npm start locally',
+              'Refine the desktop app',
+            ]
+          : productScaffoldKind === 'expo'
+            ? ['Connect Expo in Publish', 'Open in Expo Go', 'Refine the mobile app']
+            : isUpdate
+              ? commitSha
+                ? ['Rollback last commit', 'Make another tweak', 'Open preview']
+                : ['Make another tweak', 'Open preview']
+              : ['Refine the design', 'Add another feature', 'Open preview'],
     route,
   };
 }

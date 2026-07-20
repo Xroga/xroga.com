@@ -3,10 +3,11 @@
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 
+/** Dashboard shortcuts — coding-agent only (no image/browser studio claims). */
 const ACTIONS = [
-  { icon: '💻', label: 'Build App', prompt: 'Build a full-stack web app for: ' },
-  { icon: '🎨', label: 'Generate Image', prompt: 'Generate a professional image for: ' },
-  { icon: '🤖', label: 'Automate', prompt: 'Automate this workflow for me: ' },
+  { icon: '🌐', label: 'Website', prompt: 'Build a landing page for: ' },
+  { icon: '💻', label: 'SaaS app', prompt: 'Build a full-stack SaaS web app with auth for: ' },
+  { icon: '🖥️', label: 'Desktop', prompt: 'Build an Electron desktop app for: ' },
 ];
 
 export function QuickActions() {

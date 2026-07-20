@@ -261,11 +261,11 @@ console.log('${name} content script loaded');
 4. Iterate in Workspace; follow-ups patch the same sticky GitHub repo
 
 ## Chrome Web Store (user-paid, ~$5 one-time)
-1. Run \`npm run zip\` (or download the zip Xroga packages after build)
+1. Download \`extension.zip\` from the GitHub Release Xroga creates after ship (or run \`npm run zip\` locally)
 2. Create a [Chrome Web Store developer](https://chrome.google.com/webstore/devconsole) account (you pay the one-time fee)
 3. Upload the zip, fill listing, submit for review
 
-Xroga does **not** pay CWS fees and does not publish on your behalf — it scaffolds + pushes GitHub + packages the zip.
+Xroga does **not** pay CWS fees and does not publish on your behalf — it scaffolds + pushes GitHub + attaches \`extension.zip\` on a GitHub Release for download.
 `,
     },
     {

@@ -574,11 +574,17 @@ function isFrameworkSourceTree(files: ProjectFile[]): boolean {
   );
 }
 
-/** Chrome / Electron: deploy only the story preview page — not a fake Next build. */
+/** Chrome / Electron / Expo: deploy only the story preview page — not a fake Next build. */
 function isPreviewOnlyProduct(files: ProjectFile[]): boolean {
   if (files.some((f) => f.path === 'manifest.json')) return true;
+  if (files.some((f) => f.path === 'app.json')) {
+    const appJson = files.find((f) => f.path === 'app.json')?.content ?? '';
+    if (/"expo"/i.test(appJson) || /"android"/i.test(appJson) || /"ios"/i.test(appJson)) return true;
+  }
   const pkg = files.find((f) => f.path === 'package.json')?.content ?? '';
-  return /"electron"/i.test(pkg) && !/"next"/i.test(pkg);
+  if (/"electron"/i.test(pkg) && !/"next"/i.test(pkg)) return true;
+  if (/"expo"/i.test(pkg) && !/"next"/i.test(pkg)) return true;
+  return false;
 }
 
 /**

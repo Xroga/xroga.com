@@ -71,11 +71,17 @@ function runCmd(
 }
 
 function shouldCompile(files: ProjectFile[]): boolean {
-  return files.some((f) => f.path === 'package.json');
+  if (!files.some((f) => f.path === 'package.json')) return false;
+  // Chrome / Electron / Expo: JS scaffolds — do not block ship on fake tsc
+  if (files.some((f) => f.path === 'manifest.json')) return false;
+  const pkg = files.find((f) => f.path === 'package.json')?.content ?? '';
+  if (/"electron"/i.test(pkg) && !/"next"/i.test(pkg)) return false;
+  if (/"expo"/i.test(pkg) && !/"next"/i.test(pkg)) return false;
+  return true;
 }
 
 /**
- * Compile-validate a generated tree. Skips static HTML-only projects.
+ * Compile-validate a generated tree. Skips static HTML-only and non-web scaffolds.
  */
 export async function compileValidateProject(
   files: ProjectFile[],
@@ -83,10 +89,18 @@ export async function compileValidateProject(
 ): Promise<CompileValidateResult> {
   const started = Date.now();
   if (!shouldCompile(files)) {
+    const pkg = files.find((f) => f.path === 'package.json')?.content ?? '';
+    const reason = files.some((f) => f.path === 'manifest.json')
+      ? 'Chrome extension — skipped compile (sideload / zip path)'
+      : /"electron"/i.test(pkg)
+        ? 'Electron desktop — skipped compile (local start / GitHub Releases)'
+        : /"expo"/i.test(pkg)
+          ? 'Expo mobile — skipped compile (Expo Go / EAS on your account)'
+          : 'No package.json — static project, skipped compile';
     return {
       ok: true,
       skipped: true,
-      reason: 'No package.json — static project, skipped compile',
+      reason,
       issues: [],
       logTail: '',
       durationMs: 0,
