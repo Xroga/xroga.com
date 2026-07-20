@@ -7,6 +7,9 @@ import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepagePipelineDemo } from '@/components/homepage/HomepagePipelineDemo';
 import { HomepageEmpowerSection } from '@/components/homepage/HomepageEmpowerSection';
+import { HomepageBlackHolePower } from '@/components/homepage/HomepageBlackHolePower';
+import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
+import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
 import { HomepageCompareSection } from '@/components/homepage/HomepageCompareSection';
 import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
 import '@/styles/homepage-coding.css';
@@ -150,6 +153,9 @@ export default function HomePage() {
 
       <HomepageEmpowerSection />
 
+      {/* Additional sections — existing homepage content above unchanged */}
+      <HomepageBlackHolePower />
+
       <section className="xv-hc-features" aria-labelledby="features-heading">
         <div className="xv-hc-features-inner">
           <span className="xv-hc-features-label">WHAT WE SHIP</span>
@@ -175,6 +181,10 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <HomepageShipStack />
+
+      <HomepageEnterpriseProof />
 
       <HomepageCompareSection />
 

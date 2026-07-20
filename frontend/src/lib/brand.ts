@@ -22,4 +22,12 @@ export const XROGA_INFINITY_TOOLTIP_SHORT =
 export const XROGA_API_BASE = 'https://xroga-api.fly.dev/v1';
 
 /** Event Horizon update label — bump date when shipping major features */
-export const XROGA_MODEL_UPDATE = 'Event Horizon Update (June 28)';
+export const XROGA_MODEL_UPDATE = 'Event Horizon Update · July 2026';
+
+/** Public capability figures shown as Black Hole V∞ (never expose provider brands). */
+export const BLACK_HOLE_POWER = {
+  contextWindow: '1M',
+  monthlyPoolSpark: '6.17M',
+  swarmCores: 6,
+  shipLoop: 'Prompt → code → GitHub → Vercel',
+} as const;
