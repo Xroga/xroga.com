@@ -28,6 +28,42 @@ export function IntegrationsPanel() {
       .catch(() => setGithubConnected(false));
   }, []);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const q = new URLSearchParams(window.location.search);
+    const vercel = q.get('vercel');
+    const github = q.get('github');
+    const supabase = q.get('supabase');
+    const message = q.get('message');
+    if (vercel === 'connected') {
+      toast.success(
+        q.get('username') ? `Vercel connected as @${q.get('username')}` : 'Vercel connected',
+      );
+    } else if (vercel === 'error' || vercel === 'missing_code') {
+      toast.error(message || 'Vercel authorize failed — try again');
+    }
+    if (github === 'connected') {
+      setGithubConnected(true);
+      toast.success(
+        q.get('username') ? `GitHub connected as @${q.get('username')}` : 'GitHub connected',
+      );
+    } else if (github === 'error' || github === 'missing_code') {
+      toast.error(message || 'GitHub authorize failed — try again');
+    }
+    if (supabase === 'connected') {
+      toast.success('Supabase authorized');
+    } else if (supabase === 'error' || supabase === 'missing_code') {
+      toast.error(message || 'Supabase authorize failed — try again');
+    }
+    if (vercel || github || supabase) {
+      const url = new URL(window.location.href);
+      ['vercel', 'github', 'supabase', 'message', 'username', 'pick'].forEach((k) =>
+        url.searchParams.delete(k),
+      );
+      window.history.replaceState({}, '', url.pathname + url.search);
+    }
+  }, []);
+
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
     if (!q) return INTEGRATIONS;
@@ -59,7 +95,12 @@ export function IntegrationsPanel() {
     if (id === 'github') {
       try {
         const { url } = await api.github.oauthUrl();
-        window.location.href = url;
+        if (!url) {
+          toast.error('GitHub OAuth not configured');
+          return;
+        }
+        const popup = window.open(url, 'xroga-github-oauth', 'width=600,height=720,scrollbars=yes');
+        if (!popup) window.location.href = url;
       } catch {
         toast.error('GitHub OAuth not configured');
       }
@@ -83,6 +124,8 @@ export function IntegrationsPanel() {
       if (!result.opened) {
         stop();
         toast.error(result.error || 'Could not open Vercel authorization');
+      } else if (!result.popup) {
+        toast.success('Continue authorizing Vercel in this tab…');
       }
       return;
     }

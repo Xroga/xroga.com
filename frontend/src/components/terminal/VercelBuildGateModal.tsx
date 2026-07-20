@@ -64,50 +64,59 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
     setConnecting(true);
     setError(null);
     try {
-      const { url, oauthConfigured: configured } = await api.vercel.oauthUrl();
-      if (!url || !configured) {
+      const { openVercelOAuthPopup } = await import('@/lib/vercelConnect');
+      const result = await openVercelOAuthPopup();
+      if (!result.oauthConfigured) {
         setShowTokenForm(true);
         setConnecting(false);
         setError(null);
         return;
       }
-      const popup = window.open(url, 'xroga-vercel-oauth', 'width=600,height=700,scrollbars=yes');
-      if (!popup) {
-        setError('Allow popups to connect Vercel, or paste your token below.');
+      if (!result.opened) {
+        setError(result.error || 'Allow popups to connect Vercel, or paste your token below.');
         setShowTokenForm(true);
         setConnecting(false);
+        return;
+      }
+      if (!result.popup) {
+        // Same-tab navigation — leave connecting state; page will leave
         return;
       }
 
       pollRef.current = setInterval(async () => {
         try {
-          if (popup.closed) {
-            stopPoll();
-            const status = await api.vercel.status();
-            setConnecting(false);
-            if (status.connected) {
-              onConnected(status.username);
-            } else {
-              setError('Vercel connection was not completed. Paste your token below or try again.');
-              setShowTokenForm(true);
-            }
-            return;
-          }
           const status = await api.vercel.status();
           if (status.connected) {
             stopPoll();
-            popup.close();
             setConnecting(false);
             onConnected(status.username);
+            return;
           }
         } catch {
           /* keep polling */
         }
       }, 1500);
-    } catch (e) {
-      setConnecting(false);
+
+      // Also watch popup closed without connect
+      const watch = setInterval(async () => {
+        // popup reference not retained when using helper — rely on status poll + message
+        try {
+          const status = await api.vercel.status();
+          if (status.connected) {
+            clearInterval(watch);
+            stopPoll();
+            setConnecting(false);
+            onConnected(status.username);
+          }
+        } catch {
+          /* ignore */
+        }
+      }, 2000);
+      setTimeout(() => clearInterval(watch), 120_000);
+    } catch (err) {
+      setError((err as Error).message || 'Could not start Vercel connect');
       setShowTokenForm(true);
-      setError((e as Error).message);
+      setConnecting(false);
     }
   }
 

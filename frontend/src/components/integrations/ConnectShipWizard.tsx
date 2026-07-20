@@ -56,12 +56,57 @@ export function ConnectShipWizard() {
     void refresh();
   }, [refresh]);
 
+  useEffect(() => {
+    const onMsg = (e: MessageEvent) => {
+      if (e.data?.type === 'xroga-github-connected') {
+        setGithubOk(true);
+        toast.success(
+          typeof e.data.username === 'string'
+            ? `GitHub connected as @${e.data.username}`
+            : 'GitHub connected',
+        );
+        void refresh();
+      }
+      if (e.data?.type === 'xroga-github-error' && typeof e.data.message === 'string') {
+        toast.error(e.data.message);
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, [refresh]);
+
+  // After same-tab Vercel/GitHub return (?vercel=connected on integrations)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const q = new URLSearchParams(window.location.search);
+    if (q.get('vercel') === 'connected') {
+      setVercelOk(true);
+      void refresh();
+    }
+    if (q.get('github') === 'connected') {
+      setGithubOk(true);
+      void refresh();
+    }
+  }, [refresh]);
+
   async function connectGithub() {
     setBusy('github');
     try {
       const { url } = await api.github.oauthUrl();
-      if (url) window.location.href = url;
-      else toast.error('GitHub OAuth not configured');
+      if (!url) {
+        toast.error('GitHub OAuth not configured');
+        return;
+      }
+      const popup = window.open(url, 'xroga-github-oauth', 'width=600,height=720,scrollbars=yes');
+      if (!popup) {
+        window.location.href = url;
+      } else {
+        try {
+          popup.focus();
+        } catch {
+          /* ignore */
+        }
+      }
     } catch {
       toast.error('Could not start GitHub connect');
     } finally {
@@ -72,9 +117,27 @@ export function ConnectShipWizard() {
   async function connectVercel() {
     setBusy('vercel');
     try {
-      const { url } = await api.vercel.oauthUrl();
-      if (url) window.location.href = url;
-      else toast.error('Vercel OAuth not configured — use a Full Account token below');
+      const { openVercelOAuthPopup, listenVercelOAuthMessages } = await import('@/lib/vercelConnect');
+      const stop = listenVercelOAuthMessages(
+        (username) => {
+          stop();
+          setVercelOk(true);
+          toast.success(username ? `Vercel connected as @${username}` : 'Vercel connected');
+          void refresh();
+        },
+        (msg) => {
+          stop();
+          toast.error(msg);
+        },
+      );
+      const result = await openVercelOAuthPopup();
+      if (!result.opened) {
+        stop();
+        toast.error(result.error || 'Could not start Vercel authorize');
+      } else if (!result.popup) {
+        // Same-tab fallback — page will navigate away; keep listener briefly irrelevant
+        toast.success('Continue authorizing Vercel in this tab…');
+      }
     } catch {
       toast.error('Could not start Vercel connect');
     } finally {
@@ -102,7 +165,7 @@ export function ConnectShipWizard() {
     {
       id: 'vercel',
       title: '2. Vercel',
-      body: 'Authorize once (Vercel App). With Project + Deployment + Env permissions, we deploy and sync keys automatically.',
+      body: 'Authorize in a popup (Vercel App). With Project + Deployment + Env permissions, we deploy and sync keys automatically.',
       done: vercelOk,
       action: connectVercel,
       label: vercelOk ? 'Connected' : 'Authorize',

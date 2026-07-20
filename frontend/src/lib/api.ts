@@ -635,7 +635,10 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ token }),
       }),
-    status: () => apiFetch<{ connected: boolean; username?: string }>('/api/vercel/status'),
+    status: () =>
+      apiFetch<{ connected: boolean; username?: string; oauthConfigured?: boolean; tokenValid?: boolean | null }>(
+        '/api/vercel/status'
+      ),
     disconnect: () => apiFetch('/api/vercel/disconnect', { method: 'DELETE' }),
     deploy: (payload: {
       html: string;
