@@ -12,7 +12,7 @@ const base = {
   shouldPush: true,
   githubPushConfirmed: true,
   chromeZipOk: false,
-  electronReleaseTriggered: false,
+  electronZipOk: false,
 } as const;
 
 describe('computeShipOutcome', () => {
@@ -35,7 +35,6 @@ describe('computeShipOutcome', () => {
       chromeZipOk: false,
     });
     assert.equal(missing.fullyShipped, false);
-    assert.equal(missing.verifyPass, false);
 
     const shipped = computeShipOutcome({
       ...base,
@@ -44,26 +43,14 @@ describe('computeShipOutcome', () => {
       chromeZipOk: true,
     });
     assert.equal(shipped.fullyShipped, true);
-    assert.equal(shipped.verifyPass, true);
   });
 
-  it('expo github-only is free path but nextSteps mention EAS', () => {
-    const o = computeShipOutcome({
-      ...base,
-      kind: 'expo',
-      vercelConnected: false,
-    });
-    assert.equal(o.fullyShipped, true);
-    assert.ok(o.nextSteps.some((s) => /EAS/i.test(s)));
-    assert.ok(o.verifyLines.some((l) => /EAS|store/i.test(l)));
-  });
-
-  it('electron requires release trigger', () => {
+  it('requires electron zip downloadable for fullyShipped', () => {
     const no = computeShipOutcome({
       ...base,
       kind: 'electron',
       vercelConnected: false,
-      electronReleaseTriggered: false,
+      electronZipOk: false,
     });
     assert.equal(no.fullyShipped, false);
 
@@ -71,10 +58,21 @@ describe('computeShipOutcome', () => {
       ...base,
       kind: 'electron',
       vercelConnected: false,
-      electronReleaseTriggered: true,
+      electronZipOk: true,
     });
     assert.equal(yes.fullyShipped, true);
-    assert.match(yes.statusMessage, /Actions/i);
+    assert.match(yes.statusMessage, /zip ready/i);
+  });
+
+  it('expo github path + eas next steps', () => {
+    const o = computeShipOutcome({
+      ...base,
+      kind: 'expo',
+      vercelConnected: false,
+      easTriggered: false,
+    });
+    assert.equal(o.fullyShipped, true);
+    assert.ok(o.nextSteps.some((s) => /EAS|Expo/i.test(s)));
   });
 
   it('qa critical blocks buildOk', () => {

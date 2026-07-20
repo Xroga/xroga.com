@@ -55,8 +55,11 @@ import {
   getGithubDefaultRepo,
 } from '../services/integrations/githubDeploy.js';
 import { getVercelToken } from '../services/integrations/vercelAuth.js';
-import { getUserSupabaseStatus } from '../services/integrations/userProviderKeys.js';
-import { buildProviderEnvFiles } from '../services/integrations/userProviderKeys.js';
+import {
+  getUserSupabaseStatus,
+  buildProviderEnvFiles,
+  getUserProviderKey,
+} from '../services/integrations/userProviderKeys.js';
 import {
   buildScaffoldForPrompt,
   detectScaffoldKind,
@@ -70,7 +73,10 @@ import {
 import {
   shipChromeExtensionZip,
   triggerElectronDesktopRelease,
+  waitForDesktopReleaseZip,
 } from '../services/publish/nonWebShip.js';
+import { triggerEasPublish } from '../services/publish/easPublish.js';
+import { ensureScaffoldIntegrity } from '../services/scaffolds/scaffoldIntegrity.js';
 import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
 import {
   getProjectMemory,
@@ -1207,6 +1213,8 @@ export async function runBuildPipeline(opts: {
         projectName,
       });
       nextFiles = mergeScaffoldWithGenerated(scaffoldFiles, nextFiles);
+      const integrity = ensureScaffoldIntegrity(scaffoldKind, scaffoldFiles, nextFiles);
+      nextFiles = integrity.files;
       const features = detectScaffoldFeatures(userFacingPrompt);
       const featureBits = [
         features.crypto ? 'crypto prices + wallet demo' : null,
@@ -1225,7 +1233,10 @@ export async function runBuildPipeline(opts: {
       emit({
         agent: 'builder',
         status: 'scaffolding',
-        message: scaffoldMessage,
+        message:
+          integrity.restored.length > 0
+            ? `${scaffoldMessage} · restored ${integrity.restored.length} critical file(s)`
+            : scaffoldMessage,
         swarmStatusLabel: 'Scaffold',
         swarmActivity: featureBits.length ? featureBits.join(', ') : scaffoldKind,
         swarmTodos: todos('build'),
@@ -1718,9 +1729,13 @@ export async function runBuildPipeline(opts: {
   let desktopReleaseTag: string | undefined;
   let desktopActionsUrl: string | undefined;
   let desktopReleasesUrl: string | undefined;
+  let desktopZipDownloadUrl: string | undefined;
   let electronReleaseError: string | undefined;
   let chromeZipOk = false;
-  let electronReleaseTriggered = false;
+  let electronZipOk = false;
+  let easTriggered = false;
+  let easUrl: string | undefined;
+  let easError: string | undefined;
 
   if (githubPushConfirmed && githubRepoName && productScaffoldKind === 'chrome') {
     emit({
@@ -1794,17 +1809,54 @@ export async function runBuildPipeline(opts: {
       desktopActionsUrl = released.actionsUrl;
       desktopReleasesUrl = released.releasesUrl;
       if (released.ok) {
-        electronReleaseTriggered = true;
         emit({
           agent: 'deploy',
           status: 'release_triggered',
           message: released.tag
-            ? `Tagged ${released.tag} — Actions will build unsigned zip (not finished yet — wait for green)`
-            : 'Desktop release workflow dispatched — wait for Actions to finish',
-          swarmStatusLabel: 'Release started',
+            ? `Tagged ${released.tag} — waiting for Actions to upload the unsigned zip…`
+            : 'Desktop release dispatched — waiting for zip asset…',
+          swarmStatusLabel: 'Building zip',
           swarmActivity: released.actionsUrl || released.tag || 'Actions',
           swarmTodos: todos('push'),
         });
+        const waited = await waitForDesktopReleaseZip({
+          userId: opts.userId,
+          repoFullName: githubRepoName,
+          tag: released.tag,
+          onProgress: (msg) => {
+            emit({
+              agent: 'deploy',
+              status: 'waiting_zip',
+              message: msg,
+              swarmStatusLabel: 'Waiting zip',
+              swarmActivity: desktopActionsUrl || 'Actions',
+              swarmTodos: todos('push'),
+            });
+          },
+        });
+        if (waited.ok && waited.zipDownloadUrl) {
+          electronZipOk = true;
+          desktopZipDownloadUrl = waited.zipDownloadUrl;
+          if (waited.releaseUrl) desktopReleasesUrl = waited.releaseUrl;
+          emit({
+            agent: 'deploy',
+            status: 'zip_ready',
+            message: `Desktop zip ready — ${waited.zipDownloadUrl}`,
+            swarmStatusLabel: 'Zip ready',
+            swarmActivity: waited.zipDownloadUrl.slice(0, 80),
+            swarmTodos: todos('push'),
+          });
+        } else {
+          electronReleaseError = waited.error || 'Desktop zip not ready in time';
+          emit({
+            agent: 'deploy',
+            status: 'zip_timeout',
+            message: electronReleaseError,
+            swarmStatusLabel: 'Zip pending',
+            swarmActivity: desktopActionsUrl || 'Actions still running',
+            swarmTodos: todos('push'),
+          });
+        }
       } else {
         electronReleaseError = released.error || 'Could not start desktop release';
         emit({
@@ -1827,6 +1879,63 @@ export async function runBuildPipeline(opts: {
         swarmActivity: electronReleaseError.slice(0, 100),
         swarmTodos: todos('push'),
       });
+    }
+  }
+
+  // Expo: auto-trigger EAS build-only when user already saved Expo token
+  if (githubPushConfirmed && productScaffoldKind === 'expo') {
+    const expoToken = await getUserProviderKey(opts.userId, 'expo').catch(() => null);
+    if (expoToken) {
+      emit({
+        agent: 'deploy',
+        status: 'eas_dispatch',
+        message: 'Expo token found — starting EAS build on your account (you pay EAS/store fees)…',
+        swarmStatusLabel: 'EAS',
+        swarmActivity: 'build-android',
+        swarmTodos: todos('push'),
+      });
+      try {
+        const eas = await triggerEasPublish({
+          userId: opts.userId,
+          platform: 'android',
+          gitRef: githubBranch || 'main',
+          submit: false,
+        });
+        if (eas.ok) {
+          easTriggered = true;
+          easUrl = eas.url;
+          emit({
+            agent: 'deploy',
+            status: 'eas_started',
+            message: eas.message,
+            swarmStatusLabel: 'EAS started',
+            swarmActivity: eas.url || eas.fileName,
+            swarmTodos: todos('push'),
+          });
+        } else {
+          easError = eas.message || eas.error || 'EAS dispatch failed';
+          emit({
+            agent: 'deploy',
+            status: 'eas_skipped',
+            message: easError,
+            swarmStatusLabel: 'EAS needs setup',
+            swarmActivity: easError.slice(0, 100),
+            swarmTodos: todos('push'),
+          });
+        }
+      } catch (err) {
+        easError = (err as Error).message;
+        emit({
+          agent: 'deploy',
+          status: 'eas_skipped',
+          message: easError,
+          swarmStatusLabel: 'EAS needs setup',
+          swarmActivity: easError.slice(0, 100),
+          swarmTodos: todos('push'),
+        });
+      }
+    } else {
+      easError = 'No Expo token — Connect Expo in Publish to start EAS';
     }
   }
 
@@ -1953,9 +2062,12 @@ export async function runBuildPipeline(opts: {
     deployUrl: deployUrl || undefined,
     liveOk: deployUrl ? Boolean(shipVerify?.liveOk ?? deployVerified) : undefined,
     chromeZipOk,
-    electronReleaseTriggered,
+    electronZipOk,
+    easTriggered,
+    easUrl,
     chromeZipError,
     electronReleaseError,
+    easError,
   });
 
   // Merge pre-push blockers (e.g. missing sticky repo) that outcome may not know
@@ -1970,7 +2082,9 @@ export async function runBuildPipeline(opts: {
     const summaryLines = [
       ...outcome.verifyLines,
       ...(chromeZipDownloadUrl ? [`Download: ${chromeZipDownloadUrl}`] : []),
-      ...(desktopActionsUrl ? [`Actions: ${desktopActionsUrl}`] : []),
+      ...(desktopZipDownloadUrl ? [`Download: ${desktopZipDownloadUrl}`] : []),
+      ...(desktopActionsUrl && !desktopZipDownloadUrl ? [`Actions: ${desktopActionsUrl}`] : []),
+      ...(easUrl ? [`EAS: ${easUrl}`] : []),
       ...(outcome.nextSteps.length
         ? outcome.nextSteps.map((s) => `➡️ ${s}`)
         : []),
@@ -2062,7 +2176,7 @@ export async function runBuildPipeline(opts: {
           ? productScaffoldKind === 'chrome'
             ? `Shipped **${projectName}** — GitHub + \`extension.zip\` on Releases.`
             : productScaffoldKind === 'electron'
-              ? `**${projectName}** on GitHub — desktop release **started** (wait for Actions zip; not finished yet).`
+              ? `Shipped **${projectName}** — desktop zip ready on GitHub Releases.`
               : productScaffoldKind === 'expo'
                 ? `**${projectName}** on GitHub (Expo Go path). **EAS/App Store/Play not done** — Publish → Connect Expo.`
                 : isUpdate
@@ -2116,6 +2230,9 @@ export async function runBuildPipeline(opts: {
     desktopReleaseTag,
     desktopActionsUrl,
     desktopReleasesUrl,
+    desktopZipDownloadUrl,
+    easTriggered,
+    easUrl,
     shipBlockers: finalBlockers.length ? finalBlockers : undefined,
     supabase: {
       connected: Boolean(supabaseStatus.connected),
@@ -2187,8 +2304,8 @@ export async function runBuildPipeline(opts: {
           : ['Open GitHub Releases', 'Sideload from repo', 'Refine the extension']
         : productScaffoldKind === 'electron'
           ? [
-              desktopReleasesUrl ? 'Open GitHub Releases' : 'Open GitHub Actions',
-              'Run npm start locally',
+              desktopZipDownloadUrl ? 'Download desktop zip' : 'Open GitHub Actions',
+              desktopReleasesUrl ? 'Open GitHub Releases' : 'Run npm start locally',
               'Refine the desktop app',
             ]
           : productScaffoldKind === 'expo'
