@@ -1175,11 +1175,16 @@ export async function runBuildPipeline(opts: {
     ? prior.projectName || projectNameFromPrompt(opts.prompt)
     : projectNameFromPrompt(opts.prompt);
 
-  // New builds: merge deterministic scaffold (auth/API or Expo) under AI output
-  // so user vault keys can power live /api routes and mobile apps ship complete.
+  // New builds: merge deterministic scaffold under AI output
+  // so user vault keys can power live /api routes and mobile/extension/desktop ship complete.
   if (!isUpdate && nextFiles.length) {
     const scaffoldKind = detectScaffoldKind(userFacingPrompt);
-    if (scaffoldKind === 'nextjs' || scaffoldKind === 'expo') {
+    if (
+      scaffoldKind === 'nextjs' ||
+      scaffoldKind === 'expo' ||
+      scaffoldKind === 'chrome' ||
+      scaffoldKind === 'electron'
+    ) {
       const { files: scaffoldFiles } = buildScaffoldForPrompt({
         prompt: userFacingPrompt,
         projectName,
@@ -1190,15 +1195,20 @@ export async function runBuildPipeline(opts: {
         features.crypto ? 'crypto prices + wallet demo' : null,
         features.agent ? 'automation agent + cron' : null,
       ].filter(Boolean);
+      const scaffoldMessage =
+        scaffoldKind === 'expo'
+          ? 'Merged Android/iOS Expo scaffold under your build'
+          : scaffoldKind === 'chrome'
+            ? 'Merged Chrome MV3 extension scaffold (+ zip path)'
+            : scaffoldKind === 'electron'
+              ? 'Merged Electron desktop scaffold (+ GitHub Releases workflow)'
+              : featureBits.length
+                ? `Merged Next.js scaffold with ${featureBits.join(' · ')}`
+                : 'Merged Next.js auth/API scaffold (vault keys → Vercel env)';
       emit({
         agent: 'builder',
         status: 'scaffolding',
-        message:
-          scaffoldKind === 'expo'
-            ? 'Merged Android/iOS Expo scaffold under your build'
-            : featureBits.length
-              ? `Merged Next.js scaffold with ${featureBits.join(' · ')}`
-              : 'Merged Next.js auth/API scaffold (vault keys → Vercel env)',
+        message: scaffoldMessage,
         swarmStatusLabel: 'Scaffold',
         swarmActivity: featureBits.length ? featureBits.join(', ') : scaffoldKind,
         swarmTodos: todos('build'),

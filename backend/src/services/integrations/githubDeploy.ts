@@ -574,12 +574,28 @@ function isFrameworkSourceTree(files: ProjectFile[]): boolean {
   );
 }
 
+/** Chrome / Electron: deploy only the story preview page — not a fake Next build. */
+function isPreviewOnlyProduct(files: ProjectFile[]): boolean {
+  if (files.some((f) => f.path === 'manifest.json')) return true;
+  const pkg = files.find((f) => f.path === 'package.json')?.content ?? '';
+  return /"electron"/i.test(pkg) && !/"next"/i.test(pkg);
+}
+
 /**
  * Prepare files for Vercel file-upload deploy.
  * Framework projects keep the full source tree (no GitHub↔Vercel link required).
  * Classic static sites still merge into a single preview HTML.
  */
 function hostingDeployFiles(files: ProjectFile[]): ProjectFile[] {
+  if (isPreviewOnlyProduct(files)) {
+    const preview = files.find((f) => f.path === 'index.html');
+    const readme = files.find((f) => f.path === 'README.md');
+    const out: ProjectFile[] = [];
+    if (preview) out.push(preview);
+    if (readme) out.push(readme);
+    if (out.length) return out;
+  }
+
   if (isFrameworkSourceTree(files)) {
     // Cap payload — skip lockfiles / binaries; keep README
     return files.filter(
@@ -604,10 +620,11 @@ function hostingDeployFiles(files: ProjectFile[]): ProjectFile[] {
 }
 
 function frameworkForDeploy(files: ProjectFile[]): 'nextjs' | 'vite' | null {
+  if (isPreviewOnlyProduct(files)) return null;
   const pkg = files.find((f) => f.path === 'package.json')?.content ?? '';
   if (/"next"/i.test(pkg)) return 'nextjs';
-  if (/"vite"/i.test(pkg) && !/"expo"/i.test(pkg)) return 'vite';
-  // Expo / RN: deploy the static index.html preview page only
+  if (/"vite"/i.test(pkg) && !/"expo"/i.test(pkg) && !/"electron"/i.test(pkg)) return 'vite';
+  // Expo / RN / Electron / Chrome: preview page only (or null framework)
   return null;
 }
 

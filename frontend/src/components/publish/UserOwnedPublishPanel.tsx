@@ -282,10 +282,11 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
       ) : (
         <div className="space-y-4">
           <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-3 py-2.5 text-xs text-[var(--foreground)] leading-relaxed">
-            <strong>Non-developer path:</strong> You pay Google (~$25 once) and/or Apple (~$99/yr).
-            Save credentials below → click <strong>Publish</strong>. Xroga triggers EAS on{' '}
-            <em>your</em> Expo account. Store review still takes Apple/Google time (not instant).
-            Callback / web Authorize is separate — see Ship setup for GitHub + Vercel + Supabase.
+            <strong>Connect Expo (like GitHub — on your account):</strong> Expo does not offer a
+            public “Authorize app” OAuth for CI like GitHub/Vercel. Paste a free{' '}
+            <em>access / robot token</em> once → link EAS project → one-click Publish. You pay
+            Google (~$25) / Apple (~$99/yr) / EAS minutes where those fees live. Xroga never pays
+            store fees.
           </div>
           <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--background)]/40 px-3">
             {(status?.mobile.checklist ?? []).map((item) => (
@@ -295,10 +296,10 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
 
           <div className="rounded-xl border border-[var(--card-border)] p-3 space-y-2">
             <p className="text-sm font-semibold flex items-center gap-1.5">
-              <KeyRound className="w-4 h-4" /> Expo access token (free)
+              <KeyRound className="w-4 h-4" /> Connect Expo account
             </p>
             <p className="text-xs text-[var(--muted)]">
-              Create at{' '}
+              Create a free token at{' '}
               <a
                 className="text-[var(--accent)] hover:underline"
                 href="https://expo.dev/settings/access-tokens"
@@ -307,7 +308,8 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
               >
                 expo.dev/settings/access-tokens
               </a>
-              . Encrypted (AES-256-GCM) — never committed to GitHub.
+              . Prefer a <strong>robot</strong> token for CI. Encrypted (AES-256-GCM) — never
+              committed to GitHub. No Expo client id/secret needed on Xroga.
             </p>
             <div className="flex flex-col sm:flex-row gap-2">
               <input
@@ -324,12 +326,12 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
                 onClick={() => void saveExpo()}
                 className="shrink-0 rounded-md bg-[var(--accent)] text-white px-3 py-2 text-xs font-bold disabled:opacity-60"
               >
-                {busy === 'expo' ? 'Saving…' : 'Save & verify'}
+                {busy === 'expo' ? 'Connecting…' : 'Connect Expo'}
               </button>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 pt-1">
               <input
-                placeholder="EAS project ID (UUID from expo.dev)"
+                placeholder="EAS project ID (auto if you have exactly one app)"
                 value={easProjectId}
                 onChange={(e) => setEasProjectId(e.target.value)}
                 className="flex-1 min-w-0 rounded-md border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-sm font-mono"

@@ -32,12 +32,16 @@ const FAQS: Array<{ q: string; a: string }> = [
     a: 'No for the first ship. Describe the product in plain language. Developers can still open the repo and refine — Xroga does not lock you into a black box.',
   },
   {
-    q: 'Is Xroga for browser automation or video?',
-    a: 'No. Xroga is a coding agent for web apps — build, push to GitHub, deploy on Vercel, sync API keys, update the same repo. Not a browser-automation or video product.',
+    q: 'Is Xroga for browser automation, image, or video studios?',
+    a: 'No. Xroga is a coding agent — websites, SaaS, Expo apps, Chrome extensions, and Electron desktops to your GitHub (and Vercel for web). Not a browser-automation farm or media generation studio.',
   },
   {
     q: 'Can Xroga build Android and iOS apps?',
-    a: 'Yes for Expo / React Native scaffolds — Xroga generates the mobile project, pushes it to your GitHub, and you run it in Expo Go or ship store builds with EAS. Native App Store submission still uses Expo/EAS on your machine.',
+    a: 'Yes — Expo / React Native scaffolds. Xroga generates the mobile project, pushes it to your GitHub, and after you Connect Expo (access token) + link an EAS project in Publish, one-click Publish triggers EAS on your Expo account. You pay Apple/Google/EAS fees; store review stays Apple/Google. Expo Go works for free previews.',
+  },
+  {
+    q: 'Can Xroga ship Chrome extensions or desktop apps?',
+    a: 'Yes as scaffolds: Chrome MV3 (zip for sideload / Chrome Web Store — you pay ~$5 CWS once) and Electron (GitHub Releases free path for unsigned builds; code signing/store fees are yours if you need them). Not a managed App Store publisher that pays fees for you.',
   },
   {
     q: 'Where is billing and support?',

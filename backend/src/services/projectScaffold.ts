@@ -5,6 +5,8 @@ import type { ProjectFile } from './integrations/githubDeploy.js';
 import { detectScaffoldKind, type ScaffoldKind } from './scaffolds/detectScaffold.js';
 import { buildExpoScaffold } from './scaffolds/expoScaffold.js';
 import { buildNextjsScaffold } from './scaffolds/nextjsScaffold.js';
+import { buildChromeExtensionScaffold } from './scaffolds/chromeExtensionScaffold.js';
+import { buildElectronScaffold } from './scaffolds/electronScaffold.js';
 
 export { detectScaffoldKind, type ScaffoldKind } from './scaffolds/detectScaffold.js';
 
@@ -39,6 +41,12 @@ export function scaffoldFilePaths(prompt?: string): string[] {
   if (kind === 'expo') {
     return ['package.json', 'app.json', 'app/index.tsx', 'app/_layout.tsx', 'index.html', 'README.md'];
   }
+  if (kind === 'chrome') {
+    return ['manifest.json', 'background.js', 'popup.html', 'package.json', 'PUBLISH.md', 'README.md'];
+  }
+  if (kind === 'electron') {
+    return ['package.json', 'main.js', 'renderer/index.html', 'PUBLISH.md', 'README.md'];
+  }
   if (kind === 'nextjs') {
     return [
       'package.json',
@@ -53,7 +61,7 @@ export function scaffoldFilePaths(prompt?: string): string[] {
   return ['index.html', 'styles.css', 'script.js', 'vercel.json', 'README.md'];
 }
 
-/** Deterministic scaffold tree for a prompt (auth/DB/API or Expo mobile). */
+/** Deterministic scaffold tree for a prompt. */
 export function buildScaffoldForPrompt(opts: {
   prompt: string;
   projectName: string;
@@ -61,6 +69,18 @@ export function buildScaffoldForPrompt(opts: {
   const kind = detectScaffoldKind(opts.prompt);
   if (kind === 'expo') {
     return { kind, files: buildExpoScaffold({ projectName: opts.projectName, userPrompt: opts.prompt }) };
+  }
+  if (kind === 'chrome') {
+    return {
+      kind,
+      files: buildChromeExtensionScaffold({ projectName: opts.projectName, userPrompt: opts.prompt }),
+    };
+  }
+  if (kind === 'electron') {
+    return {
+      kind,
+      files: buildElectronScaffold({ projectName: opts.projectName, userPrompt: opts.prompt }),
+    };
   }
   if (kind === 'nextjs') {
     return {
@@ -98,6 +118,7 @@ export function mergeScaffoldWithGenerated(
 }
 
 export function looksLikeFrameworkProject(files: ProjectFile[]): boolean {
+  if (files.some((f) => f.path === 'manifest.json')) return true;
   const pkg = files.find((f) => f.path === 'package.json' || f.path.endsWith('/package.json'));
   if (!pkg) return false;
   try {
@@ -106,17 +127,26 @@ export function looksLikeFrameworkProject(files: ProjectFile[]): boolean {
       devDependencies?: Record<string, string>;
     };
     const deps = { ...json.dependencies, ...json.devDependencies };
-    return Boolean(deps.next || deps.expo || deps['react-native'] || deps.vite || deps.nuxt);
+    return Boolean(
+      deps.next ||
+        deps.expo ||
+        deps['react-native'] ||
+        deps.vite ||
+        deps.nuxt ||
+        deps.electron,
+    );
   } catch {
-    return /"next"|"expo"|"react-native"/i.test(pkg.content);
+    return /"next"|"expo"|"react-native"|"electron"/i.test(pkg.content);
   }
 }
 
 export function detectFrameworkFromFiles(
   files: ProjectFile[],
-): 'nextjs' | 'expo' | 'vite' | 'static' | null {
+): 'nextjs' | 'expo' | 'vite' | 'chrome' | 'electron' | 'static' | null {
+  if (files.some((f) => f.path === 'manifest.json')) return 'chrome';
   const pkg = files.find((f) => f.path === 'package.json')?.content ?? '';
   if (/"expo"|"expo-router"/i.test(pkg)) return 'expo';
+  if (/"electron"/i.test(pkg)) return 'electron';
   if (/"next"/i.test(pkg)) return 'nextjs';
   if (/"vite"/i.test(pkg)) return 'vite';
   if (files.some((f) => f.path === 'index.html')) return 'static';

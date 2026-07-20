@@ -2,13 +2,13 @@ import type { LucideIcon } from 'lucide-react';
 import {
   Search,
   Code2,
-  Image,
   FileText,
-  Box,
   Rocket,
-  Globe,
   Bug,
-  Mic,
+  Globe,
+  Smartphone,
+  Puzzle,
+  Monitor,
 } from 'lucide-react';
 
 export interface QuickAction {
@@ -19,16 +19,15 @@ export interface QuickAction {
   color: string;
 }
 
-/** Top 10 quick actions per spec */
+/** Quick actions aligned with real ship loops */
 export const QUICK_ACTIONS: QuickAction[] = [
-  { id: 'advice', icon: Search, label: 'Advice', prompt: 'Give me expert advice for ', color: '#60a5fa' },
-  { id: 'code', icon: Code2, label: 'Code', prompt: 'Write a Python script to ', color: '#22c55e' },
-  { id: 'image', icon: Image, label: 'Image', prompt: 'Generate an image of ', color: '#ec4899' },
-  { id: 'research', icon: Search, label: 'Researches', prompt: 'Research deeply and summarize ', color: '#38bdf8' },
-  { id: 'script', icon: FileText, label: 'Script', prompt: 'Write a script for ', color: '#f59e0b' },
-  { id: '3d', icon: Box, label: '3D', prompt: 'Generate a 3D model of ', color: '#8b5cf6' },
-  { id: 'deploy', icon: Rocket, label: 'Deploy', prompt: 'Deploy my project to the best platform for: ', color: '#ef4444' },
-  { id: 'scrape', icon: Globe, label: 'Scrape', prompt: 'Scrape and extract data from ', color: '#06b6d4' },
-  { id: 'voice', icon: Mic, label: 'Voice call', prompt: 'Create voice/TTS for ', color: '#14b8a6' },
-  { id: 'review', icon: Bug, label: 'Review', prompt: 'Review and improve this: ', color: '#6366f1' },
+  { id: 'website', icon: Globe, label: 'Website', prompt: 'Build a landing page for ', color: '#60a5fa' },
+  { id: 'saas', icon: Code2, label: 'SaaS', prompt: 'Build a SaaS dashboard with auth for ', color: '#22c55e' },
+  { id: 'research', icon: Search, label: 'Research', prompt: 'Research deeply and summarize ', color: '#38bdf8' },
+  { id: 'mobile', icon: Smartphone, label: 'Mobile', prompt: 'Build an Expo Android/iOS app for ', color: '#a78bfa' },
+  { id: 'extension', icon: Puzzle, label: 'Extension', prompt: 'Build a Chrome MV3 extension that ', color: '#f59e0b' },
+  { id: 'desktop', icon: Monitor, label: 'Desktop', prompt: 'Build an Electron desktop app for ', color: '#94a3b8' },
+  { id: 'deploy', icon: Rocket, label: 'Ship', prompt: 'Push to GitHub and deploy on Vercel: ', color: '#ef4444' },
+  { id: 'script', icon: FileText, label: 'Script', prompt: 'Write a production script to ', color: '#14b8a6' },
+  { id: 'review', icon: Bug, label: 'Review', prompt: 'Review and improve this code: ', color: '#6366f1' },
 ];

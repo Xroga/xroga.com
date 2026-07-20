@@ -15,15 +15,23 @@ export function isCapabilitiesQuery(input: string): boolean {
 }
 
 export function getXrogaCapabilitiesResponse(): string {
-  return `✨ Everything you can build with XROGA
+  return `✨ What Xroga ships today
 
-Live right now
-💬 Chat — ask anything; business advice, pricing, and current events use **SearXNG + YouTube** automatically (Tavily only if SearXNG is empty)
-🎨 **Image generation** — logos, thumbnails, art, mockups, edits, variants, upscale, background removal
-🌐 **Websites & apps** — full code pushed to your GitHub, live preview, crypto dashboards, chatbots, SaaS, CRM, games, APIs
-💻 **Software & code** — any stack, any project type: scripts, tools, extensions, mobile, backend, debugging
+**#1 coding agent — prompt → your GitHub → live**
 
-When you ask about prices, net worth, strategies, or what's happening now — I search **SearXNG** (free) and **YouTube** first. Tavily is only used if SearXNG has no results.
+Live product loops
+🌐 **Web apps & sites** — Converter briefs → swarm builds → sticky GitHub repo → your Vercel (optional Supabase keys in vault)
+📱 **Mobile (Expo)** — Android/iOS scaffold → push GitHub → one-click EAS trigger on **your** Expo account (you pay Apple/Google/EAS)
+🧩 **Chrome extension (MV3)** — scaffold + zip for sideload / Chrome Web Store (you pay ~$5 CWS once)
+🖥️ **Desktop (Electron)** — scaffold + GitHub Releases workflow (free unsigned path; you pay signing/stores if you need them)
+📊 **Crypto market dashboards** — prices UI + wallet-connect demo — **not** an exchange, custody, or trading system
+⚙️ **Agent runner scaffolds** — cron/LLM stubs on your stack — not a managed always-on bot farm
 
-What do you want to create first?`;
+Research
+🔍 Live web + X research when keys are set — empty research is skipped (never faked)
+
+Not part of the product
+❌ Image / video studios, browser-automation farms, or paying App Store fees for you
+
+What do you want to ship first?`;
 }
