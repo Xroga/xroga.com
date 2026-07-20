@@ -23,6 +23,8 @@ export function ConnectShipWizard() {
   const [busy, setBusy] = useState<StepId | null>(null);
   const [showKeys, setShowKeys] = useState(false);
   const [showSupabase, setShowSupabase] = useState(false);
+  const [showVercelToken, setShowVercelToken] = useState(false);
+  const [vercelToken, setVercelToken] = useState('');
   const stopVercelListen = useRef<(() => void) | null>(null);
 
   const refresh = useCallback(async () => {
@@ -106,10 +108,17 @@ export function ConnectShipWizard() {
     if (q.get('supabase') === 'connected') {
       void refresh();
     }
+    // Chatbar / OAuth session-store failure → land here with token paste ready
+    if (q.get('vercel') === 'setup' || q.get('focus') === 'vercel') {
+      setShowVercelToken(true);
+    }
+    const onSetup = () => setShowVercelToken(true);
+    window.addEventListener('xroga-vercel-setup', onSetup);
     const vercelErr = q.get('vercel') === 'error' ? q.get('message') : null;
     const githubErr = q.get('github') === 'error' ? q.get('message') : null;
     if (vercelErr) toast.error(vercelErr);
     if (githubErr) toast.error(githubErr);
+    return () => window.removeEventListener('xroga-vercel-setup', onSetup);
   }, [refresh]);
 
   async function connectGithub() {
@@ -161,15 +170,51 @@ export function ConnectShipWizard() {
         },
       );
       const result = await openVercelOAuthPopup();
+      if (result.goToIntegrations && !result.opened) {
+        stopVercelListen.current?.();
+        stopVercelListen.current = null;
+        // Already on Integrations — show token paste instead of looping navigate
+        setShowVercelToken(true);
+        toast.error(
+          result.error ||
+            'OAuth session store unavailable — paste a Vercel personal token below',
+        );
+        return;
+      }
       if (!result.opened) {
         stopVercelListen.current?.();
         stopVercelListen.current = null;
+        setShowVercelToken(true);
         toast.error(result.error || 'Could not start Vercel authorize');
       } else if (!result.popup) {
         toast.success('Continue authorizing Vercel in this tab…');
       }
     } catch {
+      setShowVercelToken(true);
       toast.error('Could not start Vercel connect');
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function saveVercelToken() {
+    const token = vercelToken.trim();
+    if (!token || token.length < 20) {
+      toast.error('Paste a valid token from vercel.com/account/tokens');
+      return;
+    }
+    setBusy('vercel');
+    try {
+      const res = await api.vercel.connectToken(token);
+      setVercelOk(true);
+      setShowVercelToken(false);
+      setVercelToken('');
+      toast.success(
+        res.username ? `Vercel connected as @${res.username}` : 'Vercel connected',
+      );
+      void refresh();
+    } catch (err) {
+      toast.error((err as Error).message || 'Could not save Vercel token');
     } finally {
       setBusy(null);
     }
@@ -296,6 +341,49 @@ export function ConnectShipWizard() {
           </li>
         ))}
       </ol>
+
+      {!vercelOk && showVercelToken ? (
+        <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3 space-y-2">
+          <p className="text-xs text-[var(--muted)] leading-relaxed">
+            Paste a Vercel personal token from{' '}
+            <a
+              href="https://vercel.com/account/tokens"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--accent)] font-semibold hover:underline"
+            >
+              vercel.com/account/tokens
+            </a>{' '}
+            (works even when OAuth session storage is unavailable).
+          </p>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="password"
+              value={vercelToken}
+              onChange={(e) => setVercelToken(e.target.value)}
+              placeholder="vercel_… personal access token"
+              className="flex-1 px-3 py-1.5 rounded-lg bg-white/5 border border-[var(--card-border)] text-xs font-mono"
+              autoComplete="off"
+            />
+            <button
+              type="button"
+              disabled={busy === 'vercel'}
+              onClick={() => void saveVercelToken()}
+              className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--accent)] text-[var(--background)] disabled:opacity-50"
+            >
+              {busy === 'vercel' ? 'Saving…' : 'Save token'}
+            </button>
+          </div>
+        </div>
+      ) : !vercelOk ? (
+        <button
+          type="button"
+          onClick={() => setShowVercelToken(true)}
+          className="mt-3 text-xs text-[var(--muted)] hover:text-[var(--accent)] underline-offset-2 hover:underline"
+        >
+          Prefer a personal token? Paste it here
+        </button>
+      ) : null}
 
       {ready ? (
         <p className="mt-4 text-sm text-[var(--muted)]">

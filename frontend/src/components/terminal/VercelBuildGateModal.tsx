@@ -64,8 +64,14 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
     setConnecting(true);
     setError(null);
     try {
-      const { openVercelOAuthPopup } = await import('@/lib/vercelConnect');
+      const { openVercelOAuthPopup, goToVercelIntegrations } = await import('@/lib/vercelConnect');
       const result = await openVercelOAuthPopup();
+      if (result.goToIntegrations && !result.opened) {
+        setConnecting(false);
+        onClose();
+        goToVercelIntegrations({ error: result.error });
+        return;
+      }
       if (!result.oauthConfigured) {
         setShowTokenForm(true);
         setConnecting(false);
@@ -79,7 +85,6 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
         return;
       }
       if (!result.popup) {
-        // Same-tab navigation — leave connecting state; page will leave
         return;
       }
 
@@ -97,9 +102,7 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
         }
       }, 1500);
 
-      // Also watch popup closed without connect
       const watch = setInterval(async () => {
-        // popup reference not retained when using helper — rely on status poll + message
         try {
           const status = await api.vercel.status();
           if (status.connected) {

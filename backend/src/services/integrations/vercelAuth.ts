@@ -5,10 +5,12 @@
 
 import { createHash, randomBytes } from 'crypto';
 import { getSupabaseAdmin } from '../../config/supabase.js';
+import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
 import { isMissingTableError } from './githubTokenStore.js';
 
 const PKCE_PROVIDER = 'vercel_oauth_pkce';
 const CALLBACK_PATH = '/dashboard/integrations/vercel/callback';
+const TOKEN_BUCKET = 'xroga-github-tokens';
 
 const ALLOWED_CALLBACK_ORIGINS = [
   'https://xroga.com',
@@ -16,6 +18,77 @@ const ALLOWED_CALLBACK_ORIGINS = [
   'http://localhost:3000',
   'http://127.0.0.1:3000',
 ];
+
+type StoredVercelAuth = {
+  access_token: string;
+  username: string;
+  provider_user_id?: string;
+  refresh_token?: string;
+  expires_in?: number;
+  updated_at: string;
+};
+
+function vercelStoragePath(userId: string): string {
+  return `${userId}/vercel.json`;
+}
+
+async function ensureTokenBucket(): Promise<boolean> {
+  const supabase = getSupabaseAdmin();
+  const { data: buckets, error: listErr } = await supabase.storage.listBuckets();
+  if (!listErr && buckets?.some((b) => b.id === TOKEN_BUCKET || b.name === TOKEN_BUCKET)) {
+    return true;
+  }
+  const { error: createErr } = await supabase.storage.createBucket(TOKEN_BUCKET, {
+    public: false,
+    fileSizeLimit: 8192,
+  });
+  if (!createErr) return true;
+  if (/already exists|duplicate/i.test(createErr.message)) return true;
+  console.warn('[vercelAuth] createBucket:', createErr.message);
+  return false;
+}
+
+async function saveVercelTokenToStorage(userId: string, data: StoredVercelAuth): Promise<boolean> {
+  try {
+    if (!(await ensureTokenBucket())) return false;
+    const supabase = getSupabaseAdmin();
+    const body = JSON.stringify(data);
+    const { error } = await supabase.storage.from(TOKEN_BUCKET).upload(vercelStoragePath(userId), body, {
+      upsert: true,
+      contentType: 'application/json',
+    });
+    if (error) {
+      console.warn('[vercelAuth] storage upload:', error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.warn('[vercelAuth] storage save:', (err as Error).message);
+    return false;
+  }
+}
+
+async function getVercelTokenFromStorage(userId: string): Promise<StoredVercelAuth | null> {
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase.storage.from(TOKEN_BUCKET).download(vercelStoragePath(userId));
+    if (error || !data) return null;
+    const parsed = JSON.parse(await data.text()) as StoredVercelAuth;
+    if (!parsed?.access_token?.trim()) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+async function deleteVercelTokenFromStorage(userId: string): Promise<void> {
+  try {
+    const supabase = getSupabaseAdmin();
+    await supabase.storage.from(TOKEN_BUCKET).remove([vercelStoragePath(userId)]);
+  } catch {
+    /* ignore */
+  }
+}
 
 export function vercelOAuthConfigured(): boolean {
   return Boolean(clientId() && clientSecret());
@@ -95,26 +168,58 @@ export async function buildVercelAuthorizeUrl(
     JSON.stringify({ userId, t: Date.now(), n: randomBytes(8).toString('hex') }),
   ).toString('base64url');
 
+  // Production DBs sometimes never applied migration 020 — bootstrap before PKCE upsert
+  if (githubSchemaAutoBootstrapEnabled()) {
+    await ensureGithubSchema();
+  }
+
   const supabase = getSupabaseAdmin();
-  const { error: pkceErr } = await supabase.from('user_integrations').upsert(
-    {
-      user_id: userId,
-      provider: PKCE_PROVIDER,
-      access_token: verifier,
-      metadata: {
-        state,
-        nonce,
-        redirect_uri: redirectUri,
-        created_at: new Date().toISOString(),
+  let pkceErr = (
+    await supabase.from('user_integrations').upsert(
+      {
+        user_id: userId,
+        provider: PKCE_PROVIDER,
+        access_token: verifier,
+        metadata: {
+          state,
+          nonce,
+          redirect_uri: redirectUri,
+          created_at: new Date().toISOString(),
+        },
       },
-    },
-    { onConflict: 'user_id,provider' },
-  );
+      { onConflict: 'user_id,provider' },
+    )
+  ).error;
+
+  // Schema cache / missing table — retry once after bootstrap + brief wait
+  if (pkceErr && isMissingTableError(pkceErr.message)) {
+    await ensureGithubSchema();
+    await new Promise((r) => setTimeout(r, 400));
+    pkceErr = (
+      await supabase.from('user_integrations').upsert(
+        {
+          user_id: userId,
+          provider: PKCE_PROVIDER,
+          access_token: verifier,
+          metadata: {
+            state,
+            nonce,
+            redirect_uri: redirectUri,
+            created_at: new Date().toISOString(),
+          },
+        },
+        { onConflict: 'user_id,provider' },
+      )
+    ).error;
+  }
 
   if (pkceErr) {
     console.error('[vercelAuth] PKCE store failed:', pkceErr.message);
+    const missing = isMissingTableError(pkceErr.message);
     throw new Error(
-      `Could not start Vercel authorize (session store failed): ${pkceErr.message}. Check Supabase service role + user_integrations table.`,
+      missing
+        ? 'Vercel authorize needs the user_integrations table in Supabase. Open Integrations and paste a Vercel personal token (vercel.com/account/tokens), or apply migration 020_user_integrations.sql / set DATABASE_URL so the API can auto-create the table.'
+        : `Could not start Vercel authorize (session store failed): ${pkceErr.message}`,
     );
   }
 
@@ -233,23 +338,39 @@ export async function getVercelToken(userId: string): Promise<string | null> {
     .eq('provider', 'vercel')
     .maybeSingle();
 
+  if (error && isMissingTableError(error.message)) {
+    const stored = await getVercelTokenFromStorage(userId);
+    return stored?.access_token?.trim() ?? null;
+  }
+
   if (error && !isMissingTableError(error.message)) {
     console.warn('[vercelAuth] lookup:', error.message);
   }
 
-  return data?.access_token?.trim() ?? null;
+  if (data?.access_token?.trim()) return data.access_token.trim();
+
+  const stored = await getVercelTokenFromStorage(userId);
+  return stored?.access_token?.trim() ?? null;
 }
 
 export async function getVercelUsername(userId: string): Promise<string | null> {
   const supabase = getSupabaseAdmin();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('user_integrations')
     .select('metadata')
     .eq('user_id', userId)
     .eq('provider', 'vercel')
     .maybeSingle();
+
+  if (error && isMissingTableError(error.message)) {
+    const stored = await getVercelTokenFromStorage(userId);
+    return stored?.username?.trim() || null;
+  }
+
   const meta = data?.metadata as { username?: string } | null;
-  return meta?.username?.trim() ?? null;
+  if (meta?.username?.trim()) return meta.username.trim();
+  const stored = await getVercelTokenFromStorage(userId);
+  return stored?.username?.trim() || null;
 }
 
 export async function isVercelConnected(userId: string): Promise<boolean> {
@@ -289,11 +410,27 @@ export async function saveVercelConnection(
     expiresIn?: number;
   },
 ): Promise<void> {
+  const token = accessToken.trim();
+  if (!token) throw new Error('Empty Vercel access token');
+
+  const storagePayload: StoredVercelAuth = {
+    access_token: token,
+    username: meta.username ?? 'vercel-user',
+    provider_user_id: meta.providerUserId,
+    refresh_token: meta.refreshToken,
+    expires_in: meta.expiresIn,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (githubSchemaAutoBootstrapEnabled()) {
+    await ensureGithubSchema();
+  }
+
   const supabase = getSupabaseAdmin();
   const row = {
     user_id: userId,
     provider: 'vercel',
-    access_token: accessToken,
+    access_token: token,
     refresh_token: meta.refreshToken ?? null,
     provider_user_id: meta.providerUserId ?? null,
     metadata: {
@@ -303,19 +440,43 @@ export async function saveVercelConnection(
     },
   };
 
-  const { error } = await supabase.from('user_integrations').upsert(row, {
+  let { error } = await supabase.from('user_integrations').upsert(row, {
     onConflict: 'user_id,provider',
   });
+
+  if (error && isMissingTableError(error.message)) {
+    await ensureGithubSchema();
+    await new Promise((r) => setTimeout(r, 400));
+    ({ error } = await supabase.from('user_integrations').upsert(row, {
+      onConflict: 'user_id,provider',
+    }));
+  }
+
+  if (error && isMissingTableError(error.message)) {
+    const ok = await saveVercelTokenToStorage(userId, storagePayload);
+    if (!ok) {
+      throw new Error(
+        'Could not save Vercel token — user_integrations table missing and storage fallback failed. Apply migration 036 or set DATABASE_URL on the API.',
+      );
+    }
+    console.warn('[vercelAuth] saved via storage fallback (user_integrations missing)');
+    return;
+  }
 
   if (error) {
     throw new Error(error.message);
   }
+
+  void saveVercelTokenToStorage(userId, storagePayload).catch(() => {
+    /* DB is primary; storage mirror is best-effort */
+  });
 }
 
 export async function clearVercelConnection(userId: string): Promise<void> {
   const supabase = getSupabaseAdmin();
   await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', 'vercel');
   await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', PKCE_PROVIDER);
+  await deleteVercelTokenFromStorage(userId);
 }
 
 /**
