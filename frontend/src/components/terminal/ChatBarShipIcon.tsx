@@ -11,17 +11,20 @@ export function isShipSailing(state: SendButtonState | undefined): boolean {
 
 export function ChatBarShipIcon({
   state = 'idle',
-  size = 14,
+  size = 18,
+  bold = false,
   className,
 }: {
   state?: SendButtonState;
   size?: number;
+  bold?: boolean;
   className?: string;
 }) {
   return (
     <ShipIcon
       size={size}
       sailing={isShipSailing(state)}
+      bold={bold}
       className={className}
     />
   );

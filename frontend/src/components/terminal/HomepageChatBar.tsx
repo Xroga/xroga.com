@@ -137,7 +137,49 @@ export function HomepageChatBar() {
                 </div>
               )}
             </div>
+          </div>
 
+          <div className="xv-hc-prompt-footer">
+            <div className="xv-hc-prompt-integrations" aria-label="Ships with GitHub, Vercel, and Supabase">
+              <span className="xv-hc-prompt-integration">
+                <Image
+                  src="/brand/logos/github.svg"
+                  alt=""
+                  width={14}
+                  height={14}
+                  unoptimized
+                  priority
+                  className="xv-hc-prompt-integration-logo"
+                />
+                <span>GitHub</span>
+              </span>
+              <span className="xv-hc-prompt-integration-sep" aria-hidden />
+              <span className="xv-hc-prompt-integration">
+                <Image
+                  src="/brand/logos/vercel.svg"
+                  alt=""
+                  width={14}
+                  height={14}
+                  unoptimized
+                  priority
+                  className="xv-hc-prompt-integration-logo"
+                />
+                <span>Vercel</span>
+              </span>
+              <span className="xv-hc-prompt-integration-sep" aria-hidden />
+              <span className="xv-hc-prompt-integration">
+                <Image
+                  src="/brand/logos/supabase.svg"
+                  alt=""
+                  width={14}
+                  height={14}
+                  unoptimized
+                  priority
+                  className="xv-hc-prompt-integration-logo"
+                />
+                <span>Supabase</span>
+              </span>
+            </div>
             <button
               type="submit"
               className="xv-go-btn xv-go-btn--home shrink-0"
@@ -146,50 +188,9 @@ export function HomepageChatBar() {
             >
               <span className="xv-go-btn__liquid" aria-hidden />
               <span className="xv-go-btn__icon">
-                <ChatBarShipIcon state={sendState} size={14} />
+                <ChatBarShipIcon state={sendState} size={18} bold />
               </span>
             </button>
-          </div>
-
-          <div className="xv-hc-prompt-footer">
-            <div className="xv-hc-prompt-integrations" aria-label="Ships with GitHub, Vercel, and Supabase">
-              <span className="xv-hc-prompt-integration">
-                <Image
-                  src="https://cdn.simpleicons.org/github/ffffff"
-                  alt=""
-                  width={14}
-                  height={14}
-                  unoptimized
-                  className="xv-hc-prompt-integration-logo"
-                />
-                <span>GitHub</span>
-              </span>
-              <span className="xv-hc-prompt-integration-sep" aria-hidden />
-              <span className="xv-hc-prompt-integration">
-                <Image
-                  src="https://cdn.simpleicons.org/vercel/ffffff"
-                  alt=""
-                  width={14}
-                  height={14}
-                  unoptimized
-                  className="xv-hc-prompt-integration-logo"
-                />
-                <span>Vercel</span>
-              </span>
-              <span className="xv-hc-prompt-integration-sep" aria-hidden />
-              <span className="xv-hc-prompt-integration">
-                <Image
-                  src="https://cdn.simpleicons.org/supabase/3ECF8E"
-                  alt=""
-                  width={14}
-                  height={14}
-                  unoptimized
-                  className="xv-hc-prompt-integration-logo"
-                />
-                <span>Supabase</span>
-              </span>
-            </div>
-            <p className="xv-hc-prompt-hint">Describe what you want to build</p>
           </div>
         </div>
       </form>

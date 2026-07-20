@@ -1,6 +1,6 @@
 'use client';
 
-import { Mic } from 'lucide-react';
+import { Phone, PhoneCall } from 'lucide-react';
 import { useId } from 'react';
 import { useVoiceTalk } from '@/context/VoiceTalkContext';
 import { openVoiceTalkSession } from '@/components/voice/VoiceTalkOverlay';
@@ -17,7 +17,10 @@ interface TalkButtonProps {
 function UiverseTalkInner({ label, active }: { label: string; active: boolean }) {
   return (
     <div className="xv-talk-uiverse-wrapper">
-      <span>{label}</span>
+      <span className="xv-talk-uiverse-label-row">
+        <PhoneCall className="w-3.5 h-3.5 shrink-0" strokeWidth={2.25} aria-hidden />
+        {label}
+      </span>
       {Array.from({ length: 12 }, (_, i) => (
         <div key={i} className={`xv-talk-uiverse-circle xv-talk-uiverse-circle-${i + 1}`} />
       ))}
@@ -41,7 +44,10 @@ function BlackThemeTalkInner({ label }: { label: string }) {
       <div className="xv-talk-black-a xv-talk-black-r" style={{ filter: `blur(4px) url(#${filterId})` }} />
       <div className="xv-talk-black-a xv-talk-black-t" style={{ filter: `blur(4px) url(#${filterId})` }} />
       <div className="xv-talk-black-a xv-talk-black-b" style={{ filter: `blur(4px) url(#${filterId})` }} />
-      <span className="xv-talk-black-text">{label}</span>
+      <span className="xv-talk-black-text">
+        <PhoneCall className="w-3 h-3 shrink-0" strokeWidth={2.25} aria-hidden />
+        {label}
+      </span>
     </>
   );
 }
@@ -52,7 +58,10 @@ function GrayThemeTalkInner({ label }: { label: string }) {
       <span className="xv-talk-gray-gradient-container">
         <span className="xv-talk-gray-gradient" />
       </span>
-      <span className="xv-talk-gray-label">{label}</span>
+      <span className="xv-talk-gray-label">
+        <PhoneCall className="w-3 h-3 shrink-0" strokeWidth={2.25} aria-hidden />
+        {label}
+      </span>
     </>
   );
 }
@@ -74,7 +83,7 @@ export function TalkButton({ variant = 'chatbar', className }: TalkButtonProps) 
   };
 
   const isLive = overlayOpen && state !== 'idle';
-  const label = isLive ? 'Live' : 'Talk';
+  const label = isLive ? 'Live' : 'Call AI';
 
   if (variant === 'header') {
     return (
@@ -86,11 +95,11 @@ export function TalkButton({ variant = 'chatbar', className }: TalkButtonProps) 
           (overlayOpen || isLive) && 'xv-talk-btn-header--active',
           className
         )}
-        aria-label="Open XROGA Voice"
-        title="Talk with XROGA Voice"
+        aria-label="Talk with Xroga AI — voice call"
+        title="Talk with Xroga AI (voice call)"
       >
-        <Mic className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-        <span className="hidden sm:inline font-medium">Talk</span>
+        <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.25} />
+        <span className="hidden sm:inline font-medium">{isLive ? 'Live' : 'Call AI'}</span>
       </button>
     );
   }
@@ -101,17 +110,18 @@ export function TalkButton({ variant = 'chatbar', className }: TalkButtonProps) 
         type="button"
         onClick={handleClick}
         className={cn(
-          'xv-talk-inline-btn shrink-0',
+          'xv-talk-inline-btn xv-talk-inline-btn--call shrink-0',
           theme === 'black' && 'xv-talk-inline-btn--black',
           theme === 'gray' && 'xv-talk-inline-btn--gray',
           theme === 'white' && 'xv-talk-inline-btn--white',
           isLive && 'xv-talk-inline-btn--live',
           className
         )}
-        aria-label="Talk with XROGA Voice"
-        title="Talk with XROGA Voice"
+        aria-label="Talk with Xroga AI — voice call"
+        title="Talk with Xroga AI (voice call) — not voice-to-text"
       >
-        <Mic className="w-3 h-3 shrink-0" />
+        <span className="xv-talk-call-pulse" aria-hidden />
+        <PhoneCall className="w-3.5 h-3.5 shrink-0 xv-talk-call-icon" strokeWidth={2.35} />
         <span>{label}</span>
       </button>
     );
@@ -124,8 +134,8 @@ export function TalkButton({ variant = 'chatbar', className }: TalkButtonProps) 
       type="button"
       onClick={handleClick}
       className={cn('xv-talk-chatbar-btn', themeClass, isLive && 'xv-talk-chatbar-btn--live', className)}
-      aria-label="Talk with XROGA AI"
-      title="Talk with XROGA Voice"
+      aria-label="Talk with Xroga AI — voice call"
+      title="Talk with Xroga AI (voice call)"
     >
       {theme === 'black' ? (
         <BlackThemeTalkInner label={label} />

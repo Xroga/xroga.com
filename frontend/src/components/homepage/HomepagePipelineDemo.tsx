@@ -3,11 +3,52 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
-const PROMPT_STEPS = [
-  'Build a crypto staking dashboard…',
-  'Analyzing workspace + repo…',
-  'Converter → Builder brief ready…',
-  'Generating app files…',
+const BUILD_SCENES = [
+  {
+    prompt: 'Build a crypto staking dashboard…',
+    file: 'src/app/page.tsx',
+    del: '- // TODO: wire auth',
+    addOpen: '+ export default function StakingPage() {',
+    addBody: '+   return <VaultDashboard />',
+    addClose: '+ }',
+    checks: ['Preview ready', 'Checks passed', 'Domain mapped'],
+  },
+  {
+    prompt: 'Ship a SaaS waitlist with Stripe…',
+    file: 'app/api/checkout/route.ts',
+    del: '- // placeholder checkout',
+    addOpen: '+ export async function POST(req: Request) {',
+    addBody: '+   return stripe.sessions.create(…)',
+    addClose: '+ }',
+    checks: ['Auth wired', 'Billing live', 'Domain mapped'],
+  },
+  {
+    prompt: 'Hackathon MVP — pitch deck site…',
+    file: 'components/Hero.tsx',
+    del: '- <h1>Coming soon</h1>',
+    addOpen: '+ export function Hero() {',
+    addBody: '+   return <PitchLanding />',
+    addClose: '+ }',
+    checks: ['Preview ready', 'Demo URL', 'Domain mapped'],
+  },
+  {
+    prompt: 'Landing page for our AI product…',
+    file: 'app/page.tsx',
+    del: '- export default function Home() {}',
+    addOpen: '+ export default function Home() {',
+    addBody: '+   return <ProductLanding />',
+    addClose: '+ }',
+    checks: ['Lighthouse pass', 'OG images', 'Domain mapped'],
+  },
+  {
+    prompt: 'Internal ops dashboard for the team…',
+    file: 'app/dashboard/page.tsx',
+    del: '- // stub table',
+    addOpen: '+ export default function OpsBoard() {',
+    addBody: '+   return <TeamMetrics />',
+    addClose: '+ }',
+    checks: ['RBAC ready', 'Checks passed', 'Deploy live'],
+  },
 ] as const;
 
 const PIPELINE_STEPS = [
@@ -19,22 +60,24 @@ const PIPELINE_STEPS = [
   { id: 'vercel', label: 'Live on Vercel', detail: 'yourapp.xroga.app · custom domain ready' },
 ] as const;
 
-const DIFF_LINES = [
-  { type: 'meta', text: 'src/app/page.tsx' },
-  { type: 'del', text: '- // TODO: wire auth' },
-  { type: 'add', text: '+ export default function StakingPage() {' },
-  { type: 'add', text: '+   return <VaultDashboard />' },
-  { type: 'add', text: '+ }' },
-] as const;
-
 export function HomepagePipelineDemo() {
-  const [promptIdx, setPromptIdx] = useState(0);
+  const [sceneIdx, setSceneIdx] = useState(0);
+  const [promptPhase, setPromptPhase] = useState(0);
   const [stepIdx, setStepIdx] = useState(0);
   const [diffTick, setDiffTick] = useState(0);
 
   useEffect(() => {
     const t = window.setInterval(() => {
-      setPromptIdx((i) => (i + 1) % PROMPT_STEPS.length);
+      setSceneIdx((i) => (i + 1) % BUILD_SCENES.length);
+      setPromptPhase(0);
+      setDiffTick(0);
+    }, 9000);
+    return () => window.clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    const t = window.setInterval(() => {
+      setPromptPhase((i) => (i + 1) % 4);
     }, 2200);
     return () => window.clearInterval(t);
   }, []);
@@ -53,11 +96,24 @@ export function HomepagePipelineDemo() {
     return () => window.clearInterval(t);
   }, []);
 
+  const scene = BUILD_SCENES[sceneIdx];
+  const promptLines = [
+    scene.prompt,
+    'Analyzing workspace + repo…',
+    'Converter → Builder brief ready…',
+    'Generating app files…',
+  ] as const;
+  const DIFF_LINES = [
+    { type: 'meta', text: scene.file },
+    { type: 'del', text: scene.del },
+    { type: 'add', text: scene.addOpen },
+    { type: 'add', text: scene.addBody },
+    { type: 'add', text: scene.addClose },
+  ] as const;
   const visibleDiff = DIFF_LINES.slice(0, 1 + (diffTick % DIFF_LINES.length));
 
   return (
     <div className="xv-hc-demo" aria-hidden>
-      {/* Card 1 — live workspace prompt */}
       <article className="xv-hc-demo-card">
         <header className="xv-hc-demo-card-head">
           <h3>Ship with confidence</h3>
@@ -72,17 +128,14 @@ export function HomepagePipelineDemo() {
           </div>
           <div className="xv-hc-demo-prompt">
             <span className="xv-hc-demo-prompt-label">You</span>
-            <p key={promptIdx} className="xv-hc-demo-prompt-text">
-              {PROMPT_STEPS[promptIdx]}
+            <p key={`${sceneIdx}-${promptPhase}`} className="xv-hc-demo-prompt-text">
+              {promptLines[promptPhase]}
               <i className="xv-hc-demo-caret" />
             </p>
           </div>
           <ul className="xv-hc-demo-checks">
-            {['Preview ready', 'Checks passed', 'Domain mapped'].map((item, i) => (
-              <li
-                key={item}
-                className={cn(stepIdx >= i + 3 && 'is-done')}
-              >
+            {scene.checks.map((item, i) => (
+              <li key={`${sceneIdx}-${item}`} className={cn(stepIdx >= i + 3 && 'is-done')}>
                 <span className="xv-hc-demo-check" />
                 {item}
               </li>
@@ -94,7 +147,6 @@ export function HomepagePipelineDemo() {
         </div>
       </article>
 
-      {/* Card 2 — pipeline timeline */}
       <article className="xv-hc-demo-card">
         <header className="xv-hc-demo-card-head">
           <h3>Adapts to your standards</h3>
@@ -119,7 +171,6 @@ export function HomepagePipelineDemo() {
         </div>
       </article>
 
-      {/* Card 3 — live diff + swarm note */}
       <article className="xv-hc-demo-card">
         <header className="xv-hc-demo-card-head">
           <h3>High signal, low noise</h3>

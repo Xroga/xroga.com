@@ -2898,6 +2898,61 @@ body.theme-gray * {
   .xv-chatbar-row-modern {
     gap: 0.55rem;
   }
+  .xv-chatbar-row--stacked {
+    gap: 0.35rem;
+  }
+  .xv-chatbar-tools {
+    min-height: 36px;
+  }
+  .xv-mic-btn--dictate .xv-mic-dictate-icon {
+    animation: xv-mic-dictate-idle 2.4s ease-in-out infinite;
+  }
+  .xv-mic-btn--listening {
+    box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.35);
+  }
+  @keyframes xv-mic-dictate-idle {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.08); opacity: 1; }
+  }
+  .xv-talk-inline-btn--call {
+    position: relative;
+    overflow: hidden;
+    height: 30px;
+    padding: 0 11px;
+    font-size: 10px;
+    gap: 5px;
+  }
+  .xv-talk-call-pulse {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(56, 189, 248, 0.28), transparent 55%);
+    animation: xv-talk-call-glow 2.2s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .xv-talk-call-icon {
+    position: relative;
+    z-index: 1;
+    animation: xv-talk-call-ring 1.8s ease-in-out infinite;
+  }
+  @keyframes xv-talk-call-glow {
+    0%, 100% { opacity: 0.45; transform: scale(1); }
+    50% { opacity: 0.9; transform: scale(1.05); }
+  }
+  @keyframes xv-talk-call-ring {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    35% { transform: rotate(-8deg) scale(1.05); }
+    70% { transform: rotate(8deg) scale(1.05); }
+  }
+  .xv-talk-black-text,
+  .xv-talk-gray-label,
+  .xv-talk-uiverse-label-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .xv-ship-icon--bold {
+    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.25));
+  }
   .xv-chatbar-toolbar {
     border-bottom: 1px solid color-mix(in srgb, var(--card-border) 80%, transparent);
   }
@@ -3634,9 +3689,9 @@ body.theme-gray * {
   /* Small icon-only GO button with liquid water fill (Uiverse-inspired) */
   .xv-go-btn {
     position: relative;
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
     padding: 0;
     border-radius: 999px;
     border: 0;
@@ -3655,15 +3710,15 @@ body.theme-gray * {
   .xv-go-btn:disabled { opacity: 0.7; cursor: wait; }
 
   .xv-go-btn__liquid {
-    background-color: #2893eb;
+    background-color: #0a2f6e;
     width: 100%;
     height: 70%;
     position: absolute;
     bottom: 0;
     left: 0;
     box-shadow:
-      inset 5px -5px 25px #104e81,
-      inset -5px 0 25px #104e81;
+      inset 5px -5px 25px #041830,
+      inset -5px 0 25px #062a5c;
     pointer-events: none;
   }
   .xv-go-btn__liquid::after {
@@ -3682,7 +3737,7 @@ body.theme-gray * {
     content: '';
     width: 180%;
     height: 280%;
-    background-color: rgb(68, 160, 235);
+    background-color: #123f8a;
     z-index: 1;
     position: absolute;
     left: -40%;

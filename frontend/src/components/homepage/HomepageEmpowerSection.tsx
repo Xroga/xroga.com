@@ -20,11 +20,34 @@ const PIPE_STEPS = [
   { id: 'ship', label: 'Ship', detail: 'GitHub → Vercel', agent: 'Deploy' },
 ] as const;
 
-const FILES = [
-  { path: 'app/page.tsx', status: 'written' },
-  { path: 'app/api/auth/route.ts', status: 'written' },
-  { path: 'components/VaultCard.tsx', status: 'writing' },
-  { path: 'vercel.json', status: 'queued' },
+const PROMPT_ROTATION = [
+  'Build a crypto vault dashboard with auth…',
+  'Ship a SaaS onboarding flow + Stripe…',
+  'Hackathon landing — demo-ready tonight…',
+  'Marketing site with blog + waitlist…',
+  'Internal ops board for the team…',
+  'Add night/day theme — keep sticky repo…',
+] as const;
+
+const FILES_BY_SCENE = [
+  [
+    { path: 'app/page.tsx', status: 'written' },
+    { path: 'app/api/auth/route.ts', status: 'written' },
+    { path: 'components/VaultCard.tsx', status: 'writing' },
+    { path: 'vercel.json', status: 'queued' },
+  ],
+  [
+    { path: 'app/(saas)/onboard/page.tsx', status: 'written' },
+    { path: 'app/api/stripe/route.ts', status: 'writing' },
+    { path: 'components/Checkout.tsx', status: 'queued' },
+    { path: 'supabase/schema.sql', status: 'queued' },
+  ],
+  [
+    { path: 'app/page.tsx', status: 'written' },
+    { path: 'components/PitchHero.tsx', status: 'writing' },
+    { path: 'app/demo/page.tsx', status: 'queued' },
+    { path: 'public/og.png', status: 'queued' },
+  ],
 ] as const;
 
 const ACTIVITY = [
@@ -112,26 +135,20 @@ export function HomepageEmpowerSection() {
             <div className="xv-hc-ops-main">
               <div className="xv-hc-ops-prompt">
                 <span className="font-pixel">YOU</span>
-                <p key={tick % 3}>
-                  {
-                    [
-                      'Build a crypto vault dashboard with auth…',
-                      'Add night/day theme + Stripe checkout…',
-                      'Patch landing hero — keep sticky repo…',
-                    ][tick % 3]
-                  }
+                <p key={tick % PROMPT_ROTATION.length}>
+                  {PROMPT_ROTATION[tick % PROMPT_ROTATION.length]}
                   <i className="xv-hc-ops-caret" />
                 </p>
               </div>
 
               <ul className="xv-hc-ops-files">
-                {FILES.map((f, i) => {
+                {FILES_BY_SCENE[tick % FILES_BY_SCENE.length].map((f, i) => {
                   const writing = step === 1 && i === 2;
                   const done =
                     step > 1 || (step === 1 && i < 2) || (step === 0 && i < 1);
                   return (
                     <li
-                      key={f.path}
+                      key={`${tick}-${f.path}`}
                       className={cn(
                         'xv-hc-ops-file',
                         writing && 'is-writing',

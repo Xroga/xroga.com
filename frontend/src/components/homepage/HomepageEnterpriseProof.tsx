@@ -30,8 +30,11 @@ export function HomepageEnterpriseProof() {
   return (
     <section className="xv-hc-ent" aria-labelledby="ent-heading">
       <div className="xv-hc-ent-inner">
-        <div className="xv-hc-ent-banner">
-          <Infinity className="xv-hc-ent-inf" strokeWidth={2.25} aria-hidden />
+        <div className="xv-hc-ent-banner xv-hc-ent-banner--alive">
+          <span className="xv-hc-ent-orbit" aria-hidden>
+            <span className="xv-hc-ent-orbit-ring" />
+            <Infinity className="xv-hc-ent-inf" strokeWidth={2.25} />
+          </span>
           <p className="xv-hc-ent-kicker font-pixel">WHY TEAMS SAY WOW</p>
           <h2 id="ent-heading" className="xv-hc-ent-title">
             Built so high-level companies stop scrolling.
@@ -40,16 +43,26 @@ export function HomepageEnterpriseProof() {
             When a serious buyer opens Xroga, they should feel {XROGA_MODEL_FULL} is already the
             last coding agent they’ll need — continuously updated, never “wait for the next model.”
           </p>
+          <div className="xv-hc-ent-signal" aria-hidden>
+            <span />
+            <span />
+            <span />
+          </div>
         </div>
 
         <ul className="xv-hc-ent-grid">
           {PROOFS.map((p, i) => (
-            <li key={p.title} className="xv-hc-ent-card" style={{ animationDelay: `${0.07 * i}s` }}>
+            <li
+              key={p.title}
+              className="xv-hc-ent-card xv-hc-ent-card--alive"
+              style={{ animationDelay: `${0.08 * i}s` }}
+            >
               <span className="xv-hc-ent-icon" aria-hidden>
                 <p.Icon className="xv-hc-ent-lucide" strokeWidth={1.75} />
               </span>
               <h3>{p.title}</h3>
               <p>{p.body}</p>
+              <span className="xv-hc-ent-card-glow" aria-hidden />
             </li>
           ))}
         </ul>
