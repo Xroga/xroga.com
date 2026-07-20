@@ -54,6 +54,7 @@ import {
   isGitHubConnected,
 } from '../services/integrations/githubDeploy.js';
 import { getVercelToken } from '../services/integrations/vercelAuth.js';
+import { getUserSupabaseStatus } from '../services/integrations/userProviderKeys.js';
 import { buildProviderEnvFiles } from '../services/integrations/userProviderKeys.js';
 import {
   buildScaffoldForPrompt,
@@ -1379,6 +1380,12 @@ export async function runBuildPipeline(opts: {
 
   const githubOk = await isGitHubConnected(opts.userId);
   const vercelOk = Boolean(await getVercelToken(opts.userId));
+  const supabaseStatus = await getUserSupabaseStatus(opts.userId).catch(() => ({
+    connected: false,
+    ready: false,
+    provisioned: false,
+    message: '',
+  }));
   const compileBlocksShip = !compile.skipped && compile.ok === false;
   const shipBlockers: string[] = [];
   if (!githubOk) shipBlockers.push('Connect GitHub to push code to your repo');
@@ -1389,6 +1396,12 @@ export async function runBuildPipeline(opts: {
   if (patchAborted) shipBlockers.push('Unsafe patches aborted — live site unchanged');
   if (security.blocked) shipBlockers.push('Critical secrets blocked the push');
   if (compileBlocksShip) shipBlockers.push('Compile failed — fix TypeScript/install before ship');
+  // Informational — does not block fullyShipped (sites can ship without DB)
+  const supabaseNote = supabaseStatus.provisioned
+    ? 'Supabase provisioned on your project'
+    : supabaseStatus.connected
+      ? 'Supabase authorized — finish project pick/create for DB + memory'
+      : null;
 
   let filesToPush = isUpdate ? (changedFiles.length ? changedFiles : []) : nextFiles;
   if (isUpdate && nextFiles.length) {
@@ -1708,6 +1721,11 @@ export async function runBuildPipeline(opts: {
     githubPushConfirmed,
     fullyShipped,
     shipBlockers: shipBlockers.length ? shipBlockers : undefined,
+    supabase: {
+      connected: Boolean(supabaseStatus.connected),
+      provisioned: Boolean(supabaseStatus.provisioned || supabaseStatus.ready),
+      note: supabaseNote || undefined,
+    },
     commitSha,
     previousCommitSha: priorCommitSha,
     githubBranch,

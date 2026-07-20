@@ -21,5 +21,7 @@ describe('supabaseProvision', () => {
     assert.match(sql, /app_items/);
     assert.match(sql, /xroga-uploads/);
     assert.match(sql, /enable row level security/i);
+    assert.match(sql, /xroga_uploads_select_own/);
+    assert.match(sql, /storage\.objects/);
   });
 });

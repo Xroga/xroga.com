@@ -33,13 +33,21 @@ export function getVercelOAuthCallbackUrl(requested?: string): string {
   return `${frontendBase()}${CALLBACK_PATH}`;
 }
 
+/** OAuth scope for user Authorize. Default stays `deployment` (deploy works).
+ * Set VERCEL_OAUTH_SCOPES on Fly if your Integration Console grants broader
+ * permissions (e.g. project + env). Env sync still needs Full Account PAT when
+ * OAuth tokens cannot write project env vars. */
+function vercelOAuthScope(): string {
+  return (process.env.VERCEL_OAUTH_SCOPES || 'deployment').trim() || 'deployment';
+}
+
 function buildAuthorizeUrl(userId: string, redirectUri: string): string | null {
   if (!VERCEL_CLIENT_ID) return null;
   const state = Buffer.from(JSON.stringify({ userId })).toString('base64url');
   const params = new URLSearchParams({
     client_id: VERCEL_CLIENT_ID,
     redirect_uri: redirectUri,
-    scope: 'deployment',
+    scope: vercelOAuthScope(),
     state,
   });
   return `https://vercel.com/oauth/authorize?${params.toString()}`;

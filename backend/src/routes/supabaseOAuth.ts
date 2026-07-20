@@ -28,10 +28,21 @@ import {
   getUserSupabaseStatus,
   saveUserProviderKey,
 } from '../services/integrations/userProviderKeys.js';
-import { getVercelToken } from '../services/integrations/vercelAuth.js';
+import {
+  getVercelToken,
+  resolveVercelProjectForEnvSync,
+} from '../services/integrations/vercelAuth.js';
 import { syncUserVaultToVercel } from '../services/integrations/githubDeploy.js';
 
 const router = Router();
+
+/** Best-effort: push vault Supabase/AI keys to the user's Vercel project after provision. */
+async function maybeSyncVaultToVercel(userId: string, vercelProject?: string) {
+  if (!(await getVercelToken(userId))) return null;
+  const slug = await resolveVercelProjectForEnvSync(userId, vercelProject);
+  if (!slug) return null;
+  return syncUserVaultToVercel(userId, slug);
+}
 
 router.get('/oauth', async (req: AuthRequest, res) => {
   const requested = typeof req.query.redirect_uri === 'string' ? req.query.redirect_uri : undefined;
@@ -127,6 +138,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
     let autoSelected: string | null = null;
     let status = await getUserSupabaseStatus(req.userId!);
 
+    let envSync: unknown = null;
     if (projects.length === 1) {
       const p = projects[0]!;
       autoSelected = p.ref;
@@ -140,6 +152,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
       await saveUserProviderKey(req.userId!, 'supabase_pat', accessToken).catch(() => undefined);
       provision = result.provision;
       status = result.status;
+      envSync = await maybeSyncVaultToVercel(req.userId!).catch(() => null);
     } else if (projects.length > 1) {
       await saveUserProviderKey(req.userId!, 'supabase_pat', accessToken).catch(() => undefined);
     }
@@ -151,13 +164,14 @@ router.post('/connect', async (req: AuthRequest, res) => {
       autoSelected,
       provision,
       status,
+      envSync,
       needsProjectPick: projects.length !== 1,
       message:
         projects.length === 1
           ? (provision as { message?: string })?.message ||
             `Connected ${projects[0]!.name} — schema, memory & storage set up automatically`
           : projects.length === 0
-            ? 'Authorized — create a project in Supabase, then click Refresh projects'
+            ? 'Authorized — create a project below (or in Supabase), then we set everything up'
             : 'Authorized — pick a project to finish (one click, no paste)',
     });
   } catch (err) {
@@ -215,11 +229,10 @@ router.post('/select-project', async (req: AuthRequest, res) => {
       vercelProject: parsed.data.vercelProject,
     });
 
-    let envSync: unknown = null;
-    const project = parsed.data.vercelProject?.trim();
-    if (project && (await getVercelToken(req.userId!))) {
-      envSync = await syncUserVaultToVercel(req.userId!, project);
-    }
+    const envSync = await maybeSyncVaultToVercel(
+      req.userId!,
+      parsed.data.vercelProject,
+    ).catch(() => null);
 
     res.json({
       ok: result.status.ready && result.provision.ok,
@@ -313,10 +326,10 @@ router.post('/create-project', async (req: AuthRequest, res) => {
       region: parsed.data.region,
     });
 
-    let envSync: unknown = null;
-    if (parsed.data.vercelProject && (await getVercelToken(req.userId!))) {
-      envSync = await syncUserVaultToVercel(req.userId!, parsed.data.vercelProject);
-    }
+    const envSync = await maybeSyncVaultToVercel(
+      req.userId!,
+      parsed.data.vercelProject,
+    ).catch(() => null);
 
     const status = await getUserSupabaseStatus(req.userId!);
     res.json({

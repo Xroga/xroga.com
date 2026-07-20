@@ -252,8 +252,9 @@ export default function HomePage() {
         <p style={{ color: 'var(--muted)', marginBottom: 0 }}>
           Connect Supabase (URL + anon + service role) and OpenAI/Stripe in Xroga
           Integrations — they sync into this Vercel project env and power{' '}
-          <code>/api/*</code> routes. Apply <code>supabase/migrations/001_initial.sql</code>{' '}
-          in your Supabase SQL editor once.
+          <code>/api/*</code> routes. Prefer <strong>Ship setup → Authorize Supabase</strong> so
+          Xroga applies schema automatically (or run{' '}
+          <code>supabase/migrations/001_initial.sql</code> once).
         </p>
       </section>
     </main>
@@ -524,10 +525,9 @@ Built with **Xroga AI** — coding agent that pushes to your GitHub and deploys 
 - \`supabase/migrations/001_initial.sql\` — profiles, RLS, optional storage
 
 ## Ship
-1. Connect GitHub + Vercel in Xroga
-2. Connect Supabase (URL + anon + service role) — data stays in **your** project
-3. Apply \`supabase/migrations/001_initial.sql\` in your Supabase SQL editor
-4. Build in Workspace — Xroga pushes, syncs vault → Vercel env, deploys
+1. Authorize GitHub + Vercel in Xroga Ship setup
+2. Authorize Supabase (create or pick your project) — Xroga applies schema + memory + storage
+3. Build in Workspace — Xroga pushes, syncs vault → Vercel env when possible, deploys
 
 ${opts.userPrompt ? `## Prompt\n\n${opts.userPrompt.slice(0, 800)}\n` : ''}
 `,

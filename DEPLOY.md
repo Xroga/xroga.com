@@ -30,10 +30,12 @@ NEXT_PUBLIC_SITE_URL=https://xroga.com
 JWT Secret is in Supabase → Project Settings → API → JWT Settings.
 
 ## Supabase OAuth (user connect — authorize, no paste)
-Create an OAuth App in your Supabase org → OAuth Apps.
+Create an OAuth App in your Supabase **Organization → OAuth Apps** (not Project → Auth → OAuth Server).
 
 Callback URL (exact):
 `https://xroga.com/dashboard/integrations/supabase/callback`
+
+Suggested scopes: Projects Write, Secrets Read, Database Write, Organizations Read, Storage Write.
 
 Fly secrets:
 ```bash
@@ -43,7 +45,23 @@ fly secrets set -a xroga-api \
   SUPABASE_OAUTH_CALLBACK_URL="https://xroga.com/dashboard/integrations/supabase/callback"
 ```
 
-After authorize, Xroga lists projects, fetches keys, and auto-runs SQL (schema + AI memory + storage) on the user's project.
+After authorize, Xroga lists projects (or creates one in-panel), fetches keys, auto-runs SQL (schema + AI memory + storage RLS), and best-effort syncs vault keys to the user's newest Vercel/`xroga*` project.
+
+## Vercel OAuth (user connect — authorize deploy)
+Vercel Integration / OAuth App callback (exact):
+`https://xroga.com/dashboard/integrations/vercel/callback`
+
+Fly secrets:
+```bash
+fly secrets set -a xroga-api \
+  VERCEL_CLIENT_ID="from_vercel_integration" \
+  VERCEL_CLIENT_SECRET="from_vercel_integration" \
+  VERCEL_OAUTH_CALLBACK_URL="https://xroga.com/dashboard/integrations/vercel/callback"
+```
+
+Optional: `VERCEL_OAUTH_SCOPES` if your Integration Console grants more than `deployment`.
+
+**Env vars on the user's Vercel project:** OAuth with only `deployment` often cannot write env. Users who need Supabase/AI keys on the live site should also paste a **Full Account** token under Integrations (or expand integration permissions). Deploy-without-env still works after Authorize.
 
 ## GitHub OAuth (user connect — not Fly URL)
 GitHub OAuth App → Authorization callback URL (exact):

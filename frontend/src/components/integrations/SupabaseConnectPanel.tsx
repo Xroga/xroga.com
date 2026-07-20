@@ -10,10 +10,11 @@ type Props = {
 };
 
 type ListedProject = { id: string; ref: string; name: string; region?: string };
+type ListedOrg = { id: string; name: string; slug?: string };
 
 /**
- * OAuth-only Supabase connect: user clicks Authorize — Xroga does the rest
- * (keys, SQL schema, AI memory tables, storage buckets). No paste.
+ * OAuth-first Supabase connect: Authorize → pick or create project →
+ * Xroga fetches keys and runs SQL (schema, AI memory, storage RLS).
  */
 export function SupabaseConnectPanel({ onConnected, compact }: Props) {
   const [busy, setBusy] = useState(false);
@@ -21,7 +22,11 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
   const [oauthConnected, setOauthConnected] = useState(false);
   const [provisioned, setProvisioned] = useState(false);
   const [projects, setProjects] = useState<ListedProject[]>([]);
+  const [orgs, setOrgs] = useState<ListedOrg[]>([]);
   const [message, setMessage] = useState('');
+  const [newName, setNewName] = useState('my-app');
+  const [orgId, setOrgId] = useState('');
+  const [region, setRegion] = useState('us-east-1');
 
   const refresh = useCallback(async () => {
     try {
@@ -33,11 +38,17 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
       if (st.oauthConnected && !st.provisioned) {
         const list = await api.supabase.projects().catch(() => ({ projects: [] as ListedProject[] }));
         setProjects(list.projects ?? []);
+        if ((list.projects ?? []).length === 0) {
+          const o = await api.supabase.organizations().catch(() => ({ organizations: [] as ListedOrg[] }));
+          const organizations = o.organizations ?? [];
+          setOrgs(organizations);
+          if (organizations[0] && !orgId) setOrgId(organizations[0].id);
+        }
       }
     } catch {
       /* optional */
     }
-  }, []);
+  }, [orgId]);
 
   useEffect(() => {
     void refresh();
@@ -62,7 +73,7 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
           toast.success('Supabase ready — memory & storage on your project');
           onConnected?.();
         } else if (data.needsProjectPick) {
-          toast.success('Authorized — pick a project');
+          toast.success('Authorized — pick or create a project');
         }
         void refresh();
       }
@@ -116,13 +127,62 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
     }
   }
 
+  async function createProject() {
+    if (!orgId || !newName.trim()) {
+      toast.error('Pick an organization and name');
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await api.supabase.createProject({
+        name: newName.trim().slice(0, 64),
+        organizationId: orgId,
+        region,
+      });
+      if (res.ok) {
+        toast.success(res.message || 'Created and provisioned');
+        setProvisioned(true);
+        onConnected?.();
+        void refresh();
+      } else {
+        toast.error(res.message || res.error || 'Create failed');
+      }
+    } catch (err) {
+      toast.error((err as Error).message || 'Could not create project');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function refreshProjects() {
+    setBusy(true);
+    try {
+      const list = await api.supabase.projects();
+      setProjects(list.projects ?? []);
+      if ((list.projects ?? []).length === 0) {
+        const o = await api.supabase.organizations();
+        setOrgs(o.organizations ?? []);
+        if (o.organizations?.[0]) setOrgId(o.organizations[0].id);
+      }
+      toast.success(
+        (list.projects ?? []).length
+          ? `${list.projects.length} project(s)`
+          : 'No projects yet — create one below',
+      );
+    } catch (err) {
+      toast.error((err as Error).message || 'Could not list projects');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className={`space-y-3 ${compact ? '' : 'rounded-xl border border-[var(--card-border)] p-4'}`}>
       <div>
         <p className="text-sm font-semibold">Connect Supabase</p>
         <p className="text-xs text-[var(--muted)] mt-0.5 leading-relaxed">
-          Click authorize once. Xroga fetches keys and runs SQL on <strong>your</strong> project —
-          schema, AI memory, and storage — automatically. Nothing to paste.
+          Authorize once. We fetch keys and run SQL on <strong>your</strong> project — schema, AI
+          memory, and storage RLS. If you have no project yet, create one here.
         </p>
       </div>
 
@@ -131,20 +191,32 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
           Connected — your Supabase holds app data, AI memory, and storage.
         </p>
       ) : (
-        <button
-          type="button"
-          disabled={busy || !oauthConfigured}
-          onClick={() => void authorize()}
-          className="px-3 py-2 rounded-lg text-xs font-semibold bg-[var(--accent)] text-[var(--background)] disabled:opacity-50"
-        >
-          {busy ? 'Opening…' : oauthConnected ? 'Re-authorize Supabase' : 'Authorize Supabase'}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            disabled={busy || !oauthConfigured}
+            onClick={() => void authorize()}
+            className="px-3 py-2 rounded-lg text-xs font-semibold bg-[var(--accent)] text-[var(--background)] disabled:opacity-50"
+          >
+            {busy ? 'Opening…' : oauthConnected ? 'Re-authorize Supabase' : 'Authorize Supabase'}
+          </button>
+          {oauthConnected ? (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void refreshProjects()}
+              className="px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--card-border)] disabled:opacity-50"
+            >
+              Refresh projects
+            </button>
+          ) : null}
+        </div>
       )}
 
       {!oauthConfigured ? (
         <p className="text-xs text-amber-700">
           Server needs <code>SUPABASE_OAUTH_CLIENT_ID</code> and{' '}
-          <code>SUPABASE_OAUTH_CLIENT_SECRET</code> from a Supabase OAuth App.
+          <code>SUPABASE_OAUTH_CLIENT_SECRET</code> from a Supabase Org OAuth App.
         </p>
       ) : null}
 
@@ -173,6 +245,68 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
               </li>
             ))}
           </ul>
+        </div>
+      ) : null}
+
+      {oauthConnected && !provisioned && projects.length === 0 ? (
+        <div className="space-y-2 rounded-lg border border-dashed border-[var(--card-border)] p-3">
+          <p className="text-xs font-medium">No projects yet — create one in your org:</p>
+          {orgs.length === 0 ? (
+            <p className="text-xs text-amber-700">
+              Could not load organizations. Re-authorize with Organizations Read, then refresh.
+            </p>
+          ) : (
+            <>
+              <label className="block text-xs text-[var(--muted)]">
+                Organization
+                <select
+                  className="mt-1 w-full rounded-md border border-[var(--card-border)] bg-transparent px-2 py-1.5 text-xs"
+                  value={orgId}
+                  onChange={(e) => setOrgId(e.target.value)}
+                  disabled={busy}
+                >
+                  {orgs.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {o.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block text-xs text-[var(--muted)]">
+                Project name
+                <input
+                  className="mt-1 w-full rounded-md border border-[var(--card-border)] bg-transparent px-2 py-1.5 text-xs"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  disabled={busy}
+                  maxLength={64}
+                />
+              </label>
+              <label className="block text-xs text-[var(--muted)]">
+                Region
+                <select
+                  className="mt-1 w-full rounded-md border border-[var(--card-border)] bg-transparent px-2 py-1.5 text-xs"
+                  value={region}
+                  onChange={(e) => setRegion(e.target.value)}
+                  disabled={busy}
+                >
+                  <option value="us-east-1">us-east-1</option>
+                  <option value="us-west-1">us-west-1</option>
+                  <option value="eu-west-1">eu-west-1</option>
+                  <option value="eu-central-1">eu-central-1</option>
+                  <option value="ap-southeast-1">ap-southeast-1</option>
+                </select>
+              </label>
+              <button
+                type="button"
+                disabled={busy || !orgId || !newName.trim()}
+                onClick={() => void createProject()}
+                className="px-3 py-2 rounded-lg text-xs font-semibold bg-[var(--accent)] text-[var(--background)] disabled:opacity-50"
+              >
+                {busy ? 'Creating…' : 'Create & provision'}
+              </button>
+            </>
+          )}
         </div>
       ) : null}
     </div>
