@@ -7,6 +7,11 @@ import { createHash, randomBytes } from 'crypto';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
 import { isMissingTableError } from './githubTokenStore.js';
+import {
+  clearPkceSession,
+  loadPkceSession,
+  storePkceSession,
+} from './oauthPkceStore.js';
 
 const PKCE_PROVIDER = 'vercel_oauth_pkce';
 const CALLBACK_PATH = '/dashboard/integrations/vercel/callback';
@@ -168,60 +173,14 @@ export async function buildVercelAuthorizeUrl(
     JSON.stringify({ userId, t: Date.now(), n: randomBytes(8).toString('hex') }),
   ).toString('base64url');
 
-  // Production DBs sometimes never applied migration 020 — bootstrap before PKCE upsert
-  if (githubSchemaAutoBootstrapEnabled()) {
-    await ensureGithubSchema();
-  }
-
-  const supabase = getSupabaseAdmin();
-  let pkceErr = (
-    await supabase.from('user_integrations').upsert(
-      {
-        user_id: userId,
-        provider: PKCE_PROVIDER,
-        access_token: verifier,
-        metadata: {
-          state,
-          nonce,
-          redirect_uri: redirectUri,
-          created_at: new Date().toISOString(),
-        },
-      },
-      { onConflict: 'user_id,provider' },
-    )
-  ).error;
-
-  // Schema cache / missing table — retry once after bootstrap + brief wait
-  if (pkceErr && isMissingTableError(pkceErr.message)) {
-    await ensureGithubSchema();
-    await new Promise((r) => setTimeout(r, 400));
-    pkceErr = (
-      await supabase.from('user_integrations').upsert(
-        {
-          user_id: userId,
-          provider: PKCE_PROVIDER,
-          access_token: verifier,
-          metadata: {
-            state,
-            nonce,
-            redirect_uri: redirectUri,
-            created_at: new Date().toISOString(),
-          },
-        },
-        { onConflict: 'user_id,provider' },
-      )
-    ).error;
-  }
-
-  if (pkceErr) {
-    console.error('[vercelAuth] PKCE store failed:', pkceErr.message);
-    const missing = isMissingTableError(pkceErr.message);
-    throw new Error(
-      missing
-        ? 'Vercel authorize needs the user_integrations table in Supabase. Open Integrations and paste a Vercel personal token (vercel.com/account/tokens), or apply migration 020_user_integrations.sql / set DATABASE_URL so the API can auto-create the table.'
-        : `Could not start Vercel authorize (session store failed): ${pkceErr.message}`,
-    );
-  }
+  // DB when available; Storage fallback when user_integrations is missing
+  await storePkceSession(userId, PKCE_PROVIDER, {
+    verifier,
+    state,
+    redirect_uri: redirectUri,
+    nonce,
+    created_at: new Date().toISOString(),
+  });
 
   const params = new URLSearchParams({
     client_id: clientId(),
@@ -247,27 +206,15 @@ export async function exchangeVercelOAuthCode(opts: {
     throw new Error('Vercel OAuth not configured — set VERCEL_CLIENT_ID/SECRET');
   }
 
-  const supabase = getSupabaseAdmin();
-  const { data: pkce, error: pkceReadErr } = await supabase
-    .from('user_integrations')
-    .select('access_token, metadata')
-    .eq('user_id', opts.userId)
-    .eq('provider', PKCE_PROVIDER)
-    .maybeSingle();
-
-  if (pkceReadErr && !isMissingTableError(pkceReadErr.message)) {
-    console.warn('[vercelAuth] PKCE read:', pkceReadErr.message);
-  }
-
-  const meta = (pkce?.metadata ?? {}) as { state?: string; redirect_uri?: string };
-  if (!pkce?.access_token || meta.state !== opts.state) {
+  const pkce = await loadPkceSession(opts.userId, PKCE_PROVIDER, opts.state);
+  if (!pkce?.verifier) {
     throw new Error('Invalid or expired OAuth state — click Authorize Vercel again');
   }
 
   // Must be the exact redirect_uri used in the authorize request
   const redirectUri =
-    (meta.redirect_uri && isAllowedCallbackUrl(meta.redirect_uri)
-      ? meta.redirect_uri
+    (pkce.redirect_uri && isAllowedCallbackUrl(pkce.redirect_uri)
+      ? pkce.redirect_uri
       : opts.redirectUri
     ).replace(/\/$/, '');
 
@@ -277,7 +224,7 @@ export async function exchangeVercelOAuthCode(opts: {
     client_secret: clientSecret(),
     code: opts.code,
     redirect_uri: redirectUri,
-    code_verifier: pkce.access_token,
+    code_verifier: pkce.verifier,
   });
 
   const tokenRes = await fetch('https://api.vercel.com/login/oauth/token', {
@@ -294,7 +241,7 @@ export async function exchangeVercelOAuthCode(opts: {
     error_description?: string;
   };
 
-  await supabase.from('user_integrations').delete().eq('user_id', opts.userId).eq('provider', PKCE_PROVIDER);
+  await clearPkceSession(opts.userId, PKCE_PROVIDER);
 
   if (!tokenData.access_token) {
     throw new Error(
@@ -475,7 +422,7 @@ export async function saveVercelConnection(
 export async function clearVercelConnection(userId: string): Promise<void> {
   const supabase = getSupabaseAdmin();
   await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', 'vercel');
-  await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', PKCE_PROVIDER);
+  await clearPkceSession(userId, PKCE_PROVIDER);
   await deleteVercelTokenFromStorage(userId);
 }
 

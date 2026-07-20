@@ -13,7 +13,8 @@ export const VERCEL_INTEGRATIONS_PATH =
 /** True when authorize failed because PKCE/session table is missing or DB bootstrap failed. */
 export function isVercelSessionStoreError(message?: string): boolean {
   if (!message) return false;
-  return /user_integrations|session store|schema cache|Could not find the table/i.test(message);
+  // Only treat as session-store failure when authorize truly cannot start
+  return /session store failed|storage fallback failed|Could not store OAuth session/i.test(message);
 }
 
 /** Leave chat/popup and open Integrations (Ship setup + token paste). */
