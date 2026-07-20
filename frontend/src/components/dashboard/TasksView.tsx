@@ -279,7 +279,7 @@ export function TasksView() {
       <header>
         <h1 className="text-2xl font-bold">Earn XRG & Token Boosts</h1>
         <p className="text-sm text-[var(--muted)] mt-1">
-          Complete tasks to earn XRG tokens and boost your monthly 7M token quota. Tap any task for full requirements and examples.
+          Complete tasks to earn XRG tokens and boost your monthly token quota. Tap any task for full requirements and examples.
         </p>
       </header>
 

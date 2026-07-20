@@ -92,6 +92,12 @@ export interface PipelineProgress {
   swarmActivity?: string;
   swarmTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' }>;
   keepalive?: boolean;
+  /** Open GitHub connect gate early (before long build finishes). */
+  needsGitHub?: boolean;
+  /** Open Vercel connect gate early. */
+  needsVercel?: boolean;
+  /** Update mode needs sticky/selected repo. */
+  needsRepoPick?: boolean;
 }
 
 export type ProgressFn = (event: PipelineProgress) => void;
@@ -285,6 +291,7 @@ async function callBuilderStream(
     onDelta?: DeltaFn;
     userId?: string;
     signal?: AbortSignal;
+    onModelFallback?: (from: ModelId, to: ModelId) => void;
   },
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
   const order = [preferred, ...BUILDER_FALLBACKS.filter((m) => m !== preferred)];
@@ -301,6 +308,7 @@ async function callBuilderStream(
       }
       if (modelId !== preferred) {
         console.warn(`[pipeline] Falling back from ${preferred} → ${modelId}`);
+        opts.onModelFallback?.(preferred, modelId);
       }
       return await chatCompletionStream(modelId, messages, {
         maxTokens: opts.maxTokens,
@@ -454,6 +462,7 @@ export async function runChatPipeline(opts: {
   if (route.useResearch) {
     research = await gatherResearch(opts.prompt);
     researchBlock = formatResearchForPrompt(research);
+    if (!researchBlock) research = null;
   }
 
   const historyMsgs: ChatMessage[] = (opts.history ?? [])
@@ -618,6 +627,42 @@ export async function runBuildPipeline(opts: {
     swarmTodos: todosForBuild('route'),
   });
 
+  // Early OAuth preflight — warn before long build so users connect before waiting
+  const githubOkEarly = await isGitHubConnected(opts.userId);
+  const vercelOkEarly = Boolean(await getVercelToken(opts.userId));
+  const earlyShipBlockers: string[] = [];
+  if (!githubOkEarly) earlyShipBlockers.push('Connect GitHub to push code to your repo');
+  if (!vercelOkEarly) earlyShipBlockers.push('Connect Vercel to deploy live to your account');
+  if (isUpdate && githubOkEarly && !meta?.githubTargetRepo) {
+    earlyShipBlockers.push(
+      'Update mode needs your ship repo — we remember it after first ship, or pick it once in Terminal.',
+    );
+  }
+  if (earlyShipBlockers.length) {
+    emit({
+      agent: 'deploy',
+      status: 'ship_preflight',
+      message: `Connect integrations now so this build can ship live: ${earlyShipBlockers[0]}`,
+      swarmStatusLabel: 'Authorize',
+      swarmActivity: earlyShipBlockers.join(' · '),
+      swarmTodos: todosForBuild('route'),
+      needsGitHub: !githubOkEarly,
+      needsVercel: githubOkEarly && !vercelOkEarly,
+      needsRepoPick: Boolean(isUpdate && githubOkEarly && !meta?.githubTargetRepo),
+    });
+  } else {
+    emit({
+      agent: 'deploy',
+      status: 'ship_preflight_ok',
+      message: meta?.githubTargetRepo
+        ? `Ship ready · target ${meta.githubTargetRepo}`
+        : 'Ship ready · GitHub + Vercel connected',
+      swarmStatusLabel: 'Ship ready',
+      swarmActivity: meta?.githubTargetRepo || 'Authorize OK',
+      swarmTodos: todosForBuild('route'),
+    });
+  }
+
   // Optional one-time AI memo (GLM / DeepSeek Pro) — skipped when memory already has it
   if (
     isUpdate &&
@@ -668,13 +713,37 @@ export async function runBuildPipeline(opts: {
     emit({
       agent: 'research',
       status: 'searching',
-      message: 'Gathering sources…',
+      message: 'Live research (web + X via Xroga Live)…',
       swarmStatusLabel: 'Research',
-      swarmActivity: 'Collecting sources',
+      swarmActivity: 'Xroga Live · web + X',
       swarmTodos: todosForBuild('research'),
     });
     research = await gatherResearch(opts.prompt);
     researchBlock = formatResearchForPrompt(research);
+    if (!researchBlock) {
+      // Do not fake a research step when nothing came back
+      research = null;
+      emit({
+        agent: 'research',
+        status: 'skipped',
+        message: 'No live sources available — continuing without research',
+        swarmStatusLabel: 'Research skipped',
+        swarmActivity: 'Build continues',
+        swarmTodos: todosForBuild('convert'),
+      });
+    } else {
+      emit({
+        agent: 'research',
+        status: 'ready',
+        message:
+          research.provider === 'grok_live'
+            ? `Live research ready${research.includedXSearch ? ' (web + X)' : ''} · ${research.sources.length} source(s)`
+            : `Research ready · ${research.sources.length} source(s)`,
+        swarmStatusLabel: 'Research',
+        swarmActivity: research.provider,
+        swarmTodos: todosForBuild('convert'),
+      });
+    }
   }
 
   // Build/update with screenshot: Grok vision → text brief for the (non-vision) builder
@@ -843,8 +912,27 @@ export async function runBuildPipeline(opts: {
       temperature: isUpdate ? 0.3 : 0.45,
       onDelta: opts.onDelta,
       signal: opts.signal,
+      onModelFallback: (from, to) => {
+        emit({
+          agent: 'builder',
+          status: 'model_fallback',
+          message: `Switched ${MODELS[from].label} → ${MODELS[to].label} (capacity or availability)`,
+          swarmStatusLabel: MODELS[to].label,
+          swarmActivity: 'Fallback',
+          swarmTodos: todosForBuild('build'),
+        });
+      },
     },
   );
+
+  emit({
+    agent: 'builder',
+    status: 'model_active',
+    message: `Building with ${MODELS[result.modelId].label}`,
+    swarmStatusLabel: MODELS[result.modelId].label,
+    swarmActivity: result.modelId === route.builder ? 'Preferred model' : 'Fallback model',
+    swarmTodos: todosForBuild('build'),
+  });
 
   usage = await recordUsage(opts.userId, result.modelId, result.inputTokens, result.outputTokens);
 

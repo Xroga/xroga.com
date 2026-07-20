@@ -21,7 +21,7 @@ export function HeaderTokenMeter({ onClick, className }: HeaderTokenMeterProps) 
   const planTier = useAppStore((s) => s.planTier);
   // null usage = still loading — do NOT flash “0 tokens left”
   const remaining = usage?.totalTokensRemaining;
-  const total = usage?.totalLimit ?? 7_000_000;
+  const total = usage?.totalLimit ?? 6_172_222;
   const loaded = typeof remaining === 'number';
   const isOut = loaded && remaining <= 0;
   const isLow = loaded && total > 0 && remaining / total <= 0.2;

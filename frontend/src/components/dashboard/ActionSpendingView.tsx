@@ -24,7 +24,7 @@ export function ActionSpendingView({ embedded }: { embedded?: boolean }) {
               </span>
               <span className="text-[var(--muted)]">
                 {' '}
-                / {formatTokens(usage.totalLimit ?? 7_000_000)} tokens remaining ({usage.percentUsed}% used)
+                / {formatTokens(usage.totalLimit ?? 6_172_222)} tokens remaining ({usage.percentUsed}% used)
               </span>
             </p>
             <div className="h-2 rounded-full bg-white/10 overflow-hidden">

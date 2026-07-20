@@ -14,8 +14,8 @@ function formatTokens(n: number): string {
 export function ActionCostPanel() {
   const usage = useAppStore((s) => s.tokenUsage);
   const { prompt } = useTerminalChat();
-  const remaining = usage?.totalTokensRemaining ?? 7_000_000;
-  const total = usage?.totalLimit ?? 7_000_000;
+  const remaining = usage?.totalTokensRemaining ?? 6_172_222;
+  const total = usage?.totalLimit ?? 6_172_222;
   const pct = total > 0 ? Math.round((remaining / total) * 100) : 100;
 
   return (

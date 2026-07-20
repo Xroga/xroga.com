@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, Info, Zap, Calculator } from 'lucide-react';
+import { X, Info, Brain, Calculator } from 'lucide-react';
 import Link from 'next/link';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import {
@@ -19,6 +19,10 @@ interface ActionCostModalProps {
   onClose: () => void;
 }
 
+/**
+ * Relative complexity reference — billing is tokens, not legacy “actions”.
+ * Numbers help estimate heaviness; they are not a separate meter.
+ */
 export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
   const { prompt } = useTerminalChat();
   const estimate = estimateActionCost(prompt || 'chat');
@@ -50,8 +54,8 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5 text-[var(--accent)]" />
-            <h2 className="font-semibold">Complete Action Cost Master List</h2>
+            <Brain className="w-5 h-5 text-[var(--accent)]" />
+            <h2 className="font-semibold">Task complexity (relative)</h2>
           </div>
           <button type="button" onClick={onClose} className="p-2 rounded-lg hover:bg-white/10">
             <X className="w-4 h-4" />
@@ -60,7 +64,11 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
 
         <div className="px-5 py-3 bg-[var(--primary)]/10 border-b border-white/10 space-y-2">
           <p className="text-sm">
-            Your prompt estimates <strong>{estimate.cost} actions</strong> — {estimate.label}
+            Your prompt is about <strong>{estimate.cost} relative units</strong> — {estimate.label}
+          </p>
+          <p className="text-xs text-[var(--muted)]">
+            You are billed in tokens (Spark = 6.17M/mo). These units are a complexity guide only — not a
+            separate actions meter.
           </p>
           {estimate.breakdown && (
             <p className="text-xs text-[var(--muted)]">{estimate.breakdown.join(' · ')}</p>
@@ -69,10 +77,10 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
 
         <div className="px-5 py-4 border-b border-white/10 bg-white/[0.02]">
           <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wider mb-2 flex items-center gap-1">
-            <Calculator className="w-3.5 h-3.5" /> Reverse calculator
+            <Calculator className="w-3.5 h-3.5" /> Complexity budget helper
           </p>
           <div className="flex flex-wrap items-center gap-2 mb-3">
-            <label className="text-sm text-[var(--muted)]">If I have</label>
+            <label className="text-sm text-[var(--muted)]">If my complexity budget is</label>
             <input
               type="number"
               min={0}
@@ -80,7 +88,7 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
               onChange={(e) => setBudgetInput(e.target.value)}
               className="w-24 px-2 py-1.5 rounded-lg bg-white/5 border border-[var(--card-border)] text-sm font-mono"
             />
-            <span className="text-sm text-[var(--muted)]">actions, I can do:</span>
+            <span className="text-sm text-[var(--muted)]">relative units, I can do:</span>
           </div>
           {budget > 0 ? (
             <UiverseTableCard
@@ -91,7 +99,7 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
               }))}
             />
           ) : (
-            <p className="text-xs text-[var(--muted)]">Enter an action count above.</p>
+            <p className="text-xs text-[var(--muted)]">Enter a complexity budget above.</p>
           )}
         </div>
 
@@ -105,7 +113,7 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
                 title={title}
                 rows={items.map((item) => ({
                   left: item.task,
-                  right: String(item.cost),
+                  right: `${item.cost} units`,
                 }))}
               />
             </div>
@@ -114,7 +122,7 @@ export function ActionCostModal({ open, onClose }: ActionCostModalProps) {
 
         <div className="px-5 py-3 border-t border-white/10 text-center">
           <Link href="/dashboard/billing" onClick={onClose} className="text-sm text-[var(--accent)] hover:underline">
-            View billing & plans →
+            View billing & token plans →
           </Link>
         </div>
       </div>

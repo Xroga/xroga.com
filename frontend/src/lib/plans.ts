@@ -6,9 +6,11 @@ export interface GalacticPlan {
   priceLabel: string;
   usdPrice: number;
   productId: string;
+  /** @deprecated Prefer tokensLabel — actions billing retired for AI metering */
   actionsLabel: string;
   actions: number;
   aiTokens: number;
+  tokensLabel: string;
   aiTokensLabel: string;
   xrgBonus: number;
   xrgLabel: string;
@@ -17,6 +19,10 @@ export interface GalacticPlan {
   tagline?: string;
 }
 
+/** Canonical Spark pool — matches backend MONTHLY_TOTAL_TOKENS */
+export const SPARK_TOKEN_POOL = 6_172_222;
+export const TRIAL_TOKEN_POOL = 552_077;
+
 export const GALACTIC_PLANS: GalacticPlan[] = [
   {
     tier: 'spark',
@@ -24,9 +30,10 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     priceLabel: '$19',
     usdPrice: 19,
     productId: 'pro_01kw4k9efhq3tyrnzxa7kq1nra',
-    actionsLabel: '1,500 Actions/mo',
+    actionsLabel: '6.17M tokens/mo',
     actions: 1500,
-    aiTokens: 7_000_000,
+    aiTokens: SPARK_TOKEN_POOL,
+    tokensLabel: '6.17M tokens/mo',
     aiTokensLabel: '2 concurrent tasks',
     xrgBonus: 0,
     xrgLabel: 'Solo builders & side projects',
@@ -39,9 +46,10 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     priceLabel: '$29',
     usdPrice: 29,
     productId: 'pro_01kw4kae0qby4dt86b8n551sqt',
-    actionsLabel: '5,000 Actions/mo',
+    actionsLabel: '9.42M tokens/mo',
     actions: 5000,
-    aiTokens: 12_000_000,
+    aiTokens: 9_422_116,
+    tokensLabel: '9.42M tokens/mo',
     aiTokensLabel: '8 concurrent tasks',
     xrgBonus: 0,
     xrgLabel: 'Most popular — daily swarm power',
@@ -55,9 +63,10 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     priceLabel: '$49',
     usdPrice: 49,
     productId: 'pro_01kw4kawhx64rdmm5ncax0at6e',
-    actionsLabel: '10,000 Actions/mo',
+    actionsLabel: '15.9M tokens/mo',
     actions: 10000,
-    aiTokens: 20_000_000,
+    aiTokens: 15_918_223,
+    tokensLabel: '15.9M tokens/mo',
     aiTokensLabel: '12 concurrent tasks',
     xrgBonus: 0,
     xrgLabel: 'Teams shipping every week',
@@ -70,9 +79,10 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     priceLabel: '$99',
     usdPrice: 99,
     productId: 'pro_01kw4kb8t79rfdj68h5c5ep5x0',
-    actionsLabel: '6,000 Actions/mo',
+    actionsLabel: '32.2M tokens/mo',
     actions: 6000,
-    aiTokens: 35_000_000,
+    aiTokens: 32_160_331,
+    tokensLabel: '32.2M tokens/mo',
     aiTokensLabel: '30 concurrent tasks',
     xrgBonus: 0,
     xrgLabel: 'High concurrency & priority',
@@ -85,9 +95,10 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     priceLabel: '$999',
     usdPrice: 999,
     productId: 'pro_01kw4jptfsdbs2yfv6s5ctyptg',
-    actionsLabel: '50,000 Actions/mo',
+    actionsLabel: '325M tokens/mo',
     actions: 50000,
-    aiTokens: 100_000_000,
+    aiTokens: 324_529_323,
+    tokensLabel: '325M tokens/mo',
     aiTokensLabel: '100 concurrent tasks',
     xrgBonus: 0,
     xrgLabel: 'Enterprise-scale swarm',
@@ -102,12 +113,13 @@ export const COMING_SOON_PLANS = [
   { name: 'Essential', price: '$10', label: 'Coming soon' },
 ];
 
-export const FREE_TRIAL_ACTIONS = 50;
+export const FREE_TRIAL_ACTIONS = 50; // legacy constant — trial pool is TRIAL_TOKEN_POOL (~0.55M)
 
-/** Feature bullets for pricing cards — no token/XRG quota marketing */
+/** Feature bullets for pricing cards — concurrency + tokens, no legacy actions marketing */
 export function getPlanFeatures(plan: GalacticPlan, featureCount: number): string[] {
   return [
     `${plan.concurrency} concurrent tasks`,
+    plan.tokensLabel,
     `All ${featureCount} features unlocked`,
     plan.tagline ?? 'Full Xroga access',
   ];

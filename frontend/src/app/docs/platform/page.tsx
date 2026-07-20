@@ -107,7 +107,7 @@ export default function PlatformDocsPage() {
                   <th className="py-2 pr-2">Model</th>
                   <th className="py-2 pr-2">Role</th>
                   <th className="py-2 pr-2">Share</th>
-                  <th className="py-2 pr-2">7M pool</th>
+                  <th className="py-2 pr-2">6.17M pool</th>
                   <th className="py-2 pr-2">Tasks</th>
                   <th className="py-2">API cost</th>
                 </tr>
@@ -118,7 +118,7 @@ export default function PlatformDocsPage() {
                     <td className="py-2.5 pr-2 font-medium">{m.name}</td>
                     <td className="py-2.5 pr-2">{m.role}</td>
                     <td className="py-2.5 pr-2 text-[var(--accent)]">{m.usage}</td>
-                    <td className="py-2.5 pr-2 font-mono text-xs">{m.tokens7M}</td>
+                    <td className="py-2.5 pr-2 font-mono text-xs">{m.tokensPool}</td>
                     <td className="py-2.5 pr-2 text-[var(--muted)]">{m.tasks}</td>
                     <td className="py-2.5 text-[var(--muted)] text-xs">{m.cost}</td>
                   </tr>
