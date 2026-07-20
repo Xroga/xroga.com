@@ -421,7 +421,18 @@ export function PostBuildDashboard({
               Open Chrome Releases
             </a>
           ) : null}
-          {data.desktopReleasesUrl ? (
+          {data.desktopZipDownloadUrl ? (
+            <a
+              href={data.desktopZipDownloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--foreground)] text-[var(--background)] text-xs font-bold hover:opacity-90 shadow-sm transition-opacity"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Download desktop zip
+            </a>
+          ) : null}
+          {data.desktopReleasesUrl && !data.desktopZipDownloadUrl ? (
             <a
               href={data.desktopReleasesUrl}
               target="_blank"
@@ -432,7 +443,18 @@ export function PostBuildDashboard({
               Desktop Releases
             </a>
           ) : null}
-          {data.desktopActionsUrl ? (
+          {data.easUrl ? (
+            <a
+              href={data.easUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--card-border)] text-xs font-bold hover:border-[var(--accent)]/50 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Open EAS run
+            </a>
+          ) : null}
+          {data.desktopActionsUrl && !data.desktopZipDownloadUrl ? (
             <a
               href={data.desktopActionsUrl}
               target="_blank"

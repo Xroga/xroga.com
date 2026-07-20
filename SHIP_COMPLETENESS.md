@@ -1,16 +1,18 @@
 # Honest ship status
 
-## Truth rules (enforced in code)
-- **Built** ≠ **Shipped**. UI says “ship incomplete” until free-path artifacts / live URL pass.
-- Web shipped = GitHub push + Vercel live URL check.
-- Chrome shipped = GitHub push + `extension.zip` on Releases (download URL required).
-- Electron shipped = GitHub push + release **triggered** (Actions zip may still be building — next step says wait).
-- Expo “shipped” free path = GitHub only; next step always says EAS/stores not done.
-- Critical structure issues block push.
-- Verify is never force-green.
+## Free-path “shipped” (enforced)
+| Kind | Shipped when |
+|------|----------------|
+| Web | GitHub + live Vercel URL |
+| Chrome | GitHub + `extension.zip` download URL |
+| Electron | GitHub + **downloadable** desktop `.zip` on Releases (polls Actions up to ~7 min) |
+| Expo | GitHub (Expo Go). If Expo token saved → auto EAS **build** (not store submit) |
 
-## Still not automatic (honest)
-- Waiting for Electron Actions to finish building the zip
-- EAS / App Store / Play submit
-- CWS publish fee, code signing
-- 710+ OAuth catalog (wishlist; ~7 live connects)
+## User-paid (guided, not faked)
+- CWS ~$5, Apple/Google, EAS minutes, code signing
+- Integrations UI: live connects only; Coming soon in a dropdown
+
+## Quality
+- Scaffold integrity restore if LLM empties entrypoints
+- Structure validation blocks push
+- Builder prompt forbids deleting critical scaffold files

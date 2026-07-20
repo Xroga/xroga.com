@@ -19,10 +19,14 @@ export type ShipOutcomeInput = {
   liveOk?: boolean;
   /** Chrome: zip download URL present */
   chromeZipOk: boolean;
-  /** Electron: tag/dispatch accepted by GitHub */
-  electronReleaseTriggered: boolean;
+  /** Electron: unsigned .zip asset downloadable on Releases */
+  electronZipOk: boolean;
+  /** Expo: EAS workflow dispatched when user had Expo token */
+  easTriggered?: boolean;
+  easUrl?: string;
   chromeZipError?: string;
   electronReleaseError?: string;
+  easError?: string;
 };
 
 export type ShipOutcome = {
@@ -62,10 +66,10 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
         'Chrome extension.zip was not uploaded to GitHub Releases — re-run ship or npm run zip',
     );
   }
-  if (input.kind === 'electron' && input.githubPushConfirmed && !input.electronReleaseTriggered) {
+  if (input.kind === 'electron' && input.githubPushConfirmed && !input.electronZipOk) {
     shipBlockers.push(
       input.electronReleaseError ||
-        'Desktop release was not triggered — tag v* or run Desktop release on GitHub Actions',
+        'Desktop zip not downloadable yet — open GitHub Actions/Releases and wait for the .zip asset',
     );
   }
   if (!isNonWeb && input.githubPushConfirmed && !input.deployUrl) {
@@ -84,24 +88,35 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
   let fullyShipped = false;
   if (buildOk && input.githubPushConfirmed) {
     if (input.kind === 'chrome') fullyShipped = input.chromeZipOk;
-    else if (input.kind === 'electron') fullyShipped = input.electronReleaseTriggered;
-    else if (input.kind === 'expo') fullyShipped = true; // free path = GitHub for Expo Go
+    else if (input.kind === 'electron') fullyShipped = input.electronZipOk;
+    else if (input.kind === 'expo') fullyShipped = true; // GitHub = Expo Go free path
     else fullyShipped = Boolean(input.deployUrl && input.liveOk !== false);
   }
 
-  // Honest next steps (even when shipped)
   if (input.kind === 'chrome' && fullyShipped) {
-    nextSteps.push('Sideload: chrome://extensions → Load unpacked, or upload extension.zip to CWS (~$5 on your account)');
+    nextSteps.push(
+      'Sideload free, or upload extension.zip to Chrome Web Store (~$5 on your developer account — Xroga does not pay/publish)',
+    );
   }
   if (input.kind === 'electron' && fullyShipped) {
     nextSteps.push(
-      'Wait until GitHub Actions is green, then download the unsigned zip from Releases (signing/stores are on you)',
+      'Unsigned zip is ready. Code signing / Mac App Store / Microsoft Store fees are on you if you need them.',
     );
   }
   if (input.kind === 'expo' && input.githubPushConfirmed) {
-    nextSteps.push(
-      'EAS / App Store / Play are NOT done yet — open Publish → Connect Expo (your token; you pay Apple/Google/EAS)',
-    );
+    if (input.easTriggered) {
+      nextSteps.push(
+        input.easUrl
+          ? `EAS started on your Expo account — watch: ${input.easUrl} (you pay Apple/Google/EAS)`
+          : 'EAS started on your Expo account (you pay Apple/Google/EAS)',
+      );
+    } else {
+      nextSteps.push(
+        input.easError
+          ? `EAS not started: ${input.easError}. Open Publish → Connect Expo (your token).`
+          : 'EAS / App Store / Play not done — Publish → Connect Expo (your token; you pay fees)',
+      );
+    }
   }
   if (!isNonWeb && fullyShipped) {
     nextSteps.push('Optional: Connect Supabase for DB/memory if the app needs it');
@@ -127,13 +142,17 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
     );
   } else if (input.kind === 'electron') {
     verifyLines.push(
-      input.electronReleaseTriggered
-        ? '✅ Desktop release triggered (Actions may still be building)'
-        : '❌ Desktop release not triggered',
+      input.electronZipOk
+        ? '✅ Desktop .zip downloadable on Releases'
+        : '❌ Desktop .zip not ready yet',
     );
   } else if (input.kind === 'expo') {
     verifyLines.push('✅ Code on GitHub (Expo Go path)');
-    verifyLines.push('ℹ️ EAS / store submit not run by this build');
+    verifyLines.push(
+      input.easTriggered
+        ? '✅ EAS workflow triggered on your Expo account'
+        : 'ℹ️ EAS / store submit not run (Connect Expo in Publish)',
+    );
   } else {
     if (input.deployUrl) {
       verifyLines.push(
@@ -156,11 +175,13 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
       statusMessage = 'Extension shipped — zip on GitHub Releases';
       statusLabel = 'Shipped';
     } else if (input.kind === 'electron') {
-      statusMessage = 'Desktop pushed — release started (wait for Actions zip)';
-      statusLabel = 'Release started';
+      statusMessage = 'Desktop shipped — unsigned zip ready to download';
+      statusLabel = 'Shipped';
     } else if (input.kind === 'expo') {
-      statusMessage = 'Mobile on GitHub — EAS/store still needs Publish → Expo';
-      statusLabel = 'On GitHub';
+      statusMessage = input.easTriggered
+        ? 'Mobile on GitHub + EAS started (you pay store/EAS fees)'
+        : 'Mobile on GitHub — Connect Expo for EAS when ready';
+      statusLabel = input.easTriggered ? 'GitHub + EAS' : 'On GitHub';
     } else {
       statusMessage = 'Build shipped & verified live';
       statusLabel = 'Shipped';

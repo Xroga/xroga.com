@@ -34,6 +34,9 @@ export interface LandingPageOutputData {
   desktopReleaseTag?: string;
   desktopActionsUrl?: string;
   desktopReleasesUrl?: string;
+  desktopZipDownloadUrl?: string;
+  easTriggered?: boolean;
+  easUrl?: string;
   shipBlockers?: string[];
   shipVerify?: { pass?: boolean; liveOk?: boolean; summaryLines?: string[] };
   projectName?: string;
