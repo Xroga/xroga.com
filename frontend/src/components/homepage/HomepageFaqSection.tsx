@@ -8,6 +8,10 @@ const FAQS: Array<{ q: string; a: string }> = [
     a: 'Xroga AI is the #1 coding agent for developers and non-developers. It builds web apps, pushes working code to your GitHub, deploys on your Vercel, syncs your API keys securely into Vercel env, and updates the same repo (edit/delete) without starting over. No coding knowledge required to start.',
   },
   {
+    q: 'What is Black Hole V∞?',
+    a: 'Black Hole V∞ is Xroga’s only public model. Under the hood it routes specialist cores (Apex, Horizon, Forge, Pulse, Live, Lens) — you never pick a vendor model. New capability ships as Event Horizon updates inside V∞, so you don’t wait for “the next model.”',
+  },
+  {
     q: 'Can Xroga build anything from one prompt?',
     a: 'It can start almost any web product from one clear prompt — landing pages, dashboards, games, tools — then push GitHub and deploy. Complex systems (heavy backends, custom infra, pixel-perfect native apps) usually need follow-up prompts and your connected GitHub/Vercel. One prompt starts the ship loop; big products iterate.',
   },
