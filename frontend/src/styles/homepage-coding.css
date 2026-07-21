@@ -1891,6 +1891,15 @@
   position: relative;
 }
 
+.xv-home-coding .xv-hc-bh-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 11rem;
+  margin-bottom: 0.25rem;
+}
+
 .xv-home-coding .xv-hc-bh-orbit-icon {
   width: 1.35rem;
   height: 1.35rem;

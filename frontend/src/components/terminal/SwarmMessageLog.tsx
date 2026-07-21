@@ -7,7 +7,7 @@ import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { ProcessingLogo } from '@/components/layout/ProcessingLogo';
-import { BlackHoleLoader } from '@/components/ui/BlackHoleLoader';
+import { MorphWaitLoader } from '@/components/ui/MorphWaitLoader';
 import { ResearchPagesLoader } from '@/components/ui/ResearchPagesLoader';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { MessageBubbleActions } from './MessageBubbleActions';
@@ -353,7 +353,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                 )}
                 {msg.role === 'assistant' && (
                   loading && msg.id === animatingId && !showResearchPages ? (
-                    <BlackHoleLoader size="xs" className="shrink-0 mt-1" />
+                    <MorphWaitLoader size="sm" className="shrink-0 mt-0.5" />
                   ) : (
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
                       <ProcessingLogo
