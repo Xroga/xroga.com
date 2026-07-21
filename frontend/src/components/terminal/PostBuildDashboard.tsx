@@ -153,9 +153,13 @@ export function PostBuildDashboard({
     missingItems.push('Live URL optional — connect Vercel or use sandbox preview below');
   }
   if (isExpoApp) {
-    if (data.easUrl) {
+    if (data.easBuildOk && data.easArtifactUrl) {
       missingItems.push(
-        'Mobile: EAS build started — open the run for your installable binary. App Store/Play submit needs credentials in Expo (you pay fees).',
+        'Mobile: EAS binary ready — open the install/download link. Store approval is still Apple/Google’s if submit was started.',
+      );
+    } else if (data.easUrl) {
+      missingItems.push(
+        'Mobile: EAS build started — open the run for your installable binary. Sync Play/Apple ASC in Publish for store submit.',
       );
     } else {
       missingItems.push(
@@ -164,16 +168,24 @@ export function PostBuildDashboard({
     }
   }
   if (isChromeExtension) {
-    if (data.chromeZipDownloadUrl) {
+    if (data.chromeStoreSubmitted) {
       missingItems.push(
-        'Chrome: Download extension.zip → chrome://extensions → Developer mode → Load unpacked. Optional CWS listing (~$5) is on you.',
+        'Chrome: Submitted to Chrome Web Store for Google review — listing goes public only after Google approves.',
+      );
+    } else if (data.chromeZipDownloadUrl) {
+      missingItems.push(
+        'Chrome: Download extension.zip → chrome://extensions → Developer mode → Load unpacked. Connect CWS in Publish to submit for review.',
       );
     } else {
       missingItems.push('Chrome: wait for extension.zip on Releases, then Load unpacked');
     }
   }
   if (isElectronApp) {
-    if (data.desktopZipDownloadUrl) {
+    if (data.electronInstallerOk || data.desktopInstallerDownloadUrl) {
+      missingItems.push(
+        'Desktop: Installer ready on Releases. Portable zip still works via npm install && npm start.',
+      );
+    } else if (data.desktopZipDownloadUrl) {
       missingItems.push(
         'Desktop: Download desktop.zip → npm install && npm start. Signing / stores are optional next steps on your accounts.',
       );
@@ -436,6 +448,17 @@ export function PostBuildDashboard({
               Download extension.zip
             </a>
           ) : null}
+          {data.chromeStoreUrl ? (
+            <a
+              href={data.chromeStoreUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--card-border)] text-xs font-bold hover:border-[var(--accent)]/50 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              {data.chromeStoreSubmitted ? 'CWS dashboard (in review)' : 'CWS dashboard'}
+            </a>
+          ) : null}
           {data.chromeReleaseUrl && !data.chromeZipDownloadUrl ? (
             <a
               href={data.chromeReleaseUrl}
@@ -455,7 +478,18 @@ export function PostBuildDashboard({
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--foreground)] text-[var(--background)] text-xs font-bold hover:opacity-90 shadow-sm transition-opacity"
             >
               <ExternalLink className="w-4 h-4" />
-              Download desktop zip
+              Download desktop.zip
+            </a>
+          ) : null}
+          {data.desktopInstallerDownloadUrl ? (
+            <a
+              href={data.desktopInstallerDownloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-500/40 text-xs font-bold text-emerald-600 hover:bg-emerald-500/10 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Download installer
             </a>
           ) : null}
           {data.desktopReleasesUrl && !data.desktopZipDownloadUrl ? (
@@ -469,6 +503,17 @@ export function PostBuildDashboard({
               Desktop Releases
             </a>
           ) : null}
+          {data.easArtifactUrl ? (
+            <a
+              href={data.easArtifactUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--foreground)] text-[var(--background)] text-xs font-bold hover:opacity-90 shadow-sm transition-opacity"
+            >
+              <ExternalLink className="w-4 h-4" />
+              {data.easBuildOk ? 'Download EAS binary' : 'Open EAS artifact'}
+            </a>
+          ) : null}
           {data.easUrl ? (
             <a
               href={data.easUrl}
@@ -477,10 +522,10 @@ export function PostBuildDashboard({
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--card-border)] text-xs font-bold hover:border-[var(--accent)]/50 transition-colors"
             >
               <ExternalLink className="w-4 h-4" />
-              Open EAS run
+              {data.easStoreSubmitted ? 'EAS submit run' : 'Open EAS run'}
             </a>
           ) : null}
-          {data.desktopActionsUrl && !data.desktopZipDownloadUrl ? (
+          {data.desktopActionsUrl && !data.desktopZipDownloadUrl && !data.desktopInstallerDownloadUrl ? (
             <a
               href={data.desktopActionsUrl}
               target="_blank"

@@ -11,6 +11,15 @@ import { resolveExpoProjectId } from './easPublish.js';
 
 const EXPO_API = 'https://api.expo.dev';
 
+/** Match Expo scaffold package/bundle: com.xroga.<slug> */
+export function packageIdFromProjectName(name?: string | null): string {
+  const slug = String(name || 'app')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '')
+    .slice(0, 30);
+  return `com.xroga.${slug || 'app'}`;
+}
+
 async function expoFetch(
   token: string,
   path: string,
@@ -59,6 +68,7 @@ async function expoGraphql<T>(
 export async function syncGooglePlayCredentialsToExpo(opts: {
   userId: string;
   applicationIdentifier?: string;
+  projectName?: string;
 }): Promise<{ ok: boolean; message: string; error?: string }> {
   const token = await getUserProviderKey(opts.userId, 'expo');
   if (!token) {
@@ -85,17 +95,16 @@ export async function syncGooglePlayCredentialsToExpo(opts: {
   }
 
   try {
-    // Resolve account + android credentials for this app
-    const meta = await expoGraphql<{
-      app?: {
+    // Resolve account + android credentials for this app (always unwrap byId)
+    type AppCredsShape = {
+      id: string;
+      ownerAccount?: { id: string; name?: string };
+      androidAppCredentialsList?: Array<{
         id: string;
-        ownerAccount?: { id: string; name?: string };
-        androidAppCredentialsList?: Array<{
-          id: string;
-          applicationIdentifier?: string | null;
-        }>;
-      };
-    }>(
+        applicationIdentifier?: string | null;
+      }>;
+    };
+    const meta = await expoGraphql<{ app?: { byId?: AppCredsShape | null } }>(
       token,
       `query XrogaAppCreds($appId: String!) {
         app {
@@ -110,37 +119,9 @@ export async function syncGooglePlayCredentialsToExpo(opts: {
         }
       }`,
       { appId: projectId },
-    ).catch(async () => {
-      // Fallback shape used by some Expo schema versions
-      return expoGraphql<{
-        app?: {
-          byId?: {
-            id: string;
-            ownerAccount?: { id: string };
-            androidAppCredentialsList?: Array<{
-              id: string;
-              applicationIdentifier?: string | null;
-            }>;
-          };
-        };
-      }>(
-        token,
-        `query($appId: String!) {
-          app { byId(appId: $appId) {
-            id
-            ownerAccount { id }
-            androidAppCredentialsList { id applicationIdentifier }
-          }}
-        }`,
-        { appId: projectId },
-      ).then((d) => ({ app: d.app?.byId }));
-    });
+    );
 
-    const app = (meta as { app?: {
-      id: string;
-      ownerAccount?: { id: string };
-      androidAppCredentialsList?: Array<{ id: string; applicationIdentifier?: string | null }>;
-    } }).app;
+    const app = meta.app?.byId ?? null;
     const accountId = app?.ownerAccount?.id;
     if (!accountId) {
       return {
@@ -201,7 +182,8 @@ export async function syncGooglePlayCredentialsToExpo(opts: {
         }`,
         {
           appId: projectId,
-          applicationIdentifier: opts.applicationIdentifier || 'com.xroga.app',
+          applicationIdentifier:
+            opts.applicationIdentifier || packageIdFromProjectName(opts.projectName),
         },
       ).catch(() => null);
       androidCredsId =
@@ -276,6 +258,7 @@ function parseAppleAscJson(raw: string): {
 export async function syncAppleAscApiKeyToExpo(opts: {
   userId: string;
   bundleIdentifier?: string;
+  projectName?: string;
 }): Promise<{ ok: boolean; message: string; error?: string; keyId?: string }> {
   const token = await getUserProviderKey(opts.userId, 'expo');
   if (!token) {
@@ -429,7 +412,7 @@ export async function syncAppleAscApiKeyToExpo(opts: {
     }
 
     const bundleIdentifier =
-      opts.bundleIdentifier?.trim() || 'com.xroga.app';
+      opts.bundleIdentifier?.trim() || packageIdFromProjectName(opts.projectName);
 
     const appleId = await expoGraphql<{
       appleAppIdentifier?: {
@@ -518,6 +501,7 @@ export type EasBuildInfo = {
   platform?: string;
   artifactUrl?: string;
   buildDetailsPageUrl?: string;
+  createdAt?: string;
 };
 
 /** List recent EAS builds and pick the newest finished artifact. */
@@ -546,6 +530,7 @@ export async function listEasBuilds(opts: {
                   id: string;
                   status: string;
                   platform?: string;
+                  createdAt?: string;
                   artifacts?: { buildUrl?: string };
                   appBuildUrl?: string;
                 };
@@ -564,6 +549,7 @@ export async function listEasBuilds(opts: {
                     id
                     status
                     platform
+                    createdAt
                     artifacts { buildUrl }
                   }
                 }
@@ -580,6 +566,7 @@ export async function listEasBuilds(opts: {
           id: n!.id,
           status: n!.status,
           platform: n!.platform,
+          createdAt: n!.createdAt,
           artifactUrl: n!.artifacts?.buildUrl,
           buildDetailsPageUrl: `https://expo.dev/projects/${projectId}/builds/${n!.id}`,
         }));
@@ -593,6 +580,7 @@ export async function listEasBuilds(opts: {
       id?: string;
       status?: string;
       platform?: string;
+      createdAt?: string;
       artifacts?: { buildUrl?: string; applicationArchiveUrl?: string };
       appBuildUrl?: string;
     }>;
@@ -603,6 +591,7 @@ export async function listEasBuilds(opts: {
       id: b.id!,
       status: b.status || 'unknown',
       platform: b.platform,
+      createdAt: b.createdAt,
       artifactUrl:
         b.artifacts?.buildUrl ||
         b.artifacts?.applicationArchiveUrl ||
@@ -616,6 +605,10 @@ export async function waitForEasBuildArtifact(opts: {
   platform?: 'android' | 'ios';
   timeoutMs?: number;
   intervalMs?: number;
+  /** Build IDs that already existed at dispatch — ignore finished ones among these */
+  ignoreBuildIds?: string[];
+  /** Only accept builds created at/after this ms epoch (when known) */
+  startedAfterMs?: number;
   onProgress?: (msg: string) => void;
 }): Promise<{
   ok: boolean;
@@ -625,41 +618,73 @@ export async function waitForEasBuildArtifact(opts: {
   const timeoutMs = opts.timeoutMs ?? 12 * 60 * 1000;
   const intervalMs = opts.intervalMs ?? 20_000;
   const started = Date.now();
+  const startedAfterMs = opts.startedAfterMs ?? started - 30_000;
   let attempt = 0;
+
+  // Snapshot baseline if caller didn't pass one
+  let ignore = new Set(opts.ignoreBuildIds || []);
+  if (!opts.ignoreBuildIds?.length) {
+    const prior = await listEasBuilds({ userId: opts.userId, limit: 8 });
+    ignore = new Set(prior.map((b) => b.id));
+  }
 
   while (Date.now() - started < timeoutMs) {
     attempt += 1;
     opts.onProgress?.(
       `Waiting for EAS ${opts.platform || ''} build artifact (check ${attempt})…`,
     );
-    const builds = await listEasBuilds({ userId: opts.userId, limit: 8 });
-    const match = builds.find((b) => {
+    const builds = await listEasBuilds({ userId: opts.userId, limit: 12 });
+
+    const platformMatch = (b: EasBuildInfo) =>
+      !opts.platform || (b.platform || '').toLowerCase().includes(opts.platform);
+
+    const isNewEnough = (b: EasBuildInfo) => {
+      if (!ignore.has(b.id)) return true;
+      if (b.createdAt) {
+        const t = Date.parse(b.createdAt);
+        if (!Number.isNaN(t) && t >= startedAfterMs) return true;
+      }
+      return false;
+    };
+
+    const inFlight = builds.find((b) => {
+      const status = (b.status || '').toUpperCase();
+      return (
+        platformMatch(b) &&
+        isNewEnough(b) &&
+        /NEW|IN_QUEUE|IN_PROGRESS|PENDING|ERRORED_WAITING|REQUESTED/i.test(status)
+      );
+    });
+
+    const finishedNew = builds.find((b) => {
       const status = (b.status || '').toUpperCase();
       const finished = status === 'FINISHED' || status === 'finished';
-      const platformOk =
-        !opts.platform ||
-        (b.platform || '').toLowerCase().includes(opts.platform);
-      return finished && platformOk && Boolean(b.artifactUrl || b.buildDetailsPageUrl);
+      return finished && platformMatch(b) && isNewEnough(b);
     });
-    if (match) {
+
+    if (finishedNew) {
       return {
         ok: true,
-        build: match,
-        message: match.artifactUrl
-          ? `EAS build finished — install/download: ${match.artifactUrl}`
-          : `EAS build finished — open ${match.buildDetailsPageUrl}`,
+        build: finishedNew,
+        message: finishedNew.artifactUrl
+          ? `EAS build finished — install/download: ${finishedNew.artifactUrl}`
+          : `EAS build finished — open ${finishedNew.buildDetailsPageUrl}`,
       };
     }
-    const failed = builds.find((b) =>
-      /ERROR|ERRORED|CANCELED|CANCELLED/i.test(b.status || ''),
-    );
-    if (failed && attempt > 2) {
+
+    // Only fail on a *new* errored build (not an old one from baseline)
+    const failedNew = builds.find((b) => {
+      if (!platformMatch(b) || !isNewEnough(b)) return false;
+      return /ERROR|ERRORED|CANCELED|CANCELLED/i.test(b.status || '');
+    });
+    if (failedNew && attempt > 2 && !inFlight) {
       return {
         ok: false,
-        build: failed,
-        message: `EAS build ${failed.status}. Open ${failed.buildDetailsPageUrl}`,
+        build: failedNew,
+        message: `EAS build ${failedNew.status}. Open ${failedNew.buildDetailsPageUrl}`,
       };
     }
+
     await new Promise((r) => setTimeout(r, intervalMs));
   }
 
