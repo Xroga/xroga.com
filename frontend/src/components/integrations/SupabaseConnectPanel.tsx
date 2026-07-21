@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
-import { clearOAuthResult, subscribeOAuthResults } from '@/lib/oauthPopupResult';
+import { subscribeOAuthResults } from '@/lib/oauthPopupResult';
 
 type Props = {
   onConnected?: () => void;
@@ -80,27 +80,36 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
   async function authorize() {
     setBusy(true);
     try {
-      clearOAuthResult();
-      const { url, oauthConfigured: ok } = await api.supabase.oauthUrl();
-      if (!ok || !url) {
-        setOauthConfigured(false);
-        toast.error('Supabase OAuth not configured on the server yet');
-        return;
-      }
-      const w = window.open(
-        'about:blank',
-        'xroga-supabase-oauth',
-        'width=560,height=720,scrollbars=yes,resizable=yes',
+      const { openSupabaseOAuthPopup, listenSupabaseOAuthMessages } = await import(
+        '@/lib/supabaseConnect'
       );
-      if (!w) {
-        window.location.href = url;
-      } else {
-        try {
-          w.location.href = url;
-          w.focus();
-        } catch {
-          window.location.href = url;
-        }
+      const stop = listenSupabaseOAuthMessages(
+        (result) => {
+          stop();
+          setOauthConnected(true);
+          setProvisioned(Boolean(result.provisioned));
+          if (result.projects?.length) setProjects(result.projects);
+          setMessage(result.message || 'Authorized');
+          if (result.provisioned) {
+            toast.success(result.message || 'Supabase ready — memory & storage on your project');
+            onConnected?.();
+          } else {
+            toast.success(result.message || 'Authorized — pick or create a project');
+          }
+          void refresh();
+        },
+        (msg) => {
+          stop();
+          toast.error(msg);
+        },
+      );
+      const result = await openSupabaseOAuthPopup();
+      if (!result.opened) {
+        stop();
+        if (!result.oauthConfigured) setOauthConfigured(false);
+        toast.error(result.error || 'Could not start Supabase authorize');
+      } else if (!result.popup) {
+        toast.success('Continue authorizing Supabase in this tab…');
       }
     } catch (err) {
       toast.error((err as Error).message || 'Could not start Supabase authorize');

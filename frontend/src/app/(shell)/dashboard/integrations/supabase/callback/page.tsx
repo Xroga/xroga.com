@@ -73,21 +73,19 @@ function CallbackHandler() {
         };
         publishOAuthResult(payload);
 
-        if (window.opener && !window.opener.closed) {
-          setTimeout(() => window.close(), 500);
-          return;
-        }
-
-        const q = new URLSearchParams({ supabase: 'connected' });
-        if (res.needsProjectPick) q.set('pick', '1');
+        // Always try to close popup; if COOP blocked opener, parent polls status
         setTimeout(() => {
           try {
             window.close();
           } catch {
             /* ignore */
           }
-          router.replace(`/dashboard/integrations?${q.toString()}`);
-        }, 500);
+          if (!window.opener || window.opener.closed) {
+            const q = new URLSearchParams({ supabase: 'connected' });
+            if (res.needsProjectPick) q.set('pick', '1');
+            router.replace(`/dashboard/integrations?${q.toString()}#ship-setup`);
+          }
+        }, 400);
       } catch (e) {
         finishError((e as Error).message || 'Supabase connection failed');
       }
@@ -97,6 +95,10 @@ function CallbackHandler() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[40vh] gap-3 px-4 text-center">
       <p className="text-[var(--muted)] font-mono text-sm">{message}</p>
+      <p className="text-[11px] text-[var(--muted)] max-w-sm">
+        Keep this window open until it finishes. If it fails, go back to Integrations and click
+        Authorize Supabase again.
+      </p>
     </div>
   );
 }
