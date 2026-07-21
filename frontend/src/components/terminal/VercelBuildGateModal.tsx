@@ -178,8 +178,14 @@ export function VercelBuildGateModal({ open, onClose, onConnected }: VercelBuild
               Xroga sends <code className="text-[10px]">client_id</code> + <code className="text-[10px]">client_secret</code> in the token exchange — not Basic auth or JWT.
             </p>
             <p>
-              <strong>Permissions to enable:</strong> Read User, Read/Write Deployment. Optional: Read Project.
-              You do <strong>not</strong> need openid, email, profile, offline_access, billing, or env-var scopes.
+              <strong>OIDC scopes</strong> (App → Manage): openid, email, profile, offline_access.
+              Leave Fly <code className="text-[10px]">VERCEL_OAUTH_SCOPES</code> unset.
+            </p>
+            <p>
+              <strong>API permissions required for ship</strong> (App → Permissions — these are not
+              OAuth scope strings): Read User, Read/Write Project, Read/Write Deployment, Read/Write
+              Project Environment Variables. Without these, Authorize may succeed but deploy/env sync
+              fails — then paste a Full Account personal token instead.
             </p>
             <p>
               <strong>Fly.io secrets:</strong> <code className="text-[10px]">VERCEL_CLIENT_ID</code>,{' '}

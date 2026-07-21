@@ -75,8 +75,9 @@ Fly secrets:
 fly secrets set -a xroga-api \
   VERCEL_CLIENT_ID="cl_…" \
   VERCEL_CLIENT_SECRET="…" \
-  VERCEL_OAUTH_CALLBACK_URL="https://xroga.com/dashboard/integrations/vercel/callback" \
-  VERCEL_OAUTH_SCOPES="openid email profile offline_access"
+  VERCEL_OAUTH_CALLBACK_URL="https://xroga.com/dashboard/integrations/vercel/callback"
+# Do NOT set VERCEL_OAUTH_SCOPES (or unset it). Bad scopes cause invalid_scope.
+# fly secrets unset -a xroga-api VERCEL_OAUTH_SCOPES
 ```
 
 Xroga uses PKCE + `https://api.vercel.com/login/oauth/token` (Apps API). After Authorize, users can deploy and sync vault env without a separate Full Account PAT **if** the env permissions above are granted on the App.

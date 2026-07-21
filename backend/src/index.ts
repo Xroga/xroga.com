@@ -39,6 +39,8 @@ import mediaRouter from './routes/media.js';
 import { adminMiddleware } from './middleware/admin.js';
 import { getGitHubOAuthCallbackUrl } from './routes/github.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
+import { vercelOAuthConfigured } from './services/integrations/vercelAuth.js';
+import { supabaseOAuthConfigured } from './services/integrations/supabaseAuth.js';
 import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
 import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
 import { ensureShipLoopSchema } from './db/ensureShipLoopSchema.js';
@@ -118,6 +120,10 @@ const healthPayload = () => ({
   githubOAuthRedirectUri: getGitHubOAuthCallbackUrl(),
   research: 'tavily+searxng',
   githubSchemaAutoBootstrap: githubSchemaAutoBootstrapEnabled(),
+  vercelOAuthConfigured: vercelOAuthConfigured(),
+  supabaseOAuthConfigured: supabaseOAuthConfigured(),
+  vercelOauthCallback: process.env.VERCEL_OAUTH_CALLBACK_URL || null,
+  supabaseOauthCallback: process.env.SUPABASE_OAUTH_CALLBACK_URL || null,
 });
 
 app.get('/', (_req, res) => {

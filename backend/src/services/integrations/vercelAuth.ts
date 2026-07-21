@@ -30,6 +30,7 @@ type StoredVercelAuth = {
   provider_user_id?: string;
   refresh_token?: string;
   expires_in?: number;
+  expires_at?: string;
   updated_at: string;
 };
 
@@ -146,12 +147,35 @@ export function getVercelOAuthCallbackUrl(requested?: string): string {
   return `${base}${CALLBACK_PATH}`;
 }
 
-/** OIDC scopes for Vercel Apps. API permissions are configured in the App console separately. */
+/**
+ * OIDC scopes for Vercel Sign-in Apps only.
+ * Valid: openid | email | profile | offline_access
+ * API deploy permissions are NOT OAuth scopes — set them in the Vercel App console.
+ * Malformed env (commas with junk, API permission names, quotes) causes:
+ * "The request scope is invalid, unknown, or malformed."
+ */
+const VERCEL_OIDC_SCOPES = new Set(['openid', 'email', 'profile', 'offline_access']);
+
+/** Sanitize env scopes. Returns '' to omit `scope` (Vercel then uses App-configured defaults). */
 export function vercelOAuthScope(): string {
-  return (
-    (process.env.VERCEL_OAUTH_SCOPES || 'openid email profile offline_access').trim() ||
-    'openid email profile offline_access'
-  );
+  const raw = (process.env.VERCEL_OAUTH_SCOPES ?? '').trim();
+  // Empty → omit param so Vercel includes whatever is enabled on the App
+  if (!raw) return '';
+
+  const parts = raw
+    .replace(/[",']/g, ' ')
+    .split(/[\s,]+/)
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+
+  const allowed = [...new Set(parts.filter((s) => VERCEL_OIDC_SCOPES.has(s)))];
+  if (allowed.length === 0) {
+    console.warn(
+      '[vercelAuth] VERCEL_OAUTH_SCOPES had no valid OIDC scopes — omitting scope param. Valid: openid email profile offline_access',
+    );
+    return '';
+  }
+  return allowed.join(' ');
 }
 
 function pkceChallenge(verifier: string): string {
@@ -186,12 +210,14 @@ export async function buildVercelAuthorizeUrl(
     client_id: clientId(),
     redirect_uri: redirectUri,
     response_type: 'code',
-    scope: vercelOAuthScope(),
     state,
     nonce,
     code_challenge: pkceChallenge(verifier),
     code_challenge_method: 'S256',
   });
+  // Only send scope when sanitized + valid — omitting avoids invalid_scope from bad env
+  const scope = vercelOAuthScope();
+  if (scope) params.set('scope', scope);
 
   return { url: `https://vercel.com/oauth/authorize?${params.toString()}`, state };
 }
@@ -276,48 +302,103 @@ export function parseVercelOAuthState(state: string): { userId: string } | null 
 }
 
 export async function getVercelToken(userId: string): Promise<string | null> {
-  const supabase = getSupabaseAdmin();
+  const row = await loadVercelConnection(userId);
+  if (!row?.access_token?.trim()) return null;
 
+  const expiresAt = row.expires_at ? Date.parse(row.expires_at) : 0;
+  const needsRefresh = expiresAt > 0 && expiresAt < Date.now() + 60_000;
+  if (needsRefresh && row.refresh_token) {
+    try {
+      const refreshed = await refreshVercelOAuthToken(userId, row.refresh_token, row.username);
+      return refreshed;
+    } catch (err) {
+      console.warn('[vercelAuth] refresh failed:', (err as Error).message);
+      // Fall through — access token may still work briefly
+    }
+  }
+  return row.access_token.trim();
+}
+
+async function loadVercelConnection(userId: string): Promise<{
+  access_token: string;
+  refresh_token?: string | null;
+  username?: string;
+  expires_at?: string;
+} | null> {
+  const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('user_integrations')
-    .select('access_token')
+    .select('access_token, refresh_token, metadata')
     .eq('user_id', userId)
     .eq('provider', 'vercel')
     .maybeSingle();
 
-  if (error && isMissingTableError(error.message)) {
-    const stored = await getVercelTokenFromStorage(userId);
-    return stored?.access_token?.trim() ?? null;
+  if (!error && data?.access_token?.trim()) {
+    const meta = (data.metadata ?? {}) as { username?: string; expires_at?: string };
+    return {
+      access_token: data.access_token.trim(),
+      refresh_token: data.refresh_token,
+      username: meta.username,
+      expires_at: meta.expires_at,
+    };
   }
 
   if (error && !isMissingTableError(error.message)) {
     console.warn('[vercelAuth] lookup:', error.message);
   }
 
-  if (data?.access_token?.trim()) return data.access_token.trim();
-
   const stored = await getVercelTokenFromStorage(userId);
-  return stored?.access_token?.trim() ?? null;
+  if (!stored?.access_token?.trim()) return null;
+  return {
+    access_token: stored.access_token.trim(),
+    refresh_token: stored.refresh_token,
+    username: stored.username,
+    expires_at: stored.expires_at,
+  };
+}
+
+export async function refreshVercelOAuthToken(
+  userId: string,
+  refreshToken: string,
+  username?: string,
+): Promise<string> {
+  if (!vercelOAuthConfigured()) {
+    throw new Error('Vercel OAuth not configured');
+  }
+  const body = new URLSearchParams({
+    grant_type: 'refresh_token',
+    client_id: clientId(),
+    client_secret: clientSecret(),
+    refresh_token: refreshToken,
+  });
+  const tokenRes = await fetch('https://api.vercel.com/login/oauth/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
+  });
+  const tokenData = (await tokenRes.json()) as {
+    access_token?: string;
+    refresh_token?: string;
+    expires_in?: number;
+    error?: string;
+    error_description?: string;
+  };
+  if (!tokenData.access_token) {
+    throw new Error(
+      tokenData.error_description || tokenData.error || `Vercel refresh failed (${tokenRes.status})`,
+    );
+  }
+  await saveVercelConnection(userId, tokenData.access_token, {
+    username: username || 'vercel-user',
+    refreshToken: tokenData.refresh_token || refreshToken,
+    expiresIn: tokenData.expires_in,
+  });
+  return tokenData.access_token;
 }
 
 export async function getVercelUsername(userId: string): Promise<string | null> {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from('user_integrations')
-    .select('metadata')
-    .eq('user_id', userId)
-    .eq('provider', 'vercel')
-    .maybeSingle();
-
-  if (error && isMissingTableError(error.message)) {
-    const stored = await getVercelTokenFromStorage(userId);
-    return stored?.username?.trim() || null;
-  }
-
-  const meta = data?.metadata as { username?: string } | null;
-  if (meta?.username?.trim()) return meta.username.trim();
-  const stored = await getVercelTokenFromStorage(userId);
-  return stored?.username?.trim() || null;
+  const row = await loadVercelConnection(userId);
+  return row?.username?.trim() || null;
 }
 
 export async function isVercelConnected(userId: string): Promise<boolean> {
@@ -325,26 +406,71 @@ export async function isVercelConnected(userId: string): Promise<boolean> {
   return Boolean(token);
 }
 
-/** Verify the stored token still talks to Vercel (catches revoked tokens). */
+/**
+ * Verify stored Vercel token.
+ * Sign-in-with-Vercel tokens may pass userinfo but fail /v2/user without Read User API permission.
+ * Identity via userinfo is enough to stay "connected"; canDeploy is reported separately.
+ */
 export async function verifyVercelTokenLive(userId: string): Promise<{
   ok: boolean;
   username?: string;
+  canDeploy?: boolean;
   error?: string;
 }> {
   const token = await getVercelToken(userId);
   if (!token) return { ok: false, error: 'not_connected' };
+
+  let username: string | undefined;
+  let identityOk = false;
+
   try {
-    const res = await fetch('https://api.vercel.com/v2/user', {
+    const infoRes = await fetch('https://api.vercel.com/login/oauth/userinfo', {
+      method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
     });
-    if (!res.ok) {
-      return { ok: false, error: `vercel_api_${res.status}` };
+    if (infoRes.ok) {
+      const info = (await infoRes.json()) as {
+        preferred_username?: string;
+        name?: string;
+        email?: string;
+      };
+      username = info.preferred_username || info.name || undefined;
+      identityOk = true;
     }
-    const u = (await res.json()) as { user?: { username?: string } };
-    return { ok: true, username: u.user?.username };
-  } catch (err) {
-    return { ok: false, error: (err as Error).message };
+  } catch {
+    /* try REST next */
   }
+
+  if (!identityOk) {
+    try {
+      const res = await fetch('https://api.vercel.com/v2/user', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const u = (await res.json()) as { user?: { username?: string } };
+        username = u.user?.username || username;
+        identityOk = true;
+      }
+    } catch (err) {
+      return { ok: false, error: (err as Error).message };
+    }
+  }
+
+  if (!identityOk) {
+    return { ok: false, error: 'vercel_token_invalid' };
+  }
+
+  let canDeploy = false;
+  try {
+    const proj = await fetch('https://api.vercel.com/v9/projects?limit=1', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    canDeploy = proj.ok;
+  } catch {
+    canDeploy = false;
+  }
+
+  return { ok: true, username, canDeploy };
 }
 
 export async function saveVercelConnection(
@@ -360,12 +486,18 @@ export async function saveVercelConnection(
   const token = accessToken.trim();
   if (!token) throw new Error('Empty Vercel access token');
 
+  const expiresAt =
+    typeof meta.expiresIn === 'number' && meta.expiresIn > 0
+      ? new Date(Date.now() + meta.expiresIn * 1000).toISOString()
+      : undefined;
+
   const storagePayload: StoredVercelAuth = {
     access_token: token,
     username: meta.username ?? 'vercel-user',
     provider_user_id: meta.providerUserId,
     refresh_token: meta.refreshToken,
     expires_in: meta.expiresIn,
+    expires_at: expiresAt,
     updated_at: new Date().toISOString(),
   };
 
@@ -383,6 +515,7 @@ export async function saveVercelConnection(
     metadata: {
       username: meta.username ?? 'vercel-user',
       expires_in: meta.expiresIn,
+      expires_at: expiresAt,
       connected_at: new Date().toISOString(),
     },
   };

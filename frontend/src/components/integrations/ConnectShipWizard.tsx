@@ -240,7 +240,7 @@ export function ConnectShipWizard() {
     {
       id: 'vercel',
       title: '2. Vercel',
-      body: 'Authorize in a popup (Vercel App). With Project + Deployment + Env permissions, we deploy and sync keys automatically.',
+      body: 'Authorize in a popup (Vercel App). Enable Project + Deployment + Env API permissions on the App — OIDC scopes alone cannot deploy.',
       done: vercelOk,
       action: connectVercel,
       label: vercelOk ? 'Connected' : 'Authorize',
