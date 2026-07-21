@@ -15,6 +15,7 @@ export const XROGA_FEATURES = [
   'Web + X live research (when keyed)',
   'Code debug & fix',
   'Website & SaaS generation',
+  'Chatbot landing + BYOK /api/chat scaffold',
   'Ship GitHub → Vercel (web) / Releases (Chrome & desktop)',
   'Connectable: GitHub, Vercel, Supabase, Expo, billing keys',
   'Honest token-based billing',
