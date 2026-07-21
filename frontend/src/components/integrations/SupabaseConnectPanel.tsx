@@ -68,6 +68,13 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
         } else if (data.needsProjectPick) {
           toast.success('Authorized — pick or create a project');
         }
+        const envSync = (data as { envSync?: { ok?: boolean; error?: string } }).envSync;
+        if (envSync && envSync.ok === false) {
+          toast.error(
+            envSync.error ||
+              'Supabase connected, but vault → Vercel env sync failed. Sync from Integrations.',
+          );
+        }
         void refresh();
       }
       if (data.type === 'xroga-supabase-error' && data.message) {
