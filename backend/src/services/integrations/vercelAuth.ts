@@ -146,12 +146,35 @@ export function getVercelOAuthCallbackUrl(requested?: string): string {
   return `${base}${CALLBACK_PATH}`;
 }
 
-/** OIDC scopes for Vercel Apps. API permissions are configured in the App console separately. */
+/**
+ * OIDC scopes for Vercel Sign-in Apps only.
+ * Valid: openid | email | profile | offline_access
+ * API deploy permissions are NOT OAuth scopes — set them in the Vercel App console.
+ * Malformed env (commas with junk, API permission names, quotes) causes:
+ * "The request scope is invalid, unknown, or malformed."
+ */
+const VERCEL_OIDC_SCOPES = new Set(['openid', 'email', 'profile', 'offline_access']);
+
+/** Sanitize env scopes. Returns '' to omit `scope` (Vercel then uses App-configured defaults). */
 export function vercelOAuthScope(): string {
-  return (
-    (process.env.VERCEL_OAUTH_SCOPES || 'openid email profile offline_access').trim() ||
-    'openid email profile offline_access'
-  );
+  const raw = (process.env.VERCEL_OAUTH_SCOPES ?? '').trim();
+  // Empty → omit param so Vercel includes whatever is enabled on the App
+  if (!raw) return '';
+
+  const parts = raw
+    .replace(/[",']/g, ' ')
+    .split(/[\s,]+/)
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+
+  const allowed = [...new Set(parts.filter((s) => VERCEL_OIDC_SCOPES.has(s)))];
+  if (allowed.length === 0) {
+    console.warn(
+      '[vercelAuth] VERCEL_OAUTH_SCOPES had no valid OIDC scopes — omitting scope param. Valid: openid email profile offline_access',
+    );
+    return '';
+  }
+  return allowed.join(' ');
 }
 
 function pkceChallenge(verifier: string): string {
@@ -186,12 +209,14 @@ export async function buildVercelAuthorizeUrl(
     client_id: clientId(),
     redirect_uri: redirectUri,
     response_type: 'code',
-    scope: vercelOAuthScope(),
     state,
     nonce,
     code_challenge: pkceChallenge(verifier),
     code_challenge_method: 'S256',
   });
+  // Only send scope when sanitized + valid — omitting avoids invalid_scope from bad env
+  const scope = vercelOAuthScope();
+  if (scope) params.set('scope', scope);
 
   return { url: `https://vercel.com/oauth/authorize?${params.toString()}`, state };
 }
