@@ -52,8 +52,8 @@ export function shouldRouteToPhase1(
     }
     return true;
   }
-  // Greetings / "hi" / thanks → cheap swarm fast-chat (never Phase 1 WOW essays + history bleed).
-  if (isTrivialPrompt(prompt)) return false;
+  // Greetings / "hi" / thanks → Phase 1 light chat (fast). Never send to build swarm.
+  if (isTrivialPrompt(prompt)) return true;
   // Builds must NEVER hit Phase 1 — it answers with long how-to essays instead of shipping code.
   if (looksLikeProductBuild(prompt) || isWebsiteBuildPrompt(prompt)) return false;
   if (isVideoGenerationPrompt(prompt)) return false;

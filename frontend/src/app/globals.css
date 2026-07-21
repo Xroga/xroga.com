@@ -5147,19 +5147,19 @@ body.theme-gray * {
   overflow: visible;
   position: relative;
 }
-.xv-bh-wrap--sm {
-  width: 3.5rem;
-  height: 3.5rem;
+.xv-bh-wrap--xs {
+  width: 1.75rem;
+  height: 1.75rem;
 }
-.xv-bh-wrap--md {
-  width: 5rem;
-  height: 5rem;
+.xv-bh-wrap--sm {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+.xv-bh-wrap--xs .xv-bh-loader {
+  transform: scale(0.22);
 }
 .xv-bh-wrap--sm .xv-bh-loader {
-  transform: scale(0.42);
-}
-.xv-bh-wrap--md .xv-bh-loader {
-  transform: scale(0.58);
+  transform: scale(0.28);
 }
 
 .xv-bh-loader {
@@ -5199,20 +5199,11 @@ body.theme-gray .xv-bh-loader {
 }
 
 .xv-bh-curve {
-  width: 180%;
-  height: 180%;
-  position: absolute;
-  animation: xv-bh-rotate 8s linear infinite;
-  fill: transparent;
-  pointer-events: none;
+  display: none;
 }
 
 .xv-bh-curve text {
-  letter-spacing: 0.42em;
-  text-transform: uppercase;
-  font: 1.15em var(--font-coding), 'JetBrains Mono', ui-monospace, monospace;
-  fill: var(--bh-text);
-  filter: drop-shadow(0 1px 4px color-mix(in srgb, var(--background) 70%, transparent));
+  display: none;
 }
 
 .xv-bh-blackhole {
