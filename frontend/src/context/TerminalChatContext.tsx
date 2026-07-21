@@ -103,7 +103,7 @@ export interface ChatMessage {
     thumbnailUrl?: string;
     siteDomain?: string;
   }>;
-  hackathonBrief?: import('@/components/terminal/HackathonBriefCard').HackathonBriefCardData;
+  hackathonBrief?: import('@/lib/hackathonBrief').HackathonBriefCardData;
   /** Behind-the-scenes reasoning steps shown after response */
   thinkingSteps?: string[];
   thoughtMs?: number;
@@ -1449,7 +1449,7 @@ export function TerminalChatProvider({
         // Paint assistant row immediately — don't wait on auth before the bubble appears
         setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
         setAnimatingId(assistantId);
-        setPipelineMessage('Connecting…');
+        setPipelineMessage('Starting build…');
 
         const supabase = createClient();
         const { data: { session } } = await supabase.auth.getSession();

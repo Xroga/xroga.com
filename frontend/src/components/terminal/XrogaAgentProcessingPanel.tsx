@@ -15,7 +15,6 @@ import {
 import { buildLiveStatusMessage, isKeepaliveActivity } from '@/lib/buildLiveStatus';
 import { AgentActivityRow, AgentTypewriterText } from './AgentTypewriterText';
 import { XrogaBlackHoleShineText } from '@/components/ui/XrogaBlackHoleShineText';
-import { ModelCollaborationBar } from './ModelCollaborationBar';
 import { BuildPatienceBanner } from './BuildPatienceBanner';
 import { BuildTodoList } from './BuildTodoList';
 import { requestBuildNotificationPermission } from '@/lib/buildBrowserNotify';
@@ -153,12 +152,9 @@ export function XrogaAgentProcessingPanel({
         className
       )}
     >
-      {loading && <ModelCollaborationBar activePhase={activePhase} loading={loading} />}
-
       {todos.length > 0 && (
         <BuildTodoList todos={todos} showProgress={loading} />
       )}
-
       {softPeak && loading && (
         <p className="text-[11px] leading-relaxed text-[var(--foreground)]/75 rounded-lg border border-[var(--card-border)]/50 bg-[var(--card)]/60 px-2.5 py-2">
           {softPeak}

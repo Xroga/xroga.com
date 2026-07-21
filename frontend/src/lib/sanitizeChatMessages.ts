@@ -1,6 +1,6 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
 
-import type { HackathonBriefCardData } from '@/components/terminal/HackathonBriefCard';
+import type { HackathonBriefCardData } from '@/lib/hackathonBrief';
 
 function sanitizeHackathonBrief(raw: unknown): ChatMessage['hackathonBrief'] {
   if (!raw || typeof raw !== 'object') return undefined;
