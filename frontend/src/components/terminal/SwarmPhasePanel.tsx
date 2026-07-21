@@ -51,7 +51,6 @@ export function SwarmPhasePanel({
         goal={goal ?? message}
         activityLog={activityLog.length ? activityLog : message ? [message] : []}
         todos={todos}
-        activePhase={activePhase}
         buildPrompt={buildPrompt}
         peakNudge={peakNudge}
       />

@@ -25,7 +25,6 @@ interface XrogaAgentProcessingPanelProps {
   goal?: string | null;
   activityLog?: string[];
   todos?: SwarmTodoItem[];
-  activePhase?: number | null;
   buildPrompt?: string;
   className?: string;
   peakNudge?: string | null;
@@ -104,7 +103,6 @@ export function XrogaAgentProcessingPanel({
   goal,
   activityLog = [],
   todos = [],
-  activePhase,
   buildPrompt,
   className,
   peakNudge,
