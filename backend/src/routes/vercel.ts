@@ -143,16 +143,19 @@ router.get('/status', async (req: AuthRequest, res) => {
   const connected = await isVercelConnected(req.userId!);
   let username = connected ? await getVercelUsername(req.userId!) : null;
   let tokenValid: boolean | null = null;
+  let canDeploy: boolean | null = null;
   if (connected) {
     const live = await verifyVercelTokenLive(req.userId!);
     tokenValid = live.ok;
+    canDeploy = live.canDeploy ?? null;
     if (live.ok && live.username) username = live.username;
     if (!live.ok && live.error && live.error !== 'not_connected') {
-      // Stale/revoked token — report disconnected so UI can re-authorize
+      // Truly invalid/revoked — not merely missing deploy API permission
       res.json({
         connected: false,
         oauthConfigured: vercelOAuthConfigured(),
         tokenValid: false,
+        canDeploy: false,
         error: 'Vercel token expired or revoked — Authorize again',
       });
       return;
@@ -163,6 +166,11 @@ router.get('/status', async (req: AuthRequest, res) => {
     username: username ?? undefined,
     oauthConfigured: vercelOAuthConfigured(),
     tokenValid,
+    canDeploy,
+    warning:
+      connected && canDeploy === false
+        ? 'Connected, but this Vercel App token cannot list projects/deploy. Enable Read/Write Project + Deployment (+ Env) on the Vercel App, or paste a Full Account personal token.'
+        : undefined,
   });
 });
 

@@ -230,18 +230,37 @@ export async function fetchProjectApiKeys(
   accessToken: string,
   projectRef: string,
 ): Promise<{ url: string; anonKey: string; serviceRoleKey: string }> {
-  const keys = await mgmtFetch<Array<{ name?: string; api_key?: string; type?: string }>>(
-    `/projects/${encodeURIComponent(projectRef)}/api-keys`,
-    accessToken,
+  // Current Management API requires reveal=true for secret values
+  const keys = await mgmtFetch<
+    Array<{
+      name?: string;
+      api_key?: string;
+      type?: string;
+      id?: string;
+    }>
+  >(`/projects/${encodeURIComponent(projectRef)}/api-keys?reveal=true`, accessToken);
+
+  const pick = (...preds: Array<(k: (typeof keys)[number]) => boolean>) => {
+    for (const pred of preds) {
+      const hit = keys.find(pred)?.api_key?.trim();
+      if (hit) return hit;
+    }
+    return undefined;
+  };
+
+  const anon = pick(
+    (k) => k.name === 'anon' || k.type === 'legacyAnonKey' || k.type === 'anon',
+    (k) => k.type === 'publishable' || /publishable|anon/i.test(String(k.name)),
   );
-  const anon =
-    keys.find((k) => k.name === 'anon' || k.type === 'legacyAnonKey' || k.type === 'anon')?.api_key ||
-    keys.find((k) => /anon/i.test(String(k.name)))?.api_key;
-  const service =
-    keys.find((k) => k.name === 'service_role' || k.type === 'legacyServiceRoleKey' || k.type === 'service_role')
-      ?.api_key || keys.find((k) => /service/i.test(String(k.name)))?.api_key;
+  const service = pick(
+    (k) => k.name === 'service_role' || k.type === 'legacyServiceRoleKey' || k.type === 'service_role',
+    (k) => k.type === 'secret' || /service|secret/i.test(String(k.name)),
+  );
+
   if (!anon || !service) {
-    throw new Error('Could not read anon/service_role keys from Supabase Management API');
+    throw new Error(
+      'Could not read anon/service_role keys from Supabase Management API. Ensure the OAuth app has Secrets Read (and try re-authorize).',
+    );
   }
   return {
     url: `https://${projectRef}.supabase.co`,
