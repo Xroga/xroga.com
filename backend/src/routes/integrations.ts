@@ -57,7 +57,9 @@ router.get('/supabase/status', async (req: AuthRequest, res) => {
     const status = await getUserSupabaseStatus(req.userId!);
     res.json(status);
   } catch (err) {
-    res.status(500).json({
+    const raw = (err as Error).message || '';
+    const schemaMiss = /schema cache|user_integrations|could not find the table/i.test(raw);
+    res.status(schemaMiss ? 200 : 500).json({
       connected: false,
       ready: false,
       provisioned: false,
@@ -66,7 +68,9 @@ router.get('/supabase/status', async (req: AuthRequest, res) => {
       hasServiceRole: false,
       hasAccessToken: false,
       hasDbPassword: false,
-      message: (err as Error).message,
+      message: schemaMiss
+        ? 'Authorize Supabase to continue — vault uses secure storage until the DB table is ready.'
+        : raw,
     });
   }
 });
