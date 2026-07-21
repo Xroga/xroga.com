@@ -3,6 +3,7 @@ import type { AuthRequest } from '../middleware/auth.js';
 import { runBuildPipeline } from '../ai/pipeline.js';
 import { MODELS } from '../ai/models.js';
 import { initSSE, sendSSE, endSSE } from '../lib/sse.js';
+import { slimOutputForSse } from '../lib/slimOutputForSse.js';
 import { buildFullProjectFiles } from '../services/projectScaffold.js';
 import {
   completeRun,
@@ -18,7 +19,7 @@ const router = Router();
 
 /**
  * POST /api/swarm/execute
- * SSE stream: start → progress → delta* → complete
+ * SSE: start → progress → preview (code ready) → complete
  */
 router.post('/execute', async (req: AuthRequest, res) => {
   const userId = req.userId;
@@ -78,8 +79,11 @@ router.post('/execute', async (req: AuthRequest, res) => {
   }, 15_000);
 
   const ac = new AbortController();
+  /** After preview is sent, do not abort ship if the browser/proxy drops. */
+  let codeReady = false;
   const abort = () => {
     clearInterval(keepalive);
+    if (codeReady) return;
     if (!ac.signal.aborted) ac.abort();
   };
   req.on('close', abort);
@@ -111,6 +115,19 @@ router.post('/execute', async (req: AuthRequest, res) => {
       onDelta: (delta) => {
         if (!res.writableEnded) sendSSE(res, { event: 'delta', data: { delta } });
       },
+      onCodeReady: (output) => {
+        codeReady = true;
+        if (!res.writableEnded) {
+          sendSSE(res, {
+            event: 'preview',
+            data: {
+              success: true,
+              shipPending: true,
+              output: slimOutputForSse(output),
+            },
+          });
+        }
+      },
       signal: ac.signal,
     });
 
@@ -137,7 +154,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
         runId: result.runId,
         success: result.success,
         featureCategory: result.featureCategory,
-        output: result.output,
+        output: slimOutputForSse(result.output as Record<string, unknown>),
         tokenUsage: result.tokenUsage,
         followUps: result.followUps,
       },

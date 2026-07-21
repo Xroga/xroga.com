@@ -69,6 +69,7 @@ export function FeatureOutputView({
       statusLines.push('Preview · sandbox panel');
     }
     if (o.usedSurgicalPatches) statusLines.push('Patches · surgical SEARCH/REPLACE');
+    if (o.shipPending) statusLines.push('Ship · GitHub / Vercel still finishing…');
     const envSync = o.envSync as { ok?: boolean; error?: string } | undefined;
     if (envSync && envSync.ok === false) {
       statusLines.push(
