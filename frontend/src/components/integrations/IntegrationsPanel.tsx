@@ -34,13 +34,32 @@ const LIVE_ORDER = [
 export function IntegrationsPanel() {
   const [search, setSearch] = useState('');
   const [githubConnected, setGithubConnected] = useState(false);
+  const [vercelConnected, setVercelConnected] = useState(false);
+  const [supabaseConnected, setSupabaseConnected] = useState(false);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
 
   useEffect(() => {
-    api.github
-      .status()
-      .then((s) => setGithubConnected(s.connected))
-      .catch(() => setGithubConnected(false));
+    void Promise.all([
+      api.github.status().catch(() => ({ connected: false })),
+      api.vercel.status().catch(() => ({ connected: false })),
+      api.supabase.status().catch(() => ({
+        oauthConnected: false,
+        connected: false,
+        provisioned: false,
+        ready: false,
+      })),
+    ]).then(([gh, ve, sb]) => {
+      setGithubConnected(Boolean(gh.connected));
+      setVercelConnected(Boolean(ve.connected));
+      setSupabaseConnected(
+        Boolean(
+          (sb as { oauthConnected?: boolean }).oauthConnected ||
+            (sb as { connected?: boolean }).connected ||
+            (sb as { provisioned?: boolean }).provisioned ||
+            (sb as { ready?: boolean }).ready,
+        ),
+      );
+    });
   }, []);
 
   useEffect(() => {
@@ -272,7 +291,10 @@ export function IntegrationsPanel() {
         </div>
         <div className="divide-y divide-[var(--card-border)]">
           {liveFiltered.map((item) => {
-            const isLiveConnected = item.id === 'github' && githubConnected;
+            const isLiveConnected =
+              (item.id === 'github' && githubConnected) ||
+              (item.id === 'vercel' && vercelConnected) ||
+              (item.id === 'supabase' && supabaseConnected);
             return (
               <div
                 key={item.id}
@@ -315,8 +337,13 @@ export function IntegrationsPanel() {
                     connected={isLiveConnected}
                     label={isLiveConnected ? 'Manage' : 'Connect'}
                     onClick={() => {
-                      if (isLiveConnected && item.id === 'github') {
-                        window.location.href = '/dashboard/integrations';
+                      if (isLiveConnected) {
+                        document
+                          .getElementById('ship-setup')
+                          ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        if (item.id === 'supabase') {
+                          window.dispatchEvent(new CustomEvent('xroga-supabase-setup'));
+                        }
                       } else if (!isLiveConnected) {
                         void handleConnect(item.id, item.oauth);
                       }

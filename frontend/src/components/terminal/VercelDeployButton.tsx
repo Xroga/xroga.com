@@ -66,12 +66,19 @@ export function VercelDeployButton({
     }
     setDeploying(true);
     try {
+      let preferredSlug = '';
+      try {
+        preferredSlug = localStorage.getItem('xroga_vercel_preferred_project')?.trim() || '';
+      } catch {
+        /* ignore */
+      }
+      const slug = preferredSlug || projectSlug;
       const result = await api.vercel.deploy({
         html,
         css,
         js,
-        projectSlug,
-        projectName,
+        projectSlug: slug,
+        projectName: preferredSlug || projectName,
       });
       if (result.deployUrl) {
         setLiveUrl(result.deployUrl);

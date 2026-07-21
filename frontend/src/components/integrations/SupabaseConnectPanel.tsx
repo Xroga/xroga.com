@@ -56,6 +56,16 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
   }, [refresh]);
 
   useEffect(() => {
+    const onChangeProject = () => {
+      setProvisioned(false);
+      void refreshProjects();
+    };
+    window.addEventListener('xroga-supabase-change-project', onChangeProject);
+    return () => window.removeEventListener('xroga-supabase-change-project', onChangeProject);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- open picker on external event only
+  }, []);
+
+  useEffect(() => {
     const unsub = subscribeOAuthResults((data) => {
       if (data.type === 'xroga-supabase-connected') {
         setOauthConnected(true);
@@ -225,9 +235,54 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
       </div>
 
       {provisioned ? (
-        <p className="text-xs text-emerald-600 font-medium">
-          Connected — your Supabase holds app data, AI memory, and storage.
-        </p>
+        <div className="space-y-2">
+          <p className="text-xs text-emerald-600 font-medium">
+            Connected — your Supabase holds app data, AI memory, and storage.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                setProvisioned(false);
+                void refreshProjects();
+              }}
+              className="px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--card-border)] disabled:opacity-50"
+            >
+              Change project
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void authorize()}
+              className="px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--card-border)] disabled:opacity-50"
+            >
+              Change account
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                setBusy(true);
+                void api.supabase
+                  .disconnect()
+                  .then(() => {
+                    setOauthConnected(false);
+                    setProvisioned(false);
+                    setProjects([]);
+                    setMessage('');
+                    toast.success('Supabase disconnected');
+                    onConnected?.();
+                  })
+                  .catch((err) => toast.error((err as Error).message || 'Disconnect failed'))
+                  .finally(() => setBusy(false));
+              }}
+              className="px-3 py-2 rounded-lg text-xs font-semibold border border-red-500/30 text-red-500/90 disabled:opacity-50"
+            >
+              Disconnect
+            </button>
+          </div>
+        </div>
       ) : (
         <div className="flex flex-wrap gap-2">
           <button
