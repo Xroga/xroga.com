@@ -5138,6 +5138,360 @@ body.theme-gray * {
   80% { border-radius: 45% 55% 35% 65% / 60% 40% 60% 40%; transform: rotate(-10deg) scale(1.02); }
 }
 
+/* ── Black Hole V∞ wait loader (Uiverse StealthWorm, theme-tuned) ── */
+.xv-bh-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: visible;
+  position: relative;
+}
+.xv-bh-wrap--sm {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+.xv-bh-wrap--md {
+  width: 5rem;
+  height: 5rem;
+}
+.xv-bh-wrap--sm .xv-bh-loader {
+  transform: scale(0.42);
+}
+.xv-bh-wrap--md .xv-bh-loader {
+  transform: scale(0.58);
+}
+
+.xv-bh-loader {
+  --bh-core: #050505;
+  --bh-ring: #f4f4f5;
+  --bh-glow: color-mix(in srgb, var(--accent) 45%, #c2babb);
+  --bh-glow-soft: color-mix(in srgb, var(--accent) 28%, #d7c4be);
+  --bh-text: var(--foreground);
+  --bh-disc-mid: #353535;
+  display: flex;
+  width: 8rem;
+  height: 8rem;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex-direction: column;
+  transform-origin: center center;
+}
+
+body.theme-white .xv-bh-loader {
+  --bh-core: #0a0a0a;
+  --bh-ring: #ffffff;
+  --bh-glow: color-mix(in srgb, var(--accent) 40%, #a8b4c8);
+  --bh-glow-soft: color-mix(in srgb, var(--accent) 25%, #c8d0dc);
+  --bh-text: #0a0a0a;
+  --bh-disc-mid: #3a3a3a;
+}
+
+body.theme-black .xv-bh-loader,
+body.theme-gray .xv-bh-loader {
+  --bh-core: #000000;
+  --bh-ring: #f5f5f5;
+  --bh-glow: color-mix(in srgb, var(--accent) 55%, #c2babb);
+  --bh-glow-soft: color-mix(in srgb, var(--accent) 35%, #d7c4be);
+  --bh-text: #f5f5f5;
+  --bh-disc-mid: #2a2a2a;
+}
+
+.xv-bh-curve {
+  width: 180%;
+  height: 180%;
+  position: absolute;
+  animation: xv-bh-rotate 8s linear infinite;
+  fill: transparent;
+  pointer-events: none;
+}
+
+.xv-bh-curve text {
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  font: 1.15em var(--font-coding), 'JetBrains Mono', ui-monospace, monospace;
+  fill: var(--bh-text);
+  filter: drop-shadow(0 1px 4px color-mix(in srgb, var(--background) 70%, transparent));
+}
+
+.xv-bh-blackhole {
+  z-index: 0;
+  display: flex;
+  position: absolute;
+  width: 8rem;
+  height: 8rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.xv-bh-circle {
+  z-index: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--bh-core) 25%, var(--bh-ring) 35%, var(--bh-ring) 100%);
+  box-shadow: 0 0 1.5rem var(--bh-glow);
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.xv-bh-circle::after {
+  z-index: 0;
+  position: absolute;
+  content: "";
+  display: flex;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid var(--bh-ring);
+  background: radial-gradient(circle at center, var(--bh-core) 35%, var(--bh-ring) 60%, var(--bh-ring) 100%);
+  box-shadow: 0 0 3.5rem var(--bh-glow);
+  align-items: center;
+  justify-content: center;
+  filter: blur(3px);
+  animation: xv-bh-pulse linear infinite 2s alternate-reverse;
+}
+
+.xv-bh-circle::before {
+  z-index: 1;
+  content: "";
+  position: absolute;
+  display: block;
+  width: 3.5rem;
+  height: 3.5rem;
+  border: 2px solid var(--bh-ring);
+  box-shadow: 2px 2px 8px var(--bh-glow), inset 0 0 0.75rem var(--bh-ring);
+  border-radius: 50%;
+  filter: blur(0.4px);
+  animation: xv-bh-rotate linear infinite 3s;
+}
+
+.xv-bh-disc {
+  position: absolute;
+  z-index: 0;
+  display: flex;
+  width: 4.5rem;
+  height: 9rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--bh-ring) 80%, var(--bh-disc-mid) 90%, var(--bh-ring) 100%);
+  filter: blur(0.85rem) brightness(125%);
+  border: 0.85rem solid var(--bh-ring);
+  box-shadow: 0 0 2.5rem var(--bh-glow-soft);
+  transform: rotate3d(1, 1, 1, 220deg);
+  animation: xv-bh-pulse2 linear infinite 2s alternate-reverse;
+  justify-content: center;
+  align-items: center;
+}
+
+.xv-bh-disc::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  display: flex;
+  width: 4.5rem;
+  height: 9rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--bh-ring) 80%, var(--bh-disc-mid) 90%, var(--bh-ring) 100%);
+  filter: blur(2.5rem);
+  border: 0.85rem solid var(--bh-ring);
+  box-shadow: 0 0 4.5rem var(--bh-glow-soft);
+  animation: xv-bh-pulse linear infinite 2s alternate-reverse;
+}
+
+@keyframes xv-bh-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes xv-bh-pulse {
+  0% {
+    box-shadow: 0 0 2rem var(--bh-glow);
+    transform: scale(1);
+  }
+  100% {
+    box-shadow: 0 0 3.5rem var(--bh-glow);
+    transform: scale(1.09);
+  }
+}
+
+@keyframes xv-bh-pulse2 {
+  0% {
+    box-shadow: 0 0 2rem var(--bh-glow-soft);
+    transform: rotate3d(1, 1, 1, 220deg) scale(1);
+  }
+  100% {
+    box-shadow: 0 0 3.5rem var(--bh-glow-soft);
+    transform: rotate3d(1, 1, 1, 220deg) scale(0.95);
+  }
+}
+
+/* ── Research page-flip wait (Uiverse Nawsome, theme-tuned) ── */
+.xv-rp-loader {
+  --rp-background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--primary-glow) 85%, #23c4f8),
+    var(--accent)
+  );
+  --rp-shadow: color-mix(in srgb, var(--accent) 28%, transparent);
+  --rp-text: var(--muted);
+  --rp-page: rgba(255, 255, 255, 0.36);
+  --rp-page-fold: rgba(255, 255, 255, 0.52);
+  --rp-duration: 3s;
+  width: 160px;
+  height: 112px;
+  position: relative;
+  margin: 0.25rem 0 0.5rem;
+}
+
+body.theme-white .xv-rp-loader {
+  --rp-background: linear-gradient(135deg, #4a7aff, #006aff);
+  --rp-shadow: rgba(0, 106, 255, 0.22);
+  --rp-page: rgba(255, 255, 255, 0.55);
+  --rp-page-fold: rgba(255, 255, 255, 0.72);
+}
+
+body.theme-black .xv-rp-loader,
+body.theme-gray .xv-rp-loader {
+  --rp-background: linear-gradient(135deg, #3a3a42, #1a1a1e);
+  --rp-shadow: rgba(0, 0, 0, 0.45);
+  --rp-page: rgba(255, 255, 255, 0.22);
+  --rp-page-fold: rgba(255, 255, 255, 0.38);
+  --rp-text: color-mix(in srgb, var(--foreground) 70%, transparent);
+}
+
+.xv-rp-loader::before,
+.xv-rp-loader::after {
+  --r: -6deg;
+  content: "";
+  position: absolute;
+  bottom: 6px;
+  width: 96px;
+  top: 80%;
+  box-shadow: 0 12px 10px var(--rp-shadow);
+  transform: rotate(var(--r));
+}
+
+.xv-rp-loader::before {
+  left: 3px;
+}
+
+.xv-rp-loader::after {
+  --r: 6deg;
+  right: 3px;
+}
+
+.xv-rp-book {
+  width: 100%;
+  height: 100%;
+  border-radius: 11px;
+  position: relative;
+  z-index: 1;
+  perspective: 600px;
+  box-shadow: 0 3px 5px var(--rp-shadow);
+  background-image: var(--rp-background);
+}
+
+.xv-rp-book ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  position: relative;
+}
+
+.xv-rp-book ul li {
+  --r: 180deg;
+  --o: 0;
+  --c: var(--rp-page);
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  transform-origin: 100% 50%;
+  color: var(--c);
+  opacity: var(--o);
+  transform: rotateY(var(--r));
+  animation: var(--rp-duration) ease infinite;
+}
+
+.xv-rp-book ul li:nth-child(2) {
+  --c: var(--rp-page-fold);
+  animation-name: xv-rp-page-2;
+}
+
+.xv-rp-book ul li:nth-child(3) {
+  --c: var(--rp-page-fold);
+  animation-name: xv-rp-page-3;
+}
+
+.xv-rp-book ul li:nth-child(4) {
+  --c: var(--rp-page-fold);
+  animation-name: xv-rp-page-4;
+}
+
+.xv-rp-book ul li:nth-child(5) {
+  --c: var(--rp-page-fold);
+  animation-name: xv-rp-page-5;
+}
+
+.xv-rp-book ul li svg {
+  width: 72px;
+  height: 96px;
+  display: block;
+}
+
+.xv-rp-book ul li:first-child {
+  --r: 0deg;
+  --o: 1;
+}
+
+.xv-rp-book ul li:last-child {
+  --o: 1;
+}
+
+.xv-rp-label {
+  display: block;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: 14px;
+  text-align: left;
+  color: var(--rp-text);
+  font-family: var(--font-coding), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+@keyframes xv-rp-page-2 {
+  0% { transform: rotateY(180deg); opacity: 0; }
+  20% { opacity: 1; }
+  35%, 100% { opacity: 0; }
+  50%, 100% { transform: rotateY(0deg); }
+}
+
+@keyframes xv-rp-page-3 {
+  15% { transform: rotateY(180deg); opacity: 0; }
+  35% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+  65%, 100% { transform: rotateY(0deg); }
+}
+
+@keyframes xv-rp-page-4 {
+  30% { transform: rotateY(180deg); opacity: 0; }
+  50% { opacity: 1; }
+  65%, 100% { opacity: 0; }
+  80%, 100% { transform: rotateY(0deg); }
+}
+
+@keyframes xv-rp-page-5 {
+  45% { transform: rotateY(180deg); opacity: 0; }
+  65% { opacity: 1; }
+  80%, 100% { opacity: 0; }
+  95%, 100% { transform: rotateY(0deg); }
+}
+
 /* ── Modern pricing cards ── */
 .xv-pricing-grid {
   position: relative;
