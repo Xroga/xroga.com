@@ -1,12 +1,108 @@
 /**
  * User BYOK / product API keys — AES-256-GCM in user_integrations.
  * Secrets never go into GitHub; synced to the user's Vercel project env on deploy.
+ * When user_integrations is missing, fall back to private Storage (same as OAuth PKCE).
  */
 
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
 import { getSupabaseAdmin } from '../../config/supabase.js';
+import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
+import { isMissingTableError } from './githubTokenStore.js';
 
 const PROVIDER_PREFIX = 'apikey_';
+const KEY_BUCKET = 'xroga-github-tokens';
+
+function keyStoragePath(userId: string, providerRow: string): string {
+  return `${userId}/vault-${providerRow}.json`;
+}
+
+async function ensureKeyBucket(): Promise<boolean> {
+  const supabase = getSupabaseAdmin();
+  const { data: buckets, error: listErr } = await supabase.storage.listBuckets();
+  if (!listErr && buckets?.some((b) => b.id === KEY_BUCKET || b.name === KEY_BUCKET)) {
+    return true;
+  }
+  const { error: createErr } = await supabase.storage.createBucket(KEY_BUCKET, {
+    public: false,
+    fileSizeLimit: 65536,
+  });
+  if (!createErr) return true;
+  if (/already exists|duplicate/i.test(createErr.message)) return true;
+  console.warn('[userProviderKeys] createBucket:', createErr.message);
+  return false;
+}
+
+async function saveKeyToStorage(
+  userId: string,
+  providerRow: string,
+  payload: { access_token: string; metadata: Record<string, unknown> },
+): Promise<boolean> {
+  try {
+    if (!(await ensureKeyBucket())) return false;
+    const supabase = getSupabaseAdmin();
+    const { error } = await supabase.storage
+      .from(KEY_BUCKET)
+      .upload(keyStoragePath(userId, providerRow), JSON.stringify(payload), {
+        upsert: true,
+        contentType: 'application/json',
+      });
+    if (error) {
+      console.warn('[userProviderKeys] storage upload:', error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.warn('[userProviderKeys] storage save:', (err as Error).message);
+    return false;
+  }
+}
+
+async function loadKeyFromStorage(
+  userId: string,
+  providerRow: string,
+): Promise<{ access_token: string; metadata: Record<string, unknown> } | null> {
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase.storage
+      .from(KEY_BUCKET)
+      .download(keyStoragePath(userId, providerRow));
+    if (error || !data) return null;
+    const parsed = JSON.parse(await data.text()) as {
+      access_token?: string;
+      metadata?: Record<string, unknown>;
+    };
+    if (!parsed?.access_token) return null;
+    return { access_token: parsed.access_token, metadata: parsed.metadata ?? {} };
+  } catch {
+    return null;
+  }
+}
+
+async function listKeysFromStorage(userId: string): Promise<
+  Array<{ provider: string; metadata: Record<string, unknown>; updated_at?: string }>
+> {
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase.storage.from(KEY_BUCKET).list(userId, { limit: 100 });
+    if (error || !data?.length) return [];
+    const out: Array<{ provider: string; metadata: Record<string, unknown>; updated_at?: string }> =
+      [];
+    for (const file of data) {
+      if (!file.name?.startsWith('vault-apikey_') || !file.name.endsWith('.json')) continue;
+      const providerRow = file.name.replace(/^vault-/, '').replace(/\.json$/, '');
+      const loaded = await loadKeyFromStorage(userId, providerRow);
+      if (!loaded) continue;
+      out.push({
+        provider: providerRow,
+        metadata: loaded.metadata,
+        updated_at: typeof loaded.metadata.connected_at === 'string' ? loaded.metadata.connected_at : undefined,
+      });
+    }
+    return out;
+  } catch {
+    return [];
+  }
+}
 
 /** Providers users can paste for their own live products (not Xroga platform keys). */
 export const ALLOWED_PROVIDERS = [
@@ -204,28 +300,69 @@ export async function saveUserProviderKey(
     : SUPABASE_SERVER_ONLY_PROVIDERS.has(p)
       ? 'xroga_server'
       : 'vercel';
-  const { error } = await supabase.from('user_integrations').upsert(
+  const providerRow = `${PROVIDER_PREFIX}${p === 'custom' ? `custom_${envVar.toLowerCase()}` : p}`;
+  const metadata = {
+    type: PUBLISH_ONLY_PROVIDERS.has(p)
+      ? 'user_publish_credential'
+      : SUPABASE_SERVER_ONLY_PROVIDERS.has(p)
+        ? 'supabase_provision'
+        : 'user_api_key',
+    provider: p,
+    env_var: envVar,
+    sync_target: syncTarget,
+    connected_at: now,
+    masked: maskKey(trimmed),
+  };
+  const encrypted = encryptApiKey(trimmed);
+
+  if (githubSchemaAutoBootstrapEnabled()) {
+    await ensureGithubSchema();
+  }
+
+  let { error } = await supabase.from('user_integrations').upsert(
     {
       user_id: userId,
-      provider: `${PROVIDER_PREFIX}${p === 'custom' ? `custom_${envVar.toLowerCase()}` : p}`,
-      access_token: encryptApiKey(trimmed),
-      metadata: {
-        type: PUBLISH_ONLY_PROVIDERS.has(p)
-          ? 'user_publish_credential'
-          : SUPABASE_SERVER_ONLY_PROVIDERS.has(p)
-            ? 'supabase_provision'
-            : 'user_api_key',
-        provider: p,
-        env_var: envVar,
-        sync_target: syncTarget,
-        connected_at: now,
-        masked: maskKey(trimmed),
-      },
+      provider: providerRow,
+      access_token: encrypted,
+      metadata,
     },
     { onConflict: 'user_id,provider' },
   );
 
+  if (error && isMissingTableError(error.message)) {
+    await ensureGithubSchema();
+    await new Promise((r) => setTimeout(r, 400));
+    ({ error } = await supabase.from('user_integrations').upsert(
+      {
+        user_id: userId,
+        provider: providerRow,
+        access_token: encrypted,
+        metadata,
+      },
+      { onConflict: 'user_id,provider' },
+    ));
+  }
+
+  if (error && isMissingTableError(error.message)) {
+    const ok = await saveKeyToStorage(userId, providerRow, {
+      access_token: encrypted,
+      metadata,
+    });
+    if (!ok) {
+      throw new Error(
+        'Could not save credentials — user_integrations table missing and storage fallback failed. Apply migration 036 or set SUPABASE_DB_PASSWORD on Fly.',
+      );
+    }
+    console.warn('[userProviderKeys] saved via storage fallback:', providerRow);
+    return { provider: p, connected: true, masked: maskKey(trimmed), envVar, connectedAt: now };
+  }
+
   if (error) throw new Error(error.message);
+
+  void saveKeyToStorage(userId, providerRow, {
+    access_token: encrypted,
+    metadata,
+  }).catch(() => undefined);
 
   return { provider: p, connected: true, masked: maskKey(trimmed), envVar, connectedAt: now };
 }
@@ -238,9 +375,24 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
     .eq('user_id', userId)
     .like('provider', `${PROVIDER_PREFIX}%`);
 
-  if (error) throw new Error(error.message);
+  type KeyRow = {
+    provider: string;
+    metadata: Record<string, unknown> | null;
+    updated_at?: string | null;
+  };
+  let rows: KeyRow[] = (data ?? []) as KeyRow[];
+  if (error) {
+    if (!isMissingTableError(error.message)) {
+      throw new Error(error.message);
+    }
+    rows = await listKeysFromStorage(userId);
+  } else if (!rows.length) {
+    // Also merge storage fallback keys (table empty but vault files exist)
+    const stored = await listKeysFromStorage(userId);
+    if (stored.length) rows = stored;
+  }
 
-  return (data ?? []).map((row) => {
+  return rows.map((row) => {
     const meta = (row.metadata ?? {}) as {
       provider?: string;
       masked?: string;
@@ -253,7 +405,7 @@ export async function listUserProviderKeys(userId: string): Promise<UserProvider
       connected: true,
       masked: meta.masked,
       envVar: meta.env_var ?? envVarForProvider(provider),
-      connectedAt: meta.connected_at ?? row.updated_at,
+      connectedAt: meta.connected_at ?? row.updated_at ?? undefined,
     };
   });
 }
@@ -263,22 +415,37 @@ export async function deleteUserProviderKey(userId: string, provider: string): P
   const supabase = getSupabaseAdmin();
   // custom_* rows: delete by prefix match when provider is custom_FOO
   if (p.startsWith('custom_') || p === 'custom') {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('user_integrations')
       .select('provider')
       .eq('user_id', userId)
       .like('provider', `${PROVIDER_PREFIX}custom%`);
-    for (const row of data ?? []) {
-      await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', row.provider);
+    if (!error) {
+      for (const row of data ?? []) {
+        await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', row.provider);
+        await supabase.storage.from(KEY_BUCKET).remove([keyStoragePath(userId, row.provider)]).catch(() => undefined);
+      }
+    } else if (!isMissingTableError(error.message)) {
+      throw new Error(error.message);
+    }
+    const stored = await listKeysFromStorage(userId);
+    for (const row of stored) {
+      if (String(row.provider).includes('custom')) {
+        await supabase.storage.from(KEY_BUCKET).remove([keyStoragePath(userId, row.provider)]).catch(() => undefined);
+      }
     }
     return;
   }
+  const providerRow = `${PROVIDER_PREFIX}${p}`;
   const { error } = await supabase
     .from('user_integrations')
     .delete()
     .eq('user_id', userId)
-    .eq('provider', `${PROVIDER_PREFIX}${p}`);
-  if (error) throw new Error(error.message);
+    .eq('provider', providerRow);
+  if (error && !isMissingTableError(error.message)) {
+    throw new Error(error.message);
+  }
+  await supabase.storage.from(KEY_BUCKET).remove([keyStoragePath(userId, providerRow)]).catch(() => undefined);
 }
 
 /** Placeholders only for GitHub — never plaintext secrets. */
@@ -353,23 +520,43 @@ export async function getUserProviderKey(userId: string, provider: string): Prom
   const p = normalizeProvider(provider);
   const supabase = getSupabaseAdmin();
   if (p === 'custom' || p.startsWith('custom_')) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('user_integrations')
       .select('access_token, provider')
       .eq('user_id', userId)
       .like('provider', `${PROVIDER_PREFIX}custom%`);
-    const row = (data ?? [])[0];
-    if (!row?.access_token) return null;
-    return decryptApiKey(row.access_token);
+    if (!error) {
+      const row = (data ?? [])[0];
+      if (row?.access_token) return decryptApiKey(row.access_token);
+    }
+    const storedList = await listKeysFromStorage(userId);
+    const custom = storedList.find((r) => String(r.provider).includes('custom'));
+    if (custom) {
+      const loaded = await loadKeyFromStorage(userId, custom.provider);
+      if (loaded?.access_token) return decryptApiKey(loaded.access_token);
+    }
+    return null;
   }
+
+  const providerRow = `${PROVIDER_PREFIX}${p}`;
   const { data, error } = await supabase
     .from('user_integrations')
     .select('access_token')
     .eq('user_id', userId)
-    .eq('provider', `${PROVIDER_PREFIX}${p}`)
+    .eq('provider', providerRow)
     .maybeSingle();
-  if (error || !data?.access_token) return null;
-  return decryptApiKey(data.access_token);
+
+  if (!error && data?.access_token) {
+    return decryptApiKey(data.access_token);
+  }
+
+  if (error && !isMissingTableError(error.message)) {
+    return null;
+  }
+
+  const stored = await loadKeyFromStorage(userId, providerRow);
+  if (!stored?.access_token) return null;
+  return decryptApiKey(stored.access_token);
 }
 
 /** Decrypt vault → env map for Vercel sync only (never log values). */
@@ -380,10 +567,33 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
     .select('provider, access_token, metadata')
     .eq('user_id', userId)
     .like('provider', `${PROVIDER_PREFIX}%`);
-  if (error || !data?.length) return {};
+
+  type Row = {
+    provider: string;
+    access_token?: string | null;
+    metadata?: Record<string, unknown> | null;
+  };
+  let rows: Row[] = (!error && data?.length ? data : []) as Row[];
+
+  if (error || !rows.length) {
+    if (error && !isMissingTableError(error.message)) {
+      console.warn('[userProviderKeys] resolve for deploy:', error.message);
+    }
+    const stored = await listKeysFromStorage(userId);
+    rows = [];
+    for (const s of stored) {
+      const loaded = await loadKeyFromStorage(userId, s.provider);
+      if (!loaded?.access_token) continue;
+      rows.push({
+        provider: s.provider,
+        access_token: loaded.access_token,
+        metadata: loaded.metadata,
+      });
+    }
+  }
 
   const out: Record<string, string> = {};
-  for (const row of data) {
+  for (const row of rows) {
     const meta = (row.metadata ?? {}) as {
       env_var?: string;
       provider?: string;
@@ -476,7 +686,16 @@ export interface UserSupabaseStatus {
 
 /** True when the user can power a generated app against THEIR Supabase project. */
 export async function getUserSupabaseStatus(userId: string): Promise<UserSupabaseStatus> {
-  const keys = await listUserProviderKeys(userId);
+  let keys: UserProviderKeyStatus[] = [];
+  try {
+    keys = await listUserProviderKeys(userId);
+  } catch (err) {
+    // Missing table / schema cache — treat as empty vault, not a hard failure after OAuth
+    if (!isMissingTableError((err as Error).message)) {
+      console.warn('[userProviderKeys] status list:', (err as Error).message);
+    }
+    keys = [];
+  }
   const byProvider = new Map(keys.map((k) => [k.provider, k]));
   const url = byProvider.get('supabase_url');
   const anon = byProvider.get('supabase_anon');

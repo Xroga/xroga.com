@@ -69,7 +69,7 @@ router.get('/oauth', async (req: AuthRequest, res) => {
 router.get('/status', async (req: AuthRequest, res) => {
   try {
     const [oauthConnected, vault] = await Promise.all([
-      isSupabaseOAuthConnected(req.userId!),
+      isSupabaseOAuthConnected(req.userId!).catch(() => false),
       getUserSupabaseStatus(req.userId!),
     ]);
     res.json({
@@ -88,13 +88,17 @@ router.get('/status', async (req: AuthRequest, res) => {
             : 'Supabase OAuth app not configured on the server yet.',
     });
   } catch (err) {
-    res.status(500).json({
+    const raw = (err as Error).message || '';
+    const schemaMiss = /schema cache|user_integrations|could not find the table/i.test(raw);
+    res.status(schemaMiss ? 200 : 500).json({
       connected: false,
       ready: false,
       provisioned: false,
       oauthConnected: false,
       oauthConfigured: supabaseOAuthConfigured(),
-      message: (err as Error).message,
+      message: schemaMiss
+        ? 'Supabase Authorize is available — vault table not ready yet; tokens use secure storage fallback.'
+        : raw,
     });
   }
 });
@@ -190,7 +194,17 @@ router.post('/connect', async (req: AuthRequest, res) => {
             : 'Authorized — pick a project to finish (one click, no paste)',
     });
   } catch (err) {
-    res.status(400).json({ error: (err as Error).message });
+    const raw = (err as Error).message || 'Supabase connection failed';
+    // Never surface PostgREST schema-cache noise after a successful authorize popup
+    if (/schema cache|could not find the table.*user_integrations/i.test(raw)) {
+      console.warn('[supabaseOAuth] connect schema-cache miss (should use storage fallback):', raw);
+      res.status(400).json({
+        error:
+          'Authorized, but saving the connection failed temporarily. Click Authorize Supabase once more — or apply migration 036 / set SUPABASE_DB_PASSWORD on Fly.',
+      });
+      return;
+    }
+    res.status(400).json({ error: raw });
   }
 });
 
