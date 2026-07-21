@@ -72,10 +72,15 @@ import {
 } from '../services/scaffolds/detectScaffold.js';
 import {
   shipChromeExtensionZip,
+  shipElectronPortableZip,
   triggerElectronDesktopRelease,
   waitForDesktopReleaseZip,
 } from '../services/publish/nonWebShip.js';
-import { triggerEasPublish } from '../services/publish/easPublish.js';
+import {
+  ensureExpoProjectLinked,
+  patchExpoProjectIdInFiles,
+  triggerEasPublish,
+} from '../services/publish/easPublish.js';
 import { ensureScaffoldIntegrity } from '../services/scaffolds/scaffoldIntegrity.js';
 import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
 import {
@@ -1631,6 +1636,47 @@ export async function runBuildPipeline(opts: {
       filesToPush = Array.from(byPath.values());
     }
   }
+
+  // Expo: auto-link/create EAS project and stamp app.json before GitHub push
+  if (productScaffoldKind === 'expo' && githubOk) {
+    const expoToken = await getUserProviderKey(opts.userId, 'expo').catch(() => null);
+    if (expoToken) {
+      emit({
+        agent: 'deploy',
+        status: 'eas_link',
+        message: 'Linking Expo / EAS project…',
+        swarmStatusLabel: 'EAS link',
+        swarmActivity: projectName,
+        swarmTodos: todos('push'),
+      });
+      const linked = await ensureExpoProjectLinked({
+        userId: opts.userId,
+        projectName,
+      });
+      if (linked.projectId) {
+        nextFiles = patchExpoProjectIdInFiles(nextFiles, linked.projectId);
+        filesToPush = patchExpoProjectIdInFiles(filesToPush, linked.projectId);
+        emit({
+          agent: 'deploy',
+          status: 'eas_linked',
+          message: linked.message,
+          swarmStatusLabel: linked.created ? 'EAS created' : 'EAS linked',
+          swarmActivity: linked.projectId.slice(0, 12),
+          swarmTodos: todos('push'),
+        });
+      } else if (linked.error === 'NEED_PROJECT_PICK') {
+        emit({
+          agent: 'deploy',
+          status: 'eas_pick',
+          message: linked.message,
+          swarmStatusLabel: 'Pick Expo app',
+          swarmActivity: 'Publish → select project',
+          swarmTodos: todos('push'),
+        });
+      }
+    }
+  }
+
   // Updates must target the same repo — never create a new repo for edit/delete
   // Abort push when patches failed or secrets still blocked
   const shouldPush =
@@ -1791,11 +1837,49 @@ export async function runBuildPipeline(opts: {
   }
 
   if (githubPushConfirmed && githubRepoName && productScaffoldKind === 'electron') {
+    // Immediate portable zip so users never wait on Actions for a usable handoff
+    emit({
+      agent: 'deploy',
+      status: 'packaging',
+      message: 'Packaging desktop.zip (portable — npm install && npm start)…',
+      swarmStatusLabel: 'Desktop zip',
+      swarmActivity: githubRepoName,
+      swarmTodos: todos('push'),
+    });
+    try {
+      const portable = await shipElectronPortableZip({
+        userId: opts.userId,
+        repoFullName: githubRepoName,
+        files: nextFiles,
+      });
+      if (portable.ok && portable.downloadUrl) {
+        electronZipOk = true;
+        desktopZipDownloadUrl = portable.downloadUrl;
+        desktopReleasesUrl = portable.releaseUrl;
+        desktopReleaseTag = portable.tag;
+        emit({
+          agent: 'deploy',
+          status: 'zip_ready',
+          message: `desktop.zip ready — ${portable.downloadUrl}`,
+          swarmStatusLabel: 'Zip ready',
+          swarmActivity: portable.tag || 'desktop.zip',
+          swarmTodos: todos('push'),
+        });
+      } else {
+        electronReleaseError = portable.error || 'desktop.zip upload failed';
+        desktopReleasesUrl = portable.releaseUrl;
+      }
+    } catch (err) {
+      electronReleaseError = (err as Error).message;
+      console.warn('[pipeline] electron portable zip:', electronReleaseError);
+    }
+
+    // Also kick Actions for unsigned Linux binary (best-effort, short wait)
     emit({
       agent: 'deploy',
       status: 'releasing',
-      message: 'Triggering Electron desktop release on GitHub Actions…',
-      swarmStatusLabel: 'Desktop release',
+      message: 'Starting GitHub Actions for unsigned Linux binary zip…',
+      swarmStatusLabel: 'Desktop Actions',
       swarmActivity: githubRepoName,
       swarmTodos: todos('push'),
     });
@@ -1805,30 +1889,22 @@ export async function runBuildPipeline(opts: {
         repoFullName: githubRepoName,
         commitSha,
       });
-      desktopReleaseTag = released.tag;
+      desktopReleaseTag = released.tag || desktopReleaseTag;
       desktopActionsUrl = released.actionsUrl;
-      desktopReleasesUrl = released.releasesUrl;
+      if (released.releasesUrl) desktopReleasesUrl = released.releasesUrl;
       if (released.ok) {
-        emit({
-          agent: 'deploy',
-          status: 'release_triggered',
-          message: released.tag
-            ? `Tagged ${released.tag} — waiting for Actions to upload the unsigned zip…`
-            : 'Desktop release dispatched — waiting for zip asset…',
-          swarmStatusLabel: 'Building zip',
-          swarmActivity: released.actionsUrl || released.tag || 'Actions',
-          swarmTodos: todos('push'),
-        });
         const waited = await waitForDesktopReleaseZip({
           userId: opts.userId,
           repoFullName: githubRepoName,
           tag: released.tag,
+          timeoutMs: 90_000,
+          intervalMs: 12_000,
           onProgress: (msg) => {
             emit({
               agent: 'deploy',
               status: 'waiting_zip',
               message: msg,
-              swarmStatusLabel: 'Waiting zip',
+              swarmStatusLabel: 'Binary zip',
               swarmActivity: desktopActionsUrl || 'Actions',
               swarmTodos: todos('push'),
             });
@@ -1841,41 +1917,32 @@ export async function runBuildPipeline(opts: {
           emit({
             agent: 'deploy',
             status: 'zip_ready',
-            message: `Desktop zip ready — ${waited.zipDownloadUrl}`,
-            swarmStatusLabel: 'Zip ready',
+            message: `Unsigned binary zip ready — ${waited.zipDownloadUrl}`,
+            swarmStatusLabel: 'Binary ready',
             swarmActivity: waited.zipDownloadUrl.slice(0, 80),
             swarmTodos: todos('push'),
           });
-        } else {
-          electronReleaseError = waited.error || 'Desktop zip not ready in time';
-          emit({
-            agent: 'deploy',
-            status: 'zip_timeout',
-            message: electronReleaseError,
-            swarmStatusLabel: 'Zip pending',
-            swarmActivity: desktopActionsUrl || 'Actions still running',
-            swarmTodos: todos('push'),
-          });
+        } else if (!electronZipOk) {
+          electronReleaseError =
+            waited.error ||
+            'Binary zip still building on Actions — portable desktop.zip is ready above';
         }
-      } else {
+      } else if (!electronZipOk) {
         electronReleaseError = released.error || 'Could not start desktop release';
-        emit({
-          agent: 'deploy',
-          status: 'release_failed',
-          message: electronReleaseError,
-          swarmStatusLabel: 'Release failed',
-          swarmActivity: electronReleaseError.slice(0, 100),
-          swarmTodos: todos('push'),
-        });
       }
     } catch (err) {
-      electronReleaseError = (err as Error).message;
-      console.warn('[pipeline] electron release:', electronReleaseError);
+      if (!electronZipOk) {
+        electronReleaseError = (err as Error).message;
+      }
+      console.warn('[pipeline] electron release:', (err as Error).message);
+    }
+
+    if (!electronZipOk && electronReleaseError) {
       emit({
         agent: 'deploy',
         status: 'release_failed',
         message: electronReleaseError,
-        swarmStatusLabel: 'Release failed',
+        swarmStatusLabel: 'Zip failed',
         swarmActivity: electronReleaseError.slice(0, 100),
         swarmTodos: todos('push'),
       });
@@ -1889,7 +1956,7 @@ export async function runBuildPipeline(opts: {
       emit({
         agent: 'deploy',
         status: 'eas_dispatch',
-        message: 'Expo token found — starting EAS build on your account (you pay EAS/store fees)…',
+        message: 'Starting EAS Android build on your Expo account…',
         swarmStatusLabel: 'EAS',
         swarmActivity: 'build-android',
         swarmTodos: todos('push'),
@@ -1900,6 +1967,7 @@ export async function runBuildPipeline(opts: {
           platform: 'android',
           gitRef: githubBranch || 'main',
           submit: false,
+          projectName,
         });
         if (eas.ok) {
           easTriggered = true;
@@ -1935,7 +2003,7 @@ export async function runBuildPipeline(opts: {
         });
       }
     } else {
-      easError = 'No Expo token — Connect Expo in Publish to start EAS';
+      easError = 'No Expo token — Connect Expo in Publish to start EAS builds automatically';
     }
   }
 

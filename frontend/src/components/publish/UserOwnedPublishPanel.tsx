@@ -27,12 +27,15 @@ type ChecklistItem = {
 
 type PublishStatus = {
   web: { ready: boolean; checklist: ChecklistItem[] };
+  chrome?: { ready: boolean; checklist: ChecklistItem[]; installSteps: string[] };
+  desktop?: { ready: boolean; checklist: ChecklistItem[]; runSteps: string[] };
   mobile: {
     ready: boolean;
     expoTokenSaved: boolean;
     expoTokenValid: boolean | null;
     appleSaved: boolean;
     googlePlaySaved: boolean;
+    easProjectLinked?: boolean;
     checklist: ChecklistItem[];
     commands: string[];
   };
@@ -85,7 +88,7 @@ function StepRow({ item }: { item: ChecklistItem }) {
 export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
   const [status, setStatus] = useState<PublishStatus | null>(null);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<'web' | 'mobile'>('web');
+  const [tab, setTab] = useState<'web' | 'chrome' | 'desktop' | 'mobile'>('web');
   const [expoToken, setExpoToken] = useState('');
   const [applePass, setApplePass] = useState('');
   const [googleJson, setGoogleJson] = useState('');
@@ -120,6 +123,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
     try {
       const res = await api.publish.saveExpoToken(token);
       toast.success(res.message || `Expo connected${res.username ? ` as @${res.username}` : ''}`);
+      if (res.easProjectId) setEasProjectId(res.easProjectId);
       setExpoToken('');
       await refresh();
     } catch (e) {
@@ -209,33 +213,32 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
           </p>
           <h2 className="text-lg sm:text-xl font-bold mt-1">Ship on your accounts</h2>
           <p className="text-sm text-[var(--muted)] mt-1 max-w-2xl">
-            <strong>Web:</strong> Authorize GitHub + Vercel (+ Supabase) — automatic when connected.{" "}
-            <strong>Mobile:</strong> Connect Expo → start an EAS <em>workflow</em>. That is a build
-            handoff — not App Store / Play approval. Pasting Apple/Google credentials here does not
-            wire store submission by itself; configure them in Expo/EAS for real submit.
+            <strong>Web:</strong> GitHub + Vercel → live URL. <strong>Chrome / Desktop:</strong>{' '}
+            GitHub → downloadable zip on ship (install / run in minutes). <strong>Mobile:</strong>{' '}
+            GitHub + Expo token → EAS build auto-starts. Store listing fees stay on your accounts.
           </p>
         </div>
-        <div className="flex items-center gap-1.5 rounded-full border border-[var(--card-border)] p-1 text-xs">
-          <button
-            type="button"
-            onClick={() => setTab('web')}
-            className={cn(
-              'inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-semibold transition',
-              tab === 'web' ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted)]'
-            )}
-          >
-            <Globe className="w-3.5 h-3.5" /> Web
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab('mobile')}
-            className={cn(
-              'inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-semibold transition',
-              tab === 'mobile' ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted)]'
-            )}
-          >
-            <Smartphone className="w-3.5 h-3.5" /> Mobile
-          </button>
+        <div className="flex flex-wrap items-center gap-1 rounded-full border border-[var(--card-border)] p-1 text-xs">
+          {(
+            [
+              ['web', 'Web', Globe],
+              ['chrome', 'Chrome', Globe],
+              ['desktop', 'Desktop', Globe],
+              ['mobile', 'Mobile', Smartphone],
+            ] as const
+          ).map(([id, label, Icon]) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setTab(id)}
+              className={cn(
+                'inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full font-semibold transition',
+                tab === id ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted)]'
+              )}
+            >
+              <Icon className="w-3.5 h-3.5" /> {label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -248,7 +251,27 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
               : 'border-[var(--card-border)] text-[var(--muted)]'
           )}
         >
-          Web {status?.web.ready ? 'ready' : 'setup needed'}
+          Web {status?.web.ready ? 'ready' : 'setup'}
+        </span>
+        <span
+          className={cn(
+            'px-2.5 py-1 rounded-full border font-semibold',
+            status?.chrome?.ready
+              ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600'
+              : 'border-[var(--card-border)] text-[var(--muted)]'
+          )}
+        >
+          Chrome {status?.chrome?.ready ? 'ready' : 'GitHub'}
+        </span>
+        <span
+          className={cn(
+            'px-2.5 py-1 rounded-full border font-semibold',
+            status?.desktop?.ready
+              ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600'
+              : 'border-[var(--card-border)] text-[var(--muted)]'
+          )}
+        >
+          Desktop {status?.desktop?.ready ? 'ready' : 'GitHub'}
         </span>
         <span
           className={cn(
@@ -258,7 +281,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
               : 'border-[var(--card-border)] text-[var(--muted)]'
           )}
         >
-          Mobile {status?.mobile.ready ? 'ready' : 'setup needed'}
+          Mobile {status?.mobile.ready ? 'ready' : 'setup'}
         </span>
       </div>
 
@@ -280,14 +303,51 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
             Open ship setup →
           </Link>
         </div>
+      ) : tab === 'chrome' ? (
+        <div className="space-y-3">
+          <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--background)]/40 px-3">
+            {(status?.chrome?.checklist ?? []).map((item) => (
+              <StepRow key={item.id} item={item} />
+            ))}
+          </ul>
+          <ol className="rounded-xl border border-[var(--card-border)] bg-[var(--background)]/40 px-4 py-3 space-y-1.5 text-xs list-decimal list-inside">
+            {(status?.chrome?.installSteps ?? []).map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+          <Link
+            href="/dashboard"
+            className="inline-flex text-sm font-semibold text-[var(--accent)] hover:underline"
+          >
+            Build an extension in Workspace →
+          </Link>
+        </div>
+      ) : tab === 'desktop' ? (
+        <div className="space-y-3">
+          <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--background)]/40 px-3">
+            {(status?.desktop?.checklist ?? []).map((item) => (
+              <StepRow key={item.id} item={item} />
+            ))}
+          </ul>
+          <ol className="rounded-xl border border-[var(--card-border)] bg-[var(--background)]/40 px-4 py-3 space-y-1.5 text-xs list-decimal list-inside">
+            {(status?.desktop?.runSteps ?? []).map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+          <Link
+            href="/dashboard"
+            className="inline-flex text-sm font-semibold text-[var(--accent)] hover:underline"
+          >
+            Build a desktop app in Workspace →
+          </Link>
+        </div>
       ) : (
         <div className="space-y-4">
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 px-3 py-2.5 text-xs text-[var(--foreground)] leading-relaxed">
-            <strong>Connect Expo (your account):</strong> Expo has no GitHub-style Authorize for CI.
-            Paste a free access / robot token → link EAS project → <strong>Start EAS workflow</strong>.
-            That dispatches a build on Expo. It is <strong>not</strong> guaranteed App Store / Play
-            publish. Store submit only works if credentials are already set up in Expo/EAS. You pay
-            Google / Apple / EAS fees — Xroga never pays store fees.
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-3 py-2.5 text-xs text-[var(--foreground)] leading-relaxed">
+            <strong>One Expo token:</strong> we verify it, auto-link or create an EAS project, stamp{' '}
+            <code className="font-mono">app.json</code>, and start an Android build on the next mobile
+            ship. Store submit still needs Apple/Google credentials configured in Expo (you pay their
+            fees).
           </div>
           <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--background)]/40 px-3">
             {(status?.mobile.checklist ?? []).map((item) => (
@@ -309,8 +369,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
               >
                 expo.dev/settings/access-tokens
               </a>
-              . Prefer a <strong>robot</strong> token for CI. Encrypted (AES-256-GCM) — never
-              committed to GitHub. No Expo client id/secret needed on Xroga.
+              . Encrypted in your vault — never committed to GitHub.
             </p>
             <div className="flex flex-col sm:flex-row gap-2">
               <input
@@ -332,7 +391,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
             </div>
             <div className="flex flex-col sm:flex-row gap-2 pt-1">
               <input
-                placeholder="EAS project ID (auto if you have exactly one app)"
+                placeholder="EAS project ID (auto if zero or one app)"
                 value={easProjectId}
                 onChange={(e) => setEasProjectId(e.target.value)}
                 className="flex-1 min-w-0 rounded-md border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-sm font-mono"
@@ -346,14 +405,16 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
                 {busy === 'eas-project' ? 'Saving…' : 'Link project'}
               </button>
             </div>
+            {status?.mobile.easProjectLinked ? (
+              <p className="text-[11px] text-emerald-600 font-semibold">EAS project linked</p>
+            ) : null}
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3">
             <div className="rounded-xl border border-[var(--card-border)] p-3 space-y-2">
-              <p className="text-sm font-semibold">Google Play (optional setup)</p>
+              <p className="text-sm font-semibold">Google Play (optional)</p>
               <p className="text-[11px] text-[var(--muted)]">
-                Save JSON here for your records. For real submit, also configure it in Expo/EAS, then
-                start the Android EAS workflow.
+                Save JSON here, then also add it under Expo → Credentials for real Play submit.
               </p>
               <textarea
                 rows={3}
@@ -381,15 +442,14 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
                   onClick={() => void publishPlatform('android')}
                   className="rounded-md bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-bold disabled:opacity-50"
                 >
-                  {busy === 'publish-android' ? 'Starting…' : 'Start Android EAS workflow'}
+                  {busy === 'publish-android' ? 'Starting…' : 'Start Android EAS'}
                 </button>
               </div>
             </div>
             <div className="rounded-xl border border-[var(--card-border)] p-3 space-y-2">
-              <p className="text-sm font-semibold">Apple App Store (optional setup)</p>
+              <p className="text-sm font-semibold">Apple App Store (optional)</p>
               <p className="text-[11px] text-[var(--muted)]">
-                Save password here for your records. For real submit, configure Apple in Expo/EAS,
-                then start the iOS EAS workflow.
+                Save password here, then configure Apple in Expo → Credentials for real submit.
               </p>
               <input
                 type="password"
@@ -413,7 +473,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
                   onClick={() => void publishPlatform('ios')}
                   className="rounded-md bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-bold disabled:opacity-50"
                 >
-                  {busy === 'publish-ios' ? 'Starting…' : 'Start iOS EAS workflow'}
+                  {busy === 'publish-ios' ? 'Starting…' : 'Start iOS EAS'}
                 </button>
               </div>
             </div>

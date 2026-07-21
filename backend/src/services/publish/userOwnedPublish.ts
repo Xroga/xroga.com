@@ -1,6 +1,6 @@
 /**
- * User-owned publish readiness — web (GitHub+Vercel) and mobile (Expo/EAS).
- * Xroga stores encrypted credentials; Apple/Google developer fees are always the user's.
+ * User-owned publish readiness — web, chrome, desktop, mobile.
+ * Xroga stores encrypted credentials; store fees stay on the user.
  */
 
 import { isGitHubConnected } from '../integrations/githubAuth.js';
@@ -10,7 +10,7 @@ import {
   listUserProviderKeys,
 } from '../integrations/userProviderKeys.js';
 
-export type PublishChannel = 'web' | 'mobile';
+export type PublishChannel = 'web' | 'chrome' | 'desktop' | 'mobile';
 
 export interface PublishChecklistItem {
   id: string;
@@ -28,12 +28,25 @@ export interface PublishStatus {
     vercelConnected: boolean;
     checklist: PublishChecklistItem[];
   };
+  chrome: {
+    ready: boolean;
+    githubConnected: boolean;
+    checklist: PublishChecklistItem[];
+    installSteps: string[];
+  };
+  desktop: {
+    ready: boolean;
+    githubConnected: boolean;
+    checklist: PublishChecklistItem[];
+    runSteps: string[];
+  };
   mobile: {
     ready: boolean;
     expoTokenSaved: boolean;
     expoTokenValid: boolean | null;
     appleSaved: boolean;
     googlePlaySaved: boolean;
+    easProjectLinked: boolean;
     checklist: PublishChecklistItem[];
     commands: string[];
   };
@@ -89,6 +102,7 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
     listUserProviderKeys(userId).catch(() => []),
   ]);
   const expoKey = keys.find((k) => k.provider === 'expo' && k.connected);
+  const easProject = keys.find((k) => k.provider === 'expo_project_id' && k.connected);
   const appleKey = keys.find((k) => k.provider === 'apple_asc' && k.connected);
   const googleKey = keys.find((k) => k.provider === 'google_play' && k.connected);
   const supabaseUrl = keys.find((k) => k.provider === 'supabase_url' && k.connected);
@@ -136,6 +150,44 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
     },
   ];
 
+  const chromeChecklist: PublishChecklistItem[] = [
+    {
+      id: 'github',
+      label: '1. Authorize GitHub',
+      done: githubConnected,
+      required: true,
+      hint: 'Ship packages extension.zip onto your Releases automatically',
+      href: '/dashboard/integrations',
+    },
+    {
+      id: 'ship',
+      label: '2. Describe a Chrome extension in Workspace',
+      done: false,
+      required: true,
+      hint: 'After ship: Download extension.zip → chrome://extensions → Load unpacked',
+      href: '/dashboard',
+    },
+  ];
+
+  const desktopChecklist: PublishChecklistItem[] = [
+    {
+      id: 'github',
+      label: '1. Authorize GitHub',
+      done: githubConnected,
+      required: true,
+      hint: 'Ship uploads desktop.zip immediately (no waiting on Actions)',
+      href: '/dashboard/integrations',
+    },
+    {
+      id: 'ship',
+      label: '2. Describe a desktop / Electron app in Workspace',
+      done: false,
+      required: true,
+      hint: 'After ship: Download desktop.zip → npm install && npm start',
+      href: '/dashboard',
+    },
+  ];
+
   const mobileChecklist: PublishChecklistItem[] = [
     {
       id: 'github',
@@ -147,36 +199,45 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
     },
     {
       id: 'expo',
-      label: '2. Connect Expo account (access token)',
+      label: '2. Connect Expo (access token)',
       done: Boolean(expoKey),
       required: true,
-      hint: 'Free robot/access token — Expo has no GitHub-style Authorize for CI',
+      hint: 'Paste once — next mobile ship auto-creates/links EAS and starts a build',
       href: 'https://expo.dev/settings/access-tokens',
     },
     {
       id: 'expo_valid',
-      label: 'Expo connected & verified',
+      label: 'Expo token verified',
       done: expoTokenValid === true,
       required: true,
       hint:
         expoTokenValid === false
           ? 'Token saved but Expo rejected it — paste a fresh one'
-          : 'Verified automatically when you Connect Expo',
+          : 'Verified when you Connect Expo',
+    },
+    {
+      id: 'eas_project',
+      label: 'EAS project linked',
+      done: Boolean(easProject),
+      required: false,
+      hint: Boolean(easProject)
+        ? 'Linked — app.json gets stamped on ship'
+        : 'Auto-created on first ship if you have zero Expo apps (or pick one below)',
     },
     {
       id: 'google',
-      label: '3a. Optional: Google Play JSON (for EAS submit setup)',
+      label: 'Optional: Google Play JSON (for store submit)',
       done: Boolean(googleKey),
       required: false,
-      hint: 'Saved in Xroga for your records — configure the same credentials in Expo/EAS for real submit. Fees stay on Google.',
+      hint: 'Also add the same credentials in Expo → Credentials for real Play submit',
       href: 'https://play.google.com/console',
     },
     {
       id: 'apple',
-      label: '3b. Optional: Apple password (for EAS submit setup)',
+      label: 'Optional: Apple password (for store submit)',
       done: Boolean(appleKey),
       required: false,
-      hint: 'Saved in Xroga for your records — configure Apple credentials in Expo/EAS for real submit. Fees stay on Apple.',
+      hint: 'Also configure Apple in Expo → Credentials for real App Store submit',
       href: 'https://developer.apple.com',
     },
   ];
@@ -188,34 +249,56 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
       vercelConnected,
       checklist: webChecklist,
     },
+    chrome: {
+      ready: githubConnected,
+      githubConnected,
+      checklist: chromeChecklist,
+      installSteps: [
+        'Ship a Chrome extension from Workspace (GitHub connected)',
+        'Click Download extension.zip in the build result',
+        'Open chrome://extensions → enable Developer mode',
+        'Load unpacked → select the unzipped folder',
+        'Optional: upload the same zip to Chrome Web Store (~$5 on your account)',
+      ],
+    },
+    desktop: {
+      ready: githubConnected,
+      githubConnected,
+      checklist: desktopChecklist,
+      runSteps: [
+        'Ship an Electron / desktop app from Workspace (GitHub connected)',
+        'Click Download desktop.zip',
+        'Unzip → npm install && npm start',
+        'Optional: wait for GitHub Actions unsigned Linux binary on Releases',
+        'Code signing / Mac App Store / Microsoft Store stay on your accounts',
+      ],
+    },
     mobile: {
       ready: githubConnected && Boolean(expoKey) && expoTokenValid === true,
       expoTokenSaved: Boolean(expoKey),
       expoTokenValid,
       appleSaved: Boolean(appleKey),
       googlePlaySaved: Boolean(googleKey),
+      easProjectLinked: Boolean(easProject),
       checklist: mobileChecklist,
       commands: [
-        '# Preferred: Start EAS workflow buttons in Xroga Publish (dispatch only)',
-        '# Real store submit needs credentials configured in Expo/EAS',
-        'npm i -g eas-cli',
-        'export EXPO_TOKEN=…',
-        'eas build -p android --profile production',
-        'eas submit -p android',
-        'eas build -p ios --profile production',
-        'eas submit -p ios',
+        '# Preferred: Connect Expo once → describe mobile app → Xroga ships + starts EAS',
+        '# Or use Start EAS Android / iOS buttons below',
+        '# Store submit: configure credentials in Expo, then Start with submit',
       ],
     },
     costs: {
       xrogaPays: [
         'Xroga AI build / chat usage (your Xroga plan)',
-        'Encrypted vault + EAS workflow dispatch (included)',
+        'Packaging + GitHub Releases upload + EAS workflow dispatch',
       ],
       userPays: [
+        'Chrome Web Store developer (~$5 one-time) if you list publicly',
         'Google Play Console (~$25 one-time) for Android store',
         'Apple Developer Program (~$99/yr) for iOS store',
         'Expo EAS build minutes on your Expo account',
-        'Vercel hosting only if you also ship a web app',
+        'Code signing certificates (desktop) if you need signed installs',
+        'Vercel hosting only for web apps',
       ],
     },
   };

@@ -211,18 +211,18 @@ jobs:
       path: 'PUBLISH.md',
       content: `# Package ${name} (Electron desktop)
 
-## Free path — local + GitHub Releases
-1. \`npm install && npm start\` — run unsigned locally
-2. Push to your sticky GitHub repo (Xroga does this in the ship loop)
-3. Xroga can create a \`v*\` tag / dispatch **Desktop release** so Actions builds an unsigned zip
-4. Download the zip from GitHub Releases for testing — this is **not** a store release
+## Free path — portable zip + optional Actions binary
+1. Xroga pushes to your GitHub repo and uploads **desktop.zip** immediately
+2. Download → unzip → \`npm install && npm start\`
+3. Optional: a \`v*\` tag / Actions workflow builds an unsigned Linux binary zip
+4. This is **ready to run** — not a signed store release
 
 ## Not done by Xroga
 - Apple Developer / notarization
 - Windows code signing certificate
 - Microsoft Store / Mac App Store submission
 
-Xroga scaffolds + can trigger GitHub Actions on **your** repo. It does not sign or store-publish the app.
+Xroga packages + can trigger GitHub Actions on **your** repo. It does not sign or store-publish the app.
 `,
     },
     {

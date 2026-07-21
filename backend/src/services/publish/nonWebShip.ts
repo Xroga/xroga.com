@@ -1,11 +1,18 @@
 /**
  * Free-path ship helpers for Chrome / Electron (not store automation).
  * Uses the user's GitHub token after sticky push.
+ *
+ * Chrome: extension.zip on Releases (sideload / manual CWS).
+ * Electron: portable desktop.zip immediately + optional Actions binary zip.
  */
 
 import { getGitHubToken } from '../integrations/githubAuth.js';
 import type { ProjectFile } from '../integrations/githubDeploy.js';
-import { chromeExtensionZipFilter, packageBuildZip } from '../scaffolds/packageBuildZip.js';
+import {
+  chromeExtensionZipFilter,
+  electronPortableZipFilter,
+  packageBuildZip,
+} from '../scaffolds/packageBuildZip.js';
 
 async function ghFetch(token: string, path: string, init?: RequestInit): Promise<Response> {
   return fetch(`https://api.github.com${path}`, {
@@ -133,6 +140,121 @@ export async function shipChromeExtensionZip(opts: {
   }
 
   const asset = (await upload.json()) as { browser_download_url?: string; url?: string };
+  return {
+    ok: true,
+    tag,
+    releaseUrl: htmlUrl,
+    downloadUrl: asset.browser_download_url || htmlUrl,
+  };
+}
+
+/**
+ * Package Electron project as portable desktop.zip on GitHub Releases (immediate).
+ * User can npm install && npm start — does not wait for Actions electron-builder.
+ */
+export async function shipElectronPortableZip(opts: {
+  userId: string;
+  repoFullName: string;
+  files: ProjectFile[];
+  version?: string;
+}): Promise<ChromeZipShipResult> {
+  const token = await getGitHubToken(opts.userId);
+  if (!token) return { ok: false, error: 'GitHub not connected' };
+  const parsed = splitRepo(opts.repoFullName);
+  if (!parsed) return { ok: false, error: 'Invalid repo name' };
+
+  const zip = packageBuildZip(opts.files, { include: electronPortableZipFilter });
+  if (zip.length < 64) return { ok: false, error: 'Zip empty — missing Electron files' };
+
+  const tag = opts.version?.startsWith('v')
+    ? `${opts.version}-portable`
+    : `v${opts.version || '1.0.0'}-portable`;
+  const { owner, repo } = parsed;
+
+  let releaseId: number | null = null;
+  let uploadUrl: string | null = null;
+  let htmlUrl: string | undefined;
+
+  const existing = await ghFetch(token, `/repos/${owner}/${repo}/releases/tags/${encodeURIComponent(tag)}`);
+  if (existing.ok) {
+    const data = (await existing.json()) as {
+      id: number;
+      upload_url?: string;
+      html_url?: string;
+    };
+    releaseId = data.id;
+    uploadUrl = data.upload_url ?? null;
+    htmlUrl = data.html_url;
+  } else {
+    const created = await ghFetch(token, `/repos/${owner}/${repo}/releases`, {
+      method: 'POST',
+      body: JSON.stringify({
+        tag_name: tag,
+        name: `Desktop portable ${tag}`,
+        body: [
+          'Portable Electron project packaged by Xroga.',
+          '',
+          '1. Download `desktop.zip` and unzip',
+          '2. `npm install && npm start`',
+          '',
+          'Optional: GitHub Actions can also build an unsigned Linux binary zip on a `v*` tag.',
+          'Code signing / Mac App Store / Microsoft Store are not included.',
+        ].join('\n'),
+        draft: false,
+        prerelease: false,
+      }),
+    });
+    if (!created.ok) {
+      const err = await created.text();
+      return { ok: false, error: `Could not create release: ${err.slice(0, 200)}` };
+    }
+    const data = (await created.json()) as {
+      id: number;
+      upload_url?: string;
+      html_url?: string;
+    };
+    releaseId = data.id;
+    uploadUrl = data.upload_url ?? null;
+    htmlUrl = data.html_url;
+  }
+
+  if (!uploadUrl || !releaseId) {
+    return { ok: false, error: 'Release missing upload URL', releaseUrl: htmlUrl };
+  }
+
+  const assetUrl = `${uploadUrl.replace(/\{[^}]*\}/, '')}?name=${encodeURIComponent('desktop.zip')}`;
+
+  const assetsRes = await ghFetch(token, `/repos/${owner}/${repo}/releases/${releaseId}/assets`);
+  if (assetsRes.ok) {
+    const assets = (await assetsRes.json()) as Array<{ id: number; name: string }>;
+    const old = assets.find((a) => a.name === 'desktop.zip');
+    if (old) {
+      await ghFetch(token, `/repos/${owner}/${repo}/releases/assets/${old.id}`, { method: 'DELETE' });
+    }
+  }
+
+  const upload = await fetch(assetUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+      'Content-Type': 'application/zip',
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
+    body: zip,
+  });
+
+  if (!upload.ok) {
+    const err = await upload.text();
+    return {
+      ok: false,
+      error: `desktop.zip upload failed: ${err.slice(0, 200)}`,
+      releaseUrl: htmlUrl,
+      tag,
+    };
+  }
+
+  const asset = (await upload.json()) as { browser_download_url?: string };
   return {
     ok: true,
     tag,

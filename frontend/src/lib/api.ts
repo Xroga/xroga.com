@@ -910,6 +910,10 @@ export const api = {
         masked?: string;
         envVar?: string;
         message?: string;
+        easProjectId?: string | null;
+        easLinked?: boolean;
+        easCreated?: boolean;
+        needsProjectPick?: boolean;
       }>('/api/publish/expo-token', {
         method: 'POST',
         body: JSON.stringify({ token }),

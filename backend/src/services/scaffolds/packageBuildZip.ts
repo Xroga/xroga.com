@@ -110,3 +110,17 @@ export function chromeExtensionZipFilter(path: string): boolean {
   if (path.startsWith('dist/')) return false;
   return true;
 }
+
+/**
+ * Electron portable project zip — npm install && npm start locally.
+ * Excludes preview story page noise and huge lockfiles; includes package.json + main/renderer.
+ */
+export function electronPortableZipFilter(path: string): boolean {
+  if (path === 'index.html') return false; // web story preview only
+  if (path.endsWith('.md') && path !== 'README.md') return false;
+  if (path.startsWith('release/') || path.startsWith('dist/')) return false;
+  if (path.startsWith('node_modules/')) return false;
+  if (path.endsWith('package-lock.json')) return false;
+  if (path.startsWith('.github/')) return false;
+  return true;
+}

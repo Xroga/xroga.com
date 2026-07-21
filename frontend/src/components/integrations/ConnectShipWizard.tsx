@@ -323,10 +323,11 @@ export function ConnectShipWizard() {
           <p className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
             Ship setup
           </p>
-          <h2 className="text-lg sm:text-xl font-bold mt-1">3 clicks · then just describe</h2>
+          <h2 className="text-lg sm:text-xl font-bold mt-1">Connect once · then just describe</h2>
           <p className="text-sm text-[var(--muted)] mt-1 max-w-xl">
-            Authorize GitHub + Vercel (+ Supabase). Then open Workspace and tell Xroga what to
-            build — we code, push, and deploy for you.
+            <strong>Web:</strong> GitHub + Vercel (+ Supabase). <strong>Chrome / Desktop:</strong>{' '}
+            GitHub alone (zip on ship). <strong>Mobile:</strong> GitHub + Expo token in Publish. Then
+            open Workspace and describe what to build.
           </p>
         </div>
         <div
