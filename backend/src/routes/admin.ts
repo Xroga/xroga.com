@@ -1,8 +1,13 @@
 import { Router } from 'express';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from '../middleware/auth.js';
+import { computePlatformReady } from '../lib/platformReady.js';
 
 const router = Router();
+
+router.get('/platform-ready', (_req, res) => {
+  res.json(computePlatformReady());
+});
 
 router.get('/errors', async (req: AuthRequest, res) => {
   const limit = Math.min(Number(req.query.limit) || 100, 200);

@@ -10,6 +10,7 @@ import { ConnectedServicesSection } from '@/components/integrations/ConnectedSer
 import { CustomCredentialsSection } from '@/components/integrations/CustomCredentialsSection';
 import { IntegrationRequestBanner } from '@/components/integrations/IntegrationRequestBanner';
 import { ConnectShipWizard } from '@/components/integrations/ConnectShipWizard';
+import { PlatformReadyPanel } from '@/components/dashboard/PlatformReadyPanel';
 import { UserOwnedPublishPanel } from '@/components/publish/UserOwnedPublishPanel';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -235,6 +236,8 @@ export function IntegrationsPanel() {
           Live connects only below. Expo is under Publish. Everything else is Coming soon (dropdown).
         </p>
       </div>
+
+      <PlatformReadyPanel />
 
       <ConnectShipWizard />
 

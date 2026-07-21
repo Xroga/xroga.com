@@ -5,8 +5,97 @@ import { GALACTIC_PLANS, planDisplayName } from '../config/galacticPlans.js';
 import { MONTHLY_USER_PRICE_USD } from '../ai/models.js';
 import { getApiBudgetUsd, getTokenPool } from '../config/plans.js';
 import { getUsage, usageToDashboardTokens } from '../ai/quota.js';
+import { computePlatformReady } from '../lib/platformReady.js';
+import { listRunsForUserAsync } from '../ai/runStore.js';
 
 const router = Router();
+
+router.get('/platform-ready', (_req, res) => {
+  res.json(computePlatformReady());
+});
+
+router.get('/ship-analytics', async (req: AuthRequest, res) => {
+  const userId = req.userId!;
+  const runs = await listRunsForUserAsync(userId, 40);
+  let shipped = 0;
+  let handoff = 0;
+  let blocked = 0;
+  let failed = 0;
+  const byKind: Record<string, number> = {};
+  const recent: Array<{
+    id: string;
+    prompt: string;
+    status: string;
+    ship: string;
+    scaffoldKind?: string;
+    created_at: string;
+  }> = [];
+
+  for (const run of runs) {
+    const out = (run.output?.output ?? run.output) as
+      | {
+          fullyShipped?: boolean;
+          handoffReady?: boolean;
+          buildOk?: boolean;
+          shipBlockers?: string[];
+          scaffoldKind?: string;
+          shipOutcome?: {
+            fullyShipped?: boolean;
+            handoffReady?: boolean;
+            buildOk?: boolean;
+            scaffoldKind?: string;
+            blockers?: string[];
+          };
+        }
+      | null
+      | undefined;
+    const fully = Boolean(out?.shipOutcome?.fullyShipped ?? out?.fullyShipped);
+    const hand = Boolean(out?.shipOutcome?.handoffReady ?? out?.handoffReady);
+    const buildOk = out?.shipOutcome?.buildOk ?? out?.buildOk;
+    const blockers = out?.shipOutcome?.blockers ?? out?.shipBlockers ?? [];
+    const kind = out?.shipOutcome?.scaffoldKind ?? out?.scaffoldKind ?? 'unknown';
+    byKind[kind] = (byKind[kind] || 0) + 1;
+
+    let ship = '—';
+    if (fully) {
+      shipped += 1;
+      ship = 'shipped';
+    } else if (hand) {
+      handoff += 1;
+      ship = 'handoff';
+    } else if (buildOk === false || run.status === 'error') {
+      failed += 1;
+      ship = 'failed';
+    } else if (blockers.length) {
+      blocked += 1;
+      ship = 'blocked';
+    } else if (run.status === 'complete') {
+      blocked += 1;
+      ship = 'incomplete';
+    }
+
+    recent.push({
+      id: run.id,
+      prompt: run.prompt.slice(0, 80),
+      status: run.status,
+      ship,
+      scaffoldKind: kind === 'unknown' ? undefined : kind,
+      created_at: run.created_at,
+    });
+  }
+
+  res.json({
+    totals: {
+      runs: runs.length,
+      shipped,
+      handoff,
+      blocked,
+      failed,
+    },
+    byKind,
+    recent: recent.slice(0, 20),
+  });
+});
 
 router.get('/summary', async (req: AuthRequest, res) => {
   const userId = req.userId!;

@@ -19,6 +19,7 @@ export interface ShipVerifyResult {
   githubOk: boolean;
   summaryLines: string[];
   pass: boolean;
+  smoke?: Array<{ path: string; ok: boolean; status?: number }>;
 }
 
 export async function verifyShippedProduct(opts: {
@@ -104,7 +105,32 @@ export async function verifyShippedProduct(opts: {
 
   // Stricter when we have a URL: need liveOk; health 404 (static) is OK
   const healthFail = healthOk === false;
-  const strictPass = githubOk && (liveUrl ? liveOk : true) && !healthFail;
+
+  // Lightweight smoke: homepage must stay up; probe a few common product routes (no browser).
+  const smoke: Array<{ path: string; ok: boolean; status?: number }> = [];
+  if (liveUrl && liveOk) {
+    const base = liveUrl.replace(/\/$/, '');
+    const paths = ['/', ...(opts.expectApiHealth ? ['/api/health'] : [])];
+    for (const path of paths) {
+      try {
+        const res = await fetch(`${base}${path}`, {
+          method: 'GET',
+          redirect: 'follow',
+          headers: { 'User-Agent': 'XROGA-Ship-Smoke/1.0' },
+          signal: AbortSignal.timeout(10_000),
+        });
+        const ok = res.status > 0 && res.status < 500;
+        smoke.push({ path, ok, status: res.status });
+        if (!ok) lines.push(`❌ Smoke ${path} → HTTP ${res.status}`);
+        else if (path !== '/' && path !== '/api/health') lines.push(`✅ Smoke ${path}`);
+      } catch {
+        smoke.push({ path, ok: false });
+        lines.push(`❌ Smoke ${path} unreachable`);
+      }
+    }
+  }
+  const smokeFail = smoke.some((s) => !s.ok);
+  const strictPass = githubOk && (liveUrl ? liveOk : true) && !healthFail && !smokeFail;
 
   return {
     liveOk,
@@ -115,5 +141,6 @@ export async function verifyShippedProduct(opts: {
     githubOk,
     summaryLines: lines,
     pass: strictPass,
+    smoke: smoke.length ? smoke : undefined,
   };
 }

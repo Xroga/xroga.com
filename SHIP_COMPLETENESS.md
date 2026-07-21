@@ -29,6 +29,24 @@
 - Production vault encryption **refuses** the insecure `xroga-dev-key` fallback
 - Sticky `default_repo` applies **only on updates**; New Terminal / greenfield never auto-bind the last product; `needsRepoPick` opens the chatbar picker
 
+## What we can finish in code vs what stays external
+
+| Gap | Who can do it | Status on this branch |
+|-----|---------------|------------------------|
+| Custom domain attach + DNS verify UI | **Agent / code** (Vercel Domains API) | **Done** — Publish → Web → Custom domain |
+| Multi-product Update / New product | **Agent / code** | **Done** (launch-ready merge) |
+| First-run checklist | **Agent / code** | **Done** |
+| Platform ready gate | **Agent / code** | **Done** — Integrations + Analytics |
+| Ship analytics (not vanity UI shell) | **Agent / code** | **Done** — `/dashboard/analytics` from real runs |
+| Post-deploy smoke (`/` + health) | **Agent / code** | **Done** — shipVerify |
+| Vault → Vercel env sync honesty | **Agent / code** | **Done** earlier (blocks fullyShipped) |
+| Supabase OAuth / DB password friction | **Partial** — clearer UX; scopes/password still user/org | Improved messaging only where present |
+| Generated app quality / deep E2E | **Partial** — smoke + health, not full Playwright product QA | Smoke only |
+| Free AI inside user apps | **Product + cost** — was retired; can rebuild metered proxy later | **Not rebuilt** (BYOK stays) |
+| Guaranteed App Store / Play / CWS public | **Impossible in code** — review + fees + first listing | External |
+| Electron signed installers | **User certs + Actions** — we sync secrets; cannot invent CSC | External + Publish forms |
+| Store “live” approval | **External** | External |
+
 ## Launch-ready product checklist (in code)
 | Area | Status |
 |------|--------|

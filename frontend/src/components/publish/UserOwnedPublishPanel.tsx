@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
+import { CustomDomainPanel } from '@/components/publish/CustomDomainPanel';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -762,6 +763,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
             After connect: chat “build a landing page…” → Xroga pushes GitHub and deploys to{' '}
             <strong>your</strong> Vercel.
           </p>
+          <CustomDomainPanel />
           <Link
             href="/dashboard/integrations"
             className="inline-flex text-sm font-semibold text-[var(--accent)] hover:underline"
