@@ -882,12 +882,41 @@ export const api = {
             href?: string;
           }>;
         };
+        chrome?: {
+          ready: boolean;
+          cwsConnected?: boolean;
+          checklist: Array<{
+            id: string;
+            label: string;
+            done: boolean;
+            required: boolean;
+            hint?: string;
+            href?: string;
+          }>;
+          installSteps: string[];
+        };
+        desktop?: {
+          ready: boolean;
+          cscSaved?: boolean;
+          notarizationSaved?: boolean;
+          checklist: Array<{
+            id: string;
+            label: string;
+            done: boolean;
+            required: boolean;
+            hint?: string;
+            href?: string;
+          }>;
+          runSteps: string[];
+        };
         mobile: {
           ready: boolean;
           expoTokenSaved: boolean;
           expoTokenValid: boolean | null;
           appleSaved: boolean;
+          appleAscApiSaved?: boolean;
           googlePlaySaved: boolean;
+          easProjectLinked?: boolean;
           checklist: Array<{
             id: string;
             label: string;
