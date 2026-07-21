@@ -35,7 +35,7 @@ import { buildPromptWithMemory, isBuildThreadContinuation, isGeneralAdviceOrKnow
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { seedBuildTodos } from '@/lib/buildDefaultTodos';
 import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
-import { planningStepsForPrompt, startPipelineMessageForPrompt } from '@/lib/buildPlanningSteps';
+import { startPipelineMessageForPrompt } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
 import { getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
 import { isKeepaliveActivity } from '@/lib/buildLiveStatus';
@@ -1412,16 +1412,15 @@ export function TerminalChatProvider({
 
       if (startingHeavyBuild) {
         setSwarmNegotiationPhase(0);
-        setSwarmStatusLabel('XROGA Architect');
+        setSwarmStatusLabel('Building');
         const seededTodos = seedBuildTodos(displayPrompt);
         buildTodosSeedRef.current = seededTodos;
         liveBuildSnapshotRef.current.todos = seededTodos;
         setSwarmTodos(seededTodos);
         const startMsg = startPipelineMessageForPrompt(displayPrompt);
-        const planSteps = planningStepsForPrompt(displayPrompt);
         setPipelineMessage(startMsg);
-        thinkingStepsRef.current = [...planSteps];
-        setThinkingSteps([...planSteps]);
+        thinkingStepsRef.current = [];
+        setThinkingSteps([]);
         setSwarmActivityLog([startMsg]);
         lastActivityAtRef.current = Date.now();
         lastRealProgressAtRef.current = Date.now();

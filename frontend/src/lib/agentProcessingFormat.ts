@@ -16,27 +16,8 @@ export interface AgentActivityEntry {
 export function formatAgentActivityLine(raw: string): string {
   const line = sanitizeXrogaTerminalText(raw.trim());
   if (!line) return '';
-
-  const stepMatch = line.match(/Step\s+(\d+)\/(\d+)\s+(.+)/i);
-  if (stepMatch) {
-    return `XROGA Pulse — step ${stepMatch[1]}/${stepMatch[2]}: ${stepMatch[3]!.trim()}`;
-  }
-
-  if (/\bverifying\b/i.test(line)) return 'XROGA Collective — quality & security review…';
-  if (/\bdeploying\b/i.test(line) || /\bvercel\b/i.test(line)) return 'XROGA — deploying live preview…';
-  if (/\bgithub\b/i.test(line) && /\b(push|repo|creating)\b/i.test(line)) {
-    return 'XROGA — pushing project files to GitHub…';
-  }
-  if (/\bplanning\b/i.test(line)) return 'XROGA Architect — planning your build…';
-  if (/\bstarting your\b/i.test(line)) {
-    return line.replace(/^🚀\s*\[Phase \d+\]\s*/i, '').trim();
-  }
-  if (/\bbuild plan ready\b/i.test(line)) return 'XROGA Architect — build plan ready';
-  if (/\ball checks passed\b/i.test(line)) return 'XROGA Collective — all checks passed';
-  if (/\blive\b/i.test(line) && /\b✅/i.test(line)) return 'BLACK HOLE V∞ — live preview ready';
-
-  const cleaned = line.replace(/\[Phase \d+\]\s*/gi, '').replace(/^[^\w]*\s*/, '').trim();
-  return cleaned || line;
+  // Pass through honest backend lines — do not rewrite into Architect/Pulse theater copy.
+  return line.replace(/\[Phase \d+\]\s*/gi, '').replace(/^🚀\s*/, '').trim() || line;
 }
 
 /** Map swarm progress lines → honest activity rows (never invent file paths). */

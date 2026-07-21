@@ -57,17 +57,7 @@ export const XROGA_BUILD_PROCESS = [
   'Preview — sandbox ready; GitHub push when repo is selected',
 ] as const;
 
-export function startPipelineMessageForPrompt(prompt: string): string {
-  const t = prompt.toLowerCase();
-  if (/\b(chatbot|chat\s*bot|helpbee|support bot)\b/.test(t)) {
-    return 'XROGA Architect — planning your chatbot UI & free AI chat…';
-  }
-  if (/\b(crypto|web3|defi|nebuladex|coingecko)\b/.test(t)) {
-    return 'XROGA Architect — planning your crypto dashboard & live prices…';
-  }
-  if (/\b(landing|homepage|hibee|pricing)\b/.test(t)) {
-    const name = /\b(?:called|named)\s+([A-Za-z0-9][\w-]{1,32})\b/i.exec(prompt)?.[1] || 'landing page';
-    return `XROGA Architect — planning ${name} sections & theme…`;
-  }
-  return 'XROGA Architect — planning your project from your prompt…';
+export function startPipelineMessageForPrompt(_prompt: string): string {
+  void _prompt;
+  return 'Starting build…';
 }
