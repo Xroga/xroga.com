@@ -651,6 +651,36 @@ export const api = {
         '/api/vercel/deploy',
         { method: 'POST', body: JSON.stringify(payload) }
       ),
+    listDomains: (project: string) =>
+      apiFetch<{ ok: boolean; project: string; domains: unknown[]; error?: string }>(
+        `/api/vercel/domains?project=${encodeURIComponent(project)}`,
+      ),
+    addDomain: (project: string, domain: string) =>
+      apiFetch<{
+        ok: boolean;
+        domain?: { name: string; verified: boolean; verification?: unknown[] };
+        message?: string;
+        error?: string;
+      }>('/api/vercel/domains', {
+        method: 'POST',
+        body: JSON.stringify({ project, domain }),
+      }),
+    verifyDomain: (project: string, domain: string) =>
+      apiFetch<{
+        ok: boolean;
+        verified: boolean;
+        domain?: { name: string; verified: boolean; verification?: unknown[] };
+        message?: string;
+        error?: string;
+      }>('/api/vercel/domains/verify', {
+        method: 'POST',
+        body: JSON.stringify({ project, domain }),
+      }),
+    removeDomain: (project: string, domain: string) =>
+      apiFetch<{ ok: boolean; error?: string }>('/api/vercel/domains', {
+        method: 'DELETE',
+        body: JSON.stringify({ project, domain }),
+      }),
   },
   supabase: {
     oauthUrl: () => {
@@ -1086,6 +1116,38 @@ export const api = {
   },
   dashboard: {
     summary: () => apiFetch<DashboardSummary>('/api/dashboard/summary'),
+    platformReady: () =>
+      apiFetch<{
+        ready: boolean;
+        requiredOk: number;
+        requiredTotal: number;
+        checks: Array<{
+          id: string;
+          label: string;
+          ok: boolean;
+          required: boolean;
+          hint?: string;
+        }>;
+      }>('/api/dashboard/platform-ready'),
+    shipAnalytics: () =>
+      apiFetch<{
+        totals: {
+          runs: number;
+          shipped: number;
+          handoff: number;
+          blocked: number;
+          failed: number;
+        };
+        byKind: Record<string, number>;
+        recent: Array<{
+          id: string;
+          prompt: string;
+          status: string;
+          ship: string;
+          scaffoldKind?: string;
+          created_at: string;
+        }>;
+      }>('/api/dashboard/ship-analytics'),
   },
   phase1: {
     chat: (

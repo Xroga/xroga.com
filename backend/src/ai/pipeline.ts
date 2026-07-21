@@ -2428,10 +2428,29 @@ export async function runBuildPipeline(opts: {
   const fullyShipped = outcome.fullyShipped;
   const handoffReady = outcome.handoffReady;
   const buildOk = outcome.buildOk;
-  // Honest API success: build produced usable code. Shipped is a separate flag.
-  const overallSuccess = buildOk;
+  // Honest API success: usable code is not enough when ship was required and blocked.
+  // Soft "looks shipped" is forbidden — blockers mean the run did not succeed end-to-end.
+  const shipUsable = fullyShipped || handoffReady;
+  const overallSuccess =
+    buildOk &&
+    (shouldPush ? shipUsable && finalBlockers.length === 0 : finalBlockers.length === 0);
   const statusMessage = outcome.statusMessage;
-  const freePathDone = fullyShipped || handoffReady;
+  const freePathDone = shipUsable;
+
+  const shipOutcomeMeta = {
+    fullyShipped,
+    handoffReady,
+    buildOk,
+    shipOk: outcome.shipOk,
+    scaffoldKind: productScaffoldKind,
+    blockers: finalBlockers,
+    deployUrl: deployUrl || undefined,
+    githubRepoName: githubRepoName || undefined,
+    githubPushConfirmed,
+    envSyncOk: vaultEnvSync ? vaultEnvSync.ok : undefined,
+    storeSubmitted: outcome.storeSubmitted,
+    statusLabel: outcome.statusLabel,
+  };
 
   if (shipVerify || githubPushConfirmed || deployUrl) {
     const summaryLines = [
@@ -2473,7 +2492,12 @@ export async function runBuildPipeline(opts: {
         status: (outcome.verifyPass ? 'done' : 'pending') as 'done' | 'pending',
       })),
     });
-    trace.setMeta({ shipVerify: summaryLines, fullyShipped, buildOk });
+    trace.setMeta({
+      shipVerify: summaryLines,
+      fullyShipped,
+      buildOk,
+      shipOutcome: shipOutcomeMeta,
+    });
   }
 
   const outSite = filesToSite(nextFiles);
@@ -2595,6 +2619,7 @@ export async function runBuildPipeline(opts: {
     storeSubmitted: outcome.storeSubmitted,
     buildOk,
     shipped: fullyShipped,
+    shipOutcome: shipOutcomeMeta,
     nextSteps: outcome.nextSteps,
     scaffoldKind: productScaffoldKind,
     chromeZipDownloadUrl,

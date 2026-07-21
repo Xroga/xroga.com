@@ -6,14 +6,16 @@ import { api, type GitHubRepo } from '@/lib/api';
 import { getCachedRepoAnalysis, setCachedRepoAnalysis } from '@/lib/repoAnalysisCache';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
 import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
+import { consumeFreshTerminalIntent, markFreshTerminalIntent, clearSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
 import {
   GITHUB_PROJECT_SAVED_EVENT,
   GITHUB_REPO_CONTEXT_EVENT,
   OPEN_REPO_PICKER_EVENT,
   REPO_CONTEXT_CLEARED_EVENT,
   notifyGithubRepoContext,
+  notifyOpenRepoPicker,
+  notifyRepoContextCleared,
 } from '@/lib/githubProjectEvents';
-import { consumeFreshTerminalIntent, saveSelectedRepoContext } from '@/lib/repoContext';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 
@@ -311,6 +313,50 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
         outside ? 'px-0 py-0' : 'px-2 sm:px-3 py-1 border-0'
       )}
     >
+      {/* Explicit product intent — avoids patching the wrong app */}
+      <div className="flex items-center gap-1 shrink-0">
+        <button
+          type="button"
+          title={
+            selectedRepo
+              ? `Updates go to ${selectedRepo}`
+              : 'Pick a repo first to update an existing product'
+          }
+          onClick={() => {
+            if (!selectedRepo) {
+              setOpen('repo');
+              notifyOpenRepoPicker();
+            }
+          }}
+          className={cn(
+            'rounded px-1.5 py-0.5 border text-[9px] font-semibold transition-colors',
+            selectedRepo
+              ? 'border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+              : 'border-[var(--card-border)] text-[var(--muted)] hover:text-[var(--foreground)]',
+          )}
+        >
+          {selectedRepo ? 'Update current' : 'Pick to update'}
+        </button>
+        <button
+          type="button"
+          title="Clear repo selection and start a brand-new product"
+          onClick={() => {
+            markFreshTerminalIntent();
+            clearSelectedRepoContext();
+            notifyRepoContextCleared();
+            setSelectedRepo(null);
+            setSelectedBranch('main');
+            setRepoSummary(null);
+            setRepoTech([]);
+            startNewChat();
+            notifyOpenRepoPicker();
+          }}
+          className="rounded px-1.5 py-0.5 border border-[var(--card-border)] text-[9px] font-semibold text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/40 transition-colors"
+        >
+          New product
+        </button>
+      </div>
+
       <div className="relative shrink-0">
         {repoLocked && selectedRepo ? (
           <span className={plainTextClass}>

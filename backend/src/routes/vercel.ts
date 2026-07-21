@@ -18,6 +18,12 @@ import { deployStaticSiteWithToken } from '../lib/vercel.js';
 import { normalizeBuildFiles } from '../lib/normalizeBuildSource.js';
 import { buildFullProjectFiles } from '../services/projectScaffold.js';
 import { syncUserVaultToVercel } from '../services/integrations/githubDeploy.js';
+import {
+  addProjectDomain,
+  listProjectDomains,
+  removeProjectDomain,
+  verifyProjectDomain,
+} from '../lib/vercelDomains.js';
 
 const router = Router();
 
@@ -242,6 +248,115 @@ router.post('/deploy', async (req: AuthRequest, res) => {
   } catch (err) {
     res.status(502).json({ error: (err as Error).message.slice(0, 240), deployUrl: '' });
   }
+});
+
+/** List custom domains on a Vercel project (user token). */
+router.get('/domains', async (req: AuthRequest, res) => {
+  const project = String(req.query.project || '').trim();
+  if (!project || project.length < 2) {
+    res.status(400).json({ error: 'Pass ?project=your-vercel-project-slug' });
+    return;
+  }
+  const token = await getVercelToken(req.userId!);
+  if (!token) {
+    res.status(403).json({ error: 'Connect Vercel first' });
+    return;
+  }
+  const listed = await listProjectDomains(token, project);
+  if (!listed.ok) {
+    res.status(400).json({ error: listed.error || 'Could not list domains', domains: [] });
+    return;
+  }
+  res.json({ ok: true, project, domains: listed.domains });
+});
+
+/** Attach a custom domain to the user's Vercel project. */
+router.post('/domains', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    project: z.string().min(2).max(120),
+    domain: z.string().min(3).max(253),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+  const token = await getVercelToken(req.userId!);
+  if (!token) {
+    res.status(403).json({ error: 'Connect Vercel first' });
+    return;
+  }
+  const added = await addProjectDomain(token, parsed.data.project, parsed.data.domain);
+  if (!added.ok) {
+    res.status(400).json({
+      ok: false,
+      error:
+        added.error ||
+        'Could not add domain. Enable Domain write on your Vercel App, then retry.',
+    });
+    return;
+  }
+  res.json({
+    ok: true,
+    domain: added.domain,
+    message: added.domain?.verified
+      ? 'Domain attached and verified'
+      : 'Domain attached — add the DNS records below, then click Verify',
+  });
+});
+
+/** Re-check DNS / TXT verification for a domain. */
+router.post('/domains/verify', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    project: z.string().min(2).max(120),
+    domain: z.string().min(3).max(253),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+  const token = await getVercelToken(req.userId!);
+  if (!token) {
+    res.status(403).json({ error: 'Connect Vercel first' });
+    return;
+  }
+  const verified = await verifyProjectDomain(token, parsed.data.project, parsed.data.domain);
+  if (!verified.ok && !verified.domain) {
+    res.status(400).json({ ok: false, verified: false, error: verified.error });
+    return;
+  }
+  res.json({
+    ok: true,
+    verified: verified.verified,
+    domain: verified.domain,
+    message: verified.verified
+      ? 'Domain verified — HTTPS will provision on Vercel shortly'
+      : 'Still waiting on DNS. Point A/CNAME (and TXT if shown) at Vercel, wait a few minutes, retry.',
+  });
+});
+
+router.delete('/domains', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    project: z.string().min(2).max(120),
+    domain: z.string().min(3).max(253),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+  const token = await getVercelToken(req.userId!);
+  if (!token) {
+    res.status(403).json({ error: 'Connect Vercel first' });
+    return;
+  }
+  const removed = await removeProjectDomain(token, parsed.data.project, parsed.data.domain);
+  if (!removed.ok) {
+    res.status(400).json({ ok: false, error: removed.error });
+    return;
+  }
+  res.json({ ok: true });
 });
 
 export default router;

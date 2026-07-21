@@ -6,6 +6,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { getTimeGreetingKey, t } from '@/lib/i18n/translations';
 import { useLocale } from '@/components/providers/LanguageProvider';
 import { WorkspaceResumeList } from '@/components/dashboard/WorkspaceResumeList';
+import { FirstRunShipChecklist } from '@/components/dashboard/FirstRunShipChecklist';
 import { ProductStartChips } from '@/components/terminal/ProductStartChips';
 import { claudeSerif, pixelCoding } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
@@ -53,6 +54,7 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
       </div>
 
       <div className="relative mt-3 max-w-3xl">
+        <FirstRunShipChecklist className="mb-3" />
         <ProductStartChips />
       </div>
 
