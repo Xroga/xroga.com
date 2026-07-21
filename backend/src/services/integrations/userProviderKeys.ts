@@ -219,7 +219,18 @@ function encryptionKey(): Buffer {
     process.env.USER_SECRETS_ENCRYPTION_KEY ||
     process.env.SUPABASE_SERVICE_ROLE_KEY ||
     process.env.SUPABASE_JWT_SECRET ||
-    'xroga-dev-key';
+    '';
+  if (!secret.trim()) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        'USER_SECRETS_ENCRYPTION_KEY (or SUPABASE_SERVICE_ROLE_KEY) required in production to encrypt user vault secrets',
+      );
+    }
+    console.warn(
+      '[userProviderKeys] using insecure dev encryption fallback — set USER_SECRETS_ENCRYPTION_KEY',
+    );
+    return scryptSync('xroga-dev-key', 'xroga-provider-keys-v2', 32);
+  }
   return scryptSync(secret.slice(0, 64), 'xroga-provider-keys-v2', 32);
 }
 

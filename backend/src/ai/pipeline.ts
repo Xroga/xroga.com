@@ -1076,7 +1076,8 @@ export async function runBuildPipeline(opts: {
   }
 
   // Recovery: incomplete update → keep prior and retry once with stricter patch prompt
-  if (isUpdate && prior.files.length) {
+  // Never recover after an explicit patch abort (protect sticky live repo).
+  if (isUpdate && prior.files.length && !patchAborted) {
     const site = filesToSite(nextFiles);
     const bad =
       (!nextFiles.length && !deletedPaths.length) ||
@@ -1128,19 +1129,34 @@ export async function runBuildPipeline(opts: {
         const patches = extractSearchReplacePatches(retry.text);
         if (patches.length) {
           const applied = applyPatches(prior.files, patches);
-          if (applied.applied.length) {
+          if (applied.failed.length) {
+            // Same contract as primary path — never half-apply to sticky repo
+            patchFailures = applied.failureReasons;
+            patchAborted = true;
+            nextFiles = prior.files;
+            usedPatches = false;
+            emit({
+              agent: 'reviewer',
+              status: 'patch_aborted',
+              message: `Recovery aborted — ${applied.failed.length} patch(es) missed SEARCH. Site unchanged.`,
+              swarmStatusLabel: 'Aborted',
+              swarmActivity: applied.failureReasons.slice(0, 2).join('; ') || 'SEARCH miss',
+              swarmTodos: todos('build'),
+            });
+            trace.setMeta({ patchAborted: true, patchFailures });
+          } else if (applied.applied.length) {
             nextFiles = applied.files;
             usedPatches = true;
           }
         }
-        if (!nextFiles.length) {
+        if (!patchAborted && !nextFiles.length) {
           const extracted = extractProjectFiles(retry.text);
           if (extracted.length) nextFiles = mergeFileMaps(prior.files, extracted);
         }
       } catch (err) {
         console.warn('[pipeline] recovery retry failed:', (err as Error).message);
       }
-      if (!nextFiles.length) nextFiles = prior.files;
+      if (!patchAborted && !nextFiles.length) nextFiles = prior.files;
     }
   }
 
@@ -1403,8 +1419,21 @@ export async function runBuildPipeline(opts: {
       if (isUpdate) {
         const patches = extractSearchReplacePatches(fixResult.text);
         if (patches.length) {
-          const applied = applyPatches(nextFiles, patches);
-          if (applied.applied.length) nextFiles = applied.files;
+          const qaBase = nextFiles;
+          const applied = applyPatches(qaBase, patches);
+          if (applied.failed.length) {
+            // Do not half-apply QA patches onto a sticky update
+            emit({
+              agent: 'reviewer',
+              status: 'qa_patch_skipped',
+              message: `QA fix skipped — ${applied.failed.length} patch(es) missed SEARCH. Keeping prior update files.`,
+              swarmStatusLabel: 'QA patch skip',
+              swarmActivity: applied.failureReasons.slice(0, 2).join('; ') || 'SEARCH miss',
+              swarmTodos: todos('qa'),
+            });
+          } else if (applied.applied.length) {
+            nextFiles = applied.files;
+          }
         } else {
           const extracted = extractProjectFiles(fixResult.text);
           if (extracted.length) nextFiles = mergeFileMaps(nextFiles, extracted);
@@ -2254,8 +2283,10 @@ export async function runBuildPipeline(opts: {
   }
 
   // Vercel redeploy via file-upload API — does NOT require GitHub↔Vercel project link
+  // Non-web products (Chrome / Electron / Expo) ship via Releases/EAS — never upload them to Vercel.
   const vercelToken = await getVercelToken(opts.userId);
   const canDeployVercel =
+    !isNonWebProduct &&
     !patchAborted &&
     !security.blocked &&
     !compileBlocksShip &&
