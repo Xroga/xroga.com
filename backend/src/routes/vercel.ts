@@ -220,7 +220,18 @@ router.post('/deploy', async (req: AuthRequest, res) => {
   const staticFiles = projectFiles.map((f) => ({ file: f.path, data: f.content }));
 
   try {
-    const envSync = await syncUserVaultToVercel(req.userId!, slug);
+    let envSync: Awaited<ReturnType<typeof syncUserVaultToVercel>> | null = null;
+    try {
+      envSync = await syncUserVaultToVercel(req.userId!, slug);
+    } catch (err) {
+      envSync = {
+        ok: false,
+        projectName: slug,
+        upserted: [],
+        skipped: [],
+        error: (err as Error).message.slice(0, 240),
+      };
+    }
     const deployment = await deployStaticSiteWithToken(slug, staticFiles, token);
     res.json({
       deployUrl: deployment.deployUrl,

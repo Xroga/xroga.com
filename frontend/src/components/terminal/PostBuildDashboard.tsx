@@ -196,6 +196,26 @@ export function PostBuildDashboard({
   if (siteAudit.issues.some((i) => i.severity === 'critical')) {
     missingItems.push(`${siteAudit.issues.filter((i) => i.severity === 'critical').length} critical health issue(s)`);
   }
+  if (data.envSync && data.envSync.ok === false) {
+    const skipped =
+      data.envSync.skipped?.length
+        ? ` (missed: ${data.envSync.skipped.slice(0, 5).join(', ')})`
+        : '';
+    missingItems.push(
+      `Vault → Vercel env sync failed${skipped}${
+        data.envSync.error ? `: ${data.envSync.error}` : ''
+      }. Re-sync from Integrations or re-ship.`,
+    );
+  } else if (data.envSync?.ok && data.envSync.upserted?.length) {
+    // Informational — not a missing item; surface via features if needed
+  }
+  if (data.shipBlockers?.length) {
+    for (const b of data.shipBlockers.slice(0, 4)) {
+      if (!missingItems.some((m) => m.includes(b.slice(0, 40)))) {
+        missingItems.push(b);
+      }
+    }
+  }
 
   return (
     <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">

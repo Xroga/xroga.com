@@ -48,6 +48,13 @@ export interface LandingPageOutputData {
   easStoreSubmitted?: boolean;
   storeSubmitted?: boolean;
   shipBlockers?: string[];
+  envSync?: {
+    ok: boolean;
+    projectName?: string;
+    upserted?: string[];
+    skipped?: string[];
+    error?: string;
+  };
   shipVerify?: { pass?: boolean; liveOk?: boolean; summaryLines?: string[] };
   projectName?: string;
   pages?: string[];

@@ -112,7 +112,7 @@ export function TerminalChatBar() {
       .catch(() => setVercelConnected(false));
   }, []);
 
-  // Sidebar "New Terminal" → clear repo, open chatbar picker (do NOT auto-select)
+  // Sidebar "New Terminal" → clear repo, open chatbar picker (do NOT auto-select sticky)
   useEffect(() => {
     const onNewTerminal = () => {
       if (incognito) return;
@@ -137,15 +137,6 @@ export function TerminalChatBar() {
             });
             return;
           }
-          // Prefer sticky default from first ship so New Terminal still updates the live product.
-          // User can switch repos in the bar when they want a brand-new product.
-          if (ghStatus.defaultRepo?.includes('/')) {
-            const { saveSelectedRepoContext } = await import('@/lib/repoContext');
-            const { notifyGithubRepoContext } = await import('@/lib/githubProjectEvents');
-            saveSelectedRepoContext({ repo: ghStatus.defaultRepo, branch: 'main' });
-            notifyGithubRepoContext(ghStatus.defaultRepo, 'main');
-            return;
-          }
         } catch {
           setRepoGate({
             open: true,
@@ -154,7 +145,7 @@ export function TerminalChatBar() {
           });
           return;
         }
-        // First-time: open picker so they pick once
+        // Always open picker — never auto-bind last product (multi-product safety)
         notifyOpenRepoPicker();
       })();
     };
@@ -183,19 +174,11 @@ export function TerminalChatBar() {
         return true;
       }
     }
-    // Auto-bind sticky default_repo from first ship when nothing is selected yet.
+    // Do NOT auto-bind sticky default_repo here — that silently targets the wrong product
+    // when starting a new build. Updates get sticky only when the chat layer detects an update.
     try {
       const status = await api.github.status();
       setGithubConnected(status.connected);
-      if (status.connected && status.defaultRepo?.includes('/')) {
-        const selected = (await import('@/lib/repoContext')).getSelectedRepoContext();
-        if (!selected?.repo?.includes('/')) {
-          const { saveSelectedRepoContext } = await import('@/lib/repoContext');
-          const { notifyGithubRepoContext } = await import('@/lib/githubProjectEvents');
-          saveSelectedRepoContext({ repo: status.defaultRepo, branch: 'main' });
-          notifyGithubRepoContext(status.defaultRepo, 'main');
-        }
-      }
     } catch {
       /* gate will handle */
     }

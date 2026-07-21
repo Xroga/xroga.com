@@ -122,8 +122,15 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
         } catch { /* ignore */ }
       }
 
-      const defaultRepo =
-        savedRepo && list.some((r) => r.fullName === savedRepo)
+      const { hasFreshTerminalIntent } = await import('@/lib/repoContext');
+      const freshTerminal = hasFreshTerminalIntent();
+
+      // Fresh Terminal: never auto-bind sticky default — user must pick (or leave empty for new product).
+      const defaultRepo = freshTerminal
+        ? savedRepo && list.some((r) => r.fullName === savedRepo)
+          ? savedRepo
+          : null
+        : savedRepo && list.some((r) => r.fullName === savedRepo)
           ? savedRepo
           : status.defaultRepo && list.some((r) => r.fullName === status.defaultRepo)
             ? status.defaultRepo
@@ -148,6 +155,9 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
         } else {
           globalThis.setTimeout(runAnalyze, 200);
         }
+      } else if (freshTerminal) {
+        // Keep selection cleared for a new product
+        setSelectedBranch('main');
       }
     } catch {
       setConnected(false);

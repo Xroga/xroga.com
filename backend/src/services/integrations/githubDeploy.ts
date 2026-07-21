@@ -682,7 +682,15 @@ async function deployToVercelWithUserToken(
       console.log(`[vercel] synced ${envSync.upserted.length} env var(s) to project ${projectSlug}`);
     }
   } catch (err) {
-    console.warn('[vercel] env sync skipped:', (err as Error).message);
+    const msg = (err as Error).message;
+    console.warn('[vercel] env sync skipped:', msg);
+    envSync = {
+      ok: false,
+      projectName: projectSlug,
+      upserted: [],
+      skipped: [],
+      error: msg.slice(0, 240),
+    };
   }
 
   const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
@@ -764,6 +772,7 @@ export interface PlatformDeployResult {
   vercelDeploymentId?: string;
   netlifyDeployId?: string;
   error?: string;
+  envSync?: VercelEnvSyncResult;
 }
 
 /** Deploy to user's Vercel account when connected; otherwise skip platform deploy. */
@@ -780,12 +789,14 @@ export async function deployToAllPlatforms(
   vercelDeploymentId?: string;
   netlifyDeployId?: string;
   deployError?: string;
+  envSync?: VercelEnvSyncResult;
 }> {
   const staticFiles = hostingDeployFiles(files);
   const errors: string[] = [];
 
   let vercel: PlatformDeployResult | undefined;
   let netlify: PlatformDeployResult | undefined;
+  let envSync: VercelEnvSyncResult | undefined;
 
   const userVercelToken = userId ? await getVercelToken(userId) : null;
 
@@ -793,10 +804,12 @@ export async function deployToAllPlatforms(
     try {
       const result = await deployToVercelWithUserToken(userId, projectSlug, staticFiles);
       const verified = await verifyLivePreviewUrl(result.deployUrl);
+      envSync = result.envSync;
       vercel = {
         deployUrl: result.deployUrl,
         deployVerified: verified,
         vercelDeploymentId: result.vercelDeploymentId,
+        envSync: result.envSync,
       };
       if (!verified) errors.push('Vercel URL failed verification');
     } catch (err) {
@@ -827,6 +840,7 @@ export async function deployToAllPlatforms(
     deployVerified: Boolean(vercel?.deployVerified),
     vercelDeploymentId: vercel?.vercelDeploymentId,
     deployError: primary ? undefined : errors.join(' · '),
+    envSync,
   };
 }
 

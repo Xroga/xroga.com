@@ -70,6 +70,7 @@ function CallbackHandler() {
           autoSelected: Boolean(res.autoSelected),
           provisioned: Boolean(res.provision?.schemaApplied || res.status?.provisioned),
           message: msg,
+          envSync: (res as { envSync?: { ok?: boolean; error?: string } }).envSync,
         };
         publishOAuthResult(payload);
 

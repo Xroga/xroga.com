@@ -38,6 +38,20 @@ describe('computeShipOutcome', () => {
     assert.equal(o.statusLabel, 'Shipped');
   });
 
+  it('web env sync failure blocks fullyShipped', () => {
+    const o = computeShipOutcome({
+      ...base,
+      kind: 'nextjs',
+      deployUrl: 'https://example.vercel.app',
+      liveOk: true,
+      envSyncOk: false,
+      envSyncError: 'project not found',
+    });
+    assert.equal(o.fullyShipped, false);
+    assert.ok(o.shipBlockers.some((b) => /env sync/i.test(b)));
+    assert.ok(o.verifyLines.some((l) => /env sync failed/i.test(l)));
+  });
+
   it('chrome zip is handoff; CWS submit is fullyShipped', () => {
     const missing = computeShipOutcome({
       ...base,
