@@ -86,6 +86,8 @@ export interface StreamSwarmOptions {
   };
   onProgress?: (event: SwarmProgressEvent) => void;
   onDelta?: (delta: string) => void;
+  /** Early code delivery — show preview before GitHub/Vercel finish. */
+  onPreview?: (event: SwarmCompleteEvent & { shipPending?: boolean }) => void;
   onComplete?: (event: SwarmCompleteEvent & { followUps?: string[] }) => void;
 }
 
@@ -177,7 +179,14 @@ export async function streamSwarmExecute(
 
       if (!dataLine) continue;
 
-      const payload = JSON.parse(dataLine) as Record<string, unknown>;
+      let payload: Record<string, unknown>;
+      try {
+        payload = JSON.parse(dataLine) as Record<string, unknown>;
+      } catch {
+        // Truncated/oversized SSE chunk — skip; preview/complete may still arrive
+        console.warn('[streamSwarmExecute] skipped malformed SSE chunk');
+        continue;
+      }
 
       if (eventName === 'error' || payload.error) {
         if (payload.code === 'OUT_OF_ACTIONS') {
@@ -205,6 +214,11 @@ export async function streamSwarmExecute(
       if (eventName === 'delta' && typeof payload.delta === 'string' && payload.delta) {
         finalText += payload.delta;
         options.onDelta?.(payload.delta);
+      }
+
+      if (eventName === 'preview') {
+        const preview = payload as SwarmCompleteEvent & { shipPending?: boolean };
+        options.onPreview?.(preview);
       }
 
       if (eventName === 'complete') {

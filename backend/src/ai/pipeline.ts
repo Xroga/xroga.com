@@ -599,6 +599,8 @@ export async function runBuildPipeline(opts: {
   attachments?: ChatAttachment[];
   onProgress?: ProgressFn;
   onDelta?: DeltaFn;
+  /** Fired as soon as generated files exist — UI must show code before ship finishes. */
+  onCodeReady?: (output: Record<string, unknown>) => void;
   signal?: AbortSignal;
 }): Promise<BuildPipelineResult> {
   const runId = randomUUID();
@@ -1397,6 +1399,50 @@ export async function runBuildPipeline(opts: {
   const isNonWebProduct = isNonWebFrameworkScaffold(productScaffoldKind);
 
   previousFiles = prior.files.length ? prior.files : landingFilesFromOutput('', '', '');
+
+  // Deliver code to the client IMMEDIATELY — do not wait for QA/GitHub/Vercel.
+  // Users were billed for LLM then saw "Connecting…" until the ship phase dropped SSE.
+  {
+    const readySite = filesToSite(nextFiles);
+    const previewOutput: Record<string, unknown> = {
+      type: 'landing_page',
+      html: readySite.html,
+      css: readySite.css,
+      js: readySite.js,
+      projectName,
+      generatedFiles: nextFiles.map((f) => f.path),
+      fileCount: nextFiles.length,
+      scaffoldKind: productScaffoldKind,
+      userPrompt: userFacingPrompt,
+      isUpdate,
+      shipPending: true,
+      buildOk: true,
+      message: isUpdate
+        ? `Updated **${projectName}** — preview ready; finishing GitHub/Vercel…`
+        : `**${projectName}** code ready — preview below; finishing GitHub/Vercel…`,
+      changesSummary: [
+        `Generated ${nextFiles.length} file(s)`,
+        detectScaffoldKind(userFacingPrompt) !== 'static'
+          ? `Scaffold: ${productScaffoldKind}`
+          : 'Static landing',
+        'Ship in progress (GitHub / Vercel)',
+      ],
+      modelLabel: MODELS[result.modelId].label,
+    };
+    try {
+      opts.onCodeReady?.(previewOutput);
+    } catch (err) {
+      console.warn('[pipeline] onCodeReady failed:', (err as Error).message);
+    }
+    emit({
+      agent: 'builder',
+      status: 'code_ready',
+      message: `${projectName} — code ready (shipping next)`,
+      swarmStatusLabel: 'Preview ready',
+      swarmActivity: `${nextFiles.length} files`,
+      swarmTodos: todos('build'),
+    });
+  }
 
   // QA review loop
   emit({

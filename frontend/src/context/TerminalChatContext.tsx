@@ -1944,6 +1944,49 @@ export function TerminalChatProvider({
               m.map((msg) => (msg.id === assistantId ? { ...msg, content: msg.content + delta } : msg))
             );
           },
+          onPreview: (preview) => {
+            // LLM finished — show code NOW (do not wait for GitHub/Vercel complete)
+            const output = preview.output as Record<string, unknown> | undefined;
+            if (!output || output.type !== 'landing_page') return;
+            const landingHtml = String((output as { html?: string }).html ?? '').trim();
+            const gen = (output as { generatedFiles?: unknown }).generatedFiles;
+            const hasFiles =
+              landingHtml.length > 40 ||
+              (Array.isArray(gen) && gen.length > 0);
+            if (!hasFiles) return;
+            gotEvent = true;
+            buildHadVisibleResult = true;
+            setPipelineMessage('Preview ready — finishing GitHub / Vercel…');
+            setMessages((m) =>
+              m.map((msg) =>
+                msg.id === assistantId
+                  ? {
+                      ...msg,
+                      content: '',
+                      featureOutput: { ...output, shipPending: true, type: 'landing_page' },
+                    }
+                  : msg
+              )
+            );
+            void import('@/store/useProjectWorkspaceStore').then(({ useProjectWorkspaceStore }) => {
+              const ws = useProjectWorkspaceStore.getState();
+              const projectName =
+                (typeof output.projectName === 'string' && output.projectName.trim()) ||
+                ws.projectName ||
+                'Your project';
+              ws.applyBuild({
+                projectName,
+                html: String(output.html ?? ''),
+                css: String(output.css ?? ''),
+                js: String(output.js ?? ''),
+                status: 'updating',
+                changesSummary: Array.isArray(output.changesSummary)
+                  ? (output.changesSummary as string[])
+                  : ['Preview ready — shipping…'],
+                openPreview: true,
+              });
+            });
+          },
           onComplete: (complete) => {
             if (complete.tokenUsage) {
               const tu = complete.tokenUsage;
@@ -2554,11 +2597,24 @@ export function TerminalChatProvider({
         }
         setMessages((m) => {
           const existing = m.find((msg) => msg.id === assistantId);
+          const fo = existing?.featureOutput as { type?: string; html?: string } | undefined;
           const hasFeature =
-            existing?.featureOutput &&
-            typeof existing.featureOutput === 'object' &&
-            (existing.featureOutput as { type?: string }).type === 'landing_page';
-          if (hasFeature) return m.filter((msg) => msg.id !== assistantId || Boolean(msg.content?.trim()));
+            fo?.type === 'landing_page' &&
+            (typeof fo.html === 'string' ? fo.html.trim().length > 40 : true);
+          // Keep preview if LLM already delivered code — connection loss after that is ship-only
+          if (hasFeature || buildHadVisibleResult) {
+            return m.map((msg) =>
+              msg.id === assistantId
+                ? {
+                    ...msg,
+                    content:
+                      msg.content?.trim() ||
+                      '⚠️ **Ship connection interrupted** after your preview was ready. Check GitHub for pushed files, or tap Retry to finish deploy.',
+                    featureOutput: msg.featureOutput,
+                  }
+                : msg
+            );
+          }
           const friendly = codeBuildActive
             ? isBuildUpdateEarly
               ? '⚠️ **Update interrupted.** Keep this chat open and retry — we patch your current preview (night/day, buttons, copy) without rebuilding from scratch. If it keeps failing, reconnect under Integrations and try again.'

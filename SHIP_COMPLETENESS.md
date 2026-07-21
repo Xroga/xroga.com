@@ -63,6 +63,8 @@ Wall-clock = model latency + research + GitHub + Vercel/EAS. Elapsed UI counter 
 
 **Stall / progress fix:** Workspace to-dos used different IDs than the backend pipeline, so the UI could freeze on “Analyze…” while OpenRouter was still working. Frontend now bridges `convert`→`analyze`, `architect`→`plan`, `build`→`code-gen`, etc. Simple static landings skip the LLM Architect (deterministic plan). Architect LLM waits are capped at 45s then continue to builder. Role chips get `negotiationPhase` from each agent. Banners tell you to press **Stop** (waiting is not billed; client does not silently kill paid calls).
 
+**Code delivery fix:** LLM finish used to wait for QA + GitHub + Vercel before SSE `complete`, and `complete` included full `projectFiles` (often megabytes) — proxies dropped the stream after spend with no UI result. Pipeline now emits SSE `preview` as soon as files exist; `complete` is slimmed (`slimOutputForSse`); client disconnect after preview no longer aborts ship.
+
 ### Env sync honesty
 Vault → Vercel failures **block `fullyShipped`**, surface in **Integrations toasts**, and appear on the live **TerminalBuildReport** as `Env sync · failed` / `Blocker · …` status lines when present on the run output.
 
