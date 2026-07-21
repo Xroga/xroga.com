@@ -56,8 +56,8 @@ describe('computeShipOutcome', () => {
     });
     assert.equal(ready.fullyShipped, false);
     assert.equal(ready.handoffReady, true);
-    assert.equal(ready.statusLabel, 'Artifact ready');
-    assert.match(ready.statusMessage, /not CWS/i);
+    assert.equal(ready.statusLabel, 'Ready to install');
+    assert.match(ready.statusMessage, /Load unpacked|install/i);
   });
 
   it('electron zip is handoffReady but never fullyShipped', () => {
@@ -78,7 +78,8 @@ describe('computeShipOutcome', () => {
     });
     assert.equal(yes.fullyShipped, false);
     assert.equal(yes.handoffReady, true);
-    assert.match(yes.statusMessage, /not store/i);
+    assert.equal(yes.statusLabel, 'Ready to run');
+    assert.match(yes.statusMessage, /npm install/i);
   });
 
   it('expo github path is handoff only — never store-shipped', () => {
@@ -91,8 +92,8 @@ describe('computeShipOutcome', () => {
     assert.equal(o.fullyShipped, false);
     assert.equal(o.handoffReady, true);
     assert.equal(o.statusLabel, 'Source ready');
-    assert.ok(o.nextSteps.some((s) => /App Store|Play/i.test(s)));
-    assert.ok(o.verifyLines.some((l) => /Not published to App Store/i.test(l)));
+    assert.ok(o.nextSteps.some((s) => /Connect Expo|EAS/i.test(s)));
+    assert.ok(o.verifyLines.some((l) => /App Store|Play/i.test(l)));
   });
 
   it('qa critical blocks buildOk', () => {

@@ -153,26 +153,32 @@ export function PostBuildDashboard({
     missingItems.push('Live URL optional — connect Vercel or use sandbox preview below');
   }
   if (isExpoApp) {
-    missingItems.push(
-      'Mobile: source/Expo Go handoff only — Connect Expo → Start EAS workflow (not one-click App Store/Play publish)',
-    );
+    if (data.easUrl) {
+      missingItems.push(
+        'Mobile: EAS build started — open the run for your installable binary. App Store/Play submit needs credentials in Expo (you pay fees).',
+      );
+    } else {
+      missingItems.push(
+        'Mobile: Connect Expo once in Publish — next ship auto-links EAS and starts a build',
+      );
+    }
   }
   if (isChromeExtension) {
     if (data.chromeZipDownloadUrl) {
       missingItems.push(
-        'Chrome: download extension.zip → sideload free, or upload to CWS yourself (~$5). Xroga does not publish to the store.',
+        'Chrome: Download extension.zip → chrome://extensions → Developer mode → Load unpacked. Optional CWS listing (~$5) is on you.',
       );
     } else {
-      missingItems.push('Chrome: sideload from GitHub, or wait for extension.zip on Releases / npm run zip');
+      missingItems.push('Chrome: wait for extension.zip on Releases, then Load unpacked');
     }
   }
   if (isElectronApp) {
-    if (data.desktopActionsUrl || data.desktopReleasesUrl) {
+    if (data.desktopZipDownloadUrl) {
       missingItems.push(
-        'Desktop: unsigned zip from Releases for testing — code signing / store submission are separate and on you',
+        'Desktop: Download desktop.zip → npm install && npm start. Signing / stores are optional next steps on your accounts.',
       );
     } else {
-      missingItems.push('Desktop: npm start locally, or open GitHub Actions / Releases for the unsigned zip');
+      missingItems.push('Desktop: download zip from Releases when ready, or npm start from the repo');
     }
   }
   if (siteAudit.issues.some((i) => i.severity === 'critical')) {
@@ -192,11 +198,13 @@ export function PostBuildDashboard({
                   : 'Project shipped'
                 : data.handoffReady
                   ? isChromeExtension
-                    ? 'Extension artifact ready'
+                    ? 'Extension ready to install'
                     : isElectronApp
-                      ? 'Desktop artifact ready'
+                      ? 'Desktop ready to run'
                       : isExpoApp
-                        ? 'Mobile source ready'
+                        ? data.easUrl
+                          ? 'Mobile EAS build started'
+                          : 'Mobile source ready'
                         : 'Handoff ready'
                   : data.buildOk === false
                     ? 'Build needs attention'

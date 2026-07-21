@@ -113,26 +113,26 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
 
   if (input.kind === 'chrome' && handoffReady) {
     nextSteps.push(
-      'Sideload free, or upload extension.zip to Chrome Web Store yourself (~$5). Xroga does not publish to CWS.',
+      'Install: chrome://extensions → Developer mode → Load unpacked (unzip first) — or upload extension.zip to Chrome Web Store (~$5, you pay).',
     );
   }
   if (input.kind === 'electron' && handoffReady) {
     nextSteps.push(
-      'Unsigned zip is for download/testing only. Code signing and Mac/Microsoft Store submission are on you.',
+      'Run: unzip desktop.zip → npm install && npm start. Optional unsigned Linux binary builds on GitHub Actions. Code signing / stores stay on you.',
     );
   }
   if (input.kind === 'expo' && input.githubPushConfirmed) {
     if (input.easTriggered) {
       nextSteps.push(
         input.easUrl
-          ? `EAS workflow started — watch ${input.easUrl}. Store submission only works if credentials are set in Expo/EAS (pasting JSON here does not auto-submit).`
-          : 'EAS workflow started. Store submission only if Expo/EAS already has store credentials configured.',
+          ? `EAS build running — open ${input.easUrl}. When green, install the binary / submit from Expo (store fees on you).`
+          : 'EAS build started on your Expo account — open expo.dev builds when ready.',
       );
     } else {
       nextSteps.push(
         input.easError
-          ? `EAS not started: ${input.easError}. Publish → Connect Expo → Start EAS workflow (not one-click store publish).`
-          : 'Source on GitHub / Expo Go only — App Store & Play are not done. Publish → Connect Expo → start EAS build workflow.',
+          ? `EAS not started: ${input.easError}. Publish → Connect Expo (one token) — next ship auto-starts the build.`
+          : 'Connect Expo in Publish (access token) — next ship auto-links EAS and starts an Android build.',
       );
     }
   }
@@ -155,25 +155,25 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
   if (input.kind === 'chrome') {
     verifyLines.push(
       input.chromeZipOk
-        ? '✅ extension.zip on GitHub Releases (sideload / manual CWS upload)'
+        ? '✅ extension.zip on GitHub Releases — ready to install / sideload'
         : '❌ extension.zip not on Releases',
     );
-    verifyLines.push('ℹ️ Chrome Web Store publish is manual — not done by Xroga');
+    verifyLines.push('ℹ️ Chrome Web Store listing (~$5) is optional and on your account');
   } else if (input.kind === 'electron') {
     verifyLines.push(
       input.electronZipOk
-        ? '✅ Unsigned desktop .zip downloadable on Releases'
-        : '❌ Desktop .zip not ready yet',
+        ? '✅ desktop.zip ready — npm install && npm start'
+        : '❌ Desktop zip not ready yet',
     );
-    verifyLines.push('ℹ️ Not code-signed / not Mac App Store / Microsoft Store');
+    verifyLines.push('ℹ️ Code signing / Mac App Store / Microsoft Store are optional next steps');
   } else if (input.kind === 'expo') {
-    verifyLines.push('✅ Code on GitHub (Expo Go / source handoff)');
+    verifyLines.push('✅ Code on GitHub');
     verifyLines.push(
       input.easTriggered
-        ? '✅ EAS workflow dispatched (build handoff — not store-approved)'
-        : 'ℹ️ EAS / App Store / Play not run',
+        ? '✅ EAS build started on your Expo account'
+        : 'ℹ️ Connect Expo to auto-start EAS builds on ship',
     );
-    verifyLines.push('❌ Not published to App Store or Google Play');
+    verifyLines.push('ℹ️ App Store / Play submission uses your Apple/Google accounts + fees');
   } else {
     if (input.deployUrl) {
       verifyLines.push(
@@ -197,16 +197,16 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
     statusLabel = 'Shipped';
   } else if (handoffReady) {
     if (input.kind === 'chrome') {
-      statusMessage = 'Extension artifact ready — zip on GitHub Releases (not CWS-published)';
-      statusLabel = 'Artifact ready';
+      statusMessage = 'Extension ready — download zip and Load unpacked in Chrome';
+      statusLabel = 'Ready to install';
     } else if (input.kind === 'electron') {
-      statusMessage = 'Unsigned desktop zip ready — not store-signed or store-published';
-      statusLabel = 'Artifact ready';
+      statusMessage = 'Desktop ready — download zip, then npm install && npm start';
+      statusLabel = 'Ready to run';
     } else if (input.kind === 'expo') {
       statusMessage = input.easTriggered
-        ? 'Mobile source on GitHub + EAS workflow started — not App Store/Play published'
-        : 'Mobile source on GitHub (Expo Go) — not App Store/Play published';
-      statusLabel = input.easTriggered ? 'Source + EAS handoff' : 'Source ready';
+        ? 'Mobile build started on EAS — watch the run for your installable binary'
+        : 'Mobile source on GitHub — Connect Expo to auto-build with EAS';
+      statusLabel = input.easTriggered ? 'EAS building' : 'Source ready';
     } else {
       statusMessage = 'Handoff ready';
       statusLabel = 'Handoff ready';
