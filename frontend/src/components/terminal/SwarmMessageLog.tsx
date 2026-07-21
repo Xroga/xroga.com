@@ -7,6 +7,8 @@ import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { ProcessingLogo } from '@/components/layout/ProcessingLogo';
+import { BlackHoleLoader } from '@/components/ui/BlackHoleLoader';
+import { ResearchPagesLoader } from '@/components/ui/ResearchPagesLoader';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
@@ -18,6 +20,7 @@ import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { UpdateFileTrail } from './UpdateFileTrail';
 import { WebSourcesPanel } from './WebSourcesPanel';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
+import { promptWantsLiveResearch } from '@/lib/researchWait';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -247,6 +250,13 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
 
   const buildPanelMessageId = heavyAssistantId ?? animatingId;
 
+  const researchTodoActive = swarmTodos.some(
+    (t) => t.id === 'research' && t.status === 'active'
+  );
+  const lightResearchWait =
+    loading && !heavyBuildActive && promptWantsLiveResearch(lastUserText);
+  const showResearchPages = lightResearchWait || researchTodoActive;
+
   function handleEditAI(content: string) {
     setPrompt(content);
     toast('AI text loaded — edit and press GO');
@@ -342,14 +352,18 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   )
                 )}
                 {msg.role === 'assistant' && (
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
-                    <ProcessingLogo
-                      variant="response"
-                      height={28}
-                      processing={loading && msg.id === animatingId}
-                      className="!w-7 !h-7 sm:!w-8 sm:!h-8"
-                    />
-                  </div>
+                  loading && msg.id === animatingId ? (
+                    <BlackHoleLoader size="sm" className="shrink-0 mt-0.5" />
+                  ) : (
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
+                      <ProcessingLogo
+                        variant="response"
+                        height={28}
+                        processing={false}
+                        className="!w-7 !h-7 sm:!w-8 sm:!h-8"
+                      />
+                    </div>
+                  )
                 )}
                 <div
                   className={cn(
@@ -373,6 +387,19 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
+                        {showResearchPages &&
+                          msg.id === (buildPanelMessageId ?? animatingId) &&
+                          loading &&
+                          !msg.content?.trim() && (
+                            <ResearchPagesLoader className="my-2" />
+                          )}
+                        {!showResearchPages &&
+                          !heavyBuildActive &&
+                          loading &&
+                          msg.id === animatingId &&
+                          !msg.content?.trim() && (
+                            <BlackHoleLoader size="md" className="my-3" />
+                          )}
                         {heavyBuildActive &&
                           buildPanelMessageId &&
                           msg.id === buildPanelMessageId &&
@@ -474,6 +501,12 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           msg.id === buildPanelMessageId &&
                           !msg.content?.trim() &&
                           (msg.featureOutput || swarmTodos.length > 0) ? null : msg.updateTrail &&
+                          !msg.content?.trim() ? null : showResearchPages &&
+                          msg.id === (buildPanelMessageId ?? animatingId) &&
+                          loading &&
+                          !msg.content?.trim() ? null : !heavyBuildActive &&
+                          loading &&
+                          msg.id === animatingId &&
                           !msg.content?.trim() ? null : (
                           <ModernResponseText
                             content={
