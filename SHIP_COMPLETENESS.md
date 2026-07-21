@@ -22,6 +22,28 @@
 | Research (Grok / Tavily / SearXNG) | **Real** or honest skip |
 | Chrome / Electron / Expo ship automation | **Real**; store approval is external |
 | Free AI proxy inside user apps | **Not real** (retired; BYOK on the user’s Vercel) |
+| Legacy `/chat` + `/api/v1` estimate/catalog chat | **Retired (410)** — no follow-ups, no ship; Workspace uses `/api/swarm/execute` only |
+
+## Product categories the swarm builds (scaffolds)
+| Category | Scaffold | Typical prompt |
+|----------|----------|----------------|
+| Website / landing | `static` or `nextjs` | “Build a landing page for …” |
+| Chatbot site | `nextjs` + `/api/chat` (BYOK) | “Build a chatbot landing page …” |
+| SaaS / dashboard | `nextjs` | “Build a SaaS dashboard with auth …” |
+| Mobile | `expo` | “Build an Expo Android/iOS app …” |
+| Chrome extension | `chrome` | “Build a Chrome MV3 extension …” |
+| Desktop | `electron` | “Build an Electron desktop app …” |
+| Feature packs | crypto / agent overlays on Next | Detected from prompt when relevant |
+
+## Build time (honest — no wall-clock SLA)
+There is **no fixed “old vs new minutes” timer** in product code. Economics (`/api/phase1/economics`) sizes builds by **tokens/cost**, not clock time:
+| Tier | Approx tokens | Approx API $ | Example |
+|------|---------------|--------------|---------|
+| Simple | ~20k | ~$0.11 | Simple web / landing |
+| Medium | ~150k | ~$0.81 | Full-stack SaaS |
+| Complex | ~600k | ~$3.24 | Game / crypto platform |
+
+Wall-clock depends on model latency, research, GitHub push, and Vercel deploy. A chatbot landing is usually **simple→medium**. **Old** simpleChat/`/chat` did not reliably ship or handle follow-ups; **new** swarm path applies SEARCH/REPLACE patches on the sticky repo for follow-ups.
 
 ## Safety hardenings (ship correctness)
 - Patch apply is **all-or-nothing** (primary + recovery + QA) — never half-apply SEARCH/REPLACE onto a sticky live repo

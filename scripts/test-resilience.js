@@ -57,8 +57,8 @@ function testNoLeakage() {
 }
 
 function testFeatureCatalogCount() {
-  // Verify catalog file exists with 98 entries (checked at build time via import in backend)
-  ok('Feature catalog module present (98 features in backend/src/config/featureCatalog.ts)');
+  // Legacy 98-feature action catalog retired — Workspace uses real swarm scaffolds only.
+  ok('Legacy feature-catalog UI retired; swarm scaffolds remain the product surface');
 }
 
 async function main() {

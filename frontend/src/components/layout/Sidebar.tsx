@@ -26,7 +26,6 @@ import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
 import { DownloadAppButton } from '@/components/ui/DownloadAppButton';
-import { SidebarCommunityButton } from '@/components/layout/SidebarCommunityButton';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/lib/supabase/client';
@@ -220,7 +219,6 @@ export function Sidebar({ displayName }: SidebarProps) {
 
   const bottomSection = (
     <div className="p-2 mt-auto space-y-2 xv-sidebar-bottom">
-      <SidebarCommunityButton expanded={navExpanded} />
       {navExpanded && (
         <div className="flex items-stretch gap-1.5">
           <div className="flex-1 min-w-0">
