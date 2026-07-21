@@ -87,6 +87,8 @@ import {
   syncGooglePlayCredentialsToExpo,
   syncAppleAscApiKeyToExpo,
   waitForEasBuildArtifact,
+  listEasBuilds,
+  packageIdFromProjectName,
 } from '../services/publish/easCredentials.js';
 import { chromeExtensionZipFilter, packageBuildZip } from '../services/scaffolds/packageBuildZip.js';
 import { ensureScaffoldIntegrity } from '../services/scaffolds/scaffoldIntegrity.js';
@@ -1784,6 +1786,7 @@ export async function runBuildPipeline(opts: {
   let desktopActionsUrl: string | undefined;
   let desktopReleasesUrl: string | undefined;
   let desktopZipDownloadUrl: string | undefined;
+  let desktopInstallerDownloadUrl: string | undefined;
   let electronReleaseError: string | undefined;
   let chromeZipOk = false;
   let electronZipOk = false;
@@ -1973,12 +1976,13 @@ export async function runBuildPipeline(opts: {
           },
         });
         if (waited.ok && waited.zipDownloadUrl) {
-          electronZipOk = true;
           electronInstallerOk = Boolean(
             waited.installerUrls?.some((u) => /\.(exe|AppImage|dmg|msi)(\?|$)/i.test(u)) ||
               /\.(exe|AppImage|dmg|msi)(\?|$)/i.test(waited.zipDownloadUrl),
           );
-          desktopZipDownloadUrl = waited.zipDownloadUrl;
+          desktopInstallerDownloadUrl = waited.zipDownloadUrl;
+          // Keep portable desktop.zip URL; installer is a separate download
+          if (!desktopZipDownloadUrl) desktopZipDownloadUrl = waited.zipDownloadUrl;
           if (waited.releaseUrl) desktopReleasesUrl = waited.releaseUrl;
           emit({
             agent: 'deploy',
@@ -2024,8 +2028,13 @@ export async function runBuildPipeline(opts: {
       // Best-effort: push store credentials into Expo before submit
       const google = await getUserProviderKey(opts.userId, 'google_play').catch(() => null);
       const appleAsc = await getUserProviderKey(opts.userId, 'apple_asc_api').catch(() => null);
+      const pkgId = packageIdFromProjectName(projectName);
       if (google) {
-        const synced = await syncGooglePlayCredentialsToExpo({ userId: opts.userId });
+        const synced = await syncGooglePlayCredentialsToExpo({
+          userId: opts.userId,
+          applicationIdentifier: pkgId,
+          projectName,
+        });
         emit({
           agent: 'deploy',
           status: synced.ok ? 'eas_creds' : 'eas_creds_skip',
@@ -2036,7 +2045,11 @@ export async function runBuildPipeline(opts: {
         });
       }
       if (appleAsc) {
-        const syncedApple = await syncAppleAscApiKeyToExpo({ userId: opts.userId });
+        const syncedApple = await syncAppleAscApiKeyToExpo({
+          userId: opts.userId,
+          bundleIdentifier: pkgId,
+          projectName,
+        });
         emit({
           agent: 'deploy',
           status: syncedApple.ok ? 'eas_apple_creds' : 'eas_apple_creds_skip',
@@ -2049,6 +2062,10 @@ export async function runBuildPipeline(opts: {
 
       const wantAndroidSubmit = Boolean(google);
       const wantIosSubmit = Boolean(appleAsc);
+      const priorBuilds = await listEasBuilds({ userId: opts.userId, limit: 10 }).catch(() => []);
+      const ignoreBuildIds = priorBuilds.map((b) => b.id);
+      const startedAfterMs = Date.now() - 15_000;
+
       emit({
         agent: 'deploy',
         status: 'eas_dispatch',
@@ -2084,6 +2101,8 @@ export async function runBuildPipeline(opts: {
             userId: opts.userId,
             platform: 'android',
             timeoutMs: 8 * 60 * 1000,
+            ignoreBuildIds,
+            startedAfterMs,
             onProgress: (msg) => {
               emit({
                 agent: 'deploy',
@@ -2151,6 +2170,38 @@ export async function runBuildPipeline(opts: {
               swarmActivity: easIos.url || easIos.fileName,
               swarmTodos: todos('push'),
             });
+            const waitedIos = await waitForEasBuildArtifact({
+              userId: opts.userId,
+              platform: 'ios',
+              timeoutMs: 6 * 60 * 1000,
+              ignoreBuildIds,
+              startedAfterMs,
+              onProgress: (msg) => {
+                emit({
+                  agent: 'deploy',
+                  status: 'eas_ios_waiting',
+                  message: msg,
+                  swarmStatusLabel: 'EAS iOS building',
+                  swarmActivity: easUrl || 'expo.dev',
+                  swarmTodos: todos('push'),
+                });
+              },
+            });
+            if (waitedIos.ok && waitedIos.build) {
+              easBuildOk = true;
+              if (!easArtifactUrl) {
+                easArtifactUrl =
+                  waitedIos.build.artifactUrl || waitedIos.build.buildDetailsPageUrl;
+              }
+              emit({
+                agent: 'deploy',
+                status: 'eas_ios_ready',
+                message: waitedIos.message,
+                swarmStatusLabel: 'EAS iOS ready',
+                swarmActivity: (easArtifactUrl || '').slice(0, 80) || 'artifact',
+                swarmTodos: todos('push'),
+              });
+            }
           } else {
             emit({
               agent: 'deploy',
@@ -2498,6 +2549,7 @@ export async function runBuildPipeline(opts: {
     desktopActionsUrl,
     desktopReleasesUrl,
     desktopZipDownloadUrl,
+    desktopInstallerDownloadUrl,
     electronInstallerOk,
     easTriggered,
     easUrl,
