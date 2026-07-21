@@ -222,7 +222,8 @@ export function XrogaAgentProcessingPanel({
 
       {loading && (
         <p className="text-[11px] text-[var(--muted)]/50">
-          Real API work in progress — if this stalls with no new to-dos, we auto-stop to protect your credits.
+          Real API work in progress — press <strong className="font-semibold">Stop</strong> if
+          to-dos stay frozen; waiting time does not add API charges.
         </p>
       )}
     </div>

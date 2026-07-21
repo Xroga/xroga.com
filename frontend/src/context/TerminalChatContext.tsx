@@ -1798,8 +1798,26 @@ export function TerminalChatProvider({
             if (event.agent) setSwarmActiveAgent(event.agent);
             // Prefer negotiationPhase so chips advance (userFacingPhase was often stuck at 1).
             const negPhase = swarmEv.negotiationPhase ?? swarmEv.userFacingPhase;
+            const agentPhase =
+              negPhase != null
+                ? negPhase
+                : event.agent === 'converter'
+                  ? 2
+                  : event.agent === 'architect'
+                    ? 3
+                    : event.agent === 'builder'
+                      ? 4
+                      : event.agent === 'qa' || event.agent === 'reviewer' || event.agent === 'compiler'
+                        ? 6
+                        : event.agent === 'security'
+                          ? 7
+                          : event.agent === 'deploy'
+                            ? 8
+                            : event.agent === 'research'
+                              ? 1
+                              : null;
             const prevPhase = liveBuildSnapshotRef.current.phase;
-            if (negPhase != null) setSwarmNegotiationPhase(negPhase);
+            if (agentPhase != null) setSwarmNegotiationPhase(agentPhase);
             let todosChanged = false;
             if (swarmEv.swarmTodos?.length) {
               const seeded = buildTodosSeedRef.current.length
@@ -1814,8 +1832,8 @@ export function TerminalChatProvider({
               liveBuildSnapshotRef.current.todos = merged;
               setSwarmTodos(merged);
             }
-            if (negPhase != null) {
-              liveBuildSnapshotRef.current.phase = negPhase;
+            if (agentPhase != null) {
+              liveBuildSnapshotRef.current.phase = agentPhase;
             }
             if (swarmEv.swarmStatusLabel) {
               setSwarmStatusLabel(sanitizeXrogaTerminalText(swarmEv.swarmStatusLabel));
@@ -1844,7 +1862,7 @@ export function TerminalChatProvider({
               pushSwarmTerminalLine(activityText);
             }
             // Stall clock only moves on real progress (todo/phase/activity), not heartbeats
-            if (realActivity || todosChanged || (negPhase != null && negPhase !== prevPhase)) {
+            if (realActivity || todosChanged || (agentPhase != null && agentPhase !== prevPhase)) {
               lastRealProgressAtRef.current = Date.now();
               lastActivityAtRef.current = Date.now();
             }
