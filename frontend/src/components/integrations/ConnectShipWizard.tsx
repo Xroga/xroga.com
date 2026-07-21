@@ -34,16 +34,33 @@ export function ConnectShipWizard() {
       const [gh, ve, keys, sb] = await Promise.all([
         api.github.status().catch(() => ({ connected: false })),
         api.vercel.status().catch(() => ({ connected: false })),
-        api.integrations.providerKeys().catch(() => ({ keys: [] as Array<{ provider?: string; connected?: boolean }> })),
-        api.supabase.status().catch(() => ({ ready: false, connected: false, provisioned: false })),
+        api.integrations
+          .providerKeys()
+          .catch(() => ({ keys: [] as Array<{ provider?: string; connected?: boolean }> })),
+        api.supabase.status().catch(() => ({
+          ready: false,
+          connected: false,
+          provisioned: false,
+          oauthConnected: false,
+        })),
       ]);
       setGithubOk(Boolean((gh as { connected?: boolean }).connected));
       setVercelOk(Boolean((ve as { connected?: boolean }).connected));
-      const list = (keys as { keys?: Array<{ provider?: string; connected?: boolean }> }).keys ?? [];
+      const list =
+        (keys as { keys?: Array<{ provider?: string; connected?: boolean }> }).keys ?? [];
       const connected = list.filter((k) => k.connected);
+      // Authorize alone is enough to tick — project pick/provision may still be needed next
+      const sbStatus = sb as {
+        oauthConnected?: boolean;
+        connected?: boolean;
+        ready?: boolean;
+        provisioned?: boolean;
+      };
       setSupabaseOk(
-        Boolean((sb as { provisioned?: boolean }).provisioned) ||
-          Boolean((sb as { ready?: boolean }).ready),
+        Boolean(sbStatus.oauthConnected) ||
+          Boolean(sbStatus.connected) ||
+          Boolean(sbStatus.provisioned) ||
+          Boolean(sbStatus.ready),
       );
       setKeysOk(
         connected.some(
@@ -87,9 +104,9 @@ export function ConnectShipWizard() {
       // Vercel success/error is handled by listenVercelOAuthMessages during Authorize
       // to avoid double toasts (storage + postMessage + poll).
       if (data.type === 'xroga-supabase-connected') {
-        if (data.provisioned) {
-          setSupabaseOk(true);
-        }
+        // OAuth succeeded — tick immediately (even if user still needs to pick a project)
+        setSupabaseOk(true);
+        setShowSupabase(true);
         void refresh();
       }
     });
@@ -109,6 +126,8 @@ export function ConnectShipWizard() {
       void refresh();
     }
     if (q.get('supabase') === 'connected') {
+      setSupabaseOk(true);
+      setShowSupabase(true);
       void refresh();
     }
     // Chatbar / OAuth session-store failure → land here with token paste ready
@@ -212,8 +231,9 @@ export function ConnectShipWizard() {
       stopSupabaseListen.current = listenSupabaseOAuthMessages(
         (result) => {
           stopSupabaseListen.current = null;
+          setSupabaseOk(true);
+          setShowSupabase(true);
           if (result.provisioned) {
-            setSupabaseOk(true);
             toast.success(result.message || 'Supabase ready');
           } else {
             toast.success(result.message || 'Supabase authorized — pick or create a project below');
@@ -291,11 +311,11 @@ export function ConnectShipWizard() {
     {
       id: 'supabase',
       title: '3. Supabase',
-      body: 'Authorize in a popup. We fetch keys and run SQL on your project. Create one here if you have none.',
+      body: 'Optional for static sites. Authorize, then pick/create a project so we can run schema + sync keys.',
       done: supabaseOk,
       optional: true,
       action: connectSupabase,
-      label: supabaseOk ? 'Connected' : 'Authorize',
+      label: supabaseOk ? 'Authorized' : 'Authorize',
     },
     {
       id: 'keys',
@@ -375,7 +395,7 @@ export function ConnectShipWizard() {
               type="button"
               disabled={(s.done && s.id !== 'keys' && s.id !== 'supabase') || busy === s.id}
               onClick={s.action}
-              className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--accent)] text-[var(--background)] disabled:opacity-50"
+              className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--accent)]/40 bg-[var(--accent)]/15 text-[var(--accent)] disabled:opacity-50 hover:bg-[var(--accent)]/25 transition-colors"
             >
               {busy === s.id ? 'Opening…' : s.label}
             </button>
@@ -410,7 +430,7 @@ export function ConnectShipWizard() {
               type="button"
               disabled={busy === 'vercel'}
               onClick={() => void saveVercelToken()}
-              className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--accent)] text-[var(--background)] disabled:opacity-50"
+              className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--accent)]/40 bg-[var(--accent)]/15 text-[var(--accent)] disabled:opacity-50"
             >
               {busy === 'vercel' ? 'Saving…' : 'Save token'}
             </button>

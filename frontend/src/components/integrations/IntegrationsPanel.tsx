@@ -10,7 +10,6 @@ import { ConnectedServicesSection } from '@/components/integrations/ConnectedSer
 import { CustomCredentialsSection } from '@/components/integrations/CustomCredentialsSection';
 import { IntegrationRequestBanner } from '@/components/integrations/IntegrationRequestBanner';
 import { ConnectShipWizard } from '@/components/integrations/ConnectShipWizard';
-import { PlatformReadyPanel } from '@/components/dashboard/PlatformReadyPanel';
 import { UserOwnedPublishPanel } from '@/components/publish/UserOwnedPublishPanel';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -233,11 +232,10 @@ export function IntegrationsPanel() {
           </span>
         </div>
         <p className="text-sm text-[var(--muted)] mt-1 font-coding">
-          Live connects only below. Expo is under Publish. Everything else is Coming soon (dropdown).
+          Connect GitHub + Vercel to ship. Supabase and AI keys are optional for static sites. Expo
+          credentials live under Publish.
         </p>
       </div>
-
-      <PlatformReadyPanel />
 
       <ConnectShipWizard />
 
