@@ -73,6 +73,7 @@ Vault → Vercel failures **block `fullyShipped`**, surface in **Integrations to
 |---------|--------|
 | Legacy `/chat` simpleChat + client `streamChatMessage` | Removed from frontend; backend retired **410** |
 | `/api/v1/estimate` + action-cost / 98-feature catalog UI | Removed |
+| Old thinking panels / ProcessingPipeline / role-chip marketing bar / ActionCost / XTerm / mood / council orbs | **Deleted** — Workspace shows real todos + activity + TerminalBuildReport only |
 | Free live-AI proxy inside user apps | Retired; BYOK only |
 | Video studio / legacy image gen in message output | Honest “removed” copy |
 | Store approval guarantees | Impossible in code |

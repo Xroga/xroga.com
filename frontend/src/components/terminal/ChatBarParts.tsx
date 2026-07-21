@@ -285,26 +285,3 @@ export function ChatBarToolChip({
     </button>
   );
 }
-
-export function ChatBarFuelMeter({
-  remaining,
-  estimate,
-  onClick,
-}: {
-  remaining: number;
-  estimate: number;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="xv-fuel-meter flex items-center gap-1 px-2 py-0.5 rounded-full border border-[var(--card-border)]/50 bg-white/[0.03] text-[9px] sm:text-[10px] font-terminal hover:border-[var(--accent)]/40 transition-colors shrink-0"
-    >
-      <span className="w-1 h-1 rounded-full bg-[var(--accent)]" />
-      <span className="font-semibold text-[var(--foreground)] whitespace-nowrap">
-        {remaining} actions · Est. {estimate}
-      </span>
-    </button>
-  );
-}

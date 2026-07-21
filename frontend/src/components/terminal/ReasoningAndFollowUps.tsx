@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import {
   extractImagesFromContent,
@@ -12,67 +12,6 @@ import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
 import { PlainAiResponse } from '@/lib/plainAiText';
 import { isMathSolutionContent } from '@/lib/mathDetect';
 import { ImageStudioCard } from './ImageStudioCard';
-
-interface ReasoningPanelProps {
-  reasoning?: string;
-  dag?: Array<{ id: string; description: string; agent: string }>;
-}
-
-export function ReasoningPanel({ reasoning, dag }: ReasoningPanelProps) {
-  const [open, setOpen] = useState(false);
-  if (!reasoning && !dag?.length) return null;
-
-  return (
-    <div className="mt-2">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="text-[10px] text-[var(--muted)] hover:text-[var(--primary)] underline-offset-2 hover:underline"
-      >
-        {open ? 'Hide reasoning' : 'Show reasoning'}
-      </button>
-      {open && (
-        <div className="mt-2 p-2.5 rounded-lg bg-black/20 border border-white/10 text-[11px] text-[var(--muted)] space-y-2">
-          {reasoning && <p className="italic">{reasoning}</p>}
-          {dag?.map((d) => (
-            <div key={d.id} className="flex gap-2">
-              <span className="text-[var(--primary)] font-mono">{d.id}.</span>
-              <span>
-                <strong className="text-[var(--foreground)]">{d.agent}</strong> — {d.description}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-interface FollowUpChipsProps {
-  items: string[];
-  onSelect: (text: string) => void;
-}
-
-export function FollowUpChips({ items, onSelect }: FollowUpChipsProps) {
-  if (!items.length) return null;
-  return (
-    <div className="flex flex-wrap gap-1.5 mt-2">
-      {items.map((item) => (
-        <button
-          key={item}
-          type="button"
-          onClick={() => onSelect(item)}
-          className={cn(
-            'text-[10px] px-2.5 py-1 rounded-full border border-[var(--accent)]/30',
-            'bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 text-[var(--foreground)] transition-colors'
-          )}
-        >
-          {item}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 function hasMarkdown(content: string): boolean {
   return /^#{1,4}\s/m.test(content) || /^\|.+\|/m.test(content) || /^[-*•]\s/m.test(content) || /^>\s/m.test(content);

@@ -73,7 +73,7 @@ export interface SwarmProgressEvent {
   heavyBusy?: boolean;
   /** Silent stream keepalive — not real progress; do not reset stall timers */
   keepalive?: boolean;
-  hackathonBrief?: import('@/components/terminal/HackathonBriefCard').HackathonBriefCardData;
+  hackathonBrief?: import('@/lib/hackathonBrief').HackathonBriefCardData;
 }
 
 export type SwarmTodoStatus = 'done' | 'active' | 'pending' | 'skipped';

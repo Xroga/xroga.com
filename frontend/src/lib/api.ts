@@ -1378,7 +1378,7 @@ export interface TokenUsage {
   planTier?: string;
 }
 
-import type { HackathonBriefCardData } from '@/components/terminal/HackathonBriefCard';
+import type { HackathonBriefCardData } from '@/lib/hackathonBrief';
 
 export interface Phase1ChatResult {
   response: string;

@@ -93,13 +93,3 @@ export function mediaTableRows(item: MediaItem, meta: ItemMeta): UiverseTableRow
     { left: 'recently seen', right: recentlyLabel(meta.seenAt) },
   ];
 }
-
-export function actionCostRows(
-  items: { task: string; cost: number }[],
-  budgetLine?: (task: string, cost: number) => string
-): UiverseTableRow[] {
-  return items.map((item) => ({
-    left: item.task,
-    right: budgetLine ? budgetLine(item.task, item.cost) : String(item.cost),
-  }));
-}

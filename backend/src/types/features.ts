@@ -327,31 +327,3 @@ export interface SwarmProgressEvent {
   /** Structured hackathon brief for requirement-aligned builds */
   hackathonBrief?: unknown;
 }
-
-export const FEATURE_ACTION_COSTS: Record<FeatureCategory, number> = {
-  chat: 1,
-  landing_page: 25,
-  image_generation: 4,
-  browser_automation: 5,
-  cross_post: 1,
-  key_creation: 5,
-  video_studio: 50,
-  deep_research: 100,
-  content_blocker: 1,
-  job_hunter: 90,
-  code_debug: 15,
-};
-
-export const FEATURE_TASK_TYPES: Record<FeatureCategory, TaskType> = {
-  chat: 'chat',
-  landing_page: 'website',
-  image_generation: 'image',
-  browser_automation: 'scrape',
-  cross_post: 'chat',
-  key_creation: 'chat',
-  video_studio: 'video',
-  deep_research: 'research',
-  content_blocker: 'chat',
-  job_hunter: 'scrape',
-  code_debug: 'code_fix',
-};
