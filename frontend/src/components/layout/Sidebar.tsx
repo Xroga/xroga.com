@@ -66,7 +66,7 @@ const navItems = [
     href: '/dashboard/publish',
     label: 'Publish',
     icon: Rocket,
-    tip: 'Ship web on your Vercel; mobile stores via your Expo/Apple/Google accounts.',
+    tip: 'Ship web (Vercel), Chrome extension, desktop installers, or mobile (Expo) on your accounts.',
   },
   {
     href: '/settings?tab=plan',

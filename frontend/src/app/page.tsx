@@ -48,10 +48,11 @@ const AI_FEATURES = [
 const HERO_BUILD_WORDS = [
   'Websites',
   'SaaS apps',
-  'Hackathon MVPs',
+  'Chrome extensions',
+  'Desktop apps',
+  'Mobile apps',
   'Landing pages',
   'Dashboards',
-  'Internal tools',
   'Your stack',
 ] as const;
 
@@ -129,8 +130,9 @@ export default function HomePage() {
           </p>
 
           <p className="xv-hc-sub">
-            Describe the product. Converter writes the brief. The swarm codes, debugs, pushes to
-            your GitHub, and deploys live on Vercel — then you iterate with follow-up prompts.
+            Describe the product. The swarm codes, debugs, and pushes to your GitHub — web goes live
+            on Vercel; Chrome / desktop ship as zips and installers; mobile builds on your Expo
+            account.
           </p>
 
           <div className="xv-hc-ctas">

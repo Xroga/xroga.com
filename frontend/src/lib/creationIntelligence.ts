@@ -7,6 +7,7 @@ export type CreationType =
   | 'website'
   | 'webapp'
   | 'mobile_app'
+  | 'chrome_extension'
   | 'game'
   | 'software'
   | 'api'
@@ -42,9 +43,16 @@ const TYPE_PATTERNS: Array<{ type: CreationType; label: string; patterns: RegExp
     ],
   },
   {
+    type: 'chrome_extension',
+    label: 'Chrome extension',
+    patterns: [
+      /\b(chrome\s*extension|browser\s*extension|mv3|manifest\.json|web\s*extension)\b/i,
+    ],
+  },
+  {
     type: 'mobile_app',
     label: 'Mobile app',
-    patterns: [/\b(mobile\s*app|ios\s*app|android\s*app|react\s*native|flutter|app\s*store|testflight|pwa)\b/i],
+    patterns: [/\b(mobile\s*app|ios\s*app|android\s*app|react\s*native|flutter|app\s*store|testflight|expo)\b/i],
   },
   {
     type: 'video',
@@ -60,7 +68,7 @@ const TYPE_PATTERNS: Array<{ type: CreationType; label: string; patterns: RegExp
     type: 'automation',
     label: 'Automation',
     patterns: [
-      /\b(automate|automation|scrape|scraping|playwright|puppeteer|browser|workflow|cron|schedule|bot)\b/i,
+      /\b(automate|automation|scrape|scraping|playwright|puppeteer|workflow|cron|schedule|bot)\b/i,
     ],
   },
   {
@@ -80,8 +88,8 @@ const TYPE_PATTERNS: Array<{ type: CreationType; label: string; patterns: RegExp
   },
   {
     type: 'software',
-    label: 'Software',
-    patterns: [/\b(desktop\s*app|electron|software|executable|installer|windows\s*app|mac\s*app|tool)\b/i],
+    label: 'Desktop app',
+    patterns: [/\b(desktop\s*app|electron|software|executable|installer|windows\s*app|mac\s*app)\b/i],
   },
   {
     type: 'research',
@@ -93,6 +101,9 @@ const TYPE_PATTERNS: Array<{ type: CreationType; label: string; patterns: RegExp
 export function detectCreationType(userText: string, aiText: string): CreationType {
   const user = userText.toLowerCase();
   if (/\b(build|create|make|design)\b/.test(user)) {
+    if (/\b(chrome\s*extension|browser\s*extension|mv3)\b/.test(user)) return 'chrome_extension';
+    if (/\b(electron|desktop\s*app)\b/.test(user)) return 'software';
+    if (/\b(expo|mobile\s*app|android|ios\s*app)\b/.test(user)) return 'mobile_app';
     if (/\b(website|web\s*page|landing|site|coffee|shop|restaurant|store)\b/.test(user)) {
       return 'website';
     }
@@ -117,6 +128,11 @@ const REFINE_BY_TYPE: Record<CreationType, string[]> = {
   website: ['Add contact form', 'Improve mobile layout', 'Add SEO meta tags'],
   webapp: ['Add user authentication', 'Add admin dashboard', 'Connect Supabase database'],
   mobile_app: ['Add push notifications', 'Improve onboarding', 'Add dark mode'],
+  chrome_extension: [
+    'Connect CWS credentials in Publish',
+    'Add options page',
+    'Tighten content-script permissions',
+  ],
   game: ['Add sound effects', 'Balance difficulty', 'Add leaderboard'],
   software: ['Add GitHub Releases zip', 'Document unsigned install', 'Add settings panel'],
   api: ['Add rate limiting', 'Write API docs', 'Add monitoring'],
@@ -132,6 +148,11 @@ const FOLLOWUP_BY_TYPE: Record<CreationType, string[]> = {
   website: ['Add a pricing section', 'Add online ordering', 'Make it responsive'],
   webapp: ['Add user login with Supabase', 'Add Lemon Squeezy payments', 'Add analytics dashboard'],
   mobile_app: ['Connect Expo in Publish', 'Add app icon & splash screen', 'Add offline mode'],
+  chrome_extension: [
+    'Download extension.zip and Load unpacked',
+    'Add popup UI',
+    'Submit to Chrome Web Store',
+  ],
   game: ['Add multiplayer', 'Publish playable demo', 'Add score leaderboard'],
   software: ['Tag v1.0.0 for GitHub Releases', 'Add installer docs', 'Add user settings'],
   api: ['Add Swagger docs', 'Set up staging environment', 'Add webhook endpoints'],
@@ -139,7 +160,12 @@ const FOLLOWUP_BY_TYPE: Record<CreationType, string[]> = {
   image: ['Build a portfolio site', 'Add an assets folder in the repo', 'Ship a landing page'],
   automation: ['Schedule daily cron on Vercel', 'Add Slack webhook docs', 'Export to CSV endpoint'],
   research: ['Expand bibliography', 'Fact-check claims', 'Export as PDF'],
-  chat: ['Build a landing page', 'Build a SaaS app', 'Build a Chrome extension'],
+  chat: [
+    'Build a landing page',
+    'Build a Chrome extension',
+    'Build an Electron desktop app',
+    'Build an Expo mobile app',
+  ],
   unknown: ['Add another feature', 'Improve the design', 'Tell me next steps'],
 };
 

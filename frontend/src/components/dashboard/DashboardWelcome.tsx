@@ -6,6 +6,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { getTimeGreetingKey, t } from '@/lib/i18n/translations';
 import { useLocale } from '@/components/providers/LanguageProvider';
 import { WorkspaceResumeList } from '@/components/dashboard/WorkspaceResumeList';
+import { ProductStartChips } from '@/components/terminal/ProductStartChips';
 import { claudeSerif, pixelCoding } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
 
@@ -42,14 +43,17 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
       </div>
 
       <div className="xv-welcome-taglines relative mt-3 space-y-2 max-w-3xl">
-        {/*
-          Anthropic Serif is proprietary — Newsreader (claudeSerif.className) is the open stand-in.
-          Applying next/font className directly so body Outfit/sans cannot override it.
-        */}
         <p className={cn('xv-welcome-tagline-sub', claudeSerif.className)}>
           The <span className="xv-tagline-accent">first</span> and{' '}
           <span className="xv-tagline-accent">last</span> model you will ever need.
         </p>
+        <p className="text-xs text-[var(--muted)]">
+          Start with Website, SaaS, Mobile, Extension, or Desktop — chips also sit above the chatbar.
+        </p>
+      </div>
+
+      <div className="relative mt-3 max-w-3xl">
+        <ProductStartChips />
       </div>
 
       <WorkspaceResumeList className="relative mt-4" />
