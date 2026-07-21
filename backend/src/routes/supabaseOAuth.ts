@@ -133,7 +133,18 @@ router.post('/connect', async (req: AuthRequest, res) => {
       return;
     }
 
-    const projects = await listSupabaseProjects(accessToken);
+    // Persist PAT best-effort (table may be missing; OAuth token is already in store)
+    await saveUserProviderKey(req.userId!, 'supabase_pat', accessToken).catch(() => undefined);
+
+    let projects: Array<{ id: string; ref: string; name: string; region?: string }> = [];
+    let projectsError: string | undefined;
+    try {
+      projects = await listSupabaseProjects(accessToken);
+    } catch (err) {
+      projectsError = (err as Error).message;
+      console.warn('[supabaseOAuth] list projects after authorize:', projectsError);
+    }
+
     let provision: unknown = null;
     let autoSelected: string | null = null;
     let status = await getUserSupabaseStatus(req.userId!);
@@ -142,25 +153,27 @@ router.post('/connect', async (req: AuthRequest, res) => {
     if (projects.length === 1) {
       const p = projects[0]!;
       autoSelected = p.ref;
-      const result = await oneClickConnectSupabase({
-        userId: req.userId!,
-        accessToken,
-        projectRef: p.ref,
-        projectName: p.name,
-      });
-      // Persist OAuth token as supabase_pat as well for provisioner
-      await saveUserProviderKey(req.userId!, 'supabase_pat', accessToken).catch(() => undefined);
-      provision = result.provision;
-      status = result.status;
-      envSync = await maybeSyncVaultToVercel(req.userId!).catch(() => null);
-    } else if (projects.length > 1) {
-      await saveUserProviderKey(req.userId!, 'supabase_pat', accessToken).catch(() => undefined);
+      try {
+        const result = await oneClickConnectSupabase({
+          userId: req.userId!,
+          accessToken,
+          projectRef: p.ref,
+          projectName: p.name,
+        });
+        provision = result.provision;
+        status = result.status;
+        envSync = await maybeSyncVaultToVercel(req.userId!).catch(() => null);
+      } catch (err) {
+        console.warn('[supabaseOAuth] auto-provision failed:', (err as Error).message);
+        provision = { ok: false, message: (err as Error).message };
+      }
     }
 
     res.json({
       ok: true,
       oauthConnected: true,
       projects,
+      projectsError,
       autoSelected,
       provision,
       status,
@@ -171,7 +184,9 @@ router.post('/connect', async (req: AuthRequest, res) => {
           ? (provision as { message?: string })?.message ||
             `Connected ${projects[0]!.name} — schema, memory & storage set up automatically`
           : projects.length === 0
-            ? 'Authorized — create a project below (or in Supabase), then we set everything up'
+            ? projectsError
+              ? `Authorized — could not list projects yet (${projectsError}). Re-authorize with Projects Read or create a project below.`
+              : 'Authorized — create a project below (or in Supabase), then we set everything up'
             : 'Authorized — pick a project to finish (one click, no paste)',
     });
   } catch (err) {

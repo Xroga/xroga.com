@@ -192,8 +192,27 @@ export function IntegrationsPanel() {
       return;
     }
     if (id === 'supabase') {
-      toast('Use Ship setup → Authorize Supabase (no paste)', { icon: '🗄' });
-      document.getElementById('ship-setup')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const { openSupabaseOAuthPopup, listenSupabaseOAuthMessages } = await import(
+        '@/lib/supabaseConnect'
+      );
+      const stop = listenSupabaseOAuthMessages(
+        (result) => {
+          toast.success(result.message || 'Supabase authorized');
+          if (result.needsProjectPick) {
+            document
+              .getElementById('ship-setup')
+              ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        },
+        (msg) => toast.error(msg),
+      );
+      const result = await openSupabaseOAuthPopup();
+      if (!result.opened) {
+        stop();
+        toast.error(result.error || 'Could not open Supabase authorization');
+      } else if (!result.popup) {
+        toast.success('Continue authorizing Supabase in this tab…');
+      }
       return;
     }
     if (oauth) {

@@ -26,6 +26,7 @@ export function ConnectShipWizard() {
   const [showVercelToken, setShowVercelToken] = useState(false);
   const [vercelToken, setVercelToken] = useState('');
   const stopVercelListen = useRef<(() => void) | null>(null);
+  const stopSupabaseListen = useRef<(() => void) | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -64,6 +65,8 @@ export function ConnectShipWizard() {
     return () => {
       stopVercelListen.current?.();
       stopVercelListen.current = null;
+      stopSupabaseListen.current?.();
+      stopSupabaseListen.current = null;
     };
   }, []);
 
@@ -197,6 +200,46 @@ export function ConnectShipWizard() {
     }
   }
 
+  async function connectSupabase() {
+    setBusy('supabase');
+    setShowSupabase(true);
+    setShowKeys(false);
+    try {
+      stopSupabaseListen.current?.();
+      const { openSupabaseOAuthPopup, listenSupabaseOAuthMessages } = await import(
+        '@/lib/supabaseConnect'
+      );
+      stopSupabaseListen.current = listenSupabaseOAuthMessages(
+        (result) => {
+          stopSupabaseListen.current = null;
+          if (result.provisioned) {
+            setSupabaseOk(true);
+            toast.success(result.message || 'Supabase ready');
+          } else {
+            toast.success(result.message || 'Supabase authorized — pick or create a project below');
+          }
+          void refresh();
+        },
+        (msg) => {
+          stopSupabaseListen.current = null;
+          toast.error(msg);
+        },
+      );
+      const result = await openSupabaseOAuthPopup();
+      if (!result.opened) {
+        stopSupabaseListen.current?.();
+        stopSupabaseListen.current = null;
+        toast.error(result.error || 'Could not start Supabase authorize');
+      } else if (!result.popup) {
+        toast.success('Continue authorizing Supabase in this tab…');
+      }
+    } catch {
+      toast.error('Could not start Supabase connect');
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function saveVercelToken() {
     const token = vercelToken.trim();
     if (!token || token.length < 20) {
@@ -248,13 +291,10 @@ export function ConnectShipWizard() {
     {
       id: 'supabase',
       title: '3. Supabase',
-      body: 'Authorize once. We fetch keys and run SQL (schema, memory, storage). Create a project here if you have none.',
+      body: 'Authorize in a popup. We fetch keys and run SQL on your project. Create one here if you have none.',
       done: supabaseOk,
       optional: true,
-      action: () => {
-        setShowSupabase(true);
-        setShowKeys(false);
-      },
+      action: connectSupabase,
       label: supabaseOk ? 'Connected' : 'Authorize',
     },
     {
