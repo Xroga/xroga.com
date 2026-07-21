@@ -549,10 +549,21 @@ export const api = {
         body: JSON.stringify({ token }),
       }),
     status: () =>
-      apiFetch<{ connected: boolean; username?: string; oauthConfigured?: boolean; tokenValid?: boolean | null }>(
-        '/api/vercel/status'
-      ),
+      apiFetch<{
+        connected: boolean;
+        username?: string;
+        oauthConfigured?: boolean;
+        tokenValid?: boolean | null;
+        canDeploy?: boolean | null;
+        warning?: string;
+        error?: string;
+      }>('/api/vercel/status'),
     disconnect: () => apiFetch('/api/vercel/disconnect', { method: 'DELETE' }),
+    projects: () =>
+      apiFetch<{
+        projects: Array<{ id: string; name: string; framework?: string }>;
+        error?: string;
+      }>('/api/vercel/projects'),
     deploy: (payload: {
       html: string;
       css?: string;

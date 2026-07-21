@@ -136,9 +136,8 @@ export default function HomePage() {
           </div>
 
           <p className="xv-hc-sub">
-            Describe the product. The swarm codes, debugs, and pushes to your GitHub — web goes live
-            on Vercel; Chrome extensions and desktop software ship as zips and installers; Android
-            and iOS build on your Expo account. Same loop for debug, update, and edit errors.
+            Describe it. The swarm codes, debugs, and ships — web to Vercel, Chrome & desktop as
+            zips, Android & iOS on Expo. Same loop for fixes and updates.
           </p>
 
           <div className="xv-hc-ctas">

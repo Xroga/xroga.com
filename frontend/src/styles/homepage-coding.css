@@ -1656,6 +1656,32 @@
   border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
+.xv-home-coding .xv-hc-desk-tasks li,
+.xv-home-coding .xv-hc-desk-ready li {
+  list-style: none;
+}
+
+.xv-home-coding .xv-hc-desk-task-btn {
+  display: grid;
+  grid-template-columns: 0.9rem minmax(0, 1fr);
+  gap: 0.45rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.45rem 0.4rem;
+  border-radius: 0.45rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.xv-home-coding .xv-hc-desk-task-btn:hover,
+.xv-home-coding .xv-hc-desk-task-btn.is-active {
+  background: rgba(74, 163, 255, 0.12);
+  border-color: rgba(74, 163, 255, 0.3);
+}
+
 .xv-home-coding .xv-hc-desk-tasks,
 .xv-home-coding .xv-hc-desk-ready {
   list-style: none;
@@ -1666,23 +1692,7 @@
   gap: 0.4rem;
 }
 
-.xv-home-coding .xv-hc-desk-tasks li,
-.xv-home-coding .xv-hc-desk-ready li {
-  display: grid;
-  grid-template-columns: 0.9rem minmax(0, 1fr);
-  gap: 0.45rem;
-  padding: 0.45rem 0.4rem;
-  border-radius: 0.45rem;
-  border: 1px solid transparent;
-}
-
-.xv-home-coding .xv-hc-desk-tasks li.is-active {
-  background: rgba(74, 163, 255, 0.12);
-  border-color: rgba(74, 163, 255, 0.3);
-}
-
-.xv-home-coding .xv-hc-desk-tasks strong,
-.xv-home-coding .xv-hc-desk-ready strong {
+.xv-home-coding .xv-hc-desk-task-btn strong {
   display: block;
   font-size: 0.72rem;
   color: #fff;
@@ -1690,8 +1700,7 @@
   margin-bottom: 0.1rem;
 }
 
-.xv-home-coding .xv-hc-desk-tasks span,
-.xv-home-coding .xv-hc-desk-ready span {
+.xv-home-coding .xv-hc-desk-task-btn span {
   display: block;
   font-size: 0.62rem;
   color: rgba(220, 230, 255, 0.5);

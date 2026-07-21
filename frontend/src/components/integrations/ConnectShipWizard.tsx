@@ -17,6 +17,8 @@ type StepId = 'github' | 'vercel' | 'supabase' | 'keys';
 export function ConnectShipWizard() {
   const [githubOk, setGithubOk] = useState(false);
   const [vercelOk, setVercelOk] = useState(false);
+  const [vercelUser, setVercelUser] = useState<string | null>(null);
+  const [vercelWarning, setVercelWarning] = useState<string | null>(null);
   const [supabaseOk, setSupabaseOk] = useState(false);
   const [keysOk, setKeysOk] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -25,6 +27,9 @@ export function ConnectShipWizard() {
   const [showSupabase, setShowSupabase] = useState(false);
   const [showVercelToken, setShowVercelToken] = useState(false);
   const [vercelToken, setVercelToken] = useState('');
+  const [showVercelProjects, setShowVercelProjects] = useState(false);
+  const [vercelProjects, setVercelProjects] = useState<Array<{ id: string; name: string }>>([]);
+  const [vercelPreferred, setVercelPreferred] = useState<string | null>(null);
   const stopVercelListen = useRef<(() => void) | null>(null);
   const stopSupabaseListen = useRef<(() => void) | null>(null);
 
@@ -45,7 +50,16 @@ export function ConnectShipWizard() {
         })),
       ]);
       setGithubOk(Boolean((gh as { connected?: boolean }).connected));
-      setVercelOk(Boolean((ve as { connected?: boolean }).connected));
+      const veStatus = ve as {
+        connected?: boolean;
+        username?: string;
+        warning?: string;
+        tokenValid?: boolean | null;
+      };
+      // Persist Connected when a token is stored (backend connected=true), even if live check is flaky
+      setVercelOk(Boolean(veStatus.connected));
+      setVercelUser(veStatus.username ?? null);
+      setVercelWarning(veStatus.warning ?? null);
       const list =
         (keys as { keys?: Array<{ provider?: string; connected?: boolean }> }).keys ?? [];
       const connected = list.filter((k) => k.connected);
@@ -260,6 +274,85 @@ export function ConnectShipWizard() {
     }
   }
 
+  useEffect(() => {
+    const onSb = () => {
+      setShowSupabase(true);
+      setShowKeys(false);
+    };
+    window.addEventListener('xroga-supabase-setup', onSb);
+    window.addEventListener('xroga-supabase-change-project', onSb);
+    try {
+      setVercelPreferred(localStorage.getItem('xroga_vercel_preferred_project'));
+    } catch {
+      /* ignore */
+    }
+    return () => {
+      window.removeEventListener('xroga-supabase-setup', onSb);
+      window.removeEventListener('xroga-supabase-change-project', onSb);
+    };
+  }, []);
+
+  async function loadVercelProjects() {
+    setBusy('vercel');
+    try {
+      const res = await api.vercel.projects();
+      setVercelProjects(res.projects ?? []);
+      setShowVercelProjects(true);
+      toast.success(
+        (res.projects ?? []).length
+          ? `${res.projects.length} Vercel project(s)`
+          : 'No Vercel projects yet',
+      );
+    } catch (err) {
+      toast.error((err as Error).message || 'Could not list Vercel projects');
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function disconnectVercel() {
+    setBusy('vercel');
+    try {
+      await api.vercel.disconnect();
+      setVercelOk(false);
+      setVercelUser(null);
+      setVercelWarning(null);
+      setShowVercelProjects(false);
+      setVercelProjects([]);
+      setVercelPreferred(null);
+      try {
+        localStorage.removeItem('xroga_vercel_preferred_project');
+      } catch {
+        /* ignore */
+      }
+      toast.success('Vercel disconnected');
+      void refresh();
+    } catch (err) {
+      toast.error((err as Error).message || 'Could not disconnect Vercel');
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function changeVercelAccount() {
+    await disconnectVercel();
+    await connectVercel();
+  }
+
+  async function disconnectSupabase() {
+    setBusy('supabase');
+    try {
+      await api.supabase.disconnect();
+      setSupabaseOk(false);
+      toast.success('Supabase disconnected');
+      void refresh();
+    } catch (err) {
+      toast.error((err as Error).message || 'Could not disconnect Supabase');
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function saveVercelToken() {
     const token = vercelToken.trim();
     if (!token || token.length < 20) {
@@ -388,17 +481,79 @@ export function ConnectShipWizard() {
                     </span>
                   ) : null}
                 </p>
-                <p className="text-xs text-[var(--muted)] mt-0.5 leading-relaxed">{s.body}</p>
+                <p className="text-xs text-[var(--muted)] mt-0.5 leading-relaxed">
+                  {s.body}
+                  {s.id === 'vercel' && vercelUser ? (
+                    <span className="block mt-1 text-[var(--foreground)]/80">
+                      Signed in as @{vercelUser}
+                      {vercelPreferred ? ` · project ${vercelPreferred}` : ''}
+                      {vercelWarning ? ` · ${vercelWarning}` : ''}
+                    </span>
+                  ) : null}
+                </p>
               </div>
             </div>
-            <button
-              type="button"
-              disabled={(s.done && s.id !== 'keys' && s.id !== 'supabase') || busy === s.id}
-              onClick={s.action}
-              className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--accent)]/40 bg-[var(--accent)]/15 text-[var(--accent)] disabled:opacity-50 hover:bg-[var(--accent)]/25 transition-colors"
-            >
-              {busy === s.id ? 'Opening…' : s.label}
-            </button>
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              {s.id === 'vercel' && vercelOk ? (
+                <>
+                  <button
+                    type="button"
+                    disabled={busy === 'vercel'}
+                    onClick={() => void changeVercelAccount()}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--card-border)] hover:border-[var(--accent)]/40 transition-colors"
+                  >
+                    Change account
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy === 'vercel'}
+                    onClick={() => void loadVercelProjects()}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--card-border)] hover:border-[var(--accent)]/40 transition-colors"
+                  >
+                    Change project
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy === 'vercel'}
+                    onClick={() => void disconnectVercel()}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-500/30 text-red-500/90 hover:bg-red-500/10 transition-colors"
+                  >
+                    Disconnect
+                  </button>
+                </>
+              ) : s.id === 'supabase' && supabaseOk ? (
+                <>
+                  <button
+                    type="button"
+                    disabled={busy === 'supabase'}
+                    onClick={() => {
+                      setShowSupabase(true);
+                      setShowKeys(false);
+                    }}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--card-border)] hover:border-[var(--accent)]/40 transition-colors"
+                  >
+                    Change project
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy === 'supabase'}
+                    onClick={() => void disconnectSupabase()}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-500/30 text-red-500/90 hover:bg-red-500/10 transition-colors"
+                  >
+                    Disconnect
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  disabled={(s.done && s.id !== 'keys' && s.id !== 'supabase') || busy === s.id}
+                  onClick={s.action}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--accent)]/40 bg-[var(--accent)]/15 text-[var(--accent)] disabled:opacity-50 hover:bg-[var(--accent)]/25 transition-colors"
+                >
+                  {busy === s.id ? 'Opening…' : s.label}
+                </button>
+              )}
+            </div>
           </li>
         ))}
       </ol>
@@ -444,6 +599,39 @@ export function ConnectShipWizard() {
         >
           Prefer a personal token? Paste it here
         </button>
+      ) : null}
+
+      {vercelOk && showVercelProjects ? (
+        <ul className="mt-4 max-h-40 overflow-auto space-y-1 rounded-xl border border-[var(--card-border)] p-3">
+          {vercelProjects.length === 0 ? (
+            <li className="text-xs text-[var(--muted)]">No projects listed</li>
+          ) : (
+            vercelProjects.map((p) => (
+              <li
+                key={p.id}
+                className="text-xs font-coding flex items-center justify-between gap-2 px-2 py-1.5 rounded hover:bg-[var(--foreground)]/5"
+              >
+                <span className="truncate">{p.name}</span>
+                <button
+                  type="button"
+                  className="shrink-0 text-[10px] font-bold text-[var(--accent)]"
+                  onClick={() => {
+                    try {
+                      localStorage.setItem('xroga_vercel_preferred_project', p.name);
+                      setVercelPreferred(p.name);
+                    } catch {
+                      /* ignore */
+                    }
+                    toast.success(`Preferred Vercel project: ${p.name}`);
+                    setShowVercelProjects(false);
+                  }}
+                >
+                  {vercelPreferred === p.name ? 'Selected' : 'Use'}
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
       ) : null}
 
       {ready ? (

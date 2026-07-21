@@ -255,9 +255,14 @@ export function HomepagePipelineDemo() {
   const [sceneIdx, setSceneIdx] = useState(0);
   const [phase, setPhase] = useState(0);
   const [tick, setTick] = useState(0);
+  const [pausedUntil, setPausedUntil] = useState(0);
 
   useEffect(() => {
     const t = window.setInterval(() => {
+      if (Date.now() < pausedUntil) {
+        setTick((n) => n + 1);
+        return;
+      }
       setPhase((p) => {
         if (p >= 5) {
           setSceneIdx((i) => (i + 1) % SCENES.length);
@@ -268,7 +273,13 @@ export function HomepagePipelineDemo() {
       setTick((n) => n + 1);
     }, 2200);
     return () => window.clearInterval(t);
-  }, []);
+  }, [pausedUntil]);
+
+  function selectScene(idx: number) {
+    setSceneIdx(idx);
+    setPhase(0);
+    setPausedUntil(Date.now() + 12_000);
+  }
 
   const scene = SCENES[sceneIdx]!;
   const visibleAgent = scene.agentLines.slice(0, Math.min(phase + 1, scene.agentLines.length));
@@ -277,20 +288,35 @@ export function HomepagePipelineDemo() {
   const shipReady = phase >= 5;
 
   const inProgress = useMemo(() => {
-    const next = SCENES[(sceneIdx + 1) % SCENES.length]!;
+    const nextIdx = (sceneIdx + 1) % SCENES.length;
+    const next = SCENES[nextIdx]!;
     return [
-      { title: scene.title, status: scene.agentLines[Math.min(phase, scene.agentLines.length - 1)]!, active: true },
-      { title: next.title, status: 'Queued in swarm…', active: false },
+      {
+        idx: sceneIdx,
+        title: scene.title,
+        status: scene.agentLines[Math.min(phase, scene.agentLines.length - 1)]!,
+        active: true,
+      },
+      {
+        idx: nextIdx,
+        title: next.title,
+        status: 'Queued in swarm…',
+        active: false,
+      },
     ];
   }, [scene, sceneIdx, phase]);
 
   const readyItems = useMemo(() => {
     const rotate = tick % READY_POOL.length;
-    return Array.from({ length: 5 }, (_, i) => READY_POOL[(rotate + i) % READY_POOL.length]!);
+    return Array.from({ length: 5 }, (_, i) => {
+      const item = READY_POOL[(rotate + i) % READY_POOL.length]!;
+      const sceneMatch = SCENES.findIndex((s) => s.category === item.cat);
+      return { ...item, sceneIdx: sceneMatch >= 0 ? sceneMatch : 0 };
+    });
   }, [tick]);
 
   return (
-    <div className="xv-hc-desk" aria-hidden>
+    <div className="xv-hc-desk">
       <div className="xv-hc-desk-window">
         <header className="xv-hc-desk-chrome">
           <div className="xv-hc-desk-dots">
@@ -312,18 +338,25 @@ export function HomepagePipelineDemo() {
             </p>
             <ul className="xv-hc-desk-tasks">
               {inProgress.map((t) => (
-                <li key={t.title} className={cn(t.active && 'is-active')}>
-                  <span className="xv-hc-desk-task-ico">
-                    {t.active ? (
-                      <Loader2 className="w-3 h-3 xv-hc-desk-spin" strokeWidth={2.5} />
-                    ) : (
-                      <Loader2 className="w-3 h-3 opacity-40" strokeWidth={2} />
-                    )}
-                  </span>
-                  <div>
-                    <strong>{t.title}</strong>
-                    <span>{t.status}</span>
-                  </div>
+                <li key={t.title}>
+                  <button
+                    type="button"
+                    className={cn('xv-hc-desk-task-btn', t.active && 'is-active')}
+                    onClick={() => selectScene(t.idx)}
+                    aria-pressed={t.active}
+                  >
+                    <span className="xv-hc-desk-task-ico">
+                      {t.active ? (
+                        <Loader2 className="w-3 h-3 xv-hc-desk-spin" strokeWidth={2.5} />
+                      ) : (
+                        <Loader2 className="w-3 h-3 opacity-40" strokeWidth={2} />
+                      )}
+                    </span>
+                    <div>
+                      <strong>{t.title}</strong>
+                      <span>{t.status}</span>
+                    </div>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -334,13 +367,19 @@ export function HomepagePipelineDemo() {
             <ul className="xv-hc-desk-ready">
               {readyItems.map((item) => (
                 <li key={`${item.title}-${item.meta}`}>
-                  <Check className="w-3 h-3" strokeWidth={2.5} />
-                  <div>
-                    <strong>{item.title}</strong>
-                    <span>
-                      {item.cat} · {item.meta}
-                    </span>
-                  </div>
+                  <button
+                    type="button"
+                    className="xv-hc-desk-task-btn"
+                    onClick={() => selectScene(item.sceneIdx)}
+                  >
+                    <Check className="w-3 h-3" strokeWidth={2.5} />
+                    <div>
+                      <strong>{item.title}</strong>
+                      <span>
+                        {item.cat} · {item.meta}
+                      </span>
+                    </div>
+                  </button>
                 </li>
               ))}
             </ul>

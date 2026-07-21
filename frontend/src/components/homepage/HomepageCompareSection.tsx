@@ -132,11 +132,9 @@ export function HomepageCompareSection() {
           Fair look: ship loop vs coding tools
         </h2>
         <p className="xv-hc-section-copy">
-          Cursor, Codex, Claude, and Replit are strong for writing and editing code. Xroga is built
-          to take a product prompt to your GitHub + Vercel — with optional Supabase — without
-          starting in an IDE. Other tools often hit 5-hour resets and burn through usage fast, with
-          no rollover of unused tokens. Xroga meters a monthly pool and rolls unused API credit up
-          to one month.
+          Cursor, Codex, Claude, and Replit excel at writing code. Xroga ships the product — GitHub +
+          Vercel, optional Supabase — without an IDE. Others often hit 5-hour resets and burn usage
+          with no rollover; Xroga meters a monthly pool and rolls unused API credit up to one month.
         </p>
 
         <div className="xv-hc-compare-scroll" role="region" aria-label="Product comparison">

@@ -24,6 +24,7 @@ import {
   provisionUserSupabase,
 } from '../services/integrations/supabaseProvision.js';
 import {
+  deleteUserProviderKey,
   getUserProviderKey,
   getUserSupabaseStatus,
   saveUserProviderKey,
@@ -408,6 +409,22 @@ router.get('/organizations', async (req: AuthRequest, res) => {
 router.delete('/disconnect', async (req: AuthRequest, res) => {
   try {
     await clearSupabaseOAuth(req.userId!);
+    // Also clear vault Supabase keys so status does not stay "connected" via leftover URL/keys
+    const vaultProviders = [
+      'supabase_url',
+      'supabase_anon',
+      'supabase_service',
+      'supabase',
+      'supabase_pat',
+      'supabase_db_password',
+    ];
+    for (const p of vaultProviders) {
+      try {
+        await deleteUserProviderKey(req.userId!, p);
+      } catch {
+        /* ignore missing */
+      }
+    }
     res.json({ ok: true });
   } catch (err) {
     res.status(400).json({ error: (err as Error).message });

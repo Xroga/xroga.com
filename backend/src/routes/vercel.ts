@@ -150,21 +150,16 @@ router.get('/status', async (req: AuthRequest, res) => {
   let username = connected ? await getVercelUsername(req.userId!) : null;
   let tokenValid: boolean | null = null;
   let canDeploy: boolean | null = null;
+  let liveError: string | undefined;
   if (connected) {
     const live = await verifyVercelTokenLive(req.userId!);
     tokenValid = live.ok;
     canDeploy = live.canDeploy ?? null;
     if (live.ok && live.username) username = live.username;
     if (!live.ok && live.error && live.error !== 'not_connected') {
-      // Truly invalid/revoked — not merely missing deploy API permission
-      res.json({
-        connected: false,
-        oauthConfigured: vercelOAuthConfigured(),
-        tokenValid: false,
-        canDeploy: false,
-        error: 'Vercel token expired or revoked — Authorize again',
-      });
-      return;
+      liveError = live.error;
+      // Keep connected=true when a token is stored so refresh doesn't flip UI to Authorize.
+      // tokenValid=false + warning tells the user to re-authorize without losing the badge.
     }
   }
   res.json({
@@ -174,15 +169,51 @@ router.get('/status', async (req: AuthRequest, res) => {
     tokenValid,
     canDeploy,
     warning:
-      connected && canDeploy === false
-        ? 'Connected, but this Vercel App token cannot list projects/deploy. Enable Read/Write Project + Deployment (+ Env) on the Vercel App, or paste a Full Account personal token.'
-        : undefined,
+      connected && tokenValid === false
+        ? 'Vercel token may be expired or revoked — use Change account to re-authorize'
+        : connected && canDeploy === false
+          ? 'Connected, but this Vercel App token cannot list projects/deploy. Enable Read/Write Project + Deployment (+ Env) on the Vercel App, or paste a Full Account personal token.'
+          : undefined,
+    error: liveError,
   });
 });
 
 router.delete('/disconnect', async (req: AuthRequest, res) => {
   await clearVercelConnection(req.userId!);
   res.json({ ok: true });
+});
+
+/** List Vercel projects for Change project UI */
+router.get('/projects', async (req: AuthRequest, res) => {
+  const token = await getVercelToken(req.userId!);
+  if (!token) {
+    res.status(403).json({ error: 'Authorize Vercel first', projects: [] });
+    return;
+  }
+  try {
+    const r = await fetch('https://api.vercel.com/v9/projects?limit=50', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!r.ok) {
+      const text = await r.text().catch(() => '');
+      res.status(400).json({
+        error: text.slice(0, 200) || `Vercel projects failed (${r.status})`,
+        projects: [],
+      });
+      return;
+    }
+    const data = (await r.json()) as {
+      projects?: Array<{ id: string; name: string; framework?: string | null }>;
+    };
+    const projects = (data.projects ?? []).map((p) => ({
+      id: p.id,
+      name: p.name,
+      framework: p.framework ?? undefined,
+    }));
+    res.json({ projects });
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message, projects: [] });
+  }
 });
 
 router.post('/deploy', async (req: AuthRequest, res) => {
