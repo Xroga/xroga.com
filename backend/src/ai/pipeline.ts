@@ -85,6 +85,7 @@ import { publishChromeExtensionToStore } from '../services/publish/chromeWebStor
 import { syncElectronSigningSecretsToGitHub } from '../services/publish/electronSecrets.js';
 import {
   syncGooglePlayCredentialsToExpo,
+  syncAppleAscApiKeyToExpo,
   waitForEasBuildArtifact,
 } from '../services/publish/easCredentials.js';
 import { chromeExtensionZipFilter, packageBuildZip } from '../services/scaffolds/packageBuildZip.js';
@@ -2016,12 +2017,13 @@ export async function runBuildPipeline(opts: {
     }
   }
 
-  // Expo: auto-trigger EAS build, poll artifact, optionally submit when Play creds synced
+  // Expo: auto-trigger EAS build, poll artifact, optionally submit when store creds synced
   if (githubPushConfirmed && productScaffoldKind === 'expo') {
     const expoToken = await getUserProviderKey(opts.userId, 'expo').catch(() => null);
     if (expoToken) {
-      // Best-effort: push Google Play JSON into Expo before submit
+      // Best-effort: push store credentials into Expo before submit
       const google = await getUserProviderKey(opts.userId, 'google_play').catch(() => null);
+      const appleAsc = await getUserProviderKey(opts.userId, 'apple_asc_api').catch(() => null);
       if (google) {
         const synced = await syncGooglePlayCredentialsToExpo({ userId: opts.userId });
         emit({
@@ -2033,16 +2035,28 @@ export async function runBuildPipeline(opts: {
           swarmTodos: todos('push'),
         });
       }
+      if (appleAsc) {
+        const syncedApple = await syncAppleAscApiKeyToExpo({ userId: opts.userId });
+        emit({
+          agent: 'deploy',
+          status: syncedApple.ok ? 'eas_apple_creds' : 'eas_apple_creds_skip',
+          message: syncedApple.message,
+          swarmStatusLabel: syncedApple.ok ? 'Apple ASC synced' : 'Apple ASC',
+          swarmActivity: syncedApple.message.slice(0, 80),
+          swarmTodos: todos('push'),
+        });
+      }
 
-      const wantSubmit = Boolean(google);
+      const wantAndroidSubmit = Boolean(google);
+      const wantIosSubmit = Boolean(appleAsc);
       emit({
         agent: 'deploy',
         status: 'eas_dispatch',
-        message: wantSubmit
+        message: wantAndroidSubmit
           ? 'Starting EAS Android build + store submit on your Expo account…'
           : 'Starting EAS Android build on your Expo account…',
         swarmStatusLabel: 'EAS',
-        swarmActivity: wantSubmit ? 'publish-android' : 'build-android',
+        swarmActivity: wantAndroidSubmit ? 'publish-android' : 'build-android',
         swarmTodos: todos('push'),
       });
       try {
@@ -2050,13 +2064,13 @@ export async function runBuildPipeline(opts: {
           userId: opts.userId,
           platform: 'android',
           gitRef: githubBranch || 'main',
-          submit: wantSubmit,
+          submit: wantAndroidSubmit,
           projectName,
         });
         if (eas.ok) {
           easTriggered = true;
           easUrl = eas.url;
-          easStoreSubmitted = wantSubmit && /publish|submit/i.test(eas.fileName || '');
+          easStoreSubmitted = wantAndroidSubmit && /publish|submit/i.test(eas.fileName || '');
           emit({
             agent: 'deploy',
             status: 'eas_started',
@@ -2107,13 +2121,54 @@ export async function runBuildPipeline(opts: {
             swarmTodos: todos('push'),
           });
         }
+
+        // iOS path when ASC API key is in vault (parallel store track — does not block Android)
+        if (wantIosSubmit) {
+          emit({
+            agent: 'deploy',
+            status: 'eas_ios_dispatch',
+            message: 'Starting EAS iOS build + App Store submit on your Expo account…',
+            swarmStatusLabel: 'EAS iOS',
+            swarmActivity: 'publish-ios',
+            swarmTodos: todos('push'),
+          });
+          const easIos = await triggerEasPublish({
+            userId: opts.userId,
+            platform: 'ios',
+            gitRef: githubBranch || 'main',
+            submit: true,
+            projectName,
+          });
+          if (easIos.ok) {
+            easTriggered = true;
+            easUrl = easIos.url || easUrl;
+            easStoreSubmitted = true;
+            emit({
+              agent: 'deploy',
+              status: 'eas_ios_started',
+              message: easIos.message,
+              swarmStatusLabel: 'EAS iOS started',
+              swarmActivity: easIos.url || easIos.fileName,
+              swarmTodos: todos('push'),
+            });
+          } else {
+            emit({
+              agent: 'deploy',
+              status: 'eas_ios_skipped',
+              message: easIos.message || easIos.error || 'iOS EAS dispatch failed',
+              swarmStatusLabel: 'EAS iOS',
+              swarmActivity: (easIos.message || '').slice(0, 100),
+              swarmTodos: todos('push'),
+            });
+          }
+        }
       } catch (err) {
         easError = (err as Error).message;
         emit({
           agent: 'deploy',
-          status: 'eas_skipped',
+          status: 'eas_error',
           message: easError,
-          swarmStatusLabel: 'EAS needs setup',
+          swarmStatusLabel: 'EAS error',
           swarmActivity: easError.slice(0, 100),
           swarmTodos: todos('push'),
         });

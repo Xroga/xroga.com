@@ -135,12 +135,18 @@ export const ALLOWED_PROVIDERS = [
   'expo',
   'expo_project_id',
   'apple_asc',
+  /** App Store Connect API key JSON: keyId, issuerId, keyP8 */
+  'apple_asc_api',
   'google_play',
   /** Chrome Web Store OAuth JSON: clientId, clientSecret, refreshToken, extensionId, publisherId */
   'cws_oauth',
   /** Electron code-signing: base64 p12 / CSC_LINK value */
   'electron_csc_link',
   'electron_csc_password',
+  /** Electron macOS notarization (GitHub Actions secrets) */
+  'electron_apple_id',
+  'electron_apple_password',
+  'electron_apple_team_id',
   'custom',
 ] as const;
 
@@ -171,10 +177,14 @@ export const ENV_VAR_BY_PROVIDER: Record<string, string> = {
   expo: 'EXPO_TOKEN',
   expo_project_id: 'EXPO_EAS_PROJECT_ID',
   apple_asc: 'EXPO_APPLE_APP_SPECIFIC_PASSWORD',
+  apple_asc_api: 'EXPO_APPLE_ASC_API_JSON',
   google_play: 'GOOGLE_SERVICE_ACCOUNT_JSON',
   cws_oauth: 'CHROME_WEBSTORE_OAUTH_JSON',
   electron_csc_link: 'CSC_LINK',
   electron_csc_password: 'CSC_KEY_PASSWORD',
+  electron_apple_id: 'APPLE_ID',
+  electron_apple_password: 'APPLE_APP_SPECIFIC_PASSWORD',
+  electron_apple_team_id: 'APPLE_TEAM_ID',
   custom: 'CUSTOM_API_KEY',
 };
 
@@ -183,10 +193,14 @@ export const PUBLISH_ONLY_PROVIDERS = new Set([
   'expo',
   'expo_project_id',
   'apple_asc',
+  'apple_asc_api',
   'google_play',
   'cws_oauth',
   'electron_csc_link',
   'electron_csc_password',
+  'electron_apple_id',
+  'electron_apple_password',
+  'electron_apple_team_id',
 ]);
 
 /** Server-only provision credentials — never sync to Vercel (or expose to browser). */
@@ -288,11 +302,13 @@ export async function saveUserProviderKey(
   }
   const trimmed = apiKey.trim();
   const minLen =
-    p === 'google_play' || p === 'cws_oauth'
+    p === 'google_play' || p === 'cws_oauth' || p === 'apple_asc_api'
       ? 32
       : p === 'supabase_url'
         ? 12
-        : p === 'supabase_db_password' || p === 'electron_csc_password'
+        : p === 'supabase_db_password' ||
+            p === 'electron_csc_password' ||
+            p === 'electron_apple_team_id'
           ? 4
           : 8;
   if (trimmed.length < minLen) throw new Error('API key / credential too short');
@@ -679,6 +695,13 @@ export function providerCatalog() {
       category: 'publish',
     },
     {
+      id: 'apple_asc_api',
+      name: 'App Store Connect API key JSON',
+      envVar: 'EXPO_APPLE_ASC_API_JSON',
+      freeTier: false,
+      category: 'publish',
+    },
+    {
       id: 'google_play',
       name: 'Google Play service account JSON',
       envVar: 'GOOGLE_SERVICE_ACCOUNT_JSON',
@@ -703,6 +726,27 @@ export function providerCatalog() {
       id: 'electron_csc_password',
       name: 'Electron code-sign password',
       envVar: 'CSC_KEY_PASSWORD',
+      freeTier: false,
+      category: 'publish',
+    },
+    {
+      id: 'electron_apple_id',
+      name: 'Apple ID (Electron notarization)',
+      envVar: 'APPLE_ID',
+      freeTier: false,
+      category: 'publish',
+    },
+    {
+      id: 'electron_apple_password',
+      name: 'Apple app-specific password (notarization)',
+      envVar: 'APPLE_APP_SPECIFIC_PASSWORD',
+      freeTier: false,
+      category: 'publish',
+    },
+    {
+      id: 'electron_apple_team_id',
+      name: 'Apple Team ID (notarization)',
+      envVar: 'APPLE_TEAM_ID',
       freeTier: false,
       category: 'publish',
     },

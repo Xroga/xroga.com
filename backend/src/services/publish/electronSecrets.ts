@@ -1,6 +1,6 @@
 /**
- * Sync Electron code-signing secrets into the user's GitHub repo
- * so Actions can produce signed installers when certs exist.
+ * Sync Electron code-signing + macOS notarization secrets into the user's
+ * GitHub repo so Actions can produce signed / notarized installers when certs exist.
  */
 
 import { getGitHubToken } from '../integrations/githubAuth.js';
@@ -13,12 +13,8 @@ async function putRepoSecret(opts: {
   name: string;
   value: string;
 }): Promise<boolean> {
-  // GitHub requires libsodium seal — use Actions public key + tweetnacl-style encrypt.
-  // Without sodium in deps, fall back to documenting failure honestly.
+  // GitHub requires libsodium sealed box — Node RSA cannot encrypt Actions secrets.
   try {
-    const { createPublicKey, publicEncrypt, constants } = await import('crypto');
-    // GitHub uses libsodium sealed box, NOT RSA — Node crypto cannot seal for Actions.
-    // Use NaCl if available via dynamic import of 'libsodium-wrappers' — may not be installed.
     let sodiumMod: typeof import('libsodium-wrappers') | null = null;
     try {
       sodiumMod = await import('libsodium-wrappers');
@@ -26,9 +22,6 @@ async function putRepoSecret(opts: {
       sodiumMod = null;
     }
     if (!sodiumMod) {
-      void createPublicKey;
-      void publicEncrypt;
-      void constants;
       console.warn(
         '[electronSecrets] libsodium-wrappers not installed — cannot encrypt GitHub Actions secrets',
       );
@@ -80,7 +73,10 @@ function splitRepo(fullName: string): { owner: string; repo: string } | null {
   return { owner: parts[0], repo: parts[1].replace(/\.git$/, '') };
 }
 
-/** Push CSC_LINK / CSC_KEY_PASSWORD from vault → GitHub Actions secrets when present. */
+/**
+ * Push CSC_* and optional Apple notarization secrets from vault → GitHub Actions.
+ * Unsigned Linux/Windows installers still build when CSC is absent.
+ */
 export async function syncElectronSigningSecretsToGitHub(opts: {
   userId: string;
   repoFullName: string;
@@ -92,34 +88,40 @@ export async function syncElectronSigningSecretsToGitHub(opts: {
 
   const cscLink = await getUserProviderKey(opts.userId, 'electron_csc_link');
   const cscPass = await getUserProviderKey(opts.userId, 'electron_csc_password');
-  if (!cscLink) {
+  const appleId = await getUserProviderKey(opts.userId, 'electron_apple_id');
+  const applePass = await getUserProviderKey(opts.userId, 'electron_apple_password');
+  const appleTeam = await getUserProviderKey(opts.userId, 'electron_apple_team_id');
+
+  if (!cscLink && !appleId && !applePass && !appleTeam) {
     return {
       ok: true,
       synced: [],
       message:
-        'No code-signing cert in vault — Actions will produce unsigned installers (Linux/Windows). Add CSC_LINK for signed builds.',
+        'No code-signing or notarization secrets in vault — Actions will produce unsigned installers (Linux/Windows). Add CSC_LINK / Apple ID in Publish for signed macOS builds.',
     };
   }
 
   const synced: string[] = [];
-  const linkOk = await putRepoSecret({
-    token,
-    owner: parsed.owner,
-    repo: parsed.repo,
-    name: 'CSC_LINK',
-    value: cscLink,
-  });
-  if (linkOk) synced.push('CSC_LINK');
-  if (cscPass) {
-    const passOk = await putRepoSecret({
-      token,
-      owner: parsed.owner,
-      repo: parsed.repo,
-      name: 'CSC_KEY_PASSWORD',
-      value: cscPass,
+  const failed: string[] = [];
+
+  async function trySync(name: string, value: string | null) {
+    if (!value?.trim()) return;
+    const ok = await putRepoSecret({
+      token: token!,
+      owner: parsed!.owner,
+      repo: parsed!.repo,
+      name,
+      value: value.trim(),
     });
-    if (passOk) synced.push('CSC_KEY_PASSWORD');
+    if (ok) synced.push(name);
+    else failed.push(name);
   }
+
+  await trySync('CSC_LINK', cscLink);
+  await trySync('CSC_KEY_PASSWORD', cscPass);
+  await trySync('APPLE_ID', appleId);
+  await trySync('APPLE_APP_SPECIFIC_PASSWORD', applePass);
+  await trySync('APPLE_TEAM_ID', appleTeam);
 
   if (!synced.length) {
     return {
@@ -129,9 +131,20 @@ export async function syncElectronSigningSecretsToGitHub(opts: {
         'Could not write GitHub Actions secrets (needs libsodium + repo secrets permission). Unsigned installers still build.',
     };
   }
+
+  const parts = [`Synced ${synced.join(', ')} to GitHub Actions secrets`];
+  if (failed.length) parts.push(`failed: ${failed.join(', ')}`);
+  if (cscLink && appleId && applePass && appleTeam) {
+    parts.push('macOS notarization env is set for electron-builder');
+  } else if (cscLink) {
+    parts.push('signing cert synced — add Apple ID + app-specific password + Team ID for notarization');
+  } else if (appleId || applePass || appleTeam) {
+    parts.push('notarization secrets synced — add CSC_LINK for code signing');
+  }
+
   return {
-    ok: true,
+    ok: failed.length === 0,
     synced,
-    message: `Synced ${synced.join(', ')} to GitHub Actions secrets for signed desktop builds.`,
+    message: `${parts.join('. ')}.`,
   };
 }

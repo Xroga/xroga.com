@@ -309,9 +309,9 @@ export async function resolveExpoProjectId(
 }
 
 /**
- * Trigger EAS workflow dispatch (build, or build+submit only if Expo/EAS already has store creds).
+ * Trigger EAS workflow dispatch (build, or build+submit when store creds synced to Expo).
  * Auto-creates/links an Expo project when none is set.
- * Pasted Apple/Google keys in Xroga are guidance — configure the same in Expo/EAS for submit.
+ * Call syncGooglePlayCredentialsToExpo / syncAppleAscApiKeyToExpo before submit=true.
  */
 export async function triggerEasPublish(opts: {
   userId: string;

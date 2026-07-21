@@ -239,6 +239,279 @@ export async function syncGooglePlayCredentialsToExpo(opts: {
   }
 }
 
+function parseAppleAscJson(raw: string): {
+  keyId: string;
+  issuerId: string;
+  keyP8: string;
+  teamId?: string;
+} | null {
+  try {
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const keyId = String(
+      parsed.keyId || parsed.key_id || parsed.keyIdentifier || '',
+    ).trim();
+    const issuerId = String(
+      parsed.issuerId || parsed.issuer_id || parsed.issuerIdentifier || '',
+    ).trim();
+    let keyP8 = String(
+      parsed.keyP8 || parsed.key_p8 || parsed.privateKey || parsed.private_key || '',
+    ).trim();
+    if (keyP8.includes('\\n') && !keyP8.includes('\n')) {
+      keyP8 = keyP8.replace(/\\n/g, '\n');
+    }
+    if (!keyId || !issuerId || !keyP8.includes('BEGIN PRIVATE KEY')) return null;
+    const teamId = String(
+      parsed.teamId || parsed.team_id || parsed.appleTeamId || '',
+    ).trim();
+    return { keyId, issuerId, keyP8, ...(teamId ? { teamId } : {}) };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Upload App Store Connect API key to Expo and attach for iOS submissions
+ * (same GraphQL path as `eas credentials` / eas-cli).
+ */
+export async function syncAppleAscApiKeyToExpo(opts: {
+  userId: string;
+  bundleIdentifier?: string;
+}): Promise<{ ok: boolean; message: string; error?: string; keyId?: string }> {
+  const token = await getUserProviderKey(opts.userId, 'expo');
+  if (!token) {
+    return { ok: false, message: 'Connect Expo first', error: 'NO_EXPO_TOKEN' };
+  }
+  const appleJson = await getUserProviderKey(opts.userId, 'apple_asc_api');
+  if (!appleJson) {
+    return {
+      ok: false,
+      message:
+        'Save App Store Connect API key JSON in Publish first ({ keyId, issuerId, keyP8 })',
+      error: 'NO_APPLE_ASC',
+    };
+  }
+  const creds = parseAppleAscJson(appleJson);
+  if (!creds) {
+    return {
+      ok: false,
+      message:
+        'Invalid Apple ASC JSON. Need { keyId, issuerId, keyP8 } (P8 private key contents).',
+      error: 'BAD_JSON',
+    };
+  }
+
+  const projectId = await resolveExpoProjectId(opts.userId);
+  if (!projectId) {
+    return { ok: false, message: 'Link an EAS project first', error: 'NO_PROJECT' };
+  }
+
+  try {
+    const meta = await expoGraphql<{
+      app?: {
+        byId?: {
+          id: string;
+          ownerAccount?: { id: string };
+          iosAppCredentialsList?: Array<{
+            id: string;
+            appleAppIdentifier?: { id?: string; bundleIdentifier?: string | null } | null;
+            appStoreConnectApiKeyForSubmissions?: {
+              id: string;
+              keyIdentifier?: string;
+            } | null;
+          }>;
+        };
+      };
+    }>(
+      token,
+      `query($appId: String!) {
+        app {
+          byId(appId: $appId) {
+            id
+            ownerAccount { id }
+            iosAppCredentialsList {
+              id
+              appleAppIdentifier { id bundleIdentifier }
+              appStoreConnectApiKeyForSubmissions { id keyIdentifier }
+            }
+          }
+        }
+      }`,
+      { appId: projectId },
+    );
+
+    const app = meta.app?.byId;
+    const accountId = app?.ownerAccount?.id;
+    if (!accountId) {
+      return {
+        ok: false,
+        message: 'Could not resolve Expo account for this project',
+        error: 'NO_ACCOUNT',
+      };
+    }
+
+    const existingList = app?.iosAppCredentialsList ?? [];
+    const alreadyAttached = existingList.find(
+      (c) => c.appStoreConnectApiKeyForSubmissions?.keyIdentifier === creds.keyId,
+    );
+    if (alreadyAttached?.appStoreConnectApiKeyForSubmissions?.id) {
+      return {
+        ok: true,
+        keyId: alreadyAttached.appStoreConnectApiKeyForSubmissions.id,
+        message:
+          'App Store Connect API key already attached on Expo for iOS submissions. Store approval is still Apple’s.',
+      };
+    }
+
+    const created = await expoGraphql<{
+      appStoreConnectApiKey?: {
+        createAppStoreConnectApiKey?: { id: string; keyIdentifier?: string };
+      };
+    }>(
+      token,
+      `mutation($accountId: ID!, $appStoreConnectApiKeyInput: AppStoreConnectApiKeyInput!) {
+        appStoreConnectApiKey {
+          createAppStoreConnectApiKey(
+            accountId: $accountId
+            appStoreConnectApiKeyInput: $appStoreConnectApiKeyInput
+          ) {
+            id
+            keyIdentifier
+          }
+        }
+      }`,
+      {
+        accountId,
+        appStoreConnectApiKeyInput: {
+          keyIdentifier: creds.keyId,
+          issuerIdentifier: creds.issuerId,
+          keyP8: creds.keyP8,
+          name: `Xroga ASC ${creds.keyId}`,
+          ...(creds.teamId ? { appleTeamId: creds.teamId } : {}),
+        },
+      },
+    );
+
+    const keyId = created.appStoreConnectApiKey?.createAppStoreConnectApiKey?.id;
+    if (!keyId) {
+      return {
+        ok: false,
+        message: 'Expo did not return an App Store Connect API key id',
+        error: 'CREATE_KEY_FAILED',
+      };
+    }
+
+    let iosCredsId =
+      existingList.find(
+        (c) =>
+          !opts.bundleIdentifier ||
+          c.appleAppIdentifier?.bundleIdentifier === opts.bundleIdentifier,
+      )?.id || existingList[0]?.id;
+
+    if (iosCredsId) {
+      await expoGraphql(
+        token,
+        `mutation($iosAppCredentialsId: ID!, $ascApiKeyId: ID!) {
+          iosAppCredentials {
+            setAppStoreConnectApiKeyForSubmissions(
+              id: $iosAppCredentialsId
+              ascApiKeyId: $ascApiKeyId
+            ) { id }
+          }
+        }`,
+        { iosAppCredentialsId: iosCredsId, ascApiKeyId: keyId },
+      );
+      return {
+        ok: true,
+        keyId,
+        message:
+          'App Store Connect API key uploaded to Expo and attached for iOS submissions. Apple review is still external.',
+      };
+    }
+
+    const bundleIdentifier =
+      opts.bundleIdentifier?.trim() || 'com.xroga.app';
+
+    const appleId = await expoGraphql<{
+      appleAppIdentifier?: {
+        createAppleAppIdentifier?: { id: string };
+      };
+    }>(
+      token,
+      `mutation($accountId: ID!, $appleAppIdentifierInput: AppleAppIdentifierInput!) {
+        appleAppIdentifier {
+          createAppleAppIdentifier(
+            accountId: $accountId
+            appleAppIdentifierInput: $appleAppIdentifierInput
+          ) { id }
+        }
+      }`,
+      {
+        accountId,
+        appleAppIdentifierInput: {
+          bundleIdentifier,
+          ...(creds.teamId ? { appleTeamId: creds.teamId } : {}),
+        },
+      },
+    ).catch(() => null);
+
+    const appleAppIdentifierId =
+      appleId?.appleAppIdentifier?.createAppleAppIdentifier?.id;
+
+    if (appleAppIdentifierId) {
+      const createdCreds = await expoGraphql<{
+        iosAppCredentials?: {
+          createIosAppCredentials?: { id: string };
+        };
+      }>(
+        token,
+        `mutation(
+          $appId: ID!
+          $appleAppIdentifierId: ID!
+          $iosAppCredentialsInput: IosAppCredentialsInput!
+        ) {
+          iosAppCredentials {
+            createIosAppCredentials(
+              appId: $appId
+              appleAppIdentifierId: $appleAppIdentifierId
+              iosAppCredentialsInput: $iosAppCredentialsInput
+            ) { id }
+          }
+        }`,
+        {
+          appId: projectId,
+          appleAppIdentifierId,
+          iosAppCredentialsInput: {
+            appStoreConnectApiKeyForSubmissionsId: keyId,
+            ...(creds.teamId ? { appleTeamId: creds.teamId } : {}),
+          },
+        },
+      ).catch(() => null);
+
+      if (createdCreds?.iosAppCredentials?.createIosAppCredentials?.id) {
+        return {
+          ok: true,
+          keyId,
+          message: `ASC API key uploaded and attached for iOS (${bundleIdentifier}). First App Store listing still needs Apple Developer + ASC app create.`,
+        };
+      }
+    }
+
+    // Key is on the Expo account even if project-level attach needs a one-time Expo UI step
+    return {
+      ok: true,
+      keyId,
+      message:
+        'ASC API key uploaded to your Expo account. If attach failed, open Expo → Credentials → iOS → set this key for submissions (one-time). Store approval is still Apple’s.',
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      message: (err as Error).message,
+      error: 'SYNC_FAILED',
+    };
+  }
+}
+
 export type EasBuildInfo = {
   id: string;
   status: string;

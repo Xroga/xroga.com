@@ -5,7 +5,7 @@
 |------|---------------------|----------------|
 | **Web** | Live Vercel URL verified | — |
 | **Chrome** | CWS upload + publish API succeeded | Google review / public listing |
-| **Electron** | Real installer (`.exe` / `.AppImage` / `.dmg`) on Releases | Mac/MS Store listing; signing needs your CSC cert |
+| **Electron** | Real installer (`.exe` / `.AppImage` / `.dmg`) on Releases | Mac/MS Store listing; signing/notarization need your certs |
 | **Expo** | EAS build finished with install/artifact URL | Apple/Google store approval after submit |
 
 ## Also tracked
@@ -15,9 +15,9 @@
 | `storeSubmitted` | CWS publish or EAS submit workflow started — **not** store approval |
 
 ## What Xroga automates (real APIs)
-- Chrome: package zip → CWS `upload` + `publish` when OAuth creds saved
-- Electron: portable zip immediately + multi-OS Actions installers; sync `CSC_*` secrets when provided
-- Mobile: auto-link/create EAS project, sync Google Play JSON into Expo, start build (+ submit if Play JSON present), poll artifact URL
+- Chrome: Google OAuth authorize (user’s client) or paste refresh token → CWS `upload` + `publish` + status check
+- Electron: portable zip immediately + multi-OS Actions installers; sync `CSC_*` + Apple notarization secrets to GitHub Actions when provided
+- Mobile: auto-link/create EAS project; sync Google Play JSON **and** App Store Connect API key into Expo via GraphQL; start build (+ submit when creds present); poll artifact URL; list recent EAS builds in Publish
 
 ## What Xroga cannot do (no fakes)
 - Approve Chrome Web Store / App Store / Play listings
