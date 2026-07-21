@@ -1,16 +1,14 @@
-/** Simulates streaming by revealing text in small chunks (for non-SSE responses). */
+/**
+ * Instant paint for already-complete Phase-1 replies.
+ * (Fake typewriter after a full round-trip made chat feel twice as slow.)
+ * Keep a tiny async yield so React can commit once before continuing.
+ */
 export async function streamTextReveal(
   text: string,
   onChunk: (partial: string) => void,
-  signal?: AbortSignal,
-  chunkSize = 8,
-  delayMs = 5
+  signal?: AbortSignal
 ): Promise<void> {
-  let acc = '';
-  for (let i = 0; i < text.length; i += chunkSize) {
-    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
-    acc += text.slice(i, i + chunkSize);
-    onChunk(acc);
-    await new Promise((r) => setTimeout(r, delayMs));
-  }
+  if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+  onChunk(text);
+  await Promise.resolve();
 }

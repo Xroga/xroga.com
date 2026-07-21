@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { AI_RESPONSE_LOGO_URL, HEADER_LOGO_URL, SIDEBAR_LOGO_URL, HOMEPAGE_LOGO_URL } from '@/lib/theme';
-import { BlackHoleLoader } from '@/components/ui/BlackHoleLoader';
 
 type LogoVariant = 'header' | 'sidebar' | 'homepage' | 'response';
 
@@ -47,7 +46,7 @@ interface ProcessingLogoProps {
   alt?: string;
 }
 
-/** Xroga logo — while processing, swaps to Black Hole V∞ animation */
+/** Xroga logo — static avatar mark (processing wait uses BlackHoleLoader separately) */
 export function ProcessingLogo({
   processing = false,
   height = 32,
@@ -59,14 +58,8 @@ export function ProcessingLogo({
   const width = variant === 'homepage' ? height * 2.8 : variant === 'header' ? height * 2.2 : height;
   const src = VARIANT_SRC[variant];
 
-  if (processing) {
-    return (
-      <BlackHoleLoader
-        size={height >= 48 ? 'md' : 'sm'}
-        className={className}
-      />
-    );
-  }
+  // Ignore legacy `processing` — callers must render BlackHoleLoader / ResearchPagesLoader instead.
+  void processing;
 
   return (
     <div

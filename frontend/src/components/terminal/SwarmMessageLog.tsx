@@ -352,15 +352,15 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   )
                 )}
                 {msg.role === 'assistant' && (
-                  loading && msg.id === animatingId ? (
-                    <BlackHoleLoader size="sm" className="shrink-0 mt-0.5" />
+                  loading && msg.id === animatingId && !showResearchPages ? (
+                    <BlackHoleLoader size="xs" className="shrink-0 mt-1" />
                   ) : (
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
                       <ProcessingLogo
                         variant="response"
-                        height={28}
+                        height={24}
                         processing={false}
-                        className="!w-7 !h-7 sm:!w-8 sm:!h-8"
+                        className="!w-6 !h-6 sm:!w-7 sm:!h-7"
                       />
                     </div>
                   )
@@ -392,13 +392,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           loading &&
                           !msg.content?.trim() && (
                             <ResearchPagesLoader className="my-2" />
-                          )}
-                        {!showResearchPages &&
-                          !heavyBuildActive &&
-                          loading &&
-                          msg.id === animatingId &&
-                          !msg.content?.trim() && (
-                            <BlackHoleLoader size="md" className="my-3" />
                           )}
                         {heavyBuildActive &&
                           buildPanelMessageId &&
@@ -504,9 +497,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           !msg.content?.trim() ? null : showResearchPages &&
                           msg.id === (buildPanelMessageId ?? animatingId) &&
                           loading &&
-                          !msg.content?.trim() ? null : !heavyBuildActive &&
-                          loading &&
-                          msg.id === animatingId &&
                           !msg.content?.trim() ? null : (
                           <ModernResponseText
                             content={
