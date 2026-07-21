@@ -60,16 +60,6 @@ const HERO_BUILD_WORDS = [
   'Your stack',
 ] as const;
 
-const HERO_SURFACE_CHIPS = [
-  'Web',
-  'Chrome extension',
-  'Desktop software',
-  'Android',
-  'iOS',
-  'Mobile',
-  'Debug errors',
-] as const;
-
 export default function HomePage() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
@@ -144,12 +134,6 @@ export default function HomePage() {
               </span>
             </p>
           </div>
-
-          <ul className="xv-hc-surface-chips" aria-label="What Xroga ships">
-            {HERO_SURFACE_CHIPS.map((chip) => (
-              <li key={chip}>{chip}</li>
-            ))}
-          </ul>
 
           <p className="xv-hc-sub">
             Describe the product. The swarm codes, debugs, and pushes to your GitHub — web goes live

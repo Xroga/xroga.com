@@ -99,6 +99,22 @@ const ROWS: Array<{
     claude: 'You + Claude in the loop',
     replit: 'Agent + cloud workspace',
   },
+  {
+    feature: 'Usage limits',
+    xroga: 'Monthly plan pool — build until it lasts',
+    cursor: 'Rate limits & plan caps; often feels low fast',
+    codex: 'Usage caps; bursts hit limits quickly',
+    claude: 'Session / plan limits; 5-hour style resets common',
+    replit: 'Agent / compute quotas reset on a short cycle',
+  },
+  {
+    feature: 'Unused tokens',
+    xroga: 'Unused API credit rolls up to 1 month',
+    cursor: 'No month-to-month token rollover',
+    codex: 'No month-to-month token rollover',
+    claude: 'No month-to-month token rollover',
+    replit: 'Unused quota typically does not roll over',
+  },
 ];
 
 function cell(row: (typeof ROWS)[number], id: (typeof COLUMNS)[number]['id']) {
@@ -116,10 +132,11 @@ export function HomepageCompareSection() {
           Fair look: ship loop vs coding tools
         </h2>
         <p className="xv-hc-section-copy">
-          Cursor and Codex are excellent for writing and editing code. Claude shines at reasoning
-          and guided coding. Replit is strong for cloud prototypes. Xroga is built to take a
-          product prompt to your GitHub + Vercel — with optional Supabase — without starting in an
-          IDE.
+          Cursor, Codex, Claude, and Replit are strong for writing and editing code. Xroga is built
+          to take a product prompt to your GitHub + Vercel — with optional Supabase — without
+          starting in an IDE. Other tools often hit 5-hour resets and burn through usage fast, with
+          no rollover of unused tokens. Xroga meters a monthly pool and rolls unused API credit up
+          to one month.
         </p>
 
         <div className="xv-hc-compare-scroll" role="region" aria-label="Product comparison">
@@ -129,15 +146,16 @@ export function HomepageCompareSection() {
                 <th scope="col"> </th>
                 {COLUMNS.map((col) => (
                   <th key={col.id} scope="col" className={col.highlight ? 'is-xroga' : undefined}>
-                    <span className="inline-flex flex-col items-center gap-1.5">
-                      <span className="relative h-7 w-14 sm:h-8 sm:w-16 xv-hc-compare-logo">
+                    <span className="xv-hc-compare-brand">
+                      <span className="xv-hc-compare-logo">
                         <Image
                           src={col.logo}
-                          alt=""
-                          fill
+                          alt={`${col.name} logo`}
+                          width={56}
+                          height={32}
                           unoptimized
                           priority
-                          className="object-contain"
+                          className="xv-hc-compare-logo-img"
                         />
                       </span>
                       <span>{col.name}</span>
