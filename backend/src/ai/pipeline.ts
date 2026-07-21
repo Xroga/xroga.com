@@ -112,6 +112,7 @@ import {
 } from './sessionMemory.js';
 import { RunTrace } from './runTrace.js';
 import { verifyShippedProduct } from '../lib/shipVerify.js';
+import type { VercelEnvSyncResult } from '../lib/vercelEnv.js';
 import { computeShipOutcome } from './shipOutcome.js';
 
 export interface PipelineProgress {
@@ -581,9 +582,10 @@ export async function runBuildPipeline(opts: {
     }
   };
   const metaRaw = parseClientMeta(opts.clientMeta);
-  // Prefer Terminal selection; fall back to sticky default from first ship so updates hit the live product.
+  // Sticky default_repo ONLY for explicit updates when the chatbar omitted a target.
+  // Greenfield builds must never silently overwrite the last product.
   const stickyDefault =
-    !metaRaw?.githubTargetRepo?.includes('/')
+    metaRaw?.buildUpdate && !metaRaw?.githubTargetRepo?.includes('/')
       ? await getGithubDefaultRepo(opts.userId).catch(() => null)
       : null;
   const meta: BuildClientMeta | undefined = metaRaw
@@ -593,9 +595,7 @@ export async function runBuildPipeline(opts: {
           metaRaw.githubTargetRepo ||
           (stickyDefault?.includes('/') ? stickyDefault : undefined),
       }
-    : stickyDefault?.includes('/')
-      ? { githubTargetRepo: stickyDefault }
-      : undefined;
+    : undefined;
   const userFacingPrompt = (meta?.userPrompt || opts.prompt).trim();
 
   createRun(opts.userId, userFacingPrompt, runId);
@@ -2285,6 +2285,7 @@ export async function runBuildPipeline(opts: {
   // Vercel redeploy via file-upload API — does NOT require GitHub↔Vercel project link
   // Non-web products (Chrome / Electron / Expo) ship via Releases/EAS — never upload them to Vercel.
   const vercelToken = await getVercelToken(opts.userId);
+  let vaultEnvSync: VercelEnvSyncResult | undefined;
   const canDeployVercel =
     !isNonWebProduct &&
     !patchAborted &&
@@ -2318,6 +2319,23 @@ export async function runBuildPipeline(opts: {
           .replace(/^-|-$/g, '')
           .slice(0, 40) || 'xroga-build';
       const deployed = await deployToAllPlatforms(slug, nextFiles, opts.userId);
+      vaultEnvSync = deployed.envSync ?? deployed.vercel?.envSync;
+      if (vaultEnvSync && !vaultEnvSync.ok) {
+        const detail =
+          vaultEnvSync.error ||
+          (vaultEnvSync.skipped?.length
+            ? `skipped ${vaultEnvSync.skipped.join(', ')}`
+            : 'unknown error');
+        shipBlockers.push(`Vault → Vercel env sync failed: ${detail}`);
+        emit({
+          agent: 'deploy',
+          status: 'env_sync_failed',
+          message: `Vault secrets did not fully sync to Vercel: ${detail}`,
+          swarmStatusLabel: 'Env sync issue',
+          swarmActivity: detail.slice(0, 120),
+          swarmTodos: todos('push'),
+        });
+      }
       if (deployed.deployUrl) {
         deployUrl = deployed.deployUrl;
         deployVerified = deployed.deployVerified;
@@ -2396,6 +2414,13 @@ export async function runBuildPipeline(opts: {
     chromeZipError,
     electronReleaseError,
     easError,
+    envSyncOk: vaultEnvSync ? vaultEnvSync.ok : undefined,
+    envSyncError: vaultEnvSync && !vaultEnvSync.ok
+      ? vaultEnvSync.error ||
+        (vaultEnvSync.skipped?.length
+          ? `skipped ${vaultEnvSync.skipped.slice(0, 6).join(', ')}`
+          : 'env sync incomplete')
+      : undefined,
   });
 
   // Merge pre-push blockers (e.g. missing sticky repo) that outcome may not know
@@ -2599,6 +2624,15 @@ export async function runBuildPipeline(opts: {
     deployUrl,
     deployVerified: Boolean(shipVerify?.liveOk ?? deployVerified),
     vercelPreviewUrl,
+    envSync: vaultEnvSync
+      ? {
+          ok: vaultEnvSync.ok,
+          projectName: vaultEnvSync.projectName,
+          upserted: vaultEnvSync.upserted,
+          skipped: vaultEnvSync.skipped,
+          error: vaultEnvSync.error,
+        }
+      : undefined,
     shipVerify,
     canRollback: Boolean(commitSha && githubRepoName),
     qa: {

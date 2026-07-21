@@ -3,14 +3,14 @@
  * - GitHub code lives on GitHub
  * - Chat, images, research, builds live on Xroga under the selected repo
  *
- * After the first ship we persist default_repo — later prompts auto-bind to it
- * so updates change the live product without re-picking every time.
+ * Sticky default_repo is for updates only (applied by the chat layer when it
+ * detects an update). This gate never silently binds the last product — that
+ * caused multi-product wrong-repo ships.
  */
 
-import { getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
+import { getSelectedRepoContext } from '@/lib/repoContext';
 import { api } from '@/lib/api';
 import { isGitHubConnectedSession } from '@/lib/xrogaBrand';
-import { notifyGithubRepoContext } from '@/lib/githubProjectEvents';
 
 export type RepoWorkspaceReady =
   | { ok: true; repo: string; branch: string }
@@ -20,12 +20,6 @@ function validSelectedRepo(
   selected: ReturnType<typeof getSelectedRepoContext>
 ): selected is { repo: string; branch: string } {
   return Boolean(selected?.repo && selected.repo.includes('/'));
-}
-
-function bindStickyRepo(repo: string, branch = 'main'): RepoWorkspaceReady {
-  saveSelectedRepoContext({ repo, branch });
-  notifyGithubRepoContext(repo, branch);
-  return { ok: true, repo, branch };
 }
 
 export async function checkRepoWorkspaceReady(): Promise<RepoWorkspaceReady> {
@@ -56,10 +50,6 @@ export async function checkRepoWorkspaceReady(): Promise<RepoWorkspaceReady> {
           'Connect GitHub first. Your code can go to GitHub — chats, images, and research stay on Xroga under your selected repo.',
       };
     }
-    // Sticky default from first ship / last pick — auto-bind so updates hit the live product.
-    if (status.defaultRepo?.includes('/')) {
-      return bindStickyRepo(status.defaultRepo, 'main');
-    }
   } catch {
     if (isGitHubConnectedSession()) {
       return {
@@ -80,6 +70,6 @@ export async function checkRepoWorkspaceReady(): Promise<RepoWorkspaceReady> {
     ok: false,
     reason: 'no_repo_selected',
     message:
-      'Select a GitHub repository in the bar above (once). We remember it so later updates change the same live product.',
+      'Select a GitHub repository in the bar above. For a new product leave it clear or pick a fresh repo; for updates pick the live product.',
   };
 }

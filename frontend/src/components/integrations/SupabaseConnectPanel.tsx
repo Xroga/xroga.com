@@ -130,6 +130,16 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
         setProvisioned(true);
         onConnected?.();
         void refresh();
+        const envSync = (res as { envSync?: { ok?: boolean; error?: string; skipped?: string[] } })
+          .envSync;
+        if (envSync && envSync.ok === false) {
+          toast.error(
+            envSync.error ||
+              `Supabase ready, but vault → Vercel env sync failed${
+                envSync.skipped?.length ? ` (${envSync.skipped.slice(0, 4).join(', ')})` : ''
+              }. Sync from Integrations.`,
+          );
+        }
       } else {
         toast.error(res.message || res.error || 'Provisioning failed');
       }
@@ -157,6 +167,14 @@ export function SupabaseConnectPanel({ onConnected, compact }: Props) {
         setProvisioned(true);
         onConnected?.();
         void refresh();
+        const envSync = (res as { envSync?: { ok?: boolean; error?: string; skipped?: string[] } })
+          .envSync;
+        if (envSync && envSync.ok === false) {
+          toast.error(
+            envSync.error ||
+              'Project created, but vault → Vercel env sync failed. Sync from Integrations.',
+          );
+        }
       } else {
         toast.error(res.message || res.error || 'Create failed');
       }

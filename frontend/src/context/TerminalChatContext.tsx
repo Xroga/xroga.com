@@ -1586,10 +1586,10 @@ export function TerminalChatProvider({
         }
 
         const repoContext = repoContextEarly ?? getSelectedRepoContext();
-        // Sticky fallback: if chat bar has no selection yet, use GitHub default_repo from first ship.
+        // Sticky fallback ONLY for updates — never for greenfield (wrong-product risk).
         let stickyTargetRepo = repoContext?.repo;
         let stickyTargetBranch = repoContext?.branch ?? 'main';
-        if (!stickyTargetRepo?.includes('/')) {
+        if (isBuildUpdate && !stickyTargetRepo?.includes('/')) {
           try {
             const ghStatus = await api.github.status();
             if (ghStatus.defaultRepo?.includes('/')) {
@@ -1869,16 +1869,20 @@ export function TerminalChatProvider({
                 interrupt: false,
                 attachments,
               };
-              void api.github.status().then((gh) => {
+              void api.github.status().then(async (gh) => {
                 if (gh.connected) {
-                  setGithubActivation({ open: true, username: gh.username });
+                  const { notifyOpenRepoPicker } = await import('@/lib/githubProjectEvents');
+                  notifyOpenRepoPicker();
+                  pushSwarmTerminalLine(
+                    'Pick the live product repo in the chat bar — then re-send your update.',
+                  );
                 } else {
                   setGithubGateOpen(true);
+                  pushSwarmTerminalLine(
+                    'Connect GitHub, then pick the repo to update before shipping.',
+                  );
                 }
               });
-              pushSwarmTerminalLine(
-                'Pick or confirm your sticky ship repo — updates reuse the same live product.'
-              );
             }
             if (swarmEv.needsVercel) {
               handleVercelBuildBlocked(displayPrompt, attachments);

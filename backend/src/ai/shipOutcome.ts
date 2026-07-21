@@ -39,6 +39,9 @@ export type ShipOutcomeInput = {
   electronReleaseError?: string;
   easError?: string;
   chromeStoreError?: string;
+  /** Vault → Vercel env sync ran and failed (undefined = not attempted / no vault keys) */
+  envSyncOk?: boolean;
+  envSyncError?: string;
 };
 
 export type ShipOutcome = {
@@ -92,6 +95,13 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
   if (!isNonWeb && input.deployUrl && input.liveOk === false) {
     shipBlockers.push('Live URL check failed — open Vercel logs or redeploy');
   }
+  if (!isNonWeb && input.envSyncOk === false) {
+    shipBlockers.push(
+      input.envSyncError
+        ? `Vault → Vercel env sync failed: ${input.envSyncError}`
+        : 'Vault secrets did not sync to Vercel — AI/DB keys may be missing on the live site',
+    );
+  }
 
   const buildOk =
     !input.patchAborted &&
@@ -117,7 +127,10 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
       storeSubmitted = Boolean(input.easStoreSubmitted);
       fullyShipped = Boolean(input.easBuildOk);
     } else {
-      fullyShipped = Boolean(input.deployUrl && input.liveOk !== false);
+      // Live URL alone is not enough if vault env sync failed — site may boot without keys
+      fullyShipped = Boolean(
+        input.deployUrl && input.liveOk !== false && input.envSyncOk !== false,
+      );
       handoffReady = fullyShipped;
     }
   }
@@ -228,6 +241,13 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
       );
     } else {
       verifyLines.push('❌ No Vercel live URL');
+    }
+    if (input.envSyncOk === false) {
+      verifyLines.push(
+        `❌ Vault → Vercel env sync failed${input.envSyncError ? `: ${input.envSyncError}` : ''}`,
+      );
+    } else if (input.envSyncOk === true) {
+      verifyLines.push('✅ Vault secrets synced to Vercel');
     }
   }
 
