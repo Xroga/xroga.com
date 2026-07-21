@@ -7,6 +7,7 @@ import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepagePipelineDemo } from '@/components/homepage/HomepagePipelineDemo';
 import { HomepageEmpowerSection } from '@/components/homepage/HomepageEmpowerSection';
+import { HomepageErrorDashboard } from '@/components/homepage/HomepageErrorDashboard';
 import { HomepageBlackHolePower } from '@/components/homepage/HomepageBlackHolePower';
 import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
 import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
@@ -49,11 +50,24 @@ const HERO_BUILD_WORDS = [
   'Websites',
   'SaaS apps',
   'Chrome extensions',
-  'Desktop apps',
+  'Desktop software',
+  'Android apps',
+  'iOS apps',
   'Mobile apps',
+  'Debug errors',
   'Landing pages',
   'Dashboards',
   'Your stack',
+] as const;
+
+const HERO_SURFACE_CHIPS = [
+  'Web',
+  'Chrome extension',
+  'Desktop software',
+  'Android',
+  'iOS',
+  'Mobile',
+  'Debug errors',
 ] as const;
 
 export default function HomePage() {
@@ -120,19 +134,27 @@ export default function HomePage() {
 
           <h1 className="xv-hc-brand">XROGA</h1>
 
-          <p className="xv-hc-headline">
-            AI That <span className="xv-hc-headline-em">Builds & Ships</span>{' '}
-            <span className="xv-hc-headline-rotator" aria-live="polite">
+          <div className="xv-hc-headline-block">
+            <p className="xv-hc-headline">
+              AI That <span className="xv-hc-headline-em">Builds & Ships</span>
+            </p>
+            <p className="xv-hc-headline-rotator" aria-live="polite">
               <span key={HERO_BUILD_WORDS[buildWordIdx]} className="xv-hc-headline-word">
                 {HERO_BUILD_WORDS[buildWordIdx]}
               </span>
-            </span>
-          </p>
+            </p>
+          </div>
+
+          <ul className="xv-hc-surface-chips" aria-label="What Xroga ships">
+            {HERO_SURFACE_CHIPS.map((chip) => (
+              <li key={chip}>{chip}</li>
+            ))}
+          </ul>
 
           <p className="xv-hc-sub">
             Describe the product. The swarm codes, debugs, and pushes to your GitHub — web goes live
-            on Vercel; Chrome / desktop ship as zips and installers; mobile builds on your Expo
-            account.
+            on Vercel; Chrome extensions and desktop software ship as zips and installers; Android
+            and iOS build on your Expo account. Same loop for debug, update, and edit errors.
           </p>
 
           <div className="xv-hc-ctas">
@@ -178,7 +200,8 @@ export default function HomePage() {
 
       <HomepageEmpowerSection />
 
-      {/* Additional sections — existing homepage content above unchanged */}
+      <HomepageErrorDashboard />
+
       <HomepageBlackHolePower />
 
       <section className="xv-hc-features" aria-labelledby="features-heading">

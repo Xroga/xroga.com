@@ -11,9 +11,11 @@ import { ChatBarShipIcon, type SendButtonState } from './ChatBarShipIcon';
 const TYPEWRITER_FEATURES = [
   'Build a website or web app — ship to GitHub + Vercel…',
   'Build a Chrome MV3 extension — zip on Releases…',
-  'Build an Electron desktop app — installers on GitHub…',
+  'Build Electron desktop software — installers on GitHub…',
+  'Build an Expo Android app — EAS on your account…',
+  'Build an Expo iOS app — TestFlight on your account…',
+  'Debug this error — frontend, backend, or integration…',
   'Build a full-stack SaaS with auth and billing…',
-  'Build an Expo Android/iOS app — EAS on your account…',
   'Push to GitHub and go live on Vercel…',
   'Update your repo — theme, auth, pages — in chat…',
 ];
