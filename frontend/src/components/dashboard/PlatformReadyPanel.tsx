@@ -43,7 +43,7 @@ export function PlatformReadyPanel({ className }: { className?: string }) {
     <div className={cn('rounded-xl border border-[var(--card-border)] p-4 space-y-3', className)}>
       <div className="flex items-center gap-2">
         <Shield className="w-4 h-4 text-[var(--accent)]" />
-        <h3 className="text-sm font-bold">Platform ready</h3>
+        <h3 className="text-sm font-bold">Platform ready (operators)</h3>
         {data ? (
           <span
             className={cn(
@@ -58,8 +58,8 @@ export function PlatformReadyPanel({ className }: { className?: string }) {
         ) : null}
       </div>
       <p className="text-[11px] text-[var(--muted)]">
-        Boolean checks only — secret values are never shown. Fix Fly secrets / OAuth apps before
-        inviting users.
+        Operator checklist for Fly secrets / OAuth apps — not shown to end users on Integrations.
+        Boolean checks only; secret values are never shown.
       </p>
       {loading ? (
         <p className="text-xs text-[var(--muted)] flex items-center gap-1">

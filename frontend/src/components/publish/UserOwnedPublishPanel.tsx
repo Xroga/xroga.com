@@ -685,7 +685,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
             <strong>Mobile:</strong> Expo + EAS — Sync Play/Apple pushes vault creds into Expo.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-1 rounded-full border border-[var(--card-border)] p-1 text-xs">
+        <div className="flex flex-wrap items-center gap-1 rounded-xl border border-[var(--card-border)] bg-[var(--background)]/40 p-1 text-xs">
           {(
             [
               ['web', 'Web', Globe],
@@ -699,8 +699,10 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
               type="button"
               onClick={() => setTab(id)}
               className={cn(
-                'inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full font-semibold transition',
-                tab === id ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted)]',
+                'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-colors',
+                tab === id
+                  ? 'border border-[var(--accent)]/40 bg-[var(--accent)]/15 text-[var(--accent)]'
+                  : 'border border-transparent text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/[0.04]',
               )}
             >
               <Icon className="w-3.5 h-3.5" /> {label}
