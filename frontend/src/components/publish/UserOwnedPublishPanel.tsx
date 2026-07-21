@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   CheckCircle2,
   Circle,
@@ -11,10 +12,13 @@ import {
   Smartphone,
   Globe,
   Shield,
+  Puzzle,
+  Monitor,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { useAppStore } from '@/store/useAppStore';
 
 type ChecklistItem = {
   id: string;
@@ -447,6 +451,8 @@ function ElectronSecretsForm({
 }
 
 export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
+  const router = useRouter();
+  const setChatPrefill = useAppStore((s) => s.setChatPrefill);
   const [status, setStatus] = useState<PublishStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'web' | 'chrome' | 'desktop' | 'mobile'>('web');
@@ -640,6 +646,11 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
     }
   }
 
+  function startInWorkspace(prompt: string) {
+    setChatPrefill(prompt);
+    router.push('/workspace');
+  }
+
   useEffect(() => {
     if (tab === 'mobile' && status?.mobile.ready) {
       void loadBuilds();
@@ -677,8 +688,8 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
           {(
             [
               ['web', 'Web', Globe],
-              ['chrome', 'Chrome', Globe],
-              ['desktop', 'Desktop', Globe],
+              ['chrome', 'Chrome', Puzzle],
+              ['desktop', 'Desktop', Monitor],
               ['mobile', 'Mobile', Smartphone],
             ] as const
           ).map(([id, label, Icon]) => (
@@ -774,12 +785,15 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
             connected={status?.chrome?.cwsConnected}
             onSaved={() => void refresh()}
           />
-          <Link
-            href="/dashboard"
+          <button
+            type="button"
+            onClick={() =>
+              startInWorkspace('Build a Chrome MV3 extension that ')
+            }
             className="inline-flex text-sm font-semibold text-[var(--accent)] hover:underline"
           >
             Build an extension in Workspace →
-          </Link>
+          </button>
         </div>
       ) : tab === 'desktop' ? (
         <div className="space-y-3">
@@ -798,12 +812,15 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
             notarizationSaved={status?.desktop?.notarizationSaved}
             onSaved={() => void refresh()}
           />
-          <Link
-            href="/dashboard"
+          <button
+            type="button"
+            onClick={() =>
+              startInWorkspace('Build an Electron desktop app for ')
+            }
             className="inline-flex text-sm font-semibold text-[var(--accent)] hover:underline"
           >
             Build a desktop app in Workspace →
-          </Link>
+          </button>
         </div>
       ) : (
         <div className="space-y-4">

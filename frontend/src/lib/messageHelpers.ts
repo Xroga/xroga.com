@@ -24,7 +24,12 @@ export function generateMessageSuggestions(userText: string, aiText: string): Me
     return {
       creationType: 'chat',
       creationLabel: 'Chat',
-      followUps: ['Build a website', 'Ship a SaaS dashboard', 'Build a Chrome extension'],
+      followUps: [
+        'Build a website',
+        'Build a Chrome extension',
+        'Build an Electron desktop app',
+        'Build an Expo mobile app',
+      ],
       refine: [],
       deploy: [],
     };
