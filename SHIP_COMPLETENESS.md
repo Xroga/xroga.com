@@ -61,6 +61,8 @@ Economics (`GET /api/phase1/economics`) sizes by **tokens/cost**, not minutes:
 
 Wall-clock = model latency + research + GitHub + Vercel/EAS. Elapsed UI counter ≠ ETA.
 
+**Stall / progress fix:** Workspace to-dos used different IDs than the backend pipeline, so the UI could freeze on “Analyze…” while OpenRouter was still working. Frontend now bridges `convert`→`analyze`, `architect`→`plan`, `build`→`code-gen`, etc. Simple static landings skip the LLM Architect (deterministic plan). Architect LLM waits are capped at 45s then continue to builder. Role chips get `negotiationPhase` from each agent. Banners tell you to press **Stop** (waiting is not billed; client does not silently kill paid calls).
+
 ### Env sync honesty
 Vault → Vercel failures **block `fullyShipped`**, surface in **Integrations toasts**, and appear on the live **TerminalBuildReport** as `Env sync · failed` / `Blocker · …` status lines when present on the run output.
 

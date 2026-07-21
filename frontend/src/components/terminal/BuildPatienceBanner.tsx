@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Coffee, Sparkles, Square } from 'lucide-react';
+import { Bell, Coffee, Square } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface BuildPatienceBannerProps {
@@ -9,7 +9,10 @@ interface BuildPatienceBannerProps {
   onEnableNotifications?: () => void;
 }
 
-/** Shown during long builds — honest wait; warns + auto-stop protects API cost. */
+/**
+ * Honest wait banner. Client does not auto-kill paid model calls —
+ * user presses Stop if todos stay frozen.
+ */
 export function BuildPatienceBanner({
   elapsedSeconds,
   className,
@@ -36,21 +39,21 @@ export function BuildPatienceBanner({
             {Math.floor(elapsedSeconds / 60)}m — still waiting on the model (or quota)
           </p>
           <p className="text-[11px] leading-relaxed text-[var(--foreground)]/80">
-            This banner is honest progress, not a fake busy loop. If todos are frozen or tokens show
-            exhausted, press <strong>Stop</strong> and <strong>Retry</strong> — you only pay for completed
-            API calls, not waiting time.
+            This is a real API wait, not a fake busy loop. Waiting time does not add OpenRouter
+            charges. If to-dos stay frozen, press <strong>Stop</strong> then <strong>Retry</strong> —
+            you only pay for completed model calls.
           </p>
         </>
       ) : (
         <>
           <p className="text-[12px] font-semibold text-[var(--foreground)] flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-[var(--accent)] shrink-0" />
+            <Coffee className="h-3.5 w-3.5 text-[var(--accent)] shrink-0" />
             Real build in progress — waiting on model responses
           </p>
-          <p className="text-[11px] leading-relaxed text-[var(--foreground)]/80 flex items-start gap-1.5">
-            <Coffee className="h-3.5 w-3.5 text-[var(--muted)] shrink-0 mt-0.5" />
-            Status updates when the swarm actually advances. Complex products (chatbot/crypto) take a few
-            minutes; we skip endless polish loops so you get runnable code sooner.
+          <p className="text-[11px] leading-relaxed text-[var(--foreground)]/80">
+            Status updates when the swarm advances. Simple landings should move past planning
+            quickly; chatbot/crypto can take a few minutes. Press <strong>Stop</strong> anytime to
+            cancel.
           </p>
         </>
       )}

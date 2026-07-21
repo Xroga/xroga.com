@@ -123,12 +123,45 @@ export interface PipelineProgress {
   swarmActivity?: string;
   swarmTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' | 'skipped' }>;
   keepalive?: boolean;
+  /** Drives Workspace role chips — must advance with real agents. */
+  negotiationPhase?: number;
+  userFacingPhase?: number;
   /** Open GitHub connect gate early (before long build finishes). */
   needsGitHub?: boolean;
   /** Open Vercel connect gate early. */
   needsVercel?: boolean;
   /** Update mode needs sticky/selected repo. */
   needsRepoPick?: boolean;
+}
+
+/** Map pipeline agents → Workspace collaboration chip phases (0–8). */
+function negotiationPhaseForAgent(agent?: string): number | undefined {
+  if (!agent) return undefined;
+  switch (agent) {
+    case 'router':
+      return 0;
+    case 'research':
+    case 'analyst':
+      return 1;
+    case 'converter':
+    case 'vision':
+      return 2;
+    case 'architect':
+      return 3;
+    case 'builder':
+      return 4;
+    case 'reviewer':
+      return 5;
+    case 'qa':
+    case 'compiler':
+      return 6;
+    case 'security':
+      return 7;
+    case 'deploy':
+      return 8;
+    default:
+      return undefined;
+  }
 }
 
 export type ProgressFn = (event: PipelineProgress) => void;
@@ -571,8 +604,17 @@ export async function runBuildPipeline(opts: {
   const runId = randomUUID();
   const trace = new RunTrace(runId, opts.userId);
   const emit = (ev: PipelineProgress) => {
-    if (ev.agent && ev.status) trace.add(ev.agent, ev.status, ev.message);
-    opts.onProgress?.(ev);
+    const phase = ev.negotiationPhase ?? negotiationPhaseForAgent(ev.agent);
+    const enriched: PipelineProgress = {
+      ...ev,
+      ...(phase != null
+        ? { negotiationPhase: phase, userFacingPhase: ev.userFacingPhase ?? phase }
+        : {}),
+    };
+    if (enriched.agent && enriched.status) {
+      trace.add(enriched.agent, enriched.status, enriched.message);
+    }
+    opts.onProgress?.(enriched);
   };
   const throwIfAborted = () => {
     if (opts.signal?.aborted) {
@@ -911,47 +953,115 @@ export async function runBuildPipeline(opts: {
     converted.outputTokens,
   );
 
-  // Architect agent — concrete file plan (real multi-agent stage)
+  // Architect agent — concrete file plan (real multi-agent stage).
+  // Simple static landings use a deterministic plan (no extra OpenRouter wait).
   throwIfAborted();
+  const scaffoldForArchitect = detectScaffoldKind(userFacingPrompt);
+  const simpleStaticFastPath =
+    !isUpdate &&
+    scaffoldForArchitect === 'static' &&
+    (route.kind === 'build_volume' ||
+      /\b(landing\s*page|simple\s+(web|site|app)|static\s+site)\b/i.test(userFacingPrompt));
+
   emit({
     agent: 'architect',
     status: 'planning',
-    message: 'Architect planning file tree…',
+    message: simpleStaticFastPath
+      ? 'Architect using static landing plan (fast path)…'
+      : 'Architect planning file tree…',
     swarmStatusLabel: 'Architect',
-    swarmActivity: 'File plan',
+    swarmActivity: simpleStaticFastPath ? 'Static fast path' : 'File plan',
     swarmTodos: todos('architect'),
   });
   let architectBlock = '';
   let architectPlanSummary: { stack: string; files: string[]; notes: string[] } | undefined;
   try {
-    await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
-    const plan = await runArchitectPlan({
-      brief: converted.instruction,
-      userPrompt: userFacingPrompt,
-      isUpdate,
-    });
-    usage = await recordUsage(
-      opts.userId,
-      'deepseek_v4_flash',
-      plan.inputTokens,
-      plan.outputTokens,
-    );
-    architectBlock = formatArchitectForBuilder(plan);
-    architectPlanSummary = {
-      stack: plan.stack,
-      files: plan.files.map((f) => f.path),
-      notes: plan.notes,
-    };
+    if (simpleStaticFastPath) {
+      const plan = {
+        stack: 'static',
+        files: [
+          { path: 'index.html', purpose: 'Landing page markup' },
+          { path: 'styles.css', purpose: 'Styles and theme' },
+          { path: 'script.js', purpose: 'Interactions' },
+          { path: 'vercel.json', purpose: 'Static Vercel deploy' },
+          { path: 'README.md', purpose: 'Project readme' },
+        ],
+        notes: ['Fast path — skipped LLM architect for simple static landing'],
+        inputTokens: 0,
+        outputTokens: 0,
+        raw: '',
+      };
+      architectBlock = formatArchitectForBuilder(plan);
+      architectPlanSummary = {
+        stack: plan.stack,
+        files: plan.files.map((f) => f.path),
+        notes: plan.notes,
+      };
+      emit({
+        agent: 'architect',
+        status: 'planned',
+        message: `Plan: ${plan.stack} · ${plan.files.length} files (fast path)`,
+        swarmStatusLabel: 'Architect',
+        swarmActivity: plan.stack,
+        swarmTodos: todos('architect'),
+      });
+    } else {
+      await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
+      // Cap Architect wait so a hung OpenRouter call cannot freeze the UI for 5+ minutes
+      const ARCHITECT_MS = 45_000;
+      const plan = await Promise.race([
+        runArchitectPlan({
+          brief: converted.instruction,
+          userPrompt: userFacingPrompt,
+          isUpdate,
+        }),
+        new Promise<never>((_, reject) => {
+          const t = setTimeout(() => {
+            reject(new Error(`Architect timed out after ${ARCHITECT_MS / 1000}s`));
+          }, ARCHITECT_MS);
+          opts.signal?.addEventListener(
+            'abort',
+            () => {
+              clearTimeout(t);
+              reject(Object.assign(new Error('Build cancelled'), { code: 'BUILD_CANCELLED' }));
+            },
+            { once: true },
+          );
+        }),
+      ]);
+      usage = await recordUsage(
+        opts.userId,
+        'deepseek_v4_flash',
+        plan.inputTokens,
+        plan.outputTokens,
+      );
+      architectBlock = formatArchitectForBuilder(plan);
+      architectPlanSummary = {
+        stack: plan.stack,
+        files: plan.files.map((f) => f.path),
+        notes: plan.notes,
+      };
+      emit({
+        agent: 'architect',
+        status: 'planned',
+        message: `Plan: ${plan.stack} · ${plan.files.length} files`,
+        swarmStatusLabel: 'Architect',
+        swarmActivity: plan.stack,
+        swarmTodos: todos('architect'),
+      });
+    }
+  } catch (err) {
+    const code = (err as Error & { code?: string }).code;
+    if (code === 'BUILD_CANCELLED') throw err;
+    console.warn('[pipeline] architect failed (continuing):', (err as Error).message);
     emit({
       agent: 'architect',
-      status: 'planned',
-      message: `Plan: ${plan.stack} · ${plan.files.length} files`,
+      status: 'skipped',
+      message: 'Architect skipped — continuing to builder',
       swarmStatusLabel: 'Architect',
-      swarmActivity: plan.stack,
-      swarmTodos: todos('architect'),
+      swarmActivity: 'Skipped',
+      swarmTodos: todos('build'),
     });
-  } catch (err) {
-    console.warn('[pipeline] architect failed (continuing):', (err as Error).message);
   }
 
   emit({
