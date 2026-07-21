@@ -166,11 +166,11 @@ export default function HomePage() {
             CODING
           </p>
           <h2 className="xv-hc-section-title">
-            Build better products. <em>Agents for your repo.</em> One modern flow.
+            Build better products. <em>Swarm for your repo.</em> One continuous loop.
           </h2>
           <p className="xv-hc-section-copy">
-            Prompt in Workspace → analyze → build → debug → push GitHub → live on Vercel with your
-            domain. Continuous loop, not a one-shot demo.
+            Watch Xroga Workspace ship across every category — web, Chrome, desktop, Android, iOS,
+            debug, crypto, and updates — prompt → code → GitHub → live.
           </p>
           <div className="xv-hc-mark" aria-hidden />
         </div>
