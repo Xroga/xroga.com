@@ -1,11 +1,11 @@
 'use client';
 
-import { Globe, Code2, Smartphone, Puzzle, Monitor } from 'lucide-react';
+import { Globe, Code2, MessageSquare, Smartphone, Puzzle, Monitor } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { StaticQuickTab } from '@/components/ui/Uiverse';
 import { cn } from '@/lib/utils';
 
-/** Product kinds users can start from Workspace — includes Chrome + Desktop. */
+/** Product kinds users can start from Workspace — real swarm scaffolds only. */
 const PRODUCT_STARTS = [
   {
     id: 'website',
@@ -13,6 +13,13 @@ const PRODUCT_STARTS = [
     prompt: 'Build a landing page for ',
     icon: Globe,
     color: '#60a5fa',
+  },
+  {
+    id: 'chatbot',
+    label: 'Chatbot',
+    prompt: 'Build a chatbot landing page with a working chat UI and /api/chat (BYOK) for ',
+    icon: MessageSquare,
+    color: '#38bdf8',
   },
   {
     id: 'saas',
