@@ -6,7 +6,6 @@ import {
   Brain,
   Infinity,
   Layers,
-  Orbit,
   Radar,
   Sparkles,
   Zap,
@@ -20,6 +19,7 @@ import {
   XROGA_MODEL_FIRST_LAST,
 } from '@/lib/brand';
 import { GALACTIC_PLANS, SPARK_TOKEN_POOL, type GalacticPlan } from '@/lib/plans';
+import { BlackHoleLoader } from '@/components/ui/BlackHoleLoader';
 
 /**
  * Public swarm cores — Xroga product names only.
@@ -137,7 +137,9 @@ export function HomepageBlackHolePower() {
       <div className="xv-hc-bh-inner">
         <header className="xv-hc-bh-head">
           <div className="xv-hc-bh-identity" aria-label={XROGA_MODEL_FULL}>
-            <Orbit className="xv-hc-bh-orbit-icon" strokeWidth={1.5} aria-hidden />
+            <div className="xv-hc-bh-visual">
+              <BlackHoleLoader size="xl" showOrbitText />
+            </div>
             <div className="xv-hc-bh-mark">
               <span className="xv-hc-bh-label">BLACK HOLE</span>
               <span className="xv-hc-bh-vrow">
