@@ -364,18 +364,20 @@ EXPO_PUBLIC_API_URL=
       path: 'PUBLISH.md',
       content: `# Build / store handoff for ${name}
 
-Xroga builds the Expo app and pushes it to **your GitHub**.  
-That is **source ready** (Expo Go path) — **not** App Store / Google Play published.
+Xroga builds the Expo app and pushes it to **your GitHub**.
+Free path = Expo Go / EAS binary. Store listing approval is still Apple/Google’s.
 
 ## What Xroga does
 1. Generate Expo scaffold + push to your GitHub
-2. Optional: dispatch an **EAS workflow** after you Connect Expo in Xroga → Publish
+2. After you Connect Expo in **Xroga → Publish**: auto-link/create EAS project, stamp \`app.json\`, start builds
+3. **Sync to Expo** pushes Google Play JSON / App Store Connect API key into Expo via real GraphQL
+4. With store creds synced, ship can start EAS **submit** workflows (review still external)
 
 ## What you still do for stores
 1. Create an [Expo](https://expo.dev) account → Access tokens → Connect in **Xroga → Publish**
-2. Link the EAS project ID
-3. Configure Apple / Google credentials **inside Expo/EAS** (pasting them only in Xroga does not complete store submit)
-4. Click **Start Android/iOS EAS workflow** in Xroga — watch the run on expo.dev
+2. One-time: create the first app in [Play Console](https://play.google.com/console) / [App Store Connect](https://appstoreconnect.apple.com) (API cannot invent the first listing)
+3. Save Play service-account JSON and/or ASC API key JSON in Publish → **Sync to Expo**
+4. Ship again or click **Start Android/iOS EAS** — watch the run on expo.dev
 5. Apple/Google store review is separate and not automatic
 
 ## Fees (you pay)
@@ -391,7 +393,7 @@ That is **source ready** (Expo Go path) — **not** App Store / Google Play publ
 npm i -g eas-cli
 export EXPO_TOKEN=…
 eas build -p android --profile production
-eas submit -p android   # only after Expo/EAS has Play credentials
+eas submit -p android   # after Play credentials are on Expo
 \`\`\`
 `,
     },

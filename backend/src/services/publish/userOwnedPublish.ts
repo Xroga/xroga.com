@@ -179,9 +179,9 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
     {
       id: 'cws_listing',
       label: '2. Create listing once in CWS dashboard (~$5)',
-      done: Boolean(cwsKey),
+      done: false,
       required: false,
-      hint: 'Google’s API cannot finish first listing metadata — create the item once, copy Extension ID + Publisher ID',
+      hint: 'One-time dashboard step — Google’s API cannot finish first listing metadata. Copy Extension ID + Publisher ID after create.',
       href: 'https://chrome.google.com/webstore/devconsole',
     },
     {

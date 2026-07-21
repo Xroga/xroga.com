@@ -455,6 +455,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
   const [appleAscJson, setAppleAscJson] = useState('');
   const [googleJson, setGoogleJson] = useState('');
   const [easProjectId, setEasProjectId] = useState('');
+  const [expoApps, setExpoApps] = useState<Array<{ id: string; name: string; slug?: string }>>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [lastRunUrl, setLastRunUrl] = useState<string | null>(null);
   const [easBuilds, setEasBuilds] = useState<
@@ -502,6 +503,21 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
     }
   }, [refresh]);
 
+  async function loadExpoApps() {
+    try {
+      const res = await api.publish.listExpoApps();
+      setExpoApps(res.apps || []);
+    } catch {
+      setExpoApps([]);
+    }
+  }
+
+  useEffect(() => {
+    if (tab === 'mobile' && status?.mobile.expoTokenSaved) {
+      void loadExpoApps();
+    }
+  }, [tab, status?.mobile.expoTokenSaved]);
+
   async function saveExpo() {
     const token = expoToken.trim();
     if (!token) {
@@ -515,6 +531,10 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
       if (res.easProjectId) setEasProjectId(res.easProjectId);
       setExpoToken('');
       await refresh();
+      void loadExpoApps();
+      if (res.needsProjectPick) {
+        toast('Multiple Expo apps found — pick one below');
+      }
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -849,6 +869,36 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
                 {busy === 'eas-project' ? 'Saving…' : 'Link project'}
               </button>
             </div>
+            {expoApps.length > 1 ? (
+              <div className="space-y-1.5 pt-1">
+                <p className="text-[11px] text-[var(--muted)]">
+                  Multiple Expo apps on this account — select one to link:
+                </p>
+                <select
+                  className="w-full rounded-md border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-xs"
+                  value={easProjectId}
+                  onChange={(e) => {
+                    setEasProjectId(e.target.value);
+                  }}
+                >
+                  <option value="">Pick an Expo app…</option>
+                  {expoApps.map((app) => (
+                    <option key={app.id} value={app.id}>
+                      {app.name}
+                      {app.slug ? ` (@${app.slug})` : ''} — {app.id.slice(0, 8)}…
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  disabled={busy === 'eas-project' || !easProjectId.trim()}
+                  onClick={() => void saveEasProject()}
+                  className="rounded-md bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-bold disabled:opacity-50"
+                >
+                  Link selected app
+                </button>
+              </div>
+            ) : null}
             {status?.mobile.easProjectLinked ? (
               <p className="text-[11px] text-emerald-600 font-semibold">EAS project linked</p>
             ) : null}

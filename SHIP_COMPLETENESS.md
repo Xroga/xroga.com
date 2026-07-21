@@ -17,7 +17,8 @@
 ## What Xroga automates (real APIs)
 - Chrome: Google OAuth authorize (user’s client) or paste refresh token → CWS `upload` + `publish` + status check
 - Electron: portable zip immediately + multi-OS Actions installers; sync `CSC_*` + Apple notarization secrets to GitHub Actions when provided
-- Mobile: auto-link/create EAS project; sync Google Play JSON **and** App Store Connect API key into Expo via GraphQL; start build (+ submit when creds present); poll artifact URL; list recent EAS builds in Publish
+- Mobile: auto-link/create EAS project; sync Google Play JSON **and** App Store Connect API key into Expo via GraphQL; start build (+ submit when creds present); poll **new** artifact URL (ignores stale builds); list recent EAS builds + project picker in Publish
+- Post-ship UI: CWS dashboard / installer / EAS artifact CTAs when those outcomes exist
 
 ## What Xroga cannot do (no fakes)
 - Approve Chrome Web Store / App Store / Play listings
