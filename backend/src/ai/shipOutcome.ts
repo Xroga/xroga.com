@@ -1,5 +1,7 @@
 /**
- * Honest ship outcome — never mark success as “shipped” when artifacts/live URL are missing.
+ * Honest ship outcome — never mark Chrome/Electron/Expo as store-shipped.
+ * Web: fullyShipped = live Vercel URL verified.
+ * Non-web: handoffReady = free-path artifact/source ready (not App Store / CWS / Play).
  */
 
 export type ProductScaffoldKind = 'static' | 'nextjs' | 'expo' | 'chrome' | 'electron';
@@ -31,8 +33,10 @@ export type ShipOutcomeInput = {
 
 export type ShipOutcome = {
   buildOk: boolean;
-  /** Free-path agent work finished for this product kind */
+  /** True only for verified live web deploy — never App Store / Play / CWS */
   fullyShipped: boolean;
+  /** Free-path handoff ready (zip on Releases, Expo source on GitHub) — not store published */
+  handoffReady: boolean;
   shipOk: boolean;
   shipBlockers: string[];
   nextSteps: string[];
@@ -85,43 +89,57 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
     !input.compileBlocksShip &&
     !input.qaBlocksShip;
 
+  let handoffReady = false;
   let fullyShipped = false;
+
   if (buildOk && input.githubPushConfirmed) {
-    if (input.kind === 'chrome') fullyShipped = input.chromeZipOk;
-    else if (input.kind === 'electron') fullyShipped = input.electronZipOk;
-    else if (input.kind === 'expo') fullyShipped = true; // GitHub = Expo Go free path
-    else fullyShipped = Boolean(input.deployUrl && input.liveOk !== false);
+    if (input.kind === 'chrome') {
+      handoffReady = input.chromeZipOk;
+      // Zip ≠ Chrome Web Store publish
+      fullyShipped = false;
+    } else if (input.kind === 'electron') {
+      handoffReady = input.electronZipOk;
+      // Unsigned zip ≠ signed store desktop app
+      fullyShipped = false;
+    } else if (input.kind === 'expo') {
+      // GitHub / Expo Go / EAS dispatch ≠ App Store / Play
+      handoffReady = true;
+      fullyShipped = false;
+    } else {
+      fullyShipped = Boolean(input.deployUrl && input.liveOk !== false);
+      handoffReady = fullyShipped;
+    }
   }
 
-  if (input.kind === 'chrome' && fullyShipped) {
+  if (input.kind === 'chrome' && handoffReady) {
     nextSteps.push(
-      'Sideload free, or upload extension.zip to Chrome Web Store (~$5 on your developer account — Xroga does not pay/publish)',
+      'Sideload free, or upload extension.zip to Chrome Web Store yourself (~$5). Xroga does not publish to CWS.',
     );
   }
-  if (input.kind === 'electron' && fullyShipped) {
+  if (input.kind === 'electron' && handoffReady) {
     nextSteps.push(
-      'Unsigned zip is ready. Code signing / Mac App Store / Microsoft Store fees are on you if you need them.',
+      'Unsigned zip is for download/testing only. Code signing and Mac/Microsoft Store submission are on you.',
     );
   }
   if (input.kind === 'expo' && input.githubPushConfirmed) {
     if (input.easTriggered) {
       nextSteps.push(
         input.easUrl
-          ? `EAS started on your Expo account — watch: ${input.easUrl} (you pay Apple/Google/EAS)`
-          : 'EAS started on your Expo account (you pay Apple/Google/EAS)',
+          ? `EAS workflow started — watch ${input.easUrl}. Store submission only works if credentials are set in Expo/EAS (pasting JSON here does not auto-submit).`
+          : 'EAS workflow started. Store submission only if Expo/EAS already has store credentials configured.',
       );
     } else {
       nextSteps.push(
         input.easError
-          ? `EAS not started: ${input.easError}. Open Publish → Connect Expo (your token).`
-          : 'EAS / App Store / Play not done — Publish → Connect Expo (your token; you pay fees)',
+          ? `EAS not started: ${input.easError}. Publish → Connect Expo → Start EAS workflow (not one-click store publish).`
+          : 'Source on GitHub / Expo Go only — App Store & Play are not done. Publish → Connect Expo → start EAS build workflow.',
       );
     }
   }
   if (!isNonWeb && fullyShipped) {
     nextSteps.push('Optional: Connect Supabase for DB/memory if the app needs it');
   }
-  if (buildOk && !fullyShipped && shipBlockers.length) {
+  if (buildOk && !handoffReady && !fullyShipped && shipBlockers.length) {
     nextSteps.push(...shipBlockers.slice(0, 3));
   }
 
@@ -137,22 +155,25 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
   if (input.kind === 'chrome') {
     verifyLines.push(
       input.chromeZipOk
-        ? '✅ extension.zip on GitHub Releases'
+        ? '✅ extension.zip on GitHub Releases (sideload / manual CWS upload)'
         : '❌ extension.zip not on Releases',
     );
+    verifyLines.push('ℹ️ Chrome Web Store publish is manual — not done by Xroga');
   } else if (input.kind === 'electron') {
     verifyLines.push(
       input.electronZipOk
-        ? '✅ Desktop .zip downloadable on Releases'
+        ? '✅ Unsigned desktop .zip downloadable on Releases'
         : '❌ Desktop .zip not ready yet',
     );
+    verifyLines.push('ℹ️ Not code-signed / not Mac App Store / Microsoft Store');
   } else if (input.kind === 'expo') {
-    verifyLines.push('✅ Code on GitHub (Expo Go path)');
+    verifyLines.push('✅ Code on GitHub (Expo Go / source handoff)');
     verifyLines.push(
       input.easTriggered
-        ? '✅ EAS workflow triggered on your Expo account'
-        : 'ℹ️ EAS / store submit not run (Connect Expo in Publish)',
+        ? '✅ EAS workflow dispatched (build handoff — not store-approved)'
+        : 'ℹ️ EAS / App Store / Play not run',
     );
+    verifyLines.push('❌ Not published to App Store or Google Play');
   } else {
     if (input.deployUrl) {
       verifyLines.push(
@@ -163,7 +184,8 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
     }
   }
 
-  const verifyPass = fullyShipped;
+  // Web: live URL verified. Non-web: artifact/source handoff checks only.
+  const verifyPass = isNonWeb ? handoffReady : fullyShipped;
 
   let statusMessage: string;
   let statusLabel: string;
@@ -171,25 +193,28 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
     statusMessage = 'Update aborted — site unchanged';
     statusLabel = 'Aborted';
   } else if (fullyShipped) {
+    statusMessage = 'Build shipped & verified live';
+    statusLabel = 'Shipped';
+  } else if (handoffReady) {
     if (input.kind === 'chrome') {
-      statusMessage = 'Extension shipped — zip on GitHub Releases';
-      statusLabel = 'Shipped';
+      statusMessage = 'Extension artifact ready — zip on GitHub Releases (not CWS-published)';
+      statusLabel = 'Artifact ready';
     } else if (input.kind === 'electron') {
-      statusMessage = 'Desktop shipped — unsigned zip ready to download';
-      statusLabel = 'Shipped';
+      statusMessage = 'Unsigned desktop zip ready — not store-signed or store-published';
+      statusLabel = 'Artifact ready';
     } else if (input.kind === 'expo') {
       statusMessage = input.easTriggered
-        ? 'Mobile on GitHub + EAS started (you pay store/EAS fees)'
-        : 'Mobile on GitHub — Connect Expo for EAS when ready';
-      statusLabel = input.easTriggered ? 'GitHub + EAS' : 'On GitHub';
+        ? 'Mobile source on GitHub + EAS workflow started — not App Store/Play published'
+        : 'Mobile source on GitHub (Expo Go) — not App Store/Play published';
+      statusLabel = input.easTriggered ? 'Source + EAS handoff' : 'Source ready';
     } else {
-      statusMessage = 'Build shipped & verified live';
-      statusLabel = 'Shipped';
+      statusMessage = 'Handoff ready';
+      statusLabel = 'Handoff ready';
     }
   } else if (buildOk) {
     statusMessage = shipBlockers[0]
-      ? `Built — not fully shipped: ${shipBlockers[0]}`
-      : 'Built — connect integrations to finish ship';
+      ? `Built — handoff incomplete: ${shipBlockers[0]}`
+      : 'Built — connect integrations to finish handoff';
     statusLabel = 'Built · incomplete';
   } else {
     statusMessage = shipBlockers[0]
@@ -201,7 +226,8 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
   return {
     buildOk,
     fullyShipped,
-    shipOk: shipOk && (fullyShipped || !input.shouldPush),
+    handoffReady,
+    shipOk: shipOk && (fullyShipped || handoffReady || !input.shouldPush),
     shipBlockers: [...new Set(shipBlockers)],
     nextSteps: [...new Set(nextSteps)],
     statusLabel,

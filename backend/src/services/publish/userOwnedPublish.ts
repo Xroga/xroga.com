@@ -165,18 +165,18 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
     },
     {
       id: 'google',
-      label: '3a. Pay Google (~$25 once) + paste Play JSON',
+      label: '3a. Optional: Google Play JSON (for EAS submit setup)',
       done: Boolean(googleKey),
       required: false,
-      hint: 'Pay on Google’s page → paste JSON → Publish. Fees stay on Google, not Xroga.',
+      hint: 'Saved in Xroga for your records — configure the same credentials in Expo/EAS for real submit. Fees stay on Google.',
       href: 'https://play.google.com/console',
     },
     {
       id: 'apple',
-      label: '3b. Pay Apple (~$99/yr) + app-specific password',
+      label: '3b. Optional: Apple password (for EAS submit setup)',
       done: Boolean(appleKey),
       required: false,
-      hint: 'Pay on Apple’s enroll page → paste password → Publish. Fees stay on Apple.',
+      hint: 'Saved in Xroga for your records — configure Apple credentials in Expo/EAS for real submit. Fees stay on Apple.',
       href: 'https://developer.apple.com',
     },
   ];
@@ -196,17 +196,20 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
       googlePlaySaved: Boolean(googleKey),
       checklist: mobileChecklist,
       commands: [
-        '# Usually not needed — use one-click Publish buttons above',
+        '# Preferred: Start EAS workflow buttons in Xroga Publish (dispatch only)',
+        '# Real store submit needs credentials configured in Expo/EAS',
         'npm i -g eas-cli',
         'export EXPO_TOKEN=…',
-        'eas build -p android --profile production && eas submit -p android',
-        'eas build -p ios --profile production && eas submit -p ios',
+        'eas build -p android --profile production',
+        'eas submit -p android',
+        'eas build -p ios --profile production',
+        'eas submit -p ios',
       ],
     },
     costs: {
       xrogaPays: [
         'Xroga AI build / chat usage (your Xroga plan)',
-        'Encrypted vault + one-click EAS trigger (included)',
+        'Encrypted vault + EAS workflow dispatch (included)',
       ],
       userPays: [
         'Google Play Console (~$25 one-time) for Android store',

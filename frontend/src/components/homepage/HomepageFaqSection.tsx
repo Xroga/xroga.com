@@ -37,11 +37,11 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: 'Can Xroga build Android and iOS apps?',
-    a: 'Yes — Expo / React Native scaffolds. Xroga generates the mobile project, pushes it to your GitHub, and after you Connect Expo (access token) + link an EAS project in Publish, one-click Publish triggers EAS on your Expo account. You pay Apple/Google/EAS fees; store review stays Apple/Google. Expo Go works for free previews.',
+    a: 'Yes — Expo / React Native scaffolds. Xroga generates the project and pushes it to your GitHub. Expo Go works for free previews. Connecting Expo + starting an EAS workflow can build binaries on your account — that is not the same as App Store / Play approval. Pasting Apple/Google credentials in Xroga does not guarantee store submission; EAS must already be set up for submit.',
   },
   {
     q: 'Can Xroga ship Chrome extensions or desktop apps?',
-    a: 'Yes as scaffolds: Chrome MV3 (zip for sideload / Chrome Web Store — you pay ~$5 CWS once) and Electron (GitHub Releases free path for unsigned builds; code signing/store fees are yours if you need them). Not a managed App Store publisher that pays fees for you.',
+    a: 'It builds scaffolds and packages artifacts: Chrome MV3 zip for sideload / your own CWS upload (~$5), and unsigned Electron zips on GitHub Releases for testing. It is not a managed store publisher and does not pay fees or complete store review for you.',
   },
   {
     q: 'Where is billing and support?',

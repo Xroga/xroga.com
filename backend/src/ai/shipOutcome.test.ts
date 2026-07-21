@@ -16,18 +16,29 @@ const base = {
 } as const;
 
 describe('computeShipOutcome', () => {
-  it('does not mark web success without live URL', () => {
+  it('web requires live URL for fullyShipped', () => {
     const o = computeShipOutcome({
       ...base,
       kind: 'nextjs',
       deployUrl: undefined,
     });
-    assert.equal(o.buildOk, true);
     assert.equal(o.fullyShipped, false);
-    assert.ok(o.shipBlockers.some((b) => /Vercel deploy/i.test(b)));
+    assert.equal(o.handoffReady, false);
   });
 
-  it('requires chrome zip for fullyShipped', () => {
+  it('web live URL = fullyShipped', () => {
+    const o = computeShipOutcome({
+      ...base,
+      kind: 'nextjs',
+      deployUrl: 'https://example.vercel.app',
+      liveOk: true,
+    });
+    assert.equal(o.fullyShipped, true);
+    assert.equal(o.handoffReady, true);
+    assert.equal(o.statusLabel, 'Shipped');
+  });
+
+  it('chrome zip is handoffReady but never fullyShipped', () => {
     const missing = computeShipOutcome({
       ...base,
       kind: 'chrome',
@@ -35,17 +46,21 @@ describe('computeShipOutcome', () => {
       chromeZipOk: false,
     });
     assert.equal(missing.fullyShipped, false);
+    assert.equal(missing.handoffReady, false);
 
-    const shipped = computeShipOutcome({
+    const ready = computeShipOutcome({
       ...base,
       kind: 'chrome',
       vercelConnected: false,
       chromeZipOk: true,
     });
-    assert.equal(shipped.fullyShipped, true);
+    assert.equal(ready.fullyShipped, false);
+    assert.equal(ready.handoffReady, true);
+    assert.equal(ready.statusLabel, 'Artifact ready');
+    assert.match(ready.statusMessage, /not CWS/i);
   });
 
-  it('requires electron zip downloadable for fullyShipped', () => {
+  it('electron zip is handoffReady but never fullyShipped', () => {
     const no = computeShipOutcome({
       ...base,
       kind: 'electron',
@@ -53,6 +68,7 @@ describe('computeShipOutcome', () => {
       electronZipOk: false,
     });
     assert.equal(no.fullyShipped, false);
+    assert.equal(no.handoffReady, false);
 
     const yes = computeShipOutcome({
       ...base,
@@ -60,19 +76,23 @@ describe('computeShipOutcome', () => {
       vercelConnected: false,
       electronZipOk: true,
     });
-    assert.equal(yes.fullyShipped, true);
-    assert.match(yes.statusMessage, /zip ready/i);
+    assert.equal(yes.fullyShipped, false);
+    assert.equal(yes.handoffReady, true);
+    assert.match(yes.statusMessage, /not store/i);
   });
 
-  it('expo github path + eas next steps', () => {
+  it('expo github path is handoff only — never store-shipped', () => {
     const o = computeShipOutcome({
       ...base,
       kind: 'expo',
       vercelConnected: false,
       easTriggered: false,
     });
-    assert.equal(o.fullyShipped, true);
-    assert.ok(o.nextSteps.some((s) => /EAS|Expo/i.test(s)));
+    assert.equal(o.fullyShipped, false);
+    assert.equal(o.handoffReady, true);
+    assert.equal(o.statusLabel, 'Source ready');
+    assert.ok(o.nextSteps.some((s) => /App Store|Play/i.test(s)));
+    assert.ok(o.verifyLines.some((l) => /Not published to App Store/i.test(l)));
   });
 
   it('qa critical blocks buildOk', () => {

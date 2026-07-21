@@ -1,6 +1,6 @@
 /**
- * One-click mobile publish via EAS Workflows REST API.
- * User pays Apple/Google + Expo — Xroga only triggers with their EXPO_TOKEN.
+ * EAS workflow dispatch for user-owned Expo projects.
+ * Does not guarantee App Store / Play submission — only starts a workflow on Expo.
  */
 
 import {
@@ -104,7 +104,8 @@ export async function resolveExpoProjectId(
 }
 
 /**
- * Trigger EAS workflow: build (+ submit when credentials exist on Expo/EAS).
+ * Trigger EAS workflow dispatch (build, or build+submit only if Expo/EAS already has store creds).
+ * Pasted Apple/Google keys in Xroga are stored for guidance — this call does not upload them to EAS.
  * Requires workflow files in the linked GitHub repo (Xroga Expo scaffold includes them).
  */
 export async function triggerEasPublish(opts: {
@@ -165,7 +166,7 @@ export async function triggerEasPublish(opts: {
         return {
           ok: false,
           fileName: '',
-          message: 'Pick which Expo project to publish (multiple found on your Expo account)',
+          message: 'Pick which Expo project for the EAS workflow (multiple found on your Expo account)',
           error: 'NEED_PROJECT_PICK',
         };
       }
@@ -248,7 +249,7 @@ export async function triggerEasPublish(opts: {
     url: data.data?.url,
     fileName,
     message: wantSubmit
-      ? `Publish started for ${opts.platform}. You paid Apple/Google — EAS is building & submitting on your Expo account.`
-      : `Build started for ${opts.platform} on your Expo account.`,
+      ? `EAS workflow started for ${opts.platform} (${fileName}). This is a build/submit handoff on your Expo account — not store approval. Submit only works if store credentials are already configured in Expo/EAS.`
+      : `EAS build workflow started for ${opts.platform} on your Expo account.`,
   };
 }

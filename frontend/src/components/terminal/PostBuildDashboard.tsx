@@ -153,18 +153,24 @@ export function PostBuildDashboard({
     missingItems.push('Live URL optional — connect Vercel or use sandbox preview below');
   }
   if (isExpoApp) {
-    missingItems.push('Mobile: Connect Expo in Publish → one-click EAS on your account (you pay store/EAS fees)');
+    missingItems.push(
+      'Mobile: source/Expo Go handoff only — Connect Expo → Start EAS workflow (not one-click App Store/Play publish)',
+    );
   }
   if (isChromeExtension) {
     if (data.chromeZipDownloadUrl) {
-      missingItems.push('Chrome: download extension.zip from Releases → sideload or CWS (~$5 on your account)');
+      missingItems.push(
+        'Chrome: download extension.zip → sideload free, or upload to CWS yourself (~$5). Xroga does not publish to the store.',
+      );
     } else {
-      missingItems.push('Chrome: sideload from GitHub repo (free), or download zip from Releases / npm run zip');
+      missingItems.push('Chrome: sideload from GitHub, or wait for extension.zip on Releases / npm run zip');
     }
   }
   if (isElectronApp) {
     if (data.desktopActionsUrl || data.desktopReleasesUrl) {
-      missingItems.push('Desktop: wait for Actions → download unsigned zip from GitHub Releases');
+      missingItems.push(
+        'Desktop: unsigned zip from Releases for testing — code signing / store submission are separate and on you',
+      );
     } else {
       missingItems.push('Desktop: npm start locally, or open GitHub Actions / Releases for the unsigned zip');
     }
@@ -184,11 +190,19 @@ export function PostBuildDashboard({
                 ? isUpdate
                   ? 'Update shipped'
                   : 'Project shipped'
-                : data.buildOk === false
-                  ? 'Build needs attention'
-                  : isUpdate
-                    ? 'Update built — ship incomplete'
-                    : 'Built — ship incomplete'}
+                : data.handoffReady
+                  ? isChromeExtension
+                    ? 'Extension artifact ready'
+                    : isElectronApp
+                      ? 'Desktop artifact ready'
+                      : isExpoApp
+                        ? 'Mobile source ready'
+                        : 'Handoff ready'
+                  : data.buildOk === false
+                    ? 'Build needs attention'
+                    : isUpdate
+                      ? 'Update built — ship incomplete'
+                      : 'Built — ship incomplete'}
             </h2>
             <p className="text-sm font-semibold text-[var(--accent)] mt-0.5 truncate">{projectName}</p>
           </div>
@@ -344,7 +358,11 @@ export function PostBuildDashboard({
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-500" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                {data.fullyShipped ? 'Next steps' : 'Missing or needs attention'}
+                {data.fullyShipped
+                  ? 'Next steps'
+                  : data.handoffReady
+                    ? 'Required before public store release'
+                    : 'Missing or needs attention'}
               </h3>
             </div>
             <ul className="space-y-1.5 text-[11px]">
@@ -512,7 +530,7 @@ export function PostBuildDashboard({
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--card-border)] text-xs font-semibold hover:bg-[var(--foreground)]/5 transition-colors"
           >
             {isExpoApp ? <Smartphone className="w-4 h-4" /> : <Rocket className="w-4 h-4" />}
-            {isExpoApp ? 'Publish mobile (your stores)' : 'Publish setup'}
+            {isExpoApp ? 'Mobile EAS / store handoff' : 'Publish setup'}
           </Link>
           <button
             type="button"

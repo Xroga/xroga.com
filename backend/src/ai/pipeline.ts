@@ -2073,10 +2073,12 @@ export async function runBuildPipeline(opts: {
   // Merge pre-push blockers (e.g. missing sticky repo) that outcome may not know
   const finalBlockers = [...new Set([...outcome.shipBlockers, ...shipBlockers])];
   const fullyShipped = outcome.fullyShipped;
+  const handoffReady = outcome.handoffReady;
   const buildOk = outcome.buildOk;
   // Honest API success: build produced usable code. Shipped is a separate flag.
   const overallSuccess = buildOk;
   const statusMessage = outcome.statusMessage;
+  const freePathDone = fullyShipped || handoffReady;
 
   if (shipVerify || githubPushConfirmed || deployUrl) {
     const summaryLines = [
@@ -2125,12 +2127,18 @@ export async function runBuildPipeline(opts: {
 
   emit({
     agent: 'builder',
-    status: fullyShipped ? 'complete' : buildOk ? 'complete_incomplete_ship' : 'complete_with_errors',
+    status: fullyShipped
+      ? 'complete'
+      : handoffReady
+        ? 'complete_handoff'
+        : buildOk
+          ? 'complete_incomplete_ship'
+          : 'complete_with_errors',
     message: statusMessage,
-    swarmStatusLabel: fullyShipped
+    swarmStatusLabel: freePathDone
       ? outcome.statusLabel
       : buildOk
-        ? 'Built · not fully shipped'
+        ? 'Built · incomplete'
         : 'Needs attention',
     swarmActivity: shipVerify?.summaryLines?.[0] ||
       (deployVerified
@@ -2140,6 +2148,7 @@ export async function runBuildPipeline(opts: {
           : finalBlockers[0] || 'Preview ready'),
     swarmTodos: todos('done').map((t) => ({
       ...t,
+      // Non-web handoff still leaves store/signing work pending
       status: (fullyShipped ? 'done' : 'pending') as 'done' | 'pending',
     })),
   });
@@ -2173,18 +2182,20 @@ export async function runBuildPipeline(opts: {
       (patchAborted
         ? `⚠️ **Update aborted** for **${projectName}** — patches did not match safely. Your live site was **not** changed.`
         : fullyShipped
-          ? productScaffoldKind === 'chrome'
-            ? `Shipped **${projectName}** — GitHub + \`extension.zip\` on Releases.`
-            : productScaffoldKind === 'electron'
-              ? `Shipped **${projectName}** — desktop zip ready on GitHub Releases.`
-              : productScaffoldKind === 'expo'
-                ? `**${projectName}** on GitHub (Expo Go path). **EAS/App Store/Play not done** — Publish → Connect Expo.`
-                : isUpdate
-                  ? `Updated **${projectName}** — pushed to GitHub and live on Vercel.`
-                  : `Shipped **${projectName}** — pushed to GitHub and live on Vercel.`
-          : buildOk
-            ? `Built **${projectName}** — **not fully shipped.** ${finalBlockers[0] || 'Finish integrations / artifacts below.'}`
-            : `⚠️ **${projectName}** finished with blockers — see ship check below.`) +
+          ? isUpdate
+            ? `Updated **${projectName}** — pushed to GitHub and live on Vercel.`
+            : `Shipped **${projectName}** — pushed to GitHub and live on Vercel.`
+          : handoffReady
+            ? productScaffoldKind === 'chrome'
+              ? `**${projectName}** artifact ready — \`extension.zip\` on GitHub Releases. **Not** published to Chrome Web Store.`
+              : productScaffoldKind === 'electron'
+                ? `**${projectName}** unsigned desktop zip ready on Releases. **Not** code-signed or store-published.`
+                : productScaffoldKind === 'expo'
+                  ? `**${projectName}** source on GitHub (Expo Go / EAS handoff). **Not** on App Store or Google Play.`
+                  : `**${projectName}** handoff ready — not fully shipped live.`
+            : buildOk
+              ? `Built **${projectName}** — **not fully shipped.** ${finalBlockers[0] || 'Finish integrations / artifacts below.'}`
+              : `⚠️ **${projectName}** finished with blockers — see ship check below.`) +
       verifyMarkdown +
       blockersMarkdown +
       nextStepsMarkdown +
@@ -2221,6 +2232,7 @@ export async function runBuildPipeline(opts: {
     githubRepoName,
     githubPushConfirmed,
     fullyShipped,
+    handoffReady,
     buildOk,
     shipped: fullyShipped,
     nextSteps: outcome.nextSteps,

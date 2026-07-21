@@ -179,7 +179,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
         submit: true,
       });
       if (res.url) setLastRunUrl(res.url);
-      toast.success(res.message || `${platform} publish started`);
+      toast.success(res.message || `${platform} EAS workflow started`);
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -209,9 +209,10 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
           </p>
           <h2 className="text-lg sm:text-xl font-bold mt-1">Ship on your accounts</h2>
           <p className="text-sm text-[var(--muted)] mt-1 max-w-2xl">
-            <strong>Web:</strong> Authorize GitHub + Vercel (+ Supabase) — automatic.{" "}
-            <strong>Mobile:</strong> you pay Google/Apple once, save credentials, then one-click
-            Publish. Xroga triggers EAS; store review is still Apple/Google.
+            <strong>Web:</strong> Authorize GitHub + Vercel (+ Supabase) — automatic when connected.{" "}
+            <strong>Mobile:</strong> Connect Expo → start an EAS <em>workflow</em>. That is a build
+            handoff — not App Store / Play approval. Pasting Apple/Google credentials here does not
+            wire store submission by itself; configure them in Expo/EAS for real submit.
           </p>
         </div>
         <div className="flex items-center gap-1.5 rounded-full border border-[var(--card-border)] p-1 text-xs">
@@ -281,12 +282,12 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-3 py-2.5 text-xs text-[var(--foreground)] leading-relaxed">
-            <strong>Connect Expo (like GitHub — on your account):</strong> Expo does not offer a
-            public “Authorize app” OAuth for CI like GitHub/Vercel. Paste a free{' '}
-            <em>access / robot token</em> once → link EAS project → one-click Publish. You pay
-            Google (~$25) / Apple (~$99/yr) / EAS minutes where those fees live. Xroga never pays
-            store fees.
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 px-3 py-2.5 text-xs text-[var(--foreground)] leading-relaxed">
+            <strong>Connect Expo (your account):</strong> Expo has no GitHub-style Authorize for CI.
+            Paste a free access / robot token → link EAS project → <strong>Start EAS workflow</strong>.
+            That dispatches a build on Expo. It is <strong>not</strong> guaranteed App Store / Play
+            publish. Store submit only works if credentials are already set up in Expo/EAS. You pay
+            Google / Apple / EAS fees — Xroga never pays store fees.
           </div>
           <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--background)]/40 px-3">
             {(status?.mobile.checklist ?? []).map((item) => (
@@ -349,9 +350,10 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
 
           <div className="grid sm:grid-cols-2 gap-3">
             <div className="rounded-xl border border-[var(--card-border)] p-3 space-y-2">
-              <p className="text-sm font-semibold">Google Play (~$25 once)</p>
+              <p className="text-sm font-semibold">Google Play (optional setup)</p>
               <p className="text-[11px] text-[var(--muted)]">
-                Pay Google → create service account JSON → paste → Publish.
+                Save JSON here for your records. For real submit, also configure it in Expo/EAS, then
+                start the Android EAS workflow.
               </p>
               <textarea
                 rows={3}
@@ -379,14 +381,15 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
                   onClick={() => void publishPlatform('android')}
                   className="rounded-md bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-bold disabled:opacity-50"
                 >
-                  {busy === 'publish-android' ? 'Starting…' : 'Publish to Google Play'}
+                  {busy === 'publish-android' ? 'Starting…' : 'Start Android EAS workflow'}
                 </button>
               </div>
             </div>
             <div className="rounded-xl border border-[var(--card-border)] p-3 space-y-2">
-              <p className="text-sm font-semibold">Apple App Store (~$99/yr)</p>
+              <p className="text-sm font-semibold">Apple App Store (optional setup)</p>
               <p className="text-[11px] text-[var(--muted)]">
-                Pay Apple → app-specific password → paste → Publish.
+                Save password here for your records. For real submit, configure Apple in Expo/EAS,
+                then start the iOS EAS workflow.
               </p>
               <input
                 type="password"
@@ -410,7 +413,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
                   onClick={() => void publishPlatform('ios')}
                   className="rounded-md bg-[var(--accent)] text-white px-3 py-1.5 text-xs font-bold disabled:opacity-50"
                 >
-                  {busy === 'publish-ios' ? 'Starting…' : 'Publish to App Store'}
+                  {busy === 'publish-ios' ? 'Starting…' : 'Start iOS EAS workflow'}
                 </button>
               </div>
             </div>
