@@ -38,7 +38,7 @@ describe('computeShipOutcome', () => {
     assert.equal(o.statusLabel, 'Shipped');
   });
 
-  it('chrome zip is handoffReady but never fullyShipped', () => {
+  it('chrome zip is handoff; CWS submit is fullyShipped', () => {
     const missing = computeShipOutcome({
       ...base,
       kind: 'chrome',
@@ -56,44 +56,74 @@ describe('computeShipOutcome', () => {
     });
     assert.equal(ready.fullyShipped, false);
     assert.equal(ready.handoffReady, true);
-    assert.equal(ready.statusLabel, 'Ready to install');
-    assert.match(ready.statusMessage, /Load unpacked|install/i);
+    assert.equal(ready.storeSubmitted, false);
+
+    const submitted = computeShipOutcome({
+      ...base,
+      kind: 'chrome',
+      vercelConnected: false,
+      chromeZipOk: true,
+      chromeStoreSubmitted: true,
+      chromeStoreUrl: 'https://chrome.google.com/webstore/devconsole/x',
+    });
+    assert.equal(submitted.fullyShipped, true);
+    assert.equal(submitted.storeSubmitted, true);
+    assert.match(submitted.statusMessage, /review/i);
   });
 
-  it('electron zip is handoffReady but never fullyShipped', () => {
-    const no = computeShipOutcome({
-      ...base,
-      kind: 'electron',
-      vercelConnected: false,
-      electronZipOk: false,
-    });
-    assert.equal(no.fullyShipped, false);
-    assert.equal(no.handoffReady, false);
-
-    const yes = computeShipOutcome({
+  it('electron installer binary = fullyShipped', () => {
+    const portable = computeShipOutcome({
       ...base,
       kind: 'electron',
       vercelConnected: false,
       electronZipOk: true,
+      electronInstallerOk: false,
     });
-    assert.equal(yes.fullyShipped, false);
-    assert.equal(yes.handoffReady, true);
-    assert.equal(yes.statusLabel, 'Ready to run');
-    assert.match(yes.statusMessage, /npm install/i);
+    assert.equal(portable.fullyShipped, false);
+    assert.equal(portable.handoffReady, true);
+
+    const installer = computeShipOutcome({
+      ...base,
+      kind: 'electron',
+      vercelConnected: false,
+      electronZipOk: true,
+      electronInstallerOk: true,
+    });
+    assert.equal(installer.fullyShipped, true);
+    assert.equal(installer.statusLabel, 'Installer ready');
   });
 
-  it('expo github path is handoff only — never store-shipped', () => {
-    const o = computeShipOutcome({
+  it('expo eas build artifact = fullyShipped; submit is separate', () => {
+    const source = computeShipOutcome({
       ...base,
       kind: 'expo',
       vercelConnected: false,
       easTriggered: false,
     });
-    assert.equal(o.fullyShipped, false);
-    assert.equal(o.handoffReady, true);
-    assert.equal(o.statusLabel, 'Source ready');
-    assert.ok(o.nextSteps.some((s) => /Connect Expo|EAS/i.test(s)));
-    assert.ok(o.verifyLines.some((l) => /App Store|Play/i.test(l)));
+    assert.equal(source.fullyShipped, false);
+    assert.equal(source.handoffReady, true);
+
+    const built = computeShipOutcome({
+      ...base,
+      kind: 'expo',
+      vercelConnected: false,
+      easTriggered: true,
+      easBuildOk: true,
+      easArtifactUrl: 'https://expo.dev/artifacts/x',
+    });
+    assert.equal(built.fullyShipped, true);
+    assert.equal(built.storeSubmitted, false);
+
+    const submitted = computeShipOutcome({
+      ...base,
+      kind: 'expo',
+      vercelConnected: false,
+      easTriggered: true,
+      easBuildOk: true,
+      easStoreSubmitted: true,
+    });
+    assert.equal(submitted.fullyShipped, true);
+    assert.equal(submitted.storeSubmitted, true);
   });
 
   it('qa critical blocks buildOk', () => {

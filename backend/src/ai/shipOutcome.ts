@@ -1,7 +1,10 @@
 /**
- * Honest ship outcome — never mark Chrome/Electron/Expo as store-shipped.
- * Web: fullyShipped = live Vercel URL verified.
- * Non-web: handoffReady = free-path artifact/source ready (not App Store / CWS / Play).
+ * Honest ship outcome.
+ * Web: fullyShipped = live Vercel URL.
+ * Chrome: fullyShipped = CWS submit API succeeded (Google review still pending).
+ * Electron: fullyShipped = real installer (.exe/.AppImage/.dmg) downloadable.
+ * Expo: fullyShipped = EAS build finished with install/artifact URL
+ *        (storeSubmitted = Play/App Store submit workflow started; approval is external).
  */
 
 export type ProductScaffoldKind = 'static' | 'nextjs' | 'expo' | 'chrome' | 'electron';
@@ -11,7 +14,6 @@ export type ShipOutcomeInput = {
   patchAborted: boolean;
   securityBlocked: boolean;
   compileBlocksShip: boolean;
-  /** Structural / critical QA — blocks ship when true */
   qaBlocksShip: boolean;
   githubConnected: boolean;
   vercelConnected: boolean;
@@ -19,24 +21,32 @@ export type ShipOutcomeInput = {
   githubPushConfirmed: boolean;
   deployUrl?: string;
   liveOk?: boolean;
-  /** Chrome: zip download URL present */
   chromeZipOk: boolean;
-  /** Electron: unsigned .zip asset downloadable on Releases */
+  /** Real CWS upload+publish API succeeded (submitted for review) */
+  chromeStoreSubmitted?: boolean;
+  chromeStoreUrl?: string;
   electronZipOk: boolean;
-  /** Expo: EAS workflow dispatched when user had Expo token */
+  /** Real installer binary (exe/AppImage/dmg), not just portable source zip */
+  electronInstallerOk?: boolean;
   easTriggered?: boolean;
   easUrl?: string;
+  /** Finished EAS build with artifact / details URL */
+  easBuildOk?: boolean;
+  easArtifactUrl?: string;
+  /** EAS submit workflow started (not store approval) */
+  easStoreSubmitted?: boolean;
   chromeZipError?: string;
   electronReleaseError?: string;
   easError?: string;
+  chromeStoreError?: string;
 };
 
 export type ShipOutcome = {
   buildOk: boolean;
-  /** True only for verified live web deploy — never App Store / Play / CWS */
   fullyShipped: boolean;
-  /** Free-path handoff ready (zip on Releases, Expo source on GitHub) — not store published */
   handoffReady: boolean;
+  /** Store submit API/workflow started — approval still on Google/Apple */
+  storeSubmitted: boolean;
   shipOk: boolean;
   shipBlockers: string[];
   nextSteps: string[];
@@ -67,13 +77,13 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
   if (input.kind === 'chrome' && input.githubPushConfirmed && !input.chromeZipOk) {
     shipBlockers.push(
       input.chromeZipError ||
-        'Chrome extension.zip was not uploaded to GitHub Releases — re-run ship or npm run zip',
+        'Chrome extension.zip was not uploaded to GitHub Releases — re-run ship',
     );
   }
   if (input.kind === 'electron' && input.githubPushConfirmed && !input.electronZipOk) {
     shipBlockers.push(
       input.electronReleaseError ||
-        'Desktop zip not downloadable yet — open GitHub Actions/Releases and wait for the .zip asset',
+        'Desktop package not downloadable yet — open GitHub Actions/Releases',
     );
   }
   if (!isNonWeb && input.githubPushConfirmed && !input.deployUrl) {
@@ -91,48 +101,75 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
 
   let handoffReady = false;
   let fullyShipped = false;
+  let storeSubmitted = false;
 
   if (buildOk && input.githubPushConfirmed) {
     if (input.kind === 'chrome') {
       handoffReady = input.chromeZipOk;
-      // Zip ≠ Chrome Web Store publish
-      fullyShipped = false;
+      storeSubmitted = Boolean(input.chromeStoreSubmitted);
+      // Our side complete when CWS submit succeeded (Google review is external)
+      fullyShipped = storeSubmitted;
     } else if (input.kind === 'electron') {
       handoffReady = input.electronZipOk;
-      // Unsigned zip ≠ signed store desktop app
-      fullyShipped = false;
+      fullyShipped = Boolean(input.electronInstallerOk);
     } else if (input.kind === 'expo') {
-      // GitHub / Expo Go / EAS dispatch ≠ App Store / Play
       handoffReady = true;
-      fullyShipped = false;
+      storeSubmitted = Boolean(input.easStoreSubmitted);
+      fullyShipped = Boolean(input.easBuildOk);
     } else {
       fullyShipped = Boolean(input.deployUrl && input.liveOk !== false);
       handoffReady = fullyShipped;
     }
   }
 
-  if (input.kind === 'chrome' && handoffReady) {
-    nextSteps.push(
-      'Install: chrome://extensions → Developer mode → Load unpacked (unzip first) — or upload extension.zip to Chrome Web Store (~$5, you pay).',
-    );
+  if (input.kind === 'chrome') {
+    if (storeSubmitted) {
+      nextSteps.push(
+        input.chromeStoreUrl
+          ? `Await Google review — track status: ${input.chromeStoreUrl}`
+          : 'Await Google Chrome Web Store review (Xroga cannot approve listings).',
+      );
+    } else if (handoffReady) {
+      nextSteps.push(
+        input.chromeStoreError
+          ? `CWS submit: ${input.chromeStoreError}. Or Load unpacked from extension.zip.`
+          : 'Add CWS OAuth credentials in Publish to submit for review, or Load unpacked from the zip.',
+      );
+    }
   }
-  if (input.kind === 'electron' && handoffReady) {
-    nextSteps.push(
-      'Run: unzip desktop.zip → npm install && npm start. Optional unsigned Linux binary builds on GitHub Actions. Code signing / stores stay on you.',
-    );
+  if (input.kind === 'electron') {
+    if (fullyShipped) {
+      nextSteps.push(
+        'Download the installer (.exe / .AppImage / .dmg). Signed builds need CSC_LINK in Publish.',
+      );
+    } else if (handoffReady) {
+      nextSteps.push(
+        'Portable desktop.zip ready now. Installers build on GitHub Actions (Linux/Windows/macOS) — open Releases when green.',
+      );
+    }
   }
   if (input.kind === 'expo' && input.githubPushConfirmed) {
-    if (input.easTriggered) {
+    if (storeSubmitted) {
+      nextSteps.push(
+        'Store submit started on EAS — Apple/Google still review. Watch the Expo submit run.',
+      );
+    } else if (input.easBuildOk) {
+      nextSteps.push(
+        input.easArtifactUrl
+          ? `Install build: ${input.easArtifactUrl}. Optional: Start EAS submit after Play/Apple creds are in Expo.`
+          : 'EAS build finished — open the Expo build page to install. Optional: submit to stores.',
+      );
+    } else if (input.easTriggered) {
       nextSteps.push(
         input.easUrl
-          ? `EAS build running — open ${input.easUrl}. When green, install the binary / submit from Expo (store fees on you).`
-          : 'EAS build started on your Expo account — open expo.dev builds when ready.',
+          ? `EAS building — ${input.easUrl}`
+          : 'EAS build started — wait for the installable artifact.',
       );
     } else {
       nextSteps.push(
         input.easError
-          ? `EAS not started: ${input.easError}. Publish → Connect Expo (one token) — next ship auto-starts the build.`
-          : 'Connect Expo in Publish (access token) — next ship auto-links EAS and starts an Android build.',
+          ? `EAS: ${input.easError}`
+          : 'Connect Expo in Publish so the next ship starts an EAS build automatically.',
       );
     }
   }
@@ -154,26 +191,36 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
 
   if (input.kind === 'chrome') {
     verifyLines.push(
-      input.chromeZipOk
-        ? '✅ extension.zip on GitHub Releases — ready to install / sideload'
-        : '❌ extension.zip not on Releases',
+      input.chromeZipOk ? '✅ extension.zip on GitHub Releases' : '❌ extension.zip missing',
     );
-    verifyLines.push('ℹ️ Chrome Web Store listing (~$5) is optional and on your account');
+    verifyLines.push(
+      input.chromeStoreSubmitted
+        ? '✅ Submitted to Chrome Web Store (awaiting Google review)'
+        : 'ℹ️ Not submitted to CWS yet',
+    );
   } else if (input.kind === 'electron') {
     verifyLines.push(
-      input.electronZipOk
-        ? '✅ desktop.zip ready — npm install && npm start'
-        : '❌ Desktop zip not ready yet',
+      input.electronZipOk ? '✅ Desktop package available' : '❌ Desktop package missing',
     );
-    verifyLines.push('ℹ️ Code signing / Mac App Store / Microsoft Store are optional next steps');
+    verifyLines.push(
+      input.electronInstallerOk
+        ? '✅ Installer binary (.exe/.AppImage/.dmg) ready'
+        : 'ℹ️ Installer binary still building on Actions (or use portable zip)',
+    );
   } else if (input.kind === 'expo') {
     verifyLines.push('✅ Code on GitHub');
     verifyLines.push(
-      input.easTriggered
-        ? '✅ EAS build started on your Expo account'
-        : 'ℹ️ Connect Expo to auto-start EAS builds on ship',
+      input.easBuildOk
+        ? '✅ EAS build finished with install/artifact URL'
+        : input.easTriggered
+          ? '⏳ EAS build started'
+          : 'ℹ️ EAS not started',
     );
-    verifyLines.push('ℹ️ App Store / Play submission uses your Apple/Google accounts + fees');
+    verifyLines.push(
+      input.easStoreSubmitted
+        ? '✅ Store submit workflow started (awaiting Apple/Google)'
+        : 'ℹ️ Not submitted to App Store / Play yet',
+    );
   } else {
     if (input.deployUrl) {
       verifyLines.push(
@@ -184,8 +231,7 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
     }
   }
 
-  // Web: live URL verified. Non-web: artifact/source handoff checks only.
-  const verifyPass = isNonWeb ? handoffReady : fullyShipped;
+  const verifyPass = isNonWeb ? handoffReady || fullyShipped : fullyShipped;
 
   let statusMessage: string;
   let statusLabel: string;
@@ -193,19 +239,32 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
     statusMessage = 'Update aborted — site unchanged';
     statusLabel = 'Aborted';
   } else if (fullyShipped) {
-    statusMessage = 'Build shipped & verified live';
-    statusLabel = 'Shipped';
+    if (input.kind === 'chrome') {
+      statusMessage = 'Submitted to Chrome Web Store — awaiting Google review';
+      statusLabel = 'Submitted to CWS';
+    } else if (input.kind === 'electron') {
+      statusMessage = 'Desktop installer ready to download';
+      statusLabel = 'Installer ready';
+    } else if (input.kind === 'expo') {
+      statusMessage = input.easStoreSubmitted
+        ? 'Mobile binary ready + store submit started (awaiting Apple/Google)'
+        : 'Mobile binary ready to install from EAS';
+      statusLabel = input.easStoreSubmitted ? 'Build + submitted' : 'Build ready';
+    } else {
+      statusMessage = 'Build shipped & verified live';
+      statusLabel = 'Shipped';
+    }
   } else if (handoffReady) {
     if (input.kind === 'chrome') {
-      statusMessage = 'Extension ready — download zip and Load unpacked in Chrome';
-      statusLabel = 'Ready to install';
+      statusMessage = 'Extension zip ready — connect CWS credentials to submit for review';
+      statusLabel = 'Ready to install / submit';
     } else if (input.kind === 'electron') {
-      statusMessage = 'Desktop ready — download zip, then npm install && npm start';
+      statusMessage = 'Portable zip ready — installers building on GitHub Actions';
       statusLabel = 'Ready to run';
     } else if (input.kind === 'expo') {
       statusMessage = input.easTriggered
-        ? 'Mobile build started on EAS — watch the run for your installable binary'
-        : 'Mobile source on GitHub — Connect Expo to auto-build with EAS';
+        ? 'Mobile source on GitHub + EAS building'
+        : 'Mobile source on GitHub — Connect Expo to auto-build';
       statusLabel = input.easTriggered ? 'EAS building' : 'Source ready';
     } else {
       statusMessage = 'Handoff ready';
@@ -213,8 +272,8 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
     }
   } else if (buildOk) {
     statusMessage = shipBlockers[0]
-      ? `Built — handoff incomplete: ${shipBlockers[0]}`
-      : 'Built — connect integrations to finish handoff';
+      ? `Built — incomplete: ${shipBlockers[0]}`
+      : 'Built — connect integrations to finish';
     statusLabel = 'Built · incomplete';
   } else {
     statusMessage = shipBlockers[0]
@@ -227,6 +286,7 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
     buildOk,
     fullyShipped,
     handoffReady,
+    storeSubmitted,
     shipOk: shipOk && (fullyShipped || handoffReady || !input.shouldPush),
     shipBlockers: [...new Set(shipBlockers)],
     nextSteps: [...new Set(nextSteps)],

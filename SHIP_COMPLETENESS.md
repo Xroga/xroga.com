@@ -1,33 +1,29 @@
 # Honest ship status
 
-## Product-complete free path (what Xroga finishes for you)
-| Kind | Ready when | User does next |
-|------|------------|----------------|
-| **Web** (`fullyShipped`) | GitHub + live Vercel URL verified | Optional Supabase |
-| **Chrome** (`handoffReady`) | GitHub + `extension.zip` on Releases | Load unpacked (or optional CWS ~$5) |
-| **Electron** (`handoffReady`) | GitHub + immediate `desktop.zip` | `npm install && npm start` (Actions binary optional) |
-| **Expo** (`handoffReady`) | GitHub push; EAS auto-starts if Expo connected | Install binary from EAS; store submit on your accounts |
+## Fully shipped (Xroga’s side complete)
+| Kind | `fullyShipped` when | Still external |
+|------|---------------------|----------------|
+| **Web** | Live Vercel URL verified | — |
+| **Chrome** | CWS upload + publish API succeeded | Google review / public listing |
+| **Electron** | Real installer (`.exe` / `.AppImage` / `.dmg`) on Releases | Mac/MS Store listing; signing needs your CSC cert |
+| **Expo** | EAS build finished with install/artifact URL | Apple/Google store approval after submit |
 
-## Store listing (never auto-approved)
-| Kind | Still on the user |
-|------|-------------------|
-| Chrome Web Store | Developer account + listing assets + review |
-| Mac / Microsoft Store | Code signing certificates + store accounts |
-| App Store / Play | Apple/Google fees + credentials in Expo/EAS + review |
+## Also tracked
+| Flag | Meaning |
+|------|---------|
+| `handoffReady` | Free path usable (zip / source) even if store submit not done |
+| `storeSubmitted` | CWS publish or EAS submit workflow started — **not** store approval |
 
-## What improved for non-web E2E
-- **Chrome:** zip packaged on every ship; Publish → Chrome install steps
-- **Electron:** portable `desktop.zip` uploaded immediately (no 7‑min Actions wait); Actions binary still kicked off
-- **Expo:** Connect token → auto-link or create EAS project → stamp `app.json` → auto-dispatch Android build on ship
-- Publish panel tabs: Web / Chrome / Desktop / Mobile
+## What Xroga automates (real APIs)
+- Chrome: package zip → CWS `upload` + `publish` when OAuth creds saved
+- Electron: portable zip immediately + multi-OS Actions installers; sync `CSC_*` secrets when provided
+- Mobile: auto-link/create EAS project, sync Google Play JSON into Expo, start build (+ submit if Play JSON present), poll artifact URL
 
-## User-paid (guided, not faked)
-- CWS ~$5, Apple/Google, EAS minutes, code signing
-- Pasting Apple/Google credentials in Xroga ≠ automatic store approval
-- EAS buttons dispatch workflows; store review is Apple/Google’s
+## What Xroga cannot do (no fakes)
+- Approve Chrome Web Store / App Store / Play listings
+- Create first CWS listing metadata without dashboard (API limit)
+- Create first Play app without Play Console (Google rule)
+- Invent signing certificates or Apple/Google developer accounts
 
-## Quality
-- Scaffold integrity restore if LLM empties entrypoints
-- Structure validation blocks push for web
-- Chrome / Electron / Expo skip compile — scaffolds + artifact packaging
-- Builder prompt forbids deleting critical scaffold files
+## User-paid
+- CWS ~$5, Apple ~$99/yr, Play ~$25, EAS minutes, code-signing certs

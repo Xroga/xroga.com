@@ -81,6 +81,13 @@ import {
   patchExpoProjectIdInFiles,
   triggerEasPublish,
 } from '../services/publish/easPublish.js';
+import { publishChromeExtensionToStore } from '../services/publish/chromeWebStore.js';
+import { syncElectronSigningSecretsToGitHub } from '../services/publish/electronSecrets.js';
+import {
+  syncGooglePlayCredentialsToExpo,
+  waitForEasBuildArtifact,
+} from '../services/publish/easCredentials.js';
+import { chromeExtensionZipFilter, packageBuildZip } from '../services/scaffolds/packageBuildZip.js';
 import { ensureScaffoldIntegrity } from '../services/scaffolds/scaffoldIntegrity.js';
 import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
 import {
@@ -1779,9 +1786,16 @@ export async function runBuildPipeline(opts: {
   let electronReleaseError: string | undefined;
   let chromeZipOk = false;
   let electronZipOk = false;
+  let electronInstallerOk = false;
   let easTriggered = false;
   let easUrl: string | undefined;
   let easError: string | undefined;
+  let chromeStoreSubmitted = false;
+  let chromeStoreUrl: string | undefined;
+  let chromeStoreError: string | undefined;
+  let easBuildOk = false;
+  let easArtifactUrl: string | undefined;
+  let easStoreSubmitted = false;
 
   if (githubPushConfirmed && githubRepoName && productScaffoldKind === 'chrome') {
     emit({
@@ -1810,6 +1824,49 @@ export async function runBuildPipeline(opts: {
           swarmActivity: zipped.tag || 'extension.zip',
           swarmTodos: todos('push'),
         });
+
+        // Real CWS submit when user connected Chrome Web Store OAuth
+        try {
+          const zipBuf = packageBuildZip(nextFiles, { include: chromeExtensionZipFilter });
+          emit({
+            agent: 'deploy',
+            status: 'cws_submit',
+            message: 'Submitting extension.zip to Chrome Web Store…',
+            swarmStatusLabel: 'CWS submit',
+            swarmActivity: 'upload + publish',
+            swarmTodos: todos('push'),
+          });
+          const cws = await publishChromeExtensionToStore({
+            userId: opts.userId,
+            zip: zipBuf,
+          });
+          if (cws.submitted) {
+            chromeStoreSubmitted = true;
+            chromeStoreUrl = cws.dashboardUrl;
+            emit({
+              agent: 'deploy',
+              status: 'cws_submitted',
+              message: cws.message,
+              swarmStatusLabel: 'CWS submitted',
+              swarmActivity: cws.dashboardUrl || 'awaiting Google review',
+              swarmTodos: todos('push'),
+            });
+          } else if (cws.error && cws.error !== 'NO_CWS_CREDS') {
+            chromeStoreError = cws.message;
+            emit({
+              agent: 'deploy',
+              status: 'cws_failed',
+              message: cws.message,
+              swarmStatusLabel: 'CWS failed',
+              swarmActivity: cws.message.slice(0, 100),
+              swarmTodos: todos('push'),
+            });
+          } else if (cws.error === 'NO_CWS_CREDS') {
+            chromeStoreError = cws.message;
+          }
+        } catch (err) {
+          chromeStoreError = (err as Error).message;
+        }
       } else {
         chromeZipError = zipped.error || 'extension.zip upload failed';
         chromeReleaseUrl = zipped.releaseUrl;
@@ -1874,16 +1931,20 @@ export async function runBuildPipeline(opts: {
       console.warn('[pipeline] electron portable zip:', electronReleaseError);
     }
 
-    // Also kick Actions for unsigned Linux binary (best-effort, short wait)
+    // Sync signing secrets then kick multi-OS Actions for real installers
     emit({
       agent: 'deploy',
       status: 'releasing',
-      message: 'Starting GitHub Actions for unsigned Linux binary zip…',
+      message: 'Syncing signing secrets + starting multi-OS installer builds…',
       swarmStatusLabel: 'Desktop Actions',
       swarmActivity: githubRepoName,
       swarmTodos: todos('push'),
     });
     try {
+      await syncElectronSigningSecretsToGitHub({
+        userId: opts.userId,
+        repoFullName: githubRepoName,
+      });
       const released = await triggerElectronDesktopRelease({
         userId: opts.userId,
         repoFullName: githubRepoName,
@@ -1897,14 +1958,14 @@ export async function runBuildPipeline(opts: {
           userId: opts.userId,
           repoFullName: githubRepoName,
           tag: released.tag,
-          timeoutMs: 90_000,
-          intervalMs: 12_000,
+          timeoutMs: 10 * 60 * 1000,
+          intervalMs: 20_000,
           onProgress: (msg) => {
             emit({
               agent: 'deploy',
               status: 'waiting_zip',
               message: msg,
-              swarmStatusLabel: 'Binary zip',
+              swarmStatusLabel: 'Installers',
               swarmActivity: desktopActionsUrl || 'Actions',
               swarmTodos: todos('push'),
             });
@@ -1912,20 +1973,26 @@ export async function runBuildPipeline(opts: {
         });
         if (waited.ok && waited.zipDownloadUrl) {
           electronZipOk = true;
+          electronInstallerOk = Boolean(
+            waited.installerUrls?.some((u) => /\.(exe|AppImage|dmg|msi)(\?|$)/i.test(u)) ||
+              /\.(exe|AppImage|dmg|msi)(\?|$)/i.test(waited.zipDownloadUrl),
+          );
           desktopZipDownloadUrl = waited.zipDownloadUrl;
           if (waited.releaseUrl) desktopReleasesUrl = waited.releaseUrl;
           emit({
             agent: 'deploy',
             status: 'zip_ready',
-            message: `Unsigned binary zip ready — ${waited.zipDownloadUrl}`,
-            swarmStatusLabel: 'Binary ready',
+            message: electronInstallerOk
+              ? `Desktop installer ready — ${waited.zipDownloadUrl}`
+              : `Desktop package ready — ${waited.zipDownloadUrl}`,
+            swarmStatusLabel: electronInstallerOk ? 'Installer ready' : 'Package ready',
             swarmActivity: waited.zipDownloadUrl.slice(0, 80),
             swarmTodos: todos('push'),
           });
         } else if (!electronZipOk) {
           electronReleaseError =
             waited.error ||
-            'Binary zip still building on Actions — portable desktop.zip is ready above';
+            'Installers still building on Actions — portable desktop.zip is ready above';
         }
       } else if (!electronZipOk) {
         electronReleaseError = released.error || 'Could not start desktop release';
@@ -1949,16 +2016,33 @@ export async function runBuildPipeline(opts: {
     }
   }
 
-  // Expo: auto-trigger EAS build-only when user already saved Expo token
+  // Expo: auto-trigger EAS build, poll artifact, optionally submit when Play creds synced
   if (githubPushConfirmed && productScaffoldKind === 'expo') {
     const expoToken = await getUserProviderKey(opts.userId, 'expo').catch(() => null);
     if (expoToken) {
+      // Best-effort: push Google Play JSON into Expo before submit
+      const google = await getUserProviderKey(opts.userId, 'google_play').catch(() => null);
+      if (google) {
+        const synced = await syncGooglePlayCredentialsToExpo({ userId: opts.userId });
+        emit({
+          agent: 'deploy',
+          status: synced.ok ? 'eas_creds' : 'eas_creds_skip',
+          message: synced.message,
+          swarmStatusLabel: synced.ok ? 'Play creds synced' : 'Play creds',
+          swarmActivity: synced.message.slice(0, 80),
+          swarmTodos: todos('push'),
+        });
+      }
+
+      const wantSubmit = Boolean(google);
       emit({
         agent: 'deploy',
         status: 'eas_dispatch',
-        message: 'Starting EAS Android build on your Expo account…',
+        message: wantSubmit
+          ? 'Starting EAS Android build + store submit on your Expo account…'
+          : 'Starting EAS Android build on your Expo account…',
         swarmStatusLabel: 'EAS',
-        swarmActivity: 'build-android',
+        swarmActivity: wantSubmit ? 'publish-android' : 'build-android',
         swarmTodos: todos('push'),
       });
       try {
@@ -1966,12 +2050,13 @@ export async function runBuildPipeline(opts: {
           userId: opts.userId,
           platform: 'android',
           gitRef: githubBranch || 'main',
-          submit: false,
+          submit: wantSubmit,
           projectName,
         });
         if (eas.ok) {
           easTriggered = true;
           easUrl = eas.url;
+          easStoreSubmitted = wantSubmit && /publish|submit/i.test(eas.fileName || '');
           emit({
             agent: 'deploy',
             status: 'eas_started',
@@ -1980,6 +2065,37 @@ export async function runBuildPipeline(opts: {
             swarmActivity: eas.url || eas.fileName,
             swarmTodos: todos('push'),
           });
+
+          const waited = await waitForEasBuildArtifact({
+            userId: opts.userId,
+            platform: 'android',
+            timeoutMs: 8 * 60 * 1000,
+            onProgress: (msg) => {
+              emit({
+                agent: 'deploy',
+                status: 'eas_waiting',
+                message: msg,
+                swarmStatusLabel: 'EAS building',
+                swarmActivity: easUrl || 'expo.dev',
+                swarmTodos: todos('push'),
+              });
+            },
+          });
+          if (waited.ok && waited.build) {
+            easBuildOk = true;
+            easArtifactUrl =
+              waited.build.artifactUrl || waited.build.buildDetailsPageUrl;
+            emit({
+              agent: 'deploy',
+              status: 'eas_ready',
+              message: waited.message,
+              swarmStatusLabel: 'EAS binary ready',
+              swarmActivity: easArtifactUrl?.slice(0, 80) || 'artifact',
+              swarmTodos: todos('push'),
+            });
+          } else {
+            easError = waited.message;
+          }
         } else {
           easError = eas.message || eas.error || 'EAS dispatch failed';
           emit({
@@ -2130,9 +2246,16 @@ export async function runBuildPipeline(opts: {
     deployUrl: deployUrl || undefined,
     liveOk: deployUrl ? Boolean(shipVerify?.liveOk ?? deployVerified) : undefined,
     chromeZipOk,
+    chromeStoreSubmitted,
+    chromeStoreUrl,
+    chromeStoreError,
     electronZipOk,
+    electronInstallerOk,
     easTriggered,
     easUrl,
+    easBuildOk,
+    easArtifactUrl,
+    easStoreSubmitted,
     chromeZipError,
     electronReleaseError,
     easError,
@@ -2255,12 +2378,18 @@ export async function runBuildPipeline(opts: {
             : `Shipped **${projectName}** — pushed to GitHub and live on Vercel.`
           : handoffReady
             ? productScaffoldKind === 'chrome'
-              ? `**${projectName}** artifact ready — \`extension.zip\` on GitHub Releases. **Not** published to Chrome Web Store.`
+              ? chromeStoreSubmitted
+                ? `**${projectName}** submitted to Chrome Web Store — awaiting Google review.`
+                : `**${projectName}** extension.zip ready. Connect CWS credentials in Publish to submit for review.`
               : productScaffoldKind === 'electron'
-                ? `**${projectName}** unsigned desktop zip ready on Releases. **Not** code-signed or store-published.`
+                ? electronInstallerOk
+                  ? `**${projectName}** desktop installer ready to download.`
+                  : `**${projectName}** portable zip ready; installers building on GitHub Actions.`
                 : productScaffoldKind === 'expo'
-                  ? `**${projectName}** source on GitHub (Expo Go / EAS handoff). **Not** on App Store or Google Play.`
-                  : `**${projectName}** handoff ready — not fully shipped live.`
+                  ? easBuildOk
+                    ? `**${projectName}** EAS binary ready${easStoreSubmitted ? ' + store submit started (awaiting Apple/Google)' : ''}.`
+                    : `**${projectName}** on GitHub${easTriggered ? ' + EAS building' : ' — Connect Expo to auto-build'}.`
+                  : `**${projectName}** handoff ready.`
             : buildOk
               ? `Built **${projectName}** — **not fully shipped.** ${finalBlockers[0] || 'Finish integrations / artifacts below.'}`
               : `⚠️ **${projectName}** finished with blockers — see ship check below.`) +
@@ -2301,18 +2430,25 @@ export async function runBuildPipeline(opts: {
     githubPushConfirmed,
     fullyShipped,
     handoffReady,
+    storeSubmitted: outcome.storeSubmitted,
     buildOk,
     shipped: fullyShipped,
     nextSteps: outcome.nextSteps,
     scaffoldKind: productScaffoldKind,
     chromeZipDownloadUrl,
     chromeReleaseUrl,
+    chromeStoreSubmitted,
+    chromeStoreUrl,
     desktopReleaseTag,
     desktopActionsUrl,
     desktopReleasesUrl,
     desktopZipDownloadUrl,
+    electronInstallerOk,
     easTriggered,
     easUrl,
+    easBuildOk,
+    easArtifactUrl,
+    easStoreSubmitted,
     shipBlockers: finalBlockers.length ? finalBlockers : undefined,
     supabase: {
       connected: Boolean(supabaseStatus.connected),

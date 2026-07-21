@@ -85,6 +85,64 @@ function StepRow({ item }: { item: ChecklistItem }) {
   );
 }
 
+function CwsCredentialsForm() {
+  const [busy, setBusy] = useState(false);
+  const [clientId, setClientId] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+  const [refreshToken, setRefreshToken] = useState('');
+  const [extensionId, setExtensionId] = useState('');
+  const [publisherId, setPublisherId] = useState('');
+
+  async function save() {
+    if (!clientId.trim() || !clientSecret.trim() || !refreshToken.trim() || !extensionId.trim() || !publisherId.trim()) {
+      toast.error('Fill all Chrome Web Store fields');
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await api.publish.saveCwsCredentials({
+        clientId: clientId.trim(),
+        clientSecret: clientSecret.trim(),
+        refreshToken: refreshToken.trim(),
+        extensionId: extensionId.trim(),
+        publisherId: publisherId.trim(),
+      });
+      toast.success(res.message || 'CWS credentials saved');
+      setClientSecret('');
+      setRefreshToken('');
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="rounded-xl border border-[var(--card-border)] p-3 space-y-2">
+      <p className="text-sm font-semibold">Chrome Web Store submit (real API)</p>
+      <p className="text-[11px] text-[var(--muted)] leading-relaxed">
+        Pay ~$5 once at the{' '}
+        <a className="text-[var(--accent)] hover:underline" href="https://chrome.google.com/webstore/devconsole" target="_blank" rel="noreferrer">
+          CWS developer dashboard
+        </a>
+        , create the extension listing once, enable Chrome Web Store API in Google Cloud, then paste
+        OAuth client + refresh token + extension ID + publisher ID. Next Chrome ship uploads the zip
+        and submits for Google review — approval is still Google’s.
+      </p>
+      <div className="grid sm:grid-cols-2 gap-2">
+        <input placeholder="OAuth client ID" value={clientId} onChange={(e) => setClientId(e.target.value)} className="rounded-md border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-xs font-mono" />
+        <input type="password" placeholder="OAuth client secret" value={clientSecret} onChange={(e) => setClientSecret(e.target.value)} className="rounded-md border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-xs font-mono" />
+        <input type="password" placeholder="Refresh token" value={refreshToken} onChange={(e) => setRefreshToken(e.target.value)} className="rounded-md border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-xs font-mono sm:col-span-2" />
+        <input placeholder="Extension ID" value={extensionId} onChange={(e) => setExtensionId(e.target.value)} className="rounded-md border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-xs font-mono" />
+        <input placeholder="Publisher ID" value={publisherId} onChange={(e) => setPublisherId(e.target.value)} className="rounded-md border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-xs font-mono" />
+      </div>
+      <button type="button" disabled={busy} onClick={() => void save()} className="rounded-md bg-[var(--accent)] text-white px-3 py-2 text-xs font-bold disabled:opacity-60">
+        {busy ? 'Saving…' : 'Save CWS credentials'}
+      </button>
+    </div>
+  );
+}
+
 export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
   const [status, setStatus] = useState<PublishStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -315,6 +373,7 @@ export function UserOwnedPublishPanel({ compact }: { compact?: boolean }) {
               <li key={step}>{step}</li>
             ))}
           </ol>
+          <CwsCredentialsForm />
           <Link
             href="/dashboard"
             className="inline-flex text-sm font-semibold text-[var(--accent)] hover:underline"
