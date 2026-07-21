@@ -216,10 +216,10 @@
 
 .xv-home-coding .xv-hc-sub {
   font-family: var(--font-goga), system-ui, sans-serif;
-  font-size: clamp(0.95rem, 2vw, 1.1rem);
-  line-height: 1.55;
+  font-size: clamp(0.9rem, 1.9vw, 1.05rem);
+  line-height: 1.5;
   color: var(--hc-muted);
-  max-width: 36rem;
+  max-width: 34rem;
   margin: 0 auto 1.5rem;
   animation: xv-hc-fade-up 0.85s ease 0.15s both;
 }
@@ -551,6 +551,31 @@
 
 .xv-home-coding .xv-hc-compare-table thead th.is-xroga {
   color: #8ec5ff;
+}
+
+.xv-home-coding .xv-hc-compare-brand {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.xv-home-coding .xv-hc-compare-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 2.1rem;
+  padding: 0.25rem 0.35rem;
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.xv-home-coding .xv-hc-compare-logo-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
 }
 
 .xv-home-coding .xv-hc-compare-table tbody tr:last-child th,
