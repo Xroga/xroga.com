@@ -1,4 +1,4 @@
-import type { LandingPageOutputData } from '@/components/terminal/LandingPageCard';
+import type { LandingPageOutputData } from '@/lib/landingPageOutput';
 import { api } from '@/lib/api';
 
 /** Load html/css/js from GitHub or cloud project storage when restore snapshot stripped code. */

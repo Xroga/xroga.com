@@ -64,7 +64,7 @@ export function SwarmRunHistory({ search = '' }: { search?: string }) {
           if (m.featureOutput && typeof m.featureOutput === 'object') {
             const fo = m.featureOutput as { type?: string };
             if (fo.type === 'landing_page') {
-              const loaded = await hydrateLandingOutput(m.featureOutput as import('@/components/terminal/LandingPageCard').LandingPageOutputData);
+              const loaded = await hydrateLandingOutput(m.featureOutput as import('@/lib/landingPageOutput').LandingPageOutputData);
               return { ...m, featureOutput: loaded };
             }
           }

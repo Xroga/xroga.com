@@ -14,36 +14,74 @@
 | `handoffReady` | Free path usable (zip / source) even if store submit not done |
 | `storeSubmitted` | CWS publish or EAS submit workflow started — **not** store approval |
 
-## Core loop (real end-to-end)
-| Path | Reality |
-|------|---------|
-| Prompt → LLM → GitHub → Vercel → follow-up patches | **Real** (needs OAuth + AI keys) |
-| User vault → provision → Vercel env | **Real**; sync failures block `fullyShipped` and surface in PostBuild / Integrations toasts |
-| Research (Grok / Tavily / SearXNG) | **Real** or honest skip |
-| Chrome / Electron / Expo ship automation | **Real**; store approval is external |
-| Free AI proxy inside user apps | **Not real** (retired; BYOK on the user’s Vercel) |
-| Legacy `/chat` + `/api/v1` estimate/catalog chat | **Retired (410)** — no follow-ups, no ship; Workspace uses `/api/swarm/execute` only |
+## Workspace AI — live end-to-end (100% accurate)
 
-## Product categories the swarm builds (scaffolds)
-| Category | Scaffold | Typical prompt |
-|----------|----------|----------------|
-| Website / landing | `static` or `nextjs` | “Build a landing page for …” |
-| Chatbot site | `nextjs` + `/api/chat` (BYOK) | “Build a chatbot landing page …” |
-| SaaS / dashboard | `nextjs` | “Build a SaaS dashboard with auth …” |
-| Mobile | `expo` | “Build an Expo Android/iOS app …” |
-| Chrome extension | `chrome` | “Build a Chrome MV3 extension …” |
-| Desktop | `electron` | “Build an Electron desktop app …” |
-| Feature packs | crypto / agent overlays on Next | Detected from prompt when relevant |
+### What users see (live path only)
+| Step | UI | Notes |
+|------|-----|--------|
+| Empty / start | `ProductStartChips` | Labels: **Website · Chatbot · SaaS · Mobile · Extension · Desktop** |
+| While building | `SwarmPhasePanel` → `XrogaAgentProcessingPanel` | Black Hole V branding, role bar, **real** todos + activity SSE lines, elapsed “thinking” — no rotating fake polish |
+| Gates | GitHub / Vercel / repo-pick modals | Fired when SSE sets `needsGitHub` / `needsVercel` / client needs repo pick |
+| Done (build) | `FeatureOutputView` → **`TerminalBuildReport`** | Terminal-native report: asked/update, change bullets, expandable file diffs, QA lines, GitHub + live links, status lines |
+| Done (update) | Same report + optional `UpdateFileTrail` | Surgical SEARCH/REPLACE on sticky repo |
+| Preview | `ProjectPreviewDock` | Sandbox `srcDoc` and/or live Vercel URL |
+| Light Q&A (not a product build) | Phase 1 text reply | Routed by `shouldRouteToPhase1` → `POST /api/phase1/chat` |
 
-## Build time (honest — no wall-clock SLA)
-There is **no fixed “old vs new minutes” timer** in product code. Economics (`/api/phase1/economics`) sizes builds by **tokens/cost**, not clock time:
+**Not shown in the live message log:** old feature-catalog UI (deleted), `LandingPageCard` / `PostBuildDashboard` (removed — were dead), `HackathonBriefCard` (component may exist; **never mounted** in swarm log).
+
+### API + planning (real)
+1. **Frontend build:** `streamSwarmExecute` → `POST /api/swarm/execute` (SSE: start → progress → delta → complete)
+2. **Backend:** `runBuildPipeline` in `backend/src/ai/pipeline.ts`
+3. **Stages (functions, not marketing-only):** optional `gatherResearch` → `convertUserRequest` → `runArchitectPlan` → builder (`chatCompletion` / stream) → scaffold merge → `reviewBuildOutput` (QA) → security scan → `pushBuildToGitHub` → web: `deployToAllPlatforms` / non-web: Chrome zip · Electron zip/Actions · Expo EAS when tokens exist
+4. **SSE progress agents** include tags such as `router`, `research`, `converter`, `architect`, `builder`, `reviewer`, `qa`, `compiler`, `security`, `deploy` (plus vision when attachments)
+5. **Start marketing line** on execute: “Architect → Builder → Reviewer → Security → Deploy → Verify” (user-facing summary of the loop above)
+6. **Outbound providers:** OpenRouter / Moonshot / Zhipu / xAI (Grok); research Grok live → Tavily → SearXNG; GitHub API; Vercel API; optional Expo / CWS
+7. **Follow-ups:** incremental **SEARCH/REPLACE** (all-or-nothing) on sticky `default_repo` for updates — not a new fake chat product
+
+### Product categories (`detectScaffoldKind` + feature packs)
+| User intent | Scaffold | Ship surface | Honest limit |
+|-------------|----------|--------------|--------------|
+| Landing / simple site | `static` (or `nextjs` if prompt needs backend) | GitHub → Vercel | — |
+| Chatbot site | `nextjs` + `/api/chat` | GitHub → Vercel | Chat in **user app** needs **BYOK** (no free Xroga proxy) |
+| SaaS / dashboard / auth | `nextjs` | GitHub → Vercel | Quality varies; not a guaranteed production SaaS |
+| Crypto / DeFi dashboard | `nextjs` + crypto pack | GitHub → Vercel | Markets UI / stubs — **no custody, no trading** |
+| Automation / agent shell | `nextjs` + agent pack | GitHub → Vercel | Runner scaffold, not a hosted forever-agent |
+| Hackathon prompts | usually `nextjs` / `static` | same as above | **Prompt-aware todos/research only** — no dedicated hackathon scaffold; brief card **not** in UI |
+| Mobile | `expo` | GitHub (+ EAS if Expo token) | Store approval external |
+| Chrome extension | `chrome` | GitHub Releases zip (+ CWS optional) | Store listing / review external |
+| Desktop | `electron` | GitHub zip / Actions installers | Signing + store listing external |
+
+### Build time (honest — no wall-clock SLA)
+Economics (`GET /api/phase1/economics`) sizes by **tokens/cost**, not minutes:
 | Tier | Approx tokens | Approx API $ | Example |
 |------|---------------|--------------|---------|
 | Simple | ~20k | ~$0.11 | Simple web / landing |
-| Medium | ~150k | ~$0.81 | Full-stack SaaS |
+| Medium | ~150k | ~$0.81 | Full-stack / chatbot site |
 | Complex | ~600k | ~$3.24 | Game / crypto platform |
 
-Wall-clock depends on model latency, research, GitHub push, and Vercel deploy. A chatbot landing is usually **simple→medium**. **Old** simpleChat/`/chat` did not reliably ship or handle follow-ups; **new** swarm path applies SEARCH/REPLACE patches on the sticky repo for follow-ups.
+Wall-clock = model latency + research + GitHub + Vercel/EAS. Elapsed UI counter ≠ ETA.
+
+### Env sync honesty
+Vault → Vercel failures **block `fullyShipped`**, surface in **Integrations toasts**, and appear on the live **TerminalBuildReport** as `Env sync · failed` / `Blocker · …` status lines when present on the run output.
+
+### Retired (not product AI)
+| Surface | Status |
+|---------|--------|
+| Legacy `/chat` simpleChat + client `streamChatMessage` | Removed from frontend; backend retired **410** |
+| `/api/v1/estimate` + action-cost / 98-feature catalog UI | Removed |
+| Free live-AI proxy inside user apps | Retired; BYOK only |
+| Video studio / legacy image gen in message output | Honest “removed” copy |
+| Store approval guarantees | Impossible in code |
+
+## Core loop (summary)
+| Path | Reality |
+|------|---------|
+| Prompt → LLM → GitHub → Vercel → follow-up patches | **Real** (needs OAuth + AI keys) |
+| User vault → provision → Vercel env | **Real**; failures block `fullyShipped` + Integrations toasts |
+| Research (Grok / Tavily / SearXNG) | **Real** or honest skip |
+| Chrome / Electron / Expo ship automation | **Real**; store approval is external |
+| Free AI proxy inside user apps | **Not real** (retired; BYOK) |
+| Legacy `/chat` + catalog/estimate | **Retired** — Workspace builds use `/api/swarm/execute` only |
 
 ## Safety hardenings (ship correctness)
 - Patch apply is **all-or-nothing** (primary + recovery + QA) — never half-apply SEARCH/REPLACE onto a sticky live repo
@@ -53,41 +91,43 @@ Wall-clock depends on model latency, research, GitHub push, and Vercel deploy. A
 
 ## What we can finish in code vs what stays external
 
-| Gap | Who can do it | Status on this branch |
-|-----|---------------|------------------------|
-| Custom domain attach + DNS verify UI | **Agent / code** (Vercel Domains API) | **Done** — Publish → Web → Custom domain |
-| Multi-product Update / New product | **Agent / code** | **Done** (launch-ready merge) |
+| Gap | Who can do it | Status |
+|-----|---------------|--------|
+| Custom domain attach + DNS verify UI | **Agent / code** | **Done** — Publish → Web → Custom domain |
+| Multi-product Update / New product | **Agent / code** | **Done** |
 | First-run checklist | **Agent / code** | **Done** |
-| Platform ready gate | **Agent / code** | **Done** — Integrations + Analytics |
-| Ship analytics (not vanity UI shell) | **Agent / code** | **Done** — `/dashboard/analytics` from real runs |
+| Platform ready gate | **Agent / code** | **Done** — Analytics (+ operator surfaces); user Integrations hide operator-only “Platform ready” where UX branch applies |
+| Ship analytics | **Agent / code** | **Done** — `/dashboard/analytics` from real runs |
 | Post-deploy smoke (`/` + health) | **Agent / code** | **Done** — shipVerify |
-| Vault → Vercel env sync honesty | **Agent / code** | **Done** earlier (blocks fullyShipped) |
-| Supabase OAuth / DB password friction | **Partial** — clearer UX; scopes/password still user/org | Improved messaging only where present |
-| Generated app quality / deep E2E | **Partial** — smoke + health, not full Playwright product QA | Smoke only |
-| Free AI inside user apps | **Product + cost** — was retired; can rebuild metered proxy later | **Not rebuilt** (BYOK stays) |
-| Guaranteed App Store / Play / CWS public | **Impossible in code** — review + fees + first listing | External |
-| Electron signed installers | **User certs + Actions** — we sync secrets; cannot invent CSC | External + Publish forms |
+| Vault → Vercel env sync honesty | **Agent / code** | **Done** |
+| Supabase OAuth / DB password friction | **Partial** | User/org scopes remain |
+| Generated app quality / deep E2E | **Partial** | Smoke + health, not full product Playwright QA |
+| Free AI inside user apps | **Not rebuilt** | BYOK stays |
+| Guaranteed App Store / Play / CWS public | **External** | Review + fees + first listing |
+| Electron signed installers | **User certs + Actions** | Cannot invent CSC |
 | Store “live” approval | **External** | External |
 
 ## Launch-ready product checklist (in code)
 | Area | Status |
 |------|--------|
-| Ship reliability | Run `success` requires ship usable + no blockers; PostBuild warns (not green) when incomplete |
+| Ship reliability | Run `success` requires ship usable + no blockers; incomplete ships are not falsely “all green” |
 | Multi-product UX | Chatbar **Update current** / **New product** intent pills |
 | Onboarding | Workspace **First ship checklist** (GitHub → Vercel → AI key → ship) |
-| Observability | `shipOutcome` persisted on run output + run trace meta; Chats history shows ship badge |
+| Observability | `shipOutcome` on run output + run trace meta; Chats history shows ship badge |
 
 ## What Xroga automates (real APIs)
 - Chrome: Google OAuth authorize (user’s client) or paste refresh token → CWS `upload` + `publish` + status check
 - Electron: portable zip immediately + multi-OS Actions installers; sync `CSC_*` + Apple notarization secrets to GitHub Actions when provided
 - Mobile: auto-link/create EAS project; sync Google Play JSON **and** App Store Connect API key into Expo via GraphQL; start build (+ submit when creds present); poll **new** artifact URL (ignores stale builds); list recent EAS builds + project picker in Publish
-- Post-ship UI: CWS dashboard / installer / EAS artifact CTAs when those outcomes exist
+- Post-ship: CWS / installer / EAS artifact URLs when those outcomes exist (Publish + run output fields)
 
 ## What Xroga cannot do (no fakes)
 - Approve Chrome Web Store / App Store / Play listings
 - Create first CWS listing metadata without dashboard (API limit)
 - Create first Play app without Play Console (Google rule)
 - Invent signing certificates or Apple/Google developer accounts
+- Guarantee a fixed build wall-clock time
+- Host free LLM chat inside the user’s shipped app (BYOK)
 
 ## User-paid
 - CWS ~$5, Apple ~$99/yr, Play ~$25, EAS minutes, code-signing certs

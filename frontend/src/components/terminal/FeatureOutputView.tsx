@@ -63,10 +63,24 @@ export function FeatureOutputView({
     }
     if (o.deployVerified && typeof o.deployUrl === 'string' && o.deployUrl) {
       statusLines.push(`Vercel · live`);
+    } else if (typeof o.scaffoldKind === 'string' && /^(expo|chrome|electron)$/.test(o.scaffoldKind)) {
+      statusLines.push(`Ship · ${o.scaffoldKind} (non-web — see GitHub / Publish)`);
     } else {
       statusLines.push('Preview · sandbox panel');
     }
     if (o.usedSurgicalPatches) statusLines.push('Patches · surgical SEARCH/REPLACE');
+    const envSync = o.envSync as { ok?: boolean; error?: string } | undefined;
+    if (envSync && envSync.ok === false) {
+      statusLines.push(
+        `Env sync · failed${envSync.error ? ` (${String(envSync.error).slice(0, 80)})` : ''}`
+      );
+    }
+    const blockers = Array.isArray(o.shipBlockers)
+      ? (o.shipBlockers as string[]).filter((b) => typeof b === 'string' && b.trim())
+      : [];
+    for (const b of blockers.slice(0, 3)) {
+      statusLines.push(`Blocker · ${b}`);
+    }
 
     const qa = o.qa as { issues?: string[] } | undefined;
 

@@ -1,0 +1,90 @@
+/** Swarm build output payload (type: landing_page). Used for hydrate/history — not a card UI. */
+export interface LandingPageOutputData {
+  type: 'landing_page';
+  html: string;
+  css: string;
+  js: string;
+  heroImageUrl?: string;
+  deployUrl: string;
+  deployVerified?: boolean;
+  githubRepoUrl?: string;
+  githubRepoName?: string;
+  githubPushConfirmed?: boolean;
+  fullyShipped?: boolean;
+  /** Non-web free-path artifact/source ready — not store published */
+  handoffReady?: boolean;
+  buildOk?: boolean;
+  shipped?: boolean;
+  nextSteps?: string[];
+  scaffoldKind?: string;
+  chromeZipDownloadUrl?: string;
+  chromeReleaseUrl?: string;
+  chromeStoreSubmitted?: boolean;
+  chromeStoreUrl?: string;
+  desktopReleaseTag?: string;
+  desktopActionsUrl?: string;
+  desktopReleasesUrl?: string;
+  desktopZipDownloadUrl?: string;
+  desktopInstallerDownloadUrl?: string;
+  electronInstallerOk?: boolean;
+  easTriggered?: boolean;
+  easUrl?: string;
+  easBuildOk?: boolean;
+  easArtifactUrl?: string;
+  easStoreSubmitted?: boolean;
+  storeSubmitted?: boolean;
+  shipBlockers?: string[];
+  envSync?: {
+    ok: boolean;
+    projectName?: string;
+    upserted?: string[];
+    skipped?: string[];
+    error?: string;
+  };
+  shipOutcome?: {
+    fullyShipped?: boolean;
+    handoffReady?: boolean;
+    buildOk?: boolean;
+    shipOk?: boolean;
+    scaffoldKind?: string;
+    blockers?: string[];
+    statusLabel?: string;
+  };
+  shipVerify?: { pass?: boolean; liveOk?: boolean; summaryLines?: string[] };
+  projectName?: string;
+  pages?: string[];
+  features?: string[];
+  designTheme?: string;
+  needsPayment?: boolean;
+  memoryNote?: string;
+  summary?: string;
+  vercelPreviewUrl?: string;
+  netlifyPreviewUrl?: string;
+  followUps?: string[];
+  generatedFiles?: string[];
+  fileCount?: number;
+  userPrompt?: string;
+  isUpdate?: boolean;
+  updatedFiles?: string[];
+  changesSummary?: string[];
+  commitSha?: string;
+  siteAudit?: {
+    score: number;
+    issues: Array<{ id: string; severity: string; area: string; message: string; fixPrompt: string }>;
+    working: string[];
+  };
+  integratedAi?: Array<{
+    id: string;
+    name: string;
+    freeTier: boolean;
+    requiresApiKey: boolean;
+    endpoint: string;
+    signupUrl?: string;
+    topUpUrl?: string;
+    userGuidance: string;
+    xrogaProvided?: boolean;
+  }>;
+  usedSurgicalPatches?: boolean;
+  fileTrail?: unknown[];
+  qa?: { issues?: string[] };
+}
