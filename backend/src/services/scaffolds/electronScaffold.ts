@@ -161,20 +161,42 @@ permissions:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            args: --linux AppImage zip
+          - os: windows-latest
+            args: --win nsis portable
+          - os: macos-latest
+            args: --mac dmg zip
+    runs-on: \${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: npm install
-      - run: npx electron-builder --linux zip
+      - name: Build installers
+        run: npx electron-builder \${{ matrix.args }}
         env:
           GH_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+          CSC_LINK: \${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: \${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_ID: \${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: \${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: \${{ secrets.APPLE_TEAM_ID }}
       - uses: softprops/action-gh-release@v2
         with:
-          files: release/*.zip
+          files: |
+            release/*.zip
+            release/*.AppImage
+            release/*.exe
+            release/*.dmg
+            release/*.msi
           generate_release_notes: true
+          fail_on_unmatched_files: false
         env:
           GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
 `,

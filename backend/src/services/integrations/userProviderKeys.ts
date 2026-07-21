@@ -136,6 +136,11 @@ export const ALLOWED_PROVIDERS = [
   'expo_project_id',
   'apple_asc',
   'google_play',
+  /** Chrome Web Store OAuth JSON: clientId, clientSecret, refreshToken, extensionId, publisherId */
+  'cws_oauth',
+  /** Electron code-signing: base64 p12 / CSC_LINK value */
+  'electron_csc_link',
+  'electron_csc_password',
   'custom',
 ] as const;
 
@@ -167,6 +172,9 @@ export const ENV_VAR_BY_PROVIDER: Record<string, string> = {
   expo_project_id: 'EXPO_EAS_PROJECT_ID',
   apple_asc: 'EXPO_APPLE_APP_SPECIFIC_PASSWORD',
   google_play: 'GOOGLE_SERVICE_ACCOUNT_JSON',
+  cws_oauth: 'CHROME_WEBSTORE_OAUTH_JSON',
+  electron_csc_link: 'CSC_LINK',
+  electron_csc_password: 'CSC_KEY_PASSWORD',
   custom: 'CUSTOM_API_KEY',
 };
 
@@ -176,6 +184,9 @@ export const PUBLISH_ONLY_PROVIDERS = new Set([
   'expo_project_id',
   'apple_asc',
   'google_play',
+  'cws_oauth',
+  'electron_csc_link',
+  'electron_csc_password',
 ]);
 
 /** Server-only provision credentials — never sync to Vercel (or expose to browser). */
@@ -276,7 +287,14 @@ export async function saveUserProviderKey(
     throw new Error('Custom keys require an env var name (e.g. MY_SERVICE_API_KEY)');
   }
   const trimmed = apiKey.trim();
-  const minLen = p === 'google_play' ? 32 : p === 'supabase_url' ? 12 : p === 'supabase_db_password' ? 4 : 8;
+  const minLen =
+    p === 'google_play' || p === 'cws_oauth'
+      ? 32
+      : p === 'supabase_url'
+        ? 12
+        : p === 'supabase_db_password' || p === 'electron_csc_password'
+          ? 4
+          : 8;
   if (trimmed.length < minLen) throw new Error('API key / credential too short');
   if (trimmed.length > 48_000) throw new Error('Credential too long (max ~48KB)');
 
@@ -664,6 +682,27 @@ export function providerCatalog() {
       id: 'google_play',
       name: 'Google Play service account JSON',
       envVar: 'GOOGLE_SERVICE_ACCOUNT_JSON',
+      freeTier: false,
+      category: 'publish',
+    },
+    {
+      id: 'cws_oauth',
+      name: 'Chrome Web Store OAuth JSON',
+      envVar: 'CHROME_WEBSTORE_OAUTH_JSON',
+      freeTier: false,
+      category: 'publish',
+    },
+    {
+      id: 'electron_csc_link',
+      name: 'Electron code-sign cert (CSC_LINK)',
+      envVar: 'CSC_LINK',
+      freeTier: false,
+      category: 'publish',
+    },
+    {
+      id: 'electron_csc_password',
+      name: 'Electron code-sign password',
+      envVar: 'CSC_KEY_PASSWORD',
       freeTier: false,
       category: 'publish',
     },

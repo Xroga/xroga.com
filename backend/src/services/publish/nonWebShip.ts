@@ -373,35 +373,41 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
- * Poll GitHub Releases until a .zip asset appears (Electron builder output).
- * Returns download URL when ready; times out honestly if Actions is still running.
+ * Poll GitHub Releases until an installer asset appears (exe/AppImage/dmg/msi/zip).
  */
 export async function waitForDesktopReleaseZip(opts: {
   userId: string;
   repoFullName: string;
   tag?: string;
-  /** Default 7 minutes — electron-builder on ubuntu often needs several minutes */
+  /** Default 12 minutes — multi-OS matrix needs longer than linux-only */
   timeoutMs?: number;
   intervalMs?: number;
   onProgress?: (msg: string) => void;
-}): Promise<{ ok: boolean; zipDownloadUrl?: string; releaseUrl?: string; error?: string }> {
+}): Promise<{
+  ok: boolean;
+  zipDownloadUrl?: string;
+  installerUrls?: string[];
+  releaseUrl?: string;
+  error?: string;
+}> {
   const token = await getGitHubToken(opts.userId);
   if (!token) return { ok: false, error: 'GitHub not connected' };
   const parsed = splitRepo(opts.repoFullName);
   if (!parsed) return { ok: false, error: 'Invalid repo name' };
   const { owner, repo } = parsed;
-  const timeoutMs = opts.timeoutMs ?? 7 * 60 * 1000;
-  const intervalMs = opts.intervalMs ?? 15_000;
+  const timeoutMs = opts.timeoutMs ?? 12 * 60 * 1000;
+  const intervalMs = opts.intervalMs ?? 20_000;
   const started = Date.now();
   let attempt = 0;
+
+  const installerRe = /\.(zip|AppImage|exe|dmg|msi|blockmap)$/i;
 
   while (Date.now() - started < timeoutMs) {
     attempt += 1;
     opts.onProgress?.(
-      `Waiting for desktop zip on GitHub Releases (check ${attempt}, ~${Math.round((Date.now() - started) / 1000)}s)…`,
+      `Waiting for desktop installers on GitHub Releases (check ${attempt}, ~${Math.round((Date.now() - started) / 1000)}s)…`,
     );
 
-    // Prefer tagged release; else latest release
     const paths = opts.tag
       ? [`/repos/${owner}/${repo}/releases/tags/${encodeURIComponent(opts.tag)}`]
       : [];
@@ -414,17 +420,21 @@ export async function waitForDesktopReleaseZip(opts: {
         html_url?: string;
         assets?: Array<{ name?: string; browser_download_url?: string; state?: string }>;
       };
-      // GitHub uses state "uploaded" when the asset is ready to download
-      const readyZip = (data.assets || []).find(
+      const ready = (data.assets || []).filter(
         (a) =>
           a.browser_download_url &&
-          /\.zip$/i.test(a.name || '') &&
+          installerRe.test(a.name || '') &&
+          !/\.blockmap$/i.test(a.name || '') &&
           (!a.state || a.state === 'uploaded'),
       );
-      if (readyZip?.browser_download_url) {
+      // Prefer real installers over source zip
+      const preferred =
+        ready.find((a) => /\.(exe|AppImage|dmg|msi)$/i.test(a.name || '')) || ready[0];
+      if (preferred?.browser_download_url) {
         return {
           ok: true,
-          zipDownloadUrl: readyZip.browser_download_url,
+          zipDownloadUrl: preferred.browser_download_url,
+          installerUrls: ready.map((a) => a.browser_download_url!).filter(Boolean),
           releaseUrl: data.html_url,
         };
       }
@@ -436,6 +446,6 @@ export async function waitForDesktopReleaseZip(opts: {
   return {
     ok: false,
     error:
-      'Desktop zip not ready yet — GitHub Actions is still building. Open Actions/Releases and download when green.',
+      'Desktop installers not ready yet — GitHub Actions is still building. Open Actions/Releases when green.',
   };
 }

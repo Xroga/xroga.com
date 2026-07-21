@@ -950,6 +950,32 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(body),
       }),
+    saveCwsCredentials: (body: {
+      clientId: string;
+      clientSecret: string;
+      refreshToken: string;
+      extensionId: string;
+      publisherId: string;
+    }) =>
+      apiFetch<{ ok: boolean; message?: string }>('/api/publish/cws-credentials', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    syncPlayCredentials: () =>
+      apiFetch<{ ok: boolean; message?: string }>('/api/publish/sync-play-credentials', {
+        method: 'POST',
+        body: JSON.stringify({}),
+      }),
+    easBuilds: () =>
+      apiFetch<{
+        ok: boolean;
+        builds: Array<{
+          id: string;
+          status: string;
+          artifactUrl?: string;
+          buildDetailsPageUrl?: string;
+        }>;
+      }>('/api/publish/eas-builds'),
   },
   notifications: {
     list: () => apiFetch<Notification[]>('/api/notifications'),

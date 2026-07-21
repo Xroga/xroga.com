@@ -255,10 +255,10 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
       checklist: chromeChecklist,
       installSteps: [
         'Ship a Chrome extension from Workspace (GitHub connected)',
-        'Click Download extension.zip in the build result',
-        'Open chrome://extensions → enable Developer mode',
-        'Load unpacked → select the unzipped folder',
-        'Optional: upload the same zip to Chrome Web Store (~$5 on your account)',
+        'Download extension.zip — or Load unpacked for personal use',
+        'For public store: save CWS OAuth credentials below (after ~$5 dashboard signup + create listing once)',
+        'Next ship uploads + submits to Chrome Web Store for Google review',
+        'Google approval is external — Xroga never fakes “live in store”',
       ],
     },
     desktop: {

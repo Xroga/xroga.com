@@ -164,6 +164,14 @@ router.post('/eas-publish', async (req: AuthRequest, res) => {
   }
 
   try {
+    if (parsed.data.submit) {
+      const { syncGooglePlayCredentialsToExpo } = await import(
+        '../services/publish/easCredentials.js'
+      );
+      if (parsed.data.platform === 'android') {
+        await syncGooglePlayCredentialsToExpo({ userId: req.userId! });
+      }
+    }
     const result = await triggerEasPublish({
       userId: req.userId!,
       platform: parsed.data.platform,
@@ -174,6 +182,57 @@ router.post('/eas-publish', async (req: AuthRequest, res) => {
     res.status(result.ok ? 200 : 400).json(result);
   } catch (err) {
     res.status(500).json({ ok: false, error: (err as Error).message });
+  }
+});
+
+/** Save Chrome Web Store OAuth JSON and optionally test token refresh. */
+router.post('/cws-credentials', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    clientId: z.string().min(8).max(256),
+    clientSecret: z.string().min(8).max(256),
+    refreshToken: z.string().min(8).max(512),
+    extensionId: z.string().min(8).max(64),
+    publisherId: z.string().min(2).max(128),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ ok: false, error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const { saveCwsCredentials } = await import('../services/publish/chromeWebStore.js');
+    await saveCwsCredentials(req.userId!, parsed.data);
+    res.json({
+      ok: true,
+      message:
+        'Chrome Web Store credentials saved. Next Chrome ship will upload + submit for Google review (listing must already exist in the CWS dashboard).',
+    });
+  } catch (err) {
+    res.status(400).json({ ok: false, error: (err as Error).message });
+  }
+});
+
+/** Sync Google Play JSON from vault → Expo/EAS credentials. */
+router.post('/sync-play-credentials', async (req: AuthRequest, res) => {
+  try {
+    const { syncGooglePlayCredentialsToExpo } = await import(
+      '../services/publish/easCredentials.js'
+    );
+    const result = await syncGooglePlayCredentialsToExpo({ userId: req.userId! });
+    res.status(result.ok ? 200 : 400).json(result);
+  } catch (err) {
+    res.status(500).json({ ok: false, error: (err as Error).message });
+  }
+});
+
+/** Latest EAS builds / artifact URLs for this user. */
+router.get('/eas-builds', async (req: AuthRequest, res) => {
+  try {
+    const { listEasBuilds } = await import('../services/publish/easCredentials.js');
+    const builds = await listEasBuilds({ userId: req.userId!, limit: 10 });
+    res.json({ ok: true, builds });
+  } catch (err) {
+    res.status(400).json({ ok: false, builds: [], error: (err as Error).message });
   }
 });
 
