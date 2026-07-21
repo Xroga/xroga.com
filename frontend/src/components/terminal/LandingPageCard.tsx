@@ -55,6 +55,15 @@ export interface LandingPageOutputData {
     skipped?: string[];
     error?: string;
   };
+  shipOutcome?: {
+    fullyShipped?: boolean;
+    handoffReady?: boolean;
+    buildOk?: boolean;
+    shipOk?: boolean;
+    scaffoldKind?: string;
+    blockers?: string[];
+    statusLabel?: string;
+  };
   shipVerify?: { pass?: boolean; liveOk?: boolean; summaryLines?: string[] };
   projectName?: string;
   pages?: string[];

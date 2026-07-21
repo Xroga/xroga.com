@@ -221,7 +221,11 @@ export function PostBuildDashboard({
     <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
       <div className="px-4 py-4 border-b border-[var(--card-border)] bg-gradient-to-br from-[var(--accent)]/12 to-transparent space-y-3">
         <div className="flex items-start gap-2">
-          <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+          {data.fullyShipped || data.handoffReady ? (
+            <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+          ) : (
+            <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+          )}
           <div className="min-w-0 flex-1">
             <h2 className="text-lg font-bold text-[var(--foreground)] leading-tight">
               {data.fullyShipped

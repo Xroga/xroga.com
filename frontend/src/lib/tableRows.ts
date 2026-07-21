@@ -26,9 +26,33 @@ export function projectTableRows(project: Project, meta: ItemMeta): UiverseTable
 
 export function chatTableRows(run: SwarmRunSummary, meta: ItemMeta): UiverseTableRow[] {
   const created = splitDateParts(run.created_at);
+  const nested = (run.output as { output?: Record<string, unknown> } | null)?.output;
+  const fo = (nested ?? run.output) as
+    | {
+        fullyShipped?: boolean;
+        handoffReady?: boolean;
+        buildOk?: boolean;
+        shipBlockers?: string[];
+        shipOutcome?: { fullyShipped?: boolean; handoffReady?: boolean; buildOk?: boolean };
+      }
+    | null
+    | undefined;
+  const shipped = Boolean(fo?.shipOutcome?.fullyShipped ?? fo?.fullyShipped);
+  const handoff = Boolean(fo?.shipOutcome?.handoffReady ?? fo?.handoffReady);
+  const buildOk = fo?.shipOutcome?.buildOk ?? fo?.buildOk;
+  const shipLabel = shipped
+    ? 'shipped'
+    : handoff
+      ? 'handoff'
+      : buildOk === false
+        ? 'build failed'
+        : fo?.shipBlockers?.length
+          ? 'blocked'
+          : '—';
   return [
     { left: 'prompt', right: run.prompt.slice(0, 32) + (run.prompt.length > 32 ? '…' : '') },
     { left: 'status', right: run.status },
+    { left: 'ship', right: shipLabel },
     { left: 'date', right: created.date },
     { left: 'time', right: created.time },
     { left: 'year', right: created.year },

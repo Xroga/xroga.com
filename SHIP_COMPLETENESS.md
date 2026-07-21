@@ -29,6 +29,14 @@
 - Production vault encryption **refuses** the insecure `xroga-dev-key` fallback
 - Sticky `default_repo` applies **only on updates**; New Terminal / greenfield never auto-bind the last product; `needsRepoPick` opens the chatbar picker
 
+## Launch-ready product checklist (in code)
+| Area | Status |
+|------|--------|
+| Ship reliability | Run `success` requires ship usable + no blockers; PostBuild warns (not green) when incomplete |
+| Multi-product UX | Chatbar **Update current** / **New product** intent pills |
+| Onboarding | Workspace **First ship checklist** (GitHub → Vercel → AI key → ship) |
+| Observability | `shipOutcome` persisted on run output + run trace meta; Chats history shows ship badge |
+
 ## What Xroga automates (real APIs)
 - Chrome: Google OAuth authorize (user’s client) or paste refresh token → CWS `upload` + `publish` + status check
 - Electron: portable zip immediately + multi-OS Actions installers; sync `CSC_*` + Apple notarization secrets to GitHub Actions when provided
