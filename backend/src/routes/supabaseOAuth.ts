@@ -36,12 +36,23 @@ import { syncUserVaultToVercel } from '../services/integrations/githubDeploy.js'
 
 const router = Router();
 
-/** Best-effort: push vault Supabase/AI keys to the user's Vercel project after provision. */
+/** Best-effort: push vault Supabase/AI keys to the user's Vercel project after provision.
+ * Returns null when sync was not attempted (no Vercel / no project). Never swallows sync errors. */
 async function maybeSyncVaultToVercel(userId: string, vercelProject?: string) {
   if (!(await getVercelToken(userId))) return null;
   const slug = await resolveVercelProjectForEnvSync(userId, vercelProject);
   if (!slug) return null;
-  return syncUserVaultToVercel(userId, slug);
+  try {
+    return await syncUserVaultToVercel(userId, slug);
+  } catch (err) {
+    return {
+      ok: false as const,
+      projectName: slug,
+      upserted: [] as string[],
+      skipped: [] as string[],
+      error: (err as Error).message.slice(0, 240),
+    };
+  }
 }
 
 router.get('/oauth', async (req: AuthRequest, res) => {
@@ -166,7 +177,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
         });
         provision = result.provision;
         status = result.status;
-        envSync = await maybeSyncVaultToVercel(req.userId!).catch(() => null);
+        envSync = await maybeSyncVaultToVercel(req.userId!);
       } catch (err) {
         console.warn('[supabaseOAuth] auto-provision failed:', (err as Error).message);
         provision = { ok: false, message: (err as Error).message };
@@ -261,7 +272,7 @@ router.post('/select-project', async (req: AuthRequest, res) => {
     const envSync = await maybeSyncVaultToVercel(
       req.userId!,
       parsed.data.vercelProject,
-    ).catch(() => null);
+    );
 
     res.json({
       ok: result.status.ready && result.provision.ok,
@@ -358,7 +369,7 @@ router.post('/create-project', async (req: AuthRequest, res) => {
     const envSync = await maybeSyncVaultToVercel(
       req.userId!,
       parsed.data.vercelProject,
-    ).catch(() => null);
+    );
 
     const status = await getUserSupabaseStatus(req.userId!);
     res.json({

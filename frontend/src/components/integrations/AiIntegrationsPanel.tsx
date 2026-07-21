@@ -79,6 +79,18 @@ export function AiIntegrationsPanel({ compact }: { compact?: boolean }) {
           ? `${item.name} saved → ${res.envVar} (encrypted). Syncs to Vercel on deploy.`
           : `${item.name} encrypted & saved`,
       );
+      const envSync = res.envSync as
+        | { ok?: boolean; error?: string; skipped?: string[] }
+        | null
+        | undefined;
+      if (envSync && envSync.ok === false) {
+        toast.error(
+          envSync.error ||
+            `Key saved, but vault → Vercel sync failed${
+              envSync.skipped?.length ? ` (${envSync.skipped.slice(0, 4).join(', ')})` : ''
+            }. Use Sync now.`,
+        );
+      }
       setDrafts((d) => ({ ...d, [item.id]: '' }));
       await load();
     } catch (e) {

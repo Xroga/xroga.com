@@ -120,10 +120,20 @@ router.post('/supabase/one-click', async (req: AuthRequest, res) => {
       vercelProject: parsed.data.vercelProject,
     });
 
-    let envSync: unknown = null;
+    let envSync: Awaited<ReturnType<typeof syncUserVaultToVercel>> | null = null;
     const project = parsed.data.vercelProject?.trim();
     if (project && (await getVercelToken(req.userId!))) {
-      envSync = await syncUserVaultToVercel(req.userId!, project);
+      try {
+        envSync = await syncUserVaultToVercel(req.userId!, project);
+      } catch (err) {
+        envSync = {
+          ok: false,
+          projectName: project,
+          upserted: [],
+          skipped: [],
+          error: (err as Error).message.slice(0, 240),
+        };
+      }
     }
 
     res.json({
@@ -164,10 +174,20 @@ router.post('/supabase/connect', async (req: AuthRequest, res) => {
       projectName: parsed.data.projectName,
     });
 
-    let envSync: unknown = null;
+    let envSync: Awaited<ReturnType<typeof syncUserVaultToVercel>> | null = null;
     const project = parsed.data.vercelProject?.trim();
     if (project && (await getVercelToken(req.userId!))) {
-      envSync = await syncUserVaultToVercel(req.userId!, project);
+      try {
+        envSync = await syncUserVaultToVercel(req.userId!, project);
+      } catch (err) {
+        envSync = {
+          ok: false,
+          projectName: project,
+          upserted: [],
+          skipped: [],
+          error: (err as Error).message.slice(0, 240),
+        };
+      }
     }
 
     res.json({
@@ -253,13 +273,24 @@ router.post('/provider-keys', async (req: AuthRequest, res) => {
       { envVarName: parsed.data.envVarName },
     );
 
-    let envSync: unknown = null;
+    let envSync: Awaited<ReturnType<typeof syncUserVaultToVercel>> | null = null;
     const project = parsed.data.vercelProject?.trim();
     const isPublish = PUBLISH_ONLY_PROVIDERS.has(saved.provider);
     if (!isPublish && project && (await getVercelToken(req.userId!))) {
-      envSync = await syncUserVaultToVercel(req.userId!, project);
+      try {
+        envSync = await syncUserVaultToVercel(req.userId!, project);
+      } catch (err) {
+        envSync = {
+          ok: false,
+          projectName: project,
+          upserted: [],
+          skipped: [],
+          error: (err as Error).message.slice(0, 240),
+        };
+      }
     }
 
+    const envSyncFailed = Boolean(envSync && envSync.ok === false);
     res.json({
       ok: true,
       provider: saved.provider,
@@ -268,7 +299,11 @@ router.post('/provider-keys', async (req: AuthRequest, res) => {
       envSync,
       message: isPublish
         ? 'Publish credential encrypted in your account. Used for your Expo/EAS store flow — Apple/Google fees stay on you.'
-        : 'Key encrypted in your account. Connect Vercel and deploy (or pass vercelProject) to sync env vars.',
+        : envSyncFailed
+          ? `Key encrypted, but vault → Vercel env sync failed${
+              envSync?.error ? `: ${envSync.error}` : ''
+            }. Use Sync to Vercel or re-deploy.`
+          : 'Key encrypted in your account. Connect Vercel and deploy (or pass vercelProject) to sync env vars.',
     });
   } catch (err) {
     res.status(400).json({ error: (err as Error).message });
