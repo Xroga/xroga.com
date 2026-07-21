@@ -33,14 +33,21 @@ describe('userProviderKeys mapping', () => {
     assert.ok(ids.includes('supabase_anon'));
     assert.ok(ids.includes('expo'));
     assert.ok(ids.includes('apple_asc'));
+    assert.ok(ids.includes('apple_asc_api'));
     assert.ok(ids.includes('google_play'));
+    assert.ok(ids.includes('cws_oauth'));
+    assert.ok(ids.includes('electron_apple_id'));
     assert.ok(ids.includes('custom'));
   });
 
   it('maps publish providers to env vars', () => {
     assert.equal(envVarForProvider('expo'), 'EXPO_TOKEN');
     assert.equal(envVarForProvider('apple_asc'), 'EXPO_APPLE_APP_SPECIFIC_PASSWORD');
+    assert.equal(envVarForProvider('apple_asc_api'), 'EXPO_APPLE_ASC_API_JSON');
     assert.equal(envVarForProvider('google_play'), 'GOOGLE_SERVICE_ACCOUNT_JSON');
+    assert.equal(envVarForProvider('electron_apple_id'), 'APPLE_ID');
+    assert.equal(envVarForProvider('electron_apple_password'), 'APPLE_APP_SPECIFIC_PASSWORD');
+    assert.equal(envVarForProvider('electron_apple_team_id'), 'APPLE_TEAM_ID');
   });
 
   it('every catalog entry has env mapping except custom default', () => {

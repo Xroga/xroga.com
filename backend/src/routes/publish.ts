@@ -165,11 +165,14 @@ router.post('/eas-publish', async (req: AuthRequest, res) => {
 
   try {
     if (parsed.data.submit) {
-      const { syncGooglePlayCredentialsToExpo } = await import(
-        '../services/publish/easCredentials.js'
-      );
+      const {
+        syncGooglePlayCredentialsToExpo,
+        syncAppleAscApiKeyToExpo,
+      } = await import('../services/publish/easCredentials.js');
       if (parsed.data.platform === 'android') {
         await syncGooglePlayCredentialsToExpo({ userId: req.userId! });
+      } else {
+        await syncAppleAscApiKeyToExpo({ userId: req.userId! });
       }
     }
     const result = await triggerEasPublish({
@@ -185,7 +188,7 @@ router.post('/eas-publish', async (req: AuthRequest, res) => {
   }
 });
 
-/** Save Chrome Web Store OAuth JSON and optionally test token refresh. */
+/** Save Chrome Web Store OAuth JSON and validate token refresh. */
 router.post('/cws-credentials', async (req: AuthRequest, res) => {
   const schema = z.object({
     clientId: z.string().min(8).max(256),
@@ -193,6 +196,7 @@ router.post('/cws-credentials', async (req: AuthRequest, res) => {
     refreshToken: z.string().min(8).max(512),
     extensionId: z.string().min(8).max(64),
     publisherId: z.string().min(2).max(128),
+    skipValidate: z.boolean().optional(),
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) {
@@ -200,15 +204,109 @@ router.post('/cws-credentials', async (req: AuthRequest, res) => {
     return;
   }
   try {
-    const { saveCwsCredentials } = await import('../services/publish/chromeWebStore.js');
-    await saveCwsCredentials(req.userId!, parsed.data);
+    const {
+      saveCwsCredentials,
+      validateCwsCredentials,
+    } = await import('../services/publish/chromeWebStore.js');
+    const creds = {
+      clientId: parsed.data.clientId,
+      clientSecret: parsed.data.clientSecret,
+      refreshToken: parsed.data.refreshToken,
+      extensionId: parsed.data.extensionId,
+      publisherId: parsed.data.publisherId,
+    };
+    if (!parsed.data.skipValidate) {
+      const valid = await validateCwsCredentials(creds);
+      if (!valid.ok) {
+        res.status(400).json({ ok: false, error: valid.error, validated: false });
+        return;
+      }
+    }
+    await saveCwsCredentials(req.userId!, creds);
     res.json({
       ok: true,
+      validated: !parsed.data.skipValidate,
       message:
         'Chrome Web Store credentials saved. Next Chrome ship will upload + submit for Google review (listing must already exist in the CWS dashboard).',
     });
   } catch (err) {
     res.status(400).json({ ok: false, error: (err as Error).message });
+  }
+});
+
+/** Start Google OAuth (user’s client) for Chrome Web Store refresh token. */
+router.post('/cws-oauth/start', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    clientId: z.string().min(8).max(256),
+    clientSecret: z.string().min(8).max(256),
+    extensionId: z.string().min(8).max(64),
+    publisherId: z.string().min(2).max(128),
+    redirectUri: z.string().url().optional(),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ ok: false, error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const { startCwsOAuth, getCwsOAuthCallbackUrl } = await import(
+      '../services/publish/chromeWebStore.js'
+    );
+    const redirectUri = getCwsOAuthCallbackUrl(parsed.data.redirectUri);
+    const built = await startCwsOAuth({
+      userId: req.userId!,
+      clientId: parsed.data.clientId,
+      clientSecret: parsed.data.clientSecret,
+      extensionId: parsed.data.extensionId,
+      publisherId: parsed.data.publisherId,
+      redirectUri,
+    });
+    res.json({
+      ok: true,
+      url: built.url,
+      state: built.state,
+      redirectUri: built.redirectUri,
+      hint: `Add this redirect URI on your Google Cloud OAuth client: ${built.redirectUri}`,
+    });
+  } catch (err) {
+    res.status(400).json({ ok: false, error: (err as Error).message });
+  }
+});
+
+/** Finish CWS Google OAuth (code → refresh token). */
+router.post('/cws-oauth/callback', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    code: z.string().min(4).max(2048),
+    state: z.string().min(8).max(128),
+    redirectUri: z.string().url().optional(),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ ok: false, error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const { completeCwsOAuth } = await import('../services/publish/chromeWebStore.js');
+    const result = await completeCwsOAuth({
+      userId: req.userId!,
+      code: parsed.data.code,
+      state: parsed.data.state,
+      redirectUri: parsed.data.redirectUri,
+    });
+    res.status(result.ok ? 200 : 400).json(result);
+  } catch (err) {
+    res.status(400).json({ ok: false, error: (err as Error).message });
+  }
+});
+
+/** Best-effort CWS listing status (never invents approval). */
+router.get('/cws-status', async (req: AuthRequest, res) => {
+  try {
+    const { fetchCwsItemStatus } = await import('../services/publish/chromeWebStore.js');
+    const result = await fetchCwsItemStatus(req.userId!);
+    res.status(result.ok ? 200 : 400).json(result);
+  } catch (err) {
+    res.status(500).json({ ok: false, error: (err as Error).message });
   }
 });
 
@@ -219,6 +317,54 @@ router.post('/sync-play-credentials', async (req: AuthRequest, res) => {
       '../services/publish/easCredentials.js'
     );
     const result = await syncGooglePlayCredentialsToExpo({ userId: req.userId! });
+    res.status(result.ok ? 200 : 400).json(result);
+  } catch (err) {
+    res.status(500).json({ ok: false, error: (err as Error).message });
+  }
+});
+
+/** Sync Apple ASC API key JSON from vault → Expo/EAS credentials. */
+router.post('/sync-apple-credentials', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    bundleIdentifier: z.string().min(3).max(128).optional(),
+  });
+  const parsed = schema.safeParse(req.body ?? {});
+  if (!parsed.success) {
+    res.status(400).json({ ok: false, error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const { syncAppleAscApiKeyToExpo } = await import(
+      '../services/publish/easCredentials.js'
+    );
+    const result = await syncAppleAscApiKeyToExpo({
+      userId: req.userId!,
+      bundleIdentifier: parsed.data.bundleIdentifier,
+    });
+    res.status(result.ok ? 200 : 400).json(result);
+  } catch (err) {
+    res.status(500).json({ ok: false, error: (err as Error).message });
+  }
+});
+
+/** Sync Electron CSC + Apple notarization secrets → GitHub Actions. */
+router.post('/sync-electron-secrets', async (req: AuthRequest, res) => {
+  const schema = z.object({
+    repoFullName: z.string().min(3).max(200),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ ok: false, error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const { syncElectronSigningSecretsToGitHub } = await import(
+      '../services/publish/electronSecrets.js'
+    );
+    const result = await syncElectronSigningSecretsToGitHub({
+      userId: req.userId!,
+      repoFullName: parsed.data.repoFullName,
+    });
     res.status(result.ok ? 200 : 400).json(result);
   } catch (err) {
     res.status(500).json({ ok: false, error: (err as Error).message });

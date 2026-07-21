@@ -956,22 +956,66 @@ export const api = {
       refreshToken: string;
       extensionId: string;
       publisherId: string;
+      skipValidate?: boolean;
     }) =>
-      apiFetch<{ ok: boolean; message?: string }>('/api/publish/cws-credentials', {
+      apiFetch<{ ok: boolean; message?: string; validated?: boolean }>('/api/publish/cws-credentials', {
         method: 'POST',
         body: JSON.stringify(body),
       }),
+    startCwsOAuth: (body: {
+      clientId: string;
+      clientSecret: string;
+      extensionId: string;
+      publisherId: string;
+      redirectUri?: string;
+    }) =>
+      apiFetch<{
+        ok: boolean;
+        url?: string;
+        redirectUri?: string;
+        hint?: string;
+        error?: string;
+      }>('/api/publish/cws-oauth/start', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    completeCwsOAuth: (body: { code: string; state: string; redirectUri?: string }) =>
+      apiFetch<{ ok: boolean; message?: string; error?: string }>('/api/publish/cws-oauth/callback', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    cwsStatus: () =>
+      apiFetch<{
+        ok: boolean;
+        status?: string;
+        dashboardUrl?: string;
+        message?: string;
+      }>('/api/publish/cws-status'),
     syncPlayCredentials: () =>
       apiFetch<{ ok: boolean; message?: string }>('/api/publish/sync-play-credentials', {
         method: 'POST',
         body: JSON.stringify({}),
       }),
+    syncAppleCredentials: (body?: { bundleIdentifier?: string }) =>
+      apiFetch<{ ok: boolean; message?: string }>('/api/publish/sync-apple-credentials', {
+        method: 'POST',
+        body: JSON.stringify(body || {}),
+      }),
+    syncElectronSecrets: (repoFullName: string) =>
+      apiFetch<{ ok: boolean; message?: string; synced?: string[] }>(
+        '/api/publish/sync-electron-secrets',
+        {
+          method: 'POST',
+          body: JSON.stringify({ repoFullName }),
+        },
+      ),
     easBuilds: () =>
       apiFetch<{
         ok: boolean;
         builds: Array<{
           id: string;
           status: string;
+          platform?: string;
           artifactUrl?: string;
           buildDetailsPageUrl?: string;
         }>;
