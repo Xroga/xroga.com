@@ -176,6 +176,8 @@ export interface BuildClientMeta {
   buildUpdate?: boolean;
   githubTargetRepo?: string;
   githubTargetBranch?: string;
+  /** User-selected Vercel project from Integrations → Change project */
+  preferredVercelProject?: string;
   priorSite?: {
     html: string;
     css?: string;
@@ -243,6 +245,10 @@ function parseClientMeta(raw: unknown): BuildClientMeta | undefined {
         : undefined,
     githubTargetBranch:
       typeof m.githubTargetBranch === 'string' ? m.githubTargetBranch : undefined,
+    preferredVercelProject:
+      typeof m.preferredVercelProject === 'string' && m.preferredVercelProject.trim().length >= 2
+        ? m.preferredVercelProject.trim().slice(0, 64)
+        : undefined,
     priorSite:
       prior && typeof prior.html === 'string' && prior.html.trim().length > 40
         ? {
@@ -411,6 +417,7 @@ function todosForBuild(
     | 'qa'
     | 'compile'
     | 'push'
+    | 'deploy'
     | 'done',
   researchState: ResearchTodoState = 'omit',
 ) {
@@ -422,7 +429,8 @@ function todosForBuild(
     { id: 'build', label: 'Generate product' },
     { id: 'qa', label: 'Review quality' },
     { id: 'compile', label: 'Compile validate' },
-    { id: 'push', label: 'Push & deploy' },
+    { id: 'push', label: 'Push to GitHub' },
+    { id: 'deploy', label: 'Deploy to Vercel' },
   ] as const;
 
   const steps =
@@ -452,6 +460,49 @@ function todosForBuild(
     const status: BuildTodoStatus =
       i < idx ? 'done' : i === idx ? 'active' : 'pending';
     return { id: s.id, label: s.label, status };
+  });
+}
+
+/** Honest end-state: completed pipeline steps stay done; only incomplete ship steps stay pending. */
+function finalizeBuildTodos(
+  researchState: ResearchTodoState,
+  opts: {
+    githubPushConfirmed: boolean;
+    deployUrl: string;
+    isNonWeb: boolean;
+    fullyShipped: boolean;
+    vercelConnected: boolean;
+  },
+) {
+  return todosForBuild('done', researchState).map((t) => {
+    if (t.id === 'push') {
+      return {
+        ...t,
+        status: (opts.githubPushConfirmed ? 'done' : 'pending') as 'done' | 'pending',
+      };
+    }
+    if (t.id === 'deploy') {
+      if (opts.isNonWeb) {
+        return {
+          ...t,
+          label: 'Deploy skipped (non-web)',
+          status: 'skipped' as const,
+        };
+      }
+      if (opts.deployUrl) {
+        return { ...t, status: 'done' as const };
+      }
+      if (!opts.vercelConnected) {
+        return {
+          ...t,
+          label: 'Connect Vercel to deploy',
+          status: 'pending' as const,
+        };
+      }
+      return { ...t, status: 'pending' as const };
+    }
+    // Earlier steps already ran when we reach ship/finalize
+    return { ...t, status: 'done' as const };
   });
 }
 
@@ -1950,6 +2001,23 @@ export async function runBuildPipeline(opts: {
       githubPushConfirmed = true;
       commitSha = pushed.commitSha;
       githubBranch = pushed.branch || githubBranch;
+      emit({
+        agent: 'deploy',
+        status: 'pushed',
+        message: `Pushed to ${pushed.repoName || githubRepoName}`,
+        swarmStatusLabel: 'Pushed',
+        swarmActivity: pushed.htmlUrl || pushed.repoName || 'GitHub',
+        // Push done — next step is deploy (or non-web artifacts)
+        swarmTodos: isNonWebProduct
+          ? todos('push').map((t) =>
+              t.id === 'push'
+                ? { ...t, status: 'done' as const }
+                : t.id === 'deploy'
+                  ? { ...t, label: 'Ship artifacts', status: 'active' as const }
+                  : t,
+            )
+          : todos('deploy'),
+      });
     } catch (err) {
       console.warn('[pipeline] GitHub push failed:', (err as Error).message);
       emit({
@@ -2464,16 +2532,26 @@ export async function runBuildPipeline(opts: {
         ? 'Redeploying on your Vercel (no GitHub link required)…'
         : 'Deploying to your Vercel account…',
       swarmStatusLabel: 'Deploying',
-      swarmActivity: 'Vercel file upload',
-      swarmTodos: todos('push'),
+      swarmActivity: meta?.preferredVercelProject
+        ? `Vercel · ${meta.preferredVercelProject}`
+        : 'Vercel file upload',
+      swarmTodos: todos('deploy'),
     });
     try {
+      const preferred =
+        meta?.preferredVercelProject
+          ?.toLowerCase()
+          .replace(/[^a-z0-9-_]/gi, '-')
+          .replace(/^-|-$/g, '')
+          .slice(0, 40) || '';
       const slug =
+        preferred ||
         (githubRepoName?.split('/').pop() || projectName)
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/^-|-$/g, '')
-          .slice(0, 40) || 'xroga-build';
+          .slice(0, 40) ||
+        'xroga-build';
       const deployed = await deployToAllPlatforms(slug, nextFiles, opts.userId);
       vaultEnvSync = deployed.envSync ?? deployed.vercel?.envSync;
       if (vaultEnvSync && !vaultEnvSync.ok) {
@@ -2489,13 +2567,21 @@ export async function runBuildPipeline(opts: {
           message: `Vault secrets did not fully sync to Vercel: ${detail}`,
           swarmStatusLabel: 'Env sync issue',
           swarmActivity: detail.slice(0, 120),
-          swarmTodos: todos('push'),
+          swarmTodos: todos('deploy'),
         });
       }
       if (deployed.deployUrl) {
         deployUrl = deployed.deployUrl;
         deployVerified = deployed.deployVerified;
         vercelPreviewUrl = deployed.vercel?.deployUrl || deployed.deployUrl;
+        emit({
+          agent: 'deploy',
+          status: 'deployed',
+          message: `Live on Vercel: ${deployUrl}`,
+          swarmStatusLabel: 'Live',
+          swarmActivity: deployUrl,
+          swarmTodos: todos('done').map((t) => ({ ...t, status: 'done' as const })),
+        });
       } else if (deployed.deployError) {
         emit({
           agent: 'deploy',
@@ -2503,7 +2589,7 @@ export async function runBuildPipeline(opts: {
           message: deployed.deployError,
           swarmStatusLabel: 'Deploy issue',
           swarmActivity: deployed.deployError.slice(0, 120),
-          swarmTodos: todos('push'),
+          swarmTodos: todos('deploy'),
         });
       }
     } catch (err) {
@@ -2514,9 +2600,26 @@ export async function runBuildPipeline(opts: {
         message: `Vercel deploy failed: ${(err as Error).message}`,
         swarmStatusLabel: 'Deploy failed',
         swarmActivity: (err as Error).message.slice(0, 120),
-        swarmTodos: todos('push'),
+        swarmTodos: todos('deploy'),
       });
     }
+  } else if (!isNonWebProduct && !vercelToken && !patchAborted && !security.blocked) {
+    shipBlockers.push('Connect Vercel under Integrations to deploy live to your domain');
+    emit({
+      agent: 'deploy',
+      status: 'deploy_skipped',
+      message: 'Code is on GitHub — connect Vercel to auto-deploy to your domain',
+      swarmStatusLabel: 'Need Vercel',
+      swarmActivity: 'Authorize Vercel',
+      swarmTodos: todos('deploy').map((t) =>
+        t.id === 'deploy'
+          ? { ...t, label: 'Connect Vercel to deploy', status: 'pending' as const }
+          : t.id === 'push'
+            ? { ...t, status: (githubPushConfirmed ? 'done' : t.status) as typeof t.status }
+            : t,
+      ),
+      needsVercel: true,
+    });
   }
 
   // Post-deploy verify — honest pass/fail (no force-green)
@@ -2533,7 +2636,7 @@ export async function runBuildPipeline(opts: {
         : 'Verifying GitHub push + live URL + /api/health…',
       swarmStatusLabel: 'Verify',
       swarmActivity: deployUrl || githubRepoUrl || 'checks',
-      swarmTodos: todos('push'),
+      swarmTodos: todos('deploy'),
     });
     shipVerify = await verifyShippedProduct({
       deployUrl: deployUrl || vercelPreviewUrl,
@@ -2643,10 +2746,13 @@ export async function runBuildPipeline(opts: {
       swarmActivity: outcome.verifyPass
         ? outcome.statusLabel
         : finalBlockers[0] || 'See ship blockers',
-      swarmTodos: todos('done').map((t) => ({
-        ...t,
-        status: (outcome.verifyPass ? 'done' : 'pending') as 'done' | 'pending',
-      })),
+      swarmTodos: finalizeBuildTodos(researchState, {
+        githubPushConfirmed,
+        deployUrl: deployUrl || vercelPreviewUrl || '',
+        isNonWeb: isNonWebProduct,
+        fullyShipped,
+        vercelConnected: Boolean(vercelToken),
+      }),
     });
     trace.setMeta({
       shipVerify: summaryLines,
@@ -2657,6 +2763,14 @@ export async function runBuildPipeline(opts: {
   }
 
   const outSite = filesToSite(nextFiles);
+
+  const finalTodos = finalizeBuildTodos(researchState, {
+    githubPushConfirmed,
+    deployUrl: deployUrl || vercelPreviewUrl || '',
+    isNonWeb: isNonWebProduct,
+    fullyShipped,
+    vercelConnected: Boolean(vercelToken),
+  });
 
   emit({
     agent: 'builder',
@@ -2679,11 +2793,7 @@ export async function runBuildPipeline(opts: {
         : githubPushConfirmed
           ? `Pushed to ${githubRepoName}`
           : finalBlockers[0] || 'Preview ready'),
-    swarmTodos: todos('done').map((t) => ({
-      ...t,
-      // Non-web handoff still leaves store/signing work pending
-      status: (fullyShipped ? 'done' : 'pending') as 'done' | 'pending',
-    })),
+    swarmTodos: finalTodos,
   });
 
   const verifyMarkdown = shipVerify?.summaryLines?.length
@@ -2805,6 +2915,7 @@ export async function runBuildPipeline(opts: {
     deployUrl,
     deployVerified: Boolean(shipVerify?.liveOk ?? deployVerified),
     vercelPreviewUrl,
+    completedTodos: finalTodos,
     envSync: vaultEnvSync
       ? {
           ok: vaultEnvSync.ok,

@@ -13,7 +13,8 @@ const BACKEND_TO_SEED: Record<string, string[]> = {
   build: ['code-gen', 'ui-trends'],
   qa: ['verify'],
   compile: ['verify'],
-  push: ['github-push', 'live-deploy'],
+  push: ['github-push'],
+  deploy: ['live-deploy'],
 };
 
 function backendStepIndex(incoming: SwarmTodoItem[]): { active?: string; done: Set<string> } {
@@ -57,7 +58,7 @@ export function mergeBuildTodos(seeded: SwarmTodoItem[], incoming: SwarmTodoItem
   }
 
   const { active: backendActiveId, done: backendDoneIds } = backendStepIndex(incoming);
-  const pipelineOrder = ['route', 'research', 'convert', 'architect', 'build', 'qa', 'compile', 'push'] as const;
+  const pipelineOrder = ['route', 'research', 'convert', 'architect', 'build', 'qa', 'compile', 'push', 'deploy'] as const;
   const activePipelineIdx = backendActiveId
     ? pipelineOrder.indexOf(backendActiveId as (typeof pipelineOrder)[number])
     : -1;
@@ -219,12 +220,19 @@ export function mergeBuildTodos(seeded: SwarmTodoItem[], incoming: SwarmTodoItem
         } else if (backendActive('github-push') || backendActive('push')) status = 'active';
         break;
       case 'live-deploy':
-        if (backendDone('live-deploy') || (backendDone('push') && !backendActive('push'))) {
+        if (
+          backendDone('live-deploy') ||
+          backendDone('deploy') ||
+          (backendDone('push') && !backendActive('push') && !backendActive('deploy') && seedDoneFromBackend.has('live-deploy'))
+        ) {
           status = 'done';
-        } else if (backendActive('live-deploy')) status = 'active';
-        // When push is active, show push first; deploy becomes active after push done
-        if (backendActive('push') && status !== 'done') status = 'pending';
-        if (backendDone('push') && !backendActive('push') && status !== 'done') status = 'active';
+        } else if (backendActive('live-deploy') || backendActive('deploy')) {
+          status = 'active';
+        } else if (backendActive('push') && status !== 'done') {
+          status = 'pending';
+        } else if (backendDone('push') && !backendActive('push') && status !== 'done') {
+          status = 'active';
+        }
         break;
     }
 

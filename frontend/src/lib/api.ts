@@ -77,6 +77,7 @@ export interface StreamSwarmOptions {
     buildUpdate?: boolean;
     githubTargetRepo?: string;
     githubTargetBranch?: string;
+    preferredVercelProject?: string;
     priorSite?: {
       html: string;
       css?: string;
@@ -561,7 +562,13 @@ export const api = {
     disconnect: () => apiFetch('/api/vercel/disconnect', { method: 'DELETE' }),
     projects: () =>
       apiFetch<{
-        projects: Array<{ id: string; name: string; framework?: string }>;
+        projects: Array<{
+          id: string;
+          name: string;
+          framework?: string;
+          teamId?: string;
+          teamName?: string;
+        }>;
         error?: string;
       }>('/api/vercel/projects'),
     deploy: (payload: {

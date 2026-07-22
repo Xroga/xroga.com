@@ -183,7 +183,7 @@ router.delete('/disconnect', async (req: AuthRequest, res) => {
   res.json({ ok: true });
 });
 
-/** List Vercel projects for Change project UI */
+/** List Vercel projects for Change project UI (personal + team accounts). */
 router.get('/projects', async (req: AuthRequest, res) => {
   const token = await getVercelToken(req.userId!);
   if (!token) {
@@ -191,26 +191,64 @@ router.get('/projects', async (req: AuthRequest, res) => {
     return;
   }
   try {
-    const r = await fetch('https://api.vercel.com/v9/projects?limit=50', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!r.ok) {
-      const text = await r.text().catch(() => '');
-      res.status(400).json({
-        error: text.slice(0, 200) || `Vercel projects failed (${r.status})`,
-        projects: [],
-      });
-      return;
-    }
-    const data = (await r.json()) as {
-      projects?: Array<{ id: string; name: string; framework?: string | null }>;
+    type VercelProject = {
+      id: string;
+      name: string;
+      framework?: string;
+      teamId?: string;
+      teamName?: string;
     };
-    const projects = (data.projects ?? []).map((p) => ({
-      id: p.id,
-      name: p.name,
-      framework: p.framework ?? undefined,
-    }));
-    res.json({ projects });
+    const byId = new Map<string, VercelProject>();
+
+    const fetchProjects = async (teamId?: string) => {
+      const url = teamId
+        ? `https://api.vercel.com/v9/projects?limit=50&teamId=${encodeURIComponent(teamId)}`
+        : 'https://api.vercel.com/v9/projects?limit=50';
+      const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      if (!r.ok) return;
+      const data = (await r.json()) as {
+        projects?: Array<{ id: string; name: string; framework?: string | null }>;
+      };
+      for (const p of data.projects ?? []) {
+        if (!p?.id || !p?.name) continue;
+        byId.set(p.id, {
+          id: p.id,
+          name: p.name,
+          framework: p.framework ?? undefined,
+          teamId,
+        });
+      }
+    };
+
+    await fetchProjects();
+
+    // Also list team projects — many Vercel accounts only have team-scoped apps
+    try {
+      const teamsRes = await fetch('https://api.vercel.com/v2/teams?limit=20', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (teamsRes.ok) {
+        const teamsData = (await teamsRes.json()) as {
+          teams?: Array<{ id: string; name?: string; slug?: string }>;
+        };
+        for (const team of teamsData.teams ?? []) {
+          if (!team?.id) continue;
+          await fetchProjects(team.id);
+          for (const [id, p] of byId) {
+            if (p.teamId === team.id) {
+              byId.set(id, {
+                ...p,
+                teamName: team.name || team.slug || team.id,
+              });
+            }
+          }
+        }
+      }
+    } catch {
+      /* personal list still returned */
+    }
+
+    res.json({ projects: [...byId.values()] });
   } catch (err) {
     res.status(400).json({ error: (err as Error).message, projects: [] });
   }

@@ -46,7 +46,9 @@ export function ConnectedServicesSection() {
   const [vercelConnected, setVercelConnected] = useState(false);
   const [vercelUser, setVercelUser] = useState<string | null>(null);
   const [vercelWarning, setVercelWarning] = useState<string | null>(null);
-  const [vercelProjects, setVercelProjects] = useState<Array<{ id: string; name: string }>>([]);
+  const [vercelProjects, setVercelProjects] = useState<
+    Array<{ id: string; name: string; teamName?: string }>
+  >([]);
   const [showVercelProjects, setShowVercelProjects] = useState(false);
   const [vercelPreferred, setVercelPreferred] = useState<string | null>(null);
   const [showVercelToken, setShowVercelToken] = useState(false);
@@ -376,7 +378,12 @@ export function ConnectedServicesSection() {
                       key={p.id}
                       className="text-xs font-coding flex items-center justify-between gap-2 px-2 py-1 rounded hover:bg-[var(--foreground)]/5"
                     >
-                      <span className="truncate">{p.name}</span>
+                      <span className="truncate">
+                        {p.name}
+                        {p.teamName ? (
+                          <span className="text-[var(--muted)]"> · {p.teamName}</span>
+                        ) : null}
+                      </span>
                       <button
                         type="button"
                         className="shrink-0 text-[10px] font-bold text-[var(--accent)]"

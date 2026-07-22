@@ -1749,6 +1749,13 @@ export function TerminalChatProvider({
               (Boolean(stickyTargetRepo?.includes('/')) && isWebsiteUpdateRequest(displayPrompt)),
             githubTargetRepo: stickyTargetRepo,
             githubTargetBranch: stickyTargetBranch,
+            preferredVercelProject: (() => {
+              try {
+                return localStorage.getItem('xroga_vercel_preferred_project')?.trim() || undefined;
+              } catch {
+                return undefined;
+              }
+            })(),
             ...(priorSite ? { priorSite } : {}),
           },
           onProgress: (event) => {
@@ -1987,6 +1994,32 @@ export function TerminalChatProvider({
             });
           },
           onComplete: (complete) => {
+            // End "Building…" as soon as the swarm finishes — don't wait for finally /
+            // archive work. Waiting time after this is not model spend.
+            if (startingHeavyBuild) {
+              const finalTodos = Array.isArray(
+                (complete.output as { completedTodos?: unknown } | undefined)?.completedTodos,
+              )
+                ? ((complete.output as { completedTodos: typeof liveBuildSnapshotRef.current.todos })
+                    .completedTodos)
+                : liveBuildSnapshotRef.current.todos;
+              if (finalTodos?.length) {
+                const normalized = normalizeActiveTodo(
+                  mergeBuildTodos(
+                    buildTodosSeedRef.current.length ? buildTodosSeedRef.current : finalTodos,
+                    finalTodos,
+                  ),
+                );
+                setSwarmTodos(normalized);
+                liveBuildSnapshotRef.current.todos = normalized;
+              }
+              setHeavyLoading(false);
+              setHeavyBuildActive(false);
+              heavyBuildActiveRef.current = false;
+              heavyJobActiveRef.current = false;
+              setSwarmRunning(false);
+              setPipelineMessage(null);
+            }
             if (complete.tokenUsage) {
               const tu = complete.tokenUsage;
               // Never invent 0 remaining when the field is missing — that flashed “0 tokens left”
@@ -2206,12 +2239,20 @@ export function TerminalChatProvider({
                   js,
                   deployUrl:
                     (typeof (output as { deployUrl?: string }).deployUrl === 'string' &&
-                    (output as { deployVerified?: boolean }).deployVerified
+                    (output as { deployUrl: string }).deployUrl.trim()
                       ? (output as { deployUrl: string }).deployUrl
-                      : (output as { vercelPreviewUrl?: string }).vercelPreviewUrl) || null,
+                      : typeof (output as { vercelPreviewUrl?: string }).vercelPreviewUrl ===
+                          'string'
+                        ? (output as { vercelPreviewUrl: string }).vercelPreviewUrl
+                        : null) || null,
                   githubRepoUrl: (output as { githubRepoUrl?: string }).githubRepoUrl ?? null,
                   commitSha: (output as { commitSha?: string }).commitSha ?? null,
-                  status: (output as { deployVerified?: boolean }).deployVerified ? 'live' : 'pushed',
+                  status: (output as { deployVerified?: boolean }).deployVerified
+                    ? 'live'
+                    : typeof (output as { deployUrl?: string }).deployUrl === 'string' &&
+                        (output as { deployUrl: string }).deployUrl
+                      ? 'live'
+                      : 'pushed',
                   changesSummary,
                   fileTrail: fileTrailRaw,
                   previousFiles: previousFiles ?? null,

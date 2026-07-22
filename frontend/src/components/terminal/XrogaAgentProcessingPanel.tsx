@@ -53,6 +53,7 @@ export function XrogaAgentProcessingPanel({
 
   const activeTodo = todos.find((t) => t.status === 'active');
   const doneCount = todos.filter((t) => t.status === 'done').length;
+  const allDone = todos.length > 0 && todos.every((t) => t.status === 'done' || t.status === 'skipped');
 
   return (
     <div
@@ -61,10 +62,17 @@ export function XrogaAgentProcessingPanel({
         className
       )}
     >
-      {loading && (
+      {loading && !allDone ? (
         <p className="text-[13px] font-medium text-[var(--foreground)] flex items-center gap-2">
           <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0 text-[var(--accent)]" strokeWidth={2.5} />
           Building…
+          {elapsedSec > 0 ? (
+            <span className="text-[11px] font-normal text-[var(--muted)] tabular-nums">{elapsedSec}s</span>
+          ) : null}
+        </p>
+      ) : (
+        <p className="text-[13px] font-medium text-emerald-600 flex items-center gap-2">
+          {allDone || !loading ? 'Completed' : 'Building…'}
           {elapsedSec > 0 ? (
             <span className="text-[11px] font-normal text-[var(--muted)] tabular-nums">{elapsedSec}s</span>
           ) : null}
@@ -73,7 +81,7 @@ export function XrogaAgentProcessingPanel({
 
       <p className="text-[12px] text-[var(--foreground)]/80 font-mono leading-snug">{statusLine}</p>
 
-      {activeTodo ? (
+      {activeTodo && loading && !allDone ? (
         <p className="text-[11px] text-[var(--muted)]">
           Step: {activeTodo.label}
           {todos.length > 0 ? ` · ${doneCount}/${todos.length}` : ''}
@@ -81,10 +89,10 @@ export function XrogaAgentProcessingPanel({
       ) : null}
 
       {todos.length > 0 && (
-        <BuildTodoList todos={todos} showProgress={loading} />
+        <BuildTodoList todos={todos} showProgress={loading && !allDone} />
       )}
 
-      {loading && (
+      {loading && !allDone && (
         <p className="text-[11px] text-[var(--muted)]/60">
           Press <strong className="font-semibold">Stop</strong> if this status never changes. Waiting
           time is not billed — only completed model calls are.
