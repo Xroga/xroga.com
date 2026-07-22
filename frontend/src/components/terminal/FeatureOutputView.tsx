@@ -61,15 +61,20 @@ export function FeatureOutputView({
     } else if (typeof o.githubRepoName === 'string' && o.githubRepoName.includes('/')) {
       statusLines.push(`GitHub target · ${o.githubRepoName}`);
     }
-    if (o.deployVerified && typeof o.deployUrl === 'string' && o.deployUrl) {
-      statusLines.push(`Vercel · live`);
+    const liveUrl =
+      (typeof o.deployUrl === 'string' && o.deployUrl.trim()) ||
+      (typeof o.vercelPreviewUrl === 'string' && o.vercelPreviewUrl.trim()) ||
+      '';
+    if (liveUrl) {
+      statusLines.push(o.deployVerified ? `Vercel · live` : `Vercel · ${liveUrl.replace(/^https?:\/\//, '')}`);
     } else if (typeof o.scaffoldKind === 'string' && /^(expo|chrome|electron)$/.test(o.scaffoldKind)) {
       statusLines.push(`Ship · ${o.scaffoldKind} (non-web — see GitHub / Publish)`);
+    } else if (o.shipPending) {
+      statusLines.push('Ship · GitHub / Vercel still finishing…');
     } else {
       statusLines.push('Preview · sandbox panel');
     }
     if (o.usedSurgicalPatches) statusLines.push('Patches · surgical SEARCH/REPLACE');
-    if (o.shipPending) statusLines.push('Ship · GitHub / Vercel still finishing…');
     const envSync = o.envSync as { ok?: boolean; error?: string } | undefined;
     if (envSync && envSync.ok === false) {
       statusLines.push(
@@ -94,8 +99,15 @@ export function FeatureOutputView({
         files={files}
         statusLines={statusLines}
         githubUrl={typeof o.githubRepoUrl === 'string' ? o.githubRepoUrl : null}
-        deployUrl={
-          o.deployVerified && typeof o.deployUrl === 'string' ? o.deployUrl : null
+        deployUrl={liveUrl || null}
+        completedTodos={
+          Array.isArray(o.completedTodos)
+            ? (o.completedTodos as Array<{
+                id: string;
+                label: string;
+                status: 'done' | 'active' | 'pending' | 'skipped';
+              }>)
+            : undefined
         }
         qaIssues={qa?.issues}
         isUpdate={isUpdate}

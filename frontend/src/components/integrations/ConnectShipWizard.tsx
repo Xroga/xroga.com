@@ -28,7 +28,9 @@ export function ConnectShipWizard() {
   const [showVercelToken, setShowVercelToken] = useState(false);
   const [vercelToken, setVercelToken] = useState('');
   const [showVercelProjects, setShowVercelProjects] = useState(false);
-  const [vercelProjects, setVercelProjects] = useState<Array<{ id: string; name: string }>>([]);
+  const [vercelProjects, setVercelProjects] = useState<
+    Array<{ id: string; name: string; teamName?: string }>
+  >([]);
   const [vercelPreferred, setVercelPreferred] = useState<string | null>(null);
   const stopVercelListen = useRef<(() => void) | null>(null);
   const stopSupabaseListen = useRef<(() => void) | null>(null);
@@ -611,7 +613,12 @@ export function ConnectShipWizard() {
                 key={p.id}
                 className="text-xs font-coding flex items-center justify-between gap-2 px-2 py-1.5 rounded hover:bg-[var(--foreground)]/5"
               >
-                <span className="truncate">{p.name}</span>
+                <span className="truncate">
+                  {p.name}
+                  {p.teamName ? (
+                    <span className="text-[var(--muted)]"> · {p.teamName}</span>
+                  ) : null}
+                </span>
                 <button
                   type="button"
                   className="shrink-0 text-[10px] font-bold text-[var(--accent)]"
