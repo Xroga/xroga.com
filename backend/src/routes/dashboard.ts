@@ -7,11 +7,21 @@ import { getApiBudgetUsd, getTokenPool } from '../config/plans.js';
 import { getUsage, usageToDashboardTokens } from '../ai/quota.js';
 import { computePlatformReady } from '../lib/platformReady.js';
 import { listRunsForUserAsync } from '../ai/runStore.js';
+import { isPromoFullAccessActive, promoFullAccessEndIso } from '../lib/promoAccess.js';
 
 const router = Router();
 
 router.get('/platform-ready', (_req, res) => {
   res.json(computePlatformReady());
+});
+
+/** Promotional product-feature window (does not bypass provider billing / quotas). */
+router.get('/promo-access', (_req, res) => {
+  res.json({
+    active: isPromoFullAccessActive(),
+    endsAt: promoFullAccessEndIso(),
+    note: 'Unlocks Xroga product features only — provider billing and rate limits still apply.',
+  });
 });
 
 router.get('/ship-analytics', async (req: AuthRequest, res) => {

@@ -49,7 +49,7 @@ export function XrogaAgentProcessingPanel({
 
   const statusLine = (status?.trim() && !isKeepaliveActivity(status)
     ? status.trim()
-    : lastReal) || (loading ? 'Waiting on model…' : 'Done');
+    : lastReal) || (loading ? 'Request accepted' : 'Completed');
 
   const activeTodo = todos.find((t) => t.status === 'active');
   const doneCount = todos.filter((t) => t.status === 'done').length;
@@ -65,14 +65,14 @@ export function XrogaAgentProcessingPanel({
       {loading && !allDone ? (
         <p className="text-[13px] font-medium text-[var(--foreground)] flex items-center gap-2">
           <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0 text-[var(--accent)]" strokeWidth={2.5} />
-          Building…
+          Working…
           {elapsedSec > 0 ? (
             <span className="text-[11px] font-normal text-[var(--muted)] tabular-nums">{elapsedSec}s</span>
           ) : null}
         </p>
       ) : (
         <p className="text-[13px] font-medium text-emerald-600 flex items-center gap-2">
-          {allDone || !loading ? 'Completed' : 'Building…'}
+          {allDone || !loading ? 'Completed' : 'Working…'}
           {elapsedSec > 0 ? (
             <span className="text-[11px] font-normal text-[var(--muted)] tabular-nums">{elapsedSec}s</span>
           ) : null}
@@ -83,7 +83,7 @@ export function XrogaAgentProcessingPanel({
 
       {activeTodo && loading && !allDone ? (
         <p className="text-[11px] text-[var(--muted)]">
-          Step: {activeTodo.label}
+          {activeTodo.label}
           {todos.length > 0 ? ` · ${doneCount}/${todos.length}` : ''}
         </p>
       ) : null}

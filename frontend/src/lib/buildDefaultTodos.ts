@@ -11,8 +11,8 @@ function isUpdatePrompt(prompt: string): boolean {
 }
 
 /**
- * Honest build checklist aligned to backend pipeline ids
- * (route/convert/architect/build/qa/compile/push) — not marketing theater.
+ * Compact real job statuses — no theater labels (Convert request / File plan / etc.).
+ * Ids stay aligned to backend pipeline mapping in mergeBuildTodos.
  */
 export function buildTodosForPrompt(userPrompt: string, opts?: { hasSelectedRepo?: boolean }): BuildTodoDef[] {
   const hasSelectedRepo =
@@ -21,24 +21,24 @@ export function buildTodosForPrompt(userPrompt: string, opts?: { hasSelectedRepo
 
   if (update) {
     return [
-      { id: 'github', label: hasSelectedRepo ? 'Load selected repo' : 'Load project files' },
-      { id: 'analyze', label: 'Convert update brief' },
-      { id: 'plan', label: 'Plan file changes' },
-      { id: 'code-gen', label: 'Apply code patches' },
-      { id: 'verify', label: 'QA / validate' },
-      { id: 'github-push', label: 'Push to GitHub' },
-      { id: 'live-deploy', label: 'Refresh preview' },
+      { id: 'github', label: hasSelectedRepo ? 'Inspecting project' : 'Reading files' },
+      { id: 'analyze', label: 'Request accepted' },
+      { id: 'plan', label: 'Reading files' },
+      { id: 'code-gen', label: 'Editing files' },
+      { id: 'verify', label: 'Validating' },
+      { id: 'github-push', label: 'Pushing' },
+      { id: 'live-deploy', label: 'Deploying' },
     ];
   }
 
   return [
-    { id: 'github', label: hasSelectedRepo ? 'Using selected GitHub repo' : 'Prepare project' },
-    { id: 'analyze', label: 'Convert request' },
-    { id: 'plan', label: 'File plan' },
-    { id: 'code-gen', label: 'Generate code' },
-    { id: 'verify', label: 'QA / validate' },
-    { id: 'github-push', label: 'Push to GitHub' },
-    { id: 'live-deploy', label: 'Open preview' },
+    { id: 'github', label: hasSelectedRepo ? 'Inspecting project' : 'Request accepted' },
+    { id: 'analyze', label: 'Request accepted' },
+    { id: 'plan', label: 'Reading files' },
+    { id: 'code-gen', label: 'Editing files' },
+    { id: 'verify', label: 'Validating' },
+    { id: 'github-push', label: 'Pushing' },
+    { id: 'live-deploy', label: 'Deploying' },
   ];
 }
 

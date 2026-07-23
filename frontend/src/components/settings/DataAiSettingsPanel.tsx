@@ -5,45 +5,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Download, LogIn, Mail, ShieldAlert } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { exportUserData, clearLocalUserData } from '@/lib/exportUserData';
-import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
-
-function ToggleRow({
-  label,
-  desc,
-  on,
-  onChange,
-}: {
-  label: string;
-  desc: string;
-  on: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <div className="flex items-start justify-between gap-4 py-3 border-b border-[var(--card-border)]/40 last:border-0">
-      <div className="min-w-0">
-        <p className="text-sm font-medium">{label}</p>
-        <p className="text-xs text-[var(--muted)] mt-0.5 leading-relaxed">{desc}</p>
-      </div>
-      <button
-        type="button"
-        onClick={() => onChange(!on)}
-        className={cn('w-10 h-5 rounded-full shrink-0 relative transition-colors mt-0.5', on ? 'bg-[#006aff]' : 'bg-white/20')}
-      >
-        <span className={cn('absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all', on ? 'left-5' : 'left-0.5')} />
-      </button>
-    </div>
-  );
-}
 
 export function DataAiSettingsPanel({ email }: { email: string }) {
   const router = useRouter();
-  const trainForPersonalUse = usePrivacyStore((s) => s.trainForPersonalUse);
-  const setTrainForPersonalUse = usePrivacyStore((s) => s.setTrainForPersonalUse);
-  const improveModelForEveryone = usePrivacyStore((s) => s.improveModelForEveryone);
-  const setImproveModelForEveryone = usePrivacyStore((s) => s.setImproveModelForEveryone);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState('');
@@ -74,7 +40,9 @@ export function DataAiSettingsPanel({ email }: { email: string }) {
     <div className="space-y-6">
       <div>
         <h2 className="font-semibold text-lg">Data & AI</h2>
-        <p className="text-xs text-[var(--muted)] mt-1">Manage your account, training preferences, and exported data.</p>
+        <p className="text-xs text-[var(--muted)] mt-1">
+          Manage your account and exported data. Xroga calls pretrained AI APIs — it does not train models.
+        </p>
       </div>
 
       <div className="rounded-xl border border-[var(--card-border)]/50 p-4 space-y-3">
@@ -100,23 +68,6 @@ export function DataAiSettingsPanel({ email }: { email: string }) {
             <LogIn className="w-3.5 h-3.5" /> Manage sign-in options
           </Link>
         )}
-      </div>
-
-      <div className="rounded-xl border border-[var(--card-border)]/50 px-4">
-        <h3 className="text-sm font-medium pt-4 pb-1">AI training</h3>
-        <p className="text-xs text-[var(--muted)] mb-2">Control how Xroga learns from your work. We secure your data privacy.</p>
-        <ToggleRow
-          label="Train Xroga for your uses"
-          desc="Let Xroga learn from your chats and projects to personalize responses for you."
-          on={trainForPersonalUse}
-          onChange={setTrainForPersonalUse}
-        />
-        <ToggleRow
-          label="Improve the model for everyone"
-          desc="Allow your content to be used to train our models and improve our services. We secure your data privacy."
-          on={improveModelForEveryone}
-          onChange={setImproveModelForEveryone}
-        />
       </div>
 
       <div className="rounded-xl border border-[var(--card-border)]/50 p-4 space-y-3">
