@@ -422,15 +422,15 @@ function todosForBuild(
   researchState: ResearchTodoState = 'omit',
 ) {
   const all = [
-    { id: 'route', label: 'Route request' },
-    { id: 'research', label: 'Gather research' },
-    { id: 'convert', label: 'Convert to builder brief' },
-    { id: 'architect', label: 'Architect file plan' },
-    { id: 'build', label: 'Generate product' },
-    { id: 'qa', label: 'Review quality' },
-    { id: 'compile', label: 'Compile validate' },
-    { id: 'push', label: 'Push to GitHub' },
-    { id: 'deploy', label: 'Deploy to Vercel' },
+    { id: 'route', label: 'Request accepted' },
+    { id: 'research', label: 'Inspecting project' },
+    { id: 'convert', label: 'Reading files' },
+    { id: 'architect', label: 'Reading files' },
+    { id: 'build', label: 'Editing files' },
+    { id: 'qa', label: 'Validating' },
+    { id: 'compile', label: 'Validating' },
+    { id: 'push', label: 'Pushing' },
+    { id: 'deploy', label: 'Deploying' },
   ] as const;
 
   const steps =

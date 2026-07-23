@@ -13,9 +13,9 @@ interface PrivacyState {
   crossProjectAccess: boolean;
   xrogaAutoMode: boolean;
   confirmationMode: ConfirmationMode;
-  /** Train Xroga on this user's chats for personalized responses */
+  /** Legacy flags — Xroga does not train models; kept for persisted store compatibility */
   trainForPersonalUse: boolean;
-  /** Allow anonymized content to improve models for everyone */
+  /** Legacy flags — unused */
   improveModelForEveryone: boolean;
   setIncognito: (v: boolean) => void;
   setAllowPersonalInfo: (v: boolean) => void;

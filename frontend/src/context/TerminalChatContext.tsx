@@ -1985,11 +1985,23 @@ export function TerminalChatProvider({
                 html: String(output.html ?? ''),
                 css: String(output.css ?? ''),
                 js: String(output.js ?? ''),
+                projectFiles: Array.isArray((output as { projectFiles?: unknown }).projectFiles)
+                  ? (
+                      (output as { projectFiles: Array<{ path: string; content: string }> }).projectFiles
+                    )
+                      .filter((f) => f && typeof f.path === 'string')
+                      .map((f) => ({
+                        path: f.path,
+                        content: typeof f.content === 'string' ? f.content : '',
+                        flag: 'generated' as const,
+                      }))
+                  : undefined,
                 status: 'updating',
                 changesSummary: Array.isArray(output.changesSummary)
                   ? (output.changesSummary as string[])
                   : ['Preview ready — shipping…'],
                 openPreview: true,
+                terminalLine: 'Preview ready — finishing GitHub / Vercel…',
               });
             });
           },
@@ -2237,6 +2249,18 @@ export function TerminalChatProvider({
                   html,
                   css,
                   js,
+                  projectFiles: Array.isArray((output as { projectFiles?: unknown }).projectFiles)
+                    ? (
+                        (output as { projectFiles: Array<{ path: string; content: string }> })
+                          .projectFiles
+                      )
+                        .filter((f) => f && typeof f.path === 'string')
+                        .map((f) => ({
+                          path: f.path,
+                          content: typeof f.content === 'string' ? f.content : '',
+                          flag: 'generated' as const,
+                        }))
+                    : undefined,
                   deployUrl:
                     (typeof (output as { deployUrl?: string }).deployUrl === 'string' &&
                     (output as { deployUrl: string }).deployUrl.trim()
@@ -2257,6 +2281,11 @@ export function TerminalChatProvider({
                   fileTrail: fileTrailRaw,
                   previousFiles: previousFiles ?? null,
                   openPreview: true,
+                  terminalLine: (output as { deployUrl?: string }).deployUrl
+                    ? `Deployed · ${(output as { deployUrl: string }).deployUrl}`
+                    : (output as { githubPushConfirmed?: boolean }).githubPushConfirmed
+                      ? `Pushed · ${(output as { githubRepoName?: string }).githubRepoName || 'GitHub'}`
+                      : 'Build finished',
                 });
               });
 
