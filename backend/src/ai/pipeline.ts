@@ -118,6 +118,15 @@ import {
   createEvidence,
   type OperationEvidence,
 } from '../lib/truthfulExecution.js';
+import {
+  fallbackOrderForModel,
+  createIntelligentRoutePlan,
+  selectRepairModel,
+} from './intelligentRouter.js';
+import { normalizeProviderError, recordModelValidation } from './providerRuntime.js';
+import { classifyFailure } from '../lib/recoveryPlanner.js';
+import { recordRoutingOutcome } from './routingOutcomes.js';
+import { getRuntimeModelRegistry } from './modelCapabilityRegistry.js';
 
 export interface PipelineProgress {
   agent?: string;
@@ -366,9 +375,13 @@ async function callBuilderStream(
     userId?: string;
     signal?: AbortSignal;
     onModelFallback?: (from: ModelId, to: ModelId) => void;
+    credentialOverrides?: Partial<Record<ModelId, string>>;
   },
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
-  const order = [preferred, ...BUILDER_FALLBACKS.filter((m) => m !== preferred)];
+  const healthAwareOrder = fallbackOrderForModel(preferred);
+  const order = healthAwareOrder.length
+    ? healthAwareOrder
+    : [preferred, ...BUILDER_FALLBACKS.filter((m) => m !== preferred)];
   let lastErr: Error | null = null;
   for (const modelId of order) {
     try {
@@ -384,17 +397,28 @@ async function callBuilderStream(
         console.warn(`[pipeline] Falling back from ${preferred} → ${modelId}`);
         opts.onModelFallback?.(preferred, modelId);
       }
+      const provider = MODELS[modelId].provider;
+      const userCredential =
+        opts.credentialOverrides?.[modelId] ??
+        (opts.userId
+          ? await getUserProviderKey(
+              opts.userId,
+              provider === 'xai' ? 'grok' : provider,
+            ).catch(() => null)
+          : null);
       return await chatCompletionStream(modelId, messages, {
         maxTokens: opts.maxTokens,
         temperature: opts.temperature,
         onDelta: opts.onDelta,
         signal: opts.signal,
+        credentialOverride: userCredential || undefined,
       });
     } catch (err) {
       lastErr = err as Error;
       const code = (lastErr as Error & { code?: string }).code;
       if (code === 'OUT_OF_TOKENS' || code === 'BUILD_CANCELLED') throw lastErr;
-      console.warn(`[pipeline] ${modelId} stream failed:`, lastErr.message);
+      const normalized = normalizeProviderError(lastErr);
+      console.warn(`[pipeline] ${modelId} stream failed:`, normalized.safeMessage);
     }
   }
   throw lastErr ?? new Error('All AI models failed');
@@ -762,18 +786,51 @@ export async function runBuildPipeline(opts: {
     };
   }
 
-  const route = routePrompt(opts.prompt);
-
+  const baseRoute = routePrompt(opts.prompt);
   const prior = await hydratePriorFiles(opts.userId, meta);
   const isUpdate = Boolean(meta?.buildUpdate && prior.files.length);
+  const providerKeyName = (modelId: ModelId): string => {
+    const provider = MODELS[modelId].provider;
+    return provider === 'xai' ? 'grok' : provider;
+  };
+  const credentialOverrides: Partial<Record<ModelId, string>> = {};
+  await Promise.all((Object.keys(MODELS) as ModelId[]).map(async (modelId) => {
+    const key = await getUserProviderKey(
+      opts.userId,
+      providerKeyName(modelId),
+    ).catch(() => null);
+    if (key) credentialOverrides[modelId] = key;
+  }));
+  const runtimeRegistry = getRuntimeModelRegistry().map((model) =>
+    credentialOverrides[model.id]
+      ? { ...model, configured: true, credentialSource: 'user' as const }
+      : model,
+  );
+  const intelligentPlan = createIntelligentRoutePlan({
+    prompt: opts.prompt,
+    repositoryFiles: prior.files,
+    registry: runtimeRegistry,
+  });
+  const implementationTask = intelligentPlan.subtasks.find((task) =>
+    ['multi_file_implementation', 'code_generation', 'bug_fixing', 'refactoring'].includes(
+      task.taskClass,
+    ),
+  );
+  const route: RouteDecision = {
+    ...baseRoute,
+    builder: implementationTask?.selectedModel ?? baseRoute.builder,
+    reason: `${baseRoute.reason} · ${intelligentPlan.mode} route · complexity ${intelligentPlan.complexity.level}`,
+  };
   let cachedSummary = prior.aiSummary;
   let usage: UsageSnapshot | null = null;
   /** Tracks whether research ran / skipped so todos never green-check empty research. */
   let researchState: ResearchTodoState = 'omit';
+  let modelSwitches = 0;
   const todos = (
     step: Parameters<typeof todosForBuild>[0],
   ) => todosForBuild(step, researchState);
   const emitModelSwitch = (from: ModelId, to: ModelId) => {
+    modelSwitches += 1;
     emit({
       agent: 'builder',
       status: 'model_fallback',
@@ -1170,6 +1227,7 @@ export async function runBuildPipeline(opts: {
       onModelFallback: (from, to) => {
         emitModelSwitch(from, to);
       },
+      credentialOverrides,
     },
   );
 
@@ -1285,6 +1343,7 @@ export async function runBuildPipeline(opts: {
             onDelta: opts.onDelta,
             signal: opts.signal,
             onModelFallback: emitModelSwitch,
+            credentialOverrides,
           },
         );
         usage = await recordUsage(
@@ -1590,9 +1649,12 @@ export async function runBuildPipeline(opts: {
     });
   }
   trace.setMeta({ compile: { ok: compile.ok, skipped: compile.skipped, issues: compile.issues } });
+  recordModelValidation(result.modelId, qa.ok && (compile.ok || compile.skipped));
 
   // One fix pass if QA/compile failed and we have fix hints
+  let repairLoops = 0;
   if (!qa.ok && qa.fixHints.length && !opts.signal?.aborted) {
+    repairLoops += 1;
     emit({
       agent: 'builder',
       status: 'fixing',
@@ -1606,8 +1668,18 @@ export async function runBuildPipeline(opts: {
         ? `${incrementalUpdateContext(nextFiles)}\n\nQA issues to fix with SEARCH/REPLACE:\n${qa.issues.map((i) => `- ${i}`).join('\n')}\nHints:\n${qa.fixHints.map((h) => `- ${h}`).join('\n')}`
         : `Fix these QA issues in the project. Return full updated files with path fences.\nIssues:\n${qa.issues.map((i) => `- ${i}`).join('\n')}\nHints:\n${qa.fixHints.map((h) => `- ${h}`).join('\n')}\n\nCurrent index.html:\n\`\`\`html\n${siteForQa.html.slice(0, 40000)}\n\`\`\``;
 
+      const failureText = [...qa.issues, ...compile.issues].join('\n');
+      const repairCategory = classifyFailure(failureText);
+      const repairModel = selectRepairModel(repairCategory, [result.modelId]) ?? route.builder;
+      trace.setMeta({
+        repairRoute: {
+          category: repairCategory,
+          modelChanged: repairModel !== result.modelId,
+          evidenceItems: qa.issues.length + compile.issues.length,
+        },
+      });
       const fixResult = await callBuilderStream(
-        route.builder,
+        repairModel,
         [
           { role: 'system', content: BUILDER_SYSTEM },
           { role: 'user', content: fixPrompt },
@@ -1619,6 +1691,7 @@ export async function runBuildPipeline(opts: {
           onDelta: opts.onDelta,
           signal: opts.signal,
           onModelFallback: emitModelSwitch,
+          credentialOverrides,
         },
       );
       usage = await recordUsage(
@@ -1690,10 +1763,28 @@ export async function runBuildPipeline(opts: {
           issues: [...qa.issues, ...compile.issues.map((i) => `compile: ${i}`)],
         };
       }
+      recordModelValidation(fixResult.modelId, qa.ok && (compile.ok || compile.skipped));
     } catch (err) {
-      console.warn('[pipeline] QA fix pass failed:', (err as Error).message);
+      console.warn('[pipeline] QA fix pass failed:', normalizeProviderError(err).safeMessage);
     }
   }
+
+  await recordRoutingOutcome({
+    runId,
+    userId: opts.userId,
+    taskClass: implementationTask?.taskClass ?? route.kind,
+    modelId: result.modelId,
+    mode: intelligentPlan.mode,
+    inputTokens: result.inputTokens,
+    outputTokens: result.outputTokens,
+    patchApplied: usedPatches,
+    typecheckOk: compile.skipped ? undefined : compile.tscOk,
+    buildOk: compile.ok,
+    repairLoops,
+    modelSwitches,
+    recoverySucceeded:
+      repairLoops > 0 ? qa.ok && (compile.ok || compile.skipped) : undefined,
+  });
 
   const fileTrail = buildFileTrail(
     isUpdate ? previousFiles : previousFiles.map((f) => ({ ...f, content: '' })),

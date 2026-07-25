@@ -5,6 +5,9 @@ import type { ProjectContext } from '../lib/adaptiveOrchestrator.js';
 import type { StorageProviderId, StorageProviderState } from '../lib/storageSelection.js';
 import type { ProviderCandidate } from '../lib/providerResolver.js';
 import type { ModelId } from '../ai/models.js';
+import { createIntelligentRoutePlan } from '../ai/intelligentRouter.js';
+import { safeModelDiagnostics } from '../ai/modelCapabilityRegistry.js';
+import type { RoutingMode } from '../ai/routerConfig.js';
 
 const router = Router();
 
@@ -76,6 +79,9 @@ router.get('/', (_req, res) => {
   res.json({
     generatedAt: new Date().toISOString(),
     capabilities: getCapabilityRegistry(),
+    routerDiagnostics: {
+      models: safeModelDiagnostics(),
+    },
   });
 });
 
@@ -92,7 +98,28 @@ router.post('/plan', (req, res) => {
   }
 
   const project = projectContext(req.body?.project);
-  res.json(createAdaptiveExecutionPlan(prompt, context, project));
+  const adaptive = createAdaptiveExecutionPlan(prompt, context, project);
+  const requestedMode: RoutingMode | undefined =
+    req.body?.mode === 'intelligence' ||
+    req.body?.mode === 'balanced' ||
+    req.body?.mode === 'cost'
+      ? req.body.mode
+      : undefined;
+  const repositoryFileCount =
+    typeof req.body?.repositoryFileCount === 'number'
+      ? Math.max(0, Math.floor(req.body.repositoryFileCount))
+      : 0;
+  const affectedFileCount =
+    typeof req.body?.affectedFileCount === 'number'
+      ? Math.max(0, Math.floor(req.body.affectedFileCount))
+      : 0;
+  const routerPlan = createIntelligentRoutePlan({
+    prompt: `${prompt}\n${context}`.trim(),
+    mode: requestedMode,
+    repositoryFileCount,
+    affectedFileCount,
+  });
+  res.json({ ...adaptive, routerPlan });
 });
 
 export default router;
