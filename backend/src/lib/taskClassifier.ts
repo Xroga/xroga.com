@@ -3,16 +3,26 @@ import type { CapabilityId } from './capabilityRegistry.js';
 export type TaskIntent =
   | 'build'
   | 'change'
+  | 'replace'
   | 'remove'
   | 'repair'
+  | 'recover'
+  | 'restore'
   | 'analyze'
   | 'research'
   | 'connect'
+  | 'configure'
   | 'automate'
   | 'generate'
   | 'convert'
+  | 'migrate'
+  | 'store'
+  | 'process'
   | 'deploy'
+  | 'redeploy'
+  | 'rollback'
   | 'review'
+  | 'secure'
   | 'explain'
   | 'optimize'
   | 'test'
@@ -32,20 +42,30 @@ export interface TaskClassification {
 }
 
 const INTENT_PATTERNS: Array<[TaskIntent, RegExp]> = [
+  ['rollback', /\b(roll\s*back|rollback|revert\s+(?:the\s+)?deploy)/i],
+  ['redeploy', /\b(redeploy|deploy\s+again|retry\s+(?:the\s+)?deploy)/i],
+  ['restore', /\b(restore|bring\s+back|undo\s+(?:the\s+)?removal)/i],
+  ['recover', /\b(recover|recovery|resume\s+from|last\s+valid\s+state)/i],
+  ['replace', /\b(replace|swap\s+out|substitute)/i],
   ['remove', /\b(remove|delete|drop|uninstall|disconnect)\b/i],
   ['repair', /\b(fix|repair|debug|resolve|broken|error|failing)\b/i],
-  ['change', /\b(change|update|edit|modify|patch|refactor|migrate)\b/i],
+  ['migrate', /\b(migrate|migration|move\s+(?:from|to))\b/i],
+  ['change', /\b(change|update|edit|modify|patch|refactor)\b/i],
   ['build', /\b(build|create|make|develop|implement|scaffold|code|spin\s*up)\b/i],
   ['research', /\b(research|investigate|latest|current|news|sources?|citations?)\b/i],
   ['search', /\b(search|find|look\s*up|discover)\b/i],
   ['analyze', /\b(analy[sz]e|inspect|audit|assess|summarize|compare)\b/i],
   ['review', /\b(review|code\s*review|security\s*review|critique)\b/i],
-  ['connect', /\b(connect|integrate|authorize|oauth|api\s+integration)\b/i],
+  ['connect', /\b(connect|integrate|authorize|implement\s+oauth|add\s+oauth|api\s+integration)\b/i],
+  ['configure', /\b(configure|configuration|set\s*up|environment\s+variable)\b/i],
   ['automate', /\b(automate|workflow|cron|schedule|agent|background\s+job)\b/i],
   ['deploy', /\b(deploy|publish|ship|release|go\s+live)\b/i],
   ['test', /\b(test|verify|validate|lint|typecheck|smoke)\b/i],
   ['optimize', /\b(optimi[sz]e|performance|speed\s*up|reduce\s*cost)\b/i],
   ['convert', /\b(convert|transform|export|import)\b/i],
+  ['store', /\b(store|persist|save\s+(?:to|in)|cache)\b/i],
+  ['process', /\b(process|parse|extract|ingest)\b/i],
+  ['secure', /\b(secure|harden|vulnerabilit|threat\s+model)\b/i],
   ['generate', /\b(generate|write|produce|render)\b/i],
   ['explain', /\b(explain|teach|how\s+does|what\s+is|why\s+does)\b/i],
 ];
@@ -53,11 +73,21 @@ const INTENT_PATTERNS: Array<[TaskIntent, RegExp]> = [
 const CODE_INTENTS = new Set<TaskIntent>([
   'build',
   'change',
+  'replace',
   'remove',
   'repair',
+  'recover',
+  'restore',
   'connect',
+  'configure',
   'automate',
   'deploy',
+  'redeploy',
+  'rollback',
+  'migrate',
+  'store',
+  'process',
+  'secure',
   'optimize',
   'test',
 ]);
@@ -89,7 +119,7 @@ export function classifyTaskRequest(
     reasoning.push('The requested operation changes or validates a software workflow.');
   }
   if (intents.includes('test') || requiresCoding) capabilities.push('testing');
-  if (/\b(security|secret|credential|vulnerab|auth)\b/i.test(fullInput)) {
+  if (intents.includes('secure') || /\b(security|secret|credential|vulnerab|auth)\b/i.test(fullInput)) {
     capabilities.push('security_review');
   }
   if (requiresResearch) {
@@ -97,7 +127,7 @@ export function classifyTaskRequest(
     reasoning.push('The request needs current or externally retrieved information.');
   }
   if (/\b(x\.com|twitter)\b/i.test(fullInput)) capabilities.push('x_research');
-  if (/\b(file|pdf|document|upload|attachment|image)\b/i.test(fullInput)) {
+  if (intents.includes('process') || /\b(file|pdf|document|upload|attachment|image)\b/i.test(fullInput)) {
     capabilities.push('file_processing');
   }
   if (/\b(csv|spreadsheet|dataset|json|data|transform|export)\b/i.test(fullInput)) {
@@ -113,7 +143,11 @@ export function classifyTaskRequest(
   if (/\b(auth|oauth|login|sign[- ]?in)\b/i.test(fullInput)) {
     capabilities.push('authentication_integration');
   }
-  if (/\b(database|postgres|supabase|sql|storage)\b/i.test(fullInput)) {
+  if (
+    intents.includes('store') ||
+    intents.includes('migrate') ||
+    /\b(database|postgres|mysql|mongo(?:db)?|firebase|neon|supabase|upstash|sqlite|redis|blob|sql|storage)\b/i.test(fullInput)
+  ) {
     capabilities.push('database_integration');
   }
   if (/\b(payment|checkout|subscription|stripe|lemon\s*squeezy)\b/i.test(fullInput)) {
@@ -126,7 +160,7 @@ export function classifyTaskRequest(
   if (/\b(github|repository|repo|pull\s*request|commit|push)\b/i.test(fullInput)) {
     capabilities.push('github_operations');
   }
-  if (intents.includes('deploy')) {
+  if (intents.some((intent) => ['deploy', 'redeploy', 'rollback'].includes(intent))) {
     capabilities.push('deployment');
     if (/\b(vercel)\b/i.test(fullInput)) capabilities.push('vercel_operations');
   }
