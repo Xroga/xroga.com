@@ -144,6 +144,32 @@ export function connectionIsVerified(input: {
   return input.tokenPersisted && input.authenticatedProbeOk;
 }
 
+export function integrationIsComplete(input: {
+  configurationValid: boolean;
+  authenticatedApiCallOk: boolean;
+  applicationConsumesResponse: boolean;
+  errorHandlingVerified: boolean;
+  secretsServerSide: boolean;
+}): boolean {
+  return (
+    input.configurationValid &&
+    input.authenticatedApiCallOk &&
+    input.applicationConsumesResponse &&
+    input.errorHandlingVerified &&
+    input.secretsServerSide
+  );
+}
+
+export function publishableDeploymentUrl(input: {
+  providerAccepted: boolean;
+  reachable: boolean;
+  url?: string;
+}): string | undefined {
+  return input.providerAccepted && input.reachable && /^https?:\/\//i.test(input.url || '')
+    ? input.url
+    : undefined;
+}
+
 export function previewIsReady(input: {
   persisted: boolean;
   serverReachable: boolean;

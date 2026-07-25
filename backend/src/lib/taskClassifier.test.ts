@@ -33,5 +33,17 @@ describe('task classifier', () => {
     assert.ok(result.requiredCapabilities.includes('vercel_operations'));
     assert.equal(result.requiresUserAuthorization, true);
   });
+
+  it('recognizes recovery, replacement, migration, redeploy, rollback, and secure operations', () => {
+    const result = classifyTaskRequest(
+      'Recover the failed migration, replace storage, secure it, redeploy, then rollback if verification fails',
+    );
+    for (const intent of ['recover', 'migrate', 'replace', 'secure', 'redeploy', 'rollback'] as const) {
+      assert.ok(result.intents.includes(intent), intent);
+    }
+    assert.ok(result.requiredCapabilities.includes('database_integration'));
+    assert.ok(result.requiredCapabilities.includes('security_review'));
+    assert.ok(result.requiredCapabilities.includes('deployment'));
+  });
 });
 
