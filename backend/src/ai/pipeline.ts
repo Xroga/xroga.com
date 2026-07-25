@@ -114,6 +114,10 @@ import { RunTrace } from './runTrace.js';
 import { verifyShippedProduct } from '../lib/shipVerify.js';
 import type { VercelEnvSyncResult } from '../lib/vercelEnv.js';
 import { computeShipOutcome } from './shipOutcome.js';
+import {
+  createEvidence,
+  type OperationEvidence,
+} from '../lib/truthfulExecution.js';
 
 export interface PipelineProgress {
   agent?: string;
@@ -585,6 +589,7 @@ export async function runChatPipeline(opts: {
         builder: pick.modelId,
         useResearch: false,
         reason: pick.reason,
+        classification: routePrompt(opts.prompt).classification,
       },
     };
   }
@@ -1747,6 +1752,7 @@ export async function runBuildPipeline(opts: {
   let deployUrl = '';
   let deployVerified = false;
   let vercelPreviewUrl: string | undefined;
+  const executionEvidence: OperationEvidence[] = [];
 
   // Placeholders only (.env.example / SECRETS.md) — never plaintext vault secrets in Git
   try {
@@ -1998,13 +2004,32 @@ export async function runBuildPipeline(opts: {
       });
       githubRepoUrl = pushed.htmlUrl;
       githubRepoName = pushed.repoName;
+      const verifiedCommitSha = pushed.commitSha;
+      if (
+        typeof verifiedCommitSha !== 'string' ||
+        !/^[0-9a-f]{7,40}$/i.test(verifiedCommitSha)
+      ) {
+        throw new Error('GitHub push returned without a valid commit SHA');
+      }
+      commitSha = verifiedCommitSha;
       githubPushConfirmed = true;
-      commitSha = pushed.commitSha;
       githubBranch = pushed.branch || githubBranch;
+      executionEvidence.push(
+        createEvidence({
+          kind: 'commit',
+          operation: 'github_push',
+          ok: true,
+          identifier: verifiedCommitSha,
+          details: {
+            repository: pushed.repoName || githubRepoName || '',
+            branch: githubBranch,
+          },
+        }),
+      );
       emit({
         agent: 'deploy',
         status: 'pushed',
-        message: `Pushed to ${pushed.repoName || githubRepoName}`,
+        message: `Pushed ${verifiedCommitSha.slice(0, 12)} to ${pushed.repoName || githubRepoName}`,
         swarmStatusLabel: 'Pushed',
         swarmActivity: pushed.htmlUrl || pushed.repoName || 'GitHub',
         // Push done — next step is deploy (or non-web artifacts)
@@ -2576,11 +2601,15 @@ export async function runBuildPipeline(opts: {
         vercelPreviewUrl = deployed.vercel?.deployUrl || deployed.deployUrl;
         emit({
           agent: 'deploy',
-          status: 'deployed',
-          message: `Live on Vercel: ${deployUrl}`,
-          swarmStatusLabel: 'Live',
-          swarmActivity: deployUrl,
-          swarmTodos: todos('done').map((t) => ({ ...t, status: 'done' as const })),
+          status: deployVerified ? 'deployed' : 'deploy_pending_verification',
+          message: deployVerified
+            ? `Verified live on Vercel: ${deployUrl}`
+            : `Vercel returned a deployment URL; reachability verification is pending: ${deployUrl}`,
+          swarmStatusLabel: deployVerified ? 'Live · verified' : 'Verify deploy',
+          swarmActivity: deployVerified ? deployUrl : 'Checking deployment URL',
+          swarmTodos: deployVerified
+            ? todos('done').map((t) => ({ ...t, status: 'done' as const }))
+            : todos('deploy'),
         });
       } else if (deployed.deployError) {
         emit({
@@ -2645,6 +2674,20 @@ export async function runBuildPipeline(opts: {
       expectApiHealth: expectApi,
     });
     deployVerified = shipVerify.liveOk || deployVerified;
+    if (deployUrl || vercelPreviewUrl) {
+      executionEvidence.push(
+        createEvidence({
+          kind: 'deployment',
+          operation: 'deployment',
+          ok: Boolean(shipVerify.liveOk),
+          identifier: deployUrl || vercelPreviewUrl,
+          details: {
+            reachable: Boolean(shipVerify.liveOk),
+            healthOk: shipVerify.healthOk === true,
+          },
+        }),
+      );
+    }
   }
 
   const outcome = computeShipOutcome({
@@ -2709,6 +2752,7 @@ export async function runBuildPipeline(opts: {
     envSyncOk: vaultEnvSync ? vaultEnvSync.ok : undefined,
     storeSubmitted: outcome.storeSubmitted,
     statusLabel: outcome.statusLabel,
+    evidence: executionEvidence,
   };
 
   if (shipVerify || githubPushConfirmed || deployUrl) {
@@ -2886,6 +2930,7 @@ export async function runBuildPipeline(opts: {
     buildOk,
     shipped: fullyShipped,
     shipOutcome: shipOutcomeMeta,
+    executionEvidence,
     nextSteps: outcome.nextSteps,
     scaffoldKind: productScaffoldKind,
     chromeZipDownloadUrl,

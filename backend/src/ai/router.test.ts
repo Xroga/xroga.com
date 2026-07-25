@@ -29,4 +29,16 @@ describe('routePrompt', () => {
     assert.equal(isBuildPrompt('build me a website'), true);
     assert.equal(isBuildPrompt('what is staking'), false);
   });
+
+  it('routes unknown categories by requested operation instead of a whitelist', () => {
+    const r = routePrompt('build a lunar moss accounting engine');
+    assert.equal(r.kind.startsWith('build'), true);
+    assert.equal(r.classification.primaryIntent, 'build');
+  });
+
+  it('does not route pure data research into a website build', () => {
+    const r = routePrompt('research current public transport data APIs with sources');
+    assert.equal(r.kind, 'research');
+    assert.equal(r.classification.requiresCoding, false);
+  });
 });

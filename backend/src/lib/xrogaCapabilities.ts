@@ -1,5 +1,9 @@
-/** "What can you build?" — must always fast-path, never swarm/DAG */
+import {
+  capabilityIsUsable,
+  getCapabilityRegistry,
+} from './capabilityRegistry.js';
 
+/** "What can you do?" fast-path backed by the server capability registry. */
 export function isCapabilitiesQuery(input: string): boolean {
   const lower = input.toLowerCase().trim().replace(/[?!.]+$/g, '');
   return (
@@ -15,23 +19,25 @@ export function isCapabilitiesQuery(input: string): boolean {
 }
 
 export function getXrogaCapabilitiesResponse(): string {
-  return `✨ What Xroga ships today
+  const registry = getCapabilityRegistry();
+  const usable = registry.filter(capabilityIsUsable);
+  const configured = usable
+    .map((capability) => `- **${capability.label}** — ${capability.description}`)
+    .join('\n');
 
-**#1 coding agent — prompt → your GitHub → live**
+  const needsSetup = registry
+    .filter((capability) => !capabilityIsUsable(capability))
+    .map((capability) => `- ${capability.label}`)
+    .join('\n');
 
-Live product loops
-🌐 **Web apps & sites** — build → sticky GitHub → your Vercel (optional Supabase). “Shipped” only when live URL checks out.
-📱 **Mobile (Expo)** — scaffold → GitHub (Expo Go). EAS / stores need Publish → your Expo token (you pay fees).
-🧩 **Chrome MV3** — scaffold → GitHub → \`extension.zip\` on Releases (required for “shipped”).
-🖥️ **Desktop (Electron)** — scaffold → GitHub → Actions release **started** (download zip when Actions is green).
-📊 **Crypto dashboards** — UI demos — not an exchange or custody.
-⚙️ **Agent scaffolds** — cron/LLM stubs — not a managed bot farm.
+  return `✨ What Xroga can execute
 
-Research
-🔍 Live web + X research when keys are set — empty research is skipped (never faked)
+Xroga is capability-driven, not limited to a fixed list of project categories. Your message defines the task; Xroga selects only the capabilities needed and reports real blockers when authorization, credentials, or infrastructure are missing.
 
-Not part of the product
-❌ Image / video studios, browser-automation farms, paying App Store fees, or claiming “710+ live OAuths”
+Available or user-authorizable now:
+${configured || '- No executable providers are currently configured.'}
 
-What do you want to ship first?`;
+${needsSetup ? `Requires provider configuration:\n${needsSetup}\n\n` : ''}A task is only marked completed when its operation has real verification evidence. Mock or simulated output is labeled, and failed external actions are never replaced with fake success.
+
+What outcome do you want?`;
 }

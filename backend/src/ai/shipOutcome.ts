@@ -92,7 +92,7 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
   if (!isNonWeb && input.githubPushConfirmed && !input.deployUrl) {
     shipBlockers.push('Vercel deploy did not produce a live URL');
   }
-  if (!isNonWeb && input.deployUrl && input.liveOk === false) {
+  if (!isNonWeb && input.deployUrl && input.liveOk !== true) {
     shipBlockers.push('Live URL check failed — open Vercel logs or redeploy');
   }
   if (!isNonWeb && input.envSyncOk === false) {
@@ -129,7 +129,7 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
     } else {
       // Live URL alone is not enough if vault env sync failed — site may boot without keys
       fullyShipped = Boolean(
-        input.deployUrl && input.liveOk !== false && input.envSyncOk !== false,
+        input.deployUrl && input.liveOk === true && input.envSyncOk !== false,
       );
       handoffReady = fullyShipped;
     }
@@ -237,7 +237,9 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
   } else {
     if (input.deployUrl) {
       verifyLines.push(
-        input.liveOk === false ? `❌ Live URL failed: ${input.deployUrl}` : `✅ Live: ${input.deployUrl}`,
+        input.liveOk !== true
+          ? `❌ Live URL not verified: ${input.deployUrl}`
+          : `✅ Live URL verified: ${input.deployUrl}`,
       );
     } else {
       verifyLines.push('❌ No Vercel live URL');

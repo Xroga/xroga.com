@@ -365,7 +365,7 @@ EXPO_PUBLIC_API_URL=
       content: `# Build / store handoff for ${name}
 
 Xroga builds the Expo app and pushes it to **your GitHub**.
-Free path = Expo Go / EAS binary. Store listing approval is still Apple/Google’s.
+Xroga does not publish directly to the App Store or Google Play. The free path is Expo Go / an EAS binary; store submission requires your credentials, and approval remains with Apple/Google.
 
 ## What Xroga does
 1. Generate Expo scaffold + push to your GitHub
