@@ -36,6 +36,7 @@ import adminRouter from './routes/admin.js';
 import { metricsMiddleware, getMetricsText } from './middleware/metricsMiddleware.js';
 import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
+import capabilitiesRouter from './routes/capabilities.js';
 import { adminMiddleware } from './middleware/admin.js';
 import { getGitHubOAuthCallbackUrl } from './routes/github.js';
 import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
@@ -135,6 +136,7 @@ app.get('/', (_req, res) => {
       chat: '/api/phase1/chat',
       build: '/api/swarm/execute',
       github: '/api/github',
+      capabilities: '/api/capabilities',
       billing: '/api/billing',
     },
   });
@@ -182,6 +184,7 @@ app.use('/api/projects', authMiddleware, projectsRouter);
 app.use('/api/terminal-sessions', authMiddleware, terminalSessionsRouter);
 app.use('/api/profile', authMiddleware, profileRouter);
 app.use('/api/media', authMiddleware, mediaRouter);
+app.use('/api/capabilities', authMiddleware, capabilitiesRouter);
 app.use('/api/debug', authMiddleware, debugRouter);
 app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
 app.use('/api/github', authMiddleware, githubRouter);

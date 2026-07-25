@@ -52,6 +52,18 @@ describe('computeShipOutcome', () => {
     assert.ok(o.verifyLines.some((l) => /env sync failed/i.test(l)));
   });
 
+  it('web deploy URL without reachability evidence is not shipped', () => {
+    const o = computeShipOutcome({
+      ...base,
+      kind: 'nextjs',
+      deployUrl: 'https://unverified.vercel.app',
+      liveOk: undefined,
+    });
+    assert.equal(o.fullyShipped, false);
+    assert.match(o.statusMessage, /incomplete/i);
+    assert.ok(o.verifyLines.some((line) => /not verified/i.test(line)));
+  });
+
   it('chrome zip is handoff; CWS submit is fullyShipped', () => {
     const missing = computeShipOutcome({
       ...base,
