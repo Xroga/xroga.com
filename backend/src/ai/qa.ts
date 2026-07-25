@@ -1,6 +1,7 @@
 import { chatCompletion } from './openaiCompat.js';
 import type { ProjectFile } from './patches.js';
 import { staticValidateProject } from './staticValidate.js';
+import type { ModelId } from './models.js';
 
 export interface ReviewBuildOutputOpts {
   prompt: string;
@@ -10,6 +11,13 @@ export interface ReviewBuildOutputOpts {
   isUpdate?: boolean;
   /** Framework / multi-file tree for Next/Expo QA */
   files?: ProjectFile[];
+  reviewerModel?: ModelId;
+  acceptanceCriteria?: string[];
+  architectureSummary?: string;
+  changedFiles?: string[];
+  validationResults?: unknown[];
+  securitySensitiveContext?: string[];
+  completion?: typeof chatCompletion;
 }
 
 export interface ReviewBuildOutputResult {
@@ -19,20 +27,27 @@ export interface ReviewBuildOutputResult {
   inputTokens: number;
   outputTokens: number;
   staticKind?: string;
+  reviewerModel: ModelId;
+  findings: Array<{
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    title: string;
+    evidence: string;
+    affectedFiles: string[];
+  }>;
 }
 
 const REVIEW_SYSTEM = `You are a strict QA reviewer for Xroga builds (static HTML, Next.js, or Expo).
-Respond with JSON only: { "ok": boolean, "issues": string[], "fixHints": string[] }.
+Respond with JSON only: { "ok": boolean, "issues": string[], "fixHints": string[], "findings": [{ "severity": "low|medium|high|critical", "title": string, "evidence": string, "affectedFiles": string[] }] }.
 - ok=true when the build satisfies the user prompt with no critical defects.
 - For Next/Expo: check entry files, env usage (no hardcoded secrets), and that the ask was met.
 - issues: concrete problems.
 - fixHints: short, actionable repairs.
 No markdown. No extra keys.`;
 
-function parseReviewJson(text: string): Pick<ReviewBuildOutputResult, 'ok' | 'issues' | 'fixHints'> {
+function parseReviewJson(text: string): Pick<ReviewBuildOutputResult, 'ok' | 'issues' | 'fixHints' | 'findings'> {
   const fallback = { ok: false, issues: ['QA parse failed — treat as needs review'], fixHints: [] as string[] };
   const trimmed = text.trim();
-  if (!trimmed) return fallback;
+  if (!trimmed) return { ...fallback, findings: [] };
 
   const fence = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
   const raw = (fence ? fence[1] : trimmed).trim();
@@ -42,6 +57,7 @@ function parseReviewJson(text: string): Pick<ReviewBuildOutputResult, 'ok' | 'is
       ok?: boolean;
       issues?: unknown;
       fixHints?: unknown;
+      findings?: unknown;
     };
     return {
       ok: parsed.ok !== false,
@@ -51,9 +67,25 @@ function parseReviewJson(text: string): Pick<ReviewBuildOutputResult, 'ok' | 'is
       fixHints: Array.isArray(parsed.fixHints)
         ? parsed.fixHints.filter((x): x is string => typeof x === 'string')
         : [],
+      findings: Array.isArray(parsed.findings) ? parsed.findings.flatMap((finding) => {
+        if (!finding || typeof finding !== 'object') return [];
+        const value = finding as Record<string, unknown>;
+        if (typeof value.title !== 'string' || typeof value.evidence !== 'string') return [];
+        const severity = ['low', 'medium', 'high', 'critical'].includes(String(value.severity))
+          ? value.severity as ReviewBuildOutputResult['findings'][number]['severity']
+          : 'medium';
+        return [{
+          severity,
+          title: value.title,
+          evidence: value.evidence,
+          affectedFiles: Array.isArray(value.affectedFiles)
+            ? value.affectedFiles.filter((item): item is string => typeof item === 'string')
+            : [],
+        }];
+      }) : [],
     };
   } catch {
-    return fallback;
+    return { ...fallback, findings: [] };
   }
 }
 
@@ -93,6 +125,8 @@ export async function reviewBuildOutput(
     fixHints: ['Retry build'],
     inputTokens: 0,
     outputTokens: 0,
+    reviewerModel: opts.reviewerModel ?? 'deepseek_v4_flash',
+    findings: [],
   };
 
   const staticResult = opts.files?.length
@@ -108,11 +142,16 @@ export async function reviewBuildOutput(
     js: opts.js.slice(0, 4000),
     files: opts.files?.length ? frameworkSamples(opts.files) : undefined,
     staticIssues: staticResult.issues,
+    acceptanceCriteria: opts.acceptanceCriteria,
+    architectureSummary: opts.architectureSummary,
+    changedFiles: opts.changedFiles,
+    validationResults: opts.validationResults,
+    securitySensitiveContext: opts.securitySensitiveContext,
   };
 
   try {
-    const result = await chatCompletion(
-      'deepseek_v4_flash',
+    const result = await (opts.completion ?? chatCompletion)(
+      opts.reviewerModel ?? 'deepseek_v4_flash',
       [
         { role: 'system', content: REVIEW_SYSTEM },
         {
@@ -135,6 +174,8 @@ export async function reviewBuildOutput(
       inputTokens: result.inputTokens,
       outputTokens: result.outputTokens,
       staticKind: staticResult.kind,
+      reviewerModel: opts.reviewerModel ?? 'deepseek_v4_flash',
+      findings: parsed.findings,
     };
   } catch {
     // Still surface static validation if LLM QA fails
@@ -146,6 +187,8 @@ export async function reviewBuildOutput(
         inputTokens: 0,
         outputTokens: 0,
         staticKind: staticResult.kind,
+        reviewerModel: opts.reviewerModel ?? 'deepseek_v4_flash',
+        findings: [],
       };
     }
     return emptyFail;

@@ -171,3 +171,47 @@ export function getModelRuntimeHealth(
 export function resetModelRuntimeHealth(): void {
   health.clear();
 }
+
+export async function executeWithProviderFallback<T>(input: {
+  routes: ModelId[];
+  execute: (modelId: ModelId, signal: AbortSignal) => Promise<T>;
+  timeoutMs?: number;
+  maximumAttemptsPerRoute?: number;
+  signal?: AbortSignal;
+  sleep?: (ms: number) => Promise<void>;
+}): Promise<{ value: T; modelId: ModelId; failures: NormalizedProviderError[] }> {
+  const failures: NormalizedProviderError[] = [];
+  const sleep = input.sleep ?? ((ms: number) => new Promise((resolve) => setTimeout(resolve, ms)));
+  for (const modelId of [...new Set(input.routes)]) {
+    if (getModelRuntimeHealth(modelId).status === 'circuit_open') continue;
+    const attempts = Math.max(1, input.maximumAttemptsPerRoute ?? 2);
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      if (input.signal?.aborted) throw Object.assign(new Error('Provider request cancelled'), { name: 'AbortError' });
+      const controller = new AbortController();
+      const abort = () => controller.abort();
+      input.signal?.addEventListener('abort', abort, { once: true });
+      const timeout = setTimeout(() => controller.abort(), input.timeoutMs ?? 60_000);
+      const started = Date.now();
+      try {
+        const value = await input.execute(modelId, controller.signal);
+        recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
+        return { value, modelId, failures };
+      } catch (error) {
+        const normalized = controller.signal.aborted && !input.signal?.aborted
+          ? normalizeProviderError(Object.assign(new Error('Provider request timed out'), { code: 'ETIMEDOUT' }))
+          : normalizeProviderError(error);
+        failures.push(normalized);
+        recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
+        if (!normalized.retryable || normalized.kind === 'authentication' || normalized.kind === 'invalid_model' || normalized.kind === 'invalid_request' || attempt === attempts - 1) break;
+        const delay = Math.min(5_000, 200 * 2 ** attempt) + Math.floor(Math.random() * 100);
+        await sleep(delay);
+      } finally {
+        clearTimeout(timeout);
+        input.signal?.removeEventListener('abort', abort);
+      }
+    }
+  }
+  const error = new Error('All compatible provider routes failed');
+  Object.assign(error, { failures });
+  throw error;
+}
