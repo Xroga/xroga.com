@@ -16,6 +16,9 @@ export interface CompileValidateResult {
   reason?: string;
   installOk?: boolean;
   tscOk?: boolean;
+  buildOk?: boolean;
+  buildCommand?: string;
+  buildExitCode?: number | null;
   issues: string[];
   logTail: string;
   durationMs: number;
@@ -25,6 +28,24 @@ const MAX_FILES = 80;
 const MAX_FILE_BYTES = 200_000;
 const INSTALL_MS = 90_000;
 const TSC_MS = 60_000;
+const BUILD_MS = 180_000;
+
+export function requiredProductionBuild(files: ProjectFile[]): { command: string; args: string[] } | null {
+  const raw = files.find((file) => file.path === 'package.json')?.content;
+  if (!raw) return null;
+  try {
+    const pkg = JSON.parse(raw) as { scripts?: Record<string, string> };
+    return pkg.scripts?.build ? { command: 'npm', args: ['run', 'build'] } : null;
+  } catch {
+    return null;
+  }
+}
+
+export function productionValidationAllowsDeployment(result: CompileValidateResult): boolean {
+  if (result.skipped) return result.ok;
+  if (!result.ok || result.installOk !== true || result.tscOk !== true) return false;
+  return result.buildCommand ? result.buildOk === true && result.buildExitCode === 0 : true;
+}
 
 function runCmd(
   cmd: string,
@@ -226,13 +247,31 @@ export async function compileValidateProject(
     const installOk = install.code === 0 && !install.timedOut;
     const tscOk = tscResult.code === 0 && !tscResult.timedOut;
     // Soft-pass install failures that are registry flakes if tsc somehow ok — rare
-    const ok = installOk && tscOk;
+    const requiredBuild = requiredProductionBuild(limited);
+    let buildOk: boolean | undefined;
+    let buildExitCode: number | null | undefined;
+    if (installOk && tscOk && requiredBuild) {
+      const buildResult = await runCmd(requiredBuild.command, requiredBuild.args, dir, BUILD_MS);
+      buildExitCode = buildResult.code;
+      buildOk = buildResult.code === 0 && !buildResult.timedOut;
+      log += `production build (${requiredBuild.command} ${requiredBuild.args.join(' ')}):\n${buildResult.stdout}\n${buildResult.stderr}\n`;
+      if (buildResult.timedOut) issues.push('production build timed out');
+      else if (!buildOk) issues.push(`production build failed (exit ${buildResult.code})`);
+    } else if (requiredBuild) {
+      buildOk = false;
+      buildExitCode = null;
+      issues.push('production build blocked by install or typecheck failure');
+    }
+    const ok = installOk && tscOk && (!requiredBuild || buildOk === true);
 
     return {
       ok,
       skipped: false,
       installOk,
       tscOk,
+      buildOk,
+      buildCommand: requiredBuild ? `${requiredBuild.command} ${requiredBuild.args.join(' ')}` : undefined,
+      buildExitCode,
       issues: issues.slice(0, 12),
       logTail: log.slice(-6000),
       durationMs: Date.now() - started,

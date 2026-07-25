@@ -38,15 +38,12 @@ import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
 import capabilitiesRouter from './routes/capabilities.js';
 import { adminMiddleware } from './middleware/admin.js';
-import { getGitHubOAuthCallbackUrl } from './routes/github.js';
-import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from './db/ensureGithubSchema.js';
-import { vercelOAuthConfigured } from './services/integrations/vercelAuth.js';
-import { supabaseOAuthConfigured } from './services/integrations/supabaseAuth.js';
+import { ensureGithubSchema } from './db/ensureGithubSchema.js';
 import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
 import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
 import { ensureShipLoopSchema } from './db/ensureShipLoopSchema.js';
 import { modelKeyStatus, modelTransportStatus } from './ai/openaiCompat.js';
-import { getAiStackKeyStatus } from './config/envSecrets.js';
+import { publicHealthPayload } from './lib/safeHealth.js';
 
 const app = express();
 
@@ -99,37 +96,9 @@ app.use('/api/billing/webhook', billingWebhookRouter);
 
 app.use(express.json({ limit: '10mb' }));
 
-const healthPayload = () => ({
-  status: 'ok',
-  service: 'xroga-api',
-  version: '3.0.0-ai-swarm',
-  aiBackend: 'kimi-glm-deepseek-grok',
-  aiPipeline: 'converter→builder',
-  aiTransport: 'openrouter-deepseek+native-kimi-glm-grok',
-  aiKeys: modelKeyStatus(),
-  aiStackKeys: getAiStackKeyStatus(),
-  aiModelRoutes: modelTransportStatus(),
-  timestamp: new Date().toISOString(),
-  authConfigured: Boolean(process.env.SUPABASE_URL),
-  dbConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
-  jwtConfigured: Boolean(
-    process.env.SUPABASE_URL &&
-      (process.env.SUPABASE_JWT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY)
-  ),
-  authMethod: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'supabase_admin' : 'jwt_local',
-  frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
-  githubOAuthRedirectUri: getGitHubOAuthCallbackUrl(),
-  research: 'tavily+searxng',
-  githubSchemaAutoBootstrap: githubSchemaAutoBootstrapEnabled(),
-  vercelOAuthConfigured: vercelOAuthConfigured(),
-  supabaseOAuthConfigured: supabaseOAuthConfigured(),
-  vercelOauthCallback: process.env.VERCEL_OAUTH_CALLBACK_URL || null,
-  supabaseOauthCallback: process.env.SUPABASE_OAUTH_CALLBACK_URL || null,
-});
-
 app.get('/', (_req, res) => {
   res.json({
-    ...healthPayload(),
+    ...publicHealthPayload(),
     message: 'Xroga API is running — Converter → Builder AI Swarm (Kimi / GLM / DeepSeek / Grok)',
     docs: {
       health: '/health',
@@ -143,7 +112,7 @@ app.get('/', (_req, res) => {
 });
 
 app.get('/health', (_req, res) => {
-  res.json(healthPayload());
+  res.json(publicHealthPayload());
 });
 
 app.get('/metrics', (_req, res) => {
@@ -152,7 +121,7 @@ app.get('/metrics', (_req, res) => {
 });
 
 app.get('/api/health', (_req, res) => {
-  res.json(healthPayload());
+  res.json(publicHealthPayload());
 });
 
 app.get('/api/config', (_req, res) => {
@@ -160,7 +129,7 @@ app.get('/api/config', (_req, res) => {
     frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
     aiBackend: 'kimi-glm-deepseek-grok',
     aiPipeline: 'converter→builder',
-    keys: modelKeyStatus(),
+    capabilities: ['chat', 'build', 'github', 'deployment'],
   });
 });
 

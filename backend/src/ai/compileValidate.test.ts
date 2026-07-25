@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { compileValidateProject } from './compileValidate.js';
+import { compileValidateProject, productionValidationAllowsDeployment, requiredProductionBuild } from './compileValidate.js';
 import { formatArchitectForBuilder, runArchitectPlan } from './architect.js';
 
 describe('compileValidateProject', () => {
@@ -10,6 +10,15 @@ describe('compileValidateProject', () => {
     ]);
     assert.equal(result.skipped, true);
     assert.equal(result.ok, true);
+  });
+
+  it('requires the real framework build and blocks deployment when it fails', () => {
+    const files = [{ path: 'package.json', content: JSON.stringify({ scripts: { build: 'next build' }, dependencies: { next: '15.5.7' } }) }];
+    assert.deepEqual(requiredProductionBuild(files), { command: 'npm', args: ['run', 'build'] });
+    assert.equal(productionValidationAllowsDeployment({
+      ok: false, skipped: false, installOk: true, tscOk: true, buildOk: false,
+      buildCommand: 'npm run build', buildExitCode: 1, issues: ['build failed'], logTail: '', durationMs: 1,
+    }), false);
   });
 });
 
