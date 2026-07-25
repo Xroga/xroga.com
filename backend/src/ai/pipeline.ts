@@ -103,7 +103,7 @@ import {
 import { summarizeRepoForUpdates } from './repoSummarize.js';
 import { scanProjectFiles, redactCriticalSecrets } from './securityScan.js';
 import { staticValidateProject } from './staticValidate.js';
-import { compileValidateProject } from './compileValidate.js';
+import { compileValidateProject, productionValidationAllowsDeployment } from './compileValidate.js';
 import { formatArchitectForBuilder, runArchitectPlan } from './architect.js';
 import {
   loadSessionHistory,
@@ -125,8 +125,16 @@ import {
 } from './intelligentRouter.js';
 import { normalizeProviderError, recordModelValidation } from './providerRuntime.js';
 import { classifyFailure } from '../lib/recoveryPlanner.js';
-import { recordRoutingOutcome } from './routingOutcomes.js';
+import { loadRoutingOutcomes, recordRoutingOutcome } from './routingOutcomes.js';
 import { getRuntimeModelRegistry } from './modelCapabilityRegistry.js';
+import { prepareFocusedContext } from './contextPreparation.js';
+import {
+  InMemoryExecutionStateStore,
+  SupabaseExecutionStateStore,
+  createCanonicalExecutionState,
+  executableTasksFromRoutePlan,
+  transitionTask,
+} from './executionRuntime.js';
 
 export interface PipelineProgress {
   agent?: string;
@@ -806,6 +814,7 @@ export async function runBuildPipeline(opts: {
       ? { ...model, configured: true, credentialSource: 'user' as const }
       : model,
   );
+  await loadRoutingOutcomes();
   const intelligentPlan = createIntelligentRoutePlan({
     prompt: opts.prompt,
     repositoryFiles: prior.files,
@@ -816,6 +825,33 @@ export async function runBuildPipeline(opts: {
       task.taskClass,
     ),
   );
+  const reviewerTask = intelligentPlan.subtasks.find((task) =>
+    ['code_review', 'security_review'].includes(task.taskClass),
+  );
+  const reviewerModel = reviewerTask?.selectedModel ?? 'deepseek_v4_flash';
+  const executionStore = process.env.SUPABASE_SERVICE_ROLE_KEY
+    ? new SupabaseExecutionStateStore(opts.userId)
+    : new InMemoryExecutionStateStore();
+  const executionState = createCanonicalExecutionState({
+    projectId: meta?.githubTargetRepo || prior.projectName || runId,
+    runId,
+    repository: meta?.githubTargetRepo ? {
+      owner: meta.githubTargetRepo.split('/')[0] || '',
+      name: meta.githubTargetRepo.split('/')[1] || meta.githubTargetRepo,
+    } : null,
+    selectedBranch: meta?.githubTargetBranch || 'main',
+    files: prior.files,
+    requiredCapabilities: intelligentPlan.classification.requiredCapabilities,
+    tasks: executableTasksFromRoutePlan(intelligentPlan),
+  });
+  for (const taskClass of ['request_understanding', 'repository_analysis']) {
+    const task = intelligentPlan.subtasks.find((candidate) => candidate.taskClass === taskClass);
+    if (task && !task.blocker) transitionTask(executionState, task.id, 'completed', { evidence: [{
+      id: randomUUID(), kind: taskClass, summary: taskClass === 'repository_analysis' ? `Inspected ${prior.files.length} project files` : 'Classified requested outcome and required capabilities',
+      timestamp: new Date().toISOString(),
+    }] });
+  }
+  await executionStore.save(executionState).catch((error) => console.warn('[executionRuntime] initial persistence skipped:', (error as Error).message));
   const route: RouteDecision = {
     ...baseRoute,
     builder: implementationTask?.selectedModel ?? baseRoute.builder,
@@ -1036,6 +1072,20 @@ export async function runBuildPipeline(opts: {
   const selection = isUpdate
     ? selectFilesForUpdate(prior.files, userFacingPrompt)
     : { selected: prior.files, skippedPaths: [] as string[], reason: '' };
+  const focusedContext = prepareFocusedContext({
+    files: prior.files,
+    objective: userFacingPrompt,
+    allowedFiles: selection.selected.map((file) => file.path),
+    maximumTokens: intelligentPlan.contextStrategy.maximumContextTokens,
+  });
+  const implementationExecutionTask = implementationTask
+    ? executionState.tasks.find((task) => task.id === implementationTask.id)
+    : undefined;
+  if (implementationExecutionTask) {
+    implementationExecutionTask.requiredContextReferences = focusedContext.suppliedReferences;
+    implementationExecutionTask.status = 'running';
+    implementationExecutionTask.startedAt = new Date().toISOString();
+  }
   const likelyDeletes = isUpdate
     ? guessDeletePaths(
         userFacingPrompt,
@@ -1200,7 +1250,7 @@ export async function runBuildPipeline(opts: {
 
   const updateBlock =
     isUpdate
-      ? `\n\n${incrementalUpdateContext(selection.selected, {
+      ? `\n\n${incrementalUpdateContext(focusedContext.files, {
           allPaths: prior.files.map((f) => f.path),
           cachedSummary,
           selectionNote: selection.reason,
@@ -1570,7 +1620,7 @@ export async function runBuildPipeline(opts: {
   });
   throwIfAborted();
   const siteForQa = filesToSite(nextFiles);
-  await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
+  await assertCanUseModel(opts.userId, reviewerModel);
   emit({
     agent: 'reviewer',
     status: 'reviewing',
@@ -1588,6 +1638,11 @@ export async function runBuildPipeline(opts: {
     js: siteForQa.js,
     isUpdate,
     files: nextFiles,
+    reviewerModel,
+    acceptanceCriteria: intelligentPlan.classification.reasoning,
+    architectureSummary: cachedSummary || undefined,
+    changedFiles: buildFileTrail(previousFiles, nextFiles).map((entry) => entry.path),
+    securitySensitiveContext: intelligentPlan.classification.requiredCapabilities.filter((capability) => /security|auth|payment|blockchain/i.test(capability)),
   });
   if (!staticPre.ok) {
     qa = {
@@ -1600,20 +1655,20 @@ export async function runBuildPipeline(opts: {
   if (qa.inputTokens || qa.outputTokens) {
     usage = await recordUsage(
       opts.userId,
-      'deepseek_v4_flash',
+      reviewerModel,
       qa.inputTokens,
       qa.outputTokens,
     );
   }
 
-  // Real compile: npm install --ignore-scripts + tsc --noEmit (framework projects)
+  // Real validation: dependency install, typecheck, and required framework production build.
   throwIfAborted();
   emit({
     agent: 'compiler',
     status: 'compiling',
-    message: 'Compile validate — npm install + tsc…',
+    message: 'Production validate — install, typecheck, framework build…',
     swarmStatusLabel: 'Compile',
-    swarmActivity: 'Sandbox tsc',
+    swarmActivity: 'Sandbox production build',
     swarmTodos: todos('compile'),
   });
   let compile = await compileValidateProject(nextFiles, { signal: opts.signal });
@@ -1745,11 +1800,16 @@ export async function runBuildPipeline(opts: {
         js: reQaSite.js,
         isUpdate,
         files: nextFiles,
+        reviewerModel,
+        acceptanceCriteria: intelligentPlan.classification.reasoning,
+        architectureSummary: cachedSummary || undefined,
+        changedFiles: buildFileTrail(previousFiles, nextFiles).map((entry) => entry.path),
+        validationResults: [{ kind: 'production_build', ok: compile.ok, command: compile.buildCommand, exitCode: compile.buildExitCode }],
       });
       if (qa.inputTokens || qa.outputTokens) {
         usage = await recordUsage(
           opts.userId,
-          'deepseek_v4_flash',
+          reviewerModel,
           qa.inputTokens,
           qa.outputTokens,
         );
@@ -1769,6 +1829,30 @@ export async function runBuildPipeline(opts: {
     }
   }
 
+  executionState.currentWorkingSnapshot = nextFiles;
+  executionState.changedFiles = buildFileTrail(previousFiles, nextFiles).map((entry) => entry.path);
+  executionState.validationResults.push({
+    class: 'framework_production_build', command: compile.buildCommand,
+    exitCode: compile.buildExitCode, ok: compile.ok,
+    safeOutputSummary: compile.ok ? 'Production validation passed' : compile.issues.slice(0, 4).join('; '),
+    timestamp: new Date().toISOString(), taskId: implementationTask?.id,
+  });
+  if (implementationTask) transitionTask(executionState, implementationTask.id, qa.ok && productionValidationAllowsDeployment(compile) ? 'completed' : 'failed', {
+    evidence: qa.ok && productionValidationAllowsDeployment(compile) ? [{
+      id: randomUUID(), kind: 'validated_implementation', summary: `${executionState.changedFiles.length} changed files passed required validation`, timestamp: new Date().toISOString(),
+    }] : undefined,
+    blocker: qa.ok ? compile.issues.join('; ') : qa.issues.join('; '),
+  });
+  if (reviewerTask) {
+    executionState.reviewer = { provider: MODELS[reviewerModel].provider, model: reviewerModel, taskId: reviewerTask.id };
+    executionState.reviewFindings = qa.findings.map((finding) => ({ id: randomUUID(), ...finding, resolved: false }));
+    transitionTask(executionState, reviewerTask.id, qa.ok ? 'completed' : 'failed', {
+      evidence: qa.ok ? [{ id: randomUUID(), kind: 'independent_review', summary: `${MODELS[reviewerModel].label} completed structured review`, timestamp: new Date().toISOString() }] : undefined,
+      blocker: qa.ok ? undefined : qa.issues.join('; '),
+    });
+  }
+  await executionStore.save(executionState).catch((error) => console.warn('[executionRuntime] validation persistence skipped:', (error as Error).message));
+
   await recordRoutingOutcome({
     runId,
     userId: opts.userId,
@@ -1780,6 +1864,9 @@ export async function runBuildPipeline(opts: {
     patchApplied: usedPatches,
     typecheckOk: compile.skipped ? undefined : compile.tscOk,
     buildOk: compile.ok,
+    reviewOk: qa.ok,
+    requiredCapabilities: intelligentPlan.classification.requiredCapabilities,
+    provider: MODELS[result.modelId].provider,
     repairLoops,
     modelSwitches,
     recoverySucceeded:
@@ -1941,7 +2028,7 @@ export async function runBuildPipeline(opts: {
     provisioned: false,
     message: '',
   }));
-  const compileBlocksShip = !compile.skipped && compile.ok === false;
+  const compileBlocksShip = !productionValidationAllowsDeployment(compile);
   // Re-check structure right before push (after QA fix passes may have changed files)
   const structureFinal = staticValidateProject(nextFiles);
   const qaBlocksShip = !structureFinal.ok;

@@ -8,6 +8,7 @@ import {
 import { getRouterAdminConfig, type RoutingMode } from './routerConfig.js';
 import { classifyTaskRequest, type TaskClassification } from '../lib/taskClassifier.js';
 import type { FailureCategory } from '../lib/recoveryPlanner.js';
+import { historicalModelQuality } from './routingOutcomes.js';
 
 export type RouterTaskClass =
   | 'request_understanding'
@@ -216,6 +217,7 @@ function modelScore(
   mode: RoutingMode,
   complexity: ComplexityAssessment,
   requiredTokens: number,
+  framework?: string,
 ): number {
   if (!model.enabled || !model.configured || model.health.status === 'circuit_open') return -Infinity;
   if (model.configuredMonthlyBudgetUsd <= 0) return -Infinity;
@@ -237,6 +239,8 @@ function modelScore(
     score += model.strengths.repository_analysis * 2;
   }
   if (model.credentialSource === 'user') score += 3;
+  const historical = historicalModelQuality({ modelId: model.id, taskClass, framework });
+  if (historical !== null) score += (historical - 0.5) * 20;
   return score;
 }
 
@@ -249,6 +253,7 @@ export function rankModelsForSubtask(
     registry?: RuntimeModelCapability[];
     budget?: RouterBudget;
     exclude?: ModelId[];
+    framework?: string;
   },
 ): ModelId[] {
   const excluded = new Set(opts.exclude ?? []);
@@ -261,7 +266,7 @@ export function rankModelsForSubtask(
     .filter((model) => !excluded.has(model.id))
     .map((model) => ({
       id: model.id,
-      score: modelScore(model, taskClass, opts.mode, opts.complexity, opts.requiredTokens),
+      score: modelScore(model, taskClass, opts.mode, opts.complexity, opts.requiredTokens, opts.framework),
     }))
     .filter((item) => Number.isFinite(item.score))
     .sort((a, b) => b.score - a.score)
@@ -293,7 +298,9 @@ export function createIntelligentRoutePlan(input: {
     affectedFileCount: input.affectedFileCount ?? input.affectedFiles?.length,
     previousFailures: input.previousFailures,
   });
-  const highRisk = classification.requiredCapabilities.some((id) => HIGH_RISK_CAPABILITIES.has(id));
+  const highRisk =
+    classification.requiredCapabilities.some((id) => HIGH_RISK_CAPABILITIES.has(id)) ||
+    /\b(auth(?:entication|orisation|orization)?|rls|row level security|payment|webhook|secret|encryption|wallet|smart contract|deployment infrastructure|irreversible)\b/i.test(input.prompt);
   const mode = effectiveMode(input.mode, complexity, highRisk);
   const taskClasses = inferTaskClasses(input.prompt, classification);
   const admin = getRouterAdminConfig();
@@ -355,14 +362,17 @@ export function createIntelligentRoutePlan(input: {
     admin.requireHighRiskReview &&
     (highRisk || complexity.level === 'critical' || (input.affectedFileCount ?? input.affectedFiles?.length ?? 0) > 12 || (input.previousFailures ?? 0) >= 2);
   if (reviewRequired) {
-    const implementationModels = subtasks.map((task) => task.selectedModel).filter(Boolean) as ModelId[];
+    const implementationModels = subtasks
+      .filter((task) => ['ui_generation', 'backend_generation', 'code_generation', 'multi_file_implementation', 'integration_implementation', 'bug_fixing', 'refactoring'].includes(task.taskClass))
+      .map((task) => task.selectedModel)
+      .filter(Boolean) as ModelId[];
     const ranked = rankModelsForSubtask('security_review', {
       mode: 'intelligence',
       complexity,
       requiredTokens: Math.min(perTask, 8_192),
       registry: input.registry,
       budget: input.budget,
-      exclude: implementationModels.slice(-1),
+      exclude: [...new Set(implementationModels)],
     });
     if (!ranked.length) blockers.push('Independent review is required but no distinct healthy configured review model is available.');
     subtasks.push({
