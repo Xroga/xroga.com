@@ -5,6 +5,7 @@ import {
   OPENROUTER_BASE_URL,
   type ModelId,
 } from './models.js';
+import { recordModelExecution } from './providerRuntime.js';
 
 export type ContentPart =
   | { type: 'text'; text: string }
@@ -33,6 +34,19 @@ interface ResolvedEndpoint {
   defaultHeaders?: Record<string, string>;
 }
 
+const MODEL_ID_ENV: Record<ModelId, string> = {
+  kimi_k3: 'KIMI_MODEL_ID',
+  glm_5_2: 'GLM_MODEL_ID',
+  deepseek_v4_pro: 'DEEPSEEK_PRO_MODEL_ID',
+  deepseek_v4_flash: 'DEEPSEEK_FLASH_MODEL_ID',
+  grok_4_5: 'GROK_PRIMARY_MODEL_ID',
+  grok_4_3: 'GROK_REVIEW_MODEL_ID',
+};
+
+export function configuredApiModel(modelId: ModelId): string {
+  return process.env[MODEL_ID_ENV[modelId]]?.trim() || MODELS[modelId].apiModel;
+}
+
 function openRouterHeaders(): Record<string, string> {
   const referer = process.env.FRONTEND_URL || 'https://xroga.com';
   return {
@@ -48,47 +62,49 @@ function openRouterHeaders(): Record<string, string> {
  * - GLM → Zhipu official (GLM_API_KEY)
  * - Grok → xAI official (GROK_API_KEY)
  */
-export function resolveEndpoint(modelId: ModelId): ResolvedEndpoint {
+export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): ResolvedEndpoint {
   const def = MODELS[modelId];
+  const apiModel = configuredApiModel(modelId);
 
   if (def.provider === 'openrouter') {
-    const orKey = getSecret('OPENROUTER_API_KEY');
+    const orKey = credentialOverride?.trim() || getSecret('OPENROUTER_API_KEY');
     if (!orKey) {
       throw new Error(
-        `OPENROUTER_API_KEY is not configured (required for ${def.apiModel}). ` +
+        `OPENROUTER_API_KEY is not configured (required for ${apiModel}). ` +
           'DeepSeek runs only via OpenRouter — DEEPSEEK_API_KEY is not used.',
       );
     }
     return {
       apiKey: orKey,
       baseUrl: OPENROUTER_BASE_URL,
-      apiModel: def.apiModel,
+      apiModel,
       provider: 'openrouter',
       defaultHeaders: openRouterHeaders(),
     };
   }
 
   if (def.provider === 'xai') {
-    const grokKey = getSecret('GROK_API_KEY') || getSecret('XAI_API_KEY');
+    const grokKey =
+      credentialOverride?.trim() || getSecret('GROK_API_KEY') || getSecret('XAI_API_KEY');
     if (!grokKey) {
       throw new Error('GROK_API_KEY is not configured on the server');
     }
     return {
       apiKey: grokKey,
       baseUrl: def.baseUrl,
-      apiModel: def.apiModel,
+      apiModel,
       provider: 'xai',
     };
   }
 
-  const apiKey = getSecret(def.secretKey);
+  const apiKey = credentialOverride?.trim() || getSecret(def.secretKey);
   if (!apiKey) {
     throw new Error(`${def.secretKey} is not configured on the server`);
   }
   return {
     apiKey,
     baseUrl: def.baseUrl,
-    apiModel: def.apiModel,
+    apiModel,
     provider: def.provider,
   };
 }
@@ -117,35 +133,48 @@ function contentTokenEstimate(content: string | ContentPart[]): number {
 export async function chatCompletion(
   modelId: ModelId,
   messages: ChatMessage[],
-  opts: { maxTokens?: number; temperature?: number; json?: boolean } = {},
+  opts: {
+    maxTokens?: number;
+    temperature?: number;
+    json?: boolean;
+    signal?: AbortSignal;
+    credentialOverride?: string;
+  } = {},
 ): Promise<ChatResult> {
-  const endpoint = resolveEndpoint(modelId);
-  const client = clientFor(endpoint);
-
-  const completion = await client.chat.completions.create({
-    model: endpoint.apiModel,
-    messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
-    max_tokens: opts.maxTokens ?? 8192,
-    temperature: opts.temperature ?? 0.4,
-    ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
-  });
-
-  const choice = completion.choices[0]?.message;
-  const text = (choice?.content ?? '').trim();
-  const inputTokens =
-    completion.usage?.prompt_tokens ??
-    messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
-  const outputTokens = completion.usage?.completion_tokens ?? estimateTokens(text);
-
-  return {
-    text,
-    modelId,
-    apiModel: endpoint.apiModel,
-    provider: endpoint.provider,
-    inputTokens,
-    outputTokens,
-    totalTokens: inputTokens + outputTokens,
-  };
+  const started = Date.now();
+  try {
+    const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
+    const client = clientFor(endpoint);
+    const completion = await client.chat.completions.create(
+      {
+        model: endpoint.apiModel,
+        messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
+        max_tokens: opts.maxTokens ?? 8192,
+        temperature: opts.temperature ?? 0.4,
+        ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
+      },
+      opts.signal ? { signal: opts.signal } : undefined,
+    );
+    const choice = completion.choices[0]?.message;
+    const text = (choice?.content ?? '').trim();
+    const inputTokens =
+      completion.usage?.prompt_tokens ??
+      messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
+    const outputTokens = completion.usage?.completion_tokens ?? estimateTokens(text);
+    recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
+    return {
+      text,
+      modelId,
+      apiModel: endpoint.apiModel,
+      provider: endpoint.provider,
+      inputTokens,
+      outputTokens,
+      totalTokens: inputTokens + outputTokens,
+    };
+  } catch (error) {
+    recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
+    throw error;
+  }
 }
 
 export async function chatCompletionStream(
@@ -156,18 +185,19 @@ export async function chatCompletionStream(
     temperature?: number;
     onDelta?: (delta: string) => void;
     signal?: AbortSignal;
+    credentialOverride?: string;
   } = {},
 ): Promise<ChatResult> {
-  const endpoint = resolveEndpoint(modelId);
-  const client = clientFor(endpoint);
-
-  if (opts.signal?.aborted) {
-    const err = new Error('Build cancelled') as Error & { code?: string };
-    err.code = 'BUILD_CANCELLED';
-    throw err;
-  }
-
-  const stream = await client.chat.completions.create(
+  const started = Date.now();
+  try {
+    const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
+    const client = clientFor(endpoint);
+    if (opts.signal?.aborted) {
+      const err = new Error('Build cancelled') as Error & { code?: string };
+      err.code = 'BUILD_CANCELLED';
+      throw err;
+    }
+    const stream = await client.chat.completions.create(
     {
       model: endpoint.apiModel,
       messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
@@ -178,42 +208,45 @@ export async function chatCompletionStream(
     opts.signal ? { signal: opts.signal } : undefined,
   );
 
-  let text = '';
-  let inputTokens = messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
-  let outputTokens = 0;
+    let text = '';
+    let inputTokens = messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
+    let outputTokens = 0;
 
-  for await (const chunk of stream) {
-    if (opts.signal?.aborted) {
-      const err = new Error('Build cancelled') as Error & { code?: string };
-      err.code = 'BUILD_CANCELLED';
-      throw err;
-    }
-    const delta = chunk.choices[0]?.delta?.content ?? '';
-    if (delta) {
-      text += delta;
-      opts.onDelta?.(delta);
+    for await (const chunk of stream) {
+      if (opts.signal?.aborted) {
+        const err = new Error('Build cancelled') as Error & { code?: string };
+        err.code = 'BUILD_CANCELLED';
+        throw err;
+      }
+      const delta = chunk.choices[0]?.delta?.content ?? '';
+      if (delta) {
+        text += delta;
+        opts.onDelta?.(delta);
+      }
+
+      if (chunk.usage) {
+        inputTokens = chunk.usage.prompt_tokens ?? inputTokens;
+        outputTokens = chunk.usage.completion_tokens ?? outputTokens;
+      }
     }
 
-    if (chunk.usage) {
-      inputTokens = chunk.usage.prompt_tokens ?? inputTokens;
-      outputTokens = chunk.usage.completion_tokens ?? outputTokens;
-    }
+    text = text.trim();
+    if (!outputTokens) outputTokens = estimateTokens(text);
+
+    recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
+    return {
+      text,
+      modelId,
+      apiModel: endpoint.apiModel,
+      provider: endpoint.provider,
+      inputTokens,
+      outputTokens,
+      totalTokens: inputTokens + outputTokens,
+    };
+  } catch (error) {
+    recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
+    throw error;
   }
-
-  text = text.trim();
-  if (!outputTokens) {
-    outputTokens = estimateTokens(text);
-  }
-
-  return {
-    text,
-    modelId,
-    apiModel: endpoint.apiModel,
-    provider: endpoint.provider,
-    inputTokens,
-    outputTokens,
-    totalTokens: inputTokens + outputTokens,
-  };
 }
 
 /** Build OpenAI-compatible multimodal user content (text + images). */

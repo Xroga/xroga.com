@@ -1,5 +1,6 @@
 import { getSecret } from '../config/envSecrets.js';
-import { MODELS } from './models.js';
+import { configuredApiModel } from './openaiCompat.js';
+import { normalizeProviderError, recordModelExecution } from './providerRuntime.js';
 
 export interface ResearchSource {
   title: string;
@@ -32,11 +33,18 @@ export async function gatherResearch(query: string): Promise<ResearchBundle> {
 
   const grokKey = getSecret('GROK_API_KEY') || getSecret('XAI_API_KEY');
   if (grokKey) {
+    const started = Date.now();
     try {
       const bundle = await grokLiveSearch(q, grokKey, { includeX: true, forceX: wantsX });
+      recordModelExecution('grok_4_5', { ok: true, latencyMs: Date.now() - started });
       if (bundle.summary.trim() || bundle.sources.length) return bundle;
     } catch (err) {
-      console.warn('[research] Grok live search failed:', (err as Error).message);
+      recordModelExecution('grok_4_5', {
+        ok: false,
+        latencyMs: Date.now() - started,
+        error: err,
+      });
+      console.warn('[research] Grok live search failed:', normalizeProviderError(err).safeMessage);
     }
   }
 
@@ -46,7 +54,7 @@ export async function gatherResearch(query: string): Promise<ResearchBundle> {
       const bundle = await tavilySearch(q, tavily);
       if (bundle.sources.length) return bundle;
     } catch (err) {
-      console.warn('[research] Tavily failed:', (err as Error).message);
+      console.warn('[research] Tavily failed:', normalizeProviderError(err).safeMessage);
     }
   }
 
@@ -54,7 +62,7 @@ export async function gatherResearch(query: string): Promise<ResearchBundle> {
     const bundle = await searxngSearch(q);
     if (bundle.sources.length) return bundle;
   } catch (err) {
-    console.warn('[research] SearXNG failed:', (err as Error).message);
+    console.warn('[research] SearXNG failed:', normalizeProviderError(err).safeMessage);
   }
 
   return { query: q, summary: '', sources: [], provider: 'none' };
@@ -69,7 +77,7 @@ async function grokLiveSearch(
   apiKey: string,
   opts: { includeX: boolean; forceX: boolean },
 ): Promise<ResearchBundle> {
-  const apiModel = MODELS.grok_4_5.apiModel;
+  const apiModel = configuredApiModel('grok_4_5');
   const sources: Array<Record<string, unknown>> = [{ type: 'web' }, { type: 'news' }];
   if (opts.includeX) sources.push({ type: 'x' });
 
@@ -105,11 +113,11 @@ async function grokLiveSearch(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(body),
+    signal: AbortSignal.timeout(30_000),
   });
 
   if (!res.ok) {
-    const errText = await res.text().catch(() => '');
-    throw new Error(`Grok search HTTP ${res.status}: ${errText.slice(0, 200)}`);
+    throw Object.assign(new Error('Grok search request failed'), { status: res.status });
   }
 
   const data = (await res.json()) as {
@@ -173,8 +181,9 @@ async function tavilySearch(query: string, apiKey: string): Promise<ResearchBund
       include_answer: true,
       max_results: 8,
     }),
+    signal: AbortSignal.timeout(20_000),
   });
-  if (!res.ok) throw new Error(`Tavily HTTP ${res.status}`);
+  if (!res.ok) throw Object.assign(new Error('Tavily request failed'), { status: res.status });
   const data = (await res.json()) as {
     answer?: string;
     results?: Array<{ title?: string; url?: string; content?: string }>;

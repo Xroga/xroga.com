@@ -1,6 +1,7 @@
 import { withRetry, type RetryOptions } from './retry.js';
 import { circuitBreaker } from './circuitBreaker.js';
 import { logSystemError } from '../../services/systemErrorLog.js';
+import { normalizeProviderError } from '../../ai/providerRuntime.js';
 
 export interface FallbackCallContext {
   userId?: string;
@@ -13,7 +14,7 @@ export interface FallbackCallContext {
 export async function callWithFallback<T>(
   providers: Array<{
     name: string;
-    call: () => Promise<T>;
+    call: (signal?: AbortSignal) => Promise<T>;
     isValid?: (result: T) => boolean;
   }>,
   finalFallback: () => T | Promise<T>,
@@ -24,7 +25,11 @@ export async function callWithFallback<T>(
     try {
       const result = await circuitBreaker(
         `${ctx.apiType}:${provider.name}`,
-        () => withRetry(provider.call, { ...retryOpts, label: provider.name }),
+        () => withRetry(provider.call, {
+          ...retryOpts,
+          label: provider.name,
+          shouldRetry: (error) => normalizeProviderError(error).retryable,
+        }),
         async () => {
           throw new Error('circuit open');
         }
@@ -34,7 +39,7 @@ export async function callWithFallback<T>(
     } catch (err) {
       await logSystemError({
         api: provider.name,
-        errorMessage: (err as Error).message,
+        errorMessage: normalizeProviderError(err).safeMessage,
         fallbackUsed: 'trying next provider',
         severity: 'warning',
         userId: ctx.userId,
