@@ -16,8 +16,8 @@ function projectRefFromUrl(url) {
 
 export function resolveProjectRef() {
   return (
-    projectRefFromConfig() ||
     projectRefFromUrl(process.env.SUPABASE_URL) ||
+    projectRefFromConfig() ||
     'mweinwhoekwjrecsodip'
   );
 }

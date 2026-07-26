@@ -60,15 +60,33 @@ jobs:
             delay=$((delay * 2))
           done
 
-      - name: Verify health
+      - name: Record deployed release evidence
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
+          set -euo pipefail
+          flyctl status --app xroga-api --json > fly-release-status.json
+          node -e "const fs=require('fs'); const s=JSON.parse(fs.readFileSync('fly-release-status.json')); console.log(JSON.stringify({commit:process.env.GITHUB_SHA,app:s.Name ?? 'xroga-api',status:s.Status ?? 'unknown'}))"
+
+      - name: Verify health and readiness
+        run: |
+          set -euo pipefail
           sleep 15
-          curl -fsS "https://xroga-api.fly.dev/health"
-          echo ""
-          curl -fsS "https://xroga-api.fly.dev/api/health"
-          echo ""
-          curl -fsS "https://xroga-api.fly.dev/ready"
-          echo ""
+          : > deployment-verification.jsonl
+          verify_endpoint() {
+            name="$1"
+            url="$2"
+            body_file="/tmp/${name}.json"
+            code=$(curl -sS -o "$body_file" -w '%{http_code}' --max-time 20 "$url" || true)
+            node -e "const fs=require('fs'); const body=fs.readFileSync(process.argv[1],'utf8').slice(0,500); console.log(JSON.stringify({check:process.argv[2],url:process.argv[3],status:Number(process.argv[4]||0),body}))" "$body_file" "$name" "$url" "$code" | tee -a deployment-verification.jsonl
+            if [ "$code" -lt 200 ] || [ "$code" -ge 300 ]; then
+              echo "::error::${name} failed with HTTP ${code}. See deployment-verification artifact for the safe response."
+              return 1
+            fi
+          }
+          verify_endpoint liveness "https://xroga-api.fly.dev/health"
+          verify_endpoint api_health "https://xroga-api.fly.dev/api/health"
+          verify_endpoint readiness "https://xroga-api.fly.dev/ready"
           # Supabase OAuth route should exist after this deploy (401 without user token is OK)
           code=$(curl -s -o /tmp/sb.json -w '%{http_code}' "https://xroga-api.fly.dev/api/supabase/oauth" || true)
           echo "GET /api/supabase/oauth → HTTP $code"
@@ -79,16 +97,12 @@ jobs:
             exit 1
           fi
 
-      - name: Record deployed release evidence
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-        run: |
-          set -euo pipefail
-          flyctl status --app xroga-api --json > fly-release-status.json
-          node -e "const fs=require('fs'); const s=JSON.parse(fs.readFileSync('fly-release-status.json')); console.log(JSON.stringify({commit:process.env.GITHUB_SHA,app:s.Name ?? 'xroga-api',status:s.Status ?? 'unknown'}))"
-
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: fly-release-evidence-${{ github.sha }}
-          path: fly-release-status.json
+          path: |
+            fly-release-status.json
+            deployment-verification.jsonl
+          if-no-files-found: warn
           retention-days: 30

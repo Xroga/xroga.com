@@ -31,14 +31,6 @@ function printOfflineMigrationInventory(reason) {
 
 async function handleUnavailableDb(reason) {
   const shipLoop = await shipLoopTablesExistViaRest();
-  if (shipLoop === true) {
-    console.warn(`::warning::${reason}`);
-    console.warn(
-      '::warning::project_memory + session_memory already exist via REST. Fix DB password before the next schema change.'
-    );
-    process.exit(0);
-  }
-
   if (dryRun) {
     printOfflineMigrationInventory(
       `${reason} Dry-run cannot verify applied state — listing migration files only.`
@@ -46,7 +38,9 @@ async function handleUnavailableDb(reason) {
     process.exit(0);
   }
 
-  // Proven missing → fail the main apply job (actionable schema gap).
+  // A production migration job must never pass unless it either applied every
+  // pending migration or proved the complete expected migration state. Checking
+  // two legacy tables does not prove newer migrations were applied.
   if (shipLoop === false) {
     console.error(
       '::error::Ship-loop tables missing (project_memory / session_memory). Durable memory and run traces will not persist until migrations apply.'
@@ -55,14 +49,12 @@ async function handleUnavailableDb(reason) {
     process.exit(1);
   }
 
-  // REST secrets missing/invalid → cannot prove tables are absent. Do not red-X main
-  // over unverifiable state; API boot `ensureShipLoopSchema` covers Fly when DB URL is set.
-  console.warn(`::warning::${reason}`);
-  console.warn(
-    '::warning::Cannot verify ship-loop tables via REST (set GitHub secrets SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY). Skipping hard-fail; fix SUPABASE_DB_PASSWORD (Database password, not service role) so migrations can apply.'
+  console.error(`::error::${reason}`);
+  console.error(
+    '::error::Migration state is unverified and migrations were not applied. Fix DATABASE_URL or SUPABASE_DB_PASSWORD and provide SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY for independent verification.'
   );
   printOfflineMigrationInventory('Migrations not applied this run.');
-  process.exit(0);
+  process.exit(1);
 }
 
 if (!resolveDatabaseUrls().length) {

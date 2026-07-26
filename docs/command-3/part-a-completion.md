@@ -2,6 +2,10 @@
 
 Current result: `command_3a_partially_complete`.
 
+Post-merge production result: `command_3a_blocked`.
+
+The main deployment built and deployed successfully at commit `cdc83e289a6978fb694ecc247ce71f8505b9fcc2`, but `/ready` returned `database_unavailable`. The migration job also logged an invalid database password and did not apply migrations while incorrectly exiting successfully. Command 3B remains gated.
+
 Implemented and locally verified: canonical operational types, immutable release provenance, deployment state validation, evidence-gated promotion, rollback safety, bounded/redacted evidence, protected dimensional metrics, distinct readiness, webhook fail-closed verification and idempotency persistence, server-only operational tables/APIs, and pinned Fly release evidence.
 
 Not yet truthfully verified: the pending migration and backend code in production, post-deploy `/ready`, protected production `/metrics`, `www` DNS, a provider-backed backup restore proof, and a configured external alert destination. Command 3B must not start until these gates are closed.
