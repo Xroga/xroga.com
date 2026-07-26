@@ -1,54 +1,40 @@
 {
-  "command": "3A",
-  "branch": "agent/command3a-production-recovery",
-  "baseCommit": "f980bc71a6a4f36fcaf09d8a2a472c10703f241f",
-  "phase": "command_3a_verified",
-  "part_status": "command_3a_verified",
-  "productionWritesPerformed": true,
-  "productionDeploymentPerformed": true,
-  "supabase": {
-    "projectRef": "nzenxdfumxrnsmybazmo",
-    "projectUrl": "https://nzenxdfumxrnsmybazmo.supabase.co",
-    "repositoryMigrationCount": 38,
-    "migrationWorkflowRun": "https://github.com/Xroga/xroga.com/actions/runs/30214218916",
-    "migrationWorkflowResult": "success",
-    "schemaVerification": {
-      "publicTables": 54,
-      "rlsEnabledTables": 54,
-      "policies": 48,
-      "publicFunctions": 9,
-      "repositoryMigrationRecords": 38,
-      "securityDefinerPublicExposure": false
-    }
-  },
-  "fly": {
-    "app": "xroga-api",
-    "workflowRun": "https://github.com/Xroga/xroga.com/actions/runs/30218203265",
-    "workflowResult": "success",
-    "releaseId": "rel_v0or2w9o1g99y9gx",
-    "releaseVersion": 404,
-    "imageDigest": "sha256:b8084ed37058e6561f9b0a7137d2fc13960d91eac3c580ed6dc36531ed9dc7de",
+  "command": "3B",
+  "branch": "agent/complete-command3b-operations-centre",
+  "baseCommit": "c77add7d86dc38ace87144c9bd8d4bfabfa5ed4c",
+  "phase": "final_verification",
+  "derivedStatus": "command_3b_blocked",
+  "statusSource": "docs/command-3/requirements-ledger.json",
+  "command3aGate": {
+    "status": "verified",
+    "supabaseProjectRef": "nzenxdfumxrnsmybazmo",
+    "migrationWorkflow": "https://github.com/Xroga/xroga.com/actions/runs/30214218916",
+    "flyWorkflow": "https://github.com/Xroga/xroga.com/actions/runs/30218203265",
     "liveReadyUrl": "https://xroga-api.fly.dev/ready",
-    "liveReadyStatus": 200,
-    "liveReadyBody": {
-      "status": "ready",
-      "service": "xroga-api"
+    "liveReadyStatus": 200
+  },
+  "command3b": {
+    "pullRequest": "https://github.com/Xroga/xroga.com/pull/353",
+    "productionWritesPerformed": true,
+    "productionDeploymentPerformed": false,
+    "migrations": ["20260726211546_command3b_operations_centre", "20260726211810_command3b_action_retry_hardening"],
+    "schemaVerification": { "requiredTables": 12, "rlsEnabledTables": 12, "anonymousCanClaim": false, "authenticatedCanClaim": false, "serviceRoleCanClaim": true, "immutableAuditTriggers": 1 },
+    "validation": {
+      "frontendLint": "passed_with_4_pre_existing_warnings",
+      "resilience": "4/4 passed",
+      "backendTests": "293/293 passed",
+      "completionGateTests": "3/3 passed",
+      "backendBuild": "passed",
+      "frontendBuild": "passed (65 pages)",
+      "githubChecks": "passed at commit 46aa465c110e0ebc8ce215dd6e33a6f26a1883c5"
+    },
+    "browserVerification": {
+      "status": "blocked_external",
+      "localResult": "The production bundle starts, but local middleware returns 500 because no Supabase public URL/key is configured.",
+      "previewResult": "Vercel reported Canceled by Ignored Build Step, so no PR preview URL exists.",
+      "missing": ["non-production preview deployment", "valid preview public configuration", "safe authenticated test account/session"]
     }
   },
-  "liveEvidenceObservedAt": "2026-07-27T01:05:53+05:00",
-  "blockers": [],
-  "historicalEvidence": {
-    "previousProjectRef": "mweinwhoekwjrecsodip",
-    "previousState": "That project was inaccessible; its GitHub database password failed and Fly readiness returned database_unavailable.",
-    "failedMigrationRun": "https://github.com/Xroga/xroga.com/actions/runs/30214218916/attempts/1",
-    "failedFlyRun": "https://github.com/Xroga/xroga.com/actions/runs/30214218897",
-    "failedFlyReadiness": {
-      "status": 503,
-      "body": {
-        "status": "not_ready",
-        "reason": "database_unavailable"
-      }
-    }
-  },
-  "nextGate": "Command 3A is verified. Command 3B may begin only on explicit operator instruction."
+  "blockers": ["Mandatory authenticated end-to-end Operations Centre browser verification cannot run until a safe preview and test login are available."],
+  "updatedAt": "2026-07-27T02:35:00+05:00"
 }
