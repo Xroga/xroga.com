@@ -7,9 +7,10 @@
   "baseCommit": "99941d79fa74a0ad9f75dcde81b17bdb9e30ce4c",
   "checkpointCommits": [
     {"part":"2A","message":"command2a: build universal synthesis foundation","sha":"2577ceb6ea8136454ea1e8049a4f39fd70d39cb5"},
-    {"part":"2B","message":"command2b: add integrations research and chain foundations","sha":"a7b6e9933c20cf5b9bc0b47ed6249415b827a66a"}
+    {"part":"2B","message":"command2b: add integrations research and chain foundations","sha":"a7b6e9933c20cf5b9bc0b47ed6249415b827a66a"},
+    {"part":"2C","message":"command2c: verify advanced web3 and complete command 2","sha":"2fc92a04f3758681b10bb1ea59f3fdb3add11b7d"}
   ],
-  "draftPullRequest": "https://github.com/Xroga/xroga.com/pull/348 (merged before Part 2C; continuation PR required)",
+  "draftPullRequest": "https://github.com/Xroga/xroga.com/pull/349",
   "migrations": ["generated-product operations manifest 1.0.0 -> 1.1.0"],
   "migrationDecision": "No Xroga database migration is required. The existing canonical execution state persists the new verification plan and operations manifest. A tested in-process migration upgrades Part 2B operations manifests without replacing chain identity or owner identifiers.",
   "completedRequirementIds": ["C2A-001", "C2A-002", "C2A-003", "C2A-004", "C2A-005", "C2A-006", "C2A-007", "C2A-008", "C2A-009", "C2A-010", "C2A-011", "C2B-001", "C2B-002", "C2B-003", "C2B-004", "C2B-005", "C2B-006", "C2B-007", "C2B-008", "C2B-009", "C2C-001", "C2C-002", "C2C-003", "C2C-006", "C2C-007", "C2C-008", "C2C-009"],

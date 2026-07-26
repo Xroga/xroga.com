@@ -2,6 +2,8 @@
 
 Final status: `partially_complete`.
 
+Checkpoint: `2fc92a04f3758681b10bb1ea59f3fdb3add11b7d` (`command2c: verify advanced web3 and complete command 2`). Draft continuation PR: [#349](https://github.com/Xroga/xroga.com/pull/349).
+
 The implementation, canonical integration, deterministic fixtures, EVM native compilation and repository acceptance gates are complete. Command 2 cannot truthfully use `universal_product_synthesis_verified` because native Solana/Soroban builds, local validators, public testnet receipts and explorer verification did not execute in this environment.
 
 ## Implemented and verified locally
