@@ -131,10 +131,10 @@ import { prepareFocusedContext } from './contextPreparation.js';
 import {
   InMemoryExecutionStateStore,
   SupabaseExecutionStateStore,
-  createCanonicalExecutionState,
   executableTasksFromRoutePlan,
   transitionTask,
 } from './executionRuntime.js';
+import { runUniversalSynthesisFoundation } from '../synthesis/foundation.js';
 
 export interface PipelineProgress {
   agent?: string;
@@ -832,7 +832,8 @@ export async function runBuildPipeline(opts: {
   const executionStore = process.env.SUPABASE_SERVICE_ROLE_KEY
     ? new SupabaseExecutionStateStore(opts.userId)
     : new InMemoryExecutionStateStore();
-  const executionState = createCanonicalExecutionState({
+  const synthesis = await runUniversalSynthesisFoundation({
+    prompt: opts.prompt,
     projectId: meta?.githubTargetRepo || prior.projectName || runId,
     runId,
     repository: meta?.githubTargetRepo ? {
@@ -841,9 +842,14 @@ export async function runBuildPipeline(opts: {
     } : null,
     selectedBranch: meta?.githubTargetBranch || 'main',
     files: prior.files,
-    requiredCapabilities: intelligentPlan.classification.requiredCapabilities,
-    tasks: executableTasksFromRoutePlan(intelligentPlan),
+    store: executionStore,
   });
+  const executionState = synthesis.state;
+  executionState.requiredCapabilities = [...new Set([
+    ...executionState.requiredCapabilities,
+    ...intelligentPlan.classification.requiredCapabilities,
+  ])];
+  executionState.tasks.push(...executableTasksFromRoutePlan(intelligentPlan));
   for (const taskClass of ['request_understanding', 'repository_analysis']) {
     const task = intelligentPlan.subtasks.find((candidate) => candidate.taskClass === taskClass);
     if (task && !task.blocker) transitionTask(executionState, task.id, 'completed', { evidence: [{

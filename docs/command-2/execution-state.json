@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0.0",
+  "command": "command-2-universal-product-synthesis",
+  "activePart": "2A",
+  "status": "command_2a_verified",
+  "branch": "agent/complete-universal-product-synthesis",
+  "baseCommit": "99941d79fa74a0ad9f75dcde81b17bdb9e30ce4c",
+  "checkpointCommits": [
+    {"part":"2A","message":"command2a: build universal synthesis foundation","sha":"2577ceb6ea8136454ea1e8049a4f39fd70d39cb5"}
+  ],
+  "draftPullRequest": "https://github.com/Xroga/xroga.com/pull/347",
+  "migrations": [],
+  "migrationDecision": "No new database schema is required: versioned synthesis artifacts are persisted inside the existing Command 1 execution_runs canonical state. This avoids a duplicate persistence path; isolated migration application is not applicable in Part 2A.",
+  "completedRequirementIds": ["C2A-001", "C2A-002", "C2A-003", "C2A-004", "C2A-005", "C2A-006", "C2A-007", "C2A-008", "C2A-009", "C2A-010", "C2A-011"],
+  "incompleteRequirementIds": [],
+  "blockedRequirementIds": [],
+  "testsAndBuilds": [
+    {
+      "command": "backend/node_modules/.bin/tsc.cmd -p backend/tsconfig.json --noEmit",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T13:56:07+05:00",
+      "evidence": "final focused compilation before black-box tests"
+    },
+    {
+      "command": "backend/node_modules/.bin/tsx.cmd --test backend/src/synthesis/*.test.ts",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T13:56:07+05:00",
+      "evidence": "14 tests passed, 0 failed, 0 skipped"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T13:56:07+05:00",
+      "evidence": "Next lint passed with four existing warnings"
+    },
+    {
+      "command": "npm run test:resilience",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T13:56:07+05:00",
+      "evidence": "4 passed, 0 failed"
+    },
+    {
+      "command": "npm run test --workspace=backend",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T13:56:07+05:00",
+      "evidence": "187 passed, 0 failed, 0 skipped"
+    },
+    {
+      "command": "npm run build --workspace=backend",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T13:56:07+05:00",
+      "evidence": "TypeScript production compilation completed"
+    },
+    {
+      "command": "npm run build --workspace=frontend",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T13:56:07+05:00",
+      "evidence": "Next.js optimized production build compiled and generated 64 static pages"
+    },
+    {
+      "command": "npm audit --omit=dev --audit-level=critical",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T13:56:07+05:00",
+      "evidence": "No critical findings; two pre-existing high-severity Next.js/PostCSS findings remain and require a separately validated breaking framework upgrade"
+    }
+  ],
+  "evidencePaths": [
+    "docs/universal-product-synthesis-audit.md",
+    "backend/src/synthesis/foundation.fixture.test.ts",
+    "backend/src/synthesis/capabilityGraph.test.ts",
+    "backend/src/synthesis/adapters.test.ts",
+    "backend/src/synthesis/productDefinition.test.ts",
+    "sha256:8609a64fc5376edd4d5431f12b6cbe77ce8004337b81e78c68635f81e2f80fe7"
+  ],
+  "externalCredentialsOrActionsRequired": [],
+  "knownRegressions": [],
+  "knownSecurityDebt": ["npm audit reports two high-severity findings in the pre-existing Next.js 14/PostCSS dependency tree; no critical finding, no new dependency introduced, and the available automatic fix is a breaking Next.js 16 upgrade outside Part 2A"],
+  "nextPartPrerequisites": ["Part 2A acceptance gates must pass", "Use this branch and the same draft pull request"],
+  "migrationPath": ["1.0.0 is the initial Command 2 execution-state schema"]
+}
