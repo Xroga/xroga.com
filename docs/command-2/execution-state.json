@@ -9,7 +9,7 @@
     {"part":"2A","message":"command2a: build universal synthesis foundation","sha":"2577ceb6ea8136454ea1e8049a4f39fd70d39cb5"},
     {"part":"2B","message":"command2b: add integrations research and chain foundations","sha":"a7b6e99d77c896dc07d33bbb5a81599a64e224f1"}
   ],
-  "draftPullRequest": "pending_continuation_pr_because_347_was_merged_externally",
+  "draftPullRequest": "https://github.com/Xroga/xroga.com/pull/348",
   "migrations": [],
   "migrationDecision": "No new Xroga database schema is required: the versioned operations manifest persists inside the existing Command 1 execution_runs canonical state. Generated products receive explicit migration and rollback requirements. Isolated Xroga migration application is not applicable in Part 2B.",
   "completedRequirementIds": ["C2A-001", "C2A-002", "C2A-003", "C2A-004", "C2A-005", "C2A-006", "C2A-007", "C2A-008", "C2A-009", "C2A-010", "C2A-011", "C2B-001", "C2B-002", "C2B-003", "C2B-004", "C2B-005", "C2B-006", "C2B-007", "C2B-008", "C2B-009"],

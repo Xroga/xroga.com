@@ -4,7 +4,7 @@ Status: `command_2b_verified`.
 
 Checkpoint: `a7b6e99d77c896dc07d33bbb5a81599a64e224f1` (`command2b: add integrations research and chain foundations`).
 
-Command 2A checkpoint `2577ceb6ea8136454ea1e8049a4f39fd70d39cb5` was present and its tests were rerun. PR #347 had already been merged externally, so an immutable merged PR could not be updated; 2B remains on the required branch and requires a continuation draft PR.
+Command 2A checkpoint `2577ceb6ea8136454ea1e8049a4f39fd70d39cb5` was present and its tests were rerun. PR #347 had already been merged externally, so an immutable merged PR could not be updated; 2B remains on the required branch in continuation draft PR #348.
 
 ## Implemented
 
