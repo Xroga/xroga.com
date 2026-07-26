@@ -1,30 +1,9 @@
 # Command 3A completion gate
 
-Current result: `command_3a_partially_complete`.
+Final result: `command_3a_verified`.
 
-Post-merge production result: `command_3a_blocked`.
+The production recovery was completed on `main` at commit `c77add7d86dc38ace87144c9bd8d4bfabfa5ed4c`. Supabase migration workflow run `30214218916`, frontend deployment, and Fly workflow run `30218203265` succeeded. The Fly release is `rel_v0or2w9o1g99y9gx` (version 404, image digest `sha256:b8084ed37058e6561f9b0a7137d2fc13960d91eac3c580ed6dc36531ed9dc7de`). Live `/ready` returned HTTP 200 again during Command 3B validation on 2026-07-27.
 
-The main deployment built and deployed successfully at commit `cdc83e289a6978fb694ecc247ce71f8505b9fcc2`, but `/ready` returned `database_unavailable`. The migration job also logged an invalid database password and did not apply migrations while incorrectly exiting successfully. Command 3B remains gated.
+The old project reference `mweinwhoekwjrecsodip`, invalid-password migration attempt, and HTTP 503 readiness evidence remain historical facts. The active Supabase project is `nzenxdfumxrnsmybazmo`.
 
-Implemented and locally verified: canonical operational types, immutable release provenance, deployment state validation, evidence-gated promotion, rollback safety, bounded/redacted evidence, protected dimensional metrics, distinct readiness, webhook fail-closed verification and idempotency persistence, server-only operational tables/APIs, and pinned Fly release evidence.
-
-Not yet truthfully verified: the pending migration and backend code in production, post-deploy `/ready`, protected production `/metrics`, `www` DNS, a provider-backed backup restore proof, and a configured external alert destination. Command 3B must not start until these gates are closed.
-
-## Validation executed
-
-- Backend tests: 251 passed, 0 failed.
-- Backend TypeScript production build: passed.
-- Frontend lint: passed with four pre-existing warnings.
-- Frontend Next.js production build: passed; 64 pages generated.
-- Resilience suite: 4 passed, 0 failed.
-- Migration dry-run: file discovery passed; applied-state verification was unavailable because database credentials were intentionally not present in the local shell.
-- Docker image build: not executed locally because Docker is not installed; the draft PR's authoritative API Docker build check passed.
-
-## Draft PR evidence
-
-- Draft PR: `#350`.
-- API Docker build check: passed.
-- Supabase migration dry-run check: passed; it did not apply production state from the pull request.
-- Frontend CI build: passed.
-- Vercel preview: `dpl_3shAVU32mxE9nxSgq5up9v9Wv8GV`, READY for commit `6dc7ea5aac68efad1fb80fb8ad4dec4c4cd623eb`.
-- Production promotion: not performed.
+External limitations that do not invalidate Command 3A are recorded truthfully: `www.xroga.com` has no verified DNS evidence, no provider-backed destructive restore test was run, and no external alert destination was fabricated.
