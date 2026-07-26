@@ -2,11 +2,17 @@
   "command": "3A",
   "branch": "agent/complete-production-operations-growth",
   "baseCommit": "8d96593ac0ca069069ce3f414ed72ed03d46c8ba",
-  "phase": "implementation_validation",
+  "phase": "draft_pr_validation_complete",
   "productionWritesPerformed": false,
-  "deploymentPerformed": false,
+  "productionDeploymentPerformed": false,
+  "previewDeployment": {
+    "id": "dpl_3shAVU32mxE9nxSgq5up9v9Wv8GV",
+    "commit": "6dc7ea5aac68efad1fb80fb8ad4dec4c4cd623eb",
+    "state": "READY",
+    "automaticGitIntegration": true
+  },
   "migrationApplied": false,
   "liveEvidenceObservedAt": "2026-07-26T15:40:00+05:00",
   "blockers": ["www.xroga.com does not resolve", "production database migration is not applied", "backup restore proof is unavailable"],
-  "nextGate": "all required checks pass on the draft PR and post-merge production evidence is recorded"
+  "nextGate": "external blockers are resolved and post-merge production evidence is recorded"
 }

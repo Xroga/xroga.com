@@ -14,4 +14,13 @@ Not yet truthfully verified: the pending migration and backend code in productio
 - Frontend Next.js production build: passed; 64 pages generated.
 - Resilience suite: 4 passed, 0 failed.
 - Migration dry-run: file discovery passed; applied-state verification was unavailable because database credentials were intentionally not present in the local shell.
-- Docker image build: not executed because Docker is not installed locally; the draft PR's API Docker build check is the authoritative pending gate.
+- Docker image build: not executed locally because Docker is not installed; the draft PR's authoritative API Docker build check passed.
+
+## Draft PR evidence
+
+- Draft PR: `#350`.
+- API Docker build check: passed.
+- Supabase migration dry-run check: passed; it did not apply production state from the pull request.
+- Frontend CI build: passed.
+- Vercel preview: `dpl_3shAVU32mxE9nxSgq5up9v9Wv8GV`, READY for commit `6dc7ea5aac68efad1fb80fb8ad4dec4c4cd623eb`.
+- Production promotion: not performed.
