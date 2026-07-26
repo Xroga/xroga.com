@@ -17,6 +17,7 @@ import {
   Terminal,
   Rocket,
   Gauge,
+  Activity,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
@@ -54,6 +55,12 @@ const navItems = [
     label: 'Dashboard',
     icon: LayoutDashboard,
     tip: 'Recent activity, billing, and plan overview.',
+  },
+  {
+    href: '/dashboard/operations',
+    label: 'Operations',
+    icon: Activity,
+    tip: 'Inspect real product health, releases, incidents, approvals, and operational evidence.',
   },
   {
     href: '/dashboard/integrations',
