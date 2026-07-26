@@ -13,11 +13,20 @@ interface SystemError {
   severity: string;
 }
 
+interface OperationsReadiness {
+  status: 'verified' | 'degraded' | 'blocked' | 'unknown';
+  checks: Array<{ id: string; status: string; required: boolean; blocker?: string }>;
+  blockers: string[];
+  evaluatedAt: string;
+}
+
 export default function AdminPageClient() {
   const [errors, setErrors] = useState<SystemError[]>([]);
   const [filter, setFilter] = useState('');
   const [severity, setSeverity] = useState('');
   const [loading, setLoading] = useState(true);
+  const [readiness, setReadiness] = useState<OperationsReadiness | null>(null);
+  const [readinessError, setReadinessError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -28,13 +37,22 @@ export default function AdminPageClient() {
       if (severity) params.set('severity', severity);
       if (filter) params.set('api', filter);
 
-      const res = await fetch(`${API_URL}/api/admin/errors?${params}`, {
-        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
-      });
+      const headers: Record<string, string> = session?.access_token
+        ? { Authorization: `Bearer ${session.access_token}` }
+        : {};
+      const [res, readinessRes] = await Promise.all([
+        fetch(`${API_URL}/api/admin/errors?${params}`, { headers }),
+        fetch(`${API_URL}/api/operations/readiness`, { headers }),
+      ]);
       const data = (await res.json()) as { errors: SystemError[] };
       setErrors(data.errors ?? []);
+      const readinessData = (await readinessRes.json()) as { readiness?: OperationsReadiness; blocker?: string };
+      setReadiness(readinessData.readiness ?? null);
+      setReadinessError(readinessRes.ok ? null : readinessData.blocker ?? 'Readiness evidence unavailable');
     } catch {
       setErrors([]);
+      setReadiness(null);
+      setReadinessError('Readiness request failed');
     } finally {
       setLoading(false);
     }
@@ -60,6 +78,22 @@ export default function AdminPageClient() {
         <h1 className="text-2xl font-bold">XROGA Admin</h1>
         <p className="text-sm text-[var(--muted)]">Internal system errors — never shown to end users</p>
       </div>
+
+      <section className="rounded-xl border border-[var(--card-border)] p-4 space-y-3" aria-live="polite">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="font-semibold">Production readiness</h2>
+          <span className="font-mono text-sm">{loading ? 'loading' : readiness?.status ?? 'unknown'}</span>
+        </div>
+        {readinessError && <p className="text-sm text-red-400">{readinessError}</p>}
+        {readiness?.blockers.map((blocker) => (
+          <p key={blocker} className="text-sm text-yellow-400">Blocked: {blocker}</p>
+        ))}
+        {readiness && (
+          <p className="text-xs text-[var(--muted)]">
+            {readiness.checks.filter((check) => check.status === 'verified').length}/{readiness.checks.length} checks verified · evaluated {new Date(readiness.evaluatedAt).toLocaleString()}
+          </p>
+        )}
+      </section>
 
       <div className="flex flex-wrap gap-3">
         <input
@@ -130,7 +164,7 @@ export default function AdminPageClient() {
               {!filtered.length && (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-[var(--muted)]">
-                    No errors logged yet — system healthy
+                    No matching error records. This does not prove system health; see readiness evidence above.
                   </td>
                 </tr>
               )}
