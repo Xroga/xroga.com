@@ -2,6 +2,8 @@
 
 Status: `command_2a_verified`.
 
+Checkpoint: `2577ceb6ea8136454ea1e8049a4f39fd70d39cb5` (`command2a: build universal synthesis foundation`). Draft PR: <https://github.com/Xroga/xroga.com/pull/347>.
+
 Implemented: a versioned outcome-first product definition; dynamic capability graph and specification compiler; behavior-derived domain, lifecycle and permission models; architecture/framework/provider contracts; secure credential classification; synthesis artifacts persisted through the existing Command 1 execution state; and five real Command 1 scheduler stages integrated before implementation routing. No new database migration is needed because the canonical state already has versioned JSON persistence.
 
 Truth boundary: synthesis creates executable work, not a success claim. Compiled implementation and verification nodes start `ready` or `pending`; only the Command 1 executor and validators may complete them. No provider connection, payment, deployment, domain, blockchain action or live infrastructure is claimed by Part 2A.

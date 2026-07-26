@@ -1,7 +1,9 @@
 # Universal Product Synthesis Audit — Command 2A
 
-Date: 2026-07-26  
-Base: `99941d79fa74a0ad9f75dcde81b17bdb9e30ce4c`  
+Date: 2026-07-26
+
+Base: `99941d79fa74a0ad9f75dcde81b17bdb9e30ce4c`
+
 Method: direct source inspection plus existing and new executable tests. A registry or prompt declaration alone was not counted as dynamic implementation.
 
 ## Evidence-based subsystem matrix
