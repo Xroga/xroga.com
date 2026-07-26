@@ -44,6 +44,8 @@ import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
 import { ensureShipLoopSchema } from './db/ensureShipLoopSchema.js';
 import { modelKeyStatus, modelTransportStatus } from './ai/openaiCompat.js';
 import { publicHealthPayload } from './lib/safeHealth.js';
+import operationsRouter from './routes/operations.js';
+import { getSupabaseAdmin } from './config/supabase.js';
 
 const app = express();
 
@@ -115,9 +117,18 @@ app.get('/health', (_req, res) => {
   res.json(publicHealthPayload());
 });
 
-app.get('/metrics', (_req, res) => {
-  res.setHeader('Content-Type', 'text/plain; version=0.0.4');
-  res.send(getMetricsText());
+app.get('/ready', async (_req, res) => {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    res.status(503).json({ status: 'not_ready', reason: 'database_not_configured' });
+    return;
+  }
+  try {
+    const { error } = await getSupabaseAdmin().from('profiles').select('id').limit(1);
+    if (error) throw error;
+    res.json({ status: 'ready', service: 'xroga-api', timestamp: new Date().toISOString() });
+  } catch {
+    res.status(503).json({ status: 'not_ready', reason: 'database_unavailable' });
+  }
 });
 
 app.get('/api/health', (_req, res) => {
@@ -148,6 +159,11 @@ app.use('/api/marketplace', authMiddleware, marketplaceRouter);
 app.use('/api/influencer', authMiddleware, influencerRouter);
 app.use('/api/analytics', authMiddleware, analyticsRouter);
 app.use('/api/admin', authMiddleware, adminMiddleware, adminRouter);
+app.use('/api/operations', authMiddleware, adminMiddleware, operationsRouter);
+app.get('/metrics', authMiddleware, adminMiddleware, (_req, res) => {
+  res.setHeader('Content-Type', 'text/plain; version=0.0.4');
+  res.send(getMetricsText());
+});
 app.use('/api/chat', authMiddleware, chatRouter);
 app.use('/api/projects', authMiddleware, projectsRouter);
 app.use('/api/terminal-sessions', authMiddleware, terminalSessionsRouter);

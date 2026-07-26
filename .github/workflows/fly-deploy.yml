@@ -7,7 +7,7 @@ on:
 
 concurrency:
   group: fly-deploy-xroga-api
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -17,7 +17,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: superfly/flyctl-actions/setup-flyctl@master
+      # Pinned to an immutable commit to prevent action supply-chain drift.
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1
+        with:
+          version: 0.4.49
 
       - name: Check Fly token
         env:
@@ -64,6 +67,8 @@ jobs:
           echo ""
           curl -fsS "https://xroga-api.fly.dev/api/health"
           echo ""
+          curl -fsS "https://xroga-api.fly.dev/ready"
+          echo ""
           # Supabase OAuth route should exist after this deploy (401 without user token is OK)
           code=$(curl -s -o /tmp/sb.json -w '%{http_code}' "https://xroga-api.fly.dev/api/supabase/oauth" || true)
           echo "GET /api/supabase/oauth → HTTP $code"
@@ -73,3 +78,17 @@ jobs:
             echo "::error::Supabase OAuth route still 404 — deploy may have used an old image"
             exit 1
           fi
+
+      - name: Record deployed release evidence
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          flyctl status --app xroga-api --json > fly-release-status.json
+          node -e "const fs=require('fs'); const s=JSON.parse(fs.readFileSync('fly-release-status.json')); console.log(JSON.stringify({commit:process.env.GITHUB_SHA,app:s.Name ?? 'xroga-api',status:s.Status ?? 'unknown'}))"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fly-release-evidence-${{ github.sha }}
+          path: fly-release-status.json
+          retention-days: 30

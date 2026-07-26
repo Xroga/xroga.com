@@ -1,0 +1,16 @@
+{
+  "command": "3A",
+  "baseCommit": "8d96593ac0ca069069ce3f414ed72ed03d46c8ba",
+  "updatedAt": "2026-07-26T15:45:00+05:00",
+  "requirements": [
+    { "id": "inventory", "status": "verified_complete", "evidence": "docs/operations/production-inventory.md" },
+    { "id": "release_provenance", "status": "implemented_pending_deployment", "evidence": "backend/src/operations/productionOperations.ts" },
+    { "id": "readiness", "status": "implemented_pending_deployment", "evidence": "GET /ready and GET /api/operations/readiness" },
+    { "id": "webhook_idempotency", "status": "implemented_pending_migration", "evidence": "webhook_deliveries unique provider/delivery ID" },
+    { "id": "promotion_and_rollback", "status": "verified_by_test", "evidence": "productionOperations.test.ts" },
+    { "id": "observability", "status": "partially_working", "evidence": "protected bounded metrics; Vercel 24h runtime evidence; external alert destination unconfigured" },
+    { "id": "domain_tls", "status": "blocked_external", "evidence": "www.xroga.com DNS resolution failed on 2026-07-26" },
+    { "id": "backup_restore", "status": "external_only", "evidence": "provider backup/restore proof unavailable; no destructive test performed" },
+    { "id": "production_migration", "status": "waiting_for_merge", "evidence": "20260726153357_command3a_production_operations.sql" }
+  ]
+}
