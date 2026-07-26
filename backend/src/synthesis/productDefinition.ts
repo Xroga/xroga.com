@@ -224,6 +224,8 @@ function inferEntities(prompt: string, actors: ProductActor[]): DomainEntityDefi
     [/\b(message|conversation|chat|comment)\b/i, 'Message', 'Communication exchanged between actors', false],
     [/\b(job|task|queue|process|pipeline|transform)\b/i, 'Job', 'A bounded executable unit with retry and result state', true],
     [/\b(product|listing|catalog|order|purchase)\b/i, 'Order', 'A requested exchange with fulfilment state', true],
+    [/\b(cart|checkout|discount|tax|shipping|fulfil|fulfill|return|refund|subscription|marketplace|vendor|payout)\b/i, 'Commerce transaction', 'A durable commerce lifecycle with fulfilment and financial state', true],
+    [/\b(article|content|publish|draft|moderation|transcod|video|audio|image processing)\b/i, 'Content item', 'A versioned content or media asset with processing state', true],
     [/\b(report|metric|evaluation|score|assessment)\b/i, 'Evaluation', 'A versioned measurement or report result', true],
   ];
   for (const [pattern, label, purpose, stateful] of behaviourEntities) if (pattern.test(prompt)) add(label, purpose, stateful);
@@ -292,10 +294,20 @@ export function synthesizeProductDefinition(input: { prompt: string; repositoryF
   if (/\b(external api|third[- ]party|webhook)\b/i.test(prompt)) addIntegration('external API integration', ['request', 'receive_webhook'], ['PROVIDER_ACCESS_TOKEN', 'PROVIDER_WEBHOOK_SECRET']);
   if (/\b(ai|model|llm|embedding|rag)\b/i.test(prompt)) addIntegration('user-owned AI provider', ['generate', 'health_check'], ['AI_PROVIDER_API_KEY']);
   if (/\b(payment|checkout|charge|refund|subscription)\b/i.test(prompt)) addIntegration('user-owned payment provider', ['create', 'verify_webhook', 'refund'], ['PAYMENT_SECRET_KEY', 'PAYMENT_WEBHOOK_SECRET']);
+  if (/\b(custom domain|domain connect|dns|buy domain)\b/i.test(prompt)) addIntegration('user-owned domain provider', ['detect', 'authorise', 'configure', 'verify'], ['DOMAIN_PROVIDER_ACCESS_TOKEN']);
+  if (/\b(blockchain|smart contract|web3|on[- ]chain|wallet authentication|wallet connect|evm|solana|soroban|stellar)\b/i.test(prompt)) addIntegration('user-owned chain infrastructure', ['wallet_authenticate', 'submit_transaction', 'index_events'], ['CHAIN_RPC_API_KEY', 'DEPLOYMENT_SIGNER_REFERENCE']);
   const repositoryFiles = input.repositoryFiles ?? [];
   const manifests = repositoryFiles.filter((file) => /(^|\/)(package\.json|pyproject\.toml|Cargo\.toml|go\.mod|composer\.json)$/.test(file.path)).map((file) => file.path);
   const requiredCredentials = unique(integrations.flatMap((integration) => integration.credentialFields));
   const objective = allPhrases[0] ?? prompt;
+  const deploymentTargets = unique([
+    /\b(web|website|dashboard|portal|storefront|admin console)\b/i.test(prompt) ? 'user-owned web deployment' : '',
+    /\b(mobile|android|ios)\b/i.test(prompt) ? 'user-owned mobile build' : '',
+    /\b(browser extension)\b/i.test(prompt) ? 'user-owned browser extension package' : '',
+    /\b(cli|command line)\b/i.test(prompt) ? 'user-owned package or release artifact' : '',
+    /\b(api|backend service)\b/i.test(prompt) ? 'user-owned service deployment' : '',
+    /\b(smart contract|program deploy|soroban)\b/i.test(prompt) ? 'owner-authorised chain deployment' : '',
+  ]);
   return {
     schema: 'xroga.product-definition', schemaVersion: PRODUCT_DEFINITION_SCHEMA_VERSION,
     migrationPath: ['0.x -> 1.0.0: normalize actors, workflows, domain entities, permissions and evidence requirements'],
@@ -332,7 +344,13 @@ export function synthesizeProductDefinition(input: { prompt: string; repositoryF
     deviceCapabilities: /\b(camera|gps|bluetooth|sensor|device)\b/i.test(prompt) ? ['Explicitly authorised device capability'] : [],
     aiCapabilities: /\b(ai|model|llm|rag|embedding)\b/i.test(prompt) ? ['Provider-backed AI operation with structured output and evaluation'] : [],
     paymentCapabilities: /\b(payment|checkout|refund|subscription)\b/i.test(prompt) ? ['Provider-backed payment lifecycle with verified webhooks'] : [],
-    domainCapabilities: workflows.map((workflow) => workflow.objective), blockchainCapabilities: [], contractRequirements: [], walletRequirements: [], hackathonRequirements: [], testnetEvidenceRequirements: [],
+    domainCapabilities: workflows.map((workflow) => workflow.objective),
+    blockchainCapabilities: /\b(blockchain|smart contract|web3|on[- ]chain|wallet authentication|wallet connect|evm|solana|soroban|stellar)\b/i.test(prompt)
+      ? unique([/\b(evm|ethereum|polygon|base|arbitrum|optimism)\b/i.test(prompt) ? 'evm' : '', /\bsolana\b/i.test(prompt) ? 'solana' : '', /\b(stellar|soroban)\b/i.test(prompt) ? 'stellar_soroban' : '', 'runtime-verified chain integration']) : [],
+    contractRequirements: /\b(smart contract|contract deploy|program deploy|soroban)\b/i.test(prompt) ? ['Specify invariants, roles, upgrade policy and emergency controls before implementation'] : [],
+    walletRequirements: /\b(wallet|sign[- ]in with ethereum|siwe)\b/i.test(prompt) ? ['One-time domain- and chain-bound challenge; user-owned signing; no raw private material'] : [],
+    hackathonRequirements: /\bhackathon\b/i.test(prompt) ? ['Reproducible setup, demo fixture and judge-verifiable evidence'] : [],
+    testnetEvidenceRequirements: /\b(blockchain|smart contract|web3|on[- ]chain|wallet|evm|solana|soroban|stellar)\b/i.test(prompt) ? ['Local deterministic chain test first; testnet transaction evidence requires user-owned infrastructure'] : [],
     webResearchRequirements: /\b(latest|current|research|official documentation|web search)\b/i.test(prompt) ? ['Retrieve current authoritative web sources'] : [],
     xSearchRequirements: /\b(?:x search|x\.com|twitter)\b/i.test(prompt) ? ['Retrieve X posts as non-authoritative discovery sources'] : [],
     researchRequirements: /\b(latest|current|research|official documentation|web search|x search|x\.com|twitter)\b/i.test(prompt) ? ['Retrieve current sources and verify consequential facts with authoritative sources'] : [],
@@ -344,11 +362,12 @@ export function synthesizeProductDefinition(input: { prompt: string; repositoryF
       serviceAccounts: actors.some((actor) => actor.kind === 'service'),
       sessionRequirements: requiresAuth ? ['server-validated session', 'revocation takes effect', 'account deletion and export are authorised'] : [],
     },
-    deploymentTargets: /\b(cli|command line)\b/i.test(prompt) ? ['user-owned package or release artifact'] : /\b(desktop|local-only)\b/i.test(prompt) ? ['user-owned desktop artifact'] : ['user-owned deployment target'],
+    deploymentTargets: deploymentTargets.length ? deploymentTargets : /\b(desktop|local-only)\b/i.test(prompt) ? ['user-owned desktop artifact'] : ['user-owned deployment target'],
     quality: {
       availability: ['critical workflows fail safely when dependencies are unavailable'], performance: ['budgets and timeouts are explicit'],
       security: ['least privilege', 'secret redaction', 'server-side authorisation'], privacy: ['data minimisation and owner-controlled retention'],
-      accessibility: ['keyboard and semantic access for interactive interfaces'], internationalisation: ['locale-safe dates, times and text'], compliance: [],
+      accessibility: ['keyboard and semantic access for interactive interfaces', 'automated accessibility checks plus documented manual review'],
+      internationalisation: /\b(i18n|international|multiple locales|rtl|right-to-left|translation)\b/i.test(prompt) ? ['locale routing and translation resources', 'locale-safe dates, times, numbers and currency', 'RTL layout verification when required'] : ['locale-safe dates, times and text'], compliance: [],
     },
     evidenceRequirements: ['generated file evidence', 'validation command evidence', 'critical workflow test evidence', 'external provider evidence when used'],
     externalBlockers: requiredCredentials.map((credential) => `User-owned ${credential} must be supplied and validated before live use`),

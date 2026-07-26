@@ -25,6 +25,7 @@ import {
   type FrameworkAdapter,
 } from './adapters.js';
 import { synthesizeProductDefinition, type ProductDefinitionV1 } from './productDefinition.js';
+import { buildOperationsManifest, type GeneratedProductOperationsManifest } from './operationsManifest.js';
 
 export interface UniversalSynthesisArtifacts {
   schemaVersion: '1.0.0';
@@ -35,6 +36,7 @@ export interface UniversalSynthesisArtifacts {
   architecture: ArchitectureDecision;
   framework: FrameworkAdapter;
   dependencyInventory: ReturnType<typeof dependencyInventory>;
+  operationsManifest: GeneratedProductOperationsManifest;
   evidenceHash: string;
 }
 
@@ -48,7 +50,8 @@ const stages = [
   ['synthesis-capabilities', 'Build and validate the dynamic capability graph', 'synthesis_capability_graph', ['synthesis-understand']],
   ['synthesis-architecture', 'Select architecture and framework contracts from required behavior', 'synthesis_architecture', ['synthesis-capabilities']],
   ['synthesis-compile', 'Compile capability specifications into executable Command 1 task nodes', 'synthesis_compile', ['synthesis-architecture']],
-  ['synthesis-evidence', 'Persist the coherent synthesis manifest and evidence digest', 'synthesis_evidence', ['synthesis-compile']],
+  ['synthesis-operations', 'Compile integration, research, chain and operations contracts', 'synthesis_operations', ['synthesis-compile']],
+  ['synthesis-evidence', 'Persist the coherent synthesis manifest and evidence digest', 'synthesis_evidence', ['synthesis-operations']],
 ] as const;
 
 function stageTask(stage: typeof stages[number]): ExecutableTaskNode {
@@ -99,6 +102,7 @@ export async function runUniversalSynthesisFoundation(input: {
   let framework: FrameworkAdapter | undefined;
   let compiledPlan: CompiledCapabilityPlan | undefined;
   let inventory: ReturnType<typeof dependencyInventory> | undefined;
+  let operationsManifest: GeneratedProductOperationsManifest | undefined;
 
   const state = createCanonicalExecutionState({
     projectId: input.projectId, runId: input.runId, repository: input.repository,
@@ -140,9 +144,15 @@ export async function runUniversalSynthesisFoundation(input: {
       state.productManifest.compiledCapabilityPlan = compiledPlan;
       return { output: compiledPlan, evidence: [evidence('compiled_capability_plan', `Compiled ${compiledPlan.tasks.length} executable tasks with validation and evidence requirements`, compiledPlan)], validated: compiledPlan.tasks.every((task) => task.status !== 'completed' && task.validationMethod.length > 0 && task.evidenceRequirements.length > 0) };
     },
+    synthesis_operations: async () => {
+      if (!definition || !graph || !architecture || !framework) throw new Error('operations inputs are unavailable');
+      operationsManifest = buildOperationsManifest({ definition, graph, architecture, framework });
+      state.productManifest.operationsManifest = operationsManifest;
+      return { output: operationsManifest, evidence: [evidence('operations_manifest', 'Compiled truthful integration, research and chain operations contracts', operationsManifest)], validated: operationsManifest.digest.length === 64 && operationsManifest.testTiers.some((tier) => tier.tier === 'integration_fixture' && tier.required) };
+    },
     synthesis_evidence: async () => {
-      if (!definition || !graph || !compiledPlan || !architecture || !framework || !inventory) throw new Error('synthesis is incomplete');
-      const manifest = { schemaVersion: '1.0.0', definition, graph, compiledPlan, architecture, framework, inventory };
+      if (!definition || !graph || !compiledPlan || !architecture || !framework || !inventory || !operationsManifest) throw new Error('synthesis is incomplete');
+      const manifest = { schemaVersion: '1.0.0', definition, graph, compiledPlan, architecture, framework, inventory, operationsManifest };
       const digest = stableHash(manifest);
       state.productManifest.synthesisEvidenceHash = digest;
       return { output: { digest }, evidence: [evidence('synthesis_manifest', 'Persisted one coherent, content-addressed synthesis manifest', manifest)], validated: digest.length === 64 };
@@ -152,12 +162,12 @@ export async function runUniversalSynthesisFoundation(input: {
   await new ExecutionScheduler(input.store, input.onEvent).run(state, handlers);
   const failed = state.tasks.find((task) => task.status !== 'completed');
   if (failed) throw new Error(`universal synthesis failed at ${failed.id}: ${failed.blocker ?? failed.status}`);
-  if (!definition || !graph || !compiledPlan || !architecture || !framework || !inventory) throw new Error('universal synthesis did not produce all artifacts');
+  if (!definition || !graph || !compiledPlan || !architecture || !framework || !inventory || !operationsManifest) throw new Error('universal synthesis did not produce all artifacts');
   return {
     state,
     artifacts: {
       schemaVersion: '1.0.0', migrationPath: ['1.0.0 is the initial universal-synthesis artifact schema'], productDefinition: definition, capabilityGraph: graph,
-      compiledPlan, architecture, framework, dependencyInventory: inventory,
+      compiledPlan, architecture, framework, dependencyInventory: inventory, operationsManifest,
       evidenceHash: String(state.productManifest.synthesisEvidenceHash),
     },
   };

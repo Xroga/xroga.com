@@ -1,6 +1,8 @@
 import { getSecret } from '../config/envSecrets.js';
 import { configuredApiModel } from './openaiCompat.js';
 import { normalizeProviderError, recordModelExecution } from './providerRuntime.js';
+import { redactSecrets } from '../lib/truthfulExecution.js';
+import { validateResearchUrl } from '../synthesis/research/researchEngine.js';
 
 export interface ResearchSource {
   title: string;
@@ -25,7 +27,7 @@ export interface ResearchBundle {
  * Returns provider 'none' only when every source fails (caller must NOT fake a research step).
  */
 export async function gatherResearch(query: string): Promise<ResearchBundle> {
-  const q = query.trim();
+  const q = redactSecrets(query).trim().slice(0, 2_000);
   if (!q) return { query: q, summary: '', sources: [], provider: 'none' };
 
   const wantsX =
@@ -127,9 +129,10 @@ async function grokLiveSearch(
   };
 
   const summary = (data.choices?.[0]?.message?.content ?? '').trim();
-  const citationUrls = Array.isArray(data.citations)
-    ? data.citations.filter((u) => typeof u === 'string' && /^https?:\/\//i.test(u))
-    : [];
+  const citationUrls = (Array.isArray(data.citations) ? data.citations : []).filter((value): value is string => {
+    if (typeof value !== 'string') return false;
+    try { validateResearchUrl(value); return true; } catch { return false; }
+  });
 
   const urlSources: ResearchSource[] = citationUrls.slice(0, 12).map((url) => ({
     title: hostTitle(url),
@@ -138,24 +141,15 @@ async function grokLiveSearch(
     source: /x\.com|twitter\.com/i.test(url) ? 'x' : 'web',
   }));
 
-  // If citations missing, still keep summary as research (Grok searched live)
-  if (!summary && !urlSources.length) {
+  // An uncited model summary is not durable research evidence.
+  if (!urlSources.length) {
     return { query, summary: '', sources: [], provider: 'none' };
   }
 
   return {
     query,
     summary: summary.slice(0, 4000),
-    sources: urlSources.length
-      ? urlSources
-      : [
-          {
-            title: 'Grok live research',
-            url: 'https://x.ai',
-            snippet: summary.slice(0, 280),
-            source: 'grok_live',
-          },
-        ],
+    sources: urlSources,
     provider: 'grok_live',
     includedXSearch: opts.includeX,
   };
@@ -173,11 +167,10 @@ function hostTitle(url: string): string {
 async function tavilySearch(query: string, apiKey: string): Promise<ResearchBundle> {
   const res = await fetch('https://api.tavily.com/search', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      api_key: apiKey,
       query,
-      search_depth: 'advanced',
+      search_depth: 'basic',
       include_answer: true,
       max_results: 8,
     }),
@@ -189,7 +182,7 @@ async function tavilySearch(query: string, apiKey: string): Promise<ResearchBund
     results?: Array<{ title?: string; url?: string; content?: string }>;
   };
   const sources: ResearchSource[] = (data.results ?? [])
-    .filter((r) => r.url)
+    .filter((r) => { try { if (!r.url) return false; validateResearchUrl(r.url); return true; } catch { return false; } })
     .map((r) => ({
       title: r.title || r.url || 'Source',
       url: r.url!,
@@ -206,6 +199,7 @@ async function tavilySearch(query: string, apiKey: string): Promise<ResearchBund
 
 async function searxngSearch(query: string): Promise<ResearchBundle> {
   const base = (process.env.SEARXNG_URL || 'https://searx.be').replace(/\/$/, '');
+  validateResearchUrl(base);
   const url = `${base}/search?q=${encodeURIComponent(query)}&format=json`;
   const res = await fetch(url, {
     headers: { Accept: 'application/json', 'User-Agent': 'XrogaResearch/2.0' },
@@ -217,7 +211,7 @@ async function searxngSearch(query: string): Promise<ResearchBundle> {
   };
   const sources: ResearchSource[] = (data.results ?? [])
     .slice(0, 8)
-    .filter((r) => r.url)
+    .filter((r) => { try { if (!r.url) return false; validateResearchUrl(r.url); return true; } catch { return false; } })
     .map((r) => ({
       title: r.title || r.url || 'Source',
       url: r.url!,

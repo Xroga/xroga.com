@@ -19,6 +19,8 @@ describe('non-crypto universal synthesis black-box fixtures', () => {
     assert.ok(result.state.tasks.every((task) => task.status === 'completed' && task.evidence.length > 0));
     assert.ok(result.artifacts.compiledPlan.tasks.every((task) => task.status !== 'completed'));
     assert.match(result.artifacts.evidenceHash, /^[a-f0-9]{64}$/);
+    assert.equal(result.artifacts.operationsManifest.schema, 'xroga.generated-product-operations');
+    assert.equal(result.artifacts.operationsManifest.testTiers.find((tier) => tier.tier === 'integration_fixture')?.status, 'required');
     assert.deepEqual(result.artifacts.productDefinition.blockchainCapabilities, []);
     const reloaded = await store.load(`${fixture.id}-run`);
     assert.equal(reloaded?.productManifest.synthesisEvidenceHash, result.artifacts.evidenceHash);
