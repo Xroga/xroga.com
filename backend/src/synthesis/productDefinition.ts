@@ -293,13 +293,25 @@ export function synthesizeProductDefinition(input: { prompt: string; repositoryF
   if (/\b(calendar|calendar sync)\b/i.test(prompt)) addIntegration('calendar synchronisation', ['read_availability', 'create_event', 'cancel_event'], ['CALENDAR_ACCESS_TOKEN']);
   if (/\b(external api|third[- ]party|webhook)\b/i.test(prompt)) addIntegration('external API integration', ['request', 'receive_webhook'], ['PROVIDER_ACCESS_TOKEN', 'PROVIDER_WEBHOOK_SECRET']);
   if (/\b(ai|model|llm|embedding|rag)\b/i.test(prompt)) addIntegration('user-owned AI provider', ['generate', 'health_check'], ['AI_PROVIDER_API_KEY']);
-  if (/\b(payment|checkout|charge|refund|subscription)\b/i.test(prompt)) addIntegration('user-owned payment provider', ['create', 'verify_webhook', 'refund'], ['PAYMENT_SECRET_KEY', 'PAYMENT_WEBHOOK_SECRET']);
+  if (/\b(payments?|checkout|charge|refund|subscription)\b/i.test(prompt)) addIntegration('user-owned payment provider', ['create', 'verify_webhook', 'refund'], ['PAYMENT_SECRET_KEY', 'PAYMENT_WEBHOOK_SECRET']);
   if (/\b(custom domain|domain connect|dns|buy domain)\b/i.test(prompt)) addIntegration('user-owned domain provider', ['detect', 'authorise', 'configure', 'verify'], ['DOMAIN_PROVIDER_ACCESS_TOKEN']);
-  if (/\b(blockchain|smart contract|web3|on[- ]chain|wallet authentication|wallet connect|evm|solana|soroban|stellar)\b/i.test(prompt)) addIntegration('user-owned chain infrastructure', ['wallet_authenticate', 'submit_transaction', 'index_events'], ['CHAIN_RPC_API_KEY', 'DEPLOYMENT_SIGNER_REFERENCE']);
+  if (/\b(blockchain|smart contract|web3|on[- ]chain|wallet authentication|wallet connect|evm|solana|soroban|stellar|defi|oracle|cross[- ]chain|token|nft|dao|zero[- ]knowledge|account abstraction)\b/i.test(prompt)) addIntegration('user-owned chain infrastructure', ['wallet_authenticate', 'submit_transaction', 'index_events'], ['CHAIN_RPC_API_KEY', 'DEPLOYMENT_SIGNER_REFERENCE']);
   const repositoryFiles = input.repositoryFiles ?? [];
   const manifests = repositoryFiles.filter((file) => /(^|\/)(package\.json|pyproject\.toml|Cargo\.toml|go\.mod|composer\.json)$/.test(file.path)).map((file) => file.path);
   const requiredCredentials = unique(integrations.flatMap((integration) => integration.credentialFields));
   const objective = allPhrases[0] ?? prompt;
+  const chainRequested = /\b(blockchain|smart contract|web3|on[- ]chain|wallet authentication|wallet connect|evm|solana|soroban|stellar|defi|oracle|cross[- ]chain|token|nft|dao|zero[- ]knowledge|account abstraction)\b/i.test(prompt);
+  const advancedChainRequirements = unique([
+    /\boracles?\b/i.test(prompt) ? 'Oracle feeds enforce source identity, freshness, decimals, deviation and sequencer safety' : '',
+    /\b(cross[- ]chain|bridge|interoperability)\b/i.test(prompt) ? 'Cross-chain messages require source and destination finality evidence, replay protection and explicit recovery states' : '',
+    /\b(defi|swap|liquidity|lending|staking|yield)\b/i.test(prompt) ? 'DeFi math uses fixed-point arithmetic, slippage limits, approval bounds and economic invariants' : '',
+    /\b(token|nft|digital asset|asset issuance)\b/i.test(prompt) ? 'Asset issuance defines supply, ownership, metadata, transfer, pause and upgrade invariants' : '',
+    /\b(governance|dao|voting|proposal)\b/i.test(prompt) ? 'Governance defines snapshot voting power, quorum, timelock, double-vote denial and emergency authority' : '',
+    /\b(identity|attestation|credential)\b/i.test(prompt) ? 'On-chain identity stores privacy-minimised attestations with issuer authority and revocation' : '',
+    /\b(zero[- ]knowledge|\bzk\b|zkp)\b/i.test(prompt) ? 'Zero-knowledge workflows separate witness data from public inputs and verify proof-system constraints' : '',
+    /\b(ipfs|arweave|decentralized storage|content[- ]addressed)\b/i.test(prompt) ? 'Decentralized storage verifies upload and retrieval content hashes' : '',
+    /\b(account abstraction|gasless|session key|smart account)\b/i.test(prompt) ? 'Account abstraction enforces sponsorship, session-key, target, spend and expiry policy' : '',
+  ]);
   const deploymentTargets = unique([
     /\b(web|website|dashboard|portal|storefront|admin console)\b/i.test(prompt) ? 'user-owned web deployment' : '',
     /\b(mobile|android|ios)\b/i.test(prompt) ? 'user-owned mobile build' : '',
@@ -343,14 +355,14 @@ export function synthesizeProductDefinition(input: { prompt: string; repositoryF
     offline: /\boffline|local-first\b/i.test(prompt) ? ['Local operation queue and deterministic conflict reconciliation'] : [],
     deviceCapabilities: /\b(camera|gps|bluetooth|sensor|device)\b/i.test(prompt) ? ['Explicitly authorised device capability'] : [],
     aiCapabilities: /\b(ai|model|llm|rag|embedding)\b/i.test(prompt) ? ['Provider-backed AI operation with structured output and evaluation'] : [],
-    paymentCapabilities: /\b(payment|checkout|refund|subscription)\b/i.test(prompt) ? ['Provider-backed payment lifecycle with verified webhooks'] : [],
+    paymentCapabilities: /\b(payments?|checkout|refund|subscription)\b/i.test(prompt) ? ['Provider-backed payment lifecycle with verified webhooks'] : [],
     domainCapabilities: workflows.map((workflow) => workflow.objective),
-    blockchainCapabilities: /\b(blockchain|smart contract|web3|on[- ]chain|wallet authentication|wallet connect|evm|solana|soroban|stellar)\b/i.test(prompt)
-      ? unique([/\b(evm|ethereum|polygon|base|arbitrum|optimism)\b/i.test(prompt) ? 'evm' : '', /\bsolana\b/i.test(prompt) ? 'solana' : '', /\b(stellar|soroban)\b/i.test(prompt) ? 'stellar_soroban' : '', 'runtime-verified chain integration']) : [],
-    contractRequirements: /\b(smart contract|contract deploy|program deploy|soroban)\b/i.test(prompt) ? ['Specify invariants, roles, upgrade policy and emergency controls before implementation'] : [],
+    blockchainCapabilities: chainRequested
+      ? unique([/\b(evm|ethereum|polygon|base|arbitrum|optimism)\b/i.test(prompt) ? 'evm' : '', /\bsolana\b/i.test(prompt) ? 'solana' : '', /\b(stellar|soroban)\b/i.test(prompt) ? 'stellar_soroban' : '', 'runtime-verified chain integration', ...advancedChainRequirements]) : [],
+    contractRequirements: chainRequested ? ['Specify invariants, roles, upgrade policy and emergency controls before implementation', ...advancedChainRequirements] : [],
     walletRequirements: /\b(wallet|sign[- ]in with ethereum|siwe)\b/i.test(prompt) ? ['One-time domain- and chain-bound challenge; user-owned signing; no raw private material'] : [],
     hackathonRequirements: /\bhackathon\b/i.test(prompt) ? ['Reproducible setup, demo fixture and judge-verifiable evidence'] : [],
-    testnetEvidenceRequirements: /\b(blockchain|smart contract|web3|on[- ]chain|wallet|evm|solana|soroban|stellar)\b/i.test(prompt) ? ['Local deterministic chain test first; testnet transaction evidence requires user-owned infrastructure'] : [],
+    testnetEvidenceRequirements: chainRequested ? ['Local deterministic chain test first; testnet transaction evidence requires user-owned infrastructure', 'Deployment evidence requires network, transaction hash, address or program ID, block or slot, artifact hash and verification result'] : [],
     webResearchRequirements: /\b(latest|current|research|official documentation|web search)\b/i.test(prompt) ? ['Retrieve current authoritative web sources'] : [],
     xSearchRequirements: /\b(?:x search|x\.com|twitter)\b/i.test(prompt) ? ['Retrieve X posts as non-authoritative discovery sources'] : [],
     researchRequirements: /\b(latest|current|research|official documentation|web search|x search|x\.com|twitter)\b/i.test(prompt) ? ['Retrieve current sources and verify consequential facts with authoritative sources'] : [],

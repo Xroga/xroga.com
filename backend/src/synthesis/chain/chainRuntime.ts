@@ -5,7 +5,7 @@ export interface ChainNetworkFact { family: ChainFamily; name: string; chainId: 
 
 export function validateNetworkFact(fact: ChainNetworkFact, now = new Date()): ChainNetworkFact {
   if (!fact.chainId || !fact.name || !/^https:\/\//.test(fact.sourceUrl)) throw new Error('chain identity requires an authoritative HTTPS source');
-  if (new Date(fact.expiresAt) <= now || new Date(fact.verifiedAt) >= new Date(fact.expiresAt)) throw new Error('chain fact is stale or has an invalid evidence window');
+  if (new Date(fact.expiresAt) <= now || new Date(fact.verifiedAt) > now || new Date(fact.verifiedAt) >= new Date(fact.expiresAt)) throw new Error('chain fact is stale or has an invalid evidence window');
   if (!fact.rpcUrls.length || fact.rpcUrls.some((url) => !/^https:\/\//.test(url))) throw new Error('chain RPC URLs must be explicit HTTPS endpoints');
   return structuredClone(fact);
 }

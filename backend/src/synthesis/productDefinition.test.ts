@@ -39,7 +39,8 @@ describe('versioned product definition', () => {
     assert.ok(result.deploymentTargets.includes('user-owned web deployment'));
     assert.ok(result.deploymentTargets.includes('user-owned mobile build'));
     assert.ok(result.blockchainCapabilities.includes('solana'));
-    assert.deepEqual(result.testnetEvidenceRequirements, ['Local deterministic chain test first; testnet transaction evidence requires user-owned infrastructure']);
+    assert.ok(result.testnetEvidenceRequirements.includes('Local deterministic chain test first; testnet transaction evidence requires user-owned infrastructure'));
+    assert.ok(result.testnetEvidenceRequirements.some((requirement) => /transaction hash.*block or slot.*artifact hash/i.test(requirement)));
     assert.equal(result.blockchainCapabilities.some((value) => /devnet|mainnet|rpc\.com/i.test(value)), false);
   });
 });

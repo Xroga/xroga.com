@@ -11,6 +11,15 @@ test('wallet challenge is domain/chain bound, signature checked, and one-time', 
   await assert.rejects(() => verifyWalletChallenge({ store, challengeId: challenge.id, domain: 'app.example.com', chainId: 'chain-a', signature: 'ok', verifier: async () => true, now }));
 });
 
+test('wallet challenge expiry is enforced before signature verification', async () => {
+  const store = new InMemoryWalletChallengeStore();
+  const issuedAt = new Date('2026-07-26T00:00:00Z');
+  const challenge = await issueWalletChallenge({ store, address: '0xabc', domain: 'app.example.com', chainId: 'chain-a', ttlMs: 1_000, now: issuedAt });
+  let verifierCalled = false;
+  await assert.rejects(() => verifyWalletChallenge({ store, challengeId: challenge.id, domain: 'app.example.com', chainId: 'chain-a', signature: 'ok', verifier: async () => { verifierCalled = true; return true; }, now: new Date('2026-07-26T00:00:02Z') }), /expired/);
+  assert.equal(verifierCalled, false);
+});
+
 test('signer boundaries and transaction lifecycle require real evidence', () => {
   const policy = { allowedChainIds: ['chain-a'], allowedContractAddresses: ['0xabc'], allowedMethods: ['mint'], maximumValue: '10', expiresAt: '2026-07-27T00:00:00Z', requireConfirmation: true };
   assert.throws(() => enforceSignerPolicy({ policy, chainId: 'chain-a', contractAddress: '0xabc', method: 'mint', value: 1n, ownerConfirmed: true, signerMaterial: `private key ${'a'.repeat(64)}`, now: new Date('2026-07-26T00:00:00Z') }));
