@@ -1,26 +1,54 @@
 {
   "command": "3A",
-  "branch": "agent/complete-production-operations-growth",
-  "baseCommit": "8d96593ac0ca069069ce3f414ed72ed03d46c8ba",
-  "phase": "command_3a_production_recovery_blocked",
-  "part_status": "command_3a_blocked",
-  "productionWritesPerformed": false,
-  "productionDeploymentPerformed": false,
-  "previewDeployment": {
-    "id": "dpl_3shAVU32mxE9nxSgq5up9v9Wv8GV",
-    "commit": "6dc7ea5aac68efad1fb80fb8ad4dec4c4cd623eb",
-    "state": "READY",
-    "automaticGitIntegration": true
+  "branch": "agent/command3a-production-recovery",
+  "baseCommit": "f980bc71a6a4f36fcaf09d8a2a472c10703f241f",
+  "phase": "command_3a_verified",
+  "part_status": "command_3a_verified",
+  "productionWritesPerformed": true,
+  "productionDeploymentPerformed": true,
+  "supabase": {
+    "projectRef": "nzenxdfumxrnsmybazmo",
+    "projectUrl": "https://nzenxdfumxrnsmybazmo.supabase.co",
+    "repositoryMigrationCount": 38,
+    "migrationWorkflowRun": "https://github.com/Xroga/xroga.com/actions/runs/30214218916",
+    "migrationWorkflowResult": "success",
+    "schemaVerification": {
+      "publicTables": 54,
+      "rlsEnabledTables": 54,
+      "policies": 48,
+      "publicFunctions": 9,
+      "repositoryMigrationRecords": 38,
+      "securityDefinerPublicExposure": false
+    }
   },
-  "migrationApplied": false,
-  "liveEvidenceObservedAt": "2026-07-26T15:40:00+05:00",
-  "blockers": [
-    "Production Supabase project mweinwhoekwjrecsodip is not accessible through the connected Supabase account",
-    "GitHub SUPABASE_DB_PASSWORD is invalid and production migrations were not applied",
-    "Fly readiness reports database_unavailable",
-    "Supabase active-project quota prevented restoring a different inactive project; the active replacement contains 12 Auth users and cannot be paused safely",
-    "www.xroga.com does not resolve",
-    "backup restore proof is unavailable"
-  ],
-  "nextGate": "restore access to mweinwhoekwjrecsodip, correct GitHub/Fly Supabase credentials, apply migrations, and verify /ready before Command 3B"
+  "fly": {
+    "app": "xroga-api",
+    "workflowRun": "https://github.com/Xroga/xroga.com/actions/runs/30218203265",
+    "workflowResult": "success",
+    "releaseId": "rel_v0or2w9o1g99y9gx",
+    "releaseVersion": 404,
+    "imageDigest": "sha256:b8084ed37058e6561f9b0a7137d2fc13960d91eac3c580ed6dc36531ed9dc7de",
+    "liveReadyUrl": "https://xroga-api.fly.dev/ready",
+    "liveReadyStatus": 200,
+    "liveReadyBody": {
+      "status": "ready",
+      "service": "xroga-api"
+    }
+  },
+  "liveEvidenceObservedAt": "2026-07-27T01:05:53+05:00",
+  "blockers": [],
+  "historicalEvidence": {
+    "previousProjectRef": "mweinwhoekwjrecsodip",
+    "previousState": "That project was inaccessible; its GitHub database password failed and Fly readiness returned database_unavailable.",
+    "failedMigrationRun": "https://github.com/Xroga/xroga.com/actions/runs/30214218916/attempts/1",
+    "failedFlyRun": "https://github.com/Xroga/xroga.com/actions/runs/30214218897",
+    "failedFlyReadiness": {
+      "status": 503,
+      "body": {
+        "status": "not_ready",
+        "reason": "database_unavailable"
+      }
+    }
+  },
+  "nextGate": "Command 3A is verified. Command 3B may begin only on explicit operator instruction."
 }

@@ -5,15 +5,29 @@ import { join } from 'path';
 
 dns.setDefaultResultOrder('ipv4first');
 
-const DEFAULT_POOLER_HOST = 'aws-1-ap-southeast-1.pooler.supabase.com';
+const DEFAULT_POOLER_HOST = 'aws-1-ap-northeast-1.pooler.supabase.com';
+
+function projectRefFromUrl(raw?: string): string | undefined {
+  if (!raw) return undefined;
+  try {
+    return new URL(raw).hostname.match(/^([a-z0-9]+)\.supabase\.co$/i)?.[1];
+  } catch {
+    return undefined;
+  }
+}
 
 function projectRefFromConfig(): string {
+  const configured =
+    process.env.SUPABASE_PROJECT_REF?.trim() ||
+    projectRefFromUrl(process.env.SUPABASE_URL);
+  if (configured) return configured;
+
   try {
     const toml = readFileSync(join(process.cwd(), 'supabase/config.toml'), 'utf8');
     const match = toml.match(/^project_id\s*=\s*"([^"]+)"/m);
-    return match?.[1] ?? 'mweinwhoekwjrecsodip';
+    return match?.[1] ?? 'nzenxdfumxrnsmybazmo';
   } catch {
-    return 'mweinwhoekwjrecsodip';
+    return 'nzenxdfumxrnsmybazmo';
   }
 }
 

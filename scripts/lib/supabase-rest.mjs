@@ -8,16 +8,16 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '../..');
 
-/** Supabase project region — detected from pooler probe (ap-southeast-1). */
-export const DEFAULT_POOLER_HOST = 'aws-1-ap-southeast-1.pooler.supabase.com';
+/** Production Supabase project region (ap-northeast-1). */
+export const DEFAULT_POOLER_HOST = 'aws-1-ap-northeast-1.pooler.supabase.com';
 
 export function projectRefFromConfig() {
   try {
     const toml = readFileSync(join(ROOT, 'supabase/config.toml'), 'utf8');
     const match = toml.match(/^project_id\s*=\s*"([^"]+)"/m);
-    return match?.[1] ?? 'mweinwhoekwjrecsodip';
+    return match?.[1] ?? 'nzenxdfumxrnsmybazmo';
   } catch {
-    return 'mweinwhoekwjrecsodip';
+    return 'nzenxdfumxrnsmybazmo';
   }
 }
 

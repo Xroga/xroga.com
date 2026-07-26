@@ -1,5 +1,5 @@
 # Xroga Supabase — link with: supabase link --project-ref YOUR_REF
-project_id = "mweinwhoekwjrecsodip"
+project_id = "nzenxdfumxrnsmybazmo"
 
 [api]
 enabled = true
@@ -10,7 +10,7 @@ max_rows = 1000
 
 [db]
 port = 54322
-major_version = 15
+major_version = 17
 
 [studio]
 enabled = true

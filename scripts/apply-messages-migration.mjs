@@ -1,6 +1,6 @@
 /**
  * Apply messages migration using direct Postgres connection.
- * Usage: DATABASE_URL="postgresql://postgres:PASSWORD@db.mweinwhoekwjrecsodip.supabase.co:5432/postgres" node scripts/apply-messages-migration.mjs
+ * Usage: DATABASE_URL="postgresql://postgres:PASSWORD@db.nzenxdfumxrnsmybazmo.supabase.co:5432/postgres" node scripts/apply-messages-migration.mjs
  */
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
