@@ -4,7 +4,11 @@
 import { readdirSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { resolveDatabaseUrls, missingDatabaseUrlHelp } from './lib/database-url.mjs';
+import {
+  resolveDatabaseUrls,
+  missingDatabaseUrlHelp,
+  safeDatabaseMetadata,
+} from './lib/database-url.mjs';
 import { connectPostgres } from './lib/pg-connect.mjs';
 import { phase1TableExistsViaRest, shipLoopTablesExistViaRest } from './lib/supabase-rest.mjs';
 
@@ -19,6 +23,46 @@ function listMigrationFiles() {
     .filter((f) => f.endsWith('.sql'))
     .sort();
 }
+
+function configured(name) {
+  return Boolean(process.env[name]?.trim());
+}
+
+function classifyFailure(err) {
+  const message = String(err?.message ?? '');
+  if (/password authentication failed|28P01/i.test(message)) return 'authentication_error';
+  if (/does not exist|42P01|42703/i.test(message)) return 'missing_dependency';
+  if (/permission denied|42501/i.test(message)) return 'permission_error';
+  if (/timeout|ETIMEDOUT/i.test(message)) return 'connection_timeout';
+  if (/ENOTFOUND|getaddrinfo/i.test(message)) return 'dns_error';
+  if (/duplicate|already exists|42P07|42710/i.test(message)) return 'non_idempotent_sql';
+  return 'database_error';
+}
+
+function safeError(err) {
+  return String(err?.message ?? 'unknown database error')
+    .replace(/postgres(?:ql)?:\/\/\S+/gi, '[REDACTED_DATABASE_URL]')
+    .replace(/(password|token|key)\s*[=:]\s*\S+/gi, '$1=[REDACTED]')
+    .slice(0, 500);
+}
+
+const migrationFiles = listMigrationFiles();
+const metadata = safeDatabaseMetadata();
+console.log(JSON.stringify({
+  stage: 'preflight',
+  variablesPresent: {
+    SUPABASE_ACCESS_TOKEN: configured('SUPABASE_ACCESS_TOKEN'),
+    SUPABASE_DB_PASSWORD: configured('SUPABASE_DB_PASSWORD'),
+    SUPABASE_PROJECT_REF: configured('SUPABASE_PROJECT_REF'),
+    DATABASE_URL: configured('DATABASE_URL'),
+    SUPABASE_URL: configured('SUPABASE_URL'),
+    SUPABASE_SERVICE_ROLE_KEY: configured('SUPABASE_SERVICE_ROLE_KEY'),
+  },
+  selectedProjectRef: metadata.projectRef,
+  databaseHost: metadata.databaseHost,
+  databasePort: metadata.databasePort,
+  migrationCount: migrationFiles.length,
+}));
 
 function printOfflineMigrationInventory(reason) {
   const files = listMigrationFiles();
@@ -85,8 +129,18 @@ const client = await connectPostgres().catch(async (err) => {
       'SUPABASE_DB_PASSWORD in GitHub secrets is incorrect (use Database password from Supabase Dashboard → Database settings, NOT the service role key).'
     );
   }
+  console.error(`::error::stage=connectivity category=${classifyFailure(err)} message=${safeError(err)}`);
   throw err;
 });
+
+try {
+  await client.query("SELECT current_database(), current_setting('server_version_num')");
+  console.log(JSON.stringify({ stage: 'connectivity', status: 'succeeded' }));
+} catch (err) {
+  console.error(`::error::stage=connectivity category=${classifyFailure(err)} message=${safeError(err)}`);
+  await client.end();
+  process.exit(1);
+}
 
 await client.query(`
   CREATE SCHEMA IF NOT EXISTS supabase_migrations;
@@ -108,7 +162,11 @@ async function isMigrationApplied(version) {
     const check = await client.query(
       "SELECT to_regclass('public.user_token_usage') AS reg"
     );
-    if (check.rows[0]?.reg) return true;
+    if (check.rows[0]?.reg) {
+      await markMigrationApplied(version, '022_phase1_token_usage.sql');
+      console.log('reconciled migration record for existing user_token_usage table');
+      return true;
+    }
   }
 
   return false;
@@ -122,7 +180,7 @@ async function markMigrationApplied(version, file) {
   );
 }
 
-const files = listMigrationFiles();
+const files = migrationFiles;
 
 let appliedCount = 0;
 
@@ -153,14 +211,10 @@ for (const file of files) {
   } catch (err) {
     await client.query('ROLLBACK');
 
-    if (/already exists|duplicate key/i.test(err.message)) {
-      console.warn(`warn  ${version}: ${err.message} — marking applied`);
-      await markMigrationApplied(version, file);
-      appliedCount += 1;
-      continue;
-    }
-
-    console.error(`fail  ${version}:`, err.message);
+    console.error(
+      `::error::stage=apply migration=${version} category=${classifyFailure(err)} message=${safeError(err)}`
+    );
+    await client.end();
     process.exit(1);
   }
 }

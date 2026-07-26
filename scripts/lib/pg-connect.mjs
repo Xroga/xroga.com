@@ -29,16 +29,16 @@ export async function connectPostgres() {
   let lastError;
 
   for (const connectionString of urls) {
-    const safeHost = connectionString.replace(/:[^:@/]+@/, ':***@');
     const client = clientFromUrl(connectionString);
+    const safeTarget = `${client.host}:${client.port}/${client.database}`;
 
     try {
       await client.connect();
-      console.log(`Connected via ${safeHost}`);
+      console.log(`Connected to ${safeTarget}`);
       return client;
     } catch (err) {
       lastError = err;
-      console.warn(`Connection failed (${safeHost}): ${err.message}`);
+      console.warn(`Connection failed (${safeTarget}): ${err.message}`);
       try {
         await client.end();
       } catch {

@@ -25,6 +25,7 @@ jobs:
   migrate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    environment: Production
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
 
     steps:
@@ -41,6 +42,8 @@ jobs:
       - name: Apply migrations
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           # Prefer dedicated secrets; fall back to common alternate names if set
@@ -52,6 +55,8 @@ jobs:
       - name: Dry-run on pull request
         if: github.event_name == 'pull_request'
         env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}

@@ -155,12 +155,16 @@ Add these **GitHub repository secrets** (Settings → Secrets and variables → 
 
 | Secret | Where to get it |
 |--------|-----------------|
+| `SUPABASE_ACCESS_TOKEN` | Supabase account access token used by CLI operations |
 | `SUPABASE_DB_PASSWORD` | Supabase → Project Settings → **Database** → Database password |
-| `SUPABASE_URL` | `https://mweinwhoekwjrecsodip.supabase.co` (your project URL) |
+| `SUPABASE_PROJECT_REF` | `nzenxdfumxrnsmybazmo` |
+| `DATABASE_URL` | Complete **session-pooler** URI; use this instead of constructing a URI from the raw password |
+| `SUPABASE_URL` | `https://nzenxdfumxrnsmybazmo.supabase.co` (your project URL) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API; never use this value as the database password |
 
-Optional: `DATABASE_URL` (full Postgres URI) instead of the two above.
+`SUPABASE_DB_PASSWORD` is the raw database password. `DATABASE_URL` is the complete session-pooler connection string.
 
-Optional: `SUPABASE_PROJECT_ID` = `mweinwhoekwjrecsodip` if you omit `SUPABASE_URL`.
+Optional: `SUPABASE_PROJECT_REF` = `nzenxdfumxrnsmybazmo` if you omit `SUPABASE_URL`.
 
 **Note:** `SUPABASE_SERVICE_ROLE_KEY` (Fly.io / Vercel) is **not** the database password and cannot run migrations.
 
@@ -180,13 +184,13 @@ You already have `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` on Fly — add `
 Option A (CLI — needs Supabase access token):
 ```bash
 supabase login
-supabase link --project-ref mweinwhoekwjrecsodip
+supabase link --project-ref nzenxdfumxrnsmybazmo
 ./scripts/supabase-db-push.sh
 ```
 
 Option B (direct script — same as GitHub Actions):
 ```bash
-SUPABASE_DB_PASSWORD="..." SUPABASE_URL="https://mweinwhoekwjrecsodip.supabase.co" \
+SUPABASE_DB_PASSWORD="..." SUPABASE_URL="https://nzenxdfumxrnsmybazmo.supabase.co" \
   node scripts/apply-supabase-migrations.mjs
 ```
 
