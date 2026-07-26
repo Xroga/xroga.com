@@ -159,7 +159,9 @@ app.use('/api/marketplace', authMiddleware, marketplaceRouter);
 app.use('/api/influencer', authMiddleware, influencerRouter);
 app.use('/api/analytics', authMiddleware, analyticsRouter);
 app.use('/api/admin', authMiddleware, adminMiddleware, adminRouter);
-app.use('/api/operations', authMiddleware, adminMiddleware, operationsRouter);
+// Operations routes enforce tenant membership and action-specific permissions in
+// the service layer; hiding controls or requiring global admin is not security.
+app.use('/api/operations', authMiddleware, operationsRouter);
 app.get('/metrics', authMiddleware, adminMiddleware, (_req, res) => {
   res.setHeader('Content-Type', 'text/plain; version=0.0.4');
   res.send(getMetricsText());
