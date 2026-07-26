@@ -222,6 +222,21 @@ export function buildCapabilityGraph(definition: ProductDefinitionV1): DynamicCa
     files: { generate: ['product/chain', 'tests/chain'], modify: ['.env.example'] },
     validationStrategy: ['local contract or program test', 'wallet replay denial test', 'RPC same-chain failover test', 'indexer reorg and idempotency test'],
   }));
+  const advancedChainCapabilities: Array<[RegExp, string, string, string[], string[]]> = [
+    [/oracle/i, 'chain-oracle-safety', 'Validate oracle provenance and market-data safety', ['validate_round', 'reject_stale_data', 'enforce_deviation_limit', 'enforce_sequencer_grace'], ['staleness and deviation boundary tests', 'sequencer downtime recovery test']],
+    [/cross-chain/i, 'chain-cross-chain-messaging', 'Track cross-chain messages through source and destination finality', ['record_source', 'relay', 'finalize_destination', 'recover_failure'], ['source/destination finality test', 'duplicate message denial test']],
+    [/DeFi/i, 'chain-defi-safety', 'Enforce deterministic DeFi math and user economic limits', ['quote', 'enforce_slippage', 'bound_approval', 'settle'], ['fixed-point fuzz test', 'economic conservation invariant']],
+    [/Asset issuance/i, 'chain-assets', 'Control token and digital-asset issuance and ownership', ['issue', 'transfer', 'pause', 'upgrade'], ['supply invariant test', 'unauthorised issuance denial']],
+    [/Governance/i, 'chain-governance', 'Execute evidence-backed governance lifecycle', ['propose', 'vote', 'queue', 'execute'], ['snapshot and double-vote test', 'quorum and timelock test']],
+    [/identity/i, 'chain-identity', 'Manage privacy-safe attestations and revocation', ['attest', 'verify', 'revoke'], ['PII minimisation test', 'issuer revocation test']],
+    [/Zero-knowledge/i, 'chain-zero-knowledge', 'Specify and verify zero-knowledge proof boundaries', ['define_circuit', 'prove', 'verify'], ['witness/public input separation test', 'invalid proof denial']],
+    [/storage/i, 'chain-content-storage', 'Verify content-addressed upload and retrieval', ['upload', 'retrieve', 'verify_hash'], ['retrieval hash equality test', 'tamper denial']],
+    [/account abstraction/i, 'chain-account-abstraction', 'Enforce smart-account sponsorship and delegated-action policy', ['authorize_session', 'sponsor', 'execute', 'revoke'], ['session expiry and target-limit test', 'unavailable sponsorship truth test']],
+  ];
+  for (const [pattern, capabilityId, purpose, operations, validationStrategy] of advancedChainCapabilities) {
+    if (!definition.blockchainCapabilities.some((requirement) => pattern.test(requirement))) continue;
+    add(node({ id: capabilityId, purpose, operations, runtimeDependencies: ['product-chain-runtime'], contractRequirements: definition.contractRequirements.filter((requirement) => pattern.test(requirement)), files: { generate: [`product/chain/${capabilityId.replace('chain-', '')}`, `tests/chain/${capabilityId.replace('chain-', '')}`], modify: [] }, securityRequirements: ['explicit authority boundary', 'no mainnet activation without independent review', 'preserve last verified chain state'], validationStrategy, evidenceRequirements: ['executed local fixture evidence', 'content-addressed artifact evidence', 'external transaction evidence only when actually authorized and executed'] }));
+  }
   if (definition.backgroundWork.length || definition.scheduledWork.length) add(node({
     id: 'background-execution', purpose: 'Execute durable background and scheduled work', operations: ['enqueue', 'execute', 'retry', 'cancel'],
     runtimeDependencies: ['long-running or durable job runtime'], eventsConsumed: definition.events,
@@ -245,6 +260,7 @@ export function buildCapabilityGraph(definition: ProductDefinitionV1): DynamicCa
   for (const integration of definition.integrations) for (const workflow of nodes.filter((entry) => entry.id.startsWith('workflow-'))) {
     if (workflow.purpose.toLowerCase().includes(integration.purpose.split(' ')[0].toLowerCase())) relate(workflow.id, integration.id, 'external_dependency', 'workflow explicitly requires the integration');
   }
+  for (const advanced of nodes.filter((entry) => entry.id.startsWith('chain-'))) relate(advanced.id, 'product-chain-runtime', 'runtime_dependency', 'advanced chain behavior uses the canonical wallet, RPC, finality and indexing boundary');
   return {
     schema: 'xroga.capability-graph', schemaVersion: CAPABILITY_GRAPH_SCHEMA_VERSION,
     migrationPath: ['0.x -> 1.0.0: normalize nodes, typed relationships, lifecycle and evidence fields'],
