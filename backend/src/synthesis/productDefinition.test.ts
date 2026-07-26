@@ -32,4 +32,14 @@ describe('versioned product definition', () => {
     const value = synthesizeProductDefinition({ prompt: 'Build a report tool using sk-1234567890123456789012345678901234567890' });
     assert.ok(!JSON.stringify(value).includes('sk-123456789'));
   });
+
+  it('evolves an existing multi-output chain product without hardcoded networks', () => {
+    const result = synthesizeProductDefinition({ prompt: 'Extend this existing repository with a web dashboard, mobile wallet authentication, Solana program and indexer', repositoryFiles: [{ path: 'package.json', content: '{"dependencies":{"next":"14.2.0"}}' }] });
+    assert.equal(result.repositoryContext.present, true);
+    assert.ok(result.deploymentTargets.includes('user-owned web deployment'));
+    assert.ok(result.deploymentTargets.includes('user-owned mobile build'));
+    assert.ok(result.blockchainCapabilities.includes('solana'));
+    assert.deepEqual(result.testnetEvidenceRequirements, ['Local deterministic chain test first; testnet transaction evidence requires user-owned infrastructure']);
+    assert.equal(result.blockchainCapabilities.some((value) => /devnet|mainnet|rpc\.com/i.test(value)), false);
+  });
 });

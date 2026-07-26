@@ -201,7 +201,7 @@ export function buildCapabilityGraph(definition: ProductDefinitionV1): DynamicCa
     id: integration.id, purpose: integration.purpose, operations: integration.operations,
     providerRequirements: [integration.ownership], credentialRequirements: integration.credentialFields,
     environmentVariables: integration.credentialFields, externalSetupStatus: integration.externalSetupRequired ? 'required' : 'not_required',
-    implementationStatus: integration.externalSetupRequired ? 'external_only' : 'must_synthesise',
+    implementationStatus: 'must_synthesise',
     researchRequirements: {
       web: integration.authoritativeSourceRequired ? [`verify ${integration.purpose} from official documentation`] : [], x: [],
       authoritativeSources: integration.authoritativeSourceRequired ? ['official provider documentation'] : [],
@@ -210,6 +210,17 @@ export function buildCapabilityGraph(definition: ProductDefinitionV1): DynamicCa
     },
     files: { generate: [`product/integrations/${slug(integration.purpose)}-adapter`], modify: ['.env.example'] },
     limitations: integration.externalSetupRequired ? ['Cannot report connected until an authenticated request succeeds'] : [],
+  }));
+  if (definition.blockchainCapabilities.length) add(node({
+    id: 'product-chain-runtime', purpose: 'Implement wallet, contract, transaction, RPC and indexing boundaries',
+    operations: ['issue_wallet_challenge', 'verify_signature', 'enforce_signer_policy', 'submit_transaction', 'track_finality', 'index_events', 'recover_reorg'],
+    chainRequirements: { families: definition.blockchainCapabilities.filter((value) => !value.startsWith('runtime-')), networks: [] },
+    contractRequirements: definition.contractRequirements, walletRequirements: definition.walletRequirements,
+    testnetRequirements: definition.testnetEvidenceRequirements, hackathonEvidenceRequirements: definition.hackathonRequirements,
+    credentialRequirements: ['CHAIN_RPC_API_KEY', 'DEPLOYMENT_SIGNER_REFERENCE'], environmentVariables: ['CHAIN_RPC_API_KEY', 'DEPLOYMENT_SIGNER_REFERENCE'],
+    securityRequirements: ['never accept raw private keys or seed phrases', 'domain- and chain-bound one-time wallet challenges', 'explicit signer allowlists and spend limits'],
+    files: { generate: ['product/chain', 'tests/chain'], modify: ['.env.example'] },
+    validationStrategy: ['local contract or program test', 'wallet replay denial test', 'RPC same-chain failover test', 'indexer reorg and idempotency test'],
   }));
   if (definition.backgroundWork.length || definition.scheduledWork.length) add(node({
     id: 'background-execution', purpose: 'Execute durable background and scheduled work', operations: ['enqueue', 'execute', 'retry', 'cancel'],

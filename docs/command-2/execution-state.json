@@ -1,20 +1,57 @@
 {
   "schemaVersion": "1.0.0",
   "command": "command-2-universal-product-synthesis",
-  "activePart": "2A",
-  "status": "command_2a_verified",
+  "activePart": "2B",
+  "status": "command_2b_verified",
   "branch": "agent/complete-universal-product-synthesis",
   "baseCommit": "99941d79fa74a0ad9f75dcde81b17bdb9e30ce4c",
   "checkpointCommits": [
-    {"part":"2A","message":"command2a: build universal synthesis foundation","sha":"2577ceb6ea8136454ea1e8049a4f39fd70d39cb5"}
+    {"part":"2A","message":"command2a: build universal synthesis foundation","sha":"2577ceb6ea8136454ea1e8049a4f39fd70d39cb5"},
+    {"part":"2B","message":"command2b: add integrations research and chain foundations","sha":"pending_checkpoint_commit"}
   ],
-  "draftPullRequest": "https://github.com/Xroga/xroga.com/pull/347",
+  "draftPullRequest": "pending_continuation_pr_because_347_was_merged_externally",
   "migrations": [],
-  "migrationDecision": "No new database schema is required: versioned synthesis artifacts are persisted inside the existing Command 1 execution_runs canonical state. This avoids a duplicate persistence path; isolated migration application is not applicable in Part 2A.",
-  "completedRequirementIds": ["C2A-001", "C2A-002", "C2A-003", "C2A-004", "C2A-005", "C2A-006", "C2A-007", "C2A-008", "C2A-009", "C2A-010", "C2A-011"],
+  "migrationDecision": "No new Xroga database schema is required: the versioned operations manifest persists inside the existing Command 1 execution_runs canonical state. Generated products receive explicit migration and rollback requirements. Isolated Xroga migration application is not applicable in Part 2B.",
+  "completedRequirementIds": ["C2A-001", "C2A-002", "C2A-003", "C2A-004", "C2A-005", "C2A-006", "C2A-007", "C2A-008", "C2A-009", "C2A-010", "C2A-011", "C2B-001", "C2B-002", "C2B-003", "C2B-004", "C2B-005", "C2B-006", "C2B-007", "C2B-008", "C2B-009"],
   "incompleteRequirementIds": [],
   "blockedRequirementIds": [],
   "testsAndBuilds": [
+    {
+      "command": "backend/node_modules/.bin/tsc.cmd -p backend/tsconfig.json --noEmit",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T14:34:41+05:00",
+      "evidence": "Command 2B TypeScript compilation passed"
+    },
+    {
+      "command": "focused Command 2B deterministic tests",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T14:34:41+05:00",
+      "evidence": "21 integration/research/chain tests passed, 0 failed, 0 skipped"
+    },
+    {
+      "command": "backend/node_modules/.bin/tsx.cmd --test backend/src/**/*.test.ts",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T14:34:41+05:00",
+      "evidence": "209 passed, 0 failed, 0 skipped"
+    },
+    {
+      "command": "node scripts/test-resilience.js",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T14:34:41+05:00",
+      "evidence": "4 of 4 passed"
+    },
+    {
+      "command": "frontend/node_modules/.bin/next.cmd lint",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T14:34:41+05:00",
+      "evidence": "lint passed with four pre-existing warnings"
+    },
+    {
+      "command": "frontend/node_modules/.bin/next.cmd build",
+      "exitCode": 0,
+      "timestamp": "2026-07-26T14:34:41+05:00",
+      "evidence": "optimized Next.js production build completed and generated 64 static pages"
+    },
     {
       "command": "backend/node_modules/.bin/tsc.cmd -p backend/tsconfig.json --noEmit",
       "exitCode": 0,
@@ -65,6 +102,11 @@
     }
   ],
   "evidencePaths": [
+    "docs/integrations-research-chain-audit.md",
+    "backend/src/synthesis/integrations/integrations.test.ts",
+    "backend/src/synthesis/research/researchEngine.test.ts",
+    "backend/src/synthesis/chain/chainRuntime.test.ts",
+    "backend/src/synthesis/operationsManifest.ts",
     "docs/universal-product-synthesis-audit.md",
     "backend/src/synthesis/foundation.fixture.test.ts",
     "backend/src/synthesis/capabilityGraph.test.ts",
@@ -72,9 +114,15 @@
     "backend/src/synthesis/productDefinition.test.ts",
     "sha256:8609a64fc5376edd4d5431f12b6cbe77ce8004337b81e78c68635f81e2f80fe7"
   ],
-  "externalCredentialsOrActionsRequired": [],
+  "externalCredentialsOrActionsRequired": [
+    "Owner credentials and authorisation for payment sandbox/live verification",
+    "Owner Vercel/DNS credentials and explicit confirmation for DNS writes or domain purchase",
+    "Owner communication, AI and research credentials for live provider verification",
+    "Owner RPC and signer references for authorised testnet or mainnet verification",
+    "Part C advanced Web3, hackathon and final Command 2 verification"
+  ],
   "knownRegressions": [],
   "knownSecurityDebt": ["npm audit reports two high-severity findings in the pre-existing Next.js 14/PostCSS dependency tree; no critical finding, no new dependency introduced, and the available automatic fix is a breaking Next.js 16 upgrade outside Part 2A"],
-  "nextPartPrerequisites": ["Part 2A acceptance gates must pass", "Use this branch and the same draft pull request"],
+  "nextPartPrerequisites": ["Part 2B checkpoint and local gates must remain green", "Continue on this branch and its unavoidable continuation draft PR", "Revalidate all current chain/provider facts before external action"],
   "migrationPath": ["1.0.0 is the initial Command 2 execution-state schema"]
 }
