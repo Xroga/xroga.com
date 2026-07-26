@@ -2,7 +2,8 @@
   "command": "3A",
   "branch": "agent/complete-production-operations-growth",
   "baseCommit": "8d96593ac0ca069069ce3f414ed72ed03d46c8ba",
-  "phase": "draft_pr_validation_complete",
+  "phase": "command_3a_production_recovery_blocked",
+  "part_status": "command_3a_blocked",
   "productionWritesPerformed": false,
   "productionDeploymentPerformed": false,
   "previewDeployment": {
@@ -13,6 +14,13 @@
   },
   "migrationApplied": false,
   "liveEvidenceObservedAt": "2026-07-26T15:40:00+05:00",
-  "blockers": ["www.xroga.com does not resolve", "production database migration is not applied", "backup restore proof is unavailable"],
-  "nextGate": "external blockers are resolved and post-merge production evidence is recorded"
+  "blockers": [
+    "Production Supabase project mweinwhoekwjrecsodip is not accessible through the connected Supabase account",
+    "GitHub SUPABASE_DB_PASSWORD is invalid and production migrations were not applied",
+    "Fly readiness reports database_unavailable",
+    "Supabase active-project quota prevented restoring a different inactive project; the active replacement contains 12 Auth users and cannot be paused safely",
+    "www.xroga.com does not resolve",
+    "backup restore proof is unavailable"
+  ],
+  "nextGate": "restore access to mweinwhoekwjrecsodip, correct GitHub/Fly Supabase credentials, apply migrations, and verify /ready before Command 3B"
 }
