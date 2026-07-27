@@ -74,8 +74,9 @@ export function LoginForm() {
 
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
-          <AuthModernLabel>Email</AuthModernLabel>
+          <AuthModernLabel htmlFor="login-email">Email</AuthModernLabel>
           <AuthModernInput
+            id="login-email"
             type="email"
             placeholder="you@example.com"
             value={email}
@@ -85,8 +86,9 @@ export function LoginForm() {
           />
         </div>
         <div>
-          <AuthModernLabel>Password</AuthModernLabel>
+          <AuthModernLabel htmlFor="login-password">Password</AuthModernLabel>
           <AuthModernInput
+            id="login-password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

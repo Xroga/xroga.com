@@ -1,16 +1,15 @@
-# Command 3B black-box evidence
+# Command 3 black-box evidence
 
-## Executed
+Protected browser run: https://github.com/Xroga/xroga.com/actions/runs/30250920431
 
-- The backend suite passed 293/293 tests, including tenant authorization, action idempotency, approval invalidation, maintenance enforcement, provider failures, retry bounds, reconciliation, evidence, and audit behavior.
-- Resilience passed 4/4. The completion-status gate passed 3/3.
-- Backend and frontend production builds passed; the frontend generated 65 pages including `/dashboard/operations`.
-- Both Command 3B migrations were applied to Supabase project `nzenxdfumxrnsmybazmo`. Independent queries found all 12 required tables with RLS, revoked browser mutation access, service-role execution access, the immutable audit trigger, and both migration records.
-- GitHub PR checks passed at commit `46aa465c110e0ebc8ce215dd6e33a6f26a1883c5`.
-- The unchanged Command 3A Fly `/ready` endpoint returned HTTP 200.
-
-## Blocked mandatory check
-
-Authenticated browser verification of the Operations Centre has not passed. Vercel skipped the PR preview using its Ignored Build Step, leaving no preview URL. A local production server was started, but middleware correctly rejected the request because the local environment has no Supabase public URL/key. No credentials were copied from a browser or production system, and no result was fabricated.
-
-Required safe verification environment: a non-production PR preview with valid public preview configuration and an authenticated test account/session. Then verify navigation, tenant isolation, loading/empty/failure/stale/permission states, one low-risk action, idempotent replay, evidence, and audit history.
+- Approved Supabase project: `nzenxdfumxrnsmybazmo`; public URL and publishable key preflight passed without printing values.
+- Real password login initially exposed disabled email authentication. The protected workflow enabled the required provider through the authenticated Supabase Management API and verified the setting.
+- Real browser login passed; `/api/session` remained authenticated after refresh.
+- `/dashboard/operations` loaded the temporary owner's durable project from the backend.
+- The owner's product API returned 200; an unrelated tenant's product API returned 403.
+- The real Settings security logout control cleared the session; `/api/session` returned 401.
+- Temporary verified users and their cascading project fixtures were deleted in cleanup.
+- The workflow artifact contains only redacted status evidence, project ref, HTTP results, and timestamps.
+- Growth runtime tests prove invalid-event rejection, idempotency schema, meaningful activation, deterministic experiment assignment, insufficient-data results, operational blocker precedence, truthful provider states, server-key rejection, and private sitemap exclusion.
+- Supabase queries independently verified growth RLS, revoked browser grants, server-only operational access, constraints, indexes, and migration records.
+- Backend: 306/306 tests. Resilience: 4/4. Completion derivation: 4/4. Backend and frontend production builds passed.

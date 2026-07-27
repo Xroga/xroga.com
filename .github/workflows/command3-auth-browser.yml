@@ -1,0 +1,96 @@
+name: Command 3 authenticated browser verification
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  authenticated-browser:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      NEXT_PUBLIC_API_URL: http://127.0.0.1:4000
+      E2E_BACKEND_URL: http://127.0.0.1:4000
+      FRONTEND_URL: http://127.0.0.1:3000
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Safe configuration preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY SUPABASE_ACCESS_TOKEN; do
+            if [ -z "${!name:-}" ]; then echo "missing_required_variable=$name"; exit 1; fi
+          done
+          test "$NEXT_PUBLIC_SUPABASE_URL" = "https://nzenxdfumxrnsmybazmo.supabase.co"
+          test "$SUPABASE_URL" = "$NEXT_PUBLIC_SUPABASE_URL"
+          case "$NEXT_PUBLIC_SUPABASE_ANON_KEY" in sb_secret_*|"") echo "invalid_public_key_category"; exit 1;; esac
+          echo "project_ref=nzenxdfumxrnsmybazmo"
+          echo "public_key_present=true"
+          echo "service_key_present=true"
+      - name: Verify required email authentication provider
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="https://api.supabase.com/v1/projects/nzenxdfumxrnsmybazmo/config/auth"
+          curl --silent --show-error --fail --output auth-config.json \
+            --header "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" "$endpoint"
+          enabled="$(node -e "const c=require('./auth-config.json'); process.stdout.write(String(c.external_email_enabled === true))")"
+          if [ "$enabled" != "true" ]; then
+            curl --silent --show-error --fail --output auth-config-updated.json \
+              --request PATCH --header "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
+              --header "Content-Type: application/json" \
+              --data '{"external_email_enabled":true}' "$endpoint"
+          fi
+          curl --silent --show-error --fail --output auth-config-verified.json \
+            --header "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" "$endpoint"
+          node -e "const c=require('./auth-config-verified.json'); if(c.external_email_enabled !== true) process.exit(1)"
+          rm -f auth-config.json auth-config-updated.json auth-config-verified.json
+          echo "email_authentication_enabled=true"
+      - run: npm ci
+      - run: npm run build --workspace=backend
+      - run: npm run build --workspace=frontend
+      - run: npx playwright install --with-deps chromium
+      - name: Start isolated application
+        shell: bash
+        run: |
+          PORT=4000 node backend/dist/index.js > backend.log 2>&1 & echo $! > backend.pid
+          npm run start --workspace=frontend -- --hostname 127.0.0.1 --port 3000 > frontend.log 2>&1 & echo $! > frontend.pid
+          for attempt in $(seq 1 40); do
+            curl --silent --fail http://127.0.0.1:4000/ready >/dev/null && curl --silent --fail http://127.0.0.1:3000/auth/login >/dev/null && exit 0
+            sleep 2
+          done
+          echo "application_start_failed"; tail -n 40 backend.log; tail -n 40 frontend.log; exit 1
+      - name: Authenticated browser and tenant isolation
+        working-directory: frontend
+        run: npx playwright test e2e/command3-auth.spec.ts
+      - name: Upload redacted verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: command3-auth-browser-evidence
+          path: |
+            frontend/test-results/command3-auth-evidence.json
+            frontend/test-results/**/test-failed-*.png
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Cleanup processes
+        if: always()
+        shell: bash
+        run: |
+          test -f frontend.pid && kill "$(cat frontend.pid)" || true
+          test -f backend.pid && kill "$(cat backend.pid)" || true

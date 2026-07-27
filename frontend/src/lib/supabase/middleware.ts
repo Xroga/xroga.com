@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { getSupabasePublicConfig } from './config';
 
 /** Paths crawlers and visitors can access without signing in */
 const PUBLIC_PREFIXES = [
@@ -17,6 +18,9 @@ const PUBLIC_PREFIXES = [
 
 function isPublicPath(pathname: string): boolean {
   if (pathname === '/') return true;
+  // This route reports authenticated=false as JSON; middleware must not replace
+  // that contract with an HTML login redirect for signed-out callers.
+  if (pathname === '/api/session') return true;
   if (pathname === '/robots.txt' || pathname === '/sitemap.xml') return true;
   if (pathname.startsWith('/auth')) return true;
   return PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
@@ -24,10 +28,11 @@ function isPublicPath(pathname: string): boolean {
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
+  const config = getSupabasePublicConfig();
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    config.url,
+    config.publishableKey,
     {
       cookies: {
         getAll() {

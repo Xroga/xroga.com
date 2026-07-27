@@ -18,6 +18,7 @@ import {
   Rocket,
   Gauge,
   Activity,
+  TrendingUp,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
@@ -61,6 +62,12 @@ const navItems = [
     label: 'Operations',
     icon: Activity,
     tip: 'Inspect real product health, releases, incidents, approvals, and operational evidence.',
+  },
+  {
+    href: '/dashboard/growth',
+    label: 'Growth',
+    icon: TrendingUp,
+    tip: 'Evidence-backed activation, recommendations, campaigns, messaging, referrals, experiments, and attribution.',
   },
   {
     href: '/dashboard/integrations',

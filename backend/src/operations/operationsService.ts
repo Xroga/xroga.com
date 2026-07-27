@@ -145,7 +145,7 @@ export class OperationsService {
       queryOrThrow(this.db.from('operations_actions').select('id,action_type,target_type,target_id,risk_level,status,status_reason,evidence_reference,created_at,updated_at').eq('project_id', projectId).eq('user_id', access.ownerId).order('created_at', { ascending: false }).limit(100), 'Actions unavailable'),
       queryOrThrow(this.db.from('operations_action_approvals').select('id,action_id,required_role,decision,expires_at,created_at,operations_actions!inner(project_id)').eq('operations_actions.project_id', projectId).eq('user_id', access.ownerId).order('created_at', { ascending: false }).limit(100), 'Approvals unavailable'),
       queryOrThrow(this.db.from('swarm_job_queue').select('id,run_id,feature_category,status,attempt_count,max_attempts,error_category,safe_error,created_at,updated_at,completed_at').eq('project_id', projectId).eq('user_id', access.ownerId).order('created_at', { ascending: false }).limit(100), 'Jobs unavailable'),
-      queryOrThrow(this.db.from('webhook_deliveries').select('id,delivery_id,provider,event_type,status,signature_verified,attempt_count,response_status,related_object,evidence_reference,received_at,processed_at,updated_at').eq('project_id', projectId).eq('user_id', access.ownerId).order('received_at', { ascending: false }).limit(100), 'Webhooks unavailable'),
+      queryOrThrow(this.db.from('webhook_deliveries').select('delivery_id,provider,event_type,status,signature_verified,attempt_count,response_status,related_object,evidence_reference,received_at,completed_at,updated_at').eq('project_id', projectId).eq('user_id', access.ownerId).order('received_at', { ascending: false }).limit(100), 'Webhooks unavailable'),
       queryOrThrow(this.db.from('operations_maintenance_windows').select('*').eq('project_id', projectId).eq('user_id', access.ownerId).order('starts_at', { ascending: false }).limit(100), 'Maintenance windows unavailable'),
     ]);
     if (!project) throw new OperationsServiceError('not_found', 'Product not found', 404);
@@ -256,6 +256,7 @@ export class OperationsService {
       webhook: { table: 'webhook_deliveries', idColumn: 'delivery_id', versionColumn: 'attempt_count' }, automation: { table: 'operations_automation_rules', idColumn: 'id', versionColumn: 'version' },
       environment: { table: 'operations_environments', idColumn: 'id', versionColumn: 'version' }, maintenance: { table: 'operations_maintenance_windows', idColumn: 'id', versionColumn: 'version' },
       migration: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' }, backup: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' }, queue: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' },
+      growth_campaign: { table: 'growth_campaigns', idColumn: 'id', versionColumn: 'version' },
     };
     const lookup = lookups[action.target_type];
     if (!lookup) return action.target_type === 'release' ? 1 : null;
@@ -364,6 +365,10 @@ export class OperationsService {
     if (capability === 'cancel_maintenance') {
       const rows = await queryOrThrow<DbRow[]>(this.db.from('operations_maintenance_windows').update({ status: 'cancelled', version: Number(input.targetVersion) + 1, updated_at: now }).eq('id', targetId).eq('project_id', projectId).eq('user_id', userId).eq('version', Number(input.targetVersion)).in('status', ['scheduled','active']).select('id,status'), 'Maintenance cancellation failed');
       return rows.length ? { status: 'verified', safeSummary: 'Maintenance cancellation persisted and verified' } : { status: 'blocked', safeSummary: 'Maintenance window changed or is no longer cancellable', errorCategory: 'invalid_state' };
+    }
+    if (capability === 'execute_growth_campaign') {
+      const rows = await queryOrThrow<DbRow[]>(this.db.from('growth_campaigns').update({ status: 'running', version: Number(input.targetVersion) + 1, updated_at: now }).eq('id', targetId).eq('project_id', projectId).eq('tenant_id', userId).eq('version', Number(input.targetVersion)).eq('status', 'approval_required').select('id,status,version'), 'Growth campaign approval failed');
+      return rows.length ? { status: 'verified', safeSummary: 'Growth campaign approval persisted; recipient processing may begin' } : { status: 'blocked', safeSummary: 'Campaign changed or is not awaiting approval', errorCategory: 'invalid_state' };
     }
     if (capability === 'prepare_repair') return { status: 'verified', safeSummary: 'Repair request prepared; branch creation, merge, and production promotion remain separate authorised actions', observedState: { command1Boundary: 'approval_required_before_production' } };
     return { status: 'unsupported', safeSummary: `${capability} is not implemented` };

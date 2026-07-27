@@ -45,6 +45,7 @@ import { ensureShipLoopSchema } from './db/ensureShipLoopSchema.js';
 import { modelKeyStatus, modelTransportStatus } from './ai/openaiCompat.js';
 import { publicHealthPayload } from './lib/safeHealth.js';
 import operationsRouter from './routes/operations.js';
+import growthRouter from './routes/growth.js';
 import { getSupabaseAdmin } from './config/supabase.js';
 
 const app = express();
@@ -162,6 +163,7 @@ app.use('/api/admin', authMiddleware, adminMiddleware, adminRouter);
 // Operations routes enforce tenant membership and action-specific permissions in
 // the service layer; hiding controls or requiring global admin is not security.
 app.use('/api/operations', authMiddleware, operationsRouter);
+app.use('/api/growth', authMiddleware, growthRouter);
 app.get('/metrics', authMiddleware, adminMiddleware, (_req, res) => {
   res.setHeader('Content-Type', 'text/plain; version=0.0.4');
   res.send(getMetricsText());
