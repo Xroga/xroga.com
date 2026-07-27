@@ -1,7 +1,7 @@
 {
   "command": "3",
   "branch": "agent/command3c-production-growth",
-  "headCommit": "pending-final-evidence-commit",
+  "evidenceCommit": "ae3783eb8fa8c58f1d585db9289ec24ccb50575c",
   "pullRequest": "https://github.com/Xroga/xroga.com/pull/354",
   "phase": "verified",
   "statusSource": "docs/command-3/requirements-ledger.json",
