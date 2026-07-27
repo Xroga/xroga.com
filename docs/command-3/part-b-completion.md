@@ -1,7 +1,7 @@
-# Command 3B completion result
+# Command 3B completion
 
-Current derived state: `command_3b_blocked`.
+Derived status: `command_3b_verified`.
 
-The canonical Operations Centre runtime, schema, permissions, safe actions, approvals, automation, provider contract, truthful UI, production migrations, and automated verification are implemented. The only mandatory gate not completed is authenticated browser verification because no PR preview or safe test session is available.
+The protected GitHub Actions browser run used the approved Supabase project and a temporary verified user. It proved real UI login, session persistence after refresh, the authenticated Operations Centre, owner API access, cross-tenant denial, logout, and fixture cleanup. The run also exposed and repaired missing server-only privileges on legacy operational tables; browser grants remain revoked.
 
-This state is derived from `requirements-ledger.json`; it must not be changed to `command_3b_verified` until C3B-35 and C3B-40 have real browser evidence. The branch has not been merged or deployed.
+The status is derived from the evidenced mandatory entries in `requirements-ledger.json`, not selected manually.

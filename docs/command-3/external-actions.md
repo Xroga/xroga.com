@@ -1,12 +1,8 @@
-# Command 3B external actions
+# Command 3 external actions
 
-One mandatory verification blocker remains:
+No mandatory implementation or verification blocker remains.
 
-1. Allow a non-production Vercel preview for PR #353 (the current deployment is skipped by the Ignored Build Step).
-2. Configure that preview with its public Supabase URL/key and backend API URL. Do not provide service-role or database credentials to the browser.
-3. Provide or sign in with a safe test account that belongs to an isolated test workspace.
-4. Run the authenticated browser acceptance flow documented in `black-box-evidence.md`.
-
-Optional provider operations remain truthfully unavailable until their mutation adapters and credentials are configured. This includes production rollback, database restore, cache purge, and provider-specific queue mutation. Their absence does not appear as success and does not expose a working UI control.
-
-Existing Supabase advisor items outside this PR remain operator-owned: public avatar object listing and leaked-password protection configuration.
+1. Review and merge draft PR #354 when satisfied; Codex did not merge it.
+2. Configure Resend or Brevo server credentials and delivery webhooks only if email campaigns are required. Until then the API truthfully returns `external_setup_required`; in-app notifications remain supported.
+3. Review pre-existing Supabase advisor notices for public avatar object listing and leaked-password protection. They were not introduced by Command 3C.
+4. Confirm the Vercel production environment carries the approved public Supabase URL and publishable key before promoting the branch. Protected CI already verifies those GitHub secrets without exposing values.

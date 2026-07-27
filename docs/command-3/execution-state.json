@@ -1,40 +1,46 @@
 {
-  "command": "3B",
-  "branch": "agent/complete-command3b-operations-centre",
-  "baseCommit": "c77add7d86dc38ace87144c9bd8d4bfabfa5ed4c",
-  "phase": "final_verification",
-  "derivedStatus": "command_3b_blocked",
+  "command": "3",
+  "branch": "agent/command3c-production-growth",
+  "headCommit": "pending-final-evidence-commit",
+  "pullRequest": "https://github.com/Xroga/xroga.com/pull/354",
+  "phase": "verified",
   "statusSource": "docs/command-3/requirements-ledger.json",
-  "command3aGate": {
-    "status": "verified",
-    "supabaseProjectRef": "nzenxdfumxrnsmybazmo",
-    "migrationWorkflow": "https://github.com/Xroga/xroga.com/actions/runs/30214218916",
-    "flyWorkflow": "https://github.com/Xroga/xroga.com/actions/runs/30218203265",
-    "liveReadyUrl": "https://xroga-api.fly.dev/ready",
-    "liveReadyStatus": 200
+  "derivedStatuses": {
+    "command3b": "command_3b_verified",
+    "command3c": "command_3c_verified",
+    "complete": "production_operations_growth_verified"
   },
-  "command3b": {
-    "pullRequest": "https://github.com/Xroga/xroga.com/pull/353",
-    "productionWritesPerformed": true,
-    "productionDeploymentPerformed": false,
-    "migrations": ["20260726211546_command3b_operations_centre", "20260726211810_command3b_action_retry_hardening"],
-    "schemaVerification": { "requiredTables": 12, "rlsEnabledTables": 12, "anonymousCanClaim": false, "authenticatedCanClaim": false, "serviceRoleCanClaim": true, "immutableAuditTriggers": 1 },
-    "validation": {
-      "frontendLint": "passed_with_4_pre_existing_warnings",
-      "resilience": "4/4 passed",
-      "backendTests": "293/293 passed",
-      "completionGateTests": "3/3 passed",
-      "backendBuild": "passed",
-      "frontendBuild": "passed (65 pages)",
-      "githubChecks": "passed at commit 46aa465c110e0ebc8ce215dd6e33a6f26a1883c5"
-    },
-    "browserVerification": {
-      "status": "blocked_external",
-      "localResult": "The production bundle starts, but local middleware returns 500 because no Supabase public URL/key is configured.",
-      "previewResult": "Vercel reported Canceled by Ignored Build Step, so no PR preview URL exists.",
-      "missing": ["non-production preview deployment", "valid preview public configuration", "safe authenticated test account/session"]
-    }
+  "supabase": {
+    "projectRef": "nzenxdfumxrnsmybazmo",
+    "url": "https://nzenxdfumxrnsmybazmo.supabase.co",
+    "emailAuthentication": "enabled_and_browser_verified",
+    "migrations": [
+      "20260727071619_command3c_growth_runtime",
+      "20260727073814_command3c_growth_indexes",
+      "20260727082121_command3c_deployment_status_access",
+      "20260727082535_command3c_legacy_operations_access"
+    ],
+    "browserRoleGrowthAccess": false,
+    "serviceRoleGrowthAccess": true
   },
-  "blockers": ["Mandatory authenticated end-to-end Operations Centre browser verification cannot run until a safe preview and test login are available."],
-  "updatedAt": "2026-07-27T02:35:00+05:00"
+  "validation": {
+    "lint": "passed_with_4_pre_existing_warnings",
+    "resilience": "4/4 passed",
+    "backendTests": "306/306 passed",
+    "completionGate": "4/4 passed",
+    "backendBuild": "passed",
+    "frontendBuild": "passed (67 routes)",
+    "migrationWorkflow": "passed",
+    "apiContainerBuild": "passed",
+    "frontendWorkflow": "passed",
+    "authenticatedBrowser": "passed: https://github.com/Xroga/xroga.com/actions/runs/30250920431",
+    "tenantIsolation": "owner 200; unrelated tenant 403",
+    "secretRedaction": "passed"
+  },
+  "externalActions": [
+    "Human review and merge of draft PR #354",
+    "Configure optional Resend or Brevo credentials before enabling email campaigns",
+    "Review existing Supabase advisor notices recorded in external-actions.md"
+  ],
+  "updatedAt": "2026-07-27T13:35:00+05:00"
 }
