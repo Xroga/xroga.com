@@ -56,7 +56,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const denied = await fetch(`${backendUrl}/api/operations/products/${outsiderProjectId}`, { headers: { Authorization: browserBearer } });
   expect(allowed.status).toBe(200); expect(denied.status).toBe(403);
   await page.goto('/settings');
+  await page.getByRole('button', { name: 'Security' }).click();
   await page.getByRole('button', { name: 'Logout' }).first().click();
+  await page.goto('/auth/login');
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await page.request.get('/api/session'); expect(loggedOut.status()).toBe(401);
   await mkdir('test-results', { recursive: true });
