@@ -1,34 +1,37 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getSupabasePublicConfig } from './config';
+import { isPublicPath } from './routeAccess';
 
-/** Paths crawlers and visitors can access without signing in */
-const PUBLIC_PREFIXES = [
-  '/features',
-  '/integrations',
-  '/droga',
-  '/pricing',
-  '/about',
-  '/contact',
-  '/docs',
-  '/terms',
-  '/privacy',
-  '/refund',
-];
+function authUnavailableResponse(request: NextRequest, isPublicPage: boolean) {
+  if (isPublicPage) return NextResponse.next({ request });
 
-function isPublicPath(pathname: string): boolean {
-  if (pathname === '/') return true;
-  // This route reports authenticated=false as JSON; middleware must not replace
-  // that contract with an HTML login redirect for signed-out callers.
-  if (pathname === '/api/session') return true;
-  if (pathname === '/robots.txt' || pathname === '/sitemap.xml') return true;
-  if (pathname.startsWith('/auth')) return true;
-  return PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  const url = request.nextUrl.clone();
+  url.pathname = '/auth/login';
+  url.search = '';
+  url.searchParams.set('reason', 'authentication_unavailable');
+  url.searchParams.set('next', request.nextUrl.pathname);
+  return NextResponse.redirect(url);
 }
 
 export async function updateSession(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const isAuthPage = pathname.startsWith('/auth');
+  const isPublicPage = isPublicPath(pathname);
   let supabaseResponse = NextResponse.next({ request });
-  const config = getSupabasePublicConfig();
+
+  let config: ReturnType<typeof getSupabasePublicConfig>;
+  try {
+    config = getSupabasePublicConfig();
+  } catch {
+    // Configuration details may contain deployment information. Keep the public
+    // site available, fail protected routes closed, and log only a safe category.
+    console.error('Authentication middleware unavailable', {
+      category: 'invalid_public_auth_configuration',
+      pathname,
+    });
+    return authUnavailableResponse(request, isPublicPage);
+  }
 
   const supabase = createServerClient(
     config.url,
@@ -49,11 +52,17 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
-  const pathname = request.nextUrl.pathname;
-
-  const isAuthPage = pathname.startsWith('/auth');
-  const isPublicPage = isPublicPath(pathname);
+  let user = null;
+  try {
+    const result = await supabase.auth.getUser();
+    user = result.data.user;
+  } catch {
+    console.error('Authentication provider request failed', {
+      category: 'authentication_provider_unavailable',
+      pathname,
+    });
+    return authUnavailableResponse(request, isPublicPage);
+  }
 
   if (!user && !isPublicPage) {
     const url = request.nextUrl.clone();
