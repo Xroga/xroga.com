@@ -24,6 +24,7 @@ export const ACTION_DEFINITIONS: Record<string, ActionDefinition> = {
   cancel_maintenance: { type: 'cancel_maintenance', permission: 'manage_automation', riskLevel: 'medium', confirmationRequired: true, supportedTargetTypes: ['maintenance'], providerCapability: 'cancel_maintenance', maxAttempts: 1 },
   enable_automation: { type: 'enable_automation', permission: 'manage_automation', riskLevel: 'medium', confirmationRequired: true, supportedTargetTypes: ['automation'], providerCapability: 'enable_automation', maxAttempts: 1 },
   disable_automation: { type: 'disable_automation', permission: 'manage_automation', riskLevel: 'low', confirmationRequired: true, supportedTargetTypes: ['automation'], providerCapability: 'disable_automation', maxAttempts: 1 },
+  execute_growth_campaign: { type: 'execute_growth_campaign', permission: 'manage_automation', riskLevel: 'high', confirmationRequired: true, approvalRole: 'recovery_manager', supportedTargetTypes: ['growth_campaign'], providerCapability: 'execute_growth_campaign', maxAttempts: 1 },
 };
 
 const SENSITIVE = [

@@ -256,6 +256,7 @@ export class OperationsService {
       webhook: { table: 'webhook_deliveries', idColumn: 'delivery_id', versionColumn: 'attempt_count' }, automation: { table: 'operations_automation_rules', idColumn: 'id', versionColumn: 'version' },
       environment: { table: 'operations_environments', idColumn: 'id', versionColumn: 'version' }, maintenance: { table: 'operations_maintenance_windows', idColumn: 'id', versionColumn: 'version' },
       migration: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' }, backup: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' }, queue: { table: 'operations_resources', idColumn: 'id', versionColumn: 'version' },
+      growth_campaign: { table: 'growth_campaigns', idColumn: 'id', versionColumn: 'version' },
     };
     const lookup = lookups[action.target_type];
     if (!lookup) return action.target_type === 'release' ? 1 : null;
@@ -364,6 +365,10 @@ export class OperationsService {
     if (capability === 'cancel_maintenance') {
       const rows = await queryOrThrow<DbRow[]>(this.db.from('operations_maintenance_windows').update({ status: 'cancelled', version: Number(input.targetVersion) + 1, updated_at: now }).eq('id', targetId).eq('project_id', projectId).eq('user_id', userId).eq('version', Number(input.targetVersion)).in('status', ['scheduled','active']).select('id,status'), 'Maintenance cancellation failed');
       return rows.length ? { status: 'verified', safeSummary: 'Maintenance cancellation persisted and verified' } : { status: 'blocked', safeSummary: 'Maintenance window changed or is no longer cancellable', errorCategory: 'invalid_state' };
+    }
+    if (capability === 'execute_growth_campaign') {
+      const rows = await queryOrThrow<DbRow[]>(this.db.from('growth_campaigns').update({ status: 'running', version: Number(input.targetVersion) + 1, updated_at: now }).eq('id', targetId).eq('project_id', projectId).eq('tenant_id', userId).eq('version', Number(input.targetVersion)).eq('status', 'approval_required').select('id,status,version'), 'Growth campaign approval failed');
+      return rows.length ? { status: 'verified', safeSummary: 'Growth campaign approval persisted; recipient processing may begin' } : { status: 'blocked', safeSummary: 'Campaign changed or is not awaiting approval', errorCategory: 'invalid_state' };
     }
     if (capability === 'prepare_repair') return { status: 'verified', safeSummary: 'Repair request prepared; branch creation, merge, and production promotion remain separate authorised actions', observedState: { command1Boundary: 'approval_required_before_production' } };
     return { status: 'unsupported', safeSummary: `${capability} is not implemented` };

@@ -1,0 +1,31 @@
+-- Index the canonical tenant/project access paths and foreign keys used by the
+-- growth service. These are additive and do not change stored evidence.
+CREATE INDEX IF NOT EXISTS idx_growth_identity_project ON public.growth_identity_links(project_id);
+CREATE INDEX IF NOT EXISTS idx_growth_identity_user ON public.growth_identity_links(user_id);
+CREATE INDEX IF NOT EXISTS idx_growth_activation_tenant ON public.growth_activation_definitions(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_growth_lifecycle_tenant ON public.growth_lifecycle_state(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_growth_lifecycle_activation ON public.growth_lifecycle_state(activation_definition_id);
+CREATE INDEX IF NOT EXISTS idx_growth_recommendations_project ON public.growth_recommendations(project_id, priority DESC, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_growth_recommendations_environment ON public.growth_recommendations(environment_id);
+CREATE INDEX IF NOT EXISTS idx_growth_recommendations_approval ON public.growth_recommendations(approval_id);
+CREATE INDEX IF NOT EXISTS idx_growth_recommendations_outcome ON public.growth_recommendations(outcome_event_id);
+CREATE INDEX IF NOT EXISTS idx_growth_suppressions_project ON public.growth_suppressions(project_id);
+CREATE INDEX IF NOT EXISTS idx_growth_segments_tenant ON public.growth_segments(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_growth_campaigns_project ON public.growth_campaigns(project_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_growth_campaigns_segment ON public.growth_campaigns(segment_id);
+CREATE INDEX IF NOT EXISTS idx_growth_campaigns_approval ON public.growth_campaigns(approval_id);
+CREATE INDEX IF NOT EXISTS idx_growth_messages_project ON public.growth_messages(project_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_growth_messages_recipient ON public.growth_messages(recipient_user_id);
+CREATE INDEX IF NOT EXISTS idx_growth_referral_tenant ON public.growth_referral_attribution(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_growth_referral_referral ON public.growth_referral_attribution(referral_id);
+CREATE INDEX IF NOT EXISTS idx_growth_experiments_tenant ON public.growth_experiments(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_growth_assignments_tenant ON public.growth_experiment_assignments(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_growth_outcomes_experiment ON public.growth_experiment_outcomes(experiment_id);
+CREATE INDEX IF NOT EXISTS idx_growth_outcomes_event ON public.growth_experiment_outcomes(event_id);
+CREATE INDEX IF NOT EXISTS idx_growth_attribution_project ON public.growth_attribution_touches(project_id, occurred_at DESC);
+CREATE INDEX IF NOT EXISTS idx_growth_attribution_user ON public.growth_attribution_touches(user_id);
+CREATE INDEX IF NOT EXISTS idx_growth_share_tenant ON public.growth_share_links(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_growth_share_project ON public.growth_share_links(project_id);
+CREATE INDEX IF NOT EXISTS idx_analytics_events_release ON public.analytics_events(release_id);
+CREATE INDEX IF NOT EXISTS idx_analytics_events_deployment ON public.analytics_events(deployment_id);
+CREATE INDEX IF NOT EXISTS idx_analytics_events_referral ON public.analytics_events(referral_id);

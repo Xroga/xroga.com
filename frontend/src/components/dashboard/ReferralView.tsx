@@ -58,7 +58,7 @@ export function ReferralView() {
       if (navigator.share) {
         await navigator.share({
           title: 'Join Xroga AI',
-          text: 'Build with Xroga AI — we both get 250K tokens + 5,000 XRG when you subscribe!',
+          text: 'Build with Xroga AI using my referral link.',
           url,
         });
       } else {
@@ -89,7 +89,7 @@ export function ReferralView() {
           Refer &amp; Earn
         </h1>
         <p className="text-sm text-[var(--muted)] mt-1">
-          Both you and your friend get 250,000 AI tokens + 5,000 XRG instantly when they subscribe. After 3 months, both get another 190,000 tokens + 5,000 XRG.
+          Share your referral link. Qualification and earned rewards appear only after server-side evidence is verified.
         </p>
       </header>
 
@@ -156,12 +156,12 @@ export function ReferralView() {
       </section>
 
       <section className="glass-panel rounded-2xl p-5 space-y-3">
-        <h2 className="font-semibold text-sm">Reward breakdown</h2>
+        <h2 className="font-semibold text-sm">Referral evidence</h2>
         <ul className="text-xs text-[var(--muted)] space-y-1.5">
-          <li>Instant (both): 250,000 AI tokens + 5,000 XRG on subscription</li>
-          <li>3-month bonus (both): 190,000 AI tokens + 5,000 XRG</li>
-          <li>New user after 3 months: +3% lifetime discount</li>
-          <li>Per referral total: up to 440,000 AI tokens + 10,000 XRG each</li>
+          <li>Applying a code records attribution; it does not automatically qualify a reward.</li>
+          <li>Self-referrals and duplicate referred accounts are rejected.</li>
+          <li>Only durable rewarded records are included in the totals above.</li>
+          <li>Pending or suspicious referrals remain uncredited until independently qualified.</li>
         </ul>
       </section>
 
