@@ -2,19 +2,15 @@ import { PricingPageClient } from '@/components/pricing/PricingPageClient';
 import { buildMetadata } from '@/lib/seo';
 
 export const metadata = buildMetadata({
-  title: 'Pricing — AI Token Plans & Galactic Tiers',
+  title: 'Pricing — One Xroga AI Plan',
   description:
-    'Xroga AI pricing: pay for tokens, not features. Free trial ~0.55M tokens. Spark 6.17M tokens/mo, Pulse 9.42M (most popular), Nova 15.9M, Zenith 32.2M, Singularity 325M. All features on every plan.',
+    'Xroga AI is $19 per 30-day billing period. Activate by 30 August 2026 for one complete 30-day period free, with no card and no automatic charge.',
   path: '/pricing',
   keywords: [
     'Xroga pricing',
-    'AI token plans',
-    'Pulse plan',
-    'Spark plan',
-    'roga pricing',
-    'droga ai cost',
-    'top up tokens',
-    '6.17M tokens',
+    'Xroga AI plan',
+    '30-day Xroga promotion',
+    'AI product builder pricing',
   ],
 });
 

@@ -81,34 +81,6 @@ export const FEATURE_SEO_PAGES: FeatureSeoPage[] = [
     relatedSlugs: ['xroga-workspace', 'build-websites-apps-games', 'github-auto-deploy'],
   },
   {
-    slug: 'ai-voice-talk',
-    title: 'Talk with AI — Voice Assistant',
-    headline: 'Talk with AI — Push-to-Talk Voice on Xroga AI',
-    description:
-      'Speak naturally with Xroga Voice — push-to-talk AI with human-like speech, live web search via Tavily, Groq Whisper STT, and Edge TTS. Ask questions hands-free on xroga.com.',
-    keywords: [
-      'talk with AI',
-      'AI voice assistant',
-      'voice AI chat',
-      'push to talk AI',
-      'Xroga voice',
-      'AI speech assistant',
-      'voice chatbot',
-      'hands-free AI',
-    ],
-    bullets: [
-      'Tap Talk — full-screen voice UI with glowing orb and live captions',
-      'Groq Whisper listens; Groq Llama thinks; Edge TTS speaks naturally',
-      'Live web search for weather, news, stocks, and current events',
-      'Cancel, close, mute, and conversation history in one overlay',
-    ],
-    faq: [
-      { q: 'Does Xroga have voice talk?', a: 'Yes. Click Talk in the header to open the voice overlay — sign in and allow microphone access.' },
-      { q: 'Does voice search the web?', a: 'Yes. Time-sensitive questions trigger Tavily search before the AI speaks an answer.' },
-    ],
-    relatedSlugs: ['ai-chat', 'ai-image-generation', 'integrations'],
-  },
-  {
     slug: 'build-websites-apps-games',
     title: 'Build Websites, Web Apps & Games',
     headline: 'Build Websites & Web Apps with AI — No Coding Knowledge Required',

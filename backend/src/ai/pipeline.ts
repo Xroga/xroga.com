@@ -4,8 +4,10 @@ import { MODELS, type ModelId } from './models.js';
 import {
   buildVisionUserContent,
   chatCompletionStream,
+  estimateMessageTokens,
   type ChatMessage,
 } from './openaiCompat.js';
+import { withProviderReservation } from './providerBudget.js';
 import {
   BUILDER_SYSTEM,
   CHAT_SYSTEM,
@@ -414,17 +416,26 @@ async function callBuilderStream(
               provider === 'xai' ? 'grok' : provider,
             ).catch(() => null)
           : null);
-      return await chatCompletionStream(modelId, messages, {
-        maxTokens: opts.maxTokens,
-        temperature: opts.temperature,
-        onDelta: opts.onDelta,
-        signal: opts.signal,
-        credentialOverride: userCredential || undefined,
-      });
+      const execute = () => chatCompletionStream(modelId, messages, {
+          maxTokens: opts.maxTokens,
+          temperature: opts.temperature,
+          onDelta: opts.onDelta,
+          signal: opts.signal,
+          credentialOverride: userCredential || undefined,
+        });
+      return opts.userId
+        ? await withProviderReservation({
+            userId: opts.userId,
+            modelId,
+            estimatedInputTokens: estimateMessageTokens(messages),
+            maximumOutputTokens: opts.maxTokens ?? 8192,
+            execute,
+          })
+        : await execute();
     } catch (err) {
       lastErr = err as Error;
       const code = (lastErr as Error & { code?: string }).code;
-      if (code === 'OUT_OF_TOKENS' || code === 'BUILD_CANCELLED') throw lastErr;
+      if (code === 'OUT_OF_TOKENS' || code === 'BUILD_CANCELLED' || code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE') throw lastErr;
       const normalized = normalizeProviderError(lastErr);
       console.warn(`[pipeline] ${modelId} stream failed:`, normalized.safeMessage);
     }
@@ -637,7 +648,7 @@ export async function runChatPipeline(opts: {
   let research: ResearchBundle | null = null;
   let researchBlock = '';
   if (route.useResearch) {
-    research = await gatherResearch(opts.prompt);
+    research = await gatherResearch(opts.prompt, opts.userId);
     researchBlock = formatResearchForPrompt(research);
     if (!researchBlock) research = null;
   }
@@ -750,10 +761,10 @@ export async function runBuildPipeline(opts: {
       agent: 'vision',
       status: 'analyzing',
       message: preparedEarly.hasImages
-        ? 'Analyzing image(s) with Grok vision…'
+        ? 'Analyzing image(s) for design and error context…'
         : 'Analyzing document(s)…',
       swarmStatusLabel: 'Analyze',
-      swarmActivity: preparedEarly.hasImages ? 'Grok vision' : 'Doc extract',
+      swarmActivity: preparedEarly.hasImages ? 'Image analysis' : 'Document extract',
       swarmTodos: todosForBuild('route', 'omit'),
     });
     const chat = await runChatPipeline({
@@ -766,7 +777,7 @@ export async function runBuildPipeline(opts: {
     const output = {
       type: 'chat',
       content: chat.response,
-      modelLabel: MODELS[chat.modelId].label,
+      modelLabel: 'Xroga AI',
       analyzeKind: chat.intent,
     };
     completeRun(runId, {
@@ -780,7 +791,7 @@ export async function runBuildPipeline(opts: {
       status: 'complete',
       message: 'Analysis ready',
       swarmStatusLabel: 'Done',
-      swarmActivity: MODELS[chat.modelId].label,
+      swarmActivity: 'Xroga AI',
       swarmTodos: todosForBuild('done', 'omit').map((t) => ({ ...t, status: 'done' as const })),
     });
     return {
@@ -871,14 +882,14 @@ export async function runBuildPipeline(opts: {
   const todos = (
     step: Parameters<typeof todosForBuild>[0],
   ) => todosForBuild(step, researchState);
-  const emitModelSwitch = (from: ModelId, to: ModelId) => {
+  const emitModelSwitch = (_from: ModelId, _to: ModelId) => {
     modelSwitches += 1;
     emit({
       agent: 'builder',
       status: 'model_fallback',
-      message: `Switched ${MODELS[from].label} → ${MODELS[to].label} (capacity or availability)`,
-      swarmStatusLabel: MODELS[to].label,
-      swarmActivity: 'Fallback',
+      message: 'Changed the internal execution route because of capacity or availability',
+      swarmStatusLabel: 'Rerouting',
+      swarmActivity: 'Compatible fallback',
       swarmTodos: todos('build'),
     });
   };
@@ -892,7 +903,7 @@ export async function runBuildPipeline(opts: {
     swarmStatusLabel: isUpdate ? 'Updating' : 'Routing',
     swarmActivity: isUpdate
       ? `Patching ${prior.projectName || meta?.githubTargetRepo || 'project'}`
-      : `Assigning ${MODELS[route.builder].label}`,
+      : 'Preparing the implementation route',
     swarmTodos: todos('route'),
   });
 
@@ -952,7 +963,7 @@ export async function runBuildPipeline(opts: {
       status: 'summarizing',
       message: 'One-time project memo for cheaper future updates…',
       swarmStatusLabel: 'Memo',
-      swarmActivity: 'DeepSeek Pro / GLM (once)',
+      swarmActivity: 'Repository comprehension',
       swarmTodos: todos('route'),
     });
     await assertCanUseModel(
@@ -960,6 +971,7 @@ export async function runBuildPipeline(opts: {
       prior.files.length >= 20 || route.kind === 'build_long_horizon' ? 'glm_5_2' : 'deepseek_v4_pro',
     );
     const memo = await summarizeRepoForUpdates({
+      userId: opts.userId,
       prompt: userFacingPrompt,
       projectName: prior.projectName,
       paths: prior.files.map((f) => f.path),
@@ -994,7 +1006,7 @@ export async function runBuildPipeline(opts: {
       swarmActivity: 'Xroga Live · web + X',
       swarmTodos: todos('research'),
     });
-    research = await gatherResearch(opts.prompt);
+    research = await gatherResearch(opts.prompt, opts.userId);
     researchBlock = formatResearchForPrompt(research);
     if (!researchBlock) {
       // Do not fake a research step when nothing came back
@@ -1018,21 +1030,21 @@ export async function runBuildPipeline(opts: {
             ? `Live research ready${research.includedXSearch ? ' (web + X)' : ''} · ${research.sources.length} source(s)`
             : `Research ready · ${research.sources.length} source(s)`,
         swarmStatusLabel: 'Research',
-        swarmActivity: research.provider,
+        swarmActivity: 'Verified sources',
         swarmTodos: todos('convert'),
       });
     }
   }
 
-  // Build/update with screenshot: Grok vision → text brief for the (non-vision) builder
+  // Build/update with screenshot: image analysis → text brief for the builder.
   let designReference = '';
   if (preparedEarly.hasImages) {
     emit({
       agent: 'vision',
       status: 'analyzing',
-      message: 'Reading attached image(s) with Grok for design/error context…',
+      message: 'Reading attached image(s) for design and error context…',
       swarmStatusLabel: 'Vision',
-      swarmActivity: 'Grok 4.3',
+      swarmActivity: 'Image analysis',
       swarmTodos: todos('convert'),
     });
     try {
@@ -1057,12 +1069,12 @@ export async function runBuildPipeline(opts: {
         vision.inputTokens,
         vision.outputTokens,
       );
-      designReference = `\n\nDESIGN / SCREENSHOT REFERENCE (from Grok vision):\n${vision.text.slice(0, 6000)}`;
+      designReference = `\n\nDESIGN / SCREENSHOT REFERENCE:\n${vision.text.slice(0, 6000)}`;
       emit({
         agent: 'vision',
         status: 'model_active',
-        message: `Vision with ${MODELS[vision.modelId].label}`,
-        swarmStatusLabel: MODELS[vision.modelId].label,
+        message: 'Image analysis complete',
+        swarmStatusLabel: 'Vision ready',
         swarmActivity: 'Vision brief',
         swarmTodos: todos('convert'),
       });
@@ -1106,12 +1118,13 @@ export async function runBuildPipeline(opts: {
       ? `Converting update into a patch brief… (${selection.reason || 'targeted files'})`
       : 'Converting your request into a builder brief…',
     swarmStatusLabel: 'Briefing',
-    swarmActivity: `Converter · ${MODELS[route.converter].label}`,
+    swarmActivity: 'Executable brief',
     swarmTodos: todos('convert'),
   });
 
   await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
   const converted = await convertUserRequest(
+    opts.userId,
     isUpdate
       ? `INCREMENTAL UPDATE to existing project "${prior.projectName || 'current site'}". Apply only this change using SEARCH/REPLACE patches (or Delete File). Do not re-analyze the whole repo: ${opts.prompt}`
       : opts.prompt,
@@ -1182,6 +1195,7 @@ export async function runBuildPipeline(opts: {
       const ARCHITECT_MS = 45_000;
       const plan = await Promise.race([
         runArchitectPlan({
+          userId: opts.userId,
           brief: converted.instruction,
           userPrompt: userFacingPrompt,
           isUpdate,
@@ -1240,9 +1254,9 @@ export async function runBuildPipeline(opts: {
     status: 'building',
     message: isUpdate
       ? `Surgical update · ${selection.selected.length} files in context${prior.fromMemory ? ' · memory' : ''}`
-      : `Building with ${MODELS[route.builder].label}…`,
+      : 'Implementing the accepted outcome…',
     swarmStatusLabel: isUpdate ? 'Patching' : 'Building',
-    swarmActivity: MODELS[route.builder].tagline,
+    swarmActivity: 'Focused implementation',
     swarmTodos: todos('build'),
   });
 
@@ -1290,9 +1304,9 @@ export async function runBuildPipeline(opts: {
   emit({
     agent: 'builder',
     status: 'model_active',
-    message: `Building with ${MODELS[result.modelId].label}`,
-    swarmStatusLabel: MODELS[result.modelId].label,
-    swarmActivity: result.modelId === route.builder ? 'Preferred model' : 'Fallback model',
+    message: 'Implementation route active',
+    swarmStatusLabel: 'Building',
+    swarmActivity: result.modelId === route.builder ? 'Primary route' : 'Compatible fallback',
     swarmTodos: todos('build'),
   });
 
@@ -1469,7 +1483,7 @@ export async function runBuildPipeline(opts: {
     const chatOut = {
       type: 'chat',
       content: result.text,
-      modelLabel: MODELS[result.modelId].label,
+      modelLabel: 'Xroga AI',
       webSources: research?.sources,
     };
     const chatUsage = usageToTokenUsage(usage!);
@@ -1598,7 +1612,7 @@ export async function runBuildPipeline(opts: {
           : 'Static landing',
         'Ship in progress (GitHub / Vercel)',
       ],
-      modelLabel: MODELS[result.modelId].label,
+      modelLabel: 'Xroga AI',
     };
     try {
       opts.onCodeReady?.(previewOutput);
@@ -1621,7 +1635,7 @@ export async function runBuildPipeline(opts: {
     status: 'reviewing',
     message: 'Reviewing build quality…',
     swarmStatusLabel: 'QA',
-    swarmActivity: 'DeepSeek review',
+    swarmActivity: 'Independent review',
     swarmTodos: todos('qa'),
   });
   throwIfAborted();
@@ -1853,7 +1867,7 @@ export async function runBuildPipeline(opts: {
     executionState.reviewer = { provider: MODELS[reviewerModel].provider, model: reviewerModel, taskId: reviewerTask.id };
     executionState.reviewFindings = qa.findings.map((finding) => ({ id: randomUUID(), ...finding, resolved: false }));
     transitionTask(executionState, reviewerTask.id, qa.ok ? 'completed' : 'failed', {
-      evidence: qa.ok ? [{ id: randomUUID(), kind: 'independent_review', summary: `${MODELS[reviewerModel].label} completed structured review`, timestamp: new Date().toISOString() }] : undefined,
+      evidence: qa.ok ? [{ id: randomUUID(), kind: 'independent_review', summary: 'Independent reviewer completed structured review', timestamp: new Date().toISOString() }] : undefined,
       blocker: qa.ok ? undefined : qa.issues.join('; '),
     });
   }
@@ -3078,7 +3092,7 @@ export async function runBuildPipeline(opts: {
       nextStepsMarkdown +
       compileMarkdown
     ),
-    modelLabel: MODELS[result.modelId].label,
+    modelLabel: 'Xroga AI',
     userPrompt: userFacingPrompt,
     isUpdate,
     usedSurgicalPatches: usedPatches,

@@ -1,8 +1,6 @@
 import { getSupabaseAdmin } from '../config/supabase.js';
 import {
   MODELS,
-  MONTHLY_TOTAL_BUDGET_USD,
-  MONTHLY_TOTAL_TOKENS,
   costUsdForTokens,
   dashboardModelPools,
   type ModelId,
@@ -428,49 +426,6 @@ export function usageToTokenUsage(usage: UsageSnapshot) {
     emergencyTokensAvailable: usage.emergencyTokensAvailable,
     emergencyTokensClaimedThisMonth: usage.emergencyTokensClaimedThisMonth,
     totalLimit: usage.totalLimit,
-    planBudgetUsd: usage.planBudgetUsd,
-    rolloverUsd: usage.rolloverUsd,
-    spentUsd: usage.spentUsd,
-    creditRemainingUsd: usage.creditRemainingUsd,
-    percentCreditUsed: usage.percentCreditUsed,
     planTier: usage.planTier,
-  };
-}
-
-export function usageToDashboardTokens(usage: UsageSnapshot) {
-  const daysInMonth = 30;
-  const dayOfMonth = new Date().getUTCDate();
-  const daysRemaining = Math.max(1, daysInMonth - dayOfMonth + 1);
-  return {
-    totalLimit: usage.totalLimit,
-    totalUsed: usage.totalTokensUsed,
-    totalRemaining: usage.totalTokensRemaining,
-    percentUsed: usage.percentUsed,
-    inputUsed: usage.inputTokensUsed,
-    inputLimit: Math.floor(usage.totalLimit / 2),
-    inputRemaining: usage.inputTokensRemaining,
-    outputUsed: usage.outputTokensUsed,
-    outputLimit: Math.ceil(usage.totalLimit / 2),
-    outputRemaining: usage.outputTokensRemaining,
-    emergencyAvailable: false,
-    emergencyClaimed: false,
-    daysRemaining,
-    estimatedDailyUsage:
-      dayOfMonth > 0 ? Math.round(usage.totalTokensUsed / dayOfMonth) : 0,
-    quotaPeriodStart: usage.quotaPeriodStart,
-    planBudgetUsd: usage.planBudgetUsd,
-    rolloverUsd: usage.rolloverUsd,
-    spentUsd: usage.spentUsd,
-    creditRemainingUsd: usage.creditRemainingUsd,
-    percentCreditUsed: usage.percentCreditUsed,
-    byModel: usage.byModel,
-  };
-}
-
-/** Defaults for economics endpoint / docs. */
-export function baseEconomics() {
-  return {
-    monthlyTotalBudgetUsd: MONTHLY_TOTAL_BUDGET_USD,
-    monthlyTotalTokens: MONTHLY_TOTAL_TOKENS,
   };
 }

@@ -13,13 +13,6 @@ export type CurrencyCode =
 
 export const PLAN_USD_PRICES: Record<string, number> = {
   spark: 19,
-  pulse: 29,
-  nova: 49,
-  zenith: 99,
-  singularity: 999,
-  micro: 6,
-  lite: 9,
-  essential: 10,
 };
 
 /** Approximate rates vs USD */

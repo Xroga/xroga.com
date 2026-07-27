@@ -1,89 +1,11 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { CloudUpload, Mic } from 'lucide-react';
+import { CloudUpload } from 'lucide-react';
 import { ChatBarShipIcon, type SendButtonState } from './ChatBarShipIcon';
 
 export type { SendButtonState };
 export type ChatbarSurface = 'homepage' | 'dashboard' | 'incognito';
-
-export function ChatBarComboAction({
-  hasText,
-  listening,
-  onMicToggle,
-  micDisabled,
-  sendState = 'idle',
-  stopping = false,
-  onStop,
-  surface = 'homepage',
-}: {
-  hasText: boolean;
-  listening: boolean;
-  onMicToggle: () => void;
-  micDisabled?: boolean;
-  sendState?: SendButtonState;
-  stopping?: boolean;
-  onStop?: () => void;
-  surface?: ChatbarSurface;
-}) {
-  const busy = stopping || sendState === 'sending' || sendState === 'thinking';
-  const launchReady = hasText || sendState === 'launched';
-
-  if (busy) {
-    return (
-      <button
-        type="button"
-        onClick={onStop}
-        className={cn('xv-combo-action xv-combo-action--stop shrink-0', surface === 'homepage' && 'xv-combo-action--home')}
-        aria-label="Stop response"
-      >
-        <span className="xv-combo-action__icon xv-combo-action__icon--stop">
-          <ChatBarShipIcon state={stopping ? 'thinking' : sendState} size={18} bold />
-        </span>
-        <span className="xv-combo-action__label">Stop</span>
-      </button>
-    );
-  }
-
-  if (launchReady) {
-    return (
-      <button
-        type="submit"
-        className={cn('xv-go-btn shrink-0', surface === 'homepage' && 'xv-go-btn--home')}
-        aria-label="Launch"
-      >
-        <span className="xv-go-btn__liquid" aria-hidden />
-        <span className="xv-go-btn__icon">
-          <ChatBarShipIcon state={sendState} size={18} bold />
-        </span>
-      </button>
-    );
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={onMicToggle}
-      disabled={micDisabled}
-      className={cn(
-        'xv-combo-action xv-combo-action--mic xv-combo-action--dictate shrink-0',
-        surface === 'homepage' && 'xv-combo-action--home',
-        listening && 'xv-combo-action--listen'
-      )}
-      title={listening ? 'Stop voice-to-text' : 'Voice to text — dictate into the chat'}
-      aria-label={listening ? 'Stop voice-to-text' : 'Voice to text'}
-    >
-      {listening ? (
-        <VoiceWaveform active />
-      ) : (
-        <span className="xv-combo-action__icon xv-combo-action__icon--mic">
-          <Mic className="w-4 h-4" strokeWidth={2.25} />
-        </span>
-      )}
-      <span className="xv-combo-action__label">Dictate</span>
-    </button>
-  );
-}
 
 export function ChatBarSendButton({
   stopping = false,
@@ -170,20 +92,6 @@ export function ChatBarUploadButton({
         {active && <span className="xv-upload-pulse-ring" aria-hidden />}
       </button>
     </div>
-  );
-}
-
-export function VoiceWaveform({ active }: { active: boolean }) {
-  return (
-    <span className="xv-voice-wave flex items-end justify-center gap-0.5 h-4 w-5" aria-hidden>
-      {[0, 1, 2, 3].map((i) => (
-        <span
-          key={i}
-          className={cn('xv-wave-bar w-0.5 rounded-full bg-red-400', active && 'xv-wave-bar--active')}
-          style={{ animationDelay: `${i * 0.12}s`, height: active ? undefined : '4px' }}
-        />
-      ))}
-    </span>
   );
 }
 

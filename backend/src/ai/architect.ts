@@ -2,7 +2,8 @@
  * Architect agent — emits a concrete file plan before the builder runs.
  */
 
-import { chatCompletion } from './openaiCompat.js';
+import { chatCompletion, estimateMessageTokens, type ChatMessage } from './openaiCompat.js';
+import { withProviderReservation } from './providerBudget.js';
 
 export interface ArchitectPlan {
   stack: string;
@@ -65,21 +66,28 @@ function parsePlan(text: string): Pick<ArchitectPlan, 'stack' | 'files' | 'notes
 }
 
 export async function runArchitectPlan(opts: {
+  userId: string;
   brief: string;
   userPrompt: string;
   isUpdate?: boolean;
 }): Promise<ArchitectPlan> {
-  const result = await chatCompletion(
-    'deepseek_v4_flash',
-    [
+  const messages: ChatMessage[] = [
       { role: 'system', content: ARCHITECT_SYSTEM },
       {
         role: 'user',
         content: `${opts.isUpdate ? 'INCREMENTAL UPDATE — plan only files that must change.\n' : ''}Builder brief:\n${opts.brief.slice(0, 6000)}\n\nUser request:\n${opts.userPrompt.slice(0, 2000)}`,
       },
-    ],
-    { maxTokens: 1200, temperature: 0.2, json: true },
-  );
+    ];
+  const result = await withProviderReservation({
+    userId: opts.userId,
+    modelId: 'deepseek_v4_flash',
+    estimatedInputTokens: estimateMessageTokens(messages),
+    maximumOutputTokens: 1200,
+    purpose: 'complexity',
+    execute: () => chatCompletion(
+      'deepseek_v4_flash', messages, { maxTokens: 1200, temperature: 0.2, json: true },
+    ),
+  });
   const parsed = parsePlan(result.text);
   return {
     ...parsed,

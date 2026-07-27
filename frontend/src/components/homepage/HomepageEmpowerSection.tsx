@@ -14,9 +14,9 @@ import {
 import { cn } from '@/lib/utils';
 
 const PIPE_STEPS = [
-  { id: 'convert', label: 'Converter', detail: 'Pulse → builder brief', agent: 'Pulse' },
-  { id: 'build', label: 'Builder', detail: 'Apex · Horizon · Forge', agent: 'Apex' },
-  { id: 'qa', label: 'QA', detail: 'Checks · compile', agent: 'Horizon' },
+  { id: 'convert', label: 'Understand', detail: 'Outcome → executable brief', agent: 'Xroga' },
+  { id: 'build', label: 'Build', detail: 'Focused implementation', agent: 'Xroga' },
+  { id: 'qa', label: 'Verify', detail: 'Checks · production build', agent: 'Review' },
   { id: 'ship', label: 'Ship', detail: 'GitHub → Vercel', agent: 'Deploy' },
 ] as const;
 

@@ -42,6 +42,7 @@ describe('runArchitectPlan', () => {
   it('returns a plan object shape when models available or fails open', async () => {
     try {
       const plan = await runArchitectPlan({
+        userId: '00000000-0000-4000-8000-000000000001',
         brief: 'Build a simple landing page',
         userPrompt: 'landing page for a cafe',
       });

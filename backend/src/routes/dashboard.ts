@@ -1,10 +1,7 @@
 import { Router } from 'express';
 import type { AuthRequest } from '../middleware/auth.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
-import { GALACTIC_PLANS, planDisplayName } from '../config/galacticPlans.js';
-import { MONTHLY_USER_PRICE_USD } from '../ai/models.js';
-import { getApiBudgetUsd, getTokenPool } from '../config/plans.js';
-import { getUsage, usageToDashboardTokens } from '../ai/quota.js';
+import { getProviderEntitlementStatus } from '../ai/providerBudget.js';
 import { computePlatformReady } from '../lib/platformReady.js';
 import { listRunsForUserAsync } from '../ai/runStore.js';
 import { isPromoFullAccessActive, promoFullAccessEndIso } from '../lib/promoAccess.js';
@@ -110,41 +107,6 @@ router.get('/ship-analytics', async (req: AuthRequest, res) => {
 router.get('/summary', async (req: AuthRequest, res) => {
   const userId = req.userId!;
 
-  let planTier = 'spark';
-  let planName = 'Basic';
-  let planPrice = `$${MONTHLY_USER_PRICE_USD}/month`;
-  let nextBilling = '';
-
-  try {
-    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      const supabase = getSupabaseAdmin();
-      const { data: actions } = await supabase
-        .from('user_actions')
-        .select('plan_tier, reset_date')
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (actions?.plan_tier) {
-        planTier = actions.plan_tier;
-        const plan = GALACTIC_PLANS.find((p) => p.tier === planTier);
-        planName = planDisplayName(planTier);
-        planPrice = plan ? `${plan.priceLabel}/month` : `$${MONTHLY_USER_PRICE_USD}/month`;
-      }
-      if (actions?.reset_date) {
-        nextBilling = new Date(actions.reset_date).toISOString().slice(0, 10);
-      }
-    }
-  } catch {
-    // defaults ok
-  }
-
-  if (!nextBilling) {
-    const d = new Date();
-    d.setUTCMonth(d.getUTCMonth() + 1);
-    d.setUTCDate(1);
-    nextBilling = d.toISOString().slice(0, 10);
-  }
-
   let recentActivity: Array<{ action: string; created_at: string; projectName?: string }> = [];
   try {
     if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -166,37 +128,30 @@ router.get('/summary', async (req: AuthRequest, res) => {
     // empty ok
   }
 
-  const usage = await getUsage(userId);
-  const tokens = usageToDashboardTokens(usage);
-  const effectiveTier = usage.planTier || planTier;
-  const tokensIncluded = getTokenPool(effectiveTier);
+  const entitlement = await getProviderEntitlementStatus(userId).catch(() => ({
+    state: 'billing_unavailable' as const,
+    pacing: null,
+    startsAt: null,
+    endsAt: null,
+    nextUnlockAt: null,
+    capacityRemainingPercent: null,
+    availableNowPercent: null,
+    promotionActivationDeadline: '2026-08-31T00:00:00.000Z',
+    requiresCard: false,
+    autoChargesAtPromotionEnd: false,
+  }));
+  const promotion = entitlement.state.startsWith('promotional_') || entitlement.state === 'billing_unavailable';
 
   res.json({
     now: new Date().toISOString(),
-    tokens,
-    xrg: {
-      totalXrg: 0,
-      availableXrg: 0,
-      vestedXrg: 0,
-      tokenBoostTotal: 0,
-      consistencyStreakMonths: 0,
-      consistencyBonusPercent: 0,
-    },
     billing: {
-      planTier: effectiveTier,
-      planName,
-      planPrice,
-      nextBilling,
-      tokensIncluded,
-      tokensUsed: tokens.totalUsed,
-      tokensRemaining: tokens.totalRemaining,
-      apiBudgetUsd: usage.planBudgetUsd || getApiBudgetUsd(effectiveTier),
-      creditRemainingUsd: usage.creditRemainingUsd,
-      spentUsd: usage.spentUsd,
-      rolloverUsd: usage.rolloverUsd,
+      planTier: promotion ? 'unpaid' : 'spark',
+      planName: promotion ? 'Launch Promotion' : 'Xroga AI',
+      planPrice: promotion ? '$0 for 30 days' : '$19 per 30 days',
+      nextBilling: entitlement.endsAt,
     },
+    entitlement,
     recentActivity,
-    aiBackend: 'kimi-glm-deepseek-grok',
   });
 });
 

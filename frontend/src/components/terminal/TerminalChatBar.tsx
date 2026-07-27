@@ -9,13 +9,11 @@ import { uploadChatImage, type ChatAttachment } from '@/lib/api';
 import { IntegrationsModal } from './IntegrationsModal';
 import { GithubRepoModal } from './GithubRepoModal';
 import { RepoWorkspaceGateModal } from './RepoWorkspaceGateModal';
-import { TalkButton } from '@/components/voice/TalkButton';
 import { ChatbarShell } from '@/components/ui/Uiverse';
 import {
   ChatBarDragOverlay,
   ChatBarInputRow,
   ChatBarToolChip,
-  useSpeechToText,
 } from './ChatBarParts';
 import { ChatBarFileGrid } from './ChatBarFileGrid';
 import type { SendButtonState } from './ChatBarButtons';
@@ -82,7 +80,6 @@ export function TerminalChatBar() {
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
-  const [listening, setListening] = useState(false);
   const [sendState, setSendState] = useState<SendButtonState>('idle');
   const [repoGate, setRepoGate] = useState<{
     open: boolean;
@@ -294,21 +291,6 @@ export function TerminalChatBar() {
   }
 
   /** Baseline prompt before the current mic session — speech replaces after baseline. */
-  const speechBaseRef = useRef('');
-  const speechActiveRef = useRef(false);
-  const applySpeech = useCallback((transcript: string) => {
-    if (!speechActiveRef.current) {
-      speechBaseRef.current = draftRef.current;
-      speechActiveRef.current = true;
-    }
-    const base = speechBaseRef.current.trim();
-    const next = transcript.trim();
-    const merged = base && next ? `${base} ${next}` : next || base;
-    setDraft(merged);
-    draftRef.current = merged;
-  }, []);
-  const speech = useSpeechToText(applySpeech);
-
   const addFiles = useCallback((list: FileList | null) => {
     if (!list?.length) return;
     const incoming = Array.from(list).filter(
@@ -479,25 +461,9 @@ export function TerminalChatBar() {
             <ChatBarInputRow
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
-              listening={listening}
               hideUpload={incognito}
               surface={incognito ? 'incognito' : 'dashboard'}
               compactGo={!!draft.trim()}
-              talkSlot={incognito ? undefined : <TalkButton variant="inline" />}
-              onMicToggle={() => {
-                if (!speech.supported) {
-                  toast.error('Voice input not supported in this browser');
-                  return;
-                }
-                if (listening) {
-                  speechActiveRef.current = false;
-                } else {
-                  speechBaseRef.current = draftRef.current;
-                  speechActiveRef.current = true;
-                }
-                speech.toggle(listening, setListening);
-              }}
-              micDisabled={!speech.supported}
               sendState={sendState}
               stopping={loading}
               onStop={() => {
@@ -514,7 +480,6 @@ export function TerminalChatBar() {
                 ref={textareaRef}
                 value={draft}
                 onChange={(e) => {
-                  speechActiveRef.current = false;
                   const next = e.target.value;
                   setDraft(next);
                   draftRef.current = next;

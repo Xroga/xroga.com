@@ -7,8 +7,6 @@ import { CurrencyDetector } from './CurrencyDetector';
 import { LanguageProvider } from './LanguageProvider';
 import { OfflineOverlay } from '@/components/errors/OfflineOverlay';
 import { ScheduledFeedbackPrompt } from '@/components/feedback/ScheduledFeedbackPrompt';
-import { VoiceTalkProvider } from '@/context/VoiceTalkContext';
-import { VoiceTalkOverlay } from '@/components/voice/VoiceTalkOverlay';
 import { getFirstVisitTime } from '@/lib/scheduledFeedback';
 import { recoverCorruptStorage } from '@/lib/storageRecovery';
 
@@ -25,11 +23,8 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
     <ThemeProvider>
       <LanguageProvider>
         <CurrencyDetector />
-        <VoiceTalkProvider>
-          {children}
-          <VoiceTalkOverlay />
-          <OfflineOverlay />
-        </VoiceTalkProvider>
+        {children}
+        <OfflineOverlay />
         <ScheduledFeedbackPrompt />
         <Toaster
           position="top-right"

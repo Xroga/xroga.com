@@ -1,4 +1,5 @@
-import { chatCompletion } from './openaiCompat.js';
+import { chatCompletion, estimateMessageTokens, type ChatMessage } from './openaiCompat.js';
+import { withProviderReservation } from './providerBudget.js';
 import { CONVERTER_SYSTEM, converterUserPrompt } from './prompts.js';
 
 /**
@@ -6,15 +7,23 @@ import { CONVERTER_SYSTEM, converterUserPrompt } from './prompts.js';
  * Uses DeepSeek V4 Flash (cheap) — no template catalogs.
  */
 export async function convertUserRequest(
+  userId: string,
   userRequest: string,
   researchBlock?: string,
 ): Promise<{ instruction: string; inputTokens: number; outputTokens: number }> {
-  const result = await chatCompletion('deepseek_v4_flash', [
+  const messages: ChatMessage[] = [
     { role: 'system', content: CONVERTER_SYSTEM },
     { role: 'user', content: converterUserPrompt(userRequest, researchBlock) },
-  ], {
-    temperature: 0.4,
-    maxTokens: 4096,
+  ];
+  const result = await withProviderReservation({
+    userId,
+    modelId: 'deepseek_v4_flash',
+    estimatedInputTokens: estimateMessageTokens(messages),
+    maximumOutputTokens: 4096,
+    execute: () => chatCompletion('deepseek_v4_flash', messages, {
+      temperature: 0.4,
+      maxTokens: 4096,
+    }),
   });
 
   const instruction = result.text.trim();

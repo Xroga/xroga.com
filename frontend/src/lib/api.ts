@@ -1035,6 +1035,36 @@ export const api = {
   },
   billing: {
     plans: () => apiFetch<{ plans: unknown[] }>('/api/billing/plans'),
+    status: () => apiFetch<{
+      lemonApi: boolean;
+      lemonWebhook: boolean;
+      lemonStore: boolean;
+      environment: 'production' | 'unconfigured';
+      plans: Array<{ tier: string; name: string; ready: boolean }>;
+    }>('/api/billing/status'),
+    entitlement: () => apiFetch<{
+      state: 'promotional_eligible' | 'promotional_active' | 'promotional_expired' | 'paid_active' | 'past_due' | 'paused' | 'cancelled' | 'billing_unavailable';
+      pacing: 'balanced_month' | 'full_access' | null;
+      startsAt: string | null;
+      endsAt: string | null;
+      nextUnlockAt: string | null;
+      capacityRemainingPercent: number | null;
+      availableNowPercent: number | null;
+      promotionActivationDeadline: string;
+      requiresCard: boolean;
+      autoChargesAtPromotionEnd: boolean;
+    }>('/api/billing/entitlement'),
+    activatePromotion: () => apiFetch<{
+      state: string;
+      startsAt: string;
+      endsAt: string;
+      pacing: 'balanced_month' | 'full_access';
+    }>('/api/billing/promotion/activate', { method: 'POST' }),
+    setPacing: (pacing: 'balanced_month' | 'full_access', confirmed: boolean) =>
+      apiFetch('/api/billing/pacing', {
+        method: 'POST',
+        body: JSON.stringify({ pacing, confirmed }),
+      }),
     createCheckout: (planTier: string) =>
       apiFetch<{
         checkoutUrl?: string;
@@ -1310,7 +1340,8 @@ export interface SwarmRunSummary {
 
 export interface DashboardSummary {
   now: string;
-  tokens: {
+  /** Transitional field accepted during rolling deploys; current API does not expose internal pools. */
+  tokens?: {
     totalLimit: number;
     totalUsed: number;
     totalRemaining: number;
@@ -1347,27 +1378,23 @@ export interface DashboardSummary {
       creditRemainingUsd?: number;
     }>;
   } | null;
-  aiBackend?: string;
-  xrg: {
-    totalXrg: number;
-    availableXrg: number;
-    vestedXrg: number;
-    tokenBoostTotal: number;
-    consistencyStreakMonths: number;
-    consistencyBonusPercent: number;
-  };
   billing: {
     planTier: string;
     planName: string;
     planPrice: string;
-    nextBilling: string;
-    tokensIncluded: number;
-    tokensUsed: number;
-    tokensRemaining: number;
-    apiBudgetUsd?: number;
-    creditRemainingUsd?: number;
-    spentUsd?: number;
-    rolloverUsd?: number;
+    nextBilling: string | null;
+  };
+  entitlement: {
+    state: 'promotional_eligible' | 'promotional_active' | 'promotional_expired' | 'paid_active' | 'past_due' | 'paused' | 'cancelled' | 'billing_unavailable';
+    pacing: 'balanced_month' | 'full_access' | null;
+    startsAt: string | null;
+    endsAt: string | null;
+    nextUnlockAt: string | null;
+    capacityRemainingPercent: number | null;
+    availableNowPercent: number | null;
+    promotionActivationDeadline: string;
+    requiresCard: boolean;
+    autoChargesAtPromotionEnd: boolean;
   };
   recentActivity: Array<{
     action: string;

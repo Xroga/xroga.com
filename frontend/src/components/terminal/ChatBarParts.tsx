@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useRef, type ReactNode } from 'react';
-import { X, FileText, Image as ImageIcon, Film, Mic } from 'lucide-react';
-import { ChatBarSendButton, ChatBarUploadButton, ChatBarComboAction, VoiceWaveform, type SendButtonState, type ChatbarSurface } from './ChatBarButtons';
+import { type ReactNode } from 'react';
+import { X, FileText, Image as ImageIcon, Film } from 'lucide-react';
+import { ChatBarSendButton, ChatBarUploadButton, type SendButtonState, type ChatbarSurface } from './ChatBarButtons';
 import { cn } from '@/lib/utils';
 
 const FILE_ROWS = 2;
@@ -76,80 +76,25 @@ export function ChatBarDragOverlay({ active }: { active: boolean }) {
   );
 }
 
-export function ChatBarMicButton({
-  listening,
-  onToggle,
-  disabled,
-  surface = 'dashboard',
-}: {
-  listening: boolean;
-  onToggle: () => void;
-  disabled?: boolean;
-  surface?: ChatbarSurface;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      disabled={disabled}
-      className={cn(
-        'xv-mic-btn xv-mic-btn--dictate relative inline-flex items-center gap-1 px-2 py-1.5 rounded-xl transition-all shrink-0',
-        surface === 'homepage' && 'xv-mic-btn--home',
-        surface === 'incognito' && 'xv-mic-btn--incognito',
-        listening
-          ? 'bg-red-500/15 text-red-400 xv-mic-btn--listening'
-          : surface === 'incognito'
-            ? 'border border-white/25 text-white hover:bg-white/10'
-            : 'xv-chatbar-secondary-btn hover:bg-white/10 text-[var(--foreground)]'
-      )}
-      title={listening ? 'Stop voice-to-text' : 'Voice to text — dictate into the chat'}
-      aria-label={listening ? 'Stop voice-to-text' : 'Voice to text'}
-    >
-      {listening ? (
-        <VoiceWaveform active />
-      ) : (
-        <Mic className="w-4 h-4 xv-mic-dictate-icon" strokeWidth={2.25} />
-      )}
-      <span className="xv-mic-btn__label hidden sm:inline text-[10px] font-semibold tracking-wide uppercase opacity-80">
-        {listening ? 'Listening' : 'Dictate'}
-      </span>
-    </button>
-  );
-}
-
 export function ChatBarInputRow({
   uploading,
   onUploadClick,
-  listening,
-  onMicToggle,
-  micDisabled,
   sendState,
   stopping,
   onStop,
   surface = 'dashboard',
   hideUpload = false,
   compactGo = false,
-  comboAction = false,
-  goOnly = false,
-  hasText = false,
-  talkSlot,
   children,
 }: {
   uploading: boolean;
   onUploadClick: () => void;
-  listening: boolean;
-  onMicToggle: () => void;
-  micDisabled?: boolean;
   sendState: SendButtonState;
   stopping?: boolean;
   onStop?: () => void;
   surface?: ChatbarSurface;
   hideUpload?: boolean;
   compactGo?: boolean;
-  comboAction?: boolean;
-  goOnly?: boolean;
-  hasText?: boolean;
-  talkSlot?: ReactNode;
   children: ReactNode;
 }) {
   return (
@@ -166,92 +111,11 @@ export function ChatBarInputRow({
         )}
         <div className="flex-1 min-w-[4px]" />
         <div className="xv-chatbar-actions flex items-center gap-1.5 shrink-0">
-          {goOnly ? (
-            <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
-          ) : comboAction ? (
-            <ChatBarComboAction
-              hasText={hasText}
-              listening={listening}
-              onMicToggle={onMicToggle}
-              micDisabled={micDisabled}
-              sendState={sendState}
-              stopping={stopping}
-              onStop={onStop}
-              surface={surface}
-            />
-          ) : (
-            <>
-              <ChatBarMicButton listening={listening} onToggle={onMicToggle} disabled={micDisabled || stopping} surface={surface} />
-              {talkSlot}
-              <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
-            </>
-          )}
+          <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
         </div>
       </div>
     </div>
   );
-}
-
-export function useSpeechToText(onResult: (text: string) => void) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null);
-  /** Latest full transcript for this speech session (replace, don't append). */
-  const sessionTranscriptRef = useRef('');
-
-  useEffect(() => {
-    return () => {
-      recognitionRef.current?.stop();
-    };
-  }, []);
-
-  function toggle(listening: boolean, setListening: (v: boolean) => void) {
-    if (typeof window === 'undefined') return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const w = window as any;
-    const SR = w.SpeechRecognition || w.webkitSpeechRecognition;
-    if (!SR) return;
-
-    if (listening) {
-      recognitionRef.current?.stop();
-      setListening(false);
-      return;
-    }
-
-    sessionTranscriptRef.current = '';
-    const rec = new SR();
-    rec.continuous = false;
-    rec.interimResults = true;
-    rec.lang = 'en-US';
-    rec.onresult = (e: {
-      resultIndex: number;
-      results: ArrayLike<{ isFinal?: boolean; 0: { transcript: string } }>;
-    }) => {
-      let interim = '';
-      let finalPiece = '';
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        const piece = e.results[i]?.[0]?.transcript ?? '';
-        if (e.results[i]?.isFinal) finalPiece += piece;
-        else interim += piece;
-      }
-      if (finalPiece) {
-        sessionTranscriptRef.current = `${sessionTranscriptRef.current} ${finalPiece}`.trim();
-      }
-      const next = `${sessionTranscriptRef.current}${interim ? ` ${interim}` : ''}`.trim();
-      if (next) onResult(next);
-    };
-    rec.onend = () => setListening(false);
-    rec.onerror = () => setListening(false);
-    recognitionRef.current = rec;
-    rec.start();
-    setListening(true);
-  }
-
-  const supported =
-    typeof window !== 'undefined' &&
-    !!((window as unknown as { SpeechRecognition?: unknown }).SpeechRecognition ||
-      (window as unknown as { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition);
-
-  return { toggle, supported };
 }
 
 /** Modern pill chips for GitHub / Deploy toolbar */

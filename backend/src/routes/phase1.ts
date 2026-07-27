@@ -1,20 +1,9 @@
 import { Router } from 'express';
 import type { AuthRequest } from '../middleware/auth.js';
 import { runChatPipeline } from '../ai/pipeline.js';
-import {
-  assertHasQuota,
-  getUsage,
-  usageToTokenUsage,
-} from '../ai/quota.js';
-import {
-  MONTHLY_TOTAL_BUDGET_USD,
-  MONTHLY_TOTAL_TOKENS,
-  MONTHLY_USER_PRICE_USD,
-  MODELS,
-  dashboardModelPools,
-} from '../ai/models.js';
-import { modelKeyStatus } from '../ai/openaiCompat.js';
-import { GALACTIC_PLANS, getPlanByTier } from '../config/plans.js';
+import { assertHasQuota, getUsage, usageToTokenUsage } from '../ai/quota.js';
+import { MONTHLY_USER_PRICE_USD } from '../ai/models.js';
+import { getProviderEntitlementStatus } from '../ai/providerBudget.js';
 
 const router = Router();
 
@@ -22,15 +11,10 @@ function requireUserId(req: AuthRequest): string | null {
   return req.userId || (typeof req.body?.userId === 'string' ? req.body.userId : null);
 }
 
-/**
- * POST /api/phase1/chat — light lane (Converter not required; chat / research Q&A).
- * Build prompts return 409 USE_BUILD_PIPELINE so the client uses /api/swarm/execute.
- */
+/** Chat and research lane. Build requests are redirected to the durable workspace pipeline. */
 router.post('/chat', async (req: AuthRequest, res) => {
   const userId = requireUserId(req);
-  if (!userId) {
-    return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
-  }
+  if (!userId) return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
 
   const message =
     (typeof req.body?.message === 'string' && req.body.message) ||
@@ -40,157 +24,79 @@ router.post('/chat', async (req: AuthRequest, res) => {
   if (!message.trim() && !(attachments && attachments.length)) {
     return res.status(400).json({ error: 'message or attachments required' });
   }
-
   const history = Array.isArray(req.body?.history)
     ? (req.body.history as Array<{ role: 'user' | 'assistant'; content: string }>)
     : [];
 
   try {
-    const result = await runChatPipeline({
-      userId,
-      prompt: message.trim(),
-      history,
-      attachments,
-    });
+    const result = await runChatPipeline({ userId, prompt: message.trim(), history, attachments });
     return res.json({
       response: result.response,
       intent: result.intent,
       usage: result.usage,
       webSources: result.webSources,
-      modelId: result.modelId,
-      modelLabel: MODELS[result.modelId].label,
-      routeReason: result.route.reason,
+      engine: 'xroga',
     });
   } catch (err) {
-    const e = err as Error & { code?: string };
-    if (e.code === 'USE_BUILD_PIPELINE' || e.message === 'USE_BUILD_PIPELINE') {
+    const error = err as Error & { code?: string };
+    if (error.code === 'USE_BUILD_PIPELINE' || error.message === 'USE_BUILD_PIPELINE') {
       return res.status(409).json({
-        error: 'This looks like a build request — use the workspace build pipeline.',
+        error: 'This looks like a build request - use the workspace build pipeline.',
         code: 'USE_BUILD_PIPELINE',
       });
     }
-    if (e.code === 'OUT_OF_TOKENS' || e.code === 'MODEL_CAP_REACHED') {
+    if (['OUT_OF_TOKENS', 'MODEL_CAP_REACHED', 'PAID_PROVIDER_CAPACITY_UNAVAILABLE'].includes(error.code ?? '')) {
       return res.status(402).json({
-        error: e.message,
-        code: e.code === 'MODEL_CAP_REACHED' ? 'MODEL_CAP_REACHED' : 'OUT_OF_ACTIONS',
+        error: error.message,
+        code: 'CAPACITY_UNAVAILABLE',
         paymentLink: '/pricing',
       });
     }
-    console.error('[phase1/chat]', e);
-    return res.status(500).json({ error: e.message || 'Chat failed', code: 'CHAT_FAILED' });
+    console.error('[phase1/chat]', { code: error.code ?? 'CHAT_FAILED', message: error.message });
+    return res.status(500).json({ error: 'Chat is temporarily unavailable', code: 'CHAT_FAILED' });
   }
 });
 
 router.get('/usage', async (req: AuthRequest, res) => {
   const userId = requireUserId(req);
-  if (!userId) {
-    return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
-  }
+  if (!userId) return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
   try {
     const usage = await getUsage(userId);
-    return res.json({ usage: usageToTokenUsage(usage), byModel: usage.byModel });
+    return res.json({ usage: usageToTokenUsage(usage) });
   } catch (err) {
-    console.error('[phase1/usage]', err);
+    console.error('[phase1/usage]', { category: 'usage_read_failed' });
     return res.status(500).json({ error: 'Failed to load usage' });
   }
 });
 
-router.get('/economics', (_req, res) => {
-  const pools = dashboardModelPools(MONTHLY_TOTAL_BUDGET_USD);
-  const trial = getPlanByTier('unpaid')!;
-  res.json({
-    currency: 'USD',
-    metering: 'real_provider_tokens_to_usd',
-    rollover: 'unused_api_credit_rolls_1_month_max',
-    freeUserMonthlyTokens: trial.tokenPool,
-    freeUserWorstCaseApiUsd: trial.apiBudgetUsd,
-    userChargeUsd: MONTHLY_USER_PRICE_USD,
-    profitPerUserUsd: Math.round((MONTHLY_USER_PRICE_USD - MONTHLY_TOTAL_BUDGET_USD) * 100) / 100,
-    marginPct: Math.round(((MONTHLY_USER_PRICE_USD - MONTHLY_TOTAL_BUDGET_USD) / MONTHLY_USER_PRICE_USD) * 1000) / 10,
-    modelStack: Object.values(MODELS).map((m) => ({
-      id: m.id,
-      label: m.label,
-      tagline: m.tagline,
-      budgetUsd: m.budgetUsd,
-      monthlyTokens: m.monthlyTokens,
-      inputUsdPer1M: m.inputUsdPer1M,
-      outputUsdPer1M: m.outputUsdPer1M,
-      role: m.role,
-    })),
-    pools,
-    plans: [
-      {
-        tier: 'unpaid',
-        priceUsd: 0,
-        tokens: trial.tokenPool,
-        apiBudgetUsd: trial.apiBudgetUsd,
-      },
-      ...GALACTIC_PLANS.map((p) => ({
-        tier: p.tier,
-        priceUsd: Number(p.priceLabel.replace(/[^0-9.]/g, '')) || 0,
-        tokens: p.tokenPool,
-        apiBudgetUsd: p.apiBudgetUsd,
-        grossProfitIfFullBurnUsd:
-          Math.round((Number(p.priceLabel.replace(/[^0-9.]/g, '')) - p.apiBudgetUsd) * 100) / 100,
-      })),
-    ],
-    perBuild: [
-      {
-        tier: 'simple',
-        label: 'Simple web app',
-        totalTokens: 20_000,
-        totalUsd: 0.11,
-        buildsPerFreeMonth: 50,
-        howAi: 'OpenRouter DeepSeek V4 Pro / Converter → Builder',
-      },
-      {
-        tier: 'medium',
-        label: 'Medium full-stack app',
-        totalTokens: 150_000,
-        totalUsd: 0.81,
-        buildsPerFreeMonth: 6,
-        howAi: 'Kimi K3 or GLM-5.2 via Converter',
-      },
-      {
-        tier: 'complex',
-        label: 'Complex game / crypto platform',
-        totalTokens: 600_000,
-        totalUsd: 3.24,
-        buildsPerFreeMonth: 2,
-        howAi: 'Kimi K3 flagship + research when needed',
-      },
-    ],
-    planProfitIfFullTokenBurn: [
-      {
-        tier: 'spark',
-        priceUsd: MONTHLY_USER_PRICE_USD,
-        tokens: MONTHLY_TOTAL_TOKENS,
-        apiCostIfFullBurnUsd: MONTHLY_TOTAL_BUDGET_USD,
-        grossProfitUsd: Math.round((MONTHLY_USER_PRICE_USD - MONTHLY_TOTAL_BUDGET_USD) * 100) / 100,
-        marginPct: Math.round(((MONTHLY_USER_PRICE_USD - MONTHLY_TOTAL_BUDGET_USD) / MONTHLY_USER_PRICE_USD) * 1000) / 10,
-      },
-    ],
-    keysConfigured: modelKeyStatus(),
-  });
+/** Customer-safe plan information. Internal provider economics are never returned. */
+router.get('/economics', async (req: AuthRequest, res) => {
+  const userId = requireUserId(req);
+  if (!userId) return res.status(401).json({ error: 'Sign in required' });
+  try {
+    res.json({
+      plan: 'Xroga AI',
+      price: `$${MONTHLY_USER_PRICE_USD} per 30 days`,
+      entitlement: await getProviderEntitlementStatus(userId),
+    });
+  } catch {
+    res.status(503).json({ error: 'Plan capacity is temporarily unavailable', code: 'BILLING_UNAVAILABLE' });
+  }
 });
 
 router.post('/emergency-tokens', (_req, res) => {
   res.status(410).json({
     success: false,
-    message: 'Emergency token grants are not part of the new AI quota system.',
+    message: 'Emergency capacity grants are not available on the current plan.',
     code: 'NOT_SUPPORTED',
   });
 });
 
 router.get('/health', (_req, res) => {
-  res.json({
-    ok: true,
-    aiBackend: 'kimi-glm-deepseek-grok',
-    keys: modelKeyStatus(),
-  });
+  res.json({ ok: true, service: 'xroga-ai' });
 });
 
-/** Dev helper — assert quota without spending */
+/** Non-mutating quota preflight used by the workspace. */
 router.get('/quota-check', async (req: AuthRequest, res) => {
   const userId = requireUserId(req);
   if (!userId) return res.status(401).json({ error: 'Sign in required' });
@@ -198,8 +104,8 @@ router.get('/quota-check', async (req: AuthRequest, res) => {
     const usage = await assertHasQuota(userId);
     res.json({ ok: true, usage: usageToTokenUsage(usage) });
   } catch (err) {
-    const e = err as Error & { code?: string };
-    res.status(402).json({ ok: false, error: e.message, code: e.code });
+    const error = err as Error & { code?: string };
+    res.status(402).json({ ok: false, error: error.message, code: error.code });
   }
 });
 

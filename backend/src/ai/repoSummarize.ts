@@ -3,12 +3,14 @@
  * Cheap default: DeepSeek V4 Pro. Long/large: GLM-5.2.
  */
 
-import { chatCompletion } from './openaiCompat.js';
+import { chatCompletion, estimateMessageTokens, type ChatMessage } from './openaiCompat.js';
 import type { ModelId } from './models.js';
+import { withProviderReservation } from './providerBudget.js';
 import type { ProjectFile } from './patches.js';
 import { userWantsRepoIntelligence } from './projectMemory.js';
 
 export async function summarizeRepoForUpdates(opts: {
+  userId: string;
   prompt: string;
   projectName?: string;
   paths: string[];
@@ -29,9 +31,7 @@ export async function summarizeRepoForUpdates(opts: {
     .join('\n\n');
 
   try {
-    const result = await chatCompletion(
-      modelId,
-      [
+    const messages: ChatMessage[] = [
         {
           role: 'system',
           content:
@@ -50,9 +50,15 @@ ${samples}
 
 Write the reusable memo for future surgical updates.`,
         },
-      ],
-      { maxTokens: 700, temperature: 0.2 },
-    );
+      ];
+    const result = await withProviderReservation({
+      userId: opts.userId,
+      modelId,
+      estimatedInputTokens: estimateMessageTokens(messages),
+      maximumOutputTokens: 700,
+      purpose: 'complexity',
+      execute: () => chatCompletion(modelId, messages, { maxTokens: 700, temperature: 0.2 }),
+    });
 
     const summary = result.text.trim();
     if (!summary) return null;
