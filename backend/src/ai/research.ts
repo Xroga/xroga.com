@@ -3,6 +3,7 @@ import { configuredApiModel } from './openaiCompat.js';
 import { normalizeProviderError, recordModelExecution } from './providerRuntime.js';
 import { redactSecrets } from '../lib/truthfulExecution.js';
 import { validateResearchUrl } from '../synthesis/research/researchEngine.js';
+import { withProviderReservation } from './providerBudget.js';
 
 export interface ResearchSource {
   title: string;
@@ -26,7 +27,7 @@ export interface ResearchBundle {
  * Fallback: Tavily → SearXNG.
  * Returns provider 'none' only when every source fails (caller must NOT fake a research step).
  */
-export async function gatherResearch(query: string): Promise<ResearchBundle> {
+export async function gatherResearch(query: string, userId?: string): Promise<ResearchBundle> {
   const q = redactSecrets(query).trim().slice(0, 2_000);
   if (!q) return { query: q, summary: '', sources: [], provider: 'none' };
 
@@ -37,7 +38,18 @@ export async function gatherResearch(query: string): Promise<ResearchBundle> {
   if (grokKey) {
     const started = Date.now();
     try {
-      const bundle = await grokLiveSearch(q, grokKey, { includeX: true, forceX: wantsX });
+      const execute = () => grokLiveSearch(q, grokKey, { includeX: true, forceX: wantsX });
+      const result = userId
+        ? await withProviderReservation({
+            userId,
+            modelId: 'grok_4_5',
+            estimatedInputTokens: Math.max(1, Math.ceil(q.length / 4) + 180),
+            maximumOutputTokens: 2048,
+            purpose: 'daily_work',
+            execute,
+          })
+        : await execute();
+      const bundle = result.bundle;
       recordModelExecution('grok_4_5', { ok: true, latencyMs: Date.now() - started });
       if (bundle.summary.trim() || bundle.sources.length) return bundle;
     } catch (err) {
@@ -51,7 +63,9 @@ export async function gatherResearch(query: string): Promise<ResearchBundle> {
   }
 
   const tavily = getSecret('TAVILY_API_KEY');
-  if (tavily) {
+  // Shared paid search must not bypass the entitlement ledger. Until an exact,
+  // versioned per-request price is configured, use the free metasearch fallback.
+  if (tavily && !userId) {
     try {
       const bundle = await tavilySearch(q, tavily);
       if (bundle.sources.length) return bundle;
@@ -78,7 +92,12 @@ async function grokLiveSearch(
   query: string,
   apiKey: string,
   opts: { includeX: boolean; forceX: boolean },
-): Promise<ResearchBundle> {
+): Promise<{
+  bundle: ResearchBundle;
+  inputTokens: number;
+  outputTokens: number;
+  providerRequestId?: string;
+}> {
   const apiModel = configuredApiModel('grok_4_5');
   const sources: Array<Record<string, unknown>> = [{ type: 'web' }, { type: 'news' }];
   if (opts.includeX) sources.push({ type: 'x' });
@@ -123,9 +142,10 @@ async function grokLiveSearch(
   }
 
   const data = (await res.json()) as {
+    id?: string;
     choices?: Array<{ message?: { content?: string } }>;
     citations?: string[];
-    usage?: { num_sources_used?: number };
+    usage?: { prompt_tokens?: number; completion_tokens?: number; num_sources_used?: number };
   };
 
   const summary = (data.choices?.[0]?.message?.content ?? '').trim();
@@ -143,15 +163,25 @@ async function grokLiveSearch(
 
   // An uncited model summary is not durable research evidence.
   if (!urlSources.length) {
-    return { query, summary: '', sources: [], provider: 'none' };
+    return {
+      bundle: { query, summary: '', sources: [], provider: 'none' },
+      inputTokens: data.usage?.prompt_tokens ?? Math.max(1, Math.ceil(query.length / 4)),
+      outputTokens: data.usage?.completion_tokens ?? Math.max(1, Math.ceil(summary.length / 4)),
+      providerRequestId: data.id,
+    };
   }
 
   return {
-    query,
-    summary: summary.slice(0, 4000),
-    sources: urlSources,
-    provider: 'grok_live',
-    includedXSearch: opts.includeX,
+    bundle: {
+      query,
+      summary: summary.slice(0, 4000),
+      sources: urlSources,
+      provider: 'grok_live',
+      includedXSearch: opts.includeX,
+    },
+    inputTokens: data.usage?.prompt_tokens ?? Math.max(1, Math.ceil(query.length / 4)),
+    outputTokens: data.usage?.completion_tokens ?? Math.max(1, Math.ceil(summary.length / 4)),
+    providerRequestId: data.id,
   };
 }
 

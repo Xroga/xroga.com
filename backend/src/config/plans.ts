@@ -22,11 +22,6 @@ export interface PlanDefinition {
   tokenPool: number;
 }
 
-/** ~88.3% of list price goes to API credit; remainder is margin before infra. */
-function budgetFromPrice(usdPrice: number): number {
-  return Math.round(usdPrice * (MONTHLY_TOTAL_BUDGET_USD / 19) * 100) / 100;
-}
-
 function tokensFromBudget(apiBudgetUsd: number): number {
   return Math.max(
     50_000,
@@ -39,7 +34,7 @@ export const GALACTIC_PLANS: PlanDefinition[] = [
     tier: 'spark',
     name: 'Spark',
     priceLabel: '$19',
-    actionsLabel: '6.17M tokens/mo',
+    actionsLabel: 'Included AI capacity',
     actions: 1500,
     concurrency: 2,
     envPriceKey: 'LEMONSQUEEZY_VARIANT_SPARK',
@@ -47,83 +42,37 @@ export const GALACTIC_PLANS: PlanDefinition[] = [
     apiBudgetUsd: MONTHLY_TOTAL_BUDGET_USD,
     tokenPool: MONTHLY_TOTAL_TOKENS,
   },
-  {
-    tier: 'pulse',
-    name: 'Pulse',
-    priceLabel: '$29',
-    actionsLabel: '9.42M tokens/mo',
-    actions: 5000,
-    concurrency: 8,
-    envPriceKey: 'LEMONSQUEEZY_VARIANT_PULSE',
-    paid: true,
-    highlight: true,
-    apiBudgetUsd: budgetFromPrice(29),
-    tokenPool: tokensFromBudget(budgetFromPrice(29)),
-  },
-  {
-    tier: 'nova',
-    name: 'Nova',
-    priceLabel: '$49',
-    actionsLabel: '15.9M tokens/mo',
-    actions: 10000,
-    concurrency: 12,
-    envPriceKey: 'LEMONSQUEEZY_VARIANT_NOVA',
-    paid: true,
-    apiBudgetUsd: budgetFromPrice(49),
-    tokenPool: tokensFromBudget(budgetFromPrice(49)),
-  },
-  {
-    tier: 'zenith',
-    name: 'Zenith',
-    priceLabel: '$99',
-    actionsLabel: '32.2M tokens/mo',
-    actions: 6000,
-    concurrency: 30,
-    envPriceKey: 'LEMONSQUEEZY_VARIANT_ZENITH',
-    paid: true,
-    apiBudgetUsd: budgetFromPrice(99),
-    tokenPool: tokensFromBudget(budgetFromPrice(99)),
-  },
-  {
-    tier: 'singularity',
-    name: 'Singularity',
-    priceLabel: '$999',
-    actionsLabel: '325M tokens/mo',
-    actions: 50000,
-    concurrency: 100,
-    envPriceKey: 'LEMONSQUEEZY_VARIANT_SINGULARITY',
-    paid: true,
-    apiBudgetUsd: budgetFromPrice(999),
-    tokenPool: tokensFromBudget(budgetFromPrice(999)),
-  },
 ];
 
-const TRIAL_API_BUDGET_USD = 1.5;
+const LEGACY_PAID_TIERS = new Set(['pulse', 'nova', 'zenith', 'singularity']);
 
 export function getPlanByTier(tier: string): PlanDefinition | undefined {
   if (tier === 'unpaid') {
     return {
       tier: 'unpaid',
-      name: 'Free Trial',
+      name: 'Launch Promotion',
       priceLabel: '$0',
-      actionsLabel: '~0.55M trial tokens',
+      actionsLabel: '30-day promotional access',
       actions: FREE_TRIAL_ACTIONS,
-      concurrency: 1,
+      concurrency: 2,
       envPriceKey: '',
       paid: false,
-      apiBudgetUsd: TRIAL_API_BUDGET_USD,
-      tokenPool: tokensFromBudget(TRIAL_API_BUDGET_USD),
+      apiBudgetUsd: MONTHLY_TOTAL_BUDGET_USD,
+      tokenPool: MONTHLY_TOTAL_TOKENS,
     };
   }
-  return GALACTIC_PLANS.find((p) => p.tier === tier);
+  const canonical = GALACTIC_PLANS[0];
+  if (tier === 'spark') return canonical;
+  if (LEGACY_PAID_TIERS.has(tier)) return { ...canonical, tier: tier as PlanTier };
+  return undefined;
 }
 
 export function getApiBudgetUsd(tier: string): number {
-  return getPlanByTier(tier)?.apiBudgetUsd ?? TRIAL_API_BUDGET_USD;
+  return getPlanByTier(tier)?.apiBudgetUsd ?? MONTHLY_TOTAL_BUDGET_USD;
 }
 
 export function getTokenPool(tier: string): number {
-  return getPlanByTier(tier)?.tokenPool ?? tokensFromBudget(TRIAL_API_BUDGET_USD);
+  return getPlanByTier(tier)?.tokenPool ?? MONTHLY_TOTAL_TOKENS;
 }
 
 export function getLemonVariantId(tier: PlanTier): string | undefined {

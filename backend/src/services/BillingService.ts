@@ -3,6 +3,40 @@ import { getSupabaseAdmin } from '../config/supabase.js';
 import { ActionService } from './ActionService.js';
 import { GALACTIC_PLANS, getLemonVariantId, getPlanByTier } from '../config/plans.js';
 import type { PlanTier } from '../types/index.js';
+import { activatePaidCycle } from '../ai/providerBudget.js';
+
+export interface LemonWebhookEvent {
+  meta?: { event_name?: string; event_id?: string; custom_data?: Record<string, unknown> };
+  data?: { type?: string; id?: string; attributes?: Record<string, unknown> };
+}
+
+export function derivePaidCycleEvidence(event: LemonWebhookEvent): {
+  providerReference: string;
+  startsAt: Date;
+  endsAt: Date;
+} {
+  const attributes = event.data?.attributes ?? {};
+  const rawStatus = String(attributes.status ?? '').toLowerCase();
+  if (rawStatus && ['cancelled', 'expired', 'failed', 'refunded'].includes(rawStatus)) {
+    throw new Error('Billing event does not prove an active paid period');
+  }
+  const parseDate = (value: unknown): Date | null => {
+    if (typeof value !== 'string' || !value.trim()) return null;
+    const date = new Date(value);
+    return Number.isFinite(date.getTime()) ? date : null;
+  };
+  const parsedEnd = parseDate(attributes.renews_at ?? attributes.ends_at);
+  const parsedStart = parseDate(attributes.created_at ?? attributes.updated_at);
+  const endsAt = parsedEnd ?? new Date((parsedStart ?? new Date()).getTime() + 30 * 86_400_000);
+  const startsAt = parsedEnd ? new Date(parsedEnd.getTime() - 30 * 86_400_000) : parsedStart ?? new Date();
+  const subscriptionId = String(attributes.subscription_id ?? event.data?.id ?? '').trim();
+  if (!subscriptionId) throw new Error('Billing event is missing a durable subscription reference');
+  return {
+    providerReference: `lemon:${subscriptionId}:${endsAt.toISOString()}`,
+    startsAt,
+    endsAt,
+  };
+}
 
 /**
  * Xroga platform billing via Lemon Squeezy (merchant of record).
@@ -122,14 +156,7 @@ export class BillingService {
     return crypto.timingSafeEqual(a, b);
   }
 
-  static async handleWebhookEvent(event: {
-    meta?: { event_name?: string; custom_data?: Record<string, unknown> };
-    data?: {
-      type?: string;
-      id?: string;
-      attributes?: Record<string, unknown>;
-    };
-  }): Promise<void> {
+  static async handleWebhookEvent(event: LemonWebhookEvent): Promise<void> {
     const type = event.meta?.event_name ?? '';
     if (
       type === 'subscription_created' ||
@@ -149,10 +176,7 @@ export class BillingService {
     }
   }
 
-  static async syncFromLemonPayload(event: {
-    meta?: { custom_data?: Record<string, unknown> };
-    data?: { attributes?: Record<string, unknown>; id?: string };
-  }): Promise<void> {
+  static async syncFromLemonPayload(event: LemonWebhookEvent): Promise<void> {
     const custom = (event.meta?.custom_data ?? {}) as Record<string, string>;
     const userId = custom.user_id ? String(custom.user_id) : '';
     let planTier = custom.plan_tier as PlanTier | undefined;
@@ -175,6 +199,9 @@ export class BillingService {
     const plan = getPlanByTier(planTier);
     if (!plan) return;
 
+    const attributes = event.data?.attributes ?? {};
+    const cycle = derivePaidCycleEvidence(event);
+    await activatePaidCycle({ userId, ...cycle });
     await ActionService.applyPlan(userId, planTier, plan.actions);
 
     const supabase = getSupabaseAdmin();

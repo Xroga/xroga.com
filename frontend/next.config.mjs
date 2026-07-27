@@ -27,8 +27,6 @@ const nextConfig = {
       { source: '/ai-image-generator', destination: '/features/ai-image-generation', permanent: true },
       { source: '/ai-image-generation', destination: '/features/ai-image-generation', permanent: true },
       { source: '/ai-chat', destination: '/features/ai-chat', permanent: true },
-      { source: '/talk-with-ai', destination: '/features/ai-voice-talk', permanent: true },
-      { source: '/voice-ai', destination: '/features/ai-voice-talk', permanent: true },
       { source: '/github-deploy', destination: '/features/github-auto-deploy', permanent: true },
       { source: '/vercel-deploy', destination: '/features/vercel-netlify-deploy', permanent: true },
       { source: '/netlify-deploy', destination: '/features/vercel-netlify-deploy', permanent: true },

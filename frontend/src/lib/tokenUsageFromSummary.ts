@@ -1,6 +1,6 @@
 import type { DashboardSummary, TokenUsage } from '@/lib/api';
 
-/** Matches backend MONTHLY_TOTAL_TOKENS (~$16.77 multi-model pool). */
+/** Transitional activity limits used only while older API responses roll out. */
 const DEFAULT_LIMIT = 6_172_222;
 const DEFAULT_INPUT = 3_086_111;
 const DEFAULT_OUTPUT = 3_086_111;
@@ -45,11 +45,6 @@ export function tokenUsageFromSummary(summary: unknown): {
         emergencyTokensAvailable: false,
         emergencyTokensClaimedThisMonth: false,
         totalLimit: tokens.totalLimit ?? DEFAULT_LIMIT,
-        planBudgetUsd: tokens.planBudgetUsd,
-        rolloverUsd: tokens.rolloverUsd,
-        spentUsd: tokens.spentUsd,
-        creditRemainingUsd: tokens.creditRemainingUsd ?? billing?.creditRemainingUsd,
-        percentCreditUsed: tokens.percentCreditUsed,
         planTier: billing?.planTier,
       },
       planTier: billing?.planTier ?? null,

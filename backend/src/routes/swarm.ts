@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import type { AuthRequest } from '../middleware/auth.js';
 import { runBuildPipeline } from '../ai/pipeline.js';
-import { MODELS } from '../ai/models.js';
 import { initSSE, sendSSE, endSSE } from '../lib/sse.js';
 import { slimOutputForSse } from '../lib/slimOutputForSse.js';
 import { buildFullProjectFiles } from '../services/projectScaffold.js';
@@ -57,10 +56,11 @@ router.post('/execute', async (req: AuthRequest, res) => {
         clientMeta,
         attachments,
       });
-      return res.json(result);
+      const { route: _internalRoute, ...publicResult } = result;
+      return res.json(publicResult);
     } catch (err) {
       const e = err as Error & { code?: string };
-      if (e.code === 'OUT_OF_TOKENS') {
+      if (e.code === 'OUT_OF_TOKENS' || e.code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE') {
         return res.status(402).json({
           error: e.message,
           code: 'OUT_OF_ACTIONS',
@@ -92,12 +92,12 @@ router.post('/execute', async (req: AuthRequest, res) => {
   try {
     sendSSE(res, {
       event: 'start',
-      data: { message: 'Xroga AI Swarm online', aiBackend: 'kimi-glm-deepseek-grok' },
+      data: { message: 'Xroga AI execution started', engine: 'xroga' },
     });
     sendSSE(res, {
       event: 'pipeline',
       data: {
-        message: 'Architect → Builder → Reviewer → Security → Deploy → Verify',
+        message: 'Understand → Build → Review → Security → Deploy → Verify',
         stage: 'init',
       },
     });
@@ -145,7 +145,6 @@ router.post('/execute', async (req: AuthRequest, res) => {
         });
         result.output.scaffoldPaths = files.map((f) => f.path);
       }
-      result.output.builderModel = MODELS[result.route.builder].label;
     }
 
     sendSSE(res, {
@@ -167,6 +166,8 @@ router.post('/execute', async (req: AuthRequest, res) => {
     const code =
       e.code === 'OUT_OF_TOKENS'
         ? 'OUT_OF_ACTIONS'
+        : e.code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE'
+          ? 'CAPACITY_UNAVAILABLE'
         : e.code === 'MODEL_CAP_REACHED'
           ? 'MODEL_CAP_REACHED'
           : e.code === 'BUILD_CANCELLED'
@@ -179,7 +180,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
           error: e.message || 'Build failed',
           code,
           paymentLink:
-            code === 'OUT_OF_ACTIONS' || code === 'MODEL_CAP_REACHED' ? '/pricing' : undefined,
+            code === 'OUT_OF_ACTIONS' || code === 'MODEL_CAP_REACHED' || code === 'CAPACITY_UNAVAILABLE' ? '/pricing' : undefined,
         },
       });
       res.end();

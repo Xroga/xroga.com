@@ -39,21 +39,22 @@ describe('costUsdForTokens', () => {
 });
 
 describe('plan budgets', () => {
-  it('spark matches base $16.77 / 6.17M pool', () => {
+  it('canonical plan uses the $16.50 internal provider ceiling', () => {
     assert.equal(getApiBudgetUsd('spark'), MONTHLY_TOTAL_BUDGET_USD);
+    assert.equal(MONTHLY_TOTAL_BUDGET_USD, 16.5);
     assert.equal(getTokenPool('spark'), 6_172_222);
   });
 
-  it('higher plans get larger API credit', () => {
-    assert.ok(getApiBudgetUsd('pulse') > getApiBudgetUsd('spark'));
-    assert.ok(getApiBudgetUsd('nova') > getApiBudgetUsd('pulse'));
-    assert.ok(getApiBudgetUsd('singularity') > getApiBudgetUsd('zenith'));
+  it('publishes one canonical plan while preserving historical tiers at the same ceiling', () => {
+    assert.deepEqual(GALACTIC_PLANS.map((plan) => plan.tier), ['spark']);
+    assert.equal(getApiBudgetUsd('pulse'), getApiBudgetUsd('spark'));
+    assert.equal(getApiBudgetUsd('singularity'), getApiBudgetUsd('spark'));
   });
 
-  it('trial is capped below spark', () => {
+  it('launch-promotion users receive the same complete cycle capacity', () => {
     const trial = getPlanByTier('unpaid')!;
-    assert.ok(trial.apiBudgetUsd < MONTHLY_TOTAL_BUDGET_USD);
-    assert.ok(trial.tokenPool < getTokenPool('spark'));
+    assert.equal(trial.apiBudgetUsd, MONTHLY_TOTAL_BUDGET_USD);
+    assert.equal(trial.tokenPool, getTokenPool('spark'));
   });
 
   it('every galactic plan has apiBudgetUsd + tokenPool', () => {
@@ -65,17 +66,16 @@ describe('plan budgets', () => {
 });
 
 describe('scaled model pools', () => {
-  it('spark pools sum near $16.77', () => {
+  it('internal pools sum near the $16.50 ceiling', () => {
     const pools = dashboardModelPools(MONTHLY_TOTAL_BUDGET_USD);
     const sum = pools.reduce((a, p) => a + p.budgetUsd, 0);
     assert.ok(Math.abs(sum - MONTHLY_TOTAL_BUDGET_USD) < 0.05);
   });
 
-  it('nova pools scale up', () => {
+  it('historical tiers cannot unlock more than the canonical plan', () => {
     const spark = dashboardModelPools(getApiBudgetUsd('spark'));
     const nova = dashboardModelPools(getApiBudgetUsd('nova'));
-    assert.ok(nova[0].totalLimit > spark[0].totalLimit);
-    assert.ok(nova[0].budgetUsd > spark[0].budgetUsd);
+    assert.deepEqual(nova, spark);
   });
 
   it('scale factor is linear', () => {
@@ -97,7 +97,7 @@ describe('modelBudgetRemaining + usage snapshot fields', () => {
     emergencyTokensAvailable: false,
     emergencyTokensClaimedThisMonth: false,
     totalLimit: 6_172_222,
-    planBudgetUsd: 16.77,
+    planBudgetUsd: 16.5,
     rolloverUsd: 2,
     spentUsd: 1.5,
     creditRemainingUsd: 17.27,
@@ -133,12 +133,12 @@ describe('modelBudgetRemaining + usage snapshot fields', () => {
     assert.equal(poolRoleFor('kimi_k3'), 'kimi_k3');
   });
 
-  it('usageToTokenUsage exposes credit without inventing invoice fields', () => {
+  it('usageToTokenUsage exposes activity without internal provider economics', () => {
     const tu = usageToTokenUsage(usage);
     assert.equal(tu.totalTokensRemaining, 2000);
-    assert.equal(tu.creditRemainingUsd, 17.27);
-    assert.equal(tu.spentUsd, 1.5);
-    assert.equal(tu.rolloverUsd, 2);
-    assert.ok(!('providerInvoiceUsd' in tu));
+    assert.ok(!('creditRemainingUsd' in tu));
+    assert.ok(!('spentUsd' in tu));
+    assert.ok(!('rolloverUsd' in tu));
+    assert.ok(!('byModel' in tu));
   });
 });

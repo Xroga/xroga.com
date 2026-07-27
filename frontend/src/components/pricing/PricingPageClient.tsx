@@ -1,251 +1,156 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { ArrowRight, Check, Shield, Sparkles, Zap } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { createClient } from '@/lib/supabase/client';
+import { api } from '@/lib/api';
 import { Logo } from '@/components/layout/Logo';
-import { GALACTIC_PLANS, COMING_SOON_PLANS, TRIAL_TOKEN_POOL } from '@/lib/plans';
-import { XROGA_FEATURES, FEATURE_COUNT } from '@/lib/features';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
-import {
-  GalacticPlanPricingCard,
-  PricingPlanGrid,
-  XrogaPricingCard,
-} from '@/components/billing/XrogaPricingCard';
-import { useAppStore } from '@/store/useAppStore';
-import { Zap, Shield, Layers, Sparkles, ChevronDown, ChevronUp, Lock, ArrowRight } from 'lucide-react';
+import { XROGA_FEATURES, FEATURE_COUNT } from '@/lib/features';
 import { GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
 import { PowerSmashButton } from '@/components/ui/XrogaButtons';
-import { CurrencyToggle } from '@/hooks/usePlanPrice';
 import { COMPANY_CONTACT } from '@/lib/companyContact';
 
-function FeaturesExpand() {
-  const [open, setOpen] = useState(false);
-  const shown = open ? XROGA_FEATURES : XROGA_FEATURES.slice(0, 12);
-  return (
-    <div className="glass-panel rounded-2xl p-6 mb-12">
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <h2 className="text-lg font-bold">All {FEATURE_COUNT} features on every plan</h2>
-        <button
-          type="button"
-          onClick={() => setOpen((o) => !o)}
-          className="xv-footer-pill !text-xs flex items-center gap-1"
-        >
-          {open ? (
-            <>
-              Show less <ChevronUp className="w-3.5 h-3.5" />
-            </>
-          ) : (
-            <>
-              View all {FEATURE_COUNT} features <ChevronDown className="w-3.5 h-3.5" />
-            </>
-          )}
-        </button>
-      </div>
-      <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs text-[var(--muted)]">
-        {shown.map((f) => (
-          <li key={f} className="flex items-start gap-2">
-            <span className="text-[#4a7aff] shrink-0">✓</span>
-            {f}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+type Entitlement = Awaited<ReturnType<typeof api.billing.entitlement>>;
+
+function formatDate(value: string | null): string {
+  if (!value) return 'Unavailable';
+  return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
 }
 
 export function PricingPageClient() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const planTier = useAppStore((s) => s.planTier);
+  const [entitlement, setEntitlement] = useState<Entitlement | null>(null);
+  const [activating, setActivating] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    createClient()
-      .auth.getSession()
-      .then(async ({ data: { session } }) => {
-        setLoggedIn(!!session);
-        if (session) {
-          try {
-            const { api } = await import('@/lib/api');
-            const summary = await api.dashboard.summary();
-            const { billing } = summary;
-            useAppStore.getState().setPlanInfo(billing.planTier, billing.planName);
-          } catch {
-            /* ignore */
-          }
-        }
-      });
+    void (async () => {
+      try {
+        const { data } = await createClient().auth.getSession();
+        setLoggedIn(Boolean(data.session));
+        if (data.session) setEntitlement(await api.billing.entitlement());
+      } catch {
+        setEntitlement(null);
+      }
+    })();
   }, []);
+
+  async function activatePromotion() {
+    setActivating(true);
+    try {
+      await api.billing.activatePromotion();
+      const status = await api.billing.entitlement();
+      setEntitlement(status);
+      toast.success(`Your complete 30-day promotional period ends ${formatDate(status.endsAt)}.`);
+    } catch (error) {
+      toast.error((error as Error).message || 'Promotion activation is temporarily unavailable.');
+    } finally {
+      setActivating(false);
+    }
+  }
+
+  const promotionActive = entitlement?.state === 'promotional_active';
+  const paidActive = entitlement?.state === 'paid_active';
 
   return (
     <div className="min-h-screen flex flex-col">
       <header className="sticky top-0 z-50 glass-panel-strong border-b border-[var(--card-border)]">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Logo href={loggedIn ? '/dashboard' : '/'} variant="header" height={50} />
-          <div className="flex items-center gap-4">
-            {loggedIn ? (
-              <PowerSmashButton size="sm" onClick={() => router.push('/workspace')}>
-                Workspace
-              </PowerSmashButton>
-            ) : (
-              <>
-                <PlayNowButton className="xv-play-btn-sm" onClick={() => router.push('/auth/login')}>
-                  Sign In
-                </PlayNowButton>
-                <GradientStartButton className="xv-gradient-btn-sm" onClick={() => router.push('/auth/signup')}>
-                  Start Free
-                </GradientStartButton>
-              </>
-            )}
-          </div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+          <Logo href={loggedIn ? '/dashboard' : '/'} variant="header" height={48} />
+          {loggedIn ? (
+            <PowerSmashButton size="sm" onClick={() => router.push('/workspace')}>Workspace</PowerSmashButton>
+          ) : (
+            <div className="flex items-center gap-2">
+              <PlayNowButton className="xv-play-btn-sm" onClick={() => router.push('/auth/login')}>Sign In</PlayNowButton>
+              <GradientStartButton className="xv-gradient-btn-sm" onClick={() => router.push('/auth/signup')}>Start</GradientStartButton>
+            </div>
+          )}
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-16">
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-[#4a7aff] mb-6 font-terminal">
-            <Sparkles className="w-3 h-3" />
-            ALL {FEATURE_COUNT} FEATURES UNLOCKED ON EVERY PLAN
+      <main className="w-full max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-[var(--accent)] mb-5">
+            <Sparkles className="w-3.5 h-3.5" /> ONE PLAN · ALL {FEATURE_COUNT} FEATURES
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Plans built for <span className="gradient-text">builders</span>
-          </h1>
-          <p className="text-[var(--muted)] max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            Pay for tokens and concurrency — not gated features. Spark starts at 6.17M tokens/mo.
-            Free trial is ~0.55M tokens (not a full Spark pool).
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">Build and ship with Xroga AI</h1>
+          <p className="text-[var(--muted)] max-w-2xl mx-auto leading-relaxed">
+            Activate by 30 August 2026 for one complete 30-day period free. No card is required and there is no automatic charge when the promotional period ends.
           </p>
-          <div className="mt-4 flex justify-center">
-            <CurrencyToggle />
-          </div>
         </div>
 
-        <div className="grid sm:grid-cols-3 gap-3 mb-12">
-          {[
-            {
-              icon: Layers,
-              title: 'All features included',
-              desc: `Every tier gets the full Xroga stack — all ${FEATURE_COUNT} features.`,
-            },
-            {
-              icon: Zap,
-              title: 'Concurrency scaling',
-              desc: 'Higher plans run more swarm tasks in parallel — Spark 2 → Singularity 100.',
-            },
-            {
-              icon: Shield,
-              title: 'Honest token pools',
-              desc: 'Each card shows the real monthly token pool. Trial is tiny; Spark is 6.17M.',
-            },
-          ].map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="glass-panel rounded-xl p-4 border border-[var(--card-border)]">
-              <Icon className="w-5 h-5 text-[#4a7aff] mb-2" />
-              <p className="text-sm font-semibold mb-1">{title}</p>
-              <p className="text-xs text-[var(--muted)] leading-relaxed">{desc}</p>
-            </div>
-          ))}
-        </div>
-
-        <PricingPlanGrid className="mb-16">
-          <XrogaPricingCard
-            name="Free Trial"
-            price="$0"
-            subtitle="Try before you subscribe"
-            tokensLabel="~0.55M trial tokens"
-            features={[
-              '1 concurrent task',
-              `~${(TRIAL_TOKEN_POOL / 1_000_000).toFixed(2)}M trial tokens`,
-              'Full Xroga AI access',
-            ]}
-            cta={
-              loggedIn ? (
-                <div className="xv-pricing-cta xv-pricing-cta--solid text-center cursor-default">
-                  <span className="capitalize">Plan: {planTier ?? 'trial'}</span>
-                </div>
-              ) : (
-                <GradientStartButton className="w-full text-sm" onClick={() => router.push('/auth/signup')}>
-                  Start Free
-                </GradientStartButton>
-              )
-            }
-          />
-
-          {GALACTIC_PLANS.map((plan) => {
-            const isCurrent = loggedIn && planTier === plan.tier;
-            const cta = isCurrent ? (
-              <div className="text-center py-2 text-sm font-semibold text-[#4a7aff]">Current Plan</div>
-            ) : (
-              <CheckoutButton
-                planTier={plan.tier}
-                label={`Get ${plan.name} →`}
-                className="!w-full xv-pricing-cta xv-pricing-cta--outline !rounded-full"
-              />
-            );
-
-            return (
-              <GalacticPlanPricingCard key={plan.tier} plan={plan} current={!!isCurrent} cta={cta} />
-            );
-          })}
-        </PricingPlanGrid>
-
-        <div className="rounded-2xl border border-dashed border-[var(--card-border)] p-6 mb-12 text-center">
-          <p className="text-xs font-semibold text-[var(--muted)] mb-4 flex items-center justify-center gap-1.5">
-            <Lock className="w-3.5 h-3.5" /> Budget tiers — coming soon
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {COMING_SOON_PLANS.map((p) => (
-              <div
-                key={p.price}
-                className="px-4 py-3 rounded-xl bg-white/5 border border-[var(--card-border)] min-w-[88px] opacity-80"
-              >
-                <p className="text-lg font-bold">{p.price}</p>
-                <p className="text-[10px] text-[var(--muted)]">/mo · {p.label}</p>
+        <section className="grid md:grid-cols-[1.1fr_.9fr] gap-5 mb-10" aria-label="Xroga plan">
+          <div className="glass-panel rounded-2xl border border-[var(--accent)]/35 p-6 sm:p-8">
+            <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+              <div>
+                <p className="text-sm text-[var(--accent)] font-semibold">Xroga AI</p>
+                <p className="text-4xl font-bold mt-1">$19 <span className="text-sm font-normal text-[var(--muted)]">per 30-day billing period</span></p>
               </div>
-            ))}
+              <Shield className="w-7 h-7 text-[var(--accent)]" aria-hidden />
+            </div>
+            <ul className="space-y-3 text-sm mb-7">
+              {[
+                'All product-building, operations, growth, and publishing features',
+                'Balanced Month pacing with capacity preserved for completion and repair',
+                'One active main run with bounded implementation and verification concurrency',
+                'Durable checkpoints, evidence, and truthful external blockers',
+              ].map((item) => <li key={item} className="flex gap-2"><Check className="w-4 h-4 mt-0.5 text-emerald-500 shrink-0" />{item}</li>)}
+            </ul>
+
+            {!loggedIn ? (
+              <GradientStartButton className="w-full" onClick={() => router.push('/auth/signup')}>Create account and activate</GradientStartButton>
+            ) : entitlement?.state === 'promotional_eligible' ? (
+              <button type="button" onClick={activatePromotion} disabled={activating} className="w-full rounded-xl bg-[var(--accent)] px-4 py-3 font-semibold text-white disabled:opacity-60">
+                {activating ? 'Activating…' : 'Activate my complete 30-day period'}
+              </button>
+            ) : promotionActive ? (
+              <div className="rounded-xl border border-emerald-500/35 bg-emerald-500/10 p-4 text-sm">
+                <p className="font-semibold text-emerald-600 dark:text-emerald-400">Promotional period active</p>
+                <p className="mt-1 text-[var(--muted)]">Ends {formatDate(entitlement.endsAt)}. No automatic charge follows.</p>
+              </div>
+            ) : paidActive ? (
+              <div className="rounded-xl border border-emerald-500/35 bg-emerald-500/10 p-4 text-sm font-semibold">Paid plan active</div>
+            ) : (
+              <CheckoutButton planTier="spark" label="Subscribe for $19" className="w-full rounded-xl bg-[var(--accent)] px-4 py-3 font-semibold text-white" />
+            )}
           </div>
+
+          <div className="glass-panel rounded-2xl border border-[var(--card-border)] p-6 space-y-5">
+            <div className="flex gap-3"><Zap className="w-5 h-5 text-[var(--accent)] shrink-0" /><div><p className="font-semibold">Capacity, not messages</p><p className="text-sm text-[var(--muted)] mt-1">No fixed message allowance, model picker, artificial credits, or guaranteed token total.</p></div></div>
+            <div className="border-t border-[var(--card-border)] pt-5 text-sm text-[var(--muted)]">
+              <p className="font-semibold text-[var(--foreground)] mb-1">Promotion terms</p>
+              <p>Activation closes at the end of 30 August 2026 UTC. Activating on 29 or 30 August still starts a complete 30-day period.</p>
+            </div>
+            {entitlement && (
+              <div className="border-t border-[var(--card-border)] pt-5 text-sm">
+                <p className="text-[var(--muted)]">Current state</p>
+                <p className="font-semibold capitalize">{entitlement.state.replaceAll('_', ' ')}</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="glass-panel rounded-2xl p-6 mb-10">
+          <h2 className="text-lg font-bold mb-4">Included capabilities</h2>
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs text-[var(--muted)]">
+            {XROGA_FEATURES.map((feature) => <li key={feature} className="flex items-start gap-2"><Check className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" />{feature}</li>)}
+          </ul>
+        </section>
+
+        <div className="text-center">
+          <Link href={loggedIn ? '/workspace' : '/auth/signup'} className="inline-flex items-center gap-2 rounded-full border border-[var(--card-border)] px-5 py-3 text-sm font-semibold hover:border-[var(--accent)]/50">
+            {loggedIn ? 'Return to Workspace' : 'Create your account'} <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
 
-        <FeaturesExpand />
-
-        <div className="flex flex-wrap justify-center gap-3 mt-12">
-          {loggedIn ? (
-            <button
-              type="button"
-              onClick={() => router.push('/workspace')}
-              className="xv-footer-pill !text-sm flex items-center gap-2 !text-[var(--foreground)] px-6 py-3"
-            >
-              Back to Workspace <ArrowRight className="w-4 h-4" />
-            </button>
-          ) : (
-            <GradientStartButton className="xv-gradient-btn-sm" onClick={() => router.push('/auth/signup')}>
-              Start Free
-            </GradientStartButton>
-          )}
-        </div>
-
-        <footer className="mt-14 pt-8 border-t border-[var(--card-border)] text-center text-xs text-[var(--muted)] space-y-2">
-          <p>
-            {COMPANY_CONTACT.productDescription.slice(0, 160)}…
-          </p>
-          <nav className="flex flex-wrap justify-center gap-x-3 gap-y-1" aria-label="Legal">
-            <Link href="/contact" className="text-[var(--accent)] hover:underline">
-              Contact
-            </Link>
-            <Link href="/terms" className="hover:underline">
-              Terms
-            </Link>
-            <Link href="/privacy" className="hover:underline">
-              Privacy
-            </Link>
-            <Link href="/refund" className="hover:underline">
-              Refund
-            </Link>
-            <a href={`mailto:${COMPANY_CONTACT.email}`} className="hover:underline">
-              {COMPANY_CONTACT.email}
-            </a>
-            <a href={`tel:${COMPANY_CONTACT.phoneTel}`} className="hover:underline">
-              {COMPANY_CONTACT.phoneDisplay}
-            </a>
+        <footer className="mt-14 pt-8 border-t border-[var(--card-border)] text-center text-xs text-[var(--muted)]">
+          <nav className="flex flex-wrap justify-center gap-3" aria-label="Legal">
+            <Link href="/contact">Contact</Link><Link href="/terms">Terms</Link><Link href="/privacy">Privacy</Link><Link href="/refund">Refund</Link>
+            <a href={`mailto:${COMPANY_CONTACT.email}`}>{COMPANY_CONTACT.email}</a>
           </nav>
         </footer>
       </main>

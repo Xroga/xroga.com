@@ -2,12 +2,9 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import Skeleton from 'react-loading-skeleton';
-import { CreditCard, Activity, ArrowUpRight, Cpu } from 'lucide-react';
+import { Activity, ArrowUpRight, CreditCard, Gauge } from 'lucide-react';
 import { api, type DashboardSummary } from '@/lib/api';
-import { GALACTIC_PLANS } from '@/lib/plans';
-import { GalacticPlanPricingCard, PricingPlanGrid } from '@/components/billing/XrogaPricingCard';
 import { formatSafeDate, formatSafeDistance, safeDate } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -22,12 +19,7 @@ const ACTION_LABELS: Record<string, string> = {
   pushed_to_github: 'Pushed to GitHub',
 };
 
-function WidgetCard({
-  title,
-  icon: Icon,
-  children,
-  className,
-}: {
+function WidgetCard({ title, icon: Icon, children, className }: {
   title: string;
   icon: React.ComponentType<{ className?: string }>;
   children: React.ReactNode;
@@ -44,28 +36,36 @@ function WidgetCard({
   );
 }
 
+function PercentBar({ value, label }: { value: number | null; label: string }) {
+  if (value == null) return <p className="text-sm text-[var(--muted)]">{label}: unavailable</p>;
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between gap-3 text-sm">
+        <span>{label}</span>
+        <strong>{value}%</strong>
+      </div>
+      <div className="h-2 rounded-full bg-[var(--foreground)]/10 overflow-hidden">
+        <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
+      </div>
+    </div>
+  );
+}
+
 export function DashboardHomeView() {
-  const router = useRouter();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
-    api.dashboard
-      .summary()
+    setError(false);
+    api.dashboard.summary()
       .then(setSummary)
-      .catch(() => {})
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  const now = safeDate(summary?.now) ?? new Date();
-  const billing = summary?.billing;
-  const tokens = summary?.tokens;
-  const modelPools = tokens?.byModel ?? [];
+  useEffect(() => { load(); }, [load]);
 
   if (loading) {
     return (
@@ -79,6 +79,20 @@ export function DashboardHomeView() {
     );
   }
 
+  if (error || !summary) {
+    return (
+      <div className="max-w-3xl mx-auto glass-panel rounded-xl p-6">
+        <h1 className="text-xl font-semibold">Dashboard unavailable</h1>
+        <p className="mt-2 text-sm text-[var(--muted)]">Your account state could not be verified. No successful status has been assumed.</p>
+        <button type="button" onClick={load} className="mt-4 px-3 py-2 rounded-lg border border-[var(--card-border)] text-sm">Try again</button>
+      </div>
+    );
+  }
+
+  const now = safeDate(summary.now) ?? new Date();
+  const { billing, entitlement } = summary;
+  const stateLabel = entitlement.state.replace(/_/g, ' ');
+
   return (
     <div className="max-w-6xl mx-auto space-y-6 universe-fade-in">
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
@@ -88,159 +102,50 @@ export function DashboardHomeView() {
             {formatSafeDate(now, 'EEEE, MMMM d, yyyy')} · {formatSafeDate(now, 'h:mm a')}
           </p>
         </div>
-        <Link
-          href="/workspace"
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--accent)] hover:underline"
-        >
-          Open Workspace
-          <ArrowUpRight className="w-3.5 h-3.5" />
+        <Link href="/workspace" className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--accent)] hover:underline">
+          Open Workspace <ArrowUpRight className="w-3.5 h-3.5" />
         </Link>
       </header>
 
-      {tokens && (
-        <WidgetCard title="AI Capacity" icon={Cpu} className="md:col-span-2">
-          <div className="space-y-3">
-            <div className="flex flex-wrap items-baseline justify-between gap-2 text-sm">
-              <p>
-                <span className="text-[var(--muted)]">Tokens used: </span>
-                <strong>{tokens.totalUsed.toLocaleString()}</strong>
-                <span className="text-[var(--muted)]">
-                  {' '}
-                  / {tokens.totalLimit.toLocaleString()}
-                </span>
-              </p>
-              <p className="text-xs text-[var(--muted)]">{tokens.percentUsed}% of token pool</p>
-            </div>
-            <div className="h-2 rounded-full bg-[var(--foreground)]/10 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-[var(--accent)] transition-all"
-                style={{ width: `${Math.min(100, tokens.percentUsed)}%` }}
-              />
-            </div>
-            {modelPools.length > 0 && (
-              <ul className="grid gap-2 sm:grid-cols-2">
-                {modelPools.map((pool) => (
-                  <li
-                    key={pool.role}
-                    className="rounded-lg border border-[var(--card-border)] px-3 py-2 text-xs"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold">{pool.label}</span>
-                      <span className="text-[var(--muted)]">{pool.percentUsed}%</span>
-                    </div>
-                    {pool.tagline && (
-                      <p className="text-[var(--muted)] mt-0.5">{pool.tagline}</p>
-                    )}
-                    <p className="mt-1 text-[var(--muted)]">
-                      {pool.totalUsed.toLocaleString()} / {pool.totalLimit.toLocaleString()} tokens
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </WidgetCard>
-      )}
-
       <div className="grid gap-4 md:grid-cols-2">
-        <WidgetCard title="Recent Activity" icon={Activity}>
-          <ul className="space-y-2.5">
-            {(summary?.recentActivity ?? []).length === 0 ? (
-              <li className="text-sm text-[var(--muted)] text-center py-4">No activity yet</li>
-            ) : (
-              summary?.recentActivity.map((item, i) => (
-                <li key={`${item.created_at}-${i}`} className="flex items-start gap-2 text-sm">
-                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0" />
-                  <div className="min-w-0">
-                    <p>{ACTION_LABELS[item.action] ?? item.action.replace(/_/g, ' ')}</p>
-                    {item.projectName && (
-                      <p className="text-xs text-violet-400 truncate">{item.projectName}</p>
-                    )}
-                    <p className="text-xs text-[var(--muted)]">
-                      {formatSafeDistance(item.created_at)}
-                    </p>
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
+        <WidgetCard title="AI Capacity" icon={Gauge}>
+          <PercentBar label="Capacity remaining" value={entitlement.capacityRemainingPercent} />
+          <PercentBar label="Available now" value={entitlement.availableNowPercent} />
+          <p className="text-xs text-[var(--muted)] capitalize">Pacing: {entitlement.pacing?.replace(/_/g, ' ') ?? 'not active'}</p>
+          {entitlement.nextUnlockAt && <p className="text-xs text-[var(--muted)]">Next unlock: {formatSafeDate(entitlement.nextUnlockAt, 'MMM d, h:mm a')}</p>}
+          <Link href="/dashboard/billing" className="inline-flex text-xs font-semibold text-[var(--accent)] hover:underline">Review Plan & Usage</Link>
         </WidgetCard>
 
         <WidgetCard title="Billing & Plan" icon={CreditCard}>
-          <div className="space-y-2 text-sm">
-            <p>
-              <span className="text-[var(--muted)]">Current plan: </span>
-              <strong>{billing?.planName ?? 'Basic'}</strong>
-              <span className="text-[var(--muted)]"> ({billing?.planPrice ?? '$19/month'})</span>
-            </p>
-            <p>
-              <span className="text-[var(--muted)]">Next billing: </span>
-              <strong>{billing?.nextBilling ?? '—'}</strong>
-            </p>
-            <p>
-              <span className="text-[var(--muted)]">Tokens remaining: </span>
-              <strong>
-                {(billing?.tokensRemaining ?? tokens?.totalRemaining ?? 0).toLocaleString()}
-              </strong>
-              {typeof billing?.tokensIncluded === 'number' && (
-                <span className="text-[var(--muted)]">
-                  {' '}
-                  / {billing.tokensIncluded.toLocaleString()}
-                </span>
-              )}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => router.push('/pricing')}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 transition-opacity"
-            >
-              Upgrade Plan
-            </button>
-            <button
-              type="button"
-              onClick={() => router.push('/dashboard/billing')}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--card-border)] hover:border-[var(--accent)]/40 transition-colors"
-            >
-              Manage Billing
-            </button>
-          </div>
+          <dl className="space-y-2 text-sm">
+            <div><dt className="inline text-[var(--muted)]">Plan: </dt><dd className="inline font-semibold">{billing.planName}</dd></div>
+            <div><dt className="inline text-[var(--muted)]">Price: </dt><dd className="inline font-semibold">{billing.planPrice}</dd></div>
+            <div><dt className="inline text-[var(--muted)]">Status: </dt><dd className="inline font-semibold capitalize">{stateLabel}</dd></div>
+            <div><dt className="inline text-[var(--muted)]">Cycle ends: </dt><dd className="inline font-semibold">{billing.nextBilling ? formatSafeDate(billing.nextBilling, 'MMM d, yyyy') : 'not active'}</dd></div>
+          </dl>
+          {entitlement.state === 'promotional_eligible' && (
+            <p className="text-xs text-[var(--muted)]">Activate by August 30, 2026 for 30 complete days free. No card and no automatic charge.</p>
+          )}
+          <Link href="/pricing" className="inline-flex px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--card-border)] hover:border-[var(--accent)]/40">View plan</Link>
         </WidgetCard>
       </div>
 
-      <section className="glass-panel rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-[var(--card-border)] flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-[#4a7aff]" />
-            <h2 className="font-semibold text-sm">Pricing Plans</h2>
-          </div>
-          <Link href="/pricing" className="text-xs text-[#4a7aff] hover:underline">
-            View all
-          </Link>
-        </div>
-        <div className="p-4">
-          <PricingPlanGrid>
-            {GALACTIC_PLANS.map((plan) => (
-              <GalacticPlanPricingCard
-                key={plan.tier}
-                plan={plan}
-                compact
-                cta={
-                  <button
-                    type="button"
-                    onClick={() => router.push('/pricing')}
-                    className="xv-pricing-cta xv-pricing-cta--outline"
-                  >
-                    Get {plan.name} →
-                  </button>
-                }
-              />
-            ))}
-          </PricingPlanGrid>
-        </div>
-      </section>
+      <WidgetCard title="Recent Activity" icon={Activity}>
+        <ul className="grid gap-2.5 md:grid-cols-2">
+          {summary.recentActivity.length === 0 ? (
+            <li className="text-sm text-[var(--muted)] py-4">No recorded activity yet.</li>
+          ) : summary.recentActivity.map((item, index) => (
+            <li key={`${item.created_at}-${index}`} className="flex items-start gap-2 text-sm rounded-lg border border-[var(--card-border)] p-3">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0" />
+              <div className="min-w-0">
+                <p>{ACTION_LABELS[item.action] ?? item.action.replace(/_/g, ' ')}</p>
+                {item.projectName && <p className="text-xs text-[var(--accent)] truncate">{item.projectName}</p>}
+                <p className="text-xs text-[var(--muted)]">{formatSafeDistance(item.created_at)}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </WidgetCard>
     </div>
   );
 }

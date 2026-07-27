@@ -22,24 +22,24 @@ export function OutOfActionsModal({ open, onClose }: OutOfActionsModalProps) {
         <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
           <Brain className="w-7 h-7 text-red-400" />
         </div>
-        <h2 className="text-xl font-bold mb-2">Monthly Token Quota Reached</h2>
+        <h2 className="text-xl font-bold mb-2">Monthly AI Capacity Used</h2>
         <p className="text-[var(--muted)] text-sm mb-6">
-          You&apos;ve used your monthly token allocation. Upgrade your plan to continue.
+          Your completed work and current checkpoint are saved. Xroga can resume after your next reset.
         </p>
         <Link
           href="/dashboard"
           className="block w-full mb-3 px-4 py-2.5 rounded-lg bg-[var(--accent)]/15 text-[var(--accent)] font-semibold text-sm hover:bg-[var(--accent)]/25 transition-colors"
           onClick={onClose}
         >
-          View Token Usage
+          View Plan &amp; Usage
         </Link>
-        <CheckoutButton planTier="nova" label="Upgrade Plan" className="w-full mb-3" onSuccess={onClose} />
+        <CheckoutButton planTier="spark" label="Subscribe after promotion" className="w-full mb-3" onSuccess={onClose} />
         <Link
           href="/pricing"
           className="block text-sm text-[var(--accent)] hover:underline"
           onClick={onClose}
         >
-          View all Galactic Tiers →
+          View plan details →
         </Link>
       </div>
     </div>

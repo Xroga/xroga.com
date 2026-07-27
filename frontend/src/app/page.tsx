@@ -30,7 +30,7 @@ const FOOTER_LINKS = [
 const AI_FEATURES = [
   {
     title: 'Converter → Builder → Ship',
-    body: 'Pulse briefs · Apex/Horizon/Forge build · sticky GitHub + Vercel live — one continuous loop.',
+    body: 'Understand the outcome · implement focused changes · verify · push the sticky GitHub repo · publish with evidence.',
   },
   {
     title: '#1 Coding Agent',

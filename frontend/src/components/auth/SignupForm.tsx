@@ -138,7 +138,7 @@ export function SignupForm() {
   }
 
   return (
-    <AuthModernCard title="Create your Xroga account" subtitle="~0.55M free trial tokens · pick your vibe">
+    <AuthModernCard title="Create your Xroga account" subtitle="Activate by 30 August for a complete 30-day period free — no card">
       <AuthModernQuote text={quote.text} author={quote.author} compact />
 
       <div className="mb-3">

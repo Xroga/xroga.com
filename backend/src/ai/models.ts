@@ -44,7 +44,8 @@ export interface ModelDef {
 
 export const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
 
-export const MONTHLY_TOTAL_BUDGET_USD = 16.77;
+export const MONTHLY_TOTAL_BUDGET_USD = 16.5;
+export const MONTHLY_TOTAL_BUDGET_MICRO_USD = 16_500_000;
 export const MONTHLY_USER_PRICE_USD = 19;
 export const MONTHLY_TOTAL_TOKENS = 6_172_222;
 
@@ -57,7 +58,7 @@ export const MODELS: Record<ModelId, ModelDef> = {
     provider: 'moonshot',
     baseUrl: 'https://api.moonshot.ai/v1',
     secretKey: 'KIMI_API_KEY',
-    budgetUsd: 8.0,
+    budgetUsd: 7.73,
     monthlyTokens: 888_888,
     inputTokens: 444_444,
     outputTokens: 444_444,

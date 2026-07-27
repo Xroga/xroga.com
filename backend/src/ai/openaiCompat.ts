@@ -24,6 +24,7 @@ export interface ChatResult {
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
+  providerRequestId?: string;
 }
 
 interface ResolvedEndpoint {
@@ -170,6 +171,7 @@ export async function chatCompletion(
       inputTokens,
       outputTokens,
       totalTokens: inputTokens + outputTokens,
+      providerRequestId: completion.id,
     };
   } catch (error) {
     recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
@@ -209,10 +211,12 @@ export async function chatCompletionStream(
   );
 
     let text = '';
+    let providerRequestId: string | undefined;
     let inputTokens = messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
     let outputTokens = 0;
 
     for await (const chunk of stream) {
+      providerRequestId ??= chunk.id;
       if (opts.signal?.aborted) {
         const err = new Error('Build cancelled') as Error & { code?: string };
         err.code = 'BUILD_CANCELLED';
@@ -242,6 +246,7 @@ export async function chatCompletionStream(
       inputTokens,
       outputTokens,
       totalTokens: inputTokens + outputTokens,
+      providerRequestId,
     };
   } catch (error) {
     recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
@@ -264,6 +269,10 @@ export function buildVisionUserContent(
 
 export function estimateTokens(text: string): number {
   return Math.max(1, Math.ceil(text.length / 4));
+}
+
+export function estimateMessageTokens(messages: ChatMessage[]): number {
+  return messages.reduce((sum, message) => sum + contentTokenEstimate(message.content), 0);
 }
 
 export function modelKeyStatus(): Record<string, boolean> {

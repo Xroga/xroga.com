@@ -30,11 +30,11 @@ router.post(
     let claimedDeliveryId: string | undefined;
     try {
       const event = JSON.parse(rawBody) as {
-        meta?: { event_name?: string; custom_data?: Record<string, unknown> };
+        meta?: { event_name?: string; event_id?: string; custom_data?: Record<string, unknown> };
         data?: { type?: string; id?: string; attributes?: Record<string, unknown> };
       };
       const deliveryId = String(
-        req.headers['x-event-id'] ?? event.data?.id ?? createHash('sha256').update(rawBody).digest('hex'),
+        req.headers['x-event-id'] ?? event.meta?.event_id ?? createHash('sha256').update(rawBody).digest('hex'),
       ).slice(0, 200);
       claimedDeliveryId = deliveryId;
       const payloadDigest = createHash('sha256').update(rawBody).digest('hex');

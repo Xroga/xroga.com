@@ -13,7 +13,7 @@ const STEPS = [
   {
     Icon: Workflow,
     title: 'Prompt once',
-    body: 'Describe the product — website, SaaS, crypto dashboard, ASP agent. Pulse converts intent into a builder brief Black Hole V∞ can execute.',
+    body: 'Describe the product — website, SaaS, crypto dashboard, or agent. Xroga turns the outcome into an executable brief and controlled build.',
   },
   {
     Icon: GitBranch,
