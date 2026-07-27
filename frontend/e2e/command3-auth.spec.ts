@@ -14,6 +14,14 @@ const outsiderEmail = `command3-outsider-${run}@example.invalid`;
 const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
 let ownerId = ''; let outsiderId = ''; let ownerProjectId = ''; let outsiderProjectId = '';
 
+async function browserSession(page: import('@playwright/test').Page): Promise<{ status: number; authenticated: boolean }> {
+  return page.evaluate(async () => {
+    const response = await fetch('/api/session', { cache: 'no-store' });
+    const body = await response.json();
+    return { status: response.status, authenticated: body.authenticated === true };
+  });
+}
+
 test.beforeAll(async () => {
   const owner = await admin.auth.admin.createUser({ email: ownerEmail, password, email_confirm: true, user_metadata: { fixture: 'command3_isolated_demo' } });
   const outsider = await admin.auth.admin.createUser({ email: outsiderEmail, password, email_confirm: true, user_metadata: { fixture: 'command3_isolated_demo' } });
@@ -44,11 +52,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Sign in' }).click();
   await expect(page).toHaveURL(/\/(workspace|dashboard)/);
-  const firstSession = await page.request.get('/api/session');
-  expect(firstSession.status()).toBe(200); expect((await firstSession.json()).authenticated).toBe(true);
+  const firstSession = await browserSession(page);
+  expect(firstSession).toEqual({ status: 200, authenticated: true });
   await page.reload();
-  const refreshedSession = await page.request.get('/api/session');
-  expect(refreshedSession.status()).toBe(200); expect((await refreshedSession.json()).authenticated).toBe(true);
+  const refreshedSession = await browserSession(page);
+  expect(refreshedSession).toEqual({ status: 200, authenticated: true });
   await page.goto('/dashboard/operations');
   await expect(page.getByText(`command3-demo-owner-${run}`)).toBeVisible();
   expect(browserBearer).toMatch(/^Bearer /);
@@ -61,7 +69,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/^http:\/\/127\.0\.0\.1:3000\/$/);
   await page.goto('/dashboard/operations');
   await expect(page).toHaveURL(/\/auth\/login/);
-  const loggedOut = await page.request.get('/api/session'); expect(loggedOut.status()).toBe(401);
+  const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
-  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], login: 'verified', sessionRefresh: 'verified', operationsApi: allowed.status, crossTenantApi: denied.status, logout: loggedOut.status(), fixtureIsolation: 'temporary users and projects cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
+  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], login: 'verified', sessionRefresh: 'verified', operationsApi: allowed.status, crossTenantApi: denied.status, logout: loggedOut.status, fixtureIsolation: 'temporary users and projects cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });
