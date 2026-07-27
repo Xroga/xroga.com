@@ -17,6 +17,7 @@
     "test:resilience": "node scripts/test-resilience.js"
   },
   "devDependencies": {
+    "@playwright/test": "1.55.0",
     "concurrently": "^9.1.2",
     "pg": "^8.14.1"
   }
