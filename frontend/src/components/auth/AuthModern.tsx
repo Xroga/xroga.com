@@ -54,9 +54,9 @@ export function AuthModernInput({
   );
 }
 
-export function AuthModernLabel({ children }: { children: ReactNode }) {
+export function AuthModernLabel({ children, htmlFor }: { children: ReactNode; htmlFor?: string }) {
   return (
-    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">{children}</p>
+    <label htmlFor={htmlFor} className="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">{children}</label>
   );
 }
 
