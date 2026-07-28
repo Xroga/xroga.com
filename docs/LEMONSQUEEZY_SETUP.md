@@ -1,61 +1,44 @@
 # Lemon Squeezy billing (Xroga platform)
 
-Paddle has been removed. Subscriptions run through **Lemon Squeezy** as merchant of record.
+Paddle has been removed. Xroga has one $19 per 30-day plan, billed through Lemon Squeezy as merchant of record.
 
-## 1. Create products
+## 1. Create the product
 
-In [Lemon Squeezy](https://app.lemonsqueezy.com) → Products, create a subscription product/variant for each plan:
+In [Lemon Squeezy](https://app.lemonsqueezy.com), create one 30-day subscription product and variant:
 
-| Plan | Env var | Variant ID |
-|------|---------|------------|
-| Spark ($19) | `LEMONSQUEEZY_VARIANT_SPARK` | from variant |
-| Pulse ($29) | `LEMONSQUEEZY_VARIANT_PULSE` | |
-| Nova ($49) | `LEMONSQUEEZY_VARIANT_NOVA` | |
-| Zenith ($99) | `LEMONSQUEEZY_VARIANT_ZENITH` | |
-| Singularity ($999) | `LEMONSQUEEZY_VARIANT_SINGULARITY` | |
+| Plan | Environment variable | Value |
+| --- | --- | --- |
+| Xroga AI ($19) | `LEMONSQUEEZY_VARIANT_SPARK` | Variant ID |
 
-Store ID: Settings → Stores → ID → `LEMONSQUEEZY_STORE_ID`
+Also record the store ID from Store settings and create an API key.
 
-API key: Settings → API → `LEMONSQUEEZY_API_KEY`
-
-## 2. Fly secrets
+## 2. Configure Fly secrets
 
 ```bash
 fly secrets set -a xroga-api \
-  LEMONSQUEEZY_API_KEY="…" \
-  LEMONSQUEEZY_STORE_ID="…" \
-  LEMONSQUEEZY_WEBHOOK_SECRET="…" \
-  LEMONSQUEEZY_VARIANT_SPARK="…" \
-  LEMONSQUEEZY_VARIANT_PULSE="…" \
-  LEMONSQUEEZY_VARIANT_NOVA="…" \
-  LEMONSQUEEZY_VARIANT_ZENITH="…" \
-  LEMONSQUEEZY_VARIANT_SINGULARITY="…" \
+  LEMONSQUEEZY_API_KEY="..." \
+  LEMONSQUEEZY_STORE_ID="..." \
+  LEMONSQUEEZY_WEBHOOK_SECRET="..." \
+  LEMONSQUEEZY_VARIANT_SPARK="..." \
   LEMONSQUEEZY_REDIRECT_URL="https://xroga.com/dashboard/billing?checkout=success"
 ```
 
-Remove old Paddle secrets if present (`PADDLE_*`).
+Remove obsolete `PADDLE_*` and historical multi-plan variant secrets if present.
 
-## 3. Webhook
+## 3. Configure the webhook
 
-Dashboard → Settings → Webhooks → Add:
+Create a Lemon Squeezy webhook with:
 
 - URL: `https://xroga-api.fly.dev/api/billing/webhook/lemon-squeezy`
-- Secret: same as `LEMONSQUEEZY_WEBHOOK_SECRET`
+- Secret: the same value stored as `LEMONSQUEEZY_WEBHOOK_SECRET`
 - Events: `subscription_created`, `subscription_updated`, `subscription_payment_success`, `order_created`, `subscription_cancelled`, `subscription_expired`
 
-Checkout embeds `custom.user_id` + `custom.plan_tier` so webhooks upgrade the right Xroga account.
+Checkout includes `custom.user_id` and `custom.plan_tier`, and Xroga accepts capacity activation only after a valid signed and deduplicated provider event.
 
-## 4. Frontend
+## 4. Checkout and customer portal
 
-No Lemon.js required — checkout redirects to hosted Lemon URL from the API.
+No Lemon.js is required. Checkout redirects to Lemon Squeezy's hosted checkout. Paid users open a fresh signed Customer Portal URL retrieved server-side from the Lemon Squeezy Customer API. Provider credentials and portal signatures are never committed.
 
-## 5. User-generated apps (their billing)
+## 5. User-generated products
 
-Users who want subscriptions **in apps Xroga builds** save Lemon keys under Integrations (vault → Vercel env):
-
-- `LEMONSQUEEZY_API_KEY`
-- `LEMONSQUEEZY_STORE_ID`
-- `LEMONSQUEEZY_WEBHOOK_SECRET`
-- `LEMONSQUEEZY_VARIANT_ID` (default product)
-
-Scaffolded Next apps can include `/api/checkout` + `/api/webhooks/lemon-squeezy` when billing is requested.
+The credentials a customer supplies for a generated product are separate from Xroga platform billing. They are stored in the customer's encrypted integration vault and synced only to the selected deployment environment.

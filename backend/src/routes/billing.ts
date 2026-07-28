@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { BillingService } from '../services/BillingService.js';
+import { BillingService, BillingServiceError } from '../services/BillingService.js';
 import type { AuthRequest } from '../middleware/auth.js';
 import type { PlanTier } from '../types/index.js';
 import {
@@ -82,7 +82,23 @@ router.post('/create-checkout', async (req: AuthRequest, res) => {
     );
     res.json(result);
   } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
+    if (err instanceof BillingServiceError) {
+      res.status(err.statusCode).json({ error: err.message, code: err.code });
+      return;
+    }
+    res.status(500).json({ error: 'Checkout could not be created', code: 'billing_failure' });
+  }
+});
+
+router.post('/portal', async (req: AuthRequest, res) => {
+  try {
+    res.json(await BillingService.createCustomerPortal(req.userId!));
+  } catch (err) {
+    if (err instanceof BillingServiceError) {
+      res.status(err.statusCode).json({ error: err.message, code: err.code });
+      return;
+    }
+    res.status(500).json({ error: 'Subscription management could not be opened', code: 'billing_failure' });
   }
 });
 

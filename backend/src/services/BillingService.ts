@@ -10,6 +10,35 @@ export interface LemonWebhookEvent {
   data?: { type?: string; id?: string; attributes?: Record<string, unknown> };
 }
 
+export class BillingServiceError extends Error {
+  constructor(
+    public readonly code: 'external_setup_required' | 'subscription_not_found' | 'provider_unavailable' | 'storage_unavailable',
+    message: string,
+    public readonly statusCode: number,
+  ) {
+    super(message);
+  }
+}
+
+export function parseCustomerPortalUrl(payload: unknown): string {
+  const candidate = (payload as {
+    data?: { attributes?: { urls?: { customer_portal?: unknown } } };
+  })?.data?.attributes?.urls?.customer_portal;
+  if (typeof candidate !== 'string' || !candidate.trim()) {
+    throw new BillingServiceError('subscription_not_found', 'No paid subscription is available to manage', 409);
+  }
+  let url: URL;
+  try {
+    url = new URL(candidate);
+  } catch {
+    throw new BillingServiceError('provider_unavailable', 'Billing portal returned an invalid destination', 502);
+  }
+  if (url.protocol !== 'https:' || url.username || url.password) {
+    throw new BillingServiceError('provider_unavailable', 'Billing portal returned an unsafe destination', 502);
+  }
+  return url.toString();
+}
+
 export function derivePaidCycleEvidence(event: LemonWebhookEvent): {
   providerReference: string;
   startsAt: Date;
@@ -84,7 +113,7 @@ export class BillingService {
   ): Promise<{ checkoutUrl?: string; priceId: string; customData: Record<string, string> }> {
     const variantId = getLemonVariantId(planTier);
     if (!variantId) {
-      throw new Error(`Lemon Squeezy variant not configured for plan: ${planTier}`);
+      throw new BillingServiceError('external_setup_required', 'Paid checkout is not configured', 409);
     }
 
     const storeId = (process.env.LEMONSQUEEZY_STORE_ID || '').trim();
@@ -92,7 +121,7 @@ export class BillingService {
     const customData = { user_id: userId, plan_tier: planTier };
 
     if (!apiKey || !storeId) {
-      return { priceId: variantId, customData };
+      throw new BillingServiceError('external_setup_required', 'Paid checkout is not configured', 409);
     }
 
     const checkoutData: Record<string, unknown> = {
@@ -129,9 +158,8 @@ export class BillingService {
     });
 
     if (!response.ok) {
-      const errText = await response.text();
-      console.error('[BillingService] Lemon checkout error:', errText);
-      throw new Error('Could not create Lemon Squeezy checkout');
+      console.error('[BillingService] Lemon checkout failed', { status: response.status });
+      throw new BillingServiceError('provider_unavailable', 'Billing provider could not create checkout', 502);
     }
 
     const data = (await response.json()) as {
@@ -143,6 +171,38 @@ export class BillingService {
       priceId: variantId,
       customData,
     };
+  }
+
+  static async createCustomerPortal(userId: string): Promise<{ portalUrl: string }> {
+    const apiKey = (process.env.LEMONSQUEEZY_API_KEY || '').trim();
+    if (!apiKey) {
+      throw new BillingServiceError('external_setup_required', 'Subscription management is not configured', 409);
+    }
+
+    const { data, error } = await getSupabaseAdmin()
+      .from('profiles')
+      .select('lemon_squeezy_customer_id')
+      .eq('id', userId)
+      .maybeSingle();
+    if (error) {
+      throw new BillingServiceError('storage_unavailable', 'Billing account could not be loaded', 503);
+    }
+    const customerId = String(data?.lemon_squeezy_customer_id ?? '').trim();
+    if (!/^\d+$/.test(customerId)) {
+      throw new BillingServiceError('subscription_not_found', 'No paid subscription is available to manage', 409);
+    }
+
+    const response = await fetch(`https://api.lemonsqueezy.com/v1/customers/${encodeURIComponent(customerId)}`, {
+      headers: {
+        Accept: 'application/vnd.api+json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
+    if (!response.ok) {
+      console.error('[BillingService] Lemon customer portal failed', { status: response.status });
+      throw new BillingServiceError('provider_unavailable', 'Billing provider could not open subscription management', 502);
+    }
+    return { portalUrl: parseCustomerPortalUrl(await response.json()) };
   }
 
   static verifyWebhookSignature(rawBody: string, signatureHeader: string | undefined): boolean {

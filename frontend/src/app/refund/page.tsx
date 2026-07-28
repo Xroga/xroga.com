@@ -24,7 +24,7 @@ export default function RefundPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Cancel anytime</h2>
         <p className="text-[var(--muted)]">
-          Cancel from your dashboard billing settings. Cancellation stops future renewals. You keep
+          Open the signed Lemon Squeezy portal from dashboard billing to cancel. If the portal is unavailable, contact support before renewal. Cancellation stops future renewals. You keep
           access until the end of the period already paid.
         </p>
       </section>
@@ -32,8 +32,7 @@ export default function RefundPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Pause instead of cancel</h2>
         <p className="text-[var(--muted)]">
-          If you need a break, contact us to pause for up to 3 months where available. Billing
-          stops while paused; your projects remain so you can return without starting over.
+          If you need a break, use the Lemon Squeezy portal where pause is available, or contact us for help. Provider eligibility and timing are shown before confirmation; Xroga does not assume a pause succeeded without provider evidence.
         </p>
       </section>
 
