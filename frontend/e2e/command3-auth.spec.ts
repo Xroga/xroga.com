@@ -71,6 +71,41 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await page.reload();
   const refreshedSession = await browserSession(page);
   expect(refreshedSession).toEqual({ status: 200, authenticated: true });
+
+  const routeChecks = [
+    '/workspace',
+    '/dashboard',
+    '/dashboard/projects',
+    '/dashboard/integrations',
+    '/dashboard/operations',
+    '/dashboard/growth',
+    '/dashboard/publish',
+    '/settings?tab=plan',
+    '/settings',
+  ];
+  for (const route of routeChecks) {
+    await page.goto(route);
+    await expect(page).not.toHaveURL(/\/auth\/login/);
+    const shellState = await page.evaluate(() => ({
+      text: document.body?.innerText ?? '',
+      overflow: document.documentElement.scrollWidth > window.innerWidth + 2,
+    }));
+    expect(shellState.text).not.toMatch(/application error|something went wrong|internal server error/i);
+    expect(shellState.text).not.toContain("We give our best — perfection is Allah's alone. Xroga verifies before publish.");
+    expect(shellState.overflow).toBe(false);
+  }
+
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 820, height: 1180 },
+    { width: 1440, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/workspace');
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
+    expect(overflow).toBe(false);
+  }
+
   await page.goto('/dashboard/operations');
   await expect(page.getByText(`command3-demo-owner-${run}`)).toBeVisible();
   expect(browserBearer).toMatch(/^Bearer /);
@@ -117,5 +152,5 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
-  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', login: 'verified', sessionRefresh: 'verified', operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, logout: loggedOut.status, fixtureIsolation: 'temporary users and projects cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
+  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, logout: loggedOut.status, fixtureIsolation: 'temporary users and projects cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });
