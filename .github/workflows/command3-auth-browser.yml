@@ -81,7 +81,9 @@ jobs:
           echo "application_start_failed"; tail -n 40 backend.log; tail -n 40 frontend.log; exit 1
       - name: Authenticated browser and tenant isolation
         working-directory: frontend
-        run: npx playwright test e2e/command3-auth.spec.ts
+        # Invoke the test package's own CLI so npm's nested workspace install
+        # cannot select the transitive playwright binary from another copy.
+        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts
       - name: Upload redacted verification evidence
         if: always()
         uses: actions/upload-artifact@v4
