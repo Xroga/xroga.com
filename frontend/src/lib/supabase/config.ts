@@ -1,4 +1,5 @@
 const APPROVED_PROJECT_REF = 'nzenxdfumxrnsmybazmo';
+const APPROVED_PUBLIC_URL = `https://${APPROVED_PROJECT_REF}.supabase.co`;
 
 function legacyRole(key: string): string | null {
   if (!key.includes('.')) return null;
@@ -10,9 +11,13 @@ function legacyRole(key: string): string | null {
 }
 
 export function getSupabasePublicConfig(): { url: string; publishableKey: string; projectRef: string } {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() ?? '';
+  // Xroga has one approved production auth project. Keep its public endpoint
+  // canonical so a stale hosting variable cannot redirect browser credentials
+  // to a different Supabase project. The publishable key remains configurable
+  // for rotation and is validated below.
+  const url = APPROVED_PUBLIC_URL;
   const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() ?? '';
-  if (!url || !publishableKey) throw new Error('Supabase public configuration is missing');
+  if (!publishableKey) throw new Error('Supabase public configuration is missing');
   let parsed: URL;
   try { parsed = new URL(url); } catch { throw new Error('Supabase public URL is invalid'); }
   const projectRef = parsed.hostname.split('.')[0];
