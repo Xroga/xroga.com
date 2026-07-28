@@ -12,8 +12,21 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 function resolveApiUrl(): string {
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, '');
+  const configured = process.env.NEXT_PUBLIC_API_URL?.trim();
+  if (configured) {
+    try {
+      const url = new URL(configured);
+      const isSupabaseHost = url.hostname.endsWith('.supabase.co');
+      const isSafeProtocol =
+        url.protocol === 'https:' ||
+        (url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname));
+      if (isSafeProtocol && !isSupabaseHost) {
+        return url.origin;
+      }
+      console.error('[config] Ignoring invalid public API origin');
+    } catch {
+      console.error('[config] Ignoring malformed public API origin');
+    }
   }
   if (process.env.NODE_ENV === 'development') {
     return 'http://localhost:4000';
@@ -428,11 +441,12 @@ export const api = {
         `/api/github/oauth?redirect_uri=${encodeURIComponent(redirectUri)}`
       );
     },
-    connect: (code: string, repoStrategy?: string, defaultRepo?: string) =>
+    connect: (code: string, state: string, repoStrategy?: string, defaultRepo?: string) =>
       apiFetch<{ connected: boolean; username: string }>('/api/github/connect', {
         method: 'POST',
         body: JSON.stringify({
           code,
+          state,
           repoStrategy,
           defaultRepo,
           redirectUri: githubOAuthCallbackUrl(),

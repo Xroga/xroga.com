@@ -149,7 +149,7 @@ export function DevWorkspacePanel({ className }: { className?: string }) {
   return (
     <aside
       className={cn(
-        'xv-dev-workspace flex flex-col border border-[var(--card-border)]/60 bg-[var(--card)]/80 backdrop-blur-md rounded-xl overflow-hidden min-h-[420px]',
+        'xv-dev-workspace flex flex-col border border-[var(--card-border)]/60 bg-[var(--card)]/80 backdrop-blur-md rounded-xl overflow-hidden min-h-[360px]',
         expanded && 'fixed inset-3 z-[180] min-h-0 rounded-2xl',
         className
       )}

@@ -3,6 +3,7 @@ import type { AuthRequest } from '../middleware/auth.js';
 import { runBuildPipeline } from '../ai/pipeline.js';
 import { initSSE, sendSSE, endSSE } from '../lib/sse.js';
 import { slimOutputForSse } from '../lib/slimOutputForSse.js';
+import { bindBuildStreamAbort } from '../lib/buildStreamLifecycle.js';
 import { buildFullProjectFiles } from '../services/projectScaffold.js';
 import {
   completeRun,
@@ -81,13 +82,13 @@ router.post('/execute', async (req: AuthRequest, res) => {
   const ac = new AbortController();
   /** After preview is sent, do not abort ship if the browser/proxy drops. */
   let codeReady = false;
-  const abort = () => {
+  const detachAbortHandlers = bindBuildStreamAbort(req, res, () => ({
+    responseEnded: res.writableEnded,
+    codeReady,
+  }), () => {
     clearInterval(keepalive);
-    if (codeReady) return;
     if (!ac.signal.aborted) ac.abort();
-  };
-  req.on('close', abort);
-  req.on('aborted', abort);
+  });
 
   try {
     sendSSE(res, {
@@ -159,9 +160,11 @@ router.post('/execute', async (req: AuthRequest, res) => {
       },
     });
     clearInterval(keepalive);
+    detachAbortHandlers();
     endSSE(res);
   } catch (err) {
     clearInterval(keepalive);
+    detachAbortHandlers();
     const e = err as Error & { code?: string };
     const code =
       e.code === 'OUT_OF_TOKENS'

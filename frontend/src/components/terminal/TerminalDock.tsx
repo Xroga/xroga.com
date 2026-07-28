@@ -15,6 +15,7 @@ import { useVisualViewportBottom } from '@/hooks/useVisualViewportBottom';
 import { useHydrated } from '@/hooks/useHydrated';
 import { INCOGNITO_PRIVATE_ROOM_NOTICE } from '@/lib/incognito';
 import { cn } from '@/lib/utils';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 
 export function TerminalDock() {
   const pathname = usePathname();
@@ -22,6 +23,7 @@ export function TerminalDock() {
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
+  const workspaceOpen = useProjectWorkspaceStore((s) => s.workspaceOpen);
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const keyboardOffset = useVisualViewportBottom();
@@ -78,7 +80,11 @@ export function TerminalDock() {
         ref={dockInnerRef}
         className={cn(
           'mx-auto px-2 sm:px-4 lg:px-6 pt-2 sm:pt-3 pb-1.5 sm:pb-3 lg:pb-4 xv-terminal-dock-inner',
-          dashboardFullscreen ? 'max-w-6xl' : 'max-w-3xl'
+          dashboardFullscreen
+            ? 'max-w-6xl'
+            : workspaceOpen
+              ? 'max-w-[1400px] xl:pr-[calc(40%+1.5rem)]'
+              : 'max-w-4xl'
         )}
       >
         <div className="flex items-end gap-3">
@@ -104,11 +110,7 @@ export function TerminalDock() {
           <p className="text-[10px] sm:text-xs text-center text-white py-2 sm:py-2.5 px-3 font-medium leading-relaxed xv-incognito-room-notice">
             {INCOGNITO_PRIVATE_ROOM_NOTICE}
           </p>
-        ) : (
-          <p className="text-[9px] sm:text-[10px] text-center text-[var(--muted)] py-1 sm:py-1.5 px-3 font-terminal xv-chatbar-disclaimer leading-snug max-w-xl mx-auto">
-            We give our best — perfection is Allah&apos;s alone. Xroga verifies before publish.
-          </p>
-        )}
+        ) : null}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from '../middleware/auth.js';
+import { createOAuthState, verifyOAuthState } from '../lib/oauthState.js';
 import {
   getGitHubToken,
   saveGitHubConnection,
@@ -80,7 +81,8 @@ async function ghApi<T>(token: string, path: string): Promise<T> {
 
 function buildGitHubAuthorizeUrl(userId: string, redirectUri: string): string | null {
   if (!GITHUB_CLIENT_ID) return null;
-  const state = Buffer.from(JSON.stringify({ userId })).toString('base64url');
+  if (!GITHUB_CLIENT_SECRET) return null;
+  const state = createOAuthState(userId, GITHUB_CLIENT_SECRET);
   return `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=repo,user:email&state=${state}`;
 }
 
@@ -123,6 +125,7 @@ router.get('/redirect', (req: AuthRequest, res) => {
 router.post('/connect', async (req: AuthRequest, res) => {
   const schema = z.object({
     code: z.string().min(1),
+    state: z.string().min(1),
     repoStrategy: z.enum(['auto', 'monorepo', 'manual']).optional(),
     defaultRepo: z.string().optional(),
     redirectUri: z.string().optional(),
@@ -136,6 +139,11 @@ router.post('/connect', async (req: AuthRequest, res) => {
 
   if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
     res.status(503).json({ error: 'GitHub OAuth not configured' });
+    return;
+  }
+
+  if (!verifyOAuthState(parsed.data.state, req.userId!, GITHUB_CLIENT_SECRET)) {
+    res.status(400).json({ error: 'Invalid or expired GitHub authorization state' });
     return;
   }
 

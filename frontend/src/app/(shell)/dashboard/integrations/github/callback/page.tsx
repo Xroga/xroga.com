@@ -23,6 +23,7 @@ function CallbackHandler() {
 
   useEffect(() => {
     const code = searchParams.get('code');
+    const state = searchParams.get('state');
     const oauthErr =
       searchParams.get('error_description') || searchParams.get('error');
 
@@ -42,7 +43,7 @@ function CallbackHandler() {
       return;
     }
 
-    if (!code) {
+    if (!code || !state) {
       if (window.opener) {
         window.close();
       } else {
@@ -59,7 +60,7 @@ function CallbackHandler() {
       }
 
       try {
-        const res = await api.github.connect(code, 'auto');
+        const res = await api.github.connect(code, state, 'auto');
         setMessage(`Connected as @${res.username}`);
 
         publishOAuthResult({
