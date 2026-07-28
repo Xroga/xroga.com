@@ -11,6 +11,7 @@ test('keeps public and authentication routes available', () => {
     '/robots.txt',
     '/sitemap.xml',
     '/api/session',
+    '/api/release',
   ]) {
     assert.equal(isPublicPath(path), true, path);
   }

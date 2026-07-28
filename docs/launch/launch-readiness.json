@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "candidate_commit": "cb38638c3ee9a3b58d7e51b7b5464fc50c0d09bf",
+  "status": "not_certified",
+  "gates": {
+    "local_lint_tests_builds": "passed",
+    "supabase_schema": "previous_main_migration_applied_and_pr_dry_run_passed",
+    "authentication": "passed",
+    "session_refresh": "passed",
+    "tenant_isolation": "passed",
+    "api_container_build": "passed",
+    "billing_provider_checkout": "pending_current_ci",
+    "email_auth_provider": "enabled",
+    "final_pr_checks": "pending",
+    "merged_main": "pending",
+    "exact_production_release": "pending",
+    "production_browser": "pending"
+  },
+  "certification": {
+    "command_4_verified": false,
+    "public_launch_certified": false
+  }
+}
