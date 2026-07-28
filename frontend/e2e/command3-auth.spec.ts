@@ -77,6 +77,12 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const allowed = await fetch(`${backendUrl}/api/operations/products/${ownerProjectId}`, { headers: { Authorization: browserBearer } });
   const denied = await fetch(`${backendUrl}/api/operations/products/${outsiderProjectId}`, { headers: { Authorization: browserBearer } });
   expect(allowed.status).toBe(200); expect(denied.status).toBe(403);
+  const notifications = await fetch(`${backendUrl}/api/notifications`, { headers: { Authorization: browserBearer } });
+  const unreadNotifications = await fetch(`${backendUrl}/api/notifications/unread-count`, { headers: { Authorization: browserBearer } });
+  expect(notifications.status).toBe(200);
+  expect(await notifications.json()).toEqual([]);
+  expect(unreadNotifications.status).toBe(200);
+  expect(await unreadNotifications.json()).toEqual({ count: 0 });
   let billingCheckout: 'not_requested' | 'verified' = 'not_requested';
   if (launchBillingApiUrl) {
     const billingStatusResponse = await fetch(`${launchBillingApiUrl}/api/billing/status`, { headers: { Authorization: browserBearer } });
@@ -111,5 +117,5 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
-  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', login: 'verified', sessionRefresh: 'verified', operationsApi: allowed.status, crossTenantApi: denied.status, billingCheckout, logout: loggedOut.status, fixtureIsolation: 'temporary users and projects cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
+  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', login: 'verified', sessionRefresh: 'verified', operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, logout: loggedOut.status, fixtureIsolation: 'temporary users and projects cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });
