@@ -106,7 +106,7 @@ const empty = {
   commitSha: null as string | null,
   status: 'idle' as ProjectWorkspaceStatus,
   previewOpen: false,
-  workspaceOpen: true,
+  workspaceOpen: false,
   activeTab: 'preview' as DevWorkspaceTab,
   openFilePath: null as string | null,
   openFilePaths: [] as string[],
@@ -311,6 +311,14 @@ export const useProjectWorkspaceStore = create<ProjectWorkspaceState>()(
     }),
     {
       name: 'xroga-project-workspace',
+      version: 2,
+      migrate: (persisted, version) => {
+        const state = (persisted || {}) as Partial<ProjectWorkspaceState>;
+        if (version < 2 && !state.repo && !state.deployUrl && state.status === 'idle') {
+          return { ...state, workspaceOpen: false } as ProjectWorkspaceState;
+        }
+        return state as ProjectWorkspaceState;
+      },
       partialize: (s) => ({
         repo: s.repo,
         branch: s.branch,
