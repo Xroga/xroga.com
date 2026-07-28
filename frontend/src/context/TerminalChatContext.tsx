@@ -13,6 +13,7 @@ import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, ApiError, type ChatAttachment, api } from '@/lib/api';
 import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
+import { buildCompletedChatHistory } from '@/lib/chatHistory';
 import { isMathQueryPrompt } from '@/lib/mathDetect';
 import { streamTextReveal } from '@/lib/streamText';
 import type { SwarmProgressEvent } from '@/lib/swarm';
@@ -488,35 +489,12 @@ export function TerminalChatProvider({
 
   const handleVercelBuildBlocked = useCallback(
     (userPrompt: string, attachments?: ChatAttachment[]) => {
+      void userPrompt;
+      void attachments;
       void api.vercel.status().then((vc) => {
-        if (vc.connected) {
-          void submitRef.current(userPrompt, false, false, attachments);
-          return;
-        }
-        pendingBuildRef.current = {
-          userPrompt,
-          fromQueue: false,
-          interrupt: false,
-          attachments,
-        };
-        // Don't trap users in a chat popup — send them to Integrations Ship setup
-        try {
-          sessionStorage.setItem(
-            'xroga-vercel-pending-prompt',
-            JSON.stringify({ userPrompt: userPrompt.slice(0, 2000), t: Date.now() }),
-          );
-        } catch {
-          /* ignore */
-        }
-        window.location.assign('/dashboard/integrations?focus=vercel&vercel=setup#ship-setup');
+        if (!vc.connected) setVercelGateOpen(true);
       }).catch(() => {
-        pendingBuildRef.current = {
-          userPrompt,
-          fromQueue: false,
-          interrupt: false,
-          attachments,
-        };
-        window.location.assign('/dashboard/integrations?focus=vercel&vercel=setup#ship-setup');
+        setVercelGateOpen(true);
       });
     },
     []
@@ -1093,18 +1071,15 @@ export function TerminalChatProvider({
         { id: assistantId, role: 'assistant', content: '', createdAt: Date.now(), agent: 'Xroga AI Brain' },
       ]);
 
-      const threadForMemory = [
-        ...messages,
-        { id: userMessageId, role: 'user' as const, content: displayPrompt, createdAt: Date.now() },
-      ];
-      const history = threadForMemory
-        .filter((m) => (m.role === 'user' || m.role === 'assistant') && m.content?.trim())
-        .slice(-10)
-        .map((m) => ({
-          role: m.role as 'user' | 'assistant',
-          content: (m.content ?? '').length > 1200 ? `${(m.content ?? '').slice(0, 1200)}…` : (m.content ?? ''),
-        }))
-        .filter((h) => h.content.length > 0);
+      const history = buildCompletedChatHistory(
+        messages.map((m) => ({
+          role: m.role,
+          content:
+            (m.content ?? '').length > 1200
+              ? `${(m.content ?? '').slice(0, 1200)}…`
+              : (m.content ?? ''),
+        })),
+      );
 
       try {
         const result = await runLightLaneChat({
@@ -1555,31 +1530,30 @@ export function TerminalChatProvider({
         // Never send prior build essays with "hi"/thanks — that burns tokens and continues the blog guide.
         let history = isTrivialPrompt(displayPrompt)
           ? ([] as Array<{ role: 'user' | 'assistant'; content: string }>)
-          : threadForMemory
-              .filter((m) => (m.role === 'user' || m.role === 'assistant') && (m.content?.trim() || m.featureOutput))
-              .slice(-10)
-              .map((m) => {
+          : buildCompletedChatHistory(
+              messages.map((m) => {
                 let content = m.content?.trim() ?? '';
                 if (!content && m.featureOutput && typeof m.featureOutput === 'object') {
-                  const o = m.featureOutput as { type?: string; summary?: string; deployUrl?: string };
-                  if (o.type === 'landing_page') {
-                    content = o.summary ?? `Built website: ${o.deployUrl ?? 'live'}`;
+                  const output = m.featureOutput as {
+                    type?: string;
+                    summary?: string;
+                    deployUrl?: string;
+                  };
+                  if (output.type === 'landing_page') {
+                    content = output.summary ?? `Built website: ${output.deployUrl ?? 'preview ready'}`;
                   }
                 }
-                // Cap history turn size so old builds don't dominate cost on normal chat.
                 if (content.length > 1200) content = `${content.slice(0, 1200)}…`;
-                return { role: m.role as 'user' | 'assistant', content };
-              })
-              .filter((h) => h.content.length > 0);
-
+                return { role: m.role, content };
+              }),
+            );
         if (buildSession && isBuildAnswer) {
           const hasPhase1 = history.some((h) => isPhase1BuildQuestion(h.content));
           if (!hasPhase1) {
             history = [
               { role: 'user', content: buildSession.originalPrompt },
               { role: 'assistant', content: buildSession.phase1Reply },
-              ...history.filter((h) => h.content !== displayPrompt),
-              { role: 'user', content: displayPrompt },
+              ...history,
             ];
           }
         }
