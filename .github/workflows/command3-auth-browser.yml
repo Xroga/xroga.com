@@ -52,18 +52,20 @@ jobs:
           endpoint="https://api.supabase.com/v1/projects/nzenxdfumxrnsmybazmo/config/auth"
           curl --silent --show-error --fail --output auth-config.json \
             --header "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" "$endpoint"
-          enabled="$(node -e "const c=require('./auth-config.json'); process.stdout.write(String(c.external_email_enabled === true))")"
-          if [ "$enabled" != "true" ]; then
+          configured="$(node -e "const c=require('./auth-config.json'); process.stdout.write(String(c.external_email_enabled === true && c.disable_signup === false && c.site_url === 'https://xroga.com' && String(c.uri_allow_list || '').includes('https://xroga.com/auth/callback')))")"
+          if [ "$configured" != "true" ]; then
             curl --silent --show-error --fail --output auth-config-updated.json \
               --request PATCH --header "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
               --header "Content-Type: application/json" \
-              --data '{"external_email_enabled":true}' "$endpoint"
+              --data '{"external_email_enabled":true,"disable_signup":false,"site_url":"https://xroga.com","uri_allow_list":"https://xroga.com/auth/callback,http://127.0.0.1:3000/auth/callback"}' "$endpoint"
           fi
           curl --silent --show-error --fail --output auth-config-verified.json \
             --header "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" "$endpoint"
-          node -e "const c=require('./auth-config-verified.json'); if(c.external_email_enabled !== true) process.exit(1)"
+          node -e "const c=require('./auth-config-verified.json'); if(c.external_email_enabled !== true || c.disable_signup !== false || c.site_url !== 'https://xroga.com' || !String(c.uri_allow_list || '').includes('https://xroga.com/auth/callback')) process.exit(1)"
           rm -f auth-config.json auth-config-updated.json auth-config-verified.json
           echo "email_authentication_enabled=true"
+          echo "public_signup_enabled=true"
+          echo "production_callback_allowed=true"
       - name: Install isolated workspace dependencies
         run: |
           npm ci --workspaces=false

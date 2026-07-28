@@ -1,53 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
 import { GLOBAL_ERROR_CSS } from './global-error-styles';
 import { storageBootstrapScript } from '@/lib/storageBootstrapScript';
 
-const ERROR_RECOVERY_KEY = 'xroga_error_recovery_attempted';
-
-function hardResetWorkspace() {
-  try {
-    localStorage.removeItem('xroga-theme');
-    localStorage.removeItem('xroga_workspace_session');
-    localStorage.removeItem('xroga_custom_desktop_bg');
-    localStorage.removeItem('xroga_custom_mobile_bg');
-    localStorage.removeItem('xroga_slideshow_enabled');
-    localStorage.removeItem('xroga_slideshow_frozen_index');
-    sessionStorage.removeItem('xroga_workspace_session');
-    sessionStorage.removeItem(ERROR_RECOVERY_KEY);
-  } catch {
-    /* ignore */
-  }
-  window.location.href = '/workspace';
-}
-
-export default function GlobalError({
-  error,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
-  useEffect(() => {
-    console.error('[global-error]', error.message, error.stack);
-
-    if (typeof window === 'undefined') return;
-    if (sessionStorage.getItem(ERROR_RECOVERY_KEY)) return;
-
-    sessionStorage.setItem(ERROR_RECOVERY_KEY, '1');
-    try {
-      localStorage.removeItem('xroga-theme');
-      localStorage.removeItem('xroga_workspace_session');
-      localStorage.removeItem('xroga_custom_desktop_bg');
-      localStorage.removeItem('xroga_custom_mobile_bg');
-      sessionStorage.removeItem('xroga_workspace_session');
-    } catch {
-      /* ignore */
-    }
-
-    window.setTimeout(() => window.location.replace('/workspace'), 500);
-  }, [error]);
-
+export default function GlobalError() {
   return (
     <html lang="en">
       <head>
@@ -70,17 +26,17 @@ export default function GlobalError({
             <p className="xv-ge__brand">
               Black Hole <span className="xv-ge__brand-v">V∞</span>
             </p>
-            <h1 className="xv-ge__title">Workspace session needs a refresh</h1>
+            <h1 className="xv-ge__title">Xroga could not load this page</h1>
             <p className="xv-ge__desc">
-              A cached session conflict interrupted the app. Reset once to continue — your account and
-              projects are safe.
+              The problem has been recorded. Reload this page or return to the public homepage; your
+              account and projects are unchanged.
             </p>
             <div className="xv-ge__actions">
-              <button type="button" className="xv-ge__btn xv-ge__btn--primary" onClick={hardResetWorkspace}>
-                Reset &amp; continue
+              <button type="button" className="xv-ge__btn xv-ge__btn--primary" onClick={() => window.location.reload()}>
+                Reload page
               </button>
-              <button type="button" className="xv-ge__btn xv-ge__btn--secondary" onClick={hardResetWorkspace}>
-                Open workspace
+              <button type="button" className="xv-ge__btn xv-ge__btn--secondary" onClick={() => window.location.assign('/')}>
+                Return to homepage
               </button>
             </div>
           </div>

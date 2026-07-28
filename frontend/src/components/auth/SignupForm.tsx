@@ -3,6 +3,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { GitHubIcon } from '@/components/icons/GitHubIcon';
 import { createClient } from '@/lib/supabase/client';
+import { safeAuthError, withAuthTimeout } from '@/lib/supabase/authErrors';
+import { requireGitHubProvider } from '@/lib/supabase/authProviders';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { SIGNUP_QUOTES, randomQuote } from '@/lib/authQuotes';
@@ -37,6 +39,7 @@ export function SignupForm() {
   const [oauthLoading, setOauthLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [confirmationRequired, setConfirmationRequired] = useState(false);
   const router = useRouter();
   const quote = useMemo(() => randomQuote(SIGNUP_QUOTES), []);
   const pwdStrength = getPasswordStrength(password);
@@ -52,14 +55,24 @@ export function SignupForm() {
   async function handleGitHub() {
     setError('');
     setOauthLoading(true);
-    const supabase = createClient();
-    const { error: err } = await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
-    if (err) {
+    try {
+      await requireGitHubProvider();
+      const supabase = createClient();
+      const { data, error: err } = await withAuthTimeout(
+        supabase.auth.signInWithOAuth({
+          provider: 'github',
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+            skipBrowserRedirect: true,
+          },
+        })
+      );
+      if (err) throw err;
+      if (!data.url) throw new Error('OAuth provider did not return a redirect URL');
+      window.location.assign(data.url);
+    } catch (err) {
       setOauthLoading(false);
-      setError(err.message);
+      setError(safeAuthError(err, 'GitHub sign-in is currently unavailable.'));
     }
   }
 
@@ -82,56 +95,68 @@ export function SignupForm() {
     setError('');
     setGlobalTheme(theme);
 
-    const supabase = createClient();
-    const { error: signErr } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: displayName, avatar_url: avatarUrl, preferred_theme: theme },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-
-    if (signErr) {
-      const msg = signErr.message.toLowerCase();
-      if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('user already')) {
-        setError('You are already registered with this email. Please sign in instead.');
-      } else {
-        setError(signErr.message);
-      }
-      setLoading(false);
-      return;
-    }
-
     try {
-      await api.profile.update({
-        display_name: displayName.trim(),
-        avatar_url: avatarUrl || null,
+      const supabase = createClient();
+      const { data, error: signErr } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: displayName, avatar_url: avatarUrl, preferred_theme: theme },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
-    } catch {
-      /* profile may sync on first dashboard load */
-    }
 
-    const code = referralCode.trim() || getStoredReferralCode();
-    if (code) {
-      try {
-        const result = await api.referrals.apply(code);
-        if (result.success) clearStoredReferralCode();
-      } catch {
-        /* apply on dashboard if session not ready */
+      if (signErr) {
+        const msg = signErr.message.toLowerCase();
+        if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('user already')) {
+          setError('You are already registered with this email. Please sign in instead.');
+        } else {
+          setError(safeAuthError(signErr, 'Account creation failed. Please try again.'));
+        }
+        return;
       }
-    }
 
-    setSuccess(true);
-    setLoading(false);
-    setTimeout(() => router.push('/workspace'), 1500);
+      if (!data.session) {
+        setConfirmationRequired(true);
+        setSuccess(true);
+        return;
+      }
+
+      try {
+        await api.profile.update({
+          display_name: displayName.trim(),
+          avatar_url: avatarUrl || null,
+        });
+      } catch {
+        /* profile may sync on first dashboard load */
+      }
+
+      const code = referralCode.trim() || getStoredReferralCode();
+      if (code) {
+        try {
+          const result = await api.referrals.apply(code);
+          if (result.success) clearStoredReferralCode();
+        } catch {
+          /* apply on dashboard if session not ready */
+        }
+      }
+
+      setSuccess(true);
+      setTimeout(() => router.push('/workspace'), 1500);
+    } catch (err) {
+      setError(safeAuthError(err, 'Account creation failed. Please try again.'));
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (success) {
     return (
       <AuthModernCard title={`Welcome, ${displayName}!`}>
         <p className="text-center xv-auth-gradient-text text-sm font-semibold mt-4 py-6">
-          Account created! Redirecting to your dashboard…
+          {confirmationRequired
+            ? 'Check your email to confirm your account, then sign in.'
+            : 'Account created! Redirecting to your dashboard…'}
         </p>
       </AuthModernCard>
     );
