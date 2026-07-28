@@ -441,11 +441,12 @@ export const api = {
         `/api/github/oauth?redirect_uri=${encodeURIComponent(redirectUri)}`
       );
     },
-    connect: (code: string, repoStrategy?: string, defaultRepo?: string) =>
+    connect: (code: string, state: string, repoStrategy?: string, defaultRepo?: string) =>
       apiFetch<{ connected: boolean; username: string }>('/api/github/connect', {
         method: 'POST',
         body: JSON.stringify({
           code,
+          state,
           repoStrategy,
           defaultRepo,
           redirectUri: githubOAuthCallbackUrl(),

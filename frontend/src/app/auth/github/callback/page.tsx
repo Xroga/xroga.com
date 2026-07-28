@@ -12,7 +12,8 @@ function GitHubAuthCallback() {
 
   useEffect(() => {
     const code = searchParams.get('code');
-    if (!code) {
+    const state = searchParams.get('state');
+    if (!code || !state) {
       if (window.opener) {
         window.close();
       } else {
@@ -22,7 +23,7 @@ function GitHubAuthCallback() {
     }
 
     void api.github
-      .connect(code, 'auto')
+      .connect(code, state, 'auto')
       .then((res) => {
         setMessage(`Connected as @${res.username}`);
         if (window.opener) {

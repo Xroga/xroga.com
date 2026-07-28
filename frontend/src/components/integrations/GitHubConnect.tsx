@@ -33,9 +33,10 @@ export function GitHubConnect() {
 
   useEffect(() => {
     const code = searchParams.get('code');
-    if (code && !status?.connected) {
+    const state = searchParams.get('state');
+    if (code && state && !status?.connected) {
       setConnecting(true);
-      api.github.connect(code, repoStrategy, defaultRepo || undefined)
+      api.github.connect(code, state, repoStrategy, defaultRepo || undefined)
         .then((res) => {
           dispatchGitHubConnected(res.username);
           router.replace(
