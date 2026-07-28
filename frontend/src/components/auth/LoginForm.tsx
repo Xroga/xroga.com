@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { GitHubIcon } from "@/components/icons/GitHubIcon";
 import { createClient } from "@/lib/supabase/client";
+import { safeAuthError, withAuthTimeout } from "@/lib/supabase/authErrors";
+import { requireGitHubProvider } from "@/lib/supabase/authProviders";
 import {
   AuthModernCard,
   AuthModernInput,
@@ -24,28 +26,43 @@ export function LoginForm() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    const supabase = createClient();
-    const { error: err } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (err) {
-      setError(err.message);
-      return;
+    try {
+      const supabase = createClient();
+      const { error: err } = await supabase.auth.signInWithPassword({ email, password });
+      if (err) {
+        setError(safeAuthError(err, "Sign in failed. Please try again."));
+        return;
+      }
+      router.push("/workspace");
+      router.refresh();
+    } catch (err) {
+      setError(safeAuthError(err, "Sign in failed. Please try again."));
+    } finally {
+      setLoading(false);
     }
-    router.push("/workspace");
-    router.refresh();
   }
 
   async function handleGitHub() {
     setError(null);
     setOauthLoading(true);
-    const supabase = createClient();
-    const { error: err } = await supabase.auth.signInWithOAuth({
-      provider: "github",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
-    if (err) {
+    try {
+      await requireGitHubProvider();
+      const supabase = createClient();
+      const { data, error: err } = await withAuthTimeout(
+        supabase.auth.signInWithOAuth({
+          provider: "github",
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+            skipBrowserRedirect: true,
+          },
+        })
+      );
+      if (err) throw err;
+      if (!data.url) throw new Error("OAuth provider did not return a redirect URL");
+      window.location.assign(data.url);
+    } catch (err) {
       setOauthLoading(false);
-      setError(err.message);
+      setError(safeAuthError(err, "GitHub sign-in is currently unavailable."));
     }
   }
 

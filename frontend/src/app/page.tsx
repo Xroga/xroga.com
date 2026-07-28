@@ -63,12 +63,26 @@ export default function HomePage() {
   const [buildWordIdx, setBuildWordIdx] = useState(0);
 
   useEffect(() => {
-    createClient()
-      .auth.getSession()
-      .then(({ data: { session } }) => {
-        setLoggedIn(!!session);
-        setAuthReady(true);
-      });
+    let active = true;
+    try {
+      createClient()
+        .auth.getSession()
+        .then(({ data: { session } }) => {
+          if (!active) return;
+          setLoggedIn(!!session);
+          setAuthReady(true);
+        })
+        .catch(() => {
+          if (!active) return;
+          setLoggedIn(false);
+          setAuthReady(true);
+        });
+    } catch {
+      // Public content must remain available when authentication is unavailable.
+      setLoggedIn(false);
+      setAuthReady(true);
+    }
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
