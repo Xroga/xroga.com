@@ -462,6 +462,13 @@ export function TerminalChatBar() {
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
               hideUpload={incognito}
+              hideMicrophone={incognito}
+              onTranscript={(transcript) => {
+                const next = `${draftRef.current}${draftRef.current ? ' ' : ''}${transcript}`;
+                setDraft(next);
+                draftRef.current = next;
+                textareaRef.current?.focus();
+              }}
               surface={incognito ? 'incognito' : 'dashboard'}
               compactGo={!!draft.trim()}
               sendState={sendState}
