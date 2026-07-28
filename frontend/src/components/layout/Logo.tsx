@@ -39,7 +39,13 @@ export function Logo({ href = '/dashboard', height = 50, className, variant = 'h
 
   if (href != null && href !== '') {
     return (
-      <Link href={href} onClick={onClick} className="inline-block bg-transparent" style={{ background: 'transparent' }}>
+      <Link
+        href={href}
+        onClick={onClick}
+        aria-label="Xroga"
+        className="inline-block bg-transparent"
+        style={{ background: 'transparent' }}
+      >
         {inner}
       </Link>
     );
