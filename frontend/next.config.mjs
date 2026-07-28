@@ -1,3 +1,25 @@
+const configuredApiOrigin = (() => {
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_API_URL ?? '');
+    const isSafe = url.protocol === 'https:' ||
+      (url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname));
+    return isSafe ? url.origin : null;
+  } catch {
+    return null;
+  }
+})();
+
+const connectSources = [
+  "'self'",
+  'https://xroga-api.fly.dev',
+  'wss://xroga-api.fly.dev',
+  'https://*.supabase.co',
+  'wss://*.supabase.co',
+  'https://api.github.com',
+  'https://api.vercel.com',
+  configuredApiOrigin,
+].filter(Boolean).join(' ');
+
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'DENY' },
@@ -8,7 +30,7 @@ const securityHeaders = [
   { key: 'X-DNS-Prefetch-Control', value: 'off' },
   {
     key: 'Content-Security-Policy',
-    value: "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://xroga-api.fly.dev wss://xroga-api.fly.dev https://*.supabase.co wss://*.supabase.co https://api.github.com https://api.vercel.com; frame-src 'self' https:; worker-src 'self' blob:; upgrade-insecure-requests",
+    value: `default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src ${connectSources}; frame-src 'self' https:; worker-src 'self' blob:; upgrade-insecure-requests`,
   },
 ];
 
