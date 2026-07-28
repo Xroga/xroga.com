@@ -10,9 +10,9 @@ import { rootFontVariables } from '@/lib/fonts';
 
 export const metadata: Metadata = {
   ...buildMetadata({
-    title: 'Xroga AI — #1 Coding Agent | Build Web Apps → GitHub + Vercel',
+    title: 'Xroga AI — Build, verify, and publish software',
     description:
-      'Xroga AI is the #1 coding agent for developers and non-developers. Describe a website or web app in plain language — Xroga builds it, pushes working code to your GitHub, deploys on your Vercel, syncs your API keys securely into Vercel env, and updates the same repo (edit/delete) without starting over. No coding knowledge required to start. Also known as Roga AI, Droga AI, xroga.com.',
+      'Describe a software outcome in plain language. Xroga works in your connected repository, validates applicable changes, and can push or publish through accounts you authorise. Results include evidence or the exact setup still required.',
     path: '/',
   }),
   metadataBase: new URL('https://xroga.com'),
@@ -30,9 +30,9 @@ export const metadata: Metadata = {
     apple: [{ url: '/apple-touch-icon.png', type: 'image/png', sizes: '180x180' }],
     shortcut: '/favicon-32.png',
   },
-  verification: {
-    google: 'xroga-google-verification-placeholder',
-  },
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+    : undefined,
 };
 
 export const viewport: Viewport = {

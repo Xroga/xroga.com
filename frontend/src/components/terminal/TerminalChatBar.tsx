@@ -506,7 +506,7 @@ export function TerminalChatBar() {
                     void handleSubmit(e, false);
                   }
                 }}
-                placeholder={incognito ? 'Type a private message…' : 'Xroga AI do everything..'}
+                placeholder={incognito ? 'Type a private message…' : 'Describe what you want to build or change…'}
                 rows={1}
                 spellCheck={false}
                 autoCorrect="off"

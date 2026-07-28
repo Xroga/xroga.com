@@ -34,7 +34,7 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
     actions: 1500,
     aiTokens: SPARK_TOKEN_POOL,
     tokensLabel: 'Balanced Month pacing',
-    aiTokensLabel: 'Up to 2 implementation tasks',
+    aiTokensLabel: 'Up to 2 safe independent tasks concurrently',
     xrgBonus: 0,
     xrgLabel: 'Build, verify, and publish with one plan',
     concurrency: 2,

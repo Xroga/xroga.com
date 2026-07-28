@@ -15,7 +15,7 @@ interface DownloadAppButtonProps {
 function LaunchSoonPopup({ onClose, theme }: { onClose: () => void; theme: string }) {
   if (typeof document === 'undefined') return null;
 
-  const isLight = theme === 'white';
+  const isLight = theme === 'white' || theme === 'beige';
 
   return createPortal(
     <>

@@ -10,7 +10,7 @@ const CEO_QUOTE =
   'If you can dream it, Xroga can build it — one command at a time.';
 
 const AUTH_FEATURES_BLURB =
-  'The #1 coding agent for everyone — developers and non-developers. Build web apps, push to GitHub, deploy on Vercel, and update the same repo.';
+  'Build in a connected repository, validate the result, and publish through accounts you authorise.';
 
 export function AuthShell({
   children,

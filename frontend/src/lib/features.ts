@@ -21,7 +21,7 @@ export const XROGA_FEATURES = [
   'Truthful shared-capacity billing',
   'Terminal fullscreen mode',
   'Browser preview dock',
-  'Theme: White / Black / Gray',
+  'Themes: White / Gray / Black / Beige with accessibility preferences',
   'File upload & drag-drop attachments',
   'Project file manager',
   'Swarm / build run history',

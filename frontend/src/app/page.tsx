@@ -5,13 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
-import { HomepagePipelineDemo } from '@/components/homepage/HomepagePipelineDemo';
-import { HomepageEmpowerSection } from '@/components/homepage/HomepageEmpowerSection';
-import { HomepageErrorDashboard } from '@/components/homepage/HomepageErrorDashboard';
 import { HomepageBlackHolePower } from '@/components/homepage/HomepageBlackHolePower';
 import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
 import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
-import { HomepageCompareSection } from '@/components/homepage/HomepageCompareSection';
 import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
 import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
@@ -33,7 +29,7 @@ const AI_FEATURES = [
     body: 'Understand the outcome · implement focused changes · verify · push the sticky GitHub repo · publish with evidence.',
   },
   {
-    title: '#1 Coding Agent',
+    title: 'Automatic capability routing',
     body: 'Black Hole V∞: frontier coding depth, long-context repos, live web+X research — no vendor model picker.',
   },
   {
@@ -175,15 +171,22 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="xv-hc-live" id="ship-loop" aria-label="Live build simulation">
-        <div className="xv-hc-live-inner">
-          <HomepagePipelineDemo />
+      <section className="xv-hc-features" id="ship-loop" aria-labelledby="ship-loop-heading">
+        <div className="xv-hc-features-inner">
+          <span className="xv-hc-features-label">THE REAL SHIP LOOP</span>
+          <div className="xv-hc-features-grid">
+            <div>
+              <h2 className="xv-hc-features-headline" id="ship-loop-heading">Durable work. <em>Verified outcomes.</em></h2>
+              <p className="xv-hc-features-lead">Workspace activity comes from real backend run events. A build is complete only after its required validation, and publishing is reported only with provider evidence.</p>
+            </div>
+            <ul className="xv-hc-feature-list">
+              <li><strong>Understand and implement</strong><span>Inspect the current repository, change the controlled project state, and preserve unrelated code.</span></li>
+              <li><strong>Validate and repair</strong><span>Run applicable checks, classify real failures, and target the responsible files.</span></li>
+              <li><strong>Push and publish with evidence</strong><span>Show the remote commit and deployment result, or the exact external setup still required.</span></li>
+            </ul>
+          </div>
         </div>
       </section>
-
-      <HomepageEmpowerSection />
-
-      <HomepageErrorDashboard />
 
       <HomepageBlackHolePower />
 
@@ -196,7 +199,7 @@ export default function HomePage() {
                 Coding agent that ships. <em>Same repo, forever.</em>
               </h2>
               <p className="xv-hc-features-lead">
-                Xroga AI is the #1 coding agent for everyone: prompt → brief → code → QA → your
+                Xroga AI connects the product loop: prompt → brief → code → QA → your
                 GitHub → your Vercel. Edit, update, and delete without starting over — no coding
                 knowledge required to start.
               </p>
@@ -216,8 +219,6 @@ export default function HomePage() {
       <HomepageShipStack />
 
       <HomepageEnterpriseProof />
-
-      <HomepageCompareSection />
 
       <HomepageFaqSection />
 

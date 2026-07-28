@@ -408,7 +408,7 @@ function ProjectsHubInner() {
               <Sparkles className="w-10 h-10 mx-auto text-[var(--accent)]/50 mb-4" />
               <p className="text-[var(--muted)] mb-2">No projects yet.</p>
               <p className="text-sm text-[var(--muted)] mb-6">
-                Ask Xroga to build anything — websites, SaaS, Chrome extensions, desktop apps, mobile, games, APIs, and more.
+                Start a supported website, SaaS, extension, desktop, mobile, game, or API project, then review the real validation and publishing state.
               </p>
               <Link
                 href="/workspace"

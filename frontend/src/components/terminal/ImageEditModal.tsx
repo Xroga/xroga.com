@@ -143,7 +143,7 @@ export function ImageEditModal({
     : [previewSrc];
 
   const themeClass =
-    siteTheme === 'white'
+    siteTheme === 'white' || siteTheme === 'beige'
       ? 'xv-image-modal--white'
       : siteTheme === 'black'
         ? 'xv-image-modal--black'

@@ -11,7 +11,7 @@ import { ArrowLeft, Key, Zap, BookOpen, Code2 } from 'lucide-react';
 
 export const metadata = buildMetadata({
   title: 'API Documentation',
-  description: `${XROGA_MODEL_FULL} API — one model, high limits, every feature on all plans. ${XROGA_MODEL_TAGLINE}`,
+  description: `${XROGA_MODEL_FULL} authenticated API for controlled runs and truthful capacity state.`,
   path: '/docs/api',
 });
 
@@ -29,7 +29,7 @@ export default function ApiDocsPage() {
           <p className="text-[var(--muted)] leading-relaxed">
             One evolving model — <strong className="text-[var(--foreground)]">{XROGA_MODEL_ID}</strong>.
             New capabilities ship inside {XROGA_MODEL_FULL}, not as separate models.
-            All {FEATURE_COUNT} features and swarm agents available on every plan with generous rate limits.
+            All {FEATURE_COUNT} product features use the same Xroga AI plan and durable capacity pacing.
           </p>
           <p className="text-xs text-[var(--muted)] italic border-l-2 border-[var(--accent)]/30 pl-3">
             {XROGA_MODEL_TAGLINE} Hover the ∞ symbol in-app for our philosophy on version infinity.
@@ -42,7 +42,7 @@ export default function ApiDocsPage() {
             <h2 className="font-bold text-lg">Authentication</h2>
           </div>
           <p className="text-sm text-[var(--muted)]">
-            Use your session JWT from the dashboard, or create an API key in Settings → API (coming soon).
+            Use the authenticated session token issued after signing in. Standalone API keys are not currently available.
           </p>
           <pre className="text-xs p-4 rounded-xl bg-black/5 dark:bg-white/5 overflow-x-auto border border-[var(--card-border)]">
 {`Authorization: Bearer <your_token>
@@ -60,7 +60,6 @@ Content-Type: application/json`}
           <pre className="text-xs p-4 rounded-xl bg-black/5 dark:bg-white/5 overflow-x-auto border border-[var(--card-border)]">
 {`{
   "prompt": "Build a landing page for my SaaS",
-  "model": "${XROGA_MODEL_ID}",
   "project_id": "optional-uuid"
 }`}
           </pre>
@@ -72,11 +71,10 @@ Content-Type: application/json`}
             <h2 className="font-bold text-lg">Rate limits</h2>
           </div>
           <ul className="text-sm text-[var(--muted)] space-y-2 list-disc pl-5">
-            <li>Free trial: ~0.55M tokens · 1 concurrent</li>
-            <li>Spark: 6.17M tokens/mo · 2 concurrent swarms</li>
-            <li>Pulse: 9.42M tokens/mo · 8 concurrent</li>
-            <li>Nova: 15.9M · Zenith: 32.2M · Singularity: 325M</li>
-            <li>API requests share your plan token quota — no feature gating</li>
+            <li>One Xroga AI plan: $19 per complete 30-day cycle</li>
+            <li>Balanced Month pacing exposes capacity percentages and unlock dates</li>
+            <li>Full Access can be enabled only after explicit confirmation</li>
+            <li>API and Workspace requests use the same durable capacity entitlement</li>
           </ul>
         </section>
 
@@ -86,7 +84,7 @@ Content-Type: application/json`}
             <h2 className="font-bold text-lg">Helpful docs</h2>
           </div>
           <ul className="text-sm space-y-2">
-            <li><Link href="/pricing" className="text-[var(--accent)] hover:underline">Plans & token quota</Link></li>
+            <li><Link href="/pricing" className="text-[var(--accent)] hover:underline">Plan & capacity</Link></li>
             <li><Link href="/terms" className="text-[var(--accent)] hover:underline">Terms of Service</Link></li>
             <li><Link href="/about" className="text-[var(--accent)] hover:underline">About Xroga & the team</Link></li>
             <li><a href="mailto:hello@xroga.com" className="text-[var(--accent)] hover:underline">hello@xroga.com</a> — API & support</li>

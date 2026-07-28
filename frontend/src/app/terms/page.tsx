@@ -39,8 +39,8 @@ export default function TermsPage() {
         <p className="text-[var(--muted)]">
           Paid plans are billed through Lemon Squeezy (merchant of record where applicable). Supported
           methods may include cards, PayPal, Google Pay, and other local methods. Prices may show
-          in local currency; Lemon Squeezy handles conversion and taxes where required. Plan AI credit /
-          token capacity is described on{' '}
+          in local currency; Lemon Squeezy handles conversion and taxes where required. Plan capacity,
+          pacing, and cycle dates are described on{' '}
           <Link href="/pricing" className="text-[var(--accent)] hover:underline">
             Pricing
           </Link>

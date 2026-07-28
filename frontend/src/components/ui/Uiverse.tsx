@@ -143,8 +143,8 @@ export function UpgradeProButton({ onClick }: { onClick?: () => void }) {
     <button type="button" onClick={onClick} className="xv-upgrade-pro">
       <span className="xv-upgrade-inner">
         <span className="xv-upgrade-text">
-          <span>Upgrade to&nbsp;</span>
-          <span className="pro">Spark</span>
+          <span>View&nbsp;</span>
+          <span className="pro">Xroga AI plan</span>
         </span>
         <span className="xv-upgrade-icon">
           <svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg">

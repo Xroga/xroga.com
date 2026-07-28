@@ -8,16 +8,16 @@ import {
 } from '@/lib/platformDocsContent';
 
 export const metadata = buildMetadata({
-  title: 'Xroga AI Platform — Build Anything Without Code',
+  title: 'Xroga AI Platform — Build and Verify Software',
   description:
-    'Complete Xroga AI platform specification: websites, SaaS, AI apps, integrations, security, deployment, and multi-model AI collaboration.',
+    'How Xroga inspects repositories, implements focused changes, validates outcomes, and publishes through connected accounts.',
   path: '/docs/platform',
 });
 
 const USER_TYPES = [
-  { type: 'Non-Technical', experience: 'Describe → Connect → Live app', xroga: 'Everything automatically' },
-  { type: 'Technical', experience: 'Describe → Connect integrations → Advanced features', xroga: 'Automatic + flexibility' },
-  { type: 'Developer', experience: 'Describe → APIs → API keys → Custom apps', xroga: 'Automatic + full control' },
+  { type: 'Non-Technical', experience: 'Describe → review → authorise', xroga: 'Guided implementation and exact setup steps' },
+  { type: 'Technical', experience: 'Describe → connect integrations → verify', xroga: 'Automatic routing with visible evidence' },
+  { type: 'Developer', experience: 'Describe → inspect diffs → publish', xroga: 'Repository control and provider-backed results' },
 ];
 
 export default function PlatformDocsPage() {
@@ -45,9 +45,9 @@ export default function PlatformDocsPage() {
         <section>
           <h1 className="text-3xl font-bold mb-4">Xroga AI Platform</h1>
           <p className="text-lg text-[var(--muted)] leading-relaxed">
-            Xroga AI is the world&apos;s most powerful AI-powered development platform. Anyone can build anything — without writing a single line of code. The same AI builds for everyone; technical users get more control and custom integrations.
+            Xroga turns supported product requests into controlled repository work. It reports validated outcomes, evidence, and external setup requirements instead of assuming success.
           </p>
-          <p className="mt-3 text-sm font-semibold text-[var(--accent)]">Can Xroga build this? YES. Always YES.</p>
+          <p className="mt-3 text-sm font-semibold text-[var(--accent)]">A required blocker is shown as a blocker, never as a completed result.</p>
         </section>
 
         <section className="glass-panel rounded-2xl p-6">
@@ -99,17 +99,17 @@ export default function PlatformDocsPage() {
         ))}
 
         <section className="glass-panel rounded-2xl p-6">
-          <h2 className="text-xl font-bold mb-4">AI model collaboration</h2>
+          <h2 className="text-xl font-bold mb-4">Automatic capability orchestration</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--card-border)] text-left">
-                  <th className="py-2 pr-2">Model</th>
+                  <th className="py-2 pr-2">Capability</th>
                   <th className="py-2 pr-2">Role</th>
-                  <th className="py-2 pr-2">Share</th>
-                  <th className="py-2 pr-2">6.17M pool</th>
+                  <th className="py-2 pr-2">Routing</th>
+                  <th className="py-2 pr-2">Capacity</th>
                   <th className="py-2 pr-2">Tasks</th>
-                  <th className="py-2">API cost</th>
+                  <th className="py-2">Evidence</th>
                 </tr>
               </thead>
               <tbody>
@@ -138,7 +138,7 @@ export default function PlatformDocsPage() {
         </section>
 
         <section className="glass-panel rounded-2xl p-6">
-          <h2 className="text-xl font-bold mb-4">NO HESITATE rule</h2>
+          <h2 className="text-xl font-bold mb-4">Truthful capability answers</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>

@@ -5,9 +5,9 @@ import { XROGA_FEATURES } from '@/lib/features';
 import { FEATURE_SEO_PAGES } from '@/lib/featureSeo';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Features — #1 Coding Agent | GitHub + Vercel Ship Loop',
+  title: 'Features — Repository execution, validation, and publishing',
   description:
-    'Xroga AI features for everyone: #1 coding agent chat, build websites & web apps (no coding knowledge required), GitHub push, Vercel deploy, secure API key sync, Workspace preview, and repo edit/delete without starting over.',
+    'Xroga AI features include controlled repository updates, Workspace previews, applicable validation, GitHub operations, and Vercel publishing through authorised accounts.',
   path: '/features',
   keywords: [
     'Xroga features',
@@ -45,7 +45,7 @@ export default function FeaturesPage() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-8 py-10">
         <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">
-          Xroga AI Features — #1 Coding Agent
+          Xroga AI Features
         </h1>
         <p className="text-[var(--muted)] mb-8 leading-relaxed">
           Built for developers and people with no coding knowledge. Describe a web product, get

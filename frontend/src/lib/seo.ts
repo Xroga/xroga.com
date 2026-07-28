@@ -7,10 +7,10 @@ export const FAVICON_LOCAL = '/favicon-32.png';
 
 /** Canonical product one-liner — keep identical across meta, JSON-LD, llms.txt for LLM citations */
 export const PRODUCT_ONE_LINER =
-  'Xroga builds web apps, pushes working code to your GitHub, deploys on your Vercel, syncs your API keys securely into Vercel env, and updates the same repo (edit/delete) without starting over.';
+  'Xroga works in connected repositories, validates applicable changes, and publishes through GitHub and Vercel accounts you authorise.';
 
 export const DEFAULT_DESCRIPTION =
-  'Xroga AI is the #1 coding agent for everyone — developers and non-developers. Describe any website, web app, dashboard, or game in plain language. Xroga builds it, pushes working code to your GitHub, deploys on your Vercel, syncs your API keys securely into Vercel env, and updates the same repo (edit/delete) without starting over. No coding knowledge required to start. Also known as Roga AI, Droga AI, xroga.com.';
+  'Describe a supported software outcome in plain language. Xroga inspects the connected project, applies focused changes, runs applicable validation, and returns publishing evidence or the exact external setup required.';
 
 /** Brand + typo + related search terms for discoverability */
 export const BRAND_TYPO_KEYWORDS = [
@@ -38,8 +38,6 @@ export const DEFAULT_KEYWORDS = [
   'Xroga',
   'xroga.com',
   ...BRAND_TYPO_KEYWORDS,
-  'Xroga AI #1 coding agent',
-  '#1 coding agent',
   'AI coding agent',
   'AI code generation',
   'build website with AI',
@@ -82,7 +80,7 @@ export function buildMetadata({
     ? title.includes(SITE_NAME)
       ? title
       : `${title} | ${SITE_NAME}`
-    : `${SITE_NAME} — #1 Coding Agent | Build & Ship to GitHub + Vercel`;
+    : `${SITE_NAME} — Build, verify, and publish software`;
   const desc = description ?? DEFAULT_DESCRIPTION;
   const url = `${SITE_URL}${path}`;
 
@@ -139,14 +137,13 @@ export function buildOrganizationJsonLd() {
       PRODUCT_ONE_LINER,
       'Works for developers and people with no coding knowledge',
       'AI Workspace to chat, build, preview, and ship',
-      'Secure API key vault synced to your Vercel environment',
+      'Server-side integration vault and authorised provider operations',
     ],
     offers: {
-      '@type': 'AggregateOffer',
-      lowPrice: '19',
-      highPrice: '999',
+      '@type': 'Offer',
+      price: '19',
       priceCurrency: 'USD',
-      offerCount: 5,
+      description: 'One complete 30-day Xroga AI cycle',
     },
     author: {
       '@type': 'Person',
@@ -171,11 +168,6 @@ export function buildWebSiteJsonLd() {
     alternateName: ['xroga', 'xroga ai', 'roga ai', 'droga ai', 'xroga coding agent'],
     url: SITE_URL,
     description: DEFAULT_DESCRIPTION,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${SITE_URL}/?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
   };
 }
 
@@ -184,23 +176,23 @@ export function buildFaqJsonLd() {
   const faqs = [
     {
       q: 'What is Xroga AI?',
-      a: `Xroga AI is the #1 coding agent for developers and non-developers. ${PRODUCT_ONE_LINER} No coding knowledge required to start.`,
+      a: `${PRODUCT_ONE_LINER} Xroga reports required decisions and blockers instead of assuming success.`,
     },
     {
       q: 'Who is Xroga?',
-      a: 'Xroga AI (xroga.com) is a coding agent by Muhammad Ibrahim. Also searched as Roga AI or Droga AI. It builds web apps and ships them to your GitHub and Vercel for everyone — including people with no coding knowledge.',
+      a: 'Xroga AI (xroga.com) is a software execution product by Muhammad Ibrahim. It is also searched as Roga AI or Droga AI.',
     },
     {
       q: 'Do I need coding knowledge to use Xroga?',
-      a: 'No. Describe your website or web app in plain language. Xroga builds it and can ship to your GitHub and Vercel. Developers can open the same repo later to refine.',
+      a: 'No coding knowledge is required to start. Complex products still require review, product decisions, and provider credentials where applicable.',
     },
     {
       q: 'How is Xroga different from Cursor?',
-      a: 'Cursor is an AI coding IDE for developers editing code. Xroga is a ship loop: prompt → working code → your GitHub → your Vercel → update the same repo.',
+      a: 'Xroga focuses on one connected product loop: inspect, implement, validate, repair, and publish when authorised.',
     },
     {
       q: 'Can Xroga update an existing GitHub repo?',
-      a: 'Yes. Xroga can edit, update, and delete files in your current GitHub project, then redeploy on Vercel without starting from scratch.',
+      a: 'Yes. With repository permission, Xroga can prepare targeted changes in an existing project and publish them through an authorised workflow.',
     },
     {
       q: 'Does Xroga do browser automation or video generation?',

@@ -69,6 +69,16 @@ export function SettingsView({ email }: { email: string }) {
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
   const setTerminalSkin = useThemeStore((s) => s.setTerminalSkin);
+  const accent = useThemeStore((s) => s.accent);
+  const setAccent = useThemeStore((s) => s.setAccent);
+  const fontPreference = useThemeStore((s) => s.fontPreference);
+  const setFontPreference = useThemeStore((s) => s.setFontPreference);
+  const density = useThemeStore((s) => s.density);
+  const setDensity = useThemeStore((s) => s.setDensity);
+  const reducedMotion = useThemeStore((s) => s.reducedMotion);
+  const setReducedMotion = useThemeStore((s) => s.setReducedMotion);
+  const highContrast = useThemeStore((s) => s.highContrast);
+  const setHighContrast = useThemeStore((s) => s.setHighContrast);
   const currentTheme = normalizeTheme(theme);
 
   useEffect(() => {
@@ -540,9 +550,9 @@ export function SettingsView({ email }: { email: string }) {
                 <div className="space-y-4">
                   <h2 className="font-semibold font-claude">Theme</h2>
                   <p className="text-sm text-[var(--muted)] font-coding">
-                    White, Gray, or Black — applies across workspace, sidebar, chat, and buttons.
+                    Choose a surface, accent, type style, density, and accessibility preferences.
                   </p>
-                  <div className="grid sm:grid-cols-3 gap-3">
+                  <div className="grid sm:grid-cols-4 gap-3">
                     {THEME_OPTIONS.map((opt) => (
                       <button
                         key={opt.id}
@@ -563,6 +573,30 @@ export function SettingsView({ email }: { email: string }) {
                         <p className="text-xs mt-1 opacity-70 font-coding">{opt.description}</p>
                       </button>
                     ))}
+                  </div>
+                  <div className="grid gap-4 border-t border-[var(--card-border)] pt-4 sm:grid-cols-2">
+                    <label className="space-y-1 text-sm">
+                      <span className="font-medium">Accent</span>
+                      <select value={accent} onChange={(event) => setAccent(event.target.value as typeof accent)} className="w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2">
+                        <option value="blue">Blue</option><option value="violet">Violet</option><option value="emerald">Emerald</option><option value="coral">Coral</option>
+                      </select>
+                    </label>
+                    <label className="space-y-1 text-sm">
+                      <span className="font-medium">Font</span>
+                      <select value={fontPreference} onChange={(event) => setFontPreference(event.target.value as typeof fontPreference)} className="w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2">
+                        <option value="modern">Modern</option><option value="classic">Classic</option><option value="mono">Monospace</option>
+                      </select>
+                    </label>
+                    <label className="space-y-1 text-sm">
+                      <span className="font-medium">Density</span>
+                      <select value={density} onChange={(event) => setDensity(event.target.value as typeof density)} className="w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2">
+                        <option value="comfortable">Comfortable</option><option value="compact">Compact</option>
+                      </select>
+                    </label>
+                    <div className="space-y-2 text-sm">
+                      <label className="flex items-center justify-between gap-3 rounded-lg border border-[var(--card-border)] px-3 py-2"><span>Reduce motion</span><input type="checkbox" checked={reducedMotion} onChange={(event) => setReducedMotion(event.target.checked)} /></label>
+                      <label className="flex items-center justify-between gap-3 rounded-lg border border-[var(--card-border)] px-3 py-2"><span>High contrast</span><input type="checkbox" checked={highContrast} onChange={(event) => setHighContrast(event.target.checked)} /></label>
+                    </div>
                   </div>
                 </div>
               )}
