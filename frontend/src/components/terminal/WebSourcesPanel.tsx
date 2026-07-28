@@ -1,6 +1,7 @@
 'use client';
 
 import { ExternalLink, Play } from 'lucide-react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 export interface WebSourceItem {
@@ -33,6 +34,8 @@ function isYoutube(item: WebSourceItem): boolean {
   return item.source === 'youtube' || displayDomain(item).includes('youtube');
 }
 
+const externalImageLoader = ({ src }: { src: string }) => src;
+
 function SourceCard({ item }: { item: WebSourceItem }) {
   const domain = displayDomain(item);
   const yt = isYoutube(item);
@@ -47,9 +50,13 @@ function SourceCard({ item }: { item: WebSourceItem }) {
     >
       {item.thumbnailUrl ? (
         <div className="relative shrink-0">
-          <img
+          <Image
             src={item.thumbnailUrl}
             alt=""
+            width={72}
+            height={52}
+            loader={externalImageLoader}
+            unoptimized
             className="w-[4.5rem] h-[3.25rem] rounded-lg object-cover bg-black/20 ring-1 ring-black/10"
           />
           {yt && (
@@ -62,9 +69,13 @@ function SourceCard({ item }: { item: WebSourceItem }) {
         </div>
       ) : (
         <div className="w-11 h-11 rounded-lg bg-white dark:bg-white/10 flex items-center justify-center shrink-0 ring-1 ring-black/5 dark:ring-white/10 overflow-hidden">
-          <img
+          <Image
             src={faviconForDomain(domain)}
             alt=""
+            width={24}
+            height={24}
+            loader={externalImageLoader}
+            unoptimized
             className="w-6 h-6 object-contain"
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = 'none';

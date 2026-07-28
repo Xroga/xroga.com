@@ -165,7 +165,7 @@ export function SignupForm() {
       <form onSubmit={handleSignup} className="space-y-3">
         <div>
           <AuthModernLabel>Workspace theme</AuthModernLabel>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {THEME_OPTIONS.map((opt) => (
               <button
                 key={opt.id}

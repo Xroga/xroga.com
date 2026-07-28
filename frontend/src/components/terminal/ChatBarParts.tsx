@@ -2,7 +2,7 @@
 
 import { type ReactNode } from 'react';
 import { X, FileText, Image as ImageIcon, Film } from 'lucide-react';
-import { ChatBarSendButton, ChatBarUploadButton, type SendButtonState, type ChatbarSurface } from './ChatBarButtons';
+import { ChatBarMicrophoneButton, ChatBarSendButton, ChatBarUploadButton, type SendButtonState, type ChatbarSurface } from './ChatBarButtons';
 import { cn } from '@/lib/utils';
 
 const FILE_ROWS = 2;
@@ -84,6 +84,8 @@ export function ChatBarInputRow({
   onStop,
   surface = 'dashboard',
   hideUpload = false,
+  hideMicrophone = false,
+  onTranscript,
   compactGo = false,
   children,
 }: {
@@ -94,6 +96,8 @@ export function ChatBarInputRow({
   onStop?: () => void;
   surface?: ChatbarSurface;
   hideUpload?: boolean;
+  hideMicrophone?: boolean;
+  onTranscript?: (transcript: string) => void;
   compactGo?: boolean;
   children: ReactNode;
 }) {
@@ -111,6 +115,9 @@ export function ChatBarInputRow({
         )}
         <div className="flex-1 min-w-[4px]" />
         <div className="xv-chatbar-actions flex items-center gap-1.5 shrink-0">
+          {!hideMicrophone && onTranscript ? (
+            <ChatBarMicrophoneButton onTranscript={onTranscript} surface={surface} />
+          ) : null}
           <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
         </div>
       </div>

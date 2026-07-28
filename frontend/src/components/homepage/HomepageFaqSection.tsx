@@ -5,15 +5,15 @@ import { useId, useState } from 'react';
 const FAQS: Array<{ q: string; a: string }> = [
   {
     q: 'What is Xroga AI?',
-    a: 'Xroga AI is the #1 coding agent for developers and non-developers. It builds web apps, pushes working code to your GitHub, deploys on your Vercel, syncs your API keys securely into Vercel env, and updates the same repo (edit/delete) without starting over. No coding knowledge required to start.',
+    a: 'Xroga AI turns supported product requests into controlled repository work, applicable validation, and provider-backed publishing through accounts you authorise. It updates the same connected project instead of starting over.',
   },
   {
     q: 'What is Black Hole V∞?',
     a: 'Black Hole V∞ is Xroga’s single customer-facing AI. Xroga selects internal capabilities automatically for comprehension, implementation, research, review, and repair. Customers never need to select or manage a provider model.',
   },
   {
-    q: 'Can Xroga build anything from one prompt?',
-    a: 'It can start almost any web product from one clear prompt — landing pages, dashboards, games, tools — then push GitHub and deploy. Complex systems (heavy backends, custom infra, pixel-perfect native apps) usually need follow-up prompts and your connected GitHub/Vercel. One prompt starts the ship loop; big products iterate.',
+    q: 'What can Xroga build from one prompt?',
+    a: 'One clear prompt can start many web products, but complex systems usually require follow-up decisions, credentials, and review. Xroga reports incomplete requirements and external blockers instead of calling a partial scaffold complete.',
   },
   {
     q: 'How is this different from Cursor or Codex?',

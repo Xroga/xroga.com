@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Bell, Download, Copy, Share2, Trash2, ExternalLink } from 'lucide-react';
 import { api, type Notification } from '@/lib/api';
@@ -37,7 +37,7 @@ export function NotificationBell({ className, variant = 'header' }: Notification
   const setNotifications = useAppStore((s) => s.setNotifications);
   const setUnreadCount = useAppStore((s) => s.setUnreadCount);
 
-  async function refreshNotifications() {
+  const refreshNotifications = useCallback(async () => {
     try {
       const [count, list] = await Promise.all([
         api.notifications.unreadCount(),
@@ -48,7 +48,7 @@ export function NotificationBell({ className, variant = 'header' }: Notification
     } catch {
       /* ignore */
     }
-  }
+  }, [setNotifications, setUnreadCount]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -66,7 +66,7 @@ export function NotificationBell({ className, variant = 'header' }: Notification
       void refreshNotifications();
     }, 30000);
     return () => clearInterval(id);
-  }, []);
+  }, [refreshNotifications]);
 
   async function handleMarkRead(n: Notification) {
     if (!n.read) {

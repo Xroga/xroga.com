@@ -1,4 +1,7 @@
-export type CoreThemeId = 'white' | 'black' | 'gray';
+export type CoreThemeId = 'white' | 'beige' | 'black' | 'gray';
+export type AccentId = 'blue' | 'violet' | 'emerald' | 'coral';
+export type FontPreference = 'modern' | 'classic' | 'mono';
+export type DensityPreference = 'comfortable' | 'compact';
 
 /** Includes legacy `image` for persisted storage migration */
 export type ThemeId = CoreThemeId | 'image';
@@ -26,6 +29,7 @@ export type TerminalSkin = 'dark' | 'light' | 'light-grid' | 'gray' | 'amoled';
 
 export const DEFAULT_TERMINAL_SKIN: Record<CoreThemeId, TerminalSkin> = {
   white: 'light',
+  beige: 'light',
   black: 'amoled',
   gray: 'gray',
 };
@@ -48,8 +52,9 @@ export const CUSTOM_MOBILE_BG_KEY = 'xroga_custom_mobile_bg';
 export const SLIDESHOW_ENABLED_KEY = 'xroga_slideshow_enabled';
 export const SLIDESHOW_FROZEN_INDEX_KEY = 'xroga_slideshow_frozen_index';
 
-/** Only three themes — white is default */
+/** Solid product surfaces; white remains the default. */
 export const THEME_OPTIONS: { id: CoreThemeId; label: string; description: string }[] = [
+  { id: 'beige', label: 'Beige', description: 'Warm and calm' },
   { id: 'white', label: 'White', description: 'Bright · clean writing' },
   { id: 'gray', label: 'Gray', description: 'Soft focused mode' },
   { id: 'black', label: 'Black', description: 'High contrast' },
@@ -59,13 +64,14 @@ export const SHELL_THEME_OPTIONS = THEME_OPTIONS;
 
 export const THEME_SURFACE: Record<CoreThemeId, string> = {
   white: '#ffffff',
+  beige: '#f5efe3',
   gray: '#1a1a1a',
   black: '#000000',
 };
 
 /** Map legacy `image` / deep-work → white */
 export function normalizeTheme(theme: ThemeId | string | null | undefined): CoreThemeId {
-  if (theme === 'black' || theme === 'gray' || theme === 'white') return theme;
+  if (theme === 'black' || theme === 'gray' || theme === 'beige' || theme === 'white') return theme;
   return 'white';
 }
 

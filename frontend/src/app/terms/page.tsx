@@ -39,8 +39,8 @@ export default function TermsPage() {
         <p className="text-[var(--muted)]">
           Paid plans are billed through Lemon Squeezy (merchant of record where applicable). Supported
           methods may include cards, PayPal, Google Pay, and other local methods. Prices may show
-          in local currency; Lemon Squeezy handles conversion and taxes where required. Plan AI credit /
-          token capacity is described on{' '}
+          in local currency; Lemon Squeezy handles conversion and taxes where required. Plan capacity,
+          pacing, and cycle dates are described on{' '}
           <Link href="/pricing" className="text-[var(--accent)] hover:underline">
             Pricing
           </Link>
@@ -69,7 +69,7 @@ export default function TermsPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">6. Cancellation & refunds</h2>
         <p className="text-[var(--muted)]">
-          Cancel anytime from your dashboard. Details are in our{' '}
+          Paid subscribers can cancel through the signed Lemon Squeezy portal opened from dashboard billing. If the portal is unavailable, contact support before renewal. Details are in our{' '}
           <Link href="/refund" className="text-[var(--accent)] hover:underline">
             Refund Policy
           </Link>

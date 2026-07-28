@@ -28,6 +28,9 @@ RUN npm prune --omit=dev
 
 FROM base
 
+ARG XROGA_RELEASE_SHA=unknown
+ENV XROGA_RELEASE_SHA=$XROGA_RELEASE_SHA
+
 # Legacy AI/video stack removed — no ffmpeg/playwright runtime deps needed.
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y ca-certificates && \

@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import type { ThemeId, TerminalSkin } from '@/lib/theme';
+import type { AccentId, DensityPreference, FontPreference, ThemeId, TerminalSkin } from '@/lib/theme';
 import {
   CUSTOM_DESKTOP_BG_KEY,
   CUSTOM_MOBILE_BG_KEY,
@@ -31,6 +31,11 @@ interface ThemeState {
   slideshowFrozenIndex: number;
   terminalFullscreen: boolean;
   terminalSkin: TerminalSkin;
+  accent: AccentId;
+  fontPreference: FontPreference;
+  density: DensityPreference;
+  reducedMotion: boolean;
+  highContrast: boolean;
   browserPanelOpen: boolean;
   browserFullscreen: boolean;
   setTheme: (theme: ThemeId) => void;
@@ -44,6 +49,11 @@ interface ThemeState {
   setTerminalFullscreen: (v: boolean) => void;
   cycleTerminalSkin: () => void;
   setTerminalSkin: (skin: TerminalSkin) => void;
+  setAccent: (accent: AccentId) => void;
+  setFontPreference: (fontPreference: FontPreference) => void;
+  setDensity: (density: DensityPreference) => void;
+  setReducedMotion: (reducedMotion: boolean) => void;
+  setHighContrast: (highContrast: boolean) => void;
   setBrowserPanelOpen: (v: boolean) => void;
   setBrowserFullscreen: (v: boolean) => void;
   closeBrowser: () => void;
@@ -62,6 +72,11 @@ export const useThemeStore = create<ThemeState>()(
       slideshowFrozenIndex: 0,
       terminalFullscreen: false,
       terminalSkin: 'light',
+      accent: 'blue',
+      fontPreference: 'modern',
+      density: 'comfortable',
+      reducedMotion: false,
+      highContrast: false,
       browserPanelOpen: false,
       browserFullscreen: false,
       setTheme: (theme) => {
@@ -108,6 +123,11 @@ export const useThemeStore = create<ThemeState>()(
           return { terminalSkin: next };
         }),
       setTerminalSkin: (terminalSkin) => set({ terminalSkin }),
+      setAccent: (accent) => set({ accent }),
+      setFontPreference: (fontPreference) => set({ fontPreference }),
+      setDensity: (density) => set({ density }),
+      setReducedMotion: (reducedMotion) => set({ reducedMotion }),
+      setHighContrast: (highContrast) => set({ highContrast }),
       setBrowserPanelOpen: (browserPanelOpen) =>
         set(
           browserPanelOpen
@@ -132,6 +152,11 @@ export const useThemeStore = create<ThemeState>()(
         slideshowEnabled: s.slideshowEnabled,
         slideshowFrozenIndex: s.slideshowFrozenIndex,
         terminalSkin: s.terminalSkin,
+        accent: s.accent,
+        fontPreference: s.fontPreference,
+        density: s.density,
+        reducedMotion: s.reducedMotion,
+        highContrast: s.highContrast,
       }),
       storage: createJSONStorage(() => ({
         getItem: (name) => {

@@ -54,8 +54,7 @@ export function HomepageShipStack() {
         </h2>
         <p className="xv-hc-section-copy">
           Enterprises ask who owns the code and where it runs. Xroga answers both: your GitHub,
-          your Vercel, continuous updates inside Black Hole V∞ — the #1 coding agent that finishes
-          the loop.
+          your Vercel, and continuous updates through one connected product loop.
         </p>
 
         <ul className="xv-hc-ship-grid">

@@ -14,6 +14,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const setTheme = useThemeStore((s) => s.setTheme);
   const setTerminalSkin = useThemeStore((s) => s.setTerminalSkin);
   const setSlideshowEnabled = useThemeStore((s) => s.setSlideshowEnabled);
+  const accent = useThemeStore((s) => s.accent);
+  const fontPreference = useThemeStore((s) => s.fontPreference);
+  const density = useThemeStore((s) => s.density);
+  const reducedMotion = useThemeStore((s) => s.reducedMotion);
+  const highContrast = useThemeStore((s) => s.highContrast);
   const pathname = usePathname();
   const isHomepage = pathname === '/';
 
@@ -35,11 +40,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     body.classList.remove(
       'theme-image',
       'theme-white',
+      'theme-beige',
       'theme-black',
       'theme-gray',
       'xv-deep-work-shell',
     );
     body.classList.add(`theme-${core}`);
+    document.documentElement.dataset.accent = accent;
+    document.documentElement.dataset.font = fontPreference;
+    document.documentElement.dataset.density = density;
+    document.documentElement.dataset.reducedMotion = reducedMotion ? 'true' : 'false';
+    document.documentElement.dataset.highContrast = highContrast ? 'true' : 'false';
 
     // Clear any leftover wallpaper / deep-work inline styles
     body.style.backgroundImage = '';
@@ -62,7 +73,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (isHomepage) {
       body.style.backgroundColor = THEME_SURFACE[core];
     }
-  }, [theme, isHomepage]);
+  }, [theme, accent, fontPreference, density, reducedMotion, highContrast, isHomepage]);
 
   return <>{children}</>;
 }

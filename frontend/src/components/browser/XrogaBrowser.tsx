@@ -271,7 +271,7 @@ export function XrogaBrowser({ className, compact }: XrogaBrowserProps) {
             navigate(activeTab.input);
           }}
         >
-          <div className={cn('flex-1 flex items-center gap-1.5 px-2 py-1 rounded-lg border min-w-0', theme === 'white' ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10')}>
+          <div className={cn('flex-1 flex items-center gap-1.5 px-2 py-1 rounded-lg border min-w-0', theme === 'white' || theme === 'beige' ? 'bg-white border-slate-200' : 'bg-white/5 border-white/10')}>
             <Lock className="w-3 h-3 text-emerald-400 shrink-0" />
             <input
               value={activeTab.input}
@@ -279,7 +279,7 @@ export function XrogaBrowser({ className, compact }: XrogaBrowserProps) {
               placeholder="Search or enter URL — safe web search enforced"
               className={cn(
                 'flex-1 bg-transparent text-[11px] focus:outline-none min-w-0 font-terminal',
-                theme === 'white' ? 'text-slate-900 placeholder:text-slate-400' : 'text-white placeholder:text-white/40'
+                theme === 'white' || theme === 'beige' ? 'text-slate-900 placeholder:text-slate-400' : 'text-white placeholder:text-white/40'
               )}
             />
             <button type="submit" className="p-0.5 text-[var(--accent)] shrink-0" aria-label="Go">

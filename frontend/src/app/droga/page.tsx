@@ -4,9 +4,9 @@ import { buildMetadata, SITE_URL, BRAND_TYPO_KEYWORDS } from '@/lib/seo';
 import { FEATURE_SEO_PAGES } from '@/lib/featureSeo';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Droga AI? You Found Xroga AI — #1 Coding Agent',
+  title: 'Droga AI? You Found Xroga AI',
   description:
-    'Searching for Droga AI, Roga AI, or Zroga? You found Xroga AI (xroga.com) — the #1 coding agent for developers and non-developers. Build web apps, push to GitHub, deploy on Vercel, sync API keys, and update the same repo.',
+    'Searching for Droga AI, Roga AI, or Zroga? You found Xroga AI at xroga.com: controlled repository work, validation, and authorised publishing.',
   path: '/droga',
   keywords: [
     ...BRAND_TYPO_KEYWORDS,
@@ -63,9 +63,9 @@ export default function DrogaTypoPage() {
             <Link href="/" className="text-[var(--accent)] hover:underline">
               xroga.com
             </Link>
-            . Xroga is the #1 coding agent for developers and non-developers: it builds web apps,
-            pushes working code to your GitHub, deploys on your Vercel, syncs API keys securely into
-            Vercel env, and updates the same repo (edit/delete) without starting over.
+            . Xroga works in connected repositories, validates applicable changes, and can publish
+            through GitHub and Vercel accounts you authorise. It reports provider evidence or the
+            exact external setup still required.
           </p>
 
           <div className="p-5 rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/5 mb-10">

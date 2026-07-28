@@ -1074,6 +1074,8 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ planTier }),
       }),
+    portal: () =>
+      apiFetch<{ portalUrl: string }>('/api/billing/portal', { method: 'POST' }),
   },
   dashboard: {
     summary: () => apiFetch<DashboardSummary>('/api/dashboard/summary'),

@@ -19,6 +19,7 @@ import {
   Gauge,
   Activity,
   TrendingUp,
+  FolderGit2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
@@ -27,7 +28,6 @@ import { SidebarProjectHistory } from './SidebarProjectHistory';
 import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
-import { DownloadAppButton } from '@/components/ui/DownloadAppButton';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/lib/supabase/client';
@@ -41,7 +41,6 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
-import { GALACTIC_PLANS } from '@/lib/plans';
 import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
 
 const navItems = [
@@ -58,6 +57,18 @@ const navItems = [
     tip: 'Recent activity, billing, and plan overview.',
   },
   {
+    href: '/dashboard/projects',
+    label: 'Repositories',
+    icon: FolderGit2,
+    tip: 'Open connected repositories and their durable Xroga workspaces.',
+  },
+  {
+    href: '/dashboard/integrations',
+    label: 'Integrations',
+    icon: Link2,
+    tip: 'Connect GitHub, Slack, databases, and tools.',
+  },
+  {
     href: '/dashboard/operations',
     label: 'Operations',
     icon: Activity,
@@ -70,12 +81,6 @@ const navItems = [
     tip: 'Evidence-backed activation, recommendations, campaigns, messaging, referrals, experiments, and attribution.',
   },
   {
-    href: '/dashboard/integrations',
-    label: 'Integrations',
-    icon: Link2,
-    tip: 'Connect GitHub, Slack, databases, and tools.',
-  },
-  {
     href: '/dashboard/publish',
     label: 'Publish',
     icon: Rocket,
@@ -85,7 +90,7 @@ const navItems = [
     href: '/settings?tab=plan',
     label: 'Plan & Usage',
     icon: Gauge,
-    tip: 'See your plan, tokens, and usage.',
+    tip: 'See capacity percentages, pacing, cycle dates, and billing state.',
   },
   {
     href: '/settings',
@@ -101,9 +106,8 @@ interface SidebarProps {
 }
 
 function planLabel(tier?: string | null) {
-  if (!tier || tier === 'unpaid') return 'Free Trial';
-  const plan = GALACTIC_PLANS.find((p) => p.tier === tier);
-  return plan ? `${plan.name} Plan` : `${tier.charAt(0).toUpperCase()}${tier.slice(1)} Plan`;
+  if (!tier || tier === 'unpaid') return 'Launch Promotion';
+  return 'Xroga AI Plan';
 }
 
 export function Sidebar({ displayName }: SidebarProps) {
@@ -238,7 +242,6 @@ export function Sidebar({ displayName }: SidebarProps) {
           <div className="flex-1 min-w-0">
             <UpgradeProButton onClick={() => router.push('/pricing')} />
           </div>
-          <DownloadAppButton variant="row" className="self-center" />
         </div>
       )}
       {!navExpanded && !isMobile && (
@@ -251,9 +254,6 @@ export function Sidebar({ displayName }: SidebarProps) {
             >
               <Zap className="w-4 h-4" />
             </Link>
-          </HoverTip>
-          <HoverTip label="Download app" description="Launch soon">
-            <DownloadAppButton variant="icon" />
           </HoverTip>
         </div>
       )}

@@ -313,7 +313,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
               <span className="opacity-70 text-[var(--accent)]">&gt;</span>{' '}
               {isIncognito
                 ? 'Start a temporary chat — questions & conversation only…'
-                : 'Ask Xroga to build anything…'}
+                : 'Ask Xroga to build or change your product…'}
             </p>
           )}
 

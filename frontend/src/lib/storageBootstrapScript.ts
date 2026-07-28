@@ -17,7 +17,7 @@ export function storageBootstrapScript(): string {
             if (state.customDesktopBg) { delete state.customDesktopBg; dirty = true; }
             if (state.customMobileBg) { delete state.customMobileBg; dirty = true; }
             var t = state.theme;
-            if (t === 'black' || t === 'gray' || t === 'white') {
+            if (t === 'black' || t === 'gray' || t === 'white' || t === 'beige') {
               core = t;
             } else {
               state.theme = 'white';
@@ -34,11 +34,11 @@ export function storageBootstrapScript(): string {
         }
       }
     }
-    var surfaces = { white: '#ffffff', gray: '#1a1a1a', black: '#000000' };
+    var surfaces = { white: '#ffffff', gray: '#1a1a1a', black: '#000000', beige: '#f4eddf' };
     document.documentElement.setAttribute('data-theme', core);
     var applyBody = function() {
       if (!document.body) return;
-      document.body.classList.remove('theme-image','theme-white','theme-black','theme-gray','xv-deep-work-shell');
+      document.body.classList.remove('theme-image','theme-white','theme-black','theme-gray','theme-beige','xv-deep-work-shell');
       document.body.classList.add('theme-' + core);
       document.body.style.backgroundColor = surfaces[core] || '#ffffff';
       document.body.style.backgroundImage = '';

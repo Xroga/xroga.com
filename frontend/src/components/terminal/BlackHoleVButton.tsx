@@ -1,13 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Infinity, ChevronDown, Lock } from 'lucide-react';
+import { Infinity, ChevronDown, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
 import { useRef } from 'react';
 
-/** Black Hole V — Auto mode always ON (toggle disabled). Confirmations always auto. */
+/** Compact explanation of Xroga's capability orchestration and approval boundary. */
 export function BlackHoleVButton({
   className,
   compact = false,
@@ -17,8 +16,6 @@ export function BlackHoleVButton({
 }) {
   const [open, setOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
-  const xrogaAutoMode = usePrivacyStore((s) => s.xrogaAutoMode);
-
   return (
     <div className={cn('relative shrink-0', className)}>
       <ChatBarPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} width={300}>
@@ -33,28 +30,17 @@ export function BlackHoleVButton({
           <p className="text-[10px] text-[var(--muted)] leading-relaxed mb-2.5">
             Our first and last model — every update ships in this one model. All Xroga AI capabilities, balanced for complex tasks.
           </p>
-          <div className="flex items-center justify-between gap-2 py-1.5 opacity-80">
-            <span className="text-[10px] font-semibold">Auto mode</span>
-            <div
-              className="w-9 h-5 rounded-full relative bg-[#006aff] cursor-not-allowed"
-              title="Auto mode is always enabled"
-            >
-              <span className="absolute top-0.5 left-4 w-4 h-4 rounded-full bg-white" />
-              <Lock className="absolute -right-4 top-0.5 w-3 h-3 text-[var(--muted)]" />
-            </div>
+          <div className="flex items-center gap-2 py-1.5 opacity-90">
+            <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-500" />
+            <span className="text-[10px] font-semibold">Safe tasks can continue automatically</span>
           </div>
           <p className="text-[9px] text-[var(--muted)] mb-2">
-            Auto mode runs continuously — confirmations auto-approve so work completes while you sleep.
+            Production, destructive, paid, or irreversible actions remain blocked until the required approval is recorded.
           </p>
           <div className="flex items-center justify-between gap-2 py-1.5">
-            <span className="text-[10px] font-semibold">Confirmations</span>
-            <div className="flex text-[9px] font-bold overflow-hidden rounded-lg border border-[var(--card-border)] opacity-90">
-              <span className="px-2 py-1 bg-[#006aff] text-white">Auto</span>
-            </div>
+            <span className="text-[10px] font-semibold">Sensitive-action approvals</span>
+            <span className="rounded-lg border border-[var(--card-border)] px-2 py-1 text-[9px] font-bold text-[var(--muted)]">Required</span>
           </div>
-          {!xrogaAutoMode && (
-            <p className="text-[9px] text-amber-400 mt-2">Auto mode will re-enable on next session.</p>
-          )}
         </div>
       </ChatBarPortalPopover>
 

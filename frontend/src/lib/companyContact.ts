@@ -15,5 +15,5 @@ export const COMPANY_CONTACT = {
   phoneTel: phoneDisplay.replace(/[^\d+]/g, ''),
   region: 'Pakistan',
   productDescription:
-    'Xroga AI is the #1 coding agent for developers and non-developers. It builds web apps from plain language, pushes working code to your GitHub, deploys on your Vercel, syncs your API keys securely into Vercel env, and updates the same repo (edit/delete) without starting over. No coding knowledge required to start. Subscriptions are billed monthly via Lemon Squeezy with AI token capacity by plan.',
+    'Xroga AI works in connected repositories, validates applicable changes, and publishes through accounts the operator authorises. One plan is billed by Lemon Squeezy in complete 30-day cycles with capacity pacing.',
 };

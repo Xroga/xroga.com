@@ -13,10 +13,10 @@ export default function UpgradePage() {
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
             <Rocket className="w-7 h-7 text-[#4a7aff]" />
-            Upgrade Your Plan
+            Xroga AI Plan
           </h1>
           <p className="text-sm text-[var(--muted)] mt-1">
-            All {FEATURE_COUNT} features unlocked on every plan. Upgrade for higher concurrency.
+            One $19 plan per complete 30-day cycle with all {FEATURE_COUNT} features and capacity pacing.
           </p>
         </div>
 

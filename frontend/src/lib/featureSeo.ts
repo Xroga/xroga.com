@@ -49,9 +49,9 @@ export const FEATURE_SEO_PAGES: FeatureSeoPage[] = [
   {
     slug: 'ai-chat',
     title: 'AI Coding Agent Chat',
-    headline: 'Chat with Xroga — the #1 Coding Agent for Builders & Beginners',
+    headline: 'Chat with Xroga — Build in your connected project',
     description:
-      'Chat with Xroga AI, the #1 coding agent. Ask in plain language to build websites and web apps, push to GitHub, deploy on Vercel, and update your repo — whether you are a developer or have no coding knowledge.',
+      'Ask Xroga in plain language to inspect a connected project, implement supported changes, validate the result, and publish when authorised.',
     keywords: [
       'AI chat',
       'AI coding agent chat',
@@ -85,7 +85,7 @@ export const FEATURE_SEO_PAGES: FeatureSeoPage[] = [
     title: 'Build Websites, Web Apps & Games',
     headline: 'Build Websites & Web Apps with AI — No Coding Knowledge Required',
     description:
-      'Xroga AI is the #1 coding agent for developers and non-developers. Describe a website, dashboard, or browser game in plain language — Xroga builds working code, pushes to your GitHub, deploys on your Vercel, and updates the same repo (edit/delete) without starting over.',
+      'Describe a supported website, dashboard, or browser game in plain language. Xroga works in the connected repository and reports validation and publishing evidence.',
     keywords: [
       'AI build website',
       'AI web app builder',
@@ -203,7 +203,7 @@ export const FEATURE_SEO_PAGES: FeatureSeoPage[] = [
     title: 'GitHub, Vercel & API Keys',
     headline: 'Integrations — GitHub, Vercel & Secure API Keys for Your Product',
     description:
-      'Connect GitHub and Vercel to Xroga AI. Push working code, deploy live, and sync your product API keys securely into Vercel env — built for the #1 coding agent ship loop.',
+      'Connect GitHub and Vercel to Xroga AI for authorised repository and deployment operations with evidence-backed results.',
     keywords: [
       'Xroga integrations',
       'AI coding agent integrations',
@@ -235,7 +235,7 @@ export const FEATURE_SEO_PAGES: FeatureSeoPage[] = [
     title: 'Not a Video Tool — Coding Agent',
     headline: 'Xroga Builds Web Apps — Not Videos',
     description:
-      'Xroga AI is the #1 coding agent for web apps on GitHub and Vercel — not a video generator. Describe your product in plain language; get working code, deploy live, and iterate in the same repo. For developers and non-developers.',
+      'Xroga AI is a repository execution product for web apps on GitHub and Vercel, not a video generator. Describe the outcome, review the work, and iterate in the same project.',
     keywords: [
       'Xroga coding agent',
       'build web apps with AI',
@@ -287,10 +287,10 @@ export const FEATURE_SEO_PAGES: FeatureSeoPage[] = [
   },
   {
     slug: 'xroga-workspace',
-    title: 'Xroga Workspace — #1 Coding Agent',
-    headline: 'Xroga Workspace — #1 Coding Agent for Developers & Non-Developers',
+    title: 'Xroga Workspace — Build, verify, and publish',
+    headline: 'Xroga Workspace — One connected product loop',
     description:
-      'Xroga Workspace is where the #1 coding agent builds and ships. Describe a web product in plain language — preview in Workspace, push working code to your GitHub, deploy on your Vercel, sync API keys securely into Vercel env, and update the same repo (edit/delete) without starting over. No coding knowledge required to start.',
+      'Xroga Workspace is where repository inspection, implementation, validation, repair, and authorised publishing are tied to durable run evidence.',
     keywords: [
       'Xroga workspace',
       'AI coding agent workspace',

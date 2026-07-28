@@ -40,7 +40,7 @@ export default function PrivacyPage() {
         <h2 className="text-lg font-semibold">2. Data we collect</h2>
         <ul className="list-disc pl-5 space-y-1 text-[var(--muted)]">
           <li>Account: email, display name, auth identifiers (via Supabase Auth).</li>
-          <li>Product usage: prompts, project files, AI token/credit usage for quota and billing fairness.</li>
+          <li>Product usage: prompts, project files, and privacy-safe capacity accounting needed for billing fairness.</li>
           <li>Integrations you connect: GitHub / Vercel tokens stored to push and deploy on your behalf.</li>
           <li>Payments: processed by Lemon Squeezy — we do not store full card numbers.</li>
         </ul>

@@ -1,0 +1,57 @@
+name: Production launch browser verification
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  production-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: Production
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      PLAYWRIGHT_BASE_URL: https://xroga.com
+      E2E_BACKEND_URL: https://xroga-api.fly.dev
+      LAUNCH_BILLING_API_URL: https://xroga-api.fly.dev
+      EXPECTED_RELEASE_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Safe production preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY; do
+            if [ -z "${!name:-}" ]; then echo "missing_required_variable=$name"; exit 1; fi
+          done
+          test "$NEXT_PUBLIC_SUPABASE_URL" = "https://nzenxdfumxrnsmybazmo.supabase.co"
+          case "$NEXT_PUBLIC_SUPABASE_ANON_KEY" in sb_secret_*|"") echo "invalid_public_key_category"; exit 1;; esac
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 20 https://xroga.com/api/release)" = "200"
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 20 https://xroga-api.fly.dev/ready)" = "200"
+          echo "production_endpoints_reachable=true"
+      - name: Install browser-test dependencies
+        run: |
+          npm ci --workspaces=false
+          npm ci --prefix frontend --workspaces=false
+          npx playwright install --with-deps chromium
+      - name: Verify exact production release, authentication, and tenant isolation
+        working-directory: frontend
+        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/launch-public.spec.ts
+      - name: Upload redacted production evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-launch-browser-evidence-${{ github.sha }}
+          path: |
+            frontend/test-results/command3-auth-evidence.json
+            frontend/test-results/**/test-failed-*.png
+          if-no-files-found: warn
+          retention-days: 30

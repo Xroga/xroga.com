@@ -85,8 +85,8 @@ export const PLATFORM_PARTS = [
       {
         heading: 'Every project includes',
         items: [
-          'Frontend: Next.js + Tailwind (Black Hole V∞ Apex / Horizon)',
-          'Backend: Supabase Edge Functions (Forge / Pulse)',
+          'Frontend: project-native framework and established repository patterns',
+          'Backend: server routes, durable jobs, and integrations required by the outcome',
           'Database: PostgreSQL schema + RLS',
           'Auth: Supabase Auth · Payments: Lemon Squeezy/Stripe',
           'Deploy: Vercel + Cloudflare · GitHub repo + README',
@@ -182,84 +182,51 @@ export const PLATFORM_PARTS = [
 
 export const MODEL_TABLE = [
   {
-    name: 'Xroga Apex',
-    role: 'Chief Architect',
-    usage: 'Flagship core',
-    tokensPool: '889K',
-    tasks: 'Complex full-stack, crypto, long-horizon builds',
-    cost: 'Inside Black Hole V∞',
+    name: 'Repository comprehension',
+    role: 'Understand the existing project before edits',
+    usage: 'Automatic',
+    tokensPool: 'Relevant files only',
+    tasks: 'Entry points, dependencies, tests, and existing patterns',
+    cost: 'Context evidence',
   },
   {
-    name: 'Xroga Horizon',
-    role: 'Project Engineer',
-    usage: 'Long-context core',
-    tokensPool: '2.0M',
-    tasks: 'Whole-repo engineering, large codebases',
-    cost: 'Inside Black Hole V∞',
+    name: 'Implementation',
+    role: 'Apply controlled project changes',
+    usage: 'Automatic',
+    tokensPool: 'Paced capacity',
+    tasks: 'Focused code, migrations, configuration, and tests',
+    cost: 'Changed-file evidence',
   },
   {
-    name: 'Xroga Forge',
-    role: 'Deep Executor',
-    usage: 'Volume core',
-    tokensPool: '1.5M',
-    tasks: 'Agent tasks, knowledge work, shipping',
-    cost: 'Inside Black Hole V∞',
+    name: 'Validation and repair',
+    role: 'Verify the required outcome and repair failures',
+    usage: 'Risk based',
+    tokensPool: 'Protected completion capacity',
+    tasks: 'Lint, tests, builds, security checks, and targeted repair',
+    cost: 'Command and result evidence',
   },
   {
-    name: 'Xroga Pulse',
-    role: 'Converter',
-    usage: 'Fast core',
-    tokensPool: '1.0M',
-    tasks: 'Prompt → builder brief, high-volume chat',
-    cost: 'Inside Black Hole V∞',
-  },
-  {
-    name: 'Xroga Live',
-    role: 'Real-Time Intel',
-    usage: 'Live core',
-    tokensPool: '250K',
-    tasks: 'Web + X live search, news, research synthesis',
-    cost: 'Inside Black Hole V∞',
-  },
-  {
-    name: 'Xroga Lens',
-    role: 'Document Mind',
-    usage: 'Vision/docs core',
-    tokensPool: '533K',
-    tasks: 'Files, PDFs, vision, backup context',
-    cost: 'Inside Black Hole V∞',
+    name: 'Independent review',
+    role: 'Review high-risk changes separately',
+    usage: 'When required',
+    tokensPool: 'Risk gated',
+    tasks: 'Authentication, permissions, payments, secrets, and deployment',
+    cost: 'Structured findings',
   },
 ] as const;
 
-/** Spark monthly pool — matches backend MONTHLY_TOTAL_TOKENS */
-export const QUOTA_SPARK_BREAKDOWN = {
-  inputPool: '~3.09M',
-  outputPool: '~3.09M',
-  total: '6.17M',
-  oneBuildApiUsd: 'varies by core',
-  models: MODEL_TABLE.map((m) => ({
-    model: m.name,
-    share: m.usage,
-    tokens: m.tokensPool,
-  })),
-  webSearchPipeline: 'Xroga Live (native web + X firehose) → Tavily/SearXNG fallback',
-};
-
-/** @deprecated alias — Spark is 6.17M */
-export const QUOTA_7M_BREAKDOWN = QUOTA_SPARK_BREAKDOWN;
-
 export const BUILD_STEPS = [
-  'Live research — Xroga Live (web + X) when needed',
-  'Convert prompt → builder brief (Pulse)',
-  'Architect + generate (Apex / Horizon / Forge)',
-  'QA + compile validate',
-  'Push GitHub + deploy Vercel (sticky repo)',
-  'Follow-up prompts update the same live product',
+  'Inspect the current repository and infer acceptance criteria',
+  'Research current information when the outcome requires it',
+  'Apply focused changes to one controlled project state',
+  'Run applicable validation and targeted repair',
+  'Push or publish only when requested and return provider evidence',
+  'Follow-up prompts update the same connected project',
 ];
 
 export const NO_HESITATE = [
-  { ask: 'Can you build a website?', answer: 'YES — any website' },
-  { ask: 'Can you build a SaaS?', answer: 'YES — any SaaS' },
-  { ask: 'Can you build an AI tool?', answer: 'YES — any AI tool' },
-  { ask: 'Do I wait for a new model?', answer: 'NO — Black Hole V∞ updates continuously' },
+  { ask: 'Can you build a website?', answer: 'Xroga can implement and validate supported web projects.' },
+  { ask: 'Can you build a SaaS?', answer: 'Yes when the required accounts, credentials, and product decisions are available.' },
+  { ask: 'Can you build an AI tool?', answer: 'Yes through configured integrations; missing provider setup is reported exactly.' },
+  { ask: 'What if publishing is blocked?', answer: 'The project stays intact and Xroga reports the exact external action required.' },
 ];

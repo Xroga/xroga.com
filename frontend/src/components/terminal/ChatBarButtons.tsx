@@ -1,11 +1,154 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { CloudUpload } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { CloudUpload, LoaderCircle, Mic, MicOff } from 'lucide-react';
 import { ChatBarShipIcon, type SendButtonState } from './ChatBarShipIcon';
 
 export type { SendButtonState };
 export type ChatbarSurface = 'homepage' | 'dashboard' | 'incognito';
+
+type SpeechInputState = 'idle' | 'recording' | 'processing' | 'denied' | 'unavailable';
+
+interface BrowserSpeechRecognitionEvent {
+  resultIndex: number;
+  results: ArrayLike<{
+    isFinal: boolean;
+    0: { transcript: string };
+  }>;
+}
+
+interface BrowserSpeechRecognitionErrorEvent {
+  error: string;
+}
+
+interface BrowserSpeechRecognition {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onstart: (() => void) | null;
+  onresult: ((event: BrowserSpeechRecognitionEvent) => void) | null;
+  onerror: ((event: BrowserSpeechRecognitionErrorEvent) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+}
+
+type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
+
+function getSpeechRecognitionConstructor(): BrowserSpeechRecognitionConstructor | null {
+  if (typeof window === 'undefined') return null;
+  const speechWindow = window as typeof window & {
+    SpeechRecognition?: BrowserSpeechRecognitionConstructor;
+    webkitSpeechRecognition?: BrowserSpeechRecognitionConstructor;
+  };
+  return speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition ?? null;
+}
+
+export function ChatBarMicrophoneButton({
+  onTranscript,
+  surface = 'dashboard',
+}: {
+  onTranscript: (transcript: string) => void;
+  surface?: ChatbarSurface;
+}) {
+  const [state, setState] = useState<SpeechInputState>('idle');
+  const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
+
+  useEffect(() => {
+    if (!getSpeechRecognitionConstructor()) setState('unavailable');
+    return () => {
+      recognitionRef.current?.abort();
+      recognitionRef.current = null;
+    };
+  }, []);
+
+  const label = {
+    idle: 'Start voice input',
+    recording: 'Stop recording',
+    processing: 'Processing voice input',
+    denied: 'Voice input permission denied',
+    unavailable: 'Voice input unavailable in this browser',
+  }[state];
+
+  const handleClick = () => {
+    if (state === 'recording') {
+      recognitionRef.current?.stop();
+      setState('processing');
+      return;
+    }
+    if (state === 'processing' || state === 'unavailable') return;
+
+    const SpeechRecognition = getSpeechRecognitionConstructor();
+    if (!SpeechRecognition) {
+      setState('unavailable');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = document.documentElement.lang || navigator.language || 'en-US';
+    recognition.onstart = () => setState('recording');
+    recognition.onresult = (event) => {
+      let finalTranscript = '';
+      for (let index = event.resultIndex; index < event.results.length; index += 1) {
+        const result = event.results[index];
+        if (result.isFinal) finalTranscript += result[0]?.transcript ?? '';
+      }
+      const transcript = finalTranscript.trim();
+      if (transcript) {
+        setState('processing');
+        onTranscript(transcript);
+      }
+    };
+    recognition.onerror = (event) => {
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+        setState('denied');
+      } else if (event.error === 'audio-capture') {
+        setState('unavailable');
+      } else {
+        setState('idle');
+      }
+    };
+    recognition.onend = () => {
+      recognitionRef.current = null;
+      setState((current) => (current === 'denied' || current === 'unavailable' ? current : 'idle'));
+    };
+    recognitionRef.current = recognition;
+
+    try {
+      recognition.start();
+    } catch {
+      recognitionRef.current = null;
+      setState('unavailable');
+    }
+  };
+
+  const Icon = state === 'processing' ? LoaderCircle : state === 'denied' || state === 'unavailable' ? MicOff : Mic;
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={state === 'processing' || state === 'unavailable'}
+      className={cn(
+        'h-9 w-9 shrink-0 rounded-full border border-[var(--card-border)] flex items-center justify-center text-[var(--muted)] transition-colors',
+        'hover:text-[var(--foreground)] hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]',
+        state === 'recording' && 'border-red-500 text-red-500 bg-red-500/10',
+        (state === 'processing' || state === 'unavailable') && 'cursor-not-allowed opacity-60',
+        surface === 'homepage' && 'bg-white/5'
+      )}
+      title={label}
+      aria-label={label}
+      aria-pressed={state === 'recording'}
+      aria-live="polite"
+    >
+      <Icon className={cn('h-4 w-4', state === 'processing' && 'animate-spin')} aria-hidden />
+    </button>
+  );
+}
 
 export function ChatBarSendButton({
   stopping = false,

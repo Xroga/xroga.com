@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-07-28T13:20:00Z",
+  "branch": "agent/final-command-4-5-public-launch",
+  "commit": "cb38638c3ee9a3b58d7e51b7b5464fc50c0d09bf",
+  "pull_request": "https://github.com/Xroga/xroga.com/pull/356",
+  "state": "launch_candidate_validation_running",
+  "command_4_verified": false,
+  "public_launch_certified": false,
+  "evidence": {
+    "frontend_lint": "passed",
+    "resilience_tests": { "passed": 4, "failed": 0 },
+    "backend_tests": { "passed": 316, "failed": 0 },
+    "database_url_tests": { "passed": 3, "failed": 0 },
+    "backend_build": "passed",
+    "frontend_build": { "status": "passed", "routes": 66 },
+    "authenticated_browser": "passed_on_778bbea; checkout-strengthened_run_pending",
+    "supabase_project_ref": "nzenxdfumxrnsmybazmo",
+    "supabase_migration_pr_gate": "dry_run_passed",
+    "api_docker_build": "passed",
+    "vercel_preview": "passed"
+  },
+  "pending_required_gates": [
+    "authenticated production checkout evidence on current commit",
+    "all pull-request checks green on current commit",
+    "human review and merge to main",
+    "main Supabase migration gate",
+    "main Fly and Vercel deployment of the exact merge commit",
+    "production release-SHA equality",
+    "production six-scenario browser verification"
+  ]
+}

@@ -9,18 +9,21 @@ export function dashboardPageMetadata(
   path: string,
   extraKeywords: string[] = []
 ): Metadata {
-  return buildMetadata({
+  return {
+    ...buildMetadata({
     title,
     description,
     path,
     keywords: [...extraKeywords, ...PALESTINE_KEYWORDS, 'Xroga dashboard', 'Xroga AI workspace'],
-  });
+    }),
+    robots: { index: false, follow: false },
+  };
 }
 
 export const PAGE_SEO = {
   dashboard: dashboardPageMetadata(
-    'Workspace — #1 Coding Agent',
-    'Xroga AI Workspace: the #1 coding agent for developers and non-developers. Build web apps from a prompt, push working code to your GitHub, deploy on your Vercel, sync API keys securely into Vercel env, and update the same repo (edit/delete) without starting over. No coding knowledge required to start.',
+    'Workspace',
+    'Authenticated Xroga workspace for controlled repository work, validation, and authorised publishing.',
     '/workspace',
     [
       'Xroga workspace',
@@ -32,7 +35,7 @@ export const PAGE_SEO = {
   ),
   dashboardHome: dashboardPageMetadata(
     'Dashboard',
-    'Token usage, XRG balance, billing, and recent activity for your Xroga AI account.',
+    'Capacity percentages, pacing, cycle dates, billing state, and recent activity for your Xroga AI account.',
     '/dashboard',
     ['Xroga tokens', 'XRG balance', 'usage dashboard']
   ),

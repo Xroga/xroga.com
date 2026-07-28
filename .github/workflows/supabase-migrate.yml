@@ -1,4 +1,4 @@
-name: Apply Supabase migrations
+name: Supabase migration gate
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
   migrate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment: Production
+    environment: ${{ github.event_name == 'pull_request' && 'Preview' || 'Production' }}
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
 
     steps:
@@ -37,7 +37,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --workspaces=false
 
       - name: Apply migrations
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'

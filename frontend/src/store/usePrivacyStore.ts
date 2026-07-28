@@ -37,7 +37,7 @@ export const usePrivacyStore = create<PrivacyState>()(
       rememberIp: false,
       crossProjectAccess: false,
       xrogaAutoMode: true,
-      confirmationMode: 'auto',
+      confirmationMode: 'manual',
       trainForPersonalUse: true,
       improveModelForEveryone: false,
       setIncognito: (incognito) => set({ incognito }),

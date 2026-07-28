@@ -67,7 +67,7 @@ export default function AboutPage() {
               className="mx-auto"
               unoptimized
             />
-            <h1 className="text-3xl sm:text-4xl font-bold">Xroga AI — #1 Coding Agent</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold">Xroga AI — Build, verify, and publish</h1>
             <p className="text-[var(--muted)] max-w-2xl mx-auto">
               For developers and people with no coding knowledge: describe a web product, get working
               code on your GitHub, live on your Vercel, then keep updating the same repo.
@@ -80,9 +80,9 @@ export default function AboutPage() {
               {COMPANY_CONTACT.productDescription}
             </p>
             <p className="text-sm text-[var(--muted)] leading-relaxed">
-              It is not a single chatbot. A coordinated swarm — Converter, Builder roles (Apex, Horizon,
-              Forge, Live), and QA — turns a prompt into previewable code, pushes your GitHub, and deploys
-              on Vercel. Billing is monthly via Lemon Squeezy with AI credit by plan.
+              It is not a single chatbot. Xroga automatically coordinates repository comprehension,
+              implementation, research, validation, review, and targeted repair. GitHub and Vercel
+              operations run only through accounts you authorise and return evidence or an exact blocker.
             </p>
           </section>
 
