@@ -21,7 +21,9 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       NEXT_PUBLIC_API_URL: http://127.0.0.1:4000
       E2E_BACKEND_URL: http://127.0.0.1:4000
-      LAUNCH_BILLING_API_URL: https://xroga-api.fly.dev
+      # Production billing is verified by launch-production-verification.yml
+      # after the merged release SHA is deployed. PR authentication checks must
+      # not couple branch validation to the configuration of an older release.
       FRONTEND_URL: http://127.0.0.1:3000
       NODE_ENV: test
     steps:
