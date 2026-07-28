@@ -1,21 +1,7 @@
-'use client';
+import { ReferralRedirectClient } from '@/components/referrals/ReferralRedirectClient';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { storeReferralCode } from '@/lib/referralStorage';
-
-export default function RefLandingPage({ params }: { params: { code: string } }) {
-  const router = useRouter();
-  const code = decodeURIComponent(params.code ?? '').trim().toUpperCase();
-
-  useEffect(() => {
-    if (code) storeReferralCode(code);
-    router.replace(`/auth/signup?ref=${encodeURIComponent(code)}`);
-  }, [code, router]);
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] text-white">
-      <p className="text-sm text-white/70">Redirecting to sign up with referral {code}…</p>
-    </div>
-  );
+export default async function RefLandingPage({ params }: { params: Promise<{ code: string }> }) {
+  const { code: rawCode } = await params;
+  const code = decodeURIComponent(rawCode ?? '').trim().toUpperCase();
+  return <ReferralRedirectClient code={code} />;
 }

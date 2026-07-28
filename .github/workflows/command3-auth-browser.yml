@@ -61,15 +61,19 @@ jobs:
           node -e "const c=require('./auth-config-verified.json'); if(c.external_email_enabled !== true) process.exit(1)"
           rm -f auth-config.json auth-config-updated.json auth-config-verified.json
           echo "email_authentication_enabled=true"
-      - run: npm ci
-      - run: npm run build --workspace=backend
-      - run: npm run build --workspace=frontend
+      - name: Install isolated workspace dependencies
+        run: |
+          npm ci --workspaces=false
+          npm ci --prefix backend --workspaces=false
+          npm ci --prefix frontend --workspaces=false
+      - run: npm run build --prefix backend --workspaces=false
+      - run: npm run build --prefix frontend --workspaces=false
       - run: npx playwright install --with-deps chromium
       - name: Start isolated application
         shell: bash
         run: |
           PORT=4000 node backend/dist/index.js > backend.log 2>&1 & echo $! > backend.pid
-          npm run start --workspace=frontend -- --hostname 127.0.0.1 --port 3000 > frontend.log 2>&1 & echo $! > frontend.pid
+          npm run start --prefix frontend --workspaces=false -- --hostname 127.0.0.1 --port 3000 > frontend.log 2>&1 & echo $! > frontend.pid
           for attempt in $(seq 1 40); do
             curl --silent --fail http://127.0.0.1:4000/ready >/dev/null && curl --silent --fail http://127.0.0.1:3000/auth/login >/dev/null && exit 0
             sleep 2

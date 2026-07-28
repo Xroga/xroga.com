@@ -49,6 +49,7 @@ jobs:
           until flyctl deploy \
             --config fly.api.toml \
             -a xroga-api \
+            --build-arg XROGA_RELEASE_SHA="$GITHUB_SHA" \
             --remote-only \
             --ha=false; do
             if [ "$attempt" -ge "$max_attempts" ]; then

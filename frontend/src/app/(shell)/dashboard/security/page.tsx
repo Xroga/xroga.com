@@ -1,10 +1,5 @@
-import { PlaceholderPage } from '@/components/PlaceholderPage';
-import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
+import { redirect } from 'next/navigation';
 
-export default function Page() {
-  return (
-    <PageFullscreenFrame>
-      <PlaceholderPage title="Security" />
-    </PageFullscreenFrame>
-  );
+export default function SecurityPage() {
+  redirect('/settings?tab=security');
 }

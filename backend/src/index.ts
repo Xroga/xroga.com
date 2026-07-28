@@ -102,7 +102,7 @@ app.use(express.json({ limit: '10mb' }));
 app.get('/', (_req, res) => {
   res.json({
     ...publicHealthPayload(),
-    message: 'Xroga API is running — Converter → Builder AI Swarm (Kimi / GLM / DeepSeek / Grok)',
+    message: 'Xroga API is running with capability-routed build and verification services.',
     docs: {
       health: '/health',
       chat: '/api/phase1/chat',
@@ -126,7 +126,8 @@ app.get('/ready', async (_req, res) => {
   try {
     const { error } = await getSupabaseAdmin().from('profiles').select('id').limit(1);
     if (error) throw error;
-    res.json({ status: 'ready', service: 'xroga-api', timestamp: new Date().toISOString() });
+    const health = publicHealthPayload();
+    res.json({ status: 'ready', service: 'xroga-api', release: health.release, timestamp: new Date().toISOString() });
   } catch {
     res.status(503).json({ status: 'not_ready', reason: 'database_unavailable' });
   }
@@ -139,8 +140,8 @@ app.get('/api/health', (_req, res) => {
 app.get('/api/config', (_req, res) => {
   res.json({
     frontendUrl: process.env.FRONTEND_URL ?? 'https://xroga.com',
-    aiBackend: 'kimi-glm-deepseek-grok',
-    aiPipeline: 'converter→builder',
+    orchestration: 'capability-routed',
+    execution: 'build-and-verify',
     capabilities: ['chat', 'build', 'github', 'deployment'],
   });
 });
