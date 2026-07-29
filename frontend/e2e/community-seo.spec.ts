@@ -15,6 +15,32 @@ test('community feedback modal is accessible and preserves public requirements',
   await expect(dialog).toBeHidden();
 });
 
+test('guest community draft survives the existing login redirect without a protected post attempt', async ({ page }) => {
+  let createAttempts = 0;
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().includes('/api/community/posts')) createAttempts += 1;
+  });
+
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  await page.getByRole('button', { name: 'Share Feedback' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Post to Xroga Community' });
+  await dialog.getByLabel('Category').selectOption('bug');
+  await dialog.getByLabel('Title').fill('Guest draft is preserved');
+  await dialog.getByLabel('Message').fill('This content should survive the existing Xroga login flow.');
+  await dialog.getByRole('button', { name: 'Post to Community' }).click();
+
+  await page.waitForURL(/\/auth\/login\?next=%2Fcommunity%3Fcompose%3D1/);
+  expect(createAttempts).toBe(0);
+  await expect.poll(() => page.evaluate(() => window.sessionStorage.getItem('xroga-community-draft'))).not.toBeNull();
+  const savedDraft = await page.evaluate(() => JSON.parse(window.sessionStorage.getItem('xroga-community-draft') ?? '{}'));
+  expect(savedDraft).toEqual({
+    category: 'bug',
+    title: 'Guest draft is preserved',
+    body: 'This content should survive the existing Xroga login flow.',
+  });
+});
+
 test('canonical SEO pages render distinct crawlable outcomes', async ({ page, request }) => {
   const paths = ['/ai-coding-agent', '/ai-app-builder', '/ai-website-builder', '/build-saas-with-ai', '/github-ai-coding-agent', '/vercel-ai-deployment', '/docs', '/crypto-hackathon-builder', '/research/web3-hackathon-winning-patterns'];
   const titles = new Set<string>();
