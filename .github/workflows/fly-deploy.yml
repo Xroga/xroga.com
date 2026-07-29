@@ -41,8 +41,17 @@ jobs:
       - name: Deploy to Fly.io (remote build)
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          LEMONSQUEEZY_WEBHOOK_SECRET: ${{ secrets.LEMONSQUEEZY_WEBHOOK_SECRET }}
         run: |
           set -euo pipefail
+          secret_length="${#LEMONSQUEEZY_WEBHOOK_SECRET}"
+          if [ "$secret_length" -lt 6 ] || [ "$secret_length" -gt 40 ]; then
+            echo "::error::LEMONSQUEEZY_WEBHOOK_SECRET must be present and contain 6 to 40 characters."
+            exit 1
+          fi
+          flyctl secrets set --stage -a xroga-api \
+            LEMONSQUEEZY_WEBHOOK_SECRET="$LEMONSQUEEZY_WEBHOOK_SECRET"
+          echo "lemon_test_webhook_secret_staged=true"
           attempt=1
           max_attempts=5
           delay=15

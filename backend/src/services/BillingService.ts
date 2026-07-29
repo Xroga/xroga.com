@@ -10,6 +10,24 @@ export interface LemonWebhookEvent {
   data?: { type?: string; id?: string; attributes?: Record<string, unknown> };
 }
 
+export type LemonEnvironment = 'test' | 'live' | 'unconfigured';
+
+export function getLemonEnvironment(env: Record<string, string | undefined> = process.env): LemonEnvironment {
+  if (!env.LEMONSQUEEZY_STORE_ID?.trim()) return 'unconfigured';
+  const configured = env.LEMONSQUEEZY_MODE?.trim().toLowerCase();
+  return configured === 'test' || configured === 'live' ? configured : 'unconfigured';
+}
+
+export function assertLemonWebhookEnvironment(
+  event: LemonWebhookEvent,
+  expected: LemonEnvironment = getLemonEnvironment(),
+): void {
+  const eventIsTest = event.data?.attributes?.test_mode;
+  if (expected === 'unconfigured') throw new Error('Lemon Squeezy environment is not configured');
+  if (typeof eventIsTest !== 'boolean') throw new Error('Billing event is missing environment evidence');
+  if ((expected === 'test') !== eventIsTest) throw new Error('Billing event environment does not match runtime configuration');
+}
+
 export class BillingServiceError extends Error {
   constructor(
     public readonly code: 'external_setup_required' | 'subscription_not_found' | 'provider_unavailable' | 'storage_unavailable',
@@ -54,14 +72,14 @@ export function derivePaidCycleEvidence(event: LemonWebhookEvent): {
     const date = new Date(value);
     return Number.isFinite(date.getTime()) ? date : null;
   };
-  const parsedEnd = parseDate(attributes.renews_at ?? attributes.ends_at);
+  const parsedEnd = parseDate(attributes.trial_ends_at ?? attributes.renews_at ?? attributes.ends_at);
   const parsedStart = parseDate(attributes.created_at ?? attributes.updated_at);
   const endsAt = parsedEnd ?? new Date((parsedStart ?? new Date()).getTime() + 30 * 86_400_000);
-  const startsAt = parsedEnd ? new Date(parsedEnd.getTime() - 30 * 86_400_000) : parsedStart ?? new Date();
+  const startsAt = parsedStart ?? (parsedEnd ? new Date(parsedEnd.getTime() - 30 * 86_400_000) : new Date());
   const subscriptionId = String(attributes.subscription_id ?? event.data?.id ?? '').trim();
   if (!subscriptionId) throw new Error('Billing event is missing a durable subscription reference');
   return {
-    providerReference: `lemon:${subscriptionId}:${endsAt.toISOString()}`,
+    providerReference: `lemon:${attributes.test_mode === true ? 'test' : 'live'}:${subscriptionId}:${endsAt.toISOString()}`,
     startsAt,
     endsAt,
   };
@@ -76,6 +94,7 @@ export class BillingService {
     const apiKey = !!process.env.LEMONSQUEEZY_API_KEY;
     const webhook = !!process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
     const store = !!process.env.LEMONSQUEEZY_STORE_ID;
+    const environment = getLemonEnvironment();
     return {
       lemonApi: apiKey,
       lemonWebhook: webhook,
@@ -84,12 +103,14 @@ export class BillingService {
       paddleApi: false,
       paddleWebhook: false,
       paddleClient: false,
-      environment: process.env.LEMONSQUEEZY_STORE_ID ? 'production' : 'unconfigured',
+      environment,
+      testMode: environment === 'test',
+      trialDays: environment === 'test' ? 30 : null,
       plans: GALACTIC_PLANS.map((plan) => ({
         tier: plan.tier,
         name: plan.name,
         priceId: process.env[plan.envPriceKey] ?? null,
-        ready: !!(process.env[plan.envPriceKey] && apiKey && store),
+        ready: !!(process.env[plan.envPriceKey] && apiKey && store && environment !== 'unconfigured'),
       })),
     };
   }
@@ -118,9 +139,10 @@ export class BillingService {
 
     const storeId = (process.env.LEMONSQUEEZY_STORE_ID || '').trim();
     const apiKey = (process.env.LEMONSQUEEZY_API_KEY || '').trim();
+    const environment = getLemonEnvironment();
     const customData = { user_id: userId, plan_tier: planTier };
 
-    if (!apiKey || !storeId) {
+    if (!apiKey || !storeId || environment === 'unconfigured') {
       throw new BillingServiceError('external_setup_required', 'Paid checkout is not configured', 409);
     }
 
@@ -133,7 +155,11 @@ export class BillingService {
       data: {
         type: 'checkouts',
         attributes: {
+          test_mode: environment === 'test',
           checkout_data: checkoutData,
+          checkout_options: {
+            skip_trial: false,
+          },
           product_options: {
             redirect_url:
               (process.env.LEMONSQUEEZY_REDIRECT_URL || '').trim() ||
@@ -217,6 +243,7 @@ export class BillingService {
   }
 
   static async handleWebhookEvent(event: LemonWebhookEvent): Promise<void> {
+    assertLemonWebhookEnvironment(event);
     const type = event.meta?.event_name ?? '';
     if (
       type === 'subscription_created' ||

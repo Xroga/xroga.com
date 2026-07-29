@@ -11,11 +11,15 @@ export function PaymentMethodIcons() {
 
 export function SubscriptionManagePanel() {
   const [ready, setReady] = useState<boolean | null>(null);
+  const [environment, setEnvironment] = useState<'test' | 'live' | 'unconfigured'>('unconfigured');
   const [opening, setOpening] = useState(false);
 
   useEffect(() => {
     void api.billing.status()
-      .then((status) => setReady(status.lemonApi && status.lemonWebhook && status.lemonStore && status.plans.some((plan) => plan.ready)))
+      .then((status) => {
+        setEnvironment(status.environment);
+        setReady(status.lemonApi && status.lemonWebhook && status.lemonStore && status.plans.some((plan) => plan.ready));
+      })
       .catch(() => setReady(null));
   }, []);
 
@@ -38,8 +42,10 @@ export function SubscriptionManagePanel() {
         <div>
           <h3 className="font-semibold text-sm">Subscription management</h3>
           <p className="text-xs sm:text-sm text-[var(--muted)] mt-1 leading-relaxed">
-            {ready === true
-              ? 'Checkout and verified billing webhooks are configured. Paid subscribers can open Lemon Squeezy’s signed portal to manage payment details, invoices, pause, cancellation, and renewal.'
+            {ready === true && environment === 'test'
+              ? 'Lemon Squeezy Test Mode is connected. The $19/month plan starts with a 30-day trial, uses dummy payment data, and charges $0 in this environment.'
+              : ready === true
+                ? 'Checkout and verified billing webhooks are configured. Paid subscribers can open Lemon Squeezy’s signed portal to manage payment details, invoices, pause, cancellation, and renewal.'
               : ready === false
                 ? 'External setup required: the canonical billing provider is not fully configured. Xroga will not invent subscription, payment, cancellation, or invoice state.'
                 : 'Billing configuration could not be verified. No successful billing state is being assumed.'}
@@ -50,7 +56,7 @@ export function SubscriptionManagePanel() {
             onClick={() => void openPortal()}
             className="mt-3 rounded-lg border border-[var(--card-border)] px-3 py-2 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {opening ? 'Opening…' : ready === true ? 'Manage subscription' : 'Billing portal unavailable'}
+            {opening ? 'Opening…' : ready === true ? environment === 'test' ? 'Manage test subscription' : 'Manage subscription' : 'Billing portal unavailable'}
           </button>
         </div>
       </div>
