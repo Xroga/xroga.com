@@ -70,6 +70,7 @@ jobs:
           name: production-launch-browser-evidence-${{ github.sha }}
           path: |
             frontend/test-results/command3-auth-evidence.json
+            frontend/test-results/lemon-webhook-diagnostic.json
             frontend/test-results/**/test-failed-*.png
           if-no-files-found: warn
           retention-days: 30
