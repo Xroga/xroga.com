@@ -289,7 +289,10 @@ export class BillingService {
 
     let response: Response;
     try {
-      const query = new URLSearchParams({ 'filter[product_id]': productId, 'filter[status]': 'published' });
+      // Retrieve every variant for the configured product, then enforce publication
+      // and the full Xroga plan contract locally. A provider-side published filter
+      // would collapse a real draft-plan mismatch into the less useful no_variant.
+      const query = new URLSearchParams({ 'filter[product_id]': productId });
       response = await fetch(`https://api.lemonsqueezy.com/v1/variants?${query}`, {
         headers: {
           Accept: 'application/vnd.api+json',
