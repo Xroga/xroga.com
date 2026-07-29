@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  assertLemonProductContract,
   assertLemonWebhookEnvironment,
   BillingService,
   derivePaidCycleEvidence,
@@ -77,6 +78,7 @@ test('selectLemonVariant accepts only the published $19 monthly 30-day Test Mode
     },
   };
   assert.equal(selectLemonVariant({ data: [valid] }, '1231656', 'test'), '456');
+  assert.equal(selectLemonVariant({ data: [{ ...valid, attributes: { ...valid.attributes, status: 'pending' } }] }, '1231656', 'test'), '456');
   assert.throws(
     () => selectLemonVariant({ data: [{ ...valid, attributes: { ...valid.attributes, test_mode: false } }] }, '1231656', 'test'),
     /environment/,
@@ -91,6 +93,23 @@ test('selectLemonVariant accepts only the published $19 monthly 30-day Test Mode
   );
   assert.throws(() => selectLemonVariant({ data: [] }, '1231656', 'test'), /no_variant/);
   assert.throws(() => selectLemonVariant({ data: [valid, valid] }, '1231656', 'test'), /duplicate_match/);
+  assert.throws(
+    () => selectLemonVariant({ data: [
+      { ...valid, attributes: { ...valid.attributes, status: 'pending' } },
+      { ...valid, id: '457', attributes: { ...valid.attributes, status: 'draft' } },
+    ] }, '1231656', 'test'),
+    /publication/,
+  );
+});
+
+test('the product itself must be published in the configured Test Mode store', () => {
+  const product = { data: { id: '1231656', attributes: { store_id: 217480, status: 'published', test_mode: true } } };
+  assert.doesNotThrow(() => assertLemonProductContract(product, '1231656', '217480', 'test'));
+  assert.throws(
+    () => assertLemonProductContract({ data: { ...product.data, attributes: { ...product.data.attributes, status: 'draft' } } }, '1231656', '217480', 'test'),
+    /product_publication/,
+  );
+  assert.throws(() => assertLemonProductContract(product, '1231656', '999', 'test'), /product_store/);
 });
 
 test('checkout discovers and verifies the configured product variant when no variant ID is stored', async (t) => {
@@ -110,6 +129,12 @@ test('checkout discovers and verifies the configured product variant when no var
   process.env.LEMONSQUEEZY_MODE = 'test';
   globalThis.fetch = (async (input, init) => {
     requested.push(String(input));
+    if (String(input).includes('/v1/products/987654')) {
+      return new Response(JSON.stringify({ data: {
+        id: '987654',
+        attributes: { store_id: 217480, status: 'published', test_mode: true },
+      } }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
     if (String(input).includes('/v1/variants?')) {
       return new Response(JSON.stringify({ data: [{
         id: '456',
@@ -149,8 +174,9 @@ test('checkout discovers and verifies the configured product variant when no var
 
   const checkout = await BillingService.createCheckout('00000000-0000-0000-0000-000000000002', 'spark');
   assert.equal(checkout.priceId, '456');
-  assert.equal(requested.length, 2);
-  assert.match(requested[0], /filter%5Bproduct_id%5D=987654/);
+  assert.equal(requested.length, 3);
+  assert.match(requested[0], /\/products\/987654/);
+  assert.match(requested[1], /filter%5Bproduct_id%5D=987654/);
 });
 
 test('Test Mode checkout is explicit, keeps the trial, and never requests a live charge', async (t) => {
