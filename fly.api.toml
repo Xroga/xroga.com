@@ -14,6 +14,8 @@ primary_region = 'iad'
   FRONTEND_URL = 'https://xroga.com'
   GITHUB_OAUTH_CALLBACK_URL = 'https://xroga.com/dashboard/integrations/github/callback'
   LEMONSQUEEZY_MODE = 'test'
+  LEMONSQUEEZY_STORE_ID = '217480'
+  LEMONSQUEEZY_PRODUCT_SPARK = '1231656'
 
 [processes]
   app = 'node dist/index.js'
