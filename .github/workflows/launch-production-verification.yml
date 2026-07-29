@@ -21,7 +21,7 @@ jobs:
       EXPECTED_RELEASE_SHA: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -54,7 +54,7 @@ jobs:
         run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/launch-public.spec.ts
       - name: Upload redacted production evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: production-launch-browser-evidence-${{ github.sha }}
           path: |
