@@ -1,4 +1,4 @@
-import { CalendarClock, CheckCircle2, Gauge, ShieldCheck } from 'lucide-react';
+import { CalendarClock, CheckCircle2, Gauge, ShieldCheck, Sparkles } from 'lucide-react';
 
 const PACING = [
   {
@@ -22,18 +22,27 @@ export function HomepageBlackHolePower() {
   return (
     <section className="xv-hc-power" aria-labelledby="capacity-heading">
       <div className="xv-hc-power-inner">
-        <p className="xv-hc-pixel-kicker">ONE XROGA AI PLAN</p>
-        <h2 className="xv-hc-section-title" id="capacity-heading">
-          Capacity designed to <em>finish work.</em>
-        </h2>
-        <p className="xv-hc-section-copy">
+        <div className="xv-hc-plan-heading">
+          <div>
+            <p className="xv-hc-pixel-kicker">ONE XROGA AI PLAN</p>
+            <h2 className="xv-hc-section-title" id="capacity-heading">
+              Capacity designed to <em>finish work.</em>
+            </h2>
+          </div>
+          <span className="xv-hc-plan-orbit" aria-hidden><Sparkles /></span>
+        </div>
+        <p className="xv-hc-section-copy xv-hc-plan-copy">
           No model picker, provider balances, artificial credits, fixed message limit, or guaranteed token total. Xroga routes the work and shows real capacity, unlocks, and reset timing.
         </p>
 
+        <div className="xv-hc-capacity-flow" aria-label="Capacity protection flow">
+          <span>30-day cycle</span><i aria-hidden /><span>Complex work</span><i aria-hidden /><span>Protected completion</span>
+        </div>
+
         <div className="grid gap-4 md:grid-cols-3 mt-8">
           {PACING.map(({ Icon, title, body }) => (
-            <article key={title} className="glass-panel rounded-2xl border border-[var(--card-border)] p-5">
-              <Icon className="w-5 h-5 text-[var(--accent)] mb-3" aria-hidden />
+            <article key={title} className="xv-hc-plan-card glass-panel rounded-2xl border border-[var(--card-border)] p-5">
+              <span className="xv-hc-plan-icon"><Icon className="w-5 h-5" aria-hidden /></span>
               <h3 className="font-semibold">{title}</h3>
               <p className="text-sm text-[var(--muted)] mt-2 leading-relaxed">{body}</p>
             </article>

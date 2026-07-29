@@ -11,6 +11,8 @@ import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpris
 import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
 import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
+import { HomepageCompanionStage } from '@/components/companion/CompanionSurfaces';
+import { HomepageThemeSwitcher } from '@/components/companion/HomepageThemeSwitcher';
 
 const FOOTER_LINKS = [
   { href: '/features', label: 'Features' },
@@ -109,6 +111,7 @@ export default function HomePage() {
             <Logo href="/" variant="homepage" height={64} className="shrink-0" />
             {authReady && (
               <div className="flex items-center gap-2">
+                <HomepageThemeSwitcher />
                 {!loggedIn && (
                   <Link href="/auth/login" className="xv-hc-btn-ghost !min-h-[2.4rem] !px-4 !text-[0.7rem]">
                     Sign In
@@ -164,6 +167,7 @@ export default function HomePage() {
           </div>
 
           <div className="xv-hc-chat xv-home-chatbar-wrap">
+            <HomepageCompanionStage />
             <HomepageChatBar />
           </div>
         </div>

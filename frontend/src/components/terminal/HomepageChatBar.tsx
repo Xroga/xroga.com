@@ -7,6 +7,8 @@ import { PENDING_PROMPT_KEY } from '@/lib/constants';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
 import { ChatBarShipIcon, type SendButtonState } from './ChatBarShipIcon';
+import { createClient } from '@/lib/supabase/client';
+import { dispatchCompanionEvent } from '@/lib/companion';
 
 const TYPEWRITER_FEATURES = [
   'Build a website or web app — ship to GitHub + Vercel…',
@@ -78,17 +80,30 @@ export function HomepageChatBar() {
     el.style.height = `${Math.min(el.scrollHeight, 110)}px`;
   }, [prompt]);
 
+  useEffect(() => {
+    const onCompanionAsk = (event: Event) => {
+      const text = (event as CustomEvent<{ text?: string }>).detail?.text?.trim() ?? '';
+      if (text) setPrompt(text);
+      window.setTimeout(() => textareaRef.current?.focus(), 50);
+    };
+    window.addEventListener('xroga:companion-ask', onCompanionAsk);
+    return () => window.removeEventListener('xroga:companion-ask', onCompanionAsk);
+  }, []);
+
   const handleSubmit = useCallback(
-    (e?: React.FormEvent) => {
+    async (e?: React.FormEvent) => {
       e?.preventDefault();
       if (composingRef.current || sending) return;
       const text = autocorrectText((textareaRef.current?.value ?? prompt).trim());
       setSending(true);
       setSendState('sending');
       localStorage.setItem(PENDING_PROMPT_KEY, text || 'Build a web app with Xroga AI');
+      dispatchCompanionEvent({ type: 'prompt_submitted', message: 'Your prompt is ready for the authenticated Xroga workspace.', source: 'runtime' });
       setTimeout(() => {
-        setSendState('launched');
-        router.push('/auth/signup');
+        void createClient().auth.getSession().then(({ data }) => {
+          setSendState('launched');
+          router.push(data.session ? '/workspace' : '/auth/signup');
+        }).catch(() => router.push('/auth/signup'));
       }, 700);
     },
     [prompt, router, sending]
@@ -117,7 +132,10 @@ export function HomepageChatBar() {
                   composingRef.current = false;
                   setPrompt(e.currentTarget.value);
                 }}
-                onFocus={() => setFocused(true)}
+                onFocus={() => {
+                  setFocused(true);
+                  dispatchCompanionEvent({ type: 'composer_focused', source: 'runtime' });
+                }}
                 onBlur={() => setFocused(false)}
                 onKeyDown={(e) => {
                   if (composingRef.current || (e.nativeEvent as KeyboardEvent).isComposing) return;

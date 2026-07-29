@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { api, type Profile } from '@/lib/api';
@@ -27,7 +28,12 @@ import {
   showBuildBrowserNotification,
 } from '@/lib/buildBrowserNotify';
 
-const TABS = ['General', 'Privacy', 'Data & AI', 'Plan & Usage', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
+const CompanionCustomizer = dynamic(
+  () => import('@/components/companion/CompanionCustomizer').then((module) => module.CompanionCustomizer),
+  { loading: () => <Skeleton height={280} borderRadius={16} /> },
+);
+
+const TABS = ['General', 'Companion', 'Privacy', 'Data & AI', 'Plan & Usage', 'Integrations', 'Security', 'Notifications', 'Theme'] as const;
 type Tab = (typeof TABS)[number];
 
 function tabFromQuery(raw: string | null): Tab | null {
@@ -38,6 +44,7 @@ function tabFromQuery(raw: string | null): Tab | null {
   if (q.includes('notif')) return 'Notifications';
   if (q.includes('integrat')) return 'Integrations';
   if (q.includes('theme')) return 'Theme';
+  if (q.includes('companion')) return 'Companion';
   if (q.includes('privacy')) return 'Privacy';
   if (q.includes('data')) return 'Data & AI';
   if (q.includes('general')) return 'General';
@@ -381,6 +388,7 @@ export function SettingsView({ email }: { email: string }) {
                   </button>
                 </form>
               )}
+              {tab === 'Companion' && <CompanionCustomizer />}
 
               {tab === 'Privacy' && <PrivacySettingsPanel />}
               {tab === 'Data & AI' && <DataAiSettingsPanel email={email} />}

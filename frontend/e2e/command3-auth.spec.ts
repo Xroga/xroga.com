@@ -4,7 +4,6 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const backendUrl = process.env.E2E_BACKEND_URL ?? 'http://127.0.0.1:4000';
 const expectedRelease = process.env.EXPECTED_RELEASE_SHA?.trim() ?? '';
@@ -285,6 +284,18 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const refreshedSession = await browserSession(page);
   expect(refreshedSession).toEqual({ status: 200, authenticated: true });
 
+  await page.goto('/workspace');
+  const companion = page.getByTestId('xroga-companion-composer');
+  await expect(companion).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
+  const canonicalComposer = page.locator('.xv-terminal-dock');
+  for (const removedChip of ['Website', 'Chatbot', 'SaaS', 'Mobile', 'Extension', 'Desktop']) {
+    await expect(canonicalComposer.getByRole('button', { name: removedChip, exact: true })).toHaveCount(0);
+  }
+  await companion.getByRole('button', { name: /Open .*Xroga companion/ }).click();
+  await expect(page.getByRole('region', { name: /companion panel/ })).toContainText(/real workspace event|Deterministic companion status/i);
+  await page.getByRole('button', { name: 'Close companion panel' }).click();
+
   const routeChecks = [
     '/workspace',
     '/dashboard',
@@ -465,6 +476,24 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     billingEntitlementEndsAt = paidEntitlement.endsAt ?? null;
     billingTransaction = 'verified_test_mode_webhook';
   }
+  await page.goto('/settings?tab=companion');
+  await expect(page.getByRole('heading', { name: 'Make the companion yours' })).toBeVisible();
+  const companionName = page.getByLabel('Companion name');
+  await companionName.fill(`Xo-${run.slice(0, 6)}`);
+  await companionName.blur();
+  await page.waitForTimeout(1_300);
+  await page.reload();
+  await expect(page.getByLabel('Companion name')).toHaveValue(`Xo-${run.slice(0, 6)}`);
+  let companionProfilePersistence: 'verified_local_pr' | 'verified_server' = 'verified_local_pr';
+  // PR checks intentionally dry-run migrations. The production launch workflow
+  // runs after main applies the migration and independently verifies durable state.
+  if (launchBillingApiUrl) {
+    const storedProfile = await admin.from('profiles').select('companion_preferences').eq('id', ownerId).single();
+    expect(storedProfile.error).toBeNull();
+    expect((storedProfile.data?.companion_preferences as { name?: string } | null)?.name).toBe(`Xo-${run.slice(0, 6)}`);
+    companionProfilePersistence = 'verified_server';
+  }
+
   await page.goto('/settings');
   await page.getByRole('button', { name: 'Security' }).click();
   await page.getByRole('button', { name: 'Logout' }).first().click();
@@ -473,5 +502,5 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
-  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction, billingMode: billingTransaction === 'verified_test_mode_webhook' ? 'test' : 'not_verified', initialRealCharge: billingTransaction === 'verified_test_mode_webhook' ? 0 : null, testPaymentInstrument, billingSubmissionMethod, billingEntitlementEndsAt, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, and billing cycles cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
+  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, companionComposer: 'verified', canonicalComposerProductChips: 'removed', canonicalComposerMicrophone: 'removed', companionProfilePersistence, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction, billingMode: billingTransaction === 'verified_test_mode_webhook' ? 'test' : 'not_verified', initialRealCharge: billingTransaction === 'verified_test_mode_webhook' ? 0 : null, testPaymentInstrument, billingSubmissionMethod, billingEntitlementEndsAt, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, billing cycles, and companion preferences cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });

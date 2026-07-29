@@ -49,7 +49,7 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
           <span className="xv-tagline-accent">last</span> model you will ever need.
         </p>
         <p className="text-xs text-[var(--muted)]">
-          Start with Website, SaaS, Mobile, Extension, or Desktop — chips also sit above the chatbar.
+          Start with Website, SaaS, Mobile, Extension, or Desktop here, then continue in the single Workspace composer.
         </p>
       </div>
 

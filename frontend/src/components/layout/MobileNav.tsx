@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Activity, FolderGit2, Gauge, LayoutDashboard, Link2, Rocket, Settings, Terminal, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { AnimatedNavIcon } from './AnimatedNavIcon';
 
 const items = [
   { href: '/workspace', label: 'Workspace', icon: Terminal },
@@ -29,7 +30,7 @@ export function MobileNav() {
           const active = pathname === path || (path !== '/dashboard' && pathname.startsWith(path));
           return (
             <Link key={href} href={href} aria-current={active ? 'page' : undefined} className={cn('flex shrink-0 flex-col items-center gap-0.5 px-2 py-1 rounded-lg text-[9px] transition-colors min-w-[66px]', active ? 'text-[var(--accent)] bg-[var(--accent-dim)]' : 'text-[var(--muted)]')}>
-              <Icon className="w-4 h-4" aria-hidden="true" />
+              <AnimatedNavIcon Icon={Icon} />
               <span>{label}</span>
             </Link>
           );

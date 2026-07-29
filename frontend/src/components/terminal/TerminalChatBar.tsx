@@ -23,6 +23,7 @@ import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { dispatchCompanionEvent } from '@/lib/companion';
 import toast from 'react-hot-toast';
 import { checkRepoWorkspaceReady } from '@/lib/repoWorkspaceGate';
 import { ensureSelectedRepoFolder } from '@/lib/repoSessionsIndex';
@@ -150,6 +151,21 @@ export function TerminalChatBar() {
     return () => window.removeEventListener('xroga-request-new-terminal', onNewTerminal);
   }, [incognito]);
 
+  useEffect(() => {
+    const onCompanionAsk = (event: Event) => {
+      const text = (event as CustomEvent<{ text?: string }>).detail?.text?.trim() ?? '';
+      if (text) {
+        setDraft(text);
+        draftRef.current = text;
+        setPrompt(text);
+        lastExternalPrompt.current = text;
+      }
+      window.setTimeout(() => textareaRef.current?.focus(), 80);
+    };
+    window.addEventListener('xroga:companion-ask', onCompanionAsk);
+    return () => window.removeEventListener('xroga:companion-ask', onCompanionAsk);
+  }, [setPrompt]);
+
   async function ensureRepoWorkspace(promptText?: string): Promise<boolean> {
     if (incognito) return true;
     // Sandbox website/landing/chatbot/crypto builds must not be blocked by a flaky GitHub status
@@ -212,6 +228,8 @@ export function TerminalChatBar() {
       setSendState('idle');
       return;
     }
+
+    dispatchCompanionEvent({ type: 'prompt_submitted', message: 'Xroga accepted your prompt and is preparing the real execution route.', source: 'runtime' });
 
     if (loading && !interrupt) {
       await submit(text, false, false);
@@ -410,19 +428,28 @@ export function TerminalChatBar() {
               <ChatBarToolChip
                 icon={<Search className="w-3.5 h-3.5" />}
                 label="Integrations"
-                onClick={() => setIntegrationsOpen(true)}
+                onClick={() => {
+                  dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your authorised integrations.', source: 'runtime' });
+                  setIntegrationsOpen(true);
+                }}
                 accent="#006aff"
               />
             </ChatBarTip>
             <ChatBarTip label="GitHub repos" className="shrink-0">
               <span className="inline-flex shrink-0 lg:hidden">
-                <ChatBarBrandChip variant="github" label="GitHub" onClick={() => setGithubOpen(true)} plain darkUi={darkUi} connected={githubConnected} />
+                <ChatBarBrandChip variant="github" label="GitHub" onClick={() => {
+                  dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening the connected GitHub repository picker.', source: 'runtime' });
+                  setGithubOpen(true);
+                }} plain darkUi={darkUi} connected={githubConnected} />
               </span>
               <span className="hidden lg:inline-flex shrink-0">
                 <ChatBarToolChip
                   icon={<GitHubChipIcon />}
                   label="GitHub"
-                  onClick={() => setGithubOpen(true)}
+                  onClick={() => {
+                    dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening the connected GitHub repository picker.', source: 'runtime' });
+                    setGithubOpen(true);
+                  }}
                   accent="#24292f"
                   connected={githubConnected}
                 />
@@ -430,13 +457,19 @@ export function TerminalChatBar() {
             </ChatBarTip>
             <ChatBarTip label="Vercel" className="shrink-0">
               <span className="inline-flex shrink-0 lg:hidden">
-                <ChatBarBrandChip variant="vercel" label="Vercel" onClick={() => setIntegrationsOpen(true)} plain darkUi={darkUi} connected={vercelConnected} />
+                <ChatBarBrandChip variant="vercel" label="Vercel" onClick={() => {
+                  dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your Vercel integration settings.', source: 'runtime' });
+                  setIntegrationsOpen(true);
+                }} plain darkUi={darkUi} connected={vercelConnected} />
               </span>
               <span className="hidden lg:inline-flex shrink-0">
                 <ChatBarToolChip
                   icon={<VercelChipIcon />}
                   label="Vercel"
-                  onClick={() => setIntegrationsOpen(true)}
+                  onClick={() => {
+                    dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your Vercel integration settings.', source: 'runtime' });
+                    setIntegrationsOpen(true);
+                  }}
                   accent="#000"
                   connected={vercelConnected}
                 />
@@ -462,13 +495,7 @@ export function TerminalChatBar() {
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
               hideUpload={incognito}
-              hideMicrophone={incognito}
-              onTranscript={(transcript) => {
-                const next = `${draftRef.current}${draftRef.current ? ' ' : ''}${transcript}`;
-                setDraft(next);
-                draftRef.current = next;
-                textareaRef.current?.focus();
-              }}
+              hideMicrophone
               surface={incognito ? 'incognito' : 'dashboard'}
               compactGo={!!draft.trim()}
               sendState={sendState}
@@ -491,6 +518,7 @@ export function TerminalChatBar() {
                   setDraft(next);
                   draftRef.current = next;
                 }}
+                onFocus={() => dispatchCompanionEvent({ type: 'composer_focused', source: 'runtime' })}
                 onCompositionStart={() => {
                   composingRef.current = true;
                 }}
