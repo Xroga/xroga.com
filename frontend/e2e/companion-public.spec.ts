@@ -39,7 +39,9 @@ test('public X-companion, themes, plan story, and accessibility are connected', 
   await page.getByRole('button', { name: 'Voice input' }).click();
   await expect(page.getByLabel('Ask through Xroga workspace')).toHaveValue('Build a voice accessible portfolio');
   await page.getByRole('button', { name: 'Move question to Xroga workspace' }).click();
-  await expect(page.getByLabel('Describe what you want to build')).toHaveValue('Build a voice accessible portfolio');
+  const homepageComposer = page.getByLabel('Describe what you want to build');
+  await expect(homepageComposer).toHaveValue('Build a voice accessible portfolio');
+  await expect(homepageComposer).toBeFocused();
 
   await page.evaluate(() => window.dispatchEvent(new CustomEvent('xroga:companion-event', {
     detail: { type: 'runtime_progress', operation: 'testing', message: 'Running the real validation command', source: 'runtime' },
