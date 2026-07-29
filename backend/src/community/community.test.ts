@@ -10,6 +10,7 @@ import {
 import { canPermanentlyDelete, canUseOfficialIdentity, isCommunityStaff } from './types.js';
 
 const migration = readFileSync(new URL('../../../supabase/migrations/20260729192159_community_platform.sql', import.meta.url), 'utf8');
+const publicReadPolicyMigration = readFileSync(new URL('../../../supabase/migrations/20260730020500_community_split_public_read_policies.sql', import.meta.url), 'utf8');
 
 test('community post validation enforces category and content bounds', () => {
   assert.equal(createCommunityPostSchema.safeParse({ category: 'bug', title: 'Valid title', body: 'A reproducible bug report.' }).success, true);
@@ -65,6 +66,14 @@ test('public policy excludes hidden content and notes remain staff-only', () => 
   assert.match(migration, /Community comments are publicly readable[\s\S]*not is_hidden/);
   assert.match(migration, /Community staff read admin notes/);
   assert.doesNotMatch(migration, /admin notes are publicly readable/);
+});
+
+test('anonymous reads never depend on staff-only helper execution', () => {
+  assert.match(publicReadPolicyMigration, /to anon\s+using \(not is_hidden\)/);
+  assert.match(publicReadPolicyMigration, /Visible community comments are publicly readable[\s\S]*to anon/);
+  const anonymousPolicies = [...publicReadPolicyMigration.matchAll(/create policy "Visible community [^"]+"([\s\S]*?);/g)].map((match) => match[1]).join('\n');
+  assert.doesNotMatch(anonymousPolicies, /community_private\.is_staff/);
+  assert.match(publicReadPolicyMigration, /to authenticated[\s\S]*community_private\.is_staff/);
 });
 
 test('profile grants expose only public identity and deny browser role writes', () => {
