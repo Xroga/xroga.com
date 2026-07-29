@@ -40,8 +40,20 @@ for (const path of privatePaths) {
   } catch (error) { problems.push(`${path}: private-route check failed (${error instanceof Error ? error.message : 'network error'})`); }
 }
 
-for (const path of ['/robots.txt', '/sitemap.xml', '/llms.txt']) {
-  try { const response = await fetch(`${base}${path}`, { signal: AbortSignal.timeout(15_000) }); if (!response.ok) problems.push(`${path}: HTTP ${response.status}`); }
+const discoveryFiles = [
+  { path: '/robots.txt', contentType: 'text/plain', required: /Sitemap:\s*https:\/\/xroga\.com\/sitemap\.xml/i },
+  { path: '/sitemap.xml', contentType: 'application/xml', required: /<urlset\b/i },
+  { path: '/llms.txt', contentType: 'text/plain', required: /# Xroga AI/i },
+];
+for (const { path, contentType, required } of discoveryFiles) {
+  try {
+    const response = await fetch(`${base}${path}`, { redirect: 'manual', signal: AbortSignal.timeout(15_000) });
+    const body = await response.text();
+    if (!response.ok) problems.push(`${path}: HTTP ${response.status}`);
+    if (response.status >= 300 && response.status < 400) problems.push(`${path}: redirects to ${response.headers.get('location') || 'an unknown location'}`);
+    if (!response.headers.get('content-type')?.toLowerCase().includes(contentType)) problems.push(`${path}: expected ${contentType} response`);
+    if (!required.test(body)) problems.push(`${path}: expected discovery content is missing`);
+  }
   catch { problems.push(`${path}: unavailable`); }
 }
 

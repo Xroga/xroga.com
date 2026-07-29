@@ -15,6 +15,7 @@ test('keeps public and authentication routes available', () => {
     '/auth/login',
     '/robots.txt',
     '/sitemap.xml',
+    '/llms.txt',
     '/api/session',
     '/api/release',
   ]) {
