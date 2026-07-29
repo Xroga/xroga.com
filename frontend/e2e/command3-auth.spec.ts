@@ -143,8 +143,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
       headers: { Authorization: browserBearer, 'Content-Type': 'application/json' },
       body: JSON.stringify({ planTier: 'spark' }),
     });
-    const checkout = await checkoutResponse.json() as { checkoutUrl?: string };
+    const checkout = await checkoutResponse.json() as { checkoutUrl?: string; priceId?: string };
     expect(checkoutResponse.status).toBe(200);
+    expect(checkout.priceId).toMatch(/^\d+$/);
     const checkoutUrl = new URL(checkout.checkoutUrl ?? '');
     expect(checkoutUrl.protocol).toBe('https:');
     expect(checkoutUrl.hostname === 'lemonsqueezy.com' || checkoutUrl.hostname.endsWith('.lemonsqueezy.com')).toBe(true);
