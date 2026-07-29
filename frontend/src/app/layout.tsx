@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import '@/styles/xroga-fonts.css';
 import '@/styles/uiverse.css';
+import '@/styles/companion.css';
 import { buildMetadata, FAVICON_URL, FAVICON_LOCAL } from '@/lib/seo';
 import { RootProviders } from '@/components/providers/RootProviders';
 import { SiteJsonLd } from '@/components/seo/SiteJsonLd';

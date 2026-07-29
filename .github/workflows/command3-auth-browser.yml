@@ -88,7 +88,7 @@ jobs:
         working-directory: frontend
         # Invoke the test package's own CLI so npm's nested workspace install
         # cannot select the transitive playwright binary from another copy.
-        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts
+        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/companion-public.spec.ts
       - name: Upload redacted verification evidence
         if: always()
         uses: actions/upload-artifact@v5

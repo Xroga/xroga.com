@@ -62,7 +62,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Verify exact production release, authentication, and tenant isolation
         working-directory: frontend
-        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/launch-public.spec.ts
+        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/launch-public.spec.ts e2e/companion-public.spec.ts
       - name: Upload redacted production evidence
         if: always()
         uses: actions/upload-artifact@v5

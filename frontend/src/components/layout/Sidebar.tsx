@@ -42,6 +42,7 @@ import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
+import { AnimatedNavIcon } from './AnimatedNavIcon';
 
 const navItems = [
   {
@@ -338,7 +339,7 @@ export function Sidebar({ displayName }: SidebarProps) {
             {navItems.map(({ href, label, icon: Icon, tip }) => (
               <SidebarTip key={href} label={label} description={tip}>
                 <Link href={href} onClick={handleNavClick} className={cn(isActive(href) && 'xv-active')}>
-                  <Icon className="w-4 h-4 shrink-0" />
+                  <AnimatedNavIcon Icon={Icon} className="shrink-0" />
                   <span>{label}</span>
                 </Link>
               </SidebarTip>
@@ -353,7 +354,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                   onClick={handleNavClick}
                   className={cn('xv-sidebar-icon-link', isActive(href) && 'xv-active')}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
+                  <AnimatedNavIcon Icon={Icon} className="shrink-0" />
                 </Link>
               </SidebarTip>
             ))}

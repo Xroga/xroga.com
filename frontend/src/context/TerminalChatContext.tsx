@@ -67,6 +67,7 @@ import {
   sanitizeXrogaTerminalText,
 } from '@/lib/xrogaBrand';
 import { addPendingBuildJob, removePendingBuildJob } from '@/lib/pendingBuildJobs';
+import { dispatchCompanionEvent, operationFromProgress } from '@/lib/companion';
 import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
 import { useBuildCompletionAlerts } from '@/hooks/useBuildCompletionAlerts';
 import { requestBuildNotificationPermission, showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
@@ -1776,6 +1777,14 @@ export function TerminalChatProvider({
             const layer = (event as { councilLayer?: 'elite' | 'reserve' | 'blackhole' }).councilLayer;
             if (layer) setCouncilLayer(layer);
             if (event.agent) setSwarmActiveAgent(event.agent);
+            if (!isKeepaliveLine) {
+              dispatchCompanionEvent({
+                type: 'runtime_progress',
+                operation: operationFromProgress(event.agent, label),
+                message: label || undefined,
+                source: 'runtime',
+              });
+            }
             // Prefer negotiationPhase so chips advance (userFacingPhase was often stuck at 1).
             const negPhase = swarmEv.negotiationPhase ?? swarmEv.userFacingPhase;
             const agentPhase =
@@ -2063,14 +2072,19 @@ export function TerminalChatProvider({
             const output = complete.output as Record<string, unknown> | undefined;
             const chatContent =
               output?.type === 'chat' && typeof output.content === 'string' ? output.content : '';
-            if (
+            const githubConnectionBlocked =
               requiresGitHubForBuild(displayPrompt) &&
               (isGitHubConnectRequiredText(chatContent) ||
-                complete.followUps?.some((f) => /connect github/i.test(f)))
-            ) {
+                complete.followUps?.some((f) => /connect github/i.test(f)));
+            if (githubConnectionBlocked) {
               handleGitHubBuildBlocked(displayPrompt, attachments);
             }
             if (output?.type === 'image_blocked') {
+              dispatchCompanionEvent({
+                type: 'task_warning',
+                message: 'Image generation requires attention before it can continue.',
+                source: 'runtime',
+              });
               buildHadVisibleResult = true;
               setMessages((m) =>
                 m.map((msg) =>
@@ -2090,6 +2104,11 @@ export function TerminalChatProvider({
               return;
             }
             if (output?.type === 'image' && typeof output.imageUrl === 'string') {
+              dispatchCompanionEvent({
+                type: 'task_success',
+                message: 'The requested image was generated.',
+                source: 'runtime',
+              });
               buildHadVisibleResult = true;
               setMessages((m) => {
                 const updated = m.map((msg) =>
@@ -2121,6 +2140,11 @@ export function TerminalChatProvider({
                 const failMsg =
                   '⚠️ **Build finished without a preview.** Tokens were used, but no HTML was returned. Tap Retry — we will ship a sandbox site from your prompt.';
                 fullReply = failMsg;
+                dispatchCompanionEvent({
+                  type: 'task_failure',
+                  message: 'The build ended without a valid preview.',
+                  source: 'runtime',
+                });
                 setMessages((m) =>
                   m.map((msg) =>
                     msg.id === assistantId
@@ -2514,6 +2538,36 @@ export function TerminalChatProvider({
             }
 
             const sessionReply = (fullReply || chatContent).trim();
+            const unsuccessfulBuildReply =
+              codeBuildActive &&
+              /build (?:could not|did not|ended without)|update interrupted|connection (?:lost|interrupted)/i.test(sessionReply);
+            if (githubConnectionBlocked) {
+              dispatchCompanionEvent({
+                type: 'task_warning',
+                message: 'GitHub authorisation is required before this build can finish.',
+                source: 'runtime',
+              });
+            } else if (unsuccessfulBuildReply) {
+              dispatchCompanionEvent({
+                type: 'task_failure',
+                message: 'The build did not complete successfully.',
+                source: 'runtime',
+              });
+            } else {
+              dispatchCompanionEvent({
+                type: 'task_success',
+                message: codeBuildActive ? 'Xroga completed the build execution.' : 'Xroga completed the response.',
+                source: 'runtime',
+              });
+            }
+            if (sessionReply && !githubConnectionBlocked && !unsuccessfulBuildReply) {
+              dispatchCompanionEvent({
+                type: 'assistant_response',
+                message: 'A real Xroga AI response is ready.',
+                assistantText: sessionReply,
+                source: 'ai',
+              });
+            }
             if (sessionReply && isPhase1BuildQuestion(sessionReply)) {
               const original =
                 [...messages]
@@ -2562,6 +2616,11 @@ export function TerminalChatProvider({
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
           if (interruptRef.current) {
+            dispatchCompanionEvent({
+              type: 'task_interrupted',
+              message: 'You stopped the current operation.',
+              source: 'runtime',
+            });
             interruptRef.current = false;
             cleanupInProgressAssistant();
             return;
@@ -2574,6 +2633,13 @@ export function TerminalChatProvider({
           const phaseSnapshot = snap.phase;
           const activitySnapshot = [...snap.activity].slice(-12);
           const original = lastTurnRef.current?.text || displayPrompt;
+          dispatchCompanionEvent({
+            type: wasStall ? 'task_failure' : 'task_interrupted',
+            message: wasStall
+              ? 'The build stalled and was safely stopped.'
+              : 'The build was stopped with progress preserved.',
+            source: 'runtime',
+          });
           const stallMessage =
             '⚠️ **Build stalled — no real progress.** Fake busy animations were stopped and further API calls were cancelled to protect your credits.\n\nTap **Retry** to continue, or start a new chat with a clearer prompt.';
           const userStopMessage =
@@ -2623,6 +2689,11 @@ export function TerminalChatProvider({
           return;
         }
         if (err instanceof ApiError && err.status === 402) {
+          dispatchCompanionEvent({
+            type: 'task_warning',
+            message: 'This account has reached its current plan capacity.',
+            source: 'runtime',
+          });
           setOutOfActionsOpen(true);
           setMessages((m) =>
             m.map((msg) =>
@@ -2638,6 +2709,11 @@ export function TerminalChatProvider({
           );
           return;
         }
+        dispatchCompanionEvent({
+          type: 'task_failure',
+          message: 'The current operation failed. Xroga preserved any valid work already produced.',
+          source: 'runtime',
+        });
         setMessages((m) => {
           const existing = m.find((msg) => msg.id === assistantId);
           const fo = existing?.featureOutput as { type?: string; html?: string } | undefined;

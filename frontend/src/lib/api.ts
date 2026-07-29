@@ -1242,6 +1242,7 @@ export interface Profile {
   avatar_url: string | null;
   timezone: string;
   language: string;
+  companion_preferences?: import('@/lib/companion').CompanionPreferences | null;
 }
 
 export interface Project {

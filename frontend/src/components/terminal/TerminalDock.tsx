@@ -6,7 +6,7 @@ import { TerminalChatBar } from './TerminalChatBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
 import { RepoContextBar } from './RepoContextBar';
 import { BlackHoleVButton } from './BlackHoleVButton';
-import { ProductStartChips } from './ProductStartChips';
+import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { ChevronDown } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -96,12 +96,8 @@ export function TerminalDock() {
               </div>
             )}
             <ChatbarQueueOutside />
-            {!incognito ? (
-              <div className="mb-1.5 px-0.5">
-                <ProductStartChips />
-              </div>
-            ) : null}
             <div className="xv-chatbar-stack relative">
+              {!incognito ? <CompanionComposerAnchor /> : null}
               <TerminalChatBar />
             </div>
           </div>

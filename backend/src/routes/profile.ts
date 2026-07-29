@@ -5,6 +5,21 @@ import type { AuthRequest } from '../middleware/auth.js';
 
 const router = Router();
 
+export const companionPreferencesSchema = z.object({
+  name: z.string().trim().min(1).max(24),
+  costume: z.enum(['core', 'builder', 'navigator']),
+  accent: z.enum(['blue', 'violet', 'cyan', 'emerald']),
+  size: z.enum(['compact', 'standard', 'large']),
+  dock: z.enum(['composer', 'corner']),
+  visible: z.boolean(),
+  voiceEnabled: z.boolean(),
+  careEnabled: z.boolean(),
+  reducedGamification: z.boolean(),
+  crownEnabled: z.boolean(),
+  mantleEnabled: z.boolean(),
+  lastFedAt: z.string().datetime().nullable(),
+}).strict();
+
 router.get('/', async (req: AuthRequest, res) => {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
@@ -26,7 +41,8 @@ router.patch('/', async (req: AuthRequest, res) => {
     avatar_url: z.union([z.string().url(), z.literal('')]).optional(),
     timezone: z.string().max(64).optional(),
     language: z.string().max(16).optional(),
-  });
+    companion_preferences: companionPreferencesSchema.optional(),
+  }).strict();
 
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) {
@@ -34,7 +50,7 @@ router.patch('/', async (req: AuthRequest, res) => {
     return;
   }
 
-  const patch: Record<string, string> = {};
+  const patch: Record<string, unknown> = {};
   if (parsed.data.display_name !== undefined) {
     patch.display_name = parsed.data.display_name.trim() || 'User';
   }
@@ -43,6 +59,9 @@ router.patch('/', async (req: AuthRequest, res) => {
   }
   if (parsed.data.timezone !== undefined) patch.timezone = parsed.data.timezone;
   if (parsed.data.language !== undefined) patch.language = parsed.data.language;
+  if (parsed.data.companion_preferences !== undefined) {
+    patch.companion_preferences = parsed.data.companion_preferences;
+  }
 
   if (!Object.keys(patch).length) {
     res.status(400).json({ error: 'No profile fields to update' });
