@@ -69,13 +69,13 @@ export interface CompanionRuntimeEvent {
 }
 
 export const DEFAULT_COMPANION_PREFERENCES: CompanionPreferences = {
-  name: 'Xo',
+  name: 'Smoky',
   costume: 'core',
   accent: 'blue',
   size: 'standard',
   dock: 'composer',
   visible: true,
-  voiceEnabled: false,
+  voiceEnabled: true,
   careEnabled: true,
   reducedGamification: false,
   crownEnabled: true,

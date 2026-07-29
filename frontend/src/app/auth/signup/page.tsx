@@ -4,7 +4,8 @@ import { buildMetadata } from '@/lib/seo';
 import { SignupForm } from '@/components/auth/SignupForm';
 import { AuthShell } from '@/components/auth/AuthShell';
 
-export const metadata: Metadata = buildMetadata({
+export const metadata: Metadata = {
+  ...buildMetadata({
   title: 'Sign Up Free — Create Your Xroga AI Account',
   description:
     'Create an Xroga AI account to build in a connected repository, validate changes, and publish through accounts you authorise.',
@@ -16,7 +17,9 @@ export const metadata: Metadata = buildMetadata({
     'create Xroga account',
     'AI website builder signup',
   ],
-});
+  }),
+  robots: { index: false, follow: false },
+};
 
 export default function SignupPage() {
   return (

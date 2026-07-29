@@ -3,17 +3,19 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { WandSparkles, Users, MessageCircleHeart, Sparkles } from 'lucide-react';
+import { WandSparkles, Users, MessageCircleHeart, Sparkles, ShieldCheck } from 'lucide-react';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { LogoutButton } from '@/components/ui/Uiverse';
+import { useAppStore } from '@/store/useAppStore';
+import { communityApi } from '@/lib/community';
 
 const ITEMS = [
   {
     key: 'community',
     label: 'Community',
-    desc: 'Discover builder creations — coming soon',
+    desc: 'Share ideas, questions, and working solutions',
     icon: Users,
-    href: '/dashboard/community',
+    href: '/community',
   },
   {
     key: 'feedback',
@@ -42,10 +44,18 @@ interface ProfileQuickMenuProps {
 export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps) {
   const [open, setOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [communityOpenCount, setCommunityOpenCount] = useState<number | null>(null);
   const [pos, setPos] = useState({ top: 0, left: 0 });
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const role = useAppStore((state) => state.profile?.role);
+  const canManageCommunity = role === 'moderator' || role === 'admin' || role === 'owner';
+
+  useEffect(() => {
+    if (!canManageCommunity) { setCommunityOpenCount(null); return; }
+    void communityApi.summary().then((value) => setCommunityOpenCount(typeof value.open === 'number' ? value.open : null)).catch(() => setCommunityOpenCount(null));
+  }, [canManageCommunity]);
 
   useLayoutEffect(() => {
     if (!open) return;
@@ -150,6 +160,14 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
                     );
                   })}
                 </ul>
+                {canManageCommunity && (
+                  <div className="border-t border-[var(--card-border)]/50 p-1.5">
+                    <button type="button" onClick={() => { setOpen(false); router.push('/admin/community'); }} className="flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2 text-left hover:bg-[var(--accent)]/10">
+                      <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
+                      <div className="min-w-0 flex-1"><p className="flex items-center justify-between gap-2 text-xs font-semibold"><span>Admin Dashboard</span>{communityOpenCount !== null && <span className="rounded-full bg-[var(--accent)] px-1.5 py-0.5 text-[9px] text-white" aria-label={`${communityOpenCount} open community posts`}>{communityOpenCount}</span>}</p><p className="text-[10px] text-[var(--muted)]">Manage community and official replies</p></div>
+                    </button>
+                  </div>
+                )}
                 {onLogout && (
                   <div className="p-2.5 border-t border-[var(--card-border)]/50">
                     <LogoutButton onClick={() => { setOpen(false); onLogout(); }} />

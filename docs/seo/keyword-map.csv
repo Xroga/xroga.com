@@ -1,0 +1,11 @@
+cluster,primary_intent,canonical_page,evidence_basis
+AI coding agent,commercial investigation,/ai-coding-agent,Current product capability and search-result language reviewed without numeric volume claims
+AI app builder,commercial investigation,/ai-app-builder,Distinct end-to-end application intent
+AI website builder,commercial investigation,/ai-website-builder,Distinct website and deployment intent
+build SaaS with AI,problem solution,/build-saas-with-ai,Multi-capability SaaS intent
+GitHub AI coding agent,integration intent,/github-ai-coding-agent,Repository and pull-request workflow intent
+Vercel AI deployment,integration intent,/vercel-ai-deployment,Production build and deployment intent
+crypto hackathon builder,project workflow,/crypto-hackathon-builder,Official ecosystem and organiser research
+Web3 hackathon winning patterns,research intent,/research/web3-hackathon-winning-patterns,Original transparent qualitative source analysis
+Xroga documentation,navigational,/docs,Product task and troubleshooting intent
+Xroga feedback,navigational,/community,Public product community intent

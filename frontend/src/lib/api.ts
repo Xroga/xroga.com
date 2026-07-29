@@ -1238,6 +1238,7 @@ export const api = {
 
 export interface Profile {
   id?: string;
+  role?: 'member' | 'moderator' | 'admin' | 'owner' | 'user';
   display_name: string | null;
   avatar_url: string | null;
   timezone: string;

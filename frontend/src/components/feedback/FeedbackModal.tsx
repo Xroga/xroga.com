@@ -1,26 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Send, Sparkles } from 'lucide-react';
-import { addFeedback } from '@/lib/feedbackStorage';
-import { markFeedbackSubmitted } from '@/lib/scheduledFeedback';
-import { cn } from '@/lib/utils';
-import toast from 'react-hot-toast';
+import { CheckCircle2, Send, X } from 'lucide-react';
+import { communityApi, communityCategoryLabel, type CommunityCategory } from '@/lib/community';
 
-const RATING_OPTIONS = [
-  { label: 'Amazing', pct: 100 },
-  { label: 'Good', pct: 70 },
-  { label: 'Okay', pct: 50 },
-  { label: 'Weak', pct: 25 },
-  { label: 'Poor', pct: 0 },
-] as const;
+const DRAFT_KEY = 'xroga-community-draft';
+const categories = Object.entries(communityCategoryLabel) as Array<[CommunityCategory, string]>;
 
-const CHECKBOX_OPTIONS = [
-  { id: 'ui', label: 'UI / UX needs work' },
-  { id: 'ai', label: 'AI responses feel weak or off' },
-  { id: 'speed', label: 'Too slow or buggy' },
-] as const;
+interface Draft {
+  category: CommunityCategory;
+  title: string;
+  body: string;
+}
 
 interface FeedbackModalProps {
   open: boolean;
@@ -28,114 +21,126 @@ interface FeedbackModalProps {
 }
 
 export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
-  const [selected, setSelected] = useState(1);
-  const [checks, setChecks] = useState<Record<string, boolean>>({});
-  const [message, setMessage] = useState('');
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
+  const [draft, setDraft] = useState<Draft>({ category: 'feedback', title: '', body: '' });
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [publishedId, setPublishedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const stored = window.sessionStorage.getItem(DRAFT_KEY);
+    if (stored) {
+      try {
+        const value = JSON.parse(stored) as Partial<Draft>;
+        setDraft({
+          category: categories.some(([key]) => key === value.category) ? value.category as CommunityCategory : 'feedback',
+          title: typeof value.title === 'string' ? value.title : '',
+          body: typeof value.body === 'string' ? value.body : '',
+        });
+      } catch {
+        window.sessionStorage.removeItem(DRAFT_KEY);
+      }
+    }
+    window.setTimeout(() => titleRef.current?.focus(), 0);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape' && !submitting) onClose();
+      if (event.key !== 'Tab') return;
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]), input, select, textarea, a[href]');
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [onClose, open, submitting]);
 
   if (!open || typeof document === 'undefined') return null;
 
-  const rating = RATING_OPTIONS[selected];
-
-  function toggleCheck(id: string) {
-    setChecks((prev) => ({ ...prev, [id]: !prev[id] }));
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const tags = CHECKBOX_OPTIONS.filter((c) => checks[c.id]).map((c) => c.label);
-    if (!message.trim() && tags.length === 0) {
-      toast.error('Pick a rating or leave a quick note');
+  async function publish(event: React.FormEvent) {
+    event.preventDefault();
+    setError('');
+    if (draft.title.trim().length < 5 || draft.title.trim().length > 150) {
+      setError('Title must be between 5 and 150 characters.');
+      return;
+    }
+    if (draft.body.trim().length < 10 || draft.body.trim().length > 5000) {
+      setError('Message must be between 10 and 5,000 characters.');
       return;
     }
     setSubmitting(true);
-    addFeedback({
-      emoji: `${rating.pct}%`,
-      rating: Math.max(1, Math.round(rating.pct / 20)),
-      experience: [message.trim(), tags.length ? `Tags: ${tags.join(', ')}` : ''].filter(Boolean).join(' | '),
-      featuresWanted: '',
-      author: 'You',
-    });
-    markFeedbackSubmitted();
-    toast.success('Thanks for the feedback!');
-    setMessage('');
-    setChecks({});
-    setSubmitting(false);
-    onClose();
+    try {
+      const { post } = await communityApi.createPost({ ...draft, title: draft.title.trim(), body: draft.body.trim() });
+      window.sessionStorage.removeItem(DRAFT_KEY);
+      setPublishedId(post.id);
+    } catch (reason) {
+      const status = typeof reason === 'object' && reason && 'status' in reason ? Number(reason.status) : 0;
+      if (status === 401) {
+        window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+        window.location.assign('/auth/login?next=%2Fcommunity%3Fcompose%3D1');
+        return;
+      }
+      setError(reason instanceof Error ? reason.message : 'Your post could not be published.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return createPortal(
-    <>
-      <div className="fixed inset-0 z-[400] bg-black/50 backdrop-blur-sm" onClick={onClose} aria-hidden />
-      <div
-        className="fixed z-[410] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(380px,calc(100vw-24px))] rounded-3xl border border-[#006aff]/25 bg-gradient-to-br from-white via-sky-50 to-blue-50 shadow-[0_24px_64px_rgba(0,106,255,0.2)] overflow-hidden"
-        role="dialog"
-      >
-        <div className="h-1 bg-gradient-to-r from-[#006aff] via-[#60a5fa] to-[#006aff]" />
-        <div className="p-5">
-          <div className="flex items-start justify-between gap-2 mb-4">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-[#006aff]" />
-              <h2 className="font-bold text-lg text-slate-900">Quick feedback</h2>
+    <div className="fixed inset-0 z-[500] grid place-items-center bg-slate-950/70 p-3 backdrop-blur-sm" onMouseDown={(event) => event.target === event.currentTarget && !submitting && onClose()}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="community-modal-title" className="w-full max-w-xl overflow-hidden rounded-3xl border border-cyan-400/20 bg-[var(--card)] text-[var(--foreground)] shadow-[0_32px_100px_rgba(0,0,0,.45)]">
+        <div className="h-1 bg-gradient-to-r from-[#006aff] via-cyan-400 to-violet-500" />
+        <div className="p-5 sm:p-7">
+          <div className="mb-5 flex items-start justify-between gap-4">
+            <div>
+              <h2 id="community-modal-title" className="text-xl font-black tracking-tight">Post to Xroga Community</h2>
+              <p className="mt-1 text-sm text-[var(--muted)]">Your post will be publicly visible in the Xroga Community.</p>
             </div>
-            <button type="button" onClick={onClose} className="p-1 rounded-lg hover:bg-black/5 text-slate-500">
-              <X className="w-4 h-4" />
-            </button>
+            <button type="button" onClick={onClose} disabled={submitting} aria-label="Close community post dialog" className="rounded-xl p-2 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-50"><X className="h-5 w-5" /></button>
           </div>
 
-          <div className="grid grid-cols-5 gap-1.5 mb-4">
-            {RATING_OPTIONS.map((m, i) => (
-              <button
-                key={m.pct}
-                type="button"
-                onClick={() => setSelected(i)}
-                className={cn(
-                  'flex flex-col items-center gap-0.5 py-2 rounded-xl border border-slate-200 transition-all hover:border-[#006aff]/40',
-                  selected === i && 'ring-2 ring-[#006aff]/40 bg-[#006aff]/10 border-[#006aff]/30'
-                )}
-              >
-                <span className="text-sm font-bold text-[#006aff]">{m.pct}%</span>
-                <span className="text-[8px] text-slate-500">{m.label}</span>
+          {publishedId ? (
+            <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/10 p-5" role="status">
+              <CheckCircle2 className="mb-3 h-7 w-7 text-emerald-500" />
+              <p className="font-bold">Published successfully</p>
+              <Link href={`/community/${publishedId}`} onClick={onClose} className="mt-3 inline-flex font-semibold text-[#006aff] hover:underline">View your post →</Link>
+            </div>
+          ) : (
+            <form onSubmit={publish} className="space-y-4">
+              <label className="block text-sm font-semibold">Category
+                <select value={draft.category} onChange={(event) => setDraft((current) => ({ ...current, category: event.target.value as CommunityCategory }))} className="mt-1.5 w-full rounded-xl border border-[var(--card-border)] bg-[var(--background)] px-3 py-2.5 font-normal" disabled={submitting}>
+                  {categories.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                </select>
+              </label>
+              <label className="block text-sm font-semibold">Title
+                <input ref={titleRef} value={draft.title} onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))} minLength={5} maxLength={150} required disabled={submitting} className="mt-1.5 w-full rounded-xl border border-[var(--card-border)] bg-[var(--background)] px-3 py-2.5 font-normal" placeholder="What should the community know?" />
+                <span className="mt-1 block text-right text-[11px] text-[var(--muted)]">{draft.title.length}/150</span>
+              </label>
+              <label className="block text-sm font-semibold">Message
+                <textarea value={draft.body} onChange={(event) => setDraft((current) => ({ ...current, body: event.target.value }))} minLength={10} maxLength={5000} required disabled={submitting} rows={7} className="mt-1.5 w-full resize-y rounded-xl border border-[var(--card-border)] bg-[var(--background)] px-3 py-2.5 font-normal" placeholder="Describe your idea, question, feedback, or bug." />
+                <span className="mt-1 block text-right text-[11px] text-[var(--muted)]">{draft.body.length}/5,000</span>
+              </label>
+              {error && <p className="rounded-xl bg-red-500/10 px-3 py-2 text-sm text-red-600" role="alert">{error}</p>}
+              <button type="submit" disabled={submitting} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#006aff] px-4 py-3 font-bold text-white transition hover:bg-[#0055cc] disabled:cursor-wait disabled:opacity-60">
+                <Send className="h-4 w-4" /> {submitting ? 'Publishing…' : 'Post to Community'}
               </button>
-            ))}
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="space-y-2">
-              {CHECKBOX_OPTIONS.map((opt) => (
-                <label
-                  key={opt.id}
-                  className="flex items-center gap-2.5 text-sm text-slate-700 cursor-pointer rounded-lg px-2 py-1.5 hover:bg-white/60"
-                >
-                  <input
-                    type="checkbox"
-                    checked={!!checks[opt.id]}
-                    onChange={() => toggleCheck(opt.id)}
-                    className="rounded border-slate-300 text-[#006aff] focus:ring-[#006aff]/30"
-                  />
-                  {opt.label}
-                </label>
-              ))}
-            </div>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Anything else? (optional)"
-              rows={2}
-              className="w-full px-3 py-2 rounded-xl text-sm bg-white border border-sky-100 text-slate-800 placeholder:text-slate-400 resize-none focus:outline-none focus:border-[#006aff]/40"
-            />
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-[#006aff] to-[#60a5fa] text-white font-bold text-sm"
-            >
-              <Send className="w-4 h-4" />
-              Send
-            </button>
-          </form>
+            </form>
+          )}
         </div>
       </div>
-    </>,
-    document.body
+    </div>,
+    document.body,
   );
 }

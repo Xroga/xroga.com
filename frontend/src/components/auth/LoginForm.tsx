@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { GitHubIcon } from "@/components/icons/GitHubIcon";
 import { createClient } from "@/lib/supabase/client";
 import { safeAuthError, withAuthTimeout } from "@/lib/supabase/authErrors";
@@ -16,6 +16,9 @@ import {
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedNext = searchParams.get('next');
+  const nextPath = requestedNext?.startsWith('/') && !requestedNext.startsWith('//') ? requestedNext : '/workspace';
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +36,7 @@ export function LoginForm() {
         setError(safeAuthError(err, "Sign in failed. Please try again."));
         return;
       }
-      router.push("/workspace");
+      router.push(nextPath);
       router.refresh();
     } catch (err) {
       setError(safeAuthError(err, "Sign in failed. Please try again."));
@@ -52,7 +55,7 @@ export function LoginForm() {
         supabase.auth.signInWithOAuth({
           provider: "github",
           options: {
-            redirectTo: `${window.location.origin}/auth/callback`,
+            redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
             skipBrowserRedirect: true,
           },
         })
@@ -123,7 +126,7 @@ export function LoginForm() {
         </AuthGradientButton>
       </form>
 
-      <AuthSwitchText prompt="No account?" linkText="Sign up" href="/auth/signup" />
+      <AuthSwitchText prompt="No account?" linkText="Sign up" href={`/auth/signup?next=${encodeURIComponent(nextPath)}`} />
     </AuthModernCard>
   );
 }

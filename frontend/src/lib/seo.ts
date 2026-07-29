@@ -4,10 +4,11 @@ export const SITE_URL = 'https://xroga.com';
 export const SITE_NAME = 'Xroga AI';
 export const FAVICON_URL = 'https://xroga.com/brand/xroga-mark-192.png';
 export const FAVICON_LOCAL = '/favicon-32.png';
+export const OG_IMAGE_URL = 'https://xroga.com/opengraph-image';
 
 /** Canonical product one-liner — keep identical across meta, JSON-LD, llms.txt for LLM citations */
 export const PRODUCT_ONE_LINER =
-  'Xroga works in connected repositories, validates applicable changes, and publishes through GitHub and Vercel accounts you authorise.';
+  'Xroga is an AI coding and product-building agent that helps users research, build, test, repair, connect repositories, and deploy applications.';
 
 export const DEFAULT_DESCRIPTION =
   'Describe a supported software outcome in plain language. Xroga inspects the connected project, applies focused changes, runs applicable validation, and returns publishing evidence or the exact external setup required.';
@@ -97,13 +98,13 @@ export function buildMetadata({
       siteName: SITE_NAME,
       title: fullTitle,
       description: desc,
-      images: [{ url: FAVICON_URL, width: 512, height: 512, alt: SITE_NAME }],
+      images: [{ url: OG_IMAGE_URL, width: 1200, height: 630, alt: 'Xroga AI — research, build, test, repair, and deploy software' }],
     },
     twitter: {
       card: 'summary_large_image',
       title: fullTitle,
       description: desc,
-      images: [FAVICON_URL],
+      images: [OG_IMAGE_URL],
     },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
     authors: [{ name: 'Muhammad Ibrahim', url: `${SITE_URL}/about` }],
@@ -143,7 +144,7 @@ export function buildOrganizationJsonLd() {
       '@type': 'Offer',
       price: '19',
       priceCurrency: 'USD',
-      description: 'One complete 30-day Xroga AI cycle',
+      description: 'One Xroga AI plan; current eligibility and capacity are shown before checkout.',
     },
     author: {
       '@type': 'Person',
@@ -196,7 +197,7 @@ export function buildFaqJsonLd() {
     },
     {
       q: 'Does Xroga do browser automation or video generation?',
-      a: 'No. Xroga is a coding agent for web apps — GitHub + Vercel ship loop — not a browser-automation or video platform.',
+      a: 'Xroga is a coding and product-building agent. It may use browser verification as part of testing, but it does not sell a standalone browser-automation or video-generation studio.',
     },
   ];
 
@@ -226,7 +227,7 @@ export function buildSiteNavigationJsonLd() {
     },
     {
       name: 'Workspace',
-      url: `${SITE_URL}/features/xroga-workspace`,
+      url: `${SITE_URL}/ai-coding-agent`,
       description:
         'Xroga Workspace — AI coding agent to build, push GitHub, deploy Vercel, and update your repo',
     },
@@ -237,12 +238,12 @@ export function buildSiteNavigationJsonLd() {
     },
     {
       name: 'GitHub Deploy',
-      url: `${SITE_URL}/features/github-auto-deploy`,
+      url: `${SITE_URL}/github-ai-coding-agent`,
       description: 'Push working code to your GitHub and keep updating the same repo',
     },
     {
       name: 'Vercel Deploy',
-      url: `${SITE_URL}/features/vercel-netlify-deploy`,
+      url: `${SITE_URL}/vercel-ai-deployment`,
       description: 'Deploy live on your Vercel account from Xroga',
     },
     {
@@ -250,15 +251,13 @@ export function buildSiteNavigationJsonLd() {
       url: `${SITE_URL}/integrations`,
       description: 'Connect GitHub, Vercel, and secure API keys for your product',
     },
-    {
-      name: 'Droga AI',
-      url: `${SITE_URL}/droga`,
-      description: 'Looking for Droga AI or Roga AI? This is Xroga AI',
-    },
+    { name: 'Community', url: `${SITE_URL}/community`, description: 'Public feedback, feature requests, bug reports, questions, and official Xroga replies' },
+    { name: 'Documentation', url: `${SITE_URL}/docs`, description: 'Guides for repositories, validation, publishing, integrations, and security' },
+    { name: 'Crypto Hackathon Builder', url: `${SITE_URL}/crypto-hackathon-builder`, description: 'Research official rules, build a credible MVP, and prepare a verifiable submission' },
     {
       name: 'Pricing',
       url: `${SITE_URL}/pricing`,
-      description: 'Xroga AI plans from $19/mo — AI tokens to build and ship',
+      description: 'Current Xroga plan, capacity, eligibility, and billing information',
     },
     {
       name: 'About',

@@ -52,6 +52,14 @@ jobs:
           SUPABASE_POOLER_HOST: ${{ secrets.SUPABASE_POOLER_HOST }}
         run: node scripts/apply-supabase-migrations.mjs
 
+      - name: Verify community row-level security
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SERVICE_KEY || secrets.SUPABASE_SECRET_KEY }}
+        run: node scripts/verify-community-rls.mjs
+
       - name: Dry-run on pull request
         if: github.event_name == 'pull_request'
         env:

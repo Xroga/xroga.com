@@ -14,7 +14,8 @@
     "build": "npm run build --workspace=frontend && npm run build --workspace=backend",
     "lint": "npm run lint --workspace=frontend",
     "test": "npm run test --workspace=backend",
-    "test:resilience": "node scripts/test-resilience.js"
+    "test:resilience": "node scripts/test-resilience.js",
+    "test:seo": "node scripts/seo-audit.mjs"
   },
   "overrides": {
     "zod": "3.24.2",

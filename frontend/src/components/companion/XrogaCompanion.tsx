@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Mic, MicOff, Settings2, Sparkles, Volume2, VolumeX, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { CompanionRenderer } from './CompanionRenderer';
@@ -43,6 +43,8 @@ export function XrogaCompanion({ variant = 'floating', className, interactive = 
   const router = useRouter();
   const pathname = usePathname();
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
+  const greetedRef = useRef(false);
+  const spokenEvidenceRef = useRef<string | null>(null);
   const [voiceListening, setVoiceListening] = useState(false);
   const [intro, setIntro] = useState(false);
   const [askText, setAskText] = useState('');
@@ -62,14 +64,12 @@ export function XrogaCompanion({ variant = 'floating', className, interactive = 
     useCompanionStore.getState().applyRuntimeEvent({
       type: 'online',
       operation: 'greeting',
-      message: 'Welcome. I follow Xroga’s real work and hand your questions to the real Workspace.',
+      message: 'Smoky is ready to help with real Xroga work.',
       source: 'deterministic',
     });
     const timer = window.setTimeout(() => setIntro(false), 1_050);
     return () => window.clearTimeout(timer);
   }, []);
-
-  if (!state.visible && variant !== 'preview') return null;
 
   function focusRealComposer(text?: string) {
     const prompt = text?.trim();
@@ -82,12 +82,40 @@ export function XrogaCompanion({ variant = 'floating', className, interactive = 
     state.setPanelOpen(false);
   }
 
-  function speakStatus() {
-    if (!state.voiceEnabled || typeof window.speechSynthesis === 'undefined') return;
-    const speech = safeCompanionSpeech(status);
+  const speak = useCallback((value: string, force = false) => {
+    if ((!state.voiceEnabled && !force) || typeof window.speechSynthesis === 'undefined') return;
+    const speech = safeCompanionSpeech(value);
     if (!speech) return;
     window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(new SpeechSynthesisUtterance(speech));
+    const utterance = new SpeechSynthesisUtterance(speech);
+    utterance.rate = 0.94;
+    utterance.pitch = 1.22;
+    utterance.volume = 0.92;
+    const voice = window.speechSynthesis.getVoices().find((candidate) => candidate.lang.toLowerCase().startsWith('en'));
+    if (voice) utterance.voice = voice;
+    window.speechSynthesis.speak(utterance);
+  }, [state.voiceEnabled]);
+
+  useEffect(() => {
+    if (!state.voiceEnabled || state.eventSource !== 'ai' || !state.evidenceAt || spokenEvidenceRef.current === state.evidenceAt) return;
+    spokenEvidenceRef.current = state.evidenceAt;
+    speak(state.statusMessage);
+  }, [speak, state.evidenceAt, state.eventSource, state.statusMessage, state.voiceEnabled]);
+
+  if (!state.visible && variant !== 'preview') return null;
+
+  function speakStatus() {
+    speak(status);
+  }
+
+  function openCompanion() {
+    if (!interactive) return;
+    if (!greetedRef.current) {
+      greetedRef.current = true;
+      const person = state.accountName?.trim();
+      speak(`Meow! ${person ? `Hi ${person}. ` : ''}What problem should we solve? Xroga is live, and our owner keeps improving me.`, true);
+    }
+    state.setPanelOpen(!state.panelOpen);
   }
 
   function toggleListening() {
@@ -132,7 +160,7 @@ export function XrogaCompanion({ variant = 'floating', className, interactive = 
         className="xv-companion-trigger"
         aria-label={`Open ${state.name}, your Xroga companion`}
         aria-expanded={state.panelOpen}
-        onClick={() => interactive && state.setPanelOpen(!state.panelOpen)}
+        onClick={openCompanion}
         disabled={!interactive}
       >
         <CompanionRenderer
@@ -164,8 +192,8 @@ export function XrogaCompanion({ variant = 'floating', className, interactive = 
           </p>
           <p className="xv-companion-context-note">
             {state.accountName
-              ? 'Questions continue through your authenticated Xroga account and current Workspace context.'
-              : 'Public questions continue through the real Xroga signup and Workspace flow.'}
+              ? 'I use your authenticated Xroga account and current Workspace context; I do not reveal secrets.'
+              : 'Ask me now. Building continues through the real Xroga signup and Workspace flow.'}
           </p>
           <div className="xv-companion-live-status" data-source={state.eventSource}>
             <span className="xv-companion-live-pulse" aria-hidden />

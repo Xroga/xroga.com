@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   ...buildMetadata({
     title: 'Xroga AI — Build, verify, and publish software',
     description:
-      'Describe a software outcome in plain language. Xroga works in your connected repository, validates applicable changes, and can push or publish through accounts you authorise. Results include evidence or the exact setup still required.',
+      'Describe a software outcome in plain language. Xroga works in your connected repository, validates changes, and publishes through accounts you authorise.',
     path: '/',
   }),
   metadataBase: new URL('https://xroga.com'),
