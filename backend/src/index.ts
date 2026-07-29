@@ -155,7 +155,7 @@ app.use('/api/phase1', phase1AuthMiddleware, phase1Router);
 app.use('/api/dashboard', authMiddleware, dashboardRouter);
 app.use('/api/tasks', authMiddleware, tasksRouter);
 app.use('/api/referrals', authMiddleware, referralsRouter);
-app.use('/api/community', authMiddleware, communityRouter);
+app.use('/api/community', communityRouter);
 app.use('/api/token-distribution', authMiddleware, tokenDistributionRouter);
 app.use('/api/marketplace', authMiddleware, marketplaceRouter);
 app.use('/api/influencer', authMiddleware, influencerRouter);

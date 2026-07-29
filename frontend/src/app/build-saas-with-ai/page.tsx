@@ -1,0 +1,2 @@
+import { CapabilityPage } from '@/components/marketing/CapabilityPage'; import { CAPABILITY_PAGES } from '@/lib/capabilityPages'; import { buildMetadata } from '@/lib/seo';
+const data = CAPABILITY_PAGES['build-saas-with-ai']; export const metadata = buildMetadata({ title: data.title, description: data.description, path: `/${data.slug}`, keywords: data.keywords }); export default function Page(){ return <CapabilityPage data={data} />; }

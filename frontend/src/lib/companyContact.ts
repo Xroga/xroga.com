@@ -15,5 +15,5 @@ export const COMPANY_CONTACT = {
   phoneTel: phoneDisplay.replace(/[^\d+]/g, ''),
   region: 'Pakistan',
   productDescription:
-    'Xroga AI works in connected repositories, validates applicable changes, and publishes through accounts the operator authorises. One plan is billed by Lemon Squeezy in complete 30-day cycles with capacity pacing.',
+    'Xroga AI works in connected repositories, validates changes, and publishes through accounts you authorise, with one 30-day plan billed by Lemon Squeezy.',
 };

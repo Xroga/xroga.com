@@ -97,3 +97,37 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
     });
   }
 }
+
+/** Resolve a viewer for public routes when a bearer token is present. */
+export async function optionalAuthMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    next();
+    return;
+  }
+  if (!authHeader.startsWith('Bearer ')) {
+    res.status(401).json({ error: 'Invalid authorization header.', code: 'AUTH_FAILED' });
+    return;
+  }
+
+  try {
+    const token = authHeader.slice(7);
+    const { userId, email } = await resolveUser(token);
+    req.userId = userId;
+    req.accessToken = token;
+    req.userEmail = email;
+    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      try {
+        await ensureUserRecords(userId, email);
+      } catch (provisionErr) {
+        console.warn('[auth] ensureUserRecords failed (non-fatal):', (provisionErr as Error).message);
+      }
+    }
+    next();
+  } catch {
+    res.status(401).json({
+      error: 'Your session is invalid or expired. Sign in again and retry.',
+      code: 'AUTH_FAILED',
+    });
+  }
+}

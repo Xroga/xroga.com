@@ -1,0 +1,20 @@
+{
+  "title": "Web3 hackathon official-source map",
+  "method": "Qualitative review of official organiser, ecosystem, developer and submission-platform resources.",
+  "lastReviewed": "2026-07-30",
+  "affiliation": "Xroga is not affiliated with or endorsed by the listed organisations.",
+  "sources": [
+    {"name":"OKX Web3","role":"ecosystem and organiser/sponsor","url":"https://web3.okx.com/xlayer/build-x-series"},
+    {"name":"ETHGlobal","role":"independent organiser","url":"https://ethglobal.com/events"},
+    {"name":"Solana","role":"ecosystem and organiser","url":"https://solana.com/hackathon"},
+    {"name":"Chainlink","role":"technology provider and organiser/sponsor","url":"https://chain.link/hackathon"},
+    {"name":"Polygon","role":"ecosystem and technology partner","url":"https://polygon.technology/developers"},
+    {"name":"Avalanche","role":"ecosystem and technology partner","url":"https://build.avax.network/"},
+    {"name":"BNB Chain","role":"ecosystem and organiser","url":"https://www.bnbchain.org/en/hackathons"},
+    {"name":"Aptos","role":"ecosystem and technology partner","url":"https://aptos.dev/"},
+    {"name":"Sui","role":"ecosystem and technology partner","url":"https://docs.sui.io/"},
+    {"name":"Devpost","role":"hosting and submission platform","url":"https://devpost.com/hackathons"},
+    {"name":"DoraHacks","role":"Web3 hackathon platform","url":"https://dorahacks.io/hackathon"},
+    {"name":"Mantle","role":"ecosystem and technology partner","url":"https://www.mantle.xyz/build"}
+  ]
+}

@@ -1,0 +1,16 @@
+prospect_type,prospect,public_url,relevance,status
+hackathon organiser,ETHGlobal,https://ethglobal.com/,Official Ethereum hackathon ecosystem; research resource may be useful,not_contacted
+hackathon platform,Devpost,https://devpost.com/,General hackathon education and submission audience,not_contacted
+web3 platform,DoraHacks,https://dorahacks.io/,Web3 builder and hackathon audience,not_contacted
+developer ecosystem,Solana Developers,https://solana.com/developers,Builders preparing ecosystem projects,not_contacted
+developer ecosystem,Chainlink Developers,https://chain.link/developers,Builders preparing meaningful integrations,not_contacted
+developer ecosystem,Polygon Developers,https://polygon.technology/developers,Web3 application builders,not_contacted
+developer ecosystem,Avalanche Builders,https://build.avax.network/,Web3 application builders,not_contacted
+developer ecosystem,BNB Chain Developers,https://www.bnbchain.org/en/developers,Builders and hackathon participants,not_contacted
+developer ecosystem,Aptos Developers,https://aptos.dev/,Move ecosystem builders,not_contacted
+developer ecosystem,Sui Developers,https://docs.sui.io/,Move ecosystem builders,not_contacted
+open-source community,GitHub Awesome Lists,https://github.com/sindresorhus/awesome,Only relevant maintained lists accepting evidence-backed tools,not_contacted
+startup community,Product Hunt,https://www.producthunt.com/,Public product launch and builder feedback,not_contacted
+startup community,Indie Hackers,https://www.indiehackers.com/,Founder build-process education,not_contacted
+technical publication,HackerNoon,https://hackernoon.com/,Original engineering and hackathon analysis pitches,not_contacted
+developer publication,DEV Community,https://dev.to/,Practical repository and hackathon guides,not_contacted

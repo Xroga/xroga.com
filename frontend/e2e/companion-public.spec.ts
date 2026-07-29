@@ -25,6 +25,7 @@ test('public X-companion, themes, plan story, and accessibility are connected', 
   await expect(page.getByText('Completion stays protected')).toBeVisible();
 
   for (const theme of ['Beige', 'White', 'Gray', 'Black']) {
+    await page.getByRole('button', { name: 'Change homepage theme' }).click();
     await page.getByRole('radio', { name: new RegExp(`^${theme}`) }).click();
     await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
   }
@@ -34,8 +35,7 @@ test('public X-companion, themes, plan story, and accessibility are connected', 
   await page.keyboard.press('Enter');
   await expect(page.getByRole('region', { name: /companion panel/ })).toBeVisible();
   await expect(page.getByText('Deterministic companion status')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Enable voice' })).toHaveAttribute('aria-pressed', 'false');
-  await page.getByRole('button', { name: 'Enable voice' }).click();
+  await expect(page.getByRole('button', { name: 'Voice on' })).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'Voice input' }).click();
   await expect(page.getByLabel('Ask through Xroga workspace')).toHaveValue('Build a voice accessible portfolio');
   await page.getByRole('button', { name: 'Move question to Xroga workspace' }).click();

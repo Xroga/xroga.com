@@ -122,7 +122,16 @@ export const useCompanionStore = create<CompanionState>()(
       name: 'xroga-companion',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => companionPreferencesSnapshot(state),
-      version: 1,
+      version: 2,
+      migrate: (persisted) => {
+        if (!persisted || typeof persisted !== 'object') return DEFAULT_COMPANION_PREFERENCES;
+        const current = persisted as Partial<CompanionPreferences>;
+        return {
+          ...DEFAULT_COMPANION_PREFERENCES,
+          ...current,
+          name: !current.name || current.name === 'Xo' ? 'Smoky' : current.name,
+        };
+      },
     },
   ),
 );

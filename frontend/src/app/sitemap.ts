@@ -1,34 +1,19 @@
 import type { MetadataRoute } from 'next';
+import { CAPABILITY_PAGES } from '@/lib/capabilityPages';
+import { DOC_PAGES } from '@/lib/docsContent';
 import { SITE_URL } from '@/lib/seo';
-import { getAllFeatureSlugs } from '@/lib/featureSeo';
 
-const STATIC_ROUTES: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[0]['changeFrequency'] }[] = [
-  { path: '', priority: 1, changeFrequency: 'daily' },
-  { path: '/features', priority: 0.95, changeFrequency: 'weekly' },
-  { path: '/features/xroga-workspace', priority: 0.93, changeFrequency: 'weekly' },
-  { path: '/features/community-hub', priority: 0.92, changeFrequency: 'weekly' },
-  { path: '/features/earn-xrg-referrals', priority: 0.92, changeFrequency: 'weekly' },
-  { path: '/integrations', priority: 0.92, changeFrequency: 'weekly' },
-  { path: '/droga', priority: 0.9, changeFrequency: 'monthly' },
-  { path: '/pricing', priority: 0.95, changeFrequency: 'weekly' },
-  { path: '/about', priority: 0.85, changeFrequency: 'monthly' },
-  { path: '/contact', priority: 0.85, changeFrequency: 'monthly' },
-  { path: '/docs/api', priority: 0.8, changeFrequency: 'monthly' },
-  { path: '/terms', priority: 0.5, changeFrequency: 'yearly' },
-  { path: '/privacy', priority: 0.5, changeFrequency: 'yearly' },
-  { path: '/refund', priority: 0.5, changeFrequency: 'yearly' },
-];
+const UPDATED = new Date('2026-07-30T00:00:00Z');
+const routes = [
+  ['', 1, 'daily'], ['/features', .95, 'weekly'], ['/pricing', .92, 'weekly'], ['/integrations', .88, 'monthly'],
+  ['/community', .9, 'daily'], ['/docs', .92, 'weekly'], ['/crypto-hackathon-builder', .94, 'weekly'],
+  ['/research', .82, 'monthly'], ['/research/web3-hackathon-winning-patterns', .9, 'monthly'],
+  ['/about', .78, 'monthly'], ['/contact', .65, 'yearly'], ['/terms', .45, 'yearly'], ['/privacy', .45, 'yearly'], ['/refund', .45, 'yearly'],
+] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const featureRoutes = getAllFeatureSlugs().map((slug) => ({
-    path: `/features/${slug}`,
-    priority: 0.88,
-    changeFrequency: 'weekly' as const,
-  }));
-
-  return [...STATIC_ROUTES, ...featureRoutes].map(({ path, priority, changeFrequency }) => ({
-    url: `${SITE_URL}${path}`,
-    changeFrequency,
-    priority,
-  }));
+  const canonical = routes.map(([path, priority, changeFrequency]) => ({ url: `${SITE_URL}${path}`, priority, changeFrequency, lastModified: UPDATED }));
+  const capabilities = Object.values(CAPABILITY_PAGES).map((page) => ({ url: `${SITE_URL}/${page.slug}`, priority: .9, changeFrequency: 'monthly' as const, lastModified: UPDATED }));
+  const docs = DOC_PAGES.map((page) => ({ url: `${SITE_URL}/docs/${page.slug}`, priority: .72, changeFrequency: 'monthly' as const, lastModified: new Date(`${page.updated}T00:00:00Z`) }));
+  return [...canonical, ...capabilities, ...docs];
 }

@@ -1,32 +1,16 @@
 'use client';
 
-import { Check, Palette } from 'lucide-react';
+import { Check, Palette, X } from 'lucide-react';
+import { useState } from 'react';
 import { THEME_OPTIONS, normalizeTheme } from '@/lib/theme';
 import { useThemeStore } from '@/store/useThemeStore';
 
 export function HomepageThemeSwitcher() {
+  const [open, setOpen] = useState(false);
   const theme = useThemeStore((state) => normalizeTheme(state.theme));
   const setTheme = useThemeStore((state) => state.setTheme);
-  return (
-    <div className="xv-home-theme-switcher" aria-label="Homepage theme">
-      <span className="xv-home-theme-title"><Palette className="h-3.5 w-3.5" /> Theme</span>
-      <div role="radiogroup" aria-label="Choose homepage theme">
-        {THEME_OPTIONS.map((option) => (
-          <button
-            key={option.id}
-            type="button"
-            role="radio"
-            aria-checked={theme === option.id}
-            className={theme === option.id ? 'is-active' : undefined}
-            onClick={() => setTheme(option.id)}
-            title={`${option.label}: ${option.description}`}
-          >
-            <span className={`xv-home-theme-swatch xv-home-theme-swatch--${option.id}`} aria-hidden />
-            <span><strong>{option.label}</strong><small>{option.description}</small></span>
-            {theme === option.id ? <Check className="h-3.5 w-3.5" aria-hidden /> : null}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+  return <div className="xv-home-theme-switcher">
+    <button type="button" className="xv-home-theme-trigger" aria-label="Change homepage theme" aria-expanded={open} onClick={() => setOpen((value) => !value)}>{open ? <X className="h-4 w-4" /> : <Palette className="h-4 w-4" />}<span className={`xv-home-theme-swatch xv-home-theme-swatch--${theme}`} aria-hidden /></button>
+    {open && <div className="xv-home-theme-menu" role="radiogroup" aria-label="Choose homepage theme">{THEME_OPTIONS.map((option) => <button key={option.id} type="button" role="radio" aria-checked={theme === option.id} className={theme === option.id ? 'is-active' : undefined} onClick={() => { setTheme(option.id); setOpen(false); }}><span className={`xv-home-theme-swatch xv-home-theme-swatch--${option.id}`} aria-hidden /><strong>{option.label}</strong>{theme === option.id && <Check className="h-3.5 w-3.5" />}</button>)}</div>}
+  </div>;
 }

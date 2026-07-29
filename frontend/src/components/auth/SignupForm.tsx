@@ -28,6 +28,8 @@ import {
 export function SignupForm() {
   const searchParams = useSearchParams();
   const refFromUrl = searchParams.get('ref');
+  const requestedNext = searchParams.get('next');
+  const nextPath = requestedNext?.startsWith('/') && !requestedNext.startsWith('//') ? requestedNext : '/workspace';
   const [referralCode, setReferralCode] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -62,7 +64,7 @@ export function SignupForm() {
         supabase.auth.signInWithOAuth({
           provider: 'github',
           options: {
-            redirectTo: `${window.location.origin}/auth/callback`,
+            redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
             skipBrowserRedirect: true,
           },
         })
@@ -102,7 +104,7 @@ export function SignupForm() {
         password,
         options: {
           data: { full_name: displayName, avatar_url: avatarUrl, preferred_theme: theme },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
         },
       });
 
@@ -142,7 +144,7 @@ export function SignupForm() {
       }
 
       setSuccess(true);
-      setTimeout(() => router.push('/workspace'), 1500);
+      setTimeout(() => router.push(nextPath), 1500);
     } catch (err) {
       setError(safeAuthError(err, 'Account creation failed. Please try again.'));
     } finally {

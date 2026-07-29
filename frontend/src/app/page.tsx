@@ -13,9 +13,14 @@ import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
 import { HomepageCompanionStage } from '@/components/companion/CompanionSurfaces';
 import { HomepageThemeSwitcher } from '@/components/companion/HomepageThemeSwitcher';
+import { FeedbackModal } from '@/components/feedback/FeedbackModal';
+import { useCompanionStore } from '@/store/useCompanionStore';
 
 const FOOTER_LINKS = [
   { href: '/features', label: 'Features' },
+  { href: '/community', label: 'Community' },
+  { href: '/docs', label: 'Docs' },
+  { href: '/crypto-hackathon-builder', label: 'Hackathons' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
   { href: '/pricing', label: 'Pricing' },
@@ -63,6 +68,8 @@ export default function HomePage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [authReady, setAuthReady] = useState(false);
   const [buildWordIdx, setBuildWordIdx] = useState(0);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const hydrateCompanion = useCompanionStore((state) => state.hydratePreferences);
 
   useEffect(() => {
     let active = true;
@@ -73,6 +80,11 @@ export default function HomePage() {
           if (!active) return;
           setLoggedIn(!!session);
           setAuthReady(true);
+          if (session?.user.id) {
+            void createClient().from('profiles').select('display_name').eq('id', session.user.id).maybeSingle().then(({ data }) => {
+              hydrateCompanion({}, typeof data?.display_name === 'string' ? data.display_name : null);
+            });
+          }
         })
         .catch(() => {
           if (!active) return;
@@ -85,7 +97,7 @@ export default function HomePage() {
       setAuthReady(true);
     }
     return () => { active = false; };
-  }, []);
+  }, [hydrateCompanion]);
 
   useEffect(() => {
     const t = window.setInterval(() => {
@@ -112,6 +124,7 @@ export default function HomePage() {
             {authReady && (
               <div className="flex items-center gap-2">
                 <HomepageThemeSwitcher />
+                <Link href="/community" className="xv-hc-btn-ghost !hidden !min-h-[2.4rem] !px-4 !text-[0.7rem] sm:!inline-flex">Community</Link>
                 {!loggedIn && (
                   <Link href="/auth/login" className="xv-hc-btn-ghost !min-h-[2.4rem] !px-4 !text-[0.7rem]">
                     Sign In
@@ -132,7 +145,7 @@ export default function HomePage() {
         <div className="xv-hc-hero-main">
           <p className="xv-hc-badge">
             <span className="xv-hc-badge-dot" aria-hidden />
-            NEW: XROGA AI SWARM
+            XROGA AI CODING AGENT
           </p>
 
           <h1 className="xv-hc-brand">XROGA</h1>
@@ -149,8 +162,8 @@ export default function HomePage() {
           </div>
 
           <p className="xv-hc-sub">
-            Describe it. The swarm codes, debugs, and ships — web to Vercel, Chrome & desktop as
-            zips, Android & iOS on Expo. Same loop for fixes and updates.
+            Describe the outcome. Xroga inspects your project, implements focused changes, runs applicable checks,
+            and can push or publish through accounts you authorise—with evidence or the exact blocker.
           </p>
 
           <div className="xv-hc-ctas">
@@ -164,6 +177,7 @@ export default function HomePage() {
             <a href="#ship-loop" className="xv-hc-btn-ghost">
               See how it ships
             </a>
+            <button type="button" onClick={() => setFeedbackOpen(true)} className="xv-hc-btn-ghost">Share Feedback</button>
           </div>
 
           <div className="xv-hc-chat xv-home-chatbar-wrap">
@@ -239,6 +253,8 @@ export default function HomePage() {
       <HomepageEnterpriseProof />
 
       <HomepageFaqSection />
+
+      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
 
       <section className="xv-hc-mid-cta" aria-label="Start building">
         <div className="xv-hc-mid-cta-inner">

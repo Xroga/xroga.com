@@ -58,6 +58,12 @@ const navItems = [
     tip: 'Recent activity, billing, and plan overview.',
   },
   {
+    href: '/community',
+    label: 'Community',
+    icon: MessageCirclePlus,
+    tip: 'Share feedback, report bugs, request features, and help other Xroga builders.',
+  },
+  {
     href: '/dashboard/projects',
     label: 'Repositories',
     icon: FolderGit2,

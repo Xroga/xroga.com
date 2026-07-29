@@ -2,11 +2,6 @@ import type { Response, NextFunction } from 'express';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from './auth.js';
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? 'ceo@xroga.com,admin@xroga.com')
-  .split(',')
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean);
-
 export async function adminMiddleware(
   req: AuthRequest,
   res: Response,
@@ -25,14 +20,7 @@ export async function adminMiddleware(
       .eq('id', req.userId)
       .maybeSingle();
 
-    if (profile?.role === 'admin') {
-      next();
-      return;
-    }
-
-    const { data: user } = await supabase.auth.admin.getUserById(req.userId);
-    const email = user?.user?.email?.toLowerCase();
-    if (email && ADMIN_EMAILS.includes(email)) {
+    if (profile?.role === 'admin' || profile?.role === 'owner') {
       next();
       return;
     }
