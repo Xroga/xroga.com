@@ -17,6 +17,8 @@ const outsiderEmail = `command3-outsider-${run}@example.invalid`;
 const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
 let ownerId = ''; let outsiderId = ''; let ownerProjectId = ''; let outsiderProjectId = '';
 
+test.setTimeout(180_000);
+
 async function browserSession(page: import('@playwright/test').Page): Promise<{ status: number; authenticated: boolean }> {
   return page.evaluate(async () => {
     const response = await fetch('/api/session', { cache: 'no-store' });
@@ -56,6 +58,28 @@ async function clickVisibleCheckoutSubmit(page: import('@playwright/test').Page)
   const submit = page.locator('button[type="submit"]:visible').last();
   await expect(submit, 'Lemon Test Mode checkout has no enabled submit control').toBeVisible();
   await submit.click();
+}
+
+async function selectVisibleCheckoutOption(
+  page: import('@playwright/test').Page,
+  selectors: string[],
+  label: string,
+  value: string,
+): Promise<boolean> {
+  for (const frame of page.frames()) {
+    for (const selector of selectors) {
+      const locator = frame.locator(selector).first();
+      if (await locator.count() && await locator.isVisible().catch(() => false)) {
+        try {
+          await locator.selectOption({ label });
+        } catch {
+          await locator.selectOption(value);
+        }
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 test.beforeAll(async () => {
@@ -191,17 +215,40 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
 
     await page.goto(checkoutUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 60_000 });
     await expect(page.getByText(/test mode/i).first()).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText('$0.00', { exact: true })).toBeVisible();
+    await expect(page.getByText(/30 day trial/i).first()).toBeVisible();
+    await expect(page.getByText('$19.00', { exact: true }).first()).toBeVisible();
     await fillVisibleCheckoutField(page, ['input[type="email"]', 'input[autocomplete="email"]'], ownerEmail);
     await fillVisibleCheckoutField(page, [
       'input[autocomplete="name"]',
       'input[autocomplete="cc-name"]',
       'input[name*="name" i]',
     ], 'Xroga Test');
-    await fillVisibleCheckoutField(page, [
+    expect(await fillVisibleCheckoutField(page, [
+      'input[autocomplete="address-line1"]',
+      'input[name*="address" i]',
+      'input[placeholder*="address line 1" i]',
+    ], '1 Test Mode Avenue')).toBe(true);
+    const stateSelected = await selectVisibleCheckoutOption(page, [
+      'select[autocomplete="address-level1"]',
+      'select[name*="state" i]',
+      'select[name*="region" i]',
+    ], 'New York', 'NY');
+    if (!stateSelected) {
+      await page.getByText(/select a state/i).click();
+      await page.getByText('New York', { exact: true }).click();
+    }
+    expect(await fillVisibleCheckoutField(page, [
+      'input[autocomplete="address-level2"]',
+      'input[name*="city" i]',
+      'input[placeholder="City" i]',
+    ], 'New York')).toBe(true);
+    expect(await fillVisibleCheckoutField(page, [
       'input[autocomplete="postal-code"]',
       'input[name*="postal" i]',
       'input[name*="zip" i]',
-    ], '10001');
+      'input[placeholder="ZIP" i]',
+    ], '10001')).toBe(true);
     const cardFilled = await fillVisibleCheckoutField(page, [
       'input[autocomplete="cc-number"]',
       'input[name="cardnumber"]',
