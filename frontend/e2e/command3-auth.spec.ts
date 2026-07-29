@@ -8,6 +8,7 @@ const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const backendUrl = process.env.E2E_BACKEND_URL ?? 'http://127.0.0.1:4000';
 const expectedRelease = process.env.EXPECTED_RELEASE_SHA?.trim() ?? '';
+const expectedWebRelease = process.env.EXPECTED_WEB_RELEASE_SHA?.trim() || expectedRelease;
 const launchBillingApiUrl = process.env.LAUNCH_BILLING_API_URL?.replace(/\/$/, '') ?? '';
 const run = randomUUID();
 const password = `C3!${randomUUID()}aA9`;
@@ -59,7 +60,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(webRelease.status).toBe(200);
   expect(apiReadiness.status).toBe(200);
   if (expectedRelease) {
-    expect(webRelease.body.release).toBe(expectedRelease);
+    expect(webRelease.body.release).toBe(expectedWebRelease);
     expect(apiRelease.release).toBe(expectedRelease);
   }
   await page.getByLabel('Email').fill(ownerEmail);
@@ -160,5 +161,5 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
-  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, logout: loggedOut.status, fixtureIsolation: 'temporary users and projects cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
+  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, logout: loggedOut.status, fixtureIsolation: 'temporary users and projects cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });

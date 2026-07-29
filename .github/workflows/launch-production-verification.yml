@@ -21,6 +21,8 @@ jobs:
       EXPECTED_RELEASE_SHA: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -36,6 +38,14 @@ jobs:
           case "$NEXT_PUBLIC_SUPABASE_ANON_KEY" in sb_secret_*|"") echo "invalid_public_key_category"; exit 1;; esac
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 20 https://xroga.com/api/release)" = "200"
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 20 https://xroga-api.fly.dev/ready)" = "200"
+          web_release="$(curl --silent --show-error --max-time 20 https://xroga.com/api/release | node -e "let b='';process.stdin.on('data',d=>b+=d).on('end',()=>{const r=JSON.parse(b).release;if(!/^[0-9a-f]{40}$/.test(r||''))process.exit(1);process.stdout.write(r)})")"
+          git cat-file -e "${web_release}^{commit}"
+          git merge-base --is-ancestor "$web_release" "$GITHUB_SHA"
+          if ! git diff --quiet "$web_release" "$GITHUB_SHA" -- frontend; then
+            echo "frontend_release_does_not_match_current_frontend_tree"
+            exit 1
+          fi
+          echo "EXPECTED_WEB_RELEASE_SHA=$web_release" >> "$GITHUB_ENV"
           github_auth_location="$(curl --silent --show-error --output /dev/null --write-out '%{redirect_url}' --max-time 20 \
             "$NEXT_PUBLIC_SUPABASE_URL/auth/v1/authorize?provider=github&redirect_to=https%3A%2F%2Fxroga.com%2Fauth%2Fcallback")"
           case "$github_auth_location" in
@@ -43,6 +53,7 @@ jobs:
             *) echo "github_social_auth_provider_unavailable"; exit 1;;
           esac
           echo "production_endpoints_reachable=true"
+          echo "frontend_artifact_equivalent=true"
           echo "github_social_auth_provider_reachable=true"
       - name: Install browser-test dependencies
         run: |
