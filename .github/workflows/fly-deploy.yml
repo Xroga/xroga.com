@@ -91,13 +91,6 @@ jobs:
           flyctl status --app xroga-api --json > fly-release-status.json
           node -e "const fs=require('fs'); const s=JSON.parse(fs.readFileSync('fly-release-status.json')); console.log(JSON.stringify({commit:process.env.GITHUB_SHA,app:s.Name ?? 'xroga-api',status:s.Status ?? 'unknown'}))"
 
-      - name: Reconcile Lemon Test Mode webhook
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-        run: |
-          set -euo pipefail
-          flyctl ssh console -a xroga-api -C "node dist/scripts/reconcileLemonWebhook.js"
-
       - name: Verify health and readiness
         run: |
           set -euo pipefail
@@ -126,6 +119,15 @@ jobs:
             echo "::error::Supabase OAuth route still 404 — deploy may have used an old image"
             exit 1
           fi
+
+      # Readiness wakes an autostopped machine and proves the new application is
+      # serving before SSH executes the provider reconciliation command.
+      - name: Reconcile Lemon Test Mode webhook
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          flyctl ssh console -a xroga-api -C "node dist/scripts/reconcileLemonWebhook.js"
 
       - uses: actions/upload-artifact@v5
         if: always()
