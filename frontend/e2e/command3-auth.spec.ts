@@ -147,7 +147,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await page.goto('/settings');
   await page.getByRole('button', { name: 'Security' }).click();
   await page.getByRole('button', { name: 'Logout' }).first().click();
-  await expect(page).toHaveURL(/^http:\/\/127\.0\.0\.1:3000\/$/);
+  await expect.poll(() => new URL(page.url()).pathname).toBe('/');
   await page.goto('/dashboard/operations');
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });

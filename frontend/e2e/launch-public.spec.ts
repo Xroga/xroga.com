@@ -37,7 +37,8 @@ test('public metadata excludes private application routes and security headers a
   const home = await request.get('/');
   expect(home.status()).toBe(200);
   const headers = home.headers();
-  expect(headers['strict-transport-security']).toContain('max-age=31536000');
+  const hstsMaxAge = Number(headers['strict-transport-security']?.match(/max-age=(\d+)/i)?.[1] ?? 0);
+  expect(hstsMaxAge).toBeGreaterThanOrEqual(31_536_000);
   expect(headers['x-content-type-options']).toBe('nosniff');
   expect(headers['x-frame-options']).toBe('DENY');
   expect(headers['permissions-policy']).toContain('microphone=(self)');

@@ -36,7 +36,14 @@ jobs:
           case "$NEXT_PUBLIC_SUPABASE_ANON_KEY" in sb_secret_*|"") echo "invalid_public_key_category"; exit 1;; esac
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 20 https://xroga.com/api/release)" = "200"
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 20 https://xroga-api.fly.dev/ready)" = "200"
+          github_auth_location="$(curl --silent --show-error --output /dev/null --write-out '%{redirect_url}' --max-time 20 \
+            "$NEXT_PUBLIC_SUPABASE_URL/auth/v1/authorize?provider=github&redirect_to=https%3A%2F%2Fxroga.com%2Fauth%2Fcallback")"
+          case "$github_auth_location" in
+            https://github.com/login/oauth/authorize*) ;;
+            *) echo "github_social_auth_provider_unavailable"; exit 1;;
+          esac
           echo "production_endpoints_reachable=true"
+          echo "github_social_auth_provider_reachable=true"
       - name: Install browser-test dependencies
         run: |
           npm ci --workspaces=false
