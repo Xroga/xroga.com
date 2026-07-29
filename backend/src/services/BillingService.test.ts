@@ -85,6 +85,10 @@ test('selectLemonVariant accepts only the published $19 monthly 30-day Test Mode
     () => selectLemonVariant({ data: [{ ...valid, attributes: { ...valid.attributes, trial_interval_count: 14 } }] }, '1231656', 'test'),
     /trial_days/,
   );
+  assert.throws(
+    () => selectLemonVariant({ data: [{ ...valid, attributes: { ...valid.attributes, status: 'draft' } }] }, '1231656', 'test'),
+    /publication/,
+  );
   assert.throws(() => selectLemonVariant({ data: [] }, '1231656', 'test'), /no_variant/);
   assert.throws(() => selectLemonVariant({ data: [valid, valid] }, '1231656', 'test'), /duplicate_match/);
 });
