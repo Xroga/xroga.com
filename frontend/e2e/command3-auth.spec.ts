@@ -25,6 +25,39 @@ async function browserSession(page: import('@playwright/test').Page): Promise<{ 
   });
 }
 
+async function fillVisibleCheckoutField(
+  page: import('@playwright/test').Page,
+  selectors: string[],
+  value: string,
+): Promise<boolean> {
+  for (const frame of page.frames()) {
+    for (const selector of selectors) {
+      const locator = frame.locator(selector).first();
+      if (await locator.count() && await locator.isVisible().catch(() => false)) {
+        await locator.fill(value);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+async function clickVisibleCheckoutSubmit(page: import('@playwright/test').Page): Promise<void> {
+  const named = page.getByRole('button', {
+    name: /start.*trial|begin.*trial|subscribe|complete (order|purchase)|place order|pay \$?0/i,
+  });
+  for (let index = 0; index < await named.count(); index += 1) {
+    const candidate = named.nth(index);
+    if (await candidate.isVisible().catch(() => false) && await candidate.isEnabled().catch(() => false)) {
+      await candidate.click();
+      return;
+    }
+  }
+  const submit = page.locator('button[type="submit"]:visible').last();
+  await expect(submit, 'Lemon Test Mode checkout has no enabled submit control').toBeVisible();
+  await submit.click();
+}
+
 test.beforeAll(async () => {
   const owner = await admin.auth.admin.createUser({ email: ownerEmail, password, email_confirm: true, user_metadata: { fixture: 'command3_isolated_demo' } });
   const outsider = await admin.auth.admin.createUser({ email: outsiderEmail, password, email_confirm: true, user_metadata: { fixture: 'command3_isolated_demo' } });
@@ -120,6 +153,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(unreadNotifications.status).toBe(200);
   expect(await unreadNotifications.json()).toEqual({ count: 0 });
   let billingCheckout: 'not_requested' | 'verified' = 'not_requested';
+  let billingTransaction: 'not_requested' | 'verified_test_mode_webhook' = 'not_requested';
+  let testPaymentInstrument: 'not_requested' | 'dummy_card_4242' | 'provider_no_card_trial' = 'not_requested';
+  let billingEntitlementEndsAt: string | null = null;
   if (launchBillingApiUrl) {
     const billingStatusResponse = await fetch(`${launchBillingApiUrl}/api/billing/status`, { headers: { Authorization: browserBearer } });
     const billingStatus = await billingStatusResponse.json() as {
@@ -152,6 +188,67 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     expect(checkoutUrl.protocol).toBe('https:');
     expect(checkoutUrl.hostname === 'lemonsqueezy.com' || checkoutUrl.hostname.endsWith('.lemonsqueezy.com')).toBe(true);
     billingCheckout = 'verified';
+
+    await page.goto(checkoutUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 60_000 });
+    await expect(page.getByText(/test mode/i).first()).toBeVisible({ timeout: 20_000 });
+    await fillVisibleCheckoutField(page, ['input[type="email"]', 'input[autocomplete="email"]'], ownerEmail);
+    await fillVisibleCheckoutField(page, [
+      'input[autocomplete="name"]',
+      'input[autocomplete="cc-name"]',
+      'input[name*="name" i]',
+    ], 'Xroga Test');
+    await fillVisibleCheckoutField(page, [
+      'input[autocomplete="postal-code"]',
+      'input[name*="postal" i]',
+      'input[name*="zip" i]',
+    ], '10001');
+    const cardFilled = await fillVisibleCheckoutField(page, [
+      'input[autocomplete="cc-number"]',
+      'input[name="cardnumber"]',
+      'input[placeholder*="card number" i]',
+    ], '4242424242424242');
+    if (cardFilled) {
+      expect(await fillVisibleCheckoutField(page, [
+        'input[autocomplete="cc-exp"]',
+        'input[name="exp-date"]',
+        'input[placeholder*="MM" i]',
+      ], '1230')).toBe(true);
+      expect(await fillVisibleCheckoutField(page, [
+        'input[autocomplete="cc-csc"]',
+        'input[name="cvc"]',
+        'input[placeholder*="CVC" i]',
+        'input[placeholder*="CVV" i]',
+      ], '123')).toBe(true);
+      testPaymentInstrument = 'dummy_card_4242';
+    } else {
+      testPaymentInstrument = 'provider_no_card_trial';
+    }
+    const terms = page.getByRole('checkbox', { name: /agree|terms/i });
+    if (await terms.count() && await terms.first().isVisible().catch(() => false) && !(await terms.first().isChecked())) {
+      await terms.first().check();
+    }
+    await clickVisibleCheckoutSubmit(page);
+    let paidEntitlement: { state?: string; startsAt?: string | null; endsAt?: string | null; requiresCard?: boolean } = {};
+    await expect.poll(async () => {
+      const response = await fetch(`${launchBillingApiUrl}/api/billing/entitlement`, {
+        headers: { Authorization: browserBearer, Accept: 'application/json' },
+      });
+      paidEntitlement = response.ok ? await response.json() : {};
+      return paidEntitlement.state;
+    }, {
+      message: 'signed Lemon webhook did not create the durable paid Test Mode entitlement',
+      timeout: 90_000,
+      intervals: [1_000, 2_000, 3_000, 5_000],
+    }).toBe('paid_active');
+    expect(paidEntitlement.requiresCard).toBe(true);
+    const startsAt = new Date(paidEntitlement.startsAt ?? '').getTime();
+    const endsAt = new Date(paidEntitlement.endsAt ?? '').getTime();
+    expect(Number.isFinite(startsAt)).toBe(true);
+    expect(Number.isFinite(endsAt)).toBe(true);
+    expect((endsAt - startsAt) / 86_400_000).toBeGreaterThanOrEqual(29.9);
+    expect((endsAt - startsAt) / 86_400_000).toBeLessThanOrEqual(30.1);
+    billingEntitlementEndsAt = paidEntitlement.endsAt ?? null;
+    billingTransaction = 'verified_test_mode_webhook';
   }
   await page.goto('/settings');
   await page.getByRole('button', { name: 'Security' }).click();
@@ -161,5 +258,5 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
-  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, logout: loggedOut.status, fixtureIsolation: 'temporary users and projects cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
+  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction, billingMode: billingTransaction === 'verified_test_mode_webhook' ? 'test' : 'not_verified', initialRealCharge: billingTransaction === 'verified_test_mode_webhook' ? 0 : null, testPaymentInstrument, billingEntitlementEndsAt, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, and billing cycles cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });
