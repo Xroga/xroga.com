@@ -8,7 +8,7 @@ In [Lemon Squeezy](https://app.lemonsqueezy.com), create one monthly subscriptio
 
 | Plan | Environment variable | Value |
 | --- | --- | --- |
-| Xroga AI ($19) | `LEMONSQUEEZY_VARIANT_SPARK` | Variant ID |
+| Xroga AI ($19) | `LEMONSQUEEZY_PRODUCT_SPARK` | Product ID; Xroga resolves and verifies its one eligible variant at checkout |
 
 Also record the store ID from Store settings and create an API key.
 
@@ -19,11 +19,11 @@ fly secrets set -a xroga-api \
   LEMONSQUEEZY_API_KEY="..." \
   LEMONSQUEEZY_STORE_ID="..." \
   LEMONSQUEEZY_WEBHOOK_SECRET="..." \
-  LEMONSQUEEZY_VARIANT_SPARK="..." \
+  LEMONSQUEEZY_PRODUCT_SPARK="1231656" \
   LEMONSQUEEZY_REDIRECT_URL="https://xroga.com/dashboard/billing?checkout=success"
 ```
 
-Set the non-secret runtime mode to `LEMONSQUEEZY_MODE=test`. Xroga includes `test_mode: true` when creating checkout and rejects a live webhook in a Test Mode runtime. Switching to live billing requires an explicit coordinated change to the API key, product/variant, webhook, signing secret, and runtime mode.
+Set the non-secret runtime mode to `LEMONSQUEEZY_MODE=test`. Xroga includes `test_mode: true` when creating checkout, resolves the published variant through the authenticated Lemon API, and accepts it only when it is a Test Mode $19 monthly subscription with a 30-day trial. A live webhook is rejected in a Test Mode runtime. Switching to live billing requires an explicit coordinated change to the API key, product, webhook, signing secret, and runtime mode.
 
 Remove obsolete `PADDLE_*` and historical multi-plan variant secrets if present.
 

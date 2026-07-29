@@ -14,6 +14,7 @@ export interface PlanDefinition {
   actions: number;
   concurrency: number;
   envPriceKey: string;
+  envProductKey: string;
   paid: boolean;
   highlight?: boolean;
   /** Hard monthly API credit ($) — what we can spend on providers for this user. */
@@ -38,6 +39,7 @@ export const GALACTIC_PLANS: PlanDefinition[] = [
     actions: 1500,
     concurrency: 2,
     envPriceKey: 'LEMONSQUEEZY_VARIANT_SPARK',
+    envProductKey: 'LEMONSQUEEZY_PRODUCT_SPARK',
     paid: true,
     apiBudgetUsd: MONTHLY_TOTAL_BUDGET_USD,
     tokenPool: MONTHLY_TOTAL_TOKENS,
@@ -56,6 +58,7 @@ export function getPlanByTier(tier: string): PlanDefinition | undefined {
       actions: FREE_TRIAL_ACTIONS,
       concurrency: 2,
       envPriceKey: '',
+      envProductKey: '',
       paid: false,
       apiBudgetUsd: MONTHLY_TOTAL_BUDGET_USD,
       tokenPool: MONTHLY_TOTAL_TOKENS,
@@ -80,6 +83,13 @@ export function getLemonVariantId(tier: PlanTier): string | undefined {
   const plan = getPlanByTier(tier);
   if (!plan?.envPriceKey) return undefined;
   return process.env[plan.envPriceKey];
+}
+
+export function getLemonProductId(tier: PlanTier): string | undefined {
+  if (tier === 'unpaid') return undefined;
+  const plan = getPlanByTier(tier);
+  if (!plan?.envProductKey) return undefined;
+  return process.env[plan.envProductKey];
 }
 
 /** @deprecated use getLemonVariantId */

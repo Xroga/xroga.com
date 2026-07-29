@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ActionService } from './ActionService.js';
-import { GALACTIC_PLANS, getLemonVariantId, getPlanByTier } from '../config/plans.js';
+import { GALACTIC_PLANS, getLemonProductId, getLemonVariantId, getPlanByTier } from '../config/plans.js';
 import type { PlanTier } from '../types/index.js';
 import { activatePaidCycle } from '../ai/providerBudget.js';
 
@@ -27,6 +27,40 @@ export function assertLemonWebhookEnvironment(
   if (typeof eventIsTest !== 'boolean') throw new Error('Billing event is missing environment evidence');
   if ((expected === 'test') !== eventIsTest) throw new Error('Billing event environment does not match runtime configuration');
 }
+
+interface LemonVariantResource {
+  id?: string;
+  attributes?: Record<string, unknown>;
+}
+
+export function selectLemonVariant(
+  payload: unknown,
+  productId: string,
+  environment: Exclude<LemonEnvironment, 'unconfigured'>,
+): string {
+  const data = (payload as { data?: LemonVariantResource[] })?.data;
+  if (!Array.isArray(data)) throw new Error('Billing provider returned an invalid variant list');
+  const matches = data.filter((candidate) => {
+    const attributes = candidate.attributes ?? {};
+    return String(attributes.product_id ?? '') === productId
+      && attributes.status === 'published'
+      && attributes.test_mode === (environment === 'test')
+      && attributes.is_subscription === true
+      && attributes.price === 1900
+      && attributes.interval === 'month'
+      && attributes.interval_count === 1
+      && attributes.has_free_trial === true
+      && attributes.trial_interval === 'day'
+      && attributes.trial_interval_count === 30
+      && /^\d+$/.test(String(candidate.id ?? ''));
+  });
+  if (matches.length !== 1) {
+    throw new Error('Billing product must have exactly one published $19 monthly variant with a 30-day trial');
+  }
+  return String(matches[0].id);
+}
+
+const variantCache = new Map<string, { id: string; expiresAt: number }>();
 
 export class BillingServiceError extends Error {
   constructor(
@@ -110,7 +144,12 @@ export class BillingService {
         tier: plan.tier,
         name: plan.name,
         priceId: process.env[plan.envPriceKey] ?? null,
-        ready: !!(process.env[plan.envPriceKey] && apiKey && store && environment !== 'unconfigured'),
+        ready: !!(
+          (process.env[plan.envPriceKey] || process.env[plan.envProductKey])
+          && apiKey
+          && store
+          && environment !== 'unconfigured'
+        ),
       })),
     };
   }
@@ -132,11 +171,6 @@ export class BillingService {
     planTier: PlanTier,
     userEmail?: string,
   ): Promise<{ checkoutUrl?: string; priceId: string; customData: Record<string, string> }> {
-    const variantId = getLemonVariantId(planTier);
-    if (!variantId) {
-      throw new BillingServiceError('external_setup_required', 'Paid checkout is not configured', 409);
-    }
-
     const storeId = (process.env.LEMONSQUEEZY_STORE_ID || '').trim();
     const apiKey = (process.env.LEMONSQUEEZY_API_KEY || '').trim();
     const environment = getLemonEnvironment();
@@ -145,6 +179,7 @@ export class BillingService {
     if (!apiKey || !storeId || environment === 'unconfigured') {
       throw new BillingServiceError('external_setup_required', 'Paid checkout is not configured', 409);
     }
+    const variantId = await this.resolveVariantId(planTier, apiKey, environment);
 
     const checkoutData: Record<string, unknown> = {
       custom: customData,
@@ -197,6 +232,48 @@ export class BillingService {
       priceId: variantId,
       customData,
     };
+  }
+
+  private static async resolveVariantId(
+    planTier: PlanTier,
+    apiKey: string,
+    environment: Exclude<LemonEnvironment, 'unconfigured'>,
+  ): Promise<string> {
+    const configuredVariant = getLemonVariantId(planTier)?.trim();
+    if (configuredVariant) return configuredVariant;
+    const productId = getLemonProductId(planTier)?.trim();
+    if (!productId || !/^\d+$/.test(productId)) {
+      throw new BillingServiceError('external_setup_required', 'Paid checkout is not configured', 409);
+    }
+    const cacheKey = `${environment}:${productId}`;
+    const cached = variantCache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) return cached.id;
+
+    let response: Response;
+    try {
+      const query = new URLSearchParams({ 'filter[product_id]': productId, 'filter[status]': 'published' });
+      response = await fetch(`https://api.lemonsqueezy.com/v1/variants?${query}`, {
+        headers: {
+          Accept: 'application/vnd.api+json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        signal: AbortSignal.timeout(10_000),
+      });
+    } catch {
+      throw new BillingServiceError('provider_unavailable', 'Billing provider could not verify the plan', 502);
+    }
+    if (!response.ok) {
+      console.error('[BillingService] Lemon variant lookup failed', { status: response.status });
+      throw new BillingServiceError('provider_unavailable', 'Billing provider could not verify the plan', 502);
+    }
+    let variantId: string;
+    try {
+      variantId = selectLemonVariant(await response.json(), productId, environment);
+    } catch {
+      throw new BillingServiceError('provider_unavailable', 'Billing provider plan does not match Xroga Test Mode', 502);
+    }
+    variantCache.set(cacheKey, { id: variantId, expiresAt: Date.now() + 300_000 });
+    return variantId;
   }
 
   static async createCustomerPortal(userId: string): Promise<{ portalUrl: string }> {
