@@ -101,3 +101,19 @@ test('fails closed when duplicate Test Mode endpoints would deliver the same eve
       && error.category === 'duplicate_test_webhooks',
   );
 });
+
+test('retries a transient provider failure with backoff and returns safe diagnostics on terminal failure', async () => {
+  let calls = 0;
+  const fetchImplementation = (async () => {
+    calls += 1;
+    return new Response('{}', { status: 503 });
+  }) as typeof fetch;
+  await assert.rejects(
+    () => reconcileLemonTestWebhook(env, fetchImplementation),
+    (error: unknown) => error instanceof LemonWebhookReconciliationError
+      && error.category === 'provider_unavailable'
+      && error.operation === 'list'
+      && error.httpStatus === 503,
+  );
+  assert.equal(calls, 3);
+});

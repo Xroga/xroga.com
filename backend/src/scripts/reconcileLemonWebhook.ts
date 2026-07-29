@@ -12,10 +12,13 @@ try {
     lastSentAtPresent: Boolean(result.lastSentAt),
   }));
 } catch (error) {
+  const reconciliationError = error instanceof LemonWebhookReconciliationError ? error : null;
   console.error(JSON.stringify({
     check: 'lemon_test_webhook',
     status: 'failed',
-    category: error instanceof LemonWebhookReconciliationError ? error.category : 'unexpected_failure',
+    category: reconciliationError?.category ?? 'unexpected_failure',
+    operation: reconciliationError?.operation ?? 'unknown',
+    httpStatus: reconciliationError?.httpStatus ?? null,
   }));
   process.exitCode = 1;
 }

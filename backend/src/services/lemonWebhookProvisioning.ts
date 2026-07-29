@@ -22,8 +22,14 @@ interface LemonWebhookResource {
   };
 }
 
+export type LemonWebhookOperation = 'configuration' | 'list' | 'create' | 'update' | 'verify';
+
 export class LemonWebhookReconciliationError extends Error {
-  constructor(public readonly category: string) {
+  constructor(
+    public readonly category: string,
+    public readonly operation: LemonWebhookOperation = 'configuration',
+    public readonly httpStatus: number | null = null,
+  ) {
     super(`Lemon webhook reconciliation failed: ${category}`);
   }
 }
@@ -51,9 +57,11 @@ async function providerRequest(
   fetchImplementation: FetchImplementation,
   apiKey: string,
   url: string,
+  operation: Exclude<LemonWebhookOperation, 'configuration' | 'verify'>,
   init?: RequestInit,
 ): Promise<Response> {
   let lastCategory = 'provider_unavailable';
+  let lastStatus: number | null = null;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
       const response = await fetchImplementation(url, {
@@ -67,6 +75,7 @@ async function providerRequest(
         signal: AbortSignal.timeout(10_000),
       });
       if (response.ok) return response;
+      lastStatus = response.status;
       lastCategory = response.status === 401 || response.status === 403
         ? 'invalid_provider_credential'
         : response.status === 429
@@ -75,12 +84,17 @@ async function providerRequest(
             ? 'provider_unavailable'
             : 'provider_rejected_configuration';
       if (attempt === 3 || (response.status < 500 && response.status !== 429)) break;
-    } catch {
-      lastCategory = 'provider_unavailable';
+    } catch (error) {
+      lastStatus = null;
+      const errorName = error instanceof Error ? error.name : '';
+      lastCategory = errorName === 'TimeoutError' || errorName === 'AbortError'
+        ? 'provider_timeout'
+        : 'provider_network_failure';
       if (attempt === 3) break;
     }
+    await new Promise((resolve) => setTimeout(resolve, attempt * 1_000));
   }
-  throw new LemonWebhookReconciliationError(lastCategory);
+  throw new LemonWebhookReconciliationError(lastCategory, operation, lastStatus);
 }
 
 export async function reconcileLemonTestWebhook(
@@ -112,6 +126,7 @@ export async function reconcileLemonTestWebhook(
     fetchImplementation,
     apiKey,
     `https://api.lemonsqueezy.com/v1/webhooks?${query}`,
+    'list',
   );
   const listPayload = await listResponse.json() as { data?: LemonWebhookResource[] };
   if (!Array.isArray(listPayload.data)) {
@@ -135,6 +150,7 @@ export async function reconcileLemonTestWebhook(
       fetchImplementation,
       apiKey,
       `https://api.lemonsqueezy.com/v1/webhooks/${encodeURIComponent(String(existing.id))}`,
+      'update',
       {
         method: 'PATCH',
         body: JSON.stringify({ data: { type: 'webhooks', id: String(existing.id), attributes } }),
@@ -144,6 +160,7 @@ export async function reconcileLemonTestWebhook(
       fetchImplementation,
       apiKey,
       'https://api.lemonsqueezy.com/v1/webhooks',
+      'create',
       {
         method: 'POST',
         body: JSON.stringify({
@@ -165,7 +182,7 @@ export async function reconcileLemonTestWebhook(
     || normalizeUrl(String(resource.attributes.url ?? '')) !== webhookUrl
     || !sameEvents(resource.attributes.events)
   ) {
-    throw new LemonWebhookReconciliationError('provider_verification_failed');
+    throw new LemonWebhookReconciliationError('provider_verification_failed', 'verify');
   }
 
   return {
