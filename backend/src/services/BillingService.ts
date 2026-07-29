@@ -36,6 +36,9 @@ interface LemonVariantResource {
 export type LemonVariantMismatchCode =
   | 'no_variant'
   | 'product'
+  | 'product_store'
+  | 'product_publication'
+  | 'product_environment'
   | 'publication'
   | 'environment'
   | 'subscription'
@@ -58,11 +61,14 @@ function lemonVariantMismatchCodes(
   candidate: LemonVariantResource,
   productId: string,
   environment: Exclude<LemonEnvironment, 'unconfigured'>,
+  totalVariants: number,
 ): LemonVariantMismatchCode[] {
   const attributes = candidate.attributes ?? {};
+  const status = attributes.status;
+  const validPublication = status === 'published' || (status === 'pending' && totalVariants === 1);
   return [
     String(attributes.product_id ?? '') === productId ? null : 'product',
-    attributes.status === 'published' ? null : 'publication',
+    validPublication ? null : 'publication',
     attributes.test_mode === (environment === 'test') ? null : 'environment',
     attributes.is_subscription === true ? null : 'subscription',
     attributes.price === 1900 ? null : 'price',
@@ -75,6 +81,23 @@ function lemonVariantMismatchCodes(
   ].filter((code): code is LemonVariantMismatchCode => code !== null);
 }
 
+export function assertLemonProductContract(
+  payload: unknown,
+  productId: string,
+  storeId: string,
+  environment: Exclude<LemonEnvironment, 'unconfigured'>,
+): void {
+  const product = (payload as { data?: LemonVariantResource })?.data;
+  const attributes = product?.attributes ?? {};
+  const mismatchCodes: LemonVariantMismatchCode[] = [
+    String(product?.id ?? '') === productId ? null : 'product',
+    String(attributes.store_id ?? '') === storeId ? null : 'product_store',
+    attributes.status === 'published' ? null : 'product_publication',
+    attributes.test_mode === (environment === 'test') ? null : 'product_environment',
+  ].filter((code): code is LemonVariantMismatchCode => code !== null);
+  if (mismatchCodes.length) throw new LemonVariantContractError(mismatchCodes);
+}
+
 export function selectLemonVariant(
   payload: unknown,
   productId: string,
@@ -84,7 +107,7 @@ export function selectLemonVariant(
   if (!Array.isArray(data)) throw new Error('Billing provider returned an invalid variant list');
   const evaluated = data.map((candidate) => ({
     candidate,
-    mismatchCodes: lemonVariantMismatchCodes(candidate, productId, environment),
+    mismatchCodes: lemonVariantMismatchCodes(candidate, productId, environment, data.length),
   }));
   const matches = evaluated.filter(({ mismatchCodes }) => mismatchCodes.length === 0);
   if (matches.length !== 1) {
@@ -217,7 +240,7 @@ export class BillingService {
     if (!apiKey || !storeId || environment === 'unconfigured') {
       throw new BillingServiceError('external_setup_required', 'Paid checkout is not configured', 409);
     }
-    const variantId = await this.resolveVariantId(planTier, apiKey, environment);
+    const variantId = await this.resolveVariantId(planTier, apiKey, storeId, environment);
 
     const checkoutData: Record<string, unknown> = {
       custom: customData,
@@ -275,6 +298,7 @@ export class BillingService {
   private static async resolveVariantId(
     planTier: PlanTier,
     apiKey: string,
+    storeId: string,
     environment: Exclude<LemonEnvironment, 'unconfigured'>,
   ): Promise<string> {
     const configuredVariant = getLemonVariantId(planTier)?.trim();
@@ -287,8 +311,16 @@ export class BillingService {
     const cached = variantCache.get(cacheKey);
     if (cached && cached.expiresAt > Date.now()) return cached.id;
 
+    let productResponse: Response;
     let response: Response;
     try {
+      productResponse = await fetch(`https://api.lemonsqueezy.com/v1/products/${encodeURIComponent(productId)}`, {
+        headers: {
+          Accept: 'application/vnd.api+json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        signal: AbortSignal.timeout(10_000),
+      });
       // Retrieve every variant for the configured product, then enforce publication
       // and the full Xroga plan contract locally. A provider-side published filter
       // would collapse a real draft-plan mismatch into the less useful no_variant.
@@ -303,12 +335,16 @@ export class BillingService {
     } catch {
       throw new BillingServiceError('provider_unavailable', 'Billing provider could not verify the plan', 502);
     }
-    if (!response.ok) {
-      console.error('[BillingService] Lemon variant lookup failed', { status: response.status });
+    if (!productResponse.ok || !response.ok) {
+      console.error('[BillingService] Lemon plan lookup failed', {
+        productStatus: productResponse.status,
+        variantStatus: response.status,
+      });
       throw new BillingServiceError('provider_unavailable', 'Billing provider could not verify the plan', 502);
     }
     let variantId: string;
     try {
+      assertLemonProductContract(await productResponse.json(), productId, storeId, environment);
       variantId = selectLemonVariant(await response.json(), productId, environment);
     } catch (error) {
       const diagnostic = error instanceof LemonVariantContractError
