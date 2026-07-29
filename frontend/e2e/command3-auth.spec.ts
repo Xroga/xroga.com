@@ -82,6 +82,36 @@ async function selectVisibleCheckoutOption(
   return false;
 }
 
+async function chooseCheckoutState(page: import('@playwright/test').Page): Promise<void> {
+  if (await selectVisibleCheckoutOption(page, [
+    'select[autocomplete="address-level1"]',
+    'select[name*="state" i]',
+    'select[name*="region" i]',
+  ], 'New York', 'NY')) return;
+
+  await expect.poll(async () => {
+    const namedCount = await page.getByRole('combobox', { name: /state|region/i }).count();
+    if (namedCount) return namedCount;
+    return (await page.getByRole('combobox').count()) >= 2 ? 1 : 0;
+  }, { timeout: 10_000, message: 'Lemon checkout state combobox did not become available' }).toBeGreaterThan(0);
+
+  const named = page.getByRole('combobox', { name: /state|region/i });
+  const control = await named.count() ? named.first() : page.getByRole('combobox').nth(1);
+  const tagName = await control.evaluate((element) => element.tagName.toLowerCase());
+  if (tagName === 'select') {
+    try {
+      await control.selectOption({ label: 'New York' });
+    } catch {
+      await control.selectOption('NY');
+    }
+    return;
+  }
+  await control.click({ timeout: 10_000 });
+  const option = page.getByRole('option', { name: 'New York', exact: true });
+  if (await option.count()) await option.last().click({ timeout: 10_000 });
+  else await page.getByText('New York', { exact: true }).last().click({ timeout: 10_000 });
+}
+
 test.beforeAll(async () => {
   const owner = await admin.auth.admin.createUser({ email: ownerEmail, password, email_confirm: true, user_metadata: { fixture: 'command3_isolated_demo' } });
   const outsider = await admin.auth.admin.createUser({ email: outsiderEmail, password, email_confirm: true, user_metadata: { fixture: 'command3_isolated_demo' } });
@@ -229,15 +259,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
       'input[name*="address" i]',
       'input[placeholder*="address line 1" i]',
     ], '1 Test Mode Avenue')).toBe(true);
-    const stateSelected = await selectVisibleCheckoutOption(page, [
-      'select[autocomplete="address-level1"]',
-      'select[name*="state" i]',
-      'select[name*="region" i]',
-    ], 'New York', 'NY');
-    if (!stateSelected) {
-      await page.getByText(/select a state/i).click();
-      await page.getByText('New York', { exact: true }).click();
-    }
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(500);
+    await chooseCheckoutState(page);
     expect(await fillVisibleCheckoutField(page, [
       'input[autocomplete="address-level2"]',
       'input[name*="city" i]',
@@ -253,6 +277,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
       'input[autocomplete="cc-number"]',
       'input[name="cardnumber"]',
       'input[placeholder*="card number" i]',
+      'input[placeholder*="1234 1234" i]',
     ], '4242424242424242');
     if (cardFilled) {
       expect(await fillVisibleCheckoutField(page, [
