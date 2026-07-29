@@ -461,22 +461,22 @@ create policy "Public can read safe community profile rows"
   on public.profiles for select
   to anon, authenticated
   using (
-    id = (select auth.uid()) or exists (
+    profiles.id = (select auth.uid()) or exists (
       select 1 from public.community_posts p
-      where p.author_id = id and not p.is_hidden
+      where p.author_id = profiles.id and not p.is_hidden
     ) or exists (
       select 1
       from public.community_comments c
       join public.community_posts p on p.id = c.post_id
-      where c.author_id = id and not c.is_hidden and not p.is_hidden
+      where c.author_id = profiles.id and not c.is_hidden and not p.is_hidden
     )
   );
 
 create policy "Users update their own safe profile"
   on public.profiles for update
   to authenticated
-  using (id = (select auth.uid()))
-  with check (id = (select auth.uid()));
+  using (profiles.id = (select auth.uid()))
+  with check (profiles.id = (select auth.uid()));
 
 revoke all on public.profiles from anon, authenticated;
 grant select (id, username, display_name, avatar_url, created_at)
