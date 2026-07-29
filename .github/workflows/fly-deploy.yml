@@ -49,8 +49,20 @@ jobs:
             echo "::error::LEMONSQUEEZY_WEBHOOK_SECRET must be present and contain 6 to 40 characters."
             exit 1
           fi
-          flyctl secrets set --stage -a xroga-api \
-            LEMONSQUEEZY_WEBHOOK_SECRET="$LEMONSQUEEZY_WEBHOOK_SECRET"
+          secret_attempt=1
+          secret_max_attempts=3
+          secret_delay=10
+          until flyctl secrets set --stage -a xroga-api \
+            LEMONSQUEEZY_WEBHOOK_SECRET="$LEMONSQUEEZY_WEBHOOK_SECRET"; do
+            if [ "$secret_attempt" -ge "$secret_max_attempts" ]; then
+              echo "::error::Fly could not stage the verified Lemon webhook secret after ${secret_max_attempts} attempts."
+              exit 1
+            fi
+            echo "secret staging temporarily unavailable (attempt ${secret_attempt}/${secret_max_attempts}); retrying in ${secret_delay}s"
+            sleep "$secret_delay"
+            secret_attempt=$((secret_attempt + 1))
+            secret_delay=$((secret_delay * 2))
+          done
           echo "lemon_test_webhook_secret_staged=true"
           attempt=1
           max_attempts=5
