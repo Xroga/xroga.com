@@ -45,19 +45,24 @@ async function fillVisibleCheckoutField(
 }
 
 async function clickVisibleCheckoutSubmit(page: import('@playwright/test').Page): Promise<void> {
-  const named = page.getByRole('button', {
-    name: /start.*trial|begin.*trial|subscribe|complete (order|purchase)|place order|pay \$?0/i,
-  });
-  for (let index = 0; index < await named.count(); index += 1) {
-    const candidate = named.nth(index);
-    if (await candidate.isVisible().catch(() => false) && await candidate.isEnabled().catch(() => false)) {
-      await candidate.click();
+  for (const frame of page.frames()) {
+    const named = frame.getByRole('button', {
+      name: /start.*trial|begin.*trial|subscribe|complete (order|purchase)|place order|pay \$?0/i,
+    });
+    for (let index = 0; index < await named.count(); index += 1) {
+      const candidate = named.nth(index);
+      if (await candidate.isVisible().catch(() => false) && await candidate.isEnabled().catch(() => false)) {
+        await candidate.click();
+        return;
+      }
+    }
+    const submit = frame.locator('button[type="submit"], input[type="submit"]').filter({ visible: true }).last();
+    if (await submit.count() && await submit.isEnabled().catch(() => false)) {
+      await submit.click();
       return;
     }
   }
-  const submit = page.locator('button[type="submit"]:visible').last();
-  await expect(submit, 'Lemon Test Mode checkout has no enabled submit control').toBeVisible();
-  await submit.click();
+  throw new Error('Lemon Test Mode checkout has no enabled submit control');
 }
 
 async function selectVisibleCheckoutOption(
