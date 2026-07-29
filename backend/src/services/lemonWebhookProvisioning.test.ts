@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  inspectRecentLemonTestBilling,
   LEMON_BILLING_WEBHOOK_EVENTS,
   LemonWebhookReconciliationError,
   reconcileLemonTestWebhook,
@@ -116,4 +117,32 @@ test('retries a transient provider failure with backoff and returns safe diagnos
       && error.httpStatus === 503,
   );
   assert.equal(calls, 3);
+});
+
+test('reports only safe recent Test Mode order and subscription evidence', async () => {
+  let call = 0;
+  const fetchImplementation = (async () => {
+    call += 1;
+    const type = call === 1 ? 'orders' : 'subscriptions';
+    return response({ data: [{
+      id: type === 'orders' ? '501' : '601',
+      attributes: {
+        store_id: 217480,
+        test_mode: true,
+        created_at: '2026-07-29T15:00:00.000Z',
+        status: type === 'orders' ? 'paid' : 'on_trial',
+        user_email: 'must-not-be-returned@example.com',
+      },
+    }] });
+  }) as typeof fetch;
+  const result = await inspectRecentLemonTestBilling(
+    env,
+    fetchImplementation,
+    new Date('2026-07-29T15:30:00.000Z'),
+  );
+  assert.equal(result.recentOrderCount, 1);
+  assert.equal(result.recentSubscriptionCount, 1);
+  assert.equal(result.latestOrderStatus, 'paid');
+  assert.equal(result.latestSubscriptionStatus, 'on_trial');
+  assert.equal(JSON.stringify(result).includes('must-not-be-returned'), false);
 });

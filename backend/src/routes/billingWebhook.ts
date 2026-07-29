@@ -21,6 +21,19 @@ router.post(
     {
       const valid = BillingService.verifyWebhookSignature(rawBody, signature);
       if (!valid) {
+        const eventName = String(req.headers['x-event-name'] ?? '').slice(0, 100);
+        if (
+          /^[a-f0-9]{64}$/i.test(signature ?? '')
+          && /^(order_created|subscription_(created|updated|cancelled|expired|payment_success))$/.test(eventName)
+        ) {
+          const payloadDigest = createHash('sha256').update(rawBody).digest('hex');
+          await getSupabaseAdmin().from('webhook_deliveries').insert({
+            provider: 'lemon_squeezy', delivery_id: `invalid:${payloadDigest}`,
+            payload_digest: payloadDigest, status: 'failed', safe_error: 'invalid_signature',
+            event_type: eventName, signature_verified: false, response_status: 401,
+            completed_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+          });
+        }
         console.warn('[billing/webhook] invalid Lemon Squeezy signature');
         res.status(401).json({ error: 'Invalid signature' });
         return;
