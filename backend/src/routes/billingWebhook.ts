@@ -40,7 +40,8 @@ router.post(
       const payloadDigest = createHash('sha256').update(rawBody).digest('hex');
       const { error: insertError } = await getSupabaseAdmin().from('webhook_deliveries').insert({
         provider: 'lemon_squeezy', delivery_id: deliveryId, payload_digest: payloadDigest,
-        status: 'processing',
+        status: 'processing', event_type: event.meta?.event_name ?? null,
+        signature_verified: true, response_status: null,
       });
       if (insertError) {
         if (insertError.code === '23505') {
@@ -52,13 +53,15 @@ router.post(
       }
       await BillingService.handleWebhookEvent(event);
       await getSupabaseAdmin().from('webhook_deliveries').update({
-        status: 'completed', completed_at: new Date().toISOString(),
+        status: 'completed', response_status: 200,
+        completed_at: new Date().toISOString(), updated_at: new Date().toISOString(),
       }).eq('provider', 'lemon_squeezy').eq('delivery_id', deliveryId);
       res.json({ received: true });
     } catch (err) {
       if (claimedDeliveryId) {
         await getSupabaseAdmin().from('webhook_deliveries').update({
-          status: 'failed', safe_error: 'processing_failed', completed_at: new Date().toISOString(),
+          status: 'failed', safe_error: 'processing_failed', response_status: 500,
+          completed_at: new Date().toISOString(), updated_at: new Date().toISOString(),
         }).eq('provider', 'lemon_squeezy').eq('delivery_id', claimedDeliveryId);
       }
       console.error(JSON.stringify({

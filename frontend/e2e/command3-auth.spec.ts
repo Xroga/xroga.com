@@ -65,6 +65,35 @@ async function clickVisibleCheckoutSubmit(page: import('@playwright/test').Page)
   throw new Error('Lemon Test Mode checkout has no enabled submit control');
 }
 
+async function writeSafeWebhookDeliveryDiagnostic(since: string): Promise<{
+  deliveryCount: number;
+  statuses: string[];
+  safeErrors: string[];
+  signedDeliveryObserved: boolean;
+}> {
+  const { data, error } = await admin
+    .from('webhook_deliveries')
+    .select('status,safe_error,signature_verified,response_status,received_at,event_type')
+    .eq('provider', 'lemon_squeezy')
+    .gte('received_at', since)
+    .order('received_at', { ascending: false })
+    .limit(20);
+  const rows = error ? [] : (data ?? []);
+  const diagnostic = {
+    queryStatus: error ? 'unavailable' : 'verified',
+    deliveryCount: rows.length,
+    statuses: [...new Set(rows.map((row) => String(row.status ?? 'unknown')))],
+    safeErrors: [...new Set(rows.map((row) => String(row.safe_error ?? '')).filter(Boolean))],
+    signedDeliveryObserved: rows.some((row) => row.signature_verified === true),
+    responseStatuses: [...new Set(rows.map((row) => Number(row.response_status)).filter(Number.isFinite))],
+    eventTypes: [...new Set(rows.map((row) => String(row.event_type ?? 'unknown')))],
+    observedAt: new Date().toISOString(),
+  };
+  await mkdir('test-results', { recursive: true });
+  await writeFile('test-results/lemon-webhook-diagnostic.json', JSON.stringify(diagnostic, null, 2));
+  return diagnostic;
+}
+
 async function selectVisibleCheckoutOption(
   page: import('@playwright/test').Page,
   selectors: string[],
@@ -304,19 +333,30 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     if (await terms.count() && await terms.first().isVisible().catch(() => false) && !(await terms.first().isChecked())) {
       await terms.first().check();
     }
+    const checkoutSubmittedAt = new Date().toISOString();
     await clickVisibleCheckoutSubmit(page);
     let paidEntitlement: { state?: string; startsAt?: string | null; endsAt?: string | null; requiresCard?: boolean } = {};
-    await expect.poll(async () => {
-      const response = await fetch(`${launchBillingApiUrl}/api/billing/entitlement`, {
-        headers: { Authorization: browserBearer, Accept: 'application/json' },
-      });
-      paidEntitlement = response.ok ? await response.json() : {};
-      return paidEntitlement.state;
-    }, {
-      message: 'signed Lemon webhook did not create the durable paid Test Mode entitlement',
-      timeout: 90_000,
-      intervals: [1_000, 2_000, 3_000, 5_000],
-    }).toBe('paid_active');
+    try {
+      await expect.poll(async () => {
+        const response = await fetch(`${launchBillingApiUrl}/api/billing/entitlement`, {
+          headers: { Authorization: browserBearer, Accept: 'application/json' },
+        });
+        paidEntitlement = response.ok ? await response.json() : {};
+        return paidEntitlement.state;
+      }, {
+        message: 'signed Lemon webhook did not create the durable paid Test Mode entitlement',
+        timeout: 90_000,
+        intervals: [1_000, 2_000, 3_000, 5_000],
+      }).toBe('paid_active');
+    } catch (error) {
+      const diagnostic = await writeSafeWebhookDeliveryDiagnostic(checkoutSubmittedAt);
+      throw new Error(
+        `signed Lemon webhook did not create the durable paid Test Mode entitlement `
+        + `(deliveries=${diagnostic.deliveryCount}, signed=${diagnostic.signedDeliveryObserved}, `
+        + `statuses=${diagnostic.statuses.join(',') || 'none'}, errors=${diagnostic.safeErrors.join(',') || 'none'})`,
+        { cause: error },
+      );
+    }
     expect(paidEntitlement.requiresCard).toBe(true);
     const startsAt = new Date(paidEntitlement.startsAt ?? '').getTime();
     const endsAt = new Date(paidEntitlement.endsAt ?? '').getTime();
