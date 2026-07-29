@@ -12,7 +12,7 @@ const expectedWebRelease = process.env.EXPECTED_WEB_RELEASE_SHA?.trim() || expec
 const launchBillingApiUrl = process.env.LAUNCH_BILLING_API_URL?.replace(/\/$/, '') ?? '';
 const run = randomUUID();
 const password = `C3!${randomUUID()}aA9`;
-const ownerEmail = `command3-owner-${run}@example.invalid`;
+const ownerEmail = `command3-owner-${run}@example.com`;
 const outsiderEmail = `command3-outsider-${run}@example.invalid`;
 const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
 let ownerId = ''; let outsiderId = ''; let ownerProjectId = ''; let outsiderProjectId = '';

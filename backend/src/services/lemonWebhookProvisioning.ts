@@ -19,6 +19,8 @@ interface LemonWebhookResource {
     events?: string[];
     last_sent_at?: string | null;
     test_mode?: boolean;
+    created_at?: string;
+    status?: string;
   };
 }
 
@@ -41,6 +43,17 @@ export interface LemonWebhookReconciliationResult {
   testMode: true;
   eventCount: number;
   lastSentAt: string | null;
+}
+
+export interface LemonTestBillingState {
+  status: 'verified';
+  observationWindowMinutes: 60;
+  recentOrderCount: number;
+  recentSubscriptionCount: number;
+  latestOrderAt: string | null;
+  latestSubscriptionAt: string | null;
+  latestOrderStatus: string | null;
+  latestSubscriptionStatus: string | null;
 }
 
 function normalizeUrl(value: string): string {
@@ -192,5 +205,50 @@ export async function reconcileLemonTestWebhook(
     testMode: true,
     eventCount: LEMON_BILLING_WEBHOOK_EVENTS.length,
     lastSentAt: resource.attributes.last_sent_at ?? null,
+  };
+}
+
+export async function inspectRecentLemonTestBilling(
+  env: Record<string, string | undefined> = process.env,
+  fetchImplementation: FetchImplementation = fetch,
+  now: Date = new Date(),
+): Promise<LemonTestBillingState> {
+  const apiKey = env.LEMONSQUEEZY_API_KEY?.trim() ?? '';
+  const storeId = env.LEMONSQUEEZY_STORE_ID?.trim() ?? '';
+  if (!apiKey) throw new LemonWebhookReconciliationError('missing_api_key');
+  if (!/^\d+$/.test(storeId)) throw new LemonWebhookReconciliationError('invalid_store_id');
+  if (env.LEMONSQUEEZY_MODE?.trim().toLowerCase() !== 'test') {
+    throw new LemonWebhookReconciliationError('runtime_not_in_test_mode');
+  }
+  const query = new URLSearchParams({ 'filter[store_id]': storeId, 'page[size]': '100' });
+  const [ordersResponse, subscriptionsResponse] = await Promise.all([
+    providerRequest(fetchImplementation, apiKey, `https://api.lemonsqueezy.com/v1/orders?${query}`, 'list'),
+    providerRequest(fetchImplementation, apiKey, `https://api.lemonsqueezy.com/v1/subscriptions?${query}`, 'list'),
+  ]);
+  const ordersPayload = await ordersResponse.json() as { data?: LemonWebhookResource[] };
+  const subscriptionsPayload = await subscriptionsResponse.json() as { data?: LemonWebhookResource[] };
+  if (!Array.isArray(ordersPayload.data) || !Array.isArray(subscriptionsPayload.data)) {
+    throw new LemonWebhookReconciliationError('invalid_provider_response', 'verify');
+  }
+  const cutoff = now.getTime() - 60 * 60_000;
+  const recent = (resources: LemonWebhookResource[]) => resources.filter((resource) => {
+    const createdAt = String(resource.attributes?.created_at ?? '');
+    const createdAtTime = new Date(createdAt).getTime();
+    return resource.attributes?.test_mode === true
+      && String(resource.attributes.store_id ?? '') === storeId
+      && Number.isFinite(createdAtTime)
+      && createdAtTime >= cutoff;
+  });
+  const orders = recent(ordersPayload.data);
+  const subscriptions = recent(subscriptionsPayload.data);
+  return {
+    status: 'verified',
+    observationWindowMinutes: 60,
+    recentOrderCount: orders.length,
+    recentSubscriptionCount: subscriptions.length,
+    latestOrderAt: String(orders[0]?.attributes?.created_at ?? '') || null,
+    latestSubscriptionAt: String(subscriptions[0]?.attributes?.created_at ?? '') || null,
+    latestOrderStatus: String(orders[0]?.attributes?.status ?? '') || null,
+    latestSubscriptionStatus: String(subscriptions[0]?.attributes?.status ?? '') || null,
   };
 }

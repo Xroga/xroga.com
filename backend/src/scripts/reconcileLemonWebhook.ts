@@ -1,5 +1,10 @@
-import { LemonWebhookReconciliationError, reconcileLemonTestWebhook } from '../services/lemonWebhookProvisioning.js';
+import {
+  inspectRecentLemonTestBilling,
+  LemonWebhookReconciliationError,
+  reconcileLemonTestWebhook,
+} from '../services/lemonWebhookProvisioning.js';
 
+let check = 'lemon_test_webhook';
 try {
   const result = await reconcileLemonTestWebhook();
   console.log(JSON.stringify({
@@ -11,10 +16,13 @@ try {
     eventCount: result.eventCount,
     lastSentAtPresent: Boolean(result.lastSentAt),
   }));
+  check = 'lemon_test_billing_state';
+  const billingState = await inspectRecentLemonTestBilling();
+  console.log(JSON.stringify({ check, ...billingState }));
 } catch (error) {
   const reconciliationError = error instanceof LemonWebhookReconciliationError ? error : null;
   console.error(JSON.stringify({
-    check: 'lemon_test_webhook',
+    check,
     status: 'failed',
     category: reconciliationError?.category ?? 'unexpected_failure',
     operation: reconciliationError?.operation ?? 'unknown',
