@@ -36,7 +36,14 @@ async function fillVisibleCheckoutField(
     for (const selector of selectors) {
       const locator = frame.locator(selector).first();
       if (await locator.count() && await locator.isVisible().catch(() => false)) {
-        await locator.fill(value);
+        // Hosted payment controls keep framework/provider state outside the
+        // input DOM. Sequential keyboard events update that state, while a
+        // direct DOM fill can render the value without enabling submission.
+        await locator.click();
+        await locator.selectText().catch(() => undefined);
+        await locator.press('Backspace').catch(() => undefined);
+        await locator.pressSequentially(value, { delay: 15 });
+        await locator.blur();
         return true;
       }
     }
