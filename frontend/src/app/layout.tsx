@@ -57,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://xroga-api.fly.dev" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />
       </head>
-      <body className={`theme-white ${rootFontVariables} font-sans antialiased`}>
+      <body suppressHydrationWarning className={`theme-white ${rootFontVariables} font-sans antialiased`}>
         <SiteJsonLd />
         <RootProviders>{children}</RootProviders>
       </body>

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { CheckCircle2, Send, X } from 'lucide-react';
 import { communityApi, communityCategoryLabel, type CommunityCategory } from '@/lib/community';
+import { createClient } from '@/lib/supabase/client';
 
 const DRAFT_KEY = 'xroga-community-draft';
 const categories = Object.entries(communityCategoryLabel) as Array<[CommunityCategory, string]>;
@@ -82,6 +83,18 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
     }
     setSubmitting(true);
     try {
+      let hasSession = false;
+      try {
+        const { data, error: sessionError } = await createClient().auth.getSession();
+        hasSession = !sessionError && !!data.session;
+      } catch {
+        // Authentication configuration and recovery belong to the existing login flow.
+      }
+      if (!hasSession) {
+        window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+        window.location.assign('/auth/login?next=%2Fcommunity%3Fcompose%3D1');
+        return;
+      }
       const { post } = await communityApi.createPost({ ...draft, title: draft.title.trim(), body: draft.body.trim() });
       window.sessionStorage.removeItem(DRAFT_KEY);
       setPublishedId(post.id);
