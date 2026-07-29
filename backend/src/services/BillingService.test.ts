@@ -79,12 +79,14 @@ test('selectLemonVariant accepts only the published $19 monthly 30-day Test Mode
   assert.equal(selectLemonVariant({ data: [valid] }, '1231656', 'test'), '456');
   assert.throws(
     () => selectLemonVariant({ data: [{ ...valid, attributes: { ...valid.attributes, test_mode: false } }] }, '1231656', 'test'),
-    /exactly one/,
+    /environment/,
   );
   assert.throws(
     () => selectLemonVariant({ data: [{ ...valid, attributes: { ...valid.attributes, trial_interval_count: 14 } }] }, '1231656', 'test'),
-    /exactly one/,
+    /trial_days/,
   );
+  assert.throws(() => selectLemonVariant({ data: [] }, '1231656', 'test'), /no_variant/);
+  assert.throws(() => selectLemonVariant({ data: [valid, valid] }, '1231656', 'test'), /duplicate_match/);
 });
 
 test('checkout discovers and verifies the configured product variant when no variant ID is stored', async (t) => {
