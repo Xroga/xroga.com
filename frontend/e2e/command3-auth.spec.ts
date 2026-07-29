@@ -44,25 +44,109 @@ async function fillVisibleCheckoutField(
   return false;
 }
 
-async function clickVisibleCheckoutSubmit(page: import('@playwright/test').Page): Promise<void> {
+async function clickVisibleCheckoutSubmit(
+  page: import('@playwright/test').Page,
+  providerAccepted: () => Promise<boolean>,
+): Promise<'pointer' | 'keyboard'> {
+  const safeFailures: string[] = [];
+  const onResponse = (response: import('@playwright/test').Response) => {
+    const url = new URL(response.url());
+    if (response.status() >= 400 && /lemonsqueezy|stripe/i.test(url.hostname)) {
+      safeFailures.push(`${url.hostname}${url.pathname}:${response.status()}`);
+    }
+  };
+  const onRequestFailed = (request: import('@playwright/test').Request) => {
+    const url = new URL(request.url());
+    if (/lemonsqueezy|stripe/i.test(url.hostname)) {
+      safeFailures.push(`${url.hostname}${url.pathname}:network_failure`);
+    }
+  };
+  page.on('response', onResponse);
+  page.on('requestfailed', onRequestFailed);
+
+  const submissionAccepted = async (
+    candidate: import('@playwright/test').Locator,
+    startingUrl: string,
+  ): Promise<boolean> => {
+    try {
+      await expect.poll(async () => {
+        if (await providerAccepted()) return true;
+        if (page.url() !== startingUrl) return true;
+        if (!(await candidate.isVisible().catch(() => false))) return true;
+        if (!(await candidate.isEnabled().catch(() => false))) return true;
+        return false;
+      }, { timeout: 20_000, intervals: [500, 1_000, 2_000] }).toBe(true);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  let candidate: import('@playwright/test').Locator | undefined;
   for (const frame of page.frames()) {
     const named = frame.getByRole('button', {
       name: /start.*trial|begin.*trial|subscribe|complete (order|purchase)|place order|pay \$?0/i,
     });
     for (let index = 0; index < await named.count(); index += 1) {
-      const candidate = named.nth(index);
-      if (await candidate.isVisible().catch(() => false) && await candidate.isEnabled().catch(() => false)) {
-        await candidate.click();
-        return;
+      const current = named.nth(index);
+      if (await current.isVisible().catch(() => false) && await current.isEnabled().catch(() => false)) {
+        candidate = current;
+        break;
       }
     }
+    if (candidate) break;
     const submit = frame.locator('button[type="submit"], input[type="submit"]').filter({ visible: true }).last();
     if (await submit.count() && await submit.isEnabled().catch(() => false)) {
-      await submit.click();
-      return;
+      candidate = submit;
+      break;
     }
   }
-  throw new Error('Lemon Test Mode checkout has no enabled submit control');
+  if (!candidate) {
+    page.off('response', onResponse);
+    page.off('requestfailed', onRequestFailed);
+    throw new Error('Lemon Test Mode checkout has no enabled submit control');
+  }
+
+  const startingUrl = page.url();
+  try {
+    await candidate.scrollIntoViewIfNeeded();
+    await candidate.click();
+    if (await submissionAccepted(candidate, startingUrl)) return 'pointer';
+
+    // Some hosted payment controls accept their final submit only through the
+    // focused form control. Retry once with an actual keyboard submit, but only
+    // after neither the page nor the provider state changed for 20 seconds.
+    await candidate.focus();
+    await candidate.press('Enter');
+    if (await submissionAccepted(candidate, startingUrl)) return 'keyboard';
+
+    const invalidControls: string[] = [];
+    for (const frame of page.frames()) {
+      invalidControls.push(...await frame.locator('input, select, textarea').evaluateAll((controls) => controls
+        .filter((control) => control instanceof HTMLInputElement || control instanceof HTMLSelectElement || control instanceof HTMLTextAreaElement)
+        .filter((control) => !control.checkValidity())
+        .map((control) => {
+          const input = control as HTMLInputElement;
+          const validity = input.validity;
+          const category = validity.valueMissing ? 'value_missing'
+            : validity.typeMismatch ? 'type_mismatch'
+              : validity.patternMismatch ? 'pattern_mismatch'
+                : validity.tooShort ? 'too_short'
+                  : validity.tooLong ? 'too_long'
+                    : validity.rangeUnderflow || validity.rangeOverflow ? 'range'
+                      : validity.badInput ? 'bad_input'
+                        : 'invalid';
+          return `${input.type || input.tagName.toLowerCase()}:${input.autocomplete || input.name || 'unnamed'}:${category}`;
+        })));
+    }
+    throw new Error(
+      `Lemon Test Mode checkout did not accept pointer or keyboard submission `
+      + `(invalid=${invalidControls.join(',') || 'none'}, provider_failures=${[...new Set(safeFailures)].join(',') || 'none'})`,
+    );
+  } finally {
+    page.off('response', onResponse);
+    page.off('requestfailed', onRequestFailed);
+  }
 }
 
 async function writeSafeWebhookDeliveryDiagnostic(since: string): Promise<{
@@ -243,6 +327,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   let billingCheckout: 'not_requested' | 'verified' = 'not_requested';
   let billingTransaction: 'not_requested' | 'verified_test_mode_webhook' = 'not_requested';
   let testPaymentInstrument: 'not_requested' | 'dummy_card_5555' | 'provider_no_card_trial' = 'not_requested';
+  let billingSubmissionMethod: 'not_requested' | 'pointer' | 'keyboard' = 'not_requested';
   let billingEntitlementEndsAt: string | null = null;
   if (launchBillingApiUrl) {
     const billingStatusResponse = await fetch(`${launchBillingApiUrl}/api/billing/status`, { headers: { Authorization: browserBearer } });
@@ -334,8 +419,14 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
       await terms.first().check();
     }
     const checkoutSubmittedAt = new Date().toISOString();
-    await clickVisibleCheckoutSubmit(page);
     let paidEntitlement: { state?: string; startsAt?: string | null; endsAt?: string | null; requiresCard?: boolean } = {};
+    billingSubmissionMethod = await clickVisibleCheckoutSubmit(page, async () => {
+      const response = await fetch(`${launchBillingApiUrl}/api/billing/entitlement`, {
+        headers: { Authorization: browserBearer, Accept: 'application/json' },
+      });
+      paidEntitlement = response.ok ? await response.json() : {};
+      return paidEntitlement.state === 'paid_active';
+    });
     try {
       await expect.poll(async () => {
         const response = await fetch(`${launchBillingApiUrl}/api/billing/entitlement`, {
@@ -375,5 +466,5 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
-  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction, billingMode: billingTransaction === 'verified_test_mode_webhook' ? 'test' : 'not_verified', initialRealCharge: billingTransaction === 'verified_test_mode_webhook' ? 0 : null, testPaymentInstrument, billingEntitlementEndsAt, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, and billing cycles cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
+  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction, billingMode: billingTransaction === 'verified_test_mode_webhook' ? 'test' : 'not_verified', initialRealCharge: billingTransaction === 'verified_test_mode_webhook' ? 0 : null, testPaymentInstrument, billingSubmissionMethod, billingEntitlementEndsAt, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, and billing cycles cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });
