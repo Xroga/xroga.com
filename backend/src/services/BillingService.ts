@@ -33,6 +33,48 @@ interface LemonVariantResource {
   attributes?: Record<string, unknown>;
 }
 
+export type LemonVariantMismatchCode =
+  | 'no_variant'
+  | 'product'
+  | 'publication'
+  | 'environment'
+  | 'subscription'
+  | 'price'
+  | 'interval'
+  | 'interval_count'
+  | 'trial'
+  | 'trial_interval'
+  | 'trial_days'
+  | 'variant_id'
+  | 'duplicate_match';
+
+export class LemonVariantContractError extends Error {
+  constructor(public readonly mismatchCodes: LemonVariantMismatchCode[]) {
+    super(`Billing product contract mismatch: ${mismatchCodes.join(',')}`);
+  }
+}
+
+function lemonVariantMismatchCodes(
+  candidate: LemonVariantResource,
+  productId: string,
+  environment: Exclude<LemonEnvironment, 'unconfigured'>,
+): LemonVariantMismatchCode[] {
+  const attributes = candidate.attributes ?? {};
+  return [
+    String(attributes.product_id ?? '') === productId ? null : 'product',
+    attributes.status === 'published' ? null : 'publication',
+    attributes.test_mode === (environment === 'test') ? null : 'environment',
+    attributes.is_subscription === true ? null : 'subscription',
+    attributes.price === 1900 ? null : 'price',
+    attributes.interval === 'month' ? null : 'interval',
+    attributes.interval_count === 1 ? null : 'interval_count',
+    attributes.has_free_trial === true ? null : 'trial',
+    attributes.trial_interval === 'day' ? null : 'trial_interval',
+    attributes.trial_interval_count === 30 ? null : 'trial_days',
+    /^\d+$/.test(String(candidate.id ?? '')) ? null : 'variant_id',
+  ].filter((code): code is LemonVariantMismatchCode => code !== null);
+}
+
 export function selectLemonVariant(
   payload: unknown,
   productId: string,
@@ -40,24 +82,20 @@ export function selectLemonVariant(
 ): string {
   const data = (payload as { data?: LemonVariantResource[] })?.data;
   if (!Array.isArray(data)) throw new Error('Billing provider returned an invalid variant list');
-  const matches = data.filter((candidate) => {
-    const attributes = candidate.attributes ?? {};
-    return String(attributes.product_id ?? '') === productId
-      && attributes.status === 'published'
-      && attributes.test_mode === (environment === 'test')
-      && attributes.is_subscription === true
-      && attributes.price === 1900
-      && attributes.interval === 'month'
-      && attributes.interval_count === 1
-      && attributes.has_free_trial === true
-      && attributes.trial_interval === 'day'
-      && attributes.trial_interval_count === 30
-      && /^\d+$/.test(String(candidate.id ?? ''));
-  });
+  const evaluated = data.map((candidate) => ({
+    candidate,
+    mismatchCodes: lemonVariantMismatchCodes(candidate, productId, environment),
+  }));
+  const matches = evaluated.filter(({ mismatchCodes }) => mismatchCodes.length === 0);
   if (matches.length !== 1) {
-    throw new Error('Billing product must have exactly one published $19 monthly variant with a 30-day trial');
+    const mismatchCodes = matches.length > 1
+      ? ['duplicate_match' as const]
+      : data.length === 0
+        ? ['no_variant' as const]
+        : [...new Set(evaluated.flatMap(({ mismatchCodes: codes }) => codes))];
+    throw new LemonVariantContractError(mismatchCodes);
   }
-  return String(matches[0].id);
+  return String(matches[0].candidate.id);
 }
 
 const variantCache = new Map<string, { id: string; expiresAt: number }>();
@@ -269,8 +307,15 @@ export class BillingService {
     let variantId: string;
     try {
       variantId = selectLemonVariant(await response.json(), productId, environment);
-    } catch {
-      throw new BillingServiceError('provider_unavailable', 'Billing provider plan does not match Xroga Test Mode', 502);
+    } catch (error) {
+      const diagnostic = error instanceof LemonVariantContractError
+        ? ` (${error.mismatchCodes.join(',')})`
+        : ' (invalid_provider_response)';
+      throw new BillingServiceError(
+        'provider_unavailable',
+        `Billing provider plan does not match Xroga Test Mode${diagnostic}`,
+        502,
+      );
     }
     variantCache.set(cacheKey, { id: variantId, expiresAt: Date.now() + 300_000 });
     return variantId;
