@@ -13,6 +13,7 @@ primary_region = 'iad'
   NODE_ENV = 'production'
   FRONTEND_URL = 'https://xroga.com'
   GITHUB_OAUTH_CALLBACK_URL = 'https://xroga.com/dashboard/integrations/github/callback'
+  LEMONSQUEEZY_MODE = 'test'
 
 [processes]
   app = 'node dist/index.js'

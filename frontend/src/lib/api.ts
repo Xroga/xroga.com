@@ -1053,7 +1053,9 @@ export const api = {
       lemonApi: boolean;
       lemonWebhook: boolean;
       lemonStore: boolean;
-      environment: 'production' | 'unconfigured';
+      environment: 'test' | 'live' | 'unconfigured';
+      testMode: boolean;
+      trialDays: number | null;
       plans: Array<{ tier: string; name: string; ready: boolean }>;
     }>('/api/billing/status'),
     entitlement: () => apiFetch<{

@@ -1,10 +1,10 @@
 # Lemon Squeezy billing (Xroga platform)
 
-Paddle has been removed. Xroga has one $19 per 30-day plan, billed through Lemon Squeezy as merchant of record.
+Paddle has been removed. Xroga has one $19 per 30-day plan through Lemon Squeezy. The current launch environment deliberately uses Lemon Squeezy Test Mode: the published Spark subscription has a 30-day free trial, all payment data is dummy, and the initial charge is $0.
 
 ## 1. Create the product
 
-In [Lemon Squeezy](https://app.lemonsqueezy.com), create one 30-day subscription product and variant:
+In [Lemon Squeezy](https://app.lemonsqueezy.com), create one monthly subscription product and variant in Test Mode. Configure a 30-day free trial and keep `skip_trial` disabled:
 
 | Plan | Environment variable | Value |
 | --- | --- | --- |
@@ -22,6 +22,8 @@ fly secrets set -a xroga-api \
   LEMONSQUEEZY_VARIANT_SPARK="..." \
   LEMONSQUEEZY_REDIRECT_URL="https://xroga.com/dashboard/billing?checkout=success"
 ```
+
+Set the non-secret runtime mode to `LEMONSQUEEZY_MODE=test`. Xroga includes `test_mode: true` when creating checkout and rejects a live webhook in a Test Mode runtime. Switching to live billing requires an explicit coordinated change to the API key, product/variant, webhook, signing secret, and runtime mode.
 
 Remove obsolete `PADDLE_*` and historical multi-plan variant secrets if present.
 

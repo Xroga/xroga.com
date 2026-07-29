@@ -125,12 +125,18 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
       lemonApi?: boolean;
       lemonWebhook?: boolean;
       lemonStore?: boolean;
+      environment?: 'test' | 'live' | 'unconfigured';
+      testMode?: boolean;
+      trialDays?: number | null;
       plans?: Array<{ tier?: string; ready?: boolean }>;
     };
     expect(billingStatusResponse.status).toBe(200);
     expect(billingStatus.lemonApi).toBe(true);
     expect(billingStatus.lemonWebhook).toBe(true);
     expect(billingStatus.lemonStore).toBe(true);
+    expect(billingStatus.environment).toBe('test');
+    expect(billingStatus.testMode).toBe(true);
+    expect(billingStatus.trialDays).toBe(30);
     expect(billingStatus.plans?.some((plan) => plan.tier === 'spark' && plan.ready === true)).toBe(true);
     const checkoutResponse = await fetch(`${launchBillingApiUrl}/api/billing/create-checkout`, {
       method: 'POST',
