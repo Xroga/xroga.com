@@ -242,7 +242,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(await unreadNotifications.json()).toEqual({ count: 0 });
   let billingCheckout: 'not_requested' | 'verified' = 'not_requested';
   let billingTransaction: 'not_requested' | 'verified_test_mode_webhook' = 'not_requested';
-  let testPaymentInstrument: 'not_requested' | 'dummy_card_4242' | 'provider_no_card_trial' = 'not_requested';
+  let testPaymentInstrument: 'not_requested' | 'dummy_card_5555' | 'provider_no_card_trial' = 'not_requested';
   let billingEntitlementEndsAt: string | null = null;
   if (launchBillingApiUrl) {
     const billingStatusResponse = await fetch(`${launchBillingApiUrl}/api/billing/status`, { headers: { Authorization: browserBearer } });
@@ -287,7 +287,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
       'input[autocomplete="name"]',
       'input[autocomplete="cc-name"]',
       'input[name*="name" i]',
-    ], 'Xroga Test');
+    ], `Xroga Test ${run.slice(0, 8)}`);
     expect(await fillVisibleCheckoutField(page, [
       'input[autocomplete="address-line1"]',
       'input[name*="address" i]',
@@ -312,7 +312,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
       'input[name="cardnumber"]',
       'input[placeholder*="card number" i]',
       'input[placeholder*="1234 1234" i]',
-    ], '4242424242424242');
+    ], '5555555555554444');
     if (cardFilled) {
       expect(await fillVisibleCheckoutField(page, [
         'input[autocomplete="cc-exp"]',
@@ -325,7 +325,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
         'input[placeholder*="CVC" i]',
         'input[placeholder*="CVV" i]',
       ], '123')).toBe(true);
-      testPaymentInstrument = 'dummy_card_4242';
+      testPaymentInstrument = 'dummy_card_5555';
     } else {
       testPaymentInstrument = 'provider_no_card_trial';
     }
