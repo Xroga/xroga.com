@@ -26,7 +26,6 @@ import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/Switch';
 import { Badge } from '@/components/ui/Badge';
 import { Tabs, type TabItem } from '@/components/ui/Tabs';
-import { SettingsPanelHeader } from '@/components/settings/SettingsPrimitives';
 
 const COSTUMES: Array<{ id: CompanionCostume; label: string; detail: string }> = [
   { id: 'core', label: 'Core', detail: 'Compact guardian silhouette' },
@@ -55,10 +54,15 @@ export function CompanionCustomizer() {
 
   return (
     <section aria-labelledby="companion-settings-title" className="space-y-5">
-      <SettingsPanelHeader
-        title="Companion Studio"
-        description="Its operational gestures come from real Xroga events. Personality, voice, appearance, and optional care stay under your control and sync to your account."
-      />
+      <div>
+        <p className="text-xs font-bold tracking-[.16em] text-[var(--accent)]">COMPANION STUDIO</p>
+        <h2 id="companion-settings-title" className="mt-1 text-xl font-semibold text-[var(--text-primary)]">
+          Make the companion yours
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm text-[var(--text-secondary)]">
+          Its operational gestures come from real Xroga events. Personality, voice, appearance, and optional care stay under your control and sync to your account.
+        </p>
+      </div>
 
       <div className="grid gap-5 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
         {/* Live preview */}
