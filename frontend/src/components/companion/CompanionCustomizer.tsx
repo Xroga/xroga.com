@@ -1,6 +1,17 @@
 'use client';
 
-import { BatteryCharging, Crown, Eye, Gamepad2, Mic2, Shirt, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import {
+  BatteryCharging,
+  Check,
+  Fingerprint,
+  Gamepad2,
+  LayoutGrid,
+  Maximize2,
+  Mic2,
+  Shirt,
+  Smile,
+} from 'lucide-react';
 import { CompanionRenderer } from './CompanionRenderer';
 import {
   COMPANION_MOODS,
@@ -12,6 +23,10 @@ import {
 } from '@/lib/companion';
 import { useCompanionStore } from '@/store/useCompanionStore';
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/Switch';
+import { Badge } from '@/components/ui/Badge';
+import { Tabs, type TabItem } from '@/components/ui/Tabs';
+import { SettingsPanelHeader } from '@/components/settings/SettingsPrimitives';
 
 const COSTUMES: Array<{ id: CompanionCostume; label: string; detail: string }> = [
   { id: 'core', label: 'Core', detail: 'Compact guardian silhouette' },
@@ -21,110 +36,275 @@ const COSTUMES: Array<{ id: CompanionCostume; label: string; detail: string }> =
 const ACCENTS: CompanionAccent[] = ['blue', 'violet', 'cyan', 'emerald'];
 const SIZES: CompanionSize[] = ['compact', 'standard', 'large'];
 
-function Toggle({ label, detail, checked, onChange, icon }: { label: string; detail: string; checked: boolean; onChange: (checked: boolean) => void; icon: React.ReactNode }) {
-  return (
-    <label className="xv-companion-toggle">
-      <span className="xv-companion-toggle-icon">{icon}</span>
-      <span><strong>{label}</strong><small>{detail}</small></span>
-      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} />
-    </label>
-  );
-}
+const GROUPS = [
+  { id: 'identity', label: 'Identity', icon: <Fingerprint className="h-3.5 w-3.5" aria-hidden="true" /> },
+  { id: 'form', label: 'Form', icon: <Maximize2 className="h-3.5 w-3.5" aria-hidden="true" /> },
+  { id: 'wardrobe', label: 'Skins & Costumes', icon: <Shirt className="h-3.5 w-3.5" aria-hidden="true" /> },
+  { id: 'expression', label: 'Expression', icon: <Smile className="h-3.5 w-3.5" aria-hidden="true" /> },
+  { id: 'placement', label: 'Placement', icon: <LayoutGrid className="h-3.5 w-3.5" aria-hidden="true" /> },
+  { id: 'behavior', label: 'Behavior', icon: <Gamepad2 className="h-3.5 w-3.5" aria-hidden="true" /> },
+  { id: 'voice', label: 'Voice & Care', icon: <Mic2 className="h-3.5 w-3.5" aria-hidden="true" /> },
+] as const satisfies readonly TabItem[];
+
+type GroupId = (typeof GROUPS)[number]['id'];
 
 export function CompanionCustomizer() {
   const state = useCompanionStore();
   const energy = companionEnergy(state);
+  const [group, setGroup] = useState<GroupId>('identity');
+
   return (
-    <section className="xv-companion-customizer" aria-labelledby="companion-settings-title">
-      <div className="xv-companion-customizer-intro">
-        <div>
-          <p className="text-xs font-bold tracking-[.16em] text-[var(--accent)]">LIVING X-COMPANION</p>
-          <h2 id="companion-settings-title" className="text-xl font-semibold mt-1">Make the companion yours</h2>
-          <p className="text-sm text-[var(--muted)] mt-2 max-w-2xl">
-            Its operational gestures come from real Xroga events. Personality, voice, appearance, and optional care stay under your control and sync to your account.
-          </p>
-        </div>
-        <div className="xv-companion-customizer-preview" data-size={state.size}>
-          <CompanionRenderer
-            mood={state.mood}
-            operation={state.operation}
-            costume={state.costume}
-            accent={state.accent}
-            crownEnabled={state.crownEnabled}
-            mantleEnabled={state.mantleEnabled}
-            decorative={false}
-          />
-          <span>{state.name} · {energy}</span>
-        </div>
-      </div>
+    <section aria-labelledby="companion-settings-title" className="space-y-5">
+      <SettingsPanelHeader
+        title="Companion Studio"
+        description="Its operational gestures come from real Xroga events. Personality, voice, appearance, and optional care stay under your control and sync to your account."
+      />
 
-      <div className="xv-companion-settings-grid">
-        <div className="xv-companion-setting-card">
-          <label htmlFor="companion-name">Companion name</label>
-          <input
-            id="companion-name"
-            value={state.name}
-            maxLength={24}
-            onChange={(event) => state.updatePreferences({ name: event.target.value })}
-            onBlur={(event) => state.updatePreferences({ name: validateCompanionName(event.target.value) })}
-          />
-          <small>1–24 characters. Saved to your authenticated profile.</small>
+      <div className="grid gap-5 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
+        {/* Live preview */}
+        <div className="flex flex-col items-center gap-2 rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-5">
+          <div className="xv-companion-customizer-preview mx-auto" data-size={state.size}>
+            <CompanionRenderer
+              mood={state.mood}
+              operation={state.operation}
+              costume={state.costume}
+              accent={state.accent}
+              crownEnabled={state.crownEnabled}
+              mantleEnabled={state.mantleEnabled}
+              decorative={false}
+            />
+          </div>
+          <span className="text-xs capitalize text-[var(--text-secondary)]">
+            {state.name} · {energy}
+          </span>
         </div>
 
-        <fieldset className="xv-companion-setting-card">
-          <legend><Shirt className="h-4 w-4" /> Silhouette</legend>
-          <div className="xv-companion-choice-grid">
-            {COSTUMES.map((costume) => (
-              <button key={costume.id} type="button" className={cn(state.costume === costume.id && 'is-active')} onClick={() => state.updatePreferences({ costume: costume.id })}>
-                <strong>{costume.label}</strong><small>{costume.detail}</small>
-              </button>
-            ))}
-          </div>
-        </fieldset>
+        <div className="min-w-0 space-y-4">
+          <Tabs items={GROUPS} activeId={group} onChange={(id) => setGroup(id as GroupId)} orientation="horizontal" idPrefix="xv-companion-group" />
 
-        <fieldset className="xv-companion-setting-card">
-          <legend><Sparkles className="h-4 w-4" /> Energy accent</legend>
-          <div className="xv-companion-accent-row">
-            {ACCENTS.map((accent) => (
-              <button key={accent} type="button" aria-label={`${accent} accent`} aria-pressed={state.accent === accent} data-accent={accent} onClick={() => state.updatePreferences({ accent })} />
-            ))}
-          </div>
-        </fieldset>
+          <div
+            role="tabpanel"
+            id={`xv-companion-group-panel-${group}`}
+            aria-labelledby={`xv-companion-group-${group}`}
+            className="space-y-4"
+          >
+            {group === 'identity' && (
+              <div>
+                <label htmlFor="companion-name" className="text-xs font-medium text-[var(--text-secondary)]">
+                  Companion name
+                </label>
+                <input
+                  id="companion-name"
+                  value={state.name}
+                  maxLength={24}
+                  onChange={(event) => state.updatePreferences({ name: event.target.value })}
+                  onBlur={(event) => state.updatePreferences({ name: validateCompanionName(event.target.value) })}
+                  className="mt-1.5 w-full rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-3 py-2 text-sm text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+                />
+                <p className="mt-1.5 text-xs text-[var(--text-muted)]">1–24 characters. Saved to your authenticated profile.</p>
+              </div>
+            )}
 
-        <fieldset className="xv-companion-setting-card">
-          <legend><Eye className="h-4 w-4" /> Mood preview</legend>
-          <div className="xv-companion-mood-row">
-            {COMPANION_MOODS.map((mood) => (
-              <button key={mood} type="button" className={cn(state.mood === mood && 'is-active')} onClick={() => state.previewMood(mood)}>{mood}</button>
-            ))}
-          </div>
-        </fieldset>
+            {group === 'form' && (
+              <div>
+                <p className="text-xs font-medium text-[var(--text-secondary)]">Display size</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {SIZES.map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      aria-pressed={state.size === size}
+                      onClick={() => state.updatePreferences({ size })}
+                      className={cn(
+                        'rounded-full border px-3 py-1.5 text-xs font-medium capitalize transition-colors focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
+                        state.size === size
+                          ? 'border-[var(--accent)] bg-[var(--accent-dim)] text-[var(--accent)]'
+                          : 'border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]',
+                      )}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-        <fieldset className="xv-companion-setting-card">
-          <legend>Display size</legend>
-          <div className="xv-companion-mood-row">
-            {SIZES.map((size) => (
-              <button key={size} type="button" className={cn(state.size === size && 'is-active')} onClick={() => state.updatePreferences({ size })}>{size}</button>
-            ))}
-          </div>
-        </fieldset>
+            {group === 'wardrobe' && (
+              <div className="space-y-5">
+                <div>
+                  <p className="mb-2 text-xs font-medium text-[var(--text-secondary)]">Silhouette</p>
+                  <div role="radiogroup" aria-label="Silhouette" className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                    {COSTUMES.map((costume) => {
+                      const equipped = state.costume === costume.id;
+                      return (
+                        <button
+                          key={costume.id}
+                          type="button"
+                          role="radio"
+                          aria-checked={equipped}
+                          onClick={() => state.updatePreferences({ costume: costume.id })}
+                          className={cn(
+                            'relative flex flex-col items-center gap-2 rounded-token-md border p-3 text-center transition-colors focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
+                            equipped
+                              ? 'border-[var(--accent)] bg-[var(--accent-dim)]'
+                              : 'border-[var(--border-subtle)] hover:border-[var(--border-strong)]',
+                          )}
+                        >
+                          <span className="w-12">
+                            <CompanionRenderer
+                              mood={state.mood}
+                              operation="idle"
+                              costume={costume.id}
+                              accent={state.accent}
+                              crownEnabled={false}
+                              mantleEnabled={false}
+                              decorative
+                            />
+                          </span>
+                          <span className="text-xs font-medium text-[var(--text-primary)]">{costume.label}</span>
+                          <span className="text-[10px] leading-tight text-[var(--text-muted)]">{costume.detail}</span>
+                          {equipped && (
+                            <Badge tone="accent" className="absolute right-1.5 top-1.5">
+                              <Check className="h-2.5 w-2.5" aria-hidden="true" /> Equipped
+                            </Badge>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
-        <fieldset className="xv-companion-setting-card">
-          <legend>Workspace position</legend>
-          <div className="xv-companion-mood-row">
-            <button type="button" className={cn(state.dock === 'composer' && 'is-active')} onClick={() => state.updatePreferences({ dock: 'composer' })}>Composer</button>
-            <button type="button" className={cn(state.dock === 'corner' && 'is-active')} onClick={() => state.updatePreferences({ dock: 'corner' })}>Corner</button>
-          </div>
-        </fieldset>
-      </div>
+                <div>
+                  <p className="mb-2 text-xs font-medium text-[var(--text-secondary)]">Energy accent</p>
+                  <div className="xv-companion-accent-row" role="radiogroup" aria-label="Energy accent">
+                    {ACCENTS.map((accent) => (
+                      <button
+                        key={accent}
+                        type="button"
+                        role="radio"
+                        aria-label={`${accent} accent`}
+                        aria-checked={state.accent === accent}
+                        data-accent={accent}
+                        onClick={() => state.updatePreferences({ accent })}
+                      />
+                    ))}
+                  </div>
+                </div>
 
-      <div className="xv-companion-toggle-list">
-        <Toggle label="Show companion" detail="Visible on the homepage, Workspace composer, and authenticated product surfaces." checked={state.visible} onChange={(visible) => state.updatePreferences({ visible })} icon={<Eye className="h-4 w-4" />} />
-        <Toggle label="X crown" detail="Keep the protected X-shaped identity crown." checked={state.crownEnabled} onChange={(crownEnabled) => state.updatePreferences({ crownEnabled })} icon={<Crown className="h-4 w-4" />} />
-        <Toggle label="Adaptive mantle" detail="Theme-aware clothing layer that changes with the selected silhouette." checked={state.mantleEnabled} onChange={(mantleEnabled) => state.updatePreferences({ mantleEnabled })} icon={<Shirt className="h-4 w-4" />} />
-        <Toggle label="Optional voice" detail="Speak completed real AI responses only after you opt in. Never auto-enabled." checked={state.voiceEnabled} onChange={(voiceEnabled) => state.updatePreferences({ voiceEnabled })} icon={<Mic2 className="h-4 w-4" />} />
-        <Toggle label="Weekly code energy" detail="A gentle weekly care state that never blocks building or hides product status." checked={state.careEnabled} onChange={(careEnabled) => state.updatePreferences({ careEnabled })} icon={<BatteryCharging className="h-4 w-4" />} />
-        <Toggle label="Reduced gamification" detail="Keep the companion professional and disable energy-pressure language." checked={state.reducedGamification} onChange={(reducedGamification) => state.updatePreferences({ reducedGamification })} icon={<Gamepad2 className="h-4 w-4" />} />
+                <div>
+                  <Switch
+                    checked={state.crownEnabled}
+                    onChange={(crownEnabled) => state.updatePreferences({ crownEnabled })}
+                    label="X crown"
+                    description="Keep the protected X-shaped identity crown."
+                  />
+                  <Switch
+                    checked={state.mantleEnabled}
+                    onChange={(mantleEnabled) => state.updatePreferences({ mantleEnabled })}
+                    label="Adaptive mantle"
+                    description="Theme-aware clothing layer that changes with the selected silhouette."
+                  />
+                </div>
+              </div>
+            )}
+
+            {group === 'expression' && (
+              <div>
+                <p className="text-xs font-medium text-[var(--text-secondary)]">Mood preview</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {COMPANION_MOODS.map((mood) => (
+                    <button
+                      key={mood}
+                      type="button"
+                      aria-pressed={state.mood === mood}
+                      onClick={() => state.previewMood(mood)}
+                      className={cn(
+                        'rounded-full border px-3 py-1.5 text-xs font-medium capitalize transition-colors focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
+                        state.mood === mood
+                          ? 'border-[var(--accent)] bg-[var(--accent-dim)] text-[var(--accent)]'
+                          : 'border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]',
+                      )}
+                    >
+                      {mood}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {group === 'placement' && (
+              <div className="space-y-4">
+                <div>
+                  <p className="text-xs font-medium text-[var(--text-secondary)]">Workspace position</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      aria-pressed={state.dock === 'composer'}
+                      onClick={() => state.updatePreferences({ dock: 'composer' })}
+                      className={cn(
+                        'rounded-full border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
+                        state.dock === 'composer'
+                          ? 'border-[var(--accent)] bg-[var(--accent-dim)] text-[var(--accent)]'
+                          : 'border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]',
+                      )}
+                    >
+                      Composer
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={state.dock === 'corner'}
+                      onClick={() => state.updatePreferences({ dock: 'corner' })}
+                      className={cn(
+                        'rounded-full border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
+                        state.dock === 'corner'
+                          ? 'border-[var(--accent)] bg-[var(--accent-dim)] text-[var(--accent)]'
+                          : 'border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]',
+                      )}
+                    >
+                      Corner
+                    </button>
+                  </div>
+                </div>
+                <Switch
+                  checked={state.visible}
+                  onChange={(visible) => state.updatePreferences({ visible })}
+                  label="Show companion"
+                  description="Visible on the homepage, Workspace composer, and authenticated product surfaces."
+                />
+              </div>
+            )}
+
+            {group === 'behavior' && (
+              <Switch
+                checked={state.reducedGamification}
+                onChange={(reducedGamification) => state.updatePreferences({ reducedGamification })}
+                label="Reduced gamification"
+                description="Keep the companion professional and disable energy-pressure language."
+              />
+            )}
+
+            {group === 'voice' && (
+              <div>
+                <Switch
+                  checked={state.voiceEnabled}
+                  onChange={(voiceEnabled) => state.updatePreferences({ voiceEnabled })}
+                  label="Optional voice"
+                  description="Speak completed real AI responses only after you opt in. Never auto-enabled."
+                />
+                <Switch
+                  checked={state.careEnabled}
+                  onChange={(careEnabled) => state.updatePreferences({ careEnabled })}
+                  label="Weekly code energy"
+                  description="A gentle weekly care state that never blocks building or hides product status."
+                />
+                <div className="flex items-center gap-2 pt-2">
+                  <BatteryCharging className="h-3.5 w-3.5 text-[var(--text-muted)]" aria-hidden="true" />
+                  <span className="text-xs text-[var(--text-muted)]">Current energy: <span className="capitalize">{energy}</span></span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );

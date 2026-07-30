@@ -9,6 +9,7 @@ import { HomepageBlackHolePower } from '@/components/homepage/HomepageBlackHoleP
 import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
 import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
 import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
+import { HomepageAnnouncementBanner } from '@/components/homepage/HomepageAnnouncementBanner';
 import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
 import { HomepageCompanionStage } from '@/components/companion/CompanionSurfaces';
@@ -118,6 +119,7 @@ export default function HomePage() {
       />
 
       <section className="xv-hc-hero">
+        <HomepageAnnouncementBanner href={primaryHref} label={loggedIn ? 'Open Workspace' : 'Start building'} />
         <header className="xv-hc-header">
           <div className="xv-hc-header-inner">
             <Logo href="/" variant="homepage" height={64} className="shrink-0" />

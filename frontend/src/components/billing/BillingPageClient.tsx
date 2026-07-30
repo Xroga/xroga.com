@@ -3,7 +3,6 @@
 import { Lock, Shield } from 'lucide-react';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { PlanUsageSettingsPanel } from '@/components/settings/PlanUsageSettingsPanel';
-import { SubscriptionManagePanel } from '@/components/billing/SubscriptionManagePanel';
 
 export function BillingPageClient() {
   return (
@@ -15,7 +14,6 @@ export function BillingPageClient() {
         </header>
 
         <PlanUsageSettingsPanel />
-        <SubscriptionManagePanel />
 
         <div className="grid sm:grid-cols-2 gap-4 text-sm">
           <div className="glass-panel rounded-xl p-4 flex gap-3">

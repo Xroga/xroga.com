@@ -4,24 +4,9 @@ import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { cn } from '@/lib/utils';
-
-function ToggleRow({ label, desc, on, onChange }: { label: string; desc: string; on: boolean; onChange: (v: boolean) => void }) {
-  return (
-    <div className="flex items-start justify-between gap-4 py-3 border-b border-[var(--card-border)]/40 last:border-0">
-      <div className="min-w-0">
-        <p className="text-sm font-medium">{label}</p>
-        <p className="text-xs text-[var(--muted)] mt-0.5 leading-relaxed">{desc}</p>
-      </div>
-      <button
-        type="button"
-        onClick={() => onChange(!on)}
-        className={cn('w-10 h-5 rounded-full shrink-0 relative transition-colors mt-0.5', on ? 'bg-[#006aff]' : 'bg-white/20')}
-      >
-        <span className={cn('absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all', on ? 'left-5' : 'left-0.5')} />
-      </button>
-    </div>
-  );
-}
+import { Switch } from '@/components/ui/Switch';
+import { Badge } from '@/components/ui/Badge';
+import { SettingsPanelHeader, SettingsRow, SettingsStack } from '@/components/settings/SettingsPrimitives';
 
 export function PrivacySettingsPanel() {
   const allowPersonalInfo = usePrivacyStore((s) => s.allowPersonalInfo);
@@ -33,49 +18,57 @@ export function PrivacySettingsPanel() {
   const crossProjectAccess = usePrivacyStore((s) => s.crossProjectAccess);
   const setCrossProjectAccess = usePrivacyStore((s) => s.setCrossProjectAccess);
   return (
-    <div className="space-y-5">
-      <h2 className="font-semibold text-lg">Privacy & AI behavior</h2>
-      <p className="text-xs text-[var(--muted)] leading-relaxed">
-        Control how Xroga uses your data. We only use what you allow — never sold or misused.
-      </p>
-      <div className="rounded-xl border border-[var(--card-border)]/50 divide-y divide-[var(--card-border)]/30 px-4">
-        <ToggleRow
-          label="Allow personal context"
-          desc="Let Xroga use your profile info to personalize replies (never shared externally)."
-          on={allowPersonalInfo}
-          onChange={setAllowPersonalInfo}
-        />
-        <ToggleRow
-          label="Use random display name"
-          desc="Mask your real name in logs and non-essential UI with a random alias."
-          on={useRandomDisplayName}
-          onChange={setUseRandomDisplayName}
-        />
-        <ToggleRow
-          label="Remember my IP"
-          desc="When off, we do not store your IP for analytics or session fingerprinting."
-          on={rememberIp}
-          onChange={setRememberIp}
-        />
-        <ToggleRow
-          label="Access other projects & chats"
-          desc="When off, AI only sees the current chat/project — not your full history."
-          on={crossProjectAccess}
-          onChange={setCrossProjectAccess}
-        />
-        <div className="flex items-start justify-between gap-4 py-3 border-b border-[var(--card-border)]/40">
-          <div className="min-w-0">
-            <p className="text-sm font-medium">Safety confirmations</p>
-            <p className="text-xs text-[var(--muted)] mt-0.5 leading-relaxed">
+    <SettingsStack>
+      <SettingsPanelHeader
+        title="Privacy & AI behavior"
+        description="Control how Xroga uses your data. We only use what you allow — never sold or misused. These preferences are stored on this device."
+      />
+      <div>
+        <SettingsRow>
+          <Switch
+            checked={allowPersonalInfo}
+            onChange={setAllowPersonalInfo}
+            label="Allow personal context"
+            description="Let Xroga use your profile info to personalize replies (never shared externally)."
+          />
+        </SettingsRow>
+        <SettingsRow>
+          <Switch
+            checked={useRandomDisplayName}
+            onChange={setUseRandomDisplayName}
+            label="Use random display name"
+            description="Mask your real name in logs and non-essential UI with a random alias."
+          />
+        </SettingsRow>
+        <SettingsRow>
+          <Switch
+            checked={rememberIp}
+            onChange={setRememberIp}
+            label="Remember my IP"
+            description="When off, we do not store your IP for analytics or session fingerprinting."
+          />
+        </SettingsRow>
+        <SettingsRow>
+          <Switch
+            checked={crossProjectAccess}
+            onChange={setCrossProjectAccess}
+            label="Access other projects & chats"
+            description="When off, AI only sees the current chat/project — not your full history."
+          />
+        </SettingsRow>
+        <SettingsRow className="flex items-start justify-between gap-4">
+          <div className="min-w-0 py-3">
+            <p className="text-sm font-medium text-[var(--text-primary)]">Safety confirmations</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-[var(--text-muted)]">
               Xroga may continue safe, reversible work automatically. Destructive or production-impacting actions still require explicit approval.
             </p>
           </div>
-          <span className="shrink-0 rounded-full border border-[var(--card-border)] px-2 py-1 text-[10px] font-semibold text-[var(--muted)]">
+          <Badge tone="neutral" className="mt-3 shrink-0">
             Required
-          </span>
-        </div>
+          </Badge>
+        </SettingsRow>
       </div>
-    </div>
+    </SettingsStack>
   );
 }
 

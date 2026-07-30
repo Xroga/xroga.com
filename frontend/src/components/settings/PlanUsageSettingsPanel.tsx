@@ -1,10 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { CalendarClock, CreditCard, Gauge, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
 import { SubscriptionManagePanel } from '@/components/billing/SubscriptionManagePanel';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { Progress } from '@/components/ui/Progress';
+import { SettingsCard, SettingsDivider, SettingsPanelHeader, SettingsStack } from '@/components/settings/SettingsPrimitives';
+import Skeleton from 'react-loading-skeleton';
 
 type Entitlement = Awaited<ReturnType<typeof api.billing.entitlement>>;
 
@@ -14,6 +19,22 @@ function dateTime(value: string | null): string {
     : 'Unavailable';
 }
 
+const STATE_TONE: Record<string, 'success' | 'accent' | 'warning' | 'neutral'> = {
+  paid_active: 'success',
+  promotional_active: 'success',
+  promotional_eligible: 'accent',
+};
+
+function StatTile({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
+  return (
+    <div className="rounded-token-md border border-[var(--border-subtle)] p-3">
+      <span className="mb-2 flex text-[var(--accent)]">{icon}</span>
+      <p className="text-xs text-[var(--text-secondary)]">{label}</p>
+      <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">{value}</p>
+    </div>
+  );
+}
+
 export function PlanUsageSettingsPanel() {
   const [status, setStatus] = useState<Entitlement | null>(null);
   const [loading, setLoading] = useState(true);
@@ -21,77 +42,142 @@ export function PlanUsageSettingsPanel() {
 
   async function refresh() {
     setLoading(true);
-    try { setStatus(await api.billing.entitlement()); }
-    catch { setStatus(null); }
-    finally { setLoading(false); }
+    try {
+      setStatus(await api.billing.entitlement());
+    } catch {
+      setStatus(null);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  useEffect(() => { void refresh(); }, []);
+  useEffect(() => {
+    void refresh();
+  }, []);
 
   async function activate() {
+    if (saving) return;
     setSaving(true);
     try {
       await api.billing.activatePromotion();
       await refresh();
       toast.success('Your complete 30-day promotional period is active.');
-    } catch (error) { toast.error((error as Error).message); }
-    finally { setSaving(false); }
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function choosePacing(pacing: 'balanced_month' | 'full_access') {
-    const confirmed = pacing === 'full_access'
-      ? window.confirm('Full Access makes your remaining monthly AI capacity available now. Large or repeated builds may use it before the end of your 30-day period. Completed work will be preserved when the included capacity is used.')
-      : true;
+    if (saving) return;
+    const confirmed =
+      pacing === 'full_access'
+        ? window.confirm(
+            'Full Access makes your remaining monthly AI capacity available now. Large or repeated builds may use it before the end of your 30-day period. Completed work will be preserved when the included capacity is used.',
+          )
+        : true;
     if (!confirmed) return;
     setSaving(true);
     try {
       await api.billing.setPacing(pacing, confirmed);
       await refresh();
       toast.success(pacing === 'full_access' ? 'Full Access pacing enabled.' : 'Balanced Month pacing selected.');
-    } catch (error) { toast.error((error as Error).message); }
-    finally { setSaving(false); }
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
-    <div className="space-y-5">
-      <h2 className="font-semibold text-lg flex items-center gap-2"><CreditCard className="w-5 h-5 text-[var(--accent)]" />Plan &amp; Usage</h2>
-      <div className="p-5 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div><p className="font-semibold text-lg">Xroga AI</p><p className="text-sm text-[var(--muted)]">$19 per 30-day billing period · all features</p></div>
-          <span className="rounded-full border border-[var(--card-border)] px-3 py-1 text-xs capitalize">{loading ? 'Loading…' : status?.state.replaceAll('_', ' ') ?? 'Unavailable'}</span>
-        </div>
+    <SettingsStack>
+      <SettingsPanelHeader
+        icon={<CreditCard className="h-4 w-4" aria-hidden="true" />}
+        title="Plan & Usage"
+        description="One Xroga AI plan, durable 30-day cycles, and truthful capacity pacing."
+      />
 
-        {status?.state === 'promotional_eligible' && (
-          <div className="mt-5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
-            <p className="font-semibold">Complete 30-day launch promotion</p>
-            <p className="text-sm text-[var(--muted)] mt-1">Activate by 30 August 2026. No card and no automatic charge.</p>
-            <button type="button" onClick={activate} disabled={saving} className="mt-3 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">{saving ? 'Activating…' : 'Activate promotion'}</button>
-          </div>
-        )}
-
-        {status?.startsAt && (
-          <div className="grid sm:grid-cols-2 gap-3 mt-5 text-sm">
-            <div className="rounded-lg border border-[var(--card-border)] p-3"><CalendarClock className="w-4 h-4 text-[var(--accent)] mb-2" /><p className="text-[var(--muted)]">Cycle ends</p><p className="font-medium mt-1">{dateTime(status.endsAt)}</p></div>
-            <div className="rounded-lg border border-[var(--card-border)] p-3"><Gauge className="w-4 h-4 text-[var(--accent)] mb-2" /><p className="text-[var(--muted)]">Monthly capacity remaining</p><p className="font-medium mt-1">{status.capacityRemainingPercent == null ? 'Unavailable' : `${status.capacityRemainingPercent}%`}</p></div>
-            <div className="rounded-lg border border-[var(--card-border)] p-3"><ShieldCheck className="w-4 h-4 text-[var(--accent)] mb-2" /><p className="text-[var(--muted)]">Available now</p><p className="font-medium mt-1">{status.availableNowPercent == null ? 'Unavailable' : `${status.availableNowPercent}%`}</p></div>
-            <div className="rounded-lg border border-[var(--card-border)] p-3"><CalendarClock className="w-4 h-4 text-[var(--accent)] mb-2" /><p className="text-[var(--muted)]">Next unlock</p><p className="font-medium mt-1">{dateTime(status.nextUnlockAt)}</p></div>
-          </div>
-        )}
-
-        {status?.pacing && (
-          <div className="mt-5 border-t border-[var(--card-border)] pt-4">
-            <p className="text-sm font-semibold">Usage pacing</p>
-            <p className="text-xs text-[var(--muted)] mt-1">Pacing changes availability timing only. It does not change model quality.</p>
-            <div className="flex flex-wrap gap-2 mt-3">
-              <button type="button" disabled={saving || status.pacing === 'balanced_month'} onClick={() => void choosePacing('balanced_month')} className="rounded-lg border border-[var(--card-border)] px-3 py-2 text-xs font-semibold disabled:opacity-50">Balanced Month</button>
-              <button type="button" disabled={saving || status.pacing === 'full_access'} onClick={() => void choosePacing('full_access')} className="rounded-lg border border-amber-500/40 px-3 py-2 text-xs font-semibold disabled:opacity-50">Full Access…</button>
+      {loading ? (
+        <Skeleton height={220} borderRadius={16} />
+      ) : (
+        <SettingsCard>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-lg font-semibold text-[var(--text-primary)]">Xroga AI</p>
+              <p className="text-sm text-[var(--text-secondary)]">$19 per 30-day billing period · all features</p>
             </div>
+            <Badge tone={status ? STATE_TONE[status.state] ?? 'neutral' : 'neutral'} dot>
+              {status?.state.replaceAll('_', ' ') ?? 'Unavailable'}
+            </Badge>
           </div>
-        )}
 
-        {!loading && !status && <p className="mt-4 text-sm text-amber-600 dark:text-amber-400">Billing state is unavailable. No active or successful status is being assumed.</p>}
-      </div>
+          {status?.state === 'promotional_eligible' && (
+            <div className="mt-5 rounded-token-md border border-[var(--success-dim)] bg-[var(--success-dim)] p-4">
+              <p className="font-semibold text-[var(--text-primary)]">Complete 30-day launch promotion</p>
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">Activate by 30 August 2026. No card and no automatic charge.</p>
+              <Button variant="primary" size="sm" className="mt-3" loading={saving} onClick={() => void activate()}>
+                {saving ? 'Activating…' : 'Activate promotion'}
+              </Button>
+            </div>
+          )}
+
+          {status?.startsAt && (
+            <div className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
+              <StatTile icon={<CalendarClock className="h-4 w-4" aria-hidden="true" />} label="Cycle ends" value={dateTime(status.endsAt)} />
+              <div className="rounded-token-md border border-[var(--border-subtle)] p-3">
+                <span className="mb-2 flex text-[var(--accent)]">
+                  <Gauge className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <p className="text-xs text-[var(--text-secondary)]">Monthly capacity remaining</p>
+                <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">
+                  {status.capacityRemainingPercent == null ? 'Unavailable' : `${status.capacityRemainingPercent}%`}
+                </p>
+                {status.capacityRemainingPercent != null && (
+                  <Progress className="mt-2" value={status.capacityRemainingPercent} label="Monthly capacity remaining" />
+                )}
+              </div>
+              <div className="rounded-token-md border border-[var(--border-subtle)] p-3">
+                <span className="mb-2 flex text-[var(--accent)]">
+                  <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <p className="text-xs text-[var(--text-secondary)]">Available now</p>
+                <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">
+                  {status.availableNowPercent == null ? 'Unavailable' : `${status.availableNowPercent}%`}
+                </p>
+                {status.availableNowPercent != null && (
+                  <Progress className="mt-2" value={status.availableNowPercent} tone="success" label="Available now" />
+                )}
+              </div>
+              <StatTile icon={<CalendarClock className="h-4 w-4" aria-hidden="true" />} label="Next unlock" value={dateTime(status.nextUnlockAt)} />
+            </div>
+          )}
+
+          {status?.pacing && (
+            <>
+              <div className="my-5">
+                <SettingsDivider />
+              </div>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">Usage pacing</p>
+              <p className="mt-1 text-xs text-[var(--text-secondary)]">Pacing changes availability timing only. It does not change model quality.</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button variant="secondary" size="sm" disabled={saving || status.pacing === 'balanced_month'} onClick={() => void choosePacing('balanced_month')}>
+                  Balanced Month
+                </Button>
+                <Button variant="secondary" size="sm" disabled={saving || status.pacing === 'full_access'} onClick={() => void choosePacing('full_access')}>
+                  Full Access…
+                </Button>
+              </div>
+            </>
+          )}
+
+          {!loading && !status && (
+            <p className="mt-4 text-sm text-[var(--warning)]">Billing state is unavailable. No active or successful status is being assumed.</p>
+          )}
+        </SettingsCard>
+      )}
+
       <SubscriptionManagePanel />
-    </div>
+    </SettingsStack>
   );
 }
