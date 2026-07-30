@@ -3,10 +3,12 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import {
+  COMPANION_COSTUMES,
   DEFAULT_COMPANION_PREFERENCES,
   moodForOperation,
   OPERATION_LABELS,
   validateCompanionName,
+  type CompanionCostume,
   type CompanionEventSource,
   type CompanionMood,
   type CompanionOperation,
@@ -122,14 +124,16 @@ export const useCompanionStore = create<CompanionState>()(
       name: 'xroga-companion',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => companionPreferencesSnapshot(state),
-      version: 2,
+      version: 3,
       migrate: (persisted) => {
         if (!persisted || typeof persisted !== 'object') return DEFAULT_COMPANION_PREFERENCES;
         const current = persisted as Partial<CompanionPreferences>;
+        const validCostume = COMPANION_COSTUMES.includes(current.costume as CompanionCostume);
         return {
           ...DEFAULT_COMPANION_PREFERENCES,
           ...current,
           name: !current.name || current.name === 'Xo' ? 'Smoky' : current.name,
+          costume: validCostume ? (current.costume as CompanionCostume) : DEFAULT_COMPANION_PREFERENCES.costume,
         };
       },
     },

@@ -53,8 +53,6 @@ body.theme-black .xv-companion { --xv-companion-highlight: #e8f7ff; --xv-compani
 .xv-companion-renderer[data-mood='angry'] .xv-companion-eye--left { transform: rotate(12deg); transform-origin: center; }
 .xv-companion-renderer[data-mood='angry'] .xv-companion-eye--right { transform: rotate(-12deg); transform-origin: center; }
 .xv-companion-renderer[data-mood='curious'] .xv-companion-head { transform: rotate(4deg) translateX(2px); }
-.xv-companion-renderer[data-costume='builder'] .xv-companion-body { transform: scaleX(1.08); }
-.xv-companion-renderer[data-costume='navigator'] .xv-companion-head { transform: scale(1.05); }
 
 .xv-companion-renderer[data-operation='listening'] .xv-companion-head { animation: xv-companion-listen 1.2s ease-in-out infinite alternate; }
 .xv-companion-renderer[data-operation='thinking'] .xv-companion-crown,
@@ -86,7 +84,7 @@ body.theme-black .xv-companion { --xv-companion-highlight: #e8f7ff; --xv-compani
 .xv-companion-operation-dot { position: absolute; right: .15rem; bottom: .35rem; width: .75rem; height: .75rem; border-radius: 999px; border: 2px solid var(--card); background: var(--xv-companion-core); box-shadow: 0 0 12px var(--xv-companion-core); }
 .xv-companion-panel { position: absolute; z-index: 400; width: min(23rem, calc(100vw - 1.5rem)); padding: 1rem; border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--card-border)); border-radius: 1.25rem; background: color-mix(in srgb, var(--card) 94%, transparent); color: var(--foreground); box-shadow: 0 24px 70px rgba(0,0,0,.3); backdrop-filter: blur(22px); text-align: left; }
 .xv-companion--hero .xv-companion-panel { left: 50%; bottom: 1.25rem; transform: translate(-50%, 100%); }
-.xv-companion--composer .xv-companion-panel { left: 0; bottom: calc(100% + .65rem); }
+.xv-companion--composer .xv-companion-panel { right: 0; bottom: calc(100% + .65rem); }
 .xv-companion--floating .xv-companion-panel { right: 0; bottom: calc(100% + .65rem); }
 .xv-companion-panel-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
 .xv-companion-panel-head h2 { color: var(--foreground) !important; font-size: 1.1rem; font-weight: 750; }
@@ -116,7 +114,7 @@ body.theme-black .xv-companion { --xv-companion-highlight: #e8f7ff; --xv-compani
 .xv-home-companion-copy span { display: block; font-size: .48rem; letter-spacing: .13em; color: var(--hc-blue); font-weight: 800; }
 .xv-home-companion-copy strong { display: block; color: var(--hc-ink); font-size: .92rem; margin-top: .25rem; }
 .xv-home-companion-copy p { color: var(--hc-muted); font-size: .72rem; line-height: 1.45; margin-top: .25rem; }
-.xv-companion-composer-anchor { position: absolute; left: .35rem; bottom: calc(100% - .3rem); z-index: 100; display: flex; align-items: center; gap: .2rem; }
+.xv-companion-composer-anchor { position: absolute; right: .35rem; bottom: calc(100% - .3rem); z-index: 100; display: flex; flex-direction: row-reverse; align-items: center; gap: .2rem; }
 .xv-companion-composer-label { display: none; color: var(--muted); font-size: .6rem; font-weight: 700; }
 .xv-companion--floating { position: fixed; right: 1rem; bottom: calc(5.25rem + env(safe-area-inset-bottom)); z-index: 150; }
 
@@ -212,13 +210,6 @@ html[data-reduced-motion='true'] .xv-animated-nav-icon { animation: none !import
 @keyframes xv-smoky-listen { to { transform:rotate(3deg) translateY(-2px); } }
 @keyframes xv-smoky-think { 50% { transform:translateY(-5px) rotate(-2deg); } }
 @keyframes xv-smoky-code { to { transform:translateY(-3px) scale(1.015); } }
-
-/* Silhouette identity — a subtle posture shift since the sprite sheet has no per-costume art.
-   Only visible at rest (greeting/warning); pose animations above own `transform` while active. */
-.xv-smoky-sprite--greeting[data-costume='builder'],
-.xv-smoky-sprite--warning[data-costume='builder'] { transform: scaleX(1.06); }
-.xv-smoky-sprite--greeting[data-costume='navigator'],
-.xv-smoky-sprite--warning[data-costume='navigator'] { transform: scale(1.04) rotate(-1deg); }
 
 /* Crown / mantle — original overlay marks (not sprite art), tinted by the companion's accent. */
 .xv-companion-stage { position: relative; display: block; width: 100%; }

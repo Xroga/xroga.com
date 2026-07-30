@@ -7,7 +7,6 @@ import { Shield, Eye, EyeOff, LogOut } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Dialog } from '@/components/ui/Dialog';
 import { SettingsCard, SettingsPanelHeader, SettingsStack } from '@/components/settings/SettingsPrimitives';
 
 export function SecuritySettingsPanel() {
@@ -24,7 +23,6 @@ export function SecuritySettingsPanel() {
   const [mfaSecretRevealed, setMfaSecretRevealed] = useState(false);
   const [mfaFactorId, setMfaFactorId] = useState<string | null>(null);
   const [mfaCode, setMfaCode] = useState('');
-  const [signOutConfirmOpen, setSignOutConfirmOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
@@ -138,15 +136,15 @@ export function SecuritySettingsPanel() {
   }
 
   async function handleSignOut() {
+    if (signingOut) return;
     setSigningOut(true);
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
       router.push('/');
       router.refresh();
-    } finally {
+    } catch {
       setSigningOut(false);
-      setSignOutConfirmOpen(false);
     }
   }
 
@@ -248,28 +246,11 @@ export function SecuritySettingsPanel() {
       </SettingsCard>
 
       <div>
-        <Button variant="secondary" onClick={() => setSignOutConfirmOpen(true)}>
+        <Button variant="secondary" loading={signingOut} onClick={() => void handleSignOut()}>
           <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
           Sign out
         </Button>
       </div>
-
-      <Dialog
-        open={signOutConfirmOpen}
-        onClose={() => setSignOutConfirmOpen(false)}
-        title="Sign out of Xroga?"
-        description="You'll need to sign back in to access your dashboard. To permanently delete your account, use Data & AI → Danger zone instead."
-        footer={
-          <>
-            <Button variant="secondary" className="flex-1" onClick={() => setSignOutConfirmOpen(false)} disabled={signingOut}>
-              Cancel
-            </Button>
-            <Button variant="danger" className="flex-1" loading={signingOut} onClick={() => void handleSignOut()}>
-              Sign out
-            </Button>
-          </>
-        }
-      />
     </SettingsStack>
   );
 }

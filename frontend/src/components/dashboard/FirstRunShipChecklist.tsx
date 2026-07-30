@@ -105,17 +105,19 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'rounded-xl border border-[var(--card-border)] bg-[var(--card)]/60 p-3 space-y-2 max-w-3xl',
+        'max-w-3xl space-y-2 rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-3',
         className,
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <p className="text-xs font-semibold text-[var(--foreground)]">
-          First ship checklist
-        </p>
+        <div className="flex items-center gap-1.5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/xroga-mark.png" alt="" aria-hidden="true" className="h-3.5 w-3.5" />
+          <p className="text-xs font-semibold text-[var(--text-primary)]">First ship checklist</p>
+        </div>
         <button
           type="button"
-          className="text-[10px] text-[var(--muted)] hover:text-[var(--foreground)]"
+          className="text-[10px] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
           onClick={() => {
             sessionStorage.setItem('xroga-firstrun-checklist-dismissed', '1');
             setDismissed(true);
@@ -124,38 +126,44 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
           Dismiss
         </button>
       </div>
-      <p className="text-[11px] text-[var(--muted)] leading-snug">
+      <p className="text-[11px] leading-snug text-[var(--text-secondary)]">
         GitHub → Vercel → optional AI key → prompt in the chatbar. Deploys go to{' '}
-        <span className="font-medium text-[var(--foreground)]">your</span> accounts.
+        <span className="font-medium text-[var(--text-primary)]">your</span> accounts.
       </p>
-      <ul className="space-y-1.5">
+      <ul className="space-y-1">
         {steps.map((s) => {
           const Icon = s.icon;
           return (
-            <li key={s.id} className="flex items-center gap-2 text-[11px]">
-              {s.done ? (
-                <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-              ) : (
-                <Circle className="w-3.5 h-3.5 text-[var(--muted)] shrink-0" />
+            <li
+              key={s.id}
+              className={cn(
+                'flex items-center gap-2 rounded-token-sm px-1.5 py-1 text-[11px] transition-colors',
+                s.done && 'bg-[var(--success-dim)]',
               )}
-              <Icon className="w-3.5 h-3.5 text-[var(--muted)] shrink-0" />
-              <span className="flex-1 text-[var(--foreground)]">{s.label}</span>
+            >
+              {s.done ? (
+                <Check className="h-3.5 w-3.5 shrink-0 text-[var(--success)]" />
+              ) : (
+                <Circle className="h-3.5 w-3.5 shrink-0 text-[var(--text-muted)]" />
+              )}
+              <Icon className="h-3.5 w-3.5 shrink-0 text-[var(--text-muted)]" />
+              <span className={cn('flex-1', s.done ? 'text-[var(--text-secondary)]' : 'text-[var(--text-primary)]')}>{s.label}</span>
               {!s.done && s.id !== 'ship' ? (
                 <Link
                   href={s.href}
-                  className="text-[10px] font-semibold text-[var(--accent)] hover:underline shrink-0"
+                  className="shrink-0 text-[10px] font-semibold text-[var(--accent)] hover:underline"
                 >
                   {s.cta}
                 </Link>
               ) : (
-                <span className="text-[10px] text-[var(--muted)] shrink-0">{s.cta}</span>
+                <span className={cn('shrink-0 text-[10px]', s.done ? 'text-[var(--success)]' : 'text-[var(--text-muted)]')}>{s.cta}</span>
               )}
             </li>
           );
         })}
       </ul>
       {loading ? (
-        <p className="text-[10px] text-[var(--muted)]">Checking connections…</p>
+        <p className="text-[10px] text-[var(--text-muted)]">Checking connections…</p>
       ) : null}
     </div>
   );

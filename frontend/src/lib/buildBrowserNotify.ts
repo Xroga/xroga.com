@@ -34,7 +34,7 @@ export function showBuildBrowserNotification(opts: {
     const notification = new Notification(opts.title, {
       body: opts.body,
       tag: opts.tag ?? 'xroga-build',
-      icon: '/favicon-32.png',
+      icon: '/brand/xroga-mark-192.png',
       requireInteraction: true,
       silent: false,
     });

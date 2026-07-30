@@ -7,7 +7,7 @@ const router = Router();
 
 export const companionPreferencesSchema = z.object({
   name: z.string().trim().min(1).max(24),
-  costume: z.enum(['core', 'builder', 'navigator']),
+  costume: z.enum(['coder', 'guardian', 'exec', 'scout', 'builder', 'mystic', 'pilot', 'shadow']),
   accent: z.enum(['blue', 'violet', 'cyan', 'emerald']),
   size: z.enum(['compact', 'standard', 'large']),
   dock: z.enum(['composer', 'corner']),
