@@ -27,10 +27,15 @@ import { Switch } from '@/components/ui/Switch';
 import { Badge } from '@/components/ui/Badge';
 import { Tabs, type TabItem } from '@/components/ui/Tabs';
 
-const COSTUMES: Array<{ id: CompanionCostume; label: string; detail: string }> = [
-  { id: 'core', label: 'Core', detail: 'Compact guardian silhouette' },
-  { id: 'builder', label: 'Builder', detail: 'Structured tool-ready frame' },
-  { id: 'navigator', label: 'Navigator', detail: 'Rounded guidance silhouette' },
+const COSTUMES: Array<{ id: CompanionCostume; label: string; detail: string; image: string }> = [
+  { id: 'coder', label: 'Coder', detail: 'Hoodie-clad engineering focus', image: '/brand/costumes/coder.webp' },
+  { id: 'guardian', label: 'Guardian', detail: 'Armored, security-first frame', image: '/brand/costumes/guardian.webp' },
+  { id: 'exec', label: 'Exec', detail: 'Business-ready professional', image: '/brand/costumes/exec.webp' },
+  { id: 'scout', label: 'Scout', detail: 'Explorer gear for research runs', image: '/brand/costumes/scout.webp' },
+  { id: 'builder', label: 'Builder', detail: 'Hard hat, ready to ship', image: '/brand/costumes/builder.webp' },
+  { id: 'mystic', label: 'Mystic', detail: 'Arcane robes for deep reasoning', image: '/brand/costumes/mystic.webp' },
+  { id: 'pilot', label: 'Pilot', detail: 'Suited up for launch day', image: '/brand/costumes/pilot.webp' },
+  { id: 'shadow', label: 'Shadow', detail: 'Stealth mode for quiet automation', image: '/brand/costumes/shadow.webp' },
 ];
 const ACCENTS: CompanionAccent[] = ['blue', 'violet', 'cyan', 'emerald'];
 const SIZES: CompanionSize[] = ['compact', 'standard', 'large'];
@@ -42,7 +47,7 @@ const GROUPS = [
   { id: 'expression', label: 'Expression', icon: <Smile className="h-3.5 w-3.5" aria-hidden="true" /> },
   { id: 'placement', label: 'Placement', icon: <LayoutGrid className="h-3.5 w-3.5" aria-hidden="true" /> },
   { id: 'behavior', label: 'Behavior', icon: <Gamepad2 className="h-3.5 w-3.5" aria-hidden="true" /> },
-  { id: 'voice', label: 'Voice & Care', icon: <Mic2 className="h-3.5 w-3.5" aria-hidden="true" /> },
+  { id: 'voice', label: 'Sound & Care', icon: <Mic2 className="h-3.5 w-3.5" aria-hidden="true" /> },
 ] as const satisfies readonly TabItem[];
 
 type GroupId = (typeof GROUPS)[number]['id'];
@@ -51,6 +56,7 @@ export function CompanionCustomizer() {
   const state = useCompanionStore();
   const energy = companionEnergy(state);
   const [group, setGroup] = useState<GroupId>('identity');
+  const selectedCostume = COSTUMES.find((c) => c.id === state.costume) ?? COSTUMES[0];
 
   return (
     <section aria-labelledby="companion-settings-title" className="space-y-5">
@@ -60,7 +66,7 @@ export function CompanionCustomizer() {
           Make the companion yours
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-[var(--text-secondary)]">
-          Its operational gestures come from real Xroga events. Personality, voice, appearance, and optional care stay under your control and sync to your account.
+          Its operational gestures come from real Xroga events. Personality, tone, appearance, and optional care stay under your control and sync to your account.
         </p>
       </div>
 
@@ -75,6 +81,7 @@ export function CompanionCustomizer() {
               accent={state.accent}
               crownEnabled={state.crownEnabled}
               mantleEnabled={state.mantleEnabled}
+              portraitSrc={selectedCostume.image}
               decorative={false}
             />
           </div>
@@ -136,8 +143,8 @@ export function CompanionCustomizer() {
             {group === 'wardrobe' && (
               <div className="space-y-5">
                 <div>
-                  <p className="mb-2 text-xs font-medium text-[var(--text-secondary)]">Silhouette</p>
-                  <div role="radiogroup" aria-label="Silhouette" className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                  <p className="mb-2 text-xs font-medium text-[var(--text-secondary)]">Costume</p>
+                  <div role="radiogroup" aria-label="Costume" className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                     {COSTUMES.map((costume) => {
                       const equipped = state.costume === costume.id;
                       return (
@@ -154,17 +161,8 @@ export function CompanionCustomizer() {
                               : 'border-[var(--border-subtle)] hover:border-[var(--border-strong)]',
                           )}
                         >
-                          <span className="w-12">
-                            <CompanionRenderer
-                              mood={state.mood}
-                              operation="idle"
-                              costume={costume.id}
-                              accent={state.accent}
-                              crownEnabled={false}
-                              mantleEnabled={false}
-                              decorative
-                            />
-                          </span>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={costume.image} alt="" aria-hidden="true" className="h-14 w-auto object-contain" />
                           <span className="text-xs font-medium text-[var(--text-primary)]">{costume.label}</span>
                           <span className="text-[10px] leading-tight text-[var(--text-muted)]">{costume.detail}</span>
                           {equipped && (
@@ -206,7 +204,7 @@ export function CompanionCustomizer() {
                     checked={state.mantleEnabled}
                     onChange={(mantleEnabled) => state.updatePreferences({ mantleEnabled })}
                     label="Adaptive mantle"
-                    description="Theme-aware clothing layer that changes with the selected silhouette."
+                    description="Theme-aware clothing layer that changes with the selected costume."
                   />
                 </div>
               </div>
@@ -292,7 +290,7 @@ export function CompanionCustomizer() {
                 <Switch
                   checked={state.voiceEnabled}
                   onChange={(voiceEnabled) => state.updatePreferences({ voiceEnabled })}
-                  label="Optional voice"
+                  label="Read replies aloud"
                   description="Speak completed real AI responses only after you opt in. Never auto-enabled."
                 />
                 <Switch

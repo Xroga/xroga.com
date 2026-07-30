@@ -12,6 +12,8 @@ interface CompanionRendererProps {
   mantleEnabled: boolean;
   className?: string;
   decorative?: boolean;
+  /** When set, renders this costume portrait instead of the animated mood/operation sprite. */
+  portraitSrc?: string;
 }
 
 function poseFor(operation: CompanionOperation, mood: CompanionMood): string {
@@ -32,6 +34,7 @@ export function CompanionRenderer({
   mantleEnabled,
   className,
   decorative = true,
+  portraitSrc,
 }: CompanionRendererProps) {
   const pose = poseFor(operation, mood);
   const label = decorative ? undefined : `Smoky, the Xroga voxel cat, ${mood} and ${operation.replaceAll('_', ' ')}`;
@@ -42,14 +45,19 @@ export function CompanionRenderer({
       aria-hidden={decorative || undefined}
       aria-label={label}
     >
-      <span
-        className={cn('xv-companion-renderer xv-smoky-sprite', `xv-smoky-sprite--${pose}`)}
-        data-mood={mood}
-        data-operation={operation}
-        data-costume={costume}
-        data-accent={accent}
-        aria-hidden="true"
-      />
+      {portraitSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={portraitSrc} alt="" className="xv-companion-renderer" data-costume={costume} aria-hidden="true" />
+      ) : (
+        <span
+          className={cn('xv-companion-renderer xv-smoky-sprite', `xv-smoky-sprite--${pose}`)}
+          data-mood={mood}
+          data-operation={operation}
+          data-costume={costume}
+          data-accent={accent}
+          aria-hidden="true"
+        />
+      )}
       {mantleEnabled && <span className="xv-companion-mantle-mark" data-accent={accent} aria-hidden="true" />}
       {crownEnabled && (
         <svg viewBox="0 0 24 24" className="xv-companion-crown-mark" data-accent={accent} aria-hidden="true" focusable="false">

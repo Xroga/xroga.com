@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Search, X, Plug } from 'lucide-react';
+import { Search, X, Plug, ChevronDown } from 'lucide-react';
 import { INTEGRATIONS, INTEGRATION_CATEGORIES } from '@/lib/integrations';
 import { getIntegrationLogo } from '@/lib/integrationLogos';
 import { isConnectableIntegration } from '@/lib/connectableIntegrations';
@@ -19,6 +19,7 @@ interface IntegrationsModalProps {
 export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
   const router = useRouter();
   const [search, setSearch] = useState('');
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -33,6 +34,9 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
       (i) => i.name.toLowerCase().includes(q) || i.category.toLowerCase().includes(q)
     );
   }, [search]);
+
+  const liveFiltered = useMemo(() => filtered.filter((i) => isConnectableIntegration(i.id)), [filtered]);
+  const comingSoonFiltered = useMemo(() => filtered.filter((i) => !isConnectableIntegration(i.id)), [filtered]);
 
   function handleConnect(id: string, name: string) {
     if (!isConnectableIntegration(id)) {
@@ -70,7 +74,7 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {INTEGRATION_CATEGORIES.map((cat) => {
-            const items = filtered.filter((i) => i.category === cat);
+            const items = liveFiltered.filter((i) => i.category === cat);
             if (!items.length) return null;
             return (
               <div key={cat}>
@@ -78,22 +82,13 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {items.map((item) => {
                     const logo = getIntegrationLogo(item.id);
-                    const connectable = isConnectableIntegration(item.id);
                     const connected = item.status === 'connected';
                     return (
                       <div
                         key={item.id}
-                        className={cn(
-                          'relative flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] transition-colors overflow-hidden',
-                          connectable ? 'hover:bg-white/[0.07]' : 'opacity-80'
-                        )}
+                        className="relative flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] transition-colors overflow-hidden hover:bg-white/[0.07]"
                       >
-                        <div
-                          className={cn(
-                            'flex items-center gap-3 min-w-0 flex-1',
-                            !connectable && 'blur-[1.5px] opacity-70'
-                          )}
-                        >
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
                           <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center shrink-0 overflow-hidden">
                             {logo ? (
                               <Image src={logo} alt="" width={22} height={22} unoptimized className="object-contain" />
@@ -103,32 +98,17 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className="text-sm font-medium truncate">{item.name}</p>
-                            <p className="text-[10px] text-[var(--muted)]">
-                              {connectable
-                                ? connected
-                                  ? 'Connected'
-                                  : 'Available'
-                                : 'Coming soon'}
-                            </p>
+                            <p className="text-[10px] text-[var(--muted)]">{connected ? 'Connected' : 'Available'}</p>
                           </div>
                         </div>
-                        {connectable ? (
-                          <button
-                            type="button"
-                            onClick={() => handleConnect(item.id, item.name)}
-                            className="shrink-0 relative z-[1] flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-[var(--accent)]/15 border border-[var(--accent)]/35 text-[var(--foreground)] hover:bg-[var(--accent)]/25 transition-colors"
-                          >
-                            <Plug className="w-3 h-3" />
-                            {connected ? 'Manage' : 'Install'}
-                          </button>
-                        ) : (
-                          <span className="shrink-0 relative z-[1] text-[9px] px-2 py-1 rounded-md bg-white/10 text-[var(--muted)] uppercase tracking-wider font-semibold">
-                            Soon
-                          </span>
-                        )}
-                        {!connectable && (
-                          <div className="pointer-events-none absolute inset-0 bg-[var(--background)]/20 backdrop-blur-[1px]" />
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleConnect(item.id, item.name)}
+                          className="shrink-0 relative z-[1] flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-[var(--accent)]/15 border border-[var(--accent)]/35 text-[var(--foreground)] hover:bg-[var(--accent)]/25 transition-colors"
+                        >
+                          <Plug className="w-3 h-3" />
+                          {connected ? 'Manage' : 'Install'}
+                        </button>
                       </div>
                     );
                   })}
@@ -136,6 +116,34 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
               </div>
             );
           })}
+
+          {comingSoonFiltered.length > 0 && (
+            <div className="rounded-xl border border-white/[0.06] overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setComingSoonOpen((v) => !v)}
+                aria-expanded={comingSoonOpen}
+                className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-white/[0.03]"
+              >
+                <span className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wider">
+                  Coming soon ({comingSoonFiltered.length})
+                </span>
+                <ChevronDown className={cn('w-3.5 h-3.5 text-[var(--muted)] transition-transform shrink-0', comingSoonOpen && 'rotate-180')} />
+              </button>
+              {comingSoonOpen && (
+                <div className="flex flex-wrap gap-1.5 border-t border-white/[0.06] p-3">
+                  {comingSoonFiltered.map((item) => (
+                    <span
+                      key={item.id}
+                      className="text-[10px] px-2 py-1 rounded-md bg-white/[0.04] text-[var(--muted)] uppercase tracking-wider font-semibold"
+                    >
+                      {item.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <div className="px-5 py-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-2">
           <Link
