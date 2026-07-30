@@ -52,7 +52,15 @@ test('public metadata excludes private application routes and security headers a
   const sitemap = await request.get('/sitemap.xml');
   const sitemapText = await sitemap.text();
   expect(sitemap.status()).toBe(200);
-  expect(sitemapText).not.toContain('/dashboard/');
-  expect(sitemapText).not.toContain('/workspace');
-  expect(sitemapText).not.toContain('/settings');
+  // Compare whole <loc> paths, not substrings: the sitemap legitimately lists public
+  // docs pages such as /docs/workspace, which a bare `not.toContain('/workspace')`
+  // flags as a private-route leak.
+  const sitemapPaths = [...sitemapText.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+    (match) => new URL(match[1].trim()).pathname.replace(/\/$/, ''),
+  );
+  expect(sitemapPaths.length).toBeGreaterThan(0);
+  for (const privatePath of ['/workspace', '/settings']) {
+    expect(sitemapPaths).not.toContain(privatePath);
+  }
+  expect(sitemapPaths.filter((path) => path.startsWith('/dashboard'))).toEqual([]);
 });
