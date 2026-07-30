@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Download, LogIn, Mail, ShieldAlert } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { exportUserData, clearLocalUserData } from '@/lib/exportUserData';
@@ -13,8 +12,6 @@ import { Dialog } from '@/components/ui/Dialog';
 import { SettingsCard, SettingsPanelHeader, SettingsStack } from '@/components/settings/SettingsPrimitives';
 
 export function DataAiSettingsPanel({ email }: { email: string }) {
-  const router = useRouter();
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [deleting, setDeleting] = useState(false);
@@ -28,8 +25,9 @@ export function DataAiSettingsPanel({ email }: { email: string }) {
       const supabase = createClient();
       await supabase.auth.signOut();
       toast.success('Your account has been permanently deleted');
-      router.push('/');
-      router.refresh();
+      // Hard navigation: router.refresh() would re-render the current shell route, whose
+      // layout now sees no user and redirects to /auth/login, racing ahead of the push.
+      window.location.assign('/');
     } catch (err) {
       toast.error((err as Error).message || 'Could not delete account — try again or contact support');
     } finally {
