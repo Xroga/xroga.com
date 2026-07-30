@@ -52,8 +52,8 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
         </div>
       </div>
 
-      <div className="relative mt-3 max-w-3xl">
-        <FirstRunShipChecklist className="mb-3" />
+      <div className="relative mx-auto mt-4 max-w-3xl">
+        <FirstRunShipChecklist className="mb-4" />
         <ProductStartChips />
       </div>
 
