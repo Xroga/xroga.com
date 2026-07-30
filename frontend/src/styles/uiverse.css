@@ -250,6 +250,45 @@
   font-size: 11px;
 }
 
+/* ── Floating sidebar panel ──
+   The panel is inset from the viewport edges instead of being flush-mounted to
+   them, so it reads as a raised surface sitting on the page rather than a wall
+   of chrome. The outer .xv-sidebar-root still reserves the full column width in
+   the shell's flex row, so insetting the panel shifts nothing in main content. */
+:root {
+  --xv-sidebar-inset: 0.875rem;
+  --xv-sidebar-radius: 1.5rem;
+}
+.xv-sidebar-root {
+  /* Wrapper only reserves layout width — all visuals belong to the panel. */
+  background: transparent;
+  border: 0;
+}
+.xv-sidebar-floating {
+  position: sticky;
+  top: var(--xv-sidebar-inset);
+  height: calc(100vh - (var(--xv-sidebar-inset) * 2));
+  width: calc(100% - (var(--xv-sidebar-inset) * 2));
+  margin-inline-start: var(--xv-sidebar-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--xv-sidebar-radius);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-elevated);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+.xv-sidebar-floating--mobile {
+  top: calc(var(--xv-sidebar-inset) + env(safe-area-inset-top));
+  left: var(--xv-sidebar-inset);
+  bottom: calc(var(--xv-sidebar-inset) + env(safe-area-inset-bottom));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--xv-sidebar-radius);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-elevated);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
 /* ── Sidebar nav (no blue pill background) ── */
 .xv-sidebar-menu {
   width: 100%;
@@ -272,8 +311,8 @@
   width: 100%;
   color: var(--text-secondary);
   text-decoration: none;
-  padding: 8px 12px;
-  border-radius: var(--radius-lg, 999rem);
+  padding: 9px 14px;
+  border-radius: 999rem;
   border: 1px solid transparent;
   background: transparent;
   cursor: pointer;
@@ -289,12 +328,27 @@
   transform: none;
   color: var(--text-primary);
 }
+/* Active row is a solid high-contrast pill. Inverting the page's own text/surface
+   pair keeps the contrast guaranteed and correct in every theme (dark pill on the
+   light themes, light pill on the dark ones) without hardcoding a colour. */
 .xv-sidebar-menu a.xv-active,
 .xv-sidebar-menu button.xv-menu-item.xv-active,
 .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active {
-  background: var(--accent-dim);
-  color: var(--accent);
+  background: var(--text-primary);
+  color: var(--surface-page);
   border: 1px solid transparent;
+}
+.xv-sidebar-menu a.xv-active:hover,
+.xv-sidebar-menu button.xv-menu-item.xv-active:hover,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active:hover {
+  background: var(--text-primary);
+  color: var(--surface-page);
+}
+/* Keep the icon on the active pill matching the pill's text instead of flipping
+   to the accent colour on hover (which would clash against the inverted fill). */
+.xv-sidebar-menu a.xv-active:hover > .xv-animated-nav-icon,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active:hover > .xv-animated-nav-icon {
+  color: currentColor;
 }
 .xv-sidebar-menu a:active { transform: scale(0.98); }
 

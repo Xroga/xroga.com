@@ -410,7 +410,7 @@ export function Sidebar({ displayName }: SidebarProps) {
               onClick={closeMobile}
               aria-hidden
             />
-            <aside className="fixed top-0 left-0 z-[100] flex flex-col w-[min(88vw,320px)] max-w-[320px] h-[100dvh] pt-[env(safe-area-inset-top)] border-r border-[var(--card-border)] glass-panel-strong overflow-hidden shadow-2xl xv-sidebar-mobile-open">
+            <aside className="xv-sidebar-mobile-open xv-sidebar-floating--mobile fixed z-[100] flex flex-col w-[min(86vw,312px)] max-w-[312px] overflow-hidden">
               <div className="flex flex-col flex-1 min-h-0 overflow-hidden">{sidebarInner}</div>
             </aside>
           </>,
@@ -425,7 +425,8 @@ export function Sidebar({ displayName }: SidebarProps) {
         }}
         className={cn('xv-sidebar-edge-toggle hidden lg:flex', terminalFullscreen && '!hidden')}
         aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
-        style={{ left: sidebarOpen ? asideWidth : 0 }}
+        // Track the inset panel's right edge, not the reserved column's edge.
+        style={{ left: sidebarOpen ? `calc(${asideWidth}px - var(--xv-sidebar-inset))` : 0 }}
       >
         {sidebarOpen ? (
           <PanelLeftClose className="w-3.5 h-3.5" />
@@ -436,9 +437,8 @@ export function Sidebar({ displayName }: SidebarProps) {
 
       <div className="xv-sidebar-root hidden lg:block shrink-0" style={{ width: asideWidth }}>
         <aside
-          style={{ width: asideWidth }}
           className={cn(
-            'sticky top-0 z-40 border-r border-[var(--card-border)] glass-panel-strong min-h-screen transition-[width,opacity] duration-200 xv-sidebar-hover shrink-0 relative overflow-hidden',
+            'xv-sidebar-floating xv-sidebar-hover relative z-40 shrink-0 overflow-hidden transition-[opacity] duration-200',
             sidebarOpen ? 'flex flex-col opacity-100' : 'pointer-events-none opacity-0'
           )}
         >

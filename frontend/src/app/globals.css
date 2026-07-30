@@ -142,11 +142,7 @@ body.theme-white .xv-site-header-transparent {
   color: var(--foreground);
 }
 
-body.theme-white .xv-sidebar-root,
-body.theme-white aside.xv-sidebar-root,
 body.theme-white .xv-sidebar-root > div {
-  background: rgba(255, 255, 255, 0.96);
-  border-color: rgba(15, 23, 42, 0.1);
   color: var(--foreground);
 }
 
@@ -173,11 +169,7 @@ body.theme-beige {
 
 body.theme-beige .glass-panel,
 body.theme-beige .glass-panel-strong,
-body.theme-beige .xv-sidebar-root,
-body.theme-beige aside.xv-sidebar-root,
 body.theme-beige .xv-sidebar-root > div {
-  background: rgba(255, 251, 242, 0.94);
-  border-color: var(--card-border);
   color: var(--foreground);
 }
 
@@ -241,11 +233,7 @@ body.theme-black .xv-site-header-transparent {
   color: var(--foreground);
 }
 
-body.theme-black .xv-sidebar-root,
-body.theme-black aside.xv-sidebar-root,
 body.theme-black .xv-sidebar-root > div {
-  background: rgba(0, 0, 0, 0.96);
-  border-color: rgba(255, 255, 255, 0.1);
   color: var(--foreground);
 }
 
@@ -289,11 +277,7 @@ body.theme-gray .xv-site-header-transparent {
   color: var(--foreground);
 }
 
-body.theme-gray .xv-sidebar-root,
-body.theme-gray aside.xv-sidebar-root,
 body.theme-gray .xv-sidebar-root > div {
-  background: rgba(22, 22, 22, 0.96);
-  border-color: rgba(255, 255, 255, 0.08);
   color: var(--foreground);
 }
 
@@ -3486,13 +3470,16 @@ body.theme-gray * {
     color: var(--text-primary);
   }
 
+  /* Nav rows are wrapped by SidebarTip (.xv-sidebar-tip-wrap), so the pill styling
+     has to be declared for that selector too — otherwise it wins over the base
+     rules in uiverse.css and the active row falls back to the old accent tint. */
   .xv-sidebar-menu .xv-sidebar-tip-wrap > a {
     display: flex;
     align-items: center;
     gap: 10px;
     width: 100%;
-    padding: 8px 12px;
-    border-radius: 10px;
+    padding: 9px 14px;
+    border-radius: 999rem;
     font-size: 13px;
     color: var(--text-secondary);
     text-decoration: none;
@@ -3502,9 +3489,13 @@ body.theme-gray * {
     background: var(--surface-inset);
     color: var(--text-primary);
   }
-  .xv-sidebar-menu .xv-sidebar-tip-wrap > a.xv-active {
-    background: var(--accent-dim);
-    color: var(--accent);
+  .xv-sidebar-menu .xv-sidebar-tip-wrap > a.xv-active,
+  .xv-sidebar-menu .xv-sidebar-tip-wrap > a.xv-active:hover {
+    background: var(--text-primary);
+    color: var(--surface-page);
+  }
+  .xv-sidebar-menu .xv-sidebar-tip-wrap > a.xv-active:hover > .xv-animated-nav-icon {
+    color: currentColor;
   }
 
   /* Xroga chip loader — transparent bg */
