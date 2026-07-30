@@ -236,8 +236,9 @@ export function Sidebar({ displayName }: SidebarProps) {
   async function handleLogout() {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push('/');
-    router.refresh();
+    // Hard navigation: router.refresh() would re-render the current shell route, whose
+    // layout now sees no user and redirects to /auth/login, racing ahead of the push.
+    window.location.assign('/');
   }
 
   const logoHref = pathname.startsWith('/dashboard') ? '/dashboard' : '/workspace';

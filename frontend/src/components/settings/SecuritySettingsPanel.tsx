@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, type FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { Shield, Eye, EyeOff, LogOut } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -10,7 +9,6 @@ import { Badge } from '@/components/ui/Badge';
 import { SettingsCard, SettingsPanelHeader, SettingsStack } from '@/components/settings/SettingsPrimitives';
 
 export function SecuritySettingsPanel() {
-  const router = useRouter();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -141,8 +139,12 @@ export function SecuritySettingsPanel() {
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
-      router.push('/');
-      router.refresh();
+      // Hard navigation, not router.push + router.refresh: the refresh re-renders the
+      // *current* /settings route, whose shell layout now sees no user and fires its own
+      // redirect('/auth/login') — which races and beats the push, stranding the signed-out
+      // user on the login page instead of home. A full load is also the right semantic for
+      // sign-out (drops all client state) and cannot race.
+      window.location.assign('/');
     } catch {
       setSigningOut(false);
     }
