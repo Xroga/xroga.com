@@ -69,6 +69,14 @@ export const THEME_SURFACE: Record<CoreThemeId, string> = {
   black: '#000000',
 };
 
+/** Swatch hex per accent — mirrors the html[data-accent] rules in globals.css. */
+export const ACCENT_OPTIONS: { id: AccentId; label: string; swatch: string }[] = [
+  { id: 'blue', label: 'Blue', swatch: '#006aff' },
+  { id: 'violet', label: 'Violet', swatch: '#7c3aed' },
+  { id: 'emerald', label: 'Emerald', swatch: '#059669' },
+  { id: 'coral', label: 'Coral', swatch: '#e05252' },
+];
+
 /** Map legacy `image` / deep-work → white */
 export function normalizeTheme(theme: ThemeId | string | null | undefined): CoreThemeId {
   if (theme === 'black' || theme === 'gray' || theme === 'beige' || theme === 'white') return theme;

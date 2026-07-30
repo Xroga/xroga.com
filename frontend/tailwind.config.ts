@@ -24,6 +24,15 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      borderRadius: {
+        'token-sm': 'var(--radius-sm)',
+        'token-md': 'var(--radius-md)',
+        'token-lg': 'var(--radius-lg)',
+      },
+      boxShadow: {
+        subtle: 'var(--shadow-subtle)',
+        elevated: 'var(--shadow-elevated)',
+      },
       keyframes: {
         'gradient-x': {
           '0%, 100%': { backgroundPosition: '0% 50%' },

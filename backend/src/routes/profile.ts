@@ -83,6 +83,25 @@ router.patch('/', async (req: AuthRequest, res) => {
   res.json(data);
 });
 
+export const deleteAccountSchema = z.object({ confirm: z.literal('DELETE') }).strict();
+
+router.delete('/', async (req: AuthRequest, res) => {
+  const parsed = deleteAccountSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: 'Send { "confirm": "DELETE" } to permanently delete this account' });
+    return;
+  }
+
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase.auth.admin.deleteUser(req.userId!);
+  if (error) {
+    res.status(500).json({ error: error.message });
+    return;
+  }
+  // profiles/projects/etc. cascade via `ON DELETE CASCADE` FKs to auth.users.
+  res.json({ deleted: true });
+});
+
 router.get('/activity', async (req: AuthRequest, res) => {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase

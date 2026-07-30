@@ -1,9 +1,12 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { X, Upload, Check, Camera, Loader2 } from 'lucide-react';
 import { XROGA_PROFILE_AVATARS } from '@/lib/profileAvatars';
 import { cn } from '@/lib/utils';
+
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 interface AvatarPickerModalProps {
   open: boolean;
@@ -23,6 +26,44 @@ export function AvatarPickerModal({
   const [picking, setPicking] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const previouslyFocused = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    previouslyFocused.current = document.activeElement as HTMLElement | null;
+    const panel = panelRef.current;
+    panel?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)?.focus();
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        event.stopPropagation();
+        onClose();
+        return;
+      }
+      if (event.key !== 'Tab' || !panel) return;
+      const nodes = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
+      if (nodes.length === 0) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener('keydown', onKeyDown, true);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown, true);
+      document.body.style.overflow = originalOverflow;
+      previouslyFocused.current?.focus();
+    };
+  }, [open, onClose]);
 
   if (!open) return null;
 
@@ -49,45 +90,53 @@ export function AvatarPickerModal({
 
   return (
     <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-xl" onClick={onClose} aria-hidden />
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+        aria-label="Close dialog"
+        tabIndex={-1}
+      />
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="avatar-picker-title"
-        className="relative w-full sm:max-w-md max-h-[92vh] rounded-t-[28px] sm:rounded-[28px] border border-white/10 bg-[#1a1b26] shadow-[0_32px_80px_rgba(0,0,0,0.55)] flex flex-col overflow-hidden"
+        tabIndex={-1}
+        className="relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-elevated focus:outline-none sm:max-w-md sm:rounded-token-lg"
       >
-        <div className="shrink-0 px-5 py-5 border-b border-white/8">
+        <div className="shrink-0 border-b border-[var(--border-subtle)] px-5 py-5">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="w-7 h-7 rounded-full bg-gradient-to-br from-[#5865f2] to-[#006aff] flex items-center justify-center">
-                  <Camera className="w-3.5 h-3.5 text-white" />
+              <div className="mb-1.5 flex items-center gap-2">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--accent-dim)]">
+                  <Camera className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden="true" />
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/70">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">
                   Profile
                 </span>
               </div>
-              <h2 id="avatar-picker-title" className="font-bold text-xl tracking-tight text-white">
+              <h2 id="avatar-picker-title" className="text-xl font-bold tracking-tight text-[var(--text-primary)]">
                 Choose your avatar
               </h2>
-              <p className="text-xs text-white/55 mt-1 max-w-sm">
+              <p className="mt-1 max-w-sm text-xs text-[var(--text-secondary)]">
                 Pick a profile photo or upload your own
               </p>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-full bg-white/10 hover:bg-white/15 text-white/80"
+              className="rounded-full p-2 text-[var(--text-secondary)] hover:bg-[var(--surface-inset)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
               aria-label="Close"
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-5 py-4 space-y-5">
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 py-4 sm:px-5">
           <section>
-            <h3 className="text-[11px] font-bold uppercase tracking-wider text-white/45 mb-2.5">
+            <h3 className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
               Profile photos
             </h3>
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
@@ -100,14 +149,15 @@ export function AvatarPickerModal({
                     type="button"
                     disabled={!!picking || uploading}
                     onClick={() => void pick(avatar.url)}
-                    className="flex flex-col items-center gap-1"
+                    aria-pressed={selected}
+                    className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)] rounded-token-sm"
                   >
                     <span
                       className={cn(
-                        'relative w-full aspect-square max-w-[88px] rounded-xl overflow-hidden border-2 transition-all hover:scale-105 block',
+                        'relative block aspect-square w-full max-w-[88px] overflow-hidden rounded-token-md border-2 transition-all hover:scale-105',
                         selected
-                          ? 'border-[#fffc00] ring-2 ring-[#fffc00]/40'
-                          : 'border-white/15 hover:border-[#5865f2]/60'
+                          ? 'border-[var(--accent)] ring-2 ring-[var(--accent-dim)]'
+                          : 'border-[var(--border-subtle)] hover:border-[var(--accent)]/60',
                       )}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -118,17 +168,17 @@ export function AvatarPickerModal({
                         loading={i < 5 ? 'eager' : 'lazy'}
                       />
                       {selected && (
-                        <span className="absolute inset-0 bg-[#5865f2]/30 flex items-center justify-center">
-                          <Check className="w-5 h-5 text-white" />
+                        <span className="absolute inset-0 flex items-center justify-center bg-[var(--accent)]/30">
+                          <Check className="h-5 w-5 text-white" aria-hidden="true" />
                         </span>
                       )}
                       {loading && (
-                        <span className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                          <Loader2 className="w-5 h-5 text-white animate-spin" />
+                        <span className="absolute inset-0 flex items-center justify-center bg-black/50">
+                          <Loader2 className="h-5 w-5 animate-spin text-white" aria-hidden="true" />
                         </span>
                       )}
                     </span>
-                    <span className="text-[9px] font-semibold text-white/50">{avatar.label}</span>
+                    <span className="text-[9px] font-semibold text-[var(--text-muted)]">{avatar.label}</span>
                   </button>
                 );
               })}
@@ -136,7 +186,7 @@ export function AvatarPickerModal({
           </section>
         </div>
 
-        <div className="shrink-0 px-4 sm:px-5 py-4 border-t border-white/8 bg-[#1e1f2a]">
+        <div className="shrink-0 border-t border-[var(--border-subtle)] bg-[var(--surface-inset)] px-4 py-4 sm:px-5">
           <input
             ref={fileRef}
             type="file"
@@ -152,9 +202,9 @@ export function AvatarPickerModal({
             type="button"
             disabled={uploading || !!picking}
             onClick={() => fileRef.current?.click()}
-            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-[#5865f2] to-[#006aff] text-white text-sm font-bold shadow-lg shadow-[#5865f2]/25 hover:opacity-95 transition-opacity disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-token-md bg-[var(--accent)] py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
           >
-            {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+            {uploading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Upload className="h-4 w-4" aria-hidden="true" />}
             {uploading ? 'Uploading…' : 'Upload custom photo'}
           </button>
         </div>

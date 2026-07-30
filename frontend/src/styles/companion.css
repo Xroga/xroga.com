@@ -145,7 +145,7 @@ body.theme-black .xv-companion { --xv-companion-highlight: #e8f7ff; --xv-compani
 .xv-companion-accent-row button[data-accent='violet'] { background: #865dff; }
 .xv-companion-accent-row button[data-accent='cyan'] { background: #05a7c8; }
 .xv-companion-accent-row button[data-accent='emerald'] { background: #0da178; }
-.xv-companion-accent-row button[aria-pressed='true'] { outline: 2px solid var(--foreground); outline-offset: 2px; }
+.xv-companion-accent-row button[aria-checked='true'] { outline: 2px solid var(--foreground); outline-offset: 2px; }
 .xv-companion-mood-row button { padding: .35rem .55rem; border: 1px solid var(--card-border); border-radius: 999px; font-size: .65rem; text-transform: capitalize; }
 .xv-companion-toggle-list { display: grid; gap: .5rem; }
 .xv-companion-toggle { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .65rem; padding: .7rem .8rem; border: 1px solid var(--card-border); border-radius: .8rem; background: var(--card); }
@@ -212,6 +212,38 @@ html[data-reduced-motion='true'] .xv-animated-nav-icon { animation: none !import
 @keyframes xv-smoky-listen { to { transform:rotate(3deg) translateY(-2px); } }
 @keyframes xv-smoky-think { 50% { transform:translateY(-5px) rotate(-2deg); } }
 @keyframes xv-smoky-code { to { transform:translateY(-3px) scale(1.015); } }
+
+/* Silhouette identity — a subtle posture shift since the sprite sheet has no per-costume art.
+   Only visible at rest (greeting/warning); pose animations above own `transform` while active. */
+.xv-smoky-sprite--greeting[data-costume='builder'],
+.xv-smoky-sprite--warning[data-costume='builder'] { transform: scaleX(1.06); }
+.xv-smoky-sprite--greeting[data-costume='navigator'],
+.xv-smoky-sprite--warning[data-costume='navigator'] { transform: scale(1.04) rotate(-1deg); }
+
+/* Crown / mantle — original overlay marks (not sprite art), tinted by the companion's accent. */
+.xv-companion-stage { position: relative; display: block; width: 100%; }
+.xv-companion-crown-mark {
+  position: absolute;
+  top: -14%;
+  left: 50%;
+  width: 34%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  color: var(--xv-companion-accent);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+  pointer-events: none;
+}
+.xv-companion-mantle-mark {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 6%;
+  height: 30%;
+  border-radius: 999px 999px 40% 40%;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--xv-companion-accent) 55%, transparent), transparent);
+  opacity: 0.55;
+  pointer-events: none;
+}
 
 .xv-home-companion-stage { position:fixed; right:max(1rem,env(safe-area-inset-right)); bottom:max(5.25rem,calc(1rem + env(safe-area-inset-bottom))); z-index:180; display:block; width:clamp(5.8rem,9vw,7.5rem); margin:0; padding:0; border:0; background:transparent; backdrop-filter:none; touch-action:none; cursor:grab; }
 .xv-home-companion-stage:active { cursor:grabbing; }

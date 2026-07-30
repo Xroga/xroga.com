@@ -433,6 +433,12 @@ export const api = {
     update: (body: Partial<Profile>) =>
       apiFetch<Profile>('/api/profile', { method: 'PATCH', body: JSON.stringify(body) }),
     activity: () => apiFetch<ActivityLog[]>('/api/profile/activity'),
+    /** Permanently deletes the authenticated Supabase user (cascades to profile/projects). */
+    deleteAccount: () =>
+      apiFetch<{ deleted: boolean }>('/api/profile', {
+        method: 'DELETE',
+        body: JSON.stringify({ confirm: 'DELETE' }),
+      }),
   },
   github: {
     oauthUrl: () => {
