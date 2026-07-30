@@ -139,11 +139,8 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
       return;
     }
 
-    if (loading && stickToBottomRef.current && !userScrolledUpRef.current) {
-      scrollToBottom('auto');
-      return;
-    }
-
+    // While actively streaming, don't repeatedly yank the view to the bottom on every
+    // token — let the user read/scroll freely. Only snap once, when the response finishes.
     if (finished && stickToBottomRef.current && !userScrolledUpRef.current) {
       scrollToBottom('smooth');
     }

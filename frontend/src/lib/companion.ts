@@ -26,7 +26,17 @@ export const COMPANION_OPERATIONS = [
 ] as const;
 export type CompanionOperation = (typeof COMPANION_OPERATIONS)[number];
 
-export type CompanionCostume = 'core' | 'builder' | 'navigator';
+export const COMPANION_COSTUMES = [
+  'coder',
+  'guardian',
+  'exec',
+  'scout',
+  'builder',
+  'mystic',
+  'pilot',
+  'shadow',
+] as const;
+export type CompanionCostume = (typeof COMPANION_COSTUMES)[number];
 export type CompanionAccent = 'blue' | 'violet' | 'cyan' | 'emerald';
 export type CompanionSize = 'compact' | 'standard' | 'large';
 export type CompanionDock = 'composer' | 'corner';
@@ -70,7 +80,7 @@ export interface CompanionRuntimeEvent {
 
 export const DEFAULT_COMPANION_PREFERENCES: CompanionPreferences = {
   name: 'Smoky',
-  costume: 'core',
+  costume: 'coder',
   accent: 'blue',
   size: 'standard',
   dock: 'composer',

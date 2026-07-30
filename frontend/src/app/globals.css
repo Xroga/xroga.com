@@ -101,25 +101,6 @@ body.theme-white {
   --focus-ring-color: var(--accent);
 }
 
-body.theme-white .xv-sidebar-menu a,
-body.theme-white .xv-sidebar-menu button.xv-menu-item,
-body.theme-white .xv-sidebar-menu .xv-hover-tip-wrap > a {
-  color: #000;
-}
-body.theme-white .xv-sidebar-menu a:hover,
-body.theme-white .xv-sidebar-menu button.xv-menu-item:hover,
-body.theme-white .xv-sidebar-menu .xv-hover-tip-wrap > a:hover {
-  color: #000;
-  background: rgba(0, 0, 0, 0.06);
-}
-body.theme-white .xv-sidebar-menu a.xv-active,
-body.theme-white .xv-sidebar-menu button.xv-menu-item.xv-active,
-body.theme-white .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active {
-  color: #000;
-  background: rgba(74, 122, 255, 0.12);
-  border-color: rgba(74, 122, 255, 0.35);
-}
-
 body.theme-white .xv-chatbar-disclaimer {
   color: rgba(0, 0, 0, 0.65);
 }
@@ -268,11 +249,6 @@ body.theme-black .xv-sidebar-root > div {
   color: var(--foreground);
 }
 
-body.theme-black .xv-sidebar-menu a,
-body.theme-black .xv-sidebar-menu button.xv-menu-item {
-  color: rgba(245, 245, 245, 0.85);
-}
-
 body.theme-gray {
   --background: #1a1a1a;
   --foreground: #f3f4f6;
@@ -319,11 +295,6 @@ body.theme-gray .xv-sidebar-root > div {
   background: rgba(22, 22, 22, 0.96);
   border-color: rgba(255, 255, 255, 0.08);
   color: var(--foreground);
-}
-
-body.theme-gray .xv-sidebar-menu a,
-body.theme-gray .xv-sidebar-menu button.xv-menu-item {
-  color: rgba(243, 244, 246, 0.85);
 }
 
 html[data-accent='blue'] body { --primary: #006aff; --accent: #006aff; --primary-glow: #3b82f6; --accent-dim: rgba(0, 106, 255, 0.12); }
@@ -2842,6 +2813,24 @@ body.theme-gray * {
   body.theme-white .xv-blackhole-identity__label {
     color: #0a0a0a;
   }
+  .xv-blackhole-identity--compact {
+    margin-top: 0.7rem;
+    padding: 0.2rem 0.28rem 0.2rem 0.7rem;
+    gap: 0.4rem;
+  }
+  .xv-blackhole-identity--compact .xv-blackhole-identity__label {
+    font-size: clamp(0.58rem, 1.1vw, 0.68rem);
+  }
+  .xv-blackhole-identity--compact .xv-blackhole-identity__mark {
+    padding: 0.22rem 0.5rem;
+  }
+  .xv-blackhole-identity--compact .xv-blackhole-identity__v {
+    font-size: clamp(0.78rem, 1.6vw, 0.92rem);
+  }
+  .xv-blackhole-identity--compact .xv-blackhole-identity__inf {
+    width: 0.8em;
+    height: 0.8em;
+  }
   .xv-blackhole-identity__mark {
     display: inline-flex;
     align-items: center;
@@ -3155,31 +3144,21 @@ body.theme-gray * {
   }
 
   .xv-sidebar-profile-row {
-    background: rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-  body.theme-white .xv-sidebar-profile-row {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: var(--surface-inset);
+    border: 1px solid var(--border-subtle);
   }
   .xv-sidebar-profile-name {
-    color: rgba(255, 255, 255, 0.92);
+    color: var(--text-primary);
   }
   .xv-sidebar-profile-plan {
-    color: rgba(255, 255, 255, 0.45);
+    color: var(--text-muted);
   }
-  body.theme-white .xv-sidebar-profile-name {
-    color: #0f172a !important;
+  .xv-profile-quick-trigger {
+    color: var(--text-secondary);
   }
-  body.theme-white .xv-sidebar-profile-plan {
-    color: #64748b !important;
-  }
-  body.theme-white .xv-profile-quick-trigger {
-    color: #334155 !important;
-  }
-  body.theme-white .xv-profile-quick-trigger:hover {
-    color: #006aff !important;
-    background: rgba(0, 106, 255, 0.08);
+  .xv-profile-quick-trigger:hover {
+    color: var(--accent);
+    background: var(--accent-dim);
   }
 
   /* Upload button — theme-aware */
@@ -3503,8 +3482,8 @@ body.theme-gray * {
   }
   .xv-sidebar-icon-link:hover,
   .xv-sidebar-icon-link.xv-active {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--foreground);
+    background: var(--surface-inset);
+    color: var(--text-primary);
   }
 
   .xv-sidebar-menu .xv-sidebar-tip-wrap > a {
@@ -3515,15 +3494,16 @@ body.theme-gray * {
     padding: 8px 12px;
     border-radius: 10px;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--text-secondary);
     text-decoration: none;
-    transition: background 0.15s;
+    transition: background 0.15s, color 0.15s;
   }
   .xv-sidebar-menu .xv-sidebar-tip-wrap > a:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--surface-inset);
+    color: var(--text-primary);
   }
   .xv-sidebar-menu .xv-sidebar-tip-wrap > a.xv-active {
-    background: rgba(74, 122, 255, 0.15);
+    background: var(--accent-dim);
     color: var(--accent);
   }
 
