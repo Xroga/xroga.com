@@ -84,7 +84,7 @@ body.theme-black .xv-companion { --xv-companion-highlight: #e8f7ff; --xv-compani
 .xv-companion-operation-dot { position: absolute; right: .15rem; bottom: .35rem; width: .75rem; height: .75rem; border-radius: 999px; border: 2px solid var(--card); background: var(--xv-companion-core); box-shadow: 0 0 12px var(--xv-companion-core); }
 .xv-companion-panel { position: absolute; z-index: 400; width: min(23rem, calc(100vw - 1.5rem)); padding: 1rem; border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--card-border)); border-radius: 1.25rem; background: color-mix(in srgb, var(--card) 94%, transparent); color: var(--foreground); box-shadow: 0 24px 70px rgba(0,0,0,.3); backdrop-filter: blur(22px); text-align: left; }
 .xv-companion--hero .xv-companion-panel { left: 50%; bottom: 1.25rem; transform: translate(-50%, 100%); }
-.xv-companion--composer .xv-companion-panel { left: 0; bottom: calc(100% + .65rem); }
+.xv-companion--composer .xv-companion-panel { right: 0; bottom: calc(100% + .65rem); }
 .xv-companion--floating .xv-companion-panel { right: 0; bottom: calc(100% + .65rem); }
 .xv-companion-panel-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
 .xv-companion-panel-head h2 { color: var(--foreground) !important; font-size: 1.1rem; font-weight: 750; }
