@@ -1,8 +1,24 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
-import { buildMetadata, FAVICON_URL, SITE_URL } from '@/lib/seo';
+import { ArrowRight, Check, CircleDot, GitBranch, Hammer, Rocket, Search, ShieldCheck } from 'lucide-react';
+import { buildMetadata, SITE_URL } from '@/lib/seo';
 import { COMPANY_CONTACT } from '@/lib/companyContact';
+import { GitHubIcon } from '@/components/icons/GitHubIcon';
+import { AboutArt } from '@/components/about/AboutArt';
+import { AboutFaq } from '@/components/about/AboutFaq';
+import {
+  ABOUT_ART,
+  ABOUT_CAPABILITIES,
+  ABOUT_EXECUTION,
+  ABOUT_FAQS,
+  ABOUT_FINAL_CTA,
+  ABOUT_FOUNDER,
+  ABOUT_HERO,
+  ABOUT_SOCIALS,
+  ABOUT_STEPS,
+  ABOUT_WHAT_IS,
+} from '@/lib/aboutContent';
+import '@/styles/about.css';
 
 export const metadata: Metadata = buildMetadata({
   title: 'About Xroga AI & CEO Muhammad Ibrahim',
@@ -11,162 +27,342 @@ export const metadata: Metadata = buildMetadata({
   keywords: ['about Xroga', 'Muhammad Ibrahim CEO', 'Pakistan AI founder', 'Xroga mission'],
 });
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: COMPANY_CONTACT.brand,
-  url: SITE_URL,
-  logo: FAVICON_URL,
-  description: COMPANY_CONTACT.productDescription,
-  email: COMPANY_CONTACT.email,
-  telephone: COMPANY_CONTACT.phoneTel,
-  founder: {
-    '@type': 'Person',
-    name: 'Muhammad Ibrahim',
-    nationality: 'Pakistani',
-    jobTitle: 'Founder & CEO',
-    age: 19,
-  },
-  contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'customer support',
-    email: COMPANY_CONTACT.email,
-    telephone: COMPANY_CONTACT.phoneTel,
-    areaServed: 'Worldwide',
-    availableLanguage: ['English'],
-  },
-};
+const STAGE_ICONS = { understand: Search, build: Hammer, verify: ShieldCheck, publish: Rocket } as const;
+const CAPABILITY_ICONS = { build: Hammer, verify: ShieldCheck, publish: GitBranch } as const;
+
+const NAV = [
+  { href: '/features', label: 'Product', current: false },
+  { href: '#how-it-works', label: 'How it works', current: false },
+  { href: '/about', label: 'About', current: true },
+  { href: '#faq', label: 'FAQ', current: false },
+  { href: '/contact', label: 'Contact', current: false },
+] as const;
 
 export default function AboutPage() {
+  const organisationLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: COMPANY_CONTACT.legalName,
+    url: `${SITE_URL}/about`,
+    email: COMPANY_CONTACT.email,
+    telephone: COMPANY_CONTACT.phoneDisplay,
+    sameAs: [ABOUT_SOCIALS.x, ABOUT_SOCIALS.github],
+    founder: { '@type': 'Person', name: ABOUT_FOUNDER.name, jobTitle: ABOUT_FOUNDER.role },
+  };
+
   return (
-    <>
+    <div className="ab-root">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organisationLd).replace(/</g, '\\u003c') }}
       />
-      <div className="min-h-screen bg-[var(--background)]">
-        <header className="border-b border-[var(--card-border)] glass-panel-strong">
-          <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <Image src={FAVICON_URL} alt="Xroga" width={40} height={40} unoptimized />
-              <span className="font-bold">Xroga AI</span>
-            </Link>
-            <Link href="/auth/signup" className="text-sm text-[var(--accent)] hover:underline">
-              Get Started →
-            </Link>
-          </div>
-        </header>
 
-        <main className="max-w-4xl mx-auto px-6 py-12 space-y-12">
-          <section className="text-center space-y-4">
-            <Image
-              src={FAVICON_URL}
-              alt="Xroga AI"
-              width={80}
-              height={80}
-              className="mx-auto"
-              unoptimized
-            />
-            <h1 className="text-3xl sm:text-4xl font-bold">Xroga AI — Build, verify, and publish</h1>
-            <p className="text-[var(--muted)] max-w-2xl mx-auto">
-              For developers and people with no coding knowledge: describe a web product, get working
-              code on your GitHub, live on your Vercel, then keep updating the same repo.
-            </p>
-          </section>
+      {/* --------------------------------------------------------- navigation */}
+      <header className="ab-nav">
+        <div className="ab-shell ab-nav-inner">
+          <Link href="/" className="ab-logo">
+            <span className="ab-logo-mark" aria-hidden>
+              X
+            </span>
+            Xroga AI
+          </Link>
 
-          <section className="glass-panel rounded-2xl p-6 space-y-3">
-            <h2 className="text-xl font-semibold">What is Xroga AI?</h2>
-            <p className="text-sm text-[var(--muted)] leading-relaxed">
-              {COMPANY_CONTACT.productDescription}
-            </p>
-            <p className="text-sm text-[var(--muted)] leading-relaxed">
-              It is not a single chatbot. Xroga automatically coordinates repository comprehension,
-              implementation, research, validation, review, and targeted repair. GitHub and Vercel
-              operations run only through accounts you authorise and return evidence or an exact blocker.
-            </p>
-          </section>
-
-          <section className="glass-panel rounded-2xl p-6 space-y-3">
-            <h2 className="text-xl font-semibold">Contact</h2>
-            <p className="text-sm text-[var(--muted)]">
-              Email:{' '}
-              <a href={`mailto:${COMPANY_CONTACT.email}`} className="text-[var(--accent)] hover:underline">
-                {COMPANY_CONTACT.email}
-              </a>
-            </p>
-            <p className="text-sm text-[var(--muted)]">
-              Phone:{' '}
-              <a href={`tel:${COMPANY_CONTACT.phoneTel}`} className="text-[var(--accent)] hover:underline">
-                {COMPANY_CONTACT.phoneDisplay}
-              </a>
-            </p>
-            <p className="text-sm text-[var(--muted)]">
-              <Link href="/contact" className="text-[var(--accent)] hover:underline">
-                Full contact page
+          <nav className="ab-nav-links" aria-label="Primary">
+            {NAV.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                aria-current={item.current ? 'page' : undefined}
+                className={item.current ? 'is-current' : undefined}
+              >
+                {item.label}
               </Link>
-              {' · '}
-              <Link href="/terms" className="text-[var(--accent)] hover:underline">
-                Terms
-              </Link>
-              {' · '}
-              <Link href="/privacy" className="text-[var(--accent)] hover:underline">
-                Privacy
-              </Link>
-              {' · '}
-              <Link href="/refund" className="text-[var(--accent)] hover:underline">
-                Refund
-              </Link>
-            </p>
-          </section>
+            ))}
+          </nav>
 
-          <section className="glass-panel rounded-2xl p-6 space-y-3">
-            <h2 className="text-xl font-semibold">What can Xroga do?</h2>
-            <ul className="text-sm text-[var(--muted)] space-y-2 list-disc pl-5">
-              <li>Build websites, web apps, dashboards, and browser games from plain language</li>
-              <li>Push working code to your GitHub and update the same repo (edit/delete)</li>
-              <li>Deploy live on your Vercel account</li>
-              <li>Sync your product API keys securely into Vercel env</li>
-              <li>Works for developers and non-developers — no coding knowledge required to start</li>
-            </ul>
-          </section>
+          <Link href="/auth/signup" className="ab-btn ab-btn--primary ab-btn--sm">
+            Get Started
+          </Link>
+        </div>
+      </header>
 
-          <section className="glass-panel rounded-2xl p-6 space-y-4">
-            <h2 className="text-xl font-semibold">Who we are</h2>
-            <div className="flex flex-col sm:flex-row gap-4 items-start">
-              <div className="w-16 h-16 rounded-full bg-[var(--accent)]/20 flex items-center justify-center text-2xl font-bold shrink-0">
-                MI
+      <main>
+        {/* ------------------------------------------------------------- hero */}
+        <section className="ab-section ab-hero">
+          <div className="ab-shell ab-hero-grid">
+            <div>
+              <p className="ab-eyebrow">{ABOUT_HERO.eyebrow}</p>
+              <h1 className="ab-h1">{ABOUT_HERO.headline}</h1>
+              <p className="ab-lede">{ABOUT_HERO.body}</p>
+
+              <div className="ab-cta-row">
+                <Link href={ABOUT_HERO.primaryCta.href} className="ab-btn ab-btn--primary">
+                  {ABOUT_HERO.primaryCta.label}
+                  <ArrowRight className="ab-icon-sm" aria-hidden="true" />
+                </Link>
+                <Link href={ABOUT_HERO.secondaryCta.href} className="ab-btn ab-btn--ghost">
+                  {ABOUT_HERO.secondaryCta.label}
+                </Link>
               </div>
-              <div>
-                <h3 className="font-semibold">Muhammad Ibrahim — Founder & CEO</h3>
-                <p className="text-xs text-[var(--accent)] mb-2">19 years old · Pakistan</p>
-                <p className="text-sm text-[var(--muted)] leading-relaxed">
-                  Muhammad Ibrahim founded Xroga AI with a single belief: AI should not just answer questions —
-                  it should execute. From Pakistan at age 19, he built Xroga to give every creator, developer,
-                  and business access to a full AI workforce that plans, builds, and verifies real work —
-                  not demos.
+
+              <ul className="ab-trust" aria-label="What Xroga connects to">
+                {ABOUT_HERO.trustLine.map((item) => (
+                  <li key={item}>
+                    <CircleDot className="ab-icon-xs" aria-hidden="true" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <AboutArt src={ABOUT_ART.hero} alt="Xroga's voxel builder character working at a laptop" priority />
+          </div>
+        </section>
+
+        {/* -------------------------------------------------------- what is it */}
+        <section className="ab-section" aria-labelledby="ab-what-heading">
+          <div className="ab-shell">
+            <div className="ab-panel ab-panel--dark">
+              <p className="ab-eyebrow ab-eyebrow--light">WHAT IS XROGA?</p>
+              <h2 id="ab-what-heading" className="ab-h2 ab-h2--light">
+                {ABOUT_WHAT_IS.heading}
+              </h2>
+              {ABOUT_WHAT_IS.paragraphs.map((paragraph) => (
+                <p key={paragraph} className="ab-body ab-body--light">
+                  {paragraph}
                 </p>
+              ))}
+
+              <ol className="ab-flow" aria-label="How work moves through Xroga">
+                {ABOUT_WHAT_IS.stages.map((stage) => {
+                  const Icon = STAGE_ICONS[stage.id as keyof typeof STAGE_ICONS];
+                  return (
+                    <li key={stage.id} className="ab-flow-item">
+                      <span className="ab-flow-icon" aria-hidden>
+                        <Icon className="ab-icon-sm" />
+                      </span>
+                      <h3 className="ab-flow-title">{stage.title}</h3>
+                      <p className="ab-flow-body">{stage.body}</p>
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------------------------------------------- how it works */}
+        <section className="ab-section" id="how-it-works" aria-labelledby="ab-how-heading">
+          <div className="ab-shell ab-split">
+            <AboutArt src={ABOUT_ART.workflow} alt="Xroga's workflow illustrated as connected building blocks" />
+
+            <div>
+              <p className="ab-eyebrow">HOW XROGA WORKS</p>
+              <h2 id="ab-how-heading" className="ab-h2">
+                Three steps, no guesswork.
+              </h2>
+
+              <ol className="ab-steps">
+                {ABOUT_STEPS.map((step) => (
+                  <li key={step.number} className="ab-step ab-reveal">
+                    <span className="ab-step-num" aria-hidden>
+                      {step.number}
+                    </span>
+                    <div>
+                      <h3 className="ab-step-title">{step.title}</h3>
+                      <p className="ab-body">{step.body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        {/* ------------------------------------------------------ capabilities */}
+        <section className="ab-section" aria-labelledby="ab-cap-heading">
+          <div className="ab-shell">
+            <p className="ab-eyebrow">CAPABILITIES</p>
+            <h2 id="ab-cap-heading" className="ab-h2">
+              What Xroga actually does.
+            </h2>
+
+            <div className="ab-cards">
+              {ABOUT_CAPABILITIES.map((capability) => {
+                const Icon = CAPABILITY_ICONS[capability.id as keyof typeof CAPABILITY_ICONS];
+                return (
+                  <article key={capability.id} className="ab-card ab-reveal">
+                    <span className="ab-card-icon" aria-hidden>
+                      <Icon className="ab-icon-sm" />
+                    </span>
+                    <h3 className="ab-card-title">{capability.title}</h3>
+                    <p className="ab-body">{capability.body}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* -------------------------------------------------- built for execution */}
+        <section className="ab-section" aria-labelledby="ab-exec-heading">
+          <div className="ab-shell ab-split">
+            <AboutArt src={ABOUT_ART.verify} alt="Xroga verifying a build before publishing it" />
+
+            <div>
+              <p className="ab-eyebrow">BUILT FOR EXECUTION</p>
+              <h2 id="ab-exec-heading" className="ab-h2">
+                {ABOUT_EXECUTION.heading}
+              </h2>
+              <p className="ab-lede">{ABOUT_EXECUTION.body}</p>
+
+              <ul className="ab-checklist">
+                {ABOUT_EXECUTION.checklist.map((item) => (
+                  <li key={item}>
+                    <Check className="ab-icon-sm ab-check" aria-hidden="true" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------------------------------------------------- founder */}
+        <section className="ab-section" aria-labelledby="ab-founder-heading">
+          <div className="ab-shell">
+            <div className="ab-founder">
+              <AboutArt
+                src={ABOUT_ART.founder}
+                alt={`${ABOUT_FOUNDER.name}, founder of Xroga AI`}
+                className="ab-founder-art"
+              />
+
+              <div>
+                <p className="ab-eyebrow">FOUNDER</p>
+                <h2 id="ab-founder-heading" className="ab-h2">
+                  {ABOUT_FOUNDER.name}
+                </h2>
+                <p className="ab-founder-role">{ABOUT_FOUNDER.role}</p>
+                {ABOUT_FOUNDER.paragraphs.map((paragraph) => (
+                  <p key={paragraph} className="ab-body">
+                    {paragraph}
+                  </p>
+                ))}
+
+                <div className="ab-founder-links">
+                  <a href={ABOUT_SOCIALS.x} target="_blank" rel="noreferrer noopener" className="ab-chip-link">
+                    {/* X ships no lucide glyph; the wordmark carries the label. */}
+                    <span aria-hidden className="ab-x-mark">
+                      X
+                    </span>
+                    Xroga on X
+                  </a>
+                  <a href={ABOUT_SOCIALS.github} target="_blank" rel="noreferrer noopener" className="ab-chip-link">
+                    <GitHubIcon className="ab-icon-sm" />
+                    GitHub
+                  </a>
+                </div>
               </div>
             </div>
-            <p className="text-sm text-[var(--muted)]">
-              Behind Xroga is a growing team of engineers, designers, and AI researchers united by one mission:
-              make advanced AI execution accessible, honest, and affordable for everyone.
-            </p>
-          </section>
+          </div>
+        </section>
 
-          <section className="text-center pt-4">
-            <Link
-              href="/auth/signup"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-[var(--accent)] text-[var(--background)] font-semibold text-sm hover:opacity-90 transition-opacity"
-            >
-              Start Building with Xroga
+        {/* ---------------------------------------------------------- contact */}
+        <section className="ab-section" aria-labelledby="ab-contact-heading">
+          <div className="ab-shell">
+            <div className="ab-contact">
+              <div>
+                <h2 id="ab-contact-heading" className="ab-h3">
+                  Talk to us
+                </h2>
+                <p className="ab-body">Real people read these.</p>
+              </div>
+
+              <dl className="ab-contact-rows">
+                <div>
+                  <dt>Email</dt>
+                  <dd>
+                    <a href={`mailto:${COMPANY_CONTACT.email}`}>{COMPANY_CONTACT.email}</a>
+                  </dd>
+                </div>
+                <div>
+                  <dt>Phone</dt>
+                  <dd>
+                    <a href={`tel:${COMPANY_CONTACT.phoneTel}`}>{COMPANY_CONTACT.phoneDisplay}</a>
+                  </dd>
+                </div>
+              </dl>
+
+              <nav className="ab-contact-links" aria-label="Company and legal">
+                <Link href="/contact">Contact</Link>
+                <Link href="/terms">Terms</Link>
+                <Link href="/privacy">Privacy</Link>
+                <Link href="/refund">Refund Policy</Link>
+              </nav>
+            </div>
+          </div>
+        </section>
+
+        {/* -------------------------------------------------------------- faq */}
+        <section className="ab-section" id="faq" aria-labelledby="ab-faq-heading">
+          <div className="ab-shell ab-shell--narrow">
+            <p className="ab-eyebrow">FAQ</p>
+            <h2 id="ab-faq-heading" className="ab-h2">
+              Questions worth answering.
+            </h2>
+            <AboutFaq items={ABOUT_FAQS} />
+          </div>
+        </section>
+
+        {/* -------------------------------------------------------- final cta */}
+        <section className="ab-section" aria-labelledby="ab-cta-heading">
+          <div className="ab-shell">
+            <div className="ab-panel ab-panel--dark ab-final">
+              <h2 id="ab-cta-heading" className="ab-h2 ab-h2--light">
+                {ABOUT_FINAL_CTA.headline}
+              </h2>
+              <p className="ab-body ab-body--light">{ABOUT_FINAL_CTA.body}</p>
+              <div className="ab-cta-row">
+                <Link href={ABOUT_FINAL_CTA.primary.href} className="ab-btn ab-btn--primary">
+                  {ABOUT_FINAL_CTA.primary.label}
+                  <ArrowRight className="ab-icon-sm" aria-hidden="true" />
+                </Link>
+                <Link href={ABOUT_FINAL_CTA.secondary.href} className="ab-btn ab-btn--onDark">
+                  {ABOUT_FINAL_CTA.secondary.label}
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* ------------------------------------------------------------- footer */}
+      <footer className="ab-footer">
+        <div className="ab-shell ab-footer-inner">
+          <div>
+            <Link href="/" className="ab-logo">
+              <span className="ab-logo-mark" aria-hidden>
+                X
+              </span>
+              Xroga AI
             </Link>
-          </section>
-        </main>
+            <p className="ab-footer-note">
+              © {new Date().getFullYear()} {COMPANY_CONTACT.legalName}. Built in {COMPANY_CONTACT.region}.
+            </p>
+          </div>
 
-        <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-[var(--muted)]">
-          © {new Date().getFullYear()} Xroga AI · Founded by Muhammad Ibrahim, Pakistan
-        </footer>
-      </div>
-    </>
+          <nav className="ab-footer-links" aria-label="Footer">
+            <Link href="/features">Product</Link>
+            <Link href="/pricing">Pricing</Link>
+            <Link href="/docs">Docs</Link>
+            <Link href="/showcase">Showcase</Link>
+            <Link href="/community">Community</Link>
+            <Link href="/terms">Terms</Link>
+            <Link href="/privacy">Privacy</Link>
+          </nav>
+        </div>
+      </footer>
+    </div>
   );
 }
