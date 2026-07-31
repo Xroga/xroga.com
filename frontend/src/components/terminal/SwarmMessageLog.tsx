@@ -7,7 +7,6 @@ import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { ProcessingLogo } from '@/components/layout/ProcessingLogo';
-import { MorphWaitLoader } from '@/components/ui/MorphWaitLoader';
 import { ResearchPagesLoader } from '@/components/ui/ResearchPagesLoader';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { MessageBubbleActions } from './MessageBubbleActions';
@@ -348,19 +347,19 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                     />
                   )
                 )}
+                {/* The morphing square/diamond/circle wait animation is gone. It implied
+                    work was happening on a timer rather than on a real event, and the
+                    execution transcript above already reports genuine activity. The
+                    avatar is now static in every state. */}
                 {msg.role === 'assistant' && (
-                  loading && msg.id === animatingId && !showResearchPages ? (
-                    <MorphWaitLoader size="sm" className="shrink-0 mt-0.5" />
-                  ) : (
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
-                      <ProcessingLogo
-                        variant="response"
-                        height={24}
-                        processing={false}
-                        className="!w-6 !h-6 sm:!w-7 sm:!h-7"
-                      />
-                    </div>
-                  )
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
+                    <ProcessingLogo
+                      variant="response"
+                      height={24}
+                      processing={false}
+                      className="!w-6 !h-6 sm:!w-7 sm:!h-7"
+                    />
+                  </div>
                 )}
                 <div
                   className={cn(
@@ -502,7 +501,12 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                                 : !loading && !msg.featureOutput && !msg.buildStopped && !msg.updateTrail
                                   ? (() => {
                                       if (!(codeBuildActive || heavyBuildActive)) {
-                                        return 'No answer was delivered for this turn. Send your question again — chat and advice replies should appear here.';
+                                        // An empty assistant turn is a real failure, not
+                                        // something to explain away by telling the user
+                                        // to retype. The execution transcript above shows
+                                        // what actually ran; this states the outcome
+                                        // plainly without blaming the prompt.
+                                        return 'This turn produced no response. The execution log above shows what ran.';
                                       }
                                       // Never show OrbitVault/update copy on a NEW build (e.g. "build a landing page").
                                       const updateAsk =

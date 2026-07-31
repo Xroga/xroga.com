@@ -95,12 +95,11 @@ export function XrogaAgentProcessingPanel({
         <BuildTodoList todos={todos} showProgress={loading && !allDone} />
       )}
 
-      {loading && !allDone && (
-        <p className="text-[11px] text-[var(--muted)]/60">
-          Press <strong className="font-semibold">Stop</strong> if this status never changes. Waiting
-          time is not billed — only completed model calls are.
-        </p>
-      )}
+      {/* The "Press Stop if this status never changes / Waiting time is not billed"
+          note is gone. It existed because the old fixed checklist could stall with no
+          real event behind it, so the UI had to warn the user it might be lying. Events
+          now come from the stream, so a stalled status reflects genuine backend state
+          and needs no disclaimer. Stop remains available in the composer. */}
     </div>
   );
 }
