@@ -26,6 +26,52 @@ const BRAND = {
 } as const;
 
 const BEST_KEY = 'xroga_showcase_game_best_v1';
+const SOUND_KEY = 'xroga_showcase_game_sound_v1';
+
+/**
+ * Tones are synthesised with WebAudio rather than shipped as audio files, so the
+ * template carries no third-party or licensed sound assets.
+ *
+ * The context is created lazily on the first deliberate sound, because browsers
+ * refuse to start audio before a user gesture.
+ */
+class TonePlayer {
+  private ctx: AudioContext | null = null;
+
+  play(frequency: number, seconds: number, type: OscillatorType = 'sine') {
+    try {
+      if (!this.ctx) {
+        const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        if (!Ctor) return;
+        this.ctx = new Ctor();
+      }
+      const ctx = this.ctx;
+      if (ctx.state === 'suspended') void ctx.resume();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = frequency;
+      // Short envelope so repeated tones never click or stack into noise.
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + seconds);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + seconds);
+    } catch {
+      /* Audio is optional; a blocked context must never break the game loop. */
+    }
+  }
+
+  close() {
+    try {
+      void this.ctx?.close();
+    } catch {
+      /* ignore */
+    }
+    this.ctx = null;
+  }
+}
 
 /** Logical play field; the canvas is scaled to fit its container. */
 const WORLD = { width: 480, height: 720 };
@@ -57,6 +103,9 @@ export function WebGame() {
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(0);
   const [collected, setCollected] = useState(0);
+  const [soundOn, setSoundOn] = useState(false);
+  const tones = useRef<TonePlayer | null>(null);
+  const soundRef = useRef(false);
 
   // Mutable game state lives in a ref so the animation loop never re-subscribes.
   const game = useRef({
@@ -76,6 +125,28 @@ export function WebGame() {
 
   useEffect(() => {
     setBest(readLocal<number>(BEST_KEY, 0));
+    const saved = readLocal<boolean>(SOUND_KEY, false);
+    setSoundOn(saved);
+    soundRef.current = saved;
+    tones.current = new TonePlayer();
+    return () => tones.current?.close();
+  }, []);
+
+  /** Read through a ref so the game loop never restarts when sound is toggled. */
+  const beep = useCallback((frequency: number, seconds: number, type: OscillatorType = 'sine') => {
+    if (!soundRef.current) return;
+    tones.current?.play(frequency, seconds, type);
+  }, []);
+
+  const toggleSound = useCallback(() => {
+    setSoundOn((on) => {
+      const next = !on;
+      soundRef.current = next;
+      writeLocal(SOUND_KEY, next);
+      // Confirm the change audibly, so enabling sound gives immediate feedback.
+      if (next) tones.current?.play(660, 0.08);
+      return next;
+    });
   }, []);
 
   const reset = useCallback(() => {
@@ -102,12 +173,13 @@ export function WebGame() {
   const endRun = useCallback(() => {
     const finalScore = Math.floor(game.current.score);
     setPhase('over');
+    beep(150, 0.35, 'sawtooth');
     setBest((prev) => {
       if (finalScore <= prev) return prev;
       writeLocal(BEST_KEY, finalScore);
       return finalScore;
     });
-  }, []);
+  }, [beep]);
 
   /* ------------------------------------------------------------- controls */
 
@@ -299,6 +371,7 @@ export function WebGame() {
             state.score += 25;
             state.collected += 1;
             setCollected(state.collected);
+            beep(880, 0.09, 'triangle');
           }
         }
 
@@ -322,7 +395,7 @@ export function WebGame() {
       stopped = true;
       cancelAnimationFrame(raf);
     };
-  }, [phase, endRun]);
+  }, [phase, endRun, beep]);
 
   return (
     <div className="dl-root">
@@ -443,6 +516,24 @@ export function WebGame() {
             </button>
             <button
               type="button"
+              role="switch"
+              aria-checked={soundOn}
+              aria-label="Sound"
+              title={soundOn ? 'Sound on' : 'Sound off'}
+              className={`dl-pad dl-pad--sound${soundOn ? ' dl-pad--on' : ''}`}
+              onClick={toggleSound}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M4 9h3l4-3.5v13L7 15H4z" fill="currentColor" />
+                {soundOn ? (
+                  <path d="M15.5 8.5a4.5 4.5 0 0 1 0 7M18 6a8 8 0 0 1 0 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                ) : (
+                  <path d="M15.5 9.5l5 5M20.5 9.5l-5 5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                )}
+              </svg>
+            </button>
+            <button
+              type="button"
               className="dl-pad"
               aria-label="Steer right"
               onPointerDown={() => {
@@ -461,7 +552,7 @@ export function WebGame() {
 
           <p className="dl-help">
             Arrow keys or <kbd>A</kbd>/<kbd>D</kbd> to steer · <kbd>P</kbd> to pause · or drag anywhere on the field.
-            Your best score is saved on this device only.
+            Sound is off by default and synthesised, not sampled. Your best score is saved on this device only.
           </p>
         </div>
       </main>
@@ -535,6 +626,8 @@ ${productReset('.dl-root')}
   color: #f2f2fa; font-size: 19px; cursor: pointer; font-family: inherit; touch-action: none;
 }
 .dl-pad:active { background: #1d1d31; }
+.dl-pad--sound { width: 46px; color: var(--muted); }
+.dl-pad--on { color: var(--accent); border-color: rgba(34,211,238,0.45); }
 
 .dl-help { margin: 14px 0 0; text-align: center; font-size: 11.5px; line-height: 1.6; color: var(--muted); }
 .dl-help kbd {

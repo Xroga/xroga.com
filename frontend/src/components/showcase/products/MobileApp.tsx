@@ -53,6 +53,7 @@ const ENTRIES: readonly Entry[] = [
 const TABS = [
   { id: 'browse', label: 'Browse' },
   { id: 'saved', label: 'Saved' },
+  { id: 'profile', label: 'Profile' },
   { id: 'settings', label: 'Settings' },
 ] as const;
 
@@ -257,6 +258,74 @@ export function MobileApp() {
                 </div>
               )}
 
+              {/* ------------------------------------------------ profile */}
+              {tab === 'profile' && (
+                <div className="fb-view">
+                  <div className="fb-app-bar">
+                    <div>
+                      <p className="fb-app-eyebrow">This device</p>
+                      <h2 className="fb-app-title">Profile</h2>
+                    </div>
+                  </div>
+
+                  <div className="fb-profile-card">
+                    <span className="fb-profile-avatar" aria-hidden>
+                      FB
+                    </span>
+                    <p className="fb-profile-name">Field notes</p>
+                    <p className="fb-profile-sub">Local profile — no account, sign-in, or sync exists in this template.</p>
+                  </div>
+
+                  {/* Counts are read from real local state, never invented. */}
+                  <dl className="fb-profile-stats">
+                    <div>
+                      <dt>Saved</dt>
+                      <dd>{saved.length}</dd>
+                    </div>
+                    <div>
+                      <dt>Entries</dt>
+                      <dd>{ENTRIES.length}</dd>
+                    </div>
+                    <div>
+                      <dt>Categories</dt>
+                      <dd>{new Set(ENTRIES.map((entry) => entry.category)).size}</dd>
+                    </div>
+                  </dl>
+
+                  <h3 className="fb-section-label">Your categories</h3>
+                  {saved.length === 0 ? (
+                    <p className="fb-empty">Save an entry and its category will appear here.</p>
+                  ) : (
+                    <ul className="fb-profile-tags">
+                      {Array.from(new Set(savedResults.map((entry) => entry.category))).map((name) => (
+                        <li key={name}>{name}</li>
+                      ))}
+                    </ul>
+                  )}
+
+                  <h3 className="fb-section-label">Recently saved</h3>
+                  {savedResults.length === 0 ? (
+                    <p className="fb-empty">Nothing saved yet.</p>
+                  ) : (
+                    <ul className="fb-list">
+                      {savedResults.slice(0, 3).map((entry) => (
+                        <li key={entry.id}>
+                          <button type="button" className="fb-item" onClick={() => setOpen(entry)}>
+                            <span className="fb-item-art">
+                              <EntryArt entry={entry} />
+                            </span>
+                            <span className="fb-item-text">
+                              <span className="fb-item-cat">{entry.category}</span>
+                              <span className="fb-item-title">{entry.title}</span>
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+
               {/* ----------------------------------------------- settings */}
               {tab === 'settings' && (
                 <div className="fb-view">
@@ -371,6 +440,12 @@ export function MobileApp() {
                         <path d="M6 4h12v16l-6-4-6 4V4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
                       </svg>
                     )}
+                    {item.id === 'profile' && (
+                      <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="8.5" r="3.4" stroke="currentColor" strokeWidth="1.8" />
+                        <path d="M5 20c0-3.4 3.1-5.5 7-5.5s7 2.1 7 5.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                      </svg>
+                    )}
                     {item.id === 'settings' && (
                       <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
                         <circle cx="12" cy="12" r="3.1" stroke="currentColor" strokeWidth="1.8" />
@@ -476,6 +551,19 @@ ${productReset('.fb-root')}
 .fb-switch--on { background: var(--accent); }
 .fb-switch-knob { display: block; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform 180ms ease; box-shadow: 0 1px 3px rgba(0,0,0,0.28); }
 .fb-switch--on .fb-switch-knob { transform: translateX(18px); }
+
+/* profile */
+.fb-profile-card { display: grid; justify-items: center; gap: 4px; padding: 20px 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--subtle); text-align: center; }
+.fb-profile-avatar { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 6px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 17px; font-weight: 800; }
+.fb-profile-name { margin: 0; font-size: 15.5px; font-weight: 750; }
+.fb-profile-sub { margin: 0; max-width: 30ch; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+.fb-profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 0; }
+.fb-profile-stats > div { display: grid; gap: 2px; padding: 11px 8px; border: 1px solid var(--border); border-radius: 11px; text-align: center; }
+.fb-profile-stats dt { font-size: 10px; font-weight: 750; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.fb-profile-stats dd { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+.fb-section-label { margin: 18px 0 8px; font-size: 11px; font-weight: 750; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.fb-profile-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.fb-profile-tags li { padding: 5px 11px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-deep); font-size: 12px; font-weight: 650; }
 
 .fb-about { margin-top: 16px; padding: 14px; border-radius: 12px; background: var(--subtle); border: 1px solid var(--border); }
 .fb-about-row { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 7px; font-size: 12.5px; }

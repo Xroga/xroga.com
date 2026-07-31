@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
-import { HomepageBlackHolePower } from '@/components/homepage/HomepageBlackHolePower';
 import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
 import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
 import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
@@ -224,8 +223,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      <HomepageBlackHolePower />
 
       <section className="xv-hc-features" aria-labelledby="features-heading">
         <div className="xv-hc-features-inner">

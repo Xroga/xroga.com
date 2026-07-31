@@ -63,6 +63,25 @@ export interface ShowcaseTemplate {
   lastVerifiedAt: string | null;
 }
 
+/**
+ * Thumbnails are real screenshots of the running product, captured by
+ * `scripts/capture-showcase-thumbnails.mjs` — never mockups.
+ *
+ * Cards use these rather than a live frame so a page showing all six does not boot
+ * six application runtimes. The interactive preview still runs live on the detail
+ * and preview routes, which is where a user has asked to try the product.
+ */
+export function thumbnailFor(template: ShowcaseTemplate, view: 'desktop' | 'tablet' | 'mobile' = 'desktop'): string {
+  return `/showcase/thumbnails/${template.slug}-${view}.webp`;
+}
+
+/** Intrinsic size of each stored thumbnail, so images reserve space and never shift layout. */
+export const THUMBNAIL_SIZES = {
+  desktop: { width: 960, height: 600 },
+  tablet: { width: 640, height: 767 },
+  mobile: { width: 414, height: 760 },
+} as const;
+
 /** Questions every product asks. Kept to two so the first step stays short. */
 const BRAND_QUESTIONS: readonly GuidedQuestion[] = [
   {
@@ -173,7 +192,8 @@ export const SHOWCASE_TEMPLATES: readonly ShowcaseTemplate[] = [
       'Keyword search across area, type, and features',
       'City, type, price, and bedroom filters with reset',
       'Five sort orders and a live result count',
-      'Property detail drawer with specifications',
+      'Detail drawer with a four-view image gallery',
+      'Amenities, a map-ready location slot, and an agent enquiry form',
       'Favourites saved on the device',
       'Mortgage calculator with real amortisation',
     ],
@@ -279,10 +299,11 @@ export const SHOWCASE_TEMPLATES: readonly ShowcaseTemplate[] = [
     longDescription:
       'An Expo and React Native application with bottom-tab navigation, a browse list with search and category filters, a detail sheet, saved items persisted on the device, and working settings toggles. The showcase renders the interface in an interactive phone frame in the browser — no APK is built and no store listing exists.',
     capabilities: [
-      'Bottom-tab navigation between three sections',
+      'Bottom-tab navigation across browse, saved, profile, and settings',
       'Browse with search and category filters',
       'Detail sheet with save and dismiss',
       'Saved items persisted on the device',
+      'Profile screen summarising real local activity',
       'Working settings toggles, including live text sizing',
     ],
     technologies: ['Expo', 'React Native', 'TypeScript'],
@@ -333,7 +354,8 @@ export const SHOWCASE_TEMPLATES: readonly ShowcaseTemplate[] = [
     longDescription:
       'A SaaS application shell around a chat workspace: multi-conversation history with auto-titling, suggested prompts, a composer with keyboard send, a usage panel counted from real session activity, and a guide for wiring your own provider key server-side. The preview runs in a labelled demonstration mode — replies are composed locally and every one says so, because the template will not present composed text as model output.',
     capabilities: [
-      'Chat workspace with suggested prompts',
+      'Product overview with a real session summary',
+      'Chat workspace with suggested prompts, error and retry states',
       'Multi-conversation history with auto-titling',
       'Usage panel counted from real session activity',
       'Server-side provider key guidance, no bundled credential',
@@ -391,6 +413,7 @@ export const SHOWCASE_TEMPLATES: readonly ShowcaseTemplate[] = [
       'Start screen with instructions',
       'Real game loop with delta timing and collision',
       'Rising difficulty, pause, resume, and restart',
+      'Synthesised sound with an off-by-default toggle',
       'Keyboard, pointer, and touch controls',
       'Best score saved on the device',
     ],

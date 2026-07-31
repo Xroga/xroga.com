@@ -70,9 +70,65 @@ type SortId = (typeof SORTS)[number]['id'];
 
 /* ------------------------------------------------------------------ artwork */
 
+/**
+ * Gallery views for one property. Each is generated from the listing's own hue, so a
+ * gallery is always complete and never depends on a bitmap that could 404.
+ */
+const GALLERY_VIEWS = ['Exterior', 'Living space', 'Kitchen', 'Garden'] as const;
+type GalleryView = (typeof GALLERY_VIEWS)[number];
+
 /** Per-listing generated artwork, so no card ever shows a broken image. */
-function ListingArt({ listing }: { listing: Listing }) {
+function ListingArt({ listing, view = 'Exterior' }: { listing: Listing; view?: GalleryView }) {
   const h = listing.hue;
+
+  if (view === 'Living space' || view === 'Kitchen') {
+    const warm = view === 'Kitchen' ? h + 20 : h;
+    return (
+      <svg viewBox="0 0 400 240" preserveAspectRatio="none" aria-hidden className="hl-art-svg">
+        <rect width="400" height="240" fill={`hsl(${warm} 22% 92%)`} />
+        {/* Floor and back wall */}
+        <rect y="168" width="400" height="72" fill={`hsl(${warm} 24% 74%)`} />
+        <rect x="252" y="44" width="112" height="86" rx="4" fill={`hsl(${warm} 44% 82%)`} />
+        <rect x="252" y="44" width="112" height="86" rx="4" fill="none" stroke={`hsl(${warm} 30% 58%)`} strokeWidth="3" />
+        <line x1="308" y1="44" x2="308" y2="130" stroke={`hsl(${warm} 30% 58%)`} strokeWidth="2.5" />
+        {view === 'Living space' ? (
+          <>
+            <rect x="40" y="128" width="150" height="46" rx="9" fill={`hsl(${warm} 34% 56%)`} />
+            <rect x="52" y="112" width="42" height="22" rx="6" fill={`hsl(${warm} 38% 66%)`} />
+            <rect x="102" y="112" width="42" height="22" rx="6" fill={`hsl(${warm} 38% 66%)`} />
+            <rect x="206" y="150" width="70" height="12" rx="5" fill={`hsl(${warm} 26% 62%)`} />
+          </>
+        ) : (
+          <>
+            <rect x="34" y="120" width="176" height="16" rx="4" fill={`hsl(${warm} 30% 60%)`} />
+            <rect x="34" y="136" width="176" height="38" rx="4" fill={`hsl(${warm} 26% 70%)`} />
+            {[52, 88, 124, 160].map((x) => (
+              <rect key={x} x={x} y="146" width="18" height="20" rx="3" fill={`hsl(${warm} 30% 82%)`} />
+            ))}
+            <rect x="34" y="66" width="120" height="34" rx="4" fill={`hsl(${warm} 30% 78%)`} />
+          </>
+        )}
+      </svg>
+    );
+  }
+
+  if (view === 'Garden') {
+    return (
+      <svg viewBox="0 0 400 240" preserveAspectRatio="none" aria-hidden className="hl-art-svg">
+        <rect width="400" height="240" fill={`hsl(${h + 8} 44% 88%)`} />
+        <rect y="150" width="400" height="90" fill={`hsl(120 32% 62%)`} />
+        <circle cx="330" cy="52" r="22" fill="#fff" opacity="0.6" />
+        {[70, 150, 250, 330].map((x, i) => (
+          <g key={x}>
+            <rect x={x - 3} y={150 - [42, 30, 50, 34][i]} width="6" height={[42, 30, 50, 34][i]} fill="hsl(28 34% 42%)" />
+            <circle cx={x} cy={150 - [42, 30, 50, 34][i]} r={[20, 15, 24, 17][i]} fill={`hsl(${128 + i * 6} 34% ${46 + i * 4}%)`} />
+          </g>
+        ))}
+        <rect x="120" y="176" width="170" height="12" rx="6" fill="hsl(38 26% 74%)" />
+      </svg>
+    );
+  }
+
   return (
     <svg viewBox="0 0 400 240" preserveAspectRatio="none" aria-hidden className="hl-art-svg">
       <defs>
@@ -438,12 +494,36 @@ function ListingDrawer({
   onToggle: () => void;
 }) {
   const titleId = `hl-drawer-${listing.id}`;
+  const [view, setView] = useState<GalleryView>('Exterior');
+
   return (
     <div className="hl-drawer-wrap" role="dialog" aria-modal="true" aria-labelledby={titleId}>
       <button type="button" className="hl-drawer-scrim" aria-label="Close details" onClick={onClose} />
       <div className="hl-drawer">
-        <div className="hl-drawer-art">
-          <ListingArt listing={listing} />
+        {/* Gallery */}
+        <div className="hl-gallery">
+          <div className="hl-drawer-art">
+            <ListingArt listing={listing} view={view} />
+            <span className="hl-gallery-counter">
+              {GALLERY_VIEWS.indexOf(view) + 1} / {GALLERY_VIEWS.length}
+            </span>
+          </div>
+          <div className="hl-thumbs" role="tablist" aria-label="Property images">
+            {GALLERY_VIEWS.map((option) => (
+              <button
+                key={option}
+                type="button"
+                role="tab"
+                aria-selected={view === option}
+                aria-label={option}
+                className={`hl-thumb${view === option ? ' hl-thumb--on' : ''}`}
+                onClick={() => setView(option)}
+              >
+                <ListingArt listing={listing} view={option} />
+                <span>{option}</span>
+              </button>
+            ))}
+          </div>
         </div>
         <div className="hl-drawer-body">
           <div className="hl-drawer-top">
@@ -482,12 +562,33 @@ function ListingDrawer({
             </div>
           </dl>
 
-          <h3 className="hl-h3">Features</h3>
+          <h3 className="hl-h3">Amenities</h3>
           <ul className="hl-features">
             {listing.features.map((feature) => (
               <li key={feature}>{feature}</li>
             ))}
           </ul>
+
+          {/* Location — a map-ready slot with a schematic stand-in, so no tile
+              provider key is required for a public preview. */}
+          <h3 className="hl-h3 hl-h3--spaced">Location</h3>
+          <div className="hl-map" role="img" aria-label={`Schematic location of ${listing.area}, ${listing.city}`}>
+            <svg viewBox="0 0 400 170" preserveAspectRatio="none" aria-hidden>
+              <rect width="400" height="170" fill="#e8efec" />
+              {[30, 70, 110, 150].map((y) => (
+                <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#cfdcd6" strokeWidth="2" />
+              ))}
+              {[60, 140, 220, 300, 370].map((x) => (
+                <line key={x} x1={x} y1="0" x2={x} y2="170" stroke="#cfdcd6" strokeWidth="2" />
+              ))}
+              <path d="M0 96 C90 70 150 120 230 92 C300 68 350 104 400 84" stroke="#a9c6bb" strokeWidth="9" fill="none" />
+              <circle cx="220" cy="92" r="14" fill={BRAND.accent} opacity="0.22" />
+              <circle cx="220" cy="92" r="6" fill={BRAND.accent} />
+            </svg>
+            <p className="hl-map-note">
+              Schematic only. Connect a map provider in your own build to show the real location.
+            </p>
+          </div>
 
           <div className="hl-drawer-actions">
             <button type="button" className={`hl-btn ${saved ? 'hl-btn--outline' : 'hl-btn--primary'}`} onClick={onToggle}>
@@ -498,12 +599,100 @@ function ListingDrawer({
             </a>
           </div>
 
-          <p className="hl-note">
-            Sample listing. Viewing requests are not sent anywhere in this demonstration.
-          </p>
+          <InquiryForm listing={listing} />
         </div>
       </div>
     </div>
+  );
+}
+
+/* -------------------------------------------------------- the enquiry form */
+
+/**
+ * Agent enquiry form. Validates properly and never transmits anything — the success
+ * state says so, so nobody believes a real agent was contacted.
+ */
+function InquiryForm({ listing }: { listing: Listing }) {
+  const uid = useId();
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [sent, setSent] = useState(false);
+
+  function submit(event: React.FormEvent) {
+    event.preventDefault();
+    const next: Record<string, string> = {};
+    if (!form.name.trim()) next.name = 'Please add your name.';
+    if (!form.email.trim()) next.email = 'Please add an email address.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = 'That email address does not look right.';
+    setErrors(next);
+    if (Object.keys(next).length > 0) return;
+    setSent(true);
+  }
+
+  return (
+    <section className="hl-inquiry" aria-labelledby={`${uid}-h`}>
+      <h3 id={`${uid}-h`} className="hl-h3">
+        Ask about {listing.title}
+      </h3>
+
+      {sent ? (
+        <p className="hl-inquiry-done" role="status">
+          Thanks — your enquiry is validated but <strong>not sent</strong>. In your own build this would reach the listing
+          agent&rsquo;s inbox.
+        </p>
+      ) : (
+        <form className="hl-inquiry-form" onSubmit={submit} noValidate>
+          <div className="hl-field">
+            <label htmlFor={`${uid}-n`}>Your name</label>
+            <input
+              id={`${uid}-n`}
+              value={form.name}
+              autoComplete="name"
+              aria-invalid={Boolean(errors.name)}
+              aria-describedby={errors.name ? `${uid}-n-e` : undefined}
+              onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+            />
+            {errors.name && (
+              <p id={`${uid}-n-e`} className="hl-inquiry-error">
+                {errors.name}
+              </p>
+            )}
+          </div>
+          <div className="hl-field">
+            <label htmlFor={`${uid}-e`}>Email</label>
+            <input
+              id={`${uid}-e`}
+              type="email"
+              value={form.email}
+              autoComplete="email"
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby={errors.email ? `${uid}-e-e` : undefined}
+              onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
+            />
+            {errors.email && (
+              <p id={`${uid}-e-e`} className="hl-inquiry-error">
+                {errors.email}
+              </p>
+            )}
+          </div>
+          <div className="hl-field">
+            <label htmlFor={`${uid}-m`}>Message (optional)</label>
+            <textarea
+              id={`${uid}-m`}
+              rows={3}
+              value={form.message}
+              placeholder="I would like to arrange a viewing."
+              onChange={(event) => setForm((prev) => ({ ...prev, message: event.target.value }))}
+            />
+          </div>
+          <button type="submit" className="hl-btn hl-btn--primary">
+            Send enquiry
+          </button>
+        </form>
+      )}
+
+      <p className="hl-note">Sample listing. Nothing is transmitted in this demonstration.</p>
+    </section>
   );
 }
 
@@ -779,11 +968,46 @@ ${productReset('.hl-root')}
 .hl-btn--outline:hover { border-color: var(--accent); color: var(--accent-deep); }
 .hl-icon-btn { display: grid; place-items: center; width: 34px; height: 34px; flex: none; border: 1px solid var(--border); border-radius: 10px; background: var(--paper); color: var(--ink); cursor: pointer; }
 
+/* gallery */
+.hl-gallery { border-bottom: 1px solid var(--border); }
+.hl-drawer-art { position: relative; }
+.hl-gallery-counter {
+  position: absolute; right: 10px; bottom: 10px; padding: 3px 9px; border-radius: 999px;
+  background: rgba(18,36,31,0.68); color: #fff; font-size: 11px; font-weight: 650;
+}
+.hl-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 8px; }
+.hl-thumb {
+  display: grid; gap: 3px; padding: 0; overflow: hidden; cursor: pointer;
+  border: 2px solid transparent; border-radius: 9px; background: none; font-family: inherit;
+}
+.hl-thumb .hl-art-svg { height: 42px; border-radius: 6px; }
+.hl-thumb span { font-size: 9.5px; font-weight: 650; color: var(--muted); text-align: center; }
+.hl-thumb--on { border-color: var(--accent); }
+.hl-thumb--on span { color: var(--accent-deep); }
+
+/* location */
+.hl-h3--spaced { margin-top: 22px; }
+.hl-map { margin-top: 10px; overflow: hidden; border: 1px solid var(--border); border-radius: 11px; }
+.hl-map svg { display: block; width: 100%; height: 150px; }
+.hl-map-note { margin: 0; padding: 8px 11px; background: var(--subtle); border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+
+/* enquiry */
+.hl-inquiry { margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--border); }
+.hl-inquiry-form { display: grid; gap: 13px; margin-top: 12px; }
+.hl-inquiry-form input, .hl-inquiry-form textarea {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 9px;
+  background: var(--paper); color: var(--ink); font-size: 14px; font-family: inherit; resize: vertical;
+}
+.hl-inquiry-form [aria-invalid="true"] { border-color: #dc2626; }
+.hl-inquiry-error { margin: 0; font-size: 12px; color: #b91c1c; }
+.hl-inquiry-done { margin: 12px 0 0; padding: 12px 14px; border-radius: 10px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 13px; line-height: 1.6; }
+
 /* drawer */
 .hl-drawer-wrap { position: fixed; inset: 0; z-index: 70; display: flex; justify-content: flex-end; }
 .hl-drawer-scrim { flex: 1; border: 0; padding: 0; background: rgba(18,36,31,0.42); cursor: pointer; }
 .hl-drawer { width: min(470px, 100%); overflow-y: auto; background: var(--paper); box-shadow: -20px 0 60px -30px rgba(18,36,31,0.55); }
-.hl-drawer-art { height: 210px; border-bottom: 1px solid var(--border); }
+/* Height only — position and the border live with the gallery rules above. */
+.hl-drawer-art { height: 210px; }
 .hl-drawer-body { padding: 20px 22px 28px; }
 .hl-drawer-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
 .hl-drawer-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }

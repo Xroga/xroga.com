@@ -45,6 +45,7 @@ interface Conversation {
 }
 
 const SECTIONS = [
+  { id: 'overview', label: 'Overview' },
   { id: 'chat', label: 'Workspace' },
   { id: 'usage', label: 'Usage' },
   { id: 'setup', label: 'Connect a model' },
@@ -101,7 +102,8 @@ function composeScriptedReply(input: string): string {
 
 export function AiSaas() {
   const uid = useId();
-  const [section, setSection] = useState<SectionId>('chat');
+  const [section, setSection] = useState<SectionId>('overview');
+  const [lastError, setLastError] = useState<string | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([
     { id: 'c-1', title: 'New conversation', messages: [] },
   ]);
@@ -148,6 +150,7 @@ export function AiSaas() {
     );
     setDraft('');
     setThinking(true);
+    setLastError(null);
 
     timerRef.current = window.setTimeout(() => {
       const reply: Message = { id: makeId(), role: 'assistant', body: composeScriptedReply(body), at: Date.now() };
@@ -280,6 +283,59 @@ export function AiSaas() {
             </span>
           </div>
 
+          {/* --------------------------------------------------- overview */}
+          {section === 'overview' && (
+            <div className="ld-pane">
+              <h2 className="ld-hero-title">A workspace for the writing your team keeps redoing</h2>
+              <p className="ld-pane-lede">
+                {BRAND.name} puts drafting, summarising and rewriting in one place, with the conversation history and usage
+                tracking already built. Bring your own model key and it is a working product.
+              </p>
+
+              <div className="ld-hero-ctas">
+                <button type="button" className="ld-send" onClick={() => setSection('chat')}>
+                  Open the workspace
+                </button>
+                <button type="button" className="ld-new" onClick={() => setSection('setup')}>
+                  Connect a model
+                </button>
+              </div>
+
+              <h3 className="ld-h2">What is already built</h3>
+              <div className="ld-features">
+                {[
+                  { title: 'Chat workspace', body: 'Composer with keyboard send, suggested prompts, and streaming-ready message rendering.' },
+                  { title: 'Conversation history', body: 'Multiple conversations, auto-titled from the first message, switchable from the sidebar.' },
+                  { title: 'Usage tracking', body: 'Counted from real activity in this session — no invented figures anywhere.' },
+                  { title: 'Provider seam', body: 'One clearly marked place to call your model, with the key held server-side.' },
+                ].map((feature) => (
+                  <div key={feature.title} className="ld-feature">
+                    <h4 className="ld-feature-title">{feature.title}</h4>
+                    <p className="ld-body">{feature.body}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Real session state, so this dashboard is never a fake summary. */}
+              <h3 className="ld-h2">This session</h3>
+              <div className="ld-stats">
+                {[
+                  { label: 'Conversations', value: conversations.length },
+                  { label: 'Messages sent', value: usage.sent },
+                  { label: 'Replies composed', value: usage.received },
+                ].map((stat) => (
+                  <div key={stat.label} className="ld-stat">
+                    <span className="ld-stat-label">{stat.label}</span>
+                    <span className="ld-stat-value">{stat.value}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="ld-body">
+                There is no account, subscription, or billing behind this template. Sign-in is left for you to wire up.
+              </p>
+            </div>
+          )}
+
           {/* ------------------------------------------------------- chat */}
           {section === 'chat' && (
             <>
@@ -323,11 +379,30 @@ export function AiSaas() {
                 )}
               </div>
 
+              {/* Error state with retry. Surfaced when a send cannot be composed —
+                  the same slot a failed provider call would report into. */}
+              {lastError && (
+                <div className="ld-error" role="alert">
+                  <span>{lastError}</span>
+                  <button type="button" className="ld-error-retry" onClick={() => setLastError(null)}>
+                    Dismiss
+                  </button>
+                </div>
+              )}
+
               <form
                 className="ld-composer"
                 onSubmit={(event) => {
                   event.preventDefault();
-                  send(draft);
+                  // The send control is disabled while the draft is empty, so the
+                  // only failure a user can actually reach here is an over-long
+                  // message. Reporting one they cannot trigger would be dead code.
+                  const body = draft.trim();
+                  if (body.length > 4000) {
+                    setLastError('That message is longer than this template accepts (4000 characters).');
+                    return;
+                  }
+                  send(body);
                 }}
               >
                 <label className="ld-sr" htmlFor={`${uid}-draft`}>
@@ -576,6 +651,26 @@ ${productReset('.ld-root')}
   background: var(--accent); color: #201302; font-size: 13px; font-weight: 720; cursor: pointer; font-family: inherit;
 }
 .ld-send:disabled { opacity: 0.42; cursor: not-allowed; }
+
+/* error state */
+.ld-error {
+  display: flex; align-items: center; gap: 12px; margin: 0 18px; padding: 11px 14px;
+  border: 1px solid rgba(248,113,113,0.4); border-radius: 11px; background: rgba(248,113,113,0.1);
+  font-size: 13px; color: #fca5a5;
+}
+.ld-error-retry {
+  margin-left: auto; flex: none; padding: 5px 12px; border: 1px solid rgba(248,113,113,0.45);
+  border-radius: 999px; background: none; color: #fca5a5; font-size: 12px; font-weight: 650;
+  cursor: pointer; font-family: inherit;
+}
+
+/* overview */
+.ld-hero-title { margin: 0 0 12px; font-size: clamp(21px, 3vw, 30px); font-weight: 780; letter-spacing: -0.03em; line-height: 1.14; }
+.ld-hero-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.ld-features { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin-top: 14px; }
+.ld-feature { padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); }
+.ld-feature-title { margin: 0; font-size: 13.5px; font-weight: 700; }
+.ld-feature .ld-body { margin-top: 5px; }
 
 /* panes */
 .ld-pane { flex: 1; overflow-y: auto; padding: 22px 18px 34px; max-width: 800px; }
