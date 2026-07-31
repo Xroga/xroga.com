@@ -25,6 +25,11 @@ export function ShowcaseCard({
   compact = false,
 }: {
   template: ShowcaseTemplate;
+  /**
+   * Omit both handlers for a link-only card. The homepage does that deliberately:
+   * customizing needs an account, and a marketing section should not open an auth
+   * wall from a button that looks like it does something in place.
+   */
   onCustomize?: (template: ShowcaseTemplate) => void;
   onGithub?: (template: ShowcaseTemplate) => void;
   className?: string;
@@ -33,6 +38,7 @@ export function ShowcaseCard({
 }) {
   const previewRoute = previewRouteFor(template);
   const live = isLive(template);
+  const hasActions = Boolean(onCustomize || onGithub);
 
   return (
     <article
@@ -144,23 +150,35 @@ export function ShowcaseCard({
           </Link>
         )}
 
-        <button
-          type="button"
-          onClick={() => onCustomize?.(template)}
-          className="ml-auto rounded-full bg-[var(--accent)] px-3 py-1.5 text-[11px] font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-        >
-          Customize for me
-        </button>
+        {hasActions ? (
+          <>
+            <button
+              type="button"
+              onClick={() => onCustomize?.(template)}
+              className="ml-auto rounded-full bg-[var(--accent)] px-3 py-1.5 text-[11px] font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            >
+              Customize for me
+            </button>
 
-        <button
-          type="button"
-          onClick={() => onGithub?.(template)}
-          aria-label={`Copy ${template.name} into a GitHub repository`}
-          title="Use in GitHub"
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--text-secondary)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-        >
-          <GitHubIcon className="h-3.5 w-3.5" />
-        </button>
+            <button
+              type="button"
+              onClick={() => onGithub?.(template)}
+              aria-label={`Copy ${template.name} into a GitHub repository`}
+              title="Use in GitHub"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--text-secondary)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            >
+              <GitHubIcon className="h-3.5 w-3.5" />
+            </button>
+          </>
+        ) : (
+          <Link
+            href={`/showcase/${template.slug}`}
+            className="ml-auto inline-flex items-center gap-1 rounded-full border border-[var(--border-subtle)] px-3 py-1.5 text-[11px] font-semibold text-[var(--text-primary)] transition-colors hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+          >
+            Details
+            <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+          </Link>
+        )}
       </div>
     </article>
   );
