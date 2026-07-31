@@ -13,7 +13,8 @@
     "dev:backend": "npm run dev --workspace=backend",
     "build": "npm run build --workspace=frontend && npm run build --workspace=backend",
     "lint": "npm run lint --workspace=frontend",
-    "test": "npm run test --workspace=backend",
+    "test": "npm run test --workspace=backend && npm run test:frontend",
+    "test:frontend": "tsx --test \"frontend/src/**/*.test.ts\"",
     "test:resilience": "node scripts/test-resilience.js",
     "test:seo": "node scripts/seo-audit.mjs"
   },

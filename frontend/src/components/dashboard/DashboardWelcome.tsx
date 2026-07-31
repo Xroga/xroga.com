@@ -7,7 +7,7 @@ import { getTimeGreetingKey, t } from '@/lib/i18n/translations';
 import { useLocale } from '@/components/providers/LanguageProvider';
 import { WorkspaceResumeList } from '@/components/dashboard/WorkspaceResumeList';
 import { FirstRunShipChecklist } from '@/components/dashboard/FirstRunShipChecklist';
-import { ProductStartChips } from '@/components/terminal/ProductStartChips';
+import { WorkspaceShowcaseStarts } from '@/components/dashboard/WorkspaceShowcaseStarts';
 import { claudeSerif, pixelCoding } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
 
@@ -54,7 +54,7 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
 
       <div className="relative mx-auto mt-4 max-w-3xl">
         <FirstRunShipChecklist className="mb-4" />
-        <ProductStartChips />
+        <WorkspaceShowcaseStarts />
       </div>
 
       <WorkspaceResumeList className="relative mt-4" />

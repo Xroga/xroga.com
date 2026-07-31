@@ -512,6 +512,7 @@ export function TerminalChatBar() {
               )}
               <textarea
                 ref={textareaRef}
+                data-terminal-composer=""
                 value={draft}
                 onChange={(e) => {
                   const next = e.target.value;

@@ -19,6 +19,8 @@ const PUBLIC_PREFIXES = [
   '/terms',
   '/privacy',
   '/refund',
+  // Anyone may browse and preview the showcase; only customizing or exporting needs auth.
+  '/showcase',
 ];
 
 export function isPublicPath(pathname: string): boolean {

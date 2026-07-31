@@ -1,0 +1,39 @@
+name: Unit tests
+
+# The backend and frontend unit suites previously ran only on developer machines,
+# so a regression in either could reach main unnoticed. This runs both from the
+# root workspace install, which is the only place `tsx` resolves for each.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+
+      - name: Backend and frontend unit tests
+        run: npm test
+
+      # An unquoted `src/**/*.test.ts` silently collects only the files two levels
+      # deep in POSIX sh, which once hid 15 backend files and 6 frontend files
+      # while still reporting success. These floors make that collapse fail loudly.
+      - name: Assert both suites actually collected their tests
+        run: |
+          set -euo pipefail
+          backend=$(npm run test --workspace=backend 2>&1 | sed -n 's/^[^0-9]*tests \([0-9][0-9]*\)[[:space:]]*$/\1/p' | tail -1)
+          frontend=$(npm run test:frontend 2>&1 | sed -n 's/^[^0-9]*tests \([0-9][0-9]*\)[[:space:]]*$/\1/p' | tail -1)
+          echo "backend=$backend frontend=$frontend"
+          test "${backend:-0}" -ge 350 || { echo "Backend collected only ${backend:-0} tests"; exit 1; }
+          test "${frontend:-0}" -ge 40 || { echo "Frontend collected only ${frontend:-0} tests"; exit 1; }

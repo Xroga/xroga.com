@@ -11,6 +11,7 @@ import chatRouter from './routes/chat.js';
 import projectsRouter from './routes/projects.js';
 import terminalSessionsRouter from './routes/terminalSessions.js';
 import profileRouter from './routes/profile.js';
+import showcaseRouter from './routes/showcase.js';
 import debugRouter from './routes/debug.js';
 import wellbeingRouter from './routes/wellbeing.js';
 import githubRouter from './routes/github.js';
@@ -173,6 +174,8 @@ app.use('/api/chat', authMiddleware, chatRouter);
 app.use('/api/projects', authMiddleware, projectsRouter);
 app.use('/api/terminal-sessions', authMiddleware, terminalSessionsRouter);
 app.use('/api/profile', authMiddleware, profileRouter);
+// Showcase template export writes to a user's repository, so it is auth-gated.
+app.use('/api/showcase', authMiddleware, showcaseRouter);
 app.use('/api/media', authMiddleware, mediaRouter);
 app.use('/api/capabilities', authMiddleware, capabilitiesRouter);
 app.use('/api/debug', authMiddleware, debugRouter);
