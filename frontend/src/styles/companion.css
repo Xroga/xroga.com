@@ -252,3 +252,54 @@ html[data-reduced-motion='true'] .xv-animated-nav-icon { animation: none !import
   .xv-home-companion-stage { width:5.8rem; right:.65rem; bottom:calc(4.8rem + env(safe-area-inset-bottom)); padding:0; }
   .xv-home-companion-stage .xv-companion--hero .xv-companion-panel { position:fixed; right:.65rem; left:.65rem; bottom:calc(.65rem + env(safe-area-inset-bottom)); width:auto; }
 }
+
+/* ------------------------------------------------- companion pose loop
+   Each skin is a single rendered image rather than a sprite sheet, so the
+   "poses" are built from transforms on that image: the character breathes,
+   tilts to look around, waves, and hops, then repeats. The cycle is one
+   keyframe track so every skin animates identically without extra art.
+
+   `transform-origin` sits at the feet so a tilt reads as leaning rather than
+   spinning about the middle. */
+
+.xv-companion-stage img.xv-companion-renderer {
+  transform-origin: 50% 92%;
+  will-change: transform;
+  animation: xv-companion-poses 11s cubic-bezier(0.36, 0.07, 0.28, 0.99) infinite;
+}
+
+@keyframes xv-companion-poses {
+  /* settle / breathe */
+  0%    { transform: translateY(0) rotate(0deg) scale(1); }
+  8%    { transform: translateY(-2%) rotate(0deg) scale(1.015); }
+  16%   { transform: translateY(0) rotate(0deg) scale(1); }
+
+  /* look left, then right */
+  24%   { transform: translateY(-1%) rotate(-3.2deg) scale(1.01); }
+  34%   { transform: translateY(-1%) rotate(3.2deg) scale(1.01); }
+  42%   { transform: translateY(0) rotate(0deg) scale(1); }
+
+  /* wave: lean in with a small bounce */
+  50%   { transform: translateY(-3%) rotate(-2deg) scale(1.03); }
+  56%   { transform: translateY(-1.5%) rotate(1.5deg) scale(1.02); }
+  62%   { transform: translateY(-3%) rotate(-1.5deg) scale(1.03); }
+  68%   { transform: translateY(0) rotate(0deg) scale(1); }
+
+  /* hop */
+  76%   { transform: translateY(-7%) rotate(0deg) scale(1.02); }
+  82%   { transform: translateY(0) rotate(0deg) scale(0.985); }
+  86%   { transform: translateY(0) rotate(0deg) scale(1); }
+
+  /* rest before repeating */
+  100%  { transform: translateY(0) rotate(0deg) scale(1); }
+}
+
+/* A busy companion works faster; an idle one is calmer. Driven by real
+   operation state, not decoration. */
+.xv-companion-stage[data-operation='building'] img.xv-companion-renderer,
+.xv-companion-stage[data-operation='deploying'] img.xv-companion-renderer { animation-duration: 7s; }
+.xv-companion-stage[data-operation='idle'] img.xv-companion-renderer { animation-duration: 14s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-companion-stage img.xv-companion-renderer { animation: none; }
+}
