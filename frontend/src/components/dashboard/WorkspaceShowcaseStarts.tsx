@@ -50,7 +50,10 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
         templates={visible}
         compact
         selectable
-        columnsClassName="grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
+        // Phones get a single horizontal row that scrolls, so the starters cost one
+        // row of height instead of three stacked cards above the composer. Every
+        // wider breakpoint keeps the normal grid.
+        columnsClassName="grid-flow-col auto-cols-[minmax(13rem,1fr)] overflow-x-auto scrollbar-hide sm:grid-flow-row sm:auto-cols-auto sm:overflow-visible sm:grid-cols-2 xl:grid-cols-3"
         onPromptReady={(prompt) => {
           setPrompt(prompt);
           document.querySelector<HTMLTextAreaElement>('textarea[data-terminal-composer]')?.focus();

@@ -34,7 +34,6 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/lib/supabase/client';
 import { api } from '@/lib/api';
-import { UpgradeProButton } from '@/components/ui/Uiverse';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { UserProfileBox } from '@/components/profile/UserProfileBox';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
@@ -259,20 +258,16 @@ export function Sidebar({ displayName }: SidebarProps) {
 
   const bottomSection = (
     <div className="p-2 mt-auto space-y-2 xv-sidebar-bottom">
-      {navExpanded && (
-        <div className="flex items-stretch gap-1.5">
-          <div className="flex-1 min-w-0">
-            <UpgradeProButton onClick={() => router.push('/pricing')} />
-          </div>
-        </div>
-      )}
+      {/* The plan link used to be a full-width button of its own above the profile,
+          which cost a whole row. It now rides in the profile line as a compact icon,
+          so the nav keeps every item while taking less height. */}
       {!navExpanded && !isMobile && (
         <div className="flex flex-col items-center gap-1">
-          <HoverTip label="Upgrade Plan" description="View plans and upgrade your subscription.">
+          <HoverTip label="Xroga AI plan" description="View plans and upgrade your subscription.">
             <Link
               href="/pricing"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center p-2 mx-auto w-10 h-10 rounded-lg bg-[var(--foreground)] text-[var(--background)]"
+              className="flex items-center justify-center p-2 mx-auto w-9 h-9 rounded-lg bg-[var(--foreground)] text-[var(--background)]"
             >
               <Zap className="w-4 h-4" />
             </Link>
@@ -280,7 +275,7 @@ export function Sidebar({ displayName }: SidebarProps) {
         </div>
       )}
       {displayName && navExpanded && (
-        <div ref={profileRowRef} className="xv-sidebar-profile-row flex items-center gap-2.5 px-2.5 py-2 rounded-xl">
+        <div ref={profileRowRef} className="xv-sidebar-profile-row flex items-center gap-2 px-2 py-1.5 rounded-xl">
           {incognito ? (
             <IncognitoProfileBox size="sidebar" />
           ) : (
@@ -292,9 +287,19 @@ export function Sidebar({ displayName }: SidebarProps) {
           />
           )}
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium xv-sidebar-profile-name truncate leading-tight">{userName}</p>
-            <p className="text-xs xv-sidebar-profile-plan truncate">{userPlan}</p>
+            <p className="text-[13px] font-medium xv-sidebar-profile-name truncate leading-tight">{userName}</p>
+            <p className="text-[11px] xv-sidebar-profile-plan truncate">{userPlan}</p>
           </div>
+          <HoverTip label="Xroga AI plan" description="View plans and upgrade your subscription.">
+            <Link
+              href="/pricing"
+              onClick={() => setMobileOpen(false)}
+              aria-label="View Xroga AI plan"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--foreground)] text-[var(--background)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            >
+              <Zap className="h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
+          </HoverTip>
           <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} />
         </div>
       )}

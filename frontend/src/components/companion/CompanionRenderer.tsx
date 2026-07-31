@@ -12,8 +12,21 @@ interface CompanionRendererProps {
   mantleEnabled: boolean;
   className?: string;
   decorative?: boolean;
-  /** When set, renders this costume portrait instead of the animated mood/operation sprite. */
+  /** Overrides the costume artwork. Only the wardrobe preview needs this. */
   portraitSrc?: string;
+}
+
+/**
+ * Artwork for a costume.
+ *
+ * Every surface resolves this from the selected costume, which is the fix for
+ * choosing a skin appearing to do nothing: previously only the wardrobe preview
+ * passed a portrait, and every other surface fell back to a CSS sprite that carried
+ * `data-costume` but had no per-costume art. Changing costume moved an attribute and
+ * nothing else.
+ */
+export function costumeImage(costume: CompanionCostume): string {
+  return `/brand/costumes/${costume}.webp`;
 }
 
 function poseFor(operation: CompanionOperation, mood: CompanionMood): string {
@@ -45,19 +58,22 @@ export function CompanionRenderer({
       aria-hidden={decorative || undefined}
       aria-label={label}
     >
-      {portraitSrc ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={portraitSrc} alt="" className="xv-companion-renderer" data-costume={costume} aria-hidden="true" />
-      ) : (
-        <span
-          className={cn('xv-companion-renderer xv-smoky-sprite', `xv-smoky-sprite--${pose}`)}
-          data-mood={mood}
-          data-operation={operation}
-          data-costume={costume}
-          data-accent={accent}
-          aria-hidden="true"
-        />
-      )}
+      {/* One rendering path for every surface, so the selected skin is always what
+          shows. `data-*` stays on the element because CSS keys the pose loop's speed
+          off the real operation. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={portraitSrc ?? costumeImage(costume)}
+        alt=""
+        className={cn('xv-companion-renderer', `xv-smoky-pose--${pose}`)}
+        data-mood={mood}
+        data-operation={operation}
+        data-costume={costume}
+        data-accent={accent}
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+      />
       {mantleEnabled && <span className="xv-companion-mantle-mark" data-accent={accent} aria-hidden="true" />}
       {crownEnabled && (
         <svg viewBox="0 0 24 24" className="xv-companion-crown-mark" data-accent={accent} aria-hidden="true" focusable="false">
