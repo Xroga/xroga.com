@@ -90,7 +90,7 @@ export async function getGithubDefaultRepo(userId: string): Promise<string | nul
   return repo?.includes('/') ? repo : null;
 }
 
-async function ghFetch(token: string, path: string, init?: RequestInit): Promise<Response> {
+export async function ghFetch(token: string, path: string, init?: RequestInit): Promise<Response> {
   return fetch(`https://api.github.com${path}`, {
     ...init,
     headers: {
@@ -185,7 +185,15 @@ async function createRepo(token: string, name: string): Promise<{ fullName: stri
   return { fullName: repo.full_name, htmlUrl: repo.html_url, owner: owner!, repo: repoName! };
 }
 
-async function getBranchHeadSha(
+/**
+ * Resolves a branch head, falling back to the repository's default branches.
+ *
+ * Callers that need a specific branch to be used *and no other* must not rely on
+ * this — the fallback is deliberate for the ship flow, but it means a request for
+ * a not-yet-created branch silently resolves to `main`. Use
+ * `resolveExactBranchHead` when the branch identity matters.
+ */
+export async function getBranchHeadSha(
   token: string,
   owner: string,
   repo: string,
@@ -916,7 +924,7 @@ export async function pushBuildFromSource(
   return pushBuildToGitHub(userId, files, opts);
 }
 
-function parseRepoName(input: string): { owner: string; repo: string } {
+export function parseRepoName(input: string): { owner: string; repo: string } {
   const trimmed = input.trim().replace(/^https:\/\/github\.com\//i, '').replace(/\/$/, '');
   const [owner, repo] = trimmed.split('/');
   if (!owner || !repo) throw new Error('Invalid GitHub repo name');

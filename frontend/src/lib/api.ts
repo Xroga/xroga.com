@@ -428,6 +428,35 @@ export const api = {
         method: 'DELETE',
       }),
   },
+  showcase: {
+    /**
+     * Copies a showcase template into one of the user's repositories on a new
+     * feature branch and opens a pull request. Only the template id crosses the
+     * wire — the server resolves the source from its own allow-list.
+     */
+    exportTemplate: (body: {
+      templateId: string;
+      repoFullName: string;
+      branch: string;
+      projectName: string;
+      userPrompt?: string;
+      targetDirectory?: string;
+      baseBranch?: string;
+    }) =>
+      apiFetch<{
+        ok: boolean;
+        repoFullName: string;
+        branch: string;
+        baseBranch: string;
+        commitSha?: string;
+        pullRequestUrl?: string;
+        pullRequestNumber?: number;
+        filesCreated: number;
+        filesSkipped: number;
+        plan: Array<{ path: string; status: 'create' | 'skip-conflict'; bytes: number }>;
+        warnings: string[];
+      }>('/api/showcase/export', { method: 'POST', body: JSON.stringify(body) }),
+  },
   profile: {
     get: () => apiFetch<Profile>('/api/profile'),
     update: (body: Partial<Profile>) =>

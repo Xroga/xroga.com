@@ -10,6 +10,7 @@ import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
 import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
 import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
 import { HomepageAnnouncementBanner } from '@/components/homepage/HomepageAnnouncementBanner';
+import { HomepageShowcase } from '@/components/showcase/HomepageShowcase';
 import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
 import { HomepageCompanionStage } from '@/components/companion/CompanionSurfaces';
@@ -188,6 +189,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <HomepageShowcase />
 
       <section className="xv-hc-section" aria-labelledby="coding-heading">
         <div className="xv-hc-section-inner">
