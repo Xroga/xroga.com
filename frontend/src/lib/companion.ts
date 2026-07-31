@@ -26,15 +26,20 @@ export const COMPANION_OPERATIONS = [
 ] as const;
 export type CompanionOperation = (typeof COMPANION_OPERATIONS)[number];
 
+/**
+ * The five companion skins. `coder` is the original default and stays first; the
+ * other four are the supplied costume artwork under /brand/costumes.
+ *
+ * Changing this list is a contract change: the backend's `companionPreferencesSchema`
+ * enum and the persisted-store migration must move with it, or a saved preference
+ * becomes unreadable.
+ */
 export const COMPANION_COSTUMES = [
   'coder',
-  'guardian',
-  'exec',
-  'scout',
-  'builder',
-  'mystic',
-  'pilot',
-  'shadow',
+  'techwear',
+  'mystic-robe',
+  'circuit',
+  'ninja-neon',
 ] as const;
 export type CompanionCostume = (typeof COMPANION_COSTUMES)[number];
 export type CompanionAccent = 'blue' | 'violet' | 'cyan' | 'emerald';

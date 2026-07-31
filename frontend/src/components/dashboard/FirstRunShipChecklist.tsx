@@ -137,8 +137,10 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
     <section
       aria-label="First ship checklist"
       className={cn(
-        'mx-auto w-full max-w-md rounded-token-lg border border-[var(--border-subtle)]',
-        'bg-[var(--surface-raised)] p-4 shadow-subtle',
+        // Tighter than before: this sits directly above the composer, and the
+        // previous padding pushed the input well down the viewport.
+        'xv-first-run-checklist mx-auto w-full max-w-md rounded-token-lg border border-[var(--border-subtle)]',
+        'bg-[var(--surface-raised)] px-3.5 py-3 shadow-subtle',
         className,
       )}
     >

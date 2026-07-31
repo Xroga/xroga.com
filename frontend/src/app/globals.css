@@ -6180,3 +6180,53 @@ body.theme-gray .xv-rp-loader {
   justify-content: center;
 }
 
+
+/* ============================================================================
+   Workspace welcome block — compact pass
+   The greeting, BLACK HOLE badge, tagline, and ship checklist together took a
+   large share of the viewport before the composer. These tighten the vertical
+   rhythm, left-align the greeting on phones where centred text reads worse in a
+   narrow column, and shrink the tagline on small screens.
+   ========================================================================== */
+
+/* Tighter badge and tagline spacing on every size. */
+.xv-dashboard-welcome .xv-blackhole-identity {
+  margin-top: 0.5rem;
+  padding: 0.2rem 0.28rem 0.2rem 0.7rem;
+  box-shadow: 0 6px 20px rgba(120, 150, 255, 0.2);
+}
+.xv-dashboard-welcome .xv-blackhole-identity__label { font-size: clamp(0.6rem, 1.2vw, 0.7rem); }
+.xv-dashboard-welcome .xv-welcome-taglines { margin-top: 0.55rem; }
+.xv-dashboard-welcome .xv-welcome-hero { gap: 0; }
+
+/* The checklist sat in its own generous block; pull it closer to the composer. */
+.xv-dashboard-welcome .xv-first-run-checklist { margin-bottom: 0.85rem; }
+
+@media (max-width: 640px) {
+  /* Left-align the greeting column on phones. Centred headings in a narrow
+     column force the eye to re-find the left edge on every line. */
+  .xv-dashboard-welcome .xv-welcome-hero {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .xv-dashboard-welcome .xv-welcome-greeting,
+  .xv-dashboard-welcome .xv-welcome-name-line,
+  .xv-dashboard-welcome .xv-welcome-taglines { text-align: left; }
+
+  /* "The first and last model you will ever need." is long for a phone. */
+  .xv-dashboard-welcome .xv-welcome-tagline-sub {
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+
+  .xv-dashboard-welcome .xv-blackhole-identity { margin-top: 0.4rem; }
+  .xv-dashboard-welcome .xv-welcome-taglines { margin-top: 0.4rem; }
+}
+
+/* Desktop keeps the centred composition. */
+@media (min-width: 641px) {
+  .xv-dashboard-welcome .xv-welcome-hero {
+    align-items: center;
+    text-align: center;
+  }
+}

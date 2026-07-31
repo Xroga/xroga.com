@@ -4,7 +4,7 @@ import { companionPreferencesSchema } from './profile.js';
 
 const valid = {
   name: 'Xo',
-  costume: 'builder',
+  costume: 'techwear',
   accent: 'violet',
   size: 'standard',
   dock: 'composer',

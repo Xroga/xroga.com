@@ -7,7 +7,8 @@ const router = Router();
 
 export const companionPreferencesSchema = z.object({
   name: z.string().trim().min(1).max(24),
-  costume: z.enum(['coder', 'guardian', 'exec', 'scout', 'builder', 'mystic', 'pilot', 'shadow']),
+  // Must match COMPANION_COSTUMES in frontend/src/lib/companion.ts.
+  costume: z.enum(['coder', 'techwear', 'mystic-robe', 'circuit', 'ninja-neon']),
   accent: z.enum(['blue', 'violet', 'cyan', 'emerald']),
   size: z.enum(['compact', 'standard', 'large']),
   dock: z.enum(['composer', 'corner']),

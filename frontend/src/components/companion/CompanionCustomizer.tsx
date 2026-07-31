@@ -28,14 +28,11 @@ import { Badge } from '@/components/ui/Badge';
 import { Tabs, type TabItem } from '@/components/ui/Tabs';
 
 const COSTUMES: Array<{ id: CompanionCostume; label: string; detail: string; image: string }> = [
-  { id: 'coder', label: 'Coder', detail: 'Hoodie-clad engineering focus', image: '/brand/costumes/coder.webp' },
-  { id: 'guardian', label: 'Guardian', detail: 'Armored, security-first frame', image: '/brand/costumes/guardian.webp' },
-  { id: 'exec', label: 'Exec', detail: 'Business-ready professional', image: '/brand/costumes/exec.webp' },
-  { id: 'scout', label: 'Scout', detail: 'Explorer gear for research runs', image: '/brand/costumes/scout.webp' },
-  { id: 'builder', label: 'Builder', detail: 'Hard hat, ready to ship', image: '/brand/costumes/builder.webp' },
-  { id: 'mystic', label: 'Mystic', detail: 'Arcane robes for deep reasoning', image: '/brand/costumes/mystic.webp' },
-  { id: 'pilot', label: 'Pilot', detail: 'Suited up for launch day', image: '/brand/costumes/pilot.webp' },
-  { id: 'shadow', label: 'Shadow', detail: 'Stealth mode for quiet automation', image: '/brand/costumes/shadow.webp' },
+  { id: 'coder', label: 'Coder', detail: 'The original hoodie build', image: '/brand/costumes/coder.webp' },
+  { id: 'techwear', label: 'Techwear', detail: 'White-plated suit with reactor core', image: '/brand/costumes/techwear.webp' },
+  { id: 'mystic-robe', label: 'Mystic', detail: 'Wide-brim hat and arcane robe', image: '/brand/costumes/mystic-robe.webp' },
+  { id: 'circuit', label: 'Circuit', detail: 'Wired plating and live traces', image: '/brand/costumes/circuit.webp' },
+  { id: 'ninja-neon', label: 'Neon Ninja', detail: 'Hooded blacks with neon trim', image: '/brand/costumes/ninja-neon.webp' },
 ];
 const ACCENTS: CompanionAccent[] = ['blue', 'violet', 'cyan', 'emerald'];
 const SIZES: CompanionSize[] = ['compact', 'standard', 'large'];
