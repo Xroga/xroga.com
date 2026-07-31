@@ -121,7 +121,7 @@
   color: #000;
   transition: all 0.6s ease;
 }
-.xv-play-btn:hover span { color: #fff; }
+.xv-play-btn:hover span { color: var(--text-primary, var(--foreground)); }
 .xv-play-btn::before {
   content: '';
   position: absolute;
@@ -146,7 +146,7 @@
   font-size: 10px;
   letter-spacing: 0.5px;
   top: 44%;
-  color: #fff;
+  color: var(--text-primary, var(--foreground));
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 0, 0, 0.5);
 }
 @media (min-width: 640px) {
@@ -439,7 +439,7 @@ body.theme-gray .xv-poda-main { background: rgba(26,26,26,0.9); }
 }
 .xv-upgrade-pro .xv-upgrade-text .pro {
   background: var(--accent);
-  color: #fff;
+  color: var(--text-primary, var(--foreground));
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.85em;
@@ -470,7 +470,7 @@ body.theme-gray .xv-poda-main { background: rgba(26,26,26,0.9); }
   padding: 8px 14px;
   border-radius: 8px;
   border: 1px solid var(--card-border);
-  background: rgba(255,255,255,0.06);
+  background: var(--surface-raised, var(--card));
   color: var(--foreground);
   font-size: 11px;
   font-weight: 600;
@@ -478,13 +478,13 @@ body.theme-gray .xv-poda-main { background: rgba(26,26,26,0.9); }
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
 }
-.xv-quick-tab:hover { background: rgba(255,255,255,0.12); border-color: var(--accent); }
+.xv-quick-tab:hover { background: var(--surface-inset, var(--card)); border-color: var(--accent); }
 .xv-quick-tab:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ── BUY NOW (aCHEN-design) ── */
 .xv-buy-now {
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.35);
+  border: 1px solid var(--border-subtle, var(--card-border));
   background: rgba(0,0,0,0.25);
   box-shadow: 0 2px 0 rgba(0,0,0,0.5);
   backdrop-filter: blur(15px);
@@ -495,7 +495,7 @@ body.theme-gray .xv-poda-main { background: rgba(26,26,26,0.9); }
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #fff;
+  color: var(--text-primary, var(--foreground));
   gap: 10px;
   outline: none;
   overflow: hidden;
@@ -610,8 +610,8 @@ body.theme-white .xv-connect-btn .xv-connect-wrap {
 }
 body.theme-white .xv-connect-btn .xv-connect-content {
   background: linear-gradient(180deg, #1f2937 0%, #0f172a 100%);
-  color: #f9fafb;
-  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary, var(--foreground));
+  border-color: var(--text-secondary, var(--muted));
 }
 
 /* ── Modern transparent chatbar ── */
@@ -633,17 +633,17 @@ body.theme-black .xv-chatbar-solid,
 body.theme-gray .xv-chatbar-solid {
   background: transparent;
   border: 1px solid var(--card-border);
-  color: #fff;
+  color: var(--text-primary, var(--foreground));
 }
 body.theme-black .xv-chatbar-solid textarea,
 body.theme-black .xv-chatbar-solid button,
 body.theme-gray .xv-chatbar-solid textarea,
 body.theme-gray .xv-chatbar-solid button {
-  color: #fff !important;
+  color: var(--text-primary, var(--foreground)) !important;
 }
 body.theme-black .xv-chatbar-solid textarea::placeholder,
 body.theme-gray .xv-chatbar-solid textarea::placeholder {
-  color: rgba(255, 255, 255, 0.65) !important;
+  color: var(--text-secondary, var(--muted)) !important;
 }
 
 /* ── Settings tabs modern ── */
@@ -658,7 +658,7 @@ body.theme-gray .xv-chatbar-solid textarea::placeholder {
   transition: all 0.15s;
   color: var(--muted);
 }
-.xv-settings-tab:hover { background: rgba(255,255,255,0.05); color: var(--foreground); }
+.xv-settings-tab:hover { background: var(--surface-raised, var(--card)); color: var(--foreground); }
 .xv-settings-tab.xv-active {
   background: rgba(74,122,255,0.15);
   border-color: rgba(74,122,255,0.35);
@@ -950,7 +950,7 @@ body.theme-gray .xv-chatbar-solid textarea::placeholder {
 }
 .xv-plan-card .xv-plan-cta .xv-pricing-cta--solid {
   background-image: linear-gradient(0deg, hsl(220, 92%, 58%), hsl(220, 99%, 26%) 100%);
-  color: #fff;
+  color: var(--text-primary, var(--foreground));
 }
 
 /* ── Popular plan (MuhammadHasann — purple) ── */
@@ -1132,7 +1132,7 @@ body.theme-gray .xv-chatbar-solid textarea::placeholder {
   align-items: center;
   padding: 12px 16px;
   justify-content: space-between;
-  color: #fff;
+  color: var(--text-primary, var(--foreground));
   font-size: 12px;
   font-weight: 600;
   font-style: italic;
@@ -1149,7 +1149,7 @@ body.theme-gray .xv-chatbar-solid textarea::placeholder {
   flex: 1;
 }
 .xv-popular-card .xv-popular-inner .xv-title { font-weight: 600; color: #bab9b9; font-size: 18px; }
-.xv-popular-card .xv-popular-inner .xv-price { font-size: 32px; color: #fff; font-weight: 700; }
+.xv-popular-card .xv-popular-inner .xv-price { font-size: 32px; color: var(--text-primary, var(--foreground)); font-weight: 700; }
 
 /* ── Spin subscribe button (SelfMadeSystem) ── */
 .xv-spin-subscribe { position: relative; width: 100%; }
@@ -1175,7 +1175,7 @@ body.theme-gray .xv-chatbar-solid textarea::placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--text-primary, var(--foreground));
   font-size: 13px;
   font-weight: 600;
 }
@@ -1285,7 +1285,7 @@ body.theme-gray .xv-chatbar-solid textarea::placeholder {
   top: 8px;
   left: 8px;
   transform-origin: 100% 50%;
-  color: rgba(255,255,255,0.36);
+  color: var(--text-secondary, var(--muted));
   opacity: 0;
   animation: 3s ease infinite;
 }
@@ -1594,7 +1594,7 @@ body.theme-white .xv-uiverse-table-card {
   width: 100% !important;
   padding: 10px !important;
   background: #000 !important;
-  color: #fff !important;
+  color: var(--text-primary, var(--foreground)) !important;
   border: 4px solid #000 !important;
   font-size: 11px !important;
   font-weight: 900 !important;
@@ -1614,7 +1614,7 @@ body.theme-white .xv-uiverse-table-card {
   background: linear-gradient(4deg, #975af4, #2f7cf8 40%, #78aafa 65%, #934cff 100%) !important;
   border: none !important;
   border-radius: 8px !important;
-  color: #fff !important;
+  color: var(--text-primary, var(--foreground)) !important;
   font-size: 12px !important;
   padding: 10px !important;
   width: 100%;
@@ -1642,3 +1642,40 @@ body.theme-white .xv-uiverse-table-card {
   min-width: 52px;
 }
 
+
+/* ============================================================================
+   Beige theme — missing workspace surface overrides
+   These four surfaces had theme-white, theme-gray and theme-black rules but no
+   theme-beige, so beige fell through to each rule's dark default and produced a
+   dark panel on a warm page. Values come from the semantic tokens so beige reads
+   as intentionally warm rather than muddy or low contrast.
+   ========================================================================== */
+
+body.theme-beige .xv-poda-main {
+  background: color-mix(in srgb, var(--surface-raised, var(--card)) 95%, transparent);
+}
+
+body.theme-beige .xv-chatbar-solid {
+  background: transparent;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  color: var(--text-primary, var(--foreground));
+}
+
+body.theme-beige .xv-uiverse-table-card {
+  background: var(--surface-raised, var(--card));
+}
+body.theme-beige .xv-uiverse-table-card__title {
+  color: var(--text-primary, var(--foreground));
+}
+
+/* The connect button keeps a deliberately dark chip so the provider logos inside
+   it stay legible — those SVGs are hardcoded white — but its border and text
+   follow the theme. */
+body.theme-beige .xv-connect-btn .xv-connect-wrap {
+  background: linear-gradient(145deg, #241d14, #4a3c2a);
+}
+body.theme-beige .xv-connect-btn .xv-connect-content {
+  background: linear-gradient(180deg, #3a2f20 0%, #241d14 100%);
+  color: #f5efe4;
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
