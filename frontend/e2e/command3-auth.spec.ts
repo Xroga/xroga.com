@@ -292,9 +292,12 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   for (const removedChip of ['Website', 'Chatbot', 'SaaS', 'Mobile', 'Extension', 'Desktop']) {
     await expect(canonicalComposer.getByRole('button', { name: removedChip, exact: true })).toHaveCount(0);
   }
-  await companion.getByRole('button', { name: /Open .*Xroga companion/ }).click();
-  await expect(page.getByRole('region', { name: /companion panel/ })).toContainText(/real workspace event|Deterministic companion status/i);
-  await page.getByRole('button', { name: 'Close companion panel' }).click();
+  // Smoky is decorative now: the click-to-open control panel and its speech
+  // synthesis were removed, so there is no trigger button and no panel. Companion
+  // preferences live in Settings → Companion, exercised later in this spec.
+  await expect(companion.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
+  await expect(companion.locator('img.xv-companion-renderer')).toHaveAttribute('aria-hidden', 'true');
 
   const routeChecks = [
     '/workspace',
