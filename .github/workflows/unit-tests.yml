@@ -1,0 +1,26 @@
+name: Unit tests
+
+# The backend and frontend unit suites previously ran only on developer machines,
+# so a regression in either could reach main unnoticed. This runs both from the
+# root workspace install, which is the only place `tsx` resolves for each.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Backend and frontend unit tests
+        run: npm test
