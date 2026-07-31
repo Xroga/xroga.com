@@ -1387,7 +1387,7 @@ export function TerminalChatProvider({
 
       if (startingHeavyBuild) {
         setSwarmNegotiationPhase(0);
-        setSwarmStatusLabel('Building');
+        setSwarmStatusLabel('Connected');
         const seededTodos: typeof liveBuildSnapshotRef.current.todos = [];
         buildTodosSeedRef.current = seededTodos;
         liveBuildSnapshotRef.current.todos = seededTodos;

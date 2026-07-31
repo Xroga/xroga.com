@@ -17,7 +17,7 @@ interface BlackHoleLoaderProps {
 
 /**
  * Black Hole V∞ visual for the homepage Black Hole section.
- * Do not use in terminal processing — use MorphWaitLoader there.
+ * Do not use in terminal execution surfaces; those report real events instead.
  */
 export function BlackHoleLoader({
   size = 'lg',

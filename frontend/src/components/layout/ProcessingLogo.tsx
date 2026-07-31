@@ -46,7 +46,7 @@ interface ProcessingLogoProps {
   alt?: string;
 }
 
-/** Xroga logo — static avatar mark (processing wait uses MorphWaitLoader / ResearchPagesLoader) */
+/** Xroga logo — static avatar mark (processing wait uses ResearchPagesLoader) */
 export function ProcessingLogo({
   processing = false,
   height = 32,
@@ -58,7 +58,7 @@ export function ProcessingLogo({
   const width = variant === 'homepage' ? height * 2.8 : variant === 'header' ? height * 2.2 : height;
   const src = VARIANT_SRC[variant];
 
-  // Ignore legacy `processing` — callers render MorphWaitLoader / ResearchPagesLoader instead.
+  // Ignore legacy `processing` — callers render ResearchPagesLoader instead.
   void processing;
 
   return (
