@@ -47,9 +47,12 @@ export function XrogaAgentProcessingPanel({
     return null;
   }, [activityLog]);
 
+  // Falls back to "Connected" rather than "Request accepted": before any real event
+  // arrives the only thing actually true is that the stream is open. Claiming the
+  // request was accepted asserted a backend outcome the UI had not observed.
   const statusLine = (status?.trim() && !isKeepaliveActivity(status)
     ? status.trim()
-    : lastReal) || (loading ? 'Request accepted' : 'Completed');
+    : lastReal) || (loading ? 'Connected' : 'Completed');
 
   const activeTodo = todos.find((t) => t.status === 'active');
   const doneCount = todos.filter((t) => t.status === 'done').length;

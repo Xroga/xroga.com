@@ -27,14 +27,23 @@ export const AI_RESPONSE_LOGO_URL = '/brand/xroga-mark.png';
 
 export type TerminalSkin = 'dark' | 'light' | 'light-grid' | 'gray' | 'amoled';
 
-export const DEFAULT_TERMINAL_SKIN: Record<CoreThemeId, TerminalSkin> = {
-  white: 'light',
-  beige: 'light',
-  black: 'amoled',
-  gray: 'gray',
-};
+/**
+ * The terminal has one look in every theme.
+ *
+ * It used to follow the page theme, which meant a White or Beige theme produced a
+ * light terminal — a code surface reads better dark regardless of the surrounding
+ * page, and a per-theme terminal made command output and ANSI colours inconsistent
+ * between users. The chrome *around* the terminal still follows the selected theme;
+ * only the code surface is pinned.
+ */
+export const TERMINAL_SKIN_CYCLE: TerminalSkin[] = ['dark'];
 
-export const TERMINAL_SKIN_CYCLE: TerminalSkin[] = ['light', 'amoled', 'gray', 'dark', 'light-grid'];
+export const DEFAULT_TERMINAL_SKIN: Record<CoreThemeId, TerminalSkin> = {
+  white: 'dark',
+  beige: 'dark',
+  black: 'dark',
+  gray: 'dark',
+};
 
 export const TERMINAL_SKIN_LABELS: Record<TerminalSkin, string> = {
   light: 'White',

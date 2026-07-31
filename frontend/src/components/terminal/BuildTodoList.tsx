@@ -28,17 +28,20 @@ export function BuildTodoList({
         className
       )}
     >
+      {/* Header reports real activity, not a checklist. The old "To-dos" label with a
+          total count implied a fixed plan, and "Next:" predicted a step the run had
+          not committed to — a run may edit before reading, repair, rerun, or skip
+          deploy entirely. The count of completed events is real; a denominator is not. */}
       <p className="text-[12px] font-medium text-[var(--foreground)]/80 mb-2.5 flex items-center gap-2">
         <ListTodo className="h-3.5 w-3.5 text-[var(--muted)]" strokeWidth={2} />
-        <span>To-dos</span>
-        <span className="text-[var(--muted)]/50 tabular-nums">{todos.length}</span>
+        <span>Activity</span>
       </p>
       {showProgress && active && (
         <p className="text-[12px] text-[var(--accent)] font-medium mb-2 leading-snug">
-          Next: {cleanLabel(active.label)}
+          {cleanLabel(active.label)}
         </p>
       )}
-      <ul className="space-y-2" aria-label="Build to-dos">
+      <ul className="space-y-2" aria-label="Execution activity">
         {todos.map((item) => (
           <li
             key={item.id}
@@ -70,7 +73,7 @@ export function BuildTodoList({
       {showProgress && (doneCount > 0 || skippedCount > 0) && (
         <p className="mt-2.5 text-[11px] text-[var(--muted)]/55 flex items-center gap-1.5">
           <Check className="h-3 w-3 text-emerald-500/65" strokeWidth={2.5} />
-          Completed {doneCount} of {todos.length} to-dos
+          {doneCount} {doneCount === 1 ? 'step' : 'steps'} completed
           {skippedCount > 0 ? ` · ${skippedCount} skipped` : ''}
         </p>
       )}
