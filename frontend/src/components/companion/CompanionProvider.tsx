@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef, type ReactNode } from 'react';
+import type { CompanionRuntimeEvent } from '@/lib/companion';
 import { api, type Profile } from '@/lib/api';
 import { createClient } from '@/lib/supabase/client';
-import { safeCompanionSpeech, type CompanionRuntimeEvent } from '@/lib/companion';
 import {
   companionPreferencesFromUnknown,
   companionPreferencesSnapshot,
@@ -20,19 +20,9 @@ export function CompanionProvider({ children }: { children: ReactNode }) {
     const apply = (event: Event) => {
       const detail = (event as CustomEvent<CompanionRuntimeEvent>).detail;
       if (!detail?.type) return;
+      // Smoky no longer reads responses aloud. The companion is decorative company,
+      // and unprompted speech over a work surface was more intrusive than useful.
       useCompanionStore.getState().applyRuntimeEvent(detail);
-
-      if (detail.type === 'assistant_response' && detail.assistantText) {
-        const state = useCompanionStore.getState();
-        if (!state.voiceEnabled || typeof window.speechSynthesis === 'undefined') return;
-        const speech = safeCompanionSpeech(detail.assistantText);
-        if (!speech) return;
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(speech);
-        utterance.rate = 1;
-        utterance.pitch = 1;
-        window.speechSynthesis.speak(utterance);
-      }
     };
     const online = () => useCompanionStore.getState().applyRuntimeEvent({ type: 'online', source: 'runtime' });
     const offline = () => useCompanionStore.getState().applyRuntimeEvent({ type: 'offline', source: 'runtime' });
@@ -44,7 +34,6 @@ export function CompanionProvider({ children }: { children: ReactNode }) {
       window.removeEventListener('xroga:companion-event', apply);
       window.removeEventListener('online', online);
       window.removeEventListener('offline', offline);
-      window.speechSynthesis?.cancel();
     };
   }, []);
 

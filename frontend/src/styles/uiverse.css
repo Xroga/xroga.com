@@ -168,7 +168,7 @@
 }
 .xv-gradient-btn-wrapper.xv-gradient-btn-sm .xv-gradient-btn,
 .xv-gradient-btn-wrapper.xv-gradient-btn-sm .xv-text-overlay {
-  padding: 7px 12px;
+  padding: 9px 14px;
   letter-spacing: 0.04rem;
 }
 @media (min-width: 640px) {
@@ -302,16 +302,18 @@
   gap: 2px;
   position: relative;
 }
+/* Compact rows: the nav carries twelve items, so the padding and gap are trimmed to
+   fit them all without the column feeling crowded. Hit area stays above 32px. */
 .xv-sidebar-menu a,
 .xv-sidebar-menu button.xv-menu-item,
 .xv-sidebar-menu .xv-hover-tip-wrap > a {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   width: 100%;
   color: var(--text-secondary);
   text-decoration: none;
-  padding: 9px 14px;
+  padding: 7px 12px;
   border-radius: 999rem;
   border: 1px solid transparent;
   background: transparent;
@@ -1678,4 +1680,72 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   background: linear-gradient(180deg, #3a2f20 0%, #241d14 100%);
   color: #f5efe4;
   border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+/* ------------------------------------------------- chatbar dictation button
+   Idle: a plain mic chip. Listening: the mic fades out and three bars pulse, so
+   the state reads without depending on colour. Stopped returns to the chip. */
+.xv-mic-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 30px;
+  height: 26px;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  border-radius: 999px;
+  background: var(--surface-raised, var(--card));
+  color: var(--text-secondary, var(--muted));
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+.xv-mic-btn:hover:not(:disabled) {
+  color: var(--text-primary, var(--foreground));
+  border-color: var(--border-strong, var(--card-border));
+}
+.xv-mic-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.xv-mic-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.xv-mic-btn.is-listening {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+.xv-mic-btn.is-error { border-color: #dc2626; color: #dc2626; }
+
+.xv-mic-icon { transition: opacity 160ms ease; }
+.xv-mic-btn.is-listening .xv-mic-icon { opacity: 0; }
+
+.xv-mic-wave {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+.xv-mic-btn.is-listening .xv-mic-wave { opacity: 1; }
+.xv-mic-wave i {
+  width: 2px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+.xv-mic-btn.is-listening .xv-mic-wave i { animation: xv-mic-pulse 0.9s ease-in-out infinite; }
+.xv-mic-btn.is-listening .xv-mic-wave i:nth-child(2) { animation-delay: 0.15s; }
+.xv-mic-btn.is-listening .xv-mic-wave i:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes xv-mic-pulse {
+  0%, 100% { height: 5px; opacity: 0.55; }
+  50%      { height: 13px; opacity: 1; }
+}
+
+/* Reduced motion: hold the bars at a steady taller height so listening is still
+   visibly different from idle, without any animation. */
+@media (prefers-reduced-motion: reduce) {
+  .xv-mic-btn.is-listening .xv-mic-wave i { animation: none; height: 11px; }
+  .xv-mic-btn, .xv-mic-icon, .xv-mic-wave { transition: none; }
 }

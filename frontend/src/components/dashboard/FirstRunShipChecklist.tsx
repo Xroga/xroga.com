@@ -163,10 +163,10 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
         </button>
       </div>
 
-      <div className="mt-3 flex items-center gap-3">
+      <div className="mt-2 flex items-center gap-2.5">
         <span
           className={cn(
-            'flex h-11 w-11 shrink-0 items-center justify-center rounded-token-md border',
+            'flex h-9 w-9 shrink-0 items-center justify-center rounded-token-sm border',
             step.done
               ? 'border-transparent bg-[var(--success-dim)]'
               : // The provider marks in /brand/logos are white-only assets (hardcoded
@@ -176,15 +176,15 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
           )}
         >
           {step.done ? (
-            <Check className="h-5 w-5 text-[var(--success)]" aria-hidden="true" />
+            <Check className="h-4 w-4 text-[var(--success)]" aria-hidden="true" />
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={step.logo} alt="" aria-hidden="true" className="h-5 w-5 object-contain" />
+            <img src={step.logo} alt="" aria-hidden="true" className="h-4 w-4 object-contain" />
           )}
         </span>
 
         <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-1.5 text-sm font-semibold text-[var(--text-primary)]">
+          <p className="flex items-center gap-1.5 text-[13px] font-semibold text-[var(--text-primary)]">
             {step.label}
             {step.optional && (
               <span className="text-[10px] font-medium uppercase tracking-wide text-[var(--text-muted)]">
@@ -192,7 +192,7 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
               </span>
             )}
           </p>
-          <p className="mt-0.5 text-[11px] leading-snug text-[var(--text-secondary)]">{step.detail}</p>
+          <p className="mt-0.5 text-[10.5px] leading-snug text-[var(--text-secondary)]">{step.detail}</p>
         </div>
 
         {step.done ? (
@@ -209,7 +209,7 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
         )}
       </div>
 
-      <div className="mt-3 flex items-center justify-between gap-2 border-t border-[var(--border-subtle)] pt-2.5">
+      <div className="mt-2 flex items-center justify-between gap-2 border-t border-[var(--border-subtle)] pt-2">
         <button
           type="button"
           onClick={() => go(-1)}

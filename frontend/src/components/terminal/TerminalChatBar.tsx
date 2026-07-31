@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
+import { ChatBarMicButton } from './ChatBarMicButton';
+import { BlackHoleVButton } from './BlackHoleVButton';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -424,6 +426,23 @@ export function TerminalChatBar() {
 
           {!incognito && (
           <div className="xv-chatbar-toolbar flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 overflow-x-auto scrollbar-hide flex-nowrap">
+            {/* Black Hole lives in the toolbar rather than on its own row above the
+                chatbar, which reclaims that row's height. */}
+            <BlackHoleVButton compact className="shrink-0" />
+            <ChatBarMicButton
+              className="shrink-0"
+              disabled={loading}
+              onTranscript={(text) => {
+                // Append rather than replace, so dictating after typing keeps
+                // whatever the user already wrote.
+                setDraft((current) => {
+                  const next = current.trim() ? `${current.trim()} ${text}` : text;
+                  draftRef.current = next;
+                  return next;
+                });
+                textareaRef.current?.focus();
+              }}
+            />
             <ChatBarTip label="Search integrations" className="shrink-0">
               <ChatBarToolChip
                 icon={<Search className="w-3.5 h-3.5" />}

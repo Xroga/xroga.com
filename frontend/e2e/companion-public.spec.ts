@@ -31,18 +31,12 @@ test('public X-companion, themes, plan story, and accessibility are connected', 
     await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
   }
 
-  const trigger = page.getByRole('button', { name: /Open .*Xroga companion/ });
-  await trigger.focus();
-  await page.keyboard.press('Enter');
-  await expect(page.getByRole('region', { name: /companion panel/ })).toBeVisible();
-  await expect(page.getByText('Deterministic companion status')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Voice on' })).toHaveAttribute('aria-pressed', 'true');
-  await page.getByRole('button', { name: 'Voice input' }).click();
-  await expect(page.getByLabel('Ask through Xroga workspace')).toHaveValue('Build a voice accessible portfolio');
-  await page.getByRole('button', { name: 'Move question to Xroga workspace' }).click();
-  const homepageComposer = page.getByLabel('Describe what you want to build');
-  await expect(homepageComposer).toHaveValue('Build a voice accessible portfolio');
-  await expect(homepageComposer).toBeFocused();
+  // Smoky is decorative now: the click-to-open control panel and the speech
+  // synthesis it carried were removed, so there is no trigger button and no panel.
+  // Companion preferences moved to Settings; dictation belongs to the composer.
+  await expect(page.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
+  await expect(page.locator('img.xv-companion-renderer').first()).toHaveAttribute('aria-hidden', 'true');
 
   await page.evaluate(() => window.dispatchEvent(new CustomEvent('xroga:companion-event', {
     detail: { type: 'runtime_progress', operation: 'testing', message: 'Running the real validation command', source: 'runtime' },
