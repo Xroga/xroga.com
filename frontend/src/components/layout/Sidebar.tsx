@@ -21,6 +21,7 @@ import {
   TrendingUp,
   FolderGit2,
   LayoutTemplate,
+  Bitcoin,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
@@ -63,6 +64,12 @@ const navItems = [
     label: 'Community',
     icon: MessageCirclePlus,
     tip: 'Share feedback, report bugs, request features, and help other Xroga builders.',
+  },
+  {
+    href: '/crypto-builder',
+    label: 'Crypto Builder',
+    icon: Bitcoin,
+    tip: 'Build crypto agents, Web3 apps, DeFi and DAO tools, on-chain monitoring, and hackathon projects.',
   },
   {
     href: '/showcase',
