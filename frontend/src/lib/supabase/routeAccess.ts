@@ -9,7 +9,7 @@ const PUBLIC_PREFIXES = [
   '/docs',
   '/community',
   '/research',
-  '/crypto-hackathon-builder',
+  '/crypto-builder',
   '/ai-coding-agent',
   '/ai-app-builder',
   '/ai-website-builder',

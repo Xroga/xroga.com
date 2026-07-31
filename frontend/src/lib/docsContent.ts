@@ -54,7 +54,7 @@ export const DOC_PAGES: DocPage[] = [
     { heading: 'Start with the first meaningful error', paragraphs: ['Refresh the session for authentication failures. Confirm the selected repository and permission for GitHub failures. Run the real framework build before deployment. For readiness failures, inspect the application health response instead of weakening the check.'] },
     { heading: 'Ask the community', paragraphs: ['If a reproducible issue remains, create a Bug Report in Xroga Community. Include safe steps, expected behavior, actual behavior, and the affected surface—never paste passwords or tokens.'] },
   ] },
-  { slug: 'hackathon-workflows', title: 'Hackathon workflows', description: 'Turn official rules into an achievable, tested, demonstrable submission.', updated: '2026-07-30', sourceHref: '/crypto-hackathon-builder', sections: [
+  { slug: 'hackathon-workflows', title: 'Hackathon workflows', description: 'Turn official rules into an achievable, tested, demonstrable submission.', updated: '2026-07-30', sourceHref: '/crypto-builder', sections: [
     { heading: 'Research before building', paragraphs: ['Use the current official event rules, track requirements, submission deadline, judging rubric, and permitted pre-existing work. Treat third-party summaries as untrusted until confirmed against the organizer.'] },
     { heading: 'Ship the smallest credible demo', paragraphs: ['Choose a real problem, use the required ecosystem meaningfully, keep a visible commit history, document architecture and security decisions, deploy a working demo, and rehearse the time-limited presentation. None of these practices guarantees winning.'] },
   ] },
