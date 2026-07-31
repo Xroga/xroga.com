@@ -34,7 +34,6 @@ import { registerRepoSession } from '@/lib/repoSessionsIndex';
 import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
 import { buildPromptWithMemory, isBuildThreadContinuation, isGeneralAdviceOrKnowledgePrompt, isPhase1BuildQuestion, isWebsiteBuildPrompt, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
-import { seedBuildTodos } from '@/lib/buildDefaultTodos';
 import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
 import { startPipelineMessageForPrompt } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
@@ -1389,7 +1388,7 @@ export function TerminalChatProvider({
       if (startingHeavyBuild) {
         setSwarmNegotiationPhase(0);
         setSwarmStatusLabel('Building');
-        const seededTodos = seedBuildTodos(displayPrompt);
+        const seededTodos: typeof liveBuildSnapshotRef.current.todos = [];
         buildTodosSeedRef.current = seededTodos;
         liveBuildSnapshotRef.current.todos = seededTodos;
         setSwarmTodos(seededTodos);
@@ -1694,7 +1693,7 @@ export function TerminalChatProvider({
                 heavyBuildActiveRef.current = true;
                 setSwarmNegotiationPhase(0);
                 setSwarmStatusLabel('XROGA Architect');
-                const seededTodos = seedBuildTodos(displayPrompt);
+                const seededTodos: typeof liveBuildSnapshotRef.current.todos = [];
                 buildTodosSeedRef.current = seededTodos;
                 liveBuildSnapshotRef.current.todos = seededTodos;
                 setSwarmTodos(seededTodos);
