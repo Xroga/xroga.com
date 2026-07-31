@@ -179,3 +179,77 @@ test('the sidebar-facing route is publicly reachable without signing in', async 
   expect(response?.status()).toBe(200);
   expect(new URL(page.url()).pathname).toBe(PAGE);
 });
+
+/* ------------------------------------------------------- homepage theming (§12) */
+
+/**
+ * The homepage was a self-contained dark design system: its local `--hc-*` tokens
+ * were fixed dark literals, so selecting White or Beige changed almost nothing. These
+ * assert the page genuinely follows the selected theme.
+ */
+test('the homepage follows every Xroga theme instead of staying dark', async ({ page }) => {
+  for (const theme of ['theme-white', 'theme-beige', 'theme-gray', 'theme-black']) {
+    await page.goto('/');
+    await page.evaluate((name) => {
+      document.body.classList.remove('theme-white', 'theme-beige', 'theme-gray', 'theme-black');
+      document.body.classList.add(name);
+    }, theme);
+    await page.waitForTimeout(200);
+
+    const measured = await page.evaluate(() => {
+      const luminance = (value: string | null) => {
+        if (!value) return null;
+        const parts = (value.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+        return parts.length < 3 ? null : (0.2126 * parts[0] + 0.7152 * parts[1] + 0.0722 * parts[2]) / 255;
+      };
+      const wrap = document.querySelector('.xv-home-coding');
+      const read = (selector: string) => {
+        const el = document.querySelector(selector);
+        return el ? luminance(getComputedStyle(el).color) : null;
+      };
+      return {
+        background: luminance(wrap ? getComputedStyle(wrap).backgroundColor : null),
+        brand: read('.xv-hc-brand'),
+        sub: read('.xv-hc-sub'),
+      };
+    });
+
+    expect(measured.background, `${theme} background unmeasurable`).not.toBeNull();
+    for (const [name, value] of Object.entries({ brand: measured.brand, sub: measured.sub })) {
+      expect(value, `${theme} ${name} unmeasurable`).not.toBeNull();
+      expect(Math.abs(value! - measured.background!), `${theme} ${name} unreadable`).toBeGreaterThan(0.4);
+    }
+
+    // A light theme must actually produce a light page.
+    if (theme === 'theme-white' || theme === 'theme-beige') {
+      expect(measured.background!, `${theme} page is still dark`).toBeGreaterThan(0.7);
+    } else {
+      expect(measured.background!, `${theme} page should stay dark`).toBeLessThan(0.35);
+    }
+  }
+});
+
+test('the homepage primary button stays legible in a light theme', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    document.body.classList.remove('theme-black', 'theme-gray');
+    document.body.classList.add('theme-white');
+  });
+  await page.waitForTimeout(150);
+
+  const contrast = await page.evaluate(() => {
+    const luminance = (value: string) => {
+      const parts = (value.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+      return parts.length < 3 ? null : (0.2126 * parts[0] + 0.7152 * parts[1] + 0.0722 * parts[2]) / 255;
+    };
+    const button = document.querySelector('.xv-hc-btn-primary');
+    if (!button) return null;
+    const style = getComputedStyle(button);
+    const text = luminance(style.color);
+    const background = luminance(style.backgroundColor);
+    return text === null || background === null ? null : Math.abs(text - background);
+  });
+
+  expect(contrast, 'primary button contrast unmeasurable').not.toBeNull();
+  expect(contrast!, 'primary button text is not legible on its own fill').toBeGreaterThan(0.35);
+});
