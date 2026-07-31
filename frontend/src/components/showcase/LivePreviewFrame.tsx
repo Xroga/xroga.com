@@ -14,39 +14,51 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-/** Width the product is rendered at before scaling — a desktop layout. */
-const DESIGN_WIDTH = 1440;
-
 export function LivePreviewFrame({
   src,
   title,
+  designWidth = 1440,
   designHeight = 900,
   className,
   interactive = false,
+  scaleMode = 'fit',
 }: {
   src: string;
   title: string;
+  /** Viewport width the product renders at before scaling. */
+  designWidth?: number;
   /** Taller values show more of the page in the same box. */
   designHeight?: number;
   className?: string;
   /** Allow interaction. Off for cards, on where the frame is the main content. */
   interactive?: boolean;
+  /**
+   * `fit` scales the document down to the container width — right for a card.
+   * `actual` renders at the design width with no scaling, so a phone-width preview
+   * is genuinely phone-width and its own media queries and touch targets apply.
+   */
+  scaleMode?: 'fit' | 'actual';
 }) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(0);
   const [visible, setVisible] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
-  // Scale to the container's real width, re-measured on resize.
+  // Scale to the container's real width, re-measured on resize. In `actual` mode the
+  // scale is pinned to 1 but still clamped down if the container is narrower than the
+  // design width, so a phone preview never overflows on a small screen.
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
-    const measure = () => setScale(host.clientWidth / DESIGN_WIDTH);
+    const measure = () => {
+      const ratio = host.clientWidth / designWidth;
+      setScale(scaleMode === 'actual' ? Math.min(1, ratio) : ratio);
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(host);
     return () => observer.disconnect();
-  }, []);
+  }, [designWidth, scaleMode]);
 
   // Defer the document load until the card is nearly on screen.
   useEffect(() => {
@@ -73,7 +85,21 @@ export function LivePreviewFrame({
     <div
       ref={hostRef}
       className={className}
-      style={{ position: 'relative', overflow: 'hidden', aspectRatio: `${DESIGN_WIDTH} / ${designHeight}` }}
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        // In `actual` mode the box is the device size — but it must follow the *scaled*
+        // height, or clamping a wide device into a narrower container leaves dead space
+        // below the content. Before the first measurement, fall back to the ratio.
+        ...(scaleMode === 'actual'
+          ? {
+              width: '100%',
+              maxWidth: `${designWidth}px`,
+              marginInline: 'auto',
+              ...(scale > 0 ? { height: `${designHeight * scale}px` } : { aspectRatio: `${designWidth} / ${designHeight}` }),
+            }
+          : { aspectRatio: `${designWidth} / ${designHeight}` }),
+      }}
     >
       {visible && scale > 0 && (
         <iframe
@@ -94,7 +120,7 @@ export function LivePreviewFrame({
             position: 'absolute',
             top: 0,
             left: 0,
-            width: `${DESIGN_WIDTH}px`,
+            width: `${designWidth}px`,
             height: `${designHeight}px`,
             border: 0,
             transform: `scale(${scale})`,
