@@ -2,6 +2,11 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SHOWCASE_TEMPLATES, getShowcaseBySlug, isLive } from '@/lib/showcase/registry';
 import { BusinessWebsite } from '@/components/showcase/products/BusinessWebsite';
+import { RealEstatePlatform } from '@/components/showcase/products/RealEstatePlatform';
+import { BookingPlatform } from '@/components/showcase/products/BookingPlatform';
+import { WebGame } from '@/components/showcase/products/WebGame';
+import { MobileApp } from '@/components/showcase/products/MobileApp';
+import { AiSaas } from '@/components/showcase/products/AiSaas';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -36,6 +41,16 @@ export default async function ShowcasePreviewPage({ params }: Props) {
   switch (template.id) {
     case 'business-website':
       return <BusinessWebsite />;
+    case 'real-estate-platform':
+      return <RealEstatePlatform />;
+    case 'booking-platform':
+      return <BookingPlatform />;
+    case 'web-game':
+      return <WebGame />;
+    case 'android-app':
+      return <MobileApp />;
+    case 'ai-saas':
+      return <AiSaas />;
     default:
       // A template marked live must have a renderer; treat a gap as not-found
       // rather than showing an empty frame.

@@ -83,10 +83,25 @@ test('previews are excluded from search indexing', async ({ page }) => {
   expect(robots).toMatch(/noindex/i);
 });
 
-test('products still in development do not offer a preview that renders nothing', async ({ page }) => {
-  await page.goto('/showcase/real-estate-platform/preview');
-  // A template with no renderer must land on not-found, never an empty frame.
+/**
+ * All six products are live and have renderers, so there is currently no
+ * in-development preview to check. The invariant that still matters is the guard
+ * itself: a slug with no renderer must land on not-found rather than an empty frame.
+ */
+test('a preview for an unknown product lands on not-found, never an empty frame', async ({ page }) => {
+  await page.goto('/showcase/not-a-real-product/preview');
   await expect(page.getByRole('heading', { name: /that build was not found/i })).toBeVisible();
+});
+
+test('every product advertised as live actually renders its preview', async ({ page }) => {
+  for (const slug of ALL_SLUGS) {
+    await page.goto(`/showcase/${slug}`);
+    const isLive = await page.getByText(/^Live$/).first().isVisible().catch(() => false);
+    if (!isLive) continue;
+    await page.goto(`/showcase/${slug}/preview`);
+    await expect(page.getByRole('heading', { level: 1 }).first(), slug).toBeVisible();
+    await expect(page.getByRole('heading', { name: /that build was not found/i }), slug).toBeHidden();
+  }
 });
 
 test('sample content is labelled and no fabricated metrics are shown', async ({ page }) => {

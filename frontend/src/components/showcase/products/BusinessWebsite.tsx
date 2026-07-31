@@ -16,6 +16,7 @@
  */
 
 import { useEffect, useId, useRef, useState } from 'react';
+import { productReset } from './shared';
 
 const BRAND = {
   name: 'Northwind Studio',
@@ -666,6 +667,7 @@ export function BusinessWebsite() {
 /* ----------------------------------------------------------------------- css */
 
 const CSS = `
+${productReset('.nw-root')}
 .nw-root {
   --ink: ${BRAND.ink};
   --paper: ${BRAND.paper};
