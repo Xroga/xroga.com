@@ -20,6 +20,7 @@ import {
   Activity,
   TrendingUp,
   FolderGit2,
+  LayoutTemplate,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
@@ -62,6 +63,12 @@ const navItems = [
     label: 'Community',
     icon: MessageCirclePlus,
     tip: 'Share feedback, report bugs, request features, and help other Xroga builders.',
+  },
+  {
+    href: '/showcase',
+    label: 'Showcase',
+    icon: LayoutTemplate,
+    tip: 'Reusable Xroga templates — preview a complete product, then customise it into your own project.',
   },
   {
     href: '/dashboard/projects',

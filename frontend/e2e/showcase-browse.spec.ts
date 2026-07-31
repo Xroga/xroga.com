@@ -82,38 +82,38 @@ test('sorting reorders the rendered cards', async ({ page }) => {
   expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)));
 });
 
-test('every card in the catalogue shows a live preview of its product', async ({ page }) => {
+/**
+ * Cards carry real captured screenshots rather than live frames, so a listing page
+ * never boots six application runtimes. The one live frame on /showcase is the
+ * spotlight, which is where a visitor has asked to try a product.
+ */
+test('every card shows a real product screenshot, with one live frame on the page', async ({ page }) => {
   await page.goto('/showcase');
   await page.locator('#showcase-browse-heading').scrollIntoViewIfNeeded();
 
-  // One spotlight frame plus one per card.
-  await expect.poll(async () => page.locator('iframe').count(), { timeout: 20_000 }).toBe(7);
+  const catalogue = page.locator('section', { has: page.locator('#showcase-browse-heading') });
+  const cards = catalogue.locator('article');
+  await expect(cards).toHaveCount(6);
+  await expect(cards.locator('img[src*="thumbnails"]')).toHaveCount(6);
 
-  const headings: string[] = [];
-  for (let index = 0; index < 7; index += 1) {
-    const text = await page
-      .frameLocator('iframe')
-      .nth(index)
-      .locator('h1')
-      .first()
-      .innerText({ timeout: 12_000 })
-      .catch(() => '');
-    if (text) headings.push(text);
-  }
-  expect(headings.length, 'every frame should render its product').toBe(7);
+  // Only the spotlight runs a product.
+  await expect(page.locator('iframe')).toHaveCount(1);
+  await expect(page.frameLocator('iframe').first().getByRole('heading', { level: 1 })).toBeVisible();
 });
 
-test('homepage cards show live previews and stay link-only', async ({ page }) => {
+test('homepage cards carry screenshots and a working customize action', async ({ page }) => {
   await page.goto('/');
   await page.locator('#showcase-home-heading').scrollIntoViewIfNeeded();
 
-  await expect.poll(async () => page.locator('iframe').count(), { timeout: 20_000 }).toBeGreaterThanOrEqual(6);
-  await expect(page.frameLocator('iframe').first().getByRole('heading', { level: 1 })).toBeVisible({ timeout: 15_000 });
-
-  // A marketing section must not offer an action that turns into an auth wall.
   const section = page.locator('#showcase-home-heading').locator('..');
-  await expect(section.getByRole('button', { name: /customize for me/i })).toHaveCount(0);
-  await expect(section.getByRole('link', { name: /details/i }).first()).toBeVisible();
+  await expect(section.locator('img[src*="thumbnails"]')).toHaveCount(6);
+  await expect(page.locator('iframe')).toHaveCount(0);
+
+  // Customizing is offered here and must open the real flow, not a placeholder.
+  await section.getByRole('button', { name: /customize for me/i }).first().click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.keyboard.press('Escape');
+
   await expect(page.locator('a[href="/showcase"]').last()).toBeVisible();
 });
 

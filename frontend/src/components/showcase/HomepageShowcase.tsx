@@ -1,38 +1,48 @@
 'use client';
 
 /**
- * Homepage showcase strip.
+ * Homepage showcase strip, placed directly after the hero and its prompt bar.
  *
- * Uses the same ShowcaseCard as /showcase — including its live scaled preview of the
- * real product — but with no action handlers, so the card renders link-only. That is
- * deliberate: customizing needs an account, and a marketing section should not put a
- * button in front of people that immediately turns into an auth wall.
+ * Cards use real captured screenshots rather than live frames, so this section does
+ * not boot six application runtimes on the homepage. The interactive product loads
+ * only once someone opens a preview.
  *
- * The previews are lazy: each frame loads only once it is near the viewport, so this
- * section costs nothing on first paint.
+ * "Customize for me" is fully wired here: a signed-out visitor's template choice and
+ * answers are preserved through signup and restored in the workspace afterwards, so
+ * the button does real work rather than bouncing them to a login screen empty-handed.
  */
 
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { ShowcaseCard } from './ShowcaseCard';
+import { useShowcaseWorkflows } from './ShowcaseDialogs';
 import { SHOWCASE_TEMPLATES } from '@/lib/showcase/registry';
 
 export function HomepageShowcase() {
+  const { openCustomize, openGithub, dialogs } = useShowcaseWorkflows();
+
   return (
     <section className="xv-hc-section" aria-labelledby="showcase-home-heading">
       <div className="xv-hc-section-inner">
         <p className="xv-hc-pixel-kicker">BUILT WITH XROGA AI</p>
         <h2 className="xv-hc-section-title" id="showcase-home-heading">
-          Real products, <em>not screenshots.</em>
+          Start from something <em>powerful.</em>
         </h2>
         <p className="xv-hc-section-copy">
-          Every card below is the running product, live and scaled down. Open one, click through it, then customize it for
-          your idea or copy it into your own repository.
+          Explore complete products built through the Xroga workflow. Preview every experience in desktop, tablet, and
+          mobile — then make one your own with Xroga AI.
         </p>
 
-        <div className="mx-auto mt-8 grid w-full max-w-6xl gap-4 text-left sm:grid-cols-2 lg:grid-cols-3">
-          {SHOWCASE_TEMPLATES.map((template) => (
-            <ShowcaseCard key={template.id} template={template} />
+        <div className="mx-auto mt-8 grid w-full max-w-6xl gap-5 text-left sm:grid-cols-2 lg:grid-cols-3">
+          {SHOWCASE_TEMPLATES.map((template, index) => (
+            <ShowcaseCard
+              key={template.id}
+              template={template}
+              onCustomize={openCustomize}
+              onGithub={openGithub}
+              // Only the first image is eager; the rest stay lazy.
+              priority={index === 0}
+            />
           ))}
         </div>
 
@@ -43,6 +53,8 @@ export function HomepageShowcase() {
           </Link>
         </div>
       </div>
+
+      {dialogs}
     </section>
   );
 }

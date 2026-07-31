@@ -199,6 +199,8 @@ test('mobile app: tabs, search, saving and settings all work', async ({ page }) 
 
 test('ai saas: replies are labelled as scripted and never presented as model output', async ({ page }) => {
   await page.goto(preview('ai-saas-chatbot'));
+  // The product opens on its Overview section; the chat lives under Workspace.
+  await page.locator('.ld-sections').getByRole('button', { name: 'Workspace' }).click();
 
   // The standing disclosure.
   await expect(page.getByText(/no language model is connected and none is called/i)).toBeVisible();
@@ -220,7 +222,7 @@ test('ai saas: history and the usage panel reflect real activity only', async ({
   await expect(page.locator('.ld-stat').first().locator('.ld-stat-value')).toHaveText('0');
   await expect(page.getByText(/nothing recorded yet/i)).toBeVisible();
 
-  await page.getByRole('button', { name: 'Workspace' }).click();
+  await page.locator('.ld-sections').getByRole('button', { name: 'Workspace' }).click();
   await page.locator('.ld-composer textarea').fill('A message with exactly seven words here');
   await page.getByRole('button', { name: 'Send' }).click();
   await expect(page.locator('.ld-msg--assistant')).toHaveCount(1);
@@ -235,7 +237,8 @@ test('ai saas: history and the usage panel reflect real activity only', async ({
 
 test('ai saas: the setup guide keeps the provider key server-side', async ({ page }) => {
   await page.goto(preview('ai-saas-chatbot'));
-  await page.getByRole('button', { name: /connect a model/i }).click();
+  // The Overview also offers a "Connect a model" button, so scope to the sidebar.
+  await page.locator('.ld-sections').getByRole('button', { name: /connect a model/i }).click();
   const body = await page.locator('.ld-pane').innerText();
   expect(body).toMatch(/server only, never NEXT_PUBLIC_/i);
   expect(body).toMatch(/never reaches the browser/i);

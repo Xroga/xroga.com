@@ -19,10 +19,11 @@ test('public X-companion, themes, plan story, and accessibility are connected', 
   });
   await page.goto('/');
   await expect(page.getByTestId('xroga-companion-hero')).toBeVisible();
-  await expect(page.getByRole('heading', { name: /Capacity designed to finish work/i })).toBeVisible();
-  await expect(page.getByText('Balanced Month by default')).toBeVisible();
-  await expect(page.getByText('Complexity when it matters')).toBeVisible();
-  await expect(page.getByText('Completion stays protected')).toBeVisible();
+
+  // The "Capacity designed to finish work" plan section was removed from the homepage
+  // by request, so its assertions are gone. Plan detail now lives on /pricing and
+  // inside the homepage FAQ accordion; this spec covers the companion, themes, and
+  // accessibility instead.
 
   for (const theme of ['Beige', 'White', 'Gray', 'Black']) {
     await page.getByRole('button', { name: 'Change homepage theme' }).click();
