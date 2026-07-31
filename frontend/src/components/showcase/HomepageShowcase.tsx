@@ -15,12 +15,9 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { ShowcaseCard } from './ShowcaseCard';
-import { useShowcaseWorkflows } from './ShowcaseDialogs';
 import { SHOWCASE_TEMPLATES } from '@/lib/showcase/registry';
 
 export function HomepageShowcase() {
-  const { openCustomize, openGithub, dialogs } = useShowcaseWorkflows();
-
   return (
     <section className="xv-hc-section" aria-labelledby="showcase-home-heading">
       <div className="xv-hc-section-inner">
@@ -38,8 +35,6 @@ export function HomepageShowcase() {
             <ShowcaseCard
               key={template.id}
               template={template}
-              onCustomize={openCustomize}
-              onGithub={openGithub}
               // Only the first image is eager; the rest stay lazy.
               priority={index === 0}
             />
@@ -54,7 +49,7 @@ export function HomepageShowcase() {
         </div>
       </div>
 
-      {dialogs}
+
     </section>
   );
 }

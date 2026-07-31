@@ -21,7 +21,7 @@ const FOOTER_LINKS = [
   { href: '/features', label: 'Features' },
   { href: '/community', label: 'Community' },
   { href: '/docs', label: 'Docs' },
-  { href: '/crypto-hackathon-builder', label: 'Hackathons' },
+  { href: '/crypto-builder', label: 'Crypto Builder' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
   { href: '/pricing', label: 'Pricing' },
@@ -126,7 +126,6 @@ export default function HomePage() {
             {authReady && (
               <div className="flex items-center gap-2">
                 <HomepageThemeSwitcher />
-                <Link href="/community" className="xv-hc-btn-ghost !hidden !min-h-[2.4rem] !px-4 !text-[0.7rem] sm:!inline-flex">Community</Link>
                 {!loggedIn && (
                   <Link href="/auth/login" className="xv-hc-btn-ghost !min-h-[2.4rem] !px-4 !text-[0.7rem]">
                     Sign In
@@ -179,7 +178,6 @@ export default function HomePage() {
             <a href="#ship-loop" className="xv-hc-btn-ghost">
               See how it ships
             </a>
-            <button type="button" onClick={() => setFeedbackOpen(true)} className="xv-hc-btn-ghost">Share Feedback</button>
           </div>
 
           <div className="xv-hc-chat xv-home-chatbar-wrap">
@@ -255,6 +253,33 @@ export default function HomePage() {
       <HomepageEnterpriseProof />
 
       <HomepageFaqSection />
+
+      {/* Community and Share Feedback moved out of the hero so it stays focused on the
+          product and its primary action. Both keep the same behaviour: Community links
+          to the existing page, and Share Feedback opens the existing modal. */}
+      <section className="xv-hc-section" aria-labelledby="community-support-heading">
+        <div className="xv-hc-section-inner">
+          <p className="xv-hc-pixel-kicker">COMMUNITY &amp; SUPPORT</p>
+          <h2 className="xv-hc-section-title" id="community-support-heading">
+            Build alongside <em>other builders.</em>
+          </h2>
+          <p className="xv-hc-section-copy">
+            Share what you shipped, report a bug, or request a feature. Feedback goes straight to the people building
+            Xroga.
+          </p>
+          <div className="xv-hc-ctas">
+            <Link href="/community" className="xv-hc-btn-primary">
+              Open Community
+            </Link>
+            <button type="button" onClick={() => setFeedbackOpen(true)} className="xv-hc-btn-ghost">
+              Share Feedback
+            </button>
+            <Link href="/docs" className="xv-hc-btn-ghost">
+              Read the docs
+            </Link>
+          </div>
+        </div>
+      </section>
 
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
 

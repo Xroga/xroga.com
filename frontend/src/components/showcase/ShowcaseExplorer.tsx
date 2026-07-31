@@ -15,8 +15,10 @@ export function ShowcaseExplorer() {
 
   return (
     <div className="space-y-12">
-      <ShowcaseSpotlight templates={SHOWCASE_TEMPLATES} />
-      <ShowcaseBrowser templates={SHOWCASE_TEMPLATES} onCustomize={openCustomize} onGithub={openGithub} />
+      {/* Cards are clean tiles that link to a detail page; the spotlight is where a
+          product can be customised or exported once you have actually tried it. */}
+      <ShowcaseSpotlight templates={SHOWCASE_TEMPLATES} onCustomize={openCustomize} onGithub={openGithub} />
+      <ShowcaseBrowser templates={SHOWCASE_TEMPLATES} />
       {dialogs}
     </div>
   );

@@ -36,15 +36,7 @@ function haystack(template: ShowcaseTemplate): string {
     .toLowerCase();
 }
 
-export function ShowcaseBrowser({
-  templates = SHOWCASE_TEMPLATES,
-  onCustomize,
-  onGithub,
-}: {
-  templates?: readonly ShowcaseTemplate[];
-  onCustomize?: (template: ShowcaseTemplate) => void;
-  onGithub?: (template: ShowcaseTemplate) => void;
-}) {
+export function ShowcaseBrowser({ templates = SHOWCASE_TEMPLATES }: { templates?: readonly ShowcaseTemplate[] }) {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
   const [tech, setTech] = useState('All');
@@ -203,7 +195,7 @@ export function ShowcaseBrowser({
       ) : (
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {results.map((template) => (
-            <ShowcaseCard key={template.id} template={template} onCustomize={onCustomize} onGithub={onGithub} />
+            <ShowcaseCard key={template.id} template={template} />
           ))}
         </div>
       )}

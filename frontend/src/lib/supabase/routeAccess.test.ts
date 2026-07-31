@@ -10,7 +10,7 @@ test('keeps public and authentication routes available', () => {
     '/community',
     '/community/9d0c98dc-6c8c-4f24-8a2b-4ddd50ed802e',
     '/docs/getting-started',
-    '/crypto-hackathon-builder',
+    '/crypto-builder',
     '/research/web3-hackathon-winning-patterns',
     '/showcase',
     '/showcase/modern-business-website',

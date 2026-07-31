@@ -11,6 +11,7 @@
 
 import { useMemo, useState } from 'react';
 import { ArrowUpRight, Laptop, Smartphone, Tablet } from 'lucide-react';
+import { GitHubIcon } from '@/components/icons/GitHubIcon';
 import { LivePreviewFrame } from './LivePreviewFrame';
 import { isLive, previewRouteFor, type ShowcaseTemplate } from '@/lib/showcase/registry';
 import { cn } from '@/lib/utils';
@@ -23,7 +24,16 @@ const DEVICES = [
 
 type DeviceId = (typeof DEVICES)[number]['id'];
 
-export function ShowcaseSpotlight({ templates }: { templates: readonly ShowcaseTemplate[] }) {
+export function ShowcaseSpotlight({
+  templates,
+  onCustomize,
+  onGithub,
+}: {
+  templates: readonly ShowcaseTemplate[];
+  /** Cards are clean tiles now, so the spotlight is where you act on a product. */
+  onCustomize?: (template: ShowcaseTemplate) => void;
+  onGithub?: (template: ShowcaseTemplate) => void;
+}) {
   const playable = useMemo(() => templates.filter(isLive), [templates]);
   const [activeId, setActiveId] = useState(playable[0]?.id ?? '');
   const [deviceId, setDeviceId] = useState<DeviceId>('desktop');
@@ -131,19 +141,41 @@ export function ShowcaseSpotlight({ templates }: { templates: readonly ShowcaseT
           />
         </div>
 
-        <div className="mx-auto mt-3 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-center">
+        <div className="mx-auto mt-4 flex max-w-3xl flex-col items-center gap-3 text-center">
           <p className="text-[11px] text-[var(--text-secondary)]">
             {active.name} at {device.width}px — {active.shortDescription}
           </p>
-          <a
-            href={route}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:underline focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-          >
-            Open in a new tab
-            <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
-          </a>
+
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {onCustomize && (
+              <button
+                type="button"
+                onClick={() => onCustomize(active)}
+                className="rounded-full bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+              >
+                Customize for me
+              </button>
+            )}
+            {onGithub && (
+              <button
+                type="button"
+                onClick={() => onGithub(active)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border-subtle)] px-4 py-2 text-xs font-semibold text-[var(--text-primary)] transition-colors hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+              >
+                <GitHubIcon className="h-3.5 w-3.5" />
+                Use in GitHub
+              </button>
+            )}
+            <a
+              href={route}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 px-2 text-[11px] font-semibold text-[var(--accent)] hover:underline focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            >
+              Open in a new tab
+              <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+            </a>
+          </div>
         </div>
       </div>
     </section>

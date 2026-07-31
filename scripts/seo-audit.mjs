@@ -1,5 +1,5 @@
 const base = (process.env.SEO_AUDIT_BASE_URL || process.argv.find((value) => value.startsWith('--base='))?.slice(7) || 'http://localhost:3000').replace(/\/$/, '');
-const publicPaths = ['/', '/features', '/ai-coding-agent', '/ai-app-builder', '/ai-website-builder', '/build-saas-with-ai', '/github-ai-coding-agent', '/vercel-ai-deployment', '/community', '/docs', '/docs/getting-started', '/docs/security', '/crypto-hackathon-builder', '/research/web3-hackathon-winning-patterns', '/pricing', '/about'];
+const publicPaths = ['/', '/features', '/ai-coding-agent', '/ai-app-builder', '/ai-website-builder', '/build-saas-with-ai', '/github-ai-coding-agent', '/vercel-ai-deployment', '/community', '/docs', '/docs/getting-started', '/docs/security', '/crypto-builder', '/research/web3-hackathon-winning-patterns', '/pricing', '/about'];
 const privatePaths = ['/workspace', '/dashboard', '/settings', '/admin/community', '/auth/login'];
 const problems = [];
 const titleMap = new Map();

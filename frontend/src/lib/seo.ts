@@ -253,7 +253,7 @@ export function buildSiteNavigationJsonLd() {
     },
     { name: 'Community', url: `${SITE_URL}/community`, description: 'Public feedback, feature requests, bug reports, questions, and official Xroga replies' },
     { name: 'Documentation', url: `${SITE_URL}/docs`, description: 'Guides for repositories, validation, publishing, integrations, and security' },
-    { name: 'Crypto Hackathon Builder', url: `${SITE_URL}/crypto-hackathon-builder`, description: 'Research official rules, build a credible MVP, and prepare a verifiable submission' },
+    { name: 'Crypto Builder', url: `${SITE_URL}/crypto-builder`, description: 'Build crypto agents, Web3 apps, DeFi and DAO tools, on-chain monitoring, and hackathon projects' },
     {
       name: 'Pricing',
       url: `${SITE_URL}/pricing`,

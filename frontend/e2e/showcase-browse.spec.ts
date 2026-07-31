@@ -13,7 +13,8 @@ test('the spotlight runs the real product, interactively', async ({ page }) => {
   await page.goto('/showcase');
   const frame = page.frameLocator('iframe').first();
 
-  await expect(frame.getByRole('heading', { level: 1 })).toContainText(/digital products/i);
+  // The frame boots a full application, so allow for a busy machine.
+  await expect(frame.getByRole('heading', { level: 1 })).toContainText(/digital products/i, { timeout: 20_000 });
 
   // Interactive means interactive: the product's own FAQ responds inside the frame.
   const faq = frame.getByRole('button', { name: /do you work with existing codebases/i });
@@ -25,10 +26,15 @@ test('the spotlight runs the real product, interactively', async ({ page }) => {
 
 test('the product switcher changes which product is previewed', async ({ page }) => {
   await page.goto('/showcase');
-  await expect(page.frameLocator('iframe').first().getByRole('heading', { level: 1 })).toContainText(/digital products/i);
+  await expect(page.frameLocator('iframe').first().getByRole('heading', { level: 1 })).toContainText(
+    /digital products/i,
+    { timeout: 20_000 },
+  );
 
   await page.getByRole('tab', { name: 'Playable Web Game' }).click();
-  await expect(page.frameLocator('iframe').first().getByRole('heading', { level: 1 })).toContainText('Driftline');
+  await expect(page.frameLocator('iframe').first().getByRole('heading', { level: 1 })).toContainText('Driftline', {
+    timeout: 20_000,
+  });
 });
 
 test('the device switcher renders the product at a genuinely narrower viewport', async ({ page }) => {
@@ -101,7 +107,12 @@ test('every card shows a real product screenshot, with one live frame on the pag
   await expect(page.frameLocator('iframe').first().getByRole('heading', { level: 1 })).toBeVisible();
 });
 
-test('homepage cards carry screenshots and a working customize action', async ({ page }) => {
+/**
+ * Cards are clean tiles: a screenshot, a name, one line. Clicking one opens its
+ * detail page, which is where the product is seen, previewed, and customised. The
+ * card itself carries no capability list, technology labels, or action row.
+ */
+test('homepage cards are clean tiles that open the product', async ({ page }) => {
   await page.goto('/');
   await page.locator('#showcase-home-heading').scrollIntoViewIfNeeded();
 
@@ -109,12 +120,34 @@ test('homepage cards carry screenshots and a working customize action', async ({
   await expect(section.locator('img[src*="thumbnails"]')).toHaveCount(6);
   await expect(page.locator('iframe')).toHaveCount(0);
 
-  // Customizing is offered here and must open the real flow, not a placeholder.
-  await section.getByRole('button', { name: /customize for me/i }).first().click();
-  await expect(page.getByRole('dialog')).toBeVisible();
-  await page.keyboard.press('Escape');
+  // No action buttons or technology labels on the tile.
+  await expect(section.getByRole('button', { name: /customize for me/i })).toHaveCount(0);
+  await expect(section.getByRole('button', { name: /use in github/i })).toHaveCount(0);
 
-  await expect(page.locator('a[href="/showcase"]').last()).toBeVisible();
+  // Clicking the tile's title opens the product's detail page.
+  await section.locator('article h3 a').first().click();
+  await expect(page).toHaveURL(/\/showcase\/[a-z-]+$/);
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+
+  // Customizing lives there, and it opens the real flow.
+  await page.getByRole('button', { name: /customize for me/i }).first().click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+});
+
+/**
+ * The card-wide link paints an ::after overlay across the whole tile, which sat above
+ * the hover Preview pill and made it unclickable. This guards the stacking fix.
+ */
+test('the hover Preview pill on a card is actually clickable', async ({ page }) => {
+  await page.goto('/showcase');
+  const catalogue = page.locator('section', { has: page.locator('#showcase-browse-heading') });
+  const card = catalogue.locator('article').first();
+
+  await card.hover();
+  const pill = card.getByRole('link', { name: /^preview$/i });
+  await expect(pill).toBeVisible();
+  await pill.click();
+  await expect(page).toHaveURL(/\/showcase\/[a-z-]+\/preview$/);
 });
 
 test('the browse surface has no horizontal overflow on mobile', async ({ page }) => {

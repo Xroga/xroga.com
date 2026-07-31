@@ -84,6 +84,10 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // The crypto page is now positioned as a broader Crypto Builder, not a
+      // hackathon-only page. The old URL is kept as a permanent redirect so existing
+      // links and indexed results still resolve, and it renders no duplicate page.
+      { source: '/crypto-hackathon-builder', destination: '/crypto-builder', permanent: true },
       { source: '/login', destination: '/auth/login', permanent: true },
       { source: '/signin', destination: '/auth/login', permanent: true },
       { source: '/signup', destination: '/auth/signup', permanent: true },

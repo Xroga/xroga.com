@@ -42,7 +42,7 @@ test('guest community draft survives the existing login redirect without a prote
 });
 
 test('canonical SEO pages render distinct crawlable outcomes', async ({ page, request }) => {
-  const paths = ['/ai-coding-agent', '/ai-app-builder', '/ai-website-builder', '/build-saas-with-ai', '/github-ai-coding-agent', '/vercel-ai-deployment', '/docs', '/crypto-hackathon-builder', '/research/web3-hackathon-winning-patterns'];
+  const paths = ['/ai-coding-agent', '/ai-app-builder', '/ai-website-builder', '/build-saas-with-ai', '/github-ai-coding-agent', '/vercel-ai-deployment', '/docs', '/crypto-builder', '/research/web3-hackathon-winning-patterns'];
   const titles = new Set<string>();
   for (const path of paths) {
     const response = await page.goto(path);
@@ -56,7 +56,7 @@ test('canonical SEO pages render distinct crawlable outcomes', async ({ page, re
     expect((await page.locator('body').innerText()).length).toBeGreaterThan(300);
   }
   const sitemap = await (await request.get('/sitemap.xml')).text();
-  expect(sitemap).toContain('/crypto-hackathon-builder');
+  expect(sitemap).toContain('/crypto-builder');
   expect(sitemap).toContain('/community');
   expect(sitemap).not.toContain('/features/earn-xrg-referrals');
   expect(sitemap).not.toContain('/features/ai-image-generation');

@@ -7,7 +7,7 @@ import { SHOWCASE_TEMPLATES } from '@/lib/showcase/registry';
 const UPDATED = new Date('2026-07-30T00:00:00Z');
 const routes = [
   ['', 1, 'daily'], ['/features', .95, 'weekly'], ['/pricing', .92, 'weekly'], ['/integrations', .88, 'monthly'],
-  ['/community', .9, 'daily'], ['/docs', .92, 'weekly'], ['/crypto-hackathon-builder', .94, 'weekly'],
+  ['/community', .9, 'daily'], ['/docs', .92, 'weekly'], ['/crypto-builder', .94, 'weekly'],
   ['/research', .82, 'monthly'], ['/research/web3-hackathon-winning-patterns', .9, 'monthly'],
   ['/about', .78, 'monthly'], ['/contact', .65, 'yearly'], ['/terms', .45, 'yearly'], ['/privacy', .45, 'yearly'], ['/refund', .45, 'yearly'],
   ['/showcase', .93, 'weekly'],
