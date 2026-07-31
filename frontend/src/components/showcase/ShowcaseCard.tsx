@@ -1,17 +1,19 @@
 'use client';
 
 /**
- * Compact showcase card.
+ * Showcase card.
  *
- * Layout follows the supplied reference: a colour-blocked upper block carrying
- * pill chips, the product name and a one-line description, then a thumbnail band
- * below with the primary action overlaid on it. Thumbnails are CSS-composed rather
- * than bitmaps so the grid costs no image requests and stays crisp in every theme.
+ * The visual weight is the product itself: a live, scaled preview of the real
+ * route fills the top of the card. Nothing here is a placeholder or a mockup, so
+ * a card cannot advertise something the product does not actually render.
+ *
+ * Products still in development say so plainly instead of showing an empty frame.
  */
 
 import Link from 'next/link';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Hammer } from 'lucide-react';
 import { GitHubIcon } from '@/components/icons/GitHubIcon';
+import { LivePreviewFrame } from './LivePreviewFrame';
 import { cn } from '@/lib/utils';
 import { isLive, previewRouteFor, type ShowcaseTemplate } from '@/lib/showcase/registry';
 
@@ -35,86 +37,112 @@ export function ShowcaseCard({
   return (
     <article
       className={cn(
-        'group flex flex-col overflow-hidden rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] transition-shadow hover:shadow-elevated',
+        'group relative flex flex-col overflow-hidden rounded-token-lg border border-[var(--border-subtle)]',
+        'bg-[var(--surface-raised)] transition-all duration-300',
+        'hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:shadow-elevated',
+        'motion-reduce:transition-none motion-reduce:hover:translate-y-0',
         className,
       )}
     >
-      {/* Colour-blocked header */}
-      <div
-        className={cn('relative', compact ? 'p-3.5' : 'p-5')}
-        style={{ background: `color-mix(in srgb, ${template.accent} 16%, var(--surface-raised))` }}
-      >
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className="rounded-full bg-[var(--surface-page)]/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
-            {template.category}
-          </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-[var(--surface-page)]/70 px-2 py-0.5 text-[10px] font-semibold text-[var(--text-secondary)]">
-            <Sparkles className="h-2.5 w-2.5" aria-hidden="true" />
-            Built with Xroga AI
-          </span>
-          {!live && (
-            <span className="rounded-full bg-[var(--warning-dim)] px-2 py-0.5 text-[10px] font-semibold text-[var(--warning)]">
-              In development
+      {/* The product, live */}
+      <div className="relative border-b border-[var(--border-subtle)] bg-[var(--surface-inset)]">
+        {live && previewRoute ? (
+          <>
+            <LivePreviewFrame
+              src={previewRoute}
+              title={`${template.name} preview`}
+              designHeight={compact ? 1000 : 900}
+            />
+            {/* Keeps the scaled type legible against the card edge. */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[var(--surface-raised)] to-transparent"
+            />
+          </>
+        ) : (
+          <div
+            className="flex flex-col items-center justify-center gap-2 px-4 text-center"
+            style={{ aspectRatio: '1440 / 900' }}
+          >
+            <span
+              className="flex h-9 w-9 items-center justify-center rounded-full"
+              style={{ background: `color-mix(in srgb, ${template.accent} 22%, transparent)` }}
+            >
+              <Hammer className="h-4 w-4" style={{ color: template.accent }} aria-hidden="true" />
             </span>
-          )}
-        </div>
+            <span className="text-xs font-semibold text-[var(--text-secondary)]">Being built now</span>
+            <span className="max-w-[22ch] text-[11px] leading-snug text-[var(--text-muted)]">
+              No preview yet — we do not show mockups of things that are not running.
+            </span>
+          </div>
+        )}
 
-        <h3 className={cn('mt-2.5 font-semibold leading-tight text-[var(--text-primary)]', compact ? 'text-base' : 'text-lg')}>
-          {template.name}
+        <span
+          className="absolute left-3 top-3 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider backdrop-blur"
+          style={{
+            background: `color-mix(in srgb, ${template.accent} 88%, transparent)`,
+            color: '#fff',
+          }}
+        >
+          {template.category}
+        </span>
+
+        {live && (
+          <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-page)]/85 px-2 py-0.5 text-[10px] font-semibold text-[var(--text-primary)] backdrop-blur">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[var(--success,#16a34a)]" />
+            Live
+          </span>
+        )}
+      </div>
+
+      {/* Identity */}
+      <div className={cn('flex-1', compact ? 'p-3.5' : 'p-4')}>
+        <h3
+          className={cn(
+            'font-semibold leading-tight tracking-tight text-[var(--text-primary)]',
+            compact ? 'text-[15px]' : 'text-lg',
+          )}
+        >
+          <Link
+            href={`/showcase/${template.slug}`}
+            className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+          >
+            {template.name}
+          </Link>
         </h3>
-        <p className={cn('mt-1 text-[var(--text-secondary)]', compact ? 'text-[11px] leading-snug' : 'text-xs leading-relaxed')}>
+        <p
+          className={cn(
+            'mt-1.5 text-[var(--text-secondary)]',
+            compact ? 'text-[11px] leading-snug' : 'text-xs leading-relaxed',
+          )}
+        >
           {template.shortDescription}
         </p>
       </div>
 
-      {/* Thumbnail band with the primary action overlaid */}
+      {/* Actions sit above the card-wide link so they stay clickable. */}
       <div
-        className={cn('relative border-t border-[var(--border-subtle)]', compact ? 'h-24' : 'h-36')}
-        style={{
-          background: `linear-gradient(135deg, color-mix(in srgb, ${template.accent} 26%, transparent), color-mix(in srgb, ${template.accent} 6%, transparent))`,
-        }}
+        className={cn(
+          'relative z-10 mt-auto flex items-center gap-2 border-t border-[var(--border-subtle)]',
+          compact ? 'p-2.5' : 'px-4 py-3',
+        )}
       >
-        {/* Abstract wireframe suggestion of the product, theme-safe. */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 p-3">
-          <div className="h-full w-full rounded-md border border-[var(--border-subtle)] bg-[var(--surface-page)]/55 p-2">
-            <div className="h-1.5 w-10 rounded-full bg-[var(--border-strong)]/50" />
-            <div className="mt-1.5 h-1.5 w-16 rounded-full bg-[var(--border-strong)]/35" />
-            <div className="mt-2 grid grid-cols-3 gap-1.5">
-              <div className="h-5 rounded bg-[var(--border-strong)]/25" />
-              <div className="h-5 rounded bg-[var(--border-strong)]/25" />
-              <div className="h-5 rounded bg-[var(--border-strong)]/25" />
-            </div>
-          </div>
-        </div>
-
-        <div className="absolute bottom-2.5 left-2.5">
-          {live && previewRoute ? (
-            <Link
-              href={previewRoute}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[var(--text-primary)] px-3 py-1.5 text-[11px] font-semibold text-[var(--surface-page)] transition-transform hover:translate-x-0.5 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-            >
-              Preview
-              <ArrowRight className="h-3 w-3" aria-hidden="true" />
-            </Link>
-          ) : (
-            <span
-              className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-full bg-[var(--surface-page)]/80 px-3 py-1.5 text-[11px] font-semibold text-[var(--text-muted)]"
-              aria-disabled="true"
-            >
-              Preview coming
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Actions */}
-      <div className={cn('mt-auto flex items-center gap-2 border-t border-[var(--border-subtle)]', compact ? 'p-2.5' : 'p-3')}>
-        <Link
-          href={`/showcase/${template.slug}`}
-          className="text-[11px] font-semibold text-[var(--text-secondary)] underline-offset-2 hover:text-[var(--text-primary)] hover:underline focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-        >
-          Details
-        </Link>
+        {live && previewRoute ? (
+          <Link
+            href={previewRoute}
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--text-secondary)] underline-offset-2 transition-colors hover:text-[var(--text-primary)] hover:underline focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+          >
+            Open it
+            <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+          </Link>
+        ) : (
+          <Link
+            href={`/showcase/${template.slug}`}
+            className="text-[11px] font-semibold text-[var(--text-secondary)] underline-offset-2 transition-colors hover:text-[var(--text-primary)] hover:underline focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+          >
+            What it ships with
+          </Link>
+        )}
 
         <button
           type="button"
@@ -127,9 +155,9 @@ export function ShowcaseCard({
         <button
           type="button"
           onClick={() => onGithub?.(template)}
-          aria-label={`Use ${template.name} in GitHub`}
+          aria-label={`Copy ${template.name} into a GitHub repository`}
           title="Use in GitHub"
-          className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--text-secondary)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
         >
           <GitHubIcon className="h-3.5 w-3.5" />
         </button>

@@ -167,9 +167,12 @@ export function DevicePreview({
               loading="lazy"
               onLoad={() => setStatus('ready')}
               onError={() => setStatus('error')}
-              // Same-origin is deliberately withheld: these previews need no
-              // storage access, so the frame cannot reach into the parent page.
-              sandbox="allow-scripts allow-forms allow-popups"
+              // `allow-same-origin` is required: without it the frame gets an opaque
+              // origin and every localStorage read in the app's providers throws, so
+              // the product renders an error page instead of itself. Safe here because
+              // the framed document is our own first-party route, with no user-supplied
+              // markup to contain.
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
               className="h-full w-full border-0 bg-white"
             />
           )}
