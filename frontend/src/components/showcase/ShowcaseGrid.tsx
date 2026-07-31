@@ -1,11 +1,12 @@
 'use client';
 
 /**
- * A plain grid of showcase cards wired to the shared workflows.
+ * A plain grid of showcase cards.
  *
- * Used by the workspace starter strip and the "start from this build" section on a
- * detail page. /showcase uses ShowcaseBrowser instead, which adds search and
- * filtering on top of the same cards and the same workflows.
+ * Cards are clean tiles. By default they link to their detail page, where a product
+ * can be seen, previewed, and customised. Pass `selectable` and the whole card opens
+ * the customisation flow instead — which is what the workspace wants, since picking a
+ * template to build from is the reason a user is looking at this grid there.
  */
 
 import { ShowcaseCard } from './ShowcaseCard';
@@ -17,15 +18,18 @@ export function ShowcaseGrid({
   templates = SHOWCASE_TEMPLATES,
   compact = false,
   columnsClassName,
+  selectable = false,
   onPromptReady,
 }: {
   templates?: readonly ShowcaseTemplate[];
   compact?: boolean;
   columnsClassName?: string;
+  /** Make the whole card open the customisation flow rather than navigate. */
+  selectable?: boolean;
   /** See useShowcaseWorkflows — hands the built prompt to a host composer. */
   onPromptReady?: (prompt: string, template: ShowcaseTemplate) => void;
 }) {
-  const { openCustomize, openGithub, dialogs } = useShowcaseWorkflows({ onPromptReady });
+  const { openCustomize, dialogs } = useShowcaseWorkflows({ onPromptReady });
 
   return (
     <>
@@ -40,13 +44,12 @@ export function ShowcaseGrid({
             key={template.id}
             template={template}
             compact={compact}
-            onCustomize={openCustomize}
-            onGithub={openGithub}
+            onSelect={selectable ? openCustomize : undefined}
           />
         ))}
       </div>
 
-      {dialogs}
+      {selectable && dialogs}
     </>
   );
 }

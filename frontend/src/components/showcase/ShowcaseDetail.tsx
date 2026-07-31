@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { DevicePreview } from './DevicePreview';
 import { ShowcaseGrid } from './ShowcaseGrid';
+import { useShowcaseWorkflows } from './ShowcaseDialogs';
 import { SHOWCASE_TEMPLATES, type ShowcaseTemplate } from '@/lib/showcase/registry';
 
 export function ShowcaseDetail({
@@ -15,6 +16,7 @@ export function ShowcaseDetail({
   previewRoute: string | null;
 }) {
   const related = SHOWCASE_TEMPLATES.filter((item) => item.id !== template.id).slice(0, 3);
+  const { openCustomize, openGithub, dialogs } = useShowcaseWorkflows();
 
   return (
     <div className="space-y-12">
@@ -42,11 +44,10 @@ export function ShowcaseDetail({
           </p>
         )}
 
+        {/* Cards are clean tiles, so the detail page owns these actions directly
+            rather than relying on a card rendered further down the page. */}
         <div className="mt-5 flex flex-wrap gap-2">
-          <Button
-            variant="primary"
-            onClick={() => document.getElementById('showcase-start')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-          >
+          <Button variant="primary" onClick={() => openCustomize(template)}>
             Customize for me
           </Button>
           {previewRoute && (
@@ -54,6 +55,9 @@ export function ShowcaseDetail({
               Open full preview
             </Button>
           )}
+          <Button variant="secondary" onClick={() => openGithub(template)}>
+            Use in GitHub
+          </Button>
         </div>
       </header>
 
@@ -98,11 +102,17 @@ export function ShowcaseDetail({
         <h2 id="showcase-start" className="text-lg font-semibold text-[var(--text-primary)]">
           Start from this build
         </h2>
-        <p className="mt-1.5 text-sm text-[var(--text-secondary)]">
-          Customize it with Xroga AI, or copy it into a repository you own.
+        <p className="mt-1.5 max-w-xl text-sm text-[var(--text-secondary)]">
+          Answer a few questions and Xroga AI customises this template into a project you own — or copy it straight into
+          a repository on a new branch with a pull request.
         </p>
-        <div className="mt-4 max-w-sm">
-          <ShowcaseGrid templates={[template]} columnsClassName="grid-cols-1" />
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button variant="primary" onClick={() => openCustomize(template)}>
+            Customize for me
+          </Button>
+          <Button variant="secondary" onClick={() => openGithub(template)}>
+            Use in GitHub
+          </Button>
         </div>
       </section>
 
@@ -116,6 +126,8 @@ export function ShowcaseDetail({
           </div>
         </section>
       )}
+
+      {dialogs}
     </div>
   );
 }

@@ -49,6 +49,7 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
       <ShowcaseGrid
         templates={visible}
         compact
+        selectable
         columnsClassName="grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
         onPromptReady={(prompt) => {
           setPrompt(prompt);
