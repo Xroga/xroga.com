@@ -296,9 +296,9 @@ html[data-reduced-motion='true'] .xv-animated-nav-icon { animation: none !import
 
 /* A busy companion works faster; an idle one is calmer. Driven by real
    operation state, not decoration. */
-.xv-companion-stage[data-operation='building'] img.xv-companion-renderer,
-.xv-companion-stage[data-operation='deploying'] img.xv-companion-renderer { animation-duration: 7s; }
-.xv-companion-stage[data-operation='idle'] img.xv-companion-renderer { animation-duration: 14s; }
+img.xv-companion-renderer[data-operation='building'],
+img.xv-companion-renderer[data-operation='deploying'] { animation-duration: 7s; }
+img.xv-companion-renderer[data-operation='idle'] { animation-duration: 14s; }
 
 @media (prefers-reduced-motion: reduce) {
   .xv-companion-stage img.xv-companion-renderer { animation: none; }
