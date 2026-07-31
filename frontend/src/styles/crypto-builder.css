@@ -1,0 +1,524 @@
+/**
+ * Crypto Builder page.
+ *
+ * Every colour here resolves through a semantic Xroga token, so the page follows the
+ * user's selected theme. The previous version was hardcoded to `#02070d` with white
+ * text, which meant selecting White or Beige left it a dark page. The atmospheric
+ * glow and grid are built from `color-mix` over the accent and border tokens, so they
+ * stay subtle on light surfaces instead of glowing over them.
+ */
+
+.xv-cb-root {
+  min-height: 100vh;
+  background: var(--surface-page, var(--background));
+  color: var(--text-primary, var(--foreground));
+}
+
+.xv-cb-shell {
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* --------------------------------------------------------------- header */
+
+.xv-cb-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid var(--border-subtle, var(--card-border));
+  background: color-mix(in srgb, var(--surface-page, var(--background)) 88%, transparent);
+  backdrop-filter: blur(12px);
+}
+.xv-cb-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 60px;
+  padding-block: 0.5rem;
+}
+.xv-cb-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.xv-cb-nav > a:not(.xv-cb-btn) {
+  display: none;
+  padding: 0.45rem 0.7rem;
+  border-radius: 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary, var(--muted));
+  text-decoration: none;
+  transition: color 160ms ease, background 160ms ease;
+}
+.xv-cb-nav > a:not(.xv-cb-btn):hover {
+  color: var(--text-primary, var(--foreground));
+  background: var(--surface-inset, var(--card));
+}
+
+/* --------------------------------------------------------------- buttons */
+
+.xv-cb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.7rem 1.15rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.83rem;
+  font-weight: 650;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+.xv-cb-btn--sm { padding: 0.5rem 0.9rem; font-size: 0.76rem; }
+.xv-cb-btn--primary {
+  background: var(--accent);
+  color: #fff;
+}
+.xv-cb-btn--primary:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.xv-cb-btn--ghost {
+  background: var(--surface-raised, var(--card));
+  border-color: var(--border-subtle, var(--card-border));
+  color: var(--text-primary, var(--foreground));
+}
+.xv-cb-btn--ghost:hover { border-color: var(--border-strong, var(--card-border)); }
+.xv-cb-root :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ hero */
+
+.xv-cb-hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(2.75rem, 7vw, 5.5rem) 0 clamp(2.5rem, 6vw, 4.5rem);
+}
+
+/* Controlled glow: mixed against the page surface so it reads as depth on a light
+   theme rather than a bright halo. */
+.xv-cb-hero-glow {
+  position: absolute;
+  inset: -30% -10% auto -10%;
+  height: 660px;
+  pointer-events: none;
+  background:
+    radial-gradient(46% 58% at 22% 26%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%),
+    radial-gradient(40% 50% at 80% 8%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%);
+}
+
+/* Subtle grid, drawn from the border token so it never fights the background. */
+.xv-cb-grid-pattern {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--border-subtle, var(--card-border)) 60%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--border-subtle, var(--card-border)) 60%, transparent) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(75% 60% at 50% 30%, #000 0%, transparent 78%);
+  opacity: 0.7;
+}
+
+.xv-cb-hero-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.xv-cb-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  border-radius: 999px;
+  background: var(--surface-raised, var(--card));
+  font-size: 0.66rem;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  color: var(--text-secondary, var(--muted));
+}
+.xv-cb-kicker-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.xv-cb-h1 {
+  margin: 1.15rem 0 0;
+  max-width: 22ch;
+  font-family: var(--font-display, var(--font-heading, inherit));
+  font-size: clamp(2.1rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  color: var(--text-primary, var(--foreground));
+}
+.xv-cb-h1 em { font-style: normal; color: var(--accent); }
+
+.xv-cb-lede {
+  margin: 1.1rem auto 0;
+  max-width: 62ch;
+  font-size: clamp(0.92rem, 1.6vw, 1.05rem);
+  line-height: 1.65;
+  color: var(--text-secondary, var(--muted));
+}
+
+.xv-cb-chat { width: 100%; margin-top: 2rem; }
+
+.xv-cb-hero-note {
+  margin: 1.5rem auto 0;
+  max-width: 60ch;
+  font-size: 0.71rem;
+  line-height: 1.6;
+  color: var(--text-muted, var(--muted));
+}
+
+/* --------------------------------------------------------------- sections */
+
+.xv-cb-section { padding: clamp(2.5rem, 6vw, 4.5rem) 0; }
+.xv-cb-section--tint {
+  background: var(--surface-inset, var(--card));
+  border-block: 1px solid var(--border-subtle, var(--card-border));
+}
+
+.xv-cb-eyebrow {
+  margin: 0;
+  font-size: 0.66rem;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.xv-cb-h2 {
+  margin: 0.6rem 0 0;
+  font-family: var(--font-heading, inherit);
+  font-size: clamp(1.45rem, 3vw, 2.25rem);
+  font-weight: 750;
+  line-height: 1.14;
+  letter-spacing: -0.028em;
+  color: var(--text-primary, var(--foreground));
+}
+.xv-cb-section-copy {
+  margin: 0.7rem 0 0;
+  max-width: 64ch;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--text-secondary, var(--muted));
+}
+
+/* ------------------------------------------------------------------ cards */
+
+.xv-cb-cards,
+.xv-cb-pattern-list {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1.9rem;
+}
+.xv-cb-card {
+  padding: 1.15rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  border-radius: 0.95rem;
+  background: var(--surface-raised, var(--card));
+  transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+.xv-cb-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-elevated, 0 18px 34px -24px rgba(0, 0, 0, 0.35));
+}
+.xv-cb-card-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 0.8rem;
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+.xv-cb-card-title {
+  margin: 0;
+  font-size: 0.93rem;
+  font-weight: 680;
+  letter-spacing: -0.012em;
+  color: var(--text-primary, var(--foreground));
+}
+.xv-cb-card-body {
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--text-secondary, var(--muted));
+}
+
+/* ----------------------------------------------------------------- stages */
+
+.xv-cb-stages {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1.9rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.xv-cb-stage {
+  padding: 1.15rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  border-radius: 0.95rem;
+  background: var(--surface-raised, var(--card));
+}
+.xv-cb-stage-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.xv-cb-stage-top .xv-cb-card-icon { margin-bottom: 0.8rem; }
+.xv-cb-stage-num {
+  font-family: var(--font-code, ui-monospace, monospace);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted, var(--muted));
+}
+
+/* ------------------------------------------------------------- ecosystems */
+
+.xv-cb-disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin-top: 1.4rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border-subtle, var(--card-border)));
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+  color: var(--text-secondary, var(--muted));
+}
+.xv-cb-disclaimer svg { margin-top: 0.1rem; color: var(--accent); }
+.xv-cb-disclaimer p { margin: 0; font-size: 0.78rem; line-height: 1.6; }
+
+.xv-cb-eco-list {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.xv-cb-eco-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.15rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  border-radius: 0.95rem;
+  background: var(--surface-raised, var(--card));
+  text-decoration: none;
+  transition: transform 200ms ease, border-color 200ms ease;
+}
+.xv-cb-eco-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+.xv-cb-eco-role {
+  font-size: 0.62rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.xv-cb-eco-name {
+  margin-top: 0.4rem;
+  font-size: 1rem;
+  font-weight: 720;
+  letter-spacing: -0.015em;
+  color: var(--text-primary, var(--foreground));
+}
+.xv-cb-eco-note {
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--text-secondary, var(--muted));
+}
+.xv-cb-eco-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: auto;
+  padding-top: 0.9rem;
+  font-size: 0.74rem;
+  font-weight: 680;
+  color: var(--accent);
+}
+
+.xv-cb-fineprint {
+  margin: 1.4rem 0 0;
+  max-width: 78ch;
+  font-size: 0.71rem;
+  line-height: 1.65;
+  color: var(--text-muted, var(--muted));
+}
+
+/* -------------------------------------------------------------------- cta */
+
+.xv-cb-cta {
+  display: grid;
+  gap: 1.4rem;
+  padding: clamp(1.4rem, 3vw, 2.2rem);
+  border: 1px solid var(--border-subtle, var(--card-border));
+  border-radius: 1.2rem;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 65%),
+    var(--surface-raised, var(--card));
+}
+.xv-cb-cta-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+/* ------------------------------------------------------------- responsive */
+
+@media (min-width: 640px) {
+  .xv-cb-cards { grid-template-columns: repeat(2, 1fr); }
+  .xv-cb-pattern-list { grid-template-columns: repeat(2, 1fr); }
+  .xv-cb-stages { grid-template-columns: repeat(2, 1fr); }
+  .xv-cb-eco-list { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .xv-cb-nav > a:not(.xv-cb-btn) { display: inline-flex; }
+  .xv-cb-cards { grid-template-columns: repeat(4, 1fr); }
+  .xv-cb-stages { grid-template-columns: repeat(4, 1fr); }
+  .xv-cb-eco-list { grid-template-columns: repeat(3, 1fr); }
+  .xv-cb-cta { grid-template-columns: 1fr auto; align-items: center; }
+  .xv-cb-cta-actions { justify-content: flex-end; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-cb-root *,
+  .xv-cb-root *::before,
+  .xv-cb-root *::after {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+  .xv-cb-card:hover,
+  .xv-cb-eco-card:hover,
+  .xv-cb-btn--primary:hover { transform: none; }
+}
+
+/* -------------------------------------------------- the prompt bar, themed
+   The shared prompt bar's styles live in homepage-coding.css scoped under
+   `.xv-home-coding`, which hardcodes a dark surface and light ink. Adding that
+   wrapper here would undo the theming, so the bar gets its own token-driven
+   rules scoped to this page instead. The markup and submission flow are the
+   same component — only the surface differs. */
+
+.xv-cb-chat .xv-hc-prompt { width: 100%; max-width: 40rem; margin-inline: auto; }
+
+.xv-cb-chat .xv-hc-prompt-shell {
+  padding: 0.9rem 0.9rem 0.75rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  border-radius: 1.25rem;
+  background: var(--surface-raised, var(--card));
+  box-shadow: var(--shadow-elevated, 0 18px 44px -28px rgba(0, 0, 0, 0.4));
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+.xv-cb-chat .xv-hc-prompt-shell.is-focused {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.xv-cb-chat .xv-hc-prompt-shell.is-sending { opacity: 0.85; }
+
+.xv-cb-chat .xv-hc-prompt-main { display: block; width: 100%; }
+
+.xv-cb-chat .xv-hc-prompt-input {
+  width: 100%;
+  min-height: 3rem;
+  max-height: 7rem;
+  padding: 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: var(--text-primary, var(--foreground));
+  font-family: var(--font-chat-input, inherit);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+/* The typewriter sits behind the empty input as a placeholder. */
+.xv-cb-chat .xv-hc-prompt-typewriter {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--text-muted, var(--muted));
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+.xv-cb-chat .xv-hc-prompt-caret {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  margin-left: 1px;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: xv-cb-caret 1s steps(2, start) infinite;
+}
+@keyframes xv-cb-caret { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+.xv-cb-chat .xv-hc-prompt-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--border-subtle, var(--card-border));
+}
+.xv-cb-chat .xv-hc-prompt-integrations {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  overflow: hidden;
+}
+.xv-cb-chat .xv-hc-prompt-integration {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--text-secondary, var(--muted));
+}
+.xv-cb-chat .xv-hc-prompt-integration-logo { opacity: 0.85; }
+.xv-cb-chat .xv-hc-prompt-integration-sep {
+  width: 1px;
+  height: 0.7rem;
+  background: var(--border-subtle, var(--card-border));
+}
+
+/* Send button */
+.xv-cb-chat .xv-go-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  margin-left: auto;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 160ms ease, filter 160ms ease;
+}
+.xv-cb-chat .xv-go-btn:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.07); }
+.xv-cb-chat .xv-go-btn:disabled { opacity: 0.6; cursor: progress; transform: none; }
+.xv-cb-chat .xv-go-btn__liquid { display: none; }
+.xv-cb-chat .xv-go-btn__icon { display: grid; place-items: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-cb-chat .xv-hc-prompt-caret { animation: none; }
+  .xv-cb-chat .xv-go-btn:hover:not(:disabled) { transform: none; }
+}

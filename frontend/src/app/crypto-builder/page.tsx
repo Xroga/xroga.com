@@ -1,11 +1,294 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, BookOpenCheck, Braces, GitBranch, Network, Rocket, ShieldCheck } from 'lucide-react';
+import {
+  ArrowRight,
+  BarChart3,
+  BookOpenCheck,
+  Bot,
+  Braces,
+  GitBranch,
+  Landmark,
+  LineChart,
+  Network,
+  Radar,
+  Rocket,
+  ShieldCheck,
+  Wallet,
+} from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
+import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HACKATHON_SOURCES, WINNING_PATTERNS } from '@/lib/hackathonResearch';
 import { buildMetadata } from '@/lib/seo';
+import '@/styles/homepage-coding.css';
+import '@/styles/crypto-builder.css';
 
-export const metadata: Metadata = buildMetadata({ title: 'Crypto Builder — Build Crypto Agents, Web3 Apps, and Hackathon Projects', description: 'Build AI crypto agents, Web3 applications, DeFi and DAO tools, token utilities, on-chain monitoring, analytics dashboards, and hackathon projects. Xroga researches, implements, validates, and prepares publishing through accounts you authorise.', path: '/crypto-builder', keywords: ['crypto builder', 'AI crypto agent builder', 'Web3 app builder', 'DeFi dashboard builder', 'DAO tooling', 'on-chain monitoring agent', 'crypto hackathon project'] });
-const stages = [{ icon: BookOpenCheck, title: 'Research the official event', body: 'Collect the current rules, tracks, judging criteria, permitted prior work, deadline, and submission requirements from organiser sources.' }, { icon: Network, title: 'Choose an achievable problem', body: 'Match one meaningful user problem to a track and decide what can be demonstrated end to end within the build window.' }, { icon: Braces, title: 'Build the smallest credible MVP', body: 'Create the required integration, UI, backend, contracts or data flow in a repository with a visible commit history.' }, { icon: ShieldCheck, title: 'Test the risky path', body: 'Check permissions, secrets, wallet or contract behavior, failure handling, and the real production build.' }, { icon: GitBranch, title: 'Prepare the evidence', body: 'Make setup reproducible, explain architecture and tradeoffs, link the relevant code, and document known limits.' }, { icon: Rocket, title: 'Deploy and rehearse', body: 'Verify the live demo, prepare the required video and submission fields, and practise the actual judging timebox.' }];
+export const metadata: Metadata = buildMetadata({
+  title: 'Crypto Builder — Build Crypto Agents, Web3 Apps, and Hackathon Projects',
+  description:
+    'Build AI crypto agents, Web3 applications, DeFi and DAO tools, token utilities, on-chain monitoring, analytics dashboards, and hackathon projects. Xroga researches, implements, validates, and prepares publishing through accounts you authorise.',
+  path: '/crypto-builder',
+  keywords: [
+    'crypto builder',
+    'AI crypto agent builder',
+    'Web3 app builder',
+    'DeFi dashboard builder',
+    'DAO tooling',
+    'on-chain monitoring agent',
+    'crypto hackathon project',
+  ],
+});
 
-export default function CryptoBuilderPage() { const softwareLd = { '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'Xroga AI', applicationCategory: 'DeveloperApplication', operatingSystem: 'Web', url: 'https://xroga.com/crypto-builder', description: 'AI coding and product-building agent for research, repository work, validation, GitHub, and authorized deployment.' }; return <main className="min-h-screen overflow-hidden bg-[#02070d] text-white"><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd).replace(/</g, '\\u003c') }} /><header className="relative z-10 border-b border-cyan-300/10 bg-[#02070d]/80 backdrop-blur"><div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3"><Logo href="/" height={38} /><nav className="flex items-center gap-4 text-sm font-bold"><Link href="/research/web3-hackathon-winning-patterns">Research</Link><Link href="/docs/hackathon-workflows">Guide</Link><Link href="/auth/signup" className="rounded-xl bg-[#006aff] px-4 py-2">Build a project</Link></nav></div></header><section className="relative px-4 py-20 sm:py-28"><div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(0,215,255,.19),transparent_32%),radial-gradient(circle_at_22%_60%,rgba(117,65,255,.22),transparent_35%),linear-gradient(rgba(0,209,255,.025)_1px,transparent_1px),linear-gradient(90deg,rgba(0,209,255,.025)_1px,transparent_1px)] bg-[size:auto,auto,32px_32px,32px_32px]" /><div className="relative mx-auto max-w-6xl"><p className="text-xs font-black uppercase tracking-[.25em] text-cyan-300">Research → repository → verified demo</p><h1 className="mt-5 max-w-5xl text-5xl font-black tracking-[-.05em] sm:text-7xl">Build a crypto hackathon project judges can actually verify.</h1><p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">Xroga helps turn official rules into a bounded product plan, repository work, tests, GitHub evidence, deployment, and a clear submission. It does not promise a prize or pretend to be affiliated with the ecosystems below.</p><div className="mt-8 flex flex-wrap gap-3"><Link href="/auth/signup" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#006aff] to-violet-600 px-5 py-3 font-black">Start with your event brief <ArrowRight className="h-4 w-4" /></Link><Link href="/research/web3-hackathon-winning-patterns" className="rounded-xl border border-cyan-300/20 bg-cyan-300/[.04] px-5 py-3 font-bold">Read the source-backed research</Link></div></div></section><section className="mx-auto max-w-6xl px-4 py-16"><p className="text-xs font-black uppercase tracking-[.22em] text-cyan-300">A controlled build loop</p><h2 className="mt-3 text-3xl font-black sm:text-5xl">From event brief to demo</h2><div className="relative mt-9 grid gap-4 md:grid-cols-3">{stages.map(({ icon: Icon, title, body }, index) => <article key={title} className="group rounded-2xl border border-cyan-300/10 bg-gradient-to-br from-white/[.055] to-white/[.02] p-6 transition hover:border-cyan-300/35"><div className="flex items-center justify-between"><Icon className="h-6 w-6 text-cyan-300" /><span className="font-mono text-xs text-violet-300">0{index + 1}</span></div><h3 className="mt-5 text-xl font-black">{title}</h3><p className="mt-2 text-sm leading-7 text-slate-300">{body}</p></article>)}</div></section><section className="border-y border-white/10 bg-white/[.025]"><div className="mx-auto max-w-6xl px-4 py-16"><div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="text-xs font-black uppercase tracking-[.22em] text-violet-300">Official ecosystem map</p><h2 className="mt-3 text-3xl font-black sm:text-5xl">Know who does what.</h2></div><p className="max-w-xl text-sm leading-6 text-slate-400">These are independent organisations and ecosystems. Inclusion means their official resources were reviewed; it does not imply partnership, endorsement, sponsorship, or affiliation with Xroga.</p></div><div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{HACKATHON_SOURCES.map((source) => <a key={source.name} href={source.url} target="_blank" rel="noreferrer" className="rounded-2xl border border-white/10 bg-black/20 p-5 hover:border-cyan-300/30"><h3 className="font-black text-cyan-100">{source.name}</h3><p className="mt-1 text-xs font-bold text-violet-300">{source.role}</p><p className="mt-3 text-sm leading-6 text-slate-400">{source.note}</p></a>)}</div></div></section><section className="mx-auto max-w-6xl px-4 py-16"><h2 className="text-3xl font-black sm:text-5xl">Patterns repeated in official criteria</h2><p className="mt-4 max-w-3xl leading-7 text-slate-300">These practices improve eligibility and clarity; they do not guarantee winning. Always follow the current event-specific rules.</p><div className="mt-8 grid gap-3 md:grid-cols-2">{WINNING_PATTERNS.map((pattern) => <article key={pattern.name} className="rounded-2xl border border-white/10 p-5"><h3 className="font-black text-cyan-200">{pattern.name}</h3><p className="mt-2 text-sm leading-6 text-slate-300">{pattern.evidence}</p></article>)}</div><div className="mt-12 rounded-3xl border border-[#006aff]/30 bg-gradient-to-r from-[#006aff]/15 to-violet-500/10 p-7 sm:flex sm:items-center sm:justify-between"><div><h2 className="text-2xl font-black">Bring the event page and one honest outcome.</h2><p className="mt-2 text-sm text-slate-300">Xroga can research, plan, implement, validate, and prepare publishing through accounts you authorize.</p></div><Link href="/auth/signup" className="mt-5 inline-flex shrink-0 rounded-xl bg-white px-5 py-3 font-black text-slate-950 sm:mt-0">Open Xroga</Link></div></section></main>; }
+/** What the page says you can build. Deliberately broader than hackathons. */
+const BUILD_KINDS = [
+  { icon: Bot, title: 'AI crypto agents', body: 'Market research, on-chain summarisation, and automation agents that work from sources you approve.' },
+  { icon: Braces, title: 'Web3 applications', body: 'Wallet-connected front ends, contract read and write flows, and the APIs behind them.' },
+  { icon: LineChart, title: 'DeFi tools and dashboards', body: 'Position views, yield comparisons, and analytics over documented public data sources.' },
+  { icon: Landmark, title: 'DAO and governance tooling', body: 'Proposal tracking, voting summaries, treasury views, and contributor workflows.' },
+  { icon: Wallet, title: 'Token and wallet utilities', body: 'Token utility planners, allowance and approval views, and wallet-facing interfaces.' },
+  { icon: Radar, title: 'On-chain monitoring', body: 'Address and contract watchers, alerting surfaces, and event pipelines.' },
+  { icon: BarChart3, title: 'Crypto analytics products', body: 'Reporting surfaces over indexed data, with the data source stated in the interface.' },
+  { icon: Network, title: 'Hackathon projects', body: 'A bounded, demonstrable MVP prepared against the official rules of a public event.' },
+] as const;
+
+const STAGES = [
+  { icon: BookOpenCheck, title: 'Research the brief', body: 'Read the official docs, event rules, or protocol references you point Xroga at, and turn them into a bounded plan.' },
+  { icon: Braces, title: 'Implement in your repository', body: 'Inspect the existing project, apply focused changes, and leave unrelated working code intact.' },
+  { icon: ShieldCheck, title: 'Validate before claiming', body: 'Run the applicable checks. Work is reported complete only after its required validation actually passes.' },
+  { icon: GitBranch, title: 'Push and publish', body: 'Commit to a repository you own and publish through providers you authorise — with evidence, or the exact blocker.' },
+] as const;
+
+const PROMPT_SUGGESTIONS = [
+  'Build an AI agent for crypto market research',
+  'Create a Web3 hackathon project',
+  'Build a DeFi analytics dashboard',
+  'Create a DAO governance assistant',
+  'Build a token utility planner',
+  'Create a blockchain monitoring agent',
+] as const;
+
+const PLACEHOLDERS = [
+  'Describe the crypto product or AI agent you want to build…',
+  'Build an AI agent that summarises on-chain activity…',
+  'Create a DeFi dashboard with position tracking…',
+  'Build a DAO proposal and voting assistant…',
+  'Create an on-chain monitoring agent with alerts…',
+  'Build a Web3 hackathon MVP against the official rules…',
+];
+
+export default function CryptoBuilderPage() {
+  const softwareLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Xroga Crypto Builder',
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'Web',
+    url: 'https://xroga.com/crypto-builder',
+    description:
+      'Build AI crypto agents, Web3 applications, DeFi and DAO tools, on-chain monitoring, analytics products, and hackathon projects with Xroga AI.',
+  };
+
+  return (
+    <main className="xv-cb-root">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd).replace(/</g, '\\u003c') }}
+      />
+
+      <header className="xv-cb-header">
+        <div className="xv-cb-shell xv-cb-header-inner">
+          <Logo href="/" height={38} />
+          <nav className="xv-cb-nav" aria-label="Crypto Builder">
+            <Link href="/research/web3-hackathon-winning-patterns">Research</Link>
+            <Link href="/docs/hackathon-workflows">Guide</Link>
+            <Link href="/showcase">Showcase</Link>
+            <Link href="/auth/signup" className="xv-cb-btn xv-cb-btn--primary xv-cb-btn--sm">
+              Start building
+            </Link>
+          </nav>
+        </div>
+      </header>
+
+      {/* ------------------------------------------------------------- hero */}
+      <section className="xv-cb-hero">
+        <div className="xv-cb-hero-glow" aria-hidden />
+        <div className="xv-cb-grid-pattern" aria-hidden />
+
+        <div className="xv-cb-shell xv-cb-hero-inner">
+          <p className="xv-cb-kicker">
+            <span className="xv-cb-kicker-dot" aria-hidden />
+            XROGA CRYPTO BUILDER
+          </p>
+
+          <h1 className="xv-cb-h1">
+            Build crypto products that <em>actually run.</em>
+          </h1>
+
+          <p className="xv-cb-lede">
+            Describe the crypto product, agent, application, or hackathon project you want to build, and Xroga will
+            continue the task inside the real workspace — inspecting your repository, implementing focused changes, running
+            applicable checks, and publishing through accounts you authorise.
+          </p>
+
+          <div className="xv-cb-chat">
+            <HomepageChatBar
+              placeholders={PLACEHOLDERS}
+              suggestions={PROMPT_SUGGESTIONS}
+              ariaLabel="Describe the crypto product or AI agent you want to build"
+              fallbackPrompt="Build a crypto product with Xroga AI"
+            />
+          </div>
+
+          <p className="xv-cb-hero-note">
+            Xroga does not guarantee prizes, funding, listings, trading performance, token value, or security outcomes. It
+            reports evidence, a real failure, or the exact external setup still required.
+          </p>
+        </div>
+      </section>
+
+      {/* -------------------------------------------------- what you can build */}
+      <section className="xv-cb-section" aria-labelledby="cb-build-heading">
+        <div className="xv-cb-shell">
+          <p className="xv-cb-eyebrow">Not only hackathons</p>
+          <h2 id="cb-build-heading" className="xv-cb-h2">
+            What you can build here
+          </h2>
+          <p className="xv-cb-section-copy">
+            Crypto hackathons remain a first-class use case. They are one of several.
+          </p>
+
+          <div className="xv-cb-cards">
+            {BUILD_KINDS.map(({ icon: Icon, title, body }) => (
+              <article key={title} className="xv-cb-card">
+                <span className="xv-cb-card-icon">
+                  <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+                </span>
+                <h3 className="xv-cb-card-title">{title}</h3>
+                <p className="xv-cb-card-body">{body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------------- the loop */}
+      <section className="xv-cb-section xv-cb-section--tint" aria-labelledby="cb-loop-heading">
+        <div className="xv-cb-shell">
+          <p className="xv-cb-eyebrow">A controlled build loop</p>
+          <h2 id="cb-loop-heading" className="xv-cb-h2">
+            Research → repository → verified result
+          </h2>
+
+          <ol className="xv-cb-stages">
+            {STAGES.map(({ icon: Icon, title, body }, index) => (
+              <li key={title} className="xv-cb-stage">
+                <div className="xv-cb-stage-top">
+                  <span className="xv-cb-card-icon">
+                    <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+                  </span>
+                  <span className="xv-cb-stage-num">0{index + 1}</span>
+                </div>
+                <h3 className="xv-cb-card-title">{title}</h3>
+                <p className="xv-cb-card-body">{body}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------- ecosystems */}
+      <section className="xv-cb-section" aria-labelledby="cb-eco-heading">
+        <div className="xv-cb-shell">
+          <p className="xv-cb-eyebrow">Official ecosystem map</p>
+          <h2 id="cb-eco-heading" className="xv-cb-h2">
+            Public hackathon ecosystems and organisers
+          </h2>
+
+          <div className="xv-cb-disclaimer" role="note">
+            <ShieldCheck className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <p>
+              Xroga is not affiliated with or endorsed by the organizations shown unless explicitly stated. Their names
+              and resources are displayed for informational purposes so builders can prepare projects for public crypto
+              hackathons.
+            </p>
+          </div>
+
+          <ul className="xv-cb-eco-list">
+            {HACKATHON_SOURCES.map((source) => (
+              <li key={source.name}>
+                <a href={source.url} target="_blank" rel="noreferrer noopener" className="xv-cb-eco-card">
+                  <span className="xv-cb-eco-role">{source.role}</span>
+                  <span className="xv-cb-eco-name">{source.name}</span>
+                  <span className="xv-cb-eco-note">{source.note}</span>
+                  {/* No prize figure is shown: this repository holds no verified current
+                      amount, and inventing one would be worse than sending a builder to
+                      the organiser's own page. */}
+                  <span className="xv-cb-eco-cta">
+                    Check official event details
+                    <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <p className="xv-cb-fineprint">
+            Prize pools, tracks, grants, bounties, eligibility, and claim processes are set by each organiser and change
+            between events. Verify the current rules and eligibility directly with the organiser before you build. Xroga
+            does not control, administer, or guarantee any reward, and cannot guarantee eligibility or that funds can be
+            claimed or withdrawn.
+          </p>
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------------- patterns */}
+      <section className="xv-cb-section xv-cb-section--tint" aria-labelledby="cb-patterns-heading">
+        <div className="xv-cb-shell">
+          <p className="xv-cb-eyebrow">Repeated in official criteria</p>
+          <h2 id="cb-patterns-heading" className="xv-cb-h2">
+            What judging pages keep asking for
+          </h2>
+          <p className="xv-cb-section-copy">
+            These practices improve eligibility and clarity. They do not guarantee winning, and event-specific rules
+            always take precedence.
+          </p>
+
+          <div className="xv-cb-pattern-list">
+            {WINNING_PATTERNS.map((pattern) => (
+              <article key={pattern.name} className="xv-cb-card">
+                <h3 className="xv-cb-card-title">{pattern.name}</h3>
+                <p className="xv-cb-card-body">{pattern.evidence}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* --------------------------------------------------------------- cta */}
+      <section className="xv-cb-section" aria-labelledby="cb-cta-heading">
+        <div className="xv-cb-shell">
+          <div className="xv-cb-cta">
+            <div>
+              <h2 id="cb-cta-heading" className="xv-cb-h2">
+                Bring the brief and one honest outcome.
+              </h2>
+              <p className="xv-cb-section-copy">
+                A protocol doc, an event page, or a plain description. Xroga researches, plans, implements, validates, and
+                prepares publishing through accounts you authorise.
+              </p>
+            </div>
+            <div className="xv-cb-cta-actions">
+              <Link href="/auth/signup" className="xv-cb-btn xv-cb-btn--primary">
+                Open Xroga
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <Link href="/showcase" className="xv-cb-btn xv-cb-btn--ghost">
+                <Rocket className="h-4 w-4" aria-hidden="true" />
+                See what Xroga builds
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}

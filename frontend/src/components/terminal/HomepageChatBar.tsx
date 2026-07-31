@@ -22,16 +22,15 @@ const TYPEWRITER_FEATURES = [
   'Update your repo — theme, auth, pages — in chat…',
 ];
 
-function useTypewriterPlaceholder(active: boolean) {
+function useTypewriterPlaceholder(active: boolean, phrases: readonly string[]) {
   const [text, setText] = useState('');
   const idxRef = useRef(0);
   const charRef = useRef(0);
   const deletingRef = useRef(false);
 
   useEffect(() => {
-    if (!active) return;
+    if (!active || phrases.length === 0) return;
     const tick = (): number => {
-      const phrases = TYPEWRITER_FEATURES;
       const phrase = phrases[idxRef.current % phrases.length];
       if (!deletingRef.current) {
         charRef.current += 1;
@@ -58,12 +57,35 @@ function useTypewriterPlaceholder(active: boolean) {
     };
     run(600);
     return () => clearTimeout(timeout);
-  }, [active]);
+  }, [active, phrases]);
 
   return text;
 }
 
-export function HomepageChatBar() {
+/**
+ * The public prompt bar.
+ *
+ * Used on the homepage and on /crypto-builder. Both share one submission path —
+ * stash the prompt under PENDING_PROMPT_KEY, then route to the workspace when a
+ * session exists or through signup when it does not — so the prompt survives
+ * authentication and the workspace picks it up on arrival. The props below only
+ * change wording and suggestions; the flow itself is never duplicated.
+ */
+export function HomepageChatBar({
+  placeholders = TYPEWRITER_FEATURES,
+  ariaLabel = 'Describe what you want to build',
+  fallbackPrompt = 'Build a web app with Xroga AI',
+  suggestions,
+  className,
+}: {
+  placeholders?: readonly string[];
+  ariaLabel?: string;
+  /** Used when the user submits an empty box, so the workspace always gets intent. */
+  fallbackPrompt?: string;
+  /** Chips rendered under the bar. Clicking one fills the input and focuses it. */
+  suggestions?: readonly string[];
+  className?: string;
+} = {}) {
   const [prompt, setPrompt] = useState('');
   const [focused, setFocused] = useState(false);
   const [sending, setSending] = useState(false);
@@ -71,7 +93,7 @@ export function HomepageChatBar() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const composingRef = useRef(false);
   const router = useRouter();
-  const typewriter = useTypewriterPlaceholder(!prompt && !focused);
+  const typewriter = useTypewriterPlaceholder(!prompt && !focused, placeholders);
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -97,7 +119,7 @@ export function HomepageChatBar() {
       const text = autocorrectText((textareaRef.current?.value ?? prompt).trim());
       setSending(true);
       setSendState('sending');
-      localStorage.setItem(PENDING_PROMPT_KEY, text || 'Build a web app with Xroga AI');
+      localStorage.setItem(PENDING_PROMPT_KEY, text || fallbackPrompt);
       dispatchCompanionEvent({ type: 'prompt_submitted', message: 'Your prompt is ready for the authenticated Xroga workspace.', source: 'runtime' });
       setTimeout(() => {
         void createClient().auth.getSession().then(({ data }) => {
@@ -106,11 +128,11 @@ export function HomepageChatBar() {
         }).catch(() => router.push('/auth/signup'));
       }, 700);
     },
-    [prompt, router, sending]
+    [prompt, router, sending, fallbackPrompt]
   );
 
   return (
-    <div className="w-full max-w-xl mx-auto relative xv-hc-prompt">
+    <div className={cn('w-full max-w-xl mx-auto relative xv-hc-prompt', className)}>
       <form onSubmit={handleSubmit} className="w-full">
         <div
           className={cn(
@@ -149,7 +171,7 @@ export function HomepageChatBar() {
                 spellCheck={false}
                 autoCorrect="off"
                 autoCapitalize="off"
-                aria-label="Describe what you want to build"
+                aria-label={ariaLabel}
                 className="xv-hc-prompt-input"
               />
               {!prompt && !focused && (
@@ -216,6 +238,29 @@ export function HomepageChatBar() {
           </div>
         </div>
       </form>
+
+      {/* Suggestion chips fill the input and focus it, following the same
+          convention as the companion's ask event, so the user always reviews the
+          prompt before it is submitted. */}
+      {suggestions && suggestions.length > 0 && (
+        <ul className="xv-cb-chips" aria-label="Prompt suggestions">
+          {suggestions.map((suggestion) => (
+            <li key={suggestion}>
+              <button
+                type="button"
+                className="xv-cb-chip"
+                disabled={sending}
+                onClick={() => {
+                  setPrompt(suggestion);
+                  window.setTimeout(() => textareaRef.current?.focus(), 20);
+                }}
+              >
+                {suggestion}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
