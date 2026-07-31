@@ -7,21 +7,27 @@
  * Xroga app's own tokens — a showcase product has its own design system, driven by
  * the BRAND constant below so a customised build only has to change these values.
  *
- * All testimonial and portfolio content is clearly labelled sample content.
+ * Imagery is composed from CSS and inline SVG rather than bitmaps: it stays crisp,
+ * costs no requests, recolours with the brand, and means no section ever renders an
+ * empty placeholder box.
+ *
+ * All testimonial and portfolio content is clearly labelled sample content, and no
+ * customer, revenue, rating or download figures are stated anywhere.
  */
 
 import { useEffect, useId, useRef, useState } from 'react';
+import { productReset } from './shared';
 
 const BRAND = {
   name: 'Northwind Studio',
-  tagline: 'Digital products for teams that ship',
-  ink: '#101828',
+  ink: '#0b1120',
   paper: '#ffffff',
-  subtle: '#f6f7f9',
-  border: '#e4e7ec',
+  subtle: '#f7f8fa',
+  border: '#e6e9ee',
   muted: '#5b6472',
-  accent: '#1f6feb',
-  accentInk: '#ffffff',
+  accent: '#2563eb',
+  accentDeep: '#1e40af',
+  accentSoft: '#dbeafe',
 } as const;
 
 const NAV = [
@@ -34,16 +40,47 @@ const NAV = [
 ] as const;
 
 const SERVICES = [
-  { title: 'Product design', body: 'Interface design, design systems, and prototypes your engineers can build from.' },
-  { title: 'Web engineering', body: 'Accessible, fast front-ends and the APIs behind them.' },
-  { title: 'Platform work', body: 'Migrations, integrations, and the plumbing that keeps releases boring.' },
-  { title: 'Ongoing support', body: 'A retained team for iteration after launch, not just delivery.' },
+  {
+    title: 'Product design',
+    body: 'Interface design, design systems, and prototypes your engineers can build from.',
+    icon: 'design',
+  },
+  {
+    title: 'Web engineering',
+    body: 'Accessible, fast front-ends and the APIs behind them.',
+    icon: 'code',
+  },
+  {
+    title: 'Platform work',
+    body: 'Migrations, integrations, and the plumbing that keeps releases boring.',
+    icon: 'stack',
+  },
+  {
+    title: 'Ongoing support',
+    body: 'A retained team for iteration after launch, not just delivery.',
+    icon: 'pulse',
+  },
 ] as const;
 
 const WORK = [
-  { title: 'Fleet operations console', tag: 'Logistics', blurb: 'Dispatch and tracking for a regional carrier.' },
-  { title: 'Clinical intake flow', tag: 'Healthcare', blurb: 'Reduced a nine-step form to three screens.' },
-  { title: 'Billing migration', tag: 'Fintech', blurb: 'Moved a legacy biller without downtime.' },
+  {
+    title: 'Fleet operations console',
+    tag: 'Logistics',
+    blurb: 'Dispatch and tracking for a regional carrier.',
+    art: 'map',
+  },
+  {
+    title: 'Clinical intake flow',
+    tag: 'Healthcare',
+    blurb: 'Reduced a nine-step form to three screens.',
+    art: 'form',
+  },
+  {
+    title: 'Billing migration',
+    tag: 'Fintech',
+    blurb: 'Moved a legacy biller without downtime.',
+    art: 'chart',
+  },
 ] as const;
 
 const PROCESS = [
@@ -65,9 +102,25 @@ const PLANS: readonly {
   features: readonly string[];
   featured?: boolean;
 }[] = [
-  { name: 'Sprint', price: 'From $6k', body: 'A focused two-week engagement for one clear problem.', features: ['Discovery workshop', 'Design or build', 'Written handover'] },
-  { name: 'Project', price: 'From $24k', body: 'End-to-end delivery of a defined product surface.', features: ['Full discovery', 'Design and build', 'QA and launch', '30 days support'], featured: true },
-  { name: 'Retained', price: 'Monthly', body: 'An embedded team for continuous iteration.', features: ['Dedicated capacity', 'Roadmap planning', 'Priority support'] },
+  {
+    name: 'Sprint',
+    price: 'From $6k',
+    body: 'A focused two-week engagement for one clear problem.',
+    features: ['Discovery workshop', 'Design or build', 'Written handover'],
+  },
+  {
+    name: 'Project',
+    price: 'From $24k',
+    body: 'End-to-end delivery of a defined product surface.',
+    features: ['Full discovery', 'Design and build', 'QA and launch', '30 days support'],
+    featured: true,
+  },
+  {
+    name: 'Retained',
+    price: 'Monthly',
+    body: 'An embedded team for continuous iteration.',
+    features: ['Dedicated capacity', 'Roadmap planning', 'Priority support'],
+  },
 ];
 
 const FAQS = [
@@ -79,191 +132,316 @@ const FAQS = [
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
 
-function SampleBadge({ children }: { children: string }) {
+/* ---------------------------------------------------------------- iconography */
+
+function ServiceIcon({ kind }: { kind: string }) {
+  const common = { width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none', 'aria-hidden': true } as const;
+  const stroke = { stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+  if (kind === 'design') {
+    return (
+      <svg {...common}>
+        <path d="M4 20h16M7 16l4-9 4 9M8.5 13h5" {...stroke} />
+      </svg>
+    );
+  }
+  if (kind === 'code') {
+    return (
+      <svg {...common}>
+        <path d="M9 8l-4 4 4 4M15 8l4 4-4 4" {...stroke} />
+      </svg>
+    );
+  }
+  if (kind === 'stack') {
+    return (
+      <svg {...common}>
+        <path d="M12 4l8 4-8 4-8-4 8-4Z" {...stroke} />
+        <path d="M4 12l8 4 8-4M4 16l8 4 8-4" {...stroke} />
+      </svg>
+    );
+  }
   return (
-    <span
-      style={{
-        display: 'inline-block',
-        fontSize: 11,
-        fontWeight: 600,
-        letterSpacing: '0.04em',
-        textTransform: 'uppercase',
-        padding: '3px 8px',
-        borderRadius: 999,
-        background: BRAND.subtle,
-        color: BRAND.muted,
-        border: `1px solid ${BRAND.border}`,
-      }}
-    >
-      {children}
-    </span>
+    <svg {...common}>
+      <path d="M3 12h4l2-5 3 10 2-5h7" {...stroke} />
+    </svg>
   );
 }
 
+/** Abstract, brand-tinted artwork so a work card is never an empty rectangle. */
+function WorkArt({ kind }: { kind: string }) {
+  const base = { width: '100%', height: '100%', viewBox: '0 0 320 190', preserveAspectRatio: 'none', 'aria-hidden': true } as const;
+  if (kind === 'map') {
+    return (
+      <svg {...base}>
+        <rect width="320" height="190" fill={BRAND.accentSoft} />
+        <path d="M0 130 L70 96 L140 118 L215 70 L320 100 V190 H0Z" fill={BRAND.accent} opacity="0.16" />
+        <path d="M0 150 L80 124 L150 142 L230 104 L320 132" stroke={BRAND.accent} strokeWidth="2" fill="none" opacity="0.65" />
+        {[70, 150, 230].map((x, i) => (
+          <circle key={x} cx={x} cy={[124, 142, 104][i]} r="5" fill={BRAND.paper} stroke={BRAND.accent} strokeWidth="2.5" />
+        ))}
+      </svg>
+    );
+  }
+  if (kind === 'form') {
+    return (
+      <svg {...base}>
+        <rect width="320" height="190" fill={BRAND.accentSoft} />
+        {[0, 1, 2].map((row) => (
+          <g key={row} transform={`translate(46 ${44 + row * 40})`}>
+            <rect width="120" height="9" rx="4.5" fill={BRAND.accent} opacity="0.32" />
+            <rect y="17" width="228" height="14" rx="7" fill={BRAND.paper} />
+          </g>
+        ))}
+        <rect x="46" y="160" width="86" height="16" rx="8" fill={BRAND.accent} opacity="0.85" />
+      </svg>
+    );
+  }
+  return (
+    <svg {...base}>
+      <rect width="320" height="190" fill={BRAND.accentSoft} />
+      {[36, 74, 112, 150, 188, 226, 264].map((x, i) => {
+        const h = [46, 74, 58, 100, 82, 126, 108][i];
+        return <rect key={x} x={x} y={168 - h} width="22" height={h} rx="5" fill={BRAND.accent} opacity={0.28 + i * 0.09} />;
+      })}
+    </svg>
+  );
+}
+
+/** The hero visual: a suggestion of a shipped interface, composed in markup. */
+function HeroCanvas() {
+  return (
+    <div className="nw-hero-canvas" aria-hidden>
+      <div className="nw-hero-window">
+        <div className="nw-hero-chrome">
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className="nw-hero-body">
+          <div className="nw-hero-side">
+            {[68, 46, 56, 38, 50].map((w, i) => (
+              <span key={i} style={{ width: `${w}%`, opacity: i === 0 ? 1 : 0.5 }} />
+            ))}
+          </div>
+          <div className="nw-hero-main">
+            <div className="nw-hero-kpis">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="nw-hero-kpi">
+                  <span className="nw-hero-kpi-label" />
+                  <span className="nw-hero-kpi-bar" style={{ width: `${[62, 84, 48][i]}%` }} />
+                </div>
+              ))}
+            </div>
+            <svg className="nw-hero-chart" viewBox="0 0 300 96" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="nw-fill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={BRAND.accent} stopOpacity="0.42" />
+                  <stop offset="100%" stopColor={BRAND.accent} stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M0 74 L50 58 L100 66 L150 36 L200 46 L250 20 L300 30 V96 H0Z" fill="url(#nw-fill)" />
+              <path
+                d="M0 74 L50 58 L100 66 L150 36 L200 46 L250 20 L300 30"
+                fill="none"
+                stroke={BRAND.accent}
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------- product */
+
 export function BusinessWebsite() {
+  const uid = useId();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [state, setState] = useState<FormState>('idle');
-  const formId = useId();
-  const statusRef = useRef<HTMLParagraphElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  // Close the mobile menu on Escape so keyboard users are never trapped.
+  // Escape closes the mobile menu, and focus returns to the control that opened it.
   useEffect(() => {
     if (!menuOpen) return;
-    function onKey(event: KeyboardEvent) {
-      if (event.key === 'Escape') setMenuOpen(false);
-    }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
   }, [menuOpen]);
+
+  // Solidifies the header once the hero is behind it.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   function validate() {
     const next: Record<string, string> = {};
-    if (!form.name.trim()) next.name = 'Please enter your name.';
-    if (!form.email.trim()) next.email = 'Please enter your email.';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = 'Enter a valid email address.';
-    if (form.message.trim().length < 10) next.message = 'Please give us at least a sentence.';
+    if (!form.name.trim()) next.name = 'Please tell us your name.';
+    if (!form.email.trim()) next.email = 'Please add an email address.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = 'That email address does not look right.';
+    if (form.message.trim().length < 10) next.message = 'A sentence or two about your project helps.';
     return next;
   }
 
-  async function onSubmit(event: React.FormEvent) {
+  function onSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (state === 'submitting') return;
     const found = validate();
     setErrors(found);
-    if (Object.keys(found).length) return;
-
-    setState('submitting');
-    try {
-      // Demonstration submit: this template ships without a backend so the
-      // preview never sends data anywhere. A customised build wires this to a
-      // real endpoint.
-      await new Promise((resolve) => setTimeout(resolve, 700));
-      if (/^fail@/i.test(form.email.trim())) throw new Error('Simulated failure');
-      setState('success');
-      setForm({ name: '', email: '', message: '' });
-    } catch {
+    if (Object.keys(found).length > 0) {
       setState('error');
+      return;
     }
+    setState('submitting');
+    // A demonstration form: it never transmits anything, and says so in the UI.
+    window.setTimeout(() => setState('success'), 700);
   }
 
-  useEffect(() => {
-    if (state === 'success' || state === 'error') statusRef.current?.focus();
-  }, [state]);
-
-  const section: React.CSSProperties = { padding: '72px 24px', maxWidth: 1120, margin: '0 auto' };
-  const h2: React.CSSProperties = { fontSize: 'clamp(1.6rem, 3.2vw, 2.4rem)', lineHeight: 1.15, letterSpacing: '-0.02em', margin: 0, color: BRAND.ink };
-  const lead: React.CSSProperties = { color: BRAND.muted, marginTop: 12, fontSize: 16, lineHeight: 1.6, maxWidth: 620 };
-  const card: React.CSSProperties = { border: `1px solid ${BRAND.border}`, borderRadius: 16, padding: 20, background: BRAND.paper };
-  const btn: React.CSSProperties = {
-    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-    background: BRAND.accent, color: BRAND.accentInk, border: '1px solid transparent',
-    padding: '12px 20px', borderRadius: 999, fontWeight: 650, fontSize: 15, cursor: 'pointer', textDecoration: 'none',
-  };
-  const btnGhost: React.CSSProperties = { ...btn, background: 'transparent', color: BRAND.ink, border: `1px solid ${BRAND.border}` };
-  const label: React.CSSProperties = { display: 'block', fontSize: 13, fontWeight: 600, color: BRAND.ink, marginBottom: 6 };
-  const input: React.CSSProperties = {
-    width: '100%', padding: '11px 13px', borderRadius: 10, border: `1px solid ${BRAND.border}`,
-    fontSize: 15, color: BRAND.ink, background: BRAND.paper, fontFamily: 'inherit',
-  };
-  const err: React.CSSProperties = { color: '#b42318', fontSize: 13, marginTop: 6 };
-
   return (
-    <div style={{ background: BRAND.paper, color: BRAND.ink, fontFamily: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif', minHeight: '100%' }}>
-      <a
-        href="#main"
-        style={{ position: 'absolute', left: -9999, top: 8 }}
-        onFocus={(e) => { e.currentTarget.style.left = '8px'; e.currentTarget.style.zIndex = '50'; e.currentTarget.style.background = BRAND.paper; e.currentTarget.style.padding = '8px 12px'; e.currentTarget.style.borderRadius = '8px'; e.currentTarget.style.border = `1px solid ${BRAND.border}`; }}
-        onBlur={(e) => { e.currentTarget.style.left = '-9999px'; }}
-      >
+    <div className="nw-root">
+      <style>{CSS}</style>
+
+      <a href="#nw-main" className="nw-skip">
         Skip to content
       </a>
 
-      {/* Navigation */}
-      <header style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(10px)', borderBottom: `1px solid ${BRAND.border}` }}>
-        <div style={{ maxWidth: 1120, margin: '0 auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 16 }}>
-          <span style={{ fontWeight: 750, letterSpacing: '-0.02em', fontSize: 17 }}>{BRAND.name}</span>
-          <nav aria-label="Primary" style={{ marginLeft: 'auto', display: 'none', gap: 4 }} className="nw-desktop-nav">
-            {NAV.map((item) => (
-              <a key={item.id} href={`#${item.id}`} style={{ padding: '8px 12px', borderRadius: 999, color: BRAND.muted, textDecoration: 'none', fontSize: 14, fontWeight: 600 }}>
-                {item.label}
-              </a>
-            ))}
-          </nav>
-          <a href="#contact" style={{ ...btn, padding: '9px 16px', fontSize: 14, marginLeft: 'auto' }} className="nw-desktop-cta">
-            Book a call
+      <header className={`nw-header${scrolled ? ' nw-header--solid' : ''}`}>
+        <div className="nw-shell nw-header-inner">
+          <a href="#nw-main" className="nw-brand">
+            <span className="nw-brand-mark" aria-hidden>
+              N
+            </span>
+            {BRAND.name}
           </a>
-          <button
-            type="button"
-            onClick={() => setMenuOpen((v) => !v)}
-            aria-expanded={menuOpen}
-            aria-controls={`${formId}-mobile-nav`}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            className="nw-menu-btn"
-            style={{ marginLeft: 'auto', display: 'inline-flex', flexDirection: 'column', gap: 4, background: 'transparent', border: `1px solid ${BRAND.border}`, borderRadius: 10, padding: 10, cursor: 'pointer' }}
-          >
-            <span style={{ width: 16, height: 2, background: BRAND.ink, display: 'block' }} />
-            <span style={{ width: 16, height: 2, background: BRAND.ink, display: 'block' }} />
-          </button>
-        </div>
-        {menuOpen && (
-          <nav id={`${formId}-mobile-nav`} aria-label="Mobile" style={{ borderTop: `1px solid ${BRAND.border}`, padding: 12, display: 'grid', gap: 2 }}>
+
+          <nav className="nw-nav" aria-label="Primary">
             {NAV.map((item) => (
-              <a key={item.id} href={`#${item.id}`} onClick={() => setMenuOpen(false)} style={{ padding: '11px 12px', borderRadius: 10, color: BRAND.ink, textDecoration: 'none', fontWeight: 600 }}>
+              <a key={item.id} href={`#${item.id}`}>
                 {item.label}
               </a>
             ))}
           </nav>
+
+          <div className="nw-header-actions">
+            <a href="#contact" className="nw-btn nw-btn--primary nw-btn--sm">
+              Book a call
+            </a>
+            <button
+              ref={menuButtonRef}
+              type="button"
+              className="nw-menu-toggle"
+              aria-expanded={menuOpen}
+              aria-controls={`${uid}-menu`}
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              <span className="nw-sr">{menuOpen ? 'Close menu' : 'Open menu'}</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+                {menuOpen ? (
+                  <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                ) : (
+                  <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                )}
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {menuOpen && (
+          <div id={`${uid}-menu`} className="nw-mobile-menu">
+            {NAV.map((item) => (
+              <a key={item.id} href={`#${item.id}`} onClick={() => setMenuOpen(false)}>
+                {item.label}
+              </a>
+            ))}
+          </div>
         )}
       </header>
 
-      <main id="main">
-        {/* Hero */}
-        <section style={{ ...section, paddingTop: 88, paddingBottom: 56 }}>
-          <SampleBadge>Sample company</SampleBadge>
-          <h1 style={{ fontSize: 'clamp(2.1rem, 6vw, 3.6rem)', lineHeight: 1.05, letterSpacing: '-0.035em', margin: '16px 0 0', maxWidth: 780 }}>
-            {BRAND.tagline}
-          </h1>
-          <p style={{ ...lead, fontSize: 18 }}>
-            We design and build software with small teams and short feedback loops. You own the code from week one.
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 28 }}>
-            <a href="#contact" style={btn}>Book a discovery call</a>
-            <a href="#work" style={btnGhost}>See our work</a>
-          </div>
-        </section>
-
-        {/* Services */}
-        <section id="services" style={{ ...section, paddingTop: 32 }} aria-labelledby="nw-services">
-          <h2 id="nw-services" style={h2}>What we do</h2>
-          <p style={lead}>Four ways teams bring us in.</p>
-          <div style={{ display: 'grid', gap: 16, marginTop: 28, gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
-            {SERVICES.map((s) => (
-              <div key={s.title} style={card}>
-                <h3 style={{ margin: 0, fontSize: 17 }}>{s.title}</h3>
-                <p style={{ color: BRAND.muted, marginTop: 8, marginBottom: 0, fontSize: 14.5, lineHeight: 1.6 }}>{s.body}</p>
+      <main id="nw-main">
+        {/* ------------------------------------------------------------- hero */}
+        <section className="nw-hero">
+          <div className="nw-hero-glow" aria-hidden />
+          <div className="nw-shell nw-hero-grid">
+            <div className="nw-hero-copy">
+              <span className="nw-eyebrow">Sample company</span>
+              <h1 className="nw-display">
+                Digital products for teams that <em>ship</em>
+              </h1>
+              <p className="nw-lede">
+                We design and build software with small senior teams and short feedback loops. You own the code from week
+                one.
+              </p>
+              <div className="nw-hero-ctas">
+                <a href="#contact" className="nw-btn nw-btn--primary">
+                  Book a discovery call
+                </a>
+                <a href="#work" className="nw-btn nw-btn--ghost">
+                  See our work
+                </a>
               </div>
-            ))}
+              <ul className="nw-hero-points">
+                <li>Senior team, no handoffs</li>
+                <li>Working software every iteration</li>
+                <li>Your repository from day one</li>
+              </ul>
+            </div>
+            <HeroCanvas />
           </div>
         </section>
 
-        {/* Work */}
-        <section id="work" style={{ ...section, background: BRAND.subtle, maxWidth: 'none' }} aria-labelledby="nw-work">
-          <div style={{ maxWidth: 1120, margin: '0 auto' }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
-              <h2 id="nw-work" style={h2}>Selected work</h2>
-              <SampleBadge>Sample projects</SampleBadge>
+        {/* --------------------------------------------------------- services */}
+        <section id="services" className="nw-section">
+          <div className="nw-shell">
+            <div className="nw-section-head">
+              <span className="nw-eyebrow">Services</span>
+              <h2 className="nw-h2">Four ways teams bring us in</h2>
             </div>
-            <div style={{ display: 'grid', gap: 16, marginTop: 28, gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
-              {WORK.map((w) => (
-                <article key={w.title} style={{ ...card, overflow: 'hidden', padding: 0 }}>
-                  <div aria-hidden style={{ height: 132, background: `linear-gradient(135deg, ${BRAND.accent}22, ${BRAND.accent}05)`, borderBottom: `1px solid ${BRAND.border}` }} />
-                  <div style={{ padding: 18 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: BRAND.accent, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{w.tag}</span>
-                    <h3 style={{ margin: '8px 0 0', fontSize: 16.5 }}>{w.title}</h3>
-                    <p style={{ color: BRAND.muted, marginTop: 6, marginBottom: 0, fontSize: 14, lineHeight: 1.6 }}>{w.blurb}</p>
+            <div className="nw-grid nw-grid--4">
+              {SERVICES.map((service) => (
+                <article key={service.title} className="nw-card nw-card--service">
+                  <span className="nw-service-icon">
+                    <ServiceIcon kind={service.icon} />
+                  </span>
+                  <h3 className="nw-h3">{service.title}</h3>
+                  <p className="nw-body">{service.body}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ------------------------------------------------------------- work */}
+        <section id="work" className="nw-section nw-section--tint">
+          <div className="nw-shell">
+            <div className="nw-section-head">
+              <span className="nw-eyebrow">Selected work</span>
+              <h2 className="nw-h2">Sample projects</h2>
+              <p className="nw-section-sub">
+                Illustrative engagements for this template — not real client work.
+              </p>
+            </div>
+            <div className="nw-grid nw-grid--3">
+              {WORK.map((item) => (
+                <article key={item.title} className="nw-card nw-card--work">
+                  <div className="nw-work-art">
+                    <WorkArt kind={item.art} />
+                  </div>
+                  <div className="nw-work-body">
+                    <span className="nw-tag">{item.tag}</span>
+                    <h3 className="nw-h3">{item.title}</h3>
+                    <p className="nw-body">{item.blurb}</p>
                   </div>
                 </article>
               ))}
@@ -271,171 +449,524 @@ export function BusinessWebsite() {
           </div>
         </section>
 
-        {/* About + Process */}
-        <section id="process" style={section} aria-labelledby="nw-process">
-          <h2 id="nw-process" style={h2}>How we work</h2>
-          <p style={lead}>
-            A small senior team, working in the open. No handoff cliffs, no surprise rewrites.
-          </p>
-          <ol style={{ display: 'grid', gap: 16, marginTop: 28, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', listStyle: 'none', padding: 0 }}>
-            {PROCESS.map((p) => (
-              <li key={p.step} style={card}>
-                <span style={{ fontSize: 12, fontWeight: 800, color: BRAND.accent }}>{p.step}</span>
-                <h3 style={{ margin: '6px 0 0', fontSize: 16.5 }}>{p.title}</h3>
-                <p style={{ color: BRAND.muted, marginTop: 6, marginBottom: 0, fontSize: 14, lineHeight: 1.6 }}>{p.body}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        {/* Testimonials */}
-        <section style={{ ...section, paddingTop: 8 }} aria-labelledby="nw-testimonials">
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
-            <h2 id="nw-testimonials" style={h2}>What clients say</h2>
-            <SampleBadge>Sample testimonials</SampleBadge>
-          </div>
-          <div style={{ display: 'grid', gap: 16, marginTop: 24, gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
-            {TESTIMONIALS.map((t, i) => (
-              <blockquote key={i} style={{ ...card, margin: 0 }}>
-                <p style={{ margin: 0, fontSize: 16, lineHeight: 1.6 }}>“{t.quote}”</p>
-                <footer style={{ marginTop: 12, color: BRAND.muted, fontSize: 13.5 }}>
-                  {t.name} · {t.role}
-                </footer>
-              </blockquote>
-            ))}
+        {/* ---------------------------------------------------------- process */}
+        <section id="process" className="nw-section">
+          <div className="nw-shell">
+            <div className="nw-section-head">
+              <span className="nw-eyebrow">Process</span>
+              <h2 className="nw-h2">How we work</h2>
+              <p className="nw-section-sub">A small senior team, working in the open. No handoff cliffs, no surprise rewrites.</p>
+            </div>
+            <ol className="nw-steps">
+              {PROCESS.map((item) => (
+                <li key={item.step} className="nw-step">
+                  <span className="nw-step-num">{item.step}</span>
+                  <h3 className="nw-h3">{item.title}</h3>
+                  <p className="nw-body">{item.body}</p>
+                </li>
+              ))}
+            </ol>
           </div>
         </section>
 
-        {/* Pricing */}
-        <section id="pricing" style={{ ...section, background: BRAND.subtle, maxWidth: 'none' }} aria-labelledby="nw-pricing">
-          <div style={{ maxWidth: 1120, margin: '0 auto' }}>
-            <h2 id="nw-pricing" style={h2}>Engagements</h2>
-            <p style={lead}>Indicative ranges. Every scope is quoted after discovery.</p>
-            <div style={{ display: 'grid', gap: 16, marginTop: 28, gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
-              {PLANS.map((plan) => (
-                <div key={plan.name} style={{ ...card, borderColor: plan.featured ? BRAND.accent : BRAND.border, borderWidth: plan.featured ? 2 : 1 }}>
-                  {plan.featured && <SampleBadge>Most chosen</SampleBadge>}
-                  <h3 style={{ margin: plan.featured ? '10px 0 0' : 0, fontSize: 17 }}>{plan.name}</h3>
-                  <p style={{ fontSize: 22, fontWeight: 750, margin: '8px 0 0', letterSpacing: '-0.02em' }}>{plan.price}</p>
-                  <p style={{ color: BRAND.muted, marginTop: 8, fontSize: 14, lineHeight: 1.6 }}>{plan.body}</p>
-                  <ul style={{ margin: '14px 0 0', padding: 0, listStyle: 'none', display: 'grid', gap: 8 }}>
-                    {plan.features.map((f) => (
-                      <li key={f} style={{ fontSize: 14, color: BRAND.ink, display: 'flex', gap: 8 }}>
-                        <span aria-hidden style={{ color: BRAND.accent, fontWeight: 700 }}>✓</span>
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <a href="#contact" style={{ ...(plan.featured ? btn : btnGhost), width: '100%', marginTop: 18 }}>Enquire</a>
-                </div>
+        {/* ----------------------------------------------------- testimonials */}
+        <section className="nw-section nw-section--ink">
+          <div className="nw-shell">
+            <div className="nw-section-head nw-section-head--center">
+              <span className="nw-eyebrow nw-eyebrow--light">Sample testimonials</span>
+              <h2 className="nw-h2 nw-h2--light">What clients say</h2>
+            </div>
+            <div className="nw-grid nw-grid--2">
+              {TESTIMONIALS.map((item) => (
+                <figure key={item.quote} className="nw-quote">
+                  <span className="nw-quote-mark" aria-hidden>
+                    &ldquo;
+                  </span>
+                  <blockquote>{item.quote}</blockquote>
+                  <figcaption>
+                    {item.name} · {item.role}
+                  </figcaption>
+                </figure>
               ))}
             </div>
           </div>
         </section>
 
-        {/* FAQ */}
-        <section id="faq" style={section} aria-labelledby="nw-faq">
-          <h2 id="nw-faq" style={h2}>Questions</h2>
-          <div style={{ marginTop: 24, display: 'grid', gap: 10, maxWidth: 760 }}>
-            {FAQS.map((f, i) => {
-              const open = openFaq === i;
-              return (
-                <div key={f.q} style={{ border: `1px solid ${BRAND.border}`, borderRadius: 14, overflow: 'hidden', background: BRAND.paper }}>
-                  <h3 style={{ margin: 0 }}>
-                    <button
-                      type="button"
-                      onClick={() => setOpenFaq(open ? null : i)}
-                      aria-expanded={open}
-                      aria-controls={`${formId}-faq-${i}`}
-                      style={{ width: '100%', textAlign: 'left', padding: '15px 17px', background: 'transparent', border: 0, cursor: 'pointer', fontWeight: 650, fontSize: 15.5, color: BRAND.ink, display: 'flex', justifyContent: 'space-between', gap: 12, fontFamily: 'inherit' }}
-                    >
-                      {f.q}
-                      <span aria-hidden style={{ color: BRAND.muted, flexShrink: 0 }}>{open ? '−' : '+'}</span>
-                    </button>
-                  </h3>
-                  {open && (
-                    <p id={`${formId}-faq-${i}`} style={{ margin: 0, padding: '0 17px 16px', color: BRAND.muted, fontSize: 14.5, lineHeight: 1.65 }}>
-                      {f.a}
-                    </p>
-                  )}
-                </div>
-              );
-            })}
+        {/* ---------------------------------------------------------- pricing */}
+        <section id="pricing" className="nw-section nw-section--tint">
+          <div className="nw-shell">
+            <div className="nw-section-head">
+              <span className="nw-eyebrow">Engagements</span>
+              <h2 className="nw-h2">Ways to work together</h2>
+              <p className="nw-section-sub">Indicative ranges. Every scope is quoted after discovery.</p>
+            </div>
+            <div className="nw-grid nw-grid--3 nw-grid--plans">
+              {PLANS.map((plan) => (
+                <article key={plan.name} className={`nw-plan${plan.featured ? ' nw-plan--featured' : ''}`}>
+                  {plan.featured && <span className="nw-plan-flag">Most chosen</span>}
+                  <h3 className="nw-plan-name">{plan.name}</h3>
+                  <p className="nw-plan-price">{plan.price}</p>
+                  <p className="nw-body">{plan.body}</p>
+                  <ul className="nw-plan-features">
+                    {plan.features.map((feature) => (
+                      <li key={feature}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
+                          <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                  <a href="#contact" className={`nw-btn ${plan.featured ? 'nw-btn--primary' : 'nw-btn--outline'} nw-btn--block`}>
+                    Enquire
+                  </a>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* Contact */}
-        <section id="contact" style={{ ...section, background: BRAND.subtle, maxWidth: 'none' }} aria-labelledby="nw-contact">
-          <div style={{ maxWidth: 620, margin: '0 auto' }}>
-            <h2 id="nw-contact" style={h2}>Start a conversation</h2>
-            <p style={lead}>Tell us what you are working on. This demonstration form does not send data anywhere.</p>
+        {/* -------------------------------------------------------------- faq */}
+        <section id="faq" className="nw-section">
+          <div className="nw-shell nw-shell--narrow">
+            <div className="nw-section-head">
+              <span className="nw-eyebrow">FAQ</span>
+              <h2 className="nw-h2">Questions</h2>
+            </div>
+            <div className="nw-faq">
+              {FAQS.map((item, index) => {
+                const open = openFaq === index;
+                return (
+                  <div key={item.q} className={`nw-faq-item${open ? ' nw-faq-item--open' : ''}`}>
+                    <button
+                      type="button"
+                      aria-expanded={open}
+                      aria-controls={`${uid}-faq-${index}`}
+                      onClick={() => setOpenFaq(open ? null : index)}
+                    >
+                      <span>{item.q}</span>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                    <div id={`${uid}-faq-${index}`} role="region" hidden={!open}>
+                      <p className="nw-body">{item.a}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
-            <form onSubmit={onSubmit} noValidate style={{ marginTop: 24, display: 'grid', gap: 16 }}>
-              <div>
-                <label htmlFor={`${formId}-name`} style={label}>Name</label>
+        {/* ---------------------------------------------------------- contact */}
+        <section id="contact" className="nw-section nw-section--tint">
+          <div className="nw-shell nw-shell--narrow">
+            <div className="nw-section-head nw-section-head--center">
+              <span className="nw-eyebrow">Contact</span>
+              <h2 className="nw-h2">Start a conversation</h2>
+              <p className="nw-section-sub">
+                Tell us what you are working on. This demonstration form validates your input and does not send data
+                anywhere.
+              </p>
+            </div>
+
+            <form className="nw-form" onSubmit={onSubmit} noValidate>
+              <div className="nw-field">
+                <label htmlFor={`${uid}-name`}>Name</label>
                 <input
-                  id={`${formId}-name`} value={form.name} style={input}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? `${formId}-name-err` : undefined}
+                  id={`${uid}-name`}
+                  value={form.name}
+                  autoComplete="name"
+                  aria-invalid={Boolean(errors.name)}
+                  aria-describedby={errors.name ? `${uid}-name-error` : undefined}
+                  onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
                 />
-                {errors.name && <p id={`${formId}-name-err`} style={err}>{errors.name}</p>}
+                {errors.name && (
+                  <p id={`${uid}-name-error`} className="nw-error">
+                    {errors.name}
+                  </p>
+                )}
               </div>
-              <div>
-                <label htmlFor={`${formId}-email`} style={label}>Email</label>
+
+              <div className="nw-field">
+                <label htmlFor={`${uid}-email`}>Email</label>
                 <input
-                  id={`${formId}-email`} type="email" value={form.email} style={input}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? `${formId}-email-err` : undefined}
+                  id={`${uid}-email`}
+                  type="email"
+                  value={form.email}
+                  autoComplete="email"
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? `${uid}-email-error` : undefined}
+                  onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
                 />
-                {errors.email && <p id={`${formId}-email-err`} style={err}>{errors.email}</p>}
+                {errors.email && (
+                  <p id={`${uid}-email-error`} className="nw-error">
+                    {errors.email}
+                  </p>
+                )}
               </div>
-              <div>
-                <label htmlFor={`${formId}-message`} style={label}>What do you need?</label>
+
+              <div className="nw-field">
+                <label htmlFor={`${uid}-message`}>What do you need?</label>
                 <textarea
-                  id={`${formId}-message`} rows={4} value={form.message} style={{ ...input, resize: 'vertical' }}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? `${formId}-message-err` : undefined}
+                  id={`${uid}-message`}
+                  rows={4}
+                  value={form.message}
+                  aria-invalid={Boolean(errors.message)}
+                  aria-describedby={errors.message ? `${uid}-message-error` : undefined}
+                  onChange={(event) => setForm((prev) => ({ ...prev, message: event.target.value }))}
                 />
-                {errors.message && <p id={`${formId}-message-err`} style={err}>{errors.message}</p>}
+                {errors.message && (
+                  <p id={`${uid}-message-error`} className="nw-error">
+                    {errors.message}
+                  </p>
+                )}
               </div>
 
-              <button type="submit" disabled={state === 'submitting'} style={{ ...btn, opacity: state === 'submitting' ? 0.65 : 1, cursor: state === 'submitting' ? 'not-allowed' : 'pointer' }}>
+              <button type="submit" className="nw-btn nw-btn--primary nw-btn--block" disabled={state === 'submitting'}>
                 {state === 'submitting' ? 'Sending…' : 'Send enquiry'}
               </button>
 
-              <p ref={statusRef} tabIndex={-1} role="status" aria-live="polite" style={{ margin: 0, fontSize: 14, minHeight: 20, color: state === 'error' ? '#b42318' : '#067647', fontWeight: 600 }}>
-                {state === 'success' && 'Thanks — your enquiry was captured by the demonstration form.'}
-                {state === 'error' && 'Something went wrong. Please try again.'}
+              <p role="status" aria-live="polite" className="nw-status">
+                {state === 'success'
+                  ? 'Thank you — in a real deployment this would reach the team inbox.'
+                  : state === 'error'
+                    ? 'Please check the highlighted fields.'
+                    : ''}
               </p>
             </form>
           </div>
         </section>
       </main>
 
-      <footer style={{ borderTop: `1px solid ${BRAND.border}`, padding: '28px 24px' }}>
-        <div style={{ maxWidth: 1120, margin: '0 auto', display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', color: BRAND.muted, fontSize: 13.5 }}>
-          <span style={{ fontWeight: 700, color: BRAND.ink }}>{BRAND.name}</span>
-          <span>Sample company for the Xroga AI Showcase.</span>
-          <nav aria-label="Footer" style={{ marginLeft: 'auto', display: 'flex', gap: 14 }}>
+      <footer className="nw-footer">
+        <div className="nw-shell nw-footer-inner">
+          <div>
+            <span className="nw-brand nw-brand--footer">
+              <span className="nw-brand-mark" aria-hidden>
+                N
+              </span>
+              {BRAND.name}
+            </span>
+            <p className="nw-footer-note">Sample company for the Xroga AI Showcase.</p>
+          </div>
+          <nav className="nw-footer-nav" aria-label="Footer">
             {NAV.slice(0, 4).map((item) => (
-              <a key={item.id} href={`#${item.id}`} style={{ color: BRAND.muted, textDecoration: 'none' }}>{item.label}</a>
+              <a key={item.id} href={`#${item.id}`}>
+                {item.label}
+              </a>
             ))}
           </nav>
         </div>
       </footer>
-
-      {/* Responsive nav swap without pulling in the app's Tailwind pipeline. */}
-      <style>{`
-        .nw-menu-btn { display: inline-flex; }
-        .nw-desktop-nav { display: none; }
-        .nw-desktop-cta { display: none; }
-        @media (min-width: 860px) {
-          .nw-menu-btn { display: none; }
-          .nw-desktop-nav { display: flex !important; }
-          .nw-desktop-cta { display: inline-flex !important; margin-left: 8px !important; }
-        }
-        @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
-      `}</style>
     </div>
   );
 }
+
+/* ----------------------------------------------------------------------- css */
+
+const CSS = `
+${productReset('.nw-root')}
+.nw-root {
+  --ink: ${BRAND.ink};
+  --paper: ${BRAND.paper};
+  --subtle: ${BRAND.subtle};
+  --border: ${BRAND.border};
+  --muted: ${BRAND.muted};
+  --accent: ${BRAND.accent};
+  --accent-deep: ${BRAND.accentDeep};
+  --accent-soft: ${BRAND.accentSoft};
+  background: var(--paper);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+.nw-root *, .nw-root *::before, .nw-root *::after { box-sizing: border-box; }
+.nw-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.nw-skip {
+  position: absolute; left: -9999px; top: 8px; z-index: 60;
+  background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 14px;
+}
+.nw-skip:focus { left: 16px; }
+
+.nw-shell { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+.nw-shell--narrow { max-width: 760px; }
+
+/* header */
+.nw-header {
+  position: sticky; top: 0; z-index: 50;
+  background: transparent; transition: background 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  border-bottom: 1px solid transparent;
+}
+.nw-header--solid {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom-color: var(--border);
+  box-shadow: 0 1px 24px rgba(11,17,32,0.05);
+}
+.nw-header-inner { display: flex; align-items: center; gap: 20px; height: 68px; }
+.nw-brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 15px; letter-spacing: -0.01em; color: var(--ink); text-decoration: none;
+}
+.nw-brand-mark {
+  display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9px;
+  background: linear-gradient(140deg, var(--accent), var(--accent-deep));
+  color: #fff; font-size: 14px; font-weight: 800;
+}
+.nw-nav { display: none; gap: 4px; margin-left: auto; }
+.nw-nav a {
+  padding: 8px 12px; border-radius: 8px; font-size: 14px; font-weight: 500;
+  color: var(--muted); text-decoration: none; transition: color 160ms ease, background 160ms ease;
+}
+.nw-nav a:hover { color: var(--ink); background: var(--subtle); }
+.nw-header-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.nw-nav ~ .nw-header-actions { margin-left: 0; }
+.nw-menu-toggle {
+  display: grid; place-items: center; width: 38px; height: 38px;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--paper); color: var(--ink); cursor: pointer;
+}
+.nw-mobile-menu {
+  display: grid; gap: 2px; padding: 8px 24px 16px;
+  background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+}
+.nw-mobile-menu a {
+  padding: 11px 12px; border-radius: 9px; font-size: 15px; font-weight: 500;
+  color: var(--ink); text-decoration: none;
+}
+.nw-mobile-menu a:hover { background: var(--subtle); }
+
+/* buttons */
+.nw-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 22px; border-radius: 999px; border: 1px solid transparent;
+  font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, color 160ms ease;
+}
+.nw-btn--sm { padding: 8px 16px; font-size: 13px; }
+.nw-btn--block { width: 100%; }
+.nw-btn--primary {
+  background: linear-gradient(140deg, var(--accent), var(--accent-deep)); color: #fff;
+  box-shadow: 0 8px 20px -8px rgba(37,99,235,0.6);
+}
+.nw-btn--primary:hover { transform: translateY(-1px); box-shadow: 0 14px 28px -10px rgba(37,99,235,0.62); }
+.nw-btn--primary:disabled { opacity: 0.65; cursor: progress; transform: none; }
+.nw-btn--ghost { background: var(--paper); color: var(--ink); border-color: var(--border); }
+.nw-btn--ghost:hover { background: var(--subtle); }
+.nw-btn--outline { background: transparent; color: var(--ink); border-color: var(--border); }
+.nw-btn--outline:hover { border-color: var(--ink); }
+.nw-root :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* type */
+.nw-eyebrow {
+  display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent);
+}
+.nw-eyebrow--light { color: #93b4fd; }
+.nw-display {
+  margin: 14px 0 0; font-size: clamp(34px, 5.4vw, 62px); line-height: 1.04;
+  letter-spacing: -0.035em; font-weight: 800;
+}
+.nw-display em { font-style: normal; color: var(--accent); }
+.nw-h2 {
+  margin: 10px 0 0; font-size: clamp(25px, 3vw, 38px); line-height: 1.12;
+  letter-spacing: -0.028em; font-weight: 750;
+}
+.nw-h2--light { color: #fff; }
+.nw-h3 { margin: 0; font-size: 16px; font-weight: 650; letter-spacing: -0.012em; }
+.nw-body { margin: 6px 0 0; font-size: 14px; line-height: 1.62; color: var(--muted); }
+.nw-lede { margin: 18px 0 0; max-width: 46ch; font-size: clamp(15px, 1.6vw, 18px); line-height: 1.62; color: var(--muted); }
+.nw-section-sub { margin: 12px 0 0; max-width: 62ch; font-size: 15px; line-height: 1.62; color: var(--muted); }
+.nw-section-head { margin-bottom: 40px; }
+.nw-section-head--center { text-align: center; }
+.nw-section-head--center .nw-section-sub { margin-inline: auto; }
+
+/* hero */
+.nw-hero { position: relative; overflow: hidden; padding: clamp(56px, 9vw, 104px) 0 clamp(48px, 7vw, 88px); }
+.nw-hero-glow {
+  position: absolute; inset: -20% -10% auto -10%; height: 620px; pointer-events: none;
+  background:
+    radial-gradient(48% 60% at 22% 24%, rgba(37,99,235,0.16), transparent 70%),
+    radial-gradient(42% 52% at 82% 8%, rgba(30,64,175,0.14), transparent 70%);
+}
+.nw-hero-grid { position: relative; display: grid; gap: clamp(40px, 6vw, 64px); align-items: center; }
+.nw-hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.nw-hero-points {
+  display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 30px 0 0; padding: 0; list-style: none;
+  font-size: 13px; font-weight: 500; color: var(--muted);
+}
+.nw-hero-points li { display: flex; align-items: center; gap: 8px; }
+.nw-hero-points li::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex: none;
+}
+
+/* hero canvas */
+.nw-hero-canvas { perspective: 1400px; }
+.nw-hero-window {
+  border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--paper);
+  box-shadow: 0 40px 80px -40px rgba(11,17,32,0.34), 0 2px 8px rgba(11,17,32,0.05);
+  transform: rotateY(-7deg) rotateX(3deg);
+}
+.nw-hero-chrome {
+  display: flex; align-items: center; gap: 6px; padding: 11px 14px;
+  background: var(--subtle); border-bottom: 1px solid var(--border);
+}
+.nw-hero-chrome span { width: 9px; height: 9px; border-radius: 50%; background: #d3d8e0; }
+.nw-hero-body { display: grid; grid-template-columns: 96px 1fr; min-height: 236px; }
+.nw-hero-side {
+  display: grid; align-content: start; gap: 11px; padding: 18px 14px;
+  border-right: 1px solid var(--border); background: #fbfcfd;
+}
+.nw-hero-side span { height: 7px; border-radius: 4px; background: var(--accent-soft); }
+.nw-hero-main { padding: 18px; display: grid; gap: 16px; align-content: start; }
+.nw-hero-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.nw-hero-kpi {
+  display: grid; gap: 8px; padding: 11px; border: 1px solid var(--border); border-radius: 10px; background: var(--paper);
+}
+.nw-hero-kpi-label { height: 6px; width: 46%; border-radius: 3px; background: #dfe3ea; }
+.nw-hero-kpi-bar { height: 9px; border-radius: 5px; background: linear-gradient(90deg, var(--accent), #60a5fa); }
+.nw-hero-chart { width: 100%; height: 96px; }
+
+/* sections */
+.nw-section { padding: clamp(56px, 8vw, 96px) 0; }
+.nw-section--tint { background: var(--subtle); border-block: 1px solid var(--border); }
+.nw-section--ink { background: var(--ink); }
+
+/* grids + cards */
+.nw-grid { display: grid; gap: 18px; }
+.nw-card {
+  background: var(--paper); border: 1px solid var(--border); border-radius: 14px;
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+.nw-card--service { padding: 22px; }
+.nw-card--service:hover {
+  transform: translateY(-3px); border-color: #cfd6e0;
+  box-shadow: 0 22px 40px -26px rgba(11,17,32,0.3);
+}
+.nw-service-icon {
+  display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 16px;
+  border-radius: 11px; background: var(--accent-soft); color: var(--accent-deep);
+}
+.nw-card--work { overflow: hidden; padding: 0; }
+.nw-card--work:hover { transform: translateY(-3px); box-shadow: 0 26px 44px -28px rgba(11,17,32,0.32); }
+.nw-work-art { height: 168px; border-bottom: 1px solid var(--border); }
+.nw-work-art svg { display: block; height: 100%; width: 100%; }
+.nw-work-body { padding: 18px 20px 22px; }
+.nw-tag {
+  display: inline-block; margin-bottom: 10px; padding: 3px 9px; border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent-deep);
+  font-size: 10px; font-weight: 750; letter-spacing: 0.07em; text-transform: uppercase;
+}
+
+/* steps */
+.nw-steps { display: grid; gap: 18px; margin: 0; padding: 0; list-style: none; counter-reset: none; }
+.nw-step { position: relative; padding: 24px 22px; border-radius: 14px; background: var(--subtle); border: 1px solid var(--border); }
+.nw-step-num {
+  display: block; margin-bottom: 12px; font-size: 12px; font-weight: 800;
+  letter-spacing: 0.1em; color: var(--accent);
+}
+
+/* testimonials */
+.nw-quote {
+  margin: 0; padding: 30px 28px; border-radius: 16px;
+  background: rgba(255,255,255,0.055); border: 1px solid rgba(255,255,255,0.11);
+}
+.nw-quote-mark { display: block; font-size: 44px; line-height: 0.7; color: #93b4fd; }
+.nw-quote blockquote {
+  margin: 14px 0 0; font-size: clamp(16px, 1.8vw, 19px); line-height: 1.56; color: #fff; letter-spacing: -0.014em;
+}
+.nw-quote figcaption { margin-top: 18px; font-size: 13px; color: #9aa8bd; }
+
+/* plans */
+.nw-grid--plans { align-items: stretch; }
+.nw-plan {
+  position: relative; display: flex; flex-direction: column; gap: 4px;
+  padding: 28px 24px; border-radius: 16px; background: var(--paper); border: 1px solid var(--border);
+}
+.nw-plan--featured {
+  border-color: var(--accent); box-shadow: 0 26px 50px -28px rgba(37,99,235,0.42);
+}
+.nw-plan-flag {
+  position: absolute; top: -11px; left: 24px; padding: 4px 11px; border-radius: 999px;
+  background: var(--accent); color: #fff; font-size: 10px; font-weight: 750;
+  letter-spacing: 0.07em; text-transform: uppercase;
+}
+.nw-plan-name { margin: 0; font-size: 13px; font-weight: 650; color: var(--muted); letter-spacing: 0.02em; }
+.nw-plan-price { margin: 6px 0 0; font-size: 30px; font-weight: 800; letter-spacing: -0.03em; }
+.nw-plan-features { display: grid; gap: 10px; margin: 20px 0 26px; padding: 0; list-style: none; }
+.nw-plan-features li { display: flex; align-items: flex-start; gap: 9px; font-size: 14px; color: var(--ink); }
+.nw-plan-features svg { flex: none; margin-top: 3px; color: var(--accent); }
+.nw-plan .nw-btn { margin-top: auto; }
+
+/* faq */
+.nw-faq { display: grid; gap: 10px; }
+.nw-faq-item { border: 1px solid var(--border); border-radius: 12px; background: var(--paper); overflow: hidden; }
+.nw-faq-item--open { border-color: #cfd6e0; box-shadow: 0 14px 30px -22px rgba(11,17,32,0.3); }
+.nw-faq-item button {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%;
+  padding: 17px 20px; background: none; border: 0; cursor: pointer; text-align: left;
+  font-size: 15px; font-weight: 600; color: var(--ink); font-family: inherit;
+}
+.nw-faq-item button svg { flex: none; color: var(--muted); transition: transform 200ms ease; }
+.nw-faq-item--open button svg { transform: rotate(180deg); }
+.nw-faq-item > div { padding: 0 20px 18px; }
+.nw-faq-item > div .nw-body { margin: 0; }
+
+/* form */
+.nw-form {
+  display: grid; gap: 18px; padding: 30px 26px; border-radius: 18px;
+  background: var(--paper); border: 1px solid var(--border);
+  box-shadow: 0 30px 60px -40px rgba(11,17,32,0.3);
+}
+.nw-field { display: grid; gap: 7px; }
+.nw-field label { font-size: 13px; font-weight: 600; }
+.nw-field input, .nw-field textarea {
+  width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px;
+  background: var(--paper); color: var(--ink); font-size: 15px; font-family: inherit; resize: vertical;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+.nw-field input:focus, .nw-field textarea:focus {
+  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.14);
+}
+.nw-field [aria-invalid="true"] { border-color: #dc2626; }
+.nw-error { margin: 0; font-size: 12.5px; color: #b91c1c; }
+.nw-status { margin: 0; min-height: 20px; font-size: 13.5px; color: var(--accent-deep); }
+
+/* footer */
+.nw-footer { padding: 40px 0; background: var(--ink); color: #9aa8bd; }
+.nw-footer-inner { display: grid; gap: 22px; }
+.nw-brand--footer { color: #fff; }
+.nw-footer-note { margin: 12px 0 0; font-size: 13px; }
+.nw-footer-nav { display: flex; flex-wrap: wrap; gap: 18px; }
+.nw-footer-nav a { font-size: 13px; color: #9aa8bd; text-decoration: none; }
+.nw-footer-nav a:hover { color: #fff; }
+
+/* responsive */
+@media (min-width: 700px) {
+  .nw-grid--2 { grid-template-columns: repeat(2, 1fr); }
+  .nw-grid--3 { grid-template-columns: repeat(3, 1fr); }
+  .nw-grid--4 { grid-template-columns: repeat(2, 1fr); }
+  .nw-steps { grid-template-columns: repeat(2, 1fr); }
+  .nw-footer-inner { grid-template-columns: 1fr auto; align-items: end; }
+}
+@media (min-width: 980px) {
+  .nw-nav { display: flex; }
+  .nw-menu-toggle { display: none; }
+  .nw-grid--4 { grid-template-columns: repeat(4, 1fr); }
+  .nw-steps { grid-template-columns: repeat(4, 1fr); }
+  .nw-hero-grid { grid-template-columns: 1.04fr 0.96fr; }
+  .nw-form { padding: 36px 34px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nw-root *, .nw-root *::before, .nw-root *::after {
+    animation-duration: 0.001ms !important; transition-duration: 0.001ms !important;
+  }
+  .nw-hero-window { transform: none; }
+  .nw-card:hover, .nw-btn--primary:hover { transform: none; }
+}
+`;

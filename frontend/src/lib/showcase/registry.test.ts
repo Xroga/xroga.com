@@ -34,6 +34,23 @@ test('lookup helpers resolve and reject cleanly', () => {
   assert.equal(getShowcaseById('not-a-template'), null);
 });
 
+test('all six products are live, so every card can show a real preview', () => {
+  const building = SHOWCASE_TEMPLATES.filter((template) => template.status === 'building');
+  assert.deepEqual(
+    building.map((template) => template.slug),
+    [],
+    'a template marked building has no renderer and shows no preview',
+  );
+});
+
+test('a live template must declare a stable release version', () => {
+  for (const template of SHOWCASE_TEMPLATES) {
+    if (!isLive(template)) continue;
+    // A live product should not still be advertising a 0.x template.
+    assert.ok(!template.templateVersion.startsWith('0.'), `${template.id} is live at ${template.templateVersion}`);
+  }
+});
+
 test('only live templates advertise a preview route', () => {
   for (const template of SHOWCASE_TEMPLATES) {
     const route = previewRouteFor(template);

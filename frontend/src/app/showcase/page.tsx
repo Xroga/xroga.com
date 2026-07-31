@@ -46,8 +46,10 @@ export default function ShowcasePage() {
       </div>
 
       <p className="mt-10 max-w-2xl text-xs text-[var(--text-muted)]">
-        Products marked as in development are being prepared for the template workflow. Sample content inside each
-        product is clearly labelled and is not real customer, property, or booking data.
+        Each card above is a live, scaled preview of the running product, not a screenshot. Sample content inside every
+        product is clearly labelled and is not real customer, property, or booking data. The mobile template generates an
+        Expo project — no app store listing or signed release exists — and the AI workspace runs in a labelled
+        demonstration mode rather than calling a model.
       </p>
     </main>
   );

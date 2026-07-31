@@ -26,19 +26,44 @@ const scriptSources = [
   ...(process.env.NODE_ENV === 'development' ? ["'unsafe-eval'"] : []),
 ].join(' ');
 
-const securityHeaders = [
+const csp = (frameAncestors) =>
+  `default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors ${frameAncestors}; object-src 'none'; script-src ${scriptSources}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src ${connectSources}; frame-src 'self' https:; worker-src 'self' blob:`;
+
+const baseSecurityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
-  { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(self), geolocation=()' },
   { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
   { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
   { key: 'X-DNS-Prefetch-Control', value: 'off' },
-  {
-    key: 'Content-Security-Policy',
-    value: `default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src ${scriptSources}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src ${connectSources}; frame-src 'self' https:; worker-src 'self' blob:`,
-  },
 ];
+
+const securityHeaders = [
+  ...baseSecurityHeaders,
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'Content-Security-Policy', value: csp("'none'") },
+];
+
+/**
+ * Showcase product previews are the one surface we frame ourselves: the cards and
+ * the device preview embed the real route so they can never advertise something the
+ * product does not render.
+ *
+ * Relaxing this to `'self'` is safe for these paths specifically. A preview page is
+ * public, carries no session or account state, is `noindex`, and contains no action
+ * that affects a user's account — so there is nothing for a clickjacker to hijack.
+ * Third-party framing is still refused, and every other route keeps DENY / 'none'.
+ */
+const framableSecurityHeaders = [
+  ...baseSecurityHeaders,
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+  { key: 'Content-Security-Policy', value: csp("'self'") },
+];
+
+// Exactly one rule must match any given path, so the catch-all excludes the
+// preview paths rather than relying on header-override ordering.
+const PREVIEW_SOURCE = '/showcase/:slug/preview';
+const NON_PREVIEW_SOURCE = '/((?!showcase/[^/]+/preview$).*)';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -52,7 +77,10 @@ const nextConfig = {
     ],
   },
   async headers() {
-    return [{ source: '/(.*)', headers: securityHeaders }];
+    return [
+      { source: PREVIEW_SOURCE, headers: framableSecurityHeaders },
+      { source: NON_PREVIEW_SOURCE, headers: securityHeaders },
+    ];
   },
   async redirects() {
     return [
