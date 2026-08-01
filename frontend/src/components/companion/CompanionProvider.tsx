@@ -12,6 +12,14 @@ import {
 
 const PROFILE_SAVE_DELAY_MS = 900;
 
+/** Persist the current, validated companion snapshot immediately. */
+export async function persistCompanionPreferencesNow(): Promise<void> {
+  const body: Partial<Profile> = {
+    companion_preferences: companionPreferencesSnapshot(useCompanionStore.getState()),
+  };
+  await api.profile.update(body);
+}
+
 export function CompanionProvider({ children }: { children: ReactNode }) {
   const hydratedRef = useRef(false);
   const hydratingStoreRef = useRef(false);
@@ -93,8 +101,7 @@ export function CompanionProvider({ children }: { children: ReactNode }) {
       }
       if (persistTimerRef.current) clearTimeout(persistTimerRef.current);
       persistTimerRef.current = setTimeout(() => {
-        const body: Partial<Profile> = { companion_preferences: companionPreferencesSnapshot(useCompanionStore.getState()) };
-        void api.profile.update(body).catch(() => {
+        void persistCompanionPreferencesNow().catch(() => {
           // Local preferences stay available; authenticated server persistence can retry on the next change.
         });
       }, PROFILE_SAVE_DELAY_MS);

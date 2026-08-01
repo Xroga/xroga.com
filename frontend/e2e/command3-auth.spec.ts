@@ -505,9 +505,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const companionName = page.getByLabel('Companion name');
   await companionName.fill(`Xo-${run.slice(0, 6)}`);
   await companionName.blur();
-  await page.waitForTimeout(1_300);
-  await page.reload();
-  await expect(page.getByLabel('Companion name')).toHaveValue(`Xo-${run.slice(0, 6)}`);
+  await expect(page.getByText('Saved.', { exact: true })).toBeVisible();
   let companionProfilePersistence: 'verified_local_pr' | 'verified_server' = 'verified_local_pr';
   // PR checks intentionally dry-run migrations. The production launch workflow
   // runs after main applies the migration and independently verifies durable state.
@@ -523,6 +521,8 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     }).toBe(`Xo-${run.slice(0, 6)}`);
     companionProfilePersistence = 'verified_server';
   }
+  await page.reload();
+  await expect(page.getByLabel('Companion name')).toHaveValue(`Xo-${run.slice(0, 6)}`);
 
   await page.goto('/settings');
   await page.getByRole('tab', { name: 'Security' }).click();
