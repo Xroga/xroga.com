@@ -37,14 +37,32 @@ test('every skin asset actually resolves', async ({ request }) => {
   }
 });
 
-test('clicking Smoky opens nothing — the character is decorative', async ({ page }) => {
+/**
+ * Smoky is interactive again, but only for usage.
+ *
+ * The old control panel — voice toggles, a status readout, dictation, a feed control
+ * — stays removed; that is what made the click intrusive. Clicking now opens exactly
+ * one thing, so this asserts both halves: usage opens, and the panel has not returned.
+ */
+test('clicking Smoky opens usage, and not the old control panel', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('button', { name: /open .*companion/i })).toHaveCount(0);
-  await expect(page.getByRole('region', { name: /companion panel/i })).toHaveCount(0);
 
-  // Decorative artwork should be hidden from assistive technology.
-  const image = page.locator('img.xv-companion-renderer').first();
-  await expect(image).toHaveAttribute('aria-hidden', 'true');
+  const trigger = page.getByRole('button', { name: /show usage/i }).first();
+  await expect(trigger).toBeVisible();
+
+  // Interactive artwork must be reachable, not hidden from assistive technology.
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+
+  await trigger.click();
+  await expect(page.getByRole('dialog', { name: /usage/i })).toBeVisible();
+
+  // The removed panel and its controls must not come back with it.
+  await expect(page.getByRole('region', { name: /companion panel/i })).toHaveCount(0);
+  await expect(page.getByRole('switch', { name: /voice/i })).toHaveCount(0);
+
+  // Escape closes it.
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog', { name: /usage/i })).toHaveCount(0);
 });
 
 test('Smoky never speaks: no speech synthesis is invoked', async ({ page }) => {

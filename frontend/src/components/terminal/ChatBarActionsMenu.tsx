@@ -1,0 +1,215 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { Bug, Check, ListChecks, Plus, ScrollText, Sparkles, X } from 'lucide-react';
+import {
+  COMPOSER_PRESETS,
+  COMPOSER_SKILLS,
+  buildComposerPreamble,
+  useComposerToolsStore,
+} from '@/store/useComposerToolsStore';
+import { cn } from '@/lib/utils';
+
+/**
+ * The composer's extra actions, behind one compact trigger.
+ *
+ * The toolbar was already at capacity — Black Hole, integrations, GitHub, Vercel, and
+ * it scrolls horizontally on a phone. Adding four more chips inline would have made
+ * the bar unusable, which is exactly what you asked me to avoid. One `+` opens a menu
+ * instead, so the resting bar gains a single 28px control.
+ *
+ * A dot on the trigger marks that rules or packs are active, because a prompt being
+ * silently modified is worse than no feature at all.
+ */
+export function ChatBarActionsMenu({
+  onInsert,
+  disabled,
+  className,
+}: {
+  /** Fills the composer with a scaffold for the user to edit. Never auto-sends. */
+  onInsert: (text: string) => void;
+  disabled?: boolean;
+  className?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [panel, setPanel] = useState<'menu' | 'skills' | 'rules'>('menu');
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  const rules = useComposerToolsStore((s) => s.rules);
+  const setRules = useComposerToolsStore((s) => s.setRules);
+  const enabledSkills = useComposerToolsStore((s) => s.enabledSkills);
+  const toggleSkill = useComposerToolsStore((s) => s.toggleSkill);
+
+  const activeCount = enabledSkills.length + (rules.trim() ? 1 : 0);
+  const preamble = buildComposerPreamble(rules, enabledSkills);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
+
+  // Always reopen on the menu — landing back inside the rules editor after a close
+  // is disorienting when the trigger looks like a single generic button.
+  useEffect(() => {
+    if (!open) setPanel('menu');
+  }, [open]);
+
+  function insert(text: string) {
+    onInsert(text);
+    setOpen(false);
+  }
+
+  return (
+    <div ref={rootRef} className={cn('relative shrink-0', className)}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        disabled={disabled}
+        className="xv-cba-trigger"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label="More composer actions"
+        title="Plan, debug, skills, and rules"
+      >
+        <Plus className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-45')} aria-hidden="true" />
+        {activeCount > 0 && <span className="xv-cba-dot" aria-hidden="true" />}
+      </button>
+
+      {open && (
+        <div className="xv-cba-menu" role="dialog" aria-label="Composer actions">
+          {panel === 'menu' && (
+            <>
+              <button type="button" className="xv-cba-item" onClick={() => insert(COMPOSER_PRESETS.plan)}>
+                <ListChecks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text">
+                  <b>Plan before build</b>
+                  <i>Get the approach first, change nothing yet</i>
+                </span>
+              </button>
+
+              <button type="button" className="xv-cba-item" onClick={() => insert(COMPOSER_PRESETS.debug)}>
+                <Bug className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text">
+                  <b>Debug an error</b>
+                  <i>Paste the error, get the root cause</i>
+                </span>
+              </button>
+
+              <div className="xv-cba-sep" role="separator" />
+
+              <button type="button" className="xv-cba-item" onClick={() => setPanel('skills')}>
+                <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text">
+                  <b>Skills</b>
+                  <i>
+                    {enabledSkills.length > 0
+                      ? `${enabledSkills.length} active`
+                      : 'Reusable instruction packs'}
+                  </i>
+                </span>
+              </button>
+
+              <button type="button" className="xv-cba-item" onClick={() => setPanel('rules')}>
+                <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text">
+                  <b>Rules</b>
+                  <i>{rules.trim() ? 'Applied to every prompt' : 'Standing instructions you write'}</i>
+                </span>
+              </button>
+
+              {/* The user sees exactly what gets attached. A prompt silently rewritten
+                  behind the composer is the failure mode this avoids. */}
+              {preamble && (
+                <p className="xv-cba-note">
+                  {activeCount} {activeCount === 1 ? 'instruction is' : 'instructions are'} added
+                  above every prompt you send.
+                </p>
+              )}
+            </>
+          )}
+
+          {panel === 'skills' && (
+            <>
+              <div className="xv-cba-head">
+                <button type="button" onClick={() => setPanel('menu')} className="xv-cba-back">
+                  Back
+                </button>
+                <span>Skills</span>
+                <button type="button" onClick={() => setOpen(false)} aria-label="Close">
+                  <X className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+              </div>
+              <p className="xv-cba-note">
+                Each pack adds its instruction above your prompt. Nothing is sent until you press
+                send.
+              </p>
+              {COMPOSER_SKILLS.map((skill) => {
+                const on = enabledSkills.includes(skill.id);
+                return (
+                  <button
+                    key={skill.id}
+                    type="button"
+                    role="switch"
+                    aria-checked={on}
+                    onClick={() => toggleSkill(skill.id)}
+                    className={cn('xv-cba-item', on && 'is-active')}
+                  >
+                    <span className={cn('xv-cba-check', on && 'is-on')} aria-hidden="true">
+                      {on && <Check className="h-2.5 w-2.5" />}
+                    </span>
+                    <span className="xv-cba-item__text">
+                      <b>{skill.label}</b>
+                      <i>{skill.description}</i>
+                    </span>
+                  </button>
+                );
+              })}
+            </>
+          )}
+
+          {panel === 'rules' && (
+            <>
+              <div className="xv-cba-head">
+                <button type="button" onClick={() => setPanel('menu')} className="xv-cba-back">
+                  Back
+                </button>
+                <span>Rules</span>
+                <button type="button" onClick={() => setOpen(false)} aria-label="Close">
+                  <X className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+              </div>
+              <p className="xv-cba-note">
+                Standing instructions added above every prompt. Stored on this device only.
+              </p>
+              <textarea
+                value={rules}
+                onChange={(e) => setRules(e.target.value)}
+                rows={6}
+                spellCheck={false}
+                placeholder={'Always use TypeScript strict mode.\nPrefer server components.\nNever add a dependency without asking.'}
+                className="xv-cba-textarea"
+                aria-label="Standing rules"
+              />
+              {rules.trim() && (
+                <button type="button" className="xv-cba-clear" onClick={() => setRules('')}>
+                  Clear rules
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

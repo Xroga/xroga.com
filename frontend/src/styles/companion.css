@@ -303,3 +303,146 @@ img.xv-companion-renderer[data-operation='idle'] { animation-duration: 14s; }
 @media (prefers-reduced-motion: reduce) {
   .xv-companion-stage img.xv-companion-renderer { animation: none; }
 }
+
+/* ---------------------------------------------------------------------------
+   Smoky's laptop loop, and the usage popover.
+
+   The costumes are single static renders, not sprite sheets, so the laptop is a
+   CSS-composed prop rather than new artwork — one shape animates over all five
+   skins instead of needing ten more images. Swap it for real renders later without
+   touching the loop: only the two `i` elements would change.
+
+   The cycle: the laptop rises out of the pocket, Smoky works on it (a lid flicker
+   standing in for typing), then it drops back down and rests. It runs on the same
+   clock as the existing pose loop so the two read as one character rather than two
+   independent animations.
+   --------------------------------------------------------------------------- */
+
+.xv-companion-laptop {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  z-index: 2;
+  width: 42%;
+  height: 26%;
+  pointer-events: none;
+  transform-origin: 50% 100%;
+  animation: xv-companion-laptop-cycle 9s ease-in-out infinite;
+}
+
+.xv-companion-laptop__base,
+.xv-companion-laptop__screen {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: block;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #3a4152 0%, #232833 100%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45);
+}
+.xv-companion-laptop__base { bottom: 0; height: 26%; border-radius: 1px 1px 3px 3px; }
+.xv-companion-laptop__screen {
+  bottom: 26%;
+  height: 74%;
+  transform-origin: 50% 100%;
+  background: linear-gradient(180deg, #59d1ff 0%, #2a7fd4 100%);
+  animation: xv-companion-laptop-type 9s ease-in-out infinite;
+}
+
+@keyframes xv-companion-laptop-cycle {
+  /* pocketed */
+  0%, 8% { opacity: 0; transform: translate(-50%, 60%) scale(0.6); }
+  /* drawn out */
+  14% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  /* in use */
+  14.001%, 68% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  /* put away */
+  78%, 100% { opacity: 0; transform: translate(-50%, 60%) scale(0.6); }
+}
+
+/* The lid brightness shifts while the laptop is out — a stand-in for typing that
+   costs no extra elements and reads at 40px. */
+@keyframes xv-companion-laptop-type {
+  0%, 14% { filter: brightness(1); }
+  22% { filter: brightness(1.35); }
+  30% { filter: brightness(0.95); }
+  38% { filter: brightness(1.3); }
+  46% { filter: brightness(1); }
+  54% { filter: brightness(1.28); }
+  62%, 100% { filter: brightness(1); }
+}
+
+/* Hero and preview keep the character clean — the prop belongs on the working
+   surfaces, not on a marketing portrait or a settings swatch. */
+.xv-companion--hero .xv-companion-laptop,
+.xv-companion--preview .xv-companion-laptop { display: none; }
+
+.xv-companion-trigger { position: relative; cursor: pointer; }
+
+/* ---- usage popover */
+
+.xv-companion-usage {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  z-index: 90;
+  width: 210px;
+  padding: 0.6rem;
+  border-radius: 0.65rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  background: var(--surface-raised, var(--card));
+  box-shadow: 0 18px 44px -18px rgba(0, 0, 0, 0.5);
+  text-align: left;
+}
+.xv-companion-usage__title {
+  margin: 0 0 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-primary, var(--foreground));
+}
+.xv-companion-usage__row { margin-bottom: 0.5rem; }
+.xv-companion-usage__label {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.64rem;
+  color: var(--text-secondary, var(--muted));
+}
+.xv-companion-usage__label b { font-weight: 700; color: var(--text-primary, var(--foreground)); }
+.xv-companion-usage__track {
+  display: block;
+  height: 5px;
+  margin-top: 0.25rem;
+  border-radius: 999px;
+  background: var(--surface-inset, rgba(127, 127, 127, 0.15));
+  overflow: hidden;
+}
+.xv-companion-usage__track i { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
+/* Unknown is drawn as a hatched track, so it cannot be misread as "zero left". */
+.xv-companion-usage__track.is-unknown {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--surface-inset, rgba(127, 127, 127, 0.15)) 0 4px,
+    transparent 4px 8px
+  );
+}
+.xv-companion-usage__muted {
+  margin: 0 0 0.4rem;
+  font-size: 0.64rem;
+  line-height: 1.5;
+  color: var(--text-muted, var(--muted));
+}
+.xv-companion-usage__link {
+  display: inline-block;
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-companion-laptop,
+  .xv-companion-laptop__screen { animation: none; }
+  /* Without the cycle the prop would sit at its 0% keyframe, invisible — so it is
+     simply not shown rather than left as a stuck artefact. */
+  .xv-companion-laptop { display: none; }
+}
