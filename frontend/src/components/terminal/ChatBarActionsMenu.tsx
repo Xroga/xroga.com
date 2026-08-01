@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Bug, Check, ListChecks, Plus, ScrollText, Sparkles, X } from 'lucide-react';
+import { Blocks, Bug, Check, ChevronRight, ListChecks, Paperclip, Plus, ScrollText, SlashSquare, Sparkles, X } from 'lucide-react';
 import {
   COMPOSER_PRESETS,
   COMPOSER_SKILLS,
@@ -23,11 +23,18 @@ import { cn } from '@/lib/utils';
  */
 export function ChatBarActionsMenu({
   onInsert,
+  onAddFiles,
+  onOpenConnectors,
+  connectorsNeedingAttention = 0,
   disabled,
   className,
 }: {
   /** Fills the composer with a scaffold for the user to edit. Never auto-sends. */
   onInsert: (text: string) => void;
+  onAddFiles?: () => void;
+  onOpenConnectors?: () => void;
+  /** Drives the "n needs reconnection" note. 0 means everything is connected. */
+  connectorsNeedingAttention?: number;
   disabled?: boolean;
   className?: string;
 }) {
@@ -90,6 +97,43 @@ export function ChatBarActionsMenu({
         <div className="xv-cba-menu" role="dialog" aria-label="Composer actions">
           {panel === 'menu' && (
             <>
+              {/* Attach and connectors come first: they are what a `+` means in a
+                  composer, and folding them in here is what let the toolbar row of
+                  GitHub / Vercel / Integrations chips above the input go away. */}
+              {onAddFiles && (
+                <button type="button" className="xv-cba-item" onClick={() => { onAddFiles(); setOpen(false); }}>
+                  <Paperclip className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span className="xv-cba-item__text">
+                    <b>Add files or photos</b>
+                  </span>
+                  <kbd className="xv-cba-kbd">Ctrl+U</kbd>
+                </button>
+              )}
+
+              <button type="button" className="xv-cba-item" onClick={() => insert('/')}>
+                <SlashSquare className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text">
+                  <b>Slash commands</b>
+                </span>
+              </button>
+
+              {onOpenConnectors && (
+                <button type="button" className="xv-cba-item" onClick={() => { onOpenConnectors(); setOpen(false); }}>
+                  <Blocks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span className="xv-cba-item__text">
+                    <b>Connectors</b>
+                  </span>
+                  {connectorsNeedingAttention > 0 && (
+                    <span className="xv-cba-hint">
+                      {connectorsNeedingAttention} needs reconnection
+                    </span>
+                  )}
+                  <ChevronRight className="h-3 w-3 shrink-0 opacity-50" aria-hidden="true" />
+                </button>
+              )}
+
+              <div className="xv-cba-sep" role="separator" />
+
               <button type="button" className="xv-cba-item" onClick={() => insert(COMPOSER_PRESETS.plan)}>
                 <ListChecks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text">

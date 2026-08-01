@@ -5,9 +5,9 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { ChatBarActionsMenu } from './ChatBarActionsMenu';
 import { buildComposerPreamble, useComposerToolsStore } from '@/store/useComposerToolsStore';
 import { BlackHoleVButton } from './BlackHoleVButton';
+import { RepoContextBar } from './RepoContextBar';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
-import { useThemeStore } from '@/store/useThemeStore';
 import { uploadChatImage, type ChatAttachment } from '@/lib/api';
 import { IntegrationsModal } from './IntegrationsModal';
 import { GithubRepoModal } from './GithubRepoModal';
@@ -16,13 +16,9 @@ import { ChatbarShell } from '@/components/ui/Uiverse';
 import {
   ChatBarDragOverlay,
   ChatBarInputRow,
-  ChatBarToolChip,
-} from './ChatBarParts';
+  } from './ChatBarParts';
 import { ChatBarFileGrid } from './ChatBarFileGrid';
 import type { SendButtonState } from './ChatBarButtons';
-import { GitHubChipIcon, VercelChipIcon, ChatBarBrandChip } from './ChatBarButtons';
-import { Search } from 'lucide-react';
-import { ChatBarTip } from '@/components/ui/ChatBarTip';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -53,8 +49,6 @@ export function TerminalChatBar() {
   const hydrated = useHydrated();
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
-  const theme = useThemeStore((s) => s.theme);
-  const darkUi = theme === 'black' || theme === 'gray';
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
@@ -438,80 +432,12 @@ export function TerminalChatBar() {
         >
           <ChatBarDragOverlay active={!incognito && dragOver} />
 
-          {!incognito && (
-          <div className="xv-chatbar-toolbar flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 overflow-x-auto scrollbar-hide flex-nowrap">
-            {/* Black Hole lives in the toolbar rather than on its own row above the
-                chatbar, which reclaims that row's height. */}
-            <BlackHoleVButton compact className="shrink-0" />
-            {/* Mic moved down beside send, where the other send-time controls are.
-                Its slot here is taken by the actions menu, so the toolbar keeps the
-                same width rather than growing by four more chips. */}
-            <ChatBarActionsMenu
-              className="shrink-0"
-              disabled={loading}
-              onInsert={(text) => {
-                // Fills the composer and focuses it. Deliberately not auto-sent: these
-                // are scaffolds the user finishes, and sending a half-written prompt
-                // would burn a real run.
-                setDraft((current) => (current.trim() ? `${text}${current}` : text));
-                draftRef.current = draftRef.current.trim() ? `${text}${draftRef.current}` : text;
-                window.setTimeout(() => textareaRef.current?.focus(), 20);
-              }}
-            />
-            <ChatBarTip label="Search integrations" className="shrink-0">
-              <ChatBarToolChip
-                icon={<Search className="w-3.5 h-3.5" />}
-                label="Integrations"
-                onClick={() => {
-                  dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your authorised integrations.', source: 'runtime' });
-                  setIntegrationsOpen(true);
-                }}
-                accent="#006aff"
-              />
-            </ChatBarTip>
-            <ChatBarTip label="GitHub repos" className="shrink-0">
-              <span className="inline-flex shrink-0 lg:hidden">
-                <ChatBarBrandChip variant="github" label="GitHub" onClick={() => {
-                  dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening the connected GitHub repository picker.', source: 'runtime' });
-                  setGithubOpen(true);
-                }} plain darkUi={darkUi} connected={githubConnected} />
-              </span>
-              <span className="hidden lg:inline-flex shrink-0">
-                <ChatBarToolChip
-                  icon={<GitHubChipIcon />}
-                  label="GitHub"
-                  onClick={() => {
-                    dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening the connected GitHub repository picker.', source: 'runtime' });
-                    setGithubOpen(true);
-                  }}
-                  accent="#24292f"
-                  connected={githubConnected}
-                />
-              </span>
-            </ChatBarTip>
-            <ChatBarTip label="Vercel" className="shrink-0">
-              <span className="inline-flex shrink-0 lg:hidden">
-                <ChatBarBrandChip variant="vercel" label="Vercel" onClick={() => {
-                  dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your Vercel integration settings.', source: 'runtime' });
-                  setIntegrationsOpen(true);
-                }} plain darkUi={darkUi} connected={vercelConnected} />
-              </span>
-              <span className="hidden lg:inline-flex shrink-0">
-                <ChatBarToolChip
-                  icon={<VercelChipIcon />}
-                  label="Vercel"
-                  onClick={() => {
-                    dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your Vercel integration settings.', source: 'runtime' });
-                    setIntegrationsOpen(true);
-                  }}
-                  accent="#000"
-                  connected={vercelConnected}
-                />
-              </span>
-            </ChatBarTip>
-            <div className="flex-1 min-w-[2px]" />
-          </div>
-          )}
+          {/* The toolbar row above the input is gone.
+              It carried Black Hole, Integrations, GitHub and Vercel as chips and
+              scrolled horizontally on a phone, which is what made the composer feel
+              crowded. Attach and connectors moved into the `+` menu where a composer
+              normally puts them, and the remaining controls sit on the single bottom
+              row, so the resting bar is the input plus one line of controls. */}
 
           {!incognito && (
           <ChatBarFileGrid
@@ -529,6 +455,39 @@ export function TerminalChatBar() {
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
               hideUpload={incognito}
+              leadingExtras={
+                !incognito ? (
+                  <ChatBarActionsMenu
+                    className="shrink-0"
+                    disabled={loading}
+                    onAddFiles={() => fileRef.current?.click()}
+                    onOpenConnectors={() => {
+                      dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your authorised integrations.', source: 'runtime' });
+                      setIntegrationsOpen(true);
+                    }}
+                    connectorsNeedingAttention={[githubConnected, vercelConnected].filter((c) => !c).length}
+                    onInsert={(text) => {
+                      // Fills the composer and focuses it. Deliberately not auto-sent:
+                      // these are scaffolds the user finishes, and sending a
+                      // half-written prompt would burn a real run.
+                      setDraft((current) => (current.trim() ? `${text}${current}` : text));
+                      draftRef.current = draftRef.current.trim() ? `${text}${draftRef.current}` : text;
+                      window.setTimeout(() => textareaRef.current?.focus(), 20);
+                    }}
+                  />
+                ) : null
+              }
+              trailingExtras={
+                !incognito ? (
+                  <div className="xv-chatbar-trailing flex items-center gap-1.5 min-w-0">
+                    {/* The repo context moved out of its own row above the composer and
+                        in here as a compact chip, which is one fewer row of height and
+                        puts the repo next to the button that acts on it. */}
+                    <RepoContextBar compact />
+                    <BlackHoleVButton compact />
+                  </div>
+                ) : null
+              }
               onTranscript={(text) => {
                 // Append rather than replace, so dictating after typing keeps
                 // whatever the user already wrote.

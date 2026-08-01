@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { TerminalChatBar } from './TerminalChatBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
-import { RepoContextBar } from './RepoContextBar';
 import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { ChevronDown, PanelBottomOpen } from 'lucide-react';
@@ -107,13 +106,10 @@ export function TerminalDock() {
         ) : (
           <div className="flex items-end gap-3">
             <div className="flex-1 min-w-0">
-              {!incognito && (
-                // Black Hole moved into the chatbar toolbar, so this row is just the
-                // repo context and no longer spends height on a second control.
-                <div className="flex flex-row items-start justify-between gap-2 px-0.5 mb-0.5">
-                  <RepoContextBar outside />
-                </div>
-              )}
+              {/* The repo context row above the composer is gone: it moved inside, onto
+                  the composer's bottom row as a compact chip. That reclaims the last
+                  row of height above the input, which is what made the area feel
+                  crowded. */}
               <ChatbarQueueOutside />
               <div className="xv-chatbar-stack relative">
                 {!incognito ? <CompanionComposerAnchor /> : null}

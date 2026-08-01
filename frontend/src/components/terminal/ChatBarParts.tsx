@@ -85,6 +85,8 @@ export function ChatBarInputRow({
   surface = 'dashboard',
   hideUpload = false,
   hideMicrophone = false,
+  leadingExtras,
+  trailingExtras,
   onTranscript,
   compactGo = false,
   children,
@@ -97,6 +99,10 @@ export function ChatBarInputRow({
   surface?: ChatbarSurface;
   hideUpload?: boolean;
   hideMicrophone?: boolean;
+  /** Sits beside the attach button, at the composer's bottom-left. */
+  leadingExtras?: ReactNode;
+  /** Sits just before the mic and send pair, at the bottom-right. */
+  trailingExtras?: ReactNode;
   onTranscript?: (transcript: string) => void;
   compactGo?: boolean;
   children: ReactNode;
@@ -110,10 +116,12 @@ export function ChatBarInputRow({
     >
       <div className="w-full min-w-0 relative">{children}</div>
       <div className="xv-chatbar-tools flex items-center gap-1.5 w-full">
+        {leadingExtras}
         {!hideUpload && (
           <ChatBarUploadButton onClick={onUploadClick} active={uploading} surface={surface} />
         )}
         <div className="flex-1 min-w-[4px]" />
+        {trailingExtras}
         <div className="xv-chatbar-actions flex items-center gap-1.5 shrink-0">
           {!hideMicrophone && onTranscript ? (
             <ChatBarMicrophoneButton onTranscript={onTranscript} surface={surface} />
