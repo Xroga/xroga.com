@@ -2,6 +2,7 @@ import type { ChatMessage } from '@/context/TerminalChatContext';
 import { getSelectedRepoContext } from '@/lib/repoContext';
 import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 import { saveTerminalSessionToIndexedDB, deleteTerminalSessionFromIndexedDB } from '@/lib/terminalSessionStorage';
+import { isLegacyFabricatedLiveText } from '@/lib/landingOutcome';
 import {
   markRepoSessionCloudId,
   registerRepoSession,
@@ -110,7 +111,23 @@ export function loadTerminalHistory(): TerminalHistoryEntry[] {
     const raw = localStorage.getItem(KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as TerminalHistoryEntry[];
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((entry) => ({
+      ...entry,
+      preview: isLegacyFabricatedLiveText(entry.preview)
+        ? 'Build result saved · verify GitHub and deployment evidence'
+        : entry.preview,
+      messages: Array.isArray(entry.messages)
+        ? entry.messages.map((message) =>
+            isLegacyFabricatedLiveText(message.content)
+              ? {
+                  ...message,
+                  content: 'Build result saved. Review the shipping evidence below.',
+                }
+              : message,
+          )
+        : [],
+    }));
   } catch {
     return [];
   }

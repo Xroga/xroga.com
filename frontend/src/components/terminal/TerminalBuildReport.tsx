@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { ChevronDown, ExternalLink, FileCode2, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { FileTrailItem } from '@/store/useProjectWorkspaceStore';
-import { BuildTodoList } from './BuildTodoList';
-import type { SwarmTodoItem } from '@/lib/swarm';
 
 export interface TerminalBuildReportData {
   headline: string;
@@ -15,8 +13,10 @@ export interface TerminalBuildReportData {
   files?: FileTrailItem[];
   statusLines?: string[];
   githubUrl?: string | null;
+  githubLabel?: string;
   deployUrl?: string | null;
-  completedTodos?: SwarmTodoItem[];
+  deployLabel?: string;
+  completionNote?: string;
   qaIssues?: string[];
   isUpdate?: boolean;
   onRollback?: () => void;
@@ -39,7 +39,7 @@ function DiffBlock({ item }: { item: FileTrailItem }) {
         <span className="truncate flex-1">{item.path}</span>
         <span className="text-emerald-500 tabular-nums shrink-0">+{item.added ?? 0}</span>
         <span className="text-rose-400 tabular-nums shrink-0">−{item.removed ?? 0}</span>
-        <ChevronDown className={cn('h-3 w-3 text-[var(--muted)] transition-transform', open && 'rotate-180')} />
+        <ChevronDown className={cn('h-3 w-3 text-[var(--muted)]', open && 'rotate-180')} />
       </button>
       {open && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-5 pb-2 text-[10px]">
@@ -64,15 +64,17 @@ export function TerminalBuildReport({
   files,
   statusLines,
   githubUrl,
+  githubLabel,
   deployUrl,
-  completedTodos,
+  deployLabel,
+  completionNote,
   qaIssues,
   isUpdate,
   onRollback,
   rollingBack,
 }: TerminalBuildReportData) {
   return (
-    <div className="my-1.5 space-y-2 text-left font-mono text-[12px] leading-relaxed animate-in fade-in duration-300">
+    <div className="my-1.5 space-y-2 text-left font-mono text-[12px] leading-relaxed">
       <p className="text-[13px] font-sans font-medium text-[var(--foreground)]">{headline}</p>
       {projectName ? (
         <p className="text-[var(--muted)]">
@@ -114,10 +116,6 @@ export function TerminalBuildReport({
         </div>
       ) : null}
 
-      {completedTodos && completedTodos.length > 0 ? (
-        <BuildTodoList todos={completedTodos} showProgress={false} />
-      ) : null}
-
       {statusLines?.length ? (
         <div className="text-[11px] text-[var(--muted)] space-y-0.5">
           {statusLines.map((line) => (
@@ -134,7 +132,7 @@ export function TerminalBuildReport({
             rel="noreferrer"
             className="inline-flex items-center gap-1 text-[var(--accent)] hover:underline"
           >
-            GitHub <ExternalLink className="h-3 w-3" />
+            {githubLabel || 'GitHub'} <ExternalLink className="h-3 w-3" />
           </a>
         ) : null}
         {deployUrl ? (
@@ -144,7 +142,7 @@ export function TerminalBuildReport({
             rel="noreferrer"
             className="inline-flex items-center gap-1 text-[var(--accent)] hover:underline"
           >
-            Live on Vercel <ExternalLink className="h-3 w-3" />
+            {deployLabel || 'Open deployment'} <ExternalLink className="h-3 w-3" />
           </a>
         ) : null}
         {onRollback ? (
@@ -154,16 +152,17 @@ export function TerminalBuildReport({
             onClick={onRollback}
             className="inline-flex items-center gap-1 text-[var(--foreground)]/70 hover:text-[var(--foreground)] disabled:opacity-50"
           >
-            <RotateCcw className={cn('h-3 w-3', rollingBack && 'animate-spin')} />
+            <RotateCcw className="h-3 w-3" />
             {rollingBack ? 'Rolling back…' : 'Undo last update'}
           </button>
         ) : null}
       </div>
 
       <p className="text-[11px] text-[var(--muted)] font-sans">
-        {deployUrl
-          ? 'Live preview opens your Vercel domain — also in the project panel.'
-          : 'Preview is in the project panel — not a separate card.'}
+        {completionNote ||
+          (deployUrl
+            ? 'A deployment URL is available below.'
+            : 'No verified live deployment was recorded.')}
       </p>
     </div>
   );

@@ -3,6 +3,7 @@
 import { TerminalBuildReport } from './TerminalBuildReport';
 import { VIDEO_REMOVED_MESSAGE } from '@/lib/videoRemoved';
 import type { FileTrailItem } from '@/store/useProjectWorkspaceStore';
+import { deriveLandingOutcome } from '@/lib/landingOutcome';
 
 export function FeatureOutputView({
   output,
@@ -55,25 +56,16 @@ export function FeatureOutputView({
         removed: Number(f.removed) || 0,
       }));
 
-    const statusLines: string[] = [];
-    if (o.githubPushConfirmed && typeof o.githubRepoName === 'string') {
-      statusLines.push(`GitHub · ${o.githubRepoName}`);
-    } else if (typeof o.githubRepoName === 'string' && o.githubRepoName.includes('/')) {
-      statusLines.push(`GitHub target · ${o.githubRepoName}`);
-    }
+    const outcome = deriveLandingOutcome(o, { projectName, isUpdate });
+    const statusLines = [...outcome.statusLines];
     const liveUrl =
-      (typeof o.deployUrl === 'string' && o.deployUrl.trim()) ||
-      (typeof o.vercelPreviewUrl === 'string' && o.vercelPreviewUrl.trim()) ||
+      (typeof o.deployUrl === 'string' &&
+        /^https:\/\//i.test(o.deployUrl.trim()) &&
+        o.deployUrl.trim()) ||
+      (typeof o.vercelPreviewUrl === 'string' &&
+        /^https:\/\//i.test(o.vercelPreviewUrl.trim()) &&
+        o.vercelPreviewUrl.trim()) ||
       '';
-    if (liveUrl) {
-      statusLines.push(o.deployVerified ? `Vercel · live` : `Vercel · ${liveUrl.replace(/^https?:\/\//, '')}`);
-    } else if (typeof o.scaffoldKind === 'string' && /^(expo|chrome|electron)$/.test(o.scaffoldKind)) {
-      statusLines.push(`Ship · ${o.scaffoldKind} (non-web — see GitHub / Publish)`);
-    } else if (o.shipPending) {
-      statusLines.push('Ship · GitHub / Vercel still finishing…');
-    } else {
-      statusLines.push('Preview · sandbox panel');
-    }
     if (o.usedSurgicalPatches) statusLines.push('Patches · surgical SEARCH/REPLACE');
     const envSync = o.envSync as { ok?: boolean; error?: string } | undefined;
     if (envSync && envSync.ok === false) {
@@ -81,34 +73,23 @@ export function FeatureOutputView({
         `Env sync · failed${envSync.error ? ` (${String(envSync.error).slice(0, 80)})` : ''}`
       );
     }
-    const blockers = Array.isArray(o.shipBlockers)
-      ? (o.shipBlockers as string[]).filter((b) => typeof b === 'string' && b.trim())
-      : [];
-    for (const b of blockers.slice(0, 3)) {
-      statusLines.push(`Blocker · ${b}`);
-    }
-
     const qa = o.qa as { issues?: string[] } | undefined;
 
     return (
       <TerminalBuildReport
-        headline={isUpdate ? `Updated ${projectName}` : `${projectName} ready`}
+        headline={outcome.headline}
         projectName={projectName}
         userPrompt={userPrompt}
         changes={changes}
         files={files}
         statusLines={statusLines}
         githubUrl={typeof o.githubRepoUrl === 'string' ? o.githubRepoUrl : null}
+        githubLabel={o.githubPushConfirmed === true ? 'GitHub commit' : 'GitHub target · not pushed'}
         deployUrl={liveUrl || null}
-        completedTodos={
-          Array.isArray(o.completedTodos)
-            ? (o.completedTodos as Array<{
-                id: string;
-                label: string;
-                status: 'done' | 'active' | 'pending' | 'skipped';
-              }>)
-            : undefined
+        deployLabel={
+          o.deployVerified === true ? 'Verified live on Vercel' : 'Open unverified deployment'
         }
+        completionNote={outcome.completionNote}
         qaIssues={qa?.issues}
         isUpdate={isUpdate}
       />

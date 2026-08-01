@@ -7,6 +7,7 @@ import {
   loadWorkspaceFromIndexedDB,
   saveWorkspaceToIndexedDB,
 } from '@/lib/workspaceSessionStorage';
+import { isLegacyFabricatedLiveText } from '@/lib/landingOutcome';
 
 const KEY = 'xroga_workspace_session';
 
@@ -18,26 +19,48 @@ function slimLandingForStorage(messages: ChatMessage[]): ChatMessage[] {
     const summaryText =
       typeof fo.summary === 'string' && fo.summary.trim()
         ? fo.summary
-        : '🎉 YOUR PROJECT IS LIVE!';
+        : typeof fo.message === 'string' && fo.message.trim()
+          ? fo.message
+          : 'Build result saved. Review the shipping evidence below.';
     return {
       ...m,
-      content: m.content?.trim() ? m.content : summaryText,
+      content:
+        m.content?.trim() && !isLegacyFabricatedLiveText(m.content) ? m.content : summaryText,
       featureOutput: {
         type: 'landing_page',
         deployUrl: fo.deployUrl ?? '',
         deployVerified: fo.deployVerified,
         githubRepoUrl: fo.githubRepoUrl,
         githubRepoName: fo.githubRepoName,
+        githubPushConfirmed: fo.githubPushConfirmed,
+        fullyShipped: fo.fullyShipped,
+        handoffReady: fo.handoffReady,
+        buildOk: fo.buildOk,
+        shipped: fo.shipped,
+        shipBlockers: fo.shipBlockers,
+        shipOutcome: fo.shipOutcome,
+        commitSha: fo.commitSha,
+        githubBranch: fo.githubBranch,
         projectName: fo.projectName,
         pages: fo.pages,
         features: fo.features,
         designTheme: fo.designTheme,
         needsPayment: fo.needsPayment,
         memoryNote: fo.memoryNote,
+        message: fo.message,
         summary: fo.summary ?? summaryText,
         heroImageUrl: fo.heroImageUrl,
         vercelPreviewUrl: fo.vercelPreviewUrl,
         netlifyPreviewUrl: fo.netlifyPreviewUrl,
+        scaffoldKind: fo.scaffoldKind,
+        userPrompt: fo.userPrompt,
+        isUpdate: fo.isUpdate,
+        changesSummary: fo.changesSummary,
+        completedTodos: fo.completedTodos,
+        qa: fo.qa,
+        shipVerify: fo.shipVerify,
+        nextSteps: fo.nextSteps,
+        envSync: fo.envSync,
         html: '',
         css: '',
         js: '',

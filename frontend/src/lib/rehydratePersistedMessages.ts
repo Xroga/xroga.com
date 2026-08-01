@@ -1,6 +1,7 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
 import { loadLandingBuild } from '@/lib/landingBuildStorage';
 import { rehydrateMessagesWithMedia } from '@/lib/messageRehydration';
+import { isLegacyFabricatedLiveText } from '@/lib/landingOutcome';
 
 function isLandingOutput(output: unknown): output is Record<string, unknown> {
   return Boolean(output && typeof output === 'object' && (output as { type?: string }).type === 'landing_page');
@@ -29,9 +30,9 @@ export async function rehydratePersistedMessages(messages: ChatMessage[]): Promi
         }
 
         const content =
-          msg.content?.trim() ||
+          (msg.content?.trim() && !isLegacyFabricatedLiveText(msg.content) ? msg.content : '') ||
           (typeof fo.summary === 'string' ? fo.summary : '') ||
-          '🎉 YOUR PROJECT IS LIVE!';
+          'Build result restored. Review the shipping evidence below.';
 
         next = {
           ...msg,
