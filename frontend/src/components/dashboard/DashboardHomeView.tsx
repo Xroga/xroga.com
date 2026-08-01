@@ -70,10 +70,10 @@ export function DashboardHomeView() {
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto space-y-6">
-        <Skeleton height={40} width={280} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
+        <Skeleton height={40} width={280} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
         <div className="grid gap-4 md:grid-cols-2">
-          <Skeleton height={220} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
-          <Skeleton height={220} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
+          <Skeleton height={220} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
+          <Skeleton height={220} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
         </div>
       </div>
     );

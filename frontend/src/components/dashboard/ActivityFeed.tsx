@@ -27,7 +27,7 @@ export function ActivityFeed() {
   }, []);
 
   if (loading) {
-    return <Skeleton height={200} baseColor="#1a1a2e" highlightColor="#2a2a3e" />;
+    return <Skeleton height={200} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />;
   }
 
   return (

@@ -93,7 +93,7 @@ export function GitHubConnect() {
     }
   }
 
-  if (loading) return <Skeleton height={200} baseColor="#1a1a2e" highlightColor="#2a2a3e" />;
+  if (loading) return <Skeleton height={200} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />;
 
   return (
     <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6 space-y-5">

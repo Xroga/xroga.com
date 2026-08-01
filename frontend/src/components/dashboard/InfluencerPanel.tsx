@@ -94,7 +94,7 @@ export function InfluencerPanel({ embedded }: InfluencerPanelProps) {
   }
 
   if (loading) {
-    return <Skeleton height={embedded ? 320 : 400} baseColor="#1a1a2e" highlightColor="#2a2a3e" />;
+    return <Skeleton height={embedded ? 320 : 400} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />;
   }
 
   if (!dash) {

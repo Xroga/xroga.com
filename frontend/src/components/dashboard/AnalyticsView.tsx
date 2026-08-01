@@ -81,10 +81,10 @@ export function AnalyticsView() {
   if (loading) {
     return (
       <div className="max-w-5xl mx-auto space-y-4">
-        <Skeleton height={40} width={200} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
+        <Skeleton height={40} width={200} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height={100} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
+            <Skeleton key={i} height={100} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
           ))}
         </div>
       </div>
