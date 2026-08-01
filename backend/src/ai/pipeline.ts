@@ -55,6 +55,7 @@ import {
   deployToAllPlatforms,
   isGitHubConnected,
   getGithubDefaultRepo,
+  inspectConnectedRepositoryState,
 } from '../services/integrations/githubDeploy.js';
 import { getVercelToken } from '../services/integrations/vercelAuth.js';
 import {
@@ -116,6 +117,7 @@ import { RunTrace } from './runTrace.js';
 import { verifyShippedProduct } from '../lib/shipVerify.js';
 import type { VercelEnvSyncResult } from '../lib/vercelEnv.js';
 import { computeShipOutcome } from './shipOutcome.js';
+import { planGitHubShipping } from './githubShippingPlan.js';
 import {
   createEvidence,
   redactSecrets,
@@ -2045,6 +2047,18 @@ export async function runBuildPipeline(opts: {
 
   const githubOk = await isGitHubConnected(opts.userId);
   const vercelOk = Boolean(await getVercelToken(opts.userId));
+  const remoteRepoState =
+    isUpdate && githubOk && meta?.githubTargetRepo
+      ? await inspectConnectedRepositoryState(
+          opts.userId,
+          meta.githubTargetRepo,
+          githubBranch,
+        ).catch((error) => ({
+          status: 'unavailable' as const,
+          branch: githubBranch,
+          reason: redactSecrets((error as Error).message || 'GitHub inspection failed').slice(0, 160),
+        }))
+      : undefined;
   const supabaseStatus = await getUserSupabaseStatus(opts.userId).catch(() => ({
     connected: false,
     ready: false,
@@ -2080,7 +2094,18 @@ export async function runBuildPipeline(opts: {
       ? 'Supabase authorized — finish project pick/create for DB + memory'
       : null;
 
-  let filesToPush = isUpdate ? (changedFiles.length ? changedFiles : []) : nextFiles;
+  const githubShippingPlan = planGitHubShipping({
+    isUpdate,
+    targetRepo: meta?.githubTargetRepo,
+    nextFiles,
+    changedFiles,
+    deletedPaths,
+    priorCommitSha,
+    remoteState: remoteRepoState,
+  });
+  if (githubShippingPlan.blocker) shipBlockers.push(githubShippingPlan.blocker);
+
+  let filesToPush = githubShippingPlan.filesToPush;
   if (isUpdate && nextFiles.length) {
     const docs = nextFiles.filter((f) => f.path === '.env.example' || f.path === 'SECRETS.md');
     if (docs.length) {
@@ -2088,6 +2113,30 @@ export async function runBuildPipeline(opts: {
       for (const f of docs) byPath.set(f.path, f);
       filesToPush = Array.from(byPath.values());
     }
+  }
+
+  if (githubShippingPlan.reuseCommitSha && meta?.githubTargetRepo) {
+    commitSha = githubShippingPlan.reuseCommitSha;
+    githubPushConfirmed = true;
+    githubRepoName = meta.githubTargetRepo;
+    githubRepoUrl = `https://github.com/${meta.githubTargetRepo}`;
+    executionEvidence.push(
+      createEvidence({
+        kind: 'commit',
+        operation: 'github_existing_commit',
+        ok: true,
+        identifier: commitSha,
+        details: { repository: githubRepoName, branch: githubBranch, reused: true },
+      }),
+    );
+    emit({
+      agent: 'deploy',
+      status: 'push_verified_existing',
+      message: `Verified existing ${commitSha.slice(0, 12)} on ${githubRepoName}; no duplicate commit needed`,
+      swarmStatusLabel: 'Commit verified',
+      swarmActivity: githubRepoName,
+      swarmTodos: todos('deploy'),
+    });
   }
 
   // Expo: auto-link/create EAS project and stamp app.json before GitHub push
@@ -2138,6 +2187,7 @@ export async function runBuildPipeline(opts: {
     !security.blocked &&
     !compileBlocksShip &&
     !qaBlocksShip &&
+    !githubShippingPlan.blocker &&
     (isUpdate ? Boolean(meta?.githubTargetRepo) : true) &&
     (filesToPush.length > 0 || deletedPaths.length > 0);
 
@@ -2743,6 +2793,7 @@ export async function runBuildPipeline(opts: {
     !patchAborted &&
     !security.blocked &&
     !compileBlocksShip &&
+    !githubShippingPlan.blocker &&
     Boolean(vercelToken) &&
     nextFiles.some(
       (f) =>
