@@ -64,7 +64,6 @@ import { GitHubActivationOverlay } from '@/components/terminal/GitHubActivationO
 import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
 import {
   clearGitHubConnectedSession,
-  isGitHubConnectedSession,
   isGitHubConnectRequiredText,
   markGitHubConnectedSession,
   sanitizeXrogaTerminalText,
@@ -80,6 +79,7 @@ import { dispatchCompanionEvent, operationFromProgress } from '@/lib/companion';
 import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
 import { useBuildCompletionAlerts } from '@/hooks/useBuildCompletionAlerts';
 import { requestBuildNotificationPermission, showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
+import { deriveLandingOutcome } from '@/lib/landingOutcome';
 
 const GENERIC_SWARM_FALLBACK =
   "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.";
@@ -614,12 +614,8 @@ export function TerminalChatProvider({
 
   const handleGitHubBuildBlocked = useCallback(
     (userPrompt: string, attachments?: ChatAttachment[]) => {
-      const selectedRepo = getSelectedRepoContext()?.repo;
-      // Already have a selected repo in the footer — never pop Connect GitHub again
-      if (selectedRepo?.includes('/') || isGitHubConnectedSession()) {
-        markGitHubConnectedSession();
-        return;
-      }
+      // A selected repository or old session marker is not proof that this authenticated
+      // user still has a valid server-side GitHub token. Always verify the connection.
       void api.github.status().then((gh) => {
         if (!gh.connected) {
           clearGitHubConnectedSession();
@@ -650,11 +646,6 @@ export function TerminalChatProvider({
         };
         setGithubActivation({ open: true, username: gh.username });
       }).catch(() => {
-        // Status flaky — if user already selected a repo, do not block with Connect modal
-        if (getSelectedRepoContext()?.repo?.includes('/')) {
-          markGitHubConnectedSession();
-          return;
-        }
         clearGitHubConnectedSession();
         skipGithubGateRef.current = false;
         pendingBuildRef.current = {
@@ -2389,6 +2380,10 @@ export function TerminalChatProvider({
                     projectName = ws.projectName || projectName;
                   }
                 }
+                const workspaceOutcome = deriveLandingOutcome(output, {
+                  projectName,
+                  isUpdate: reusePreview,
+                });
                 ws.applyBuild({
                   repo: outRepo,
                   branch:
@@ -2421,46 +2416,34 @@ export function TerminalChatProvider({
                         : null) || null,
                   githubRepoUrl: (output as { githubRepoUrl?: string }).githubRepoUrl ?? null,
                   commitSha: (output as { commitSha?: string }).commitSha ?? null,
-                  status: (output as { deployVerified?: boolean }).deployVerified
-                    ? 'live'
-                    : typeof (output as { deployUrl?: string }).deployUrl === 'string' &&
-                        (output as { deployUrl: string }).deployUrl
-                      ? 'live'
-                      : 'pushed',
+                  status: workspaceOutcome.workspaceStatus,
                   changesSummary,
                   fileTrail: fileTrailRaw,
                   previousFiles: previousFiles ?? null,
                   openPreview: true,
-                  terminalLine: (output as { deployUrl?: string }).deployUrl
-                    ? `Deployed · ${(output as { deployUrl: string }).deployUrl}`
-                    : (output as { githubPushConfirmed?: boolean }).githubPushConfirmed
-                      ? `Pushed · ${(output as { githubRepoName?: string }).githubRepoName || 'GitHub'}`
-                      : 'Build finished',
+                  terminalLine: workspaceOutcome.terminalLine,
                 });
               });
 
+              const browserOutcome = deriveLandingOutcome(output, {
+                projectName,
+                isUpdate: reusePreview,
+              });
               showBuildBrowserNotification({
-                title: reusePreview
-                  ? `${projectName} updated!`
-                  : `${projectName} is ready!`,
-                body: reusePreview
-                  ? `xroga.com · ${projectName} — project rail + preview updated.`
-                  : `xroga.com · ${projectName} — project rail + preview are ready.`,
+                title: browserOutcome.headline,
+                body: browserOutcome.completionNote,
                 tag: `build-done-${assistantId}`,
               });
               setMessages((m) => {
                 const paths = Array.isArray((output as { updatedFiles?: string[] }).updatedFiles)
                   ? ((output as { updatedFiles?: string[] }).updatedFiles as string[]).slice(0, 6)
                   : fileTrailRaw.map((f) => f.path);
+                const messageOutcome = deriveLandingOutcome(output, {
+                  projectName,
+                  isUpdate: reusePreview,
+                });
                 const statusBits = [
-                  outRepo
-                    ? (output as { githubPushConfirmed?: boolean }).githubPushConfirmed
-                      ? `GitHub · pushed ${outRepo}`
-                      : `GitHub · ${outRepo}`
-                    : null,
-                  (output as { deployVerified?: boolean }).deployVerified
-                    ? 'Vercel · live'
-                    : 'Preview · project panel',
+                  ...messageOutcome.statusLines,
                   (output as { usedSurgicalPatches?: boolean }).usedSurgicalPatches
                     ? 'Patches · surgical'
                     : null,
@@ -2484,6 +2467,7 @@ export function TerminalChatProvider({
                         ...msg,
                         featureOutput: {
                           ...prev,
+                          ...output,
                           html: (output as { html?: string }).html ?? prev.html,
                           css: (output as { css?: string }).css ?? prev.css,
                           js: (output as { js?: string }).js ?? prev.js,
@@ -2507,7 +2491,7 @@ export function TerminalChatProvider({
                         content: '',
                         featureOutput: undefined,
                         updateTrail: {
-                          headline: `Updated ${projectName}${paths[0] ? ` · ${paths.join(', ')}` : ''}`,
+                          headline: `${messageOutcome.headline}${paths[0] ? ` · ${paths.join(', ')}` : ''}`,
                           changes: changesSummary,
                           files: fileTrailRaw,
                           statusLine: statusBits.join(' · '),
@@ -2541,7 +2525,7 @@ export function TerminalChatProvider({
                           changesSummary:
                             changesSummary ??
                             [
-                              `${projectName} ready`,
+                              messageOutcome.headline,
                               fileTrailRaw.length
                                 ? `${fileTrailRaw.length} files in trail`
                                 : undefined,

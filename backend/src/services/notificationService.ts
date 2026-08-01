@@ -8,6 +8,41 @@ export interface PushNotificationInput {
   metadata?: Record<string, unknown>;
 }
 
+export interface BuildCompleteNotificationParams {
+  projectName: string;
+  prompt: string;
+  githubRepoUrl?: string;
+  githubPushConfirmed: boolean;
+  fullyShipped: boolean;
+  handoffReady: boolean;
+  deployUrl?: string;
+  deployVerified: boolean;
+  fileCount?: number;
+  assistantMessageId?: string;
+}
+
+export function buildCompletionNotification(params: BuildCompleteNotificationParams): {
+  title: string;
+  message: string;
+  type: 'success' | 'warning';
+} {
+  const verifiedLive = params.fullyShipped && params.deployVerified && Boolean(params.deployUrl);
+  const verifiedHandoff = params.handoffReady && params.githubPushConfirmed;
+  return {
+    title: verifiedLive
+      ? 'Your XROGA project is shipped'
+      : verifiedHandoff
+        ? 'Your XROGA handoff is ready'
+        : 'XROGA build verification is incomplete',
+    message: verifiedLive
+      ? `${params.projectName} — GitHub push confirmed and live deployment verified: ${params.deployUrl}`
+      : verifiedHandoff
+        ? `${params.projectName} — GitHub handoff confirmed${params.fileCount ? ` with ${params.fileCount} files` : ''}.`
+        : `${params.projectName} — completion evidence is available in Workspace.`,
+    type: verifiedLive || verifiedHandoff ? 'success' : 'warning',
+  };
+}
+
 export async function pushNotification(
   userId: string,
   input: PushNotificationInput
@@ -84,23 +119,11 @@ export async function notifyVideoFailed(
 
 export async function notifyBuildComplete(
   userId: string,
-  params: {
-    projectName: string;
-    prompt: string;
-    githubRepoUrl?: string;
-    deployUrl?: string;
-    fileCount?: number;
-    assistantMessageId?: string;
-    deployError?: string;
-  }
+  params: BuildCompleteNotificationParams,
 ): Promise<void> {
-  const hasDeployIssue = Boolean(params.deployError && !params.deployUrl);
+  const copy = buildCompletionNotification(params);
   await pushNotification(userId, {
-    title: hasDeployIssue ? 'Your XROGA project is ready (deploy note)' : 'Your XROGA project is complete!',
-    message: hasDeployIssue
-      ? `${params.projectName} — code is on GitHub. Deploy note: ${params.deployError!.slice(0, 120)}`
-      : `${params.projectName} — ${params.fileCount ?? 0} files pushed${params.deployUrl ? `. Live: ${params.deployUrl}` : ''}`,
-    type: hasDeployIssue ? 'warning' : 'success',
+    ...copy,
     link: '/dashboard',
     metadata: {
       kind: 'build_ready',
@@ -110,7 +133,10 @@ export async function notifyBuildComplete(
       deployUrl: params.deployUrl,
       fileCount: params.fileCount,
       assistantMessageId: params.assistantMessageId,
-      deployError: params.deployError,
+      githubPushConfirmed: params.githubPushConfirmed,
+      fullyShipped: params.fullyShipped,
+      handoffReady: params.handoffReady,
+      deployVerified: params.deployVerified,
     },
   });
 }

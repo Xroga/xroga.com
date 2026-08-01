@@ -16,9 +16,10 @@ test('AI responses use a plain factual status instead of an execution card', () 
 
 test('AI response renderers contain no cursor, reveal, or pulse animation', () => {
   const response = source('../../components/terminal/ReasoningAndFollowUps.tsx');
+  const buildReport = source('../../components/terminal/TerminalBuildReport.tsx');
   const plain = source('../plainAiText.tsx');
   const markdown = source('../formatAiMarkdown.tsx');
-  const combined = `${response}\n${plain}\n${markdown}`;
+  const combined = `${response}\n${buildReport}\n${plain}\n${markdown}`;
 
   assert.doesNotMatch(combined, /animate-|style\.animation|xv-stream-cursor|xv-response-in/);
 });

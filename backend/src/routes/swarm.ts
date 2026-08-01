@@ -160,15 +160,31 @@ router.post('/execute', async (req: AuthRequest, res) => {
     const output = result.output as Record<string, unknown>;
     if (output.type === 'landing_page' && clientMeta?.assistantMessageId) {
       const generatedFiles = Array.isArray(output.generatedFiles) ? output.generatedFiles : [];
-      void notifyBuildComplete(userId, {
-        projectName: String(output.projectName ?? 'Xroga project'),
-        prompt: prompt.trim(),
-        githubRepoUrl: typeof output.githubRepoUrl === 'string' ? output.githubRepoUrl : undefined,
-        deployUrl: typeof output.deployUrl === 'string' ? output.deployUrl : undefined,
-        fileCount: generatedFiles.length || undefined,
-        assistantMessageId: String(clientMeta.assistantMessageId),
-        deployError: typeof output.deployError === 'string' ? output.deployError : undefined,
-      }).catch(() => {});
+      const blockers = Array.isArray(output.shipBlockers)
+        ? output.shipBlockers.filter((item): item is string => typeof item === 'string')
+        : [];
+      const hasVerifiedHandoff = output.fullyShipped === true || output.handoffReady === true;
+      if (result.success && hasVerifiedHandoff) {
+        void notifyBuildComplete(userId, {
+          projectName: String(output.projectName ?? 'Xroga project'),
+          prompt: prompt.trim(),
+          githubRepoUrl: typeof output.githubRepoUrl === 'string' ? output.githubRepoUrl : undefined,
+          githubPushConfirmed: output.githubPushConfirmed === true,
+          fullyShipped: output.fullyShipped === true,
+          handoffReady: output.handoffReady === true,
+          deployUrl: typeof output.deployUrl === 'string' ? output.deployUrl : undefined,
+          deployVerified: output.deployVerified === true,
+          fileCount: generatedFiles.length || undefined,
+          assistantMessageId: String(clientMeta.assistantMessageId),
+        }).catch(() => {});
+      } else {
+        void notifyBuildFailed(userId, {
+          projectName: String(output.projectName ?? 'Xroga project'),
+          prompt: prompt.trim(),
+          error: blockers[0] || 'Build finished without verified GitHub and deployment evidence',
+          assistantMessageId: String(clientMeta.assistantMessageId),
+        }).catch(() => {});
+      }
     }
     if (streamConnected && !res.writableEnded) {
       sendSSE(res, {

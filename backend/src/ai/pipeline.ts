@@ -118,6 +118,7 @@ import type { VercelEnvSyncResult } from '../lib/vercelEnv.js';
 import { computeShipOutcome } from './shipOutcome.js';
 import {
   createEvidence,
+  redactSecrets,
   type OperationEvidence,
 } from '../lib/truthfulExecution.js';
 import {
@@ -1944,6 +1945,7 @@ export async function runBuildPipeline(opts: {
   let githubRepoUrl: string | undefined;
   let githubRepoName = meta?.githubTargetRepo;
   let githubPushConfirmed = false;
+  let githubPushError: string | undefined;
   let commitSha: string | undefined;
   const priorCommitSha =
     getProjectMemory(opts.userId, meta?.githubTargetRepo, meta?.githubTargetBranch)?.commitSha;
@@ -2243,13 +2245,15 @@ export async function runBuildPipeline(opts: {
           : todos('deploy'),
       });
     } catch (err) {
-      console.warn('[pipeline] GitHub push failed:', (err as Error).message);
+      githubPushError = redactSecrets((err as Error).message || 'Unknown GitHub error').slice(0, 240);
+      shipBlockers.push(`GitHub push failed: ${githubPushError}`);
+      console.warn('[pipeline] GitHub push failed:', githubPushError);
       emit({
         agent: 'deploy',
         status: 'push_failed',
-        message: `GitHub push failed: ${(err as Error).message}`,
+        message: `GitHub push failed: ${githubPushError}`,
         swarmStatusLabel: 'Push failed',
-        swarmActivity: (err as Error).message.slice(0, 120),
+        swarmActivity: githubPushError.slice(0, 120),
         swarmTodos: todos('push'),
       });
     }
@@ -2811,23 +2815,27 @@ export async function runBuildPipeline(opts: {
             : todos('deploy'),
         });
       } else if (deployed.deployError) {
+        const deployFailure = redactSecrets(deployed.deployError).slice(0, 240);
+        shipBlockers.push(`Vercel deploy failed: ${deployFailure}`);
         emit({
           agent: 'deploy',
           status: 'deploy_failed',
-          message: deployed.deployError,
+          message: deployFailure,
           swarmStatusLabel: 'Deploy issue',
-          swarmActivity: deployed.deployError.slice(0, 120),
+          swarmActivity: deployFailure.slice(0, 120),
           swarmTodos: todos('deploy'),
         });
       }
     } catch (err) {
-      console.warn('[pipeline] Vercel deploy failed:', (err as Error).message);
+      const deployFailure = redactSecrets((err as Error).message || 'Unknown Vercel error').slice(0, 240);
+      shipBlockers.push(`Vercel deploy failed: ${deployFailure}`);
+      console.warn('[pipeline] Vercel deploy failed:', deployFailure);
       emit({
         agent: 'deploy',
         status: 'deploy_failed',
-        message: `Vercel deploy failed: ${(err as Error).message}`,
+        message: `Vercel deploy failed: ${deployFailure}`,
         swarmStatusLabel: 'Deploy failed',
-        swarmActivity: (err as Error).message.slice(0, 120),
+        swarmActivity: deployFailure.slice(0, 120),
         swarmTodos: todos('deploy'),
       });
     }
@@ -2925,7 +2933,8 @@ export async function runBuildPipeline(opts: {
   });
 
   // Merge pre-push blockers (e.g. missing sticky repo) that outcome may not know
-  const finalBlockers = [...new Set([...outcome.shipBlockers, ...shipBlockers])];
+  // Preserve the specific runtime failure before the generic outcome category.
+  const finalBlockers = [...new Set([...shipBlockers, ...outcome.shipBlockers])];
   const fullyShipped = outcome.fullyShipped;
   const handoffReady = outcome.handoffReady;
   const buildOk = outcome.buildOk;
