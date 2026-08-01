@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Cloud, Filter, FolderGit2, FolderOpen, GitBranch, ChevronDown, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -75,15 +75,34 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
+  /**
+   * Live chat state is read through refs, not closed over.
+   *
+   * `refreshLocal` used to depend on `[messages, sessionId, prompt]`. `prompt` changes
+   * on every keystroke and `messages` on every streamed token, so the callback got a
+   * new identity constantly — which re-ran the effect below that owns four window
+   * listeners and a cloud subscription, tearing them down and re-adding them, and
+   * re-running a synchronous localStorage parse plus a network call, per character
+   * typed. That is the lag in this panel.
+   *
+   * Refs give the same values without making the callback unstable.
+   */
+  const messagesRef = useRef(messages);
+  const sessionIdRef = useRef(sessionId);
+  const promptRef = useRef(prompt);
+  messagesRef.current = messages;
+  sessionIdRef.current = sessionId;
+  promptRef.current = prompt;
+
   const refreshLocal = useCallback(() => {
     const selected = getSelectedRepoContext();
     setSelectedRepo(selected?.repo?.includes('/') ? selected.repo : null);
     // Stamp live chat as #1/#2 under the selected repo (fixes "chat but still 0 terminals")
-    if (messages.length > 0 && sessionId) {
+    if (messagesRef.current.length > 0 && sessionIdRef.current) {
       ensureLiveTerminalUnderSelectedRepo({
-        sessionId,
-        messages,
-        prompt,
+        sessionId: sessionIdRef.current,
+        messages: messagesRef.current,
+        prompt: promptRef.current,
         flushCloud: true,
       });
     }
@@ -95,8 +114,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
     // Live chat appears under its sticky repo (or selected if still unbound).
     // Never rewrite an existing #N onto a newly selected repo.
-    if (messages.length > 0 && sessionId) {
-      const hist = loadTerminalHistory().find((e) => e.id === sessionId);
+    if (messagesRef.current.length > 0 && sessionIdRef.current) {
+      const hist = loadTerminalHistory().find((e) => e.id === sessionIdRef.current);
       const bindRepo =
         (hist?.githubRepoName?.includes('/') ? hist.githubRepoName : null) ??
         (selected?.repo?.includes('/') ? selected.repo : null);
@@ -116,7 +135,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           createdAt: hist?.createdAt ?? new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
-        if (!nextEntries.some((e) => e.id === sessionId)) {
+        if (!nextEntries.some((e) => e.id === sessionIdRef.current)) {
           nextEntries = [live, ...nextEntries];
         } else {
           nextEntries = nextEntries.map((e) =>
@@ -151,8 +170,12 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
     setEntries(nextEntries);
     const ws = loadWorkspaceSession();
-    setActiveSessionId(ws?.sessionId ?? sessionId ?? null);
-  }, [messages, sessionId, prompt]);
+    setActiveSessionId(ws?.sessionId ?? sessionIdRef.current ?? null);
+    // `messages`, `sessionId` and `prompt` are read through refs above, so they are
+    // always current at call time without making this callback unstable. Listing them
+    // here is what caused the lag this fixes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const refreshCloud = useCallback(() => {
     void (async () => {
@@ -202,7 +225,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       refreshCloud();
     }, 100);
     return () => window.clearTimeout(t);
-  }, [messages, sessionId, expanded, refreshLocal, refreshCloud]);
+    // `messages.length`, not `messages`: the array identity changes on every streamed
+    // token, so depending on it re-ran this effect continuously during a response.
+  }, [messages.length, sessionId, expanded, refreshLocal, refreshCloud]);
 
   const folders = useMemo((): RepoFolder[] => {
     const map = new Map<string, RepoSession[]>();
@@ -306,12 +331,21 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
   useEffect(() => {
     setOpenFolders((prev) => {
+      let changed = false;
       const next = { ...prev };
       for (const f of folders) {
-        if (next[f.key] === undefined) next[f.key] = true;
+        if (next[f.key] === undefined) {
+          next[f.key] = true;
+          changed = true;
+        }
       }
-      if (selectedRepo) next[selectedRepo] = true;
-      return next;
+      if (selectedRepo && next[selectedRepo] !== true) {
+        next[selectedRepo] = true;
+        changed = true;
+      }
+      // Returning `prev` unchanged lets React skip the re-render entirely; the old
+      // version always produced a new object, so every refresh re-rendered the tree.
+      return changed ? next : prev;
     });
   }, [folders, selectedRepo]);
 

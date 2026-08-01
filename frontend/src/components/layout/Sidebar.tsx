@@ -45,7 +45,7 @@ import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
-import { AnimatedNavIcon } from './AnimatedNavIcon';
+import { AnimatedNavIcon, type NavIconMotion } from './AnimatedNavIcon';
 import { SidebarNavScroller } from './SidebarNavScroller';
 
 /**
@@ -64,6 +64,7 @@ type NavLink = {
   label: string;
   icon: typeof LayoutDashboard;
   tip: string;
+  motion?: NavIconMotion;
 };
 
 type NavGroup = {
@@ -71,6 +72,7 @@ type NavGroup = {
   label: string;
   icon: typeof LayoutDashboard;
   tip: string;
+  motion?: NavIconMotion;
   children: NavLink[];
 };
 
@@ -83,30 +85,35 @@ function isGroup(entry: NavEntry): entry is NavGroup {
 const navItems: NavEntry[] = [
   {
     href: '/workspace',
+    motion: 'blink' as const,
     label: 'Workspace',
     icon: Terminal,
     tip: 'Main workspace — build and chat with Xroga AI.',
   },
   {
     href: '/dashboard',
+    motion: 'pulse' as const,
     label: 'Dashboard',
     icon: LayoutDashboard,
     tip: 'Recent activity, billing, plan, and usage.',
   },
   {
     href: '/crypto-builder',
+    motion: 'pulse' as const,
     label: 'Crypto Builder',
     icon: Bitcoin,
     tip: 'Build crypto agents, Web3 apps, DeFi and DAO tools, on-chain monitoring, and hackathon projects.',
   },
   {
     href: '/dashboard/projects',
+    motion: 'flip' as const,
     label: 'Repositories',
     icon: FolderGit2,
     tip: 'Open connected repositories and their durable Xroga workspaces.',
   },
   {
     href: '/dashboard/integrations',
+    motion: 'pulse' as const,
     label: 'Integrations',
     icon: Link2,
     tip: 'Connect GitHub, Slack, databases, and tools.',
@@ -114,23 +121,27 @@ const navItems: NavEntry[] = [
   {
     id: 'launch',
     label: 'Launch & Growth',
+    motion: 'launch' as const,
     icon: Rocket,
     tip: 'Operations, growth, and publishing.',
     children: [
       {
         href: '/dashboard/operations',
+        motion: 'pulse' as const,
         label: 'Operations',
         icon: Activity,
         tip: 'Inspect real product health, releases, incidents, approvals, and operational evidence.',
       },
       {
         href: '/dashboard/growth',
+        motion: 'grow' as const,
         label: 'Growth',
         icon: TrendingUp,
         tip: 'Evidence-backed activation, recommendations, campaigns, messaging, referrals, experiments, and attribution.',
       },
       {
         href: '/dashboard/publish',
+        motion: 'launch' as const,
         label: 'Publish',
         icon: Rocket,
         tip: 'Ship web (Vercel), Chrome extension, desktop installers, or mobile (Expo) on your accounts.',
@@ -140,23 +151,27 @@ const navItems: NavEntry[] = [
   {
     id: 'explore',
     label: 'Explore',
+    motion: 'sweep' as const,
     icon: Compass,
     tip: 'Showcase templates, the community, and feedback.',
     children: [
       {
         href: '/showcase',
+        motion: 'flip' as const,
         label: 'Showcase',
         icon: LayoutTemplate,
         tip: 'Reusable Xroga templates — preview a complete product, then customise it into your own project.',
       },
       {
         href: '/community',
+        motion: 'pulse' as const,
         label: 'Community',
         icon: MessageCirclePlus,
         tip: 'Share feedback, report bugs, request features, and help other Xroga builders.',
       },
       {
         href: '/community?compose=feedback',
+        motion: 'pulse' as const,
         label: 'Share Feedback',
         icon: MessageSquarePlus,
         tip: 'Tell us what is working and what is not.',
@@ -165,6 +180,7 @@ const navItems: NavEntry[] = [
   },
   {
     href: '/settings',
+    motion: 'shake' as const,
     label: 'Settings',
     icon: Settings,
     tip: 'Theme, terminal skin, account, and preferences.',
@@ -439,7 +455,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                       aria-expanded={isGroupOpen(entry)}
                       title={entry.tip}
                     >
-                      <AnimatedNavIcon Icon={entry.icon} className="shrink-0" />
+                      <AnimatedNavIcon Icon={entry.icon} motion={entry.motion} className="shrink-0" />
                       <span>{entry.label}</span>
                       <ChevronDown
                         className={cn('xv-nav-group__chev h-3.5 w-3.5', isGroupOpen(entry) && 'is-open')}
@@ -455,7 +471,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                               onClick={handleNavClick}
                               className={cn(isActive(child.href) && 'xv-active')}
                             >
-                              <AnimatedNavIcon Icon={child.icon} className="shrink-0" />
+                              <AnimatedNavIcon Icon={child.icon} motion={child.motion} className="shrink-0" />
                               <span>{child.label}</span>
                             </Link>
                           </SidebarTip>
@@ -470,7 +486,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                       onClick={handleNavClick}
                       className={cn(isActive(entry.href) && 'xv-active')}
                     >
-                      <AnimatedNavIcon Icon={entry.icon} className="shrink-0" />
+                      <AnimatedNavIcon Icon={entry.icon} motion={entry.motion} className="shrink-0" />
                       <span>{entry.label}</span>
                     </Link>
                   </SidebarTip>
@@ -484,14 +500,14 @@ export function Sidebar({ displayName }: SidebarProps) {
             <div className="xv-sidebar-collapsed-nav space-y-1">
               {navItems
                 .flatMap((entry) => (isGroup(entry) ? entry.children : [entry]))
-                .map(({ href, label, icon: Icon, tip }) => (
+                .map(({ href, label, icon: Icon, tip, motion }) => (
                   <SidebarTip key={href} label={label} description={tip}>
                     <Link
                       href={href}
                       onClick={handleNavClick}
                       className={cn('xv-sidebar-icon-link', isActive(href) && 'xv-active')}
                     >
-                      <AnimatedNavIcon Icon={Icon} className="shrink-0" />
+                      <AnimatedNavIcon Icon={Icon} motion={motion} className="shrink-0" />
                     </Link>
                   </SidebarTip>
                 ))}
