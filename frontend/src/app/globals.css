@@ -6941,29 +6941,38 @@ body.theme-gray .xv-rp-loader {
 .xv-send {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
   height: 34px;
-  padding-inline: 0.65rem;
-  border-radius: 0.7rem;
-  background: var(--text-primary, var(--foreground));
-  color: var(--surface-page, var(--background));
-  font-weight: 600;
+  min-width: 50px;
+  justify-content: center;
+  padding-inline: 0.55rem;
+  border: 3px solid color-mix(in srgb, var(--accent, #006aff) 24%, var(--card) 76%);
+  border-radius: 999px;
+  background: var(--accent, #006aff);
+  color: var(--accent-foreground, #fff);
   cursor: pointer;
-  transition: transform 120ms ease, opacity 140ms ease, box-shadow 140ms ease;
+  transition: transform 120ms ease, opacity 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
 }
-.xv-send:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow-subtle, 0 4px 12px rgba(0,0,0,.18)); }
+.xv-send:hover:not(:disabled) { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent, #006aff) 44%, white 56%); box-shadow: 0 5px 16px color-mix(in srgb, var(--accent, #006aff) 25%, transparent); }
 .xv-send:active:not(:disabled) { transform: translateY(0); }
 .xv-send:disabled { opacity: 0.55; cursor: progress; }
-.xv-send__sigil {
-  font-family: var(--font-xv-mono, ui-monospace, monospace);
-  font-size: 0.7rem;
-  letter-spacing: -0.05em;
-  opacity: 0.75;
+.xv-send__arrow { display: grid; place-items: center; }
+.xv-send__arrow svg {
+  width: 29px;
+  height: 14px;
+  overflow: visible;
 }
-.xv-send__icon { display: grid; place-items: center; }
-/* Collapsed to a square once the composer has content and space is tight. */
-.xv-send--compact { padding-inline: 0; width: 34px; justify-content: center; }
-.xv-send--compact .xv-send__sigil { display: none; }
+.xv-send:hover:not(:disabled) .xv-send__arrow svg { animation: xv-jello 0.7s both; transform-origin: left center; }
+.xv-send--compact { min-width: 44px; width: 44px; padding-inline: 0.35rem; }
+
+.xv-chatbar-context-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 28px;
+  padding: 0.35rem 0.35rem 0;
+  color: var(--text-muted, var(--muted));
+}
+.xv-chatbar-context-strip > :first-child { min-width: 0; flex: 1; }
 
 /* The repo context, inline in the bottom row. */
 .xv-repo-chip {
@@ -6981,6 +6990,41 @@ body.theme-gray .xv-rp-loader {
   padding-inline: 0;
   color: var(--text-muted, var(--muted));
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-send:hover:not(:disabled) .xv-send__arrow svg { animation: none; }
+}
+
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html[data-xroga-pointer='true'],
+  html[data-xroga-pointer='true'] body,
+  html[data-xroga-pointer='true'] a,
+  html[data-xroga-pointer='true'] button,
+  html[data-xroga-pointer='true'] input,
+  html[data-xroga-pointer='true'] textarea,
+  html[data-xroga-pointer='true'] select,
+  html[data-xroga-pointer='true'] [role='button'],
+  html[data-xroga-pointer='true'] * { cursor: none !important; }
+}
+.xv-light-pointer {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 2147483646;
+  width: 24px;
+  height: 24px;
+  color: var(--accent, #006aff);
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+  contain: strict;
+  transition: opacity 80ms linear;
+}
+.xv-light-pointer[data-visible='true'] { opacity: 1; }
+.xv-light-pointer__rays { opacity: 0.28; transform-origin: 8px 8px; }
+.xv-light-pointer[data-clicking='true'] .xv-light-pointer__body { animation: xv-pointer-press 260ms ease-out; transform-origin: 12px 12px; }
+.xv-light-pointer[data-clicking='true'] .xv-light-pointer__rays { animation: xv-pointer-rays 360ms ease-out; }
+@keyframes xv-pointer-press { 50% { transform: translateY(1px) scale(.94); } }
+@keyframes xv-pointer-rays { 0% { opacity: 0; transform: scale(.65); } 45% { opacity: 1; transform: scale(1.18); } 100% { opacity: .28; transform: scale(1); } }
 
 .xv-cba-kbd {
   margin-left: auto;

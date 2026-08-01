@@ -6,7 +6,6 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
-import { ProcessingLogo } from '@/components/layout/ProcessingLogo';
 import { ResearchPagesLoader } from '@/components/ui/ResearchPagesLoader';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
@@ -379,20 +378,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                       size="terminalCompact"
                     />
                   )
-                )}
-                {/* The morphing square/diamond/circle wait animation is gone. It implied
-                    work was happening on a timer rather than on a real event, and the
-                    execution transcript above already reports genuine activity. The
-                    avatar is now static in every state. */}
-                {msg.role === 'assistant' && (
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden shrink-0 bg-white/10 flex items-center justify-center">
-                    <ProcessingLogo
-                      variant="response"
-                      height={24}
-                      processing={false}
-                      className="!w-6 !h-6 sm:!w-7 sm:!h-7"
-                    />
-                  </div>
                 )}
                 <div
                   className={cn(
