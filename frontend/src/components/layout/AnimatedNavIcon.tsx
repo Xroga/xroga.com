@@ -4,6 +4,8 @@ import { useEffect, useState, type ComponentType } from 'react';
 import { LazyMotion, domMin, m, useReducedMotion } from 'motion/react';
 import type { Variants } from 'motion/react';
 import { cn } from '@/lib/utils';
+import { useThemeStore } from '@/store/useThemeStore';
+import { useHydrated } from '@/hooks/useHydrated';
 
 /**
  * Nav icons that act out what they do on hover.
@@ -85,7 +87,10 @@ export function AnimatedNavIcon({
   hovered?: boolean;
 }) {
   const [intro, setIntro] = useState(false);
-  const reduced = useReducedMotion();
+  const systemReduced = useReducedMotion();
+  const hydrated = useHydrated();
+  const preferenceReduced = useThemeStore((state) => state.reducedMotion);
+  const reduced = systemReduced || (hydrated && preferenceReduced);
 
   useEffect(() => {
     const key = 'xroga-nav-icon-intro';

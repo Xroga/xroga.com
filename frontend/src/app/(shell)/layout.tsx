@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { AppShell } from '@/components/layout/AppShell';
 import { AppProviders } from '@/components/providers/AppProviders';
 import type { Metadata } from 'next';
+import { UserCacheScopeBootstrap } from '@/components/bootstrap/UserCacheScopeBootstrap';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -16,17 +17,14 @@ export default async function ShellLayout({
 
   if (!user) redirect('/auth/login');
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('display_name')
-    .eq('id', user.id)
-    .single();
-
-  const displayName = profile?.display_name ?? user.email?.split('@')[0] ?? 'there';
+  const displayName = user.email?.split('@')[0] ?? 'there';
 
   return (
-    <AppProviders>
-      <AppShell displayName={displayName} email={user.email ?? undefined}>{children}</AppShell>
-    </AppProviders>
+    <>
+      <UserCacheScopeBootstrap userId={user.id} />
+      <AppProviders>
+        <AppShell displayName={displayName} email={user.email ?? undefined}>{children}</AppShell>
+      </AppProviders>
+    </>
   );
 }

@@ -69,7 +69,12 @@ import {
   markGitHubConnectedSession,
   sanitizeXrogaTerminalText,
 } from '@/lib/xrogaBrand';
-import { addPendingBuildJob, attachPendingBuildRun, removePendingBuildJob } from '@/lib/pendingBuildJobs';
+import {
+  addPendingBuildJob,
+  attachPendingBuildRun,
+  removePendingBuildJob,
+  updatePendingBuildSequence,
+} from '@/lib/pendingBuildJobs';
 import { dispatchCompanionEvent, operationFromProgress } from '@/lib/companion';
 import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
 import { useBuildCompletionAlerts } from '@/hooks/useBuildCompletionAlerts';
@@ -151,6 +156,8 @@ export interface QueuedPrompt {
 
 interface TerminalChatContextValue {
   messages: ChatMessage[];
+  /** True only while durable history is being restored after mount or session switch. */
+  sessionRestoring: boolean;
   prompt: string;
   setPrompt: (v: string) => void;
   promptQueue: QueuedPrompt[];
@@ -356,6 +363,7 @@ export function TerminalChatProvider({
   const skipNextQueueRef = useRef(false);
   const interruptRef = useRef(false);
   const [sessionReady, setSessionReady] = useState(false);
+  const [sessionRestoring, setSessionRestoring] = useState(true);
   const persistReadyRef = useRef(false);
   const restoringRef = useRef(false);
   const lastActivityAtRef = useRef(0);
@@ -376,6 +384,13 @@ export function TerminalChatProvider({
 
   useBackgroundBuildJobs(
     ({ assistantMessageId, output }) => {
+      activeRunIdRef.current = null;
+      setHeavyLoading(false);
+      setHeavyBuildActive(false);
+      heavyBuildActiveRef.current = false;
+      heavyJobActiveRef.current = false;
+      setHeavyAssistantId(null);
+      setSwarmRunning(false);
       toast.success('Your XROGA project is complete!');
       setMessages((m) =>
         m.map((msg) =>
@@ -386,6 +401,13 @@ export function TerminalChatProvider({
       );
     },
     (assistantMessageId, error) => {
+      activeRunIdRef.current = null;
+      setHeavyLoading(false);
+      setHeavyBuildActive(false);
+      heavyBuildActiveRef.current = false;
+      heavyJobActiveRef.current = false;
+      setHeavyAssistantId(null);
+      setSwarmRunning(false);
       toast.error(error.slice(0, 120) || 'Build failed');
       setMessages((m) =>
         m.map((msg) =>
@@ -394,7 +416,39 @@ export function TerminalChatProvider({
             : msg
         )
       );
-    }
+    },
+    ({ assistantMessageId, runId, status, events }) => {
+      activeRunIdRef.current = runId;
+      if (status === 'running') {
+        setHeavyLoading(true);
+        setHeavyBuildActive(true);
+        heavyBuildActiveRef.current = true;
+        heavyJobActiveRef.current = true;
+        setHeavyAssistantId(assistantMessageId);
+        setSwarmRunning(true);
+        setSwarmStatusLabel('Reconnected');
+        setPipelineMessage('Restored the active build from its persisted run.');
+      }
+      for (const event of events) {
+        pushTerminalEvent('progress', event.data);
+        if (event.data.needsGitHub === true) setGithubGateOpen(true);
+        if (event.data.needsVercel === true) setVercelGateOpen(true);
+        if (event.data.needsRepoPick === true) {
+          void import('@/lib/githubProjectEvents').then(({ notifyOpenRepoPicker }) => {
+            notifyOpenRepoPicker();
+          });
+        }
+        const restoredStatus = String(event.data.status ?? '');
+        if (/waiting_for_(user|authorization|permission)/i.test(restoredStatus)) {
+          setSwarmStatusLabel('Waiting for you');
+          setPipelineMessage(
+            sanitizeXrogaTerminalText(
+              String(event.data.message ?? 'This run is waiting for your input or permission.'),
+            ),
+          );
+        }
+      }
+    },
   );
 
   useBuildCompletionAlerts();
@@ -406,6 +460,7 @@ export function TerminalChatProvider({
       setPromptQueue([]);
       persistReadyRef.current = false;
       setSessionReady(true);
+      setSessionRestoring(false);
       return;
     }
     // Allow #1 terminal saves immediately — do not wait for hydrate (race caused empty sidebar).
@@ -434,6 +489,7 @@ export function TerminalChatProvider({
         setPrompt((current) => (current?.trim() ? current : session?.prompt || ''));
         persistReadyRef.current = true;
         setSessionReady(true);
+        setSessionRestoring(false);
         if (adoptedStored && session?.messages?.length && session.sessionId) {
           void import('@/lib/syncRepoTerminalSessions').then(({ ensureLiveTerminalUnderSelectedRepo }) => {
             ensureLiveTerminalUnderSelectedRepo({
@@ -450,6 +506,7 @@ export function TerminalChatProvider({
         if (cancelled) return;
         persistReadyRef.current = true;
         setSessionReady(true);
+        setSessionRestoring(false);
       });
     return () => {
       cancelled = true;
@@ -600,9 +657,11 @@ export function TerminalChatProvider({
   const hydrateFromSession = useCallback(() => {
     if (incognito) return;
     restoringRef.current = true;
+    setSessionRestoring(true);
     void loadWorkspaceSessionHydrated().then((session) => {
       if (!session?.messages?.length) {
         restoringRef.current = false;
+        setSessionRestoring(false);
         return;
       }
       setMessages(session.messages);
@@ -612,6 +671,10 @@ export function TerminalChatProvider({
       if (session.prompt) setPrompt(session.prompt);
       if (session.sessionId) setSessionId(session.sessionId);
       restoringRef.current = false;
+      setSessionRestoring(false);
+    }).catch(() => {
+      restoringRef.current = false;
+      setSessionRestoring(false);
     });
   }, [incognito, setSessionId]);
 
@@ -627,6 +690,7 @@ export function TerminalChatProvider({
     }) => {
       if (incognito) return;
       restoringRef.current = true;
+      setSessionRestoring(true);
       abortRef.current?.abort();
       lightAbortRef.current?.abort();
       setHeavyLoading(false);
@@ -670,6 +734,7 @@ export function TerminalChatProvider({
       persistReadyRef.current = true;
       window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       restoringRef.current = false;
+      setSessionRestoring(false);
     },
     [incognito, setSwarmRunning, setSessionId]
   );
@@ -714,7 +779,6 @@ export function TerminalChatProvider({
 
   useEffect(() => {
     if (!sessionReady || incognito || !persistReadyRef.current || restoringRef.current) return;
-    if (messages.length === 0) return;
     // Debounce — streaming deltas were writing IndexedDB every token and freezing the UI
     const timer = window.setTimeout(() => {
       for (const m of messages) {
@@ -760,7 +824,6 @@ export function TerminalChatProvider({
           prompt,
           flushCloud: true,
         });
-        window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       });
     }, 500);
     return () => window.clearTimeout(timer);
@@ -1740,6 +1803,22 @@ export function TerminalChatProvider({
         }
 
         if (runSwarmBuild) {
+        let bufferedDelta = '';
+        let deltaTimer: ReturnType<typeof setTimeout> | null = null;
+        const flushBufferedDelta = () => {
+          if (deltaTimer) clearTimeout(deltaTimer);
+          deltaTimer = null;
+          if (!bufferedDelta) return;
+          const chunk = bufferedDelta;
+          bufferedDelta = '';
+          setMessages((current) =>
+            current.map((message) =>
+              message.id === assistantId
+                ? { ...message, content: message.content + chunk }
+                : message,
+            ),
+          );
+        };
         await streamSwarmExecute(apiPrompt, {
           projectId,
           signal: controller.signal,
@@ -1777,6 +1856,9 @@ export function TerminalChatProvider({
           },
           onProgress: (event) => {
             gotEvent = true;
+            if (typeof event.sequence === 'number') {
+              updatePendingBuildSequence(assistantId, event.sequence);
+            }
             if (thinkingTimerRef.current) {
               clearTimeout(thinkingTimerRef.current);
               thinkingTimerRef.current = null;
@@ -1974,9 +2056,8 @@ export function TerminalChatProvider({
             if (startingHeavyBuild) return;
             gotEvent = true;
             fullReply += delta;
-            setMessages((m) =>
-              m.map((msg) => (msg.id === assistantId ? { ...msg, content: msg.content + delta } : msg))
-            );
+            bufferedDelta += delta;
+            if (!deltaTimer) deltaTimer = setTimeout(flushBufferedDelta, 32);
           },
           onPreview: (preview) => {
             // LLM finished — show code NOW (do not wait for GitHub/Vercel complete)
@@ -2637,6 +2718,7 @@ export function TerminalChatProvider({
             void refreshTokenUsage();
           },
         });
+        flushBufferedDelta();
 
         // Stream ended empty → never leave a blank bubble (chat or build).
         if (!fullReply.trim() && !buildHadVisibleResult) {
@@ -2930,6 +3012,7 @@ export function TerminalChatProvider({
     <TerminalChatContext.Provider
       value={{
         messages,
+        sessionRestoring,
         prompt,
         setPrompt,
         promptQueue,

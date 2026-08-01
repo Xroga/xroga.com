@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   ChevronDown,
   Compass,
@@ -34,8 +34,8 @@ import { SidebarTip } from '@/components/ui/SidebarTip';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
+import { clearUserScopedCaches } from '@/lib/userScopedCache';
 import { createClient } from '@/lib/supabase/client';
-import { api } from '@/lib/api';
 import { AvatarPickerModal } from '@/components/profile/AvatarPickerModal';
 import { UserProfileBox } from '@/components/profile/UserProfileBox';
 import { useAvatarUpdate } from '@/hooks/useAvatarUpdate';
@@ -199,7 +199,6 @@ function planLabel(tier?: string | null) {
 
 export function Sidebar({ displayName }: SidebarProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -217,24 +216,17 @@ export function Sidebar({ displayName }: SidebarProps) {
   const closeBrowser = useThemeStore((s) => s.closeBrowser);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const setSidebarWidth = useThemeStore((s) => s.setSidebarWidth);
-  const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
+  const terminalFullscreenRaw = useThemeStore((s) => s.terminalFullscreen);
   const planTier = useAppStore((s) => s.planTier);
   const profile = useAppStore((s) => s.profile);
-  const setProfile = useAppStore((s) => s.setProfile);
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
+  const terminalFullscreen = hydrated && terminalFullscreenRaw;
   const isMobile = useIsMobile();
   const avatarUrl = profile?.avatar_url;
   const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
   const userName = incognito ? 'Incognito' : (profile?.display_name ?? displayName ?? 'User');
   const userPlan = incognito ? 'Temporary session' : planLabel(planTier);
-
-  useEffect(() => {
-    api.profile
-      .get()
-      .then((p) => setProfile(p))
-      .catch(() => {});
-  }, [setProfile]);
 
   useEffect(() => {
     document.body.classList.toggle('mobile-sidebar-open', mobileOpen);
@@ -265,8 +257,14 @@ export function Sidebar({ displayName }: SidebarProps) {
     document.addEventListener('mouseup', onUp);
   }
 
-  const asideWidth = (hydrated ? sidebarOpen : true) ? (hydrated ? sidebarWidth : 256) : 0;
-  const navExpanded = isMobile ? mobileOpen : (hydrated ? sidebarOpen : true);
+  const effectiveSidebarOpen = hydrated ? sidebarOpen : true;
+  const asideWidth: number | string = effectiveSidebarOpen
+    ? hydrated
+      ? sidebarWidth
+      : 'var(--xv-boot-sidebar-width, 256px)'
+    : 0;
+  const asideWidthCss = typeof asideWidth === 'number' ? `${asideWidth}px` : asideWidth;
+  const navExpanded = isMobile ? mobileOpen : effectiveSidebarOpen;
 
   function closeMobile() {
     setMobileOpen(false);
@@ -296,10 +294,8 @@ export function Sidebar({ displayName }: SidebarProps) {
   const isActive = (href: string) => {
     if (href === '/workspace') return pathname === '/workspace';
     if (href === '/dashboard') return pathname === '/dashboard' || pathname === '/dashboard/';
-    const [path, query] = href.split('?');
+    const [path] = href.split('?');
     if (pathname !== path && !pathname.startsWith(`${path}/`)) return false;
-    if (query?.includes('tab=plan')) return searchParams.get('tab') === 'plan';
-    if (path === '/settings') return searchParams.get('tab') !== 'plan';
     return true;
   };
 
@@ -327,6 +323,8 @@ export function Sidebar({ displayName }: SidebarProps) {
 
   async function handleLogout() {
     const supabase = createClient();
+    clearUserScopedCaches();
+    useAppStore.getState().setProfile(null);
     await supabase.auth.signOut();
     // Hard navigation: router.refresh() would re-render the current shell route, whose
     // layout now sees no user and redirects to /auth/login, racing ahead of the push.
@@ -382,7 +380,7 @@ export function Sidebar({ displayName }: SidebarProps) {
           <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} />
         </div>
       )}
-      {displayName && !sidebarOpen && !isMobile && (
+      {displayName && !effectiveSidebarOpen && !isMobile && (
         <div className="flex flex-col items-center gap-1 py-1">
           {incognito ? (
             <IncognitoProfileBox size="sidebarCompact" />
@@ -518,7 +516,7 @@ export function Sidebar({ displayName }: SidebarProps) {
       </SidebarNavScroller>
 
       {bottomSection}
-      {sidebarOpen && (
+      {effectiveSidebarOpen && (
         <div
           role="separator"
           aria-orientation="vertical"
@@ -571,11 +569,11 @@ export function Sidebar({ displayName }: SidebarProps) {
           setMobileOpen(false);
         }}
         className={cn('xv-sidebar-edge-toggle hidden lg:flex', terminalFullscreen && '!hidden')}
-        aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+        aria-label={effectiveSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
         // Track the inset panel's right edge, not the reserved column's edge.
-        style={{ left: sidebarOpen ? `calc(${asideWidth}px - var(--xv-sidebar-inset))` : 0 }}
+        style={{ left: effectiveSidebarOpen ? `calc(${asideWidthCss} - var(--xv-sidebar-inset))` : 0 }}
       >
-        {sidebarOpen ? (
+        {effectiveSidebarOpen ? (
           <PanelLeftClose className="w-3.5 h-3.5" />
         ) : (
           <PanelLeft className="w-3.5 h-3.5" />
@@ -586,7 +584,7 @@ export function Sidebar({ displayName }: SidebarProps) {
         <aside
           className={cn(
             'xv-sidebar-floating xv-sidebar-hover relative z-40 shrink-0 overflow-hidden transition-[opacity] duration-200',
-            sidebarOpen ? 'flex flex-col opacity-100' : 'pointer-events-none opacity-0'
+            effectiveSidebarOpen ? 'flex flex-col opacity-100' : 'pointer-events-none opacity-0'
           )}
         >
           {sidebarInner}

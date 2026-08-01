@@ -47,16 +47,18 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, pipelineMessage, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, heavyBuildActive, heavyAssistantId } =
+  const { messages, sessionRestoring, loading, animatingId, pipelineMessage, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const applyBuild = useProjectWorkspaceStore((s) => s.applyBuild);
   const clearRollbackBuffer = useProjectWorkspaceStore((s) => s.clearRollbackBuffer);
-  const terminalSkin = useThemeStore((s) => s.terminalSkin);
-  const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
+  const terminalSkinRaw = useThemeStore((s) => s.terminalSkin);
+  const terminalFullscreenRaw = useThemeStore((s) => s.terminalFullscreen);
   const setTerminalFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const profile = useAppStore((s) => s.profile);
   const hydrated = useHydrated();
+  const terminalSkin = hydrated ? terminalSkinRaw : 'dark';
+  const terminalFullscreen = hydrated && terminalFullscreenRaw;
   const storeIncognitoRaw = usePrivacyStore((s) => s.incognito);
   const storeIncognito = hydrated && storeIncognitoRaw;
   const isIncognito = incognito || storeIncognito;
@@ -320,7 +322,20 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
         </div>
 
         <div className="xv-terminal-body px-4 py-3 space-y-3 font-coding text-[13px] overflow-hidden rounded-b-xl">
-          {messages.length === 0 && !loading && (
+          {messages.length === 0 && sessionRestoring && (
+            <div className="xv-term-empty" role="status" aria-live="polite" data-testid="terminal-restoring">
+              <p className="xv-term-emptyline">
+                <span className="xv-term-prompt" aria-hidden="true">
+                  xroga<span className="xv-term-at">@</span>swarm
+                  <span className="xv-term-sep">:</span>
+                  <span className="xv-term-cwd">~</span>
+                  <span className="xv-term-sigil">$</span>
+                </span>
+                <span className="xv-term-hint">Restoring the latest verified terminal stateâ€¦</span>
+              </p>
+            </div>
+          )}
+          {messages.length === 0 && !loading && !sessionRestoring && (
             /* Left-aligned on a real prompt line with a live caret, rather than the
                centred grey sentence this replaces — a console's resting state is a
                cursor waiting at column one, and centring it read as placeholder text
@@ -397,7 +412,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                       />
                     </>
                   ) : msg.role === 'system' ? (
-                    <p className="py-0.5 text-xs xv-swarm-agent-line animate-in fade-in duration-300">{msg.content}</p>
+                    <p className="py-0.5 text-xs xv-swarm-agent-line">{msg.content}</p>
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">

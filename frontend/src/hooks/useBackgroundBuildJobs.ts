@@ -2,7 +2,11 @@
 
 import { useEffect, useRef } from 'react';
 import { api } from '@/lib/api';
-import { loadPendingBuildJobs, removePendingBuildJob } from '@/lib/pendingBuildJobs';
+import {
+  loadPendingBuildJobs,
+  removePendingBuildJob,
+  updatePendingBuildSequence,
+} from '@/lib/pendingBuildJobs';
 import { showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -11,18 +15,28 @@ type BuildCompleteHandler = (params: {
   output: Record<string, unknown>;
 }) => void;
 
+type BuildRecoveryHandler = (params: {
+  assistantMessageId: string;
+  runId: string;
+  status: string;
+  events: NonNullable<Awaited<ReturnType<typeof api.swarm.getRun>>['events']>;
+}) => void;
+
 const POLL_MS = 8000;
 
 export function useBackgroundBuildJobs(
   onBuildComplete?: BuildCompleteHandler,
-  onBuildFailed?: (assistantMessageId: string, error: string) => void
+  onBuildFailed?: (assistantMessageId: string, error: string) => void,
+  onBuildRecovered?: BuildRecoveryHandler,
 ) {
   const setUnreadCount = useAppStore((s) => s.setUnreadCount);
   const setNotifications = useAppStore((s) => s.setNotifications);
   const completeRef = useRef(onBuildComplete);
   const failedRef = useRef(onBuildFailed);
+  const recoveredRef = useRef(onBuildRecovered);
   completeRef.current = onBuildComplete;
   failedRef.current = onBuildFailed;
+  recoveredRef.current = onBuildRecovered;
 
   useEffect(() => {
     let cancelled = false;
@@ -54,7 +68,27 @@ export function useBackgroundBuildJobs(
           continue;
         }
         try {
-          const run = await api.swarm.getRun(job.runId);
+          const run = await api.swarm.getRun(job.runId, job.lastSequence ?? 0);
+          const events = run.events ?? [];
+          if (events.length) {
+            recoveredRef.current?.({
+              assistantMessageId: job.assistantMessageId,
+              runId: job.runId,
+              status: run.status,
+              events,
+            });
+            updatePendingBuildSequence(
+              job.assistantMessageId,
+              run.lastSequence ?? events[events.length - 1].sequence,
+            );
+          } else if (run.status === 'running') {
+            recoveredRef.current?.({
+              assistantMessageId: job.assistantMessageId,
+              runId: job.runId,
+              status: run.status,
+              events: [],
+            });
+          }
           if (run.status === 'complete' || run.status === 'completed') {
             removePendingBuildJob(job.assistantMessageId);
             showBuildBrowserNotification({
@@ -130,10 +164,18 @@ export function useBackgroundBuildJobs(
     const interval = setInterval(() => {
       void pollOnce();
     }, POLL_MS);
+    const onNetworkRestored = () => void pollOnce();
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void pollOnce();
+    };
+    window.addEventListener('xroga-network-restored', onNetworkRestored);
+    document.addEventListener('visibilitychange', onVisible);
 
     return () => {
       cancelled = true;
       clearInterval(interval);
+      window.removeEventListener('xroga-network-restored', onNetworkRestored);
+      document.removeEventListener('visibilitychange', onVisible);
     };
   }, [setNotifications, setUnreadCount]);
 }

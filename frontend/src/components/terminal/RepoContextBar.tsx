@@ -20,6 +20,49 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 
 const STORAGE_KEY = 'xroga-repo-context';
+const REPO_LIST_CACHE_KEY = 'xroga-repo-list-cache';
+const REPO_LIST_CACHE_TTL_MS = 5 * 60_000;
+
+interface RepoListSnapshot {
+  connected: boolean;
+  repos: GitHubRepo[];
+  defaultRepo?: string | null;
+  verifiedAt: number;
+}
+
+let repoListRequest: Promise<RepoListSnapshot> | null = null;
+
+function readRepoListSnapshot(): RepoListSnapshot | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const parsed = JSON.parse(localStorage.getItem(REPO_LIST_CACHE_KEY) ?? 'null') as RepoListSnapshot | null;
+    if (!parsed || !Array.isArray(parsed.repos) || typeof parsed.verifiedAt !== 'number') return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchRepoListSnapshot(force = false): Promise<RepoListSnapshot> {
+  const cached = readRepoListSnapshot();
+  if (!force && cached && Date.now() - cached.verifiedAt < REPO_LIST_CACHE_TTL_MS) return cached;
+  if (repoListRequest) return repoListRequest;
+  repoListRequest = (async () => {
+    const status = await api.github.status();
+    const repos = status.connected ? (await api.github.listRepos()).repos : [];
+    const snapshot: RepoListSnapshot = {
+      connected: status.connected,
+      repos,
+      defaultRepo: status.defaultRepo,
+      verifiedAt: Date.now(),
+    };
+    localStorage.setItem(REPO_LIST_CACHE_KEY, JSON.stringify(snapshot));
+    return snapshot;
+  })().finally(() => {
+    repoListRequest = null;
+  });
+  return repoListRequest;
+}
 
 interface RepoContextBarProps {
   outside?: boolean;
@@ -40,7 +83,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
   const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
   const [branches, setBranches] = useState<string[]>([]);
   const [selectedBranch, setSelectedBranch] = useState('main');
-  const [loadingRepos, setLoadingRepos] = useState(false);
+  const [loadingRepos, setLoadingRepos] = useState(true);
   const [loadingBranches, setLoadingBranches] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [repoSummary, setRepoSummary] = useState<string | null>(null);
@@ -105,19 +148,18 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
     }
   }, []);
 
-  const refresh = useCallback(async () => {
-    setLoadingRepos(true);
+  const refresh = useCallback(async (force = false) => {
+    if (!readRepoListSnapshot()) setLoadingRepos(true);
     try {
-      const status = await api.github.status();
-      if (!status.connected) {
+      const snapshot = await fetchRepoListSnapshot(force);
+      if (!snapshot.connected) {
         setConnected(false);
         setRepos([]);
         setSelectedRepo(null);
         return;
       }
       setConnected(true);
-
-      const { repos: list } = await api.github.listRepos();
+      const list = snapshot.repos;
       setRepos(list);
 
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -141,8 +183,8 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
           : null
         : savedRepo && list.some((r) => r.fullName === savedRepo)
           ? savedRepo
-          : status.defaultRepo && list.some((r) => r.fullName === status.defaultRepo)
-            ? status.defaultRepo
+          : snapshot.defaultRepo && list.some((r) => r.fullName === snapshot.defaultRepo)
+            ? snapshot.defaultRepo
             : repoLocked
               ? list[0]?.fullName ?? null
               : null;
@@ -177,12 +219,15 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
   }, [loadBranches, analyzeRepo, repoLocked]);
 
   useEffect(() => {
-    void refresh();
-    const onConnected = () => void refresh();
+    const hadCache = Boolean(readRepoListSnapshot());
+    void refresh(false).then(() => {
+      if (hadCache) void refresh(true);
+    });
+    const onConnected = () => void refresh(true);
     const onStorage = () => {
-      void refresh();
+      void refresh(true);
     };
-    const onProjectSaved = () => void refresh();
+    const onProjectSaved = () => void refresh(true);
     const onRepoContext = (e: Event) => {
       const detail = (e as CustomEvent<{ repo?: string; branch?: string }>).detail;
       if (!detail?.repo?.includes('/')) return;
@@ -190,7 +235,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
         STORAGE_KEY,
         JSON.stringify({ repo: detail.repo, branch: detail.branch ?? 'main' }),
       );
-      void refresh();
+      void refresh(false);
     };
     const onCleared = () => {
       setSelectedRepo(null);

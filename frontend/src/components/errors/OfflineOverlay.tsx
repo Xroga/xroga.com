@@ -1,39 +1,54 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { RetroTvErrorPage } from './RetroTvErrorPage';
+import { Loader2, WifiOff } from 'lucide-react';
+
+type ConnectionState = 'online' | 'offline' | 'reconnecting';
 
 export function OfflineOverlay() {
-  const [offline, setOffline] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [connection, setConnection] = useState<ConnectionState>('online');
 
   useEffect(() => {
-    setMounted(true);
-    setOffline(!navigator.onLine);
+    setConnection(navigator.onLine ? 'online' : 'offline');
 
-    const handleOffline = () => setOffline(true);
-    const handleOnline = () => setOffline(false);
+    const handleOffline = () => setConnection('offline');
+    const handleOnline = () => {
+      setConnection('reconnecting');
+      window.dispatchEvent(new CustomEvent('xroga-network-restored'));
+      window.setTimeout(() => setConnection('online'), 1800);
+    };
 
     window.addEventListener('offline', handleOffline);
     window.addEventListener('online', handleOnline);
-
     return () => {
       window.removeEventListener('offline', handleOffline);
       window.removeEventListener('online', handleOnline);
     };
   }, []);
 
-  if (!mounted || !offline) return null;
+  if (connection === 'online') return null;
 
   return (
-    <div className="xv-offline-overlay" role="alert" aria-live="assertive">
-      <RetroTvErrorPage
-        screenText="NO SIGNAL"
-        overlayDigits={['O', 'F', 'F']}
-        title="Connection lost"
-        description="You appear to be offline. Check your internet connection — we'll reconnect automatically when you're back online."
-        backHref={undefined}
-      />
+    <div
+      className="xv-connection-indicator"
+      data-state={connection}
+      role="status"
+      aria-live="polite"
+      data-testid="connection-indicator"
+    >
+      {connection === 'offline' ? (
+        <WifiOff className="h-3.5 w-3.5" aria-hidden="true" />
+      ) : (
+        <Loader2
+          className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none"
+          aria-hidden="true"
+        />
+      )}
+      <span>
+        {connection === 'offline'
+          ? 'Offline â€” your workspace and draft remain available.'
+          : 'Reconnecting to live workâ€¦'}
+      </span>
     </div>
   );
 }

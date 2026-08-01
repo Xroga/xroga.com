@@ -9,19 +9,19 @@ import { DashboardWelcome } from '@/components/dashboard/DashboardWelcome';
 import { useAppStore } from '@/store/useAppStore';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useEffect } from 'react';
-import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
+import { useHydrated } from '@/hooks/useHydrated';
 
-interface DashboardViewProps {
-  displayName: string;
-}
-
-export function DashboardView({ displayName }: DashboardViewProps) {
+export function DashboardView() {
+  const shellIdentity = useShellIdentity();
+  const profile = useAppStore((s) => s.profile);
+  const displayName = profile?.display_name ?? shellIdentity.displayName;
+  const hydrated = useHydrated();
   const fullscreen = useThemeStore((s) => s.terminalFullscreen);
-  const setFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
-  const setProfile = useAppStore((s) => s.setProfile);
-  const workspaceOpen = useProjectWorkspaceStore((s) => s.workspaceOpen);
+  const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
+  const workspaceOpen = hydrated && workspaceOpenRaw;
 
   useEffect(() => {
     document.body.classList.toggle('xv-terminal-fullscreen-active', fullscreen);
@@ -29,21 +29,8 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   }, [fullscreen]);
 
   useEffect(() => {
-    return () => setFullscreen(false);
-  }, [setFullscreen]);
-
-  useEffect(() => {
     useThemeStore.getState().setBrowserPanelOpen(false);
   }, []);
-
-  useEffect(() => {
-    api.profile
-      .get()
-      .then((p) => setProfile(p))
-      .catch(() =>
-        setProfile({ display_name: displayName, avatar_url: null, timezone: 'UTC', language: 'en' })
-      );
-  }, [displayName, setProfile]);
 
   const chatColumn = (
     <div className={cn('space-y-3 w-full min-w-0', fullscreen && 'xv-fullscreen-terminal max-w-none')}>

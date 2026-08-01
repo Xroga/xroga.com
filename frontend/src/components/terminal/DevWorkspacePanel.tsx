@@ -28,6 +28,7 @@ import {
 } from '@/store/useProjectWorkspaceStore';
 import { buildInlinePreviewDocument } from '@/lib/landingPreview';
 import { cn } from '@/lib/utils';
+import { useHydrated } from '@/hooks/useHydrated';
 
 const TABS: Array<{ id: DevWorkspaceTab; label: string; Icon: typeof FolderTree }> = [
   { id: 'files', label: 'Files', Icon: FolderTree },
@@ -98,7 +99,9 @@ function PreviewPane({ viewport, nonce = 0 }: { viewport: 'mobile' | 'tablet' | 
 }
 
 export function DevWorkspacePanel({ className }: { className?: string }) {
-  const workspaceOpen = useProjectWorkspaceStore((s) => s.workspaceOpen);
+  const hydrated = useHydrated();
+  const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
+  const workspaceOpen = hydrated && workspaceOpenRaw;
   const setWorkspaceOpen = useProjectWorkspaceStore((s) => s.setWorkspaceOpen);
   const activeTab = useProjectWorkspaceStore((s) => s.activeTab);
   const setActiveTab = useProjectWorkspaceStore((s) => s.setActiveTab);

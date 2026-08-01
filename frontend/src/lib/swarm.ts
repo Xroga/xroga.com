@@ -42,6 +42,8 @@ export function swarmOutputToText(output: unknown): string {
 }
 
 export interface SwarmProgressEvent {
+  /** Monotonic persisted event sequence, present on live and replayed build events. */
+  sequence?: number;
   agent?: string;
   status?: string;
   message?: string;
