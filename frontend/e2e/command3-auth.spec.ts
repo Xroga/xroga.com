@@ -512,9 +512,15 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // PR checks intentionally dry-run migrations. The production launch workflow
   // runs after main applies the migration and independently verifies durable state.
   if (launchBillingApiUrl) {
-    const storedProfile = await admin.from('profiles').select('companion_preferences').eq('id', ownerId).single();
-    expect(storedProfile.error).toBeNull();
-    expect((storedProfile.data?.companion_preferences as { name?: string } | null)?.name).toBe(`Xo-${run.slice(0, 6)}`);
+    await expect.poll(async () => {
+      const storedProfile = await admin.from('profiles').select('companion_preferences').eq('id', ownerId).single();
+      expect(storedProfile.error).toBeNull();
+      return (storedProfile.data?.companion_preferences as { name?: string } | null)?.name;
+    }, {
+      message: 'companion preferences did not reach durable profile storage',
+      timeout: 15_000,
+      intervals: [500, 1_000, 2_000],
+    }).toBe(`Xo-${run.slice(0, 6)}`);
     companionProfilePersistence = 'verified_server';
   }
 

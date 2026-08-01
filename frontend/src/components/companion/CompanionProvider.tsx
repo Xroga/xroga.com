@@ -48,6 +48,7 @@ export function CompanionProvider({ children }: { children: ReactNode }) {
         const profile = await api.profile.get();
         if (!active) return;
         const pending = pendingBeforeHydrationRef.current;
+        const serverPreferences = companionPreferencesFromUnknown(profile.companion_preferences);
         if (pending) {
           // A slow profile request must not overwrite or discard edits made while
           // Settings was already interactive. Treat the local edit as newer and
@@ -55,12 +56,20 @@ export function CompanionProvider({ children }: { children: ReactNode }) {
           hydratedRef.current = true;
           pendingBeforeHydrationRef.current = null;
           await api.profile.update({ companion_preferences: pending });
+        } else if (Object.keys(serverPreferences).length === 0) {
+          // New profiles have no server preference snapshot yet. Persist the local
+          // state instead of treating an empty object as newer. This also recovers a
+          // debounced save that was interrupted by a fast navigation or reload.
+          hydratedRef.current = true;
+          await api.profile.update({
+            companion_preferences: companionPreferencesSnapshot(useCompanionStore.getState()),
+          });
         } else {
           // Hydrating the store also notifies subscribers. Suppress that one
           // server-originated transition so it is not mistaken for a user edit.
           hydratingStoreRef.current = true;
           useCompanionStore.getState().hydratePreferences(
-            companionPreferencesFromUnknown(profile.companion_preferences),
+            serverPreferences,
             profile.display_name,
           );
           hydratingStoreRef.current = false;
