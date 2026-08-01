@@ -24,6 +24,24 @@ export interface ProjectMemory {
   hits: number;
 }
 
+export type ProjectMemoryPersistence = 'user_project' | 'platform' | 'memory_only';
+
+export interface DurableProjectMemoryResult {
+  memory: ProjectMemory;
+  persistence: ProjectMemoryPersistence;
+}
+
+interface SetProjectMemoryInput {
+  userId: string;
+  repo?: string | null;
+  branch?: string;
+  projectName?: string;
+  files: ProjectFile[];
+  aiSummary?: string;
+  aiSummaryModel?: string;
+  commitSha?: string;
+}
+
 const store = new Map<string, ProjectMemory>();
 const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7d hot cache
 const MAX_FILE_CHARS = 120_000;
@@ -124,7 +142,7 @@ async function loadFromDb(
   }
 }
 
-async function saveToDb(mem: ProjectMemory): Promise<void> {
+async function saveToDb(mem: ProjectMemory): Promise<ProjectMemoryPersistence> {
   try {
     const userClient = await getUserSupabaseAdmin(mem.userId);
     if (userClient) {
@@ -144,36 +162,37 @@ async function saveToDb(mem: ProjectMemory): Promise<void> {
         },
         { onConflict: 'xroga_user_id,repo,branch' },
       );
-      if (!error) return;
+      if (!error) return 'user_project';
       console.warn('[projectMemory] user project save:', error.message);
     }
   } catch (err) {
     console.warn('[projectMemory] user project save:', (err as Error).message);
   }
 
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
-  try {
-    await ensureShipLoopSchema();
-    const supabase = getSupabaseAdmin();
-    await supabase.from('project_memory').upsert(
-      {
-        user_id: mem.userId,
-        repo: normalizeRepo(mem.repo),
-        branch: mem.branch,
-        project_name: mem.projectName ?? null,
-        files: mem.files,
-        paths: mem.paths,
-        ai_summary: mem.aiSummary ?? null,
-        ai_summary_model: mem.aiSummaryModel ?? null,
-        commit_sha: mem.commitSha ?? null,
-        hits: mem.hits,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'user_id,repo,branch' },
-    );
-  } catch (err) {
-    console.warn('[projectMemory] save failed:', (err as Error).message);
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return 'memory_only';
+
+  await ensureShipLoopSchema();
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase.from('project_memory').upsert(
+    {
+      user_id: mem.userId,
+      repo: normalizeRepo(mem.repo),
+      branch: mem.branch,
+      project_name: mem.projectName ?? null,
+      files: mem.files,
+      paths: mem.paths,
+      ai_summary: mem.aiSummary ?? null,
+      ai_summary_model: mem.aiSummaryModel ?? null,
+      commit_sha: mem.commitSha ?? null,
+      hits: mem.hits,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id,repo,branch' },
+  );
+  if (error) {
+    throw new Error(`Platform project-memory write failed: ${error.message}`);
   }
+  return 'platform';
 }
 
 export function getProjectMemory(
@@ -208,16 +227,7 @@ export async function getProjectMemoryAsync(
   return db;
 }
 
-export function setProjectMemory(input: {
-  userId: string;
-  repo?: string | null;
-  branch?: string;
-  projectName?: string;
-  files: ProjectFile[];
-  aiSummary?: string;
-  aiSummaryModel?: string;
-  commitSha?: string;
-}): ProjectMemory {
+function setProjectMemoryHot(input: SetProjectMemoryInput): ProjectMemory {
   const repo = input.repo?.includes('/') ? input.repo : null;
   const branch = input.branch || 'main';
   const files = trimFiles(input.files);
@@ -236,8 +246,28 @@ export function setProjectMemory(input: {
     hits: (prev?.hits ?? 0) + 1,
   };
   store.set(key(input.userId, repo, branch), mem);
-  void saveToDb(mem);
   return mem;
+}
+
+export function setProjectMemory(input: SetProjectMemoryInput): ProjectMemory {
+  const mem = setProjectMemoryHot(input);
+  void saveToDb(mem).catch((err) => {
+    console.warn('[projectMemory] background save failed:', (err as Error).message);
+  });
+  return mem;
+}
+
+/**
+ * Acknowledged persistence checkpoint for generated project state.
+ * Execution paths that may finish or call external providers must await this
+ * instead of relying on the best-effort background writer above.
+ */
+export async function setProjectMemoryDurable(
+  input: SetProjectMemoryInput,
+): Promise<DurableProjectMemoryResult> {
+  const memory = setProjectMemoryHot(input);
+  const persistence = await saveToDb(memory);
+  return { memory, persistence };
 }
 
 export function patchProjectMemory(

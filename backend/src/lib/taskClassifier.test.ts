@@ -22,6 +22,18 @@ describe('task classifier', () => {
     assert.ok(result.requiredCapabilities.includes('web_research'));
   });
 
+  it('honors an explicit instruction not to research during a ship-only run', () => {
+    const result = classifyTaskRequest(
+      'Ship the current saved project. Do not research, browse, or redesign it. Push to GitHub and deploy to Vercel.',
+    );
+    assert.equal(result.requiresCoding, true);
+    assert.equal(result.requiresResearch, false);
+    assert.equal(result.requiredCapabilities.includes('web_research'), false);
+    assert.equal(result.requiredCapabilities.includes('x_research'), false);
+    assert.ok(result.requiredCapabilities.includes('github_operations'));
+    assert.ok(result.requiredCapabilities.includes('vercel_operations'));
+  });
+
   it('selects capabilities from the task rather than the industry', () => {
     const result = classifyTaskRequest(
       'Connect OAuth, Supabase, Stripe checkout, and deploy this unusual museum workflow to Vercel',

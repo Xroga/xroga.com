@@ -99,8 +99,8 @@ import { guessDeletePaths, selectFilesForUpdate } from './fileSelector.js';
 import {
   getProjectMemory,
   getProjectMemoryAsync,
-  patchProjectMemory,
   setProjectMemory,
+  setProjectMemoryDurable,
   shouldGenerateAiSummary,
 } from './projectMemory.js';
 import { summarizeRepoForUpdates } from './repoSummarize.js';
@@ -130,6 +130,7 @@ import {
 } from './intelligentRouter.js';
 import { normalizeProviderError, recordModelValidation } from './providerRuntime.js';
 import { classifyFailure } from '../lib/recoveryPlanner.js';
+import { explicitlyDisablesResearch } from '../lib/taskClassifier.js';
 import { loadRoutingOutcomes, recordRoutingOutcome } from './routingOutcomes.js';
 import { getRuntimeModelRegistry } from './modelCapabilityRegistry.js';
 import { prepareFocusedContext } from './contextPreparation.js';
@@ -558,6 +559,7 @@ function finalizeBuildTodos(
 
 function wantsResearch(prompt: string, _isUpdate: boolean): boolean {
   void _isUpdate;
+  if (explicitlyDisablesResearch(prompt)) return false;
   // New builds and updates: research when the user asks for current facts / news
   return /\b(research|latest|news|trends?|market|sources?|citations?|current|today|prices?)\b/i.test(
     prompt,
@@ -2115,6 +2117,44 @@ export async function runBuildPipeline(opts: {
     }
   }
 
+  // Persist the validated canonical snapshot before any external mutation. A Fly
+  // restart or interrupted provider call must not erase completed generation work.
+  let projectMemoryPersistenceError: string | undefined;
+  if (
+    nextFiles.length &&
+    !patchAborted &&
+    !security.blocked &&
+    !compileBlocksShip &&
+    !qaBlocksShip
+  ) {
+    try {
+      const saved = await setProjectMemoryDurable({
+        userId: opts.userId,
+        repo: meta?.githubTargetRepo,
+        branch: githubBranch,
+        projectName,
+        files: nextFiles,
+        commitSha: priorCommitSha,
+        aiSummary: cachedSummary,
+      });
+      if (saved.persistence === 'memory_only') {
+        projectMemoryPersistenceError = 'Durable project storage is not configured';
+      }
+    } catch (err) {
+      projectMemoryPersistenceError = redactSecrets((err as Error).message).slice(0, 200);
+    }
+    if (projectMemoryPersistenceError) {
+      emit({
+        agent: 'build',
+        status: 'snapshot_persistence_failed',
+        message: `Generated files remain available in this run, but durable recovery is unavailable: ${projectMemoryPersistenceError}`,
+        swarmStatusLabel: 'Recovery unavailable',
+        swarmActivity: projectMemoryPersistenceError,
+        swarmTodos: todos('push'),
+      });
+    }
+  }
+
   if (githubShippingPlan.reuseCommitSha && meta?.githubTargetRepo) {
     commitSha = githubShippingPlan.reuseCommitSha;
     githubPushConfirmed = true;
@@ -2760,19 +2800,10 @@ export async function runBuildPipeline(opts: {
     }
   }
 
-  // Refresh hot memory so next update skips GitHub/AI re-analyze
+  // Acknowledge the final snapshot (including the verified commit) before deploy/final response.
   if (nextFiles.length || deletedPaths.length) {
-    if (isUpdate) {
-      patchProjectMemory(
-        opts.userId,
-        meta?.githubTargetRepo,
-        githubBranch,
-        nextFiles,
-        deletedPaths,
-        { commitSha, projectName },
-      );
-    } else {
-      setProjectMemory({
+    try {
+      const saved = await setProjectMemoryDurable({
         userId: opts.userId,
         repo: githubRepoName || meta?.githubTargetRepo,
         branch: githubBranch,
@@ -2781,6 +2812,12 @@ export async function runBuildPipeline(opts: {
         commitSha,
         aiSummary: cachedSummary,
       });
+      projectMemoryPersistenceError =
+        saved.persistence === 'memory_only'
+          ? 'Durable project storage is not configured'
+          : undefined;
+    } catch (err) {
+      projectMemoryPersistenceError = redactSecrets((err as Error).message).slice(0, 200);
     }
   }
 
@@ -2946,6 +2983,10 @@ export async function runBuildPipeline(opts: {
         }),
       );
     }
+  }
+
+  if (projectMemoryPersistenceError && !githubPushConfirmed) {
+    shipBlockers.push(`Project recovery snapshot failed: ${projectMemoryPersistenceError}`);
   }
 
   const outcome = computeShipOutcome({
