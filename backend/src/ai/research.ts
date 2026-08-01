@@ -85,13 +85,14 @@ export async function gatherResearch(query: string, userId?: string): Promise<Re
 }
 
 /**
- * Grok chat completions + search_parameters.
+ * Grok Responses API with native web/X tools.
  * Default sources = web + X (native). No X developer API required.
  */
-async function grokLiveSearch(
+export async function grokLiveSearch(
   query: string,
   apiKey: string,
   opts: { includeX: boolean; forceX: boolean },
+  request: typeof fetch = fetch,
 ): Promise<{
   bundle: ResearchBundle;
   inputTokens: number;
@@ -99,35 +100,22 @@ async function grokLiveSearch(
   providerRequestId?: string;
 }> {
   const apiModel = configuredApiModel('grok_4_5');
-  const sources: Array<Record<string, unknown>> = [{ type: 'web' }, { type: 'news' }];
-  if (opts.includeX) sources.push({ type: 'x' });
+  const tools: Array<Record<string, unknown>> = [{ type: 'web_search' }];
+  if (opts.includeX) tools.push({ type: 'x_search' });
 
   const body = {
     model: apiModel,
+    instructions:
+      'You are Xroga Live research. Summarize current facts with concrete details. Prefer primary sources and preserve citations. Return plain text.',
+    input: opts.forceX
+      ? `Research with live web + X sources. Include recent posts and official pages when relevant.\n\n${query}`
+      : `Research with live web sources, and use X when useful.\n\n${query}`,
+    tools,
     temperature: 0.2,
-    max_tokens: 2048,
-    messages: [
-      {
-        role: 'system',
-        content:
-          'You are Xroga Live research. Summarize current facts with concrete details. Prefer primary sources. If X/Twitter posts matter, cite them. Return plain text; list URLs you relied on.',
-      },
-      {
-        role: 'user',
-        content: opts.forceX
-          ? `Research with live web + X (Twitter) sources:\n\n${query}\n\nInclude recent posts and official pages when relevant.`
-          : `Research with live web (and X when useful):\n\n${query}`,
-      },
-    ],
-    search_parameters: {
-      mode: 'on',
-      return_citations: true,
-      max_search_results: 12,
-      sources,
-    },
+    max_output_tokens: 2048,
   };
 
-  const res = await fetch('https://api.x.ai/v1/chat/completions', {
+  const res = await request('https://api.x.ai/v1/responses', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -143,16 +131,34 @@ async function grokLiveSearch(
 
   const data = (await res.json()) as {
     id?: string;
-    choices?: Array<{ message?: { content?: string } }>;
-    citations?: string[];
-    usage?: { prompt_tokens?: number; completion_tokens?: number; num_sources_used?: number };
+    output?: Array<{
+      content?: Array<{
+        type?: string;
+        text?: string;
+        annotations?: Array<{ type?: string; url?: string; title?: string }>;
+      }>;
+    }>;
+    citations?: Array<string | { url?: string; title?: string }>;
+    usage?: { input_tokens?: number; output_tokens?: number; num_sources_used?: number };
   };
 
-  const summary = (data.choices?.[0]?.message?.content ?? '').trim();
-  const citationUrls = (Array.isArray(data.citations) ? data.citations : []).filter((value): value is string => {
-    if (typeof value !== 'string') return false;
-    try { validateResearchUrl(value); return true; } catch { return false; }
-  });
+  const contentItems = (data.output ?? []).flatMap((item) => item.content ?? []);
+  const summary = contentItems
+    .filter((item) => item.type === 'output_text' && typeof item.text === 'string')
+    .map((item) => item.text)
+    .join('\n')
+    .trim();
+  const citationCandidates = [
+    ...(data.citations ?? []).map((citation) =>
+      typeof citation === 'string' ? { url: citation } : citation,
+    ),
+    ...contentItems.flatMap((item) => item.annotations ?? []),
+  ];
+  const citationUrls = [...new Set(citationCandidates.map((citation) => citation.url))]
+    .filter((value): value is string => {
+      if (typeof value !== 'string') return false;
+      try { validateResearchUrl(value); return true; } catch { return false; }
+    });
 
   const urlSources: ResearchSource[] = citationUrls.slice(0, 12).map((url) => ({
     title: hostTitle(url),
@@ -165,8 +171,8 @@ async function grokLiveSearch(
   if (!urlSources.length) {
     return {
       bundle: { query, summary: '', sources: [], provider: 'none' },
-      inputTokens: data.usage?.prompt_tokens ?? Math.max(1, Math.ceil(query.length / 4)),
-      outputTokens: data.usage?.completion_tokens ?? Math.max(1, Math.ceil(summary.length / 4)),
+      inputTokens: data.usage?.input_tokens ?? Math.max(1, Math.ceil(query.length / 4)),
+      outputTokens: data.usage?.output_tokens ?? Math.max(1, Math.ceil(summary.length / 4)),
       providerRequestId: data.id,
     };
   }
@@ -179,8 +185,8 @@ async function grokLiveSearch(
       provider: 'grok_live',
       includedXSearch: opts.includeX,
     },
-    inputTokens: data.usage?.prompt_tokens ?? Math.max(1, Math.ceil(query.length / 4)),
-    outputTokens: data.usage?.completion_tokens ?? Math.max(1, Math.ceil(summary.length / 4)),
+    inputTokens: data.usage?.input_tokens ?? Math.max(1, Math.ceil(query.length / 4)),
+    outputTokens: data.usage?.output_tokens ?? Math.max(1, Math.ceil(summary.length / 4)),
     providerRequestId: data.id,
   };
 }

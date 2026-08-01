@@ -40,6 +40,7 @@ test('xAI and Tavily adapters send bounded official filters without live calls',
   const tavily = new TavilyResearchProvider('tavily-owner', async (_url, init) => { tavilyBody = JSON.parse(String(init?.body)); assert.equal((init?.headers as Record<string, string>).Authorization, 'Bearer tavily-owner'); return new Response(JSON.stringify({ results: [{ url: 'https://docs.example.com/t', title: 'T', content: 'fact' }] }), { status: 200, headers: { 'content-type': 'application/json' } }) as never; });
   const dated = { ...request, allowXDiscovery: true, verifiedOfficialXHandles: ['official'], startDate: '2026-07-01', endDate: '2026-07-26' };
   assert.equal((await xai.search(dated, AbortSignal.timeout(1_000))).length, 1);
+  assert.deepEqual((xBody.tools as Array<Record<string, unknown>>)[0].filters, { allowed_domains: ['docs.example.com'] });
   assert.equal((xBody.tools as Array<Record<string, unknown>>)[1].type, 'x_search');
   assert.deepEqual((xBody.tools as Array<Record<string, unknown>>)[1].allowed_x_handles, ['official']);
   assert.equal((await tavily.search(dated, AbortSignal.timeout(1_000))).length, 1);
