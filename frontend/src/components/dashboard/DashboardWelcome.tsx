@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Infinity } from 'lucide-react';
+import { ChevronRight, Infinity } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { getTimeGreetingKey, t } from '@/lib/i18n/translations';
 import { useLocale } from '@/components/providers/LanguageProvider';
@@ -53,11 +53,39 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
       </div>
 
       <div className="relative mx-auto mt-4 max-w-3xl">
-        <FirstRunShipChecklist className="mb-4" />
-        <WorkspaceShowcaseStarts />
+        <FirstRunShipChecklist className="mb-3" />
       </div>
 
-      <WorkspaceResumeList className="relative mt-4" />
+      {/*
+        Starters and resume were both always-open card walls stacked above the
+        terminal, which is what pushed the terminal off the first screen entirely —
+        the thing people come to this page to use was the last thing they reached.
+        Both are collapsed behind a summary line now. They stay one click away, and
+        neither is removed; what changes is that the default view is short.
+      */}
+      <div className="relative mx-auto mt-3 max-w-3xl space-y-2">
+        <details className="xv-ws-fold">
+          <summary className="xv-ws-fold__summary">
+            <ChevronRight className="xv-ws-fold__chev h-3.5 w-3.5" aria-hidden="true" />
+            <span className="xv-ws-fold__label">Start from a Xroga build</span>
+            <span className="xv-ws-fold__hint">Templates</span>
+          </summary>
+          <div className="xv-ws-fold__body">
+            <WorkspaceShowcaseStarts />
+          </div>
+        </details>
+
+        <details className="xv-ws-fold">
+          <summary className="xv-ws-fold__summary">
+            <ChevronRight className="xv-ws-fold__chev h-3.5 w-3.5" aria-hidden="true" />
+            <span className="xv-ws-fold__label">Continue where you left off</span>
+            <span className="xv-ws-fold__hint">Recent</span>
+          </summary>
+          <div className="xv-ws-fold__body">
+            <WorkspaceResumeList />
+          </div>
+        </details>
+      </div>
     </div>
   );
 }

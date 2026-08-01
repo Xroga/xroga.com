@@ -3,6 +3,7 @@
 import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { ProjectWorkspaceRail } from '@/components/terminal/ProjectWorkspaceRail';
 import { DevWorkspacePanel } from '@/components/terminal/DevWorkspacePanel';
+import { WorkspaceLauncher } from '@/components/terminal/WorkspaceLauncher';
 import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
 import { DashboardWelcome } from '@/components/dashboard/DashboardWelcome';
 import { useAppStore } from '@/store/useAppStore';
@@ -47,6 +48,7 @@ export function DashboardView({ displayName }: DashboardViewProps) {
   const chatColumn = (
     <div className={cn('space-y-3 w-full min-w-0', fullscreen && 'xv-fullscreen-terminal max-w-none')}>
       <ProjectWorkspaceRail />
+      <WorkspaceLauncher />
       <SwarmMessageLog />
     </div>
   );

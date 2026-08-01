@@ -31,6 +31,8 @@ interface ThemeState {
   slideshowEnabled: boolean;
   slideshowFrozenIndex: number;
   terminalFullscreen: boolean;
+  /** Collapses the composer so the transcript gets the height back. */
+  chatbarHidden: boolean;
   terminalSkin: TerminalSkin;
   /** True while the skin tracks the theme; false once the user picks one. */
   terminalSkinAuto: boolean;
@@ -50,6 +52,7 @@ interface ThemeState {
   setSlideshowEnabled: (enabled: boolean) => void;
   setSlideshowFrozenIndex: (index: number) => void;
   setTerminalFullscreen: (v: boolean) => void;
+  setChatbarHidden: (v: boolean) => void;
   cycleTerminalSkin: () => void;
   setTerminalSkin: (skin: TerminalSkin) => void;
   /** Hand the skin back to the theme after an explicit choice. */
@@ -76,6 +79,7 @@ export const useThemeStore = create<ThemeState>()(
       slideshowEnabled: false,
       slideshowFrozenIndex: 0,
       terminalFullscreen: false,
+      chatbarHidden: false,
       terminalSkin: 'dark',
       terminalSkinAuto: true,
       accent: 'blue',
@@ -125,6 +129,7 @@ export const useThemeStore = create<ThemeState>()(
         set({ slideshowFrozenIndex });
       },
       setTerminalFullscreen: (terminalFullscreen) => set({ terminalFullscreen }),
+      setChatbarHidden: (chatbarHidden) => set({ chatbarHidden }),
       cycleTerminalSkin: () =>
         set((s) => {
           const idx = TERMINAL_SKIN_CYCLE.indexOf(s.terminalSkin);
