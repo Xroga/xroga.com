@@ -1,10 +1,9 @@
 'use client';
 
+import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useCallback, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 import {
   User,
   Sparkles,
@@ -31,7 +30,7 @@ import { sectionFromQuery, type SettingsSectionId } from '@/lib/settingsSections
 
 const CompanionCustomizer = dynamic(
   () => import('@/components/companion/CompanionCustomizer').then((module) => module.CompanionCustomizer),
-  { loading: () => <Skeleton height={280} borderRadius={16} /> },
+  { loading: () => <PanelLoader height={280} /> },
 );
 
 const SECTIONS = [

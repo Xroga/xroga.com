@@ -1,5 +1,6 @@
 'use client';
 
+import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useEffect, useState, type FormEvent } from 'react';
 import toast from 'react-hot-toast';
 import { Save, Upload } from 'lucide-react';
@@ -12,7 +13,6 @@ import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { SettingsPanelHeader, SettingsStack } from '@/components/settings/SettingsPrimitives';
-import Skeleton from 'react-loading-skeleton';
 
 const TIMEZONES = [
   { value: 'UTC', label: 'UTC' },
@@ -93,7 +93,7 @@ export function GeneralSettingsPanel({ email }: { email: string }) {
   }
 
   if (loading || !profile) {
-    return <Skeleton height={320} borderRadius={16} />;
+    return <PanelLoader height={320} />;
   }
 
   return (

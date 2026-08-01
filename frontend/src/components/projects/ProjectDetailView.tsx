@@ -1,16 +1,15 @@
 'use client';
 
+import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Download, ExternalLink, History } from 'lucide-react';
-import Skeleton from 'react-loading-skeleton';
 import toast from 'react-hot-toast';
 import { api, type ProjectDetail, type ProjectFile, type ProjectMessage } from '@/lib/api';
 import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { FilePreview } from './FilePreview';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { cn } from '@/lib/utils';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 interface ProjectDetailViewProps {
   projectId: string;
@@ -43,7 +42,7 @@ export function ProjectDetailView({ projectId }: ProjectDetailViewProps) {
   ) ?? [];
 
   if (loading) {
-    return <Skeleton height={400} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />;
+    return <PanelLoader height={400} />;
   }
 
   if (!project) {

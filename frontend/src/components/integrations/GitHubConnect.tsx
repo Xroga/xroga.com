@@ -1,13 +1,12 @@
 'use client';
 
+import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Check, Loader2, Code2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import Skeleton from 'react-loading-skeleton';
 import { api, type GitHubStatus } from '@/lib/api';
 import { dispatchGitHubConnected } from '@/lib/githubEvents';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 type RepoStrategy = 'auto' | 'monorepo' | 'manual';
 
@@ -93,7 +92,7 @@ export function GitHubConnect() {
     }
   }
 
-  if (loading) return <Skeleton height={200} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />;
+  if (loading) return <PanelLoader height={200} />;
 
   return (
     <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6 space-y-5">

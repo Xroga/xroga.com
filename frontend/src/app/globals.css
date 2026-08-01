@@ -6920,3 +6920,16 @@ button:hover > .xv-animated-nav-icon { transform: translateY(-2px) scale(1.1); }
     transform: none !important;
   }
 }
+
+/* Panel waiting state. Replaces the grey skeleton slabs: a small spinner on the
+   panel's own surface, centred in the space the real content will occupy so the page
+   does not jump when it arrives. */
+.xv-panel-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border-radius: var(--radius-md, 0.75rem);
+  background: color-mix(in srgb, var(--surface-inset, transparent) 55%, transparent);
+  color: var(--text-muted, var(--muted));
+}

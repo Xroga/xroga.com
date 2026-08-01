@@ -1,11 +1,10 @@
 'use client';
 
+import { PanelLoader } from '@/components/ui/PanelLoader';
 import Link from 'next/link';
 import { Brain, AlertTriangle } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { cn } from '@/lib/utils';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 function formatTokens(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -20,7 +19,7 @@ export function ActionMeterLarge() {
   if (!usage) {
     return (
       <div className="glass-panel rounded-xl p-6">
-        <Skeleton height={120} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
+        <PanelLoader height={120} />
       </div>
     );
   }

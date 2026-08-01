@@ -1,5 +1,6 @@
 'use client';
 
+import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
@@ -17,8 +18,6 @@ import {
 import { api, type InfluencerDashboard } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 function formatTokens(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -94,7 +93,7 @@ export function InfluencerPanel({ embedded }: InfluencerPanelProps) {
   }
 
   if (loading) {
-    return <Skeleton height={embedded ? 320 : 400} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />;
+    return <PanelLoader height={embedded ? 320 : 400} />;
   }
 
   if (!dash) {

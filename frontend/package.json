@@ -21,7 +21,6 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.6.0",
-    "react-loading-skeleton": "^3.5.0",
     "sharp": "0.35.3",
     "tailwind-merge": "^3.6.0",
     "xroga": "file:..",
