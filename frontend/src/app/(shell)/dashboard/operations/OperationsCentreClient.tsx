@@ -27,6 +27,27 @@ type ProductDetail = {
   jobs: Row[]; webhooks: Row[]; maintenance: Row[];
 };
 
+const PORTFOLIO_ATTEMPT_TIMEOUT_MS = 7_000;
+
+async function fetchPortfolio(path: string, externalSignal?: AbortSignal): Promise<{ products: Product[] }> {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const controller = new AbortController();
+    const abortForNavigation = () => controller.abort();
+    externalSignal?.addEventListener('abort', abortForNavigation, { once: true });
+    const timeout = window.setTimeout(() => controller.abort(), PORTFOLIO_ATTEMPT_TIMEOUT_MS);
+    try {
+      return await apiFetch<{ products: Product[] }>(path, { signal: controller.signal });
+    } catch (cause) {
+      if (externalSignal?.aborted) throw cause;
+      if (!(cause instanceof ApiError) || cause.status !== 0 || attempt === 1) throw cause;
+    } finally {
+      window.clearTimeout(timeout);
+      externalSignal?.removeEventListener('abort', abortForNavigation);
+    }
+  }
+  throw new ApiError('Operations portfolio is unavailable', 0);
+}
+
 const GROUPS: Array<{ label: string; kinds: string[] }> = [
   { label: 'Services & health', kinds: ['service','dependency','health_check','workflow_check'] },
   { label: 'Workers, jobs & queues', kinds: ['worker','job','queue'] },
@@ -82,16 +103,19 @@ export default function OperationsCentreClient() {
   const [maintenanceForm, setMaintenanceForm] = useState({ startsAt: '', endsAt: '', reason: '' });
   const [automationForm, setAutomationForm] = useState({ ruleKey: '', name: '', triggerType: 'provider_failure', actionType: 'prepare_repair' });
 
-  const loadPortfolio = useCallback(async () => {
+  const loadPortfolio = useCallback(async (signal?: AbortSignal) => {
     setLoading(true); setError(null);
     try {
       const params = new URLSearchParams({ limit: '100', offset: '0' });
       if (appliedQuery) params.set('search', appliedQuery);
       if (statusFilter) params.set('status', statusFilter);
-      const data = await apiFetch<{ products: Product[] }>(`/api/operations/portfolio?${params}`);
+      const data = await fetchPortfolio(`/api/operations/portfolio?${params}`, signal);
       setProducts(data.products ?? []);
-    } catch (cause) { setError(cause instanceof ApiError ? cause.message : 'Operations portfolio is unavailable'); }
-    finally { setLoading(false); }
+    } catch (cause) {
+      if (!signal?.aborted) setError(cause instanceof ApiError ? cause.message : 'Operations portfolio is unavailable');
+    } finally {
+      if (!signal?.aborted) setLoading(false);
+    }
   }, [appliedQuery, statusFilter]);
 
   const loadDetail = useCallback(async (projectId: string) => {
@@ -112,7 +136,11 @@ export default function OperationsCentreClient() {
     finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { void loadPortfolio(); }, [loadPortfolio]);
+  useEffect(() => {
+    const controller = new AbortController();
+    void loadPortfolio(controller.signal);
+    return () => controller.abort();
+  }, [loadPortfolio]);
   useEffect(() => { if (selectedId) void loadDetail(selectedId); }, [selectedId, loadDetail]);
 
   const visibleProducts = useMemo(() => products.slice().sort((a, b) => b.incidentCount - a.incidentCount || a.name.localeCompare(b.name)), [products]);
