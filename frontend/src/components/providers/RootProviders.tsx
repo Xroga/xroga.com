@@ -11,6 +11,7 @@ import { getFirstVisitTime } from '@/lib/scheduledFeedback';
 import { recoverCorruptStorage } from '@/lib/storageRecovery';
 import { CompanionProvider } from '@/components/companion/CompanionProvider';
 import { CompanionGlobalDock } from '@/components/companion/CompanionSurfaces';
+import { LightMousePointer } from '@/components/ui/LightMousePointer';
 
 export function RootProviders({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -27,6 +28,7 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
         <CompanionProvider>
           <CurrencyDetector />
           {children}
+          <LightMousePointer />
           <CompanionGlobalDock />
           <OfflineOverlay />
           <ScheduledFeedbackPrompt />

@@ -3,25 +3,21 @@ type StreamEventSource = {
   removeListener(event: string, listener: () => void): unknown;
 };
 
-export interface BuildStreamState {
-  responseEnded: boolean;
-  codeReady: boolean;
-}
-
 /**
- * Abort model work only when the request is actually interrupted or the
- * response connection disappears. A normal IncomingMessage `close` event
- * merely means the request body has been consumed and must not cancel SSE.
+ * Detach the HTTP transport without cancelling the durable build behind it.
+ * Refreshing, navigating away, or a proxy closing SSE must never become a
+ * build cancellation. Explicit cancellation is handled by the run endpoint.
  */
-export function bindBuildStreamAbort(
+export function bindBuildStreamDisconnect(
   request: StreamEventSource,
   response: StreamEventSource,
-  getState: () => BuildStreamState,
-  abort: () => void,
+  disconnect: () => void,
 ): () => void {
+  let disconnected = false;
   const handleDisconnect = () => {
-    const state = getState();
-    if (!state.responseEnded && !state.codeReady) abort();
+    if (disconnected) return;
+    disconnected = true;
+    disconnect();
   };
 
   request.once('aborted', handleDisconnect);

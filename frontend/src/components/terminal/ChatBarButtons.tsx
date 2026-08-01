@@ -186,16 +186,6 @@ export function ChatBarSendButton({
   }
 
   return (
-    /**
-     * Send, as a run command.
-     *
-     * The ship stays — it is how send reads across every Xroga surface, and the
-     * sailing state is the only signal that a run is in flight. What changes is the
-     * frame around it: a monospace `>_` sigil and a squared-off key rather than a
-     * plain circle, so the control that runs your prompt looks like the thing that
-     * runs a command. The sigil hides on the compact form, where there is no room for
-     * anything but the icon.
-     */
     <button
       type="submit"
       className={cn(
@@ -204,15 +194,17 @@ export function ChatBarSendButton({
         surface === 'homepage' && 'xv-send--home',
         surface === 'incognito' && 'xv-send--incognito'
       )}
-      aria-label="Launch"
+      aria-label="Send prompt"
       title="Send"
     >
-      {/* A run key, not a pill: squared with a soft radius, a monospace sigil, and the
-          ship as the state indicator. The sigil is the only part that goes when the
-          button collapses, so the control never loses what it means. */}
-      <span className="xv-send__sigil" aria-hidden>&gt;_</span>
-      <span className="xv-send__icon">
-        <ChatBarShipIcon state={state} size={16} bold />
+      {/* Compact theme-aware send arrow; animation is hover-driven and disabled for reduced motion. */}
+      <span className="xv-send__arrow" aria-hidden="true">
+        <svg viewBox="0 0 38 15" fill="none">
+          <path
+            fill="currentColor"
+            d="M10 7.519l-.939-.344.939.344zm14.386-1.205-.981-.192.981.192zm1.276 5.509.537.843.148-.094.107-.139-.792-.611zm4.819-4.304-.385-.923.385.923zm7.227.707a1 1 0 0 0 0-1.414L31.343.448a1 1 0 0 0-1.414 0 1 1 0 0 0 0 1.414l5.657 5.657-5.657 5.657a1 1 0 0 0 1.414 1.414l6.364-6.364zM1 7.519l.554.833.123-.08.361-.23 1.277-.77c1.054-.609 2.397-1.32 3.629-1.787.617-.234 1.17-.392 1.623-.455.477-.066.707-.008.788.034.025.013.031.021.039.034a.56.56 0 0 1 .058.235c.029.327-.047.906-.39 1.842l1.878.689c.383-1.044.571-1.949.505-2.705-.072-.815-.45-1.493-1.16-1.865-.627-.329-1.358-.332-1.993-.244-.659.092-1.367.305-2.056.566-1.381.523-2.833 1.297-3.921 1.925l-1.341.808-.385.245-.132.086c-.011.007-.011.007.543.84zm8.061-.344c-.198.54-.328 1.038-.36 1.484-.032.441.024.94.325 1.364.319.45.786.64 1.21.697.403.054.824-.001 1.21-.09.775-.179 1.694-.566 2.633-1.014l3.023-1.554c2.115-1.122 4.107-2.168 5.476-2.524.329-.086.573-.117.742-.115.169.002.195.038.161.014-.15-.105.085-.139-.076.685l1.963.384c.192-.98.152-2.083-.74-2.707-.405-.283-.868-.37-1.28-.376-.412-.006-.849.069-1.274.179-1.65.43-3.888 1.621-5.909 2.693l-2.948 1.517c-.92.439-1.673.743-2.221.87-.276.064-.429.065-.492.057-.043-.006.066.003.155.127.07.099.024.131.038-.063.014-.187.078-.49.243-.94l-1.878-.689zm14.343-1.053c-.361 1.844-.474 3.185-.413 4.161.059.95.294 1.72.811 2.215.567.544 1.242.546 1.664.459.207-.043.38-.111.502-.167l.15-.076.067-.039c.013-.008.013-.008-.524-.852l-.536-.844.019-.012c-.038.018-.064.027-.084.032-.037.008.053-.013.125.056.021.02-.151-.135-.198-.895-.046-.734.034-1.887.38-3.652l-1.963-.384zm2.257 5.701l.791.611.104-.132.311-.377 1.093-1.213c.922-.954 2.005-1.894 2.904-2.27l-.771-1.846c-1.31.547-2.637 1.758-3.572 2.725l-1.184 1.314-.341.414-.118.149c-.01.013-.01.013.781.624zm5.204-3.381c.989-.413 1.791-.42 2.697-.307.871.108 2.083.385 3.437.385v-2c-1.197 0-2.041-.226-3.19-.369-1.114-.139-2.297-.146-3.715.447l.771 1.846z"
+          />
+        </svg>
       </span>
     </button>
   );

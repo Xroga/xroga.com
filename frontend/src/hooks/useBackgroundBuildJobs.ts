@@ -47,10 +47,46 @@ export function useBackgroundBuildJobs(
       const pending = loadPendingBuildJobs();
       if (!pending.length) return;
 
+      const legacyJobs: typeof pending = [];
+      for (const job of pending) {
+        if (!job.runId) {
+          legacyJobs.push(job);
+          continue;
+        }
+        try {
+          const run = await api.swarm.getRun(job.runId);
+          if (run.status === 'complete' || run.status === 'completed') {
+            removePendingBuildJob(job.assistantMessageId);
+            showBuildBrowserNotification({
+              title: 'Your Xroga project is complete!',
+              body: 'The persisted build finished while you were away.',
+              tag: `build-${job.runId}`,
+            });
+            completeRef.current?.({
+              assistantMessageId: job.assistantMessageId,
+              output: (run.output && typeof run.output === 'object'
+                ? run.output
+                : { type: 'landing_page' }) as Record<string, unknown>,
+            });
+          } else if (run.status === 'error' || run.status === 'cancelled') {
+            removePendingBuildJob(job.assistantMessageId);
+            const output = run.output as { error?: string } | null;
+            failedRef.current?.(
+              job.assistantMessageId,
+              run.status === 'cancelled' ? 'Build stopped.' : output?.error ?? 'Build failed.'
+            );
+          }
+        } catch {
+          // A transient status-read failure is not a build failure. Keep the durable
+          // run in local storage and try again on the next visibility/interval tick.
+        }
+      }
+
+      if (!legacyJobs.length) return;
       const list = await refreshNotifications();
       if (!list.length) return;
 
-      for (const job of pending) {
+      for (const job of legacyJobs) {
         const match = list.find((n) => {
           const meta = n.metadata as Record<string, unknown> | undefined;
           return meta?.assistantMessageId === job.assistantMessageId;

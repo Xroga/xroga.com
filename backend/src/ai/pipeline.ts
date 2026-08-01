@@ -690,6 +690,7 @@ export async function runChatPipeline(opts: {
  * Converter → Builder (+ QA + GitHub/Vercel) with real streaming and surgical updates.
  */
 export async function runBuildPipeline(opts: {
+  runId?: string;
   userId: string;
   prompt: string;
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
@@ -702,7 +703,7 @@ export async function runBuildPipeline(opts: {
   onCodeReady?: (output: Record<string, unknown>) => void;
   signal?: AbortSignal;
 }): Promise<BuildPipelineResult> {
-  const runId = randomUUID();
+  const runId = opts.runId ?? randomUUID();
   const trace = new RunTrace(runId, opts.userId);
   const emit = (ev: PipelineProgress) => {
     const phase = ev.negotiationPhase ?? negotiationPhaseForAgent(ev.agent);

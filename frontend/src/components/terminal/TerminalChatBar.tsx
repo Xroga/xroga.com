@@ -4,8 +4,6 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { ChatBarActionsMenu } from './ChatBarActionsMenu';
 import { buildComposerPreamble, useComposerToolsStore } from '@/store/useComposerToolsStore';
-import { BlackHoleVButton } from './BlackHoleVButton';
-import { RepoContextBar } from './RepoContextBar';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { uploadChatImage, type ChatAttachment } from '@/lib/api';
@@ -475,17 +473,6 @@ export function TerminalChatBar() {
                       window.setTimeout(() => textareaRef.current?.focus(), 20);
                     }}
                   />
-                ) : null
-              }
-              trailingExtras={
-                !incognito ? (
-                  <div className="xv-chatbar-trailing flex items-center gap-1.5 min-w-0">
-                    {/* The repo context moved out of its own row above the composer and
-                        in here as a compact chip, which is one fewer row of height and
-                        puts the repo next to the button that acts on it. */}
-                    <RepoContextBar compact />
-                    <BlackHoleVButton compact />
-                  </div>
                 ) : null
               }
               onTranscript={(text) => {

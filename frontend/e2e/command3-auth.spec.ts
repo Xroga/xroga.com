@@ -308,7 +308,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(actionsMenu.getByRole('button', { name: /Connectors/ })).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(actionsMenu).toHaveCount(0);
-  await expect(canonicalComposer.getByRole('button', { name: 'Launch' })).toBeVisible();
+  await expect(canonicalComposer.getByRole('button', { name: 'Send prompt' })).toBeVisible();
   // Smoky opens usage on click. The old control panel — voice toggles, status
   // readout, dictation, feed control — stays removed, and so does its speech
   // synthesis. Companion preferences live in Settings → Companion, exercised later.

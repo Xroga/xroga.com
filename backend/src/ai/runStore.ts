@@ -9,7 +9,7 @@ export interface SwarmRunRecord {
   id: string;
   userId: string;
   prompt: string;
-  status: 'running' | 'complete' | 'error';
+  status: 'running' | 'complete' | 'error' | 'cancelled';
   output: Record<string, unknown> | null;
   featureCategory?: string;
   tokenUsage?: unknown;
@@ -71,6 +71,26 @@ export function completeRun(
   return rec;
 }
 
+export function failRun(
+  runId: string,
+  error: string,
+  status: 'error' | 'cancelled' = 'error',
+): SwarmRunRecord | null {
+  const rec = runs.get(runId);
+  if (!rec) return null;
+  rec.status = status;
+  rec.output = {
+    type: 'error',
+    error: error.slice(0, 1000),
+    code: status === 'cancelled' ? 'BUILD_CANCELLED' : 'BUILD_FAILED',
+  };
+  rec.completed_at = new Date().toISOString();
+  rec.iteration_count += 1;
+  runs.set(runId, rec);
+  void persistToSupabase(rec).catch(() => {});
+  return rec;
+}
+
 export function saveConversation(runId: string, messages: unknown[]): boolean {
   const rec = runs.get(runId);
   if (!rec) return false;
@@ -97,7 +117,13 @@ export async function getRunAsync(runId: string): Promise<SwarmRunRecord | null>
       id: String(data.id),
       userId: String(data.user_id),
       prompt: String(data.prompt ?? ''),
-      status: (data.status === 'error' ? 'error' : data.status === 'running' ? 'running' : 'complete'),
+      status: data.status === 'error'
+        ? 'error'
+        : data.status === 'cancelled'
+          ? 'cancelled'
+          : data.status === 'running'
+            ? 'running'
+            : 'complete',
       output: (data.output as Record<string, unknown>) ?? null,
       featureCategory: data.feature_category ?? undefined,
       tokenUsage: data.token_usage ?? undefined,
@@ -131,7 +157,7 @@ export async function listRunsForUserAsync(userId: string, limit = 30): Promise<
       .from('swarm_runs')
       .select('*')
       .eq('user_id', userId)
-      .in('status', ['complete', 'completed', 'error'])
+      .in('status', ['running', 'complete', 'completed', 'error', 'cancelled'])
       .order('created_at', { ascending: false })
       .limit(limit);
     if (error || !data?.length) return hot;
@@ -140,7 +166,13 @@ export async function listRunsForUserAsync(userId: string, limit = 30): Promise<
         id: String(row.id),
         userId: String(row.user_id),
         prompt: String(row.prompt ?? ''),
-        status: row.status === 'error' ? 'error' : 'complete',
+        status: row.status === 'error'
+          ? 'error'
+          : row.status === 'cancelled'
+            ? 'cancelled'
+            : row.status === 'running'
+              ? 'running'
+              : 'complete',
         output: (row.output as Record<string, unknown>) ?? null,
         featureCategory: row.feature_category ?? undefined,
         tokenUsage: row.token_usage ?? undefined,

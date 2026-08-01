@@ -3,6 +3,8 @@
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { TerminalChatBar } from './TerminalChatBar';
+import { RepoContextBar } from './RepoContextBar';
+import { BlackHoleVButton } from './BlackHoleVButton';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
 import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
@@ -115,6 +117,12 @@ export function TerminalDock() {
                 {!incognito ? <CompanionComposerAnchor /> : null}
                 <TerminalChatBar />
               </div>
+              {!incognito ? (
+                <div className="xv-chatbar-context-strip">
+                  <RepoContextBar outside />
+                  <BlackHoleVButton compact className="ml-auto" />
+                </div>
+              ) : null}
             </div>
           </div>
         )}
