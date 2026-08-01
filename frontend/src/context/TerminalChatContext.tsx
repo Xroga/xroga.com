@@ -5,10 +5,14 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useReducer,
   useRef,
   useState,
   type ReactNode,
 } from 'react';
+import { EMPTY_RUN_STATE, type TerminalRunState } from '@/lib/terminal/terminalEvent';
+import { adaptTerminalEvent } from '@/lib/terminal/terminalEventAdapter';
+import { terminalRunReducer } from '@/lib/terminal/terminalRunReducer';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, ApiError, type ChatAttachment, api } from '@/lib/api';
@@ -176,6 +180,8 @@ interface TerminalChatContextValue {
   swarmStatusLabel: string | null;
   swarmAnalysis: string | null;
   swarmActivityLog: string[];
+  /** Execution-terminal log, derived from the live SSE stream. */
+  terminalRun: TerminalRunState;
   submit: (
     text?: string,
     fromQueue?: boolean,
@@ -270,6 +276,29 @@ export function TerminalChatProvider({
   const [swarmStatusLabel, setSwarmStatusLabel] = useState<string | null>(null);
   const [swarmAnalysis, setSwarmAnalysis] = useState<string | null>(null);
   const [swarmActivityLog, setSwarmActivityLog] = useState<string[]>([]);
+
+  /**
+   * Execution-terminal log, built from the same SSE events the rest of this file
+   * already receives — no second request, no separate transport. Every row is
+   * produced by `adaptTerminalEvent`, so a row can only exist if the backend sent
+   * something. `terminalSeqRef` holds the sequence counter outside React state
+   * because event callbacks capture their closure and would otherwise read a
+   * stale value, replaying rows the reducer would then discard.
+   */
+  const [terminalRun, dispatchTerminalRun] = useReducer(terminalRunReducer, EMPTY_RUN_STATE);
+  const terminalSeqRef = useRef(0);
+
+  const pushTerminalEvent = useCallback((event: string, payload: Record<string, unknown>) => {
+    const rows = adaptTerminalEvent(event, payload, { fromSeq: terminalSeqRef.current });
+    if (rows.length === 0) return;
+    terminalSeqRef.current = rows[rows.length - 1].seq;
+    dispatchTerminalRun({ type: 'events', events: rows });
+  }, []);
+
+  const startTerminalRun = useCallback(() => {
+    terminalSeqRef.current = 0;
+    dispatchTerminalRun({ type: 'run-started' });
+  }, []);
   const [githubGateOpen, setGithubGateOpen] = useState(false);
   const [vercelGateOpen, setVercelGateOpen] = useState(false);
   const [githubActivation, setGithubActivation] = useState<{ open: boolean; username?: string }>({
@@ -1415,6 +1444,8 @@ export function TerminalChatProvider({
       const controller = new AbortController();
       abortRef.current = controller;
 
+      startTerminalRun();
+
       thinkingTimerRef.current = setTimeout(() => {
         if (!gotEvent && !codeBuildActive) setPipelineMessage('Thinking…');
       }, 1500);
@@ -1739,6 +1770,9 @@ export function TerminalChatProvider({
               thinkingTimerRef.current = null;
             }
             const swarmEv = event as SwarmProgressEvent;
+            // Fed before the keepalive bail-out below: the adapter drops keepalive
+            // noise itself, but still surfaces a permission gate attached to one.
+            pushTerminalEvent('progress', swarmEv as unknown as Record<string, unknown>);
             // Silent keepalives: refresh todos only — never fake pipeline activity
             if (swarmEv.keepalive) {
               if (swarmEv.swarmTodos?.length) {
@@ -1988,6 +2022,7 @@ export function TerminalChatProvider({
             });
           },
           onComplete: (complete) => {
+            pushTerminalEvent('complete', complete as unknown as Record<string, unknown>);
             // End "Building…" as soon as the swarm finishes — don't wait for finally /
             // archive work. Waiting time after this is not model spend.
             if (startingHeavyBuild) {
@@ -2614,6 +2649,15 @@ export function TerminalChatProvider({
 
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
+          // A user-initiated stop is an interruption, not a failure — the run did
+          // not fail on its own, and labelling it an error would misreport it.
+          dispatchTerminalRun({ type: 'interrupted' });
+        } else {
+          pushTerminalEvent('error', {
+            error: err instanceof Error ? err.message : 'Run failed',
+          });
+        }
+        if (err instanceof DOMException && err.name === 'AbortError') {
           if (interruptRef.current) {
             dispatchCompanionEvent({
               type: 'task_interrupted',
@@ -2749,6 +2793,10 @@ export function TerminalChatProvider({
           ];
         });
       } finally {
+        // If the stream ended without a terminal event, the reducer resolves the run
+        // to 'interrupted'. A run left marked active would spin forever with nothing
+        // behind it — the exact failure the old fixed checklist had.
+        dispatchTerminalRun({ type: 'stream-closed' });
         if (thinkingTimerRef.current) {
           clearTimeout(thinkingTimerRef.current);
           thinkingTimerRef.current = null;
@@ -2843,7 +2891,7 @@ export function TerminalChatProvider({
         setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, heavyLoading, projectId, incognito, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage, submitLightAlongsideHeavy]
+    [prompt, loading, heavyLoading, projectId, incognito, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage, submitLightAlongsideHeavy, pushTerminalEvent, startTerminalRun]
   );
 
   submitRef.current = submit;
@@ -2892,6 +2940,8 @@ export function TerminalChatProvider({
         swarmStatusLabel,
         swarmAnalysis,
         swarmActivityLog,
+
+        terminalRun,
         followUps,
         reasoning,
         dag,

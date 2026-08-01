@@ -157,6 +157,15 @@ test('ordinary output is left untouched', () => {
   }
 });
 
+test('redaction is idempotent', () => {
+  // Two patterns can match the same substring — a provider key inside a named
+  // assignment. Without guarding, the second pass re-masks the first pass's
+  // output and emits `TOKEN=[redacted]]`. Caught by rendering it, not by review.
+  const once = redactTerminalText('GITHUB_TOKEN=ghp_' + 'a'.repeat(36));
+  assert.equal(once, 'GITHUB_TOKEN=[redacted]');
+  assert.equal(redactTerminalText(once), once);
+});
+
 test('redaction is stable across repeated calls', () => {
   // The patterns carry /g, so a leaked lastIndex would make results order-dependent.
   const input = 'token=abcdefghijklmnop';

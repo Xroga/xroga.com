@@ -11,7 +11,7 @@ import { ResearchPagesLoader } from '@/components/ui/ResearchPagesLoader';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
-import { SwarmPhasePanel } from './SwarmPhasePanel';
+import { TerminalRunStream } from './TerminalRunStream';
 import { ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
@@ -48,7 +48,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, loading, animatingId, pipelineMessage, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, swarmStatusLabel, swarmAnalysis, swarmActivityLog, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, heavyBuildActive, heavyAssistantId } =
+  const { messages, loading, animatingId, pipelineMessage, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const applyBuild = useProjectWorkspaceStore((s) => s.applyBuild);
@@ -389,22 +389,14 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                           !msg.content?.trim() && (
                             <ResearchPagesLoader className="my-2" />
                           )}
-                        {heavyBuildActive &&
-                          buildPanelMessageId &&
-                          msg.id === buildPanelMessageId &&
-                          (swarmTodos.length > 0 || swarmNegotiationPhase != null || loading) && (
-                          <SwarmPhasePanel
-                            activePhase={swarmNegotiationPhase}
-                            loading={heavyBuildActive}
-                            message={pipelineMessage}
-                            statusLabel={swarmStatusLabel}
-                            analysis={swarmAnalysis}
-                            todos={swarmTodos}
-                            activityLog={swarmActivityLog}
-                            startedAt={thinkingStartedAt}
-                            buildPrompt={lastUserText}
-                          />
-                        )}
+                        {/* The execution log replaces the phase panel, the fixed
+                            to-do checklist and the progress counter. It renders
+                            only received events, so it is shown whenever the run
+                            has produced any — no separate "should we show
+                            progress" condition to fall out of sync with. */}
+                        {buildPanelMessageId && msg.id === buildPanelMessageId ? (
+                          <TerminalRunStream run={terminalRun} startedAt={thinkingStartedAt} />
+                        ) : null}
                         {msg.buildStopped ? (
                           <StoppedBuildResumeCard
                             meta={{
