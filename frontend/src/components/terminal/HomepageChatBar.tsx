@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
-import { ChatBarShipIcon, type SendButtonState } from './ChatBarShipIcon';
+import { ChatBarSendIcon, type SendButtonState } from './ChatBarSendIcon';
 import { createClient } from '@/lib/supabase/client';
 import { dispatchCompanionEvent } from '@/lib/companion';
 
@@ -232,7 +232,7 @@ export function HomepageChatBar({
             >
               <span className="xv-go-btn__liquid" aria-hidden />
               <span className="xv-go-btn__icon">
-                <ChatBarShipIcon state={sendState} size={18} bold />
+                <ChatBarSendIcon state={sendState} size={18} />
               </span>
             </button>
           </div>
