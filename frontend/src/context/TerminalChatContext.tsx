@@ -69,7 +69,7 @@ import {
   markGitHubConnectedSession,
   sanitizeXrogaTerminalText,
 } from '@/lib/xrogaBrand';
-import { addPendingBuildJob, removePendingBuildJob } from '@/lib/pendingBuildJobs';
+import { addPendingBuildJob, attachPendingBuildRun, removePendingBuildJob } from '@/lib/pendingBuildJobs';
 import { dispatchCompanionEvent, operationFromProgress } from '@/lib/companion';
 import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
 import { useBuildCompletionAlerts } from '@/hooks/useBuildCompletionAlerts';
@@ -346,6 +346,7 @@ export function TerminalChatProvider({
   }, [setTokenUsage, setPlanInfo]);
   const thinkingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const activeRunIdRef = useRef<string | null>(null);
   const autoRanRef = useRef(false);
   const submitRef = useRef<
     (text?: string, fromQueue?: boolean, interrupt?: boolean, attachments?: ChatAttachment[]) => Promise<void>
@@ -834,6 +835,9 @@ export function TerminalChatProvider({
   }, []);
 
   const stop = useCallback(() => {
+    interruptRef.current = true;
+    const runId = activeRunIdRef.current;
+    if (runId) void api.swarm.cancelRun(runId).catch(() => {});
     // Stop aborts the focused stream; never kill a light reply silent to a build stop preference —
     // prefer aborting heavy when active, else light.
     if (heavyBuildActiveRef.current && abortRef.current) {
@@ -1762,6 +1766,14 @@ export function TerminalChatProvider({
               }
             })(),
             ...(priorSite ? { priorSite } : {}),
+          },
+          onStart: (runId) => {
+            activeRunIdRef.current = runId;
+            if (startingHeavyBuild) attachPendingBuildRun(assistantId, runId);
+          },
+          onReconnect: () => {
+            setPipelineMessage('Build continues safely in the background... reconnecting');
+            setSwarmStatusLabel('Reconnecting');
           },
           onProgress: (event) => {
             gotEvent = true;
@@ -2780,7 +2792,7 @@ export function TerminalChatProvider({
           const friendly = codeBuildActive
             ? isBuildUpdateEarly
               ? '⚠️ **Update interrupted.** Keep this chat open and retry — we patch your current preview (night/day, buttons, copy) without rebuilding from scratch. If it keeps failing, reconnect under Integrations and try again.'
-              : '⚠️ **Build connection lost.** Check your connection and try again. Connect GitHub under Integrations if you have not already.'
+              : `**Build could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
             : GENERIC_SWARM_FALLBACK;
           return [
             ...m.filter((msg) => msg.id !== assistantId || msg.content.length > 0),
@@ -2845,6 +2857,7 @@ export function TerminalChatProvider({
           });
         }
         lastTurnRef.current = null;
+        activeRunIdRef.current = null;
         abortRef.current = null;
         if (startingHeavyJob) {
           setHeavyLoading(false);

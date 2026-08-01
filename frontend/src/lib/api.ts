@@ -100,10 +100,104 @@ export interface StreamSwarmOptions {
     };
   };
   onProgress?: (event: SwarmProgressEvent) => void;
+  /** Stable persisted run identity, emitted before expensive work begins. */
+  onStart?: (runId: string) => void;
+  /** The HTTP stream dropped, but the persisted server run is still active. */
+  onReconnect?: (runId: string) => void;
   onDelta?: (delta: string) => void;
   /** Early code delivery — show preview before GitHub/Vercel finish. */
   onPreview?: (event: SwarmCompleteEvent & { shipPending?: boolean }) => void;
   onComplete?: (event: SwarmCompleteEvent & { followUps?: string[] }) => void;
+}
+
+function deliverSwarmComplete(
+  complete: SwarmCompleteEvent & { followUps?: string[] },
+  options: StreamSwarmOptions,
+  currentText: string,
+): string {
+  let finalText = currentText;
+  const outType =
+    complete.output && typeof complete.output === 'object'
+      ? (complete.output as { type?: string }).type
+      : undefined;
+  const text = outType === 'landing_page' ? '' : swarmOutputToText(complete.output);
+  if (complete.output && typeof complete.output === 'object') {
+    const out = complete.output as { type?: string; imageUrl?: string };
+    if (out.type === 'image' && typeof out.imageUrl === 'string' && text) {
+      finalText = text;
+      options.onDelta?.(text);
+    } else if (text && !finalText) {
+      finalText = text;
+      options.onDelta?.(text);
+    }
+  } else if (text && !finalText) {
+    finalText = text;
+    options.onDelta?.(text);
+  }
+  options.onComplete?.(complete);
+  return finalText;
+}
+
+async function waitForPersistedSwarmRun(
+  runId: string,
+  accessToken: string,
+  options: StreamSwarmOptions,
+  currentText: string,
+): Promise<string> {
+  options.onReconnect?.(runId);
+  options.onProgress?.({
+    agent: 'runtime',
+    status: 'running',
+    message: 'Build continues safely in the background. Reconnecting to the persisted run...',
+  });
+
+  const deadline = Date.now() + 30 * 60_000;
+  let delayMs = 1_000;
+  while (Date.now() < deadline) {
+    if (options.signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    await new Promise<void>((resolve) => window.setTimeout(resolve, delayMs));
+    if (options.signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+
+    let response: Response;
+    try {
+      response = await fetch(`${API_URL}/api/swarm/runs/${runId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        cache: 'no-store',
+        signal: options.signal,
+      });
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') throw error;
+      delayMs = Math.min(5_000, Math.round(delayMs * 1.5));
+      continue;
+    }
+    if (!response.ok) {
+      if (response.status === 401) throw new ApiError('Your session expired while reconnecting.', 401);
+      delayMs = Math.min(5_000, Math.round(delayMs * 1.5));
+      continue;
+    }
+    const run = await response.json() as SwarmRunSummary;
+    if (run.status === 'running' || run.status === 'unknown') {
+      delayMs = Math.min(5_000, Math.round(delayMs * 1.35));
+      continue;
+    }
+    if (run.status === 'cancelled') throw new DOMException('Aborted', 'AbortError');
+    if (run.status === 'error') {
+      const output = run.output as { error?: string } | null;
+      throw new ApiError(output?.error ?? 'The persisted build failed.', 500, { code: 'BUILD_FAILED' });
+    }
+
+    return deliverSwarmComplete({
+      runId,
+      success: true,
+      featureCategory: run.featureCategory,
+      output: run.output,
+      tokenUsage: run.tokenUsage,
+    }, options, currentText) || 'Swarm task complete.';
+  }
+  throw new ApiError('The build is still running, but reconnect timed out. You can safely return later.', 504, {
+    code: 'RUN_STILL_ACTIVE',
+    runId,
+  });
 }
 
 /** Stream SSE from POST /api/swarm/execute with JWT auth. */
@@ -165,8 +259,11 @@ export async function streamSwarmExecute(
   const decoder = new TextDecoder();
   let buffer = '';
   let finalText = '';
+  let runId: string | undefined;
+  let receivedComplete = false;
 
-  while (true) {
+  try {
+    while (true) {
     if (options.signal?.aborted) {
       await reader.cancel().catch(() => {});
       throw new DOMException('Aborted', 'AbortError');
@@ -215,6 +312,10 @@ export async function streamSwarmExecute(
       }
 
       if (eventName === 'start' || eventName === 'pipeline') {
+        if (eventName === 'start' && typeof payload.runId === 'string') {
+          runId = payload.runId;
+          options.onStart?.(runId);
+        }
         options.onProgress?.({
           agent: 'routing',
           status: 'connecting',
@@ -238,27 +339,19 @@ export async function streamSwarmExecute(
 
       if (eventName === 'complete') {
         const complete = payload as SwarmCompleteEvent & { followUps?: string[] };
-        const outType =
-          complete.output && typeof complete.output === 'object'
-            ? (complete.output as { type?: string }).type
-            : undefined;
-        const text = outType === 'landing_page' ? '' : swarmOutputToText(complete.output);
-        if (complete.output && typeof complete.output === 'object') {
-          const out = complete.output as { type?: string; imageUrl?: string };
-          if (out.type === 'image' && typeof out.imageUrl === 'string' && text) {
-            finalText = text;
-            options.onDelta?.(text);
-          } else if (text && !finalText) {
-            finalText = text;
-            options.onDelta?.(text);
-          }
-        } else if (text && !finalText) {
-          finalText = text;
-          options.onDelta?.(text);
-        }
-        options.onComplete?.(complete);
+        receivedComplete = true;
+        finalText = deliverSwarmComplete(complete, options, finalText);
       }
     }
+    }
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') throw error;
+    if (runId) return waitForPersistedSwarmRun(runId, token, options, finalText);
+    throw error;
+  }
+
+  if (!receivedComplete && runId) {
+    return waitForPersistedSwarmRun(runId, token, options, finalText);
   }
 
   return finalText || 'Swarm task complete.';
@@ -1100,6 +1193,10 @@ export const api = {
     stream: streamSwarmExecute,
     history: () => apiFetch<SwarmRunSummary[]>('/api/swarm/history'),
     getRun: (runId: string) => apiFetch<SwarmRunSummary>(`/api/swarm/runs/${runId}`),
+    cancelRun: (runId: string) =>
+      apiFetch<{ cancelled: boolean; status: string }>(`/api/swarm/runs/${runId}/cancel`, {
+        method: 'POST',
+      }),
     saveConversation: (runId: string, messages: unknown[]) =>
       apiFetch<{ saved: boolean }>(`/api/swarm/runs/${runId}/conversation`, {
         method: 'PATCH',
@@ -1412,6 +1509,8 @@ export interface SwarmRunSummary {
   prompt: string;
   status: string;
   output: unknown;
+  featureCategory?: string;
+  tokenUsage?: SwarmCompleteEvent['tokenUsage'];
   created_at: string;
   completed_at: string | null;
   iteration_count: number;

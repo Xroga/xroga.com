@@ -1,13 +1,16 @@
 import { Router } from 'express';
+import { randomUUID } from 'node:crypto';
 import type { AuthRequest } from '../middleware/auth.js';
 import { runBuildPipeline } from '../ai/pipeline.js';
 import { initSSE, sendSSE, endSSE } from '../lib/sse.js';
 import { slimOutputForSse } from '../lib/slimOutputForSse.js';
-import { bindBuildStreamAbort } from '../lib/buildStreamLifecycle.js';
+import { bindBuildStreamDisconnect } from '../lib/buildStreamLifecycle.js';
 import { buildFullProjectFiles } from '../services/projectScaffold.js';
+import { notifyBuildComplete, notifyBuildFailed } from '../services/notificationService.js';
 import {
   completeRun,
   createRun,
+  failRun,
   getRun,
   getRunAsync,
   listRunsForUser,
@@ -16,6 +19,7 @@ import {
 } from '../ai/runStore.js';
 
 const router = Router();
+const activeBuildControllers = new Map<string, AbortController>();
 
 /**
  * POST /api/swarm/execute
@@ -73,27 +77,25 @@ router.post('/execute', async (req: AuthRequest, res) => {
   }
 
   initSSE(res);
+  const runId = randomUUID();
+  let streamConnected = true;
   const keepalive = setInterval(() => {
-    if (!res.writableEnded) {
+    if (streamConnected && !res.writableEnded) {
       sendSSE(res, { event: 'progress', data: { keepalive: true, message: 'Working…' } });
     }
   }, 15_000);
 
   const ac = new AbortController();
-  /** After preview is sent, do not abort ship if the browser/proxy drops. */
-  let codeReady = false;
-  const detachAbortHandlers = bindBuildStreamAbort(req, res, () => ({
-    responseEnded: res.writableEnded,
-    codeReady,
-  }), () => {
+  activeBuildControllers.set(runId, ac);
+  const detachDisconnectHandlers = bindBuildStreamDisconnect(req, res, () => {
+    streamConnected = false;
     clearInterval(keepalive);
-    if (!ac.signal.aborted) ac.abort();
   });
 
   try {
     sendSSE(res, {
       event: 'start',
-      data: { message: 'Xroga AI execution started', engine: 'xroga' },
+      data: { runId, message: 'Xroga AI execution started', engine: 'xroga' },
     });
     sendSSE(res, {
       event: 'pipeline',
@@ -104,6 +106,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
     });
 
     const result = await runBuildPipeline({
+      runId,
       userId,
       prompt: prompt.trim(),
       history,
@@ -111,14 +114,13 @@ router.post('/execute', async (req: AuthRequest, res) => {
       clientMeta,
       attachments,
       onProgress: (event) => {
-        if (!res.writableEnded) sendSSE(res, { event: 'progress', data: { ...event } });
+        if (streamConnected && !res.writableEnded) sendSSE(res, { event: 'progress', data: { ...event } });
       },
       onDelta: (delta) => {
-        if (!res.writableEnded) sendSSE(res, { event: 'delta', data: { delta } });
+        if (streamConnected && !res.writableEnded) sendSSE(res, { event: 'delta', data: { delta } });
       },
       onCodeReady: (output) => {
-        codeReady = true;
-        if (!res.writableEnded) {
+        if (streamConnected && !res.writableEnded) {
           sendSSE(res, {
             event: 'preview',
             data: {
@@ -148,23 +150,34 @@ router.post('/execute', async (req: AuthRequest, res) => {
       }
     }
 
-    sendSSE(res, {
-      event: 'complete',
-      data: {
-        runId: result.runId,
-        success: result.success,
-        featureCategory: result.featureCategory,
-        output: slimOutputForSse(result.output as Record<string, unknown>),
-        tokenUsage: result.tokenUsage,
-        followUps: result.followUps,
-      },
-    });
-    clearInterval(keepalive);
-    detachAbortHandlers();
-    endSSE(res);
+    const output = result.output as Record<string, unknown>;
+    if (output.type === 'landing_page' && clientMeta?.assistantMessageId) {
+      const generatedFiles = Array.isArray(output.generatedFiles) ? output.generatedFiles : [];
+      void notifyBuildComplete(userId, {
+        projectName: String(output.projectName ?? 'Xroga project'),
+        prompt: prompt.trim(),
+        githubRepoUrl: typeof output.githubRepoUrl === 'string' ? output.githubRepoUrl : undefined,
+        deployUrl: typeof output.deployUrl === 'string' ? output.deployUrl : undefined,
+        fileCount: generatedFiles.length || undefined,
+        assistantMessageId: String(clientMeta.assistantMessageId),
+        deployError: typeof output.deployError === 'string' ? output.deployError : undefined,
+      }).catch(() => {});
+    }
+    if (streamConnected && !res.writableEnded) {
+      sendSSE(res, {
+        event: 'complete',
+        data: {
+          runId: result.runId,
+          success: result.success,
+          featureCategory: result.featureCategory,
+          output: slimOutputForSse(output),
+          tokenUsage: result.tokenUsage,
+          followUps: result.followUps,
+        },
+      });
+      endSSE(res);
+    }
   } catch (err) {
-    clearInterval(keepalive);
-    detachAbortHandlers();
     const e = err as Error & { code?: string };
     const code =
       e.code === 'OUT_OF_TOKENS'
@@ -176,7 +189,16 @@ router.post('/execute', async (req: AuthRequest, res) => {
           : e.code === 'BUILD_CANCELLED'
             ? 'BUILD_CANCELLED'
             : 'BUILD_FAILED';
-    if (!res.writableEnded) {
+    failRun(runId, e.message || 'Build failed', code === 'BUILD_CANCELLED' ? 'cancelled' : 'error');
+    if (clientMeta?.assistantMessageId && code !== 'BUILD_CANCELLED') {
+      void notifyBuildFailed(userId, {
+        projectName: 'Xroga project',
+        prompt: prompt.trim(),
+        error: e.message || 'Build failed',
+        assistantMessageId: String(clientMeta.assistantMessageId),
+      }).catch(() => {});
+    }
+    if (streamConnected && !res.writableEnded) {
       sendSSE(res, {
         event: 'error',
         data: {
@@ -188,6 +210,10 @@ router.post('/execute', async (req: AuthRequest, res) => {
       });
       res.end();
     }
+  } finally {
+    clearInterval(keepalive);
+    detachDisconnectHandlers();
+    activeBuildControllers.delete(runId);
   }
 });
 
@@ -230,11 +256,34 @@ router.get('/runs/:runId', async (req: AuthRequest, res) => {
     status: run.status,
     output: run.output,
     featureCategory: run.featureCategory,
+    tokenUsage: run.tokenUsage,
     created_at: run.created_at,
     completed_at: run.completed_at,
     iteration_count: run.iteration_count,
     messages: run.messages ?? [],
   });
+});
+
+router.post('/runs/:runId/cancel', async (req: AuthRequest, res) => {
+  const runId = String(req.params.runId || '');
+  const run = await getRunAsync(runId);
+  if (!run) return res.status(404).json({ error: 'Run not found' });
+  if (!req.userId || run.userId !== req.userId) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  if (run.status !== 'running') {
+    return res.json({ cancelled: false, status: run.status });
+  }
+
+  const controller = activeBuildControllers.get(runId);
+  if (!controller) {
+    return res.status(409).json({
+      error: 'Run is persisted but not active on this worker',
+      code: 'RUN_NOT_ACTIVE',
+    });
+  }
+  controller.abort();
+  res.json({ cancelled: true, status: 'cancelling' });
 });
 
 function saveConversationHandler(req: AuthRequest, res: import('express').Response) {

@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { api, type Notification } from '@/lib/api';
 import { showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
 import { useAppStore } from '@/store/useAppStore';
-import { loadPendingBuildJobs, removePendingBuildJob } from '@/lib/pendingBuildJobs';
+import { loadPendingBuildJobs } from '@/lib/pendingBuildJobs';
 import toast from 'react-hot-toast';
 
 const SHOWN_KEY = 'xroga-shown-build-notifications';
@@ -65,15 +65,10 @@ export function useBuildCompletionAlerts() {
           });
 
           const meta = n.metadata as Record<string, unknown> | undefined;
-          const assistantMessageId =
-            typeof meta?.assistantMessageId === 'string' ? meta.assistantMessageId : undefined;
-
           if (meta?.kind === 'build_ready') {
             toast.success(n.title, { duration: 8000 });
-            if (assistantMessageId) removePendingBuildJob(assistantMessageId);
           } else if (meta?.kind === 'build_failed') {
             toast.error(n.message.slice(0, 160), { duration: 10000 });
-            if (assistantMessageId) removePendingBuildJob(assistantMessageId);
           }
 
           void api.notifications.markRead(n.id).catch(() => {});

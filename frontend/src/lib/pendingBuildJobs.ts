@@ -1,10 +1,19 @@
 const KEY = 'xroga_pending_build_jobs';
 
 export interface PendingBuildJob {
+  runId?: string;
   assistantMessageId: string;
   userMessageId: string;
   userPrompt: string;
   startedAt: number;
+}
+
+export function attachPendingBuildRun(assistantMessageId: string, runId: string) {
+  savePendingBuildJobs(
+    loadPendingBuildJobs().map((job) =>
+      job.assistantMessageId === assistantMessageId ? { ...job, runId } : job
+    )
+  );
 }
 
 export function loadPendingBuildJobs(): PendingBuildJob[] {
