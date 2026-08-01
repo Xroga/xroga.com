@@ -1,57 +1,56 @@
-import {
-  Blocks,
-  Braces,
-  FolderGit2,
-  GitBranch,
-  LayoutDashboard,
-  Rocket,
-  ShieldCheck,
-  Terminal,
-  type LucideIcon,
-} from 'lucide-react';
+import type { PixelGlyphName } from '@/components/crypto-builder/PixelArt';
 
 /**
  * Per-page identity for the shared capability template.
  *
  * The six capability pages differ only in copy — `CapabilityPageData` carries no
- * visual signal at all, which is why every one of them rendered as the identical
- * page with different words. A hero icon and an accent hue give each page a
+ * visual signal at all, which is why every one of them once rendered as the identical
+ * page with different words. A pixel glyph and an ore hue give each page a
  * recognisable identity while the layout, motion and structure stay shared.
  *
- * Hues are decoration only: body text and headings stay on the page's theme tokens,
- * so a page reads as on-brand in every theme rather than fighting it.
+ * The glyphs and ore names come from the same voxel vocabulary as `/crypto-builder`,
+ * so the two surfaces read as one brand rather than two unrelated experiments.
+ * Ore hues are decoration only: body text and headings stay on the page's theme
+ * tokens, so a page reads correctly in every theme rather than fighting it.
  */
-export type CapabilityAccent = 'blue' | 'violet' | 'cyan' | 'emerald' | 'amber' | 'rose';
+export type CapabilityOre =
+  | 'diamond'
+  | 'gold'
+  | 'emerald'
+  | 'redstone'
+  | 'lapis'
+  | 'amethyst'
+  | 'copper'
+  | 'netherite';
 
-const ACCENT_HEX: Record<CapabilityAccent, string> = {
-  blue: '#006aff',
-  violet: '#8b5cf6',
-  cyan: '#22d3ee',
-  emerald: '#22c55e',
-  amber: '#f59e0b',
-  rose: '#fb7185',
+const IDENTITY: Record<string, { glyph: PixelGlyphName; ore: CapabilityOre }> = {
+  'ai-coding-agent': { glyph: 'braces', ore: 'diamond' },
+  'ai-app-builder': { glyph: 'bot', ore: 'amethyst' },
+  'ai-website-builder': { glyph: 'gem', ore: 'lapis' },
+  'build-saas-with-ai': { glyph: 'bank', ore: 'emerald' },
+  'github-ai-coding-agent': { glyph: 'branch', ore: 'gold' },
+  'vercel-ai-deployment': { glyph: 'rocket', ore: 'redstone' },
 };
 
-export function accentHex(accent: CapabilityAccent): string {
-  return ACCENT_HEX[accent];
-}
-
-const IDENTITY: Record<string, { icon: LucideIcon; accent: CapabilityAccent }> = {
-  'ai-coding-agent': { icon: Terminal, accent: 'blue' },
-  'ai-app-builder': { icon: Blocks, accent: 'violet' },
-  'ai-website-builder': { icon: LayoutDashboard, accent: 'cyan' },
-  'build-saas-with-ai': { icon: Braces, accent: 'emerald' },
-  'github-ai-coding-agent': { icon: FolderGit2, accent: 'amber' },
-  'vercel-ai-deployment': { icon: Rocket, accent: 'rose' },
-};
-
-/** Rotated across the three process steps so the timeline isn't one repeated glyph. */
-const PROCESS_ICONS: LucideIcon[] = [ShieldCheck, GitBranch, Rocket];
+/** Rotated across the three process steps so the crafting row isn't one repeated tile. */
+const PROCESS_GLYPHS: PixelGlyphName[] = ['book', 'braces', 'shield'];
+const PROCESS_ORES: CapabilityOre[] = ['lapis', 'emerald', 'diamond'];
 
 export function capabilityIdentity(slug: string) {
-  return IDENTITY[slug] ?? { icon: Terminal, accent: 'blue' as const };
+  return IDENTITY[slug] ?? { glyph: 'braces' as PixelGlyphName, ore: 'diamond' as CapabilityOre };
 }
 
-export function processIcon(index: number): LucideIcon {
-  return PROCESS_ICONS[index % PROCESS_ICONS.length];
+export function processGlyph(index: number): PixelGlyphName {
+  return PROCESS_GLYPHS[index % PROCESS_GLYPHS.length];
+}
+
+export function processOre(index: number): CapabilityOre {
+  return PROCESS_ORES[index % PROCESS_ORES.length];
+}
+
+/** Ore assigned per outcome tile, so a grid of blocks is not one hue repeated. */
+const OUTCOME_ORES: CapabilityOre[] = ['diamond', 'gold', 'emerald', 'amethyst', 'copper', 'lapis'];
+
+export function outcomeOre(index: number): CapabilityOre {
+  return OUTCOME_ORES[index % OUTCOME_ORES.length];
 }
