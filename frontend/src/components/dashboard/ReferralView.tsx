@@ -72,8 +72,8 @@ export function ReferralView() {
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto space-y-4">
-        <Skeleton height={36} width={240} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
-        <Skeleton height={200} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
+        <Skeleton height={36} width={240} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
+        <Skeleton height={200} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
       </div>
     );
   }

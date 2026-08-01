@@ -172,8 +172,8 @@ export function CommunityView() {
   if (loading && !pool) {
     return (
       <div className="max-w-4xl mx-auto space-y-4">
-        <Skeleton height={40} width={280} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
-        <Skeleton height={220} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
+        <Skeleton height={40} width={280} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
+        <Skeleton height={220} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
       </div>
     );
   }

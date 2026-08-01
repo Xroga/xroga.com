@@ -6841,3 +6841,82 @@ body.theme-gray .xv-rp-loader {
 /* No room for the sigil once the button collapses to its icon. */
 .xv-go-btn--code-compact { min-width: 0; padding-inline: 0; border-radius: 50%; }
 .xv-go-btn--code-compact .xv-go-btn__sigil { display: none; }
+
+/* Route loader. Centred on the page surface, not a hardcoded dark sheet — a light
+   theme should not flash black between navigations. */
+.xv-route-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-page, var(--background));
+}
+
+/* ---------------------------------------------------------------------------
+   Icon hover motion, site-wide.
+
+   Done in CSS rather than by wrapping every glyph in a motion component. Making
+   several hundred icons individually animated in JS would add a runtime cost to
+   every interactive surface, which works directly against making the site faster —
+   these rules cost nothing at runtime and ship no JavaScript.
+
+   `AnimatedIcon` still exists for feature spots that want spring physics or a
+   keyframed sequence. This is the default everywhere else.
+   --------------------------------------------------------------------------- */
+
+/* Transform only. Animating layout or colour here would repaint whole rows on hover;
+   transform stays on the compositor. */
+.xv-sidebar-menu a svg,
+.xv-sidebar-icon-link svg,
+.xv-nav-group__trigger svg:not(.xv-nav-group__chev),
+.xv-chatbar-toolbar button svg,
+.xv-ws-launch svg,
+.xv-term-iconbtn svg,
+.xv-skin-trigger svg,
+.xv-cba-item svg,
+.xv-cb-btn svg {
+  transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+
+.xv-sidebar-menu a:hover svg,
+.xv-sidebar-icon-link:hover svg,
+.xv-nav-group__trigger:hover svg:not(.xv-nav-group__chev) {
+  transform: translateY(-2px) scale(1.1);
+}
+
+.xv-chatbar-toolbar button:hover svg,
+.xv-ws-launch:hover svg,
+.xv-term-iconbtn:hover svg,
+.xv-skin-trigger:hover svg {
+  transform: scale(1.15);
+}
+
+.xv-cba-item:hover svg { transform: scale(1.12) rotate(-6deg); }
+
+/* Arrows lead in their own direction rather than scaling — a right arrow that grows
+   says nothing, one that moves right says "forward". */
+.xv-cb-eco-card:hover .xv-cb-eco-cta svg,
+.xv-cb-btn:hover svg:last-child { transform: translateX(3px); }
+
+.xv-animated-nav-icon { display: inline-flex; transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+a:hover > .xv-animated-nav-icon,
+button:hover > .xv-animated-nav-icon { transform: translateY(-2px) scale(1.1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-sidebar-menu a svg,
+  .xv-sidebar-icon-link svg,
+  .xv-nav-group__trigger svg,
+  .xv-chatbar-toolbar button svg,
+  .xv-ws-launch svg,
+  .xv-term-iconbtn svg,
+  .xv-skin-trigger svg,
+  .xv-cba-item svg,
+  .xv-cb-btn svg,
+  .xv-animated-nav-icon {
+    transition: none;
+    transform: none !important;
+  }
+}

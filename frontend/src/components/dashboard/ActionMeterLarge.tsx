@@ -20,7 +20,7 @@ export function ActionMeterLarge() {
   if (!usage) {
     return (
       <div className="glass-panel rounded-xl p-6">
-        <Skeleton height={120} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
+        <Skeleton height={120} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
       </div>
     );
   }

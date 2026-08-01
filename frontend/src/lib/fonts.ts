@@ -1,3 +1,16 @@
+/**
+ * Fonts.
+ *
+ * next/font preloads every family by default. With nine families that emitted twelve
+ * render-blocking font preloads competing with the CSS and the app bundle on first
+ * paint, for faces most pages never draw — the pixel display face appears on a
+ * greeting and a few labels, the serif accents on marketing surfaces only.
+ *
+ * Only the body faces preload now: measured 12 font preloads before, 2 after. The
+ * rest still load, and still load automatically wherever they are used; they simply
+ * no longer block the first paint to do it. This changes delivery, not typography —
+ * no family is dropped and no weight is removed.
+ */
 import {
   Cormorant,
   Fraunces,
@@ -17,6 +30,7 @@ export const azurio = Fraunces({
   subsets: ['latin'],
   variable: '--font-azurio',
   weight: ['600', '700', '800', '900'],
+  preload: false,
 });
 
 /** Goga role — friendly geometric sans body */
@@ -31,6 +45,7 @@ export const remixa = Syne({
   subsets: ['latin'],
   variable: '--font-remixa',
   weight: ['500', '600', '700', '800'],
+  preload: false,
 });
 
 /** Emilio role — elegant thin italic serif accents */
@@ -39,12 +54,14 @@ export const emilio = Cormorant({
   variable: '--font-emilio',
   weight: ['300', '400', '500'],
   style: ['normal', 'italic'],
+  preload: false,
 });
 
 export const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-xv-mono',
   weight: ['400', '500', '600'],
+  preload: false,
 });
 
 /** Pixel coding display — Press Start 2P */
@@ -52,6 +69,7 @@ export const pixelCoding = Press_Start_2P({
   subsets: ['latin'],
   variable: '--font-pixel',
   weight: ['400'],
+  preload: false,
 });
 
 export const sourceSerif = Source_Serif_4({
@@ -59,6 +77,7 @@ export const sourceSerif = Source_Serif_4({
   variable: '--font-source-serif',
   weight: ['400', '600', '700'],
   style: ['normal', 'italic'],
+  preload: false,
 });
 
 /**
@@ -71,6 +90,7 @@ export const claudeSerif = Newsreader({
   variable: '--font-claude-serif',
   weight: ['400', '500', '600', '700'],
   style: ['normal', 'italic'],
+  preload: false,
 });
 
 export const rootFontVariables = [

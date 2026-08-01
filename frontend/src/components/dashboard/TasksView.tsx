@@ -267,9 +267,9 @@ export function TasksView() {
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto space-y-6">
-        <Skeleton height={48} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
-        <Skeleton height={120} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
-        <Skeleton height={120} baseColor="#1a1a2e" highlightColor="#2a2a3e" />
+        <Skeleton height={48} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
+        <Skeleton height={120} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
+        <Skeleton height={120} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
       </div>
     );
   }

@@ -43,7 +43,7 @@ export function ProjectDetailView({ projectId }: ProjectDetailViewProps) {
   ) ?? [];
 
   if (loading) {
-    return <Skeleton height={400} baseColor="#1a1a2e" highlightColor="#2a2a3e" />;
+    return <Skeleton height={400} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />;
   }
 
   if (!project) {
