@@ -108,10 +108,11 @@ export function TerminalDock() {
         ) : (
           <div className="flex items-end gap-3">
             <div className="flex-1 min-w-0">
-              {/* The repo context row above the composer is gone: it moved inside, onto
-                  the composer's bottom row as a compact chip. That reclaims the last
-                  row of height above the input, which is what made the area feel
-                  crowded. */}
+              {/* The repo context sits in this thin strip below the composer, as a
+                  compact chip — not the verbose `outside` mode, which renders a full
+                  sentence ("Loading repositories…") and full name/branch text. That
+                  variant belongs on pages with room for it; here it reintroduces the
+                  exact height and clutter the compact chip exists to avoid. */}
               <ChatbarQueueOutside />
               <div className="xv-chatbar-stack relative">
                 {!incognito ? <CompanionComposerAnchor /> : null}
@@ -119,7 +120,7 @@ export function TerminalDock() {
               </div>
               {!incognito ? (
                 <div className="xv-chatbar-context-strip">
-                  <RepoContextBar outside />
+                  <RepoContextBar compact />
                   <BlackHoleVButton compact className="ml-auto" />
                 </div>
               ) : null}
