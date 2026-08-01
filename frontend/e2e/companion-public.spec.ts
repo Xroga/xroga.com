@@ -31,12 +31,11 @@ test('public X-companion, themes, plan story, and accessibility are connected', 
     await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
   }
 
-  // Smoky is decorative now: the click-to-open control panel and the speech
-  // synthesis it carried were removed, so there is no trigger button and no panel.
-  // Companion preferences moved to Settings; dictation belongs to the composer.
-  await expect(page.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
+  // Smoky opens usage on click. The old control panel stays removed — companion
+  // preferences live in Settings and dictation belongs to the composer — and the
+  // speech synthesis it carried is still gone.
+  await expect(page.getByRole('button', { name: /show usage/i }).first()).toBeVisible();
   await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
-  await expect(page.locator('img.xv-companion-renderer').first()).toHaveAttribute('aria-hidden', 'true');
 
   await page.evaluate(() => window.dispatchEvent(new CustomEvent('xroga:companion-event', {
     detail: { type: 'runtime_progress', operation: 'testing', message: 'Running the real validation command', source: 'runtime' },

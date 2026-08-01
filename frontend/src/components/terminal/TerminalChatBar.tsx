@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
-import { ChatBarMicButton } from './ChatBarMicButton';
+import { ChatBarActionsMenu } from './ChatBarActionsMenu';
+import { buildComposerPreamble, useComposerToolsStore } from '@/store/useComposerToolsStore';
 import { BlackHoleVButton } from './BlackHoleVButton';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
@@ -288,7 +289,20 @@ export function TerminalChatBar() {
     draftRef.current = '';
     lastExternalPrompt.current = '';
     setPrompt('');
-    await submit(promptText, false, false, attachments);
+    // Rules and skill packs are prefixed here rather than stored server-side, because
+    // there is no backend field for custom instructions — prefixing the prompt is the
+    // only mechanism that genuinely reaches the model. The composer states that the
+    // preamble is attached, so nothing is rewritten behind the user's back.
+    const preamble = buildComposerPreamble(
+      useComposerToolsStore.getState().rules,
+      useComposerToolsStore.getState().enabledSkills,
+    );
+    await submit(
+      promptText && preamble ? `${preamble}${promptText}` : promptText,
+      false,
+      false,
+      attachments,
+    );
     if (!loading) setSendState('launched');
   }
 
@@ -429,18 +443,19 @@ export function TerminalChatBar() {
             {/* Black Hole lives in the toolbar rather than on its own row above the
                 chatbar, which reclaims that row's height. */}
             <BlackHoleVButton compact className="shrink-0" />
-            <ChatBarMicButton
+            {/* Mic moved down beside send, where the other send-time controls are.
+                Its slot here is taken by the actions menu, so the toolbar keeps the
+                same width rather than growing by four more chips. */}
+            <ChatBarActionsMenu
               className="shrink-0"
               disabled={loading}
-              onTranscript={(text) => {
-                // Append rather than replace, so dictating after typing keeps
-                // whatever the user already wrote.
-                setDraft((current) => {
-                  const next = current.trim() ? `${current.trim()} ${text}` : text;
-                  draftRef.current = next;
-                  return next;
-                });
-                textareaRef.current?.focus();
+              onInsert={(text) => {
+                // Fills the composer and focuses it. Deliberately not auto-sent: these
+                // are scaffolds the user finishes, and sending a half-written prompt
+                // would burn a real run.
+                setDraft((current) => (current.trim() ? `${text}${current}` : text));
+                draftRef.current = draftRef.current.trim() ? `${text}${draftRef.current}` : text;
+                window.setTimeout(() => textareaRef.current?.focus(), 20);
               }}
             />
             <ChatBarTip label="Search integrations" className="shrink-0">
@@ -514,7 +529,16 @@ export function TerminalChatBar() {
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
               hideUpload={incognito}
-              hideMicrophone
+              onTranscript={(text) => {
+                // Append rather than replace, so dictating after typing keeps
+                // whatever the user already wrote.
+                setDraft((current) => {
+                  const next = current.trim() ? `${current.trim()} ${text}` : text;
+                  draftRef.current = next;
+                  return next;
+                });
+                textareaRef.current?.focus();
+              }}
               surface={incognito ? 'incognito' : 'dashboard'}
               compactGo={!!draft.trim()}
               sendState={sendState}

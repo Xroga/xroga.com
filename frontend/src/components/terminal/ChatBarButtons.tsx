@@ -155,7 +155,7 @@ export function ChatBarSendButton({
   onStop,
   state = 'idle',
   surface = 'dashboard',
-  compact: _compact = false,
+  compact = false,
 }: {
   stopping?: boolean;
   onStop?: () => void;
@@ -163,7 +163,6 @@ export function ChatBarSendButton({
   surface?: ChatbarSurface;
   compact?: boolean;
 }) {
-  void _compact;
   const busy = stopping || state === 'sending' || state === 'thinking';
 
   if (busy) {
@@ -187,16 +186,28 @@ export function ChatBarSendButton({
   }
 
   return (
+    /**
+     * Send, as a run command.
+     *
+     * The ship stays — it is how send reads across every Xroga surface, and the
+     * sailing state is the only signal that a run is in flight. What changes is the
+     * frame around it: a monospace `>_` sigil and a squared-off key rather than a
+     * plain circle, so the control that runs your prompt looks like the thing that
+     * runs a command. The sigil hides on the compact form, where there is no room for
+     * anything but the icon.
+     */
     <button
       type="submit"
       className={cn(
-        'xv-go-btn shrink-0',
+        'xv-go-btn xv-go-btn--code shrink-0',
+        compact && 'xv-go-btn--code-compact',
         surface === 'homepage' && 'xv-go-btn--home',
         surface === 'incognito' && 'xv-go-btn--incognito'
       )}
       aria-label="Launch"
     >
       <span className="xv-go-btn__liquid" aria-hidden />
+      <span className="xv-go-btn__sigil" aria-hidden>&gt;_</span>
       <span className="xv-go-btn__icon">
         <ChatBarShipIcon state={state} size={18} bold />
       </span>

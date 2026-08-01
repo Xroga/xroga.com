@@ -6698,3 +6698,146 @@ body.theme-gray .xv-rp-loader {
 @media (prefers-reduced-motion: reduce) {
   .xv-nav-group__chev, .xv-nav-arrow { transition: none; }
 }
+
+/* ---------------------------------------------------------------------------
+   Composer actions menu, and the send button's code frame.
+   --------------------------------------------------------------------------- */
+
+.xv-cba-trigger {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  color: var(--text-secondary, var(--muted));
+  transition: color 140ms ease, background 140ms ease, border-color 140ms ease;
+}
+.xv-cba-trigger:hover:not(:disabled) {
+  color: var(--text-primary, var(--foreground));
+  border-color: var(--accent);
+}
+.xv-cba-trigger:disabled { opacity: 0.45; cursor: not-allowed; }
+/* Marks that rules or packs are modifying the prompt. A prompt changed with no
+   visible sign of it is worse than the feature not existing. */
+.xv-cba-dot {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.xv-cba-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  z-index: 80;
+  width: min(310px, calc(100vw - 2rem));
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 0.35rem;
+  border-radius: 0.7rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  background: var(--surface-raised, var(--card));
+  box-shadow: 0 20px 48px -18px rgba(0, 0, 0, 0.45);
+}
+
+.xv-cba-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  text-align: left;
+  color: var(--text-secondary, var(--muted));
+  transition: background 120ms ease, color 120ms ease;
+}
+.xv-cba-item:hover { background: var(--surface-inset, rgba(127,127,127,0.08)); color: var(--text-primary, var(--foreground)); }
+.xv-cba-item.is-active { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.xv-cba-item svg { margin-top: 2px; color: var(--accent); }
+.xv-cba-item__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.xv-cba-item__text b { font-size: 0.76rem; font-weight: 600; color: var(--text-primary, var(--foreground)); }
+.xv-cba-item__text i { font-style: normal; font-size: 0.68rem; line-height: 1.4; color: var(--text-muted, var(--muted)); }
+
+.xv-cba-check {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  border-radius: 0.25rem;
+  border: 1.5px solid var(--border-strong, var(--card-border));
+  color: #fff;
+}
+.xv-cba-check.is-on { background: var(--accent); border-color: var(--accent); }
+
+.xv-cba-sep { height: 1px; margin: 0.3rem 0.2rem; background: var(--border-subtle, var(--card-border)); }
+.xv-cba-note {
+  margin: 0.25rem 0.15rem 0.4rem;
+  padding: 0 0.35rem;
+  font-size: 0.66rem;
+  line-height: 1.5;
+  color: var(--text-muted, var(--muted));
+}
+.xv-cba-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.3rem 0.4rem 0.45rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-primary, var(--foreground));
+  border-bottom: 1px solid var(--border-subtle, var(--card-border));
+  margin-bottom: 0.35rem;
+}
+.xv-cba-back { font-size: 0.66rem; font-weight: 500; color: var(--accent); }
+.xv-cba-textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  background: var(--surface-inset, transparent);
+  color: var(--text-primary, var(--foreground));
+  font-family: var(--font-xv-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  line-height: 1.55;
+  resize: vertical;
+}
+.xv-cba-textarea:focus { outline: none; border-color: var(--accent); }
+.xv-cba-clear {
+  margin-top: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--text-muted, var(--muted));
+}
+.xv-cba-clear:hover { color: var(--text-primary, var(--foreground)); }
+
+/* ---- send, framed as a run command */
+
+.xv-go-btn--code {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: auto;
+  min-width: 2.6rem;
+  padding-inline: 0.6rem;
+  border-radius: 0.6rem;
+}
+.xv-go-btn__sigil {
+  font-family: var(--font-xv-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  opacity: 0.75;
+}
+/* No room for the sigil once the button collapses to its icon. */
+.xv-go-btn--code-compact { min-width: 0; padding-inline: 0; border-radius: 50%; }
+.xv-go-btn--code-compact .xv-go-btn__sigil { display: none; }
