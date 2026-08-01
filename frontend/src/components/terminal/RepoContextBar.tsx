@@ -23,9 +23,16 @@ const STORAGE_KEY = 'xroga-repo-context';
 
 interface RepoContextBarProps {
   outside?: boolean;
+  /**
+   * Renders inside the composer's bottom row rather than as its own row above it.
+   * Everything still works; the difference is that it stays on one line, truncates
+   * instead of scrolling, and shows a spinner rather than the words
+   * "Loading repositories…" while it waits.
+   */
+  compact?: boolean;
 }
 
-export function RepoContextBar({ outside }: RepoContextBarProps) {
+export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
   const { messages, restoreTerminalSession, startNewChat } = useTerminalChat();
   const repoLocked = messages.length > 0;
   const [connected, setConnected] = useState(false);
@@ -294,6 +301,16 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
   if (!connected && !loadingRepos) return null;
 
   if (loadingRepos) {
+    // Compact shows the spinner alone. A sentence of status text in a control row is
+    // noise, and it is also the widest this element ever gets, so the row reflowed
+    // the moment repositories finished loading.
+    if (compact) {
+      return (
+        <span className="xv-repo-chip xv-repo-chip--loading" role="status" aria-label="Loading repositories">
+          <Loader2 className="w-3 h-3 animate-spin opacity-70" aria-hidden="true" />
+        </span>
+      );
+    }
     return (
       <div className={cn('flex items-center gap-1.5 text-[10px] font-mono text-[var(--muted)]', outside ? 'py-0' : 'py-1')}>
         <Loader2 className="w-3 h-3 animate-spin opacity-60" />
@@ -309,8 +326,11 @@ export function RepoContextBar({ outside }: RepoContextBarProps) {
   return (
     <div
       className={cn(
-        'flex items-center gap-2 text-[10px] font-mono text-[var(--foreground)] overflow-x-auto scrollbar-hide',
-        outside ? 'px-0 py-0' : 'px-2 sm:px-3 py-1 border-0'
+        'flex items-center text-[10px] font-mono text-[var(--foreground)]',
+        compact
+          ? 'xv-repo-chip gap-1.5 max-w-[46vw] sm:max-w-[16rem] overflow-hidden'
+          : 'gap-2 overflow-x-auto scrollbar-hide',
+        !compact && (outside ? 'px-0 py-0' : 'px-2 sm:px-3 py-1 border-0')
       )}
     >
       {/* Explicit product intent — avoids patching the wrong app */}

@@ -199,17 +199,20 @@ export function ChatBarSendButton({
     <button
       type="submit"
       className={cn(
-        'xv-go-btn xv-go-btn--code shrink-0',
-        compact && 'xv-go-btn--code-compact',
-        surface === 'homepage' && 'xv-go-btn--home',
-        surface === 'incognito' && 'xv-go-btn--incognito'
+        'xv-send shrink-0',
+        compact && 'xv-send--compact',
+        surface === 'homepage' && 'xv-send--home',
+        surface === 'incognito' && 'xv-send--incognito'
       )}
       aria-label="Launch"
+      title="Send"
     >
-      <span className="xv-go-btn__liquid" aria-hidden />
-      <span className="xv-go-btn__sigil" aria-hidden>&gt;_</span>
-      <span className="xv-go-btn__icon">
-        <ChatBarShipIcon state={state} size={18} bold />
+      {/* A run key, not a pill: squared with a soft radius, a monospace sigil, and the
+          ship as the state indicator. The sigil is the only part that goes when the
+          button collapses, so the control never loses what it means. */}
+      <span className="xv-send__sigil" aria-hidden>&gt;_</span>
+      <span className="xv-send__icon">
+        <ChatBarShipIcon state={state} size={16} bold />
       </span>
     </button>
   );
