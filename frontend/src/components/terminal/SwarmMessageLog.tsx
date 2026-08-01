@@ -6,10 +6,8 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
-import { ResearchPagesLoader } from '@/components/ui/ResearchPagesLoader';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
-import { TerminalRunStream } from './TerminalRunStream';
 import { ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
@@ -47,7 +45,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, sessionRestoring, loading, animatingId, pipelineMessage, thinkingStartedAt, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, heavyBuildActive, heavyAssistantId } =
+  const { messages, sessionRestoring, loading, animatingId, pipelineMessage, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const applyBuild = useProjectWorkspaceStore((s) => s.applyBuild);
@@ -71,6 +69,11 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   const jumpHandledRef = useRef<string | null>(null);
   const [searchHit, setSearchHit] = useState<string | null>(null);
   const [activeTurnId, setActiveTurnId] = useState<string | null>(null);
+  const latestExecutionEvent = terminalRun.active
+    ? [...terminalRun.events]
+        .reverse()
+        .find((event) => event.kind !== 'output' && event.kind !== 'result')
+    : undefined;
 
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
     stickToBottomRef.current = true;
@@ -416,19 +419,19 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
-                        {showResearchPages &&
-                          msg.id === (buildPanelMessageId ?? animatingId) &&
-                          loading &&
-                          !msg.content?.trim() && (
-                            <ResearchPagesLoader className="my-2" />
-                          )}
-                        {/* The execution log replaces the phase panel, the fixed
-                            to-do checklist and the progress counter. It renders
-                            only received events, so it is shown whenever the run
-                            has produced any — no separate "should we show
-                            progress" condition to fall out of sync with. */}
-                        {buildPanelMessageId && msg.id === buildPanelMessageId ? (
-                          <TerminalRunStream run={terminalRun} startedAt={thinkingStartedAt} />
+                        {loading &&
+                        msg.id === (buildPanelMessageId ?? animatingId) &&
+                        latestExecutionEvent ? (
+                          <p
+                            className="py-1 font-mono text-xs text-[var(--muted)]"
+                            role="status"
+                            data-testid="ai-processing-status"
+                          >
+                            {latestExecutionEvent.source
+                              ? `${latestExecutionEvent.source}: `
+                              : ''}
+                            {latestExecutionEvent.text}
+                          </p>
                         ) : null}
                         {msg.buildStopped ? (
                           <StoppedBuildResumeCard
@@ -526,12 +529,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                                 : !loading && !msg.featureOutput && !msg.buildStopped && !msg.updateTrail
                                   ? (() => {
                                       if (!(codeBuildActive || heavyBuildActive)) {
-                                        // An empty assistant turn is a real failure, not
-                                        // something to explain away by telling the user
-                                        // to retype. The execution transcript above shows
-                                        // what actually ran; this states the outcome
-                                        // plainly without blaming the prompt.
-                                        return 'This turn produced no response. The execution log above shows what ran.';
+                                        return 'This turn ended without an AI response.';
                                       }
                                       // Never show OrbitVault/update copy on a NEW build (e.g. "build a landing page").
                                       const updateAsk =

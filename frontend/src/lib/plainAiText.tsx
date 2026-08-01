@@ -399,7 +399,6 @@ function BlockView({ block }: { block: XrogaBlock }) {
 
 export function PlainAiResponse({
   content,
-  streaming,
   className,
   mathMode = false,
 }: {
@@ -410,20 +409,13 @@ export function PlainAiResponse({
 }) {
   const blocks = useMemo(() => parseXrogaBlocks(content), [content]);
 
-  if (!blocks.length && streaming) {
-    return (
-      <span className="inline-block w-0.5 h-5 bg-[#006aff]/70 animate-pulse rounded-full" />
-    );
-  }
+  if (!blocks.length) return null;
 
   return (
     <div className={cn('xv-xroga-response space-y-3', mathMode && 'xv-math-solution', className)}>
       {blocks.map((block, i) => (
         <BlockView key={`${block.type}-${i}`} block={block} />
       ))}
-      {streaming && content.length > 0 && (
-        <span className="inline-block w-0.5 h-5 ml-0.5 bg-[#006aff]/70 align-middle animate-pulse rounded-full" />
-      )}
     </div>
   );
 }
