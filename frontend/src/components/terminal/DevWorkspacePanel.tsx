@@ -15,6 +15,7 @@ import {
   Minimize2,
   RefreshCw,
   Rocket,
+  Copy,
   Search,
   Terminal as TerminalIcon,
   Trash2,
@@ -51,7 +52,7 @@ function buildTree(files: ProjectFileEntry[]): Record<string, ProjectFileEntry[]
   return root;
 }
 
-function PreviewPane({ viewport }: { viewport: 'mobile' | 'tablet' | 'desktop' }) {
+function PreviewPane({ viewport, nonce = 0 }: { viewport: 'mobile' | 'tablet' | 'desktop'; nonce?: number }) {
   const html = useProjectWorkspaceStore((s) => s.html);
   const css = useProjectWorkspaceStore((s) => s.css);
   const js = useProjectWorkspaceStore((s) => s.js);
@@ -77,7 +78,7 @@ function PreviewPane({ viewport }: { viewport: 'mobile' | 'tablet' | 'desktop' }
     <div className={cn('mx-auto h-full w-full bg-white', width)}>
       {useLive ? (
         <iframe
-          key={`live-${deployUrl}-${lastUpdateAt ?? 0}`}
+          key={`live-${deployUrl}-${lastUpdateAt ?? 0}-${nonce}`}
           title="Live Vercel preview"
           src={deployUrl!}
           className="h-full w-full min-h-[320px] border-0"
@@ -85,7 +86,7 @@ function PreviewPane({ viewport }: { viewport: 'mobile' | 'tablet' | 'desktop' }
         />
       ) : (
         <iframe
-          key={lastUpdateAt ?? 'preview'}
+          key={`${lastUpdateAt ?? 'preview'}-${nonce}`}
           title="Sandbox preview"
           srcDoc={sandboxDoc}
           className="h-full w-full min-h-[320px] border-0"
@@ -123,6 +124,11 @@ export function DevWorkspacePanel({ className }: { className?: string }) {
   const [viewport, setViewport] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   const [expanded, setExpanded] = useState(false);
   const [draftName, setDraftName] = useState('');
+  const [previewFullscreen, setPreviewFullscreen] = useState(false);
+  const [logFullscreen, setLogFullscreen] = useState(false);
+  /* Bumping this remounts the iframe. A preview of a static srcDoc has no reload of
+     its own, so without it the only way to re-run a broken script was a page refresh. */
+  const [previewNonce, setPreviewNonce] = useState(0);
 
   const activeFile = projectFiles.find((f) => f.path === openFilePath) || null;
   const tree = useMemo(() => buildTree(projectFiles), [projectFiles]);
@@ -134,17 +140,10 @@ export function DevWorkspacePanel({ className }: { className?: string }) {
     );
   }, [projectFiles, query]);
 
-  if (!workspaceOpen) {
-    return (
-      <button
-        type="button"
-        onClick={() => setWorkspaceOpen(true)}
-        className="fixed right-3 top-1/2 z-40 -translate-y-1/2 rounded-l-lg border border-[var(--card-border)] bg-[var(--card)] px-2 py-3 text-[10px] font-bold uppercase tracking-wide text-[var(--muted)] shadow-md hover:text-[var(--foreground)] lg:right-0"
-      >
-        Workspace
-      </button>
-    );
-  }
+  // Closed renders nothing. Opening is `WorkspaceLauncher`'s job, which sits in the
+  // flow above the terminal — this used to be a pill fixed to the middle of the
+  // viewport's right edge, floating over whatever the user was reading.
+  if (!workspaceOpen) return null;
 
   return (
     <aside
@@ -331,12 +330,45 @@ export function DevWorkspacePanel({ className }: { className?: string }) {
         ) : null}
 
         {activeTab === 'terminal' ? (
-          <div className="h-full overflow-y-auto bg-black/90 p-3 font-mono text-[11px] text-emerald-400/90 space-y-1">
-            {terminalLog.length === 0 ? (
-              <p className="text-white/40">$ waiting for real command output…</p>
-            ) : (
-              terminalLog.map((line, i) => <p key={`${i}-${line.slice(0, 24)}`}>{line}</p>)
-            )}
+          <div className={cn('h-full flex flex-col min-h-0', logFullscreen && 'fixed inset-3 z-[190] rounded-2xl overflow-hidden bg-black')}>
+            <div className="flex items-center gap-1 px-2 py-1.5 border-b border-[var(--card-border)]/40 bg-[var(--card)]/60">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">
+                Output
+              </span>
+              <span className="text-[10px] text-[var(--muted)]">
+                {terminalLog.length} {terminalLog.length === 1 ? 'line' : 'lines'}
+              </span>
+              <div className="ml-auto flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    void navigator.clipboard?.writeText(terminalLog.join('\n'));
+                  }}
+                  disabled={terminalLog.length === 0}
+                  className="p-1 rounded text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-40"
+                  title="Copy output"
+                  aria-label="Copy output"
+                >
+                  <Copy className="h-3 w-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLogFullscreen((v) => !v)}
+                  className="p-1 rounded text-[var(--muted)] hover:text-[var(--foreground)]"
+                  title={logFullscreen ? 'Exit full output' : 'Full output'}
+                  aria-label={logFullscreen ? 'Exit full output' : 'Full output'}
+                >
+                  {logFullscreen ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto bg-black/90 p-3 font-mono text-[11px] text-emerald-400/90 space-y-1">
+              {terminalLog.length === 0 ? (
+                <p className="text-white/40">$ waiting for real command output…</p>
+              ) : (
+                terminalLog.map((line, i) => <p key={`${i}-${line.slice(0, 24)}`}>{line}</p>)
+              )}
+            </div>
           </div>
         ) : null}
 
@@ -356,19 +388,39 @@ export function DevWorkspacePanel({ className }: { className?: string }) {
                   {v}
                 </button>
               ))}
-              {deployUrl ? (
-                <a
-                  href={deployUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="ml-auto inline-flex items-center gap-1 text-[10px] font-bold text-[#006aff]"
+              <div className="ml-auto flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setPreviewNonce((n) => n + 1)}
+                  className="p-1 rounded text-[var(--muted)] hover:text-[var(--foreground)]"
+                  title="Reload preview"
+                  aria-label="Reload preview"
                 >
-                  <ExternalLink className="h-3 w-3" /> Live
-                </a>
-              ) : null}
+                  <RefreshCw className="h-3 w-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewFullscreen(true)}
+                  className="p-1 rounded text-[var(--muted)] hover:text-[var(--foreground)]"
+                  title="Full preview"
+                  aria-label="Full preview"
+                >
+                  <Maximize2 className="h-3 w-3" />
+                </button>
+                {deployUrl ? (
+                  <a
+                    href={deployUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 text-[10px] font-bold text-[#006aff]"
+                  >
+                    <ExternalLink className="h-3 w-3" /> Live
+                  </a>
+                ) : null}
+              </div>
             </div>
             <div className="flex-1 min-h-[280px] overflow-auto bg-[var(--foreground)]/5 p-2">
-              <PreviewPane viewport={viewport} />
+              <PreviewPane viewport={viewport} nonce={previewNonce} />
             </div>
           </div>
         ) : null}
@@ -428,6 +480,43 @@ export function DevWorkspacePanel({ className }: { className?: string }) {
           </div>
         ) : null}
       </div>
+
+      {/* Full preview. Deliberately its own overlay rather than the panel's expand:
+          expanding the panel still wraps the preview in tab chrome and a search row,
+          which is not what "see the whole thing" means. This is the rendered product
+          edge to edge, with one way out. */}
+      {previewFullscreen && (
+        <div className="fixed inset-0 z-[200] flex flex-col bg-[var(--surface-page,var(--background))]">
+          <div className="flex items-center gap-2 border-b border-[var(--card-border)]/50 px-3 py-2">
+            <Eye className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden="true" />
+            <span className="text-xs font-semibold">{projectName || 'Preview'}</span>
+            {(['mobile', 'tablet', 'desktop'] as const).map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setViewport(v)}
+                className={cn(
+                  'px-2 py-1 rounded text-[10px] font-bold uppercase',
+                  viewport === v ? 'bg-[var(--accent)]/15 text-[var(--accent)]' : 'text-[var(--muted)]'
+                )}
+              >
+                {v}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => setPreviewFullscreen(false)}
+              className="ml-auto inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-semibold text-[var(--muted)] hover:text-[var(--foreground)]"
+            >
+              <Minimize2 className="h-3.5 w-3.5" aria-hidden="true" />
+              Exit full preview
+            </button>
+          </div>
+          <div className="flex-1 min-h-0 overflow-auto bg-[var(--foreground)]/5 p-2">
+            <PreviewPane viewport={viewport} nonce={previewNonce} />
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

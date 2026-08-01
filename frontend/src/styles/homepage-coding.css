@@ -2127,7 +2127,7 @@
 
 /* Theme-aware public surface and the compact one-plan capacity story. */
 body.theme-white .xv-home-coding { --hc-bg:#f6f8fc; --hc-navy:#eaf0fb; --hc-blue:#075fe4; --hc-blue-soft:rgba(7,95,228,.2); --hc-ink:#101828; --hc-muted:rgba(16,24,40,.66); }
-body.theme-beige .xv-home-coding { --hc-bg:#f5efe3; --hc-navy:#ebe0cd; --hc-blue:#285fa8; --hc-blue-soft:rgba(40,95,168,.2); --hc-ink:#30271e; --hc-muted:rgba(48,39,30,.66); }
+body.theme-beige .xv-home-coding { --hc-bg:#faf7f0; --hc-navy:#f2ead9; --hc-blue:#285fa8; --hc-blue-soft:rgba(40,95,168,.2); --hc-ink:#30271e; --hc-muted:rgba(48,39,30,.66); }
 body.theme-gray .xv-home-coding { --hc-bg:#1a1a1a; --hc-navy:#252525; --hc-blue:#83b7ff; --hc-blue-soft:rgba(131,183,255,.24); --hc-ink:#f4f5f7; --hc-muted:rgba(244,245,247,.64); }
 body.theme-black .xv-home-coding { --hc-bg:#000; --hc-navy:#090b10; --hc-blue:#69adff; --hc-blue-soft:rgba(105,173,255,.26); --hc-ink:#fff; --hc-muted:rgba(255,255,255,.64); }
 

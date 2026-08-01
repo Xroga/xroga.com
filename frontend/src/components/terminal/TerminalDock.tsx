@@ -7,7 +7,7 @@ import { ChatbarQueueOutside } from './ChatbarQueueOutside';
 import { RepoContextBar } from './RepoContextBar';
 import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, PanelBottomOpen } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useVisualViewportBottom } from '@/hooks/useVisualViewportBottom';
@@ -22,6 +22,8 @@ export function TerminalDock() {
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
+  const chatbarHidden = useThemeStore((s) => s.chatbarHidden);
+  const setChatbarHidden = useThemeStore((s) => s.setChatbarHidden);
   const workspaceOpen = useProjectWorkspaceStore((s) => s.workspaceOpen);
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
@@ -38,11 +40,13 @@ export function TerminalDock() {
     const sync = () => {
       document.documentElement.style.setProperty('--xv-chatbar-height', `${el.offsetHeight}px`);
     };
+    // Re-measure when the bar collapses, otherwise the transcript keeps reserving
+    // room for a composer that is no longer on screen — the whole point of hiding it.
     sync();
     const ro = new ResizeObserver(sync);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [incognito, isDashboard]);
+  }, [incognito, isDashboard, chatbarHidden]);
 
   if (!isDashboard) return null;
 
@@ -86,22 +90,38 @@ export function TerminalDock() {
               : 'max-w-4xl'
         )}
       >
-        <div className="flex items-end gap-3">
-          <div className="flex-1 min-w-0">
-            {!incognito && (
-              // Black Hole moved into the chatbar toolbar, so this row is just the
-              // repo context and no longer spends height on a second control.
-              <div className="flex flex-row items-start justify-between gap-2 px-0.5 mb-0.5">
-                <RepoContextBar outside />
+        {chatbarHidden ? (
+          /* Collapsed. A single slim bar rather than nothing at all — a composer that
+             vanishes with no way back reads as a bug, and this is also the affordance
+             that brings it back on touch, where the toolbar toggle may be scrolled
+             out of view. */
+          <button
+            type="button"
+            onClick={() => setChatbarHidden(false)}
+            className="xv-chatbar-restore"
+            title="Show the chatbar"
+          >
+            <PanelBottomOpen className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Show chatbar</span>
+          </button>
+        ) : (
+          <div className="flex items-end gap-3">
+            <div className="flex-1 min-w-0">
+              {!incognito && (
+                // Black Hole moved into the chatbar toolbar, so this row is just the
+                // repo context and no longer spends height on a second control.
+                <div className="flex flex-row items-start justify-between gap-2 px-0.5 mb-0.5">
+                  <RepoContextBar outside />
+                </div>
+              )}
+              <ChatbarQueueOutside />
+              <div className="xv-chatbar-stack relative">
+                {!incognito ? <CompanionComposerAnchor /> : null}
+                <TerminalChatBar />
               </div>
-            )}
-            <ChatbarQueueOutside />
-            <div className="xv-chatbar-stack relative">
-              {!incognito ? <CompanionComposerAnchor /> : null}
-              <TerminalChatBar />
             </div>
           </div>
-        </div>
+        )}
         {incognito ? (
           <p className="text-[10px] sm:text-xs text-center text-white py-2 sm:py-2.5 px-3 font-medium leading-relaxed xv-incognito-room-notice">
             {INCOGNITO_PRIVATE_ROOM_NOTICE}
