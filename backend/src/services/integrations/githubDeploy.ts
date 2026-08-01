@@ -31,6 +31,11 @@ export interface GitHubPushResult {
   branch?: string;
 }
 
+export type ConnectedRepositoryState =
+  | { status: 'empty'; branch: string }
+  | { status: 'head'; branch: string; headSha: string }
+  | { status: 'unavailable'; branch: string; reason: string };
+
 export interface DeployPipelineResult {
   github: GitHubPushResult;
   deployUrl: string;
@@ -88,6 +93,63 @@ export async function getGithubDefaultRepo(userId: string): Promise<string | nul
   const integration = await getIntegration(userId);
   const repo = integration?.default_repo?.trim() || null;
   return repo?.includes('/') ? repo : null;
+}
+
+/**
+ * Inspect the real target branch before a retry decides whether it can reuse
+ * project memory. This never returns credentials or provider response bodies.
+ */
+export async function inspectConnectedRepositoryState(
+  userId: string,
+  repoFullName: string,
+  branch = 'main',
+): Promise<ConnectedRepositoryState> {
+  const integration = await getIntegration(userId);
+  if (!integration?.access_token) {
+    return { status: 'unavailable', branch, reason: 'GitHub is not connected' };
+  }
+
+  const [owner, repo, extra] = repoFullName.split('/');
+  if (!owner || !repo || extra) {
+    return { status: 'unavailable', branch, reason: 'Invalid GitHub repository target' };
+  }
+
+  const repoResponse = await ghFetch(integration.access_token, `/repos/${owner}/${repo}`);
+  if (!repoResponse.ok) {
+    const reason =
+      repoResponse.status === 404
+        ? 'GitHub repository was not found or is not authorized'
+        : repoResponse.status === 401 || repoResponse.status === 403
+          ? 'GitHub authorization cannot inspect the target repository'
+          : `GitHub repository inspection failed (${repoResponse.status})`;
+    return { status: 'unavailable', branch, reason };
+  }
+
+  const repository = (await repoResponse.json()) as { size?: number };
+
+  const refResponse = await ghFetch(
+    integration.access_token,
+    `/repos/${owner}/${repo}/git/ref/heads/${encodeURIComponent(branch)}`,
+  );
+  if (!refResponse.ok) {
+    if (refResponse.status === 409 || (refResponse.status === 404 && (repository.size ?? 0) === 0)) {
+      return { status: 'empty', branch };
+    }
+    const reason =
+      refResponse.status === 404
+        ? `GitHub branch ${branch} was not found`
+        : refResponse.status === 401 || refResponse.status === 403
+          ? 'GitHub authorization cannot inspect the target branch'
+          : `GitHub branch inspection failed (${refResponse.status})`;
+    return { status: 'unavailable', branch, reason };
+  }
+
+  const ref = (await refResponse.json()) as { object?: { sha?: string } };
+  const headSha = ref.object?.sha;
+  if (!headSha || !/^[0-9a-f]{7,40}$/i.test(headSha)) {
+    return { status: 'unavailable', branch, reason: 'GitHub returned an invalid branch head' };
+  }
+  return { status: 'head', branch, headSha };
 }
 
 export async function ghFetch(token: string, path: string, init?: RequestInit): Promise<Response> {
