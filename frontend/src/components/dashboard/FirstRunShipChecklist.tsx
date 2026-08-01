@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
@@ -20,9 +20,9 @@ type Step = {
 
 /**
  * Compact first-run path: Connect GitHub → Vercel → paste AI key → ship.
- * Presented as a single-step card rather than a flat list: it opens on the first
- * step that still needs work and advances as steps complete, while the arrows let
- * the user browse every step manually. Full OAuth forms stay on Integrations.
+ * Presented as one row showing a single step rather than a flat list: it opens on
+ * the first step that still needs work and advances as steps complete, while the
+ * dots reach any step directly. Full OAuth forms stay on Integrations.
  */
 export function FirstRunShipChecklist({ className }: { className?: string }) {
   const [loading, setLoading] = useState(true);
@@ -128,139 +128,121 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
   const step = steps[Math.min(index, total - 1)];
   const completedCount = steps.filter((s) => s.done).length;
 
-  function go(delta: number) {
-    userNavigatedRef.current = true;
-    setIndex((current) => Math.min(total - 1, Math.max(0, current + delta)));
-  }
 
   return (
+    /**
+     * One row, not three.
+     *
+     * This previously stacked a title row, a step row, and a navigation row, which
+     * came to roughly 130px directly above the composer — the single biggest thing
+     * pushing the input down the viewport. Everything it carried is still here:
+     * progress, the step, its action, per-step navigation, and dismiss. They now sit
+     * on one line, at about a third of the height.
+     *
+     * The arrows are gone rather than shrunk. The dots were always clickable and
+     * reach any step in one press, so the arrows were a second control for the same
+     * job; dropping them buys the width that lets the detail sentence stay.
+     */
     <section
       aria-label="First ship checklist"
       className={cn(
-        // Tighter than before: this sits directly above the composer, and the
-        // previous padding pushed the input well down the viewport.
-        'xv-first-run-checklist mx-auto w-full max-w-md rounded-token-lg border border-[var(--border-subtle)]',
-        'bg-[var(--surface-raised)] px-3.5 py-3 shadow-subtle',
+        'xv-first-run-checklist mx-auto flex w-full max-w-2xl items-center gap-2.5',
+        'rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)]',
+        'px-2.5 py-1.5 shadow-subtle',
         className,
       )}
     >
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-[var(--text-primary)]">First ship checklist</span>
-          <span className="text-[10px] font-medium text-[var(--text-muted)]">
-            {completedCount}/{total} done
-          </span>
-        </div>
-        <button
-          type="button"
-          className="text-[10px] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-          onClick={() => {
-            sessionStorage.setItem('xroga-firstrun-checklist-dismissed', '1');
-            setDismissed(true);
-          }}
-        >
-          Dismiss
-        </button>
-      </div>
-
-      <div className="mt-2 flex items-center gap-2.5">
-        <span
-          className={cn(
-            'flex h-9 w-9 shrink-0 items-center justify-center rounded-token-sm border',
-            step.done
-              ? 'border-transparent bg-[var(--success-dim)]'
-              : // The provider marks in /brand/logos are white-only assets (hardcoded
-                // fill="#ffffff"), so the chip stays dark in every theme — otherwise the
-                // logo is invisible on the light surfaces.
-                'border-transparent bg-[#12141c]',
-          )}
-        >
-          {step.done ? (
-            <Check className="h-4 w-4 text-[var(--success)]" aria-hidden="true" />
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={step.logo} alt="" aria-hidden="true" className="h-4 w-4 object-contain" />
-          )}
-        </span>
-
-        <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-1.5 text-[13px] font-semibold text-[var(--text-primary)]">
-            {step.label}
-            {step.optional && (
-              <span className="text-[10px] font-medium uppercase tracking-wide text-[var(--text-muted)]">
-                optional
-              </span>
-            )}
-          </p>
-          <p className="mt-0.5 text-[10.5px] leading-snug text-[var(--text-secondary)]">{step.detail}</p>
-        </div>
-
-        {step.done ? (
-          <span className="shrink-0 text-[10px] font-semibold text-[var(--success)]">Done</span>
-        ) : step.id === 'ship' ? (
-          <span className="shrink-0 text-[10px] text-[var(--text-muted)]">{step.cta}</span>
-        ) : (
-          <Link
-            href={step.href}
-            className="shrink-0 rounded-full bg-[var(--accent)] px-3 py-1.5 text-[11px] font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-          >
-            {step.cta}
-          </Link>
+      <span
+        className={cn(
+          'flex h-7 w-7 shrink-0 items-center justify-center rounded-token-sm',
+          step.done
+            ? 'bg-[var(--success-dim)]'
+            : // The provider marks in /brand/logos are white-only assets (hardcoded
+              // fill="#ffffff"), so the chip stays dark in every theme — otherwise the
+              // logo is invisible on the light surfaces.
+              'bg-[#12141c]',
         )}
+      >
+        {step.done ? (
+          <Check className="h-3.5 w-3.5 text-[var(--success)]" aria-hidden="true" />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={step.logo} alt="" aria-hidden="true" className="h-3.5 w-3.5 object-contain" />
+        )}
+      </span>
+
+      <div className="flex min-w-0 flex-1 items-baseline gap-1.5">
+        <span className="shrink-0 text-[12px] font-semibold text-[var(--text-primary)]">
+          {step.label}
+        </span>
+        {step.optional && (
+          <span className="shrink-0 text-[9px] font-medium uppercase tracking-wide text-[var(--text-muted)]">
+            optional
+          </span>
+        )}
+        {/* The detail is the first thing to drop when the row is tight — the label and
+            the action are what make the step actionable. */}
+        <span className="hidden min-w-0 truncate text-[11px] text-[var(--text-secondary)] sm:block">
+          {step.detail}
+        </span>
       </div>
 
-      <div className="mt-2 flex items-center justify-between gap-2 border-t border-[var(--border-subtle)] pt-2">
-        <button
-          type="button"
-          onClick={() => go(-1)}
-          disabled={index === 0}
-          aria-label="Previous step"
-          className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-inset)] hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+      <span className="shrink-0 text-[10px] font-medium tabular-nums text-[var(--text-muted)]">
+        {completedCount}/{total}
+      </span>
+
+      <ol className="flex shrink-0 items-center gap-1" aria-label={`Step ${index + 1} of ${total}`}>
+        {steps.map((s, i) => (
+          <li key={s.id}>
+            {/* Visual dot stays small, but the button keeps a ~24px pointer target. */}
+            <button
+              type="button"
+              onClick={() => {
+                userNavigatedRef.current = true;
+                setIndex(i);
+              }}
+              aria-label={`${s.label}${s.done ? ' (done)' : ''}`}
+              aria-current={i === index ? 'step' : undefined}
+              className="flex h-6 w-3.5 items-center justify-center rounded-full focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            >
+              <span
+                aria-hidden="true"
+                className={cn(
+                  'block h-1.5 rounded-full transition-all',
+                  i === index ? 'w-4 bg-[var(--text-primary)]' : 'w-1.5',
+                  i !== index && (s.done ? 'bg-[var(--success)]' : 'bg-[var(--border-strong)]'),
+                )}
+              />
+            </button>
+          </li>
+        ))}
+      </ol>
+
+      {step.done ? (
+        <span className="shrink-0 text-[10px] font-semibold text-[var(--success)]">Done</span>
+      ) : step.id === 'ship' ? (
+        <span className="hidden shrink-0 text-[10px] text-[var(--text-muted)] sm:block">{step.cta}</span>
+      ) : (
+        <Link
+          href={step.href}
+          className="shrink-0 rounded-full bg-[var(--accent)] px-2.5 py-1 text-[11px] font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
         >
-          <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
-        </button>
+          {step.cta}
+        </Link>
+      )}
 
-        <ol className="flex items-center gap-1.5" aria-label={`Step ${index + 1} of ${total}`}>
-          {steps.map((s, i) => (
-            <li key={s.id}>
-              {/* Visual dot stays small, but the button keeps a ~24px pointer target. */}
-              <button
-                type="button"
-                onClick={() => {
-                  userNavigatedRef.current = true;
-                  setIndex(i);
-                }}
-                aria-label={`${s.label}${s.done ? ' (done)' : ''}`}
-                aria-current={i === index ? 'step' : undefined}
-                className="flex h-6 w-6 items-center justify-center rounded-full focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-              >
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    'block h-1.5 rounded-full transition-all',
-                    i === index ? 'w-5 bg-[var(--text-primary)]' : 'w-1.5',
-                    i !== index && (s.done ? 'bg-[var(--success)]' : 'bg-[var(--border-strong)]'),
-                  )}
-                />
-              </button>
-            </li>
-          ))}
-        </ol>
-
-        <button
-          type="button"
-          onClick={() => go(1)}
-          disabled={index === total - 1}
-          aria-label="Next step"
-          className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-inset)] hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-        >
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-        </button>
-      </div>
-
-      {loading ? (
-        <p className="mt-2 text-[10px] text-[var(--text-muted)]">Checking connections…</p>
-      ) : null}
+      <button
+        type="button"
+        aria-label="Dismiss checklist"
+        title="Dismiss"
+        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-inset)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+        onClick={() => {
+          sessionStorage.setItem('xroga-firstrun-checklist-dismissed', '1');
+          setDismissed(true);
+        }}
+      >
+        <X className="h-3.5 w-3.5" aria-hidden="true" />
+      </button>
     </section>
   );
 }

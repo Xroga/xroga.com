@@ -25,19 +25,62 @@ export const HOMEPAGE_LOGO_URL = '/brand/xroga-home-workspace.png';
 export const SIDEBAR_LOGO_URL = '/brand/xroga-mark.png';
 export const AI_RESPONSE_LOGO_URL = '/brand/xroga-mark.png';
 
-export type TerminalSkin = 'dark' | 'light' | 'light-grid' | 'gray' | 'amoled';
+export type TerminalSkin =
+  | 'dark'
+  | 'light'
+  | 'light-grid'
+  | 'gray'
+  | 'amoled'
+  | 'midnight'
+  | 'matrix'
+  | 'amber'
+  | 'forest'
+  | 'solar';
 
 /**
- * The terminal has one look in every theme.
+ * Terminal skins are the user's choice, not the page theme's.
  *
- * It used to follow the page theme, which meant a White or Beige theme produced a
- * light terminal — a code surface reads better dark regardless of the surrounding
- * page, and a per-theme terminal made command output and ANSI colours inconsistent
- * between users. The chrome *around* the terminal still follows the selected theme;
- * only the code surface is pinned.
+ * The skin was previously pinned to one dark surface because *following the page
+ * theme* made the code surface change under people who never asked for it — a White
+ * page silently produced a light terminal, and ANSI output then differed between
+ * users. That reasoning was about the automatic coupling, not about choice itself,
+ * so the pin is lifted here rather than reverted blindly: the terminal still defaults
+ * to dark on every theme, and it only ever changes when the user picks a skin.
+ *
+ * `terminalSkinAuto` in the theme store records which mode is in effect. While it is
+ * true the skin tracks `DEFAULT_TERMINAL_SKIN`; picking a skin sets it false and
+ * nothing overrides the choice again.
  */
-export const TERMINAL_SKIN_CYCLE: TerminalSkin[] = ['dark'];
+export type TerminalSkinSpec = {
+  readonly id: TerminalSkin;
+  readonly label: string;
+  /** Grouping for the picker, and what decides whether scanlines suit the surface. */
+  readonly tone: 'dark' | 'light';
+  /** Swatch colours for the picker chip: [surface, ink, accent]. */
+  readonly swatch: readonly [string, string, string];
+};
 
+/**
+ * The catalogue. Ordered dark-first because the default and the overwhelming
+ * majority of code surfaces are dark; the light options come last rather than being
+ * hidden, since a few people genuinely prefer them.
+ */
+export const TERMINAL_SKINS: readonly TerminalSkinSpec[] = [
+  { id: 'dark', label: 'Xroga Dark', tone: 'dark', swatch: ['#0b0d12', '#e6edf3', '#4a7aff'] },
+  { id: 'amoled', label: 'True Black', tone: 'dark', swatch: ['#000000', '#f5f5f5', '#4a7aff'] },
+  { id: 'midnight', label: 'Midnight', tone: 'dark', swatch: ['#10131f', '#c8d3f5', '#82aaff'] },
+  { id: 'gray', label: 'Graphite', tone: 'dark', swatch: ['#1c1e22', '#f2f4f7', '#7aa2ff'] },
+  { id: 'forest', label: 'Evergreen', tone: 'dark', swatch: ['#0d1a14', '#d6e8dd', '#4ade80'] },
+  { id: 'matrix', label: 'Phosphor', tone: 'dark', swatch: ['#000f04', '#37ff8b', '#6bffb0'] },
+  { id: 'amber', label: 'Amber CRT', tone: 'dark', swatch: ['#17110a', '#ffb861', '#ffd08a'] },
+  { id: 'light', label: 'Daylight', tone: 'light', swatch: ['#ffffff', '#14171f', '#0b63f6'] },
+  { id: 'light-grid', label: 'Grid Paper', tone: 'light', swatch: ['#fbfbfd', '#14171f', '#0b63f6'] },
+  { id: 'solar', label: 'Parchment', tone: 'light', swatch: ['#fdf6e3', '#3b4650', '#b5890a'] },
+];
+
+export const TERMINAL_SKIN_CYCLE: TerminalSkin[] = TERMINAL_SKINS.map((skin) => skin.id);
+
+/** What `auto` resolves to. Dark on every theme — see the note above. */
 export const DEFAULT_TERMINAL_SKIN: Record<CoreThemeId, TerminalSkin> = {
   white: 'dark',
   beige: 'dark',
@@ -45,13 +88,19 @@ export const DEFAULT_TERMINAL_SKIN: Record<CoreThemeId, TerminalSkin> = {
   gray: 'dark',
 };
 
-export const TERMINAL_SKIN_LABELS: Record<TerminalSkin, string> = {
-  light: 'White',
-  amoled: 'Black',
-  gray: 'Gray',
-  dark: 'Dark',
-  'light-grid': 'Grid',
-};
+export const TERMINAL_SKIN_LABELS: Record<TerminalSkin, string> = TERMINAL_SKINS.reduce(
+  (labels, skin) => ({ ...labels, [skin.id]: skin.label }),
+  {} as Record<TerminalSkin, string>,
+);
+
+/** Scanlines read as CRT grain on a dark surface and as dirt on a light one. */
+export function skinTone(skin: TerminalSkin): 'dark' | 'light' {
+  return TERMINAL_SKINS.find((s) => s.id === skin)?.tone ?? 'dark';
+}
+
+export function isTerminalSkin(value: unknown): value is TerminalSkin {
+  return typeof value === 'string' && TERMINAL_SKINS.some((skin) => skin.id === value);
+}
 
 /** @deprecated use HEADER_LOGO_URL */
 export const LOGO_URL = HEADER_LOGO_URL;

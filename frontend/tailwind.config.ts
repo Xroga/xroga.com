@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { TERMINAL_SKINS } from "./src/lib/theme";
 
 const config: Config = {
   content: [
@@ -6,6 +7,16 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  /**
+   * The terminal skin classes live in `@layer utilities` and are composed at runtime
+   * as `terminal-skin-${skin}`, so Tailwind's scanner never sees them literally and
+   * strips every rule whose name does not also appear somewhere in source. That is
+   * how five new skins shipped as dead CSS once already.
+   *
+   * Deriving the list from the catalogue rather than hardcoding it means adding a
+   * skin cannot reintroduce the bug — there is no second place to remember to edit.
+   */
+  safelist: TERMINAL_SKINS.map((skin) => `terminal-skin-${skin.id}`),
   theme: {
     extend: {
       fontFamily: {
