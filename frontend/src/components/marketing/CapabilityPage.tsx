@@ -1,6 +1,182 @@
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Rocket, ShieldAlert } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
+import { ScrollReveal } from './ScrollReveal';
+import { CapabilityHeroCard } from './CapabilityHeroCard';
+import { capabilityIdentity, processIcon } from '@/lib/capabilityPageArt';
 import type { CapabilityPageData } from '@/lib/capabilityPages';
+import '@/styles/capability-page.css';
 
-export function CapabilityPage({ data }: { data: CapabilityPageData }) { return <main className="min-h-screen bg-[#050910] text-white"><header className="border-b border-white/10"><div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3"><Logo href="/" height={38} /><nav className="flex items-center gap-4 text-sm font-bold"><Link href="/docs">Docs</Link><Link href="/community">Community</Link><Link href="/auth/signup" className="rounded-xl bg-[#006aff] px-4 py-2">Start building</Link></nav></div></header><section className="relative overflow-hidden border-b border-white/10 px-4 py-20 sm:py-28"><div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_65%_30%,rgba(0,106,255,.25),transparent_40%),radial-gradient(circle_at_20%_70%,rgba(139,92,246,.16),transparent_35%)]" /><div className="relative mx-auto max-w-5xl"><p className="text-xs font-black uppercase tracking-[.24em] text-cyan-300">{data.eyebrow}</p><h1 className="mt-4 max-w-4xl text-5xl font-black tracking-[-.045em] sm:text-7xl">{data.title}</h1><p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">{data.intro}</p><div className="mt-8 flex flex-wrap gap-3"><Link href="/auth/signup" className="inline-flex items-center gap-2 rounded-xl bg-[#006aff] px-5 py-3 font-black">Start with a prompt <ArrowRight className="h-4 w-4" /></Link><Link href="/docs/getting-started" className="rounded-xl border border-white/15 px-5 py-3 font-bold">Read the guide</Link></div></div></section><section className="mx-auto max-w-5xl px-4 py-16"><h2 className="text-3xl font-black">Outcomes Xroga can help produce</h2><div className="mt-7 grid gap-3 sm:grid-cols-2">{data.outcomes.map((outcome) => <div key={outcome} className="flex gap-3 rounded-2xl border border-white/10 bg-white/[.04] p-5"><CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-cyan-300" /><p className="leading-7 text-slate-200">{outcome}</p></div>)}</div><h2 className="mt-16 text-3xl font-black">How the work stays controlled</h2><div className="mt-7 grid gap-4 md:grid-cols-3">{data.process.map((step, index) => <article key={step.title} className="rounded-2xl border border-white/10 bg-white/[.035] p-6"><span className="text-xs font-black text-[#50c8ff]">0{index + 1}</span><h3 className="mt-3 text-xl font-black">{step.title}</h3><p className="mt-2 text-sm leading-7 text-slate-300">{step.body}</p></article>)}</div><aside className="mt-12 rounded-2xl border border-amber-300/20 bg-amber-300/[.06] p-6"><h2 className="font-black text-amber-200">What Xroga does not fabricate</h2><p className="mt-2 leading-7 text-slate-300">{data.limits}</p></aside><div className="mt-14 flex flex-wrap gap-5 text-sm font-bold text-cyan-300"><Link href="/docs">Documentation →</Link><Link href="/pricing">Plan and capacity →</Link><Link href="/crypto-builder">Crypto Builder →</Link></div></section></main>; }
+/**
+ * The shared template behind all six capability pages (`/ai-coding-agent`,
+ * `/ai-app-builder`, `/ai-website-builder`, `/build-saas-with-ai`,
+ * `/github-ai-coding-agent`, `/vercel-ai-deployment`).
+ *
+ * The previous version was a single hardcoded-dark line with no structural
+ * identity of its own — flat cards, a static radial-gradient blob, and `bg-[#050910]
+ * text-white` regardless of the selected theme. That last part was a genuine bug,
+ * the same class already fixed on several other surfaces this session: a White or
+ * Beige visitor got a dark page whether they asked for one or not. Every colour here
+ * now resolves through the page's semantic tokens, and the hue that used to be
+ * hardcoded per element instead comes from one accent per page (see
+ * `capabilityPageArt.ts`), so the page inverts correctly with the theme while still
+ * having a distinct identity from its five siblings.
+ *
+ * Depth is CSS: 3D perspective on the hero card, a bento grid for outcomes, a
+ * connected timeline for the process steps, and IntersectionObserver-driven reveals.
+ * No WebGL, no motion library — this site was just measured down to a handful of
+ * render-blocking requests, and a canvas scene here would be the wrong trade.
+ *
+ * Every legal sentence — the limits paragraph, the exact outcome and process copy —
+ * is unchanged. This is a structural and visual rebuild, not a rewrite of the claims.
+ */
+export function CapabilityPage({ data }: { data: CapabilityPageData }) {
+  const { icon: HeroIcon, accent } = capabilityIdentity(data.slug);
+
+  return (
+    <main className="xv-cap-root" data-accent={accent}>
+      <div className="xv-cap-backdrop" aria-hidden="true">
+        <div className="xv-cap-backdrop__grid" />
+        <div className="xv-cap-backdrop__glow xv-cap-backdrop__glow--a" />
+        <div className="xv-cap-backdrop__glow xv-cap-backdrop__glow--b" />
+      </div>
+
+      <header className="xv-cap-header">
+        <div className="xv-cap-shell xv-cap-header__inner">
+          <Logo href="/" height={34} />
+          <nav className="xv-cap-nav" aria-label="Capability page">
+            <Link href="/docs">Docs</Link>
+            <Link href="/community">Community</Link>
+            <Link href="/auth/signup" className="xv-cap-btn xv-cap-btn--primary xv-cap-btn--sm">
+              Start building
+            </Link>
+          </nav>
+        </div>
+      </header>
+
+      {/* ------------------------------------------------------------------- hero */}
+      <section className="xv-cap-hero">
+        <div className="xv-cap-shell xv-cap-hero__grid">
+          <div className="xv-cap-hero__copy">
+            <p className="xv-cap-eyebrow">
+              <HeroIcon className="h-3.5 w-3.5" aria-hidden="true" />
+              {data.eyebrow}
+            </p>
+            <h1 className="xv-cap-h1">{data.title}</h1>
+            <p className="xv-cap-lede">{data.intro}</p>
+            <div className="xv-cap-cta-row">
+              <Link href="/auth/signup" className="xv-cap-btn xv-cap-btn--primary">
+                Start with a prompt
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <Link href="/docs/getting-started" className="xv-cap-btn xv-cap-btn--ghost">
+                Read the guide
+              </Link>
+            </div>
+          </div>
+
+          <CapabilityHeroCard slug={data.slug} />
+        </div>
+      </section>
+
+      {/* --------------------------------------------------------- outcomes bento */}
+      <section className="xv-cap-section" aria-labelledby="cap-outcomes-heading">
+        <div className="xv-cap-shell">
+          <ScrollReveal>
+            <h2 id="cap-outcomes-heading" className="xv-cap-h2">
+              Outcomes Xroga can help produce
+            </h2>
+          </ScrollReveal>
+
+          <div className="xv-cap-bento">
+            {data.outcomes.map((outcome, index) => (
+              <ScrollReveal key={outcome} delay={index * 60} className="xv-cap-bento-item">
+                <article className="xv-cap-card">
+                  <CheckCircle2 className="xv-cap-card__icon" aria-hidden="true" />
+                  <p className="xv-cap-card__text">{outcome}</p>
+                </article>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -------------------------------------------------------- process timeline */}
+      <section className="xv-cap-section xv-cap-section--tint" aria-labelledby="cap-process-heading">
+        <div className="xv-cap-shell">
+          <ScrollReveal>
+            <h2 id="cap-process-heading" className="xv-cap-h2">
+              How the work stays controlled
+            </h2>
+          </ScrollReveal>
+
+          <ol className="xv-cap-timeline">
+            {data.process.map((step, index) => {
+              const StepIcon = processIcon(index);
+              return (
+                <ScrollReveal key={step.title} as="li" delay={index * 90} className="xv-cap-timeline__item">
+                  <span className="xv-cap-timeline__node">
+                    <StepIcon className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <div className="xv-cap-timeline__body">
+                    <span className="xv-cap-timeline__num">0{index + 1}</span>
+                    <h3 className="xv-cap-card__title">{step.title}</h3>
+                    <p className="xv-cap-card__text">{step.body}</p>
+                  </div>
+                </ScrollReveal>
+              );
+            })}
+          </ol>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ limits */}
+      <section className="xv-cap-section">
+        <div className="xv-cap-shell">
+          <ScrollReveal>
+            <aside className="xv-cap-limits" role="note">
+              <ShieldAlert className="xv-cap-limits__icon" aria-hidden="true" />
+              <div>
+                <h2 className="xv-cap-limits__title">What Xroga does not fabricate</h2>
+                <p className="xv-cap-limits__body">{data.limits}</p>
+              </div>
+            </aside>
+          </ScrollReveal>
+
+          <div className="xv-cap-links">
+            <Link href="/docs">
+              Documentation <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
+            <Link href="/pricing">
+              Plan and capacity <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
+            <Link href="/crypto-builder">
+              Crypto Builder <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* --------------------------------------------------------------------- cta */}
+      <section className="xv-cap-section">
+        <div className="xv-cap-shell">
+          <ScrollReveal>
+            <div className="xv-cap-final-cta">
+              <div>
+                <h2 className="xv-cap-h2">Bring the outcome. Xroga does the repository work.</h2>
+                <p className="xv-cap-lede xv-cap-lede--tight">
+                  Describe what you want built, and continue in the real workspace — inspecting your project,
+                  implementing focused changes, and reporting the evidence a real check produced.
+                </p>
+              </div>
+              <Link href="/auth/signup" className="xv-cap-btn xv-cap-btn--primary">
+                <Rocket className="h-4 w-4" aria-hidden="true" />
+                Open Xroga
+              </Link>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+    </main>
+  );
+}
