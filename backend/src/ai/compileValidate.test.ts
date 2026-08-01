@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { compileValidateProject, productionValidationAllowsDeployment, requiredProductionBuild } from './compileValidate.js';
+import {
+  compileValidateProject,
+  productionValidationAllowsDeployment,
+  requiredProductionBuild,
+  validationFailureNeedsCodeRepair,
+} from './compileValidate.js';
 import { formatArchitectForBuilder, runArchitectPlan } from './architect.js';
 
 describe('compileValidateProject', () => {
@@ -19,6 +24,17 @@ describe('compileValidateProject', () => {
       ok: false, skipped: false, installOk: true, tscOk: true, buildOk: false,
       buildCommand: 'npm run build', buildExitCode: 1, issues: ['build failed'], logTail: '', durationMs: 1,
     }), false);
+  });
+
+  it('does not spend a model repair call on a pure install timeout', () => {
+    assert.equal(validationFailureNeedsCodeRepair({
+      ok: false, skipped: false, installOk: false,
+      issues: ['npm install timed out'], logTail: '', durationMs: 180_000,
+    }), false);
+    assert.equal(validationFailureNeedsCodeRepair({
+      ok: false, skipped: false, installOk: true, tscOk: false,
+      issues: ['error TS2322: incompatible value'], logTail: '', durationMs: 1,
+    }), true);
   });
 });
 

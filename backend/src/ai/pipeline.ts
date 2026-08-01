@@ -106,7 +106,11 @@ import {
 import { summarizeRepoForUpdates } from './repoSummarize.js';
 import { scanProjectFiles, redactCriticalSecrets } from './securityScan.js';
 import { staticValidateProject } from './staticValidate.js';
-import { compileValidateProject, productionValidationAllowsDeployment } from './compileValidate.js';
+import {
+  compileValidateProject,
+  productionValidationAllowsDeployment,
+  validationFailureNeedsCodeRepair,
+} from './compileValidate.js';
 import { formatArchitectForBuilder, runArchitectPlan } from './architect.js';
 import {
   loadSessionHistory,
@@ -1687,6 +1691,8 @@ export async function runBuildPipeline(opts: {
     );
   }
 
+  const qaHadFailuresBeforeCompile = !qa.ok;
+
   // Real validation: dependency install, typecheck, and required framework production build.
   throwIfAborted();
   emit({
@@ -1732,9 +1738,18 @@ export async function runBuildPipeline(opts: {
   trace.setMeta({ compile: { ok: compile.ok, skipped: compile.skipped, issues: compile.issues } });
   recordModelValidation(result.modelId, qa.ok && (compile.ok || compile.skipped));
 
-  // One fix pass if QA/compile failed and we have fix hints
+  const compileNeedsCodeRepair = validationFailureNeedsCodeRepair(compile);
+
+  // One fix pass if QA/source validation failed and we have fix hints. A pure
+  // registry/install timeout is an infrastructure blocker, not a reason to
+  // spend another model call changing otherwise-unproven source files.
   let repairLoops = 0;
-  if (!qa.ok && qa.fixHints.length && !opts.signal?.aborted) {
+  if (
+    !qa.ok &&
+    qa.fixHints.length &&
+    !opts.signal?.aborted &&
+    (qaHadFailuresBeforeCompile || compileNeedsCodeRepair)
+  ) {
     repairLoops += 1;
     emit({
       agent: 'builder',
@@ -1853,6 +1868,15 @@ export async function runBuildPipeline(opts: {
     } catch (err) {
       console.warn('[pipeline] QA fix pass failed:', normalizeProviderError(err).safeMessage);
     }
+  } else if (!qa.ok && !opts.signal?.aborted && !qaHadFailuresBeforeCompile && !compileNeedsCodeRepair) {
+    emit({
+      agent: 'compiler',
+      status: 'repair_skipped',
+      message: 'Dependency installation timed out. Code repair was skipped because it cannot repair a package-registry or network timeout.',
+      swarmStatusLabel: 'Validation blocked',
+      swarmActivity: 'Infrastructure timeout',
+      swarmTodos: todos('compile'),
+    });
   }
 
   executionState.currentWorkingSnapshot = nextFiles;
