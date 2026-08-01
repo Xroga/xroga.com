@@ -287,17 +287,21 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await page.goto('/workspace');
   const companion = page.getByTestId('xroga-companion-composer');
   await expect(companion).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
+  // Scoped to the companion, not the page. The claim this protects is that *Smoky*
+  // does not do voice — the composer's own dictation is intended and always was, and
+  // it now carries this label, so a page-wide locator asserts something nobody meant.
+  await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
   const canonicalComposer = page.locator('.xv-terminal-dock');
   for (const removedChip of ['Website', 'Chatbot', 'SaaS', 'Mobile', 'Extension', 'Desktop']) {
     await expect(canonicalComposer.getByRole('button', { name: removedChip, exact: true })).toHaveCount(0);
   }
-  // Smoky is decorative: the click-to-open control panel and its speech synthesis
-  // were removed, so there is no trigger button and no panel. Companion preferences
-  // live in Settings → Companion, exercised later in this spec.
+  // Smoky opens usage on click. The old control panel — voice toggles, status
+  // readout, dictation, feed control — stays removed, and so does its speech
+  // synthesis. Companion preferences live in Settings → Companion, exercised later.
+  // Because it is interactive it is a real button, so it must NOT be aria-hidden.
+  await expect(companion.getByRole('button', { name: /show usage/i })).toBeVisible();
   await expect(companion.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
   await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
-  await expect(companion.locator('img.xv-companion-renderer')).toHaveAttribute('aria-hidden', 'true');
 
   const routeChecks = [
     '/workspace',
