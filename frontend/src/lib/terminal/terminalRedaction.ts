@@ -40,7 +40,14 @@ const PATTERNS: readonly RegExp[] = [
    * `cookie:`, `token=` — could never match, since the mandatory character
    * consumed the very letter the alternation needed.
    */
-  /\b[A-Za-z0-9_-]*(?:key|token|secret|password|passwd|credential|auth|cookie|session|dsn)[A-Za-z0-9_-]*\s*(?:[:=]|["']\s*:\s*)\s*["']?[^\s,;"'}\])]{6,}["']?/gi,
+  /**
+   * `[` is excluded from the value characters so an already-masked value is not
+   * matched a second time. Without it, `TOKEN=ghp_…` is masked by the provider
+   * pattern first, and this pattern then re-masks the `[redacted` inside the
+   * result — emitting `TOKEN=[redacted]]`. Excluding `[` also makes redaction
+   * idempotent, which the tests assert.
+   */
+  /\b[A-Za-z0-9_-]*(?:key|token|secret|password|passwd|credential|auth|cookie|session|dsn)[A-Za-z0-9_-]*\s*(?:[:=]|["']\s*:\s*)\s*["']?[^\s,;"'}\])[]{6,}["']?/gi,
   // Bare header/scheme forms that carry no identifier before the value.
   /\b(?:bearer|basic)\s+[A-Za-z0-9._~+/=-]{10,}/gi,
   // Postgres/Mongo/Redis URIs with inline credentials.
