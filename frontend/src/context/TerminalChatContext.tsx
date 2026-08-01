@@ -2791,7 +2791,7 @@ export function TerminalChatProvider({
           }
           const friendly = codeBuildActive
             ? isBuildUpdateEarly
-              ? '⚠️ **Update interrupted.** Keep this chat open and retry — we patch your current preview (night/day, buttons, copy) without rebuilding from scratch. If it keeps failing, reconnect under Integrations and try again.'
+              ? `**Update could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
               : `**Build could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
             : GENERIC_SWARM_FALLBACK;
           return [
