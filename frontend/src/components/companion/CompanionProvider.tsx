@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from 'react';
 import type { CompanionPreferences, CompanionRuntimeEvent } from '@/lib/companion';
-import { api, type Profile } from '@/lib/api';
+import { api, ApiError, type Profile } from '@/lib/api';
 import { createClient } from '@/lib/supabase/client';
 import {
   companionPreferencesFromUnknown,
@@ -17,7 +17,18 @@ export async function persistCompanionPreferencesNow(): Promise<void> {
   const body: Partial<Profile> = {
     companion_preferences: companionPreferencesSnapshot(useCompanionStore.getState()),
   };
-  await api.profile.update(body);
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 8_000);
+    try {
+      await api.profile.update(body, controller.signal);
+      return;
+    } catch (cause) {
+      if (!(cause instanceof ApiError) || cause.status !== 0 || attempt === 1) throw cause;
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  }
 }
 
 export function CompanionProvider({ children }: { children: ReactNode }) {
