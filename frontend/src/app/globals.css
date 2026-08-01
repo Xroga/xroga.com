@@ -4788,9 +4788,7 @@ body.theme-gray * {
   }
 }
 
-.xv-response-text.xv-streaming {
-  transition: opacity 0.15s ease;
-}
+.xv-response-text.xv-streaming { transition: none; }
 
 .xv-formatted-response {
   letter-spacing: 0.01em;
@@ -4800,7 +4798,7 @@ body.theme-gray * {
   letter-spacing: 0.01em;
   font-size: 14px;
   line-height: 1.65;
-  animation: xv-response-in 0.4s ease-out;
+  animation: none;
 }
 
 @media (min-width: 640px) {
@@ -4838,27 +4836,15 @@ body.theme-gray * {
   margin-bottom: 0.25rem;
 }
 
-.xv-math-step {
-  animation: xv-response-in 0.35s ease-out backwards;
-}
-
-.xv-math-step:nth-child(2) { animation-delay: 0.05s; }
-.xv-math-step:nth-child(3) { animation-delay: 0.1s; }
-.xv-math-step:nth-child(4) { animation-delay: 0.15s; }
-
-.xv-math-answer {
-  animation: xv-response-in 0.4s ease-out backwards;
-  animation-delay: 0.2s;
-}
+.xv-math-step,
+.xv-math-answer { animation: none; }
 
 .xv-formatted-response ul li,
 .xv-formatted-response ol li {
   line-height: 1.55;
 }
 
-.xv-suggestions-enter {
-  animation: xv-response-in 0.4s ease-out;
-}
+.xv-suggestions-enter { animation: none; }
 
 .assistant-bubble-glow {
   position: relative;

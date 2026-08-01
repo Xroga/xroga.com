@@ -135,7 +135,6 @@ function parseBlocks(content: string): Block[] {
 
 export function FormattedAiMarkdown({
   content,
-  streaming,
   className,
 }: {
   content: string;
@@ -245,9 +244,6 @@ export function FormattedAiMarkdown({
         }
         return null;
       })}
-      {streaming && content.length > 0 && (
-        <span className="inline-block w-0.5 h-[1em] ml-0.5 bg-[#006aff]/80 align-middle animate-pulse rounded-full" />
-      )}
     </div>
   );
 }

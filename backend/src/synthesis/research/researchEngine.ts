@@ -179,7 +179,11 @@ export class XaiResearchProvider implements ResearchProvider {
   constructor(private readonly apiKey: string, private readonly model: string, private readonly request: typeof fetch = fetch) { if (!apiKey || !model) throw new Error('xAI API key and current model are required'); }
   async search(input: ResearchRequest, signal: AbortSignal): Promise<ResearchCandidate[]> {
     const dateRange = { ...(input.startDate ? { from_date: input.startDate } : {}), ...(input.endDate ? { to_date: input.endDate } : {}) };
-    const tools: Array<Record<string, unknown>> = [{ type: 'web_search', allowed_domains: input.officialDomains.slice(0, 20), ...dateRange }];
+    const webDomains = input.officialDomains.slice(0, 5);
+    const tools: Array<Record<string, unknown>> = [{
+      type: 'web_search',
+      ...(webDomains.length ? { filters: { allowed_domains: webDomains } } : {}),
+    }];
     if (input.allowXDiscovery) tools.push({ type: 'x_search', allowed_x_handles: input.verifiedOfficialXHandles?.slice(0, 20) ?? [], ...dateRange });
     const response = await this.request('https://api.x.ai/v1/responses', { method: 'POST', headers: { Authorization: `Bearer ${this.apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: this.model, input: input.query, tools }), signal });
     const data = await parseJson(response);

@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import {
   extractImagesFromContent,
@@ -26,26 +25,9 @@ export function ModernResponseText({
   streaming?: boolean;
 }) {
   const safeContent = typeof content === 'string' ? content : '';
-  const prevLen = useRef(0);
-  const blockRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (safeContent.length > prevLen.current && blockRef.current && !streaming) {
-      blockRef.current.style.animation = 'none';
-      void blockRef.current.offsetHeight;
-      if (safeContent.length > 0) {
-        blockRef.current.style.animation = 'xv-response-in 0.35s ease-out';
-      }
-    }
-    prevLen.current = safeContent.length;
-  }, [safeContent, streaming]);
 
   if (!safeContent && streaming) {
-    return (
-      <span className="xv-stream-cursor inline-flex items-center">
-        <span className="w-0.5 h-4 bg-[var(--accent)]/70 rounded-full animate-pulse" />
-      </span>
-    );
+    return null;
   }
 
   const images = extractImagesFromContent(safeContent);
@@ -54,7 +36,7 @@ export function ModernResponseText({
 
   if (isFailedImageContent(safeContent) && images.length === 0) {
     return (
-      <div ref={blockRef} className="xv-response-text">
+      <div className="xv-response-text">
         <p className="whitespace-pre-wrap text-[13px] text-red-300/90">{textOnly || safeContent}</p>
       </div>
     );
@@ -63,7 +45,6 @@ export function ModernResponseText({
   if (images.length > 0) {
     return (
       <div
-        ref={blockRef}
         className={cn('xv-response-text space-y-2', streaming && 'xv-streaming')}
       >
         {textOnly && (
@@ -80,16 +61,12 @@ export function ModernResponseText({
             }}
           />
         ))}
-        {streaming && (
-          <span className="inline-block w-0.5 h-[1em] ml-0.5 bg-[#006aff]/80 align-middle animate-pulse rounded-full" />
-        )}
       </div>
     );
   }
 
   return (
     <div
-      ref={blockRef}
       className={cn('xv-response-text', streaming && 'xv-streaming')}
     >
       {hasMarkdown(safeContent) && !isMathSolutionContent(safeContent) ? (
