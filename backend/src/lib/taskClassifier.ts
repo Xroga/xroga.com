@@ -96,6 +96,13 @@ function unique<T>(values: T[]): T[] {
   return [...new Set(values)];
 }
 
+/** Explicit user constraints take precedence over keyword-based research routing. */
+export function explicitlyDisablesResearch(input: string): boolean {
+  return /\b(?:do\s+not|don't|dont|skip|avoid|without)\b[^.\n]{0,60}\b(?:research|search|browse|web\s*search|x\s*search|look\s*up)\b/i.test(
+    input,
+  );
+}
+
 export function classifyTaskRequest(
   message: string,
   context = '',
@@ -110,9 +117,10 @@ export function classifyTaskRequest(
   const reasoning: string[] = [];
   const requiresCoding = intents.some((intent) => CODE_INTENTS.has(intent));
   const requiresResearch =
-    intents.includes('research') ||
-    intents.includes('search') ||
-    /\b(today|real[- ]?time|x\.com|twitter|current)\b/i.test(fullInput);
+    !explicitlyDisablesResearch(fullInput) &&
+    (intents.includes('research') ||
+      intents.includes('search') ||
+      /\b(today|real[- ]?time|x\.com|twitter|current)\b/i.test(fullInput));
 
   if (requiresCoding) {
     capabilities.push('software_engineering', 'repository_operations');
@@ -126,7 +134,7 @@ export function classifyTaskRequest(
     capabilities.push('web_research');
     reasoning.push('The request needs current or externally retrieved information.');
   }
-  if (/\b(x\.com|twitter)\b/i.test(fullInput)) capabilities.push('x_research');
+  if (requiresResearch && /\b(x\.com|twitter)\b/i.test(fullInput)) capabilities.push('x_research');
   if (intents.includes('process') || /\b(file|pdf|document|upload|attachment|image)\b/i.test(fullInput)) {
     capabilities.push('file_processing');
   }
