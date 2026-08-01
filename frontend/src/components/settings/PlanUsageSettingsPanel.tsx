@@ -1,5 +1,6 @@
 'use client';
 
+import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useEffect, useState, type ReactNode } from 'react';
 import { CalendarClock, CreditCard, Gauge, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -9,7 +10,6 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Progress } from '@/components/ui/Progress';
 import { SettingsCard, SettingsDivider, SettingsPanelHeader, SettingsStack } from '@/components/settings/SettingsPrimitives';
-import Skeleton from 'react-loading-skeleton';
 
 type Entitlement = Awaited<ReturnType<typeof api.billing.entitlement>>;
 
@@ -99,7 +99,7 @@ export function PlanUsageSettingsPanel() {
       />
 
       {loading ? (
-        <Skeleton height={220} borderRadius={16} />
+        <PanelLoader height={220} />
       ) : (
         <SettingsCard>
           <div className="flex flex-wrap items-start justify-between gap-3">

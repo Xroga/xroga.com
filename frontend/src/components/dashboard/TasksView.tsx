@@ -1,11 +1,10 @@
 'use client';
 
+import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useCallback, useEffect, useState } from 'react';
 import { CheckCircle2, ChevronDown, Clock, Gift, Link2, Upload } from 'lucide-react';
-import Skeleton from 'react-loading-skeleton';
 import { api, type TaskItem } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 const CADENCE_SECTIONS: Array<{
   cadence: TaskItem['cadence'];
@@ -267,9 +266,9 @@ export function TasksView() {
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto space-y-6">
-        <Skeleton height={48} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
-        <Skeleton height={120} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
-        <Skeleton height={120} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
+        <PanelLoader height={48} />
+        <PanelLoader height={120} />
+        <PanelLoader height={120} />
       </div>
     );
   }

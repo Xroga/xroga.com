@@ -1,5 +1,6 @@
 'use client';
 
+import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useEffect, useMemo, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -12,7 +13,6 @@ import {
   Code2,
   Link2,
 } from 'lucide-react';
-import Skeleton from 'react-loading-skeleton';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { SectionCompactCard } from '@/components/dashboard/SectionCompactCard';
@@ -34,7 +34,6 @@ import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 type Tab = 'projects' | 'conversations';
 
@@ -346,7 +345,7 @@ function ProjectsHubInner() {
           loading ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} height={180} baseColor="var(--card)" highlightColor="var(--card-border)" />
+                <PanelLoader key={i} height={180} />
               ))}
             </div>
           ) : hasGithubProjects ? (

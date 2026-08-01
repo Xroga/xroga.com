@@ -1,5 +1,6 @@
 'use client';
 
+import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -25,8 +26,6 @@ import {
 import { InfluencerPanel } from '@/components/dashboard/InfluencerPanel';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 function formatTokens(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -172,8 +171,8 @@ export function CommunityView() {
   if (loading && !pool) {
     return (
       <div className="max-w-4xl mx-auto space-y-4">
-        <Skeleton height={40} width={280} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
-        <Skeleton height={220} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
+        <PanelLoader height={40} />
+        <PanelLoader height={220} />
       </div>
     );
   }

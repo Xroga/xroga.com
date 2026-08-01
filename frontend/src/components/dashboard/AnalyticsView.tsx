@@ -1,5 +1,6 @@
 'use client';
 
+import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useEffect, useState } from 'react';
 import {
   TrendingUp,
@@ -13,8 +14,6 @@ import {
 } from 'lucide-react';
 import { api, type AnalyticsDashboard } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 function formatNum(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -81,10 +80,10 @@ export function AnalyticsView() {
   if (loading) {
     return (
       <div className="max-w-5xl mx-auto space-y-4">
-        <Skeleton height={40} width={200} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
+        <PanelLoader height={40} />
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height={100} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
+            <PanelLoader key={i} height={100} />
           ))}
         </div>
       </div>

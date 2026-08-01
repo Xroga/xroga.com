@@ -1,13 +1,12 @@
 'use client';
 
+import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import Skeleton from 'react-loading-skeleton';
 import { Activity, ArrowUpRight, CreditCard, Gauge } from 'lucide-react';
 import { api, type DashboardSummary } from '@/lib/api';
 import { formatSafeDate, formatSafeDistance, safeDate } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 const ACTION_LABELS: Record<string, string> = {
   swarm_completed: 'Build completed',
@@ -70,10 +69,10 @@ export function DashboardHomeView() {
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto space-y-6">
-        <Skeleton height={40} width={280} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
+        <PanelLoader height={40} />
         <div className="grid gap-4 md:grid-cols-2">
-          <Skeleton height={220} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
-          <Skeleton height={220} baseColor="var(--surface-inset)" highlightColor="var(--surface-raised)" />
+          <PanelLoader height={220} />
+          <PanelLoader height={220} />
         </div>
       </div>
     );
