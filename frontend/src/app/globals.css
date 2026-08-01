@@ -495,6 +495,8 @@ body.theme-gray * {
     --foreground: #fff;
     --muted: #a3a3a3;
     --accent: #4a7aff;
+    --term-chrome: #0b0d12;
+    --term-line: rgba(163, 163, 163, 0.18);
   }
 
   .terminal-skin-amoled {
@@ -504,6 +506,8 @@ body.theme-gray * {
     --foreground: #fff;
     --muted: #9ca3af;
     --accent: #4a7aff;
+    --term-chrome: #08080a;
+    --term-line: rgba(163, 163, 163, 0.16);
   }
 
   .terminal-skin-light {
@@ -513,6 +517,8 @@ body.theme-gray * {
     --foreground: #000;
     --muted: #6b7280;
     --accent: #4a7aff;
+    --term-chrome: #f4f5f8;
+    --term-line: rgba(15, 23, 42, 0.1);
   }
 
   .terminal-skin-light-grid {
@@ -526,6 +532,8 @@ body.theme-gray * {
     --foreground: #000;
     --muted: #4b5563;
     --accent: #4a7aff;
+    --term-chrome: #f4f5f8;
+    --term-line: rgba(15, 23, 42, 0.1);
   }
 
   .terminal-skin-gray {
@@ -535,6 +543,72 @@ body.theme-gray * {
     --foreground: #fff;
     --muted: #a3a3a3;
     --accent: #4a7aff;
+    --term-chrome: #17181b;
+    --term-line: rgba(255, 255, 255, 0.12);
+  }
+
+  /* ---- skins added when the terminal became user-skinnable.
+     Each one sets the same four tokens the originals do, so every child that reads
+     --foreground / --muted / --accent inherits the skin without knowing it exists.
+     `--term-chrome` and `--term-line` drive the title bar and its divider so the
+     window chrome belongs to the terminal rather than to the page card behind it. */
+
+  .terminal-skin-midnight {
+    background: #10131f;
+    border: 1px solid rgba(130, 170, 255, 0.2);
+    color: #c8d3f5;
+    --foreground: #c8d3f5;
+    --muted: #7a88c4;
+    --accent: #82aaff;
+    --term-chrome: #0b0e18;
+    --term-line: rgba(130, 170, 255, 0.16);
+  }
+
+  .terminal-skin-forest {
+    background: #0d1a14;
+    border: 1px solid rgba(74, 222, 128, 0.18);
+    color: #d6e8dd;
+    --foreground: #d6e8dd;
+    --muted: #7fa892;
+    --accent: #4ade80;
+    --term-chrome: #091210;
+    --term-line: rgba(74, 222, 128, 0.16);
+  }
+
+  /* Phosphor and Amber are single-hue CRT surfaces: the ink, the muted tone and the
+     accent are all steps of one colour, which is what makes them read as a monitor
+     rather than as a dark theme with a green accent. */
+  .terminal-skin-matrix {
+    background: #000f04;
+    border: 1px solid rgba(55, 255, 139, 0.24);
+    color: #37ff8b;
+    --foreground: #37ff8b;
+    --muted: #1f9c53;
+    --accent: #6bffb0;
+    --term-chrome: #000a03;
+    --term-line: rgba(55, 255, 139, 0.2);
+  }
+
+  .terminal-skin-amber {
+    background: #17110a;
+    border: 1px solid rgba(255, 184, 97, 0.24);
+    color: #ffb861;
+    --foreground: #ffb861;
+    --muted: #b3793a;
+    --accent: #ffd08a;
+    --term-chrome: #100c07;
+    --term-line: rgba(255, 184, 97, 0.2);
+  }
+
+  .terminal-skin-solar {
+    background: #fdf6e3;
+    border: 1px solid rgba(101, 123, 131, 0.24);
+    color: #3b4650;
+    --foreground: #3b4650;
+    --muted: #7c8a94;
+    --accent: #b5890a;
+    --term-chrome: #f4ecd8;
+    --term-line: rgba(101, 123, 131, 0.18);
   }
 
   body.theme-white .integration-logo-wrap {
@@ -6229,4 +6303,224 @@ body.theme-gray .xv-rp-loader {
     align-items: center;
     text-align: center;
   }
+}
+
+/* ============================================================================
+   Terminal window chrome, prompt line, and the skin picker.
+
+   The complaint this answers was that the pane did not read as a terminal. Three
+   things were doing that: the title bar was tinted by the page card rather than by
+   the terminal's own surface, the resting state was a centred grey sentence instead
+   of a cursor at column one, and the only control was a page-theme toggle that had
+   nothing to do with the console. All three are addressed here, and every colour
+   comes from the active skin's tokens so a new skin needs no rules of its own.
+   ============================================================================ */
+
+.xv-terminal-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--term-chrome, var(--card));
+  border-bottom: 1px solid var(--term-line, var(--card-border));
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+/* Window lights. Decorative and inert — they are not close/minimise controls, so
+   they are not buttons and carry no label. */
+.xv-term-lights {
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+.xv-term-lights i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  opacity: 0.85;
+}
+.xv-term-lights i:nth-child(1) { background: #ff5f57; }
+.xv-term-lights i:nth-child(2) { background: #febc2e; }
+.xv-term-lights i:nth-child(3) { background: #28c840; }
+@media (min-width: 640px) { .xv-term-lights { display: flex; } }
+
+.xv-term-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  flex: 1;
+  color: var(--foreground);
+}
+.xv-term-title h3 {
+  margin: 0;
+  font-family: var(--font-coding, ui-monospace, monospace);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--foreground);
+}
+.xv-term-at { opacity: 0.55; }
+.xv-term-path {
+  font-family: var(--font-coding, ui-monospace, monospace);
+  font-size: 0.66rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.xv-term-badge {
+  flex-shrink: 0;
+  font-family: var(--font-coding, ui-monospace, monospace);
+  font-size: 0.62rem;
+  color: var(--muted);
+}
+
+.xv-term-iconbtn {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 0.4rem;
+  color: var(--muted);
+  transition: background 140ms ease, color 140ms ease;
+}
+.xv-term-iconbtn:hover {
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  color: var(--foreground);
+}
+
+/* ---- resting prompt line */
+
+.xv-term-empty { padding: 1.5rem 0.25rem 1.75rem; }
+.xv-term-emptyline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  font-family: var(--font-coding, ui-monospace, monospace);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.xv-term-prompt { color: var(--accent); white-space: nowrap; }
+.xv-term-sep { opacity: 0.6; }
+.xv-term-cwd { color: var(--foreground); opacity: 0.75; }
+.xv-term-sigil { margin-left: 0.35rem; opacity: 0.8; }
+.xv-term-hint { color: var(--muted); }
+/* A block caret, the shape a terminal actually rests at. */
+.xv-term-caret {
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: xv-term-blink 1.1s steps(2, start) infinite;
+}
+@keyframes xv-term-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ---- skin picker */
+
+.xv-skin-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 28px;
+  padding: 0 0.5rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--term-line, var(--card-border));
+  font-family: var(--font-coding, ui-monospace, monospace);
+  font-size: 0.64rem;
+  color: var(--muted);
+  transition: background 140ms ease, color 140ms ease;
+}
+.xv-skin-trigger:hover {
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  color: var(--foreground);
+}
+/* The label is the first thing to go when the header is tight; the swatch alone
+   still identifies the active skin. */
+.xv-skin-trigger-label { display: none; }
+@media (min-width: 520px) { .xv-skin-trigger-label { display: inline; } }
+.xv-skin-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1.5px solid;
+  flex-shrink: 0;
+}
+
+.xv-skin-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 60;
+  width: 190px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 0.3rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--term-line, var(--card-border));
+  background: var(--term-chrome, var(--card));
+  box-shadow: 0 18px 44px -18px rgba(0, 0, 0, 0.55);
+}
+.xv-skin-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.4rem 0.45rem;
+  border-radius: 0.4rem;
+  font-family: var(--font-coding, ui-monospace, monospace);
+  font-size: 0.68rem;
+  text-align: left;
+  color: var(--muted);
+  transition: background 120ms ease, color 120ms ease;
+}
+.xv-skin-item:hover {
+  background: color-mix(in srgb, var(--foreground) 9%, transparent);
+  color: var(--foreground);
+}
+.xv-skin-item.is-active {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--foreground);
+}
+.xv-skin-name { flex: 1; min-width: 0; }
+.xv-skin-sep {
+  height: 1px;
+  margin: 0.3rem 0.2rem;
+  background: var(--term-line, var(--card-border));
+}
+/* The swatch is a miniature of the surface: pane colour, ink bar, accent bar. */
+.xv-skin-swatch {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 22px;
+  height: 16px;
+  padding: 2px;
+  border-radius: 0.25rem;
+  border: 1.5px solid;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.xv-skin-swatch i { display: block; width: 5px; border-radius: 1px; }
+.xv-skin-swatch i:first-of-type { height: 8px; }
+.xv-skin-swatch i:last-of-type { height: 5px; }
+.xv-skin-swatch--auto {
+  border-color: var(--card-border);
+  background: linear-gradient(135deg, #0b0d12 0 50%, #ffffff 50% 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-term-caret { animation: none; }
 }

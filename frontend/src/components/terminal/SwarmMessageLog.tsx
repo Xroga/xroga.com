@@ -8,7 +8,6 @@ import { useThemeStore } from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { ProcessingLogo } from '@/components/layout/ProcessingLogo';
 import { ResearchPagesLoader } from '@/components/ui/ResearchPagesLoader';
-import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { MessageBubbleActions } from './MessageBubbleActions';
 import { MessageSuggestionChips } from './MessageSuggestionChips';
 import { TerminalRunStream } from './TerminalRunStream';
@@ -28,6 +27,7 @@ import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
 import { cn } from '@/lib/utils';
+import { TerminalSkinPicker } from './TerminalSkinPicker';
 import { ChatTurnRail, buildChatTurns } from './ChatTurnRail';
 import { api } from '@/lib/api';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
@@ -273,23 +273,40 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           compact ? '' : 'w-full'
         )}
       >
-        <div className="xv-terminal-header sticky top-0 z-20 flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 border-b border-[var(--card-border)]/40 overflow-x-auto scrollbar-hide backdrop-blur-xl bg-[var(--card)]/70">
-          <Terminal className="w-4 h-4 opacity-70 shrink-0 hidden sm:block text-[var(--accent)]" />
-          <div className="flex-1 min-w-0">
-            <h3 className="font-coding text-[10px] sm:text-xs tracking-wide opacity-90 truncate text-[var(--foreground)]">
-              {isIncognito ? '>_ guest@incognito · temporary' : '>_ xroga@swarm · terminal'}
+        {/* Window chrome. The pane's own surface, not the page card's — a terminal
+            whose title bar is tinted by the page reads as a widget rather than as a
+            console, which is the substance of the "doesn't look like a terminal"
+            complaint this replaces. */}
+        <div className="xv-terminal-header">
+          <span className="xv-term-lights" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+
+          <div className="xv-term-title">
+            <Terminal className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden="true" />
+            <h3>
+              {isIncognito ? (
+                'guest@incognito'
+              ) : (
+                <>
+                  xroga<span className="xv-term-at">@</span>swarm
+                </>
+              )}
             </h3>
-            {isIncognito && (
-              <p className="text-[8px] sm:text-[9px] text-[var(--muted)] font-coding">Private room · not saved</p>
-            )}
+            <span className="xv-term-path">{isIncognito ? '~/temporary' : '~/workspace'}</span>
           </div>
-          {!isIncognito && (
+
+          {isIncognito ? (
+            <span className="xv-term-badge">Private · not saved</span>
+          ) : (
             <div className="flex items-center gap-1 shrink-0">
-              <ThemeToggle />
+              <TerminalSkinPicker />
               <button
                 type="button"
                 onClick={() => setTerminalFullscreen(!terminalFullscreen)}
-                className="p-1.5 rounded-md hover:bg-[var(--foreground)]/5 transition-colors text-[var(--muted)] hover:text-[var(--foreground)] shrink-0"
+                className="xv-term-iconbtn"
                 title={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
                 aria-label={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
               >
@@ -305,12 +322,28 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
 
         <div className="xv-terminal-body px-4 py-3 space-y-3 font-coding text-[13px] overflow-hidden rounded-b-xl">
           {messages.length === 0 && !loading && (
-            <p className="text-[var(--muted)] text-center py-8 font-coding tracking-wide">
-              <span className="opacity-70 text-[var(--accent)]">&gt;</span>{' '}
-              {isIncognito
-                ? 'Start a temporary chat — questions & conversation only…'
-                : 'Ask Xroga to build or change your product…'}
-            </p>
+            /* Left-aligned on a real prompt line with a live caret, rather than the
+               centred grey sentence this replaces — a console's resting state is a
+               cursor waiting at column one, and centring it read as placeholder text
+               in an empty box. */
+            <div className="xv-term-empty">
+              <p className="xv-term-emptyline">
+                <span className="xv-term-prompt" aria-hidden="true">
+                  xroga
+                  <span className="xv-term-at">@</span>
+                  swarm
+                  <span className="xv-term-sep">:</span>
+                  <span className="xv-term-cwd">~</span>
+                  <span className="xv-term-sigil">$</span>
+                </span>
+                <span className="xv-term-hint">
+                  {isIncognito
+                    ? 'Start a temporary chat — questions & conversation only…'
+                    : 'Ask Xroga to build or change your product…'}
+                </span>
+                <span className="xv-term-caret" aria-hidden="true" />
+              </p>
+            </div>
           )}
 
           {visibleMessages.map((msg) => {

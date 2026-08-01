@@ -44,7 +44,8 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const theme = useThemeStore((s) => s.theme);
   const terminalSkin = useThemeStore((s) => s.terminalSkin);
-  const setTerminalSkin = useThemeStore((s) => s.setTerminalSkin);
+  const terminalSkinAuto = useThemeStore((s) => s.terminalSkinAuto);
+  const resyncTerminalSkin = useThemeStore((s) => s.setTerminalSkinAuto);
   const pathname = usePathname();
   const isDashboard = pathname === '/workspace';
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
@@ -52,12 +53,16 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   const effectiveSidebarOpen = hydrated ? sidebarOpen : true;
   const widthPx = effectiveSidebarOpen ? (hydrated ? sidebarWidth : 256) : 0;
 
-  // Keep terminal skin aligned with shell theme (white→light, gray→gray, black→amoled)
+  // Keep the terminal skin aligned with the shell theme — but only while the skin is
+  // still tracking it. This effect used to run unconditionally, which meant any skin
+  // the user picked was reset on the next render.
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || !terminalSkinAuto) return;
     const expected = skinForTheme(normalizeTheme(theme));
-    if (terminalSkin !== expected) setTerminalSkin(expected);
-  }, [hydrated, theme, terminalSkin, setTerminalSkin]);
+    // `setTerminalSkin` records an explicit choice and clears the auto flag, so it
+    // cannot be used here — that would turn the sync itself into a user decision.
+    if (terminalSkin !== expected) resyncTerminalSkin();
+  }, [hydrated, theme, terminalSkin, terminalSkinAuto, resyncTerminalSkin]);
 
   useEffect(() => {
     document.body.classList.toggle('xv-incognito-active', incognito && isDashboard);

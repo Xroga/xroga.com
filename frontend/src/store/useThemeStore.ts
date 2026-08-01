@@ -10,6 +10,7 @@ import {
   SLIDESHOW_ENABLED_KEY,
   SLIDESHOW_FROZEN_INDEX_KEY,
   TERMINAL_SKIN_CYCLE,
+  isTerminalSkin,
   DESKTOP_BG_SLIDESHOW,
   normalizeTheme,
   skinForTheme,
@@ -31,6 +32,8 @@ interface ThemeState {
   slideshowFrozenIndex: number;
   terminalFullscreen: boolean;
   terminalSkin: TerminalSkin;
+  /** True while the skin tracks the theme; false once the user picks one. */
+  terminalSkinAuto: boolean;
   accent: AccentId;
   fontPreference: FontPreference;
   density: DensityPreference;
@@ -49,6 +52,8 @@ interface ThemeState {
   setTerminalFullscreen: (v: boolean) => void;
   cycleTerminalSkin: () => void;
   setTerminalSkin: (skin: TerminalSkin) => void;
+  /** Hand the skin back to the theme after an explicit choice. */
+  setTerminalSkinAuto: () => void;
   setAccent: (accent: AccentId) => void;
   setFontPreference: (fontPreference: FontPreference) => void;
   setDensity: (density: DensityPreference) => void;
@@ -71,7 +76,8 @@ export const useThemeStore = create<ThemeState>()(
       slideshowEnabled: false,
       slideshowFrozenIndex: 0,
       terminalFullscreen: false,
-      terminalSkin: 'light',
+      terminalSkin: 'dark',
+      terminalSkinAuto: true,
       accent: 'blue',
       fontPreference: 'modern',
       density: 'comfortable',
@@ -79,14 +85,17 @@ export const useThemeStore = create<ThemeState>()(
       highContrast: false,
       browserPanelOpen: false,
       browserFullscreen: false,
-      setTheme: (theme) => {
-        const next = normalizeTheme(theme);
-        set({
-          theme: next,
-          terminalSkin: skinForTheme(next),
-          slideshowEnabled: false,
-        });
-      },
+      setTheme: (theme) =>
+        set((s) => {
+          const next = normalizeTheme(theme);
+          return {
+            theme: next,
+            // Only re-derive the skin while it is still tracking the theme. A skin the
+            // user picked deliberately must survive a theme change.
+            terminalSkin: s.terminalSkinAuto ? skinForTheme(next) : s.terminalSkin,
+            slideshowEnabled: false,
+          };
+        }),
       setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
       setSidebarWidth: (sidebarWidth) =>
         set({ sidebarWidth: Math.min(420, Math.max(200, sidebarWidth)) }),
@@ -120,9 +129,12 @@ export const useThemeStore = create<ThemeState>()(
         set((s) => {
           const idx = TERMINAL_SKIN_CYCLE.indexOf(s.terminalSkin);
           const next = TERMINAL_SKIN_CYCLE[(idx + 1) % TERMINAL_SKIN_CYCLE.length];
-          return { terminalSkin: next };
+          return { terminalSkin: next, terminalSkinAuto: false };
         }),
-      setTerminalSkin: (terminalSkin) => set({ terminalSkin }),
+      // Picking a skin is an explicit choice, so it also ends automatic tracking.
+      setTerminalSkin: (terminalSkin) => set({ terminalSkin, terminalSkinAuto: false }),
+      setTerminalSkinAuto: () =>
+        set((s) => ({ terminalSkinAuto: true, terminalSkin: skinForTheme(s.theme) })),
       setAccent: (accent) => set({ accent }),
       setFontPreference: (fontPreference) => set({ fontPreference }),
       setDensity: (density) => set({ density }),
@@ -152,6 +164,7 @@ export const useThemeStore = create<ThemeState>()(
         slideshowEnabled: s.slideshowEnabled,
         slideshowFrozenIndex: s.slideshowFrozenIndex,
         terminalSkin: s.terminalSkin,
+        terminalSkinAuto: s.terminalSkinAuto,
         accent: s.accent,
         fontPreference: s.fontPreference,
         density: s.density,
@@ -189,7 +202,14 @@ export const useThemeStore = create<ThemeState>()(
               state.theme = next;
             }
             state.slideshowEnabled = false;
-            state.terminalSkin = skinForTheme(next);
+            // Stored state written before skins were selectable has no `auto` flag;
+            // treat it as auto so those users keep the pinned dark surface.
+            if (typeof state.terminalSkinAuto !== 'boolean') state.terminalSkinAuto = true;
+            // A skin id can also be stale if the catalogue changed under a persisted
+            // value, so it is validated rather than trusted.
+            if (state.terminalSkinAuto || !isTerminalSkin(state.terminalSkin)) {
+              state.terminalSkin = skinForTheme(next);
+            }
 
             const d = localStorage.getItem(CUSTOM_DESKTOP_BG_KEY);
             const m = localStorage.getItem(CUSTOM_MOBILE_BG_KEY);
