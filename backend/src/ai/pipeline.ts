@@ -7,6 +7,7 @@ import {
   estimateMessageTokens,
   type ChatMessage,
 } from './openaiCompat.js';
+import { requireBuildArtifacts } from './buildOutputValidation.js';
 import { withProviderReservation } from './providerBudget.js';
 import {
   BUILDER_SYSTEM,
@@ -394,6 +395,7 @@ async function callBuilderStream(
     signal?: AbortSignal;
     onModelFallback?: (from: ModelId, to: ModelId) => void;
     credentialOverrides?: Partial<Record<ModelId, string>>;
+    validateResponse?: (result: Awaited<ReturnType<typeof chatCompletionStream>>) => void;
   },
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
   const healthAwareOrder = fallbackOrderForModel(preferred);
@@ -424,13 +426,21 @@ async function callBuilderStream(
               provider === 'xai' ? 'grok' : provider,
             ).catch(() => null)
           : null);
-      const execute = () => chatCompletionStream(modelId, messages, {
+      const bufferedDeltas: string[] = [];
+      const execute = async () => {
+        const completion = await chatCompletionStream(modelId, messages, {
           maxTokens: opts.maxTokens,
           temperature: opts.temperature,
-          onDelta: opts.onDelta,
+          onDelta: opts.validateResponse
+            ? (delta) => bufferedDeltas.push(delta)
+            : opts.onDelta,
           signal: opts.signal,
           credentialOverride: userCredential || undefined,
         });
+        opts.validateResponse?.(completion);
+        if (bufferedDeltas.length) opts.onDelta?.(bufferedDeltas.join(''));
+        return completion;
+      };
       return opts.userId
         ? await withProviderReservation({
             userId: opts.userId,
@@ -1308,6 +1318,7 @@ export async function runBuildPipeline(opts: {
         emitModelSwitch(from, to);
       },
       credentialOverrides,
+      validateResponse: (completion) => requireBuildArtifacts(completion.text, isUpdate),
     },
   );
 
@@ -1424,6 +1435,7 @@ export async function runBuildPipeline(opts: {
             signal: opts.signal,
             onModelFallback: emitModelSwitch,
             credentialOverrides,
+            validateResponse: (completion) => requireBuildArtifacts(completion.text, true),
           },
         );
         usage = await recordUsage(
@@ -1788,6 +1800,7 @@ export async function runBuildPipeline(opts: {
           signal: opts.signal,
           onModelFallback: emitModelSwitch,
           credentialOverrides,
+          validateResponse: (completion) => requireBuildArtifacts(completion.text, isUpdate),
         },
       );
       usage = await recordUsage(
