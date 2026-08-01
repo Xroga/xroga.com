@@ -13,6 +13,7 @@ import {
   failRun,
   getRun,
   getRunAsync,
+  appendRunEvent,
   listRunsForUser,
   listRunsForUserAsync,
   saveConversation,
@@ -114,7 +115,13 @@ router.post('/execute', async (req: AuthRequest, res) => {
       clientMeta,
       attachments,
       onProgress: (event) => {
-        if (streamConnected && !res.writableEnded) sendSSE(res, { event: 'progress', data: { ...event } });
+        const recorded = appendRunEvent(runId, 'progress', event as Record<string, unknown>);
+        if (streamConnected && !res.writableEnded) {
+          sendSSE(res, {
+            event: 'progress',
+            data: { ...event, ...(recorded ? { sequence: recorded.sequence } : {}) },
+          });
+        }
       },
       onDelta: (delta) => {
         if (streamConnected && !res.writableEnded) sendSSE(res, { event: 'delta', data: { delta } });
@@ -245,11 +252,14 @@ router.get('/runs/:runId', async (req: AuthRequest, res) => {
       created_at: new Date().toISOString(),
       completed_at: null,
       iteration_count: 0,
+      events: [],
+      lastSequence: 0,
     });
   }
   if (req.userId && run.userId !== req.userId) {
     return res.status(403).json({ error: 'Forbidden' });
   }
+  const afterSequence = Math.max(0, Number(req.query.afterSequence ?? 0) || 0);
   res.json({
     id: run.id,
     prompt: run.prompt,
@@ -261,6 +271,8 @@ router.get('/runs/:runId', async (req: AuthRequest, res) => {
     completed_at: run.completed_at,
     iteration_count: run.iteration_count,
     messages: run.messages ?? [],
+    events: run.events.filter((event) => event.sequence > afterSequence),
+    lastSequence: run.lastSequence,
   });
 });
 

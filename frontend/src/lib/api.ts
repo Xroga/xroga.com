@@ -143,6 +143,7 @@ async function waitForPersistedSwarmRun(
   accessToken: string,
   options: StreamSwarmOptions,
   currentText: string,
+  afterSequence = 0,
 ): Promise<string> {
   options.onReconnect?.(runId);
   options.onProgress?.({
@@ -153,6 +154,7 @@ async function waitForPersistedSwarmRun(
 
   const deadline = Date.now() + 30 * 60_000;
   let delayMs = 1_000;
+  let lastSequence = afterSequence;
   while (Date.now() < deadline) {
     if (options.signal?.aborted) throw new DOMException('Aborted', 'AbortError');
     await new Promise<void>((resolve) => window.setTimeout(resolve, delayMs));
@@ -160,11 +162,14 @@ async function waitForPersistedSwarmRun(
 
     let response: Response;
     try {
-      response = await fetch(`${API_URL}/api/swarm/runs/${runId}`, {
+      response = await fetch(
+        `${API_URL}/api/swarm/runs/${runId}?afterSequence=${Math.max(0, lastSequence)}`,
+        {
         headers: { Authorization: `Bearer ${accessToken}` },
         cache: 'no-store',
         signal: options.signal,
-      });
+        },
+      );
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') throw error;
       delayMs = Math.min(5_000, Math.round(delayMs * 1.5));
@@ -176,6 +181,12 @@ async function waitForPersistedSwarmRun(
       continue;
     }
     const run = await response.json() as SwarmRunSummary;
+    for (const event of run.events ?? []) {
+      if (event.sequence <= lastSequence) continue;
+      options.onProgress?.({ ...event.data, sequence: event.sequence } as SwarmProgressEvent);
+      lastSequence = event.sequence;
+    }
+    lastSequence = Math.max(lastSequence, run.lastSequence ?? 0);
     if (run.status === 'running' || run.status === 'unknown') {
       delayMs = Math.min(5_000, Math.round(delayMs * 1.35));
       continue;
@@ -260,6 +271,7 @@ export async function streamSwarmExecute(
   let buffer = '';
   let finalText = '';
   let runId: string | undefined;
+  let lastSequence = 0;
   let receivedComplete = false;
 
   try {
@@ -324,7 +336,12 @@ export async function streamSwarmExecute(
       }
 
       if (eventName === 'progress') {
-        options.onProgress?.(payload as SwarmProgressEvent);
+        const progress = payload as SwarmProgressEvent;
+        if (typeof progress.sequence === 'number') {
+          if (progress.sequence <= lastSequence) continue;
+          lastSequence = progress.sequence;
+        }
+        options.onProgress?.(progress);
       }
 
       if (eventName === 'delta' && typeof payload.delta === 'string' && payload.delta) {
@@ -346,12 +363,12 @@ export async function streamSwarmExecute(
     }
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') throw error;
-    if (runId) return waitForPersistedSwarmRun(runId, token, options, finalText);
+    if (runId) return waitForPersistedSwarmRun(runId, token, options, finalText, lastSequence);
     throw error;
   }
 
   if (!receivedComplete && runId) {
-    return waitForPersistedSwarmRun(runId, token, options, finalText);
+    return waitForPersistedSwarmRun(runId, token, options, finalText, lastSequence);
   }
 
   return finalText || 'Swarm task complete.';
@@ -1196,7 +1213,10 @@ export const api = {
       }),
     stream: streamSwarmExecute,
     history: () => apiFetch<SwarmRunSummary[]>('/api/swarm/history'),
-    getRun: (runId: string) => apiFetch<SwarmRunSummary>(`/api/swarm/runs/${runId}`),
+    getRun: (runId: string, afterSequence = 0) =>
+      apiFetch<SwarmRunSummary>(
+        `/api/swarm/runs/${runId}?afterSequence=${Math.max(0, Math.floor(afterSequence))}`,
+      ),
     cancelRun: (runId: string) =>
       apiFetch<{ cancelled: boolean; status: string }>(`/api/swarm/runs/${runId}/cancel`, {
         method: 'POST',
@@ -1518,6 +1538,13 @@ export interface SwarmRunSummary {
   created_at: string;
   completed_at: string | null;
   iteration_count: number;
+  events?: Array<{
+    sequence: number;
+    type: 'progress';
+    data: Record<string, unknown>;
+    createdAt: string;
+  }>;
+  lastSequence?: number;
 }
 
 export interface DashboardSummary {

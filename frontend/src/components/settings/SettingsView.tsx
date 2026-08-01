@@ -3,7 +3,7 @@
 import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useCallback, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   User,
   Sparkles,
@@ -26,7 +26,8 @@ import { PlanUsageSettingsPanel } from '@/components/settings/PlanUsageSettingsP
 import { SecuritySettingsPanel } from '@/components/settings/SecuritySettingsPanel';
 import { NotificationsSettingsPanel } from '@/components/settings/NotificationsSettingsPanel';
 import { ThemeSettingsPanel } from '@/components/settings/ThemeSettingsPanel';
-import { sectionFromQuery, type SettingsSectionId } from '@/lib/settingsSections';
+import type { SettingsSectionId } from '@/lib/settingsSections';
+import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
 
 const CompanionCustomizer = dynamic(
   () => import('@/components/companion/CompanionCustomizer').then((module) => module.CompanionCustomizer),
@@ -45,20 +46,20 @@ const SECTIONS = [
   { id: 'theme', label: 'Theme', icon: <Palette className="h-4 w-4" aria-hidden="true" /> },
 ] as const satisfies readonly TabItem[];
 
-export function SettingsView({ email }: { email: string }) {
+export function SettingsView({ initialSection = 'general' }: { initialSection?: SettingsSectionId }) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [section, setSectionState] = useState<SettingsSectionId>(() => sectionFromQuery(searchParams.get('tab')) ?? 'general');
+  const { email = '' } = useShellIdentity();
+  const [section, setSectionState] = useState<SettingsSectionId>(initialSection);
 
   const setSection = useCallback(
     (id: string) => {
       setSectionState(id as SettingsSectionId);
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(window.location.search);
       params.set('tab', id);
       router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     },
-    [pathname, router, searchParams],
+    [pathname, router],
   );
 
   const activeMeta = useMemo(() => SECTIONS.find((s) => s.id === section) ?? SECTIONS[0], [section]);

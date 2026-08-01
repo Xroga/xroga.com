@@ -6847,16 +6847,6 @@ body.theme-gray .xv-rp-loader {
 
 /* Route loader. Centred on the page surface, not a hardcoded dark sheet — a light
    theme should not flash black between navigations. */
-.xv-route-loader {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--surface-page, var(--background));
-}
-
 /* ---------------------------------------------------------------------------
    Icon hover motion, site-wide.
 

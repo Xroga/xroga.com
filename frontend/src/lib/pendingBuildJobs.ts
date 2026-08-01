@@ -2,6 +2,7 @@ const KEY = 'xroga_pending_build_jobs';
 
 export interface PendingBuildJob {
   runId?: string;
+  lastSequence?: number;
   assistantMessageId: string;
   userMessageId: string;
   userPrompt: string;
@@ -11,8 +12,18 @@ export interface PendingBuildJob {
 export function attachPendingBuildRun(assistantMessageId: string, runId: string) {
   savePendingBuildJobs(
     loadPendingBuildJobs().map((job) =>
-      job.assistantMessageId === assistantMessageId ? { ...job, runId } : job
+      job.assistantMessageId === assistantMessageId ? { ...job, runId, lastSequence: 0 } : job
     )
+  );
+}
+
+export function updatePendingBuildSequence(assistantMessageId: string, lastSequence: number) {
+  savePendingBuildJobs(
+    loadPendingBuildJobs().map((job) =>
+      job.assistantMessageId === assistantMessageId
+        ? { ...job, lastSequence: Math.max(job.lastSequence ?? 0, lastSequence) }
+        : job,
+    ),
   );
 }
 

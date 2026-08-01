@@ -9,12 +9,17 @@ import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
 const FETCH_TIMEOUT_MS = 8000;
 
 async function withTimeout<T>(promise: Promise<T>, ms = FETCH_TIMEOUT_MS): Promise<T> {
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error('timeout')), ms)
-    ),
-  ]);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => reject(new Error('timeout')), ms);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 }
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
@@ -31,8 +36,12 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
+    let coreRunning = false;
+    let secondaryRunning = false;
 
     async function loadCore() {
+      if (coreRunning) return;
+      coreRunning = true;
       // Tokens first — everything else can wait so refresh feels instant
       try {
         const summary = await withTimeout(api.dashboard.summary());
@@ -44,19 +53,27 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         }
       } catch {
         /* keep last known usage */
+      } finally {
+        coreRunning = false;
       }
     }
 
     async function loadSecondary() {
-      const results = await Promise.allSettled([
-        withTimeout(api.notifications.unreadCount()),
-        withTimeout(api.notifications.list()),
-        withTimeout(api.profile.get()),
-      ]);
-      if (cancelled) return;
-      if (results[0].status === 'fulfilled') setUnreadCount(results[0].value.count);
-      if (results[1].status === 'fulfilled') setNotifications(results[1].value.slice(0, 5));
-      if (results[2].status === 'fulfilled') setProfile(results[2].value);
+      if (secondaryRunning) return;
+      secondaryRunning = true;
+      try {
+        const results = await Promise.allSettled([
+          withTimeout(api.notifications.unreadCount()),
+          withTimeout(api.notifications.list()),
+          withTimeout(api.profile.get()),
+        ]);
+        if (cancelled) return;
+        if (results[0].status === 'fulfilled') setUnreadCount(results[0].value.count);
+        if (results[1].status === 'fulfilled') setNotifications(results[1].value.slice(0, 5));
+        if (results[2].status === 'fulfilled') setProfile(results[2].value);
+      } finally {
+        secondaryRunning = false;
+      }
     }
 
     void loadCore().then(() => {

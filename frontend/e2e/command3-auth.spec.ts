@@ -285,6 +285,77 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(refreshedSession).toEqual({ status: 200, authenticated: true });
 
   await page.goto('/workspace');
+  const workspaceShell = page.getByTestId('workspace-shell');
+  const terminalDock = page.getByTestId('persistent-terminal-dock');
+  const composerInput = page.locator('textarea[data-terminal-composer]');
+  await expect(workspaceShell).toBeVisible();
+  await expect(terminalDock).toBeVisible();
+  await expect(composerInput).toBeVisible();
+  await expect(page.locator('.xv-route-loader')).toHaveCount(0);
+
+  // Internal navigation must retain the shared shell and the mounted composer.
+  const shellSentinel = randomUUID();
+  await page.evaluate((value) => {
+    (window as Window & { __xrogaShellSentinel?: string }).__xrogaShellSentinel = value;
+  }, shellSentinel);
+  const draft = `persistent draft ${run}`;
+  await composerInput.fill(draft);
+  await page.waitForTimeout(900);
+  await page.locator('a[href="/dashboard"]').first().click();
+  await expect(page).toHaveURL(/\/dashboard\/?$/);
+  await expect(workspaceShell).toBeVisible();
+  expect(await page.evaluate(() =>
+    (window as Window & { __xrogaShellSentinel?: string }).__xrogaShellSentinel,
+  )).toBe(shellSentinel);
+  await page.locator('a[href="/workspace"]').first().click();
+  await expect(page).toHaveURL(/\/workspace\/?$/);
+  await expect(composerInput).toHaveValue(draft);
+  const workspaceMetrics = await page.evaluate(() => window.__xrogaWorkspaceMetrics);
+  expect(workspaceMetrics?.shellMounts).toBe(1);
+  expect(workspaceMetrics?.lastNavigationMs).toBeGreaterThanOrEqual(0);
+
+  // Hard refresh restores the draft/history region without replacing the shell.
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(workspaceShell).toBeVisible();
+  await expect(terminalDock).toBeVisible();
+  await expect(composerInput).toHaveValue(draft);
+
+  // Offline is a factual status chip; it must not cover or destroy the workspace.
+  await page.context().setOffline(true);
+  await expect(page.getByTestId('connection-indicator')).toContainText('Offline');
+  await expect(workspaceShell).toBeVisible();
+  await expect(composerInput).toHaveValue(draft);
+  await page.context().setOffline(false);
+  await expect(page.getByTestId('connection-indicator')).toContainText(/Reconnecting|Offline/);
+  await expect(page.getByTestId('connection-indicator')).toHaveCount(0, { timeout: 5_000 });
+
+  // A changed account scope clears user-owned caches before private UI can read them.
+  await page.evaluate(() => {
+    localStorage.setItem('xroga-cache-owner', 'different-user');
+    localStorage.setItem('xroga_workspace_session', JSON.stringify({
+      prompt: 'previous user private draft',
+      messages: [],
+      updatedAt: new Date().toISOString(),
+    }));
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(workspaceShell).toBeVisible();
+  await expect(composerInput).not.toHaveValue(/previous user private draft/);
+
+  // The pre-hydration bootstrap applies theme and accessibility preferences before
+  // the shell becomes interactive; there is no loader used to conceal a flash.
+  await page.evaluate(() => {
+    const stored = JSON.parse(localStorage.getItem('xroga-theme') ?? '{"state":{},"version":1}');
+    stored.version = 1;
+    stored.state = { ...stored.state, theme: 'black', reducedMotion: true };
+    localStorage.setItem('xroga-theme', JSON.stringify(stored));
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(workspaceShell).toBeVisible();
+  expect(await page.locator('html').getAttribute('data-theme')).toBe('black');
+  expect(await page.locator('html').getAttribute('data-reduced-motion')).toBe('true');
+  await expect(page.locator('body')).toHaveClass(/theme-black/);
+
   const companion = page.getByTestId('xroga-companion-composer');
   await expect(companion).toBeVisible();
   // Scoped to the companion, not the page. The claim this protects is that *Smoky*
@@ -532,5 +603,5 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
-  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, companionComposer: 'verified', canonicalComposerProductChips: 'removed', canonicalComposerMicrophone: 'removed', companionProfilePersistence, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction, billingMode: billingTransaction === 'verified_test_mode_webhook' ? 'test' : 'not_verified', initialRealCharge: billingTransaction === 'verified_test_mode_webhook' ? 0 : null, testPaymentInstrument, billingSubmissionMethod, billingEntitlementEndsAt, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, billing cycles, and companion preferences cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
+  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, persistentWorkspaceShell: 'verified', workspaceMetrics, hardRefreshDraftRestore: 'verified', offlineShellContinuity: 'verified', userCacheIsolation: 'verified', prepaintTheme: 'verified', companionComposer: 'verified', canonicalComposerProductChips: 'removed', canonicalComposerMicrophone: 'removed', companionProfilePersistence, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction, billingMode: billingTransaction === 'verified_test_mode_webhook' ? 'test' : 'not_verified', initialRealCharge: billingTransaction === 'verified_test_mode_webhook' ? 0 : null, testPaymentInstrument, billingSubmissionMethod, billingEntitlementEndsAt, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, billing cycles, and companion preferences cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });

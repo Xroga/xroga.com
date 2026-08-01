@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { MobileNav } from './MobileNav';
 import { Logo } from './Logo';
@@ -13,9 +13,10 @@ import { usePathname } from 'next/navigation';
 import { IncognitoFullscreenBackground } from '@/components/incognito/IncognitoFullscreenBackground';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
-import { ShellHydrationGate } from '@/components/layout/ShellHydrationGate';
 import { cn } from '@/lib/utils';
 import { normalizeTheme, skinForTheme } from '@/lib/theme';
+import { ShellIdentityProvider } from '@/components/layout/ShellIdentityContext';
+import { WorkspacePerformanceProbe } from '@/components/layout/WorkspacePerformanceProbe';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -51,7 +52,11 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const effectiveSidebarOpen = hydrated ? sidebarOpen : true;
-  const widthPx = effectiveSidebarOpen ? (hydrated ? sidebarWidth : 256) : 0;
+  const widthPx = effectiveSidebarOpen
+    ? hydrated
+      ? `${sidebarWidth}px`
+      : 'var(--xv-boot-sidebar-width, 256px)'
+    : '0px';
 
   // Keep the terminal skin aligned with the shell theme — but only while the skin is
   // still tracking it. This effect used to run unconditionally, which meant any skin
@@ -70,17 +75,17 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   }, [incognito, isDashboard]);
 
   return (
-    <ShellHydrationGate>
+    <ShellIdentityProvider displayName={displayName ?? 'there'} email={email}>
+      <WorkspacePerformanceProbe />
       <TerminalChatProvider>
         <TerminalScrollProvider>
           <IncognitoFullscreenBackground />
           <div
             className="flex min-h-screen terminal-layout overflow-x-hidden"
-            style={{ '--sidebar-width': `${widthPx}px` } as React.CSSProperties}
+            style={{ '--sidebar-width': widthPx } as React.CSSProperties}
+            data-testid="workspace-shell"
           >
-            <Suspense fallback={null}>
-              <Sidebar displayName={displayName} email={email} />
-            </Suspense>
+            <Sidebar displayName={displayName} email={email} />
             <div className="xv-main-column flex-1 flex flex-col w-full min-w-0 max-w-full min-h-screen overflow-x-hidden relative z-[2]">
               <header className="xv-site-header xv-site-header-transparent sticky top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3 shrink-0">
                 <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -107,6 +112,6 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
           </div>
         </TerminalScrollProvider>
       </TerminalChatProvider>
-    </ShellHydrationGate>
+    </ShellIdentityProvider>
   );
 }

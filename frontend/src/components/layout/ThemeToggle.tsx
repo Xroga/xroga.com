@@ -17,7 +17,6 @@ export function ThemeToggle() {
   const setSlideshowEnabled = useThemeStore((s) => s.setSlideshowEnabled);
   const [open, setOpen] = useState(false);
   const current = normalizeTheme(theme);
-  const currentLabel = THEME_OPTIONS.find((o) => o.id === current)?.label ?? 'White';
 
   useEffect(() => {
     if (!open) return;
@@ -40,12 +39,9 @@ export function ThemeToggle() {
         onClick={() => setOpen(!open)}
         className="inline-flex items-center gap-1.5 px-2 py-1.5 rounded-lg glass-panel hover:border-[var(--accent)]/40 transition-colors"
         aria-label="Change theme"
-        title={`Theme: ${currentLabel}`}
+        title="Change theme"
       >
         <Palette className="w-4 h-4 text-[var(--accent)]" />
-        <span className="hidden md:inline text-[10px] font-coding text-[var(--foreground)] opacity-80">
-          {currentLabel}
-        </span>
       </button>
       {open && (
         <div className="absolute right-0 top-full mt-2 w-56 glass-panel-strong rounded-xl p-2 z-[250] shadow-xl border border-[var(--card-border)]">

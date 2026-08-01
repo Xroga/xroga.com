@@ -3,6 +3,7 @@
 import { ExternalLink, Eye, EyeOff, FolderGit2, Loader2 } from 'lucide-react';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { cn } from '@/lib/utils';
+import { useHydrated } from '@/hooks/useHydrated';
 
 function statusLabel(status: string): string {
   switch (status) {
@@ -21,6 +22,7 @@ function statusLabel(status: string): string {
 
 /** Persistent project rail — one per repo (Plan A). Not a response card. */
 export function ProjectWorkspaceRail() {
+  const hydrated = useHydrated();
   const repo = useProjectWorkspaceStore((s) => s.repo);
   const branch = useProjectWorkspaceStore((s) => s.branch);
   const projectName = useProjectWorkspaceStore((s) => s.projectName);
@@ -30,7 +32,7 @@ export function ProjectWorkspaceRail() {
   const setPreviewOpen = useProjectWorkspaceStore((s) => s.setPreviewOpen);
   const html = useProjectWorkspaceStore((s) => s.html);
 
-  if (!repo?.includes('/') && !html) return null;
+  if (!hydrated || (!repo?.includes('/') && !html)) return null;
 
   const label = projectName || (repo ? repo.split('/')[1] : 'Project');
 

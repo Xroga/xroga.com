@@ -161,6 +161,7 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: 'xroga-theme',
+      version: 1,
       partialize: (s) => ({
         theme: s.theme,
         sidebarOpen: s.sidebarOpen,
@@ -175,7 +176,34 @@ export const useThemeStore = create<ThemeState>()(
         density: s.density,
         reducedMotion: s.reducedMotion,
         highContrast: s.highContrast,
+        terminalFullscreen: s.terminalFullscreen,
+        chatbarHidden: s.chatbarHidden,
       }),
+      migrate: (persisted) => {
+        const state = (persisted ?? {}) as Partial<ThemeState>;
+        return {
+          ...state,
+          theme: normalizeTheme(state.theme),
+          sidebarOpen: state.sidebarOpen !== false,
+          sidebarWidth:
+            typeof state.sidebarWidth === 'number' && Number.isFinite(state.sidebarWidth)
+              ? Math.min(420, Math.max(200, state.sidebarWidth))
+              : 256,
+          accent: ['blue', 'violet', 'emerald', 'coral'].includes(String(state.accent))
+            ? state.accent
+            : 'blue',
+          fontPreference: ['modern', 'classic', 'mono'].includes(String(state.fontPreference))
+            ? state.fontPreference
+            : 'modern',
+          density: ['comfortable', 'compact'].includes(String(state.density))
+            ? state.density
+            : 'comfortable',
+          reducedMotion: state.reducedMotion === true,
+          highContrast: state.highContrast === true,
+          terminalFullscreen: state.terminalFullscreen === true,
+          chatbarHidden: state.chatbarHidden === true,
+        } as ThemeState;
+      },
       storage: createJSONStorage(() => ({
         getItem: (name) => {
           try {
@@ -207,6 +235,11 @@ export const useThemeStore = create<ThemeState>()(
               state.theme = next;
             }
             state.slideshowEnabled = false;
+            state.sidebarOpen = state.sidebarOpen !== false;
+            state.sidebarWidth = Math.min(420, Math.max(200, Number(state.sidebarWidth) || 256));
+            if (!['blue', 'violet', 'emerald', 'coral'].includes(String(state.accent))) state.accent = 'blue';
+            if (!['modern', 'classic', 'mono'].includes(String(state.fontPreference))) state.fontPreference = 'modern';
+            if (!['comfortable', 'compact'].includes(String(state.density))) state.density = 'comfortable';
             // Stored state written before skins were selectable has no `auto` flag;
             // treat it as auto so those users keep the pinned dark surface.
             if (typeof state.terminalSkinAuto !== 'boolean') state.terminalSkinAuto = true;

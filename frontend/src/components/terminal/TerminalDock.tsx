@@ -22,16 +22,19 @@ export function TerminalDock() {
   const hydrated = useHydrated();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
-  const terminalFullscreen = useThemeStore((s) => s.terminalFullscreen);
-  const chatbarHidden = useThemeStore((s) => s.chatbarHidden);
+  const terminalFullscreenRaw = useThemeStore((s) => s.terminalFullscreen);
+  const chatbarHiddenRaw = useThemeStore((s) => s.chatbarHidden);
   const setChatbarHidden = useThemeStore((s) => s.setChatbarHidden);
-  const workspaceOpen = useProjectWorkspaceStore((s) => s.workspaceOpen);
+  const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const keyboardOffset = useVisualViewportBottom();
   const dockInnerRef = useRef<HTMLDivElement>(null);
   const { showJumpToLatest, scrollToLatest } = useTerminalScroll();
   const isDashboard = pathname === '/workspace' || pathname === '/workspace/';
+  const terminalFullscreen = hydrated && terminalFullscreenRaw;
+  const chatbarHidden = hydrated && chatbarHiddenRaw;
+  const workspaceOpen = hydrated && workspaceOpenRaw;
   const dashboardFullscreen = isDashboard && terminalFullscreen;
 
   useEffect(() => {
@@ -49,19 +52,24 @@ export function TerminalDock() {
     return () => ro.disconnect();
   }, [incognito, isDashboard, chatbarHidden]);
 
-  if (!isDashboard) return null;
-
   return (
     <div
       className={cn(
         'xv-terminal-dock fixed left-0 right-0 transition-[left,opacity,transform,bottom,z-index] duration-300',
+        !isDashboard && 'hidden',
         dashboardFullscreen ? 'z-[210] xv-terminal-dock--fullscreen' : 'z-[55] lg:left-[var(--sidebar-width)]',
         incognito && 'xv-terminal-dock--incognito'
       )}
       style={{
-        '--sidebar-width': `${(hydrated ? sidebarOpen : true) ? (hydrated ? sidebarWidth : 256) : 72}px`,
+        '--sidebar-width': (hydrated ? sidebarOpen : true)
+          ? hydrated
+            ? `${sidebarWidth}px`
+            : 'var(--xv-boot-sidebar-width, 256px)'
+          : '72px',
         bottom: keyboardOffset,
       } as React.CSSProperties}
+      aria-hidden={!isDashboard}
+      data-testid="persistent-terminal-dock"
     >
       {showJumpToLatest && (
         <button

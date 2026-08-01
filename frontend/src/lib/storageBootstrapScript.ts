@@ -5,6 +5,13 @@ export function storageBootstrapScript(): string {
     var themeKey = 'xroga-theme';
     var raw = localStorage.getItem(themeKey);
     var core = 'white';
+    var accent = 'blue';
+    var font = 'modern';
+    var density = 'comfortable';
+    var reducedMotion = false;
+    var highContrast = false;
+    var sidebarOpen = true;
+    var sidebarWidth = 256;
     if (raw) {
       if (raw.length > 120000) {
         localStorage.removeItem(themeKey);
@@ -26,6 +33,15 @@ export function storageBootstrapScript(): string {
               dirty = true;
               core = 'white';
             }
+            if (/^(blue|emerald|violet|coral)$/.test(state.accent || '')) accent = state.accent;
+            if (/^(modern|classic|mono)$/.test(state.fontPreference || '')) font = state.fontPreference;
+            if (/^(compact|comfortable)$/.test(state.density || '')) density = state.density;
+            reducedMotion = state.reducedMotion === true;
+            highContrast = state.highContrast === true;
+            sidebarOpen = state.sidebarOpen !== false;
+            if (typeof state.sidebarWidth === 'number' && isFinite(state.sidebarWidth)) {
+              sidebarWidth = Math.min(420, Math.max(200, state.sidebarWidth));
+            }
             if (state.slideshowEnabled) { state.slideshowEnabled = false; dirty = true; }
             if (dirty) localStorage.setItem(themeKey, JSON.stringify(parsed));
           }
@@ -36,6 +52,13 @@ export function storageBootstrapScript(): string {
     }
     var surfaces = { white: '#ffffff', gray: '#1a1a1a', black: '#000000', beige: '#f4eddf' };
     document.documentElement.setAttribute('data-theme', core);
+    document.documentElement.setAttribute('data-accent', accent);
+    document.documentElement.setAttribute('data-font', font);
+    document.documentElement.setAttribute('data-density', density);
+    document.documentElement.setAttribute('data-reduced-motion', reducedMotion ? 'true' : 'false');
+    document.documentElement.setAttribute('data-high-contrast', highContrast ? 'true' : 'false');
+    document.documentElement.style.backgroundColor = surfaces[core] || '#ffffff';
+    document.documentElement.style.setProperty('--xv-boot-sidebar-width', sidebarOpen ? sidebarWidth + 'px' : '0px');
     var applyBody = function() {
       if (!document.body) return;
       document.body.classList.remove('theme-image','theme-white','theme-black','theme-gray','theme-beige','xv-deep-work-shell');
@@ -44,7 +67,15 @@ export function storageBootstrapScript(): string {
       document.body.style.backgroundImage = '';
     };
     if (document.body) applyBody();
-    else document.addEventListener('DOMContentLoaded', applyBody);
+    else {
+      var observer = new MutationObserver(function() {
+        if (!document.body) return;
+        applyBody();
+        observer.disconnect();
+      });
+      observer.observe(document.documentElement, { childList: true });
+      document.addEventListener('DOMContentLoaded', applyBody, { once: true });
+    }
     var sessionKey = 'xroga_workspace_session';
     var session = localStorage.getItem(sessionKey);
     if (session && session.length > 500000) {

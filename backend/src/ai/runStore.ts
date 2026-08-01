@@ -4,6 +4,14 @@
 
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
+import { redactOperationsValue } from '../operations/operationsEngine.js';
+
+export interface SwarmRunEvent {
+  sequence: number;
+  type: 'progress';
+  data: Record<string, unknown>;
+  createdAt: string;
+}
 
 export interface SwarmRunRecord {
   id: string;
@@ -17,11 +25,32 @@ export interface SwarmRunRecord {
   created_at: string;
   completed_at: string | null;
   iteration_count: number;
+  events: SwarmRunEvent[];
+  lastSequence: number;
 }
 
 const runs = new Map<string, SwarmRunRecord>();
 const userIndex = new Map<string, string[]>();
 const MAX_PER_USER = 40;
+const MAX_EVENTS_PER_RUN = 240;
+const persistTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+function schedulePersist(rec: SwarmRunRecord) {
+  if (persistTimers.has(rec.id)) return;
+  const timer = setTimeout(() => {
+    persistTimers.delete(rec.id);
+    void persistToSupabase(rec).catch(() => {});
+  }, 500);
+  timer.unref?.();
+  persistTimers.set(rec.id, timer);
+}
+
+function flushPersist(rec: SwarmRunRecord) {
+  const timer = persistTimers.get(rec.id);
+  if (timer) clearTimeout(timer);
+  persistTimers.delete(rec.id);
+  void persistToSupabase(rec).catch(() => {});
+}
 
 function touchUser(userId: string, runId: string) {
   const list = userIndex.get(userId) ?? [];
@@ -42,10 +71,12 @@ export function createRun(userId: string, prompt: string, runId: string): SwarmR
     created_at: new Date().toISOString(),
     completed_at: null,
     iteration_count: 0,
+    events: [],
+    lastSequence: 0,
   };
   runs.set(runId, rec);
   touchUser(userId, runId);
-  void persistToSupabase(rec).catch(() => {});
+  flushPersist(rec);
   return rec;
 }
 
@@ -67,7 +98,7 @@ export function completeRun(
   rec.completed_at = new Date().toISOString();
   rec.iteration_count += 1;
   runs.set(runId, rec);
-  void persistToSupabase(rec).catch(() => {});
+  flushPersist(rec);
   return rec;
 }
 
@@ -87,7 +118,7 @@ export function failRun(
   rec.completed_at = new Date().toISOString();
   rec.iteration_count += 1;
   runs.set(runId, rec);
-  void persistToSupabase(rec).catch(() => {});
+  flushPersist(rec);
   return rec;
 }
 
@@ -96,8 +127,28 @@ export function saveConversation(runId: string, messages: unknown[]): boolean {
   if (!rec) return false;
   rec.messages = Array.isArray(messages) ? messages.slice(-80) : [];
   runs.set(runId, rec);
-  void persistToSupabase(rec).catch(() => {});
+  schedulePersist(rec);
   return true;
+}
+
+export function appendRunEvent(
+  runId: string,
+  type: SwarmRunEvent['type'],
+  data: Record<string, unknown>,
+): SwarmRunEvent | null {
+  const rec = runs.get(runId);
+  if (!rec) return null;
+  const event: SwarmRunEvent = {
+    sequence: rec.lastSequence + 1,
+    type,
+    data: redactOperationsValue(data) as Record<string, unknown>,
+    createdAt: new Date().toISOString(),
+  };
+  rec.lastSequence = event.sequence;
+  rec.events = [...rec.events, event].slice(-MAX_EVENTS_PER_RUN);
+  runs.set(runId, rec);
+  schedulePersist(rec);
+  return event;
 }
 
 export function getRun(runId: string): SwarmRunRecord | null {
@@ -131,6 +182,8 @@ export async function getRunAsync(runId: string): Promise<SwarmRunRecord | null>
       created_at: String(data.created_at ?? new Date().toISOString()),
       completed_at: data.completed_at ? String(data.completed_at) : null,
       iteration_count: Number(data.iteration_count ?? 0),
+      events: Array.isArray(data.events) ? (data.events as SwarmRunEvent[]) : [],
+      lastSequence: Number(data.last_sequence ?? 0),
     };
     runs.set(runId, rec);
     touchUser(rec.userId, runId);
@@ -180,6 +233,8 @@ export async function listRunsForUserAsync(userId: string, limit = 30): Promise<
         created_at: String(row.created_at ?? new Date().toISOString()),
         completed_at: row.completed_at ? String(row.completed_at) : null,
         iteration_count: Number(row.iteration_count ?? 0),
+        events: Array.isArray(row.events) ? (row.events as SwarmRunEvent[]) : [],
+        lastSequence: Number(row.last_sequence ?? 0),
       };
       runs.set(rec.id, rec);
       touchUser(userId, rec.id);
@@ -208,6 +263,8 @@ async function persistToSupabase(rec: SwarmRunRecord): Promise<void> {
         created_at: rec.created_at,
         completed_at: rec.completed_at,
         iteration_count: rec.iteration_count,
+        events: rec.events,
+        last_sequence: rec.lastSequence,
       },
       { onConflict: 'id' },
     );

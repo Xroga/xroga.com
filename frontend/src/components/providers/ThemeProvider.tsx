@@ -59,7 +59,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     body.style.backgroundPosition = '';
     body.style.removeProperty('--background');
     body.style.backgroundColor = THEME_SURFACE[core];
-    body.style.transition = 'background 400ms ease, color 400ms ease';
+    body.style.transition = '';
 
     let themeMeta = document.querySelector('meta[name="theme-color"]');
     if (!themeMeta) {

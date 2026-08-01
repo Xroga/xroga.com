@@ -188,16 +188,6 @@ export function DeleteExpandButton({ onClick, label = 'Delete' }: { onClick?: ()
   );
 }
 
-export function QuotePageLoader() {
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--background)]/90 backdrop-blur-sm">
-      <button type="button" className="xv-quote-loader" tabIndex={-1}>
-        <span>XROGA AI: Defined by what we do.</span>
-      </button>
-    </div>
-  );
-}
-
 export function SettingsTab({
   active,
   onClick,

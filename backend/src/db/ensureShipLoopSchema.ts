@@ -62,6 +62,8 @@ CREATE INDEX IF NOT EXISTS idx_swarm_run_traces_user ON public.swarm_run_traces(
 ALTER TABLE public.swarm_runs ADD COLUMN IF NOT EXISTS messages JSONB;
 ALTER TABLE public.swarm_runs ADD COLUMN IF NOT EXISTS feature_category TEXT;
 ALTER TABLE public.swarm_runs ADD COLUMN IF NOT EXISTS token_usage JSONB;
+ALTER TABLE public.swarm_runs ADD COLUMN IF NOT EXISTS events JSONB NOT NULL DEFAULT '[]'::jsonb;
+ALTER TABLE public.swarm_runs ADD COLUMN IF NOT EXISTS last_sequence BIGINT NOT NULL DEFAULT 0;
 
 ALTER TABLE public.project_memory ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.session_memory ENABLE ROW LEVEL SECURITY;

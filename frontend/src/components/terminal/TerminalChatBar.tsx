@@ -69,6 +69,18 @@ export function TerminalChatBar() {
       draftRef.current = prompt;
     }
   }, [prompt]);
+
+  // Keep the provider's durable draft current without making the entire terminal
+  // tree render on every keystroke. The provider persists this value after a short
+  // debounce, so route navigation and hard refresh both restore unsent work.
+  useEffect(() => {
+    if (draft === prompt) return;
+    const timer = window.setTimeout(() => {
+      lastExternalPrompt.current = draft;
+      setPrompt(draft);
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [draft, prompt, setPrompt]);
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const [githubOpen, setGithubOpen] = useState(false);
   const [githubConnected, setGithubConnected] = useState(false);
