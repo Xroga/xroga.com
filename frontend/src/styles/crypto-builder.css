@@ -1,18 +1,123 @@
 /**
- * Crypto Builder page.
+ * Crypto Builder — a voxel/pixel surface.
  *
- * Every colour here resolves through a semantic Xroga token, so the page follows the
- * user's selected theme. The previous version was hardcoded to `#02070d` with white
- * text, which meant selecting White or Beige left it a dark page. The atmospheric
- * glow and grid are built from `color-mix` over the accent and border tokens, so they
- * stay subtle on light surfaces instead of glowing over them.
+ * The look is Minecraft: nothing is rounded, every panel carries a two-pixel bevel
+ * (lit top-left, shadowed bottom-right) over a hard drop, chrome is set in the pixel
+ * face, and the scene behind it is built from blocks.
+ *
+ * Two rules the design is written around, both load-bearing:
+ *
+ * 1. The page follows the selected Xroga theme. `--surface-page` and `--text-primary`
+ *    still decide the page background and the heading ink, so White and Beige produce
+ *    a genuinely light page. The previous hardcoded-dark version was a real bug and
+ *    this does not reintroduce it. Instead the scene reads as an overworld at midday
+ *    on the light themes and as night on the dark ones — both are Minecraft, so the
+ *    identity survives the constraint intact rather than being watered down by it.
+ *
+ * 2. Colour carries decoration, never meaning. Ore hues are used for block art,
+ *    bevels, and glyphs; body copy and headings stay on the theme's text tokens, so
+ *    contrast is inherited rather than re-guessed per ore.
+ *
+ * Body copy is set in the mono face, not the pixel face. Press Start 2P is roughly a
+ * full em per character with no lowercase descender detail — a paragraph of it is
+ * decoration pretending to be text. The pixel face is therefore restricted to chrome
+ * and headings, which is also where it reads as strongest.
  */
 
 .xv-cb-root {
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
+  /* `clip`, not `hidden`: the header is sticky, and an ancestor with overflow:hidden
+     silently kills sticky positioning. */
+  overflow-x: clip;
   background: var(--surface-page, var(--background));
   color: var(--text-primary, var(--foreground));
+
+  /* ---- ore hues. Decoration only; never used for body text. */
+  --ore-diamond: #35d6d6;      --ore-diamond-lit: #a9f7f7;
+  --ore-gold: #e8a423;         --ore-gold-lit: #ffd97a;
+  --ore-emerald: #21b45c;      --ore-emerald-lit: #7ceda8;
+  --ore-redstone: #dc3a3a;     --ore-redstone-lit: #ff9090;
+  --ore-lapis: #2f5fd0;        --ore-lapis-lit: #8fb0ff;
+  --ore-amethyst: #8f57f2;     --ore-amethyst-lit: #ceb2ff;
+  --ore-copper: #cf6a35;       --ore-copper-lit: #ffae82;
+  --ore-netherite: #5d5260;    --ore-netherite-lit: #ab9bad;
+
+  /* Default ore, so a block without a `data-ore` still renders. */
+  --ore: var(--ore-diamond);
+  --ore-lit: var(--ore-diamond-lit);
+
+  /* ---- day palette (White and Beige). A midday overworld. */
+  --mc-sky-top: #7fc4f2;
+  --mc-sky-mid: #bfe3fb;
+  --mc-cloud: rgba(255, 255, 255, 0.95);
+  --mc-star-alpha: 0;
+  --mc-spark: rgba(232, 164, 35, 0.75);
+  --mc-grid: rgba(15, 23, 42, 0.07);
+  --mc-grid-fade: 62%;
+
+  --mc-stone: #8d939f;
+  --mc-stone-lit: #a8adb8;
+  --mc-stone-dim: #6d727d;
+  --mc-bevel-lit: rgba(255, 255, 255, 0.42);
+  --mc-bevel-dim: rgba(0, 0, 0, 0.3);
+
+  --ridge-cap: #67ad3f;
+  --ridge-body: #8d939f;
+  --ridge-far-cap: #8fc47a;
+  --ridge-far-body: #adb2bb;
+
+  /* ---- panel chrome, derived from the theme so it inverts with it. */
+  --mc-panel: var(--surface-raised, var(--card));
+  --mc-panel-solid: color-mix(in srgb, var(--surface-page, var(--background)) 82%, var(--surface-inset, transparent));
+  --mc-outline: rgba(15, 23, 42, 0.45);
+  --mc-edge-lit: rgba(255, 255, 255, 0.75);
+  --mc-edge-dim: rgba(15, 23, 42, 0.16);
+  --mc-drop: rgba(15, 23, 42, 0.22);
+  --mc-ink-drop: rgba(15, 23, 42, 0.16);
+  --mc-slot: rgba(15, 23, 42, 0.07);
 }
+
+body.theme-gray .xv-cb-root,
+body.theme-black .xv-cb-root {
+  /* ---- night palette. Same markup, torches on. */
+  --mc-sky-top: #0a1526;
+  --mc-sky-mid: #0d1a2e;
+  --mc-cloud: rgba(206, 220, 240, 0.16);
+  --mc-star-alpha: 0.85;
+  --mc-spark: rgba(255, 208, 112, 0.8);
+  --mc-grid: rgba(160, 190, 255, 0.09);
+  --mc-grid-fade: 70%;
+
+  --mc-stone: #464c58;
+  --mc-stone-lit: #596070;
+  --mc-stone-dim: #32363f;
+  --mc-bevel-lit: rgba(255, 255, 255, 0.16);
+  --mc-bevel-dim: rgba(0, 0, 0, 0.5);
+
+  --ridge-cap: #3f7a2c;
+  --ridge-body: #363c47;
+  --ridge-far-cap: #2b5620;
+  --ridge-far-body: #262a33;
+
+  --mc-outline: rgba(0, 0, 0, 0.75);
+  --mc-edge-lit: rgba(255, 255, 255, 0.14);
+  --mc-edge-dim: rgba(0, 0, 0, 0.55);
+  --mc-drop: rgba(0, 0, 0, 0.55);
+  --mc-ink-drop: rgba(0, 0, 0, 0.8);
+  --mc-slot: rgba(255, 255, 255, 0.05);
+}
+
+/* Ore selection. One rule per hue, so a block only has to name its ore. */
+.xv-cb-root [data-ore='diamond']   { --ore: var(--ore-diamond);   --ore-lit: var(--ore-diamond-lit); }
+.xv-cb-root [data-ore='gold']      { --ore: var(--ore-gold);      --ore-lit: var(--ore-gold-lit); }
+.xv-cb-root [data-ore='emerald']   { --ore: var(--ore-emerald);   --ore-lit: var(--ore-emerald-lit); }
+.xv-cb-root [data-ore='redstone']  { --ore: var(--ore-redstone);  --ore-lit: var(--ore-redstone-lit); }
+.xv-cb-root [data-ore='lapis']     { --ore: var(--ore-lapis);     --ore-lit: var(--ore-lapis-lit); }
+.xv-cb-root [data-ore='amethyst']  { --ore: var(--ore-amethyst);  --ore-lit: var(--ore-amethyst-lit); }
+.xv-cb-root [data-ore='copper']    { --ore: var(--ore-copper);    --ore-lit: var(--ore-copper-lit); }
+.xv-cb-root [data-ore='netherite'] { --ore: var(--ore-netherite); --ore-lit: var(--ore-netherite-lit); }
 
 .xv-cb-shell {
   width: 100%;
@@ -21,112 +126,246 @@
   padding: 0 1.25rem;
 }
 
-/* --------------------------------------------------------------- header */
+/* Every real surface sits above the scene. */
+.xv-cb-header,
+.xv-cb-hero,
+.xv-cb-section { position: relative; z-index: 1; }
+
+/* Nothing on this page is round. */
+.xv-cb-root :where(a, button, article, li, div, span, svg, input, textarea, p, h1, h2, h3) { border-radius: 0; }
+
+.xv-cb-root :focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* The shared bevel. Lit from the top-left, dropped onto the surface below it —
+   the same three-tone treatment every Minecraft panel uses. */
+.xv-cb-bevel,
+.xv-cb-card,
+.xv-cb-stage,
+.xv-cb-eco-card,
+.xv-cb-advancement,
+.xv-cb-disclaimer,
+.xv-cb-cta,
+.xv-cb-slot,
+.xv-cb-btn,
+.xv-cb-root .xv-cb-chip,
+.xv-cb-chat .xv-hc-prompt-shell {
+  border: 2px solid var(--mc-outline);
+  box-shadow:
+    inset 2px 2px 0 var(--mc-edge-lit),
+    inset -2px -2px 0 var(--mc-edge-dim),
+    0 4px 0 var(--mc-drop);
+}
+
+/* ------------------------------------------------------------ the voxel scene */
+
+.xv-mc-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.xv-mc-sky {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: clamp(560px, 92vh, 1000px);
+  background: linear-gradient(180deg, var(--mc-sky-top) 0%, var(--mc-sky-mid) 42%, transparent 100%);
+}
+
+/* ---- stars: present in the markup on every theme, revealed only at night. */
+.xv-mc-stars {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: clamp(560px, 92vh, 1000px);
+  opacity: var(--mc-star-alpha);
+  transition: opacity 400ms ease;
+}
+.xv-mc-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #fff;
+  animation: xv-mc-twinkle 4.5s steps(2, end) infinite;
+}
+@keyframes xv-mc-twinkle {
+  0%, 60% { opacity: 1; }
+  61%, 100% { opacity: 0.25; }
+}
+
+/* ---- clouds: flat white slabs, drifting, exactly as they are in the game. */
+.xv-mc-clouds {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: clamp(560px, 92vh, 1000px);
+  overflow: hidden;
+}
+.xv-mc-cloud-row {
+  position: absolute;
+  left: 0;
+  width: 0;
+  height: 0;
+  animation-name: xv-mc-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.xv-mc-cloud-block {
+  position: absolute;
+  top: calc(var(--y) * 1.35rem * var(--cloud-scale, 1));
+  left: calc(var(--x) * 2.4rem * var(--cloud-scale, 1));
+  width: calc(2.4rem * var(--cloud-scale, 1));
+  height: calc(1.35rem * var(--cloud-scale, 1));
+  background: var(--mc-cloud);
+}
+@keyframes xv-mc-drift {
+  from { transform: translateX(-24rem); }
+  to { transform: translateX(115vw); }
+}
+
+/* ---- the ledger grid. */
+.xv-mc-chaingrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--mc-grid) 2px, transparent 2px),
+    linear-gradient(90deg, var(--mc-grid) 2px, transparent 2px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(180deg, #000 0%, #000 30%, transparent var(--mc-grid-fade));
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 30%, transparent var(--mc-grid-fade));
+}
+
+/* ---- ore motes drifting up out of the ground. */
+.xv-mc-sparks { position: absolute; inset: 0; }
+.xv-mc-spark {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: var(--mc-spark);
+  opacity: 0;
+  animation-name: xv-mc-rise;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes xv-mc-rise {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  82% { opacity: 1; }
+  100% { transform: translateY(-260px); opacity: 0; }
+}
+
+/* ---- the horizon, drawn at the hero's own bottom edge. */
+.xv-cb-ridges {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.xv-mc-ridge {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  display: block;
+}
+.xv-mc-ridge--far {
+  height: 148px;
+  --ridge-cap: var(--ridge-far-cap);
+  --ridge-body: var(--ridge-far-body);
+  transform: translateX(-3%) scaleX(1.06);
+}
+.xv-mc-ridge--near { height: 96px; }
+
+/* --------------------------------------------------------- header, as a hotbar */
 
 .xv-cb-header {
   position: sticky;
   top: 0;
   z-index: 30;
-  border-bottom: 1px solid var(--border-subtle, var(--card-border));
-  background: color-mix(in srgb, var(--surface-page, var(--background)) 88%, transparent);
-  backdrop-filter: blur(12px);
+  border-bottom: 3px solid var(--mc-outline);
+  background: color-mix(in srgb, var(--surface-page, var(--background)) 90%, transparent);
+  backdrop-filter: blur(10px);
 }
 .xv-cb-header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  min-height: 60px;
-  padding-block: 0.5rem;
+  min-height: 62px;
+  padding-block: 0.55rem;
 }
 .xv-cb-nav {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
 }
-.xv-cb-nav > a:not(.xv-cb-btn) {
+.xv-cb-slot {
   display: none;
-  padding: 0.45rem 0.7rem;
-  border-radius: 0.6rem;
-  font-size: 0.8rem;
-  font-weight: 600;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--mc-slot);
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.55rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
   color: var(--text-secondary, var(--muted));
   text-decoration: none;
-  transition: color 160ms ease, background 160ms ease;
+  transition: color 140ms steps(2, end), background 140ms steps(2, end), transform 90ms steps(2, end);
 }
-.xv-cb-nav > a:not(.xv-cb-btn):hover {
+.xv-cb-slot:hover {
   color: var(--text-primary, var(--foreground));
-  background: var(--surface-inset, var(--card));
+  background: color-mix(in srgb, var(--ore-emerald) 18%, transparent);
 }
+.xv-cb-slot:active { transform: translateY(2px); }
+.xv-cb-slot svg { color: var(--ore-gold); }
 
-/* --------------------------------------------------------------- buttons */
+/* -------------------------------------------------------------------- buttons */
 
 .xv-cb-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
-  padding: 0.7rem 1.15rem;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  font-size: 0.83rem;
-  font-weight: 650;
+  gap: 0.5rem;
+  padding: 0.8rem 1.15rem;
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.6rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
+  transition: transform 90ms steps(2, end), filter 140ms steps(2, end), box-shadow 90ms steps(2, end);
 }
-.xv-cb-btn--sm { padding: 0.5rem 0.9rem; font-size: 0.76rem; }
+.xv-cb-btn--sm { padding: 0.6rem 0.85rem; font-size: 0.52rem; }
+
 .xv-cb-btn--primary {
-  background: var(--accent);
-  color: #fff;
+  background: var(--ore-emerald);
+  color: #04170c;
+  --mc-edge-lit: rgba(255, 255, 255, 0.55);
+  --mc-edge-dim: rgba(0, 0, 0, 0.35);
 }
-.xv-cb-btn--primary:hover { transform: translateY(-1px); filter: brightness(1.05); }
 .xv-cb-btn--ghost {
-  background: var(--surface-raised, var(--card));
-  border-color: var(--border-subtle, var(--card-border));
+  background: var(--mc-panel);
   color: var(--text-primary, var(--foreground));
 }
-.xv-cb-btn--ghost:hover { border-color: var(--border-strong, var(--card-border)); }
-.xv-cb-root :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+.xv-cb-btn:hover { filter: brightness(1.08); }
+/* The Minecraft press: the button drops onto its own shadow rather than lifting. */
+.xv-cb-btn:active {
+  transform: translateY(4px);
+  box-shadow: inset 2px 2px 0 var(--mc-edge-lit), inset -2px -2px 0 var(--mc-edge-dim);
 }
 
-/* ------------------------------------------------------------------ hero */
+/* ----------------------------------------------------------------------- hero */
 
 .xv-cb-hero {
-  position: relative;
-  overflow: hidden;
-  padding: clamp(2.75rem, 7vw, 5.5rem) 0 clamp(2.5rem, 6vw, 4.5rem);
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0 clamp(7rem, 11vw, 9.5rem);
 }
-
-/* Controlled glow: mixed against the page surface so it reads as depth on a light
-   theme rather than a bright halo. */
-.xv-cb-hero-glow {
-  position: absolute;
-  inset: -30% -10% auto -10%;
-  height: 660px;
-  pointer-events: none;
-  background:
-    radial-gradient(46% 58% at 22% 26%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%),
-    radial-gradient(40% 50% at 80% 8%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%);
-}
-
-/* Subtle grid, drawn from the border token so it never fights the background. */
-.xv-cb-grid-pattern {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--border-subtle, var(--card-border)) 60%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--border-subtle, var(--card-border)) 60%, transparent) 1px, transparent 1px);
-  background-size: 34px 34px;
-  mask-image: radial-gradient(75% 60% at 50% 30%, #000 0%, transparent 78%);
-  opacity: 0.7;
-}
-
 .xv-cb-hero-inner {
   position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -136,180 +375,308 @@
 .xv-cb-kicker {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.55rem;
   margin: 0;
-  padding: 0.35rem 0.8rem;
-  border: 1px solid var(--border-subtle, var(--card-border));
-  border-radius: 999px;
-  background: var(--surface-raised, var(--card));
-  font-size: 0.66rem;
-  font-weight: 750;
-  letter-spacing: 0.16em;
+  padding: 0.5rem 0.85rem;
+  border: 2px solid var(--mc-outline);
+  background: var(--mc-panel);
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.5rem;
+  line-height: 1;
+  letter-spacing: 0.1em;
   color: var(--text-secondary, var(--muted));
 }
-.xv-cb-kicker-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-}
+.xv-cb-kicker svg { color: var(--ore-gold); }
+
+.xv-cb-title-wrap { position: relative; }
 
 .xv-cb-h1 {
-  margin: 1.15rem 0 0;
-  max-width: 22ch;
-  font-family: var(--font-display, var(--font-heading, inherit));
-  font-size: clamp(2.1rem, 6vw, 4rem);
-  font-weight: 800;
-  line-height: 1.04;
-  letter-spacing: -0.035em;
+  margin: 1.4rem 0 0;
+  max-width: 19ch;
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: clamp(1.05rem, 3.5vw, 2.15rem);
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: 0;
+  overflow-wrap: break-word;
+  /* The classic hard offset shadow from the game's title art. */
+  text-shadow: 0.13em 0.13em 0 var(--mc-ink-drop);
   color: var(--text-primary, var(--foreground));
 }
-.xv-cb-h1 em { font-style: normal; color: var(--accent); }
+.xv-cb-h1 em {
+  font-style: normal;
+  color: var(--ore-emerald);
+}
+
+/* The yellow line off the corner of the Minecraft title screen. Anchored to the
+   title's bottom-right and kept inside the shell — rotated text overhangs its own
+   box, so `right: 0` is the safe edge, not a negative offset. */
+.xv-cb-splash {
+  position: absolute;
+  right: 0;
+  bottom: -0.6rem;
+  display: inline-block;
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: clamp(0.45rem, 1.4vw, 0.66rem);
+  line-height: 1;
+  color: var(--ore-gold);
+  text-shadow: 0.12em 0.12em 0 var(--mc-ink-drop);
+  transform-origin: center;
+  rotate: -14deg;
+  animation: xv-mc-splash 620ms ease-in-out infinite alternate;
+}
+@keyframes xv-mc-splash {
+  from { scale: 1; }
+  to { scale: 1.13; }
+}
 
 .xv-cb-lede {
-  margin: 1.1rem auto 0;
+  margin: 2.9rem auto 0;
   max-width: 62ch;
-  font-size: clamp(0.92rem, 1.6vw, 1.05rem);
-  line-height: 1.65;
+  font-family: var(--font-xv-mono, ui-monospace, monospace);
+  font-size: clamp(0.82rem, 1.5vw, 0.95rem);
+  line-height: 1.75;
   color: var(--text-secondary, var(--muted));
 }
 
-.xv-cb-chat { width: 100%; margin-top: 2rem; }
+/* ---- the drifting coin row. */
+.xv-cb-coins {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1.9rem;
+}
+.xv-cb-coin {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 2px solid var(--mc-outline);
+  background: color-mix(in srgb, var(--ore) 22%, var(--mc-panel));
+  color: var(--ore);
+  box-shadow:
+    inset 2px 2px 0 var(--mc-edge-lit),
+    inset -2px -2px 0 var(--mc-edge-dim),
+    0 4px 0 var(--mc-drop);
+  animation: xv-mc-bob 3.4s steps(6, end) infinite;
+}
+@keyframes xv-mc-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+.xv-cb-chat { width: 100%; margin-top: 2.2rem; }
 
 .xv-cb-hero-note {
-  margin: 1.5rem auto 0;
+  margin: 1.8rem auto 0;
   max-width: 60ch;
-  font-size: 0.71rem;
-  line-height: 1.6;
+  font-family: var(--font-xv-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  line-height: 1.7;
   color: var(--text-muted, var(--muted));
 }
 
-/* --------------------------------------------------------------- sections */
+/* ------------------------------------------------------------------- sections */
 
-.xv-cb-section { padding: clamp(2.5rem, 6vw, 4.5rem) 0; }
+.xv-cb-section { padding: clamp(2.75rem, 6vw, 4.75rem) 0; }
 .xv-cb-section--tint {
-  background: var(--surface-inset, var(--card));
-  border-block: 1px solid var(--border-subtle, var(--card-border));
+  background: color-mix(in srgb, var(--surface-inset, var(--card)) 70%, var(--surface-page, var(--background)));
+  border-block: 3px solid var(--mc-outline);
 }
 
 .xv-cb-eyebrow {
   margin: 0;
-  font-size: 0.66rem;
-  font-weight: 750;
-  letter-spacing: 0.16em;
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.52rem;
+  line-height: 1.6;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--ore-gold);
+  text-shadow: 0.1em 0.1em 0 var(--mc-ink-drop);
 }
 .xv-cb-h2 {
-  margin: 0.6rem 0 0;
-  font-family: var(--font-heading, inherit);
-  font-size: clamp(1.45rem, 3vw, 2.25rem);
-  font-weight: 750;
-  line-height: 1.14;
-  letter-spacing: -0.028em;
+  margin: 0.95rem 0 0;
+  max-width: 26ch;
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: clamp(0.85rem, 2.1vw, 1.35rem);
+  font-weight: 400;
+  line-height: 1.7;
+  overflow-wrap: break-word;
+  text-shadow: 0.1em 0.1em 0 var(--mc-ink-drop);
   color: var(--text-primary, var(--foreground));
 }
 .xv-cb-section-copy {
-  margin: 0.7rem 0 0;
+  margin: 1rem 0 0;
   max-width: 64ch;
-  font-size: 0.88rem;
-  line-height: 1.65;
+  font-family: var(--font-xv-mono, ui-monospace, monospace);
+  font-size: 0.82rem;
+  line-height: 1.75;
   color: var(--text-secondary, var(--muted));
 }
 
-/* ------------------------------------------------------------------ cards */
+/* ------------------------------------------------------- ore blocks (the grid) */
 
-.xv-cb-cards,
-.xv-cb-pattern-list {
-  display: grid;
-  gap: 0.85rem;
-  margin-top: 1.9rem;
-}
+.xv-cb-cards { display: grid; gap: 1rem; margin-top: 2.1rem; }
+
 .xv-cb-card {
+  position: relative;
   padding: 1.15rem;
-  border: 1px solid var(--border-subtle, var(--card-border));
-  border-radius: 0.95rem;
-  background: var(--surface-raised, var(--card));
-  transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  background: var(--mc-panel);
+  transition: transform 110ms steps(2, end), box-shadow 110ms steps(2, end);
 }
 .xv-cb-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent);
-  box-shadow: var(--shadow-elevated, 0 18px 34px -24px rgba(0, 0, 0, 0.35));
+  transform: translateY(-4px);
+  box-shadow:
+    inset 2px 2px 0 var(--mc-edge-lit),
+    inset -2px -2px 0 var(--mc-edge-dim),
+    0 8px 0 var(--mc-drop),
+    0 0 0 2px var(--ore);
 }
-.xv-cb-card-icon {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  margin-bottom: 0.8rem;
-  border-radius: 0.6rem;
-  background: color-mix(in srgb, var(--accent) 14%, transparent);
-  color: var(--accent);
-}
-.xv-cb-card-title {
-  margin: 0;
-  font-size: 0.93rem;
-  font-weight: 680;
-  letter-spacing: -0.012em;
-  color: var(--text-primary, var(--foreground));
-}
-.xv-cb-card-body {
-  margin: 0.4rem 0 0;
-  font-size: 0.8rem;
-  line-height: 1.6;
-  color: var(--text-secondary, var(--muted));
-}
-
-/* ----------------------------------------------------------------- stages */
-
-.xv-cb-stages {
-  display: grid;
-  gap: 0.85rem;
-  margin: 1.9rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-.xv-cb-stage {
-  padding: 1.15rem;
-  border: 1px solid var(--border-subtle, var(--card-border));
-  border-radius: 0.95rem;
-  background: var(--surface-raised, var(--card));
-}
-.xv-cb-stage-top {
+.xv-cb-card-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
-}
-.xv-cb-stage-top .xv-cb-card-icon { margin-bottom: 0.8rem; }
-.xv-cb-stage-num {
-  font-family: var(--font-code, ui-monospace, monospace);
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--text-muted, var(--muted));
+  margin-bottom: 1rem;
 }
 
-/* ------------------------------------------------------------- ecosystems */
+/* The block itself, with the kind's glyph stamped over the ore. */
+.xv-cb-block {
+  position: relative;
+  display: block;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+.xv-cb-block svg { display: block; }
+.xv-cb-block-glyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--ore-lit);
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.55));
+}
+/* Struck, on hover — one short pixel-stepped shake, the way a block reacts to a hit. */
+.xv-cb-card:hover .xv-cb-block { animation: xv-mc-hit 260ms steps(2, end) 1; }
+@keyframes xv-mc-hit {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 2px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, 1px); }
+  100% { transform: translate(0, 0); }
+}
+
+.xv-cb-tag {
+  padding: 0.35rem 0.5rem;
+  border: 2px solid var(--mc-outline);
+  background: color-mix(in srgb, var(--ore) 26%, transparent);
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.44rem;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--text-primary, var(--foreground));
+}
+
+.xv-cb-card-title {
+  margin: 0;
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.62rem;
+  font-weight: 400;
+  line-height: 1.75;
+  overflow-wrap: break-word;
+  color: var(--text-primary, var(--foreground));
+}
+.xv-cb-card-body {
+  margin: 0.75rem 0 0;
+  font-family: var(--font-xv-mono, ui-monospace, monospace);
+  font-size: 0.78rem;
+  line-height: 1.7;
+  color: var(--text-secondary, var(--muted));
+}
+
+/* ------------------------------------------------- the loop, as a crafting row */
+
+.xv-cb-stages {
+  display: grid;
+  gap: 1rem;
+  margin: 2.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.xv-cb-stage {
+  position: relative;
+  padding: 1.15rem;
+  background: var(--mc-panel);
+}
+.xv-cb-stage-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+/* An inventory slot: recessed rather than raised, so it reads as a socket. */
+.xv-cb-slotframe {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: 2px solid var(--mc-outline);
+  background: var(--mc-slot);
+  box-shadow: inset 2px 2px 0 var(--mc-edge-dim), inset -2px -2px 0 var(--mc-edge-lit);
+  color: var(--ore);
+}
+.xv-cb-slotframe--sm { width: 36px; height: 36px; }
+
+.xv-cb-stage-num {
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.6rem;
+  line-height: 1;
+  color: var(--ore);
+}
+
+/* The arrow between crafting inputs. Hidden until the row is actually a row. */
+.xv-cb-craft-arrow {
+  display: none;
+  position: absolute;
+  top: 2.05rem;
+  right: -1.05rem;
+  z-index: 2;
+  color: var(--ore-gold);
+  animation: xv-mc-nudge 1.5s steps(3, end) infinite;
+}
+@keyframes xv-mc-nudge {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+
+/* -------------------------------------------------- ecosystems, as an inventory */
 
 .xv-cb-disclaimer {
   display: flex;
   align-items: flex-start;
-  gap: 0.65rem;
-  margin-top: 1.4rem;
-  padding: 0.85rem 1rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border-subtle, var(--card-border)));
-  border-radius: 0.8rem;
-  background: color-mix(in srgb, var(--accent) 7%, transparent);
+  gap: 0.75rem;
+  margin-top: 1.6rem;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--ore-gold) 12%, var(--mc-panel));
   color: var(--text-secondary, var(--muted));
 }
-.xv-cb-disclaimer svg { margin-top: 0.1rem; color: var(--accent); }
-.xv-cb-disclaimer p { margin: 0; font-size: 0.78rem; line-height: 1.6; }
+.xv-cb-disclaimer svg { margin-top: 0.15rem; flex-shrink: 0; color: var(--ore-gold); }
+.xv-cb-disclaimer p {
+  margin: 0;
+  font-family: var(--font-xv-mono, ui-monospace, monospace);
+  font-size: 0.76rem;
+  line-height: 1.7;
+}
 
 .xv-cb-eco-list {
   display: grid;
-  gap: 0.85rem;
-  margin: 1.5rem 0 0;
+  gap: 1rem;
+  margin: 1.7rem 0 0;
   padding: 0;
   list-style: none;
 }
@@ -318,115 +685,199 @@
   flex-direction: column;
   height: 100%;
   padding: 1.15rem;
-  border: 1px solid var(--border-subtle, var(--card-border));
-  border-radius: 0.95rem;
-  background: var(--surface-raised, var(--card));
+  background: var(--mc-panel);
   text-decoration: none;
-  transition: transform 200ms ease, border-color 200ms ease;
+  transition: transform 110ms steps(2, end), box-shadow 110ms steps(2, end);
 }
-.xv-cb-eco-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+.xv-cb-eco-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    inset 2px 2px 0 var(--mc-edge-lit),
+    inset -2px -2px 0 var(--mc-edge-dim),
+    0 8px 0 var(--mc-drop),
+    0 0 0 2px var(--ore-emerald);
+}
+.xv-cb-eco-slot {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 0.85rem;
+  border: 2px solid var(--mc-outline);
+  background: var(--mc-slot);
+  box-shadow: inset 2px 2px 0 var(--mc-edge-dim), inset -2px -2px 0 var(--mc-edge-lit);
+  color: var(--ore-gold);
+}
 .xv-cb-eco-role {
-  font-size: 0.62rem;
-  font-weight: 750;
-  letter-spacing: 0.09em;
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.42rem;
+  line-height: 1.7;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--ore-emerald);
 }
 .xv-cb-eco-name {
-  margin-top: 0.4rem;
-  font-size: 1rem;
-  font-weight: 720;
-  letter-spacing: -0.015em;
+  margin-top: 0.6rem;
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.7rem;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+  text-shadow: 0.1em 0.1em 0 var(--mc-ink-drop);
   color: var(--text-primary, var(--foreground));
 }
 .xv-cb-eco-note {
-  margin-top: 0.4rem;
-  font-size: 0.78rem;
-  line-height: 1.6;
+  margin-top: 0.65rem;
+  font-family: var(--font-xv-mono, ui-monospace, monospace);
+  font-size: 0.76rem;
+  line-height: 1.7;
   color: var(--text-secondary, var(--muted));
 }
 .xv-cb-eco-cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.45rem;
   margin-top: auto;
-  padding-top: 0.9rem;
-  font-size: 0.74rem;
-  font-weight: 680;
-  color: var(--accent);
+  padding-top: 1rem;
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.46rem;
+  line-height: 1.6;
+  color: var(--ore-emerald);
 }
+.xv-cb-eco-card:hover .xv-cb-eco-cta svg { transform: translateX(3px); }
+.xv-cb-eco-cta svg { transition: transform 110ms steps(2, end); }
 
 .xv-cb-fineprint {
-  margin: 1.4rem 0 0;
+  margin: 1.6rem 0 0;
   max-width: 78ch;
-  font-size: 0.71rem;
-  line-height: 1.65;
+  font-family: var(--font-xv-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  line-height: 1.75;
   color: var(--text-muted, var(--muted));
 }
 
-/* -------------------------------------------------------------------- cta */
+/* ------------------------------------------------- patterns, as advancement plaques */
+
+.xv-cb-pattern-list { display: grid; gap: 1rem; margin-top: 2.1rem; }
+
+.xv-cb-advancement {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1.15rem;
+  background: var(--mc-panel);
+  transition: transform 110ms steps(2, end), box-shadow 110ms steps(2, end);
+}
+.xv-cb-advancement:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    inset 2px 2px 0 var(--mc-edge-lit),
+    inset -2px -2px 0 var(--mc-edge-dim),
+    0 8px 0 var(--mc-drop),
+    0 0 0 2px var(--ore);
+}
+
+/* ------------------------------------------------------------ cta, as a portal */
 
 .xv-cb-cta {
   display: grid;
-  gap: 1.4rem;
-  padding: clamp(1.4rem, 3vw, 2.2rem);
-  border: 1px solid var(--border-subtle, var(--card-border));
-  border-radius: 1.2rem;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 65%),
-    var(--surface-raised, var(--card));
+  gap: 1.5rem;
+  padding: clamp(1.4rem, 3vw, 2.3rem);
+  background: var(--mc-panel);
 }
-.xv-cb-cta-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.xv-cb-cta-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 
-/* ------------------------------------------------------------- responsive */
+.xv-cb-portal {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 112px;
+  border: 3px solid var(--mc-outline);
+  background:
+    repeating-linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--ore-amethyst) 92%, #000) 0 6px,
+      color-mix(in srgb, var(--ore-amethyst) 55%, #000) 6px 12px
+    );
+  background-size: 100% 24px;
+  box-shadow:
+    inset 0 0 0 3px color-mix(in srgb, var(--ore-amethyst) 40%, #000),
+    0 4px 0 var(--mc-drop);
+  animation: xv-mc-portal 2.4s steps(4, end) infinite;
+}
+@keyframes xv-mc-portal {
+  from { background-position: 0 0; }
+  to { background-position: 0 24px; }
+}
+.xv-cb-portal-core {
+  display: grid;
+  place-items: center;
+  color: #fff;
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.7));
+  animation: xv-mc-bob 3s steps(6, end) infinite;
+}
 
-@media (min-width: 640px) {
+/* ----------------------------------------------------------------- responsive */
+
+@media (min-width: 560px) {
   .xv-cb-cards { grid-template-columns: repeat(2, 1fr); }
   .xv-cb-pattern-list { grid-template-columns: repeat(2, 1fr); }
   .xv-cb-stages { grid-template-columns: repeat(2, 1fr); }
   .xv-cb-eco-list { grid-template-columns: repeat(2, 1fr); }
 }
 @media (min-width: 900px) {
-  .xv-cb-nav > a:not(.xv-cb-btn) { display: inline-flex; }
+  .xv-cb-slot { display: inline-flex; }
   .xv-cb-cards { grid-template-columns: repeat(4, 1fr); }
   .xv-cb-stages { grid-template-columns: repeat(4, 1fr); }
   .xv-cb-eco-list { grid-template-columns: repeat(3, 1fr); }
-  .xv-cb-cta { grid-template-columns: 1fr auto; align-items: center; }
-  .xv-cb-cta-actions { justify-content: flex-end; }
+  /* Only now is the loop a single row, so only now does an arrow between the
+     stages point at the next one. */
+  .xv-cb-craft-arrow { display: block; }
+  .xv-cb-cta {
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 2rem;
+  }
+  .xv-cb-cta-actions { flex-direction: column; align-items: stretch; }
 }
+
+/* ------------------------------------------------------------ reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
   .xv-cb-root *,
   .xv-cb-root *::before,
-  .xv-cb-root *::after {
+  .xv-cb-root *::after,
+  .xv-mc-backdrop * {
+    animation: none !important;
     transition-duration: 0.001ms !important;
-    animation-duration: 0.001ms !important;
   }
   .xv-cb-card:hover,
   .xv-cb-eco-card:hover,
-  .xv-cb-btn--primary:hover { transform: none; }
+  .xv-cb-advancement:hover,
+  .xv-cb-btn:active { transform: none; }
+  /* The splash is animated by scale; without it the resting size must still read. */
+  .xv-cb-splash { scale: 1.06; }
 }
 
-/* -------------------------------------------------- the prompt bar, themed
+/* ------------------------------------------------ the prompt bar, as a console
    The shared prompt bar's styles live in homepage-coding.css scoped under
    `.xv-home-coding`, which hardcodes a dark surface and light ink. Adding that
-   wrapper here would undo the theming, so the bar gets its own token-driven
-   rules scoped to this page instead. The markup and submission flow are the
-   same component — only the surface differs. */
+   wrapper here would undo the theming, so the bar gets its own token-driven rules
+   scoped to this page instead. The markup and submission flow are the same
+   component — only the surface differs. */
 
 .xv-cb-chat .xv-hc-prompt { width: 100%; max-width: 40rem; margin-inline: auto; }
 
 .xv-cb-chat .xv-hc-prompt-shell {
-  padding: 0.9rem 0.9rem 0.75rem;
-  border: 1px solid var(--border-subtle, var(--card-border));
-  border-radius: 1.25rem;
-  background: var(--surface-raised, var(--card));
-  box-shadow: var(--shadow-elevated, 0 18px 44px -28px rgba(0, 0, 0, 0.4));
-  transition: border-color 200ms ease, box-shadow 200ms ease;
+  padding: 1rem 1rem 0.85rem;
+  background: var(--mc-panel);
+  transition: box-shadow 140ms steps(2, end);
 }
 .xv-cb-chat .xv-hc-prompt-shell.is-focused {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  box-shadow:
+    inset 2px 2px 0 var(--mc-edge-lit),
+    inset -2px -2px 0 var(--mc-edge-dim),
+    0 4px 0 var(--mc-drop),
+    0 0 0 3px var(--ore-emerald);
 }
 .xv-cb-chat .xv-hc-prompt-shell.is-sending { opacity: 0.85; }
 
@@ -442,26 +893,27 @@
   resize: none;
   background: transparent;
   color: var(--text-primary, var(--foreground));
-  font-family: var(--font-chat-input, inherit);
-  font-size: 0.92rem;
-  line-height: 1.55;
+  font-family: var(--font-xv-mono, ui-monospace, monospace);
+  font-size: 0.88rem;
+  line-height: 1.6;
 }
 
-/* The typewriter sits behind the empty input as a placeholder. */
 .xv-cb-chat .xv-hc-prompt-typewriter {
   position: absolute;
   inset: 0;
   pointer-events: none;
   color: var(--text-muted, var(--muted));
-  font-size: 0.92rem;
-  line-height: 1.55;
+  font-family: var(--font-xv-mono, ui-monospace, monospace);
+  font-size: 0.88rem;
+  line-height: 1.6;
 }
+/* A block caret, not a hairline — it belongs to the same grid as everything else. */
 .xv-cb-chat .xv-hc-prompt-caret {
   display: inline-block;
-  width: 1px;
+  width: 0.5em;
   height: 1em;
-  margin-left: 1px;
-  background: var(--accent);
+  margin-left: 2px;
+  background: var(--ore-emerald);
   vertical-align: text-bottom;
   animation: xv-cb-caret 1s steps(2, start) infinite;
 }
@@ -471,54 +923,97 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-top: 0.7rem;
-  padding-top: 0.7rem;
-  border-top: 1px solid var(--border-subtle, var(--card-border));
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 2px solid var(--mc-outline);
 }
 .xv-cb-chat .xv-hc-prompt-integrations {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.55rem;
   min-width: 0;
   overflow: hidden;
 }
 .xv-cb-chat .xv-hc-prompt-integration {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  font-size: 0.68rem;
-  font-weight: 600;
+  gap: 0.35rem;
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.44rem;
+  line-height: 1;
   white-space: nowrap;
   color: var(--text-secondary, var(--muted));
 }
 .xv-cb-chat .xv-hc-prompt-integration-logo { opacity: 0.85; }
 .xv-cb-chat .xv-hc-prompt-integration-sep {
-  width: 1px;
-  height: 0.7rem;
-  background: var(--border-subtle, var(--card-border));
+  width: 2px;
+  height: 0.75rem;
+  background: var(--mc-outline);
 }
 
-/* Send button */
+/* Send button — a square block, not a pill. */
 .xv-cb-chat .xv-go-btn {
   position: relative;
   display: grid;
   place-items: center;
-  width: 2.6rem;
-  height: 2.6rem;
+  width: 2.9rem;
+  height: 2.9rem;
   margin-left: auto;
-  border: 0;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
+  flex-shrink: 0;
+  border: 2px solid var(--mc-outline);
+  background: var(--ore-emerald);
+  color: #04170c;
   cursor: pointer;
-  transition: transform 160ms ease, filter 160ms ease;
+  box-shadow:
+    inset 2px 2px 0 rgba(255, 255, 255, 0.5),
+    inset -2px -2px 0 rgba(0, 0, 0, 0.35),
+    0 4px 0 var(--mc-drop);
+  transition: transform 90ms steps(2, end), filter 140ms steps(2, end), box-shadow 90ms steps(2, end);
 }
-.xv-cb-chat .xv-go-btn:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.07); }
-.xv-cb-chat .xv-go-btn:disabled { opacity: 0.6; cursor: progress; transform: none; }
+.xv-cb-chat .xv-go-btn:hover:not(:disabled) { filter: brightness(1.1); }
+.xv-cb-chat .xv-go-btn:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.5), inset -2px -2px 0 rgba(0, 0, 0, 0.35);
+}
+.xv-cb-chat .xv-go-btn:disabled { opacity: 0.6; cursor: progress; }
 .xv-cb-chat .xv-go-btn__liquid { display: none; }
 .xv-cb-chat .xv-go-btn__icon { display: grid; place-items: center; }
 
+/* Suggestion chips, as hotbar items. The base rules live in homepage-coding.css;
+   these override them inside this page only. */
+.xv-cb-root .xv-cb-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.xv-cb-root .xv-cb-chip {
+  padding: 0.6rem 0.75rem;
+  background: var(--mc-panel);
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  font-size: 0.46rem;
+  line-height: 1.6;
+  color: var(--text-secondary, var(--muted));
+  cursor: pointer;
+  transition: transform 90ms steps(2, end), color 140ms steps(2, end), box-shadow 90ms steps(2, end);
+}
+.xv-cb-root .xv-cb-chip:hover:not(:disabled) {
+  color: var(--text-primary, var(--foreground));
+  box-shadow:
+    inset 2px 2px 0 var(--mc-edge-lit),
+    inset -2px -2px 0 var(--mc-edge-dim),
+    0 4px 0 var(--mc-drop),
+    0 0 0 2px var(--ore-gold);
+}
+.xv-cb-root .xv-cb-chip:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: inset 2px 2px 0 var(--mc-edge-lit), inset -2px -2px 0 var(--mc-edge-dim);
+}
+.xv-cb-root .xv-cb-chip:disabled { opacity: 0.5; cursor: not-allowed; }
+
 @media (prefers-reduced-motion: reduce) {
   .xv-cb-chat .xv-hc-prompt-caret { animation: none; }
-  .xv-cb-chat .xv-go-btn:hover:not(:disabled) { transform: none; }
 }
