@@ -72,6 +72,7 @@ import {
 import {
   addPendingBuildJob,
   attachPendingBuildRun,
+  reconcilePendingBuildTranscript,
   removePendingBuildJob,
   updatePendingBuildSequence,
 } from '@/lib/pendingBuildJobs';
@@ -383,7 +384,15 @@ export function TerminalChatProvider({
   queueRef.current = promptQueue;
 
   useBackgroundBuildJobs(
-    ({ assistantMessageId, output }) => {
+    ({ assistantMessageId, userMessageId, userPrompt, startedAt, output }) => {
+      setMessages((messages) =>
+        reconcilePendingBuildTranscript(messages, {
+          assistantMessageId,
+          userMessageId,
+          userPrompt,
+          startedAt,
+        }),
+      );
       activeRunIdRef.current = null;
       setHeavyLoading(false);
       setHeavyBuildActive(false);
@@ -400,7 +409,15 @@ export function TerminalChatProvider({
         )
       );
     },
-    (assistantMessageId, error) => {
+    ({ assistantMessageId, userMessageId, userPrompt, startedAt, error }) => {
+      setMessages((messages) =>
+        reconcilePendingBuildTranscript(messages, {
+          assistantMessageId,
+          userMessageId,
+          userPrompt,
+          startedAt,
+        }),
+      );
       activeRunIdRef.current = null;
       setHeavyLoading(false);
       setHeavyBuildActive(false);
@@ -417,7 +434,15 @@ export function TerminalChatProvider({
         )
       );
     },
-    ({ assistantMessageId, runId, status, events }) => {
+    ({ assistantMessageId, userMessageId, userPrompt, startedAt, runId, status, events }) => {
+      setMessages((messages) =>
+        reconcilePendingBuildTranscript(messages, {
+          assistantMessageId,
+          userMessageId,
+          userPrompt,
+          startedAt,
+        }),
+      );
       activeRunIdRef.current = runId;
       if (status === 'running') {
         setHeavyLoading(true);
