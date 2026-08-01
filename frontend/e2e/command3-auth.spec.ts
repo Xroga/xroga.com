@@ -295,6 +295,20 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   for (const removedChip of ['Website', 'Chatbot', 'SaaS', 'Mobile', 'Extension', 'Desktop']) {
     await expect(canonicalComposer.getByRole('button', { name: removedChip, exact: true })).toHaveCount(0);
   }
+  // The compact composer must be the deployed implementation, not merely a source
+  // change: no legacy toolbar row, one actions trigger, and the real menu + launch
+  // control rendered inside the authenticated Workspace.
+  await expect(canonicalComposer.locator('.xv-chatbar-toolbar')).toHaveCount(0);
+  const composerActions = canonicalComposer.getByRole('button', { name: 'More composer actions' });
+  await expect(composerActions).toBeVisible();
+  await composerActions.click();
+  const actionsMenu = canonicalComposer.getByRole('dialog', { name: 'Composer actions' });
+  await expect(actionsMenu.getByRole('button', { name: /Add files or photos/ })).toBeVisible();
+  await expect(actionsMenu.getByRole('button', { name: 'Slash commands' })).toBeVisible();
+  await expect(actionsMenu.getByRole('button', { name: /Connectors/ })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(actionsMenu).toHaveCount(0);
+  await expect(canonicalComposer.getByRole('button', { name: 'Launch' })).toBeVisible();
   // Smoky opens usage on click. The old control panel — voice toggles, status
   // readout, dictation, feed control — stays removed, and so does its speech
   // synthesis. Companion preferences live in Settings → Companion, exercised later.
@@ -338,7 +352,10 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   }
 
   await page.goto('/dashboard/operations');
-  await expect(page.getByText(`command3-demo-owner-${run}`)).toBeVisible();
+  // A freshly deployed API can need more than Playwright's 5-second assertion
+  // default to warm its authenticated portfolio query. Wait for the durable product
+  // result; the assertion still fails if the API never returns it.
+  await expect(page.getByText(`command3-demo-owner-${run}`)).toBeVisible({ timeout: 20_000 });
   expect(browserBearer).toMatch(/^Bearer /);
   const allowed = await fetch(`${backendUrl}/api/operations/products/${ownerProjectId}`, { headers: { Authorization: browserBearer } });
   const denied = await fetch(`${backendUrl}/api/operations/products/${outsiderProjectId}`, { headers: { Authorization: browserBearer } });
