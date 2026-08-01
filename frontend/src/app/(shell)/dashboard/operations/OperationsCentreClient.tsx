@@ -27,19 +27,26 @@ type ProductDetail = {
   jobs: Row[]; webhooks: Row[]; maintenance: Row[];
 };
 
-const PORTFOLIO_ATTEMPT_TIMEOUT_MS = 7_000;
+const PORTFOLIO_ATTEMPT_TIMEOUTS_MS = [7_000, 7_000, 10_000] as const;
+
+function retryablePortfolioError(cause: unknown): boolean {
+  return cause instanceof ApiError
+    && (cause.status === 0 || cause.status === 408 || cause.status === 429 || cause.status >= 500);
+}
 
 async function fetchPortfolio(path: string, externalSignal?: AbortSignal): Promise<{ products: Product[] }> {
-  for (let attempt = 0; attempt < 2; attempt += 1) {
+  for (let attempt = 0; attempt < PORTFOLIO_ATTEMPT_TIMEOUTS_MS.length; attempt += 1) {
     const controller = new AbortController();
     const abortForNavigation = () => controller.abort();
     externalSignal?.addEventListener('abort', abortForNavigation, { once: true });
-    const timeout = window.setTimeout(() => controller.abort(), PORTFOLIO_ATTEMPT_TIMEOUT_MS);
+    const timeout = window.setTimeout(() => controller.abort(), PORTFOLIO_ATTEMPT_TIMEOUTS_MS[attempt]);
     try {
       return await apiFetch<{ products: Product[] }>(path, { signal: controller.signal });
     } catch (cause) {
       if (externalSignal?.aborted) throw cause;
-      if (!(cause instanceof ApiError) || cause.status !== 0 || attempt === 1) throw cause;
+      if (!retryablePortfolioError(cause) || attempt === PORTFOLIO_ATTEMPT_TIMEOUTS_MS.length - 1) {
+        throw cause;
+      }
     } finally {
       window.clearTimeout(timeout);
       externalSignal?.removeEventListener('abort', abortForNavigation);

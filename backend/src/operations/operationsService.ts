@@ -107,7 +107,14 @@ export class OperationsService {
       queryOrThrow(this.db.from('operations_resources').select('*').in('project_id', ids), 'Operational resources unavailable'),
       queryOrThrow(this.db.from('production_incidents').select('id,project_id,status').in('project_id', ids).not('status', 'in', '(resolved,closed,cancelled)'), 'Incident state unavailable'),
       queryOrThrow(this.db.from('operations_alerts').select('id,project_id,status').in('project_id', ids).in('status', ['active','acknowledged']), 'Alert state unavailable'),
-      queryOrThrow(this.db.from('operations_action_approvals').select('id,action_id,decision,operations_actions!inner(project_id)').eq('decision', 'pending'), 'Approval state unavailable'),
+      queryOrThrow(
+        this.db
+          .from('operations_action_approvals')
+          .select('id,action_id,decision,operations_actions!inner(project_id)')
+          .eq('decision', 'pending')
+          .in('operations_actions.project_id', ids),
+        'Approval state unavailable',
+      ),
       queryOrThrow(this.db.from('deployment_status').select('id,project_id,verification_state,status,created_at').in('project_id', ids).order('created_at', { ascending: false }), 'Deployment state unavailable'),
     ]);
 
