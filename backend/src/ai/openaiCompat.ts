@@ -35,6 +35,16 @@ interface ResolvedEndpoint {
   defaultHeaders?: Record<string, string>;
 }
 
+export function requireNonEmptyModelText(text: string, modelId: ModelId): string {
+  const normalized = text.trim();
+  if (normalized) return normalized;
+  const error = new Error(`${modelId} returned an empty completion`) as Error & {
+    code?: string;
+  };
+  error.code = 'EMPTY_PROVIDER_RESPONSE';
+  throw error;
+}
+
 const MODEL_ID_ENV: Record<ModelId, string> = {
   kimi_k3: 'KIMI_MODEL_ID',
   glm_5_2: 'GLM_MODEL_ID',
@@ -157,7 +167,7 @@ export async function chatCompletion(
       opts.signal ? { signal: opts.signal } : undefined,
     );
     const choice = completion.choices[0]?.message;
-    const text = (choice?.content ?? '').trim();
+    const text = requireNonEmptyModelText(choice?.content ?? '', modelId);
     const inputTokens =
       completion.usage?.prompt_tokens ??
       messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
@@ -234,7 +244,7 @@ export async function chatCompletionStream(
       }
     }
 
-    text = text.trim();
+    text = requireNonEmptyModelText(text, modelId);
     if (!outputTokens) outputTokens = estimateTokens(text);
 
     recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });

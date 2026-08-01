@@ -65,6 +65,16 @@ ALTER TABLE public.swarm_runs ADD COLUMN IF NOT EXISTS token_usage JSONB;
 ALTER TABLE public.swarm_runs ADD COLUMN IF NOT EXISTS events JSONB NOT NULL DEFAULT '[]'::jsonb;
 ALTER TABLE public.swarm_runs ADD COLUMN IF NOT EXISTS last_sequence BIGINT NOT NULL DEFAULT 0;
 
+-- The legacy schema used planning/building/completed/failed while the durable
+-- runtime uses running/complete/error/cancelled. Keep both for old evidence.
+ALTER TABLE public.swarm_runs DROP CONSTRAINT IF EXISTS swarm_runs_status_check;
+ALTER TABLE public.swarm_runs ADD CONSTRAINT swarm_runs_status_check CHECK (
+  status IN (
+    'pending', 'planning', 'building', 'reviewing', 'testing', 'verifying',
+    'completed', 'failed', 'running', 'complete', 'error', 'cancelled'
+  )
+);
+
 ALTER TABLE public.project_memory ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.session_memory ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.swarm_run_traces ENABLE ROW LEVEL SECURITY;
