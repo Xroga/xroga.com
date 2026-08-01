@@ -14,6 +14,7 @@ import {
   getRun,
   getRunAsync,
   appendRunEvent,
+  persistRunState,
   listRunsForUser,
   listRunsForUserAsync,
   saveConversation,
@@ -186,6 +187,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
         }).catch(() => {});
       }
     }
+    await persistRunState(runId);
     if (streamConnected && !res.writableEnded) {
       sendSSE(res, {
         event: 'complete',
@@ -213,6 +215,9 @@ router.post('/execute', async (req: AuthRequest, res) => {
             ? 'BUILD_CANCELLED'
             : 'BUILD_FAILED';
     failRun(runId, e.message || 'Build failed', code === 'BUILD_CANCELLED' ? 'cancelled' : 'error');
+    await persistRunState(runId).catch((persistError) => {
+      console.warn('[swarm] failed-run persistence:', (persistError as Error).message);
+    });
     if (clientMeta?.assistantMessageId && code !== 'BUILD_CANCELLED') {
       void notifyBuildFailed(userId, {
         projectName: 'Xroga project',

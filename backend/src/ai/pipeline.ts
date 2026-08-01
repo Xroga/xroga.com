@@ -45,7 +45,7 @@ import {
   type ProjectFile,
 } from './patches.js';
 import { reviewBuildOutput } from './qa.js';
-import { completeRun, createRun } from './runStore.js';
+import { completeRun, createRunDurable } from './runStore.js';
 import {
   UPDATE_HYDRATE_PATHS,
   fetchBuildFilesFromGitHub,
@@ -747,7 +747,7 @@ export async function runBuildPipeline(opts: {
     : undefined;
   const userFacingPrompt = (meta?.userPrompt || opts.prompt).trim();
 
-  createRun(opts.userId, userFacingPrompt, runId);
+  await createRunDurable(opts.userId, userFacingPrompt, runId);
   await assertHasQuota(opts.userId);
   throwIfAborted();
 

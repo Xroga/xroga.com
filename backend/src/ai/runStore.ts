@@ -61,7 +61,7 @@ function touchUser(userId: string, runId: string) {
   }
 }
 
-export function createRun(userId: string, prompt: string, runId: string): SwarmRunRecord {
+function createRunHot(userId: string, prompt: string, runId: string): SwarmRunRecord {
   const rec: SwarmRunRecord = {
     id: runId,
     userId,
@@ -76,7 +76,23 @@ export function createRun(userId: string, prompt: string, runId: string): SwarmR
   };
   runs.set(runId, rec);
   touchUser(userId, runId);
+  return rec;
+}
+
+export function createRun(userId: string, prompt: string, runId: string): SwarmRunRecord {
+  const rec = createRunHot(userId, prompt, runId);
   flushPersist(rec);
+  return rec;
+}
+
+/** Persist the recovery record before an expensive provider call begins. */
+export async function createRunDurable(
+  userId: string,
+  prompt: string,
+  runId: string,
+): Promise<SwarmRunRecord> {
+  const rec = createRunHot(userId, prompt, runId);
+  await persistToSupabase(rec);
   return rec;
 }
 
@@ -245,30 +261,35 @@ export async function listRunsForUserAsync(userId: string, limit = 30): Promise<
   }
 }
 
+export async function persistRunState(runId: string): Promise<void> {
+  const rec = runs.get(runId);
+  if (!rec) throw new Error('Cannot persist an unknown swarm run');
+  await persistToSupabase(rec);
+}
+
 async function persistToSupabase(rec: SwarmRunRecord): Promise<void> {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
-  try {
-    await ensureShipLoopSchema();
-    const supabase = getSupabaseAdmin();
-    await supabase.from('swarm_runs').upsert(
-      {
-        id: rec.id,
-        user_id: rec.userId,
-        prompt: rec.prompt,
-        status: rec.status,
-        output: rec.output,
-        feature_category: rec.featureCategory ?? null,
-        token_usage: rec.tokenUsage ?? null,
-        messages: rec.messages ?? null,
-        created_at: rec.created_at,
-        completed_at: rec.completed_at,
-        iteration_count: rec.iteration_count,
-        events: rec.events,
-        last_sequence: rec.lastSequence,
-      },
-      { onConflict: 'id' },
-    );
-  } catch (err) {
-    console.warn('[runStore] persist failed:', (err as Error).message);
+  await ensureShipLoopSchema();
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase.from('swarm_runs').upsert(
+    {
+      id: rec.id,
+      user_id: rec.userId,
+      prompt: rec.prompt,
+      status: rec.status,
+      output: rec.output,
+      feature_category: rec.featureCategory ?? null,
+      token_usage: rec.tokenUsage ?? null,
+      messages: rec.messages ?? null,
+      created_at: rec.created_at,
+      completed_at: rec.completed_at,
+      iteration_count: rec.iteration_count,
+      events: rec.events,
+      last_sequence: rec.lastSequence,
+    },
+    { onConflict: 'id' },
+  );
+  if (error) {
+    throw new Error(`Platform swarm-run write failed: ${error.message}`);
   }
 }
