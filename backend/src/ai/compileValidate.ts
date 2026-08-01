@@ -26,7 +26,10 @@ export interface CompileValidateResult {
 
 const MAX_FILES = 80;
 const MAX_FILE_BYTES = 200_000;
-const INSTALL_MS = 90_000;
+// Cold Fly machines frequently need more than 90 seconds to download a real
+// framework dependency tree. Keep the validation bounded, but do not turn a
+// normal cold install into a false code failure.
+const INSTALL_MS = 180_000;
 const TSC_MS = 60_000;
 const BUILD_MS = 180_000;
 
@@ -45,6 +48,17 @@ export function productionValidationAllowsDeployment(result: CompileValidateResu
   if (result.skipped) return result.ok;
   if (!result.ok || result.installOk !== true || result.tscOk !== true) return false;
   return result.buildCommand ? result.buildOk === true && result.buildExitCode === 0 : true;
+}
+
+/**
+ * Returns true only when changing generated source can reasonably repair the
+ * validation failure. Infrastructure-only failures must not spend another
+ * model call pretending a source edit can repair the package registry/network.
+ */
+export function validationFailureNeedsCodeRepair(result: CompileValidateResult): boolean {
+  if (result.ok || result.skipped) return false;
+  if (!result.issues.length) return true;
+  return !result.issues.every((issue) => /npm install timed out/i.test(issue));
 }
 
 function runCmd(
