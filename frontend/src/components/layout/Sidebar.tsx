@@ -5,7 +5,10 @@ import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
+  ChevronDown,
+  Compass,
   LayoutDashboard,
+  MessageSquarePlus,
   Link2,
   Settings,
   Menu,
@@ -16,7 +19,6 @@ import {
   MessageCirclePlus,
   Terminal,
   Rocket,
-  Gauge,
   Activity,
   TrendingUp,
   FolderGit2,
@@ -44,8 +46,41 @@ import { useHydrated } from '@/hooks/useHydrated';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
 import { AnimatedNavIcon } from './AnimatedNavIcon';
+import { SidebarNavScroller } from './SidebarNavScroller';
 
-const navItems = [
+/**
+ * The sidebar nav, as a mix of links and groups.
+ *
+ * Twelve flat rows outgrew the column: the list scrolled on a laptop, which is what
+ * put a scrollbar in the middle of the chrome and pushed half the destinations out
+ * of sight. Related destinations are grouped now, so the resting list is short and
+ * nothing is buried more than one click deep.
+ *
+ * Plan & Usage is deliberately absent — it lives on the Dashboard, next to the
+ * billing and activity it belongs with, rather than being a nav row of its own.
+ */
+type NavLink = {
+  href: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  tip: string;
+};
+
+type NavGroup = {
+  id: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  tip: string;
+  children: NavLink[];
+};
+
+type NavEntry = NavLink | NavGroup;
+
+function isGroup(entry: NavEntry): entry is NavGroup {
+  return 'children' in entry;
+}
+
+const navItems: NavEntry[] = [
   {
     href: '/workspace',
     label: 'Workspace',
@@ -56,25 +91,13 @@ const navItems = [
     href: '/dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
-    tip: 'Recent activity, billing, and plan overview.',
-  },
-  {
-    href: '/community',
-    label: 'Community',
-    icon: MessageCirclePlus,
-    tip: 'Share feedback, report bugs, request features, and help other Xroga builders.',
+    tip: 'Recent activity, billing, plan, and usage.',
   },
   {
     href: '/crypto-builder',
     label: 'Crypto Builder',
     icon: Bitcoin,
     tip: 'Build crypto agents, Web3 apps, DeFi and DAO tools, on-chain monitoring, and hackathon projects.',
-  },
-  {
-    href: '/showcase',
-    label: 'Showcase',
-    icon: LayoutTemplate,
-    tip: 'Reusable Xroga templates — preview a complete product, then customise it into your own project.',
   },
   {
     href: '/dashboard/projects',
@@ -89,28 +112,56 @@ const navItems = [
     tip: 'Connect GitHub, Slack, databases, and tools.',
   },
   {
-    href: '/dashboard/operations',
-    label: 'Operations',
-    icon: Activity,
-    tip: 'Inspect real product health, releases, incidents, approvals, and operational evidence.',
-  },
-  {
-    href: '/dashboard/growth',
-    label: 'Growth',
-    icon: TrendingUp,
-    tip: 'Evidence-backed activation, recommendations, campaigns, messaging, referrals, experiments, and attribution.',
-  },
-  {
-    href: '/dashboard/publish',
-    label: 'Publish',
+    id: 'launch',
+    label: 'Launch & Growth',
     icon: Rocket,
-    tip: 'Ship web (Vercel), Chrome extension, desktop installers, or mobile (Expo) on your accounts.',
+    tip: 'Operations, growth, and publishing.',
+    children: [
+      {
+        href: '/dashboard/operations',
+        label: 'Operations',
+        icon: Activity,
+        tip: 'Inspect real product health, releases, incidents, approvals, and operational evidence.',
+      },
+      {
+        href: '/dashboard/growth',
+        label: 'Growth',
+        icon: TrendingUp,
+        tip: 'Evidence-backed activation, recommendations, campaigns, messaging, referrals, experiments, and attribution.',
+      },
+      {
+        href: '/dashboard/publish',
+        label: 'Publish',
+        icon: Rocket,
+        tip: 'Ship web (Vercel), Chrome extension, desktop installers, or mobile (Expo) on your accounts.',
+      },
+    ],
   },
   {
-    href: '/settings?tab=plan',
-    label: 'Plan & Usage',
-    icon: Gauge,
-    tip: 'See capacity percentages, pacing, cycle dates, and billing state.',
+    id: 'explore',
+    label: 'Explore',
+    icon: Compass,
+    tip: 'Showcase templates, the community, and feedback.',
+    children: [
+      {
+        href: '/showcase',
+        label: 'Showcase',
+        icon: LayoutTemplate,
+        tip: 'Reusable Xroga templates — preview a complete product, then customise it into your own project.',
+      },
+      {
+        href: '/community',
+        label: 'Community',
+        icon: MessageCirclePlus,
+        tip: 'Share feedback, report bugs, request features, and help other Xroga builders.',
+      },
+      {
+        href: '/community?compose=feedback',
+        label: 'Share Feedback',
+        icon: MessageSquarePlus,
+        tip: 'Tell us what is working and what is not.',
+      },
+    ],
   },
   {
     href: '/settings',
@@ -137,6 +188,9 @@ export function Sidebar({ displayName }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
+  /* Must sit with the other hooks: this component returns early for the collapsed
+     case, and a hook declared past that point runs conditionally. */
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const navScrollRef = useRef<HTMLDivElement>(null);
   const profileRowRef = useRef<HTMLDivElement>(null);
   const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
@@ -220,6 +274,9 @@ export function Sidebar({ displayName }: SidebarProps) {
     );
   }
 
+  const toggleGroup = (id: string) =>
+    setOpenGroups((current) => ({ ...current, [id]: !(current[id] ?? false) }));
+
   const isActive = (href: string) => {
     if (href === '/workspace') return pathname === '/workspace';
     if (href === '/dashboard') return pathname === '/dashboard' || pathname === '/dashboard/';
@@ -229,6 +286,12 @@ export function Sidebar({ displayName }: SidebarProps) {
     if (path === '/settings') return searchParams.get('tab') !== 'plan';
     return true;
   };
+
+  const groupHasActive = (group: NavGroup) => group.children.some((c) => isActive(c.href));
+  /* A group holding the current route opens by default — otherwise the user lands on
+     a page whose own nav entry is hidden inside a collapsed row. An explicit toggle
+     always wins over that default. */
+  const isGroupOpen = (group: NavGroup) => openGroups[group.id] ?? groupHasActive(group);
 
   function handleNavClick() {
     closeMobile();
@@ -359,35 +422,84 @@ export function Sidebar({ displayName }: SidebarProps) {
         </div>
       </div>
 
-      <nav ref={navScrollRef} className="flex-1 p-2 overflow-y-auto overflow-x-hidden min-h-0">
-        {navExpanded ? (
-          <div className="xv-sidebar-menu">
-            {navItems.map(({ href, label, icon: Icon, tip }) => (
-              <SidebarTip key={href} label={label} description={tip}>
-                <Link href={href} onClick={handleNavClick} className={cn(isActive(href) && 'xv-active')}>
-                  <AnimatedNavIcon Icon={Icon} className="shrink-0" />
-                  <span>{label}</span>
-                </Link>
-              </SidebarTip>
-            ))}
-          </div>
-        ) : (
-          <div className="xv-sidebar-collapsed-nav space-y-1">
-            {navItems.map(({ href, label, icon: Icon, tip }) => (
-              <SidebarTip key={href} label={label} description={tip}>
-                <Link
-                  href={href}
-                  onClick={handleNavClick}
-                  className={cn('xv-sidebar-icon-link', isActive(href) && 'xv-active')}
-                >
-                  <AnimatedNavIcon Icon={Icon} className="shrink-0" />
-                </Link>
-              </SidebarTip>
-            ))}
-          </div>
-        )}
-        <SidebarProjectHistory expanded={navExpanded} />
-      </nav>
+      <SidebarNavScroller targetRef={navScrollRef} className="flex-1 min-h-0">
+        <nav
+          ref={navScrollRef}
+          className="xv-sidebar-nav-scroll h-full p-2 overflow-y-auto overflow-x-hidden min-h-0"
+        >
+          {navExpanded ? (
+            <div className="xv-sidebar-menu">
+              {navItems.map((entry) =>
+                isGroup(entry) ? (
+                  <div key={entry.id} className="xv-nav-group">
+                    <button
+                      type="button"
+                      onClick={() => toggleGroup(entry.id)}
+                      className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')}
+                      aria-expanded={isGroupOpen(entry)}
+                      title={entry.tip}
+                    >
+                      <AnimatedNavIcon Icon={entry.icon} className="shrink-0" />
+                      <span>{entry.label}</span>
+                      <ChevronDown
+                        className={cn('xv-nav-group__chev h-3.5 w-3.5', isGroupOpen(entry) && 'is-open')}
+                        aria-hidden="true"
+                      />
+                    </button>
+                    {isGroupOpen(entry) && (
+                      <div className="xv-nav-group__items">
+                        {entry.children.map((child) => (
+                          <SidebarTip key={child.href} label={child.label} description={child.tip}>
+                            <Link
+                              href={child.href}
+                              onClick={handleNavClick}
+                              className={cn(isActive(child.href) && 'xv-active')}
+                            >
+                              <AnimatedNavIcon Icon={child.icon} className="shrink-0" />
+                              <span>{child.label}</span>
+                            </Link>
+                          </SidebarTip>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <SidebarTip key={entry.href} label={entry.label} description={entry.tip}>
+                    <Link
+                      href={entry.href}
+                      onClick={handleNavClick}
+                      className={cn(isActive(entry.href) && 'xv-active')}
+                    >
+                      <AnimatedNavIcon Icon={entry.icon} className="shrink-0" />
+                      <span>{entry.label}</span>
+                    </Link>
+                  </SidebarTip>
+                ),
+              )}
+            </div>
+          ) : (
+            /* Collapsed to icons there is no room for a disclosure, so groups flatten
+               back into their children — every destination stays one click away
+               rather than becoming unreachable. */
+            <div className="xv-sidebar-collapsed-nav space-y-1">
+              {navItems
+                .flatMap((entry) => (isGroup(entry) ? entry.children : [entry]))
+                .map(({ href, label, icon: Icon, tip }) => (
+                  <SidebarTip key={href} label={label} description={tip}>
+                    <Link
+                      href={href}
+                      onClick={handleNavClick}
+                      className={cn('xv-sidebar-icon-link', isActive(href) && 'xv-active')}
+                    >
+                      <AnimatedNavIcon Icon={Icon} className="shrink-0" />
+                    </Link>
+                  </SidebarTip>
+                ))}
+            </div>
+          )}
+          <SidebarProjectHistory expanded={navExpanded} />
+        </nav>
+      </SidebarNavScroller>
 
       {bottomSection}
       {sidebarOpen && (

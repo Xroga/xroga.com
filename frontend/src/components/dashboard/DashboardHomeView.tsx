@@ -107,7 +107,14 @@ export function DashboardHomeView() {
         </Link>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      {/* Plan & Usage. Given a heading and an anchor because it is no longer reachable
+          from a sidebar row of its own — capacity and billing already lived here, so
+          the nav entry was a second door to the same place rather than the only one. */}
+      <section id="plan-usage" aria-labelledby="dash-plan-usage" className="space-y-3 scroll-mt-24">
+        <h2 id="dash-plan-usage" className="text-sm font-semibold text-[var(--foreground)]">
+          Plan &amp; Usage
+        </h2>
+        <div className="grid gap-4 md:grid-cols-2">
         <WidgetCard title="AI Capacity" icon={Gauge}>
           <PercentBar label="Capacity remaining" value={entitlement.capacityRemainingPercent} />
           <PercentBar label="Available now" value={entitlement.availableNowPercent} />
@@ -128,7 +135,8 @@ export function DashboardHomeView() {
           )}
           <Link href="/pricing" className="inline-flex px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--card-border)] hover:border-[var(--accent)]/40">View plan</Link>
         </WidgetCard>
-      </div>
+        </div>
+      </section>
 
       <WidgetCard title="Recent Activity" icon={Activity}>
         <ul className="grid gap-2.5 md:grid-cols-2">
