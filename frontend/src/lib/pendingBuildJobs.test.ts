@@ -4,6 +4,7 @@ import {
   addPendingBuildJob,
   attachPendingBuildRun,
   loadPendingBuildJobs,
+  reconcilePendingBuildTranscript,
   updatePendingBuildSequence,
 } from './pendingBuildJobs';
 
@@ -40,4 +41,34 @@ test('pending build recovery never moves its replay cursor backwards', () => {
     runId: 'run-1',
     lastSequence: 7,
   });
+});
+
+test('pending build recovery restores a factual transcript after an early refresh', () => {
+  const recovered = reconcilePendingBuildTranscript([], {
+    assistantMessageId: 'assistant-1',
+    userMessageId: 'user-1',
+    userPrompt: 'Build a DeFi dashboard',
+    startedAt: 10,
+  });
+
+  assert.deepEqual(recovered, [
+    {
+      id: 'user-1',
+      role: 'user',
+      content: 'Build a DeFi dashboard',
+      createdAt: 10,
+    },
+    {
+      id: 'assistant-1',
+      role: 'assistant',
+      content: '',
+      createdAt: 11,
+    },
+  ]);
+  assert.equal(reconcilePendingBuildTranscript(recovered, {
+    assistantMessageId: 'assistant-1',
+    userMessageId: 'user-1',
+    userPrompt: 'Build a DeFi dashboard',
+    startedAt: 10,
+  }), recovered);
 });

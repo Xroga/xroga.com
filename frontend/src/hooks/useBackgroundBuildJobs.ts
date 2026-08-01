@@ -6,27 +6,33 @@ import {
   loadPendingBuildJobs,
   removePendingBuildJob,
   updatePendingBuildSequence,
+  type PendingBuildJob,
 } from '@/lib/pendingBuildJobs';
 import { showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
 import { useAppStore } from '@/store/useAppStore';
 
-type BuildCompleteHandler = (params: {
-  assistantMessageId: string;
+type BuildJobIdentity = Pick<
+  PendingBuildJob,
+  'assistantMessageId' | 'userMessageId' | 'userPrompt' | 'startedAt'
+>;
+
+type BuildCompleteHandler = (params: BuildJobIdentity & {
   output: Record<string, unknown>;
 }) => void;
 
-type BuildRecoveryHandler = (params: {
-  assistantMessageId: string;
+type BuildRecoveryHandler = (params: BuildJobIdentity & {
   runId: string;
   status: string;
   events: NonNullable<Awaited<ReturnType<typeof api.swarm.getRun>>['events']>;
 }) => void;
 
+type BuildFailedHandler = (params: BuildJobIdentity & { error: string }) => void;
+
 const POLL_MS = 8000;
 
 export function useBackgroundBuildJobs(
   onBuildComplete?: BuildCompleteHandler,
-  onBuildFailed?: (assistantMessageId: string, error: string) => void,
+  onBuildFailed?: BuildFailedHandler,
   onBuildRecovered?: BuildRecoveryHandler,
 ) {
   const setUnreadCount = useAppStore((s) => s.setUnreadCount);
@@ -63,6 +69,12 @@ export function useBackgroundBuildJobs(
 
       const legacyJobs: typeof pending = [];
       for (const job of pending) {
+        const identity: BuildJobIdentity = {
+          assistantMessageId: job.assistantMessageId,
+          userMessageId: job.userMessageId,
+          userPrompt: job.userPrompt,
+          startedAt: job.startedAt,
+        };
         if (!job.runId) {
           legacyJobs.push(job);
           continue;
@@ -72,7 +84,7 @@ export function useBackgroundBuildJobs(
           const events = run.events ?? [];
           if (events.length) {
             recoveredRef.current?.({
-              assistantMessageId: job.assistantMessageId,
+              ...identity,
               runId: job.runId,
               status: run.status,
               events,
@@ -83,7 +95,7 @@ export function useBackgroundBuildJobs(
             );
           } else if (run.status === 'running') {
             recoveredRef.current?.({
-              assistantMessageId: job.assistantMessageId,
+              ...identity,
               runId: job.runId,
               status: run.status,
               events: [],
@@ -97,7 +109,7 @@ export function useBackgroundBuildJobs(
               tag: `build-${job.runId}`,
             });
             completeRef.current?.({
-              assistantMessageId: job.assistantMessageId,
+              ...identity,
               output: (run.output && typeof run.output === 'object'
                 ? run.output
                 : { type: 'landing_page' }) as Record<string, unknown>,
@@ -105,10 +117,13 @@ export function useBackgroundBuildJobs(
           } else if (run.status === 'error' || run.status === 'cancelled') {
             removePendingBuildJob(job.assistantMessageId);
             const output = run.output as { error?: string } | null;
-            failedRef.current?.(
-              job.assistantMessageId,
-              run.status === 'cancelled' ? 'Build stopped.' : output?.error ?? 'Build failed.'
-            );
+            failedRef.current?.({
+              ...identity,
+              error:
+                run.status === 'cancelled'
+                  ? 'Build stopped.'
+                  : output?.error ?? 'Build failed.',
+            });
           }
         } catch {
           // A transient status-read failure is not a build failure. Keep the durable
@@ -139,6 +154,9 @@ export function useBackgroundBuildJobs(
           });
           completeRef.current?.({
             assistantMessageId: job.assistantMessageId,
+            userMessageId: job.userMessageId,
+            userPrompt: job.userPrompt,
+            startedAt: job.startedAt,
             output: {
               type: 'landing_page',
               projectName: meta?.projectName,
@@ -155,7 +173,13 @@ export function useBackgroundBuildJobs(
             body: match.message,
             tag: `build-fail-${job.assistantMessageId}`,
           });
-          failedRef.current?.(job.assistantMessageId, match.message);
+          failedRef.current?.({
+            assistantMessageId: job.assistantMessageId,
+            userMessageId: job.userMessageId,
+            userPrompt: job.userPrompt,
+            startedAt: job.startedAt,
+            error: match.message,
+          });
         }
       }
     }
