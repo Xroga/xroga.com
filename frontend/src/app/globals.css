@@ -6620,3 +6620,81 @@ body.theme-gray .xv-rp-loader {
 @media (prefers-reduced-motion: reduce) {
   .xv-ws-fold__chev { transition: none; }
 }
+
+/* ---------------------------------------------------------------------------
+   Sidebar nav groups and scroll arrows.
+
+   The nav outgrew the column at twelve flat rows, which put a native scrollbar —
+   full-height track plus stepper arrows on some platforms — through the middle of
+   the chrome. The track is suppressed here and replaced by two buttons that appear
+   only when there is somewhere to scroll.
+   --------------------------------------------------------------------------- */
+
+.xv-nav-scroller { position: relative; display: flex; flex-direction: column; min-height: 0; }
+
+.xv-sidebar-nav-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+.xv-sidebar-nav-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+.xv-nav-arrow {
+  position: absolute;
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 18px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  background: color-mix(in srgb, var(--surface-raised, var(--card)) 94%, transparent);
+  backdrop-filter: blur(8px);
+  color: var(--text-secondary, var(--muted));
+  transition: opacity 160ms ease, color 160ms ease;
+}
+.xv-nav-arrow:hover { color: var(--text-primary, var(--foreground)); }
+.xv-nav-arrow--up { top: 2px; }
+.xv-nav-arrow--down { bottom: 2px; }
+/* Hidden at its own end of the range, so a visible arrow always does something. */
+.xv-nav-arrow.is-hidden { opacity: 0; pointer-events: none; }
+
+.xv-nav-group { display: flex; flex-direction: column; }
+.xv-nav-group__trigger {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 7px 12px;
+  border-radius: var(--radius-md, 0.6rem);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-align: left;
+  color: var(--text-secondary, var(--muted));
+  transition: background 140ms ease, color 140ms ease;
+}
+.xv-nav-group__trigger:hover {
+  color: var(--text-primary, var(--foreground));
+  background: var(--surface-inset, rgba(127, 127, 127, 0.08));
+}
+.xv-nav-group__trigger.xv-active { color: var(--text-primary, var(--foreground)); }
+.xv-nav-group__trigger > span { flex: 1; min-width: 0; }
+.xv-nav-group__chev {
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: transform 160ms ease;
+}
+.xv-nav-group__chev.is-open { transform: rotate(180deg); }
+
+/* Children are indented and share a rail, so the grouping is legible without
+   relying on the disclosure arrow alone. */
+.xv-nav-group__items {
+  display: flex;
+  flex-direction: column;
+  margin: 2px 0 2px 20px;
+  padding-left: 8px;
+  border-left: 1px solid var(--border-subtle, var(--card-border));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-nav-group__chev, .xv-nav-arrow { transition: none; }
+}
