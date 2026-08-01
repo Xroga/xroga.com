@@ -13,6 +13,7 @@ import {
   Smile,
 } from 'lucide-react';
 import { CompanionRenderer } from './CompanionRenderer';
+import { persistCompanionPreferencesNow } from './CompanionProvider';
 import {
   COMPANION_MOODS,
   companionEnergy,
@@ -53,7 +54,19 @@ export function CompanionCustomizer() {
   const state = useCompanionStore();
   const energy = companionEnergy(state);
   const [group, setGroup] = useState<GroupId>('identity');
+  const [nameSaveState, setNameSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const selectedCostume = COSTUMES.find((c) => c.id === state.costume) ?? COSTUMES[0];
+
+  const saveCompanionName = async (value: string) => {
+    state.updatePreferences({ name: validateCompanionName(value) });
+    setNameSaveState('saving');
+    try {
+      await persistCompanionPreferencesNow();
+      setNameSaveState('saved');
+    } catch {
+      setNameSaveState('error');
+    }
+  };
 
   return (
     <section aria-labelledby="companion-settings-title" className="space-y-5">
@@ -105,11 +118,19 @@ export function CompanionCustomizer() {
                   id="companion-name"
                   value={state.name}
                   maxLength={24}
-                  onChange={(event) => state.updatePreferences({ name: event.target.value })}
-                  onBlur={(event) => state.updatePreferences({ name: validateCompanionName(event.target.value) })}
+                  onChange={(event) => {
+                    state.updatePreferences({ name: event.target.value });
+                    setNameSaveState('idle');
+                  }}
+                  onBlur={(event) => void saveCompanionName(event.target.value)}
                   className="mt-1.5 w-full rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-3 py-2 text-sm text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
                 />
-                <p className="mt-1.5 text-xs text-[var(--text-muted)]">1–24 characters. Saved to your authenticated profile.</p>
+                <p className="mt-1.5 text-xs text-[var(--text-muted)]">
+                  1–24 characters. Saved to your authenticated profile.
+                  {nameSaveState === 'saving' && <span role="status"> Saving…</span>}
+                  {nameSaveState === 'saved' && <span role="status"> Saved.</span>}
+                  {nameSaveState === 'error' && <span role="alert"> Could not save. Try again.</span>}
+                </p>
               </div>
             )}
 
