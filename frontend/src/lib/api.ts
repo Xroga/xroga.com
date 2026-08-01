@@ -460,7 +460,9 @@ export const api = {
   profile: {
     get: () => apiFetch<Profile>('/api/profile'),
     update: (body: Partial<Profile>) =>
-      apiFetch<Profile>('/api/profile', { method: 'PATCH', body: JSON.stringify(body) }),
+      // Profile payloads are small and may be triggered by debounced settings.
+      // Keep an already-started save alive when the user reloads or navigates.
+      apiFetch<Profile>('/api/profile', { method: 'PATCH', body: JSON.stringify(body), keepalive: true }),
     activity: () => apiFetch<ActivityLog[]>('/api/profile/activity'),
     /** Permanently deletes the authenticated Supabase user (cascades to profile/projects). */
     deleteAccount: () =>
