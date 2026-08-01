@@ -1,0 +1,324 @@
+/**
+ * The shared capability page (/ai-coding-agent, /ai-app-builder, /ai-website-builder,
+ * /build-saas-with-ai, /github-ai-coding-agent, /vercel-ai-deployment).
+ *
+ * Every colour resolves through the page's semantic tokens (`--surface-page`,
+ * `--text-primary`, …), so the page follows the selected Xroga theme instead of
+ * being pinned dark. `--cap-accent` is the one hue that varies per page — set from
+ * `data-accent` below — and it is used for decoration only: glows, icon fills,
+ * borders. Body copy and headings stay on the theme's own ink tokens.
+ */
+
+.xv-cap-root {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--surface-page, var(--background));
+  color: var(--text-primary, var(--foreground));
+
+  --cap-accent: #006aff;
+  --cap-accent-lit: #5fa8ff;
+}
+.xv-cap-root[data-accent='blue']    { --cap-accent: #006aff; --cap-accent-lit: #5fa8ff; }
+.xv-cap-root[data-accent='violet']  { --cap-accent: #8b5cf6; --cap-accent-lit: #c4b1ff; }
+.xv-cap-root[data-accent='cyan']    { --cap-accent: #0891b2; --cap-accent-lit: #67e8f9; }
+.xv-cap-root[data-accent='emerald'] { --cap-accent: #16a34a; --cap-accent-lit: #86efac; }
+.xv-cap-root[data-accent='amber']   { --cap-accent: #b45309; --cap-accent-lit: #fcd34d; }
+.xv-cap-root[data-accent='rose']    { --cap-accent: #e11d48; --cap-accent-lit: #fda4af; }
+
+.xv-cap-shell { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 1.25rem; }
+.xv-cap-root :where(section, header) { position: relative; z-index: 1; }
+.xv-cap-root :focus-visible { outline: 2px solid var(--cap-accent); outline-offset: 3px; }
+
+/* --------------------------------------------------------------------- backdrop */
+
+.xv-cap-backdrop { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.xv-cap-backdrop__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--border-subtle, var(--card-border)) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--border-subtle, var(--card-border)) 55%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(60% 45% at 50% 0%, #000 0%, transparent 75%);
+  opacity: 0.6;
+}
+.xv-cap-backdrop__glow {
+  position: absolute;
+  width: 640px;
+  height: 640px;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.22;
+}
+.xv-cap-backdrop__glow--a { top: -220px; right: -160px; background: var(--cap-accent); }
+.xv-cap-backdrop__glow--b { top: 260px; left: -220px; background: var(--cap-accent-lit); opacity: 0.14; }
+
+/* ------------------------------------------------------------------------ header */
+
+.xv-cap-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid var(--border-subtle, var(--card-border));
+  background: color-mix(in srgb, var(--surface-page, var(--background)) 88%, transparent);
+  backdrop-filter: blur(12px);
+}
+.xv-cap-header__inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 58px; padding-block: 0.5rem; }
+.xv-cap-nav { display: flex; align-items: center; gap: 0.4rem; }
+.xv-cap-nav > a:not(.xv-cap-btn) {
+  display: none;
+  padding: 0.45rem 0.7rem;
+  border-radius: 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary, var(--muted));
+  text-decoration: none;
+  transition: color 160ms ease, background 160ms ease;
+}
+.xv-cap-nav > a:not(.xv-cap-btn):hover { color: var(--text-primary, var(--foreground)); background: var(--surface-inset, var(--card)); }
+@media (min-width: 720px) { .xv-cap-nav > a:not(.xv-cap-btn) { display: inline-flex; } }
+
+/* ------------------------------------------------------------------------ buttons */
+
+.xv-cap-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.2rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 160ms ease, filter 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+.xv-cap-btn--sm { padding: 0.5rem 0.9rem; font-size: 0.78rem; }
+.xv-cap-btn--primary { background: var(--cap-accent); color: #fff; }
+.xv-cap-btn--primary:hover { transform: translateY(-1px); filter: brightness(1.08); }
+.xv-cap-btn--ghost { background: var(--surface-raised, var(--card)); border-color: var(--border-subtle, var(--card-border)); color: var(--text-primary, var(--foreground)); }
+.xv-cap-btn--ghost:hover { border-color: var(--cap-accent); }
+
+/* --------------------------------------------------------------------------- hero */
+
+.xv-cap-hero { padding: clamp(2.5rem, 6vw, 4.5rem) 0 clamp(2rem, 5vw, 3.5rem); }
+.xv-cap-hero__grid { display: grid; gap: 2.5rem; align-items: center; }
+@media (min-width: 960px) { .xv-cap-hero__grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 3rem; } }
+
+.xv-cap-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  border-radius: 999px;
+  background: var(--surface-raised, var(--card));
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cap-accent);
+}
+.xv-cap-h1 {
+  margin: 1.2rem 0 0;
+  max-width: 20ch;
+  font-family: var(--font-display, var(--font-heading, inherit));
+  font-size: clamp(2rem, 4.6vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--text-primary, var(--foreground));
+  /* A subtle kinetic gradient sweep across the headline — CSS only, no JS. */
+  background: linear-gradient(
+    100deg,
+    var(--text-primary, var(--foreground)) 30%,
+    var(--cap-accent) 46%,
+    var(--text-primary, var(--foreground)) 62%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: xv-cap-headline-sweep 7s ease-in-out infinite;
+}
+@keyframes xv-cap-headline-sweep {
+  0%, 100% { background-position: 0% 0; }
+  50% { background-position: 100% 0; }
+}
+.xv-cap-lede { margin: 1.1rem 0 0; max-width: 56ch; font-size: clamp(0.92rem, 1.4vw, 1.02rem); line-height: 1.65; color: var(--text-secondary, var(--muted)); }
+.xv-cap-lede--tight { max-width: 46ch; }
+.xv-cap-cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+
+/* ------------------------------------------------------------ hero card (the "3D") */
+
+.xv-cap-hero-stage { perspective: 1400px; display: flex; justify-content: center; }
+.xv-cap-hero-card {
+  --xv-tilt-x: 0deg;
+  --xv-tilt-y: 6deg;
+  position: relative;
+  width: min(100%, 400px);
+  aspect-ratio: 4 / 3;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--xv-tilt-x)) rotateY(var(--xv-tilt-y));
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.xv-cap-hero-card__glow {
+  position: absolute;
+  inset: -10%;
+  border-radius: 1.5rem;
+  background: radial-gradient(circle at var(--xv-glow-x, 70%) var(--xv-glow-y, 30%), color-mix(in srgb, var(--cap-accent) 35%, transparent), transparent 60%);
+  filter: blur(20px);
+  transform: translateZ(-40px);
+}
+.xv-cap-hero-card__layer {
+  position: absolute;
+  inset: 0;
+  border-radius: 1.25rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  background: var(--surface-raised, var(--card));
+}
+.xv-cap-hero-card__layer--back { transform: translateZ(-36px) translate(14px, 18px) rotate(-3deg); opacity: 0.5; }
+.xv-cap-hero-card__layer--mid { transform: translateZ(-18px) translate(7px, 9px) rotate(-1.5deg); opacity: 0.75; }
+
+.xv-cap-hero-card__face {
+  position: relative;
+  transform: translateZ(0);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem 1.1rem 1.1rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  background: var(--surface-raised, var(--card));
+  box-shadow: var(--shadow-elevated, 0 30px 60px -30px rgba(0, 0, 0, 0.4));
+}
+.xv-cap-hero-card__titlebar { display: flex; align-items: center; gap: 0.35rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-subtle, var(--card-border)); color: var(--text-muted, var(--muted)); }
+.xv-cap-hero-card__titlebar span { width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong, var(--card-border)); }
+.xv-cap-hero-card__row { display: flex; align-items: center; gap: 0.6rem; color: var(--text-secondary, var(--muted)); }
+.xv-cap-hero-card__line { display: block; height: 8px; border-radius: 999px; background: var(--surface-inset, color-mix(in srgb, var(--text-primary, var(--foreground)) 8%, transparent)); }
+.xv-cap-hero-card__line--full { width: 78%; }
+.xv-cap-hero-card__line--long { width: 62%; }
+.xv-cap-hero-card__line--mid { width: 48%; }
+.xv-cap-hero-card__line--short { width: 34%; }
+.xv-cap-hero-card__dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.xv-cap-hero-card__dot--pending { background: var(--cap-accent); animation: xv-cap-pulse-dot 1.6s ease-in-out infinite; }
+@keyframes xv-cap-pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.xv-cap-hero-card__ok { color: #22c55e; }
+.xv-cap-hero-card__footer { margin-top: auto; display: flex; gap: 0.5rem; padding-top: 0.6rem; border-top: 1px solid var(--border-subtle, var(--card-border)); }
+.xv-cap-hero-card__pill { padding: 0.25rem 0.55rem; border-radius: 999px; font-size: 0.62rem; font-weight: 700; background: var(--surface-inset, transparent); color: var(--text-secondary, var(--muted)); }
+.xv-cap-hero-card__pill--ok { background: color-mix(in srgb, #22c55e 18%, transparent); color: #16a34a; }
+
+/* --------------------------------------------------------------------- sections */
+
+.xv-cap-section { padding: clamp(2.75rem, 6vw, 4.5rem) 0; }
+.xv-cap-section--tint { background: color-mix(in srgb, var(--surface-inset, var(--card)) 65%, var(--surface-page, var(--background))); border-block: 1px solid var(--border-subtle, var(--card-border)); }
+.xv-cap-h2 { margin: 0; max-width: 30ch; font-family: var(--font-heading, inherit); font-size: clamp(1.4rem, 2.8vw, 2rem); font-weight: 750; line-height: 1.18; letter-spacing: -0.02em; color: var(--text-primary, var(--foreground)); }
+
+/* ------------------------------------------------------------------------ bento */
+
+.xv-cap-bento { display: grid; gap: 0.9rem; margin-top: 1.9rem; }
+@media (min-width: 640px) { .xv-cap-bento { grid-template-columns: repeat(2, 1fr); } }
+/* First and last items span both columns on wide screens, so a 4-item grid reads as
+   an actual bento composition rather than four identical tiles in a row. */
+@media (min-width: 640px) {
+  .xv-cap-bento-item:first-child,
+  .xv-cap-bento-item:nth-child(4) { grid-column: span 2; }
+}
+
+.xv-cap-card {
+  display: flex;
+  gap: 0.85rem;
+  height: 100%;
+  padding: 1.25rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  border-radius: 1.1rem;
+  background: var(--surface-raised, var(--card));
+  transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+.xv-cap-card:hover { transform: translateY(-3px); border-color: var(--cap-accent); box-shadow: var(--shadow-elevated, 0 18px 34px -24px rgba(0, 0, 0, 0.35)); }
+.xv-cap-card__icon { flex-shrink: 0; width: 20px; height: 20px; margin-top: 0.15rem; color: var(--cap-accent); }
+.xv-cap-card__title { margin: 0; font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; color: var(--text-primary, var(--foreground)); }
+.xv-cap-card__text { margin: 0; font-size: 0.88rem; line-height: 1.65; color: var(--text-secondary, var(--muted)); }
+
+/* --------------------------------------------------------------------- timeline */
+
+.xv-cap-timeline { position: relative; display: grid; gap: 1.6rem; margin: 2.2rem 0 0; padding: 0; list-style: none; }
+@media (min-width: 860px) {
+  .xv-cap-timeline { grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+  /* The connecting line, drawn once behind the row rather than per-item. */
+  .xv-cap-timeline::before {
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: calc(100% / 6);
+    right: calc(100% / 6);
+    height: 2px;
+    background: linear-gradient(90deg, var(--cap-accent), color-mix(in srgb, var(--cap-accent) 30%, transparent));
+    opacity: 0.4;
+    z-index: 0;
+  }
+}
+.xv-cap-timeline__item { position: relative; z-index: 1; display: flex; gap: 1rem; }
+@media (min-width: 860px) { .xv-cap-timeline__item { flex-direction: column; } }
+.xv-cap-timeline__node {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--cap-accent);
+  background: var(--surface-page, var(--background));
+  color: var(--cap-accent);
+}
+.xv-cap-timeline__body { min-width: 0; }
+.xv-cap-timeline__num { display: block; font-family: var(--font-code, ui-monospace, monospace); font-size: 0.7rem; font-weight: 700; color: var(--text-muted, var(--muted)); margin-bottom: 0.35rem; }
+
+/* -------------------------------------------------------------------------- limits */
+
+.xv-cap-limits {
+  display: flex;
+  gap: 0.9rem;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid color-mix(in srgb, #f59e0b 32%, var(--border-subtle, var(--card-border)));
+  border-radius: 1.1rem;
+  background: color-mix(in srgb, #f59e0b 8%, var(--surface-raised, var(--card)));
+}
+.xv-cap-limits__icon { flex-shrink: 0; width: 20px; height: 20px; margin-top: 0.2rem; color: #b45309; }
+.xv-cap-limits__title { margin: 0; font-size: 0.95rem; font-weight: 750; color: var(--text-primary, var(--foreground)); }
+.xv-cap-limits__body { margin: 0.5rem 0 0; font-size: 0.86rem; line-height: 1.65; color: var(--text-secondary, var(--muted)); }
+
+.xv-cap-links { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.6rem; }
+.xv-cap-links a { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; font-weight: 700; color: var(--cap-accent); text-decoration: none; }
+.xv-cap-links a:hover { text-decoration: underline; }
+
+/* ------------------------------------------------------------------------- final cta */
+
+.xv-cap-final-cta {
+  display: grid;
+  gap: 1.5rem;
+  align-items: center;
+  padding: clamp(1.6rem, 3vw, 2.4rem);
+  border: 1px solid var(--border-subtle, var(--card-border));
+  border-radius: 1.3rem;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--cap-accent) 12%, transparent), transparent 65%), var(--surface-raised, var(--card));
+}
+@media (min-width: 780px) { .xv-cap-final-cta { grid-template-columns: 1fr auto; } }
+
+/* --------------------------------------------------------------------- scroll reveal */
+
+.xv-cap-reveal { opacity: 0; transform: translateY(18px); transition: opacity 560ms ease, transform 560ms ease; }
+.xv-cap-reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-cap-root *, .xv-cap-root *::before, .xv-cap-root *::after { animation: none !important; }
+  .xv-cap-reveal { opacity: 1; transform: none; transition: none; }
+  .xv-cap-hero-card { transition: none; }
+  .xv-cap-h1 { animation: none; background-position: 0 0; }
+  .xv-cap-card:hover { transform: none; }
+}
