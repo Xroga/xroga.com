@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { createClient } from '@/lib/supabase/client';
+import type { Session } from '@supabase/supabase-js';
 import {
   swarmOutputToText,
   type SwarmCompleteEvent,
@@ -274,10 +275,27 @@ export class ApiError extends Error {
   }
 }
 
+let cachedAccessToken: string | null = null;
+let cachedAccessTokenExpiresAt = 0;
+let authCacheListenerStarted = false;
+
+function updateAccessTokenCache(session: Session | null): void {
+  cachedAccessToken = session?.access_token ?? null;
+  cachedAccessTokenExpiresAt = session?.expires_at ? session.expires_at * 1_000 : 0;
+}
+
 export async function getAccessToken(): Promise<string | null> {
   const supabase = createClient();
+  if (!authCacheListenerStarted) {
+    authCacheListenerStarted = true;
+    supabase.auth.onAuthStateChange((_event, session) => updateAccessTokenCache(session));
+  }
+  if (cachedAccessToken && cachedAccessTokenExpiresAt > Date.now() + 30_000) {
+    return cachedAccessToken;
+  }
   const { data: { session } } = await supabase.auth.getSession();
-  return session?.access_token ?? null;
+  updateAccessTokenCache(session);
+  return cachedAccessToken;
 }
 
 /** Read any chat attachment as a data URL (works offline when media upload is retired). */
@@ -336,8 +354,10 @@ export async function apiFetch<T = unknown>(
   } catch (err) {
     const raw = (err as Error).message || 'Failed to fetch';
     throw new ApiError(
-      /failed to fetch|networkerror|load failed/i.test(raw)
-        ? 'Cannot reach the Xroga API. Check your connection and try again.'
+      /abort/i.test(raw)
+        ? 'The Xroga API request timed out. Try again.'
+        : /failed to fetch|networkerror|load failed/i.test(raw)
+          ? 'Cannot reach the Xroga API. Check your connection and try again.'
         : raw,
       0,
       { code: 'NETWORK_ERROR' }
@@ -348,6 +368,8 @@ export async function apiFetch<T = unknown>(
   if (!res.ok) {
     const message = typeof data.error === 'string' ? data.error : 'API request failed';
     if (res.status === 401) {
+      cachedAccessToken = null;
+      cachedAccessTokenExpiresAt = 0;
       throw new ApiError(
         message.includes('token') || message.includes('authorization')
           ? message
