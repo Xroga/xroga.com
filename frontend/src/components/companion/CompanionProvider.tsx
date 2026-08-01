@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from 'react';
 import type { CompanionPreferences, CompanionRuntimeEvent } from '@/lib/companion';
-import { api, ApiError, type Profile } from '@/lib/api';
+import { api, ApiError, getAccessToken, type Profile } from '@/lib/api';
 import { createClient } from '@/lib/supabase/client';
 import {
   companionPreferencesFromUnknown,
@@ -11,24 +11,49 @@ import {
 } from '@/store/useCompanionStore';
 
 const PROFILE_SAVE_DELAY_MS = 900;
+const PROFILE_SAVE_TIMEOUT_MS = 5_000;
+const PROFILE_SAVE_MAX_ATTEMPTS = 3;
+let companionSaveQueue: Promise<void> = Promise.resolve();
+
+function isRetryableProfileSaveError(cause: unknown): boolean {
+  return cause instanceof ApiError
+    && (cause.status === 0 || cause.status === 408 || cause.status === 429 || cause.status >= 500);
+}
+
+async function persistCompanionSnapshot(body: Partial<Profile>, accessToken: string): Promise<void> {
+  for (let attempt = 0; attempt < PROFILE_SAVE_MAX_ATTEMPTS; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), PROFILE_SAVE_TIMEOUT_MS);
+    try {
+      await api.profile.update(body, controller.signal, accessToken);
+      return;
+    } catch (cause) {
+      if (!isRetryableProfileSaveError(cause) || attempt === PROFILE_SAVE_MAX_ATTEMPTS - 1) {
+        throw cause;
+      }
+      await new Promise<void>((resolve) => {
+        window.setTimeout(resolve, 250 * (2 ** attempt));
+      });
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  }
+}
 
 /** Persist the current, validated companion snapshot immediately. */
 export async function persistCompanionPreferencesNow(): Promise<void> {
   const body: Partial<Profile> = {
     companion_preferences: companionPreferencesSnapshot(useCompanionStore.getState()),
   };
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 8_000);
-    try {
-      await api.profile.update(body, controller.signal);
-      return;
-    } catch (cause) {
-      if (!(cause instanceof ApiError) || cause.status !== 0 || attempt === 1) throw cause;
-    } finally {
-      window.clearTimeout(timeout);
-    }
-  }
+  // Capture the current session before joining the queue. A delayed save must
+  // never inherit a different account's token after sign-out/sign-in.
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new ApiError('Authentication is required to save companion settings.', 401);
+  const save = companionSaveQueue
+    .catch(() => undefined)
+    .then(() => persistCompanionSnapshot(body, accessToken));
+  companionSaveQueue = save;
+  return save;
 }
 
 export function CompanionProvider({ children }: { children: ReactNode }) {
