@@ -3921,16 +3921,6 @@ body.theme-gray * {
     border-radius: 40%;
     animation: xv-go-liquid-spin 5s linear 1.8s infinite;
   }
-  .xv-go-btn__liquid--stop {
-    background-color: #ef4444;
-    box-shadow:
-      inset 5px -5px 25px #7f1d1d,
-      inset -5px 0 25px #7f1d1d;
-  }
-  .xv-go-btn__liquid--stop::before {
-    background-color: #f87171;
-  }
-
   .xv-go-btn__icon {
     position: relative;
     z-index: 2;
@@ -3942,9 +3932,6 @@ body.theme-gray * {
     color: #fff;
     background: transparent !important;
     border-radius: 0;
-  }
-  .xv-go-btn__icon--stop {
-    background: transparent !important;
   }
   .xv-go-btn__text {
     display: none !important;
@@ -6914,31 +6901,121 @@ body.theme-gray .xv-rp-loader {
    Composer: the send key, the repo chip, and the `+` menu rows.
    --------------------------------------------------------------------------- */
 
+/* ------------------------------------------------------------ the send button
+   A squircle rather than a pill, sized as one square touch target. It stays the
+   same element from idle through in-flight to complete — see ChatBarSendButton —
+   so the state change reads as the button reacting rather than the control being
+   replaced. The lift on hover and the press-down on active are the only motion in
+   the resting state; everything else is driven by [data-state]. */
 .xv-send {
-  display: inline-flex;
-  align-items: center;
-  height: 34px;
-  min-width: 50px;
-  justify-content: center;
-  padding-inline: 0.55rem;
-  border: 3px solid color-mix(in srgb, var(--accent, #006aff) 24%, var(--card) 76%);
-  border-radius: 999px;
-  background: var(--accent, #006aff);
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 13px;
+  background:
+    linear-gradient(160deg,
+      color-mix(in srgb, var(--accent, #006aff) 88%, white 12%) 0%,
+      var(--accent, #006aff) 52%,
+      color-mix(in srgb, var(--accent, #006aff) 88%, black 12%) 100%);
   color: var(--accent-foreground, #fff);
   cursor: pointer;
-  transition: transform 120ms ease, opacity 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 2px 8px color-mix(in srgb, var(--accent, #006aff) 28%, transparent);
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease, border-radius 240ms ease,
+    background 220ms ease, opacity 140ms ease;
 }
-.xv-send:hover:not(:disabled) { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent, #006aff) 44%, white 56%); box-shadow: 0 5px 16px color-mix(in srgb, var(--accent, #006aff) 25%, transparent); }
-.xv-send:active:not(:disabled) { transform: translateY(0); }
+.xv-send:hover:not(:disabled) {
+  transform: translateY(-1.5px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 6px 18px color-mix(in srgb, var(--accent, #006aff) 38%, transparent);
+}
+.xv-send:active:not(:disabled) { transform: translateY(0) scale(0.94); }
+.xv-send:focus-visible { outline: 2px solid var(--accent, #006aff); outline-offset: 2px; }
 .xv-send:disabled { opacity: 0.55; cursor: progress; }
-.xv-send__arrow { display: grid; place-items: center; }
-.xv-send__arrow svg {
-  width: 29px;
-  height: 14px;
-  overflow: visible;
+.xv-send--compact { width: 34px; height: 34px; border-radius: 11px; }
+
+/* A sheen that sweeps once on hover. `translate` only, and it sits behind the
+   glyph via z-index rather than opacity, so it never washes out the icon. */
+.xv-send__glow {
+  position: absolute;
+  inset: -40%;
+  z-index: -1;
+  background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.42) 50%, transparent 62%);
+  translate: -120% 0;
+  pointer-events: none;
 }
-.xv-send:hover:not(:disabled) .xv-send__arrow svg { animation: xv-jello 0.7s both; transform-origin: left center; }
-.xv-send--compact { min-width: 44px; width: 44px; padding-inline: 0.35rem; }
+.xv-send:hover:not(:disabled) .xv-send__glow { animation: xv-send-sheen 720ms ease-out; }
+@keyframes xv-send-sheen { to { translate: 120% 0; } }
+
+/* In flight: the squircle rounds off toward a circle to echo the sweeping ring,
+   and the fill drops to a muted surface so "stop" does not look like "send". */
+.xv-send[data-state='busy'] {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent, #006aff) 16%, var(--surface-raised, var(--card)) 84%);
+  color: var(--text-primary, var(--foreground));
+  box-shadow: inset 0 0 0 1px var(--border-subtle, var(--card-border));
+}
+/* Complete: a single confirming pop, in green rather than the accent so the
+   difference from idle is legible without reading the glyph. */
+.xv-send[data-state='done'] {
+  background: linear-gradient(160deg, #22c55e 0%, #16a34a 100%);
+  color: #fff;
+  animation: xv-send-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes xv-send-pop { 0% { transform: scale(0.86); } 55% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+/* --------------------------------------------------------- the send glyph */
+.xv-sendicon { display: grid; place-items: center; }
+.xv-sendicon svg { width: 100%; height: 100%; overflow: visible; }
+
+/* Every state's shapes are present in the SVG; opacity picks the live one, so the
+   swap costs no re-render and nothing reflows. */
+.xv-sendicon__trail,
+.xv-sendicon__head,
+.xv-sendicon__track,
+.xv-sendicon__sweep,
+.xv-sendicon__stop,
+.xv-sendicon__check { opacity: 0; transition: opacity 160ms ease; }
+
+.xv-sendicon[data-state='idle'] .xv-sendicon__trail,
+.xv-sendicon[data-state='idle'] .xv-sendicon__head { opacity: 1; }
+
+.xv-sendicon[data-state='busy'] .xv-sendicon__track { opacity: 0.22; }
+.xv-sendicon[data-state='busy'] .xv-sendicon__sweep { opacity: 1; }
+.xv-sendicon[data-state='busy'] .xv-sendicon__stop { opacity: 1; }
+
+.xv-sendicon[data-state='done'] .xv-sendicon__check { opacity: 1; }
+
+/* The ring sweeps as an arc chasing its own tail — a determinate-looking spinner
+   without claiming a percentage we do not have. */
+.xv-sendicon__sweep {
+  stroke-dasharray: 26 74;
+  transform-origin: 12px 12px;
+  animation: xv-sendicon-spin 900ms linear infinite;
+}
+@keyframes xv-sendicon-spin { to { rotate: 360deg; } }
+.xv-sendicon[data-state='busy'] .xv-sendicon__stop { animation: xv-sendicon-breathe 1.4s ease-in-out infinite; transform-origin: 12px 12px; }
+@keyframes xv-sendicon-breathe { 50% { scale: 0.78; opacity: 0.75; } }
+
+/* The check draws itself once on arrival rather than appearing whole. */
+.xv-sendicon[data-state='done'] .xv-sendicon__check {
+  stroke-dasharray: 100;
+  animation: xv-sendicon-draw 380ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+@keyframes xv-sendicon-draw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+
+/* Hover nudges the trail forward, which is the one flourish on the resting state. */
+.xv-send:hover:not(:disabled) .xv-sendicon[data-state='idle'] .xv-sendicon__head { animation: xv-sendicon-nudge 620ms ease-out; }
+@keyframes xv-sendicon-nudge { 40% { translate: 3px 0; } }
 
 .xv-chatbar-context-strip {
   display: flex;
@@ -6968,7 +7045,15 @@ body.theme-gray .xv-rp-loader {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .xv-send:hover:not(:disabled) .xv-send__arrow svg { animation: none; }
+  /* Each state stays visually distinct — the ring, the check, and the colour all
+     remain — but nothing loops, sweeps, or pops. */
+  .xv-send__glow,
+  .xv-send[data-state='done'],
+  .xv-sendicon__sweep,
+  .xv-sendicon[data-state='busy'] .xv-sendicon__stop,
+  .xv-sendicon[data-state='done'] .xv-sendicon__check,
+  .xv-send:hover:not(:disabled) .xv-sendicon[data-state='idle'] .xv-sendicon__head { animation: none; }
+  .xv-sendicon__sweep { stroke-dasharray: 100; opacity: 0.35; }
 }
 
 @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
