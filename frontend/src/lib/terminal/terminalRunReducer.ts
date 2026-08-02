@@ -16,7 +16,7 @@
 import { EMPTY_RUN_STATE, type TerminalEvent, type TerminalRunState } from './terminalEvent';
 
 export type TerminalRunAction =
-  | { type: 'run-started' }
+  | { type: 'run-started'; at?: number }
   | { type: 'events'; events: TerminalEvent[] }
   | { type: 'interrupted' }
   | { type: 'stream-closed' }
@@ -36,8 +36,10 @@ export function terminalRunReducer(
   switch (action.type) {
     case 'run-started':
       // A new run starts from empty rather than appending to the previous one, so
-      // two runs can never be read as a single longer one.
-      return { ...EMPTY_RUN_STATE, active: true };
+      // two runs can never be read as a single longer one. `startedAt` is stamped
+      // here — the client knows when it sent the request, and that is the only honest
+      // basis for the elapsed time shown before the first event arrives.
+      return { ...EMPTY_RUN_STATE, active: true, startedAt: action.at ?? Date.now() };
 
     case 'events': {
       const fresh = action.events.filter((event) => event.seq > state.lastSeq);
@@ -56,6 +58,7 @@ export function terminalRunReducer(
       }
 
       return {
+        ...state,
         events: [...state.events, ...fresh],
         active: outcome === null,
         outcome,

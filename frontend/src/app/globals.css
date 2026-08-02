@@ -6411,6 +6411,57 @@ body.theme-gray .xv-rp-loader {
 }
 @keyframes xv-term-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
+/* ---- live run transcript
+   Shown only while a run is active. Every line here corresponds to a real backend
+   event, or to the one true client-side fact (the request was sent and nothing has
+   come back yet). Nothing in this block animates except the marker on the newest
+   line, so the terminal reads as alive without implying progress it cannot measure. */
+
+.xv-term-live {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.15rem 0 0.25rem;
+}
+.xv-term-liveline {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin: 0;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+/* Earlier rows recede rather than disappear: the transcript stays readable while the
+   newest line remains the one the eye lands on. */
+.xv-term-liveline--past { opacity: 0.55; }
+.xv-term-livedot {
+  flex: none;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-top: 0.1rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground) 35%, transparent);
+}
+.xv-term-livedot--active {
+  background: var(--accent);
+  animation: xv-term-livepulse 1.4s ease-in-out infinite;
+}
+.xv-term-liveclock {
+  margin-left: auto;
+  padding-left: 0.6rem;
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  opacity: 0.75;
+}
+@keyframes xv-term-livepulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xv-term-livedot--active { animation: none; }
+}
+
 /* ---- skin picker */
 
 .xv-skin-trigger {

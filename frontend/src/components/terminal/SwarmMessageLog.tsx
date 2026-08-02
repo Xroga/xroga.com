@@ -25,6 +25,7 @@ import { useHydrated } from '@/hooks/useHydrated';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
 import { cn } from '@/lib/utils';
 import { TerminalSkinPicker } from './TerminalSkinPicker';
+import { TerminalLiveActivity } from './TerminalLiveActivity';
 import { ChatTurnRail, buildChatTurns } from './ChatTurnRail';
 import { api } from '@/lib/api';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
@@ -69,11 +70,6 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   const jumpHandledRef = useRef<string | null>(null);
   const [searchHit, setSearchHit] = useState<string | null>(null);
   const [activeTurnId, setActiveTurnId] = useState<string | null>(null);
-  const latestExecutionEvent = terminalRun.active
-    ? [...terminalRun.events]
-        .reverse()
-        .find((event) => event.kind !== 'output' && event.kind !== 'result')
-    : undefined;
 
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
     stickToBottomRef.current = true;
@@ -419,19 +415,12 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
-                        {loading &&
-                        msg.id === (buildPanelMessageId ?? animatingId) &&
-                        latestExecutionEvent ? (
-                          <p
-                            className="py-1 font-mono text-xs text-[var(--muted)]"
-                            role="status"
-                            data-testid="ai-processing-status"
-                          >
-                            {latestExecutionEvent.source
-                              ? `${latestExecutionEvent.source}: `
-                              : ''}
-                            {latestExecutionEvent.text}
-                          </p>
+                        {/* The live transcript. Previously this was one dim line
+                            showing only the newest event, which rendered as nothing at
+                            all until the first event arrived — the blank terminal a
+                            user reported after sending a build prompt. */}
+                        {loading && msg.id === (buildPanelMessageId ?? animatingId) ? (
+                          <TerminalLiveActivity run={terminalRun} />
                         ) : null}
                         {msg.buildStopped ? (
                           <StoppedBuildResumeCard

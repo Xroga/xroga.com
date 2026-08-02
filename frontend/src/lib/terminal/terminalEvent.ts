@@ -72,6 +72,15 @@ export interface TerminalRunState {
   lastSeq: number;
   /** Authorisations the backend said are missing. Drives the permission prompt. */
   pendingPermissions: string[];
+  /**
+   * Client clock reading from when the request was sent, or `null` when no run has
+   * started. This is the one fact the UI holds that the backend cannot supply: between
+   * pressing send and the first event arriving there is nothing from the server to
+   * display, and that window used to render as an entirely blank terminal. Elapsed
+   * time is measured from here so the waiting line is a real measurement rather than a
+   * spinner.
+   */
+  startedAt: number | null;
 }
 
 export const EMPTY_RUN_STATE: TerminalRunState = {
@@ -80,4 +89,5 @@ export const EMPTY_RUN_STATE: TerminalRunState = {
   outcome: null,
   lastSeq: 0,
   pendingPermissions: [],
+  startedAt: null,
 };
