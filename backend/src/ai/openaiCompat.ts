@@ -6,6 +6,7 @@ import {
   type ModelId,
 } from './models.js';
 import { recordModelExecution } from './providerRuntime.js';
+import { withTemperatureFallback } from './temperatureCompat.js';
 
 export type ContentPart =
   | { type: 'text'; text: string }
@@ -156,15 +157,17 @@ export async function chatCompletion(
   try {
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
     const client = clientFor(endpoint);
-    const completion = await client.chat.completions.create(
-      {
-        model: endpoint.apiModel,
-        messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
-        max_tokens: opts.maxTokens ?? 8192,
-        temperature: opts.temperature ?? 0.4,
-        ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
-      },
-      opts.signal ? { signal: opts.signal } : undefined,
+    const completion = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
+      client.chat.completions.create(
+        {
+          model: endpoint.apiModel,
+          messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
+          max_tokens: opts.maxTokens ?? 8192,
+          ...(temperature === undefined ? {} : { temperature }),
+          ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
+        },
+        opts.signal ? { signal: opts.signal } : undefined,
+      ),
     );
     const choice = completion.choices[0]?.message;
     const text = requireNonEmptyModelText(choice?.content ?? '', modelId);
@@ -209,16 +212,20 @@ export async function chatCompletionStream(
       err.code = 'BUILD_CANCELLED';
       throw err;
     }
-    const stream = await client.chat.completions.create(
-    {
-      model: endpoint.apiModel,
-      messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
-      max_tokens: opts.maxTokens ?? 8192,
-      temperature: opts.temperature ?? 0.4,
-      stream: true,
-    },
-    opts.signal ? { signal: opts.signal } : undefined,
-  );
+    // Some models refuse any temperature but their own default and answer 400.
+    // Retry once without the parameter rather than losing the run to it.
+    const stream = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
+      client.chat.completions.create(
+        {
+          model: endpoint.apiModel,
+          messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
+          max_tokens: opts.maxTokens ?? 8192,
+          ...(temperature === undefined ? {} : { temperature }),
+          stream: true,
+        },
+        opts.signal ? { signal: opts.signal } : undefined,
+      ),
+    );
 
     let text = '';
     let providerRequestId: string | undefined;
