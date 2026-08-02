@@ -8,8 +8,6 @@ import { bindBuildStreamDisconnect } from '../lib/buildStreamLifecycle.js';
 import { buildFullProjectFiles } from '../services/projectScaffold.js';
 import { notifyBuildComplete, notifyBuildFailed } from '../services/notificationService.js';
 import {
-  completeRun,
-  createRun,
   failRun,
   getRun,
   getRunAsync,
@@ -18,6 +16,7 @@ import {
   listRunsForUser,
   listRunsForUserAsync,
   saveConversation,
+  persistConversationOnly,
 } from '../ai/runStore.js';
 
 const router = Router();
@@ -319,19 +318,25 @@ router.post('/runs/:runId/cancel', async (req: AuthRequest, res) => {
   res.json({ cancelled: true, status: 'cancelling' });
 });
 
-function saveConversationHandler(req: AuthRequest, res: import('express').Response) {
+async function saveConversationHandler(req: AuthRequest, res: import('express').Response) {
   const runId = String(req.params.runId || '');
   const messages = Array.isArray(req.body?.messages) ? req.body.messages : [];
   if (!runId) return res.status(400).json({ error: 'runId required' });
 
-  // Ensure a stub run exists so conversation can attach
-  if (!getRun(runId) && req.userId) {
-    createRun(req.userId, '', runId);
-    completeRun(runId, { output: { type: 'chat', content: '' }, success: true });
+  // In memory: the normal path, on the machine that owns the run.
+  if (getRun(runId)) {
+    const saved = saveConversation(runId, messages);
+    return res.json({ saved: true, persisted: saved });
   }
 
-  const saved = saveConversation(runId, messages);
-  res.json({ saved: true, persisted: saved });
+  // Not in memory. The run map is per-process and production runs more than one
+  // machine, so this is ordinary — not a missing run. This used to fabricate a stub
+  // run and complete it, which upserted on `id` and destroyed the real row: prompt,
+  // created_at, the whole event transcript, and the actual outcome, replaced by an
+  // empty chat marked complete. Write only the messages column instead.
+  if (!req.userId) return res.status(401).json({ error: 'unauthorized' });
+  const persisted = await persistConversationOnly(runId, req.userId, messages);
+  return res.json({ saved: true, persisted });
 }
 
 router.post('/runs/:runId/conversation', saveConversationHandler);
