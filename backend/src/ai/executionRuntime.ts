@@ -383,8 +383,19 @@ export class ExecutionScheduler {
       if (!this.providerCalls.has(dedupeKey)) this.providerCalls.set(dedupeKey, promise);
       const result = await promise;
       task.output = result.output; task.evidence.push(...result.evidence);
-      task.status = result.validated && result.evidence.length ? 'completed' : 'failed';
-      if (task.status === 'failed') task.blocker = 'task output was not validated with evidence';
+      // Two independent reasons a task can fail here, and they need different
+      // repairs. The old message collapsed both into "not validated with evidence",
+      // which is what made a validation-gate bug in synthesis-architecture look
+      // like an unexplained four-second death in production.
+      const missingEvidence = result.evidence.length === 0;
+      task.status = result.validated && !missingEvidence ? 'completed' : 'failed';
+      if (task.status === 'failed') {
+        task.blocker = missingEvidence && !result.validated
+          ? `${task.operationType} produced neither a validated result nor evidence`
+          : missingEvidence
+            ? `${task.operationType} validated but produced no evidence`
+            : `${task.operationType} produced evidence but did not pass its validation rule`;
+      }
     } catch (error) {
       task.blocker = redactSecrets(error instanceof Error ? error.message : String(error)).slice(0, 500);
       const mutation = task.allowedFiles.length > 0 && /mutat|implement|patch|write|delete|rename/i.test(task.operationType);
