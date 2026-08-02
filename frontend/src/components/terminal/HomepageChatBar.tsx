@@ -233,11 +233,16 @@ export function HomepageChatBar({
                 <span>Supabase</span>
               </span>
             </div>
+            {/* The idle label stays "Launch" — it is this surface's established
+                name and is asserted by the public e2e suite. Only the in-flight
+                label changes, so a screen reader hears the state without the
+                control being renamed underneath anyone. */}
             <button
               type="submit"
               className="xv-go-btn xv-go-btn--home shrink-0"
               disabled={sending}
-              aria-label="Launch"
+              aria-busy={sending}
+              aria-label={sending ? 'Sending message' : 'Launch'}
             >
               <span className="xv-go-btn__liquid" aria-hidden />
               <span className="xv-go-btn__icon">

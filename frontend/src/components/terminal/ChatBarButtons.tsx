@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState } from 'react';
 import { CloudUpload, LoaderCircle, Mic, MicOff } from 'lucide-react';
-import { ChatBarSendIcon, isSendBusy, type SendButtonState } from './ChatBarSendIcon';
+import { ChatBarSendIcon, isSendBusy, isSendLoading, type SendButtonState } from './ChatBarSendIcon';
 
 export type { SendButtonState };
 export type ChatbarSurface = 'homepage' | 'dashboard' | 'incognito';
@@ -163,28 +163,41 @@ export function ChatBarSendButton({
   surface?: ChatbarSurface;
   compact?: boolean;
 }) {
-  const busy = stopping || isSendBusy(state);
-  const done = !busy && state === 'launched';
+  const loading = isSendLoading(state) && !stopping;
+  const busy = !loading && (stopping || isSendBusy(state));
+  const done = !busy && !loading && state === 'launched';
 
   /**
    * One button across every state rather than swapping in a separate stop button.
-   * Keeping the same element mounted is what lets the glyph morph in place and the
+   * Keeping the same element mounted is what lets the glyph swap in place and the
    * fill cross-fade; two buttons meant the control vanished and reappeared at a
    * different size the moment you pressed enter.
+   *
+   * Three behaviours hang off the state:
+   *   loading  disabled submit — a second press must not fire another request
+   *   busy     live button that stops the streaming response
+   *   idle     ordinary submit
+   *
+   * `aria-busy` marks the control itself as working, and the label changes to
+   * "Sending message" so a screen reader hears what is happening rather than being
+   * told it is still a send button. The button keeps its width and height in every
+   * state, so nothing around it shifts.
    */
   return (
     <button
       type={busy ? 'button' : 'submit'}
       onClick={busy ? onStop : undefined}
+      disabled={loading}
+      aria-busy={loading || busy}
       className={cn(
         'xv-send shrink-0',
         compact && 'xv-send--compact',
         surface === 'homepage' && 'xv-send--home',
         surface === 'incognito' && 'xv-send--incognito'
       )}
-      data-state={busy ? 'busy' : done ? 'done' : 'idle'}
-      aria-label={busy ? 'Stop response' : 'Send prompt'}
-      title={busy ? 'Stop' : 'Send'}
+      data-state={loading ? 'sending' : busy ? 'busy' : done ? 'done' : 'idle'}
+      aria-label={loading ? 'Sending message' : busy ? 'Stop response' : 'Send prompt'}
+      title={loading ? 'Sending…' : busy ? 'Stop' : 'Send'}
       aria-live="polite"
     >
       <span className="xv-send__glow" aria-hidden="true" />
