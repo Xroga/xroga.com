@@ -42,6 +42,8 @@ import { adminMiddleware } from './middleware/admin.js';
 import { ensureGithubSchema } from './db/ensureGithubSchema.js';
 import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
 import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
+import { activeRunIds } from './ai/runStore.js';
+import { failInFlightRuns, reconcileOrphanedRuns } from './ai/runReconciler.js';
 import { ensureShipLoopSchema } from './db/ensureShipLoopSchema.js';
 import { modelKeyStatus, modelTransportStatus } from './ai/openaiCompat.js';
 import { publicHealthPayload } from './lib/safeHealth.js';
@@ -229,7 +231,38 @@ server.listen(port, '0.0.0.0', () => {
   void ensureShipLoopSchema().catch((err) => {
     console.warn('[shipLoopSchema] Startup ensure skipped:', (err as Error).message);
   });
+  // Anything still `running` belongs to a process that no longer exists — the live
+  // run map is in memory, so a fresh process owns nothing. Left alone these sit at
+  // `running` forever; one production row did so for over fourteen hours.
+  void reconcileOrphanedRuns().catch((err) => {
+    console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
+  });
 });
+
+/**
+ * Graceful shutdown.
+ *
+ * Fly sends SIGTERM on every deploy. Without this, in-flight builds died with the
+ * process and their rows stayed `running` with no worker and no explanation — a
+ * routine API deploy silently killed user builds. Now they end truthfully first.
+ */
+let shuttingDown = false;
+async function shutdown(signal: NodeJS.Signals) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  const active = activeRunIds();
+  if (active.length) {
+    console.warn(`[shutdown] ${signal}: failing ${active.length} in-flight run(s) before exit`);
+    await failInFlightRuns(active, 'deploy_interrupted').catch((err) => {
+      console.warn('[shutdown] could not fail in-flight runs:', (err as Error).message);
+    });
+  }
+  server.close(() => process.exit(0));
+  // The platform will kill us regardless; do not hang waiting on open sockets.
+  setTimeout(() => process.exit(0), 5_000).unref();
+}
+process.on('SIGTERM', (signal) => void shutdown(signal));
+process.on('SIGINT', (signal) => void shutdown(signal));
 
 process.on('uncaughtException', (err) => {
   console.error('Uncaught exception:', err);

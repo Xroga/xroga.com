@@ -14,6 +14,8 @@ export type ShipOutcomeInput = {
   patchAborted: boolean;
   securityBlocked: boolean;
   compileBlocksShip: boolean;
+  /** Specific, user-facing reason from describeCompileBlocker. */
+  compileBlockerMessage?: string;
   qaBlocksShip: boolean;
   githubConnected: boolean;
   vercelConnected: boolean;
@@ -70,7 +72,14 @@ export function computeShipOutcome(input: ShipOutcomeInput): ShipOutcome {
   }
   if (input.patchAborted) shipBlockers.push('Unsafe patches aborted — live site unchanged');
   if (input.securityBlocked) shipBlockers.push('Critical secrets blocked the push');
-  if (input.compileBlocksShip) shipBlockers.push('Compile failed — fix TypeScript/install before ship');
+  if (input.compileBlocksShip) {
+    // Never hand the user a generic instruction to go fix TypeScript themselves —
+    // doing that work is the product. Say which stage failed and what it said.
+    shipBlockers.push(
+      input.compileBlockerMessage?.trim() ||
+        'Production validation did not pass. Nothing was pushed or deployed.',
+    );
+  }
   if (input.qaBlocksShip) shipBlockers.push('Critical project structure issues — fix before ship');
 
   if (input.shouldPush && !input.githubPushConfirmed) {

@@ -209,6 +209,20 @@ export async function getRunAsync(runId: string): Promise<SwarmRunRecord | null>
   }
 }
 
+/**
+ * The runs this process is currently holding.
+ *
+ * Used by the shutdown handler: a deploy kills the process, and anything still
+ * `running` here would otherwise be left orphaned in the database with no worker.
+ */
+export function activeRunIds(): string[] {
+  const active: string[] = [];
+  for (const [id, run] of runs) {
+    if (run.status === 'running') active.push(id);
+  }
+  return active;
+}
+
 export function listRunsForUser(userId: string, limit = 30): SwarmRunRecord[] {
   const ids = userIndex.get(userId) ?? [];
   return ids

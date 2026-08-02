@@ -27,6 +27,7 @@ import {
 import { synthesizeProductDefinition, type ProductDefinitionV1 } from './productDefinition.js';
 import { buildOperationsManifest, type GeneratedProductOperationsManifest } from './operationsManifest.js';
 import { compileVerificationPlan, type VerificationPlan } from './verificationCompiler.js';
+import { architectureStageIsValid } from './architectureValidation.js';
 
 export interface UniversalSynthesisArtifacts {
   schemaVersion: '1.0.0';
@@ -140,7 +141,7 @@ export async function runUniversalSynthesisFoundation(input: {
       state.productManifest.framework = framework;
       state.productManifest.dependencyInventory = inventory;
       state.architectureDecisions = [`${architecture.primary}: ${architecture.reasoning.join('; ')}`, `framework:${framework.id}`];
-      return { output: { architecture, framework, dependencyInventory: inventory }, evidence: [evidence('architecture_decision', `Selected ${architecture.primary} with ${framework.id}`, { architecture, framework })], validated: Boolean(framework.buildCommand || architecture.primary === 'static_site') };
+      return { output: { architecture, framework, dependencyInventory: inventory }, evidence: [evidence('architecture_decision', `Selected ${architecture.primary} with ${framework.id}`, { architecture, framework })], validated: architectureStageIsValid(architecture, framework) };
     },
     synthesis_compile: async () => {
       if (!definition || !graph) throw new Error('synthesis inputs are unavailable');

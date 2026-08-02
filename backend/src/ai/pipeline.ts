@@ -8,6 +8,7 @@ import {
   type ChatMessage,
 } from './openaiCompat.js';
 import { requireBuildArtifacts } from './buildOutputValidation.js';
+import { describeCompileBlocker } from './compileBlockerMessage.js';
 import {
   classifyBuilderFailure,
   isRetryableBuilderFailure,
@@ -2190,7 +2191,7 @@ export async function runBuildPipeline(opts: {
   }
   if (patchAborted) shipBlockers.push('Unsafe patches aborted — live site unchanged');
   if (security.blocked) shipBlockers.push('Critical secrets blocked the push');
-  if (compileBlocksShip) shipBlockers.push('Compile failed — fix TypeScript/install before ship');
+  if (compileBlocksShip) shipBlockers.push(describeCompileBlocker(compile, { repairAttempts: repairLoops }));
   if (qaBlocksShip) {
     shipBlockers.push(
       `Critical structure: ${structureFinal.issues[0] || 'fix project files before ship'}`,
@@ -3101,6 +3102,11 @@ export async function runBuildPipeline(opts: {
     patchAborted,
     securityBlocked: security.blocked,
     compileBlocksShip,
+    // The specific stage + diagnostic, so this path cannot fall back to the old
+    // generic "fix TypeScript/install before ship" instruction either.
+    compileBlockerMessage: compileBlocksShip
+      ? describeCompileBlocker(compile, { repairAttempts: repairLoops })
+      : undefined,
     qaBlocksShip,
     githubConnected: githubOk,
     vercelConnected: vercelOk,
