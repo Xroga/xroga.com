@@ -492,7 +492,7 @@ body.theme-beige .xv-gc-root {
 }
 /* 38–42% / 58–62% at desktop, per the approved composition. */
 @media (min-width: 1180px) {
-  .xv-gc-hero__grid { grid-template-columns: minmax(0, 42fr) minmax(0, 58fr); gap: 2rem; }
+  .xv-gc-hero__grid { grid-template-columns: minmax(0, 44fr) minmax(0, 56fr); gap: 2rem; }
 }
 
 .xv-gc-eyebrow {
@@ -515,10 +515,14 @@ body.theme-beige .xv-gc-root {
 .xv-gc-h1 {
   margin: 0;
   font-family: var(--font-remixa), var(--font-goga), sans-serif;
-  font-size: clamp(1.5rem, 2.15vw, 1.98rem);
+  /* Sized and tracked so "Play it minutes later." holds one line inside the copy
+     column at desktop — measured against the column width rather than guessed, so
+     the headline keeps its scale instead of shrinking to fit. Syne is a wide face;
+     the tight tracking is what buys the fit without a new font dependency. */
+  font-size: clamp(1.5rem, 2.05vw, 1.85rem);
   font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
   text-transform: uppercase;
   color: var(--gc-text);
 }
@@ -1390,7 +1394,9 @@ body.theme-beige .xv-gc-root {
   /* At 320px the decorative frame goes, and the densest grids drop a column so
      nothing clips. */
   .xv-gc-atmos__edge { display: none; }
-  .xv-gc-h1 { font-size: 1.7rem; }
+  /* Below the clamp's floor, not above it — this override predated the clamp and
+     was making the headline larger at 320px than at 390px. */
+  .xv-gc-h1 { font-size: 1.35rem; }
   .xv-gc-systems__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .xv-gc-loadout__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .xv-gc-cockpit__bar { flex-wrap: wrap; }
