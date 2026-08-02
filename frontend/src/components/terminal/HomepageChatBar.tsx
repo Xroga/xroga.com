@@ -77,6 +77,7 @@ export function HomepageChatBar({
   fallbackPrompt = 'Build a web app with Xroga AI',
   suggestions,
   className,
+  listenForAsk = true,
 }: {
   placeholders?: readonly string[];
   ariaLabel?: string;
@@ -85,6 +86,13 @@ export function HomepageChatBar({
   /** Chips rendered under the bar. Clicking one fills the input and focuses it. */
   suggestions?: readonly string[];
   className?: string;
+  /**
+   * Whether this bar answers the global `xroga:companion-ask` fill event. Default
+   * true, which is the existing behaviour. A page that renders two bars sets this
+   * false on the secondary one so a fill request does not pull focus to the copy
+   * furthest down the page.
+   */
+  listenForAsk?: boolean;
 } = {}) {
   const [prompt, setPrompt] = useState('');
   const [focused, setFocused] = useState(false);
@@ -103,6 +111,7 @@ export function HomepageChatBar({
   }, [prompt]);
 
   useEffect(() => {
+    if (!listenForAsk) return;
     const onCompanionAsk = (event: Event) => {
       const text = (event as CustomEvent<{ text?: string }>).detail?.text?.trim() ?? '';
       if (text) setPrompt(text);
@@ -110,7 +119,7 @@ export function HomepageChatBar({
     };
     window.addEventListener('xroga:companion-ask', onCompanionAsk);
     return () => window.removeEventListener('xroga:companion-ask', onCompanionAsk);
-  }, []);
+  }, [listenForAsk]);
 
   const handleSubmit = useCallback(
     async (e?: React.FormEvent) => {
