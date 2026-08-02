@@ -55,6 +55,8 @@ import {
 } from './patches.js';
 import { reviewBuildOutput } from './qa.js';
 import { completeRun, createRunDurable } from './runStore.js';
+import { startupProgress } from './startupProgress.js';
+import { heartbeatMessage, withProgressHeartbeat } from './progressHeartbeat.js';
 import {
   UPDATE_HYDRATE_PATHS,
   fetchBuildFilesFromGitHub,
@@ -406,6 +408,13 @@ async function callBuilderStream(
     validateResponse?: (result: Awaited<ReturnType<typeof chatCompletionStream>>) => void;
     budget?: Partial<BuilderAttemptBudget>;
     onAttemptFailure?: (record: BuilderAttemptRecord) => void;
+    /**
+     * Called periodically while an attempt is still waiting on the provider. Purely
+     * observational — see `progressHeartbeat`. Without it the terminal shows nothing
+     * for the full first-token deadline, which is 60 seconds per model in the
+     * fallback order.
+     */
+    onWaiting?: (info: { elapsedMs: number; model: ModelId }) => void;
   },
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
   const healthAwareOrder = fallbackOrderForModel(preferred);
@@ -465,15 +474,25 @@ async function callBuilderStream(
         if (bufferedDeltas.length) opts.onDelta?.(bufferedDeltas.join(''));
         return attempt.value;
       };
-      return opts.userId
-        ? await withProviderReservation({
-            userId: opts.userId,
-            modelId,
-            estimatedInputTokens: estimateMessageTokens(messages),
-            maximumOutputTokens: opts.maxTokens ?? 8192,
-            execute,
-          })
-        : await execute();
+      const runAttempt = () =>
+        opts.userId
+          ? withProviderReservation({
+              userId: opts.userId,
+              modelId,
+              estimatedInputTokens: estimateMessageTokens(messages),
+              maximumOutputTokens: opts.maxTokens ?? 8192,
+              execute,
+            })
+          : execute();
+      return opts.onWaiting
+        ? await withProgressHeartbeat(
+            {
+              everyMs: 12_000,
+              emit: (elapsedMs) => opts.onWaiting?.({ elapsedMs, model: modelId }),
+            },
+            runAttempt,
+          )
+        : await runAttempt();
     } catch (err) {
       lastErr = err as Error;
       const code = (lastErr as Error & { code?: string }).code;
@@ -780,6 +799,12 @@ export async function runBuildPipeline(opts: {
       throw err;
     }
   };
+  // First line out, before any await. Everything below this point — the recovery-row
+  // write, the quota check, the history load, the repository read — is real work that
+  // used to happen in total silence, and a user watching an empty terminal for
+  // twenty-two seconds has no way to tell it apart from a hang.
+  emit({ ...startupProgress('accepted'), swarmTodos: todosForBuild('route', 'omit') });
+
   const metaRaw = parseClientMeta(opts.clientMeta);
   // Sticky default_repo ONLY for explicit updates when the chatbar omitted a target.
   // Greenfield builds must never silently overwrite the last product.
@@ -798,10 +823,12 @@ export async function runBuildPipeline(opts: {
   const userFacingPrompt = (meta?.userPrompt || opts.prompt).trim();
 
   await createRunDurable(opts.userId, userFacingPrompt, runId);
+  emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });
   await assertHasQuota(opts.userId);
   throwIfAborted();
 
   // Durable chat memory across sessions (DB + client history)
+  emit({ ...startupProgress('history'), swarmTodos: todosForBuild('route', 'omit') });
   const dbHistory = await loadSessionHistory(opts.userId, meta?.githubTargetRepo, 12);
   const history = mergeHistories(dbHistory, opts.history ?? []);
 
@@ -862,7 +889,28 @@ export async function runBuildPipeline(opts: {
   }
 
   const baseRoute = routePrompt(opts.prompt);
-  const prior = await hydratePriorFiles(opts.userId, meta);
+  // Reads the user's repository over the GitHub API — routinely the longest single
+  // wait before the build starts, and previously invisible.
+  emit({ ...startupProgress('repository'), swarmTodos: todosForBuild('route', 'omit') });
+  const prior = await withProgressHeartbeat(
+    {
+      everyMs: 10_000,
+      emit: (elapsedMs) =>
+        emit({
+          agent: 'session',
+          status: 'reading_repository',
+          message: heartbeatMessage('your repository files', elapsedMs),
+          swarmStatusLabel: 'Reading',
+          swarmTodos: todosForBuild('route', 'omit'),
+        }),
+    },
+    () => hydratePriorFiles(opts.userId, meta),
+  );
+  emit({
+    ...startupProgress('hydrated', { fileCount: prior.files.length }),
+    swarmTodos: todosForBuild('route', 'omit'),
+  });
+  emit({ ...startupProgress('route'), swarmTodos: todosForBuild('route', 'omit') });
   const isUpdate = Boolean(meta?.buildUpdate && prior.files.length);
   const providerKeyName = (modelId: ModelId): string => {
     const provider = MODELS[modelId].provider;
@@ -1062,7 +1110,20 @@ export async function runBuildPipeline(opts: {
       swarmActivity: 'Xroga Live · web + X',
       swarmTodos: todos('research'),
     });
-    research = await gatherResearch(opts.prompt, opts.userId);
+    research = await withProgressHeartbeat(
+      {
+        everyMs: 12_000,
+        emit: (elapsedMs) =>
+          emit({
+            agent: 'research',
+            status: 'searching',
+            message: heartbeatMessage('live research sources', elapsedMs),
+            swarmStatusLabel: 'Research',
+            swarmTodos: todos('research'),
+          }),
+      },
+      () => gatherResearch(opts.prompt, opts.userId),
+    );
     researchBlock = formatResearchForPrompt(research);
     if (!researchBlock) {
       // Do not fake a research step when nothing came back
@@ -1354,6 +1415,14 @@ export async function runBuildPipeline(opts: {
         emitModelSwitch(from, to);
       },
       credentialOverrides,
+      onWaiting: ({ elapsedMs, model }) =>
+        emit({
+          agent: 'builder',
+          status: 'awaiting_model',
+          message: heartbeatMessage(`${MODELS[model].label} to return code`, elapsedMs),
+          swarmStatusLabel: isUpdate ? 'Patching' : 'Building',
+          swarmTodos: todos('build'),
+        }),
       validateResponse: (completion) => requireBuildArtifacts(completion.text, isUpdate),
     },
   );
