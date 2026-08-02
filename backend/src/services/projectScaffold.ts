@@ -9,6 +9,8 @@ import { buildChromeExtensionScaffold } from './scaffolds/chromeExtensionScaffol
 import { buildElectronScaffold } from './scaffolds/electronScaffold.js';
 
 export { detectScaffoldKind, type ScaffoldKind } from './scaffolds/detectScaffold.js';
+export { buildDeterministicSite } from './scaffolds/deterministicSite.js';
+import { buildDeterministicSite } from './scaffolds/deterministicSite.js';
 
 /**
  * Minimal static project scaffold for GitHub/Vercel push.
@@ -88,12 +90,17 @@ export function buildScaffoldForPrompt(opts: {
       files: buildNextjsScaffold({ projectName: opts.projectName, userPrompt: opts.prompt }),
     };
   }
+  // The static fallback used to emit `<h1>{name}</h1>` with a zero-byte stylesheet
+  // and a zero-byte script. That deploys, but it is not a product, and this path is
+  // exactly what a user receives when every builder provider fails. It now builds a
+  // real themed page from the prompt — still deterministic, still no network.
+  const site = buildDeterministicSite({ prompt: opts.prompt, projectName: opts.projectName });
   return {
     kind: 'static',
     files: buildFullProjectFiles({
-      html: `<!doctype html><html><head><meta charset="utf-8"><title>${opts.projectName}</title></head><body><h1>${opts.projectName}</h1></body></html>`,
-      css: '',
-      js: '',
+      html: site.html,
+      css: site.css,
+      js: site.js,
       projectName: opts.projectName,
       userPrompt: opts.prompt,
     }),

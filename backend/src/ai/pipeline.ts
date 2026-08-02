@@ -8,6 +8,13 @@ import {
   type ChatMessage,
 } from './openaiCompat.js';
 import { requireBuildArtifacts } from './buildOutputValidation.js';
+import {
+  classifyBuilderFailure,
+  isRetryableBuilderFailure,
+  runBuilderAttempt,
+  type BuilderAttemptBudget,
+  type BuilderAttemptRecord,
+} from './builderAttempt.js';
 import { withProviderReservation } from './providerBudget.js';
 import {
   BUILDER_SYSTEM,
@@ -396,6 +403,8 @@ async function callBuilderStream(
     onModelFallback?: (from: ModelId, to: ModelId) => void;
     credentialOverrides?: Partial<Record<ModelId, string>>;
     validateResponse?: (result: Awaited<ReturnType<typeof chatCompletionStream>>) => void;
+    budget?: Partial<BuilderAttemptBudget>;
+    onAttemptFailure?: (record: BuilderAttemptRecord) => void;
   },
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
   const healthAwareOrder = fallbackOrderForModel(preferred);
@@ -404,6 +413,7 @@ async function callBuilderStream(
     : [preferred, ...BUILDER_FALLBACKS.filter((m) => m !== preferred)];
   let lastErr: Error | null = null;
   for (const modelId of order) {
+    const attemptStartedAt = Date.now();
     try {
       if (opts.signal?.aborted) {
         const err = new Error('Build cancelled') as Error & { code?: string };
@@ -428,18 +438,31 @@ async function callBuilderStream(
           : null);
       const bufferedDeltas: string[] = [];
       const execute = async () => {
-        const completion = await chatCompletionStream(modelId, messages, {
-          maxTokens: opts.maxTokens,
-          temperature: opts.temperature,
-          onDelta: opts.validateResponse
-            ? (delta) => bufferedDeltas.push(delta)
-            : opts.onDelta,
-          signal: opts.signal,
-          credentialOverride: userCredential || undefined,
-        });
-        opts.validateResponse?.(completion);
+        // Every attempt runs under a first-token and generation deadline. Without
+        // them a provider that accepts the connection and then goes silent held the
+        // whole run open until the socket timeout, once per model in the fallback
+        // order — which is how a run could stay active for many minutes and still
+        // deliver nothing.
+        const attempt = await runBuilderAttempt(
+          async ({ signal, onToken }) => {
+            const completion = await chatCompletionStream(modelId, messages, {
+              maxTokens: opts.maxTokens,
+              temperature: opts.temperature,
+              onDelta: (delta) => {
+                onToken(delta);
+                if (opts.validateResponse) bufferedDeltas.push(delta);
+                else opts.onDelta?.(delta);
+              },
+              signal,
+              credentialOverride: userCredential || undefined,
+            });
+            opts.validateResponse?.(completion);
+            return completion;
+          },
+          { budget: opts.budget, signal: opts.signal },
+        );
         if (bufferedDeltas.length) opts.onDelta?.(bufferedDeltas.join(''));
-        return completion;
+        return attempt.value;
       };
       return opts.userId
         ? await withProviderReservation({
@@ -453,9 +476,21 @@ async function callBuilderStream(
     } catch (err) {
       lastErr = err as Error;
       const code = (lastErr as Error & { code?: string }).code;
-      if (code === 'OUT_OF_TOKENS' || code === 'BUILD_CANCELLED' || code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE') throw lastErr;
+      const failure = classifyBuilderFailure(lastErr);
+      opts.onAttemptFailure?.({
+        model: MODELS[modelId].label,
+        failure,
+        startedAt: attemptStartedAt,
+        firstTokenAt: null,
+        endedAt: Date.now(),
+        outputChars: 0,
+      });
+      if (code === 'OUT_OF_TOKENS' || code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE') throw lastErr;
+      // Cancellation and permanent auth failures must not walk the fallback order:
+      // the first ignores the user, the second burns every route on a bad key.
+      if (!isRetryableBuilderFailure(failure)) throw lastErr;
       const normalized = normalizeProviderError(lastErr);
-      console.warn(`[pipeline] ${modelId} stream failed:`, normalized.safeMessage);
+      console.warn(`[pipeline] ${modelId} stream failed (${failure}):`, normalized.safeMessage);
     }
   }
   throw lastErr ?? new Error('All AI models failed');
@@ -1549,7 +1584,42 @@ export async function runBuildPipeline(opts: {
   // New builds: merge deterministic scaffold under AI output
   // so user vault keys can power live /api routes and mobile/extension/desktop ship complete.
   let productScaffoldKind: ScaffoldKind = 'static';
-  if (!isUpdate && nextFiles.length) {
+
+  /**
+   * Deterministic scaffold fallback.
+   *
+   * The scaffold merge below was gated on `nextFiles.length`, so it only ever ran
+   * when the model had already produced files — which meant it could not help in
+   * the one case it exists for: every provider returning empty, prose-only or
+   * invalid output. That is the production blocker. A user should not receive
+   * nothing merely because external builders failed, so when a new build reaches
+   * this point with no files, the scaffold produces a real, buildable foundation
+   * that the existing install/repair and shipping stages can carry the rest of the
+   * way. These are real files written to the workspace, never a fake preview.
+   */
+  let usedDeterministicScaffold = false;
+  if (!isUpdate && !nextFiles.length) {
+    const scaffoldKind = detectScaffoldKind(userFacingPrompt);
+    const { files: scaffoldFiles } = buildScaffoldForPrompt({
+      prompt: userFacingPrompt,
+      projectName,
+    });
+    if (scaffoldFiles.length) {
+      nextFiles = scaffoldFiles;
+      productScaffoldKind = scaffoldKind;
+      usedDeterministicScaffold = true;
+      emit({
+        agent: 'builder',
+        status: 'model_active',
+        message: 'Builder routes returned no files — using the deterministic scaffold',
+        swarmStatusLabel: 'Building',
+        swarmActivity: 'Deterministic scaffold',
+        swarmTodos: todos('build'),
+      });
+    }
+  }
+
+  if (!isUpdate && nextFiles.length && !usedDeterministicScaffold) {
     const scaffoldKind = detectScaffoldKind(userFacingPrompt);
     productScaffoldKind = scaffoldKind;
     if (
