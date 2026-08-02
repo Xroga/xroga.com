@@ -6901,6 +6901,61 @@ body.theme-gray .xv-rp-loader {
    Composer: the send key, the repo chip, and the `+` menu rows.
    --------------------------------------------------------------------------- */
 
+/* --------------------------------------------------- send button theme tokens
+   The button's colours resolve through these rather than through `--accent`
+   directly, so a theme retunes the control in one place and the loader inside it
+   follows automatically — the SVG paints with `currentColor`, which is
+   `--send-button-fg`.
+
+   Defaults here are the accent treatment, which is what every surface that does
+   not override them keeps. The four Xroga themes override below. */
+:root,
+body {
+  --send-button-bg: var(--accent, #006aff);
+  --send-button-fg: var(--accent-foreground, #fff);
+  --send-button-hover-bg: color-mix(in srgb, var(--send-button-bg) 88%, white 12%);
+  --send-button-border: transparent;
+  --send-button-disabled-opacity: 0.55;
+  --send-loader-color: var(--send-button-fg);
+}
+
+/* Near-black button, off-white loader. The 1px border is what keeps a near-black
+   control visible on a near-black page — without it the button disappears into
+   the composer instead of reading as a target. */
+body.theme-black {
+  --send-button-bg: #14171c;
+  --send-button-fg: #f7f9fb;
+  --send-button-hover-bg: #1d222a;
+  --send-button-border: rgba(255, 255, 255, 0.22);
+}
+
+/* Dark graphite. The loader stays white because the background is well below the
+   midpoint — picking the higher-contrast of white/near-black, as specified. */
+body.theme-gray {
+  --send-button-bg: #3a4046;
+  --send-button-fg: #ffffff;
+  --send-button-hover-bg: #474e56;
+  --send-button-border: rgba(255, 255, 255, 0.16);
+}
+
+/* Off-white button, near-black loader. Border does the separation work here,
+   since the surface behind it is also light. */
+body.theme-white {
+  --send-button-bg: #ffffff;
+  --send-button-fg: #12161c;
+  --send-button-hover-bg: #f1f4f8;
+  --send-button-border: rgba(18, 22, 28, 0.22);
+}
+
+/* Warm beige with a dark warm charcoal loader — brown-black rather than blue-black,
+   so it sits in the same temperature as the surface. */
+body.theme-beige {
+  --send-button-bg: #ecdfc8;
+  --send-button-fg: #2a2118;
+  --send-button-hover-bg: #e2d3b7;
+  --send-button-border: rgba(42, 33, 24, 0.24);
+}
+
 /* ------------------------------------------------------------ the send button
    A squircle rather than a pill, sized as one square touch target. It stays the
    same element from idle through in-flight to complete — see ChatBarSendButton —
@@ -6913,34 +6968,38 @@ body.theme-gray .xv-rp-loader {
   place-items: center;
   width: 38px;
   height: 38px;
-  border: 0;
+  border: 1px solid var(--send-button-border);
   border-radius: 13px;
   background:
     linear-gradient(160deg,
-      color-mix(in srgb, var(--accent, #006aff) 88%, white 12%) 0%,
-      var(--accent, #006aff) 52%,
-      color-mix(in srgb, var(--accent, #006aff) 88%, black 12%) 100%);
-  color: var(--accent-foreground, #fff);
+      color-mix(in srgb, var(--send-button-bg) 92%, white 8%) 0%,
+      var(--send-button-bg) 52%,
+      color-mix(in srgb, var(--send-button-bg) 92%, black 8%) 100%);
+  color: var(--send-button-fg);
   cursor: pointer;
   overflow: hidden;
   isolation: isolate;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.34),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-    0 2px 8px color-mix(in srgb, var(--accent, #006aff) 28%, transparent);
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.14),
+    0 2px 8px color-mix(in srgb, var(--send-button-bg) 28%, transparent);
   transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease, border-radius 240ms ease,
     background 220ms ease, opacity 140ms ease;
 }
 .xv-send:hover:not(:disabled) {
   transform: translateY(-1.5px);
+  background: var(--send-button-hover-bg);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-    0 6px 18px color-mix(in srgb, var(--accent, #006aff) 38%, transparent);
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.14),
+    0 6px 18px color-mix(in srgb, var(--send-button-bg) 38%, transparent);
 }
 .xv-send:active:not(:disabled) { transform: translateY(0) scale(0.94); }
 .xv-send:focus-visible { outline: 2px solid var(--accent, #006aff); outline-offset: 2px; }
-.xv-send:disabled { opacity: 0.55; cursor: progress; }
+.xv-send:disabled { opacity: var(--send-button-disabled-opacity); }
+/* While sending the control is inert but not "broken" — a wait cursor, not a
+   not-allowed one, and no hover lift. */
+.xv-send[data-state='sending'] { cursor: progress; transform: none; }
 .xv-send--compact { width: 34px; height: 34px; border-radius: 11px; }
 
 /* A sheen that sweeps once on hover. `translate` only, and it sits behind the
@@ -6994,6 +7053,40 @@ body.theme-gray .xv-rp-loader {
 .xv-sendicon[data-state='busy'] .xv-sendicon__stop { opacity: 1; }
 
 .xv-sendicon[data-state='done'] .xv-sendicon__check { opacity: 1; }
+
+/* ------------------------------------------------------------- leaf preloader
+   Eight curved petals ringing an invisible circle. One transform animates: the
+   group. Rotating the group rather than each petal means a single composited
+   animation, and because the arrangement is 8-fold symmetric the picture at 45°
+   is identical to the picture at 0° — so the loop has no seam to jump at.
+
+   `transform-box: fill-box` plus a 50% origin keeps the pivot on the icon's own
+   centre at every rendered size, which is what keeps it centred in the button
+   from 16px through 24px. */
+.xv-leafloader {
+  display: grid;
+  place-items: center;
+  /* Ornament only: never swallow a click meant for the button under it. */
+  pointer-events: none;
+}
+.xv-leafloader svg { display: block; overflow: visible; }
+.xv-leafloader__ring {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: xv-leaf-spin 1000ms linear infinite;
+  /* Promote once, so the rotation stays on the compositor. */
+  will-change: transform;
+}
+@keyframes xv-leaf-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Static loader: the ring still reads as a "working" indicator through its
+     opacity ramp, it simply does not turn. */
+  .xv-leafloader__ring { animation: none; }
+}
 
 /* The ring sweeps as an arc chasing its own tail — a determinate-looking spinner
    without claiming a percentage we do not have. */

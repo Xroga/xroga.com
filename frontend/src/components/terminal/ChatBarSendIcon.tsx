@@ -1,29 +1,49 @@
 'use client';
 
+import { LeafLoader } from '@/components/ui/LeafLoader';
+
 /**
  * The chatbar send icon.
  *
- * One icon that covers the whole send lifecycle, replacing the sailing boat. The
- * three states are drawn from the same 24×24 box so the glyph swaps in place
- * without the button resizing or the row reflowing:
+ * One icon that covers the whole send lifecycle. Every state is drawn from the same
+ * 24×24 box so the glyph swaps in place without the button resizing or the row
+ * reflowing:
  *
- *   idle      → the stroke-drawn send trail, which is the resting shape
- *   sending   → a stop square inside a sweeping ring, so the click has an
- *   thinking    immediate result and the button doubles as the stop control
+ *   idle      → the stroke-drawn send trail, the resting shape
+ *   sending   → the leaf preloader, while the submit request is in flight
+ *   thinking  → a stop square inside a sweeping ring; the button is the stop
+ *               control while a response streams back
  *   launched  → a check that draws itself once, then the state machine in
  *               TerminalChatBar returns to idle after 1.4s
  *
+ * `sending` and `thinking` are deliberately different pictures. They used to share
+ * the stop treatment, but they are not the same thing to a user: during `sending`
+ * there is nothing to stop yet and a second submit must not fire, so the control is
+ * disabled and shows a loader; during `thinking` there is a response to abort, so
+ * the control stays live and shows Stop. Collapsing them would have meant either
+ * losing the ability to stop a response, or offering a stop button for a request
+ * that has not left yet.
+ *
  * Plain SVG and CSS rather than `motion/react`: this sits in the chatbar, which is
- * mounted on every workspace route, and the whole behaviour here is three keyframe
- * animations. Reduced motion is handled in globals.css, where the sweep and the
- * draw are stilled but each state stays visually distinct.
+ * mounted on every workspace route, and the whole behaviour here is a handful of
+ * keyframes. Reduced motion is handled in globals.css, where the sweep, the draw
+ * and the leaf rotation are stilled but each state stays visually distinct.
  */
 
 export type SendButtonState = 'idle' | 'sending' | 'thinking' | 'launched';
 
-/** True while a response is in flight, i.e. the button acts as Stop. */
+/**
+ * True while the control is not a send button: either the submit is in flight
+ * (`sending`) or a response is streaming and the control acts as Stop
+ * (`thinking`).
+ */
 export function isSendBusy(state: SendButtonState | undefined): boolean {
   return state === 'sending' || state === 'thinking';
+}
+
+/** True only while the submit request itself is in flight. */
+export function isSendLoading(state: SendButtonState | undefined): boolean {
+  return state === 'sending';
 }
 
 export function ChatBarSendIcon({
@@ -35,8 +55,23 @@ export function ChatBarSendIcon({
   size?: number;
   className?: string;
 }) {
-  const busy = isSendBusy(state);
+  const loading = isSendLoading(state);
+  const busy = isSendBusy(state) && !loading;
   const done = state === 'launched';
+
+  // The loader replaces the glyph outright rather than layering over it, and it is
+  // rendered at the same box size, so the button's contents never change dimensions.
+  if (loading) {
+    return (
+      <span
+        className={`xv-sendicon ${className ?? ''}`}
+        data-state="loading"
+        style={{ width: size, height: size }}
+      >
+        <LeafLoader size={size} />
+      </span>
+    );
+  }
 
   return (
     <span
