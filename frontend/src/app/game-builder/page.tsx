@@ -1,23 +1,27 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
-import { OreBlock, PixelGlyph } from '@/components/crypto-builder/PixelArt';
-import { VoxelWorld } from '@/components/game-builder/VoxelWorld';
+import { AtmosphericBackdrop } from '@/components/game-builder/AtmosphericBackdrop';
+import { BuildActivity } from '@/components/game-builder/BuildActivity';
+import { EngineLoadout } from '@/components/game-builder/EngineLoadout';
+import { GameBuilderHeader } from '@/components/game-builder/GameBuilderHeader';
+import { GameBuilderHero } from '@/components/game-builder/GameBuilderHero';
 import { GameFaq } from '@/components/game-builder/GameFaq';
-import {
-  GAME_KINDS,
-  GAME_LIMITS,
-  GAME_PIPELINE,
-  GAME_PLACEHOLDERS,
-  GAME_PROMPTS,
-  GAME_SPLASH,
-  GAME_STACKS,
-} from '@/lib/gameBuilderContent';
+import { GeneratedSystems } from '@/components/game-builder/GeneratedSystems';
+import { HudIcon } from '@/components/game-builder/HudIcons';
+import { IterationDemo } from '@/components/game-builder/IterationDemo';
+import { PlayableExamples } from '@/components/game-builder/PlayableExamples';
+import { RepositoryPreview } from '@/components/game-builder/RepositoryPreview';
+import { GAME_LIMITS } from '@/lib/gameBuilderContent';
 import { buildMetadata } from '@/lib/seo';
 import '@/styles/homepage-coding.css';
-import '@/styles/game-builder.css';
+import '@/styles/game-cockpit.css';
 
+/**
+ * Metadata carried over unchanged from the previous version of this route: same
+ * title, description, path and keywords, so the canonical URL, the sitemap entry
+ * and any existing ranking signal are untouched by the redesign.
+ */
 export const metadata: Metadata = buildMetadata({
   title: 'Game Builder — Build Games With AI in Code You Own',
   description:
@@ -40,18 +44,12 @@ export const metadata: Metadata = buildMetadata({
 
 export default function GameBuilderPage() {
   /**
-   * Structured data: the product only.
+   * Structured data: the product only, unchanged from before the redesign.
    *
-   * Deliberately no `FAQPage` block, even though this page renders a real FAQ.
-   * `SiteJsonLd` in the root layout already emits a site-wide FAQPage on every
-   * route, so adding one here put two conflicting FAQPage entries on a single URL —
-   * and the global block's questions ("What is Xroga AI?", "How is Xroga different
-   * from Cursor?") are not visible on this page. One FAQPage per URL whose Q&A is
-   * actually on screen is the rule; two is worse than one, so this page does not add
-   * a second. The visible FAQ still gets crawled as ordinary content.
-   *
-   * The site-wide FAQPage appearing on pages that do not display its questions is a
-   * pre-existing issue worth fixing separately; it is not made worse here.
+   * Still deliberately no `FAQPage` block. `SiteJsonLd` in the root layout already
+   * emits a site-wide FAQPage on every route, so adding one here would put two
+   * conflicting FAQPage entries on a single URL. The visible FAQ is still crawled
+   * as ordinary content.
    */
   const softwareLd = {
     '@context': 'https://schema.org',
@@ -65,218 +63,84 @@ export default function GameBuilderPage() {
       'Build 2D platformers, puzzle games, roguelikes, voxel sandboxes, idle games, and browser game jam entries with Xroga AI, in a repository you own.',
   };
 
-
   return (
-    <main className="xv-gb-root">
+    <main className="xv-gc-root">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd).replace(/</g, '\\u003c') }}
       />
 
-      <div className="xv-gb-backdrop" aria-hidden="true">
-        <div className="xv-gb-sky" />
-        <div className="xv-gb-stars" />
-        <div className="xv-gb-grid" />
-      </div>
+      <AtmosphericBackdrop />
 
-      {/* ----------------------------------------------------- header: a hotbar */}
-      <header className="xv-gb-header">
-        <div className="xv-gb-shell xv-gb-header__inner">
-          <Logo href="/" height={32} />
-          <nav className="xv-gb-nav" aria-label="Game Builder">
-            <Link href="/showcase" className="xv-gb-slot">
-              <PixelGlyph name="gem" size={12} />
-              <span>Showcase</span>
-            </Link>
-            <Link href="/docs" className="xv-gb-slot">
-              <PixelGlyph name="book" size={12} />
-              <span>Docs</span>
-            </Link>
-            <Link href="/auth/signup" className="xv-gb-btn xv-gb-btn--primary xv-gb-btn--sm">
-              Start building
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <GameBuilderHeader />
 
-      {/* -------------------------------------------------------------- hero */}
-      <section className="xv-gb-hero">
-        <div className="xv-gb-shell xv-gb-hero__grid">
-          <div className="xv-gb-hero__copy">
-            <p className="xv-gb-eyebrow">
-              <PixelGlyph name="pick" size={12} />
-              XROGA GAME BUILDER
-            </p>
+      <div className="xv-gc-shell">
+        <GameBuilderHero />
 
-            <div className="xv-gb-title-wrap">
-              <h1 className="xv-gb-h1">
-                Build games that <em>actually play.</em>
-              </h1>
-              <span className="xv-gb-splash" aria-hidden="true">
-                {GAME_SPLASH}
-              </span>
-            </div>
-
-            <p className="xv-gb-lede">
-              Describe the game you want — a platformer, a roguelike, a voxel world, a jam entry — and Xroga builds
-              the real systems in a repository you own: input, state, collision, rendering, and progression.
-            </p>
-
-            <div className="xv-gb-chat">
-              <HomepageChatBar
-                placeholders={GAME_PLACEHOLDERS}
-                suggestions={GAME_PROMPTS}
-                ariaLabel="Describe the game you want to build"
-                fallbackPrompt="Build a game with Xroga AI"
-              />
-            </div>
+        <div className="xv-gc-sections">
+          {/* 1 · 2 · 3 */}
+          <div className="xv-gc-row xv-gc-row--a">
+            <PlayableExamples />
+            <GeneratedSystems />
+            <BuildActivity variant="steps" />
           </div>
 
-          <VoxelWorld />
-        </div>
-      </section>
-
-      {/* ------------------------------------------------ genres as ore blocks */}
-      <section className="xv-gb-section" aria-labelledby="gb-kinds-heading">
-        <div className="xv-gb-shell">
-          <p className="xv-gb-kicker">Creative mode</p>
-          <h2 id="gb-kinds-heading" className="xv-gb-h2">
-            What you can build here
-          </h2>
-          <p className="xv-gb-section-copy">
-            Every one of these is a real project in your repository, not a preview locked inside an editor.
-          </p>
-
-          <div className="xv-gb-blocks">
-            {GAME_KINDS.map(({ title, body, ore, glyph, tag }, index) => (
-              <article key={title} className="xv-gb-block" data-ore={ore}>
-                <div className="xv-gb-block__top">
-                  <span className="xv-gb-block__art">
-                    <OreBlock variant={index} size={48} />
-                    <span className="xv-gb-block__glyph">
-                      <PixelGlyph name={glyph} size={18} />
-                    </span>
-                  </span>
-                  <span className="xv-gb-tag">{tag}</span>
-                </div>
-                <h3 className="xv-gb-block__title">{title}</h3>
-                <p className="xv-gb-block__text">{body}</p>
-              </article>
-            ))}
+          {/* 4 · 5 · 6 */}
+          <div className="xv-gc-row xv-gc-row--b">
+            <EngineLoadout />
+            <IterationDemo />
+            <RepositoryPreview />
           </div>
-        </div>
-      </section>
 
-      {/* ------------------------------------------------------ engines/stacks */}
-      <section className="xv-gb-section xv-gb-section--tint" aria-labelledby="gb-stack-heading">
-        <div className="xv-gb-shell">
-          <p className="xv-gb-kicker">Choose your tools</p>
-          <h2 id="gb-stack-heading" className="xv-gb-h2">
-            Engines and runtimes it can target
-          </h2>
-          <p className="xv-gb-section-copy">
-            Xroga is not affiliated with or endorsed by these projects. They are named as targets you can ask for.
-          </p>
+          {/* FAQ — existing content and behaviour, restyled */}
+          <section className="xv-gc-panel" aria-labelledby="gc-faq-title">
+            <header className="xv-gc-panel__head">
+              <h2 className="xv-gc-panel__title" id="gc-faq-title">
+                <span className="xv-gc-panel__index">7.</span> Questions builders actually ask
+              </h2>
+            </header>
+            <GameFaq />
+          </section>
 
-          <ul className="xv-gb-stacks">
-            {GAME_STACKS.map((stack) => (
-              <li key={stack.name} className="xv-gb-stack">
-                <span className="xv-gb-stack__kind">{stack.kind}</span>
-                <span className="xv-gb-stack__name">{stack.name}</span>
-                <span className="xv-gb-stack__note">{stack.note}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* -------------------------------------------- pipeline as crafting row */}
-      <section className="xv-gb-section" aria-labelledby="gb-loop-heading">
-        <div className="xv-gb-shell">
-          <p className="xv-gb-kicker">Survival mode</p>
-          <h2 id="gb-loop-heading" className="xv-gb-h2">
-            Design → build → play → ship
-          </h2>
-
-          <ol className="xv-gb-craft">
-            {GAME_PIPELINE.map(({ title, body, glyph }, index) => (
-              <li key={title} className="xv-gb-craft__item">
-                <div className="xv-gb-craft__card">
-                  <div className="xv-gb-craft__top">
-                    <span className="xv-gb-slotframe">
-                      <PixelGlyph name={glyph} size={20} />
-                    </span>
-                    <span className="xv-gb-craft__num">0{index + 1}</span>
-                  </div>
-                  <h3 className="xv-gb-block__title">{title}</h3>
-                  <p className="xv-gb-block__text">{body}</p>
-                </div>
-                {index < GAME_PIPELINE.length - 1 && (
-                  <span className="xv-gb-craft__arrow" aria-hidden="true">
-                    <PixelGlyph name="arrow" size={14} />
-                  </span>
-                )}
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------------------- faq */}
-      <section className="xv-gb-section xv-gb-section--tint" aria-labelledby="gb-faq-heading">
-        <div className="xv-gb-shell">
-          <p className="xv-gb-kicker">Before you start</p>
-          <h2 id="gb-faq-heading" className="xv-gb-h2">
-            Questions builders actually ask
-          </h2>
-          <GameFaq />
-        </div>
-      </section>
-
-      {/* -------------------------------------------------------------- limits */}
-      <section className="xv-gb-section">
-        <div className="xv-gb-shell">
-          <aside className="xv-gb-limits" role="note">
-            <PixelGlyph name="shield" size={18} className="xv-gb-limits__icon" />
+          {/* Limits — verbatim, and kept above the final call to action */}
+          <aside className="xv-gc-panel xv-gc-limits" role="note" aria-labelledby="gc-limits-title">
+            <HudIcon name="combat" size={20} />
             <div>
-              <h2 className="xv-gb-limits__title">What Xroga does not promise</h2>
-              <p className="xv-gb-block__text">{GAME_LIMITS}</p>
+              <h2 className="xv-gc-panel__title" id="gc-limits-title">
+                What Xroga does not promise
+              </h2>
+              <p>{GAME_LIMITS}</p>
             </div>
           </aside>
 
-          <div className="xv-gb-cta">
-            <span className="xv-gb-cta__block" aria-hidden="true">
-              <OreBlock variant={2} size={56} />
-              <span className="xv-gb-cta__glyph">
-                <PixelGlyph name="pick" size={22} />
-              </span>
-            </span>
+          {/* Final CTA — the same prompt component, not a decorative lookalike.
+              `listenForAsk={false}` so a "use this prompt" click fills the hero
+              bar and keeps focus there rather than jumping to the page foot. */}
+          <section className="xv-gc-cta" aria-labelledby="gc-cta-title">
             <div>
-              <h2 className="xv-gb-h2">Bring the idea. Xroga writes the game.</h2>
-              <p className="xv-gb-section-copy">
-                Start with one sentence and keep iterating in the real workspace — the code stays in your repository
-                the whole time.
-              </p>
+              <h2 className="xv-gc-cta__title" id="gc-cta-title">
+                Ready to build your game?
+              </h2>
+              <p className="xv-gc-cta__copy">Describe your idea and watch Xroga bring it to life.</p>
             </div>
-            <Link href="/auth/signup" className="xv-gb-btn xv-gb-btn--primary">
-              <PixelGlyph name="rocket" size={12} />
-              Open Xroga
-            </Link>
-          </div>
+            <div className="xv-gc-cta__prompt xv-gc-prompt-surface">
+              <HomepageChatBar
+                placeholders={['Describe your game…']}
+                ariaLabel="Describe the game you want to build"
+                fallbackPrompt="Build a game with Xroga AI"
+                listenForAsk={false}
+              />
+            </div>
+          </section>
 
-          <div className="xv-gb-links">
-            <Link href="/crypto-builder">
-              Crypto Builder <PixelGlyph name="arrow" size={10} />
-            </Link>
-            <Link href="/showcase">
-              Showcase <PixelGlyph name="arrow" size={10} />
-            </Link>
-            <Link href="/pricing">
-              Plan and capacity <PixelGlyph name="arrow" size={10} />
-            </Link>
-          </div>
+          <nav className="xv-gc-foot" aria-label="Related pages">
+            <Link href="/crypto-builder">Crypto Builder</Link>
+            <Link href="/showcase">Showcase</Link>
+            <Link href="/pricing">Plan and capacity</Link>
+            <Link href="/docs">Docs</Link>
+          </nav>
         </div>
-      </section>
+      </div>
     </main>
   );
 }
