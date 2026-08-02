@@ -147,6 +147,47 @@ export function saveConversation(runId: string, messages: unknown[]): boolean {
   return true;
 }
 
+/**
+ * Saves a conversation for a run this process does not hold in memory.
+ *
+ * The run map is per-process, and production runs more than one machine, so a
+ * conversation save routinely lands on an instance that never saw the build. The
+ * route used to handle that by fabricating a stub run and completing it — which
+ * upserted on `id` and destroyed the real row: prompt, created_at, the entire
+ * event transcript, and the actual outcome, replaced by an empty chat marked
+ * complete. Observed in production twice.
+ *
+ * This writes the one column it means to write. It updates rather than upserts, so
+ * it cannot create a row, and it is scoped to the owner so one user cannot write
+ * over another's run. If the run does not exist, nothing happens — which is the
+ * correct outcome for a conversation with no run.
+ */
+export async function persistConversationOnly(
+  runId: string,
+  userId: string,
+  messages: unknown[],
+): Promise<boolean> {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return false;
+  const trimmed = Array.isArray(messages) ? messages.slice(-80) : [];
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('swarm_runs')
+      .update({ messages: trimmed })
+      .eq('id', runId)
+      .eq('user_id', userId)
+      .select('id');
+    if (error) {
+      console.warn('[runStore] conversation-only persist failed:', error.message);
+      return false;
+    }
+    return (data?.length ?? 0) > 0;
+  } catch (error) {
+    console.warn('[runStore] conversation-only persist threw:', (error as Error).message);
+    return false;
+  }
+}
+
 export function appendRunEvent(
   runId: string,
   type: SwarmRunEvent['type'],
