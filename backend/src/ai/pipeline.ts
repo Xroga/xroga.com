@@ -10,6 +10,11 @@ import {
 import { requireBuildArtifacts } from './buildOutputValidation.js';
 import { describeCompileBlocker } from './compileBlockerMessage.js';
 import {
+  classifyValidation,
+  describeUnverifiedShip,
+  qaWasUnavailable,
+} from './validationVerdict.js';
+import {
   classifyBuilderFailure,
   isRetryableBuilderFailure,
   runBuilderAttempt,
@@ -1895,11 +1900,17 @@ export async function runBuildPipeline(opts: {
   // One fix pass if QA/source validation failed and we have fix hints. A pure
   // registry/install timeout is an infrastructure blocker, not a reason to
   // spend another model call changing otherwise-unproven source files.
+  // A reviewer outage is not a code defect. On run `dca6799a` the reviewer was down
+  // and the compile failure was a registry timeout, and the pipeline still spent four
+  // and a half minutes asking a model to repair source files that nothing had found
+  // fault with.
+  const qaOutage = qaWasUnavailable(qa);
   let repairLoops = 0;
   if (
     !qa.ok &&
     qa.fixHints.length &&
     !opts.signal?.aborted &&
+    !(qaOutage && !compileNeedsCodeRepair) &&
     (qaHadFailuresBeforeCompile || compileNeedsCodeRepair)
   ) {
     repairLoops += 1;
@@ -2021,13 +2032,15 @@ export async function runBuildPipeline(opts: {
     } catch (err) {
       console.warn('[pipeline] QA fix pass failed:', normalizeProviderError(err).safeMessage);
     }
-  } else if (!qa.ok && !opts.signal?.aborted && !qaHadFailuresBeforeCompile && !compileNeedsCodeRepair) {
+  } else if (!qa.ok && !opts.signal?.aborted && !compileNeedsCodeRepair) {
     emit({
       agent: 'compiler',
       status: 'repair_skipped',
-      message: 'Dependency installation timed out. Code repair was skipped because it cannot repair a package-registry or network timeout.',
-      swarmStatusLabel: 'Validation blocked',
-      swarmActivity: 'Infrastructure timeout',
+      message: qaOutage
+        ? 'The reviewer and the dependency install were both unavailable. Editing the code cannot repair either, so the build continues to ship.'
+        : 'Dependency installation timed out. Code repair was skipped because it cannot repair a package-registry or network timeout.',
+      swarmStatusLabel: 'Not verified here',
+      swarmActivity: 'Infrastructure unavailable',
       swarmTodos: todos('compile'),
     });
   }
@@ -2244,10 +2257,30 @@ export async function runBuildPipeline(opts: {
     provisioned: false,
     message: '',
   }));
-  const compileBlocksShip = !productionValidationAllowsDeployment(compile);
   // Re-check structure right before push (after QA fix passes may have changed files)
   const structureFinal = staticValidateProject(nextFiles);
   const qaBlocksShip = !structureFinal.ok;
+
+  // Our sandbox failing is not the user's product failing. A registry timeout or a
+  // reviewer outage produces no evidence about their code — and refusing to push means
+  // we never obtain any, while guaranteeing they receive nothing. Vercel runs a real
+  // install and a real production build on every deployment, so when we cannot run one
+  // here, that build is the verification. A genuine code defect still blocks.
+  const validation = classifyValidation({ compile, qa, structureOk: structureFinal.ok });
+  const compileBlocksShip = validation.verdict === 'code_defect';
+  const unverifiedNote =
+    validation.verdict === 'not_verified'
+      ? describeUnverifiedShip(validation.unverifiedReasons)
+      : null;
+  if (unverifiedNote) {
+    emit({
+      agent: 'compiler',
+      status: 'not_verified_locally',
+      message: unverifiedNote,
+      swarmStatusLabel: 'Not verified here',
+      swarmTodos: todos('compile'),
+    });
+  }
   const shipBlockers: string[] = [];
   if (!githubOk) shipBlockers.push('Connect GitHub to push code to your repo');
   if (!isNonWebProduct && !vercelOk) {
@@ -3331,8 +3364,12 @@ export async function runBuildPipeline(opts: {
   const nextStepsMarkdown = outcome.nextSteps.length
     ? `\n\n### Next steps\n${outcome.nextSteps.map((s) => `- ${s}`).join('\n')}`
     : '';
-  const compileMarkdown =
-    !compile.skipped
+  // When validation could not run, say so instead of printing a red cross next to a
+  // product that was shipped anyway — a bare ❌ beside working code is what made the
+  // previous report read as a failure when it was not one.
+  const compileMarkdown = unverifiedNote
+    ? `\n\n### Verification\n⚠️ ${unverifiedNote}`
+    : !compile.skipped
       ? `\n\n### Compile\n${compile.ok ? '✅' : '❌'} npm install ${compile.installOk ? 'OK' : 'FAIL'} · tsc ${compile.tscOk ? 'OK' : 'FAIL'}${
           compile.issues.length ? `\n${compile.issues.slice(0, 5).map((i) => `- ${i}`).join('\n')}` : ''
         }`
@@ -3347,6 +3384,9 @@ export async function runBuildPipeline(opts: {
     generatedFiles: nextFiles.map((f) => f.path),
     fileCount: nextFiles.length,
     projectName,
+    // Present only when the code shipped without local verification, so the UI can
+    // show a warning rather than either a silent pass or a false failure.
+    ...(unverifiedNote ? { validationNotVerified: unverifiedNote } : {}),
     message: (
       (patchAborted
         ? `⚠️ **Update aborted** for **${projectName}** — patches did not match safely. Your live site was **not** changed.`

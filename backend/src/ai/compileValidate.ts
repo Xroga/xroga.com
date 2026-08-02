@@ -33,6 +33,42 @@ const INSTALL_MS = 180_000;
 const TSC_MS = 60_000;
 const BUILD_MS = 180_000;
 
+/**
+ * A cache directory shared by every validation on this machine.
+ *
+ * Each run previously installed into a fresh `mkdtemp` with npm's default per-process
+ * cache resolution, so a Next.js dependency tree was downloaded from scratch every
+ * time. On run `dca6799a` that install ran for the full 180-second budget and timed
+ * out, and the finished twenty-one-file project was discarded because of it.
+ *
+ * Pointing every install at one directory means the download happens once per machine
+ * rather than once per build. It is still inside the ephemeral filesystem, so nothing
+ * is persisted across deploys and no user content is shared — an npm cache holds only
+ * public registry tarballs.
+ */
+const NPM_CACHE_DIR = join(tmpdir(), 'xroga-npm-cache');
+
+/**
+ * Install flags.
+ *
+ * `--ignore-scripts` is a security boundary and must never be removed: it is what stops
+ * a generated `package.json` from executing arbitrary code on our machine.
+ *
+ * The retry settings make a failing network fail *fast* instead of consuming the whole
+ * budget. npm's defaults retry with a maximum backoff of a minute, which turns one slow
+ * mirror into a three-minute timeout that reads to the user as a broken product.
+ */
+const INSTALL_ARGS = [
+  'install',
+  '--ignore-scripts',
+  '--no-audit',
+  '--no-fund',
+  '--prefer-offline',
+  `--cache=${NPM_CACHE_DIR}`,
+  '--fetch-retries=2',
+  '--fetch-retry-maxtimeout=20000',
+];
+
 export function requiredProductionBuild(files: ProjectFile[]): { command: string; args: string[] } | null {
   const raw = files.find((file) => file.path === 'package.json')?.content;
   if (!raw) return null;
@@ -201,12 +237,7 @@ export async function compileValidateProject(
       );
     }
 
-    const install = await runCmd(
-      'npm',
-      ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--prefer-offline'],
-      dir,
-      INSTALL_MS,
-    );
+    const install = await runCmd('npm', INSTALL_ARGS, dir, INSTALL_MS);
     log += `npm install:\n${install.stdout}\n${install.stderr}\n`;
     if (install.timedOut) {
       issues.push('npm install timed out');
