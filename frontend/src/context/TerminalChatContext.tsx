@@ -16,6 +16,7 @@ import { terminalRunReducer } from '@/lib/terminal/terminalRunReducer';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, ApiError, type ChatAttachment, api } from '@/lib/api';
+import { capacityUnavailableLine } from '@/lib/capacityMessage';
 import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
 import { buildCompletedChatHistory } from '@/lib/chatHistory';
 import { isMathQueryPrompt } from '@/lib/mathDetect';
@@ -2756,8 +2757,13 @@ export function TerminalChatProvider({
           // not fail on its own, and labelling it an error would misreport it.
           dispatchTerminalRun({ type: 'interrupted' });
         } else {
+          // ApiError.data carries `code` and, for CAPACITY_UNAVAILABLE, `nextUnlockAt`
+          // — spread it through so the adapter can append the unlock time instead of
+          // just the bare sentence.
+          const errData = err instanceof ApiError ? err.data : {};
           pushTerminalEvent('error', {
             error: err instanceof Error ? err.message : 'Run failed',
+            ...errData,
           });
         }
         if (err instanceof DOMException && err.name === 'AbortError') {
@@ -2880,11 +2886,23 @@ export function TerminalChatProvider({
                 : msg
             );
           }
-          const friendly = codeBuildActive
-            ? isBuildUpdateEarly
-              ? `**Update could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
-              : `**Build could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
-            : GENERIC_SWARM_FALLBACK;
+          // A capacity-cap failure gets its own line with the unlock time, rather than
+          // being folded into the generic "could not start" wording — the whole point
+          // of surfacing nextUnlockAt is that it answers "when can I try again", and
+          // that answer belongs in the message the user actually reads, not only in
+          // the terminal transcript underneath it.
+          const errData = err instanceof ApiError ? (err.data as { code?: string; nextUnlockAt?: unknown }) : null;
+          const capacityLine =
+            errData?.code === 'CAPACITY_UNAVAILABLE' && err instanceof Error
+              ? capacityUnavailableLine(err.message, errData.nextUnlockAt)
+              : null;
+          const friendly =
+            capacityLine ??
+            (codeBuildActive
+              ? isBuildUpdateEarly
+                ? `**Update could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
+                : `**Build could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
+              : GENERIC_SWARM_FALLBACK);
           return [
             ...m.filter((msg) => msg.id !== assistantId || msg.content.length > 0),
             {

@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { MODELS, type ModelId } from './models.js';
 import { normalizeProviderError } from './providerRuntime.js';
+import { capacityUnavailableError } from './capacityUnavailable.js';
 
 export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 16_500_000;
 export const PROVIDER_PRICE_VERSION = '2026-07-28-v1';
@@ -324,9 +325,12 @@ export async function reserveProviderBudget(input: {
       result = await rpc();
     }
     if (result.error) {
-      const error = new Error('Currently unlocked AI capacity is unavailable') as Error & { code?: string };
-      error.code = 'PAID_PROVIDER_CAPACITY_UNAVAILABLE';
-      throw error;
+      // The RPC does its own bookkeeping in the database, so this failure can be the
+      // pacing cap or an unrelated database error — re-check the account's own
+      // entitlement to tell them apart rather than blaming the schedule for both.
+      const status = await getProviderEntitlementStatus(input.userId).catch(() => null);
+      const atCapacity = status?.availableNowPercent != null && status.availableNowPercent <= 0;
+      throw capacityUnavailableError(atCapacity, status?.nextUnlockAt ?? null);
     }
     const row = result.data as unknown as { id: string; reserved_micro_usd: number; price_version: string };
     return { id: row.id, reservedMicroUsd: Number(row.reserved_micro_usd), priceVersion: row.price_version };
@@ -361,9 +365,9 @@ export async function reserveProviderBudget(input: {
     acceleratedUnlockMicroUsd: cycle.acceleratedUnlockMicroUsd,
   });
   if (cycle.settled + cycle.reserved + amount > unlocked) {
-    const error = new Error('Currently unlocked AI capacity is unavailable') as Error & { code?: string };
-    error.code = 'PAID_PROVIDER_CAPACITY_UNAVAILABLE';
-    throw error;
+    // This is the exact check that refused the reservation, so it is the source of
+    // truth for whether the pacing cap caused it — no need to re-derive it.
+    throw capacityUnavailableError(true, nextCycleUnlock(cycle.startsAt, new Date(), cycle.endsAt));
   }
   cycle.reserved += amount;
   const id = randomUUID();

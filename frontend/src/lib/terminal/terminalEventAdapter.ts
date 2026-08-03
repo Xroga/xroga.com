@@ -15,6 +15,7 @@
 
 import type { TerminalEvent, TerminalEventKind, TerminalEventLevel } from './terminalEvent';
 import { redactTerminalText } from './terminalRedaction';
+import { capacityUnavailableLine } from '../capacityMessage';
 
 /** Raw payload as received. Deliberately loose — this is untrusted input. */
 export type RawTerminalPayload = Record<string, unknown>;
@@ -79,7 +80,12 @@ function kindFor(event: string): TerminalEventKind | null {
  */
 function textFor(event: string, payload: RawTerminalPayload): string | null {
   if (event === 'delta') return str(payload.delta);
-  if (event === 'error') return str(payload.error) ?? 'Run failed';
+  if (event === 'error') {
+    const base = str(payload.error) ?? 'Run failed';
+    return payload.code === 'CAPACITY_UNAVAILABLE'
+      ? capacityUnavailableLine(base, payload.nextUnlockAt)
+      : base;
+  }
   if (event === 'preview') return 'Preview build ready';
   if (event === 'complete') {
     return payload.success === false ? 'Run finished with errors' : 'Run complete';

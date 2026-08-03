@@ -54,6 +54,36 @@ test('event names map to the documented kinds', () => {
   assert.equal(adapt('error', { error: 'x' })[0].kind, 'failure');
 });
 
+test('a capacity-unavailable error appends the next unlock time, formatted, no dollar amount', () => {
+  const [row] = adapt('error', {
+    error: "Today's unlocked AI capacity is fully in use.",
+    code: 'CAPACITY_UNAVAILABLE',
+    nextUnlockAt: '2026-08-03T15:42:46.809Z',
+  });
+  const expected = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(
+    new Date('2026-08-03T15:42:46.809Z'),
+  );
+  assert.equal(row.text, `Today's unlocked AI capacity is fully in use. More capacity unlocks ${expected}.`);
+  assert.doesNotMatch(row.text, /\$|USD/);
+});
+
+test('a capacity-unavailable error with no unlock time still shows the base message', () => {
+  const [row] = adapt('error', {
+    error: 'AI capacity could not be reserved right now. Please try again in a moment.',
+    code: 'CAPACITY_UNAVAILABLE',
+  });
+  assert.equal(row.text, 'AI capacity could not be reserved right now. Please try again in a moment.');
+});
+
+test('a non-capacity error never gets the unlock-time treatment', () => {
+  const [row] = adapt('error', {
+    error: 'Production build failed (exit 1).',
+    code: 'BUILD_FAILED',
+    nextUnlockAt: '2026-08-03T15:42:46.809Z',
+  });
+  assert.equal(row.text, 'Production build failed (exit 1).');
+});
+
 test('failed complete is an error row, not a success row', () => {
   const [row] = adapt('complete', { success: false });
   assert.equal(row.level, 'error');

@@ -193,8 +193,15 @@ async function waitForPersistedSwarmRun(
     }
     if (run.status === 'cancelled') throw new DOMException('Aborted', 'AbortError');
     if (run.status === 'error') {
-      const output = run.output as { error?: string } | null;
-      throw new ApiError(output?.error ?? 'The persisted build failed.', 500, { code: 'BUILD_FAILED' });
+      // The persisted row now carries the real reason code (and, for a capacity
+      // cap, when it lifts) instead of the generic BUILD_FAILED every failure used
+      // to be flattened to — this is exactly the path a dropped SSE stream lands
+      // on, so losing that distinction here defeats the point of persisting it.
+      const output = run.output as { error?: string; code?: string; nextUnlockAt?: string | null } | null;
+      throw new ApiError(output?.error ?? 'The persisted build failed.', 500, {
+        code: output?.code ?? 'BUILD_FAILED',
+        nextUnlockAt: output?.nextUnlockAt,
+      });
     }
 
     return deliverSwarmComplete({
@@ -320,7 +327,14 @@ export async function streamSwarmExecute(
             payload as Record<string, unknown>
           );
         }
-        throw new Error(String(payload.error ?? 'Swarm stream error'));
+        // Carries `code` and (for CAPACITY_UNAVAILABLE) `nextUnlockAt` through as
+        // structured data rather than a plain Error, whose message is all that used to
+        // survive — losing exactly the fact the terminal needs to say when to retry.
+        throw new ApiError(
+          String(payload.error ?? 'Swarm stream error'),
+          500,
+          payload as Record<string, unknown>
+        );
       }
 
       if (eventName === 'start' || eventName === 'pipeline') {
