@@ -9,6 +9,12 @@ import {
 } from './openaiCompat.js';
 import { requireBuildArtifacts } from './buildOutputValidation.js';
 import { describeCompileBlocker } from './compileBlockerMessage.js';
+import { describeVercelDeployFailure, isVercelAuthFailure } from '../lib/vercelAuthError.js';
+import {
+  classifyValidation,
+  describeUnverifiedShip,
+  qaWasUnavailable,
+} from './validationVerdict.js';
 import {
   classifyBuilderFailure,
   isRetryableBuilderFailure,
@@ -68,7 +74,7 @@ import {
   getGithubDefaultRepo,
   inspectConnectedRepositoryState,
 } from '../services/integrations/githubDeploy.js';
-import { getVercelToken } from '../services/integrations/vercelAuth.js';
+import { clearVercelConnection, getVercelToken } from '../services/integrations/vercelAuth.js';
 import {
   getUserSupabaseStatus,
   buildProviderEnvFiles,
@@ -256,9 +262,30 @@ const BUILDER_FALLBACKS: ModelId[] = [
   'deepseek_v4_flash',
 ];
 
-function projectNameFromPrompt(prompt: string): string {
-  const cleaned = prompt
-    .replace(/^(build|create|make|generate|scaffold|develop)\s+(me\s+)?(a|an|the)?\s*/i, '')
+/**
+ * A short display name for the product, taken from what the user actually asked for.
+ *
+ * The terminal wraps a prompt in conversation memory before sending it:
+ *
+ *   [Previous conversation for context — refer when user asks about earlier messages]
+ *   …
+ *   [Current message]
+ *   build a landing page of dental clinic
+ *
+ * This function used to receive that whole block, take its first four words, and name
+ * the project `[Previous Conversation For Context`. Two production runs shipped under
+ * that name — it appeared as the project title in the terminal and in the build report.
+ *
+ * Callers now pass `userFacingPrompt`, and the context block is stripped here as well,
+ * because any caller that omits `clientMeta.userPrompt` would reintroduce the same bug.
+ */
+export function projectNameFromPrompt(prompt: string): string {
+  const currentMessage = prompt.split(/\[Current message\]\s*/i).pop() ?? prompt;
+  const cleaned = currentMessage
+    .replace(/^\s*\[[^\]]*\]\s*/g, '')
+    // `(a|an|the)?` without a boundary matched the "a" inside "an", so
+    // "create an invoicing app" was named "N Invoicing App".
+    .replace(/^(build|create|make|generate|scaffold|develop)\s+(me\s+)?(?:(?:a|an|the)\b\s*)?/i, '')
     .replace(/[.!?]+$/g, '')
     .trim();
   const words = cleaned.split(/\s+/).filter(Boolean).slice(0, 4);
@@ -1648,8 +1675,8 @@ export async function runBuildPipeline(opts: {
   }
 
   const projectName = isUpdate
-    ? prior.projectName || projectNameFromPrompt(opts.prompt)
-    : projectNameFromPrompt(opts.prompt);
+    ? prior.projectName || projectNameFromPrompt(userFacingPrompt)
+    : projectNameFromPrompt(userFacingPrompt);
 
   // New builds: merge deterministic scaffold under AI output
   // so user vault keys can power live /api routes and mobile/extension/desktop ship complete.
@@ -1895,11 +1922,17 @@ export async function runBuildPipeline(opts: {
   // One fix pass if QA/source validation failed and we have fix hints. A pure
   // registry/install timeout is an infrastructure blocker, not a reason to
   // spend another model call changing otherwise-unproven source files.
+  // A reviewer outage is not a code defect. On run `dca6799a` the reviewer was down
+  // and the compile failure was a registry timeout, and the pipeline still spent four
+  // and a half minutes asking a model to repair source files that nothing had found
+  // fault with.
+  const qaOutage = qaWasUnavailable(qa);
   let repairLoops = 0;
   if (
     !qa.ok &&
     qa.fixHints.length &&
     !opts.signal?.aborted &&
+    !(qaOutage && !compileNeedsCodeRepair) &&
     (qaHadFailuresBeforeCompile || compileNeedsCodeRepair)
   ) {
     repairLoops += 1;
@@ -2021,13 +2054,15 @@ export async function runBuildPipeline(opts: {
     } catch (err) {
       console.warn('[pipeline] QA fix pass failed:', normalizeProviderError(err).safeMessage);
     }
-  } else if (!qa.ok && !opts.signal?.aborted && !qaHadFailuresBeforeCompile && !compileNeedsCodeRepair) {
+  } else if (!qa.ok && !opts.signal?.aborted && !compileNeedsCodeRepair) {
     emit({
       agent: 'compiler',
       status: 'repair_skipped',
-      message: 'Dependency installation timed out. Code repair was skipped because it cannot repair a package-registry or network timeout.',
-      swarmStatusLabel: 'Validation blocked',
-      swarmActivity: 'Infrastructure timeout',
+      message: qaOutage
+        ? 'The reviewer and the dependency install were both unavailable. Editing the code cannot repair either, so the build continues to ship.'
+        : 'Dependency installation timed out. Code repair was skipped because it cannot repair a package-registry or network timeout.',
+      swarmStatusLabel: 'Not verified here',
+      swarmActivity: 'Infrastructure unavailable',
       swarmTodos: todos('compile'),
     });
   }
@@ -2244,10 +2279,30 @@ export async function runBuildPipeline(opts: {
     provisioned: false,
     message: '',
   }));
-  const compileBlocksShip = !productionValidationAllowsDeployment(compile);
   // Re-check structure right before push (after QA fix passes may have changed files)
   const structureFinal = staticValidateProject(nextFiles);
   const qaBlocksShip = !structureFinal.ok;
+
+  // Our sandbox failing is not the user's product failing. A registry timeout or a
+  // reviewer outage produces no evidence about their code — and refusing to push means
+  // we never obtain any, while guaranteeing they receive nothing. Vercel runs a real
+  // install and a real production build on every deployment, so when we cannot run one
+  // here, that build is the verification. A genuine code defect still blocks.
+  const validation = classifyValidation({ compile, qa, structureOk: structureFinal.ok });
+  const compileBlocksShip = validation.verdict === 'code_defect';
+  const unverifiedNote =
+    validation.verdict === 'not_verified'
+      ? describeUnverifiedShip(validation.unverifiedReasons)
+      : null;
+  if (unverifiedNote) {
+    emit({
+      agent: 'compiler',
+      status: 'not_verified_locally',
+      message: unverifiedNote,
+      swarmStatusLabel: 'Not verified here',
+      swarmTodos: todos('compile'),
+    });
+  }
   const shipBlockers: string[] = [];
   if (!githubOk) shipBlockers.push('Connect GitHub to push code to your repo');
   if (!isNonWebProduct && !vercelOk) {
@@ -3080,28 +3135,39 @@ export async function runBuildPipeline(opts: {
             : todos('deploy'),
         });
       } else if (deployed.deployError) {
-        const deployFailure = redactSecrets(deployed.deployError).slice(0, 240);
-        shipBlockers.push(`Vercel deploy failed: ${deployFailure}`);
+        const deployFailure = describeVercelDeployFailure(
+          redactSecrets(deployed.deployError),
+          { githubRepoName },
+        );
+        const reauth = isVercelAuthFailure(deployed.deployError);
+        if (reauth) await clearVercelConnection(opts.userId).catch(() => {});
+        shipBlockers.push(deployFailure);
         emit({
           agent: 'deploy',
-          status: 'deploy_failed',
+          status: reauth ? 'deploy_reauth_required' : 'deploy_failed',
           message: deployFailure,
-          swarmStatusLabel: 'Deploy issue',
-          swarmActivity: deployFailure.slice(0, 120),
+          swarmStatusLabel: reauth ? 'Reconnect Vercel' : 'Deploy issue',
           swarmTodos: todos('deploy'),
+          ...(reauth ? { needsVercel: true } : {}),
         });
       }
     } catch (err) {
-      const deployFailure = redactSecrets((err as Error).message || 'Unknown Vercel error').slice(0, 240);
-      shipBlockers.push(`Vercel deploy failed: ${deployFailure}`);
+      const raw = redactSecrets((err as Error).message || 'Unknown Vercel error');
+      const deployFailure = describeVercelDeployFailure(raw, { githubRepoName });
+      // An `invalidToken` rejection means the stored authorization is dead. Leaving it
+      // in place makes the account look connected, so every later build repeats this
+      // same failure with no way for the user to know why.
+      const reauth = isVercelAuthFailure(raw);
+      if (reauth) await clearVercelConnection(opts.userId).catch(() => {});
+      shipBlockers.push(deployFailure);
       console.warn('[pipeline] Vercel deploy failed:', deployFailure);
       emit({
         agent: 'deploy',
-        status: 'deploy_failed',
-        message: `Vercel deploy failed: ${deployFailure}`,
-        swarmStatusLabel: 'Deploy failed',
-        swarmActivity: deployFailure.slice(0, 120),
+        status: reauth ? 'deploy_reauth_required' : 'deploy_failed',
+        message: deployFailure,
+        swarmStatusLabel: reauth ? 'Reconnect Vercel' : 'Deploy failed',
         swarmTodos: todos('deploy'),
+        ...(reauth ? { needsVercel: true } : {}),
       });
     }
   } else if (!isNonWebProduct && !vercelToken && !patchAborted && !security.blocked) {
@@ -3331,8 +3397,12 @@ export async function runBuildPipeline(opts: {
   const nextStepsMarkdown = outcome.nextSteps.length
     ? `\n\n### Next steps\n${outcome.nextSteps.map((s) => `- ${s}`).join('\n')}`
     : '';
-  const compileMarkdown =
-    !compile.skipped
+  // When validation could not run, say so instead of printing a red cross next to a
+  // product that was shipped anyway — a bare ❌ beside working code is what made the
+  // previous report read as a failure when it was not one.
+  const compileMarkdown = unverifiedNote
+    ? `\n\n### Verification\n⚠️ ${unverifiedNote}`
+    : !compile.skipped
       ? `\n\n### Compile\n${compile.ok ? '✅' : '❌'} npm install ${compile.installOk ? 'OK' : 'FAIL'} · tsc ${compile.tscOk ? 'OK' : 'FAIL'}${
           compile.issues.length ? `\n${compile.issues.slice(0, 5).map((i) => `- ${i}`).join('\n')}` : ''
         }`
@@ -3347,6 +3417,9 @@ export async function runBuildPipeline(opts: {
     generatedFiles: nextFiles.map((f) => f.path),
     fileCount: nextFiles.length,
     projectName,
+    // Present only when the code shipped without local verification, so the UI can
+    // show a warning rather than either a silent pass or a false failure.
+    ...(unverifiedNote ? { validationNotVerified: unverifiedNote } : {}),
     message: (
       (patchAborted
         ? `⚠️ **Update aborted** for **${projectName}** — patches did not match safely. Your live site was **not** changed.`
