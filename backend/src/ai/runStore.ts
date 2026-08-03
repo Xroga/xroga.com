@@ -122,6 +122,10 @@ export function failRun(
   runId: string,
   error: string,
   status: 'error' | 'cancelled' = 'error',
+  // The specific reason code (e.g. CAPACITY_UNAVAILABLE) previously never reached the
+  // persisted row — every failure was stored as the generic BUILD_FAILED, so a run
+  // reconnected or reloaded after the fact lost the distinction the live stream had.
+  extra: { code?: string; nextUnlockAt?: string | null } = {},
 ): SwarmRunRecord | null {
   const rec = runs.get(runId);
   if (!rec) return null;
@@ -129,7 +133,8 @@ export function failRun(
   rec.output = {
     type: 'error',
     error: error.slice(0, 1000),
-    code: status === 'cancelled' ? 'BUILD_CANCELLED' : 'BUILD_FAILED',
+    code: status === 'cancelled' ? 'BUILD_CANCELLED' : (extra.code ?? 'BUILD_FAILED'),
+    ...(extra.nextUnlockAt ? { nextUnlockAt: extra.nextUnlockAt } : {}),
   };
   rec.completed_at = new Date().toISOString();
   rec.iteration_count += 1;
