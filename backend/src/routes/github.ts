@@ -477,6 +477,20 @@ router.post('/push-build', async (req: AuthRequest, res) => {
       .max(40)
       .optional(),
     incremental: z.boolean().optional(),
+    /**
+     * Visibility for a repository this push creates. Absent means private.
+     *
+     * Deliberately an explicit two-value enum rather than a boolean: a missing or
+     * malformed field can only ever fail closed to private, and there is no value a
+     * client can send by accident that publishes a repository.
+     */
+    visibility: z.enum(['private', 'public']).optional(),
+    /**
+     * Explicit approval to commit straight to a default or protected branch. Without it
+     * such a push becomes a pull request from `xroga/<run-id>` instead.
+     */
+    directWriteAuthorized: z.boolean().optional(),
+    runId: z.string().max(120).optional(),
   });
 
   const parsed = schema.safeParse(req.body);
@@ -515,11 +529,18 @@ router.post('/push-build', async (req: AuthRequest, res) => {
       targetRepo: parsed.data.repoName,
       targetBranch: parsed.data.branch ?? 'main',
       slug: parsed.data.projectSlug,
+      // No visibility selected means private. Never public by omission.
+      visibility: parsed.data.visibility ?? 'private',
+      ...(parsed.data.runId ? { runId: parsed.data.runId } : {}),
+      ...(parsed.data.directWriteAuthorized === true ? { directWriteAuthorized: true } : {}),
     });
     res.json({
       githubRepoUrl: github.htmlUrl,
       githubRepoName: github.repoName,
       commitSha: github.commitSha,
+      branch: github.branch,
+      ...(github.pullRequestUrl ? { pullRequestUrl: github.pullRequestUrl } : {}),
+      ...(github.warning ? { warning: github.warning } : {}),
       pushed: true,
       fileCount: files.length,
       generatedFiles: incremental ? files.map((f) => f.path) : scaffoldFilePaths(prompt),

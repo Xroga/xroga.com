@@ -6,7 +6,15 @@ import { api, type GitHubRepo } from '@/lib/api';
 import { getCachedRepoAnalysis, setCachedRepoAnalysis } from '@/lib/repoAnalysisCache';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
 import { GITHUB_CONNECTED_EVENT } from '@/lib/githubEvents';
-import { consumeFreshTerminalIntent, markFreshTerminalIntent, clearSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
+import {
+  consumeFreshTerminalIntent,
+  markFreshTerminalIntent,
+  clearSelectedRepoContext,
+  saveSelectedRepoContext,
+  getNewRepoVisibility,
+  saveNewRepoVisibility,
+  type NewRepoVisibility,
+} from '@/lib/repoContext';
 import {
   GITHUB_PROJECT_SAVED_EVENT,
   GITHUB_REPO_CONTEXT_EVENT,
@@ -89,8 +97,16 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
   const [repoSummary, setRepoSummary] = useState<string | null>(null);
   const [repoTech, setRepoTech] = useState<string[]>([]);
   const [open, setOpen] = useState<'repo' | 'branch' | null>(null);
+  // Only consulted when no repo is selected, i.e. when this build will create one.
+  // Initialised to 'private' rather than from storage so the first server-rendered paint
+  // can never show "Public" for a user whose stored value has not been read yet.
+  const [newRepoVisibility, setNewRepoVisibility] = useState<NewRepoVisibility>('private');
   const repoAnchorRef = useRef<HTMLSpanElement>(null);
   const branchAnchorRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    setNewRepoVisibility(getNewRepoVisibility());
+  }, []);
 
   const loadBranches = useCallback(async (fullName: string, preferred?: string) => {
     const [owner, repo] = fullName.split('/');
@@ -524,7 +540,43 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
             )}
           </div>
         </>
-      ) : null}
+      ) : (
+        /*
+         * No repo selected means this build will create one, so this is the only moment
+         * the user can decide whether it is published. It is a two-state toggle rather
+         * than a checkbox because "unchecked" reads as an absence, and an absence must
+         * never be what publishes a repository — here both states are chosen, visible,
+         * and labelled.
+         */
+        <div className="flex items-center gap-1 shrink-0" role="group" aria-label="Visibility for the repository Xroga will create">
+          {(['private', 'public'] as const).map((value) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={newRepoVisibility === value}
+              title={
+                value === 'private'
+                  ? 'The new repository will be private to your account'
+                  : 'The new repository will be visible to anyone on GitHub'
+              }
+              onClick={() => {
+                setNewRepoVisibility(value);
+                saveNewRepoVisibility(value);
+              }}
+              className={cn(
+                'rounded px-1.5 py-0.5 border text-[9px] font-semibold transition-colors capitalize',
+                newRepoVisibility === value
+                  ? value === 'public'
+                    ? 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/10'
+                    : 'border-[var(--accent)]/40 text-[var(--foreground)] bg-[var(--accent)]/10'
+                  : 'border-[var(--card-border)] text-[var(--muted)] hover:text-[var(--foreground)]',
+              )}
+            >
+              {value}
+            </button>
+          ))}
+        </div>
+      )}
 
       {(analyzing || repoSummary) && selectedRepo && (
         <span className="text-[9px] text-[var(--muted)] truncate max-w-[200px] sm:max-w-[360px] shrink-0" title={repoSummary ?? undefined}>
