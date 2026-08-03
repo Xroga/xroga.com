@@ -7,6 +7,7 @@ import { slimOutputForSse } from '../lib/slimOutputForSse.js';
 import { bindBuildStreamDisconnect } from '../lib/buildStreamLifecycle.js';
 import { buildFullProjectFiles } from '../services/projectScaffold.js';
 import { notifyBuildComplete, notifyBuildFailed } from '../services/notificationService.js';
+import { isValidClientRunId } from '../lib/clientRunId.js';
 import {
   failRun,
   getRun,
@@ -78,7 +79,17 @@ router.post('/execute', async (req: AuthRequest, res) => {
   }
 
   initSSE(res);
-  const runId = randomUUID();
+  // The client generates and sends its own ID when it can, rather than waiting for
+  // this response to hand one back. Production evidence: three consecutive builds
+  // where the backend produced 25-49 real events each, and the browser received zero
+  // bytes of the stream — a proxy or dropped connection between here and the browser,
+  // with no fix on our side that guarantees delivery. Previously the client only
+  // learned its own runId from the first SSE byte, so a stream that never delivers
+  // anything left it with no ID to fall back to polling with — it could only wait
+  // forever. A client-supplied ID (any v4-shaped UUID; a malformed one is ignored, not
+  // trusted) means the browser always knows what to poll for, independent of whether
+  // this connection ever delivers a single byte.
+  const runId = isValidClientRunId(req.body?.runId) ? req.body.runId : randomUUID();
   let streamConnected = true;
   const keepalive = setInterval(() => {
     if (streamConnected && !res.writableEnded) {
