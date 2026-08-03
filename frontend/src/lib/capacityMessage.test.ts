@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { capacityUnavailableLine } from './capacityMessage';
+import { capacityUnavailableLine, formatUnlockTime } from './capacityMessage';
 
 /**
  * Cover for the capacity error line shown in the terminal and the chat bubble.
@@ -41,4 +41,25 @@ test('an unparseable string is treated as missing rather than printing "Invalid 
 
 test('an empty string is treated as missing', () => {
   assert.equal(capacityUnavailableLine('Base message.', ''), 'Base message.');
+});
+
+/**
+ * Cover for `formatUnlockTime`, shared by the Plan & Usage panel, the terminal
+ * transcript, and the inline "Use full power now" card added for people who said they
+ * do not want to wait for the daily unlock. All three must show the same time for the
+ * same timestamp — this is the one place that formatting can happen.
+ */
+
+test('formatUnlockTime matches capacityUnavailableLine\'s own formatting', () => {
+  const iso = '2026-08-03T15:42:46.809Z';
+  const formatted = formatUnlockTime(iso);
+  assert.equal(capacityUnavailableLine('Base.', iso), `Base. More capacity unlocks ${formatted}.`);
+});
+
+test('formatUnlockTime returns null rather than "Invalid Date" for bad input', () => {
+  assert.equal(formatUnlockTime(undefined), null);
+  assert.equal(formatUnlockTime(null), null);
+  assert.equal(formatUnlockTime(''), null);
+  assert.equal(formatUnlockTime('not-a-date'), null);
+  assert.equal(formatUnlockTime(12345), null);
 });

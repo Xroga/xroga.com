@@ -126,6 +126,15 @@ export interface ChatMessage {
   stoppedActivityLog?: string[];
   originalBuildPrompt?: string;
   githubRepoName?: string;
+  /**
+   * The build stopped because today's unlocked AI capacity is used up. Shows an inline
+   * card offering to switch to Full Power (unlocks the rest of the month's capacity
+   * immediately) and retry, as an alternative to waiting for `nextUnlockAt`.
+   */
+  capacityUnavailable?: {
+    prompt: string;
+    nextUnlockAt?: string | null;
+  };
   /** Plan A update turn — file trail + diffs (not a landing card) */
   updateTrail?: {
     headline: string;
@@ -200,6 +209,7 @@ interface TerminalChatContextValue {
   stop: () => void;
   /** Continue a stopped build from checkpoint + GitHub (not from scratch) */
   retryStoppedBuild: (assistantMessageId: string) => Promise<void>;
+  retryWithFullPower: (assistantMessageId: string) => Promise<void>;
   startNewChat: () => void;
   /** Restore session from workspace (e.g. jump from AI Media) */
   hydrateFromSession: () => void;
@@ -962,6 +972,39 @@ export function TerminalChatProvider({
       .join('\n');
 
     await submitRef.current(continuePrompt, false, false);
+  }, [messages]);
+
+  /**
+   * "Use full power now" — switches the account off the daily drip and onto Full
+   * Power pacing, which unlocks the rest of the month's capacity immediately, then
+   * resends the exact prompt that got refused.
+   *
+   * `confirmed: true` matches the explicit-consent requirement on the backend
+   * (`setUsagePacing` refuses `full_access` without it) — the click itself is the
+   * confirmation, since the card states the trade-off before the button is shown.
+   */
+  const retryWithFullPower = useCallback(async (assistantMessageId: string) => {
+    const msg = messages.find((m) => m.id === assistantMessageId && m.capacityUnavailable);
+    if (!msg?.capacityUnavailable) {
+      toast.error('Nothing to retry here');
+      return;
+    }
+    const { prompt: original } = msg.capacityUnavailable;
+    try {
+      await api.billing.setPacing('full_access', true);
+    } catch {
+      toast.error('Could not switch to Full Power — please try again');
+      return;
+    }
+    setMessages((m) =>
+      m.map((message) =>
+        message.id === assistantMessageId
+          ? { ...message, capacityUnavailable: undefined }
+          : message
+      )
+    );
+    toast.success('Full Power on — resuming your build');
+    await submitRef.current(original, false, false);
   }, [messages]);
 
   const startNewChat = useCallback(() => {
@@ -2903,6 +2946,16 @@ export function TerminalChatProvider({
                 ? `**Update could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
                 : `**Build could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
               : GENERIC_SWARM_FALLBACK);
+          // Carries the original prompt so "Use full power now" can resend it the
+          // moment more capacity is unlocked, instead of just naming when to come back.
+          const capacityUnavailable =
+            capacityLine != null
+              ? {
+                  prompt: lastTurnRef.current?.text || displayPrompt,
+                  nextUnlockAt:
+                    typeof errData?.nextUnlockAt === 'string' ? errData.nextUnlockAt : null,
+                }
+              : undefined;
           return [
             ...m.filter((msg) => msg.id !== assistantId || msg.content.length > 0),
             {
@@ -2910,6 +2963,7 @@ export function TerminalChatProvider({
               role: 'assistant',
               content: fullReply || friendly,
               createdAt: Date.now(),
+              ...(capacityUnavailable ? { capacityUnavailable } : {}),
             },
           ];
         });
@@ -3071,6 +3125,7 @@ export function TerminalChatProvider({
         submit,
         stop,
         retryStoppedBuild,
+        retryWithFullPower,
         startNewChat,
         hydrateFromSession,
         restoreTerminalSession,
