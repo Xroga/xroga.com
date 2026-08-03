@@ -77,7 +77,14 @@ export function classifyValidation(input: {
 
   const compileOk = productionValidationAllowsDeployment(input.compile);
   if (!compileOk) {
-    if (compileFailureIsInfrastructure(input.compile)) {
+    if (input.compile.sandboxUnavailable) {
+      // Nothing was executed, so nothing is known about the code. Reporting this as a
+      // defect would blame the user's product for our missing isolation runtime — the
+      // same mistake that once discarded a working build over an npm timeout.
+      unverifiedReasons.push(
+        'generated code could not be run safely here, so it was not executed',
+      );
+    } else if (compileFailureIsInfrastructure(input.compile)) {
       unverifiedReasons.push('the package registry could not be reached from our build sandbox');
     } else {
       return { verdict: 'code_defect', unverifiedReasons };
