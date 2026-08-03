@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import type { TerminalEvent, TerminalRunState } from '@/lib/terminal/terminalEvent';
-import { formatElapsed, waitingLine } from '@/lib/terminal/liveActivityText';
+import { formatElapsed, shouldShowWaitingLine, waitingLine } from '@/lib/terminal/liveActivityText';
 
 /**
  * What the terminal shows while a run is in flight.
@@ -32,7 +32,7 @@ import { formatElapsed, waitingLine } from '@/lib/terminal/liveActivityText';
 
 /** Rows kept on screen. Enough to read as a transcript, short enough not to shove the
  *  composer off a phone. Older rows are not lost — they stay in the run state. */
-const VISIBLE_ROWS = 6;
+const VISIBLE_ROWS = 8;
 
 const LEVEL_CLASS: Record<TerminalEvent['level'], string> = {
   info: 'text-[var(--muted)]',
@@ -85,10 +85,12 @@ export function TerminalLiveActivity({ run, now }: TerminalLiveActivityProps) {
       data-testid="terminal-live-activity"
     >
       {rows.length === 0 ? (
-        <p className="xv-term-liveline" data-testid="terminal-waiting-line">
-          <span className="xv-term-livedot" aria-hidden="true" />
-          <span className="text-[var(--muted)]">{waitingLine(elapsed)}</span>
-        </p>
+        shouldShowWaitingLine(elapsed) ? (
+          <p className="xv-term-liveline" data-testid="terminal-waiting-line">
+            <span className="xv-term-livedot" aria-hidden="true" />
+            <span className="text-[var(--muted)]">{waitingLine(elapsed)}</span>
+          </p>
+        ) : null
       ) : (
         <>
           {rows.map((event, index) => {

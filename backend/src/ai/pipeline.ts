@@ -62,6 +62,11 @@ import {
 import { reviewBuildOutput } from './qa.js';
 import { completeRun, createRunDurable } from './runStore.js';
 import { startupProgress } from './startupProgress.js';
+import {
+  BuildStreamNarrator,
+  narrationLine,
+  type NarrationEvent,
+} from './buildStreamNarrator.js';
 import { heartbeatMessage, withProgressHeartbeat } from './progressHeartbeat.js';
 import {
   UPDATE_HYDRATE_PATHS,
@@ -442,6 +447,16 @@ async function callBuilderStream(
      * fallback order.
      */
     onWaiting?: (info: { elapsedMs: number; model: ModelId }) => void;
+    /**
+     * Fired for every token as it arrives, regardless of `validateResponse`.
+     *
+     * `onDelta` is withheld until the response passes validation, because unvalidated
+     * text must never reach the user as if it were real output. That is right, and it
+     * is also why the four minutes in which a project is written showed nothing at
+     * all. This hook exists to narrate the stream's *structure* — which file is being
+     * written, how large it has grown — without releasing its contents.
+     */
+    onStreamDelta?: (delta: string) => void;
   },
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
   const healthAwareOrder = fallbackOrderForModel(preferred);
@@ -487,6 +502,7 @@ async function callBuilderStream(
               temperature: opts.temperature,
               onDelta: (delta) => {
                 onToken(delta);
+                opts.onStreamDelta?.(delta);
                 if (opts.validateResponse) bufferedDeltas.push(delta);
                 else opts.onDelta?.(delta);
               },
@@ -1426,6 +1442,19 @@ export async function runBuildPipeline(opts: {
     researchBlock ? `\n\n${researchBlock}` : ''
   }${designReference}${updateBlock}\n\nOriginal user request:\n${opts.prompt}`;
 
+  // Narrates the builder's stream as it arrives: which file is open, how far it has
+  // got, what it finished at. This is the "show me the work" surface — every line is a
+  // report of bytes that have already been received, never a prediction.
+  const narrator = new BuildStreamNarrator();
+  const narrate = (event: NarrationEvent) =>
+    emit({
+      agent: 'builder',
+      status: event.kind === 'file_done' ? 'file_written' : 'writing_file',
+      message: narrationLine(event),
+      swarmStatusLabel: isUpdate ? 'Patching' : 'Building',
+      swarmTodos: todos('build'),
+    });
+
   let result = await callBuilderStream(
     route.builder,
     [
@@ -1437,6 +1466,9 @@ export async function runBuildPipeline(opts: {
       maxTokens: 16384,
       temperature: isUpdate ? 0.3 : 0.45,
       onDelta: opts.onDelta,
+      onStreamDelta: (delta) => {
+        for (const event of narrator.push(delta)) narrate(event);
+      },
       signal: opts.signal,
       onModelFallback: (from, to) => {
         emitModelSwitch(from, to);
@@ -1453,6 +1485,9 @@ export async function runBuildPipeline(opts: {
       validateResponse: (completion) => requireBuildArtifacts(completion.text, isUpdate),
     },
   );
+  // A response cut short leaves a fence open; reporting the partial file is the
+  // evidence that it was truncated.
+  for (const event of narrator.finish()) narrate(event);
 
   emit({
     agent: 'builder',
