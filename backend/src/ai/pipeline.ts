@@ -63,6 +63,12 @@ import { reviewBuildOutput } from './qa.js';
 import { completeRun, createRunDurable } from './runStore.js';
 import { startupProgress } from './startupProgress.js';
 import {
+  blueprintBriefForBuilder,
+  describeBlueprintGaps,
+  detectProductBlueprint,
+  missingBlueprintSections,
+} from '../synthesis/productBlueprints.js';
+import {
   BuildStreamNarrator,
   narrationLine,
   type NarrationEvent,
@@ -1438,7 +1444,23 @@ export async function runBuildPipeline(opts: {
         })}`
       : '';
 
-  const builderUser = `${converted.instruction}${architectBlock}${historyNote}${
+  // What this kind of product has to contain. Without it the builder infers
+  // completeness for itself, which is how a dental-clinic page shipped with a hero and
+  // nothing else.
+  const blueprint = detectProductBlueprint(userFacingPrompt);
+  const blueprintBlock = blueprint ? blueprintBriefForBuilder(blueprint) : '';
+  if (blueprint) {
+    emit({
+      agent: 'architect',
+      status: 'blueprint',
+      message: `${blueprint.label} — ${blueprint.sections.filter((s) => s.priority === 'required').length} required sections`,
+      swarmStatusLabel: 'Architect',
+      swarmActivity: `Building a ${blueprint.label.toLowerCase()}`,
+      swarmTodos: todos('architect'),
+    });
+  }
+
+  const builderUser = `${converted.instruction}${architectBlock}${blueprintBlock}${historyNote}${
     researchBlock ? `\n\n${researchBlock}` : ''
   }${designReference}${updateBlock}\n\nOriginal user request:\n${opts.prompt}`;
 
@@ -1903,6 +1925,37 @@ export async function runBuildPipeline(opts: {
       qa.inputTokens,
       qa.outputTokens,
     );
+  }
+
+  // Does the delivered product actually contain what this kind of product needs?
+  // Reported and fed to the repair pass, never used to block a ship: section detection
+  // reads generated markup for evidence, and a heuristic that can block would
+  // eventually discard a working product — which this pipeline has already done once,
+  // over an npm timeout.
+  const blueprintGaps = blueprint ? missingBlueprintSections(blueprint, nextFiles) : [];
+  if (blueprint && blueprintGaps.length) {
+    qa = {
+      ...qa,
+      fixHints: [
+        ...qa.fixHints,
+        ...blueprintGaps.map((gap) => `Add the missing ${blueprint.label.toLowerCase()} section: ${gap.requirement}`),
+      ],
+    };
+    emit({
+      agent: 'reviewer',
+      status: 'blueprint_gaps',
+      message: describeBlueprintGaps(blueprint, blueprintGaps),
+      swarmStatusLabel: 'Incomplete',
+      swarmTodos: todos('qa'),
+    });
+  } else if (blueprint) {
+    emit({
+      agent: 'reviewer',
+      status: 'blueprint_complete',
+      message: `Every expected ${blueprint.label.toLowerCase()} section is present.`,
+      swarmStatusLabel: 'Reviewer',
+      swarmTodos: todos('qa'),
+    });
   }
 
   const qaHadFailuresBeforeCompile = !qa.ok;
@@ -3455,6 +3508,10 @@ export async function runBuildPipeline(opts: {
     // Present only when the code shipped without local verification, so the UI can
     // show a warning rather than either a silent pass or a false failure.
     ...(unverifiedNote ? { validationNotVerified: unverifiedNote } : {}),
+    ...(blueprint ? { productType: blueprint.label } : {}),
+    ...(blueprint && blueprintGaps.length
+      ? { missingSections: blueprintGaps.map((gap) => gap.requirement) }
+      : {}),
     message: (
       (patchAborted
         ? `⚠️ **Update aborted** for **${projectName}** — patches did not match safely. Your live site was **not** changed.`
