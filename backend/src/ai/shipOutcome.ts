@@ -15,7 +15,7 @@ export type ShipOutcomeInput = {
   securityBlocked: boolean;
   compileBlocksShip: boolean;
   /** Specific, user-facing reason from describeCompileBlocker. */
-  compileBlockerMessage?: string;
+  compileBlockerMessage?: string | null;
   qaBlocksShip: boolean;
   githubConnected: boolean;
   vercelConnected: boolean;
