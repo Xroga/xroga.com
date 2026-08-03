@@ -12,6 +12,7 @@ import { ModernResponseText } from './ReasoningAndFollowUps';
 import { FeatureOutputView } from './FeatureOutputView';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
+import { CapacityUnavailableCard } from './CapacityUnavailableCard';
 import { UpdateFileTrail } from './UpdateFileTrail';
 import { WebSourcesPanel } from './WebSourcesPanel';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
@@ -46,7 +47,7 @@ interface SwarmMessageLogProps {
 }
 
 export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
-  const { messages, sessionRestoring, loading, animatingId, pipelineMessage, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, heavyBuildActive, heavyAssistantId } =
+  const { messages, sessionRestoring, loading, animatingId, pipelineMessage, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const applyBuild = useProjectWorkspaceStore((s) => s.applyBuild);
@@ -432,6 +433,12 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
                               activityLog: msg.stoppedActivityLog,
                             }}
                             onRetry={() => void retryStoppedBuild(msg.id)}
+                          />
+                        ) : null}
+                        {msg.capacityUnavailable ? (
+                          <CapacityUnavailableCard
+                            meta={msg.capacityUnavailable}
+                            onUseFullPower={() => retryWithFullPower(msg.id)}
                           />
                         ) : null}
                         {msg.updateTrail ? (

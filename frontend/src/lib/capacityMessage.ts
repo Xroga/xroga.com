@@ -10,12 +10,22 @@
  * specifically for the timing without the price attached.
  */
 export function capacityUnavailableLine(baseMessage: string, nextUnlockAt: unknown): string {
+  const formatted = formatUnlockTime(nextUnlockAt);
+  return formatted ? `${baseMessage} More capacity unlocks ${formatted}.` : baseMessage;
+}
+
+/**
+ * `nextUnlockAt`, formatted the one way this product ever shows a time — shared so the
+ * Plan & Usage panel, the terminal transcript, and the inline "Use full power now" card
+ * can never drift into disagreeing about what time it is.
+ *
+ * Returns `null` for anything that isn't a parseable timestamp, so a caller can decide
+ * whether to omit the whole sentence rather than print "Invalid Date".
+ */
+export function formatUnlockTime(nextUnlockAt: unknown): string | null {
   const iso = typeof nextUnlockAt === 'string' ? nextUnlockAt : null;
-  if (!iso) return baseMessage;
+  if (!iso) return null;
   const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return baseMessage;
-  const formatted = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(
-    date,
-  );
-  return `${baseMessage} More capacity unlocks ${formatted}.`;
+  if (Number.isNaN(date.getTime())) return null;
+  return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(date);
 }
