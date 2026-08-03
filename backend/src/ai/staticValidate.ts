@@ -1,4 +1,5 @@
 import type { ProjectFile } from './patches.js';
+import { htmlLooksTruncated, htmlTagBalance } from './htmlTruncation.js';
 
 export interface StaticValidateResult {
   ok: boolean;
@@ -13,6 +14,36 @@ function has(files: ProjectFile[], path: string): boolean {
 
 function read(files: ProjectFile[], path: string): string {
   return files.find((f) => f.path === path)?.content ?? '';
+}
+
+/**
+ * Empty stylesheets and scripts that an HTML page actually links.
+ *
+ * An unused empty file is untidy. An empty file the page loads is a broken product: the
+ * markup promises styling or behaviour that does not exist, and the result looks like
+ * the unstyled document a user screenshotted after run `85681d10` — a zero-byte
+ * `styles.css` and `script.js` shipped next to a page that linked both.
+ */
+export function emptyReferencedAssets(files: ProjectFile[]): string[] {
+  const html = files
+    .filter((f) => /\.html$/i.test(f.path))
+    .map((f) => f.content)
+    .join('\n');
+  if (!html.trim()) return [];
+
+  return files
+    .filter((f) => /\.(css|js)$/i.test(f.path) && !f.content?.trim())
+    .filter((f) => {
+      const name = f.path.split('/').pop() ?? f.path;
+      // Matched on the file name so `./styles.css`, `/styles.css` and `styles.css` all
+      // count as a reference.
+      return new RegExp(`(?:src|href)\\s*=\\s*["'][^"']*${escapeRegExp(name)}["']`, 'i').test(html);
+    })
+    .map((f) => f.path);
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /**
@@ -122,21 +153,33 @@ export function staticValidateProject(files: ProjectFile[]): StaticValidateResul
       fixHints.push(`Fill ${f.path} or delete it`);
     }
     if (/\.(tsx|jsx|html)$/i.test(f.path)) {
-      const opens = (f.content.match(/<[A-Za-z][\w.-]*[^>]*>/g) || []).length;
-      const closes = (f.content.match(/<\/[A-Za-z][\w.-]*>/g) || []).length;
-      if (opens > closes + 8) {
+      // A document that stops mid-page is a broken product, not a style note. See
+      // `htmlTruncation` for why the previous open/close count could not be trusted.
+      if (/\.html$/i.test(f.path) && htmlLooksTruncated(f.content)) {
+        issues.push(`Truncated document: ${f.path} is missing its closing tags`);
+        fixHints.push(`Regenerate ${f.path} in full — the previous output stopped early`);
+      } else if (htmlTagBalance(f.content).unclosed >= 2) {
         issues.push(`Possible unclosed tags in ${f.path}`);
         fixHints.push(`Check JSX/HTML structure in ${f.path}`);
       }
     }
   }
 
-  const critical = issues.some(
-    (i) =>
-      /missing|not valid|nothing to preview|Empty file: (app\/page|index\.html|package\.json|manifest\.json|main\.js|app\.json)/i.test(
-        i,
-      ) || /manifest_version must be 3/i.test(i),
-  );
+  // A truncated entry document and an empty file the page actually loads are both
+  // shipped-and-broken, so they join the critical set. Run 85681d10 shipped an
+  // index.html that ended mid-page alongside a zero-byte styles.css it linked, and
+  // reported "Structure: ok" while doing it.
+  const critical =
+    issues.some(
+      (i) =>
+        /missing|not valid|nothing to preview|Empty file: (app\/page|index\.html|package\.json|manifest\.json|main\.js|app\.json)/i.test(
+          i,
+        ) || /manifest_version must be 3|^Truncated document:/i.test(i),
+    ) || emptyReferencedAssets(files).length > 0;
+
+  for (const path of emptyReferencedAssets(files)) {
+    fixHints.push(`Write ${path} or remove the reference to it from the page`);
+  }
 
   return {
     ok: !critical && issues.length < 8,

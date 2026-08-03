@@ -9,6 +9,7 @@ import {
 } from './openaiCompat.js';
 import { requireBuildArtifacts } from './buildOutputValidation.js';
 import { describeCompileBlocker } from './compileBlockerMessage.js';
+import { describeVercelDeployFailure, isVercelAuthFailure } from '../lib/vercelAuthError.js';
 import {
   classifyValidation,
   describeUnverifiedShip,
@@ -73,7 +74,7 @@ import {
   getGithubDefaultRepo,
   inspectConnectedRepositoryState,
 } from '../services/integrations/githubDeploy.js';
-import { getVercelToken } from '../services/integrations/vercelAuth.js';
+import { clearVercelConnection, getVercelToken } from '../services/integrations/vercelAuth.js';
 import {
   getUserSupabaseStatus,
   buildProviderEnvFiles,
@@ -261,9 +262,30 @@ const BUILDER_FALLBACKS: ModelId[] = [
   'deepseek_v4_flash',
 ];
 
-function projectNameFromPrompt(prompt: string): string {
-  const cleaned = prompt
-    .replace(/^(build|create|make|generate|scaffold|develop)\s+(me\s+)?(a|an|the)?\s*/i, '')
+/**
+ * A short display name for the product, taken from what the user actually asked for.
+ *
+ * The terminal wraps a prompt in conversation memory before sending it:
+ *
+ *   [Previous conversation for context — refer when user asks about earlier messages]
+ *   …
+ *   [Current message]
+ *   build a landing page of dental clinic
+ *
+ * This function used to receive that whole block, take its first four words, and name
+ * the project `[Previous Conversation For Context`. Two production runs shipped under
+ * that name — it appeared as the project title in the terminal and in the build report.
+ *
+ * Callers now pass `userFacingPrompt`, and the context block is stripped here as well,
+ * because any caller that omits `clientMeta.userPrompt` would reintroduce the same bug.
+ */
+export function projectNameFromPrompt(prompt: string): string {
+  const currentMessage = prompt.split(/\[Current message\]\s*/i).pop() ?? prompt;
+  const cleaned = currentMessage
+    .replace(/^\s*\[[^\]]*\]\s*/g, '')
+    // `(a|an|the)?` without a boundary matched the "a" inside "an", so
+    // "create an invoicing app" was named "N Invoicing App".
+    .replace(/^(build|create|make|generate|scaffold|develop)\s+(me\s+)?(?:(?:a|an|the)\b\s*)?/i, '')
     .replace(/[.!?]+$/g, '')
     .trim();
   const words = cleaned.split(/\s+/).filter(Boolean).slice(0, 4);
@@ -1653,8 +1675,8 @@ export async function runBuildPipeline(opts: {
   }
 
   const projectName = isUpdate
-    ? prior.projectName || projectNameFromPrompt(opts.prompt)
-    : projectNameFromPrompt(opts.prompt);
+    ? prior.projectName || projectNameFromPrompt(userFacingPrompt)
+    : projectNameFromPrompt(userFacingPrompt);
 
   // New builds: merge deterministic scaffold under AI output
   // so user vault keys can power live /api routes and mobile/extension/desktop ship complete.
@@ -3113,28 +3135,39 @@ export async function runBuildPipeline(opts: {
             : todos('deploy'),
         });
       } else if (deployed.deployError) {
-        const deployFailure = redactSecrets(deployed.deployError).slice(0, 240);
-        shipBlockers.push(`Vercel deploy failed: ${deployFailure}`);
+        const deployFailure = describeVercelDeployFailure(
+          redactSecrets(deployed.deployError),
+          { githubRepoName },
+        );
+        const reauth = isVercelAuthFailure(deployed.deployError);
+        if (reauth) await clearVercelConnection(opts.userId).catch(() => {});
+        shipBlockers.push(deployFailure);
         emit({
           agent: 'deploy',
-          status: 'deploy_failed',
+          status: reauth ? 'deploy_reauth_required' : 'deploy_failed',
           message: deployFailure,
-          swarmStatusLabel: 'Deploy issue',
-          swarmActivity: deployFailure.slice(0, 120),
+          swarmStatusLabel: reauth ? 'Reconnect Vercel' : 'Deploy issue',
           swarmTodos: todos('deploy'),
+          ...(reauth ? { needsVercel: true } : {}),
         });
       }
     } catch (err) {
-      const deployFailure = redactSecrets((err as Error).message || 'Unknown Vercel error').slice(0, 240);
-      shipBlockers.push(`Vercel deploy failed: ${deployFailure}`);
+      const raw = redactSecrets((err as Error).message || 'Unknown Vercel error');
+      const deployFailure = describeVercelDeployFailure(raw, { githubRepoName });
+      // An `invalidToken` rejection means the stored authorization is dead. Leaving it
+      // in place makes the account look connected, so every later build repeats this
+      // same failure with no way for the user to know why.
+      const reauth = isVercelAuthFailure(raw);
+      if (reauth) await clearVercelConnection(opts.userId).catch(() => {});
+      shipBlockers.push(deployFailure);
       console.warn('[pipeline] Vercel deploy failed:', deployFailure);
       emit({
         agent: 'deploy',
-        status: 'deploy_failed',
-        message: `Vercel deploy failed: ${deployFailure}`,
-        swarmStatusLabel: 'Deploy failed',
-        swarmActivity: deployFailure.slice(0, 120),
+        status: reauth ? 'deploy_reauth_required' : 'deploy_failed',
+        message: deployFailure,
+        swarmStatusLabel: reauth ? 'Reconnect Vercel' : 'Deploy failed',
         swarmTodos: todos('deploy'),
+        ...(reauth ? { needsVercel: true } : {}),
       });
     }
   } else if (!isNonWebProduct && !vercelToken && !patchAborted && !security.blocked) {
