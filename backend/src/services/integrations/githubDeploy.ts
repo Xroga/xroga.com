@@ -9,6 +9,24 @@ import { vercelStaticSiteJson } from '../../lib/vercelStaticConfig.js';
 import { getSecret } from '../../config/envSecrets.js';
 import { getGitHubToken, isGitHubConnected as checkGitHubConnected, getGitHubStorageMeta, setGithubDefaultRepo } from './githubAuth.js';
 import { getVercelToken } from './vercelAuth.js';
+import {
+  DEFAULT_REPOSITORY_VISIBILITY,
+  MAX_NAME_COLLISION_RETRIES,
+  RepoCreateError,
+  classifyRepoCreateFailure,
+  describeRepoCreateFailure,
+  nextCandidateName,
+  readRepositoryResponse,
+  type GitHubErrorBody,
+  type RepoCreateFailure,
+  type RepositoryVisibility,
+} from './githubRepoCreation.js';
+import {
+  ExactBranchWriteError,
+  resolveExactWritableBranch,
+  verifyBranchHead,
+  type BranchApi,
+} from './githubBranchSafety.js';
 import { resolveProviderEnvForDeploy } from './userProviderKeys.js';
 import {
   getCachedRepoAnalysis,
@@ -218,33 +236,92 @@ function gitCommitAuthorFields() {
   };
 }
 
-async function createRepo(token: string, name: string): Promise<{ fullName: string; htmlUrl: string; owner: string; repo: string }> {
-  const res = await ghFetch(token, '/user/repos', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name,
-      private: false,
-      auto_init: true,
-      description: 'Built with XROGA AI Swarm',
-    }),
-  });
-  if (res.status === 422) {
-    const username = await getGitHubUsername(token);
-    return {
-      fullName: `${username}/${name}`,
-      htmlUrl: `https://github.com/${username}/${name}`,
-      owner: username,
-      repo: name,
-    };
+/**
+ * Creates a repository, private by default, with honest 422 handling.
+ *
+ * Replaces two defects. Repositories were created `private: false` with no user choice.
+ * And every 422 was read as "it already exists", so a build after an *invalid name* or
+ * any other validation failure would construct `{owner}/{name}` and write into whatever
+ * that resolved to — potentially an unrelated repository the user already owned.
+ *
+ * Now: a collision retries with a distinct name a bounded number of times, and every
+ * other 422 stops with the real, sanitised reason. Nothing is written to a repository
+ * that was not verifiably created by this call.
+ */
+async function createRepo(
+  token: string,
+  name: string,
+  visibility: RepositoryVisibility = DEFAULT_REPOSITORY_VISIBILITY,
+): Promise<{ fullName: string; htmlUrl: string; owner: string; repo: string; visibility: RepositoryVisibility; defaultBranch: string }> {
+  let lastFailure: RepoCreateFailure = 'unknown';
+
+  for (let attempt = 0; attempt < MAX_NAME_COLLISION_RETRIES; attempt += 1) {
+    const candidate = nextCandidateName(name, attempt);
+    const res = await ghFetch(token, '/user/repos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: candidate,
+        private: visibility === 'private',
+        auto_init: true,
+        description: 'Built with XROGA AI Swarm',
+      }),
+    });
+
+    if (res.ok) {
+      const created = readRepositoryResponse(await res.json());
+      if (!created) {
+        throw new RepoCreateError('unknown', res.status, 'GitHub returned an unrecognised repository response.');
+      }
+      // Verified from GitHub's own fields, not from a name we constructed.
+      return {
+        fullName: created.fullName,
+        htmlUrl: created.htmlUrl,
+        owner: created.owner,
+        repo: created.repo,
+        visibility: created.visibility,
+        defaultBranch: created.defaultBranch,
+      };
+    }
+
+    const body = (await res.json().catch(() => null)) as GitHubErrorBody | null;
+    lastFailure = classifyRepoCreateFailure(res.status, body);
+
+    // Only a genuine name collision is retryable. Everything else stops here rather
+    // than presuming a repository exists and writing to it.
+    if (lastFailure !== 'name_taken') {
+      throw new RepoCreateError(lastFailure, res.status, describeRepoCreateFailure(lastFailure, candidate));
+    }
   }
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`GitHub create repo failed: ${res.status} ${err}`);
-  }
-  const repo = (await res.json()) as { full_name: string; html_url: string };
-  const [owner, repoName] = repo.full_name.split('/');
-  return { fullName: repo.full_name, htmlUrl: repo.html_url, owner: owner!, repo: repoName! };
+
+  throw new RepoCreateError(
+    lastFailure,
+    422,
+    `Could not find an available repository name based on "${name}" after ${MAX_NAME_COLLISION_RETRIES} attempts.`,
+  );
+}
+
+/**
+ * Adapts the GitHub REST calls to the transport-free `BranchApi`, so branch resolution
+ * can be tested without a live GitHub and without mocking `fetch`.
+ */
+function makeBranchApi(token: string, owner: string, repo: string): BranchApi {
+  return {
+    async getRef(branch: string) {
+      const res = await ghFetch(token, `/repos/${owner}/${repo}/git/ref/heads/${branch}`);
+      if (!res.ok) return null;
+      const data = (await res.json()) as { object?: { sha?: string } };
+      return typeof data.object?.sha === 'string' ? { sha: data.object.sha } : null;
+    },
+    async createRef(branch: string, sha: string) {
+      const res = await ghFetch(token, `/repos/${owner}/${repo}/git/refs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ref: `refs/heads/${branch}`, sha }),
+      });
+      return res.ok;
+    },
+  };
 }
 
 /**
@@ -414,7 +491,18 @@ async function pushFilesViaGitData(
     .filter((p) => p && !blobs.some((b) => b.path === p))
     .map((path) => ({ path, sha: null as string | null }));
 
-  const { sha: parentSha, branch: resolvedBranch } = await getBranchHeadSha(token, owner, repo, branch);
+  // Writes must land on the branch that was named. `getBranchHeadSha` falls back to
+  // main/master, which meant a push aimed at a not-yet-created branch silently
+  // committed to main and then reported the branch it had asked for. Resolve exactly:
+  // the branch is verified, or deliberately created from the repository's own default
+  // head, or the write is refused.
+  const branchApi = makeBranchApi(token, owner, repo);
+  const defaultHead = await getBranchHeadSha(token, owner, repo);
+  const writeTarget = await resolveExactWritableBranch(branchApi, branch, {
+    createFromSha: defaultHead.sha,
+  });
+  const parentSha = writeTarget.sha;
+  const resolvedBranch = writeTarget.branch;
 
   const treeRes = await ghFetch(token, `/repos/${owner}/${repo}/git/trees`, {
     method: 'POST',
@@ -446,12 +534,24 @@ async function pushFilesViaGitData(
   const commit = (await commitRes.json()) as { sha: string };
 
   if (parentSha) {
+    // `force: false` makes this a compare-and-swap: GitHub rejects the update unless
+    // the branch is still at the commit this tree was built on. Without it a push that
+    // landed between our read and our write is silently overwritten. A rejection here
+    // is a conflict to surface, never something to retry with force.
     const updateRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs/heads/${resolvedBranch}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sha: commit.sha }),
+      body: JSON.stringify({ sha: commit.sha, force: false }),
     });
-    if (!updateRes.ok) throw new Error(`GitHub ref update failed: ${updateRes.status}`);
+    if (!updateRes.ok) {
+      if (updateRes.status === 422) {
+        throw new Error(
+          `GitHub branch "${resolvedBranch}" moved while this build was running. ` +
+            'Nothing was overwritten. Run the build again to include the newer commits.',
+        );
+      }
+      throw new Error(`GitHub ref update failed: ${updateRes.status}`);
+    }
   } else {
     const refRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs`, {
       method: 'POST',
@@ -460,6 +560,17 @@ async function pushFilesViaGitData(
     });
     if (!refRes.ok) throw new Error(`GitHub ref create failed: ${refRes.status}`);
   }
+
+  // Evidence, not assumption: confirm the branch really points at the commit we made
+  // before any caller reports this as a successful push.
+  const verified = await verifyBranchHead(branchApi, resolvedBranch, commit.sha);
+  if (!verified.verified) {
+    throw new Error(
+      `GitHub branch "${resolvedBranch}" is at ${verified.actualSha?.slice(0, 7) ?? 'an unknown commit'} ` +
+        `after the update, not the commit that was created (${commit.sha.slice(0, 7)}).`,
+    );
+  }
+
   return commit.sha;
 }
 

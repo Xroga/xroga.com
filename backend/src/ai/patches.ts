@@ -1,11 +1,29 @@
 /**
  * Surgical search/replace patch helpers for incremental project updates.
+ *
+ * Safety rules live in `patchSafety.ts`; this module applies patches only after they
+ * pass. See that file for the defects these checks exist for.
  */
+
+import {
+  checkPatchResult,
+  checkPatchSafety,
+  countOccurrences,
+  describePatchRejection,
+} from './patchSafety.js';
 
 export interface FilePatch {
   path: string;
   search: string;
   replace: string;
+  /**
+   * Hash of the content this patch was authored against. When present, the patch is
+   * refused if the file has changed since — a stale patch applied to moved content is
+   * how a "surgical" edit lands in the wrong place.
+   */
+  expectedSourceHash?: string;
+  /** Set only when a large deletion or full rewrite is genuinely intended. */
+  allowDestructive?: boolean;
 }
 
 /** Explicit file deletion requested by the model */
@@ -145,18 +163,25 @@ function applySinglePatch(content: string, patch: FilePatch): string | null {
   const search = normalizeEol(patch.search);
   const replace = normalizeEol(patch.replace);
 
-  // Empty SEARCH on existing file → append; used carefully by callers for new files
+  // An empty SEARCH against an existing file used to return `replace`, wiping the whole
+  // file. A truncated model response produces exactly that shape. Callers now gate this
+  // through `checkPatchSafety`; this is the second line of defence.
   if (!search.trim()) {
-    return replace;
+    return null;
   }
 
-  if (haystack.includes(search)) {
-    return haystack.replace(search, replace);
-  }
+  // Exactly-once matching. Each fallback below re-checks uniqueness, because the old
+  // chain took the first match from progressively looser patterns and could silently
+  // patch the wrong occurrence.
+  const exactMatches = countOccurrences(haystack, search);
+  if (exactMatches === 1) return haystack.replace(search, replace);
+  if (exactMatches > 1) return null;
 
   const trimmedSearch = search.trim();
-  if (trimmedSearch && trimmedSearch !== search && haystack.includes(trimmedSearch)) {
-    return haystack.replace(trimmedSearch, replace);
+  if (trimmedSearch && trimmedSearch !== search) {
+    const trimmedMatches = countOccurrences(haystack, trimmedSearch);
+    if (trimmedMatches === 1) return haystack.replace(trimmedSearch, replace);
+    if (trimmedMatches > 1) return null;
   }
 
   // Indentation-tolerant: collapse leading spaces per line
@@ -167,28 +192,20 @@ function applySinglePatch(content: string, patch: FilePatch): string | null {
       .join('\n');
   const collapsedHay = collapseIndent(haystack);
   const collapsedSearch = collapseIndent(search);
-  if (collapsedSearch.trim() && collapsedHay.includes(collapsedSearch)) {
-    // Map back by finding first line of search in original
-    const firstLine = search.split('\n').map((l) => l.trim()).find(Boolean);
-    if (firstLine) {
-      const idx = haystack.indexOf(firstLine);
-      if (idx >= 0) {
-        // Best-effort: replace first occurrence of flexible whitespace match
-        const flex = flexibleWhitespacePattern(search);
-        if (flex) {
-          const match = haystack.match(flex);
-          if (match) return haystack.replace(match[0], replace);
-        }
-      }
+  if (collapsedSearch.trim() && countOccurrences(collapsedHay, collapsedSearch) === 1) {
+    const flex = flexibleWhitespacePattern(search);
+    if (flex) {
+      // `g` so every match is counted, not just the first — a broad whitespace pattern
+      // is exactly where an ambiguous match used to slip through unnoticed.
+      const all = [...haystack.matchAll(new RegExp(flex.source, 'g'))];
+      if (all.length === 1) return haystack.replace(all[0][0], replace);
     }
   }
 
   const flex = flexibleWhitespacePattern(search);
   if (flex) {
-    const match = haystack.match(flex);
-    if (match) {
-      return haystack.replace(match[0], replace);
-    }
+    const all = [...haystack.matchAll(new RegExp(flex.source, 'g'))];
+    if (all.length === 1) return haystack.replace(all[0][0], replace);
   }
 
   return null;
@@ -221,18 +238,28 @@ export function applyPatches(
     const path = patch.path.replace(/^\.\//, '');
     const normalizedPatch = { ...patch, path };
     const current = byPath.get(path);
+    const searchTrim = normalizeEol(patch.search).trim();
+    const isNewFile =
+      !searchTrim || searchTrim === '<<NEW FILE>>' || searchTrim === '(new file)';
 
-    // Create new file when SEARCH is empty / placeholder and path missing
-    if (current === undefined) {
-      const searchTrim = normalizeEol(patch.search).trim();
-      if (!searchTrim || searchTrim === '<<NEW FILE>>' || searchTrim === '(new file)') {
-        byPath.set(path, normalizeEol(patch.replace));
-        applied.push(normalizedPatch);
-        createdPaths.push(path);
-        continue;
-      }
+    // Every patch is checked before it is applied: an empty SEARCH can no longer
+    // overwrite an existing file, a SEARCH must match exactly once, and a patch
+    // authored against different content is refused rather than applied blindly.
+    const verdict = checkPatchSafety(current ?? null, patch.search, {
+      isNewFile,
+      expectedSourceHash: patch.expectedSourceHash,
+      allowDestructive: patch.allowDestructive,
+    });
+    if (!verdict.ok) {
       failed.push(normalizedPatch);
-      failureReasons.push(`missing file: ${path}`);
+      failureReasons.push(describePatchRejection(verdict.rejection!, path));
+      continue;
+    }
+
+    if (current === undefined) {
+      byPath.set(path, normalizeEol(patch.replace));
+      applied.push(normalizedPatch);
+      createdPaths.push(path);
       continue;
     }
 
@@ -240,6 +267,17 @@ export function applyPatches(
     if (next === null) {
       failed.push(normalizedPatch);
       failureReasons.push(`SEARCH not found in ${path}`);
+      continue;
+    }
+
+    // A patch that claims to edit a section but removes most of the file is the
+    // signature of a truncated REPLACE body.
+    const resultVerdict = checkPatchResult(current, next, {
+      allowDestructive: patch.allowDestructive,
+    });
+    if (!resultVerdict.ok) {
+      failed.push(normalizedPatch);
+      failureReasons.push(describePatchRejection(resultVerdict.rejection!, path));
       continue;
     }
 

@@ -1,14 +1,25 @@
 /**
- * Safe sandbox compile check for generated projects.
- * Writes to os.tmpdir → npm install --ignore-scripts → tsc --noEmit.
- * Never runs package lifecycle scripts (security).
+ * Compile check for generated projects, executed under isolation.
+ *
+ * This file used to `spawn` npm and the generated project's own build command with
+ * `env: { ...process.env }`. `--ignore-scripts` blocked `postinstall`, but a `build`
+ * script is *meant* to run and its command comes from a model-generated package.json —
+ * so every Xroga secret in the API process environment was readable by generated code.
+ *
+ * Execution now goes through `src/sandbox`, which passes an explicit allowlisted
+ * environment and refuses entirely when no isolation runtime is present. There is no
+ * unsafe fallback: a refusal surfaces as `sandboxUnavailable`, which
+ * `classifyValidation` already maps to `not_verified` — the code still ships and the
+ * deployment build becomes the verification.
  */
 
 import { mkdtemp, writeFile, mkdir, rm } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join, dirname } from 'path';
-import { spawn } from 'child_process';
 import type { ProjectFile } from './patches.js';
+import { buildSandboxEnvironment } from '../sandbox/sandboxEnvironment.js';
+import { executeSandboxed, probeSandbox } from '../sandbox/sandboxRuntime.js';
+import { SandboxUnavailableError, type SandboxNetworkPolicy } from '../sandbox/sandboxTypes.js';
 
 export interface CompileValidateResult {
   ok: boolean;
@@ -22,6 +33,12 @@ export interface CompileValidateResult {
   issues: string[];
   logTail: string;
   durationMs: number;
+  /**
+   * True when validation did not run because no isolation runtime was available.
+   * Distinct from a failure: nothing is known about the code either way, so callers
+   * must report this as "not verified", never as a defect.
+   */
+  sandboxUnavailable?: boolean;
 }
 
 const MAX_FILES = 80;
@@ -97,48 +114,41 @@ export function validationFailureNeedsCodeRepair(result: CompileValidateResult):
   return !result.issues.every((issue) => /npm install timed out/i.test(issue));
 }
 
-function runCmd(
+/**
+ * Runs one validation command under isolation.
+ *
+ * `networkPolicy` is `registry-only` for dependency installation and `none` for
+ * everything after it — a typecheck or a production build has no legitimate reason to
+ * reach the network, and denying it removes exfiltration as an option even if the
+ * environment allowlist were ever weakened.
+ *
+ * Throws `SandboxUnavailableError` when nothing can isolate the work. It is deliberately
+ * not caught here: `compileValidateProject` turns it into an honest "not verified"
+ * result, and swallowing it lower down would make an unverified build look checked.
+ */
+async function runCmd(
   cmd: string,
   args: string[],
   cwd: string,
   timeoutMs: number,
+  files: ProjectFile[],
+  networkPolicy: SandboxNetworkPolicy,
 ): Promise<{ code: number | null; stdout: string; stderr: string; timedOut: boolean }> {
-  return new Promise((resolve) => {
-    const child = spawn(cmd, args, {
-      cwd,
-      env: {
-        ...process.env,
-        npm_config_ignore_scripts: 'true',
-        npm_config_audit: 'false',
-        npm_config_fund: 'false',
-        CI: '1',
-      },
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-    let stdout = '';
-    let stderr = '';
-    let timedOut = false;
-    const timer = setTimeout(() => {
-      timedOut = true;
-      child.kill('SIGKILL');
-    }, timeoutMs);
-    child.stdout?.on('data', (d: Buffer) => {
-      stdout += d.toString('utf8');
-      if (stdout.length > 40_000) stdout = stdout.slice(-40_000);
-    });
-    child.stderr?.on('data', (d: Buffer) => {
-      stderr += d.toString('utf8');
-      if (stderr.length > 40_000) stderr = stderr.slice(-40_000);
-    });
-    child.on('close', (code) => {
-      clearTimeout(timer);
-      resolve({ code, stdout, stderr, timedOut });
-    });
-    child.on('error', (err) => {
-      clearTimeout(timer);
-      resolve({ code: 1, stdout, stderr: err.message, timedOut });
-    });
+  const result = await executeSandboxed({
+    files,
+    command: cmd,
+    args,
+    timeoutMs,
+    networkPolicy,
+    // Never `process.env`. The allowlist is the boundary; see sandboxEnvironment.
+    environment: buildSandboxEnvironment({ XROGA_SANDBOX_WORKDIR: cwd }),
   });
+  return {
+    code: result.exitCode,
+    stdout: result.stdout,
+    stderr: result.stderr,
+    timedOut: result.timedOut,
+  };
 }
 
 function shouldCompile(files: ProjectFile[]): boolean {
@@ -186,6 +196,24 @@ export async function compileValidateProject(
       issues: ['Compile cancelled'],
       logTail: '',
       durationMs: 0,
+    };
+  }
+
+  // Refuse before writing anything if nothing can isolate the execution. The brief for
+  // this boundary is explicit: a missing runtime marks the build not locally verified,
+  // it never falls back to running generated code on the API host.
+  const availability = await probeSandbox();
+  if (!availability.available) {
+    return {
+      ok: false,
+      skipped: true,
+      sandboxUnavailable: true,
+      reason:
+        availability.detail ??
+        'No isolation runtime is available, so generated code was not executed here.',
+      issues: [],
+      logTail: '',
+      durationMs: Date.now() - started,
     };
   }
 
@@ -237,7 +265,8 @@ export async function compileValidateProject(
       );
     }
 
-    const install = await runCmd('npm', INSTALL_ARGS, dir, INSTALL_MS);
+    // The only stage permitted to reach the network, and only the registry.
+    const install = await runCmd('npm', INSTALL_ARGS, dir, INSTALL_MS, limited, 'registry-only');
     log += `npm install:\n${install.stdout}\n${install.stderr}\n`;
     if (install.timedOut) {
       issues.push('npm install timed out');
@@ -272,9 +301,11 @@ export async function compileValidateProject(
       ['--noEmit', '--pretty', 'false'],
       dir,
       TSC_MS,
+      limited,
+      'none',
     );
     if (tscResult.code !== 0 && /ENOENT|not found|spawn/i.test(tscResult.stderr)) {
-      tscResult = await runCmd('npx', ['tsc', '--noEmit', '--pretty', 'false'], dir, TSC_MS);
+      tscResult = await runCmd('npx', ['tsc', '--noEmit', '--pretty', 'false'], dir, TSC_MS, limited, 'none');
     }
 
     log += `tsc:\n${tscResult.stdout}\n${tscResult.stderr}\n`;
@@ -296,7 +327,7 @@ export async function compileValidateProject(
     let buildOk: boolean | undefined;
     let buildExitCode: number | null | undefined;
     if (installOk && tscOk && requiredBuild) {
-      const buildResult = await runCmd(requiredBuild.command, requiredBuild.args, dir, BUILD_MS);
+      const buildResult = await runCmd(requiredBuild.command, requiredBuild.args, dir, BUILD_MS, limited, 'none');
       buildExitCode = buildResult.code;
       buildOk = buildResult.code === 0 && !buildResult.timedOut;
       log += `production build (${requiredBuild.command} ${requiredBuild.args.join(' ')}):\n${buildResult.stdout}\n${buildResult.stderr}\n`;
@@ -323,6 +354,19 @@ export async function compileValidateProject(
       reason: ok ? 'compile passed' : 'compile failed',
     };
   } catch (err) {
+    // A runtime that disappears mid-validation is still an infrastructure outcome, not
+    // evidence about the generated code.
+    if (err instanceof SandboxUnavailableError) {
+      return {
+        ok: false,
+        skipped: true,
+        sandboxUnavailable: true,
+        reason: err.message,
+        issues: [],
+        logTail: log.slice(-6000),
+        durationMs: Date.now() - started,
+      };
+    }
     return {
       ok: false,
       skipped: false,
