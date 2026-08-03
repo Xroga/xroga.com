@@ -8,7 +8,7 @@ import {
   type ChatMessage,
 } from './openaiCompat.js';
 import { requireBuildArtifacts } from './buildOutputValidation.js';
-import { describeCompileBlocker } from './compileBlockerMessage.js';
+import { selectShipBlockerMessage } from './compileBlockerMessage.js';
 import { describeVercelDeployFailure, isVercelAuthFailure } from '../lib/vercelAuthError.js';
 import {
   classifyValidation,
@@ -2378,6 +2378,20 @@ export async function runBuildPipeline(opts: {
   // here, that build is the verification. A genuine code defect still blocks.
   const validation = classifyValidation({ compile, qa, structureOk: structureFinal.ok });
   const compileBlocksShip = validation.verdict === 'code_defect';
+  // `compileBlocksShip` means "the overall verdict is code_defect", which can be true
+  // for reasons that have nothing to do with compiling — a static site with no
+  // package.json always skips compile, harmlessly. Run e1f37426 shipped nothing and
+  // told the user "No package.json — static project, skipped compile. Nothing was
+  // pushed or deployed." while the real reason — the reviewer had found the HTML
+  // truncated, the booking form and admin modal missing, and key JS functions like
+  // generateTimeSlots absent — sat unseen in the QA notes panel.
+  const compileBlockerMessage = selectShipBlockerMessage({
+    verdictIsCodeDefect: compileBlocksShip,
+    structureOk: structureFinal.ok,
+    compile,
+    qa,
+    repairAttempts: repairLoops,
+  });
   const unverifiedNote =
     validation.verdict === 'not_verified'
       ? describeUnverifiedShip(validation.unverifiedReasons)
@@ -2403,7 +2417,7 @@ export async function runBuildPipeline(opts: {
   }
   if (patchAborted) shipBlockers.push('Unsafe patches aborted — live site unchanged');
   if (security.blocked) shipBlockers.push('Critical secrets blocked the push');
-  if (compileBlocksShip) shipBlockers.push(describeCompileBlocker(compile, { repairAttempts: repairLoops }));
+  if (compileBlockerMessage) shipBlockers.push(compileBlockerMessage);
   if (qaBlocksShip) {
     shipBlockers.push(
       `Critical structure: ${structureFinal.issues[0] || 'fix project files before ship'}`,
@@ -3327,9 +3341,7 @@ export async function runBuildPipeline(opts: {
     compileBlocksShip,
     // The specific stage + diagnostic, so this path cannot fall back to the old
     // generic "fix TypeScript/install before ship" instruction either.
-    compileBlockerMessage: compileBlocksShip
-      ? describeCompileBlocker(compile, { repairAttempts: repairLoops })
-      : undefined,
+    compileBlockerMessage,
     qaBlocksShip,
     githubConnected: githubOk,
     vercelConnected: vercelOk,

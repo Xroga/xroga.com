@@ -1,4 +1,6 @@
 import type { CompileValidateResult } from './compileValidate.js';
+import type { ReviewBuildOutputResult } from './qa.js';
+import { productionValidationAllowsDeployment } from './compileValidate.js';
 
 /**
  * The user-facing reason a build could not ship.
@@ -76,4 +78,56 @@ export function describeCompileBlocker(
     return `Production validation did not pass — ${result.reason.slice(0, 180)}. Nothing was pushed or deployed.`;
   }
   return `Production validation did not pass${tried}${suffix}. Nothing was pushed or deployed.`;
+}
+
+/**
+ * The user-facing reason a build is blocked purely on review content — a truncated
+ * file, a missing required section, incomplete logic — with no compile or structural
+ * problem involved.
+ *
+ * Run `e1f37426` is why this exists. The reviewer found real, specific problems:
+ * *"The HTML file is truncated; the booking form, contact section, and admin modal are
+ * incomplete or missing. The JavaScript file is truncated; functions like
+ * generateTimeSlots, showAdminModal, toggleMobileNav, and booking submission logic are
+ * missing."* That finding sat in a QA notes panel the terminal message never
+ * referenced. Instead the ship blocker said "No package.json — static project, skipped
+ * compile" — `describeCompileBlocker` reporting on `compile`, the one thing that had
+ * genuinely gone fine, because nothing else told it the real reason was elsewhere.
+ *
+ * This surfaces what the reviewer actually found instead of manufacturing a compile
+ * explanation for a failure compile had nothing to do with.
+ */
+export function describeReviewBlocker(qa: Pick<ReviewBuildOutputResult, 'issues'>): string {
+  const findings = qa.issues.map((issue) => issue.trim()).filter(Boolean).slice(0, 3);
+  const detail = findings.length ? ` — ${findings.join('; ').slice(0, 300)}` : '';
+  return `Review found the build incomplete${detail}. Nothing was pushed or deployed.`;
+}
+
+/**
+ * Picks which explanation belongs to a blocked ship — the one place this decision is
+ * made, so pipeline.ts cannot again reach for `describeCompileBlocker` for a verdict
+ * that compile had nothing to do with.
+ *
+ * `verdictIsCodeDefect` is `classifyValidation`'s own verdict, not re-derived here — the
+ * three inputs below only decide *which* of the three reasons that verdict already
+ * covers actually applies, matching the exhaustive case analysis in `classifyValidation`:
+ * a structural failure, a compile failure, or a review failure, in that priority order
+ * because a broken structure is checked first there too.
+ */
+export function selectShipBlockerMessage(input: {
+  verdictIsCodeDefect: boolean;
+  structureOk: boolean;
+  compile: CompileValidateResult;
+  qa: Pick<ReviewBuildOutputResult, 'issues'>;
+  repairAttempts?: number;
+}): string | null {
+  if (!input.verdictIsCodeDefect) return null;
+  // A broken structure already gets its own message elsewhere (naming the specific
+  // structural issue); returning null here avoids a second, less specific message for
+  // the same root cause.
+  if (!input.structureOk) return null;
+  if (!productionValidationAllowsDeployment(input.compile)) {
+    return describeCompileBlocker(input.compile, { repairAttempts: input.repairAttempts });
+  }
+  return describeReviewBlocker(input.qa);
 }

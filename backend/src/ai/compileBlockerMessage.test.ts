@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { CompileValidateResult } from './compileValidate.js';
-import { compileFailureIsInfrastructure, describeCompileBlocker } from './compileBlockerMessage.js';
+import {
+  compileFailureIsInfrastructure,
+  describeCompileBlocker,
+  describeReviewBlocker,
+  selectShipBlockerMessage,
+} from './compileBlockerMessage.js';
 
 /**
  * Cover for the message two production runs ended on:
@@ -126,4 +131,115 @@ test('a result with no diagnostics still produces a usable sentence', () => {
   const message = describeCompileBlocker(result());
   assert.ok(message.length > 20);
   assert.match(message, /Production validation did not pass/);
+});
+
+/**
+ * Cover for `describeReviewBlocker`.
+ *
+ * Run `e1f37426`: the reviewer found the HTML truncated, the booking form and admin
+ * modal missing, and key JS functions absent — and the ship blocker the user actually
+ * saw was "No package.json — static project, skipped compile. Nothing was pushed or
+ * deployed." — `describeCompileBlocker` reporting on the one thing that had genuinely
+ * gone fine, because nothing told it the real reason was the review, not the compile.
+ */
+
+test('reproduces the run: the reviewer\'s real findings become the message', () => {
+  const message = describeReviewBlocker({
+    issues: [
+      'The HTML file is truncated; the booking form, contact section, and admin modal are incomplete or missing.',
+      'The JavaScript file is truncated; functions like generateTimeSlots, showAdminModal, toggleMobileNav, and booking submission logic are missing.',
+    ],
+  });
+  assert.match(message, /truncated/);
+  assert.match(message, /booking form/);
+  assert.match(message, /generateTimeSlots/);
+});
+
+test('it never blames a compile step that was never the problem', () => {
+  const message = describeReviewBlocker({ issues: ['Truncated JS'] });
+  assert.doesNotMatch(message, /package\.json|npm install|tsc|TypeScript/i);
+});
+
+test('it still states nothing was shipped', () => {
+  assert.match(describeReviewBlocker({ issues: ['x'] }), /Nothing was pushed or deployed\./);
+});
+
+test('with no specific findings it is still a usable sentence', () => {
+  const message = describeReviewBlocker({ issues: [] });
+  assert.match(message, /Review found the build incomplete\. Nothing was pushed or deployed\./);
+});
+
+test('empty-string issues are dropped rather than shown as blank findings', () => {
+  const message = describeReviewBlocker({ issues: ['', '  ', 'Real finding'] });
+  assert.match(message, /Real finding/);
+  assert.doesNotMatch(message, / — ;| ;  ;/);
+});
+
+test('only the first few findings are shown, so the message stays a sentence, not a dump', () => {
+  const message = describeReviewBlocker({
+    issues: ['one', 'two', 'three', 'four', 'five'],
+  });
+  assert.doesNotMatch(message, /four|five/);
+});
+
+/**
+ * Cover for `selectShipBlockerMessage` — the single decision point that replaced three
+ * separate places pipeline.ts used to reach for `describeCompileBlocker` regardless of
+ * which of `classifyValidation`'s three code_defect causes actually applied.
+ */
+
+function skippedOkCompile(): CompileValidateResult {
+  return { ok: true, skipped: true, reason: 'No package.json — static project, skipped compile', issues: [], logTail: '', durationMs: 0 };
+}
+
+function failedCompile(): CompileValidateResult {
+  return { ok: false, skipped: false, installOk: true, tscOk: false, issues: ["error TS2304: Cannot find name 'Hero'."], logTail: '', durationMs: 0 };
+}
+
+test('a passing verdict needs no message at all', () => {
+  assert.equal(
+    selectShipBlockerMessage({
+      verdictIsCodeDefect: false,
+      structureOk: true,
+      compile: skippedOkCompile(),
+      qa: { issues: [] },
+    }),
+    null,
+  );
+});
+
+test('reproduces the run: a fine compile with a real review failure blames the review, not the compile', () => {
+  const message = selectShipBlockerMessage({
+    verdictIsCodeDefect: true,
+    structureOk: true,
+    compile: skippedOkCompile(),
+    qa: {
+      issues: [
+        'The HTML file is truncated; the booking form, contact section, and admin modal are incomplete or missing.',
+      ],
+    },
+  });
+  assert.match(message!, /truncated/);
+  assert.match(message!, /booking form/);
+  assert.doesNotMatch(message!, /package\.json|skipped compile/);
+});
+
+test('a genuine compile failure is still reported as a compile failure', () => {
+  const message = selectShipBlockerMessage({
+    verdictIsCodeDefect: true,
+    structureOk: true,
+    compile: failedCompile(),
+    qa: { issues: [] },
+  });
+  assert.match(message!, /TypeScript/);
+});
+
+test('a broken structure produces no message here — the caller\'s own structural message already names it', () => {
+  const message = selectShipBlockerMessage({
+    verdictIsCodeDefect: true,
+    structureOk: false,
+    compile: skippedOkCompile(),
+    qa: { issues: ['irrelevant — structure already explains this'] },
+  });
+  assert.equal(message, null);
 });
