@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { formatElapsed, waitingLine } from './liveActivityText';
+import {
+  WAITING_LINE_AFTER_SECONDS,
+  formatElapsed,
+  shouldShowWaitingLine,
+  waitingLine,
+} from './liveActivityText';
 import { terminalRunReducer } from './terminalRunReducer';
 import { adaptTerminalEvent } from './terminalEventAdapter';
 import { EMPTY_RUN_STATE, type TerminalEvent } from './terminalEvent';
@@ -57,19 +62,28 @@ test('a second run restarts the clock rather than continuing the first', () => {
   assert.deepEqual(state.events, []);
 });
 
-test('the waiting line claims only that the request was sent', () => {
+test('the connecting line claims only that we are connecting', () => {
   const line = waitingLine(3);
-  assert.match(line, /Request sent/);
-  assert.match(line, /waiting for the build service/);
+  assert.match(line, /Connecting to the build service/);
   // At this point the client knows nothing about the build itself. Saying otherwise is
   // the fabrication the old checklist made.
   assert.doesNotMatch(line, /building|generating|writing|analy[sz]ing|%/i);
 });
 
-test('the waiting line carries the real elapsed time', () => {
+test('the connecting line carries the real elapsed time', () => {
   assert.match(waitingLine(0), /\(0s\)/);
   assert.match(waitingLine(45), /\(45s\)/);
   assert.match(waitingLine(90), /\(1m 30s\)/);
+});
+
+test('no notice is shown for a gap nobody notices', () => {
+  // A user asked not to be shown a waiting message: they want to watch the work, not
+  // read that work is pending. The backend's first event now leaves within
+  // milliseconds, so this line is a slow-network fallback, not the normal experience.
+  assert.equal(shouldShowWaitingLine(0), false);
+  assert.equal(shouldShowWaitingLine(1), false);
+  assert.equal(shouldShowWaitingLine(WAITING_LINE_AFTER_SECONDS), true);
+  assert.equal(shouldShowWaitingLine(30), true);
 });
 
 test('elapsed formatting reads as a duration a person recognises', () => {
