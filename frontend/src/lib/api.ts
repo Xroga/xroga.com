@@ -228,6 +228,21 @@ export async function streamSwarmExecute(
     throw new Error('Please sign in to chat.');
   }
 
+  // Generated here rather than waited for from the server's first SSE byte.
+  // Production evidence: three consecutive builds where the backend produced 25-49
+  // real events each while the browser received zero bytes of the stream — a proxy or
+  // dropped connection somewhere between here and the browser, invisible from this
+  // sandbox and with no guaranteed fix on our side. When the runId only ever arrived
+  // over the stream, a stream that delivers nothing left the client with no ID to fall
+  // back to polling with — it could only wait forever, which is exactly what the
+  // screenshots showed. Knowing the ID upfront means the stall watchdog below always
+  // has something to poll for, independent of whether this connection ever delivers a
+  // single byte.
+  const clientRunId =
+    typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : undefined;
+
   const res = await fetch(`${API_URL}/api/swarm/execute`, {
     method: 'POST',
     headers: {
@@ -238,6 +253,7 @@ export async function streamSwarmExecute(
     body: JSON.stringify({
       prompt,
       stream: true,
+      ...(clientRunId ? { runId: clientRunId } : {}),
       ...(options.projectId ? { projectId: options.projectId } : {}),
       ...(options.attachments?.length ? { attachments: options.attachments } : {}),
       ...(options.history?.length ? { history: options.history } : {}),
@@ -277,9 +293,31 @@ export async function streamSwarmExecute(
   const decoder = new TextDecoder();
   let buffer = '';
   let finalText = '';
-  let runId: string | undefined;
+  // Known immediately when the server accepted a client-supplied ID; otherwise learned
+  // from the server's own 'start' event exactly as before, for the fallback case where
+  // this browser could not generate one.
+  let runId: string | undefined = clientRunId;
   let lastSequence = 0;
   let receivedComplete = false;
+
+  if (runId) options.onStart?.(runId);
+
+  // How long to wait for the *next* byte before treating this connection as stalled.
+  // The backend now emits its first event within milliseconds of accepting the request
+  // and sends a keepalive at minimum every 15s, so 20s of true silence at the transport
+  // level is already abnormal under every legitimate cause — a slow model, a big
+  // repository read, a busy Fly machine — because none of those delay the *first*
+  // byte, only what it says.
+  const STREAM_STALL_MS = 20_000;
+
+  function readWithStallGuard(): Promise<ReadableStreamReadResult<Uint8Array>> {
+    let timer: ReturnType<typeof setTimeout>;
+    const settle = reader.read().finally(() => clearTimeout(timer));
+    const stalled = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error('SWARM_STREAM_STALLED')), STREAM_STALL_MS);
+    });
+    return Promise.race([settle, stalled]);
+  }
 
   try {
     while (true) {
@@ -288,7 +326,20 @@ export async function streamSwarmExecute(
       throw new DOMException('Aborted', 'AbortError');
     }
 
-    const { done, value } = await reader.read();
+    let readResult: ReadableStreamReadResult<Uint8Array>;
+    try {
+      readResult = await readWithStallGuard();
+    } catch (err) {
+      if ((err as Error).message !== 'SWARM_STREAM_STALLED') throw err;
+      await reader.cancel().catch(() => {});
+      // No bytes arrived in time. The backend may still be working — this is not a
+      // verdict that the build failed, only that this connection stopped delivering —
+      // so fall back to polling the same run by the ID we already know, exactly the
+      // path a genuinely dropped connection already uses below.
+      if (runId) return waitForPersistedSwarmRun(runId, token, options, finalText, lastSequence);
+      throw new Error('The build service is not responding. Please try again.');
+    }
+    const { done, value } = readResult;
     if (done) break;
 
     buffer += decoder.decode(value, { stream: true });
@@ -339,8 +390,13 @@ export async function streamSwarmExecute(
 
       if (eventName === 'start' || eventName === 'pipeline') {
         if (eventName === 'start' && typeof payload.runId === 'string') {
+          // Already fired above with the client-generated ID in the normal case — the
+          // server echoes the same value back, so re-firing here would just be a
+          // duplicate notification. Only genuinely new when the browser could not
+          // generate its own ID and this is the first the client is learning it.
+          const alreadyKnown = runId === payload.runId;
           runId = payload.runId;
-          options.onStart?.(runId);
+          if (!alreadyKnown) options.onStart?.(runId);
         }
         options.onProgress?.({
           agent: 'routing',
