@@ -849,7 +849,11 @@ export function TerminalChatProvider({
           sessionId: sessionIdRef.current,
           messages,
           prompt,
-          flushCloud: true,
+          // Deliberately not `flushCloud`. This effect re-arms on every change to
+          // `messages`, so during a response it lands once per settled token batch;
+          // flushing bypassed the upload debounce and sent the whole transcript each
+          // time. The turn-completion handler below still flushes, so a finished turn
+          // is on the server just as promptly.
         });
       });
     }, 500);

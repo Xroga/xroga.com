@@ -56,21 +56,39 @@ NOTIFY pgrst, 'reload schema';
 `;
 
 let schemaReady: boolean | null = null;
+let lastAttemptAt = 0;
+let inFlight: Promise<boolean> | null = null;
+
+/**
+ * Retry backoff after a failed bootstrap. Without this, `schemaReady === false`
+ * fell through the success guard on every subsequent request, so a persistent
+ * failure opened a fresh Postgres connection per API call.
+ */
+const RETRY_AFTER_MS = 5 * 60 * 1000;
 
 export async function ensureTerminalSessionsSchema(): Promise<boolean> {
   if (schemaReady === true) return true;
   if (!resolveDatabaseUrls().length) return false;
+  if (schemaReady === false && Date.now() - lastAttemptAt < RETRY_AFTER_MS) return false;
+  if (inFlight) return inFlight;
 
-  try {
-    const client = await connectPostgres();
-    await client.query(ENSURE_TERMINAL_SESSIONS_SQL);
-    await client.end();
-    schemaReady = true;
-    console.log('[terminalSessionsSchema] terminal_sessions table ensured');
-    return true;
-  } catch (err) {
-    console.error('[terminalSessionsSchema] Bootstrap failed:', (err as Error).message);
-    schemaReady = false;
-    return false;
-  }
+  inFlight = (async () => {
+    lastAttemptAt = Date.now();
+    try {
+      const client = await connectPostgres();
+      await client.query(ENSURE_TERMINAL_SESSIONS_SQL);
+      await client.end();
+      schemaReady = true;
+      console.log('[terminalSessionsSchema] terminal_sessions table ensured');
+      return true;
+    } catch (err) {
+      console.error('[terminalSessionsSchema] Bootstrap failed:', (err as Error).message);
+      schemaReady = false;
+      return false;
+    } finally {
+      inFlight = null;
+    }
+  })();
+
+  return inFlight;
 }

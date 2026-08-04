@@ -607,12 +607,16 @@ export const api = {
   },
   /** Permanent terminal sessions under a GitHub repo (#1, #2, …) — stored in Supabase */
   terminalSessions: {
-    list: (repo?: string) =>
-      apiFetch<{ sessions: CloudTerminalSessionSummary[] }>(
-        repo
-          ? `/api/terminal-sessions?repo=${encodeURIComponent(repo)}`
-          : '/api/terminal-sessions'
-      ),
+    list: (repo?: string, opts?: { limit?: number; offset?: number }) => {
+      const params = new URLSearchParams();
+      if (repo) params.set('repo', repo);
+      if (opts?.limit !== undefined) params.set('limit', String(opts.limit));
+      if (opts?.offset !== undefined) params.set('offset', String(opts.offset));
+      const qs = params.toString();
+      return apiFetch<CloudTerminalSessionPage>(
+        qs ? `/api/terminal-sessions?${qs}` : '/api/terminal-sessions'
+      );
+    },
     get: (id: string) =>
       apiFetch<{ session: CloudTerminalSession }>(`/api/terminal-sessions/${encodeURIComponent(id)}`),
     upsert: (
@@ -628,10 +632,14 @@ export const api = {
         status?: string;
       }
     ) =>
-      apiFetch<{ session: CloudTerminalSession }>(`/api/terminal-sessions/${encodeURIComponent(id)}`, {
-        method: 'PUT',
-        body: JSON.stringify({ ...body, id }),
-      }),
+      // Returns metadata only — the server no longer echoes the transcript back.
+      apiFetch<{ session: CloudTerminalSessionSummary }>(
+        `/api/terminal-sessions/${encodeURIComponent(id)}`,
+        {
+          method: 'PUT',
+          body: JSON.stringify({ ...body, id }),
+        }
+      ),
     delete: (id: string) =>
       apiFetch<{ success: boolean; id: string }>(`/api/terminal-sessions/${encodeURIComponent(id)}`, {
         method: 'DELETE',
@@ -1515,13 +1523,20 @@ export interface Project {
   updated_at: string;
 }
 
+/**
+ * Metadata for a stored terminal session.
+ *
+ * Deliberately has no `prompt` and no `messages`: list responses return many of
+ * these, and carrying a 20 KB prompt plus a full transcript per row made routine
+ * sidebar refreshes cost megabytes. Use `terminalSessions.get(id)` for a session
+ * the user actually opens.
+ */
 export interface CloudTerminalSessionSummary {
   id: string;
   githubRepoName: string;
   githubBranch: string;
   terminalNumber: number;
   title: string;
-  prompt: string;
   preview: string;
   kind: string;
   status: string;
@@ -1530,8 +1545,20 @@ export interface CloudTerminalSessionSummary {
   updatedAt: string;
 }
 
+/** One fully-loaded session, returned only by `get`. */
 export interface CloudTerminalSession extends CloudTerminalSessionSummary {
+  prompt: string;
   messages: unknown[];
+}
+
+export interface CloudTerminalSessionPage {
+  sessions: CloudTerminalSessionSummary[];
+  pagination?: {
+    limit: number;
+    offset: number;
+    hasMore: boolean;
+    nextOffset: number | null;
+  };
 }
 
 export interface ProjectFile {

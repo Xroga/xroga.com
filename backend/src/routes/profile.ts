@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from '../middleware/auth.js';
+import { forgetProvisionedUser } from '../services/userProvisioningCache.js';
 
 const router = Router();
 
@@ -99,6 +100,10 @@ router.delete('/', async (req: AuthRequest, res) => {
     res.status(500).json({ error: error.message });
     return;
   }
+  // The provisioning cache remembers only that this user's rows existed. Drop the
+  // entry so a re-registration under the same id provisions again from scratch
+  // rather than inheriting a stale "already provisioned" answer.
+  forgetProvisionedUser(req.userId!);
   // profiles/projects/etc. cascade via `ON DELETE CASCADE` FKs to auth.users.
   res.json({ deleted: true });
 });

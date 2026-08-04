@@ -177,24 +177,53 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const refreshCloud = useCallback(() => {
-    void (async () => {
+  const cloudRefreshTimer = useRef<number | null>(null);
+  const cloudRefreshInFlight = useRef(false);
+
+  const refreshCloudNow = useCallback(async () => {
+    // One list call at a time. Five listeners below plus the chat-progress effect
+    // can all ask for a refresh inside the same tick; without this each ask was
+    // its own request to /api/terminal-sessions.
+    if (cloudRefreshInFlight.current) return;
+    cloudRefreshInFlight.current = true;
+    try {
       const list = await listCloudTerminalSessions();
       setCloudSessions(list);
       const local = loadTerminalHistory().filter(
         (e) => e.messageCount > 0 && e.githubRepoName?.includes('/') && e.messages?.length
       );
-      if (local.length) {
-        await migrateLocalSessionsToCloud(local, list);
-        const again = await listCloudTerminalSessions();
-        setCloudSessions(again);
-      }
-    })();
+      if (!local.length) return;
+      // `migrateLocalSessionsToCloud` runs at most once per page load and reports
+      // whether it actually uploaded anything. Re-listing unconditionally — as this
+      // did before — meant every refresh cost two list calls even when there was
+      // nothing to migrate, and each upload's change event started the cycle again.
+      const uploaded = await migrateLocalSessionsToCloud(local, list);
+      if (uploaded) setCloudSessions(await listCloudTerminalSessions());
+    } finally {
+      cloudRefreshInFlight.current = false;
+    }
   }, []);
+
+  /**
+   * Coalesced cloud refresh.
+   *
+   * A single save dispatches one change event, but a repo switch or a resumed
+   * workspace dispatches several within a few milliseconds, and each one used to
+   * become its own list request. Collapsing them into one trailing call keeps the
+   * UI just as fresh at a fraction of the egress.
+   */
+  const refreshCloud = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    if (cloudRefreshTimer.current !== null) window.clearTimeout(cloudRefreshTimer.current);
+    cloudRefreshTimer.current = window.setTimeout(() => {
+      cloudRefreshTimer.current = null;
+      void refreshCloudNow();
+    }, 400);
+  }, [refreshCloudNow]);
 
   useEffect(() => {
     refreshLocal();
-    refreshCloud();
+    void refreshCloudNow();
     const onRefresh = () => {
       refreshLocal();
       refreshCloud();
@@ -210,8 +239,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       window.removeEventListener('storage', refreshLocal);
       window.removeEventListener('xroga-resume-workspace', onRefresh);
       offCloud();
+      if (cloudRefreshTimer.current !== null) window.clearTimeout(cloudRefreshTimer.current);
     };
-  }, [refreshLocal, refreshCloud]);
+  }, [refreshLocal, refreshCloud, refreshCloudNow]);
 
   // Refresh as soon as the user chats — #1 / #2 should appear quickly
   useEffect(() => {
