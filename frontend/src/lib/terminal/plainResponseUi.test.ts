@@ -3,7 +3,9 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 function source(relativeUrl: string): string {
-  return readFileSync(new URL(relativeUrl, import.meta.url), 'utf8');
+  // LF-normalised: assertions here search for literals containing `\n`, which never match
+  // on a CRLF checkout.
+  return readFileSync(new URL(relativeUrl, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 }
 
 test('AI responses use a plain factual status instead of an execution card', () => {

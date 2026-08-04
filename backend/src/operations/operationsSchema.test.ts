@@ -2,8 +2,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
-const migration = readFileSync(new URL('../../../supabase/migrations/20260726211546_command3b_operations_centre.sql', import.meta.url), 'utf8');
-const retryHardening = readFileSync(new URL('../../../supabase/migrations/20260726211810_command3b_action_retry_hardening.sql', import.meta.url), 'utf8');
+/** LF-normalised: these assertions match SQL text, and a CRLF checkout must not change the answer. */
+function readSql(url: URL): string {
+  return readFileSync(url, 'utf8').replace(/\r\n/g, '\n');
+}
+
+const migration = readSql(new URL('../../../supabase/migrations/20260726211546_command3b_operations_centre.sql', import.meta.url));
+const retryHardening = readSql(new URL('../../../supabase/migrations/20260726211810_command3b_action_retry_hardening.sql', import.meta.url));
 
 test('canonical operations schema contains every durable control table', () => {
   for (const table of ['operations_memberships','operations_environments','operations_resources','operations_actions','operations_action_approvals','operations_action_runs','operations_alerts','operations_automation_rules','operations_automation_runs','operations_maintenance_windows','operations_config_checks','operations_slo_snapshots']) {

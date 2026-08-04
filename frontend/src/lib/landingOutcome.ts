@@ -47,7 +47,13 @@ export function deriveLandingOutcome(
     githubPushConfirmed &&
     (deployUrl ? deployVerified : true);
   const handoffReady = output.handoffReady === true || shipOutcome?.handoffReady === true;
-  const buildOk = output.buildOk !== false && shipOutcome?.buildOk !== false;
+  // `output.buildOk !== false` read a *missing* field as a pass. That was survivable only
+  // while the backend always sent `buildOk: true` — including in the pre-QA preview, before
+  // anything had compiled. Now that the preview carries `verificationState:
+  // 'generated_unverified'` instead, absence must mean "no build claim", not "the build
+  // passed". So the claim has to be present and true.
+  const buildOk = output.buildOk === true || shipOutcome?.buildOk === true;
+  const generatedUnverified = output.verificationState === 'generated_unverified';
   const isNonWeb =
     typeof output.scaffoldKind === 'string' && /^(expo|chrome|electron)$/.test(output.scaffoldKind);
   const statusLines: string[] = [];
@@ -97,6 +103,16 @@ export function deriveLandingOutcome(
     headline = `${options.projectName} preview ready · not shipped`;
     completionNote = 'A local preview exists, but no verified GitHub push or live deployment was recorded.';
     terminalLine = 'Preview ready · no verified ship evidence';
+    workspaceStatus = 'idle';
+  } else if (generatedUnverified && !blockers.length) {
+    // Distinct from the branch below on purpose. "Nothing has been checked yet" and "the
+    // checks came back bad" are different facts, and collapsing them into "needs attention"
+    // would be as inaccurate as the `buildOk: true` this replaced — just pessimistic
+    // instead of optimistic. The preview is real and viewable; the verdict is not in.
+    headline = `${options.projectName} preview ready · not verified`;
+    completionNote =
+      'The code was generated and can be previewed, but nothing has been installed, compiled or tested yet.';
+    terminalLine = 'Generated · checks not run yet';
     workspaceStatus = 'idle';
   } else {
     headline = `${options.projectName} needs attention`;

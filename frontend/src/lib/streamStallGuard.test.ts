@@ -23,7 +23,11 @@ import { test } from 'node:test';
  */
 
 function source(): string {
-  return readFileSync(new URL('./api.ts', import.meta.url), 'utf8');
+  // Normalise line endings. Several assertions below locate a region by searching for a
+  // literal containing `\n`, which finds nothing on a CRLF checkout — the slice then comes
+  // back empty and the test fails for a reason that has nothing to do with the code under
+  // test. Read the source as LF regardless of how git checked it out.
+  return readFileSync(new URL('./api.ts', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 }
 
 test('the client generates its own runId before the request is even sent', () => {

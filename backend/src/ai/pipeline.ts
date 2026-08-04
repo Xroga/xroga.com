@@ -173,6 +173,7 @@ import {
   executableTasksFromRoutePlan,
   transitionTask,
 } from './executionRuntime.js';
+import { describeVerificationState } from './verificationLifecycle.js';
 import { runUniversalSynthesisFoundation } from '../synthesis/foundation.js';
 
 export interface PipelineProgress {
@@ -1858,15 +1859,22 @@ export async function runBuildPipeline(opts: {
       userPrompt: userFacingPrompt,
       isUpdate,
       shipPending: true,
-      buildOk: true,
+      // Nothing has installed, compiled, typechecked or run at this point — the builder
+      // has only just responded. This payload used to carry `buildOk: true`, which made
+      // "we generated files" and "the build passed" the same claim to every consumer of
+      // the preview. The lifecycle state says what is actually true, and it cannot reach
+      // `verified` without passing through `testing` first.
+      verificationState: 'generated_unverified',
+      verificationDetail: describeVerificationState('generated_unverified'),
       message: isUpdate
-        ? `Updated **${projectName}** — preview ready; finishing GitHub/Vercel…`
-        : `**${projectName}** code ready — preview below; finishing GitHub/Vercel…`,
+        ? `Updated **${projectName}** — preview ready (not verified yet); running checks…`
+        : `**${projectName}** code generated — preview below (not verified yet); running checks…`,
       changesSummary: [
         `Generated ${nextFiles.length} file(s)`,
         detectScaffoldKind(userFacingPrompt) !== 'static'
           ? `Scaffold: ${productScaffoldKind}`
           : 'Static landing',
+        'Not verified yet — checks have not run',
         'Ship in progress (GitHub / Vercel)',
       ],
       modelLabel: 'Xroga AI',
@@ -1879,8 +1887,8 @@ export async function runBuildPipeline(opts: {
     emit({
       agent: 'builder',
       status: 'code_ready',
-      message: `${projectName} — code ready (shipping next)`,
-      swarmStatusLabel: 'Preview ready',
+      message: `${projectName} — code generated (not verified yet)`,
+      swarmStatusLabel: 'Generated — not verified',
       swarmActivity: `${nextFiles.length} files`,
       swarmTodos: todos('build'),
     });
