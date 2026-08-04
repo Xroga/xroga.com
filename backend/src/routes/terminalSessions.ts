@@ -1,5 +1,11 @@
 /**
  * Durable terminal sessions per GitHub repo — #1, #2, … for each user.
+ *
+ * Egress note: list responses are metadata only. `messages` (up to 300 per row) and
+ * `prompt` (up to 20 KB per row) are deliberately absent — the sidebar renders a
+ * title, a number and a count, and never read either. Fetching them for up to 200
+ * rows made a single sidebar refresh worth megabytes. Full bodies come from
+ * `GET /:id`, which loads exactly one session the user actually opened.
  */
 
 import { Router } from 'express';
@@ -7,8 +13,19 @@ import { z } from 'zod';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from '../middleware/auth.js';
 import { ensureTerminalSessionsSchema } from '../db/ensureTerminalSessionsSchema.js';
+import { approximateBytes, recordSupabaseCall } from '../lib/supabaseCallCounters.js';
 
 const router = Router();
+
+/** Columns the sidebar needs. Excludes `messages` and `prompt` by construction. */
+export const SUMMARY_COLUMNS =
+  'id, github_repo_name, github_branch, terminal_number, title, preview, kind, status, message_count, created_at, updated_at';
+
+/** Columns a write needs to return: enough to place the row in the UI, no bodies. */
+const WRITE_RETURN_COLUMNS = SUMMARY_COLUMNS;
+
+export const DEFAULT_PAGE_SIZE = 50;
+export const MAX_PAGE_SIZE = 100;
 
 const upsertSchema = z.object({
   id: z.string().min(8).max(120),
@@ -39,14 +56,18 @@ type SessionRow = {
   updated_at: string;
 };
 
-function toSummary(row: SessionRow) {
+/**
+ * Metadata for one session. `prompt` is intentionally not returned: it is up to
+ * 20 KB, the sidebar shows `preview` instead, and including it dominated the
+ * response size of every list call.
+ */
+export function toSummary(row: Partial<SessionRow>) {
   return {
     id: row.id,
     githubRepoName: row.github_repo_name,
     githubBranch: row.github_branch,
     terminalNumber: row.terminal_number,
     title: row.title,
-    prompt: row.prompt,
     preview: row.preview,
     kind: row.kind,
     status: row.status,
@@ -59,8 +80,21 @@ function toSummary(row: SessionRow) {
 function toFull(row: SessionRow) {
   return {
     ...toSummary(row),
+    prompt: row.prompt,
     messages: Array.isArray(row.messages) ? row.messages : [],
   };
+}
+
+export function parsePageSize(raw: unknown): number {
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n <= 0) return DEFAULT_PAGE_SIZE;
+  return Math.min(Math.floor(n), MAX_PAGE_SIZE);
+}
+
+export function parseOffset(raw: unknown): number {
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n <= 0) return 0;
+  return Math.min(Math.floor(n), 10_000);
 }
 
 async function nextTerminalNumber(
@@ -79,7 +113,7 @@ async function nextTerminalNumber(
   return Number(data?.terminal_number ?? 0) + 1;
 }
 
-/** GET /api/terminal-sessions?repo=owner/name — list for sidebar (no heavy messages) */
+/** GET /api/terminal-sessions?repo=owner/name&limit=&offset= — metadata only */
 router.get('/', async (req: AuthRequest, res) => {
   const userId = req.userId!;
   await ensureTerminalSessionsSchema().catch(() => false);
@@ -89,15 +123,18 @@ router.get('/', async (req: AuthRequest, res) => {
       ? req.query.repo.trim()
       : null;
 
+  const limit = parsePageSize(req.query.limit);
+  const offset = parseOffset(req.query.offset);
+
   try {
     const supabase = getSupabaseAdmin();
     let query = supabase
       .from('terminal_sessions')
-      .select(
-        'id, user_id, github_repo_name, github_branch, terminal_number, title, prompt, preview, kind, status, message_count, created_at, updated_at'
-      )
+      .select(SUMMARY_COLUMNS)
       .eq('user_id', userId)
-      .limit(200);
+      // `range` is inclusive on both ends, so ask for one extra row to learn
+      // whether another page exists without running a second COUNT query.
+      .range(offset, offset + limit);
 
     if (repo) {
       query = query.eq('github_repo_name', repo).order('terminal_number', { ascending: true });
@@ -107,10 +144,25 @@ router.get('/', async (req: AuthRequest, res) => {
 
     const { data, error } = await query;
     if (error) {
+      recordSupabaseCall({ table: 'terminal_sessions', operation: 'select', outcome: 'error' });
       res.status(500).json({ error: error.message });
       return;
     }
-    res.json({ sessions: (data as SessionRow[] | null)?.map(toSummary) ?? [] });
+
+    const rows = (data as Partial<SessionRow>[] | null) ?? [];
+    const hasMore = rows.length > limit;
+    const page = hasMore ? rows.slice(0, limit) : rows;
+    const sessions = page.map(toSummary);
+
+    recordSupabaseCall(
+      { table: 'terminal_sessions', operation: 'select', outcome: 'ok' },
+      approximateBytes(sessions)
+    );
+
+    res.json({
+      sessions,
+      pagination: { limit, offset, hasMore, nextOffset: hasMore ? offset + limit : null },
+    });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
@@ -211,7 +263,10 @@ router.put('/:id', async (req: AuthRequest, res) => {
     let { data, error } = await supabase
       .from('terminal_sessions')
       .upsert(row, { onConflict: 'id' })
-      .select('*')
+      // Return metadata only. This used to be `select('*')`, which echoed all 300
+      // messages back on every autosave — the request paid for the payload twice,
+      // once up and once down, and the client discarded the copy it got back.
+      .select(WRITE_RETURN_COLUMNS)
       .single();
 
     // Unique (user, repo, terminal_number) race — reallocate and retry once.
@@ -225,18 +280,24 @@ router.put('/:id', async (req: AuthRequest, res) => {
       const retry = await supabase
         .from('terminal_sessions')
         .upsert(retryRow, { onConflict: 'id' })
-        .select('*')
+        .select(WRITE_RETURN_COLUMNS)
         .single();
       data = retry.data;
       error = retry.error;
     }
 
     if (error) {
+      recordSupabaseCall({ table: 'terminal_sessions', operation: 'upsert', outcome: 'error' });
       res.status(500).json({ error: error.message });
       return;
     }
 
-    res.json({ session: toFull(data as SessionRow) });
+    const session = toSummary(data as Partial<SessionRow>);
+    recordSupabaseCall(
+      { table: 'terminal_sessions', operation: 'upsert', outcome: 'ok' },
+      approximateBytes(session)
+    );
+    res.json({ session });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }

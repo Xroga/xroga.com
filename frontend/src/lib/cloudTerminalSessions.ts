@@ -6,6 +6,13 @@
 import { api, type CloudTerminalSession, type CloudTerminalSessionSummary } from '@/lib/api';
 import type { TerminalHistoryEntry } from '@/lib/terminalHistory';
 import { messagesForStorage } from '@/lib/storageSafe';
+import {
+  fingerprintUpload,
+  isDuplicateUpload,
+  rememberUpload,
+  resetUploadCoalescing,
+  uploadDelayMs,
+} from '@/lib/uploadCoalescing';
 import type { ChatMessage } from '@/context/TerminalChatContext';
 
 const CLOUD_EVENT = 'xroga-cloud-terminals-changed';
@@ -13,7 +20,8 @@ const ordinalCache = new Map<string, number>();
 /** Highest terminal # seen per repo — used to assign #1, #2 immediately on first chat */
 const repoMaxNumber = new Map<string, number>();
 const pendingUploads = new Map<string, ReturnType<typeof setTimeout>>();
-const lastUploadedAt = new Map<string, number>();
+/** sessionId → in-flight upload, so concurrent callers share one request. */
+const inFlightUploads = new Map<string, Promise<CloudTerminalSessionSummary | null>>();
 
 export function notifyCloudTerminalsChanged() {
   if (typeof window === 'undefined') return;
@@ -88,48 +96,67 @@ export function allocateTerminalNumber(sessionId: string, repo: string): number 
 
 async function pushTerminalSessionToCloudNow(
   entry: TerminalHistoryEntry
-): Promise<CloudTerminalSession | null> {
+): Promise<CloudTerminalSessionSummary | null> {
   if (!entry.id || !entry.githubRepoName?.includes('/') || !entry.messages?.length) return null;
-  try {
-    const slimMessages = messagesForStorage(entry.messages).slice(-300);
-    const { session } = await api.terminalSessions.upsert(entry.id, {
-      githubRepoName: entry.githubRepoName,
-      githubBranch: entry.githubBranch || 'main',
-      title: entry.title,
-      prompt: entry.prompt,
-      preview: entry.preview,
-      messages: slimMessages,
-      kind: entry.kind,
-      status: entry.status || 'active',
-    });
-    rememberTerminalNumber(session.id, session.terminalNumber, session.githubRepoName);
-    lastUploadedAt.set(session.id, Date.now());
-    notifyCloudTerminalsChanged();
-    return session;
-  } catch (err) {
-    console.warn('[cloudTerminalSessions] upsert failed:', (err as Error).message);
+
+  const inFlight = inFlightUploads.get(entry.id);
+  if (inFlight) return inFlight;
+
+  const body = {
+    githubRepoName: entry.githubRepoName,
+    githubBranch: entry.githubBranch || 'main',
+    title: entry.title,
+    prompt: entry.prompt,
+    preview: entry.preview,
+    messages: messagesForStorage(entry.messages).slice(-300),
+    kind: entry.kind,
+    status: entry.status || 'active',
+  };
+
+  const fingerprint = fingerprintUpload(body);
+  if (isDuplicateUpload(entry.id, fingerprint)) {
+    // Byte-identical to what the server already holds. Uploading it again would
+    // cost a full round trip to store what is already stored.
     return null;
   }
+
+  const upload = (async () => {
+    try {
+      const { session } = await api.terminalSessions.upsert(entry.id, body);
+      rememberTerminalNumber(session.id, session.terminalNumber, session.githubRepoName);
+      rememberUpload(session.id, fingerprint, Date.now());
+      // Only announce a change that a listener could act on. Announcing every
+      // save turned each upload into a sidebar refresh, and each refresh into
+      // more uploads.
+      notifyCloudTerminalsChanged();
+      return session;
+    } catch (err) {
+      console.warn('[cloudTerminalSessions] upsert failed:', (err as Error).message);
+      return null;
+    } finally {
+      inFlightUploads.delete(entry.id);
+    }
+  })();
+
+  inFlightUploads.set(entry.id, upload);
+  return upload;
 }
 
 /** Debounced upsert — first save for a session is nearly instant so #N appears quickly. */
 export function pushTerminalSessionToCloud(
   entry: TerminalHistoryEntry
-): Promise<CloudTerminalSession | null> {
+): Promise<CloudTerminalSessionSummary | null> {
   if (!entry.id || !entry.githubRepoName?.includes('/') || !entry.messages?.length) {
     return Promise.resolve(null);
   }
   const existing = pendingUploads.get(entry.id);
   if (existing) clearTimeout(existing);
 
-  const isFirstUpload = !lastUploadedAt.has(entry.id);
-  const delay = isFirstUpload ? 80 : 900;
-
   return new Promise((resolve) => {
     const timer = setTimeout(() => {
       pendingUploads.delete(entry.id);
       void pushTerminalSessionToCloudNow(entry).then(resolve);
-    }, delay);
+    }, uploadDelayMs(entry.id));
     pendingUploads.set(entry.id, timer);
   });
 }
@@ -137,7 +164,7 @@ export function pushTerminalSessionToCloud(
 /** Flush immediately (New Terminal / leave) so #1 is on the server before blank UI. */
 export async function flushTerminalSessionToCloud(
   entry: TerminalHistoryEntry
-): Promise<CloudTerminalSession | null> {
+): Promise<CloudTerminalSessionSummary | null> {
   const existing = pendingUploads.get(entry.id);
   if (existing) {
     clearTimeout(existing);
@@ -147,10 +174,11 @@ export async function flushTerminalSessionToCloud(
 }
 
 export async function listCloudTerminalSessions(
-  repo?: string
+  repo?: string,
+  opts?: { limit?: number; offset?: number }
 ): Promise<CloudTerminalSessionSummary[]> {
   try {
-    const { sessions } = await api.terminalSessions.list(repo);
+    const { sessions } = await api.terminalSessions.list(repo, opts);
     for (const s of sessions) {
       rememberTerminalNumber(s.id, s.terminalNumber, s.githubRepoName);
     }
@@ -191,16 +219,41 @@ export function cloudToHistoryEntry(session: CloudTerminalSession): TerminalHist
   };
 }
 
-/** Upload any local sessions missing from the cloud list (one-time heal). */
+/**
+ * Upload any local sessions missing from the cloud list (one-time heal).
+ *
+ * Runs at most once per page load. Previously this ran on every sidebar refresh,
+ * and because each upload dispatched the "cloud terminals changed" event that the
+ * sidebar listens to, one refresh could queue forty uploads, each of which
+ * triggered another refresh, which started another migration pass. That feedback
+ * loop is the single largest source of duplicate writes.
+ */
+let migrationRan = false;
+
 export async function migrateLocalSessionsToCloud(
   local: TerminalHistoryEntry[],
   already: CloudTerminalSessionSummary[]
-): Promise<void> {
+): Promise<boolean> {
+  if (migrationRan) return false;
+  migrationRan = true;
+
   const have = new Set(already.map((s) => s.id));
   const candidates = local.filter(
     (e) => e.githubRepoName?.includes('/') && e.messages?.length && !have.has(e.id)
   );
+  if (!candidates.length) return false;
+
   for (const entry of candidates.slice(0, 40)) {
-    await pushTerminalSessionToCloud(entry);
+    // Sequential and awaited: a burst of parallel writes to the same table is what
+    // the quota restriction is about.
+    await flushTerminalSessionToCloud(entry);
   }
+  return true;
+}
+
+/** Test-only: allow a fresh migration pass. */
+export function resetMigrationGuardForTests(): void {
+  migrationRan = false;
+  resetUploadCoalescing();
+  inFlightUploads.clear();
 }

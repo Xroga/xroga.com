@@ -35,6 +35,7 @@ import influencerRouter from './routes/influencer.js';
 import analyticsRouter from './routes/analytics.js';
 import adminRouter from './routes/admin.js';
 import { metricsMiddleware, getMetricsText } from './middleware/metricsMiddleware.js';
+import { getSupabaseCounterText } from './lib/supabaseCallCounters.js';
 import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
 import capabilitiesRouter from './routes/capabilities.js';
@@ -170,7 +171,7 @@ app.use('/api/operations', authMiddleware, operationsRouter);
 app.use('/api/growth', authMiddleware, growthRouter);
 app.get('/metrics', authMiddleware, adminMiddleware, (_req, res) => {
   res.setHeader('Content-Type', 'text/plain; version=0.0.4');
-  res.send(getMetricsText());
+  res.send(`${getMetricsText()}${getSupabaseCounterText()}`);
 });
 app.use('/api/chat', authMiddleware, chatRouter);
 app.use('/api/projects', authMiddleware, projectsRouter);
