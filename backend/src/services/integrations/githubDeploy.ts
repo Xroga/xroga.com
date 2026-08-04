@@ -27,13 +27,32 @@ import {
   verifyBranchHead,
   type BranchApi,
 } from './githubBranchSafety.js';
+import {
+  AtomicWriteError,
+  describeAtomicWriteFailure,
+  writeAtomically,
+  type AtomicWriteRecord,
+} from './githubAtomicWrite.js';
+import { makeAtomicWriteApi } from './githubAtomicTransport.js';
+import {
+  describeMutationRejection,
+  deriveFileSyncMutations,
+  MutationPlanError,
+} from './githubMutationPlan.js';
+import { describeTreeSnapshotFailure, TreeSnapshotError } from './githubTreeSnapshot.js';
+import {
+  authorizeBranchWrite,
+  BranchAuthorizationError,
+  describeBranchAuthorizationRefusal,
+} from './githubBranchAuthorization.js';
+import { planRunBranch, RunBranchError } from './githubRunBranch.js';
 import { resolveProviderEnvForDeploy } from './userProviderKeys.js';
 import {
   getCachedRepoAnalysis,
   setCachedRepoAnalysis,
   invalidateRepoAnalysis,
 } from '../../lib/repoAnalysisCache.js';
-import { HACKATHON_GITHUB_BATCH_SIZE, HACKATHON_REPO_TREE_SAMPLE } from '../../config/modelRegistry.js';
+import { HACKATHON_REPO_TREE_SAMPLE } from '../../config/modelRegistry.js';
 
 export interface ProjectFile {
   path: string;
@@ -47,6 +66,10 @@ export interface GitHubPushResult {
   /** Tip commit SHA after push (for rollback) */
   commitSha?: string;
   branch?: string;
+  /** Set when the build was proposed as a pull request rather than committed directly. */
+  pullRequestUrl?: string;
+  /** Non-fatal: the commit landed but something after it did not. */
+  warning?: string;
 }
 
 export type ConnectedRepositoryState =
@@ -353,287 +376,230 @@ export async function getBranchHeadSha(
   return { sha: null, branch: preferredBranch ?? 'main' };
 }
 
-async function isRepoEmpty(token: string, owner: string, repo: string): Promise<boolean> {
-  const res = await ghFetch(token, `/repos/${owner}/${repo}`);
-  if (!res.ok) return true;
-  const data = (await res.json()) as { size?: number };
-  return (data.size ?? 0) === 0;
+/**
+ * The whole non-atomic write surface (Contents API helpers, the Git Data push, the
+ * batching wrapper and the catch-all fallback) is replaced by one call into
+ * `writeAtomically`.
+ *
+ * Deleted deliberately, not refactored:
+ *
+ * - `pushFilesViaContents` / `pushFileViaContents` / `deleteFileViaContents` — one commit
+ *   per file. A build that failed at file 12 of 40 left a published repository containing
+ *   twelve files of a design that was never coherent at twelve files.
+ *
+ * - the `catch` that fell back to Contents on *any* Git Data error — this is the one that
+ *   mattered most. The compare-and-swap added in #458 refuses the write when the branch
+ *   moved; this handler caught that refusal and immediately re-applied the same files
+ *   through the per-file path, overwriting the commit the refusal existed to protect. The
+ *   protection was real and the layer above it undid it.
+ *
+ * - the >35-file batching loop — N commits again, with deletes deferred to the last batch,
+ *   so a failure mid-way left the repository holding some new files, none of the removals,
+ *   and no single commit that represented the build.
+ */
+
+/** Reads the target branch's head without the read-path fallback ever being used for a write. */
+async function atomicWriteApiFor(token: string, owner: string, repo: string) {
+  return makeAtomicWriteApi(ghFetch, token, owner, repo, {
+    commitIdentity: gitCommitAuthorFields(),
+  });
 }
 
-async function getExistingFileSha(
+export interface AtomicPushOptions {
+  /** Paths to remove from the target branch. */
+  deletePaths?: string[];
+  /** Set to open a pull request from the written branch back to this base. */
+  pullRequest?: { base: string; title: string; body: string };
+  /** Explicit approval to commit straight to a default or protected branch. */
+  directWriteAuthorized?: boolean;
+  /** Commit to create the branch from, when it does not exist yet. */
+  createBranchFromSha?: string | null;
+  /** The repository's default branch, so authorization can recognise it. */
+  defaultBranch?: string;
+}
+
+/**
+ * Writes a build to a branch as a single commit, or writes nothing.
+ *
+ * One tree, one commit, one reference update, regardless of how many files the build
+ * produced. Returns the full record rather than just a SHA, because the branch, the
+ * starting commit, the manifest and the verification result are what make the reported
+ * commit trustworthy.
+ */
+async function pushFilesAtomically(
   token: string,
   owner: string,
   repo: string,
-  path: string,
-  branch: string
-): Promise<string | undefined> {
-  const res = await ghFetch(
-    token,
-    `/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`
-  );
-  if (!res.ok) return undefined;
-  const data = (await res.json()) as { sha?: string };
-  return data.sha;
-}
-
-/** Contents API — works on empty repos (Git Data API returns 409 on empty repos). */
-async function pushFileViaContents(
-  token: string,
-  owner: string,
-  repo: string,
-  file: ProjectFile,
+  files: ProjectFile[],
   message: string,
   branch: string,
-  existingSha?: string
-): Promise<void> {
-  const body: Record<string, string> = {
-    message,
-    content: Buffer.from(file.content, 'utf8').toString('base64'),
-    branch,
-  };
-  if (existingSha) body.sha = existingSha;
+  options: AtomicPushOptions = {},
+): Promise<AtomicWriteRecord> {
+  const api = await atomicWriteApiFor(token, owner, repo);
 
-  const res = await ghFetch(
-    token,
-    `/repos/${owner}/${repo}/contents/${encodeURIComponent(file.path)}`,
+  return writeAtomically(
+    api,
+    { owner, repo },
     {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    }
-  );
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`GitHub push ${file.path} failed: ${res.status} ${err.slice(0, 240)}`);
-  }
-}
-
-async function deleteFileViaContents(
-  token: string,
-  owner: string,
-  repo: string,
-  path: string,
-  message: string,
-  branch: string,
-): Promise<void> {
-  const sha = await getExistingFileSha(token, owner, repo, path, branch);
-  if (!sha) return;
-  const res = await ghFetch(
-    token,
-    `/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`,
-    {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, sha, branch }),
+      branch,
+      createBranchFromSha: options.createBranchFromSha ?? null,
+      // Resolved against the repository's real starting tree, inside the write, so an
+      // update is classified as an update and keeps the file's existing mode.
+      mutations: (tree) => deriveFileSyncMutations(tree, files, options.deletePaths ?? []),
+      message,
+      ...(options.defaultBranch ? { defaultBranch: options.defaultBranch } : {}),
+      ...(options.pullRequest ? { pullRequest: options.pullRequest } : {}),
+      ...(options.directWriteAuthorized === true ? { directWriteAuthorized: true } : {}),
     },
   );
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`GitHub delete ${path} failed: ${res.status} ${err.slice(0, 200)}`);
-  }
 }
 
-async function pushFilesViaContents(
+interface ConnectedRepositoryPushOptions {
+  requestedBranch: string;
+  deletePaths: string[];
+  runId?: string;
+  directWriteAuthorized: boolean;
+}
+
+/**
+ * Chooses where a build lands in a repository the user already owns, then writes it.
+ *
+ * The default is a pull request, not a commit on the branch the user is working from.
+ * A generated build is a proposal; treating it as one means the branch other people
+ * depend on only changes when somebody decides it should.
+ *
+ * A direct commit still happens when the target branch is neither the default nor
+ * protected — a feature branch the run was pointed at is the user's to write to — or when
+ * the caller carries explicit authorization for this specific write. When authorization is
+ * required, absent, and the run has an id, the build goes to `xroga/<run-id>` cut from the
+ * exact commit the target branch is at, and a pull request opens against that same branch
+ * by name. Without a run id there is no branch to propose from, so it refuses.
+ */
+async function pushToConnectedRepository(
   token: string,
   owner: string,
   repo: string,
   files: ProjectFile[],
   message: string,
-  branch: string,
-  deletePaths: string[] = [],
-): Promise<string | undefined> {
-  for (const file of files) {
-    const sha = await getExistingFileSha(token, owner, repo, file.path, branch);
-    await pushFileViaContents(token, owner, repo, file, message, branch, sha);
-  }
-  for (const path of [...new Set(deletePaths.map((p) => p.replace(/^\//, '')))].filter(Boolean)) {
-    if (files.some((f) => f.path === path)) continue;
-    await deleteFileViaContents(token, owner, repo, path, message, branch);
-  }
-  try {
-    const { sha } = await getBranchHeadSha(token, owner, repo, branch);
-    return sha ?? undefined;
-  } catch {
-    return undefined;
-  }
-}
+  options: ConnectedRepositoryPushOptions,
+): Promise<AtomicWriteRecord> {
+  const api = await atomicWriteApiFor(token, owner, repo);
+  const defaultBranch = await getDefaultBranch(token, owner, repo);
 
-async function pushFilesViaGitData(
-  token: string,
-  owner: string,
-  repo: string,
-  files: ProjectFile[],
-  message: string,
-  branch: string,
-  deletePaths: string[] = []
-): Promise<string> {
-  const blobs = await Promise.all(
-    files.map(async (f) => {
-      const res = await ghFetch(token, `/repos/${owner}/${repo}/git/blobs`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          content: Buffer.from(f.content, 'utf8').toString('base64'),
-          encoding: 'base64',
-        }),
-      });
-      if (!res.ok) {
-        const err = await res.text();
-        throw new Error(`GitHub blob failed: ${res.status} ${err.slice(0, 120)}`);
-      }
-      const blob = (await res.json()) as { sha: string };
-      return { path: f.path, sha: blob.sha as string | null };
-    })
+  const needsAuthorization = await branchWriteNeedsAuthorization(
+    api,
+    options.requestedBranch,
+    defaultBranch,
   );
 
-  // GitHub Git Data API: sha null removes path from base_tree
-  const deletes = [...new Set(deletePaths.map((p) => p.replace(/^\//, '')))]
-    .filter((p) => p && !blobs.some((b) => b.path === p))
-    .map((path) => ({ path, sha: null as string | null }));
-
-  // Writes must land on the branch that was named. `getBranchHeadSha` falls back to
-  // main/master, which meant a push aimed at a not-yet-created branch silently
-  // committed to main and then reported the branch it had asked for. Resolve exactly:
-  // the branch is verified, or deliberately created from the repository's own default
-  // head, or the write is refused.
-  const branchApi = makeBranchApi(token, owner, repo);
-  const defaultHead = await getBranchHeadSha(token, owner, repo);
-  const writeTarget = await resolveExactWritableBranch(branchApi, branch, {
-    createFromSha: defaultHead.sha,
-  });
-  const parentSha = writeTarget.sha;
-  const resolvedBranch = writeTarget.branch;
-
-  const treeRes = await ghFetch(token, `/repos/${owner}/${repo}/git/trees`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      base_tree: parentSha ?? undefined,
-      tree: [...blobs, ...deletes].map((b) => ({
-        path: b.path,
-        mode: '100644',
-        type: 'blob',
-        sha: b.sha,
-      })),
-    }),
-  });
-  if (!treeRes.ok) throw new Error(`GitHub tree failed: ${treeRes.status}`);
-  const tree = (await treeRes.json()) as { sha: string };
-
-  const commitRes = await ghFetch(token, `/repos/${owner}/${repo}/git/commits`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      message,
-      tree: tree.sha,
-      parents: parentSha ? [parentSha] : [],
-      ...gitCommitAuthorFields(),
-    }),
-  });
-  if (!commitRes.ok) throw new Error(`GitHub commit failed: ${commitRes.status}`);
-  const commit = (await commitRes.json()) as { sha: string };
-
-  if (parentSha) {
-    // `force: false` makes this a compare-and-swap: GitHub rejects the update unless
-    // the branch is still at the commit this tree was built on. Without it a push that
-    // landed between our read and our write is silently overwritten. A rejection here
-    // is a conflict to surface, never something to retry with force.
-    const updateRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs/heads/${resolvedBranch}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sha: commit.sha, force: false }),
-    });
-    if (!updateRes.ok) {
-      if (updateRes.status === 422) {
-        throw new Error(
-          `GitHub branch "${resolvedBranch}" moved while this build was running. ` +
-            'Nothing was overwritten. Run the build again to include the newer commits.',
-        );
-      }
-      throw new Error(`GitHub ref update failed: ${updateRes.status}`);
-    }
-  } else {
-    const refRes = await ghFetch(token, `/repos/${owner}/${repo}/git/refs`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ref: `refs/heads/${resolvedBranch}`, sha: commit.sha }),
-    });
-    if (!refRes.ok) throw new Error(`GitHub ref create failed: ${refRes.status}`);
-  }
-
-  // Evidence, not assumption: confirm the branch really points at the commit we made
-  // before any caller reports this as a successful push.
-  const verified = await verifyBranchHead(branchApi, resolvedBranch, commit.sha);
-  if (!verified.verified) {
-    throw new Error(
-      `GitHub branch "${resolvedBranch}" is at ${verified.actualSha?.slice(0, 7) ?? 'an unknown commit'} ` +
-        `after the update, not the commit that was created (${commit.sha.slice(0, 7)}).`,
+  if (!needsAuthorization || options.directWriteAuthorized) {
+    return writeAtomically(
+      api,
+      { owner, repo },
+      {
+        branch: options.requestedBranch,
+        mutations: (tree) => deriveFileSyncMutations(tree, files, options.deletePaths),
+        message,
+        defaultBranch,
+        ...(options.directWriteAuthorized ? { directWriteAuthorized: true } : {}),
+      },
     );
   }
 
-  return commit.sha;
-}
-
-async function pushFilesToRepo(
-  token: string,
-  owner: string,
-  repo: string,
-  files: ProjectFile[],
-  message: string,
-  branch = 'main',
-  deletePaths: string[] = []
-): Promise<string | undefined> {
-  if (files.length > HACKATHON_GITHUB_BATCH_SIZE) {
-    const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
-    const batches = Math.ceil(files.length / HACKATHON_GITHUB_BATCH_SIZE);
-    let lastSha: string | undefined;
-    for (let i = 0; i < files.length; i += HACKATHON_GITHUB_BATCH_SIZE) {
-      const batch = files.slice(i, i + HACKATHON_GITHUB_BATCH_SIZE);
-      const n = Math.floor(i / HACKATHON_GITHUB_BATCH_SIZE) + 1;
-      // Apply deletes only on the final batch so base_tree stays coherent
-      const dels = i + HACKATHON_GITHUB_BATCH_SIZE >= files.length ? deletePaths : [];
-      lastSha = await pushFilesToRepoSingle(
-        token,
-        owner,
-        repo,
-        batch,
-        buildBrandedCommitMessage(`XROGA hackathon batch ${n}/${batches} — ${stamp}`, null),
-        branch,
-        dels
-      );
-    }
-    return lastSha;
-  }
-  return pushFilesToRepoSingle(token, owner, repo, files, message, branch, deletePaths);
-}
-
-async function pushFilesToRepoSingle(
-  token: string,
-  owner: string,
-  repo: string,
-  files: ProjectFile[],
-  message: string,
-  branch = 'main',
-  deletePaths: string[] = []
-): Promise<string | undefined> {
-  const empty = await isRepoEmpty(token, owner, repo);
-
-  if (empty) {
-    // Empty repo: push files; deletes are no-ops
-    return pushFilesViaContents(token, owner, repo, files, message, branch, deletePaths);
+  if (!options.runId) {
+    throw new BranchAuthorizationError(
+      'default_branch_requires_authorization',
+      options.requestedBranch,
+      `"${options.requestedBranch}" needs explicit approval before Xroga commits to it, and ` +
+        'this build has no run id to open a pull request from instead.',
+    );
   }
 
+  // The source SHA is read once, here, and is the same SHA the branch is cut from and the
+  // pull request is based on — so the diff a reviewer sees is exactly this build's work.
+  const head = await api.getRef(options.requestedBranch);
+  if (!head) {
+    throw new ExactBranchWriteError(
+      'branch_missing',
+      options.requestedBranch,
+      `Branch "${options.requestedBranch}" does not exist, so there is nothing to base this build on.`,
+    );
+  }
+
+  const runBranch = await planRunBranch(api, {
+    runId: options.runId,
+    sourceSha: head.sha,
+    baseBranch: options.requestedBranch,
+  });
+
+  return writeAtomically(
+    api,
+    { owner, repo },
+    {
+      branch: runBranch.branch,
+      createBranchFromSha: runBranch.sourceSha,
+      mutations: (tree) => deriveFileSyncMutations(tree, files, options.deletePaths),
+      message,
+      defaultBranch,
+      pullRequest: {
+        base: runBranch.baseBranch,
+        title: message.split('\n')[0] ?? 'XROGA build update',
+        body:
+          `Built by XROGA from \`${runBranch.baseBranch}\` at \`${runBranch.sourceSha.slice(0, 7)}\`.\n\n` +
+          'Applied as a single commit. Review and merge when the change looks right.',
+      },
+    },
+  );
+}
+
+/** The repository's default branch, from GitHub. Empty string when it cannot be read. */
+async function getDefaultBranch(token: string, owner: string, repo: string): Promise<string> {
   try {
-    return await pushFilesViaGitData(token, owner, repo, files, message, branch, deletePaths);
-  } catch (err) {
-    const msg = (err as Error).message;
-    if (/409|empty/i.test(msg)) {
-      return pushFilesViaContents(token, owner, repo, files, message, branch, deletePaths);
-    }
-    // Fall back to Contents API (supports delete) when Git Data fails
-    console.warn('[githubDeploy] Git Data push failed, Contents API fallback:', msg.slice(0, 160));
-    return pushFilesViaContents(token, owner, repo, files, message, branch, deletePaths);
+    const res = await ghFetch(token, `/repos/${owner}/${repo}`);
+    if (!res.ok) return '';
+    const data = (await res.json()) as { default_branch?: string };
+    return typeof data.default_branch === 'string' ? data.default_branch : '';
+  } catch {
+    return '';
   }
+}
+
+/** True when a direct commit to this branch would need explicit approval. */
+async function branchWriteNeedsAuthorization(
+  api: Awaited<ReturnType<typeof atomicWriteApiFor>>,
+  branch: string,
+  defaultBranch: string,
+): Promise<boolean> {
+  try {
+    const decision = await authorizeBranchWrite(api, { branch, defaultBranch });
+    return decision.requiresAuthorization;
+  } catch (error) {
+    if (error instanceof BranchAuthorizationError) return true;
+    throw error;
+  }
+}
+
+/**
+ * Turns any refusal from the write path into one sanitised sentence.
+ *
+ * Every branch here is a *refusal to write*, so the message has to say that plainly —
+ * "nothing was written" is the single most useful fact for someone reading a failed build,
+ * and the old string-matched errors did not reliably carry it.
+ */
+export function describeGitHubWriteFailure(error: unknown): string {
+  if (error instanceof AtomicWriteError) return describeAtomicWriteFailure(error);
+  if (error instanceof BranchAuthorizationError) {
+    return describeBranchAuthorizationRefusal(error.reason);
+  }
+  if (error instanceof MutationPlanError) return describeMutationRejection(error.rejection);
+  if (error instanceof TreeSnapshotError) return describeTreeSnapshotFailure(error.reason);
+  if (error instanceof RunBranchError) {
+    return 'A branch could not be reserved for this build, so nothing was written.';
+  }
+  if (error instanceof ExactBranchWriteError) {
+    return `The target branch could not be resolved, so nothing was written (${error.reason.replace(/_/g, ' ')}).`;
+  }
+  return (error as Error)?.message ?? 'The change was not applied.';
 }
 
 export interface GitHubPushOptions {
@@ -642,6 +608,15 @@ export interface GitHubPushOptions {
   targetBranch?: string;
   /** Paths to remove from the target branch (Git Data API sha:null). */
   deletePaths?: string[];
+  /**
+   * The build's run id. When present, and the target branch needs authorization that was
+   * not given, the build goes to `xroga/<run-id>` with a pull request instead of failing.
+   */
+  runId?: string;
+  /** Explicit approval to commit straight to a default or protected branch. */
+  directWriteAuthorized?: boolean;
+  /** Visibility for a repository this call creates. Private unless explicitly public. */
+  visibility?: RepositoryVisibility;
 }
 
 export async function pushBuildToGitHub(
@@ -664,20 +639,20 @@ export async function pushBuildToGitHub(
 
   if (selectedRepo?.includes('/')) {
     const [owner, repo] = selectedRepo.split('/');
-    const branch = opts.targetBranch ?? 'main';
+    const requestedBranch = opts.targetBranch ?? 'main';
     const htmlUrl = `https://github.com/${owner}/${repo}`;
-    const commitSha = await pushFilesToRepo(
-      token,
-      owner!,
-      repo!,
-      files,
-      buildBrandedCommitMessage(
-        `XROGA build update — ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`,
-        coAuthor
-      ),
-      branch,
-      opts.deletePaths ?? []
+    const message = buildBrandedCommitMessage(
+      `XROGA build update — ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`,
+      coAuthor,
     );
+
+    const record = await pushToConnectedRepository(token, owner!, repo!, files, message, {
+      requestedBranch,
+      deletePaths: opts.deletePaths ?? [],
+      runId: opts.runId,
+      directWriteAuthorized: opts.directWriteAuthorized === true,
+    });
+
     invalidateRepoAnalysis(userId, selectedRepo);
     // Keep sticky default on updates too
     await setGithubDefaultRepo(userId, selectedRepo).catch(() => undefined);
@@ -685,23 +660,34 @@ export async function pushBuildToGitHub(
       repoName: `${owner}/${repo}`,
       repoUrl: htmlUrl,
       htmlUrl,
-      commitSha,
-      branch,
+      commitSha: record.resultingCommitSha,
+      branch: record.branch,
+      ...(record.pullRequest ? { pullRequestUrl: record.pullRequest.htmlUrl } : {}),
+      ...(record.pullRequestWarning ? { warning: record.pullRequestWarning } : {}),
     };
   }
 
   const repoName = opts.slug ?? `xroga-build-${Date.now()}`;
 
-  const created = await createRepo(token, repoName);
+  // Visibility is whatever the caller was told to use, and private when nobody chose.
+  // A missing selection is never read as "public".
+  const created = await createRepo(token, repoName, opts.visibility ?? DEFAULT_REPOSITORY_VISIBILITY);
   const owner = created.owner;
   const repo = created.repo;
   const htmlUrl = created.htmlUrl;
-  const commitSha = await pushFilesToRepo(
+
+  // This repository was created by this call, seconds ago, at the user's request, and
+  // `auto_init: true` means it already has a commit — so it is never empty and the write
+  // takes the atomic path. Writing to its default branch is the thing the user asked for,
+  // which is what makes this the one authorized direct write in the flow.
+  const record = await pushFilesAtomically(
     token,
     owner,
     repo,
     files,
-    buildBrandedCommitMessage('Initial XROGA build', coAuthor)
+    buildBrandedCommitMessage('Initial XROGA build', coAuthor),
+    created.defaultBranch,
+    { defaultBranch: created.defaultBranch, directWriteAuthorized: true },
   );
 
   const fullName = `${owner}/${repo}`;
@@ -714,8 +700,8 @@ export async function pushBuildToGitHub(
     repoName: fullName,
     repoUrl: `https://github.com/${owner}/${repo}`,
     htmlUrl,
-    commitSha,
-    branch: 'main',
+    commitSha: record.resultingCommitSha,
+    branch: record.branch,
   };
 }
 

@@ -80,6 +80,7 @@ import {
   fetchGitHubFilesByPaths,
   landingFilesFromOutput,
   pushBuildToGitHub,
+  describeGitHubWriteFailure,
   deployToAllPlatforms,
   isGitHubConnected,
   getGithubDefaultRepo,
@@ -235,6 +236,11 @@ export interface BuildClientMeta {
   buildUpdate?: boolean;
   githubTargetRepo?: string;
   githubTargetBranch?: string;
+  /**
+   * Visibility for a repository this build creates. Only ever the two literal values the
+   * user can pick between. Absent means private — see `parseClientMeta`.
+   */
+  githubVisibility?: 'private' | 'public';
   /** User-selected Vercel project from Integrations → Change project */
   preferredVercelProject?: string;
   priorSite?: {
@@ -325,6 +331,11 @@ function parseClientMeta(raw: unknown): BuildClientMeta | undefined {
         : undefined,
     githubTargetBranch:
       typeof m.githubTargetBranch === 'string' ? m.githubTargetBranch : undefined,
+    // Only the exact string "public" grants publication. Anything else — absent, null,
+    // "PUBLIC", a truthy object, a client that never learned about this field — is
+    // private. The failure mode of guessing wrong here is a permanently public
+    // repository of someone else's code, so it fails closed by construction.
+    githubVisibility: m.githubVisibility === 'public' ? 'public' : 'private',
     preferredVercelProject:
       typeof m.preferredVercelProject === 'string' && m.preferredVercelProject.trim().length >= 2
         ? m.preferredVercelProject.trim().slice(0, 64)
@@ -2626,6 +2637,10 @@ export async function runBuildPipeline(opts: {
         targetBranch: githubBranch,
         slug: `xroga-${projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)}`,
         deletePaths: deletedPaths,
+        // Lets the write open `xroga/<run-id>` with a pull request when the target branch
+        // is protected, instead of failing the build or committing without approval.
+        runId,
+        visibility: meta?.githubVisibility ?? 'private',
       });
       githubRepoUrl = pushed.htmlUrl;
       githubRepoName = pushed.repoName;
@@ -2647,16 +2662,24 @@ export async function runBuildPipeline(opts: {
           identifier: verifiedCommitSha,
           details: {
             repository: pushed.repoName || githubRepoName || '',
+            // The branch actually written, which is not always the branch requested: a
+            // protected target becomes `xroga/<run-id>` plus a pull request. Recording the
+            // requested branch here would make the evidence describe a write that did not
+            // happen.
             branch: githubBranch,
+            ...(pushed.pullRequestUrl ? { pullRequest: pushed.pullRequestUrl } : {}),
           },
         }),
       );
+      if (pushed.warning) shipBlockers.push(pushed.warning);
       emit({
         agent: 'deploy',
         status: 'pushed',
-        message: `Pushed ${verifiedCommitSha.slice(0, 12)} to ${pushed.repoName || githubRepoName}`,
-        swarmStatusLabel: 'Pushed',
-        swarmActivity: pushed.htmlUrl || pushed.repoName || 'GitHub',
+        message: pushed.pullRequestUrl
+          ? `Opened ${pushed.pullRequestUrl} from ${githubBranch} (${verifiedCommitSha.slice(0, 12)})`
+          : `Pushed ${verifiedCommitSha.slice(0, 12)} to ${pushed.repoName || githubRepoName}`,
+        swarmStatusLabel: pushed.pullRequestUrl ? 'PR opened' : 'Pushed',
+        swarmActivity: pushed.pullRequestUrl || pushed.htmlUrl || pushed.repoName || 'GitHub',
         // Push done — next step is deploy (or non-web artifacts)
         swarmTodos: isNonWebProduct
           ? todos('push').map((t) =>
@@ -2669,7 +2692,12 @@ export async function runBuildPipeline(opts: {
           : todos('deploy'),
       });
     } catch (err) {
-      githubPushError = redactSecrets((err as Error).message || 'Unknown GitHub error').slice(0, 240);
+      // Typed refusals from the atomic write path describe themselves, and the one fact
+      // that matters most to whoever reads this — that the branch was not changed — only
+      // survives if it comes from there rather than from a raw vendor message.
+      githubPushError = redactSecrets(
+        describeGitHubWriteFailure(err) || 'Unknown GitHub error',
+      ).slice(0, 240);
       shipBlockers.push(`GitHub push failed: ${githubPushError}`);
       console.warn('[pipeline] GitHub push failed:', githubPushError);
       emit({

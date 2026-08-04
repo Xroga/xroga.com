@@ -42,7 +42,7 @@ import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
 import { startPipelineMessageForPrompt } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
-import { getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
+import { getNewRepoVisibility, getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
 import { isKeepaliveActivity } from '@/lib/buildLiveStatus';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
@@ -1897,6 +1897,10 @@ export function TerminalChatProvider({
               (Boolean(stickyTargetRepo?.includes('/')) && isWebsiteUpdateRequest(displayPrompt)),
             githubTargetRepo: stickyTargetRepo,
             githubTargetBranch: stickyTargetBranch,
+            // Only meaningful when no repo is selected, since that is the case where the
+            // build creates one. Read at send time rather than captured earlier so the
+            // value sent is the one currently shown in the chatbar.
+            githubVisibility: getNewRepoVisibility(),
             preferredVercelProject: (() => {
               try {
                 return localStorage.getItem('xroga_vercel_preferred_project')?.trim() || undefined;

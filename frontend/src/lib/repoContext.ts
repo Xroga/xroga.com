@@ -32,6 +32,39 @@ export function clearSelectedRepoContext(): void {
   localStorage.removeItem(STORAGE_KEY);
 }
 
+const VISIBILITY_KEY = 'xroga-new-repo-visibility';
+
+/** Visibility for repositories Xroga creates. Never inferred from anything else. */
+export type NewRepoVisibility = 'private' | 'public';
+
+/**
+ * Reads the user's choice for repositories Xroga creates on their behalf.
+ *
+ * Returns `'private'` for every input that is not the exact string `'public'`: no stored
+ * value, a corrupt one, a value written by an older build, or storage that throws. The
+ * cost of reading this wrong in the private direction is a repository the user has to
+ * flip to public themselves; in the public direction it is their code published to the
+ * internet under their own account. Those are not symmetric, so this is not a default —
+ * it is the answer to everything except an explicit, current "public".
+ */
+export function getNewRepoVisibility(): NewRepoVisibility {
+  if (typeof window === 'undefined') return 'private';
+  try {
+    return localStorage.getItem(VISIBILITY_KEY) === 'public' ? 'public' : 'private';
+  } catch {
+    return 'private';
+  }
+}
+
+export function saveNewRepoVisibility(visibility: NewRepoVisibility): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(VISIBILITY_KEY, visibility === 'public' ? 'public' : 'private');
+  } catch {
+    /* non-blocking — the send path re-reads and falls back to private */
+  }
+}
+
 const FRESH_TERMINAL_KEY = 'xroga-fresh-terminal';
 
 /** Mark that New Terminal was clicked — user must pick a repo; do not auto-restore old #N. */
