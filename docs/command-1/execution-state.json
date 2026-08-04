@@ -1,0 +1,48 @@
+{
+  "command": "command-1",
+  "branch": "agent/complete-command-1-runtime",
+  "baseCommit": "0997a0450f4354e4b52c0d49f08359a999254a95",
+  "phase": "audit_complete_implementation_started",
+  "status": "command_1_partially_complete",
+  "milestones": [
+    {
+      "id": "M1",
+      "title": "Audit and requirements ledger",
+      "state": "completed",
+      "artefacts": [
+        "docs/command-1/requirements-ledger.json",
+        "docs/command-1/execution-state.json",
+        "docs/command-1/audit.md"
+      ]
+    },
+    { "id": "M2", "title": "Repository tool suite and on-demand context (section 5)", "state": "pending", "requirements": ["R5.1", "R5.2", "R5.3", "R5.4", "R2.11"] },
+    { "id": "M3", "title": "Transactional patch workspace (section 6)", "state": "pending", "requirements": ["R6.1", "R6.2", "R2.7"] },
+    { "id": "M4", "title": "Canonical verification lifecycle (section 9)", "state": "pending", "requirements": ["R9.1", "R9.2", "R2.15", "R2.16"] },
+    { "id": "M5", "title": "Fail-closed reviewer and review scope (section 10)", "state": "pending", "requirements": ["R10.1", "R10.2", "R10.3", "R2.9"] },
+    { "id": "M6", "title": "Iterative task graph, resume, black-box fixture (sections 2 and 4)", "state": "pending", "requirements": ["R2.2", "R2.4", "R2.5", "R2.12", "R4.1", "R4.2", "R4.3"] },
+    { "id": "M7", "title": "Sandbox provider architecture and isolation tests (section 7)", "state": "pending", "requirements": ["R7.2", "R7.4", "R7.5"] },
+    { "id": "M8", "title": "Final evidence record and intent reasoning (sections 8 and 11)", "state": "pending", "requirements": ["R8.1", "R8.2", "R11.1", "R2.17"] },
+    { "id": "M9", "title": "Regression tests for merged P0 repairs and cross-platform line endings (sections 3 and 13)", "state": "pending", "requirements": ["R3.E", "R7.5", "R13.1"] },
+    { "id": "M10", "title": "Full gate, push, draft pull request, completion document (section 14)", "state": "pending", "requirements": [] }
+  ],
+  "classificationCounts": {
+    "verified_complete": 17,
+    "partially_complete": 18,
+    "missing": 7,
+    "broken": 4,
+    "external_blocker": 2,
+    "not_applicable": 0
+  },
+  "externalBlockers": [
+    {
+      "requirementId": "R7.6",
+      "resource": "A dedicated isolated execution worker — a separate Fly.io application or machine pool that can run a container runtime, distinct from the xroga-api app.",
+      "purpose": "Section 7 requires generated code to execute in a disposable, network-denied, unprivileged sandbox. The API host has no nested container runtime, so DockerSandboxRuntime.probe() always fails in production and every executable validation refuses.",
+      "ownerApprovalRequired": true,
+      "createdAutomatically": false,
+      "consequence": "Command 1 cannot be reported as command_1_verified while this remains open."
+    }
+  ],
+  "nextFile": "backend/src/ai/repositoryTools.ts",
+  "nextAction": "Implement the section 5 repository tool suite (list_tree, search_code, search_symbol, read_file, read_file_range, read_imports, read_git_diff, read_test_failure, inspect_blob_sha, write_file, apply_patch, propose_delete, inspect_resulting_diff) scoped to an authorized repository at an exact commit, then add the deeply nested non-whitelisted path discovery test."
+}
