@@ -3,6 +3,17 @@ import { test } from 'node:test';
 import { persistConversationOnly } from './runStore.js';
 
 /**
+ * LF-normalised. The assertions below locate a function body by searching for a literal
+ * containing newlines; on a CRLF checkout that search finds nothing, `indexOf` returns -1,
+ * the slice comes back all-but-empty and the test fails for a reason that has nothing to
+ * do with the code under test.
+ */
+async function source(relative: string): Promise<string> {
+  const { readFile } = await import('node:fs/promises');
+  return (await readFile(new URL(relative, import.meta.url), 'utf8')).replace(/\r\n/g, '\n');
+}
+
+/**
  * Cover for a production data-loss bug.
  *
  * Observed live: run 46d07c5d ran for 18 minutes, produced 17 events, reached the
@@ -37,9 +48,8 @@ test('conversation persistence is inert without service credentials', async () =
 test('the swarm route no longer fabricates a stub run', async () => {
   // The regression is structural, so assert on the source: a conversation save must
   // never call createRun/completeRun, because that upsert is what destroyed the row.
-  const { readFile } = await import('node:fs/promises');
-  const source = await readFile(new URL('../routes/swarm.ts', import.meta.url), 'utf8');
-  const handler = source.slice(source.indexOf('function saveConversationHandler'));
+  const swarm = await source('../routes/swarm.ts');
+  const handler = swarm.slice(swarm.indexOf('function saveConversationHandler'));
   const body = handler.slice(0, handler.indexOf('\n}\n') + 3);
 
   assert.doesNotMatch(body, /createRun\s*\(/, 'conversation save must not create a run');
@@ -50,9 +60,8 @@ test('the swarm route no longer fabricates a stub run', async () => {
 test('conversation persistence updates rather than upserts', async () => {
   // An upsert here would recreate the exact bug: a missing row would be inserted
   // with empty everything. Assert the query shape.
-  const { readFile } = await import('node:fs/promises');
-  const source = await readFile(new URL('./runStore.ts', import.meta.url), 'utf8');
-  const fn = source.slice(source.indexOf('export async function persistConversationOnly'));
+  const store = await source('./runStore.ts');
+  const fn = store.slice(store.indexOf('export async function persistConversationOnly'));
   const body = fn.slice(0, fn.indexOf('\n}\n') + 3);
 
   assert.match(body, /\.update\(/, 'must use update');
@@ -63,9 +72,8 @@ test('conversation persistence updates rather than upserts', async () => {
 
 test('only the messages column is written', async () => {
   // Writing status/prompt/events here is precisely the data loss being fixed.
-  const { readFile } = await import('node:fs/promises');
-  const source = await readFile(new URL('./runStore.ts', import.meta.url), 'utf8');
-  const fn = source.slice(source.indexOf('export async function persistConversationOnly'));
+  const store = await source('./runStore.ts');
+  const fn = store.slice(store.indexOf('export async function persistConversationOnly'));
   const body = fn.slice(0, fn.indexOf('\n}\n') + 3);
   const update = body.slice(body.indexOf('.update('), body.indexOf('.eq('));
 

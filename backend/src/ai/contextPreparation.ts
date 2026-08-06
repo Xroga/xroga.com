@@ -3,7 +3,12 @@ import type { ProjectFile } from './patches.js';
 
 const SECRET_PATTERNS = [
   /\b(?:api[_-]?key|secret|token|password|authorization)\s*[:=]\s*["']?[^\s"']+/gi,
-  /\b(?:sk|ghp|gho|xox[baprs])_[A-Za-z0-9_-]{12,}\b/g,
+  /\b(?:sk|ghp|gho|ghu|ghs|ghr|xox[baprs])_[A-Za-z0-9_-]{12,}\b/g,
+  // Hyphen-separated provider keys. The underscore form above misses every real Anthropic
+  // and OpenAI credential, which are `sk-ant-api03-…` and `sk-proj-…`.
+  /\b(?:sk|rk)-[A-Za-z0-9](?:[A-Za-z0-9-]{16,})\b/g,
+  /\bsb_secret_[A-Za-z0-9_-]{12,}\b/g,
+  /\bAKIA[0-9A-Z]{16}\b/g,
   /-----BEGIN [A-Z ]+ PRIVATE KEY-----[\s\S]*?-----END [A-Z ]+ PRIVATE KEY-----/g,
 ];
 
