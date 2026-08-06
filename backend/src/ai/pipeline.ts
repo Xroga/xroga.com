@@ -1916,6 +1916,13 @@ export async function runBuildPipeline(opts: {
   });
   // Parallel-ish reviewer: static structure + LLM QA together
   const staticPre = staticValidateProject(nextFiles);
+  // The commit the reviewed files came from. The review runs before anything is pushed, so
+  // the honest value is the base the changes were made against, not the commit they become.
+  const baseCommitSha = getProjectMemory(
+    opts.userId,
+    meta?.githubTargetRepo,
+    meta?.githubTargetBranch,
+  )?.commitSha;
   let qa = await reviewBuildOutput({
     prompt: userFacingPrompt,
     html: siteForQa.html,
@@ -1928,7 +1935,7 @@ export async function runBuildPipeline(opts: {
     architectureSummary: cachedSummary || undefined,
     changedFiles: buildFileTrail(previousFiles, nextFiles).map((entry) => entry.path),
     securitySensitiveContext: intelligentPlan.classification.requiredCapabilities.filter((capability) => /security|auth|payment|blockchain/i.test(capability)),
-    commitSha,
+    commitSha: baseCommitSha,
   });
   if (!staticPre.ok) {
     qa = {
@@ -2271,8 +2278,7 @@ export async function runBuildPipeline(opts: {
   let githubPushConfirmed = false;
   let githubPushError: string | undefined;
   let commitSha: string | undefined;
-  const priorCommitSha =
-    getProjectMemory(opts.userId, meta?.githubTargetRepo, meta?.githubTargetBranch)?.commitSha;
+  const priorCommitSha = baseCommitSha;
   let githubBranch = meta?.githubTargetBranch || 'main';
   let deployUrl = '';
   let deployVerified = false;
