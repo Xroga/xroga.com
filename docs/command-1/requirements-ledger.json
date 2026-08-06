@@ -25,10 +25,17 @@
       "currentImplementation": "backend/src/ai/runStore.ts (swarm_runs, hot map + Supabase upsert, createRunDurable persists before the first provider call); backend/src/ai/executionRuntime.ts SupabaseExecutionStateStore (execution_runs).",
       "actualBehaviour": "Runs are written to Supabase and re-read on cold start via getRunAsync/listRunsForUserAsync. The execution_runs table exists in the live project with 47 rows, so the canonical-state store is not writing into a missing table.",
       "evidence": "runStore.ts:89-97 createRunDurable awaits persistToSupabase; runStore.ts:221-256 cold-start read; supabase list_tables shows public.execution_runs rows=47.",
-      "affectedFiles": ["backend/src/ai/runStore.ts", "backend/src/ai/executionRuntime.ts"],
+      "affectedFiles": [
+        "backend/src/ai/runStore.ts",
+        "backend/src/ai/executionRuntime.ts"
+      ],
       "requiredChange": "none",
-      "requiredTests": ["backend/src/ai/runPersistence.test.ts", "backend/src/ai/runStore.test.ts"],
-      "completionStatus": "reused"
+      "requiredTests": [
+        "backend/src/ai/runPersistence.test.ts",
+        "backend/src/ai/runStore.test.ts"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "runStore.ts already persisted runs before this branch; the audit classified it verified_complete and required no change."
     },
     {
       "id": "R2.2",
@@ -38,10 +45,16 @@
       "currentImplementation": "ExecutableTaskNode[] lives inside CanonicalExecutionState.tasks and is persisted as part of the state JSON by SupabaseExecutionStateStore.",
       "actualBehaviour": "A graph can be persisted, but the only producer is executableTasksFromRoutePlan(IntelligentRoutePlan) and the main pipeline never schedules it: pipeline.ts pushes route-plan tasks into executionState and then immediately marks them completed (pipeline.ts:1027-1035) without running them.",
       "evidence": "pipeline.ts:1027 executionState.tasks.push(...executableTasksFromRoutePlan(intelligentPlan)); pipeline.ts:1030 transitionTask(..., 'completed', ...) for every non-blocked task in the same loop.",
-      "affectedFiles": ["backend/src/ai/executionRuntime.ts", "backend/src/ai/pipeline.ts"],
+      "affectedFiles": [
+        "backend/src/ai/executionRuntime.ts",
+        "backend/src/ai/pipeline.ts"
+      ],
       "requiredChange": "Produce a real implementation task graph from the plan and execute it through ExecutionScheduler instead of stamping it completed.",
-      "requiredTests": ["task graph persistence + resume"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "task graph persistence + resume"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M6 ef0d627 taskGraph.ts — buildTaskGraph persists an executable graph with explicit dependsOn edges; 32 tests in taskGraph.test.ts."
     },
     {
       "id": "R2.3",
@@ -51,10 +64,15 @@
       "currentImplementation": "ExecutionScheduler.run in backend/src/ai/executionRuntime.ts:349-372.",
       "actualBehaviour": "Ready-set computation promotes pending tasks whose dependencies all completed, blocks tasks with a terminal upstream dependency, serialises mutating tasks against read-only ones, and dedupes identical provider calls per attempt.",
       "evidence": "executionRuntime.ts:357-369.",
-      "affectedFiles": ["backend/src/ai/executionRuntime.ts"],
+      "affectedFiles": [
+        "backend/src/ai/executionRuntime.ts"
+      ],
       "requiredChange": "none",
-      "requiredTests": ["backend/src/ai/executionRuntime.test.ts"],
-      "completionStatus": "reused"
+      "requiredTests": [
+        "backend/src/ai/executionRuntime.test.ts"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M6 taskGraphRunner.ts readyTasks/propagateBlocked schedule strictly in dependency order."
     },
     {
       "id": "R2.4",
@@ -64,10 +82,16 @@
       "currentImplementation": "backend/src/ai/runReconciler.ts marks orphaned swarm_runs failed on startup and fails in-flight runs on SIGTERM.",
       "actualBehaviour": "Recovery is truthful but terminal: an interrupted run is failed, never resumed. Nothing reloads a CanonicalExecutionState and continues from the last completed task.",
       "evidence": "runReconciler.ts:61-88 sets status 'error' with BUILD_INTERRUPTED; no caller of SupabaseExecutionStateStore.load exists outside tests.",
-      "affectedFiles": ["backend/src/ai/runReconciler.ts", "backend/src/ai/executionRuntime.ts"],
+      "affectedFiles": [
+        "backend/src/ai/runReconciler.ts",
+        "backend/src/ai/executionRuntime.ts"
+      ],
       "requiredChange": "Add resume-from-checkpoint that reloads persisted state and re-runs only unfinished tasks.",
-      "requiredTests": ["restart recovery test"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "restart recovery test"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M6 recoverGraph — a task found running at load was interrupted, so it resets to pending while keeping its attempt count. A crash-after-every-step loop asserts each task runs exactly once."
     },
     {
       "id": "R2.5",
@@ -77,10 +101,17 @@
       "currentImplementation": "CanonicalExecutionState in executionRuntime.ts.",
       "actualBehaviour": "The type exists and is the state used by synthesis/foundation.ts, but pipeline.ts keeps its own parallel notion of progress and the two are not reconciled.",
       "evidence": "synthesis/foundation.ts:112 createCanonicalExecutionState + :173 ExecutionScheduler.run; pipeline.ts uses the state only for transitionTask bookkeeping.",
-      "affectedFiles": ["backend/src/ai/executionRuntime.ts", "backend/src/ai/pipeline.ts", "backend/src/synthesis/foundation.ts"],
+      "affectedFiles": [
+        "backend/src/ai/executionRuntime.ts",
+        "backend/src/ai/pipeline.ts",
+        "backend/src/synthesis/foundation.ts"
+      ],
       "requiredChange": "Route the pipeline's implementation phase through the same state object.",
-      "requiredTests": ["state identity test"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "state identity test"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M6 TASK_STATES plus M2 70c2b26 verificationLifecycle.ts; the frontend and backend state lists are asserted identical and in the same order."
     },
     {
       "id": "R2.6",
@@ -90,10 +121,16 @@
       "currentImplementation": "backend/src/services/integrations/githubAtomicWrite.ts, githubMutationPlan.ts, githubAtomicTransport.ts, githubTreeSnapshot.ts (merged in PR #458/#459).",
       "actualBehaviour": "One tree, one commit, one non-force compare-and-swap ref update; a truncated tree is refused rather than planned against.",
       "evidence": "githubTreeSnapshot.ts:104-113 refuses truncated trees; see R3.E.",
-      "affectedFiles": ["backend/src/services/integrations/githubAtomicWrite.ts"],
+      "affectedFiles": [
+        "backend/src/services/integrations/githubAtomicWrite.ts"
+      ],
       "requiredChange": "none — preserve and regression-test only (R3.E)",
-      "requiredTests": ["githubAtomicWrite.test.ts", "githubTreeSnapshot.test.ts"],
-      "completionStatus": "reused"
+      "requiredTests": [
+        "githubAtomicWrite.test.ts",
+        "githubTreeSnapshot.test.ts"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "Merged P0 36fc871 githubAtomicWrite/githubMutationPlan, pinned against regression by M9."
     },
     {
       "id": "R2.7",
@@ -103,10 +140,15 @@
       "currentImplementation": "backend/src/ai/patchSafety.ts + patches.ts.",
       "actualBehaviour": "Empty-SEARCH, ambiguous-SEARCH, stale-hash and destructive-ratio rejections are implemented and unit tested. There is no transactional workspace, no expected base blob SHA derived from the GitHub tree, and no resulting-diff inspection before the branch is touched.",
       "evidence": "patchSafety.ts:94-169; no module references git worktree or blob SHA for patch bases.",
-      "affectedFiles": ["backend/src/ai/patchSafety.ts"],
+      "affectedFiles": [
+        "backend/src/ai/patchSafety.ts"
+      ],
       "requiredChange": "Add the transactional patch workspace required by section 6.",
-      "requiredTests": ["patch worktree tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "patch worktree tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "patchSafety.ts refuses empty, ambiguous, stale and destructive patches; M9 pins all four at the boundary."
     },
     {
       "id": "R2.8",
@@ -116,10 +158,16 @@
       "currentImplementation": "backend/src/ai/router.ts, models.ts, modelCapabilityRegistry.ts, providerRuntime.ts, intelligentRouter.ts.",
       "actualBehaviour": "Provider transports are distinguished per model; routing outcomes are persisted to model_routing_outcomes.",
       "evidence": "backend/src/ai/routingPersistence.test.ts, providerRuntime.test.ts, router.test.ts all pass on this branch.",
-      "affectedFiles": ["backend/src/ai/router.ts", "backend/src/ai/providerRuntime.ts"],
+      "affectedFiles": [
+        "backend/src/ai/router.ts",
+        "backend/src/ai/providerRuntime.ts"
+      ],
       "requiredChange": "none (section 12 forbids finalising the commercial allocation)",
-      "requiredTests": ["existing router tests"],
-      "completionStatus": "reused"
+      "requiredTests": [
+        "existing router tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "Existing routing contracts; the audit classified them verified_complete and required no change."
     },
     {
       "id": "R2.9",
@@ -129,10 +177,15 @@
       "currentImplementation": "backend/src/ai/qa.ts + reviewerRouting.test.ts.",
       "actualBehaviour": "A separate reviewer model is selected, but reviewer output parsing and the file sample it sees are the section 10 defects.",
       "evidence": "see R10.2 and R10.3.",
-      "affectedFiles": ["backend/src/ai/qa.ts"],
+      "affectedFiles": [
+        "backend/src/ai/qa.ts"
+      ],
       "requiredChange": "fail-closed parsing + evidence-bearing review scope",
-      "requiredTests": ["reviewer parsing tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "reviewer parsing tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M5 efcd91f qa.ts — the reviewer fails closed and batches deterministically; qa.test.ts."
     },
     {
       "id": "R2.10",
@@ -142,10 +195,16 @@
       "currentImplementation": "fallbackRoutes on ExecutableTaskNode + providerBudget.ts + capacityUnavailable handling.",
       "actualBehaviour": "Retry with backoff for non-mutating tasks; mutating tasks are never silently retried (executionRuntime.ts:401-409).",
       "evidence": "executionRuntime.ts:399-409; capacityUnavailable.test.ts.",
-      "affectedFiles": ["backend/src/ai/executionRuntime.ts", "backend/src/ai/providerBudget.ts"],
+      "affectedFiles": [
+        "backend/src/ai/executionRuntime.ts",
+        "backend/src/ai/providerBudget.ts"
+      ],
       "requiredChange": "none",
-      "requiredTests": ["existing"],
-      "completionStatus": "reused"
+      "requiredTests": [
+        "existing"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "Existing failover contracts; the audit classified them verified_complete and required no change."
     },
     {
       "id": "R2.11",
@@ -155,10 +214,15 @@
       "currentImplementation": "backend/src/ai/contextPreparation.ts prepareFocusedContext + indexRepository.",
       "actualBehaviour": "Selection is focused and secrets are redacted, but it ranks over a ProjectFile[] that must already be fully in memory. There is no on-demand fetch: the whole tree is hydrated first, then filtered.",
       "evidence": "contextPreparation.ts:57-62 signature takes files: ProjectFile[]; no network access anywhere in the module.",
-      "affectedFiles": ["backend/src/ai/contextPreparation.ts"],
+      "affectedFiles": [
+        "backend/src/ai/contextPreparation.ts"
+      ],
       "requiredChange": "Add the repository tool suite in section 5 so context is fetched on demand at an exact commit.",
-      "requiredTests": ["repository tool tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "repository tool tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M3 1c16879 repositoryTools.ts — a 919-line on-demand tool suite with 578 lines of tests."
     },
     {
       "id": "R2.12",
@@ -168,10 +232,15 @@
       "currentImplementation": "backend/src/ai/pipeline.ts builder phase.",
       "actualBehaviour": "The builder produces the whole project in one model response and the preview is emitted from that single response. See R4.1.",
       "evidence": "pipeline.ts:1846-1885 emits the complete generated file set as one preview payload immediately after the builder attempt.",
-      "affectedFiles": ["backend/src/ai/pipeline.ts"],
+      "affectedFiles": [
+        "backend/src/ai/pipeline.ts"
+      ],
       "requiredChange": "Section 4 iterative workflow.",
-      "requiredTests": ["black-box iterative fixture (>=40 files)"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "black-box iterative fixture (>=40 files)"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M6 runTaskGraph executes task by task with two checkpoints each, replacing one-shot generation."
     },
     {
       "id": "R2.13",
@@ -181,10 +250,16 @@
       "currentImplementation": "backend/src/sandbox/*.",
       "actualBehaviour": "DockerSandboxRuntime probes for a container runtime and refuses when none exists; the API host never executes generated code. Production Fly machines have no nested container runtime, so isolation is currently always refused. See R7.*",
       "evidence": "sandboxRuntime.ts:77-96 probe; sandboxTypes.ts:57-60 documents runtime_unavailable as the expected production state.",
-      "affectedFiles": ["backend/src/sandbox/sandboxRuntime.ts"],
+      "affectedFiles": [
+        "backend/src/sandbox/sandboxRuntime.ts"
+      ],
       "requiredChange": "A dedicated isolated execution worker (paid infrastructure) — owner approval required.",
-      "requiredTests": ["sentinel-secret isolation test", "network-denial test"],
-      "completionStatus": "blocked"
+      "requiredTests": [
+        "sentinel-secret isolation test",
+        "network-denial test"
+      ],
+      "completionStatus": "external_blocker",
+      "completionEvidence": "Code, config and tests are complete (M7 sandboxProviders.ts: provider registry, isolation flags, refusal path, 38 tests). The remaining step is a dedicated paid isolated-execution worker, which was not created — new billable Fly resources are outside the approved budget."
     },
     {
       "id": "R2.14",
@@ -194,10 +269,15 @@
       "currentImplementation": "backend/src/ai/compileValidate.ts, staticValidate.ts, validationVerdict.ts, buildOutputValidation.ts.",
       "actualBehaviour": "Static validation and a QA repair loop exist; executable validation depends on R2.13.",
       "evidence": "validationVerdict.test.ts passes; compileValidate delegates execution to the sandbox and classifies unavailability as not_verified.",
-      "affectedFiles": ["backend/src/ai/compileValidate.ts"],
+      "affectedFiles": [
+        "backend/src/ai/compileValidate.ts"
+      ],
       "requiredChange": "Per-task focused validation inside the iterative loop.",
-      "requiredTests": ["per-task validation tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "per-task validation tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M6 runs per-task validation inside the iterative loop; the repair path keeps retry budgets that are spent honestly across restarts."
     },
     {
       "id": "R2.15",
@@ -207,10 +287,15 @@
       "currentImplementation": "productionValidationAllowsDeployment in pipeline.ts.",
       "actualBehaviour": "A gate exists before deployment, but the pre-QA preview already reports buildOk: true, so the user-visible state claims a successful build before any gate ran.",
       "evidence": "pipeline.ts:1861 buildOk: true inside the pre-QA preview payload.",
-      "affectedFiles": ["backend/src/ai/pipeline.ts"],
+      "affectedFiles": [
+        "backend/src/ai/pipeline.ts"
+      ],
       "requiredChange": "Section 9 lifecycle.",
-      "requiredTests": ["lifecycle transition tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "lifecycle transition tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M2 verificationLifecycle.ts is the single build gate; previewNotVerified.test.ts asserts a generated preview is never labelled verified."
     },
     {
       "id": "R2.16",
@@ -220,10 +305,15 @@
       "currentImplementation": "ExecutionScheduler.persist emits redacted task_state events; runStore.appendRunEvent redacts via redactOperationsValue.",
       "actualBehaviour": "Events are redacted and sequence-numbered, but the pipeline emits 'Preview ready' with buildOk: true before QA, which is not truthful.",
       "evidence": "executionRuntime.ts:417-427; pipeline.ts:1855-1885.",
-      "affectedFiles": ["backend/src/ai/pipeline.ts"],
+      "affectedFiles": [
+        "backend/src/ai/pipeline.ts"
+      ],
       "requiredChange": "Section 9.",
-      "requiredTests": ["lifecycle tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "lifecycle tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M2 lifecycle events, plus M8 buildFinalEvidenceRecord which withholds any claim the evidence does not support."
     },
     {
       "id": "R2.17",
@@ -233,12 +323,16 @@
       "currentImplementation": "evaluateFinalExecution in executionRuntime.ts:442-458; transitionTask refuses to complete a task without evidence (executionRuntime.ts:241).",
       "actualBehaviour": "The primitive is correct and enforced. It is not the shape section 11 requires (no distinction between committed / pull request opened / deployed / production verified).",
       "evidence": "FinalExecutionOutcome has no deployment or commit fields.",
-      "affectedFiles": ["backend/src/ai/executionRuntime.ts"],
+      "affectedFiles": [
+        "backend/src/ai/executionRuntime.ts"
+      ],
       "requiredChange": "Section 11 final-evidence record.",
-      "requiredTests": ["final evidence tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "final evidence tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M8 1cf97ef buildFinalEvidenceRecord and claimIsSupported; 33 tests."
     },
-
     {
       "id": "R3.A",
       "section": 3,
@@ -247,10 +341,17 @@
       "currentImplementation": "backend/src/sandbox/sandboxEnvironment.ts allowlist + forbidden-pattern guard.",
       "actualBehaviour": "buildSandboxEnvironment reads only 8 allowlisted names from process.env and throws ForbiddenSandboxVariableError on any caller-supplied credential-shaped name.",
       "evidence": "sandboxEnvironment.ts:21-30 allowlist, :41-42 forbidden pattern, :93-96 throw.",
-      "affectedFiles": ["backend/src/sandbox/sandboxEnvironment.ts"],
+      "affectedFiles": [
+        "backend/src/sandbox/sandboxEnvironment.ts"
+      ],
       "requiredChange": "none — add a sentinel-secret end-to-end test (R7.5)",
-      "requiredTests": ["sandboxEnvironment.test.ts", "sandboxIsolation.test.ts", "new sentinel test"],
-      "completionStatus": "preserve"
+      "requiredTests": [
+        "sandboxEnvironment.test.ts",
+        "sandboxIsolation.test.ts",
+        "new sentinel test"
+      ],
+      "completionStatus": "preserved",
+      "completionEvidence": "P0 protection kept intact and pinned against reintroduction by M9 43c6918 p0Regressions.test.ts (34 tests)."
     },
     {
       "id": "R3.B",
@@ -260,10 +361,15 @@
       "currentImplementation": "backend/src/services/integrations/githubRepoCreation.ts.",
       "actualBehaviour": "Verified by githubRepoCreation.test.ts on this branch.",
       "evidence": "test file present and passing in the backend suite.",
-      "affectedFiles": ["backend/src/services/integrations/githubRepoCreation.ts"],
+      "affectedFiles": [
+        "backend/src/services/integrations/githubRepoCreation.ts"
+      ],
       "requiredChange": "none",
-      "requiredTests": ["githubRepoCreation.test.ts"],
-      "completionStatus": "preserve"
+      "requiredTests": [
+        "githubRepoCreation.test.ts"
+      ],
+      "completionStatus": "preserved",
+      "completionEvidence": "P0 protection kept intact and pinned against reintroduction by M9 43c6918 p0Regressions.test.ts (34 tests)."
     },
     {
       "id": "R3.C",
@@ -273,10 +379,15 @@
       "currentImplementation": "githubRepoCreation.ts + githubAtomicTransport.ts.",
       "actualBehaviour": "422 is decomposed rather than assumed to mean name-taken.",
       "evidence": "githubRepoCreation.test.ts covers the distinct 422 causes.",
-      "affectedFiles": ["backend/src/services/integrations/githubRepoCreation.ts"],
+      "affectedFiles": [
+        "backend/src/services/integrations/githubRepoCreation.ts"
+      ],
       "requiredChange": "none",
-      "requiredTests": ["githubRepoCreation.test.ts"],
-      "completionStatus": "preserve"
+      "requiredTests": [
+        "githubRepoCreation.test.ts"
+      ],
+      "completionStatus": "preserved",
+      "completionEvidence": "P0 protection kept intact and pinned against reintroduction by M9 43c6918 p0Regressions.test.ts (34 tests)."
     },
     {
       "id": "R3.D",
@@ -286,10 +397,15 @@
       "currentImplementation": "githubBranchSafety.ts + githubRunBranch.ts.",
       "actualBehaviour": "Covered by githubBranchSafety.test.ts and githubRunBranch.test.ts.",
       "evidence": "both test files present and passing.",
-      "affectedFiles": ["backend/src/services/integrations/githubBranchSafety.ts"],
+      "affectedFiles": [
+        "backend/src/services/integrations/githubBranchSafety.ts"
+      ],
       "requiredChange": "none",
-      "requiredTests": ["githubBranchSafety.test.ts"],
-      "completionStatus": "preserve"
+      "requiredTests": [
+        "githubBranchSafety.test.ts"
+      ],
+      "completionStatus": "preserved",
+      "completionEvidence": "P0 protection kept intact and pinned against reintroduction by M9 43c6918 p0Regressions.test.ts (34 tests)."
     },
     {
       "id": "R3.E",
@@ -299,10 +415,16 @@
       "currentImplementation": "githubAtomicWrite.ts + githubMutationPlan.ts + githubTreeSnapshot.ts.",
       "actualBehaviour": "Truncated trees, unreadable commits and empty repositories are typed refusals; nothing partial is written.",
       "evidence": "githubTreeSnapshot.ts:84-113.",
-      "affectedFiles": ["backend/src/services/integrations/githubAtomicWrite.ts"],
+      "affectedFiles": [
+        "backend/src/services/integrations/githubAtomicWrite.ts"
+      ],
       "requiredChange": "none — add a failure-injection regression test (section 13)",
-      "requiredTests": ["githubAtomicWrite.test.ts", "new failure-injection test"],
-      "completionStatus": "preserve"
+      "requiredTests": [
+        "githubAtomicWrite.test.ts",
+        "new failure-injection test"
+      ],
+      "completionStatus": "preserved",
+      "completionEvidence": "P0 protection kept intact and pinned against reintroduction by M9 43c6918 p0Regressions.test.ts (34 tests)."
     },
     {
       "id": "R3.F",
@@ -312,10 +434,15 @@
       "currentImplementation": "githubBranchAuthorization.ts + githubRunBranch.ts.",
       "actualBehaviour": "Covered by githubBranchAuthorization.test.ts.",
       "evidence": "test present and passing.",
-      "affectedFiles": ["backend/src/services/integrations/githubBranchAuthorization.ts"],
+      "affectedFiles": [
+        "backend/src/services/integrations/githubBranchAuthorization.ts"
+      ],
       "requiredChange": "none",
-      "requiredTests": ["githubBranchAuthorization.test.ts"],
-      "completionStatus": "preserve"
+      "requiredTests": [
+        "githubBranchAuthorization.test.ts"
+      ],
+      "completionStatus": "preserved",
+      "completionEvidence": "P0 protection kept intact and pinned against reintroduction by M9 43c6918 p0Regressions.test.ts (34 tests)."
     },
     {
       "id": "R3.G",
@@ -325,10 +452,15 @@
       "currentImplementation": "backend/src/ai/patchSafety.ts.",
       "actualBehaviour": "empty_search_on_existing_file, search_ambiguous, stale_source and unexpectedly_destructive are all refusals.",
       "evidence": "patchSafety.ts:111-142, :154-169; patchSafety.test.ts.",
-      "affectedFiles": ["backend/src/ai/patchSafety.ts"],
+      "affectedFiles": [
+        "backend/src/ai/patchSafety.ts"
+      ],
       "requiredChange": "none",
-      "requiredTests": ["patchSafety.test.ts"],
-      "completionStatus": "preserve"
+      "requiredTests": [
+        "patchSafety.test.ts"
+      ],
+      "completionStatus": "preserved",
+      "completionEvidence": "P0 protection kept intact and pinned against reintroduction by M9 43c6918 p0Regressions.test.ts (34 tests)."
     },
     {
       "id": "R3.H",
@@ -338,12 +470,18 @@
       "currentImplementation": "backend/src/lib/resolveIdentity.ts, backend/src/services/userProvisioningCache.ts, backend/src/routes/terminalSessions.ts, frontend/src/lib/uploadCoalescing.ts.",
       "actualBehaviour": "Local JWT verification, one provisioning pass per user, metadata-only list/write projections and upload fingerprinting are all present on this branch.",
       "evidence": "authRoundTrips.test.ts, terminalSessions.payload.test.ts, uploadCoalescing.test.ts, supabaseCallCounters.test.ts all present.",
-      "affectedFiles": ["backend/src/lib/resolveIdentity.ts", "backend/src/routes/terminalSessions.ts"],
+      "affectedFiles": [
+        "backend/src/lib/resolveIdentity.ts",
+        "backend/src/routes/terminalSessions.ts"
+      ],
       "requiredChange": "none — must not regress",
-      "requiredTests": ["authRoundTrips.test.ts", "terminalSessions.payload.test.ts"],
-      "completionStatus": "preserve"
+      "requiredTests": [
+        "authRoundTrips.test.ts",
+        "terminalSessions.payload.test.ts"
+      ],
+      "completionStatus": "preserved",
+      "completionEvidence": "P0 protection kept intact and pinned against reintroduction by M9 43c6918 p0Regressions.test.ts (34 tests)."
     },
-
     {
       "id": "R4.1",
       "section": 4,
@@ -352,10 +490,15 @@
       "currentImplementation": "pipeline.ts builder attempt produces the full file set in one response.",
       "actualBehaviour": "One builder call returns every file; the preview payload is built from that single response.",
       "evidence": "pipeline.ts:1846-1885.",
-      "affectedFiles": ["backend/src/ai/pipeline.ts"],
+      "affectedFiles": [
+        "backend/src/ai/pipeline.ts"
+      ],
       "requiredChange": "Persisted iterative workflow: objective -> specification -> acceptance criteria -> repository analysis -> file/task plan -> executable graph -> bounded task -> checkpoint -> validation -> repair -> next task -> final verification.",
-      "requiredTests": ["black-box fixture with >=40 files"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "black-box fixture with >=40 files"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M6 replaced one-shot complete-product generation with the persisted task graph."
     },
     {
       "id": "R4.2",
@@ -365,10 +508,15 @@
       "currentImplementation": "none",
       "actualBehaviour": "An interrupted run is failed, not resumed (R2.4).",
       "evidence": "runReconciler.ts:61-88.",
-      "affectedFiles": ["backend/src/ai/executionRuntime.ts"],
+      "affectedFiles": [
+        "backend/src/ai/executionRuntime.ts"
+      ],
       "requiredChange": "resumeExecution() that reloads state and re-runs only unfinished tasks.",
-      "requiredTests": ["interruption/resume black-box test"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "interruption/resume black-box test"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M6 resumeTaskGraph resumes from the last durable checkpoint without regenerating settled tasks."
     },
     {
       "id": "R4.3",
@@ -378,12 +526,16 @@
       "currentImplementation": "backend/src/ai/blackBoxExecution.test.ts (74 lines).",
       "actualBehaviour": "The existing black-box test is small and does not assert task decomposition, per-response file bounds, interruption survival or acceptance traceability.",
       "evidence": "wc -l backend/src/ai/blackBoxExecution.test.ts = 74.",
-      "affectedFiles": ["backend/src/ai/blackBoxExecution.test.ts"],
+      "affectedFiles": [
+        "backend/src/ai/blackBoxExecution.test.ts"
+      ],
       "requiredChange": "Add a new fixture asserting all six properties required by section 4.",
-      "requiredTests": ["new fixture"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "new fixture"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M6 taskGraph.test.ts \"a realistic multi-file run\" — a 42-file black-box fixture across six dependent layers; the executor fails the run if any path is written twice."
     },
-
     {
       "id": "R5.1",
       "section": 5,
@@ -392,10 +544,15 @@
       "currentImplementation": "githubTreeSnapshot.readStartingTree takes the caller's recorded commit SHA; githubAtomicWrite performs a compare-and-swap.",
       "actualBehaviour": "Correct for the write path merged in #458. Not yet applied to the read/analysis path, which has no notion of an exact commit.",
       "evidence": "githubTreeSnapshot.ts:75-84 documents the deliberate choice to take the SHA from the caller.",
-      "affectedFiles": ["backend/src/services/integrations/githubTreeSnapshot.ts"],
+      "affectedFiles": [
+        "backend/src/services/integrations/githubTreeSnapshot.ts"
+      ],
       "requiredChange": "Pin repository tools to the same exact commit.",
-      "requiredTests": ["stale-write refusal test"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "stale-write refusal test"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M4 7608713 patchWorkspace.ts resolves the exact remote HEAD and pins the source commit before any write."
     },
     {
       "id": "R5.2",
@@ -407,8 +564,11 @@
       "evidence": "grep -rln for all thirteen names across backend/src and frontend/src returns no files.",
       "affectedFiles": [],
       "requiredChange": "Implement the tool suite, scoped to an authorized repo at an exact commit, with path validation, secret redaction, bounded output, on-demand fetch, tenant isolation, evidence recording and stale-write refusal.",
-      "requiredTests": ["deeply nested non-whitelisted path discovery test"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "deeply nested non-whitelisted path discovery test"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M3 repositoryTools.ts — list_tree, search_code, search_symbol, read_file and the rest of the suite."
     },
     {
       "id": "R5.3",
@@ -418,10 +578,15 @@
       "currentImplementation": "contextPreparation.prepareFocusedContext.",
       "actualBehaviour": "There is no hard-coded path whitelist, which is better than the audit assumed; but the mechanism still requires the entire tree in memory before it can select, so it is hydration-first rather than on-demand.",
       "evidence": "contextPreparation.ts:57 signature; no fixed path list found in contextPreparation.ts, fileSelector.ts or repoSummarize.ts.",
-      "affectedFiles": ["backend/src/ai/contextPreparation.ts"],
+      "affectedFiles": [
+        "backend/src/ai/contextPreparation.ts"
+      ],
       "requiredChange": "Make the tool suite the primary mechanism and keep focused selection as the ranking layer over tool results.",
-      "requiredTests": ["nested path test"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "nested path test"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M3 contextPreparation.ts no longer hydrates fixed paths as the primary context mechanism."
     },
     {
       "id": "R5.4",
@@ -431,12 +596,16 @@
       "currentImplementation": "backend/src/ai/projectMemory.ts + public.project_memory (11 rows).",
       "actualBehaviour": "Memory exists and stores summaries; there is no explicit rule preventing a cached snapshot from being treated as canonical.",
       "evidence": "projectMemory.ts present; no completeness assertion against a tree SHA.",
-      "affectedFiles": ["backend/src/ai/projectMemory.ts"],
+      "affectedFiles": [
+        "backend/src/ai/projectMemory.ts"
+      ],
       "requiredChange": "Record the tree SHA memory was derived from and refuse to claim completeness when it does not match the current HEAD.",
-      "requiredTests": ["memory staleness test"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "memory staleness test"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M3/M4 — project memory summarises only; the exact GitHub tree is read through the tool suite."
     },
-
     {
       "id": "R6.1",
       "section": 6,
@@ -445,10 +614,15 @@
       "currentImplementation": "patchSafety.PatchIntent.expectedSourceHash is a content SHA-256, not a git blob SHA, and no caller derives it from the GitHub tree.",
       "actualBehaviour": "Stale-source detection works only when a caller volunteers a hash; nothing does.",
       "evidence": "patchSafety.ts:86 expectedSourceHash; no producer in the repository.",
-      "affectedFiles": ["backend/src/ai/patchSafety.ts"],
+      "affectedFiles": [
+        "backend/src/ai/patchSafety.ts"
+      ],
       "requiredChange": "Derive git blob SHAs from the starting tree and require them for updates.",
-      "requiredTests": ["stale base rejection test"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "stale base rejection test"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M4 patchWorkspace.ts carries or derives the expected base blob SHA for every update."
     },
     {
       "id": "R6.2",
@@ -458,10 +632,16 @@
       "currentImplementation": "none",
       "actualBehaviour": "Patches are applied to an in-memory ProjectFile[] with no isolated workspace, no symlink handling and no .git rejection.",
       "evidence": "patches.ts operates purely on arrays; CanonicalMutationService.safePath rejects traversal and absolute paths but not .git or symlinks.",
-      "affectedFiles": ["backend/src/ai/executionRuntime.ts", "backend/src/ai/patches.ts"],
+      "affectedFiles": [
+        "backend/src/ai/executionRuntime.ts",
+        "backend/src/ai/patches.ts"
+      ],
       "requiredChange": "Implement the transactional workspace with all nine section 6 requirements.",
-      "requiredTests": ["worktree safety tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "worktree safety tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M4 transactional patch workspace pinned to the exact source commit; 369 lines of tests."
     },
     {
       "id": "R6.3",
@@ -471,12 +651,16 @@
       "currentImplementation": "githubAtomicWrite.ts — the ref update is the last step and is a compare-and-swap.",
       "actualBehaviour": "Nothing is written until the complete tree is built, so a failure earlier leaves the branch untouched.",
       "evidence": "R3.E.",
-      "affectedFiles": ["backend/src/services/integrations/githubAtomicWrite.ts"],
+      "affectedFiles": [
+        "backend/src/services/integrations/githubAtomicWrite.ts"
+      ],
       "requiredChange": "none",
-      "requiredTests": ["failure-injection test"],
-      "completionStatus": "preserve"
+      "requiredTests": [
+        "failure-injection test"
+      ],
+      "completionStatus": "preserved",
+      "completionEvidence": "P0 protection kept intact and pinned against reintroduction by M9 43c6918 p0Regressions.test.ts (34 tests)."
     },
-
     {
       "id": "R7.1",
       "section": 7,
@@ -485,10 +669,15 @@
       "currentImplementation": "backend/src/sandbox/sandboxRuntime.ts executeSandboxed.",
       "actualBehaviour": "There is no unsafe fallback path in the module; an unavailable runtime throws SandboxUnavailableError.",
       "evidence": "sandboxRuntime.ts:215-233.",
-      "affectedFiles": ["backend/src/sandbox/sandboxRuntime.ts"],
+      "affectedFiles": [
+        "backend/src/sandbox/sandboxRuntime.ts"
+      ],
       "requiredChange": "none",
-      "requiredTests": ["sandboxIsolation.test.ts"],
-      "completionStatus": "preserve"
+      "requiredTests": [
+        "sandboxIsolation.test.ts"
+      ],
+      "completionStatus": "preserved",
+      "completionEvidence": "P0 protection kept intact and pinned against reintroduction by M9 43c6918 p0Regressions.test.ts (34 tests)."
     },
     {
       "id": "R7.2",
@@ -498,10 +687,15 @@
       "currentImplementation": "SandboxRuntime interface + DockerSandboxRuntime.",
       "actualBehaviour": "One concrete runtime exists and it only works where a Docker socket is reachable. There is no remote/worker provider, so there is no architecture to select between providers.",
       "evidence": "getSandboxRuntime() returns new DockerSandboxRuntime() unconditionally (sandboxRuntime.ts:203-205).",
-      "affectedFiles": ["backend/src/sandbox/sandboxRuntime.ts"],
+      "affectedFiles": [
+        "backend/src/sandbox/sandboxRuntime.ts"
+      ],
       "requiredChange": "Add a provider registry and a remote isolated-worker provider with full config and deployment docs.",
-      "requiredTests": ["provider selection tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "provider selection tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M7 19645e9 sandboxProviders.ts — a provider registry with preference ordering, per-use probing and a hosted-provider seam."
     },
     {
       "id": "R7.3",
@@ -511,10 +705,15 @@
       "currentImplementation": "runIsolated in sandboxRuntime.ts:112-136.",
       "actualBehaviour": "--user 1000:1000, --read-only, tmpfs workspace, --memory/--memory-swap, --cpus, --pids-limit, --cap-drop ALL, no-new-privileges, SIGKILL timeout, 40 KB output cap.",
       "evidence": "sandboxRuntime.ts:116-136, :150-168.",
-      "affectedFiles": ["backend/src/sandbox/sandboxRuntime.ts"],
+      "affectedFiles": [
+        "backend/src/sandbox/sandboxRuntime.ts"
+      ],
       "requiredChange": "none",
-      "requiredTests": ["flag assertion test"],
-      "completionStatus": "preserve"
+      "requiredTests": [
+        "flag assertion test"
+      ],
+      "completionStatus": "preserved",
+      "completionEvidence": "P0 protection kept intact and pinned against reintroduction by M9 43c6918 p0Regressions.test.ts (34 tests)."
     },
     {
       "id": "R7.4",
@@ -524,10 +723,15 @@
       "currentImplementation": "networkPolicy on SandboxExecutionRequest.",
       "actualBehaviour": "'none' maps to --network none, but any other value maps to a full bridge network — 'registry-only' and 'restricted' are not actually narrower than unrestricted egress.",
       "evidence": "sandboxRuntime.ts:114 const network = request.networkPolicy === 'none' ? 'none' : 'bridge'.",
-      "affectedFiles": ["backend/src/sandbox/sandboxRuntime.ts"],
+      "affectedFiles": [
+        "backend/src/sandbox/sandboxRuntime.ts"
+      ],
       "requiredChange": "Make registry-only genuinely narrow, and default to none.",
-      "requiredTests": ["network-denial test"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "network-denial test"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M7 buildContainerArgs sets --network none by default and bridge only for an explicit registry stage; asserted in sandboxProviders.test.ts and again in M9."
     },
     {
       "id": "R7.5",
@@ -537,10 +741,15 @@
       "currentImplementation": "backend/src/sandbox/sandboxIsolation.test.ts.",
       "actualBehaviour": "Existing tests assert the environment builder; there is no end-to-end sentinel secret planted in process.env and asserted absent from a real execution request, and no network-denial assertion.",
       "evidence": "test file contents reviewed.",
-      "affectedFiles": ["backend/src/sandbox/sandboxIsolation.test.ts"],
+      "affectedFiles": [
+        "backend/src/sandbox/sandboxIsolation.test.ts"
+      ],
       "requiredChange": "Add both tests.",
-      "requiredTests": ["new"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "new"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M7 and M9 — secret-isolation tests over the real production secret names, plus the network-denial assertion."
     },
     {
       "id": "R7.6",
@@ -552,10 +761,12 @@
       "evidence": "sandboxTypes.ts:53-56 documents this as the expected production state.",
       "affectedFiles": [],
       "requiredChange": "A dedicated Fly app or machine pool for sandbox execution — a new paid resource. Owner approval required; not created automatically.",
-      "requiredTests": ["n/a until provisioned"],
-      "completionStatus": "blocked"
+      "requiredTests": [
+        "n/a until provisioned"
+      ],
+      "completionStatus": "external_blocker",
+      "completionEvidence": "Requires a dedicated Fly app or machine pool for sandbox execution — a new paid resource, not created because it is outside the approved budget. Everything that does not depend on it is complete."
     },
-
     {
       "id": "R8.1",
       "section": 8,
@@ -564,10 +775,15 @@
       "currentImplementation": "detectScaffoldKind + intelligentRouter.ts.",
       "actualBehaviour": "An intelligent router exists, but detectScaffoldKind(userFacingPrompt) is still consulted directly in the preview path.",
       "evidence": "pipeline.ts:1871 detectScaffoldKind(userFacingPrompt) !== 'static'.",
-      "affectedFiles": ["backend/src/ai/pipeline.ts"],
+      "affectedFiles": [
+        "backend/src/ai/pipeline.ts"
+      ],
       "requiredChange": "Demote keyword detection behind the reasoned classification.",
-      "requiredTests": ["classification tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "classification tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M8 readIntent reasons from the desired outcome; keyword classification is the fallback guard only."
     },
     {
       "id": "R8.2",
@@ -577,12 +793,16 @@
       "currentImplementation": "landingFilesFromOutput fallback in pipeline.ts.",
       "actualBehaviour": "previousFiles falls back to landingFilesFromOutput('', '', '') — a static landing scaffold — when there is no prior state.",
       "evidence": "pipeline.ts:1843.",
-      "affectedFiles": ["backend/src/ai/pipeline.ts"],
+      "affectedFiles": [
+        "backend/src/ai/pipeline.ts"
+      ],
       "requiredChange": "Report unsupported capability truthfully instead of substituting a static site.",
-      "requiredTests": ["unknown product test"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "unknown product test"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M8 decideArchitecture derives capabilities first and picks the scaffold last as a hint, so an unknown product does not fall back to static HTML."
     },
-
     {
       "id": "R9.1",
       "section": 9,
@@ -591,10 +811,15 @@
       "currentImplementation": "pipeline.ts:1861.",
       "actualBehaviour": "The preview payload emitted before QA sets buildOk: true and labels the state 'Preview ready'.",
       "evidence": "pipeline.ts:1861 buildOk: true, inside the block commented 'Deliver code to the client IMMEDIATELY — do not wait for QA'.",
-      "affectedFiles": ["backend/src/ai/pipeline.ts"],
+      "affectedFiles": [
+        "backend/src/ai/pipeline.ts"
+      ],
       "requiredChange": "Replace with an explicit generated_unverified lifecycle state.",
-      "requiredTests": ["transition tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "transition tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M2 70c2b26 removed the premature success states; previewNotVerified.test.ts pins it."
     },
     {
       "id": "R9.2",
@@ -606,10 +831,12 @@
       "evidence": "grep across backend/src and frontend/src finds production_verified only in growth/growthService.ts:84,101 and operations/operationsEngine.ts:100.",
       "affectedFiles": [],
       "requiredChange": "Implement the lifecycle module and share it with the frontend.",
-      "requiredTests": ["invalid and premature transition rejection tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "invalid and premature transition rejection tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M2 verificationLifecycle.ts is shared by backend and frontend; both state lists are asserted identical and in the same order."
     },
-
     {
       "id": "R10.1",
       "section": 10,
@@ -618,10 +845,15 @@
       "currentImplementation": "qa.ts + compileValidate.ts.",
       "actualBehaviour": "QA model review currently gates completion (pipeline.ts:2177 uses qa.ok). Executable verification is blocked on R7.6.",
       "evidence": "pipeline.ts:2177 transitionTask(..., qa.ok && productionValidationAllowsDeployment(compile) ? 'completed' : 'failed').",
-      "affectedFiles": ["backend/src/ai/pipeline.ts"],
+      "affectedFiles": [
+        "backend/src/ai/pipeline.ts"
+      ],
       "requiredChange": "Make executable checks primary where they can run and mark the rest not_verified.",
-      "requiredTests": ["gate tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "gate tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M5 makes executable verification the primary gate; anything that cannot run is marked not_verified rather than passed."
     },
     {
       "id": "R10.2",
@@ -631,10 +863,15 @@
       "currentImplementation": "parseReviewJson in backend/src/ai/qa.ts:47-90.",
       "actualBehaviour": "Unparseable and empty output correctly fall back to ok:false, so a malformed response is handled. But well-formed JSON that simply omits the ok field returns ok:true, because the expression is `parsed.ok !== false`. A reviewer that answers `{\"issues\":[]}` — or any object at all without an explicit ok:false — is read as a pass. That is fail-open on the exact case section 10 names: missing ok/status is not success.",
       "evidence": "qa.ts:63 `ok: parsed.ok !== false` with `ok?: boolean` optional at qa.ts:57. Also qa.ts:168 combines it as `staticResult.ok && parsed.ok && ...`, so a missing ok reaches the combined gate as true.",
-      "affectedFiles": ["backend/src/ai/qa.ts"],
+      "affectedFiles": [
+        "backend/src/ai/qa.ts"
+      ],
       "requiredChange": "Malformed or missing status must not be success; disclose incomplete project context; name examined files and the commit SHA.",
-      "requiredTests": ["malformed reviewer output tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "malformed reviewer output tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M5 qa.ts — only an explicit boolean ok:true counts as a pass."
     },
     {
       "id": "R10.3",
@@ -644,12 +881,16 @@
       "currentImplementation": "frameworkSamples in backend/src/ai/qa.ts:92-113.",
       "actualBehaviour": "Exactly the defect the command names. A fixed list of eight preferred paths is tried; if none of them exists — which is the normal case for any project that is not a Next/Expo/static scaffold at those precise paths — the reviewer is handed `files.slice(0, 4)`, the first four files in array order. Each file is truncated to 2500 characters and the whole sample to 14000, and nothing discloses to the reviewer or to the user that the review covered a fraction of the project. There is no commit SHA and no list of examined files in the reviewer's evidence.",
       "evidence": "qa.ts:93-102 fixed preferred paths; qa.ts:108 `if (!picked.length) picked.push(...files.slice(0, 4));`; qa.ts:110-112 truncation to 2500 per file and 14000 overall; no commit or file-list field on ReviewBuildOutputResult.",
-      "affectedFiles": ["backend/src/ai/qa.ts"],
+      "affectedFiles": [
+        "backend/src/ai/qa.ts"
+      ],
       "requiredChange": "Use repository tools and task evidence to cover all critical surfaces.",
-      "requiredTests": ["review scope tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "review scope tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M5 deterministic bounded batching: every changed file lands in some batch, and an omitted changed file blocks verification."
     },
-
     {
       "id": "R11.1",
       "section": 11,
@@ -658,12 +899,16 @@
       "currentImplementation": "FinalExecutionOutcome (5 statuses).",
       "actualBehaviour": "The outcome type has no commit, branch, pull request, deployment or live-verification fields.",
       "evidence": "executionRuntime.ts:430-440.",
-      "affectedFiles": ["backend/src/ai/executionRuntime.ts"],
+      "affectedFiles": [
+        "backend/src/ai/executionRuntime.ts"
+      ],
       "requiredChange": "Extend the final outcome with the section 11 evidence fields, never invented.",
-      "requiredTests": ["evidence tests"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "evidence tests"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "M8 FinalEvidenceRecord distinguishes generated / verified / written / deployed / live and names what is outstanding."
     },
-
     {
       "id": "R12.1",
       "section": 12,
@@ -672,12 +917,16 @@
       "currentImplementation": "router.ts, providerRuntime.ts, modelCapabilityRegistry.ts, providerBudget.ts.",
       "actualBehaviour": "Present and tested. Section 12 forbids finalising the commercial allocation, so no change is made.",
       "evidence": "router.test.ts, providerRuntime.test.ts, reviewerRouting.test.ts.",
-      "affectedFiles": ["backend/src/ai/router.ts"],
+      "affectedFiles": [
+        "backend/src/ai/router.ts"
+      ],
       "requiredChange": "none",
-      "requiredTests": ["existing"],
-      "completionStatus": "reused"
+      "requiredTests": [
+        "existing"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "Existing generic provider contracts; the audit classified them verified_complete and required no change."
     },
-
     {
       "id": "R13.1",
       "section": 13,
@@ -686,10 +935,18 @@
       "currentImplementation": "Four tests slice their own source with indexOf on an LF-only marker.",
       "actualBehaviour": "On a CRLF checkout indexOf('\\n}\\n') returns -1, the asserted body is empty and the test fails. Four failures on this branch: three backend, one frontend.",
       "evidence": "backend: 'the swarm route no longer fabricates a stub run', 'conversation persistence updates rather than upserts', 'only the messages column is written'; frontend: 'the client-generated ID is sent to the server, not just kept locally'.",
-      "affectedFiles": ["backend/src/ai/conversationPersist.test.ts", "frontend/src/lib"],
+      "affectedFiles": [
+        "backend/src/ai/conversationPersist.test.ts",
+        "frontend/src/lib"
+      ],
       "requiredChange": "Normalise line endings inside the source-shape tests so they pass on both CRLF and LF checkouts.",
-      "requiredTests": ["the four tests themselves"],
-      "completionStatus": "pending"
+      "requiredTests": [
+        "the four tests themselves"
+      ],
+      "completionStatus": "complete",
+      "completionEvidence": "Fixed rather than dismissed: the source-shape tests normalise CRLF before searching (streamStallGuard.test.ts source(), conversationPersist.test.ts). Verified on a CRLF Windows checkout — backend 978/978 and frontend 181/181 pass."
     }
-  ]
+  ],
+  "completedAt": "2026-08-06",
+  "completionSummary": "Command 1 complete. 49 of 51 requirements delivered and verified. Two (R2.13, R7.6) remain external_blocker: both need a dedicated paid isolated-execution worker, which was not created because new billable Fly resources are outside the approved budget. All code, config and tests that do not depend on that worker are done. Verified on this branch: backend 978/978, frontend 181/181."
 }
