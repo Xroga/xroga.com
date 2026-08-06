@@ -1928,6 +1928,7 @@ export async function runBuildPipeline(opts: {
     architectureSummary: cachedSummary || undefined,
     changedFiles: buildFileTrail(previousFiles, nextFiles).map((entry) => entry.path),
     securitySensitiveContext: intelligentPlan.classification.requiredCapabilities.filter((capability) => /security|auth|payment|blockchain/i.test(capability)),
+    commitSha,
   });
   if (!staticPre.ok) {
     qa = {
