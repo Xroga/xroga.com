@@ -1,0 +1,24 @@
+# Shrink the Fly.io build context for the backend image (fly.toml sets the
+# Dockerfile path relative to backend/, so the root .dockerignore never
+# applies to this build).
+node_modules/
+**/node_modules/
+.git/
+.github/
+.cursor/
+terminals/
+*.md
+.env
+.env.*
+**/.env
+**/.env.*
+**/*.log
+**/dist/
+**/.turbo/
+**/coverage/
+**/__tests__/
+**/*.test.ts
+**/*.spec.ts
+agent-tools/
+opt/
+fixtures/

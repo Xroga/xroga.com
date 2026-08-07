@@ -56,6 +56,12 @@ and `npm run test:frontend` — the exact commands that produce the 978/978 and 
 above. It should be rerun when GitHub's runner pool recovers; nothing here needs a code
 change, and no change was invented to force a rerun.
 
+**Resolved.** The runner pool recovered and `unit` ran on the merge commit `cd01938`
+(run 31171493322): all nine steps green, and its collection-floor step printed
+`backend=978 frontend=181` — identical to the local numbers above. This confirms the
+earlier `cancelled` results were GitHub capacity, never a property of the branch. No code
+change was needed, and none was made.
+
 ## What shipped, by milestone
 
 | # | milestone | commit |
@@ -128,22 +134,56 @@ seam, the complete isolation flag set, and refusals that name every provider tri
 38 sandbox tests pass. Attaching a worker once it exists is a single call to
 `registerSandboxProvider` — no new code.
 
-## Why the PR was not merged or deployed
+## Merge and deployment
 
-The merge gate is `command_1_verified`. `docs/command-1/execution-state.json` states that
-Command 1 cannot be reported as `command_1_verified` while R7.6 is open. Merging and
-deploying would assert a verification that has not happened, which is the exact class of
-overclaim this command was written to eliminate — so PR #461 is left as a draft for the
-owner.
+PR #461 was merged to `main` as `cd01938` on 2026-08-07 at the owner's explicit
+instruction, with R2.13 and R7.6 still open. That decision is recorded here rather than
+implied: **the merge did not close those two requirements, and Command 1 is still not
+`command_1_verified`.** What the merge asserts is that the implementable work is finished,
+not that section 7 is satisfied.
 
-Nothing about the merge is blocked on code: the full suite passes, the typecheck is clean,
-and the production build succeeds. The current production deployment was checked and is
-healthy (`/health` 200, `/ready` 200); it is unchanged by this branch.
+Merging without the sandbox worker is safe for a specific reason: with no provider
+available, executable validation *refuses* rather than running generated code on the API
+host. The absent worker degrades what the runtime can verify; it does not weaken isolation.
 
-## What the owner needs to decide
+The canonical `fly-deploy.yml` workflow deployed the merge commit and passed all eleven
+steps, including its own health and readiness verification. Confirmed independently
+afterwards:
+
+| check | result |
+| --- | --- |
+| `/health` | 200 — `release: cd01938f47ad282d575d51c937ee3875210cd2d7` |
+| `/api/health` | 200 |
+| `/ready` | 200 — same release SHA |
+| `/api/supabase/oauth` | 401 — route present, unauthenticated call correctly rejected |
+| `https://xroga.com` | 200 |
+| `https://xroga.com/dashboard` | 200 |
+
+The release SHA reported by the running service equals the merge commit, so production is
+demonstrably serving this code rather than a cached image.
+
+### A defect introduced and reverted during the deployment
+
+Worth recording because it cost real resources. Deploying manually from `backend/` instead
+of the canonical root config created a `worker` process group that does not exist in
+`fly.api.toml` — two billable Fly machines, outside the approved budget — and they
+crash-looped immediately:
+
+```
+Error: Cannot find module '/app/RUN_SWARM_WORKER=true'
+```
+
+Fly execs a process command directly rather than through a shell, so the `VAR=value` prefix
+was read as the script path. Both machines were destroyed, the canonical workflow was rerun
+to restore production to `fly.api.toml` exactly, and the underlying config traps are fixed
+in PR #462. Production now runs the `app` group only, which is what the canonical config
+declares.
+
+## What the owner still needs to decide
 
 Approve a dedicated isolated-execution worker — a new paid Fly app or machine pool — to
 close R7.6 and R2.13. Once it exists: register it with `registerSandboxProvider`, rerun the
-suite, mark PR #461 ready, merge, and deploy.
+suite, and Command 1 reaches `command_1_verified`.
 
-Approving it is the only thing standing between this branch and `command_1_verified`.
+That approval remains the only thing standing between the merged code and
+`command_1_verified`. Merging did not change this.
