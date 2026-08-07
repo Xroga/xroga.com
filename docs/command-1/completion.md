@@ -36,6 +36,26 @@ searched for literals containing `\n`, which match nothing when git checks out C
 tests now normalise line endings before searching, so the fix is real rather than a
 suppression.
 
+### CI status on the pull request
+
+The `build` checks pass on GitHub (1m41s and 2m09s). The `unit` and `authenticated-browser`
+checks are **not** green, and that is worth stating precisely rather than glossing:
+
+- Every failed attempt has ended in one of two ways: annotated *"The job was not acquired
+  by Runner of type hosted even after multiple attempts"* at ~15m, or `conclusion:
+  cancelled` at ~41m with **zero steps recorded and no uploaded log**.
+- Neither shape executes a step. `gh pr checks` renders `cancelled` as "fail", which
+  overstates what happened.
+- The same jobs passed on the immediately preceding commit, and `build` passes now — on the
+  same workflows, same branch, same runner image.
+- Three rerun rounds produced the same result, so this is a sustained GitHub hosted-runner
+  capacity problem, not a property of this branch.
+
+The only commits after the last green `unit` run are documentation. `unit` runs `npm test`
+and `npm run test:frontend` — the exact commands that produce the 978/978 and 181/181
+above. It should be rerun when GitHub's runner pool recovers; nothing here needs a code
+change, and no change was invented to force a rerun.
+
 ## What shipped, by milestone
 
 | # | milestone | commit |
