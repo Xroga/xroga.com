@@ -37,7 +37,7 @@ Run on this branch, on a CRLF Windows checkout:
 
 | gate | result |
 | --- | --- |
-| backend unit tests | **1027 / 1027 pass** |
+| backend unit tests | **1031 / 1031 pass** |
 | frontend unit tests | **181 / 181 pass** |
 | `tsc --noEmit` | clean |
 | `npm run build` | succeeds |
@@ -71,9 +71,9 @@ change was invented to force a rerun.
 (run 31171493322): all nine steps green, and its collection-floor step printed
 `backend=978 frontend=181` — identical to the local numbers at that commit. This confirms
 the earlier `cancelled` results were GitHub capacity, never a property of the branch. No
-code change was needed, and none was made. The backend figure is 1027 on this branch because
-M11 added 21 tests and M12 a further 28; the collection floors are `>=350` and `>=40`, so
-they track collapse rather than an exact count.
+code change was needed, and none was made. The backend figure is 1031 on this branch because
+M11 added 21 tests, M12 a further 28, and the guest-shape fix 4 more; the collection floors
+are `>=350` and `>=40`, so they track collapse rather than an exact count.
 
 ## What shipped, by milestone
 
