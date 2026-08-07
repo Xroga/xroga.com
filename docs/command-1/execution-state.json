@@ -198,6 +198,7 @@
   "honestLimits": [
     "Code in a Fly Machine runs as root: unshare -n requires CAP_SYS_ADMIN and the Machines API exposes no per-exec user, so the container providers’ --user 1000:1000 and --cap-drop ALL have no equivalent here.",
     "The guest root filesystem is writable; there is no --read-only plus tmpfs equivalent. Containment is by disposal rather than by permission.",
-    "Both are why this provider registers behind the container providers rather than in front of them, and why that ordering is pinned by a test."
+    "Resource capping is partial: guest.cpus and memory_mb come from the caller limits, but diskMb and maxProcesses are not enforced because the Machines API has no --tmpfs size= or --pids-limit equivalent. A fork bomb or a disk-filling build is bounded by the machine memory and its deadline, not by the stated limit.",
+    "All three are why this provider registers behind the container providers rather than in front of them, and why that ordering is pinned by a test."
   ]
 }

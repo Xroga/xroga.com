@@ -45,7 +45,11 @@
  *   app that holds no secrets of its own. Yes.
  * - *Unreachable* — no services are declared and no IP is allocated, so nothing can connect
  *   to it. Yes.
- * - *Resource-capped* — memory and CPU are set from the caller's limits. Yes.
+ * - *Resource-capped* — **partly.** `guest.cpus` and `memory_mb` come from the caller's
+ *   limits, snapped to values Fly accepts. But `diskMb` and `maxProcesses` are *not*
+ *   enforced: there is no `--tmpfs size=` or `--pids-limit` equivalent in the Machines API.
+ *   A fork bomb or a disk-filling build is bounded by the machine's own memory and its
+ *   deadline, not by the caller's stated limit.
  * - *Network-denied* — yes, but by a different mechanism than the container providers, and
  *   that difference is worth stating precisely. The Machines API has no `--network none`, so
  *   denial cannot come from the machine's configuration. It comes from inside the guest: a

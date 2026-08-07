@@ -183,13 +183,13 @@ Honest accounting, because overclaiming here would defeat the point:
 | disposable | **yes** | fresh microVM per execution, destroyed after |
 | no secrets | **yes** | separate app with none; caller's scrubbed environment only |
 | no inbound | **yes** | no `services` block, no IP allocated — nothing can connect |
-| resource-capped | **yes** | `guest.cpus` and `memory_mb` from the caller's limits |
+| resource-capped | **partly** | `guest.cpus` and `memory_mb` from the caller's limits; `diskMb` and `maxProcesses` are not enforced (no `--tmpfs size` or `--pids-limit` equivalent) |
 | egress denied | **yes**, for `networkPolicy: 'none'` | the command runs under `unshare -n` |
 | unprivileged | **no** | code runs as root; `unshare -n` needs `CAP_SYS_ADMIN` |
 | read-only root | **no** | the Machines API has no `--read-only` equivalent |
 
-The last two are real gaps against the container providers, which is why this provider
-registers **behind** them rather than in front — and why that ordering is pinned by a test.
+The last two, plus the half-kept resource cap, are real gaps against the container providers,
+which is why this provider registers **behind** them rather than in front — and why that ordering is pinned by a test.
 Containment here is by disposal, not by permission. `registerSandboxProvider` unshifts, so
 registering it the ordinary way would have silently downgraded any environment that *did*
 have Docker; `registerFallbackSandboxProvider` exists for that reason.
