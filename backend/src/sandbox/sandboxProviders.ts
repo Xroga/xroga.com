@@ -21,6 +21,7 @@
 
 import { spawn } from 'child_process';
 import { buildSandboxEnvironment } from './sandboxEnvironment.js';
+import { remoteSandboxFromEnvironment } from './remoteSandbox.js';
 import {
   SandboxUnavailableError,
   type SandboxAvailability,
@@ -264,6 +265,28 @@ export function registerSandboxProvider(runtime: SandboxRuntime): void {
 /** Test seam. Passing `null` restores the real provider list. */
 export function setSandboxProvidersForTesting(runtimes: SandboxRuntime[] | null): void {
   registry = runtimes;
+}
+
+/**
+ * Registers the remote isolation worker if — and only if — one is configured.
+ *
+ * Called once at startup. With no `XROGA_SANDBOX_WORKER_URL` this does nothing at all and
+ * returns null, which is the normal state: the container providers are tried and, failing
+ * those, execution is refused. Nothing here provisions or bills for anything; the presence
+ * of that variable is an operator's deliberate decision.
+ *
+ * Registering does not assert the worker works. It goes to the front of the preference
+ * order and is still probed before every use, so a configured-but-broken worker refuses
+ * rather than executing.
+ */
+export function configureRemoteSandboxProvider(
+  env: NodeJS.ProcessEnv = process.env,
+): SandboxRuntime | null {
+  const remote = remoteSandboxFromEnvironment(env);
+  if (!remote) return null;
+  if (providers().some((p) => p.name === remote.name)) return null;
+  registerSandboxProvider(remote);
+  return remote;
 }
 
 export function listSandboxProviders(): readonly string[] {
