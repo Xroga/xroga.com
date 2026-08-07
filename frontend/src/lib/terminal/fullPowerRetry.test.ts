@@ -17,7 +17,9 @@ import { test } from 'node:test';
  */
 
 function source(relativeUrl: string): string {
-  return readFileSync(new URL(relativeUrl, import.meta.url), 'utf8');
+  // LF-normalised: assertions here search for literals containing `\n`, which never match
+  // on a CRLF checkout.
+  return readFileSync(new URL(relativeUrl, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 }
 
 test('the capacity card is wired into the message log, next to the stopped-build card', () => {

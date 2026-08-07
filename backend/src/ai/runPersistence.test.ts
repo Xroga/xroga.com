@@ -7,7 +7,7 @@ describe('durable swarm run status migration', () => {
     const sql = readFileSync(
       new URL('../../../supabase/migrations/20260802000000_swarm_run_runtime_status.sql', import.meta.url),
       'utf8',
-    );
+    ).replace(/\r\n/g, '\n');
     for (const status of [
       'pending',
       'building',

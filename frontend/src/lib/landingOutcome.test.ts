@@ -67,4 +67,47 @@ describe('deriveLandingOutcome', () => {
     assert.equal(isLegacyFabricatedLiveText('🎉 YOUR PROJECT IS LIVE!'), true);
     assert.equal(isLegacyFabricatedLiveText('Shipped Project'), false);
   });
+
+  it('does not read a missing build claim as a passing build', () => {
+    // The pre-QA preview no longer sends `buildOk`, because at that point nothing has
+    // compiled. The old `output.buildOk !== false` turned that absence into a pass.
+    const view = deriveLandingOutcome(
+      { githubRepoName: 'Xroga/defi-test', githubPushConfirmed: false },
+      { projectName: 'DeFi dashboard', isUpdate: false },
+    );
+    assert.doesNotMatch(view.headline, /preview ready · not shipped/i);
+  });
+
+  it('separates "not checked yet" from "the checks failed"', () => {
+    const unverified = deriveLandingOutcome(
+      { verificationState: 'generated_unverified', githubPushConfirmed: false },
+      { projectName: 'DeFi dashboard', isUpdate: false },
+    );
+    assert.equal(unverified.headline, 'DeFi dashboard preview ready · not verified');
+    assert.match(unverified.completionNote, /nothing has been installed, compiled or tested/i);
+    assert.match(unverified.terminalLine, /checks not run yet/i);
+    assert.equal(unverified.fullyShipped, false);
+
+    const failed = deriveLandingOutcome(
+      { buildOk: false, shipBlockers: ['Compile failed'] },
+      { projectName: 'DeFi dashboard', isUpdate: false },
+    );
+    assert.match(failed.headline, /needs attention/i);
+    assert.equal(failed.workspaceStatus, 'degraded');
+  });
+
+  it('never lets an unverified generated state claim a ship', () => {
+    const view = deriveLandingOutcome(
+      {
+        verificationState: 'generated_unverified',
+        fullyShipped: true,
+        deployUrl: 'https://defi-test.vercel.app',
+      },
+      { projectName: 'DeFi dashboard', isUpdate: false },
+    );
+    // fullyShipped needs a confirmed push and a verified deploy, neither of which exist.
+    assert.equal(view.fullyShipped, false);
+    assert.notEqual(view.workspaceStatus, 'live');
+    assert.doesNotMatch(view.terminalLine, /verified live/i);
+  });
 });

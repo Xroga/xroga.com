@@ -4,11 +4,17 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '../../..');
-const migration = readFileSync(resolve(root, 'supabase/migrations/20260727071619_command3c_growth_runtime.sql'), 'utf8');
-const workflow = readFileSync(resolve(root, '.github/workflows/command3-auth-browser.yml'), 'utf8');
-const browserTest = readFileSync(resolve(root, 'frontend/e2e/command3-auth.spec.ts'), 'utf8');
-const config = readFileSync(resolve(root, 'frontend/src/lib/supabase/config.ts'), 'utf8');
-const sitemap = readFileSync(resolve(root, 'frontend/src/app/sitemap.ts'), 'utf8');
+
+/** LF-normalised: these assertions match file text, and a CRLF checkout must not change the answer. */
+function readText(relativePath: string): string {
+  return readFileSync(resolve(root, relativePath), 'utf8').replace(/\r\n/g, '\n');
+}
+
+const migration = readText('supabase/migrations/20260727071619_command3c_growth_runtime.sql');
+const workflow = readText('.github/workflows/command3-auth-browser.yml');
+const browserTest = readText('frontend/e2e/command3-auth.spec.ts');
+const config = readText('frontend/src/lib/supabase/config.ts');
+const sitemap = readText('frontend/src/app/sitemap.ts');
 
 test('existing analytics_events is evolved instead of replaced', () => {
   assert.match(migration, /ALTER TABLE public\.analytics_events/);

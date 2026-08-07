@@ -13,7 +13,18 @@ export interface LandingPageOutputData {
   fullyShipped?: boolean;
   /** Non-web free-path artifact/source ready — not store published */
   handoffReady?: boolean;
+  /**
+   * Absent until something has actually compiled. Read it as "a build was claimed", never
+   * as "no claim means it passed" — see `landingOutcome.ts`.
+   */
   buildOk?: boolean;
+  /**
+   * Where this run sits in the canonical verification lifecycle
+   * (`frontend/src/lib/verificationLifecycle.ts`). The pre-QA preview carries
+   * `generated_unverified`; nothing may present that as verified, shipped or deployed.
+   */
+  verificationState?: string;
+  verificationDetail?: string;
   shipped?: boolean;
   nextSteps?: string[];
   scaffoldKind?: string;

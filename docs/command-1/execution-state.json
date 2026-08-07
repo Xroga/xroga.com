@@ -1,0 +1,171 @@
+{
+  "command": "command-1",
+  "branch": "agent/complete-command-1-runtime",
+  "baseCommit": "0997a0450f4354e4b52c0d49f08359a999254a95",
+  "phase": "implementation_complete_external_blocker_open",
+  "status": "command_1_implementation_complete_not_verified",
+  "milestones": [
+    {
+      "id": "M1",
+      "title": "Audit and requirements ledger",
+      "state": "completed",
+      "artefacts": [
+        "docs/command-1/requirements-ledger.json",
+        "docs/command-1/execution-state.json",
+        "docs/command-1/audit.md"
+      ],
+      "commit": "a678d96 docs(command-1): audit the current runtime and record the requirements ledger"
+    },
+    {
+      "id": "M2",
+      "title": "Repository tool suite and on-demand context (section 5)",
+      "state": "completed",
+      "requirements": [
+        "R5.1",
+        "R5.2",
+        "R5.3",
+        "R5.4",
+        "R2.11"
+      ],
+      "commit": "1c16879 feat(agent): on-demand repository tool suite"
+    },
+    {
+      "id": "M3",
+      "title": "Transactional patch workspace (section 6)",
+      "state": "completed",
+      "requirements": [
+        "R6.1",
+        "R6.2",
+        "R2.7"
+      ],
+      "commit": "7608713 feat(agent): transactional patch workspace pinned to a source commit"
+    },
+    {
+      "id": "M4",
+      "title": "Canonical verification lifecycle (section 9)",
+      "state": "completed",
+      "requirements": [
+        "R9.1",
+        "R9.2",
+        "R2.15",
+        "R2.16"
+      ],
+      "commit": "70c2b26 feat(command-1): make the verification lifecycle the single source of truth"
+    },
+    {
+      "id": "M5",
+      "title": "Fail-closed reviewer and review scope (section 10)",
+      "state": "completed",
+      "requirements": [
+        "R10.1",
+        "R10.2",
+        "R10.3",
+        "R2.9"
+      ],
+      "commit": "efcd91f feat(M5): fail-closed reviewer with complete review scope"
+    },
+    {
+      "id": "M6",
+      "title": "Iterative task graph, resume, black-box fixture (sections 2 and 4)",
+      "state": "completed",
+      "requirements": [
+        "R2.2",
+        "R2.4",
+        "R2.5",
+        "R2.12",
+        "R4.1",
+        "R4.2",
+        "R4.3"
+      ],
+      "commit": "ef0d627 feat(M6): persisted task graph with exact restart recovery"
+    },
+    {
+      "id": "M7",
+      "title": "Sandbox provider architecture and isolation tests (section 7)",
+      "state": "completed",
+      "requirements": [
+        "R7.2",
+        "R7.4",
+        "R7.5"
+      ],
+      "commit": "19645e9 feat(M7): provider-neutral isolation with a self-explaining refusal"
+    },
+    {
+      "id": "M8",
+      "title": "Final evidence record and intent reasoning (sections 8 and 11)",
+      "state": "completed",
+      "requirements": [
+        "R8.1",
+        "R8.2",
+        "R11.1",
+        "R2.17"
+      ],
+      "commit": "1cf97ef feat(M8): outcome-first intent and claim-gated evidence"
+    },
+    {
+      "id": "M9",
+      "title": "Regression tests for merged P0 repairs and cross-platform line endings (sections 3 and 13)",
+      "state": "completed",
+      "requirements": [
+        "R3.E",
+        "R7.5",
+        "R13.1"
+      ],
+      "commit": "43c6918 test(M9): pin the merged P0 invariants at the boundary"
+    },
+    {
+      "id": "M10",
+      "title": "Full gate, push, draft pull request, completion document (section 14)",
+      "state": "completed",
+      "requirements": [],
+      "commit": "1d27385 docs(M10): close the Command 1 ledger against what shipped"
+    }
+  ],
+  "classificationCounts": {
+    "verified_complete": 17,
+    "partially_complete": 18,
+    "missing": 7,
+    "broken": 4,
+    "external_blocker": 2,
+    "not_applicable": 0
+  },
+  "externalBlockers": [
+    {
+      "requirementId": "R7.6",
+      "alsoBlocks": "R2.13",
+      "resource": "A dedicated isolated execution worker — a separate Fly.io application or machine pool that can run a container runtime, distinct from the xroga-api app.",
+      "purpose": "Section 7 requires generated code to execute in a disposable, network-denied, unprivileged sandbox. The API host has no nested container runtime, so provider selection always returns unavailable in production and every executable validation refuses — which is the designed behaviour, not a gap.",
+      "ownerApprovalRequired": true,
+      "createdAutomatically": false,
+      "whyNotCreated": "Creating it is a new billable Fly resource, which is outside the approved budget. Per the standing instruction, all code, config, tests and documentation were completed instead and the requirement is marked external_blocker.",
+      "workCompletedAgainstIt": "M7 shipped the provider-neutral registry (sandboxProviders.ts): preference ordering, a probe before every use, a hosted-provider seam, the full isolation flag set, and refusals that name every provider tried. 38 sandbox tests pass. Registering a worker is a call to registerSandboxProvider — no further code is required.",
+      "consequence": "Command 1 cannot be reported as command_1_verified while this remains open."
+    }
+  ],
+  "nextFile": null,
+  "nextAction": "Owner decision required: approve a dedicated isolated-execution worker (a new paid Fly app or machine pool) to close R7.6 and R2.13. Once it exists, register it with registerSandboxProvider, rerun the suite, then merge PR 461 and deploy. No further implementation work is outstanding.",
+  "verification": {
+    "backendTests": "978/978 pass",
+    "frontendTests": "181/181 pass",
+    "typecheck": "tsc --noEmit clean",
+    "productionBuild": "npm run build succeeds",
+    "platform": "verified on a CRLF Windows checkout, so the section 13 line-ending failures are genuinely fixed"
+  },
+  "requirementCounts": {
+    "complete": 38,
+    "preserved": 11,
+    "external_blocker": 2,
+    "total": 51
+  },
+  "pullRequest": {
+    "number": 461,
+    "url": "https://github.com/Xroga/xroga.com/pull/461",
+    "draft": true,
+    "merged": false,
+    "reason": "Left as a draft and not merged. The merge gate is command_1_verified, which this file defines as unreachable while R7.6 is open. Merging would assert a verification that has not happened."
+  },
+  "deployment": {
+    "attempted": false,
+    "reason": "Deployment follows merge, and the merge gate is not met. The backend build and the full test suite pass, so nothing here is blocked on code."
+  }
+}

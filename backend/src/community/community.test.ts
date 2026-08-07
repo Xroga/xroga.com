@@ -9,8 +9,13 @@ import {
 } from './schemas.js';
 import { canPermanentlyDelete, canUseOfficialIdentity, isCommunityStaff } from './types.js';
 
-const migration = readFileSync(new URL('../../../supabase/migrations/20260729192159_community_platform.sql', import.meta.url), 'utf8');
-const publicReadPolicyMigration = readFileSync(new URL('../../../supabase/migrations/20260730020500_community_split_public_read_policies.sql', import.meta.url), 'utf8');
+/** LF-normalised: these assertions match SQL text, and a CRLF checkout must not change the answer. */
+function readSql(url: URL): string {
+  return readFileSync(url, 'utf8').replace(/\r\n/g, '\n');
+}
+
+const migration = readSql(new URL('../../../supabase/migrations/20260729192159_community_platform.sql', import.meta.url));
+const publicReadPolicyMigration = readSql(new URL('../../../supabase/migrations/20260730020500_community_split_public_read_policies.sql', import.meta.url));
 
 test('community post validation enforces category and content bounds', () => {
   assert.equal(createCommunityPostSchema.safeParse({ category: 'bug', title: 'Valid title', body: 'A reproducible bug report.' }).success, true);
