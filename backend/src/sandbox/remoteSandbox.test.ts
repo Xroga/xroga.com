@@ -155,6 +155,20 @@ describe('an unreadable worker reply is never a success', () => {
     assert.equal(readWorkerResult('done'), null);
   });
 
+  it('keeps the tail of oversized output, where a build failure prints its reason', () => {
+    const parsed = readWorkerResult({
+      exitCode: 1,
+      stdout: 'x'.repeat(50_000),
+      stderr: `${'noise\n'.repeat(20_000)}error TS2345: the line that matters`,
+      timedOut: false,
+      killedForLimit: false,
+      durationMs: 5,
+    });
+    assert.ok(parsed);
+    assert.equal(parsed.stdout.length, 40_000);
+    assert.match(parsed.stderr, /error TS2345: the line that matters$/);
+  });
+
   it('accepts a null exitCode, because a signalled process has none', () => {
     const parsed = readWorkerResult({
       exitCode: null,

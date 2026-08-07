@@ -26,7 +26,7 @@ Run on this branch, on a CRLF Windows checkout:
 
 | gate | result |
 | --- | --- |
-| backend unit tests | **995 / 995 pass** |
+| backend unit tests | **996 / 996 pass** |
 | frontend unit tests | **181 / 181 pass** |
 | `tsc --noEmit` | clean |
 | `npm run build` | succeeds |
@@ -60,8 +60,8 @@ change was invented to force a rerun.
 (run 31171493322): all nine steps green, and its collection-floor step printed
 `backend=978 frontend=181` — identical to the local numbers at that commit. This confirms
 the earlier `cancelled` results were GitHub capacity, never a property of the branch. No
-code change was needed, and none was made. The backend figure is 995 on this branch because
-M11 added 17 tests; the collection floors are `>=350` and `>=40`, so they track collapse
+code change was needed, and none was made. The backend figure is 996 on this branch because
+M11 added 18 tests; the collection floors are `>=350` and `>=40`, so they track collapse
 rather than an exact count.
 
 ## What shipped, by milestone
@@ -164,7 +164,7 @@ refused. They run against a stub worker that records exactly what crossed the wi
 A stub is not a provisioned worker, and it is worth being precise about the boundary: these
 tests verify the half that is ours — that the API sends no secret, forwards the policy, and
 never launders an unreadable reply into a pass. Whether a real worker actually denies the
-network is R7.6, and that still needs the paid resource. 55 sandbox tests pass.
+network is R7.6, and that still needs the paid resource. 56 sandbox tests pass.
 
 Attaching a worker once it exists is now configuration, not code: set the URL, optionally a
 token, restart.

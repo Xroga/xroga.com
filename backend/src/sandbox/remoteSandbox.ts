@@ -58,10 +58,16 @@ export interface RemoteSandboxOptions {
   fetchImpl?: typeof fetch;
 }
 
-/** Truncates from the end, matching the container providers' capture bound. */
+/**
+ * Bounds captured output, keeping the tail.
+ *
+ * The tail rather than the head, matching the container providers: a build that fails
+ * prints the reason at the end, so truncating from the front would discard exactly the
+ * lines a reviewer needs and keep the banner.
+ */
 function capture(value: unknown): string {
   if (typeof value !== 'string') return '';
-  return value.length > MAX_CAPTURE_BYTES ? value.slice(0, MAX_CAPTURE_BYTES) : value;
+  return value.length > MAX_CAPTURE_BYTES ? value.slice(-MAX_CAPTURE_BYTES) : value;
 }
 
 /**
