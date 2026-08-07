@@ -145,6 +145,35 @@ describe('R2.13: network policy reaches the worker intact', () => {
     assert.equal(isAcceptableWorkerUrl('ftp://worker.example'), false);
     assert.equal(isAcceptableWorkerUrl('not a url'), false);
   });
+
+  it('refuses a URL carrying credentials, which would print in error messages', () => {
+    // Not stripped and accepted — refused. The URL is interpolated into transport error
+    // text, so a failed connection to this would print the password.
+    assert.equal(isAcceptableWorkerUrl('https://user:pass@worker.example'), false);
+    assert.equal(isAcceptableWorkerUrl('https://token@worker.example'), false);
+  });
+});
+
+describe('a worker explains itself but does not choose how much it says', () => {
+  it('bounds a worker-supplied detail before it reaches a refusal message', () => {
+    const availability = readWorkerProbe({ ready: false, detail: 'z'.repeat(5_000) }, 'w');
+    assert.equal(availability.available, false);
+    assert.ok(
+      (availability.detail ?? '').length <= 501,
+      `detail was ${availability.detail?.length} chars; an unbounded worker string should not reach a log`,
+    );
+  });
+
+  it('falls back to its own wording when the worker sends a useless detail', () => {
+    assert.match(
+      readWorkerProbe({ ready: false, detail: '   ' }, 'w').detail ?? '',
+      /did not report ready:true/,
+    );
+    assert.match(
+      readWorkerProbe({ ready: false, detail: 42 }, 'w').detail ?? '',
+      /did not report ready:true/,
+    );
+  });
 });
 
 describe('an unreadable worker reply is never a success', () => {

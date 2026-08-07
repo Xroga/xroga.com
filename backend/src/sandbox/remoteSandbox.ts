@@ -71,10 +71,16 @@ function capture(value: unknown): string {
 }
 
 /**
- * Rejects a worker URL that would put generated code on the wire in plaintext.
+ * Rejects a worker URL that would put generated code on the wire in plaintext, or that
+ * carries credentials in the URL itself.
  *
  * Loopback is allowed so the worker contract can be exercised locally without a
  * certificate. Anything else must be HTTPS.
+ *
+ * Embedded credentials (`https://user:pass@host`) are refused rather than accepted and
+ * stripped: fetch would send them in a way this module does not control, and — worse — the
+ * URL is interpolated into transport error messages, so a failed connection would print the
+ * password. The token belongs in `XROGA_SANDBOX_WORKER_TOKEN`, where it stays in a header.
  */
 export function isAcceptableWorkerUrl(raw: string): boolean {
   let parsed: URL;
@@ -83,6 +89,7 @@ export function isAcceptableWorkerUrl(raw: string): boolean {
   } catch {
     return false;
   }
+  if (parsed.username || parsed.password) return false;
   if (parsed.protocol === 'https:') return true;
   if (parsed.protocol !== 'http:') return false;
   const host = parsed.hostname;
@@ -120,6 +127,15 @@ export function readWorkerResult(body: unknown): SandboxExecutionResult | null {
   };
 }
 
+/** Bound on a worker-supplied explanation before it reaches a log or a refusal message. */
+const MAX_DETAIL_CHARS = 500;
+
+/** Trusts the worker to explain itself, but not to choose how much it says. */
+function detailFrom(value: unknown, fallback: string): string {
+  if (typeof value !== 'string' || !value.trim()) return fallback;
+  return value.length > MAX_DETAIL_CHARS ? `${value.slice(0, MAX_DETAIL_CHARS)}…` : value;
+}
+
 /**
  * Reads a worker's probe reply.
  *
@@ -138,11 +154,15 @@ export function readWorkerProbe(body: unknown, name: string): SandboxAvailabilit
   }
   const b = body as Record<string, unknown>;
   if (b.ready !== true) {
-    const detail =
-      typeof b.detail === 'string'
-        ? b.detail
-        : 'Worker did not report ready:true, so it was treated as unavailable.';
-    return { available: false, runtime: name, reason: 'runtime_unhealthy', detail };
+    return {
+      available: false,
+      runtime: name,
+      reason: 'runtime_unhealthy',
+      detail: detailFrom(
+        b.detail,
+        'Worker did not report ready:true, so it was treated as unavailable.',
+      ),
+    };
   }
   // A worker that cannot deny the network cannot satisfy the isolation requirement, so it
   // is refused even though it is reachable and willing.
