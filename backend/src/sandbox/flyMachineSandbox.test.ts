@@ -15,7 +15,14 @@
  * **What a stub cannot tell you.** These run against a recorded fetch, so they pin the
  * request this module *sends*; they cannot confirm Fly accepts it or that the guest behaves.
  * That half was checked separately against real machines in `xroga-sandbox`, each destroyed
- * after, and it found two things no stub would have:
+ * after, and it found three things no stub would have — the third only after deploy, which is
+ * the honest lesson of this file: a stub that replays the module's own arithmetic agrees with
+ * itself, so the values a *remote* API validates have to be checked against that API.
+ *
+ * - `guest.cpus` must be one of `[1 2 4 6 8]`. The default 300 cpuSeconds / 60 gives 5, so
+ *   every default-limits create was rejected with HTTP 400 in production. Pinned by "never
+ *   asks for a CPU count Fly rejects" and "rejects the exact default that failed in
+ *   production".
  *
  * - `mkdir -p /work` is required. A bare `cd /work` failed with exit 2 whenever no request
  *   file happened to create that directory. Pinned by "creates /work before entering it".
@@ -34,9 +41,11 @@ import { describe, it, afterEach } from 'node:test';
 
 import {
   FlyMachineSandboxRuntime,
+  allowedCpuCount,
   buildExecCommand,
   flyMachineSandboxFromEnvironment,
   readExecExitCode,
+  roundedMemoryMb,
 } from './flyMachineSandbox.js';
 import {
   configureFlyMachineSandboxProvider,
@@ -396,10 +405,70 @@ describe('configuration is opt-in and costs nothing until set', () => {
     assert.deepEqual(after.slice(0, before.length), before, 'existing order must be untouched');
   });
 
-  it('rounds memory to a multiple of 256, which Fly requires', () => {
+  it('rounds memory up to what Fly requires for the CPU count', () => {
+    // 300 MB is below the floor for the 4 CPUs the default limits produce, so it is raised
+    // rather than merely rounded. This expectation used to read 512, which is what a
+    // multiple-of-256 rule alone gives — and Fly rejects it:
+    //   CPUS=4 MEM=512 → 400 {"error":"invalid config.guest.memory_mb, minimum required 1024 MiB"}
     const config = runtime(stubFly().fetchImpl).buildMachineConfig(
       request({ limits: { ...DEFAULT_SANDBOX_LIMITS, memoryMb: 300 } }),
-    ) as { config: { guest: { memory_mb: number } } };
-    assert.equal(config.config.guest.memory_mb, 512);
+    ) as { config: { guest: { cpus: number; memory_mb: number } } };
+    assert.equal(config.config.guest.cpus, 4);
+    assert.equal(config.config.guest.memory_mb, 1024);
+  });
+});
+
+describe('the guest shape is one Fly will actually accept', () => {
+  // Regression, and the most expensive kind: this one shipped. Selection worked, the probe
+  // passed, and then every create was rejected with
+  //   {"error":"invalid config.guest.cpus, must be one of [1 2 4 6 8]"}
+  // because the default 300 cpuSeconds / 60 gives 5. Found by running the deployed module in
+  // production, not by any stub — a stub replaying this module's own arithmetic agrees with
+  // itself. The refusal was at least safe: exitCode null and "nothing was executed".
+  it('never asks for a CPU count Fly rejects, at any limit', () => {
+    for (let cpuSeconds = 0; cpuSeconds <= 900; cpuSeconds += 15) {
+      const config = runtime(stubFly().fetchImpl).buildMachineConfig(
+        request({ limits: { ...DEFAULT_SANDBOX_LIMITS, cpuSeconds } }),
+      ) as { config: { guest: { cpus: number } } };
+      assert.ok(
+        [1, 2, 4, 6, 8].includes(config.config.guest.cpus),
+        `cpuSeconds ${cpuSeconds} produced cpus ${config.config.guest.cpus}`,
+      );
+    }
+  });
+
+  it('rejects the exact default that failed in production', () => {
+    assert.equal(DEFAULT_SANDBOX_LIMITS.cpuSeconds / 60, 5, 'the default that produced HTTP 400');
+    const config = runtime(stubFly().fetchImpl).buildMachineConfig(request()) as {
+      config: { guest: { cpus: number } };
+    };
+    assert.equal(config.config.guest.cpus, 4, '5 must snap down to 4, not stay 5');
+  });
+
+  it('snaps down rather than up, so a build never exceeds its own limit', () => {
+    assert.equal(allowedCpuCount(5), 4);
+    assert.equal(allowedCpuCount(7), 6);
+    assert.equal(allowedCpuCount(3), 2);
+    assert.equal(allowedCpuCount(9), 8, 'above the largest, take the largest');
+    assert.equal(allowedCpuCount(0), 1, 'below the smallest, 1 is the floor');
+    assert.equal(allowedCpuCount(0.5), 1);
+    assert.equal(allowedCpuCount(Number.NaN), 1, 'a bad number must not become a bad request');
+  });
+
+  it('keeps memory inside the per-CPU band Fly enforces', () => {
+    // 2048 MB per CPU is the shared-guest ceiling, 256 the floor. A caller that raised
+    // memoryMb without raising cpuSeconds would otherwise build an over-ceiling request.
+    assert.equal(roundedMemoryMb(8192, 1), 2048, 'one CPU cannot hold 8 GB');
+    assert.equal(roundedMemoryMb(8192, 4), 8192);
+    assert.equal(roundedMemoryMb(64, 1), 256, 'below the floor, take the floor');
+    assert.equal(roundedMemoryMb(300, 1), 512, 'still a multiple of 256');
+    assert.equal(roundedMemoryMb(Number.NaN, 2), 512, 'a bad number falls to the floor');
+    for (let mb = 0; mb <= 20_000; mb += 137) {
+      for (const cpus of [1, 2, 4, 6, 8]) {
+        const value = roundedMemoryMb(mb, cpus);
+        assert.equal(value % 256, 0, `memory ${value} is not a multiple of 256`);
+        assert.ok(value >= 256 * cpus && value <= 2048 * cpus, `memory ${value} outside band`);
+      }
+    }
   });
 });
