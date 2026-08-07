@@ -31,7 +31,14 @@
  * **What this does and does not isolate.** Honest accounting, because overclaiming here
  * would defeat the point. Every "yes" below was measured against a real machine in
  * `xroga-sandbox`, not reasoned about — the checks are in the test file's comments and the
- * two that failed on first attempt are recorded as regressions.
+ * three that failed on first attempt are recorded as regressions.
+ *
+ * The third is worth naming here rather than only in the tests, because it was found in
+ * production after deploy: `guest.cpus` must be one of `[1 2 4 6 8]`, and the default limit
+ * of 300 cpuSeconds divided by 60 gives **5**, so every default-limits execution was rejected
+ * with HTTP 400 before `allowedCpuCount` snapped it. The refusal was safe — `exitCode: null`,
+ * "nothing was executed", never a false pass — but nothing ran. A stub that replays this
+ * module's own arithmetic cannot catch a value the *remote* API rejects.
  *
  * - *Disposable* — a fresh microVM per execution, destroyed after. Yes.
  * - *No secrets* — the machine gets only the caller's already-scrubbed environment, in an
@@ -99,10 +106,62 @@ const DEFAULT_IMAGE = 'registry-1.docker.io/library/node:20-alpine';
  */
 const MACHINE_LIFETIME_GRACE_MS = 60_000;
 
-/** Fly rejects a create whose memory is not a multiple of 256 MB. */
-function roundedMemoryMb(requested: number): number {
-  const clamped = Math.max(256, Math.min(requested, 8192));
-  return Math.ceil(clamped / 256) * 256;
+/**
+ * The only CPU counts Fly accepts. Anything else is rejected with HTTP 400.
+ *
+ * Worth stating because the obvious arithmetic lands outside this set: the default limit of
+ * 300 cpuSeconds divided by 60 gives 5, which is not a valid count, so *every* execution at
+ * default limits failed to create a machine until this snapped. The stub tests could not see
+ * it — they asserted the number this module computes, not the number Fly will take.
+ */
+const ALLOWED_CPUS = [1, 2, 4, 6, 8] as const;
+
+/** Fly rejects any guest whose memory is not a multiple of 256 MB. */
+const MEMORY_STEP_MB = 256;
+
+/**
+ * Per-CPU memory band for shared guests. Outside it, Fly rejects the create.
+ *
+ * Measured, not guessed. Against the real API:
+ *   cpus 4, 512 MB  → 400 "invalid config.guest.memory_mb, minimum required 1024 MiB"
+ *   cpus 1, 4096 MB → 400 "invalid config.guest.memory_mb, cannot exceed 2048 MiB"
+ *   cpus 4, 1024 MB / cpus 1, 2048 MB / cpus 2, 512 MB / cpus 8, 2048 MB → created
+ */
+const MIN_MEMORY_PER_CPU_MB = 256;
+const MAX_MEMORY_PER_CPU_MB = 2048;
+
+/**
+ * Snaps a requested CPU count *down* to one Fly accepts.
+ *
+ * Down rather than to-nearest deliberately. The caller's number is a ceiling on what the
+ * sandbox may consume, so rounding up would hand a build more CPU than its limits allowed —
+ * and on Fly that also means billing more than the limit implied. Below the smallest legal
+ * value there is nothing to round down to, so 1 is the floor.
+ */
+export function allowedCpuCount(requested: number): number {
+  const wanted = Number.isFinite(requested) ? Math.floor(requested) : 1;
+  let chosen: number = ALLOWED_CPUS[0];
+  for (const candidate of ALLOWED_CPUS) {
+    if (candidate <= wanted) chosen = candidate;
+  }
+  return chosen;
+}
+
+/**
+ * Rounds memory to something Fly will accept for the given CPU count.
+ *
+ * Two constraints at once: a multiple of 256 MB, and within the shared-guest band of
+ * 256–2048 MB *per CPU*. The band is why this takes `cpus` — 2048 MB is fine on four CPUs
+ * and fine on one, but 8192 MB on one CPU is rejected, and a caller raising `memoryMb`
+ * without raising `cpuSeconds` would otherwise produce exactly that.
+ */
+export function roundedMemoryMb(requested: number, cpus: number): number {
+  const floor = MIN_MEMORY_PER_CPU_MB * cpus;
+  const ceiling = MAX_MEMORY_PER_CPU_MB * cpus;
+  const clamped = Math.max(floor, Math.min(Number.isFinite(requested) ? requested : floor, ceiling));
+  const rounded = Math.ceil(clamped / MEMORY_STEP_MB) * MEMORY_STEP_MB;
+  // Rounding up can cross the ceiling when the ceiling is itself not on a 256 boundary.
+  return Math.min(rounded, Math.floor(ceiling / MEMORY_STEP_MB) * MEMORY_STEP_MB);
 }
 
 function capture(value: unknown): string {
@@ -269,6 +328,7 @@ export class FlyMachineSandboxRuntime implements SandboxRuntime {
     const lifetimeSeconds = Math.ceil(
       (request.timeoutMs + MACHINE_LIFETIME_GRACE_MS) / 1000,
     );
+    const cpus = allowedCpuCount(request.limits.cpuSeconds / 60);
 
     return {
       region: this.region,
@@ -284,8 +344,8 @@ export class FlyMachineSandboxRuntime implements SandboxRuntime {
         restart: { policy: 'no' },
         guest: {
           cpu_kind: 'shared',
-          cpus: Math.max(1, Math.min(8, Math.floor(request.limits.cpuSeconds / 60) || 1)),
-          memory_mb: roundedMemoryMb(request.limits.memoryMb),
+          cpus,
+          memory_mb: roundedMemoryMb(request.limits.memoryMb, cpus),
         },
         // Exactly the caller's environment. `process.env` is never read here, and the app
         // itself holds no secrets, so there is nothing for a compromised build to find.
