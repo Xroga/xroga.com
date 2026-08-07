@@ -142,6 +142,18 @@
       ],
       "commit": "eaaaf21 feat: close R7.6 and R2.13 with a disposable Fly Machine sandbox",
       "pullRequest": 465
+    },
+    {
+      "id": "M13",
+      "title": "Guest shape Fly accepts, and proof on the deployed artefact (section 7)",
+      "state": "completed",
+      "requirements": [
+        "R7.6",
+        "R2.13"
+      ],
+      "commit": "e7a37fb fix: send a guest shape Fly will accept",
+      "pullRequest": 466,
+      "note": "The M12 deploy registered the provider but could not create a machine: default cpuSeconds 300 / 60 gives 5 and Fly accepts only [1 2 4 6 8]. Fixed by snapping down to a legal count and taking the CPU count into the per-CPU memory band. Merged as 7dc911b and re-verified against the compiled module on the production host at DEFAULT_SANDBOX_LIMITS."
     }
   ],
   "classificationCounts": {
@@ -154,7 +166,7 @@
   },
   "externalBlockers": [],
   "nextFile": null,
-  "nextAction": "None. All 51 requirements are complete or preserved and no external blocker remains. Production secrets XROGA_SANDBOX_FLY_APP and XROGA_SANDBOX_FLY_TOKEN are staged on xroga-api and take effect on the next deploy, which the merge triggers.",
+  "nextAction": "None. R7.6 and R2.13 are closed against the deployed artefact, not only against stubs. The runtime executes generated code in a disposable microVM and refuses rather than degrading when it cannot.",
   "verification": {
     "backendTests": "1031/1031 pass",
     "frontendTests": "181/181 pass",
@@ -163,7 +175,8 @@
     "platform": "verified on a CRLF Windows checkout, so the section 13 line-ending failures are genuinely fixed",
     "liveSandbox": "Verified against real machines in xroga-sandbox, each destroyed after: create, wait for started, exec and force-delete all behave as the provider assumes; base64 file injection lands at the requested guest path; the exec reply field is exit_code; egress denial proven with a control (registry.npmjs.org reachable without the unshare wrapper, denied with it); and an argument containing a shell metacharacter was echoed as literal data with no injected file created. End-to-end after the guest-shape fix: cpus=4 memory_mb=1024 created, ran to exit 0, denied egress, and was destroyed.",
     "leakCheck": "xroga-sandbox confirmed to hold no machines, no IP and no secrets after every verification run.",
-    "postDeployDefect": "The first deploy registered the provider but every create was rejected with HTTP 400 invalid config.guest.cpus, because the default 300 cpuSeconds / 60 gives 5 and Fly accepts only [1 2 4 6 8]. Stub tests could not catch it — they replay this module own arithmetic — so it was found by running the deployed module from the production host. Fixed in PR #466 (allowedCpuCount snaps down; roundedMemoryMb takes the CPU count for the 256-2048 MB per-CPU band). The failure was fail-closed throughout: exitCode null and nothing was executed, never a false pass."
+    "postDeployDefect": "The first deploy registered the provider but every create was rejected with HTTP 400 invalid config.guest.cpus, because the default 300 cpuSeconds / 60 gives 5 and Fly accepts only [1 2 4 6 8]. Stub tests could not catch it — they replay this module own arithmetic — so it was found by running the deployed module from the production host. Fixed in PR #466 (allowedCpuCount snaps down; roundedMemoryMb takes the CPU count for the 256-2048 MB per-CPU band). The failure was fail-closed throughout: exitCode null and nothing was executed, never a false pass. Merged as 7dc911b; deploy run 31207648513 succeeded and /health reports that release.",
+    "deployedArtefactCheck": "Ran /app/dist/sandbox/flyMachineSandbox.js on the xroga-api host at DEFAULT_SANDBOX_LIMITS, which is what compileValidate actually sends because runCmd passes no limits: provider fly-machine available with networkIsolation true; cpuSeconds 300 and memoryMb 2048 computed cpus=4 memory_mb=2048, both legal; execution exited 0 with the injected /work/marker.txt readable; networkPolicy none gave EGRESS_DENIED while networkPolicy registry-only gave EGRESS_ALLOWED through the same code path, so the denial is unshare -n rather than absent connectivity; 0 machines remaining. id -u printed 0, the documented root limitation appearing exactly where the table says it will."
   },
   "requirementCounts": {
     "complete": 40,

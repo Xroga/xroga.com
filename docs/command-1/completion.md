@@ -235,6 +235,31 @@ destroyed after, and doing so found two real bugs the stub suite could not have 
 
 `xroga-sandbox` was confirmed to hold no machines, no IP and no secrets after every run.
 
+### Confirmed on the deployed artefact, at the caller's real limits
+
+The fix above was proven by hand before it merged. That is not the same as proving the thing
+production actually loads, so after PR #466 deployed as `7dc911b` the check was repeated
+against `/app/dist/sandbox/flyMachineSandbox.js` on the running API host — the compiled
+module, not a copy — using `DEFAULT_SANDBOX_LIMITS` verbatim, because `compileValidate.runCmd`
+passes no `limits` and therefore every real validation command uses exactly those:
+
+| check | result |
+| --- | --- |
+| provider registered and probed | `fly-machine`, available, `networkIsolation: true` |
+| guest shape at default limits | `cpuSeconds 300, memoryMb 2048` → `cpus=4, memory_mb=2048` — both legal |
+| execution | exit **0**, injected `/work/marker.txt` readable by the command |
+| `networkPolicy: 'none'` | `EGRESS_DENIED` |
+| `networkPolicy: 'registry-only'` | `EGRESS_ALLOWED` |
+| machines left behind | **0** |
+
+The `registry-only` row is the one that makes the `none` row mean anything. A denial proves
+nothing on its own — a machine with no working network at all would produce the identical
+`EGRESS_DENIED`. The control reaches the same host through the same code path and succeeds,
+so the denial is `unshare -n` doing its job rather than an absence of connectivity.
+
+`id -u` printed `0` in that run, which is the root limitation recorded above showing up
+exactly where the table says it will.
+
 ### The remote-worker provider is still there, and still optional
 
 M11's `remoteSandbox.ts` remains as a first-preference provider for anyone who *does* want a
