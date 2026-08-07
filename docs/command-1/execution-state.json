@@ -1,6 +1,8 @@
 {
   "command": "command-1",
   "branch": "agent/complete-command-1-runtime",
+  "laterBranch": "agent/hosted-sandbox-worker",
+  "branchNote": "M1-M10 shipped on agent/complete-command-1-runtime (PR #461, merged as cd01938). M11 and M12 shipped on agent/hosted-sandbox-worker (M11 as f5705a2; M12 as eaaaf21, PR #465).",
   "baseCommit": "0997a0450f4354e4b52c0d49f08359a999254a95",
   "phase": "complete",
   "status": "command_1_verified",
@@ -121,6 +123,16 @@
       "commit": "1d27385 docs(M10): close the Command 1 ledger against what shipped"
     },
     {
+      "id": "M11",
+      "title": "Hosted isolation worker client and R2.13's two named tests (sections 2 and 7)",
+      "state": "completed",
+      "requirements": [
+        "R2.13"
+      ],
+      "commit": "f5705a2 feat(M11): reach isolation over the network without trusting the worker",
+      "note": "Closed the half of R2.13 that is ours — no secret sent, policy forwarded, an unreadable reply read as not-run — against a stub worker. Whether a real runtime denies egress was still open at this point, and M12 closed it against real hardware."
+    },
+    {
       "id": "M12",
       "title": "Disposable Fly Machine sandbox: closes the last two blockers (section 7)",
       "state": "completed",
@@ -128,7 +140,8 @@
         "R7.6",
         "R2.13"
       ],
-      "commit": "pending"
+      "commit": "eaaaf21 feat: close R7.6 and R2.13 with a disposable Fly Machine sandbox",
+      "pullRequest": 465
     }
   ],
   "classificationCounts": {
