@@ -32,11 +32,14 @@ import {
 export {
   ContainerSandboxRuntime,
   registerSandboxProvider,
+  configureRemoteSandboxProvider,
   listSandboxProviders,
   selectSandboxProvider,
   buildContainerArgs,
   type ProviderProbe,
 } from './sandboxProviders.js';
+
+export { RemoteSandboxRuntime } from './remoteSandbox.js';
 
 /**
  * Docker, named for the callers and tests that reference it directly.

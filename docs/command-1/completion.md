@@ -26,7 +26,7 @@ Run on this branch, on a CRLF Windows checkout:
 
 | gate | result |
 | --- | --- |
-| backend unit tests | **978 / 978 pass** |
+| backend unit tests | **995 / 995 pass** |
 | frontend unit tests | **181 / 181 pass** |
 | `tsc --noEmit` | clean |
 | `npm run build` | succeeds |
@@ -52,15 +52,17 @@ checks are **not** green, and that is worth stating precisely rather than glossi
   capacity problem, not a property of this branch.
 
 The only commits after the last green `unit` run are documentation. `unit` runs `npm test`
-and `npm run test:frontend` — the exact commands that produce the 978/978 and 181/181
-above. It should be rerun when GitHub's runner pool recovers; nothing here needs a code
-change, and no change was invented to force a rerun.
+and `npm run test:frontend` — the exact commands that produce the local numbers above. It
+should be rerun when GitHub's runner pool recovers; nothing here needs a code change, and no
+change was invented to force a rerun.
 
 **Resolved.** The runner pool recovered and `unit` ran on the merge commit `cd01938`
 (run 31171493322): all nine steps green, and its collection-floor step printed
-`backend=978 frontend=181` — identical to the local numbers above. This confirms the
-earlier `cancelled` results were GitHub capacity, never a property of the branch. No code
-change was needed, and none was made.
+`backend=978 frontend=181` — identical to the local numbers at that commit. This confirms
+the earlier `cancelled` results were GitHub capacity, never a property of the branch. No
+code change was needed, and none was made. The backend figure is 995 on this branch because
+M11 added 17 tests; the collection floors are `>=350` and `>=40`, so they track collapse
+rather than an exact count.
 
 ## What shipped, by milestone
 
@@ -76,6 +78,7 @@ change was needed, and none was made.
 | M8 | Final evidence record and intent reasoning (§8, §11) | `1cf97ef` |
 | M9 | Regression tests for merged P0 repairs and line endings (§3, §13) | `43c6918` |
 | M10 | Full gate, ledger closure, completion document (§14) | `1d27385` |
+| M11 | Hosted isolation worker client and R2.13's two named tests (§2, §7) | this branch |
 
 ### The decisions worth recording
 
@@ -129,10 +132,42 @@ the standing instruction, all code, config, tests and documentation were complet
 and the requirement is marked `external_blocker`.
 
 **No further implementation work is outstanding against it.** M7 shipped the
-provider-neutral registry: preference ordering, a probe before every use, a hosted-provider
-seam, the complete isolation flag set, and refusals that name every provider tried and why.
-38 sandbox tests pass. Attaching a worker once it exists is a single call to
-`registerSandboxProvider` — no new code.
+provider-neutral registry: preference ordering, a probe before every use, the complete
+isolation flag set, and refusals that name every provider tried and why. M11 then closed the
+gap that registry left behind — it exposed a *seam* for a hosted provider but shipped no
+provider to put in it, so attaching a worker would still have required writing code first.
+
+`backend/src/sandbox/remoteSandbox.ts` is that provider. It executes on a remote worker over
+HTTP and holds the security properties across the network hop:
+
+- The request carries the caller's already-scrubbed environment, never `process.env`. A
+  worker compromise cannot yield a credential that was never sent.
+- The auth token goes in an `authorization` header, never a query string, because query
+  strings land in access logs.
+- Any reply that does not match the contract is read as **not run**, never as success.
+  `ok: true` is not accepted as a stand-in for an outcome, and only an explicit
+  `ready === true` counts as available.
+- The transport must be HTTPS unless the host is loopback, so generated source never crosses
+  a plaintext hop.
+
+It is inert until an operator sets `XROGA_SANDBOX_WORKER_URL`. With that variable absent,
+`configureRemoteSandboxProvider()` registers nothing, and startup logs which state it is in.
+Nothing here provisions or bills for anything.
+
+This is also what closes R2.13's two named tests, which had no way to run before: the
+**sentinel-secret isolation test** puts a real-shaped secret in `process.env` and asserts
+neither its value nor its name appears anywhere in the request, and the **network-denial
+tests** assert `networkPolicy: 'none'` is forwarded intact, that a worker admitting
+`networkIsolation: false` is refused, and that plaintext HTTP to a non-loopback host is
+refused. They run against a stub worker that records exactly what crossed the wire.
+
+A stub is not a provisioned worker, and it is worth being precise about the boundary: these
+tests verify the half that is ours — that the API sends no secret, forwards the policy, and
+never launders an unreadable reply into a pass. Whether a real worker actually denies the
+network is R7.6, and that still needs the paid resource. 55 sandbox tests pass.
+
+Attaching a worker once it exists is now configuration, not code: set the URL, optionally a
+token, restart.
 
 ## Merge and deployment
 
@@ -181,9 +216,23 @@ declares.
 
 ## What the owner still needs to decide
 
-Approve a dedicated isolated-execution worker — a new paid Fly app or machine pool — to
-close R7.6 and R2.13. Once it exists: register it with `registerSandboxProvider`, rerun the
-suite, and Command 1 reaches `command_1_verified`.
+Approve a dedicated isolated-execution worker — a new paid Fly app or machine pool. That is
+the only thing standing between the merged code and `command_1_verified`, and it is a
+budget decision, not an engineering one.
 
-That approval remains the only thing standing between the merged code and
-`command_1_verified`. Merging did not change this.
+Once such a worker exists, closing R7.6 and R2.13 takes no code change:
+
+```
+fly secrets set \
+  XROGA_SANDBOX_WORKER_URL=https://<worker-host> \
+  XROGA_SANDBOX_WORKER_TOKEN=<token> \
+  -a xroga-api
+```
+
+The worker must serve `GET /health` returning `{"ready": true, "networkIsolation": true}`
+and `POST /execute` returning `{exitCode, stdout, stderr, timedOut, killedForLimit,
+durationMs}`. Anything else is refused rather than trusted. On restart the API registers it,
+probes it before every use, and executable validation begins running for real.
+
+Until then the runtime refuses to execute generated code, which is the designed behaviour:
+the absent worker limits what can be verified, it does not weaken isolation.

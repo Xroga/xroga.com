@@ -51,6 +51,7 @@ import { publicHealthPayload } from './lib/safeHealth.js';
 import operationsRouter from './routes/operations.js';
 import growthRouter from './routes/growth.js';
 import { getSupabaseAdmin } from './config/supabase.js';
+import { configureRemoteSandboxProvider } from './sandbox/sandboxRuntime.js';
 
 const app = express();
 
@@ -238,6 +239,16 @@ server.listen(port, '0.0.0.0', () => {
   void reconcileOrphanedRuns().catch((err) => {
     console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
   });
+  // Registers a hosted isolation worker only if an operator configured one. With no
+  // XROGA_SANDBOX_WORKER_URL this does nothing and costs nothing: the container
+  // providers are tried and, failing those, executable validation refuses rather than
+  // running generated code on this host.
+  const remoteSandbox = configureRemoteSandboxProvider();
+  console.log(
+    remoteSandbox
+      ? `[sandbox] Remote isolation worker registered as "${remoteSandbox.name}" (probed before every use)`
+      : '[sandbox] No remote isolation worker configured — container providers only',
+  );
 });
 
 /**

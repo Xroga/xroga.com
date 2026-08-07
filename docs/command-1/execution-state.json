@@ -138,14 +138,14 @@
       "ownerApprovalRequired": true,
       "createdAutomatically": false,
       "whyNotCreated": "Creating it is a new billable Fly resource, which is outside the approved budget. Per the standing instruction, all code, config, tests and documentation were completed instead and the requirement is marked external_blocker.",
-      "workCompletedAgainstIt": "M7 shipped the provider-neutral registry (sandboxProviders.ts): preference ordering, a probe before every use, a hosted-provider seam, the full isolation flag set, and refusals that name every provider tried. 38 sandbox tests pass. Registering a worker is a call to registerSandboxProvider — no further code is required.",
+      "workCompletedAgainstIt": "M7 shipped the provider-neutral registry (sandboxProviders.ts): preference ordering, a probe before every use, the full isolation flag set, and refusals that name every provider tried. M11 shipped the concrete hosted provider that registry had only left a seam for (remoteSandbox.ts): an HTTP worker client that sends the caller's scrubbed environment rather than process.env, puts its token in a header rather than a query string, requires HTTPS off loopback, and reads every non-conforming reply as 'not run' rather than success. configureRemoteSandboxProvider() runs at startup and registers it only when XROGA_SANDBOX_WORKER_URL is set, so the module is inert and costs nothing until an operator configures a worker. R2.13's two named tests — sentinel-secret isolation and network denial — now exist and pass against a stub worker. 55 sandbox tests pass. Attaching a real worker is configuration, not code.",
       "consequence": "Command 1 cannot be reported as command_1_verified while this remains open."
     }
   ],
   "nextFile": null,
-  "nextAction": "Owner decision required: approve a dedicated isolated-execution worker (a new paid Fly app or machine pool) to close R7.6 and R2.13. Once it exists, register it with registerSandboxProvider, rerun the suite, then merge PR 461 and deploy. No further implementation work is outstanding.",
+  "nextAction": "Owner decision required: approve a dedicated isolated-execution worker (a new paid Fly app or machine pool) to close R7.6 and R2.13. Once it exists, set XROGA_SANDBOX_WORKER_URL (and optionally XROGA_SANDBOX_WORKER_TOKEN) on xroga-api and restart — the API registers and probes it automatically. No implementation work is outstanding.",
   "verification": {
-    "backendTests": "978/978 pass",
+    "backendTests": "995/995 pass",
     "frontendTests": "181/181 pass",
     "typecheck": "tsc --noEmit clean",
     "productionBuild": "npm run build succeeds",

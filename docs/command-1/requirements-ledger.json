@@ -251,7 +251,10 @@
       "actualBehaviour": "DockerSandboxRuntime probes for a container runtime and refuses when none exists; the API host never executes generated code. Production Fly machines have no nested container runtime, so isolation is currently always refused. See R7.*",
       "evidence": "sandboxRuntime.ts:77-96 probe; sandboxTypes.ts:57-60 documents runtime_unavailable as the expected production state.",
       "affectedFiles": [
-        "backend/src/sandbox/sandboxRuntime.ts"
+        "backend/src/sandbox/sandboxRuntime.ts",
+        "backend/src/sandbox/sandboxProviders.ts",
+        "backend/src/sandbox/remoteSandbox.ts",
+        "backend/src/sandbox/remoteSandbox.test.ts"
       ],
       "requiredChange": "A dedicated isolated execution worker (paid infrastructure) — owner approval required.",
       "requiredTests": [
@@ -259,7 +262,7 @@
         "network-denial test"
       ],
       "completionStatus": "external_blocker",
-      "completionEvidence": "Code, config and tests are complete (M7 sandboxProviders.ts: provider registry, isolation flags, refusal path, 38 tests). The remaining step is a dedicated paid isolated-execution worker, which was not created — new billable Fly resources are outside the approved budget."
+      "completionEvidence": "Both named tests now exist and pass. remoteSandbox.test.ts drives a stub worker that records what crossed the wire: the sentinel test puts a real-shaped secret in process.env and asserts neither its value nor its name appears anywhere in the request; the network-denial tests assert networkPolicy 'none' is forwarded intact, that a worker reporting networkIsolation:false is refused with policy_disabled, and that plaintext http to a non-loopback host is refused. M11 added the concrete hosted provider (remoteSandbox.ts) behind the registry seam, so attaching a worker is now configuration (XROGA_SANDBOX_WORKER_URL) rather than new code — the module is inert and costs nothing until that variable is set. 55 sandbox tests pass. What remains is the paid isolated-execution worker itself, not created because new billable Fly resources are outside the approved budget."
     },
     {
       "id": "R2.14",
@@ -762,10 +765,11 @@
       "affectedFiles": [],
       "requiredChange": "A dedicated Fly app or machine pool for sandbox execution — a new paid resource. Owner approval required; not created automatically.",
       "requiredTests": [
-        "n/a until provisioned"
+        "worker contract tests against a stub (delivered)",
+        "live worker probe — n/a until provisioned"
       ],
       "completionStatus": "external_blocker",
-      "completionEvidence": "Requires a dedicated Fly app or machine pool for sandbox execution — a new paid resource, not created because it is outside the approved budget. Everything that does not depend on it is complete."
+      "completionEvidence": "Requires a dedicated Fly app or machine pool for sandbox execution — a new paid resource, not created because it is outside the approved budget. The API side is now complete rather than merely seamed: remoteSandbox.ts implements the worker client (HTTPS-or-loopback only, token in a header, fail-closed on every non-conforming reply), configureRemoteSandboxProvider() runs at startup in index.ts and registers the worker only when XROGA_SANDBOX_WORKER_URL is set, and the contract is pinned by 17 tests against a stub worker. Provisioning the worker and setting that variable is the only remaining step, and it is the owner's decision."
     },
     {
       "id": "R8.1",
@@ -948,5 +952,5 @@
     }
   ],
   "completedAt": "2026-08-06",
-  "completionSummary": "Command 1 complete. 49 of 51 requirements delivered and verified. Two (R2.13, R7.6) remain external_blocker: both need a dedicated paid isolated-execution worker, which was not created because new billable Fly resources are outside the approved budget. All code, config and tests that do not depend on that worker are done. Verified on this branch: backend 978/978, frontend 181/181."
+  "completionSummary": "Command 1 complete. 49 of 51 requirements delivered and verified. Two (R2.13, R7.6) remain external_blocker: both need a dedicated paid isolated-execution worker, which was not created because new billable Fly resources are outside the approved budget. Every line of code either requirement needs is now written and tested — including the hosted-worker client and its two named tests — so closing them is provisioning plus one environment variable, not development. Verified: backend 995/995, frontend 181/181."
 }
