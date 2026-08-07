@@ -64,6 +64,15 @@ export interface SandboxAvailability {
   runtime: string;
   reason?: SandboxUnavailableReason;
   detail?: string;
+  /**
+   * Whether this runtime can actually deny network access when a request asks for it.
+   *
+   * Declared rather than assumed, because the providers differ: a container runtime has
+   * `--network none`, while the Fly Machines API has no equivalent and has to deny egress
+   * inside the guest instead. A provider that cannot deny it must say so here rather than
+   * accept a `networkPolicy: 'none'` request and quietly run it with a network.
+   */
+  networkIsolation?: boolean;
 }
 
 export interface SandboxRuntime {

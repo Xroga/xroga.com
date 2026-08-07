@@ -22,6 +22,7 @@
 import { spawn } from 'child_process';
 import { buildSandboxEnvironment } from './sandboxEnvironment.js';
 import { remoteSandboxFromEnvironment } from './remoteSandbox.js';
+import { flyMachineSandboxFromEnvironment } from './flyMachineSandbox.js';
 import {
   SandboxUnavailableError,
   type SandboxAvailability,
@@ -74,7 +75,8 @@ export class ContainerSandboxRuntime implements SandboxRuntime {
     }
     const ok = await canRun(this.binary, ['version']);
     return ok
-      ? { available: true, runtime: this.name }
+      ? // `--network none` in buildContainerArgs is what backs this claim.
+        { available: true, runtime: this.name, networkIsolation: true }
       : {
           available: false,
           runtime: this.name,
@@ -262,6 +264,21 @@ export function registerSandboxProvider(runtime: SandboxRuntime): void {
   providers().unshift(runtime);
 }
 
+/**
+ * Adds a provider at the *back* of the preference order, behind the built-in containers.
+ *
+ * Needed because "register" means "prefer this", and not every provider deserves that. A
+ * container gets `--user 1000:1000`, `--cap-drop ALL`, `--security-opt no-new-privileges`
+ * and a read-only root; the Fly Machine provider can offer none of those, since `unshare -n`
+ * requires CAP_SYS_ADMIN and the Machines API exposes no per-exec user. It is the better
+ * answer only when there is no container runtime at all — which is the production case, and
+ * exactly why it exists. Registering it at the front would have quietly downgraded any
+ * environment that *did* have Docker.
+ */
+export function registerFallbackSandboxProvider(runtime: SandboxRuntime): void {
+  providers().push(runtime);
+}
+
 /** Test seam. Passing `null` restores the real provider list. */
 export function setSandboxProvidersForTesting(runtimes: SandboxRuntime[] | null): void {
   registry = runtimes;
@@ -287,6 +304,28 @@ export function configureRemoteSandboxProvider(
   if (providers().some((p) => p.name === remote.name)) return null;
   registerSandboxProvider(remote);
   return remote;
+}
+
+/**
+ * Registers the Fly Machine provider when one is configured, or does nothing.
+ *
+ * Separate from `configureRemoteSandboxProvider` because they are different bets: the remote
+ * worker is a machine someone keeps running, while this one creates a microVM per execution
+ * and destroys it. Both are inert unless their environment variables are set, so a
+ * deployment that configures neither behaves exactly as it did before either existed.
+ *
+ * Registered as a *fallback*, behind the container providers rather than in front of them.
+ * A container can drop privileges and mount its root read-only; this cannot. It wins only
+ * where there is no container runtime — which is production, and the reason it exists.
+ */
+export function configureFlyMachineSandboxProvider(
+  env: NodeJS.ProcessEnv = process.env,
+): SandboxRuntime | null {
+  const fly = flyMachineSandboxFromEnvironment(env);
+  if (!fly) return null;
+  if (providers().some((p) => p.name === fly.name)) return null;
+  registerFallbackSandboxProvider(fly);
+  return fly;
 }
 
 export function listSandboxProviders(): readonly string[] {

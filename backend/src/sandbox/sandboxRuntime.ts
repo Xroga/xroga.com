@@ -33,6 +33,7 @@ export {
   ContainerSandboxRuntime,
   registerSandboxProvider,
   configureRemoteSandboxProvider,
+  configureFlyMachineSandboxProvider,
   listSandboxProviders,
   selectSandboxProvider,
   buildContainerArgs,
@@ -101,6 +102,24 @@ export async function executeSandboxed(
   const { runtime, availability } = await selectSandboxProvider();
   cachedProbe = { at: Date.now(), value: availability };
   if (!runtime || !availability.available) throw new SandboxUnavailableError(availability);
+
+  // A provider that has told us it cannot deny egress must not be handed a request that
+  // required it. Enforced here rather than in each provider because it is a property of the
+  // pairing, and because a provider added later would otherwise have to remember this rule.
+  //
+  // Only an explicit `false` refuses. An undeclared flag means the provider never spoke to
+  // the question — every provider in this repository declares it, so undeclared in practice
+  // means a test fake or a runtime registered by an operator who owns that judgement.
+  if (request.networkPolicy === 'none' && availability.networkIsolation === false) {
+    throw new SandboxUnavailableError({
+      available: false,
+      runtime: availability.runtime,
+      reason: 'policy_disabled',
+      detail:
+        `${availability.runtime} reported that it cannot deny outbound network access, and ` +
+        'this step required a denied network, so generated code was not executed.',
+    });
+  }
 
   return runtime.execute({
     ...request,

@@ -51,7 +51,10 @@ import { publicHealthPayload } from './lib/safeHealth.js';
 import operationsRouter from './routes/operations.js';
 import growthRouter from './routes/growth.js';
 import { getSupabaseAdmin } from './config/supabase.js';
-import { configureRemoteSandboxProvider } from './sandbox/sandboxRuntime.js';
+import {
+  configureRemoteSandboxProvider,
+  configureFlyMachineSandboxProvider,
+} from './sandbox/sandboxRuntime.js';
 
 const app = express();
 
@@ -248,6 +251,15 @@ server.listen(port, '0.0.0.0', () => {
     remoteSandbox
       ? `[sandbox] Remote isolation worker registered as "${remoteSandbox.name}" (probed before every use)`
       : '[sandbox] No remote isolation worker configured — container providers only',
+  );
+  // Same contract as above: inert without XROGA_SANDBOX_FLY_APP and _TOKEN. When both are
+  // set, each execution gets a throwaway Fly microVM in an app that holds no secrets, so
+  // there is no standing machine to pay for between builds.
+  const flySandbox = configureFlyMachineSandboxProvider();
+  console.log(
+    flySandbox
+      ? `[sandbox] Fly Machine sandbox registered as "${flySandbox.name}" (one disposable microVM per execution)`
+      : '[sandbox] No Fly Machine sandbox configured',
   );
 });
 
