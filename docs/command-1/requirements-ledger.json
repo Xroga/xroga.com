@@ -247,22 +247,26 @@
       "section": 2,
       "title": "Isolated generated-code execution",
       "classification": "external_blocker",
-      "currentImplementation": "backend/src/sandbox/*.",
-      "actualBehaviour": "DockerSandboxRuntime probes for a container runtime and refuses when none exists; the API host never executes generated code. Production Fly machines have no nested container runtime, so isolation is currently always refused. See R7.*",
+      "currentImplementation": "backend/src/sandbox/flyMachineSandbox.ts (production provider), remoteSandbox.ts (optional dedicated worker), sandboxProviders.ts (selection and the networkPolicy gate).",
+      "actualBehaviour": "Generated code executes in a disposable Fly Machine created per execution and force-destroyed after. The machine runs in xroga-sandbox, a separate app holding no secrets, with no services and no allocated IP. A networkPolicy of none is enforced inside the guest with unshare -n. executeSandboxed refuses any provider that cannot honour the requested network policy, so no caller silently receives a weaker sandbox than it asked for.",
       "evidence": "sandboxRuntime.ts:77-96 probe; sandboxTypes.ts:57-60 documents runtime_unavailable as the expected production state.",
       "affectedFiles": [
-        "backend/src/sandbox/sandboxRuntime.ts",
+        "backend/src/sandbox/flyMachineSandbox.ts",
+        "backend/src/sandbox/flyMachineSandbox.test.ts",
         "backend/src/sandbox/sandboxProviders.ts",
+        "backend/src/sandbox/sandboxTypes.ts",
+        "backend/src/sandbox/sandboxRuntime.ts",
         "backend/src/sandbox/remoteSandbox.ts",
         "backend/src/sandbox/remoteSandbox.test.ts"
       ],
-      "requiredChange": "A dedicated isolated execution worker (paid infrastructure) — owner approval required.",
+      "requiredChange": "Closed. No further change required.",
       "requiredTests": [
         "sentinel-secret isolation test",
         "network-denial test"
       ],
-      "completionStatus": "external_blocker",
-      "completionEvidence": "Both named tests now exist and pass. remoteSandbox.test.ts drives a stub worker that records what crossed the wire: the sentinel test puts a real-shaped secret in process.env and asserts neither its value nor its name appears anywhere in the request; the network-denial tests assert networkPolicy 'none' is forwarded intact, that a worker reporting networkIsolation:false is refused with policy_disabled, and that plaintext http to a non-loopback host is refused. M11 added the concrete hosted provider (remoteSandbox.ts) behind the registry seam, so attaching a worker is now configuration (XROGA_SANDBOX_WORKER_URL) rather than new code — the module is inert and costs nothing until that variable is set. 59 sandbox tests pass. What remains is the paid isolated-execution worker itself, not created because new billable Fly resources are outside the approved budget."
+      "completionStatus": "complete",
+      "completionEvidence": "Both named tests exist and pass, for the real provider as well as the stub worker. Sentinel-secret isolation: a real-shaped secret is placed in process.env and neither its value nor its name appears anywhere in the create request. Network denial: the argv for networkPolicy none runs under unshare -n, registry-only deliberately does not, and executeSandboxed refuses a provider whose probe reports networkIsolation:false. Verified against real machines in the xroga-sandbox Fly app, each destroyed after: base64 file injection lands at the requested guest path; the exec reply field is exit_code; an argument containing \"; touch /tmp/PWNED\" was echoed as literal data and no such file was created; and egress denial was proven with a control — the same request to registry.npmjs.org succeeds without the unshare wrapper and fails with it. 1027 backend tests pass. Honest limits recorded in the module header rather than left to be discovered: code runs as root and the guest root is writable, because unshare -n needs CAP_SYS_ADMIN and the Machines API exposes no per-exec user or read-only root. That is why the provider registers behind the container providers, not in front of them.",
+      "resolvedFromBlocker": true
     },
     {
       "id": "R2.14",
@@ -759,17 +763,23 @@
       "section": 7,
       "title": "Live production isolated worker",
       "classification": "external_blocker",
-      "currentImplementation": "none in production",
-      "actualBehaviour": "Fly machines running the API have no nested container runtime, so probe() always fails in production and every executable validation refuses.",
+      "currentImplementation": "xroga-sandbox Fly app plus backend/src/sandbox/flyMachineSandbox.ts.",
+      "actualBehaviour": "A live isolated execution path exists in production without standing infrastructure. The xroga-sandbox app holds no machines, no IP and no secrets when idle, so it costs nothing; a microVM is created for an execution and destroyed immediately after, billing only for the seconds it ran.",
       "evidence": "sandboxTypes.ts:53-56 documents this as the expected production state.",
-      "affectedFiles": [],
-      "requiredChange": "A dedicated Fly app or machine pool for sandbox execution — a new paid resource. Owner approval required; not created automatically.",
+      "affectedFiles": [
+        "backend/src/sandbox/flyMachineSandbox.ts",
+        "backend/src/sandbox/flyMachineSandbox.test.ts",
+        "backend/src/sandbox/sandboxProviders.ts",
+        "backend/src/sandbox/sandboxRuntime.ts"
+      ],
+      "requiredChange": "Closed. The separate app replaced the always-on worker the original entry assumed was required.",
       "requiredTests": [
         "worker contract tests against a stub (delivered)",
-        "live worker probe — n/a until provisioned"
+        "live machine create/wait/exec/destroy against the real Machines API (delivered)"
       ],
-      "completionStatus": "external_blocker",
-      "completionEvidence": "Requires a dedicated Fly app or machine pool for sandbox execution — a new paid resource, not created because it is outside the approved budget. The API side is now complete rather than merely seamed: remoteSandbox.ts implements the worker client (HTTPS-or-loopback only, token in a header, fail-closed on every non-conforming reply), configureRemoteSandboxProvider() runs at startup in index.ts and registers the worker only when XROGA_SANDBOX_WORKER_URL is set, and the contract is pinned by 21 tests against a stub worker. Provisioning the worker and setting that variable is the only remaining step, and it is the owner's decision."
+      "completionStatus": "complete",
+      "completionEvidence": "Resolved without an always-on paid worker, which is why it is closed rather than still blocked. A Fly app record is free; billing attaches to machines, volumes and IPs. xroga-sandbox was created with none of those and verified empty. Three independent mechanisms must fail before a machine can leak: restart.policy no, a bounded init sleep plus auto_destroy giving the machine its own deadline even if the API process dies, and a force-delete in a finally that runs on success, failure and timeout. The delete-on-every-path property is asserted by test, including when the transport throws mid-execution. A separate app is mandatory rather than tidy: Fly secrets are app-scoped and injected into every machine, so a sandbox inside xroga-api would receive SUPABASE_SERVICE_ROLE_KEY automatically — the provider refuses to run against the API app to make that unbypassable. Configured in production with a deploy token scoped to xroga-sandbox alone, staged via fly secrets set --stage and never printed. Verified against real machines in the xroga-sandbox Fly app, each destroyed after: base64 file injection lands at the requested guest path; the exec reply field is exit_code; an argument containing \"; touch /tmp/PWNED\" was echoed as literal data and no such file was created; and egress denial was proven with a control — the same request to registry.npmjs.org succeeds without the unshare wrapper and fails with it.",
+      "resolvedFromBlocker": true
     },
     {
       "id": "R8.1",

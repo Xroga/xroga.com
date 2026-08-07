@@ -2,23 +2,34 @@
 
 **Branch:** `agent/complete-command-1-runtime`
 **Base:** `0997a04`
-**Pull request:** [#461](https://github.com/Xroga/xroga.com/pull/461) — draft, not merged
-**Date:** 2026-08-06
+**Pull requests:** [#461](https://github.com/Xroga/xroga.com/pull/461) merged as `cd01938`
+(M1–M10), [#462](https://github.com/Xroga/xroga.com/pull/462) merged as `2b63166` (Fly config
+traps), M11 as `f5705a2`, M12 on this branch
+**Date:** 2026-08-06, last updated 2026-08-07
 
 ## Status
 
-**49 of 51 requirements delivered. 2 remain open behind an external blocker.**
+**All 51 requirements delivered. No external blocker remains.**
 
-Command 1 is **not** reported as `command_1_verified`. The ledger defines that state as
-unreachable while R7.6 is open, and R7.6 needs a paid Fly resource that was deliberately
-not created. Everything that does not depend on that resource is finished.
+Command 1 is reported as `command_1_verified`.
+
+The last two — R7.6 and R2.13 — were open for most of this work behind what looked like an
+unavoidable purchase: a dedicated always-on isolation worker. That framing was wrong, and
+correcting it is what closed them. A Fly **app** record is free; billing attaches to
+machines, volumes and IP addresses. So the sandbox app can exist permanently at zero cost,
+and an execution pays only for the seconds one microVM actually runs. The blocker was never
+the infrastructure, it was the assumption that the infrastructure had to be standing.
 
 | completionStatus | count |
 | --- | --- |
-| `complete` | 38 |
+| `complete` | 40 |
 | `preserved` (P0 protections, now regression-pinned) | 11 |
-| `external_blocker` | 2 |
+| `external_blocker` | 0 |
 | **total** | **51** |
+
+The ledger still records `classification: external_blocker` against those two, with
+`resolvedFromBlocker: true`. The audit finding was accurate when it was made; overwriting it
+would erase the trail rather than close it.
 
 ## Verification
 
@@ -26,7 +37,7 @@ Run on this branch, on a CRLF Windows checkout:
 
 | gate | result |
 | --- | --- |
-| backend unit tests | **999 / 999 pass** |
+| backend unit tests | **1027 / 1027 pass** |
 | frontend unit tests | **181 / 181 pass** |
 | `tsc --noEmit` | clean |
 | `npm run build` | succeeds |
@@ -60,9 +71,9 @@ change was invented to force a rerun.
 (run 31171493322): all nine steps green, and its collection-floor step printed
 `backend=978 frontend=181` — identical to the local numbers at that commit. This confirms
 the earlier `cancelled` results were GitHub capacity, never a property of the branch. No
-code change was needed, and none was made. The backend figure is 999 on this branch because
-M11 added 21 tests; the collection floors are `>=350` and `>=40`, so they track collapse
-rather than an exact count.
+code change was needed, and none was made. The backend figure is 1027 on this branch because
+M11 added 21 tests and M12 a further 28; the collection floors are `>=350` and `>=40`, so
+they track collapse rather than an exact count.
 
 ## What shipped, by milestone
 
@@ -78,7 +89,8 @@ rather than an exact count.
 | M8 | Final evidence record and intent reasoning (§8, §11) | `1cf97ef` |
 | M9 | Regression tests for merged P0 repairs and line endings (§3, §13) | `43c6918` |
 | M10 | Full gate, ledger closure, completion document (§14) | `1d27385` |
-| M11 | Hosted isolation worker client and R2.13's two named tests (§2, §7) | this branch |
+| M11 | Hosted isolation worker client and R2.13's two named tests (§2, §7) | `f5705a2` |
+| M12 | Disposable Fly Machine sandbox — closes R7.6 and R2.13 (§7) | this branch |
 
 ### The decisions worth recording
 
@@ -115,27 +127,110 @@ The scaffold is chosen last, and only as a hint.
 stand on a deployment record for code that was never committed. Only an explicit boolean
 `ok === true` counts as evidence — the same fail-closed rule the reviewer uses.
 
-## The external blocker
+## How the last blocker was closed
 
-**R7.6 — live production isolated worker** (also blocks **R2.13 — isolated generated-code
-execution**)
+**R7.6 — live production isolated worker** and **R2.13 — isolated generated-code execution**
 
 Section 7 requires generated code to run in a disposable, network-denied, unprivileged
-sandbox. The `xroga-api` Fly machine runs the API inside a container with no nested
-container runtime, so provider selection returns unavailable in production and every
-executable validation refuses. **That refusal is the designed behaviour, not a gap** —
-there is intentionally no fallback path that would run generated code on the API host.
+sandbox. The `xroga-api` Fly machine runs the API inside a container with no nested container
+runtime, so every `docker`/`podman` probe fails, provider selection returns unavailable, and
+every executable validation refuses. **That refusal was correct behaviour, not a gap** —
+there is intentionally no fallback that would run generated code on the API host. But it was
+also permanent, which made the runtime unable to verify anything it built.
 
-Closing it needs a dedicated Fly application or machine pool for sandbox execution. That is
-a new billable resource, which is outside the approved budget, so it was not created. Per
-the standing instruction, all code, config, tests and documentation were completed instead
-and the requirement is marked `external_blocker`.
+These two were carried as `external_blocker` for most of this work on the reasoning that
+closing them required a dedicated always-on worker, and therefore a purchase outside the
+approved budget. **That reasoning was wrong in a way worth stating plainly, because the error
+was mine.** A Fly app record is free — billing attaches to machines, volumes and IP
+addresses, not to the app. An app with none of those costs nothing and can sit there
+indefinitely. The requirement was never an always-on worker; it was *somewhere that is not
+this machine*.
 
-**No further implementation work is outstanding against it.** M7 shipped the
-provider-neutral registry: preference ordering, a probe before every use, the complete
-isolation flag set, and refusals that name every provider tried and why. M11 then closed the
-gap that registry left behind — it exposed a *seam* for a hosted provider but shipped no
-provider to put in it, so attaching a worker would still have required writing code first.
+`backend/src/sandbox/flyMachineSandbox.ts` is that somewhere. A Fly Machine is itself a
+Firecracker microVM, so rather than nesting isolation inside a machine that has none, the
+provider asks Fly for a fresh one, runs the build in it, and destroys it.
+
+### Why a separate app is a security boundary, not bookkeeping
+
+Fly secrets are **app-scoped**: every machine in an app receives that app's secrets in its
+environment. A sandbox machine created inside `xroga-api` would be handed
+`SUPABASE_SERVICE_ROLE_KEY` and the GitHub tokens automatically — precisely the leak the
+whole isolation boundary exists to prevent. `xroga-sandbox` holds no secrets of its own, and
+the provider **refuses to run against the API's own app** so this cannot be misconfigured
+back into a leak. Its Fly token is a deploy token scoped to `xroga-sandbox` alone, so it
+cannot read `xroga-api`'s secrets even if the API is compromised.
+
+### Why cost safety is a correctness property
+
+A machine that outlives its execution bills until someone notices, and this project already
+produced that exact failure once: a misconfigured process group crash-looped to its restart
+limit before it was caught. So three independent mechanisms must fail before a machine can
+leak:
+
+1. `restart.policy: 'no'` — a process that dies stays dead. No crash loop, ever.
+2. `init.exec` is a bounded `sleep` and `auto_destroy: true` disposes of the machine when it
+   exits. The machine has a hard lifespan **even if this API process is killed mid-run** —
+   the one mechanism that needs nothing of ours to still be alive.
+3. A force-delete in a `finally`, which runs on success, failure and timeout alike. Asserted
+   by test, including when the transport throws mid-execution.
+
+### What is isolated, and what is not
+
+Honest accounting, because overclaiming here would defeat the point:
+
+| property | holds | how |
+| --- | --- | --- |
+| disposable | **yes** | fresh microVM per execution, destroyed after |
+| no secrets | **yes** | separate app with none; caller's scrubbed environment only |
+| no inbound | **yes** | no `services` block, no IP allocated — nothing can connect |
+| resource-capped | **yes** | `guest.cpus` and `memory_mb` from the caller's limits |
+| egress denied | **yes**, for `networkPolicy: 'none'` | the command runs under `unshare -n` |
+| unprivileged | **no** | code runs as root; `unshare -n` needs `CAP_SYS_ADMIN` |
+| read-only root | **no** | the Machines API has no `--read-only` equivalent |
+
+The last two are real gaps against the container providers, which is why this provider
+registers **behind** them rather than in front — and why that ordering is pinned by a test.
+Containment here is by disposal, not by permission. `registerSandboxProvider` unshifts, so
+registering it the ordinary way would have silently downgraded any environment that *did*
+have Docker; `registerFallbackSandboxProvider` exists for that reason.
+
+Separately, `executeSandboxed` now refuses a provider whose probe reports it cannot honour
+the requested network policy. A caller asking for a denied network gets a refusal naming the
+reason, never a quietly weaker sandbox.
+
+### Verified against real machines, not just stubs
+
+Every claim above that could be checked against the live Machines API was, each machine
+destroyed after, and one check found a real bug:
+
+- base64 file injection lands at the requested guest path
+- the exec reply field is `exit_code` — the provider reads it and treats a missing or
+  non-numeric value as `null`, never as 0
+- **egress denial proven with a control**: the same request to `registry.npmjs.org` succeeds
+  without the `unshare` wrapper and fails with it. An earlier attempt to verify this against
+  `api.github.com` "passed" for the wrong reason — that host is IPv4-only and a Fly machine's
+  egress is IPv6 — so the test proved nothing until the control was added.
+- an argument containing `; touch /tmp/PWNED` was echoed as literal data and no such file was
+  created. Arguments reach the guest as positional parameters (`$0`, `"$@"`), so the shell
+  parses only fixed script text and never re-parses caller data.
+- **the bug**: the first argv `cd`'d into `/work`, which does not exist unless a file happens
+  to be injected there. A no-files execution would have failed on a real machine while every
+  stub test passed. Now `mkdir -p` first, with a regression test.
+
+`xroga-sandbox` was confirmed to hold no machines, no IP and no secrets after every run.
+
+### The remote-worker provider is still there, and still optional
+
+M11's `remoteSandbox.ts` remains as a first-preference provider for anyone who *does* want a
+dedicated worker — it can hold a warm dependency cache and needs no boot per build. It is
+inert until `XROGA_SANDBOX_WORKER_URL` is set. It holds the same properties across a network
+hop: scrubbed environment only, token in a header rather than a query string (query strings
+land in access logs), HTTPS unless the host is loopback, and any non-conforming reply read as
+**not run** rather than success.
+
+M7's provider-neutral registry is what made both of these additions configuration-shaped
+rather than rewrites: preference ordering, a probe before every use, and refusals that name
+every provider tried and why.
 
 `backend/src/sandbox/remoteSandbox.ts` is that provider. It executes on a remote worker over
 HTTP and holds the security properties across the network hop:
@@ -163,23 +258,25 @@ refused. They run against a stub worker that records exactly what crossed the wi
 
 A stub is not a provisioned worker, and it is worth being precise about the boundary: these
 tests verify the half that is ours — that the API sends no secret, forwards the policy, and
-never launders an unreadable reply into a pass. Whether a real worker actually denies the
-network is R7.6, and that still needs the paid resource. 59 sandbox tests pass.
+never launders an unreadable reply into a pass. Whether a real runtime *actually* denies the
+network is R7.6, and at M11 that half was still unproven. M12 closed it against real
+hardware — see "How the last blocker was closed" above.
 
 Attaching a worker once it exists is now configuration, not code: set the URL, optionally a
-token, restart.
+token, restart. It remains supported as a *first-preference* provider for an operator who
+runs one, and is simply inert for everyone else.
 
 ## Merge and deployment
 
 PR #461 was merged to `main` as `cd01938` on 2026-08-07 at the owner's explicit
 instruction, with R2.13 and R7.6 still open. That decision is recorded here rather than
-implied: **the merge did not close those two requirements, and Command 1 is still not
-`command_1_verified`.** What the merge asserts is that the implementable work is finished,
-not that section 7 is satisfied.
+implied: **the merge did not close those two requirements.** What it asserted was that the
+implementable work was finished, not that section 7 was satisfied. They were closed
+afterwards by M12, on this branch.
 
-Merging without the sandbox worker is safe for a specific reason: with no provider
-available, executable validation *refuses* rather than running generated code on the API
-host. The absent worker degrades what the runtime can verify; it does not weaken isolation.
+Merging without a sandbox provider was safe for a specific reason: with none available,
+executable validation *refuses* rather than running generated code on the API host. The
+absent provider degraded what the runtime could verify; it did not weaken isolation.
 
 The canonical `fly-deploy.yml` workflow deployed the merge commit and passed all eleven
 steps, including its own health and readiness verification. Confirmed independently
@@ -214,25 +311,46 @@ to restore production to `fly.api.toml` exactly, and the underlying config traps
 in PR #462. Production now runs the `app` group only, which is what the canonical config
 declares.
 
-## What the owner still needs to decide
+## What the owner needs to know, rather than decide
 
-Approve a dedicated isolated-execution worker — a new paid Fly app or machine pool. That is
-the only thing standing between the merged code and `command_1_verified`, and it is a
-budget decision, not an engineering one.
-
-Once such a worker exists, closing R7.6 and R2.13 takes no code change:
+Nothing is waiting on a decision. The two configuration values the Fly sandbox needs are
+already **staged** on `xroga-api`:
 
 ```
-fly secrets set \
-  XROGA_SANDBOX_WORKER_URL=https://<worker-host> \
-  XROGA_SANDBOX_WORKER_TOKEN=<token> \
-  -a xroga-api
+XROGA_SANDBOX_FLY_APP    = xroga-sandbox
+XROGA_SANDBOX_FLY_TOKEN  = <deploy token, scoped to xroga-sandbox only>
 ```
 
-The worker must serve `GET /health` returning `{"ready": true, "networkIsolation": true}`
-and `POST /execute` returning `{exitCode, stdout, stderr, timedOut, killedForLimit,
-durationMs}`. Anything else is refused rather than trusted. On restart the API registers it,
-probes it before every use, and executable validation begins running for real.
+Staged, not live: Fly's own message is *"Secrets have been staged, but not set on VMs. Deploy
+or update machines in this app for the secrets to take effect."* The deploy that ships this
+branch is what applies them — no separate step, and no restart of production ahead of the
+merge.
 
-Until then the runtime refuses to execute generated code, which is the designed behaviour:
-the absent worker limits what can be verified, it does not weaken isolation.
+Three things about that token are worth stating, since it is the one new credential this
+work introduced:
+
+- It is a **deploy token scoped to `xroga-sandbox` alone**. It cannot read `xroga-api`'s
+  secrets, so an API compromise does not widen into one. Least privilege was the point of
+  creating it separately rather than reusing an org token.
+- It was piped into `fly secrets set` and **never printed** — not to a log, not to a tool
+  result, not into this document. The command that created it guarded its own output.
+- If it leaks, the blast radius is machine creation in an app that holds no secrets and has
+  no IP address. Rotate with `fly tokens create deploy -a xroga-sandbox`, restage, redeploy.
+
+### What a build costs now
+
+A machine exists only for the seconds an execution runs, and three independent mechanisms
+have to fail before one outlives that: `restart.policy: 'no'`, a bounded `init` sleep plus
+`auto_destroy: true`, and a force-delete in a `finally`. The second is the one that survives
+this API process being killed mid-run, which is what makes it the important one.
+
+Verified after every live run during this work: `xroga-sandbox` holds **no machines, no
+volumes and no IP addresses**. There is no standing cost between builds.
+
+### Where the runtime still refuses
+
+Local development on a machine with no Docker, no Podman and no Fly configuration still
+refuses to execute generated code, and that remains correct. A refusal reports the providers
+tried and why each declined, so the operator learns what to install rather than being told a
+runtime is missing in the abstract. `classifyValidation` reads such a refusal as
+`not_verified` — the build is reported honestly as unverified, never as passing.

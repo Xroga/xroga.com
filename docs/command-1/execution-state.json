@@ -1,9 +1,11 @@
 {
   "command": "command-1",
   "branch": "agent/complete-command-1-runtime",
+  "laterBranch": "agent/hosted-sandbox-worker",
+  "branchNote": "M1-M10 shipped on agent/complete-command-1-runtime (PR #461, merged as cd01938). M11 and M12 shipped on agent/hosted-sandbox-worker (M11 as f5705a2; M12 as eaaaf21, PR #465).",
   "baseCommit": "0997a0450f4354e4b52c0d49f08359a999254a95",
-  "phase": "implementation_complete_external_blocker_open",
-  "status": "command_1_implementation_complete_not_verified",
+  "phase": "complete",
+  "status": "command_1_verified",
   "milestones": [
     {
       "id": "M1",
@@ -119,6 +121,27 @@
       "state": "completed",
       "requirements": [],
       "commit": "1d27385 docs(M10): close the Command 1 ledger against what shipped"
+    },
+    {
+      "id": "M11",
+      "title": "Hosted isolation worker client and R2.13's two named tests (sections 2 and 7)",
+      "state": "completed",
+      "requirements": [
+        "R2.13"
+      ],
+      "commit": "f5705a2 feat(M11): reach isolation over the network without trusting the worker",
+      "note": "Closed the half of R2.13 that is ours — no secret sent, policy forwarded, an unreadable reply read as not-run — against a stub worker. Whether a real runtime denies egress was still open at this point, and M12 closed it against real hardware."
+    },
+    {
+      "id": "M12",
+      "title": "Disposable Fly Machine sandbox: closes the last two blockers (section 7)",
+      "state": "completed",
+      "requirements": [
+        "R7.6",
+        "R2.13"
+      ],
+      "commit": "eaaaf21 feat: close R7.6 and R2.13 with a disposable Fly Machine sandbox",
+      "pullRequest": 465
     }
   ],
   "classificationCounts": {
@@ -129,32 +152,22 @@
     "external_blocker": 2,
     "not_applicable": 0
   },
-  "externalBlockers": [
-    {
-      "requirementId": "R7.6",
-      "alsoBlocks": "R2.13",
-      "resource": "A dedicated isolated execution worker — a separate Fly.io application or machine pool that can run a container runtime, distinct from the xroga-api app.",
-      "purpose": "Section 7 requires generated code to execute in a disposable, network-denied, unprivileged sandbox. The API host has no nested container runtime, so provider selection always returns unavailable in production and every executable validation refuses — which is the designed behaviour, not a gap.",
-      "ownerApprovalRequired": true,
-      "createdAutomatically": false,
-      "whyNotCreated": "Creating it is a new billable Fly resource, which is outside the approved budget. Per the standing instruction, all code, config, tests and documentation were completed instead and the requirement is marked external_blocker.",
-      "workCompletedAgainstIt": "M7 shipped the provider-neutral registry (sandboxProviders.ts): preference ordering, a probe before every use, the full isolation flag set, and refusals that name every provider tried. M11 shipped the concrete hosted provider that registry had only left a seam for (remoteSandbox.ts): an HTTP worker client that sends the caller's scrubbed environment rather than process.env, puts its token in a header rather than a query string, requires HTTPS off loopback, and reads every non-conforming reply as 'not run' rather than success. configureRemoteSandboxProvider() runs at startup and registers it only when XROGA_SANDBOX_WORKER_URL is set, so the module is inert and costs nothing until an operator configures a worker. R2.13's two named tests — sentinel-secret isolation and network denial — now exist and pass against a stub worker. 59 sandbox tests pass. Attaching a real worker is configuration, not code.",
-      "consequence": "Command 1 cannot be reported as command_1_verified while this remains open."
-    }
-  ],
+  "externalBlockers": [],
   "nextFile": null,
-  "nextAction": "Owner decision required: approve a dedicated isolated-execution worker (a new paid Fly app or machine pool) to close R7.6 and R2.13. Once it exists, set XROGA_SANDBOX_WORKER_URL (and optionally XROGA_SANDBOX_WORKER_TOKEN) on xroga-api and restart — the API registers and probes it automatically. No implementation work is outstanding.",
+  "nextAction": "None. All 51 requirements are complete or preserved and no external blocker remains. Production secrets XROGA_SANDBOX_FLY_APP and XROGA_SANDBOX_FLY_TOKEN are staged on xroga-api and take effect on the next deploy, which the merge triggers.",
   "verification": {
-    "backendTests": "999/999 pass",
+    "backendTests": "1027/1027 pass",
     "frontendTests": "181/181 pass",
     "typecheck": "tsc --noEmit clean",
     "productionBuild": "npm run build succeeds",
-    "platform": "verified on a CRLF Windows checkout, so the section 13 line-ending failures are genuinely fixed"
+    "platform": "verified on a CRLF Windows checkout, so the section 13 line-ending failures are genuinely fixed",
+    "liveSandbox": "Verified against real machines in xroga-sandbox, each destroyed after: create, wait for started, exec and force-delete all behave as the provider assumes; base64 file injection lands at the requested guest path; the exec reply field is exit_code; egress denial proven with a control (registry.npmjs.org reachable without the unshare wrapper, denied with it); and an argument containing a shell metacharacter was echoed as literal data with no injected file created.",
+    "leakCheck": "xroga-sandbox confirmed to hold no machines, no IP and no secrets after every verification run."
   },
   "requirementCounts": {
-    "complete": 38,
+    "complete": 40,
     "preserved": 11,
-    "external_blocker": 2,
+    "external_blocker": 0,
     "total": 51
   },
   "pullRequest": {
@@ -167,5 +180,23 @@
   "deployment": {
     "attempted": false,
     "reason": "Deployment follows merge, and the merge gate is not met. The backend build and the full test suite pass, so nothing here is blocked on code."
-  }
+  },
+  "resolvedBlockers": [
+    {
+      "requirementIds": [
+        "R7.6",
+        "R2.13"
+      ],
+      "resolution": "Closed without the always-on paid worker the original entry assumed was necessary.",
+      "why": "A Fly app record is free; billing attaches to machines, volumes and IP addresses. So the sandbox app can exist permanently at zero cost and pay only for the seconds a microVM actually runs. The earlier analysis treated an always-on worker as the floor, which overstated the blocker.",
+      "approval": "Owner approved the ephemeral-machine approach explicitly.",
+      "costModel": "xroga-sandbox idles with no machines, no volumes and no IP, verified empty. Per execution: one shared-CPU microVM for the duration of the build only.",
+      "separateAppIsSecurityNotBookkeeping": "Fly secrets are app-scoped and injected into every machine in the app. A sandbox machine inside xroga-api would receive SUPABASE_SERVICE_ROLE_KEY and the GitHub tokens automatically. The provider refuses to run against the API app, so this cannot be misconfigured back into a leak."
+    }
+  ],
+  "honestLimits": [
+    "Code in a Fly Machine runs as root: unshare -n requires CAP_SYS_ADMIN and the Machines API exposes no per-exec user, so the container providers’ --user 1000:1000 and --cap-drop ALL have no equivalent here.",
+    "The guest root filesystem is writable; there is no --read-only plus tmpfs equivalent. Containment is by disposal rather than by permission.",
+    "Both are why this provider registers behind the container providers rather than in front of them, and why that ordering is pinned by a test."
+  ]
 }
