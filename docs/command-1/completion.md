@@ -37,7 +37,7 @@ Run on this branch, on a CRLF Windows checkout:
 
 | gate | result |
 | --- | --- |
-| backend unit tests | **1027 / 1027 pass** |
+| backend unit tests | **1031 / 1031 pass** |
 | frontend unit tests | **181 / 181 pass** |
 | `tsc --noEmit` | clean |
 | `npm run build` | succeeds |
@@ -71,9 +71,9 @@ change was invented to force a rerun.
 (run 31171493322): all nine steps green, and its collection-floor step printed
 `backend=978 frontend=181` — identical to the local numbers at that commit. This confirms
 the earlier `cancelled` results were GitHub capacity, never a property of the branch. No
-code change was needed, and none was made. The backend figure is 1027 on this branch because
-M11 added 21 tests and M12 a further 28; the collection floors are `>=350` and `>=40`, so
-they track collapse rather than an exact count.
+code change was needed, and none was made. The backend figure is 1031 on this branch because
+M11 added 21 tests, M12 a further 28, and the guest-shape fix 4 more; the collection floors
+are `>=350` and `>=40`, so they track collapse rather than an exact count.
 
 ## What shipped, by milestone
 
@@ -183,13 +183,13 @@ Honest accounting, because overclaiming here would defeat the point:
 | disposable | **yes** | fresh microVM per execution, destroyed after |
 | no secrets | **yes** | separate app with none; caller's scrubbed environment only |
 | no inbound | **yes** | no `services` block, no IP allocated — nothing can connect |
-| resource-capped | **yes** | `guest.cpus` and `memory_mb` from the caller's limits |
+| resource-capped | **partly** | `guest.cpus` and `memory_mb` from the caller's limits; `diskMb` and `maxProcesses` are not enforced (no `--tmpfs size` or `--pids-limit` equivalent) |
 | egress denied | **yes**, for `networkPolicy: 'none'` | the command runs under `unshare -n` |
 | unprivileged | **no** | code runs as root; `unshare -n` needs `CAP_SYS_ADMIN` |
 | read-only root | **no** | the Machines API has no `--read-only` equivalent |
 
-The last two are real gaps against the container providers, which is why this provider
-registers **behind** them rather than in front — and why that ordering is pinned by a test.
+The last two, plus the half-kept resource cap, are real gaps against the container providers,
+which is why this provider registers **behind** them rather than in front — and why that ordering is pinned by a test.
 Containment here is by disposal, not by permission. `registerSandboxProvider` unshifts, so
 registering it the ordinary way would have silently downgraded any environment that *did*
 have Docker; `registerFallbackSandboxProvider` exists for that reason.
@@ -201,7 +201,7 @@ reason, never a quietly weaker sandbox.
 ### Verified against real machines, not just stubs
 
 Every claim above that could be checked against the live Machines API was, each machine
-destroyed after, and one check found a real bug:
+destroyed after, and doing so found two real bugs the stub suite could not have found:
 
 - base64 file injection lands at the requested guest path
 - the exec reply field is `exit_code` — the provider reads it and treats a missing or
@@ -213,11 +213,52 @@ destroyed after, and one check found a real bug:
 - an argument containing `; touch /tmp/PWNED` was echoed as literal data and no such file was
   created. Arguments reach the guest as positional parameters (`$0`, `"$@"`), so the shell
   parses only fixed script text and never re-parses caller data.
-- **the bug**: the first argv `cd`'d into `/work`, which does not exist unless a file happens
+- **first bug**: the first argv `cd`'d into `/work`, which does not exist unless a file happens
   to be injected there. A no-files execution would have failed on a real machine while every
   stub test passed. Now `mkdir -p` first, with a regression test.
+- **second bug, and this one shipped**: `guest.cpus` must be one of `[1 2 4 6 8]`, and the
+  default `cpuSeconds: 300` divided by 60 gives **5**. Every create at default limits was
+  rejected with `HTTP 400 invalid config.guest.cpus`. Selection worked, the probe passed, and
+  then nothing ran. Fixed in PR #466 by snapping down to a legal count, plus a per-CPU memory
+  band (`cpus 4, 512 MB` → *"minimum required 1024 MiB"*; `cpus 1, 4096 MB` → *"cannot exceed
+  2048 MiB"*) that a multiple-of-256 rule alone had missed — the pre-existing memory test was
+  itself asserting a value Fly rejects.
+
+  Worth stating why the suite missed it, because it is the limit of this kind of test: a stub
+  replays *this module's own arithmetic*, so it agrees with whatever the module computes. Only
+  the remote API knows which values it accepts. It was found by running the deployed module
+  from the production host — and the refusal it produced was at least honest: `exitCode: null`
+  and "nothing was executed", never a false pass.
+
+  After the fix, the same values that failed (`cpus=4 memory_mb=1024`) create, run
+  `SANDBOX_RAN_OK` at exit 0, deny egress, and destroy cleanly.
 
 `xroga-sandbox` was confirmed to hold no machines, no IP and no secrets after every run.
+
+### Confirmed on the deployed artefact, at the caller's real limits
+
+The fix above was proven by hand before it merged. That is not the same as proving the thing
+production actually loads, so after PR #466 deployed as `7dc911b` the check was repeated
+against `/app/dist/sandbox/flyMachineSandbox.js` on the running API host — the compiled
+module, not a copy — using `DEFAULT_SANDBOX_LIMITS` verbatim, because `compileValidate.runCmd`
+passes no `limits` and therefore every real validation command uses exactly those:
+
+| check | result |
+| --- | --- |
+| provider registered and probed | `fly-machine`, available, `networkIsolation: true` |
+| guest shape at default limits | `cpuSeconds 300, memoryMb 2048` → `cpus=4, memory_mb=2048` — both legal |
+| execution | exit **0**, injected `/work/marker.txt` readable by the command |
+| `networkPolicy: 'none'` | `EGRESS_DENIED` |
+| `networkPolicy: 'registry-only'` | `EGRESS_ALLOWED` |
+| machines left behind | **0** |
+
+The `registry-only` row is the one that makes the `none` row mean anything. A denial proves
+nothing on its own — a machine with no working network at all would produce the identical
+`EGRESS_DENIED`. The control reaches the same host through the same code path and succeeds,
+so the denial is `unshare -n` doing its job rather than an absence of connectivity.
+
+`id -u` printed `0` in that run, which is the root limitation recorded above showing up
+exactly where the table says it will.
 
 ### The remote-worker provider is still there, and still optional
 
