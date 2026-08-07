@@ -156,13 +156,14 @@
   "nextFile": null,
   "nextAction": "None. All 51 requirements are complete or preserved and no external blocker remains. Production secrets XROGA_SANDBOX_FLY_APP and XROGA_SANDBOX_FLY_TOKEN are staged on xroga-api and take effect on the next deploy, which the merge triggers.",
   "verification": {
-    "backendTests": "1027/1027 pass",
+    "backendTests": "1031/1031 pass",
     "frontendTests": "181/181 pass",
     "typecheck": "tsc --noEmit clean",
     "productionBuild": "npm run build succeeds",
     "platform": "verified on a CRLF Windows checkout, so the section 13 line-ending failures are genuinely fixed",
-    "liveSandbox": "Verified against real machines in xroga-sandbox, each destroyed after: create, wait for started, exec and force-delete all behave as the provider assumes; base64 file injection lands at the requested guest path; the exec reply field is exit_code; egress denial proven with a control (registry.npmjs.org reachable without the unshare wrapper, denied with it); and an argument containing a shell metacharacter was echoed as literal data with no injected file created.",
-    "leakCheck": "xroga-sandbox confirmed to hold no machines, no IP and no secrets after every verification run."
+    "liveSandbox": "Verified against real machines in xroga-sandbox, each destroyed after: create, wait for started, exec and force-delete all behave as the provider assumes; base64 file injection lands at the requested guest path; the exec reply field is exit_code; egress denial proven with a control (registry.npmjs.org reachable without the unshare wrapper, denied with it); and an argument containing a shell metacharacter was echoed as literal data with no injected file created. End-to-end after the guest-shape fix: cpus=4 memory_mb=1024 created, ran to exit 0, denied egress, and was destroyed.",
+    "leakCheck": "xroga-sandbox confirmed to hold no machines, no IP and no secrets after every verification run.",
+    "postDeployDefect": "The first deploy registered the provider but every create was rejected with HTTP 400 invalid config.guest.cpus, because the default 300 cpuSeconds / 60 gives 5 and Fly accepts only [1 2 4 6 8]. Stub tests could not catch it — they replay this module own arithmetic — so it was found by running the deployed module from the production host. Fixed in PR #466 (allowedCpuCount snaps down; roundedMemoryMb takes the CPU count for the 256-2048 MB per-CPU band). The failure was fail-closed throughout: exitCode null and nothing was executed, never a false pass."
   },
   "requirementCounts": {
     "complete": 40,

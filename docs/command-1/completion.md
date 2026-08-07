@@ -201,7 +201,7 @@ reason, never a quietly weaker sandbox.
 ### Verified against real machines, not just stubs
 
 Every claim above that could be checked against the live Machines API was, each machine
-destroyed after, and one check found a real bug:
+destroyed after, and doing so found two real bugs the stub suite could not have found:
 
 - base64 file injection lands at the requested guest path
 - the exec reply field is `exit_code` — the provider reads it and treats a missing or
@@ -213,9 +213,25 @@ destroyed after, and one check found a real bug:
 - an argument containing `; touch /tmp/PWNED` was echoed as literal data and no such file was
   created. Arguments reach the guest as positional parameters (`$0`, `"$@"`), so the shell
   parses only fixed script text and never re-parses caller data.
-- **the bug**: the first argv `cd`'d into `/work`, which does not exist unless a file happens
+- **first bug**: the first argv `cd`'d into `/work`, which does not exist unless a file happens
   to be injected there. A no-files execution would have failed on a real machine while every
   stub test passed. Now `mkdir -p` first, with a regression test.
+- **second bug, and this one shipped**: `guest.cpus` must be one of `[1 2 4 6 8]`, and the
+  default `cpuSeconds: 300` divided by 60 gives **5**. Every create at default limits was
+  rejected with `HTTP 400 invalid config.guest.cpus`. Selection worked, the probe passed, and
+  then nothing ran. Fixed in PR #466 by snapping down to a legal count, plus a per-CPU memory
+  band (`cpus 4, 512 MB` → *"minimum required 1024 MiB"*; `cpus 1, 4096 MB` → *"cannot exceed
+  2048 MiB"*) that a multiple-of-256 rule alone had missed — the pre-existing memory test was
+  itself asserting a value Fly rejects.
+
+  Worth stating why the suite missed it, because it is the limit of this kind of test: a stub
+  replays *this module's own arithmetic*, so it agrees with whatever the module computes. Only
+  the remote API knows which values it accepts. It was found by running the deployed module
+  from the production host — and the refusal it produced was at least honest: `exitCode: null`
+  and "nothing was executed", never a false pass.
+
+  After the fix, the same values that failed (`cpus=4 memory_mb=1024`) create, run
+  `SANDBOX_RAN_OK` at exit 0, deny egress, and destroy cleanly.
 
 `xroga-sandbox` was confirmed to hold no machines, no IP and no secrets after every run.
 
