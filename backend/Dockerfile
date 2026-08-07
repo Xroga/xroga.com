@@ -23,7 +23,7 @@ COPY . .
 
 RUN npm run build
 
-RUN test -f dist/index.js || (echo "ERROR: dist/index.js missing — deploy from backend/ with: cd backend && fly deploy -a xroga-api" && exit 1)
+RUN test -f dist/index.js || (echo "ERROR: dist/index.js missing — production deploys run from the repo root with: fly deploy . --config fly.api.toml -a xroga-api" && exit 1)
 
 RUN npm prune --omit=dev
 

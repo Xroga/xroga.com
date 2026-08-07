@@ -1,7 +1,10 @@
 # fly.toml app configuration file for xroga-api
 #
-# Deploy from THIS directory (backend/):
-#   cd backend && fly deploy -a xroga-api
+# NOT the deploy path. Production deploys use /fly.api.toml via
+# .github/workflows/fly-deploy.yml. Deploying with this file instead rolls the
+# app machines onto the [env] below, which is missing the OAuth callback and
+# Lemon Squeezy variables that fly.api.toml sets — see that file before
+# changing anything here.
 
 app = 'xroga-api'
 primary_region = 'iad'
@@ -19,7 +22,13 @@ primary_region = 'iad'
 
 [processes]
   app = 'node dist/index.js'
-  worker = 'RUN_SWARM_WORKER=true node dist/index.js'
+  # No `worker` group. Fly execs a process command directly rather than through
+  # a shell, so a `VAR=value node ...` prefix is read as the script path: a
+  # worker defined that way died with
+  #   Error: Cannot find module '/app/RUN_SWARM_WORKER=true'
+  # and crash-looped to its max restart count. RUN_SWARM_WORKER is already set
+  # in [env] above, so a worker group would need only 'node dist/index.js' —
+  # but fly.api.toml intentionally runs no worker, so none is defined here.
 
 [http_service]
   internal_port = 8080
