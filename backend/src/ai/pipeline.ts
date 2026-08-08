@@ -101,6 +101,7 @@ import {
   describeShadowObservation,
   observeUniversalShadow,
 } from '../synthesis/universalShadow.js';
+import { refusingCommit, tryUniversalBuild } from '../synthesis/universalEntrypoint.js';
 import {
   detectScaffoldFeatures,
   isNonWebFrameworkScaffold,
@@ -1094,6 +1095,61 @@ export async function runBuildPipeline(opts: {
     }),
   );
   if (shadowLine) console.log(shadowLine);
+
+  // The enabled universal path. Returns null — and changes nothing below — unless
+  // UNIVERSAL_AGENT_ENABLED=enabled *and* this project is allowlisted, so with production
+  // on `shadow` this is unreachable and the legacy pipeline proceeds exactly as before.
+  //
+  // Kept as one guarded call rather than an `if` wrapped around the rest of this function:
+  // the alternative leaves three thousand lines where every later edit has to remember
+  // which branch it is in.
+  //
+  // The commit function refuses when no repository is connected. A universal run that
+  // "succeeded" without writing to source control would be the precise shape of dishonest
+  // evidence this path exists to avoid.
+  const universal = await tryUniversalBuild({
+    runId,
+    userId: opts.userId,
+    projectId: opts.projectId ?? null,
+    prompt: userFacingPrompt,
+    commit: refusingCommit(
+      githubOkEarly && meta?.githubTargetRepo
+        ? 'the universal path does not yet own the repository shipping step'
+        : 'no GitHub repository is connected for this project',
+    ),
+  });
+  if (universal) {
+    const { result, routing } = universal;
+    emit({
+      agent: 'architect',
+      status: result.outcome === 'completed' ? 'done' : 'error',
+      message: `Universal path: ${result.outcome} at ${result.phaseReached}. ${result.reason}`,
+    });
+    return {
+      runId,
+      success: result.outcome === 'completed' && result.verified,
+      featureCategory: 'universal',
+      output: {
+        universal: true,
+        outcome: result.outcome,
+        phaseReached: result.phaseReached,
+        verified: result.verified,
+        reason: result.reason,
+        blockers: result.blockers,
+        commitSha: result.commitSha,
+        files: result.files.map((file) => file.path),
+        evidence: result.evidence,
+        routing,
+      },
+      // Usage may legitimately be null here, because the universal path can refuse before
+      // any model call. Recording zero tokens returns the user's real quota state rather
+      // than a hand-built object that would drift from the real shape.
+      tokenUsage: usageToTokenUsage(
+        usage ?? (await recordUsage(opts.userId, route.builder, 0, 0)),
+      ),
+      route,
+    };
+  }
 
   const needsVercelEarly = !isNonWebFrameworkScaffold(scaffoldKindEarly);
   const earlyShipBlockers: string[] = [];
