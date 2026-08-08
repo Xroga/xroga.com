@@ -23,7 +23,7 @@ Partly, and the split is clean.
 
 **Planning is universal and proven.** An unfamiliar request produces a real spec, a real
 architecture and real per-component commands with no central case for it. That is
-demonstrated by 117 tests including the §58–63 fixtures.
+demonstrated by 148 new tests including the §58–63 fixtures.
 
 **Execution is universal and unproven.** The commands are correct and the boundary is
 right. Nothing has run `cargo test` inside the sandbox, so the ecosystems beyond Node are
