@@ -98,6 +98,10 @@ import {
   mergeScaffoldWithGenerated,
 } from '../services/projectScaffold.js';
 import {
+  describeShadowObservation,
+  observeUniversalShadow,
+} from '../synthesis/universalShadow.js';
+import {
   detectScaffoldFeatures,
   isNonWebFrameworkScaffold,
   type ScaffoldKind,
@@ -1076,6 +1080,21 @@ export async function runBuildPipeline(opts: {
   const githubOkEarly = await isGitHubConnected(opts.userId);
   const vercelOkEarly = Boolean(await getVercelToken(opts.userId));
   const scaffoldKindEarly = detectScaffoldKind(userFacingPrompt);
+
+  // Observation only, and off unless UNIVERSAL_AGENT_ENABLED=shadow. Nothing below reads
+  // the result: it exists to record where the universal planner would have disagreed with
+  // `detectScaffoldKind`, which is the only evidence available that was not produced by
+  // the same reasoning that wrote the planner. `observeUniversalShadow` never throws, so
+  // this cannot turn a measurement into a failed build.
+  const shadowLine = describeShadowObservation(
+    observeUniversalShadow({
+      prompt: userFacingPrompt,
+      legacyStack: scaffoldKindEarly,
+      projectId: opts.projectId ?? null,
+    }),
+  );
+  if (shadowLine) console.log(shadowLine);
+
   const needsVercelEarly = !isNonWebFrameworkScaffold(scaffoldKindEarly);
   const earlyShipBlockers: string[] = [];
   if (!githubOkEarly) earlyShipBlockers.push('Connect GitHub to push code to your repo');

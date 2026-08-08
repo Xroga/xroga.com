@@ -1,0 +1,256 @@
+{
+  "schemaVersion": "1.0.0",
+  "command": "command-2-universal",
+  "branch": "agent/universal-engineering",
+  "baseCommit": "ac96781a9550569bcd2526f7b127669d70f49985",
+  "currentHead": "ac96781a9550569bcd2526f7b127669d70f49985",
+  "status": "partially_complete",
+  "activeMilestone": null,
+  "completedMilestones": [
+    {
+      "id": "M1",
+      "title": "Audit and requirements ledger",
+      "commit": "cb1cac8"
+    },
+    {
+      "id": "M2",
+      "title": "RuntimeAdapter contract plus Node, Python and Rust adapters",
+      "commit": "2c173cf"
+    },
+    {
+      "id": "M3",
+      "title": "Multi-ecosystem repository discovery",
+      "commit": "4bd732d"
+    },
+    {
+      "id": "M4",
+      "title": "Open-ended UniversalProductSpec",
+      "commit": "bf0d5f7"
+    },
+    {
+      "id": "M5",
+      "title": "ArchitecturePlan replacing the closed stack enum",
+      "commit": "bf0d5f7"
+    },
+    {
+      "id": "M6",
+      "title": "Generic unknown-runtime discovery",
+      "commit": "0c2bff1"
+    },
+    {
+      "id": "M7",
+      "title": "Black-box universality fixtures",
+      "commit": "354d97d"
+    },
+    {
+      "id": "M8",
+      "title": "Feature-flagged rollout and documentation",
+      "commit": "7bcdd3c"
+    }
+  ],
+  "incompleteMilestones": [],
+  "completedRequirementIds": [
+    "C2U-010",
+    "C2U-011",
+    "C2U-012",
+    "C2U-013",
+    "C2U-030",
+    "C2U-009",
+    "C2U-018",
+    "C2U-031",
+    "C2U-001",
+    "C2U-002",
+    "C2U-003",
+    "C2U-004",
+    "C2U-005",
+    "C2U-006",
+    "C2U-029",
+    "C2U-043",
+    "C2U-015",
+    "C2U-016",
+    "C2U-040",
+    "C2U-019",
+    "C2U-021",
+    "C2U-022",
+    "C2U-034",
+    "C2U-035",
+    "C2U-036",
+    "C2U-037",
+    "C2U-038",
+    "C2U-039",
+    "C2U-041",
+    "C2U-042",
+    "C2U-046",
+    "C2U-023"
+  ],
+  "incompleteRequirementIds": [
+    "C2U-007",
+    "C2U-008",
+    "C2U-014",
+    "C2U-017",
+    "C2U-020",
+    "C2U-024",
+    "C2U-025",
+    "C2U-026",
+    "C2U-027",
+    "C2U-028",
+    "C2U-032",
+    "C2U-033",
+    "C2U-044",
+    "C2U-045"
+  ],
+  "blockedRequirementIds": [],
+  "blockers": [],
+  "migrationIds": [],
+  "focusedTestsExecuted": [
+    {
+      "command": "npx tsx --test src/synthesis/runtime/adapters.test.ts",
+      "result": "33/33 pass"
+    },
+    {
+      "command": "npm test (backend)",
+      "result": "1064/1064 pass"
+    },
+    {
+      "command": "npx tsc --noEmit (backend)",
+      "result": "clean"
+    },
+    {
+      "command": "npx tsx --test src/synthesis/runtime/repositoryDiscovery.test.ts",
+      "result": "18/18 pass"
+    },
+    {
+      "command": "npm test (backend)",
+      "result": "1082/1082 pass"
+    },
+    {
+      "command": "npx tsx --test src/synthesis/universalArchitecture.test.ts",
+      "result": "29/29 pass"
+    },
+    {
+      "command": "npm test (backend)",
+      "result": "1111/1111 pass"
+    },
+    {
+      "command": "npx tsx --test src/synthesis/runtime/runtimeDiscovery.test.ts",
+      "result": "24/24 pass"
+    },
+    {
+      "command": "npm test (backend)",
+      "result": "1135/1135 pass"
+    },
+    {
+      "command": "npx tsx --test src/synthesis/universalFixtures.test.ts",
+      "result": "31/31 pass"
+    },
+    {
+      "command": "npm test (backend)",
+      "result": "1166/1166 pass"
+    },
+    {
+      "command": "npx tsx --test src/config/universalAgentFlags.test.ts",
+      "result": "13/13 pass"
+    },
+    {
+      "command": "npx tsx --test src/synthesis/universalShadow.test.ts",
+      "result": "7/7 pass"
+    }
+  ],
+  "integrationTestsExecuted": [],
+  "generatedFixtureTestsExecuted": [
+    {
+      "fixture": "section 58 A-N",
+      "result": "pass"
+    },
+    {
+      "fixture": "section 59 polyglot",
+      "result": "pass"
+    },
+    {
+      "fixture": "section 60 monorepo",
+      "result": "pass"
+    },
+    {
+      "fixture": "section 61 existing repository",
+      "result": "pass"
+    },
+    {
+      "fixture": "section 62 unknown runtime (Nim)",
+      "result": "pass"
+    },
+    {
+      "fixture": "section 63 Python FastAPI vertical slice",
+      "result": "pass at plan and validation tiers; sandbox toolchain availability unverified"
+    }
+  ],
+  "fullValidationResults": {
+    "backendTests": "1189/1189 pass",
+    "frontendTests": "181/181 pass",
+    "backendTypecheck": "clean",
+    "frontendTypecheck": "clean",
+    "backendBuild": "succeeds",
+    "frontendBuild": "succeeds (production build compiled)"
+  },
+  "evidencePaths": [
+    "docs/command-2/universal/audit.md",
+    "docs/command-2/universal/requirements-ledger.json",
+    "docs/command-2/universal/final-completion.md",
+    "docs/universal-agent-architecture.md",
+    "docs/runtime-adapters.md",
+    "docs/universal-agent-rollout.md"
+  ],
+  "checkpointCommits": [
+    {
+      "commit": "cb1cac8",
+      "milestone": "M1",
+      "title": "command2: audit universal engineering limitations"
+    },
+    {
+      "commit": "2c173cf",
+      "milestone": "M2",
+      "title": "command2: add runtime adapter architecture with node python rust"
+    },
+    {
+      "commit": "4bd732d",
+      "milestone": "M3",
+      "title": "command2: expand repository intelligence across ecosystems"
+    },
+    {
+      "commit": "bf0d5f7",
+      "milestone": "M4+M5",
+      "title": "command2: add universal product spec and architecture planning"
+    },
+    {
+      "commit": "0c2bff1",
+      "milestone": "M6",
+      "title": "command2: add generic runtime discovery"
+    },
+    {
+      "commit": "354d97d",
+      "milestone": "M7",
+      "title": "command2: add acceptance compiler and universal black-box fixtures"
+    },
+    {
+      "commit": "7bcdd3c",
+      "milestone": "M8",
+      "title": "command2: add feature-flag rollout and universal agent documentation"
+    }
+  ],
+  "externalCredentialsRequired": [],
+  "externalInfrastructureRequired": [
+    "Command 1 Fly Machine sandbox — available, and its toolchain coverage is now measured rather than assumed. The default image carries node and npm only; Python and Rust run in adapter-declared images verified on real machines."
+  ],
+  "deploymentState": "not_attempted",
+  "nextFile": "backend/src/ai/pipeline.ts",
+  "nextAction": "Enable shadow mode in production and read the disagreements. The enabled path is still unwired: no real build routes through planUniversalRun to generate files. Sections 20-22 were not implemented.",
+  "inheritedConstraints": [
+    "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
+    "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
+  ],
+  "updatedAt": "2026-08-08T12:08:48.900Z",
+  "verification": {
+    "sandboxToolchainProbe": "Deployed runtime, default image node:20-alpine: HAVE node, HAVE npm; MISS cargo, rustc, python, python3, pip, pip3, poetry, uv, pytest, go, java, dotnet, php, ruby.",
+    "perEcosystemImages": "rust:1-alpine -> cargo 1.97.1 (exit 0); python:3.12-alpine -> Python 3.12.13, pip 25.0.1 (exit 0). Both machines destroyed; xroga-sandbox holds no machines, IPs or volumes."
+  },
+  "statusReason": "The sandbox blocker is measured and closed. What remains is implementable work that was not done: sections 20-22 (model capability registry, benchmarks, capability routing) are untouched and section 13 framework adapters do not exist. Rounding this up to implementation_complete_external_validation_pending would blame an environment for a gap that is not environmental."
+}

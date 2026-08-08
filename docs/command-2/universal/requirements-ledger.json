@@ -1,0 +1,1053 @@
+{
+  "schemaVersion": "1.0.0",
+  "command": "command-2-universal",
+  "generatedAt": "2026-08-08T11:19:35.578Z",
+  "baseCommit": "ac96781a9550569bcd2526f7b127669d70f49985",
+  "verificationStates": [
+    "not_started",
+    "implementation_in_progress",
+    "implemented_unverified",
+    "locally_verified",
+    "sandbox_verified",
+    "integration_verified",
+    "externally_blocked",
+    "unsupported",
+    "failed",
+    "verified"
+  ],
+  "requirements": [
+    {
+      "id": "C2U-001",
+      "section": "5",
+      "title": "Open-ended UniversalProductSpec persisted and versioned",
+      "owningSubsystem": "synthesis/universalProductSpec",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "UniversalProductSpec persisted, versioned and migratable; migration preserves unknown surfaces and recomputes the custom flag so a promoted surface stops being custom."
+    },
+    {
+      "id": "C2U-002",
+      "section": "5",
+      "title": "ProductSurface is open-ended, not a closed enum",
+      "owningSubsystem": "synthesis/universalProductSpec",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "ProductSurface is KnownProductSurface | (string & {}) — known values keep completion while any string is legal. withCustomSurface adds one a caller determined some other way."
+    },
+    {
+      "id": "C2U-003",
+      "section": "5",
+      "title": "A product may declare multiple surfaces",
+      "owningSubsystem": "synthesis/universalProductSpec",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Surfaces are a scored list, not a single winner. A Go service with a background worker yields both, which a single-answer detector drops."
+    },
+    {
+      "id": "C2U-004",
+      "section": "6",
+      "title": "Persisted ArchitecturePlan covering components, languages, runtimes, build systems",
+      "owningSubsystem": "synthesis/architecturePlan",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "ArchitecturePlan with per-component language, runtime, framework, package manager, build system and adapter binding."
+    },
+    {
+      "id": "C2U-005",
+      "section": "6",
+      "title": "Every architecture decision records reason, evidence, alternatives, tradeoffs, confidence",
+      "owningSubsystem": "synthesis/architecturePlan",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Every decision records selection, reason, requirement and repository evidence, alternatives, tradeoffs, confidence, inheritedFromRepository and validationMethod."
+    },
+    {
+      "id": "C2U-006",
+      "section": "6",
+      "title": "No forced Next.js/React/Node/Postgres/Vercel unless requirements demand them",
+      "owningSubsystem": "synthesis/architecturePlan",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Surface defaults put a CLI on Rust and a data pipeline on Python; no database is added unless persistence is requested; a browser surface keeps TypeScript because Rust cannot run there."
+    },
+    {
+      "id": "C2U-007",
+      "section": "7",
+      "title": "Repository tools bounded, path-safe, commit-scoped, evidence-recording",
+      "owningSubsystem": "ai/repositoryTools",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": ""
+    },
+    {
+      "id": "C2U-008",
+      "section": "7",
+      "title": "Repository index with blob SHA, language, package ownership; HEAD invalidation",
+      "owningSubsystem": "ai/repositoryIndex",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": ""
+    },
+    {
+      "id": "C2U-009",
+      "section": "8",
+      "title": "Multi-ecosystem manifest and lockfile discovery without a whitelist",
+      "owningSubsystem": "synthesis/repositoryDiscovery",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/repositoryDiscovery.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/repositoryDiscovery.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/repositoryDiscovery.test.ts"
+      ],
+      "evidence": [
+        "18/18 discovery tests pass; backend suite 1082/1082; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Marker table covering the section 8 ecosystems plus pattern markers for extension families. adapterId is null where an ecosystem is recognised but unbuildable, so a blocker is specific rather than generic. Not a whitelist: genericSignals reads shebangs, Makefile targets, CI run steps, Dockerfile RUN lines and README fences for anything unmatched."
+    },
+    {
+      "id": "C2U-010",
+      "section": "9",
+      "title": "RuntimeAdapter contract; no language-specific commands in the central pipeline",
+      "owningSubsystem": "synthesis/runtimeAdapters",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/adapterContract.ts",
+        "backend/src/synthesis/runtime/nodeAdapter.ts",
+        "backend/src/synthesis/runtime/pythonAdapter.ts",
+        "backend/src/synthesis/runtime/rustAdapter.ts",
+        "backend/src/synthesis/runtime/registry.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/adapters.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/adapters.test.ts"
+      ],
+      "evidence": [
+        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "RuntimeAdapter contract with 7 command phases; registry.ts and adapterContract.ts assert-tested to contain no language-specific commands."
+    },
+    {
+      "id": "C2U-011",
+      "section": "10",
+      "title": "Node/TypeScript adapter verified; repository scripts take precedence",
+      "owningSubsystem": "synthesis/runtimeAdapters",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/adapterContract.ts",
+        "backend/src/synthesis/runtime/nodeAdapter.ts",
+        "backend/src/synthesis/runtime/pythonAdapter.ts",
+        "backend/src/synthesis/runtime/rustAdapter.ts",
+        "backend/src/synthesis/runtime/registry.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/adapters.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/adapters.test.ts"
+      ],
+      "evidence": [
+        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Node adapter: lockfile-derived package manager, repository scripts outrank adapter defaults, --ignore-scripts on every install."
+    },
+    {
+      "id": "C2U-012",
+      "section": "10",
+      "title": "Python adapter verified across pyproject/requirements/Poetry/uv",
+      "owningSubsystem": "synthesis/runtimeAdapters",
+      "implementationState": "implemented",
+      "verificationState": "sandbox_verified",
+      "files": [
+        "backend/src/synthesis/runtime/adapterContract.ts",
+        "backend/src/synthesis/runtime/nodeAdapter.ts",
+        "backend/src/synthesis/runtime/pythonAdapter.ts",
+        "backend/src/synthesis/runtime/rustAdapter.ts",
+        "backend/src/synthesis/runtime/registry.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/adapters.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/adapters.test.ts"
+      ],
+      "evidence": [
+        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean",
+        "Toolchain confirmed present in the adapter-declared image on a real Fly machine."
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Python adapter: uv/Poetry/Pipenv/pip precedence from committed evidence; commands run inside the workflow environment."
+    },
+    {
+      "id": "C2U-013",
+      "section": "10",
+      "title": "Rust adapter verified including Cargo workspaces",
+      "owningSubsystem": "synthesis/runtimeAdapters",
+      "implementationState": "implemented",
+      "verificationState": "sandbox_verified",
+      "files": [
+        "backend/src/synthesis/runtime/adapterContract.ts",
+        "backend/src/synthesis/runtime/nodeAdapter.ts",
+        "backend/src/synthesis/runtime/pythonAdapter.ts",
+        "backend/src/synthesis/runtime/rustAdapter.ts",
+        "backend/src/synthesis/runtime/registry.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/adapters.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/adapters.test.ts"
+      ],
+      "evidence": [
+        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean",
+        "Toolchain confirmed present in the adapter-declared image on a real Fly machine."
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Rust adapter: Cargo with workspace and virtual-manifest handling; networked fetch separated from every later step."
+    },
+    {
+      "id": "C2U-014",
+      "section": "11",
+      "title": "Additional ecosystem adapters with honest capability states",
+      "owningSubsystem": "synthesis/runtimeAdapters",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": ""
+    },
+    {
+      "id": "C2U-015",
+      "section": "12",
+      "title": "Generic unknown-runtime discovery producing a provisional RuntimeCapabilitySpec",
+      "owningSubsystem": "synthesis/runtimeDiscovery",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/runtimeDiscovery.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/runtimeDiscovery.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/runtimeDiscovery.test.ts"
+      ],
+      "evidence": [
+        "24/24 tests pass; backend suite 1135/1135; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "deriveRuntimeCapability ranks evidence CI > container > Makefile > documentation > inferred and emits a provisional RuntimeCapabilitySpec. Proven on a Nim repository: no adapter, no marker, no mention anywhere in the codebase."
+    },
+    {
+      "id": "C2U-016",
+      "section": "12",
+      "title": "Synthesised adapters are not trusted until validated",
+      "owningSubsystem": "synthesis/runtimeDiscovery",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/runtimeDiscovery.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/runtimeDiscovery.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/runtimeDiscovery.test.ts"
+      ],
+      "evidence": [
+        "24/24 tests pass; backend suite 1135/1135; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "A derived spec is always validated:false. synthesizeAdapter throws on an unvalidated spec, so a README guess can never be registered beside the written adapters. A discovered adapter reports confidence 0.5 so a real adapter always wins."
+    },
+    {
+      "id": "C2U-017",
+      "section": "13",
+      "title": "FrameworkAdapter metadata; frameworks are adapters not categories",
+      "owningSubsystem": "synthesis/frameworkAdapters",
+      "implementationState": "partially_implemented",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Frameworks are recorded as architecture decisions with evidence, but no FrameworkAdapter contract exists."
+    },
+    {
+      "id": "C2U-018",
+      "section": "14",
+      "title": "Package manager and build system detection; install is not assumed to be npm",
+      "owningSubsystem": "synthesis/toolchainDetection",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/repositoryDiscovery.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/repositoryDiscovery.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/repositoryDiscovery.test.ts"
+      ],
+      "evidence": [
+        "18/18 discovery tests pass; backend suite 1082/1082; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Package manager and build system carried per ecosystem signal; monorepo tooling detected separately because it changes which commands are correct."
+    },
+    {
+      "id": "C2U-019",
+      "section": "15",
+      "title": "Universal EngineeringTask graph reusing the Command 1 scheduler",
+      "owningSubsystem": "ai/executionRuntime",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "planUniversalRun composes spec, plan, acceptance and per-component validation commands into an executable plan."
+    },
+    {
+      "id": "C2U-020",
+      "section": "16",
+      "title": "Dynamic planning: tasks may be added, split, reordered with recorded evidence",
+      "owningSubsystem": "ai/executionRuntime",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": ""
+    },
+    {
+      "id": "C2U-021",
+      "section": "17",
+      "title": "Product-specific acceptance criteria, never generic \"app works\"",
+      "owningSubsystem": "synthesis/acceptanceCompiler",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "compileAcceptanceCriteria emits criteria naming an observable; unfalsifiableCriteria guards the module against drifting back to \"App works\". Surfaces with no template still yield a checkable criterion, which is what keeps section 58 N open."
+    },
+    {
+      "id": "C2U-022",
+      "section": "18",
+      "title": "Validation derived from architecture and adapters; zero-test success is failure",
+      "owningSubsystem": "synthesis/verificationCompiler",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Validation derives from architecture and adapters. mayClaimVerified refuses when no test ran, so a green run over zero tests is a failure per section 18."
+    },
+    {
+      "id": "C2U-023",
+      "section": "19",
+      "title": "Generated code executes only through the Command 1 sandbox boundary",
+      "owningSubsystem": "sandbox",
+      "implementationState": "implemented",
+      "verificationState": "sandbox_verified",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [
+        "Live probe of the deployed sandbox: default image node:20-alpine reports HAVE node, HAVE npm, MISS cargo/rustc/python/python3/pip/pip3/poetry/uv/pytest/go/java/dotnet/php/ruby.",
+        "Per-ecosystem images verified on real machines: rust:1-alpine gave cargo 1.97.1, python:3.12-alpine gave Python 3.12.13 with pip 25.0.1, both exit 0, both machines destroyed, xroga-sandbox left empty."
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Adapters declare sandboxImage. Node uses the sandbox default; Python and Rust name images whose toolchains were measured present. Carried per validation so a polyglot repository gets a different image per component."
+    },
+    {
+      "id": "C2U-024",
+      "section": "20",
+      "title": "Versioned ModelCapabilityProfile with expiry and evidence-based claims",
+      "owningSubsystem": "ai/modelCapabilityRegistry",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Model capability registry not implemented. modelCapabilityRegistry.ts remains interface-only."
+    },
+    {
+      "id": "C2U-025",
+      "section": "21",
+      "title": "Benchmark definitions and persisted results",
+      "owningSubsystem": "ai/modelBenchmarks",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Benchmark system not implemented."
+    },
+    {
+      "id": "C2U-026",
+      "section": "22",
+      "title": "Capability-based routing with evidence-based failover",
+      "owningSubsystem": "ai/intelligentRouter",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Capability-based routing not implemented; intelligentRouter is unchanged."
+    },
+    {
+      "id": "C2U-027",
+      "section": "24",
+      "title": "Provider-agnostic research with freshness metadata; retrieved pages untrusted",
+      "owningSubsystem": "synthesis/research",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": ""
+    },
+    {
+      "id": "C2U-028",
+      "section": "25",
+      "title": "Greenfield bootstrap without requiring a predefined template",
+      "owningSubsystem": "synthesis/bootstrap",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": ""
+    },
+    {
+      "id": "C2U-029",
+      "section": "26",
+      "title": "Existing repositories inspected before modification and normally extended",
+      "owningSubsystem": "synthesis/existingRepository",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "planFromRepository marks every decision inheritedFromRepository with committed files as evidence. A Django repository stays Python even when the request says Node."
+    },
+    {
+      "id": "C2U-030",
+      "section": "28",
+      "title": "Polyglot repositories assign adapters per component",
+      "owningSubsystem": "synthesis/repositoryDiscovery",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/adapterContract.ts",
+        "backend/src/synthesis/runtime/nodeAdapter.ts",
+        "backend/src/synthesis/runtime/pythonAdapter.ts",
+        "backend/src/synthesis/runtime/rustAdapter.ts",
+        "backend/src/synthesis/runtime/registry.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/adapters.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/adapters.test.ts"
+      ],
+      "evidence": [
+        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "detectComposition assigns one adapter per component; polyglot fixture proves no npm command reaches Rust or Python components."
+    },
+    {
+      "id": "C2U-031",
+      "section": "29",
+      "title": "Monorepo workspace detection and focused validation",
+      "owningSubsystem": "synthesis/repositoryDiscovery",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/repositoryDiscovery.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/repositoryDiscovery.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/repositoryDiscovery.test.ts"
+      ],
+      "evidence": [
+        "18/18 discovery tests pass; backend suite 1082/1082; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "detectMonorepoLayouts covers nx, turborepo, pnpm/npm workspaces, lerna, go.work, bazel and Cargo workspaces."
+    },
+    {
+      "id": "C2U-032",
+      "section": "43",
+      "title": "Security controls preserved in universal generation",
+      "owningSubsystem": "synthesis/security",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": ""
+    },
+    {
+      "id": "C2U-033",
+      "section": "45",
+      "title": "Transactional patching with repository and source-commit identity",
+      "owningSubsystem": "ai/patchWorkspace",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": ""
+    },
+    {
+      "id": "C2U-034",
+      "section": "49",
+      "title": "Evidence-based completion; a model message cannot complete a task",
+      "owningSubsystem": "ai/executionRuntime",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "mayClaimVerified requires sandbox-tier execution and a passing test command; blockers block the claim."
+    },
+    {
+      "id": "C2U-035",
+      "section": "57",
+      "title": "Test tier model showing exactly which tier was reached",
+      "owningSubsystem": "synthesis/verificationCompiler",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "tierReached never overstates: none when nothing executed, sandbox only when commands actually ran."
+    },
+    {
+      "id": "C2U-036",
+      "section": "58",
+      "title": "Black-box universality fixtures A-N",
+      "owningSubsystem": "synthesis/fixtures",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Section 58 fixtures A,B,C,D,E,I,J,K,N all pass."
+    },
+    {
+      "id": "C2U-037",
+      "section": "59",
+      "title": "Polyglot fixture: three runtimes, correct adapters, no npm in Rust/Python",
+      "owningSubsystem": "synthesis/fixtures",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Polyglot fixture: three adapters, correct per-component test commands, no npm in Rust or Python components."
+    },
+    {
+      "id": "C2U-038",
+      "section": "60",
+      "title": "Monorepo fixture with deep nested target discovery",
+      "owningSubsystem": "synthesis/fixtures",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Monorepo fixture: a package nested five levels deep is discovered without a hardcoded path."
+    },
+    {
+      "id": "C2U-039",
+      "section": "61",
+      "title": "Existing-repository fixture preserving unrelated functionality",
+      "owningSubsystem": "synthesis/fixtures",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Existing-repository fixture: Django stack inherited, existing pytest suite planned."
+    },
+    {
+      "id": "C2U-040",
+      "section": "62",
+      "title": "Unknown-runtime fixture proving discovery over whitelisting",
+      "owningSubsystem": "synthesis/fixtures",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/runtimeDiscovery.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/runtimeDiscovery.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/runtimeDiscovery.test.ts"
+      ],
+      "evidence": [
+        "24/24 tests pass; backend suite 1135/1135; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Nim fixture end to end: derive, refuse unsafe lines, validate in sandbox, synthesise, register, detect."
+    },
+    {
+      "id": "C2U-041",
+      "section": "63",
+      "title": "Python FastAPI vertical slice through the real architecture",
+      "owningSubsystem": "synthesis/fixtures",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Python FastAPI vertical slice: surfaces, FastAPI and SQLite selected from requirements, adapter-bound pytest command, registry-only install with every other phase denied egress, and an explicit unfaked blocker when the toolchain is absent."
+    },
+    {
+      "id": "C2U-042",
+      "section": "70",
+      "title": "Feature-flagged rollout with shadow planning and rollback",
+      "owningSubsystem": "config/featureFlags",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/config/universalAgentFlags.ts",
+        "docs/universal-agent-architecture.md",
+        "docs/runtime-adapters.md",
+        "docs/universal-agent-rollout.md"
+      ],
+      "tests": [
+        "backend/src/config/universalAgentFlags.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/config/universalAgentFlags.test.ts"
+      ],
+      "evidence": [
+        "13/13 flag tests pass; backend suite 1179/1179"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "UNIVERSAL_AGENT_ENABLED off|shadow|enabled with percentage and allowlist. mayWrite returns false in shadow, asserted across every mode/percentage combination. Bucketing is deterministic so a project never changes path on retry. An unrecognised flag value is off, not an error."
+    },
+    {
+      "id": "C2U-043",
+      "section": "71",
+      "title": "No unknown-product to static-HTML path in the universal execution path",
+      "owningSubsystem": "ai/pipeline",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "planIsRefusal: a request with no determinable surface produces zero components and a blocker naming the static-website failure it replaces."
+    },
+    {
+      "id": "C2U-044",
+      "section": "72",
+      "title": "Versioned persistence for specs, plans, adapters, runs and evidence",
+      "owningSubsystem": "db",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Specs and plans are serialisable and versioned with migration functions, but no Supabase tables or migrations were created."
+    },
+    {
+      "id": "C2U-045",
+      "section": "74",
+      "title": "Required focused tests across every listed subsystem",
+      "owningSubsystem": "tests",
+      "implementationState": "not_started",
+      "verificationState": "not_started",
+      "files": [],
+      "tests": [],
+      "commands": [],
+      "evidence": [],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": ""
+    },
+    {
+      "id": "C2U-046",
+      "section": "76",
+      "title": "Documentation distinguishing verified from planned and externally blocked",
+      "owningSubsystem": "docs",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/config/universalAgentFlags.ts",
+        "docs/universal-agent-architecture.md",
+        "docs/runtime-adapters.md",
+        "docs/universal-agent-rollout.md"
+      ],
+      "tests": [
+        "backend/src/config/universalAgentFlags.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/config/universalAgentFlags.test.ts"
+      ],
+      "evidence": [
+        "13/13 flag tests pass; backend suite 1179/1179"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "docs/universal-agent-architecture.md, docs/runtime-adapters.md and docs/universal-agent-rollout.md distinguish verified, adapter_available, planned, external_blocked and not-implemented per subsystem."
+    }
+  ]
+}

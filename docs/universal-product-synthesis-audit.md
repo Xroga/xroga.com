@@ -46,4 +46,4 @@ Method: direct source inspection plus existing and new executable tests. A regis
 
 ## Files and validation
 
-Implementation: `backend/src/synthesis/*` and `backend/src/ai/pipeline.ts`. The existing Command 1 `execution_runs` JSON state is reused for persistence, so Part 2A needs no database migration and creates no duplicate persistence path. Tests cover product-definition migration, graph compilation, architecture/provider/credential contracts, and three persisted black-box fixtures. Exact commands and results are recorded in `docs/command-2/execution-state.json` and `part-a-completion.md`.
+Implementation: `backend/src/synthesis/*` and `backend/src/ai/pipeline.ts`. The existing Command 1 `execution_runs` JSON state is reused for persistence, so Part 2A needs no database migration and creates no duplicate persistence path. Tests cover product-definition migration, graph compilation, architecture/provider/credential contracts, and three persisted black-box fixtures. Exact commands and results are recorded in `docs/command-2/parts-abc/execution-state.json` and `docs/command-2/parts-abc/part-a-completion.md`.
