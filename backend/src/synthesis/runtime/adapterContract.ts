@@ -48,6 +48,8 @@ export type AdapterCapabilityState =
   | 'detected'
   | 'implementation_available'
   | 'fixture_verified'
+  /** Commands were executed inside the real sandbox image and the toolchain ran. */
+  | 'sandbox_verified'
   | 'production_observed'
   | 'external_toolchain_required'
   | 'unsupported';

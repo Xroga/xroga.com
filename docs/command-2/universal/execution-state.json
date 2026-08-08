@@ -5,7 +5,7 @@
   "baseCommit": "ac96781a9550569bcd2526f7b127669d70f49985",
   "currentHead": "ac96781a9550569bcd2526f7b127669d70f49985",
   "status": "partially_complete",
-  "activeMilestone": null,
+  "activeMilestone": "M10",
   "completedMilestones": [
     {
       "id": "M1",
@@ -54,7 +54,67 @@
       "pullRequest": 469
     }
   ],
-  "incompleteMilestones": [],
+  "incompleteMilestones": [
+    {
+      "id": "M10",
+      "title": "Repository index with HEAD invalidation",
+      "requirement": "C2U-008"
+    },
+    {
+      "id": "M11",
+      "title": "Additional runtime adapters",
+      "requirement": "C2U-014"
+    },
+    {
+      "id": "M12",
+      "title": "Dynamic replanning",
+      "requirement": "C2U-020"
+    },
+    {
+      "id": "M13",
+      "title": "Research freshness and provenance",
+      "requirement": "C2U-027"
+    },
+    {
+      "id": "M14",
+      "title": "Security control generation",
+      "requirement": "C2U-032"
+    },
+    {
+      "id": "M15",
+      "title": "Supabase persistence with RLS",
+      "requirement": "C2U-044"
+    },
+    {
+      "id": "M16",
+      "title": "Complete missing validation",
+      "requirement": "C2U-045"
+    },
+    {
+      "id": "M17",
+      "title": "Wire the enabled universal execution path"
+    },
+    {
+      "id": "M18",
+      "title": "Real sandbox generated-project proofs"
+    },
+    {
+      "id": "M19",
+      "title": "Live allowlisted universal routing proof"
+    },
+    {
+      "id": "M20",
+      "title": "Follow-up modification proof"
+    },
+    {
+      "id": "M21",
+      "title": "Universality regression"
+    },
+    {
+      "id": "M22",
+      "title": "Final validation"
+    }
+  ],
   "completedRequirementIds": [
     "C2U-010",
     "C2U-011",
@@ -258,13 +318,13 @@
     "Command 1 Fly Machine sandbox — available, and its toolchain coverage is now measured rather than assumed. The default image carries node and npm only; Python and Rust run in adapter-declared images verified on real machines."
   ],
   "deploymentState": "not_attempted",
-  "nextFile": "backend/src/ai/pipeline.ts",
-  "nextAction": "Enable shadow mode in production and read the disagreements. The enabled path is still unwired: no real build routes through planUniversalRun to generate files. Sections 20-22 were not implemented.",
+  "nextFile": "backend/src/synthesis/repositoryIndex.ts",
+  "nextAction": "Implement the derived repository index (C2U-008) with a store abstraction, so the Supabase implementation in M15 can back it without the index depending on a database.",
   "inheritedConstraints": [
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T13:16:18.741Z",
+  "updatedAt": "2026-08-08T15:41:37.905Z",
   "verification": {
     "sandboxToolchainProbe": "Deployed runtime, default image node:20-alpine: HAVE node, HAVE npm; MISS cargo, rustc, python, python3, pip, pip3, poetry, uv, pytest, go, java, dotnet, php, ruby.",
     "perEcosystemImages": "rust:1-alpine -> cargo 1.97.1 (exit 0); python:3.12-alpine -> Python 3.12.13, pip 25.0.1 (exit 0). Both machines destroyed; xroga-sandbox holds no machines, IPs or volumes.",
@@ -283,5 +343,7 @@
       "commit": "4c36574",
       "scope": "capability registry, benchmarks, routing, framework adapters, repair loop"
     }
-  ]
+  ],
+  "continuationBranch": "agent/finish-command-2-universal",
+  "continuationBase": "322548ce79527f46c1106161105561a060f39bfb"
 }
