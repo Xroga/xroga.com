@@ -149,16 +149,24 @@
       "section": "8",
       "title": "Multi-ecosystem manifest and lockfile discovery without a whitelist",
       "owningSubsystem": "synthesis/repositoryDiscovery",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/repositoryDiscovery.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/repositoryDiscovery.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/repositoryDiscovery.test.ts"
+      ],
+      "evidence": [
+        "18/18 discovery tests pass; backend suite 1082/1082; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Marker table covering the section 8 ecosystems plus pattern markers for extension families. adapterId is null where an ecosystem is recognised but unbuildable, so a blocker is specific rather than generic. Not a whitelist: genericSignals reads shebangs, Makefile targets, CI run steps, Dockerfile RUN lines and README fences for anything unmatched."
     },
     {
       "id": "C2U-010",
@@ -341,16 +349,24 @@
       "section": "14",
       "title": "Package manager and build system detection; install is not assumed to be npm",
       "owningSubsystem": "synthesis/toolchainDetection",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/repositoryDiscovery.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/repositoryDiscovery.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/repositoryDiscovery.test.ts"
+      ],
+      "evidence": [
+        "18/18 discovery tests pass; backend suite 1082/1082; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Package manager and build system carried per ecosystem signal; monorepo tooling detected separately because it changes which commands are correct."
     },
     {
       "id": "C2U-019",
@@ -561,16 +577,24 @@
       "section": "29",
       "title": "Monorepo workspace detection and focused validation",
       "owningSubsystem": "synthesis/repositoryDiscovery",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/repositoryDiscovery.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/repositoryDiscovery.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/repositoryDiscovery.test.ts"
+      ],
+      "evidence": [
+        "18/18 discovery tests pass; backend suite 1082/1082; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "detectMonorepoLayouts covers nx, turborepo, pnpm/npm workspaces, lerna, go.work, bazel and Cargo workspaces."
     },
     {
       "id": "C2U-032",
