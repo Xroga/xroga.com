@@ -405,16 +405,23 @@
       "section": "13",
       "title": "FrameworkAdapter metadata; frameworks are adapters not categories",
       "owningSubsystem": "synthesis/frameworkAdapters",
-      "implementationState": "partially_implemented",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/frameworkAdapters.ts"
+      ],
+      "tests": [
+        "backend/src/ai/capabilityRouting.test.ts",
+        "backend/src/synthesis/repairAndFrameworks.test.ts"
+      ],
       "commands": [],
-      "evidence": [],
+      "evidence": [
+        "backend suite 1241/1241; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "Frameworks are recorded as architecture decisions with evidence, but no FrameworkAdapter contract exists."
+      "notes": "FrameworkAdapter with conventions, constraints and deployment facts as reviewable data. Detection is scoped to the component runtime so a Python service is never reported as Express. Absence returns null, which is an ordinary answer. Holds no build or test commands — asserted by test — because those belong to the runtime adapter."
     },
     {
       "id": "C2U-018",
@@ -555,48 +562,69 @@
       "section": "20",
       "title": "Versioned ModelCapabilityProfile with expiry and evidence-based claims",
       "owningSubsystem": "ai/modelCapabilityRegistry",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/ai/modelCapabilityProfile.ts"
+      ],
+      "tests": [
+        "backend/src/ai/capabilityRouting.test.ts",
+        "backend/src/synthesis/repairAndFrameworks.test.ts"
+      ],
       "commands": [],
-      "evidence": [],
+      "evidence": [
+        "backend suite 1241/1241; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "Model capability registry not implemented. modelCapabilityRegistry.ts remains interface-only."
+      "notes": "Every score carries provenance and an expiry. A declared score is a labelled prior with confidence 0.3; an observed score is computed from recorded build, test, patch and repair outcomes and replaces the prior at MIN_OBSERVATIONS. needsRevalidation reports a profile that expired or was never measured. A stored profile with no expiry is treated as expired rather than immortal."
     },
     {
       "id": "C2U-025",
       "section": "21",
       "title": "Benchmark definitions and persisted results",
       "owningSubsystem": "ai/modelBenchmarks",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/ai/modelBenchmarks.ts"
+      ],
+      "tests": [
+        "backend/src/ai/capabilityRouting.test.ts",
+        "backend/src/synthesis/repairAndFrameworks.test.ts"
+      ],
       "commands": [],
-      "evidence": [],
+      "evidence": [
+        "backend suite 1241/1241; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "Benchmark system not implemented."
+      "notes": "22 benchmark definitions covering the section 21 task list. Every one is settled by executable evidence rather than a model rating itself. sampleBenchmarks returns a bounded subset and excludes heavy benchmarks by default, so a user request never pays for the full suite."
     },
     {
       "id": "C2U-026",
       "section": "22",
       "title": "Capability-based routing with evidence-based failover",
       "owningSubsystem": "ai/intelligentRouter",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/ai/capabilityRouter.ts"
+      ],
+      "tests": [
+        "backend/src/ai/capabilityRouting.test.ts",
+        "backend/src/synthesis/repairAndFrameworks.test.ts"
+      ],
       "commands": [],
-      "evidence": [],
+      "evidence": [
+        "backend suite 1241/1241; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "Capability-based routing not implemented; intelligentRouter is unchanged."
+      "notes": "Ranks whatever profiles it is handed and names no model, so a new provider is routable by having a profile. Evidence beats assertion: a measured 7 outranks a hand-written 9 through confidence weighting. Hard requirements filter rather than penalise. Security-sensitive work refuses an unmeasured profile. Fallbacks are ranked in advance so failover is justified rather than arbitrary."
     },
     {
       "id": "C2U-027",
@@ -1048,6 +1076,28 @@
       "blocker": null,
       "externalRequirements": [],
       "notes": "docs/universal-agent-architecture.md, docs/runtime-adapters.md and docs/universal-agent-rollout.md distinguish verified, adapter_available, planned, external_blocked and not-implemented per subsystem."
+    },
+    {
+      "id": "C2U-047",
+      "section": "47",
+      "title": "Bounded targeted repair loop",
+      "owningSubsystem": "synthesis/repairLoop",
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/repairLoop.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/repairAndFrameworks.test.ts"
+      ],
+      "commands": [],
+      "evidence": [
+        "backend suite 1241/1241"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Bounded repair: scope comes from the diagnostics, attempts are capped at 3, only the failing validation is rerun, and a non-repairable diagnostic ends the loop without consuming the budget. isDestructiveRepair refuses a fix that deletes tests or source."
     }
   ]
 }

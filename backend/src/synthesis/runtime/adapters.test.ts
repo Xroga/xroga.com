@@ -506,3 +506,31 @@ describe('diagnostics are parsed by the adapter that produced them', () => {
     }
   });
 });
+
+describe('a missing toolchain is recognised however the shell words it', () => {
+  // Regression. The Rust parser matched only `command not found: cargo`, while every real
+  // shell writes the subject first: `bash: cargo: command not found`. So a missing Cargo
+  // produced no diagnostic at all, and the failure went into the repair loop — where a
+  // model would be asked to patch source for a problem no source change can fix.
+  it('detects cargo missing in the wording shells actually use', () => {
+    const adapter = new RustRuntimeAdapter();
+    for (const output of [
+      'bash: cargo: command not found',
+      '/bin/sh: cargo: not found\ncargo: command not found',
+      "'cargo' is not recognized as an internal or external command",
+    ]) {
+      const diagnostics = adapter.parseFailure(output);
+      assert.ok(
+        diagnostics.some((diagnostic) => diagnostic.kind === 'toolchain_missing'),
+        `should recognise a missing toolchain in: ${output}`,
+      );
+    }
+  });
+
+  it('does not mistake a compile error mentioning cargo for a missing toolchain', () => {
+    const diagnostics = new RustRuntimeAdapter().parseFailure(
+      'error[E0432]: unresolved import `cargo_metadata`\n  --> src/main.rs:1:5\n',
+    );
+    assert.ok(!diagnostics.some((diagnostic) => diagnostic.kind === 'toolchain_missing'));
+  });
+});

@@ -261,7 +261,16 @@ export class RustRuntimeAdapter implements RuntimeAdapter {
         repairable: true,
       });
     }
-    if (/error: could not find `Cargo\.toml`|command not found: cargo|'cargo' is not recognized/.test(output)) {
+    // The shell's actual wording is `bash: cargo: command not found` — subject first, not
+    // `command not found: cargo`. The narrower pattern this replaces matched neither that
+    // nor sh's variant, so a missing Cargo was reported as an unparseable failure and went
+    // into the repair loop, where no source change could ever fix it.
+    if (
+      /error: could not find `Cargo\.toml`/.test(output) ||
+      /\bcargo\b[^\n]*\bcommand not found\b/i.test(output) ||
+      /\bcommand not found\b[^\n]*\bcargo\b/i.test(output) ||
+      /'cargo' is not recognized/i.test(output)
+    ) {
       diagnostics.push({
         kind: 'toolchain_missing',
         message: 'Cargo is not available in the sandbox image',
