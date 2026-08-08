@@ -324,11 +324,20 @@
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T15:41:37.905Z",
+  "updatedAt": "2026-08-08T16:17:16.598Z",
   "verification": {
     "sandboxToolchainProbe": "Deployed runtime, default image node:20-alpine: HAVE node, HAVE npm; MISS cargo, rustc, python, python3, pip, pip3, poetry, uv, pytest, go, java, dotnet, php, ruby.",
     "perEcosystemImages": "rust:1-alpine -> cargo 1.97.1 (exit 0); python:3.12-alpine -> Python 3.12.13, pip 25.0.1 (exit 0). Both machines destroyed; xroga-sandbox holds no machines, IPs or volumes.",
-    "shadowInertInProduction": "Ran the merged modules with the production environment (no UNIVERSAL_AGENT_* variables): mode=off, routeProject returns useUniversal=false shadow=false, observeUniversalShadow returns ran=false wrote=false and logs nothing. With UNIVERSAL_AGENT_ENABLED=shadow it observes and reports the legacy/universal disagreement while wrote stays false."
+    "shadowInertInProduction": "Ran the merged modules with the production environment (no UNIVERSAL_AGENT_* variables): mode=off, routeProject returns useUniversal=false shadow=false, observeUniversalShadow returns ran=false wrote=false and logs nothing. With UNIVERSAL_AGENT_ENABLED=shadow it observes and reports the legacy/universal disagreement while wrote stays false.",
+    "realSandboxExecution": {
+      "evidencePath": "docs/command-2/universal/evidence/sandbox-execution-proofs.md",
+      "rust": "2 cargo tests passed, release binary built and executed: correct JSON, exit 1 on missing file, exit 1 on ragged row. cargo fmt absent and correctly optional.",
+      "python": "5 pytest tests passed including a 422 validation case and a SQL-injection literal-storage case; PROOF_ROWS=2 read back from SQLite so persistence is verified by query.",
+      "go": "go vet clean, tests passed, binary built and executed, exit 1 on empty input.",
+      "node": "npm test exit 0 with 2/2 passing, captured directly rather than through a pipe after the first attempt masked the status.",
+      "leakCheck": "machines_remaining=0 after every run.",
+      "notProven": "JVM, .NET, Dart/Flutter and PHP adapters emit commands but were not executed in the sandbox; they remain implementation_available."
+    }
   },
   "statusReason": "The sandbox blocker is measured and closed. What remains is implementable work that was not done: sections 20-22 (model capability registry, benchmarks, capability routing) are untouched and section 13 framework adapters do not exist. Rounding this up to implementation_complete_external_validation_pending would blame an environment for a gap that is not environmental.",
   "laterBranch": "agent/universal-engineering-2",
