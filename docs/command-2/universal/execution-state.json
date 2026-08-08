@@ -5,13 +5,15 @@
   "baseCommit": "ac96781a9550569bcd2526f7b127669d70f49985",
   "currentHead": "ac96781a9550569bcd2526f7b127669d70f49985",
   "status": "implementation_in_progress",
-  "activeMilestone": "M1",
-  "completedMilestones": [],
-  "incompleteMilestones": [
+  "activeMilestone": "M3",
+  "completedMilestones": [
     {
       "id": "M1",
-      "title": "Audit and requirements ledger"
-    },
+      "title": "Audit and requirements ledger",
+      "commit": "cb1cac8"
+    }
+  ],
+  "incompleteMilestones": [
     {
       "id": "M2",
       "title": "RuntimeAdapter contract plus Node, Python and Rust adapters"
@@ -41,7 +43,13 @@
       "title": "Feature-flagged rollout and pipeline integration"
     }
   ],
-  "completedRequirementIds": [],
+  "completedRequirementIds": [
+    "C2U-010",
+    "C2U-011",
+    "C2U-012",
+    "C2U-013",
+    "C2U-030"
+  ],
   "incompleteRequirementIds": [
     "C2U-001",
     "C2U-002",
@@ -52,10 +60,6 @@
     "C2U-007",
     "C2U-008",
     "C2U-009",
-    "C2U-010",
-    "C2U-011",
-    "C2U-012",
-    "C2U-013",
     "C2U-014",
     "C2U-015",
     "C2U-016",
@@ -72,7 +76,6 @@
     "C2U-027",
     "C2U-028",
     "C2U-029",
-    "C2U-030",
     "C2U-031",
     "C2U-032",
     "C2U-033",
@@ -93,7 +96,20 @@
   "blockedRequirementIds": [],
   "blockers": [],
   "migrationIds": [],
-  "focusedTestsExecuted": [],
+  "focusedTestsExecuted": [
+    {
+      "command": "npx tsx --test src/synthesis/runtime/adapters.test.ts",
+      "result": "33/33 pass"
+    },
+    {
+      "command": "npm test (backend)",
+      "result": "1064/1064 pass"
+    },
+    {
+      "command": "npx tsc --noEmit (backend)",
+      "result": "clean"
+    }
+  ],
   "integrationTestsExecuted": [],
   "generatedFixtureTestsExecuted": [],
   "fullValidationResults": null,
@@ -101,17 +117,23 @@
     "docs/command-2/universal/audit.md",
     "docs/command-2/universal/requirements-ledger.json"
   ],
-  "checkpointCommits": [],
+  "checkpointCommits": [
+    {
+      "commit": "cb1cac8",
+      "milestone": "M1",
+      "title": "command2: audit universal engineering limitations"
+    }
+  ],
   "externalCredentialsRequired": [],
   "externalInfrastructureRequired": [
     "Command 1 Fly Machine sandbox for executing generated code in any ecosystem. Available and verified on main as of ac96781; per-ecosystem toolchain availability inside the sandbox image is unverified and is a real risk for non-Node adapters."
   ],
   "deploymentState": "not_attempted",
-  "nextFile": "backend/src/synthesis/runtimeAdapters.ts",
-  "nextAction": "Implement the RuntimeAdapter contract (section 9) so architecture selection has a vocabulary for toolchains it cannot currently name. Adapters must come before the architecture planner because the planner cannot select a runtime that has no representation.",
+  "nextFile": "backend/src/synthesis/runtime/repositoryDiscovery.ts",
+  "nextAction": "Implement multi-ecosystem repository discovery (sections 8 and 14): recognise manifests and lockfiles across ecosystems that have no adapter yet, so unclaimed roots become a discovery input rather than an unsupported result.",
   "inheritedConstraints": [
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T11:19:51.030Z"
+  "updatedAt": "2026-08-08T11:28:49.982Z"
 }

@@ -165,64 +165,112 @@
       "section": "9",
       "title": "RuntimeAdapter contract; no language-specific commands in the central pipeline",
       "owningSubsystem": "synthesis/runtimeAdapters",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/adapterContract.ts",
+        "backend/src/synthesis/runtime/nodeAdapter.ts",
+        "backend/src/synthesis/runtime/pythonAdapter.ts",
+        "backend/src/synthesis/runtime/rustAdapter.ts",
+        "backend/src/synthesis/runtime/registry.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/adapters.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/adapters.test.ts"
+      ],
+      "evidence": [
+        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "RuntimeAdapter contract with 7 command phases; registry.ts and adapterContract.ts assert-tested to contain no language-specific commands."
     },
     {
       "id": "C2U-011",
       "section": "10",
       "title": "Node/TypeScript adapter verified; repository scripts take precedence",
       "owningSubsystem": "synthesis/runtimeAdapters",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/adapterContract.ts",
+        "backend/src/synthesis/runtime/nodeAdapter.ts",
+        "backend/src/synthesis/runtime/pythonAdapter.ts",
+        "backend/src/synthesis/runtime/rustAdapter.ts",
+        "backend/src/synthesis/runtime/registry.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/adapters.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/adapters.test.ts"
+      ],
+      "evidence": [
+        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Node adapter: lockfile-derived package manager, repository scripts outrank adapter defaults, --ignore-scripts on every install."
     },
     {
       "id": "C2U-012",
       "section": "10",
       "title": "Python adapter verified across pyproject/requirements/Poetry/uv",
       "owningSubsystem": "synthesis/runtimeAdapters",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/adapterContract.ts",
+        "backend/src/synthesis/runtime/nodeAdapter.ts",
+        "backend/src/synthesis/runtime/pythonAdapter.ts",
+        "backend/src/synthesis/runtime/rustAdapter.ts",
+        "backend/src/synthesis/runtime/registry.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/adapters.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/adapters.test.ts"
+      ],
+      "evidence": [
+        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Python adapter: uv/Poetry/Pipenv/pip precedence from committed evidence; commands run inside the workflow environment."
     },
     {
       "id": "C2U-013",
       "section": "10",
       "title": "Rust adapter verified including Cargo workspaces",
       "owningSubsystem": "synthesis/runtimeAdapters",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/adapterContract.ts",
+        "backend/src/synthesis/runtime/nodeAdapter.ts",
+        "backend/src/synthesis/runtime/pythonAdapter.ts",
+        "backend/src/synthesis/runtime/rustAdapter.ts",
+        "backend/src/synthesis/runtime/registry.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/adapters.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/adapters.test.ts"
+      ],
+      "evidence": [
+        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Rust adapter: Cargo with workspace and virtual-manifest handling; networked fetch separated from every later step."
     },
     {
       "id": "C2U-014",
@@ -485,16 +533,28 @@
       "section": "28",
       "title": "Polyglot repositories assign adapters per component",
       "owningSubsystem": "synthesis/repositoryDiscovery",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/adapterContract.ts",
+        "backend/src/synthesis/runtime/nodeAdapter.ts",
+        "backend/src/synthesis/runtime/pythonAdapter.ts",
+        "backend/src/synthesis/runtime/rustAdapter.ts",
+        "backend/src/synthesis/runtime/registry.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/adapters.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/adapters.test.ts"
+      ],
+      "evidence": [
+        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "detectComposition assigns one adapter per component; polyglot fixture proves no npm command reaches Rust or Python components."
     },
     {
       "id": "C2U-031",
