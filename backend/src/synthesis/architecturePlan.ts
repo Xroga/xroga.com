@@ -193,8 +193,8 @@ function planFromRepository(
   spec: UniversalProductSpec,
   composition: RepositoryComposition,
   files: readonly ProjectFile[],
+  discovery = discoverRepository(files),
 ): ArchitecturePlan {
-  const discovery = discoverRepository(files);
   const components: PlannedComponent[] = [];
   const decisions: ArchitectureDecision[] = [];
   const blockers: string[] = [];
@@ -249,6 +249,37 @@ function planFromRepository(
     });
   }
 
+  // A tree that matched no marker at all — a Nim or Haskell repository, say. There is
+  // nothing to name and still something to build, so the component is recorded with the
+  // languages inference could see and left for §12 discovery to resolve. Returning no
+  // component here would make an existing repository indistinguishable from an empty one.
+  if (!components.length) {
+    const languages = [
+      ...new Set(
+        discovery.generic
+          .filter((signal) => signal.kind === 'extension')
+          .map((signal) => signal.detail.replace(/^\d+\s+/, '').replace(/\s+source file\(s\)$/, '')),
+      ),
+    ];
+    const blocker =
+      `The repository uses a toolchain no runtime adapter recognises` +
+      (languages.length ? ` (${languages.join(', ')} sources found)` : '') +
+      '. Build and test commands must be discovered from repository evidence before anything can run.';
+    blockers.push(blocker);
+    components.push({
+      id: 'component:root',
+      root: '',
+      surfaces: spec.surfaces.map((declaration) => declaration.surface),
+      language: languages[0] ?? null,
+      runtime: null,
+      framework: null,
+      packageManager: null,
+      buildSystem: null,
+      adapterId: null,
+      blocker,
+    });
+  }
+
   return {
     schemaVersion: ARCHITECTURE_PLAN_SCHEMA_VERSION,
     components,
@@ -276,8 +307,14 @@ export function planArchitecture(input: {
 
   if (files.length) {
     const composition = detectComposition(files);
-    if (composition.components.length || discoverRepository(files).unsupported.length) {
-      return planFromRepository(spec, composition, files);
+    const discovery = discoverRepository(files);
+    // `needsRuntimeDiscovery` belongs in this condition, not just the first two. A Nim
+    // repository matches no marker and has no adapter, so without it the request fell
+    // through to the greenfield path — where a maintenance prompt like "fix the delimiter
+    // bug" names no surface and was refused as if the repository were not there at all.
+    // An existing tree is a fact regardless of whether anything can build it.
+    if (composition.components.length || discovery.unsupported.length || discovery.needsRuntimeDiscovery) {
+      return planFromRepository(spec, composition, files, discovery);
     }
   }
 

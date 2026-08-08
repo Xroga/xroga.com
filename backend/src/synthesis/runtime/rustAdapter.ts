@@ -41,6 +41,8 @@ export class RustRuntimeAdapter implements RuntimeAdapter {
   readonly platforms = ['linux', 'darwin', 'win32'] as const;
   readonly capabilityState = 'implementation_available' as const;
   readonly manifestNames = ['Cargo.toml'] as const;
+  /** `cargo test` at a workspace root already tests every member. */
+  readonly rootCommandCoversWorkspace = true;
 
   detect(files: readonly ProjectFile[], root = ''): ProjectInspection | null {
     const manifest = fileAt(files, root, 'Cargo.toml');

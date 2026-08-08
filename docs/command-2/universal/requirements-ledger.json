@@ -443,16 +443,25 @@
       "section": "15",
       "title": "Universal EngineeringTask graph reusing the Command 1 scheduler",
       "owningSubsystem": "ai/executionRuntime",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "planUniversalRun composes spec, plan, acceptance and per-component validation commands into an executable plan."
     },
     {
       "id": "C2U-020",
@@ -475,32 +484,50 @@
       "section": "17",
       "title": "Product-specific acceptance criteria, never generic \"app works\"",
       "owningSubsystem": "synthesis/acceptanceCompiler",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "compileAcceptanceCriteria emits criteria naming an observable; unfalsifiableCriteria guards the module against drifting back to \"App works\". Surfaces with no template still yield a checkable criterion, which is what keeps section 58 N open."
     },
     {
       "id": "C2U-022",
       "section": "18",
       "title": "Validation derived from architecture and adapters; zero-test success is failure",
       "owningSubsystem": "synthesis/verificationCompiler",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Validation derives from architecture and adapters. mayClaimVerified refuses when no test ran, so a green run over zero tests is a failure per section 18."
     },
     {
       "id": "C2U-023",
@@ -712,96 +739,150 @@
       "section": "49",
       "title": "Evidence-based completion; a model message cannot complete a task",
       "owningSubsystem": "ai/executionRuntime",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "mayClaimVerified requires sandbox-tier execution and a passing test command; blockers block the claim."
     },
     {
       "id": "C2U-035",
       "section": "57",
       "title": "Test tier model showing exactly which tier was reached",
       "owningSubsystem": "synthesis/verificationCompiler",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "tierReached never overstates: none when nothing executed, sandbox only when commands actually ran."
     },
     {
       "id": "C2U-036",
       "section": "58",
       "title": "Black-box universality fixtures A-N",
       "owningSubsystem": "synthesis/fixtures",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Section 58 fixtures A,B,C,D,E,I,J,K,N all pass."
     },
     {
       "id": "C2U-037",
       "section": "59",
       "title": "Polyglot fixture: three runtimes, correct adapters, no npm in Rust/Python",
       "owningSubsystem": "synthesis/fixtures",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Polyglot fixture: three adapters, correct per-component test commands, no npm in Rust or Python components."
     },
     {
       "id": "C2U-038",
       "section": "60",
       "title": "Monorepo fixture with deep nested target discovery",
       "owningSubsystem": "synthesis/fixtures",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Monorepo fixture: a package nested five levels deep is discovered without a hardcoded path."
     },
     {
       "id": "C2U-039",
       "section": "61",
       "title": "Existing-repository fixture preserving unrelated functionality",
       "owningSubsystem": "synthesis/fixtures",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Existing-repository fixture: Django stack inherited, existing pytest suite planned."
     },
     {
       "id": "C2U-040",
@@ -832,16 +913,25 @@
       "section": "63",
       "title": "Python FastAPI vertical slice through the real architecture",
       "owningSubsystem": "synthesis/fixtures",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalFlow.ts",
+        "backend/src/synthesis/acceptanceCompiler.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalFixtures.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalFixtures.test.ts"
+      ],
+      "evidence": [
+        "31/31 fixtures pass; backend suite 1166/1166; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Python FastAPI vertical slice: surfaces, FastAPI and SQLite selected from requirements, adapter-bound pytest command, registry-only install with every other phase denied egress, and an explicit unfaked blocker when the toolchain is absent."
     },
     {
       "id": "C2U-042",

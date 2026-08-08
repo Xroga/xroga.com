@@ -121,8 +121,10 @@ export function detectComposition(files: readonly ProjectFile[]): RepositoryComp
     }
     if (!best) continue;
 
-    // A workspace member already covered by its parent's own adapter is not a separate
-    // component; a member with a *different* adapter is, which is how a Python service
+    // A workspace member is folded into its parent only when the parent's own command
+    // already covers it — true for Cargo, false for npm workspaces, where a root
+    // `npm test` frequently runs nothing and each package owns its scripts. A member with
+    // a *different* adapter is always its own component, which is how a Python service
     // nested inside a Node monorepo keeps its own toolchain.
     const parent = components.find(
       (candidate) =>
@@ -131,7 +133,7 @@ export function detectComposition(files: readonly ProjectFile[]): RepositoryComp
         candidate.adapterId === best!.adapter.id &&
         candidate.inspection.workspaces.includes(root),
     );
-    if (parent) continue;
+    if (parent && adapterById(parent.adapterId)?.rootCommandCoversWorkspace) continue;
 
     components.push({ root, adapterId: best.adapter.id, inspection: best.inspection });
     claimed.add(root);

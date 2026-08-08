@@ -153,6 +153,20 @@ export interface RuntimeAdapter {
   /** Files that mean "this ecosystem is present", used before a full inspection. */
   readonly manifestNames: readonly string[];
 
+  /**
+   * Whether running a command at the workspace root also covers its members.
+   *
+   * True for Cargo: `cargo test` at a workspace root tests every member, so treating each
+   * member as its own component would compile and test the same code once per member.
+   * False for npm workspaces, where a root `npm test` frequently runs nothing at all and
+   * each package has its own scripts — collapsing those would silently skip their suites.
+   *
+   * Defaults to false, because skipping a member's tests is the more expensive mistake:
+   * duplicated work is slow and visible, while an unrun suite looks exactly like a
+   * passing one.
+   */
+  readonly rootCommandCoversWorkspace?: boolean;
+
   /** Null when this ecosystem is not present at `root`. */
   detect(files: readonly ProjectFile[], root?: string): ProjectInspection | null;
 
