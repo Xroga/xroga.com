@@ -41,6 +41,8 @@ export class RustRuntimeAdapter implements RuntimeAdapter {
   readonly platforms = ['linux', 'darwin', 'win32'] as const;
   readonly capabilityState = 'implementation_available' as const;
   readonly manifestNames = ['Cargo.toml'] as const;
+  /** Verified on a real machine: cargo 1.97.1. */
+  readonly sandboxImage = 'registry-1.docker.io/library/rust:1-alpine';
   /** `cargo test` at a workspace root already tests every member. */
   readonly rootCommandCoversWorkspace = true;
 

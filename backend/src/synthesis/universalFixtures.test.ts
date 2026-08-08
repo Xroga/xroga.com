@@ -419,3 +419,62 @@ describe('the flow itself names no language', () => {
     assert.ok(automatedCriteria(criteria).every((criterion) => criterion.kind !== 'manual'));
   });
 });
+
+describe('each ecosystem gets an image whose toolchain exists', () => {
+  /**
+   * Measured against the deployed sandbox, not inferred from the image name.
+   *
+   * A probe on the live runtime reported `HAVE node`, `HAVE npm`, and `MISS` for cargo,
+   * rustc, python, python3, pip, poetry, uv, pytest, go, java, dotnet, php and ruby — the
+   * default image is `node:20-alpine` and carries nothing else. Without a per-adapter
+   * image the Python and Rust adapters emit perfectly correct commands that cannot run.
+   *
+   * Both replacements were verified on real machines: `rust:1-alpine` gave cargo 1.97.1
+   * and `python:3.12-alpine` gave Python 3.12.13 with pip 25.0.1, each machine destroyed
+   * afterwards.
+   */
+  it('asks for a Rust image for Cargo commands and a Python image for pytest', () => {
+    const rust = run('Fix a bug', [
+      f('Cargo.toml', '[package]\nname = "a"\n'),
+      f('src/main.rs', 'fn main() {}'),
+    ]);
+    assert.ok(rust.validations.length > 0);
+    assert.ok(
+      rust.validations.every((validation) => /rust:/.test(validation.sandboxImage ?? '')),
+      'every Cargo command must run in an image that has cargo',
+    );
+
+    const python = run('Fix a bug', [
+      f('pyproject.toml', '[tool.poetry]\nname = "s"\n[tool.pytest.ini_options]\n'),
+      f('poetry.lock', ''),
+      f('tests/test_a.py', ''),
+    ]);
+    assert.ok(
+      python.validations.every((validation) => /python:/.test(validation.sandboxImage ?? '')),
+      'every Python command must run in an image that has python',
+    );
+  });
+
+  it('leaves Node on the sandbox default, which already has node and npm', () => {
+    const node = run('Fix a bug', [f('package.json', '{"name":"a","scripts":{"test":"vitest run"}}')]);
+    assert.ok(node.validations.every((validation) => validation.sandboxImage === null));
+  });
+
+  it('gives each component of a polyglot repository its own image', () => {
+    // A single run-wide image would make two of the three components fail on a missing
+    // toolchain: the Rust worker cannot run in the Python image and neither in the Node one.
+    const plan = run('Add a health check', [
+      f('frontend/package.json', '{"name":"w","scripts":{"test":"vitest run"}}'),
+      f('service/pyproject.toml', '[tool.poetry]\nname="s"\n[tool.pytest.ini_options]\n'),
+      f('service/poetry.lock', ''),
+      f('worker/Cargo.toml', '[package]\nname="w"\n'),
+      f('worker/src/main.rs', ''),
+    ]);
+    const imageFor = (root: string) =>
+      plan.validations.find((validation) => validation.componentRoot === root)?.sandboxImage;
+
+    assert.equal(imageFor('frontend'), null);
+    assert.match(imageFor('service') ?? '', /python:/);
+    assert.match(imageFor('worker') ?? '', /rust:/);
+  });
+});

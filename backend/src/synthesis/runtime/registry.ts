@@ -241,6 +241,18 @@ export function commandsFor(
 }
 
 /**
+ * The image a component's commands need, or null for the sandbox default.
+ *
+ * Exists because the sandbox default carries node and npm only — measured, not assumed: a
+ * probe against the deployed runtime reported `MISS` for cargo, python, pip, poetry, go,
+ * java, dotnet, php and ruby. A caller that ignores this will get correct commands and a
+ * missing-toolchain refusal, which is honest but builds nothing.
+ */
+export function sandboxImageFor(component: DetectedComponent): string | null {
+  return adapterById(component.adapterId)?.sandboxImage ?? null;
+}
+
+/**
  * Parses a failure using the adapter that produced it.
  *
  * Routing a Cargo error through the Node parser yields no diagnostics and a repair loop

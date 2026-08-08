@@ -88,6 +88,8 @@ export class PythonRuntimeAdapter implements RuntimeAdapter {
   readonly runtimes = ['cpython'] as const;
   readonly platforms = ['linux', 'darwin', 'win32'] as const;
   readonly capabilityState = 'implementation_available' as const;
+  /** Verified on a real machine: Python 3.12.13 with pip 25.0.1. */
+  readonly sandboxImage = 'registry-1.docker.io/library/python:3.12-alpine';
   readonly manifestNames = [
     'pyproject.toml',
     'requirements.txt',

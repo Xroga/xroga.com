@@ -29,6 +29,7 @@ import { compileAcceptanceCriteria, automatedCriteria, type AcceptanceCriterion 
 import {
   commandsFor,
   detectComposition,
+  sandboxImageFor,
   type DetectedComponent,
   type ValidationPhase,
 } from './runtime/registry.js';
@@ -47,6 +48,15 @@ export interface PlannedValidation {
   readonly adapterId: string;
   readonly phase: ValidationPhase;
   readonly command: ToolCommand;
+  /**
+   * The image this command needs, or null for the sandbox default.
+   *
+   * Carried per validation rather than per run because a polyglot repository needs a
+   * different image per component: the Rust worker cannot run in the Python image and
+   * neither can run in the Node one. A single run-wide image would make two of the three
+   * components fail on a missing toolchain.
+   */
+  readonly sandboxImage: string | null;
 }
 
 export interface UniversalRunPlan {
@@ -73,6 +83,7 @@ const PHASES: readonly ValidationPhase[] = ['install', 'lint', 'typecheck', 'tes
 function validationsFor(components: readonly DetectedComponent[]): readonly PlannedValidation[] {
   const validations: PlannedValidation[] = [];
   for (const component of components) {
+    const sandboxImage = sandboxImageFor(component);
     for (const phase of PHASES) {
       for (const command of commandsFor(component, phase)) {
         validations.push({
@@ -80,6 +91,7 @@ function validationsFor(components: readonly DetectedComponent[]): readonly Plan
           adapterId: component.adapterId,
           phase,
           command,
+          sandboxImage,
         });
       }
     }

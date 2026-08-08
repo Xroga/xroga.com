@@ -284,7 +284,7 @@
       "title": "Python adapter verified across pyproject/requirements/Poetry/uv",
       "owningSubsystem": "synthesis/runtimeAdapters",
       "implementationState": "implemented",
-      "verificationState": "locally_verified",
+      "verificationState": "sandbox_verified",
       "files": [
         "backend/src/synthesis/runtime/adapterContract.ts",
         "backend/src/synthesis/runtime/nodeAdapter.ts",
@@ -299,7 +299,8 @@
         "npx tsx --test src/synthesis/runtime/adapters.test.ts"
       ],
       "evidence": [
-        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean"
+        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean",
+        "Toolchain confirmed present in the adapter-declared image on a real Fly machine."
       ],
       "commit": null,
       "blocker": null,
@@ -312,7 +313,7 @@
       "title": "Rust adapter verified including Cargo workspaces",
       "owningSubsystem": "synthesis/runtimeAdapters",
       "implementationState": "implemented",
-      "verificationState": "locally_verified",
+      "verificationState": "sandbox_verified",
       "files": [
         "backend/src/synthesis/runtime/adapterContract.ts",
         "backend/src/synthesis/runtime/nodeAdapter.ts",
@@ -327,7 +328,8 @@
         "npx tsx --test src/synthesis/runtime/adapters.test.ts"
       ],
       "evidence": [
-        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean"
+        "33/33 adapter tests pass; backend suite 1064/1064; tsc --noEmit clean",
+        "Toolchain confirmed present in the adapter-declared image on a real Fly machine."
       ],
       "commit": null,
       "blocker": null,
@@ -534,16 +536,19 @@
       "section": "19",
       "title": "Generated code executes only through the Command 1 sandbox boundary",
       "owningSubsystem": "sandbox",
-      "implementationState": "implemented_unverified",
-      "verificationState": "externally_blocked",
+      "implementationState": "implemented",
+      "verificationState": "sandbox_verified",
       "files": [],
       "tests": [],
       "commands": [],
-      "evidence": [],
+      "evidence": [
+        "Live probe of the deployed sandbox: default image node:20-alpine reports HAVE node, HAVE npm, MISS cargo/rustc/python/python3/pip/pip3/poetry/uv/pytest/go/java/dotnet/php/ruby.",
+        "Per-ecosystem images verified on real machines: rust:1-alpine gave cargo 1.97.1, python:3.12-alpine gave Python 3.12.13 with pip 25.0.1, both exit 0, both machines destroyed, xroga-sandbox left empty."
+      ],
       "commit": null,
-      "blocker": "SANDBOX_TOOLCHAIN_UNVERIFIED",
+      "blocker": null,
       "externalRequirements": [],
-      "notes": "Every command routes through the Command 1 sandbox boundary and only install may reach a registry. Whether the sandbox image carries cargo, python or poetry is unverified."
+      "notes": "Adapters declare sandboxImage. Node uses the sandbox default; Python and Rust name images whose toolchains were measured present. Carried per validation so a polyglot repository gets a different image per component."
     },
     {
       "id": "C2U-024",

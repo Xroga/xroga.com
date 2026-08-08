@@ -154,6 +154,27 @@ export interface RuntimeAdapter {
   readonly manifestNames: readonly string[];
 
   /**
+   * The container image whose toolchain this adapter needs.
+   *
+   * Necessary because the sandbox default is `node:20-alpine`, and that image contains
+   * node and npm and nothing else. Measured against the live sandbox rather than inferred:
+   * a probe on the deployed runtime reported `HAVE node`, `HAVE npm`, and `MISS` for
+   * cargo, rustc, python, python3, pip, poetry, uv, pytest, go, java, dotnet, php and ruby.
+   *
+   * So without this field the Python and Rust adapters emit perfectly correct commands
+   * that cannot run — the failure is honest, because the runtime reports the missing
+   * toolchain and refuses, but nothing gets built. Naming an image per ecosystem is what
+   * makes those adapters usable rather than merely correct.
+   *
+   * Both replacement images were verified on real machines: `rust:1-alpine` gives
+   * cargo 1.97.1 and `python:3.12-alpine` gives Python 3.12.13 with pip 25.0.1.
+   *
+   * Undefined means the sandbox default is fine, which is true for Node and is the right
+   * answer for a discovered adapter — it has no way to know what image it would need.
+   */
+  readonly sandboxImage?: string;
+
+  /**
    * Whether running a command at the workspace root also covers its members.
    *
    * True for Cargo: `cargo test` at a workspace root tests every member, so treating each

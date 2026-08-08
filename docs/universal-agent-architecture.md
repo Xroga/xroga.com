@@ -84,9 +84,9 @@ README guess must not sit beside the Cargo adapter unproven.
 | capability | state | evidence |
 | --- | --- | --- |
 | adapter contract, no language commands in shared layer | **verified** | asserted against module source |
-| Node / TypeScript adapter | **verified** | 1,179 backend tests |
-| Python adapter (uv, Poetry, Pipenv, pip) | **verified** | unit-level |
-| Rust adapter (incl. workspaces, virtual manifests) | **verified** | unit-level |
+| Node / TypeScript adapter | **verified** | 1,189 backend tests |
+| Python adapter (uv, Poetry, Pipenv, pip) | **verified** | unit-level; toolchain present in its declared image |
+| Rust adapter (incl. workspaces, virtual manifests) | **verified** | unit-level; toolchain present in its declared image |
 | polyglot component isolation | **verified** | §59 fixture |
 | monorepo deep-path discovery | **verified** | §60 fixture |
 | existing-repository inheritance | **verified** | §61 fixture |
@@ -95,22 +95,21 @@ README guess must not sit beside the Cargo adapter unproven.
 | Go, JVM, .NET and other adapters | **planned** | contract supports them; none written |
 | framework adapters | **planned** | frameworks are recorded as decisions, not yet adapters |
 | model capability registry and benchmarks | **planned** | §20–22 not implemented |
-| sandbox execution of non-Node toolchains | **external_blocked** | see below |
+| sandbox toolchain availability | **verified** | measured on the deployed runtime; adapters declare their image |
+| full install-and-test cycle in Python/Rust images | **planned** | toolchains proven present; a complete cycle has not been run |
 
-### The external blocker
+### Sandbox toolchain coverage, measured
 
-Every validation command is produced correctly and passes through the Command 1 sandbox
-boundary. Whether the sandbox image actually contains `cargo`, `python`, `poetry` or a Nim
-compiler has **not** been verified, and it is not knowable from the code.
+A probe of the deployed runtime found the default image is node:20-alpine and carries node
+and npm only — cargo, python, pip, poetry, go, java, dotnet, php and ruby are all absent.
 
-The behaviour when a toolchain is absent is implemented and tested: the run stops, reports
-which command could not execute, states that nothing after that point ran, and records that
-no source change can fix it. What has not happened is a live run proving the toolchains are
-present.
+Adapters therefore declare the image their toolchain needs. Verified on real machines:
+rust:1-alpine gives cargo 1.97.1, python:3.12-alpine gives Python 3.12.13 with pip 25.0.1.
+The image travels per validation, so a polyglot repository gets a different one per
+component.
 
-This is recorded as `external_blocked` rather than assumed either way. Command 1 established
-why: a Fly guest configuration passed every stub test and was rejected by the live API,
-because a stub replaying a module's own reasoning agrees with it.
+Still unverified: a full install-and-test cycle inside those images. The probe proved the
+toolchains exist and execute, not that cargo test completes on a generated crate.
 
 ## Rollout
 
