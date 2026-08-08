@@ -138,9 +138,9 @@ so an environment problem never enters a repair loop — is implemented and test
 **Supabase persistence (§72).** Specs and plans are serialisable and versioned with
 migration functions; no tables were created and no migration was written.
 
-**Live universal runs.**  now calls the shadow observer, so shadow mode can
-be switched on in production. What is still absent is the *enabled* path: nothing routes a
-real build through  to generate files, so 
+**Live universal runs.** `pipeline.ts` now calls the shadow observer, so shadow mode can be
+switched on in production. What is still absent is the *enabled* path: nothing routes a real
+build through `planUniversalRun` to generate files, so `UNIVERSAL_AGENT_ENABLED=enabled`
 currently changes nothing beyond the routing decision itself.
 
 ## The external blocker
