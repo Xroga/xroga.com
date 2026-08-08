@@ -113,7 +113,7 @@
     {
       "id": "M19",
       "title": "Live allowlisted universal routing proof",
-      "blocker": "M19_NO_OWNER_CONTROLLED_TEST_PROJECT"
+      "blocker": "M19_NO_TEST_PROJECT_ROW_AND_NO_SESSION"
     }
   ],
   "completedRequirementIds": [
@@ -172,11 +172,12 @@
   "blockedRequirementIds": [],
   "blockers": [
     {
-      "id": "M19_NO_OWNER_CONTROLLED_TEST_PROJECT",
+      "id": "M19_NO_TEST_PROJECT_ROW_AND_NO_SESSION",
       "milestone": "M19",
-      "description": "Section 3 requires one owner-controlled test project and forbids using a customer project. Production holds 6 projects, all belonging to real users, and 0 belonging to the operator account. Creating one needs a GitHub OAuth authorization only a person can complete, and section 9 requires the final write to go through the atomic GitHub path against a real connected repository.",
-      "secondaryGap": "The universal commit step is wired to refusingCommit because the repository shipping step is still owned by the legacy flow. Implementable, but not verifiable without a test project, and wiring an unverifiable write path into the production build pipeline would be worse than a visible refusal.",
-      "resolution": "Designate or create an owner-controlled project with GitHub connected, wire the universal commit to the atomic path, set the allowlist, run the Rust CLI request and the --pretty follow-up, then return production to shadow."
+      "supersedes": "M19_NO_OWNER_CONTROLLED_TEST_PROJECT",
+      "correction": "The earlier blocker said a GitHub OAuth authorization was needed. That was wrong and is corrected here: the operator account already holds a github_integrations row for username Xroga with a live, non-expiring token. The OAuth step is done.",
+      "description": "What is actually missing is narrower. The operator account owns zero projects, so there is no project row to allowlist, and no build can be started without an authenticated session for that account. Read-only database access cannot insert the project row, and no session token for that account is held. Both are ordinary owner actions rather than engineering work.",
+      "resolution": "Sign in as the operator, create one project marked as Command 2 M19 verification, and provide its project id. Everything after that is implementable: wire the universal commit to the atomic GitHub path, set UNIVERSAL_AGENT_ALLOWLIST to that id with UNIVERSAL_AGENT_ENABLED=enabled, run the Rust CLI request and the --pretty follow-up, capture the evidence, then return production to shadow."
     }
   ],
   "migrationIds": [],
@@ -333,12 +334,12 @@
   ],
   "deploymentState": "not_attempted",
   "nextFile": "backend/src/synthesis/repositoryIndex.ts",
-  "nextAction": "Designate an owner-controlled test project with GitHub connected. That single human action unblocks M19; everything else is implementable from it.",
+  "nextAction": "Create one project under the operator account and provide its id. GitHub is already connected for that account, so no OAuth step remains.",
   "inheritedConstraints": [
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T17:07:39.017Z",
+  "updatedAt": "2026-08-08T18:30:40.192Z",
   "verification": {
     "sandboxToolchainProbe": "Deployed runtime, default image node:20-alpine: HAVE node, HAVE npm; MISS cargo, rustc, python, python3, pip, pip3, poetry, uv, pytest, go, java, dotnet, php, ruby.",
     "perEcosystemImages": "rust:1-alpine -> cargo 1.97.1 (exit 0); python:3.12-alpine -> Python 3.12.13, pip 25.0.1 (exit 0). Both machines destroyed; xroga-sandbox holds no machines, IPs or volumes.",

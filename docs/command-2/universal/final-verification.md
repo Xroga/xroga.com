@@ -53,23 +53,34 @@ into `ModelCapabilityProfile`s and `routeByCapability` selects, so the enabled p
 fall through to `intelligentRouter`. The selected model, its fallbacks, the reason and every
 exclusion are recorded on the outcome.
 
+## The blocker — corrected after a closer check
+
+**An earlier version of this document said a GitHub OAuth authorization was still needed.
+That was wrong.** The operator account already holds a `github_integrations` row for
+username `Xroga` with a live, non-expiring token, so the OAuth step is done. What is
+actually missing is narrower, and is recorded below.
+
 ## The blocker
 
-**`M19_NO_OWNER_CONTROLLED_TEST_PROJECT`**
+**`M19_NO_TEST_PROJECT_ROW_AND_NO_SESSION`**
 
 §3 requires one owner-controlled or internal test project and forbids using a customer
 project as an experiment. Queried against production:
 
 - **6 projects exist. All belong to real users** (domains `gmail.com` and `aganseo.com`).
 - **0 projects belong to the operator account** (`evanderthorne.help@gmail.com`).
-- 3 GitHub integrations exist, all belonging to those users.
+- 3 GitHub integrations exist. **One of them belongs to the operator**, for username
+  `Xroga`, with a live token and no expiry.
 
 So there is no project that may be used, and creating one cannot be completed from here:
 
-1. It needs an authenticated account for the operator, who currently owns no project.
-2. §9 requires the final write to go through the Command 1 atomic GitHub path against a
-   real connected repository. That needs a GitHub OAuth authorization, which only a person
-   can complete — a token cannot be minted on someone's behalf.
+1. The operator account owns **zero projects**, so there is no project row to allowlist.
+2. No build can be started without an authenticated session for that account, and none is
+   held here.
+
+Neither is an engineering problem. Read-only database access cannot insert the project row,
+and a session token is not something to mint on someone else's behalf. Both are ordinary
+owner actions taking about a minute.
 
 Without a repository to write to, §6's required evidence (branch, commit SHA, resulting
 diff), §9 entirely, and §10's follow-up modification cannot be produced. Running the build
@@ -88,8 +99,9 @@ production build pipeline is a worse outcome than a visible refusal.
 
 ## Exactly what unblocks M19
 
-1. Designate or create an owner-controlled test project and connect GitHub to it. That
-   single action is the only step requiring a human.
+1. Sign in as the operator and create **one** project, marked as Command 2 M19
+   verification, then provide its project id. GitHub is already connected for that account,
+   so there is no OAuth step. This is the only part requiring a person.
 2. Wire the universal commit to the atomic GitHub path — implementable once there is a
    repository to verify against.
 3. Set `UNIVERSAL_AGENT_ALLOWLIST=<that project id>` and `UNIVERSAL_AGENT_ENABLED=enabled`.
