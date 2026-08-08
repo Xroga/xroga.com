@@ -4,7 +4,7 @@
   "branch": "agent/universal-engineering",
   "baseCommit": "ac96781a9550569bcd2526f7b127669d70f49985",
   "currentHead": "ac96781a9550569bcd2526f7b127669d70f49985",
-  "status": "partially_complete",
+  "status": "implementation_complete_external_validation_pending",
   "activeMilestone": "M19",
   "completedMilestones": [
     {
@@ -92,12 +92,28 @@
       "id": "M18",
       "title": "Real sandbox proofs",
       "commit": "bcefc6d"
+    },
+    {
+      "id": "M20",
+      "title": "Follow-up modification proof",
+      "commit": "ff70c0a"
+    },
+    {
+      "id": "M21",
+      "title": "Universality regression",
+      "commit": "ff70c0a"
+    },
+    {
+      "id": "M22",
+      "title": "Final validation",
+      "commit": "pending"
     }
   ],
   "incompleteMilestones": [
     {
       "id": "M19",
-      "title": "Live allowlisted universal routing proof in production"
+      "title": "Live allowlisted universal routing proof",
+      "blocker": "LIVE_RUN_PENDING_DEPLOY_AND_TEST_PROJECT"
     }
   ],
   "completedRequirementIds": [
@@ -154,7 +170,14 @@
   ],
   "incompleteRequirementIds": [],
   "blockedRequirementIds": [],
-  "blockers": [],
+  "blockers": [
+    {
+      "id": "LIVE_RUN_PENDING_DEPLOY_AND_TEST_PROJECT",
+      "milestone": "M19",
+      "description": "UNIVERSAL_AGENT_ENABLED=shadow is staged on xroga-api and applies on the deploy this merge triggers. Shadow never writes. A controlled enabled run then needs a project named in UNIVERSAL_AGENT_ALLOWLIST; none has been designated, and using a customer project as an experiment without authorization is out of bounds.",
+      "resolution": "Merge and deploy, read the shadow disagreements, then allowlist one owner-designated test project for a single enabled run."
+    }
+  ],
   "migrationIds": [],
   "focusedTestsExecuted": [
     {
@@ -238,7 +261,7 @@
     }
   ],
   "fullValidationResults": {
-    "backendTests": "1433/1433 pass",
+    "backendTests": "1443/1443 pass",
     "frontendTests": "181/181 pass",
     "backendTypecheck": "clean",
     "frontendTypecheck": "clean",
@@ -251,7 +274,9 @@
     "docs/command-2/universal/final-completion.md",
     "docs/universal-agent-architecture.md",
     "docs/runtime-adapters.md",
-    "docs/universal-agent-rollout.md"
+    "docs/universal-agent-rollout.md",
+    "docs/command-2/universal/continuation-completion.md",
+    "docs/command-2/universal/evidence/sandbox-execution-proofs.md"
   ],
   "checkpointCommits": [
     {
@@ -306,12 +331,12 @@
   ],
   "deploymentState": "not_attempted",
   "nextFile": "backend/src/synthesis/repositoryIndex.ts",
-  "nextAction": "Implement the derived repository index (C2U-008) with a store abstraction, so the Supabase implementation in M15 can back it without the index depending on a database.",
+  "nextAction": "Merge, let the deploy apply the staged shadow secret, read the recorded disagreements, then allowlist one designated test project for a single enabled run.",
   "inheritedConstraints": [
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T16:20:05.070Z",
+  "updatedAt": "2026-08-08T16:25:18.386Z",
   "verification": {
     "sandboxToolchainProbe": "Deployed runtime, default image node:20-alpine: HAVE node, HAVE npm; MISS cargo, rustc, python, python3, pip, pip3, poetry, uv, pytest, go, java, dotnet, php, ruby.",
     "perEcosystemImages": "rust:1-alpine -> cargo 1.97.1 (exit 0); python:3.12-alpine -> Python 3.12.13, pip 25.0.1 (exit 0). Both machines destroyed; xroga-sandbox holds no machines, IPs or volumes.",
@@ -326,7 +351,7 @@
       "notProven": "JVM, .NET, Dart/Flutter and PHP adapters emit commands but were not executed in the sandbox; they remain implementation_available."
     }
   },
-  "statusReason": "The sandbox blocker is measured and closed. What remains is implementable work that was not done: sections 20-22 (model capability registry, benchmarks, capability routing) are untouched and section 13 framework adapters do not exist. Rounding this up to implementation_complete_external_validation_pending would blame an environment for a gap that is not environmental.",
+  "statusReason": "All seven previously open requirement IDs are closed with executable evidence, and four generated projects were built and run in the real sandbox. What remains is a live run through the enabled path in production, which needs the deploy this merge triggers plus an owner-designated test project.",
   "laterBranch": "agent/universal-engineering-2",
   "mergedAs": [
     {
