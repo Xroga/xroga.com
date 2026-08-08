@@ -355,32 +355,48 @@
       "section": "12",
       "title": "Generic unknown-runtime discovery producing a provisional RuntimeCapabilitySpec",
       "owningSubsystem": "synthesis/runtimeDiscovery",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/runtimeDiscovery.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/runtimeDiscovery.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/runtimeDiscovery.test.ts"
+      ],
+      "evidence": [
+        "24/24 tests pass; backend suite 1135/1135; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "deriveRuntimeCapability ranks evidence CI > container > Makefile > documentation > inferred and emits a provisional RuntimeCapabilitySpec. Proven on a Nim repository: no adapter, no marker, no mention anywhere in the codebase."
     },
     {
       "id": "C2U-016",
       "section": "12",
       "title": "Synthesised adapters are not trusted until validated",
       "owningSubsystem": "synthesis/runtimeDiscovery",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/runtimeDiscovery.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/runtimeDiscovery.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/runtimeDiscovery.test.ts"
+      ],
+      "evidence": [
+        "24/24 tests pass; backend suite 1135/1135; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "A derived spec is always validated:false. synthesizeAdapter throws on an unvalidated spec, so a README guess can never be registered beside the written adapters. A discovered adapter reports confidence 0.5 so a real adapter always wins."
     },
     {
       "id": "C2U-017",
@@ -792,16 +808,24 @@
       "section": "62",
       "title": "Unknown-runtime fixture proving discovery over whitelisting",
       "owningSubsystem": "synthesis/fixtures",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/runtime/runtimeDiscovery.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/runtime/runtimeDiscovery.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/runtime/runtimeDiscovery.test.ts"
+      ],
+      "evidence": [
+        "24/24 tests pass; backend suite 1135/1135; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Nim fixture end to end: derive, refuse unsafe lines, validate in sandbox, synthesise, register, detect."
     },
     {
       "id": "C2U-041",

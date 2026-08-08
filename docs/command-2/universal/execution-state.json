@@ -5,7 +5,7 @@
   "baseCommit": "ac96781a9550569bcd2526f7b127669d70f49985",
   "currentHead": "ac96781a9550569bcd2526f7b127669d70f49985",
   "status": "implementation_in_progress",
-  "activeMilestone": "M6",
+  "activeMilestone": "M7",
   "completedMilestones": [
     {
       "id": "M1",
@@ -25,19 +25,20 @@
     {
       "id": "M4",
       "title": "Open-ended UniversalProductSpec",
-      "commit": "pending"
+      "commit": "bf0d5f7"
     },
     {
       "id": "M5",
       "title": "ArchitecturePlan replacing the closed stack enum",
+      "commit": "bf0d5f7"
+    },
+    {
+      "id": "M6",
+      "title": "Generic unknown-runtime discovery",
       "commit": "pending"
     }
   ],
   "incompleteMilestones": [
-    {
-      "id": "M6",
-      "title": "Generic unknown-runtime discovery"
-    },
     {
       "id": "M7",
       "title": "Black-box universality fixtures"
@@ -63,14 +64,15 @@
     "C2U-005",
     "C2U-006",
     "C2U-029",
-    "C2U-043"
+    "C2U-043",
+    "C2U-015",
+    "C2U-016",
+    "C2U-040"
   ],
   "incompleteRequirementIds": [
     "C2U-007",
     "C2U-008",
     "C2U-014",
-    "C2U-015",
-    "C2U-016",
     "C2U-017",
     "C2U-019",
     "C2U-020",
@@ -90,7 +92,6 @@
     "C2U-037",
     "C2U-038",
     "C2U-039",
-    "C2U-040",
     "C2U-041",
     "C2U-042",
     "C2U-044",
@@ -128,6 +129,14 @@
     {
       "command": "npm test (backend)",
       "result": "1111/1111 pass"
+    },
+    {
+      "command": "npx tsx --test src/synthesis/runtime/runtimeDiscovery.test.ts",
+      "result": "24/24 pass"
+    },
+    {
+      "command": "npm test (backend)",
+      "result": "1135/1135 pass"
     }
   ],
   "integrationTestsExecuted": [],
@@ -152,6 +161,11 @@
       "commit": "4bd732d",
       "milestone": "M3",
       "title": "command2: expand repository intelligence across ecosystems"
+    },
+    {
+      "commit": "bf0d5f7",
+      "milestone": "M4+M5",
+      "title": "command2: add universal product spec and architecture planning"
     }
   ],
   "externalCredentialsRequired": [],
@@ -159,11 +173,11 @@
     "Command 1 Fly Machine sandbox for executing generated code in any ecosystem. Available and verified on main as of ac96781; per-ecosystem toolchain availability inside the sandbox image is unverified and is a real risk for non-Node adapters."
   ],
   "deploymentState": "not_attempted",
-  "nextFile": "backend/src/synthesis/runtime/runtimeDiscovery.ts",
-  "nextAction": "Implement generic unknown-runtime discovery (section 12): turn the generic signals into a provisional RuntimeCapabilitySpec, validate it before trusting it, and register it as adapter evidence. Without this the system is a larger whitelist rather than an open architecture.",
+  "nextFile": "backend/src/synthesis/universalFixtures.test.ts",
+  "nextAction": "Add the section 58-63 black-box fixtures, including the Python FastAPI vertical slice, and wire the universal path behind a feature flag.",
   "inheritedConstraints": [
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T11:38:24.459Z"
+  "updatedAt": "2026-08-08T11:42:06.376Z"
 }
