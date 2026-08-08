@@ -99,6 +99,7 @@ Twenty-nine met, four partial, three not implemented, one blocked externally.
 | backend `tsc --noEmit` | clean |
 | frontend `tsc --noEmit` | clean |
 | backend `npm run build` | succeeds |
+| frontend `npm run build` | succeeds |
 
 New tests by area: adapters 33, repository discovery 18, spec and planner 29, runtime
 discovery 24, black-box fixtures 31, rollout flags 13.

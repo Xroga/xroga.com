@@ -45,7 +45,7 @@
     {
       "id": "M8",
       "title": "Feature-flagged rollout and documentation",
-      "commit": "pending"
+      "commit": "7bcdd3c"
     }
   ],
   "incompleteMilestones": [],
@@ -193,7 +193,8 @@
     "frontendTests": "181/181 pass",
     "backendTypecheck": "clean",
     "frontendTypecheck": "clean",
-    "backendBuild": "succeeds"
+    "backendBuild": "succeeds",
+    "frontendBuild": "succeeds (production build compiled)"
   },
   "evidencePaths": [
     "docs/command-2/universal/audit.md",
@@ -233,6 +234,11 @@
       "commit": "354d97d",
       "milestone": "M7",
       "title": "command2: add acceptance compiler and universal black-box fixtures"
+    },
+    {
+      "commit": "7bcdd3c",
+      "milestone": "M8",
+      "title": "command2: add feature-flag rollout and universal agent documentation"
     }
   ],
   "externalCredentialsRequired": [],
@@ -246,5 +252,5 @@
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T11:53:39.740Z"
+  "updatedAt": "2026-08-08T11:56:07.914Z"
 }
