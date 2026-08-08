@@ -13,6 +13,7 @@ import type { ProjectFile } from '../ai/patches.js';
 import { planUniversalRun } from './universalFlow.js';
 import { deriveSecurityControls } from './securityControls.js';
 import { buildImplementationBrief, productionAdapters } from './productionAdapters.js';
+import { listSandboxProviders, setSandboxProvidersForTesting } from '../sandbox/sandboxProviders.js';
 
 const f = (path: string, content = ''): ProjectFile => ({ path, content });
 
@@ -98,26 +99,72 @@ describe('the review adapter fails closed', () => {
 });
 
 describe('adapters delegate rather than reimplement', () => {
-  it('passes the command\'s own network policy through unchanged', async () => {
+  it('passes each command\'s own network policy through unchanged', async () => {
     // The adapter already decided which step needs a registry. Nothing here may widen it.
-    const adapters = productionAdapters({
-      implement: async () => [],
-      commit: async () => ({ commitSha: 'x' }),
-    });
+    //
+    // Asserted against a recording provider rather than against a refusal. The first
+    // version of this test expected `runValidation` to reject because no container runtime
+    // was present — which held on a developer machine without Docker and failed in CI,
+    // where Docker exists and the command genuinely executed. A test whose result depends
+    // on what happens to be installed is testing the environment, not the code.
+    const seen: Array<{ command: string; networkPolicy: string }> = [];
+    const original = listSandboxProviders();
+    setSandboxProvidersForTesting([
+      {
+        name: 'recording',
+        probe: async () => ({ available: true, runtime: 'recording', networkIsolation: true }),
+        execute: async (request) => {
+          seen.push({ command: request.command, networkPolicy: request.networkPolicy });
+          return { exitCode: 0, stdout: '', stderr: '', timedOut: false, killedForLimit: false, durationMs: 1 };
+        },
+      },
+    ]);
 
-    // Without a sandbox provider configured this refuses, which is the correct behaviour
-    // and proves the call reaches the Command 1 boundary rather than running locally.
-    await assert.rejects(
-      async () => adapters.runValidation({
+    try {
+      const adapters = productionAdapters({
+        implement: async () => [],
+        commit: async () => ({ commitSha: 'x' }),
+      });
+
+      await adapters.runValidation({
+        command: 'cargo', args: ['fetch'], networkPolicy: 'registry-only',
+        source: 'manifest', purpose: 'install',
+      });
+      await adapters.runValidation({
         command: 'cargo', args: ['test'], networkPolicy: 'none',
         source: 'manifest', purpose: 'test',
-      }),
-      (error: Error) => {
-        assert.match(error.message, /isolation|sandbox|not executed/i);
-        return true;
-      },
-      'generated code must never run outside the sandbox boundary',
-    );
+      });
+
+      assert.deepEqual(seen, [
+        { command: 'cargo', networkPolicy: 'registry-only' },
+        { command: 'cargo', networkPolicy: 'none' },
+      ]);
+    } finally {
+      setSandboxProvidersForTesting(null);
+      assert.ok(original.length >= 0);
+    }
+  });
+
+  it('routes validation through the sandbox rather than spawning locally', async () => {
+    // The property the previous version was reaching for, stated so it does not depend on
+    // the host: with no provider registered at all, execution is refused.
+    setSandboxProvidersForTesting([]);
+    try {
+      const adapters = productionAdapters({
+        implement: async () => [],
+        commit: async () => ({ commitSha: 'x' }),
+      });
+      await assert.rejects(
+        async () => adapters.runValidation({
+          command: 'cargo', args: ['test'], networkPolicy: 'none',
+          source: 'manifest', purpose: 'test',
+        }),
+        /isolation|sandbox|not executed/i,
+        'generated code must never run outside the sandbox boundary',
+      );
+    } finally {
+      setSandboxProvidersForTesting(null);
+    }
   });
 
   it('routes implement through the injected function with a built brief', async () => {
