@@ -171,16 +171,18 @@
       "section": "7",
       "title": "Repository tools bounded, path-safe, commit-scoped, evidence-recording",
       "owningSubsystem": "ai/repositoryTools",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/ai/repositoryTools.ts"
+      ],
       "tests": [],
       "commands": [],
       "evidence": [],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Satisfied by Command 1 reuse, verified in source: the suite is pinned to one exact commit, validateRepositoryPath enforces path safety, and every call is recorded as ToolEvidence."
     },
     {
       "id": "C2U-008",
@@ -196,7 +198,7 @@
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "No repository index module exists. Retrieval works per request through the Command 1 repository tools; there is no persisted index carrying blob SHA, language, symbols or package ownership, and no HEAD-change invalidation."
     },
     {
       "id": "C2U-009",
@@ -341,8 +343,8 @@
       "section": "11",
       "title": "Additional ecosystem adapters with honest capability states",
       "owningSubsystem": "synthesis/runtimeAdapters",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
+      "implementationState": "partially_implemented",
+      "verificationState": "implemented_unverified",
       "files": [],
       "tests": [],
       "commands": [],
@@ -350,7 +352,7 @@
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Ecosystems beyond Node, Python and Rust are recognised by the marker table and honestly reported as having no adapter. No additional adapter was written, so their capability state is planned."
     },
     {
       "id": "C2U-015",
@@ -486,7 +488,7 @@
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "The Command 1 scheduler executes a fixed task graph. Nothing adds, splits or reorders tasks mid-run in response to what implementation reveals."
     },
     {
       "id": "C2U-021",
@@ -640,23 +642,25 @@
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "synthesis/research exists from earlier work but carries no freshness metadata and no provenance ranking for the universal path."
     },
     {
       "id": "C2U-028",
       "section": "25",
       "title": "Greenfield bootstrap without requiring a predefined template",
       "owningSubsystem": "synthesis/bootstrap",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
       "tests": [],
       "commands": [],
       "evidence": [],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "planArchitecture builds a greenfield plan from surfaces alone with no template involved; proven by the section 58 fixtures, which use no scaffold."
     },
     {
       "id": "C2U-029",
@@ -740,8 +744,8 @@
       "section": "43",
       "title": "Security controls preserved in universal generation",
       "owningSubsystem": "synthesis/security",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
+      "implementationState": "partially_implemented",
+      "verificationState": "implemented_unverified",
       "files": [],
       "tests": [],
       "commands": [],
@@ -749,23 +753,25 @@
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "The universal path inherits the Command 1 sandbox boundary, argv-only commands with no shell, and the discovery refusal list. No security control generation for produced products was added."
     },
     {
       "id": "C2U-033",
       "section": "45",
       "title": "Transactional patching with repository and source-commit identity",
       "owningSubsystem": "ai/patchWorkspace",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/ai/patchWorkspace.ts"
+      ],
       "tests": [],
       "commands": [],
       "evidence": [],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Satisfied by Command 1 reuse, verified in source: baseShas records a per-file blob SHA and every mutation carries baseBlobSha, so a write against a stale source is detectable."
     },
     {
       "id": "C2U-034",
@@ -1032,15 +1038,15 @@
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "Specs and plans are serialisable and versioned with migration functions, but no Supabase tables or migrations were created."
+      "notes": "Specs, plans and profiles are serialisable and versioned with migration functions, but no Supabase tables or migrations were created."
     },
     {
       "id": "C2U-045",
       "section": "74",
       "title": "Required focused tests across every listed subsystem",
       "owningSubsystem": "tests",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
+      "implementationState": "partially_implemented",
+      "verificationState": "implemented_unverified",
       "files": [],
       "tests": [],
       "commands": [],
@@ -1048,7 +1054,7 @@
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "210 tests cover the section 74 list for adapters, discovery, spec, planner, routing, repair, frameworks, fixtures and flags. Not covered: repository indexing, remote SHA invalidation, RLS and Supabase ownership, since those subsystems were not built."
     },
     {
       "id": "C2U-046",
