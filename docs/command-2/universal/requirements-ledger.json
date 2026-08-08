@@ -21,96 +21,150 @@
       "section": "5",
       "title": "Open-ended UniversalProductSpec persisted and versioned",
       "owningSubsystem": "synthesis/universalProductSpec",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "UniversalProductSpec persisted, versioned and migratable; migration preserves unknown surfaces and recomputes the custom flag so a promoted surface stops being custom."
     },
     {
       "id": "C2U-002",
       "section": "5",
       "title": "ProductSurface is open-ended, not a closed enum",
       "owningSubsystem": "synthesis/universalProductSpec",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "Custom/new surface values must remain possible"
+      "notes": "ProductSurface is KnownProductSurface | (string & {}) — known values keep completion while any string is legal. withCustomSurface adds one a caller determined some other way."
     },
     {
       "id": "C2U-003",
       "section": "5",
       "title": "A product may declare multiple surfaces",
       "owningSubsystem": "synthesis/universalProductSpec",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Surfaces are a scored list, not a single winner. A Go service with a background worker yields both, which a single-answer detector drops."
     },
     {
       "id": "C2U-004",
       "section": "6",
       "title": "Persisted ArchitecturePlan covering components, languages, runtimes, build systems",
       "owningSubsystem": "synthesis/architecturePlan",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "ArchitecturePlan with per-component language, runtime, framework, package manager, build system and adapter binding."
     },
     {
       "id": "C2U-005",
       "section": "6",
       "title": "Every architecture decision records reason, evidence, alternatives, tradeoffs, confidence",
       "owningSubsystem": "synthesis/architecturePlan",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Every decision records selection, reason, requirement and repository evidence, alternatives, tradeoffs, confidence, inheritedFromRepository and validationMethod."
     },
     {
       "id": "C2U-006",
       "section": "6",
       "title": "No forced Next.js/React/Node/Postgres/Vercel unless requirements demand them",
       "owningSubsystem": "synthesis/architecturePlan",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Surface defaults put a CLI on Rust and a data pipeline on Python; no database is added unless persistence is requested; a browser surface keeps TypeScript because Rust cannot run there."
     },
     {
       "id": "C2U-007",
@@ -533,16 +587,25 @@
       "section": "26",
       "title": "Existing repositories inspected before modification and normally extended",
       "owningSubsystem": "synthesis/existingRepository",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "planFromRepository marks every decision inheritedFromRepository with committed files as evidence. A Django repository stays Python even when the request says Node."
     },
     {
       "id": "C2U-030",
@@ -777,16 +840,25 @@
       "section": "71",
       "title": "No unknown-product to static-HTML path in the universal execution path",
       "owningSubsystem": "ai/pipeline",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/synthesis/universalProductSpec.ts",
+        "backend/src/synthesis/architecturePlan.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalArchitecture.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/synthesis/universalArchitecture.test.ts"
+      ],
+      "evidence": [
+        "29/29 tests pass; backend suite 1111/1111; tsc --noEmit clean"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "planIsRefusal: a request with no determinable surface produces zero components and a blocker naming the static-website failure it replaces."
     },
     {
       "id": "C2U-044",

@@ -5,7 +5,7 @@
   "baseCommit": "ac96781a9550569bcd2526f7b127669d70f49985",
   "currentHead": "ac96781a9550569bcd2526f7b127669d70f49985",
   "status": "implementation_in_progress",
-  "activeMilestone": "M4",
+  "activeMilestone": "M6",
   "completedMilestones": [
     {
       "id": "M1",
@@ -20,18 +20,20 @@
     {
       "id": "M3",
       "title": "Multi-ecosystem repository discovery",
+      "commit": "4bd732d"
+    },
+    {
+      "id": "M4",
+      "title": "Open-ended UniversalProductSpec",
+      "commit": "pending"
+    },
+    {
+      "id": "M5",
+      "title": "ArchitecturePlan replacing the closed stack enum",
       "commit": "pending"
     }
   ],
   "incompleteMilestones": [
-    {
-      "id": "M4",
-      "title": "Open-ended UniversalProductSpec"
-    },
-    {
-      "id": "M5",
-      "title": "ArchitecturePlan replacing the closed stack enum"
-    },
     {
       "id": "M6",
       "title": "Generic unknown-runtime discovery"
@@ -53,15 +55,17 @@
     "C2U-030",
     "C2U-009",
     "C2U-018",
-    "C2U-031"
-  ],
-  "incompleteRequirementIds": [
+    "C2U-031",
     "C2U-001",
     "C2U-002",
     "C2U-003",
     "C2U-004",
     "C2U-005",
     "C2U-006",
+    "C2U-029",
+    "C2U-043"
+  ],
+  "incompleteRequirementIds": [
     "C2U-007",
     "C2U-008",
     "C2U-014",
@@ -78,7 +82,6 @@
     "C2U-026",
     "C2U-027",
     "C2U-028",
-    "C2U-029",
     "C2U-032",
     "C2U-033",
     "C2U-034",
@@ -90,7 +93,6 @@
     "C2U-040",
     "C2U-041",
     "C2U-042",
-    "C2U-043",
     "C2U-044",
     "C2U-045",
     "C2U-046"
@@ -118,6 +120,14 @@
     {
       "command": "npm test (backend)",
       "result": "1082/1082 pass"
+    },
+    {
+      "command": "npx tsx --test src/synthesis/universalArchitecture.test.ts",
+      "result": "29/29 pass"
+    },
+    {
+      "command": "npm test (backend)",
+      "result": "1111/1111 pass"
     }
   ],
   "integrationTestsExecuted": [],
@@ -137,6 +147,11 @@
       "commit": "2c173cf",
       "milestone": "M2",
       "title": "command2: add runtime adapter architecture with node python rust"
+    },
+    {
+      "commit": "4bd732d",
+      "milestone": "M3",
+      "title": "command2: expand repository intelligence across ecosystems"
     }
   ],
   "externalCredentialsRequired": [],
@@ -144,11 +159,11 @@
     "Command 1 Fly Machine sandbox for executing generated code in any ecosystem. Available and verified on main as of ac96781; per-ecosystem toolchain availability inside the sandbox image is unverified and is a real risk for non-Node adapters."
   ],
   "deploymentState": "not_attempted",
-  "nextFile": "backend/src/synthesis/universalProductSpec.ts",
-  "nextAction": "Implement the open-ended UniversalProductSpec (section 5) with an open ProductSurface, so a product can declare surfaces the code has never seen without a closed enum rejecting them.",
+  "nextFile": "backend/src/synthesis/runtime/runtimeDiscovery.ts",
+  "nextAction": "Implement generic unknown-runtime discovery (section 12): turn the generic signals into a provisional RuntimeCapabilitySpec, validate it before trusting it, and register it as adapter evidence. Without this the system is a larger whitelist rather than an open architecture.",
   "inheritedConstraints": [
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T11:32:23.058Z"
+  "updatedAt": "2026-08-08T11:38:24.459Z"
 }
