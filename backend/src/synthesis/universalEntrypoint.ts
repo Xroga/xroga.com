@@ -1,0 +1,214 @@
+/**
+ * The point where a real user build enters the universal path.
+ *
+ * Until this existed, `executeUniversalRun` and `productionAdapters` were defined, tested
+ * and called by nothing. The flag could be set to `enabled` and a project could be
+ * allowlisted and the outcome would be identical to leaving it off — which meant M19's
+ * requirement to run "through the ACTUAL production user-build entrypoint" could not be
+ * met, because there was no path from the entrypoint to the code.
+ *
+ * The integration is deliberately one function returning `null`. `runBuildPipeline` calls
+ * it once; a null means "not selected, carry on as before" and the legacy pipeline proceeds
+ * untouched. That shape matters more than it looks: the alternative is an `if` wrapped
+ * around three thousand lines of orchestration, where every later edit has to remember
+ * which branch it is in.
+ *
+ * Reachability is worth stating plainly. This returns `null` unless
+ * `UNIVERSAL_AGENT_ENABLED=enabled` *and* the project is allowlisted. Production runs
+ * `shadow`, so today this is unreachable there — which is the intended state until a
+ * designated test project exists.
+ */
+
+import { randomUUID } from 'node:crypto';
+import type { ProjectFile } from '../ai/patches.js';
+import { chatCompletion, type ChatMessage } from '../ai/openaiCompat.js';
+import { mayWrite, routeProject, type UniversalAgentFlags } from '../config/universalAgentFlags.js';
+import { productionAdapters, type CommitFn } from './productionAdapters.js';
+import { executeUniversalRun, type UniversalExecutionResult } from './universalExecution.js';
+import { universalStore, type Owner, type UniversalStore } from './universalPersistence.js';
+import { routeByCapability, type RoutingCandidate } from '../ai/capabilityRouter.js';
+import { buildProfile } from '../ai/modelCapabilityProfile.js';
+import { getRuntimeModelRegistry } from '../ai/modelCapabilityRegistry.js';
+
+export interface UniversalBuildOutcome {
+  readonly ran: true;
+  readonly result: UniversalExecutionResult;
+  readonly routing: {
+    readonly selectedModel: string | null;
+    readonly fallbacks: readonly string[];
+    readonly reason: string;
+    readonly excluded: ReadonlyArray<{ modelId: string; reason: string }>;
+  };
+}
+
+/**
+ * Builds capability profiles from the runtime model registry.
+ *
+ * The bridge M19 §8 asks for. The legacy `intelligentRouter` picks from the same registry
+ * by hand-written strength scores; this converts those into profiles so the capability
+ * router ranks them by provenance-weighted evidence instead. Every profile starts
+ * `declared` and stays that way until outcomes accumulate — which is the honest starting
+ * point, not a defect.
+ */
+export function capabilityCandidates(): readonly RoutingCandidate[] {
+  return getRuntimeModelRegistry().map((model) => ({
+    // A model with an open circuit or a known outage is excluded rather than ranked down:
+    // §22 treats availability as a hard requirement, not a scoring penalty.
+    available:
+      model.configured &&
+      model.enabled &&
+      model.health.status !== 'unavailable' &&
+      model.health.status !== 'circuit_open',
+    profile: buildProfile({
+      modelId: model.id,
+      providerId: model.provider,
+      contextWindow: model.contextWindow,
+      maximumOutput: model.maximumSafeRequestTokens,
+      toolSupport: model.supports.toolCalls,
+      structuredOutputSupport: model.supports.structuredOutput,
+      visionSupport: model.supports.images,
+      streamingSupport: model.supports.streaming,
+      declaredScores: model.strengths as unknown as Record<string, number>,
+      inputUsdPer1M: model.inputUsdPer1M,
+      outputUsdPer1M: model.outputUsdPer1M,
+    }),
+  }));
+}
+
+/** Extracts a file map from a model reply, tolerating the fences models add. */
+export function parseGeneratedFiles(text: string): readonly ProjectFile[] {
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const raw = (fenced ? fenced[1] : text).trim();
+  try {
+    const parsed = JSON.parse(raw) as { files?: Array<{ path?: unknown; content?: unknown }> };
+    if (!Array.isArray(parsed.files)) return [];
+    return parsed.files
+      .filter((file) => typeof file?.path === 'string' && typeof file?.content === 'string')
+      // Path safety is enforced again here even though the patch workspace enforces it too.
+      // A traversal that reaches the workspace is caught, but catching it at the boundary
+      // means the run reports a bad generation rather than a rejected write.
+      .filter((file) => {
+        const path = String(file.path);
+        return !path.startsWith('/') && !path.includes('..') && path.length > 0;
+      })
+      .map((file) => ({ path: String(file.path), content: String(file.content) }));
+  } catch {
+    return [];
+  }
+}
+
+const IMPLEMENT_SYSTEM = `You are the implementation agent on Xroga's universal engineering path.
+You receive a brief containing decisions that are already settled. Do not change the language,
+framework, package manager or architecture the brief states.
+
+Return JSON only, with no prose and no markdown fence:
+{"files":[{"path":"relative/path","content":"complete file contents"}]}
+
+Rules:
+- Every file must be complete and syntactically valid. No placeholders, no TODO stubs.
+- Include the project manifest, sources, tests and a README.
+- Paths are relative. Never absolute, never containing "..".
+- Include the tests the acceptance criteria and security requirements call for, including
+  the negative tests that prove a refusal actually happens.`;
+
+/**
+ * Runs a build through the universal path, or returns null.
+ *
+ * Null is the normal answer. It means the project was not selected, and the caller should
+ * continue exactly as it did before this function existed.
+ */
+export async function tryUniversalBuild(input: {
+  runId?: string;
+  userId: string;
+  projectId?: string | null;
+  prompt: string;
+  existingFiles?: readonly ProjectFile[];
+  commit: CommitFn;
+  flags?: UniversalAgentFlags;
+  store?: UniversalStore;
+}): Promise<UniversalBuildOutcome | null> {
+  const decision = routeProject(input.projectId ?? null, input.flags);
+  if (!mayWrite(decision)) return null;
+
+  const owner: Owner = {
+    userId: input.userId,
+    projectId: input.projectId ?? `run:${input.runId ?? 'unknown'}`,
+  };
+
+  // §8: the capability router must actually decide, not the legacy one. The selection is
+  // captured so the run's evidence can name the model and why it won.
+  const route = routeByCapability(
+    {
+      capability: 'coding',
+      requiredContextTokens: 32_000,
+      needsStructuredOutput: true,
+    },
+    capabilityCandidates(),
+  );
+
+  if (!route.selected) {
+    // Refusing beats routing to something unevaluated. The excluded list explains why.
+    return {
+      ran: true,
+      routing: { selectedModel: null, fallbacks: [], reason: route.reason, excluded: route.excluded },
+      result: {
+        outcome: 'blocked', phaseReached: 'routing', plan: null, securityControls: [],
+        files: [], commitSha: null, evidence: [], blockers: [route.reason],
+        mutationBegan: false, verified: false, reason: route.reason,
+      },
+    };
+  }
+
+  const result = await executeUniversalRun({
+    prompt: input.prompt,
+    owner,
+    runId: input.runId ?? randomUUID(),
+    existingFiles: input.existingFiles ?? [],
+    flags: input.flags,
+    store: input.store ?? universalStore(null),
+    adapters: productionAdapters({
+      implement: async ({ brief }) => {
+        const messages: ChatMessage[] = [
+          { role: 'system', content: IMPLEMENT_SYSTEM },
+          { role: 'user', content: brief },
+        ];
+        const reply = await chatCompletion(
+          route.selected!.modelId as Parameters<typeof chatCompletion>[0],
+          messages,
+          { maxTokens: 16_000, temperature: 0.2, json: true },
+        );
+        return parseGeneratedFiles(reply.text);
+      },
+      commit: input.commit,
+    }),
+  });
+
+  return {
+    ran: true,
+    result,
+    routing: {
+      selectedModel: route.selected.modelId,
+      fallbacks: route.fallbacks.map((model) => model.modelId),
+      reason: route.reason,
+      excluded: route.excluded,
+    },
+  };
+}
+
+/**
+ * A commit function that refuses rather than inventing a repository.
+ *
+ * §9 requires the final write to go through the Command 1 atomic path against a real
+ * connected repository. A run without one must fail visibly: returning a fake SHA, or
+ * skipping the commit and reporting success, would produce a "completed" build with
+ * nothing in source control — the precise shape of dishonest evidence this command exists
+ * to prevent.
+ */
+export function refusingCommit(reason: string): CommitFn {
+  return async () => {
+    throw new Error(
+      `Refusing to commit: ${reason}. A universal run must write through the atomic GitHub ` +
+        'path against a connected repository; reporting success without a commit would be a false result.',
+    );
+  };
+}

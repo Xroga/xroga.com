@@ -113,7 +113,7 @@
     {
       "id": "M19",
       "title": "Live allowlisted universal routing proof",
-      "blocker": "LIVE_RUN_PENDING_DEPLOY_AND_TEST_PROJECT"
+      "blocker": "M19_NO_OWNER_CONTROLLED_TEST_PROJECT"
     }
   ],
   "completedRequirementIds": [
@@ -172,10 +172,11 @@
   "blockedRequirementIds": [],
   "blockers": [
     {
-      "id": "LIVE_RUN_PENDING_DEPLOY_AND_TEST_PROJECT",
+      "id": "M19_NO_OWNER_CONTROLLED_TEST_PROJECT",
       "milestone": "M19",
-      "description": "UNIVERSAL_AGENT_ENABLED=shadow is staged on xroga-api and applies on the deploy this merge triggers. Shadow never writes. A controlled enabled run then needs a project named in UNIVERSAL_AGENT_ALLOWLIST; none has been designated, and using a customer project as an experiment without authorization is out of bounds.",
-      "resolution": "Merge and deploy, read the shadow disagreements, then allowlist one owner-designated test project for a single enabled run."
+      "description": "Section 3 requires one owner-controlled test project and forbids using a customer project. Production holds 6 projects, all belonging to real users, and 0 belonging to the operator account. Creating one needs a GitHub OAuth authorization only a person can complete, and section 9 requires the final write to go through the atomic GitHub path against a real connected repository.",
+      "secondaryGap": "The universal commit step is wired to refusingCommit because the repository shipping step is still owned by the legacy flow. Implementable, but not verifiable without a test project, and wiring an unverifiable write path into the production build pipeline would be worse than a visible refusal.",
+      "resolution": "Designate or create an owner-controlled project with GitHub connected, wire the universal commit to the atomic path, set the allowlist, run the Rust CLI request and the --pretty follow-up, then return production to shadow."
     }
   ],
   "migrationIds": [],
@@ -276,7 +277,8 @@
     "docs/runtime-adapters.md",
     "docs/universal-agent-rollout.md",
     "docs/command-2/universal/continuation-completion.md",
-    "docs/command-2/universal/evidence/sandbox-execution-proofs.md"
+    "docs/command-2/universal/evidence/sandbox-execution-proofs.md",
+    "docs/command-2/universal/final-verification.md"
   ],
   "checkpointCommits": [
     {
@@ -331,12 +333,12 @@
   ],
   "deploymentState": "not_attempted",
   "nextFile": "backend/src/synthesis/repositoryIndex.ts",
-  "nextAction": "Merge, let the deploy apply the staged shadow secret, read the recorded disagreements, then allowlist one designated test project for a single enabled run.",
+  "nextAction": "Designate an owner-controlled test project with GitHub connected. That single human action unblocks M19; everything else is implementable from it.",
   "inheritedConstraints": [
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T16:37:26.589Z",
+  "updatedAt": "2026-08-08T17:07:39.017Z",
   "verification": {
     "sandboxToolchainProbe": "Deployed runtime, default image node:20-alpine: HAVE node, HAVE npm; MISS cargo, rustc, python, python3, pip, pip3, poetry, uv, pytest, go, java, dotnet, php, ruby.",
     "perEcosystemImages": "rust:1-alpine -> cargo 1.97.1 (exit 0); python:3.12-alpine -> Python 3.12.13, pip 25.0.1 (exit 0). Both machines destroyed; xroga-sandbox holds no machines, IPs or volumes.",
@@ -355,6 +357,12 @@
       "migration": "supabase-migrate gate succeeded; all ten tables exist in the live database",
       "rls": "Verified by querying pg_class and information_schema against production: row level security enabled on all ten tables; seven carry exactly one read policy; model_capability_profiles, model_benchmark_runs and repository_index_files carry zero policies and are therefore service-only as designed; zero INSERT, UPDATE or DELETE grants to authenticated on any of the ten.",
       "shadowFlag": "UNIVERSAL_AGENT_ENABLED is Deployed on xroga-api with value shadow. Shadow never writes."
+    },
+    "m19": {
+      "shadowEvidence": "Zero observations. No user build has run since the flag deployed, so production logs contain no universal-shadow lines and no build activity. Recorded rather than invented; the critical gate is passed vacuously, not meaningfully.",
+      "entrypointWired": "runBuildPipeline now calls tryUniversalBuild once. Returns null unless enabled and allowlisted, so the legacy path is untouched. Previously nothing called executeUniversalRun at all, which is why section 5 could not be satisfied.",
+      "capabilityRouting": "capabilityCandidates converts the runtime model registry into ModelCapabilityProfiles and routeByCapability selects, so the enabled path does not fall through to intelligentRouter. Selection, fallbacks, reason and exclusions are recorded.",
+      "productionState": "UNIVERSAL_AGENT_ENABLED remains shadow, no allowlist ever set, nothing enabled for any user. Release 8f304a8, health ok, sandbox empty."
     }
   },
   "statusReason": "All seven previously open requirement IDs are closed with executable evidence, and four generated projects were built and run in the real sandbox. What remains is a live run through the enabled path in production, which needs the deploy this merge triggers plus an owner-designated test project.",
