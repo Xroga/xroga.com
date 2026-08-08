@@ -58,6 +58,15 @@ the nearest web option.
 That is the failure this command exists to fix, called out by name so nobody reading logs
 has to infer it.
 
+## Wiring
+
+`pipeline.ts` calls `observeUniversalShadow` immediately after `detectScaffoldKind`. Nothing
+downstream reads the result — it records where the two paths disagree and returns rather
+than throwing, so observation can never turn into a failed build.
+
+The *enabled* path is not yet wired: no real build routes through `planUniversalRun` to
+generate files, so setting `enabled` today changes only the routing decision.
+
 ## Suggested sequence
 
 1. `shadow` in production. Collect disagreements.

@@ -23,7 +23,7 @@ Partly, and the split is clean.
 
 **Planning is universal and proven.** An unfamiliar request produces a real spec, a real
 architecture and real per-component commands with no central case for it. That is
-demonstrated by 148 new tests including the §58–63 fixtures.
+demonstrated by 155 new tests including the §58–63 fixtures.
 
 **Execution is universal and unproven.** The commands are correct and the boundary is
 right. Nothing has run `cargo test` inside the sandbox, so the ecosystems beyond Node are
@@ -94,7 +94,7 @@ Twenty-nine met, four partial, three not implemented, one blocked externally.
 
 | gate | result |
 | --- | --- |
-| backend tests | **1,179 / 1,179 pass** (1,031 at base + 148 new) |
+| backend tests | **1,186 / 1,186 pass** (1,031 at base + 155 new) |
 | frontend tests | **181 / 181 pass** |
 | backend `tsc --noEmit` | clean |
 | frontend `tsc --noEmit` | clean |
@@ -102,7 +102,7 @@ Twenty-nine met, four partial, three not implemented, one blocked externally.
 | frontend `npm run build` | succeeds |
 
 New tests by area: adapters 33, repository discovery 18, spec and planner 29, runtime
-discovery 24, black-box fixtures 31, rollout flags 13.
+discovery 24, black-box fixtures 31, rollout flags 13, shadow observation 7.
 
 ## Two bugs the fixtures found
 
@@ -138,10 +138,10 @@ so an environment problem never enters a repair loop — is implemented and test
 **Supabase persistence (§72).** Specs and plans are serialisable and versioned with
 migration functions; no tables were created and no migration was written.
 
-**Pipeline integration.** The flags exist and are tested; `pipeline.ts` does not yet call
-`routeProject`. The universal path is reachable through `planUniversalRun` but is not wired
-into the request flow, which is deliberate for one checkpoint but means shadow mode cannot
-yet be switched on in production.
+**Live universal runs.**  now calls the shadow observer, so shadow mode can
+be switched on in production. What is still absent is the *enabled* path: nothing routes a
+real build through  to generate files, so 
+currently changes nothing beyond the routing decision itself.
 
 ## The external blocker
 
@@ -161,6 +161,6 @@ replaying a module's own reasoning agrees with it.
 ## Next actions
 
 1. Run one sandbox execution per ecosystem to settle the blocker.
-2. Wire `routeProject` into `pipeline.ts` and enable shadow mode.
+2. Enable shadow mode in production and collect disagreements.
 3. Read the shadow disagreements. One where *legacy* was right blocks the rollout.
 4. Implement §20–22 if evidence-based routing is wanted.
