@@ -403,7 +403,7 @@
       "section": "13",
       "title": "FrameworkAdapter metadata; frameworks are adapters not categories",
       "owningSubsystem": "synthesis/frameworkAdapters",
-      "implementationState": "not_started",
+      "implementationState": "partially_implemented",
       "verificationState": "not_started",
       "files": [],
       "tests": [],
@@ -412,7 +412,7 @@
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Frameworks are recorded as architecture decisions with evidence, but no FrameworkAdapter contract exists."
     },
     {
       "id": "C2U-018",
@@ -534,16 +534,16 @@
       "section": "19",
       "title": "Generated code executes only through the Command 1 sandbox boundary",
       "owningSubsystem": "sandbox",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
+      "implementationState": "implemented_unverified",
+      "verificationState": "externally_blocked",
       "files": [],
       "tests": [],
       "commands": [],
       "evidence": [],
       "commit": null,
-      "blocker": null,
+      "blocker": "SANDBOX_TOOLCHAIN_UNVERIFIED",
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Every command routes through the Command 1 sandbox boundary and only install may reach a registry. Whether the sandbox image carries cargo, python or poetry is unverified."
     },
     {
       "id": "C2U-024",
@@ -559,7 +559,7 @@
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Model capability registry not implemented. modelCapabilityRegistry.ts remains interface-only."
     },
     {
       "id": "C2U-025",
@@ -575,7 +575,7 @@
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Benchmark system not implemented."
     },
     {
       "id": "C2U-026",
@@ -591,7 +591,7 @@
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Capability-based routing not implemented; intelligentRouter is unchanged."
     },
     {
       "id": "C2U-027",
@@ -938,16 +938,27 @@
       "section": "70",
       "title": "Feature-flagged rollout with shadow planning and rollback",
       "owningSubsystem": "config/featureFlags",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/config/universalAgentFlags.ts",
+        "docs/universal-agent-architecture.md",
+        "docs/runtime-adapters.md",
+        "docs/universal-agent-rollout.md"
+      ],
+      "tests": [
+        "backend/src/config/universalAgentFlags.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/config/universalAgentFlags.test.ts"
+      ],
+      "evidence": [
+        "13/13 flag tests pass; backend suite 1179/1179"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "UNIVERSAL_AGENT_ENABLED off|shadow|enabled with percentage and allowlist. mayWrite returns false in shadow, asserted across every mode/percentage combination. Bucketing is deterministic so a project never changes path on retry. An unrecognised flag value is off, not an error."
     },
     {
       "id": "C2U-043",
@@ -988,7 +999,7 @@
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "Specs and plans are serialisable and versioned with migration functions, but no Supabase tables or migrations were created."
     },
     {
       "id": "C2U-045",
@@ -1011,16 +1022,27 @@
       "section": "76",
       "title": "Documentation distinguishing verified from planned and externally blocked",
       "owningSubsystem": "docs",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
-      "tests": [],
-      "commands": [],
-      "evidence": [],
+      "implementationState": "implemented",
+      "verificationState": "locally_verified",
+      "files": [
+        "backend/src/config/universalAgentFlags.ts",
+        "docs/universal-agent-architecture.md",
+        "docs/runtime-adapters.md",
+        "docs/universal-agent-rollout.md"
+      ],
+      "tests": [
+        "backend/src/config/universalAgentFlags.test.ts"
+      ],
+      "commands": [
+        "npx tsx --test src/config/universalAgentFlags.test.ts"
+      ],
+      "evidence": [
+        "13/13 flag tests pass; backend suite 1179/1179"
+      ],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": ""
+      "notes": "docs/universal-agent-architecture.md, docs/runtime-adapters.md and docs/universal-agent-rollout.md distinguish verified, adapter_available, planned, external_blocked and not-implemented per subsystem."
     }
   ]
 }

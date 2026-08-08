@@ -4,8 +4,8 @@
   "branch": "agent/universal-engineering",
   "baseCommit": "ac96781a9550569bcd2526f7b127669d70f49985",
   "currentHead": "ac96781a9550569bcd2526f7b127669d70f49985",
-  "status": "implementation_in_progress",
-  "activeMilestone": "M8",
+  "status": "implementation_complete_external_validation_pending",
+  "activeMilestone": null,
   "completedMilestones": [
     {
       "id": "M1",
@@ -40,15 +40,15 @@
     {
       "id": "M7",
       "title": "Black-box universality fixtures",
+      "commit": "354d97d"
+    },
+    {
+      "id": "M8",
+      "title": "Feature-flagged rollout and documentation",
       "commit": "pending"
     }
   ],
-  "incompleteMilestones": [
-    {
-      "id": "M8",
-      "title": "Feature-flagged rollout and pipeline integration"
-    }
-  ],
+  "incompleteMilestones": [],
   "completedRequirementIds": [
     "C2U-010",
     "C2U-011",
@@ -78,7 +78,9 @@
     "C2U-037",
     "C2U-038",
     "C2U-039",
-    "C2U-041"
+    "C2U-041",
+    "C2U-042",
+    "C2U-046"
   ],
   "incompleteRequirementIds": [
     "C2U-007",
@@ -94,13 +96,20 @@
     "C2U-028",
     "C2U-032",
     "C2U-033",
-    "C2U-042",
     "C2U-044",
-    "C2U-045",
-    "C2U-046"
+    "C2U-045"
   ],
-  "blockedRequirementIds": [],
-  "blockers": [],
+  "blockedRequirementIds": [
+    "C2U-023"
+  ],
+  "blockers": [
+    {
+      "id": "SANDBOX_TOOLCHAIN_UNVERIFIED",
+      "requirement": "C2U-023",
+      "description": "Every validation command is produced correctly and routed through the Command 1 Fly Machine sandbox, which is available and proven for Node. Whether its image carries cargo, python, poetry, pytest or a Nim compiler has never been observed. The behaviour when a toolchain is absent is implemented and tested: the run stops, names the command, states nothing after it executed, and records that no source change can fix it. Never a pass.",
+      "resolution": "One live sandbox execution per ecosystem against the deployed image."
+    }
+  ],
   "migrationIds": [],
   "focusedTestsExecuted": [
     {
@@ -146,6 +155,10 @@
     {
       "command": "npm test (backend)",
       "result": "1166/1166 pass"
+    },
+    {
+      "command": "npx tsx --test src/config/universalAgentFlags.test.ts",
+      "result": "13/13 pass"
     }
   ],
   "integrationTestsExecuted": [],
@@ -175,10 +188,20 @@
       "result": "pass at plan and validation tiers; sandbox toolchain availability unverified"
     }
   ],
-  "fullValidationResults": null,
+  "fullValidationResults": {
+    "backendTests": "1179/1179 pass",
+    "frontendTests": "181/181 pass",
+    "backendTypecheck": "clean",
+    "frontendTypecheck": "clean",
+    "backendBuild": "succeeds"
+  },
   "evidencePaths": [
     "docs/command-2/universal/audit.md",
-    "docs/command-2/universal/requirements-ledger.json"
+    "docs/command-2/universal/requirements-ledger.json",
+    "docs/command-2/universal/final-completion.md",
+    "docs/universal-agent-architecture.md",
+    "docs/runtime-adapters.md",
+    "docs/universal-agent-rollout.md"
   ],
   "checkpointCommits": [
     {
@@ -205,6 +228,11 @@
       "commit": "0c2bff1",
       "milestone": "M6",
       "title": "command2: add generic runtime discovery"
+    },
+    {
+      "commit": "354d97d",
+      "milestone": "M7",
+      "title": "command2: add acceptance compiler and universal black-box fixtures"
     }
   ],
   "externalCredentialsRequired": [],
@@ -212,11 +240,11 @@
     "Command 1 Fly Machine sandbox for executing generated code in any ecosystem. Available and verified on main as of ac96781; per-ecosystem toolchain availability inside the sandbox image is unverified and is a real risk for non-Node adapters."
   ],
   "deploymentState": "not_attempted",
-  "nextFile": "backend/src/config/universalAgentFlags.ts",
-  "nextAction": "Add the feature-flagged rollout (section 70) with shadow planning, then write the documentation set and open the draft pull request.",
+  "nextFile": "backend/src/ai/pipeline.ts",
+  "nextAction": "Resolve SANDBOX_TOOLCHAIN_UNVERIFIED with one live sandbox run per ecosystem, then wire routeProject into pipeline.ts and enable shadow mode. Sections 20-22 (model capability registry, benchmarks, capability routing) were not implemented and are recorded as not_started rather than partial.",
   "inheritedConstraints": [
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T11:47:50.476Z"
+  "updatedAt": "2026-08-08T11:53:39.740Z"
 }
