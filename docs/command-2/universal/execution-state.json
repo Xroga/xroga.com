@@ -46,6 +46,12 @@
       "id": "M8",
       "title": "Feature-flagged rollout and documentation",
       "commit": "7bcdd3c"
+    },
+    {
+      "id": "M9",
+      "title": "Capability routing, framework adapters and repair loop",
+      "commit": "6b3e00e",
+      "pullRequest": 469
     }
   ],
   "incompleteMilestones": [],
@@ -235,6 +241,16 @@
       "commit": "7bcdd3c",
       "milestone": "M8",
       "title": "command2: add feature-flag rollout and universal agent documentation"
+    },
+    {
+      "commit": "6b3e00e",
+      "milestone": "M9",
+      "title": "command2: add capability registry, benchmarks, routing, frameworks and repair"
+    },
+    {
+      "commit": "1f8ed71",
+      "milestone": "M9",
+      "title": "command2: close the ledger honestly against what the second pass shipped"
     }
   ],
   "externalCredentialsRequired": [],
@@ -248,10 +264,24 @@
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T13:08:57.287Z",
+  "updatedAt": "2026-08-08T13:16:18.741Z",
   "verification": {
     "sandboxToolchainProbe": "Deployed runtime, default image node:20-alpine: HAVE node, HAVE npm; MISS cargo, rustc, python, python3, pip, pip3, poetry, uv, pytest, go, java, dotnet, php, ruby.",
-    "perEcosystemImages": "rust:1-alpine -> cargo 1.97.1 (exit 0); python:3.12-alpine -> Python 3.12.13, pip 25.0.1 (exit 0). Both machines destroyed; xroga-sandbox holds no machines, IPs or volumes."
+    "perEcosystemImages": "rust:1-alpine -> cargo 1.97.1 (exit 0); python:3.12-alpine -> Python 3.12.13, pip 25.0.1 (exit 0). Both machines destroyed; xroga-sandbox holds no machines, IPs or volumes.",
+    "shadowInertInProduction": "Ran the merged modules with the production environment (no UNIVERSAL_AGENT_* variables): mode=off, routeProject returns useUniversal=false shadow=false, observeUniversalShadow returns ran=false wrote=false and logs nothing. With UNIVERSAL_AGENT_ENABLED=shadow it observes and reports the legacy/universal disagreement while wrote stays false."
   },
-  "statusReason": "The sandbox blocker is measured and closed. What remains is implementable work that was not done: sections 20-22 (model capability registry, benchmarks, capability routing) are untouched and section 13 framework adapters do not exist. Rounding this up to implementation_complete_external_validation_pending would blame an environment for a gap that is not environmental."
+  "statusReason": "The sandbox blocker is measured and closed. What remains is implementable work that was not done: sections 20-22 (model capability registry, benchmarks, capability routing) are untouched and section 13 framework adapters do not exist. Rounding this up to implementation_complete_external_validation_pending would blame an environment for a gap that is not environmental.",
+  "laterBranch": "agent/universal-engineering-2",
+  "mergedAs": [
+    {
+      "pullRequest": 468,
+      "commit": "776ca3b",
+      "scope": "universal architecture: adapters, discovery, spec, planner, fixtures, rollout"
+    },
+    {
+      "pullRequest": 469,
+      "commit": "4c36574",
+      "scope": "capability registry, benchmarks, routing, framework adapters, repair loop"
+    }
+  ]
 }

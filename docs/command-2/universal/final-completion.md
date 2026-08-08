@@ -2,8 +2,15 @@
 
 **Status: `partially_complete`**
 
-Delivered across two branches: `agent/universal-engineering` (merged as `776ca3b`) and
-`agent/universal-engineering-2`, base `ac96781`.
+Delivered across two branches from base `ac96781`: `agent/universal-engineering`
+(PR #468, merged as `776ca3b`) and `agent/universal-engineering-2` (PR #469, merged as
+`4c36574`). Both are on `main`.
+
+Everything added is inert until switched on. Verified by running the merged modules with
+the production environment — no `UNIVERSAL_AGENT_*` variables set — which gives `mode=off`,
+`useUniversal=false`, `wrote=false`, and no log output at all. With
+`UNIVERSAL_AGENT_ENABLED=shadow` the same code observes and reports the legacy/universal
+disagreement while `wrote` stays false.
 
 Not `universal_agent_verified`. The sandbox blocker is measured and closed, and §20-22,
 §13 and §47 — the gaps recorded in the first pass — are now implemented. What remains is a
