@@ -336,7 +336,7 @@
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T16:25:18.386Z",
+  "updatedAt": "2026-08-08T16:37:26.589Z",
   "verification": {
     "sandboxToolchainProbe": "Deployed runtime, default image node:20-alpine: HAVE node, HAVE npm; MISS cargo, rustc, python, python3, pip, pip3, poetry, uv, pytest, go, java, dotnet, php, ruby.",
     "perEcosystemImages": "rust:1-alpine -> cargo 1.97.1 (exit 0); python:3.12-alpine -> Python 3.12.13, pip 25.0.1 (exit 0). Both machines destroyed; xroga-sandbox holds no machines, IPs or volumes.",
@@ -349,6 +349,12 @@
       "node": "npm test exit 0 with 2/2 passing, captured directly rather than through a pipe after the first attempt masked the status.",
       "leakCheck": "machines_remaining=0 after every run.",
       "notProven": "JVM, .NET, Dart/Flutter and PHP adapters emit commands but were not executed in the sandbox; they remain implementation_available."
+    },
+    "liveProductionAfterMerge": {
+      "release": "e2db136eebd2202716cfad6f372659764d87e156, /health ok and /ready ready",
+      "migration": "supabase-migrate gate succeeded; all ten tables exist in the live database",
+      "rls": "Verified by querying pg_class and information_schema against production: row level security enabled on all ten tables; seven carry exactly one read policy; model_capability_profiles, model_benchmark_runs and repository_index_files carry zero policies and are therefore service-only as designed; zero INSERT, UPDATE or DELETE grants to authenticated on any of the ten.",
+      "shadowFlag": "UNIVERSAL_AGENT_ENABLED is Deployed on xroga-api with value shadow. Shadow never writes."
     }
   },
   "statusReason": "All seven previously open requirement IDs are closed with executable evidence, and four generated projects were built and run in the real sandbox. What remains is a live run through the enabled path in production, which needs the deploy this merge triggers plus an owner-designated test project.",
@@ -363,6 +369,11 @@
       "pullRequest": 469,
       "commit": "4c36574",
       "scope": "capability registry, benchmarks, routing, framework adapters, repair loop"
+    },
+    {
+      "pullRequest": 471,
+      "commit": "e2db136",
+      "scope": "continuation: seven open IDs closed, enabled execution path, real sandbox proofs"
     }
   ],
   "continuationBranch": "agent/finish-command-2-universal",
