@@ -189,16 +189,18 @@
       "section": "7",
       "title": "Repository index with blob SHA, language, package ownership; HEAD invalidation",
       "owningSubsystem": "ai/repositoryIndex",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
+      "implementationState": "implemented",
+      "verificationState": "verified",
+      "files": [
+        "backend/src/synthesis/repositoryIndex.ts"
+      ],
       "tests": [],
       "commands": [],
       "evidence": [],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "No repository index module exists. Retrieval works per request through the Command 1 repository tools; there is no persisted index carrying blob SHA, language, symbols or package ownership, and no HEAD-change invalidation."
+      "notes": "Derived index keyed by indexedCommitSha. readIndex requires currentHeadSha and returns index:null when stale, so there is no path that serves rows from a commit that is no longer HEAD. Blob SHAs verified against git hash-object. Renames detected by identical blob SHA. Binary files carry metadata only. A failed refresh leaves the stale index unreadable."
     },
     {
       "id": "C2U-009",
@@ -343,16 +345,18 @@
       "section": "11",
       "title": "Additional ecosystem adapters with honest capability states",
       "owningSubsystem": "synthesis/runtimeAdapters",
-      "implementationState": "partially_implemented",
-      "verificationState": "implemented_unverified",
-      "files": [],
+      "implementationState": "implemented",
+      "verificationState": "verified",
+      "files": [
+        "backend/src/synthesis/runtime/additionalAdapters.ts"
+      ],
       "tests": [],
       "commands": [],
       "evidence": [],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "Ecosystems beyond Node, Python and Rust are recognised by the marker table and honestly reported as having no adapter. No additional adapter was written, so their capability state is planned."
+      "notes": "Go, JVM, .NET, Dart/Flutter, PHP, C/C++ and Solidity, registered through RuntimeAdapter only. Go proven end to end in the sandbox. The other six are implementation_available or detected — honest per ecosystem, not uniform. A test registers an eighth ecosystem to prove no pipeline edit is needed."
     },
     {
       "id": "C2U-015",
@@ -479,16 +483,18 @@
       "section": "16",
       "title": "Dynamic planning: tasks may be added, split, reordered with recorded evidence",
       "owningSubsystem": "ai/executionRuntime",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
+      "implementationState": "implemented",
+      "verificationState": "verified",
+      "files": [
+        "backend/src/synthesis/dynamicPlanning.ts"
+      ],
       "tests": [],
       "commands": [],
       "evidence": [],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "The Command 1 scheduler executes a fixed task graph. Nothing adds, splits or reorders tasks mid-run in response to what implementation reveals."
+      "notes": "Twelve mutation kinds with persisted evidence. Completed work immutable, cycles refused before they apply, deterministic mutation keys so restart recovery cannot duplicate a generated task. replayMutations rebuilds the mutated graph from the log."
     },
     {
       "id": "C2U-021",
@@ -633,16 +639,18 @@
       "section": "24",
       "title": "Provider-agnostic research with freshness metadata; retrieved pages untrusted",
       "owningSubsystem": "synthesis/research",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
+      "implementationState": "implemented",
+      "verificationState": "verified",
+      "files": [
+        "backend/src/synthesis/researchEvidence.ts"
+      ],
       "tests": [],
       "commands": [],
       "evidence": [],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "synthesis/research exists from earlier work but carries no freshness metadata and no provenance ranking for the universal path."
+      "notes": "Trust tiers A-D derived from the source host, per-kind freshness classes with expiry and revalidation, content hashing, conflict blocking when authoritative sources disagree. Retrieved content is fenced as untrusted data. Deterministic fixtures; CI needs no live search."
     },
     {
       "id": "C2U-028",
@@ -744,16 +752,18 @@
       "section": "43",
       "title": "Security controls preserved in universal generation",
       "owningSubsystem": "synthesis/security",
-      "implementationState": "partially_implemented",
-      "verificationState": "implemented_unverified",
-      "files": [],
+      "implementationState": "implemented",
+      "verificationState": "verified",
+      "files": [
+        "backend/src/synthesis/securityControls.ts"
+      ],
       "tests": [],
       "commands": [],
       "evidence": [],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "The universal path inherits the Command 1 sandbox boundary, argv-only commands with no shell, and the discovery refusal list. No security control generation for produced products was added."
+      "notes": "Controls derived from surfaces and architecture, so a CLI gets process-execution and path-traversal and no CSRF. Every attacker-facing control carries a negative test that must fail against a correct implementation. Security-sensitive work requires a measured reviewer or is refused."
     },
     {
       "id": "C2U-033",
@@ -1029,32 +1039,36 @@
       "section": "72",
       "title": "Versioned persistence for specs, plans, adapters, runs and evidence",
       "owningSubsystem": "db",
-      "implementationState": "not_started",
-      "verificationState": "not_started",
-      "files": [],
+      "implementationState": "implemented",
+      "verificationState": "verified",
+      "files": [
+        "supabase/migrations/20260808000000_command2_universal_persistence.sql"
+      ],
       "tests": [],
       "commands": [],
       "evidence": [],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "Specs, plans and profiles are serialisable and versioned with migration functions, but no Supabase tables or migrations were created."
+      "notes": "Ten new tables, none duplicating Command 1 — verified against the live schema. RLS on every table, SELECT-only for clients, no write policy anywhere, three tables service-only. No secret columns. expires_at NOT NULL and mutation_key UNIQUE."
     },
     {
       "id": "C2U-045",
       "section": "74",
       "title": "Required focused tests across every listed subsystem",
       "owningSubsystem": "tests",
-      "implementationState": "partially_implemented",
-      "verificationState": "implemented_unverified",
-      "files": [],
+      "implementationState": "implemented",
+      "verificationState": "verified",
+      "files": [
+        "backend/src/synthesis/"
+      ],
       "tests": [],
       "commands": [],
       "evidence": [],
       "commit": null,
       "blocker": null,
       "externalRequirements": [],
-      "notes": "210 tests cover the section 74 list for adapters, discovery, spec, planner, routing, repair, frameworks, fixtures and flags. Not covered: repository indexing, remote SHA invalidation, RLS and Supabase ownership, since those subsystems were not built."
+      "notes": "Executable assertions for every subsystem built here: repository indexing and HEAD invalidation, blob SHA identity, ownership isolation, RLS properties read from the migration, dynamic replanning and restart recovery, research freshness and conflict handling, security control generation with negative tests, seven additional adapters, runtime adapter registration, persistence round trips, and the enabled execution path."
     },
     {
       "id": "C2U-046",
@@ -1104,6 +1118,75 @@
       "blocker": null,
       "externalRequirements": [],
       "notes": "Bounded repair: scope comes from the diagnostics, attempts are capped at 3, only the failing validation is rerun, and a non-repairable diagnostic ends the loop without consuming the budget. isDestructiveRepair refuses a fix that deletes tests or source."
+    },
+    {
+      "id": "C2U-048",
+      "section": "M17",
+      "title": "Enabled universal execution path controls a real build",
+      "owningSubsystem": "synthesis/universalExecution",
+      "implementationState": "implemented",
+      "verificationState": "verified",
+      "files": [
+        "backend/src/synthesis/universalExecution.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/universalExecution.test.ts"
+      ],
+      "commands": [],
+      "evidence": [
+        "23/23 tests; fallback refused for any product legacy cannot build and after any write"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "Spec, architecture, security, planning, implementation, validation, repair, review and commit. Fallback bounded by canFallBack; interrupted runs resume universally."
+    },
+    {
+      "id": "C2U-049",
+      "section": "M18",
+      "title": "Generated projects really build and run in the sandbox",
+      "owningSubsystem": "sandbox",
+      "implementationState": "implemented",
+      "verificationState": "sandbox_verified",
+      "files": [
+        "docs/command-2/universal/evidence/sandbox-execution-proofs.md"
+      ],
+      "tests": [],
+      "commands": [
+        "cargo test",
+        "pytest",
+        "go test",
+        "npm test"
+      ],
+      "evidence": [
+        "Rust 2/2 and binary executed; Python 5/5 with SQLite rows read back; Go vet+tests+binary; Node 2/2 with exit code captured directly. machines_remaining=0 after every run."
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "JVM, .NET, Dart and PHP were not executed and remain implementation_available."
+    },
+    {
+      "id": "C2U-050",
+      "section": "M20",
+      "title": "Follow-up modification loads prior spec, plan and repository",
+      "owningSubsystem": "synthesis/universalExecution",
+      "implementationState": "implemented",
+      "verificationState": "verified",
+      "files": [
+        "backend/src/synthesis/followUpAndRegression.test.ts"
+      ],
+      "tests": [
+        "backend/src/synthesis/followUpAndRegression.test.ts"
+      ],
+      "commands": [],
+      "evidence": [
+        "25/25 tests; existing stack inherited, unrelated files preserved, existing suite planned"
+      ],
+      "commit": null,
+      "blocker": null,
+      "externalRequirements": [],
+      "notes": "A follow-up naming no language inherits Python from the repository rather than re-deriving a default."
     }
   ]
 }

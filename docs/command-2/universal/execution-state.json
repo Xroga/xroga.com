@@ -5,7 +5,7 @@
   "baseCommit": "ac96781a9550569bcd2526f7b127669d70f49985",
   "currentHead": "ac96781a9550569bcd2526f7b127669d70f49985",
   "status": "partially_complete",
-  "activeMilestone": "M10",
+  "activeMilestone": "M19",
   "completedMilestones": [
     {
       "id": "M1",
@@ -52,67 +52,52 @@
       "title": "Capability routing, framework adapters and repair loop",
       "commit": "6b3e00e",
       "pullRequest": 469
-    }
-  ],
-  "incompleteMilestones": [
+    },
     {
       "id": "M10",
-      "title": "Repository index with HEAD invalidation",
-      "requirement": "C2U-008"
+      "title": "Repository index",
+      "commit": "e466977"
     },
     {
       "id": "M11",
-      "title": "Additional runtime adapters",
-      "requirement": "C2U-014"
+      "title": "Seven additional adapters",
+      "commit": "e466977"
     },
     {
       "id": "M12",
       "title": "Dynamic replanning",
-      "requirement": "C2U-020"
+      "commit": "5706398"
     },
     {
       "id": "M13",
-      "title": "Research freshness and provenance",
-      "requirement": "C2U-027"
+      "title": "Research provenance",
+      "commit": "5706398"
     },
     {
       "id": "M14",
       "title": "Security control generation",
-      "requirement": "C2U-032"
+      "commit": "5706398"
     },
     {
       "id": "M15",
-      "title": "Supabase persistence with RLS",
-      "requirement": "C2U-044"
-    },
-    {
-      "id": "M16",
-      "title": "Complete missing validation",
-      "requirement": "C2U-045"
+      "title": "Supabase persistence",
+      "commit": "19d5ba0"
     },
     {
       "id": "M17",
-      "title": "Wire the enabled universal execution path"
+      "title": "Enabled universal execution",
+      "commit": "04fe795"
     },
     {
       "id": "M18",
-      "title": "Real sandbox generated-project proofs"
-    },
+      "title": "Real sandbox proofs",
+      "commit": "bcefc6d"
+    }
+  ],
+  "incompleteMilestones": [
     {
       "id": "M19",
-      "title": "Live allowlisted universal routing proof"
-    },
-    {
-      "id": "M20",
-      "title": "Follow-up modification proof"
-    },
-    {
-      "id": "M21",
-      "title": "Universality regression"
-    },
-    {
-      "id": "M22",
-      "title": "Final validation"
+      "title": "Live allowlisted universal routing proof in production"
     }
   ],
   "completedRequirementIds": [
@@ -155,17 +140,19 @@
     "C2U-047",
     "C2U-007",
     "C2U-033",
-    "C2U-028"
-  ],
-  "incompleteRequirementIds": [
+    "C2U-028",
     "C2U-008",
     "C2U-014",
     "C2U-020",
     "C2U-027",
     "C2U-032",
     "C2U-044",
-    "C2U-045"
+    "C2U-045",
+    "C2U-048",
+    "C2U-049",
+    "C2U-050"
   ],
+  "incompleteRequirementIds": [],
   "blockedRequirementIds": [],
   "blockers": [],
   "migrationIds": [],
@@ -251,12 +238,12 @@
     }
   ],
   "fullValidationResults": {
-    "backendTests": "1241/1241 pass",
+    "backendTests": "1433/1433 pass",
     "frontendTests": "181/181 pass",
     "backendTypecheck": "clean",
     "frontendTypecheck": "clean",
     "backendBuild": "succeeds",
-    "frontendBuild": "succeeds (production build compiled)"
+    "frontendBuild": "succeeds"
   },
   "evidencePaths": [
     "docs/command-2/universal/audit.md",
@@ -324,7 +311,7 @@
     "Generated code never executes on xroga-api. The Command 1 sandbox is the only path, and an unavailable toolchain is a recorded blocker rather than a fabricated pass.",
     "The legacy pipeline keeps serving users during rollout. The static fallback is removed from the universal path, not deleted from pipeline.ts."
   ],
-  "updatedAt": "2026-08-08T16:17:16.598Z",
+  "updatedAt": "2026-08-08T16:20:05.070Z",
   "verification": {
     "sandboxToolchainProbe": "Deployed runtime, default image node:20-alpine: HAVE node, HAVE npm; MISS cargo, rustc, python, python3, pip, pip3, poetry, uv, pytest, go, java, dotnet, php, ruby.",
     "perEcosystemImages": "rust:1-alpine -> cargo 1.97.1 (exit 0); python:3.12-alpine -> Python 3.12.13, pip 25.0.1 (exit 0). Both machines destroyed; xroga-sandbox holds no machines, IPs or volumes.",
