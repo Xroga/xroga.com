@@ -7,6 +7,48 @@ import { getSupabaseAdmin } from '../../config/supabase.js';
 import { storeProjectFile } from '../storage/projectFiles.js';
 import type { ProjectFile } from '../integrations/githubDeploy.js';
 
+/**
+ * Finds the project a build belongs to from the repository it targets.
+ *
+ * The client sends a project id only when the browser is on `/dashboard/projects/<id>`,
+ * because that is the single place the id appears — it is parsed out of the URL. Builds
+ * are typed into the terminal dock, which is present on every route, so a real build
+ * usually arrives with no project id at all.
+ *
+ * That is fine for the legacy pipeline, which never asks. It is not fine for the
+ * universal rollout: `routeProject` buckets on project id, so an absent id means a build
+ * can never be allowlisted and never falls inside a percentage. Left alone, raising the
+ * rollout to 50% would still route approximately nothing, because the identity it buckets
+ * on is missing from most requests.
+ *
+ * Resolving from the target repository is not a fallback guess. `upsertBuildProject`
+ * already treats `(user_id, github_repo_name)` as the identity of a project — this reads
+ * the same key it writes, so the id recovered here is the id the build would be recorded
+ * under when it completes.
+ *
+ * Returns null rather than throwing: a failed lookup must leave the build on the legacy
+ * path, never break it.
+ */
+export async function findProjectIdByRepo(
+  userId: string,
+  githubRepoName: string | null | undefined,
+): Promise<string | null> {
+  const repoName = githubRepoName?.trim();
+  if (!repoName || !userId) return null;
+  try {
+    const { data, error } = await getSupabaseAdmin()
+      .from('projects')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('github_repo_name', repoName)
+      .maybeSingle();
+    if (error || !data) return null;
+    return typeof data.id === 'string' ? data.id : null;
+  } catch {
+    return null;
+  }
+}
+
 export interface UpsertBuildProjectInput {
   userId: string;
   name: string;
