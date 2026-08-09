@@ -103,6 +103,7 @@ import {
 } from '../synthesis/universalShadow.js';
 import { refusingCommit, tryUniversalBuild } from '../synthesis/universalEntrypoint.js';
 import { routeProject } from '../config/universalAgentFlags.js';
+import { findProjectIdByRepo } from '../services/memory/buildProjectStore.js';
 import { atomicGitHubCommit, type UniversalCommitRecord } from '../synthesis/universalCommit.js';
 import { getGitHubToken } from '../services/integrations/githubAuth.js';
 import {
@@ -207,6 +208,8 @@ export interface PipelineProgress {
   universalShadow?: boolean;
   /** `routeProject`'s stated reason for the path this run took. */
   universalReason?: string;
+  /** True when the project id came from the client rather than repository resolution. */
+  projectIdFromClient?: boolean;
   /**
    * Whether a project id reached the pipeline at all.
    *
@@ -1113,6 +1116,21 @@ export async function runBuildPipeline(opts: {
   );
   if (shadowLine) console.log(shadowLine);
 
+  // The identity this run is routed by.
+  //
+  // The client sends a project id only when the browser happens to be on
+  // `/dashboard/projects/<id>` — it is parsed from the URL, and builds are typed into the
+  // terminal dock, which is on every route. So a real build usually arrives without one.
+  //
+  // `routeProject` buckets on project id, which means an absent id can never be
+  // allowlisted and never lands inside a percentage. Without this the rollout dial does
+  // not work: raising it to 50% would route approximately nothing, because the identity
+  // being bucketed is missing from most requests. Recovering the id from the repository
+  // the build already targets reads the same `(user_id, github_repo_name)` key that
+  // `upsertBuildProject` writes, so it is the id this build will be recorded under.
+  const resolvedProjectId =
+    opts.projectId ?? (await findProjectIdByRepo(opts.userId, meta?.githubTargetRepo));
+
   // Which path this run took, and why, recorded on the run itself.
   //
   // Until this existed the decision was invisible after the fact: `routeProject` returns a
@@ -1124,7 +1142,7 @@ export async function runBuildPipeline(opts: {
   //
   // `routeProject` is pure and reads the same flags `tryUniversalBuild` reads, so calling
   // it here reports the real decision rather than a second guess at it.
-  const universalDecision = routeProject(opts.projectId ?? null);
+  const universalDecision = routeProject(resolvedProjectId);
   emit({
     agent: 'router',
     status: 'universal_routing',
@@ -1134,7 +1152,10 @@ export async function runBuildPipeline(opts: {
     universalPath: universalDecision.useUniversal,
     universalShadow: universalDecision.shadow,
     universalReason: universalDecision.reason,
-    projectIdPresent: Boolean(opts.projectId),
+    projectIdPresent: Boolean(resolvedProjectId),
+    // Named separately so "the client sent it" and "we recovered it from the repository"
+    // stay distinguishable — they fail for different reasons and need different fixes.
+    projectIdFromClient: Boolean(opts.projectId),
   });
 
   // The enabled universal path. Returns null — and changes nothing below — unless
@@ -1163,7 +1184,7 @@ export async function runBuildPipeline(opts: {
   const universal = await tryUniversalBuild({
     runId,
     userId: opts.userId,
-    projectId: opts.projectId ?? null,
+    projectId: resolvedProjectId,
     prompt: userFacingPrompt,
     commit:
       universalTargetRepo && universalToken
