@@ -26,6 +26,7 @@ import { mayWrite, routeProject, type UniversalAgentFlags } from '../config/univ
 import { productionAdapters, type CommitFn } from './productionAdapters.js';
 import { executeUniversalRun, type UniversalExecutionResult } from './universalExecution.js';
 import { universalStore, type Owner, type UniversalStore } from './universalPersistence.js';
+import { getSupabaseAdmin } from '../config/supabase.js';
 import { routeByCapability, type RoutingCandidate } from '../ai/capabilityRouter.js';
 import { buildProfile } from '../ai/modelCapabilityProfile.js';
 import { getRuntimeModelRegistry } from '../ai/modelCapabilityRegistry.js';
@@ -165,19 +166,51 @@ export async function tryUniversalBuild(input: {
     runId: input.runId ?? randomUUID(),
     existingFiles: input.existingFiles ?? [],
     flags: input.flags,
-    store: input.store ?? universalStore(null),
+    // A real client, not null. `universalStore(null)` builds an in-memory store, so every
+    // spec, plan and run record the universal path produced lived in process memory and
+    // died with the process — `universal_runs` stayed empty no matter how many runs
+    // executed. M19 asks for durable evidence of what a run decided; an audit trail that
+    // does not survive a restart is not one.
+    store: input.store ?? universalStore(getSupabaseAdmin()),
     adapters: productionAdapters({
       implement: async ({ brief }) => {
         const messages: ChatMessage[] = [
           { role: 'system', content: IMPLEMENT_SYSTEM },
           { role: 'user', content: brief },
         ];
-        const reply = await chatCompletion(
-          route.selected!.modelId as Parameters<typeof chatCompletion>[0],
-          messages,
-          { maxTokens: 16_000, temperature: 0.2, json: true },
+        // The router ranks alternatives; until now only the winner was ever called, so a
+        // single empty completion ended the run with a ranked list of working models
+        // sitting unused. Observed in production: `glm_5_2 returned an empty completion`
+        // failed a run outright.
+        //
+        // "Produced no usable files" is treated the same as a thrown error on purpose. An
+        // empty completion and a reply that parses to zero files are the same outcome from
+        // here — nothing to build — and only one of them arrives as an exception.
+        const attempts = [route.selected!, ...route.fallbacks];
+        const failures: string[] = [];
+
+        for (const candidate of attempts) {
+          try {
+            const reply = await chatCompletion(
+              candidate.modelId as Parameters<typeof chatCompletion>[0],
+              messages,
+              { maxTokens: 16_000, temperature: 0.2, json: true },
+            );
+            const files = parseGeneratedFiles(reply.text);
+            if (files.length) return files;
+            failures.push(
+              `${candidate.modelId} returned ${reply.text.trim() ? 'no parsable files' : 'an empty completion'}`,
+            );
+          } catch (error) {
+            failures.push(`${candidate.modelId} failed: ${(error as Error).message}`);
+          }
+        }
+
+        // Every candidate is named. A run that refuses must say what it tried, or the next
+        // person has to reproduce the whole run to learn which models were attempted.
+        throw new Error(
+          `no capable model produced an implementation — ${failures.join('; ')}`,
         );
-        return parseGeneratedFiles(reply.text);
       },
       commit: input.commit,
     }),
