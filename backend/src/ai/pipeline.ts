@@ -102,6 +102,8 @@ import {
   observeUniversalShadow,
 } from '../synthesis/universalShadow.js';
 import { refusingCommit, tryUniversalBuild } from '../synthesis/universalEntrypoint.js';
+import { atomicGitHubCommit, type UniversalCommitRecord } from '../synthesis/universalCommit.js';
+import { getGitHubToken } from '../services/integrations/githubAuth.js';
 import {
   detectScaffoldFeatures,
   isNonWebFrameworkScaffold,
@@ -1104,19 +1106,43 @@ export async function runBuildPipeline(opts: {
   // the alternative leaves three thousand lines where every later edit has to remember
   // which branch it is in.
   //
-  // The commit function refuses when no repository is connected. A universal run that
-  // "succeeded" without writing to source control would be the precise shape of dishonest
-  // evidence this path exists to avoid.
+  // The commit function writes through Command 1's atomic path when a repository is
+  // genuinely connected, and refuses otherwise. "No repository" stays a visible failure
+  // rather than a silently skipped step: a universal run that "succeeded" without
+  // writing to source control would be the precise shape of dishonest evidence this
+  // path exists to avoid.
+  //
+  // The token is read only when a repository is actually targeted, so the ordinary
+  // legacy path does not pay for a lookup it will not use.
+  // A holder rather than a bare `let`: the assignment happens inside the commit callback,
+  // which control-flow analysis cannot see, so a plain variable narrows to `never` here.
+  const universalCommit: { record: UniversalCommitRecord | null } = { record: null };
+  const universalTargetRepo =
+    githubOkEarly && meta?.githubTargetRepo?.includes('/') ? meta.githubTargetRepo : null;
+  const universalToken = universalTargetRepo ? await getGitHubToken(opts.userId) : null;
+
   const universal = await tryUniversalBuild({
     runId,
     userId: opts.userId,
     projectId: opts.projectId ?? null,
     prompt: userFacingPrompt,
-    commit: refusingCommit(
-      githubOkEarly && meta?.githubTargetRepo
-        ? 'the universal path does not yet own the repository shipping step'
-        : 'no GitHub repository is connected for this project',
-    ),
+    commit:
+      universalTargetRepo && universalToken
+        ? atomicGitHubCommit({
+            token: universalToken,
+            owner: universalTargetRepo.split('/')[0]!,
+            repo: universalTargetRepo.split('/')[1]!,
+            runId,
+            baseBranch: meta?.githubTargetBranch || 'main',
+            onRecord: (record) => {
+              universalCommit.record = record;
+            },
+          })
+        : refusingCommit(
+            universalTargetRepo
+              ? 'the connected GitHub authorization could not be read for this project'
+              : 'no GitHub repository is connected for this project',
+          ),
   });
   if (universal) {
     const { result, routing } = universal;
@@ -1140,6 +1166,22 @@ export async function runBuildPipeline(opts: {
         files: result.files.map((file) => file.path),
         evidence: result.evidence,
         routing,
+        // Observed from the write itself, not reconstructed. Present only when the run
+        // actually committed, so its absence on a completed run is itself a signal.
+        repository: universalCommit.record
+          ? {
+              owner: universalCommit.record.owner,
+              repo: universalCommit.record.repo,
+              branch: universalCommit.record.branch,
+              baseBranch: universalCommit.record.baseBranch,
+              branchCreated: universalCommit.record.branchCreated,
+              startingHeadSha: universalCommit.record.startingHeadSha,
+              resultingCommitSha: universalCommit.record.resultingCommitSha,
+              verified: universalCommit.record.verified,
+              manifest: universalCommit.record.manifest,
+              pullRequest: universalCommit.record.pullRequest,
+            }
+          : null,
       },
       // Usage may legitimately be null here, because the universal path can refuse before
       // any model call. Recording zero tokens returns the user's real quota state rather
