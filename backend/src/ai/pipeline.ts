@@ -102,6 +102,7 @@ import {
   observeUniversalShadow,
 } from '../synthesis/universalShadow.js';
 import { refusingCommit, tryUniversalBuild } from '../synthesis/universalEntrypoint.js';
+import { routeProject } from '../config/universalAgentFlags.js';
 import { atomicGitHubCommit, type UniversalCommitRecord } from '../synthesis/universalCommit.js';
 import { getGitHubToken } from '../services/integrations/githubAuth.js';
 import {
@@ -200,6 +201,20 @@ export interface PipelineProgress {
   needsVercel?: boolean;
   /** Update mode needs sticky/selected repo. */
   needsRepoPick?: boolean;
+  /** True when this run took the universal engineering path rather than the legacy one. */
+  universalPath?: boolean;
+  /** True when the universal planner ran for comparison only and wrote nothing. */
+  universalShadow?: boolean;
+  /** `routeProject`'s stated reason for the path this run took. */
+  universalReason?: string;
+  /**
+   * Whether a project id reached the pipeline at all.
+   *
+   * Separate from the reason because it is the first thing to check when an allowlist
+   * does not match: an id that never arrived and an id that is not allowlisted produce
+   * the same legacy build, and only this distinguishes them.
+   */
+  projectIdPresent?: boolean;
 }
 
 /** Map pipeline agents → Workspace collaboration chip phases (0–8). */
@@ -1097,6 +1112,30 @@ export async function runBuildPipeline(opts: {
     }),
   );
   if (shadowLine) console.log(shadowLine);
+
+  // Which path this run took, and why, recorded on the run itself.
+  //
+  // Until this existed the decision was invisible after the fact: `routeProject` returns a
+  // reason for every outcome and every one of them was discarded. A run that quietly took
+  // the legacy path looked identical to one that was never eligible, so diagnosing "why
+  // did this project not use the universal path" meant reading server logs that only say
+  // anything in shadow mode — and an operator verifying a rollout could not tell an
+  // unset flag from a project id that never arrived.
+  //
+  // `routeProject` is pure and reads the same flags `tryUniversalBuild` reads, so calling
+  // it here reports the real decision rather than a second guess at it.
+  const universalDecision = routeProject(opts.projectId ?? null);
+  emit({
+    agent: 'router',
+    status: 'universal_routing',
+    message: `Build path: ${universalDecision.useUniversal ? 'universal' : 'legacy'} — ${universalDecision.reason}`,
+    // The distinguishing facts, named rather than inferred from prose: whether an id
+    // arrived at all is the first thing to check when an allowlist does not match.
+    universalPath: universalDecision.useUniversal,
+    universalShadow: universalDecision.shadow,
+    universalReason: universalDecision.reason,
+    projectIdPresent: Boolean(opts.projectId),
+  });
 
   // The enabled universal path. Returns null — and changes nothing below — unless
   // UNIVERSAL_AGENT_ENABLED=enabled *and* this project is allowlisted, so with production
