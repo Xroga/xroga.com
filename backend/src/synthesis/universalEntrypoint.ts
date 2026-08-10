@@ -24,6 +24,7 @@ import type { ProjectFile } from '../ai/patches.js';
 import { chatCompletion, type ChatMessage } from '../ai/openaiCompat.js';
 import { mayWrite, routeProject, type UniversalAgentFlags } from '../config/universalAgentFlags.js';
 import { productionAdapters, type CommitFn } from './productionAdapters.js';
+import { implementIncrementally } from './incrementalImplementation.js';
 import { executeUniversalRun, type UniversalExecutionResult } from './universalExecution.js';
 import { universalStore, type Owner, type UniversalStore } from './universalPersistence.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
@@ -182,55 +183,20 @@ export async function tryUniversalBuild(input: {
     store: input.store ?? universalStore(getSupabaseAdmin()),
     adapters: productionAdapters({
       implement: async ({ brief }) => {
-        const messages: ChatMessage[] = [
-          { role: 'system', content: IMPLEMENT_SYSTEM },
-          { role: 'user', content: brief },
-        ];
-        // The router ranks alternatives; until now only the winner was ever called, so a
-        // single empty completion ended the run with a ranked list of working models
-        // sitting unused. Observed in production: `glm_5_2 returned an empty completion`
-        // failed a run outright.
+        // Incremental rather than one whole-project completion. The single-call approach
+        // failed against every coding model in production (run 05769971): a project encoded
+        // as one JSON object under a 16k ceiling ends mid-string, and JSON.parse then
+        // rejects the entire reply — nine finished files lost because the tenth was
+        // clipped. Raising the ceiling only moves that cliff.
         //
-        // "Produced no usable files" is treated the same as a thrown error on purpose. An
-        // empty completion and a reply that parses to zero files are the same outcome from
-        // here — nothing to build — and only one of them arrives as an exception.
-        const attempts = [route.selected!, ...route.fallbacks];
-        const failures: string[] = [];
-
-        for (const candidate of attempts) {
-          try {
-            // Belt and braces: the candidate list is already filtered, but the implement
-            // step is the exact place where a policy failure would become generated code
-            // in a user's repository, so it refuses rather than trusts its input.
-            assertCodingModel(candidate.modelId, 'universal implementation');
-            const reply = await chatCompletion(
-              candidate.modelId as Parameters<typeof chatCompletion>[0],
-              messages,
-              { maxTokens: 16_000, temperature: 0.2, json: true },
-            );
-            const files = parseGeneratedFiles(reply.text);
-            if (files.length) return files;
-            // Truncation and malformed output both parse to nothing, and they need
-            // opposite responses: one means raise the budget or split the work, the other
-            // means fix the prompt. Reporting them identically sent the last production
-            // run's diagnosis in the wrong direction, so they are named apart here.
-            failures.push(
-              reply.finishReason === 'length'
-                ? `${candidate.modelId} was cut off at the ${16_000}-token ceiling after ` +
-                  `${reply.outputTokens} tokens, leaving incomplete JSON — the whole project ` +
-                  'did not fit in one reply'
-                : `${candidate.modelId} returned ${reply.text.trim() ? 'no parsable files' : 'an empty completion'}`,
-            );
-          } catch (error) {
-            failures.push(`${candidate.modelId} failed: ${(error as Error).message}`);
-          }
-        }
-
-        // Every candidate is named. A run that refuses must say what it tried, or the next
-        // person has to reproduce the whole run to learn which models were attempted.
-        throw new Error(
-          `no capable model produced an implementation — ${failures.join('; ')}`,
-        );
+        // The router's ranked candidates are passed through, so each call independently
+        // falls back rather than the whole build depending on one model answering once.
+        return implementIncrementally({
+          brief,
+          candidates: [route.selected!, ...route.fallbacks].map((candidate) => ({
+            modelId: candidate.modelId,
+          })),
+        });
       },
       commit: input.commit,
     }),
