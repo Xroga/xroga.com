@@ -268,7 +268,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     <>
       <div
         className={cn(
-          'rounded-xl relative border w-full min-w-0',
+          'xv-terminal-window rounded-xl relative border w-full min-w-0',
           isIncognito ? 'terminal-skin-dark border-white/15 bg-[#3a3a40]/80 backdrop-blur-md' : `terminal-skin-${terminalSkin}`,
           !isIncognito && (terminalSkin === 'dark' || terminalSkin === 'amoled') ? 'scanlines' : '',
           compact ? '' : 'w-full'

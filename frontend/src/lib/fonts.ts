@@ -18,7 +18,6 @@ import {
   Newsreader,
   Outfit,
   Press_Start_2P,
-  Source_Serif_4,
   Syne,
 } from 'next/font/google';
 import localFont from 'next/font/local';
@@ -74,11 +73,23 @@ export const pixelCoding = Press_Start_2P({
   preload: false,
 });
 
-export const sourceSerif = Source_Serif_4({
-  subsets: ['latin'],
+// Source Serif is self-hosted for the same reason as the terminal face. A
+// homepage-only font must not turn an otherwise valid deployment red when
+// fonts.gstatic.com is temporarily unavailable during the Vercel build.
+export const sourceSerif = localFont({
+  src: [
+    {
+      path: '../app/fonts/SourceSerif4Variable.ttf',
+      style: 'normal',
+      weight: '200 900',
+    },
+    {
+      path: '../app/fonts/SourceSerif4Variable-Italic.ttf',
+      style: 'italic',
+      weight: '200 900',
+    },
+  ],
   variable: '--font-source-serif',
-  weight: ['400', '600', '700'],
-  style: ['normal', 'italic'],
   preload: false,
 });
 

@@ -5,7 +5,6 @@ import { ChevronRight, Infinity } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { getTimeGreetingKey, t } from '@/lib/i18n/translations';
 import { useLocale } from '@/components/providers/LanguageProvider';
-import { WorkspaceResumeList } from '@/components/dashboard/WorkspaceResumeList';
 import { FirstRunShipChecklist } from '@/components/dashboard/FirstRunShipChecklist';
 import { WorkspaceShowcaseStarts } from '@/components/dashboard/WorkspaceShowcaseStarts';
 import { claudeSerif, pixelCoding } from '@/lib/fonts';
@@ -27,7 +26,10 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
   if (hidden) return null;
 
   return (
-    <div className={cn('xv-dashboard-welcome xv-welcome-modern relative', className)}>
+    <div
+      className={cn('xv-dashboard-welcome xv-welcome-modern relative', className)}
+      data-testid="workspace-welcome"
+    >
       <div className="xv-welcome-hero relative mx-auto flex max-w-3xl flex-col items-center text-center">
         <p className="xv-welcome-greeting relative">
           <span className={cn('xv-welcome-greeting-text', claudeSerif.className)}>{greeting},</span>
@@ -56,13 +58,9 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
         <FirstRunShipChecklist className="mb-3" />
       </div>
 
-      {/*
-        Starters and resume were both always-open card walls stacked above the
-        terminal, which is what pushed the terminal off the first screen entirely —
-        the thing people come to this page to use was the last thing they reached.
-        Both are collapsed behind a summary line now. They stay one click away, and
-        neither is removed; what changes is that the default view is short.
-      */}
+      {/* Keep the useful starter templates compact. Recent sessions already live in
+          Projects, so repeating them here pushed the actual terminal down and made
+          stale/degraded work look like the workspace's primary state. */}
       <div className="relative mx-auto mt-3 max-w-3xl space-y-2">
         <details className="xv-ws-fold">
           <summary className="xv-ws-fold__summary">
@@ -75,16 +73,6 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
           </div>
         </details>
 
-        <details className="xv-ws-fold">
-          <summary className="xv-ws-fold__summary">
-            <ChevronRight className="xv-ws-fold__chev h-3.5 w-3.5" aria-hidden="true" />
-            <span className="xv-ws-fold__label">Continue where you left off</span>
-            <span className="xv-ws-fold__hint">Recent</span>
-          </summary>
-          <div className="xv-ws-fold__body">
-            <WorkspaceResumeList />
-          </div>
-        </details>
       </div>
     </div>
   );

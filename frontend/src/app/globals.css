@@ -6332,6 +6332,15 @@ body.theme-gray .xv-rp-loader {
   border-radius: 0.75rem 0.75rem 0 0;
 }
 
+/* The message pane is the terminal scroll section. Keeping its window wrapper
+   overflow-visible lets the title bar remain attached to the scroll viewport;
+   overflow clipping on a rounded parent silently disables sticky positioning in
+   several browsers. The body still clips its own content and rounded corners. */
+.xv-terminal-window {
+  overflow: visible;
+  isolation: isolate;
+}
+
 /* Window lights. Decorative and inert — they are not close/minimise controls, so
    they are not buttons and carry no label. */
 .xv-term-lights {

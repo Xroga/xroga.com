@@ -292,6 +292,15 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(terminalDock).toBeVisible();
   await expect(composerInput).toBeVisible();
   await expect(page.locator('.xv-route-loader')).toHaveCount(0);
+  // Workspace owns the whole canvas: no coloured/transparent header row reserves
+  // height above the greeting, and recent sessions stay in Projects rather than
+  // pushing the actual build controls down this page.
+  await expect(page.getByTestId('workspace-site-header')).toHaveCount(0);
+  await expect(page.getByText('Continue where you left off', { exact: true })).toHaveCount(0);
+  const welcomeBox = await page.getByTestId('workspace-welcome').boundingBox();
+  expect(welcomeBox).not.toBeNull();
+  expect(welcomeBox!.y).toBeLessThan(80);
+  await expect(page.getByTestId('terminal-identity-header')).toHaveCSS('position', 'sticky');
 
   // Internal navigation must retain the shared shell and the mounted composer.
   const shellSentinel = randomUUID();
