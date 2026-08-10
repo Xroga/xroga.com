@@ -19,6 +19,17 @@ export interface ChatMessage {
 
 export interface ChatResult {
   text: string;
+  /**
+   * Why the model stopped. `length` means the reply was cut at the token ceiling.
+   *
+   * Discarded until now, and its absence was actively misleading: a truncated reply and a
+   * malformed one both parse to nothing, so a JSON payload cut mid-string was reported as
+   * the model producing unusable output. Observed in production — two DeepSeek models were
+   * recorded as returning "no parsable files" for a whole-project generation that had
+   * almost certainly hit the ceiling. Those two failures need opposite responses: raise the
+   * budget or split the work, versus fix the prompt.
+   */
+  finishReason?: string | null;
   modelId: ModelId;
   apiModel: string;
   provider: string;
@@ -178,6 +189,7 @@ export async function chatCompletion(
     recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
     return {
       text,
+      finishReason: completion.choices[0]?.finish_reason ?? null,
       modelId,
       apiModel: endpoint.apiModel,
       provider: endpoint.provider,
