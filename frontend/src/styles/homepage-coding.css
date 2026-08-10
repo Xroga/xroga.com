@@ -2131,17 +2131,6 @@ body.theme-beige .xv-home-coding { --hc-bg:#faf7f0; --hc-navy:#f2ead9; --hc-blue
 body.theme-gray .xv-home-coding { --hc-bg:#1a1a1a; --hc-navy:#252525; --hc-blue:#83b7ff; --hc-blue-soft:rgba(131,183,255,.24); --hc-ink:#f4f5f7; --hc-muted:rgba(244,245,247,.64); }
 body.theme-black .xv-home-coding { --hc-bg:#000; --hc-navy:#090b10; --hc-blue:#69adff; --hc-blue-soft:rgba(105,173,255,.26); --hc-ink:#fff; --hc-muted:rgba(255,255,255,.64); }
 
-body.theme-white .xv-home-coding .xv-hc-bg-image,
-body.theme-beige .xv-home-coding .xv-hc-bg-image {
-  background-image: none !important;
-  background: radial-gradient(circle at 50% 16%, var(--hc-blue-soft), transparent 33%), linear-gradient(180deg, color-mix(in srgb, var(--hc-bg) 94%, white), var(--hc-bg));
-}
-body.theme-white .xv-home-coding .xv-hc-bg-image::after,
-body.theme-beige .xv-home-coding .xv-hc-bg-image::after {
-  background: linear-gradient(color-mix(in srgb, var(--hc-ink) 5%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--hc-ink) 5%, transparent) 1px, transparent 1px);
-  background-size: 42px 42px;
-  mask-image: linear-gradient(to bottom, black, transparent 76%);
-}
 body.theme-white .xv-home-coding h1,
 body.theme-white .xv-home-coding h2,
 body.theme-white .xv-home-coding h3,
@@ -3759,6 +3748,10 @@ body.theme-beige .xv-home-coding .xv-hc-feature-list li { border-color:color-mix
   --hc-shadow: color-mix(in srgb, var(--hc-ink) 13%, transparent);
   --hc-action-bg: var(--hc-blue);
   --hc-action-text: #ffffff;
+  --hc-send-bg: #006aff;
+  --hc-send-text: #ffffff;
+  --hc-send-wave: #061a3c;
+  --hc-send-wave-accent: #0b4fae;
   color-scheme: light;
   background: var(--hc-bg);
   color: var(--hc-ink);
@@ -3802,40 +3795,61 @@ body.theme-black .xv-home-coding {
   color-scheme: dark;
 }
 
-/* The atmospheric background follows the selected surface instead of pinning a
-   dark navy wallpaper behind White, Beige, and Gray. Black retains a restrained
-   version of the original artwork as the brand's high-contrast mode. */
-body.theme-white .xv-home-coding .xv-hc-bg-image,
-body.theme-beige .xv-home-coding .xv-hc-bg-image,
+/* Keep the real Xroga blue atmospheric artwork in every theme. Theme-specific
+   translucent washes adapt its contrast without deleting the image or draining
+   its blue colour. */
+.xv-home-coding .xv-hc-bg-image {
+  background-image: url('/backgrounds/xroga-deep-work-bg.webp') !important;
+  background-color: var(--hc-bg);
+  background-blend-mode: normal;
+}
+
+body.theme-white .xv-home-coding .xv-hc-bg-image {
+  filter: saturate(1.2) contrast(0.94) brightness(1.04);
+}
+
+body.theme-beige .xv-home-coding .xv-hc-bg-image {
+  filter: saturate(1.12) contrast(0.92) brightness(1.02);
+}
+
 body.theme-gray .xv-home-coding .xv-hc-bg-image {
-  background-image: none !important;
-  filter: none;
-  background:
-    radial-gradient(circle at 50% 12%, var(--hc-accent-soft), transparent 34%),
-    linear-gradient(180deg, var(--hc-surface-inset), var(--hc-bg));
+  filter: saturate(1.28) contrast(1.04) brightness(0.86);
 }
 
 body.theme-black .xv-home-coding .xv-hc-bg-image {
-  background-color: var(--hc-bg);
-  background-blend-mode: luminosity;
+  filter: saturate(1.38) contrast(1.05) brightness(0.92);
 }
 
-.xv-home-coding .xv-hc-bg-image::after {
+body.theme-white .xv-home-coding .xv-hc-bg-image::after {
   background:
-    linear-gradient(color-mix(in srgb, var(--hc-ink) 5%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--hc-ink) 5%, transparent) 1px, transparent 1px),
-    linear-gradient(180deg, transparent, color-mix(in srgb, var(--hc-bg) 92%, transparent));
-  background-size: 42px 42px, 42px 42px, 100% 100%;
-  mask-image: linear-gradient(to bottom, black, transparent 84%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.82) 58%, #ffffff 100%),
+    linear-gradient(rgba(0, 106, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 106, 255, 0.07) 1px, transparent 1px);
+  background-size: 100% 100%, 42px 42px, 42px 42px;
+}
+
+body.theme-beige .xv-home-coding .xv-hc-bg-image::after {
+  background:
+    linear-gradient(180deg, rgba(250, 247, 240, 0.7), rgba(250, 247, 240, 0.83) 58%, #faf7f0 100%),
+    linear-gradient(rgba(0, 106, 255, 0.065) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 106, 255, 0.065) 1px, transparent 1px);
+  background-size: 100% 100%, 42px 42px, 42px 42px;
+}
+
+body.theme-gray .xv-home-coding .xv-hc-bg-image::after {
+  background:
+    linear-gradient(180deg, rgba(12, 18, 29, 0.48), rgba(20, 20, 20, 0.66) 58%, #1a1a1a 100%),
+    linear-gradient(rgba(77, 148, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(77, 148, 255, 0.08) 1px, transparent 1px);
+  background-size: 100% 100%, 42px 42px, 42px 42px;
 }
 
 body.theme-black .xv-home-coding .xv-hc-bg-image::after {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--hc-bg) 25%, transparent), var(--hc-bg)),
-    linear-gradient(color-mix(in srgb, var(--hc-ink) 4%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--hc-ink) 4%, transparent) 1px, transparent 1px);
+    linear-gradient(180deg, rgba(0, 12, 32, 0.34), rgba(0, 5, 16, 0.63) 58%, #000000 100%),
+    linear-gradient(rgba(77, 148, 255, 0.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(77, 148, 255, 0.075) 1px, transparent 1px);
   background-size: 100% 100%, 42px 42px, 42px 42px;
-  mask-image: none;
 }
 
 /* Navigation, announcement, labels, and every action use the active surface and
@@ -3932,10 +3946,10 @@ body.theme-white .xv-home-coding .xv-go-btn--home,
 body.theme-beige .xv-home-coding .xv-go-btn--home,
 body.theme-gray .xv-home-coding .xv-go-btn--home,
 body.theme-black .xv-home-coding .xv-go-btn--home {
-  border: 1px solid color-mix(in srgb, var(--hc-action-bg) 72%, var(--hc-ink)) !important;
-  background: var(--hc-action-bg) !important;
-  color: var(--hc-action-text) !important;
-  box-shadow: 0 9px 24px color-mix(in srgb, var(--hc-action-bg) 25%, transparent);
+  border: 1px solid color-mix(in srgb, var(--hc-send-bg) 72%, #ffffff) !important;
+  background: var(--hc-send-bg) !important;
+  color: var(--hc-send-text) !important;
+  box-shadow: 0 9px 24px color-mix(in srgb, var(--hc-send-bg) 38%, transparent);
 }
 
 body.theme-white .xv-home-coding .xv-go-btn--home .xv-go-btn__icon,
@@ -3943,11 +3957,23 @@ body.theme-beige .xv-home-coding .xv-go-btn--home .xv-go-btn__icon,
 body.theme-gray .xv-home-coding .xv-go-btn--home .xv-go-btn__icon,
 body.theme-black .xv-home-coding .xv-go-btn--home .xv-go-btn__icon {
   background: transparent !important;
-  color: var(--hc-action-text) !important;
+  color: var(--hc-send-text) !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.72));
 }
 
 .xv-home-coding .xv-go-btn--home .xv-go-btn__liquid {
-  background: color-mix(in srgb, var(--hc-action-bg) 78%, var(--hc-bg)) !important;
+  background: color-mix(in srgb, var(--hc-send-bg) 82%, var(--hc-send-wave)) !important;
+  box-shadow:
+    inset 5px -5px 25px var(--hc-send-wave),
+    inset -5px 0 25px var(--hc-send-wave-accent);
+}
+
+.xv-home-coding .xv-go-btn--home .xv-go-btn__liquid::after {
+  background: var(--hc-send-wave) !important;
+}
+
+.xv-home-coding .xv-go-btn--home .xv-go-btn__liquid::before {
+  background: var(--hc-send-wave-accent) !important;
 }
 
 /* Content sections and cards. */
