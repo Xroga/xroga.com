@@ -1,10 +1,34 @@
 import { expect, test } from '@playwright/test';
 
 const THEMES = [
-  { label: 'White', bodyClass: 'theme-white', light: true, artwork: 'xroga-light-clouds-bg.png' },
-  { label: 'Beige', bodyClass: 'theme-beige', light: true, artwork: 'xroga-deep-work-bg.webp' },
-  { label: 'Gray', bodyClass: 'theme-gray', light: false, artwork: 'xroga-deep-work-bg.webp' },
-  { label: 'Black', bodyClass: 'theme-black', light: false, artwork: 'xroga-black-clouds-bg.webp' },
+  {
+    label: 'White',
+    bodyClass: 'theme-white',
+    light: true,
+    artwork: 'xroga-light-clouds-bg.png',
+    mobileArtwork: 'xroga-light-clouds-bg-mobile.webp',
+  },
+  {
+    label: 'Beige',
+    bodyClass: 'theme-beige',
+    light: true,
+    artwork: 'xroga-deep-work-bg.webp',
+    mobileArtwork: 'xroga-deep-work-bg.webp',
+  },
+  {
+    label: 'Gray',
+    bodyClass: 'theme-gray',
+    light: false,
+    artwork: 'xroga-gray-code-city-bg.webp',
+    mobileArtwork: 'xroga-gray-code-city-bg-mobile.webp',
+  },
+  {
+    label: 'Black',
+    bodyClass: 'theme-black',
+    light: false,
+    artwork: 'xroga-black-clouds-bg.webp',
+    mobileArtwork: 'xroga-black-clouds-bg.webp',
+  },
 ] as const;
 
 test('every visible homepage region follows all four theme selections', async ({ page }) => {
@@ -167,6 +191,13 @@ test('all four homepage themes remain usable at the mobile breakpoint', async ({
     await expect(page.locator('.xv-hc-brand')).toBeVisible();
     await expect(page.locator('.xv-hc-prompt-shell')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Launch' })).toBeVisible();
+
+    const mobileArtwork = await page.locator('.xv-hc-bg-image').evaluate((element) =>
+      getComputedStyle(element).backgroundImage,
+    );
+    expect(mobileArtwork, `${theme.label} should use its mobile artwork`).toContain(
+      theme.mobileArtwork,
+    );
 
     const dimensions = await page.evaluate(() => ({
       viewport: window.innerWidth,

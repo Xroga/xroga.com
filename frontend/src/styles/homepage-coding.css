@@ -3795,9 +3795,9 @@ body.theme-black .xv-home-coding {
   color-scheme: dark;
 }
 
-/* Keep Xroga's blue atmospheric identity in every theme. White and Black use
-   purpose-built cloud artwork; Beige and Gray retain the original deep-work
-   scene. Theme-specific washes adapt contrast without draining the blue. */
+/* Each homepage theme gets intentional artwork instead of recolouring one
+   shared image. White and Black use cloud atmospheres, Gray uses monochrome
+   code architecture, and Beige retains the original deep-work scene. */
 .xv-home-coding .xv-hc-bg-image {
   background-image: url('/backgrounds/xroga-deep-work-bg.webp') !important;
   background-color: var(--hc-bg);
@@ -3814,7 +3814,8 @@ body.theme-beige .xv-home-coding .xv-hc-bg-image {
 }
 
 body.theme-gray .xv-home-coding .xv-hc-bg-image {
-  filter: saturate(1.38) contrast(1.05) brightness(0.92);
+  background-image: url('/backgrounds/xroga-gray-code-city-bg.webp') !important;
+  filter: saturate(0) contrast(1.06) brightness(0.9);
 }
 
 body.theme-black .xv-home-coding .xv-hc-bg-image {
@@ -3840,9 +3841,9 @@ body.theme-beige .xv-home-coding .xv-hc-bg-image::after {
 
 body.theme-gray .xv-home-coding .xv-hc-bg-image::after {
   background:
-    linear-gradient(180deg, rgba(0, 12, 32, 0.34), rgba(0, 5, 16, 0.63) 58%, #000000 100%),
-    linear-gradient(rgba(77, 148, 255, 0.075) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(77, 148, 255, 0.075) 1px, transparent 1px);
+    linear-gradient(180deg, rgba(13, 13, 13, 0.18), rgba(15, 15, 15, 0.3) 58%, #111111 100%),
+    linear-gradient(rgba(255, 255, 255, 0.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px);
   background-size: 100% 100%, 42px 42px, 42px 42px;
 }
 
@@ -3852,6 +3853,20 @@ body.theme-black .xv-home-coding .xv-hc-bg-image::after {
     linear-gradient(rgba(42, 126, 255, 0.035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(42, 126, 255, 0.035) 1px, transparent 1px);
   background-size: 100% 100%, 42px 42px, 42px 42px;
+}
+
+/* Portrait artwork preserves the theme's visible subject matter on phones.
+   A landscape `cover` crop removes the White clouds and Gray architecture. */
+@media (max-width: 640px) {
+  body.theme-white .xv-home-coding .xv-hc-bg-image {
+    background-image: url('/backgrounds/xroga-light-clouds-bg-mobile.webp') !important;
+    background-position: center top;
+  }
+
+  body.theme-gray .xv-home-coding .xv-hc-bg-image {
+    background-image: url('/backgrounds/xroga-gray-code-city-bg-mobile.webp') !important;
+    background-position: center top;
+  }
 }
 
 /* Navigation, announcement, labels, and every action use the active surface and
