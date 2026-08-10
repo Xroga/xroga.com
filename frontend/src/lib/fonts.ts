@@ -11,48 +11,47 @@
  * no longer block the first paint to do it. This changes delivery, not typography —
  * no family is dropped and no weight is removed.
  */
-import {
-  Cormorant,
-  Fraunces,
-  Inter,
-  Newsreader,
-  Outfit,
-  Press_Start_2P,
-  Syne,
-} from 'next/font/google';
 import localFont from 'next/font/local';
 
-export const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+// Every product font is bundled with the application. `next/font/google`
+// downloads font binaries while building; a transient fonts.gstatic.com outage
+// therefore made valid commits fail randomly on Vercel and GitHub Actions.
+export const inter = localFont({
+  src: '../app/fonts/InterVariable.ttf',
+  variable: '--font-inter',
+  weight: '100 900',
+});
 
 /** Azurio role — sharp editorial serif (Fraunces stand-in) */
-export const azurio = Fraunces({
-  subsets: ['latin'],
+export const azurio = localFont({
+  src: '../app/fonts/FrauncesVariable.ttf',
   variable: '--font-azurio',
-  weight: ['600', '700', '800', '900'],
+  weight: '100 900',
   preload: false,
 });
 
 /** Goga role — friendly geometric sans body */
-export const goga = Outfit({
-  subsets: ['latin'],
+export const goga = localFont({
+  src: '../app/fonts/OutfitVariable.ttf',
   variable: '--font-goga',
-  weight: ['400', '500', '600', '700'],
+  weight: '100 900',
 });
 
 /** Remixa role — contrasting modern sans for UI/labels */
-export const remixa = Syne({
-  subsets: ['latin'],
+export const remixa = localFont({
+  src: '../app/fonts/SyneVariable.ttf',
   variable: '--font-remixa',
-  weight: ['500', '600', '700', '800'],
+  weight: '400 800',
   preload: false,
 });
 
 /** Emilio role — elegant thin italic serif accents */
-export const emilio = Cormorant({
-  subsets: ['latin'],
+export const emilio = localFont({
+  src: [
+    { path: '../app/fonts/CormorantVariable.ttf', style: 'normal', weight: '300 700' },
+    { path: '../app/fonts/CormorantVariable-Italic.ttf', style: 'italic', weight: '300 700' },
+  ],
   variable: '--font-emilio',
-  weight: ['300', '400', '500'],
-  style: ['normal', 'italic'],
   preload: false,
 });
 
@@ -66,10 +65,10 @@ export const jetbrainsMono = localFont({
 });
 
 /** Pixel coding display — Press Start 2P */
-export const pixelCoding = Press_Start_2P({
-  subsets: ['latin'],
+export const pixelCoding = localFont({
+  src: '../app/fonts/PressStart2P-Regular.ttf',
   variable: '--font-pixel',
-  weight: ['400'],
+  weight: '400',
   preload: false,
 });
 
@@ -98,11 +97,12 @@ export const sourceSerif = localFont({
  * Anthropic Serif is proprietary — Newsreader is the closest open high-contrast literary serif.
  * Apply via `.className` (not only CSS vars) so body sans cannot override it.
  */
-export const claudeSerif = Newsreader({
-  subsets: ['latin'],
+export const claudeSerif = localFont({
+  src: [
+    { path: '../app/fonts/NewsreaderVariable.ttf', style: 'normal', weight: '200 800' },
+    { path: '../app/fonts/NewsreaderVariable-Italic.ttf', style: 'italic', weight: '200 800' },
+  ],
   variable: '--font-claude-serif',
-  weight: ['400', '500', '600', '700'],
-  style: ['normal', 'italic'],
   preload: false,
 });
 
