@@ -105,15 +105,30 @@ test('theme accent selection persists across reload', async ({ page }) => {
 test('companion wardrobe: selecting a silhouette marks it equipped and persists', async ({ page }) => {
   await signIn(page, '/settings?tab=companion');
 
+  for (const removed of [
+    'Companion name',
+    'Energy accent',
+    'X crown',
+    'Adaptive mantle',
+    'Mood preview',
+    'Workspace position',
+    'Reduced gamification',
+    'Read replies aloud',
+    'Weekly code energy',
+    'Current energy',
+  ]) {
+    await expect(page.getByText(removed, { exact: false })).toHaveCount(0);
+  }
+
   await page.getByRole('tab', { name: 'Skins & Costumes' }).click();
-  const builder = page.getByRole('radio', { name: 'Builder' });
-  await builder.click();
-  await expect(builder).toHaveAttribute('aria-checked', 'true');
-  await expect(builder.getByText('Equipped')).toBeVisible();
+  const techwear = page.getByRole('radio', { name: 'Techwear' });
+  await techwear.click();
+  await expect(techwear).toHaveAttribute('aria-checked', 'true');
+  await expect(techwear.getByText('Equipped')).toBeVisible();
 
   await page.reload();
   await page.getByRole('tab', { name: 'Skins & Costumes' }).click();
-  await expect(page.getByRole('radio', { name: 'Builder' })).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByRole('radio', { name: 'Techwear' })).toHaveAttribute('aria-checked', 'true');
 });
 
 test('destructive account deletion requires typed confirmation and never submits without it', async ({ page }) => {

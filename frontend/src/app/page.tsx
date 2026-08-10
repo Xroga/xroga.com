@@ -16,6 +16,7 @@ import { HomepageCompanionStage } from '@/components/companion/CompanionSurfaces
 import { HomepageThemeSwitcher } from '@/components/companion/HomepageThemeSwitcher';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { useCompanionStore } from '@/store/useCompanionStore';
+import { LayoutDashboard } from 'lucide-react';
 
 const FOOTER_LINKS = [
   { href: '/features', label: 'Features' },
@@ -133,10 +134,16 @@ export default function HomePage() {
                 )}
                 <button
                   type="button"
+                  aria-label={loggedIn ? 'Open Dashboard' : 'Get Started'}
                   onClick={() => router.push(loggedIn ? '/workspace' : '/auth/signup')}
-                  className="xv-hc-btn-primary !min-h-[2.4rem] !px-4 !text-[0.7rem]"
+                  className="xv-hc-btn-primary xv-hc-dashboard-action !min-h-[2.4rem] !px-4 !text-[0.7rem]"
                 >
-                  {loggedIn ? 'Dashboard' : 'Get Started'}
+                  {loggedIn ? (
+                    <>
+                      <LayoutDashboard className="xv-hc-dashboard-icon" aria-hidden="true" />
+                      <span className="xv-hc-dashboard-label">Dashboard</span>
+                    </>
+                  ) : 'Get Started'}
                 </button>
               </div>
             )}

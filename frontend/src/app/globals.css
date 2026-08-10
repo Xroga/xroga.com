@@ -292,6 +292,24 @@ body.theme-gray .xv-sidebar-root > div {
   color: var(--foreground);
 }
 
+/* The authenticated header floats over the workspace instead of becoming a
+   coloured strip that hides content while the user scrolls. */
+body .xv-site-header.xv-site-header-transparent {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+.xv-main-scroll-under-header {
+  padding-top: 5rem !important;
+}
+
+@media (min-width: 640px) {
+  .xv-main-scroll-under-header { padding-top: 6rem !important; }
+}
+
 html[data-accent='blue'] body { --primary: #006aff; --accent: #006aff; --primary-glow: #3b82f6; --accent-dim: rgba(0, 106, 255, 0.12); }
 html[data-accent='violet'] body { --primary: #7c3aed; --accent: #7c3aed; --primary-glow: #a78bfa; --accent-dim: rgba(124, 58, 237, 0.12); }
 html[data-accent='emerald'] body { --primary: #059669; --accent: #059669; --primary-glow: #34d399; --accent-dim: rgba(5, 150, 105, 0.12); }
@@ -6301,9 +6319,10 @@ body.theme-gray .xv-rp-loader {
    ============================================================================ */
 
 .xv-terminal-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 45;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 0.6rem;

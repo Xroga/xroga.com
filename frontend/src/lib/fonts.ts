@@ -60,9 +60,9 @@ export const emilio = Cormorant({
 // Keep the terminal face inside the repository. A remote JetBrains Mono fetch
 // made otherwise valid Vercel builds depend on fonts.gstatic.com availability.
 export const jetbrainsMono = localFont({
-  src: '../app/fonts/GeistMonoVF.woff',
+  src: '../app/fonts/JetBrainsMonoLatin.woff2',
   variable: '--font-xv-mono',
-  weight: '100 900',
+  weight: '400 800',
   preload: false,
 });
 

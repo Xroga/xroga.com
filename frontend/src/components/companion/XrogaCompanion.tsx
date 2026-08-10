@@ -17,10 +17,9 @@
  * Settings → Companion. Mic dictation belongs to the composer, not here.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CompanionRenderer } from './CompanionRenderer';
 import { CompanionUsagePopover } from './CompanionUsagePopover';
-import { companionEnergy } from '@/lib/companion';
 import { useCompanionStore } from '@/store/useCompanionStore';
 import { cn } from '@/lib/utils';
 
@@ -35,8 +34,7 @@ export function XrogaCompanion({ variant = 'floating', className }: XrogaCompani
   const [usageOpen, setUsageOpen] = useState(false);
   const [intro, setIntro] = useState(false);
   const state = useCompanionStore();
-  const energy = useMemo(() => companionEnergy(state), [state]);
-  const operation = energy === 'low' && state.operation === 'idle' ? 'low_energy' : state.operation;
+  const operation = state.operation;
 
   // A one-per-session entrance, so Smoky does not re-animate on every navigation.
   useEffect(() => {
@@ -77,7 +75,6 @@ export function XrogaCompanion({ variant = 'floating', className }: XrogaCompani
       data-testid={`xroga-companion-${variant}`}
       data-operation={operation}
       data-mood={state.mood}
-      data-energy={energy}
     >
       {interactive ? (
         <button

@@ -381,13 +381,11 @@
   gap: clamp(1.25rem, 4vw, 3rem);
   overflow: hidden;
   text-align: left;
-  border: 1px solid var(--hc-border);
+  border: 1px solid transparent;
   border-radius: 1.2rem;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--hc-surface-solid) 96%, transparent), color-mix(in srgb, var(--hc-surface) 86%, transparent)),
-    var(--hc-surface-solid);
-  box-shadow: var(--hc-shadow);
-  backdrop-filter: blur(18px);
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 .xv-home-coding .xv-hc-outcome-panel::before,
@@ -3908,11 +3906,13 @@ body.theme-white .xv-home-coding {
 }
 
 body.theme-beige .xv-home-coding {
-  --hc-bg: #faf7f0;
-  --hc-navy: #f2eadc;
-  --hc-ink: #241f18;
-  --hc-muted: #6b5f50;
-  --hc-blue: color-mix(in srgb, var(--accent) 72%, #3d3225);
+  --hc-bg: #f2e2c8;
+  --hc-navy: #e5cfaa;
+  --hc-ink: #2d2115;
+  --hc-muted: #66523c;
+  --hc-blue: #71502f;
+  --hc-action-bg: #68431f;
+  --hc-action-text: #fff8eb;
 }
 
 body.theme-gray .xv-home-coding {
@@ -3939,7 +3939,7 @@ body.theme-black .xv-home-coding {
 
 /* Each homepage theme gets intentional artwork instead of recolouring one
    shared image. White and Black use cloud atmospheres, Gray uses monochrome
-   code architecture, and Beige uses a warm sculptural paper landscape. */
+   code architecture, and Beige uses a calm AI-connected island landscape. */
 .xv-home-coding .xv-hc-bg-image {
   background-image: url('/backgrounds/xroga-deep-work-bg.webp') !important;
   background-color: var(--hc-bg);
@@ -3952,8 +3952,8 @@ body.theme-white .xv-home-coding .xv-hc-bg-image {
 }
 
 body.theme-beige .xv-home-coding .xv-hc-bg-image {
-  background-image: url('/backgrounds/xroga-beige-sculpted-data-bg.webp') !important;
-  filter: saturate(1.02) contrast(0.96) brightness(1.03);
+  background-image: url('/backgrounds/xroga-beige-ai-islands-bg.webp') !important;
+  filter: saturate(0.92) contrast(0.98) brightness(0.97);
 }
 
 body.theme-gray .xv-home-coding .xv-hc-bg-image {
@@ -3976,9 +3976,9 @@ body.theme-white .xv-home-coding .xv-hc-bg-image::after {
 
 body.theme-beige .xv-home-coding .xv-hc-bg-image::after {
   background:
-    linear-gradient(180deg, rgba(250, 247, 240, 0.26), rgba(250, 247, 240, 0.42) 58%, #faf7f0 100%),
-    linear-gradient(rgba(120, 84, 42, 0.038) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(120, 84, 42, 0.038) 1px, transparent 1px);
+    linear-gradient(180deg, rgba(242, 226, 200, 0.12), rgba(242, 226, 200, 0.34) 58%, #f2e2c8 100%),
+    linear-gradient(rgba(92, 61, 30, 0.042) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(92, 61, 30, 0.042) 1px, transparent 1px);
   background-size: 100% 100%, 42px 42px, 42px 42px;
 }
 
@@ -4007,7 +4007,7 @@ body.theme-black .xv-home-coding .xv-hc-bg-image::after {
   }
 
   body.theme-beige .xv-home-coding .xv-hc-bg-image {
-    background-image: url('/backgrounds/xroga-beige-sculpted-data-bg-mobile.webp') !important;
+    background-image: url('/backgrounds/xroga-beige-ai-islands-bg-mobile.webp') !important;
     background-position: center top;
   }
 
@@ -4066,6 +4066,55 @@ body.theme-black .xv-home-coding .xv-hc-bg-image::after {
   border-color: color-mix(in srgb, var(--hc-blue) 55%, var(--hc-border));
   background: var(--hc-accent-soft);
   color: var(--hc-ink);
+}
+
+body.theme-beige .xv-home-coding .xv-hc-badge,
+body.theme-beige .xv-home-coding .xv-hc-features-label {
+  border-color: rgba(91, 61, 31, 0.3);
+  background: rgba(226, 202, 164, 0.72);
+  color: #493522;
+}
+
+body.theme-beige .xv-home-coding .xv-hc-btn-ghost {
+  border-color: rgba(91, 61, 31, 0.4);
+  background: rgba(230, 207, 171, 0.68);
+  color: #2d2115;
+}
+
+body.theme-beige .xv-home-coding .xv-hc-prompt-shell {
+  border-color: rgba(91, 61, 31, 0.35);
+  background: rgba(239, 222, 194, 0.82);
+}
+
+.xv-home-coding .xv-hc-dashboard-action {
+  gap: 0.45rem;
+}
+
+.xv-home-coding .xv-hc-dashboard-icon {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+
+@media (max-width: 640px) {
+  .xv-home-coding .xv-hc-dashboard-action {
+    width: 2.4rem;
+    min-width: 2.4rem;
+    padding-inline: 0 !important;
+    border-radius: 0.8rem;
+  }
+
+  .xv-home-coding .xv-hc-dashboard-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 }
 
 /* Prompt composer. */

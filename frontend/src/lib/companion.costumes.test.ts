@@ -12,6 +12,12 @@ test('the original coder skin is first and remains the default', () => {
   assert.equal(DEFAULT_COMPANION_PREFERENCES.costume, 'coder');
 });
 
+test('voice and care gamification are disabled by default', () => {
+  assert.equal(DEFAULT_COMPANION_PREFERENCES.voiceEnabled, false);
+  assert.equal(DEFAULT_COMPANION_PREFERENCES.careEnabled, false);
+  assert.equal(DEFAULT_COMPANION_PREFERENCES.reducedGamification, true);
+});
+
 test('every skin id maps to a file-safe asset name', () => {
   for (const id of COMPANION_COSTUMES) {
     assert.match(id, /^[a-z]+(-[a-z]+)*$/, id);

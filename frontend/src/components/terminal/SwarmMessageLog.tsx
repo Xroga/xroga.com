@@ -278,7 +278,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
             whose title bar is tinted by the page reads as a widget rather than as a
             console, which is the substance of the "doesn't look like a terminal"
             complaint this replaces. */}
-        <div className="xv-terminal-header">
+        <div className="xv-terminal-header" data-testid="terminal-identity-header">
           <span className="xv-term-lights" aria-hidden="true">
             <i />
             <i />
