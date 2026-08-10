@@ -3795,9 +3795,9 @@ body.theme-black .xv-home-coding {
   color-scheme: dark;
 }
 
-/* Keep the real Xroga blue atmospheric artwork in every theme. Theme-specific
-   translucent washes adapt its contrast without deleting the image or draining
-   its blue colour. */
+/* Keep Xroga's blue atmospheric identity in every theme. White and Black use
+   purpose-built cloud artwork; Beige and Gray retain the original deep-work
+   scene. Theme-specific washes adapt contrast without draining the blue. */
 .xv-home-coding .xv-hc-bg-image {
   background-image: url('/backgrounds/xroga-deep-work-bg.webp') !important;
   background-color: var(--hc-bg);
@@ -3813,9 +3813,13 @@ body.theme-beige .xv-home-coding .xv-hc-bg-image {
   filter: saturate(1.12) contrast(0.92) brightness(1.02);
 }
 
-body.theme-gray .xv-home-coding .xv-hc-bg-image,
-body.theme-black .xv-home-coding .xv-hc-bg-image {
+body.theme-gray .xv-home-coding .xv-hc-bg-image {
   filter: saturate(1.38) contrast(1.05) brightness(0.92);
+}
+
+body.theme-black .xv-home-coding .xv-hc-bg-image {
+  background-image: url('/backgrounds/xroga-black-clouds-bg.webp') !important;
+  filter: saturate(1.04) contrast(1.03) brightness(0.88);
 }
 
 body.theme-white .xv-home-coding .xv-hc-bg-image::after {
@@ -3834,12 +3838,19 @@ body.theme-beige .xv-home-coding .xv-hc-bg-image::after {
   background-size: 100% 100%, 42px 42px, 42px 42px;
 }
 
-body.theme-gray .xv-home-coding .xv-hc-bg-image::after,
-body.theme-black .xv-home-coding .xv-hc-bg-image::after {
+body.theme-gray .xv-home-coding .xv-hc-bg-image::after {
   background:
     linear-gradient(180deg, rgba(0, 12, 32, 0.34), rgba(0, 5, 16, 0.63) 58%, #000000 100%),
     linear-gradient(rgba(77, 148, 255, 0.075) 1px, transparent 1px),
     linear-gradient(90deg, rgba(77, 148, 255, 0.075) 1px, transparent 1px);
+  background-size: 100% 100%, 42px 42px, 42px 42px;
+}
+
+body.theme-black .xv-home-coding .xv-hc-bg-image::after {
+  background:
+    linear-gradient(180deg, rgba(0, 2, 9, 0.12), rgba(0, 3, 12, 0.18) 58%, #000000 100%),
+    linear-gradient(rgba(42, 126, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(42, 126, 255, 0.035) 1px, transparent 1px);
   background-size: 100% 100%, 42px 42px, 42px 42px;
 }
 
