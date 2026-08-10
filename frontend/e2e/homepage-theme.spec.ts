@@ -1,14 +1,16 @@
 import { expect, test } from '@playwright/test';
 
 const THEMES = [
-  { label: 'White', bodyClass: 'theme-white', light: true },
-  { label: 'Beige', bodyClass: 'theme-beige', light: true },
-  { label: 'Gray', bodyClass: 'theme-gray', light: false },
-  { label: 'Black', bodyClass: 'theme-black', light: false },
+  { label: 'White', bodyClass: 'theme-white', light: true, artwork: 'xroga-light-clouds-bg.png' },
+  { label: 'Beige', bodyClass: 'theme-beige', light: true, artwork: 'xroga-deep-work-bg.webp' },
+  { label: 'Gray', bodyClass: 'theme-gray', light: false, artwork: 'xroga-deep-work-bg.webp' },
+  { label: 'Black', bodyClass: 'theme-black', light: false, artwork: 'xroga-deep-work-bg.webp' },
 ] as const;
 
 test('every visible homepage region follows all four theme selections', async ({ page }) => {
   await page.goto('/');
+  let grayArtworkTreatment: { filter: string; overlay: string } | null = null;
+  let blackArtworkTreatment: { filter: string; overlay: string } | null = null;
 
   for (const theme of THEMES) {
     await page.getByRole('button', { name: 'Change homepage theme' }).click();
@@ -92,6 +94,8 @@ test('every visible homepage region follows all four theme selections', async ({
       return {
         pageLuminance: wrapperBackground ? luminance(wrapperBackground) : null,
         artwork: artwork ? getComputedStyle(artwork).backgroundImage : null,
+        artworkFilter: artwork ? getComputedStyle(artwork).filter : null,
+        artworkOverlay: artwork ? getComputedStyle(artwork, '::after').backgroundImage : null,
         launchIconContrast:
           launchIconColour && launchSurfaces.length > 0
             ? Math.min(...launchSurfaces.map((surface) => ratio(launchIconColour, surface)))
@@ -121,9 +125,7 @@ test('every visible homepage region follows all four theme selections', async ({
     });
 
     expect(result.pageLuminance, `${theme.label} page background`).not.toBeNull();
-    expect(result.artwork, `${theme.label} should retain the Xroga background artwork`).toContain(
-      'xroga-deep-work-bg.webp',
-    );
+    expect(result.artwork, `${theme.label} should use its intended background artwork`).toContain(theme.artwork);
     expect(result.launchIconContrast, `${theme.label} launch icon contrast could not be measured`).not.toBeNull();
     expect(result.launchIconContrast!, `${theme.label} launch icon is not visible`).toBeGreaterThanOrEqual(3);
     if (theme.light) {
@@ -141,7 +143,18 @@ test('every visible homepage region follows all four theme selections', async ({
       expect(contrast, `${theme.label} ${name} contrast could not be measured`).not.toBeNull();
       expect(contrast!, `${theme.label} ${name} is not readable`).toBeGreaterThanOrEqual(3);
     }
+
+    if (theme.label === 'Gray') {
+      grayArtworkTreatment = { filter: result.artworkFilter!, overlay: result.artworkOverlay! };
+    }
+    if (theme.label === 'Black') {
+      blackArtworkTreatment = { filter: result.artworkFilter!, overlay: result.artworkOverlay! };
+    }
   }
+
+  expect(grayArtworkTreatment, 'Gray artwork treatment was not measured').not.toBeNull();
+  expect(blackArtworkTreatment, 'Black artwork treatment was not measured').not.toBeNull();
+  expect(grayArtworkTreatment).toEqual(blackArtworkTreatment);
 });
 
 test('homepage theme choice survives a reload', async ({ page }) => {

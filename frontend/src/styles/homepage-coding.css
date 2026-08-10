@@ -3758,10 +3758,10 @@ body.theme-beige .xv-home-coding .xv-hc-feature-list li { border-color:color-mix
 }
 
 body.theme-white .xv-home-coding {
-  --hc-bg: #ffffff;
-  --hc-navy: #f4f7fb;
-  --hc-ink: #0a0f1a;
-  --hc-muted: #4a5568;
+  --hc-bg: #eaf7ff;
+  --hc-navy: #f5fbff;
+  --hc-ink: #071a2d;
+  --hc-muted: #40566d;
   --hc-blue: var(--accent);
 }
 
@@ -3805,26 +3805,24 @@ body.theme-black .xv-home-coding {
 }
 
 body.theme-white .xv-home-coding .xv-hc-bg-image {
-  filter: saturate(1.2) contrast(0.94) brightness(1.04);
+  background-image: url('/backgrounds/xroga-light-clouds-bg.png') !important;
+  filter: saturate(0.96) contrast(0.94) brightness(1.04);
 }
 
 body.theme-beige .xv-home-coding .xv-hc-bg-image {
   filter: saturate(1.12) contrast(0.92) brightness(1.02);
 }
 
-body.theme-gray .xv-home-coding .xv-hc-bg-image {
-  filter: saturate(1.28) contrast(1.04) brightness(0.86);
-}
-
+body.theme-gray .xv-home-coding .xv-hc-bg-image,
 body.theme-black .xv-home-coding .xv-hc-bg-image {
   filter: saturate(1.38) contrast(1.05) brightness(0.92);
 }
 
 body.theme-white .xv-home-coding .xv-hc-bg-image::after {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.82) 58%, #ffffff 100%),
-    linear-gradient(rgba(0, 106, 255, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 106, 255, 0.07) 1px, transparent 1px);
+    linear-gradient(180deg, rgba(228, 246, 255, 0.3), rgba(238, 249, 255, 0.48) 58%, #eaf7ff 100%),
+    linear-gradient(rgba(0, 88, 214, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 88, 214, 0.06) 1px, transparent 1px);
   background-size: 100% 100%, 42px 42px, 42px 42px;
 }
 
@@ -3836,14 +3834,7 @@ body.theme-beige .xv-home-coding .xv-hc-bg-image::after {
   background-size: 100% 100%, 42px 42px, 42px 42px;
 }
 
-body.theme-gray .xv-home-coding .xv-hc-bg-image::after {
-  background:
-    linear-gradient(180deg, rgba(12, 18, 29, 0.48), rgba(20, 20, 20, 0.66) 58%, #1a1a1a 100%),
-    linear-gradient(rgba(77, 148, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(77, 148, 255, 0.08) 1px, transparent 1px);
-  background-size: 100% 100%, 42px 42px, 42px 42px;
-}
-
+body.theme-gray .xv-home-coding .xv-hc-bg-image::after,
 body.theme-black .xv-home-coding .xv-hc-bg-image::after {
   background:
     linear-gradient(180deg, rgba(0, 12, 32, 0.34), rgba(0, 5, 16, 0.63) 58%, #000000 100%),
