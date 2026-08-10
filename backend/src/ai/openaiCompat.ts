@@ -181,7 +181,36 @@ export async function chatCompletion(
       ),
     );
     const choice = completion.choices[0]?.message;
-    const text = requireNonEmptyModelText(choice?.content ?? '', modelId);
+
+    // Reasoning models split their reply in two. GLM and the DeepSeek v4 family return
+    // their thinking in `reasoning_content` and the answer in `content`. Reading only
+    // `content` means a model that spent its whole output budget thinking looks, from
+    // here, exactly like a provider that returned nothing — which is what "empty
+    // completion" reported for every GLM implementation attempt in production while the
+    // API itself was answering normally.
+    //
+    // The reasoning text is deliberately NOT used as the answer. It is a model's working,
+    // not its output, and committing it as a source file would be worse than failing. It is
+    // read only to tell the two situations apart, because they need different fixes: a
+    // larger output budget versus a different provider.
+    const reasoning =
+      typeof (choice as { reasoning_content?: unknown })?.reasoning_content === 'string'
+        ? ((choice as { reasoning_content?: string }).reasoning_content ?? '').trim()
+        : '';
+    const answer = (choice?.content ?? '').trim();
+
+    if (!answer && reasoning) {
+      const error = new Error(
+        `${modelId} returned ${reasoning.length} characters of reasoning but no answer — its ` +
+          'output budget was spent thinking. Raise the budget for this call or route to a ' +
+          'model that answers within it.',
+      ) as Error & { code?: string };
+      error.code = 'REASONING_WITHOUT_ANSWER';
+      recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started });
+      throw error;
+    }
+
+    const text = requireNonEmptyModelText(answer, modelId);
     const inputTokens =
       completion.usage?.prompt_tokens ??
       messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);

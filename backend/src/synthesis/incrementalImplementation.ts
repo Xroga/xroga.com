@@ -31,11 +31,25 @@ import type { ProjectFile } from '../ai/patches.js';
 /** Ceiling on files per project. A runaway manifest is a cost incident, not a big build. */
 export const MAX_PLANNED_FILES = 24;
 
-/** Output ceiling for one file. Generous for source; small enough to fail fast. */
-export const PER_FILE_MAX_TOKENS = 6_000;
+/**
+ * Output ceiling for one file.
+ *
+ * Sized for a reasoning model rather than the file. GLM and the DeepSeek v4 family emit
+ * their thinking into a separate `reasoning_content` field that is billed against the same
+ * output budget, so a ceiling chosen for the source alone can be entirely consumed before
+ * the answer starts — which is what produced "empty completion" for every GLM attempt in
+ * production. One source file rarely needs more than a couple of thousand tokens; the rest
+ * is headroom for the model to think first.
+ */
+export const PER_FILE_MAX_TOKENS = 16_000;
 
-/** Output ceiling for the manifest, which is only paths and one-line purposes. */
-export const MANIFEST_MAX_TOKENS = 2_000;
+/**
+ * Output ceiling for the manifest.
+ *
+ * Only paths and one-line purposes, but the same reasoning-budget argument applies: the
+ * planning step is where a model is most likely to deliberate.
+ */
+export const MANIFEST_MAX_TOKENS = 8_000;
 
 export interface PlannedFile {
   readonly path: string;
