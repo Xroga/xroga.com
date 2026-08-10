@@ -62,6 +62,34 @@ The evidence string is composed by the pipeline, not produced by executing the t
 
 This is precisely the shape Phase 4 prohibits: a task graph is generated, persisted and described, while the actual implementation happens in a separate whole-project builder response.
 
+## Correction: repository tooling already exists
+
+This section was added after the original archaeology missed it, and the omission caused
+real damage — a later slice overwrote `backend/src/ai/repositoryTools.ts` because this map
+did not record it. The overwrite was caught by an unexplained drop in the test count and
+discarded before it was committed, but the lesson belongs here rather than in a commit
+message nobody will re-read.
+
+`backend/src/ai/repositoryTools.ts` (919 lines) and its tests (578 lines) implement most of
+what §16 asks for, and implement it well:
+
+- on-demand fetching — nothing is hydrated before a tool asks for it
+- every read pinned to one exact commit, never a branch name
+- session scoped to one authorised repository, so a call naming another is refused
+- path safety refusing `.git`, traversal, absolute paths, symlinks and submodules
+- hard ceilings on file size, range length, tree entries, matches, result characters and
+  total blob fetches, so no tool can exhaust the context window or the API quota
+- secret redaction on every result, with the redaction count recorded
+- writes staged as *proposals*; nothing in the file mutates a remote branch
+
+Its test fixture deliberately places the important file at
+`services/internal/platform/adapters/persistence/postgres/migrationRunner.ts` to prove the
+tools find it without anyone having predicted where it was.
+
+**Implication for the migration plan:** §16 is largely satisfied. The open question is
+narrower — whether role-based tool permissions (§11A) are enforced at this layer, which is
+a question to answer by reading it, not by building beside it.
+
 ## Where active state is duplicated
 
 | fact | canonical owner today | competing copies |
