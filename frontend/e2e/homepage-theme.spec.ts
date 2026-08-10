@@ -12,8 +12,8 @@ const THEMES = [
     label: 'Beige',
     bodyClass: 'theme-beige',
     light: true,
-    artwork: 'xroga-beige-ai-islands-bg.webp',
-    mobileArtwork: 'xroga-beige-ai-islands-bg-mobile.webp',
+    artwork: 'xroga-beige-mars-pyramids-code-bg.webp',
+    mobileArtwork: 'xroga-beige-mars-pyramids-code-bg-mobile.webp',
   },
   {
     label: 'Gray',

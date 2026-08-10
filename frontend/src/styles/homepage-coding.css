@@ -3939,7 +3939,7 @@ body.theme-black .xv-home-coding {
 
 /* Each homepage theme gets intentional artwork instead of recolouring one
    shared image. White and Black use cloud atmospheres, Gray uses monochrome
-   code architecture, and Beige uses a calm AI-connected island landscape. */
+   code architecture, and Beige uses a Mars/pyramid coding landscape. */
 .xv-home-coding .xv-hc-bg-image {
   background-image: url('/backgrounds/xroga-deep-work-bg.webp') !important;
   background-color: var(--hc-bg);
@@ -3952,8 +3952,9 @@ body.theme-white .xv-home-coding .xv-hc-bg-image {
 }
 
 body.theme-beige .xv-home-coding .xv-hc-bg-image {
-  background-image: url('/backgrounds/xroga-beige-ai-islands-bg.webp') !important;
-  filter: saturate(0.92) contrast(0.98) brightness(0.97);
+  background-image: url('/backgrounds/xroga-beige-mars-pyramids-code-bg.webp') !important;
+  background-position: center top;
+  filter: saturate(0.98) contrast(1.02) brightness(0.9);
 }
 
 body.theme-gray .xv-home-coding .xv-hc-bg-image {
@@ -3976,7 +3977,7 @@ body.theme-white .xv-home-coding .xv-hc-bg-image::after {
 
 body.theme-beige .xv-home-coding .xv-hc-bg-image::after {
   background:
-    linear-gradient(180deg, rgba(242, 226, 200, 0.12), rgba(242, 226, 200, 0.34) 58%, #f2e2c8 100%),
+    linear-gradient(180deg, rgba(71, 37, 17, 0.16), rgba(94, 50, 23, 0.2) 56%, #f2e2c8 100%),
     linear-gradient(rgba(92, 61, 30, 0.042) 1px, transparent 1px),
     linear-gradient(90deg, rgba(92, 61, 30, 0.042) 1px, transparent 1px);
   background-size: 100% 100%, 42px 42px, 42px 42px;
@@ -4007,7 +4008,7 @@ body.theme-black .xv-home-coding .xv-hc-bg-image::after {
   }
 
   body.theme-beige .xv-home-coding .xv-hc-bg-image {
-    background-image: url('/backgrounds/xroga-beige-ai-islands-bg-mobile.webp') !important;
+    background-image: url('/backgrounds/xroga-beige-mars-pyramids-code-bg-mobile.webp') !important;
     background-position: center top;
   }
 
