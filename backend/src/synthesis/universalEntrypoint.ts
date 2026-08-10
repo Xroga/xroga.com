@@ -30,6 +30,7 @@ import { getSupabaseAdmin } from '../config/supabase.js';
 import { routeByCapability, type RoutingCandidate } from '../ai/capabilityRouter.js';
 import { buildProfile } from '../ai/modelCapabilityProfile.js';
 import { getRuntimeModelRegistry } from '../ai/modelCapabilityRegistry.js';
+import { assertCodingModel, isCodingModel } from '../ai/providerPolicy.js';
 
 export interface UniversalBuildOutcome {
   readonly ran: true;
@@ -52,7 +53,14 @@ export interface UniversalBuildOutcome {
  * point, not a defect.
  */
 export function capabilityCandidates(): readonly RoutingCandidate[] {
-  return getRuntimeModelRegistry().map((model) => ({
+  return getRuntimeModelRegistry()
+    // §7: research providers never implement. Filtered at the source of the candidate list
+    // rather than after ranking, so a research model cannot be selected, cannot become a
+    // fallback, and cannot appear in the run's recorded routing evidence as a coding
+    // option that merely lost. Before this, `grok_4_5` and `grok_4_3` carried a coding
+    // score of 7 and were ranked for the `coding` capability like any other model.
+    .filter((model) => isCodingModel(model.id))
+    .map((model) => ({
     // A model with an open circuit or a known outage is excluded rather than ranked down:
     // §22 treats availability as a hard requirement, not a scoring penalty.
     available:
@@ -191,6 +199,10 @@ export async function tryUniversalBuild(input: {
 
         for (const candidate of attempts) {
           try {
+            // Belt and braces: the candidate list is already filtered, but the implement
+            // step is the exact place where a policy failure would become generated code
+            // in a user's repository, so it refuses rather than trusts its input.
+            assertCodingModel(candidate.modelId, 'universal implementation');
             const reply = await chatCompletion(
               candidate.modelId as Parameters<typeof chatCompletion>[0],
               messages,

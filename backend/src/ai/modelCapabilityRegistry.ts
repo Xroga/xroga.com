@@ -1,4 +1,5 @@
 import { getSecret } from '../config/envSecrets.js';
+import { isCodingModel } from './providerPolicy.js';
 import { MODELS, type ModelId } from './models.js';
 import { getModelRuntimeHealth, type ModelRuntimeHealth } from './providerRuntime.js';
 import { getRouterAdminConfig } from './routerConfig.js';
@@ -53,13 +54,24 @@ const STRENGTHS: Record<ModelId, Record<ModelCapability, number>> = {
   grok_4_3: { coding: 7, repository_analysis: 9, architecture: 7, research: 8, review: 8, debugging: 7, security_review: 7, ui_generation: 7, structured_output: 7, tool_calls: 7, streaming: 9 },
 };
 
+/**
+ * Fallback chains.
+ *
+ * A coding model's chain contains only coding models. `grok_4_3` previously appeared in
+ * the chains for `kimi_k3`, `glm_5_2` and `deepseek_v4_flash`, which meant two coding
+ * failures handed implementation to a research provider — and once #478 made the universal
+ * implement step actually walk its fallback chain, that stopped being theoretical.
+ *
+ * The research models keep chains among themselves: falling back from one Grok to another
+ * is still research, and `providerPolicy` refuses either of them for engineering work.
+ */
 const FALLBACKS: Record<ModelId, ModelId[]> = {
-  kimi_k3: ['glm_5_2', 'grok_4_3', 'deepseek_v4_pro'],
-  glm_5_2: ['kimi_k3', 'deepseek_v4_pro', 'grok_4_3'],
+  kimi_k3: ['glm_5_2', 'deepseek_v4_pro', 'deepseek_v4_flash'],
+  glm_5_2: ['kimi_k3', 'deepseek_v4_pro', 'deepseek_v4_flash'],
   deepseek_v4_pro: ['glm_5_2', 'deepseek_v4_flash', 'kimi_k3'],
-  deepseek_v4_flash: ['deepseek_v4_pro', 'glm_5_2', 'grok_4_3'],
-  grok_4_5: ['grok_4_3', 'kimi_k3', 'deepseek_v4_flash'],
-  grok_4_3: ['kimi_k3', 'glm_5_2', 'grok_4_5'],
+  deepseek_v4_flash: ['deepseek_v4_pro', 'glm_5_2', 'kimi_k3'],
+  grok_4_5: ['grok_4_3'],
+  grok_4_3: ['grok_4_5'],
 };
 
 function configured(id: ModelId): boolean {
@@ -100,12 +112,17 @@ export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
               : ['focused_code_edit', 'validation_repair', 'test_generation'],
       unsuitableTaskClasses:
         id === 'grok_4_5' ? ['routine_formatting'] : id.includes('flash') ? ['high_risk_architecture'] : [],
+      // A coding model's fallback chain is filtered to coding models here rather than only
+      // in the static table, because `admin.fallbackOrder` is operator-configurable and is
+      // merged in below. Without this filter an administrator could reintroduce a research
+      // provider into a coding chain through configuration, which is precisely the routing
+      // §7 forbids and the static table alone cannot prevent.
       preferredFallbacks: [
         ...new Set([
           ...admin.fallbackOrder.filter((fallback) => fallback !== id),
           ...FALLBACKS[id],
         ]),
-      ],
+      ].filter((fallback) => (isCodingModel(id) ? isCodingModel(fallback) : true)),
       supports: {
         text: true,
         images: id.startsWith('grok'),

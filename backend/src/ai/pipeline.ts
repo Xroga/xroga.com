@@ -177,12 +177,14 @@ import { loadRoutingOutcomes, recordRoutingOutcome } from './routingOutcomes.js'
 import { getRuntimeModelRegistry } from './modelCapabilityRegistry.js';
 import { prepareFocusedContext } from './contextPreparation.js';
 import {
+  ExecutionScheduler,
   InMemoryExecutionStateStore,
   SupabaseExecutionStateStore,
   executableTasksFromRoutePlan,
   transitionTask,
 } from './executionRuntime.js';
 import { describeVerificationState } from './verificationLifecycle.js';
+import { engineeringTaskHandlers } from './engineeringTasks.js';
 import { runUniversalSynthesisFoundation } from '../synthesis/foundation.js';
 
 export interface PipelineProgress {
@@ -1051,13 +1053,34 @@ export async function runBuildPipeline(opts: {
     ...intelligentPlan.classification.requiredCapabilities,
   ])];
   executionState.tasks.push(...executableTasksFromRoutePlan(intelligentPlan));
-  for (const taskClass of ['request_understanding', 'repository_analysis']) {
-    const task = intelligentPlan.subtasks.find((candidate) => candidate.taskClass === taskClass);
-    if (task && !task.blocker) transitionTask(executionState, task.id, 'completed', { evidence: [{
-      id: randomUUID(), kind: taskClass, summary: taskClass === 'repository_analysis' ? `Inspected ${prior.files.length} project files` : 'Classified requested outcome and required capabilities',
-      timestamp: new Date().toISOString(),
-    }] });
-  }
+
+  // Engineering tasks run through the canonical scheduler.
+  //
+  // This loop previously called `transitionTask(..., 'completed', ...)` directly with an
+  // evidence sentence composed here, so two tasks were recorded as completed while no
+  // handler had run — work claimed rather than performed. `ExecutionScheduler` already
+  // refuses to complete a task without evidence (`result.validated && !missingEvidence`);
+  // the guarantee was being bypassed rather than missing.
+  //
+  // Classes without a handler are blocked by the scheduler with `no handler for <class>`.
+  // That is the truthful record: the canonical runtime does not yet perform implementation
+  // — the legacy whole-project builder below still does — and stating that in the run is
+  // the point of the migration rather than a gap to paper over.
+  //
+  // Nothing downstream reads `executionState` to gate the build, so correcting the record
+  // changes evidence quality without changing what the user receives.
+  await new ExecutionScheduler(executionStore).run(
+    executionState,
+    engineeringTaskHandlers({
+      classification: intelligentPlan.classification,
+      files: prior.files,
+      repository: meta?.githubTargetRepo ?? null,
+    }),
+  ).catch((error) => {
+    console.warn('[executionRuntime] engineering task pass skipped:', (error as Error).message);
+    return executionState;
+  });
+
   await executionStore.save(executionState).catch((error) => console.warn('[executionRuntime] initial persistence skipped:', (error as Error).message));
   const route: RouteDecision = {
     ...baseRoute,
