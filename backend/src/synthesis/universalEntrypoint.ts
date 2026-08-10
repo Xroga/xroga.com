@@ -210,8 +210,16 @@ export async function tryUniversalBuild(input: {
             );
             const files = parseGeneratedFiles(reply.text);
             if (files.length) return files;
+            // Truncation and malformed output both parse to nothing, and they need
+            // opposite responses: one means raise the budget or split the work, the other
+            // means fix the prompt. Reporting them identically sent the last production
+            // run's diagnosis in the wrong direction, so they are named apart here.
             failures.push(
-              `${candidate.modelId} returned ${reply.text.trim() ? 'no parsable files' : 'an empty completion'}`,
+              reply.finishReason === 'length'
+                ? `${candidate.modelId} was cut off at the ${16_000}-token ceiling after ` +
+                  `${reply.outputTokens} tokens, leaving incomplete JSON — the whole project ` +
+                  'did not fit in one reply'
+                : `${candidate.modelId} returned ${reply.text.trim() ? 'no parsable files' : 'an empty completion'}`,
             );
           } catch (error) {
             failures.push(`${candidate.modelId} failed: ${(error as Error).message}`);
