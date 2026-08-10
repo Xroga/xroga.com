@@ -188,13 +188,12 @@ test('the sidebar-facing route is publicly reachable without signing in', async 
  * assert the page genuinely follows the selected theme.
  */
 test('the homepage follows every Xroga theme instead of staying dark', async ({ page }) => {
-  for (const theme of ['theme-white', 'theme-beige', 'theme-gray', 'theme-black']) {
-    await page.goto('/');
-    await page.evaluate((name) => {
-      document.body.classList.remove('theme-white', 'theme-beige', 'theme-gray', 'theme-black');
-      document.body.classList.add(name);
-    }, theme);
-    await page.waitForTimeout(200);
+  await page.goto('/');
+  for (const theme of ['White', 'Beige', 'Gray', 'Black']) {
+    await page.getByRole('button', { name: 'Change homepage theme' }).click();
+    await page.getByRole('radio', { name: theme, exact: true }).click();
+    await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
+    await page.waitForTimeout(600);
 
     const measured = await page.evaluate(() => {
       const luminance = (value: string | null) => {
@@ -221,7 +220,7 @@ test('the homepage follows every Xroga theme instead of staying dark', async ({ 
     }
 
     // A light theme must actually produce a light page.
-    if (theme === 'theme-white' || theme === 'theme-beige') {
+    if (theme === 'White' || theme === 'Beige') {
       expect(measured.background!, `${theme} page is still dark`).toBeGreaterThan(0.7);
     } else {
       expect(measured.background!, `${theme} page should stay dark`).toBeLessThan(0.35);
@@ -231,11 +230,9 @@ test('the homepage follows every Xroga theme instead of staying dark', async ({ 
 
 test('the homepage primary button stays legible in a light theme', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => {
-    document.body.classList.remove('theme-black', 'theme-gray');
-    document.body.classList.add('theme-white');
-  });
-  await page.waitForTimeout(150);
+  await page.getByRole('button', { name: 'Change homepage theme' }).click();
+  await page.getByRole('radio', { name: 'White', exact: true }).click();
+  await page.waitForTimeout(600);
 
   const contrast = await page.evaluate(() => {
     const luminance = (value: string) => {
