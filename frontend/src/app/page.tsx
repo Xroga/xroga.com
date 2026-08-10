@@ -162,28 +162,42 @@ export default function HomePage() {
             </p>
           </div>
 
-          <p className="xv-hc-sub">
-            Describe the outcome. Xroga inspects your project, implements focused changes, runs applicable checks,
-            and can push or publish through accounts you authorise—with evidence or the exact blocker.
-          </p>
-
-          <div className="xv-hc-ctas">
-            <button
-              type="button"
-              onClick={() => router.push(primaryHref)}
-              className="xv-hc-btn-primary"
-            >
-              {primaryLabel}
-            </button>
-            <a href="#ship-loop" className="xv-hc-btn-ghost">
-              See how it ships
-            </a>
-          </div>
-
           <div className="xv-hc-chat xv-home-chatbar-wrap">
             <HomepageCompanionStage />
             <HomepageChatBar />
           </div>
+
+          <section className="xv-hc-outcome-panel" aria-label="From outcome to verified delivery">
+            <div className="xv-hc-outcome-copy">
+              <span className="xv-hc-outcome-kicker">OUTCOME → EVIDENCE</span>
+              <p className="xv-hc-sub">
+                Describe the outcome. Xroga inspects your project, implements focused changes, runs applicable checks,
+                and can push or publish through accounts you authorise—with evidence or the exact blocker.
+              </p>
+
+              <div className="xv-hc-ctas">
+                <button
+                  type="button"
+                  onClick={() => router.push(primaryHref)}
+                  className="xv-hc-btn-primary xv-hc-outcome-primary"
+                >
+                  {primaryLabel}
+                </button>
+                <a href="#ship-loop" className="xv-hc-btn-ghost xv-hc-outcome-secondary">
+                  See how it ships
+                </a>
+              </div>
+            </div>
+
+            <div className="xv-hc-outcome-map" aria-hidden="true">
+              <span className="xv-hc-outcome-orbit xv-hc-outcome-orbit--outer" />
+              <span className="xv-hc-outcome-orbit xv-hc-outcome-orbit--inner" />
+              <span className="xv-hc-outcome-node xv-hc-outcome-node--one" />
+              <span className="xv-hc-outcome-node xv-hc-outcome-node--two" />
+              <span className="xv-hc-outcome-node xv-hc-outcome-node--three" />
+              <span className="xv-hc-outcome-sequence">01 · BUILD · TEST · SHIP · VERIFY</span>
+            </div>
+          </section>
         </div>
       </section>
 
