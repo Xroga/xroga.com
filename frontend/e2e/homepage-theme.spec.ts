@@ -12,8 +12,8 @@ const THEMES = [
     label: 'Beige',
     bodyClass: 'theme-beige',
     light: true,
-    artwork: 'xroga-beige-sculpted-data-bg.webp',
-    mobileArtwork: 'xroga-beige-sculpted-data-bg-mobile.webp',
+    artwork: 'xroga-beige-ai-islands-bg.webp',
+    mobileArtwork: 'xroga-beige-ai-islands-bg-mobile.webp',
   },
   {
     label: 'Gray',
@@ -114,6 +114,7 @@ test('every visible homepage region follows all four theme selections', async ({
       const wrapper = document.querySelector('.xv-home-coding');
       const wrapperBackground = wrapper ? parse(getComputedStyle(wrapper).backgroundColor) : null;
       const artwork = document.querySelector('.xv-hc-bg-image');
+      const outcome = document.querySelector('.xv-hc-outcome-panel');
       const launchIcon = document.querySelector('.xv-go-btn--home .xv-go-btn__icon');
       const launchButton = document.querySelector('.xv-go-btn--home');
       const launchLiquid = document.querySelector('.xv-go-btn--home .xv-go-btn__liquid');
@@ -128,6 +129,8 @@ test('every visible homepage region follows all four theme selections', async ({
       return {
         pageLuminance: wrapperBackground ? luminance(wrapperBackground) : null,
         artwork: artwork ? getComputedStyle(artwork).backgroundImage : null,
+        outcomeBackground: outcome ? getComputedStyle(outcome).backgroundColor : null,
+        outcomeBackgroundImage: outcome ? getComputedStyle(outcome).backgroundImage : null,
         launchIconContrast:
           launchIconColour && launchSurfaces.length > 0
             ? Math.min(...launchSurfaces.map((surface) => ratio(launchIconColour, surface)))
@@ -158,6 +161,8 @@ test('every visible homepage region follows all four theme selections', async ({
 
     expect(result.pageLuminance, `${theme.label} page background`).not.toBeNull();
     expect(result.artwork, `${theme.label} should use its intended background artwork`).toContain(theme.artwork);
+    expect(result.outcomeBackground, `${theme.label} outcome panel should remain transparent`).toBe('rgba(0, 0, 0, 0)');
+    expect(result.outcomeBackgroundImage, `${theme.label} outcome panel should have no fill image`).toBe('none');
     expect(result.launchIconContrast, `${theme.label} launch icon contrast could not be measured`).not.toBeNull();
     expect(result.launchIconContrast!, `${theme.label} launch icon is not visible`).toBeGreaterThanOrEqual(3);
     if (theme.light) {

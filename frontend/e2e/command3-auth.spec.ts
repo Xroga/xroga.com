@@ -573,10 +573,13 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   }
   await page.goto('/settings?tab=companion');
   await expect(page.getByRole('heading', { name: 'Make the companion yours' })).toBeVisible();
-  const companionName = page.getByLabel('Companion name');
-  await companionName.fill(`Xo-${run.slice(0, 6)}`);
-  await companionName.blur();
-  await expect(page.getByText('Saved.', { exact: true })).toBeVisible({ timeout: 20_000 });
+  for (const removed of ['Companion name', 'Mood preview', 'Workspace position', 'Read replies aloud', 'Weekly code energy']) {
+    await expect(page.getByText(removed, { exact: false })).toHaveCount(0);
+  }
+  await page.getByRole('tab', { name: 'Skins & Costumes' }).click();
+  const techwear = page.getByRole('radio', { name: 'Techwear' });
+  await techwear.click();
+  await expect(techwear).toHaveAttribute('aria-checked', 'true');
   let companionProfilePersistence: 'verified_local_pr' | 'verified_server' = 'verified_local_pr';
   // PR checks intentionally dry-run migrations. The production launch workflow
   // runs after main applies the migration and independently verifies durable state.
@@ -584,16 +587,17 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     await expect.poll(async () => {
       const storedProfile = await admin.from('profiles').select('companion_preferences').eq('id', ownerId).single();
       expect(storedProfile.error).toBeNull();
-      return (storedProfile.data?.companion_preferences as { name?: string } | null)?.name;
+      return (storedProfile.data?.companion_preferences as { costume?: string } | null)?.costume;
     }, {
       message: 'companion preferences did not reach durable profile storage',
       timeout: 15_000,
       intervals: [500, 1_000, 2_000],
-    }).toBe(`Xo-${run.slice(0, 6)}`);
+    }).toBe('techwear');
     companionProfilePersistence = 'verified_server';
   }
   await page.reload();
-  await expect(page.getByLabel('Companion name')).toHaveValue(`Xo-${run.slice(0, 6)}`);
+  await page.getByRole('tab', { name: 'Skins & Costumes' }).click();
+  await expect(page.getByRole('radio', { name: 'Techwear' })).toHaveAttribute('aria-checked', 'true');
 
   await page.goto('/settings');
   await page.getByRole('tab', { name: 'Security' }).click();
