@@ -3048,16 +3048,13 @@ body.theme-gray * {
     font-optical-sizing: auto;
     letter-spacing: -0.018em;
     line-height: 1.3;
-    color: rgba(248, 250, 252, 0.98);
+    color: var(--foreground);
     max-width: 40rem;
     text-shadow: none;
     font-feature-settings: 'kern' 1, 'liga' 1;
     font-synthesis: none;
   }
-  body.theme-white .xv-welcome-tagline-sub {
-    color: #141413;
-    text-shadow: none;
-  }
+  body.theme-white .xv-welcome-tagline-sub { text-shadow: none; }
   .xv-tagline-accent {
     font-family: inherit !important;
     font-style: italic;
