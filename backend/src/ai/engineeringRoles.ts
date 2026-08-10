@@ -170,7 +170,11 @@ export const ENGINEERING_ROLES = {
     id: 'repair',
     responsibility: 'Read an exact validation failure and apply a bounded repair',
     providerCategory: 'coding',
-    allowedTools: [...READ_TOOLS, 'write_file', 'apply_patch', 'create_checkpoint'],
+    // §9 lists "rerun failed validation" as a repair responsibility, so this role holds the
+    // validation tool. Running validation is deterministic and grants no new mutation
+    // authority — a repair that cannot re-check its own fix would have to declare success
+    // on belief, which is the failure the validation runtime exists to prevent.
+    allowedTools: [...READ_TOOLS, ...VALIDATION_TOOLS, 'write_file', 'apply_patch', 'create_checkpoint'],
     completionEvidence: ['repair_diff', 'validation_result'],
   }),
 
