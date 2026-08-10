@@ -15,13 +15,13 @@ import {
   Cormorant,
   Fraunces,
   Inter,
-  JetBrains_Mono,
   Newsreader,
   Outfit,
   Press_Start_2P,
   Source_Serif_4,
   Syne,
 } from 'next/font/google';
+import localFont from 'next/font/local';
 
 export const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -57,10 +57,12 @@ export const emilio = Cormorant({
   preload: false,
 });
 
-export const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
+// Keep the terminal face inside the repository. A remote JetBrains Mono fetch
+// made otherwise valid Vercel builds depend on fonts.gstatic.com availability.
+export const jetbrainsMono = localFont({
+  src: '../app/fonts/GeistMonoVF.woff',
   variable: '--font-xv-mono',
-  weight: ['400', '500', '600'],
+  weight: '100 900',
   preload: false,
 });
 
