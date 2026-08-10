@@ -77,9 +77,25 @@ test('every visible homepage region follows all four theme selections', async ({
 
       const wrapper = document.querySelector('.xv-home-coding');
       const wrapperBackground = wrapper ? parse(getComputedStyle(wrapper).backgroundColor) : null;
+      const artwork = document.querySelector('.xv-hc-bg-image');
+      const launchIcon = document.querySelector('.xv-go-btn--home .xv-go-btn__icon');
+      const launchButton = document.querySelector('.xv-go-btn--home');
+      const launchLiquid = document.querySelector('.xv-go-btn--home .xv-go-btn__liquid');
+      const launchIconColour = launchIcon ? parse(getComputedStyle(launchIcon).color) : null;
+      const launchSurfaces = [
+        launchButton ? parse(getComputedStyle(launchButton).backgroundColor) : null,
+        launchLiquid ? parse(getComputedStyle(launchLiquid).backgroundColor) : null,
+        launchLiquid ? parse(getComputedStyle(launchLiquid, '::before').backgroundColor) : null,
+        launchLiquid ? parse(getComputedStyle(launchLiquid, '::after').backgroundColor) : null,
+      ].filter((value): value is Rgb => value !== null && value.a > 0.1);
 
       return {
         pageLuminance: wrapperBackground ? luminance(wrapperBackground) : null,
+        artwork: artwork ? getComputedStyle(artwork).backgroundImage : null,
+        launchIconContrast:
+          launchIconColour && launchSurfaces.length > 0
+            ? Math.min(...launchSurfaces.map((surface) => ratio(launchIconColour, surface)))
+            : null,
         text: {
           brand: contrastFor('.xv-hc-brand'),
           heroCopy: contrastFor('.xv-hc-sub'),
@@ -105,6 +121,11 @@ test('every visible homepage region follows all four theme selections', async ({
     });
 
     expect(result.pageLuminance, `${theme.label} page background`).not.toBeNull();
+    expect(result.artwork, `${theme.label} should retain the Xroga background artwork`).toContain(
+      'xroga-deep-work-bg.webp',
+    );
+    expect(result.launchIconContrast, `${theme.label} launch icon contrast could not be measured`).not.toBeNull();
+    expect(result.launchIconContrast!, `${theme.label} launch icon is not visible`).toBeGreaterThanOrEqual(3);
     if (theme.light) {
       expect(result.pageLuminance!, `${theme.label} should be a light homepage`).toBeGreaterThan(0.75);
     } else {
