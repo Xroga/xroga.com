@@ -3737,3 +3737,339 @@ body.theme-beige .xv-home-coding .xv-hc-feature-list li { border-color:color-mix
 @media (prefers-reduced-motion: reduce) {
   .xv-cb-chip { transition: none; }
 }
+
+/* ========================================================================== */
+/* Canonical homepage theme layer                                             */
+/* ========================================================================== */
+/*
+ * The landing page predates the shared four-theme surface system and still
+ * contains a number of dark-demo declarations above.  Keeping the correction in
+ * one final, homepage-scoped layer makes the cascade deterministic: every active
+ * homepage component consumes these semantic values, while legacy demos and the
+ * authenticated product remain untouched.
+ */
+.xv-home-coding {
+  --hc-surface: color-mix(in srgb, var(--hc-bg) 88%, var(--hc-ink) 12%);
+  --hc-surface-solid: color-mix(in srgb, var(--hc-bg) 94%, var(--hc-ink) 6%);
+  --hc-surface-inset: color-mix(in srgb, var(--hc-bg) 96%, var(--hc-ink) 4%);
+  --hc-border: color-mix(in srgb, var(--hc-ink) 15%, transparent);
+  --hc-border-strong: color-mix(in srgb, var(--hc-ink) 29%, transparent);
+  --hc-accent-soft: color-mix(in srgb, var(--hc-blue) 12%, transparent);
+  --hc-accent-medium: color-mix(in srgb, var(--hc-blue) 28%, transparent);
+  --hc-shadow: color-mix(in srgb, var(--hc-ink) 13%, transparent);
+  --hc-action-bg: var(--hc-blue);
+  --hc-action-text: #ffffff;
+  color-scheme: light;
+  background: var(--hc-bg);
+  color: var(--hc-ink);
+}
+
+body.theme-white .xv-home-coding {
+  --hc-bg: #ffffff;
+  --hc-navy: #f4f7fb;
+  --hc-ink: #0a0f1a;
+  --hc-muted: #4a5568;
+  --hc-blue: var(--accent);
+}
+
+body.theme-beige .xv-home-coding {
+  --hc-bg: #faf7f0;
+  --hc-navy: #f2eadc;
+  --hc-ink: #241f18;
+  --hc-muted: #6b5f50;
+  --hc-blue: color-mix(in srgb, var(--accent) 72%, #3d3225);
+}
+
+body.theme-gray .xv-home-coding {
+  --hc-bg: #1a1a1a;
+  --hc-navy: #242424;
+  --hc-ink: #f3f4f6;
+  --hc-muted: #a3a3a3;
+  --hc-blue: var(--accent);
+  --hc-action-bg: #f3f4f6;
+  --hc-action-text: #080808;
+  color-scheme: dark;
+}
+
+body.theme-black .xv-home-coding {
+  --hc-bg: #000000;
+  --hc-navy: #0a0a0a;
+  --hc-ink: #f8fafc;
+  --hc-muted: #a3a3a3;
+  --hc-blue: var(--accent);
+  --hc-action-bg: #ffffff;
+  --hc-action-text: #050505;
+  color-scheme: dark;
+}
+
+/* The atmospheric background follows the selected surface instead of pinning a
+   dark navy wallpaper behind White, Beige, and Gray. Black retains a restrained
+   version of the original artwork as the brand's high-contrast mode. */
+body.theme-white .xv-home-coding .xv-hc-bg-image,
+body.theme-beige .xv-home-coding .xv-hc-bg-image,
+body.theme-gray .xv-home-coding .xv-hc-bg-image {
+  background-image: none !important;
+  filter: none;
+  background:
+    radial-gradient(circle at 50% 12%, var(--hc-accent-soft), transparent 34%),
+    linear-gradient(180deg, var(--hc-surface-inset), var(--hc-bg));
+}
+
+body.theme-black .xv-home-coding .xv-hc-bg-image {
+  background-color: var(--hc-bg);
+  background-blend-mode: luminosity;
+}
+
+.xv-home-coding .xv-hc-bg-image::after {
+  background:
+    linear-gradient(color-mix(in srgb, var(--hc-ink) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--hc-ink) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(180deg, transparent, color-mix(in srgb, var(--hc-bg) 92%, transparent));
+  background-size: 42px 42px, 42px 42px, 100% 100%;
+  mask-image: linear-gradient(to bottom, black, transparent 84%);
+}
+
+body.theme-black .xv-home-coding .xv-hc-bg-image::after {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--hc-bg) 25%, transparent), var(--hc-bg)),
+    linear-gradient(color-mix(in srgb, var(--hc-ink) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--hc-ink) 4%, transparent) 1px, transparent 1px);
+  background-size: 100% 100%, 42px 42px, 42px 42px;
+  mask-image: none;
+}
+
+/* Navigation, announcement, labels, and every action use the active surface and
+   foreground pair. */
+.xv-home-coding .xv-hc-announcement,
+.xv-home-coding .xv-hc-footer {
+  border-color: var(--hc-border);
+  background: color-mix(in srgb, var(--hc-bg) 91%, transparent);
+  color: var(--hc-ink);
+}
+
+.xv-home-coding .xv-hc-badge,
+.xv-home-coding .xv-hc-features-label {
+  border-color: var(--hc-border);
+  background: var(--hc-surface-inset);
+  color: var(--hc-muted);
+}
+
+.xv-home-coding .xv-hc-brand,
+.xv-home-coding .xv-hc-pixel-kicker {
+  color: var(--hc-ink) !important;
+  text-shadow: none;
+}
+
+.xv-home-coding .xv-hc-headline-em,
+.xv-home-coding .xv-hc-section-title em,
+.xv-home-coding .xv-hc-features-headline em {
+  color: color-mix(in srgb, var(--hc-ink) 78%, var(--hc-blue)) !important;
+}
+
+.xv-home-coding .xv-hc-btn-primary,
+.xv-home-coding .xv-hc-btn-glass,
+.xv-home-coding .xv-hc-demo-merge,
+.xv-home-coding .xv-hc-announcement-cta {
+  border-color: color-mix(in srgb, var(--hc-action-bg) 78%, var(--hc-ink));
+  background: var(--hc-action-bg);
+  color: var(--hc-action-text) !important;
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--hc-action-bg) 24%, transparent);
+}
+
+.xv-home-coding .xv-hc-btn-ghost {
+  border-color: var(--hc-border-strong);
+  background: color-mix(in srgb, var(--hc-surface-solid) 88%, transparent);
+  color: var(--hc-ink);
+}
+
+.xv-home-coding .xv-hc-btn-ghost:hover,
+.xv-home-coding .xv-hc-announcement-close:hover {
+  border-color: color-mix(in srgb, var(--hc-blue) 55%, var(--hc-border));
+  background: var(--hc-accent-soft);
+  color: var(--hc-ink);
+}
+
+/* Prompt composer. */
+.xv-home-coding .xv-hc-prompt-shell {
+  border-color: color-mix(in srgb, var(--hc-blue) 34%, var(--hc-border));
+  background: color-mix(in srgb, var(--hc-surface-solid) 94%, transparent);
+  box-shadow: 0 20px 55px var(--hc-shadow), inset 0 1px 0 color-mix(in srgb, var(--hc-ink) 7%, transparent);
+}
+
+.xv-home-coding .xv-hc-prompt-shell.is-focused {
+  border-color: color-mix(in srgb, var(--hc-blue) 68%, var(--hc-border));
+  box-shadow: 0 22px 60px color-mix(in srgb, var(--hc-blue) 15%, transparent);
+}
+
+.xv-home-coding .xv-hc-prompt-footer {
+  border-color: var(--hc-border);
+}
+
+.xv-home-coding .xv-hc-prompt-input,
+.xv-home-coding .xv-hc-prompt-typewriter {
+  color: var(--hc-ink);
+}
+
+.xv-home-coding .xv-hc-prompt-typewriter {
+  color: var(--hc-muted);
+}
+
+.xv-home-coding .xv-hc-prompt-integration {
+  border-color: var(--hc-border);
+  background: var(--hc-surface-inset);
+  color: var(--hc-ink);
+}
+
+.xv-home-coding .xv-hc-prompt-integration-sep {
+  background: var(--hc-border-strong);
+}
+
+.xv-home-coding .xv-hc-prompt-integration-logo {
+  color: var(--hc-ink);
+}
+
+body.theme-white .xv-home-coding .xv-go-btn--home,
+body.theme-beige .xv-home-coding .xv-go-btn--home,
+body.theme-gray .xv-home-coding .xv-go-btn--home,
+body.theme-black .xv-home-coding .xv-go-btn--home {
+  border: 1px solid color-mix(in srgb, var(--hc-action-bg) 72%, var(--hc-ink)) !important;
+  background: var(--hc-action-bg) !important;
+  color: var(--hc-action-text) !important;
+  box-shadow: 0 9px 24px color-mix(in srgb, var(--hc-action-bg) 25%, transparent);
+}
+
+body.theme-white .xv-home-coding .xv-go-btn--home .xv-go-btn__icon,
+body.theme-beige .xv-home-coding .xv-go-btn--home .xv-go-btn__icon,
+body.theme-gray .xv-home-coding .xv-go-btn--home .xv-go-btn__icon,
+body.theme-black .xv-home-coding .xv-go-btn--home .xv-go-btn__icon {
+  background: transparent !important;
+  color: var(--hc-action-text) !important;
+}
+
+.xv-home-coding .xv-go-btn--home .xv-go-btn__liquid {
+  background: color-mix(in srgb, var(--hc-action-bg) 78%, var(--hc-bg)) !important;
+}
+
+/* Content sections and cards. */
+.xv-home-coding .xv-hc-section,
+.xv-home-coding .xv-hc-features,
+.xv-home-coding .xv-hc-ship,
+.xv-home-coding .xv-hc-ent,
+.xv-home-coding .xv-hc-faq,
+.xv-home-coding .xv-hc-mid-cta {
+  color: var(--hc-ink);
+}
+
+.xv-home-coding .xv-hc-feature-list li,
+.xv-home-coding .xv-hc-faq-item {
+  border-color: var(--hc-border);
+}
+
+.xv-home-coding .xv-hc-mark {
+  border-color: color-mix(in srgb, var(--hc-blue) 42%, var(--hc-border));
+  background: radial-gradient(circle at 35% 30%, var(--hc-accent-medium), transparent 58%), var(--hc-surface-solid);
+  box-shadow: 0 0 36px color-mix(in srgb, var(--hc-blue) 16%, transparent);
+}
+
+.xv-home-coding .xv-hc-mark::after {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--hc-blue) 65%, transparent), transparent);
+}
+
+.xv-home-coding .xv-hc-ship-card,
+.xv-home-coding .xv-hc-ent-card,
+.xv-home-coding .xv-hc-ent-banner {
+  border-color: var(--hc-border);
+  background: var(--hc-surface-solid);
+  box-shadow: 0 16px 38px var(--hc-shadow);
+}
+
+.xv-home-coding .xv-hc-ent-banner {
+  background: radial-gradient(circle at 50% 0%, var(--hc-accent-soft), transparent 62%), var(--hc-surface-solid);
+}
+
+.xv-home-coding .xv-hc-ent-banner--alive::before {
+  background: conic-gradient(from 120deg, transparent 0deg, var(--hc-accent-soft) 80deg, transparent 160deg);
+}
+
+.xv-home-coding .xv-hc-ship-icon,
+.xv-home-coding .xv-hc-ent-icon {
+  border-color: color-mix(in srgb, var(--hc-blue) 28%, var(--hc-border));
+  background: var(--hc-accent-soft);
+}
+
+.xv-home-coding .xv-hc-ent-orbit-ring {
+  border-color: color-mix(in srgb, var(--hc-blue) 52%, transparent);
+}
+
+.xv-home-coding .xv-hc-ent-card--alive:hover {
+  border-color: color-mix(in srgb, var(--hc-blue) 48%, var(--hc-border));
+}
+
+.xv-home-coding .xv-hc-ent-card-glow {
+  background: radial-gradient(circle, var(--hc-accent-soft), transparent 70%);
+}
+
+.xv-home-coding .xv-hc-faq-q {
+  color: var(--hc-ink);
+}
+
+.xv-home-coding .xv-hc-faq-q:hover,
+.xv-home-coding .xv-hc-footer a:hover {
+  color: var(--hc-blue);
+}
+
+.xv-home-coding .xv-hc-faq-icon {
+  border-color: var(--hc-border);
+  background: var(--hc-surface-inset);
+  color: var(--hc-muted);
+}
+
+/* The showcase card already uses shared semantic tokens; this scope prevents a
+   global heading rule from winning over those tokens in the homepage grid. */
+.xv-home-coding article {
+  border-color: var(--hc-border) !important;
+  background: var(--hc-surface-solid) !important;
+  color: var(--hc-ink);
+}
+
+.xv-home-coding article h3,
+.xv-home-coding article h3 a {
+  color: var(--hc-ink) !important;
+}
+
+.xv-home-coding article p {
+  color: var(--hc-muted) !important;
+}
+
+/* Compact theme control and floating companion must remain readable over every
+   homepage background. */
+.xv-home-coding .xv-home-theme-trigger,
+.xv-home-coding .xv-home-theme-menu,
+.xv-home-coding .xv-home-theme-menu button {
+  color: var(--hc-ink);
+}
+
+.xv-home-coding .xv-home-theme-trigger,
+.xv-home-coding .xv-home-theme-menu {
+  border-color: var(--hc-border-strong);
+  background: var(--hc-surface-solid);
+  box-shadow: 0 14px 35px var(--hc-shadow);
+}
+
+.xv-home-coding .xv-home-theme-menu button:hover,
+.xv-home-coding .xv-home-theme-menu button.is-active {
+  background: var(--hc-accent-soft);
+}
+
+.xv-home-coding :where(a, button, textarea):focus-visible {
+  outline: 2px solid var(--hc-blue);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-home-coding *,
+  .xv-home-coding *::before,
+  .xv-home-coding *::after {
+    scroll-behavior: auto !important;
+  }
+}
