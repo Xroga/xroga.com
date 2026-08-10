@@ -1211,11 +1211,8 @@ export async function runBuildPipeline(opts: {
       status: result.outcome === 'completed' ? 'done' : 'error',
       message: `Universal path: ${result.outcome} at ${result.phaseReached}. ${result.reason}`,
     });
-    return {
-      runId,
-      success: result.outcome === 'completed' && result.verified,
-      featureCategory: 'universal',
-      output: {
+    const universalSuccess = result.outcome === 'completed' && result.verified;
+    const universalOutput: Record<string, unknown> = {
         universal: true,
         outcome: result.outcome,
         phaseReached: result.phaseReached,
@@ -1242,13 +1239,38 @@ export async function runBuildPipeline(opts: {
               pullRequest: universalCommit.record.pullRequest,
             }
           : null,
-      },
-      // Usage may legitimately be null here, because the universal path can refuse before
-      // any model call. Recording zero tokens returns the user's real quota state rather
-      // than a hand-built object that would drift from the real shape.
-      tokenUsage: usageToTokenUsage(
-        usage ?? (await recordUsage(opts.userId, route.builder, 0, 0)),
-      ),
+    };
+
+    // Usage may legitimately be null here, because the universal path can refuse before
+    // any model call. Recording zero tokens returns the user's real quota state rather
+    // than a hand-built object that would drift from the real shape.
+    const universalUsage = usageToTokenUsage(
+      usage ?? (await recordUsage(opts.userId, route.builder, 0, 0)),
+    );
+
+    // Close the run record before returning.
+    //
+    // Every other terminal path in this function calls `completeRun`; this one returned
+    // straight out, leaving the row at `status: running` with a null `completed_at`
+    // forever. The build was over and nothing said so — the client polls that row, so the
+    // spinner never cleared, and cancelling did nothing because there was no live run to
+    // cancel, only a record that never closed.
+    //
+    // `success` is passed through rather than inferred, so a universal run that refused is
+    // recorded as an error instead of a silent success with no commit.
+    completeRun(runId, {
+      output: universalOutput,
+      featureCategory: 'universal',
+      tokenUsage: universalUsage,
+      success: universalSuccess,
+    });
+
+    return {
+      runId,
+      success: universalSuccess,
+      featureCategory: 'universal',
+      output: universalOutput,
+      tokenUsage: universalUsage,
       route,
     };
   }
