@@ -294,19 +294,17 @@
   font-size: clamp(0.9rem, 1.9vw, 1.05rem);
   line-height: 1.5;
   color: var(--hc-muted);
-  max-width: 34rem;
-  margin: 0 auto 1.5rem;
-  animation: xv-hc-fade-up 0.85s ease 0.15s both;
+  max-width: 38rem;
+  margin: 0;
 }
 
 .xv-home-coding .xv-hc-ctas {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0.75rem;
-  margin-bottom: 1.75rem;
-  animation: xv-hc-fade-up 0.9s ease 0.2s both;
+  margin: 1.1rem 0 0;
 }
 
 .xv-home-coding .xv-hc-btn-primary,
@@ -369,6 +367,122 @@
   width: 100%;
   max-width: 42rem;
   animation: xv-hc-fade-up 0.95s ease 0.25s both;
+}
+
+.xv-home-coding .xv-hc-outcome-panel {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  margin-top: 1.25rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(11rem, 0.46fr);
+  align-items: center;
+  gap: clamp(1.25rem, 4vw, 3rem);
+  overflow: hidden;
+  text-align: left;
+  border: 1px solid var(--hc-border);
+  border-radius: 1.2rem;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--hc-surface-solid) 96%, transparent), color-mix(in srgb, var(--hc-surface) 86%, transparent)),
+    var(--hc-surface-solid);
+  box-shadow: var(--hc-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.xv-home-coding .xv-hc-outcome-panel::before,
+.xv-home-coding .xv-hc-outcome-panel::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  width: 2.4rem;
+  height: 2.4rem;
+  pointer-events: none;
+  opacity: 0.82;
+}
+
+.xv-home-coding .xv-hc-outcome-panel::before {
+  inset: 0.55rem auto auto 0.55rem;
+  border-top: 1px solid var(--hc-border-strong);
+  border-left: 1px solid var(--hc-border-strong);
+  border-radius: 0.55rem 0 0;
+}
+
+.xv-home-coding .xv-hc-outcome-panel::after {
+  inset: auto 0.55rem 0.55rem auto;
+  border-right: 1px solid var(--hc-border-strong);
+  border-bottom: 1px solid var(--hc-border-strong);
+  border-radius: 0 0 0.55rem;
+}
+
+.xv-home-coding .xv-hc-outcome-copy {
+  position: relative;
+  z-index: 3;
+}
+
+.xv-home-coding .xv-hc-outcome-kicker {
+  display: block;
+  margin-bottom: 0.65rem;
+  color: var(--hc-blue);
+  font-family: var(--hc-font-pixel);
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
+}
+
+.xv-home-coding .xv-hc-outcome-map {
+  position: relative;
+  min-height: 10rem;
+  opacity: 0.72;
+  background:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--hc-blue) 20%, transparent) 0 1px, transparent 2px),
+    linear-gradient(90deg, transparent 49.5%, color-mix(in srgb, var(--hc-ink) 10%, transparent) 50%, transparent 50.5%);
+  background-size: 13px 13px, 100% 100%;
+  mask-image: radial-gradient(ellipse, #000 24%, rgba(0, 0, 0, 0.74) 55%, transparent 78%);
+}
+
+.xv-home-coding .xv-hc-outcome-orbit {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  border: 1px solid color-mix(in srgb, var(--hc-ink) 22%, transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(-14deg);
+}
+
+.xv-home-coding .xv-hc-outcome-orbit--outer {
+  width: 10rem;
+  height: 7rem;
+}
+
+.xv-home-coding .xv-hc-outcome-orbit--inner {
+  width: 6.1rem;
+  height: 4.2rem;
+  border-color: color-mix(in srgb, var(--hc-blue) 44%, transparent);
+  transform: translate(-50%, -50%) rotate(21deg);
+}
+
+.xv-home-coding .xv-hc-outcome-node {
+  position: absolute;
+  width: 0.48rem;
+  height: 0.48rem;
+  border: 1px solid color-mix(in srgb, var(--hc-surface-solid) 80%, transparent);
+  border-radius: 50%;
+  background: var(--hc-blue);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--hc-blue) 58%, transparent);
+}
+
+.xv-home-coding .xv-hc-outcome-node--one { top: 26%; left: 20%; }
+.xv-home-coding .xv-hc-outcome-node--two { top: 44%; right: 16%; }
+.xv-home-coding .xv-hc-outcome-node--three { bottom: 24%; left: 44%; }
+
+.xv-home-coding .xv-hc-outcome-sequence {
+  position: absolute;
+  inset: auto 0 0;
+  color: color-mix(in srgb, var(--hc-ink) 70%, transparent);
+  font-family: var(--hc-font-pixel);
+  font-size: 0.34rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .xv-home-coding .xv-hc-section {
@@ -2497,6 +2611,34 @@ body.theme-beige .xv-home-coding .xv-hc-feature-list li { border-color:color-mix
   .xv-home-coding .xv-hc-headline-block {
     max-width: 100%;
   }
+  .xv-home-coding .xv-hc-outcome-panel {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.8rem;
+    margin-top: 1rem;
+    padding: 1.2rem;
+  }
+  .xv-home-coding .xv-hc-outcome-map {
+    min-height: 3.4rem;
+  }
+  .xv-home-coding .xv-hc-outcome-orbit--outer {
+    width: 8rem;
+    height: 3rem;
+  }
+  .xv-home-coding .xv-hc-outcome-orbit--inner {
+    width: 4.6rem;
+    height: 2rem;
+  }
+  .xv-home-coding .xv-hc-ctas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+  }
+  .xv-home-coding .xv-hc-outcome-panel .xv-hc-btn-primary,
+  .xv-home-coding .xv-hc-outcome-panel .xv-hc-btn-ghost {
+    min-height: 2.55rem;
+    padding-inline: 0.7rem;
+    font-size: 0.62rem;
+  }
   .xv-home-coding .xv-hc-surface-chips {
     gap: 0.3rem;
   }
@@ -3797,7 +3939,7 @@ body.theme-black .xv-home-coding {
 
 /* Each homepage theme gets intentional artwork instead of recolouring one
    shared image. White and Black use cloud atmospheres, Gray uses monochrome
-   code architecture, and Beige retains the original deep-work scene. */
+   code architecture, and Beige uses a warm sculptural paper landscape. */
 .xv-home-coding .xv-hc-bg-image {
   background-image: url('/backgrounds/xroga-deep-work-bg.webp') !important;
   background-color: var(--hc-bg);
@@ -3810,7 +3952,8 @@ body.theme-white .xv-home-coding .xv-hc-bg-image {
 }
 
 body.theme-beige .xv-home-coding .xv-hc-bg-image {
-  filter: saturate(1.12) contrast(0.92) brightness(1.02);
+  background-image: url('/backgrounds/xroga-beige-sculpted-data-bg.webp') !important;
+  filter: saturate(1.02) contrast(0.96) brightness(1.03);
 }
 
 body.theme-gray .xv-home-coding .xv-hc-bg-image {
@@ -3833,9 +3976,9 @@ body.theme-white .xv-home-coding .xv-hc-bg-image::after {
 
 body.theme-beige .xv-home-coding .xv-hc-bg-image::after {
   background:
-    linear-gradient(180deg, rgba(250, 247, 240, 0.7), rgba(250, 247, 240, 0.83) 58%, #faf7f0 100%),
-    linear-gradient(rgba(0, 106, 255, 0.065) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 106, 255, 0.065) 1px, transparent 1px);
+    linear-gradient(180deg, rgba(250, 247, 240, 0.26), rgba(250, 247, 240, 0.42) 58%, #faf7f0 100%),
+    linear-gradient(rgba(120, 84, 42, 0.038) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 84, 42, 0.038) 1px, transparent 1px);
   background-size: 100% 100%, 42px 42px, 42px 42px;
 }
 
@@ -3860,6 +4003,11 @@ body.theme-black .xv-home-coding .xv-hc-bg-image::after {
 @media (max-width: 640px) {
   body.theme-white .xv-home-coding .xv-hc-bg-image {
     background-image: url('/backgrounds/xroga-light-clouds-bg-mobile.webp') !important;
+    background-position: center top;
+  }
+
+  body.theme-beige .xv-home-coding .xv-hc-bg-image {
+    background-image: url('/backgrounds/xroga-beige-sculpted-data-bg-mobile.webp') !important;
     background-position: center top;
   }
 

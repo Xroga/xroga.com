@@ -12,8 +12,8 @@ const THEMES = [
     label: 'Beige',
     bodyClass: 'theme-beige',
     light: true,
-    artwork: 'xroga-deep-work-bg.webp',
-    mobileArtwork: 'xroga-deep-work-bg.webp',
+    artwork: 'xroga-beige-sculpted-data-bg.webp',
+    mobileArtwork: 'xroga-beige-sculpted-data-bg-mobile.webp',
   },
   {
     label: 'Gray',
@@ -42,6 +42,18 @@ test('every visible homepage region follows all four theme selections', async ({
     // theme rather than an in-between frame where text has switched before the
     // button fill completes its transition.
     await page.waitForTimeout(600);
+
+    const chatbar = page.locator('.xv-home-chatbar-wrap');
+    const outcomePanel = page.locator('.xv-hc-outcome-panel');
+    await expect(outcomePanel).toBeVisible();
+    await expect(outcomePanel).toContainText('Describe the outcome.');
+    await expect(outcomePanel.getByRole('link', { name: 'See how it ships' })).toBeVisible();
+    const [chatbarBox, outcomeBox] = await Promise.all([chatbar.boundingBox(), outcomePanel.boundingBox()]);
+    expect(chatbarBox, `${theme.label} chatbar position`).not.toBeNull();
+    expect(outcomeBox, `${theme.label} outcome panel position`).not.toBeNull();
+    expect(outcomeBox!.y, `${theme.label} outcome panel must be below the chatbar`).toBeGreaterThanOrEqual(
+      chatbarBox!.y + chatbarBox!.height - 1,
+    );
 
     const result = await page.evaluate(() => {
       type Rgb = { r: number; g: number; b: number; a: number };
@@ -122,7 +134,7 @@ test('every visible homepage region follows all four theme selections', async ({
             : null,
         text: {
           brand: contrastFor('.xv-hc-brand'),
-          heroCopy: contrastFor('.xv-hc-sub'),
+          heroCopy: contrastFor('.xv-hc-outcome-panel .xv-hc-sub'),
           heroEmphasis: contrastFor('.xv-hc-headline-em'),
           promptCopy: contrastFor('.xv-hc-prompt-typewriter'),
           showcaseTitle: contrastFor('article h3'),
@@ -135,8 +147,8 @@ test('every visible homepage region follows all four theme selections', async ({
           footer: contrastFor('.xv-hc-footer a'),
         },
         controls: {
-          primary: contrastFor('.xv-hc-btn-primary'),
-          secondary: contrastFor('.xv-hc-btn-ghost'),
+          primary: contrastFor('.xv-hc-outcome-primary'),
+          secondary: contrastFor('.xv-hc-outcome-secondary'),
           theme: contrastFor('.xv-home-theme-trigger'),
           integration: contrastFor('.xv-hc-prompt-integration'),
           launch: contrastFor('.xv-go-btn--home'),
