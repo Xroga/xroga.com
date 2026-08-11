@@ -322,16 +322,24 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
   await expect(desktopSidebar.getByRole('separator', { name: 'Resize sidebar' })).toBeVisible();
   await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toBeVisible();
+  // Matched against both forms because `Logo` renders through next/image, which rewrites a
+  // local path to `/_next/image?url=%2Fbrand%2F…` — the slashes percent-encoded, so a regex
+  // written for the raw path can never match. The assertion is about *which* brand image the
+  // sidebar shows, and that is still exactly what is checked; only the encoding differs.
   await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute(
     'src',
-    /\/brand\/xroga-home-workspace\.png/,
+    /(?:\/brand\/|%2Fbrand%2F)xroga-home-workspace\.png/,
   );
   const expandedLogoBox = await desktopSidebar.getByRole('img', { name: 'Xroga' }).boundingBox();
   expect(expandedLogoBox).not.toBeNull();
   expect(expandedLogoBox!.width).toBeGreaterThanOrEqual(96);
   await page.getByRole('button', { name: 'Close sidebar' }).click();
   await expect(desktopSidebar).toHaveCSS('width', '64px');
-  await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute('src', /\/brand\/xroga-mark\.png/);
+  // Same next/image encoding as the expanded-sidebar assertion above.
+  await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute(
+    'src',
+    /(?:\/brand\/|%2Fbrand%2F)xroga-mark\.png/,
+  );
   await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('border-top-width', '0px');
   await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toHaveCount(0);
