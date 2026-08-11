@@ -23,7 +23,7 @@ import { executeSandboxed } from '../sandbox/sandboxRuntime.js';
 import { reviewBuildOutput } from '../ai/qa.js';
 import { buildSandboxEnvironment } from '../sandbox/sandboxEnvironment.js';
 import type { ExecutionAdapters } from './universalExecution.js';
-import type { UniversalRunPlan } from './universalFlow.js';
+import type { UniversalRunPlan, ValidationRunner } from './universalFlow.js';
 import type { SecurityControl } from './securityControls.js';
 import { compileSecurityTests } from './securityControls.js';
 
@@ -109,6 +109,32 @@ export function buildImplementationBrief(input: {
 }
 
 /**
+ * Runs one validation command under isolation.
+ *
+ * Extracted so the benchmark path validates through exactly the same boundary a user's build
+ * does. A benchmark that ran its commands anywhere else would be measuring a different
+ * sandbox — different image, different network policy — and the resulting numbers would not
+ * describe what production actually does with the same model.
+ */
+export function sandboxValidationRunner(): ValidationRunner {
+  return async (command) => {
+    // Straight through the Command 1 boundary. The adapter already decided the network
+    // policy per command, so nothing here widens it.
+    const result = await executeSandboxed({
+      files: [],
+      command: command.command,
+      args: [...command.args],
+      timeoutMs: 600_000,
+      networkPolicy: command.networkPolicy,
+      environment: buildSandboxEnvironment(
+        command.cwd ? { XROGA_SANDBOX_WORKDIR: command.cwd } : undefined,
+      ),
+    });
+    return { exitCode: result.exitCode, stdout: result.stdout, stderr: result.stderr };
+  };
+}
+
+/**
  * Builds the adapter set the enabled path runs on.
  *
  * `implement` and `commit` are injected because they need credentials and a repository
@@ -130,21 +156,7 @@ export function productionAdapters(input: {
         existingFiles,
       }),
 
-    runValidation: async (command) => {
-      // Straight through the Command 1 boundary. The adapter already decided the network
-      // policy per command, so nothing here widens it.
-      const result = await executeSandboxed({
-        files: [],
-        command: command.command,
-        args: [...command.args],
-        timeoutMs: 600_000,
-        networkPolicy: command.networkPolicy,
-        environment: buildSandboxEnvironment(
-          command.cwd ? { XROGA_SANDBOX_WORKDIR: command.cwd } : undefined,
-        ),
-      });
-      return { exitCode: result.exitCode, stdout: result.stdout, stderr: result.stderr };
-    },
+    runValidation: sandboxValidationRunner(),
 
     review: async (files) => {
       try {
