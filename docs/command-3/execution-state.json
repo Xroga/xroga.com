@@ -42,7 +42,7 @@
     "Configure optional Resend or Brevo credentials before enabling email campaigns",
     "Review existing Supabase advisor notices recorded in external-actions.md"
   ],
-  "updatedAt": "2026-08-11T08:56:15.486320Z",
+  "updatedAt": "2026-08-11T09:17:21Z",
   "agentIntelligence": {
     "status": "agent_intelligence_incomplete",
     "derivedBy": "backend/src/operations/completionGate.ts#deriveAgentIntelligenceStatus",
@@ -59,7 +59,48 @@
       "liveRunProducedCommit",
       "rolloutReturnedToSafeMode"
     ],
-    "outstandingReason": "No universal run has produced a commit. Both remaining conditions depend on the Command 2 M19 owner-authenticated build, recorded as external_owner_action_pending."
+    "outstandingReason": "No universal run has produced a commit. Both remaining conditions depend on the Command 2 M19 owner-authenticated build, recorded as external_owner_action_pending.",
+    "evidenceByCondition": {
+      "rolesEnforced": "backend/src/ai/engineeringRoles.ts + engineeringRoles.test.ts — fifteen roles, four holding mutation tools; the research role holds no repository tool at all",
+      "providerIsolationEnforced": "backend/src/ai/providerPolicy.ts + providerCostTiers.ts — allowlist selection, fixed family/transport bindings, and (PR #501) research models carry no coding prior and no coding claim in their role strings",
+      "canonicalTasksExecute": "backend/src/ai/engineeringTasks.ts — request_understanding and repository_analysis run through ExecutionScheduler with content-addressed evidence; unhandled classes are recorded blocked rather than completed",
+      "incrementalImplementation": "backend/src/synthesis/incrementalImplementation.ts, wired at universalEntrypoint.ts:194 — manifest call then one call per file, replacing whole-project JSON generation",
+      "measuredRoutingEvidence": "backend/src/ai/benchmarkLedger.ts (PR #498) — per-model, per-role aggregation feeding chooseCostAware and capability maturity",
+      "capabilityMaturityDerived": "backend/src/ai/capabilityMaturity.ts — eight gates, no assignable state; benchmark evidence can satisfy only two of them"
+    },
+    "notProvenByThese": "Every condition above is satisfied by code and tests in this repository. None of them is evidence that a build succeeded against live providers. That distinction is why liveRunProducedCommit is separate and still outstanding."
+  },
+  "landedSince": {
+    "note": "Command 3 work merged after the agent-intelligence status block was first derived. None of these flips an outstanding condition; they are recorded so the ledger is not silently ahead of or behind main.",
+    "pullRequests": [
+      {
+        "number": 499,
+        "sha": "83abdcd90b1e55ba3db527fedff21e0517b5fd28",
+        "summary": "Agent Intelligence completion derived from eight conditions rather than assignable; Operations/Growth reconciliation recorded with its limitation stated"
+      },
+      {
+        "number": 500,
+        "sha": "d009e16bc279d499589e3da839b827d365a5f08c",
+        "summary": "Seventeen tests for the previously untested benchmark suite; model-evaluation-system.md, learning-data-governance.md and migration-and-rollback.md added; a false claim in universal-agent-rollout.md corrected"
+      },
+      {
+        "number": 501,
+        "sha": "6a379bfc08ce553902a144931656795c602d6b34",
+        "summary": "Both Grok coding priors set to 0, STRENGTHS renamed UNVERIFIED_PRIOR_STRENGTHS, grok_4_5 role string corrected; three tests hold the line"
+      },
+      {
+        "number": 502,
+        "sha": "d30b1b6c318fe88d6ecb30d5d1c385ca80397f0e",
+        "summary": "Migration map reconciled: two EXTEND items closed, and the stale claim that universalEntrypoint still does whole-project generation corrected"
+      }
+    ],
+    "suiteAt": "1613 backend tests passing, 0 failing, on d30b1b6"
+  },
+  "knownNotBuilt": {
+    "note": "Recorded so a reader does not infer these exist from the components that support them. Each is a real gap, not a deferred cleanup.",
+    "benchmarkRunner": "modelBenchmarks defines and scores the suite, benchmarkLedger aggregates it, and chooseCostAware consumes it — but nothing executes the suite against live providers. The ledger is therefore empty in production, and cost-aware routing falls back to priors until it is populated.",
+    "schedulerImplementationHandlers": "Implementation, validation, review and publish still run as inline pipeline code rather than canonical tasks. Handlers were deliberately not added for architecture or task_planning: no real upstream artifact exists for them, so a handler would hash a plan and record it as architecture work — the unearned evidence engineeringTasks.ts exists to prevent.",
+    "fineTuningSubmission": "learningData.ts enforces the section 26 consent gate, but no interface transmits data to a provider. The gate sits ahead of the capability it guards, which is the correct order."
   },
   "operationsGrowthReconciliation": {
     "reconciledAt": "2026-08-11T08:56:15.486280Z",
