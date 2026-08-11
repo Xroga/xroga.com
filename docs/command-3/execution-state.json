@@ -42,7 +42,7 @@
     "Configure optional Resend or Brevo credentials before enabling email campaigns",
     "Review existing Supabase advisor notices recorded in external-actions.md"
   ],
-  "updatedAt": "2026-08-11T14:52:00Z",
+  "updatedAt": "2026-08-11T19:07:09Z",
   "agentIntelligence": {
     "status": "agent_intelligence_incomplete",
     "derivedBy": "backend/src/operations/completionGate.ts#deriveAgentIntelligenceStatus",
@@ -117,9 +117,19 @@
         "number": 511,
         "sha": "3f84b672d70b6e79ef1931d167e7caeb8027896e",
         "summary": "Bounded benchmark runner: selects, caps, executes and records into model_benchmark_runs. Built, not run."
+      },
+      {
+        "number": 515,
+        "sha": "5447d45547b53fc92dbf06a16e7cdcf629cfd512",
+        "summary": "Measured benchmark evidence loaded from model_benchmark_runs and consumed by real routing; RoutingChoice.measured made structural"
+      },
+      {
+        "number": 516,
+        "sha": "75350e3aafc33540e3cbc1443f883ca9b0a3ad3f",
+        "summary": "Launch-category planning matrix: records which categories plan, which refuse, and which are blocked before generation"
       }
     ],
-    "suiteAt": "1692 backend tests passing, 0 failing"
+    "suiteAt": "1728 backend tests passing, 0 failing; Operations and Growth 80 passing"
   },
   "knownNotBuilt": {
     "note": "Recorded so a reader does not infer these exist from the components that support them. Each is a real gap, not a deferred cleanup.",
@@ -159,5 +169,76 @@
     },
     "notVerified": "api.xroga.com is unreachable from the engineering container (proxy 403), so no /health, /ready or deployed-SHA evidence was collected. Deployment was not inferred from a green deploy job.",
     "remainingOwnerAction": "One authenticated build submitted against the allowlisted test project, after PR #510 is deployed."
+  },
+  "benchmarkExecution": {
+    "status": "benchmark_execution_unavailable_from_current_environment",
+    "reason": "No provider credentials are present in the engineering container. MOONSHOT, ZHIPU, OPENROUTER, GROK/XAI, TAVILY and SUPABASE_SERVICE_ROLE are all unset, and api.xroga.com is unreachable through the proxy. No attempt was made to read provider keys from the database; extracting them would be exposing secrets.",
+    "consequence": "model_benchmark_runs still has 0 rows. Every production routing decision is still made on a prior — now visibly, via routing.selectedOnPrior and routing.evidenceSource, rather than silently.",
+    "whatIsReady": "The runner, its caps, the loader, the ledger aggregation and the routing consumption are all implemented and tested. Populating evidence needs the runner invoked where provider credentials exist."
+  },
+  "routingEvidenceChain": {
+    "defectFound": "On ff177ee the chain was three disconnected halves: model_benchmark_runs was written by the runner and read by nothing, buildLedger was called by no production code, and neither was chooseCostAware. Running real benchmarks would have populated a table nothing consulted.",
+    "fix": "PR #515. universalEntrypoint loads measured evidence and prefers it, falling back to the prior ranking when nothing covers the role.",
+    "secondDefect": "chooseCostAware returns the premium tier on a prior when nothing has earned the lead, and stated that only in its reason prose. The first wrapper marked it measured:true, reporting an assumption as a measurement. RoutingChoice.measured is now a structural field. Two of the A-to-G tests caught it.",
+    "statesVerified": [
+      "A cheap+sufficient leads",
+      "B too few samples is not verified",
+      "C cheap+poor loses",
+      "D no measurement reported as prior",
+      "E unconfigured never chosen",
+      "F research never in coding ranking",
+      "G unconfigured tier is not_configured"
+    ]
+  },
+  "launchCategoryMatrix": {
+    "scope": "PLANNING STAGE ONLY. No model was called, no sandbox ran, no repository was written. No category is verified.",
+    "plansCorrectly": {
+      "rust_cli": "cli surface, rust, 6 validation phases including test and build --release",
+      "python_api": "api surface, python, fastapi selected",
+      "python_cli": "cli surface, python, never a website",
+      "crud_data_app": "api surface, persistence not a static page",
+      "auth_feature": "keeps the api surface of the product it belongs to",
+      "browser_extension": "browser_extension surface",
+      "saas_dashboard": "web_frontend ONLY — no api surface despite a request naming sign-in and team invites, so the planned product has no backend"
+    },
+    "refusesRatherThanBuildingWrong": {
+      "booking": "refused_no_surface — unsupported, not merely unverified",
+      "commerce": "refused_no_surface — unsupported, not merely unverified"
+    },
+    "blockedBeforeGeneration": {
+      "go": "blocked_no_adapter",
+      "dart": "blocked_no_adapter",
+      "elixir": "blocked_no_adapter",
+      "note": "Correct and cheap: an unsupported runtime costs nothing rather than a full set of paid model calls."
+    },
+    "correction": "Run 68cd1d4f's zero validation commands were caused solely by the truncated `package.` manifest path, not by a missing capability. With a correct manifest a Rust component plans six validation phases and a Node component five. PR #510 is therefore the sufficient fix, not a partial one."
+  },
+  "m19Readiness": {
+    "checkedAt": "2026-08-11T19:07:09Z",
+    "fixesMerged": [
+      "#510 malformed manifest rejection",
+      "#513 completed tasks never re-executed",
+      "#515 measured routing"
+    ],
+    "testProject": {
+      "id": "92246b8c-d1e0-43c7-a293-34b40caa3c95",
+      "repository": "Xroga/command-2-m19-verification",
+      "allowlisted": true
+    },
+    "repositoryState": {
+      "head": "dd0ed70095954fd799ee01e91b7de16a68218096",
+      "branches": [
+        "main"
+      ],
+      "files": [
+        "README.md"
+      ],
+      "empty": false,
+      "note": "Non-empty, so the Command 1 atomic writer will accept it. No leftover xroga/<run-id> branches from failed attempts."
+    },
+    "staleRuns": 0,
+    "universalRuns": 0,
+    "remainingOwnerAction": "One authenticated build submitted against the allowlisted test project.",
+    "productionVerification": "production_verification_unavailable_from_current_environment — api.xroga.com is unreachable through the proxy, so no /health, /ready or deployed-SHA evidence was collected and none was inferred from a green deploy job."
   }
 }
