@@ -25,7 +25,7 @@
 import { BENCHMARKS, type BenchmarkResult } from './modelBenchmarks.js';
 import type { ModelEvidence } from './providerCostTiers.js';
 import { assessMaturity, type MaturityGates, type MaturityRecord } from './capabilityMaturity.js';
-import { isCodingModel } from './providerPolicy.js';
+import { isCodingModel, isResearchModel } from './providerPolicy.js';
 
 /** Below this many samples, a rate is not yet a measurement. Matches the routing floor. */
 export const MIN_LEDGER_SAMPLES = 5;
@@ -61,9 +61,24 @@ export function roleForBenchmark(benchmarkId: string): string | null {
       return 'independent_review';
     case 'security_review':
       return 'security_review';
+    case 'research':
+      return 'research';
     default:
       return null;
   }
+}
+
+/**
+ * Whether a model may hold evidence for a role.
+ *
+ * §7 is usually read as "a research provider must not hold coding scores", and the reverse
+ * matters just as much: a coding model scoring well on source retrieval would justify
+ * routing research to a provider with no search grounding. So the rule is symmetric — the
+ * research role takes research providers, every other role takes coding providers, and a
+ * result that crosses the line is dropped rather than filed under the wrong category.
+ */
+function modelMayHoldRole(modelId: string, role: string): boolean {
+  return role === 'research' ? isResearchModel(modelId) : isCodingModel(modelId);
 }
 
 export interface LedgerEntry extends ModelEvidence {
@@ -83,9 +98,9 @@ export function buildLedger(results: readonly BenchmarkResult[]): readonly Ledge
   const groups = new Map<string, BenchmarkResult[]>();
 
   for (const result of results) {
-    if (!isCodingModel(result.modelId)) continue;
     const role = roleForBenchmark(result.benchmarkId);
     if (!role) continue;
+    if (!modelMayHoldRole(result.modelId, role)) continue;
     const key = `${result.modelId}::${role}`;
     const bucket = groups.get(key) ?? [];
     bucket.push(result);

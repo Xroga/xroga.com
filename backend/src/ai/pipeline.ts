@@ -60,7 +60,8 @@ import {
   type ProjectFile,
 } from './patches.js';
 import { reviewBuildOutput } from './qa.js';
-import { completeRun, createRunDurable } from './runStore.js';
+import { completeRun, createRunDurable, failRun } from './runStore.js';
+import { authorizeLegacyBuild } from './legacyBuilderAdapter.js';
 import { startupProgress } from './startupProgress.js';
 import {
   blueprintBriefForBuilder,
@@ -1294,6 +1295,50 @@ export async function runBuildPipeline(opts: {
       featureCategory: 'universal',
       output: universalOutput,
       tokenUsage: universalUsage,
+      route,
+    };
+  }
+
+  // Past this line the legacy whole-project builder is the implementation path.
+  //
+  // `authorizeLegacyBuild` was written for §5 and then never called, which is worse than
+  // not having written it: `LEGACY_WHOLE_PROJECT_BUILDER_ENABLED=disabled` silently did
+  // nothing, so the flag read as a working safety control while the builder ran anyway.
+  // A rollback switch that does not switch anything is the one kind of dead code that
+  // actively misleads.
+  //
+  // The reason is `universal_path_not_selected` because that is what the early return
+  // above establishes: reaching here means `tryUniversalBuild` produced no outcome.
+  // `universalAlreadyImplemented` is false for the same reason, and passing it explicitly
+  // keeps §29B's one-implementer-per-run invariant checkable rather than structural.
+  try {
+    authorizeLegacyBuild({
+      runId,
+      reason: 'universal_path_not_selected',
+      universalAlreadyImplemented: false,
+    });
+  } catch (error) {
+    // A disabled builder must produce a visible refusal, not an empty build that reads as
+    // a model failure. The operator who set the flag needs to see their own decision in
+    // the run record; anyone debugging needs to not go looking at the providers.
+    const message = (error as Error).message;
+    emit({
+      agent: 'builder',
+      status: 'legacy_builder_disabled',
+      message,
+      swarmStatusLabel: 'Refused',
+      swarmActivity: 'No implementation path available',
+      swarmTodos: todos('route'),
+    });
+    failRun(runId, message, 'error', { code: 'LEGACY_BUILDER_DISABLED' });
+    return {
+      runId,
+      success: false,
+      featureCategory: 'build',
+      output: { type: 'error', error: message, code: 'LEGACY_BUILDER_DISABLED' },
+      // No model was called, so this reports the user's real quota state rather than a
+      // hand-built zero object that would drift from the shape every other path returns.
+      tokenUsage: usageToTokenUsage(await recordUsage(opts.userId, route.builder, 0, 0)),
       route,
     };
   }

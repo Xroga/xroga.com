@@ -127,3 +127,44 @@ test('rollback and approved fixtures are recordable reasons', () => {
     assert.equal(result.reason, reason);
   }
 });
+
+test('the pipeline actually calls the guard', async () => {
+  // The failure this catches is the one that already happened: this module was written for
+  // §5, passed its own tests, and was imported by nothing. `LEGACY_WHOLE_PROJECT_BUILDER_ENABLED`
+  // read as a working rollback switch while the builder ran regardless.
+  //
+  // Asserting on the source is crude but it is the property that matters — a unit test of
+  // `authorizeLegacyBuild` passes whether or not anything calls it, which is exactly how
+  // the gap survived. Standing up the whole pipeline to provoke one branch would test the
+  // pipeline, not the wiring.
+  const { readFile } = await import('node:fs/promises');
+  const source = await readFile(new URL('./pipeline.ts', import.meta.url), 'utf8');
+
+  assert.match(source, /from '\.\/legacyBuilderAdapter\.js'/, 'pipeline does not import the adapter');
+  assert.match(source, /authorizeLegacyBuild\(\{/, 'pipeline does not call authorizeLegacyBuild');
+  assert.match(source, /LEGACY_BUILDER_DISABLED/, 'pipeline does not surface the refusal code');
+});
+
+test('a disabled builder refuses rather than reporting an empty build', () => {
+  // The distinction that matters operationally: an empty build looks like a model failure
+  // and sends whoever is debugging to the providers. A refusal names the flag, so the
+  // operator sees their own decision.
+  const error = (() => {
+    try {
+      authorizeLegacyBuild({
+        runId: 'run-refused',
+        reason: 'universal_path_not_selected',
+        universalAlreadyImplemented: false,
+        env: { LEGACY_WHOLE_PROJECT_BUILDER_ENABLED: 'disabled' },
+      });
+      return null;
+    } catch (caught) {
+      return caught as LegacyBuilderDisabledError;
+    }
+  })();
+
+  assert.ok(error, 'a disabled builder must refuse');
+  assert.equal(error.code, 'LEGACY_BUILDER_DISABLED');
+  assert.match(error.message, /LEGACY_WHOLE_PROJECT_BUILDER_ENABLED/);
+  assert.match(error.message, /refused rather than reported as empty/);
+});

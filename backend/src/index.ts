@@ -46,6 +46,7 @@ import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
 import { activeRunIds } from './ai/runStore.js';
 import { failInFlightRuns, reconcileOrphanedRuns } from './ai/runReconciler.js';
 import { ensureShipLoopSchema } from './db/ensureShipLoopSchema.js';
+import { hydrateProviderHealth } from './ai/providerRuntime.js';
 import { modelKeyStatus, modelTransportStatus } from './ai/openaiCompat.js';
 import { publicHealthPayload } from './lib/safeHealth.js';
 import operationsRouter from './routes/operations.js';
@@ -236,6 +237,19 @@ server.listen(port, '0.0.0.0', () => {
   void ensureShipLoopSchema().catch((err) => {
     console.warn('[shipLoopSchema] Startup ensure skipped:', (err as Error).message);
   });
+  // Provider health survives this restart (§15). Without it a circuit opened against a
+  // failing provider was forgotten on every deploy, and the model went straight back into
+  // rotation — a breaker that resets exactly when a bad deploy lands protects nothing.
+  //
+  // An expired circuit is deliberately not restored, so a provider that recovered while the
+  // process was down is available immediately rather than serving a second cooling period.
+  void hydrateProviderHealth()
+    .then((restored) => {
+      if (restored) console.log(`[providerRuntime] Restored health for ${restored} model(s)`);
+    })
+    .catch((err) => {
+      console.warn('[providerRuntime] Health hydration skipped:', (err as Error).message);
+    });
   // Anything still `running` belongs to a process that no longer exists — the live
   // run map is in memory, so a fresh process owns nothing. Left alone these sit at
   // `running` forever; one production row did so for over fourteen hours.
