@@ -315,8 +315,22 @@ export async function executeUniversalRun(input: {
   // From here the composition is derived from what was actually generated rather than from
   // the plan, because the plan is a prediction and the files are a fact.
   const composition = detectComposition(files);
-  record('implementation', 'components detected in generated files',
-    composition.components.map((component) => `${component.root || '.'}=${component.adapterId}`).join(', '));
+  // Zero components is stated as its own fact rather than as an empty detail string.
+  // Production run `68cd1d4f` recorded `components detected in generated files` with an
+  // empty detail and then failed at validation reporting "nothing was executed" — which
+  // sent diagnosis to the sandbox when the real cause was three phases earlier, in a
+  // manifest path that matched no adapter. An empty list and a list nobody printed look
+  // identical in a log; only one of them is a failure.
+  record(
+    'implementation',
+    composition.components.length
+      ? 'components detected in generated files'
+      : 'no runtime component could be detected in the generated files',
+    composition.components.length
+      ? composition.components.map((component) => `${component.root || '.'}=${component.adapterId}`).join(', ')
+      : `${files.length} file(s) generated but no adapter recognised a manifest among them: ` +
+        `${files.map((file) => file.path).slice(0, 12).join(', ')}`,
+  );
 
   // ── Validation, with bounded repair ────────────────────────────────────────
   const validationPlan = planUniversalRun({

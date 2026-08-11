@@ -138,23 +138,71 @@ test('an unusable plan falls back before any file is attempted', async () => {
   assert.equal(complete.calls[1]!.modelId, 'kimi_k3');
 });
 
-test('the plan rejects unsafe paths and caps the file count', () => {
+test('one unsafe path rejects the whole plan rather than being filtered out', () => {
+  // Changed from filtering after production run 68cd1d4f. Dropping the offending entry and
+  // generating the rest produces a project missing a file the model intended to write, and
+  // nothing downstream can tell that from a model that simply forgot it. An empty plan
+  // means "try the next model", which is what the fallback chain is for.
+  for (const bad of ['../escape.rs', '/etc/passwd', '.git/config']) {
+    const plan = parseFilePlan(
+      JSON.stringify({ files: [{ path: bad, purpose: 'x' }, { path: 'src/ok.rs', purpose: 'x' }] }),
+    );
+    assert.deepEqual(plan, [], `${bad} was filtered instead of rejecting the plan`);
+  }
+
+  const clean = parseFilePlan(JSON.stringify({ files: [{ path: 'src/ok.rs', purpose: 'x' }] }));
+  assert.deepEqual(clean.map((entry) => entry.path), ['src/ok.rs']);
+});
+
+test('a path that lost its extension rejects the plan', () => {
+  // The exact production failure. GLM returned `package.` and `tsconfig.` — the `.json`
+  // dropped, and only from the JSON files; every other extension survived. `package.`
+  // matches no runtime adapter manifest name, so detectComposition found zero components,
+  // planning produced zero validation commands, and the run died at validation after
+  // seventeen paid file calls had produced seventeen unvalidatable files.
   const plan = parseFilePlan(
     JSON.stringify({
       files: [
-        { path: '../escape.rs', purpose: 'x' },
-        { path: '/etc/passwd', purpose: 'x' },
-        { path: '.git/config', purpose: 'x' },
-        { path: 'src/ok.rs', purpose: 'x' },
+        { path: 'package.', purpose: 'manifest' },
+        { path: 'tsconfig.', purpose: 'typescript config' },
+        { path: 'src/app/page.tsx', purpose: 'page' },
       ],
     }),
   );
-  assert.deepEqual(plan.map((entry) => entry.path), ['src/ok.rs']);
+  assert.deepEqual(plan, []);
+});
 
+test('a trailing dot is caught in any segment, not only the basename', () => {
+  assert.deepEqual(parseFilePlan(JSON.stringify({ files: [{ path: 'src/app./page.tsx', purpose: 'x' }] })), []);
+});
+
+test('legitimate dotfiles and multi-dot names are still accepted', () => {
+  // The rule must not reject `.gitignore`, `.env.example` or `next.config.js` — all three
+  // were in the same production manifest and all three were correct.
+  const plan = parseFilePlan(
+    JSON.stringify({
+      files: [
+        { path: '.gitignore', purpose: 'x' },
+        { path: '.env.example', purpose: 'x' },
+        { path: 'next.config.js', purpose: 'x' },
+        { path: 'tests/e2e/journey.spec.ts', purpose: 'x' },
+        { path: 'README.md', purpose: 'x' },
+        { path: 'Makefile', purpose: 'x' },
+      ],
+    }),
+  );
+  assert.equal(plan.length, 6);
+});
+
+test('the file count is capped', () => {
   const many = parseFilePlan(
     JSON.stringify({ files: Array.from({ length: 100 }, (_, i) => ({ path: `f${i}.rs`, purpose: 'x' })) }),
   );
   assert.equal(many.length, MAX_PLANNED_FILES);
+});
+
+test('an empty file list is not a usable plan', () => {
+  assert.deepEqual(parseFilePlan(JSON.stringify({ files: [] })), []);
 });
 
 test('a fence wrapping the whole reply is stripped, one inside content is kept', () => {
