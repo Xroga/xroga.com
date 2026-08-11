@@ -19,6 +19,8 @@ test('keeps public and authentication routes available', () => {
     '/robots.txt',
     '/sitemap.xml',
     '/llms.txt',
+    '/opengraph-image',
+    '/manifest.webmanifest',
     '/api/session',
     '/api/release',
   ]) {

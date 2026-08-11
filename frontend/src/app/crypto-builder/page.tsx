@@ -18,9 +18,9 @@ import '@/styles/homepage-coding.css';
 import '@/styles/crypto-builder.css';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Crypto Builder — Build Crypto Agents, Web3 Apps, and Hackathon Projects',
+  title: 'Crypto Builder for Web3 Apps and AI Agents',
   description:
-    'Build AI crypto agents, Web3 applications, DeFi and DAO tools, token utilities, on-chain monitoring, analytics dashboards, and hackathon projects. Xroga researches, implements, validates, and prepares publishing through accounts you authorise.',
+    'Build AI crypto agents, Web3 apps, DeFi and DAO tools, on-chain monitoring, analytics dashboards, and hackathon projects with XROGA AI.',
   path: '/crypto-builder',
   keywords: [
     'crypto builder',

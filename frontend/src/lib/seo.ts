@@ -1,10 +1,18 @@
 import type { Metadata } from 'next';
+import { ABOUT_FOUNDER, ABOUT_SOCIALS } from '@/lib/aboutContent';
+import { COMPANY_CONTACT } from '@/lib/companyContact';
 
 export const SITE_URL = 'https://xroga.com';
-export const SITE_NAME = 'Xroga AI';
-export const FAVICON_URL = 'https://xroga.com/brand/xroga-mark-192.png';
-export const FAVICON_LOCAL = '/favicon-32.png';
+export const SITE_NAME = 'XROGA AI';
+export const SITE_ALTERNATE_NAME = 'XROGA';
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+export const WEBSITE_ID = `${SITE_URL}/#website`;
+export const SOFTWARE_ID = `${SITE_URL}/#software`;
+export const FOUNDER_ID = `${SITE_URL}/#founder`;
+export const LOGO_ID = `${SITE_URL}/#logo`;
+export const FAVICON_URL = `${SITE_URL}/brand/xroga-mark-192.png`;
 export const OG_IMAGE_URL = 'https://xroga.com/opengraph-image';
+export const OFFICIAL_SOCIAL_URLS = [ABOUT_SOCIALS.x, ABOUT_SOCIALS.github] as const;
 
 /** Canonical product one-liner — keep identical across meta, JSON-LD, llms.txt for LLM citations */
 export const PRODUCT_ONE_LINER =
@@ -34,38 +42,6 @@ export const BRAND_TYPO_KEYWORDS = [
   'xroga coding agent',
 ];
 
-export const DEFAULT_KEYWORDS = [
-  'Xroga AI',
-  'Xroga',
-  'xroga.com',
-  ...BRAND_TYPO_KEYWORDS,
-  'AI coding agent',
-  'AI code generation',
-  'build website with AI',
-  'AI website builder',
-  'AI web app builder',
-  'no code AI builder',
-  'no coding knowledge AI',
-  'AI for non developers',
-  'AI for beginners',
-  'AI for developers',
-  'GitHub AI builder',
-  'push code to GitHub AI',
-  'Vercel deploy AI',
-  'AI deploy to Vercel',
-  'update GitHub repo with AI',
-  'edit delete files AI GitHub',
-  'AI coding agent GitHub Vercel',
-  'prompt to live website',
-  'ship website with AI',
-  'Muhammad Ibrahim',
-  'Pakistan AI startup',
-  'sign up Xroga',
-  'Xroga login',
-  'Xroga workspace',
-  'Xroga pricing',
-];
-
 export function buildMetadata({
   title,
   description,
@@ -78,17 +54,18 @@ export function buildMetadata({
   keywords?: string[];
 }): Metadata {
   const fullTitle = title
-    ? title.includes(SITE_NAME)
+    ? /xroga(?: ai)?/i.test(title)
       ? title
       : `${title} | ${SITE_NAME}`
     : `${SITE_NAME} — Build, verify, and publish software`;
   const desc = description ?? DEFAULT_DESCRIPTION;
   const url = `${SITE_URL}${path}`;
+  const isPreviewDeployment = process.env.VERCEL_ENV === 'preview';
 
   return {
     title: fullTitle,
     description: desc,
-    keywords: [...DEFAULT_KEYWORDS, ...keywords],
+    keywords: keywords.length > 0 ? keywords : undefined,
     metadataBase: new URL(SITE_URL),
     alternates: { canonical: url },
     openGraph: {
@@ -106,34 +83,71 @@ export function buildMetadata({
       description: desc,
       images: [OG_IMAGE_URL],
     },
-    robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
-    authors: [{ name: 'Muhammad Ibrahim', url: `${SITE_URL}/about` }],
-    creator: 'Muhammad Ibrahim',
+    robots: isPreviewDeployment
+      ? { index: false, follow: false }
+      : { index: true, follow: true, googleBot: { index: true, follow: true } },
+    authors: [{ name: ABOUT_FOUNDER.name, url: `${SITE_URL}/about` }],
+    creator: ABOUT_FOUNDER.name,
     publisher: SITE_NAME,
     category: 'technology',
   };
 }
 
-/** JSON-LD for rich search results */
+/** Canonical organization entity. Unknown legal identifiers are intentionally omitted. */
 export function buildOrganizationJsonLd() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
+    '@type': 'Organization',
+    '@id': ORGANIZATION_ID,
     name: SITE_NAME,
-    alternateName: [
-      'Xroga',
-      'Xroga Coding Agent',
-      'Roga AI',
-      'Droga AI',
-      'Zroga AI',
-      'XROGA AI',
-      'xroga.com',
-    ],
+    alternateName: [SITE_ALTERNATE_NAME, 'Xroga AI'],
+    legalName: COMPANY_CONTACT.legalName,
+    url: `${SITE_URL}/`,
+    logo: {
+      '@type': 'ImageObject',
+      '@id': LOGO_ID,
+      url: FAVICON_URL,
+      contentUrl: FAVICON_URL,
+      width: 500,
+      height: 500,
+    },
+    description: PRODUCT_ONE_LINER,
+    email: `mailto:${COMPANY_CONTACT.email}`,
+    founder: { '@id': FOUNDER_ID },
+    sameAs: [...OFFICIAL_SOCIAL_URLS],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      email: COMPANY_CONTACT.email,
+      telephone: COMPANY_CONTACT.phoneTel,
+      availableLanguage: ['English'],
+    },
+  };
+}
+export function buildFounderJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': FOUNDER_ID,
+    name: ABOUT_FOUNDER.name,
+    jobTitle: ABOUT_FOUNDER.role,
+    url: `${SITE_URL}/about#founder`,
+    worksFor: { '@id': ORGANIZATION_ID },
+  };
+}
+
+export function buildSoftwareApplicationJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': SOFTWARE_ID,
+    name: SITE_NAME,
+    alternateName: SITE_ALTERNATE_NAME,
     applicationCategory: 'DeveloperApplication',
     applicationSubCategory: 'AI Coding Agent',
     operatingSystem: 'Web',
-    url: SITE_URL,
-    description: DEFAULT_DESCRIPTION,
+    url: `${SITE_URL}/`,
+    description: PRODUCT_ONE_LINER,
     featureList: [
       PRODUCT_ONE_LINER,
       'Works for developers and people with no coding knowledge',
@@ -146,18 +160,8 @@ export function buildOrganizationJsonLd() {
       priceCurrency: 'USD',
       description: 'One Xroga AI plan; current eligibility and capacity are shown before checkout.',
     },
-    author: {
-      '@type': 'Person',
-      name: 'Muhammad Ibrahim',
-      url: `${SITE_URL}/about`,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: SITE_NAME,
-      url: SITE_URL,
-      logo: FAVICON_URL,
-      sameAs: [SITE_URL, `${SITE_URL}/about`, `${SITE_URL}/contact`],
-    },
+    author: { '@id': FOUNDER_ID },
+    publisher: { '@id': ORGANIZATION_ID },
   };
 }
 
@@ -165,127 +169,37 @@ export function buildWebSiteJsonLd() {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
+    '@id': WEBSITE_ID,
     name: SITE_NAME,
-    alternateName: ['xroga', 'xroga ai', 'roga ai', 'droga ai', 'xroga coding agent'],
-    url: SITE_URL,
-    description: DEFAULT_DESCRIPTION,
+    alternateName: SITE_ALTERNATE_NAME,
+    url: `${SITE_URL}/`,
+    description: PRODUCT_ONE_LINER,
+    publisher: { '@id': ORGANIZATION_ID },
   };
 }
 
-/** FAQ entities help Google + LLMs answer “What is Xroga?” consistently */
-export function buildFaqJsonLd() {
-  const faqs = [
-    {
-      q: 'What is Xroga AI?',
-      a: `${PRODUCT_ONE_LINER} Xroga reports required decisions and blockers instead of assuming success.`,
-    },
-    {
-      q: 'Who is Xroga?',
-      a: 'Xroga AI (xroga.com) is a software execution product by Muhammad Ibrahim. It is also searched as Roga AI or Droga AI.',
-    },
-    {
-      q: 'Do I need coding knowledge to use Xroga?',
-      a: 'No coding knowledge is required to start. Complex products still require review, product decisions, and provider credentials where applicable.',
-    },
-    {
-      q: 'How is Xroga different from Cursor?',
-      a: 'Xroga focuses on one connected product loop: inspect, implement, validate, repair, and publish when authorised.',
-    },
-    {
-      q: 'Can Xroga update an existing GitHub repo?',
-      a: 'Yes. With repository permission, Xroga can prepare targeted changes in an existing project and publish them through an authorised workflow.',
-    },
-    {
-      q: 'Does Xroga do browser automation or video generation?',
-      a: 'Xroga is a coding and product-building agent. It may use browser verification as part of testing, but it does not sell a standalone browser-automation or video-generation studio.',
-    },
-  ];
-
+export function buildWebPageJsonLd({
+  path,
+  name,
+  description,
+  type = 'WebPage',
+}: {
+  path: string;
+  name: string;
+  description: string;
+  type?: 'WebPage' | 'AboutPage' | 'ContactPage' | 'CollectionPage';
+}) {
+  const url = `${SITE_URL}${path}`;
   return {
     '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((f) => ({
-      '@type': 'Question',
-      name: f.q,
-      acceptedAnswer: { '@type': 'Answer', text: f.a },
-    })),
-  };
-}
-
-/** Sitelink-style navigation for Google rich results */
-export function buildSiteNavigationJsonLd() {
-  const items = [
-    {
-      name: 'Sign Up',
-      url: `${SITE_URL}/auth/signup`,
-      description: 'Start free — build with Xroga AI coding agent',
-    },
-    {
-      name: 'Sign In',
-      url: `${SITE_URL}/auth/login`,
-      description: 'Log in to Xroga AI Workspace',
-    },
-    {
-      name: 'Workspace',
-      url: `${SITE_URL}/ai-coding-agent`,
-      description:
-        'Xroga Workspace — AI coding agent to build, push GitHub, deploy Vercel, and update your repo',
-    },
-    {
-      name: 'Features',
-      url: `${SITE_URL}/features`,
-      description: 'Build websites and web apps with AI — for developers and non-developers',
-    },
-    {
-      name: 'GitHub Deploy',
-      url: `${SITE_URL}/github-ai-coding-agent`,
-      description: 'Push working code to your GitHub and keep updating the same repo',
-    },
-    {
-      name: 'Vercel Deploy',
-      url: `${SITE_URL}/vercel-ai-deployment`,
-      description: 'Deploy live on your Vercel account from Xroga',
-    },
-    {
-      name: 'Integrations',
-      url: `${SITE_URL}/integrations`,
-      description: 'Connect GitHub, Vercel, and secure API keys for your product',
-    },
-    { name: 'Community', url: `${SITE_URL}/community`, description: 'Public feedback, feature requests, bug reports, questions, and official Xroga replies' },
-    { name: 'Documentation', url: `${SITE_URL}/docs`, description: 'Guides for repositories, validation, publishing, integrations, and security' },
-    { name: 'Crypto Builder', url: `${SITE_URL}/crypto-builder`, description: 'Build crypto agents, Web3 apps, DeFi and DAO tools, on-chain monitoring, and hackathon projects' },
-    {
-      name: 'Pricing',
-      url: `${SITE_URL}/pricing`,
-      description: 'Current Xroga plan, capacity, eligibility, and billing information',
-    },
-    {
-      name: 'About',
-      url: `${SITE_URL}/about`,
-      description: 'What is Xroga AI — coding agent by Muhammad Ibrahim',
-    },
-    {
-      name: 'Contact',
-      url: `${SITE_URL}/contact`,
-      description: 'Contact Xroga AI support',
-    },
-    {
-      name: 'API Docs',
-      url: `${SITE_URL}/docs/api`,
-      description: 'Xroga AI developer API',
-    },
-  ];
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: `${SITE_NAME} Navigation`,
-    itemListElement: items.map((item, i) => ({
-      '@type': 'SiteNavigationElement',
-      position: i + 1,
-      name: item.name,
-      url: item.url,
-      description: item.description,
-    })),
+    '@type': type,
+    '@id': `${url}#webpage`,
+    url,
+    name,
+    description,
+    isPartOf: { '@id': WEBSITE_ID },
+    about: { '@id': ORGANIZATION_ID },
+    publisher: { '@id': ORGANIZATION_ID },
+    primaryImageOfPage: path === '/' ? { '@id': LOGO_ID } : undefined,
   };
 }

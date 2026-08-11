@@ -1,0 +1,26 @@
+{
+  "publicRoutes": [
+    { "path": "/", "status": 200, "title": "Xroga AI — Build, verify, and publish software", "canonical": "https://xroga.com", "h1Count": 1, "schemaTypes": ["Organization", "Person", "WebSite", "WebApplication", "WebPage"], "schemaIds": ["https://xroga.com/#organization", "https://xroga.com/#website", "https://xroga.com/#software", "https://xroga.com/#founder"] },
+    { "path": "/features", "status": 200, "title": "Xroga Features — Repository-Aware AI Product Building", "canonical": "https://xroga.com/features", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
+    { "path": "/ai-coding-agent", "status": 200, "title": "AI Coding Agent That Works in Your Repository | XROGA AI", "canonical": "https://xroga.com/ai-coding-agent", "h1Count": 1, "schemaTypes": ["WebPage"] },
+    { "path": "/ai-app-builder", "status": 200, "title": "AI App Builder for Real Product Work | XROGA AI", "canonical": "https://xroga.com/ai-app-builder", "h1Count": 1, "schemaTypes": ["WebPage"] },
+    { "path": "/ai-website-builder", "status": 200, "title": "AI Website Builder With Code You Own | XROGA AI", "canonical": "https://xroga.com/ai-website-builder", "h1Count": 1, "schemaTypes": ["WebPage"] },
+    { "path": "/build-saas-with-ai", "status": 200, "title": "Build SaaS With AI—Without Losing the Code | XROGA AI", "canonical": "https://xroga.com/build-saas-with-ai", "h1Count": 1, "schemaTypes": ["WebPage"] },
+    { "path": "/github-ai-coding-agent", "status": 200, "title": "GitHub AI Coding Agent for Reviewable Changes | XROGA AI", "canonical": "https://xroga.com/github-ai-coding-agent", "h1Count": 1, "schemaTypes": ["WebPage"] },
+    { "path": "/vercel-ai-deployment", "status": 200, "title": "Vercel AI Deployment With Real Build Evidence | XROGA AI", "canonical": "https://xroga.com/vercel-ai-deployment", "h1Count": 1, "schemaTypes": ["WebPage"] },
+    { "path": "/integrations", "status": 200, "title": "Integrations — GitHub, Vercel & Secure API Keys | XROGA AI", "canonical": "https://xroga.com/integrations", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
+    { "path": "/docs", "status": 200, "title": "Xroga Documentation — Build, Test and Publish", "canonical": "https://xroga.com/docs", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
+    { "path": "/crypto-builder", "status": 200, "title": "Crypto Builder for Web3 Apps and AI Agents | XROGA AI", "canonical": "https://xroga.com/crypto-builder", "h1Count": 1, "schemaTypes": ["SoftwareApplication"] },
+    { "path": "/pricing", "status": 200, "title": "Pricing — One Xroga AI Plan", "canonical": "https://xroga.com/pricing", "h1Count": 1, "schemaTypes": ["WebPage"] },
+    { "path": "/about", "status": 200, "title": "About Xroga AI & CEO Muhammad Ibrahim", "canonical": "https://xroga.com/about", "h1Count": 1, "schemaTypes": ["AboutPage"] },
+    { "path": "/contact", "status": 200, "title": "Contact | XROGA AI", "canonical": "https://xroga.com/contact", "h1Count": 1, "schemaTypes": ["ContactPage"] }
+  ],
+  "privateRoutes": ["/workspace", "/dashboard", "/settings", "/admin/community", "/auth/login"],
+  "discoveryFiles": [
+    { "path": "/robots.txt", "contentType": "text/plain", "includes": "Sitemap: https://xroga.com/sitemap.xml" },
+    { "path": "/sitemap.xml", "contentType": "application/xml", "includes": "<urlset" },
+    { "path": "/llms.txt", "contentType": "text/plain", "includes": "# Xroga AI" },
+    { "path": "/opengraph-image", "contentType": "image/png" },
+    { "path": "/manifest.webmanifest", "contentType": "application/manifest+json", "includes": "XROGA AI" }
+  ]
+}

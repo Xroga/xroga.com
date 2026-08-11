@@ -3,7 +3,7 @@ import './globals.css';
 import '@/styles/xroga-fonts.css';
 import '@/styles/uiverse.css';
 import '@/styles/companion.css';
-import { buildMetadata, FAVICON_URL, FAVICON_LOCAL } from '@/lib/seo';
+import { buildMetadata, FAVICON_URL } from '@/lib/seo';
 import { RootProviders } from '@/components/providers/RootProviders';
 import { SiteJsonLd } from '@/components/seo/SiteJsonLd';
 import { StorageBootstrap } from '@/components/bootstrap/StorageBootstrap';
@@ -24,11 +24,12 @@ export const metadata: Metadata = {
   formatDetection: { email: false, address: false, telephone: false },
   icons: {
     icon: [
+      { url: '/favicon-16.png', type: 'image/png', sizes: '16x16' },
       { url: '/favicon-32.png', type: 'image/png', sizes: '32x32' },
-      { url: FAVICON_LOCAL, type: 'image/png', sizes: '512x512' },
-      { url: FAVICON_URL, type: 'image/png', sizes: '512x512' },
+      { url: '/icon.png', type: 'image/png', sizes: '64x64' },
+      { url: FAVICON_URL, type: 'image/png', sizes: '500x500' },
     ],
-    apple: [{ url: '/apple-touch-icon.png', type: 'image/png', sizes: '180x180' }],
+    apple: [{ url: '/apple-touch-icon.png', type: 'image/png', sizes: '500x500' }],
     shortcut: '/favicon-32.png',
   },
   verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
@@ -52,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <StorageBootstrap />
         <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
         <link rel="icon" href="/icon.png" type="image/png" sizes="64x64" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="500x500" />
         <link rel="shortcut icon" href="/favicon-32.png" />
         <link rel="preconnect" href="https://xroga-api.fly.dev" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://xroga-api.fly.dev" />

@@ -6,6 +6,7 @@ import { OreBlock, PixelGlyph } from '@/components/crypto-builder/PixelArt';
 import { capabilityIdentity, outcomeOre, processGlyph, processOre } from '@/lib/capabilityPageArt';
 import type { CapabilityPageData } from '@/lib/capabilityPages';
 import '@/styles/capability-page.css';
+import { PageJsonLd } from '@/components/seo/PageJsonLd';
 
 /**
  * The shared template behind all six capability pages (`/ai-coding-agent`,
@@ -44,6 +45,7 @@ export function CapabilityPage({ data }: { data: CapabilityPageData }) {
 
   return (
     <main className="xv-cap-root" data-ore={ore}>
+      <PageJsonLd path={`/${data.slug}`} name={data.title} description={data.description} />
       <div className="xv-cap-backdrop" aria-hidden="true">
         <div className="xv-cap-sky" />
         <div className="xv-cap-grid" />
