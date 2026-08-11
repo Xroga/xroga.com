@@ -32,6 +32,8 @@ import { routeByCapability, type RoutingCandidate } from '../ai/capabilityRouter
 import { buildProfile } from '../ai/modelCapabilityProfile.js';
 import { getRuntimeModelRegistry } from '../ai/modelCapabilityRegistry.js';
 import { assertCodingModel, isCodingModel } from '../ai/providerPolicy.js';
+import { MODELS, type ModelId } from '../ai/models.js';
+import type { ExecutionStateStore } from '../ai/executionRuntime.js';
 
 export interface UniversalBuildOutcome {
   readonly ran: true;
@@ -136,6 +138,8 @@ export async function tryUniversalBuild(input: {
   commit: CommitFn;
   flags?: UniversalAgentFlags;
   store?: UniversalStore;
+  /** Durable store for the canonical task graph. In-memory when absent. */
+  executionStore?: ExecutionStateStore;
 }): Promise<UniversalBuildOutcome | null> {
   const decision = routeProject(input.projectId ?? null, input.flags);
   if (!mayWrite(decision)) return null;
@@ -200,6 +204,19 @@ export async function tryUniversalBuild(input: {
       },
       commit: input.commit,
     }),
+    // The canonical implementation task records the model routing actually selected, not a
+    // re-derivation. A task whose recorded model differs from the one that generated the
+    // files would make the routing evidence useless for exactly the question it exists to
+    // answer: which model produced this code.
+    implementationRouting: {
+      selectedModel: route.selected!.modelId as ModelId,
+      // The provider is looked up from the registry rather than carried on the ranked
+      // model, which holds only scoring fields. Recording the transport matters because
+      // the family/transport binding is a policy invariant, not a detail.
+      provider: MODELS[route.selected!.modelId as ModelId]?.provider ?? null,
+      fallbackModels: route.fallbacks.map((candidate) => candidate.modelId as ModelId),
+    },
+    executionStore: input.executionStore,
   });
 
   return {
