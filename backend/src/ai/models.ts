@@ -121,7 +121,11 @@ export const MODELS: Record<ModelId, ModelDef> = {
   grok_4_5: {
     id: 'grok_4_5',
     label: 'Xroga Live',
-    role: 'Real-time intelligence — web/X search, crypto news, coding agents',
+    // Research only. This previously read "…, coding agents", which contradicted the
+    // enforced policy: `providerPolicy` refuses either Grok for engineering work, so the
+    // string described a capability the system does not grant. A registry that advertises
+    // what the router forbids is how the forbidden thing eventually gets re-enabled.
+    role: 'Real-time intelligence — web/X search and crypto news. Research only; never writes code.',
     apiModel: 'grok-4.5',
     provider: 'xai',
     baseUrl: 'https://api.x.ai/v1',

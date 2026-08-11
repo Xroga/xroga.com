@@ -45,13 +45,28 @@ export interface RuntimeModelCapability {
   };
 }
 
-const STRENGTHS: Record<ModelId, Record<ModelCapability, number>> = {
+/**
+ * Hand-written priors, not measurements.
+ *
+ * §13 requires measured evidence to outrank hard-coded capability scores, and this table is
+ * the hard-coded scores it means. Nothing here was observed: the numbers are a starting
+ * order for a model with no history, and `capabilityRouter` confidence-weights them by
+ * provenance so a measured 7 can outrank one of these 9s. The export name says so, because
+ * a table called `STRENGTHS` reads like a finding.
+ *
+ * The research models carry `coding: 0` deliberately. §7 forbids a research provider
+ * holding coding capability scores at all, and both Grok entries previously scored 7 —
+ * high enough to win a coding route had `providerPolicy` not filtered them upstream. Two
+ * independent controls over the same risk is the intent; a prior that would be dangerous
+ * if the filter were ever removed is not a prior worth keeping.
+ */
+const UNVERIFIED_PRIOR_STRENGTHS: Record<ModelId, Record<ModelCapability, number>> = {
   kimi_k3: { coding: 9, repository_analysis: 10, architecture: 10, research: 5, review: 9, debugging: 8, security_review: 8, ui_generation: 8, structured_output: 8, tool_calls: 8, streaming: 9 },
   glm_5_2: { coding: 9, repository_analysis: 9, architecture: 8, research: 4, review: 8, debugging: 9, security_review: 7, ui_generation: 7, structured_output: 9, tool_calls: 8, streaming: 9 },
   deepseek_v4_pro: { coding: 8, repository_analysis: 7, architecture: 6, research: 3, review: 7, debugging: 9, security_review: 6, ui_generation: 8, structured_output: 9, tool_calls: 7, streaming: 9 },
   deepseek_v4_flash: { coding: 7, repository_analysis: 5, architecture: 4, research: 3, review: 5, debugging: 8, security_review: 4, ui_generation: 7, structured_output: 8, tool_calls: 6, streaming: 10 },
-  grok_4_5: { coding: 7, repository_analysis: 6, architecture: 6, research: 10, review: 7, debugging: 7, security_review: 6, ui_generation: 7, structured_output: 7, tool_calls: 8, streaming: 9 },
-  grok_4_3: { coding: 7, repository_analysis: 9, architecture: 7, research: 8, review: 8, debugging: 7, security_review: 7, ui_generation: 7, structured_output: 7, tool_calls: 7, streaming: 9 },
+  grok_4_5: { coding: 0, repository_analysis: 6, architecture: 6, research: 10, review: 7, debugging: 7, security_review: 6, ui_generation: 7, structured_output: 7, tool_calls: 8, streaming: 9 },
+  grok_4_3: { coding: 0, repository_analysis: 9, architecture: 7, research: 8, review: 8, debugging: 7, security_review: 7, ui_generation: 7, structured_output: 7, tool_calls: 7, streaming: 9 },
 };
 
 /**
@@ -101,7 +116,7 @@ export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
       outputUsdPer1M: def.outputUsdPer1M,
       configuredMonthlyBudgetUsd:
         admin.providerBudgetUsd[def.provider] ?? def.budgetUsd,
-      strengths: STRENGTHS[id],
+      strengths: UNVERIFIED_PRIOR_STRENGTHS[id],
       suitableTaskClasses:
         id === 'grok_4_5'
           ? ['web_research', 'x_research', 'crypto_research']
@@ -126,8 +141,8 @@ export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
       supports: {
         text: true,
         images: id.startsWith('grok'),
-        structuredOutput: STRENGTHS[id].structured_output >= 7,
-        toolCalls: STRENGTHS[id].tool_calls >= 7,
+        structuredOutput: UNVERIFIED_PRIOR_STRENGTHS[id].structured_output >= 7,
+        toolCalls: UNVERIFIED_PRIOR_STRENGTHS[id].tool_calls >= 7,
         streaming: true,
       },
     };
