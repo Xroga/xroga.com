@@ -180,8 +180,115 @@ export function assessGeneratedFiles(files: readonly ProjectFile[]): {
 export function universalTaskHandlers(input: {
   implement: ImplementFn;
   validate?: ValidateFn;
+  repair?: RepairFn;
+  review?: ReviewFn;
+  publish?: PublishFn;
 }): Record<string, TaskHandler> {
   return {
+    ...(input.repair
+      ? {
+          validation_repair: (async (task, state) => {
+            const repaired = await input.repair!();
+
+            // A repair that produced nothing is not a failure of the run — the phase machine
+            // proceeds to report the original validation failure. But it is not a completed
+            // repair either, so the task records `failed` and the record says which.
+            if (!repaired?.length) {
+              return {
+                output: { repaired: false, fileCount: 0 },
+                evidence: [evidenceFor('repair_diff', 'repair produced no changes', { repaired: null })],
+                validated: false,
+              };
+            }
+
+            const assessment = assessGeneratedFiles(repaired);
+            if (assessment.usable) {
+              state.currentWorkingSnapshot = repaired.map((file) => ({ ...file }));
+              state.repairHistory.push({
+                taskId: task.id,
+                failureClass: 'validation_failure',
+                files: repaired.map((file) => file.path),
+                timestamp: new Date().toISOString(),
+              });
+            }
+
+            return {
+              output: { repaired: assessment.usable, files: repaired, fileCount: repaired.length },
+              evidence: [
+                evidenceFor('repair_diff', `repair rewrote ${repaired.length} file(s): ${assessment.reason}`, repaired),
+              ],
+              // §9: a repair is not successful because a model says it is fixed. This task
+              // completing means a usable file set came back; revalidation, which runs after
+              // it, is what decides whether the failure was actually repaired.
+              validated: assessment.usable,
+            };
+          }) satisfies TaskHandler,
+        }
+      : {}),
+
+    ...(input.review
+      ? {
+          code_review: (async (_task, state) => {
+            const result = await input.review!();
+
+            state.reviewFindings.push(
+              ...result.findings.map((finding, index) => ({
+                id: `${REVIEW_TASK_ID}-${index + 1}`,
+                severity: 'high' as const,
+                title: finding.slice(0, 120),
+                evidence: finding,
+                affectedFiles: [],
+                resolved: result.approved,
+              })),
+            );
+
+            return {
+              output: { approved: result.approved, findings: result.findings },
+              evidence: [
+                evidenceFor(
+                  'review_findings',
+                  result.approved
+                    ? `review approved with ${result.findings.length} non-blocking finding(s)`
+                    : `review blocked: ${result.findings.join('; ') || 'no reason given'}`,
+                  result,
+                ),
+              ],
+              // The review adapter already fails closed — a reviewer that throws or returns
+              // nothing parseable becomes `approved: false` upstream. This carries that
+              // verdict through unchanged rather than re-deriving it.
+              validated: result.approved,
+            };
+          }) satisfies TaskHandler,
+        }
+      : {}),
+
+    ...(input.publish
+      ? {
+          github_publishing: (async (_task, state) => {
+            // The Command 1 atomic writer, through the caller's commit function. No second
+            // GitHub writer exists and none is created here.
+            const { commitSha } = await input.publish!();
+            const produced = Boolean(commitSha?.trim());
+
+            return {
+              output: { commitSha },
+              evidence: [
+                evidenceFor(
+                  'resulting_commit_sha',
+                  produced
+                    ? `published ${state.generatedFiles.length} file(s) as ${commitSha}`
+                    : 'the writer returned no commit sha',
+                  { commitSha, startingCommitSha: state.startingCommitSha, branch: state.selectedBranch },
+                ),
+              ],
+              // A publish with no sha is not a publish. Recording one would be the exact
+              // fabricated-commit failure the command forbids by name.
+              validated: produced,
+            };
+          }) satisfies TaskHandler,
+        }
+      : {}),
+
     ...(input.validate
       ? {
           validation: (async (task, state) => {
@@ -333,6 +440,155 @@ export function validationRecordsFrom(report: ValidationReport): ValidationRecor
   }));
 }
 
+export const REPAIR_TASK_ID = 'universal-repair';
+export const REVIEW_TASK_ID = 'universal-review';
+export const PUBLISH_TASK_ID = 'universal-publish';
+
+/**
+ * The repair task node.
+ *
+ * Bounded by construction, not by a loop counter someone has to remember to increment.
+ * §9 caps repair attempts, and the cap lives on the node so the scheduler enforces it: a
+ * repair that keeps failing stops rather than burning provider budget on a model that is
+ * not converging.
+ *
+ * It is a mutating task — it rewrites generated files — so `maximumAttempts` is 1 for the
+ * same reason implementation's is. A second automatic attempt would produce a second
+ * repaired file set with nothing able to say which one validation then saw.
+ */
+export function repairTaskNode(input: {
+  objective: string;
+  selectedModel: ModelId | null;
+  provider: string | null;
+  failureCount: number;
+  timeoutMs?: number;
+}): ExecutableTaskNode {
+  if (input.selectedModel) assertCodingModel(input.selectedModel, 'universal repair task');
+  return {
+    id: REPAIR_TASK_ID,
+    objective: input.objective,
+    operationType: 'validation_repair',
+    requiredCapabilities: ['coding'],
+    selectedRuntime: input.selectedModel ? 'model_provider' : null,
+    selectedProvider: input.provider,
+    selectedModel: input.selectedModel,
+    requiredContextReferences: [
+      'exact validation failures',
+      'current generated file set',
+      `${input.failureCount} failing command(s)`,
+    ],
+    allowedFiles: [],
+    expectedOutputSchema: { description: 'the repaired file set' },
+    dependencies: [VALIDATION_TASK_ID],
+    riskLevel: 'high',
+    timeoutMs: input.timeoutMs ?? 600_000,
+    retryPolicy: { maximumAttempts: 1, initialBackoffMs: 0, maximumBackoffMs: 0 },
+    budget: {},
+    validationMethod: ['a repaired file set was produced', 'revalidation decides the outcome'],
+    evidenceRequirements: [...ENGINEERING_ROLES.repair.completionEvidence],
+    fallbackRoutes: [],
+    status: 'ready',
+    attempts: 0,
+    evidence: [],
+  };
+}
+
+/**
+ * The review task node.
+ *
+ * Reads the diff and never edits it — the `independent_review` role holds no mutation tool,
+ * and a reviewer that can rewrite the code it reviews is not independent of it.
+ *
+ * Depends on validation rather than on repair, because review must read the file set that
+ * actually passed. Reviewing a set that was subsequently repaired would review code the run
+ * is not going to publish.
+ */
+export function reviewTaskNode(input: {
+  objective: string;
+  selectedModel: ModelId | null;
+  provider: string | null;
+  timeoutMs?: number;
+}): ExecutableTaskNode {
+  if (input.selectedModel) assertCodingModel(input.selectedModel, 'universal review task');
+  return {
+    id: REVIEW_TASK_ID,
+    objective: input.objective,
+    operationType: 'code_review',
+    requiredCapabilities: ['review'],
+    selectedRuntime: input.selectedModel ? 'model_provider' : null,
+    selectedProvider: input.provider,
+    selectedModel: input.selectedModel,
+    requiredContextReferences: ['complete generated diff', 'product specification', 'validation results'],
+    allowedFiles: [],
+    expectedOutputSchema: { description: 'structured review findings' },
+    dependencies: [VALIDATION_TASK_ID],
+    riskLevel: 'high',
+    timeoutMs: input.timeoutMs ?? 300_000,
+    retryPolicy: { maximumAttempts: 2, initialBackoffMs: 500, maximumBackoffMs: 4_000 },
+    budget: {},
+    validationMethod: ['review completed', 'no unresolved blocking finding'],
+    evidenceRequirements: [...ENGINEERING_ROLES.independent_review.completionEvidence],
+    fallbackRoutes: [],
+    status: 'ready',
+    attempts: 0,
+    evidence: [],
+  };
+}
+
+/**
+ * The publish task node.
+ *
+ * Deterministic: `github_publishing`'s provider category is `none`, so no model participates
+ * in the write. §13 allows a model to prepare prose and requires deterministic tools to
+ * perform the mutation, and the node carrying no model is how that is enforced rather than
+ * described.
+ *
+ * Depends on review, which depends on validation, so the graph itself states the rule that
+ * nothing is published before it has been validated and reviewed.
+ */
+export function publishTaskNode(input: {
+  objective: string;
+  repository: string | null;
+  baseBranch: string;
+  startingCommitSha: string | null;
+  timeoutMs?: number;
+}): ExecutableTaskNode {
+  return {
+    id: PUBLISH_TASK_ID,
+    objective: input.objective,
+    operationType: 'github_publishing',
+    requiredCapabilities: ['repository_mutation'],
+    selectedRuntime: 'github_atomic_writer',
+    selectedProvider: null,
+    selectedModel: null,
+    requiredContextReferences: [
+      `repository ${input.repository ?? 'unresolved'}`,
+      `base branch ${input.baseBranch}`,
+      `starting sha ${input.startingCommitSha ?? 'unresolved'}`,
+      'verified mutation set',
+    ],
+    allowedFiles: [],
+    expectedOutputSchema: { description: 'the resulting commit sha' },
+    dependencies: [REVIEW_TASK_ID],
+    riskLevel: 'critical',
+    timeoutMs: input.timeoutMs ?? 300_000,
+    // A publish that failed must never be retried blindly: the first attempt may have moved
+    // the ref, and a second would either duplicate the commit or write over it.
+    retryPolicy: { maximumAttempts: 1, initialBackoffMs: 0, maximumBackoffMs: 0 },
+    budget: {},
+    validationMethod: ['a commit sha was returned'],
+    evidenceRequirements: [...ENGINEERING_ROLES.github_publishing.completionEvidence],
+    fallbackRoutes: [],
+    status: 'ready',
+    attempts: 0,
+    evidence: [],
+  };
+}
+
+export type RepairFn = () => Promise<readonly ProjectFile[] | null>;
+export type ReviewFn = () => Promise<{ approved: boolean; findings: readonly string[] }>;
+export type PublishFn = () => Promise<{ commitSha: string }>;
+
 export interface CanonicalImplementationResult {
   readonly files: readonly ProjectFile[];
   readonly task: ExecutableTaskNode;
@@ -407,6 +663,159 @@ export async function runImplementationAsCanonicalTask(input: {
 
   const output = executed.output as { files?: readonly ProjectFile[] } | undefined;
   return { files: output?.files ?? [], task: executed, state: finished };
+}
+
+/**
+ * Runs one already-constructed task on an existing run state.
+ *
+ * The shared path behind repair, review and publish. Each of those differs only in the node
+ * it contributes and the handler that performs it, so a per-phase runner would be three
+ * copies of the same scheduler wiring — and the copies would drift on exactly the details
+ * that matter, like which stub is supplied for the phases that already completed.
+ *
+ * Completed tasks are not re-run by the scheduler, and every phase not being executed here
+ * is given a throwing stub so an accidental re-execution is loud rather than silently
+ * producing a second file set or a second commit.
+ */
+async function runTaskOnState(input: {
+  state: CanonicalExecutionState;
+  node: ExecutableTaskNode;
+  handlers: Omit<Parameters<typeof universalTaskHandlers>[0], 'implement'>;
+  store?: ExecutionStateStore;
+  signal?: AbortSignal;
+}): Promise<ExecutableTaskNode> {
+  input.state.tasks = [...input.state.tasks.filter((task) => task.id !== input.node.id), input.node];
+
+  const finished = await new ExecutionScheduler(input.store ?? new InMemoryExecutionStateStore()).run(
+    input.state,
+    universalTaskHandlers({
+      ...input.handlers,
+      implement: async () => {
+        throw new Error('implementation already completed for this run');
+      },
+    }),
+    input.signal,
+  );
+
+  return finished.tasks.find((task) => task.id === input.node.id)!;
+}
+
+/**
+ * Runs bounded repair as a canonical task.
+ *
+ * Returns the repaired file set, or null when repair produced nothing. Null is an ordinary
+ * outcome — the phase machine then reports the original validation failure — so it is not
+ * an error, and the task records `failed` to keep the canonical record honest about it.
+ */
+export async function runRepairAsCanonicalTask(input: {
+  state: CanonicalExecutionState;
+  objective: string;
+  selectedModel: ModelId | null;
+  provider: string | null;
+  failureCount: number;
+  repair: RepairFn;
+  store?: ExecutionStateStore;
+  signal?: AbortSignal;
+}): Promise<{ files: readonly ProjectFile[] | null; task: ExecutableTaskNode }> {
+  const node = repairTaskNode({
+    objective: input.objective,
+    selectedModel: input.selectedModel,
+    provider: input.provider,
+    failureCount: input.failureCount,
+  });
+  // Repair depends on validation, which has already run and failed. A `failed` dependency
+  // would make the scheduler block this task, so the dependency is dropped for execution
+  // while the node still records what it followed.
+  const executed = await runTaskOnState({
+    state: input.state,
+    node: { ...node, dependencies: [] },
+    handlers: { repair: input.repair },
+    store: input.store,
+    signal: input.signal,
+  });
+
+  const output = executed.output as { files?: readonly ProjectFile[]; repaired?: boolean } | undefined;
+  return { files: output?.repaired ? (output.files ?? null) : null, task: executed };
+}
+
+/** Runs independent review as a canonical task. */
+export async function runReviewAsCanonicalTask(input: {
+  state: CanonicalExecutionState;
+  objective: string;
+  selectedModel: ModelId | null;
+  provider: string | null;
+  review: ReviewFn;
+  store?: ExecutionStateStore;
+  signal?: AbortSignal;
+}): Promise<{ approved: boolean; findings: readonly string[]; task: ExecutableTaskNode }> {
+  const node = reviewTaskNode({
+    objective: input.objective,
+    selectedModel: input.selectedModel,
+    provider: input.provider,
+  });
+  const executed = await runTaskOnState({
+    state: input.state,
+    node: { ...node, dependencies: [] },
+    handlers: { review: input.review },
+    store: input.store,
+    signal: input.signal,
+  });
+
+  const output = executed.output as { approved?: boolean; findings?: readonly string[] } | undefined;
+  if (output === undefined) {
+    // The reviewer did not complete at all. §46 requires that to be a rejection, not an
+    // approval by default.
+    return {
+      approved: false,
+      findings: [executed.blocker ?? 'the review task did not complete'],
+      task: executed,
+    };
+  }
+  return { approved: Boolean(output.approved), findings: output.findings ?? [], task: executed };
+}
+
+/**
+ * Runs publication as a canonical task.
+ *
+ * Throws when no commit was produced. Unlike validation and review, there is no downstream
+ * step that would notice a missing commit, so a silent null here would end the run reporting
+ * success with nothing written — the exact fabricated-commit outcome the command forbids.
+ */
+export async function runPublishAsCanonicalTask(input: {
+  state: CanonicalExecutionState;
+  objective: string;
+  repository: string | null;
+  baseBranch: string;
+  startingCommitSha: string | null;
+  publish: PublishFn;
+  store?: ExecutionStateStore;
+  signal?: AbortSignal;
+}): Promise<{ commitSha: string; task: ExecutableTaskNode }> {
+  const node = publishTaskNode({
+    objective: input.objective,
+    repository: input.repository,
+    baseBranch: input.baseBranch,
+    startingCommitSha: input.startingCommitSha,
+  });
+  const executed = await runTaskOnState({
+    state: input.state,
+    node: { ...node, dependencies: [] },
+    handlers: { publish: input.publish },
+    store: input.store,
+    signal: input.signal,
+  });
+
+  const output = executed.output as { commitSha?: string } | undefined;
+  if (executed.status !== 'completed' || !output?.commitSha) {
+    const detail = executed.evidence.at(-1)?.summary;
+    const blocker = executed.blocker ?? `publish task ended ${executed.status}`;
+    throw new CanonicalTaskFailure(
+      detail ? `${blocker} — ${detail}` : blocker,
+      executed.id,
+      executed.status,
+    );
+  }
+  return { commitSha: output.commitSha, task: executed };
 }
 
 export interface CanonicalValidationResult {

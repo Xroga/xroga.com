@@ -6,7 +6,13 @@ import {
   assessGeneratedFiles,
   implementationTaskNode,
   runImplementationAsCanonicalTask,
+  runPublishAsCanonicalTask,
+  runRepairAsCanonicalTask,
+  runReviewAsCanonicalTask,
   runValidationAsCanonicalTask,
+  publishTaskNode,
+  repairTaskNode,
+  reviewTaskNode,
   universalTaskHandlers,
   validationTaskNode,
   VALIDATION_TASK_ID,
@@ -362,4 +368,180 @@ test('bounded output keeps canonical state from carrying whole build logs', asyn
     validate: async () => report({ executed: [huge] as never }),
   });
   assert.ok(result.records[0]!.safeOutputSummary.length <= 2_000);
+});
+
+// ── Repair, review and publish as canonical tasks ───────────────────────────────
+
+test('repair rewrites files but does not decide its own success', async () => {
+  // §9: a repair is not successful because a model says it is fixed. This task completing
+  // means a usable file set came back; revalidation is what decides whether the failure was
+  // actually repaired.
+  const state = await stateAfterImplementation();
+  const repaired = [{ path: 'src/main.rs', content: 'fn main() { println!("fixed"); }\n' }];
+  const result = await runRepairAsCanonicalTask({
+    state,
+    objective: 'Repair 1 failure',
+    selectedModel: 'kimi_k3',
+    provider: 'moonshot',
+    failureCount: 1,
+    repair: async () => repaired,
+  });
+
+  assert.deepEqual(result.files, repaired);
+  assert.equal(result.task.status, 'completed');
+  assert.equal(state.repairHistory.length, 1);
+  assert.deepEqual(state.repairHistory[0]!.files, ['src/main.rs']);
+});
+
+test('a repair that produced nothing is recorded, not treated as success', async () => {
+  const state = await stateAfterImplementation();
+  const result = await runRepairAsCanonicalTask({
+    state,
+    objective: 'Repair 1 failure',
+    selectedModel: 'kimi_k3',
+    provider: 'moonshot',
+    failureCount: 1,
+    repair: async () => null,
+  });
+
+  assert.equal(result.files, null);
+  assert.equal(result.task.status, 'failed');
+  assert.equal(state.repairHistory.length, 0);
+});
+
+test('repair is never retried automatically', async () => {
+  // A second automatic attempt produces a second repaired file set with nothing able to say
+  // which one revalidation then saw.
+  const node = repairTaskNode({
+    objective: 'r',
+    selectedModel: 'kimi_k3',
+    provider: 'moonshot',
+    failureCount: 1,
+  });
+  assert.equal(node.retryPolicy.maximumAttempts, 1);
+});
+
+test('a research model cannot be routed to repair or review', () => {
+  assert.throws(
+    () => repairTaskNode({ objective: 'r', selectedModel: 'grok_4_5' as never, provider: 'xai', failureCount: 1 }),
+    (error: unknown) => error instanceof ProviderPolicyError,
+  );
+  assert.throws(
+    () => reviewTaskNode({ objective: 'r', selectedModel: 'grok_4_3' as never, provider: 'xai' }),
+    (error: unknown) => error instanceof ProviderPolicyError,
+  );
+});
+
+test('the reviewer holds no mutation tool', () => {
+  // A reviewer that can rewrite the code it reviews is not independent of it.
+  const node = reviewTaskNode({ objective: 'r', selectedModel: 'deepseek_v4_pro', provider: 'openrouter' });
+  assert.deepEqual(node.allowedFiles, []);
+  assert.equal(node.operationType, 'code_review');
+});
+
+test('a blocking review fails the task and records the findings', async () => {
+  const state = await stateAfterImplementation();
+  const result = await runReviewAsCanonicalTask({
+    state,
+    objective: 'Review',
+    selectedModel: 'deepseek_v4_pro',
+    provider: 'openrouter',
+    review: async () => ({ approved: false, findings: ['unauthenticated admin route'] }),
+  });
+
+  assert.equal(result.approved, false);
+  assert.equal(result.task.status, 'failed');
+  assert.equal(state.reviewFindings.length, 1);
+  assert.match(state.reviewFindings[0]!.title, /unauthenticated admin route/);
+});
+
+test('a reviewer that does not complete is a rejection, not an approval', async () => {
+  // §46. The default must never be approval.
+  const state = await stateAfterImplementation();
+  const result = await runReviewAsCanonicalTask({
+    state,
+    objective: 'Review',
+    selectedModel: 'deepseek_v4_pro',
+    provider: 'openrouter',
+    review: async () => {
+      throw new Error('reviewer timed out');
+    },
+  });
+
+  assert.equal(result.approved, false);
+  assert.ok(result.findings.length > 0, 'a rejection must say why');
+});
+
+test('publish carries no model', () => {
+  // §13: a model may prepare prose; deterministic tools perform the mutation.
+  const node = publishTaskNode({
+    objective: 'Publish',
+    repository: 'xroga/demo',
+    baseBranch: 'main',
+    startingCommitSha: 'abc123',
+  });
+  assert.equal(node.selectedModel, null);
+  assert.equal(node.selectedProvider, null);
+  assert.equal(node.selectedRuntime, 'github_atomic_writer');
+  assert.equal(node.retryPolicy.maximumAttempts, 1);
+});
+
+test('publish records the resulting commit sha as evidence', async () => {
+  const state = await stateAfterImplementation();
+  const result = await runPublishAsCanonicalTask({
+    state,
+    objective: 'Publish',
+    repository: 'xroga/demo',
+    baseBranch: 'main',
+    startingCommitSha: 'abc123',
+    publish: async () => ({ commitSha: 'deadbeef' }),
+  });
+
+  assert.equal(result.commitSha, 'deadbeef');
+  assert.equal(result.task.status, 'completed');
+  assert.match(result.task.evidence[0]!.summary, /deadbeef/);
+});
+
+test('a publish that returns no sha fails rather than completing the run', async () => {
+  // Recording a commit that does not exist is the fabricated-commit failure the command
+  // forbids by name. There is no downstream step that would notice, so this must throw.
+  const state = await stateAfterImplementation();
+  await assert.rejects(
+    runPublishAsCanonicalTask({
+      state,
+      objective: 'Publish',
+      repository: 'xroga/demo',
+      baseBranch: 'main',
+      startingCommitSha: 'abc123',
+      publish: async () => ({ commitSha: '' }),
+    }),
+    (error: unknown) => error instanceof CanonicalTaskFailure,
+  );
+});
+
+test('the publish node states the exact base it was cut from', async () => {
+  // A stale or moved base must be diagnosable from the record alone.
+  const node = publishTaskNode({
+    objective: 'Publish',
+    repository: 'xroga/demo',
+    baseBranch: 'release',
+    startingCommitSha: 'abc123',
+  });
+  assert.ok(node.requiredContextReferences.includes('base branch release'));
+  assert.ok(node.requiredContextReferences.includes('starting sha abc123'));
+  assert.equal(node.riskLevel, 'critical');
+});
+
+test('the handler map still covers only migrated phases', () => {
+  const handlers = universalTaskHandlers({
+    implement: async () => FILES,
+    validate: async () => report(),
+    repair: async () => null,
+    review: async () => ({ approved: true, findings: [] }),
+    publish: async () => ({ commitSha: 'x' }),
+  });
+  assert.deepEqual(
+    Object.keys(handlers).sort(),
+    ['code_review', 'github_publishing', 'multi_file_implementation', 'validation', 'validation_repair'],
+  );
 });
