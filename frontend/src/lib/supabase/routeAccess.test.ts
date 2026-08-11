@@ -23,6 +23,8 @@ test('keeps public and authentication routes available', () => {
     '/manifest.webmanifest',
     '/api/session',
     '/api/release',
+    '/api/showcase/aura/chat',
+    '/api/showcase/aura/health',
   ]) {
     assert.equal(isPublicPath(path), true, path);
   }

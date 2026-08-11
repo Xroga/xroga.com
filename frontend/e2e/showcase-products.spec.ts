@@ -197,53 +197,41 @@ test('mobile app: tabs, search, saving and settings all work', async ({ page }) 
   await expect(toggle).toHaveAttribute('aria-checked', 'true');
 });
 
-test('ai saas: replies are labelled as scripted and never presented as model output', async ({ page }) => {
+test('ai saas: streams a real-provider response through the public server route', async ({ page }) => {
+  await page.route('**/api/showcase/aura/health', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: '{"configured":true,"provider":"Groq"}' }));
+  await page.route('**/api/showcase/aura/chat', (route) => route.fulfill({
+    status: 200,
+    contentType: 'text/event-stream',
+    body: 'data: {"choices":[{"delta":{"content":"A live streamed answer"}}]}\n\ndata: [DONE]\n\n',
+  }));
   await page.goto(preview('ai-saas-chatbot'));
-  // The product opens on its Overview section; the chat lives under Workspace.
-  await page.locator('.ld-sections').getByRole('button', { name: 'Workspace' }).click();
-
-  // The standing disclosure.
-  await expect(page.getByText(/no language model is connected and none is called/i)).toBeVisible();
-
-  await page.getByRole('button', { name: /summarise a customer interview/i }).click();
-
-  // Every assistant reply carries the label, and says so in its body too.
-  const tag = page.locator('.ld-msg-tag').first();
-  await expect(tag).toBeVisible();
-  await expect(tag).toHaveText(/scripted reply · no model called/i);
-  await expect(page.locator('.ld-msg--assistant .ld-msg-body').first()).toContainText(/no language model was called/i);
+  await expect(page.getByText('Groq live')).toBeVisible();
+  await page.getByLabel('Message Aura').fill('Explain this product in one sentence');
+  await page.getByRole('button', { name: 'Send message' }).click();
+  await expect(page.locator('.aura-message.assistant .aura-message-body')).toHaveText('A live streamed answer');
 });
 
-test('ai saas: history and the usage panel reflect real activity only', async ({ page }) => {
+test('ai saas: history, model selection, theme, and settings are interactive', async ({ page }) => {
+  await page.route('**/api/showcase/aura/health', (route) => route.fulfill({ status: 503, contentType: 'application/json', body: '{"configured":false,"provider":"Groq"}' }));
   await page.goto(preview('ai-saas-chatbot'));
-
-  // Usage starts at zero — nothing is pre-populated with invented figures.
-  await page.getByRole('button', { name: 'Usage' }).click();
-  await expect(page.locator('.ld-stat').first().locator('.ld-stat-value')).toHaveText('0');
-  await expect(page.getByText(/nothing recorded yet/i)).toBeVisible();
-
-  await page.locator('.ld-sections').getByRole('button', { name: 'Workspace' }).click();
-  await page.locator('.ld-composer textarea').fill('A message with exactly seven words here');
-  await page.getByRole('button', { name: 'Send' }).click();
-  await expect(page.locator('.ld-msg--assistant')).toHaveCount(1);
-
-  // The conversation is auto-titled from the first message.
-  await expect(page.locator('.ld-history-title').first()).toContainText('A message with exactly seven words');
-
-  await page.getByRole('button', { name: 'Usage' }).click();
-  await expect(page.locator('.ld-stat').first().locator('.ld-stat-value')).toHaveText('1');
-  await expect(page.locator('.ld-table tbody tr')).toHaveCount(1);
+  await expect(page.getByText('Demo offline')).toBeVisible();
+  await page.getByRole('button', { name: /Llama 3.3 70B/ }).click();
+  await page.getByRole('button', { name: /Llama 3.1 8B/ }).click();
+  await expect(page.getByRole('button', { name: /Llama 3.1 8B/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Toggle theme' }).click();
+  await expect(page.locator('.aura-root')).toHaveClass(/aura-light/);
+  await page.getByRole('button', { name: 'Open settings' }).click();
+  await expect(page.getByRole('heading', { name: 'AI settings' })).toBeVisible();
+  await page.getByLabel('Assistant style').selectOption('developer');
 });
 
-test('ai saas: the setup guide keeps the provider key server-side', async ({ page }) => {
+test('ai saas: clearly states the provider credential stays server-side', async ({ page }) => {
   await page.goto(preview('ai-saas-chatbot'));
-  // The Overview also offers a "Connect a model" button, so scope to the sidebar.
-  await page.locator('.ld-sections').getByRole('button', { name: /connect a model/i }).click();
-  const body = await page.locator('.ld-pane').innerText();
-  expect(body).toMatch(/server only, never NEXT_PUBLIC_/i);
-  expect(body).toMatch(/never reaches the browser/i);
-  // No actual key may appear anywhere in the template.
-  expect(body).not.toMatch(/sk-[a-z0-9]{16,}/i);
+  await page.getByRole('button', { name: 'Open settings' }).click();
+  const body = await page.locator('.aura-settings').innerText();
+  expect(body).toMatch(/server-side key protection/i);
+  expect(body).toMatch(/never sent to this browser/i);
+  expect(body).not.toMatch(/gsk_[a-z0-9]{16,}/i);
 });
 
 test('web game: the loop runs, scores, and persists a best score', async ({ page }) => {

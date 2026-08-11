@@ -1,710 +1,256 @@
 'use client';
 
-/**
- * Showcase product: AI SaaS shell with a chat workspace.
- *
- * HONESTY CONSTRAINT — the single most important thing about this file.
- *
- * No model is called here, and nothing pretends one is. Assistant replies are
- * produced by a small local composer that echoes the structure of the user's own
- * message, and every one of them is labelled "Scripted reply · no model called".
- * A persistent banner states the same thing. The template ships the place where a
- * provider key would go; it does not ship a key, and it never fabricates model
- * output.
- *
- * The usage panel is likewise real: every figure is counted from what actually
- * happened in this browser session. Nothing there is invented.
- */
-
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { productReset } from './shared';
 
-const BRAND = {
-  name: 'Loomdesk',
-  ink: '#0d1117',
-  panel: '#141a23',
-  panelHi: '#1b232f',
-  border: '#26303d',
-  muted: '#8b98ab',
-  text: '#e8edf4',
-  accent: '#f59e0b',
-  accentDeep: '#b45309',
-} as const;
+type Role = 'user' | 'assistant';
+type Theme = 'dark' | 'light';
+type Persona = 'balanced' | 'concise' | 'creative' | 'developer';
+type Model = 'llama-3.3-70b-versatile' | 'llama-3.1-8b-instant' | 'openai/gpt-oss-120b' | 'openai/gpt-oss-20b';
 
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  body: string;
-  at: number;
-}
+interface Message { id: string; role: Role; content: string; time: string }
+interface Conversation { id: string; title: string; messages: Message[]; updatedAt: number }
 
-interface Conversation {
-  id: string;
-  title: string;
-  messages: Message[];
-}
-
-const SECTIONS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'chat', label: 'Workspace' },
-  { id: 'usage', label: 'Usage' },
-  { id: 'setup', label: 'Connect a model' },
-] as const;
-
-type SectionId = (typeof SECTIONS)[number]['id'];
-
-const STARTERS = [
-  'Summarise a customer interview',
-  'Draft a release note',
-  'Turn these bullets into an email',
-  'Explain this error to a teammate',
+const MODELS: Array<{ id: Model; name: string; note: string }> = [
+  { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', note: 'Balanced · high quality' },
+  { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', note: 'Ultra-fast · lightweight' },
+  { id: 'openai/gpt-oss-120b', name: 'GPT-OSS 120B', note: 'Deep reasoning · code' },
+  { id: 'openai/gpt-oss-20b', name: 'GPT-OSS 20B', note: 'Fast reasoning · code' },
 ];
 
-function makeId() {
-  return Math.random().toString(36).slice(2, 10);
-}
+const PROMPTS = [
+  { title: 'Plan a launch', note: 'Strategy, positioning & execution', prompt: 'Design a launch strategy for a premium AI SaaS product. Give me positioning, audience, offer, and a 30-day action plan.' },
+  { title: 'Audit a product', note: 'Find UX gaps and opportunities', prompt: 'Act as a senior product designer. Review a modern AI chat product and give me a concise UX audit with the 8 highest-impact improvements.' },
+  { title: 'Build something', note: 'Product, code & architecture', prompt: 'Build me a clean, production-ready landing page structure for an AI startup. Include the exact sections, conversion copy angles, and CTA strategy.' },
+  { title: 'Shape an idea', note: 'From rough thought to clear brief', prompt: 'Turn this rough idea into a sharp one-page business concept: an AI assistant that helps small agencies automate client reporting, insights, and next-step recommendations.' },
+];
 
-/**
- * Composes a reply from the user's own message.
- *
- * This is deliberately transparent rather than impressive: it reflects the input
- * back as a structure, so nobody could mistake it for a language model's output.
- * It is the seam where a real provider call would go.
- */
-function composeScriptedReply(input: string): string {
-  const trimmed = input.trim();
-  const words = trimmed.split(/\s+/).filter(Boolean);
-  const sentences = trimmed.split(/(?<=[.!?])\s+/).filter((part) => part.trim().length > 0);
-  const isQuestion = /\?\s*$/.test(trimmed);
-
-  const lines = [
-    `This is a scripted reply from the template — no language model was called.`,
-    '',
-    `What you sent: ${words.length} ${words.length === 1 ? 'word' : 'words'}${
-      sentences.length > 1 ? ` across ${sentences.length} sentences` : ''
-    }${isQuestion ? ', phrased as a question' : ''}.`,
-  ];
-
-  if (sentences.length > 1) {
-    lines.push('', 'Your message broken into parts:');
-    sentences.slice(0, 4).forEach((sentence, index) => {
-      lines.push(`${index + 1}. ${sentence.trim()}`);
-    });
-  }
-
-  lines.push(
-    '',
-    'Once you connect a provider key on the "Connect a model" tab, this same panel streams a real response instead. The interface, history, and usage tracking around it already work.',
-  );
-
-  return lines.join('\n');
-}
+function id() { return Math.random().toString(36).slice(2, 10); }
+function clock() { return new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date()); }
 
 export function AiSaas() {
-  const uid = useId();
-  const [section, setSection] = useState<SectionId>('overview');
-  const [lastError, setLastError] = useState<string | null>(null);
-  const [conversations, setConversations] = useState<Conversation[]>([
-    { id: 'c-1', title: 'New conversation', messages: [] },
-  ]);
-  const [activeId, setActiveId] = useState('c-1');
+  const [theme, setTheme] = useState<Theme>('dark');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [modelOpen, setModelOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [configured, setConfigured] = useState<boolean | null>(null);
+  const [model, setModel] = useState<Model>('llama-3.3-70b-versatile');
+  const [persona, setPersona] = useState<Persona>('balanced');
+  const [temperature, setTemperature] = useState(0.7);
+  const [maxTokens, setMaxTokens] = useState(1400);
   const [draft, setDraft] = useState('');
-  const [thinking, setThinking] = useState(false);
-  const [navOpen, setNavOpen] = useState(false);
-  const logRef = useRef<HTMLDivElement | null>(null);
-  const timerRef = useRef<number | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [conversations, setConversations] = useState<Conversation[]>([
+    { id: 'welcome', title: 'New conversation', messages: [], updatedAt: Date.now() },
+  ]);
+  const [activeId, setActiveId] = useState('welcome');
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const controllerRef = useRef<AbortController | null>(null);
 
-  const active = conversations.find((item) => item.id === activeId) ?? conversations[0];
+  const active = conversations.find((chat) => chat.id === activeId) ?? conversations[0];
+  const modelInfo = MODELS.find((item) => item.id === model) ?? MODELS[0];
+  const messageCount = conversations.reduce((sum, chat) => sum + chat.messages.length, 0);
 
   useEffect(() => {
-    return () => {
-      if (timerRef.current) window.clearTimeout(timerRef.current);
-    };
+    fetch('/api/showcase/aura/health', { cache: 'no-store' })
+      .then((response) => response.json())
+      .then((data: { configured?: boolean }) => setConfigured(Boolean(data.configured)))
+      .catch(() => setConfigured(false));
+    return () => controllerRef.current?.abort();
   }, []);
 
-  // Keep the newest message in view as the conversation grows.
   useEffect(() => {
-    const log = logRef.current;
-    if (log) log.scrollTop = log.scrollHeight;
-  }, [active?.messages.length, thinking]);
+    const node = scrollRef.current;
+    if (node) node.scrollTo({ top: node.scrollHeight, behavior: 'smooth' });
+  }, [active?.messages, generating]);
 
-  function send(text: string) {
-    const body = text.trim();
-    if (!body || thinking) return;
+  function updateConversation(chatId: string, updater: (chat: Conversation) => Conversation) {
+    setConversations((items) => items.map((chat) => (chat.id === chatId ? updater(chat) : chat)));
+  }
 
-    const userMessage: Message = { id: makeId(), role: 'user', body, at: Date.now() };
-    setConversations((prev) =>
-      prev.map((conversation) =>
-        conversation.id === activeId
-          ? {
-              ...conversation,
-              // Name the conversation from its first message, as a real one would.
-              title:
-                conversation.messages.length === 0
-                  ? body.slice(0, 42) + (body.length > 42 ? '…' : '')
-                  : conversation.title,
-              messages: [...conversation.messages, userMessage],
-            }
-          : conversation,
-      ),
-    );
+  function newChat() {
+    const chat: Conversation = { id: id(), title: 'New conversation', messages: [], updatedAt: Date.now() };
+    setConversations((items) => [chat, ...items]);
+    setActiveId(chat.id);
+    setError(null);
+    setMobileOpen(false);
+  }
+
+  async function sendMessage(value = draft) {
+    const content = value.trim();
+    if (!content || generating) return;
+    const chatId = activeId;
+    const user: Message = { id: id(), role: 'user', content, time: clock() };
+    const assistantId = id();
+    const history = [...active.messages, user].map(({ role, content: body }) => ({ role, content: body }));
+    updateConversation(chatId, (chat) => ({
+      ...chat,
+      title: chat.messages.length ? chat.title : content.slice(0, 38) + (content.length > 38 ? '…' : ''),
+      updatedAt: Date.now(),
+      messages: [...chat.messages, user, { id: assistantId, role: 'assistant', content: '', time: clock() }],
+    }));
     setDraft('');
-    setThinking(true);
-    setLastError(null);
+    setError(null);
+    setGenerating(true);
+    const controller = new AbortController();
+    controllerRef.current = controller;
 
-    timerRef.current = window.setTimeout(() => {
-      const reply: Message = { id: makeId(), role: 'assistant', body: composeScriptedReply(body), at: Date.now() };
-      setConversations((prev) =>
-        prev.map((conversation) =>
-          conversation.id === activeId ? { ...conversation, messages: [...conversation.messages, reply] } : conversation,
-        ),
-      );
-      setThinking(false);
-    }, 520);
+    try {
+      const response = await fetch('/api/showcase/aura/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history, model, persona, temperature, maxTokens }),
+        signal: controller.signal,
+      });
+      if (!response.ok || !response.body) {
+        const payload = await response.json().catch(() => ({})) as { error?: string };
+        throw new Error(payload.error || 'Aura could not complete that request.');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let full = '';
+      while (true) {
+        const { value: chunk, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(chunk, { stream: true });
+        const events = buffer.split('\n\n');
+        buffer = events.pop() ?? '';
+        for (const event of events) {
+          for (const line of event.split('\n')) {
+            if (!line.startsWith('data:')) continue;
+            const raw = line.slice(5).trim();
+            if (!raw || raw === '[DONE]') continue;
+            try {
+              const data = JSON.parse(raw) as { choices?: Array<{ delta?: { content?: string } }> };
+              const delta = data.choices?.[0]?.delta?.content ?? '';
+              if (!delta) continue;
+              full += delta;
+              updateConversation(chatId, (chat) => ({
+                ...chat,
+                messages: chat.messages.map((message) => message.id === assistantId ? { ...message, content: full } : message),
+              }));
+            } catch { /* ignore upstream keep-alive events */ }
+          }
+        }
+      }
+      if (!full) throw new Error('Aura returned an empty response. Please try again.');
+    } catch (reason) {
+      if (!(reason instanceof DOMException && reason.name === 'AbortError')) {
+        const message = reason instanceof Error ? reason.message : 'Aura could not complete that request.';
+        setError(message);
+        updateConversation(chatId, (chat) => ({ ...chat, messages: chat.messages.filter((item) => item.id !== assistantId) }));
+      }
+    } finally {
+      setGenerating(false);
+      controllerRef.current = null;
+    }
   }
 
-  function newConversation() {
-    const id = `c-${makeId()}`;
-    setConversations((prev) => [{ id, title: 'New conversation', messages: [] }, ...prev]);
-    setActiveId(id);
-    setSection('chat');
-    setNavOpen(false);
-  }
-
-  /** Every figure counted from real session activity — nothing invented. */
-  const usage = useMemo(() => {
-    const all = conversations.flatMap((conversation) => conversation.messages);
-    const sent = all.filter((message) => message.role === 'user');
-    const received = all.filter((message) => message.role === 'assistant');
-    const characters = sent.reduce((total, message) => total + message.body.length, 0);
-    const words = sent.reduce((total, message) => total + message.body.split(/\s+/).filter(Boolean).length, 0);
-    const started = conversations.filter((conversation) => conversation.messages.length > 0).length;
-    return {
-      sent: sent.length,
-      received: received.length,
-      characters,
-      words,
-      started,
-      longest: sent.reduce((max, message) => Math.max(max, message.body.length), 0),
-    };
-  }, [conversations]);
+  const relativeHistory = useMemo(() => conversations.map((chat) => ({ ...chat, when: chat.messages.length ? 'Just now' : 'Empty' })), [conversations]);
 
   return (
-    <div className="ld-root">
+    <div className={`aura-root aura-${theme}${sidebarOpen ? '' : ' aura-collapsed'}`}>
       <style>{CSS}</style>
-
-      <div className="ld-shell">
-        {/* ------------------------------------------------------ sidebar */}
-        <aside className={`ld-side${navOpen ? ' ld-side--open' : ''}`}>
-          <div className="ld-side-top">
-            <span className="ld-brand">
-              <span className="ld-brand-mark" aria-hidden>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M4 5h7v14H4zM13 5h7v6h-7zM13 13h7v6h-7z" />
-                </svg>
-              </span>
-              {BRAND.name}
-            </span>
-            <button type="button" className="ld-side-close" onClick={() => setNavOpen(false)} aria-label="Close navigation">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
-                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              </svg>
+      <div className="aura-ambient aura-ambient-a" /><div className="aura-ambient aura-ambient-b" />
+      <div className="aura-shell">
+        <aside className={`aura-sidebar${mobileOpen ? ' aura-mobile-open' : ''}`} aria-label="Conversation navigation">
+          <div className="aura-brand-row">
+            <button className="aura-brand" type="button" onClick={newChat} aria-label="Aura home">
+              <span className="aura-brand-mark"><i /></span>
+              <span><strong>Aura</strong><small>by Xroga AI</small></span>
             </button>
+            <button className="aura-icon aura-collapse" type="button" onClick={() => setSidebarOpen((open) => !open)} aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}>‹</button>
           </div>
-
-          <button type="button" className="ld-new" onClick={newConversation}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-            New conversation
-          </button>
-
-          <nav className="ld-sections" aria-label="Sections">
-            {SECTIONS.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={`ld-section${section === item.id ? ' ld-section--on' : ''}`}
-                aria-current={section === item.id ? 'page' : undefined}
-                onClick={() => {
-                  setSection(item.id);
-                  setNavOpen(false);
-                }}
-              >
-                {item.label}
-              </button>
-            ))}
-          </nav>
-
-          <p className="ld-side-label">History</p>
-          <ul className="ld-history">
-            {conversations.map((conversation) => (
-              <li key={conversation.id}>
-                <button
-                  type="button"
-                  className={`ld-history-item${conversation.id === activeId && section === 'chat' ? ' ld-history-item--on' : ''}`}
-                  onClick={() => {
-                    setActiveId(conversation.id);
-                    setSection('chat');
-                    setNavOpen(false);
-                  }}
-                >
-                  <span className="ld-history-title">{conversation.title}</span>
-                  <span className="ld-history-count">{conversation.messages.length}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          <div className="ld-plan">
-            <p className="ld-plan-name">Template workspace</p>
-            <p className="ld-plan-note">No account or subscription exists in this demonstration.</p>
+          <button className="aura-new" type="button" onClick={newChat}><span>＋</span><b>New chat</b><kbd>⌘ K</kbd></button>
+          <section className="aura-history-section">
+            <div className="aura-section-label"><span>Recent</span><button type="button" onClick={() => { setConversations([{ id: 'welcome', title: 'New conversation', messages: [], updatedAt: Date.now() }]); setActiveId('welcome'); }}>Clear</button></div>
+            <div className="aura-history">
+              {relativeHistory.map((chat) => <button key={chat.id} type="button" className={`aura-history-item${chat.id === activeId ? ' active' : ''}`} onClick={() => { setActiveId(chat.id); setMobileOpen(false); }}><span>◫</span><span><strong>{chat.title}</strong><small>{chat.when}</small></span></button>)}
+            </div>
+          </section>
+          <div className="aura-side-bottom">
+            <div className="aura-usage"><span><b>Local session</b><b>{messageCount} msgs</b></span><i><b style={{ width: `${Math.min(100, Math.max(7, messageCount * 7))}%` }} /></i><small>History stays in this preview session</small></div>
+            <button className="aura-profile" type="button" onClick={() => setSettingsOpen(true)}><span>XA</span><span><strong>Powered by Xroga AI</strong><small>Groq API · Test template</small></span><b>•••</b></button>
           </div>
         </aside>
 
-        {/* --------------------------------------------------------- main */}
-        <div className="ld-main">
-          <header className="ld-topbar">
-            <button type="button" className="ld-menu" onClick={() => setNavOpen(true)} aria-label="Open navigation">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
-                <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              </svg>
-            </button>
-            <h1 className="ld-topbar-title">
-              {section === 'chat' ? active?.title ?? 'Workspace' : section === 'usage' ? 'Usage' : 'Connect a model'}
-            </h1>
+        <main className="aura-main">
+          <header className="aura-topbar">
+            <div className="aura-top-left">
+              <button className="aura-icon aura-mobile-menu" type="button" onClick={() => setMobileOpen(true)} aria-label="Open menu">☰</button>
+              <button className="aura-model-pill" type="button" onClick={() => setModelOpen((open) => !open)} aria-expanded={modelOpen}><span /><span><small>Model</small><strong>{modelInfo.name}</strong></span><b>⌄</b></button>
+              {modelOpen && <div className="aura-model-menu"><header>Choose model <span>Groq</span></header>{MODELS.map((item) => <button key={item.id} type="button" onClick={() => { setModel(item.id); setModelOpen(false); }}><i /><span><strong>{item.name}</strong><small>{item.note}</small></span>{item.id === model && <b>Active</b>}</button>)}</div>}
+            </div>
+            <div className="aura-actions">
+              <span className={`aura-status ${configured ? 'online' : configured === false ? 'offline' : ''}`}><i />{configured ? 'Groq live' : configured === false ? 'Demo offline' : 'Checking Groq'}</span>
+              <button className="aura-icon" type="button" onClick={() => setTheme((value) => value === 'dark' ? 'light' : 'dark')} aria-label="Toggle theme">{theme === 'dark' ? '☼' : '☾'}</button>
+              <button className="aura-icon" type="button" onClick={() => setSettingsOpen(true)} aria-label="Open settings">⚙</button>
+            </div>
           </header>
 
-          <div className="ld-demo-banner" role="note">
-            <span className="ld-demo-dot" aria-hidden />
-            <span>
-              <strong>Demo mode.</strong> No language model is connected and none is called. Replies below are composed
-              locally by the template and are labelled as such.
-            </span>
+          <div className="aura-scroll" ref={scrollRef}>
+            {!active.messages.length ? <section className="aura-welcome">
+              <div className="aura-spark"><span /><i /><b /></div>
+              <p className="aura-eyebrow"><span /> XROGA AI · GROQ API SHOWCASE</p>
+              <h1>Meet Aura. <em>Think clearly.<br />Build beautifully.</em></h1>
+              <p>A focused AI workspace for strategy, writing, product thinking, and code—powered by fast Groq inference through a private server route.</p>
+              <div className="aura-providers"><span><i />Powered by <strong>Xroga AI</strong></span><span><i />AI inference via <strong>Groq API</strong></span><span>LIVE TEST TEMPLATE</span></div>
+              <div className="aura-prompts">{PROMPTS.map((item, index) => <button key={item.title} type="button" onClick={() => sendMessage(item.prompt)}><span>{['↗','◇','⌘','✦'][index]}</span><span><strong>{item.title}</strong><small>{item.note}</small></span><b>›</b></button>)}</div>
+              <div className="aura-trust"><span>● Private server-side API</span><span>Real Groq responses</span><span>Public test · rate limited</span><span>Enter to send</span></div>
+            </section> : <section className="aura-messages" aria-live="polite">
+              {active.messages.map((message) => <article key={message.id} className={`aura-message ${message.role}`}><div className="aura-avatar">{message.role === 'assistant' ? '✦' : 'You'}</div><div><header><strong>{message.role === 'assistant' ? 'Aura' : 'You'}</strong><span>{message.time}</span></header><div className="aura-message-body">{message.content || <span className="aura-typing"><i /><i /><i /></span>}</div>{message.content && <button type="button" className="aura-copy" onClick={() => navigator.clipboard.writeText(message.content)}>Copy</button>}</div></article>)}
+            </section>}
           </div>
 
-          {/* --------------------------------------------------- overview */}
-          {section === 'overview' && (
-            <div className="ld-pane">
-              <h2 className="ld-hero-title">A workspace for the writing your team keeps redoing</h2>
-              <p className="ld-pane-lede">
-                {BRAND.name} puts drafting, summarising and rewriting in one place, with the conversation history and usage
-                tracking already built. Bring your own model key and it is a working product.
-              </p>
-
-              <div className="ld-hero-ctas">
-                <button type="button" className="ld-send" onClick={() => setSection('chat')}>
-                  Open the workspace
-                </button>
-                <button type="button" className="ld-new" onClick={() => setSection('setup')}>
-                  Connect a model
-                </button>
-              </div>
-
-              <h3 className="ld-h2">What is already built</h3>
-              <div className="ld-features">
-                {[
-                  { title: 'Chat workspace', body: 'Composer with keyboard send, suggested prompts, and streaming-ready message rendering.' },
-                  { title: 'Conversation history', body: 'Multiple conversations, auto-titled from the first message, switchable from the sidebar.' },
-                  { title: 'Usage tracking', body: 'Counted from real activity in this session — no invented figures anywhere.' },
-                  { title: 'Provider seam', body: 'One clearly marked place to call your model, with the key held server-side.' },
-                ].map((feature) => (
-                  <div key={feature.title} className="ld-feature">
-                    <h4 className="ld-feature-title">{feature.title}</h4>
-                    <p className="ld-body">{feature.body}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Real session state, so this dashboard is never a fake summary. */}
-              <h3 className="ld-h2">This session</h3>
-              <div className="ld-stats">
-                {[
-                  { label: 'Conversations', value: conversations.length },
-                  { label: 'Messages sent', value: usage.sent },
-                  { label: 'Replies composed', value: usage.received },
-                ].map((stat) => (
-                  <div key={stat.label} className="ld-stat">
-                    <span className="ld-stat-label">{stat.label}</span>
-                    <span className="ld-stat-value">{stat.value}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="ld-body">
-                There is no account, subscription, or billing behind this template. Sign-in is left for you to wire up.
-              </p>
-            </div>
-          )}
-
-          {/* ------------------------------------------------------- chat */}
-          {section === 'chat' && (
-            <>
-              <div className="ld-log" ref={logRef}>
-                {active && active.messages.length === 0 && !thinking ? (
-                  <div className="ld-blank">
-                    <h2 className="ld-blank-title">Start a conversation</h2>
-                    <p className="ld-blank-body">
-                      The workspace, history, and usage tracking are all working. Send anything to see the flow.
-                    </p>
-                    <div className="ld-starters">
-                      {STARTERS.map((starter) => (
-                        <button key={starter} type="button" className="ld-starter" onClick={() => send(starter)}>
-                          {starter}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <ul className="ld-messages">
-                    {active?.messages.map((message) => (
-                      <li key={message.id} className={`ld-msg ld-msg--${message.role}`}>
-                        <span className="ld-msg-who">
-                          {message.role === 'user' ? 'You' : BRAND.name}
-                          {message.role === 'assistant' && <span className="ld-msg-tag">Scripted reply · no model called</span>}
-                        </span>
-                        <div className="ld-msg-body">{message.body}</div>
-                      </li>
-                    ))}
-                    {thinking && (
-                      <li className="ld-msg ld-msg--assistant" aria-live="polite">
-                        <span className="ld-msg-who">{BRAND.name}</span>
-                        <div className="ld-typing" aria-label="Composing a scripted reply">
-                          <span />
-                          <span />
-                          <span />
-                        </div>
-                      </li>
-                    )}
-                  </ul>
-                )}
-              </div>
-
-              {/* Error state with retry. Surfaced when a send cannot be composed —
-                  the same slot a failed provider call would report into. */}
-              {lastError && (
-                <div className="ld-error" role="alert">
-                  <span>{lastError}</span>
-                  <button type="button" className="ld-error-retry" onClick={() => setLastError(null)}>
-                    Dismiss
-                  </button>
-                </div>
-              )}
-
-              <form
-                className="ld-composer"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  // The send control is disabled while the draft is empty, so the
-                  // only failure a user can actually reach here is an over-long
-                  // message. Reporting one they cannot trigger would be dead code.
-                  const body = draft.trim();
-                  if (body.length > 4000) {
-                    setLastError('That message is longer than this template accepts (4000 characters).');
-                    return;
-                  }
-                  send(body);
-                }}
-              >
-                <label className="ld-sr" htmlFor={`${uid}-draft`}>
-                  Message
-                </label>
-                <textarea
-                  id={`${uid}-draft`}
-                  rows={1}
-                  value={draft}
-                  placeholder="Send a message…"
-                  onChange={(event) => setDraft(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' && !event.shiftKey) {
-                      event.preventDefault();
-                      send(draft);
-                    }
-                  }}
-                />
-                <button type="submit" className="ld-send" disabled={!draft.trim() || thinking}>
-                  {thinking ? 'Composing…' : 'Send'}
-                </button>
-              </form>
-            </>
-          )}
-
-          {/* ------------------------------------------------------ usage */}
-          {section === 'usage' && (
-            <div className="ld-pane">
-              <p className="ld-pane-lede">
-                Every figure below is counted from what actually happened in this browser session. Nothing is estimated
-                or invented, and there is no billing account behind it.
-              </p>
-
-              <div className="ld-stats">
-                {[
-                  { label: 'Messages you sent', value: usage.sent },
-                  { label: 'Replies composed', value: usage.received },
-                  { label: 'Conversations started', value: usage.started },
-                  { label: 'Words you typed', value: usage.words },
-                  { label: 'Characters you typed', value: usage.characters },
-                  { label: 'Longest message', value: `${usage.longest} chars` },
-                ].map((stat) => (
-                  <div key={stat.label} className="ld-stat">
-                    <span className="ld-stat-label">{stat.label}</span>
-                    <span className="ld-stat-value">{stat.value}</span>
-                  </div>
-                ))}
-              </div>
-
-              <h2 className="ld-h2">Per conversation</h2>
-              {usage.sent === 0 ? (
-                <p className="ld-pane-lede">Nothing recorded yet. Send a message in the workspace and it will appear here.</p>
-              ) : (
-                <table className="ld-table">
-                  <thead>
-                    <tr>
-                      <th scope="col">Conversation</th>
-                      <th scope="col">Messages</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {conversations
-                      .filter((conversation) => conversation.messages.length > 0)
-                      .map((conversation) => (
-                        <tr key={conversation.id}>
-                          <td>{conversation.title}</td>
-                          <td>{conversation.messages.length}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          )}
-
-          {/* ------------------------------------------------------ setup */}
-          {section === 'setup' && (
-            <div className="ld-pane">
-              <p className="ld-pane-lede">
-                This template ships the workspace, not a provider key. Connecting a model is the one step it deliberately
-                leaves to you, so no credential is ever bundled into a generated project.
-              </p>
-
-              <ol className="ld-steps">
-                <li>
-                  <h2 className="ld-h2">Add your key as a server environment variable</h2>
-                  <p className="ld-body">
-                    Keep it server-side only. A key placed in a client-visible variable is readable by anyone who opens
-                    the page, so the template never reads one from the browser.
-                  </p>
-                  <pre className="ld-code">
-                    <code>{`# .env.local — server only, never NEXT_PUBLIC_\nMODEL_API_KEY=your-key-here`}</code>
-                  </pre>
-                </li>
-                <li>
-                  <h2 className="ld-h2">Call the provider from the route handler</h2>
-                  <p className="ld-body">
-                    The chat panel posts to your own endpoint. That endpoint holds the key and talks to the provider, so
-                    the token never reaches the browser.
-                  </p>
-                  <pre className="ld-code">
-                    <code>{`// app/api/chat/route.ts\nexport async function POST(request: Request) {\n  const { messages } = await request.json();\n  // Call your provider here using process.env.MODEL_API_KEY\n  // and stream the response back to the client.\n}`}</code>
-                  </pre>
-                </li>
-                <li>
-                  <h2 className="ld-h2">Swap the local composer for the stream</h2>
-                  <p className="ld-body">
-                    Replace the scripted composer with a fetch to that route. The message list, history, and usage
-                    counters need no changes — they already work against real messages.
-                  </p>
-                </li>
-              </ol>
-
-              <div className="ld-warn" role="note">
-                Until that is done, this workspace stays in demo mode and says so on every reply. It will not present
-                composed text as model output.
-              </div>
-            </div>
-          )}
-        </div>
+          <div className="aura-composer-wrap">
+            {error && <div className="aura-error" role="alert"><span>{error}</span><button type="button" onClick={() => setError(null)}>Dismiss</button></div>}
+            <form className={`aura-composer${generating ? ' generating' : ''}`} onSubmit={(event: FormEvent) => { event.preventDefault(); sendMessage(); }}>
+              <textarea value={draft} maxLength={8000} rows={1} placeholder="Message Aura…" aria-label="Message Aura" onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); } }} />
+              <div><button className="aura-enhance" type="button" onClick={() => setDraft((text) => text ? `Improve this prompt and then answer it clearly: ${text}` : text)}>✦ <span>Enhance prompt</span></button><small>{draft.length} / 8000</small><button className="aura-send" type={generating ? 'button' : 'submit'} disabled={!draft.trim() && !generating} onClick={generating ? () => controllerRef.current?.abort() : undefined} aria-label={generating ? 'Stop generating' : 'Send message'}>{generating ? '■' : '↑'}</button></div>
+            </form>
+            <p>Aura can make mistakes. Verify important information. <span>Powered by Xroga AI · Responses via Groq API.</span></p>
+          </div>
+        </main>
       </div>
 
-      {navOpen && <button type="button" className="ld-scrim" aria-label="Close navigation" onClick={() => setNavOpen(false)} />}
+      {mobileOpen && <button className="aura-overlay aura-mobile-overlay" type="button" onClick={() => setMobileOpen(false)} aria-label="Close menu" />}
+      {settingsOpen && <button className="aura-overlay" type="button" onClick={() => setSettingsOpen(false)} aria-label="Close settings" />}
+      <aside className={`aura-settings${settingsOpen ? ' open' : ''}`} aria-hidden={!settingsOpen}>
+        <header><span><small>Workspace</small><h2>AI settings</h2></span><button className="aura-icon" type="button" onClick={() => setSettingsOpen(false)} aria-label="Close settings">×</button></header>
+        <label>Assistant style<select value={persona} onChange={(event) => setPersona(event.target.value as Persona)}><option value="balanced">Balanced</option><option value="concise">Concise</option><option value="creative">Creative</option><option value="developer">Developer</option></select></label>
+        <label><span>Creativity <output>{temperature.toFixed(1)}</output></span><input type="range" min="0" max="1.5" step="0.1" value={temperature} onChange={(event) => setTemperature(Number(event.target.value))} /><small>Precise <b>Imaginative</b></small></label>
+        <label><span>Max response <output>{maxTokens}</output></span><input type="range" min="400" max="3000" step="100" value={maxTokens} onChange={(event) => setMaxTokens(Number(event.target.value))} /><small>Short <b>Long</b></small></label>
+        <div className="aura-safe"><b>◇</b><span><strong>Server-side key protection</strong><p>The Groq credential is read only by the Xroga server route and never sent to this browser.</p></span></div>
+        <button className="aura-reset" type="button" onClick={() => { newChat(); setSettingsOpen(false); setTheme('dark'); setPersona('balanced'); setTemperature(0.7); setMaxTokens(1400); }}>Reset local app data</button>
+      </aside>
     </div>
   );
 }
 
 const CSS = `
-${productReset('.ld-root')}
-.ld-root {
-  --ink: ${BRAND.ink};
-  --panel: ${BRAND.panel};
-  --panel-hi: ${BRAND.panelHi};
-  --border: ${BRAND.border};
-  --muted: ${BRAND.muted};
-  --text: ${BRAND.text};
-  --accent: ${BRAND.accent};
-  --accent-deep: ${BRAND.accentDeep};
-  height: 100%; min-height: 100vh; background: var(--ink); color: var(--text); line-height: 1.5;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-.ld-root *, .ld-root *::before, .ld-root *::after { box-sizing: border-box; }
-.ld-root :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.ld-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-
-.ld-shell { display: flex; height: 100vh; overflow: hidden; }
-
-/* sidebar */
-.ld-side {
-  position: fixed; inset: 0 auto 0 0; z-index: 30; width: 268px;
-  display: flex; flex-direction: column; gap: 14px; padding: 16px 14px;
-  background: var(--panel); border-right: 1px solid var(--border);
-  transform: translateX(-100%); transition: transform 220ms ease;
-}
-.ld-side--open { transform: none; }
-.ld-side-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.ld-brand { display: inline-flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: 750; letter-spacing: -0.01em; }
-.ld-brand-mark { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: var(--accent); color: #201302; }
-.ld-side-close { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 9px; background: none; color: var(--text); cursor: pointer; }
-.ld-new {
-  display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px;
-  border: 1px solid var(--border); border-radius: 10px; background: var(--panel-hi);
-  color: var(--text); font-size: 13px; font-weight: 650; cursor: pointer; font-family: inherit;
-}
-.ld-new:hover { border-color: var(--accent); color: var(--accent); }
-.ld-sections { display: grid; gap: 2px; }
-.ld-section {
-  padding: 9px 11px; border: 0; border-radius: 9px; background: none; text-align: left;
-  color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;
-}
-.ld-section:hover { background: var(--panel-hi); color: var(--text); }
-.ld-section--on { background: var(--panel-hi); color: var(--accent); }
-.ld-side-label { margin: 6px 0 0; padding: 0 4px; font-size: 10.5px; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-.ld-history { flex: 1; overflow-y: auto; display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; align-content: start; }
-.ld-history-item {
-  display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 11px;
-  border: 0; border-radius: 9px; background: none; text-align: left;
-  color: var(--muted); font-size: 12.5px; cursor: pointer; font-family: inherit;
-}
-.ld-history-item:hover { background: var(--panel-hi); color: var(--text); }
-.ld-history-item--on { background: var(--panel-hi); color: var(--text); }
-.ld-history-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ld-history-count { flex: none; padding: 1px 6px; border-radius: 999px; background: rgba(255,255,255,0.07); font-size: 10.5px; }
-.ld-plan { padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--panel-hi); }
-.ld-plan-name { margin: 0; font-size: 12.5px; font-weight: 700; }
-.ld-plan-note { margin: 4px 0 0; font-size: 11px; line-height: 1.5; color: var(--muted); }
-.ld-scrim { position: fixed; inset: 0; z-index: 25; border: 0; background: rgba(0,0,0,0.55); cursor: pointer; }
-
-/* main */
-.ld-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-.ld-topbar { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--border); }
-.ld-menu { display: grid; place-items: center; width: 34px; height: 34px; flex: none; border: 1px solid var(--border); border-radius: 9px; background: none; color: var(--text); cursor: pointer; }
-.ld-topbar-title { margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -0.015em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-.ld-demo-banner {
-  display: flex; align-items: flex-start; gap: 9px; padding: 10px 18px;
-  background: rgba(245,158,11,0.1); border-bottom: 1px solid rgba(245,158,11,0.28);
-  font-size: 12.5px; line-height: 1.55; color: #fcd34d;
-}
-.ld-demo-dot { flex: none; width: 7px; height: 7px; margin-top: 6px; border-radius: 50%; background: var(--accent); }
-
-/* log */
-.ld-log { flex: 1; overflow-y: auto; padding: 20px 18px; }
-.ld-blank { max-width: 560px; margin: 32px auto; text-align: center; }
-.ld-blank-title { margin: 0; font-size: 21px; font-weight: 760; letter-spacing: -0.024em; }
-.ld-blank-body { margin: 9px 0 0; font-size: 13.5px; line-height: 1.6; color: var(--muted); }
-.ld-starters { display: grid; gap: 8px; margin-top: 22px; }
-.ld-starter {
-  padding: 11px 14px; border: 1px solid var(--border); border-radius: 11px; background: var(--panel);
-  color: var(--text); font-size: 13px; text-align: left; cursor: pointer; font-family: inherit;
-}
-.ld-starter:hover { border-color: var(--accent); color: var(--accent); }
-
-.ld-messages { display: grid; gap: 18px; max-width: 760px; margin: 0 auto; padding: 0; list-style: none; }
-.ld-msg { display: grid; gap: 6px; }
-.ld-msg-who { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 750; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
-.ld-msg-tag {
-  padding: 2px 8px; border-radius: 999px; background: rgba(245,158,11,0.14);
-  color: #fcd34d; font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: none;
-}
-.ld-msg-body {
-  padding: 13px 15px; border-radius: 13px; font-size: 13.5px; line-height: 1.66; white-space: pre-wrap;
-  border: 1px solid var(--border); background: var(--panel);
-}
-.ld-msg--user .ld-msg-body { background: var(--panel-hi); border-color: #334052; }
-.ld-typing { display: inline-flex; gap: 5px; padding: 15px; }
-.ld-typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: ld-bounce 1.1s infinite ease-in-out; }
-.ld-typing span:nth-child(2) { animation-delay: 0.15s; }
-.ld-typing span:nth-child(3) { animation-delay: 0.3s; }
-@keyframes ld-bounce { 0%, 60%, 100% { opacity: 0.35; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-4px); } }
-
-/* composer */
-.ld-composer {
-  display: flex; align-items: flex-end; gap: 10px; padding: 14px 18px 18px;
-  border-top: 1px solid var(--border); background: var(--ink);
-}
-.ld-composer textarea {
-  flex: 1; min-height: 44px; max-height: 160px; padding: 12px 14px;
-  border: 1px solid var(--border); border-radius: 12px; background: var(--panel);
-  color: var(--text); font-size: 13.5px; font-family: inherit; resize: vertical;
-}
-.ld-composer textarea:focus { outline: none; border-color: var(--accent); }
-.ld-send {
-  flex: none; padding: 12px 20px; border: 0; border-radius: 12px;
-  background: var(--accent); color: #201302; font-size: 13px; font-weight: 720; cursor: pointer; font-family: inherit;
-}
-.ld-send:disabled { opacity: 0.42; cursor: not-allowed; }
-
-/* error state */
-.ld-error {
-  display: flex; align-items: center; gap: 12px; margin: 0 18px; padding: 11px 14px;
-  border: 1px solid rgba(248,113,113,0.4); border-radius: 11px; background: rgba(248,113,113,0.1);
-  font-size: 13px; color: #fca5a5;
-}
-.ld-error-retry {
-  margin-left: auto; flex: none; padding: 5px 12px; border: 1px solid rgba(248,113,113,0.45);
-  border-radius: 999px; background: none; color: #fca5a5; font-size: 12px; font-weight: 650;
-  cursor: pointer; font-family: inherit;
-}
-
-/* overview */
-.ld-hero-title { margin: 0 0 12px; font-size: clamp(21px, 3vw, 30px); font-weight: 780; letter-spacing: -0.03em; line-height: 1.14; }
-.ld-hero-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
-.ld-features { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin-top: 14px; }
-.ld-feature { padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); }
-.ld-feature-title { margin: 0; font-size: 13.5px; font-weight: 700; }
-.ld-feature .ld-body { margin-top: 5px; }
-
-/* panes */
-.ld-pane { flex: 1; overflow-y: auto; padding: 22px 18px 34px; max-width: 800px; }
-.ld-pane-lede { margin: 0 0 20px; font-size: 13.5px; line-height: 1.65; color: var(--muted); }
-.ld-h2 { margin: 26px 0 0; font-size: 14.5px; font-weight: 720; letter-spacing: -0.012em; }
-.ld-body { margin: 7px 0 0; font-size: 13px; line-height: 1.62; color: var(--muted); }
-.ld-stats { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
-.ld-stat { display: grid; gap: 4px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); }
-.ld-stat-label { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
-.ld-stat-value { font-size: 22px; font-weight: 800; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; }
-.ld-table { width: 100%; margin-top: 14px; border-collapse: collapse; font-size: 13px; }
-.ld-table th, .ld-table td { padding: 9px 11px; text-align: left; border-bottom: 1px solid var(--border); }
-.ld-table th { font-size: 10.5px; font-weight: 750; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-.ld-steps { display: grid; gap: 22px; margin: 0; padding: 0 0 0 20px; }
-.ld-steps li::marker { color: var(--accent); font-weight: 700; }
-.ld-code {
-  margin: 11px 0 0; padding: 13px 15px; overflow-x: auto;
-  border: 1px solid var(--border); border-radius: 10px; background: #0a0e14;
-  font-size: 12px; line-height: 1.65; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-.ld-warn {
-  margin-top: 26px; padding: 14px 16px; border-radius: 11px;
-  background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
-  font-size: 12.5px; line-height: 1.6; color: #fcd34d;
-}
-
-@media (min-width: 900px) {
-  .ld-side { position: relative; inset: auto; transform: none; }
-  .ld-side-close, .ld-menu { display: none; }
-  .ld-scrim { display: none; }
-  .ld-starters { grid-template-columns: repeat(2, 1fr); }
-  .ld-pane, .ld-log, .ld-composer { padding-inline: 26px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ld-root *, .ld-root *::before, .ld-root *::after { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
-}
+${productReset('.aura-root')}
+.aura-root{--bg:#090a0f;--panel:#10121a;--panel2:#151822;--line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.15);--text:#f4f6fb;--muted:#8c93a6;--muted2:#656b7b;--mint:#9ef5d1;--blue:#8bbcff;position:relative;height:100dvh;min-height:560px;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.aura-light{--bg:#f7f8fb;--panel:#fff;--panel2:#f1f4f8;--line:rgba(17,24,39,.1);--line2:rgba(17,24,39,.17);--text:#151823;--muted:#6e7484;--muted2:#9aa0ac;--mint:#24a879;--blue:#4f7fe3}
+.aura-root button,.aura-root textarea,.aura-root select,.aura-root input{font:inherit}.aura-root button{color:inherit}.aura-ambient{position:absolute;pointer-events:none;filter:blur(3px);opacity:.55}.aura-ambient-a{width:620px;height:420px;left:23%;top:-260px;background:radial-gradient(ellipse,rgba(91,121,255,.2),transparent 68%)}.aura-ambient-b{width:620px;height:540px;right:-160px;bottom:-280px;background:radial-gradient(ellipse,rgba(115,240,197,.12),transparent 68%)}
+.aura-shell{position:relative;display:grid;grid-template-columns:284px minmax(0,1fr);height:100%;transition:grid-template-columns .28s ease}.aura-collapsed .aura-shell{grid-template-columns:78px minmax(0,1fr)}.aura-sidebar{z-index:15;display:flex;min-width:0;flex-direction:column;overflow:hidden;border-right:1px solid var(--line);padding:18px 14px;background:color-mix(in srgb,var(--panel) 84%,transparent);backdrop-filter:blur(28px)}
+.aura-brand-row{display:flex;height:48px;align-items:center;justify-content:space-between;padding:0 4px 0 6px}.aura-brand{display:flex;min-width:0;align-items:center;gap:11px;border:0;background:none;padding:0}.aura-brand>span:last-child{display:grid;text-align:left;white-space:nowrap}.aura-brand strong{font-size:15px}.aura-brand small{margin-top:3px;color:var(--muted);font-size:10px}.aura-brand-mark{position:relative;display:grid;width:30px;height:30px;flex:none;place-items:center;border:1px solid color-mix(in srgb,var(--mint) 22%,transparent);border-radius:10px;background:linear-gradient(145deg,color-mix(in srgb,var(--mint) 20%,transparent),color-mix(in srgb,var(--blue) 12%,transparent))}.aura-brand-mark:before,.aura-brand-mark:after,.aura-brand-mark i{position:absolute;width:14px;height:3px;border-radius:9px;background:var(--mint);content:""}.aura-brand-mark:before{transform:rotate(45deg)}.aura-brand-mark:after{transform:rotate(-45deg)}.aura-brand-mark i{width:3px;height:14px}
+.aura-icon{display:grid;width:36px;height:36px;place-items:center;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted);font-size:18px}.aura-icon:hover{border-color:var(--line);background:color-mix(in srgb,var(--text) 4%,transparent);color:var(--text)}.aura-new{display:flex;min-height:45px;align-items:center;gap:10px;margin:18px 0 16px;padding:0 12px;overflow:hidden;border:1px solid var(--line2);border-radius:13px;background:color-mix(in srgb,var(--text) 3%,transparent)}.aura-new:hover{border-color:color-mix(in srgb,var(--mint) 24%,transparent);background:color-mix(in srgb,var(--mint) 5%,transparent)}.aura-new b{flex:1;text-align:left;font-size:13px;white-space:nowrap}.aura-new kbd{padding:3px 5px;border:1px solid var(--line);border-radius:6px;color:var(--muted);font-size:9px}
+.aura-history-section{display:flex;min-height:0;flex:1;flex-direction:column}.aura-section-label{display:flex;align-items:center;justify-content:space-between;padding:8px 7px;color:var(--muted2);font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;white-space:nowrap}.aura-section-label button{border:0;background:none;color:inherit;font-size:9px}.aura-history{overflow:auto;scrollbar-width:none}.aura-history-item{position:relative;display:flex;width:100%;align-items:center;gap:10px;padding:10px 8px;border:0;border-radius:11px;background:none;color:var(--muted);text-align:left}.aura-history-item:hover,.aura-history-item.active{background:color-mix(in srgb,var(--text) 4%,transparent);color:var(--text)}.aura-history-item.active:before{position:absolute;left:0;width:2px;height:18px;border-radius:3px;background:var(--mint);content:""}.aura-history-item>span:last-child{display:grid;min-width:0;gap:3px}.aura-history-item strong{overflow:hidden;font-size:12px;font-weight:520;text-overflow:ellipsis;white-space:nowrap}.aura-history-item small{color:var(--muted2);font-size:10px}
+.aura-side-bottom{border-top:1px solid var(--line);padding-top:12px}.aura-usage{padding:10px 9px}.aura-usage>span{display:flex;justify-content:space-between;color:var(--muted);font-size:10px}.aura-usage>i{display:block;height:3px;margin-top:8px;overflow:hidden;border-radius:9px;background:var(--line)}.aura-usage>i b{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--mint),var(--blue))}.aura-usage small{display:block;margin-top:8px;color:var(--muted2);font-size:9px}.aura-profile{display:flex;width:100%;align-items:center;gap:10px;padding:8px;border:0;border-radius:12px;background:none;text-align:left}.aura-profile:hover{background:color-mix(in srgb,var(--text) 4%,transparent)}.aura-profile>span:first-child{display:grid;width:30px;height:30px;flex:none;place-items:center;border:1px solid var(--line2);border-radius:9px;background:var(--panel2);font-size:9px}.aura-profile>span:nth-child(2){display:grid;min-width:0;flex:1}.aura-profile strong{font-size:11px}.aura-profile small{color:var(--muted);font-size:9px}.aura-profile>b{color:var(--muted)}
+.aura-collapsed .aura-brand>span:last-child,.aura-collapsed .aura-new b,.aura-collapsed .aura-new kbd,.aura-collapsed .aura-section-label,.aura-collapsed .aura-history-item>span:last-child,.aura-collapsed .aura-usage,.aura-collapsed .aura-profile>span:nth-child(2),.aura-collapsed .aura-profile>b{display:none}.aura-collapsed .aura-brand-row,.aura-collapsed .aura-new,.aura-collapsed .aura-history-item,.aura-collapsed .aura-profile{justify-content:center}.aura-collapsed .aura-collapse{position:absolute;left:61px;transform:rotate(180deg);border-color:var(--line);background:var(--panel)}
+.aura-main{position:relative;display:flex;min-width:0;height:100%;flex-direction:column;background-image:linear-gradient(color-mix(in srgb,var(--text) 1.2%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--text) 1.2%,transparent) 1px,transparent 1px);background-size:38px 38px}.aura-topbar{z-index:10;display:flex;height:70px;flex:none;align-items:center;justify-content:space-between;padding:0 26px;background:linear-gradient(to bottom,var(--bg) 35%,transparent)}.aura-top-left{position:relative;display:flex;align-items:center;gap:8px}.aura-model-pill{display:flex;height:42px;align-items:center;gap:9px;padding:0 11px;border:1px solid var(--line);border-radius:13px;background:color-mix(in srgb,var(--text) 2.5%,transparent)}.aura-model-pill>span:first-child{width:22px;height:22px;border-radius:7px;background:radial-gradient(circle at 32% 30%,#cffff0,#83e3c0 34%,#47796b 72%,#25322f);box-shadow:0 0 22px rgba(158,245,209,.18)}.aura-model-pill>span:nth-child(2){display:grid;text-align:left}.aura-model-pill small{color:var(--muted);font-size:8px;letter-spacing:.08em;text-transform:uppercase}.aura-model-pill strong{font-size:11px}.aura-model-pill>b{color:var(--muted)}.aura-actions{display:flex;align-items:center;gap:6px}.aura-status{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--line);border-radius:99px;color:var(--muted);font-size:10px}.aura-status i{width:6px;height:6px;border-radius:50%;background:#f1b85e;box-shadow:0 0 10px #f1b85e}.aura-status.online i{background:var(--mint);box-shadow:0 0 10px var(--mint)}.aura-status.offline i{background:#ff8f9a;box-shadow:0 0 10px #ff8f9a}
+.aura-model-menu{position:absolute;z-index:30;top:50px;left:0;width:310px;padding:8px;border:1px solid var(--line2);border-radius:16px;background:color-mix(in srgb,var(--panel) 97%,transparent);box-shadow:0 24px 80px rgba(0,0,0,.3);backdrop-filter:blur(30px)}.aura-model-menu header{display:flex;justify-content:space-between;padding:7px 9px 10px;color:var(--muted);font-size:10px}.aura-model-menu header span{color:var(--mint);font-size:9px;letter-spacing:.1em;text-transform:uppercase}.aura-model-menu button{display:flex;width:100%;align-items:center;gap:10px;padding:10px;border:0;border-radius:11px;background:none;text-align:left}.aura-model-menu button:hover{background:color-mix(in srgb,var(--text) 5%,transparent)}.aura-model-menu button>i{width:9px;height:9px;border-radius:3px;background:linear-gradient(145deg,var(--mint),var(--blue))}.aura-model-menu button>span{display:grid;min-width:0;flex:1}.aura-model-menu strong{font-size:11px}.aura-model-menu small{color:var(--muted);font-size:9px}.aura-model-menu button>b{color:var(--mint);font-size:8px;text-transform:uppercase}
+.aura-scroll{flex:1;min-height:0;overflow-y:auto;padding:16px 22px 160px;scrollbar-gutter:stable;scroll-behavior:smooth}.aura-scroll::-webkit-scrollbar{width:8px}.aura-scroll::-webkit-scrollbar-thumb{border-radius:9px;background:var(--line2)}.aura-welcome{width:min(780px,100%);margin:clamp(4vh,9vh,100px) auto 0;text-align:center;animation:auraReveal .6s ease}.aura-spark{position:relative;width:56px;height:56px;margin:0 auto 18px;border:1px solid color-mix(in srgb,var(--mint) 20%,transparent);border-radius:18px;background:radial-gradient(circle,rgba(158,245,209,.14),transparent 65%)}.aura-spark:before,.aura-spark:after,.aura-spark span{position:absolute;top:50%;left:50%;width:25px;height:4px;border-radius:9px;background:linear-gradient(90deg,#e9fff7,var(--mint));content:"";transform:translate(-50%,-50%)}.aura-spark:before{transform:translate(-50%,-50%) rotate(45deg)}.aura-spark:after{transform:translate(-50%,-50%) rotate(-45deg)}.aura-spark span{width:4px;height:25px}.aura-spark i,.aura-spark b{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--blue)}.aura-spark i{top:11px;left:9px}.aura-spark b{right:8px;bottom:10px}.aura-eyebrow{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:8px;font-weight:700;letter-spacing:.17em}.aura-eyebrow span{width:5px;height:5px;border-radius:50%;background:var(--mint)}.aura-welcome h1{margin:12px 0 10px;font-size:clamp(32px,4vw,48px);font-weight:650;line-height:1.02;letter-spacing:-.055em}.aura-welcome h1 em{color:var(--muted);font-style:normal;font-weight:430}.aura-welcome>p:not(.aura-eyebrow){width:min(550px,92%);margin:0 auto;color:var(--muted);font-size:13px;line-height:1.7}.aura-providers{display:flex;width:fit-content;max-width:100%;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:18px auto 0;padding:7px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--text) 2.5%,transparent)}.aura-providers>span{display:inline-flex;min-height:28px;align-items:center;gap:7px;padding:0 9px;border-radius:9px;color:var(--muted);font-size:9px}.aura-providers>span:last-child{border:1px solid color-mix(in srgb,var(--mint) 14%,transparent);background:color-mix(in srgb,var(--mint) 5%,transparent);color:var(--mint);font-weight:700;letter-spacing:.11em}.aura-providers i{width:7px;height:7px;border-radius:50%;background:var(--mint)}.aura-providers span:nth-child(2) i{background:var(--blue)}
+.aura-prompts{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:30px}.aura-prompts button{display:flex;min-height:74px;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--text) 2.2%,transparent);text-align:left}.aura-prompts button:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--mint) 22%,transparent);background:color-mix(in srgb,var(--mint) 4%,transparent)}.aura-prompts button>span:first-child{display:grid;width:36px;height:36px;flex:none;place-items:center;border:1px solid var(--line);border-radius:11px;background:linear-gradient(145deg,rgba(158,245,209,.09),rgba(139,188,255,.07));color:var(--mint)}.aura-prompts button>span:nth-child(2){display:grid;min-width:0;flex:1}.aura-prompts strong{font-size:11px}.aura-prompts small{margin-top:4px;color:var(--muted);font-size:9px}.aura-prompts button>b{color:var(--muted);font-size:20px}.aura-trust{display:flex;justify-content:center;gap:18px;margin-top:20px;color:var(--muted2);font-size:8px}.aura-trust span:first-child{color:var(--muted)}
+.aura-messages{display:grid;width:min(820px,100%);gap:24px;margin:8px auto 0}.aura-message{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;animation:auraReveal .25s ease}.aura-avatar{display:grid;width:30px;height:30px;place-items:center;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--muted);font-size:9px}.aura-message.assistant .aura-avatar{color:var(--mint)}.aura-message header{display:flex;align-items:center;gap:8px;min-height:22px;margin-bottom:4px}.aura-message header strong{font-size:11px}.aura-message header span{color:var(--muted2);font-size:9px}.aura-message-body{color:color-mix(in srgb,var(--text) 92%,var(--muted));font-size:13px;line-height:1.72;white-space:pre-wrap;overflow-wrap:anywhere}.aura-copy{margin-top:7px;padding:5px 8px;border:0;border-radius:7px;background:none;color:var(--muted2);font-size:9px}.aura-copy:hover{background:color-mix(in srgb,var(--text) 4%,transparent);color:var(--text)}.aura-typing{display:inline-flex;gap:4px}.aura-typing i{width:5px;height:5px;border-radius:50%;background:var(--muted);animation:auraDot 1.1s infinite}.aura-typing i:nth-child(2){animation-delay:.14s}.aura-typing i:nth-child(3){animation-delay:.28s}
+.aura-composer-wrap{position:absolute;z-index:7;right:0;bottom:0;left:0;padding:32px 22px 15px;background:linear-gradient(to top,var(--bg) 55%,transparent);pointer-events:none}.aura-composer{width:min(820px,100%);margin:auto;overflow:hidden;border:1px solid var(--line2);border-radius:19px;background:color-mix(in srgb,var(--panel) 92%,transparent);box-shadow:0 18px 70px rgba(0,0,0,.18);backdrop-filter:blur(26px);pointer-events:auto}.aura-composer:focus-within{border-color:color-mix(in srgb,var(--mint) 24%,transparent)}.aura-composer textarea{width:100%;max-height:160px;resize:none;overflow:auto;border:0;outline:0;background:transparent;padding:13px 15px 4px;color:var(--text);font-size:13px;line-height:1.55}.aura-composer textarea::placeholder{color:var(--muted2)}.aura-composer>div{display:flex;height:46px;align-items:center;gap:9px;padding:4px 8px 8px 10px}.aura-enhance{height:30px;padding:0 7px;border:0;border-radius:8px;background:none;color:var(--muted);font-size:9px}.aura-enhance:hover{background:color-mix(in srgb,var(--text) 4%,transparent);color:var(--text)}.aura-composer small{flex:1;color:var(--muted2);font-size:8px}.aura-send{display:grid;width:34px;height:34px;place-items:center;border:0;border-radius:10px;background:var(--text);color:var(--bg)!important;font-weight:800}.aura-send:disabled{opacity:.35}.aura-composer-wrap>p{margin:8px auto 0;color:var(--muted2);font-size:8px;text-align:center;pointer-events:auto}.aura-composer-wrap>p span{color:var(--muted)}.aura-error{display:flex;width:min(820px,100%);justify-content:space-between;gap:12px;margin:0 auto 8px;padding:10px 12px;border:1px solid rgba(255,143,154,.25);border-radius:11px;background:color-mix(in srgb,var(--panel) 96%,transparent);color:#ff9da7;font-size:10px;pointer-events:auto}.aura-error button{border:0;background:none;color:inherit;text-decoration:underline}
+.aura-overlay{position:fixed;z-index:40;inset:0;border:0;background:rgba(0,0,0,.36);backdrop-filter:blur(4px)}.aura-settings{position:fixed;z-index:50;top:10px;right:10px;bottom:10px;width:min(390px,calc(100vw - 20px));overflow-y:auto;padding:18px;border:1px solid var(--line2);border-radius:22px;background:color-mix(in srgb,var(--panel) 97%,transparent);box-shadow:0 24px 90px rgba(0,0,0,.3);transform:translateX(calc(100% + 24px));transition:transform .28s ease}.aura-settings.open{transform:translateX(0)}.aura-settings>header{display:flex;align-items:center;justify-content:space-between;padding:3px 1px 20px;border-bottom:1px solid var(--line)}.aura-settings header small{display:block;margin-bottom:5px;color:var(--muted);font-size:8px;letter-spacing:.13em;text-transform:uppercase}.aura-settings h2{margin:0;font-size:18px}.aura-settings>label{display:block;padding:19px 2px;border-bottom:1px solid var(--line);font-size:10px;font-weight:650}.aura-settings select{width:100%;height:40px;margin-top:9px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:0 10px;color:var(--text);font-size:11px}.aura-settings label>span,.aura-settings label>small{display:flex;justify-content:space-between}.aura-settings output{padding:3px 7px;border:1px solid color-mix(in srgb,var(--mint) 14%,transparent);border-radius:7px;background:color-mix(in srgb,var(--mint) 7%,transparent);color:var(--mint)}.aura-settings input{width:100%;margin:12px 0 6px;accent-color:var(--mint)}.aura-settings label>small{color:var(--muted2);font-weight:400}.aura-safe{display:flex;gap:10px;margin-top:16px;padding:13px;border:1px solid color-mix(in srgb,var(--mint) 14%,transparent);border-radius:13px;background:color-mix(in srgb,var(--mint) 4%,transparent)}.aura-safe>b{display:grid;width:29px;height:29px;flex:none;place-items:center;border-radius:9px;background:color-mix(in srgb,var(--mint) 9%,transparent);color:var(--mint)}.aura-safe strong{font-size:10px}.aura-safe p{margin:4px 0 0;color:var(--muted);font-size:9px;line-height:1.5}.aura-reset{width:100%;height:39px;margin-top:18px;border:1px solid rgba(255,143,154,.2);border-radius:11px;background:rgba(255,143,154,.04);color:#ff8f9a!important;font-size:10px}.aura-mobile-menu,.aura-mobile-overlay{display:none}
+@keyframes auraReveal{from{opacity:0;transform:translateY(10px)}}@keyframes auraDot{30%{transform:translateY(-3px);opacity:1}0%,60%,100%{opacity:.35}}
+@media(max-width:760px){.aura-shell{display:block}.aura-sidebar{position:fixed;top:8px;bottom:8px;left:8px;width:min(286px,calc(100vw - 40px));border:1px solid var(--line2);border-radius:20px;background:color-mix(in srgb,var(--panel) 96%,transparent);box-shadow:0 24px 80px rgba(0,0,0,.3);transform:translateX(calc(-100% - 18px));transition:transform .25s ease}.aura-sidebar.aura-mobile-open{transform:translateX(0)}.aura-collapse{display:none}.aura-mobile-menu,.aura-mobile-overlay{display:grid}.aura-topbar{height:62px;padding:0 13px}.aura-status{display:none}.aura-model-pill{height:38px}.aura-model-pill small{display:none}.aura-scroll{padding:10px 13px 155px}.aura-welcome{margin-top:4vh}.aura-welcome h1{font-size:36px}.aura-prompts{grid-template-columns:1fr;margin-top:24px}.aura-prompts button{min-height:65px}.aura-trust{flex-wrap:wrap;gap:9px 14px}.aura-composer-wrap{padding:26px 10px 10px}.aura-message{grid-template-columns:29px minmax(0,1fr);gap:9px}.aura-message-body{font-size:12.5px}.aura-model-menu{width:min(310px,calc(100vw - 26px))}}
+@media(max-width:430px){.aura-welcome h1{font-size:31px}.aura-prompts button:nth-child(n+4){display:none}.aura-enhance span,.aura-composer small{display:none}.aura-enhance{flex:1;text-align:left}.aura-providers span:nth-child(2){display:none}}
+@media(prefers-reduced-motion:reduce){.aura-root *,.aura-root *:before,.aura-root *:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 `;
