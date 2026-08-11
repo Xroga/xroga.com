@@ -169,6 +169,15 @@ export interface RoutingChoice {
   readonly reason: string;
   /** Ranked candidates to escalate through, cheapest sufficient first. */
   readonly escalation: readonly string[];
+  /**
+   * True when measurement decided this, false when a hand-written prior did.
+   *
+   * Carried structurally rather than left to the `reason` prose. A caller that has to parse
+   * a sentence to learn whether a choice was earned will eventually parse it wrong, and the
+   * failure is silent: a prior-based selection recorded as measured, which is precisely the
+   * claim §13 exists to prevent.
+   */
+  readonly measured: boolean;
 }
 
 /**
@@ -225,6 +234,7 @@ export function chooseCostAware(input: {
         `${Math.round(record.validationSuccessRate * 100)}% validation over ${record.samples} samples ` +
         `(${record.maturity}), $${record.costUsdPerTask.toFixed(4)} per task.`,
       escalation: byCost.filter((modelId) => modelId !== sufficient),
+      measured: true,
     };
   }
 
@@ -237,5 +247,6 @@ export function chooseCostAware(input: {
       `No cost-efficient candidate has sufficient measured evidence for ${input.role}, so the ` +
       `premium tier leads. ${premium} selected on prior, not on measurement.`,
     escalation: byCost.filter((modelId) => modelId !== premium),
+    measured: false,
   };
 }

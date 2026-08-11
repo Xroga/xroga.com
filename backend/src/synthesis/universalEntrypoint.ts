@@ -32,6 +32,8 @@ import { routeByCapability, type RoutingCandidate } from '../ai/capabilityRouter
 import { buildProfile } from '../ai/modelCapabilityProfile.js';
 import { getRuntimeModelRegistry } from '../ai/modelCapabilityRegistry.js';
 import { assertCodingModel, isCodingModel } from '../ai/providerPolicy.js';
+import { chooseCostAware } from '../ai/providerCostTiers.js';
+import { chooseFromMeasuredEvidence, loadMeasuredEvidence } from '../ai/measuredEvidence.js';
 import { MODELS, type ModelId } from '../ai/models.js';
 import type { ExecutionStateStore } from '../ai/executionRuntime.js';
 
@@ -43,6 +45,9 @@ export interface UniversalBuildOutcome {
     readonly fallbacks: readonly string[];
     readonly reason: string;
     readonly excluded: ReadonlyArray<{ modelId: string; reason: string }>;
+    /** True when a hand-written prior decided this rather than a measurement. */
+    readonly selectedOnPrior?: boolean;
+    readonly evidenceSource?: 'measured' | 'unavailable';
   };
 }
 
@@ -173,6 +178,31 @@ export async function tryUniversalBuild(input: {
     };
   }
 
+  // §13: measured evidence outranks the hand-written priors the capability router ranks by.
+  //
+  // Until this existed the chain was three disconnected halves — the runner wrote
+  // `model_benchmark_runs`, nothing read it, `buildLedger` was called by no production code
+  // and neither was `chooseCostAware`. Real benchmark rows would have accumulated beside a
+  // router that never consulted them.
+  //
+  // Absence of measurement is reported rather than inferred: with no evidence for this role
+  // the prior-based `route` above stands unchanged, and the run records that the choice was
+  // made on a prior instead of implying it was earned.
+  const measuredEvidence = await loadMeasuredEvidence();
+  const measured = chooseFromMeasuredEvidence({
+    role: 'implementation',
+    candidates: [route.selected.modelId, ...route.fallbacks.map((model) => model.modelId)],
+    evidence: measuredEvidence,
+    chooser: (choice) => chooseCostAware(choice),
+  });
+
+  // The measured winner leads and the prior ranking becomes its fallback chain, with the
+  // winner removed so it is never attempted twice. When nothing was measured this is exactly
+  // the previous ordering.
+  const orderedCandidates: readonly string[] = measured.modelId
+    ? [measured.modelId, ...[route.selected.modelId, ...route.fallbacks.map((m) => m.modelId)].filter((id) => id !== measured.modelId)]
+    : [route.selected.modelId, ...route.fallbacks.map((m) => m.modelId)];
+
   const result = await executeUniversalRun({
     prompt: input.prompt,
     owner,
@@ -195,11 +225,12 @@ export async function tryUniversalBuild(input: {
         //
         // The router's ranked candidates are passed through, so each call independently
         // falls back rather than the whole build depending on one model answering once.
+        // Ordered by measurement when there is any, by prior otherwise. Passing the whole
+        // chain means each call independently falls back rather than the build depending on
+        // one model answering once.
         return implementIncrementally({
           brief,
-          candidates: [route.selected!, ...route.fallbacks].map((candidate) => ({
-            modelId: candidate.modelId,
-          })),
+          candidates: orderedCandidates.map((modelId) => ({ modelId })),
         });
       },
       commit: input.commit,
@@ -209,12 +240,12 @@ export async function tryUniversalBuild(input: {
     // files would make the routing evidence useless for exactly the question it exists to
     // answer: which model produced this code.
     implementationRouting: {
-      selectedModel: route.selected!.modelId as ModelId,
+      selectedModel: orderedCandidates[0] as ModelId,
       // The provider is looked up from the registry rather than carried on the ranked
       // model, which holds only scoring fields. Recording the transport matters because
       // the family/transport binding is a policy invariant, not a detail.
-      provider: MODELS[route.selected!.modelId as ModelId]?.provider ?? null,
-      fallbackModels: route.fallbacks.map((candidate) => candidate.modelId as ModelId),
+      provider: MODELS[orderedCandidates[0] as ModelId]?.provider ?? null,
+      fallbackModels: orderedCandidates.slice(1) as ModelId[],
     },
     executionStore: input.executionStore,
   });
@@ -223,10 +254,17 @@ export async function tryUniversalBuild(input: {
     ran: true,
     result,
     routing: {
-      selectedModel: route.selected.modelId,
-      fallbacks: route.fallbacks.map((model) => model.modelId),
-      reason: route.reason,
+      selectedModel: orderedCandidates[0] ?? null,
+      fallbacks: orderedCandidates.slice(1),
+      // States plainly whether a measurement or a prior decided this. Without it a run
+      // records a model and a plausible reason, and nobody can tell afterwards whether the
+      // choice was earned or assumed.
+      reason: measured.measured
+        ? `selected on measured evidence — ${measured.reason}`
+        : `selected on prior — ${route.reason} (${measured.reason})`,
       excluded: route.excluded,
+      selectedOnPrior: !measured.measured,
+      evidenceSource: measuredEvidence.source,
     },
   };
 }
