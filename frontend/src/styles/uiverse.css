@@ -256,8 +256,8 @@
    of chrome. The outer .xv-sidebar-root still reserves the full column width in
    the shell's flex row, so insetting the panel shifts nothing in main content. */
 :root {
-  --xv-sidebar-inset: 0.875rem;
-  --xv-sidebar-radius: 1.5rem;
+  --xv-sidebar-inset: 0.5rem;
+  --xv-sidebar-radius: 1rem;
 }
 .xv-sidebar-root {
   /* Wrapper only reserves layout width — all visuals belong to the panel. */

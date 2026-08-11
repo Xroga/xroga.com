@@ -322,10 +322,14 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     'src',
     /Green-Minimalist-Summer-Big-Sale/,
   );
+  const expandedLogoBox = await desktopSidebar.getByRole('img', { name: 'Xroga' }).boundingBox();
+  expect(expandedLogoBox).not.toBeNull();
+  expect(expandedLogoBox!.width).toBeGreaterThanOrEqual(96);
   await page.getByRole('button', { name: 'Close sidebar' }).click();
-  await expect(desktopSidebar).toHaveCSS('width', '72px');
+  await expect(desktopSidebar).toHaveCSS('width', '64px');
   await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute('src', /xrogaai\.png/);
-  await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toBeVisible();
+  await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toHaveCount(0);
+  await expect(desktopSidebar.locator('nav')).toHaveCount(0);
   await page.getByRole('button', { name: 'Open sidebar' }).click();
 
   // Internal navigation must retain the shared shell and the mounted composer.
@@ -407,6 +411,12 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(canonicalComposer.locator('.xv-chatbar-toolbar')).toHaveCount(0);
   const composerActions = canonicalComposer.getByRole('button', { name: 'More composer actions' });
   await expect(composerActions).toBeVisible();
+  const addIntegration = canonicalComposer.getByRole('button', { name: 'Add integration' });
+  await expect(addIntegration).toBeVisible();
+  await expect(canonicalComposer.getByRole('button', { name: 'Upload files' })).toHaveCount(0);
+  await addIntegration.click();
+  await expect(page.getByRole('dialog', { name: 'Integrations' })).toBeVisible();
+  await page.getByRole('button', { name: 'Close integrations' }).click();
   await composerActions.click();
   const actionsMenu = canonicalComposer.getByRole('dialog', { name: 'Composer actions' });
   await expect(actionsMenu.getByRole('button', { name: /Add files or photos/ })).toBeVisible();

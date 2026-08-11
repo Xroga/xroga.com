@@ -33,7 +33,7 @@ export function Logo({ href = '/dashboard', height = 50, className, variant = 'h
       : variant === 'header'
         ? height * 3.2
         : variant === 'sidebarFull'
-          ? height * 4.2
+          ? height * 2
           : height;
 
   const inner = (
@@ -48,6 +48,7 @@ export function Logo({ href = '/dashboard', height = 50, className, variant = 'h
         height={Math.round(height)}
         className="object-contain object-left h-full w-full"
         style={{ background: 'transparent' }}
+        unoptimized={src.startsWith('http')}
         priority
       />
     </div>

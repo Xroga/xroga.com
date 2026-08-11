@@ -65,7 +65,7 @@ export function TerminalDock() {
           ? hydrated
             ? `${sidebarWidth}px`
             : 'var(--xv-boot-sidebar-width, 256px)'
-          : '72px',
+          : '64px',
         bottom: keyboardOffset,
       } as React.CSSProperties}
       aria-hidden={!isDashboard}

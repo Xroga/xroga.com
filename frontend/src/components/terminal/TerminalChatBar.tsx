@@ -27,10 +27,11 @@ import { ensureSelectedRepoFolder } from '@/lib/repoSessionsIndex';
 import { isGeneralAdviceOrKnowledgePrompt, isWebsiteBuildPrompt } from '@/lib/chatMemory';
 import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
+import { Blocks } from 'lucide-react';
 
 const MAX_ROWS = 13;
 const LINE_HEIGHT = 20;
-const MIN_INPUT_H = 36;
+const MIN_INPUT_H = 32;
 
 function renameFile(file: File, newName: string) {
   return new File([file], newName, { type: file.type, lastModified: file.lastModified });
@@ -460,13 +461,14 @@ export function TerminalChatBar() {
           />
           )}
 
-          <form onSubmit={handleSubmit} className="px-2 sm:px-2.5 py-1 sm:py-1.5 xv-chatbar-input-form">
+          <form onSubmit={handleSubmit} className="px-2 sm:px-2.5 py-0.5 sm:py-1 xv-chatbar-input-form">
             <ChatBarInputRow
               uploading={uploading}
               onUploadClick={() => fileRef.current?.click()}
-              hideUpload={incognito}
+              hideUpload
               leadingExtras={
                 !incognito ? (
+                  <div className="flex items-center gap-1.5">
                   <ChatBarActionsMenu
                     className="shrink-0"
                     disabled={loading}
@@ -485,6 +487,23 @@ export function TerminalChatBar() {
                       window.setTimeout(() => textareaRef.current?.focus(), 20);
                     }}
                   />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your authorised integrations.', source: 'runtime' });
+                      setIntegrationsOpen(true);
+                    }}
+                    className="xv-chatbar-integration-btn"
+                    aria-label="Add integration"
+                    title="Add integration"
+                  >
+                    <Blocks className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Integrations</span>
+                    {[githubConnected, vercelConnected].filter((connected) => !connected).length > 0 ? (
+                      <i aria-hidden="true" />
+                    ) : null}
+                  </button>
+                  </div>
                 ) : null
               }
               onTranscript={(text) => {
@@ -506,11 +525,6 @@ export function TerminalChatBar() {
                 setSendState('idle');
               }}
             >
-              {!incognito && (
-                <span className="absolute left-2 bottom-2 text-sm font-terminal text-[var(--foreground)] opacity-50 z-10">
-                  &gt;
-                </span>
-              )}
               <textarea
                 ref={textareaRef}
                 data-terminal-composer=""
@@ -549,8 +563,8 @@ export function TerminalChatBar() {
                 autoCorrect="off"
                 autoCapitalize="off"
                 className={cn(
-                  'w-full pr-2 py-1.5 rounded-xl resize-none max-h-[260px] min-h-[40px]',
-                  incognito ? 'pl-3 text-white placeholder:text-white/45' : 'pl-6 text-[var(--foreground)] placeholder:text-[var(--muted)]',
+                  'w-full pr-2 py-1 rounded-xl resize-none max-h-[260px] min-h-[34px]',
+                  incognito ? 'pl-3 text-white placeholder:text-white/45' : 'pl-3 text-[var(--foreground)] placeholder:text-[var(--muted)]',
                   'bg-transparent focus:outline-none text-sm font-terminal leading-[20px]',
                   !loading && !draft && 'cursor-blink'
                 )}

@@ -2674,20 +2674,30 @@ body.theme-gray * {
   }
 
   .xv-sidebar-edge-toggle {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 45;
-    width: 20px;
-    height: 48px;
+    position: absolute;
+    top: calc(var(--xv-sidebar-inset) + 0.65rem);
+    right: 0;
+    z-index: 46;
+    width: 28px;
+    height: 28px;
     align-items: center;
     justify-content: center;
-    border-radius: 0 8px 8px 0;
+    border-radius: 9px;
     border: 1px solid var(--card-border);
-    border-left: none;
     background: var(--card);
     color: var(--muted);
-    transition: left 0.2s ease, background 0.15s;
+    opacity: 0;
+    transform: translateX(42%);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+    transition: opacity 0.15s ease, transform 0.15s ease, background 0.15s;
+  }
+  .xv-sidebar-root:hover .xv-sidebar-edge-toggle,
+  .xv-sidebar-edge-toggle:focus-visible {
+    opacity: 1;
+    transform: translateX(28%);
+  }
+  .xv-sidebar-root.is-collapsed .xv-sidebar-edge-toggle {
+    top: calc(var(--xv-sidebar-inset) + 3.4rem);
   }
   .xv-sidebar-edge-toggle:hover {
     background: rgba(74, 122, 255, 0.15);
@@ -3089,13 +3099,13 @@ body.theme-gray * {
     box-shadow: 0 16px 44px rgba(15, 23, 42, 0.08);
   }
   .xv-chatbar-row-modern {
-    gap: 0.55rem;
-  }
-  .xv-chatbar-row--stacked {
     gap: 0.35rem;
   }
+  .xv-chatbar-row--stacked {
+    gap: 0.2rem;
+  }
   .xv-chatbar-tools {
-    min-height: 36px;
+    min-height: 30px;
   }
   .xv-mic-btn--dictate .xv-mic-dictate-icon {
     animation: xv-mic-dictate-idle 2.4s ease-in-out infinite;
@@ -6318,7 +6328,10 @@ body.theme-gray .xv-rp-loader {
 .xv-terminal-header {
   position: sticky !important;
   top: 0 !important;
+  inset-block-start: 0 !important;
   z-index: 45;
+  width: 100%;
+  align-self: start;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -6338,6 +6351,7 @@ body.theme-gray .xv-rp-loader {
    overflow clipping on a rounded parent silently disables sticky positioning in
    several browsers. The body still clips its own content and rounded corners. */
 .xv-terminal-window {
+  position: relative;
   overflow: visible;
   isolation: isolate;
 }
@@ -6614,6 +6628,34 @@ body.theme-gray .xv-rp-loader {
 }
 .xv-ws-launch--icon { padding: 0; width: 28px; justify-content: center; }
 
+.xv-chatbar-integration-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  height: 28px;
+  padding: 0 0.6rem;
+  border-radius: 0.55rem;
+  border: 1px solid var(--border-subtle, var(--card-border));
+  background: color-mix(in srgb, var(--surface-raised, var(--card)) 90%, transparent);
+  color: var(--text-secondary, var(--muted));
+  font-size: 0.68rem;
+  font-weight: 650;
+  transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+.xv-chatbar-integration-btn:hover {
+  color: var(--text-primary, var(--foreground));
+  border-color: var(--accent);
+}
+.xv-chatbar-integration-btn i {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
 .xv-chatbar-restore {
   display: flex;
   align-items: center;
@@ -6644,6 +6686,8 @@ body.theme-gray .xv-rp-loader {
     padding: 0;
     justify-content: center;
   }
+  .xv-chatbar-integration-btn span { display: none; }
+  .xv-chatbar-integration-btn { width: 28px; padding: 0; }
 }
 
 .xv-ws-fold {

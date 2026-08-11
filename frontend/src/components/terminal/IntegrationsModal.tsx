@@ -55,9 +55,12 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
       <div
         className="w-full max-w-2xl max-h-[85vh] rounded-2xl modal-glass universe-fade-in flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="xv-integrations-modal-title"
       >
         <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10">
-          <h2 className="font-semibold text-base">Integrations</h2>
+          <h2 id="xv-integrations-modal-title" className="font-semibold text-base">Integrations</h2>
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
             <input
@@ -68,7 +71,7 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
               className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/5 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]/40"
             />
           </div>
-          <button type="button" onClick={onClose} className="p-2 rounded-lg hover:bg-white/10">
+          <button type="button" onClick={onClose} className="p-2 rounded-lg hover:bg-white/10" aria-label="Close integrations">
             <X className="w-4 h-4" />
           </button>
         </div>

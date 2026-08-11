@@ -204,8 +204,6 @@ export function Sidebar({ displayName }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
-  /* Must sit with the other hooks: this component returns early for the collapsed
-     case, and a hook declared past that point runs conditionally. */
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const navScrollRef = useRef<HTMLDivElement>(null);
   const profileRowRef = useRef<HTMLDivElement>(null);
@@ -263,8 +261,7 @@ export function Sidebar({ displayName }: SidebarProps) {
     ? hydrated
       ? sidebarWidth
       : 'var(--xv-boot-sidebar-width, 256px)'
-    : 72;
-  const asideWidthCss = typeof asideWidth === 'number' ? `${asideWidth}px` : asideWidth;
+    : 64;
   const navExpanded = isMobile ? mobileOpen : effectiveSidebarOpen;
 
   function closeMobile() {
@@ -339,19 +336,6 @@ export function Sidebar({ displayName }: SidebarProps) {
       {/* The plan link used to be a full-width button of its own above the profile,
           which cost a whole row. It now rides in the profile line as a compact icon,
           so the nav keeps every item while taking less height. */}
-      {!navExpanded && !isMobile && (
-        <div className="flex flex-col items-center gap-1">
-          <HoverTip label="Xroga AI plan" description="View plans and upgrade your subscription.">
-            <Link
-              href="/pricing"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center p-2 mx-auto w-9 h-9 rounded-lg bg-[var(--foreground)] text-[var(--background)]"
-            >
-              <Zap className="w-4 h-4" />
-            </Link>
-          </HoverTip>
-        </div>
-      )}
       {displayName && navExpanded && (
         <div ref={profileRowRef} className="xv-sidebar-profile-row flex items-center gap-2 px-2 py-1.5 rounded-xl">
           {incognito ? (
@@ -381,21 +365,6 @@ export function Sidebar({ displayName }: SidebarProps) {
           <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} />
         </div>
       )}
-      {displayName && !effectiveSidebarOpen && !isMobile && (
-        <div className="flex flex-col items-center gap-1 py-1">
-          {incognito ? (
-            <IncognitoProfileBox size="sidebarCompact" />
-          ) : (
-          <UserProfileBox
-            url={avatarUrl}
-            initial={nameInitial}
-            size="sidebarCompact"
-            onClick={() => setAvatarPickerOpen(true)}
-          />
-          )}
-          <ProfileQuickMenu onLogout={handleLogout} />
-        </div>
-      )}
     </div>
   );
 
@@ -411,9 +380,9 @@ export function Sidebar({ displayName }: SidebarProps) {
           <HoverTip label="Xroga AI" description="Workspace home" block className="shrink min-w-0">
             <Logo
               href={logoHref}
-              height={30}
+              height={navExpanded ? 50 : 34}
               variant={navExpanded ? 'sidebarFull' : 'sidebar'}
-              className={cn(navExpanded ? 'max-w-[132px]' : '!h-[30px] !w-[30px]')}
+              className={cn(navExpanded ? 'max-w-[100px]' : '!h-[34px] !w-[34px]')}
               onClick={handleNavClick}
             />
           </HoverTip>
@@ -447,42 +416,15 @@ export function Sidebar({ displayName }: SidebarProps) {
             <MessageCirclePlus className="w-3.5 h-3.5" />
             <span>New Terminal</span>
           </button>
-        ) : (
-          <>
-            <SidebarTip label="New Terminal" description="Start a fresh workspace session.">
-              <button
-                type="button"
-                onClick={handleNewChat}
-                className="xv-sidebar-icon-link !w-8 !h-8 !mx-0"
-                aria-label="New Terminal"
-              >
-                <MessageCirclePlus className="w-4 h-4" />
-              </button>
-            </SidebarTip>
-            <HoverTip label="Search" description="Search projects, chats, and commands.">
-              <button
-                type="button"
-                onClick={() => setSearchOpen(true)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
-                aria-label="Search"
-              >
-                <Search className="w-3.5 h-3.5" />
-              </button>
-            </HoverTip>
-            <HoverTip label="Theme" description="Choose the workspace theme.">
-              <ThemeToggle placement="right-start" />
-            </HoverTip>
-          </>
-        )}
+        ) : null}
       </div>
 
-      <SidebarNavScroller targetRef={navScrollRef} className="flex-1 min-h-0">
+      {navExpanded ? <SidebarNavScroller targetRef={navScrollRef} className="flex-1 min-h-0">
         <nav
           ref={navScrollRef}
           className="xv-sidebar-nav-scroll h-full p-2 overflow-y-auto overflow-x-hidden min-h-0"
         >
-          {navExpanded ? (
-            <div className="xv-sidebar-menu">
+          <div className="xv-sidebar-menu">
               {navItems.map((entry) =>
                 isGroup(entry) ? (
                   <div key={entry.id} className="xv-nav-group">
@@ -530,32 +472,12 @@ export function Sidebar({ displayName }: SidebarProps) {
                   </SidebarTip>
                 ),
               )}
-            </div>
-          ) : (
-            /* Collapsed to icons there is no room for a disclosure, so groups flatten
-               back into their children — every destination stays one click away
-               rather than becoming unreachable. */
-            <div className="xv-sidebar-collapsed-nav space-y-1">
-              {navItems
-                .flatMap((entry) => (isGroup(entry) ? entry.children : [entry]))
-                .map(({ href, label, icon: Icon, tip, motion }) => (
-                  <SidebarTip key={href} label={label} description={tip}>
-                    <Link
-                      href={href}
-                      onClick={handleNavClick}
-                      className={cn('xv-sidebar-icon-link', isActive(href) && 'xv-active')}
-                    >
-                      <AnimatedNavIcon Icon={Icon} motion={motion} className="shrink-0" />
-                    </Link>
-                  </SidebarTip>
-                ))}
-            </div>
-          )}
+          </div>
           <SidebarProjectHistory expanded={navExpanded} />
         </nav>
-      </SidebarNavScroller>
+      </SidebarNavScroller> : <div className="flex-1" aria-hidden="true" />}
 
-      {bottomSection}
+      {navExpanded ? bottomSection : null}
       {effectiveSidebarOpen && (
         <div
           role="separator"
@@ -602,25 +524,10 @@ export function Sidebar({ displayName }: SidebarProps) {
           document.body,
         )}
 
-      <button
-        type="button"
-        onClick={() => {
-          toggleSidebar();
-          setMobileOpen(false);
-        }}
-        className={cn('xv-sidebar-edge-toggle hidden lg:flex', terminalFullscreen && '!hidden')}
-        aria-label={effectiveSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
-        // Track the inset panel's right edge, not the reserved column's edge.
-        style={{ left: `calc(${asideWidthCss} - var(--xv-sidebar-inset))` }}
+      <div
+        className={cn('xv-sidebar-root relative hidden lg:block shrink-0', !effectiveSidebarOpen && 'is-collapsed')}
+        style={{ width: asideWidth }}
       >
-        {effectiveSidebarOpen ? (
-          <PanelLeftClose className="w-3.5 h-3.5" />
-        ) : (
-          <PanelLeft className="w-3.5 h-3.5" />
-        )}
-      </button>
-
-      <div className="xv-sidebar-root hidden lg:block shrink-0" style={{ width: asideWidth }}>
         <aside
           className={cn(
             'xv-sidebar-floating xv-sidebar-hover relative z-40 flex flex-col shrink-0 overflow-hidden transition-[width,opacity] duration-200 opacity-100'
@@ -628,6 +535,21 @@ export function Sidebar({ displayName }: SidebarProps) {
         >
           {sidebarInner}
         </aside>
+        <button
+          type="button"
+          onClick={() => {
+            toggleSidebar();
+            setMobileOpen(false);
+          }}
+          className={cn('xv-sidebar-edge-toggle hidden lg:flex', terminalFullscreen && '!hidden')}
+          aria-label={effectiveSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+        >
+          {effectiveSidebarOpen ? (
+            <PanelLeftClose className="w-3.5 h-3.5" />
+          ) : (
+            <PanelLeft className="w-3.5 h-3.5" />
+          )}
+        </button>
       </div>
 
       <AvatarPickerModal
