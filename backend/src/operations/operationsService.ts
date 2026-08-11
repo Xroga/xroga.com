@@ -7,6 +7,7 @@ import {
 } from './operationsEngine.js';
 import { hasOperationsPermission, permissionsForRole, roleForProjectAccess } from './permissions.js';
 import { createInternalAdapter, httpVerificationAdapter, ProviderAdapterRegistry } from './providerAdapters.js';
+import { benchmarkStore, createBenchmarkAdapter } from './benchmarkAdapter.js';
 import type {
   OperationalResource, OperationsPermission, OperationsRole, PortfolioProduct,
   ProviderResult, RiskLevel, SafeActionRequest,
@@ -64,6 +65,10 @@ export class OperationsService {
   constructor(private readonly db: SupabaseClient = getSupabaseAdmin()) {
     this.registry.register(httpVerificationAdapter);
     this.registry.register(createInternalAdapter((capability, input) => this.executeInternal(capability, input)));
+    // Given the same admin client the service itself uses, so measured results are durable.
+    // An in-memory store here would let an approved, paid run vanish on restart, and the
+    // router that consults `model_benchmark_runs` would be back to deciding on priors.
+    this.registry.register(createBenchmarkAdapter({ store: benchmarkStore(this.db as never) }));
   }
 
   private async access(userId: string, projectId: string, permission: OperationsPermission): Promise<{ role: OperationsRole; ownerId: string }> {
@@ -299,7 +304,9 @@ export class OperationsService {
     const running = claimed[0];
     const adapter = ['refresh_health','verify_domain','run_synthetic_check'].includes(action.action_type)
       ? this.registry.get('http_verification')
-      : this.registry.get('internal_database');
+      : action.action_type === 'run_model_benchmark'
+        ? this.registry.get('model_benchmark')
+        : this.registry.get('internal_database');
     let result: ProviderResult;
     if (!adapter || !adapter.supportedCapabilities.includes(definition.providerCapability)) {
       result = { status: 'unsupported', safeSummary: 'No working provider adapter supports this action' };

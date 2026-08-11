@@ -25,6 +25,10 @@ export const ACTION_DEFINITIONS: Record<string, ActionDefinition> = {
   enable_automation: { type: 'enable_automation', permission: 'manage_automation', riskLevel: 'medium', confirmationRequired: true, supportedTargetTypes: ['automation'], providerCapability: 'enable_automation', maxAttempts: 1 },
   disable_automation: { type: 'disable_automation', permission: 'manage_automation', riskLevel: 'low', confirmationRequired: true, supportedTargetTypes: ['automation'], providerCapability: 'disable_automation', maxAttempts: 1 },
   execute_growth_campaign: { type: 'execute_growth_campaign', permission: 'manage_automation', riskLevel: 'high', confirmationRequired: true, approvalRole: 'recovery_manager', supportedTargetTypes: ['growth_campaign'], providerCapability: 'execute_growth_campaign', maxAttempts: 1 },
+  // Spends real provider budget against real credentials, so it carries the same gate as a
+  // release promotion: confirmation, then a second person's approval bound to the plan
+  // digest. `maxAttempts: 1` because a retry is another paid run, not a free repeat.
+  run_model_benchmark: { type: 'run_model_benchmark', permission: 'manage_provider_routing', riskLevel: 'high', confirmationRequired: true, approvalRole: 'release_manager', supportedTargetTypes: ['model_benchmark'], providerCapability: 'run_model_benchmark', maxAttempts: 1 },
 };
 
 const SENSITIVE = [
