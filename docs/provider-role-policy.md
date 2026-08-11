@@ -41,15 +41,17 @@ A research model filtered *after* ranking would still appear in the run's record
 
 At `59cdcf6` the policy was documented and unenforced. Three facts were true simultaneously:
 
-1. `STRENGTHS` gave `grok_4_5` and `grok_4_3` a `coding` score of 7, and `capabilityCandidates()` built a routing profile from every registry entry — so `routeByCapability({ capability: 'coding' })` ranked both Grok models as implementation candidates.
+1. The prior table (then named `STRENGTHS`, now `UNVERIFIED_PRIOR_STRENGTHS`) gave `grok_4_5` and `grok_4_3` a `coding` score of 7, and `capabilityCandidates()` built a routing profile from every registry entry — so `routeByCapability({ capability: 'coding' })` ranked both Grok models as implementation candidates. Both scores are now `0` (#501).
 2. `FALLBACKS` listed `grok_4_3` as a fallback for `kimi_k3`, `glm_5_2` and `deepseek_v4_flash` — all three coding models.
 3. `grok_4_5`'s declared role string in `models.ts` advertised "coding agents".
 
 Point 2 stopped being theoretical when PR #478 made the universal implement step walk its fallback chain for real. Two coding-provider failures would have handed implementation to a research model rather than refusing.
 
-## Known inconsistency, not yet fixed
+## Resolved: the registry no longer advertises what the policy refuses
 
-`models.ts` still describes `grok_4_5` as *"Real-time intelligence — web/X search, crypto news, coding agents"*. The phrase contradicts the enforced policy. It is harmless at runtime because `providerPolicy` governs selection, but it is misleading documentation sitting inside the registry and is listed as EXTEND in the migration map.
+`models.ts` described `grok_4_5` as *"Real-time intelligence — web/X search, crypto news, coding agents"*. It now reads *"Real-time intelligence — web/X search and crypto news. Research only; never writes code."*
+
+The phrase was harmless at runtime, since `providerPolicy` governed selection either way. The danger was documentary: a registry that advertises a capability the router forbids invites someone to read the role, conclude the filter is a bug, and remove it. A test now asserts that no research model's role string advertises coding (#501).
 
 ## Deliberately unchanged: `router.ts`
 

@@ -55,12 +55,16 @@ Runs eight synthesis stages through the real scheduler with content-addressed ev
 
 | | |
 | --- | --- |
-| Current | Routes by capability, then implements the whole project in **one** completion parsed into a file map |
+| Current | Routes by capability, then calls `implementIncrementally` — a manifest call followed by one call per file |
 | Target | Decompose into bounded tasks executed by the canonical scheduler |
 | Risk | Medium — allowlisted projects only |
-| Removal | The one-shot `implement` closure goes once task handlers cover implementation |
+| Removal | The `implement` closure goes once scheduler task handlers cover implementation |
 
-Already carries the fallback chain (#478), durable persistence (#478) and provider-policy enforcement (this branch). What remains is that its implement step is still whole-project generation, which §11 forbids as the normal mechanism.
+Carries the fallback chain (#478), durable persistence (#478) and provider-policy enforcement.
+
+The whole-project-in-one-completion step §11 forbids is **gone**: `universalEntrypoint.ts:194` now calls `implementIncrementally`, which the single-call approach forced after it failed against every coding model in production (run `05769971`) — a project encoded as one JSON object under a 16k ceiling ends mid-string, and `JSON.parse` then rejects the entire reply, losing nine finished files because the tenth was clipped. Raising the ceiling only moves that cliff.
+
+What remains is the *scheduler* half: implementation runs incrementally but still inside a closure rather than as canonical tasks with per-task evidence.
 
 ### `synthesis/universalCommit.ts`, `universalExecution.ts`, `universalPersistence.ts` — **KEEP**
 
@@ -78,13 +82,13 @@ Atomic publication, phase machine and durable storage. `universalPersistence` ha
 
 The single answer to "may this model write code?", as an allowlist. Every routing site defers here.
 
-### `ai/models.ts` — **EXTEND**
+### `ai/models.ts` — **KEEP** (was EXTEND; closed by #501)
 
-`grok_4_5`'s declared role string still advertises "coding agents", which contradicts the enforced policy. Harmless today because `providerPolicy` governs selection, but it is misleading documentation inside the registry and should be corrected.
+`grok_4_5`'s role string advertised "coding agents", contradicting the enforced policy. Corrected to state research-only explicitly. A test now asserts that no research model's role string advertises coding, because the risk was never runtime selection — `providerPolicy` always governed that — but a reader concluding the filter was a bug and removing it.
 
-### `ai/modelCapabilityRegistry.ts` — **EXTEND**
+### `ai/modelCapabilityRegistry.ts` — **KEEP** (was EXTEND; closed by #501)
 
-`STRENGTHS` is hand-written and unlabelled. §13 requires these become `unverified_prior` and be outranked by measured evidence. Grok's coding scores remain in the table but are now unreachable for coding selection — the filter is upstream. Cleaner to mark them research-only at the source once the evidence schema lands.
+`STRENGTHS` is now `UNVERIFIED_PRIOR_STRENGTHS`, with a comment stating that nothing in it was observed and that `capabilityRouter` confidence-weights it by provenance so a measured 7 outranks a hand-written 9 — §13's requirement. Both Grok coding priors are `0`: §7 forbids a research provider holding coding scores at all, and a prior that would be dangerous if the upstream filter were removed is not one worth keeping.
 
 ### `ai/router.ts` — **KEEP**
 
