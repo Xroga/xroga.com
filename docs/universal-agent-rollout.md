@@ -64,8 +64,19 @@ has to infer it.
 downstream reads the result — it records where the two paths disagree and returns rather
 than throwing, so observation can never turn into a failed build.
 
-The *enabled* path is not yet wired: no real build routes through `planUniversalRun` to
-generate files, so setting `enabled` today changes only the routing decision.
+The *enabled* path is now wired. `pipeline.ts` calls `routeProject(resolvedProjectId)`,
+emits a `universal_routing` progress event recording the decision and its reason, and a
+routed run generates files and publishes them through `atomicGitHubCommit` — the Command 1
+atomic writer, not a second publication path.
+
+`resolvedProjectId` falls back to a repository lookup when the client sends no project id,
+because bucketing needs a stable key and an absent id would otherwise shadow every run
+regardless of the allowlist.
+
+What has *not* happened: no live universal run has yet produced a commit. The path exists
+and is tested; it has not been proven end to end against a real repository. That gap is
+tracked as `liveRunProducedCommit` in `docs/command-3/execution-state.json` and is the
+reason the Agent Intelligence status reads `agent_intelligence_incomplete`.
 
 ## Suggested sequence
 
