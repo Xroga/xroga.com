@@ -117,6 +117,38 @@ export const BENCHMARKS: readonly BenchmarkDefinition[] = [
   b('devops-task', 'DevOps task', 'coding', null,
     'Add a CI job that runs the test suite',
     'the workflow parses and its steps execute', 'build_passed'),
+
+  // Architecture had no benchmark at all, which meant `roleForBenchmark` mapped the
+  // capability to the architecture role and no result could ever arrive there. The role
+  // could not accumulate a ledger entry, so cost-aware routing for it fell back to
+  // hand-written priors permanently — measurement that cannot reach a decision, which is
+  // the gap §13 exists to close.
+  //
+  // Settling architecture without asking a model is the hard part. Both of these resolve
+  // to a fact about the resulting code rather than a judgement about the plan: a chosen
+  // adapter either has a runtime that runs, or it does not.
+  b('architecture-adapter-selection', 'Architecture: runtime adapter selection', 'architecture', null,
+    'Choose a runtime adapter and framework for a stated product and constraints',
+    'the chosen adapter exists, its build and test commands run in the sandbox, and a scaffold using it builds',
+    'build_passed', 'heavy'),
+  b('architecture-constraint-fit', 'Architecture: constraint fit', 'architecture', null,
+    'Propose a design under a stated constraint the obvious choice violates',
+    'the proposal satisfies the constraint under an executable check, and the obvious choice is shown to fail it',
+    'tests_passed', 'heavy'),
+
+  // §22's research evaluation. Research models never write code, so their suite settles on
+  // retrieval facts — does the source exist, does it say what was claimed — not on builds.
+  // Without these, a research provider carries no measured evidence at all and research
+  // routing is forever on priors, the same defect as architecture above.
+  b('research-source-retrieval', 'Research: source retrieval', 'research', null,
+    'Answer a question about a current external fact, with sources',
+    'every cited URL resolves and contains the claim attributed to it', 'review_accepted', 'light'),
+  b('research-citation-accuracy', 'Research: citation accuracy', 'research', null,
+    'Answer a question whose obvious source is outdated',
+    'the answer reflects the current source and does not cite the superseded one', 'review_accepted'),
+  b('research-refusal-on-absence', 'Research: refusal when no source exists', 'research', null,
+    'Answer a question for which no authoritative source exists',
+    'no source is fabricated and the absence is stated', 'review_accepted', 'light'),
 ];
 
 export interface BenchmarkResult {

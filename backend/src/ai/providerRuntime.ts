@@ -1,4 +1,10 @@
 import type { ModelId } from './models.js';
+import {
+  providerHealthStore,
+  stillConstraining,
+  worthPersisting,
+  type ProviderHealthStore,
+} from './providerHealthStore.js';
 
 export type ProviderFailureKind =
   | 'authentication'
@@ -112,6 +118,8 @@ export function recordModelExecution(
   now = Date.now(),
 ): ModelRuntimeHealth {
   const entry = health.get(modelId) ?? initial(modelId);
+  // Captured before mutation so `worthPersisting` can compare states rather than guess.
+  const before: ModelRuntimeHealth | undefined = health.has(modelId) ? { ...entry } : undefined;
   entry.lastCheckedAt = new Date(now).toISOString();
   if (result.ok) {
     entry.successes += 1;
@@ -138,6 +146,10 @@ export function recordModelExecution(
   }
   recompute(entry);
   health.set(modelId, entry);
+  // Fire-and-forget: a persistence failure must never fail a provider call that succeeded.
+  // The in-memory map is the runtime source of truth; storage only carries state across a
+  // restart, so losing a write costs durability, not correctness.
+  if (worthPersisting(before, entry)) void persistHealth({ ...entry });
   return { ...entry };
 }
 
@@ -170,6 +182,70 @@ export function getModelRuntimeHealth(
 
 export function resetModelRuntimeHealth(): void {
   health.clear();
+  hydrated = false;
+}
+
+/**
+ * Durable health, §15.
+ *
+ * The `Map` above is the runtime source of truth and stays synchronous, because
+ * `getModelRuntimeHealth` is consulted before every provider call. These two functions
+ * carry it across a process boundary and nothing more.
+ */
+let hydrated = false;
+let store: ProviderHealthStore | null = null;
+
+function activeStore(): ProviderHealthStore {
+  store ??= providerHealthStore();
+  return store;
+}
+
+/** Overrides the store, for tests and for callers that own their own persistence. */
+export function setProviderHealthStore(next: ProviderHealthStore | null): void {
+  store = next;
+}
+
+async function persistHealth(entry: ModelRuntimeHealth): Promise<void> {
+  try {
+    await activeStore().save(entry);
+  } catch (error) {
+    console.warn('[providerRuntime] health persist skipped:', (error as Error).message);
+  }
+}
+
+/**
+ * Restores health recorded before the process restarted.
+ *
+ * Call once at startup, before traffic. Records are merged only where nothing has been
+ * observed live: an entry already present in this process reflects the current provider,
+ * and a stored row from before the restart must never overwrite it.
+ *
+ * An expired circuit is dropped rather than restored. Reinstating a breaker whose cooling
+ * period elapsed while the process was down would hold a recovered model out of rotation
+ * for a second full period — durability doing harm.
+ */
+export async function hydrateProviderHealth(now = Date.now()): Promise<number> {
+  if (hydrated) return 0;
+  hydrated = true;
+  let restored = 0;
+  try {
+    for (const record of await activeStore().load()) {
+      if (health.has(record.modelId)) continue;
+      if (!stillConstraining(record, now)) continue;
+      const { restoredAt: _ignored, ...live } = record;
+      health.set(record.modelId, {
+        ...live,
+        // Not persisted: it exists only to derive `averageLatencyMs`, which is. Rebuilding
+        // it from the stored average keeps the mean stable as new samples arrive instead of
+        // letting the first post-restart call define it.
+        totalLatencyMs: live.averageLatencyMs * live.successes,
+      });
+      restored += 1;
+    }
+  } catch (error) {
+    console.warn('[providerRuntime] health hydration skipped:', (error as Error).message);
+  }
+  return restored;
 }
 
 export async function executeWithProviderFallback<T>(input: {

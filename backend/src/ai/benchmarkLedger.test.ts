@@ -210,3 +210,53 @@ test('entries trace back to the benchmarks behind them', () => {
   assert.deepEqual(ledger[0]!.benchmarkIds, [CODING_BENCHMARK]);
   assert.ok(ledger[0]!.lastObservedAt);
 });
+
+const RESEARCH_BENCHMARK = BENCHMARKS.find((b) => b.capability === 'research')!.id;
+const ARCHITECTURE_BENCHMARK = BENCHMARKS.find((b) => b.capability === 'architecture')!.id;
+
+test('a research benchmark files evidence under the research role', () => {
+  // Before this existed, research benchmarks did not exist and `roleForBenchmark` returned
+  // null for the capability, so a research provider could hold no measured evidence at all
+  // and research routing ran on priors forever.
+  assert.equal(roleForBenchmark(RESEARCH_BENCHMARK), 'research');
+  const ledger = buildLedger([
+    result({ modelId: 'grok_4_5', benchmarkId: RESEARCH_BENCHMARK }),
+  ]);
+  assert.equal(ledger.length, 1);
+  assert.equal(ledger[0]!.role, 'research');
+  assert.equal(ledger[0]!.modelId, 'grok_4_5');
+});
+
+test('a coding model never acquires a research score', () => {
+  // The reverse of §7, and it matters just as much: a coding model scoring well on source
+  // retrieval would justify routing research to a provider with no search grounding.
+  const ledger = buildLedger([
+    result({ modelId: 'kimi_k3', benchmarkId: RESEARCH_BENCHMARK }),
+    result({ modelId: 'deepseek_v4_pro', benchmarkId: RESEARCH_BENCHMARK }),
+  ]);
+  assert.deepEqual(ledger, []);
+});
+
+test('architecture evidence reaches the architecture role', () => {
+  // `roleForBenchmark` mapped the capability to a role that no benchmark could ever
+  // produce, so the role was permanently unmeasurable.
+  assert.equal(roleForBenchmark(ARCHITECTURE_BENCHMARK), 'architecture');
+  const ledger = buildLedger(
+    Array.from({ length: 6 }, () => result({ modelId: 'kimi_k3', benchmarkId: ARCHITECTURE_BENCHMARK })),
+  );
+  assert.equal(ledger.length, 1);
+  assert.equal(ledger[0]!.role, 'architecture');
+  assert.equal(ledger[0]!.maturity, 'verified');
+});
+
+test('every role the benchmark map names has at least one benchmark behind it', () => {
+  // The defect this catches by construction: a role reachable from `roleForBenchmark` with
+  // no benchmark producing it is a role that can never be measured, and nothing else in
+  // the system notices.
+  const rolesWithBenchmarks = new Set(
+    BENCHMARKS.map((benchmark) => roleForBenchmark(benchmark.id)).filter(Boolean),
+  );
+  for (const role of ['implementation', 'repository_analyst', 'architecture', 'repair', 'independent_review', 'security_review', 'research']) {
+    assert.ok(rolesWithBenchmarks.has(role), `no benchmark produces evidence for the ${role} role`);
+  }
+});
