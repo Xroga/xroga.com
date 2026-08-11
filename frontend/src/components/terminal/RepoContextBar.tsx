@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown, Loader2 } from 'lucide-react';
 import { api, type GitHubRepo } from '@/lib/api';
 import { getCachedRepoAnalysis, setCachedRepoAnalysis } from '@/lib/repoAnalysisCache';
@@ -96,6 +97,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
   const [analyzing, setAnalyzing] = useState(false);
   const [repoSummary, setRepoSummary] = useState<string | null>(null);
   const [repoTech, setRepoTech] = useState<string[]>([]);
+  const [contextNotice, setContextNotice] = useState<string | null>(null);
   const [open, setOpen] = useState<'repo' | 'branch' | null>(null);
   // Only consulted when no repo is selected, i.e. when this build will create one.
   // Initialised to 'private' rather than from storage so the first server-rendered paint
@@ -103,6 +105,20 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
   const [newRepoVisibility, setNewRepoVisibility] = useState<NewRepoVisibility>('private');
   const repoAnchorRef = useRef<HTMLSpanElement>(null);
   const branchAnchorRef = useRef<HTMLSpanElement>(null);
+  const noticeTimerRef = useRef<number | null>(null);
+
+  const showContextNotice = useCallback((message: string) => {
+    setContextNotice(message);
+    if (noticeTimerRef.current !== null) window.clearTimeout(noticeTimerRef.current);
+    noticeTimerRef.current = window.setTimeout(() => {
+      noticeTimerRef.current = null;
+      setContextNotice(null);
+    }, 3600);
+  }, []);
+
+  useEffect(() => () => {
+    if (noticeTimerRef.current !== null) window.clearTimeout(noticeTimerRef.current);
+  }, []);
 
   useEffect(() => {
     setNewRepoVisibility(getNewRepoVisibility());
@@ -139,6 +155,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       if (cached) {
         setRepoSummary(cached.summary);
         setRepoTech(cached.techStack ?? []);
+        showContextNotice(`${fullName} · ${cached.fileCount.toLocaleString()} existing files ready to update`);
         return;
       }
     }
@@ -157,12 +174,13 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
         fileCount: result.fileCount,
         scannedAt: Date.now(),
       });
+      showContextNotice(`${fullName} · ${result.fileCount.toLocaleString()} existing files ready to update`);
     } catch {
       setRepoSummary(null);
     } finally {
       setAnalyzing(false);
     }
-  }, []);
+  }, [showContextNotice]);
 
   const refresh = useCallback(async (force = false) => {
     if (!readRepoListSnapshot()) setLoadingRepos(true);
@@ -258,6 +276,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       setSelectedBranch('main');
       setRepoSummary(null);
       setOpen(null);
+      showContextNotice('Fresh product · no repository files selected yet');
     };
     const onOpenPicker = () => {
       setSelectedRepo(null);
@@ -280,7 +299,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       window.removeEventListener(OPEN_REPO_PICKER_EVENT, onOpenPicker);
       window.removeEventListener('storage', onStorage);
     };
-  }, [refresh]);
+  }, [refresh, showContextNotice]);
 
   useEffect(() => {
     if (!selectedRepo) return;
@@ -381,15 +400,16 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
   const plainTextClass = 'inline-flex items-center gap-0.5 font-semibold text-[var(--foreground)]';
 
   return (
-    <div
-      className={cn(
-        'flex items-center text-[10px] font-mono text-[var(--foreground)]',
-        compact
-          ? 'xv-repo-chip xv-repo-chip--compact gap-1.5 w-full max-w-full min-w-0 overflow-hidden'
-          : 'gap-2 overflow-x-auto scrollbar-hide',
-        !compact && (outside ? 'px-0 py-0' : 'px-2 sm:px-3 py-1 border-0')
-      )}
-    >
+    <>
+      <div
+        className={cn(
+          'flex items-center text-[10px] font-mono text-[var(--foreground)]',
+          compact
+            ? 'xv-repo-chip xv-repo-chip--compact gap-1.5 w-full max-w-full min-w-0 overflow-hidden'
+            : 'gap-2 overflow-x-auto scrollbar-hide',
+          !compact && (outside ? 'px-0 py-0' : 'px-2 sm:px-3 py-1 border-0')
+        )}
+      >
       {/* Explicit product intent — avoids patching the wrong app */}
       <div className={cn('flex items-center gap-1 shrink-0', compact && 'xv-repo-intent')}>
         <button
@@ -593,6 +613,15 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
           )}
         </span>
       )}
-    </div>
+      </div>
+      {compact && contextNotice && typeof document !== 'undefined'
+        ? createPortal(
+            <div className="xv-repo-context-notice" role="status" aria-live="polite">
+              {contextNotice}
+            </div>,
+            document.body,
+          )
+        : null}
+    </>
   );
 }

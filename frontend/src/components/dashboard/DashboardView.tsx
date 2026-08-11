@@ -1,7 +1,6 @@
 'use client';
 
 import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
-import { ProjectWorkspaceRail } from '@/components/terminal/ProjectWorkspaceRail';
 import { DevWorkspacePanel } from '@/components/terminal/DevWorkspacePanel';
 import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
 import { DashboardWelcome } from '@/components/dashboard/DashboardWelcome';
@@ -33,7 +32,6 @@ export function DashboardView() {
 
   const chatColumn = (
     <div className={cn('space-y-3 w-full min-w-0', fullscreen && 'xv-fullscreen-terminal max-w-none')}>
-      <ProjectWorkspaceRail />
       <SwarmMessageLog />
     </div>
   );
@@ -41,11 +39,8 @@ export function DashboardView() {
   if (fullscreen) {
     return (
       <div className="xv-fullscreen-overlay xv-dashboard-fullscreen fixed inset-0 z-[200] flex flex-col bg-transparent w-screen">
-        <div className="flex-1 overflow-hidden w-full max-w-none px-3 sm:px-6 pt-3 pb-[min(340px,calc(48vh+env(safe-area-inset-bottom)))]">
-          <div className="h-full grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(360px,42%)] gap-3">
-            <div className="min-w-0 overflow-y-auto">{chatColumn}</div>
-            <DevWorkspacePanel className="min-h-[50vh] xl:min-h-0 h-full" />
-          </div>
+        <div className="xv-dashboard-fullscreen-stage flex-1 min-h-0 overflow-hidden w-full max-w-none px-2 sm:px-4 pt-2">
+          <div className="h-full min-w-0 overflow-hidden">{chatColumn}</div>
         </div>
       </div>
     );

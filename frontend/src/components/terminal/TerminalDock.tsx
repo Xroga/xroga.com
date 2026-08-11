@@ -93,7 +93,7 @@ export function TerminalDock() {
         className={cn(
           'mx-auto px-2 sm:px-4 lg:px-6 pt-1.5 sm:pt-2 pb-0.5 sm:pb-1 xv-terminal-dock-inner',
           dashboardFullscreen
-            ? 'max-w-6xl'
+            ? 'w-full max-w-none px-2 sm:px-4'
             : workspaceOpen
               ? 'max-w-[1400px] xl:pr-[calc(40%+1.5rem)]'
               : 'max-w-4xl'

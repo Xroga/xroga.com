@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { Cloud, Filter, FolderGit2, FolderOpen, GitBranch, ChevronDown, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -56,6 +57,89 @@ type RepoFolder = {
 
 type RepoFilter = 'latest' | 'oldest' | 'all' | 'current';
 
+const REPO_FILTERS = [
+  ['latest', 'Latest activity', 'Most recently used first'],
+  ['oldest', 'Oldest activity', 'Earliest saved work first'],
+  ['all', 'All repositories', 'Every repository, newest first'],
+  ['current', 'Current repository', 'Only the selected workspace'],
+] as const;
+
+function RepositoryFilterPopover({
+  open,
+  anchorRef,
+  value,
+  onClose,
+  onChange,
+}: {
+  open: boolean;
+  anchorRef: React.RefObject<HTMLButtonElement | null>;
+  value: RepoFilter;
+  onClose: () => void;
+  onChange: (value: RepoFilter) => void;
+}) {
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ left: 12, top: 12 });
+
+  useLayoutEffect(() => {
+    if (!open || !anchorRef.current) return;
+    const width = 252;
+    const height = 244;
+    const rect = anchorRef.current.getBoundingClientRect();
+    const roomOnRight = window.innerWidth - rect.right;
+    const left = roomOnRight >= width + 18
+      ? rect.right + 10
+      : Math.max(12, rect.left - width - 10);
+    const top = Math.max(12, Math.min(rect.top - 8, window.innerHeight - height - 12));
+    setPosition({ left, top });
+  }, [anchorRef, open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (anchorRef.current?.contains(target) || menuRef.current?.contains(target)) return;
+      onClose();
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('pointerdown', close);
+    document.addEventListener('keydown', escape);
+    return () => {
+      document.removeEventListener('pointerdown', close);
+      document.removeEventListener('keydown', escape);
+    };
+  }, [anchorRef, onClose, open]);
+
+  if (!open || typeof document === 'undefined') return null;
+
+  return createPortal(
+    <div
+      ref={menuRef}
+      className="xv-repo-filter-menu xv-repo-filter-menu--portal"
+      role="menu"
+      aria-label="Repository order"
+      style={{ left: position.left, top: position.top }}
+    >
+      <div className="xv-repo-filter-head"><b>Repository view</b><span>Sort saved workspaces</span></div>
+      {REPO_FILTERS.map(([filterValue, label, description]) => (
+        <button
+          key={filterValue}
+          type="button"
+          role="menuitemradio"
+          aria-checked={value === filterValue}
+          onClick={() => onChange(filterValue)}
+          className={cn('xv-repo-filter-option', value === filterValue && 'is-active')}
+        >
+          <i aria-hidden="true" />
+          <span><b>{label}</b><small>{description}</small></span>
+        </button>
+      ))}
+    </div>,
+    document.body,
+  );
+}
+
 function repoLabel(full: string): string {
   if (!full.includes('/')) return full;
   return full.split('/')[1] || full;
@@ -73,7 +157,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
   const [repoFilter, setRepoFilter] = useState<RepoFilter>('latest');
   const [filterOpen, setFilterOpen] = useState(false);
-  const filterRef = useRef<HTMLDivElement>(null);
+  const filterAnchorRef = useRef<HTMLButtonElement>(null);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -366,14 +450,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     return foldersList;
   }, [entries, cloudSessions, repoFilter, selectedRepo]);
 
-  useEffect(() => {
-    if (!filterOpen) return;
-    const close = (event: PointerEvent) => {
-      if (!filterRef.current?.contains(event.target as Node)) setFilterOpen(false);
-    };
-    document.addEventListener('pointerdown', close);
-    return () => document.removeEventListener('pointerdown', close);
-  }, [filterOpen]);
+  const closeFilter = useCallback(() => setFilterOpen(false), []);
+  const changeFilter = useCallback((value: RepoFilter) => {
+    setRepoFilter(value);
+    setFilterOpen(false);
+  }, []);
 
   useEffect(() => {
     setOpenFolders((prev) => {
@@ -522,8 +603,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
           Repositories
         </span>
-        <div ref={filterRef} className="relative">
+        <div className="relative">
           <button
+            ref={filterAnchorRef}
             type="button"
             title="Filter repositories"
             aria-label="Filter repositories"
@@ -534,29 +616,13 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           >
             <Filter className="h-3 w-3" aria-hidden="true" />
           </button>
-          {filterOpen ? (
-            <div className="xv-repo-filter-menu" role="menu" aria-label="Repository order">
-              <div className="xv-repo-filter-head"><b>Repository view</b><span>Sort saved workspaces</span></div>
-              {([
-                ['latest', 'Latest activity', 'Most recently used first'],
-                ['oldest', 'Oldest activity', 'Earliest saved work first'],
-                ['all', 'All repositories', 'Every repository, newest first'],
-                ['current', 'Current repository', 'Only the selected workspace'],
-              ] as const).map(([value, label, description]) => (
-                <button
-                  key={value}
-                  type="button"
-                  role="menuitemradio"
-                  aria-checked={repoFilter === value}
-                  onClick={() => { setRepoFilter(value); setFilterOpen(false); }}
-                  className={cn('xv-repo-filter-option', repoFilter === value && 'is-active')}
-                >
-                  <i aria-hidden="true" />
-                  <span><b>{label}</b><small>{description}</small></span>
-                </button>
-              ))}
-            </div>
-          ) : null}
+          <RepositoryFilterPopover
+            open={filterOpen}
+            anchorRef={filterAnchorRef}
+            value={repoFilter}
+            onClose={closeFilter}
+            onChange={changeFilter}
+          />
         </div>
       </div>
 
