@@ -156,3 +156,41 @@ test('the universal coding candidate list contains no research provider', () => 
     );
   }
 });
+
+test('a research model carries no coding capability prior', async () => {
+  // §7 forbids a research provider holding coding capability scores at all. Both Grok
+  // entries previously scored 7 for coding — high enough to win a coding route had the
+  // policy filter not sat upstream. Two independent controls over the same risk is the
+  // intent; a prior that would be dangerous if the filter were removed is not one worth
+  // keeping.
+  const { getRuntimeModelRegistry } = await import('./modelCapabilityRegistry.js');
+  for (const model of getRuntimeModelRegistry()) {
+    if (!isResearchModel(model.id)) continue;
+    assert.equal(model.strengths.coding, 0, `${model.id} advertises a coding score`);
+  }
+});
+
+test('a coding model still carries a usable coding prior', async () => {
+  // The direction check: zeroing research priors must not have zeroed the coding models,
+  // which would leave every coding route ranking on nothing until evidence accumulated.
+  const { getRuntimeModelRegistry } = await import('./modelCapabilityRegistry.js');
+  const coding = getRuntimeModelRegistry().filter((model) => isCodingModel(model.id));
+  assert.ok(coding.length > 0);
+  for (const model of coding) {
+    assert.ok(model.strengths.coding > 0, `${model.id} lost its coding prior`);
+  }
+});
+
+test('no model registry entry advertises a capability the policy refuses', () => {
+  // The `role` string is customer- and operator-facing documentation. When it described
+  // Grok as serving "coding agents" it contradicted the enforced policy, and a registry
+  // that advertises what the router forbids is how the forbidden thing gets re-enabled.
+  for (const id of Object.keys(MODELS) as (keyof typeof MODELS)[]) {
+    if (!isResearchModel(id)) continue;
+    assert.equal(
+      /\bcoding\b|\bcode\b/i.test(MODELS[id].role.replace(/never writes code/i, '')),
+      false,
+      `${id} role string advertises coding: ${MODELS[id].role}`,
+    );
+  }
+});
