@@ -3292,6 +3292,38 @@ body.theme-gray * {
     font-family: var(--font-goga), system-ui, sans-serif;
   }
 
+  /* The composer grows with a real build brief instead of forcing it through a
+     cramped native textarea. Its height is calculated in TerminalChatBar against
+     the current visual viewport; these rules make the eventual overflow quiet,
+     branded, and touch-friendly. */
+  .xv-chatbar-composer {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--accent) 68%, var(--foreground) 12%) transparent;
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
+    transition: height 140ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 140ms ease;
+  }
+  .xv-chatbar-composer::-webkit-scrollbar { width: 8px; }
+  .xv-chatbar-composer::-webkit-scrollbar-track {
+    margin-block: 7px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--foreground) 5%, transparent);
+  }
+  .xv-chatbar-composer::-webkit-scrollbar-thumb {
+    min-height: 38px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--accent) 72%, #8ed7ff),
+      color-mix(in srgb, var(--accent) 82%, #2458c7));
+    background-clip: padding-box;
+    box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  .xv-chatbar-composer::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent) 82%, #174aa8);
+    background-clip: padding-box;
+  }
+
   .xv-chat-turn-rail {
     --xv-turn-blue: #7fc4ff;
     --xv-turn-blue-hover: #1559c5;
@@ -4881,6 +4913,10 @@ body.theme-gray * {
       min-height: 36px;
       font-size: 14px;
     }
+    .xv-chatbar-composer {
+      max-height: min(38dvh, 300px);
+      scrollbar-gutter: auto;
+    }
     .xv-chatbar-toolbar {
       padding-top: 0.25rem !important;
       padding-bottom: 0.25rem !important;
@@ -4903,6 +4939,18 @@ body.theme-gray * {
       height: 34px;
       min-width: 34px;
     }
+  }
+
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .xv-chatbar-composer { max-height: min(44dvh, 380px); }
+  }
+
+  @media (min-width: 1024px) {
+    .xv-chatbar-composer { max-height: min(52dvh, 480px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .xv-chatbar-composer { transition: none; }
   }
 
   /* Incognito — full viewport gray private room */

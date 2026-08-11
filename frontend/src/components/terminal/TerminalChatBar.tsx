@@ -28,10 +28,18 @@ import { isGeneralAdviceOrKnowledgePrompt, isWebsiteBuildPrompt } from '@/lib/ch
 import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { Blocks } from 'lucide-react';
+import { composerMaxHeightForViewport } from '@/lib/chatComposerSizing';
 
-const MAX_ROWS = 13;
-const LINE_HEIGHT = 20;
 const MIN_INPUT_H = 32;
+
+function composerMaxHeight() {
+  if (typeof window === 'undefined') return 320;
+  // A long build brief should be comfortably editable on desktop while leaving
+  // enough of the terminal visible to preserve context. Phones use the visual
+  // viewport so the composer also contracts when the software keyboard opens.
+  const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+  return composerMaxHeightForViewport(window.innerWidth, viewportHeight);
+}
 
 function renameFile(file: File, newName: string) {
   return new File([file], newName, { type: file.type, lastModified: file.lastModified });
@@ -373,14 +381,29 @@ export function TerminalChatBar() {
     [addFiles, incognito]
   );
 
-  useEffect(() => {
+  const resizeComposer = useCallback(() => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = 'auto';
-    const maxH = LINE_HEIGHT * MAX_ROWS;
+    const maxH = composerMaxHeight();
     const nextH = Math.max(MIN_INPUT_H, Math.min(el.scrollHeight, maxH));
     el.style.height = `${nextH}px`;
-  }, [draft]);
+    el.style.overflowY = el.scrollHeight > maxH ? 'auto' : 'hidden';
+  }, []);
+
+  useEffect(() => {
+    resizeComposer();
+  }, [draft, resizeComposer]);
+
+  useEffect(() => {
+    const onResize = () => resizeComposer();
+    window.addEventListener('resize', onResize);
+    window.visualViewport?.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      window.visualViewport?.removeEventListener('resize', onResize);
+    };
+  }, [resizeComposer]);
 
   useEffect(() => {
     const el = shellRef.current;
@@ -558,12 +581,13 @@ export function TerminalChatBar() {
                   }
                 }}
                 placeholder={incognito ? 'Type a private message…' : 'Describe what you want to build or change…'}
+                aria-label="Message Xroga"
                 rows={1}
                 spellCheck={false}
                 autoCorrect="off"
                 autoCapitalize="off"
                 className={cn(
-                  'w-full pr-2 py-1 rounded-xl resize-none max-h-[260px] min-h-[34px]',
+                  'xv-chatbar-composer w-full pr-2 py-2 rounded-xl resize-none min-h-[34px]',
                   incognito ? 'pl-3 text-white placeholder:text-white/45' : 'pl-3 text-[var(--foreground)] placeholder:text-[var(--muted)]',
                   'bg-transparent focus:outline-none text-sm font-terminal leading-[20px]',
                   !loading && !draft && 'cursor-blink'
