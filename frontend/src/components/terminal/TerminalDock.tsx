@@ -91,7 +91,7 @@ export function TerminalDock() {
       <div
         ref={dockInnerRef}
         className={cn(
-          'mx-auto px-2 sm:px-4 lg:px-6 pt-2 sm:pt-3 pb-1.5 sm:pb-3 lg:pb-4 xv-terminal-dock-inner',
+          'mx-auto px-2 sm:px-4 lg:px-6 pt-1.5 sm:pt-2 pb-0.5 sm:pb-1 xv-terminal-dock-inner',
           dashboardFullscreen
             ? 'max-w-6xl'
             : workspaceOpen

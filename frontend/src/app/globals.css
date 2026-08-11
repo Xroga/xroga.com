@@ -2732,6 +2732,33 @@ body.theme-gray * {
     border-color: color-mix(in srgb, var(--accent) 52%, var(--card-border));
     background: color-mix(in srgb, var(--accent) 17%, transparent);
   }
+
+  .xv-sidebar-collapsed-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--card) 94%, transparent);
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
+  }
+  .xv-sidebar-collapsed-actions button {
+    display: inline-flex;
+    width: 28px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: var(--muted);
+    transition: color 150ms ease, background 150ms ease;
+  }
+  .xv-sidebar-collapsed-actions button:hover,
+  .xv-sidebar-collapsed-actions button:focus-visible {
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    outline: none;
+  }
   @container (max-width: 279px) {
     .xv-new-terminal-compact {
       width: 28px;
@@ -6465,8 +6492,8 @@ body.theme-gray .xv-rp-loader {
 
 .xv-terminal-header {
   position: sticky !important;
-  top: 0 !important;
-  inset-block-start: 0 !important;
+  top: -0.75rem !important;
+  inset-block-start: -0.75rem !important;
   z-index: 45;
   width: 100%;
   align-self: start;
@@ -6492,16 +6519,35 @@ body.theme-gray .xv-rp-loader {
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
   isolation: isolate;
 }
+
+@media (min-width: 640px) {
+  .xv-terminal-header {
+    top: -1.5rem !important;
+    inset-block-start: -1.5rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .xv-terminal-header {
+    top: -2rem !important;
+    inset-block-start: -2rem !important;
+  }
+}
+
+body.xv-terminal-fullscreen-active .xv-terminal-header {
+  top: 0 !important;
+  inset-block-start: 0 !important;
+}
 .xv-terminal-window--scrolling {
-  max-height: min(74dvh, 760px);
+  max-height: none;
+  overflow: visible;
 }
 .xv-terminal-window--scrolling .xv-terminal-body {
-  min-height: min(18rem, 48dvh);
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
+  min-height: 18rem;
+  overflow: visible !important;
 }
 .xv-terminal-window--compact {
   display: block;
@@ -7408,16 +7454,16 @@ body.theme-beige {
 .xv-chatbar-context-strip {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  min-height: 28px;
-  padding: 0.35rem 0.35rem 0;
+  gap: 0.4rem;
+  min-height: 26px;
+  padding: 0.2rem 0 0;
   color: var(--text-muted, var(--muted));
 }
 .xv-chatbar-context-strip > :first-child { min-width: 0; flex: 1; }
 
 /* The repo context, inline in the bottom row. */
 .xv-repo-chip {
-  height: 28px;
+  min-height: 26px;
   padding-inline: 0.5rem;
   border-radius: 0.5rem;
   border: 1px solid var(--border-subtle, var(--card-border));

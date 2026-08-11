@@ -72,7 +72,7 @@ export interface ShowcaseTemplate {
  * and preview routes, which is where a user has asked to try the product.
  */
 export function thumbnailFor(template: ShowcaseTemplate, view: 'desktop' | 'tablet' | 'mobile' = 'desktop'): string {
-  return `/showcase/thumbnails/${template.slug}-${view}.webp`;
+  return `/showcase/thumbnails/${template.slug}-${view}.webp?v=${encodeURIComponent(template.templateVersion)}`;
 }
 
 /** Intrinsic size of each stored thumbnail, so images reserve space and never shift layout. */
@@ -198,7 +198,7 @@ export const SHOWCASE_TEMPLATES: readonly ShowcaseTemplate[] = [
       'Mortgage calculator with real amortisation',
     ],
     technologies: ['Next.js', 'React', 'TypeScript'],
-    templateVersion: '1.0.0',
+    templateVersion: '2.0.0',
     status: 'live',
     featured: true,
     mobileApp: false,

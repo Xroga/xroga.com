@@ -366,11 +366,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
     // noise, and it is also the widest this element ever gets, so the row reflowed
     // the moment repositories finished loading.
     if (compact) {
-      return (
-        <span className="xv-repo-chip xv-repo-chip--loading" role="status" aria-label="Loading repositories">
-          <Loader2 className="w-3 h-3 animate-spin opacity-70" aria-hidden="true" />
-        </span>
-      );
+      return null;
     }
     return (
       <div className={cn('flex items-center gap-1.5 text-[10px] font-mono text-[var(--muted)]', outside ? 'py-0' : 'py-1')}>
@@ -389,7 +385,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       className={cn(
         'flex items-center text-[10px] font-mono text-[var(--foreground)]',
         compact
-          ? 'xv-repo-chip gap-1.5 max-w-[46vw] sm:max-w-[16rem] overflow-hidden'
+          ? 'xv-repo-chip gap-1.5 w-max max-w-full min-w-0 overflow-x-auto scrollbar-hide'
           : 'gap-2 overflow-x-auto scrollbar-hide',
         !compact && (outside ? 'px-0 py-0' : 'px-2 sm:px-3 py-1 border-0')
       )}

@@ -302,7 +302,8 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(welcomeBox!.y).toBeLessThan(80);
   const terminalHeader = page.getByTestId('terminal-identity-header');
   await expect(terminalHeader).toHaveCSS('position', 'sticky');
-  await expect(page.locator('.xv-terminal-body')).toHaveCSS('overflow-y', 'auto');
+  await expect(terminalHeader).toHaveCSS('top', '-32px');
+  await expect(page.locator('.xv-terminal-body')).toHaveCSS('overflow-y', 'visible');
   await expect(terminalHeader.getByRole('button', { name: 'Workspace' })).toBeVisible();
   const hideChatbar = terminalHeader.getByRole('button', { name: 'Hide the chatbar' });
   await expect(hideChatbar).toBeVisible();
@@ -334,6 +335,8 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('border-top-width', '0px');
   await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toHaveCount(0);
+  await expect(desktopSidebar.getByRole('button', { name: 'Search' })).toBeVisible();
+  await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
   await expect(desktopSidebar.locator('nav')).toHaveCount(0);
   await page.getByRole('button', { name: 'Open sidebar' }).click();
 

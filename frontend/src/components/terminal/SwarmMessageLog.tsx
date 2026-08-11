@@ -324,7 +324,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           )}
         </div>
 
-        <div className="xv-terminal-body px-4 py-3 space-y-3 font-coding text-[13px] overflow-y-auto overflow-x-hidden rounded-b-xl">
+        <div className="xv-terminal-body px-4 py-3 space-y-3 font-coding text-[13px] overflow-visible rounded-b-xl">
           {messages.length === 0 && sessionRestoring && (
             <div className="xv-term-empty" role="status" aria-live="polite" data-testid="terminal-restoring">
               <p className="xv-term-emptyline">

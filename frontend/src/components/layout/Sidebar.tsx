@@ -258,9 +258,11 @@ export function Sidebar({ displayName }: SidebarProps) {
       document.body.classList.remove('xv-sidebar-resizing');
       document.removeEventListener('pointermove', onMove);
       document.removeEventListener('pointerup', onUp);
+      document.removeEventListener('pointercancel', onUp);
     }
     document.addEventListener('pointermove', onMove);
     document.addEventListener('pointerup', onUp, { once: true });
+    document.addEventListener('pointercancel', onUp, { once: true });
   }
 
   function resizeWithKeyboard(e: React.KeyboardEvent<HTMLDivElement>) {
@@ -396,11 +398,11 @@ export function Sidebar({ displayName }: SidebarProps) {
       <div
         className={cn(
           'xv-sidebar-brand border-b border-[var(--card-border)] shrink-0',
-          navExpanded ? 'px-2 py-2' : 'flex flex-col items-center gap-1 px-1 py-2',
+          navExpanded ? 'px-2 py-2' : 'flex items-center gap-2 px-2 py-2',
         )}
       >
-        <div className={cn('flex items-center', navExpanded ? 'w-full gap-2' : 'justify-center')}>
-          <HoverTip label="Xroga AI" description="Workspace home" block className="shrink min-w-0">
+        <div className={cn('flex items-center', navExpanded ? 'w-full gap-2' : 'gap-2')}>
+          <HoverTip label="Xroga AI" description="Workspace home" block className={navExpanded ? 'shrink min-w-0' : 'shrink-0'}>
             <Logo
               href={logoHref}
               height={navExpanded ? 50 : 34}
@@ -437,7 +439,29 @@ export function Sidebar({ displayName }: SidebarProps) {
               </HoverTip>
               {isMobile && mobileOpen ? <ModalCloseButton onClick={closeMobile} /> : null}
             </div>
-          ) : null}
+          ) : (
+            <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
+              <HoverTip label="Open sidebar" description="Show workspace navigation.">
+                <button
+                  type="button"
+                  onClick={() => toggleSidebar()}
+                  aria-label="Open sidebar"
+                >
+                  <PanelLeft className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </HoverTip>
+              <HoverTip label="Search" description="Search projects, chats, and commands.">
+                <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
+                  <Search className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </HoverTip>
+              <HoverTip label="New terminal" description="Start a fresh workspace terminal.">
+                <button type="button" onClick={handleNewChat} aria-label="New Terminal">
+                  <MessageCirclePlus className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </HoverTip>
+            </div>
+          )}
         </div>
 
       </div>
@@ -566,7 +590,7 @@ export function Sidebar({ displayName }: SidebarProps) {
             <span aria-hidden="true" />
           </div>
         ) : null}
-        <button
+        {effectiveSidebarOpen ? <button
           type="button"
           onClick={() => {
             toggleSidebar();
@@ -575,12 +599,8 @@ export function Sidebar({ displayName }: SidebarProps) {
           className={cn('xv-sidebar-edge-toggle hidden lg:flex', terminalFullscreen && '!hidden')}
           aria-label={effectiveSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
         >
-          {effectiveSidebarOpen ? (
-            <PanelLeftClose className="w-3.5 h-3.5" />
-          ) : (
-            <PanelLeft className="w-3.5 h-3.5" />
-          )}
-        </button>
+          <PanelLeftClose className="w-3.5 h-3.5" />
+        </button> : null}
       </div>
 
       <AvatarPickerModal

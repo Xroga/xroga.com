@@ -280,8 +280,8 @@
 }
 .xv-sidebar-root.is-collapsed .xv-sidebar-floating {
   top: var(--xv-sidebar-inset);
-  width: 48px;
-  height: 50px;
+  width: max-content;
+  height: 52px;
   margin-inline-start: var(--xv-sidebar-inset);
   overflow: visible;
   border: 0;
@@ -292,7 +292,7 @@
   -webkit-backdrop-filter: none;
 }
 .xv-sidebar-root.is-collapsed .xv-sidebar-brand {
-  padding: 8px 7px;
+  padding: 8px;
   border-bottom: 0 !important;
   background: transparent;
 }
