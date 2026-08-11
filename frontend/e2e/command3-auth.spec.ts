@@ -300,7 +300,33 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const welcomeBox = await page.getByTestId('workspace-welcome').boundingBox();
   expect(welcomeBox).not.toBeNull();
   expect(welcomeBox!.y).toBeLessThan(80);
-  await expect(page.getByTestId('terminal-identity-header')).toHaveCSS('position', 'sticky');
+  const terminalHeader = page.getByTestId('terminal-identity-header');
+  await expect(terminalHeader).toHaveCSS('position', 'sticky');
+  await expect(terminalHeader.getByRole('button', { name: 'Workspace' })).toBeVisible();
+  const hideChatbar = terminalHeader.getByRole('button', { name: 'Hide the chatbar' });
+  await expect(hideChatbar).toBeVisible();
+  await hideChatbar.click();
+  await expect(composerInput).toBeHidden();
+  const restoreChatbar = terminalDock.getByRole('button', { name: 'Show the chatbar' });
+  await expect(restoreChatbar).toBeVisible();
+  const restoreBox = await restoreChatbar.boundingBox();
+  expect(restoreBox).not.toBeNull();
+  expect(restoreBox!.width).toBeLessThanOrEqual(40);
+  expect(restoreBox!.height).toBeLessThanOrEqual(40);
+  await restoreChatbar.click();
+  await expect(composerInput).toBeVisible();
+
+  const desktopSidebar = page.locator('.xv-sidebar-root');
+  await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toBeVisible();
+  await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute(
+    'src',
+    /Green-Minimalist-Summer-Big-Sale/,
+  );
+  await page.getByRole('button', { name: 'Close sidebar' }).click();
+  await expect(desktopSidebar).toHaveCSS('width', '72px');
+  await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute('src', /xrogaai\.png/);
+  await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toBeVisible();
+  await page.getByRole('button', { name: 'Open sidebar' }).click();
 
   // Internal navigation must retain the shared shell and the mounted composer.
   const shellSentinel = randomUUID();

@@ -2,23 +2,39 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { HEADER_LOGO_URL, SIDEBAR_LOGO_URL, HOMEPAGE_LOGO_URL } from '@/lib/theme';
+import {
+  HEADER_LOGO_URL,
+  HOMEPAGE_LOGO_URL,
+  SIDEBAR_FULL_LOGO_URL,
+  SIDEBAR_LOGO_URL,
+} from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
   href?: string | null;
   height?: number;
   className?: string;
-  variant?: 'header' | 'sidebar' | 'homepage';
+  variant?: 'header' | 'sidebar' | 'sidebarFull' | 'homepage';
   onClick?: () => void;
 }
 
 export function Logo({ href = '/dashboard', height = 50, className, variant = 'header', onClick }: LogoProps) {
-  const src =
-    variant === 'homepage' ? HOMEPAGE_LOGO_URL : variant === 'sidebar' ? SIDEBAR_LOGO_URL : HEADER_LOGO_URL;
-  // Home/workspace logo is a wide transparent banner; sidebar stays square mark
+  const src = variant === 'homepage'
+    ? HOMEPAGE_LOGO_URL
+    : variant === 'sidebarFull'
+      ? SIDEBAR_FULL_LOGO_URL
+      : variant === 'sidebar'
+        ? SIDEBAR_LOGO_URL
+        : HEADER_LOGO_URL;
+  // Wide wordmarks retain their natural banner space; the folded rail stays square.
   const width =
-    variant === 'homepage' ? height * 3.6 : variant === 'header' ? height * 3.2 : height * 1.1;
+    variant === 'homepage'
+      ? height * 3.6
+      : variant === 'header'
+        ? height * 3.2
+        : variant === 'sidebarFull'
+          ? height * 4.2
+          : height;
 
   const inner = (
     <div
