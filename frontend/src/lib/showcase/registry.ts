@@ -72,7 +72,11 @@ export interface ShowcaseTemplate {
  * and preview routes, which is where a user has asked to try the product.
  */
 export function thumbnailFor(template: ShowcaseTemplate, view: 'desktop' | 'tablet' | 'mobile' = 'desktop'): string {
-  return `/showcase/thumbnails/${template.slug}-${view}.webp?v=${encodeURIComponent(template.templateVersion)}`;
+  // Vercel's public-file CDN can retain an old object even when only the query
+  // string changes. Revised screenshots therefore receive a real filename so a
+  // deployed card can never keep showing the previous product design.
+  const revision = template.slug === 'ai-saas-chatbot' || template.slug === 'playable-web-game' ? '-2026-08-12' : '';
+  return `/showcase/thumbnails/${template.slug}-${view}${revision}.webp`;
 }
 
 /** Intrinsic size of each stored thumbnail, so images reserve space and never shift layout. */
