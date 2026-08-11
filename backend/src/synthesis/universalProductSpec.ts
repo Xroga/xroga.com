@@ -30,6 +30,7 @@
 
 import type { ProjectFile } from '../ai/patches.js';
 import { detectComposition } from './runtime/registry.js';
+import { inferBehaviouralCapabilities, surfacesImpliedByCapabilities } from './behavioralCapabilities.js';
 
 export const UNIVERSAL_PRODUCT_SPEC_SCHEMA_VERSION = '1.0.0' as const;
 
@@ -240,6 +241,24 @@ export function inferSurfaces(prompt: string, files: readonly ProjectFile[] = []
         scores.set('library', entry);
       }
     }
+  }
+
+  // Behavioural implications, added after the surface rules have had their say.
+  //
+  // The surface rules match nouns — "website", "CLI", "API". A request that describes what
+  // people *do* rather than what the product *is* matches none of them, which is how
+  // "customers reserve a time slot and staff manage availability" produced no surface at all
+  // and was refused. This asks what the behaviour requires and contributes that as evidence.
+  //
+  // It runs second and with lower weights than an explicit surface noun, so a request that
+  // names its own shape still wins: "build a Rust CLI that stores its config" stays a CLI.
+  const behavioural = inferBehaviouralCapabilities(prompt);
+  for (const implication of surfacesImpliedByCapabilities(behavioural, [...scores.keys()].map(String))) {
+    const entry = scores.get(implication.surface) ?? { score: 0, reasons: [], evidence: [] };
+    entry.score += implication.weight;
+    entry.reasons.push(implication.reason);
+    entry.evidence.push(...implication.evidence);
+    scores.set(implication.surface, entry);
   }
 
   if (!scores.size) return [];

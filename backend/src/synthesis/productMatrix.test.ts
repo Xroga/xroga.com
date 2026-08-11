@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 import { planUniversalRun } from './universalFlow.js';
 import { detectComposition } from './runtime/registry.js';
 import type { ProjectFile } from '../ai/patches.js';
+import { inferBehaviouralCapabilities } from './behavioralCapabilities.js';
 
 /**
  * The launch-category product matrix, at the planning stage.
@@ -42,36 +43,56 @@ const languagesOf = (prompt: string, files: ProjectFile[] = []) =>
   [...new Set(planOf(prompt, files).architecture.components.map((component) => component.language))];
 
 describe('launch category matrix — planning stage only', () => {
-  it('SaaS dashboard plans as a web surface — with no API behind it', () => {
-    // Recorded as the current state, not as an aspiration. A dashboard whose request
-    // mentions sign-in and team invites resolves to `web_frontend` alone, so the planned
-    // product has no backend for the persistence and authorization the request implies.
-    //
-    // This is a launch finding rather than a bug to fix speculatively here: the category is
-    // plannable and buildable, but as a front end. It is recorded so the launch matrix does
-    // not list "SaaS dashboard" as though it plans a full stack.
+  it('SaaS infers a backend from sign-in, teams and invites', () => {
+    // Was `web_frontend` alone: the visual surface was recognised and the functional
+    // architecture was not, so the planned product had nowhere to keep a team or check a
+    // password. Fixed by behavioural inference rather than a SaaS branch — authentication
+    // and membership are capabilities, and capabilities imply a service.
     const found = surfacesOf(
-      'Build a SaaS analytics dashboard where teams sign in, view usage charts and invite members',
+      'Build a SaaS dashboard where users can sign in, create teams, invite members, manage team projects and view project activity.',
     );
-    assert.deepEqual(found, ['web_frontend'], `surfaces changed: ${found.join(', ')}`);
+    assert.ok(found.includes('web_frontend'), `surfaces: ${found.join(', ')}`);
+    assert.ok(found.includes('api'), `no backend inferred: ${found.join(', ')}`);
   });
 
-  it('booking is refused rather than built as the wrong thing', () => {
-    // No surface can be determined, so the run refuses. That is the *correct* behaviour —
-    // defaulting to a static website is the failure the surface system exists to prevent —
-    // but it means booking is `unsupported`, not merely unverified, and the launch matrix
-    // must say so.
+  it('booking plans rather than refusing', () => {
+    // Was `refused_no_surface`. The request contains no surface noun at all — the verbs are
+    // what carry the requirements, and "reserve"/"available"/"admins manage" imply shared
+    // durable state with a single arbiter.
     const plan = planOf(
-      'Build a restaurant table booking system where customers reserve a time slot and staff manage availability',
+      'Build a booking application where customers can view available time slots, reserve a slot, cancel a reservation, and admins can manage availability.',
     );
-    assert.equal(plan.status, 'refused_no_surface');
-    assert.match(plan.blockers[0] ?? '', /No product surface could be determined/);
+    assert.notEqual(plan.status, 'refused_no_surface');
+    const found = plan.spec.surfaces.map((s) => String(s.surface));
+    assert.ok(found.includes('api'), `booking planned no service: ${found.join(', ')}`);
   });
 
-  it('commerce is refused rather than built as the wrong thing', () => {
-    const plan = planOf('Build an online store with a product catalogue, a cart, checkout and order history');
-    assert.equal(plan.status, 'refused_no_surface');
-    assert.match(plan.blockers[0] ?? '', /No product surface could be determined/);
+  it('commerce plans rather than refusing', () => {
+    const plan = planOf(
+      'Build a small e-commerce application where customers can browse products, add items to a cart, place an order, and admins can manage products and order status.',
+    );
+    assert.notEqual(plan.status, 'refused_no_surface');
+    const found = plan.spec.surfaces.map((s) => String(s.surface));
+    assert.ok(found.includes('api'), `commerce planned no service: ${found.join(', ')}`);
+  });
+
+  it('a payment provider is not invented when payment was never requested', () => {
+    // "Order" and "checkout" appear constantly in products that never take a card. Inventing
+    // a payment integration is a real cost and a real compliance surface.
+    const capabilities = inferBehaviouralCapabilities(
+      'Build a small e-commerce application where customers can browse products, add items to a cart, place an order, and admins can manage products and order status.',
+    ).map((signal) => signal.capability);
+    assert.equal(capabilities.includes('payment'), false, `payment invented: ${capabilities.join(', ')}`);
+
+    const asked = inferBehaviouralCapabilities('customers pay with a credit card at checkout').map((s) => s.capability);
+    assert.ok(asked.includes('payment'), 'an explicit payment request was missed');
+  });
+
+  it('realtime is not invented when it was never requested', () => {
+    const capabilities = inferBehaviouralCapabilities(
+      'Build a booking application where customers reserve a slot and admins manage availability.',
+    ).map((signal) => signal.capability);
+    assert.equal(capabilities.includes('realtime'), false, `realtime invented: ${capabilities.join(', ')}`);
   });
 
   it('CRUD data application resolves to persistence, not a static page', () => {
