@@ -38,7 +38,9 @@ import {
   type ExecutionEvidence,
   type ExecutionStateStore,
   type TaskHandler,
+  type ValidationRecord,
 } from '../ai/executionRuntime.js';
+import type { ValidationReport } from './universalFlow.js';
 import { ENGINEERING_ROLES } from '../ai/engineeringRoles.js';
 import { assertCodingModel } from '../ai/providerPolicy.js';
 import type { ModelId } from '../ai/models.js';
@@ -177,8 +179,39 @@ export function assessGeneratedFiles(files: readonly ProjectFile[]): {
  */
 export function universalTaskHandlers(input: {
   implement: ImplementFn;
+  validate?: ValidateFn;
 }): Record<string, TaskHandler> {
   return {
+    ...(input.validate
+      ? {
+          validation: (async (task, state) => {
+            // The real sandbox run. `validated` comes from exit codes, never from a model.
+            const report = await input.validate!();
+            const records = validationRecordsFrom(report);
+            state.validationResults.push(...records);
+
+            return {
+              output: {
+                passed: report.passed,
+                tierReached: report.tierReached,
+                blocker: report.blocker,
+                executed: records.length,
+              },
+              evidence: [
+                evidenceFor(
+                  'validation_result',
+                  `tier ${report.tierReached}: ${records.length} command(s) executed, ` +
+                    `${report.failures.length} failed${report.blocker ? ` — ${report.blocker}` : ''}`,
+                  records,
+                ),
+              ],
+              // §19: a coding model cannot override a deterministic validation failure,
+              // and neither can this handler. `passed` is the sandbox's verdict verbatim.
+              validated: report.passed,
+            };
+          }) satisfies TaskHandler,
+        }
+      : {}),
     multi_file_implementation: async (task, state) => {
       // The real operation. Not a summary of one performed elsewhere.
       const files = await input.implement();
@@ -207,6 +240,97 @@ export function universalTaskHandlers(input: {
       };
     },
   };
+}
+
+export const VALIDATION_TASK_ID = 'universal-validation';
+
+/**
+ * The validation task node.
+ *
+ * `providerCategory` for the validation role is `none`, and that is the point: no model
+ * participates. §19 puts executable verification above model confidence, so this task's
+ * outcome is decided by exit codes and nothing else. It carries no `selectedModel`, which
+ * makes a model-driven pass structurally unavailable rather than merely discouraged.
+ *
+ * It is not treated as a mutating task — it reads and executes, it does not write — so the
+ * scheduler may retry it on a thrown error. A sandbox that failed to start is worth a
+ * second attempt; a test that failed is not, and that distinction is preserved because a
+ * failing report returns normally rather than throwing.
+ */
+export function validationTaskNode(input: {
+  objective: string;
+  dependsOn?: readonly string[];
+  timeoutMs?: number;
+}): ExecutableTaskNode {
+  return {
+    id: VALIDATION_TASK_ID,
+    objective: input.objective,
+    operationType: 'validation',
+    requiredCapabilities: ['validation'],
+    selectedRuntime: 'sandbox',
+    selectedProvider: null,
+    selectedModel: null,
+    requiredContextReferences: ['generated file set', 'validation plan'],
+    allowedFiles: [],
+    expectedOutputSchema: { description: 'the executed validation report' },
+    dependencies: [...(input.dependsOn ?? [])],
+    riskLevel: 'high',
+    timeoutMs: input.timeoutMs ?? 900_000,
+    retryPolicy: { maximumAttempts: 2, initialBackoffMs: 500, maximumBackoffMs: 4_000 },
+    budget: {},
+    validationMethod: ['every planned command executed', 'no required command failed'],
+    evidenceRequirements: [...ENGINEERING_ROLES.validation_runtime.completionEvidence],
+    fallbackRoutes: [],
+    status: 'ready',
+    attempts: 0,
+    evidence: [],
+  };
+}
+
+/** The real validation step: run the plan and report what the commands did. */
+export type ValidateFn = () => Promise<ValidationReport>;
+
+/**
+ * Records every executed command on canonical state.
+ *
+ * §19 requires the command, exit code and bounded safe output to be persisted, not just a
+ * pass/fail. Without the individual records a failed run says only that validation failed,
+ * and the next question — which command, with what exit code — has no answer in the record.
+ */
+export function validationRecordsFrom(report: ValidationReport): ValidationRecord[] {
+  const timestamp = new Date().toISOString();
+
+  // Matched structurally rather than by object identity. `runValidationPlan` currently
+  // pushes the same object into both `executed` and `failures`, so identity happens to
+  // work — but it stops working the moment a report is persisted and reloaded, and a
+  // reloaded report silently marking every failed command `ok: true` is the kind of defect
+  // that only shows up in the record long after the run.
+  const failureKeys = new Set(
+    report.failures.map(
+      (failure) =>
+        `${failure.validation.componentRoot}|${failure.validation.phase}|` +
+        `${failure.validation.command.command}|${failure.exitCode}`,
+    ),
+  );
+
+  return report.executed.map((executed) => ({
+    // The phase names what kind of check this was (compile, test, build); the adapter and
+    // component root say where it ran. A polyglot repository runs the same phase per
+    // component, so the root is what keeps two records distinguishable.
+    class: `${executed.validation.phase}:${executed.validation.componentRoot || '.'}`,
+    command: executed.validation.command.command,
+    exitCode: executed.exitCode,
+    ok: !failureKeys.has(
+      `${executed.validation.componentRoot}|${executed.validation.phase}|` +
+        `${executed.validation.command.command}|${executed.exitCode}`,
+    ),
+    // Bounded deliberately: sandbox output can be megabytes, and canonical state is
+    // persisted on every transition. Truncation here is a storage decision, not a
+    // reduction in what was checked — the exit code is the verdict.
+    safeOutputSummary: `${executed.stdout}\n${executed.stderr}`.trim().slice(0, 2_000),
+    timestamp,
+    taskId: VALIDATION_TASK_ID,
+  }));
 }
 
 export interface CanonicalImplementationResult {
@@ -283,4 +407,80 @@ export async function runImplementationAsCanonicalTask(input: {
 
   const output = executed.output as { files?: readonly ProjectFile[] } | undefined;
   return { files: output?.files ?? [], task: executed, state: finished };
+}
+
+export interface CanonicalValidationResult {
+  readonly report: ValidationReport;
+  readonly task: ExecutableTaskNode;
+  readonly records: readonly ValidationRecord[];
+}
+
+/**
+ * Runs validation as a canonical task and returns the report.
+ *
+ * Unlike implementation this does **not** throw on a failing report. A failed validation is
+ * an ordinary, expected outcome that the phase machine handles by attempting bounded repair
+ * — throwing would convert a repairable failure into a dead run. The task is still recorded
+ * `failed`, so the canonical record and the phase machine agree about what happened while
+ * the caller keeps its existing control flow.
+ *
+ * A thrown error is different: the sandbox did not run, so there is no verdict at all. That
+ * propagates, because reporting "validation failed" for a sandbox that never started would
+ * send whoever is debugging to the generated code instead of the infrastructure.
+ */
+export async function runValidationAsCanonicalTask(input: {
+  state: CanonicalExecutionState;
+  objective: string;
+  validate: ValidateFn;
+  store?: ExecutionStateStore;
+  signal?: AbortSignal;
+}): Promise<CanonicalValidationResult> {
+  const node = validationTaskNode({ objective: input.objective });
+  // Appended to the run's existing state rather than a fresh one, so implementation and
+  // validation appear in a single task graph. Two states would make the canonical record
+  // claim two runs happened.
+  input.state.tasks = [...input.state.tasks.filter((task) => task.id !== node.id), node];
+
+  const store = input.store ?? new InMemoryExecutionStateStore();
+
+  // The report is captured here rather than returned through `task.output`. Canonical state
+  // is persisted on every transition, and a report carries the full stdout and stderr of
+  // every command — which for a sandbox build is routinely megabytes. The task output keeps
+  // the bounded summary; the caller gets the real object without it being written to the
+  // database on each save.
+  let report: ValidationReport | null = null;
+
+  const finished = await new ExecutionScheduler(store).run(
+    input.state,
+    universalTaskHandlers({
+      // Implementation is already complete in this state; the scheduler will not re-run a
+      // completed task, and a throwing stub makes an accidental re-run loud rather than
+      // silently generating a second file set.
+      implement: async () => {
+        throw new Error('implementation already completed for this run');
+      },
+      validate: async () => {
+        report = await input.validate();
+        return report;
+      },
+    }),
+    input.signal,
+  );
+
+  const executed = finished.tasks.find((candidate) => candidate.id === VALIDATION_TASK_ID)!;
+  if (!report) {
+    // No verdict at all: the sandbox did not run. Distinct from a failing report, and
+    // reported as such so debugging starts at the infrastructure rather than the code.
+    throw new CanonicalTaskFailure(
+      executed.blocker ?? 'validation did not run',
+      executed.id,
+      executed.status,
+    );
+  }
+
+  return {
+    report,
+    task: executed,
+    records: finished.validationResults.filter((record) => record.taskId === VALIDATION_TASK_ID),
+  };
 }

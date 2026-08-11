@@ -6,7 +6,10 @@ import {
   assessGeneratedFiles,
   implementationTaskNode,
   runImplementationAsCanonicalTask,
+  runValidationAsCanonicalTask,
   universalTaskHandlers,
+  validationTaskNode,
+  VALIDATION_TASK_ID,
 } from './universalCanonicalTasks.js';
 import { InMemoryExecutionStateStore } from '../ai/executionRuntime.js';
 import { ProviderPolicyError } from '../ai/providerPolicy.js';
@@ -215,4 +218,148 @@ test('the handler map covers only phases that are actually migrated', () => {
   // is a deliberate act.
   const handlers = universalTaskHandlers({ implement: async () => FILES });
   assert.deepEqual(Object.keys(handlers), ['multi_file_implementation']);
+});
+
+// ── Validation as a canonical task ──────────────────────────────────────────────
+
+const report = (over: Partial<import('./universalFlow.js').ValidationReport> = {}) => ({
+  executed: [],
+  passed: true,
+  failures: [],
+  tierReached: 'sandbox' as const,
+  blocker: null,
+  ...over,
+});
+
+const executedCommand = (command: string, exitCode: number) => ({
+  validation: {
+    componentRoot: '',
+    adapterId: 'rust-cargo',
+    phase: 'test' as const,
+    command: { command, args: [] as string[] },
+    image: null,
+  },
+  exitCode,
+  stdout: 'output',
+  stderr: '',
+  skipped: false,
+});
+
+async function stateAfterImplementation() {
+  const result = await runImplementationAsCanonicalTask({ ...base, implement: async () => FILES });
+  return result.state;
+}
+
+test('the validation task carries no model at all', async () => {
+  // §19: executable verification outranks model confidence. Carrying no model makes a
+  // model-driven pass structurally unavailable rather than merely discouraged.
+  const node = validationTaskNode({ objective: 'Validate' });
+  assert.equal(node.selectedModel, null);
+  assert.equal(node.selectedProvider, null);
+  assert.equal(node.selectedRuntime, 'sandbox');
+});
+
+test('validation completes only when the sandbox says it passed', async () => {
+  const state = await stateAfterImplementation();
+  const result = await runValidationAsCanonicalTask({
+    state,
+    objective: 'Validate',
+    validate: async () => report({ executed: [executedCommand('cargo test', 0)] as never }),
+  });
+  assert.equal(result.task.status, 'completed');
+  assert.equal(result.report.passed, true);
+});
+
+test('a failing sandbox verdict fails the task and is not thrown', async () => {
+  // A failed validation is an ordinary outcome the phase machine repairs. Throwing would
+  // convert a repairable failure into a dead run — but the task must still record `failed`,
+  // so the canonical record and the phase machine agree.
+  const state = await stateAfterImplementation();
+  const result = await runValidationAsCanonicalTask({
+    state,
+    objective: 'Validate',
+    validate: async () =>
+      report({
+        passed: false,
+        blocker: 'cargo test exited 101',
+        executed: [executedCommand('cargo test', 101)] as never,
+        failures: [executedCommand('cargo test', 101)] as never,
+      }),
+  });
+  assert.equal(result.task.status, 'failed');
+  assert.equal(result.report.passed, false);
+});
+
+test('a sandbox that never ran is thrown, not reported as a failed validation', async () => {
+  // The distinction sends debugging to the right place: no verdict means infrastructure,
+  // a failing verdict means the generated code.
+  const state = await stateAfterImplementation();
+  await assert.rejects(
+    runValidationAsCanonicalTask({
+      state,
+      objective: 'Validate',
+      validate: async () => {
+        throw new Error('sandbox image unavailable');
+      },
+    }),
+    (error: unknown) => error instanceof CanonicalTaskFailure,
+  );
+});
+
+test('every executed command is persisted with its exit code', async () => {
+  // §19 requires the command and exit code, not just pass/fail. Without them a failed run
+  // says only "validation failed" and the next question has no answer in the record.
+  const state = await stateAfterImplementation();
+  const result = await runValidationAsCanonicalTask({
+    state,
+    objective: 'Validate',
+    validate: async () =>
+      report({
+        passed: false,
+        executed: [executedCommand('cargo build', 0), executedCommand('cargo test', 101)] as never,
+        failures: [executedCommand('cargo test', 101)] as never,
+      }),
+  });
+
+  assert.equal(result.records.length, 2);
+  assert.deepEqual(result.records.map((entry) => entry.command), ['cargo build', 'cargo test']);
+  assert.deepEqual(result.records.map((entry) => entry.exitCode), [0, 101]);
+  assert.deepEqual(result.records.map((entry) => entry.ok), [true, false]);
+});
+
+test('validation shares one task graph with implementation', async () => {
+  // Two states would make the canonical record claim two runs happened.
+  const state = await stateAfterImplementation();
+  const result = await runValidationAsCanonicalTask({
+    state,
+    objective: 'Validate',
+    validate: async () => report(),
+  });
+  const ids = state.tasks.map((task) => task.id).sort();
+  assert.deepEqual(ids, [IMPLEMENTATION_TASK_ID, VALIDATION_TASK_ID].sort());
+  assert.equal(result.task.dependencies.length, 0);
+});
+
+test('implementation is not re-run when validation executes', async () => {
+  // A second implementation would generate a second file set for the same run.
+  const state = await stateAfterImplementation();
+  await runValidationAsCanonicalTask({
+    state,
+    objective: 'Validate',
+    validate: async () => report(),
+  });
+  const implementation = state.tasks.find((task) => task.id === IMPLEMENTATION_TASK_ID)!;
+  assert.equal(implementation.attempts, 1);
+  assert.equal(implementation.status, 'completed');
+});
+
+test('bounded output keeps canonical state from carrying whole build logs', async () => {
+  const state = await stateAfterImplementation();
+  const huge = { ...executedCommand('cargo build', 0), stdout: 'x'.repeat(50_000) };
+  const result = await runValidationAsCanonicalTask({
+    state,
+    objective: 'Validate',
+    validate: async () => report({ executed: [huge] as never }),
+  });
+  assert.ok(result.records[0]!.safeOutputSummary.length <= 2_000);
 });

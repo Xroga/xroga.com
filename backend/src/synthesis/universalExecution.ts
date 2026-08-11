@@ -30,8 +30,8 @@ import { compileAcceptanceCriteria } from './acceptanceCompiler.js';
 import { mayWrite, routeProject, type UniversalAgentFlags } from '../config/universalAgentFlags.js';
 import { detectComposition } from './runtime/registry.js';
 import type { Owner, UniversalStore } from './universalPersistence.js';
-import { runImplementationAsCanonicalTask } from './universalCanonicalTasks.js';
-import type { ExecutableTaskNode, ExecutionStateStore } from '../ai/executionRuntime.js';
+import { runImplementationAsCanonicalTask, runValidationAsCanonicalTask } from './universalCanonicalTasks.js';
+import type { CanonicalExecutionState, ExecutableTaskNode, ExecutionStateStore } from '../ai/executionRuntime.js';
 import type { ModelId } from '../ai/models.js';
 
 export const UNIVERSAL_EXECUTION_SCHEMA_VERSION = '1.0.0' as const;
@@ -236,6 +236,9 @@ export async function executeUniversalRun(input: {
   // into a behaviour change.
   let files: readonly ProjectFile[];
   let implementationTask: ExecutableTaskNode | null = null;
+  // The canonical state the implementation task ran in. Validation appends to it so the
+  // run has one task graph; two states would make the record claim two runs happened.
+  let implementationState: CanonicalExecutionState | null = null;
   try {
     const canonical = await runImplementationAsCanonicalTask({
       projectId: input.owner.projectId,
@@ -260,6 +263,7 @@ export async function executeUniversalRun(input: {
     });
     files = canonical.files;
     implementationTask = canonical.task;
+    implementationState = canonical.state;
   } catch (error) {
     // Still before any write, so a fallback is at least conceivable — but only if legacy
     // could build the same product.
@@ -301,8 +305,31 @@ export async function executeUniversalRun(input: {
   const validationPlan = planUniversalRun({
     prompt: input.prompt, files, projectId: input.owner.projectId, runId: input.runId,
   });
-  let report = await runValidationPlan(validationPlan, input.adapters.runValidation);
+  // Validation runs as a canonical task on the same state the implementation task is
+  // recorded in, so the run has one task graph rather than two. The sandbox's exit codes
+  // remain the only verdict — §19 puts executable verification above model confidence, and
+  // the validation task carries no model at all, which makes a model-driven pass
+  // structurally unavailable rather than merely discouraged.
+  const canonicalValidation = implementationState
+    ? await runValidationAsCanonicalTask({
+        state: implementationState,
+        objective: `Validate ${plan.spec.title}`,
+        validate: () => runValidationPlan(validationPlan, input.adapters.runValidation),
+        store: input.executionStore,
+        signal: input.signal,
+      })
+    : null;
+  let report = canonicalValidation
+    ? canonicalValidation.report
+    : await runValidationPlan(validationPlan, input.adapters.runValidation);
   record('validation', `tier ${report.tierReached}`, report.blocker ?? `${report.executed.length} command(s) ran`);
+  if (canonicalValidation) {
+    record(
+      'validation',
+      `canonical task ${canonicalValidation.task.id} ${canonicalValidation.task.status}`,
+      `${canonicalValidation.records.length} command record(s) persisted with exit codes`,
+    );
+  }
 
   if (!report.passed && input.adapters.repair) {
     const failures = report.failures.map((failure) => `${failure.validation.command.command}: ${failure.stderr.slice(0, 200)}`);
