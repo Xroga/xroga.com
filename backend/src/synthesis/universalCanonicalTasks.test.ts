@@ -11,6 +11,7 @@ import {
   runReviewAsCanonicalTask,
   runValidationAsCanonicalTask,
   publishTaskNode,
+  PUBLISH_TASK_ID,
   repairTaskNode,
   reviewTaskNode,
   universalTaskHandlers,
@@ -544,4 +545,145 @@ test('the handler map still covers only migrated phases', () => {
     Object.keys(handlers).sort(),
     ['code_review', 'github_publishing', 'multi_file_implementation', 'validation', 'validation_repair'],
   );
+});
+
+// ── Cancellation ────────────────────────────────────────────────────────────────
+
+test('cancelling before implementation leaves no completed task', async () => {
+  // The command's rule: cancellation must not leave false task completion. A cancelled run
+  // that recorded implementation as done would have the run believing files exist.
+  const controller = new AbortController();
+  controller.abort();
+
+  let called = 0;
+  await assert.rejects(
+    runImplementationAsCanonicalTask({
+      ...base,
+      implement: async () => {
+        called += 1;
+        return FILES;
+      },
+      signal: controller.signal,
+    }),
+    (error: unknown) => error instanceof CanonicalTaskFailure,
+  );
+  assert.equal(called, 0, 'the implementation ran after cancellation');
+});
+
+test('a cancelled implementation task is recorded cancelled, not completed', async () => {
+  const controller = new AbortController();
+  controller.abort();
+  const store = new InMemoryExecutionStateStore();
+
+  await assert.rejects(
+    runImplementationAsCanonicalTask({
+      ...base,
+      implement: async () => FILES,
+      store,
+      signal: controller.signal,
+    }),
+    (error: unknown) => {
+      assert.ok(error instanceof CanonicalTaskFailure);
+      assert.equal(error.taskStatus, 'cancelled');
+      return true;
+    },
+  );
+
+  const persisted = await store.load(base.runId);
+  const task = persisted!.tasks.find((candidate) => candidate.id === IMPLEMENTATION_TASK_ID)!;
+  assert.equal(task.status, 'cancelled');
+  assert.deepEqual(persisted!.generatedFiles, [], 'cancelled run recorded generated files');
+});
+
+test('cancelling before publish produces no commit and no commit evidence', async () => {
+  // The most damaging cancellation case: a run that reports a commit sha it never obtained.
+  const state = await stateAfterImplementation();
+  const controller = new AbortController();
+  controller.abort();
+
+  let published = 0;
+  await assert.rejects(
+    runPublishAsCanonicalTask({
+      state,
+      objective: 'Publish',
+      repository: 'xroga/demo',
+      baseBranch: 'main',
+      startingCommitSha: 'abc123',
+      publish: async () => {
+        published += 1;
+        return { commitSha: 'deadbeef' };
+      },
+      signal: controller.signal,
+    }),
+    (error: unknown) => error instanceof CanonicalTaskFailure,
+  );
+
+  assert.equal(published, 0, 'the atomic writer was invoked after cancellation');
+  const task = state.tasks.find((candidate) => candidate.id === PUBLISH_TASK_ID)!;
+  assert.notEqual(task.status, 'completed');
+  assert.equal(
+    task.evidence.some((item) => item.kind === 'resulting_commit_sha'),
+    false,
+    'a cancelled publish recorded commit evidence',
+  );
+});
+
+test('cancelling mid-run cannot publish twice', async () => {
+  // Duplicate commits are the failure the command names. Publish carries maximumAttempts 1,
+  // and a cancelled run must not re-enter it.
+  const state = await stateAfterImplementation();
+  const controller = new AbortController();
+  let published = 0;
+
+  const result = await runPublishAsCanonicalTask({
+    state,
+    objective: 'Publish',
+    repository: 'xroga/demo',
+    baseBranch: 'main',
+    startingCommitSha: 'abc123',
+    publish: async () => {
+      published += 1;
+      controller.abort();
+      return { commitSha: 'deadbeef' };
+    },
+    signal: controller.signal,
+  });
+
+  assert.equal(published, 1);
+  assert.equal(result.commitSha, 'deadbeef');
+
+  // Re-running the same state must not call the writer again: the task is already completed.
+  await runPublishAsCanonicalTask({
+    state,
+    objective: 'Publish',
+    repository: 'xroga/demo',
+    baseBranch: 'main',
+    startingCommitSha: 'abc123',
+    publish: async () => {
+      published += 1;
+      return { commitSha: 'second-commit' };
+    },
+  }).catch(() => undefined);
+
+  assert.equal(published, 1, `the atomic writer ran ${published} times for one run`);
+});
+
+test('a cancelled validation does not report a passing verdict', async () => {
+  const state = await stateAfterImplementation();
+  const controller = new AbortController();
+  controller.abort();
+
+  await assert.rejects(
+    runValidationAsCanonicalTask({
+      state,
+      objective: 'Validate',
+      validate: async () => report({ passed: true }),
+      signal: controller.signal,
+    }),
+    (error: unknown) => error instanceof CanonicalTaskFailure,
+  );
+
+  const task = state.tasks.find((candidate) => candidate.id === VALIDATION_TASK_ID)!;
+  assert.notEqual(task.status, 'completed');
+  assert.deepEqual(state.validationResults, [], 'a cancelled validation recorded command results');
 });

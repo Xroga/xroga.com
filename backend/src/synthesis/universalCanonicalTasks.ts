@@ -684,6 +684,20 @@ async function runTaskOnState(input: {
   store?: ExecutionStateStore;
   signal?: AbortSignal;
 }): Promise<ExecutableTaskNode> {
+  // A completed task is never re-executed, and this is not a micro-optimisation.
+  //
+  // The first version replaced any existing node with a fresh `ready` one, so calling a
+  // runner twice for the same run re-entered the handler. For publish that means the atomic
+  // writer runs twice and the run produces two commits — the duplicate-commit failure this
+  // whole path exists to prevent, reachable by nothing more exotic than a retry after a
+  // cancellation. A test caught it.
+  //
+  // Only `completed` is protected. A failed validation must still be re-runnable, because
+  // revalidation after bounded repair reuses this same task id, and refusing that would
+  // make repair unable to prove it worked.
+  const existing = input.state.tasks.find((task) => task.id === input.node.id);
+  if (existing?.status === 'completed') return existing;
+
   input.state.tasks = [...input.state.tasks.filter((task) => task.id !== input.node.id), input.node];
 
   const finished = await new ExecutionScheduler(input.store ?? new InMemoryExecutionStateStore()).run(
